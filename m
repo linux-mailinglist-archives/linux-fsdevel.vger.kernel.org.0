@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-1810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20637DF0C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:01:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D6D7DF0D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 12:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C191281ADD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 11:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B555D281A71
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 11:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B29E14273;
-	Thu,  2 Nov 2023 11:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D631429E;
+	Thu,  2 Nov 2023 11:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JSQ8ZzZR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q7sseUwt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881E14006
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 11:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD6B1426B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 11:03:47 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AA0133
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 04:01:49 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 521B5DE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 04:03:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1698922908;
+	s=mimecast20190719; t=1698923025;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WEsP6UmyH+BX0JZ3F1lGKvqULOvcqKbb9QU0pxprrbY=;
-	b=JSQ8ZzZRgLWbzhfCdaUcHK/rzyB19nqEoQFs4/2y4V5ys3awZbhIH8BNDepeMEPt+8tFSk
-	Fi3oQZcmFiu3eR1EIq9NbXrQwgG0baZqr/JYUrKA2TMGoxhNNs2JXCkj+18sdeUMm1uZjI
-	LcPrqAVKQQw1YrJpq2fTGWr6/NqlBno=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=o+sUvKh0Fq9LjCXdXIyTK4b/elLQxFDSaWn4T3QHjyo=;
+	b=Q7sseUwtWEEI0egtOu8UQU3mCkNiq7VM/SJXS6Q575qofflvGnxctjBcnccBX7o/sJJFVf
+	dCEv8xdgMtfhkKKf9Rz1F+upuvMRLoBzGyvndsLT5HJfZcc5p/FJakVkHLU8+Jwf/KcaCY
+	W4PxzFg+IZ+4UW1vC2jByOrmig+yFPg=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-tSln1Gp1NCyC_YL7nGv6vA-1; Thu, 02 Nov 2023 07:01:47 -0400
-X-MC-Unique: tSln1Gp1NCyC_YL7nGv6vA-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9d30a6a67abso54226966b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 04:01:46 -0700 (PDT)
+ us-mta-638-d6CWbcDTNZamJgevcLvghw-1; Thu, 02 Nov 2023 07:03:44 -0400
+X-MC-Unique: d6CWbcDTNZamJgevcLvghw-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-9ba247e03aeso53522266b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 04:03:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698922906; x=1699527706;
+        d=1e100.net; s=20230601; t=1698923023; x=1699527823;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WEsP6UmyH+BX0JZ3F1lGKvqULOvcqKbb9QU0pxprrbY=;
-        b=AEQiib1MB3DgoK57c5YnS1mnF9coKbcX8F+ujPFPcLHfDhqEXLWDm8Q4pIGE23mO4D
-         wL2TeuzamThRQmdAWBLgQCOCmHKCWi3DSxrktDwiviM1wIYIwqhPAOjgFDLs1HPAJ3Ui
-         fz8ffZNeAszB5cyj6HpI5t3LXGG4j9Euyl//LvCyY6qWmEDwgs7Fl9xQzInGXGEVfCqj
-         GOyu/SIVQto6JxyhlIA6Bk1YAFyBqShmjAm1KWLCghcd/Qi5sYiRuzO9R81+bWSYrNvL
-         IHtVXneWhrqhPFFNxgCgGKmCETlr7Zv57KVTmyX/YbebKwf9qpE0daShKfvy+A+DxFLF
-         hQ7g==
-X-Gm-Message-State: AOJu0YylpdS1lYewxtPhU5YfFT5hxbJeQ33G60lohbFX+qagOJGxtFvu
-	ancDQw23dWLJqVmwaJ2LdIIvr57aC3Rq/tmdDsdz9nUZeWfFL3Hak+c5kGfhDBFBePbVhW2RvW+
-	yromPWabyYLr+q4p9k6lXyCdsUA==
-X-Received: by 2002:a17:906:d90:b0:9ba:a38:531e with SMTP id m16-20020a1709060d9000b009ba0a38531emr3519608eji.52.1698922905984;
-        Thu, 02 Nov 2023 04:01:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFr1MKwEsucdCPGHuXwuvbKOwjSvBNOm32t6vlzmUKLac2E5/jR4RLI2SEmoEufOHPDYy6Ibw==
-X-Received: by 2002:a17:906:d90:b0:9ba:a38:531e with SMTP id m16-20020a1709060d9000b009ba0a38531emr3519582eji.52.1698922905598;
-        Thu, 02 Nov 2023 04:01:45 -0700 (PDT)
+        bh=o+sUvKh0Fq9LjCXdXIyTK4b/elLQxFDSaWn4T3QHjyo=;
+        b=XzwlMc1LPEBEEWc4k5CZObpHMr+Z/QuAO/ZCkdqhGoNw2D8DiLtOJhKwpcGZc6+cfj
+         DkROM5X3YOMqJK/qqTsjfYS9fVnYUVEFNhfmn9WeGr3yylbg3fS2ApCCBdix9uo/RsmS
+         VxlAlLC25jU9C0xfg9WXr89zyPbZYMRGZQM27G1iuR0VsZiuRJlFP/89dXQUens4A/JN
+         2syGo2xlRG7S1PJO6WoH0Es04MaK/NdSLjfuUGVI/jm0YRSp2fCbwrj0JK8uzWn3oqyO
+         tmeVcQWKPhTvntYeapdvHUbM8TMKQc9fSrGvF2bqJswOUhMLL2W4LhlTrViT7uKlQpE3
+         Nc9w==
+X-Gm-Message-State: AOJu0Yz4Odgi+I+8EsRkSfYY3AuRCpRAIFD+tDrWMlzEEqlhh1dnPM6I
+	1oGaoByDYVvRKj+tdspsn4R8z1M6lCOO/1ijxrW6VZnt8kLTVqg1TyFSlh32dkTxYnaXB5awo+6
+	pU8jPZ2IVrlORzWW2HxAVrnSNJQ==
+X-Received: by 2002:a17:907:7b99:b0:9be:30c2:b8fd with SMTP id ne25-20020a1709077b9900b009be30c2b8fdmr4830854ejc.66.1698923023216;
+        Thu, 02 Nov 2023 04:03:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAextU6brGleAr873WsCzugduD1+qH+WMku84F2ppJAKPGqD6aYcxwyzrmazywVumiiQ5fXg==
+X-Received: by 2002:a17:907:7b99:b0:9be:30c2:b8fd with SMTP id ne25-20020a1709077b9900b009be30c2b8fdmr4830827ejc.66.1698923022777;
+        Thu, 02 Nov 2023 04:03:42 -0700 (PDT)
 Received: from ?IPV6:2001:b07:6468:f312:9af8:e5f5:7516:fa89? ([2001:b07:6468:f312:9af8:e5f5:7516:fa89])
-        by smtp.googlemail.com with ESMTPSA id a8-20020a170906684800b00993a37aebc5sm983006ejs.50.2023.11.02.04.01.42
+        by smtp.googlemail.com with ESMTPSA id hk22-20020a170906c9d600b0099cb0a7098dsm1010698ejb.19.2023.11.02.04.03.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Nov 2023 04:01:44 -0700 (PDT)
-Message-ID: <e6025e28-ea93-458b-887f-925eab7cf260@redhat.com>
-Date: Thu, 2 Nov 2023 12:01:41 +0100
+        Thu, 02 Nov 2023 04:03:42 -0700 (PDT)
+Message-ID: <496b78bb-ad12-4eed-a62c-8c2fd725ec61@redhat.com>
+Date: Thu, 2 Nov 2023 12:03:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,50 +76,55 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
  faults to userspace
 Content-Language: en-US
-To: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
-Cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
- "brauner@kernel.org" <brauner@kernel.org>,
- "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
- "chenhuacai@kernel.org" <chenhuacai@kernel.org>,
- "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
- "palmer@dabbelt.com" <palmer@dabbelt.com>, "maz@kernel.org"
- <maz@kernel.org>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
- "willy@infradead.org" <willy@infradead.org>,
- "anup@brainfault.org" <anup@brainfault.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- Xiaoyao Li <xiaoyao.li@intel.com>,
+To: "Huang, Kai" <kai.huang@intel.com>,
+ "Christopherson,, Sean" <seanjc@google.com>
+Cc: "Li, Xiaoyao" <xiaoyao.li@intel.com>,
  "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
  "mic@digikod.net" <mic@digikod.net>,
  "liam.merwick@oracle.com" <liam.merwick@oracle.com>,
  "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
  "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "david@redhat.com" <david@redhat.com>, "tabba@google.com"
- <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "amoorthy@google.com" <amoorthy@google.com>,
  "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "michael.roth@amd.com" <michael.roth@amd.com>,
+ "tabba@google.com" <tabba@google.com>,
  "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "michael.roth@amd.com" <michael.roth@amd.com>,
  "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- Vishal Annapurve <vannapurve@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
- "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+ "palmer@dabbelt.com" <palmer@dabbelt.com>,
+ "chenhuacai@kernel.org" <chenhuacai@kernel.org>,
+ "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+ "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+ "Annapurve, Vishal" <vannapurve@google.com>, "vbabka@suse.cz"
+ <vbabka@suse.cz>, "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "maz@kernel.org" <maz@kernel.org>, "willy@infradead.org"
+ <willy@infradead.org>, "dmatlack@google.com" <dmatlack@google.com>,
+ "anup@brainfault.org" <anup@brainfault.org>,
  "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
- "qperret@google.com" <qperret@google.com>,
- "dmatlack@google.com" <dmatlack@google.com>, Yilun Xu <yilun.xu@intel.com>,
+ "Xu, Yilun" <yilun.xu@intel.com>, "qperret@google.com" <qperret@google.com>,
+ "brauner@kernel.org" <brauner@kernel.org>,
  "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
  "ackerleytng@google.com" <ackerleytng@google.com>,
  "jarkko@kernel.org" <jarkko@kernel.org>,
+ "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Wei W Wang <wei.w.wang@intel.com>
+ "linux-mm@kvack.org" <linux-mm@kvack.org>, "Wang, Wei W"
+ <wei.w.wang@intel.com>, "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>
 References: <20231027182217.3615211-1-seanjc@google.com>
  <20231027182217.3615211-10-seanjc@google.com>
  <482bfea6f54ea1bb7d1ad75e03541d0ba0e5be6f.camel@intel.com>
  <ZUKMsOdg3N9wmEzy@google.com>
+ <64e3764e36ba7a00d94cc7db1dea1ef06b620aaf.camel@intel.com>
+ <32cb71700aedcbd1f65276cf44a601760ffc364b.camel@intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Autocrypt: addr=pbonzini@redhat.com; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
@@ -156,30 +161,43 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
  dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
  b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <ZUKMsOdg3N9wmEzy@google.com>
+In-Reply-To: <32cb71700aedcbd1f65276cf44a601760ffc364b.camel@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/1/23 18:36, Sean Christopherson wrote:
-> A good example is KVM_RUN with -EINTR; if KVM were to return something other than
-> -EINTR on a pending signal or vcpu->run->immediate_exit, userspace would fall over.
+On 11/2/23 10:35, Huang, Kai wrote:
+> IIUC KVM can already handle the case of poisoned
+> page by sending signal to user app: 
+> 
+> 	static int kvm_handle_error_pfn(struct kvm_vcpu *vcpu, 
+> 			struct kvm_page_fault *fault)                                               
+> 	{       
+> 		...
+> 
+>        		if (fault->pfn == KVM_PFN_ERR_HWPOISON) {
+>               		kvm_send_hwpoison_signal(fault->slot, fault->gfn);
+>                 	return RET_PF_RETRY;                                          
+>         	}
+> 	}
 
-And dually if KVM were to return KVM_EXIT_INTR together with something 
-other than -EINTR.
+EHWPOISON is not implemented by this series, so it should be left out of 
+the documentation.
 
-> And purging exit_reason super early is subtly tricky because KVM's 
-> (again, poorly documented) ABI is that *some* exit reasons are preserved 
-> across KVM_RUN with vcpu->run->immediate_exit (or with a pending 
-> signal). https://lore.kernel.org/all/ZFFbwOXZ5uI%2Fgdaf@google.com
 
-vcpu->run->immediate_exit preserves all exit reasons, but it's not a 
-good idea that immediate_exit behaves different from a pending signal on 
-entry to KVM_RUN (remember that immediate_exit was meant to be a better 
-performing alternative to KVM_SET_SIGNAL_MASK).
+> Currently as mentioned above when
+> vepc fault handler cannot allocate EPC page KVM returns -EFAULT to Qemu, and
+> Qemu prints ...
+> 
+> 	...: Bad address
+> 	<dump guest cpu registers>
+> 
+> ... which is nonsense.
+> 
+> If we can use memory_fault.flags (or is 'fault_reason' a better name?) to carry
+> a specific value for EPC to let Qemu know and Qemu can then do more reasonable
+> things.
 
-In principle, vcpu->run->immediate_exit could return KVM_EXIT_INTR 
-(perhaps even _should_, except that breaks selftests so at this point it 
-is ABI).
+Yes, that's a good idea that can be implemented on top.
 
 Paolo
 
