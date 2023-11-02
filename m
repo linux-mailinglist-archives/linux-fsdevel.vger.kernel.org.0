@@ -1,71 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-1780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE27B7DE9E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 02:10:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6CB7DEAA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 03:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88648B21176
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 01:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C896A2819AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 02:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1887B110A;
-	Thu,  2 Nov 2023 01:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5CE185B;
+	Thu,  2 Nov 2023 02:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uhT0YA0o"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LdpA/K0i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C7910F6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 01:09:59 +0000 (UTC)
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 747CC138
-	for <linux-fsdevel@vger.kernel.org>; Wed,  1 Nov 2023 18:09:55 -0700 (PDT)
-Date: Wed, 1 Nov 2023 21:09:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1698887393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hvc87rLyNSuk6U47xv+ZrAEvJPwfJlWofcSTDHhl/cc=;
-	b=uhT0YA0oJvl2v+shgvGl5NJKYfiqpHKRvoNoTvXm45MDRu2GouriFBC3ltFiriatDH7mOZ
-	NpDOUF00eA4q0YmeE7qF+dCLnxmn1GhC2/OfuxOP06K8OZ8CmTRTZR0p6D+wBYpaJEcxl3
-	0ZFHVLBAWihfsdWyIb2bneqz4H/krcg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@infradead.org>,
-	Kees Cook <keescook@google.com>,
-	syzkaller <syzkaller@googlegroups.com>,
-	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org
-Subject: Re: [PATCH 1/7] bcachefs: Convert to bdev_open_by_path()
-Message-ID: <20231102010950.no2byim4ttu6csmy@moria.home.lan>
-References: <20231101173542.23597-1-jack@suse.cz>
- <20231101174325.10596-1-jack@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E5215CB;
+	Thu,  2 Nov 2023 02:20:08 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7028211D;
+	Wed,  1 Nov 2023 19:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1698891604; x=1730427604;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qMSrBq5gKSfvneC99jG0ycqZi9wUzkwKrG5m2lwT0dM=;
+  b=LdpA/K0iBInjVEGveW8ciM4zHmQ6nSMJ/VOGGNnBWn3ppc2EvW9MSsRv
+   tv9G9s3JPgjQBZDQPURgj5BHXbQjgRj4T5FJsibP+Bq55BZudHcREyo5Q
+   uS4bpAjwIHUznzpsyfbyeCtcAovxUJqQClWsUAN7qBq1N1vY2WFaIT2vX
+   2eVBptiq/3Wrw+MW3PNzaTSKAuTOoTui0V3/QPRa4hnkOe/10L7sULKaz
+   LEyUXXgVYWqUq8zRk1eiFJmhIAJK6LZYnV1Js6LV7WPvf0CtiMo0SggU3
+   70HDcwXOYdJIlLFc9i82w48yQyVjwnIMdA8U5JRurucu+8RktGLM+Xhml
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10881"; a="373665318"
+X-IronPort-AV: E=Sophos;i="6.03,270,1694761200"; 
+   d="scan'208";a="373665318"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2023 19:20:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10881"; a="851761891"
+X-IronPort-AV: E=Sophos;i="6.03,270,1694761200"; 
+   d="scan'208";a="851761891"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.93.9.145]) ([10.93.9.145])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2023 19:19:53 -0700
+Message-ID: <33686031-c1df-4ef5-a6ac-1aab7f5c656e@intel.com>
+Date: Thu, 2 Nov 2023 10:19:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231101174325.10596-1-jack@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 09/35] KVM: Add KVM_EXIT_MEMORY_FAULT exit to report
+ faults to userspace
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
+Cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+ "brauner@kernel.org" <brauner@kernel.org>,
+ "oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+ "chenhuacai@kernel.org" <chenhuacai@kernel.org>,
+ "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+ "palmer@dabbelt.com" <palmer@dabbelt.com>, "maz@kernel.org"
+ <maz@kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+ "willy@infradead.org" <willy@infradead.org>,
+ "anup@brainfault.org" <anup@brainfault.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
+ "mic@digikod.net" <mic@digikod.net>,
+ "liam.merwick@oracle.com" <liam.merwick@oracle.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "david@redhat.com" <david@redhat.com>, "tabba@google.com"
+ <tabba@google.com>, "amoorthy@google.com" <amoorthy@google.com>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "michael.roth@amd.com" <michael.roth@amd.com>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ Vishal Annapurve <vannapurve@google.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+ "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+ "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+ "qperret@google.com" <qperret@google.com>,
+ "dmatlack@google.com" <dmatlack@google.com>, Yilun Xu <yilun.xu@intel.com>,
+ "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+ "ackerleytng@google.com" <ackerleytng@google.com>,
+ "jarkko@kernel.org" <jarkko@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>, Wei W Wang <wei.w.wang@intel.com>
+References: <20231027182217.3615211-1-seanjc@google.com>
+ <20231027182217.3615211-10-seanjc@google.com>
+ <482bfea6f54ea1bb7d1ad75e03541d0ba0e5be6f.camel@intel.com>
+ <ZUKMsOdg3N9wmEzy@google.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <ZUKMsOdg3N9wmEzy@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 01, 2023 at 06:43:06PM +0100, Jan Kara wrote:
-> Convert bcachefs to use bdev_open_by_path() and pass the handle around.
+On 11/2/2023 1:36 AM, Sean Christopherson wrote:
+>> KVM_CAP_MEMORY_FAULT_INFO is x86 only, is it better to put this function to
+>> <asm/kvm_host.h>?
+> I'd prefer to keep it in generic code, as it's highly likely to end up there
+> sooner than later.  There's a known use case for ARM (exit to userspace on missing
+> userspace mapping[*]), and I'm guessing pKVM (also ARM) will also utilize this API.
 > 
-> CC: Kent Overstreet <kent.overstreet@linux.dev>
-> CC: Brian Foster <bfoster@redhat.com>
-> CC: linux-bcachefs@vger.kernel.org
-> Signed-off-by: Jan Kara <jack@suse.cz>
+> [*]https://lore.kernel.org/all/20230908222905.1321305-8-amoorthy@google.com
 
-Acked-by: Kent Overstreet <kent.overstreet@linux.dev>
+I wonder how this CAP is supposed to be checked in userspace, for guest 
+memfd case? something like this?
+
+	if (!kvm_check_extension(s, KVM_CAP_MEMORY_FAULT_INFO) &&
+	    run->exit_reason == KVM_EXIT_MEMORY_FAULT)
+		abort("unexpected KVM_EXIT_MEMORY_FAULT");
+
+In my implementation of QEMU patches, I find it's unnecessary. When 
+userspace gets an exit with KVM_EXIT_MEMORY_FAULT, it implies 
+"KVM_CAP_MEMORY_FAULT_INFO".
+
+So I don't see how it is necessary in this series. Whether it's 
+necessary or not for [*], I don't have the answer but we can leave the 
+discussion to that patch series.
 
