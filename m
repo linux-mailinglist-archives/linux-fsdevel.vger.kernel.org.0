@@ -1,83 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-1883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CFF7DFB97
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 21:32:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1132F7DFBB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 21:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C646281D1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 20:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463231C2100B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Nov 2023 20:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBAD21A09;
-	Thu,  2 Nov 2023 20:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBCE1DDE9;
+	Thu,  2 Nov 2023 20:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="xoN5XwRH"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="o/YCnKX1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CFD21A13
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 20:32:48 +0000 (UTC)
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ECDD19E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 13:32:46 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id af79cd13be357-778927f2dd3so73523285a.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 13:32:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC311736
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 20:49:00 +0000 (UTC)
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C278184
+	for <linux-fsdevel@vger.kernel.org>; Thu,  2 Nov 2023 13:48:59 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1cc5b6d6228so10925505ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Nov 2023 13:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1698957165; x=1699561965; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1698958139; x=1699562939; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=34CPHx89bwh8qwgk3q1mguUkvTQjj2rMimJifw5cT9U=;
-        b=xoN5XwRHizRVuDGtxHnUGiYF1iLNL7fuXG/VIXZAPfXcV4XA3EDE9kwHH5ByjKXK4P
-         5nHKIIrrzkgA97BJWkoa059SQnaiSb501sBz4HnxGOZC4VCIH63rBiEtHvsuENTyny2K
-         KnP3/MUTgHrcosu4MsxjTwEa0qruDbM72ewCN2U78ZOYj3PrqydVuIkZm5OQbsJ7wTc2
-         d+s5+shd229oJKWSwxlUQIFwAoFGX3aRjmeBNkz4kECdMQ0Gqd95onkCnkEvLLhN8WDQ
-         HI/uLf2eTRbnk5GrDES45prHq/ZrY1EtJy6uOwFIyeTyuuxebI39kQGnKdVr7sE5Kjlm
-         e7BA==
+        bh=nPlOQs4H3ojv1i5CDb/ZZoP+yLZogQLFBQAjO2TQLUE=;
+        b=o/YCnKX1u8C0Z+1hwL705zfGU4AeLkcMPv+pp+POddh4meeWltMnDnMAEWpxpA2mOK
+         YLMq2cFxCe9cIt66Xbc9XIEwenryooypNsCE8tJuGcqinNPuoVSPHUeMyQRa7B/5PVGE
+         q6ICS2eZL4KeUTFXc6AWjWGySGmGMXmyrvtQ3mgY9snUKu8qzZFDId4UBoB8DREkQqW0
+         6V24HKn9rHg8r2ElkKHWNex6RbAC65qZLRYGm42jQx3dVNIuIcZSiDhOPs9wF8XcICy9
+         xwXeyQq2sYUV471MMMc+DfKL17R6qKnhcZ6C6o1cMiLos8RWu+t5noZjQtIBQZVOmsZb
+         XfTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698957165; x=1699561965;
+        d=1e100.net; s=20230601; t=1698958139; x=1699562939;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=34CPHx89bwh8qwgk3q1mguUkvTQjj2rMimJifw5cT9U=;
-        b=iKhgtiCR22qYEPgQm24RS2qGBUg8gurE0/3dIvp1VrPZpvhT0q3TmuTnUkfRx1FFdK
-         VVPT1WOhO/GeO3qE+akDhVAFHKnfw5XLHaAzYLqVDC8L02jfUVY7DaOR42F5MFVKsIKr
-         P1vWSb8dvozrnN3VErCBfsR/GdPBWn97frKmJlNNqcP+WLDeJXHK2Fyfxy1gdramz174
-         rz3JcDiwI9QelX7r7CjiUH49ToPL0PbPG1UWzYU4eynNbLyDrqm2A0xtz2y1KXG9dz+G
-         rkU/SheinH8DVhAOmoHjsoeTFz1MWNBRUjQa8Ni9ysR77T+gQd+70eoIfcdnzymqCHnm
-         aefw==
-X-Gm-Message-State: AOJu0Ywn+KLmaZXiT89MHrIxjwbTSElI9IOgqPKFPiQ7apowCfu7pH+O
-	gg2IO3+sJJwYxTNMI1uLp3QMsA==
-X-Google-Smtp-Source: AGHT+IFIQplKj+X0E7szuk90OCKyxC+AYKJdaylmw5GUDC4mFzLeB8eRJWkAA9eAYLGe6Fu3s64l2A==
-X-Received: by 2002:a05:620a:bc8:b0:77a:5112:c1ef with SMTP id s8-20020a05620a0bc800b0077a5112c1efmr5966040qki.1.1698957165464;
-        Thu, 02 Nov 2023 13:32:45 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id i10-20020a05620a144a00b0076cb3690ae7sm91589qkl.68.2023.11.02.13.32.44
+        bh=nPlOQs4H3ojv1i5CDb/ZZoP+yLZogQLFBQAjO2TQLUE=;
+        b=Cat7IcPr0uevmcwpZaCNanGVEJ5psvRf8cJE54ip9TVu3SltrHt31x1qmX7HoxVT9f
+         /2Lf0RFVbAdv+qpUVTSgoMr6X671TPmU5XylH355taLkSt9OV1nPVBwKb6Fup8FQ9jXJ
+         FLSnYjhUew/h9NFbvU9W9BpwkJlxfQ5AcrZJzPJAT//e5ILbUceLGRYTkhSmw5NkG2On
+         Ph+1NmhZJkjVl8RKNr1/YgHSHnfsB6kEQ3I3RNtO3MntjEPxcysJvS2xAYAaB56D/xBr
+         nVh1QpLfdUPbIsxMOzCU78VkhmdjlMTTdvJ0Os8wAMYI8NSPcdpV+RuXFHJdaNTMTMGy
+         c5Pw==
+X-Gm-Message-State: AOJu0YxnCCM73hEPORXFlvQbhbRrgeu6yYS/wlUQq8rsbVBkS6NN9LFd
+	ThO/iedqcnh1YJZq/MYC+XRdKljqcyVM+9eoQi0=
+X-Google-Smtp-Source: AGHT+IE4Ajg7Dp58olVWG7i7o6t8cg/BphJAwnryFXtyTOEQ2IJedsUYfu/uVRiRP1oFGswlizAu3w==
+X-Received: by 2002:a17:903:32c3:b0:1cc:453f:517b with SMTP id i3-20020a17090332c300b001cc453f517bmr13717854plr.0.1698958138903;
+        Thu, 02 Nov 2023 13:48:58 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-20-59.pa.nsw.optusnet.com.au. [49.180.20.59])
+        by smtp.gmail.com with ESMTPSA id f19-20020a170902e99300b001c61afa7009sm136641plb.114.2023.11.02.13.48.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Nov 2023 13:32:44 -0700 (PDT)
-Date: Thu, 2 Nov 2023 16:32:43 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: David Sterba <dsterba@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231102203243.GA3465621@perftesting>
-References: <ZUDxli5HTwDP6fqu@infradead.org>
- <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
- <20231102123446.GA3305034@perftesting>
- <20231102170745.GF11264@suse.cz>
+        Thu, 02 Nov 2023 13:48:58 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1qyecZ-007Nln-0P;
+	Fri, 03 Nov 2023 07:48:55 +1100
+Date: Fri, 3 Nov 2023 07:48:55 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Chandan Babu R <chandanbabu@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>, viro@zeniv.linux.org.uk,
+	axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	dchinner@fromorbit.com, Christoph Hellwig <hch@lst.de>
+Subject: Re: [BUG REPORT] next-20231102: generic/311 fails on XFS with
+ external log
+Message-ID: <ZUQLN7UBlK6MQoK3@dread.disaster.area>
+References: <87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20231102-teich-absender-47a27e86e78f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,47 +82,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231102170745.GF11264@suse.cz>
+In-Reply-To: <20231102-teich-absender-47a27e86e78f@brauner>
 
-On Thu, Nov 02, 2023 at 06:07:45PM +0100, David Sterba wrote:
-> On Thu, Nov 02, 2023 at 08:34:46AM -0400, Josef Bacik wrote:
-> > On Thu, Nov 02, 2023 at 10:48:35AM +0100, Christian Brauner wrote:
-> > > > We'll be converted to the new mount API tho, so I suppose that's something.
-> > > > Thanks,
-> > > 
-> > > Just in case you forgot about it. I did send a patch to convert btrfs to
-> > > the new mount api in June:
-> > > 
-> > > https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
-> > > 
+On Thu, Nov 02, 2023 at 03:54:48PM +0100, Christian Brauner wrote:
+> On Thu, Nov 02, 2023 at 06:06:10PM +0530, Chandan Babu R wrote:
+> > Hi,
 > > 
-> > Yeah Daan told me about this after I had done the bulk of the work.  I
-> > shamelessly stole the dup idea, I had been doing something uglier.
+> > generic/311 consistently fails when executing on a kernel built from
+> > next-20231102.
 > > 
-> > > Can I ask you to please please copy just two things from that series:
-> > > 
-> > > (1) Please get rid of the second filesystems type.
-> > > (2) Please fix the silent remount behavior when mounting a subvolume.
-> > >
+> > The following is the fstests config file that was used during testing.
 > > 
-> > Yeah I've gotten rid of the second file system type, the remount thing is odd,
-> > I'm going to see if I can get away with not bringing that over.  I *think* it's
-> > because the standard distro way of doing things is to do
+> > export FSTYP=xfs
 > > 
-> > mount -o ro,subvol=/my/root/vol /
-> > mount -o rw,subvol=/my/home/vol /home
-> > <boot some more>
-> > mount -o remount,rw /
+> > export TEST_DEV=/dev/loop0
+> > export TEST_DIR=/mnt/test
+> > export TEST_LOGDEV=/dev/loop2
 > > 
-> > but I haven't messed with it yet to see if it breaks.  That's on the list to
-> > investigate today.  Thanks,
+> > export SCRATCH_DEV=/dev/loop1
+> > export SCRATCH_MNT=/mnt/scratch
+> > export SCRATCH_LOGDEV=/dev/loop3
 > 
-> It's a use case for distros, 0723a0473fb4 ("btrfs: allow mounting btrfs
-> subvolumes with different ro/rw options"), the functionality should
-> be preserved else it's a regression.
+> Thanks for the report. So dm flakey sets up:
+> 
+> /dev/dm-0 over /dev/loop0
+> /dev/dm-1 over /dev/loop2
+> 
+> and then we mount an xfs filesystem with:
+> 
+> /dev/loop2 as logdev and /dev/loop0 as the main device.
+> 
+> So on current kernels what happens is that if you freeze the main
+> device you end up:
+> 
+> bdev_freeze(dm-0)
+> -> get_super(dm-0) # finds xfs sb
+>    -> freeze_super(sb)
+> 
+> if you also freeze the log device afterwards via:
+> 
+> bdev_freeze(dm-1)
+> -> get_super(dm-1) # doesn't find xfs sb because freezing only works for
+>                    # main device
+> 
+> What's currently in -next allows you to roughly do the following:
+> 
+> bdev_freeze(dm-0)
+> -> fs_bdev_freeze(dm-0->sb)
+>    -> freeze_super(dm-0->sb) # returns 0
+> 
+> bdev_freeze(dm-1)
+> -> fs_bdev_freeze(dm-1->sb)
+>    -> freeze_super(dm-1->sb) # returns -EBUSY
+> 
+> So you'll see EBUSY because the superblock was already frozen when the
+> main block device was frozen. I was somewhat expecting that we may run
+> into such issues.
+> 
+> I think we just need to figure out what we want to do in cases the
+> superblock is frozen via multiple devices. It would probably be correct
+> to keep it frozen as long as any of the devices is frozen?
 
-I'll add an fstest for it then, I could have easily broken this if I didn't see
-Christians giant note about it.  Thanks,
+So this series removed the blockdev freeze nesting code that dm
+suspend/resume functionality used (i.e. it allowed concurrent bdev
+freeze/thaw works and leaves the bdev frozen until the last thaw
+occurs). Removing bd_fsfreeze_count essentially removed this nesting
+ability.
 
-Josef
+IMO, bdev_freeze() should still nest freeze/thaw across all devices
+in the filesystem like it used to on the main device. This implies
+that freeze_super() needs to know that it is being called from
+bdev_freeze() and needs a freeze counter to allow concurrent bdev
+freezes and only thaw the fs when the last freeze goes away....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
