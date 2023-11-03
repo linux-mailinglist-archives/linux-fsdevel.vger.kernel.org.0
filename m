@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-1947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E027E08D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 20:06:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9FF7E090B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 20:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5627B1C21107
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 19:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72BCB281F94
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 19:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9148022F11;
-	Fri,  3 Nov 2023 19:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C647225AE;
+	Fri,  3 Nov 2023 19:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B572321107
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 19:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB07A1CF94
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 19:08:27 +0000 (UTC)
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFECD47
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 12:05:46 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A3GUmUF013260
-	for <linux-fsdevel@vger.kernel.org>; Fri, 3 Nov 2023 12:05:46 -0700
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09239191
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 12:08:26 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A3FKSB5013108
+	for <linux-fsdevel@vger.kernel.org>; Fri, 3 Nov 2023 12:08:25 -0700
 Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u54en99tb-4
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u4twvvx7p-4
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 12:05:46 -0700
-Received: from twshared68648.02.prn6.facebook.com (2620:10d:c085:208::f) by
+	for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 12:08:25 -0700
+Received: from twshared11278.41.prn1.facebook.com (2620:10d:c085:208::11) by
  mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Fri, 3 Nov 2023 12:05:37 -0700
+ 15.1.2507.34; Fri, 3 Nov 2023 12:08:23 -0700
 Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id C3B6A3AE383DA; Fri,  3 Nov 2023 12:05:36 -0700 (PDT)
+	id E1C8F3AE383E2; Fri,  3 Nov 2023 12:05:38 -0700 (PDT)
 From: Andrii Nakryiko <andrii@kernel.org>
 To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
         <brauner@kernel.org>
 CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
         <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v9 bpf-next 06/17] bpf: add BPF token support to BPF_PROG_LOAD command
-Date: Fri, 3 Nov 2023 12:05:12 -0700
-Message-ID: <20231103190523.6353-7-andrii@kernel.org>
+Subject: [PATCH v9 bpf-next 07/17] bpf: take into account BPF token when fetching helper protos
+Date: Fri, 3 Nov 2023 12:05:13 -0700
+Message-ID: <20231103190523.6353-8-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231103190523.6353-1-andrii@kernel.org>
 References: <20231103190523.6353-1-andrii@kernel.org>
@@ -55,414 +55,367 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: p7DwiAonpsgWCkCNsE8tTnLB68pNuEaT
-X-Proofpoint-GUID: p7DwiAonpsgWCkCNsE8tTnLB68pNuEaT
+X-Proofpoint-GUID: ZuW5LWUNrH7h7e5BIJ4DOIqiFw4GZBZo
+X-Proofpoint-ORIG-GUID: ZuW5LWUNrH7h7e5BIJ4DOIqiFw4GZBZo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-03_18,2023-11-02_03,2023-05-22_02
 
-Add basic support of BPF token to BPF_PROG_LOAD. Wire through a set of
-allowed BPF program types and attach types, derived from BPF FS at BPF
-token creation time. Then make sure we perform bpf_token_capable()
-checks everywhere where it's relevant.
+Instead of performing unconditional system-wide bpf_capable() and
+perfmon_capable() calls inside bpf_base_func_proto() function (and other
+similar ones) to determine eligibility of a given BPF helper for a given
+program, use previously recorded BPF token during BPF_PROG_LOAD command
+handling to inform the decision.
 
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- include/linux/bpf.h                           |  6 ++
- include/uapi/linux/bpf.h                      |  2 +
- kernel/bpf/core.c                             |  1 +
- kernel/bpf/inode.c                            |  6 +-
- kernel/bpf/syscall.c                          | 87 ++++++++++++++-----
- kernel/bpf/token.c                            | 27 ++++++
- tools/include/uapi/linux/bpf.h                |  2 +
- .../selftests/bpf/prog_tests/libbpf_probes.c  |  2 +
- .../selftests/bpf/prog_tests/libbpf_str.c     |  3 +
- 9 files changed, 110 insertions(+), 26 deletions(-)
+ drivers/media/rc/bpf-lirc.c |  2 +-
+ include/linux/bpf.h         |  5 +++--
+ kernel/bpf/cgroup.c         |  6 +++---
+ kernel/bpf/helpers.c        |  6 +++---
+ kernel/bpf/syscall.c        |  5 +++--
+ kernel/trace/bpf_trace.c    |  2 +-
+ net/core/filter.c           | 32 ++++++++++++++++----------------
+ net/ipv4/bpf_tcp_ca.c       |  2 +-
+ net/netfilter/nf_bpf_link.c |  2 +-
+ 9 files changed, 32 insertions(+), 30 deletions(-)
 
+diff --git a/drivers/media/rc/bpf-lirc.c b/drivers/media/rc/bpf-lirc.c
+index fe17c7f98e81..6d07693c6b9f 100644
+--- a/drivers/media/rc/bpf-lirc.c
++++ b/drivers/media/rc/bpf-lirc.c
+@@ -110,7 +110,7 @@ lirc_mode2_func_proto(enum bpf_func_id func_id, const=
+ struct bpf_prog *prog)
+ 	case BPF_FUNC_get_prandom_u32:
+ 		return &bpf_get_prandom_u32_proto;
+ 	case BPF_FUNC_trace_printk:
+-		if (perfmon_capable())
++		if (bpf_token_capable(prog->aux->token, CAP_PERFMON))
+ 			return bpf_get_trace_printk_proto();
+ 		fallthrough;
+ 	default:
 diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 0d8d88c1939c..048d115db3e8 100644
+index 048d115db3e8..fae4f780fd82 100644
 --- a/include/linux/bpf.h
 +++ b/include/linux/bpf.h
-@@ -1442,6 +1442,7 @@ struct bpf_prog_aux {
- #ifdef CONFIG_SECURITY
- 	void *security;
- #endif
-+	struct bpf_token *token;
- 	struct bpf_prog_offload *offload;
- 	struct btf *btf;
- 	struct bpf_func_info *func_info;
-@@ -1582,6 +1583,8 @@ struct bpf_token {
- 	struct user_namespace *userns;
- 	u64 allowed_cmds;
- 	u64 allowed_maps;
-+	u64 allowed_progs;
-+	u64 allowed_attachs;
- };
+@@ -2473,7 +2473,8 @@ const char *btf_find_decl_tag_value(const struct bt=
+f *btf, const struct btf_type
+ struct bpf_prog *bpf_prog_by_id(u32 id);
+ struct bpf_link *bpf_link_by_id(u32 id);
 =20
- struct bpf_struct_ops_value;
-@@ -2219,6 +2222,9 @@ struct bpf_token *bpf_token_get_from_fd(u32 ufd);
-=20
- bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd=
-);
- bool bpf_token_allow_map_type(const struct bpf_token *token, enum bpf_ma=
-p_type type);
-+bool bpf_token_allow_prog_type(const struct bpf_token *token,
-+			       enum bpf_prog_type prog_type,
-+			       enum bpf_attach_type attach_type);
-=20
- int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
- int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags=
-);
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 022c2ef4d0eb..97b451e9d7e6 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -1029,6 +1029,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_SK_LOOKUP,
- 	BPF_PROG_TYPE_SYSCALL, /* a program that can execute syscalls */
- 	BPF_PROG_TYPE_NETFILTER,
-+	__MAX_BPF_PROG_TYPE
- };
-=20
- enum bpf_attach_type {
-@@ -1502,6 +1503,7 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		log_true_size;
-+		__u32		prog_token_fd;
- 	};
-=20
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 08626b519ce2..fc8de25b7948 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -2747,6 +2747,7 @@ void bpf_prog_free(struct bpf_prog *fp)
-=20
- 	if (aux->dst_prog)
- 		bpf_prog_put(aux->dst_prog);
-+	bpf_token_put(aux->token);
- 	INIT_WORK(&aux->work, bpf_prog_free_deferred);
- 	schedule_work(&aux->work);
+-const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_i=
+d);
++const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_i=
+d,
++						 const struct bpf_prog *prog);
+ void bpf_task_storage_free(struct task_struct *task);
+ void bpf_cgrp_storage_free(struct cgroup *cgroup);
+ bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
+@@ -2733,7 +2734,7 @@ static inline int btf_struct_access(struct bpf_veri=
+fier_log *log,
  }
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 9c4e30cd4f2e..8c6182488325 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -619,12 +619,14 @@ static int bpf_show_options(struct seq_file *m, str=
-uct dentry *root)
- 	else if (opts->delegate_maps)
- 		seq_printf(m, ",delegate_maps=3D0x%llx", opts->delegate_maps);
 =20
--	if (opts->delegate_progs =3D=3D ~0ULL)
-+	mask =3D (1ULL << __MAX_BPF_PROG_TYPE) - 1;
-+	if ((opts->delegate_progs & mask) =3D=3D mask)
- 		seq_printf(m, ",delegate_progs=3Dany");
- 	else if (opts->delegate_progs)
- 		seq_printf(m, ",delegate_progs=3D0x%llx", opts->delegate_progs);
+ static inline const struct bpf_func_proto *
+-bpf_base_func_proto(enum bpf_func_id func_id)
++bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *pro=
+g)
+ {
+ 	return NULL;
+ }
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 491d20038cbe..98e0e3835b28 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -1630,7 +1630,7 @@ cgroup_dev_func_proto(enum bpf_func_id func_id, con=
+st struct bpf_prog *prog)
+ 	case BPF_FUNC_perf_event_output:
+ 		return &bpf_event_output_data_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
 =20
--	if (opts->delegate_attachs =3D=3D ~0ULL)
-+	mask =3D (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
-+	if ((opts->delegate_attachs & mask) =3D=3D mask)
- 		seq_printf(m, ",delegate_attachs=3Dany");
- 	else if (opts->delegate_attachs)
- 		seq_printf(m, ",delegate_attachs=3D0x%llx", opts->delegate_attachs);
+@@ -2191,7 +2191,7 @@ sysctl_func_proto(enum bpf_func_id func_id, const s=
+truct bpf_prog *prog)
+ 	case BPF_FUNC_perf_event_output:
+ 		return &bpf_event_output_data_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -2348,7 +2348,7 @@ cg_sockopt_func_proto(enum bpf_func_id func_id, con=
+st struct bpf_prog *prog)
+ 	case BPF_FUNC_perf_event_output:
+ 		return &bpf_event_output_data_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index e46ac288a108..6d81ee27f972 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -1669,7 +1669,7 @@ const struct bpf_func_proto bpf_probe_read_kernel_s=
+tr_proto __weak;
+ const struct bpf_func_proto bpf_task_pt_regs_proto __weak;
+=20
+ const struct bpf_func_proto *
+-bpf_base_func_proto(enum bpf_func_id func_id)
++bpf_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *pro=
+g)
+ {
+ 	switch (func_id) {
+ 	case BPF_FUNC_map_lookup_elem:
+@@ -1720,7 +1720,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
+ 		break;
+ 	}
+=20
+-	if (!bpf_capable())
++	if (!bpf_token_capable(prog->aux->token, CAP_BPF))
+ 		return NULL;
+=20
+ 	switch (func_id) {
+@@ -1778,7 +1778,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
+ 		break;
+ 	}
+=20
+-	if (!perfmon_capable())
++	if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
+ 		return NULL;
+=20
+ 	switch (func_id) {
 diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 6158ee3f61bb..fcb867bbc517 100644
+index fcb867bbc517..a48d3d5f83ea 100644
 --- a/kernel/bpf/syscall.c
 +++ b/kernel/bpf/syscall.c
-@@ -2583,13 +2583,15 @@ static bool is_perfmon_prog_type(enum bpf_prog_ty=
-pe prog_type)
- }
-=20
- /* last field in 'union bpf_attr' used by this command */
--#define	BPF_PROG_LOAD_LAST_FIELD log_true_size
-+#define BPF_PROG_LOAD_LAST_FIELD prog_token_fd
-=20
- static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr=
-_size)
+@@ -5681,7 +5681,7 @@ static const struct bpf_func_proto bpf_sys_bpf_prot=
+o =3D {
+ const struct bpf_func_proto * __weak
+ tracing_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog =
+*prog)
  {
- 	enum bpf_prog_type type =3D attr->prog_type;
- 	struct bpf_prog *prog, *dst_prog =3D NULL;
- 	struct btf *attach_btf =3D NULL;
-+	struct bpf_token *token =3D NULL;
-+	bool bpf_cap;
- 	int err;
- 	char license[128];
+-	return bpf_base_func_proto(func_id);
++	return bpf_base_func_proto(func_id, prog);
+ }
 =20
-@@ -2605,10 +2607,31 @@ static int bpf_prog_load(union bpf_attr *attr, bp=
-fptr_t uattr, u32 uattr_size)
- 				 BPF_F_XDP_DEV_BOUND_ONLY))
- 		return -EINVAL;
+ BPF_CALL_1(bpf_sys_close, u32, fd)
+@@ -5731,7 +5731,8 @@ syscall_prog_func_proto(enum bpf_func_id func_id, c=
+onst struct bpf_prog *prog)
+ {
+ 	switch (func_id) {
+ 	case BPF_FUNC_sys_bpf:
+-		return !perfmon_capable() ? NULL : &bpf_sys_bpf_proto;
++		return !bpf_token_capable(prog->aux->token, CAP_PERFMON)
++		       ? NULL : &bpf_sys_bpf_proto;
+ 	case BPF_FUNC_btf_find_by_name_kind:
+ 		return &bpf_btf_find_by_name_kind_proto;
+ 	case BPF_FUNC_sys_close:
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index df697c74d519..ef22a2e870b3 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1557,7 +1557,7 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, co=
+nst struct bpf_prog *prog)
+ 	case BPF_FUNC_trace_vprintk:
+ 		return bpf_get_trace_vprintk_proto();
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
 =20
-+	bpf_prog_load_fixup_attach_type(attr);
-+
-+	if (attr->prog_token_fd) {
-+		token =3D bpf_token_get_from_fd(attr->prog_token_fd);
-+		if (IS_ERR(token))
-+			return PTR_ERR(token);
-+		/* if current token doesn't grant prog loading permissions,
-+		 * then we can't use this token, so ignore it and rely on
-+		 * system-wide capabilities checks
-+		 */
-+		if (!bpf_token_allow_cmd(token, BPF_PROG_LOAD) ||
-+		    !bpf_token_allow_prog_type(token, attr->prog_type,
-+					       attr->expected_attach_type)) {
-+			bpf_token_put(token);
-+			token =3D NULL;
-+		}
-+	}
-+
-+	bpf_cap =3D bpf_token_capable(token, CAP_BPF);
-+	err =3D -EPERM;
-+
- 	if (!IS_ENABLED(CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS) &&
- 	    (attr->prog_flags & BPF_F_ANY_ALIGNMENT) &&
--	    !bpf_capable())
--		return -EPERM;
-+	    !bpf_cap)
-+		goto put_token;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 21d75108c2e9..cd2ef9fb4f1e 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -86,7 +86,7 @@
+ #include "dev.h"
 =20
- 	/* Intent here is for unprivileged_bpf_disabled to block BPF program
- 	 * creation for unprivileged users; other actions depend
-@@ -2617,21 +2640,23 @@ static int bpf_prog_load(union bpf_attr *attr, bp=
-fptr_t uattr, u32 uattr_size)
- 	 * capability checks are still carried out for these
- 	 * and other operations.
- 	 */
--	if (sysctl_unprivileged_bpf_disabled && !bpf_capable())
--		return -EPERM;
-+	if (sysctl_unprivileged_bpf_disabled && !bpf_cap)
-+		goto put_token;
+ static const struct bpf_func_proto *
+-bpf_sk_base_func_proto(enum bpf_func_id func_id);
++bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *=
+prog);
 =20
- 	if (attr->insn_cnt =3D=3D 0 ||
--	    attr->insn_cnt > (bpf_capable() ? BPF_COMPLEXITY_LIMIT_INSNS : BPF_=
-MAXINSNS))
--		return -E2BIG;
-+	    attr->insn_cnt > (bpf_cap ? BPF_COMPLEXITY_LIMIT_INSNS : BPF_MAXINS=
-NS)) {
-+		err =3D -E2BIG;
-+		goto put_token;
-+	}
- 	if (type !=3D BPF_PROG_TYPE_SOCKET_FILTER &&
- 	    type !=3D BPF_PROG_TYPE_CGROUP_SKB &&
--	    !bpf_capable())
--		return -EPERM;
-+	    !bpf_cap)
-+		goto put_token;
+ int copy_bpf_fprog_from_user(struct sock_fprog *dst, sockptr_t src, int =
+len)
+ {
+@@ -7839,7 +7839,7 @@ sock_filter_func_proto(enum bpf_func_id func_id, co=
+nst struct bpf_prog *prog)
+ 	case BPF_FUNC_ktime_get_coarse_ns:
+ 		return &bpf_ktime_get_coarse_ns_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
 =20
--	if (is_net_admin_prog_type(type) && !bpf_net_capable())
--		return -EPERM;
--	if (is_perfmon_prog_type(type) && !perfmon_capable())
--		return -EPERM;
-+	if (is_net_admin_prog_type(type) && !bpf_token_capable(token, CAP_NET_A=
-DMIN))
-+		goto put_token;
-+	if (is_perfmon_prog_type(type) && !bpf_token_capable(token, CAP_PERFMON=
-))
-+		goto put_token;
-=20
- 	/* attach_prog_fd/attach_btf_obj_fd can specify fd of either bpf_prog
- 	 * or btf, we need to check which one it is
-@@ -2641,27 +2666,33 @@ static int bpf_prog_load(union bpf_attr *attr, bp=
-fptr_t uattr, u32 uattr_size)
- 		if (IS_ERR(dst_prog)) {
- 			dst_prog =3D NULL;
- 			attach_btf =3D btf_get_by_fd(attr->attach_btf_obj_fd);
--			if (IS_ERR(attach_btf))
--				return -EINVAL;
-+			if (IS_ERR(attach_btf)) {
-+				err =3D -EINVAL;
-+				goto put_token;
-+			}
- 			if (!btf_is_kernel(attach_btf)) {
- 				/* attaching through specifying bpf_prog's BTF
- 				 * objects directly might be supported eventually
- 				 */
- 				btf_put(attach_btf);
--				return -ENOTSUPP;
-+				err =3D -ENOTSUPP;
-+				goto put_token;
- 			}
+@@ -7932,7 +7932,7 @@ sock_addr_func_proto(enum bpf_func_id func_id, cons=
+t struct bpf_prog *prog)
+ 			return NULL;
  		}
- 	} else if (attr->attach_btf_id) {
- 		/* fall back to vmlinux BTF, if BTF type ID is specified */
- 		attach_btf =3D bpf_get_btf_vmlinux();
--		if (IS_ERR(attach_btf))
--			return PTR_ERR(attach_btf);
--		if (!attach_btf)
--			return -EINVAL;
-+		if (IS_ERR(attach_btf)) {
-+			err =3D PTR_ERR(attach_btf);
-+			goto put_token;
-+		}
-+		if (!attach_btf) {
-+			err =3D -EINVAL;
-+			goto put_token;
-+		}
- 		btf_get(attach_btf);
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
  	}
-=20
--	bpf_prog_load_fixup_attach_type(attr);
- 	if (bpf_prog_load_check_attach(type, attr->expected_attach_type,
- 				       attach_btf, attr->attach_btf_id,
- 				       dst_prog)) {
-@@ -2669,7 +2700,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfp=
-tr_t uattr, u32 uattr_size)
- 			bpf_prog_put(dst_prog);
- 		if (attach_btf)
- 			btf_put(attach_btf);
--		return -EINVAL;
-+		err =3D -EINVAL;
-+		goto put_token;
- 	}
-=20
- 	/* plain bpf_prog allocation */
-@@ -2679,7 +2711,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfp=
-tr_t uattr, u32 uattr_size)
- 			bpf_prog_put(dst_prog);
- 		if (attach_btf)
- 			btf_put(attach_btf);
--		return -ENOMEM;
-+		err =3D -EINVAL;
-+		goto put_token;
- 	}
-=20
- 	prog->expected_attach_type =3D attr->expected_attach_type;
-@@ -2690,6 +2723,10 @@ static int bpf_prog_load(union bpf_attr *attr, bpf=
-ptr_t uattr, u32 uattr_size)
- 	prog->aux->sleepable =3D attr->prog_flags & BPF_F_SLEEPABLE;
- 	prog->aux->xdp_has_frags =3D attr->prog_flags & BPF_F_XDP_HAS_FRAGS;
-=20
-+	/* move token into prog->aux, reuse taken refcnt */
-+	prog->aux->token =3D token;
-+	token =3D NULL;
-+
- 	err =3D security_bpf_prog_alloc(prog->aux);
- 	if (err)
- 		goto free_prog;
-@@ -2791,6 +2828,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfp=
-tr_t uattr, u32 uattr_size)
- 	if (prog->aux->attach_btf)
- 		btf_put(prog->aux->attach_btf);
- 	bpf_prog_free(prog);
-+put_token:
-+	bpf_token_put(token);
- 	return err;
  }
 =20
-@@ -3780,7 +3819,7 @@ static int bpf_prog_attach_check_attach_type(const =
-struct bpf_prog *prog,
- 	case BPF_PROG_TYPE_SK_LOOKUP:
- 		return attach_type =3D=3D prog->expected_attach_type ? 0 : -EINVAL;
- 	case BPF_PROG_TYPE_CGROUP_SKB:
--		if (!bpf_net_capable())
-+		if (!bpf_token_capable(prog->aux->token, CAP_NET_ADMIN))
- 			/* cg-skb progs can be loaded by unpriv user.
- 			 * check permissions at attach time.
- 			 */
-diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-index c6eb25fcc308..35e6f55c2a41 100644
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -77,6 +77,20 @@ static void bpf_token_show_fdinfo(struct seq_file *m, =
-struct file *filp)
- 		seq_printf(m, "allowed_maps:\tany\n");
- 	else
- 		seq_printf(m, "allowed_maps:\t0x%llx\n", token->allowed_maps);
-+
-+	BUILD_BUG_ON(__MAX_BPF_PROG_TYPE >=3D 64);
-+	mask =3D (1ULL << __MAX_BPF_PROG_TYPE) - 1;
-+	if ((token->allowed_progs & mask) =3D=3D mask)
-+		seq_printf(m, "allowed_progs:\tany\n");
-+	else
-+		seq_printf(m, "allowed_progs:\t0x%llx\n", token->allowed_progs);
-+
-+	BUILD_BUG_ON(__MAX_BPF_ATTACH_TYPE >=3D 64);
-+	mask =3D (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
-+	if ((token->allowed_attachs & mask) =3D=3D mask)
-+		seq_printf(m, "allowed_attachs:\tany\n");
-+	else
-+		seq_printf(m, "allowed_attachs:\t0x%llx\n", token->allowed_attachs);
+@@ -7951,7 +7951,7 @@ sk_filter_func_proto(enum bpf_func_id func_id, cons=
+t struct bpf_prog *prog)
+ 	case BPF_FUNC_perf_event_output:
+ 		return &bpf_skb_event_output_proto;
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
  }
 =20
- #define BPF_TOKEN_INODE_NAME "bpf-token"
-@@ -155,6 +169,8 @@ int bpf_token_create(union bpf_attr *attr)
- 	mnt_opts =3D path.dentry->d_sb->s_fs_info;
- 	token->allowed_cmds =3D mnt_opts->delegate_cmds;
- 	token->allowed_maps =3D mnt_opts->delegate_maps;
-+	token->allowed_progs =3D mnt_opts->delegate_progs;
-+	token->allowed_attachs =3D mnt_opts->delegate_attachs;
-=20
- 	fd =3D get_unused_fd_flags(O_CLOEXEC);
- 	if (fd < 0) {
-@@ -211,3 +227,14 @@ bool bpf_token_allow_map_type(const struct bpf_token=
- *token, enum bpf_map_type t
-=20
- 	return token->allowed_maps & (1ULL << type);
+@@ -8138,7 +8138,7 @@ tc_cls_act_func_proto(enum bpf_func_id func_id, con=
+st struct bpf_prog *prog)
+ #endif
+ #endif
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
  }
-+
-+bool bpf_token_allow_prog_type(const struct bpf_token *token,
-+			       enum bpf_prog_type prog_type,
-+			       enum bpf_attach_type attach_type)
-+{
-+	if (!token || prog_type >=3D __MAX_BPF_PROG_TYPE || attach_type >=3D __=
-MAX_BPF_ATTACH_TYPE)
-+		return false;
-+
-+	return (token->allowed_progs & (1ULL << prog_type)) &&
-+	       (token->allowed_attachs & (1ULL << attach_type));
-+}
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
-f.h
-index 022c2ef4d0eb..97b451e9d7e6 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -1029,6 +1029,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_SK_LOOKUP,
- 	BPF_PROG_TYPE_SYSCALL, /* a program that can execute syscalls */
- 	BPF_PROG_TYPE_NETFILTER,
-+	__MAX_BPF_PROG_TYPE
+=20
+@@ -8197,7 +8197,7 @@ xdp_func_proto(enum bpf_func_id func_id, const stru=
+ct bpf_prog *prog)
+ #endif
+ #endif
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+=20
+ #if IS_MODULE(CONFIG_NF_CONNTRACK) && IS_ENABLED(CONFIG_DEBUG_INFO_BTF_M=
+ODULES)
+@@ -8258,7 +8258,7 @@ sock_ops_func_proto(enum bpf_func_id func_id, const=
+ struct bpf_prog *prog)
+ 		return &bpf_tcp_sock_proto;
+ #endif /* CONFIG_INET */
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -8300,7 +8300,7 @@ sk_msg_func_proto(enum bpf_func_id func_id, const s=
+truct bpf_prog *prog)
+ 		return &bpf_get_cgroup_classid_curr_proto;
+ #endif
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -8344,7 +8344,7 @@ sk_skb_func_proto(enum bpf_func_id func_id, const s=
+truct bpf_prog *prog)
+ 		return &bpf_skc_lookup_tcp_proto;
+ #endif
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -8355,7 +8355,7 @@ flow_dissector_func_proto(enum bpf_func_id func_id,=
+ const struct bpf_prog *prog)
+ 	case BPF_FUNC_skb_load_bytes:
+ 		return &bpf_flow_dissector_load_bytes_proto;
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -8382,7 +8382,7 @@ lwt_out_func_proto(enum bpf_func_id func_id, const =
+struct bpf_prog *prog)
+ 	case BPF_FUNC_skb_under_cgroup:
+ 		return &bpf_skb_under_cgroup_proto;
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -11213,7 +11213,7 @@ sk_reuseport_func_proto(enum bpf_func_id func_id,
+ 	case BPF_FUNC_ktime_get_coarse_ns:
+ 		return &bpf_ktime_get_coarse_ns_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -11395,7 +11395,7 @@ sk_lookup_func_proto(enum bpf_func_id func_id, co=
+nst struct bpf_prog *prog)
+ 	case BPF_FUNC_sk_release:
+ 		return &bpf_sk_release_proto;
+ 	default:
+-		return bpf_sk_base_func_proto(func_id);
++		return bpf_sk_base_func_proto(func_id, prog);
+ 	}
+ }
+=20
+@@ -11729,7 +11729,7 @@ const struct bpf_func_proto bpf_sock_from_file_pr=
+oto =3D {
  };
 =20
- enum bpf_attach_type {
-@@ -1502,6 +1503,7 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		log_true_size;
-+		__u32		prog_token_fd;
- 	};
+ static const struct bpf_func_proto *
+-bpf_sk_base_func_proto(enum bpf_func_id func_id)
++bpf_sk_base_func_proto(enum bpf_func_id func_id, const struct bpf_prog *=
+prog)
+ {
+ 	const struct bpf_func_proto *func;
 =20
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c b/too=
-ls/testing/selftests/bpf/prog_tests/libbpf_probes.c
-index 573249a2814d..4ed46ed58a7b 100644
---- a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-+++ b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-@@ -30,6 +30,8 @@ void test_libbpf_probe_prog_types(void)
+@@ -11758,10 +11758,10 @@ bpf_sk_base_func_proto(enum bpf_func_id func_id=
+)
+ 	case BPF_FUNC_ktime_get_coarse_ns:
+ 		return &bpf_ktime_get_coarse_ns_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
 =20
- 		if (prog_type =3D=3D BPF_PROG_TYPE_UNSPEC)
- 			continue;
-+		if (strcmp(prog_type_name, "__MAX_BPF_PROG_TYPE") =3D=3D 0)
-+			continue;
+-	if (!perfmon_capable())
++	if (!bpf_token_capable(prog->aux->token, CAP_PERFMON))
+ 		return NULL;
 =20
- 		if (!test__start_subtest(prog_type_name))
- 			continue;
-diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_str.c b/tools/=
-testing/selftests/bpf/prog_tests/libbpf_str.c
-index 2a0633f43c73..384bc1f7a65e 100644
---- a/tools/testing/selftests/bpf/prog_tests/libbpf_str.c
-+++ b/tools/testing/selftests/bpf/prog_tests/libbpf_str.c
-@@ -189,6 +189,9 @@ static void test_libbpf_bpf_prog_type_str(void)
- 		const char *prog_type_str;
- 		char buf[256];
+ 	return func;
+diff --git a/net/ipv4/bpf_tcp_ca.c b/net/ipv4/bpf_tcp_ca.c
+index 39dcccf0f174..c7bbd8f3c708 100644
+--- a/net/ipv4/bpf_tcp_ca.c
++++ b/net/ipv4/bpf_tcp_ca.c
+@@ -191,7 +191,7 @@ bpf_tcp_ca_get_func_proto(enum bpf_func_id func_id,
+ 	case BPF_FUNC_ktime_get_coarse_ns:
+ 		return &bpf_ktime_get_coarse_ns_proto;
+ 	default:
+-		return bpf_base_func_proto(func_id);
++		return bpf_base_func_proto(func_id, prog);
+ 	}
+ }
 =20
-+		if (prog_type =3D=3D __MAX_BPF_PROG_TYPE)
-+			continue;
-+
- 		prog_type_name =3D btf__str_by_offset(btf, e->name_off);
- 		prog_type_str =3D libbpf_bpf_prog_type_str(prog_type);
- 		ASSERT_OK_PTR(prog_type_str, prog_type_name);
+diff --git a/net/netfilter/nf_bpf_link.c b/net/netfilter/nf_bpf_link.c
+index e502ec00b2fe..1969facac91c 100644
+--- a/net/netfilter/nf_bpf_link.c
++++ b/net/netfilter/nf_bpf_link.c
+@@ -314,7 +314,7 @@ static bool nf_is_valid_access(int off, int size, enu=
+m bpf_access_type type,
+ static const struct bpf_func_proto *
+ bpf_nf_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+-	return bpf_base_func_proto(func_id);
++	return bpf_base_func_proto(func_id, prog);
+ }
+=20
+ const struct bpf_verifier_ops netfilter_verifier_ops =3D {
 --=20
 2.34.1
 
