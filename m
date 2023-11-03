@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-1942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F32A7E07BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 18:47:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC817E0796
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 18:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50DC3B2149D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 17:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138E8281EDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 17:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA18A210EB;
-	Fri,  3 Nov 2023 17:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEC420B33;
+	Fri,  3 Nov 2023 17:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
 	dkim=pass (2048-bit key) header.d=templeofstupid.com header.i=@templeofstupid.com header.b="E7DGPSnR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BC520B16
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 17:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CE51A5A5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 17:39:52 +0000 (UTC)
 Received: from snail.cherry.relay.mailchannels.net (snail.cherry.relay.mailchannels.net [23.83.223.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D52C18B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 10:47:37 -0700 (PDT)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29B41BD
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 10:39:47 -0700 (PDT)
 X-Sender-Id: dreamhost|x-authsender|kjlx@templeofstupid.com
 Received: from relay.mailchannels.net (localhost [127.0.0.1])
 	by relay.mailchannels.net (Postfix) with ESMTP id 391B5901964
