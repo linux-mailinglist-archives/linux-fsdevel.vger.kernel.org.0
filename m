@@ -1,141 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-1920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0153D7E0404
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 14:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DA17E0418
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 14:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22A3B21404
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 13:52:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC45CB213ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 13:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D3F18632;
-	Fri,  3 Nov 2023 13:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE26D18641;
+	Fri,  3 Nov 2023 13:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="dk1h9cNB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/3Uc3DN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68F418623
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 13:52:17 +0000 (UTC)
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2972191
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 06:52:16 -0700 (PDT)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-5ac376d311aso24710287b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 06:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699019535; x=1699624335; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYuO/C9GpkkIoAS96l7iTjBNNJrZplioBHxrTK6U3XE=;
-        b=dk1h9cNBh1W9FqTuMZuI2D0JBe7KJ+vLJeznsnXFlC7z+YZFtQBFRLZTbIRb4T22mI
-         q/RvoSWuiXUB4elvCZtkW2f9SEJSxcXOlmqckM7yRDEVHN7jR94n3i3GvSUyfW1+HiaA
-         cpHDa/uuA8NGHIOBrUf66o9vbi3uGjh6h0rAYHgY/B6GKo0BFbn3EUt1AV1TEOH7fbY+
-         so9tln8LLXAJKT/RFK1bk/2eUNSOj6m4UGxhi5Dy7tWIoRZSaaFqUFkVwlBIGbwUA6l7
-         6fTKDM9ySxsmoZNTxqS9MuXICzwzSpib8KeqoL5nwKGnzNpmkz4TDy9q4y2vqK1GAdmX
-         bRnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699019535; x=1699624335;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYuO/C9GpkkIoAS96l7iTjBNNJrZplioBHxrTK6U3XE=;
-        b=J4lLelWYb3egFS88tlmfp9M/BxPDWW+zrWL5NFjPUEmhFsIcvoyvciABR/mzeJpXiD
-         1m0SMdW9/NKlgcruJFEMjpJOZVmTTj6YDVk0T2p5TBXzv28uBgIU1uf6C0vystmVsF7i
-         wHrn1IKHz4vSLT7Z0O4X31zrn2n0jgkbP2vgyvclPd0W4GsLCj7Zkdu8XTEniJE2dshW
-         y3jcnJg/hlKPK1L2i62hNPBX8K0ZGLjsehxoR2EVzRBcSKvj2Lt5fpcc9Jxx0b9I7SQJ
-         E/bkEXDInPRzC4+Si8ru8rFlrsM3M6NtUUUsBz84YCgTQYhYbLDC5uaKDZMDfxYJPiNo
-         1IdQ==
-X-Gm-Message-State: AOJu0YzRDCplPc2L6LYraX1LyGbJUhtMGcXNn1ISJehKGB6aLqIqfxug
-	rml3nQgoSiAgIhfP/xx8jv6IfQ==
-X-Google-Smtp-Source: AGHT+IHhtlG6mXXeKlDlSKrT7t7a1BH00I4TCPHzCkDtKR3roMulinT3ZCPDhp1InU1VBskXXsP6aQ==
-X-Received: by 2002:a0d:e6cb:0:b0:5a7:b8d4:60e1 with SMTP id p194-20020a0de6cb000000b005a7b8d460e1mr3241045ywe.9.1699019535272;
-        Fri, 03 Nov 2023 06:52:15 -0700 (PDT)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id s10-20020ad4524a000000b00670c15033aesm734910qvq.144.2023.11.03.06.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Nov 2023 06:52:14 -0700 (PDT)
-Date: Fri, 3 Nov 2023 09:52:13 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: David Sterba <dsterba@suse.cz>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231103135213.GB3548732@perftesting>
-References: <20231031-anorak-sammeln-8b1c4264f0db@brauner>
- <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-ankurbeln-eingearbeitet-cbeb018bfedc@brauner>
- <20231102123446.GA3305034@perftesting>
- <20231102170745.GF11264@suse.cz>
- <20231103-wichen-shrimps-1ddd9565d6a6@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F59E1862F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 13:57:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABF0C433C8;
+	Fri,  3 Nov 2023 13:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699019820;
+	bh=yvuza+2bP4DrbVcAv4MEGOWj+9XcTxtAE8BJuDrJa+A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M/3Uc3DN2Xug6ubYkO9tDTut8zhMqKGhKPEzh7r6UwgHjC/EWGzYBNuzdmYQ9hjXR
+	 KWGJaB8G04kYiREXGQJ7AWGwt2aT4piFhO2DSJKaJDZoSWMeDKGTTtdw5MJJM7aBUD
+	 3R35fR83O1ycGPd8Mr9+0LFl/o7rUhTpseCrWEqQYWCkdwsaZu2tH3r1UbB/5gwXPh
+	 FA1/4Zx0dEwlr+vQ4LhCeqGdo4bvAs9JWwF1eZzcIsuG464ISgXzqhoGlgh6DLujXb
+	 6zX3SQMgRin6q2tN9YcGlVY8nAh8nRKv6BwsLDiYyi5XlsBpBSEFJwRIRvoytJ1yKG
+	 PU/iO34v6E3cA==
+From: Christian Brauner <brauner@kernel.org>
+To: Dave Chinner <dchinner@redhat.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Chandan Babu R <chandanbabu@kernel.org>
+Subject: [PATCH] fs: handle freezing from multiple devices
+Date: Fri,  3 Nov 2023 14:52:27 +0100
+Message-Id: <20231103-vfs-multi-device-freeze-v1-1-fe922b30bfb6@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231103-wichen-shrimps-1ddd9565d6a6@brauner>
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.13-dev-26615
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9359; i=brauner@kernel.org; h=from:subject:message-id; bh=yvuza+2bP4DrbVcAv4MEGOWj+9XcTxtAE8BJuDrJa+A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS6/Bbd/eKbT73D7m0HeI51KMmLmNV+ePf4eGVgswpb2okf be9COkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSeoDhf7mScuFp+1i/5fb6J1fUtz qvMnjxa+mslqD6jW8WiS10Zmf4Z6D7UEvBQvrILKYjbN8Oi+xTVb1SXadaMuHvllKTaZf/swAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 03, 2023 at 07:56:39AM +0100, Christian Brauner wrote:
-> On Thu, Nov 02, 2023 at 06:07:45PM +0100, David Sterba wrote:
-> > On Thu, Nov 02, 2023 at 08:34:46AM -0400, Josef Bacik wrote:
-> > > On Thu, Nov 02, 2023 at 10:48:35AM +0100, Christian Brauner wrote:
-> > > > > We'll be converted to the new mount API tho, so I suppose that's something.
-> > > > > Thanks,
-> > > > 
-> > > > Just in case you forgot about it. I did send a patch to convert btrfs to
-> > > > the new mount api in June:
-> > > > 
-> > > > https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-0-045e9735a00b@kernel.org
-> > > > 
-> > > 
-> > > Yeah Daan told me about this after I had done the bulk of the work.  I
-> > > shamelessly stole the dup idea, I had been doing something uglier.
-> > > 
-> > > > Can I ask you to please please copy just two things from that series:
-> > > > 
-> > > > (1) Please get rid of the second filesystems type.
-> > > > (2) Please fix the silent remount behavior when mounting a subvolume.
-> > > >
-> > > 
-> > > Yeah I've gotten rid of the second file system type, the remount thing is odd,
-> > > I'm going to see if I can get away with not bringing that over.  I *think* it's
-> > > because the standard distro way of doing things is to do
-> > > 
-> > > mount -o ro,subvol=/my/root/vol /
-> > > mount -o rw,subvol=/my/home/vol /home
-> > > <boot some more>
-> > > mount -o remount,rw /
-> > > 
-> > > but I haven't messed with it yet to see if it breaks.  That's on the list to
-> > > investigate today.  Thanks,
-> > 
-> > It's a use case for distros, 0723a0473fb4 ("btrfs: allow mounting btrfs
-> > subvolumes with different ro/rw options"), the functionality should
-> > be preserved else it's a regression.
-> 
-> My series explicitly made sure that it _isn't_ broken. Which is pretty
-> obvious from the description I put in there where that example is
-> explained at length.
-> 
-> It just handles it _cleanly_ through the new mount api while retaining
-> the behavior through the old mount api. The details - as Josef noted -
-> I've explained extensively.
+Before [1] freezing a filesystems through the block layer only worked
+for the main block device as the owning superblock of additional block
+devices could not be found. Any filesystem that made use of multiple
+block devices would only be freezable via it's main block device.
 
-I think Dave's comments were towards me, because I was considering just not
-pulling it forward and waiting to see who complained.  I'll copy your approach
-and your comment, and wire up a test to make sure we don't regress.  Thanks,
+For example, consider xfs over device mapper with /dev/dm-0 as main
+block device and /dev/dm-1 as external log device. Two freeze requests
+before [1]:
 
-Josef
+(1) dmsetup suspend /dev/dm-0 on the main block device
+
+    bdev_freeze(dm-0)
+    -> dm-0->bd_fsfreeze_count++
+    -> freeze_super(xfs-sb)
+
+    The owning superblock is found and the filesystem gets frozen.
+    Returns 0.
+
+(2) dmsetup suspend /dev/dm-1 on the log device
+
+    bdev_freeze(dm-1)
+    -> dm-1->bd_fsfreeze_count++
+
+    The owning superblock isn't found and only the block device freeze
+    count is incremented. Returns 0.
+
+Two freeze requests after [1]:
+
+(1') dmsetup suspend /dev/dm-0 on the main block device
+
+    bdev_freeze(dm-0)
+    -> dm-0->bd_fsfreeze_count++
+    -> freeze_super(xfs-sb)
+
+    The owning superblock is found and the filesystem gets frozen.
+    Returns 0.
+
+(2') dmsetup suspend /dev/dm-1 on the log device
+
+    bdev_freeze(dm-0)
+    -> dm-0->bd_fsfreeze_count++
+    -> freeze_super(xfs-sb)
+
+    The owning superblock is found and the filesystem gets frozen.
+    Returns -EBUSY.
+
+When (2') is called we initiate a freeze from another block device of
+the same superblock. So we increment the bd_fsfreeze_count for that
+additional block device. But we now also find the owning superblock for
+additional block devices and call freeze_super() again which reports
+-EBUSY.
+
+This can be reproduced through xfstests via:
+
+    mkfs.xfs -f -m crc=1,reflink=1,rmapbt=1, -i sparse=1 -lsize=1g,logdev=/dev/nvme1n1p4 /dev/nvme1n1p3
+    mkfs.xfs -f -m crc=1,reflink=1,rmapbt=1, -i sparse=1 -lsize=1g,logdev=/dev/nvme1n1p6 /dev/nvme1n1p5
+
+    FSTYP=xfs
+    export TEST_DEV=/dev/nvme1n1p3
+    export TEST_DIR=/mnt/test
+    export TEST_LOGDEV=/dev/nvme1n1p4
+    export SCRATCH_DEV=/dev/nvme1n1p5
+    export SCRATCH_MNT=/mnt/scratch
+    export SCRATCH_LOGDEV=/dev/nvme1n1p6
+    export USE_EXTERNAL=yes
+
+    sudo ./check generic/311
+
+Fix this by counting the number of block devices that requested the
+filesystem to be frozen in @bdev_count in struct sb_writers and only
+unfreeze once the @bdev_count hits zero. Survives fstests and blktests
+and makes the reproducer succeed.
+
+Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+Link: https://lore.kernel.org/linux-block/87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64
+Fixes: [1]: bfac4176f2c4 ("bdev: implement freeze and thaw holder operations") # no backport needed
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/super.c         | 55 +++++++++++++++++++++++++++++++++++++++++++++++++-----
+ include/linux/fs.h |  2 ++
+ 2 files changed, 52 insertions(+), 5 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 176c55abd9de..c51eb669ed0b 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1476,9 +1476,11 @@ static int fs_bdev_freeze(struct block_device *bdev)
+ 		return -EINVAL;
+ 
+ 	if (sb->s_op->freeze_super)
+-		error = sb->s_op->freeze_super(sb, FREEZE_HOLDER_USERSPACE);
++		error = sb->s_op->freeze_super(sb,
++				FREEZE_HOLDER_BDEV | FREEZE_HOLDER_USERSPACE);
+ 	else
+-		error = freeze_super(sb, FREEZE_HOLDER_USERSPACE);
++		error = freeze_super(sb,
++				FREEZE_HOLDER_BDEV | FREEZE_HOLDER_USERSPACE);
+ 	if (!error)
+ 		error = sync_blockdev(bdev);
+ 	deactivate_super(sb);
+@@ -1497,9 +1499,11 @@ static int fs_bdev_thaw(struct block_device *bdev)
+ 		return -EINVAL;
+ 
+ 	if (sb->s_op->thaw_super)
+-		error = sb->s_op->thaw_super(sb, FREEZE_HOLDER_USERSPACE);
++		error = sb->s_op->thaw_super(sb,
++				FREEZE_HOLDER_BDEV | FREEZE_HOLDER_USERSPACE);
+ 	else
+-		error = thaw_super(sb, FREEZE_HOLDER_USERSPACE);
++		error = thaw_super(sb,
++				FREEZE_HOLDER_BDEV | FREEZE_HOLDER_USERSPACE);
+ 	deactivate_super(sb);
+ 	return error;
+ }
+@@ -1923,6 +1927,7 @@ static int wait_for_partially_frozen(struct super_block *sb)
+  * @who should be:
+  * * %FREEZE_HOLDER_USERSPACE if userspace wants to freeze the fs;
+  * * %FREEZE_HOLDER_KERNEL if the kernel wants to freeze the fs.
++ * * %FREEZE_HOLDER_BDEV if freeze originated from a block device.
+  *
+  * The @who argument distinguishes between the kernel and userspace trying to
+  * freeze the filesystem.  Although there cannot be multiple kernel freezes or
+@@ -1930,6 +1935,12 @@ static int wait_for_partially_frozen(struct super_block *sb)
+  * userspace can both hold a filesystem frozen.  The filesystem remains frozen
+  * until there are no kernel or userspace freezes in effect.
+  *
++ * A filesystem may hold multiple devices and thus a filesystems may be
++ * frozen through the block layer via multiple block devices. In this
++ * case the request is as originating from the block layer by raising
++ * %FREEZE_HOLDER_BDEV. We count the number of block devices that
++ * requested a freeze in @bdev_count.
++ *
+  * During this function, sb->s_writers.frozen goes through these values:
+  *
+  * SB_UNFROZEN: File system is normal, all writes progress as usual.
+@@ -1958,18 +1969,29 @@ static int wait_for_partially_frozen(struct super_block *sb)
+ int freeze_super(struct super_block *sb, enum freeze_holder who)
+ {
+ 	int ret;
++	bool bdev_initiated;
+ 
+ 	if (!super_lock_excl(sb)) {
+ 		WARN_ON_ONCE("Dying superblock while freezing!");
+ 		return -EINVAL;
+ 	}
+ 	atomic_inc(&sb->s_active);
++	bdev_initiated = (who & FREEZE_HOLDER_BDEV);
++	who &= ~FREEZE_HOLDER_BDEV;
+ 
+ retry:
+ 	if (sb->s_writers.frozen == SB_FREEZE_COMPLETE) {
++		ret = -EBUSY;
++
++		if (bdev_initiated) {
++			sb->s_writers.bdev_count++;
++			pr_info("VFS: Freeze initiated from %d block devices\n", sb->s_writers.bdev_count);
++			ret = 0;
++		}
++
+ 		if (sb->s_writers.freeze_holders & who) {
+ 			deactivate_locked_super(sb);
+-			return -EBUSY;
++			return ret;
+ 		}
+ 
+ 		WARN_ON(sb->s_writers.freeze_holders == 0);
+@@ -2002,6 +2024,8 @@ int freeze_super(struct super_block *sb, enum freeze_holder who)
+ 		/* Nothing to do really... */
+ 		sb->s_writers.freeze_holders |= who;
+ 		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
++		if (bdev_initiated)
++			sb->s_writers.bdev_count++;
+ 		wake_up_var(&sb->s_writers.frozen);
+ 		super_unlock_excl(sb);
+ 		return 0;
+@@ -2052,6 +2076,8 @@ int freeze_super(struct super_block *sb, enum freeze_holder who)
+ 	 */
+ 	sb->s_writers.freeze_holders |= who;
+ 	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
++	if (bdev_initiated)
++		sb->s_writers.bdev_count++;
+ 	wake_up_var(&sb->s_writers.frozen);
+ 	lockdep_sb_freeze_release(sb);
+ 	super_unlock_excl(sb);
+@@ -2068,12 +2094,22 @@ EXPORT_SYMBOL(freeze_super);
+ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+ {
+ 	int error = -EINVAL;
++	bool bdev_initiated = (who & FREEZE_HOLDER_BDEV);
++	who &= ~FREEZE_HOLDER_BDEV;
+ 
+ 	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE)
+ 		goto out_unlock;
+ 	if (!(sb->s_writers.freeze_holders & who))
+ 		goto out_unlock;
+ 
++	if (bdev_initiated)
++		sb->s_writers.bdev_count--;
++	if (sb->s_writers.bdev_count) {
++		pr_info("VFS: Filesystems held frozen by %d block devices\n", sb->s_writers.bdev_count);
++		error = 0;
++		goto out_unlock;
++	}
++
+ 	/*
+ 	 * Freeze is shared with someone else.  Release our hold and drop the
+ 	 * active ref that freeze_super assigned to the freezer.
+@@ -2098,6 +2134,8 @@ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+ 		if (error) {
+ 			printk(KERN_ERR "VFS:Filesystem thaw failed\n");
+ 			lockdep_sb_freeze_release(sb);
++			if (bdev_initiated)
++				sb->s_writers.bdev_count++;
+ 			goto out_unlock;
+ 		}
+ 	}
+@@ -2126,6 +2164,13 @@ static int thaw_super_locked(struct super_block *sb, enum freeze_holder who)
+  * @who should be:
+  * * %FREEZE_HOLDER_USERSPACE if userspace wants to thaw the fs;
+  * * %FREEZE_HOLDER_KERNEL if the kernel wants to thaw the fs.
++ * * %FREEZE_HOLDER_BDEV if freeze originated from a block device.
++ *
++ * A filesystem may hold multiple devices and thus a filesystems may
++ * have been frozen through the block layer via multiple block devices.
++ * In this case the number of block devices that requested the
++ * filesystem to be frozen is stored in @bdev_count. We only unfreeze if
++ * @bdev_count is zero
+  */
+ int thaw_super(struct super_block *sb, enum freeze_holder who)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 63ff88d20e46..dda7942e1f3e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1186,6 +1186,7 @@ enum {
+ struct sb_writers {
+ 	unsigned short			frozen;		/* Is sb frozen? */
+ 	unsigned short			freeze_holders;	/* Who froze fs? */
++	int				bdev_count;	/* How many devices froze it? */
+ 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
+ };
+ 
+@@ -2054,6 +2055,7 @@ extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+ enum freeze_holder {
+ 	FREEZE_HOLDER_KERNEL	= (1U << 0),
+ 	FREEZE_HOLDER_USERSPACE	= (1U << 1),
++	FREEZE_HOLDER_BDEV	= (1U << 2),
+ };
+ 
+ struct super_operations {
+
+---
+base-commit: c6a4738de282fc95752e1f1c5573ab7b4020b55e
+change-id: 20231103-vfs-multi-device-freeze-506e2c010473
+
 
