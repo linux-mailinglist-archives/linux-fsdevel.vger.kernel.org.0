@@ -1,101 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-1904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E3C7DFF6A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 08:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED937DFFA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 09:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04AB1C2102E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 07:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809C81C20A61
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 08:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F748BE6;
-	Fri,  3 Nov 2023 07:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6991079F7;
+	Fri,  3 Nov 2023 08:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2327468
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 07:29:15 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB6F1A6;
-	Fri,  3 Nov 2023 00:29:13 -0700 (PDT)
-Received: from dggpemm100001.china.huawei.com (unknown [172.30.72.56])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4SMC6W4d5RzvPrQ;
-	Fri,  3 Nov 2023 15:29:07 +0800 (CST)
-Received: from localhost.localdomain (10.175.112.125) by
- dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Fri, 3 Nov 2023 15:29:10 +0800
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, Matthew Wilcox <willy@infradead.org>, David Hildenbrand
-	<david@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH 5/5] page_idle: kill page idle and young wrapper
-Date: Fri, 3 Nov 2023 15:29:06 +0800
-Message-ID: <20231103072906.2000381-6-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20231103072906.2000381-1-wangkefeng.wang@huawei.com>
-References: <20231103072906.2000381-1-wangkefeng.wang@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A732C79E1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 08:11:53 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CD8123;
+	Fri,  3 Nov 2023 01:11:51 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 8DFE767373; Fri,  3 Nov 2023 09:11:47 +0100 (CET)
+Date: Fri, 3 Nov 2023 09:11:47 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Li Dongyang <dongyangli@ddn.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
+	adilger.kernel@dilger.ca
+Subject: Re: [PATCH] mm: folio_wait_stable() should check for bdev
+Message-ID: <20231103081146.GA16854@lst.de>
+References: <20231103050949.480892-1-dongyangli@ddn.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.175.112.125]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm100001.china.huawei.com (7.185.36.93)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231103050949.480892-1-dongyangli@ddn.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Since all the calls of page idle and young functions are gone,
-let's remove all the wrapper.
+On Fri, Nov 03, 2023 at 04:09:49PM +1100, Li Dongyang wrote:
+> folio_wait_stable() now checks SB_I_STABLE_WRITES
+> flag on the superblock instead of backing_dev_info,
+> this could trigger a false block integrity error when
+> doing buffered write directly to the block device,
+> as folio_wait_stable() is a noop for bdev and the
+> content could be modified during writeback.
+> 
+> Check if the folio's superblock is bdev and wait for
+> writeback if the backing device requires stables_writes.
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- include/linux/page_idle.h | 25 -------------------------
- 1 file changed, 25 deletions(-)
+https://lore.kernel.org/lkml/CAOi1vP9Zit-A9rRk9jy+d1itaBzUSBzFBuhXE+EDfBtF-Mf0og@mail.gmail.com/T/#t
 
-diff --git a/include/linux/page_idle.h b/include/linux/page_idle.h
-index d8f344840643..1168d5f58ff2 100644
---- a/include/linux/page_idle.h
-+++ b/include/linux/page_idle.h
-@@ -119,29 +119,4 @@ static inline void folio_clear_idle(struct folio *folio)
- }
- 
- #endif /* CONFIG_PAGE_IDLE_FLAG */
--
--static inline bool page_is_young(struct page *page)
--{
--	return folio_test_young(page_folio(page));
--}
--
--static inline void set_page_young(struct page *page)
--{
--	folio_set_young(page_folio(page));
--}
--
--static inline bool test_and_clear_page_young(struct page *page)
--{
--	return folio_test_clear_young(page_folio(page));
--}
--
--static inline bool page_is_idle(struct page *page)
--{
--	return folio_test_idle(page_folio(page));
--}
--
--static inline void set_page_idle(struct page *page)
--{
--	folio_set_idle(page_folio(page));
--}
- #endif /* _LINUX_MM_PAGE_IDLE_H */
--- 
-2.27.0
+https://lore.kernel.org/all/20231024064416.897956-1-hch@lst.de/
 
 
