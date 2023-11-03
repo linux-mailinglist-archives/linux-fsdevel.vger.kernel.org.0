@@ -1,200 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-1912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA2C87E019C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 11:41:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334567E0211
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 12:18:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F645281E90
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 10:41:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91DC3B213D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 11:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA56FDA;
-	Fri,  3 Nov 2023 10:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E2114F9F;
+	Fri,  3 Nov 2023 11:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cRg4+PCq"
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="SZO/53Nq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0091FA3
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 10:41:07 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C729D48
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 03:41:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699008062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Lp6Jz+POVOM2ymATN0+4roKlcGz/gu2UjTswWR4Ytbw=;
-	b=cRg4+PCqqSlOE2s/8+SbHCWChJ/PgzTXRoLzGH2VKsxlFbC6nK51LMuzcKpx7+fFQ85SE9
-	ZqdCL60k0CdCxvgpyvUtNst78QeZG6G9eFzeg/QI6b37gEj2F0Veh//aj0hpgG1tnhl+/z
-	GKWyOQ93PVAwx6y1OyziDH2saneefoY=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-Mk4-ox-gOEeSbjI15iL-rQ-1; Fri, 03 Nov 2023 06:41:00 -0400
-X-MC-Unique: Mk4-ox-gOEeSbjI15iL-rQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-9c15543088aso220446866b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 03:41:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699008060; x=1699612860;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lp6Jz+POVOM2ymATN0+4roKlcGz/gu2UjTswWR4Ytbw=;
-        b=ggCXKv8WAxSXLUPm9DG8c2u2vY5SpnJprStiJqMb7VjWu3E/i2u06plTr4YcdCpDDc
-         QkmmS3K4AImKJQep+4cQzjCM8gyg0HRtViZxJeutqsUTY/Ry9Jj9Isf2B6eJi6S+tUeq
-         u3YJK28GmAM0bQst8HL9+GDXoiE5zESCNxr9M1OHCun+FPlG0Pp9vk0VN14Wwe+oSyo0
-         iATQZ5i/F02kAsNMtHiIbQFSaKUjqhyY+lt+/RxfUH+4ZJHCUDOh9DHCWWouhj3qbH2x
-         gLFFhFRAfKnAut41a7FUqXJg5MNaH3RH0Uh9VWaW3xD3FcsnIgkQJxbg1E1gHoM9yGkF
-         t2cQ==
-X-Gm-Message-State: AOJu0Yza+ZwsIiGeDnPfsiqBKizC2bY9OwjVO9u31zgJmPRCzfNHMp03
-	HnFFyU0VP62EBR6e4UKT0HdsbaVZwn9eV5Kjgjmwees1+7V+yo0Rzeimls082h6TSFVHx5I5wRI
-	YOiZGjXYCt6QqsUZFVxrnRJMo6g==
-X-Received: by 2002:a17:906:7950:b0:9bf:c00f:654a with SMTP id l16-20020a170906795000b009bfc00f654amr2302819ejo.24.1699008059858;
-        Fri, 03 Nov 2023 03:40:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYL84kQ58i2cP4K6S7xeuKGH18ZQ7RIKhzKbyX3E6c1jOpr4P+mCWZM0GIPaXqH2aak15cSg==
-X-Received: by 2002:a17:906:7950:b0:9bf:c00f:654a with SMTP id l16-20020a170906795000b009bfc00f654amr2302775ejo.24.1699008059454;
-        Fri, 03 Nov 2023 03:40:59 -0700 (PDT)
-Received: from ?IPV6:2001:b07:6468:f312:4783:a68:c1ee:15c5? ([2001:b07:6468:f312:4783:a68:c1ee:15c5])
-        by smtp.googlemail.com with ESMTPSA id g4-20020a170906394400b009a5f1d15644sm754493eje.119.2023.11.03.03.40.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Nov 2023 03:40:58 -0700 (PDT)
-Message-ID: <e39a8f6e-c98d-4873-aa3f-2e566dead5c5@redhat.com>
-Date: Fri, 3 Nov 2023 11:40:56 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0033C14F86
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 11:17:58 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2051.outbound.protection.outlook.com [40.107.7.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B501BD;
+	Fri,  3 Nov 2023 04:17:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z9mYx/+HDn0fpZ6U18/gghJkij8fe8hJq4vMylYGC3LdWWX39nCDXOPfYSx0TIUvZN/CaBNvPDNwVH1m+QCbuUpfUhs7uDOYAAgKqA9h9uzWGlLwidr9wZ6UKM73JYQ/vLuzoDY0ZHSvAtakxkijL1n0NgiENZ9gTi2TH3gdA7PvzF8/+smvBtnHeUp8acAf39l0IX40blC1QvZHDLbgkzgWW1jDBzxZgInF/HCXvPtsfG1xo21Jlcg15V8sZzkp0Jeg66LzCCUZ4KcdorihGJb8EnigsMn15zGne8SJ+jDTZk4QaEOeWVFVHVJAZou4TC84m+VdsdgvTPv4wIpAYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GWHSp4L/QFa4imII+bNVx8ezcUOxRf49u+cMpi9IxF4=;
+ b=RlZNgoGf1zwTohYVYwE1sfMmPiU/FGBEQhAzYqby62wbth4Qp2p+4Ij1n2jzll788IE8xCbnFxGftCFxRk2KuvAe43xFvYqrJz3itRjFydb0kSYFCInpmVUpUsQrHbRTilhLQeqB+PP9wJ3SEtIk39XfZ7JBYSesuu8IoFc81RMIT+X5EaE00roMz42qbS2Dp75Y0HaDOgUgeoVkPzTeiKmu0C+hfcPZgjhd6/g9ZlzB0kRJitd1X332fgRgBY+GnfaLWXPwTI8TXVLw6OogDr7K9zff7Zun2gFjjLCn8AO06QSeC9hHrZP+Nc85tiM4SHR6s7pAnI/5WMQmq2/VsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GWHSp4L/QFa4imII+bNVx8ezcUOxRf49u+cMpi9IxF4=;
+ b=SZO/53NqHz5khwthri2AdzrGlZIsYkSHUztlC57Or362E2SM8PMYTY+CmAC4n8zMy1ahC0aQn39b9wUbPwNL53NMC5+bBzGJVrroqCh/iosTNTdw5vuZubmOi+X2L2og5ZN/90c4Hs9zDo91BTY0haVYgSmhcNQG/1r6KTu3H9UeoIAlEAGFMPxRIkWJN/iJ6W+VzXdBjUouxfXfibZtgc2x28dvEvE47ULNWo/jbydMb7cTJBzIv86idFSgifN+k5ZqxbuhO1hi1EIqCM+5+FOPfdE0mjwBv2VnwPrS599L5Iyyiu0xsk/gIDxTKyUlySNYs0Xn1pjt/z4iDNreVA==
+Received: from AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:26f::16)
+ by VI1PR10MB3343.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:13e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.21; Fri, 3 Nov
+ 2023 11:17:51 +0000
+Received: from AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::327c:78b1:7b3d:fbbe]) by AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::327c:78b1:7b3d:fbbe%5]) with mapi id 15.20.6954.021; Fri, 3 Nov 2023
+ 11:17:51 +0000
+From: "carsten.schmid@siemens.com" <carsten.schmid@siemens.com>
+To: Aleksandr Nogikh <nogikh@google.com>, Thomas Gleixner <tglx@linutronix.de>
+CC: syzbot <syzbot+b408cd9b40ec25380ee1@syzkaller.appspotmail.com>,
+	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+	"tytso@mit.edu" <tytso@mit.edu>
+Subject: AW: [syzbot] [ext4?] general protection fault in hrtimer_nanosleep
+Thread-Topic: [syzbot] [ext4?] general protection fault in hrtimer_nanosleep
+Thread-Index: AQHaDIZZW5UR1HqD5EWJAELZX43HQ7BlbUWAgAGEZQCAAYDX8Q==
+Date: Fri, 3 Nov 2023 11:17:51 +0000
+Message-ID:
+ <AM9PR10MB433861B49A1EBB837087742895A5A@AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM>
+References: <000000000000cfd180060910a687@google.com> <875y2lmxys.ffs@tglx>
+ <CANp29Y7EQ0cLf23coqFLLRHbA5rJjq0q1-6G7nnhxqBOUA7apw@mail.gmail.com>
+In-Reply-To:
+ <CANp29Y7EQ0cLf23coqFLLRHbA5rJjq0q1-6G7nnhxqBOUA7apw@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=True;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2023-11-03T11:17:49.741Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=C1
+ -
+ Intern;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR10MB4338:EE_|VI1PR10MB3343:EE_
+x-ms-office365-filtering-correlation-id: 19e69caf-552b-492a-a4d5-08dbdc5e84a5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ 77xavg5EzcZbCiQCBQt2dU01h9VcXbOJRxV9u5IzNs8Yb6kyqQDDmnDjPtj7mugbSqMenftWUZ7VQrE8RMvnF5RGegOBJJiZjTKPv5IVMskk4OYqYyomdyRmsZQd/+RaYfSfBciQy5D3MyBWfxEzwLD767bjmx/DXwjDxk47Z93MobhT3kHATdXwXoxvrhnVPFplv6vNLEsEv3SdCQ0iOaiELqrXtfsZj1/bQw3dch9ZGB5X48J/NNyZwvXLWCyibmBHvf22+31DbjsSv+W+hnr1h1xARE33XNfwYaNCehB3kPbxjWi5knNXYIThOtk/h4IbRxdlSBwW4Xn7kMBMArhbaIsApthlEw1OtEwJhzi+M9rJAJbUlbpno4IyrW7Y3TnOLydfZykqjHBw8BjMWniLCKSaeLtD/sadl7IsPz6sBDZdc7Q0S/BckIhzngmQVbsBmxjJJE2hD1NhTNxrBKRPgnB2BVs8VUa1GdtaB7HdSdFXRGFEf2HfE+7xoUsJhhW5UzPWGqrel0NPyWRsoL1jop4nMQRwLUpZKQyrSo/v9uFvT1stNvBmkqJ0+13amom43kVzTfAoHn1GuTYsc2qhmLNad/Off/iL79v3DXsYwRCGGJOfnoP/KjzmCBzA
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(346002)(136003)(396003)(376002)(230922051799003)(186009)(64100799003)(1800799009)(451199024)(38070700009)(52536014)(8676002)(4326008)(8936002)(5660300002)(41300700001)(2906002)(83380400001)(55016003)(45080400002)(33656002)(71200400001)(6506007)(55236004)(7696005)(9686003)(26005)(82960400001)(66446008)(122000001)(66476007)(54906003)(66946007)(316002)(91956017)(66556008)(110136005)(86362001)(76116006)(478600001)(64756008)(38100700002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?vyHyUveS+SzQx8XY7p8hqBV7TmyDWZrRve/DPr8j3J/JIcRAEBi1uhD7Gt?=
+ =?iso-8859-1?Q?kJ7PV2gKwfhXIyMowhC+gC0o/8hCI+IX/lAuHoh66/w145ilbGbZJODq5C?=
+ =?iso-8859-1?Q?PVWfsvDNuDtKPITbURNeyxQ8a20uB8v8a4ckuOIjvHNmN0ljSRGTMm2AAV?=
+ =?iso-8859-1?Q?oiBYUJEukMylp8sPJamAwEpUUVh6urf1rAyJA/WTONSFRh/yw3au5Chn1+?=
+ =?iso-8859-1?Q?WLyFVQ3rbYx6tIvjx9XW54qWUEE721QMNdN1ViU/UczxMk1Uywb/P8xfbc?=
+ =?iso-8859-1?Q?VULJvnzePQEZy9sM9hT3zaYSB+6nQ3ZkavR4KYj1wI3kwXIwvvfV36n9qP?=
+ =?iso-8859-1?Q?qmPaJlnA4L9vy39WMKagvcRlrIzT15gnuz3PdpF4g2xyEKx/X3MUplVAFi?=
+ =?iso-8859-1?Q?KsDmgzeL+xdhxgDec0QbsULLMIhEC3jttlAh+vyHzxBzva0stNavFbzgZT?=
+ =?iso-8859-1?Q?dxgV7RuEyLGEqi7ClOHz+S70gNg2zHT6rMa1f/aSwjw/u384r3RAFcDLC3?=
+ =?iso-8859-1?Q?q7oguT572YLcpZMx9tCkyLUc0FNQwpfQiJSQg5e10Ka4IjdpDAf4I85D50?=
+ =?iso-8859-1?Q?zk2eq1eglajZDtK42xRNeDajT111VeOtLDhK50iOYzOgdMBo9mDXFkUiAG?=
+ =?iso-8859-1?Q?UYmeXw6l46zgpYeYnjWCQYXBuIpV6WasWxL0+iImBagxGIV7CPQZxF2C1V?=
+ =?iso-8859-1?Q?n+CQQ9ZWXUoXVG58Ky11HC5URFRvbT/zMmQjPZg422utFfrsPjkkaRC2HP?=
+ =?iso-8859-1?Q?nvUBSC+u8A2ZmE8zflYcqs1WqOQepieCKv0ArapX+uTfaaR65ZLSOhOJZO?=
+ =?iso-8859-1?Q?dntjudGQDD1xlShPeMVuXoT4vBx3uNVtfQgkN1x1uxRl/kBPD0WGzrBvV3?=
+ =?iso-8859-1?Q?A0tYZGtLPLIXg3MoqlRQ9eUsfpedBJXDduXBXjxTjiCDg7xgSfPGiO0tLe?=
+ =?iso-8859-1?Q?mZQnhEStfm2n7xrn5JD7KShxwmwqi4CUampRS5gjTO2J3FytwS0MaUz/ii?=
+ =?iso-8859-1?Q?8ry9n3wJBKtEHLa2U9Hvp7YMR/O/3WftSVsxCIglW6pdxijutAyAfvC13r?=
+ =?iso-8859-1?Q?IQSVFg7SzAKp9PCW9Kvng8urM/eAPPsaGNv3qOwQ5XDVmQTQfO1nKqpCKF?=
+ =?iso-8859-1?Q?JXs/HaHfcXHTEygnBSfOeBxlBTXnAv50+WqvtreJDBhaozvdyWTO+CGugS?=
+ =?iso-8859-1?Q?49kjcuS1PdRCVzAryl+LrVZjX+hCPSE5WIGVn5KuXL904/Z1e6FdssGlBd?=
+ =?iso-8859-1?Q?K6+JaQqi2x2VIpPTqBPavOuWCIc12ToHtZ8/udYDcnihb0awet2icFYcHs?=
+ =?iso-8859-1?Q?AMIIF0cSHYMu3b/ZGdM7g8cHSkxWwu90zOUPgMr0sVLFcA8TOBoL3i6V/k?=
+ =?iso-8859-1?Q?0JkMRXL6r84qyHMU2g16/Ljd3KmCnYDvjIo8xL4bIQm8nzKwD5o3HngozT?=
+ =?iso-8859-1?Q?hKJ9WKhsoVrt8IQrK+tBkH1uRNi1x0y9XZbrkQKWu8EfPuCpNswG6SJJjR?=
+ =?iso-8859-1?Q?Mp0hq15XcKXOAybVO52vyVXJghjzWBtv8HBLYnSIjriOxL8a1pIAgd8XZi?=
+ =?iso-8859-1?Q?s3NS1hu1cTZv+MgN4kyGjN449mKqW6uyq0Uh2/sEB6z7jDWR0O/7i9dLPY?=
+ =?iso-8859-1?Q?cxSqDN7Ba+pY2zMHlhEX6W6tiX+RoBggHC?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 15/35] fs: Export anon_inode_getfile_secure() for use
- by KVM
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>,
- Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
- Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>,
- Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
- Anish Moorthy <amoorthy@google.com>, David Matlack <dmatlack@google.com>,
- Yu Zhang <yu.c.zhang@linux.intel.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerley Tng <ackerleytng@google.com>,
- Maciej Szmigiero <mail@maciej.szmigiero.name>,
- David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
- Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
- Liam Merwick <liam.merwick@oracle.com>,
- Isaku Yamahata <isaku.yamahata@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-16-seanjc@google.com>
- <20231102-freihalten-vorsah-fdd68051b005@brauner>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20231102-freihalten-vorsah-fdd68051b005@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4338.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19e69caf-552b-492a-a4d5-08dbdc5e84a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2023 11:17:51.3113
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mzaFyb7A7bcGNS6P9Sm/28NDo64x2ih1KHC0vAE7GATZTmGH26OA8Q1GFkxTnh+4e6ujVXnIkiMWIFty3gFKKhCdF0m5uyvnOz36tSBOAxk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3343
 
-On 11/2/23 17:24, Christian Brauner wrote:
-> On Fri, Oct 27, 2023 at 11:21:57AM -0700, Sean Christopherson wrote:
->> Export anon_inode_getfile_secure() so that it can be used by KVM to create
->> and manage file-based guest memory without need a fullblow filesystem.
->> The "standard" anon_inode_getfd() doesn't work for KVM's use case as KVM
->> needs a unique inode for each file, e.g. to be able to independently
->> manage the size and lifecycle of a given file.
->>
->> Note, KVM doesn't need a "secure" version, just unique inodes, i.e. ignore
->> the name.
->>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
-> 
-> Before we enshrine this misleading name let's rename this to:
-> 
-> create_anon_inode_getfile()
-> 
-> I don't claim it's a great name but it's better than *_secure() which is
-> very confusing. So just:
-> 
-> struct file *create_anon_inode_getfile(const char *name,
->                                         const struct file_operations *fops,
->                                         void *priv, int flags)
-
-I slightly prefer anon_inode_create_getfile(); grepping include/linux 
-for '\<create_' vs '_create_' shows that this is much more common.
-
-Neither userfaultfd (which uses anon_inode_getfd_secure()) nor io_uring 
-strictly speaking need separate inodes; they do want the call to 
-inode_init_security_anon().  But I agree that the new name is better and 
-I will adjust the comments so that it is clear why you'd use this 
-function instead of anon_inode_get{file,fd}().
-
-> May also just remove that context_inode argument from the exported
-> function. The only other caller is io_uring. And neither it nor this
-> patchset need the context_inode thing afaict.
-
-True, OTOH we might as well rename anon_inode_getfd_secure() to 
-anon_inode_create_getfd(), and that one does need context_inode.
-
-I'll Cc you on v14 and will carry the patch in my tree.
-
-Paolo
-
-> Merge conflict risk is
-> extremely low so carrying that as part of this patchset is fine and
-> shouldn't cause huge issues for you.
-> 
-
+Hi,=0A=
+=0A=
+> [  125.919060][    C0] BUG: KASAN: stack-out-of-bounds in rb_next+0x10a/0=
+x130=0A=
+> [  125.921169][    C0] Read of size 8 at addr ffffc900048e7c60 by task kw=
+orker/0:1/9=0A=
+> [  125.923235][    C0]=0A=
+> [  125.923243][    C0] CPU: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.6.0-=
+rc7-syzkaller-00142-g888cf78c29e2 #0=0A=
+> [  125.924546][    C0] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)=
+, BIOS 1.16.2-debian-1.16.2-1 04/01/2014=0A=
+> [  125.926915][    C0] Workqueue: events nsim_dev_trap_report_work=0A=
+> [  125.929333][    C0]=0A=
+> [  125.929341][    C0] Call Trace:=0A=
+> [  125.929350][    C0]  <IRQ>=0A=
+> [  125.929356][    C0]  dump_stack_lvl+0xd9/0x1b0=0A=
+> [  125.931302][    C0]  print_report+0xc4/0x620=0A=
+> [  125.932115][    C0]  ? __virt_addr_valid+0x5e/0x2d0=0A=
+> [  125.933194][    C0]  kasan_report+0xda/0x110=0A=
+> [  125.934814][    C0]  ? rb_next+0x10a/0x130=0A=
+> [  125.936521][    C0]  ? rb_next+0x10a/0x130=0A=
+> [  125.936544][    C0]  rb_next+0x10a/0x130=0A=
+> [  125.936565][    C0]  timerqueue_del+0xd4/0x140=0A=
+> [  125.936590][    C0]  __remove_hrtimer+0x99/0x290=0A=
+> [  125.936613][    C0]  __hrtimer_run_queues+0x55b/0xc10=0A=
+> [  125.936638][    C0]  ? enqueue_hrtimer+0x310/0x310=0A=
+> [  125.936659][    C0]  ? ktime_get_update_offsets_now+0x3bc/0x610=0A=
+> [  125.936688][    C0]  hrtimer_interrupt+0x31b/0x800=0A=
+> [  125.936715][    C0]  __sysvec_apic_timer_interrupt+0x105/0x3f0=0A=
+> [  125.936737][    C0]  sysvec_apic_timer_interrupt+0x8e/0xc0=0A=
+> [  125.936755][    C0]  </IRQ>=0A=
+> [  125.936759][    C0]  <TASK>=0A=
+=0A=
+i had sporadic similar issues with 4.14 kernels (several maturities, .147  =
+.212  .247  .300) in the past 5 years where stack looked quite similar:=0A=
+=0A=
+[  432.041880] general protection fault: 0000 [#1] PREEMPT SMP NOPTI=0A=
+[  432.048697] Modules linked in: intel_tfm_governor ecryptfs coretemp i2c_=
+i801 sbi_apl snd_soc_skl sdw_cnl snd_soc_acpi_intel_match snd_soc_acpi snd_=
+soc_core snd_compress snd_soc_skl_ipc xhci_pci xhci_hcd sdw_bus crc8 ahci s=
+nd_soc_sst_ipc snd_soc_sst_dsp snd_hda_ext_core libahci snd_hda_core libata=
+ snd_pcm usbcore mei_me snd_timer scsi_mod usb_common snd mei soundcore fus=
+e 8021q inap560t(O) i915 video backlight intel_gtt i2c_algo_bit drm_kms_hel=
+per drm firmware_class igb_avb(O) ptp hwmon spi_pxa2xx_platform pps_core=0A=
+[  432.099672] CPU: 3 PID: 5729 Comm: dlt_segmented Tainted: G     U     O =
+   4.14.244-apl #1=0A=
+[  432.108909] task: 00000000504d2561 task.stack: 000000007d0046fd=0A=
+[  432.115530] RIP: 0010:rb_erase_cached+0x31/0x3b0=0A=
+[  432.120683] RSP: 0018:ffffa31d84f77d40 EFLAGS: 00010006=0A=
+[  432.126517] RAX: 0000000000000001 RBX: ffffa31d84f77e30 RCX: 00000000000=
+00000=0A=
+[  432.134485] RDX: 0000000000000000 RSI: ffff9ed077c1bb10 RDI: ffffa31d84f=
+77e30=0A=
+[  432.142456] RBP: ffffa31d84f77d40 R08: ffffa31d84f77e30 R09: 0000a31d80a=
+77c90=0A=
+[  432.150426] R10: ffff9ed077c1bee0 R11: 0000000000000400 R12: ffff9ed077c=
+1bb10=0A=
+[  432.158394] R13: 0000000000000000 R14: ffff9ed077c1bac0 R15: 00000000000=
+00000=0A=
+[  432.166366] FS:  00007ff718cce700(0000) GS:ffff9ed077d80000(0000) knlGS:=
+0000000000000000=0A=
+[  432.175403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033=0A=
+[  432.181819] CR2: 00007ff7182ca3e4 CR3: 000000026175c000 CR4: 00000000003=
+406a0=0A=
+[  432.189790] Call Trace:=0A=
+[  432.192526]  timerqueue_del+0x1d/0x40=0A=
+[  432.196617]  __remove_hrtimer+0x37/0x70=0A=
+[  432.200898]  hrtimer_try_to_cancel+0xa0/0x120=0A=
+[  432.205769]  do_nanosleep+0xa9/0x180=0A=
+[  432.209765]  ? kfree+0x169/0x180=0A=
+[  432.213370]  hrtimer_nanosleep+0xbb/0x150=0A=
+[  432.217849]  ? hrtimer_init+0x110/0x110=0A=
+[  432.222134]  SyS_nanosleep+0x6d/0xa0=0A=
+[  432.226126]  do_syscall_64+0x79/0x350=0A=
+[  432.230218]  entry_SYSCALL_64_after_hwframe+0x41/0xa6=0A=
+[  432.235861] RIP: 0033:0x7ff7199b7240=0A=
+[  432.239850] RSP: 002b:00007ff718ccddf0 EFLAGS: 00000293 ORIG_RAX: 000000=
+0000000023=0A=
+[  432.248309] RAX: ffffffffffffffda RBX: 00007ff718ccde20 RCX: 00007ff7199=
+b7240=0A=
+[  432.256282] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ff718c=
+cde20=0A=
+[  432.264252] RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000000=
+00000=0A=
+[  432.272222] R10: 0000000000000000 R11: 0000000000000293 R12: 00007ffe333=
+ec72e=0A=
+[  432.280190] R13: 00007ffe333ec72f R14: 0000000000802000 R15: 00007ffe333=
+ec730=0A=
+[  432.288161] Code: 89 f8 4c 8b 4f 08 48 89 e5 4c 8b 57 10 74 0a 48 3b 7e =
+08 0f 84 a6 02 00 00 4d 85 d2 0f 84 28 02 00 00 4d 85 c9 0f 84 03 02 00 00 =
+<49> 8b 51 10 4c 89 cf 4c 89 c8 48 85 d2 75 0b e9 65 02 00 00 48 =0A=
+[  432.309346] RIP: rb_erase_cached+0x31/0x3b0 RSP: ffffa31d84f77d40=0A=
+=0A=
+Looks like it's worth to dig inside that.=0A=
+Unfortunately i wasn't able to reproduce this, and i'm still not. So i can'=
+t help digging but wanted to tell that this seems not to be related to a sp=
+ecific kernel ....=0A=
+=0A=
+Thanks=0A=
+Carsten=0A=
+>>=0A=
+>> Thanks,=0A=
+>>=0A=
+>>         tglx=0A=
+>>=0A=
 
