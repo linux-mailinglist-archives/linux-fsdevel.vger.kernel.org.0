@@ -1,122 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-1928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A337E056F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 16:19:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99847E05B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 16:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D732C1C210B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 15:19:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C76BB21435
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 15:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C7D1BDCC;
-	Fri,  3 Nov 2023 15:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB8E1C681;
+	Fri,  3 Nov 2023 15:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="eo5HRjTi"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XayPe3iY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z5QKONR/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3A51A5A7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 15:19:36 +0000 (UTC)
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F231B2
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 08:19:32 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-3b566ee5f1dso1330356b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 08:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1699024771; x=1699629571; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=liLeXSkpooaWOUPaSwHhbbjwtzRLYBJW04zYO+tuOmo=;
-        b=eo5HRjTi09AnDl2eHY6t9MzZGSw4diEPGBBKUnl0ywju9f+kwsTvc5k4SL+uqH/JLF
-         62UwlNbCk50u1itPbc4NtvUXu7wxZZg8Ao/T3dZ6zcyHd1sJHMpBddk/Iq7UPM5iyDMF
-         jzMdxWd5DMCxG7HbR1pnU9vZ4kqQEBN0kbJlF1YtstuWX7CttkF2G4Cu5EksbxQ/HJ7u
-         EGf1qOEXNxglfcCK2jIXOSYriUmcGBlF7ykVnYmsLSMXWMZDYCz4sQIz5IFCG5nUxY7l
-         3H8dso//uiuq+POHmm74MdW7SJJ2FJ8B0sgprFO8EEQMGezcpPc3UqEA44RaLIxhLsxg
-         vGqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699024771; x=1699629571;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=liLeXSkpooaWOUPaSwHhbbjwtzRLYBJW04zYO+tuOmo=;
-        b=aDGbeitPEAkUDhkCGeKt9wtX9edrWnc+j3ivim9w12+oKVlUMjcKPUxOZsDDssaIpu
-         4VCSJxb8Z21xqiANhpE/IOjPK2Rk442koDCxiGcXDwCqt7bNcdshmn6AjzqaimRtRWCT
-         j71lRVyX21eV51mPM9aoIcYZuQq9OCK739WUpYMQbVz/+XtCZUabJAP8XIXRjvh+BXOQ
-         bonw+o8PrKUbsOjmNM43Z45S6+mOClK74+hFtEupDR563KrBoXChs8ZetTnrqGnW4X0L
-         HYfPgE8X5ymAaxTS1yGIZOn931XCbyivhWOVXb+Ptv8ehFw8siDzXkdRjMpKowyimPcJ
-         /DrA==
-X-Gm-Message-State: AOJu0YySME52LdRriItaxGYbG/xrTiGC+2T3TU/sD5mtTsrQhSvaCqdm
-	PUW+TZ1zjCEyCu7ip39LmkmkulVJKkWtU02Q0jja9w==
-X-Google-Smtp-Source: AGHT+IHPzOa9iAe+GlV7Tg9JGtkM0A7QgdUDBavOwv9+9DuGS+xM5/s6EzR1YL7nknthcj0uI8QJut9DydQ7Bvbd21w=
-X-Received: by 2002:a05:6808:1986:b0:3ab:84f0:b49d with SMTP id
- bj6-20020a056808198600b003ab84f0b49dmr26946069oib.3.1699024770996; Fri, 03
- Nov 2023 08:19:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF73A1C2B6
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 15:44:00 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C745A6
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 08:43:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7D054211E1;
+	Fri,  3 Nov 2023 15:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1699026234; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yOjJApoqT36xkZp3qnAG/EIxiXFU5GM09L0QB4D4LDY=;
+	b=XayPe3iYWrWZqcaI1JBuvsEaFTRaXiwThZYnU1ZeSg4ShbITXZm+xEAFcWnuYWxW7lB33Y
+	5eSXup6IOEegVfxv4elMnYTuZ0gAhWMpJlv2KQNHpd55ixz9PMJcLja95CYanyK8I3PNho
+	HWG65pxh9Az3glnpuN+Z4gO+t2TENKE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1699026234;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yOjJApoqT36xkZp3qnAG/EIxiXFU5GM09L0QB4D4LDY=;
+	b=Z5QKONR/73hft76v+C3PvJlXH1jJv4MsKLXTm5a7+gzrObOVjY62XyhNDFaaiouTcK6B7g
+	QXBv0W8wD4P5E8Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6CD761348C;
+	Fri,  3 Nov 2023 15:43:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id uOqGGjoVRWV5NQAAMHmgww
+	(envelope-from <jack@suse.cz>); Fri, 03 Nov 2023 15:43:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D0677A06E3; Fri,  3 Nov 2023 16:43:52 +0100 (CET)
+Date: Fri, 3 Nov 2023 16:43:52 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>,
+	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Chandan Babu R <chandanbabu@kernel.org>
+Subject: Re: [PATCH] fs: handle freezing from multiple devices
+Message-ID: <20231103154352.2iz6rqhsjkvcxpyk@quack3>
+References: <87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20231103-vfs-multi-device-freeze-v1-1-fe922b30bfb6@kernel.org>
+ <20231103141940.GA3732@lst.de>
+ <20231103-leiht-funkverkehr-48ed8d425fd9@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231101230816.1459373-1-souravpanda@google.com>
- <20231101230816.1459373-2-souravpanda@google.com> <CAAPL-u_enAt7f9XUpwYNKkCOxz2uPbMrnE2RsoDFRcKwZdnRFQ@mail.gmail.com>
- <CA+CK2bC3rSGOoT9p_VmWMT8PBWYbp7Jo7Tp2FffGrJp-hX9xCg@mail.gmail.com>
- <CAAPL-u-4D5YKuVOsyfpDUR+PbaA3MOJmNtznS77bposQSNPjnA@mail.gmail.com>
- <1e99ff39-b1cf-48b8-8b6d-ba5391e00db5@redhat.com> <CA+CK2bDo6an35R8Nu-d99pbNQMEAw_t0yUm0Q+mJNwOJ1EdqQg@mail.gmail.com>
- <025ef794-91a9-4f0c-9eb6-b0a4856fa10a@redhat.com> <CA+CK2bDJDGaAK8ZmHtpr79JjJyNV5bM6TSyg84NLu2z+bCaEWg@mail.gmail.com>
- <99113dee-6d4d-4494-9eda-62b1faafdbae@redhat.com> <CA+CK2bApoY+trxxNW8FBnwyKnX6RVkrMZG4AcLEC2Nj6yZ6HEw@mail.gmail.com>
- <b71b28b9-1d41-4085-99f8-04d85892967e@redhat.com> <CA+CK2bCNRJXm2kEjsN=5a_M8twai4TJX3vpd72uOHFLGaDLg4g@mail.gmail.com>
- <CAAPL-u_OWFLrrNxszm4D+mNiZY6cSb3=jez3XJHFtN6q05dU2g@mail.gmail.com>
- <CA+CK2bBPBtAXFQAFUeF8nTxL_Sx926HgR3zLCj_6pKgbOGt8Wg@mail.gmail.com>
- <CAAPL-u9HHgPDj_xTTx=GqPg49DcrpGP1FF8zhaog=9awwu0f_Q@mail.gmail.com>
- <CA+CK2bAv6okHVigjCyDODm5VELi7gtQHOUy9kH5J4jTBpnGPxw@mail.gmail.com> <CAAPL-u-nSLiObCC9Vbtdv1m8-87K-M6FcVcgnruGzRkAAucRTA@mail.gmail.com>
-In-Reply-To: <CAAPL-u-nSLiObCC9Vbtdv1m8-87K-M6FcVcgnruGzRkAAucRTA@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 3 Nov 2023 11:18:53 -0400
-Message-ID: <CA+CK2bAWbnapxXvOwHFXFJNqzKP-_=vroyLaeWBQ=d-ZJ4_R3w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] mm: report per-page metadata information
-To: Wei Xu <weixugc@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Sourav Panda <souravpanda@google.com>, corbet@lwn.net, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, akpm@linux-foundation.org, 
-	mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org, 
-	rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
-	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
-	yosryahmed@google.com, hannes@cmpxchg.org, shakeelb@google.com, 
-	kirill.shutemov@linux.intel.com, wangkefeng.wang@huawei.com, 
-	adobriyan@gmail.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	surenb@google.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, Greg Thelen <gthelen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231103-leiht-funkverkehr-48ed8d425fd9@brauner>
 
-> > Since we are going to use two independent interfaces
-> > /proc/meminfo/PageMetadata and nodeN/page_metadata (in a separate file
-> > as requested by Greg) How about if in /proc/meminfo we provide only
-> > the buddy allocator part, and in nodeN/page_metadata we provide the
-> > total per-page overhead in the given node that include memblock
-> > reserves, and buddy allocator memory?
->
-> What we want is the system-wide breakdown of kernel memory usage. It
-> works for this use case with the new PageMetadata counter in
-> /proc/meminfo to report only buddy-allocated per-page metadata.
+On Fri 03-11-23 16:10:10, Christian Brauner wrote:
+> On Fri, Nov 03, 2023 at 03:19:40PM +0100, Christoph Hellwig wrote:
+> > On Fri, Nov 03, 2023 at 02:52:27PM +0100, Christian Brauner wrote:
+> > > Fix this by counting the number of block devices that requested the
+> > > filesystem to be frozen in @bdev_count in struct sb_writers and only
+> > > unfreeze once the @bdev_count hits zero. Survives fstests and blktests
+> > > and makes the reproducer succeed.
+> > 
+> > Is there a good reason to not just refcount the freezes in general?
+> 
+> If we start counting freezes in general we break userspace as
+> freeze_super() is called from ioctl_fsfreeze() and that expects to
+> return EBUSY on an already frozen filesystem. xfs scrub might be another
+> user that might break if we change that.
 
-We want to report all PageMetadata, otherwise this effort is going to
-be useless for the majority of users.
+I guess Christoph meant that we'd count all the sb freezes into the
+refcount (what is now bdev_count) but without HOLDER_BDEV flag we will
+return EBUSY if the refcount is > 0 instead of incrementing it.
 
-As you noted, /proc/meminfo allows us to report only the part of
-per-page metadata that was allocated by the buddy allocator because of
-an existing MemTotal bug that does not include memblock reserves.
-However, we do not have this limitation when we create a new
-nodeN/page_metadata interface, and we can document that in the sysfs
-ABI documentation: sum(nodeN/page_metadata)  contains all per-page
-metadata and is superset of /proc/meminfo.
+There would be a subtle behavioral difference that now if you freeze the fs
+with ioctl_fsfreeze() and then try to freeze through the blockdev, you'll
+get EBUSY while with the new method the bdev freeze will succeed but I
+don't think that can do any harm. It even kind of makes more sense.
 
-The only question is how to name PageMetadata in the /proc/meminfo
-appropriately, so users can understand that not all page metadata is
-included? (of course we will also document that only the MemTotal part
-of page metadata is reported in /proc/meminfo)
-
-Pasha
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
