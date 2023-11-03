@@ -1,179 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-1962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-1963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2667E0C06
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Nov 2023 00:13:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD92D7E0C0A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Nov 2023 00:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8080C281B9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 23:13:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F922281F60
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Nov 2023 23:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FD1250F7;
-	Fri,  3 Nov 2023 23:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A77525116;
+	Fri,  3 Nov 2023 23:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LYEp8QYz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y34aghm2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491E24A05
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 23:13:17 +0000 (UTC)
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8FBD48
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 16:13:13 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231103231301euoutp01e7190bd6ed7be21892346f1e64866380~UP93mt_ge1013410134euoutp01m
-	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 23:13:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231103231301euoutp01e7190bd6ed7be21892346f1e64866380~UP93mt_ge1013410134euoutp01m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1699053181;
-	bh=oHsO3OHKphhNYc2KKcSi9BXbYPXz/A7ETlyML/Q/00I=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=LYEp8QYzPDwiyxo0vJcR59grQQPKZw/jJGYxkBRhA1+xpmy1hXxufOiNL4gCdRgD1
-	 baYL7KT4WACekSJU8eKAZUKlMSzZXdaMfjFIh/1eRzN6rxECFT4MjS44DLRRnLDAkk
-	 79Fz/sGs8mH+Nb/lyRW47yIBA8MgRI6dHi4XOfPk=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20231103231301eucas1p192942ceb0cb6ebb63aee326a6f959e2d~UP92_LwPe0263002630eucas1p1C;
-	Fri,  3 Nov 2023 23:13:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id A5.2B.42423.C7E75456; Fri,  3
-	Nov 2023 23:13:00 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231103231259eucas1p18e529693e4b47b5e0623271bf319a25f~UP915_fmj2687926879eucas1p1Z;
-	Fri,  3 Nov 2023 23:12:59 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231103231259eusmtrp22251fecfaf13e569c815d97a704cbb52~UP911BCNL1325313253eusmtrp2c;
-	Fri,  3 Nov 2023 23:12:59 +0000 (GMT)
-X-AuditID: cbfec7f2-a51ff7000002a5b7-2a-65457e7cccea
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C8.69.10549.B7E75456; Fri,  3
-	Nov 2023 23:12:59 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231103231259eusmtip2247fb3c78e71787af6a52bb65a4d74c0~UP91nknSd2294222942eusmtip2T;
-	Fri,  3 Nov 2023 23:12:59 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Fri, 3 Nov 2023 23:12:58 +0000
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Fri, 3 Nov
-	2023 23:12:58 +0000
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Matthew Wilcox <willy@infradead.org>
-CC: "minchan@kernel.org" <minchan@kernel.org>, "senozhatsky@chromium.org"
-	<senozhatsky@chromium.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
-	"djwong@kernel.org" <djwong@kernel.org>, "hughd@google.com"
-	<hughd@google.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"mcgrof@kernel.org" <mcgrof@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-xfs@vger.kernel.org"
-	<linux-xfs@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"gost.dev@samsung.com" <gost.dev@samsung.com>, Pankaj Raghav
-	<p.raghav@samsung.com>
-Subject: Re: [RFC PATCH 01/11] XArray: add cmpxchg order test
-Thread-Topic: [RFC PATCH 01/11] XArray: add cmpxchg order test
-Thread-Index: AQHaCePk2/Onfe3eA0ia1dQGCoKrA7BhNHAAgAgOVAA=
-Date: Fri, 3 Nov 2023 23:12:58 +0000
-Message-ID: <20231103231254.bytltpzsc2qojlbw@sarkhan>
-In-Reply-To: <ZT68dBiJKNLXLRZA@casper.infradead.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [106.110.32.103]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BE63A8201D5D3541A51BCEF17F33D0F1@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2111524A05
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 23:17:28 +0000 (UTC)
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B868ED62
+	for <linux-fsdevel@vger.kernel.org>; Fri,  3 Nov 2023 16:17:25 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5b064442464so36270467b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Nov 2023 16:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1699053445; x=1699658245; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wL2niLMenc8rXWamhCVdrH1GL3hMVyvGfUspx7X4DS0=;
+        b=y34aghm2O6SNvK8GRGqx/sn9ZtIKtyEKMe8V+/zJansECIFreEzwNQdaN7qaCTMxno
+         iQyNclZxVpo458htEdZJR3G15cLAf//+VCR0X7Bb9mY8NQfPYk2RLQxot9vowL58J+WQ
+         5hHhx/vsC4Fi5BrmYkOcz2Ry0VrZACj8kcr2w0P5oaF34k83fCp/HQQiRzJGW8Gpgnpt
+         LE8G4T/CWtPumWqO8WdX3VhR7PfMiIcBYnlzl1o/d6i7pLaKqyDczwP5Xg+Vnz46J/mp
+         wCPQ54D8JTsXgyveHL72zftw7M4doAMgz1QNm9HMEpFyaIBnh8OXueGidAopbHc09qPm
+         VOOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699053445; x=1699658245;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wL2niLMenc8rXWamhCVdrH1GL3hMVyvGfUspx7X4DS0=;
+        b=JPbDi2F1LmDEdBKIKiTcIhWQLuYvWhbJDhLn0K4Z4r7+5GLjz33UDaN2vzI6gsHEhu
+         AadtuINLqaV6MYwr181YIdiVNzsxaWgi8hsBua9/bxO8nDREs+OwrnNOx1Z7IH4KBXzv
+         Qxqkfm/65HoXdwe9lZfkfpPAM3M2kJLqULJJ6thgKDHPgs1sev2nE1hBzKXZDT5UXLbP
+         /JsdhppZRWNVlcQjS7h4raiNxx7WV9zpbLNwuz/oERgs+XOL4LWL+YitaaNaqozNfnDw
+         NWhJPfBsZvLzSvWiHZIrakQDO84gLCJhFLBWPpfZfn0T2rp5lI5ZipmVvg2nE243jZTY
+         d0jA==
+X-Gm-Message-State: AOJu0YxeUafvIRZsBdvJ+d7BvJvaIMhskUgCpmgbwf25bPYA6fJ7ZtvO
+	6TAvgMWcLDWtQT9nHvHGqeYBhlS1jok=
+X-Google-Smtp-Source: AGHT+IGJDyi83TwJx+I35GsLQytKZmA4RJCyClEGAPsqdhhOEgS+Lm1oHaoRVNSHVuwQA3+7WVp40Ul4xUY=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:4958:0:b0:59f:3cde:b33a with SMTP id
+ w85-20020a814958000000b0059f3cdeb33amr84737ywa.6.1699053444944; Fri, 03 Nov
+ 2023 16:17:24 -0700 (PDT)
+Date: Fri, 3 Nov 2023 16:17:23 -0700
+In-Reply-To: <CA+EHjTzGzXnfXHh0m5iHt9m3BxerkUS56EVPDA_az6n2FRnk3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsWy7djP87o1da6pBtNnW1nMWb+GzWL13X42
-	i8tP+Cyefupjsdh7S9tiz96TLBaXd81hs7i35j+rxa4/O9gtbkx4ymix7Ot7dovdGxexWfz+
-	MYfNgddjdsNFFo8Fm0o9Nq/Q8rh8ttRj06pONo9Nnyaxe5yY8ZvF4/MmuQCOKC6blNSczLLU
-	In27BK6MzUd3Mxac5anY13GcsYFxJVcXIyeHhICJxInn79i6GLk4hARWMErs3HedBcL5wijR
-	On8KE4TzmVHi9IJnLDAtzy/1MYLYQgLLGSXObGWCsIGKjn2Og2g4zShx99p9Jri5M+/sYwOp
-	YhPQlNh3chN7FyMHh4iAhsSbLUYgNcwCR1kllqzdBLZBWMBWYv3WOcwgtoiAncTDWy/ZIWwr
-	iVdfroPVsAioSLzY/hOshlfAVGLOtMVgNZxA1y3d/gnsIkYBWYlHK3+BxZkFxCVuPZnPBPGB
-	oMSi2XuYIWwxiX+7HrJB2DoSZ68/YYSwDSS2Lt0H9bGSxJ+OhYwQc3QkFuz+xAZhW0o0nPwM
-	FdeWWLbwNdQ9ghInZz4Bh6OEwFQuibVL50Etc5E4enA31BHCEq+Ob2GfwKgzC8l9s5DsmIVk
-	xywkO2Yh2bGAkXUVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYMo7/e/4px2Mc1991DvE
-	yMTBeIhRgoNZSYTX0dslVYg3JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFq
-	EUyWiYNTqoFJe/1Fy0W1vvNvn9m0sGwBX8O6OKlXSb+bhBRXbS+r/nhon/n38A1qr2PWCq1w
-	eZuqWvJZVkc5+YTPWhuJW29FvPzu5ZWuUZ/7mn8Jr9wRjYfFfZpF7y8d61ycv1xqwS82xlVz
-	jncdVwnd28jsLML86kjEG8t/ouK1z2P1RduT7Hu8czIPHV/049J81uW+HaumKMYkLryRa5hl
-	XRY2WTX7Zvz6M/6X1/1o6blpXft3Y07ywstBt1bf+v00jvlIzIJ1c580/5K2O+Gw+XBbtoCu
-	3by/b489++N7XzzMb4pkRY7AlLNp0Ukv2kzTbY0Odl5TK4z89vTJrh3FJrPbPl2Rtd21s8N5
-	55sfMV3MPB5cSizFGYmGWsxFxYkAjGb8Z+gDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsVy+t/xe7rVda6pBj1ztCzmrF/DZrH6bj+b
-	xeUnfBZPP/WxWOy9pW2xZ+9JFovLu+awWdxb85/VYtefHewWNyY8ZbRY9vU9u8XujYvYLH7/
-	mMPmwOsxu+Eii8eCTaUem1doeVw+W+qxaVUnm8emT5PYPU7M+M3i8XmTXABHlJ5NUX5pSapC
-	Rn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G5qO7GQvO8lTs6zjO
-	2MC4kquLkZNDQsBE4vmlPsYuRi4OIYGljBInzsxjhEjISGz8cpUVwhaW+HOtiw2i6COjxPPJ
-	21kgnNOMErP/XYPKrGCU6J/+kR2khU1AU2LfyU1ANgeHiICGxJstRiA1zAJHWSWWrN3EAlIj
-	LGArsX7rHGYQW0TATuLhrZfsELaVxKsv18FqWARUJF5s/wlWwytgKjFn2mJ2iGVzmSTu/V4D
-	luAEemLp9k9MIDajgKzEo5W/wAYxC4hL3HoynwniBwGJJXvOM0PYohIvH/+D+k1H4uz1J1A/
-	G0hsXbqPBcJWkvjTsZARYo6OxILdn9ggbEuJhpOfoeLaEssWvoY6TlDi5MwnLBMYZWYhWT0L
-	SfssJO2zkLTPQtK+gJF1FaNIamlxbnpusaFecWJucWleul5yfu4mRmBK23bs5+YdjPNefdQ7
-	xMjEwXiIUYKDWUmE19HbJVWINyWxsiq1KD++qDQntfgQoykw8CYyS4km5wOTal5JvKGZgamh
-	iZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8TB6dUA1O6tFrHju1ue1rd91ewfJFm2DIr
-	SUL3Qctk7RUJ995WNb3ewfrr8O1eg/pEftWEjzqnNzUb3lVbJGAoeVv4yimVgs+tZWVb/299
-	uZVhIvOnDse8ZGmfZRMDG0PzL8+M0d9+89ix+SzvGUqjmK6efXHmynkP2XkCW97HBDh2Seuf
-	cv9o9Tn2/6xnZ5/X/Jv2Rscq+U2b4ZHlCxy3as/2MZp5V+HGXVMedpvPujeUilremL5k/HBH
-	aYbB/ijmMw6zI61Y3IMqWe5Gsr2M2sJQnXjEvGF52AG7Nyfs3ef9NeXdvG1DduusvZ2sUtfj
-	75Z6frBnenpb7Emiwdsz7Rb9J3st3v5b/jC7O2uZFrPo70dKLMUZiYZazEXFiQChzl1/8gMA
-	AA==
-X-CMS-MailID: 20231103231259eucas1p18e529693e4b47b5e0623271bf319a25f
-X-Msg-Generator: CA
-X-RootMTR: 20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54
-References: <20230919135536.2165715-1-da.gomez@samsung.com>
-	<20231028211518.3424020-1-da.gomez@samsung.com>
-	<CGME20231028211538eucas1p186e33f92dbea7030f14f7f79aa1b8d54@eucas1p1.samsung.com>
-	<20231028211518.3424020-2-da.gomez@samsung.com>
-	<ZT68dBiJKNLXLRZA@casper.infradead.org>
+Mime-Version: 1.0
+References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-17-seanjc@google.com>
+ <CA+EHjTzj4drYKONVOLP19DYpJ4O8kSXcFzw2AKier1QdcFKx_Q@mail.gmail.com>
+ <ZUF8A5KpwpA6IKUH@google.com> <CA+EHjTwTT9cFzYTtwT43nLJS01Sgt0NqzUgKAnfo2fiV3tEvXg@mail.gmail.com>
+ <ZULJYg5cf1UrNq3e@google.com> <CA+EHjTzGzXnfXHh0m5iHt9m3BxerkUS56EVPDA_az6n2FRnk3w@mail.gmail.com>
+Message-ID: <ZUV_g1_3pj62OgF-@google.com>
+Subject: Re: [PATCH v13 16/35] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+From: Sean Christopherson <seanjc@google.com>
+To: Fuad Tabba <tabba@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Maciej Szmigiero <mail@maciej.szmigiero.name>, David Hildenbrand <david@redhat.com>, 
+	Quentin Perret <qperret@google.com>, Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 29, 2023 at 08:11:32PM +0000, Matthew Wilcox wrote:
-> On Sat, Oct 28, 2023 at 09:15:35PM +0000, Daniel Gomez wrote:
-> > +static noinline void check_cmpxchg_order(struct xarray *xa)
-> > +{
-> > +	void *FIVE =3D xa_mk_value(5);
-> > +	unsigned int order =3D IS_ENABLED(CONFIG_XARRAY_MULTI) ? 15 : 1;
->
-> ... have you tried this with CONFIG_XARRAY_MULTI deselected?
-> I suspect it will BUG() because orders greater than 0 are not allowed.
->
-> > +	XA_BUG_ON(xa, !xa_empty(xa));
-> > +	XA_BUG_ON(xa, xa_store_index(xa, 5, GFP_KERNEL) !=3D NULL);
-> > +	XA_BUG_ON(xa, xa_insert(xa, 5, FIVE, GFP_KERNEL) !=3D -EBUSY);
-> > +	XA_BUG_ON(xa, xa_store_order(xa, 5, order, FIVE, GFP_KERNEL));
-> > +	XA_BUG_ON(xa, xa_get_order(xa, 5) !=3D order);
-> > +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) !=3D order);
-> > +	old =3D xa_cmpxchg(xa, 5, FIVE, NULL, GFP_KERNEL);
-> > +	XA_BUG_ON(xa, old !=3D FIVE);
-> > +	XA_BUG_ON(xa, xa_get_order(xa, 5) !=3D 0);
-> > +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(FIVE)) !=3D 0);
-> > +	XA_BUG_ON(xa, xa_get_order(xa, xa_to_value(old)) !=3D 0);
-> > +	XA_BUG_ON(xa, !xa_empty(xa));
->
-> I'm not sure this is a great test.  It definitely does do what you claim
-> it will, but for example, it's possible that we might keep that
-> information for other orders.  So maybe we should have another entry at
-> (1 << order) that keeps the node around and could theoretically keep
-> the order information around for the now-NULL entry?
+On Thu, Nov 02, 2023, Fuad Tabba wrote:
+> On Wed, Nov 1, 2023 at 9:55=E2=80=AFPM Sean Christopherson <seanjc@google=
+.com> wrote:
+> > E.g. a misbehaving userspace could prematurely delete a memslot.  And t=
+he more
+> > fun example is intrahost migration, where the plan is to allow pointing=
+ multiple
+> > guest_memfd files at a single guest_memfd inode:
+> > https://lore.kernel.org/all/cover.1691446946.git.ackerleytng@google.com
+> >
+> > There was a lot of discussion for this, but it's scattered all over the=
+ place.
+> > The TL;DR is is that the inode will represent physical memory, and a fi=
+le will
+> > represent a given "struct kvm" instance's view of that memory.  And so =
+the memory
+> > isn't reclaimed until the inode is truncated/punched.
+> >
+> > I _think_ this reflects the most recent plan from the guest_memfd side:
+> > https://lore.kernel.org/all/1233d749211c08d51f9ca5d427938d47f008af1f.16=
+89893403.git.isaku.yamahata@intel.com
 
-Thanks Matthew for the review. I'm sending a separate patch with the
-fixes and improvements on the XArray cmpxchg test.=
+Doh, sitting in my TODO folder...
+
+https://lore.kernel.org/all/20231016115028.996656-1-michael.roth@amd.com
+
+> Thanks for pointing that out. I think this might be the way to go.
+> I'll have a closer look at this and see how to get it to work with
+> pKVM.
 
