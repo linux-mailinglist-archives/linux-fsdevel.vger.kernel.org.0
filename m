@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-2005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052CD7E14E9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 17:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628367E14DD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 17:35:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA0D1F214F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 16:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE225280F74
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 16:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20EC1A598;
-	Sun,  5 Nov 2023 16:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED22168BB;
+	Sun,  5 Nov 2023 16:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5pZ/9ig"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FmjMQAvx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FF81946C
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 16:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B10168AD
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 16:32:43 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693FCD57
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 08:32:34 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 075F610DD
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 08:32:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699201953;
+	s=mimecast20190719; t=1699201961;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AdANIEnF562apfJyOTMYsmSKgc8hkZrlNovbg28IThg=;
-	b=R5pZ/9ignXFJw9IrQX73JH5wWSJ5tg6G37ri1azCerYc/L6XtucpXO03iFW5cLxUbGeavr
-	W5mdh8FmxGx+1z/CjGCesmBJQYoWYrkGVRtC4mB/nD2w04yOMPQezhNQ0y8M9MVtncZBx4
-	fYkIwu2YH65hqA3rLQlIcPUPcztr3p8=
+	bh=QDV7FR51iWOMltM/VmsXZPQKZgkpdKCmFVnuH3pv968=;
+	b=FmjMQAvxf/6jS4qTMoFlscDZVHrY+4kTBkNSrSmtuwpHTO8KY2ApWY2/Mv32Klzoq7ymJa
+	rc7K0DGm3e+dmcL8ArEWl0LtsU4fUyGhfIC6vF33yiDCiJm++mB8wJovD1od/TY7xsLLX6
+	isCfxPMcos0jPuKqSfjVi7Yv+Ioy+IM=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-c8LRdjnxO_20IIX1RMc9ZA-1; Sun,
- 05 Nov 2023 11:32:32 -0500
-X-MC-Unique: c8LRdjnxO_20IIX1RMc9ZA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-219-nShYWNVxMUWCchNAK9cRGw-1; Sun,
+ 05 Nov 2023 11:32:39 -0500
+X-MC-Unique: nShYWNVxMUWCchNAK9cRGw-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3DB2738117F4;
-	Sun,  5 Nov 2023 16:32:30 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5163538117F2;
+	Sun,  5 Nov 2023 16:32:37 +0000 (UTC)
 Received: from avogadro.redhat.com (unknown [10.39.192.93])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4E1F52166B26;
-	Sun,  5 Nov 2023 16:32:23 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 88C082166B26;
+	Sun,  5 Nov 2023 16:32:30 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: Paolo Bonzini <pbonzini@redhat.com>,
 	Marc Zyngier <maz@kernel.org>,
@@ -93,9 +93,9 @@ Cc: kvm@vger.kernel.org,
 	Liam Merwick <liam.merwick@oracle.com>,
 	Isaku Yamahata <isaku.yamahata@gmail.com>,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 13/34] mm: Add AS_UNMOVABLE to mark mapping as completely unmovable
-Date: Sun,  5 Nov 2023 17:30:16 +0100
-Message-ID: <20231105163040.14904-14-pbonzini@redhat.com>
+Subject: [PATCH 14/34] fs: Rename anon_inode_getfile_secure() and anon_inode_getfd_secure()
+Date: Sun,  5 Nov 2023 17:30:17 +0100
+Message-ID: <20231105163040.14904-15-pbonzini@redhat.com>
 In-Reply-To: <20231105163040.14904-1-pbonzini@redhat.com>
 References: <20231105163040.14904-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -108,159 +108,215 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-From: Sean Christopherson <seanjc@google.com>
+The call to the inode_init_security_anon() LSM hook is not the sole
+reason to use anon_inode_getfile_secure() or anon_inode_getfd_secure().
+For example, the functions also allow one to create a file with non-zero
+size, without needing a full-blown filesystem.  In this case, you don't
+need a "secure" version, just unique inodes; the current name of the
+functions is confusing and does not explain well the difference with
+the more "standard" anon_inode_getfile() and anon_inode_getfd().
 
-Add an "unmovable" flag for mappings that cannot be migrated under any
-circumstance.  KVM will use the flag for its upcoming GUEST_MEMFD support,
-which will not support compaction/migration, at least not in the
-foreseeable future.
+Of course, there is another side of the coin; neither io_uring nor
+userfaultfd strictly speaking need distinct inodes, and it is not
+that clear anymore that anon_inode_create_get{file,fd}() allow the LSM
+to intercept and block the inode's creation.  If one was so inclined,
+anon_inode_getfile_secure() and anon_inode_getfd_secure() could be kept,
+using the shared inode or a new one depending on CONFIG_SECURITY.
+However, this is probably overkill, and potentially a cause of bugs in
+different configurations.  Therefore, just add a comment to io_uring
+and userfaultfd explaining the choice of the function.
 
-Test AS_UNMOVABLE under folio lock as already done for the async
-compaction/dirty folio case, as the mapping can be removed by truncation
-while compaction is running.  To avoid having to lock every folio with a
-mapping, assume/require that unmovable mappings are also unevictable, and
-have mapping_set_unmovable() also set AS_UNEVICTABLE.
+While at it, remove the export for what is now anon_inode_create_getfd().
+There is no in-tree module that uses it, and the old name is gone anyway.
+If anybody actually needs the symbol, they can ask or they can just use
+anon_inode_create_getfile(), which will be exported very soon for use
+in KVM.
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Co-developed-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
-Message-Id: <20231027182217.3615211-15-seanjc@google.com>
+Suggested-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- include/linux/pagemap.h | 19 +++++++++++++++++-
- mm/compaction.c         | 43 +++++++++++++++++++++++++++++------------
- mm/migrate.c            |  2 ++
- 3 files changed, 51 insertions(+), 13 deletions(-)
+ fs/anon_inodes.c            | 46 +++++++++++++++++++++++--------------
+ fs/userfaultfd.c            |  5 ++--
+ include/linux/anon_inodes.h |  4 ++--
+ io_uring/io_uring.c         |  3 ++-
+ 4 files changed, 36 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 351c3b7f93a1..82c9bf506b79 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -203,7 +203,8 @@ enum mapping_flags {
- 	/* writeback related tags are not used */
- 	AS_NO_WRITEBACK_TAGS = 5,
- 	AS_LARGE_FOLIO_SUPPORT = 6,
--	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
-+	AS_RELEASE_ALWAYS = 7,	/* Call ->release_folio(), even if no private data */
-+	AS_UNMOVABLE	= 8,	/* The mapping cannot be moved, ever */
- };
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 24192a7667ed..3d4a27f8b4fe 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -79,7 +79,7 @@ static struct file *__anon_inode_getfile(const char *name,
+ 					 const struct file_operations *fops,
+ 					 void *priv, int flags,
+ 					 const struct inode *context_inode,
+-					 bool secure)
++					 bool make_inode)
+ {
+ 	struct inode *inode;
+ 	struct file *file;
+@@ -87,7 +87,7 @@ static struct file *__anon_inode_getfile(const char *name,
+ 	if (fops->owner && !try_module_get(fops->owner))
+ 		return ERR_PTR(-ENOENT);
+ 
+-	if (secure) {
++	if (make_inode) {
+ 		inode =	anon_inode_make_secure_inode(name, context_inode);
+ 		if (IS_ERR(inode)) {
+ 			file = ERR_CAST(inode);
+@@ -149,13 +149,10 @@ struct file *anon_inode_getfile(const char *name,
+ EXPORT_SYMBOL_GPL(anon_inode_getfile);
  
  /**
-@@ -289,6 +290,22 @@ static inline void mapping_clear_release_always(struct address_space *mapping)
- 	clear_bit(AS_RELEASE_ALWAYS, &mapping->flags);
- }
- 
-+static inline void mapping_set_unmovable(struct address_space *mapping)
-+{
-+	/*
-+	 * It's expected unmovable mappings are also unevictable. Compaction
-+	 * migrate scanner (isolate_migratepages_block()) relies on this to
-+	 * reduce page locking.
-+	 */
-+	set_bit(AS_UNEVICTABLE, &mapping->flags);
-+	set_bit(AS_UNMOVABLE, &mapping->flags);
-+}
-+
-+static inline bool mapping_unmovable(struct address_space *mapping)
-+{
-+	return test_bit(AS_UNMOVABLE, &mapping->flags);
-+}
-+
- static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+- * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
++ * anon_inode_create_getfile - Like anon_inode_getfile(), but creates a new
+  *                             !S_PRIVATE anon inode rather than reuse the
+  *                             singleton anon inode and calls the
+- *                             inode_init_security_anon() LSM hook.  This
+- *                             allows for both the inode to have its own
+- *                             security context and for the LSM to enforce
+- *                             policy on the inode's creation.
++ *                             inode_init_security_anon() LSM hook.
+  *
+  * @name:    [in]    name of the "class" of the new file
+  * @fops:    [in]    file operations for the new file
+@@ -164,11 +161,19 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+  * @context_inode:
+  *           [in]    the logical relationship with the new inode (optional)
+  *
++ * Create a new anonymous inode and file pair.  This can be done for two
++ * reasons:
++ * - for the inode to have its own security context, so that LSMs can enforce
++ *   policy on the inode's creation;
++ * - if the caller needs a unique inode, for example in order to customize
++ *   the size returned by fstat()
++ *
+  * The LSM may use @context_inode in inode_init_security_anon(), but a
+- * reference to it is not held.  Returns the newly created file* or an error
+- * pointer.  See the anon_inode_getfile() documentation for more information.
++ * reference to it is not held.
++ *
++ * Returns the newly created file* or an error pointer.
+  */
+-struct file *anon_inode_getfile_secure(const char *name,
++struct file *anon_inode_create_getfile(const char *name,
+ 				       const struct file_operations *fops,
+ 				       void *priv, int flags,
+ 				       const struct inode *context_inode)
+@@ -181,7 +186,7 @@ static int __anon_inode_getfd(const char *name,
+ 			      const struct file_operations *fops,
+ 			      void *priv, int flags,
+ 			      const struct inode *context_inode,
+-			      bool secure)
++			      bool make_inode)
  {
- 	return mapping->gfp_mask;
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 38c8d216c6a3..12b828aed7c8 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -883,6 +883,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 	int error, fd;
+ 	struct file *file;
+@@ -192,7 +197,7 @@ static int __anon_inode_getfd(const char *name,
+ 	fd = error;
  
- 	/* Time to isolate some pages for migration */
- 	for (; low_pfn < end_pfn; low_pfn++) {
-+		bool is_dirty, is_unevictable;
+ 	file = __anon_inode_getfile(name, fops, priv, flags, context_inode,
+-				    secure);
++				    make_inode);
+ 	if (IS_ERR(file)) {
+ 		error = PTR_ERR(file);
+ 		goto err_put_unused_fd;
+@@ -231,10 +236,9 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
  
- 		if (skip_on_failure && low_pfn >= next_skip_pfn) {
- 			/*
-@@ -1080,8 +1081,10 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		if (!folio_test_lru(folio))
- 			goto isolate_fail_put;
+ /**
+- * anon_inode_getfd_secure - Like anon_inode_getfd(), but creates a new
++ * anon_inode_create_getfd - Like anon_inode_getfd(), but creates a new
+  * !S_PRIVATE anon inode rather than reuse the singleton anon inode, and calls
+- * the inode_init_security_anon() LSM hook. This allows the inode to have its
+- * own security context and for a LSM to reject creation of the inode.
++ * the inode_init_security_anon() LSM hook.
+  *
+  * @name:    [in]    name of the "class" of the new file
+  * @fops:    [in]    file operations for the new file
+@@ -243,16 +247,24 @@ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+  * @context_inode:
+  *           [in]    the logical relationship with the new inode (optional)
+  *
++ * Create a new anonymous inode and file pair.  This can be done for two
++ * reasons:
++ * - for the inode to have its own security context, so that LSMs can enforce
++ *   policy on the inode's creation;
++ * - if the caller needs a unique inode, for example in order to customize
++ *   the size returned by fstat()
++ *
+  * The LSM may use @context_inode in inode_init_security_anon(), but a
+  * reference to it is not held.
++ *
++ * Returns a newly created file descriptor or an error code.
+  */
+-int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
++int anon_inode_create_getfd(const char *name, const struct file_operations *fops,
+ 			    void *priv, int flags,
+ 			    const struct inode *context_inode)
+ {
+ 	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
+ }
+-EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
  
-+		is_unevictable = folio_test_unevictable(folio);
-+
- 		/* Compaction might skip unevictable pages but CMA takes them */
--		if (!(mode & ISOLATE_UNEVICTABLE) && folio_test_unevictable(folio))
-+		if (!(mode & ISOLATE_UNEVICTABLE) && is_unevictable)
- 			goto isolate_fail_put;
+ static int __init anon_inode_init(void)
+ {
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 56eaae9dac1a..7a1cf8bab5eb 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1033,7 +1033,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+ {
+ 	int fd;
  
- 		/*
-@@ -1093,26 +1096,42 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_writeback(folio))
- 			goto isolate_fail_put;
+-	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
++	fd = anon_inode_create_getfd("[userfaultfd]", &userfaultfd_fops, new,
+ 			O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+ 	if (fd < 0)
+ 		return fd;
+@@ -2205,7 +2205,8 @@ static int new_userfaultfd(int flags)
+ 	/* prevent the mm struct to be freed */
+ 	mmgrab(ctx->mm);
  
--		if ((mode & ISOLATE_ASYNC_MIGRATE) && folio_test_dirty(folio)) {
--			bool migrate_dirty;
-+		is_dirty = folio_test_dirty(folio);
-+
-+		if (((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) ||
-+		    (mapping && is_unevictable)) {
-+			bool migrate_dirty = true;
-+			bool is_unmovable;
+-	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
++	/* Create a new inode so that the LSM can block the creation.  */
++	fd = anon_inode_create_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
+ 			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+ 	if (fd < 0) {
+ 		mmdrop(ctx->mm);
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index 5deaddbd7927..93a5f16d03f3 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -15,13 +15,13 @@ struct inode;
+ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags);
+-struct file *anon_inode_getfile_secure(const char *name,
++struct file *anon_inode_create_getfile(const char *name,
+ 				       const struct file_operations *fops,
+ 				       void *priv, int flags,
+ 				       const struct inode *context_inode);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
+-int anon_inode_getfd_secure(const char *name,
++int anon_inode_create_getfd(const char *name,
+ 			    const struct file_operations *fops,
+ 			    void *priv, int flags,
+ 			    const struct inode *context_inode);
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 8d1bc6cdfe71..22b98f47bb28 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3835,7 +3835,8 @@ static struct file *io_uring_get_file(struct io_ring_ctx *ctx)
+ 		return ERR_PTR(ret);
+ #endif
  
- 			/*
- 			 * Only folios without mappings or that have
--			 * a ->migrate_folio callback are possible to
--			 * migrate without blocking.  However, we may
--			 * be racing with truncation, which can free
--			 * the mapping.  Truncation holds the folio lock
--			 * until after the folio is removed from the page
--			 * cache so holding it ourselves is sufficient.
-+			 * a ->migrate_folio callback are possible to migrate
-+			 * without blocking.
-+			 *
-+			 * Folios from unmovable mappings are not migratable.
-+			 *
-+			 * However, we can be racing with truncation, which can
-+			 * free the mapping that we need to check. Truncation
-+			 * holds the folio lock until after the folio is removed
-+			 * from the page so holding it ourselves is sufficient.
-+			 *
-+			 * To avoid locking the folio just to check unmovable,
-+			 * assume every unmovable folio is also unevictable,
-+			 * which is a cheaper test.  If our assumption goes
-+			 * wrong, it's not a correctness bug, just potentially
-+			 * wasted cycles.
- 			 */
- 			if (!folio_trylock(folio))
- 				goto isolate_fail_put;
- 
- 			mapping = folio_mapping(folio);
--			migrate_dirty = !mapping ||
--					mapping->a_ops->migrate_folio;
-+			if ((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) {
-+				migrate_dirty = !mapping ||
-+						mapping->a_ops->migrate_folio;
-+			}
-+			is_unmovable = mapping && mapping_unmovable(mapping);
- 			folio_unlock(folio);
--			if (!migrate_dirty)
-+			if (!migrate_dirty || is_unmovable)
- 				goto isolate_fail_put;
- 		}
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 06086dc9da28..60f2ff6b36aa 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -956,6 +956,8 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
- 
- 		if (!mapping)
- 			rc = migrate_folio(mapping, dst, src, mode);
-+		else if (mapping_unmovable(mapping))
-+			rc = -EOPNOTSUPP;
- 		else if (mapping->a_ops->migrate_folio)
- 			/*
- 			 * Most folios have a mapping and most filesystems
+-	file = anon_inode_getfile_secure("[io_uring]", &io_uring_fops, ctx,
++	/* Create a new inode so that the LSM can block the creation.  */
++	file = anon_inode_create_getfile("[io_uring]", &io_uring_fops, ctx,
+ 					 O_RDWR | O_CLOEXEC, NULL);
+ #if defined(CONFIG_UNIX)
+ 	if (IS_ERR(file)) {
 -- 
 2.39.1
 
