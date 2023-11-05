@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-2028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2257E1532
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 17:40:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BAB7E1529
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 17:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413C21C20993
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 16:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F301F2169C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Nov 2023 16:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02DB171DC;
-	Sun,  5 Nov 2023 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1DD25113;
+	Sun,  5 Nov 2023 16:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fltI8HUf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ipLaO9iW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1EB168D5
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 16:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DD7156F2
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 16:35:36 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E596110D4
-	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 08:35:07 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59BE22737
+	for <linux-fsdevel@vger.kernel.org>; Sun,  5 Nov 2023 08:35:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699202106;
+	s=mimecast20190719; t=1699202111;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=spqhuF0PZGaMSdHDZ1KRxocAKbjvl7sJJnsJWiVNP2k=;
-	b=fltI8HUfCAsXElWB36yYylcKfnHVz2RBks7ZtvpZrtkwS1lQhbywKWkKELK5u0D/hTR+2W
-	4DUmeVFE5aAygN+dwqDZe5E08OejZwY9Go0bd9Yq8PsKUiFwwkut0T7G/LTCDWVA389rtn
-	j4TWabgJlgGNsP6opR6VTKCilANflDY=
+	bh=/2lNQXYYLsrbLYVTniaVgwqPe8IQbGXrUlIvAzks0mI=;
+	b=ipLaO9iWdqc/5bvtOvzp3Thhh6DBrA0W0VdMiNj2TF0GEzvMBDta20gGUABLJWeil5dAMf
+	WSzMajORiFLY282TtKHuBZ/L6HVaYc859S5wvxwAHZyL4WyViTUEeCahzraVEgrxneAdWE
+	e2A8hHd0CLgSXGayA6VLQE0x7L/C4sE=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-9xnWxafYO26IbHoplvKORA-1; Sun, 05 Nov 2023 11:34:58 -0500
-X-MC-Unique: 9xnWxafYO26IbHoplvKORA-1
+ us-mta-623-PZYekO_bNTiMZxiF_ZfE-g-1; Sun, 05 Nov 2023 11:35:05 -0500
+X-MC-Unique: PZYekO_bNTiMZxiF_ZfE-g-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 39603810FC1;
-	Sun,  5 Nov 2023 16:34:56 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B902180C346;
+	Sun,  5 Nov 2023 16:35:03 +0000 (UTC)
 Received: from avogadro.redhat.com (unknown [10.39.192.93])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5ED902166B26;
-	Sun,  5 Nov 2023 16:34:48 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 960692166B26;
+	Sun,  5 Nov 2023 16:34:56 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: Paolo Bonzini <pbonzini@redhat.com>,
 	Marc Zyngier <maz@kernel.org>,
@@ -93,9 +93,9 @@ Cc: kvm@vger.kernel.org,
 	Liam Merwick <liam.merwick@oracle.com>,
 	Isaku Yamahata <isaku.yamahata@gmail.com>,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 32/34] KVM: selftests: Add basic selftest for guest_memfd()
-Date: Sun,  5 Nov 2023 17:30:35 +0100
-Message-ID: <20231105163040.14904-33-pbonzini@redhat.com>
+Subject: [PATCH 33/34] KVM: selftests: Test KVM exit behavior for private memory/access
+Date: Sun,  5 Nov 2023 17:30:36 +0100
+Message-ID: <20231105163040.14904-34-pbonzini@redhat.com>
 In-Reply-To: <20231105163040.14904-1-pbonzini@redhat.com>
 References: <20231105163040.14904-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -108,257 +108,168 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+From: Ackerley Tng <ackerleytng@google.com>
 
-Add a selftest to verify the basic functionality of guest_memfd():
+"Testing private access when memslot gets deleted" tests the behavior
+of KVM when a private memslot gets deleted while the VM is using the
+private memslot. When KVM looks up the deleted (slot = NULL) memslot,
+KVM should exit to userspace with KVM_EXIT_MEMORY_FAULT.
 
-+ file descriptor created with the guest_memfd() ioctl does not allow
-  read/write/mmap operations
-+ file size and block size as returned from fstat are as expected
-+ fallocate on the fd checks that offset/length on
-  fallocate(FALLOC_FL_PUNCH_HOLE) should be page aligned
-+ invalid inputs (misaligned size, invalid flags) are rejected
-+ file size and inode are unique (the innocuous-sounding
-  anon_inode_getfile() backs all files with a single inode...)
+In the second test, upon a private access to non-private memslot, KVM
+should also exit to userspace with KVM_EXIT_MEMORY_FAULT.
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Co-developed-by: Ackerley Tng <ackerleytng@google.com>
+Intentionally don't take a requirement on KVM_CAP_GUEST_MEMFD,
+KVM_CAP_MEMORY_FAULT_INFO, KVM_MEMORY_ATTRIBUTE_PRIVATE, etc., as it's a
+KVM bug to advertise KVM_X86_SW_PROTECTED_VM without its prerequisites.
+
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Co-developed-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
+[sean: call out the similarities with set_memory_region_test]
 Signed-off-by: Sean Christopherson <seanjc@google.com>
-Message-Id: <20231027182217.3615211-35-seanjc@google.com>
+Message-Id: <20231027182217.3615211-36-seanjc@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
  tools/testing/selftests/kvm/Makefile          |   1 +
- .../testing/selftests/kvm/guest_memfd_test.c  | 206 ++++++++++++++++++
- 2 files changed, 207 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/guest_memfd_test.c
+ .../kvm/x86_64/private_mem_kvm_exits_test.c   | 120 ++++++++++++++++++
+ 2 files changed, 121 insertions(+)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
 
 diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index ecdea5e7afa8..fd3b30a4ca7b 100644
+index fd3b30a4ca7b..69ce8e06b3a3 100644
 --- a/tools/testing/selftests/kvm/Makefile
 +++ b/tools/testing/selftests/kvm/Makefile
-@@ -134,6 +134,7 @@ TEST_GEN_PROGS_x86_64 += access_tracking_perf_test
- TEST_GEN_PROGS_x86_64 += demand_paging_test
- TEST_GEN_PROGS_x86_64 += dirty_log_test
- TEST_GEN_PROGS_x86_64 += dirty_log_perf_test
-+TEST_GEN_PROGS_x86_64 += guest_memfd_test
- TEST_GEN_PROGS_x86_64 += guest_print_test
- TEST_GEN_PROGS_x86_64 += hardware_disable_test
- TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -92,6 +92,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/nested_exceptions_test
+ TEST_GEN_PROGS_x86_64 += x86_64/platform_info_test
+ TEST_GEN_PROGS_x86_64 += x86_64/pmu_event_filter_test
+ TEST_GEN_PROGS_x86_64 += x86_64/private_mem_conversions_test
++TEST_GEN_PROGS_x86_64 += x86_64/private_mem_kvm_exits_test
+ TEST_GEN_PROGS_x86_64 += x86_64/set_boot_cpu_id
+ TEST_GEN_PROGS_x86_64 += x86_64/set_sregs_test
+ TEST_GEN_PROGS_x86_64 += x86_64/smaller_maxphyaddr_emulation_test
+diff --git a/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
 new file mode 100644
-index 000000000000..ea0ae7e25330
+index 000000000000..2f02f6128482
 --- /dev/null
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -0,0 +1,206 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright Intel Corporation, 2023
-+ *
-+ * Author: Chao Peng <chao.p.peng@linux.intel.com>
++ * Copyright (C) 2022, Google LLC.
 + */
++#include <linux/kvm.h>
++#include <pthread.h>
++#include <stdint.h>
 +
-+#define _GNU_SOURCE
++#include "kvm_util.h"
++#include "processor.h"
 +#include "test_util.h"
-+#include "kvm_util_base.h"
-+#include <linux/bitmap.h>
-+#include <linux/falloc.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
 +
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdio.h>
-+#include <fcntl.h>
++/* Arbitrarily selected to avoid overlaps with anything else */
++#define EXITS_TEST_GVA 0xc0000000
++#define EXITS_TEST_GPA EXITS_TEST_GVA
++#define EXITS_TEST_NPAGES 1
++#define EXITS_TEST_SIZE (EXITS_TEST_NPAGES * PAGE_SIZE)
++#define EXITS_TEST_SLOT 10
 +
-+static void test_file_read_write(int fd)
++static uint64_t guest_repeatedly_read(void)
 +{
-+	char buf[64];
++	volatile uint64_t value;
 +
-+	TEST_ASSERT(read(fd, buf, sizeof(buf)) < 0,
-+		    "read on a guest_mem fd should fail");
-+	TEST_ASSERT(write(fd, buf, sizeof(buf)) < 0,
-+		    "write on a guest_mem fd should fail");
-+	TEST_ASSERT(pread(fd, buf, sizeof(buf), 0) < 0,
-+		    "pread on a guest_mem fd should fail");
-+	TEST_ASSERT(pwrite(fd, buf, sizeof(buf), 0) < 0,
-+		    "pwrite on a guest_mem fd should fail");
++	while (true)
++		value = *((uint64_t *) EXITS_TEST_GVA);
++
++	return value;
 +}
 +
-+static void test_mmap(int fd, size_t page_size)
++static uint32_t run_vcpu_get_exit_reason(struct kvm_vcpu *vcpu)
 +{
-+	char *mem;
++	int r;
 +
-+	mem = mmap(NULL, page_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT_EQ(mem, MAP_FAILED);
-+}
-+
-+static void test_file_size(int fd, size_t page_size, size_t total_size)
-+{
-+	struct stat sb;
-+	int ret;
-+
-+	ret = fstat(fd, &sb);
-+	TEST_ASSERT(!ret, "fstat should succeed");
-+	TEST_ASSERT_EQ(sb.st_size, total_size);
-+	TEST_ASSERT_EQ(sb.st_blksize, page_size);
-+}
-+
-+static void test_fallocate(int fd, size_t page_size, size_t total_size)
-+{
-+	int ret;
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, 0, total_size);
-+	TEST_ASSERT(!ret, "fallocate with aligned offset and size should succeed");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			page_size - 1, page_size);
-+	TEST_ASSERT(ret, "fallocate with unaligned offset should fail");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size, page_size);
-+	TEST_ASSERT(ret, "fallocate beginning at total_size should fail");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, total_size + page_size, page_size);
-+	TEST_ASSERT(ret, "fallocate beginning after total_size should fail");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			total_size, page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) at total_size should succeed");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			total_size + page_size, page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) after total_size should succeed");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			page_size, page_size - 1);
-+	TEST_ASSERT(ret, "fallocate with unaligned size should fail");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			page_size, page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) with aligned offset and size should succeed");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE, page_size, page_size);
-+	TEST_ASSERT(!ret, "fallocate to restore punched hole should succeed");
-+}
-+
-+static void test_invalid_punch_hole(int fd, size_t page_size, size_t total_size)
-+{
-+	struct {
-+		off_t offset;
-+		off_t len;
-+	} testcases[] = {
-+		{0, 1},
-+		{0, page_size - 1},
-+		{0, page_size + 1},
-+
-+		{1, 1},
-+		{1, page_size - 1},
-+		{1, page_size},
-+		{1, page_size + 1},
-+
-+		{page_size, 1},
-+		{page_size, page_size - 1},
-+		{page_size, page_size + 1},
-+	};
-+	int ret, i;
-+
-+	for (i = 0; i < ARRAY_SIZE(testcases); i++) {
-+		ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+				testcases[i].offset, testcases[i].len);
-+		TEST_ASSERT(ret == -1 && errno == EINVAL,
-+			    "PUNCH_HOLE with !PAGE_SIZE offset (%lx) and/or length (%lx) should fail",
-+			    testcases[i].offset, testcases[i].len);
++	r = _vcpu_run(vcpu);
++	if (r) {
++		TEST_ASSERT(errno == EFAULT, KVM_IOCTL_ERROR(KVM_RUN, r));
++		TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_MEMORY_FAULT);
 +	}
++	return vcpu->run->exit_reason;
 +}
 +
-+static void test_create_guest_memfd_invalid(struct kvm_vm *vm)
++const struct vm_shape protected_vm_shape = {
++	.mode = VM_MODE_DEFAULT,
++	.type = KVM_X86_SW_PROTECTED_VM,
++};
++
++static void test_private_access_memslot_deleted(void)
 +{
-+	size_t page_size = getpagesize();
-+	uint64_t flag;
-+	size_t size;
-+	int fd;
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	pthread_t vm_thread;
++	void *thread_return;
++	uint32_t exit_reason;
 +
-+	for (size = 1; size < page_size; size++) {
-+		fd = __vm_create_guest_memfd(vm, size, 0);
-+		TEST_ASSERT(fd == -1 && errno == EINVAL,
-+			    "guest_memfd() with non-page-aligned page size '0x%lx' should fail with EINVAL",
-+			    size);
-+	}
++	vm = vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
++					   guest_repeatedly_read);
 +
-+	for (flag = 1; flag; flag <<= 1) {
-+		uint64_t bit;
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
++				    EXITS_TEST_GPA, EXITS_TEST_SLOT,
++				    EXITS_TEST_NPAGES,
++				    KVM_MEM_GUEST_MEMFD);
 +
-+		fd = __vm_create_guest_memfd(vm, page_size, flag);
-+		TEST_ASSERT(fd == -1 && errno == EINVAL,
-+			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
-+			    flag);
++	virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
 +
-+		for_each_set_bit(bit, &valid_flags, 64) {
-+			fd = __vm_create_guest_memfd(vm, page_size, flag | BIT_ULL(bit));
-+			TEST_ASSERT(fd == -1 && errno == EINVAL,
-+				    "guest_memfd() with flags '0x%llx' should fail with EINVAL",
-+				    flag | BIT_ULL(bit));
-+		}
-+	}
++	/* Request to access page privately */
++	vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
++
++	pthread_create(&vm_thread, NULL,
++		       (void *(*)(void *))run_vcpu_get_exit_reason,
++		       (void *)vcpu);
++
++	vm_mem_region_delete(vm, EXITS_TEST_SLOT);
++
++	pthread_join(vm_thread, &thread_return);
++	exit_reason = (uint32_t)(uint64_t)thread_return;
++
++	TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLAG_PRIVATE);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
++
++	kvm_vm_free(vm);
 +}
 +
-+static void test_create_guest_memfd_multiple(struct kvm_vm *vm)
++static void test_private_access_memslot_not_private(void)
 +{
-+	int fd1, fd2, ret;
-+	struct stat st1, st2;
++	struct kvm_vm *vm;
++	struct kvm_vcpu *vcpu;
++	uint32_t exit_reason;
 +
-+	fd1 = __vm_create_guest_memfd(vm, 4096, 0);
-+	TEST_ASSERT(fd1 != -1, "memfd creation should succeed");
++	vm = vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
++					   guest_repeatedly_read);
 +
-+	ret = fstat(fd1, &st1);
-+	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	TEST_ASSERT(st1.st_size == 4096, "memfd st_size should match requested size");
++	/* Add a non-private memslot (flags = 0) */
++	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
++				    EXITS_TEST_GPA, EXITS_TEST_SLOT,
++				    EXITS_TEST_NPAGES, 0);
 +
-+	fd2 = __vm_create_guest_memfd(vm, 8192, 0);
-+	TEST_ASSERT(fd2 != -1, "memfd creation should succeed");
++	virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
 +
-+	ret = fstat(fd2, &st2);
-+	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	TEST_ASSERT(st2.st_size == 8192, "second memfd st_size should match requested size");
++	/* Request to access page privately */
++	vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
 +
-+	ret = fstat(fd1, &st1);
-+	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-+	TEST_ASSERT(st1.st_size == 4096, "first memfd st_size should still match requested size");
-+	TEST_ASSERT(st1.st_ino != st2.st_ino, "different memfd should have different inode numbers");
++	exit_reason = run_vcpu_get_exit_reason(vcpu);
++
++	TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLAG_PRIVATE);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
++	TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
++
++	kvm_vm_free(vm);
 +}
 +
 +int main(int argc, char *argv[])
 +{
-+	size_t page_size;
-+	size_t total_size;
-+	int fd;
-+	struct kvm_vm *vm;
++	TEST_REQUIRE(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM));
 +
-+	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GUEST_MEMFD));
-+
-+	page_size = getpagesize();
-+	total_size = page_size * 4;
-+
-+	vm = vm_create_barebones();
-+
-+	test_create_guest_memfd_invalid(vm);
-+	test_create_guest_memfd_multiple(vm);
-+
-+	fd = vm_create_guest_memfd(vm, total_size, 0);
-+
-+	test_file_read_write(fd);
-+	test_mmap(fd, page_size);
-+	test_file_size(fd, page_size, total_size);
-+	test_fallocate(fd, page_size, total_size);
-+	test_invalid_punch_hole(fd, page_size, total_size);
-+
-+	close(fd);
++	test_private_access_memslot_deleted();
++	test_private_access_memslot_not_private();
 +}
 -- 
 2.39.1
