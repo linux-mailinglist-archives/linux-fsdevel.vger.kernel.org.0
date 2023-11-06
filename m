@@ -1,70 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-2164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457397E2F73
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:08:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F7C7E2F74
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9DEC280D8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 22:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C7C280DC2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 22:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970102D048;
-	Mon,  6 Nov 2023 22:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2509D2EB0C;
+	Mon,  6 Nov 2023 22:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="oKrfei+Q"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="qbobeG9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A18A2EAFD
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 22:08:37 +0000 (UTC)
-Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D97710A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 14:08:36 -0800 (PST)
-Received: by mail-qk1-x72e.google.com with SMTP id af79cd13be357-7789a4c01easo319647485a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 14:08:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67B12EAFE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 22:08:38 +0000 (UTC)
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D2CC1BC
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 14:08:37 -0800 (PST)
+Received: by mail-ot1-x330.google.com with SMTP id 46e09a7af769-6cd09f51fe0so3178831a34.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 14:08:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699308515; x=1699913315; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4v6mhXlBssXeK8gC3//q54ke4CUoVIyIXdnlt0Fb/8=;
-        b=oKrfei+QD1+rvFIbLMzOQvH9qNH7VjurJE7oHtp/kYrUgdj7f4WOv+6qIzJlFc8RrT
-         +i1MC65kJqJSLMtLzgvIehgm1Xi7Lgm1QWo1FQ5TZAnpQIjZhlNrX1AC3Tc4z3po4hrS
-         pA34CVmavRUlsYVBqKHHyp8SqVt1UQi4BSwwkX8GGHC9DTRlMr7Ne4iU/d+n9ZFQpAyn
-         cee5UtS/0MYTS+FF3seCV5Ds9/EfqfqFY+nyxwxhyTSWcE/xHbIC9BrnKMckxM7RzDfR
-         3sGG/O74L1hgoLaTlz2xrNgihci4Rh5NQWMDAM/s6lu1kOpywT5uPzlmJvUb1TpPUV+g
-         pHOg==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699308516; x=1699913316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tm+FRJ/W+NXgd6Kwdpc/Qv1uQRM6BXRjdtybkaEGYq4=;
+        b=qbobeG9xGxap184SxHyGKgyGq2PgyS6IpoWlojmwYfDuh3dn00WHg4W8ucCbcq2+ug
+         jPPEQQRxoPpmmPkruCwdmTI9bAY4mLVzW3g2y8m/TvZugY5MKdSooovR/zz6D3vfoWEf
+         iCAi20t/6gzW1ymaXBRPfbu1Nv806mksHMgL3soRLo88BEFMNcY/CvIt7jU/E2YuTlPW
+         YbKhIAvYxSSLpYbmjaRDNCvzwKDnth12HlWljgUn4u5kQPSrrfgLmQDAZDa2yyeCdzq6
+         aW1dJXfVN7BO9opBONdYZluLpPrZ2KPhe5U+PLg8LqO5rlj/jeXlBdgPA+YKRR+B2QHi
+         SpLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699308515; x=1699913315;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4v6mhXlBssXeK8gC3//q54ke4CUoVIyIXdnlt0Fb/8=;
-        b=iWpIdIPLMcENtpm4DVjslrZt/d4xo7AU35Emds97/b//g9nNmQCKpc5TUbe1Whrsmr
-         FiU7F4zp8ugu5gWFhJjpOwqKzfOkc0qVd57dfpm5VmqsGtQ+QMq+lFlRgT3gPMDyPDAo
-         DguPbNQgzU+6HqulWIye5Th21L57yXbZIHKavVwx3Kve02NBC/lFf8JTeTogGpiDmQ/0
-         zzU2GfedgQYoJPM84LBt3MOpSmhaMtRKcuMV8E2bpjjGOpRWM71Zl9IwRxwGyGGNwu2+
-         Cv5NJi0dA10TBMznu737tsijt1bylc3HLqaLGFwCQ7e0G+INn2OWDmdtHvndayw9GuGW
-         BhTw==
-X-Gm-Message-State: AOJu0YzIPLcIqTmqsH25xJN/Dn8JyxELgb7d0etiCn6BQsnYuKVCaEOQ
-	XeU95c4mo+vkZRCnJ2BKY76l5w==
-X-Google-Smtp-Source: AGHT+IEejiGAh1aSp3Ki2s2Y/JOESrL7dmQTrLwlC0dssEByaEH5WHNCfHFzOcDp7ImWEAPIwwnv9A==
-X-Received: by 2002:a05:620a:199a:b0:779:eb01:8390 with SMTP id bm26-20020a05620a199a00b00779eb018390mr36637337qkb.49.1699308515386;
-        Mon, 06 Nov 2023 14:08:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699308516; x=1699913316;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tm+FRJ/W+NXgd6Kwdpc/Qv1uQRM6BXRjdtybkaEGYq4=;
+        b=r3y7Dl/sNLij6nd759t81rXnvJkILCUOWC8r28oDeh4WWaYLYZAk/aByGgISyBhZfq
+         LLM4kJ5h1IlPPK9XRwZ/T4f3DFJCqG96xJXv4j8IkINQoW4hGcJyneeC/Fe+Jfkm/R6d
+         g0m++/epibW1dnAmc1mK5tqyMSOdHGQ4peEsFkEE5liUAJo9HUWXNIbIWR3MgS6ZShVL
+         Nnj1MCES8IERKmSoQShDQ9lmBwFqxyZhp6O+oOchEeoWjRu2TEhWFlYIRhnOEPcuq2U6
+         I2dWOyamTBDL2/fyldCvd7xxVQRaHku4fA7s+L7vPas7NVCLT3s7GtjsJK8Jh3KnDpsf
+         knvA==
+X-Gm-Message-State: AOJu0Yxfzy6RKeSzOTf5HiS0Wl290ayg1K7tdvznnxYcXL6ASvYv02aL
+	+LnI7P1YCJ0oEH2AgqQVDl8spUH4aQmUh2SgaqHhlw==
+X-Google-Smtp-Source: AGHT+IE8UYS4BfJoDg85VHDCQdvWtIH0Rgry8aTYWqwQxNAxbD70mCkr6GJphA7w4l+kl1LzcZM44w==
+X-Received: by 2002:a9d:6657:0:b0:6cd:a63:6ed4 with SMTP id q23-20020a9d6657000000b006cd0a636ed4mr28750100otm.14.1699308516501;
+        Mon, 06 Nov 2023 14:08:36 -0800 (PST)
 Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05620a022d00b0077a02cf7949sm3677406qkm.32.2023.11.06.14.08.35
+        by smtp.gmail.com with ESMTPSA id p16-20020ac87410000000b00419732075b4sm3760788qtq.84.2023.11.06.14.08.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 14:08:35 -0800 (PST)
+        Mon, 06 Nov 2023 14:08:36 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-btrfs@vger.kernel.org,
 	kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org
-Subject: [PATCH 00/18] btrfs: convert to the new mount API
-Date: Mon,  6 Nov 2023 17:08:08 -0500
-Message-ID: <cover.1699308010.git.josef@toxicpanda.com>
+Subject: [PATCH 01/18] fs: indicate request originates from old mount api
+Date: Mon,  6 Nov 2023 17:08:09 -0500
+Message-ID: <75912547b45b70df4f5b7d19e2de8d5fda5c8167.1699308010.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <cover.1699308010.git.josef@toxicpanda.com>
+References: <cover.1699308010.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,70 +77,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Christian Brauner <brauner@kernel.org>
 
-These patches convert us to use the new mount API.  Christian tried to do this a
-few months ago, but ran afoul of our preference to have a bunch of small
-changes.  I started this series before I knew he had tried to convert us, so
-there's a fair bit that's different, but I did copy his approach for the remount
-bit.  I've linked to the original patch where I took inspiration, Christian let
-me know if you want some other annotation for credit, I wasn't really sure the
-best way to do that.
+We already communicate to filesystems when a remount request comes from
+the old mount api as some filesystems choose to implement different
+behavior in the new mount api than the old mount api to e.g., take the
+chance to fix significant api bugs. Allow the same for regular mount
+requests.
 
-There are a few preparatory patches in the beginning, and then cleanups at the
-end.  I took each call back one at a time to try and make it as small as
-possible.  The resulting code is less, but the diffstat shows more insertions
-that deletions.  This is because there are some big comment blocks around some
-of the more subtle things that we're doing to hopefully make it more clear.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+ fs/namespace.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-This is currently running through our CI.  I thought it was fine last week but
-we had a bunch of new failures when I finished up the remount behavior.  However
-today I discovered this was a regression in btrfs-progs, and I'm re-running the
-tests with the fixes.  If anything major breaks in the CI I'll resend with
-fixes, but I'm pretty sure these patches will pass without issue.
-
-I utilized __maybe_unused liberally to make sure everything compiled while
-applied.  The only "big" patch is where I went and removed the old API.  If
-requested I can break that up a bit more, but I didn't think it was necessary.
-I did make sure to keep it in its own patch, so the switch to the new mount API
-path only has things we need to support the new mount API, and then the next
-patch removes the old code.  Thanks,
-
-Josef
-
-Christian Brauner (1):
-  fs: indicate request originates from old mount api
-
-Josef Bacik (17):
-  btrfs: split out the mount option validation code into its own helper
-  btrfs: set default compress type at btrfs_init_fs_info time
-  btrfs: move space cache settings into open_ctree
-  btrfs: do not allow free space tree rebuild on extent tree v2
-  btrfs: split out ro->rw and rw->ro helpers into their own functions
-  btrfs: add a NOSPACECACHE mount option flag
-  btrfs: add fs_parameter definitions
-  btrfs: add parse_param callback for the new mount api
-  btrfs: add fs context handling functions
-  btrfs: add reconfigure callback for fs_context
-  btrfs: add get_tree callback for new mount API
-  btrfs: handle the ro->rw transition for mounting different subovls
-  btrfs: switch to the new mount API
-  btrfs: move the device specific mount options to super.c
-  btrfs: remove old mount API code
-  btrfs: move one shot mount option clearing to super.c
-  btrfs: set clear_cache if we use usebackuproot
-
- fs/btrfs/disk-io.c          |   76 +-
- fs/btrfs/disk-io.h          |    1 -
- fs/btrfs/free-space-cache.h |    1 +
- fs/btrfs/fs.h               |   15 +-
- fs/btrfs/super.c            | 2421 ++++++++++++++++++-----------------
- fs/btrfs/super.h            |    5 +-
- fs/btrfs/zoned.c            |   16 +-
- fs/btrfs/zoned.h            |    3 +-
- fs/namespace.c              |   11 +
- 9 files changed, 1316 insertions(+), 1233 deletions(-)
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index e157efc54023..bfc5cff0e196 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2873,7 +2873,12 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 	if (IS_ERR(fc))
+ 		return PTR_ERR(fc);
+ 
++	/*
++	 * Indicate to the filesystem that the remount request is coming
++	 * from the legacy mount system call.
++	 */
+ 	fc->oldapi = true;
++
+ 	err = parse_monolithic_mount_data(fc, data);
+ 	if (!err) {
+ 		down_write(&sb->s_umount);
+@@ -3322,6 +3327,12 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
+ 	if (IS_ERR(fc))
+ 		return PTR_ERR(fc);
+ 
++	/*
++	 * Indicate to the filesystem that the mount request is coming
++	 * from the legacy mount system call.
++	 */
++	fc->oldapi = true;
++
+ 	if (subtype)
+ 		err = vfs_parse_fs_string(fc, "subtype",
+ 					  subtype, strlen(subtype));
 -- 
 2.41.0
 
