@@ -1,126 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-2157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374CA7E2BBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 19:15:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9D67E2C98
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 20:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EC81C20D1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 18:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD48C28165A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 19:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52602C874;
-	Mon,  6 Nov 2023 18:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB4229D15;
+	Mon,  6 Nov 2023 19:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ccdgbUu3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViBPj2pG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6D72C86B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 18:15:44 +0000 (UTC)
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04B3BDF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 10:15:42 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40806e4106dso29423465e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 10:15:42 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AED28E17;
+	Mon,  6 Nov 2023 19:03:20 +0000 (UTC)
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0223BB;
+	Mon,  6 Nov 2023 11:03:18 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9d0b4dfd60dso715669466b.1;
+        Mon, 06 Nov 2023 11:03:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1699294541; x=1699899341; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lf3MJg4rdvAfKEuARU7S/KWx4iZciTo315WH3I2AEME=;
-        b=ccdgbUu3YwsxnibtlQGaK7uyBsVq0iLDknYeaxe2IHcs+iruLaWRcS12GmvaGhuV45
-         QVRz6RJxjfRZWxfiZ+U1CEX/UWOF7nyBNY9G4JLuu91ayWZJi4eOHJ3ACkmGit3M7no0
-         a01vqHQnF6V9ImKFOnopAD/gZ82172cmW0SlOe46pxapzxA/a4EbJsP7j4cC/CWV/q0z
-         Ft4cxJQbXuWOHZ3uuEj9TWsn1YMSn6BUGkv/Gvu8VRB3G/deLiYMgW2GmPWI8gt8Yj+3
-         tOdE/tBOUemfXiKS15MGP5tNHd/kXI4AygwCno2XKI3znAB2P78xNUPcOG1xD2PTyClG
-         inLQ==
+        d=gmail.com; s=20230601; t=1699297397; x=1699902197; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Po8rIN0UE2EVDqSENb5hU9jONiWYxIx8ngSOAiRM/mM=;
+        b=ViBPj2pGMgtXLPfCgAYi0yDHHxrLs5SfbbuIeBSF2w0vkmWFFIYkFCBQXS1zspXWo7
+         CL0YiNlhGfS41sfaDfO/VM9QECNp1O3psBfbY5WQZwkrBvTLVM32wgJOJVpZ8HPi/tCk
+         jv35nIbMfTDt4Gb9azTSc3PyTPZBPKobOs5/DJUUvPAFhyLJ3epLiYveo34iLYcigG83
+         qEIldEFiPbfCN7pwV0ycE3dEqK1w7rth55YyKZ7E84K+EhzWGgVBqmKG30OV4s/RNVsb
+         vKnlXdEU19nLRWErx4VQJoM0AD4Eb8loqHEAGYlOdi0yr+CTEU/sxJAJFEdqd85wuKs1
+         XErA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699294541; x=1699899341;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lf3MJg4rdvAfKEuARU7S/KWx4iZciTo315WH3I2AEME=;
-        b=nqwogtZdDfGTEM/qISrDH7+0TrTBdCg9cISsJ9Zp/we4CMYkuBOU+suWroJpJa84wJ
-         RcsDU4Rscq/DHCidwht+o91vcNADc84Qwaz/ldb2yoKpHuj5A63AOm1BlCpLE4ZOO1LP
-         J+RhZqzbAAmxWhz69Salw8NkoaFFrNwbrOmVcD50Svqvazasg+jRHE+XpwI9vLSSspiT
-         SjCoi+kJ4dwUKRkPB1fjo5s8AO2TlRe75PFajmZpjMWBTJvxdVWPac6uHkMBlA6JKHIc
-         /X3CQzL/gU4RKWbeAw7592A49jvGwqoxQwuDNPxZcyyp6dymS0Ozi7iXcHxD94tA7v65
-         4XtA==
-X-Gm-Message-State: AOJu0Yzp7IUiRnHwaDXkgibK9h1S6CFG7ExQWFStZ6h+JxJqJ3ETyiX0
-	fTFPXJQKoDnxZxvD55ZyXpLGXA==
-X-Google-Smtp-Source: AGHT+IF3fXq7vHAvazsquZcnkPuD9l44U9V8qAOKm8OzrNTAFXUYFTEP0Ky4PYRkfC5cpWBiMweXEw==
-X-Received: by 2002:a05:600c:45c6:b0:405:3924:3cad with SMTP id s6-20020a05600c45c600b0040539243cadmr361508wmo.15.1699294541471;
-        Mon, 06 Nov 2023 10:15:41 -0800 (PST)
-Received: from ?IPV6:2a02:6b6a:b5c7:0:cc4:fc61:ba1d:d46c? ([2a02:6b6a:b5c7:0:cc4:fc61:ba1d:d46c])
-        by smtp.gmail.com with ESMTPSA id v6-20020a05600c444600b0040651505684sm13125607wmn.29.2023.11.06.10.15.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 10:15:40 -0800 (PST)
-Message-ID: <454dbfa1-2120-1e40-2582-d661203decca@bytedance.com>
-Date: Mon, 6 Nov 2023 18:15:39 +0000
+        d=1e100.net; s=20230601; t=1699297397; x=1699902197;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Po8rIN0UE2EVDqSENb5hU9jONiWYxIx8ngSOAiRM/mM=;
+        b=h0BCbFCBtRBEDxqH6ySoYTJPKSYI0CWfSh28cZHHhRrK0kXBHX0HRIDUhU4dIe2+zA
+         dqE/SLFmUVHJFTJD5GaVpg8zEH2ReouhbCSPjnNrrTqi/0JHtezBAsOgU2zpOrDi3Ogk
+         ZIjO3m7oOzxT4RrsignSC8vlWwM5Zf8X9PUBH2bLDrn4Ie0KqxK66mUMNyxXLNgiGZJG
+         EJk72x1TZKDQ2aFG+8fEKOiqcRHSxUw29Nxb5nd1CmjeV41FHXJrp6qMd6hFIuzsDWUG
+         3gN+Svoodn/AaDx/UNYPC1pKnHMdp/ZRKQO39BIK3h+RAuKWalhs3Q7mS1zHI5Jze6Sj
+         M28Q==
+X-Gm-Message-State: AOJu0YzOTwgcnJwMAJ92fIJpbuMyJEfxnjQOKr9D1QtzYm+avYdrpKnv
+	+7cPWrtznbVsXTrBH+qaE1Z22Kv/loChW1kJP7U=
+X-Google-Smtp-Source: AGHT+IGBgeJg/bNsD5dwJoZXLqPVs31CF6CY8+BoPeEjCL4gXQFiXcF/I4SXJow0aqntHGmOxou7y6/uTzGpe7ivH3w=
+X-Received: by 2002:a17:907:368a:b0:9c5:1100:9b8c with SMTP id
+ bi10-20020a170907368a00b009c511009b8cmr13952016ejc.56.1699297396812; Mon, 06
+ Nov 2023 11:03:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Conditions for FOLL_LONGTERM mapping in fsdax
-Content-Language: en-US
-From: Usama Arif <usama.arif@bytedance.com>
-To: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
- nvdimm@lists.linux.dev
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Fam Zheng <fam.zheng@bytedance.com>,
- "liangma@liangbit.com" <liangma@liangbit.com>
-References: <172ab047-0dc7-1704-5f30-ec7cd3632e09@bytedance.com>
-In-Reply-To: <172ab047-0dc7-1704-5f30-ec7cd3632e09@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231103190523.6353-10-andrii@kernel.org> <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
+In-Reply-To: <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 6 Nov 2023 11:03:05 -0800
+Message-ID: <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
+Subject: Re: [PATCH v9 9/17] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
+ LSM hooks
+To: Paul Moore <paul@paul-moore.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keescook@chromium.org, 
+	kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Nov 5, 2023 at 9:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Nov  3, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
+> >
+> > Based on upstream discussion ([0]), rework existing
+> > bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and instea=
+d
+> > of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
+> > program struct. Also, we pass bpf_attr union with all the user-provided
+> > arguments for BPF_PROG_LOAD command.  This will give LSMs as much
+> > information as we can basically provide.
+> >
+> > The hook is also BPF token-aware now, and optional bpf_token struct is
+> > passed as a third argument. bpf_prog_load LSM hook is called after
+> > a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux were
+> > allocated and filled out, but right before performing full-fledged BPF
+> > verification step.
+> >
+> > bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
+> > consistency. SELinux code is adjusted to all new names, types, and
+> > signatures.
+> >
+> > Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can be
+> > used by some LSMs to allocate extra security blob, but also by other
+> > LSMs to reject BPF program loading, we need to make sure that
+> > bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc one
+> > *even* if the hook itself returned error. If we don't do that, we run
+> > the risk of leaking memory. This seems to be possible today when
+> > combining SELinux and BPF LSM, as one example, depending on their
+> > relative ordering.
+> >
+> > Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
+> > sleepable LSM hooks list, as they are both executed in sleepable
+> > context. Also drop bpf_prog_load hook from untrusted, as there is no
+> > issue with refcount or anything else anymore, that originally forced us
+> > to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certain =
+LSM
+> > hook arguments as trusted"). We now trigger this hook much later and it
+> > should not be an issue anymore.
+>
+> See my comment below, but it isn't clear to me if this means it is okay
+> to have `BTF_ID(func, bpf_lsm_bpf_prog_free)` called twice.  It probably
+> would be a good idea to get KP, BPF LSM maintainer, to review this change
+> as well to make sure this looks good to him.
+>
+> >   [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.paul=
+@paul-moore.com/
+> >
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  include/linux/lsm_hook_defs.h |  5 +++--
+> >  include/linux/security.h      | 12 +++++++-----
+> >  kernel/bpf/bpf_lsm.c          |  5 +++--
+> >  kernel/bpf/syscall.c          | 25 +++++++++++++------------
+> >  security/security.c           | 25 +++++++++++++++----------
+> >  security/selinux/hooks.c      | 15 ++++++++-------
+> >  6 files changed, 49 insertions(+), 38 deletions(-)
+>
+> ...
+>
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index e14c822f8911..3e956f6302f3 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
+> >  BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
+> >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> >  BTF_ID(func, bpf_lsm_bpf_prog)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_load)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> >  BTF_ID(func, bpf_lsm_bprm_check_security)
+> >  BTF_ID(func, bpf_lsm_bprm_committed_creds)
+> >  BTF_ID(func, bpf_lsm_bprm_committing_creds)
+> > @@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
+> >
+> >  BTF_SET_START(untrusted_lsm_hooks)
+> >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
+> > -BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
+> > -BTF_ID(func, bpf_lsm_bpf_prog_free_security)
+> > +BTF_ID(func, bpf_lsm_bpf_prog_free)
+> >  BTF_ID(func, bpf_lsm_file_alloc_security)
+> >  BTF_ID(func, bpf_lsm_file_free_security)
+> >  #ifdef CONFIG_SECURITY_NETWORK
+>
+> It looks like you're calling the BTF_ID() macro on bpf_lsm_bpf_prog_free
+> twice?  I would have expected a only one macro call for each bpf_prog_loa=
+d
+> and bpf_prog_free, is that a bad assuption?
+>
 
-We wanted to run a VM with a vfio device assigned to it and with its 
-memory-backend-file residing in a persistent memory using fsdax (mounted 
-as ext4). It doesnt currently work with the kernel as 
-vfio_pin_pages_remote ends up requesting pages with FOLL_LONGTERM which 
-is currently not supported. From reading the mailing list, what I 
-understood was that this is to do with not having DMA supported on fsdax 
-due to issues that come up during truncate/hole-punching. But it was 
-solved with [1] by deferring fallocate(), truncate() on a dax mode file 
-while any page/block in the file is under active DMA.
+Yeah, there is no problem having multiple BTF_ID() invocations for the
+same function. BTF_ID() macro (conceptually) emits a relocation that
+will instruct resolve_btfids tool to put an actual BTF ID for the
+specified function in a designated 4-byte slot.
 
-If I remove the check which fails the gup opertion with the below diff, 
-the VM boots and the vfio device works without any issues. If I try to 
-truncate the mem file in fsdax, I can see that the truncate command gets 
-deferred (waits in ext4_break_layouts) and the vfio device keeps working 
-and sending packets without any issues. Just wanted to check what is 
-missing to allow FOLL_LONGTERM gup operations with fsdax? Is it just 
-enough to remove the check? Thanks!
+In this case, we have two separate lists: sleepable_lsm_hooks and
+untrusted_lsm_hooks, so we need two separate BTF_ID() entries for the
+same function. It's expected to be duplicated.
 
+> > diff --git a/security/security.c b/security/security.c
+> > index dcb3e7014f9b..5773d446210e 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *map)
+> >  }
+> >
+> >  /**
+> > - * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
+> > - * @aux: bpf program aux info struct
+> > + * security_bpf_prog_load() - Check if loading of BPF program is allow=
+ed
+> > + * @prog: BPF program object
+> > + * @attr: BPF syscall attributes used to create BPF program
+> > + * @token: BPF token used to grant user access to BPF subsystem
+> >   *
+> > - * Initialize the security field inside bpf program.
+> > + * Do a check when the kernel allocates BPF program object and is abou=
+t to
+> > + * pass it to BPF verifier for additional correctness checks. This is =
+also the
+> > + * point where LSM blob is allocated for LSMs that need them.
+>
+> This is pretty nitpicky, but I'm guessing you may need to make another
+> revision to this patchset, if you do please drop the BPF verifier remark
+> from the comment above.
+>
+> Example: "Perform an access control check when the kernel loads a BPF
+> program and allocates the associated BPF program object.  This hook is
+> also responsibile for allocating any required LSM state for the BPF
+> program."
 
-diff --git a/mm/gup.c b/mm/gup.c
-index eb8d7baf9e4d..f77bb428cf9b 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1055,9 +1055,6 @@ static int check_vma_flags(struct vm_area_struct 
-*vma, unsigned long gup_flags)
-         if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
-                 return -EFAULT;
+Done, no problem.
 
--       if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
--               return -EOPNOTSUPP;
--
-         if (vma_is_secretmem(vma))
-                 return -EFAULT;
-
-
-[1] 
-https://lore.kernel.org/all/152669371377.34337.10697370528066177062.stgit@dwillia2-desk3.amr.corp.intel.com/
-
-Regards,
-Usama
+>
+> >   * Return: Returns 0 on success, error on failure.
+> >   */
+> > -int security_bpf_prog_alloc(struct bpf_prog_aux *aux)
+> > +int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr=
+,
+> > +                        struct bpf_token *token)
+> >  {
+> > -     return call_int_hook(bpf_prog_alloc_security, 0, aux);
+> > +     return call_int_hook(bpf_prog_load, 0, prog, attr, token);
+> >  }
+>
+> --
+> paul-moore.com
 
