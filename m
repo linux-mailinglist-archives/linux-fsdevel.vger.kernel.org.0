@@ -1,256 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-2076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046E87E1FF5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 12:27:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924997E2006
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 12:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3642810E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 11:27:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EFA1C20B09
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 11:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39CB1A58A;
-	Mon,  6 Nov 2023 11:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578C518E24;
+	Mon,  6 Nov 2023 11:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hmug/IcM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ri0o3/ic";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6Fp1sON+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B5218C2E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 11:26:52 +0000 (UTC)
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FCB5BB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 03:26:50 -0800 (PST)
-Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-67131800219so30511136d6.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 03:26:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699270010; x=1699874810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bcdCS6aA0hU/P/1Lxpxkfas8L67FF+zkKmd2vDLbKHk=;
-        b=Hmug/IcMuWLcWO11j6vSFnt2652G6K+eWeDxe18rWZL9wyC+bPveocbxbcN/JlBsAQ
-         zPDyyPmt6RXGDIF7neCe4+h7HYWvB+obEy0KzLPUxK8QR9h+Ofi1I4c+bR3YKRcmGt6Q
-         6gOptmV/oUBNO0l3CxF2JfN3xqVVFHMa+UAt9COnCE4SZfF4CwVHoTdAFD8uxN6DEg13
-         4DeizrP24RbE5SUqomX/sD+ZCBEGQTSGa/vgyLdseUzclzlnePMlmam6vrbOGAoZUtz9
-         RlE1YWY+ZR2mbZbrYpzQZ9jhkpjVPLbXjARg6Z19SoB9039QBQWNDpiCqqGptotmpSot
-         q3Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699270010; x=1699874810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bcdCS6aA0hU/P/1Lxpxkfas8L67FF+zkKmd2vDLbKHk=;
-        b=LXWOJOMIyDld/q7HjS5RZ35Tj7+ebSlIMxLwgpu+0AwVFqg9r4T3X0hMOMAGSzBnXC
-         frLmEGHOu5QZ/ilu+eoB8uTeYOQWb+2WeCD9KtlwN/4LJaYmghdCMlTMn4wSjxpgtqrb
-         2KBRN/ZMpslT6SkRD8MdG1c1ylHR2QRPgK5C89zo/5YEbgKvEVFxvqdGKvxtv9lVosgj
-         KQC6d7buq/mfa//cLoEmUDfscmCoXsjtHCRUJjBP0cZeMu/1rXlu6xLMSs73yDfNxm92
-         +xH2vdgkFMAlmtdVjxNS6ZVDrZDWiEynq5BnA0/sfOAfx9zLEOZz0Ixtmr9uJKlB9+Au
-         OiLw==
-X-Gm-Message-State: AOJu0YwWTEaCJo/QsbHCYoj1ePp0JJY/5A31YIA6J4dtNac8GvosJtX6
-	GMs7SaMCOBP8H0JrrSYSo8oyN7PBlb67bZYPPHispA==
-X-Google-Smtp-Source: AGHT+IFasxLYHHudhBN/+4eIX1OsOhIRfSB2CWnjQO7Y6r4dz1/Ca+R2Pv6YHi7+A5fsQfNYO2/OlOsYvWwG9CsrzMM=
-X-Received: by 2002:a05:6214:2506:b0:658:26d7:72e0 with SMTP id
- gf6-20020a056214250600b0065826d772e0mr20208405qvb.4.1699270009660; Mon, 06
- Nov 2023 03:26:49 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC1518B1B
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 11:30:51 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728C9BB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 03:30:50 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D0FB31F88D;
+	Mon,  6 Nov 2023 11:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1699270248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U9TnOEEjKzfOal4gBX+SxjF4DzFwQ8LPtUZ6pRU65Y8=;
+	b=Ri0o3/ictn2wFknZqf0WpZUPDIMnBfMxVS4hOyPzaMW6Ig2X/FXNjodUKR5IPy0HhewoFj
+	4P0vE5rjbwDYGwbSDG87lPOLmgesumbV41Eqr4qYRRbBLEJJHXZLj/YcI0Umj/iegLFmw8
+	gdRx3pf2wu23uXVbngUCs+WIK1ANK4I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1699270248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U9TnOEEjKzfOal4gBX+SxjF4DzFwQ8LPtUZ6pRU65Y8=;
+	b=6Fp1sON+77O1AgeoI+q3OgtO36Xw/2pmeE/5yEH7pYOmubjc38dGxQZc7Z60t6PM/Dgn16
+	cOdco+zbhgBGXzAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BF9AB138E5;
+	Mon,  6 Nov 2023 11:30:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id o1/ALmjOSGUnMgAAMHmgww
+	(envelope-from <jack@suse.cz>); Mon, 06 Nov 2023 11:30:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 50C9DA07BE; Mon,  6 Nov 2023 12:30:48 +0100 (CET)
+Date: Mon, 6 Nov 2023 12:30:48 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Chandan Babu R <chandanbabu@kernel.org>
+Subject: Re: [PATCH v2 2/2] fs: handle freezing from multiple devices
+Message-ID: <20231106113048.f6qdsfma3scxikbq@quack3>
+References: <20231104-vfs-multi-device-freeze-v2-0-5b5b69626eac@kernel.org>
+ <20231104-vfs-multi-device-freeze-v2-2-5b5b69626eac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-28-seanjc@google.com>
-In-Reply-To: <20231027182217.3615211-28-seanjc@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Mon, 6 Nov 2023 11:26:13 +0000
-Message-ID: <CA+EHjTyjeKymYaJ3kTpVzRFPLKxeDEf9B-DGo7xif_FPN1dFBQ@mail.gmail.com>
-Subject: Re: [PATCH v13 27/35] KVM: selftests: Add helpers to convert guest
- memory b/w private and shared
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
-	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
-	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
-	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
-	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231104-vfs-multi-device-freeze-v2-2-5b5b69626eac@kernel.org>
 
-On Fri, Oct 27, 2023 at 7:23=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> From: Vishal Annapurve <vannapurve@google.com>
->
-> Add helpers to convert memory between private and shared via KVM's
-> memory attributes, as well as helpers to free/allocate guest_memfd memory
-> via fallocate().  Userspace, i.e. tests, is NOT required to do fallocate(=
-)
-> when converting memory, as the attributes are the single source of true.
+On Sat 04-11-23 15:00:13, Christian Brauner wrote:
+> Before [1] freezing a filesystems through the block layer only worked
+> for the main block device as the owning superblock of additional block
+> devices could not be found. Any filesystem that made use of multiple
+> block devices would only be freezable via it's main block device.
+> 
+> For example, consider xfs over device mapper with /dev/dm-0 as main
+> block device and /dev/dm-1 as external log device. Two freeze requests
+> before [1]:
+> 
+> (1) dmsetup suspend /dev/dm-0 on the main block device
+> 
+>     bdev_freeze(dm-0)
+>     -> dm-0->bd_fsfreeze_count++
+>     -> freeze_super(xfs-sb)
+> 
+>     The owning superblock is found and the filesystem gets frozen.
+>     Returns 0.
+> 
+> (2) dmsetup suspend /dev/dm-1 on the log device
+> 
+>     bdev_freeze(dm-1)
+>     -> dm-1->bd_fsfreeze_count++
+> 
+>     The owning superblock isn't found and only the block device freeze
+>     count is incremented. Returns 0.
+> 
+> Two freeze requests after [1]:
+> 
+> (1') dmsetup suspend /dev/dm-0 on the main block device
+> 
+>     bdev_freeze(dm-0)
+>     -> dm-0->bd_fsfreeze_count++
+>     -> freeze_super(xfs-sb)
+> 
+>     The owning superblock is found and the filesystem gets frozen.
+>     Returns 0.
+> 
+> (2') dmsetup suspend /dev/dm-1 on the log device
+> 
+>     bdev_freeze(dm-0)
+>     -> dm-0->bd_fsfreeze_count++
+>     -> freeze_super(xfs-sb)
+> 
+>     The owning superblock is found and the filesystem gets frozen.
+>     Returns -EBUSY.
+> 
+> When (2') is called we initiate a freeze from another block device of
+> the same superblock. So we increment the bd_fsfreeze_count for that
+> additional block device. But we now also find the owning superblock for
+> additional block devices and call freeze_super() again which reports
+> -EBUSY.
+> 
+> This can be reproduced through xfstests via:
+> 
+>     mkfs.xfs -f -m crc=1,reflink=1,rmapbt=1, -i sparse=1 -lsize=1g,logdev=/dev/nvme1n1p4 /dev/nvme1n1p3
+>     mkfs.xfs -f -m crc=1,reflink=1,rmapbt=1, -i sparse=1 -lsize=1g,logdev=/dev/nvme1n1p6 /dev/nvme1n1p5
+> 
+>     FSTYP=xfs
+>     export TEST_DEV=/dev/nvme1n1p3
+>     export TEST_DIR=/mnt/test
+>     export TEST_LOGDEV=/dev/nvme1n1p4
+>     export SCRATCH_DEV=/dev/nvme1n1p5
+>     export SCRATCH_MNT=/mnt/scratch
+>     export SCRATCH_LOGDEV=/dev/nvme1n1p6
+>     export USE_EXTERNAL=yes
+> 
+>     sudo ./check generic/311
+> 
+> Current semantics allow two concurrent freezers: one initiated from
+> userspace via FREEZE_HOLDER_USERSPACE and one initiated from the kernel
+> via FREEZE_HOLDER_KERNEL. If there are multiple concurrent freeze
+> requests from either FREEZE_HOLDER_USERSPACE or FREEZE_HOLDER_KERNEL
+> -EBUSY is returned.
+> 
+> We need to preserve these semantics because as they are uapi via
+> FIFREEZE and FITHAW ioctl()s. IOW, freezes don't nest for FIFREEZE and
+> FITHAW. Other kernels consumers rely on non-nesting freezes as well.
+> 
+> With freezes initiated from the block layer freezes need to nest if the
+> same superblock is frozen via multiple devices. So we need to start
+> counting the number of freeze requests.
+> 
+> If FREEZE_HOLDER_BDEV is passed alongside FREEZE_HOLDER_KERNEL or
+> FREEZE_HOLDER_USERSPACE we allow the caller to nest freeze calls.
 
-true->truth
+FREEZE_HOLDER_BDEV should be FREEZE_MAY_NEST I guess.
 
-> Provide allocate() helpers so that tests can mimic a userspace that frees
-> private memory on conversion, e.g. to prioritize memory usage over
-> performance.
->
-> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  .../selftests/kvm/include/kvm_util_base.h     | 48 +++++++++++++++++++
->  tools/testing/selftests/kvm/lib/kvm_util.c    | 28 +++++++++++
->  2 files changed, 76 insertions(+)
->
-> diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/=
-testing/selftests/kvm/include/kvm_util_base.h
-> index 9f861182c02a..1441fca6c273 100644
-> --- a/tools/testing/selftests/kvm/include/kvm_util_base.h
-> +++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-> @@ -333,6 +333,54 @@ static inline void vm_enable_cap(struct kvm_vm *vm, =
-uint32_t cap, uint64_t arg0)
->         vm_ioctl(vm, KVM_ENABLE_CAP, &enable_cap);
->  }
->
-> +static inline void vm_set_memory_attributes(struct kvm_vm *vm, uint64_t =
-gpa,
-> +                                           uint64_t size, uint64_t attri=
-butes)
-> +{
-> +       struct kvm_memory_attributes attr =3D {
-> +               .attributes =3D attributes,
-> +               .address =3D gpa,
-> +               .size =3D size,
-> +               .flags =3D 0,
-> +       };
-> +
-> +       /*
-> +        * KVM_SET_MEMORY_ATTRIBUTES overwrites _all_ attributes.  These =
-flows
-> +        * need significant enhancements to support multiple attributes.
-> +        */
-> +       TEST_ASSERT(!attributes || attributes =3D=3D KVM_MEMORY_ATTRIBUTE=
-_PRIVATE,
-> +                   "Update me to support multiple attributes!");
-> +
-> +       vm_ioctl(vm, KVM_SET_MEMORY_ATTRIBUTES, &attr);
-> +}
-> +
-> +
-> +static inline void vm_mem_set_private(struct kvm_vm *vm, uint64_t gpa,
-> +                                     uint64_t size)
-> +{
-> +       vm_set_memory_attributes(vm, gpa, size, KVM_MEMORY_ATTRIBUTE_PRIV=
-ATE);
-> +}
-> +
-> +static inline void vm_mem_set_shared(struct kvm_vm *vm, uint64_t gpa,
-> +                                    uint64_t size)
-> +{
-> +       vm_set_memory_attributes(vm, gpa, size, 0);
-> +}
-> +
-> +void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t gpa, uint64_t si=
-ze,
-> +                           bool punch_hole);
-> +
-> +static inline void vm_guest_mem_punch_hole(struct kvm_vm *vm, uint64_t g=
-pa,
-> +                                          uint64_t size)
-> +{
-> +       vm_guest_mem_fallocate(vm, gpa, size, true);
-> +}
-> +
-> +static inline void vm_guest_mem_allocate(struct kvm_vm *vm, uint64_t gpa=
-,
-> +                                        uint64_t size)
-> +{
-> +       vm_guest_mem_fallocate(vm, gpa, size, false);
-> +}
-> +
->  void vm_enable_dirty_ring(struct kvm_vm *vm, uint32_t ring_size);
->  const char *vm_guest_mode_string(uint32_t i);
->
-> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/s=
-elftests/kvm/lib/kvm_util.c
-> index 45050f54701a..a140aee8d0f5 100644
-> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> @@ -1176,6 +1176,34 @@ void vm_mem_region_delete(struct kvm_vm *vm, uint3=
-2_t slot)
->         __vm_mem_region_delete(vm, memslot2region(vm, slot), true);
->  }
->
-> +void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t s=
-ize,
-> +                           bool punch_hole)
-> +{
-> +       const int mode =3D FALLOC_FL_KEEP_SIZE | (punch_hole ? FALLOC_FL_=
-PUNCH_HOLE : 0);
-> +       struct userspace_mem_region *region;
-> +       uint64_t end =3D base + size;
-> +       uint64_t gpa, len;
-> +       off_t fd_offset;
-> +       int ret;
-> +
-> +       for (gpa =3D base; gpa < end; gpa +=3D len) {
-> +               uint64_t offset;
-> +
-> +               region =3D userspace_mem_region_find(vm, gpa, gpa);
-> +               TEST_ASSERT(region && region->region.flags & KVM_MEM_PRIV=
-ATE,
-> +                           "Private memory region not found for GPA 0x%l=
-x", gpa);
-> +
-> +               offset =3D (gpa - region->region.guest_phys_addr);
+> To accommodate the old semantics we split the freeze counter into two
+> counting kernel initiated and userspace initiated freezes separately. We
+> can then also stop recording FREEZE_HOLDER_* in struct sb_writers.
+> 
+> We also simplify freezing by making all concurrent freezers share a
+> single active superblock reference count instead of having separate
+> references for kernel and userspace. I don't see why we would need two
+> active reference counts. Neither FREEZE_HOLDER_KERNEL nor
+> FREEZE_HOLDER_USERSPACE can put the active reference as long as they are
+> concurrent freezers anwyay. That was already true before we allowed
+> nesting freezes.
+> 
+> Survives various fstests runs with different options including the
+> reproducer, online scrub, and online repair, fsfreze, and so on. Also
+> survives blktests.
+> 
+> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+> Link: https://lore.kernel.org/linux-block/87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64
+> Fixes: [1]: bfac4176f2c4 ("bdev: implement freeze and thaw holder operations") # no backport needed
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-nit: why the parentheses?
+Just one more typo fix below. Feel free to add:
 
-> +               fd_offset =3D region->region.guest_memfd_offset + offset;
-> +               len =3D min_t(uint64_t, end - gpa, region->region.memory_=
-size - offset);
-> +
-> +               ret =3D fallocate(region->region.guest_memfd, mode, fd_of=
-fset, len);
-> +               TEST_ASSERT(!ret, "fallocate() failed to %s at %lx (len =
-=3D %lu), fd =3D %d, mode =3D %x, offset =3D %lx\n",
-> +                           punch_hole ? "punch hole" : "allocate", gpa, =
-len,
-> +                           region->region.guest_memfd, mode, fd_offset);
-> +       }
-> +}
-> +
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Nits aside:
+> @@ -1930,6 +2008,13 @@ static int wait_for_partially_frozen(struct super_block *sb)
+>   * userspace can both hold a filesystem frozen.  The filesystem remains frozen
+>   * until there are no kernel or userspace freezes in effect.
+>   *
+> + * A filesystem may hold multiple devices and thus a filesystems may be
+> + * frozen through the block layer via multiple block devices. In this
+> + * case the request is marked as being allowed to nest passig
+							  ^^ passing
 
-Reviewed-by: Fuad Tabba <tabba@google.com>
-Tested-by: Fuad Tabba <tabba@google.com>
-
-Cheers,
-/fuad
-
-
->  /* Returns the size of a vCPU's kvm_run structure. */
->  static int vcpu_mmap_sz(void)
->  {
-> --
-> 2.42.0.820.g83a721a137-goog
->
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
