@@ -1,95 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-2058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DBE7E1DAA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 10:57:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482A27E1DD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 11:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4977728132F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 09:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026B22812B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 10:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD6F171B6;
-	Mon,  6 Nov 2023 09:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B523171C8;
+	Mon,  6 Nov 2023 10:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eU7mwfae"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F94168DB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 09:57:25 +0000 (UTC)
-Received: from out0-206.mail.aliyun.com (out0-206.mail.aliyun.com [140.205.0.206])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416CFA3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 01:57:24 -0800 (PST)
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047209;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VGGZLFo_1699264639;
-Received: from 30.46.227.128(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VGGZLFo_1699264639)
-          by smtp.aliyun-inc.com;
-          Mon, 06 Nov 2023 17:57:20 +0800
-Message-ID: <2a2bf87a-87ba-40d2-8d10-c4960efbd11f@antgroup.com>
-Date: Mon, 06 Nov 2023 17:57:16 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A726168DB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 10:03:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB58C433C7;
+	Mon,  6 Nov 2023 10:03:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699265027;
+	bh=zqSDVGb3DqGgjuM4pK3W4GvqbV/ZeF3XB2qeBZfY3i8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eU7mwfae1zlAXKXyWC7uPN+KKdPz5qxyLroCTLvbV+egcXkSHzsxIMefKPchvvOeK
+	 ZjMngWoD4qKRAq5fdMa+86yJwK6EPe2johr1eW+3J4XjZ6b+9CyIWfEVK3+os9qB0y
+	 Nrf5NSk+/0DjnByO8SQx1Q49xnA67tAUYQV/CLkIE7HzRzOdlMArG2I/bQsVyN3Zmm
+	 v/kmGW7Da+QshN1C1YnJI4dUapKDWmQQ+jmwP1GcxMdgwwnU7ZbwGQOtVntFWPU97T
+	 KkfvVO1L//CpV3Th+PtEcW9vn5BGxt/CofYW8Qh8RrpXDmpGIUnFMReZkuoNMhkbZf
+	 dI+vcGOdJyG4A==
+Date: Mon, 6 Nov 2023 11:03:37 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Message-ID: <20231106-fragment-geweigert-1d80138523e5@brauner>
+References: <20231031-anorak-sammeln-8b1c4264f0db@brauner>
+ <ZUE0CWQWdpGHm81L@infradead.org>
+ <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
+ <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
+ <20231101-neigen-storch-cde3b0671902@brauner>
+ <20231102051349.GA3292886@perftesting>
+ <20231102-schafsfell-denkzettel-08da41113e24@brauner>
+ <ZUUDmu8fTB0hyCQR@infradead.org>
+ <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
+ <ZUibZgoQa9eNRsk4@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] fuse: Introduce sysfs APIs to flush or resend
- pending requests
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org
-References: <20231031144043.68534-1-winters.zc@antgroup.com>
- <CAJfpegtjNj+W1F4j_eBAij_yYLsC9A3=LgNvUymSykHR5EvvoA@mail.gmail.com>
-From: "=?UTF-8?B?6LW15pmo?=" <winters.zc@antgroup.com>
-In-Reply-To: <CAJfpegtjNj+W1F4j_eBAij_yYLsC9A3=LgNvUymSykHR5EvvoA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZUibZgoQa9eNRsk4@infradead.org>
 
-在 2023/11/2 下午11:17, Miklos Szeredi 写道:
-> On Tue, 31 Oct 2023 at 15:41, 赵晨 <winters.zc@antgroup.com> wrote:
->>
->> After the fuse daemon crashes, the fuse mount point becomes inaccessible.
->> In some production environments, a watchdog daemon is used to preserve
->> the FUSE connection's file descriptor (fd). When the FUSE daemon crashes,
->> a new FUSE daemon is restarted and takes over the fd from the watchdog
->> daemon, allowing it to continue providing services.
->>
->> However, if any inflight requests are lost during the crash, the user
->> process becomes stuck as it does not receive any replies.
->>
->> To resolve this issue, this patchset introduces two sysfs APIs that enable
->> flushing or resending these pending requests for recovery. The flush
->> operation ends the pending request and returns an error to the
->> application, allowing the stuck user process to recover. While returning
->> an error may not be suitable for all scenarios, the resend API can be used
->> to resend the these pending requests.
->>
->> When using the resend API, FUSE daemon needs to ensure proper recording
->> and avoidance of processing duplicate non-idempotent requests to prevent
->> potential consistency issues.
+> > I would feel much more comfortable if the two filesystems that expose
+> > these objects give us something like STATX_SUBVOLUME that userspace can
+> > raise in the request mask of statx().
 > 
-> Do we need both the resend and the flush APIs?  I think the flush
-> functionality can easily be implemented with the resend API, no?
+> Except that this doesn't fix any existing code.
+
+But why do we care?
+Current code already does need to know it is on a btrfs subvolume. They
+all know that btrfs subvolumes are special. They will need to know that
+btrfs subvolumes are special in the future even if they were vfsmounts.
+They would likely end up with another kind of confusion because suddenly
+vfsmounts have device numbers that aren't associated with the superblock
+that vfsmount belongs to.
+
+So nothing is really solved by vfsmounts either. The only thing that we
+achieved is that we somehow accommodated that st_dev hack. And that I
+consider nakable.
+
 > 
-> Thanks,
-> Miklos
+> > If userspace requests STATX_SUBVOLUME in the request mask, the two
+> > filesystems raise STATX_SUBVOLUME in the statx result mask and then also
+> > return the _real_ device number of the superblock and stop exposing that
+> > made up device number.
+> 
+> What is a "real" device number?
 
-Thank you for your response, Miklos.
+The device number of the superblock of the btrfs filesystem and not some
+made-up device number.
 
-Yes, it is possible to implement flush functionality using the resend 
-API. However, flush offers additional convenience.
-
-For instance, some fuse daemons that allow discarding requests to 
-prevent user process io-hang but do not want to handle duplicate 
-requests, may require extra effort in persistent record if using resend. 
-In such cases, using the flush API would provide more convenience.
-
-So, based on my understanding, resend is adequate, but flush can offer 
-more convenience. I would like to inquire about your preference 
-regarding the two APIs. Should I do some verification and remove the 
-flush API, and then resend this patchset?
-
-Best Regards,
-Zhao Chen
+I care about not making a btrfs specific problem the vfs's problem by
+hoisting that whole problem space a level up by mapping subvolumes to
+vfsmounts.
 
