@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-2069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7127E1F1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 12:01:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B01F7E1F23
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 12:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B61F1C20B52
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 11:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27BC7281402
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 11:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF6F182BB;
-	Mon,  6 Nov 2023 11:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FC11805E;
+	Mon,  6 Nov 2023 11:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xk/37/Ky"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vYNcYifD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2213D18045
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 11:01:12 +0000 (UTC)
-Received: from mail-qv1-xf33.google.com (mail-qv1-xf33.google.com [IPv6:2607:f8b0:4864:20::f33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C49D6A
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 03:01:10 -0800 (PST)
-Received: by mail-qv1-xf33.google.com with SMTP id 6a1803df08f44-670e7ae4a2eso44726726d6.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 03:01:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7531799F
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 11:02:35 +0000 (UTC)
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EE9BD
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 03:02:32 -0800 (PST)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-5a90d6ab962so50006727b3.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 03:02:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699268470; x=1699873270; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1699268552; x=1699873352; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y/jW8kMjXgRuIy1M2h5sLyMjeudj06HAL2YGYnbzqYU=;
-        b=xk/37/Kyvb3Fg0p+JBiy93aO6/TSLlw3zEi7SR7fM3qJjSqlRhd95iSYJJ2lDYDVO3
-         AqaK1fIN/jWnxkk7MlLY/ewKay9FOvFj6xi1oyv1QQgM/uSq2RQUpATHv5htNPPA9NrS
-         7z9ndrQQo6WCyeIqm8ZrCMgQbX3DmlMKQJiHgcIIjkUcJHcZFs9ih1wPyFZYQ9loAawi
-         JNHFoJbJ85GeIxZ5PRNm76VB9MVf8de+Z+ZN7R8TnbfEEZIilJSJudmj754RaFkmnZ6e
-         n1KnM4uBdrSq7oqu5ArlM5AWYFuH5/XlDp0sLUrQR7AULfOylj81/JGqd2djHuFMAkcE
-         yM1w==
+        bh=V2GJ8/Y90IpmxpdY5rYjfIxqDFVHPJDdAKZ/UZv6WBc=;
+        b=vYNcYifDPP598PI8ch9gsg0/D6zQlCvtxo4xnaAmv4fBAEd2qbBuirTXWg5IE8hpfH
+         LtHI/BJZARdS5opWd+N0g0u+i2LlMo5/aBnmCjyP2IV/WxnBkXmr0PcFeIEMPxbu5YbF
+         WhzEaCkLFxtZmqTJmDxipCXdb4338WocA2daOHgVW2lSr6IC/8HDdprHZgT6OAhepVxi
+         jcUco6+YnH8jYxVP6QO7nFuTB7NpiAD/t60K7W81hKm0Aq2zViYGuefiHn/aEYXXGZWk
+         DJ+gsmhJHo1Fz6VjGvxRJ1HHcIFRrdotH5oSuvwI2ONM9vf3TJXxVzul3L0SPLqVjJ85
+         Msiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699268470; x=1699873270;
+        d=1e100.net; s=20230601; t=1699268552; x=1699873352;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y/jW8kMjXgRuIy1M2h5sLyMjeudj06HAL2YGYnbzqYU=;
-        b=XRD5kOHFwIjPVfNGZk39UL22i3Jh89+h9BZEqJ8tA3srJlx+PbtL9j839SNknBsMjE
-         8aGmfhnoqwLrCg3UBQWhdKe6r/6sdKMoetaqQNs/ieC8gUij5wkxNv22whsEPN1Er2vf
-         LoWBewqL0Bk7f2sgFZtEtuavjkQkzvThwUrinwLdb0eMMYEp6d8A58esATdv0QCSRDLr
-         37qD3EL6/EhrIwSpYIV5dJm3OYyCuZD6uCsXme41uz9rBJzFJTgCfbfOYtuKuQpEzGHQ
-         arR+fblPQIULsJHgkExKyYa2hO6HO84xjbd7k5+hO8fNAUI/1HR1PxG/cxNpJTfwSa8c
-         d1ig==
-X-Gm-Message-State: AOJu0YxP9gxwOBAkQJxTNutHtPCmf75AQx74qnJnEkPrzx0YnY8Yzs0I
-	gyPAcUiSJgdOMkVtTVkC9qC6I1bOlkPeFcEWVgcIsQ==
-X-Google-Smtp-Source: AGHT+IFa+nDsKAaimQq1Ix7n3hwLXHpTpfQZZDdbj5Z1OOw4/lGGeIsJrAK++Ef2UwD8IUCAFdqUvFrr7OPKx30gqD8=
-X-Received: by 2002:ad4:5ccc:0:b0:66d:593f:9a4c with SMTP id
- iu12-20020ad45ccc000000b0066d593f9a4cmr16991977qvb.2.1699268469649; Mon, 06
- Nov 2023 03:01:09 -0800 (PST)
+        bh=V2GJ8/Y90IpmxpdY5rYjfIxqDFVHPJDdAKZ/UZv6WBc=;
+        b=hYBgtky46rfOCLo+itDQi984eP2M5tMbMUmu90vQg4vdT0GX0poAWbXgKlw/3bx8Jz
+         63bXeb+vKKTf6U4A1dZVBLKJtEfrUeNBYJ8k8Z5HF1VgfbBHK5y5kWAIifgbZ3ySw/5H
+         Cu9l6BxyMpj9OmbQv0DHKudbq72Q31zObRSIxzNY4McNPNGkDkk2+h3y0LY1QDbF1koZ
+         zAJk+fcuBr+sC7nDNzjB9g5YS19cJ/s+G9Gkg+q4MDlXPoF5LC0aA+NTLOIJkkVGGR15
+         JKBdHgDNTyttBMwUdZwpAxN3CQjwo6kxe0mHzoE/uQfq3ErZxSIFyB7qZCjjro8Cq16V
+         R3Zw==
+X-Gm-Message-State: AOJu0YxM6LK0tNctqSMm8joo9s/pNAO3WzeeGM9np7lPUPdk5TmtR0It
+	BtZb8Wzvxn6c8NerOc5DAqcMpwrpAhTuWswnDqfPpg==
+X-Google-Smtp-Source: AGHT+IENsSw7a/V4UHxjgeCZCxumLhfZFTIQeh3gjUw+ULtbqWsBt8O3seLfs1J5njILHP4HGiHHO4KXlr48V0F1FV0=
+X-Received: by 2002:a0d:ead2:0:b0:5a2:20ec:40be with SMTP id
+ t201-20020a0dead2000000b005a220ec40bemr12462308ywe.29.1699268551723; Mon, 06
+ Nov 2023 03:02:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231027182217.3615211-1-seanjc@google.com> <20231027182217.3615211-24-seanjc@google.com>
-In-Reply-To: <20231027182217.3615211-24-seanjc@google.com>
+References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-22-pbonzini@redhat.com>
+In-Reply-To: <20231105163040.14904-22-pbonzini@redhat.com>
 From: Fuad Tabba <tabba@google.com>
-Date: Mon, 6 Nov 2023 11:00:33 +0000
-Message-ID: <CA+EHjTwN8BP+7hDveRyx0d+D3CmQN05kHEpLdi2q27jYBuFzAw@mail.gmail.com>
-Subject: Re: [PATCH v13 23/35] KVM: x86: Add support for "protected VMs" that
- can utilize private memory
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+Date: Mon, 6 Nov 2023 11:01:56 +0000
+Message-ID: <CA+EHjTw33hNZPeRZnoxM8snKE=s3T6ebSgOOAKqCyrb3rDPa9g@mail.gmail.com>
+Subject: Re: [PATCH 21/34] KVM: x86: Add support for "protected VMs" that can
+ utilize private memory
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Sean Christopherson <seanjc@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
 	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
@@ -90,15 +90,16 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
 	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
 	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
 	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-
-On Fri, Oct 27, 2023 at 7:23=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Sun, Nov 5, 2023 at 4:33=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com> =
+wrote:
+>
+> From: Sean Christopherson <seanjc@google.com>
 >
 > Add a new x86 VM type, KVM_X86_SW_PROTECTED_VM, to serve as a development
 > and testing vehicle for Confidential (CoCo) VMs, and potentially to even
@@ -110,6 +111,8 @@ com> wrote:
 > difficult to debug, don't support running as nested guests, and require
 > hardware that's isn't universally accessible.  I.e. relying SEV-SNP or TD=
 X
+
+(replied to v13 earlier, sorry)
 
 nit: "that isn't"
 
@@ -126,6 +129,9 @@ Cheers,
 > unique hardware.
 >
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+> Message-Id: <20231027182217.3615211-24-seanjc@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 > ---
 >  Documentation/virt/kvm/api.rst  | 32 ++++++++++++++++++++++++++++++++
 >  arch/x86/include/asm/kvm_host.h | 15 +++++++++------
@@ -139,7 +145,7 @@ Cheers,
 >
 > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.=
 rst
-> index 38dc1fda4f45..00029436ac5b 100644
+> index 4a9a291380ad..38882263278d 100644
 > --- a/Documentation/virt/kvm/api.rst
 > +++ b/Documentation/virt/kvm/api.rst
 > @@ -147,10 +147,29 @@ described as 'basic' will be available.
@@ -173,7 +179,7 @@ rst
 >  to 40bits by default. The limit can be configured if the host supports t=
 he
 >  extension KVM_CAP_ARM_VM_IPA_SIZE. When supported, use
-> @@ -8650,6 +8669,19 @@ block sizes is exposed in KVM_CAP_ARM_SUPPORTED_BL=
+> @@ -8766,6 +8785,19 @@ block sizes is exposed in KVM_CAP_ARM_SUPPORTED_BL=
 OCK_SIZES as a
 >  64-bit bitmap (each bit describing a block size). The default value is
 >  0, to disable the eager page splitting.
@@ -199,10 +205,10 @@ bit @n
 >
 > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
 ost.h
-> index f9e8d5642069..dff10051e9b6 100644
+> index 75ab0da06e64..a565a2e70f30 100644
 > --- a/arch/x86/include/asm/kvm_host.h
 > +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1244,6 +1244,7 @@ enum kvm_apicv_inhibit {
+> @@ -1255,6 +1255,7 @@ enum kvm_apicv_inhibit {
 >  };
 >
 >  struct kvm_arch {
@@ -210,7 +216,7 @@ ost.h
 >         unsigned long n_used_mmu_pages;
 >         unsigned long n_requested_mmu_pages;
 >         unsigned long n_max_mmu_pages;
-> @@ -2077,6 +2078,12 @@ void kvm_mmu_new_pgd(struct kvm_vcpu *vcpu, gpa_t =
+> @@ -2089,6 +2090,12 @@ void kvm_mmu_new_pgd(struct kvm_vcpu *vcpu, gpa_t =
 new_pgd);
 >  void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
 >                        int tdp_max_root_level, int tdp_huge_page_level);
@@ -225,7 +231,7 @@ DEFAULT_VM)
 >  static inline u16 kvm_read_ldt(void)
 >  {
 >         u16 ldt;
-> @@ -2125,14 +2132,10 @@ enum {
+> @@ -2137,14 +2144,10 @@ enum {
 >  #define HF_SMM_INSIDE_NMI_MASK (1 << 2)
 >
 >  # define KVM_MAX_NR_ADDRESS_SPACES     2
@@ -259,7 +265,7 @@ kvm.h
 > +
 >  #endif /* _ASM_X86_KVM_H */
 > diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 091b74599c22..8452ed0228cb 100644
+> index e61383674c75..c1716e83d176 100644
 > --- a/arch/x86/kvm/Kconfig
 > +++ b/arch/x86/kvm/Kconfig
 > @@ -77,6 +77,18 @@ config KVM_WERROR
@@ -298,10 +304,10 @@ pu *vcpu, gpa_t cr2_or_gpa,
 >         int r;
 >
 > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c4d17727b199..e3eb608b6692 100644
+> index f521c97f5c64..6d0772b47041 100644
 > --- a/arch/x86/kvm/x86.c
 > +++ b/arch/x86/kvm/x86.c
-> @@ -4441,6 +4441,13 @@ static int kvm_ioctl_get_supported_hv_cpuid(struct=
+> @@ -4548,6 +4548,13 @@ static int kvm_ioctl_get_supported_hv_cpuid(struct=
  kvm_vcpu *vcpu,
 >         return 0;
 >  }
@@ -316,7 +322,7 @@ pu *vcpu, gpa_t cr2_or_gpa,
 >  int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
 >  {
 >         int r =3D 0;
-> @@ -4632,6 +4639,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, =
+> @@ -4739,6 +4746,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, =
 long ext)
 >         case KVM_CAP_X86_NOTIFY_VMEXIT:
 >                 r =3D kvm_caps.has_notify_vmexit;
@@ -329,7 +335,7 @@ long ext)
 >         default:
 >                 break;
 >         }
-> @@ -12314,9 +12326,11 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned l=
+> @@ -12436,9 +12448,11 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned l=
 ong type)
 >         int ret;
 >         unsigned long flags;
@@ -344,14 +350,14 @@ ong type)
 >         if (ret)
 >                 goto out;
 > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 29e9eb51dec9..5b5820d19e71 100644
+> index 8eb10f560c69..e9cb2df67a1d 100644
 > --- a/include/uapi/linux/kvm.h
 > +++ b/include/uapi/linux/kvm.h
-> @@ -1218,6 +1218,7 @@ struct kvm_ppc_resize_hpt {
->  #define KVM_CAP_MEMORY_FAULT_INFO 231
->  #define KVM_CAP_MEMORY_ATTRIBUTES 232
->  #define KVM_CAP_GUEST_MEMFD 233
-> +#define KVM_CAP_VM_TYPES 234
+> @@ -1227,6 +1227,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_MEMORY_FAULT_INFO 232
+>  #define KVM_CAP_MEMORY_ATTRIBUTES 233
+>  #define KVM_CAP_GUEST_MEMFD 234
+> +#define KVM_CAP_VM_TYPES 235
 >
 >  #ifdef KVM_CAP_IRQ_ROUTING
 >
@@ -369,6 +375,7 @@ ong type)
 > +       select KVM_PRIVATE_MEM
 > +       bool
 > --
-> 2.42.0.820.g83a721a137-goog
+> 2.39.1
+>
 >
 
