@@ -1,81 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-2057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9034A7E1DA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 10:57:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DBE7E1DAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 10:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 295ABB20D15
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 09:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4977728132F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 09:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7A6171A9;
-	Mon,  6 Nov 2023 09:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5qnBZas"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD6F171B6;
+	Mon,  6 Nov 2023 09:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FABC443D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 09:57:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C868FC433C7;
-	Mon,  6 Nov 2023 09:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699264623;
-	bh=rzHnLpsLcwaSyMOYQyHFlfGI9zVL9VbpUnphQkNsJIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5qnBZasSDZ8riDWZCC+bOZPnszAHCjGSJ098cRA0Uqp8Lj+C1SNyPfye9CoWTdMT
-	 TetnlELHnOSaAOnnByVCtILwRcy+uqY2aC2nCOmREbDiLy3Up4/DX4It37iVk2hcMW
-	 tVnl10aHm2i2CNeuihTOP174yu9pIkS6pke74nlSdmwK5TffdKGURt/kThfyJnP2JN
-	 cAHPkIy25h/5bFrCaelzgoWkTJAuNnRuFFuBp/TsOells19gBRvLpFS3CnsRZKUa5m
-	 cHpRCiU6rOtZ0jq2ICgBr5CJaKolJyEyY6ZLG1zEphtZHf5X9vTVSZ0hIzcZwnyDA6
-	 OqZTIgmADB/tQ==
-Date: Mon, 6 Nov 2023 10:56:57 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <20231106-drehung-besagen-7fdd84ca5887@brauner>
-References: <ZUE0CWQWdpGHm81L@infradead.org>
- <20231101-nutzwert-hackbeil-bbc2fa2898ae@brauner>
- <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-schafsfell-denkzettel-08da41113e24@brauner>
- <ZUUDmu8fTB0hyCQR@infradead.org>
- <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
- <ZUibZgoQa9eNRsk4@infradead.org>
- <1d08a205-b2c5-4276-b271-088facc142ea@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F94168DB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 09:57:25 +0000 (UTC)
+Received: from out0-206.mail.aliyun.com (out0-206.mail.aliyun.com [140.205.0.206])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416CFA3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 01:57:24 -0800 (PST)
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047209;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VGGZLFo_1699264639;
+Received: from 30.46.227.128(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VGGZLFo_1699264639)
+          by smtp.aliyun-inc.com;
+          Mon, 06 Nov 2023 17:57:20 +0800
+Message-ID: <2a2bf87a-87ba-40d2-8d10-c4960efbd11f@antgroup.com>
+Date: Mon, 06 Nov 2023 17:57:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1d08a205-b2c5-4276-b271-088facc142ea@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] fuse: Introduce sysfs APIs to flush or resend
+ pending requests
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org
+References: <20231031144043.68534-1-winters.zc@antgroup.com>
+ <CAJfpegtjNj+W1F4j_eBAij_yYLsC9A3=LgNvUymSykHR5EvvoA@mail.gmail.com>
+From: "=?UTF-8?B?6LW15pmo?=" <winters.zc@antgroup.com>
+In-Reply-To: <CAJfpegtjNj+W1F4j_eBAij_yYLsC9A3=LgNvUymSykHR5EvvoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Another thing is, the st_dev situation has to be kept, as there are too many
-> legacy programs that relies on this to distinguish btrfs subvolume
-> boundaries, this would never be changed unfortunately, even if we had some
-> better solution (like the proposed extra subvolid through statx).
+在 2023/11/2 下午11:17, Miklos Szeredi 写道:
+> On Tue, 31 Oct 2023 at 15:41, 赵晨 <winters.zc@antgroup.com> wrote:
+>>
+>> After the fuse daemon crashes, the fuse mount point becomes inaccessible.
+>> In some production environments, a watchdog daemon is used to preserve
+>> the FUSE connection's file descriptor (fd). When the FUSE daemon crashes,
+>> a new FUSE daemon is restarted and takes over the fd from the watchdog
+>> daemon, allowing it to continue providing services.
+>>
+>> However, if any inflight requests are lost during the crash, the user
+>> process becomes stuck as it does not receive any replies.
+>>
+>> To resolve this issue, this patchset introduces two sysfs APIs that enable
+>> flushing or resending these pending requests for recovery. The flush
+>> operation ends the pending request and returns an error to the
+>> application, allowing the stuck user process to recover. While returning
+>> an error may not be suitable for all scenarios, the resend API can be used
+>> to resend the these pending requests.
+>>
+>> When using the resend API, FUSE daemon needs to ensure proper recording
+>> and avoidance of processing duplicate non-idempotent requests to prevent
+>> potential consistency issues.
+> 
+> Do we need both the resend and the flush APIs?  I think the flush
+> functionality can easily be implemented with the resend API, no?
+> 
+> Thanks,
+> Miklos
 
-It would retain backwards compatibility as userspace would need to
-explicitly query for STATX_SUBVOLUME otherwise they get they fake
-st_dev.
+Thank you for your response, Miklos.
 
-> Which I believe the per-subvolume-vfsmount and the automount behavior for
-> subvolume can help a lot.
+Yes, it is possible to implement flush functionality using the resend 
+API. However, flush offers additional convenience.
 
-Very much opposed to this at this point. I've seen the code for this in
-the prior patchset and it's implication nothing about this makes me want
-this.
+For instance, some fuse daemons that allow discarding requests to 
+prevent user process io-hang but do not want to handle duplicate 
+requests, may require extra effort in persistent record if using resend. 
+In such cases, using the flush API would provide more convenience.
+
+So, based on my understanding, resend is adequate, but flush can offer 
+more convenience. I would like to inquire about your preference 
+regarding the two APIs. Should I do some verification and remove the 
+flush API, and then resend this patchset?
+
+Best Regards,
+Zhao Chen
 
