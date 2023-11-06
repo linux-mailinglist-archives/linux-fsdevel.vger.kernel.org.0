@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-2193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7947E30FE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:16:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5877E3104
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7266B20BDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1641C203FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2B82F507;
-	Mon,  6 Nov 2023 23:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFB92F508;
+	Mon,  6 Nov 2023 23:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0iz+wjW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzT1Cb1t"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7715B2EAFA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 23:16:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC627C433BF;
-	Mon,  6 Nov 2023 23:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB062EAFA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 23:16:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF15C43397;
+	Mon,  6 Nov 2023 23:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699312589;
-	bh=iFI61qBkfyq1WuQgXi9AY/cl4hUyPQUmHM3UjXjleGA=;
+	s=k20201202; t=1699312606;
+	bh=6ED7HHGOBbuav1UoIZRqujtU3tvHbxf04vITs8iE8Rs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f0iz+wjWl6c80vBW15UBIfQK9vYQpIYVeYRUj36G5/dHGgCpY0RlQI//HFRtyQn3K
-	 F+9Ezz5uW9oUO6qVIOcqrQ2VNmw5fhICEOc4jxX1NH8mchPi66gMgCFTQ9rQLyfPcx
-	 awwrjmbZlAJedFWnS5Wsyq1E1t+XpvYNP1gcbMubhgMEzA0RI4KTm8VfxygLRaHoq6
-	 Gufix53a0vz3FtAaFp/3em+/0mP4F41r2p9lfclKMZ/aNr4Jdbz5Xi1GybnWkwfZcc
-	 vKnn+5VL7OrX2lMOW5bs8DKxBEukgNu0dT1LRZJd5zvWvMeOUaJLsDqwjQ5+YIBLGB
-	 FAlKgyw6/ra/w==
+	b=kzT1Cb1tTOP5UuQnfp1In2pL5Acf/CUuTWnhsPyunzSbWdG8XGmTQy1HWJMm//YMn
+	 mcYJ7S90tx2SJI05+Fx6iNV/LR0hdJHRnEm3/1+bn7ROHTqkYbewhC0OYEHFXMwUTw
+	 1XIm7NqZV43vhxrKzlr82NM8ozvFrokjfXG4t8YOupe6xIJA+yC4q/KeCU02NWfr3/
+	 TkTiKZCT66pZFDndAl7DO274Ca8PXTOcuMsUYojpkOV2Av8qRXuPrhDxjZvXev/3mh
+	 OAxVWBe8TgEwHUiCtmA8iFNrElMpKxOG6kMOfmSx9Bsn+6QMNSKhH+4uubNo/x9L0A
+	 yoi9j669K+lrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Christian Brauner <christian.brauner@ubuntu.com>,
 	Kees Cook <keescook@chromium.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 5.15 3/6] binfmt_misc: cleanup on filesystem umount
-Date: Mon,  6 Nov 2023 18:16:16 -0500
-Message-ID: <20231106231622.3735613-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 3/5] binfmt_misc: cleanup on filesystem umount
+Date: Mon,  6 Nov 2023 18:16:34 -0500
+Message-ID: <20231106231639.3735753-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231106231622.3735613-1-sashal@kernel.org>
-References: <20231106231622.3735613-1-sashal@kernel.org>
+In-Reply-To: <20231106231639.3735753-1-sashal@kernel.org>
+References: <20231106231639.3735753-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.137
+X-stable-base: Linux 5.10.199
 Content-Transfer-Encoding: 8bit
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
@@ -174,7 +174,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 168 insertions(+), 48 deletions(-)
 
 diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index bb202ad369d53..740dac1012ae8 100644
+index ce0047feea729..744ae53d483db 100644
 --- a/fs/binfmt_misc.c
 +++ b/fs/binfmt_misc.c
 @@ -60,12 +60,11 @@ typedef struct {
@@ -287,7 +287,7 @@ index bb202ad369d53..740dac1012ae8 100644
  	if (!fmt)
  		return retval;
  
-@@ -198,7 +236,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
+@@ -196,7 +234,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
  
  	retval = 0;
  ret:
@@ -305,7 +305,7 @@ index bb202ad369d53..740dac1012ae8 100644
  	return retval;
  }
  
-@@ -553,30 +600,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+@@ -551,30 +598,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
  	return inode;
  }
  
@@ -408,7 +408,7 @@ index bb202ad369d53..740dac1012ae8 100644
  }
  
  /* /<entry> */
-@@ -603,8 +710,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+@@ -601,8 +708,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
  static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
  				size_t count, loff_t *ppos)
  {
@@ -419,7 +419,7 @@ index bb202ad369d53..740dac1012ae8 100644
  	int res = parse_command(buffer, count);
  
  	switch (res) {
-@@ -618,13 +725,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+@@ -616,13 +723,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
  		break;
  	case 3:
  		/* Delete this handler. */
@@ -446,7 +446,7 @@ index bb202ad369d53..740dac1012ae8 100644
  		break;
  	default:
  		return res;
-@@ -683,13 +799,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+@@ -681,13 +797,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
  	if (!inode)
  		goto out2;
  
@@ -461,7 +461,7 @@ index bb202ad369d53..740dac1012ae8 100644
  	e->dentry = dget(dentry);
  	inode->i_private = e;
  	inode->i_fop = &bm_entry_operations;
-@@ -733,7 +843,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+@@ -731,7 +841,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
  		size_t count, loff_t *ppos)
  {
  	int res = parse_command(buffer, count);
@@ -471,7 +471,7 @@ index bb202ad369d53..740dac1012ae8 100644
  
  	switch (res) {
  	case 1:
-@@ -746,13 +857,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+@@ -744,13 +855,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
  		break;
  	case 3:
  		/* Delete all handlers. */
