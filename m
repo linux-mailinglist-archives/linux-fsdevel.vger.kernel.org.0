@@ -1,90 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-2117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1387E2AC2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 18:13:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3647E2B5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 18:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCF91C20CA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6382818A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 17:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39A929CE9;
-	Mon,  6 Nov 2023 17:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEA92E648;
+	Mon,  6 Nov 2023 17:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NN3nXumj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ErdbLEVD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A612F38
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 17:13:25 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA57D125;
-	Mon,  6 Nov 2023 09:13:24 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94352D7B6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 17:39:24 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F26D6D;
+	Mon,  6 Nov 2023 09:39:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fEpMu/27fXqk6Kwb9eu4UrW+Ne4wf1AMuIbJLkNMGwQ=; b=NN3nXumjI6cdj++TTdbqXMoxR7
-	YdxWLQncXqEotfldvoy+T0c7CS1mqEiwZaSpKXhQhXXaUiHrHBPQm3/6Plu9/U7jQb5U4nrL8D9TG
-	BlJLWoCsXCNG7Ype2eLiLUdy4aQXao7xS2pWpW32hC7oNJgRG9E7OxqkxtTfMa/2aAno4eAanWAqw
-	WlaXB6UghA15RdRP7t3ypXKudB8Nal7vv1jXV3UDWfJmFvJ9gtJTb+QcCTkwbbBgPZjc5DBnukCeh
-	QLaymggk3ueSsryNocbIwTzoabjpViQt3r74Z/7NwrFqQ9jHyvilHvUcjhEM0WmKQWQT43OkPbsxY
-	SJ0slh3A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r03A7-00HCWQ-2T;
-	Mon, 06 Nov 2023 17:13:19 +0000
-Date: Mon, 6 Nov 2023 09:13:19 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <ZUker5S8sZXnsvOl@infradead.org>
-References: <590e421a-a209-41b6-ad96-33b3d1789643@gmx.com>
- <20231101-neigen-storch-cde3b0671902@brauner>
- <20231102051349.GA3292886@perftesting>
- <20231102-schafsfell-denkzettel-08da41113e24@brauner>
- <ZUUDmu8fTB0hyCQR@infradead.org>
- <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
- <ZUibZgoQa9eNRsk4@infradead.org>
- <20231106-fragment-geweigert-1d80138523e5@brauner>
- <ZUjcI1SE+a2t8n1v@infradead.org>
- <20231106-unser-fiskus-9d1eba9fc64c@brauner>
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=AYLrLzMd96wdOm5CVv6L+hQ8+shGbfBweIymmP++Mr0=; b=ErdbLEVDt8UZxb8B7ua3XL+A4Z
+	iUS1uRA/PHLPwEe0y0szLOVP6s50ka8w+tc15CRjMtuH0thktSpvRrhWLnMO23ZTpJ5dHilDj0g7p
+	yw1oaI7SdqUIb4IbDDlS1rIrv5kUbPsa/7apRh3byFRcQTpc1ZX/xst1JbtWfAAaWbQvXS8lvPfFN
+	t7cdnN75S1I7oDfi1J8EOFhh4oTiP0FNLrc1HTJWdyl03uIrJ3fkiH4QdCVk/B6hgpX0xqSC0fgYO
+	+nOejuMxpk0xtjMnYr/bvF+seHLfg8Cpa84bHj1N3C+9SP8hZNG0HxTpyMJP0yMAcGgjHd36/Ls7O
+	8S6ClGIw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r03Z3-007H7n-O6; Mon, 06 Nov 2023 17:39:05 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-nilfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/35] nilfs2: Folio conversions
+Date: Mon,  6 Nov 2023 17:38:28 +0000
+Message-Id: <20231106173903.1734114-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231106-unser-fiskus-9d1eba9fc64c@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 06, 2023 at 02:47:16PM +0100, Christian Brauner wrote:
-> Granted, an over-generalization but non in any way different from
-> claiming that currently on one needs to know about btrfs subvolumes or
-> that the proposed vfsmount solution will make it magically so that no
-> one needs to care anymore.
+This patch series does most of the page->folio conversions needed in
+nilfs2.  I haven't done the work to support large folios in nilfs2;
+I don't know if that conversion will be worth the effort.  There are
+still a few page uses left, but the infrastructure isn't quite there to
+get rid of them yet.
 
-I don't think any one has claimed "no one" needs to care any more.  What
-the vfsmounts buy us that is that software that doesn't know and
-should't know about btrfs subvolumes isn't silently broken.  Software
-that actually wants to do something fancy with them always need special
-casing.
+Arguably, this is two separate series; the first takes care of the file
+paths and the second takes care of directories.  I've tried my best to
+include large folio support in the directory code because it'll be needed
+for large block size devices.  It also tries to stay as close as possible
+to the current ext2 code (so it also includes kmap_local support).
 
-> Tools will have to change either way is my point. And a lot of tools do
-> already handle subvolumes specially exactly because of the non-unique
-> inode situation. And if they don't they still can get confused by seing
-> st_dev numbers they can't associate with a filesystem.
+These patches are only compile-tested.  xfstests doesn't seem to know
+about nilfs2.
 
-Again, tools that actually are related to subvolume features are
-not even the problem.
+Matthew Wilcox (Oracle) (35):
+  nilfs2: Add nilfs_end_folio_io()
+  nilfs2: Convert nilfs_abort_logs to use folios
+  nilfs2: Convert nilfs_segctor_complete_write to use folios
+  nilfs2: Convert nilfs_forget_buffer to use a folio
+  nilfs2: Convert to nilfs_folio_buffers_clean()
+  nilfs2: Convert nilfs_writepage() to use a folio
+  nilfs2: Convert nilfs_mdt_write_page() to use a folio
+  nilfs2: Convert to nilfs_clear_folio_dirty()
+  nilfs2: Convert to __nilfs_clear_folio_dirty()
+  nilfs2: Convert nilfs_segctor_prepare_write to use folios
+  nilfs2: Convert nilfs_page_mkwrite() to use a folio
+  nilfs2: Convert nilfs_mdt_create_block to use a folio
+  nilfs2: Convert nilfs_mdt_submit_block to use a folio
+  nilfs2: Convert nilfs_gccache_submit_read_data to use a folio
+  nilfs2: Convert nilfs_btnode_create_block to use a folio
+  nilfs2: Convert nilfs_btnode_submit_block to use a folio
+  nilfs2: Convert nilfs_btnode_delete to use a folio
+  nilfs2: Convert nilfs_btnode_prepare_change_key to use a folio
+  nilfs2: Convert nilfs_btnode_commit_change_key to use a folio
+  nilfs2: Convert nilfs_btnode_abort_change_key to use a folio
+  nilfs2: Remove page_address() from nilfs_set_link
+  nilfs2: Remove page_address() from nilfs_add_link
+  nilfs2: Remove page_address() from nilfs_delete_entry
+  nilfs2: Return the mapped address from nilfs_get_page()
+  nilfs2: Pass the mapped address to nilfs_check_page()
+  nilfs2: Switch to kmap_local for directory handling
+  nilfs2: Add nilfs_get_folio()
+  nilfs2: Convert nilfs_readdir to use a folio
+  nilfs2: Convert nilfs_find_entry to use a folio
+  nilfs2: Convert nilfs_rename() to use folios
+  nilfs2: Convert nilfs_add_link() to use a folio
+  nilfs2: Convert nilfs_empty_dir() to use a folio
+  nilfs2: Convert nilfs_make_empty() to use a folio
+  nilfs2: Convert nilfs_prepare_chunk() and nilfs_commit_chunk() to
+    folios
+  nilfs2: Convert nilfs_page_bug() to nilfs_folio_bug()
+
+ fs/nilfs2/btnode.c  |  62 +++++------
+ fs/nilfs2/dir.c     | 248 ++++++++++++++++++++------------------------
+ fs/nilfs2/file.c    |  28 ++---
+ fs/nilfs2/gcinode.c |   4 +-
+ fs/nilfs2/inode.c   |  11 +-
+ fs/nilfs2/mdt.c     |  23 ++--
+ fs/nilfs2/namei.c   |  33 +++---
+ fs/nilfs2/nilfs.h   |  20 ++--
+ fs/nilfs2/page.c    |  93 +++++++++--------
+ fs/nilfs2/page.h    |  12 +--
+ fs/nilfs2/segment.c | 157 ++++++++++++++--------------
+ 11 files changed, 338 insertions(+), 353 deletions(-)
+
+-- 
+2.42.0
+
 
