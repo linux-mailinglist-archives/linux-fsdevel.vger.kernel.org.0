@@ -1,86 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-2047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF6A7E1BE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 09:25:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B307E1C5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 09:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910D8B20E1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 08:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E07A2813A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 08:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAF911722;
-	Mon,  6 Nov 2023 08:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiAlDF8G"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6F4320E;
+	Mon,  6 Nov 2023 08:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43737FBF7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 08:25:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D43C433C7;
-	Mon,  6 Nov 2023 08:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699259111;
-	bh=FDzAyqDW72wEFOlOk7vZD0z4dGsgWkl1Zu44szuH7CE=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=IiAlDF8GPZXng62FoqJgcZu0Pqims1Mkw7mYCSESylFznFwQ8VrOzyY2mu3qpwZ3i
-	 jxTpsdcfVGPeRK29DIK7suHfmpMyeoYrXoCU/zAdpU/Q+BiO+LxGiGou/pmUqAfm4i
-	 B40HX6fJLp0uOLmYJqSsORqzk8uPYqTVBAE8rDZfcd/763k9RBWLHGRKPMp80iaSmW
-	 E++fGfF5DWz7swOpPiCGxoWWX4lLnQCwI2diicJ3Gz0Y1/1eDDlMpUiONvKKv7c0DV
-	 uomBT7EzY4vowQJTDf3YJxAFsgkJd8d/YsOE693MUmiqYxCpAbHEbCSye9XmafS5Ry
-	 AaBYOosFO/uKw==
-References: <87bkccnwxc.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20231104-vfs-multi-device-freeze-v2-0-5b5b69626eac@kernel.org>
-User-agent: mu4e 1.8.10; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>, Jan
- Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Handle multi device freezing
-Date: Mon, 06 Nov 2023 13:51:52 +0530
-In-reply-to: <20231104-vfs-multi-device-freeze-v2-0-5b5b69626eac@kernel.org>
-Message-ID: <87y1fb70gr.fsf@debian-BULLSEYE-live-builder-AMD64>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A178128E6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 08:34:10 +0000 (UTC)
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524A613E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 00:34:08 -0800 (PST)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3b5019515c4so6172528b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 00:34:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699259647; x=1699864447;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R//xFC6MCX07YnTjEGgkyVytVcMHK0VcX9I6eFXmSn0=;
+        b=j7jPSRsUO1Cj1xO7cjl1ketSql3Eaz5K0JF+UU8uoXDAXfwOBFh56qcFF07Qy3totw
+         SuYu3M/VMmjO2f5L17YYFCiZ7ihCeVpYd6MikOkhPA05DovjAIvVyjky2VpqfUzbFclp
+         AaoFXL/lSoLvo7nMRiiXsxf0TYnm8WN6RT0Ta2OXQwrjRAM2OY9GevQ3V8Q9Y8A6OOPL
+         JoYBuYztqCldbh2oGkBgGBn2raPxWQDUxBRyjnh8hy3030CfGZ4BEHbZKN+8EP9wgLdb
+         QWopeTHe6h0Zq4zdZ8GGkZBKaaErvw3DAHxaM7T2thJxcVHAX68dgxMj62iGNWfouuh9
+         ALqg==
+X-Gm-Message-State: AOJu0YzT3j7grI2usjZJzmRB8uDgH3rR3xg3X5PTe4q5PSqCNCNluz+6
+	4uuMQP8Y3Z5P/ckNM+kd/CKGc4G2MtstdTXDAjpt05fzFhfr
+X-Google-Smtp-Source: AGHT+IGPvdUMp7cFbFWrKJV9OVBnXNdZFxJ2Ar/n96qlK/oegdaqwZk7Cnt4qpgL2n4nuLJ0ela54eQb73j/dM3UYdnpHggAwsHn
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:aca:1113:0:b0:3a3:c492:9be6 with SMTP id
+ 19-20020aca1113000000b003a3c4929be6mr3745348oir.2.1699259647315; Mon, 06 Nov
+ 2023 00:34:07 -0800 (PST)
+Date: Mon, 06 Nov 2023 00:34:07 -0800
+In-Reply-To: <000000000000cfe6f305ee84ff1f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a8d8e7060977b741@google.com>
+Subject: Re: [syzbot] [reiserfs?] possible deadlock in reiserfs_dirty_inode
+From: syzbot <syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, paul@paul-moore.com, 
+	reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
+	syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 04, 2023 at 03:00:11 PM +0100, Christian Brauner wrote:
-> Hey everyone,
->
-> Now that we can find the owning filesystem of any device if the
-> superblock and fs_holder_ops are used we need to handle multi-device
-> filesystem freezes. This series does that. Details in the main commit.
+syzbot has bisected this issue to:
 
-generic/311, xfs/006 and xfs/264 pass when executed against a kernel which has
-the patches applied. Hence,
+commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
+Author: Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Fri Mar 31 12:32:18 2023 +0000
 
-Tested-by: Chandan Babu R <chandanbabu@kernel.org>
+    reiserfs: Add security prefix to xattr name in reiserfs_security_write()
 
->
-> Thanks!
-> Christian
->
-> ---
-> Christian Brauner (2):
->       fs: remove dead check
->       fs: handle freezing from multiple devices
->
->  fs/super.c         | 140 +++++++++++++++++++++++++++++++++++++++++------------
->  include/linux/fs.h |  17 ++++++-
->  2 files changed, 124 insertions(+), 33 deletions(-)
-> ---
-> base-commit: c6a4738de282fc95752e1f1c5573ab7b4020b55e
-> change-id: 20231103-vfs-multi-device-freeze-506e2c010473
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d0b787680000
+start commit:   90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d0b787680000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d0b787680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c319bb5b1014113a92cf
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113f3717680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154985ef680000
 
+Reported-by: syzbot+c319bb5b1014113a92cf@syzkaller.appspotmail.com
+Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
 
--- 
-Chandan
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
