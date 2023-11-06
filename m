@@ -1,171 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-2091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC007E2558
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 14:31:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C4B7E259E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 14:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BCE31C208C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 13:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A0E1C20BB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 13:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9877524215;
-	Mon,  6 Nov 2023 13:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42011249F6;
+	Mon,  6 Nov 2023 13:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tkp5vxJU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJ1o35PI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5598A22F1B;
-	Mon,  6 Nov 2023 13:30:55 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838D210A;
-	Mon,  6 Nov 2023 05:30:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699277453; x=1730813453;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GcPOwqKIRcSDpD/XkGdZ5KVAeJljJ23LDoDjt600Qfg=;
-  b=Tkp5vxJUJyXrBZ2wV/laQ+hredbTr6MbNtHiMB6j8I6jylMIhHh9BmJt
-   DjKHAN/ZeHXFLI1RWWe5kdPeXU7C4fwsv5dhDJ+a1q2WxKn4XhaakZVP/
-   X8GtrTjBbryVH1/1/Bjz6R7wkgXsiR8X05WcKkRYbWZhrcfyC7u+xnPXM
-   zx/TbCqECwCSaRbytAnB5sfKcbHqgnRoLynCR9cyc0YcxoxhrSgMxfwdA
-   TZIxf9+V0zQioMRzOtTF3CFWnFBTzfsccD90L1D8RDilDvxABse8Ug6Di
-   ZTXdPEITWBSk4tp4mkEokSc7s0sBmq0J5nfLAc2ksFK7fL002AUA3szAy
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10885"; a="2263458"
-X-IronPort-AV: E=Sophos;i="6.03,281,1694761200"; 
-   d="scan'208";a="2263458"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2023 05:30:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10885"; a="755855766"
-X-IronPort-AV: E=Sophos;i="6.03,281,1694761200"; 
-   d="scan'208";a="755855766"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2023 05:30:42 -0800
-Date: Mon, 6 Nov 2023 21:29:10 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Chao Peng <chao.p.peng@linux.intel.com>,
-	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Anish Moorthy <amoorthy@google.com>,
-	David Matlack <dmatlack@google.com>,
-	Yu Zhang <yu.c.zhang@linux.intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Ackerley Tng <ackerleytng@google.com>,
-	Maciej Szmigiero <mail@maciej.szmigiero.name>,
-	David Hildenbrand <david@redhat.com>,
-	Quentin Perret <qperret@google.com>,
-	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
-	Liam Merwick <liam.merwick@oracle.com>,
-	Isaku Yamahata <isaku.yamahata@gmail.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v13 20/35] KVM: x86/mmu: Handle page fault for private
- memory
-Message-ID: <ZUjqJjz0Epf7ii8F@yilunxu-OptiPlex-7050>
-References: <20231027182217.3615211-1-seanjc@google.com>
- <20231027182217.3615211-21-seanjc@google.com>
- <ZUeSaAKRemlSRQpO@yilunxu-OptiPlex-7050>
- <CABgObfb1Wf2ptitGhJPM6VcmkCG9haMoQj2BsttjeoV=9F0O9Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B90241F4
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 13:33:41 +0000 (UTC)
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55BD107;
+	Mon,  6 Nov 2023 05:33:36 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id d75a77b69052e-41cc75c55f0so44849271cf.1;
+        Mon, 06 Nov 2023 05:33:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699277616; x=1699882416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3kfYO/jqXsEVbiPCa+98Wg6yWGKOyc07wJKMC7BNdsQ=;
+        b=YJ1o35PIC4Ts2CiYbaO5InTOJCdp2W7SskqYLl9q2vqf+5AEaGZF7dAojOCI9X5t90
+         DiCanFZPGEx9nlNg5Gc4JwwIPYgp5yandgOoVe2/qUFP7R3sTyum/blrVhTJdo1UfOXS
+         +4XeJ6OMnDdAs9j8r+Y1gKB8JzkBrPKJ4ovcpsuHuKGgNwid+6xecdyvawhLWlQpFNJ/
+         niK3A7Q7HvFUwLYEjYdHxNwreJ5ljubf2TKqlROFTlK8bNQUEYXrj5SyUsSLHuydDkPu
+         KDYKWXzk3L206GKeUdw3aHN5ePdbYbsyail+37Mc6Yydmy1btxsNi7wBdM6a8JmbJ7hn
+         fowA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699277616; x=1699882416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3kfYO/jqXsEVbiPCa+98Wg6yWGKOyc07wJKMC7BNdsQ=;
+        b=qIPrdjANE2+oW+qdHswEheUZ1Y7/QoLBC7jgkbnqontKWD8Ie8PoovkonHq/EPHFeZ
+         wXp2aJT+FlHEntIuNcFnCx/S8qZy5TllZiUPHoukWSnRLn5l8m+kuGRbQd6l+ARjYrCf
+         LBfWV/UxwdhA2A80XgqPhFVTZjA8VRT0it2bmMNblC9gp5QyaxEP+Tb7TgqQ2z3uL5y8
+         qJw3x5Y/NkNz+1Q9Rb8zeOJqyRxmUobQmxCHPCFvKH9TVYSE86mD2hSOCIBHOKwolY0r
+         StDC7ZdLTnfBnf/RpYdBBqb5z3/KUlwrqm8v/Se+LFTlwLmflYm2qcEFUYTU9Yp2m9st
+         xmNw==
+X-Gm-Message-State: AOJu0YxcmPPlWz6uY2vhec2/PoLO+ey0Q4shJ9VVkKi0lJxKADfi0xHa
+	RJR5LqXVt778X/3t9Nivr6ky1G+p7TyPfz/5EQz65peEK/w=
+X-Google-Smtp-Source: AGHT+IGfna+ns1OJYt9vnIpo34kwqS4zK3N8Q0DIkJXGI7keTrtYAHV1O3+FoRhLDkMnqRpc5FeiUhOWpjUGAD2eMr0=
+X-Received: by 2002:a05:6214:482:b0:66f:b7ff:1e12 with SMTP id
+ pt2-20020a056214048200b0066fb7ff1e12mr16096792qvb.20.1699277615718; Mon, 06
+ Nov 2023 05:33:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABgObfb1Wf2ptitGhJPM6VcmkCG9haMoQj2BsttjeoV=9F0O9Q@mail.gmail.com>
+References: <20231025140205.3586473-1-mszeredi@redhat.com> <374433e3-ab72-64a3-0fa0-ab455268e5e0@themaw.net>
+ <20231106121053.egamth3hr7zcfzji@ws.net.home>
+In-Reply-To: <20231106121053.egamth3hr7zcfzji@ws.net.home>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 6 Nov 2023 15:33:23 +0200
+Message-ID: <CAOQ4uxgn--PshKxMDmM4YoDQ8x3+a0NwCv+Bppjq-3w9V+Sxpg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] querying mount attributes
+To: Karel Zak <kzak@redhat.com>
+Cc: Ian Kent <raven@themaw.net>, Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
+	Matthew House <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 05, 2023 at 05:19:36PM +0100, Paolo Bonzini wrote:
-> On Sun, Nov 5, 2023 at 2:04 PM Xu Yilun <yilun.xu@linux.intel.com> wrote:
-> >
-> > > +static void kvm_mmu_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
-> > > +                                           struct kvm_page_fault *fault)
-> > > +{
-> > > +     kvm_prepare_memory_fault_exit(vcpu, fault->gfn << PAGE_SHIFT,
-> > > +                                   PAGE_SIZE, fault->write, fault->exec,
-> > > +                                   fault->is_private);
-> > > +}
-> > > +
-> > > +static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
-> > > +                                struct kvm_page_fault *fault)
-> > > +{
-> > > +     int max_order, r;
-> > > +
-> > > +     if (!kvm_slot_can_be_private(fault->slot)) {
-> > > +             kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-> > > +             return -EFAULT;
-> > > +     }
-> > > +
-> > > +     r = kvm_gmem_get_pfn(vcpu->kvm, fault->slot, fault->gfn, &fault->pfn,
-> > > +                          &max_order);
-> > > +     if (r) {
-> > > +             kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-> > > +             return r;
-> >
-> > Why report KVM_EXIT_MEMORY_FAULT here? even with a ret != -EFAULT?
-> 
-> The cases are EFAULT, EHWPOISON (which can report
-> KVM_EXIT_MEMORY_FAULT) and ENOMEM. I think it's fine
-> that even -ENOMEM can return KVM_EXIT_MEMORY_FAULT,
-> and it doesn't violate the documentation.  The docs tell you "what
-> can you do if error if EFAULT or EHWPOISON?"; they don't
-> exclude that other errnos result in KVM_EXIT_MEMORY_FAULT,
-> it's just that you're not supposed to look at it
+On Mon, Nov 6, 2023 at 2:11=E2=80=AFPM Karel Zak <kzak@redhat.com> wrote:
+>
+> On Wed, Nov 01, 2023 at 07:52:45PM +0800, Ian Kent wrote:
+> > On 25/10/23 22:01, Miklos Szeredi wrote:
+> > Looks ok to me,covers the primary cases I needed when I worked
+> > on using fsinfo() in systemd.
+>
+> Our work on systemd was about two areas: get mount info (stat/listmount()
+> now) from the kernel, and get the mount ID from notification.
+>
+> There was watch_queue.h with WATCH_TYPE_MOUNT_NOTIFY and struct
+> mount_notification->auxiliary_mount (aka mount ID) and event subtype
+> to get the change status (new mount, umount, etc.)
+>
+> For example David's:
+>  https://patchwork.kernel.org/project/linux-security-module/patch/1559917=
+11016.15579.4449417925184028666.stgit@warthog.procyon.org.uk/
+>
+> Do we have any replacement for this?
+>
 
-Thanks, it's OK for ENOMEM + KVM_EXIT_MEMORY_FAULT.
+The plan is to extend fanotify for mount namespace change notifications.
 
-Another concern is, now 3 places to report EFAULT + KVM_EXIT_MEMORY_FAULT:
+Here is a simple POC for FAN_UNMOUNT notification:
 
-  if (!kvm_slot_can_be_private(fault->slot)) {
-	kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-	return -EFAULT;
-  }
+https://lore.kernel.org/linux-fsdevel/20230414182903.1852019-1-amir73il@gma=
+il.com/
 
-  file = kvm_gmem_get_file(slot);
-  if (!file)
-	return -EFAULT;
+I was waiting for Miklos' patches to land, so that we can report
+mnt_id_unique (of mount and its parent mount) in the events.
 
-  if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
-	kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-	return -EFAULT;
-  }
+The plan is to start with setting a mark on a vfsmount to get
+FAN_MOUNT/FAN_UNMOUNT notifications for changes to direct
+children of that mount.
 
-They are different cases, and seems userspace should handle them
-differently, but not enough information to distinguish them.
+This part, I was planning to do myself. I cannot say for sure when
+I will be able to get to it, but it should be a rather simple patch.
+
+If anybody else would like to volunteer for the task, I will be
+happy to assist.
+
+Not sure if we are going to need special notifications for mount
+move and mount beneath?
+
+Not sure if we are going to need notifications on mount attribute
+changes?
+
+We may later also implement a mark on a mount namespace
+to get events on all mount namespace changes.
+
+If you have any feedback about this rough plan, or more items
+to the wish list, please feel free to share them.
 
 Thanks,
-Yilun
-
-> 
-> Paolo
-> 
-> 
+Amir.
 
