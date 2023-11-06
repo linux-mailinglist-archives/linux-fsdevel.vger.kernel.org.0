@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-2196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B867E3111
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:17:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F0E7E3112
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F02BB20BB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:17:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4C6280D6B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EFF2FE04;
-	Mon,  6 Nov 2023 23:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80C02F507;
+	Mon,  6 Nov 2023 23:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7n/THH0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCtA4Ti5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC9A2EAFA
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 23:17:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA9EEC193E8;
-	Mon,  6 Nov 2023 23:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070F62EAFA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 23:17:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC039C4936D;
+	Mon,  6 Nov 2023 23:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699312639;
-	bh=ZGL9TRmG4xaFkG1UhtzRMdoElpsZqE9FmdeVcg1JWSc=;
+	s=k20201202; t=1699312653;
+	bh=2kvZcATkY5fptfc6Arvgsfp8wUH2AbNdqe1IgU4H7Ps=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n7n/THH0c87AiO6sA6jlw5FNam2jFOKd0gFRKZXaApmLjndGx/93uj0k2nQa2W16h
-	 HlRKJ8fnSjrU2lqWeAUNQQyi6zBFzmdPvr3DuYg4Kpfp6ZFLkkcgqxGFlmnvl8LFDz
-	 JdRxImkgC+E5eBxR/Gf6gcW2PXcLO2b3NxdirohG88s4g3mX4RZZB8Q1fvhc7Iimtr
-	 w/33seUmPRhot+1UIX8lfDQeYWdWOZaT8wKPcyAlh7Dv4zEEUz0fxeV49RmtbK70sJ
-	 rjXrkKRXq7bygmlAj/jkXboCmAl37g9kq+bQHWbHj2ILQSwm+vXk0QYmKkaUhFoEgd
-	 PzGjRUaMzZSKw==
+	b=JCtA4Ti52kZiyHGujDKBM/9retdPPvDnxIaLf8VNGSUOEsMiS7DBfKwLnnac7uq37
+	 ULaHi0PfUFLrYSG3fkxMKgigvHMSjVFpBY3VS9sYBrbzbLuVJlv4cuDzOuF/5QTX67
+	 TpRLFy6jEFk4GFQyYIowYhUk4uKZmqJPzfhF4jUEPnCKUM6t1ubc5YLzsYZBrzC3VV
+	 McE/A1BCgm826iULIgk6Wf7K2/YQMapLoLtcM0ugvnABKSgALpLZQcUC4NlrrbYr4Y
+	 jiGgCC5FyUV0ahHi+y+bQhDPxNUzZqz9xN1Jg2ChUD2K6ANA3xMs4L9XtL6qHLKpdj
+	 VJ6B/JXamT4TQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Christian Brauner <christian.brauner@ubuntu.com>,
 	Kees Cook <keescook@chromium.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 3/5] binfmt_misc: cleanup on filesystem umount
-Date: Mon,  6 Nov 2023 18:17:06 -0500
-Message-ID: <20231106231711.3735997-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 2/4] binfmt_misc: cleanup on filesystem umount
+Date: Mon,  6 Nov 2023 18:17:23 -0500
+Message-ID: <20231106231728.3736117-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231106231711.3735997-1-sashal@kernel.org>
-References: <20231106231711.3735997-1-sashal@kernel.org>
+In-Reply-To: <20231106231728.3736117-1-sashal@kernel.org>
+References: <20231106231728.3736117-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.297
+X-stable-base: Linux 4.14.328
 Content-Transfer-Encoding: 8bit
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
@@ -174,7 +174,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 168 insertions(+), 48 deletions(-)
 
 diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 8fe7edd2b001f..2df8d2bd1153e 100644
+index c19bf5c2fbec9..e768cd60ff999 100644
 --- a/fs/binfmt_misc.c
 +++ b/fs/binfmt_misc.c
 @@ -58,12 +58,11 @@ typedef struct {
