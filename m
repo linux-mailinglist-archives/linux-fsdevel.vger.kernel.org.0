@@ -1,240 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-2183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2184-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750967E2FD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE387E2FF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9741B1C209D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 22:30:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE98F1C20850
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 22:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E738C2E648;
-	Mon,  6 Nov 2023 22:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649A11D69D;
+	Mon,  6 Nov 2023 22:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G83UFKDB"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Gj4cpOIF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E56D2F503
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 22:29:58 +0000 (UTC)
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE20D6E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 14:29:52 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-da0cfcb9f40so5276333276.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 14:29:52 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AB738E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 22:42:13 +0000 (UTC)
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2EFBD51
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 14:42:12 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-66d190a8f87so32324686d6.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 14:42:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699309792; x=1699914592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
-        b=G83UFKDBjUJQE6sMUYdBidIfkN/wfUWmRDtYjYnkhSLN1C8k2MEEn33/k11YYx2YMf
-         p9F/mm/TtKFI+Ya7L7FvJehN3IR6yqKhVQ3es09QRVRDNd2HL3l5SIpYN26rv9DrYIDb
-         3HU2jmHyt38k/wym5asGupnYI0BTKKoV1F6fKU6WHdRPhuHfQtyzBaeW2bFzdfW5YX2j
-         PBEcjTTsBtlmPbcmSWKPySkbEOoFtKw6ioyqUrH8igo5V/eeodflzl6HNY+liQ6M6bGA
-         tr2v3NqxCab7w52MXOLAYJcY8pNzTsdbF0vjWCGpHRDk6AwhLlJnrAKZk0VNHkvHHe+/
-         lNCg==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699310532; x=1699915332; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh4u9lQwcTBmzRwQYOONZw1QExGbYz2ed9uS0nODmN0=;
+        b=Gj4cpOIFNZRTzGJK6DSxt+fqBPLlSG99yiCcosFJftu9dGP0IADLA4be+hl9vVsGYQ
+         d8dsoDUrgkL6iMciv0Kld5W5dnDMYTXcPFQItoZmrzEXD0lV/1u5k+tBsgfh4Th9TMGx
+         Mhv99MCS2NOw74TW+AfZO6TW4nFtI0hpjKmeNThpxsgsO67T2lAIELlm7EvFA7qniocp
+         5FaKL+fjdElOC67EStIpjzAOV8GIqAdvh2WblLQDEYIFdQjfvcxskg53QOYfItQeRRTL
+         LO09dShSAQ/Ck9403sEFVNqyYR33kwBMyBqBmGa0MlqRz3r51SaeX5X5ovyq4b+5GwAJ
+         iPXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699309792; x=1699914592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E66zNXr7n8OxPZDJkTscd5st2Eb4+BXMECTd16p+KKY=;
-        b=Ms4F618mvtPJbetu73WLkN0EOh1GwdJLUiU96ik22Nw5ZSdicytKqP7jxh/BABqUoT
-         s4JKXMkqBT4fnvS8Dn5lJl3EcWe6C/ADSC1liqbeFpb76JItPMbyrJL/Ijiy0XHqghBp
-         rjvu9GCn009xSCK5k3VKGvAW6sdFUEUyDWVCmNbwv4MwksOJ8qu7n/+889gWo13jn7E9
-         tGrcDOOOvVnbmykX5H5royYUr3dWGJm6arWZTTTD/3SGjgaisqigloF1Kc97gzTdyepP
-         Q6gTmTxecoBTeHjfn7v3IVmaJ/T0mfGHmVhqI0E2MLQq/Yqz2s8K0FaW/ZoVijzI7Vaf
-         4T7g==
-X-Gm-Message-State: AOJu0YxEnP+D5jxfGAVVgP+w1g8ZA+kM8yIgpcvrBPwA0G5076YD52fj
-	bcqHraWD/AwhpI27wYqSQzYSjNQmDB6kSsYy4loz
-X-Google-Smtp-Source: AGHT+IG/6jCSMEcXdJXql31+PqDrBfViRunNdEn77gAOSspcDIrEyjSr07LMpHwMDmW2rtjFP6aQdvIe1WXdR8rp5JI=
-X-Received: by 2002:a25:5f4c:0:b0:da0:cea9:2b3b with SMTP id
- h12-20020a255f4c000000b00da0cea92b3bmr28568607ybm.62.1699309792021; Mon, 06
- Nov 2023 14:29:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699310532; x=1699915332;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jh4u9lQwcTBmzRwQYOONZw1QExGbYz2ed9uS0nODmN0=;
+        b=elgiFCF4zlF29JjGYEL0ITI9hCZngNSFwJeLjrsOjCdNGaYTOMzt07jt6vlIzJzUl6
+         3sUEcr6v5yGbhBI8Ta2VVq4Q91CNuHPtbuJgOqJLmJI6Fsl/5Le9Z8k8QB1s96qV3UNx
+         JYt3CWamksB3II9j1v+cKXAiAX5e84gaLlqJUT3wsL/Tlg4EHozPDUZlE6LJJkQLZu3Y
+         2JmjKDXN5IHhqgEeqvtK6h6cO/SRSjVURc15cPDkCWf6K9sNQPc04P/RfX0MW0HZQNkB
+         EOzQ/ia4CN8LLEaiC0H0oKCVEgoP4O+dtcLhvPWCt1xid3RFK7l4jvohLQ0l7KgLuIX8
+         I/eA==
+X-Gm-Message-State: AOJu0Yxz1CEPtEJZ4TjkJhvXrYZI9xKV/B/yUMQYyequiYShIjyIjO90
+	KOj5ZtakPBv4LZmJIvpJD9rPhA==
+X-Google-Smtp-Source: AGHT+IE1BxGrUrgmYdZ4xKqxUp8ea8KUUcrhOF2gcRjFuJLv0yBe7E6hyFa7RnF2hITxbs50SL/EXw==
+X-Received: by 2002:a05:6214:501c:b0:66d:20f7:8d8d with SMTP id jo28-20020a056214501c00b0066d20f78d8dmr42120778qvb.28.1699310531808;
+        Mon, 06 Nov 2023 14:42:11 -0800 (PST)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id e16-20020a056214111000b00670a8921170sm3838537qvs.112.2023.11.06.14.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 14:42:11 -0800 (PST)
+Date: Mon, 6 Nov 2023 17:42:10 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Qu Wenruo <quwenruo.btrfs@gmx.com>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Message-ID: <20231106224210.GA3812457@perftesting>
+References: <20231101-neigen-storch-cde3b0671902@brauner>
+ <20231102051349.GA3292886@perftesting>
+ <20231102-schafsfell-denkzettel-08da41113e24@brauner>
+ <ZUUDmu8fTB0hyCQR@infradead.org>
+ <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
+ <ZUibZgoQa9eNRsk4@infradead.org>
+ <20231106-fragment-geweigert-1d80138523e5@brauner>
+ <ZUjcI1SE+a2t8n1v@infradead.org>
+ <20231106-unser-fiskus-9d1eba9fc64c@brauner>
+ <ZUker5S8sZXnsvOl@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231103190523.6353-10-andrii@kernel.org> <7ff273d368f3f7dd383444928ca478ef.paul@paul-moore.com>
- <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
-In-Reply-To: <CAEf4Bzaxv4uHK=+_vwZuvgBgq8L6d4JwxTSGxZgU44LwWYhDug@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 6 Nov 2023 17:29:40 -0500
-Message-ID: <CAHC9VhRk8NHx2Sj222KdoyT-+mKyOHzCTOaPK0z-u=w8rFWDyw@mail.gmail.com>
-Subject: Re: [PATCH v9 9/17] bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free
- LSM hooks
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZUker5S8sZXnsvOl@infradead.org>
 
-On Mon, Nov 6, 2023 at 2:03=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Sun, Nov 5, 2023 at 9:01=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Nov  3, 2023 Andrii Nakryiko <andrii@kernel.org> wrote:
-> > >
-> > > Based on upstream discussion ([0]), rework existing
-> > > bpf_prog_alloc_security LSM hook. Rename it to bpf_prog_load and inst=
-ead
-> > > of passing bpf_prog_aux, pass proper bpf_prog pointer for a full BPF
-> > > program struct. Also, we pass bpf_attr union with all the user-provid=
-ed
-> > > arguments for BPF_PROG_LOAD command.  This will give LSMs as much
-> > > information as we can basically provide.
-> > >
-> > > The hook is also BPF token-aware now, and optional bpf_token struct i=
-s
-> > > passed as a third argument. bpf_prog_load LSM hook is called after
-> > > a bunch of sanity checks were performed, bpf_prog and bpf_prog_aux we=
-re
-> > > allocated and filled out, but right before performing full-fledged BP=
-F
-> > > verification step.
-> > >
-> > > bpf_prog_free LSM hook is now accepting struct bpf_prog argument, for
-> > > consistency. SELinux code is adjusted to all new names, types, and
-> > > signatures.
-> > >
-> > > Note, given that bpf_prog_load (previously bpf_prog_alloc) hook can b=
-e
-> > > used by some LSMs to allocate extra security blob, but also by other
-> > > LSMs to reject BPF program loading, we need to make sure that
-> > > bpf_prog_free LSM hook is called after bpf_prog_load/bpf_prog_alloc o=
-ne
-> > > *even* if the hook itself returned error. If we don't do that, we run
-> > > the risk of leaking memory. This seems to be possible today when
-> > > combining SELinux and BPF LSM, as one example, depending on their
-> > > relative ordering.
-> > >
-> > > Also, for BPF LSM setup, add bpf_prog_load and bpf_prog_free to
-> > > sleepable LSM hooks list, as they are both executed in sleepable
-> > > context. Also drop bpf_prog_load hook from untrusted, as there is no
-> > > issue with refcount or anything else anymore, that originally forced =
-us
-> > > to add it to untrusted list in c0c852dd1876 ("bpf: Do not mark certai=
-n LSM
-> > > hook arguments as trusted"). We now trigger this hook much later and =
-it
-> > > should not be an issue anymore.
-> >
-> > See my comment below, but it isn't clear to me if this means it is okay
-> > to have `BTF_ID(func, bpf_lsm_bpf_prog_free)` called twice.  It probabl=
-y
-> > would be a good idea to get KP, BPF LSM maintainer, to review this chan=
-ge
-> > as well to make sure this looks good to him.
-> >
-> > >   [0] https://lore.kernel.org/bpf/9fe88aef7deabbe87d3fc38c4aea3c69.pa=
-ul@paul-moore.com/
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  include/linux/lsm_hook_defs.h |  5 +++--
-> > >  include/linux/security.h      | 12 +++++++-----
-> > >  kernel/bpf/bpf_lsm.c          |  5 +++--
-> > >  kernel/bpf/syscall.c          | 25 +++++++++++++------------
-> > >  security/security.c           | 25 +++++++++++++++----------
-> > >  security/selinux/hooks.c      | 15 ++++++++-------
-> > >  6 files changed, 49 insertions(+), 38 deletions(-)
-> >
-> > ...
-> >
-> > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > index e14c822f8911..3e956f6302f3 100644
-> > > --- a/kernel/bpf/bpf_lsm.c
-> > > +++ b/kernel/bpf/bpf_lsm.c
-> > > @@ -263,6 +263,8 @@ BTF_ID(func, bpf_lsm_bpf_map)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_alloc_security)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
-> > >  BTF_ID(func, bpf_lsm_bpf_prog)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_load)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
-> > >  BTF_ID(func, bpf_lsm_bprm_check_security)
-> > >  BTF_ID(func, bpf_lsm_bprm_committed_creds)
-> > >  BTF_ID(func, bpf_lsm_bprm_committing_creds)
-> > > @@ -346,8 +348,7 @@ BTF_SET_END(sleepable_lsm_hooks)
-> > >
-> > >  BTF_SET_START(untrusted_lsm_hooks)
-> > >  BTF_ID(func, bpf_lsm_bpf_map_free_security)
-> > > -BTF_ID(func, bpf_lsm_bpf_prog_alloc_security)
-> > > -BTF_ID(func, bpf_lsm_bpf_prog_free_security)
-> > > +BTF_ID(func, bpf_lsm_bpf_prog_free)
-> > >  BTF_ID(func, bpf_lsm_file_alloc_security)
-> > >  BTF_ID(func, bpf_lsm_file_free_security)
-> > >  #ifdef CONFIG_SECURITY_NETWORK
-> >
-> > It looks like you're calling the BTF_ID() macro on bpf_lsm_bpf_prog_fre=
-e
-> > twice?  I would have expected a only one macro call for each bpf_prog_l=
-oad
-> > and bpf_prog_free, is that a bad assuption?
-> >
->
-> Yeah, there is no problem having multiple BTF_ID() invocations for the
-> same function. BTF_ID() macro (conceptually) emits a relocation that
-> will instruct resolve_btfids tool to put an actual BTF ID for the
-> specified function in a designated 4-byte slot.
->
-> In this case, we have two separate lists: sleepable_lsm_hooks and
-> untrusted_lsm_hooks, so we need two separate BTF_ID() entries for the
-> same function. It's expected to be duplicated.
+On Mon, Nov 06, 2023 at 09:13:19AM -0800, Christoph Hellwig wrote:
+> On Mon, Nov 06, 2023 at 02:47:16PM +0100, Christian Brauner wrote:
+> > Granted, an over-generalization but non in any way different from
+> > claiming that currently on one needs to know about btrfs subvolumes or
+> > that the proposed vfsmount solution will make it magically so that no
+> > one needs to care anymore.
+> 
+> I don't think any one has claimed "no one" needs to care any more.  What
+> the vfsmounts buy us that is that software that doesn't know and
+> should't know about btrfs subvolumes isn't silently broken.  Software
+> that actually wants to do something fancy with them always need special
+> casing.
 
-Okay, thanks for the explanation.  It jumped out as a deviation from
-the current code when I was looking at the changes and I was worried
-that it was a typo, but it sounds like it's expected and the proper
-thing to do.
+Again, this is where I'm confused, because this doesn't change anything, we're
+still going to report st_dev as being different, which is what you hate.
 
-> > > diff --git a/security/security.c b/security/security.c
-> > > index dcb3e7014f9b..5773d446210e 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -5180,16 +5180,21 @@ int security_bpf_map_alloc(struct bpf_map *ma=
-p)
-> > >  }
-> > >
-> > >  /**
-> > > - * security_bpf_prog_alloc() - Allocate a bpf program LSM blob
-> > > - * @aux: bpf program aux info struct
-> > > + * security_bpf_prog_load() - Check if loading of BPF program is all=
-owed
-> > > + * @prog: BPF program object
-> > > + * @attr: BPF syscall attributes used to create BPF program
-> > > + * @token: BPF token used to grant user access to BPF subsystem
-> > >   *
-> > > - * Initialize the security field inside bpf program.
-> > > + * Do a check when the kernel allocates BPF program object and is ab=
-out to
-> > > + * pass it to BPF verifier for additional correctness checks. This i=
-s also the
-> > > + * point where LSM blob is allocated for LSMs that need them.
-> >
-> > This is pretty nitpicky, but I'm guessing you may need to make another
-> > revision to this patchset, if you do please drop the BPF verifier remar=
-k
-> > from the comment above.
-> >
-> > Example: "Perform an access control check when the kernel loads a BPF
-> > program and allocates the associated BPF program object.  This hook is
-> > also responsibile for allocating any required LSM state for the BPF
-> > program."
->
-> Done, no problem.
+You pointed out above that user space thinks that different st_dev means
+different inode space.  That is why Chris put the st_dev hack in, because rsync
+got confused, and this made it not confused.
 
-With the comment change above, and the clarification of the BTF_ID()
-calls, feel free to add my ACK.
+So we're actually doing exactly what user space wants, letting them know that
+they've wandered into a different inode ino space when they cross into a
+subvolume.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+But that's the crux of the problem, new subvolume == new inode number space.
+I'm not changing this.  I don't think you want us to change this.
 
---=20
-paul-moore.com
+We want to let user space who don't care to know about btrfs be able to
+operate cleanly.  We have that with the st_dev hack.  Changing to vfsmounts
+doesn't fix this.  Userspace doesn't know it's wandered into a new directory,
+and in fact if you look at the rsync code they have a special python script you
+have to use if you want to exclude bind mounts, which is all the automount thing
+would accomplish.
+
+At this point I don't care, tell me what you want me to do so you'll stop
+complaining anytime we try to expose more btrfs specific information to user
+space and I'll do it.  I'm tired of having this argument.  You would have had
+auto mount patches in your inbox last week but it took me longer to get the new
+mount api conversion done than anticipated.
+
+But it doesn't appear to me there's agreement on the way forward.  vfsmounts
+aren't going to do anything from what I can tell, but I could very well be
+missing some detail.  And Christian doesn't seem to want that as a solution.
+Thanks,
+
+Josef
 
