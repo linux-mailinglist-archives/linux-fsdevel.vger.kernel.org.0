@@ -1,176 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-2266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C5E7E432D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 16:17:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A87B7E4347
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 16:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23D51C20D30
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BCA11C20AB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0BB31595;
-	Tue,  7 Nov 2023 15:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="e8AaogmS";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="rvJuhInc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A9B31594;
+	Tue,  7 Nov 2023 15:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46688DF72;
-	Tue,  7 Nov 2023 15:16:54 +0000 (UTC)
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC891FD34;
-	Tue,  7 Nov 2023 07:16:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1699370213; x=1730906213;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version;
-  bh=t3nXoBbZa32Vb3OVTbF4gUgz4IyWqyS75WYSsGkuaOo=;
-  b=e8AaogmS+kTftnT3upBPurUX3LAiIZJIEm7tkNDbT/dNjXjOmwIwGPzL
-   pCT1hPi6GNpM6vvMLlcmTz/Xtm9Np/ODQIQvB3IUsufdq9D48YfDBqR2n
-   qsgaA58j9C6/R47DSYJzHA788QmOD/k4py/y4h7kdZ+DOqc1iZp1wM/wx
-   9J/wv10JqejvwBtgY/A4U68FzaxVfoQ8joq+TSKWOxZWx8cRUYQoMtvnm
-   uGcce4aw0Vyg9XN69JHUj7sjK05CTCbeI7MGv59c9QY4RN4lzHu2zrHEq
-   Df6cVtZLwWAn9W1uMhK5e8rVsVJ7OcZtNeWuUEsYMKXXZw5oO294Y766p
-   Q==;
-X-CSE-ConnectionGUID: GJ1H+3pjSOyTvkQli1oUCA==
-X-CSE-MsgGUID: C8ZjgyA7QeuRrnlc6z40+Q==
-X-IronPort-AV: E=Sophos;i="6.03,284,1694707200"; 
-   d="scan'208";a="1678900"
-Received: from mail-dm6nam12lp2169.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.169])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Nov 2023 23:16:52 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=joryYLzjD5OYzVnPllfY0nZKYwfB2i5xG1pTDNXbUuGHrFvc7xYUcFVedlLyb+tlucsIS+puxSyS02ZGK6VFUueDXHt9L0rbLt/SqZ85Zl5pT5KeRzlRQwCaB7oO2GqtexzqatieaSVKX8pIe8owXkB0kAmKibVEOl6QeIJYlddjaTiGDmbkZMADBZV7IGXTlvCU6biwrlUTn1O7Y7CDftqRuAmx0ACEmegHDtn+MDqvtpIV/KNAKIJ0mSBAK397jy9Rq/32vvcZZka7d8k2jHITN5GBOa/8RIyz5ZrpYN2RSQS/zajZNPjnaSymwQue4TbfRMJcxyq31tdunc8Caw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t3nXoBbZa32Vb3OVTbF4gUgz4IyWqyS75WYSsGkuaOo=;
- b=A0wARsxBH8d5NJ9037BHsXiuMWjTN6xgCrpcN2vWDhISyWIgx6chP716oz5AkMtHdPsXAXEfvspWno9ZUKDW1tyCku2QAaqHIz/39prQu/Mqvd1F1hBA97HtLawZ65cxvkJJmH/c4K70+ZTtQrbJ+5cp/4w8irWbk0oLVXeTTzd+5QLaKwruKH2YoP2+BrDprM6imMQJVAZ6cJdx5KdxYJjNejpC8nfH1Bt41Xw9jrbY2eDGYVyPHsFMZWAtw39hInOsUE0ewQBfNiVL9p7M5de9foSRt55VASatI37w6b+kH8IhIVLoxyrIsFFniKPpt5PzZtzXzrNqKmEapiNhDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t3nXoBbZa32Vb3OVTbF4gUgz4IyWqyS75WYSsGkuaOo=;
- b=rvJuhInc6DrRGTDD9UzecKNX39XcME8qiTk9IOl+9mxlLe826VTzVtOCnW6L6Lo838UKMzBxYUeLrels3MOHp/1N/wVm/YJPZyr24I6prNB1OlOETJ/ttBogQusqTZRL9BLPoMMYIBVj+YgX5AGarflli4sc0cGf2058hxvnhh4=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by BN8PR04MB6435.namprd04.prod.outlook.com (2603:10b6:408:79::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.29; Tue, 7 Nov
- 2023 15:16:50 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::d52c:c128:1dea:63d7]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::d52c:c128:1dea:63d7%4]) with mapi id 15.20.6954.029; Tue, 7 Nov 2023
- 15:16:50 +0000
-From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To: Josef Bacik <josef@toxicpanda.com>, "linux-btrfs@vger.kernel.org"
-	<linux-btrfs@vger.kernel.org>, "kernel-team@fb.com" <kernel-team@fb.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>
-Subject: Re: [PATCH 06/18] btrfs: split out ro->rw and rw->ro helpers into
- their own functions
-Thread-Topic: [PATCH 06/18] btrfs: split out ro->rw and rw->ro helpers into
- their own functions
-Thread-Index: AQHaEP3ZC94OaOLEP0CuvSGdS9wlzLBu+OAA
-Date: Tue, 7 Nov 2023 15:16:50 +0000
-Message-ID: <1a5369c6-24e0-45dd-a867-5844e8171fb9@wdc.com>
-References: <cover.1699308010.git.josef@toxicpanda.com>
- <bb944da42fc7d01832f72495ec07f9a82a133376.1699308010.git.josef@toxicpanda.com>
-In-Reply-To:
- <bb944da42fc7d01832f72495ec07f9a82a133376.1699308010.git.josef@toxicpanda.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|BN8PR04MB6435:EE_
-x-ms-office365-filtering-correlation-id: a835fb8d-bf70-45b6-5243-08dbdfa49128
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- k4CG8dPxCg6RJh6bnYZJyY5jyM4MY3fmqTcEOP5MDZYWlaCDFWH42g0f6pgrBCyDSavTtMK3K88Fv5dBNcegacg9RujDj78WPRdWffBDPtRXXDZhr/2BDkfkpH+82sff7MGFgNaLLL5goabPM4bcBYRQ1z/F7AMZN+uIjZTq5uB30QI+nDICmAA+Pr/Q+NO3xwSK6TUGlPYqgQzjQ6VuXlT/XzrK4R8dgrqCxh/sZBgBz12sMjKIRHFT67V7t4AeU057eGDTd6fPppOxNoYLmudW16QXN0mIWKavkTipsEQ+DBEhjAdcHdGRrSIc+CprR1I/HBltb//EJGlyfxdXZ4mlcuaoVxevCtkP0AJk6+eN1ZDTxEpUoykpP1LRiCOdof29y5oXloEWPLJ3YxVW20+VXOFY7s1yrdjcyWJuG7n8PBA3kUJjgZJq4CEk56p+2n7Cin2lxwVjFj7IKwhaL+4Wi1guPD9gyOayFUVJqaNwj5CXhOHMXRjuJK/iSWraCDp4d1MWdeufm2z/EEzysT5m18D5e5qSoG17uEG/+tt5I87t6P45PmTiMRsEzV2KoLqzt4qVSoHePs6fPUiB5avcN3hNhdg4YdSQDaLMVnLY6SrNYQdhznf6fkaIYMdzoP7sWCcwGffnUGt7AQiFPNhUx2Cf2wppASDsSj5RbjL5nnVlz50QkqPKUcddPX2U
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(346002)(39860400002)(366004)(376002)(230922051799003)(186009)(451199024)(1800799009)(64100799003)(83380400001)(31686004)(6512007)(2616005)(6506007)(53546011)(478600001)(6486002)(4744005)(36756003)(64756008)(2906002)(66476007)(316002)(66946007)(66556008)(76116006)(110136005)(66446008)(91956017)(31696002)(5660300002)(122000001)(86362001)(41300700001)(38100700002)(8936002)(8676002)(71200400001)(38070700009)(82960400001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?RlNDWHVobTFzazZxb3hjb1hRekFIWGYrME9BZndvL3VTaHpsMGxCQjk2Mk9P?=
- =?utf-8?B?WjNoa1FITlpnQUhBVFdLQld4cVQvRVh6OWIvMkxMbHlzS0tQMk9uNlBGZlpI?=
- =?utf-8?B?MXVqMTh4bTFjeXNyWktJQk1tVUE3U1pWUnlPZjVtdHVNRndKNW96OURUallE?=
- =?utf-8?B?UDNsclZRejNiOStMUGF0dUJiSzJUNHlpYTZWTHdjN01Jd2NaN1Q3NVB4NktK?=
- =?utf-8?B?ZGoxZVJMejBKRTZlTytrTjYvcWdEMENCK0toTDNnWUt2SG94NmxYNUVsK3pZ?=
- =?utf-8?B?aEtJVTJTOElxTlJGN1M2UDZydXdiSDlhS0ZQbEpRbnhJRExPVFgvNW5Ta0dD?=
- =?utf-8?B?Qjc2OWI1bnNNQThnTnJ5WXduNUs4TUd0d1dNbkF3eDBuRU5zQWlOUWFmSHNq?=
- =?utf-8?B?TmFTcHZZaVl3YmVGNE1ZODNaRHpoaTBRSWZ6bUhZR0x6cnQzK2Q2WnlqMGlR?=
- =?utf-8?B?S3ZGVWdUWHpBUnVaL3NQc2gzR1l2cWpDRG4wdXhXYVhXKzZuVlQwZkdibTlo?=
- =?utf-8?B?cnM5QnZwM1dTb0dBdTZ6b0E3Q3g1d1ppdjg0Z0h6VTJZVXdWNHRhL1pWcjMx?=
- =?utf-8?B?RGxBcjZseWdsVlJsdG4rL3dQa3M1UHRGNlBJd0FjNEc4NzdWUWRBMk5IM0ox?=
- =?utf-8?B?Y1pFN2xleGc1U01zdjYxc3dHdmtlNUhUeDREZXlFWlVrVUxjK1JEbjhNWUNq?=
- =?utf-8?B?YkZnRUZkaVNGNDJjMjYvZjNvVmx1eHE3d21ObExZeXdLV2pQUERhcWhUUnZK?=
- =?utf-8?B?WkNkako5VlNyVGU0anFjbXRtTW91eDlVc3Bld3BZODhVelBRdEgxUTAvMTdz?=
- =?utf-8?B?bEUwbUJmVDFRNDVBWnNOYnJRZWEvNkhZQm1UeFBIQ0F1My9jbzVzeDQyamdl?=
- =?utf-8?B?OXdYbU9LcGNnTUJKNmwzYWxBWHJQRUF5MkNISXRqc25TMkhaZnY2RGl2Uk9r?=
- =?utf-8?B?THJnbExHcFcvRk4zZDgyWEZGMWhqdnUxRmVyT0s2WmhBUEtOai9XTWZPUmpr?=
- =?utf-8?B?MFhFdEpodHZORjhESU0rK1NyNmlyWkF4MzE3cUxzQ0g5ZndkS0c2a204Vjlu?=
- =?utf-8?B?d3A5cUxtMGJUK0hQTGhicFZ4MVY4QitieFBsaWlBZ3hxUTM0SzB4VFNuZm5K?=
- =?utf-8?B?NDdlL0R4RFdUMUorcTJMUlF0NWw1R0pBNlQwclY5NFRac0haM0EyR1drSktT?=
- =?utf-8?B?QjFWQ0piczEzT0thU20rZTY3VHJ4TWEvU3pldDRBNEYxR1I2V2l2RkdiVTly?=
- =?utf-8?B?QkhJeDYzSDZmRW5hTi9FS3VaS1I5ak9RZ04yY25BbGE2SDFNdk9kWWp6YkhW?=
- =?utf-8?B?cDNjczBoWEZMbEVJSEs1bExJb1RPYmdESHphR3NmakN1MGV2ZThOUEgydlRz?=
- =?utf-8?B?OEZqRDNVeTkxZTF3cjlTMWREalZSVk9EejVic0xjTzJkOFIvNURkaEcydmVB?=
- =?utf-8?B?TlVBTTBTUG9tVzRJNzY2c2dFcEJFVURwditTMmVLdWtNNkJRWGtYY0wrdUUw?=
- =?utf-8?B?SGJMTzhMakJNWXZlZloyRkRyV1ZhcXFjZHJDMHlNZXMzQlBETnpPdEJHVGQx?=
- =?utf-8?B?L1o5UHZtazVaTHNlL3VHYmhJZmpSMFNOdHJ1OXlERmF0UkpITTE3ZjlwUXMv?=
- =?utf-8?B?M0JuZEVZcncxNFY2cmNaMDJzbkRPZTJjcFNmTEpiZGZXMTZVNFl3bkhSZ3Z3?=
- =?utf-8?B?bGdQeGRyczFST3QrUitkM0Zia2J3bHQ5TW1WSTZWaCtWdWxrZ3lHblJwTTJM?=
- =?utf-8?B?MTFlRzAwK3RlNG1ManloZ05Pb1Z2Wk05Q2RUdUxXWEFJdnV6L2lYYkt0Qnhj?=
- =?utf-8?B?eVZkaWpuU3VUd0VCWDVhMkpKRHQzVXVuL3VWeGNuNzZ0YkpzUmlPREh5dlFv?=
- =?utf-8?B?UUx2QlFCRStsaEd5eEYzMEU5QWFqS1NjcDZhQmhqOUplOVNaR1lsa3Y2V0VL?=
- =?utf-8?B?aWxzRWtMbHFTcHg2L0FlT2oxMDFMTXFzK3NQaFVFSk1pK3ZMdGZ5N3lDc1BQ?=
- =?utf-8?B?VFdWME5nSktBMVk0Tkw4NS91bUtwYlZtd0dYU1F2Y2JDU2VXVFpTTzk1RmpZ?=
- =?utf-8?B?VlVGRHFXRlFDTHRqUjhpK1VjWUp1YXRpNzRFbXU2N3pwNXNuZmlzZ09MTTBv?=
- =?utf-8?B?VU43cjczSkREQzB3RDMrdFpRZzZJam5oUHpwbWRHMkt6ZEo0VFltUEUzR3dr?=
- =?utf-8?B?WTAzVkFWczdVNUtxS0djL1hBM0svcDJJV2xtUGRPOUhuenlSc3BCTWE4RXNN?=
- =?utf-8?B?TG4weTlwd0dvZHNmNlZFMFZrMWFnPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3BF0707F87E18649960DE5D128A9C527@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D746A30D0B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 15:19:29 +0000 (UTC)
+Received: from mail-ot1-f78.google.com (mail-ot1-f78.google.com [209.85.210.78])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEDC2128
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 07:19:29 -0800 (PST)
+Received: by mail-ot1-f78.google.com with SMTP id 46e09a7af769-6ce26047c6eso8276261a34.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 07:19:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699370368; x=1699975168;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iKQjuqUDwvEAIR3G1gt2zRHidvqLLvymJETtLU9xqm0=;
+        b=EUUJW5QhApcKC2ml78RkTbRHOsTLyQBioBJ07+uwEHpTjd1NaTDn1hpAIZ46UOnznX
+         otDTJbu9rpKK0FCW5gc+lEFqc7HK5bgAisTT6fWEYX6RLMoeUOGHMlZOsIjJ6Jwk6+vZ
+         fl0Gw5QwiIEJ/dlbXEe5NdAu+8ZYutfIaCgEujEMGq+nrMxIiLH+cAJADmDnWQVUddyG
+         tviBpWl86RrWcRplEOlbEC6deFO5r3qBD2toq9CW4cgzrfEbrhEF82FrMgjqGlCW6af3
+         4LbSxeCrno8sfYL6Jb3HOIIJqpYrLIK2a4v0USzXd/dmjZNXWQLi+p4PuNpXb3bl94uB
+         ncCQ==
+X-Gm-Message-State: AOJu0Yytzj8bQ8RZ1FBGkB6I+naNHxSBCMNPdlp8LIVvq8uCGBIeQ5a+
+	K3cEZg21QmWoXCvOGInsQ5lLhTvo5Nk+8IpBjl9sGNhiaqNn
+X-Google-Smtp-Source: AGHT+IH60bkKUNTwkWitRcAezeZgRtPvUAjXKw/yqv0wm4pnsPHhRLpHdRDIbiVEzYCR9hV+oJZMvnYPP+lWDK3hIMUQlVCznGN9
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DtP9RHhiMp69wH6rDYaPohmSlJUlOeTF+lJnLo9CYtzqI/mPqCosz6qvPGIMM19mEGMF+umzWYuwxVZWPp5aMou8gv67AXhbr8XPAZ9v77Dam2C5BUzpY//i1vmW/ckT7wzpQ7xPobEqcP8PElJBNmCkYrgdxfeYD/8xXaBj/HOCMtT6uq/uBtDBlM8CivlR5a+6P5ulypqInBuGI+3cjESxIdd/PymjrBte3VyhViQa72Lfmul173/9ee/dwEjSu/OYjHV1nKO1TMsHXR23hzo1Qc+InKNFv+RQZpiV0CQvLkRRgmu1OkIxQ/sFTffTC1YA3/Lqii8epm6AJQPmd6nKez55TPpmgqWz3YBRP46lVWeW6tW4sN3/Z7ZRrZIgetM9QB5PQEhLIje0308uL67IhO+7COcjIULqkbQARMXmn72cvT7rINd16qYiURSQS8f3l/KnxECpSmsMA57Lt0N+KDmQGcQ0mTFBaW3aPD9gzYyJ4nRCOWKAZEiY9kaOS3RWidU5nlg6chF4TjQe/8mShkpMsTtBvjMentocO2Ef4IphLus+j56kEqT2lfb0FMUleP6W9NFMviPFWyYTwDIW7dwQIszUvGwWNdxtEqGJAVmWzHjcfAxTp3mrgq3oMI5rMS1DmcM05HIa9rdwOLslLFbFfTqVPTXJUrMp35ebNp+qoDPjv2XUKYrhoVYGX4qgCLx01MKctiiiyjkMT7HrnSk6ZWbeqBN5AEFdLTdSLe4LFDvf0OJ9F4/4/6ILI6Ex0L/gqrFyzEVYifNafH8G0qE0K6TUabynTeDlUQVJfKF6CtPKLWsVvDSuEccBXBI22f0MS7ONxQze0uCZQAb8DkgXlV8H3kChuB8Ci/IECZ1I+ZTKXL4acZCET8pC
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a835fb8d-bf70-45b6-5243-08dbdfa49128
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2023 15:16:50.5486
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mcObAVb5NMf9qCr2WMve2Wu1a8yuGScskRGep7ABR5jkjxjKogkS7LW9CoKld6o168oQphJfNjqyMYtcwSVXYzOoSkQ5Wf6Sk17ch8WTAJ4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR04MB6435
+X-Received: by 2002:a05:6870:241a:b0:1ea:973:51da with SMTP id
+ n26-20020a056870241a00b001ea097351damr1409134oap.0.1699370368462; Tue, 07 Nov
+ 2023 07:19:28 -0800 (PST)
+Date: Tue, 07 Nov 2023 07:19:28 -0800
+In-Reply-To: <000000000000dba36305fa0f5e27@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002775cd0609917f4f@google.com>
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_put_block_group
+From: syzbot <syzbot+e38c6fff39c0d7d6f121@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-T24gMDYuMTEuMjMgMjM6MDksIEpvc2VmIEJhY2lrIHdyb3RlOg0KPiArCWlmIChidHJmc19zdXBl
-cl9sb2dfcm9vdChmc19pbmZvLT5zdXBlcl9jb3B5KSAhPSAwKSB7DQo+ICsJCWJ0cmZzX3dhcm4o
-ZnNfaW5mbywNCj4gKwkJCSAgICJtb3VudCByZXF1aXJlZCB0byByZXBsYXkgdHJlZS1sb2csIGNh
-bm5vdCByZW1vdW50IHJlYWQtd3JpdGUiKTsNCj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+ICsJfQ0K
-DQpJIGdldCB0aGF0IHRoaXMgaXMgb25seSBhIGNvcHkgb2YgdGhlIG9sZCBjb2RlLCBidXQgaWYg
-eW91IGhhdmUgdG8gDQpyZS1zcGluIHRoZSBzZXJpZXM6DQoNCglyZXQgPSBidHJmc19zdXBlcl9s
-b2dfcm9vdChmc19pbmZvLT5zdXBlcl9jb3B5KTsNCglpZiAocmV0KSB7DQoJCS8qIFsuLi5dICov
-DQoJfQ0K
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    be3ca57cfb77 Merge tag 'media/v6.7-1' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11163cdf680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ffa1cec3b40f3ce
+dashboard link: https://syzkaller.appspot.com/bug?extid=e38c6fff39c0d7d6f121
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f3c760e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1110877f680000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9e42e209afb1/disk-be3ca57c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/faad7e361a8e/vmlinux-be3ca57c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/56d812634b0d/bzImage-be3ca57c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2e2950f94580/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e38c6fff39c0d7d6f121@syzkaller.appspotmail.com
+
+BTRFS info (device loop2): at unmount dio bytes count 45056
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5067 at fs/btrfs/block-group.c:159 btrfs_put_block_group fs/btrfs/block-group.c:159 [inline]
+WARNING: CPU: 0 PID: 5067 at fs/btrfs/block-group.c:159 btrfs_put_block_group+0x2c9/0x330 fs/btrfs/block-group.c:146
+Modules linked in:
+CPU: 0 PID: 5067 Comm: syz-executor383 Not tainted 6.6.0-syzkaller-15029-gbe3ca57cfb77 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
+RIP: 0010:btrfs_put_block_group fs/btrfs/block-group.c:159 [inline]
+RIP: 0010:btrfs_put_block_group+0x2c9/0x330 fs/btrfs/block-group.c:146
+Code: 48 8d b8 e0 15 00 00 e8 f5 70 01 00 e9 b8 fe ff ff e8 db ca 43 fe e9 1f fe ff ff e8 d1 ca 43 fe e9 d7 fd ff ff e8 07 da ec fd <0f> 0b e9 61 fe ff ff e8 bb ca 43 fe e9 b5 fe ff ff e8 b1 ca 43 fe
+RSP: 0018:ffffc90003a1fb48 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff888026356000 RCX: ffffffff839bc0d8
+RDX: ffff888061868000 RSI: ffffffff839bc279 RDI: 0000000000000007
+RBP: 000000000000b000 R08: 0000000000000007 R09: 0000000000000000
+R10: 000000000000b000 R11: 1ffff11004f89c32 R12: ffff888060c28000
+R13: 0000000000000001 R14: ffff888026356160 R15: ffff888026356000
+FS:  0000555556d0c380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7172fd2100 CR3: 000000007ef04000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ btrfs_free_block_groups+0x9f5/0x13d0 fs/btrfs/block-group.c:4360
+ close_ctree+0x8c4/0xdd0 fs/btrfs/disk-io.c:4389
+ generic_shutdown_super+0x161/0x3c0 fs/super.c:696
+ kill_anon_super+0x3a/0x60 fs/super.c:1295
+ btrfs_kill_super+0x3b/0x50 fs/btrfs/super.c:2097
+ deactivate_locked_super+0xbc/0x1a0 fs/super.c:484
+ deactivate_super+0xde/0x100 fs/super.c:517
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1256
+ task_work_run+0x14d/0x240 kernel/task_work.c:180
+ ptrace_notify+0x10c/0x130 kernel/signal.c:2399
+ ptrace_report_syscall include/linux/ptrace.h:411 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
+ syscall_exit_work kernel/entry/common.c:251 [inline]
+ syscall_exit_to_user_mode_prepare+0x120/0x220 kernel/entry/common.c:278
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
+ syscall_exit_to_user_mode+0xd/0x60 kernel/entry/common.c:296
+ do_syscall_64+0x4b/0x110 arch/x86/entry/common.c:88
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7f7172f56677
+Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffe85c2eed8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000020373 RCX: 00007f7172f56677
+RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffe85c2ef90
+RBP: 00007ffe85c2ef90 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffe85c30000
+R13: 0000555556d0d6c0 R14: 431bde82d7b634db R15: 00007ffe85c30020
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
