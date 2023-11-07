@@ -1,182 +1,291 @@
-Return-Path: <linux-fsdevel+bounces-2260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCAB7E41D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:30:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA1F7E41F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F9202810C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2101C20B3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8E31584;
-	Tue,  7 Nov 2023 14:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2738A;
+	Tue,  7 Nov 2023 14:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NSkVJ5+f"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a0HadBcO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9DF3158E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 14:30:17 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D239798
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 06:30:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699367415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZQt7pg+hz5jNDMSq3EOjA/DhangBBizVIEI+137usOY=;
-	b=NSkVJ5+ftE4JkhKMQ3cbTufoCWpr/+yEx8qOU6q7C10vLgZzfqPLSrgzjZhvzyYOC3gP5u
-	1T2E3EFQ/j36/UlNL75HyNh4L72uoI0tcJKMz2UUkwhctj7pouJkLmshHHJUHCjykrmuvW
-	4K6uNHwArFo9+aNEOkEne3NzVwxECPQ=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-V9kYxtMfNECgslkEdv3_hw-1; Tue, 07 Nov 2023 09:30:13 -0500
-X-MC-Unique: V9kYxtMfNECgslkEdv3_hw-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2800e025bc7so4417127a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 06:30:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5208F30FB3
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 14:39:35 +0000 (UTC)
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3235F18D
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 06:39:33 -0800 (PST)
+Received: by mail-qv1-xf2e.google.com with SMTP id 6a1803df08f44-670e7ae4a2eso56071056d6.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 06:39:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1699367972; x=1699972772; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9yWUxtco4+SHtMfDkrQFL/rv2xiDn8sNB7VvrAl+j00=;
+        b=a0HadBcO9L6wge+xFkmXvQsQ+4y25Mq48FkUSZYGLV0jAXXGHs7ApM1Og/RPxjiN1T
+         Fr9hBOnagPhsrM0/CZ5sXHTdbACqtxVK8orwWPYn6sInsauLXLloQcLok4HYxcNImFxC
+         vMtgDMBPIsxq5i4B4HpcUNVwIAvTzdvod11hzHcBMw9FI7EP+8UbUbxvRaVFSqQFzY1+
+         VyrI/qScOyIiRxnrFPbsQL3XTX4OzEwkX4ExcnH1XeGfEZeJYob8NydL+qPmcyMNdpe5
+         Kaq73dWMAdf/ojYp0k6tnUOGhowrxoi4YPbEVqIQklHGE0ViHDoK6rRFgVbXawy4Ev97
+         mNFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699367412; x=1699972212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZQt7pg+hz5jNDMSq3EOjA/DhangBBizVIEI+137usOY=;
-        b=niJCZ3ylihFKM24NjRfV8OOli/i9dye4E6sHdyKxNy1aZPN2crWV/V0ZTdpRcVRusW
-         88LWBH7MXiLaERPFxqUdOAA82yWb6dxWFx+9CtrAP56WpdiEs4/Omb/BfmTb6T7pEc+C
-         0ho162XnB4dnk1HgKqQgbjvE/lKdQsE20s1uOPifCde1L2z4ERX6vKL46i4llAvqOp3h
-         f6Z/KShFfanycTA4943mrlwBdbYB9QDx63zAawc3U8Bo6CzpujqQn9QSWq7R4eDf2dEK
-         IiiIDSGi9CY1ZwfA4gZfaBjegcRZHo+udjFAwWxsHSu6P5MGIVw5uREHWGjecwipzOHu
-         R1PA==
-X-Gm-Message-State: AOJu0Yxz5tF/D4S/J2PVA8sMFVvBx2UVG14JpgRZhMK7qT49MAEES9+2
-	mE+CuI0Ihdvash7+6RQuyaihKIltesmhNScQgCMx8oqD/iH/W2jIq0/gpdl6k7qLe55XMrTXter
-	v7OpOnAcRoMwF41m28ZxW8PShdg==
-X-Received: by 2002:a17:90b:384b:b0:280:fc91:ad5d with SMTP id nl11-20020a17090b384b00b00280fc91ad5dmr4664061pjb.19.1699367412375;
-        Tue, 07 Nov 2023 06:30:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEuwPioMxYU0e32tVho4oh9okqj5EPRVrzMFmBiBPbOflyaQu6oF+fw0oH5qrNe5mI5XH8QUw==
-X-Received: by 2002:a17:90b:384b:b0:280:fc91:ad5d with SMTP id nl11-20020a17090b384b00b00280fc91ad5dmr4664041pjb.19.1699367412059;
-        Tue, 07 Nov 2023 06:30:12 -0800 (PST)
-Received: from kernel-devel.local ([240d:1a:c0d:9f00:245e:16ff:fe87:c960])
-        by smtp.gmail.com with ESMTPSA id f92-20020a17090a706500b0026f90d7947csm7762399pjk.34.2023.11.07.06.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 06:30:11 -0800 (PST)
-From: Shigeru Yoshida <syoshida@redhat.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shigeru Yoshida <syoshida@redhat.com>
-Subject: [PATCH] exfat: Fix uninit-value access in __exfat_write_inode()
-Date: Tue,  7 Nov 2023 23:30:02 +0900
-Message-ID: <20231107143002.1342295-1-syoshida@redhat.com>
-X-Mailer: git-send-email 2.41.0
+        d=1e100.net; s=20230601; t=1699367972; x=1699972772;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9yWUxtco4+SHtMfDkrQFL/rv2xiDn8sNB7VvrAl+j00=;
+        b=vdI/iI3aH8pgg3wjSnHvBMzwhXGQnvwboBjYtAU2buqn4ifaD+Fl2KzMMxcmE94SYa
+         e2Nd/u49ofL4kfLxHMOAWvsMQYCZ3uQqjEIwhLuTMcC7JGtoslEhPSulhwQNf6UKGVAk
+         /Zbaap+nPgeL+tqv+zAcm7PWo/mwvLPWMJkIFQEdxSV4x1vRNhCbaUfB3luT1ip3xF+v
+         X3V+CKM0AOE08p70WLQSNwD6/G+F4o9g++aUz3FogLy5U2HHhUjoB6A7C/a13+5Js6bK
+         vFfCTkWSegHDlH/lrv3uM+SC8TshnlNlJURpyxN+95UCDDepDBfYeSpGuW6hXK6fT5Xv
+         I6lQ==
+X-Gm-Message-State: AOJu0Yy67S5wFBxkl2nSM2TBvYvca6yRO10KN9zvMosEepywSU9fkFhA
+	O3i3dEl66cSXUjUFRlIF0BtgC8CyfwJ1j+OofgPfxQ==
+X-Google-Smtp-Source: AGHT+IENouhYwfq0zksB9smEGLB+VMdhNNrCcscvQWBkeUX0Zkluj03/Xo1edckn4e3jUv+DeKenqbsHwG9y+w7RhbQ=
+X-Received: by 2002:a05:6214:5297:b0:66f:abb4:49ff with SMTP id
+ kj23-20020a056214529700b0066fabb449ffmr3397127qvb.7.1699367972171; Tue, 07
+ Nov 2023 06:39:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-34-pbonzini@redhat.com>
+In-Reply-To: <20231105163040.14904-34-pbonzini@redhat.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 7 Nov 2023 14:38:55 +0000
+Message-ID: <CA+EHjTw4C-3E+V0WsC68DtKRjqCt+d7M=q3STM48fKHiy4GvSw@mail.gmail.com>
+Subject: Re: [PATCH 33/34] KVM: selftests: Test KVM exit behavior for private memory/access
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Sean Christopherson <seanjc@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
+	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-KMSAN reported the following uninit-value access issue:
+On Sun, Nov 5, 2023 at 4:35=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com> =
+wrote:
+>
+> From: Ackerley Tng <ackerleytng@google.com>
+>
+> "Testing private access when memslot gets deleted" tests the behavior
+> of KVM when a private memslot gets deleted while the VM is using the
+> private memslot. When KVM looks up the deleted (slot =3D NULL) memslot,
+> KVM should exit to userspace with KVM_EXIT_MEMORY_FAULT.
+>
+> In the second test, upon a private access to non-private memslot, KVM
+> should also exit to userspace with KVM_EXIT_MEMORY_FAULT.
 
-=====================================================
-BUG: KMSAN: uninit-value in exfat_set_entry_time+0x309/0x360 fs/exfat/misc.c:99
- exfat_set_entry_time+0x309/0x360 fs/exfat/misc.c:99
- __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
- __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
- exfat_truncate+0x121/0x540 fs/exfat/file.c:211
- exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
- notify_change+0x1934/0x1a30 fs/attr.c:499
- do_truncate+0x224/0x2a0 fs/open.c:66
- handle_truncate fs/namei.c:3280 [inline]
- do_open fs/namei.c:3626 [inline]
- path_openat+0x56c6/0x5f20 fs/namei.c:3779
- do_filp_open+0x21c/0x5a0 fs/namei.c:3809
- do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440
- do_sys_open fs/open.c:1455 [inline]
- __do_sys_creat fs/open.c:1531 [inline]
- __se_sys_creat fs/open.c:1525 [inline]
- __x64_sys_creat+0xe3/0x140 fs/open.c:1525
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+nit: The commit message is referring to private memslots, which might
+need rewording with the latest changes in v14.
 
-Uninit was stored to memory at:
- exfat_set_entry_time+0x302/0x360 fs/exfat/misc.c:99
- __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
- __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
- exfat_truncate+0x121/0x540 fs/exfat/file.c:211
- exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
- notify_change+0x1934/0x1a30 fs/attr.c:499
- do_truncate+0x224/0x2a0 fs/open.c:66
- handle_truncate fs/namei.c:3280 [inline]
- do_open fs/namei.c:3626 [inline]
- path_openat+0x56c6/0x5f20 fs/namei.c:3779
- do_filp_open+0x21c/0x5a0 fs/namei.c:3809
- do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440
- do_sys_open fs/open.c:1455 [inline]
- __do_sys_creat fs/open.c:1531 [inline]
- __se_sys_creat fs/open.c:1525 [inline]
- __x64_sys_creat+0xe3/0x140 fs/open.c:1525
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+> Intentionally don't take a requirement on KVM_CAP_GUEST_MEMFD,
+> KVM_CAP_MEMORY_FAULT_INFO, KVM_MEMORY_ATTRIBUTE_PRIVATE, etc., as it's a
+> KVM bug to advertise KVM_X86_SW_PROTECTED_VM without its prerequisites.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> [sean: call out the similarities with set_memory_region_test]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Message-Id: <20231027182217.3615211-36-seanjc@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  tools/testing/selftests/kvm/Makefile          |   1 +
+>  .../kvm/x86_64/private_mem_kvm_exits_test.c   | 120 ++++++++++++++++++
+>  2 files changed, 121 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/x86_64/private_mem_kvm_ex=
+its_test.c
+>
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftes=
+ts/kvm/Makefile
+> index fd3b30a4ca7b..69ce8e06b3a3 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -92,6 +92,7 @@ TEST_GEN_PROGS_x86_64 +=3D x86_64/nested_exceptions_tes=
+t
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/platform_info_test
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/pmu_event_filter_test
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/private_mem_conversions_test
+> +TEST_GEN_PROGS_x86_64 +=3D x86_64/private_mem_kvm_exits_test
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/set_boot_cpu_id
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/set_sregs_test
+>  TEST_GEN_PROGS_x86_64 +=3D x86_64/smaller_maxphyaddr_emulation_test
+> diff --git a/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_tes=
+t.c b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+> new file mode 100644
+> index 000000000000..2f02f6128482
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+> @@ -0,0 +1,120 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2022, Google LLC.
 
-Local variable ts created at:
- __exfat_write_inode+0x102/0xdb0 fs/exfat/inode.c:29
- __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
+nit: 2023
 
-CPU: 0 PID: 13839 Comm: syz-executor.7 Not tainted 6.6.0-14500-g1c41041124bd #10
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-1.fc38 04/01/2014
-=====================================================
+Nits aside:
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Tested-by: Fuad Tabba <tabba@google.com>
 
-Commit 4c72a36edd54 ("exfat: convert to new timestamp accessors") changed
-__exfat_write_inode() to use new timestamp accessor functions.
+Cheers,
+/fuad
 
-As for mtime, inode_set_mtime_to_ts() is called after
-exfat_set_entry_time(). This causes the above issue because `ts` is not
-initialized when exfat_set_entry_time() is called. The same issue can occur
-for atime.
 
-This patch resolves this issue by calling inode_get_mtime() and
-inode_get_atime() before exfat_set_entry_time() to initialize `ts`.
 
-Fixes: 4c72a36edd54 ("exfat: convert to new timestamp accessors")
-Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
----
- fs/exfat/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 875234179d1f..e7ff58b8e68c 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -56,18 +56,18 @@ int __exfat_write_inode(struct inode *inode, int sync)
- 			&ep->dentry.file.create_time,
- 			&ep->dentry.file.create_date,
- 			&ep->dentry.file.create_time_cs);
-+	ts = inode_get_mtime(inode);
- 	exfat_set_entry_time(sbi, &ts,
- 			     &ep->dentry.file.modify_tz,
- 			     &ep->dentry.file.modify_time,
- 			     &ep->dentry.file.modify_date,
- 			     &ep->dentry.file.modify_time_cs);
--	inode_set_mtime_to_ts(inode, ts);
-+	ts = inode_get_atime(inode);
- 	exfat_set_entry_time(sbi, &ts,
- 			     &ep->dentry.file.access_tz,
- 			     &ep->dentry.file.access_time,
- 			     &ep->dentry.file.access_date,
- 			     NULL);
--	inode_set_atime_to_ts(inode, ts);
- 
- 	/* File size should be zero if there is no cluster allocated */
- 	on_disk_size = i_size_read(inode);
--- 
-2.41.0
-
+> + */
+> +#include <linux/kvm.h>
+> +#include <pthread.h>
+> +#include <stdint.h>
+> +
+> +#include "kvm_util.h"
+> +#include "processor.h"
+> +#include "test_util.h"
+> +
+> +/* Arbitrarily selected to avoid overlaps with anything else */
+> +#define EXITS_TEST_GVA 0xc0000000
+> +#define EXITS_TEST_GPA EXITS_TEST_GVA
+> +#define EXITS_TEST_NPAGES 1
+> +#define EXITS_TEST_SIZE (EXITS_TEST_NPAGES * PAGE_SIZE)
+> +#define EXITS_TEST_SLOT 10
+> +
+> +static uint64_t guest_repeatedly_read(void)
+> +{
+> +       volatile uint64_t value;
+> +
+> +       while (true)
+> +               value =3D *((uint64_t *) EXITS_TEST_GVA);
+> +
+> +       return value;
+> +}
+> +
+> +static uint32_t run_vcpu_get_exit_reason(struct kvm_vcpu *vcpu)
+> +{
+> +       int r;
+> +
+> +       r =3D _vcpu_run(vcpu);
+> +       if (r) {
+> +               TEST_ASSERT(errno =3D=3D EFAULT, KVM_IOCTL_ERROR(KVM_RUN,=
+ r));
+> +               TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_MEMORY_FA=
+ULT);
+> +       }
+> +       return vcpu->run->exit_reason;
+> +}
+> +
+> +const struct vm_shape protected_vm_shape =3D {
+> +       .mode =3D VM_MODE_DEFAULT,
+> +       .type =3D KVM_X86_SW_PROTECTED_VM,
+> +};
+> +
+> +static void test_private_access_memslot_deleted(void)
+> +{
+> +       struct kvm_vm *vm;
+> +       struct kvm_vcpu *vcpu;
+> +       pthread_t vm_thread;
+> +       void *thread_return;
+> +       uint32_t exit_reason;
+> +
+> +       vm =3D vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
+> +                                          guest_repeatedly_read);
+> +
+> +       vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+> +                                   EXITS_TEST_GPA, EXITS_TEST_SLOT,
+> +                                   EXITS_TEST_NPAGES,
+> +                                   KVM_MEM_GUEST_MEMFD);
+> +
+> +       virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
+> +
+> +       /* Request to access page privately */
+> +       vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
+> +
+> +       pthread_create(&vm_thread, NULL,
+> +                      (void *(*)(void *))run_vcpu_get_exit_reason,
+> +                      (void *)vcpu);
+> +
+> +       vm_mem_region_delete(vm, EXITS_TEST_SLOT);
+> +
+> +       pthread_join(vm_thread, &thread_return);
+> +       exit_reason =3D (uint32_t)(uint64_t)thread_return;
+> +
+> +       TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLA=
+G_PRIVATE);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
+> +
+> +       kvm_vm_free(vm);
+> +}
+> +
+> +static void test_private_access_memslot_not_private(void)
+> +{
+> +       struct kvm_vm *vm;
+> +       struct kvm_vcpu *vcpu;
+> +       uint32_t exit_reason;
+> +
+> +       vm =3D vm_create_shape_with_one_vcpu(protected_vm_shape, &vcpu,
+> +                                          guest_repeatedly_read);
+> +
+> +       /* Add a non-private memslot (flags =3D 0) */
+> +       vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
+> +                                   EXITS_TEST_GPA, EXITS_TEST_SLOT,
+> +                                   EXITS_TEST_NPAGES, 0);
+> +
+> +       virt_map(vm, EXITS_TEST_GVA, EXITS_TEST_GPA, EXITS_TEST_NPAGES);
+> +
+> +       /* Request to access page privately */
+> +       vm_mem_set_private(vm, EXITS_TEST_GPA, EXITS_TEST_SIZE);
+> +
+> +       exit_reason =3D run_vcpu_get_exit_reason(vcpu);
+> +
+> +       TEST_ASSERT_EQ(exit_reason, KVM_EXIT_MEMORY_FAULT);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.flags, KVM_MEMORY_EXIT_FLA=
+G_PRIVATE);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.gpa, EXITS_TEST_GPA);
+> +       TEST_ASSERT_EQ(vcpu->run->memory_fault.size, EXITS_TEST_SIZE);
+> +
+> +       kvm_vm_free(vm);
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +       TEST_REQUIRE(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PRO=
+TECTED_VM));
+> +
+> +       test_private_access_memslot_deleted();
+> +       test_private_access_memslot_not_private();
+> +}
+> --
+> 2.39.1
+>
+>
 
