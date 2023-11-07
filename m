@@ -1,307 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-2259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADCB7E4183
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:06:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCAB7E41D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0001F28117E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F9202810C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215E830F8E;
-	Tue,  7 Nov 2023 14:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8E31584;
+	Tue,  7 Nov 2023 14:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NSkVJ5+f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB0E30D14;
-	Tue,  7 Nov 2023 14:06:33 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5EFFA;
-	Tue,  7 Nov 2023 06:06:31 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SPqRl5HJjz9xrp2;
-	Tue,  7 Nov 2023 21:53:07 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXBXU7REpltbY3AA--.54899S2;
-	Tue, 07 Nov 2023 15:06:02 +0100 (CET)
-Message-ID: <563820b8fd57deb99e6247b6cdb416c4c3af3091.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 00/23] security: Move IMA and EVM to the LSM
- infrastructure
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com, 
-	jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, 
-	casey@schaufler-ca.com, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 07 Nov 2023 15:05:44 +0100
-In-Reply-To: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
-References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9DF3158E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 14:30:17 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D239798
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 06:30:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1699367415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZQt7pg+hz5jNDMSq3EOjA/DhangBBizVIEI+137usOY=;
+	b=NSkVJ5+ftE4JkhKMQ3cbTufoCWpr/+yEx8qOU6q7C10vLgZzfqPLSrgzjZhvzyYOC3gP5u
+	1T2E3EFQ/j36/UlNL75HyNh4L72uoI0tcJKMz2UUkwhctj7pouJkLmshHHJUHCjykrmuvW
+	4K6uNHwArFo9+aNEOkEne3NzVwxECPQ=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-27-V9kYxtMfNECgslkEdv3_hw-1; Tue, 07 Nov 2023 09:30:13 -0500
+X-MC-Unique: V9kYxtMfNECgslkEdv3_hw-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2800e025bc7so4417127a91.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 06:30:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699367412; x=1699972212;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZQt7pg+hz5jNDMSq3EOjA/DhangBBizVIEI+137usOY=;
+        b=niJCZ3ylihFKM24NjRfV8OOli/i9dye4E6sHdyKxNy1aZPN2crWV/V0ZTdpRcVRusW
+         88LWBH7MXiLaERPFxqUdOAA82yWb6dxWFx+9CtrAP56WpdiEs4/Omb/BfmTb6T7pEc+C
+         0ho162XnB4dnk1HgKqQgbjvE/lKdQsE20s1uOPifCde1L2z4ERX6vKL46i4llAvqOp3h
+         f6Z/KShFfanycTA4943mrlwBdbYB9QDx63zAawc3U8Bo6CzpujqQn9QSWq7R4eDf2dEK
+         IiiIDSGi9CY1ZwfA4gZfaBjegcRZHo+udjFAwWxsHSu6P5MGIVw5uREHWGjecwipzOHu
+         R1PA==
+X-Gm-Message-State: AOJu0Yxz5tF/D4S/J2PVA8sMFVvBx2UVG14JpgRZhMK7qT49MAEES9+2
+	mE+CuI0Ihdvash7+6RQuyaihKIltesmhNScQgCMx8oqD/iH/W2jIq0/gpdl6k7qLe55XMrTXter
+	v7OpOnAcRoMwF41m28ZxW8PShdg==
+X-Received: by 2002:a17:90b:384b:b0:280:fc91:ad5d with SMTP id nl11-20020a17090b384b00b00280fc91ad5dmr4664061pjb.19.1699367412375;
+        Tue, 07 Nov 2023 06:30:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEuwPioMxYU0e32tVho4oh9okqj5EPRVrzMFmBiBPbOflyaQu6oF+fw0oH5qrNe5mI5XH8QUw==
+X-Received: by 2002:a17:90b:384b:b0:280:fc91:ad5d with SMTP id nl11-20020a17090b384b00b00280fc91ad5dmr4664041pjb.19.1699367412059;
+        Tue, 07 Nov 2023 06:30:12 -0800 (PST)
+Received: from kernel-devel.local ([240d:1a:c0d:9f00:245e:16ff:fe87:c960])
+        by smtp.gmail.com with ESMTPSA id f92-20020a17090a706500b0026f90d7947csm7762399pjk.34.2023.11.07.06.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Nov 2023 06:30:11 -0800 (PST)
+From: Shigeru Yoshida <syoshida@redhat.com>
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shigeru Yoshida <syoshida@redhat.com>
+Subject: [PATCH] exfat: Fix uninit-value access in __exfat_write_inode()
+Date: Tue,  7 Nov 2023 23:30:02 +0900
+Message-ID: <20231107143002.1342295-1-syoshida@redhat.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAXBXU7REpltbY3AA--.54899S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jr43Aw43trWkGFWrAFWUurg_yoWDJFWrpF
-	4kKa15A34kJFy2k393AF4xua1S9ayrWrWUXr9xKry8Z3W5tr1FqFWSkrWY9ry5GrWrXw1I
-	q3ZFy3s8ur1qyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv
-	6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5YblQABsj
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2023-11-07 at 14:39 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+KMSAN reported the following uninit-value access issue:
 
-Hi everyone
+=====================================================
+BUG: KMSAN: uninit-value in exfat_set_entry_time+0x309/0x360 fs/exfat/misc.c:99
+ exfat_set_entry_time+0x309/0x360 fs/exfat/misc.c:99
+ __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
+ __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
+ exfat_truncate+0x121/0x540 fs/exfat/file.c:211
+ exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
+ notify_change+0x1934/0x1a30 fs/attr.c:499
+ do_truncate+0x224/0x2a0 fs/open.c:66
+ handle_truncate fs/namei.c:3280 [inline]
+ do_open fs/namei.c:3626 [inline]
+ path_openat+0x56c6/0x5f20 fs/namei.c:3779
+ do_filp_open+0x21c/0x5a0 fs/namei.c:3809
+ do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440
+ do_sys_open fs/open.c:1455 [inline]
+ __do_sys_creat fs/open.c:1531 [inline]
+ __se_sys_creat fs/open.c:1525 [inline]
+ __x64_sys_creat+0xe3/0x140 fs/open.c:1525
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-I kindly ask your support to add the missing reviewed-by/acked-by. I
-summarize what is missing below:
+Uninit was stored to memory at:
+ exfat_set_entry_time+0x302/0x360 fs/exfat/misc.c:99
+ __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
+ __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
+ exfat_truncate+0x121/0x540 fs/exfat/file.c:211
+ exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
+ notify_change+0x1934/0x1a30 fs/attr.c:499
+ do_truncate+0x224/0x2a0 fs/open.c:66
+ handle_truncate fs/namei.c:3280 [inline]
+ do_open fs/namei.c:3626 [inline]
+ path_openat+0x56c6/0x5f20 fs/namei.c:3779
+ do_filp_open+0x21c/0x5a0 fs/namei.c:3809
+ do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440
+ do_sys_open fs/open.c:1455 [inline]
+ __do_sys_creat fs/open.c:1531 [inline]
+ __se_sys_creat fs/open.c:1525 [inline]
+ __x64_sys_creat+0xe3/0x140 fs/open.c:1525
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-- @Mimi: patches 1, 2, 4, 5, 6, 19, 21, 22, 23 (IMA/EVM-specific
-         patches)
-- @Al/@Christian: patches 10-17 (VFS-specific patches)
-- @Paul: patches 10-23 (VFS-specific patches/new LSM hooks/new LSMs)
-- @David Howells/@Jarkko: patch 18 (new LSM hook in the key subsystem)
-- @Chuck Lever: patch 12 (new LSM hook in nfsd/vfs.c)
+Local variable ts created at:
+ __exfat_write_inode+0x102/0xdb0 fs/exfat/inode.c:29
+ __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
 
-Paul, as I mentioned I currently based the patch set on lsm/dev-
-staging, which include the following dependencies:
+CPU: 0 PID: 13839 Comm: syz-executor.7 Not tainted 6.6.0-14500-g1c41041124bd #10
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-1.fc38 04/01/2014
+=====================================================
 
-8f79e425c140 lsm: don't yet account for IMA in LSM_CONFIG_COUNT calculation
-3c91a124f23d lsm: drop LSM_ID_IMA
+Commit 4c72a36edd54 ("exfat: convert to new timestamp accessors") changed
+__exfat_write_inode() to use new timestamp accessor functions.
 
-I know you wanted to wait until at least rc1 to make lsm/dev. I will
-help for rebasing my patch set, if needed.
+As for mtime, inode_set_mtime_to_ts() is called after
+exfat_set_entry_time(). This causes the above issue because `ts` is not
+initialized when exfat_set_entry_time() is called. The same issue can occur
+for atime.
 
-Chuck, Mimi, there were two conflicts during the latest rebase:
+This patch resolves this issue by calling inode_get_mtime() and
+inode_get_atime() before exfat_set_entry_time() to initialize `ts`.
 
-d59b3515ab021 - nfsd: Handle EOPENSTALE correctly in the filecache
-68279f9c9f59 - treewide: mark stuff as __ro_after_init
+Fixes: 4c72a36edd54 ("exfat: convert to new timestamp accessors")
+Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
+---
+ fs/exfat/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The first one required to change from 'goto out_nfserr' to 'goto out'
-in the error path of patch 12.
-
-The second one was automatically solved by kdiff3. It was because of
-this change:
-
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -23,7 +23,7 @@
-=20
- static struct rb_root integrity_iint_tree =3D RB_ROOT;
- static DEFINE_RWLOCK(integrity_iint_lock);
--static struct kmem_cache *iint_cache __read_mostly;
-+static struct kmem_cache *iint_cache __ro_after_init;
-
-I'm running the IMA tests for every patch set version. So far, no
-issues detected:
-
-https://github.com/robertosassu/ima-evm-utils/actions/runs/6774439916
-
-Please let me know if I can help with the process.
-
-Thanks
-
-Roberto
-
-> IMA and EVM are not effectively LSMs, especially due to the fact that in
-> the past they could not provide a security blob while there is another LS=
-M
-> active.
->=20
-> That changed in the recent years, the LSM stacking feature now makes it
-> possible to stack together multiple LSMs, and allows them to provide a
-> security blob for most kernel objects. While the LSM stacking feature has
-> some limitations being worked out, it is already suitable to make IMA and
-> EVM as LSMs.
->=20
-> In short, while this patch set is big, it does not make any functional
-> change to IMA and EVM. IMA and EVM functions are called by the LSM
-> infrastructure in the same places as before (except ima_post_path_mknod()=
-),
-> rather being hardcoded calls, and the inode metadata pointer is directly
-> stored in the inode security blob rather than in a separate rbtree.
->=20
-> To avoid functional changes, it was necessary to keep the 'integrity' LSM
-> in addition to the newly introduced 'ima' and 'evm' LSMs, despite there i=
-s
-> no LSM ID assigned to it. There are two reasons: first, IMA and EVM still
-> share the same inode metadata, and thus cannot directly reserve space in
-> the security blob for it; second, someone needs to initialize 'ima' and
-> 'evm' exactly in this order, as the LSM infrastructure cannot guarantee
-> that.
->=20
-> The patch set is organized as follows.
->=20
-> Patches 1-9 make IMA and EVM functions suitable to be registered to the L=
-SM
-> infrastructure, by aligning function parameters.
->=20
-> Patches 10-18 add new LSM hooks in the same places where IMA and EVM
-> functions are called, if there is no LSM hook already.
->=20
-> Patches 19-22 do the bulk of the work, introduce the new LSMs 'ima' and
-> 'evm', and move hardcoded calls to IMA, EVM and integrity functions to
-> those LSMs. In addition, they reserve one slot for the 'evm' LSM to suppl=
-y
-> an xattr with the inode_init_security hook.
->=20
-> Finally, patch 23 removes the rbtree used to bind integrity metadata to t=
-he
-> inodes, and instead reserves a space in the inode security blob to store
-> the pointer to that metadata. This also brings performance improvements d=
-ue
-> to retrieving metadata in constant time, as opposed to logarithmic.
->=20
-> The patch set applies on top of lsm/dev-staging, commit ba7ce019d3e9 ("ls=
-m:
-> convert security_setselfattr() to use memdup_user()"). No need to merge
-> linux-integrity/next-integrity-testing.
->=20
-> Changelog:
->=20
-> v4:
->  - Improve short and long description of
->    security_inode_post_create_tmpfile(), security_inode_post_set_acl(),
->    security_inode_post_remove_acl() and security_file_post_open()
->    (suggested by Mimi)
->  - Improve commit message of 'ima: Move to LSM infrastructure' (suggested
->    by Mimi)
->=20
-> v3:
->  - Drop 'ima: Align ima_post_path_mknod() definition with LSM
->    infrastructure' and 'ima: Align ima_post_create_tmpfile() definition
->    with LSM infrastructure', define the new LSM hooks with the same
->    IMA parameters instead (suggested by Mimi)
->  - Do IS_PRIVATE() check in security_path_post_mknod() and
->    security_inode_post_create_tmpfile() on the new inode rather than the
->    parent directory (in the post method it is available)
->  - Don't export ima_file_check() (suggested by Stefan)
->  - Remove redundant check of file mode in ima_post_path_mknod() (suggeste=
-d
->    by Mimi)
->  - Mention that ima_post_path_mknod() is now conditionally invoked when
->    CONFIG_SECURITY_PATH=3Dy (suggested by Mimi)
->  - Mention when a LSM hook will be introduced in the IMA/EVM alignment
->    patches (suggested by Mimi)
->  - Simplify the commit messages when introducing a new LSM hook
->  - Still keep the 'extern' in the function declaration, until the
->    declaration is removed (suggested by Mimi)
->  - Improve documentation of security_file_pre_free()
->  - Register 'ima' and 'evm' as standalone LSMs (suggested by Paul)
->  - Initialize the 'ima' and 'evm' LSMs from 'integrity', to keep the
->    original ordering of IMA and EVM functions as when they were hardcoded
->  - Return the IMA and EVM LSM IDs to 'integrity' for registration of the
->    integrity-specific hooks
->  - Reserve an xattr slot from the 'evm' LSM instead of 'integrity'
->  - Pass the LSM ID to init_ima_appraise_lsm()
->=20
-> v2:
->  - Add description for newly introduced LSM hooks (suggested by Casey)
->  - Clarify in the description of security_file_pre_free() that actions ca=
-n
->    be performed while the file is still open
->=20
-> v1:
->  - Drop 'evm: Complete description of evm_inode_setattr()', 'fs: Fix
->    description of vfs_tmpfile()' and 'security: Introduce LSM_ORDER_LAST'=
-,
->    they were sent separately (suggested by Christian Brauner)
->  - Replace dentry with file descriptor parameter for
->    security_inode_post_create_tmpfile()
->  - Introduce mode_stripped and pass it as mode argument to
->    security_path_mknod() and security_path_post_mknod()
->  - Use goto in do_mknodat() and __vfs_removexattr_locked() (suggested by
->    Mimi)
->  - Replace __lsm_ro_after_init with __ro_after_init
->  - Modify short description of security_inode_post_create_tmpfile() and
->    security_inode_post_set_acl() (suggested by Stefan)
->  - Move security_inode_post_setattr() just after security_inode_setattr()
->    (suggested by Mimi)
->  - Modify short description of security_key_post_create_or_update()
->    (suggested by Mimi)
->  - Add back exported functions ima_file_check() and
->    evm_inode_init_security() respectively to ima.h and evm.h (reported by
->    kernel robot)
->  - Remove extern from prototype declarations and fix style issues
->  - Remove unnecessary include of linux/lsm_hooks.h in ima_main.c and
->    ima_appraise.c
->=20
-> Roberto Sassu (23):
->   ima: Align ima_inode_post_setattr() definition with LSM infrastructure
->   ima: Align ima_file_mprotect() definition with LSM infrastructure
->   ima: Align ima_inode_setxattr() definition with LSM infrastructure
->   ima: Align ima_inode_removexattr() definition with LSM infrastructure
->   ima: Align ima_post_read_file() definition with LSM infrastructure
->   evm: Align evm_inode_post_setattr() definition with LSM infrastructure
->   evm: Align evm_inode_setxattr() definition with LSM infrastructure
->   evm: Align evm_inode_post_setxattr() definition with LSM
->     infrastructure
->   security: Align inode_setattr hook definition with EVM
->   security: Introduce inode_post_setattr hook
->   security: Introduce inode_post_removexattr hook
->   security: Introduce file_post_open hook
->   security: Introduce file_pre_free_security hook
->   security: Introduce path_post_mknod hook
->   security: Introduce inode_post_create_tmpfile hook
->   security: Introduce inode_post_set_acl hook
->   security: Introduce inode_post_remove_acl hook
->   security: Introduce key_post_create_or_update hook
->   ima: Move to LSM infrastructure
->   ima: Move IMA-Appraisal to LSM infrastructure
->   evm: Move to LSM infrastructure
->   integrity: Move integrity functions to the LSM infrastructure
->   integrity: Switch from rbtree to LSM-managed blob for
->     integrity_iint_cache
->=20
->  fs/attr.c                             |   5 +-
->  fs/file_table.c                       |   3 +-
->  fs/namei.c                            |  12 +-
->  fs/nfsd/vfs.c                         |   3 +-
->  fs/open.c                             |   1 -
->  fs/posix_acl.c                        |   5 +-
->  fs/xattr.c                            |   9 +-
->  include/linux/evm.h                   | 103 ----------
->  include/linux/ima.h                   | 142 --------------
->  include/linux/integrity.h             |  26 ---
->  include/linux/lsm_hook_defs.h         |  20 +-
->  include/linux/security.h              |  59 ++++++
->  include/uapi/linux/lsm.h              |   2 +
->  security/integrity/evm/evm_main.c     | 138 ++++++++++++--
->  security/integrity/iint.c             | 113 +++++------
->  security/integrity/ima/ima.h          |  11 ++
->  security/integrity/ima/ima_appraise.c |  37 +++-
->  security/integrity/ima/ima_main.c     |  96 ++++++++--
->  security/integrity/integrity.h        |  58 +++++-
->  security/keys/key.c                   |  10 +-
->  security/security.c                   | 261 ++++++++++++++++----------
->  security/selinux/hooks.c              |   3 +-
->  security/smack/smack_lsm.c            |   4 +-
->  23 files changed, 614 insertions(+), 507 deletions(-)
->=20
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 875234179d1f..e7ff58b8e68c 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -56,18 +56,18 @@ int __exfat_write_inode(struct inode *inode, int sync)
+ 			&ep->dentry.file.create_time,
+ 			&ep->dentry.file.create_date,
+ 			&ep->dentry.file.create_time_cs);
++	ts = inode_get_mtime(inode);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			     &ep->dentry.file.modify_tz,
+ 			     &ep->dentry.file.modify_time,
+ 			     &ep->dentry.file.modify_date,
+ 			     &ep->dentry.file.modify_time_cs);
+-	inode_set_mtime_to_ts(inode, ts);
++	ts = inode_get_atime(inode);
+ 	exfat_set_entry_time(sbi, &ts,
+ 			     &ep->dentry.file.access_tz,
+ 			     &ep->dentry.file.access_time,
+ 			     &ep->dentry.file.access_date,
+ 			     NULL);
+-	inode_set_atime_to_ts(inode, ts);
+ 
+ 	/* File size should be zero if there is no cluster allocated */
+ 	on_disk_size = i_size_read(inode);
+-- 
+2.41.0
 
 
