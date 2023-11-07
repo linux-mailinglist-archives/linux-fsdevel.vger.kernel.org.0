@@ -1,102 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-2306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6347E4974
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 20:55:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656F07E49D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 21:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7FE2813A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 19:55:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059A01F21A31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 20:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA1836B09;
-	Tue,  7 Nov 2023 19:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5662F37152;
+	Tue,  7 Nov 2023 20:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yx/c11xV"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GLxwEucg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EAD210E2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 19:55:41 +0000 (UTC)
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604FCD79
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 11:55:41 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1cc938f9612so36821545ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 11:55:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0CB37141
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 20:30:39 +0000 (UTC)
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E62C10D4
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 12:30:39 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1cc53d0030fso640745ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 12:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1699386941; x=1699991741; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1699389039; x=1699993839; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNeFqgo6zpROkihy0ShoA85fAr1c1+bU52BjgzWcK1o=;
-        b=Yx/c11xV+iyISUNC4tjBoSSI8tDR682FVRusZqHd8SLKwKdyfBTM8w5vQkcXgknLJ5
-         jAgQELvmzCuVCKasvH6kMnPtHvprVKl7yqS82mCfrB/C94OMNdAzRAu1PvRDjHy91cqI
-         QScGcCYchxw00U+ge59I8ZKuiL3/85122I5rI=
+        bh=kMKC+f3GuoNBGpjpvUIzL6NWxNO/+YBarjXdWe3vCGU=;
+        b=GLxwEucgk24yIIVqxRiHq7gNCsO7wLNcBR8CwhFyGx0o0ZKVC0pCkPzRFUZ9wEP+JE
+         HtU5BD8uw/g6Fd3H5ECSiZjBf/tCAit/1AFswZhJIhsudqWtU7hO1xt7r92ussc+wGSK
+         vtcFo241znSfq6uomTd15OzKoXoSHowxIBJd0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699386941; x=1699991741;
+        d=1e100.net; s=20230601; t=1699389039; x=1699993839;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HNeFqgo6zpROkihy0ShoA85fAr1c1+bU52BjgzWcK1o=;
-        b=pB0Hx2YNWqupeaG8p14+w1EXLPWTasVT/7fCpAIbfxtdijwp00EvLnjHLuNBG6rp/X
-         I135WTtFV25gnNXQi8HHRM5IgTPU7oI8hBbfe2XzkM9RpjZjYzv9rP2GquIGlz53zMQy
-         8J8WDRAPj2Uj8EsXUbEX3gTV0L0Pe8/DY3F2Sv/gJ5d7jtZcKm6fT8kjhQBO/C5VZWtw
-         wTH27FXCb0rP3HLP1TcZ32TD6k4SAw51+1n5bk8fC4gy9IRvoay3OfqHwwd0kJhki8b6
-         Ht7sXxhUSBqyEHiszFTfDu3qsCBA1rWYJZDxywAiMJQiMD5BX23N67fOhO9xj9fW17mJ
-         iPfA==
-X-Gm-Message-State: AOJu0YyOXYwkt/SVhgbyHnEKQG9ULpkxMddvHgoD4jyqEFNdbxJOCiqI
-	y+zNpHEqLO/blNQqhnKpIqYxDg==
-X-Google-Smtp-Source: AGHT+IEZgybC45XGlQUGbU637Xhd/YQognaCWgtAXzdYdCdXOmVngLWoQt1kbfTCkOpNfx5sZXCftA==
-X-Received: by 2002:a17:903:2282:b0:1cc:ee07:1654 with SMTP id b2-20020a170903228200b001ccee071654mr35008plh.14.1699386940686;
-        Tue, 07 Nov 2023 11:55:40 -0800 (PST)
+        bh=kMKC+f3GuoNBGpjpvUIzL6NWxNO/+YBarjXdWe3vCGU=;
+        b=F9Vg6WtxZGIq/xcNbI6s9N/JT0lzE1BXWbAkuS7P5DrsCkKds0u3P3XFePuEcqkKel
+         X78o63BeGBwGa5o2cB5W8+QRIVEaFr2idWGET4hekcnyIN1PAXOavcP8VEzCph1fmJGK
+         GMHqumLXaYzQzfY+4jApJJXBTcj65Hi2ag+03AU6iNv2llvu+kbqG9m8uzImxU6pLtzb
+         zeBB7RoWixuhqTOtMYe4KzL1UeYJWP2f1VkE95zKjZO6yyGy1lc/JAkaiAtMvt4BM7XF
+         LCwTOzYnGlRG/a3/o9GVhLH5Zbx/coeaFCmWLHVy5DlfHConAOgLWgkQaky5gL1zOwvS
+         TizQ==
+X-Gm-Message-State: AOJu0YzDMWkIVQQESrFsjZ+AnOghLd3U1/LYZprcyibTAAS+xttpwPq5
+	rrXD4z2PE4nRvEJpSKj6/vmXiEtLazKxwjQoORKl5w==
+X-Google-Smtp-Source: AGHT+IE+tNZ4JB+XVmT1foSgL0lugYRgOWvRkGk+9lpLcUqnOxA3uaZasFMQofi47dyLmcuOIes3PA==
+X-Received: by 2002:a17:903:41c6:b0:1c9:9fa6:ce5b with SMTP id u6-20020a17090341c600b001c99fa6ce5bmr5127588ple.16.1699389038799;
+        Tue, 07 Nov 2023 12:30:38 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id jw24-20020a170903279800b001cc3a8af18dsm209511plb.60.2023.11.07.11.55.38
+        by smtp.gmail.com with ESMTPSA id s14-20020a170902b18e00b001cc5225c220sm237006plr.15.2023.11.07.12.30.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 11:55:39 -0800 (PST)
-Date: Tue, 7 Nov 2023 11:55:38 -0800
+        Tue, 07 Nov 2023 12:30:38 -0800 (PST)
+Date: Tue, 7 Nov 2023 12:30:37 -0800
 From: Kees Cook <keescook@chromium.org>
-To: j.granados@samsung.com
-Cc: Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
-	josh@joshtriplett.org, Eric Biederman <ebiederm@xmission.com>,
-	Iurii Zaikin <yzaikin@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Petr Mladek <pmladek@suse.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Balbir Singh <bsingharora@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH 05/10] seccomp: Remove the now superfluous sentinel
- elements from ctl_table array
-Message-ID: <202311071155.EE9C0FBF@keescook>
-References: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-0-e4ce1388dfa0@samsung.com>
- <20231107-jag-sysctl_remove_empty_elem_kernel-v1-5-e4ce1388dfa0@samsung.com>
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Eric Biederman <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search
+ before allocating mm
+Message-ID: <202311071228.27D22C00@keescook>
+References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,22 +72,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-5-e4ce1388dfa0@samsung.com>
+In-Reply-To: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
 
-On Tue, Nov 07, 2023 at 02:45:05PM +0100, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
+On Fri, Sep 16, 2022 at 02:41:30PM +0100, Josh Triplett wrote:
+> Currently, execve allocates an mm and parses argv and envp before
+> checking if the path exists. However, the common case of a $PATH search
+> may have several failed calls to exec before a single success. Do a
+> filename lookup for the purposes of returning ENOENT before doing more
+> expensive operations.
 > 
-> This commit comes at the tail end of a greater effort to remove the
-> empty elements at the end of the ctl_table arrays (sentinels) which
-> will reduce the overall build time size of the kernel and run time
-> memory bloat by ~64 bytes per sentinel (further information Link :
-> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> This does not create a TOCTTOU race, because this can only happen if the
+> file didn't exist at some point during the exec call, and that point is
+> permitted to be when we did our lookup.
 > 
-> Remove sentinel element from seccomp_sysctl_table.
+> To measure performance, I ran 2000 fork and execvpe calls with a
+> seven-element PATH in which the file was found in the seventh directory
+> (representative of the common case as /usr/bin is the seventh directory
+> on my $PATH), as well as 2000 fork and execve calls with an absolute
+> path to an existing binary. I recorded the minimum time for each, to
+> eliminate noise from context switches and similar.
 > 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
+> Without fast-path:
+> fork/execvpe: 49876ns
+> fork/execve:  32773ns
+> 
+> With fast-path:
+> fork/execvpe: 36890ns
+> fork/execve:  32069ns
+> 
+> The cost of the additional lookup seems to be in the noise for a
+> successful exec, but it provides a 26% improvement for the path search
+> case by speeding up the six failed execs.
+> 
+> Signed-off-by: Josh Triplett <josh@joshtriplett.org>
 
-Acked-by: Kees Cook <keescook@chromium.org>
+*thread necromancy*
+
+I'll snag this patch after -rc1 is out. Based on the research we both
+did in the rest of this thread, this original patch is a clear win.
+Let's get it into linux-next and see if anything else falls out of it.
+
+I did, however, scratch my head over the 0-day report:
+https://lore.kernel.org/lkml/202209221401.90061e56-yujie.liu@intel.com/
+
+But I can't see why this patch could trigger those problems...
+
+Thanks!
+
+-Kees
 
 -- 
 Kees Cook
