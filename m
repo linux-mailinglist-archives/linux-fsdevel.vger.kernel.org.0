@@ -1,310 +1,325 @@
-Return-Path: <linux-fsdevel+bounces-2257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF787E40F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:48:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CD37E408F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C5F1C20C6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 13:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CD61C20BB4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 13:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3230D0C;
-	Tue,  7 Nov 2023 13:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAAE30F90;
+	Tue,  7 Nov 2023 13:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERDEsjJ3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B1130CF3;
-	Tue,  7 Nov 2023 13:48:28 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9167719B2;
-	Tue,  7 Nov 2023 05:48:26 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SPq2v4Sdsz9y5h2;
-	Tue,  7 Nov 2023 21:35:03 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHtXXdP0pltoA3AA--.60646S5;
-	Tue, 07 Nov 2023 14:47:58 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	kolga@netapp.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	dhowells@redhat.com,
-	jarkko@kernel.org,
-	stephen.smalley.work@gmail.com,
-	eparis@parisplace.org,
-	casey@schaufler-ca.com,
-	mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
-Date: Tue,  7 Nov 2023 14:40:12 +0100
-Message-Id: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
-References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0155930D05;
+	Tue,  7 Nov 2023 13:44:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 60C3BC433C7;
+	Tue,  7 Nov 2023 13:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699364686;
+	bh=BX2Tgmusj22t2ImeDH/Db41rnYDA2OpBkrkY6HkG4Vg=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ERDEsjJ3jcdzHK7bGuPyilBC+mNvR9achV7BxWqpA9vmn/7dGCm2UD8je32dYJ0yL
+	 EH/z/AlZTTt5tMCVS0Ztel5kr8+H7vRNE9cqWDzpShnGJEL4Q0duuzuFZvDWAul9A+
+	 NwrIR3u7rOZwPqZ4diVaGnkW36pVZ4UPFUueEFvVVlnFD8TUnTCM5E5TDh4te6Qm2m
+	 r1VV0TjIlTUso7Dufe1ctz5VLG6uvzr1ig+xGdcPBkQPBVIYmkZpgw062kQ+O6lnOy
+	 xspmbVbYYGYlLwU1k3f0ClKiUvpn0FMp4PNbZZuYJBCY95YoMVloKemUIAasvsO86p
+	 AW3wn0D1cl9vg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B81AC4332F;
+	Tue,  7 Nov 2023 13:44:46 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Subject: [PATCH 0/4] sysctl: Remove sentinel elements from fs dir
+Date: Tue, 07 Nov 2023 14:44:19 +0100
+Message-Id:
+ <20231107-jag-sysctl_remove_empty_elem_fs-v1-0-7176632fea9f@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDHtXXdP0pltoA3AA--.60646S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxKryfJr4xZFyxGr4fuF1kuFg_yoWxuF48pF
-	42gay8Jws8ZFWq9F4vyFW5Zr4fKFyqgFZ7W34Ykw1kAFyvvr1YqFs8AryUZF15GrW5t34I
-	qr1Ykr4UuF1qyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU1ebytUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBF1jj5IbhgAAs2
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADQ/SmUC/x3NQQqDMBBG4avIrBswFrV4FSlBkz86xahkRCri3
+ Q0uv817JwkiQ6jJTorYWXiZE/QrIzt28wDFLpmKvHhrndfq1w1KDrHbZCLCssMgrNthMCEYL8r
+ 1zvqq/Gjfg1JljfD8fw7t97pun+G/83EAAAA=
+To: Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org, 
+ josh@joshtriplett.org, Kees Cook <keescook@chromium.org>, 
+ David Howells <dhowells@redhat.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Benjamin LaHaise <bcrl@kvack.org>, 
+ Eric Biederman <ebiederm@xmission.com>, 
+ Trond Myklebust <trond.myklebust@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+ Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Jan Kara <jack@suse.cz>, 
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+ Anton Altaparmakov <anton@tuxera.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Iurii Zaikin <yzaikin@google.com>, 
+ Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>, 
+ coda@cs.cmu.edu
+Cc: linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-mm@kvack.org, 
+ linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
+ ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+ linux-xfs@vger.kernel.org, codalist@coda.cs.cmu.edu, 
+ Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13-dev-86aa5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10141;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=C3DmFO8Hz7l/cldXER9EIJKfHb6WTQfVYhuohw0jqAA=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBlSj9LnKbg9Qxr7Dcd99rtLU0xLDCzZRMTGLwh9
+ e1zls1ye9uJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZUo/SwAKCRC6l81St5ZB
+ TznpC/9XunhpTHq+xhr6kaz5TZDhfTOnYmqXhvejjQi1MwmqTIgaQYEoUiM8w/0O2RIxJU9hChR
+ oc3TSlJwhTQGpLQtD329xMm+cVx20uakbjIQXuXTZ0y/E8i1LgUSnxqVDKg3miAzLbNzdRqFmKX
+ QxXwnz63qIkYH1Wcb90i08RJpCmWOgGwSZ+fg8GknruPYtsHMFRpFM7oghZ5SNY7h7d8e5rjP5i
+ j9fRYr5WD34ytCrJaBKJsTemlRPKBtw8UNnHEPd9BzTQnRCCf6cC+czRbL7ygTKoa25lciGy6Nl
+ 4jXSqUir9bE9+U2Uzf3PbjH+oJ90jjCmIjBmxghSOae4S6UByh+bWnzc3F23IpvLv/xHnr7pyHM
+ +lNSgUCZhWV1RrN8Z0VWHX3h+PoKFmRDTlQwHMPmUGfW4SCFfY8fAXS5dq3W+Bda4cFz+7iQStz
+ BDArwlJ7y7nT+ps9/4EHCT0yEwIT9FmOjOAOAGps9FiDih14BG3BGz4t4z09jACJz1wHo=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received:
+ by B4 Relay for j.granados@samsung.com/default with auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: <j.granados@samsung.com>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+From: Joel Granados <j.granados@samsung.com>
 
-Before the security field of kernel objects could be shared among LSMs with
-the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-of inode metadata. The association between inode metadata and inode is
-maintained through an rbtree.
+What?
+These commits remove the sentinel element (last empty element) from the
+sysctl arrays of all the files under the "fs/" directory that use a
+sysctl array for registration. The merging of the preparation patches
+(in https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+to mainline allows us to just remove sentinel elements without changing
+behavior (more info here [1]).
 
-Because of this alternative storage mechanism, there was no need to use
-disjoint inode metadata, so IMA and EVM today still share them.
+These commits are part of a bigger set (here
+https://github.com/Joelgranados/linux/tree/tag/sysctl_remove_empty_elem_V5)
+that remove the ctl_table sentinel. We make the review process easier by
+chunking the commits into manageable pieces. Each chunk can be reviewed
+separately without noise from parallel sets.
 
-With the reservation mechanism offered by the LSM infrastructure, the
-rbtree is no longer necessary, as each LSM could reserve a space in the
-security blob for each inode. However, since IMA and EVM share the
-inode metadata, they cannot directly reserve the space for them.
+Sending the "fs/*" chunk now that the "drivers/" has been mostly
+reviewed [6]. After this and the "kernel/*" are reviewed we only have 2 more
+chunks ("net/*" and miscellaneous) to complete the sentinel removal.
+Hurray!!!
 
-Instead, request from the 'integrity' LSM a space in the security blob for
-the pointer of inode metadata (integrity_iint_cache structure). The other
-reason for keeping the 'integrity' LSM is to preserve the original ordering
-of IMA and EVM functions as when they were hardcoded.
+Why?
+By removing the sysctl sentinel elements we avoid kernel bloat as
+ctl_table arrays get moved out of kernel/sysctl.c into their own
+respective subsystems. This move was started long ago to avoid merge
+conflicts; the sentinel removal bit came after Mathew Wilcox suggested
+it to avoid bloating the kernel by one element as arrays moved out. This
+patchset will reduce the overall build time size of the kernel and run
+time memory bloat by about ~64 bytes per declared ctl_table array. I
+have consolidated some links that shed light on the history of this
+effort [2].
 
-Prefer reserving space for a pointer to allocating the integrity_iint_cache
-structure directly, as IMA would require it only for a subset of inodes.
-Always allocating it would cause a waste of memory.
+Testing:
+* Ran sysctl selftests (./tools/testing/selftests/sysctl/sysctl.sh)
+* Ran this through 0-day with no errors or warnings
 
-Introduce two primitives for getting and setting the pointer of
-integrity_iint_cache in the security blob, respectively
-integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-the code more understandable, as they directly replace rbtree operations.
+Size saving after this patchset:
+    * bloat-o-meter
+        - The "yesall" config saves 1920 bytes [4]
+        - The "tiny" config saves 576 bytes [5]
+    * If you want to know how many bytes are saved after all the chunks
+      are merged see [3]
 
-Locking is not needed, as access to inode metadata is not shared, it is per
-inode.
+Base commit:
+tag: sysctl-6.7-rc1 (8b793bcda61f)
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Comments/feedback greatly appreciated
+
+Best
+
+Joel
+
+[1]
+We are able to remove a sentinel table without behavioral change by
+introducing a table_size argument in the same place where procname is
+checked for NULL. The idea is for it to keep stopping when it hits
+->procname == NULL, while the sentinel is still present. And when the
+sentinel is removed, it will stop on the table_size. You can go to 
+(https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/)
+for more information.
+
+[2]
+Links Related to the ctl_table sentinel removal:
+* E-mail threads that summarize the sentinel effort
+  https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/
+  https://lore.kernel.org/all/ZMFizKFkVxUFtSqa@bombadil.infradead.org/
+* Replacing the register functions:
+  https://lore.kernel.org/all/20230302204612.782387-1-mcgrof@kernel.org/
+  https://lore.kernel.org/all/20230302202826.776286-1-mcgrof@kernel.org/
+* E-mail threads discussing prposal
+  https://lore.kernel.org/all/20230321130908.6972-1-frank.li@vivo.com
+  https://lore.kernel.org/all/20220220060626.15885-1-tangmeng@uniontech.com
+
+[3]
+Size saving after removing all sentinels:
+  These are the bytes that we save after removing all the sentinels
+  (this plus all the other chunks). I included them to get an idea of
+  how much memory we are talking about.
+    * bloat-o-meter:
+        - The "yesall" configuration results save 9158 bytes
+          https://lore.kernel.org/all/20230621091000.424843-1-j.granados@samsung.com/
+        - The "tiny" config + CONFIG_SYSCTL save 1215 bytes
+          https://lore.kernel.org/all/20230809105006.1198165-1-j.granados@samsung.com/
+    * memory usage:
+        In memory savings are measured to be 7296 bytes. (here is how to
+        measure [7])
+
+[4]
+add/remove: 0/0 grow/shrink: 0/30 up/down: 0/-1920 (-1920)
+Function                                     old     new   delta
+xfs_table                                   1024     960     -64
+vm_userfaultfd_table                         128      64     -64
+test_table_unregister                        128      64     -64
+test_table                                   576     512     -64
+root_table                                   128      64     -64
+pty_table                                    256     192     -64
+ocfs2_nm_table                               128      64     -64
+ntfs_sysctls                                 128      64     -64
+nlm_sysctls                                  448     384     -64
+nfs_cb_sysctls                               192     128     -64
+nfs4_cb_sysctls                              192     128     -64
+namei_sysctls                                320     256     -64
+locks_sysctls                                192     128     -64
+inotify_table                                256     192     -64
+inodes_sysctls                               192     128     -64
+fsverity_sysctl_table                        128      64     -64
+fs_stat_sysctls                              256     192     -64
+fs_shared_sysctls                            192     128     -64
+fs_pipe_sysctls                              256     192     -64
+fs_namespace_sysctls                         128      64     -64
+fs_exec_sysctls                              128      64     -64
+fs_dqstats_table                             576     512     -64
+fs_dcache_sysctls                            128      64     -64
+fanotify_table                               256     192     -64
+epoll_table                                  128      64     -64
+dnotify_sysctls                              128      64     -64
+coredump_sysctls                             256     192     -64
+coda_table                                   256     192     -64
+cachefiles_sysctls                           128      64     -64
+aio_sysctls                                  192     128     -64
+Total: Before=429912331, After=429910411, chg -0.00%
+
+[5]
+add/remove: 0/0 grow/shrink: 0/9 up/down: 0/-576 (-576)
+Function                                     old     new   delta
+root_table                                   128      64     -64
+namei_sysctls                                320     256     -64
+inodes_sysctls                               192     128     -64
+fs_stat_sysctls                              256     192     -64
+fs_shared_sysctls                            192     128     -64
+fs_pipe_sysctls                              256     192     -64
+fs_namespace_sysctls                         128      64     -64
+fs_exec_sysctls                              128      64     -64
+fs_dcache_sysctls                            128      64     -64
+Total: Before=1886645, After=1886069, chg -0.03%
+
+[6]
+https://lore.kernel.org/all/20231002-jag-sysctl_remove_empty_elem_drivers-v2-0-02dd0d46f71e@samsung.com
+
+[7]
+To measure the in memory savings apply this on top of this patchset.
+
+"
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c88854df0b62..e0073a627bac 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -976,6 +976,8 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
+        table[0].procname = new_name;
+        table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
+        init_header(&new->header, set->dir.header.root, set, node, table, 1);
++       // Counts additional sentinel used for each new dir.
++       printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+
+        return new;
+ }
+@@ -1199,6 +1201,9 @@ static struct ctl_table_header *new_links(struct ctl_dir *dir, struct ctl_table_
+                link_name += len;
+                link++;
+        }
++       // Counts additional sentinel used for each new registration
++       //
++               printk("%ld sysctl saved mem kzalloc \n", sizeof(struct ctl_table));
+        init_header(links, dir->header.root, dir->header.set, node, link_table,
+                    head->ctl_table_size);
+        links->nreg = nr_entries;
+"
+and then run the following bash script in the kernel:
+
+accum=0
+for n in $(dmesg | grep kzalloc | awk '{print $3}') ; do
+    echo $n
+    accum=$(calc "$accum + $n")
+done
+echo $accum
+
 ---
- security/integrity/iint.c      | 71 +++++-----------------------------
- security/integrity/integrity.h | 20 +++++++++-
- 2 files changed, 29 insertions(+), 62 deletions(-)
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 882fde2a2607..a5edd3c70784 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -14,56 +14,25 @@
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
--#include <linux/rbtree.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
- #include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
--static struct rb_root integrity_iint_tree = RB_ROOT;
--static DEFINE_RWLOCK(integrity_iint_lock);
- static struct kmem_cache *iint_cache __ro_after_init;
- 
- struct dentry *integrity_dir;
- 
--/*
-- * __integrity_iint_find - return the iint associated with an inode
-- */
--static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--	struct rb_node *n = integrity_iint_tree.rb_node;
--
--	while (n) {
--		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
--
--		if (inode < iint->inode)
--			n = n->rb_left;
--		else if (inode > iint->inode)
--			n = n->rb_right;
--		else
--			return iint;
--	}
--
--	return NULL;
--}
--
- /*
-  * integrity_iint_find - return the iint associated with an inode
-  */
- struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
- {
--	struct integrity_iint_cache *iint;
--
- 	if (!IS_IMA(inode))
- 		return NULL;
- 
--	read_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	read_unlock(&integrity_iint_lock);
--
--	return iint;
-+	return integrity_inode_get_iint(inode);
- }
- 
- #define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
-@@ -123,9 +92,7 @@ static void iint_free(struct integrity_iint_cache *iint)
-  */
- struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- {
--	struct rb_node **p;
--	struct rb_node *node, *parent = NULL;
--	struct integrity_iint_cache *iint, *test_iint;
-+	struct integrity_iint_cache *iint;
- 
- 	iint = integrity_iint_find(inode);
- 	if (iint)
-@@ -137,31 +104,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- 
- 	iint_init_always(iint, inode);
- 
--	write_lock(&integrity_iint_lock);
--
--	p = &integrity_iint_tree.rb_node;
--	while (*p) {
--		parent = *p;
--		test_iint = rb_entry(parent, struct integrity_iint_cache,
--				     rb_node);
--		if (inode < test_iint->inode) {
--			p = &(*p)->rb_left;
--		} else if (inode > test_iint->inode) {
--			p = &(*p)->rb_right;
--		} else {
--			write_unlock(&integrity_iint_lock);
--			kmem_cache_free(iint_cache, iint);
--			return test_iint;
--		}
--	}
--
- 	iint->inode = inode;
--	node = &iint->rb_node;
- 	inode->i_flags |= S_IMA;
--	rb_link_node(node, parent, p);
--	rb_insert_color(node, &integrity_iint_tree);
-+	integrity_inode_set_iint(inode, iint);
- 
--	write_unlock(&integrity_iint_lock);
- 	return iint;
- }
- 
-@@ -178,10 +124,8 @@ static void integrity_inode_free(struct inode *inode)
- 	if (!IS_IMA(inode))
- 		return;
- 
--	write_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
--	write_unlock(&integrity_iint_lock);
-+	iint = integrity_iint_find(inode);
-+	integrity_inode_set_iint(inode, NULL);
- 
- 	iint_free(iint);
- }
-@@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
- 	return 0;
- }
- 
-+struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
-+	.lbs_inode = sizeof(struct integrity_iint_cache *),
-+};
-+
- /*
-  * Keep it until IMA and EVM can use disjoint integrity metadata, and their
-  * initialization order can be swapped without change in their behavior.
-@@ -239,6 +187,7 @@ DEFINE_LSM(integrity) = {
- 	.name = "integrity",
- 	.init = integrity_lsm_init,
- 	.order = LSM_ORDER_LAST,
-+	.blobs = &integrity_blob_sizes,
- };
- 
- /*
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index e4df82d6f6e7..ef2689b5264d 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -158,7 +158,6 @@ struct ima_file_id {
- 
- /* integrity data associated with an inode */
- struct integrity_iint_cache {
--	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
- 	struct mutex mutex;	/* protects: version, flags, digest */
- 	struct inode *inode;	/* back pointer to inode in question */
- 	u64 version;		/* track inode changes */
-@@ -192,6 +191,25 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- #define INTEGRITY_KEYRING_MAX		4
- 
- extern struct dentry *integrity_dir;
-+extern struct lsm_blob_sizes integrity_blob_sizes;
-+
-+static inline struct integrity_iint_cache *
-+integrity_inode_get_iint(const struct inode *inode)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	return *iint_sec;
-+}
-+
-+static inline void integrity_inode_set_iint(const struct inode *inode,
-+					    struct integrity_iint_cache *iint)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	*iint_sec = iint;
-+}
- 
- struct modsig;
- 
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+
+---
+Joel Granados (4):
+      cachefiles: Remove the now superfluous sentinel element from ctl_table array
+      aio: Remove the now superfluous sentinel elements from ctl_table array
+      sysctl:  Remove the now superfluous sentinel elements from ctl_table array
+      coda:  Remove the now superfluous sentinel elements from ctl_table array
+
+ fs/aio.c                           | 1 -
+ fs/cachefiles/error_inject.c       | 1 -
+ fs/coda/sysctl.c                   | 1 -
+ fs/coredump.c                      | 1 -
+ fs/dcache.c                        | 1 -
+ fs/devpts/inode.c                  | 1 -
+ fs/eventpoll.c                     | 1 -
+ fs/exec.c                          | 1 -
+ fs/file_table.c                    | 1 -
+ fs/inode.c                         | 1 -
+ fs/lockd/svc.c                     | 1 -
+ fs/locks.c                         | 1 -
+ fs/namei.c                         | 1 -
+ fs/namespace.c                     | 1 -
+ fs/nfs/nfs4sysctl.c                | 1 -
+ fs/nfs/sysctl.c                    | 1 -
+ fs/notify/dnotify/dnotify.c        | 1 -
+ fs/notify/fanotify/fanotify_user.c | 1 -
+ fs/notify/inotify/inotify_user.c   | 1 -
+ fs/ntfs/sysctl.c                   | 1 -
+ fs/ocfs2/stackglue.c               | 1 -
+ fs/pipe.c                          | 1 -
+ fs/proc/proc_sysctl.c              | 1 -
+ fs/quota/dquot.c                   | 1 -
+ fs/sysctls.c                       | 1 -
+ fs/userfaultfd.c                   | 1 -
+ fs/verity/fsverity_private.h       | 2 +-
+ fs/verity/init.c                   | 8 +++++---
+ fs/xfs/xfs_sysctl.c                | 2 --
+ lib/test_sysctl.c                  | 2 --
+ 30 files changed, 6 insertions(+), 34 deletions(-)
+---
+base-commit: 8b793bcda61f6c3ed4f5b2ded7530ef6749580cb
+change-id: 20231107-jag-sysctl_remove_empty_elem_fs-dbdcf6581fbe
+
+Best regards,
 -- 
-2.34.1
+Joel Granados <j.granados@samsung.com>
 
 
