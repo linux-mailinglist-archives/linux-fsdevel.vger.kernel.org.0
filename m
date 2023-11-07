@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-2276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03707E46BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2230D7E46C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF9A1C20A64
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:22:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F5D1C20A4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC802347AC;
-	Tue,  7 Nov 2023 17:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDBB347B8;
+	Tue,  7 Nov 2023 17:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PdVBWiTL"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bW8wiejz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A274A328DD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:22:18 +0000 (UTC)
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5F410A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:22:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377737; bh=rS38ARgdEttTVVhi/AFCyj+0QJRHHebzLinEUr5CGRE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PdVBWiTL5xnQVD48djXxTcV1hZy+cz/IyPJRrqkHM+4ILaNArh+1k/otSvm8ZvEafyl8o88FFb6rVPvnv+oqhk0lM5+Al9Wam45HoOU3Xgc/ZuS83Fvz0zifcJwgVNVjOgiUXMUMs2zRmduPuCZn4kUUx7n9wSV4qc2ILF0YldbezY1gcjA+5rbkfuumezBc37q8hzJUgNYX82dpr/RT+pjBzVdUAGTZIeikKjBDkn2tO36EW5zD81tHy1W+eiA5cegHI2agF8ZCj+1AeP856wC7fHuqAAMrYjoMZmPHheppiwpf5Hr8fTHjen/4rS6U/963eHxOfUEwHaI/Hqus8A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377737; bh=C8cyhk8oOCxwiLNUy1F+SDRLky9EFsBQ7gxFAKctakt=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P99hsky8eM5e/UEeGICAqsOGQaKEaA8v74bbFRtu9fX+XZzJV3HUGB+aIw1ijFUCR7dpuDnMy4Gvjp6DrQWo9j73zQ78cT16Qh+VUNvX3yLVhXoIwcRqpnDhcgj5xNjm2p84D6xYQ0d1hoaPTeoYdXg1dLGQQxE4F8QHOBXa+HAAR/A+/TEt12KOCfoNi6kDQL1myjZV28UlAYzPh8vbcSKRYBGluHlygPvchm2CFjWekTVmaR0ZsTE4w/R9JI9icAJsbbEKUwGWzX9vr1zo1pVvr3L8ouiiCW4JjKNPYnAHua7E16yKmdv1dxoWCczc/YbZRjTIz+3n2DRMggNaNw==
-X-YMail-OSG: gYFM_bQVM1nu7t50CxX.GxAWkCQGcAqP6xzY3QbKvFdgMqdzY9g4UU4Z8BJ6QUO
- .dkt55u3gUxE0i.a.GIISiIE7ISnhx.Y6WNsO_4K_HSf6ykAiAeHGjQK_9DXv2niwSLT4K4h22BX
- Sqg4CgjDKwUafXRyoo8J31xZCnRtB_QowRKOtEFP2mc6fvVtSEC.Icg2AtQ14kTLZvOWPxMMTOx9
- DiTfvsN8ae8jzKCa55gxfsG5HkqO2O97OduM2WL_LQr8e4TJhF_WC9t5q72dYhhxqK5P5spY7VOy
- 1zIeFx88oF6TDYVpKKyXXjAImHO1Oi10b0ioc08kZfKnXr5N3cltMbWcPXq5lX3MfN3O8c8BQD8B
- RdTPU.QoIMwWboy2kC3icNXpA0binaLoydQqJrxOgRaIg6Jxt8efYBJNg_EAcWdNS0RHp7KigyYL
- LC9vQP9L34jzuLuPum3cmgZHeAVZ.Q65JiSavSo9qoo1yU_Y1O1JB4GdJxvdUUiGirFfqibkK2KR
- K9U4Pk0Y4yxndOsv7jL4kPzvuXMqGAaKe.2p2yzTyEyJVzCz1k7rvLKvz00sjK4nSNXNsXXndYSK
- RPSIeSGJRh81PpltItMmC3CufY__ubqofhLyVVQ1oMXuhvWGA5ewxcPrDxo9Gkop2xIuYZhnswhK
- hw_y5ZnhC3fpzSVZdRjZITSIM7XoX5N.3ACaMWuZeVh598jSlc1cZiO6xv8g3DDRnmtXhSFG7Iac
- pT8Fv5iPdtPiwPTMEc9U322ZJqj6sCuIt_6r_zAzYq5zOgYbSkgBPLwAX47pMl2rPyDaPpErtP4f
- 2SzZECTUXnqwgQxrgFe7b4RZLVZwDhgB_SZvc58kizeOloDNjwa96GrrGmjtDqUoNgIgBJ_cdBLm
- 1KpKky90YQqiKsUkUFNwkGzmTFWgrxJmrwm9ntx1F10uE9bmRhwgJsZ4LCWgx4oICYJxrpEwNu5N
- 5Zwj.1hMAIvqb9Jg2gJOZiiR2MMmsIIsx65xww1BS2xxxKCNsk.Nn4yykDr5f9tevye6VUoDxXtP
- wfu5UFOaQwi90Ss0F_Vm0k0SluG.1Jssjm2BTXaflkKGxiy6L3S2A3naTAL0w5MfFNMEYuKZ0O0d
- n7WdcxGwsi5D3Xne7IQuvJBmUJfKXht3rAH4j_MEu_6qsAFq3RnmHmVyZ70abTTUUIQD4K_LpvYE
- dWaFJ7FLvcmWlGZOsNv08ExMIYm0gH78xAqKT4JMV5qlhO5H5LcJP_2EbJP9i9lPzOtMVo9jMTCV
- JyKfhuDMGsxCbFuPIai9wMgGmPFxne6wfcs_wTRdRzbt7noHr8qanN6d9_W0PIajzpv.R0YXwTb.
- 5IFS3gmmEWmrIqxKlrZ7XZjXi.N1UQNIloINomajBgUxQMp.BW0BfCqApJJhQ4w9FSr1DebNJolm
- HmdpZyuukJ9UlmpexgQNa61o0yt5GglD9fWbz88VJJNo4b3lSkRCGy3noBiQBms6_DxaIl2DPOwc
- qLJVczyooz2DaSX3qof6D6LN7fNTIkdNgBZSd43sBbX9biinSSj4IMQy8PO4XXcC.4b9Zes2qrB1
- WQ7uBEKBt.yrIaF8DvUoPRIbY3kAqsbJi_9RowYZ0GmvVvKilz222dfmA_f7XuUeU3wodb3uzrZA
- fiZiFByDToJp005K_LPDKMZgbLZ_Rs5RE3X29Q_ZYnxcW4QQFzodRj5vF6iCQSeqiRzwAX0WsYRb
- RZ2UOF5T6_Mbdv5lW58YwUzi69Uado9VJgZQDAS4XI_Vwv0wblZfRiGGGJf1eiua_bW5vWeQiTDe
- zKqwLrN_2l3v0Zi3lO0mheBUw6UbC6i87yJtgDTnzQI_HC8q4I4E62nuyAKRj2bhKCSzeLAQF0oy
- 5hBu8pfpKi_c4SR.rdAQ4gT7191f666VBHJr63NTHoJKXB7x5MRxjA40PfvwRCxYQW3dRE6ENTkJ
- .XOhHNa0E4R.D2pXdyaD9IAcWsn2Zmih7Hhkj9tZpRAVeDsPzbyPtiePChfPl4oyipoj97VSRMF1
- fNR7YYQZWTmR2Kf0QEf1OjYC.VYy1_1BkMhN3nNlrol068lPPRoMH0pPX8Soseig8NRUY5h3jGQe
- Ty5Y4.HSm2AHwIV2szOsnMpvpkZ2J1O51RWRM6o199b2idCvOQFWXqCbRoWPxpx_.mQSa0sfNFGk
- SRZDZ9xEtEnUO7Be036WwKbetSSlqkcUK7WddOVGP3buKg6TIwwFv2.8xSPZQ6X0b_m.RcJ7QVYK
- EufvNUQobtfpa0737SzuZd4jLKT.vANtiMiMCUDbEJ44EySAe.prtcQNdgKXm4GgayJOv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96137347A2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:23:24 +0000 (UTC)
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D443116
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:23:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377803; bh=7nFaiIIvCZwjUaCZj9MQcQ/3EbMaTe2FoeMnVbrkG8I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bW8wiejzU3rx2wW/sDmlgoraHnI5O4aoOHMq+hhYHJrKY5RxdRyP5z6XZqQTGjpgaJaxEyUO3hVlSfbnCnj1T8DDDow8mw8Hpjyb9Y1ojCf+BhwbXFS8HPrEEf+Y6LTzFDkIjrOEqCxI/9+wf/HkwKOoAQiGP5EDlaIUguIsg6Nr/uZBCU+I3vVEJxVwf4HcYq9dg1D5cioXDMvfnlGUiHrWjoibG+L3DDRiruF9hcM7oFn+0NFytesq79CTwibZRkYxKiTdqITvibJIRqKOIzlI7w7qDDDqucjDpRYSTX+Z+4EONlqBFblguClP0XszrxgYSTFd6AG967pIZOW0Ug==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377803; bh=ZjE1iLA7gIV1pQwwOb3xHlBSnKFL6Qu7B5W3jPBvR+Q=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DpkRH25tcuhPI+wx+I3D5q1Xk3sIWDhWCitqV8jGv8rd72LDK2FmZde7MHeQQ1nbfCNxhqny6LRdF6x6H3Biz9zJdK8kKtRZtBPHVvc/vs66PHHzKxGrHrCUDOU4q6vWHR4HDNSV6BvFb3j9kSdqVyPiNlvui5ifGk5lLcHdADnLO1Sc2tOqHI2E2BvV8H9fTC0zdZ/Hrx9joIWo/IHRJTckgDiYB4ito+KCtav+RMLrr3zbzohVFzSPcf5Cl5etIJmOMFFiMyF+Ui0XG+ULFr5hVLP0hb91/ZmMomOvm0loS6EIxIpbzfPRZjWxc/AM3000MJRsPUf0elcCgn7VEg==
+X-YMail-OSG: wktKID4VM1k7CiY.ZvlOmZ9Q1RKrLNlU9eLBcUulfhjP2joXtWs4OKXLSi3rRV4
+ 2C7Jd8eQn4tlrhZ2LilJNxnOL6HDKvH_J.zmBCbYpRSp_kmFPKo7emHCIIYVPmqXFjJWEVkMC9HV
+ s4GcWBtKvmkNzBVORQN4obtfP.uyb_llCfY4h607vHkkul0TwIPQnrXDq5ZiZf6613bjNmbgz7pr
+ NdG6336EYs8Xbj_VJlM2WGx_P6KwbHXGfPAbqU7YLPU95JQ1nNp87nLvrwEMCKX3TgPDKwJcgOhE
+ ATtXhhSwis1rgrDzk2rBucMe_8E8zNB1O2H7jzuPWm7OJdjsgIGtNliw_NX.ovalBMPDgBZFNziZ
+ XFS_f4ppNERvBNSN_u4xHmxFPBp1x2fDGmrnmImLz8aLxU_6ngvybt1eEltdvTavwZPflWmvbHh4
+ 3j1ehT7KARumDJOmla53tNwBix0sIOyeonw8OdMKtQ5fRx8oYAAtYmpmb3IVjiFMygzZKgfUJU5p
+ QJRxned3Dh3339sV_G_N5ELs71JhmU6t_4Pz1Yk_dts8HE7BxLtU1PwBC.xAQwKxub2tX3rmD7kU
+ 87OPiy_fZoOr3EZQJbI9ngkti_2w28uZzEPEjhZyu8AxNVDjEW2OfmGnG1Nz4VifOzXILkOtmqrb
+ uUmvbg43KSs1owSSwrtVWx9VhQSb0QISdtPV6oNrhJ4eoHBBweBwC0IsYz1hxT7lf5DP9jlyptob
+ _TRyQZo29HTZRUIEp8DK7PcULpJ2nhISdE8aNt0YgQ5EOnkZ19259rnlg7CA6QGWmDYaSBU7kyC7
+ vj4XY_utDVXR3c.WEMALICs0FKWdO8hqxLAIswMtJOO1IvxRYi9H0cdEXMqdvhLVJ9ANC.lrS6Tp
+ TkActhqJ8UdXFDRga7iZ7B4emYi5pbxA7XiAF64wXo.KudaYoyU4STQJibfejhFyL.831Gf2wR87
+ NvohlBdrHngBLF3uC6EcjIf5RE4PYreC51Zg.n9wA9RXdkGE8HPW4fjNfQul1HxSoo1OYq1ER4gn
+ 8RP3AXWO0rGDex4AYiPkW_XOpk1YAND38.g8vniqKu.Lo5cHtcYR5gEl9zPYpe8ZGhLGxgvCoaFX
+ JDbKytF._PWOJJgwfZwmMoNhPFUxXF9om4I4l8jLPgaa_JVaz0GoZnljkweNDcLx2VRu8D6lxqEF
+ l7ycssXcTrIiFPM0H.ufb0MkZWIzE_3vWGG6HJQD9Is32iLpfVioXn4f0At_QmtR.ATfpGWAOBX7
+ 8VMWTaNY0F0Ovho6yot2dzroQ787.BQPL7bxGr_tTqiC57rTOgaCsgH4zaDPC1PxHWdFDs3YK5jt
+ 2uAlqEjqyxe.sDOArpbBXBwGlGxwrZKVyrgMTbLhVqCqHn1DKhMwV_IjlmOkx_TPzFXgOXq3cqnF
+ Aa.2rRCAeS_J_tgE9hjO9N4vxRvhXUsauGRy_RbYhJqXqpjtVE7m9549lf1B94sF1VGizORyDOZP
+ 7zl0wP9gOgHAnmMbzvGVHUGpTkcru4DSJheCzurcq8Wi2Wnw7Hd_1KSrozDOJkgDyQhLq5vUG4Yu
+ J65PseZ1R2ympXHg6.hfVpLYF2Z1SUXX90A2wtgywXlhaySrK0iwFXVnId2rLNqCza.YvJQsbvWO
+ oo634jxleyr5_IAF.qhdcHheAxn_4ZcJNvG0bbh7wot2B5DFOfUI0fT2.h5h2mRlqya_Or9z1I8k
+ yI3_0P.SY9V.WnWdmlrgRqVuv0.47i.7sEDas2.1FU.Yru7a634iWtSRbJ1__B2yWEM3kd_Aax.W
+ 0YhPnG2UFTBG00zKiEb5DaoGSsj9s5zud6Z5vMH2kj2fRBkt_pcQRIAtGksP8VvD8SrdbldkPuHX
+ XmBmV9xhzT8upmQvPYnAF8xMY9BYwEDQUecptjrfahX2iHcWUejPFjS_QWTLrB6LkuVfg7rON61N
+ elpls8uGQ4U7JmxlpX_BaITPR7jQBSUeex2QWksEELjqm_4oJnAKQJnaq.bo5gbKpCMF2B5PrE.E
+ K70yUXttcPqKHN1nF4noT6BKcm939Cp8uJvk2sddPdFrPLKytxIApQlGCBifKCOEBnUSidBJtlHz
+ AVhXkDLnQfQLgK9NsAuhH7871u_rg6kLLRNm.qVZqvwfr.DUzqXmIrnwe0DNr.EqAqW1N_BKGQsC
+ Vmw2opZVwiWRBYfH1GWAxXGrY27eN4v2Ci9iJBtaK3DyhFTmmKx5Cf5760vdGzcvR1bB3w4Cbxz4
+ KfGHsNrqsAAdCLtjdKjb2gN_gif0XH0G9xoiZrS26nwn15Amms0S56PnfJ9DvwA9Ch2mP
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 8c5180fa-950d-47fd-840f-8536e274ae07
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:22:17 +0000
-Received: by hermes--production-ne1-56df75844-8k4lp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e1e2ab52efbb959fd95a219a55e86ac1;
-          Tue, 07 Nov 2023 17:22:14 +0000 (UTC)
-Message-ID: <972656de-8e5c-4900-a8ef-0510c6f121d8@schaufler-ca.com>
-Date: Tue, 7 Nov 2023 09:22:13 -0800
+X-Sonic-ID: 0d2e3d61-9f18-495e-b333-d4fbd9f4b9ad
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:23:23 +0000
+Received: by hermes--production-ne1-56df75844-pr5zc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d6861bf05a6dc0512095da46cc300843;
+          Tue, 07 Nov 2023 17:23:18 +0000 (UTC)
+Message-ID: <95ca614e-d50b-4621-9ff3-693264b463e7@schaufler-ca.com>
+Date: Tue, 7 Nov 2023 09:23:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,7 +70,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/23] ima: Align ima_file_mprotect() definition with
+Subject: Re: [PATCH v5 03/23] ima: Align ima_inode_setxattr() definition with
  LSM infrastructure
 Content-Language: en-US
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
@@ -87,9 +87,9 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  Stefan Berger <stefanb@linux.ibm.com>,
  Casey Schaufler <casey@schaufler-ca.com>
 References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
- <20231107134012.682009-3-roberto.sassu@huaweicloud.com>
+ <20231107134012.682009-4-roberto.sassu@huaweicloud.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231107134012.682009-3-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-4-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -97,78 +97,80 @@ X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz
 On 11/7/2023 5:39 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> Change ima_file_mprotect() definition, so that it can be registered
-> as implementation of the file_mprotect hook.
+> Change ima_inode_setxattr() definition, so that it can be registered as
+> implementation of the inode_setxattr hook.
 >
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
+
 > ---
->  include/linux/ima.h               | 5 +++--
->  security/integrity/ima/ima_main.c | 6 ++++--
->  security/security.c               | 2 +-
->  3 files changed, 8 insertions(+), 5 deletions(-)
+>  include/linux/ima.h                   | 11 +++++++----
+>  security/integrity/ima/ima_appraise.c |  5 +++--
+>  security/security.c                   |  2 +-
+>  3 files changed, 11 insertions(+), 7 deletions(-)
 >
 > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 910a2f11a906..b66353f679e8 100644
+> index b66353f679e8..077324309c11 100644
 > --- a/include/linux/ima.h
 > +++ b/include/linux/ima.h
-> @@ -23,7 +23,8 @@ extern void ima_post_create_tmpfile(struct mnt_idmap *idmap,
->  extern void ima_file_free(struct file *file);
->  extern int ima_file_mmap(struct file *file, unsigned long reqprot,
->  			 unsigned long prot, unsigned long flags);
-> -extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
-> +extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> +			     unsigned long prot);
->  extern int ima_load_data(enum kernel_load_data_id id, bool contents);
->  extern int ima_post_load_data(char *buf, loff_t size,
->  			      enum kernel_load_data_id id, char *description);
-> @@ -84,7 +85,7 @@ static inline int ima_file_mmap(struct file *file, unsigned long reqprot,
+> @@ -188,8 +188,9 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
+>  extern bool is_ima_appraise_enabled(void);
+>  extern void ima_inode_post_setattr(struct mnt_idmap *idmap,
+>  				   struct dentry *dentry, int ia_valid);
+> -extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> -		       const void *xattr_value, size_t xattr_value_len);
+> +extern int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			      const char *xattr_name, const void *xattr_value,
+> +			      size_t xattr_value_len, int flags);
+>  extern int ima_inode_set_acl(struct mnt_idmap *idmap,
+>  			     struct dentry *dentry, const char *acl_name,
+>  			     struct posix_acl *kacl);
+> @@ -212,10 +213,12 @@ static inline void ima_inode_post_setattr(struct mnt_idmap *idmap,
+>  	return;
 >  }
 >  
->  static inline int ima_file_mprotect(struct vm_area_struct *vma,
-> -				    unsigned long prot)
-> +				    unsigned long reqprot, unsigned long prot)
+> -static inline int ima_inode_setxattr(struct dentry *dentry,
+> +static inline int ima_inode_setxattr(struct mnt_idmap *idmap,
+> +				     struct dentry *dentry,
+>  				     const char *xattr_name,
+>  				     const void *xattr_value,
+> -				     size_t xattr_value_len)
+> +				     size_t xattr_value_len,
+> +				     int flags)
 >  {
 >  	return 0;
 >  }
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index cc1217ac2c6f..b3f5e8401056 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -455,7 +455,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
->  /**
->   * ima_file_mprotect - based on policy, limit mprotect change
->   * @vma: vm_area_struct protection is set to
-> - * @prot: contains the protection that will be applied by the kernel.
-> + * @reqprot: protection requested by the application
-> + * @prot: protection that will be applied by the kernel
->   *
->   * Files can be mmap'ed read/write and later changed to execute to circumvent
->   * IMA's mmap appraisal policy rules.  Due to locking issues (mmap semaphore
-> @@ -465,7 +466,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
->   *
->   * On mprotect change success, return 0.  On failure, return -EACESS.
->   */
-> -int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
-> +int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> +		      unsigned long prot)
->  {
->  	struct ima_template_desc *template = NULL;
->  	struct file *file;
-> diff --git a/security/security.c b/security/security.c
-> index d7b15ea67c3f..c87ba1bbd7dc 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2819,7 +2819,7 @@ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
->  	ret = call_int_hook(file_mprotect, 0, vma, reqprot, prot);
->  	if (ret)
->  		return ret;
-> -	return ima_file_mprotect(vma, prot);
-> +	return ima_file_mprotect(vma, reqprot, prot);
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 36c2938a5c69..cb2d0d11aa77 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -750,8 +750,9 @@ static int validate_hash_algo(struct dentry *dentry,
+>  	return -EACCES;
 >  }
 >  
->  /**
+> -int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+> -		       const void *xattr_value, size_t xattr_value_len)
+> +int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +		       const char *xattr_name, const void *xattr_value,
+> +		       size_t xattr_value_len, int flags)
+>  {
+>  	const struct evm_ima_xattr_data *xvalue = xattr_value;
+>  	int digsig = 0;
+> diff --git a/security/security.c b/security/security.c
+> index c87ba1bbd7dc..ec5c8065ea36 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2269,7 +2269,7 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
+>  		ret = cap_inode_setxattr(dentry, name, value, size, flags);
+>  	if (ret)
+>  		return ret;
+> -	ret = ima_inode_setxattr(dentry, name, value, size);
+> +	ret = ima_inode_setxattr(idmap, dentry, name, value, size, flags);
+>  	if (ret)
+>  		return ret;
+>  	return evm_inode_setxattr(idmap, dentry, name, value, size);
 
