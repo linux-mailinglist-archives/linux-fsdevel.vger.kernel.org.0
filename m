@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-2321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54EB7E4AC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 22:37:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547567E4AC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 22:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3DB6B21037
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 21:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B0C1C20D5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 21:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015192D798;
-	Tue,  7 Nov 2023 21:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719763C6AE;
+	Tue,  7 Nov 2023 21:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DIlP1ByP"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jff+/X4R"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6FE2A1D2;
-	Tue,  7 Nov 2023 21:37:19 +0000 (UTC)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2254E10E5;
-	Tue,  7 Nov 2023 13:37:19 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35AF2A1D2;
+	Tue,  7 Nov 2023 21:37:25 +0000 (UTC)
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E0010E5;
+	Tue,  7 Nov 2023 13:37:25 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Hs+5BELWO4lcPoz50RnTuYmZWeOmIbKgaWZh5I8brnTseH9vI7ssv1qBEoj3sJTRNxjMZt7eJ6otoE6ext6IEybJPAHQmobrH4N+x8auweefRtNVJAaegiv7z1do7711heQCOSixgrQvgTOv/h97RQWCmBk+5NIwMKQsVKIaG528Z/d0ib3LUZVCWtxc5goEmvKkkk37u2m8PfahL7UG3FJ+MIGg7v+uMh37JsXj6ajOI9/zqHUXR3HLv0ebsH3guwRkGFR4RVBMIQRsXmgPmkc3iuOi4HbkzsUgqi+nexynDOXRag1pnHQ1ru5yVQoosZtBFHaalr8amWqLRRZMeQ==
+ b=nJfGzpaOYgWv6790Rw4gm3y+MT13xsQa5dnMUd1IW8O01r/vQusby9GAPZHER+m+9k8dEP78ZLp5TChcLN+nYXhMhjjFdznFYOfJz56TJzkHtnVljYXSjHSHaIihrf5QJGKgo0wHLLwT26IukaNOd0J/j7Iojmc/88A2SBEexPU8cVib6/lrbvHUy0syl2n45aPHsk3tSUA469DBsbC1t/D0NRczDpcJzIqIBx0SJUqI+IO7zNd3rBUVgNat+wybj5smJY1MZMYyk0678f+9Sa2nn0228ryxvhBy/Z+kdBK7G6jo16mskf3Jrvc27ImQd+NCPxqHAqIcVcWc6XlBYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o80P3JyfOmMN27SuigrR0uFnbUE3zC6ROmHfKue3NrM=;
- b=dj5xna0QnWU4EVUW5cskdTOJ9yDDrxZ//6x5ZOUt+PjoTe0/YA5k6TPPQxoUQ2NoWQmM5LHoaSNQoN/ZNWQTyOi8pwjj2ZlPtlUVJ0zv545NDitzh8DrdYJZEanLRPn9Brqc/yhoZskYxhnl8zg+HCuaKR2I93KG/SDGPudjQiBQUeZm+XRGVeTbf/Yp7ALkdwH6hvaO6W1jwL4B92iixU/NInpqQ9OvzEoKABQczISJpl6gpzOs0BtEZ4elWf5WuPf0TQnRqsaiuHQFTZAksS7kzqHeFJVUYjKbducJv7P0UdTPCUavNf4bOBae7NPJ2gJftcShMD0FatHJ7QYPcw==
+ bh=MA3Y6jGCoRGvIpIYfOWMFchg/cw5lcr9kqodQe2gV4Y=;
+ b=J8XUdFoZh6YQwggPnHLpOMwF0sEw+MlbKOpdzdqy7yACgvJlm4NnrZJuirsXMOC2YkKf7yU3VCJ36+uejfQV5HM/wC+MLkNB5ler/1+ZMKP1hpB+27O7AIFK4fCbK80hs9Buk3+Y8a7DRLggfrDaN2i9aBlH0yqhR/mZ3UoW6ceajj6OcHYUZ/7hwjs3+kcI4lly1SuyWoPMgaOZOjGvFIxqETn9SgGXyyn5jWQvBwAS3/q46jLeZ15ca/p4i8OOThYvG2bRpndODS56q0OKRHwfOmdG9C8RcNrximeJ1Rc24xbMsgg2D/GVAMzUH69lUanmp9MRB9M7+hd86RT0IA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o80P3JyfOmMN27SuigrR0uFnbUE3zC6ROmHfKue3NrM=;
- b=DIlP1ByPa6kZxELNTdEHtqcmoGpGN1drQWdtmb5qwedZFccugeq4cr+rzP/0jNstq0GynVk3p22YMvMP44ieTp0iurhxbuRvYg6V6ICidTRgbcCwlNkkkcMA89m0yisLtGkA97rSNbFoH2nflrMYRHA9JenpimKRocpL+CxO2pk=
-Received: from SN4PR0501CA0114.namprd05.prod.outlook.com
- (2603:10b6:803:42::31) by BL1PR12MB5852.namprd12.prod.outlook.com
- (2603:10b6:208:397::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.28; Tue, 7 Nov
- 2023 21:37:16 +0000
-Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
- (2603:10b6:803:42:cafe::5f) by SN4PR0501CA0114.outlook.office365.com
- (2603:10b6:803:42::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.16 via Frontend
- Transport; Tue, 7 Nov 2023 21:37:16 +0000
+ bh=MA3Y6jGCoRGvIpIYfOWMFchg/cw5lcr9kqodQe2gV4Y=;
+ b=jff+/X4ReraECz1IYjk/IiPtjO2uKTpYNL2F/UPU3u8V6Xo4h8GyNw+FpGAfFr+5Ig+fNN9rUcayDBd0bC8b/Qkm5HiqwhLyPeuH+z7dEKXAbuAAftSsOnAJBtMl1stW8YEzzOFZrSa+GtFtSzL/XQK3EIqjARzW3KqYT9XwK9w=
+Received: from PH8PR15CA0011.namprd15.prod.outlook.com (2603:10b6:510:2d2::28)
+ by BL1PR12MB5237.namprd12.prod.outlook.com (2603:10b6:208:30b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.30; Tue, 7 Nov
+ 2023 21:37:23 +0000
+Received: from SA2PEPF000015CA.namprd03.prod.outlook.com
+ (2603:10b6:510:2d2:cafe::9f) by PH8PR15CA0011.outlook.office365.com
+ (2603:10b6:510:2d2::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.18 via Frontend
+ Transport; Tue, 7 Nov 2023 21:37:22 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -55,23 +55,25 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SA2PEPF000015CA.mail.protection.outlook.com (10.167.241.200) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6977.16 via Frontend Transport; Tue, 7 Nov 2023 21:37:16 +0000
+ 15.20.6977.16 via Frontend Transport; Tue, 7 Nov 2023 21:37:22 +0000
 Received: from titanite-d354host.amd.com (10.180.168.240) by
  SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.32; Tue, 7 Nov 2023 15:37:06 -0600
+ 15.1.2507.32; Tue, 7 Nov 2023 15:37:17 -0600
 From: Avadhut Naik <avadhut.naik@amd.com>
 To: <linux-acpi@vger.kernel.org>
 CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
 	<tony.luck@intel.com>, <bp@alien8.de>, <gregkh@linuxfoundation.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<alexey.kardashevskiy@amd.com>, <yazen.ghannam@amd.com>, <avadnaik@amd.com>
-Subject: [RESEND v5 0/4] Add support for Vendor Defined Error Types in Einj Module
-Date: Tue, 7 Nov 2023 15:36:43 -0600
-Message-ID: <20231107213647.1405493-1-avadhut.naik@amd.com>
+Subject: [RESEND v5 1/4] ACPI: APEI: EINJ: Refactor available_error_type_show()
+Date: Tue, 7 Nov 2023 15:36:44 -0600
+Message-ID: <20231107213647.1405493-2-avadhut.naik@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231107213647.1405493-1-avadhut.naik@amd.com>
+References: <20231107213647.1405493-1-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,88 +87,120 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|BL1PR12MB5852:EE_
-X-MS-Office365-Filtering-Correlation-Id: d13d7f90-b884-459a-abf9-08dbdfd9b681
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CA:EE_|BL1PR12MB5237:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b50c076-8c3f-4496-20b6-08dbdfd9ba1f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	mI4AAL+t2sb2m+ySj7vjWgVY3YCp/oEu3qzCsPfzj+YeSJfcvGn73skUAUHR4qoGb3GPTLzqQk46/JZYCQMraCbfhUyvEqsKgAiUp/TSANhFX0tymkHaDus4/r8ri1VpJWHT9gHzs97SRd62g8AyAUBRckKyXAXzDe5k7ZRbtxFCKamIT/OY+p9fNo/PdVTjTmookFw5fmzxQenf0IS/cCe8V2K4d5WjZnR8dIENaCXOTGo/S7gmUPaqY8Nx3uTeiuayec0jOb23iPAtEufI7ckJDuLvupG1ONyBqxFDAl9GICjq+JhrOzhS3niSGPtzoOYHlNMoFKiaIQ+xdreP4k4VzU0gwQ9wJpQ7YXTMh6bljratf308FIr/C7PgLjQsr8cYNS++4KehtSyCvxIrpc8SP3CE5dUptKRg1y/eXCln/CShRe81sPuW8ee2q8sheQX4iLIZDMc4ofv/iWcwxMIPcCyA4nwcPmH3FNNrNCiSP7C1SQyVb65Hm84BwL5obrdNOTnanWVnRsGU7cAi6e5uw+FyhTsgRI7yJ3YzK3JDpATspwlRe2Ao5weN2V9j7rUdW7csL8QoMUFpjhz/l8u5g62bwabXOw82jLyxLTMjCD6yhsYnUxvUiqYQHyrwd9SUyl3gY09Mr0nTJAzFjx9ZqZvrPeZzwjarfsp7xs5a/5oPlswhinNjWV8D7/ZMGFGmf7RaJhSrvnmDm1tSLxghirDSD17vHYjgQsaDyT8TdSeIkLSm1/sWOuPb8vldM6ghflq+gw+51D1t+p5kTf8JSRrWiHcRXCkqoxa+RFlaCXFtxsBxOysX1wX/10/J
+	rDrpkK2N/IseuOR+fQOtBFYFV/etIAB9gkecgsiGAkgSi87h0vyCXq0DkEuRxhgKOFBcRk7Bab7sAx6l22avHQgAndaW1UrotKzwWDu/mdStG3+X+FGg4FpJ+Wswl1L7zj+l/uo2N0CuU5gMm3+jNdVUSj8D4ZhHFYCwzUIdVBGEyO1y84rJqGj5L/UX3IdQQYI4U0p5+IFABWjsJZ9LPJLRwfS0aXK4CUGbGdF+0FtOmSX2GgjRAIyRF4VlRcOKp19HTRe/53t+TJTYiUwJiVlMrtB3jGfNHouKrz7q2xsw+DxCFmDT1HZkLzyOiTdP95Ej0576/6kaXWi54SkEjNvQ8+LM7J+Cm3aTCpsJRpkd+a/pBAPHnf7dpS19FHJi/v2ou8fQuNMhwMd8QqYAyXMQo9CamnRg9JnHFMAtxLe/U3QiCrIOc+f2ZeatZdqCZVPZedt/FsBjQQHe4kRB+db+As0Ay+KH4Yb/+tySOGtEPvbWr+IRwwcvGFtrNpfO5JRp2Cwq4ZVohVK3X7Q2KnBFDIes8QmzY9GN72Y9jumJ8aShfxvEAiIf8lJutlfjtd0oVfbEZI0qh6JzqH8dY1iCl+aGoXVx+jWPsucU2tAuk10NTc51t269xn/kS3m3BGRPbHIkGELDbubxS9wdj9NREWRf0H+IuXPhlPqUQTD1IRI5XYbB3tox5kw7vMn0EbZ7MPcKTtPBs1l3pmsaAm9KmgOhwO/p+Cd4MdiXlKZpPEqGy2flGTbYU278BrOJKSDv6ljZ1Rw0/7T04icmbw==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(136003)(39860400002)(396003)(230273577357003)(230922051799003)(230173577357003)(82310400011)(1800799009)(451199024)(64100799003)(186009)(36840700001)(40470700004)(46966006)(82740400003)(1076003)(2616005)(336012)(40460700003)(70206006)(70586007)(83380400001)(16526019)(26005)(6666004)(478600001)(7696005)(426003)(47076005)(2906002)(6916009)(8936002)(8676002)(316002)(40480700001)(36756003)(41300700001)(4326008)(36860700001)(5660300002)(86362001)(81166007)(44832011)(54906003)(356005)(36900700001);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(376002)(396003)(136003)(39860400002)(346002)(230922051799003)(451199024)(186009)(82310400011)(64100799003)(1800799009)(46966006)(40470700004)(36840700001)(40480700001)(40460700003)(478600001)(7696005)(36756003)(86362001)(356005)(81166007)(83380400001)(36860700001)(82740400003)(47076005)(2616005)(1076003)(70586007)(70206006)(6666004)(26005)(16526019)(426003)(336012)(54906003)(5660300002)(41300700001)(44832011)(6916009)(2906002)(316002)(4326008)(8676002)(8936002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2023 21:37:16.5437
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2023 21:37:22.5775
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d13d7f90-b884-459a-abf9-08dbdfd9b681
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b50c076-8c3f-4496-20b6-08dbdfd9ba1f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CD.namprd03.prod.outlook.com
+	SA2PEPF000015CA.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5852
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5237
 
-This patchset adds support for Vendor Defined Error types in the einj
-module by exporting a binary blob file in module's debugfs directory.
-Userspace tools can write OEM Defined Structures into the blob file as
-part of injecting Vendor defined errors. Similarly, the very tools can
-also read from the blob file for information, if any, provided by the
-firmware after error injection.
+From: Avadhut Naik <Avadhut.Naik@amd.com>
 
-The first patch refactors available_error_type_show() function to ensure
-all errors supported by the platform are output through einj module's
-available_error_type file in debugfs.
+OSPM can discover the error injection capabilities of the platform by
+executing GET_ERROR_TYPE error injection action.[1] The action returns
+a DWORD representing a bitmap of platform supported error injections.[2]
 
-The second patch adds a write callback for binary blobs created through
-debugfs_create_blob() API.
+The available_error_type_show() function determines the bits set within
+this DWORD and provides a verbose output, from einj_error_type_string
+array, through /sys/kernel/debug/apei/einj/available_error_type file.
 
-The third patch fixes the permissions of panicinfo file in debugfs to
-ensure it remains read-only
+The function however, assumes one to one correspondence between an error's
+position in the bitmap and its array entry offset. Consequently, some
+errors like Vendor Defined Error Type fail this assumption and will
+incorrectly be shown as not supported, even if their corresponding bit is
+set in the bitmap and they have an entry in the array.
 
-The fourth patch adds the required support i.e. establishing the memory
-mapping and exporting it through debugfs blob file for Vendor-defined
-Error types.
+Navigate around the issue by converting einj_error_type_string into an
+array of structures with a predetermined mask for all error types
+corresponding to their bit position in the DWORD returned by GET_ERROR_TYPE
+action. The same breaks the aforementioned assumption resulting in all
+supported error types by a platform being outputted through the above
+available_error_type file.
 
-Changes in v2:
- - Split the v1 patch, as was recommended, to have a separate patch for
-changes in debugfs.
- - Refactored available_error_type_show() function into a separate patch.
- - Changed file permissions to octal format to remove checkpatch warnings.
+[1] ACPI specification 6.5, Table 18.25
+[2] ACPI specification 6.5, Table 18.30
 
-Changes in v3:
- - Use BIT macro for generating error masks instead of hex values since
-ACPI spec uses bit numbers.
- - Handle the corner case of acpi_os_map_iomem() returning NULL through
-a local variable to a store the size of OEM defined data structure.
+Suggested-by: Alexey Kardashevskiy <alexey.kardashevskiy@amd.com>
+Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
+---
+ drivers/acpi/apei/einj.c | 43 ++++++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 21 deletions(-)
 
-Changes in v4:
- - Fix permissions for panicinfo file in debugfs.
- - Replace acpi_os_map_iomem() and acpi_os_unmap_iomem() calls with
-   acpi_os_map_memory() and acpi_os_unmap_memory() respectively to avert
-   sparse warnings as suggested by Alexey.
-
-Changes in v5:
- - Change permissions of the "oem_error" file, being created in einj
-   module's debugfs directory, from "w" to "rw" since system firmware
-   in some cases might provide some information through OEM-defined
-   structure for tools to consume.
- - Remove Reviewed-by: Alexey Kardashevskiy <aik@amd.com> from the
-   fourth patch since permissions of the oem_error file have changed.
- - Add Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org> for
-   second and third patch.
- - Rebase on top of tip master.
-
-Avadhut Naik (4):
-  ACPI: APEI: EINJ: Refactor available_error_type_show()
-  fs: debugfs: Add write functionality to debugfs blobs
-  platform/chrome: cros_ec_debugfs: Fix permissions for panicinfo
-  ACPI: APEI: EINJ: Add support for vendor defined error types
-
- drivers/acpi/apei/einj.c                  | 67 ++++++++++++++++-------
- drivers/platform/chrome/cros_ec_debugfs.c |  2 +-
- fs/debugfs/file.c                         | 28 ++++++++--
- 3 files changed, 70 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index 013eb621dc92..ee360fcb1618 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -577,25 +577,25 @@ static u64 error_param2;
+ static u64 error_param3;
+ static u64 error_param4;
+ static struct dentry *einj_debug_dir;
+-static const char * const einj_error_type_string[] = {
+-	"0x00000001\tProcessor Correctable\n",
+-	"0x00000002\tProcessor Uncorrectable non-fatal\n",
+-	"0x00000004\tProcessor Uncorrectable fatal\n",
+-	"0x00000008\tMemory Correctable\n",
+-	"0x00000010\tMemory Uncorrectable non-fatal\n",
+-	"0x00000020\tMemory Uncorrectable fatal\n",
+-	"0x00000040\tPCI Express Correctable\n",
+-	"0x00000080\tPCI Express Uncorrectable non-fatal\n",
+-	"0x00000100\tPCI Express Uncorrectable fatal\n",
+-	"0x00000200\tPlatform Correctable\n",
+-	"0x00000400\tPlatform Uncorrectable non-fatal\n",
+-	"0x00000800\tPlatform Uncorrectable fatal\n",
+-	"0x00001000\tCXL.cache Protocol Correctable\n",
+-	"0x00002000\tCXL.cache Protocol Uncorrectable non-fatal\n",
+-	"0x00004000\tCXL.cache Protocol Uncorrectable fatal\n",
+-	"0x00008000\tCXL.mem Protocol Correctable\n",
+-	"0x00010000\tCXL.mem Protocol Uncorrectable non-fatal\n",
+-	"0x00020000\tCXL.mem Protocol Uncorrectable fatal\n",
++static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
++	{BIT(0), "Processor Correctable"},
++	{BIT(1), "Processor Uncorrectable non-fatal"},
++	{BIT(2), "Processor Uncorrectable fatal"},
++	{BIT(3), "Memory Correctable"},
++	{BIT(4), "Memory Uncorrectable non-fatal"},
++	{BIT(5), "Memory Uncorrectable fatal"},
++	{BIT(6), "PCI Express Correctable"},
++	{BIT(7), "PCI Express Uncorrectable non-fatal"},
++	{BIT(8), "PCI Express Uncorrectable fatal"},
++	{BIT(9), "Platform Correctable"},
++	{BIT(10), "Platform Uncorrectable non-fatal"},
++	{BIT(11), "Platform Uncorrectable fatal"},
++	{BIT(12), "CXL.cache Protocol Correctable"},
++	{BIT(13), "CXL.cache Protocol Uncorrectable non-fatal"},
++	{BIT(14), "CXL.cache Protocol Uncorrectable fatal"},
++	{BIT(15), "CXL.mem Protocol Correctable"},
++	{BIT(16), "CXL.mem Protocol Uncorrectable non-fatal"},
++	{BIT(17), "CXL.mem Protocol Uncorrectable fatal"},
+ };
+ 
+ static int available_error_type_show(struct seq_file *m, void *v)
+@@ -607,8 +607,9 @@ static int available_error_type_show(struct seq_file *m, void *v)
+ 	if (rc)
+ 		return rc;
+ 	for (int pos = 0; pos < ARRAY_SIZE(einj_error_type_string); pos++)
+-		if (available_error_type & BIT(pos))
+-			seq_puts(m, einj_error_type_string[pos]);
++		if (available_error_type & einj_error_type_string[pos].mask)
++			seq_printf(m, "0x%08x\t%s\n", einj_error_type_string[pos].mask,
++				   einj_error_type_string[pos].str);
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
