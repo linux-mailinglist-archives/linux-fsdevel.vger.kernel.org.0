@@ -1,33 +1,33 @@
-Return-Path: <linux-fsdevel+bounces-2256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099CC7E40F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:48:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF787E40F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 14:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D51C20BD1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 13:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C5F1C20C6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE91E30D0C;
-	Tue,  7 Nov 2023 13:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3230D0C;
+	Tue,  7 Nov 2023 13:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B4A30CF3;
-	Tue,  7 Nov 2023 13:48:17 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CECD2136;
-	Tue,  7 Nov 2023 05:48:14 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B1130CF3;
+	Tue,  7 Nov 2023 13:48:28 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9167719B2;
+	Tue,  7 Nov 2023 05:48:26 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4SPq2k02yMz9y19W;
-	Tue,  7 Nov 2023 21:34:54 +0800 (CST)
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SPq2v4Sdsz9y5h2;
+	Tue,  7 Nov 2023 21:35:03 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHtXXdP0pltoA3AA--.60646S4;
-	Tue, 07 Nov 2023 14:47:46 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwDHtXXdP0pltoA3AA--.60646S5;
+	Tue, 07 Nov 2023 14:47:58 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	keyrings@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 22/23] integrity: Move integrity functions to the LSM infrastructure
-Date: Tue,  7 Nov 2023 14:40:11 +0100
-Message-Id: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
+Date: Tue,  7 Nov 2023 14:40:12 +0100
+Message-Id: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
 References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
@@ -69,12 +69,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDHtXXdP0pltoA3AA--.60646S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3AF13XF15ZF17Jr17Cr1rJFb_yoW7Kw1fpF
-	srKay5Jrn5ZFy29FWkAF45ua1fK39Ygry7Wrs8Cw1vyFyqvr10qF4DAry5uFy3WrWrtr1I
-	qFsI9r4UCr1Dt3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwDHtXXdP0pltoA3AA--.60646S5
+X-Coremail-Antispam: 1UD129KBjvJXoWxKryfJr4xZFyxGr4fuF1kuFg_yoWxuF48pF
+	42gay8Jws8ZFWq9F4vyFW5Zr4fKFyqgFZ7W34Ykw1kAFyvvr1YqFs8AryUZF15GrW5t34I
+	qr1Ykr4UuF1qyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
 	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
 	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
 	WxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
@@ -85,190 +85,225 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3AF13XF15ZF17Jr17Cr1rJFb_yoW7Kw1fpF
 	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2I
 	x0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owCI42IY6xAI
 	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x
-	0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU1o5l5UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5YbkwAAsk
+	0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU1ebytUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBF1jj5IbhgAAs2
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Remove hardcoded calls to integrity functions from the LSM infrastructure
-and, instead, register them in integrity_lsm_init() with the IMA or EVM
-LSM ID (the first non-NULL returned by ima_get_lsm_id() and
-evm_get_lsm_id()).
+Before the security field of kernel objects could be shared among LSMs with
+the LSM stacking feature, IMA and EVM had to rely on an alternative storage
+of inode metadata. The association between inode metadata and inode is
+maintained through an rbtree.
 
-Also move the global declaration of integrity_inode_get() to
-security/integrity/integrity.h, so that the function can be still called by
-IMA.
+Because of this alternative storage mechanism, there was no need to use
+disjoint inode metadata, so IMA and EVM today still share them.
+
+With the reservation mechanism offered by the LSM infrastructure, the
+rbtree is no longer necessary, as each LSM could reserve a space in the
+security blob for each inode. However, since IMA and EVM share the
+inode metadata, they cannot directly reserve the space for them.
+
+Instead, request from the 'integrity' LSM a space in the security blob for
+the pointer of inode metadata (integrity_iint_cache structure). The other
+reason for keeping the 'integrity' LSM is to preserve the original ordering
+of IMA and EVM functions as when they were hardcoded.
+
+Prefer reserving space for a pointer to allocating the integrity_iint_cache
+structure directly, as IMA would require it only for a subset of inodes.
+Always allocating it would cause a waste of memory.
+
+Introduce two primitives for getting and setting the pointer of
+integrity_iint_cache in the security blob, respectively
+integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
+the code more understandable, as they directly replace rbtree operations.
+
+Locking is not needed, as access to inode metadata is not shared, it is per
+inode.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/integrity.h      | 26 --------------------------
- security/integrity/iint.c      | 30 +++++++++++++++++++++++++++++-
- security/integrity/integrity.h |  7 +++++++
- security/security.c            |  9 +--------
- 4 files changed, 37 insertions(+), 35 deletions(-)
+ security/integrity/iint.c      | 71 +++++-----------------------------
+ security/integrity/integrity.h | 20 +++++++++-
+ 2 files changed, 29 insertions(+), 62 deletions(-)
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 2ea0f2f65ab6..afaae7ad26f4 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -21,38 +21,12 @@ enum integrity_status {
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 882fde2a2607..a5edd3c70784 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -14,56 +14,25 @@
+ #include <linux/slab.h>
+ #include <linux/init.h>
+ #include <linux/spinlock.h>
+-#include <linux/rbtree.h>
+ #include <linux/file.h>
+ #include <linux/uaccess.h>
+ #include <linux/security.h>
+ #include <linux/lsm_hooks.h>
+ #include "integrity.h"
  
- /* List of EVM protected security xattrs */
- #ifdef CONFIG_INTEGRITY
--extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
--extern void integrity_inode_free(struct inode *inode);
- extern void __init integrity_load_keys(void);
+-static struct rb_root integrity_iint_tree = RB_ROOT;
+-static DEFINE_RWLOCK(integrity_iint_lock);
+ static struct kmem_cache *iint_cache __ro_after_init;
  
- #else
--static inline struct integrity_iint_cache *
--				integrity_inode_get(struct inode *inode)
+ struct dentry *integrity_dir;
+ 
+-/*
+- * __integrity_iint_find - return the iint associated with an inode
+- */
+-static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
 -{
+-	struct integrity_iint_cache *iint;
+-	struct rb_node *n = integrity_iint_tree.rb_node;
+-
+-	while (n) {
+-		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
+-
+-		if (inode < iint->inode)
+-			n = n->rb_left;
+-		else if (inode > iint->inode)
+-			n = n->rb_right;
+-		else
+-			return iint;
+-	}
+-
 -	return NULL;
 -}
 -
--static inline void integrity_inode_free(struct inode *inode)
--{
--	return;
--}
--
- static inline void integrity_load_keys(void)
- {
- }
- #endif /* CONFIG_INTEGRITY */
- 
--#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
--
--extern int integrity_kernel_module_request(char *kmod_name);
--
--#else
--
--static inline int integrity_kernel_module_request(char *kmod_name)
--{
--	return 0;
--}
--
--#endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
--
- #endif /* _LINUX_INTEGRITY_H */
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 0b0ac71142e8..882fde2a2607 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -171,7 +171,7 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
-  *
-  * Free the integrity information(iint) associated with an inode.
+ /*
+  * integrity_iint_find - return the iint associated with an inode
   */
--void integrity_inode_free(struct inode *inode)
-+static void integrity_inode_free(struct inode *inode)
+ struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
  {
- 	struct integrity_iint_cache *iint;
+-	struct integrity_iint_cache *iint;
+-
+ 	if (!IS_IMA(inode))
+ 		return NULL;
  
-@@ -193,11 +193,39 @@ static void iint_init_once(void *foo)
- 	memset(iint, 0, sizeof(*iint));
+-	read_lock(&integrity_iint_lock);
+-	iint = __integrity_iint_find(inode);
+-	read_unlock(&integrity_iint_lock);
+-
+-	return iint;
++	return integrity_inode_get_iint(inode);
  }
  
-+static struct security_hook_list integrity_hooks[] __ro_after_init = {
-+	LSM_HOOK_INIT(inode_free_security, integrity_inode_free),
-+#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-+	LSM_HOOK_INIT(kernel_module_request, integrity_kernel_module_request),
-+#endif
+ #define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
+@@ -123,9 +92,7 @@ static void iint_free(struct integrity_iint_cache *iint)
+  */
+ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+ {
+-	struct rb_node **p;
+-	struct rb_node *node, *parent = NULL;
+-	struct integrity_iint_cache *iint, *test_iint;
++	struct integrity_iint_cache *iint;
+ 
+ 	iint = integrity_iint_find(inode);
+ 	if (iint)
+@@ -137,31 +104,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+ 
+ 	iint_init_always(iint, inode);
+ 
+-	write_lock(&integrity_iint_lock);
+-
+-	p = &integrity_iint_tree.rb_node;
+-	while (*p) {
+-		parent = *p;
+-		test_iint = rb_entry(parent, struct integrity_iint_cache,
+-				     rb_node);
+-		if (inode < test_iint->inode) {
+-			p = &(*p)->rb_left;
+-		} else if (inode > test_iint->inode) {
+-			p = &(*p)->rb_right;
+-		} else {
+-			write_unlock(&integrity_iint_lock);
+-			kmem_cache_free(iint_cache, iint);
+-			return test_iint;
+-		}
+-	}
+-
+ 	iint->inode = inode;
+-	node = &iint->rb_node;
+ 	inode->i_flags |= S_IMA;
+-	rb_link_node(node, parent, p);
+-	rb_insert_color(node, &integrity_iint_tree);
++	integrity_inode_set_iint(inode, iint);
+ 
+-	write_unlock(&integrity_iint_lock);
+ 	return iint;
+ }
+ 
+@@ -178,10 +124,8 @@ static void integrity_inode_free(struct inode *inode)
+ 	if (!IS_IMA(inode))
+ 		return;
+ 
+-	write_lock(&integrity_iint_lock);
+-	iint = __integrity_iint_find(inode);
+-	rb_erase(&iint->rb_node, &integrity_iint_tree);
+-	write_unlock(&integrity_iint_lock);
++	iint = integrity_iint_find(inode);
++	integrity_inode_set_iint(inode, NULL);
+ 
+ 	iint_free(iint);
+ }
+@@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+ 	return 0;
+ }
+ 
++struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
++	.lbs_inode = sizeof(struct integrity_iint_cache *),
 +};
 +
-+/*
-+ * Perform the initialization of the 'integrity', 'ima' and 'evm' LSMs to
-+ * ensure that the management of integrity metadata is working at the time
-+ * IMA and EVM hooks are registered to the LSM infrastructure, and to keep
-+ * the original ordering of IMA and EVM functions as when they were hardcoded.
-+ */
- static int __init integrity_lsm_init(void)
- {
-+	const struct lsm_id *lsmid;
-+
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
- 			      0, SLAB_PANIC, iint_init_once);
-+	/*
-+	 * Obtain either the IMA or EVM LSM ID to register integrity-specific
-+	 * hooks under that LSM, since there is no LSM ID assigned to the
-+	 * 'integrity' LSM.
-+	 */
-+	lsmid = ima_get_lsm_id();
-+	if (!lsmid)
-+		lsmid = evm_get_lsm_id();
-+	/* No point in continuing, since both IMA and EVM are disabled. */
-+	if (!lsmid)
-+		return 0;
-+
-+	security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), lsmid);
- 	init_ima_lsm();
- 	init_evm_lsm();
- 	return 0;
+ /*
+  * Keep it until IMA and EVM can use disjoint integrity metadata, and their
+  * initialization order can be swapped without change in their behavior.
+@@ -239,6 +187,7 @@ DEFINE_LSM(integrity) = {
+ 	.name = "integrity",
+ 	.init = integrity_lsm_init,
+ 	.order = LSM_ORDER_LAST,
++	.blobs = &integrity_blob_sizes,
+ };
+ 
+ /*
 diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 7534ec06324e..e4df82d6f6e7 100644
+index e4df82d6f6e7..ef2689b5264d 100644
 --- a/security/integrity/integrity.h
 +++ b/security/integrity/integrity.h
-@@ -180,6 +180,7 @@ struct integrity_iint_cache {
-  * integrity data associated with an inode.
-  */
- struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
-+struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
+@@ -158,7 +158,6 @@ struct ima_file_id {
  
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
-@@ -266,12 +267,18 @@ static inline int __init integrity_load_cert(const unsigned int id,
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
- int asymmetric_verify(struct key *keyring, const char *sig,
- 		      int siglen, const char *data, int datalen);
-+int integrity_kernel_module_request(char *kmod_name);
- #else
- static inline int asymmetric_verify(struct key *keyring, const char *sig,
- 				    int siglen, const char *data, int datalen)
- {
- 	return -EOPNOTSUPP;
- }
+ /* integrity data associated with an inode */
+ struct integrity_iint_cache {
+-	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+ 	struct mutex mutex;	/* protects: version, flags, digest */
+ 	struct inode *inode;	/* back pointer to inode in question */
+ 	u64 version;		/* track inode changes */
+@@ -192,6 +191,25 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ #define INTEGRITY_KEYRING_MAX		4
+ 
+ extern struct dentry *integrity_dir;
++extern struct lsm_blob_sizes integrity_blob_sizes;
 +
-+static inline int integrity_kernel_module_request(char *kmod_name)
++static inline struct integrity_iint_cache *
++integrity_inode_get_iint(const struct inode *inode)
 +{
-+	return 0;
++	struct integrity_iint_cache **iint_sec;
++
++	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
++	return *iint_sec;
 +}
- #endif
++
++static inline void integrity_inode_set_iint(const struct inode *inode,
++					    struct integrity_iint_cache *iint)
++{
++	struct integrity_iint_cache **iint_sec;
++
++	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
++	*iint_sec = iint;
++}
  
- #ifdef CONFIG_IMA_APPRAISE_MODSIG
-diff --git a/security/security.c b/security/security.c
-index 9703549b6ddc..0d9eaa4cd260 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/integrity.h>
- #include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
-@@ -1597,7 +1596,6 @@ static void inode_free_by_rcu(struct rcu_head *head)
-  */
- void security_inode_free(struct inode *inode)
- {
--	integrity_inode_free(inode);
- 	call_void_hook(inode_free_security, inode);
- 	/*
- 	 * The inode may still be referenced in a path walk and
-@@ -3182,12 +3180,7 @@ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
-  */
- int security_kernel_module_request(char *kmod_name)
- {
--	int ret;
--
--	ret = call_int_hook(kernel_module_request, 0, kmod_name);
--	if (ret)
--		return ret;
--	return integrity_kernel_module_request(kmod_name);
-+	return call_int_hook(kernel_module_request, 0, kmod_name);
- }
+ struct modsig;
  
- /**
 -- 
 2.34.1
 
