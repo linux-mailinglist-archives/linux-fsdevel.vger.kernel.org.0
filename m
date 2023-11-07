@@ -1,215 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-2291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C517E476D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:46:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3AE7E4777
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 855C3B20E99
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027E5281241
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3A634CE6;
-	Tue,  7 Nov 2023 17:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3628B34CDB;
+	Tue,  7 Nov 2023 17:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Qjdg3WuH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CCF339A4;
-	Tue,  7 Nov 2023 17:46:13 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B8F1712;
-	Tue,  7 Nov 2023 09:46:11 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4SPwKG0Xw6z9xrpS;
-	Wed,  8 Nov 2023 01:32:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDXE3S4d0pluDM6AA--.2425S2;
-	Tue, 07 Nov 2023 18:45:42 +0100 (CET)
-Message-ID: <56bad12bde243ac0a3171922db9795bab0791c95.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 11/23] security: Introduce inode_post_removexattr hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, dhowells@redhat.com,
- jarkko@kernel.org,  stephen.smalley.work@gmail.com, eparis@parisplace.org,
- mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, Stefan
- Berger <stefanb@linux.ibm.com>
-Date: Tue, 07 Nov 2023 18:45:25 +0100
-In-Reply-To: <85c5dda2-5a2f-4c73-82ae-8a333b69b4a7@schaufler-ca.com>
-References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
-	 <20231107134012.682009-12-roberto.sassu@huaweicloud.com>
-	 <85c5dda2-5a2f-4c73-82ae-8a333b69b4a7@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B6D31584
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:47:25 +0000 (UTC)
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9917DD43
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:47:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699379244; bh=38RfSpPHsNTdkGAJZ1Cpe3eRvw1Uu1WMAb9d+ryxzFI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Qjdg3WuHNP4790kkeN66Nha6ibeLxdjPYB+xdZ+3YFV+0hIxzbZaVCXv+NCH1o0+S8ekhkFDdwjeM3oipxuPhJXi8WYtQTqdbcnt6pD+KWW6Ge5emLGns7+y2UAbdKsTRDH4wzxrXEy8/wtIB2u4ptzDBVxlZtwD9Y19HXtgFXVfwVdA3NyXtilJeXVfD5TjSkdRZ0SZ7d08RnLtU3qVmclicC1pfsd+T1lcZFBpIfi1VYnqagoBPZxKQDTaZkbYA3HEFktOHbksYy62Bx+B6U7/OVoky0vvfYlW6pDjkN02pZRtt1qPYRUaIsY+81egKIbAocE/DnnfZ3ynoxZO4A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699379244; bh=A36urbN7+ml2fIfPSunkiEEopRcWqP2695GNmlQ/FJ3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Axq8d0BSrnFiRTX8V8LBMNmVJKHbDpu7yPtdp1pO9eXJJ1W63dlf8jqKez2AOOwXA9xwfZqWhzPXzvxYVNWyN5KSsmD0rcAHMs3Y1Z1p4y3X2q2+4VFhrq0D+YRha1NXkDYXxzOFbR6b+RvnahSdzeKZotPSUL+ctasORDRLEzVA1H0/sGfg3sgUPB6iQAqpzxq3FCuzivg0AW3rMM7M9E7GFNVLqvBzl/tqWR8O8TvQNXDYXznhSuN8e8guVA8rKkyBH6q5Z/C58XoMj4eqB3fw0VqamNqYsNKXwrrEia6y9/5MPO9cHsbrqUoRiEjsjBenpKUrouNtl2nLdf1xzg==
+X-YMail-OSG: tdq7hlQVM1nowFRoqEGdYpI8CfTEE1V.S0WsleKnI6h8rWXgFLVh7JOyxpUQ70D
+ X1TUr3.Dg3io0vtPMtwidF4ohmDhpq.gilEHRrzQCMuaHoFACSwX3xuHt1mLdqbCZ_H2tv4Zk.aq
+ 7iQhIoS5Me7jjNt9xo9xGCJVhZu5bggePbfX0pgyyBeMu3p1ulONeE8JjR_Eg2mipcC4cyi2noCu
+ qJ2WBjueS046aRTgkhpbakV_g1MeUigLEGJvPM8gCVOcXc8OJH1JP5gJtySzrwftOkyBqAVXMtO6
+ m1nElJT5IJ7qWGa28oKByuhO0ftXJdaSla8yuALzJisP1iCpoScLN2miM.7MTFIwxwgRRtHA7qgO
+ 9l9oRT6QQ5hJagmia6DVx__JOG0086Um5Sc6x4jOrCrD7iiSuDFwNnd2AEW1SWeI5.mVY7e7vwJh
+ qBA5ypIbO8QVdC1WxI3CWWyuUzJk3Hx8fU3XdsllqPRaVCsOzU_y5iQUrkI5rDihDXGakqOCizjP
+ j5Pyafbk0iGKQsDrOpT07qkYPvhEHx1LIDPLF17LiC.QfmhZwIzvnRpC1k56LoNf6RlVJe118ynt
+ vyPB_LNaz2JMHp2P3v6t5FSztWZx0FgzNwS7q1qJtmAwumaZegBwGXLOEkIxZm9OOiHUjqm6j7SS
+ x5wF5s7dVbq3QfZf6eIroWJ2MTVZc12L_6edbuBDq4C8G8I9RxQ2bJlCSXnnT5ZMpOjFGPz_kgAL
+ Z6gKbjRJvEVN.uz8GH_Qrbz6j5bMS4hj0utyZW721G9aFTyNfHVi3aUOarZNJtMhBhpWgJeYw2Tf
+ LN3kq.GTr__bv8DT3Mu.MNpkxN1X5UwliVh3g1Jfvd4uqCu2yyDXiUWgaBAZEaVLIrsXBlLGVHwy
+ 4K8W7Yk6HrWPbWsPcDdQ5G53BBQVdr._gC3hBlUCul2I_ZFdXeReXM_mPwXl25ApT4u.ruoSU0AQ
+ 69OIY8hmhEa5Ct5MJsMdZqHUUYdv6kVeitLxZ_v9lbx7ZbBfTLOSVt0mNxB21uHcUsUGvGXRcKct
+ CqAVOlu5JpFk1CfcBUzdbvl8W22YSeDi_tEAqUcdbufg2tV1RKTPfyO1Q8fOojQZeBL9i8qODW1X
+ 1lh50_BXc3lvV893qa8MWvDPZP9Wi0ZruQXYd.6w8PeJ0bEVeUFwmQv.ijUH.lvO4Gimyf6ud9pB
+ V2rtas7qOel.jxHSjydxBAdFfayw1APtgrcPVQFoDXtG.DMyPWmL48kOhF1yJJ4jvNf_tRTQXR6u
+ G52_NPoIt8orPdi3x5w2yPgq_747sYgb.atEISGrg2uaDIX.0rETX_cE5.fHqPYZvVW8ciaKO7wo
+ bNIMbP2UxXf6rJC926Y09KKtg8O766phO8Lx1S.vgjMM8CwJzLGDXX24KthJxYtBijBuPdDi2.V4
+ Rwt05FMo5eiesrt8..xryhDdSyJHlLlaIMC9e0a020Bv0HcEDPkO3S2y7oAToWrrIT0XWV_buy_Z
+ lNoakfWRdlaec1N1LQ7kA_lIEdOjT0CJOdkowEnrlQLCbbUZRO6cklyKsc7IDCS3oEgBf6NR.d0L
+ CZxPItzHP2wIKw76loeUkE3eMSmY7YMN7pyZSXc1cOwEYenWalqyG_Jby_RVGVaiutowxvdRYsCI
+ 7KMrVGXvP313dz2b9ns7R.pOxCoPbYVEpBKeJMCUa0Rc3MMHwyTdJ.HzyhkZ1ssB.pOGsNxTW2ae
+ EbQrVWAsCDBnz3bpMyTAmBic2DtDoCP4_3H77sGLsg7xaClxvMf5.G2mW.lnaripAundNTiTxD28
+ 9zZeElU5vZU1zKNvrAYSbd5GzBc9ifwhL0qPnDM5R7VqS03QDUNtfu4vqA1imY.tPar0WlNv_QY7
+ 7RSSXQ8kG7Jk5xbxGtrX467ZI8PBDs535G2k4OlkfvbSUV2viA.37Fk9AyKvnpSwx6dffvlZlVnF
+ 8m7JUrWurgl0qpqRPZss1IGmaEOopcgfRBN6YFVOCMXoADJc_xl_5QCfHk__OXkI.hgbsfLo2Ty_
+ u1yC0iYYLrtm0N7Pq8pnQnjlZzd98l0qmwjhraRfFYYlF6nITbxeLaU8SkI_b488c8LYj3nf_gvZ
+ 5XGaTissOuS.vXLL7mCgCvgBpEwfzw7ktMCNjDWTsZn2IzN2NL6xvWhfpDQiB2tB0aJ3Kw1ahtEX
+ oKa3N3sOtYGHHArgE9VqZVjSVqFoNl9vrVyIOoyFcbo6S55tTYgVzXI3QKDZOkXeBGbRmpcod7wi
+ Cz1RAtLMVINxTiN22jla0IpIgaY00uv.RRsIWCV7wiiv4aU4wbnk0_2ZLf8S7bwM8XsnoF831JyJ
+ Sd4l_
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fcf060aa-773d-4602-aaf2-19925cb0ef88
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:47:24 +0000
+Received: by hermes--production-ne1-56df75844-jh4w4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5935d0c12330d2dd3580b3918d117964;
+          Tue, 07 Nov 2023 17:47:23 +0000 (UTC)
+Message-ID: <d32add2c-26ed-4988-990b-3014d7727645@schaufler-ca.com>
+Date: Tue, 7 Nov 2023 09:47:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDXE3S4d0pluDM6AA--.2425S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCryfur1DZr4xWrWrZF4fZrb_yoWrtw1kpF
-	s8K3Z0kr4rJFy7WFyktF1Uuw4I9ayFgr17ArW2gw12yFn2yr1IqrWakF15CryrJrWjgF1q
-	qFnFkrs5Cr15Ja7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5YfQAADsw
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 18/23] security: Introduce key_post_create_or_update
+ hook
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
+ jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+ Stefan Berger <stefanb@linux.ibm.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
+ <20231107134012.682009-19-roberto.sassu@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231107134012.682009-19-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2023-11-07 at 09:33 -0800, Casey Schaufler wrote:
-> On 11/7/2023 5:40 AM, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introd=
-uce
-> > the inode_post_removexattr hook.
-> >=20
-> > At inode_removexattr hook, EVM verifies the file's existing HMAC value.=
- At
-> > inode_post_removexattr, EVM re-calculates the file's HMAC with the pass=
-ed
-> > xattr removed and other file metadata.
-> >=20
-> > Other LSMs could similarly take some action after successful xattr remo=
-val.
-> >=20
-> > The new hook cannot return an error and cannot cause the operation to b=
-e
-> > reverted.
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >  fs/xattr.c                    |  9 +++++----
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  5 +++++
-> >  security/security.c           | 14 ++++++++++++++
-> >  4 files changed, 26 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 09d927603433..84a4aa566c02 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  		goto out;
-> > =20
-> >  	error =3D __vfs_removexattr(idmap, dentry, name);
-> > +	if (error)
-> > +		goto out;
->=20
-> Shouldn't this be simply "return error" rather than a goto to nothing
-> but "return error"?
+On 11/7/2023 5:40 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the key_post_create_or_update hook.
+>
+> Depending on policy, IMA measures the key content after creation or update,
+> so that remote verifiers are aware of the operation.
+>
+> Other LSMs could similarly take some action after successful key creation
+> or update.
+>
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Ok, no problem. I can change that.
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Thanks
-
-Roberto
-
-> > =20
-> > -	if (!error) {
-> > -		fsnotify_xattr(dentry);
-> > -		evm_inode_post_removexattr(dentry, name);
-> > -	}
-> > +	fsnotify_xattr(dentry);
-> > +	security_inode_post_removexattr(dentry, name);
-> > +	evm_inode_post_removexattr(dentry, name);
-> > =20
-> >  out:
-> >  	return error;
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_def=
-s.h
-> > index 67410e085205..88452e45025c 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -149,6 +149,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *den=
-try, const char *name)
-> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *name)
-> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *de=
-ntry,
-> > +	 const char *name)
-> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 664df46b22a9..922ea7709bae 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -380,6 +380,7 @@ int security_inode_getxattr(struct dentry *dentry, =
-const char *name);
-> >  int security_inode_listxattr(struct dentry *dentry);
-> >  int security_inode_removexattr(struct mnt_idmap *idmap,
-> >  			       struct dentry *dentry, const char *name);
-> > +void security_inode_post_removexattr(struct dentry *dentry, const char=
- *name);
-> >  int security_inode_need_killpriv(struct dentry *dentry);
-> >  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *de=
-ntry);
-> >  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> > @@ -940,6 +941,10 @@ static inline int security_inode_removexattr(struc=
-t mnt_idmap *idmap,
-> >  	return cap_inode_removexattr(idmap, dentry, name);
-> >  }
-> > =20
-> > +static inline void security_inode_post_removexattr(struct dentry *dent=
-ry,
-> > +						   const char *name)
-> > +{ }
-> > +
-> >  static inline int security_inode_need_killpriv(struct dentry *dentry)
-> >  {
-> >  	return cap_inode_need_killpriv(dentry);
-> > diff --git a/security/security.c b/security/security.c
-> > index ce3bc7642e18..8aa6e9f316dd 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2452,6 +2452,20 @@ int security_inode_removexattr(struct mnt_idmap =
-*idmap,
-> >  	return evm_inode_removexattr(idmap, dentry, name);
-> >  }
-> > =20
-> > +/**
-> > + * security_inode_post_removexattr() - Update the inode after a remove=
-xattr op
-> > + * @dentry: file
-> > + * @name: xattr name
-> > + *
-> > + * Update the inode after a successful removexattr operation.
-> > + */
-> > +void security_inode_post_removexattr(struct dentry *dentry, const char=
- *name)
-> > +{
-> > +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > +		return;
-> > +	call_void_hook(inode_post_removexattr, dentry, name);
-> > +}
-> > +
-> >  /**
-> >   * security_inode_need_killpriv() - Check if security_inode_killpriv()=
- required
-> >   * @dentry: associated dentry
-
+> ---
+>  include/linux/lsm_hook_defs.h |  3 +++
+>  include/linux/security.h      | 11 +++++++++++
+>  security/keys/key.c           |  7 ++++++-
+>  security/security.c           | 19 +++++++++++++++++++
+>  4 files changed, 39 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 2bf128f7cbae..ec5d160c32ba 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -403,6 +403,9 @@ LSM_HOOK(void, LSM_RET_VOID, key_free, struct key *key)
+>  LSM_HOOK(int, 0, key_permission, key_ref_t key_ref, const struct cred *cred,
+>  	 enum key_need_perm need_perm)
+>  LSM_HOOK(int, 0, key_getsecurity, struct key *key, char **buffer)
+> +LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
+> +	 struct key *key, const void *payload, size_t payload_len,
+> +	 unsigned long flags, bool create)
+>  #endif /* CONFIG_KEYS */
+>  
+>  #ifdef CONFIG_AUDIT
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7cd7126f6545..1cd84970ab4c 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1995,6 +1995,9 @@ void security_key_free(struct key *key);
+>  int security_key_permission(key_ref_t key_ref, const struct cred *cred,
+>  			    enum key_need_perm need_perm);
+>  int security_key_getsecurity(struct key *key, char **_buffer);
+> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
+> +					const void *payload, size_t payload_len,
+> +					unsigned long flags, bool create);
+>  
+>  #else
+>  
+> @@ -2022,6 +2025,14 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
+>  	return 0;
+>  }
+>  
+> +static inline void security_key_post_create_or_update(struct key *keyring,
+> +						      struct key *key,
+> +						      const void *payload,
+> +						      size_t payload_len,
+> +						      unsigned long flags,
+> +						      bool create)
+> +{ }
+> +
+>  #endif
+>  #endif /* CONFIG_KEYS */
+>  
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 0260a1902922..f75fe66c2f03 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -935,6 +935,8 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+>  		goto error_link_end;
+>  	}
+>  
+> +	security_key_post_create_or_update(keyring, key, payload, plen, flags,
+> +					   true);
+>  	ima_post_key_create_or_update(keyring, key, payload, plen,
+>  				      flags, true);
+>  
+> @@ -968,10 +970,13 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+>  
+>  	key_ref = __key_update(key_ref, &prep);
+>  
+> -	if (!IS_ERR(key_ref))
+> +	if (!IS_ERR(key_ref)) {
+> +		security_key_post_create_or_update(keyring, key, payload, plen,
+> +						   flags, false);
+>  		ima_post_key_create_or_update(keyring, key,
+>  					      payload, plen,
+>  					      flags, false);
+> +	}
+>  
+>  	goto error_free_prep;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index 6eb7c9cff1e5..859189722ab8 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5406,6 +5406,25 @@ int security_key_getsecurity(struct key *key, char **buffer)
+>  	*buffer = NULL;
+>  	return call_int_hook(key_getsecurity, 0, key, buffer);
+>  }
+> +
+> +/**
+> + * security_key_post_create_or_update() - Notification of key create or update
+> + * @keyring: keyring to which the key is linked to
+> + * @key: created or updated key
+> + * @payload: data used to instantiate or update the key
+> + * @payload_len: length of payload
+> + * @flags: key flags
+> + * @create: flag indicating whether the key was created or updated
+> + *
+> + * Notify the caller of a key creation or update.
+> + */
+> +void security_key_post_create_or_update(struct key *keyring, struct key *key,
+> +					const void *payload, size_t payload_len,
+> +					unsigned long flags, bool create)
+> +{
+> +	call_void_hook(key_post_create_or_update, keyring, key, payload,
+> +		       payload_len, flags, create);
+> +}
+>  #endif	/* CONFIG_KEYS */
+>  
+>  #ifdef CONFIG_AUDIT
 
