@@ -1,174 +1,329 @@
-Return-Path: <linux-fsdevel+bounces-2198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9619F7E31AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:54:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550857E31F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 01:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95641C209BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Nov 2023 23:54:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD14B20B1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB85B2FE2B;
-	Mon,  6 Nov 2023 23:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F309819;
+	Tue,  7 Nov 2023 00:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="PyL1Jfvm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TFt5nt/J"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eBaWV8MO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D909ADF6B;
-	Mon,  6 Nov 2023 23:54:32 +0000 (UTC)
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6C492;
-	Mon,  6 Nov 2023 15:54:31 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id 200DC5C02C6;
-	Mon,  6 Nov 2023 18:54:28 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 06 Nov 2023 18:54:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-	1699314868; x=1699401268; bh=HjuTB2ZqQlpPXSscXp7JtGyUNag93Pd3K89
-	gUaElrPo=; b=PyL1JfvmQ/875enNsiwOsImOIQXperWC2yEcpljNcOJx+IRw/Y1
-	84yCz72SDaBz+5U7Cj5CRwGzIfpCPUifcsvf1/BqQnHZcpAbrh1zOdqHWi5QmiE0
-	l8V5mvuKbbOktjNHdHbnCzMJNam9aqKKglFj1SBTB3sRIHJAtYGzbLeThVv135L0
-	QndK0FDu88DYtJXmWTayoE5pC9LuuaiREaPSmBSSGCPejbu4a3OXl3aJwGmvrKiW
-	aYe9yJ/LLuc5YAp9zv/IZcZkYqS/3IPkWMCb4rvOntTHPQ/axCeArGl3rbKuj7Gr
-	T2I5JSVlcH077uZ6cH9+ejZjWGj3DnhvbNQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1699314868; x=1699401268; bh=HjuTB2ZqQlpPXSscXp7JtGyUNag93Pd3K89
-	gUaElrPo=; b=TFt5nt/J39u226/EEwpygyAGnpRQddFZFDThMRPbeukSHon1934
-	eh+S5S9Sa4K1VpoyckmUOr7kZEBP31ivrOEGI3NTT8XA2WP48eU29SYzi+eS1boN
-	zbOiB6f31i7ooAFqEhF8LaFXBh5lHLgwPbEC38KPRSMTV8pIQMFPHkHbhGDDOmmc
-	vjqkUIJ7WKw5VePksFHI/38HSyw0RcJF09z1srUGTK0vp7y1g940mc3SprQK/LT4
-	lP/ofXtyhyZPkrDozB3lrE12bEvaL+r2dkRIKqk9+D1TTj0nUj00kfaSaYBe3fLI
-	hxLjg9XRc6h3XCO3j7kU8Sd093trsONCM8w==
-X-ME-Sender: <xms:s3xJZTSuBpvI0O1JC34EeeOgSQ5I7dECzAHPvDamMPt3pp9_fo5pGg>
-    <xme:s3xJZUwAQfpUdzbPUq2-ba9V3FnsLJjb_KPl0FEUWYcvtauSBhXdZWAMi_MaSqE2B
-    Zbpk-CFriRu>
-X-ME-Received: <xmr:s3xJZY3AYRmvZpxihu5ql8_5aww_EFA9159cDl6Mu7bTeHEtCFnYR7YFbDD7kvryuIenibJNmYU_tgzww7Ecu4HdOWwXI7XueTpPx1a4JV7wugk_us6CZ0S5>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudduhedgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    eptdekveelhfeuudetjedufedvtdfgveehgedugeelvedvhfejiedtudduiefgteelnecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:s3xJZTAWfa50lbE6RN6VmRRCm0qXuYaAkBvNoN8T8SOzLoRtRC0QDQ>
-    <xmx:s3xJZchWtf0LL_uK7tUj47ZxWxE_w4T3qu68WX6slj4S02XQs8KGIA>
-    <xmx:s3xJZXo_dOOXr5MIoIKLRXU_7IH84hFoffFeL7OBsCLou4jRMY1xZQ>
-    <xmx:tHxJZdZCHtlVJjMXHINnkZaOgijP_-f5q73D5MGnndrmDEeU_WO_DA>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 6 Nov 2023 18:54:22 -0500 (EST)
-Message-ID: <c9131c2f-da31-22ac-e99a-773e4282f627@themaw.net>
-Date: Tue, 7 Nov 2023 07:54:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE2B7F9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 00:04:22 +0000 (UTC)
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1C3183
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 16:04:21 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3b2e4107f47so3585328b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 16:04:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1699315460; x=1699920260; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0HO/wA9PqUNYiMdOQK9wuMf/On/ruAp85W0UZdzlNes=;
+        b=eBaWV8MOdiwZc05KX4oEicS0CI0JGlcguQcgQXFx4AgMjd1N4+0EXA9DaeRCuPvcbu
+         Nf5QgmIRUFExCeGqwDrVOO+75mqNWkZiJpkyzgMvf4Hma+3OS1VdWqwn5PiXJ1JuUznO
+         e0prcGuDfmkmW2/wrn42ge/kJbItAP35as7VU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699315460; x=1699920260;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HO/wA9PqUNYiMdOQK9wuMf/On/ruAp85W0UZdzlNes=;
+        b=P/DrjPxyS/FXQbxFS85piQOXfJ6uPv4vV40zXX8UY1wt/RXrR2fYPy7OydkI+Yp90l
+         XHy31RaxKvoMWUH1cbq5++C2BRBuZA31o9Q/F+8OmETx24Kv2BaRbDbhu8KW8I78Lhtt
+         Zy4hTMTH3NaghKE4VPP4OhSp3bMcHh7U64RTAEc3CD+J66z9bdJZruUXkT363hmE45LA
+         Bpp/6Vf//eecnvii+OkXN/YyDIM3OIKH6qp/zcu+xKbV9cYIEAs09pGIRf4oYAlJxJtm
+         qI8zkfsFUsG/xb5kM70uR0jZDEDtGCH0hkR+YzTn9INVKqnAIIlViskTiAqZKsl4OtyJ
+         mpSA==
+X-Gm-Message-State: AOJu0YzQSaIYMYUnKT/oFKqHKHav8+FVxdvPDAKRiB8rVT2f6jYFKYtO
+	XCvrisvV+Ri7YhiV/cjv7JYZlsV+vRo7UJOWDvuStg==
+X-Google-Smtp-Source: AGHT+IGDvCB17KWTyiFx8FaXAeEJc0ByauOL7iWEfL8vBMxv+JBAAYxbbDgTQnUUhZieLx7gpEEKmw==
+X-Received: by 2002:a54:418f:0:b0:3b2:d9d8:4039 with SMTP id 15-20020a54418f000000b003b2d9d84039mr34224764oiy.24.1699315460292;
+        Mon, 06 Nov 2023 16:04:20 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id y40-20020a056a00182800b006be0fb89ac3sm6111825pfa.30.2023.11.06.16.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 16:04:19 -0800 (PST)
+Date: Mon, 6 Nov 2023 16:04:18 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Pedro Falcato <pedro.falcato@gmail.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 6.6 05/13] binfmt_elf: Support segments with 0
+ filesz and misaligned starts
+Message-ID: <202311061603.CBBBC6408@keescook>
+References: <20231106231435.3734790-1-sashal@kernel.org>
+ <20231106231435.3734790-5-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-To: Karel Zak <kzak@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
- David Howells <dhowells@redhat.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>,
- Amir Goldstein <amir73il@gmail.com>, Matthew House
- <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <374433e3-ab72-64a3-0fa0-ab455268e5e0@themaw.net>
- <20231106121053.egamth3hr7zcfzji@ws.net.home>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH v4 0/6] querying mount attributes
-In-Reply-To: <20231106121053.egamth3hr7zcfzji@ws.net.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231106231435.3734790-5-sashal@kernel.org>
 
-On 6/11/23 20:10, Karel Zak wrote:
-> On Wed, Nov 01, 2023 at 07:52:45PM +0800, Ian Kent wrote:
->> On 25/10/23 22:01, Miklos Szeredi wrote:
->> Looks ok to me,covers the primary cases I needed when I worked
->> on using fsinfo() in systemd.
-> Our work on systemd was about two areas: get mount info (stat/listmount()
-> now) from the kernel, and get the mount ID from notification.
->
-> There was watch_queue.h with WATCH_TYPE_MOUNT_NOTIFY and struct
-> mount_notification->auxiliary_mount (aka mount ID) and event subtype
-> to get the change status (new mount, umount, etc.)
->
-> For example David's:
->   https://patchwork.kernel.org/project/linux-security-module/patch/155991711016.15579.4449417925184028666.stgit@warthog.procyon.org.uk/
->
-> Do we have any replacement for this?
+Please drop this from -stable -- it's part of a larger refactoring that
+shouldn't be backported without explicit effort/testing.
 
-Not yet.
+-Kees
 
+On Mon, Nov 06, 2023 at 06:14:18PM -0500, Sasha Levin wrote:
+> From: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> [ Upstream commit 585a018627b4d7ed37387211f667916840b5c5ea ]
+> 
+> Implement a helper elf_load() that wraps elf_map() and performs all
+> of the necessary work to ensure that when "memsz > filesz" the bytes
+> described by "memsz > filesz" are zeroed.
+> 
+> An outstanding issue is if the first segment has filesz 0, and has a
+> randomized location. But that is the same as today.
+> 
+> In this change I replaced an open coded padzero() that did not clear
+> all of the way to the end of the page, with padzero() that does.
+> 
+> I also stopped checking the return of padzero() as there is at least
+> one known case where testing for failure is the wrong thing to do.
+> It looks like binfmt_elf_fdpic may have the proper set of tests
+> for when error handling can be safely completed.
+> 
+> I found a couple of commits in the old history
+> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
+> that look very interesting in understanding this code.
+> 
+> commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail")
+> commit c6e2227e4a3e ("[SPARC64]: Missing user access return value checks in fs/binfmt_elf.c and fs/compat.c")
+> commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2")
+> 
+> Looking at commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail"):
+> >  commit 39b56d902bf35241e7cba6cc30b828ed937175ad
+> >  Author: Pavel Machek <pavel@ucw.cz>
+> >  Date:   Wed Feb 9 22:40:30 2005 -0800
+> >
+> >     [PATCH] binfmt_elf: clearing bss may fail
+> >
+> >     So we discover that Borland's Kylix application builder emits weird elf
+> >     files which describe a non-writeable bss segment.
+> >
+> >     So remove the clear_user() check at the place where we zero out the bss.  I
+> >     don't _think_ there are any security implications here (plus we've never
+> >     checked that clear_user() return value, so whoops if it is a problem).
+> >
+> >     Signed-off-by: Pavel Machek <pavel@suse.cz>
+> >     Signed-off-by: Andrew Morton <akpm@osdl.org>
+> >     Signed-off-by: Linus Torvalds <torvalds@osdl.org>
+> 
+> It seems pretty clear that binfmt_elf_fdpic with skipping clear_user() for
+> non-writable segments and otherwise calling clear_user(), aka padzero(),
+> and checking it's return code is the right thing to do.
+> 
+> I just skipped the error checking as that avoids breaking things.
+> 
+> And notably, it looks like Borland's Kylix died in 2005 so it might be
+> safe to just consider read-only segments with memsz > filesz an error.
+> 
+> Reported-by: Sebastian Ott <sebott@redhat.com>
+> Reported-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> Closes: https://lkml.kernel.org/r/20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> Link: https://lore.kernel.org/r/87sf71f123.fsf@email.froward.int.ebiederm.org
+> Tested-by: Pedro Falcato <pedro.falcato@gmail.com>
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
+> Link: https://lore.kernel.org/r/20230929032435.2391507-1-keescook@chromium.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/binfmt_elf.c | 111 +++++++++++++++++++++---------------------------
+>  1 file changed, 48 insertions(+), 63 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 7b3d2d4914073..2a615f476e44e 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -110,25 +110,6 @@ static struct linux_binfmt elf_format = {
+>  
+>  #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
+>  
+> -static int set_brk(unsigned long start, unsigned long end, int prot)
+> -{
+> -	start = ELF_PAGEALIGN(start);
+> -	end = ELF_PAGEALIGN(end);
+> -	if (end > start) {
+> -		/*
+> -		 * Map the last of the bss segment.
+> -		 * If the header is requesting these pages to be
+> -		 * executable, honour that (ppc32 needs this).
+> -		 */
+> -		int error = vm_brk_flags(start, end - start,
+> -				prot & PROT_EXEC ? VM_EXEC : 0);
+> -		if (error)
+> -			return error;
+> -	}
+> -	current->mm->start_brk = current->mm->brk = end;
+> -	return 0;
+> -}
+> -
+>  /* We need to explicitly zero any fractional pages
+>     after the data section (i.e. bss).  This would
+>     contain the junk from the file that should not
+> @@ -406,6 +387,51 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+>  	return(map_addr);
+>  }
+>  
+> +static unsigned long elf_load(struct file *filep, unsigned long addr,
+> +		const struct elf_phdr *eppnt, int prot, int type,
+> +		unsigned long total_size)
+> +{
+> +	unsigned long zero_start, zero_end;
+> +	unsigned long map_addr;
+> +
+> +	if (eppnt->p_filesz) {
+> +		map_addr = elf_map(filep, addr, eppnt, prot, type, total_size);
+> +		if (BAD_ADDR(map_addr))
+> +			return map_addr;
+> +		if (eppnt->p_memsz > eppnt->p_filesz) {
+> +			zero_start = map_addr + ELF_PAGEOFFSET(eppnt->p_vaddr) +
+> +				eppnt->p_filesz;
+> +			zero_end = map_addr + ELF_PAGEOFFSET(eppnt->p_vaddr) +
+> +				eppnt->p_memsz;
+> +
+> +			/* Zero the end of the last mapped page */
+> +			padzero(zero_start);
+> +		}
+> +	} else {
+> +		map_addr = zero_start = ELF_PAGESTART(addr);
+> +		zero_end = zero_start + ELF_PAGEOFFSET(eppnt->p_vaddr) +
+> +			eppnt->p_memsz;
+> +	}
+> +	if (eppnt->p_memsz > eppnt->p_filesz) {
+> +		/*
+> +		 * Map the last of the segment.
+> +		 * If the header is requesting these pages to be
+> +		 * executable, honour that (ppc32 needs this).
+> +		 */
+> +		int error;
+> +
+> +		zero_start = ELF_PAGEALIGN(zero_start);
+> +		zero_end = ELF_PAGEALIGN(zero_end);
+> +
+> +		error = vm_brk_flags(zero_start, zero_end - zero_start,
+> +				     prot & PROT_EXEC ? VM_EXEC : 0);
+> +		if (error)
+> +			map_addr = error;
+> +	}
+> +	return map_addr;
+> +}
+> +
+> +
+>  static unsigned long total_mapping_size(const struct elf_phdr *phdr, int nr)
+>  {
+>  	elf_addr_t min_addr = -1;
+> @@ -829,7 +855,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+>  	struct elf_phdr *elf_property_phdata = NULL;
+>  	unsigned long elf_bss, elf_brk;
+> -	int bss_prot = 0;
+>  	int retval, i;
+>  	unsigned long elf_entry;
+>  	unsigned long e_entry;
+> @@ -1040,33 +1065,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  		if (elf_ppnt->p_type != PT_LOAD)
+>  			continue;
+>  
+> -		if (unlikely (elf_brk > elf_bss)) {
+> -			unsigned long nbyte;
+> -
+> -			/* There was a PT_LOAD segment with p_memsz > p_filesz
+> -			   before this one. Map anonymous pages, if needed,
+> -			   and clear the area.  */
+> -			retval = set_brk(elf_bss + load_bias,
+> -					 elf_brk + load_bias,
+> -					 bss_prot);
+> -			if (retval)
+> -				goto out_free_dentry;
+> -			nbyte = ELF_PAGEOFFSET(elf_bss);
+> -			if (nbyte) {
+> -				nbyte = ELF_MIN_ALIGN - nbyte;
+> -				if (nbyte > elf_brk - elf_bss)
+> -					nbyte = elf_brk - elf_bss;
+> -				if (clear_user((void __user *)elf_bss +
+> -							load_bias, nbyte)) {
+> -					/*
+> -					 * This bss-zeroing can fail if the ELF
+> -					 * file specifies odd protections. So
+> -					 * we don't check the return value
+> -					 */
+> -				}
+> -			}
+> -		}
+> -
+>  		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
+>  				     !!interpreter, false);
+>  
+> @@ -1162,7 +1160,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			}
+>  		}
+>  
+> -		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt,
+> +		error = elf_load(bprm->file, load_bias + vaddr, elf_ppnt,
+>  				elf_prot, elf_flags, total_size);
+>  		if (BAD_ADDR(error)) {
+>  			retval = IS_ERR_VALUE(error) ?
+> @@ -1217,10 +1215,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  		if (end_data < k)
+>  			end_data = k;
+>  		k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
+> -		if (k > elf_brk) {
+> -			bss_prot = elf_prot;
+> +		if (k > elf_brk)
+>  			elf_brk = k;
+> -		}
+>  	}
+>  
+>  	e_entry = elf_ex->e_entry + load_bias;
+> @@ -1232,18 +1228,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	start_data += load_bias;
+>  	end_data += load_bias;
+>  
+> -	/* Calling set_brk effectively mmaps the pages that we need
+> -	 * for the bss and break sections.  We must do this before
+> -	 * mapping in the interpreter, to make sure it doesn't wind
+> -	 * up getting placed where the bss needs to go.
+> -	 */
+> -	retval = set_brk(elf_bss, elf_brk, bss_prot);
+> -	if (retval)
+> -		goto out_free_dentry;
+> -	if (likely(elf_bss != elf_brk) && unlikely(padzero(elf_bss))) {
+> -		retval = -EFAULT; /* Nobody gets to see this, but.. */
+> -		goto out_free_dentry;
+> -	}
+> +	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
+>  
+>  	if (interpreter) {
+>  		elf_entry = load_elf_interp(interp_elf_ex,
+> -- 
+> 2.42.0
+> 
 
-I tried to mention it early on but I don't think my description
-
-conveyed what's actually needed.
-
-
->
->> Karel, is there anything missing you would need for adding
->> libmount support?
-> Miklos's statmount() and listmount() API is excellent from my point of
-> view. It looks pretty straightforward to use, and with the unique
-> mount ID, it's safe too. It will be ideal for things like umount(8)
-> (and recursive umount, etc.).
-
-Thanks Karel, that's what I was hoping.
-
-
->
-> For complex scenarios (systemd), we need to get from the kernel the
-> unique ID's after any change in the mount table to save resources and
-> call statmount() only for the affected mount node. Parse mountinfo
-> sucks, call for(listmount(-1)) { statmount() } sucks too :-)
-
-I have been looking at the notifications side of things.
-
-
-I too need that functionality for the systemd work I was doing on
-
-this. There was a need for event rate management too to get the
-
-most out of the mount query improvements which I really only
-
-realized about the time the work stopped. So for me there's
-
-some new work needed as well.
-
-
-I'm not sure yet which way to go as the watch queue implementation
-
-that was merged is just the framework and is a bit different from
-
-what we were using so I'm not sure if I can port specific extensions
-
-of David's notifications work to it. I'm only just now getting to a
-
-point where I can spend enough time on it to work this out.
-
-
-Ian
-
+-- 
+Kees Cook
 
