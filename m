@@ -1,325 +1,525 @@
-Return-Path: <linux-fsdevel+bounces-2199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550857E31F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 01:04:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E037E31F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 01:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD14B20B1A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1565B20B60
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F309819;
-	Tue,  7 Nov 2023 00:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E803D80E;
+	Tue,  7 Nov 2023 00:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eBaWV8MO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KWOQtbs4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE2B7F9
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 00:04:22 +0000 (UTC)
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1C3183
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 16:04:21 -0800 (PST)
-Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3b2e4107f47so3585328b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 16:04:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD3139C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 00:04:40 +0000 (UTC)
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD32D57
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 16:04:37 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-5bdb0be3591so539916a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 16:04:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1699315460; x=1699920260; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0HO/wA9PqUNYiMdOQK9wuMf/On/ruAp85W0UZdzlNes=;
-        b=eBaWV8MOdiwZc05KX4oEicS0CI0JGlcguQcgQXFx4AgMjd1N4+0EXA9DaeRCuPvcbu
-         Nf5QgmIRUFExCeGqwDrVOO+75mqNWkZiJpkyzgMvf4Hma+3OS1VdWqwn5PiXJ1JuUznO
-         e0prcGuDfmkmW2/wrn42ge/kJbItAP35as7VU=
+        d=chromium.org; s=google; t=1699315477; x=1699920277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZ7Tyo8qH9aoJwRZELDU2Tn13Js2474wX9Z3rsse04E=;
+        b=KWOQtbs4rGU3Wd5cQ12hlQwNGwWkjDqiAaiBMeHd7DUMgtkMKgZ46/ORa3itE3j/Xc
+         D2j0dBuzPNx3qJDDtMLELBiLXhg31BXTCpK0GnBrNowiDyG0KFCP755wXruIkwd2Wch2
+         kl4hdWi1IQfFDBgiXZVA82vDDQPj3IctBUIF0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699315460; x=1699920260;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HO/wA9PqUNYiMdOQK9wuMf/On/ruAp85W0UZdzlNes=;
-        b=P/DrjPxyS/FXQbxFS85piQOXfJ6uPv4vV40zXX8UY1wt/RXrR2fYPy7OydkI+Yp90l
-         XHy31RaxKvoMWUH1cbq5++C2BRBuZA31o9Q/F+8OmETx24Kv2BaRbDbhu8KW8I78Lhtt
-         Zy4hTMTH3NaghKE4VPP4OhSp3bMcHh7U64RTAEc3CD+J66z9bdJZruUXkT363hmE45LA
-         Bpp/6Vf//eecnvii+OkXN/YyDIM3OIKH6qp/zcu+xKbV9cYIEAs09pGIRf4oYAlJxJtm
-         qI8zkfsFUsG/xb5kM70uR0jZDEDtGCH0hkR+YzTn9INVKqnAIIlViskTiAqZKsl4OtyJ
-         mpSA==
-X-Gm-Message-State: AOJu0YzQSaIYMYUnKT/oFKqHKHav8+FVxdvPDAKRiB8rVT2f6jYFKYtO
-	XCvrisvV+Ri7YhiV/cjv7JYZlsV+vRo7UJOWDvuStg==
-X-Google-Smtp-Source: AGHT+IGDvCB17KWTyiFx8FaXAeEJc0ByauOL7iWEfL8vBMxv+JBAAYxbbDgTQnUUhZieLx7gpEEKmw==
-X-Received: by 2002:a54:418f:0:b0:3b2:d9d8:4039 with SMTP id 15-20020a54418f000000b003b2d9d84039mr34224764oiy.24.1699315460292;
-        Mon, 06 Nov 2023 16:04:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699315477; x=1699920277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gZ7Tyo8qH9aoJwRZELDU2Tn13Js2474wX9Z3rsse04E=;
+        b=vWHYipms3TvdNoCYhI7bqT76K/u+M0OMRrejsD+AX6g3Sic/TDxWn2WLH030zmBBjH
+         95xSdWsHrxL1e8JEpAJ/v4CtKrK/tFKuVhUyz9fN5i3/nTsGPcYSJm9NytD7q4cySGQS
+         jpgKfG2RdLgOJKojuljtxLxmPTmrgJE4XG2RR5MtAX44nN3FlBTuCyU82h7YvWfgfAos
+         Xyd4ifwwizS06MoktutSIaOUf0zOPGTxnLyPyUdoCKTKrQi7F2EOh/CQd/ucKNlkxcRy
+         SPANdpu+ER/XMminvqPwJEg+oR86qcvG1PybR0jammKb+v9ik5gdJ6ghVL6mIs3ZUGCr
+         mlcQ==
+X-Gm-Message-State: AOJu0YwMzHA8DzGpH/o2Y/ktUxjBgN+wEdN6YC2NjPunsR1fkFauM7Q6
+	w847wHLgamMZT/wikXaxu+Drgg==
+X-Google-Smtp-Source: AGHT+IFlGAXxvTy3TIkf725Nv5fS/RpZl/5VLZlIod4EZ1u1OhXaby1ULHhklzUANQJ962E2kmZhzA==
+X-Received: by 2002:a05:6a21:3b48:b0:180:dd61:72a2 with SMTP id zy8-20020a056a213b4800b00180dd6172a2mr25536850pzb.33.1699315476896;
+        Mon, 06 Nov 2023 16:04:36 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id y40-20020a056a00182800b006be0fb89ac3sm6111825pfa.30.2023.11.06.16.04.19
+        by smtp.gmail.com with ESMTPSA id j7-20020a170902da8700b001b06c106844sm6416459plx.151.2023.11.06.16.04.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 16:04:19 -0800 (PST)
-Date: Mon, 6 Nov 2023 16:04:18 -0800
+        Mon, 06 Nov 2023 16:04:36 -0800 (PST)
+Date: Mon, 6 Nov 2023 16:04:35 -0800
 From: Kees Cook <keescook@chromium.org>
 To: Sasha Levin <sashal@kernel.org>
 Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Pedro Falcato <pedro.falcato@gmail.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH AUTOSEL 6.6 05/13] binfmt_elf: Support segments with 0
- filesz and misaligned starts
-Message-ID: <202311061603.CBBBC6408@keescook>
+	Christian Brauner <christian.brauner@ubuntu.com>,
+	Sargun Dhillon <sargun@sargun.me>, Serge Hallyn <serge@hallyn.com>,
+	Jann Horn <jannh@google.com>,
+	Henning Schild <henning.schild@siemens.com>,
+	Andrei Vagin <avagin@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Laurent Vivier <laurent@vivier.eu>, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 6.6 07/13] binfmt_misc: cleanup on filesystem
+ umount
+Message-ID: <202311061604.8F1A8B6771@keescook>
 References: <20231106231435.3734790-1-sashal@kernel.org>
- <20231106231435.3734790-5-sashal@kernel.org>
+ <20231106231435.3734790-7-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231106231435.3734790-5-sashal@kernel.org>
+In-Reply-To: <20231106231435.3734790-7-sashal@kernel.org>
 
 Please drop this from -stable -- it's part of a larger refactoring that
 shouldn't be backported without explicit effort/testing.
 
 -Kees
 
-On Mon, Nov 06, 2023 at 06:14:18PM -0500, Sasha Levin wrote:
-> From: "Eric W. Biederman" <ebiederm@xmission.com>
+On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
 > 
-> [ Upstream commit 585a018627b4d7ed37387211f667916840b5c5ea ]
+> [ Upstream commit 1c5976ef0f7ad76319df748ccb99a4c7ba2ba464 ]
 > 
-> Implement a helper elf_load() that wraps elf_map() and performs all
-> of the necessary work to ensure that when "memsz > filesz" the bytes
-> described by "memsz > filesz" are zeroed.
+> Currently, registering a new binary type pins the binfmt_misc
+> filesystem. Specifically, this means that as long as there is at least
+> one binary type registered the binfmt_misc filesystem survives all
+> umounts, i.e. the superblock is not destroyed. Meaning that a umount
+> followed by another mount will end up with the same superblock and the
+> same binary type handlers. This is a behavior we tend to discourage for
+> any new filesystems (apart from a few special filesystems such as e.g.
+> configfs or debugfs). A umount operation without the filesystem being
+> pinned - by e.g. someone holding a file descriptor to an open file -
+> should usually result in the destruction of the superblock and all
+> associated resources. This makes introspection easier and leads to
+> clearly defined, simple and clean semantics. An administrator can rely
+> on the fact that a umount will guarantee a clean slate making it
+> possible to reinitialize a filesystem. Right now all binary types would
+> need to be explicitly deleted before that can happen.
 > 
-> An outstanding issue is if the first segment has filesz 0, and has a
-> randomized location. But that is the same as today.
+> This allows us to remove the heavy-handed calls to simple_pin_fs() and
+> simple_release_fs() when creating and deleting binary types. This in
+> turn allows us to replace the current brittle pinning mechanism abusing
+> dget() which has caused a range of bugs judging from prior fixes in [2]
+> and [3]. The additional dget() in load_misc_binary() pins the dentry but
+> only does so for the sake to prevent ->evict_inode() from freeing the
+> node when a user removes the binary type and kill_node() is run. Which
+> would mean ->interpreter and ->interp_file would be freed causing a UAF.
 > 
-> In this change I replaced an open coded padzero() that did not clear
-> all of the way to the end of the page, with padzero() that does.
+> This isn't really nicely documented nor is it very clean because it
+> relies on simple_pin_fs() pinning the filesystem as long as at least one
+> binary type exists. Otherwise it would cause load_misc_binary() to hold
+> on to a dentry belonging to a superblock that has been shutdown.
+> Replace that implicit pinning with a clean and simple per-node refcount
+> and get rid of the ugly dget() pinning. A similar mechanism exists for
+> e.g. binderfs (cf. [4]). All the cleanup work can now be done in
+> ->evict_inode().
 > 
-> I also stopped checking the return of padzero() as there is at least
-> one known case where testing for failure is the wrong thing to do.
-> It looks like binfmt_elf_fdpic may have the proper set of tests
-> for when error handling can be safely completed.
+> In a follow-up patch we will make it possible to use binfmt_misc in
+> sandboxes. We will use the cleaner semantics where a umount for the
+> filesystem will cause the superblock and all resources to be
+> deallocated. In preparation for this apply the same semantics to the
+> initial binfmt_misc mount. Note, that this is a user-visible change and
+> as such a uapi change but one that we can reasonably risk. We've
+> discussed this in earlier versions of this patchset (cf. [1]).
 > 
-> I found a couple of commits in the old history
-> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git,
-> that look very interesting in understanding this code.
+> The main user and provider of binfmt_misc is systemd. Systemd provides
+> binfmt_misc via autofs since it is configurable as a kernel module and
+> is used by a few exotic packages and users. As such a binfmt_misc mount
+> is triggered when /proc/sys/fs/binfmt_misc is accessed and is only
+> provided on demand. Other autofs on demand filesystems include EFI ESP
+> which systemd umounts if the mountpoint stays idle for a certain amount
+> of time. This doesn't apply to the binfmt_misc autofs mount which isn't
+> touched once it is mounted meaning this change can't accidently wipe
+> binary type handlers without someone having explicitly unmounted
+> binfmt_misc. After speaking to systemd folks they don't expect this
+> change to affect them.
 > 
-> commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail")
-> commit c6e2227e4a3e ("[SPARC64]: Missing user access return value checks in fs/binfmt_elf.c and fs/compat.c")
-> commit 5bf3be033f50 ("v2.4.10.1 -> v2.4.10.2")
+> In line with our general policy, if we see a regression for systemd or
+> other users with this change we will switch back to the old behavior for
+> the initial binfmt_misc mount and have binary types pin the filesystem
+> again. But while we touch this code let's take the chance and let's
+> improve on the status quo.
 > 
-> Looking at commit 39b56d902bf3 ("[PATCH] binfmt_elf: clearing bss may fail"):
-> >  commit 39b56d902bf35241e7cba6cc30b828ed937175ad
-> >  Author: Pavel Machek <pavel@ucw.cz>
-> >  Date:   Wed Feb 9 22:40:30 2005 -0800
-> >
-> >     [PATCH] binfmt_elf: clearing bss may fail
-> >
-> >     So we discover that Borland's Kylix application builder emits weird elf
-> >     files which describe a non-writeable bss segment.
-> >
-> >     So remove the clear_user() check at the place where we zero out the bss.  I
-> >     don't _think_ there are any security implications here (plus we've never
-> >     checked that clear_user() return value, so whoops if it is a problem).
-> >
-> >     Signed-off-by: Pavel Machek <pavel@suse.cz>
-> >     Signed-off-by: Andrew Morton <akpm@osdl.org>
-> >     Signed-off-by: Linus Torvalds <torvalds@osdl.org>
+> [1]: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu
+> [2]: commit 43a4f2619038 ("exec: binfmt_misc: fix race between load_misc_binary() and kill_node()"
+> [3]: commit 83f918274e4b ("exec: binfmt_misc: shift filp_close(interp_file) from kill_node() to bm_evict_inode()")
+> [4]: commit f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
 > 
-> It seems pretty clear that binfmt_elf_fdpic with skipping clear_user() for
-> non-writable segments and otherwise calling clear_user(), aka padzero(),
-> and checking it's return code is the right thing to do.
-> 
-> I just skipped the error checking as that avoids breaking things.
-> 
-> And notably, it looks like Borland's Kylix died in 2005 so it might be
-> safe to just consider read-only segments with memsz > filesz an error.
-> 
-> Reported-by: Sebastian Ott <sebott@redhat.com>
-> Reported-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> Closes: https://lkml.kernel.org/r/20230914-bss-alloc-v1-1-78de67d2c6dd@weissschuh.net
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> Link: https://lore.kernel.org/r/87sf71f123.fsf@email.froward.int.ebiederm.org
-> Tested-by: Pedro Falcato <pedro.falcato@gmail.com>
-> Signed-off-by: Sebastian Ott <sebott@redhat.com>
-> Link: https://lore.kernel.org/r/20230929032435.2391507-1-keescook@chromium.org
+> Link: https://lore.kernel.org/r/20211028103114.2849140-1-brauner@kernel.org (v1)
+> Cc: Sargun Dhillon <sargun@sargun.me>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Henning Schild <henning.schild@siemens.com>
+> Cc: Andrei Vagin <avagin@gmail.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Laurent Vivier <laurent@vivier.eu>
+> Cc: linux-fsdevel@vger.kernel.org
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 > Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> /* v2 */
+> - Christian Brauner <christian.brauner@ubuntu.com>:
+>   - Add more comments that explain what's going on.
+>   - Rename functions while changing them to better reflect what they are
+>     doing to make the code easier to understand.
+>   - In the first version when a specific binary type handler was removed
+>     either through a write to the entry's file or all binary type
+>     handlers were removed by a write to the binfmt_misc mount's status
+>     file all cleanup work happened during inode eviction.
+>     That includes removal of the relevant entries from entry list. While
+>     that works fine I disliked that model after thinking about it for a
+>     bit. Because it means that there was a window were someone has
+>     already removed a or all binary handlers but they could still be
+>     safely reached from load_misc_binary() when it has managed to take
+>     the read_lock() on the entries list while inode eviction was already
+>     happening. Again, that perfectly benign but it's cleaner to remove
+>     the binary handler from the list immediately meaning that ones the
+>     write to then entry's file or the binfmt_misc status file returns
+>     the binary type cannot be executed anymore. That gives stronger
+>     guarantees to the user.
 > Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  fs/binfmt_elf.c | 111 +++++++++++++++++++++---------------------------
->  1 file changed, 48 insertions(+), 63 deletions(-)
+>  fs/binfmt_misc.c | 216 ++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 168 insertions(+), 48 deletions(-)
 > 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 7b3d2d4914073..2a615f476e44e 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -110,25 +110,6 @@ static struct linux_binfmt elf_format = {
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index e0108d17b085c..cf5ed5cd4102d 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -60,12 +60,11 @@ typedef struct {
+>  	char *name;
+>  	struct dentry *dentry;
+>  	struct file *interp_file;
+> +	refcount_t users;		/* sync removal with load_misc_binary() */
+>  } Node;
 >  
->  #define BAD_ADDR(x) (unlikely((unsigned long)(x) >= TASK_SIZE))
+>  static DEFINE_RWLOCK(entries_lock);
+>  static struct file_system_type bm_fs_type;
+> -static struct vfsmount *bm_mnt;
+> -static int entry_count;
 >  
-> -static int set_brk(unsigned long start, unsigned long end, int prot)
-> -{
-> -	start = ELF_PAGEALIGN(start);
-> -	end = ELF_PAGEALIGN(end);
-> -	if (end > start) {
-> -		/*
-> -		 * Map the last of the bss segment.
-> -		 * If the header is requesting these pages to be
-> -		 * executable, honour that (ppc32 needs this).
-> -		 */
-> -		int error = vm_brk_flags(start, end - start,
-> -				prot & PROT_EXEC ? VM_EXEC : 0);
-> -		if (error)
-> -			return error;
-> -	}
-> -	current->mm->start_brk = current->mm->brk = end;
-> -	return 0;
-> -}
-> -
->  /* We need to explicitly zero any fractional pages
->     after the data section (i.e. bss).  This would
->     contain the junk from the file that should not
-> @@ -406,6 +387,51 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
->  	return(map_addr);
+>  /*
+>   * Max length of the register string.  Determined by:
+> @@ -82,19 +81,23 @@ static int entry_count;
+>   */
+>  #define MAX_REGISTER_LENGTH 1920
+>  
+> -/*
+> - * Check if we support the binfmt
+> - * if we do, return the node, else NULL
+> - * locking is done in load_misc_binary
+> +/**
+> + * search_binfmt_handler - search for a binary handler for @bprm
+> + * @misc: handle to binfmt_misc instance
+> + * @bprm: binary for which we are looking for a handler
+> + *
+> + * Search for a binary type handler for @bprm in the list of registered binary
+> + * type handlers.
+> + *
+> + * Return: binary type list entry on success, NULL on failure
+>   */
+> -static Node *check_file(struct linux_binprm *bprm)
+> +static Node *search_binfmt_handler(struct linux_binprm *bprm)
+>  {
+>  	char *p = strrchr(bprm->interp, '.');
+> -	struct list_head *l;
+> +	Node *e;
+>  
+>  	/* Walk all the registered handlers. */
+> -	list_for_each(l, &entries) {
+> -		Node *e = list_entry(l, Node, list);
+> +	list_for_each_entry(e, &entries, list) {
+>  		char *s;
+>  		int j;
+>  
+> @@ -123,9 +126,49 @@ static Node *check_file(struct linux_binprm *bprm)
+>  		if (j == e->size)
+>  			return e;
+>  	}
+> +
+>  	return NULL;
 >  }
 >  
-> +static unsigned long elf_load(struct file *filep, unsigned long addr,
-> +		const struct elf_phdr *eppnt, int prot, int type,
-> +		unsigned long total_size)
+> +/**
+> + * get_binfmt_handler - try to find a binary type handler
+> + * @misc: handle to binfmt_misc instance
+> + * @bprm: binary for which we are looking for a handler
+> + *
+> + * Try to find a binfmt handler for the binary type. If one is found take a
+> + * reference to protect against removal via bm_{entry,status}_write().
+> + *
+> + * Return: binary type list entry on success, NULL on failure
+> + */
+> +static Node *get_binfmt_handler(struct linux_binprm *bprm)
 > +{
-> +	unsigned long zero_start, zero_end;
-> +	unsigned long map_addr;
+> +	Node *e;
 > +
-> +	if (eppnt->p_filesz) {
-> +		map_addr = elf_map(filep, addr, eppnt, prot, type, total_size);
-> +		if (BAD_ADDR(map_addr))
-> +			return map_addr;
-> +		if (eppnt->p_memsz > eppnt->p_filesz) {
-> +			zero_start = map_addr + ELF_PAGEOFFSET(eppnt->p_vaddr) +
-> +				eppnt->p_filesz;
-> +			zero_end = map_addr + ELF_PAGEOFFSET(eppnt->p_vaddr) +
-> +				eppnt->p_memsz;
-> +
-> +			/* Zero the end of the last mapped page */
-> +			padzero(zero_start);
-> +		}
-> +	} else {
-> +		map_addr = zero_start = ELF_PAGESTART(addr);
-> +		zero_end = zero_start + ELF_PAGEOFFSET(eppnt->p_vaddr) +
-> +			eppnt->p_memsz;
-> +	}
-> +	if (eppnt->p_memsz > eppnt->p_filesz) {
-> +		/*
-> +		 * Map the last of the segment.
-> +		 * If the header is requesting these pages to be
-> +		 * executable, honour that (ppc32 needs this).
-> +		 */
-> +		int error;
-> +
-> +		zero_start = ELF_PAGEALIGN(zero_start);
-> +		zero_end = ELF_PAGEALIGN(zero_end);
-> +
-> +		error = vm_brk_flags(zero_start, zero_end - zero_start,
-> +				     prot & PROT_EXEC ? VM_EXEC : 0);
-> +		if (error)
-> +			map_addr = error;
-> +	}
-> +	return map_addr;
+> +	read_lock(&entries_lock);
+> +	e = search_binfmt_handler(bprm);
+> +	if (e)
+> +		refcount_inc(&e->users);
+> +	read_unlock(&entries_lock);
+> +	return e;
 > +}
 > +
+> +/**
+> + * put_binfmt_handler - put binary handler node
+> + * @e: node to put
+> + *
+> + * Free node syncing with load_misc_binary() and defer final free to
+> + * load_misc_binary() in case it is using the binary type handler we were
+> + * requested to remove.
+> + */
+> +static void put_binfmt_handler(Node *e)
+> +{
+> +	if (refcount_dec_and_test(&e->users)) {
+> +		if (e->flags & MISC_FMT_OPEN_FILE)
+> +			filp_close(e->interp_file, NULL);
+> +		kfree(e);
+> +	}
+> +}
 > +
->  static unsigned long total_mapping_size(const struct elf_phdr *phdr, int nr)
+>  /*
+>   * the loader itself
+>   */
+> @@ -139,12 +182,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  	if (!enabled)
+>  		return retval;
+>  
+> -	/* to keep locking time low, we copy the interpreter string */
+> -	read_lock(&entries_lock);
+> -	fmt = check_file(bprm);
+> -	if (fmt)
+> -		dget(fmt->dentry);
+> -	read_unlock(&entries_lock);
+> +	fmt = get_binfmt_handler(bprm);
+>  	if (!fmt)
+>  		return retval;
+>  
+> @@ -198,7 +236,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  
+>  	retval = 0;
+>  ret:
+> -	dput(fmt->dentry);
+> +
+> +	/*
+> +	 * If we actually put the node here all concurrent calls to
+> +	 * load_misc_binary() will have finished. We also know
+> +	 * that for the refcount to be zero ->evict_inode() must have removed
+> +	 * the node to be deleted from the list. All that is left for us is to
+> +	 * close and free.
+> +	 */
+> +	put_binfmt_handler(fmt);
+> +
+>  	return retval;
+>  }
+>  
+> @@ -552,30 +599,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+>  	return inode;
+>  }
+>  
+> +/**
+> + * bm_evict_inode - cleanup data associated with @inode
+> + * @inode: inode to which the data is attached
+> + *
+> + * Cleanup the binary type handler data associated with @inode if a binary type
+> + * entry is removed or the filesystem is unmounted and the super block is
+> + * shutdown.
+> + *
+> + * If the ->evict call was not caused by a super block shutdown but by a write
+> + * to remove the entry or all entries via bm_{entry,status}_write() the entry
+> + * will have already been removed from the list. We keep the list_empty() check
+> + * to make that explicit.
+> +*/
+>  static void bm_evict_inode(struct inode *inode)
 >  {
->  	elf_addr_t min_addr = -1;
-> @@ -829,7 +855,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
->  	struct elf_phdr *elf_property_phdata = NULL;
->  	unsigned long elf_bss, elf_brk;
-> -	int bss_prot = 0;
->  	int retval, i;
->  	unsigned long elf_entry;
->  	unsigned long e_entry;
-> @@ -1040,33 +1065,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  		if (elf_ppnt->p_type != PT_LOAD)
->  			continue;
+>  	Node *e = inode->i_private;
 >  
-> -		if (unlikely (elf_brk > elf_bss)) {
-> -			unsigned long nbyte;
+> -	if (e && e->flags & MISC_FMT_OPEN_FILE)
+> -		filp_close(e->interp_file, NULL);
 > -
-> -			/* There was a PT_LOAD segment with p_memsz > p_filesz
-> -			   before this one. Map anonymous pages, if needed,
-> -			   and clear the area.  */
-> -			retval = set_brk(elf_bss + load_bias,
-> -					 elf_brk + load_bias,
-> -					 bss_prot);
-> -			if (retval)
-> -				goto out_free_dentry;
-> -			nbyte = ELF_PAGEOFFSET(elf_bss);
-> -			if (nbyte) {
-> -				nbyte = ELF_MIN_ALIGN - nbyte;
-> -				if (nbyte > elf_brk - elf_bss)
-> -					nbyte = elf_brk - elf_bss;
-> -				if (clear_user((void __user *)elf_bss +
-> -							load_bias, nbyte)) {
-> -					/*
-> -					 * This bss-zeroing can fail if the ELF
-> -					 * file specifies odd protections. So
-> -					 * we don't check the return value
-> -					 */
-> -				}
-> -			}
-> -		}
+>  	clear_inode(inode);
+> -	kfree(e);
+> +
+> +	if (e) {
+> +		write_lock(&entries_lock);
+> +		if (!list_empty(&e->list))
+> +			list_del_init(&e->list);
+> +		write_unlock(&entries_lock);
+> +		put_binfmt_handler(e);
+> +	}
+>  }
+>  
+> -static void kill_node(Node *e)
+> +/**
+> + * unlink_binfmt_dentry - remove the dentry for the binary type handler
+> + * @dentry: dentry associated with the binary type handler
+> + *
+> + * Do the actual filesystem work to remove a dentry for a registered binary
+> + * type handler. Since binfmt_misc only allows simple files to be created
+> + * directly under the root dentry of the filesystem we ensure that we are
+> + * indeed passed a dentry directly beneath the root dentry, that the inode
+> + * associated with the root dentry is locked, and that it is a regular file we
+> + * are asked to remove.
+> + */
+> +static void unlink_binfmt_dentry(struct dentry *dentry)
+>  {
+> -	struct dentry *dentry;
+> +	struct dentry *parent = dentry->d_parent;
+> +	struct inode *inode, *parent_inode;
+> +
+> +	/* All entries are immediate descendants of the root dentry. */
+> +	if (WARN_ON_ONCE(dentry->d_sb->s_root != parent))
+> +		return;
+>  
+> +	/* We only expect to be called on regular files. */
+> +	inode = d_inode(dentry);
+> +	if (WARN_ON_ONCE(!S_ISREG(inode->i_mode)))
+> +		return;
+> +
+> +	/* The parent inode must be locked. */
+> +	parent_inode = d_inode(parent);
+> +	if (WARN_ON_ONCE(!inode_is_locked(parent_inode)))
+> +		return;
+> +
+> +	if (simple_positive(dentry)) {
+> +		dget(dentry);
+> +		simple_unlink(parent_inode, dentry);
+> +		d_delete(dentry);
+> +		dput(dentry);
+> +	}
+> +}
+> +
+> +/**
+> + * remove_binfmt_handler - remove a binary type handler
+> + * @misc: handle to binfmt_misc instance
+> + * @e: binary type handler to remove
+> + *
+> + * Remove a binary type handler from the list of binary type handlers and
+> + * remove its associated dentry. This is called from
+> + * binfmt_{entry,status}_write(). In the future, we might want to think about
+> + * adding a proper ->unlink() method to binfmt_misc instead of forcing caller's
+> + * to use writes to files in order to delete binary type handlers. But it has
+> + * worked for so long that it's not a pressing issue.
+> + */
+> +static void remove_binfmt_handler(Node *e)
+> +{
+>  	write_lock(&entries_lock);
+>  	list_del_init(&e->list);
+>  	write_unlock(&entries_lock);
 > -
->  		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
->  				     !!interpreter, false);
+> -	dentry = e->dentry;
+> -	drop_nlink(d_inode(dentry));
+> -	d_drop(dentry);
+> -	dput(dentry);
+> -	simple_release_fs(&bm_mnt, &entry_count);
+> +	unlink_binfmt_dentry(e->dentry);
+>  }
 >  
-> @@ -1162,7 +1160,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  			}
->  		}
+>  /* /<entry> */
+> @@ -602,8 +709,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+>  static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+>  				size_t count, loff_t *ppos)
+>  {
+> -	struct dentry *root;
+> -	Node *e = file_inode(file)->i_private;
+> +	struct inode *inode = file_inode(file);
+> +	Node *e = inode->i_private;
+>  	int res = parse_command(buffer, count);
 >  
-> -		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt,
-> +		error = elf_load(bprm->file, load_bias + vaddr, elf_ppnt,
->  				elf_prot, elf_flags, total_size);
->  		if (BAD_ADDR(error)) {
->  			retval = IS_ERR_VALUE(error) ?
-> @@ -1217,10 +1215,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  		if (end_data < k)
->  			end_data = k;
->  		k = elf_ppnt->p_vaddr + elf_ppnt->p_memsz;
-> -		if (k > elf_brk) {
-> -			bss_prot = elf_prot;
-> +		if (k > elf_brk)
->  			elf_brk = k;
-> -		}
->  	}
+>  	switch (res) {
+> @@ -617,13 +724,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+>  		break;
+>  	case 3:
+>  		/* Delete this handler. */
+> -		root = file_inode(file)->i_sb->s_root;
+> -		inode_lock(d_inode(root));
+> +		inode = d_inode(inode->i_sb->s_root);
+> +		inode_lock(inode);
 >  
->  	e_entry = elf_ex->e_entry + load_bias;
-> @@ -1232,18 +1228,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	start_data += load_bias;
->  	end_data += load_bias;
+> +		/*
+> +		 * In order to add new element or remove elements from the list
+> +		 * via bm_{entry,register,status}_write() inode_lock() on the
+> +		 * root inode must be held.
+> +		 * The lock is exclusive ensuring that the list can't be
+> +		 * modified. Only load_misc_binary() can access but does so
+> +		 * read-only. So we only need to take the write lock when we
+> +		 * actually remove the entry from the list.
+> +		 */
+>  		if (!list_empty(&e->list))
+> -			kill_node(e);
+> +			remove_binfmt_handler(e);
 >  
-> -	/* Calling set_brk effectively mmaps the pages that we need
-> -	 * for the bss and break sections.  We must do this before
-> -	 * mapping in the interpreter, to make sure it doesn't wind
-> -	 * up getting placed where the bss needs to go.
-> -	 */
-> -	retval = set_brk(elf_bss, elf_brk, bss_prot);
-> -	if (retval)
-> -		goto out_free_dentry;
-> -	if (likely(elf_bss != elf_brk) && unlikely(padzero(elf_bss))) {
-> -		retval = -EFAULT; /* Nobody gets to see this, but.. */
-> -		goto out_free_dentry;
+> -		inode_unlock(d_inode(root));
+> +		inode_unlock(inode);
+>  		break;
+>  	default:
+>  		return res;
+> @@ -682,13 +798,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+>  	if (!inode)
+>  		goto out2;
+>  
+> -	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
+> -	if (err) {
+> -		iput(inode);
+> -		inode = NULL;
+> -		goto out2;
 > -	}
-> +	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
+> -
+> +	refcount_set(&e->users, 1);
+>  	e->dentry = dget(dentry);
+>  	inode->i_private = e;
+>  	inode->i_fop = &bm_entry_operations;
+> @@ -732,7 +842,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+>  		size_t count, loff_t *ppos)
+>  {
+>  	int res = parse_command(buffer, count);
+> -	struct dentry *root;
+> +	Node *e, *next;
+> +	struct inode *inode;
 >  
->  	if (interpreter) {
->  		elf_entry = load_elf_interp(interp_elf_ex,
+>  	switch (res) {
+>  	case 1:
+> @@ -745,13 +856,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+>  		break;
+>  	case 3:
+>  		/* Delete all handlers. */
+> -		root = file_inode(file)->i_sb->s_root;
+> -		inode_lock(d_inode(root));
+> +		inode = d_inode(file_inode(file)->i_sb->s_root);
+> +		inode_lock(inode);
+>  
+> -		while (!list_empty(&entries))
+> -			kill_node(list_first_entry(&entries, Node, list));
+> +		/*
+> +		 * In order to add new element or remove elements from the list
+> +		 * via bm_{entry,register,status}_write() inode_lock() on the
+> +		 * root inode must be held.
+> +		 * The lock is exclusive ensuring that the list can't be
+> +		 * modified. Only load_misc_binary() can access but does so
+> +		 * read-only. So we only need to take the write lock when we
+> +		 * actually remove the entry from the list.
+> +		 */
+> +		list_for_each_entry_safe(e, next, &entries, list)
+> +			remove_binfmt_handler(e);
+>  
+> -		inode_unlock(d_inode(root));
+> +		inode_unlock(inode);
+>  		break;
+>  	default:
+>  		return res;
 > -- 
 > 2.42.0
 > 
