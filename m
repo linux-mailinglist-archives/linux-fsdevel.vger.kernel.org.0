@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-2272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1527E445D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 16:52:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F5C7E4480
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 16:53:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4E31C20D0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD91E280FC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 15:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4502C315BE;
-	Tue,  7 Nov 2023 15:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C48631A78;
+	Tue,  7 Nov 2023 15:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdMHrRbC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OCJYp3ay"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AE3315AB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 15:52:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 600A4C433C7;
-	Tue,  7 Nov 2023 15:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2C315AB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 15:53:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 139C5C433C9;
+	Tue,  7 Nov 2023 15:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699372354;
-	bh=TNpmrZSK9554Iry28Fguo9FF8hXEOjC7aB0QMR68kTg=;
+	s=k20201202; t=1699372409;
+	bh=anaqLde6XpseD/Q55oLTl7JeTv0p7RjRbfN7Ws6xtpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XdMHrRbC2k0uRjWewj0pR8XeiSkCtRW0LY/mt4E/fUl0/g6+5LIBf9/+kD/TkDpc1
-	 k2mdda+/WBGR3VZAD2rllJNdUGPLvM8lAa1HwRgCbcZI6AVWfyOkfqp7NyPPNv+8vj
-	 wlxh2k+GNfnoWjCRsVCeNvAZVepNoMxOtYMcJQTEDb7cBk3TXFIrgJlUtGj+ZP4733
-	 9h1ZkLQY8d92zdw2YS63/Dh6NCFZEA1Qp4P94g96Y3fyfR3mTxe5q8yx6T5Np+Cngq
-	 jqypUDTtsc4tdzFl8oQ0TY4aWW/bL7Vb0niyyVWtBD84F7lhBMuJlOdvR97EK9rJxC
-	 vHlkntm4QtcYQ==
+	b=OCJYp3ayvkVsHEi5p8X74hryXBOtfLKRYxOgR79PFfnMyY30WTMdSdViP9frDrB1Y
+	 DUQqJTGr4fzpp5zhwjs0wzabzqVX0iBOMTd5gQbZRWQNWABEKwikx1U7O0W8h82/kz
+	 Ilxs6r23vvSPvRdJCzFFqrzZghaU5QS3ghHX1YucYOBiWKmE2H7jWdKXISfqra0CbI
+	 mOaBmcp0gmLKPdPpZTwtMzWxYNStHKJ46bGQRUgBXFoY7Enj2AJcwfTBF3uXb3CsPG
+	 gP+iZ9bEWvfU2RaYYqWxRylDVyg5v8vZRUPiJwhSdQnVFu4xMQ3bf+z+NiOQTOjbyi
+	 Ev8BSAVH5QJbw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -42,12 +42,12 @@ Cc: Yuezhang Mo <Yuezhang.Mo@sony.com>,
 	Sasha Levin <sashal@kernel.org>,
 	sj1557.seo@samsung.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 22/22] exfat: support handle zero-size directory
-Date: Tue,  7 Nov 2023 10:51:31 -0500
-Message-ID: <20231107155146.3767610-22-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 16/16] exfat: support handle zero-size directory
+Date: Tue,  7 Nov 2023 10:52:35 -0500
+Message-ID: <20231107155249.3768098-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231107155146.3767610-1-sashal@kernel.org>
-References: <20231107155146.3767610-1-sashal@kernel.org>
+In-Reply-To: <20231107155249.3768098-1-sashal@kernel.org>
+References: <20231107155249.3768098-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.137
+X-stable-base: Linux 5.10.199
 Content-Transfer-Encoding: 8bit
 
 From: Yuezhang Mo <Yuezhang.Mo@sony.com>
@@ -84,7 +84,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 22 insertions(+), 7 deletions(-)
 
 diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index b22d6c984f8c7..cfa46d8cf5b39 100644
+index bd00afc5e4c16..d62d961e278d9 100644
 --- a/fs/exfat/namei.c
 +++ b/fs/exfat/namei.c
 @@ -330,14 +330,20 @@ static int exfat_find_empty_entry(struct inode *inode,
@@ -112,7 +112,7 @@ index b22d6c984f8c7..cfa46d8cf5b39 100644
 +		}
  
  		/* allocate a cluster */
- 		ret = exfat_alloc_cluster(inode, 1, &clu, IS_DIRSYNC(inode));
+ 		ret = exfat_alloc_cluster(inode, 1, &clu);
 @@ -347,6 +353,11 @@ static int exfat_find_empty_entry(struct inode *inode,
  		if (exfat_zeroed_cluster(inode, clu.dir))
  			return -EIO;
@@ -134,7 +134,7 @@ index b22d6c984f8c7..cfa46d8cf5b39 100644
  		info->flags = ALLOC_NO_FAT_CHAIN;
  		info->start_clu = EXFAT_EOF_CLUSTER;
  	} else {
-@@ -891,6 +902,9 @@ static int exfat_check_dir_empty(struct super_block *sb,
+@@ -890,6 +901,9 @@ static int exfat_check_dir_empty(struct super_block *sb,
  
  	dentries_per_clu = sbi->dentries_per_clu;
  
@@ -144,7 +144,7 @@ index b22d6c984f8c7..cfa46d8cf5b39 100644
  	exfat_chain_dup(&clu, p_dir);
  
  	while (clu.dir != EXFAT_EOF_CLUSTER) {
-@@ -1274,7 +1288,8 @@ static int __exfat_rename(struct inode *old_parent_inode,
+@@ -1296,7 +1310,8 @@ static int __exfat_rename(struct inode *old_parent_inode,
  		}
  
  		/* Free the clusters if new_inode is a dir(as if exfat_rmdir) */
