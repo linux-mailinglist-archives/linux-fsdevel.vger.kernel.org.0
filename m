@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-2280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F717E46E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:26:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A57D7E46E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AF81C20A68
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:26:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A322B20E66
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D4F347BB;
-	Tue,  7 Nov 2023 17:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93D2347BB;
+	Tue,  7 Nov 2023 17:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Krbf4stk"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="c0p0EafK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FD5328D4
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:26:04 +0000 (UTC)
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D17A121
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:26:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377963; bh=qO4NEDUtnx/yjPD7AaF/5TOOtuISQMQiUsBsGQRYEZ4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Krbf4stkcKfj8KHMh4FkNnwnCaXQuw6Xa5gwR/5/oSFa8IeaH1z9kpYVGtXFflL3qrPhrMnd0Sd3cL3U4H+9YOS6/lZYkgTYcKDliTNYDOTCalzTUgqY3jwy+6Anw5dfyO/yUg7ebOvyc4Arx+0pt6TQqWLbOLjEXlbZhDFOR8Zu/aA52axFXsrqtPGoA8uvoobFwWo0zLr/YQKTYjUsb8xPZdKKROaqt2BydEnbOUWFgnlMY16xyLvWianNjGHx65bWJDUJWhlWEBkGJn6hy0EXL/TuDH5Q0ldxbSCRZ371ypcgPV8Ro+7CUAVk+LnDf4suQt6oEt51Gf+V730vqA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699377963; bh=hMcHEXnMA105vSkQfNfMQ43caYxZPHAKELFtgvHNs5A=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Mi/caqnggXKn8uOPS9zpxFB24aCjV8VIBNiMQdTCAkE2a7YQVpMOG644YjfNHTBeeLAxMD4w3ffDsf9mAKoAx4XIQnRbBKvimz8Nfwp97DSzSvNpRbLkZqGg3t0rYw/IP9K77QVc1yuBPKhZ3dXLwkJ5VgoxwbCnt4/Oz7EZMlD2wLA+iUbHqHJlPNBe7omNCTpynfPYmhTXtwcAYOeaHcMuNKRkOz/jUMGU6cmSspESG7iR8OM/aBU4m+Ridyzm2hlS6DkzSCwc6iULMfDcd8SFAgy99WxAoccnSpqBZIYnkikrfFdtpkLFNpuHe44KoE/fTDtpSgw31InAxKW6Sg==
-X-YMail-OSG: WI_4YOkVM1lmwqv7gxEz3HfzLtwSRuWKojtBNXnmYWnLRFS7je9lzJVC3lEhhbD
- CqYLywfNhmJ4RGe4VyDKPkaz5rO4czXuW_X5E7EEvqr705jmY.C5RM1BrTn9fbXCFy4_CcJ52Ha8
- uDZHNQeVEMz1jecZEfRLWsYAk9D9dd3SLcUKkK8DE8AnbXMA5SZF9GUUjUvyFjp4gqi_JlDITAs.
- YWAjLwFHXQ0T.mKXSdhnPdYDVmz1dsQ5BsDhxQLyrN6Rq3TD_7TovXmhvlSu58liQIpuGKL53iTm
- 5OMfFWHj2o8FxwifBX1VwCJC8KZruwdKq7ootBMc5y_SgzHSz612aubNck_Irm8GQ9daoHP0he6v
- vUzFAA28qsczG6LDMs7AYyQeI.M6b1kuszm3IrAEFSKLtuzFKvhl2kKV_dzPJyEn967kPPz1T9J1
- 4UK1X8HLOvTnj.qkrpR6X9O1YjCC8xJokpH13NDFVls0HO1ze7EZLffEoJ5TiN63cBSMb_FDgSL6
- SjpGPv_40ZbU3cASRWP28RQBh97LaXWX9QhQacmMOHC5IktjQLbL9KQNMYZ12Si6iioAe7jeZ6mf
- Lnl.aCjzyQ6KDc1jRxH8XMvV9Xy6dI9g4muRqPbwLiSF.kD_0ZpwYtCInqnyGbovHmIJymKJITF4
- cZfoi4A1Pkrrw1Y2yQP0wtKKt_w5C6tEeEk8QKaSyP8UorwykGSHOCkJOxXXGsJO9cY.4Y1lfdF6
- o_ExYh6Waoy2BIAAAPb8dACSw.15C8CY.IVHkhqi.xIs27NKFXu57OsuYv50u5JzE4o84R2o6cf4
- 0BTCB2l_MgRxxo6rqz0bPtgw7pfdyFhvKf7SrSjVjMnDQN3EX0YRxOcdwqr_9QwWZ1JS3wJBC1iH
- xG7thx71JIVbSVV8oTaaXAUUXKJ71emo96jFk03HpQxckgQKCJ6d6PudLGOLESIynDyJSvfdC6kL
- 5euoGw1jBNxmlV5EPkqgRR5Xr3pb_4YvUbFmc45OWzw7gPsmYpW8Lv.LOPLvhVGsgeL2IWloiGUC
- ZY76sX5bhpr8rlAry3fKNWRQwMetYAQM4VjvaiTGUqnLn_odvYM6lQoxD2uYpLqkVvEX8aAJmjVr
- 5yEcLvpaZh2Wlil3ALipg6s.dvFn3TMN._3BfneJhyXGPfyDbyJM._lN3XMc4zVoUcnHdTJoA.nU
- cpQr4KePDjHs3P43yXsPGcmJWbYmlO5aycW6EqDzGSOs3EODidzMExzC0hbm5bR2dmNBJZqCmBr7
- 95qRFzIh.f77HPVk2NrFoxd.efeNCEU1EovBaQREXqQDwBEucZky4u7vtn.G9Y33Xd5WcBglM_jh
- Tv.gNYkB8Ttm9ibR9AiuIt99cX4B6YM8vbbKUfidbBVQwoZ1rK4VNXzeNo.Ir4Wr3PLqh9zaYsqo
- xyQfRMAR09OwS6xUnMLav5cB9H4yIBxTT2E0FNOm6hreO1.1nydsmBzLlqJ54cCMThZbFC7VAOEO
- 6kh6c0WGOkfVsuohPF7b_Qm6Pbd86OjCsrRq5n4DZRrYwxsuCGGfHdYPyK7fxTJXhY3KpWN5BUV_
- xTdJrFynipbz7WULDsVo1DUWnfx8jbtNSbJLrulX992.jhAxnWYXHxMmsQTHAtzI2lzRJ4xpNoFr
- y7pOd_rN8857wPJvhE9fdvfuoQATp2PsKWCJZ2FbJGIs43xOKT8NY16kjI2Mt7Ud.sN2Pe.PvwNu
- M.jFU7kUnkDrXpThrHFLibOjS_Ga57Bhch72CIq.5aTTv.jz.85BHET6liVbN63NHNdFYp0xPPQF
- PeqrpNuznrG2I58vEFj.qxphaNsI.f_VkbwAjqTtwumd4ThUHKq11nExqcvOnUjlJTj1IpYhdzHR
- SMTMRMUBV1RIsr.pPVId_mq.LUOie5RUbN7T.Sbb5BMx.6CyHb55qWE6LTeRNuFAXPtljU.nS_5W
- sODSjuBTnScNCYP.zMEoCIwH4LeB2rRt2l7RhUOu4naKF9GDCobgbA9OgBpGHLFPGaAPnBJRQgpl
- jCIpVoQsSBHvKOvkWaFe7AQSPszLalviIvLcH21I5bx6BW1BERPhJKRXudOb32KljIGleCw3WsKe
- u6Tefe59rlBUmkIkk22ps56ISR_N6UWmDOtHEThlJfkgl.Nb1.xsrAeq3YNKmKsQI9_rOkrFWPvD
- JwYOLlZIWWUvMQ7XXVkR0q3kD2siwUy7lfG.mCABP9y5YAUvHizSYHJwkDtfX8637hUT6tLuD750
- jnWEdc0p7pC14BhtIRYf41TFZH5UoXdyA2VFzWDLE.vY3Yg7aDYJd0S8TDwuBKeXwl9KDiew-
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD5E347A0
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:27:10 +0000 (UTC)
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22D2101
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:27:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378029; bh=6q0cWNpiI24bxTkhdHgeBp7Vw++Z68dhLPZ7Hg4uKl0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=c0p0EafKosFMT5TfbeHHbeVsHl3PPvJJYNbtsYn6BUQqw7pH5Jr8GGfvul+q3PaDvQ+PeqLPjyibYqrvZLkdqBO5uiXgbTnsz2hwpiRedZbsX8ruVzVeoDGTwp4TVP0j5WR3OL6cWRQR73FVci2TYqZak1o95Q3DlnvjLcxTmv7N7Xbt3oQUfw5bLoulpTLUPTlQVlzmylE1+mcUdchRzXZLTkqTFIV5KOc4+zgnzfwYyFx4iWo9McpdgRgZV2G0bnbdP822xP3VouHhWrMdTGbrjAxu0fL9EJsZwf8icTBSRSIvmMqbgEBarcLBH0EO9ZnDfPLptUY7lKZvXHaNXg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378029; bh=ZC7+KihxtgbNsPip57C2uUGv48dOj4ZEzyPEmNPmX//=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=sfdxJBwbxD0sgdjbzSImTKu9GRRVEDZGQoO785lWKczfFeEj5afpXos2ijHFDDMuNQqetxb4zMyHverpgR8hlZ7gP5364mX/79vUFvofwLCk2HU98uqJkbTpEOaB/iOLO1imkm+xs4GoDghrZrhnTwv/xrWbtz/Z5uY8IWTgk1LaMNQU01a6MbNTpHIahczDLH/NkqVj28K9QPfggav/IScp4EnW+idLjjlsMarBatN1ISaHkgc0P3Iy9rZkssu5I7tSQ28oIN8Al3QlYYhDzQ7k0iBd2hi60Fo9MWkXFxQ2MSEgtMYnm8g41j+uesgGWMTofLfQCbHd3+3DP+kcQA==
+X-YMail-OSG: 2ZRxZEEVM1kqlg7kxupQjl7rLLlyDa5CV91MLQcVFr6qWnYSVtcnZSdcdVYchvF
+ 1J6Kav6jXA8BmBQHq5xtGiPF28VWRvCvnYkZbRE_Arc.DoDzjry8ZcYm7_zFy2iEHAP5edgeCDxG
+ p2NTiTspELaKH0Wd7iHGSxnfWzSiR3NKGtPrQ9K.WQJ.AMigUDOyVJ8LnecLXliojxs3gg0ZMdxV
+ gzTReu2C_dtMXLHf5ICzTUb6vmJ8A_3K6YWjtxOymJqSM56uYvspHm6SGCUovdvH2MtYfAPmNcDE
+ DHJRNog9xIXsHRsOkABhfbPJ6ctnPm344.d7i_N.VsmTPCyNR8JD_rQGiWHbjMkm3.hZmI7BQgB5
+ B0mccNppsBc9zRihkazw9w0cai_2TKBWd88_U6c.HoEaHUHFgJHmPJFMJPURsXuFV_mI5wqYyaxw
+ veSekkuM101HvdZKCwOT1P3bktNawvrWJhBsC4CzEQehXSzO6CQ7ERGd8PJTi.EalauGbAjeA95g
+ xilj9kHYPOheZ5gSBQWBA4JY_A.ci5uV1p_OCZZRall8KuPM9eFP69XIQ.xaz12qHuAqHrwHBiBH
+ Xhs0z46.X61H0uk7mcIq1wSUupjel_SNJrUkKlUGaMUiC7GAM0c79p1P5lGyDfnxzybzWPIIkSQj
+ bjbBVLhub3c3_D9tQH42tQSvAWd5yfqJBmCpbiDkPNeNiiR06C1ojHiMwURDUh3rWw2bhYYkabeZ
+ EIJRVaA1utxaX8d4esGHGERmG3eRpTVYV8BoNV_8o7C_.Xlg_st1mrcqJQGS5cp61gSacCnU74Ph
+ 0ewerl7sgrmQAccPEdb5I7MogCZ44Jna6ZaZDcBlHdyND2oA6B9bXCjlblCjga_DasUI40N4yxan
+ gbe8sSG4_MonmUkM7TWnSK36JpU5FGncTm68Pi7yKuG87Rwzb3G43kvMh3yOVyjf8ZwM2YHVMJg_
+ oC42_F96vvs4xF8AqkdDhbsVKfgFHZOADWilyo_xFknyPPATYvGK1h7RiWifYsTghr1V5KoXDgzK
+ 9ZlDGytaoBfKdvPlmCd1D4rA.8UDNGIrbRR.uxOi2DCadoDOnUpfZ.lTW98ZC5UAZZTaEglzwp_k
+ etK7LRrPbitDLB64r3Un5MFouRzp0eHL4pITfZPkhOAMLO86VKgn21iQmHKyNXU7SPJvNqx0pulE
+ db3ayser1YyriCfvZrXM2GIWoxDDGnvoMbaBtm8Bn7r8_4XQQ3gjp.ylqYA5Jo2U7DjT6VkDc3c0
+ bvGn2edkZaZbjV44G.yO9L4NHtEB6EIFNT8ARpDPbsk5q0dcm0rWsyqzBFMc.zaSK_2rWKuhI.ak
+ J8xbHkhQl2kpWkTK87plr1yMAMm88hwzo5Q.oBlDImGL9j.VFMAloNmZuveBVg5CxNIeqDjRS7BI
+ 7k8RK3xh4asckd4MPRSxMEQCRJNouCwiT25.OHid2ymZLp1_tDsVQNBWu30nblQmJOH0T_k3Byd0
+ 7YAbMVM8QyJMP3Gy4kA8mDn_vU5nwtcyXGdutyrC49j9UImXsV0NRzzXKjXkgPH3oNnK2i6EX7kD
+ cubgGR5F9VKaOm0z4Bsep1Vqafpe2375PZkLlciENlvYy6uBEyPsVcs8W6733k_kSBKhooNJPjDV
+ 9ZWmHsnWGNEcy17wpXNlmsa4b1JYen.TUpMOaBlT3ib.WCHnpy2yeuaI3I6hYnzgEsOmLKHcxI09
+ tMcNPP8LuNhAaCw_neZs2TDHhblqQL0iZVr8XvyiIBw_.moxct8fqmXGjekDw9Vdb0ngUFo0wBKN
+ pWYj2C0TKQpNLVaEd2p_Oo7t6a1q7DbAQdvEJU8NkUSRWvaFHc2hjha29zYaQn3zXCVC_4wFxMD0
+ lkXe6jBihJc.vhTPZkC_.73WSNEJzZXBCLiU_tJYKmu2.vajnw_2WpaX_Df7fO_EJIJcLpz_dPpu
+ ciZCy519kfyk485xtvW_ja9TKqL.C_qe5r9jQygMa.w.lhoSmNCOo.hYf5Ha9g6O3N_BDUHe.DoZ
+ lAeBCMY2lOdHkQ1R9KZPbykS0H8WgZSXbpZvtU6GAJ4FzuUVmFWqYx8qzoiW3D7flTedAnker4nj
+ ePSyWkaoRJ.tTvT7YU._zn6LYhSmDGtRrHczTbeS5mJXv0QxhonWgW442uMkvxDPpJRrwvWIrMSD
+ ZFajOrCWruMaoSf9F4ZQ69kWhrJ1ZchYDteHmWr_4poS8oWTn_U1B6mwjJgO5uRww1hBitsimzDE
+ PnIuj_8wifXXvKdI4UMkinL5A0oj1w06QvuNfcHuh0FJ2C3jHfKueX.Fhgy7CFYNg4JtJpYI-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 24599b41-3e06-454a-9983-5f3fa9fdee5b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:26:03 +0000
-Received: by hermes--production-ne1-56df75844-79fgv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 521851d72cce979ed62dc1adf02bfced;
-          Tue, 07 Nov 2023 17:26:02 +0000 (UTC)
-Message-ID: <4788b9a4-4d95-4e10-84d6-bf947f72b6df@schaufler-ca.com>
-Date: Tue, 7 Nov 2023 09:26:01 -0800
+X-Sonic-ID: 757de431-ef3b-4289-bc0c-fb2e05a72139
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:27:09 +0000
+Received: by hermes--production-ne1-56df75844-sgvl5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID dd1678dbc22e7c871f89610e29169f07;
+          Tue, 07 Nov 2023 17:27:06 +0000 (UTC)
+Message-ID: <d8094860-f0a3-48f1-a38c-3829d501a6bc@schaufler-ca.com>
+Date: Tue, 7 Nov 2023 09:27:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,8 +70,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/23] evm: Align evm_inode_post_setattr() definition
- with LSM infrastructure
+Subject: Re: [PATCH v5 07/23] evm: Align evm_inode_setxattr() definition with
+ LSM infrastructure
 Content-Language: en-US
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
  brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
@@ -87,9 +87,9 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  Stefan Berger <stefanb@linux.ibm.com>,
  Casey Schaufler <casey@schaufler-ca.com>
 References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
- <20231107134012.682009-7-roberto.sassu@huaweicloud.com>
+ <20231107134012.682009-8-roberto.sassu@huaweicloud.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231107134012.682009-7-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-8-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -97,78 +97,76 @@ X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz
 On 11/7/2023 5:39 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> Change evm_inode_post_setattr() definition, so that it can be registered as
-> implementation of the inode_post_setattr hook (to be introduced).
+> Change evm_inode_setxattr() definition, so that it can be registered as
+> implementation of the inode_setxattr hook.
 >
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
 
 > ---
->  fs/attr.c                         | 2 +-
->  include/linux/evm.h               | 6 ++++--
->  security/integrity/evm/evm_main.c | 4 +++-
->  3 files changed, 8 insertions(+), 4 deletions(-)
+>  include/linux/evm.h               | 4 ++--
+>  security/integrity/evm/evm_main.c | 3 ++-
+>  security/security.c               | 2 +-
+>  3 files changed, 5 insertions(+), 4 deletions(-)
 >
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 9bddc0a6352c..498e673bdf06 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -503,7 +503,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
->  	if (!error) {
->  		fsnotify_change(dentry, ia_valid);
->  		ima_inode_post_setattr(idmap, dentry, ia_valid);
-> -		evm_inode_post_setattr(dentry, ia_valid);
-> +		evm_inode_post_setattr(idmap, dentry, ia_valid);
->  	}
->  
->  	return error;
 > diff --git a/include/linux/evm.h b/include/linux/evm.h
-> index 01fc495a83e2..cf976d8dbd7a 100644
+> index cf976d8dbd7a..7c6a74dbc093 100644
 > --- a/include/linux/evm.h
 > +++ b/include/linux/evm.h
-> @@ -23,7 +23,8 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
->  					     struct integrity_iint_cache *iint);
->  extern int evm_inode_setattr(struct mnt_idmap *idmap,
->  			     struct dentry *dentry, struct iattr *attr);
-> -extern void evm_inode_post_setattr(struct dentry *dentry, int ia_valid);
-> +extern void evm_inode_post_setattr(struct mnt_idmap *idmap,
-> +				   struct dentry *dentry, int ia_valid);
+> @@ -27,7 +27,7 @@ extern void evm_inode_post_setattr(struct mnt_idmap *idmap,
+>  				   struct dentry *dentry, int ia_valid);
 >  extern int evm_inode_setxattr(struct mnt_idmap *idmap,
 >  			      struct dentry *dentry, const char *name,
->  			      const void *value, size_t size);
-> @@ -97,7 +98,8 @@ static inline int evm_inode_setattr(struct mnt_idmap *idmap,
+> -			      const void *value, size_t size);
+> +			      const void *value, size_t size, int flags);
+>  extern void evm_inode_post_setxattr(struct dentry *dentry,
+>  				    const char *xattr_name,
+>  				    const void *xattr_value,
+> @@ -106,7 +106,7 @@ static inline void evm_inode_post_setattr(struct mnt_idmap *idmap,
+>  
+>  static inline int evm_inode_setxattr(struct mnt_idmap *idmap,
+>  				     struct dentry *dentry, const char *name,
+> -				     const void *value, size_t size)
+> +				     const void *value, size_t size, int flags)
+>  {
 >  	return 0;
 >  }
->  
-> -static inline void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-> +static inline void evm_inode_post_setattr(struct mnt_idmap *idmap,
-> +					  struct dentry *dentry, int ia_valid)
->  {
->  	return;
->  }
 > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 894570fe39bc..d452d469c503 100644
+> index d452d469c503..7fc083d53fdf 100644
 > --- a/security/integrity/evm/evm_main.c
 > +++ b/security/integrity/evm/evm_main.c
-> @@ -840,6 +840,7 @@ int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> @@ -558,6 +558,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
+>   * @xattr_name: pointer to the affected extended attribute name
+>   * @xattr_value: pointer to the new extended attribute value
+>   * @xattr_value_len: pointer to the new extended attribute value length
+> + * @flags: flags to pass into filesystem operations
+>   *
+>   * Before allowing the 'security.evm' protected xattr to be updated,
+>   * verify the existing value is valid.  As only the kernel should have
+> @@ -567,7 +568,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
+>   */
+>  int evm_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		       const char *xattr_name, const void *xattr_value,
+> -		       size_t xattr_value_len)
+> +		       size_t xattr_value_len, int flags)
+>  {
+>  	const struct evm_ima_xattr_data *xattr_data = xattr_value;
+>  
+> diff --git a/security/security.c b/security/security.c
+> index 358ec01a5492..ae3625198c9f 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2272,7 +2272,7 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
+>  	ret = ima_inode_setxattr(idmap, dentry, name, value, size, flags);
+>  	if (ret)
+>  		return ret;
+> -	return evm_inode_setxattr(idmap, dentry, name, value, size);
+> +	return evm_inode_setxattr(idmap, dentry, name, value, size, flags);
+>  }
 >  
 >  /**
->   * evm_inode_post_setattr - update 'security.evm' after modifying metadata
-> + * @idmap: idmap of the idmapped mount
->   * @dentry: pointer to the affected dentry
->   * @ia_valid: for the UID and GID status
->   *
-> @@ -849,7 +850,8 @@ int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->   * This function is called from notify_change(), which expects the caller
->   * to lock the inode's i_mutex.
->   */
-> -void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
-> +void evm_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> +			    int ia_valid)
->  {
->  	if (!evm_revalidate_status(NULL))
->  		return;
 
