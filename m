@@ -1,227 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-2206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B347E3474
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 05:17:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131D47E3485
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 05:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7731D1C20A20
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 04:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F13280EE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 04:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D7B8F74;
-	Tue,  7 Nov 2023 04:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38947947B;
+	Tue,  7 Nov 2023 04:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghefhjEC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNqp7n1p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1BA79F2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 04:17:34 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539F0FD
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 20:17:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699330651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OEClqip8Hd/4yw5LjGu4+pn6BbKEnTze4Tcl/EjSE1A=;
-	b=ghefhjECicNOHDe6F2R7btmcAx3IEyvUmJ5FBEu4nonJzvZ52lv94RAWnozoxV+zJQySl/
-	UADRqh+PMbiTaJOy3PRaxOLQPwW5EBnSeflGgTnKJwSaXXCLoUGNt3nDIkDfgoauFgaRfc
-	HEbBU4h0tuBOPVjoOnJC3vhV+la1UQw=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-ZCu2GYxTNuOI66Owdu5__A-1; Mon, 06 Nov 2023 23:17:29 -0500
-X-MC-Unique: ZCu2GYxTNuOI66Owdu5__A-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-28011e1cdcbso4515376a91.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 20:17:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBE48F6B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 04:27:53 +0000 (UTC)
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C648110
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 20:27:52 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-507bd644a96so7507576e87.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 20:27:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1699331270; x=1699936070; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bz4ibFEani6ikAiwKtvYQFIOOBnNzX2wLnv6rOwCCMs=;
+        b=GNqp7n1p66wPlnB4E/S3CX+7x5J6beEzFXIv/prYoqTcsPbzO4SVmaVMGWDxh7lObN
+         iBovWIZ2P4EJmBEc+MkFXX+r73s0gJ7APcmP0utgD6+/OdoI2F8wmIfBn+fWQpNOhkkT
+         vqg49l4XVxJTyff01ai/ha0+MPrE1pL4CRuk8fxWy6TncAF7wjWoQmIOOfn2lJRhHP8M
+         6oTCM1p5DOWOpIrze+KGn+WZqnnpULP/dJ5uzD9wlzH+XtRUxYD9gXzLRcwZ3dhyEKcL
+         RqO7UbUcXH7GSajFKHVfEfvMo2wX+dmVyU8RsqxO3upjtnCf2XDMTvCLsksEIZIcolrZ
+         BO5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699330648; x=1699935448;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OEClqip8Hd/4yw5LjGu4+pn6BbKEnTze4Tcl/EjSE1A=;
-        b=Br2B8R+EielniMgx7tjy4SvSnRq0S3Pl3E9VkgCMZUF5PG1u732blrpXf1Ss+D2Z2Y
-         cNZsbc7HE9Kjp62WFjJJm5uhgI6yR4gKR2IZaqdDf87l7Ddkd54tIamras/B0WFft5bE
-         w9UGIwiTHG2I57k5t8hjbEBNs3th/iHmGwHYPW6keA007U42FJoPr8XE2ZYuB3Eg7nAu
-         kkLoYhZvo1ZBa2r132is7Zt+Xgp+U5GznHHPv2tUw0hq8qFSwpfo7660dXaE3Exmmi+1
-         xpjS177qP67ZAjTiAhUBUfbd0TGU6l3rzPlFEA+0T62+znbi10Ghx+ejd4T1tez5VuYU
-         7/Zw==
-X-Gm-Message-State: AOJu0YzmCWd132AjrDHlR68GNFYX8TVoWfjRg9cfUNc6QfLCetcjqoYI
-	uBEV1GxEuVsvdYdd2bVGwtTUH1DCnaU26Bi88wLuA67AJvBTYPRoCiJeMLQSWlA4uf94A4elOO7
-	K2lLyNTvRxPxkLpMebPNM6pstSw==
-X-Received: by 2002:a17:902:da87:b0:1cc:548d:4252 with SMTP id j7-20020a170902da8700b001cc548d4252mr27501632plx.57.1699330647981;
-        Mon, 06 Nov 2023 20:17:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH/bDSpYLFMGA8/IP0/ZDBgoerLMJpNRCRJpSAHrDXrDr7fFUbf3eUOwgyPRyBg+Ru2wXoVVg==
-X-Received: by 2002:a17:902:da87:b0:1cc:548d:4252 with SMTP id j7-20020a170902da8700b001cc548d4252mr27501620plx.57.1699330647618;
-        Mon, 06 Nov 2023 20:17:27 -0800 (PST)
-Received: from [192.168.68.219] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
-        by smtp.gmail.com with ESMTPSA id h4-20020a170902f54400b001c898328289sm6636558plf.158.2023.11.06.20.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 20:17:27 -0800 (PST)
-Message-ID: <26101f57-e5b3-e07b-c67f-259ab820cb0d@redhat.com>
-Date: Tue, 7 Nov 2023 12:17:22 +0800
+        d=1e100.net; s=20230601; t=1699331270; x=1699936070;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bz4ibFEani6ikAiwKtvYQFIOOBnNzX2wLnv6rOwCCMs=;
+        b=OL45yqTtJL3ibyxDYzZ/zMnrxnIvlLpL7sMosrGRamn6I/XFRpdhc6Fo6xRwMYSmWQ
+         7XhcrLnL6g/cTxyZYBE6N+9fSYqH+Dmadi9LQIYjCr6pC7l1U1i8BY/CUCI/ShjF4N/t
+         AbdXcoreEgHx3R52xGiOwuIC4xB4+uMPeCqMScONAFETd7JYYG04itQzTEVy5ElV6WaE
+         GfTbjJNlq/hNAw4AjqK4by70tNJZ3b7cOvRkYk4mLjo35Hgpofvvo3FYbIiTVkXPriYd
+         rX4rksiK5hzzf+tn5FWRluZ1+BzaHhvM5RP25sVnvivV/rEZu/wqipcgttvpgyK5qEah
+         KRSA==
+X-Gm-Message-State: AOJu0YzL3KK2k0A7WuInjEynbQmnHIbycJD8nuwj2JzyiBDkZQXfWpNS
+	267NKdCXxocsEt7VirkHQ9AiSQ==
+X-Google-Smtp-Source: AGHT+IFk9UPUznehgtsFa3wG1YIBTyBLMwYw8zTr1jNMtB7C1OcB8sHn4sRwgOB6wi5Zu5GGegmbOw==
+X-Received: by 2002:ac2:4850:0:b0:507:a089:caf4 with SMTP id 16-20020ac24850000000b00507a089caf4mr23066306lfy.60.1699331270333;
+        Mon, 06 Nov 2023 20:27:50 -0800 (PST)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d26-20020a50cd5a000000b0053dab756073sm5148167edj.84.2023.11.06.20.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Nov 2023 20:27:50 -0800 (PST)
+Date: Tue, 7 Nov 2023 07:27:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Zhou Jifeng <zhoujifeng@kylinos.com.cn>,
+	miklos@szeredi.hu
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Subject: Re: [PATCH] fuse: Track process write operations in both direct and
+ writethrough modes
+Message-ID: <70dde24c-5aee-4752-a14e-74ffdc6f7359@kadam.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Content-Language: en-US
-To: autofs mailing list <autofs@vger.kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Ian Kent <ikent@redhat.com>
-Subject: [ANNOUNCE] autofs 5.1.9 release
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231028065912.6084-1-zhoujifeng@kylinos.com.cn>
 
-Hi all,
+Hi Zhou,
 
-A release is long overdue so here it is, autofs-5.1.9.
+kernel test robot noticed the following build warnings:
 
-There are quite a lot of changes in the release but they are mostly
-bug fixes arising from a number significant improvements done over
-the last several releases.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Some general performance overheads have crept in over quite a while
-and work has been done to improve on it but once the obvious is done
-it gets much harder to improve, so that's ongoing as time permits.
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhou-Jifeng/fuse-Track-process-write-operations-in-both-direct-and-writethrough-modes/20231028-150119
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
+patch link:    https://lore.kernel.org/r/20231028065912.6084-1-zhoujifeng%40kylinos.com.cn
+patch subject: [PATCH] fuse: Track process write operations in both direct and writethrough modes
+config: x86_64-randconfig-161-20231103 (https://download.01.org/0day-ci/archive/20231107/202311070338.uJNMq6Sh-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20231107/202311070338.uJNMq6Sh-lkp@intel.com/reproduce)
 
-autofs
-======
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202311070338.uJNMq6Sh-lkp@intel.com/
 
-The package can be found at:
-https://www.kernel.org/pub/linux/daemons/autofs/v5/
+smatch warnings:
+fs/fuse/file.c:1359 fuse_cache_write_iter() error: uninitialized symbol 'err'.
 
-It is autofs-5.1.9.tar.[gz|xz]
+vim +/err +1359 fs/fuse/file.c
 
-No source rpm is there as it can be produced by using:
+55752a3aba1387 Miklos Szeredi    2019-01-24  1302  static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1303  {
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1304  	struct file *file = iocb->ki_filp;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1305  	struct address_space *mapping = file->f_mapping;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1306  	ssize_t written = 0;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1307  	struct inode *inode = mapping->host;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1308  	ssize_t err;
+56597c4ddc107c Zhou Jifeng       2023-10-28  1309  	ssize_t count;
+8981bdfda7445a Vivek Goyal       2020-10-09  1310  	struct fuse_conn *fc = get_fuse_conn(inode);
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1311  
+8981bdfda7445a Vivek Goyal       2020-10-09  1312  	if (fc->writeback_cache) {
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1313  		/* Update size (EOF optimization) and mode (SUID clearing) */
+c6c745b81033a4 Miklos Szeredi    2021-10-22  1314  		err = fuse_update_attributes(mapping->host, file,
+c6c745b81033a4 Miklos Szeredi    2021-10-22  1315  					     STATX_SIZE | STATX_MODE);
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1316  		if (err)
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1317  			return err;
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1318  
+8981bdfda7445a Vivek Goyal       2020-10-09  1319  		if (fc->handle_killpriv_v2 &&
+9452e93e6dae86 Christian Brauner 2023-01-13  1320  		    setattr_should_drop_suidgid(&nop_mnt_idmap,
+9452e93e6dae86 Christian Brauner 2023-01-13  1321  						file_inode(file))) {
+8981bdfda7445a Vivek Goyal       2020-10-09  1322  			goto writethrough;
+8981bdfda7445a Vivek Goyal       2020-10-09  1323  		}
+8981bdfda7445a Vivek Goyal       2020-10-09  1324  
+84c3d55cc474f9 Al Viro           2014-04-03  1325  		return generic_file_write_iter(iocb, from);
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1326  	}
+4d99ff8f12eb20 Pavel Emelyanov   2013-10-10  1327  
+8981bdfda7445a Vivek Goyal       2020-10-09  1328  writethrough:
+5955102c9984fa Al Viro           2016-01-22  1329  	inode_lock(inode);
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1330  
+56597c4ddc107c Zhou Jifeng       2023-10-28  1331  	count = generic_write_checks(iocb, from);
+56597c4ddc107c Zhou Jifeng       2023-10-28  1332  	if (count <= 0)
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1333  		goto out;
 
-rpmbuild -ts autofs-5.1.9.tar.gz
+Missing error code?
 
-and the binary rpm by using:
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1334  
+56597c4ddc107c Zhou Jifeng       2023-10-28  1335  	task_io_account_write(count);
+56597c4ddc107c Zhou Jifeng       2023-10-28  1336  
+5fa8e0a1c6a762 Jan Kara          2015-05-21  1337  	err = file_remove_privs(file);
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1338  	if (err)
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1339  		goto out;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1340  
+c3b2da31483449 Josef Bacik       2012-03-26  1341  	err = file_update_time(file);
+c3b2da31483449 Josef Bacik       2012-03-26  1342  	if (err)
+c3b2da31483449 Josef Bacik       2012-03-26  1343  		goto out;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1344  
+2ba48ce513c4e5 Al Viro           2015-04-09  1345  	if (iocb->ki_flags & IOCB_DIRECT) {
+1af5bb491fbb41 Christoph Hellwig 2016-04-07  1346  		written = generic_file_direct_write(iocb, from);
+84c3d55cc474f9 Al Viro           2014-04-03  1347  		if (written < 0 || !iov_iter_count(from))
+4273b793ec6875 Anand Avati       2012-02-17  1348  			goto out;
+64d1b4dd826d88 Christoph Hellwig 2023-06-01  1349  		written = direct_write_fallback(iocb, from, written,
+64d1b4dd826d88 Christoph Hellwig 2023-06-01  1350  				fuse_perform_write(iocb, from));
+4273b793ec6875 Anand Avati       2012-02-17  1351  	} else {
+596df33d673d9d Christoph Hellwig 2023-06-01  1352  		written = fuse_perform_write(iocb, from);
+4273b793ec6875 Anand Avati       2012-02-17  1353  	}
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1354  out:
+5955102c9984fa Al Viro           2016-01-22  1355  	inode_unlock(inode);
+e1c0eecba1a415 Miklos Szeredi    2017-09-12  1356  	if (written > 0)
+e1c0eecba1a415 Miklos Szeredi    2017-09-12  1357  		written = generic_write_sync(iocb, written);
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1358  
+ea9b9907b82a09 Nicholas Piggin   2008-04-30 @1359  	return written ? written : err;
+ea9b9907b82a09 Nicholas Piggin   2008-04-30  1360  }
 
-rpmbuild -tb autofs-5.1.9.tar.gz
-
-Here are the entries from the CHANGELOG which outline the updates:
-
-- fix kernel mount status notification.
-- fix fedfs build flags.
-- fix set open file limit.
-- improve descriptor open error reporting.
-- fix root offset error handling.
-- fix fix root offset error handling.
-- fix nonstrict fail handling of last offset mount.
-- dont fail on duplicate offset entry tree add.
-- fix loop under run in cache_get_offset_parent().
-- bailout on rpc systemerror.
-- fix nfsv4 only mounts should not use rpcbind.
-- simplify cache_add() a little.
-- fix use after free in tree_mapent_delete_offset_tree().
-- fix memory leak in xdr_exports().
-- avoid calling pthread_getspecific() with NULL key_thread_attempt_id.
-- fix sysconf(3) return handling.
-- remove nonstrict parameter from tree_mapent_umount_offsets().
-- fix handling of incorrect return from umount_ent().
-- dont use initgroups() at spawn.
-- fix bashism in configure.
-- musl: fix missing include in hash.h.
-- musl: define fallback dummy NSS config path
-- musl: avoid internal stat.h definitions.
-- musl: add missing include to hash.h for _WORDSIZE.
-- musl: add missing include to log.h for pid_t.
-- musl: define _SWORD_TYPE.
-- add autofs_strerror_r() helper for musl.
-- update configure.
-- handle innetgr() not present in musl.
-- fix missing unlock in sasl_do_kinit_ext_cc().
-- fix a couple of null cache locking problems.
-- restore gcc flags after autoconf Kerberos 5 check.
-- prepare for OpenLDAP SASL binding.
-- let OpenLDAP handle SASL binding.
-- configure: LDAP function checks ignore implicit declarations.
-- improve debug logging of LDAP binds.
-- improve debug logging of SASL binds.
-- internal SASL logging only in debug log mode.
-- more comprehensive verbose logging for LDAP maps.
-- fix invalid tsv access.
-- support SCRAM for SASL binding.
-- ldap_sasl_interactive_bind() needs credentials for auto-detection.
-- fix autofs regression due to positive_timeout.
-- fix parse module instance mutex naming.
-- serialise lookup module open and reinit.
-- coverity fix for invalid access.
-- fix hosts map deadlock on restart.
-- fix deadlock with hosts map reload.
-- fix memory leak in update_hosts_mounts().
-- fix minus only option handling in concat_options().
-- fix incorrect path for is_mounted() in try_remount().
-- fix additional tsv invalid access.
-- fix use_ignore_mount_option description.
-- include addtional log info for mounts.
-- fail on empty replicated host name.
-- improve handling of ENOENT in sss setautomntent().
-- don't immediately call function when waiting.
-- define LDAP_DEPRECATED during LDAP configure check.
-- fix return status of mount_autofs().
-- don't close lookup at umount.
-- fix deadlock in lookups.
-- dont delay expire.
-- make amd mapent search function name clear.
-- rename statemachine() to signal_handler().
-- make signal handling consistent.
-- eliminate last remaining state_pipe usage.
-- add function master_find_mapent_by_devid().
-- use device id to locate autofs_point when setting log priotity.
-- add command pipe handling functions.
-- switch to application wide command pipe.
-- get rid of unused field submnt_count.
-- fix mount tree startup reconnect.
-- fix unterminated read in handle_cmd_pipe_fifo_message().
-- fix memory leak in sasl_do_kinit()
-- fix fix mount tree startup reconnect.
-- fix amd selector function matching.
-- get rid entry thid field.
-- continue expire immediately after submount check.
-- eliminate realpath from mount of submount.
-- eliminate root param from autofs mount and umount.
-- remove redundant fstat from do_mount_direct().
-- get rid of strlen call in handle_packet_missing_direct().
-- remove redundant stat call in lookup_ghost().
-- set mapent dev and ino before adding to index.
-- change to use printf functions in amd parser.
-- dont call umount_subtree_mounts() on parent at umount.
-- dont take parent source lock at mount shutdown.
-- fix possible use after free in handle_mounts_exit().
-- make submount cleanup the same as top level mounts.
-- add soucre parameter to module functions.
-- add ioctlfd open helper.
-- make open files limit configurable.
-- use correct reference for IN6 macro call.
-- dont probe interface that cant send packet.
-- fix some sss error return cases.
-- fix incorrect matching of cached wildcard key.
-- fix expire retry looping.
-- allow -null map in indirect maps.
-- fix multi-mount check.
-- fix let OpenLDAP handle SASL binding.
-- always recreate credential cache.
-- fix ldap_parse_page_control() check.
-- fix typo in create_cmd_pipe_fifo().
-- add null check in master_kill().
-- be more careful with cmd pipe at exit.
-- rename configure.in to configure.ac.
-- update autoconf macros.
-- update autoconf release.
-- update autofs release.
-
-Ian
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
