@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-2200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E037E31F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 01:04:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DD27E31F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 01:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1565B20B60
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1115C1C209C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 00:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E803D80E;
-	Tue,  7 Nov 2023 00:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59E8814;
+	Tue,  7 Nov 2023 00:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KWOQtbs4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bxfENR61"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD3139C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 00:04:40 +0000 (UTC)
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD32D57
-	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 16:04:37 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-5bdb0be3591so539916a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 16:04:37 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8A4633
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 00:05:50 +0000 (UTC)
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467C9BB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  6 Nov 2023 16:05:48 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1cc316ccc38so41404335ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Nov 2023 16:05:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1699315477; x=1699920277; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1699315548; x=1699920348; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gZ7Tyo8qH9aoJwRZELDU2Tn13Js2474wX9Z3rsse04E=;
-        b=KWOQtbs4rGU3Wd5cQ12hlQwNGwWkjDqiAaiBMeHd7DUMgtkMKgZ46/ORa3itE3j/Xc
-         D2j0dBuzPNx3qJDDtMLELBiLXhg31BXTCpK0GnBrNowiDyG0KFCP755wXruIkwd2Wch2
-         kl4hdWi1IQfFDBgiXZVA82vDDQPj3IctBUIF0=
+        bh=7QJFQDzeUVX+vloytR85R4pK8I9Zva7Zk04TYVn93mA=;
+        b=bxfENR61MK5UwHfdAWlojnoP6e/+yz5lFRjNWaSzeImimuGCk8DxSDnpuc0VXDkQSN
+         lJUCE8T+UTjRrZnWCRh6INwY3zpriH5dpEIpGUh81F5N8vhN73d129LnyBrHPt9gOrMw
+         Pbp4Z8sKTO7XTHqmfyONEdTxPVsidsu8B2Nvs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699315477; x=1699920277;
+        d=1e100.net; s=20230601; t=1699315548; x=1699920348;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gZ7Tyo8qH9aoJwRZELDU2Tn13Js2474wX9Z3rsse04E=;
-        b=vWHYipms3TvdNoCYhI7bqT76K/u+M0OMRrejsD+AX6g3Sic/TDxWn2WLH030zmBBjH
-         95xSdWsHrxL1e8JEpAJ/v4CtKrK/tFKuVhUyz9fN5i3/nTsGPcYSJm9NytD7q4cySGQS
-         jpgKfG2RdLgOJKojuljtxLxmPTmrgJE4XG2RR5MtAX44nN3FlBTuCyU82h7YvWfgfAos
-         Xyd4ifwwizS06MoktutSIaOUf0zOPGTxnLyPyUdoCKTKrQi7F2EOh/CQd/ucKNlkxcRy
-         SPANdpu+ER/XMminvqPwJEg+oR86qcvG1PybR0jammKb+v9ik5gdJ6ghVL6mIs3ZUGCr
-         mlcQ==
-X-Gm-Message-State: AOJu0YwMzHA8DzGpH/o2Y/ktUxjBgN+wEdN6YC2NjPunsR1fkFauM7Q6
-	w847wHLgamMZT/wikXaxu+Drgg==
-X-Google-Smtp-Source: AGHT+IFlGAXxvTy3TIkf725Nv5fS/RpZl/5VLZlIod4EZ1u1OhXaby1ULHhklzUANQJ962E2kmZhzA==
-X-Received: by 2002:a05:6a21:3b48:b0:180:dd61:72a2 with SMTP id zy8-20020a056a213b4800b00180dd6172a2mr25536850pzb.33.1699315476896;
-        Mon, 06 Nov 2023 16:04:36 -0800 (PST)
+        bh=7QJFQDzeUVX+vloytR85R4pK8I9Zva7Zk04TYVn93mA=;
+        b=LCsIYJwgAmqRBDAi41y8cxHwThpkUQ4DISeMEO5cI2/EaNyHifTu0IMYb6N2fawVEP
+         sREB3SYrUBfhixUNqb7Ggl+y7DiMVjYRkOb5cnyXuWNh0xCcjAvtkj9+Rncuz1Bw6QpK
+         XdVeLcUTvc9Mue+eJBnCB+X0JzpDhndvBPJvA+LX6JAZFpQcO3O6lcj6necpTvb+9ms5
+         rXMBeymYzyCIoPkbpwtrHeD6RIjmYVJMYk9/jH6nC/3SB5hSyQFu1lpb6tlOIE1BaL/g
+         8jljDqcN5Sj8m6hgnryVMEmghYuwW2QrmO1Ilv9MH2NjwWuGLvmvWqiZMD6m7vLL0GW4
+         goaA==
+X-Gm-Message-State: AOJu0YygvVT5Dx+9wW+Ux4hiz56bjlJs1aluASYEq6Xaoj927V6+rezB
+	j4RMeXo2mz4eVGtNMo2jjC8bDQ==
+X-Google-Smtp-Source: AGHT+IG+PIacReeHRWabu7Z+06nTvqNpG9vAyKM5Dj0syAJ9VIXxH7xzpXc0d0gxDApuLXlGEIDIkg==
+X-Received: by 2002:a17:902:d2cf:b0:1cc:3302:7354 with SMTP id n15-20020a170902d2cf00b001cc33027354mr23215187plc.17.1699315547650;
+        Mon, 06 Nov 2023 16:05:47 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id j7-20020a170902da8700b001b06c106844sm6416459plx.151.2023.11.06.16.04.36
+        by smtp.gmail.com with ESMTPSA id j5-20020a170902c08500b001cc0e3a29a8sm6436234pld.89.2023.11.06.16.05.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Nov 2023 16:04:36 -0800 (PST)
-Date: Mon, 6 Nov 2023 16:04:35 -0800
+        Mon, 06 Nov 2023 16:05:47 -0800 (PST)
+Date: Mon, 6 Nov 2023 16:05:46 -0800
 From: Kees Cook <keescook@chromium.org>
 To: Sasha Levin <sashal@kernel.org>
 Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
@@ -65,11 +65,11 @@ Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
 	Andrei Vagin <avagin@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
 	Laurent Vivier <laurent@vivier.eu>, linux-fsdevel@vger.kernel.org,
 	Christian Brauner <brauner@kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH AUTOSEL 6.6 07/13] binfmt_misc: cleanup on filesystem
+Subject: Re: [PATCH AUTOSEL 4.14 2/4] binfmt_misc: cleanup on filesystem
  umount
-Message-ID: <202311061604.8F1A8B6771@keescook>
-References: <20231106231435.3734790-1-sashal@kernel.org>
- <20231106231435.3734790-7-sashal@kernel.org>
+Message-ID: <202311061605.4B418CD7@keescook>
+References: <20231106231728.3736117-1-sashal@kernel.org>
+ <20231106231728.3736117-2-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,14 +78,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231106231435.3734790-7-sashal@kernel.org>
+In-Reply-To: <20231106231728.3736117-2-sashal@kernel.org>
 
-Please drop this from -stable -- it's part of a larger refactoring that
-shouldn't be backported without explicit effort/testing.
+And just to be clear, please drop this (and the binfmt_elf change) from
+all -stable versions, not just 6.6. :)
+
+Thanks!
 
 -Kees
 
-On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
+On Mon, Nov 06, 2023 at 06:17:23PM -0500, Sasha Levin wrote:
 > From: Christian Brauner <christian.brauner@ubuntu.com>
 > 
 > [ Upstream commit 1c5976ef0f7ad76319df748ccb99a4c7ba2ba464 ]
@@ -195,10 +197,10 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  1 file changed, 168 insertions(+), 48 deletions(-)
 > 
 > diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index e0108d17b085c..cf5ed5cd4102d 100644
+> index c19bf5c2fbec9..e768cd60ff999 100644
 > --- a/fs/binfmt_misc.c
 > +++ b/fs/binfmt_misc.c
-> @@ -60,12 +60,11 @@ typedef struct {
+> @@ -58,12 +58,11 @@ typedef struct {
 >  	char *name;
 >  	struct dentry *dentry;
 >  	struct file *interp_file;
@@ -212,7 +214,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  
 >  /*
 >   * Max length of the register string.  Determined by:
-> @@ -82,19 +81,23 @@ static int entry_count;
+> @@ -80,19 +79,23 @@ static int entry_count;
 >   */
 >  #define MAX_REGISTER_LENGTH 1920
 >  
@@ -244,7 +246,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  		char *s;
 >  		int j;
 >  
-> @@ -123,9 +126,49 @@ static Node *check_file(struct linux_binprm *bprm)
+> @@ -121,9 +124,49 @@ static Node *check_file(struct linux_binprm *bprm)
 >  		if (j == e->size)
 >  			return e;
 >  	}
@@ -294,7 +296,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  /*
 >   * the loader itself
 >   */
-> @@ -139,12 +182,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+> @@ -138,12 +181,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
 >  	if (!enabled)
 >  		return retval;
 >  
@@ -308,9 +310,9 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  	if (!fmt)
 >  		return retval;
 >  
-> @@ -198,7 +236,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
+> @@ -237,7 +275,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>  		goto error;
 >  
->  	retval = 0;
 >  ret:
 > -	dput(fmt->dentry);
 > +
@@ -324,9 +326,9 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 > +	put_binfmt_handler(fmt);
 > +
 >  	return retval;
->  }
->  
-> @@ -552,30 +599,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
+>  error:
+>  	if (fd_binary > 0)
+> @@ -598,30 +645,90 @@ static struct inode *bm_get_inode(struct super_block *sb, int mode)
 >  	return inode;
 >  }
 >  
@@ -429,7 +431,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  }
 >  
 >  /* /<entry> */
-> @@ -602,8 +709,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
+> @@ -648,8 +755,8 @@ bm_entry_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
 >  static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
 >  				size_t count, loff_t *ppos)
 >  {
@@ -440,7 +442,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  	int res = parse_command(buffer, count);
 >  
 >  	switch (res) {
-> @@ -617,13 +724,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
+> @@ -663,13 +770,22 @@ static ssize_t bm_entry_write(struct file *file, const char __user *buffer,
 >  		break;
 >  	case 3:
 >  		/* Delete this handler. */
@@ -467,7 +469,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  		break;
 >  	default:
 >  		return res;
-> @@ -682,13 +798,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
+> @@ -728,13 +844,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
 >  	if (!inode)
 >  		goto out2;
 >  
@@ -482,7 +484,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  	e->dentry = dget(dentry);
 >  	inode->i_private = e;
 >  	inode->i_fop = &bm_entry_operations;
-> @@ -732,7 +842,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+> @@ -778,7 +888,8 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
 >  		size_t count, loff_t *ppos)
 >  {
 >  	int res = parse_command(buffer, count);
@@ -492,7 +494,7 @@ On Mon, Nov 06, 2023 at 06:14:20PM -0500, Sasha Levin wrote:
 >  
 >  	switch (res) {
 >  	case 1:
-> @@ -745,13 +856,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
+> @@ -791,13 +902,22 @@ static ssize_t bm_status_write(struct file *file, const char __user *buffer,
 >  		break;
 >  	case 3:
 >  		/* Delete all handlers. */
