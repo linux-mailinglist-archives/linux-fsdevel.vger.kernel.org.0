@@ -1,147 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-2314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B2D7E4A52
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 22:07:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D4C7E4A84
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 22:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39682281170
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 21:07:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8E528132A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 21:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22CA3C6AC;
-	Tue,  7 Nov 2023 21:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCD82A1D0;
+	Tue,  7 Nov 2023 21:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hdazj6sc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbWNkgrx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B037331A78
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 21:07:42 +0000 (UTC)
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 170A211F;
-	Tue,  7 Nov 2023 13:07:42 -0800 (PST)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d9a518d66a1so6391764276.0;
-        Tue, 07 Nov 2023 13:07:42 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299922A1C1
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 21:23:18 +0000 (UTC)
+Received: from mail-oo1-xc2b.google.com (mail-oo1-xc2b.google.com [IPv6:2607:f8b0:4864:20::c2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960A910D5;
+	Tue,  7 Nov 2023 13:23:17 -0800 (PST)
+Received: by mail-oo1-xc2b.google.com with SMTP id 006d021491bc7-58786e23d38so2517966eaf.3;
+        Tue, 07 Nov 2023 13:23:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699391261; x=1699996061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3aeXicRU4lHcbU3yR6buQ02C3rtZDXKLpVxEjoF0J04=;
-        b=Hdazj6scuSKVJFr0hsDXNcWkK9eAZCiJl+M2ohu3IkmeJIIUlWzr0LklXjhHDVylU7
-         sIyFHJJ43z0ycC4fExyejx6DYPBJFb0zDBBjQ5MarAfzCAsqLFoDrHVUe9JHqQfOQhEm
-         WWKQHcYffK17k5ALqk3vBid0Od0Qg5IwsGOoBC/rfytHPl3oIyMlNWEKvdpaYmou85Ue
-         P3EwZo9wMAIhUCH6UCBkrHfqu1Dp8zyTLPW3nZ6T/6T/5xpQdFg5UyCciqgfCVQp/eJg
-         XbcsXgqbzc+S4t5lt6YaBxNaxkqOaOajo/Poi2INEvtch2WIF2zKtgzTTzdCP1jgSF2W
-         cCcg==
+        d=gmail.com; s=20230601; t=1699392196; x=1699996996; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9gkRH7EgBc/EFjx3UGdMuaLkXzoxuUFSfx0n9wI7SU=;
+        b=IbWNkgrx4rxAfg8/YZoxByXnWrBkZfgyCu4m7L8LrFmg1WtJmXLlrp7QlopQmOZFSG
+         otBHyUXlHp2p59d94314iMPnQm9ptrtzpMvGF1gO/wDIL9pCdGrFLeKnLWhT2JDWxg3s
+         IhDnn/apUO13piiJID0sA3htcQXYVNSf3xEAzuW7XNod2VSHRKxbpeYo+w6AgFGjt0ph
+         ZEnqm9CDk3A2vlGasRuP6oktb9IAvH2jFJlWr7hQQ2D9URbjeyB7l1bqxx+kMHlZ4Prc
+         yl46bU5OwjpKB1LOcvJL1B6B2iAHJxCs9hmezIdUvb1/0f0i55OZY3wub5xkwIsoInxW
+         RgRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699391261; x=1699996061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3aeXicRU4lHcbU3yR6buQ02C3rtZDXKLpVxEjoF0J04=;
-        b=vzCxYqCVYTqDxHip4QkaeosJ0maDLAt8MQ9HLJCLQZ06ZPe//8jg+xrr5dWiIQgMI4
-         ZVWz6jpt2QVfN09RjAjF3NJpc04XNLid9Fnb3/fcGMMVPndycTmxtD6XXmag680XHnAe
-         Sqnx2N412m6MybmJWJYYCcAbbRdNiSC0+dFxlGVIzT65i65ytUm2qqgCy2YdskVMo0bF
-         1HhYARNx0TV9z6W2AAv1EpZX3RbkogfUZazlUWTchRjKH8B1a7TxkFWRDAd0VR7c5zLM
-         FKNpZJa+KjOiGGRiy+1P5K90vsUwXbGHZ9Y0GBEiL54tXm3DZsDspf6KIaVLwwGiBaoH
-         TlxQ==
-X-Gm-Message-State: AOJu0YyVpEUkMXczFQtJAFn4rhKY2yCPTiSlW7fdyvdMrYNNTZ7rWeLt
-	8pCKsCItpaAFhXvow2oON6ne2pR+V5zjNPIkxfw=
-X-Google-Smtp-Source: AGHT+IHBQNOhwgC6AxM8bJ1Gh1+f7qmlz8lu7XimL4LhQXXqoZ70t5a2uJdxqXFzjjss++G8Sfe494JrytOk+d+WafE=
-X-Received: by 2002:a25:348b:0:b0:d9a:4f14:5bf9 with SMTP id
- b133-20020a25348b000000b00d9a4f145bf9mr615820yba.26.1699391261066; Tue, 07
- Nov 2023 13:07:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699392196; x=1699996996;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p9gkRH7EgBc/EFjx3UGdMuaLkXzoxuUFSfx0n9wI7SU=;
+        b=cijgYq+5N8Ia+Rz5cv1hj3jpQLV6RBG8KmSD9KGgUzu/uSAi+ol7zAF54BD9OXgEp1
+         nodWxd2AMeKuknjI1koCYyhPX2ypg5k2zcrNFDaCH96JRnXMnCcKbF9O1YeMn/DHy5yl
+         DoPKBtgwR6JZ7kzcn7S4kfNnm+qYl9XkZ/9GeXVxC0RIfnWN2f7b54ev+CKoBn/roJqZ
+         8cpwV7UELKw4BgQge/RrQhCHpLidmLr1runrJ4/G8DseMI+HNw7ltfUp9PkdRBGlvnzV
+         lqsjDqqmJYO55L6orEPe9pua54ap/MC40ZIJBgDF5yrF+RbTyzU3DfT2lX8rzZU7Ta7P
+         NXlg==
+X-Gm-Message-State: AOJu0Yx8wBik4ZIV9HugEwfEbHB35erfhqb41bEITZKr0kJcJGOQdo8T
+	ORRgPDnmcpocPIGyzKN/dO7ED3VddQk0yTX/nak=
+X-Google-Smtp-Source: AGHT+IH9iCJh9FMWUN07cTY3FUAPQ9BbAXQBdoliTW5WLBxkBSnWDnNDeflruDGHAIyIymjEuK2ubuNKjzaTnXlo4Lw=
+X-Received: by 2002:a4a:e1d4:0:b0:581:e819:cac5 with SMTP id
+ n20-20020a4ae1d4000000b00581e819cac5mr31277772oot.9.1699392196640; Tue, 07
+ Nov 2023 13:23:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231106065045.895874-1-amir73il@gmail.com> <CAHk-=whgCwcUGKvoZX0OSAFi9fTye3BOfOCY+wR=t7W8xS_oGQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whgCwcUGKvoZX0OSAFi9fTye3BOfOCY+wR=t7W8xS_oGQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 7 Nov 2023 23:07:29 +0200
-Message-ID: <CAOQ4uxhfanssN=GdxfC7ANG=it=VMJz549z0zZ5uEGULeGK6yA@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs update for 6.7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Received: by 2002:a8a:158f:0:b0:4f0:1250:dd51 with HTTP; Tue, 7 Nov 2023
+ 13:23:16 -0800 (PST)
+In-Reply-To: <20231107205151.qkwlw7aarjvkyrqs@f>
+References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
+ <202311071228.27D22C00@keescook> <20231107205151.qkwlw7aarjvkyrqs@f>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 7 Nov 2023 22:23:16 +0100
+Message-ID: <CAGudoHFsqMPmVvaV7BebGkpkw=pSQY8PLdB-1S3W5NpYh6trmA@mail.gmail.com>
+Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search before
+ allocating mm
+To: Kees Cook <keescook@chromium.org>
+Cc: Josh Triplett <josh@joshtriplett.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 7, 2023 at 9:54=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 11/7/23, Mateusz Guzik <mjguzik@gmail.com> wrote:
+> On Tue, Nov 07, 2023 at 12:30:37PM -0800, Kees Cook wrote:
+>> On Fri, Sep 16, 2022 at 02:41:30PM +0100, Josh Triplett wrote:
+>> > Currently, execve allocates an mm and parses argv and envp before
+>> > checking if the path exists. However, the common case of a $PATH search
+>> > may have several failed calls to exec before a single success. Do a
+>> > filename lookup for the purposes of returning ENOENT before doing more
+>> > expensive operations.
+>> >
+>> > This does not create a TOCTTOU race, because this can only happen if
+>> > the
+>> > file didn't exist at some point during the exec call, and that point is
+>> > permitted to be when we did our lookup.
+>> >
+>> > To measure performance, I ran 2000 fork and execvpe calls with a
+>> > seven-element PATH in which the file was found in the seventh directory
+>> > (representative of the common case as /usr/bin is the seventh directory
+>> > on my $PATH), as well as 2000 fork and execve calls with an absolute
+>> > path to an existing binary. I recorded the minimum time for each, to
+>> > eliminate noise from context switches and similar.
+>> >
+>> > Without fast-path:
+>> > fork/execvpe: 49876ns
+>> > fork/execve:  32773ns
+>> >
+>> > With fast-path:
+>> > fork/execvpe: 36890ns
+>> > fork/execve:  32069ns
+>> >
+>> > The cost of the additional lookup seems to be in the noise for a
+>> > successful exec, but it provides a 26% improvement for the path search
+>> > case by speeding up the six failed execs.
+>> >
+>> > Signed-off-by: Josh Triplett <josh@joshtriplett.org>
+>>
+>> *thread necromancy*
+>>
+>> I'll snag this patch after -rc1 is out. Based on the research we both
+>> did in the rest of this thread, this original patch is a clear win.
+>> Let's get it into linux-next and see if anything else falls out of it.
+>>
 >
-> On Sun, 5 Nov 2023 at 22:50, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > - Overlayfs aio cleanups and fixes [1]
-> >
-> > - Overlayfs lock ordering changes [2]
-> >
-> > - Add support for nesting overlayfs private xattrs [3]
-> >
-> > - Add new mount options for appending lowerdirs [4]
-> >
-> > [1] https://lore.kernel.org/r/20230912173653.3317828-1-amir73il@gmail.c=
-om/
-> > [2] https://lore.kernel.org/r/20230816152334.924960-1-amir73il@gmail.co=
-m/
-> > [3] https://lore.kernel.org/r/cover.1694512044.git.alexl@redhat.com/
-> > [4] https://lore.kernel.org/r/20231030120419.478228-1-amir73il@gmail.co=
-m/
+> So the obvious question is why not store lookup result within bprm,
+> instead of doing the lookup again later.
 >
-> *Please* don't make me have to follow links just to see basic details.
+> Turns out you had very same question and even wrote a patch to sort it
+> out: https://lore.kernel.org/all/202209161637.9EDAF6B18@keescook/
+>
+> Why do you intend to go with this patch instead?
 >
 
-No problem.
+Welp, should have read the remaining follow up discussion.
 
-> Merge messages should stand on their own, not just point to "look,
-> here are the details in our lore archives". Yes, even when having
-> internet access is much more common, there are situations where it's
-> not there or is slow. Or maybe lore has issues. Or maybe people just
-> don't want to switch to a browser to look up details that may or may
-> not be relevant to them.
->
-> I copied the relevant stuff into my merge, but please don't make me do
-> this next time.
+Even so, the patch which is only doing the lookup once cannot be
+legitimately slower.
 
-Thanks for adding this information - I certainly didn't intend for
-you to do this extra work.
+Note there is often perf variance between different boots of the same
+kernel and I suspect this is what justifies it.
 
-> Just give me a merge message with the details spelled
-> out, not some link to a cover letter for a patch series.
->
+I would suggest adding a runtime knob to control whether 1. lookups
+are done late (stock kernel) 2. there is one upfront lookup like in
+the original patch and finally 3. stuffing file into bprm
 
-OK.
+Then a bunch of runs with the knob cycling between them could serve as
+a justification.
 
-To explain the reason why I add those links:
+If the patch which dodges second lookup still somehow appears slower a
+flamegraph or other profile would be nice. I can volunteer to take a
+look at what's going on provided above measurements will be done and
+show funkyness.
 
-A while ago, I was helping out with backporting many xfs patches
-to stable tree after a long period of neglection.
-
-I found the need to point back from fix commits to patch series
-because the cover letters often contained important information
-relevant for backporting and testing.
-
-So I hacked up a small b4 gadget to disassemble a PR
-into lore links to patch series:
-(*) you don't have to follow this link unless you are curious ;)
-https://github.com/amir73il/b4/commit/f5966362a524182206d5c5e8a4f96fba5d4c9=
-2ca
-
-At the time, I had wished that the links to the patch series
-composing the PR would have been in the PR email
-(doesn't really matter if you take them into the merge commit).
-
-This is why I included this "debug info" of the PR.
-Next time, if I include the lore links, I will separate
-them to a different section, so it is clear that I do not
-require them to be in the merge commit.
-
-Thanks,
-Amir.
+-- 
+Mateusz Guzik <mjguzik gmail.com>
 
