@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-2286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C5F7E4737
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:40:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA357E4740
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 18:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCE04B20DC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80CBBB20E2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Nov 2023 17:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2459334CE0;
-	Tue,  7 Nov 2023 17:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0223E34CC2;
+	Tue,  7 Nov 2023 17:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="d8198OO/"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LCkKieX6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9A1347DD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:40:00 +0000 (UTC)
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7124F129
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:39:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378797; bh=tBt60bDXg1DqrNe9NMPxzOTPoUq4uLMvRSkc+FjV4dc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=d8198OO/iZETZOuIf2PZUqiZUZ9p1lo0mad1QBpFfqUZVNT8jx4ptmQCoP9bEQaSWCfPJ831FR5bQjTpQdH6uQPPJl61m0yQCHpKsgEgALYZ5kAgarWB3BIxdwMgSbg2TLsgC9RtlEFxqbJ7SVatv5+oePoIyq+SKlxQ0Rtzwo9XJBDVYwP8dk6vkENw8XUrYK27XpWJ9kWHv+TDQuhmEXb+y5+WfWHKH51krtOqBJm74ioLsRjUpfygSD0r6Jj1Um80I0LHUgkasJVl020cEXr6WaHBUwZDVOC9jUffH3wPjCXt/+9Ko0vexw+ZrFwmUup8o6Nl1+pIdrWpAQJNgA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378797; bh=WOubmKwgFxTqlfu77Z9l+rrRYZyfLqTwATZzCOEUYdQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=b1VGSmrwWwaB1tgD5GI7kjQfp/ujnfOv+DX1J+VY2gq0taJSITsz5ye+eCa1jjK1sW4VeS1HmIcpzg4iNVB8CYyKn+I4+y8lca16z3sqs9898ISanG8K6S/fQII4p/MiOysmBpVhHgLUROsD6kyeKBNBDabf0Ola594F/jjo04AgfSVpyNGk7nA6QAXc3CgnPg4wGChAKq0fQD/89+CD65DVAzY5FovLkiY8YwWgGvt4ersCRR6UZ5U09Iu6qFHO1aQw1PVI3ifx6JJ63j/yys+lCi2e6CgP/ZBTwpoo9MvoY+B9/97ZvR4bxfzbNvzMPnUMp1lCN2i+BjhUx6YnnA==
-X-YMail-OSG: SFQyYJ0VM1kvUG3BWDEX8IHrV3f.bTLq_hdLmDzE5lZ71wrVTFkCpntr69jH4s1
- 0NAjglFni_c0n7pPkAjy1q8hBvaOsKAfmgYZJxIVUCIk6n2lrleS_J0qDTfTiZlSckNmoMaFpQfC
- g8hDWm9J_9IECyGEvB8mq2u_jI6h91EEnzOdVQTr1hCtm6WmV6vnF6KEwdys07HMoOa.o.8_7CfW
- gH6ruNXu06LsHgZcdlSrzg8.qQKQuo2RhvIswkNsH2GS1FSf2PcLg6HBSfJQzOjoFSEhkNixSpVa
- zl5K_dOPEJNgYrtvW499gD6CjAZQ3RANOPtqJWzc6RQtadtNLGA1aogJyEeHJzxX4JQV7mR.ikgT
- vYWKvTICOIiHMyptC_szVntYwZnRo1V.Qslj7SwflzXG5aFfT_pwPoTanndFgEDbNkYQDY2Tq9VS
- L6FLcb7_cgTmZI8xstNybPPo2by3VimFqKUO2sVSroFy1s0zQV1aoUbCiFGtfaVko9OWlAUxfnGD
- SPq5MFnjIsuIj4wlfo7KZSIIWgfo969z5AiEXCepjlbeuWtbU2AaFrkxDzpl.VqfnZj7uPiJwfVW
- 9EggHdla0QEMKEjBqLrQDWqu.JDdi87hRGUDFk_9zDZakSR8g_cux93hHLVMMvgrRdYMRC1Bl4k8
- Jv82LRIqgLH.Cgr05M1TnQ.mGN_vABEMJWJXz3xGyF7AgIKGEgptbfT.O7MfScvNtpVzwUbnJpvB
- bdhL7HUSo5Klv4fCnZgQgde99NGaiD_.jPauDGnMEkDmnofTVxzK.9ECFGzgK2CtGbvYCvCBsDBl
- Dwgh2bU.AZ4vi.tLtr6UUCmP_L7mUEnrwIt8QKmvPLjYCN5LdFXg9oDfLmnDjIGeAp.lAM.u.2np
- Htqpi8Ky1JWm_32FVaC6YlDh_Ekocce7IH4ZFF7DACUp8NbbU6v1HogrBcs82UUnhtSzXEOG5jfR
- fsgbYQCPwaqPgWWmKXMEN7IwgYA7Q6PdyfXd6z67ZpnlupqVGCcXaqk02qJ9TSB95FpD2_uVQZd6
- 73jM4xtRa8oFNl4ltL4uV5EQvJ9id9Bm_1FE3O_qKLWyK_xiyOn0LyhN3L4RQ0fpzPmdlRdxzB4r
- 5asXQa7h8CzpVMyMOBIExNt_Owlsmd8sEXqvdRuoaMHgXZSdrft6D_6pQb.K5g2ak533rKHwvX1x
- xVTRREUYZ4JDm0gKHp3QefrQ5mk98r7NYMGBVlTDl53DfQoQcLMEassGXnBQ59VrBm5ZcZ.2PrgE
- pZWb5oLupSL60lt9OFLi_nAgv_C0w9LNIved_WR3ffnsbr7r9U8NZhyUuILhLAhdgV3.EDo2TlA3
- FLnR2RMXC4AjD.mnwHxv8X31Ghdf2sdosarU5Wr3WLf.VgxkF_CUn0Jjb.KXAMSOImzJKbVhNgUg
- o9jjaNrclJtJLyXqt7S49.bJgIdkQ2nf0O9cKR2uab4UaoWnRGUJ6T5WWqsHq_caIySISOg7vt3q
- .FjeMD7pbiCOh_xa7S_Wm.Z72t2bZnS_fpdBAISRsWE5p.kBltf66YRjOHZnB0di01JIwlIVM7rq
- mqVBc4llsIlVyYt21cyoDdNS7nbca4X.GNOyF7UAxugWNQydHDRX6BsdewfoTl6pisNxbxMmy7uR
- e2P.mDfPgupY3M8l1w9_l.908CdzBxhesrW29WhoXhWiRsy_15sAnjmAnw6wg.3xRJlP2rffkFcj
- MldI3h5noa9XXQDZMDPkecK9u4v_2Nn_TVDvnh9l_.XxyigbIwMRRRCbWtnZjUPe1ZOur.aBWz1g
- 0LNUCPmBOhqgb4lZyJ4Etzj0pSIxNB3B8PiDqHH7sJlqe6CDLWOtKpsGR3xhzMweKViHWH0cr6oW
- 8eY5Cgoy3wivtMy_B05vCkh6HmM_u9UXfPBzqZ21xIOlLC_yaT28UX0KBGkshjCLjzbCowV88o5W
- BQiASpW9ED_sWNr87UR.qlPQMHKlyfO8hAJfRfh8u3n9rgonRtFntyD0QzFzYeqc6efQkjvmNbGd
- uEdbji6pBTCq_lasBF4jsvHMP5hYjKOOhuUhNmMthuHVnGUPszeykJZGRLFBilYhcLSohMWth1R4
- VvGyl3rTTVxb.b6dPCWnsy_JPFmMO_tlMQgB5EPJ.b_sstd7DIgxbvuQ5j2V3OUJtmKCOFZQd2HL
- xDJjudweCipUvnBJTaWTO6s3bSBmm6.xkrmnLoXUOKMWaMOZMU.xfRGfhVFc_JEnapWW5qkSEJ.m
- vyneY2xv9m74QENsQSfPAvbVz1tOuqCavFhB5Lox0zyt7c8ux3DUwaNJ2WwhSd5bOeLgeh1eyvsw
- 5mY8-
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36B4347D2
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 17:41:11 +0000 (UTC)
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282FF126
+	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 09:41:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378870; bh=6tixJpzyY3SuAnaWX8VQ8oeD+TsidBDIh9s9rPPjxtA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LCkKieX6kr8Sejkgx481/hwhExv5qCj8aoGCNIdImyawYaLakH4/j5qDLnPzpGYdqKAjfqSPHVb+yu2EVsvyBRbxa+ZF/zi9pZYL52vXZfnYQRqpo7W7GUmYW+sCSpTK1S0cRticC+YUQ5G3V7/N4EpAdTE2X7K/Fo3wnnBfeHa2vOcO5Km/z7EbDwokGtRrQ2bafA05Urq4bigi9ZC5NHI8uitTItSo4j0X2RLEaLyUbH//rfAcd1elZxGQprApYiInkGc3ha7eGlJ/51WND3b7MNMlO6jBDg1eEV5Vh6Saqc6XUDTVs7YzBubRBpiXNaDZHEw9jne8kcF0rgqaAA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1699378870; bh=M+6ZowwGyGCY88XxlAz3oJTVYBgI+Il6fDU3WcVXGYw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=lIONEy2tKec5+K0NKisa6rrCm9R8+4QgzYDRPWfJI7L168CpUCmL0sDM7vykUSIDOVsGu1XLVVi5OPJ+PL2Pabu4uYSCafJr5fSUxdengoOw52hXcDarS4AeAS9An/wBjbNTpEYUAZGgCeuFlTEnPdDASqzO0IfHzzSRDOO8x4rCpp/QzhH3yY3J+AWt2kpM4qStEFn+L74M8BENczlnJUjeaP8DV6i5uHE6BC3j4aA4fIRffD9jMEpfXoYUIvE/26LawGJsV5bUfLoYxmDCX2a0hC2C3BcfY3F/U++m4N4G4megPZXDxT0zLKJptKybjYcKf7LxwVbNrLrMr/YKWw==
+X-YMail-OSG: ZQ6BRVoVM1nlzWeGMZUtu23akB8hQqkeDL_2jWKBzs2DUU1X9fZLb69C_eTe1Ki
+ 147cX24YhcyARbg_Dija207c8GPJmE5hzoll0SrCtIWWhTFtD36QNOXM15w9j9Br.MKFI0P50ayW
+ VIrBfAaIKWOwsv.uyMTFZbA1NOpHNI86zszWYfYFQJ5hn7GF8iISUgTLxHQidCvrswGU1DgRI5_9
+ mMl3PsmpZS3LpuuuSsq7PBxvg0ZnKbrDYHTRiH6z_XEP.7.WQ6kqnZiXe2PBY3.tjDz9yF2v4Bz.
+ 555gRgJq_DnJJBTh.E7mnOvoHSLp6Y5VQ0srLvUxLOhQgr9vOmfjWikcrSROVbydZNcROTCvLTtf
+ 0k2QdCciJzLawkmFxkwJ5UVrJkf.tMKq4IIDPOQS2U_TYS9yjryO9mgVeZbXvh9BtQl7.wSQfnoV
+ Bv8x_RqDK9xq3ja6HOIymvm0vVgd3p96Oh3NGUxN3i8tcDgDqrefgrfxBjOE0os9kX9cjUB8s7eq
+ _ewhdbzY7h0gNruO0KJ3tBbP9z8mCV6YZcylVSgURjGhqeib4TBt76LnHeNcU9YHod9cpTeJDimE
+ K.9nGovSOAeWkJP4o__GfAhpESxyrwUHkWLTn0WtW4T1tZwOw9lC8hcs.s23wVEpmlOM8fm4A.h5
+ RW.yj2ijHYxpdThfPd9e3nLf_Lx86hGmdHnBQFbmUfg.Xa9iO9vUAwY1iPaewlIl4VN0cm4hsZL3
+ DhLBxhPKGV0TUw0cd9BihruL1WlCtzJm1pFmLrbKiekHepjGWrOzbU03U_wAftUU9E9XsuiDtV4B
+ Zz1rs08H8W_L.za9x4NeYmMSw5Nx1ukqzHL1UsgCch_LPmVkB9HaPvweWxjm.BLYj7Gz9ptz232H
+ yqo.R.Pl.NPtJR5IKKSHw9u4Ww3l5RzeUoYhtPkHxCtyW2uJkubNi0h4qsa6ddKULxWArJAy3S1b
+ fG9h3sRylp.u2Cy4JJfskvz1uRNkPdHc_APVClPMxzkviUlWsI02DsSZeLSoy4QfDBXeOIn3DqbC
+ CEfhI2wxyIv4fNCfuicURZaUsp4hylmCj.4h08MwuAVXpYknrOLtipX2V9JWexWsi2KyAl4kKYSO
+ F5NaTK9mpPEIHASrCOYJ1CT20mBcr8CCoEE952qafbCk2hpWYUONf8gmEIEpBkrezw4LAiCYnKOY
+ O0XT9XIo8e8DavhgwS0LDy1k2nMV707MRNDyOpYZEEWGaziAP4EBYoy6Ifv37xu4BPz2PwwygJwH
+ CNPPaC3az03_M46FjFivqnNS_CNobn32SsFnnHBarHFPgAS_qd0NUMoH.e9n9pQvyHizMZeFAxBh
+ QlmUUE1vihLtIUEONUdb33P8EYb1nZQgNu10An.hYPN9LVIM9Cmf_aLwyI.2ANLBCd6OVg.kWcgV
+ aegp6w6MrJ3etgXLD7BgY_3_3OqROx9h7287z35R926WyYyiiofHEixKiGnMAPqvz55cHFOtLLw3
+ 0xjRnK7tT_gACDAGvW_8EPqUn_VPjZdyC7AOSfQoEy_YSK7Ixo6kV1mxhCs7DzWpop3DmZQ8kFns
+ xXvu6lqZcpZ8tJt0gP3HPjD9bKw1OHQJdNA0udYEOEfGqcuDKaytWc8YgW5I6c3EaPXXqKHJqxd0
+ g9vFKg0N_shQXYVTBf0TnUdW6QNs9cfCZagPjoiVXG4uzdqD9b097ybrs4ay2DOlYD5LANixYHK5
+ lj3_9PZmkYGbjAGLnBioqrKu6Z13eJLJVIoIXH2xFTo6oCD2tegrJ7qSxjkdS.VJ8ADUDWA01ZD_
+ wV6BL1L3TgfT1Vy3jjBWL5sEgaXe5OWtH7Z1VPZi3cPx4TB43EaguV0oB0U.6WSpMxeU8X7iWUQu
+ TOdahW.ncEJVjm8qPm7qVsGD_gfPeLXt4QtuYxHSrz2WaZ9.0.zGfAN9NfOoHfmWE1NMvmpl3wCu
+ MyhJwdSblgzJ6kO7w1hTXkW4QmddJmXXGb2MRwYGE3.S2F0Fn4M5SFOiy3SmdLThPEN4NUxz282H
+ kSlpT0QkRGyxeqNZhuzSO84NIkcAntZqEmc4lschJmPsRxTsu5Q4.1sMvcBSZlaTafVSPPNyzNXO
+ UvY3FCaAi_amK4dsh6yRwmfBqUTZGbcNKbIdfnqY90F_L9I_dLmqhtkin1RPwP6yr1LZWofzCeN5
+ C9brjJfN5tfVgb6nHheWxG5yUX48J_Hneikom5j7YerN8tzA1zr7YqNXpNYkBppJsFVzcufm8EEQ
+ vFQlX7XxcaJY1QuGO6xOIEN5Ih87gWjBOuRLI3MYD8WL8pAi1nyfiTbEn3iwHKeHII50xK2ULJcS
+ PtnE-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b0caf173-8b98-4db2-b24d-c9eb7b1886bb
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:39:57 +0000
-Received: by hermes--production-ne1-56df75844-8pvmk (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1586259eb8feadc3eca5524add296fcb;
-          Tue, 07 Nov 2023 17:39:55 +0000 (UTC)
-Message-ID: <2901d529-55c4-4d3b-91fc-157e0f949959@schaufler-ca.com>
-Date: Tue, 7 Nov 2023 09:39:54 -0800
+X-Sonic-ID: 36100724-68d1-43d8-aaef-ee4a0d50b017
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 7 Nov 2023 17:41:10 +0000
+Received: by hermes--production-ne1-56df75844-z786t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3f90fae0e94dc78d2d0da6a674e73798;
+          Tue, 07 Nov 2023 17:41:06 +0000 (UTC)
+Message-ID: <123f22bd-6ae4-4677-9f5c-477337009491@schaufler-ca.com>
+Date: Tue, 7 Nov 2023 09:41:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/23] security: Introduce file_pre_free_security hook
+Subject: Re: [PATCH v5 14/23] security: Introduce path_post_mknod hook
 Content-Language: en-US
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
  brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
@@ -86,9 +86,9 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
  Casey Schaufler <casey@schaufler-ca.com>
 References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
- <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
+ <20231107134012.682009-15-roberto.sassu@huaweicloud.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-15-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -97,13 +97,13 @@ On 11/7/2023 5:40 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
 > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the file_pre_free_security hook.
+> the path_post_mknod hook.
 >
-> IMA calculates at file close the new digest of the file content and writes
-> it to security.ima, so that appraisal at next file access succeeds.
+> IMA-appraisal requires all existing files in policy to have a file
+> hash/signature stored in security.ima. An exception is made for empty files
+> created by mknod, by tagging them as new files.
 >
-> LSMs could also take some action before the last reference of a file is
-> released.
+> LSMs could also take some action after files are created.
 >
 > The new hook cannot return an error and cannot cause the operation to be
 > reverted.
@@ -114,78 +114,87 @@ Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
 
 > ---
->  fs/file_table.c               |  1 +
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  4 ++++
->  security/security.c           | 11 +++++++++++
->  4 files changed, 17 insertions(+)
+>  fs/namei.c                    |  5 +++++
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  5 +++++
+>  security/security.c           | 14 ++++++++++++++
+>  4 files changed, 26 insertions(+)
 >
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index de4a2915bfd4..64ed74555e64 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -385,6 +385,7 @@ static void __fput(struct file *file)
->  	eventpoll_release(file);
->  	locks_remove_file(file);
->  
-> +	security_file_pre_free(file);
->  	ima_file_free(file);
->  	if (unlikely(file->f_flags & FASYNC)) {
->  		if (file->f_op->fasync)
+> diff --git a/fs/namei.c b/fs/namei.c
+> index fb93d3e13df6..b7f433720b1e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -4047,6 +4047,11 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  					  dentry, mode, 0);
+>  			break;
+>  	}
+> +
+> +	if (error)
+> +		goto out2;
+> +
+> +	security_path_post_mknod(idmap, dentry);
+>  out2:
+>  	done_path_create(&path, dentry);
+>  	if (retry_estale(error, lookup_flags)) {
 > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 4f6861fecacd..5d0a09ead7ac 100644
+> index 5d0a09ead7ac..e491951399f7 100644
 > --- a/include/linux/lsm_hook_defs.h
 > +++ b/include/linux/lsm_hook_defs.h
-> @@ -173,6 +173,7 @@ LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
->  	 struct kernfs_node *kn)
->  LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
->  LSM_HOOK(int, 0, file_alloc_security, struct file *file)
-> +LSM_HOOK(void, LSM_RET_VOID, file_pre_free_security, struct file *file)
->  LSM_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
->  LSM_HOOK(int, 0, file_ioctl, struct file *file, unsigned int cmd,
->  	 unsigned long arg)
+> @@ -94,6 +94,8 @@ LSM_HOOK(int, 0, path_mkdir, const struct path *dir, struct dentry *dentry,
+>  LSM_HOOK(int, 0, path_rmdir, const struct path *dir, struct dentry *dentry)
+>  LSM_HOOK(int, 0, path_mknod, const struct path *dir, struct dentry *dentry,
+>  	 umode_t mode, unsigned int dev)
+> +LSM_HOOK(void, LSM_RET_VOID, path_post_mknod, struct mnt_idmap *idmap,
+> +	 struct dentry *dentry)
+>  LSM_HOOK(int, 0, path_truncate, const struct path *path)
+>  LSM_HOOK(int, 0, path_symlink, const struct path *dir, struct dentry *dentry,
+>  	 const char *old_name)
 > diff --git a/include/linux/security.h b/include/linux/security.h
-> index c360458920b1..a570213693d9 100644
+> index a570213693d9..68cbdc84506e 100644
 > --- a/include/linux/security.h
 > +++ b/include/linux/security.h
-> @@ -395,6 +395,7 @@ int security_kernfs_init_security(struct kernfs_node *kn_dir,
->  				  struct kernfs_node *kn);
->  int security_file_permission(struct file *file, int mask);
->  int security_file_alloc(struct file *file);
-> +void security_file_pre_free(struct file *file);
->  void security_file_free(struct file *file);
->  int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->  int security_mmap_file(struct file *file, unsigned long prot,
-> @@ -1006,6 +1007,9 @@ static inline int security_file_alloc(struct file *file)
+> @@ -1884,6 +1884,7 @@ int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t m
+>  int security_path_rmdir(const struct path *dir, struct dentry *dentry);
+>  int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
+>  			unsigned int dev);
+> +void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry);
+>  int security_path_truncate(const struct path *path);
+>  int security_path_symlink(const struct path *dir, struct dentry *dentry,
+>  			  const char *old_name);
+> @@ -1918,6 +1919,10 @@ static inline int security_path_mknod(const struct path *dir, struct dentry *den
 >  	return 0;
 >  }
 >  
-> +static inline void security_file_pre_free(struct file *file)
+> +static inline void security_path_post_mknod(struct mnt_idmap *idmap,
+> +					    struct dentry *dentry)
 > +{ }
 > +
->  static inline void security_file_free(struct file *file)
->  { }
->  
+>  static inline int security_path_truncate(const struct path *path)
+>  {
+>  	return 0;
 > diff --git a/security/security.c b/security/security.c
-> index fe6a160afc35..331a3e5efb62 100644
+> index 331a3e5efb62..5eaf5f2aa5ea 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -2724,6 +2724,17 @@ int security_file_alloc(struct file *file)
->  	return rc;
+> @@ -1800,6 +1800,20 @@ int security_path_mknod(const struct path *dir, struct dentry *dentry,
 >  }
+>  EXPORT_SYMBOL(security_path_mknod);
 >  
 > +/**
-> + * security_file_pre_free() - Perform actions before releasing the file ref
-> + * @file: the file
+> + * security_path_post_mknod() - Update inode security field after file creation
+> + * @idmap: idmap of the mount
+> + * @dentry: new file
 > + *
-> + * Perform actions before releasing the last reference to a file.
+> + * Update inode security field after a file has been created.
 > + */
-> +void security_file_pre_free(struct file *file)
+> +void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
 > +{
-> +	call_void_hook(file_pre_free_security, file);
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
+> +	call_void_hook(path_post_mknod, idmap, dentry);
 > +}
 > +
 >  /**
->   * security_file_free() - Free a file's LSM blob
->   * @file: the file
+>   * security_path_mkdir() - Check if creating a new directory is allowed
+>   * @dir: parent directory
 
