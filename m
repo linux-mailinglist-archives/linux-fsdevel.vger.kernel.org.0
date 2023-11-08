@@ -1,127 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-2385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86387E5488
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 11:51:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2417E54B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 12:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91691C20AD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 10:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4021C209AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 11:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34E214F96;
-	Wed,  8 Nov 2023 10:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7025215AD2;
+	Wed,  8 Nov 2023 11:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4WumBKw"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="unFem2cK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DH1VEwWv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D668F14018
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 10:51:00 +0000 (UTC)
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1242D62;
-	Wed,  8 Nov 2023 02:51:00 -0800 (PST)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6bcbfecf314so2038932b3a.1;
-        Wed, 08 Nov 2023 02:51:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699440659; x=1700045459; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bt2bvDjEv0HiaQYd0c4TjFAx6Nfzvf1eIcmbOTXqPwE=;
-        b=L4WumBKwd3Xiu+qcVNTplL6kt4zI8x4RfMx43qlF5Pnft1F+7NpEE86Wav4Yl83jfc
-         ItzREtZ65wxcGBYYNIk5iNQ36b6MED0CZh/ygGaINwSO1rehfba2R7sKWagp7brHHKf5
-         rg79Ez7uqfQA/BHsOHsR4hGyRDfaEtJsnuRGBoKkKmzowPPbHhww848wcJ0wseG4d6wC
-         Xge3yMztth3N/2Vu6mQTE2vxfmDV5v8SpIwBhoGU3L5UP6q+ISmOCvipaAYj/P5ZZF8I
-         IgJ1o8eVW74HKrPEoMPptZ89cmk0oDxrIsg18s/Rg7vqdHfUAvhCKbc5roQe7bnKIbrs
-         SjiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699440659; x=1700045459;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bt2bvDjEv0HiaQYd0c4TjFAx6Nfzvf1eIcmbOTXqPwE=;
-        b=ZqCxks+tqC9rsvkZb33MCXEbRSluw64ul6Gsrx9UOUtDEO/FLZ76OBV9R547uWs7Ht
-         67bJLmEvW2BHq/EfgZfw/XTe+HVa6GDjIeGhousxd8tO7BazcrtkJFUPbprMzqua1tOE
-         BSlG4z4XMkHw3dRMaYJexKRFVYvOFC/Tk36gkMuIfW9hsV+1kqfOIWxMRFBhGOIXtCzL
-         KkRkHtOYzIJ3VDL1MX07jhuiu+uOd/Jo8lldcRLqG4jFWcwVHLwvgw+PXx3SwDVIEpf8
-         NAMiKa8TB+tyv0ME8qUKJxUbj4QLq4dH+xvHWgDqBC43DRD4uuejx3gETK7IunS0gvDo
-         8y6w==
-X-Gm-Message-State: AOJu0Yz0guWA7Hnnqa6wjaCCVmW09SCnVhBA7BdaX9x1NtdYQ+DfJVFx
-	6f+qupQCtpJtFlOzDvx2C9c=
-X-Google-Smtp-Source: AGHT+IELClSbAQz1V/0drxjg1UD4ziQ+8CYyLr/3Fhum171i0Mlj3ge6042agi3t4nhAvWOeigTzjQ==
-X-Received: by 2002:a05:6a20:4304:b0:16e:26fd:7c02 with SMTP id h4-20020a056a20430400b0016e26fd7c02mr1709920pzk.2.1699440659349;
-        Wed, 08 Nov 2023 02:50:59 -0800 (PST)
-Received: from [192.168.0.152] ([103.75.161.208])
-        by smtp.gmail.com with ESMTPSA id fn3-20020a056a002fc300b0068fe9c7b199sm8728468pfb.105.2023.11.08.02.50.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Nov 2023 02:50:58 -0800 (PST)
-Message-ID: <35c77f16-d01f-4dfd-96a7-2f6210e40e94@gmail.com>
-Date: Wed, 8 Nov 2023 16:20:48 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D67615487;
+	Wed,  8 Nov 2023 11:08:17 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0192186;
+	Wed,  8 Nov 2023 03:08:16 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 451F521961;
+	Wed,  8 Nov 2023 11:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1699441695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hZS+B8//QMaQSgI78OONfBo9LNrKqn5NiLMxYhvRm2s=;
+	b=unFem2cKKkZuf1IvjAC/XJZZ+tUoC+8pTslehcDgU01ButNW7Ge5T1UaHGEUq2gua1izBT
+	ybhS0WpczAGGBzsBL2lreIIKY841UoFEMxwHECrRVV4r2qw/GvYWLBe2fKaNnJZ3JL6GGA
+	JDBGG0p3EdqKkGDeTr5DQi4Uj+M/ghw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1699441695;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hZS+B8//QMaQSgI78OONfBo9LNrKqn5NiLMxYhvRm2s=;
+	b=DH1VEwWvUStngQr9pNfijtD6GPFZBUI9FCKqBQmpBUbmweHzeI8BZ9BHomqnkWtDd//sQg
+	+IDx9MmBoVhQnDCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 37E77138F2;
+	Wed,  8 Nov 2023 11:08:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id jrubDR9sS2VgBAAAMHmgww
+	(envelope-from <jack@suse.cz>); Wed, 08 Nov 2023 11:08:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C0250A07C0; Wed,  8 Nov 2023 12:08:14 +0100 (CET)
+Date: Wed, 8 Nov 2023 12:08:14 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Josef Bacik <josef@toxicpanda.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Qu Wenruo <quwenruo.btrfs@gmx.com>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
+Message-ID: <20231108110814.noepnvrxdjmab6qj@quack3>
+References: <20231102-schafsfell-denkzettel-08da41113e24@brauner>
+ <ZUUDmu8fTB0hyCQR@infradead.org>
+ <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
+ <ZUibZgoQa9eNRsk4@infradead.org>
+ <20231106-fragment-geweigert-1d80138523e5@brauner>
+ <ZUjcI1SE+a2t8n1v@infradead.org>
+ <20231106-unser-fiskus-9d1eba9fc64c@brauner>
+ <ZUker5S8sZXnsvOl@infradead.org>
+ <20231106224210.GA3812457@perftesting>
+ <ZUs+HuQWZvDDVC7a@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs : Fix warning using plain integer as NULL
-Content-Language: en-US
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, dan.j.williams@intel.com,
- willy@infradead.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org
-References: <20231108101518.e4nriftavrhw45xk@quack3>
- <20231108104730.1007713-1-singhabhinav9051571833@gmail.com>
-From: Abhinav Singh <singhabhinav9051571833@gmail.com>
-In-Reply-To: <20231108104730.1007713-1-singhabhinav9051571833@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZUs+HuQWZvDDVC7a@infradead.org>
 
-On 11/8/23 16:17, Abhinav Singh wrote:
-> Sparse static analysis tools generate a warning with this message
-> "Using plain integer as NULL pointer". In this case this warning is
-> being shown because we are trying to initialize  pointer to NULL using
-> integer value 0.
+On Tue 07-11-23 23:51:58, Christoph Hellwig wrote:
+> On Mon, Nov 06, 2023 at 05:42:10PM -0500, Josef Bacik wrote:
+> > Again, this is where I'm confused, because this doesn't change anything, we're
+> > still going to report st_dev as being different, which is what you hate.
 > 
-> Signed-off-by: Abhinav Singh <singhabhinav9051571833@gmail.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> ---
->   fs/dax.c       | 2 +-
->   fs/direct-io.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 3380b43cb6bb..423fc1607dfa 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1128,7 +1128,7 @@ static int dax_iomap_copy_around(loff_t pos, uint64_t length, size_t align_size,
->   	/* zero the edges if srcmap is a HOLE or IOMAP_UNWRITTEN */
->   	bool zero_edge = srcmap->flags & IOMAP_F_SHARED ||
->   			 srcmap->type == IOMAP_UNWRITTEN;
-> -	void *saddr = 0;
-> +	void *saddr = NULL;
->   	int ret = 0;
->   
->   	if (!zero_edge) {
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 20533266ade6..60456263a338 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1114,7 +1114,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
->   	loff_t offset = iocb->ki_pos;
->   	const loff_t end = offset + count;
->   	struct dio *dio;
-> -	struct dio_submit sdio = { 0, };
-> +	struct dio_submit sdio = { NULL, };
->   	struct buffer_head map_bh = { 0, };
->   	struct blk_plug plug;
->   	unsigned long align = offset | iov_iter_alignment(iter);
-Thanks a lot  maintainers for looking into this patch and accepting this 
-patch.
+> It's not something I hate.  It's that changing it without a mount point
+> has broken things and will probably still break things.
 
-BR
-Abhinav
+So let me maybe return to what has started this thread. For fanotify we
+return <fsid, fhandle> pair with events to identify object where something
+happened. The fact that fsid is not uniform for all inodes of a superblock
+on btrfs is what triggered this series because we are then faced with the
+problem that caching fsid per superblock for "superblock marks" (to save
+CPU overhead when generating events) can lead to somewhat confusing results
+on btrfs. Whether we have vfsmount in the places where inodes' st_dev /
+fsid change is irrelevant for this fanotify issue. As far as I'm following
+the discussion it seems the non-uniform fsids per superblock are going to
+stay with us on btrfs so fanotify code should better accommodate them? At
+least by making sure the behavior is somewhat consistent and documented...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
