@@ -1,116 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-2452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2477E6111
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 00:37:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4F87E6129
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 00:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD17D1C2096C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 23:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1B72281364
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 23:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E6F38DE6;
-	Wed,  8 Nov 2023 23:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YjDT3b3V"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BBB38DE9;
+	Wed,  8 Nov 2023 23:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1F9374EB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 23:37:26 +0000 (UTC)
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BDD25A3
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 15:37:26 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5af592fed43so3375277b3.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 15:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699486645; x=1700091445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oIcgmcP1EY6htEGo1pN6EVJRVE+qt/I8BKL1s/KEy5I=;
-        b=YjDT3b3VA5LXmyfE5qxo4b0/zfiVxJVJeLNa3NwEIBTpx2nyLw1ZikWDHAFae/eh6Q
-         qA89LqZRT7XLc837NgiEZ2ol0WfnDtajGMJD+X6zJbrA2rnbgrnLY78dxvgV2FmDLEzu
-         u0nDiLzZsEHgTo2orj6d0Iu2zO5Wqonjpzy7A+Ylle05gUwsz6OVMrk8s/6EMRriEvC0
-         uhW3GVwyXFcX4JO8e6PVeMUf0MJuwRCj1q1HcYeK1SWzAXE24wGtiTrq09bu1EqZAIzi
-         k8YlqHi7Ige+g1TkzI9GToUx2g2Li8gC2Dn31k+9P+8XMJpGwhlHJ2YHoNzMhHoTdJea
-         rT4Q==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543D8374EB
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 23:44:23 +0000 (UTC)
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F7042127
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 15:44:22 -0800 (PST)
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3b3eba1fc32so362013b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 15:44:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699486645; x=1700091445;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oIcgmcP1EY6htEGo1pN6EVJRVE+qt/I8BKL1s/KEy5I=;
-        b=PBm2A2qhjlP/sI948asZ000ycqJqc8jeouATlnlp0lZyV5WThax3pbF/zzk3JL2w0O
-         /mr2sXFCpmokJvPjwMJmlqdm/6BYGrH6g8T07yAzQBWrGi4wXzoCsIt/lbVL0MLRWF1M
-         FWf09xHbO9x285AUBb3R8GO5vMfzDnyEtQBlqPUu3AxE0aODjHuWG/xpl+n1GKzkPUnt
-         2ZE7L0qgbCDY7/aGM8MwDSkg+lgivaCdQQiXMnVLEWBQwQtppBi/2BYc82GED70AJ0Sn
-         BbaB0Nxvx2ebgRu3dC/t+/L+aqGyn82tOZx3gF0knAibyMmsCHFK1Te51jUybulHhNyV
-         inVA==
-X-Gm-Message-State: AOJu0Yy3GP83BnZRsTFkMGg1hd/5ltPJqZucTaIaV+W19bDA6D/x+ndR
-	gMRicJ2Tas1FzwTac93xEGK9pXqgSwXvbQ==
-X-Google-Smtp-Source: AGHT+IEQyf2yih5ALlCfgSEkVLSLt0Zq5IBGBmP/Cna+y8K3zSa/6bcCrG6olPCsXpdGmctjh3MSlNk2LvNOvw==
-X-Received: from laogai.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:2c9])
- (user=amoorthy job=sendgmr) by 2002:a05:6902:102:b0:da3:723b:b2a4 with SMTP
- id o2-20020a056902010200b00da3723bb2a4mr72222ybh.7.1699486645232; Wed, 08 Nov
- 2023 15:37:25 -0800 (PST)
-Date: Wed,  8 Nov 2023 23:37:19 +0000
-In-Reply-To: <CAF7b7mrGYuyjyEPAesYzZ6+KDuNAmvRxEonT7JC8NDPsSP+qDA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1699487062; x=1700091862;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=omOPkzFOgHujhTqR136cEFG8vnTdihPbkd8WFXv4dFg=;
+        b=RZHjQJoo6C/2No2ZUrOCHKUoh6YGgUmJpJhMvtPTPFAw6vbW59gfk+VHp0L2KnCubR
+         6yfxQY/kUiq61Jqk0e3lTwHjqV6kUAO1drrivrCLMRZGYHH1LgiFmQletwFQDUkbkYcN
+         kZ0pcWTPWEAE29BYODPU2qZgGdq+CL5829hdhBNZPY9AysF/oUjvBCxWl5BJ8yHox5U/
+         r2vs8770hFZ1Uu+W61hRoTlW9jyfnKOW3DFirRrJjd126ZPtXZBQjPUDh6sDLa3FLmFM
+         RWwq3oP1b1WiWeBE8wkgCiXUjHlV4ZkjtbGsf3SuEt+3kFnDe3HZPXKx/pNupKyebz3n
+         OFNA==
+X-Gm-Message-State: AOJu0YzM5nhRgMbJval/Fs1T12eI77aAUlwQxetPA7s1mCrWgJnjchj0
+	p+qZlrL+ffvOft/dSGaKu1/cCUGGnZV+UXUuLKthgtKCyAOd
+X-Google-Smtp-Source: AGHT+IH8aLmqQLsGNTdroA2ZGENBSlGH3Kfq7L6wzTA2W0YLF3ESChu2j6nowvN6/kmPNHZrupMI9zOhidOYKsqo5KfV8j2kLNYH
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAF7b7mrGYuyjyEPAesYzZ6+KDuNAmvRxEonT7JC8NDPsSP+qDA@mail.gmail.com>
-X-Mailer: git-send-email 2.42.0.869.gea05f2083d-goog
-Message-ID: <20231108233723.3380042-1-amoorthy@google.com>
-Subject: Re: [PATCH 27/34] KVM: selftests: Introduce VM "shape" to allow tests
- to specify the VM type
-From: Anish Moorthy <amoorthy@google.com>
-To: amoorthy@google.com
-Cc: ackerleytng@google.com, akpm@linux-foundation.org, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, brauner@kernel.org, chao.p.peng@linux.intel.com, 
-	chenhuacai@kernel.org, david@redhat.com, dmatlack@google.com, 
-	isaku.yamahata@gmail.com, isaku.yamahata@intel.com, jarkko@kernel.org, 
-	kirill.shutemov@linux.intel.com, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev, liam.merwick@oracle.com, 
-	linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net, 
-	michael.roth@amd.com, mpe@ellerman.id.au, oliver.upton@linux.dev, 
-	palmer@dabbelt.com, paul.walmsley@sifive.com, pbonzini@redhat.com, 
-	qperret@google.com, seanjc@google.com, tabba@google.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	wei.w.wang@intel.com, willy@infradead.org, xiaoyao.li@intel.com, 
-	yilun.xu@intel.com, yu.c.zhang@linux.intel.com
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:1799:b0:3b2:e45a:7475 with SMTP id
+ bg25-20020a056808179900b003b2e45a7475mr10745oib.11.1699487061898; Wed, 08 Nov
+ 2023 15:44:21 -0800 (PST)
+Date: Wed, 08 Nov 2023 15:44:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009ffc470609acaa3a@google.com>
+Subject: [syzbot] Monthly ext4 report (Nov 2023)
+From: syzbot <syzbot+list07d69efc5e1d32eac754@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 8, 2023 at 9:00=E2=80=AFAM Anish Moorthy <amoorthy@google.com> =
-wrote:
->
-> This commit breaks the arm64 selftests build btw: looks like a simple ove=
-rsight?
+Hello ext4 maintainers/developers,
 
-Yup, fix is a one-liner. Posted below.
+This is a 31-day syzbot report for the ext4 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/ext4
 
-diff --git a/tools/testing/selftests/kvm/aarch64/page_fault_test.c b/tools/=
-testing/selftests/kvm/aarch64/page_fault_test.c
-index eb4217b7c768..08a5ca5bed56 100644
---- a/tools/testing/selftests/kvm/aarch64/page_fault_test.c
-+++ b/tools/testing/selftests/kvm/aarch64/page_fault_test.c
-@@ -705,7 +705,7 @@ static void run_test(enum vm_guest_mode mode, void *arg=
-)
-=20
- 	print_test_banner(mode, p);
-=20
--	vm =3D ____vm_create(mode);
-+	vm =3D ____vm_create(VM_SHAPE(mode));
- 	setup_memslots(vm, p);
- 	kvm_vm_elf_load(vm, program_invocation_name);
- 	setup_ucall(vm);
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 41 issues are still open and 118 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  51606   Yes   possible deadlock in console_flush_all (2)
+                   https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
+<2>  10182   Yes   KASAN: slab-out-of-bounds Read in generic_perform_write
+                   https://syzkaller.appspot.com/bug?extid=4a2376bc62e59406c414
+<3>  5928    Yes   WARNING: locking bug in ext4_move_extents
+                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
+<4>  470     Yes   WARNING: locking bug in __ext4_ioctl
+                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
+<5>  207     Yes   WARNING: locking bug in ext4_ioctl
+                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
+<6>  150     No    possible deadlock in evict (3)
+                   https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
+<7>  101     Yes   INFO: task hung in sync_inodes_sb (5)
+                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
+<8>  30      Yes   kernel BUG in ext4_write_inline_data_end
+                   https://syzkaller.appspot.com/bug?extid=198e7455f3a4f38b838a
+<9>  16      No    possible deadlock in start_this_handle (4)
+                   https://syzkaller.appspot.com/bug?extid=cf0b4280f19be4031cf2
+<10> 13      Yes   INFO: rcu detected stall in sys_unlink (3)
+                   https://syzkaller.appspot.com/bug?extid=c4f62ba28cc1290de764
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
