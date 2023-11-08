@@ -1,212 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-2355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB1E7E502F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 06:52:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD88C7E5041
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 07:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9798EB20EC1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 05:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB721C2097F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 06:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82097CA64;
-	Wed,  8 Nov 2023 05:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50973D264;
+	Wed,  8 Nov 2023 06:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KVZmAehO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sh3z8lvo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198AECA4C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 05:52:33 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B7D1709
-	for <linux-fsdevel@vger.kernel.org>; Tue,  7 Nov 2023 21:52:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699422752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rBGE/0VZmoYE6T5NyEpzvQcz4+dbke+4O0trONkaIwA=;
-	b=KVZmAehOykQY8sw6BKOOiTQSWKRTGhyXLj8apeYzmMO9XBrm24DK0lWwm/RhZ6G34hRKwD
-	VfJyyp7B5plAFO++Upb7ZotCkFYd5xJDJb9Xg1ve717BJQzI1j3IDe+ZAcArjA70fKVqLD
-	dTpgc9+BbrCzYVifCs1NMjzxLClUi2I=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-takU3GaRO862Zgt7C7mPaQ-1; Wed, 08 Nov 2023 00:52:31 -0500
-X-MC-Unique: takU3GaRO862Zgt7C7mPaQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1cc1ddb34ccso44525835ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Nov 2023 21:52:31 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC56CA67;
+	Wed,  8 Nov 2023 06:15:23 +0000 (UTC)
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97ACA10FE;
+	Tue,  7 Nov 2023 22:15:22 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-da0cfcb9f40so6880289276.2;
+        Tue, 07 Nov 2023 22:15:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699424122; x=1700028922; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NzB+EF22puVq+VRM0bcttHwDOL8IYQtCvuuzMeeaFA8=;
+        b=Sh3z8lvo1/deYpsNDC6Uqdt82nLPDKgjeL6UL3HlzIw8nYAQcj10oRCgSnk0sLrgqj
+         /xb74fwmD2Tb+WkZpTCDtMKPcsjyUGFLKs/q4T2jPFhzVb7BTXrT5XPVF0YrslmKhg7V
+         aK7jw1FBl7ZrTkeD9t2Dcin/LO6C9Cu+PzEMKUOB4kn4UAgd/sZTY281CzJ81mdBU0kT
+         jt+rOIiRuYawoeMxYJwPxOGmRpbzqIXrA+4hMEwzk8LBn6lgGf9Yfo14CxkwqHD0WSCf
+         GI2meFwJmC8uGDFnWoIRpIwBcMB2Ld6cNuuXeVjwiL95NXW+KsQjRyIO4Qk1zFPZuSQS
+         1gmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699422750; x=1700027550;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rBGE/0VZmoYE6T5NyEpzvQcz4+dbke+4O0trONkaIwA=;
-        b=scaHtkHI/rVU+rPYBRJKnUPtz53FhSD2CKSYlXgphX31NOCEcuVrmLfORmDMimEsPK
-         SmOHa22QeQT70ekb3gPxoMPfDUf6E6yzHqOvKMOHrN6oAzI8TSKGQxsA5+a/FrL2GtCm
-         jZqhM/N9M4mDkxTy8v3CSMlFlriANXSsfbxhnsQEc4PlPdGAOa0kDmQYXd1iM6nukrZ8
-         VDoCf6k6c+0hA2rhXGVgdIoJwaLZkPGNk/51DNGX6eB/ewRiLCw5Y8t+X9HKSV/enaIe
-         lb2ixuVMNzPX+i3ZeQO/Kiu8Z38ZTurhoI4EFmHn/+S3Hk3CkpI9x3XhdhFoMEY8tPWc
-         8B5A==
-X-Gm-Message-State: AOJu0Ywfo1gN3BS29pSG7qS3Hvh8ck3Ms2/uEouMmWCtZRTt4RGqmhM5
-	Ge8j63EjgortP9BtD2YSLPHrwsT0e7hAHDQB9ZK3ZV9Y5nhe3IFO/NqMUaF/pjQ3XXO5Fkm0XMO
-	C9brMnCFoi6w22FLQSxqQ4dBD7w==
-X-Received: by 2002:a17:903:186:b0:1cc:50ea:d5c5 with SMTP id z6-20020a170903018600b001cc50ead5c5mr1435877plg.24.1699422750142;
-        Tue, 07 Nov 2023 21:52:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEc5SciGddidkcawGVGQdyT7Gvy9ULncspDMuJ+MoqviGGad2QQpyyE0huCHg02paax74UBUA==
-X-Received: by 2002:a17:903:186:b0:1cc:50ea:d5c5 with SMTP id z6-20020a170903018600b001cc50ead5c5mr1435871plg.24.1699422749847;
-        Tue, 07 Nov 2023 21:52:29 -0800 (PST)
-Received: from localhost ([240d:1a:c0d:9f00:f0fd:a9ac:beeb:ad24])
-        by smtp.gmail.com with ESMTPSA id g10-20020a170902934a00b001b0358848b0sm807931plp.161.2023.11.07.21.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Nov 2023 21:52:29 -0800 (PST)
-Date: Wed, 08 Nov 2023 14:52:26 +0900 (JST)
-Message-Id: <20231108.145226.326983157567394476.syoshida@redhat.com>
-To: sj1557.seo@samsung.com
-Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exfat: Fix uninit-value access in __exfat_write_inode()
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <9e8201da11fc$f9b461b0$ed1d2510$@samsung.com>
-References: <CGME20231107143021epcas1p304b8b94862a8f28d264714f06a624674@epcas1p3.samsung.com>
-	<20231107143002.1342295-1-syoshida@redhat.com>
-	<9e8201da11fc$f9b461b0$ed1d2510$@samsung.com>
-X-Mailer: Mew version 6.9 on Emacs 28.3
+        d=1e100.net; s=20230601; t=1699424122; x=1700028922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NzB+EF22puVq+VRM0bcttHwDOL8IYQtCvuuzMeeaFA8=;
+        b=tkuVYjVFojWyC2QR0ZxpuwcRF2SJAMC+5y/kfDNYVyUXi5plD6jwY8piFx+nxg3ewL
+         T6jZmAe51bidAk6OPbeosYcsJqaWv5Jsj4qxWhC5yijAUuuCRwkH174jSf42pKA3jHJm
+         +khKOIH7jIAiqt98xuFCZYDrsSaBjoZmxivN0N+dv5XQLNvZVR7LYg5aVnAKV/59twn5
+         mLK8f82bKYbkdmf4PsGCyMTuHZ5L4hiT3Y57zKX9V5e98kk3HSLt832H1BxmG72fZrYl
+         v9mwtj/hhjlEmxyZ0aDzAFmZinHY04KFwYkdF9GWVT7E1jdWJchYxt1dv1eC3vzyuN0j
+         dirw==
+X-Gm-Message-State: AOJu0YwBNCY0xYuaCYDEvZFQTZIt+34VaMK2dmis2jkZjDlZZ9Cc0G+W
+	pby+mSZ7dSAj13m7mqYjM4b67TCDxxyn1atXZwI=
+X-Google-Smtp-Source: AGHT+IG6zOLQE9YTxU3Y1EjQsWo3CJh+0NkXAYgY8LPbJpCUQj29+6DuD96fGKDEt6a526Khm0spk6/LmXcjYG13XPc=
+X-Received: by 2002:a25:cbcd:0:b0:d9a:4a5f:415d with SMTP id
+ b196-20020a25cbcd000000b00d9a4a5f415dmr1219985ybg.0.1699424121731; Tue, 07
+ Nov 2023 22:15:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <OjZkAoZLnJc9yA0MENJhQx_32ptXZ1cLAFjEnEFog05C4pEmaAUHaA6wBvCFXWtaXbrNN5upFFi3ohQ6neLklIXZBURaYLlQYf3-2gscw_s=@proton.me>
+ <ZTHPOfy4dhj0x5ch@boqun-archlinux> <vT8j_VVzNv0Cx7iTO9OobT9H8zEc_I-dxmh2sF6GZWqRQ0nhjnaNZqtWPtYm37wOhwGek2vLUYwAM-jJ83AZEe8TXMDx9N6pZ3mZW1WdNNw=@proton.me>
+ <ZTP06kdjBQzZ3KYD@Boquns-Mac-mini.home> <ZTQDztmY0ivPcGO/@casper.infradead.org>
+ <ZTQnpeFcPwMoEcgO@Boquns-Mac-mini.home> <ZTYE0PSDwITrWMHv@dread.disaster.area>
+ <CANeycqq49Ubj-3BKcUaMOKeEwFastZzC17z_uk_VE3RDDv2wfw@mail.gmail.com>
+ <ZT8VG0MTKNNpGDOC@dread.disaster.area> <CANeycqpwFs3Sfz86ngG-ysQuP1-MzVdkMNZPFXWUgvBrphdiAQ@mail.gmail.com>
+ <ZUsUcU/s56zogyac@dread.disaster.area>
+In-Reply-To: <ZUsUcU/s56zogyac@dread.disaster.area>
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Date: Wed, 8 Nov 2023 03:15:10 -0300
+Message-ID: <CANeycqquMa6POSafEqSdAXUbnMiEsqYxOXp9Opc+4e1X8Dru_A@mail.gmail.com>
+Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
+To: Dave Chinner <david@fromorbit.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Benno Lossin <benno.lossin@proton.me>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>, 
+	Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 8 Nov 2023 13:35:17 +0900, Sungjong Seo wrote:
-> Hello,
-> 
-> A similar fix has already been queued in the dev branch.
-> Please refer to below commit.
-> 
-> Commit fc12a722e6b7 ("exfat: fix setting uninitialized time to
-> ctime/atime"):
-> https://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git/commit/
-> ?h=dev&id=fc12a722e6b799d1d3c1520dc9ba9aab4fda04bf
+On Wed, 8 Nov 2023 at 01:54, Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Tue, Oct 31, 2023 at 05:49:19PM -0300, Wedson Almeida Filho wrote:
+> > On Sun, 29 Oct 2023 at 23:29, Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Mon, Oct 23, 2023 at 09:55:08AM -0300, Wedson Almeida Filho wrote:
+> > > > On Mon, 23 Oct 2023 at 02:29, Dave Chinner <david@fromorbit.com> wrote:
+>
+> > If you do, then you'd have to agree that we are in undefined-behaviour
+> > territory. I can quote the spec if you'd like.
+>
+> /me shrugs
+>
+> I can point you at lots of code that it will break if bit operations
+> are allowed to randomly change other bits in the word transiently.
 
-Hi,
+Sure, in C you have chosen to rely on behaviour that the language spec
+says is undefined.
 
-I've not noticed the commit you mentioned. Thank you so much for your
-feedback!
+In Rust, we're trying avoid it. When it's unavoidable, we're trying to
+clearly mark it so that we can try to fix it later.
+
+> All the rust code that calls iget_locked() needs to do to "be safe"
+> is the rust equivalent of:
+>
+>         spin_lock(&inode->i_lock);
+>         if (!(inode->i_state & I_NEW)) {
+>                 spin_unlock(&inode->i_lock);
+>                 return inode;
+>         }
+>         spin_unlock(&inode->i_lock);
+>
+> IOWs, we solve the "safety" concern by ensuring that Rust filesystem
+> implementations follow the general rule of "always hold the i_lock
+> when accessing inode->i_state" I originally outlined, yes?
+
+Ah, the name of the functions iget_locked() and unlock_new_inode()
+threw me off, I thought I wouldn't be able to lock inode->i_lock.
+
+Ok, I will do this for now, I think it's better than relying on
+undefined behaviour. Thanks!
+
+Actually, looking at the implementation of iget_locked(), there's a
+single place where it returns a new inode. Wouldn't it be better to
+just return this piece of information (whether the inode is new or
+not) to the caller? Then we would eliminate the data races in C and
+the need to lock in Rust, and we would also eliminate a memory load
+from inode->i_state in all callers.
+
+> > But we want the be very deliberate about these. We don't want to
+> > accidentally introduce data races (and therefore potential undefined
+> > behaviour).
+>
+> The stop looking at the C code and all the exceptions we make for
+> special case optimisations and just code to the generic rules for
+> safe access to given fields. Yes, rust will then have to give up the
+> optimisations we make in the C code, but there's always a price for
+> safety...
+
+I'm not trying to do clever optimisations at all. I'm trying to figure
+out how to do things by looking at imperfect documentation in
+filesystems/porting.rst (which, BTW, checks I_NEW without a lock) and
+the functions I call. So I look at what existing filesystems do to
+learn the hopefully most up to date way of doing things. If you have a
+recommendation on how to do this more efficiently, I'm all ears!
 
 Thanks,
-Shigeru
-
-> Thanks.
-> 
-> B.R.
-> Sungjong Seo
-> 
->> KMSAN reported the following uninit-value access issue:
->> 
->> =====================================================
->> BUG: KMSAN: uninit-value in exfat_set_entry_time+0x309/0x360
->> fs/exfat/misc.c:99
->>  exfat_set_entry_time+0x309/0x360 fs/exfat/misc.c:99
->>  __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
->>  __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
->>  exfat_truncate+0x121/0x540 fs/exfat/file.c:211
->>  exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
->>  notify_change+0x1934/0x1a30 fs/attr.c:499
->>  do_truncate+0x224/0x2a0 fs/open.c:66
->>  handle_truncate fs/namei.c:3280 [inline]  do_open fs/namei.c:3626
-> [inline]
->>  path_openat+0x56c6/0x5f20 fs/namei.c:3779
->>  do_filp_open+0x21c/0x5a0 fs/namei.c:3809
->>  do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440  do_sys_open fs/open.c:1455
->> [inline]  __do_sys_creat fs/open.c:1531 [inline]  __se_sys_creat
->> fs/open.c:1525 [inline]
->>  __x64_sys_creat+0xe3/0x140 fs/open.c:1525
->>  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->>  do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
->> entry_SYSCALL_64_after_hwframe+0x63/0x6b
->> 
->> Uninit was stored to memory at:
->>  exfat_set_entry_time+0x302/0x360 fs/exfat/misc.c:99
->>  __exfat_write_inode+0x7ae/0xdb0 fs/exfat/inode.c:59
->>  __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
->>  exfat_truncate+0x121/0x540 fs/exfat/file.c:211
->>  exfat_setattr+0x116c/0x1a40 fs/exfat/file.c:312
->>  notify_change+0x1934/0x1a30 fs/attr.c:499
->>  do_truncate+0x224/0x2a0 fs/open.c:66
->>  handle_truncate fs/namei.c:3280 [inline]  do_open fs/namei.c:3626
-> [inline]
->>  path_openat+0x56c6/0x5f20 fs/namei.c:3779
->>  do_filp_open+0x21c/0x5a0 fs/namei.c:3809
->>  do_sys_openat2+0x1ba/0x2f0 fs/open.c:1440  do_sys_open fs/open.c:1455
->> [inline]  __do_sys_creat fs/open.c:1531 [inline]  __se_sys_creat
->> fs/open.c:1525 [inline]
->>  __x64_sys_creat+0xe3/0x140 fs/open.c:1525
->>  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->>  do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
->> entry_SYSCALL_64_after_hwframe+0x63/0x6b
->> 
->> Local variable ts created at:
->>  __exfat_write_inode+0x102/0xdb0 fs/exfat/inode.c:29
->>  __exfat_truncate+0x70e/0xb20 fs/exfat/file.c:163
->> 
->> CPU: 0 PID: 13839 Comm: syz-executor.7 Not tainted 6.6.0-14500-
->> g1c41041124bd #10 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
->> BIOS 1.16.2-1.fc38 04/01/2014
->> =====================================================
->> 
->> Commit 4c72a36edd54 ("exfat: convert to new timestamp accessors") changed
->> __exfat_write_inode() to use new timestamp accessor functions.
->> 
->> As for mtime, inode_set_mtime_to_ts() is called after
->> exfat_set_entry_time(). This causes the above issue because `ts` is not
->> initialized when exfat_set_entry_time() is called. The same issue can
->> occur for atime.
->> 
->> This patch resolves this issue by calling inode_get_mtime() and
->> inode_get_atime() before exfat_set_entry_time() to initialize `ts`.
->> 
->> Fixes: 4c72a36edd54 ("exfat: convert to new timestamp accessors")
->> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
->> ---
->>  fs/exfat/inode.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c index
->> 875234179d1f..e7ff58b8e68c 100644
->> --- a/fs/exfat/inode.c
->> +++ b/fs/exfat/inode.c
->> @@ -56,18 +56,18 @@ int __exfat_write_inode(struct inode *inode, int sync)
->>  			&ep->dentry.file.create_time,
->>  			&ep->dentry.file.create_date,
->>  			&ep->dentry.file.create_time_cs);
->> +	ts = inode_get_mtime(inode);
->>  	exfat_set_entry_time(sbi, &ts,
->>  			     &ep->dentry.file.modify_tz,
->>  			     &ep->dentry.file.modify_time,
->>  			     &ep->dentry.file.modify_date,
->>  			     &ep->dentry.file.modify_time_cs);
->> -	inode_set_mtime_to_ts(inode, ts);
->> +	ts = inode_get_atime(inode);
->>  	exfat_set_entry_time(sbi, &ts,
->>  			     &ep->dentry.file.access_tz,
->>  			     &ep->dentry.file.access_time,
->>  			     &ep->dentry.file.access_date,
->>  			     NULL);
->> -	inode_set_atime_to_ts(inode, ts);
->> 
->>  	/* File size should be zero if there is no cluster allocated */
->>  	on_disk_size = i_size_read(inode);
->> --
->> 2.41.0
-> 
-> 
-
+-Wedson
 
