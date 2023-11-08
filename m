@@ -1,163 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-2335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2B17E4DB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 01:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F807E4DF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 01:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2F8281446
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 00:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330E32814AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 00:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CF6361;
-	Wed,  8 Nov 2023 00:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627A47EE;
+	Wed,  8 Nov 2023 00:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwo8FdzT"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="na/RxMh9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R+qEu2QP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AE5182
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 00:03:34 +0000 (UTC)
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7425310E4;
-	Tue,  7 Nov 2023 16:03:34 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6ce2eaf7c2bso4035424a34.0;
-        Tue, 07 Nov 2023 16:03:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699401814; x=1700006614; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5LBcj9Ai/IS8fLRfhiYfHqRvqJUefGN2W7PjES7Bxo=;
-        b=hwo8FdzT4fVOd03VAgREecm9Kux3V4U6P1wcjfbjTjhumNpd4Cx6d8ZheUiFYnSUbd
-         PgAMEuZrigCyvS+3Hgn26UDNS/pzbE6PPNzytqqBqemNQMCErcTPhZ/bLZB8bGIuqsfk
-         yk2XqUc4cDkuw94/9t2+ordrNsPIkXZ0LECMAXX0hdSarKh+Vm08zh8xAGG9UwthTJ0Z
-         IgVPoPzqQeDc60hzKRkIeLQgrcPcXMOPZfIJB0QuZRwVuRLmE/dLwNKtHTXYgWP10OC5
-         kq4+mmJrefqhPE1ZzQ0yJ8z36KinOgmwM6A81fN7wmonDH8mA/kB590UGUZhEBlkxUJe
-         7gUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699401814; x=1700006614;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w5LBcj9Ai/IS8fLRfhiYfHqRvqJUefGN2W7PjES7Bxo=;
-        b=IWpTHGj66Ic23F15hIuhcuLB1lStAq5DKkvFcImgoEe6h06cIMfRJL9auJDZDsB7dt
-         lUXxtJsvoUYTtvk5n2prOEJw4VULG4xBWmdeRH8GoCm5vYGTg9TWsxAeIWk7QaQES3n6
-         9zTplNHZKzh2LFnoBe7bWTr6+0UmdzXwHrCYg0+0ZdN/b1X6JEXXm7cNqZMYXhMLIHmV
-         r8+C0hW40cTl5mhOJPFbuDzjHfoNlWRbJO0Hh9+S8R7+jwDJE8rJamxMIISoXuq5huez
-         hK8VKAqV67/oWbET7+tOhef5HO5V4jDxiRcEq1jk6KobwjYQIwMjcJNTmNEudn+bXpS3
-         /mVA==
-X-Gm-Message-State: AOJu0YxhOGnamhrAAccQIqKrZwP48Gi709pYrhpMXJ07tm0A+tl9Wjjl
-	qE8q7Y9mztAurIzOIGEe3PQEX8U2d2Gcn4Nq9mQAqyRW
-X-Google-Smtp-Source: AGHT+IEqZhTaX29JcgF6ONXkh2J4MIBuyEqTF1/MoCB/3c+YA7OhLsdvXIckAeQ2wusUzs9RSqXWYxO0oNDet6dw0CE=
-X-Received: by 2002:a05:6830:2b25:b0:6d3:1212:15ab with SMTP id
- l37-20020a0568302b2500b006d3121215abmr396732otv.20.1699401813768; Tue, 07 Nov
- 2023 16:03:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEDA62A;
+	Wed,  8 Nov 2023 00:27:56 +0000 (UTC)
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC5DC10F8;
+	Tue,  7 Nov 2023 16:27:55 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailout.nyi.internal (Postfix) with ESMTP id 7095D5C02D1;
+	Tue,  7 Nov 2023 19:27:53 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 07 Nov 2023 19:27:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:sender:subject
+	:subject:to:to; s=fm2; t=1699403273; x=1699489673; bh=9DHSCSCCw+
+	fHIPee2ZQydX5YSNzCAEa1Ayi+g3+7mA0=; b=na/RxMh9cs+5YmDaRxIIsN6Zee
+	vE/RBFFMOQ25VL2lg0tuQAJSeYRb7ZkBQH0GdCPTdSgb7P44Iay8X2nqpn2syK7o
+	kWppXYVWAleRzL9v97be/LHpCzF7HTOZuscH8hmt8OL2t7yt7PD18dGdwCPMFnf+
+	9qeAcbLYOy2f3gQhZbjMhMmmtfhiZMRB7gDbkg6kY6skogsAWOnfUuq6fG/JEJWg
+	9e0X/S93PQxK9w7xKBpfIutf/e+pmJp2DsYrNzDHKjwa6qgofBCgKYYmMJDxAzvx
+	vA53V5b9/9oXn79z6JFMofwWGmuXXn45jDZMSGGF9TLrhv+e27zqCwLkWyWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1699403273; x=1699489673; bh=9DHSCSCCw+fHI
+	Pee2ZQydX5YSNzCAEa1Ayi+g3+7mA0=; b=R+qEu2QPqnlP0rYvB00UuPlVqodaQ
+	mVC22ycsNE8dwrK93pZmWdB7KywXpcQduVrWoB3prCxotGgjvuSVLzrhAP1EhOn1
+	nWTOa5ACs63DutrSyvt59nCsbIiyOTkqq9GNV9qpEshWuPammBt1pDf3ZkGolRL4
+	BgsUREPgNHq9IqSYKDApUNzNRpgHj7lUQXsGeWD12G1zj7CRP40F32GU9rcY374Q
+	U/9NVz+iDS7hg1XzOlrS+WrvNl9CK6fSyX1oEEYfBVKTeMch9JVmI+el4yyAn6KA
+	vWirCWkzwf0VpQn/9iybRBSsrCzYlYS9jV/Nb8UF8AvgnqsD0yX2IUdNw==
+X-ME-Sender: <xms:CNZKZVIXVJvbSQB_7lUxZiiMJAdBOdPW7lhQtl7dTFb31l7S8wfEZQ>
+    <xme:CNZKZRK2T5MLQB35e49AGv5v1dcBYn3EYO95DQKL-vP-xTPlkjr7oVDwgHDfN1mOJ
+    gYGev8vCHW-wwikDFU>
+X-ME-Received: <xmr:CNZKZdsJfcLNj7UpvCD_wvAQjh9CxQvBOWd4fjvg2LF7NbVvPcwvjxdJ2NXhq-vD8y3wHQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddukedgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfihtghhohcu
+    tehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrfgrth
+    htvghrnhephfehleehfeejtdehteejgeefueehtdeufedvhefghefggfeigfegleelvdeh
+    gfejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihiiiigr
+X-ME-Proxy: <xmx:CNZKZWZg32p4RoeZyUhfjluRFKLfZ5WOOXz7FCJmCTmGNszP2iHzng>
+    <xmx:CNZKZcZzA8B-g23Wd_zr-8t5elPKcttGvLaZB1qaYS2FjyiJf0AVgw>
+    <xmx:CNZKZaDL6sp7zF1YWMdvurFuZi58uHyC0je3YaQU95X2jDONyFEpZg>
+    <xmx:CdZKZc7oOjn-ZTjDy3dgyvl8lwa9hadL5RnSnT_pO_XQcWbjIY7IOQ>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Nov 2023 19:27:51 -0500 (EST)
+From: Tycho Andersen <tycho@tycho.pizza>
+To: cgroups@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Haitao Huang <haitao.huang@linux.intel.com>,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Tycho Andersen <tycho@tycho.pizza>
+Subject: [RFC 0/6] tracking fd counts per cgroup
+Date: Tue,  7 Nov 2023 17:26:41 -0700
+Message-Id: <20231108002647.73784-1-tycho@tycho.pizza>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a8a:158f:0:b0:4f0:1250:dd51 with HTTP; Tue, 7 Nov 2023
- 16:03:33 -0800 (PST)
-In-Reply-To: <A7FFA44F-F7DD-477F-83A6-44AF71D6775E@kernel.org>
-References: <5c7333ea4bec2fad1b47a8fa2db7c31e4ffc4f14.1663334978.git.josh@joshtriplett.org>
- <202311071228.27D22C00@keescook> <20231107205151.qkwlw7aarjvkyrqs@f>
- <CAGudoHFsqMPmVvaV7BebGkpkw=pSQY8PLdB-1S3W5NpYh6trmA@mail.gmail.com>
- <202311071445.53E5D72C@keescook> <CAGudoHF5mYFWtzrv539W8Uc1aO_u6+UJOoDqWY0pePc+cofziw@mail.gmail.com>
- <A7FFA44F-F7DD-477F-83A6-44AF71D6775E@kernel.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 8 Nov 2023 01:03:33 +0100
-Message-ID: <CAGudoHESNDTAAOGB3riYjU3tgHTXVLRdB7tknfVBem38yqkJEA@mail.gmail.com>
-Subject: Re: [PATCH] fs/exec.c: Add fast path for ENOENT on PATH search before
- allocating mm
-To: Kees Cook <kees@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On 11/8/23, Kees Cook <kees@kernel.org> wrote:
->
->
-> On November 7, 2023 3:08:47 PM PST, Mateusz Guzik <mjguzik@gmail.com>
-> wrote:
->>On 11/7/23, Kees Cook <keescook@chromium.org> wrote:
->>> On Tue, Nov 07, 2023 at 10:23:16PM +0100, Mateusz Guzik wrote:
->>>> If the patch which dodges second lookup still somehow appears slower a
->>>> flamegraph or other profile would be nice. I can volunteer to take a
->>>> look at what's going on provided above measurements will be done and
->>>> show funkyness.
->>>
->>> When I looked at this last, it seemed like all the work done in
->>> do_filp_open() (my patch, which moved the lookup earlier) was heavier
->>> than the duplicate filename_lookup().
->>>
->>> What I didn't test was moving the sched_exec() before the mm creation,
->>> which Peter confirmed shouldn't be a problem, but I think that might be
->>> only a tiny benefit, if at all.
->>>
->>> If you can do some comparisons, that would be great; it always takes me
->>> a fair bit of time to get set up for flame graph generation, etc. :)
->>>
->>
->>So I spawned *one* process executing one statocally linked binary in a
->>loop, test case from http://apollo.backplane.com/DFlyMisc/doexec.c .
->>
->>The profile is definitely not what I expected:
->>   5.85%  [kernel]           [k] asm_exc_page_fault
->>   5.84%  [kernel]           [k] __pv_queued_spin_lock_slowpath
->>[snip]
->>
->>I'm going to have to recompile with lock profiling, meanwhile
->>according to bpftrace
->>(bpftrace -e 'kprobe:__pv_queued_spin_lock_slowpath { @[kstack()] =
->> count(); }')
->>top hits would be:
->>
->>@[
->>    __pv_queued_spin_lock_slowpath+1
->>    _raw_spin_lock+37
->>    __schedule+192
->>    schedule_idle+38
->>    do_idle+366
->>    cpu_startup_entry+38
->>    start_secondary+282
->>    secondary_startup_64_no_verify+381
->>]: 181
->>@[
->>    __pv_queued_spin_lock_slowpath+1
->>    _raw_spin_lock_irq+43
->>    wait_for_completion+141
->>    stop_one_cpu+127
->>    sched_exec+165
->
-> There's the suspicious sched_exec() I was talking about! :)
->
-> I think it needs to be moved, and perhaps _later_ instead of earlier?
-> Hmm...
->
+Hi all,
 
-I'm getting around 3.4k execs/s. However, if I "taskset -c 3
-./static-doexec 1" the number goes up to about 9.5k and lock
-contention disappears from the profile. So off hand looks like the
-task is walking around the box when it perhaps could be avoided -- it
-is idle apart from running the test. Again this is going to require a
-serious look instead of ad hoc pokes.
+At Netflix, we have a "canary" framework that will run test versions of
+an application and automatically detect anomalies in various metrics. We
+also have two "fleets", one full of virtual machines, and one that is a
+multi-tenant container environment.
 
-Side note I actually read your patch this time around instead of
-skimming through it and assuming it did what I thought.
+On our full-VM fleet, one of the metrics we analyze is the number of open file
+descriptors, from /proc/sys/fs/file-nr. However, no equivalent exists for the
+multi-tenant container fleet, which has lead to several production issues.
 
-do_filp_open is of course very expensive and kmalloc + kfree are slow.
-On top of it deallocating a file object even after a failed open was
-very expensive due to delegation to task_work (recently fixed).
+This idea is not new of course [1], but hopefully the existence of the new misc
+cgroup will make it more tenable.
 
-What I claim should be clear-cut faster is that lookup as in the
-original patch and only messing with file allocation et al if it
-succeeds.
+I'm not really tied to any of the semantics in this series (e.g. threads could
+be double counted even with a shared table), and am open to implementing this
+in other ways if it makes more sense.
 
+Thoughts welcome,
+
+Tycho
+
+[1]: https://lore.kernel.org/all/1404311407-4851-1-git-send-email-merimus@google.com/
+
+Tycho Andersen (6):
+  fs: count_open_files() -> count_possible_open_files()
+  fs: introduce count_open_files()
+  misc: introduce misc_cg_charge()
+  misc cgroup: introduce an fd counter
+  selftests/cgroup: add a flags arg to clone_into_cgroup()
+  selftests/cgroup: add a test for misc cgroup
+
+ fs/file.c                                    |  82 +++-
+ include/linux/fdtable.h                      |   6 +
+ include/linux/misc_cgroup.h                  |   2 +
+ kernel/cgroup/misc.c                         | 232 ++++++++++-
+ tools/testing/selftests/cgroup/.gitignore    |   1 +
+ tools/testing/selftests/cgroup/Makefile      |   2 +
+ tools/testing/selftests/cgroup/cgroup_util.c |   8 +-
+ tools/testing/selftests/cgroup/cgroup_util.h |   2 +-
+ tools/testing/selftests/cgroup/test_core.c   |   4 +-
+ tools/testing/selftests/cgroup/test_misc.c   | 385 +++++++++++++++++++
+ 10 files changed, 712 insertions(+), 12 deletions(-)
+ create mode 100644 tools/testing/selftests/cgroup/test_misc.c
+
+
+base-commit: 13d88ac54ddd1011b6e94443958e798aa06eb835
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.34.1
+
 
