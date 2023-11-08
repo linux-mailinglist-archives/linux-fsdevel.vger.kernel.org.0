@@ -1,345 +1,519 @@
-Return-Path: <linux-fsdevel+bounces-2381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9767E5336
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 11:19:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289567E52EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 10:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EAC6B20E1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 10:19:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 437E81C20D38
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 09:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C8F10A39;
-	Wed,  8 Nov 2023 10:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32A0107AA;
+	Wed,  8 Nov 2023 09:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/25LQDf"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RasriPX1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uvkiSVTf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177D710A18
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 10:19:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A247CC433C8;
-	Wed,  8 Nov 2023 10:19:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699438752;
-	bh=Y/KrJVMORd6UY9eo+/z3E2ahVEEgtWXA4S1w71HjX6A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V/25LQDfmgS1/R+6++vnawPZLiksIVMWJ6rsp0MjwJxNcbnIeKBJUFEFrzGN22NGZ
-	 3xOiJ80ydxz2tmxssj9YdRgmnzZeOHXACBhbui3ah9/CKAtOI0dd++GP31iHBas3t3
-	 YccU2Jn/3JhKwIc3hGNMtB8yjBu7bY0LGoQGNWxRlc2Fpmuag9jiMu38s9qIkWsZpc
-	 izVHhV/RBsIp9mgbm9kZuiDG4wVsvj1O6cC6XCpB9qvOuQIgn8FQzofyNNPHW29ETh
-	 lA8Jsq+AK+EAKpdKDEKPj7VH0RT9KEp1sMBNtxLzkx48nglwr7gLNy6U5mLUH7Te5K
-	 6CpMAuzq0Jlyw==
-User-agent: mu4e 1.8.10; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: torvalds@linux-foundation.org, chandanbabu@kernel.org
-Cc: catherine.hoang@oracle.com,cheng.lin130@zte.com.cn,dchinner@redhat.com,djwong@kernel.org,hch@lst.de,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,osandov@fb.com
-Subject: [GIT PULL] xfs: new code for 6.7
-Date: Wed, 08 Nov 2023 15:26:29 +0530
-Message-ID: <87fs1g1rac.fsf@debian-BULLSEYE-live-builder-AMD64>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8E08C12
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 09:56:37 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2981BB;
+	Wed,  8 Nov 2023 01:56:36 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2AC2C1F45A;
+	Wed,  8 Nov 2023 09:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1699437394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haSY/yaIV/fqYTZuzHRwE6iFrXPdX6sCOgCYcYIKygU=;
+	b=RasriPX17pB635D8dXsKwR06/JxRrmOsKBDaPJyRJLetV+VEbuQey9uAYZwsa7GqsZz1Eh
+	VFlVNKj4jCMe+54JDQMCjtdI+Es8g4oizMrpjeX4YnNACbz/rLXEHhI+FgYRJFZclW6v65
+	xNsxvs2zWz0Yz0XUBWPTwrHmYcLVLsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1699437394;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haSY/yaIV/fqYTZuzHRwE6iFrXPdX6sCOgCYcYIKygU=;
+	b=uvkiSVTfUaO2euHnE8o6Rp1Q3WTapY4QB6I/bsm0zkvjqLGP2+33vDahjFSCFlZsyVoCBM
+	exavwRnnW842XEBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 12DEE133F5;
+	Wed,  8 Nov 2023 09:56:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id 04+OBFJbS2VLXwAAMHmgww
+	(envelope-from <jack@suse.cz>); Wed, 08 Nov 2023 09:56:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9D4ECA07C0; Wed,  8 Nov 2023 10:56:33 +0100 (CET)
+Date: Wed, 8 Nov 2023 10:56:33 +0100
+From: Jan Kara <jack@suse.cz>
+To: j.granados@samsung.com
+Cc: Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
+	josh@joshtriplett.org, Kees Cook <keescook@chromium.org>,
+	David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	Anton Altaparmakov <anton@tuxera.com>,
+	Namjae Jeon <linkinjeon@kernel.org>, Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Iurii Zaikin <yzaikin@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Theodore Y. Ts'o" <tytso@mit.edu>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+	linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+	linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@lists.linux.dev,
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	codalist@coda.cs.cmu.edu
+Subject: Re: [PATCH 2/4] aio: Remove the now superfluous sentinel elements
+ from ctl_table array
+Message-ID: <20231108095633.ec6im6btx7hprl6o@quack3>
+References: <20231107-jag-sysctl_remove_empty_elem_fs-v1-0-7176632fea9f@samsung.com>
+ <20231107-jag-sysctl_remove_empty_elem_fs-v1-2-7176632fea9f@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231107-jag-sysctl_remove_empty_elem_fs-v1-2-7176632fea9f@samsung.com>
 
-Hi Linus,
+On Tue 07-11-23 14:44:21, Joel Granados via B4 Relay wrote:
+> From: Joel Granados <j.granados@samsung.com>
+> 
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which
+> will reduce the overall build time size of the kernel and run time
+> memory bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> 
+> Remove sentinel elements ctl_table struct. Special attention was placed in
+> making sure that an empty directory for fs/verity was created when
+> CONFIG_FS_VERITY_BUILTIN_SIGNATURES is not defined. In this case we use the
+> register sysctl call that expects a size.
+> 
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
 
-Please pull this branch with changes for xfs for 6.7-rc1.
+For fs/*.c, fs/quota/, fs/notify/, fs/ocfs2/ feel free to add:
 
-The important changes include,
-1. CPU usage optimizations for realtime allocator.
-2. Allowing read operations to continue while a FICLONE ioctl is being
-   serviced.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-The remaining changes are limited to bug fixes and code cleanups.
+Other bits look good to me as well besides fsverify changes which looks odd
+and Eric already commented on that.
 
-There was a delay in me pushing the changes to XFS' for-next branch and hence
-a delay in the code changes reaching the linux-next tree. The XFS changes
-reached linux-next on 31st of October. The delay was due to me having to drop
-a patch from the XFS tree and having to initiate execution of the test suite
-once again on October 26th. The complete test run requires around 4 days to
-complete.
+								Honza
 
-During a discussion, Darrick told me that in such scenarios he would limit
-testing to non-fuzz tests which take around 12 hours to complete.  Hence, in
-hindsight, I could have limited the time taken to execute tests after dropping
-the patch. I will make sure to update XFS' for-next branch well before the
-merge window period begins from next release onwards.
-
-The changes that are part of the current pull request are contained within XFS
-i.e. there are no patches which straddle across other subsystems. I have been
-executing fstests on linux-next for more than a week now. There were no new
-regressions found in XFS during the test run.
-
-I had performed a test merge with latest contents of torvalds/linux.git. i.e.
-
-305230142ae0637213bf6e04f6d9f10bbcb74af8
-Author:     Linus Torvalds <torvalds@linux-foundation.org>
-AuthorDate: Tue Nov 7 17:16:23 2023 -0800
-Commit:     Linus Torvalds <torvalds@linux-foundation.org>
-CommitDate: Tue Nov 7 17:16:23 2023 -0800
-Merge tag 'pm-6.7-rc1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-
-This resulted in merge conflicts. The following diff should resolve the merge
-conflicts.
-
-diff --cc fs/xfs/libxfs/xfs_rtbitmap.c
-index 396648acb5be,b332ab490a48..84e27b9987f8
---- a/fs/xfs/libxfs/xfs_rtbitmap.c
-+++ b/fs/xfs/libxfs/xfs_rtbitmap.c
-@@@ -960,19 -931,18 +931,19 @@@ xfs_rtcheck_alloc_range
-   * Free an extent in the realtime subvolume.  Length is expressed in
-   * realtime extents, as is the block number.
-   */
-- int					/* error */
-+ int
-  xfs_rtfree_extent(
-- 	xfs_trans_t	*tp,		/* transaction pointer */
-- 	xfs_rtblock_t	bno,		/* starting block number to free */
-- 	xfs_extlen_t	len)		/* length of extent freed */
-+ 	struct xfs_trans	*tp,	/* transaction pointer */
-+ 	xfs_rtxnum_t		start,	/* starting rtext number to free */
-+ 	xfs_rtxlen_t		len)	/* length of extent freed */
-  {
-- 	int		error;		/* error value */
-- 	xfs_mount_t	*mp;		/* file system mount structure */
-- 	xfs_fsblock_t	sb;		/* summary file block number */
-- 	struct xfs_buf	*sumbp = NULL;	/* summary file block buffer */
-- 	struct timespec64 atime;
-- 
-- 	mp = tp->t_mountp;
-+ 	struct xfs_mount	*mp = tp->t_mountp;
-+ 	struct xfs_rtalloc_args	args = {
-+ 		.mp		= mp,
-+ 		.tp		= tp,
-+ 	};
-+ 	int			error;
-++	struct timespec64	atime;
-  
-  	ASSERT(mp->m_rbmip->i_itemp != NULL);
-  	ASSERT(xfs_isilocked(mp->m_rbmip, XFS_ILOCK_EXCL));
-@@@ -1000,13 -970,46 +971,49 @@@
-  	    mp->m_sb.sb_rextents) {
-  		if (!(mp->m_rbmip->i_diflags & XFS_DIFLAG_NEWRTBM))
-  			mp->m_rbmip->i_diflags |= XFS_DIFLAG_NEWRTBM;
- -		*(uint64_t *)&VFS_I(mp->m_rbmip)->i_atime = 0;
- +
- +		atime = inode_get_atime(VFS_I(mp->m_rbmip));
- +		*((uint64_t *)&atime) = 0;
- +		inode_set_atime_to_ts(VFS_I(mp->m_rbmip), atime);
-  		xfs_trans_log_inode(tp, mp->m_rbmip, XFS_ILOG_CORE);
-  	}
-- 	return 0;
-+ 	error = 0;
-+ out:
-+ 	xfs_rtbuf_cache_relse(&args);
-+ 	return error;
-+ }
-+ 
-+ /*
-+  * Free some blocks in the realtime subvolume.  rtbno and rtlen are in units of
-+  * rt blocks, not rt extents; must be aligned to the rt extent size; and rtlen
-+  * cannot exceed XFS_MAX_BMBT_EXTLEN.
-+  */
-+ int
-+ xfs_rtfree_blocks(
-+ 	struct xfs_trans	*tp,
-+ 	xfs_fsblock_t		rtbno,
-+ 	xfs_filblks_t		rtlen)
-+ {
-+ 	struct xfs_mount	*mp = tp->t_mountp;
-+ 	xfs_rtxnum_t		start;
-+ 	xfs_filblks_t		len;
-+ 	xfs_extlen_t		mod;
-+ 
-+ 	ASSERT(rtlen <= XFS_MAX_BMBT_EXTLEN);
-+ 
-+ 	len = xfs_rtb_to_rtxrem(mp, rtlen, &mod);
-+ 	if (mod) {
-+ 		ASSERT(mod == 0);
-+ 		return -EIO;
-+ 	}
-+ 
-+ 	start = xfs_rtb_to_rtxrem(mp, rtbno, &mod);
-+ 	if (mod) {
-+ 		ASSERT(mod == 0);
-+ 		return -EIO;
-+ 	}
-+ 
-+ 	return xfs_rtfree_extent(tp, start, len);
-  }
-  
-  /* Find all the free records within a given range. */
-diff --cc fs/xfs/xfs_rtalloc.c
-index 2e1a4e5cd03d,ba66442910b1..0254c573086a
---- a/fs/xfs/xfs_rtalloc.c
-+++ b/fs/xfs/xfs_rtalloc.c
-@@@ -1420,16 -1414,16 +1414,16 @@@ xfs_rtunmount_inodes
-   */
-  int					/* error */
-  xfs_rtpick_extent(
-- 	xfs_mount_t		*mp,		/* file system mount point */
-- 	xfs_trans_t		*tp,		/* transaction pointer */
-- 	xfs_extlen_t		len,		/* allocation length (rtextents) */
-- 	xfs_rtblock_t		*pick)		/* result rt extent */
-- 	{
-- 	xfs_rtblock_t		b;		/* result block */
-- 	int			log2;		/* log of sequence number */
-- 	uint64_t		resid;		/* residual after log removed */
-- 	uint64_t		seq;		/* sequence number of file creation */
-- 	struct timespec64	ts;		/* temporary timespec64 storage */
- -	xfs_mount_t	*mp,		/* file system mount point */
- -	xfs_trans_t	*tp,		/* transaction pointer */
- -	xfs_rtxlen_t	len,		/* allocation length (rtextents) */
- -	xfs_rtxnum_t	*pick)		/* result rt extent */
-++	xfs_mount_t		*mp,	/* file system mount point */
-++	xfs_trans_t		*tp,	/* transaction pointer */
-++	xfs_rtxlen_t		len,	/* allocation length (rtextents) */
-++	xfs_rtxnum_t		*pick)	/* result rt extent */
-+ {
- -	xfs_rtxnum_t	b;		/* result rtext */
- -	int		log2;		/* log of sequence number */
- -	uint64_t	resid;		/* residual after log removed */
- -	uint64_t	seq;		/* sequence number of file creation */
- -	uint64_t	*seqp;		/* pointer to seqno in inode */
-++	xfs_rtxnum_t		b;	/* result rtext */
-++	int			log2;	/* log of sequence number */
-++	uint64_t		resid;	/* residual after log removed */
-++	uint64_t		seq;	/* sequence number of file creation */
-++	struct timespec64	ts;	/* temporary timespec64 storage */
-  
-  	ASSERT(xfs_isilocked(mp->m_rbmip, XFS_ILOCK_EXCL));
-
-Please let me know if you encounter any problems.
-
-The following changes since commit 05d3ef8bba77c1b5f98d941d8b2d4aeab8118ef1:
-
-  Linux 6.6-rc7 (2023-10-22 12:11:21 -1000)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.7-merge-2
-
-for you to fetch changes up to 14a537983b228cb050ceca3a5b743d01315dc4aa:
-
-  xfs: allow read IO and FICLONE to run concurrently (2023-10-23 12:02:26 +0530)
-
-----------------------------------------------------------------
-New code for 6.7:
-
-  * Realtime device subsystem
-    - Cleanup usage of xfs_rtblock_t and xfs_fsblock_t data types.
-    - Replace open coded conversions between rt blocks and rt extents with
-      calls to static inline helpers.
-    - Replace open coded realtime geometry compuation and macros with helper
-      functions.
-    - CPU usage optimizations for realtime allocator.
-    - Misc. Bug fixes associated with Realtime device.
-  * Allow read operations to execute while an FICLONE ioctl is being serviced.
-  * Misc. bug fixes
-    - Alert user when xfs_droplink() encounters an inode with a link count of zero.
-    - Handle the case where the allocator could return zero extents when
-      servicing an fallocate request.
-
-Signed-off-by: Chandan Babu R <chandanbabu@kernel.org>
-
-----------------------------------------------------------------
-Catherine Hoang (1):
-      xfs: allow read IO and FICLONE to run concurrently
-
-Chandan Babu R (6):
-      Merge tag 'realtime-fixes-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      Merge tag 'clean-up-realtime-units-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      Merge tag 'refactor-rt-unit-conversions-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      Merge tag 'refactor-rtbitmap-macros-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      Merge tag 'refactor-rtbitmap-accessors-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-      Merge tag 'rtalloc-speedups-6.7_2023-10-19' of https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.7-mergeA
-
-Cheng Lin (1):
-      xfs: introduce protection for drop nlink
-
-Christoph Hellwig (1):
-      xfs: handle nimaps=0 from xfs_bmapi_write in xfs_alloc_file_space
-
-Darrick J. Wong (30):
-      xfs: bump max fsgeom struct version
-      xfs: hoist freeing of rt data fork extent mappings
-      xfs: prevent rt growfs when quota is enabled
-      xfs: rt stubs should return negative errnos when rt disabled
-      xfs: fix units conversion error in xfs_bmap_del_extent_delay
-      xfs: make sure maxlen is still congruent with prod when rounding down
-      xfs: move the xfs_rtbitmap.c declarations to xfs_rtbitmap.h
-      xfs: convert xfs_extlen_t to xfs_rtxlen_t in the rt allocator
-      xfs: create a helper to convert rtextents to rtblocks
-      xfs: convert rt bitmap/summary block numbers to xfs_fileoff_t
-      xfs: create a helper to compute leftovers of realtime extents
-      xfs: convert rt bitmap extent lengths to xfs_rtbxlen_t
-      xfs: create a helper to convert extlen to rtextlen
-      xfs: rename xfs_verify_rtext to xfs_verify_rtbext
-      xfs: create helpers to convert rt block numbers to rt extent numbers
-      xfs: convert rt extent numbers to xfs_rtxnum_t
-      xfs: convert do_div calls to xfs_rtb_to_rtx helper calls
-      xfs: create rt extent rounding helpers for realtime extent blocks
-      xfs: convert the rtbitmap block and bit macros to static inline functions
-      xfs: use shifting and masking when converting rt extents, if possible
-      xfs: remove XFS_BLOCKWSIZE and XFS_BLOCKWMASK macros
-      xfs: convert open-coded xfs_rtword_t pointer accesses to helper
-      xfs: convert rt summary macros to helpers
-      xfs: create a helper to handle logging parts of rt bitmap/summary blocks
-      xfs: create helpers for rtbitmap block/wordcount computations
-      xfs: use accessor functions for bitmap words
-      xfs: create helpers for rtsummary block/wordcount computations
-      xfs: use accessor functions for summary info words
-      xfs: simplify xfs_rtbuf_get calling conventions
-      xfs: simplify rt bitmap/summary block accessor functions
-
-Dave Chinner (1):
-      xfs: consolidate realtime allocation arguments
-
-Omar Sandoval (6):
-      xfs: cache last bitmap block in realtime allocator
-      xfs: invert the realtime summary cache
-      xfs: return maximum free size from xfs_rtany_summary()
-      xfs: limit maxlen based on available space in xfs_rtallocate_extent_near()
-      xfs: don't try redundant allocations in xfs_rtallocate_extent_near()
-      xfs: don't look for end of extent further than necessary in xfs_rtallocate_extent_near()
-
- fs/xfs/libxfs/xfs_bmap.c       |  45 +--
- fs/xfs/libxfs/xfs_format.h     |  34 +-
- fs/xfs/libxfs/xfs_rtbitmap.c   | 803 ++++++++++++++++++++++-------------------
- fs/xfs/libxfs/xfs_rtbitmap.h   | 383 ++++++++++++++++++++
- fs/xfs/libxfs/xfs_sb.c         |   2 +
- fs/xfs/libxfs/xfs_sb.h         |   2 +-
- fs/xfs/libxfs/xfs_trans_resv.c |  10 +-
- fs/xfs/libxfs/xfs_types.c      |   4 +-
- fs/xfs/libxfs/xfs_types.h      |  10 +-
- fs/xfs/scrub/bmap.c            |   2 +-
- fs/xfs/scrub/fscounters.c      |   2 +-
- fs/xfs/scrub/inode.c           |   3 +-
- fs/xfs/scrub/rtbitmap.c        |  28 +-
- fs/xfs/scrub/rtsummary.c       |  72 ++--
- fs/xfs/scrub/trace.c           |   1 +
- fs/xfs/scrub/trace.h           |  15 +-
- fs/xfs/xfs_bmap_util.c         |  74 ++--
- fs/xfs/xfs_file.c              |  63 +++-
- fs/xfs/xfs_fsmap.c             |  15 +-
- fs/xfs/xfs_inode.c             |  24 ++
- fs/xfs/xfs_inode.h             |   9 +
- fs/xfs/xfs_inode_item.c        |   3 +-
- fs/xfs/xfs_ioctl.c             |   5 +-
- fs/xfs/xfs_linux.h             |  12 +
- fs/xfs/xfs_mount.h             |   8 +-
- fs/xfs/xfs_ondisk.h            |   4 +
- fs/xfs/xfs_reflink.c           |   4 +
- fs/xfs/xfs_rtalloc.c           | 626 ++++++++++++++++----------------
- fs/xfs/xfs_rtalloc.h           |  94 +----
- fs/xfs/xfs_super.c             |   3 +-
- fs/xfs/xfs_trans.c             |   7 +-
- 31 files changed, 1425 insertions(+), 942 deletions(-)
- create mode 100644 fs/xfs/libxfs/xfs_rtbitmap.h
+> ---
+>  fs/aio.c                           | 1 -
+>  fs/coredump.c                      | 1 -
+>  fs/dcache.c                        | 1 -
+>  fs/devpts/inode.c                  | 1 -
+>  fs/eventpoll.c                     | 1 -
+>  fs/exec.c                          | 1 -
+>  fs/file_table.c                    | 1 -
+>  fs/inode.c                         | 1 -
+>  fs/lockd/svc.c                     | 1 -
+>  fs/locks.c                         | 1 -
+>  fs/namei.c                         | 1 -
+>  fs/namespace.c                     | 1 -
+>  fs/nfs/nfs4sysctl.c                | 1 -
+>  fs/nfs/sysctl.c                    | 1 -
+>  fs/notify/dnotify/dnotify.c        | 1 -
+>  fs/notify/fanotify/fanotify_user.c | 1 -
+>  fs/notify/inotify/inotify_user.c   | 1 -
+>  fs/ntfs/sysctl.c                   | 1 -
+>  fs/ocfs2/stackglue.c               | 1 -
+>  fs/pipe.c                          | 1 -
+>  fs/proc/proc_sysctl.c              | 1 -
+>  fs/quota/dquot.c                   | 1 -
+>  fs/sysctls.c                       | 1 -
+>  fs/userfaultfd.c                   | 1 -
+>  fs/verity/fsverity_private.h       | 2 +-
+>  fs/verity/init.c                   | 8 +++++---
+>  fs/xfs/xfs_sysctl.c                | 2 --
+>  27 files changed, 6 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index a4c2a6bac72c..da069d6b6c66 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -239,7 +239,6 @@ static struct ctl_table aio_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_doulongvec_minmax,
+>  	},
+> -	{}
+>  };
+>  
+>  static void __init aio_sysctl_init(void)
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 9d235fa14ab9..f258c17c1841 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -981,7 +981,6 @@ static struct ctl_table coredump_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_coredump_sysctls(void)
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 25ac74d30bff..bafdd455b0fe 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -191,7 +191,6 @@ static struct ctl_table fs_dcache_sysctls[] = {
+>  		.mode		= 0444,
+>  		.proc_handler	= proc_nr_dentry,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_dcache_sysctls(void)
+> diff --git a/fs/devpts/inode.c b/fs/devpts/inode.c
+> index 299c295a27a0..a4de1612b1db 100644
+> --- a/fs/devpts/inode.c
+> +++ b/fs/devpts/inode.c
+> @@ -69,7 +69,6 @@ static struct ctl_table pty_table[] = {
+>  		.data		= &pty_count,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> -	{}
+>  };
+>  
+>  struct pts_mount_opts {
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 1d9a71a0c4c1..975fc5623102 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -322,7 +322,6 @@ static struct ctl_table epoll_table[] = {
+>  		.extra1		= &long_zero,
+>  		.extra2		= &long_max,
+>  	},
+> -	{ }
+>  };
+>  
+>  static void __init epoll_sysctls_init(void)
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 6518e33ea813..7a18bde22f25 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -2167,7 +2167,6 @@ static struct ctl_table fs_exec_sysctls[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_TWO,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_exec_sysctls(void)
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index ee21b3da9d08..544f7d4f166f 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -137,7 +137,6 @@ static struct ctl_table fs_stat_sysctls[] = {
+>  		.extra1		= &sysctl_nr_open_min,
+>  		.extra2		= &sysctl_nr_open_max,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_stat_sysctls(void)
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 35fd688168c5..ce16e3cda7bf 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -129,7 +129,6 @@ static struct ctl_table inodes_sysctls[] = {
+>  		.mode		= 0444,
+>  		.proc_handler	= proc_nr_inodes,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_inode_sysctls(void)
+> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+> index 6579948070a4..f784ff58bfd3 100644
+> --- a/fs/lockd/svc.c
+> +++ b/fs/lockd/svc.c
+> @@ -474,7 +474,6 @@ static struct ctl_table nlm_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> -	{ }
+>  };
+>  
+>  #endif	/* CONFIG_SYSCTL */
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 76ad05f8070a..6ecfc422fb37 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -111,7 +111,6 @@ static struct ctl_table locks_sysctls[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif /* CONFIG_MMU */
+> -	{}
+>  };
+>  
+>  static int __init init_fs_locks_sysctls(void)
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 567ee547492b..fb552161c981 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1070,7 +1070,6 @@ static struct ctl_table namei_sysctls[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_TWO,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_namei_sysctls(void)
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index e157efc54023..e95d4328539d 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5008,7 +5008,6 @@ static struct ctl_table fs_namespace_sysctls[] = {
+>  		.proc_handler	= proc_dointvec_minmax,
+>  		.extra1		= SYSCTL_ONE,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_namespace_sysctls(void)
+> diff --git a/fs/nfs/nfs4sysctl.c b/fs/nfs/nfs4sysctl.c
+> index e776200e9a11..886a7c4c60b3 100644
+> --- a/fs/nfs/nfs4sysctl.c
+> +++ b/fs/nfs/nfs4sysctl.c
+> @@ -34,7 +34,6 @@ static struct ctl_table nfs4_cb_sysctls[] = {
+>  		.mode = 0644,
+>  		.proc_handler = proc_dointvec,
+>  	},
+> -	{ }
+>  };
+>  
+>  int nfs4_register_sysctl(void)
+> diff --git a/fs/nfs/sysctl.c b/fs/nfs/sysctl.c
+> index f39e2089bc4c..e645be1a3381 100644
+> --- a/fs/nfs/sysctl.c
+> +++ b/fs/nfs/sysctl.c
+> @@ -29,7 +29,6 @@ static struct ctl_table nfs_cb_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> -	{ }
+>  };
+>  
+>  int nfs_register_sysctl(void)
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index ebdcc25df0f7..8151ed5ddefc 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -29,7 +29,6 @@ static struct ctl_table dnotify_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dointvec,
+>  	},
+> -	{}
+>  };
+>  static void __init dnotify_sysctl_init(void)
+>  {
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index f69c451018e3..80539839af0c 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -86,7 +86,6 @@ static struct ctl_table fanotify_table[] = {
+>  		.proc_handler	= proc_dointvec_minmax,
+>  		.extra1		= SYSCTL_ZERO
+>  	},
+> -	{ }
+>  };
+>  
+>  static void __init fanotify_sysctls_init(void)
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 1c4bfdab008d..3e222a271da6 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -85,7 +85,6 @@ static struct ctl_table inotify_table[] = {
+>  		.proc_handler	= proc_dointvec_minmax,
+>  		.extra1		= SYSCTL_ZERO
+>  	},
+> -	{ }
+>  };
+>  
+>  static void __init inotify_sysctls_init(void)
+> diff --git a/fs/ntfs/sysctl.c b/fs/ntfs/sysctl.c
+> index 174fe536a1c0..4e980170d86a 100644
+> --- a/fs/ntfs/sysctl.c
+> +++ b/fs/ntfs/sysctl.c
+> @@ -28,7 +28,6 @@ static struct ctl_table ntfs_sysctls[] = {
+>  		.mode		= 0644,			/* Mode, proc handler. */
+>  		.proc_handler	= proc_dointvec
+>  	},
+> -	{}
+>  };
+>  
+>  /* Storage for the sysctls header. */
+> diff --git a/fs/ocfs2/stackglue.c b/fs/ocfs2/stackglue.c
+> index a8d5ca98fa57..20aa37b67cfb 100644
+> --- a/fs/ocfs2/stackglue.c
+> +++ b/fs/ocfs2/stackglue.c
+> @@ -658,7 +658,6 @@ static struct ctl_table ocfs2_nm_table[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_dostring,
+>  	},
+> -	{ }
+>  };
+>  
+>  static struct ctl_table_header *ocfs2_table_header;
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 6c1a9b1db907..6bc1c4ae81d5 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -1492,7 +1492,6 @@ static struct ctl_table fs_pipe_sysctls[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= proc_doulongvec_minmax,
+>  	},
+> -	{ }
+>  };
+>  #endif
+>  
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index de484195f49f..4e06c4d69906 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -71,7 +71,6 @@ static struct ctl_table root_table[] = {
+>  		.procname = "",
+>  		.mode = S_IFDIR|S_IRUGO|S_IXUGO,
+>  	},
+> -	{ }
+>  };
+>  static struct ctl_table_root sysctl_table_root = {
+>  	.default_set.dir.header = {
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 9e72bfe8bbad..69b03e13e6f2 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -2949,7 +2949,6 @@ static struct ctl_table fs_dqstats_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif
+> -	{ },
+>  };
+>  
+>  static int __init dquot_init(void)
+> diff --git a/fs/sysctls.c b/fs/sysctls.c
+> index 76a0aee8c229..8dbde9a802fa 100644
+> --- a/fs/sysctls.c
+> +++ b/fs/sysctls.c
+> @@ -26,7 +26,6 @@ static struct ctl_table fs_shared_sysctls[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_MAXOLDUID,
+>  	},
+> -	{ }
+>  };
+>  
+>  static int __init init_fs_sysctls(void)
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 56eaae9dac1a..7668285779c1 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -45,7 +45,6 @@ static struct ctl_table vm_userfaultfd_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_ONE,
+>  	},
+> -	{ }
+>  };
+>  #endif
+>  
+> diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> index d071a6e32581..8191bf7ad706 100644
+> --- a/fs/verity/fsverity_private.h
+> +++ b/fs/verity/fsverity_private.h
+> @@ -122,8 +122,8 @@ void __init fsverity_init_info_cache(void);
+>  
+>  /* signature.c */
+>  
+> -#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>  extern int fsverity_require_signatures;
+> +#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>  int fsverity_verify_signature(const struct fsverity_info *vi,
+>  			      const u8 *signature, size_t sig_size);
+>  
+> diff --git a/fs/verity/init.c b/fs/verity/init.c
+> index a29f062f6047..e31045dd4f6c 100644
+> --- a/fs/verity/init.c
+> +++ b/fs/verity/init.c
+> @@ -13,7 +13,6 @@
+>  static struct ctl_table_header *fsverity_sysctl_header;
+>  
+>  static struct ctl_table fsverity_sysctl_table[] = {
+> -#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>  	{
+>  		.procname       = "require_signatures",
+>  		.data           = &fsverity_require_signatures,
+> @@ -23,14 +22,17 @@ static struct ctl_table fsverity_sysctl_table[] = {
+>  		.extra1         = SYSCTL_ZERO,
+>  		.extra2         = SYSCTL_ONE,
+>  	},
+> -#endif
+> -	{ }
+>  };
+>  
+>  static void __init fsverity_init_sysctl(void)
+>  {
+> +#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
+>  	fsverity_sysctl_header = register_sysctl("fs/verity",
+>  						 fsverity_sysctl_table);
+> +#else
+> +	fsverity_sysctl_header = register_sysctl_sz("fs/verity",
+> +						 fsverity_sysctl_table, 0);
+> +#endif
+>  	if (!fsverity_sysctl_header)
+>  		panic("fsverity sysctl registration failed");
+>  }
+> diff --git a/fs/xfs/xfs_sysctl.c b/fs/xfs/xfs_sysctl.c
+> index fade33735393..a191f6560f98 100644
+> --- a/fs/xfs/xfs_sysctl.c
+> +++ b/fs/xfs/xfs_sysctl.c
+> @@ -206,8 +206,6 @@ static struct ctl_table xfs_table[] = {
+>  		.extra2		= &xfs_params.stats_clear.max
+>  	},
+>  #endif /* CONFIG_PROC_FS */
+> -
+> -	{}
+>  };
+>  
+>  int
+> 
+> -- 
+> 2.30.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
