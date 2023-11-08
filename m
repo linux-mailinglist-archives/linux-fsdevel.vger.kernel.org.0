@@ -1,185 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-2445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2717E5FC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 22:13:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA977E5FF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 22:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553491C20BE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD34FB20EAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA74374E4;
-	Wed,  8 Nov 2023 21:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20268374DB;
+	Wed,  8 Nov 2023 21:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MxK0QdW1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bboKZbfF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2972A374C9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 21:13:21 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8A92581
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 13:13:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699477999;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6zh3RtFxtqR7UWrPVy8hV5bW36Rc8SV6vsBZyrf5I5c=;
-	b=MxK0QdW14ZllXx1HkcoRAWIekvrOYp9NxUK8a1iZR4zR58fSIAo84bUCh/OBkHE3phHk+I
-	uk3gH9d2Pt6fQsp5MulrnpFRBsf8hfQdvM01TmfnZDlTwt5qtcAnLXuSz1gYJw/Ehjk+Vk
-	cOQ5LMBpGN3aRvsx8bA74ceOaygJtRo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-552-zOYRoNxQPu6UPbTEvkGjnQ-1; Wed, 08 Nov 2023 16:13:13 -0500
-X-MC-Unique: zOYRoNxQPu6UPbTEvkGjnQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E2D0811E88;
-	Wed,  8 Nov 2023 21:13:13 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.8.221])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id A00E42166B26;
-	Wed,  8 Nov 2023 21:13:12 +0000 (UTC)
-Received: by fedora.redhat.com (Postfix, from userid 1000)
-	id 128D9227F9C; Wed,  8 Nov 2023 16:13:12 -0500 (EST)
-Date: Wed, 8 Nov 2023 16:13:12 -0500
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Alyssa Ross <hi@alyssa.is>
-Cc: linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-	stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com
-Subject: Re: [PATCH] virtiofs: Export filesystem tags through sysfs
-Message-ID: <ZUv56DRM/aiBRspd@redhat.com>
-References: <20231005203030.223489-1-vgoyal@redhat.com>
- <zdor636rec2ni6oxuic3x55khtr4bkcpqazu3xjdhvlbemsylr@pwjyz2qfa4mm>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E228C374CA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 21:29:36 +0000 (UTC)
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 385471BE2
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 13:29:36 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-54366784377so129840a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 13:29:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1699478974; x=1700083774; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsX9YSXgqoPg+e0gigeut8dVFOIqYYd3vJcAhcwMV2g=;
+        b=bboKZbfF0qYaU7p7jMpgNcpEVz4UDcnyqQHnAsWbrpcyKmc1RHMPS0eCIEQ3T2duMr
+         KrVg3L89yjSp6MwFXKZhpdNxz34yaQDwoL0GYR5PZ3WYrzjK+np7aaMTjj2buI86eiOf
+         ijg+ptCIBQx98Gr/ErjNGFi6RwEql4qOYdWoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699478974; x=1700083774;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QsX9YSXgqoPg+e0gigeut8dVFOIqYYd3vJcAhcwMV2g=;
+        b=KVJaOMUTYf0RfEkFHV2jYFMSnBUeCx7EYXOAML+PT+pIvb/H7AqingDxGjnWpENxiC
+         5GGUoTc2A/b87N8LjwuWU6vUTNg7ePRjPg2VS4uJhYAiN4V/NTq1FEZDD0MIzWm6YEbi
+         d9rtJ0RAUJsvCG3KcicrEf/Fns1MoTnQEijHEY9BeAx1hr8IeuYkd/fIPAR0jH2ltyqm
+         /N0dBKZyRRKnB6n0zLb7AeZN3WRyvWNKwg59feJC2q82J3dG69iVrtFv8GnjSotUNAeU
+         kDztCsrrtgxSKU/77726mYjOoQ1F7QbivbitlM5kAxbS5HInKmeBGLr7nL1aAyZJ4Djf
+         NmCQ==
+X-Gm-Message-State: AOJu0YzYbK9ihjsZr72ffVcRYlTXhEEXhJK2JZqs+ZWVJOKStZ4P7RcP
+	6aLNbYZpXBqPWrlLAsZsC74arRQvShl7vSz8nnWy4g==
+X-Google-Smtp-Source: AGHT+IFsdDjgUlppXgkb2lBz5YVuFVuy3RChsk8N8vUukkLUQxODU+q4VjdqwpHShXULSgcupmEZjA==
+X-Received: by 2002:a50:d74e:0:b0:53f:a017:7526 with SMTP id i14-20020a50d74e000000b0053fa0177526mr2408926edj.40.1699478974252;
+        Wed, 08 Nov 2023 13:29:34 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id t22-20020a50ab56000000b005407ac82f4csm7327533edc.97.2023.11.08.13.29.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Nov 2023 13:29:33 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-99bdeae1d0aso33556766b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 13:29:33 -0800 (PST)
+X-Received: by 2002:a17:907:97c8:b0:9da:f391:409a with SMTP id
+ js8-20020a17090797c800b009daf391409amr3121344ejc.26.1699478973426; Wed, 08
+ Nov 2023 13:29:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <zdor636rec2ni6oxuic3x55khtr4bkcpqazu3xjdhvlbemsylr@pwjyz2qfa4mm>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+References: <87fs1g1rac.fsf@debian-BULLSEYE-live-builder-AMD64>
+In-Reply-To: <87fs1g1rac.fsf@debian-BULLSEYE-live-builder-AMD64>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 8 Nov 2023 13:29:16 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj3oM3d-Hw2vvxys3KCZ9De+gBN7Gxr2jf96OTisL9udw@mail.gmail.com>
+Message-ID: <CAHk-=wj3oM3d-Hw2vvxys3KCZ9De+gBN7Gxr2jf96OTisL9udw@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: new code for 6.7
+To: Chandan Babu R <chandanbabu@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: catherine.hoang@oracle.com, cheng.lin130@zte.com.cn, dchinner@redhat.com, 
+	djwong@kernel.org, hch@lst.de, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, osandov@fb.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 21, 2023 at 04:10:21PM +0000, Alyssa Ross wrote:
-> On Thu, Oct 05, 2023 at 04:30:30PM -0400, Vivek Goyal wrote:
-> > virtiofs filesystem is mounted using a "tag" which is exported by the
-> > virtiofs device. virtiofs driver knows about all the available tags but
-> > these are not exported to user space.
-> >
-> > People have asked these tags to be exported to user space. Most recently
-> > Lennart Poettering has asked for it as he wants to scan the tags and mount
-> > virtiofs automatically in certain cases.
-> >
-> > https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
-> 
-> Hi, I was one of those people. :)
+On Wed, 8 Nov 2023 at 02:19, Chandan Babu R <chandanbabu@kernel.org> wrote:
+>
+> I had performed a test merge with latest contents of torvalds/linux.git.
+>
+> This resulted in merge conflicts. The following diff should resolve the merge
+> conflicts.
 
-Hi Alyssa,
+Well, your merge conflict resolution is the same as my initial
+mindless one, but then when I look closer at it, it turns out that
+it's wrong.
 
-Aha... Thanks. I was not able to remember who had requested this.
+It's wrong not because the merge itself would be wrong, but because
+the conflict made me look at the original, and it turns out that
+commit 75d1e312bbbd ("xfs: convert to new timestamp accessors") was
+buggy.
 
-> 
-> > This patch exports tags through sysfs. One tag is associated with each
-> > virtiofs device. A new "tag" file appears under virtiofs device dir.
-> > Actual filesystem tag can be obtained by reading this "tag" file.
-> >
-> > For example, if a virtiofs device exports tag "myfs", a new file "tag"
-> > will show up here.
-> >
-> > /sys/bus/virtio/devices/virtio<N>/tag
-> >
-> > # cat /sys/bus/virtio/devices/virtio<N>/tag
-> > myfs
-> >
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> 
-> Are you still thinking about exposing this in the uevent as well?
-> That would be much more convenient for me, because with this approach
-> by the time the "remove" uevent arrives, it's no longer possible to
-> check what tag was associated with the device — you have to store it
-> somewhere when the device appears, so you can look it up again when the
-> device is removed.  (Not everybody uses udev.)
+I'm actually surprised the compilers don't complain about it, because
+the bug means that the new
 
-Looks like systemd + udev combination can already take care of it. I just
-had to specify "StopWhenUnneeded=true" in my systemd .mount unit file. And
-that made sure that when device goes away, virtiofs is unmounted and
-service is deactivated.
+        struct timespec64 ts;
 
-Following is my mount unit file.
+temporary isn't actually initialized for the !XFS_DIFLAG_NEWRTBM case.
 
-$ cat /etc/systemd/system/mnt-virtiofs.mount
+The code does
 
-[Unit]
-Description=Virtiofs mount myfs
-DefaultDependencies=no
-ConditionPathExists=/mnt/virtiofs
-ConditionCapability=CAP_SYS_ADMIN
-Before=sysinit.target
-StopWhenUnneeded=true 
+  xfs_rtpick_extent(..)
+  ...
+        struct timespec64 ts;
+        ..
+        if (!(mp->m_rbmip->i_diflags & XFS_DIFLAG_NEWRTBM)) {
+                mp->m_rbmip->i_diflags |= XFS_DIFLAG_NEWRTBM;
+                seq = 0;
+        } else {
+        ...
+        ts.tv_sec = (time64_t)seq + 1;
+        inode_set_atime_to_ts(VFS_I(mp->m_rbmip), ts);
 
-[Mount]
-What=myfs
-Where=/mnt/virtiofs
-Type=virtiofs
+and notice how 'ts.tv_nsec' is never initialized. So we'll set the
+nsec part of the atime to random garbage.
 
-And following is the udev rule I used.
+Oh, I'm sure it doesn't really *matter*, but it's most certainly wrong.
 
-$ cat /etc/udev/rules.d/80-local.rules
-SUBSYSTEM=="virtio", DRIVER=="virtiofs", ATTR{tag}=="myfs", TAG+="systemd", ENV{SYSTEMD_WANTS}+="mnt-virtiofs.mount"
+I am not very happy about the whole crazy XFS model where people cast
+the 'struct timespec64' pointer to an 'uint64_t' pointer, and then say
+'now it's a sequence number'. This is not the only place that
+happened, ie we have similar disgusting code in at least
+xfs_rtfree_extent() too.
 
-And a combination of above two seems to work. virtiofs is automatically
-mounted when device is hotplugged and it is unmounted when device is
-hot unplugged.
+That other place in xfs_rtfree_extent() didn't have this bug - it does
+inode_get_atime() unconditionally and this keeps the nsec field as-is,
+but that other place has the same really ugly code.
 
-> 
-> Regardless,
-> 
-> Tested-by: Alyssa Ross <hi@alyssa.is>
-> 
-> … and a review comment below.
-> 
-> > ---
-> >  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >
-> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > index 5f1be1da92ce..a5b11e18f331 100644
-> > --- a/fs/fuse/virtio_fs.c
-> > +++ b/fs/fuse/virtio_fs.c
-> > @@ -107,6 +107,21 @@ static const struct fs_parameter_spec virtio_fs_parameters[] = {
-> >  	{}
-> >  };
-> >
-> > +/* Forward Declarations */
-> > +static void virtio_fs_stop_all_queues(struct virtio_fs *fs);
-> > +
-> > +/* sysfs related */
-> > +static ssize_t tag_show(struct device *dev, struct device_attribute *attr,
-> > +			char *buf)
-> > +{
-> > +	struct virtio_device *vdev = container_of(dev, struct virtio_device,
-> > +						  dev);
-> > +	struct virtio_fs *fs = vdev->priv;
-> > +
-> > +	return sysfs_emit(buf, "%s", fs->tag);
-> 
-> All of the other files in the device directory end with trailing
-> newlines.  Should this one be an exception?
+Doing that "cast struct timespec64 to an uint64_t' is not only ugly
+and wrong, it's _stupid_. The only reason it works in the first place
+is that 'struct timespec64' is
 
-I did not think much about it but you are right that other files seem
-to have a newline at the end. I will add one as well.
+  struct timespec64 {
+        time64_t        tv_sec;                 /* seconds */
+        long            tv_nsec;                /* nanoseconds */
+  };
 
-Thanks
-Vivek
+so the first field is 'tv_sec', which is a 64-bit (signed) value.
 
+So the cast is disgusting - and it's pointless. I don't know why it's
+done that way. It would have been much cleaner to just use tv_sec, and
+have a big comment about it being used as a sequence number here.
+
+I _assume_ there's just a simple 32-bit history to this all, where at
+one point it was a 32-bit tv_sec, and the cast basically used both
+32-bit fields as a 64-bit sequence number.  I get it. But it's most
+definitely wrong now.
+
+End result: I ended up fixing that bug and removing the bogus casts in
+my merge. I *think* I got it right, but apologies in advance if I
+screwed up. I only did visual inspection and build testing, no actual
+real testing.
+
+Also, xfs people may obviously have other preferences for how to deal
+with the whole "now using tv_sec in the VFS inode as a 64-bit sequence
+number" thing, and maybe you prefer to then update my fix to this all.
+But that horrid casts certainly wasn't the right way to do it.
+
+Put another way: please do give my merge a closer look, and decide
+amongst yourself if you then want to deal with this some other way.
+
+              Linus
 
