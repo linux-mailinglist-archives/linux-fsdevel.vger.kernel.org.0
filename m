@@ -1,201 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-2438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37BB7E5F61
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:46:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7857E5F96
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 22:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4466AB20DFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8655B20F4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB7C3716D;
-	Wed,  8 Nov 2023 20:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B088C374CA;
+	Wed,  8 Nov 2023 21:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LA9dtmsi"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="OBkY462g";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PE2aMCi9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0519460;
-	Wed,  8 Nov 2023 20:46:19 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FEF12132;
-	Wed,  8 Nov 2023 12:46:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=IYjCp8rTcxEG3M279vzbbI0tfP2VMAdLWvZwpGFWngE=; b=LA9dtmsibsRBbAWigyG6Ny2I5Z
-	kSVBhUGbs97uvhj7+Mn2rGkp+uAsSWEP2Wduc0+uzyWxfGaLvOLV7/6xPy7AQD+Kp4LXWjX7kQxoS
-	johirG8nYCyJ5z8YzRRJiRQuufogk1Gwmu2LiitFrN83RH8Icq/kwrNnabv0SlHmkC+YGAuND2nDi
-	Hw/Sw/1P/gl5OyrI0guLvLwD6Ius4vybwK3R0wAiX4DCsKHdadbbN5GHUY6MPLutdtrwkprjGQ+1y
-	LXNOqQ6Zjmv/pTr8ELCD9a7caQzqcmQuMjUiR6M/Tt9KADBlNOCe1IdD/rRmXO9z1v18I9zeWLQL2
-	a7Pfju9A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r0pRC-0037qA-2E; Wed, 08 Nov 2023 20:46:10 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Howells <dhowells@redhat.com>,
-	Steve French <sfrench@samba.org>,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] mm: Return void from folio_start_writeback() and related functions
-Date: Wed,  8 Nov 2023 20:46:05 +0000
-Message-Id: <20231108204605.745109-5-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20231108204605.745109-1-willy@infradead.org>
-References: <20231108204605.745109-1-willy@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEC537175;
+	Wed,  8 Nov 2023 21:01:50 +0000 (UTC)
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6480EA;
+	Wed,  8 Nov 2023 13:01:49 -0800 (PST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailout.west.internal (Postfix) with ESMTP id 9574F320070D;
+	Wed,  8 Nov 2023 16:01:46 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 08 Nov 2023 16:01:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm2; t=1699477306; x=1699563706; bh=og
+	I1vY/TtmrKblm9hj+bYsj8vQ85H0nx7k7sJd7Rhtk=; b=OBkY462gYQf2gf9BYY
+	vVTtN71ATZPF6QPw2Oa+9zbuyJ1/uFPuGyzPjgJXcJiQX1qVFextvtO0eknB5unB
+	eIZjj0hCCLX10p4J5SEVOn+9jwWq1j/Ah8OWE3pW80PgImabRmwgsy22TFKJ+NRX
+	VgDkOcWrq2UTK8DVBTqmmjiZxnt9o1MkZnCitqZZug7luwqiGnmaofdiNlTGxYeT
+	rVhG0ZOobBX+QTphF8igSnh3ZSwYWetwZ2FV++3RwfkWw0FymZDzeJtMPJjmaMDR
+	ZAE+pzzn3yqlO37nVrVEYESCS59JrRlWuvHqQs9Fm/P4BVcIr7bbcypTmqlxzCwz
+	Eh4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1699477306; x=1699563706; bh=ogI1vY/TtmrKb
+	lm9hj+bYsj8vQ85H0nx7k7sJd7Rhtk=; b=PE2aMCi95WYigB9jqQ1OmvkELT+69
+	K3aJjlpl1AuRnOj7/VCf+AhzqzaJJHqPBSXuVEf++TGG0DYpfPu8l9EK5vbd+X2Y
+	vq6HidCDPD4ckHDE5do+rZhkSq/6u5ttonp7qX0jux2vLgj4Wo8T+VgqvzHXhUbY
+	yuFI9AsrfH8UjPQAcwbZeB8ii3xilWd7v2u5x0SFpIjLSc26svziKlvbCJMJqTaU
+	3sWmx3Gx5RL6ba/tbtpwniJQbRAvDLgHObriXBfuj1Ymt5lderDo3vHyiHcKM67u
+	uJ1OIm3J47KcQGlzJydsp3hdXWgSQ7geHO/ciMhFFPcKCVOy6ugL2246Q==
+X-ME-Sender: <xms:OPdLZSv8-HtQ2b0hxbGYJnX4aYoAv_igfHRbx6mWP4otlN8JBIcctA>
+    <xme:OPdLZXccLIUs85bedOCiW6uyGe62SQiH3g8-HVPb2m8PjcwUY26HLdchQpGEhOFGW
+    eRjWDXOqI2_Ur6pXT8>
+X-ME-Received: <xmr:OPdLZdxgb7xV4ZirDtU7iR1b8dr_mGDaKEFNv5PbuMudOrwrO9yi3Rqbugg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudduledgudegvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigt
+    hhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtf
+    frrghtthgvrhhnpeeutedttefgjeefffehffffkeejueevieefudelgeejuddtfeffteek
+    lefhleelteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehthigthhhosehthigthhhordhpihiiiigr
+X-ME-Proxy: <xmx:OPdLZdNRJaTe160IaBVULj1TS4jBuNCr7GuaE4xuoRB--WvZhqYH-A>
+    <xmx:OPdLZS8tLxAAUk2hBwjaCpcqru4a6HvG5RaM_5kCYPiqAUwc6OPaOg>
+    <xmx:OPdLZVUT6TDzDlg_fIZM3KSg4Y9qLBDjq_h8JKaw8sZt4MOhZqxDfA>
+    <xmx:OvdLZWQ4aFJSfc0q_Eyy3yqGptMPQA1UCj29-BMq622zynHaDrqs0g>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Nov 2023 16:01:42 -0500 (EST)
+Date: Wed, 8 Nov 2023 14:01:40 -0700
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Haitao Huang <haitao.huang@linux.intel.com>,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Tycho Andersen <tandersen@netflix.com>
+Subject: Re: [RFC 4/6] misc cgroup: introduce an fd counter
+Message-ID: <ZUv3NCZjRn5zfytj@tycho.pizza>
+References: <20231108002647.73784-1-tycho@tycho.pizza>
+ <20231108002647.73784-5-tycho@tycho.pizza>
+ <20231108165749.GY1957730@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231108165749.GY1957730@ZenIV>
 
-Nobody now checks the return value from any of these functions, so
-add an assertion at the beginning of the function and return void.
+Hi Al,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/page-flags.h |  4 +--
- mm/folio-compat.c          |  4 +--
- mm/page-writeback.c        | 54 ++++++++++++++++++--------------------
- 3 files changed, 29 insertions(+), 33 deletions(-)
+Thanks for looking. Somehow I also missed CCing you, whoops,
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index a440062e9386..735cddc13d20 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -772,8 +772,8 @@ static __always_inline void SetPageUptodate(struct page *page)
- 
- CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
- 
--bool __folio_start_writeback(struct folio *folio, bool keep_write);
--bool set_page_writeback(struct page *page);
-+void __folio_start_writeback(struct folio *folio, bool keep_write);
-+void set_page_writeback(struct page *page);
- 
- #define folio_start_writeback(folio)			\
- 	__folio_start_writeback(folio, false)
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 10c3247542cb..aee3b9a16828 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -46,9 +46,9 @@ void mark_page_accessed(struct page *page)
- }
- EXPORT_SYMBOL(mark_page_accessed);
- 
--bool set_page_writeback(struct page *page)
-+void set_page_writeback(struct page *page)
- {
--	return folio_start_writeback(page_folio(page));
-+	folio_start_writeback(page_folio(page));
- }
- EXPORT_SYMBOL(set_page_writeback);
- 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 46f2f5d3d183..118f02b51c8d 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2982,67 +2982,63 @@ bool __folio_end_writeback(struct folio *folio)
- 	return ret;
- }
- 
--bool __folio_start_writeback(struct folio *folio, bool keep_write)
-+void __folio_start_writeback(struct folio *folio, bool keep_write)
- {
- 	long nr = folio_nr_pages(folio);
- 	struct address_space *mapping = folio_mapping(folio);
--	bool ret;
- 	int access_ret;
- 
-+	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-+
- 	folio_memcg_lock(folio);
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
- 		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 		unsigned long flags;
-+		bool on_wblist;
- 
- 		xas_lock_irqsave(&xas, flags);
- 		xas_load(&xas);
--		ret = folio_test_set_writeback(folio);
--		if (!ret) {
--			bool on_wblist;
-+		folio_test_set_writeback(folio);
- 
--			on_wblist = mapping_tagged(mapping,
--						   PAGECACHE_TAG_WRITEBACK);
-+		on_wblist = mapping_tagged(mapping, PAGECACHE_TAG_WRITEBACK);
- 
--			xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
--			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
--				struct bdi_writeback *wb = inode_to_wb(inode);
--
--				wb_stat_mod(wb, WB_WRITEBACK, nr);
--				if (!on_wblist)
--					wb_inode_writeback_start(wb);
--			}
-+		xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
-+		if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
-+			struct bdi_writeback *wb = inode_to_wb(inode);
- 
--			/*
--			 * We can come through here when swapping
--			 * anonymous folios, so we don't necessarily
--			 * have an inode to track for sync.
--			 */
--			if (mapping->host && !on_wblist)
--				sb_mark_inode_writeback(mapping->host);
-+			wb_stat_mod(wb, WB_WRITEBACK, nr);
-+			if (!on_wblist)
-+				wb_inode_writeback_start(wb);
- 		}
-+
-+		/*
-+		 * We can come through here when swapping anonymous
-+		 * folios, so we don't necessarily have an inode to
-+		 * track for sync.
-+		 */
-+		if (mapping->host && !on_wblist)
-+			sb_mark_inode_writeback(mapping->host);
- 		if (!folio_test_dirty(folio))
- 			xas_clear_mark(&xas, PAGECACHE_TAG_DIRTY);
- 		if (!keep_write)
- 			xas_clear_mark(&xas, PAGECACHE_TAG_TOWRITE);
- 		xas_unlock_irqrestore(&xas, flags);
- 	} else {
--		ret = folio_test_set_writeback(folio);
--	}
--	if (!ret) {
--		lruvec_stat_mod_folio(folio, NR_WRITEBACK, nr);
--		zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
-+		folio_test_set_writeback(folio);
- 	}
-+
-+	lruvec_stat_mod_folio(folio, NR_WRITEBACK, nr);
-+	zone_stat_mod_folio(folio, NR_ZONE_WRITE_PENDING, nr);
- 	folio_memcg_unlock(folio);
-+
- 	access_ret = arch_make_folio_accessible(folio);
- 	/*
- 	 * If writeback has been triggered on a page that cannot be made
- 	 * accessible, it is too late to recover here.
- 	 */
- 	VM_BUG_ON_FOLIO(access_ret != 0, folio);
--
--	return ret;
- }
- EXPORT_SYMBOL(__folio_start_writeback);
- 
--- 
-2.42.0
+On Wed, Nov 08, 2023 at 04:57:49PM +0000, Al Viro wrote:
+> On Tue, Nov 07, 2023 at 05:26:45PM -0700, Tycho Andersen wrote:
+> 
+> > +	if (!charge_current_fds(newf, count_open_files(new_fdt)))
+> > +		return newf;
+> 
+> Are you sure that on configs that are not cgroup-infested compiler
+> will figure out that count_open_files() would have no side effects
+> and doesn't need to be evaluated?
+> 
+> Incidentally, since you are adding your charge/uncharge stuff on each
+> allocation/freeing, why not simply maintain an accurate counter, cgroup or
+> no cgroup?  IDGI...  Make it an inlined helper right there in fs/file.c,
+> doing increment/decrement and, conditional upon config, calling
+> the cgroup side of things.  No need to look at fdt, etc. outside
+> of fs/file.c either - the counter can be picked right from the
+> files_struct...
 
+Thanks, I can re-work it to look like this.
+
+> >  static void __put_unused_fd(struct files_struct *files, unsigned int fd)
+> >  {
+> >  	struct fdtable *fdt = files_fdtable(files);
+> > +	if (test_bit(fd, fdt->open_fds))
+> > +		uncharge_current_fds(files, 1);
+> 
+> Umm...  Just where do we call it without the bit in ->open_fds set?
+> Any such caller would be a serious bug; suppose you are trying to
+> call __put_unused_fd(files, N) while N is not in open_fds.  Just before
+> your call another thread grabs a descriptor and picks N.  Resulting
+> state won't be pretty, especially if right *after* your call the
+> third thread also asks for a descriptor - and also gets N.
+> 
+> Sure, you have an exclusion on ->file_lock, but AFAICS all callers
+> are under it and in all callers except for put_unused_fd() we
+> have just observed a non-NULL file reference in ->fd[N]; that
+> would *definitely* be a hard constraint violation if it ever
+> happened with N not in ->open_fds at that moment.
+> 
+> So the only possibility would be a broken caller of put_unused_fd(),
+> and any such would be a serious bug.
+> 
+> Details, please - have you ever observed that?
+
+No, I just kept it from the original series. I agree that it should be
+safe to drop.
+
+> BTW, what about the locking hierarchy?  In the current tree ->files_lock
+> nests inside of everything; what happens with your patches in place?
+
+If I understand correctly you're asking about ->files_lock nesting
+inside of task_lock()? I tried to make the cgroup side in this patch
+do the same thing in the same order. Or am I misunderstanding?
+
+I did test this with some production container traffic and didn't see
+anything too strange, but no doubt there are complicated edge cases
+here.
+
+Thanks,
+
+Tycho
 
