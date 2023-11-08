@@ -1,214 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-2449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12487E6081
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 23:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 244197E60D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 00:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC4DB20E6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 22:52:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1063B20D8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 23:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C11536AE6;
-	Wed,  8 Nov 2023 22:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+YoBAEF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DA93715E;
+	Wed,  8 Nov 2023 23:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B444E30358
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 22:52:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185AEC433C7;
-	Wed,  8 Nov 2023 22:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699483921;
-	bh=HEtmjQaJF0gpngzuMd7uAS6GdeVXsEyiEFttrNMCLZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i+YoBAEFerirAURfyXz29Snkn78b6MV9g5HF5mNqO3mhbjpSa3K9ugS8HbLPOrKUu
-	 EFEUsND0k8tEBjmhHl99oI1KEZgFhPver+cbAg/JwPUmLmKNag9Auw78yP1OndQZBV
-	 Bs92t6zY7b5OxwF9nm7B4j908y+wKT+EfafkmebgfsvgaUeTDyO+Lzx+hYCafdoh1p
-	 DkV4dhnObJIwh6fcIA1AWNXRqDBnBlxMFeKp7+xX2QbP68VojxrCmpwFdwq0sDy4Dd
-	 T3cJ+YoVTNsFwkFR+58v0bXCJkZzdzwsmiFdy71UubyzT/pXq+xx2EeE/0x+jRsScL
-	 zGan9Ds9/ATKg==
-Date: Wed, 8 Nov 2023 14:52:00 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, catherine.hoang@oracle.com,
-	cheng.lin130@zte.com.cn, dchinner@redhat.com, hch@lst.de,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	osandov@fb.com
-Subject: Re: [GIT PULL] xfs: new code for 6.7
-Message-ID: <20231108225200.GY1205143@frogsfrogsfrogs>
-References: <87fs1g1rac.fsf@debian-BULLSEYE-live-builder-AMD64>
- <CAHk-=wj3oM3d-Hw2vvxys3KCZ9De+gBN7Gxr2jf96OTisL9udw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2E936AE6;
+	Wed,  8 Nov 2023 23:02:42 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A75682588;
+	Wed,  8 Nov 2023 15:02:41 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-53e08b60febso271027a12.1;
+        Wed, 08 Nov 2023 15:02:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699484560; x=1700089360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QezIy+A1nnmgJWdCX5sdOM70b+QBHz1gPqNRkt6Z8Jw=;
+        b=sd/iY0b+rOF29nlarpFaFGNj9e7eYdb2LBi2R7dbjgxasg/mq+yzpDWf4yU5Pc+gvN
+         CM6UJjrnDBaja4cZP0BqlvLaPuS2dehL1XXO2QQpuNooKjCPCA197YIz/gbJ89iktYVK
+         0I2YPNJJexGsD1o5Y0/4DBTi3A/cEt1jtYMALLveE92KkUojWveFDUd54kXEBbWW4C33
+         +dIklWJEpEHu+h9MujvmYsEuNT8RR7WPQ9nwnYDteg+5ibaRmhOoBFg5Vm+1RbS9dGJr
+         RGznhmaHbVB21ToW8G4Mjl7zbeCeErv14BJfhWeu+hIn+dErt5ATuoeYJfCy+WvKKfUa
+         T4OA==
+X-Gm-Message-State: AOJu0YycGfHcw8O7ApLq8/c77W+Wi5su7DJ+ulDxgbQM1Cl9HlbEhxwI
+	eID9/LoY79/9jR1Qgd0k28RvhCTq5CNQ+zuQ
+X-Google-Smtp-Source: AGHT+IG1MbqQprjN16fQanytc+0BidE5c4En4wrLj7NaaDmXjBeihEFRwZV5meVehfYt19PSr+vnBw==
+X-Received: by 2002:a50:d083:0:b0:543:bdaa:b719 with SMTP id v3-20020a50d083000000b00543bdaab719mr2228798edd.42.1699484559740;
+        Wed, 08 Nov 2023 15:02:39 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id j28-20020a508a9c000000b0053e3839fc79sm7470265edj.96.2023.11.08.15.02.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Nov 2023 15:02:39 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-9dd3f4a0f5aso42700566b.1;
+        Wed, 08 Nov 2023 15:02:39 -0800 (PST)
+X-Received: by 2002:a17:907:6ea5:b0:9e1:43cb:9088 with SMTP id
+ sh37-20020a1709076ea500b009e143cb9088mr3312221ejc.23.1699484558804; Wed, 08
+ Nov 2023 15:02:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj3oM3d-Hw2vvxys3KCZ9De+gBN7Gxr2jf96OTisL9udw@mail.gmail.com>
+References: <cover.1699470345.git.josef@toxicpanda.com>
+In-Reply-To: <cover.1699470345.git.josef@toxicpanda.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Wed, 8 Nov 2023 18:02:02 -0500
+X-Gmail-Original-Message-ID: <CAEg-Je-wJbU6TPNmOXfx8KyBdQX++AFHG57o8s8U-Bq1jKTQ8Q@mail.gmail.com>
+Message-ID: <CAEg-Je-wJbU6TPNmOXfx8KyBdQX++AFHG57o8s8U-Bq1jKTQ8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/18] btrfs: convert to the new mount API
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 08, 2023 at 01:29:16PM -0800, Linus Torvalds wrote:
-> On Wed, 8 Nov 2023 at 02:19, Chandan Babu R <chandanbabu@kernel.org> wrote:
-> >
-> > I had performed a test merge with latest contents of torvalds/linux.git.
-> >
-> > This resulted in merge conflicts. The following diff should resolve the merge
-> > conflicts.
-> 
-> Well, your merge conflict resolution is the same as my initial
-> mindless one, but then when I look closer at it, it turns out that
-> it's wrong.
-> 
-> It's wrong not because the merge itself would be wrong, but because
-> the conflict made me look at the original, and it turns out that
-> commit 75d1e312bbbd ("xfs: convert to new timestamp accessors") was
-> buggy.
-> 
-> I'm actually surprised the compilers don't complain about it, because
-> the bug means that the new
-> 
->         struct timespec64 ts;
-> 
-> temporary isn't actually initialized for the !XFS_DIFLAG_NEWRTBM case.
-> 
-> The code does
-> 
->   xfs_rtpick_extent(..)
+On Wed, Nov 8, 2023 at 2:09=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> v1->v2:
+> - Fixed up some nits and paste errors.
+> - Fixed build failure with !ZONED.
+> - Fixed accidentally dropping BINARY_MOUNTDATA flag.
+> - Added Reviewed-by's collected up to this point.
+>
+> These have run through our CI a few times, they haven't introduced any
+> regressions.
+>
+> --- Original email ---
+> Hello,
+>
+> These patches convert us to use the new mount API.  Christian tried to do=
+ this a
+> few months ago, but ran afoul of our preference to have a bunch of small
+> changes.  I started this series before I knew he had tried to convert us,=
+ so
+> there's a fair bit that's different, but I did copy his approach for the =
+remount
+> bit.  I've linked to the original patch where I took inspiration, Christi=
+an let
+> me know if you want some other annotation for credit, I wasn't really sur=
+e the
+> best way to do that.
+>
+> There are a few preparatory patches in the beginning, and then cleanups a=
+t the
+> end.  I took each call back one at a time to try and make it as small as
+> possible.  The resulting code is less, but the diffstat shows more insert=
+ions
+> that deletions.  This is because there are some big comment blocks around=
+ some
+> of the more subtle things that we're doing to hopefully make it more clea=
+r.
+>
+> This is currently running through our CI.  I thought it was fine last wee=
+k but
+> we had a bunch of new failures when I finished up the remount behavior.  =
+However
+> today I discovered this was a regression in btrfs-progs, and I'm re-runni=
+ng the
+> tests with the fixes.  If anything major breaks in the CI I'll resend wit=
+h
+> fixes, but I'm pretty sure these patches will pass without issue.
+>
+> I utilized __maybe_unused liberally to make sure everything compiled whil=
+e
+> applied.  The only "big" patch is where I went and removed the old API.  =
+If
+> requested I can break that up a bit more, but I didn't think it was neces=
+sary.
+> I did make sure to keep it in its own patch, so the switch to the new mou=
+nt API
+> path only has things we need to support the new mount API, and then the n=
+ext
+> patch removes the old code.  Thanks,
+>
+> Josef
+>
+> Christian Brauner (1):
+>   fs: indicate request originates from old mount api
+>
+> Josef Bacik (17):
+>   btrfs: split out the mount option validation code into its own helper
+>   btrfs: set default compress type at btrfs_init_fs_info time
+>   btrfs: move space cache settings into open_ctree
+>   btrfs: do not allow free space tree rebuild on extent tree v2
+>   btrfs: split out ro->rw and rw->ro helpers into their own functions
+>   btrfs: add a NOSPACECACHE mount option flag
+>   btrfs: add fs_parameter definitions
+>   btrfs: add parse_param callback for the new mount api
+>   btrfs: add fs context handling functions
+>   btrfs: add reconfigure callback for fs_context
+>   btrfs: add get_tree callback for new mount API
+>   btrfs: handle the ro->rw transition for mounting different subovls
+>   btrfs: switch to the new mount API
+>   btrfs: move the device specific mount options to super.c
+>   btrfs: remove old mount API code
+>   btrfs: move one shot mount option clearing to super.c
+>   btrfs: set clear_cache if we use usebackuproot
+>
+>  fs/btrfs/disk-io.c |   76 +-
+>  fs/btrfs/disk-io.h |    1 -
+>  fs/btrfs/fs.h      |   15 +-
+>  fs/btrfs/super.c   | 2421 +++++++++++++++++++++++---------------------
+>  fs/btrfs/super.h   |    5 +-
+>  fs/btrfs/zoned.c   |   16 +-
+>  fs/btrfs/zoned.h   |    6 +-
+>  fs/namespace.c     |   11 +
+>  8 files changed, 1317 insertions(+), 1234 deletions(-)
+>
+> --
+> 2.41.0
+>
 
-Oh gosh.  Dave might have other things to say, but xfs_rtpick_extent is
-the sort of function that I hate with the power of 1,000 suns.
+The series looks reasonable to me. I do appreciate the extra effort in
+the documents and references to give me context when looking through
+it all.
 
-Back in 2.6.x it apparently did this:
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-	seqp = (__uint64_t *)&mp->m_rbmip->i_d.di_atime;
 
-At the time, xfs_inode.id.di_atime was a struct xfs_ictimestamp:
-
-typedef struct xfs_ictimestamp {
-	__int32_t	t_sec;		/* timestamp seconds */
-	__int32_t	t_nsec;		/* timestamp nanoseconds */
-} xfs_ictimestamp_t;
-
-So the rt allocator thinks its maintaining a u64 new file counter in the
-bitmap file's atime.  The lower 32bits ended up in t_sec, and the upper
-32bits ended up in t_nsec.
-
-At some point (4.6?) the function started using the VFS i_atime field
-instead of the di_atime field.  On 32-bit systems the struct timespec
-was still a struct of two int32 values and everything kept working the
-way it always had.
-
-On 64-bit systems, tv_sec is 64-bits which means the sequence counter
-was only stored (incore, anyway) in tv_sec.  XFS truncates the upper
-32-bits when writing the inode to disk because (at the time) it didn't
-handle y2038.
-
-IOWs, we broke the ondisk format in 2016 and nobody noticed.  Because
-the allocator calls xfs_highbit64 on the sequence counter, the only
-observable behavior change would be the starting location of a free
-space search for the first rt file allocation after an upgrade from 4.5
-to a newer kernel on a 64-bit machine.
-
-(Or going back, obviously)
-
-But then in 4.18 or so, the VFS inode switched to timespec64, at which
-point /all/ of the 32-bit kernels "migrated" to storing the sequence
-counter in tv_sec and truncating it when it goes out to disk.
-
-Then in 5.10 we added y2038 support, so post-Covid filesystems truncate
-less of the sequence counter.  #winning
-
->   ...
->         struct timespec64 ts;
->         ..
->         if (!(mp->m_rbmip->i_diflags & XFS_DIFLAG_NEWRTBM)) {
->                 mp->m_rbmip->i_diflags |= XFS_DIFLAG_NEWRTBM;
->                 seq = 0;
->         } else {
->         ...
->         ts.tv_sec = (time64_t)seq + 1;
->         inode_set_atime_to_ts(VFS_I(mp->m_rbmip), ts);
-
-So... according to the pre-4.6 definition of the sequence counter this
-is wrong, but OTOH it's not inconsistent with what was there in 6.4.
-
-> and notice how 'ts.tv_nsec' is never initialized. So we'll set the
-> nsec part of the atime to random garbage.
-> 
-> Oh, I'm sure it doesn't really *matter*, but it's most certainly wrong.
-
-tv_nsec isn't explicitly initialized by rtpick_extent, but IIRC mkfs
-initializes the ondisk inode's tv_nsec field and the kernel reads that
-into the incore inode, so I dont't think it's leaking kernel memory
-contents.
-
-> I am not very happy about the whole crazy XFS model where people cast
-> the 'struct timespec64' pointer to an 'uint64_t' pointer, and then say
-> 'now it's a sequence number'. This is not the only place that
-> happened, ie we have similar disgusting code in at least
-> xfs_rtfree_extent() too.
-> 
-> That other place in xfs_rtfree_extent() didn't have this bug - it does
-> inode_get_atime() unconditionally and this keeps the nsec field as-is,
-> but that other place has the same really ugly code.
-> 
-> Doing that "cast struct timespec64 to an uint64_t' is not only ugly
-> and wrong, it's _stupid_. The only reason it works in the first place
-> is that 'struct timespec64' is
-> 
->   struct timespec64 {
->         time64_t        tv_sec;                 /* seconds */
->         long            tv_nsec;                /* nanoseconds */
->   };
-> 
-> so the first field is 'tv_sec', which is a 64-bit (signed) value.
-
-(yep)
-
-> So the cast is disgusting - and it's pointless. I don't know why it's
-> done that way. It would have been much cleaner to just use tv_sec, and
-> have a big comment about it being used as a sequence number here.
-> 
-> I _assume_ there's just a simple 32-bit history to this all, where at
-> one point it was a 32-bit tv_sec, and the cast basically used both
-> 32-bit fields as a 64-bit sequence number.  I get it. But it's most
-> definitely wrong now.
-
-I don't even think it was good C back whenever it was written, but I was
-probably in high school at that point. ;)
-
-> End result: I ended up fixing that bug and removing the bogus casts in
-> my merge. I *think* I got it right, but apologies in advance if I
-> screwed up. I only did visual inspection and build testing, no actual
-> real testing.
-
-My opinion is that you've kept your tree consistent with what the kernel
-has been doing for the last 5 years.  No comment about the s**tshow that
-went on before that.
-
-> Also, xfs people may obviously have other preferences for how to deal
-> with the whole "now using tv_sec in the VFS inode as a 64-bit sequence
-> number" thing, and maybe you prefer to then update my fix to this all.
-> But that horrid casts certainly wasn't the right way to do it.
-
-Yeah, I can work on that for the rt modernization patchset.
-
-> Put another way: please do give my merge a closer look, and decide
-> amongst yourself if you then want to deal with this some other way.
-
-Let's see what the other devs say.  Thank you for taking Chandan's pull
-request, by the way.
-
---D
-
-> 
->               Linus
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
