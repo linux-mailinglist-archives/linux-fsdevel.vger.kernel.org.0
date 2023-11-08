@@ -1,171 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-2394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421DB7E59A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:01:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF877E59E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC906B20ECD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 15:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583A7281484
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 15:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D6B30323;
-	Wed,  8 Nov 2023 15:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B46D30341;
+	Wed,  8 Nov 2023 15:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SaDI8fKk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078EE2FE39
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 15:01:39 +0000 (UTC)
-Received: from mail-ot1-f79.google.com (mail-ot1-f79.google.com [209.85.210.79])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 441E31BE5
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 07:01:39 -0800 (PST)
-Received: by mail-ot1-f79.google.com with SMTP id 46e09a7af769-6cd0a9b5a90so9707226a34.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 07:01:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699455698; x=1700060498;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6LqIztK5sqIUqLI07DaATWBMeUGb1bfpP4v378T+XPo=;
-        b=qXTQ+jFHncaG8fqy1WZMyoWBhuz7Udc0AgAaHFV6FCpmhqPtzOetHIA0VjVt3oZS9o
-         +xgWNrAp4l5fR/ndtrp0t9doqUB0QkVoyObzJHjl+uCR+OJTzzO35Iv7S0PvlcGTQMK+
-         yHMG3iP8eEhAiFENNRaBgc23Voanywom6on6aRUX3o+fTSpqnXZgsltjMTPUyf9tjcF9
-         alqfAP3W3tYpiC6MbWVAOG9ANyi0+kImlERxQe9lWIy58e+x7/M+f5XMIN/eG0gp9kpG
-         8rc1SgVxVtbFyXPhc3R7C5YP4rvSaPDbU3OETX+G46pdLz9I1O9LJTj/77lucYFZdTD0
-         PgpQ==
-X-Gm-Message-State: AOJu0YwiD1hNW/0HeU/YFSTjhHmnf2I0HsLXbxf2SxpI7MwPOr0WajDG
-	zBfkoSuAxGe3nJY8WDQjd8fc/RsRmg27mbE5L1j4oXLYS67R
-X-Google-Smtp-Source: AGHT+IEwZUGdPuRRvdDTfVm4G4F3cDzyWKXpEThqnBqQlVhZHwBf5AITtkOsINuLkwH5t9O5gP9WjF91cWvPSmTEAZkC1m21H3mb
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D9630333
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 15:17:47 +0000 (UTC)
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE341991
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 07:17:46 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231108151745euoutp023774b407991ff2c054504e4281af90b4~VrtUwV_k70847708477euoutp02f
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 15:17:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231108151745euoutp023774b407991ff2c054504e4281af90b4~VrtUwV_k70847708477euoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1699456665;
+	bh=CWM2/PR29WI4BU8PMbzFa7tHV4ws686nuD4G3Ms/niQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=SaDI8fKkSAZtBY//bRgS+Xrh6O3CSXfbGYoZOpCT5dxn8tjr0GUeyBKfdX9l9aNtw
+	 kywZXxE/m+cnLyDzFfUQa9hpMwcxRRIojsyiqkmqRdD62ORSU62h0u5uxdUpEP6eyd
+	 BmLVpLCFZGj6IZ9IcO5l3F0xtcWynZsPHf/KoyX4=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20231108151744eucas1p1ac0e2931bf373c55b122ae1022979f00~VrtUhISHi0618306183eucas1p1S;
+	Wed,  8 Nov 2023 15:17:44 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 9F.94.11320.896AB456; Wed,  8
+	Nov 2023 15:17:44 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231108151744eucas1p229d2073ae889eb95caed90b1f83821c3~VrtT-eDxw1167011670eucas1p2l;
+	Wed,  8 Nov 2023 15:17:44 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231108151744eusmtrp2b4bce7395cd6fb9b5447d56a18b63d65~VrtT4RPV31279812798eusmtrp2B;
+	Wed,  8 Nov 2023 15:17:44 +0000 (GMT)
+X-AuditID: cbfec7f4-993ff70000022c38-28-654ba6989686
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id CC.C8.10549.796AB456; Wed,  8
+	Nov 2023 15:17:43 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20231108151743eusmtip1dde324c720cb47fc83c958904af08c84~VrtS3Tcbv2704427044eusmtip1t;
+	Wed,  8 Nov 2023 15:17:43 +0000 (GMT)
+Received: from localhost (106.110.32.140) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 8 Nov 2023 15:17:41 +0000
+Date: Wed, 8 Nov 2023 16:17:40 +0100
+From: Pankaj Raghav <p.raghav@samsung.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, Hannes Reinecke
+	<hare@suse.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <p.raghav@samsung.com>
+Subject: Re: [PATCH 5/5] buffer: Fix various functions for block size >
+ PAGE_SIZE
+Message-ID: <20231108151740.emlp6tvumdloxmbd@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:2445:b0:6bf:27b3:3d29 with SMTP id
- x5-20020a056830244500b006bf27b33d29mr602704otr.5.1699455693260; Wed, 08 Nov
- 2023 07:01:33 -0800 (PST)
-Date: Wed, 08 Nov 2023 07:01:33 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e890bc0609a55cff@google.com>
-Subject: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (2)
-From: syzbot <syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20231107194152.3374087-6-willy@infradead.org>
+X-Originating-IP: [106.110.32.140]
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa1BMYRjH5z3ndPa0bHNs4bFRbDZKEpqxZMhtLPWBcfkgZOktpu1iL65j
+	JDFqXKJs2RobyYaodsk2XbCEbIqssdWMkVHRMINdlChtx+3b//k/v+d9nv/My5DCQ24iZlui
+	GisT5Qoxzacq7vc2Ts29GIFDmtqmSPNLS2hp9flThLS6pp6S2jM7kLSvJ58Od5OZigNlxsvp
+	tOxhbh8lM1n3yhxGnxVu6/hzY7Bi2w6snDZvE3+r8ZEFJd/l7WptKKdSUBadgdwZYEOhvew5
+	kYH4jJAtRvDFlkVyhROBRdvM4woHgvQuLfozYkzrQVzDgKDfXIf+Up3P7BRXmBAM1PXyXCMU
+	OxHeOusGH2YYmg2EA+lDthc7E04abtEunmTLEHwfKOe5GE92FeSdXOhiBOwsaP9US3B6BNSf
+	eUO5NMkGQUHVZ9qFk6w3GPoZl+3OhkGX7SzJHSqGFFMDxel9UHPw9lAaYO0M6HPeuHGNxWD/
+	+fU35AndD67zOD0WBir1BKf3Qoe9j+SG0xCcqCwdWgyD2443KDhmAbT/eE1ytgfYP4zgzvSA
+	UxU5v20BHDks5Gh/uPLyPZWJ/HT/BdP9F0z3L1gBIi+j0VijSojDqhmJeGewSp6g0iTGBW9J
+	SjCiwZ9i7X/gNCND96dgCyIYZEHAkGIvwc/5MiwUxMh378HKpGilRoFVFuTNUOLRAkmMLxay
+	cXI1jsc4GSv/dAnGXZRCmEMuhVXE5vUcbT5WZXZajhQWraoO5fv6NJrH8Qre56N0bBtzp1h3
+	QF20/WNaRlBS5DWLtiZgjna5uaPyacj8Yf4lGyaVx3S2pjZHHtonke2/67Agx6wlLZs9bybH
+	SlKt/qkF2VNe9o57JxQN7Apr+uLXEXV14w7Fylqb5tlaj1qRY646fqrT1PiNnVceYLRN0NfX
+	Tj/xKvN0lfXrhNX1tnOx0fqW8QE5TffI9bO7WR29OWpRS4m2NEj2xCDYrVka/+IHVUFkX18W
+	FXHsEaUuvK0LfzoZFd+xDpdQ+FbWSELbrBdFd0oyTUVVoy4YFvm0ec/OvtHWtUbv2fo4lJcj
+	FVOqrfLpgaRSJf8FIjWSN5gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsVy+t/xu7rTl3mnGtx7bWkxZ/0aNos9iyYx
+	WezZe5LF4saEp4wWv3/MYXNg9di8Qstj06pONo8TM36zeGw+Xe3xeZNcAGuUnk1RfmlJqkJG
+	fnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsamU4cYCw6zV9w6s5Gl
+	gXEyWxcjJ4eEgInEppYfjF2MXBxCAksZJRoObWaGSMhIbPxylRXCFpb4c62LDaLoI6PExO0d
+	LCAJIYHNjBJLdmqC2CwCKhIvvhwFaubgYBPQkmjsZAcJiwgYS0xcvh+sl1lgA6PE8e+3WEFq
+	hAWCJWZPdAKp4RUwl3j4cR8TxMhsiUNX17JAxAUlTs58AmYzC+hILNj9iQ2klVlAWmL5Pw6Q
+	MKeAtcTzK/OgTlaSaNh8hgXCrpXofHWabQKj8Cwkk2YhmTQLYdICRuZVjCKppcW56bnFhnrF
+	ibnFpXnpesn5uZsYgXG17djPzTsY5736qHeIkYmD8RCjBAezkgjvX3uPVCHelMTKqtSi/Pii
+	0pzU4kOMpsCAmMgsJZqcD4zsvJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKY
+	PiYOTqkGpkl7mLdGTOwrZl0g9+DEZ+ZPYs/e1hjLPlWddZGpVvujVNrSav+ivilz58if+tn1
+	6FVaSBvf3/g7UdJ7C/gP3S17+0OjtqW3/W+WXKrPzsLJax3WvHmxJMDt8/L+Kq8gh9wvrW8m
+	ztvt/s9BcM6bnHnmiXbrau827VnqKBzfx7bwuJiEW/+8hTOcG96o2zOu+D1j0eFf5gUcFrse
+	/9j6aB2Lo+fpD8pLLp1bWMmi4DT70+sdj7v5T3ZKb1djvCipXHam5tiMvbuv7vJ4cUd/Z3ym
+	Qf+X2fEzjHUvlKnq5LSdc2Izkk6dtOvNxOtN7Y7/4w/6Xo1/pRnzvGaX+8UtC7dePx1tXT1X
+	94GjsF9FyVklluKMREMt5qLiRAA6YapJNAMAAA==
+X-CMS-MailID: 20231108151744eucas1p229d2073ae889eb95caed90b1f83821c3
+X-Msg-Generator: CA
+X-RootMTR: 20231108151744eucas1p229d2073ae889eb95caed90b1f83821c3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231108151744eucas1p229d2073ae889eb95caed90b1f83821c3
+References: <20231107194152.3374087-1-willy@infradead.org>
+	<20231107194152.3374087-6-willy@infradead.org>
+	<CGME20231108151744eucas1p229d2073ae889eb95caed90b1f83821c3@eucas1p2.samsung.com>
 
-Hello,
+On Tue, Nov 07, 2023 at 07:41:52PM +0000, Matthew Wilcox (Oracle) wrote:
+> If i_blkbits is larger than PAGE_SHIFT, we shift by a negative number,
+> which is undefined.  It is safe to shift the block left as a block
+> device must be smaller than MAX_LFS_FILESIZE, which is guaranteed to
+> fit in loff_t.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-syzbot found the following issue on:
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
 
-HEAD commit:    90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10222eeb680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
-dashboard link: https://syzkaller.appspot.com/bug?extid=31e4659a3fe953aec2f4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13a2847b680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1579d0df680000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/10c213d23300/disk-90b0c2b2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0c55e6e441c1/vmlinux-90b0c2b2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c7f0436ea052/bzImage-90b0c2b2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/dbf260983b94/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+31e4659a3fe953aec2f4@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/inode.c:933!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5054 Comm: syz-executor410 Not tainted 6.6.0-syzkaller-14142-g90b0c2b2edd1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
-RIP: 0010:f2fs_evict_inode+0x1576/0x1590 fs/f2fs/inode.c:933
-Code: fd 31 ff 89 de e8 5a 4f bf fd 40 84 ed 75 29 e8 c0 4c bf fd 4c 8b 74 24 08 e9 c9 eb ff ff e8 b1 4c bf fd 0f 0b e8 aa 4c bf fd <0f> 0b e8 a3 4c bf fd 0f 0b e9 f6 fe ff ff e8 97 4c bf fd e8 72 e7
-RSP: 0018:ffffc900039df918 EFLAGS: 00010293
-RAX: ffffffff83cf9f56 RBX: 0000000000000002 RCX: ffff888014b30000
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff83cf984a R09: 1ffff1100ed0061d
-R10: dffffc0000000000 R11: ffffed100ed0061e R12: 1ffff1100ed0058f
-R13: ffff888076802c38 R14: ffff8880768030e8 R15: dffffc0000000000
-FS:  00005555556ae3c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdbe23ce18 CR3: 00000000727e8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- evict+0x2a4/0x620 fs/inode.c:664
- dispose_list fs/inode.c:697 [inline]
- evict_inodes+0x5f8/0x690 fs/inode.c:747
- generic_shutdown_super+0x9d/0x2c0 fs/super.c:675
- kill_block_super+0x44/0x90 fs/super.c:1667
- kill_f2fs_super+0x303/0x3b0 fs/f2fs/super.c:4894
- deactivate_locked_super+0xc1/0x130 fs/super.c:484
- cleanup_mnt+0x426/0x4c0 fs/namespace.c:1256
- task_work_run+0x24a/0x300 kernel/task_work.c:180
- ptrace_notify+0x2cd/0x380 kernel/signal.c:2399
- ptrace_report_syscall include/linux/ptrace.h:411 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:473 [inline]
- syscall_exit_work kernel/entry/common.c:251 [inline]
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:278 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x15c/0x280 kernel/entry/common.c:296
- do_syscall_64+0x50/0x110 arch/x86/entry/common.c:88
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7fa1a5e8ee77
-Code: 08 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffdbe23d5c8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000021a97 RCX: 00007fa1a5e8ee77
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 00007ffdbe23d680
-RBP: 00007ffdbe23d680 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffdbe23e740
-R13: 00005555556af700 R14: 431bde82d7b634db R15: 00007ffdbe23e6e4
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:f2fs_evict_inode+0x1576/0x1590 fs/f2fs/inode.c:933
-Code: fd 31 ff 89 de e8 5a 4f bf fd 40 84 ed 75 29 e8 c0 4c bf fd 4c 8b 74 24 08 e9 c9 eb ff ff e8 b1 4c bf fd 0f 0b e8 aa 4c bf fd <0f> 0b e8 a3 4c bf fd 0f 0b e9 f6 fe ff ff e8 97 4c bf fd e8 72 e7
-RSP: 0018:ffffc900039df918 EFLAGS: 00010293
-RAX: ffffffff83cf9f56 RBX: 0000000000000002 RCX: ffff888014b30000
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff83cf984a R09: 1ffff1100ed0061d
-R10: dffffc0000000000 R11: ffffed100ed0061e R12: 1ffff1100ed0058f
-R13: ffff888076802c38 R14: ffff8880768030e8 R15: dffffc0000000000
-FS:  00005555556ae3c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdbe23ce18 CR3: 00000000727e8000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+>  fs/buffer.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 2f08af3c47a2..5bdfcf8c6fe6 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -199,7 +199,7 @@ __find_get_block_slow(struct block_device *bdev, sector_t block)
+>  	int all_mapped = 1;
+>  	static DEFINE_RATELIMIT_STATE(last_warned, HZ, 1);
+>  
+> -	index = block >> (PAGE_SHIFT - bd_inode->i_blkbits);
+> +	index = ((loff_t)block << bd_inode->i_blkbits) / PAGE_SIZE;
 
