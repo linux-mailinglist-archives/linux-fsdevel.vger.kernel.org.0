@@ -1,137 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-2411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BD07E5D0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:19:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252F37E5D28
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419791C20B2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 18:19:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85191B20D4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 18:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D04358B3;
-	Wed,  8 Nov 2023 18:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF5C36B15;
+	Wed,  8 Nov 2023 18:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h6lKfaFB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EGw67X5M"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6BD358A2
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 18:19:51 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EDB21FF9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 10:19:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699467589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tix/i3v+sgjwjsKkq5B9E9w28/STeAVpcb2O8GD/72g=;
-	b=h6lKfaFBGbw6zs90MQ6nvbK/pT/UHyfyoNfC7rzHBVMurFzXrPx9sJEKH7FPU+2x329Vgx
-	Jhh9BM6glvXmhntblbafQY1nq1YL26D1Ox8FAqCO843kpUklKoBb+Jlenwm69WeWHJtzYI
-	VNsk82pTrzrI/H4oG0raN+TNVW1P5xU=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-MIlAqR6hNWKIYx4utqV7Nw-1; Wed, 08 Nov 2023 13:19:48 -0500
-X-MC-Unique: MIlAqR6hNWKIYx4utqV7Nw-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-420f5614aa9so98051cf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 10:19:48 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9D199BF
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 18:25:11 +0000 (UTC)
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9311FFE
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 10:25:11 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1cc411be7e5so182085ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 10:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1699467911; x=1700072711; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PC/6qhrPU03mDp/kTli/yNT2tn8rEseETDX1nC6wox8=;
+        b=EGw67X5MiD6H3JBdSATKzNavOXwLP4i2t9tP/rOF5jYHsTYK0TirhnySq5O27YAixd
+         YkjPoeOUmDoVuAGBXAw44EXOxP6lqc8WdQP0T8eSK1EppWGFOXr5GwHJqxjNx8GDDTGm
+         JyuuCpYj7cFUhU959QXI4CgWER/fw/KwdlB4DUr4qxD7clzsUXPATvVrFoLqyTEAEGmo
+         gxluJGGAOHKvg9+u+5y87KTE5uy0Hw+DoB2WsuAAi5YMa5/WNJpuPLqF2e0dINjOPCYQ
+         3yPgHLh8k4lqsMKYJWhf4v1CQx34kB26jrUgU7vBTYNGB4JCYm8YMtGmFUxnRgVCGb6M
+         3R1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699467587; x=1700072387;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tix/i3v+sgjwjsKkq5B9E9w28/STeAVpcb2O8GD/72g=;
-        b=rP2gDOaoYXSM4dPQyh4DIX9+BzX26OEjgUtdDBhRfkkSzy65qv2ml4fg+IKsUx1r/g
-         n8DawHyagx05KXR+A+6TqsLH/aNbtfmr3t2fAwdxUVG7pC17wgEiDEspyloxF3yd6Sbu
-         QfXJobcITMBaGRtKOWFdo81FFAa9M9Ss0SccIZEtC/3ICq0uMfnntaLa3/rAQAqJZiAd
-         9Bq7/VNeq2z1vsyG2AuUfkwa8ng4bbWlDfo0WqHdGKuwyWHnSNC+DpYnV+NrzjrcfxK6
-         edKkFSzeNbxJTDWAR47HdrX5SkayrUjDAcCJyEelPLoubVtfHN1EOk9kWpTwK/YtU8Bs
-         ZJeg==
-X-Gm-Message-State: AOJu0Yw5GcKQkuogMfE9KxSKE4yewCBvK1rTllQd2MccJHHaF5NBJjM5
-	o9P7iosZzptPy1fvE5AbhBvoR95UtxIzLoGP5u2DDSIBt0v71FMCi4R4j+7ogVYlT6Yot3kyw2E
-	nePRm96U5/E/V1UUsLZ5btsEWB54r7iISVA==
-X-Received: by 2002:ac8:5f4a:0:b0:418:737:87fc with SMTP id y10-20020ac85f4a000000b00418073787fcmr2680229qta.18.1699467586845;
-        Wed, 08 Nov 2023 10:19:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFnHaEjW4kYfsbsP4hrsQaPNwtaelyJHp6iJrJIJ0nO9aIyi2ROjvbWutD5zP71LUr9ChB1gQ==
-X-Received: by 2002:ac8:5f4a:0:b0:418:737:87fc with SMTP id y10-20020ac85f4a000000b00418073787fcmr2680214qta.18.1699467586578;
-        Wed, 08 Nov 2023 10:19:46 -0800 (PST)
-Received: from ?IPV6:2600:4040:7c46:e800:32a2:d966:1af4:8863? ([2600:4040:7c46:e800:32a2:d966:1af4:8863])
-        by smtp.gmail.com with ESMTPSA id z15-20020ac8454f000000b00419ab6ffedasm1152697qtn.29.2023.11.08.10.19.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Nov 2023 10:19:45 -0800 (PST)
-Message-ID: <1d634875-8df2-414f-bd97-04a50d55fc48@redhat.com>
-Date: Wed, 8 Nov 2023 13:19:45 -0500
+        d=1e100.net; s=20230601; t=1699467911; x=1700072711;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PC/6qhrPU03mDp/kTli/yNT2tn8rEseETDX1nC6wox8=;
+        b=LlHrwMEzVC6mPeRt7vTzVN09WgCfnjlJkbfdH1Hpz/2SylOSjtQ5PpKEiKF06bebnP
+         KIohw4VoX97aSA92Ttud274UOJBN62YivbbIgPYodmBK4BMTWBWt/6uRVwMdCGyQr6xQ
+         bDC6YhtRPVKoUzCDkUDxcwsEY+a6x8+bFyCcxhYLRchwdEfygkWzK+bvpYl/dMvKTBMr
+         bPqR1o3mrWBTV8CGXBvNnChwH/hjv98uk+ojsjfMVEEwoIVMY1h6Ktf6OiGMnDDe4R1n
+         SDXLlQLVN0rutK1FZrHyzZY3zyGQsRfVzqxyo0Xzku4PZiFma0QPUlmbERIJQhrKVQQ7
+         c71Q==
+X-Gm-Message-State: AOJu0YxrrmwnIPHuW+eLwpYWnfDo0p/VPL4PpGjDkznXtbPT830aLdgx
+	jojhNSCfTx8pBbXWicvqKY/omjvfepYPxJvv387JdA==
+X-Google-Smtp-Source: AGHT+IHxrKjsunYtwCVlQDJt85desOtieZLQtrnV8TYRwbsiFMuy8DBOb0CrFp15j+2/TxH5dCjYOFdEPQBtv0jPj4Y=
+X-Received: by 2002:a17:902:d4cc:b0:1c9:b5cf:6a78 with SMTP id
+ o12-20020a170902d4cc00b001c9b5cf6a78mr8503plg.27.1699467910689; Wed, 08 Nov
+ 2023 10:25:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Bernd Schubert <bernd.schubert@fastmail.fm>,
- Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
- hreitz@redhat.com
-References: <20230920024001.493477-1-tfanelli@redhat.com>
- <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
- <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
-Content-Language: en-US
-From: Tyler Fanelli <tfanelli@redhat.com>
-In-Reply-To: <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20230704122727.17096-1-jack@suse.cz> <20230704125702.23180-1-jack@suse.cz>
+ <20230822053523.GA8949@sol.localdomain> <20230822101154.7udsf4tdwtns2prj@quack3>
+ <CANp29Y6uBuSzLXuCMGzVNZjT+xFqV4dtWKWb7GR7Opx__Diuzg@mail.gmail.com>
+ <20231024111015.k4sbjpw5fa46k6il@quack3> <20231108101015.hj3w6a7sq5x7x2s4@quack3>
+In-Reply-To: <20231108101015.hj3w6a7sq5x7x2s4@quack3>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Wed, 8 Nov 2023 10:24:59 -0800
+Message-ID: <CANp29Y7DuDDkVBwsU_xhBSAug7q7vTsrS6jogF61CYEi85jGcw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] block: Add config option to not allow writing to
+ mounted devices
+To: Jan Kara <jack@suse.cz>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
+	Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@google.com>, 
+	Ted Tso <tytso@mit.edu>, syzkaller <syzkaller@googlegroups.com>, 
+	Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/6/23 9:08 AM, Bernd Schubert wrote:
-> Hi Miklos,
->
-> On 9/20/23 10:15, Miklos Szeredi wrote:
->> On Wed, 20 Sept 2023 at 04:41, Tyler Fanelli <tfanelli@redhat.com> 
->> wrote:
->>>
->>> At the moment, FUSE_INIT's DIRECT_IO_RELAX flag only serves the purpose
->>> of allowing shared mmap of files opened/created with DIRECT_IO enabled.
->>> However, it leaves open the possibility of further relaxing the
->>> DIRECT_IO restrictions (and in-effect, the cache coherency 
->>> guarantees of
->>> DIRECT_IO) in the future.
->>>
->>> The DIRECT_IO_ALLOW_MMAP flag leaves no ambiguity of its purpose. It
->>> only serves to allow shared mmap of DIRECT_IO files, while still
->>> bypassing the cache on regular reads and writes. The shared mmap is the
->>> only loosening of the cache policy that can take place with the flag.
->>> This removes some ambiguity and introduces a more stable flag to be 
->>> used
->>> in FUSE_INIT. Furthermore, we can document that to allow shared 
->>> mmap'ing
->>> of DIRECT_IO files, a user must enable DIRECT_IO_ALLOW_MMAP.
->>>
->>> Tyler Fanelli (2):
->>>    fs/fuse: Rename DIRECT_IO_RELAX to DIRECT_IO_ALLOW_MMAP
->>>    docs/fuse-io: Document the usage of DIRECT_IO_ALLOW_MMAP
->>
->> Looks good.
->>
->> Applied, thanks.  Will send the PR during this merge window, since the
->> rename could break stuff if already released.
->
-> I'm just porting back this feature to our internal fuse module and it 
-> looks these rename patches have been forgotten?
->
->
-> Thanks,
-> Bernd
->
- From a conversation with Miklos, I believe the patches will be modified 
-to make DIRECT_IO_RELAX an obsolete alias and still add 
-DIRECT_IO_ALLOW_MMAP.
+Hi!
 
+Thanks for letting me know!
 
-Tyler
+I've sent a PR with new syzbot configs:
+https://github.com/google/syzkaller/pull/4324
 
+--=20
+Aleksandr
+
+On Wed, Nov 8, 2023 at 2:10=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> Hi!
+>
+> On Tue 24-10-23 13:10:15, Jan Kara wrote:
+> > On Thu 19-10-23 11:16:55, Aleksandr Nogikh wrote:
+> > > Thank you for the series!
+> > >
+> > > Have you already had a chance to push an updated version of it?
+> > > I tried to search LKML, but didn't find anything.
+> > >
+> > > Or did you decide to put it off until later?
+> >
+> > So there is preliminary series sitting in VFS tree that changes how blo=
+ck
+> > devices are open. There are some conflicts with btrfs tree and bcachefs
+> > merge that complicate all this (plus there was quite some churn in VFS
+> > itself due to changing rules how block devices are open) so I didn't pu=
+sh
+> > out the series that actually forbids opening of mounted block devices
+> > because that would cause a "merge from hell" issues. I plan to push out=
+ the
+> > remaining patches once the merge window closes and all the dependencies=
+ are
+> > hopefully in a stable state. Maybe I can push out the series earlier ba=
+sed
+> > on linux-next so that people can have a look at the current state.
+>
+> So patches are now in VFS tree [1] so they should be in linux-next as wel=
+l.
+> You should be able to start using the config option for syzbot runs :)
+>
+>                                                                 Honza
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3D=
+vfs.super
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
