@@ -1,112 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-2435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBBD7E5F01
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:11:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF0C7E5F0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 21:19:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D52A1C20B7D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59E82811DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92213716D;
-	Wed,  8 Nov 2023 20:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D790337173;
+	Wed,  8 Nov 2023 20:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MZfSCdNv"
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KaaFW83v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CC237143
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 20:11:03 +0000 (UTC)
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDC29211E
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 12:11:02 -0800 (PST)
-Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-d84c24a810dso105150276.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 12:11:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1699474262; x=1700079062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
-        b=MZfSCdNv2PsxTeE75RiHAs/7KpUpwUrLsoi1dFjiDdIrDZhH70j9DCrJDUPEBr9IhX
-         k7gZMoJE1XPHOhvol4wxo7YxFnOFUVUxI7qgdvUuovss16SEqcZsK0viE5E7insB/olb
-         w2Ub/lJ8oeIEY8g2whWPsIFTchDQ2wo4Jx5VTOcRvECQdoHjLBNq2i/UrNUdBt/tLuvi
-         ncdkEFM88s27g6Bhd6EfrJ3NhwxK9AfPzT0C1NE8B9ITcgSEup4zX1OHLwsJ6r6fWWDp
-         VaLgVrHdENifBIUAvZtoUKQQYsi/x5aYeJhCWMpHuqbNiRms6pcmmrq5kaKKWigrfSRD
-         e7zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699474262; x=1700079062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WdQXlJuW20JcGlaQadU7ZgL5w1/h84E2psVd7Y2aHT4=;
-        b=EAswcvhzEPrcHw+yHNxoWHMtAGyK8+UwHBxanM52yw61C1qr7lcmrmf+hT6RLSqdZG
-         CC+EDBjtdgoMV0O98Dh5CWFvr0NbOUECvW6Arrp2Nl6jOU5MuCTw2qTMFGqx8Ierx3SJ
-         TFUNW5z6DsD0KmkgIlIQPKHBOHMpbH5tySEw74ebcEvJH/+PkzYCsf2fY64xpc0jWp62
-         LuY+AYENEZemHxTTfeCdnpx6bnBhKXSB2Mm4BITqOjUkBqbx9BqQUecMz8B1/Trm0tps
-         BohrS5+r83TMnZ0Dn15wdG1KSVfDSyO8x3R5KJeB4uNiFj3rWIroNxuVrlNx+mTBNKl6
-         QQtA==
-X-Gm-Message-State: AOJu0YwUnFH9w9MsdPBhQpEvU0JHdkcDBrbiDdcM41FJPp2xWlsUOJsg
-	U/hblsdjq71/qcUyAif5DKGxDbxwiNYLL4oACpg7
-X-Google-Smtp-Source: AGHT+IGx24XRQweoz1EaCe+kSiqvIrqmyKZE1dlffO9Wgq6HodmUotEUsJYVWiUyZ7p7+YFh1nttrYhrBU0rClZtQF0=
-X-Received: by 2002:a25:680c:0:b0:d9c:aa29:6180 with SMTP id
- d12-20020a25680c000000b00d9caa296180mr2811921ybc.46.1699474262093; Wed, 08
- Nov 2023 12:11:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4A3715B;
+	Wed,  8 Nov 2023 20:19:29 +0000 (UTC)
+Received: from mail.alien8.de (mail.alien8.de [IPv6:2a01:4f9:3051:3f93::2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 794EE2126;
+	Wed,  8 Nov 2023 12:19:29 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 28E6940E014B;
+	Wed,  8 Nov 2023 20:19:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id s5bZ6vUXjwC1; Wed,  8 Nov 2023 20:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1699474764; bh=p3oNlV39zW+VkL07Q/wVe7gatTo8JHkNdexu2jQ6/hw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KaaFW83vgNee41ulVZxpEViUksXxIlY5aDDMYQRhwTFo+0WzrIyKqsnHhW7fs+PKe
+	 lu2Mm3p9D1fQaFMLcPhsXhk9mksRX34/yj27ov71NrfDbYlJNsxdX5GwzUyLEj5Ih9
+	 w1UdfcrLxCvLzeSTV7gyozY2LIg5d2+xMg16mgxdO3ZKZwL/QuX7UwUHokNkIw3qaT
+	 yyds7aWs+vhOwC5CxgFz4/CDsdUt7BYNqj0letNrkktNL6fSUrRb+kDZppHvLV0/UK
+	 mEB/efv3OP/30SH7OhkQjBcxVHJ0xAe4g+PjhnSxKPAdfTg+VXDPnTbx6r0OpnkoMF
+	 /arK6Nc5L+THFi+wNAaHAJp4q4IOUR2zoWpcD9b8AtqphVcfWO0kIM2swyv/9jM3qF
+	 InZVaXEUMoK+6yWK71vnoHGew2wk1Mb3U5za/UYewnd6FOcgLqogROjhIUv2Xjdby6
+	 0f+gFtDc1amRnRzsXO08xbKlx2tMdv8pzC/MCOCLOu1S1aNoqdjTl5d9k/Y3v1BIj3
+	 np31c5Nvzp7Cdk6qRAU+N0hLduMJUxFeRQ9f8hf40v1G7Aip1JwoJQmLlqOT2B55np
+	 6cuN6BOE2QK6eKwFk8fehDWDEmKg84vtsBsOuXiJIUiwTrqzKLagUqgVPqNobZB2GU
+	 azPoapBxqnSmgpobzmpPw27Y=
+Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EFB0440E0031;
+	Wed,  8 Nov 2023 20:19:11 +0000 (UTC)
+Date: Wed, 8 Nov 2023 21:19:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Avadhut Naik <avadhut.naik@amd.com>
+Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
+	james.morse@arm.com, tony.luck@intel.com,
+	gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alexey.kardashevskiy@amd.com,
+	yazen.ghannam@amd.com, avadnaik@amd.com
+Subject: Re: [RESEND v5 1/4] ACPI: APEI: EINJ: Refactor
+ available_error_type_show()
+Message-ID: <20231108201905.GCZUvtOSDkVqFPBmfk@fat_crate.local>
+References: <20231107213647.1405493-1-avadhut.naik@amd.com>
+ <20231107213647.1405493-2-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231025140205.3586473-5-mszeredi@redhat.com> <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
- <20231108-zwerge-unheil-b3f48a84038d@brauner>
-In-Reply-To: <20231108-zwerge-unheil-b3f48a84038d@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 8 Nov 2023 15:10:50 -0500
-Message-ID: <CAHC9VhSLGyFRSbeZXE7z61Y2aDJi_1Dedjw0ioFOckRCs0CRaA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>, 
-	Matthew House <mattlloydhouse@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231107213647.1405493-2-avadhut.naik@amd.com>
 
-On Wed, Nov 8, 2023 at 2:58=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> > > +static int do_statmount(struct stmt_state *s)
-> > > +{
-> > > +   struct statmnt *sm =3D &s->sm;
-> > > +   struct mount *m =3D real_mount(s->mnt);
-> > > +   size_t copysize =3D min_t(size_t, s->bufsize, sizeof(*sm));
-> > > +   int err;
-> > > +
-> > > +   err =3D security_sb_statfs(s->mnt->mnt_root);
-> > > +   if (err)
-> > > +           return err;
-> > > +
-> > > +   if (!capable(CAP_SYS_ADMIN) &&
-> > > +       !is_path_reachable(m, m->mnt.mnt_root, &s->root))
-> > > +           return -EPERM;
-> >
-> > In order to be consistent with our typical access control ordering,
-> > please move the security_sb_statfs() call down to here, after the
-> > capability checks.
->
-> I've moved the security_sb_statfs() calls accordingly.
+On Tue, Nov 07, 2023 at 03:36:44PM -0600, Avadhut Naik wrote:
+> +static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
+> +	{BIT(0), "Processor Correctable"},
+> +	{BIT(1), "Processor Uncorrectable non-fatal"},
+> +	{BIT(2), "Processor Uncorrectable fatal"},
+> +	{BIT(3), "Memory Correctable"},
+> +	{BIT(4), "Memory Uncorrectable non-fatal"},
+> +	{BIT(5), "Memory Uncorrectable fatal"},
+> +	{BIT(6), "PCI Express Correctable"},
+> +	{BIT(7), "PCI Express Uncorrectable non-fatal"},
+> +	{BIT(8), "PCI Express Uncorrectable fatal"},
+> +	{BIT(9), "Platform Correctable"},
+> +	{BIT(10), "Platform Uncorrectable non-fatal"},
+> +	{BIT(11), "Platform Uncorrectable fatal"},
+> +	{BIT(12), "CXL.cache Protocol Correctable"},
+> +	{BIT(13), "CXL.cache Protocol Uncorrectable non-fatal"},
+> +	{BIT(14), "CXL.cache Protocol Uncorrectable fatal"},
+> +	{BIT(15), "CXL.mem Protocol Correctable"},
+> +	{BIT(16), "CXL.mem Protocol Uncorrectable non-fatal"},
+> +	{BIT(17), "CXL.mem Protocol Uncorrectable fatal"},
 
-Okay, good.  Did I miss a comment or a patch where that happened?  I
-looked over the patchset and comments yesterday and didn't recall
-seeing anything about shuffling the access control checks.
+Might as well put spaces between the '{' and '}' brackets for better
+readability.
 
---=20
-paul-moore.com
+>  static int available_error_type_show(struct seq_file *m, void *v)
+> @@ -607,8 +607,9 @@ static int available_error_type_show(struct seq_file *m, void *v)
+>  	if (rc)
+>  		return rc;
+>  	for (int pos = 0; pos < ARRAY_SIZE(einj_error_type_string); pos++)
+> -		if (available_error_type & BIT(pos))
+> -			seq_puts(m, einj_error_type_string[pos]);
+> +		if (available_error_type & einj_error_type_string[pos].mask)
+
+Call that variable simply "error_type". Those are simple functions, one
+can see that it is the available error type.
+
+> +			seq_printf(m, "0x%08x\t%s\n", einj_error_type_string[pos].mask,
+> +				   einj_error_type_string[pos].str);
+>  
+>  	return 0;
+
+But those are just nitpicks.
+
+Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
