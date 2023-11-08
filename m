@@ -1,95 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-2403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E067E5B1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 17:23:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C97F7E5B24
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 17:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3722814F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:23:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A196EB210DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C11231A87;
-	Wed,  8 Nov 2023 16:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC1831A92;
+	Wed,  8 Nov 2023 16:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYeExoDL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPlufv1C"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9B19440;
-	Wed,  8 Nov 2023 16:23:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4246DC433C7;
-	Wed,  8 Nov 2023 16:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F31FD6;
+	Wed,  8 Nov 2023 16:25:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BBB5C433C9;
+	Wed,  8 Nov 2023 16:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699460630;
-	bh=5fCZ7rfSZquKbxbTGp5RqeJxHmLnbRIpmC4Rako2Cbw=;
+	s=k20201202; t=1699460726;
+	bh=qD+sFBOP9V2yUmYRqtOB3VeOWhm29ZlZGuTsoaz/cM4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QYeExoDLkAvqSJ4k1lO/O2P+CeHBKbCD4mJ4+iKYa38HxVDUPABfB68PaWmLFU1e9
-	 3W2uEdfmcCBTcynPc7mmK7ncwGZ2M+xB5QXbYdjYAyVGtOROdV/bUaDVoWrvuPhIU7
-	 e517oi+/Qz8DJJmx5ueVxPfwspRnATj51B1MT7AGfCKJSuZO+8ZDfoXAQOqt48b16O
-	 tn1JLWnWGtW0PJhhOVRxryTAw2y4TIQritCcjVEINSv2lCL9esiXJE209MDtHxO1n6
-	 rfR+RkLs6iQwXnTXoS8cAM01JNeG4lkE4xHA6PoVVmmM+xatQZTQQl7a88jMyCUnye
-	 SV8juozs13ORQ==
-Date: Wed, 8 Nov 2023 17:23:43 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-	David Howells <dhowells@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <christian@brauner.io>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew House <mattlloydhouse@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
-Message-ID: <20231108-grinsen-entfachen-f04195b92e7d@brauner>
-References: <20231025140205.3586473-1-mszeredi@redhat.com>
- <20231025140205.3586473-6-mszeredi@redhat.com>
- <87il6d1cmu.fsf@meer.lwn.net>
- <20231108-redakteur-zuschauen-a9aeafaf4fad@brauner>
- <87o7g4xlmb.fsf@meer.lwn.net>
+	b=dPlufv1C6M7u5dLJzwxcRCXpDA0+ZgvcRrTe2ZqGH3BLqehtRYCWR6i1cL1M2WZw3
+	 zBqXj+z3CX/cBH0mDnRK+J3y9bRpJB+AcFtrOFH/pHZTrF9iNTm9MhA3mPNP1ZLCrg
+	 FEWSGkxIKc8R1WGnKVEc95ZpJR1M1keMyLMEqFy5+Nszf0NVJAJPn31Q49OxnPuJif
+	 AKSXzg7IZDHjEVpnUr3W/5oapj4V2707ml3npIpNNpbd+UIrSXLz4rXgza5C7gw5+R
+	 dMGnyYtQktoMsnQJ7cG2oh3p8ETYGci8MdSih6O2J4dZ7OGUWG+F0UHsVU9qHJx+gv
+	 8xKewJ9thyjmg==
+Date: Wed, 8 Nov 2023 08:25:25 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: add and use a per-mapping stable writes flag v2
+Message-ID: <20231108162525.GT1205143@frogsfrogsfrogs>
+References: <20231025141020.192413-1-hch@lst.de>
+ <20231108080518.GA6374@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87o7g4xlmb.fsf@meer.lwn.net>
+In-Reply-To: <20231108080518.GA6374@lst.de>
 
-On Wed, Nov 08, 2023 at 09:20:28AM -0700, Jonathan Corbet wrote:
-> Christian Brauner <brauner@kernel.org> writes:
-> 
-> >> Why use struct __mount_arg (or struct mnt_id_req :) here rather than
-> >> just passing in the mount ID directly?  You don't use the request_mask
-> >
-> > Please see Arnd's detailed summary here:
-> > https://lore.kernel.org/lkml/44631c05-6b8a-42dc-b37e-df6776baa5d4@app.fastmail.com
-> 
-> Ah, makes sense, I'd missed that.
-> 
-> Given this, though, it seems like maybe sys_listmount() should enforce
-> that req->request_mask==0 ?
+On Wed, Nov 08, 2023 at 09:05:18AM +0100, Christoph Hellwig wrote:
+> Can we get at least patches 1 and 2 queued for for 6.7 given that
+> they fix a regression?
 
-Good catch, it does now:
+I would say that all four should go in 6.7 because patches 3-4 fix wrong
+behavior if the rtdev needs stablewrites but the datadev does not.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ae09321b0f72..21edddd75532 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5030,6 +5030,8 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+There probably aren't many users of a RHEL-disabled feature atop
+specialty hardware, but IIRC it's still a data corruption vector.
 
-        if (copy_from_user(&kreq, req, sizeof(kreq)))
-                return -EFAULT;
-+       if (kreq.request_mask != 0)
-+               return -EINVAL;
-        mnt_id = kreq.mnt_id;
+(says me who blew up his last T10 PI drive last week :()
 
-        down_read(&namespace_sem);
+--D
 
