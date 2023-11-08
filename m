@@ -1,72 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-2414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C2B7E5E34
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8897E5E36
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7E1B20F5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:09:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F10B20DF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CA937148;
-	Wed,  8 Nov 2023 19:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC63715A;
+	Wed,  8 Nov 2023 19:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="bUagwmPJ"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="uRyDClvv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB2D36B0C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 19:09:16 +0000 (UTC)
-Received: from mail-qk1-x72d.google.com (mail-qk1-x72d.google.com [IPv6:2607:f8b0:4864:20::72d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F0CD1FEA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 11:09:16 -0800 (PST)
-Received: by mail-qk1-x72d.google.com with SMTP id af79cd13be357-779f2718accso1138185a.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 11:09:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D54B36B1E
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 19:09:18 +0000 (UTC)
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A03210A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 11:09:17 -0800 (PST)
+Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-66cfd874520so406786d6.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 11:09:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699470555; x=1700075355; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699470557; x=1700075357; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BN/A4uIT6ZK9prEkhxKzpA8qYY+Ll7k4xslWTGCzc38=;
-        b=bUagwmPJ7fqwgdhWyv4PGrHiaonCf/KdRoXpaAlfconW6KvIZElaqMJiZ6drLOui0Z
-         AeZXIZrG1xpXtKjd2KDB/E4gYcDn1RIdo++VIf7y998Dnyuni1mzk0I7pJ27Vd00zJu+
-         t9hZ+yPeKbhkROYDuDvAcVb6JLwoFJobr5XHjpgP05jMkOcSMfJGLYBCjPp8lKePL4am
-         Rqeb7QfSVJ7MoQj37aNiCMr0f/lu9y/q6brdPjklvqSHjdF8EIHQqRmzMdBETZcJhpfo
-         rvM8d+vSZL5rPHrgEqt/ZAXemn2SNecS9hU0X06c4LqTSDXHqD/pMcIy48kxQ+g0rpz4
-         XCHg==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wju2KDo89W0KqnbnN0qwqJupbKYYoKpOCJuF9HTEAq4=;
+        b=uRyDClvvXhHd3k7M/RgCwZz65rhYU4WYWaoinyTl+3EgPHDgq5LmGZ0hALxCsK1Cmt
+         w4mDpsEouceT7079kc/vcOdsrZoEW4kSw20jdl3QxZdjjY8WMr3tP2V8vLqMrkHaP6AS
+         9nUkck5pjQomLzf4QT6QqU31IFbuG0pggbd0NqTevookLm55nokHt1v2sfxDIkMLchBf
+         M1SusJbJwiNIz7gKPTgkDDs21gfMZ3nQWjUVQL+PREZjbH8xoJBPW1+p2vkHBY1mRYc3
+         EqwDm2sDnOgCDuNPwgLUsK2cbxZi/VDUCeenIG23oJwDrgUXL6LnKAXxwlx27OZCXM6S
+         EzEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699470555; x=1700075355;
+        d=1e100.net; s=20230601; t=1699470557; x=1700075357;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BN/A4uIT6ZK9prEkhxKzpA8qYY+Ll7k4xslWTGCzc38=;
-        b=nvwzWIie3IRlodqUnRiWolep8WHSYcjCsg+BvcD5//VA6V8UCdSzWiqI9uNZSd0WbP
-         4hTdRaGeD3gvcrCfZgko//HgJStbSmWFvZ+0mV9E+Mg693kZJuOQiKrAhvdZpGbkWqrs
-         Sg6IbA30riZu6tgMMc9jfIEKwu9U3i/Jo1auceRRR2H7AwVTnI4ns+FCM0PoTu1gkP5H
-         jOo5wsmu+VWekUxK49QDNe8d4yeW4bgNbhVMlE4R82paq7g36rNPzCPR9X9SirwGFB/T
-         98Vl1mN4qEpTVESuMcI7Bojw0ZPv2C+vZHS89DGAXZtShECdpkbCXuex3a9/523K7TBA
-         taCQ==
-X-Gm-Message-State: AOJu0Yz+ML2NFMN42UdWG700lJqjjdo65+QzLzKdU0zf2bqJ5XiDPAgp
-	qz7qM1gLxZw/VmCwtYyIdVu2Pg==
-X-Google-Smtp-Source: AGHT+IED454ObjuDy+olL7P3HIYGyc0aVS+mpP474dUYZbjzqUrvqTvkwpglJyEKYvm5jikIENuilQ==
-X-Received: by 2002:a05:622a:446:b0:419:7e82:9190 with SMTP id o6-20020a05622a044600b004197e829190mr3190599qtx.31.1699470555532;
-        Wed, 08 Nov 2023 11:09:15 -0800 (PST)
+        bh=Wju2KDo89W0KqnbnN0qwqJupbKYYoKpOCJuF9HTEAq4=;
+        b=FVsAIbNEp/8IeYlpl0efVaHyaWdIT5lNdacc1z82MQah4kr+sWPSfJ5R/waU8WQI3+
+         ItH19I+jgefxINKcrsu5ssj4/aFi/01oQyxS/vGrV2NAucHBVq41w8aHHJK7dV4zlVs2
+         HfWWC9bP6Tg7dxEL8ZmTJ6lWIlIIXqQyVI1zRhS0McYZ8XT559cBtY0K0+fYlojNYYBS
+         Wzd3ALu2UJbhqZymT4Zaru29oDhEfq12/YpbZ0bFscUoM1kcNv6nRmi4AtVTIhMbXKNV
+         7dphPC40qTT2yHxWoaFO0CkcraoyZnbpnnu9pHUs09QPs8SLHrS/ZlSFO4+Vm9rNrGsQ
+         Zy9Q==
+X-Gm-Message-State: AOJu0YwzNozNIfAbBQkfQah9GUzzCiSbrQ6wxi28kRLepD1F39ozyOe3
+	dMRI3bpv2WsAWIC6QF+BmI67wg==
+X-Google-Smtp-Source: AGHT+IHt4Oah385KFQK1VKUiP11Y0nIjrdVQdzbBfpnhvKSUfnu4hGAFWaasI8rWrjaOuYukVVTA3A==
+X-Received: by 2002:a05:6214:5183:b0:66d:17a2:34cc with SMTP id kl3-20020a056214518300b0066d17a234ccmr2598056qvb.64.1699470556747;
+        Wed, 08 Nov 2023 11:09:16 -0800 (PST)
 Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id v12-20020ac8728c000000b0041cc25a75e5sm1176774qto.77.2023.11.08.11.09.15
+        by smtp.gmail.com with ESMTPSA id dy7-20020a05620a60c700b00770f2a690a8sm1337020qkb.53.2023.11.08.11.09.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 11:09:15 -0800 (PST)
+        Wed, 08 Nov 2023 11:09:16 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-btrfs@vger.kernel.org,
 	kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org
-Cc: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 01/18] fs: indicate request originates from old mount api
-Date: Wed,  8 Nov 2023 14:08:36 -0500
-Message-ID: <c279b1f82085fcecd6c62e63276f0a2c64f00dac.1699470345.git.josef@toxicpanda.com>
+Subject: [PATCH v2 02/18] btrfs: split out the mount option validation code into its own helper
+Date: Wed,  8 Nov 2023 14:08:37 -0500
+Message-ID: <f30ace3052a298c6536453fed66577c308c72d2f.1699470345.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1699470345.git.josef@toxicpanda.com>
 References: <cover.1699470345.git.josef@toxicpanda.com>
@@ -78,52 +77,113 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Christian Brauner <brauner@kernel.org>
+We're going to need to validate mount options after they're all parsed
+with the new mount api, split this code out into its own helper so we
+can use it when we swap over to the new mount api.
 
-We already communicate to filesystems when a remount request comes from
-the old mount api as some filesystems choose to implement different
-behavior in the new mount api than the old mount api to e.g., take the
-chance to fix significant api bugs. Allow the same for regular mount
-requests.
-
-Fixes: b330966f79fb ("fuse: reject options on reconfigure via fsconfig(2)")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/namespace.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/btrfs/super.c | 64 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 29 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index e157efc54023..bfc5cff0e196 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2873,7 +2873,12 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index 6ecf78d09694..639601d346d0 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -233,6 +233,39 @@ static bool check_ro_option(struct btrfs_fs_info *fs_info, unsigned long opt,
+ 	return false;
+ }
  
-+	/*
-+	 * Indicate to the filesystem that the remount request is coming
-+	 * from the legacy mount system call.
-+	 */
- 	fc->oldapi = true;
++static bool check_options(struct btrfs_fs_info *info, unsigned long flags)
++{
++	if (!(flags & SB_RDONLY) &&
++	    (check_ro_option(info, BTRFS_MOUNT_NOLOGREPLAY, "nologreplay") ||
++	     check_ro_option(info, BTRFS_MOUNT_IGNOREBADROOTS, "ignorebadroots") ||
++	     check_ro_option(info, BTRFS_MOUNT_IGNOREDATACSUMS, "ignoredatacsums")))
++		return false;
 +
- 	err = parse_monolithic_mount_data(fc, data);
- 	if (!err) {
- 		down_write(&sb->s_umount);
-@@ -3322,6 +3327,12 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
++	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE) &&
++	    !btrfs_test_opt(info, FREE_SPACE_TREE) &&
++	    !btrfs_test_opt(info, CLEAR_CACHE)) {
++		btrfs_err(info, "cannot disable free space tree");
++		return false;
++	}
++	if (btrfs_fs_compat_ro(info, BLOCK_GROUP_TREE) &&
++	     !btrfs_test_opt(info, FREE_SPACE_TREE)) {
++		btrfs_err(info, "cannot disable free space tree with block-group-tree feature");
++		return false;
++	}
++
++	if (btrfs_check_mountopts_zoned(info))
++		return false;
++
++	if (!test_bit(BTRFS_FS_STATE_REMOUNTING, &info->fs_state)) {
++		if (btrfs_test_opt(info, SPACE_CACHE))
++			btrfs_info(info, "disk space caching is enabled");
++		if (btrfs_test_opt(info, FREE_SPACE_TREE))
++			btrfs_info(info, "using free space tree");
++	}
++
++	return true;
++}
++
+ static int parse_rescue_options(struct btrfs_fs_info *info, const char *options)
+ {
+ 	char *opts;
+@@ -311,7 +344,6 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 	int saved_compress_level;
+ 	bool saved_compress_force;
+ 	int no_compress = 0;
+-	const bool remounting = test_bit(BTRFS_FS_STATE_REMOUNTING, &info->fs_state);
  
-+	/*
-+	 * Indicate to the filesystem that the mount request is coming
-+	 * from the legacy mount system call.
-+	 */
-+	fc->oldapi = true;
-+
- 	if (subtype)
- 		err = vfs_parse_fs_string(fc, "subtype",
- 					  subtype, strlen(subtype));
+ 	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+ 		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+@@ -330,7 +362,7 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 	 * against new flags
+ 	 */
+ 	if (!options)
+-		goto check;
++		goto out;
+ 
+ 	while ((p = strsep(&options, ",")) != NULL) {
+ 		int token;
+@@ -774,35 +806,9 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 			break;
+ 		}
+ 	}
+-check:
+-	/* We're read-only, don't have to check. */
+-	if (new_flags & SB_RDONLY)
+-		goto out;
+-
+-	if (check_ro_option(info, BTRFS_MOUNT_NOLOGREPLAY, "nologreplay") ||
+-	    check_ro_option(info, BTRFS_MOUNT_IGNOREBADROOTS, "ignorebadroots") ||
+-	    check_ro_option(info, BTRFS_MOUNT_IGNOREDATACSUMS, "ignoredatacsums"))
+-		ret = -EINVAL;
+ out:
+-	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE) &&
+-	    !btrfs_test_opt(info, FREE_SPACE_TREE) &&
+-	    !btrfs_test_opt(info, CLEAR_CACHE)) {
+-		btrfs_err(info, "cannot disable free space tree");
++	if (!ret && !check_options(info, new_flags))
+ 		ret = -EINVAL;
+-	}
+-	if (btrfs_fs_compat_ro(info, BLOCK_GROUP_TREE) &&
+-	     !btrfs_test_opt(info, FREE_SPACE_TREE)) {
+-		btrfs_err(info, "cannot disable free space tree with block-group-tree feature");
+-		ret = -EINVAL;
+-	}
+-	if (!ret)
+-		ret = btrfs_check_mountopts_zoned(info);
+-	if (!ret && !remounting) {
+-		if (btrfs_test_opt(info, SPACE_CACHE))
+-			btrfs_info(info, "disk space caching is enabled");
+-		if (btrfs_test_opt(info, FREE_SPACE_TREE))
+-			btrfs_info(info, "using free space tree");
+-	}
+ 	return ret;
+ }
+ 
 -- 
 2.41.0
 
