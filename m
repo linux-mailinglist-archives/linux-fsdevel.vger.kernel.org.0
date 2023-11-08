@@ -1,131 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-2380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB2E7E532D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 11:15:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11C67E534D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 11:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608C31F2185E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 10:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D31281636
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 10:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA41810A34;
-	Wed,  8 Nov 2023 10:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709D411CB8;
+	Wed,  8 Nov 2023 10:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ym8T05T8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qLxBvJig"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldiga5qq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52DC1C16
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 10:15:20 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AFFB1728;
-	Wed,  8 Nov 2023 02:15:20 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0286D1F45A;
-	Wed,  8 Nov 2023 10:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1699438519; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nBa+FLt1HNfPvl1vLM5je/FvvKMWJOjySfB3IYTCWLI=;
-	b=ym8T05T88JVyuTK0E9fN8LvBtecEb7dkyx4weR6s00GbcDO2DnrM61QSKaVsx8FJIYGsvB
-	r5JXi64ErMmRC9KZsLaKOjZJnOSUQZbnTD8lYmV9K5QDSxwzkbeEfcf7jiJO+OrDLTi4Ok
-	NQ1VFf0l5833ms0CFR67d/FsqiufpYk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1699438519;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nBa+FLt1HNfPvl1vLM5je/FvvKMWJOjySfB3IYTCWLI=;
-	b=qLxBvJig27eBx0p0iaOO0LrVHq+CRcfaSAmCNE717BS17UsUoI6BYHZu+v1j54G7l7GB8H
-	iiad8huONmHzL7DA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E89F3133F5;
-	Wed,  8 Nov 2023 10:15:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id G4G4OLZfS2WkaAAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 08 Nov 2023 10:15:18 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 7A4C6A07C0; Wed,  8 Nov 2023 11:15:18 +0100 (CET)
-Date: Wed, 8 Nov 2023 11:15:18 +0100
-From: Jan Kara <jack@suse.cz>
-To: Abhinav Singh <singhabhinav9051571833@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, dan.j.williams@intel.com,
-	willy@infradead.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] fs : Fix warning using plain integer as NULL
-Message-ID: <20231108101518.e4nriftavrhw45xk@quack3>
-References: <20231108044550.1006555-1-singhabhinav9051571833@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00B212E47;
+	Wed,  8 Nov 2023 10:27:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C87C433C7;
+	Wed,  8 Nov 2023 10:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699439274;
+	bh=jPTCkhBc7PI9MxQBx8eZ6M1FUClONYHAJL7rPOuMKIk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ldiga5qq8VhgdAX6zRPKPVR6J7ovztl6429iDYp8512IacCZgszC+ILd6dOXkfo4v
+	 t5wfjDd6YBQ5ilv5qwESULiVtvxrBQx176CSYiN6i1sPaJghieI3M1eeMMRoOefqCf
+	 O+iz2Q5HsPYzw7wCoieoHfeS8i/uuey40FGqT5Ey7fkiqKOKjRh5pmaEjsK+LSN2jS
+	 Parqy+HpitkBCXQIP3xBPG8ypHcAfcQTw+ngWwR4YeRpkN+yzFew1je/X4E1KyDSU7
+	 YcEeIiRAgSItLvqJJ6VNflmLmL2IsTXZ/VPvh9vwMZ30c0Fipa9GWEnTB2JFYnZQ19
+	 sZXk8l/GMb4gg==
+Date: Wed, 8 Nov 2023 19:27:41 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: <j.granados@samsung.com>
+Cc: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org,
+ josh@joshtriplett.org, Kees Cook <keescook@chromium.org>, Eric Biederman
+ <ebiederm@xmission.com>, Iurii Zaikin <yzaikin@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner
+ <tglx@linutronix.de>, John Stultz <jstultz@google.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry
+ <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider
+ <vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>, John Ogness
+ <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+ kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 08/10] kprobes: Remove the now superfluous sentinel
+ elements from ctl_table array
+Message-Id: <20231108192741.72a341b73270d3c04d6dbc51@kernel.org>
+In-Reply-To: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-8-e4ce1388dfa0@samsung.com>
+References: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-0-e4ce1388dfa0@samsung.com>
+	<20231107-jag-sysctl_remove_empty_elem_kernel-v1-8-e4ce1388dfa0@samsung.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108044550.1006555-1-singhabhinav9051571833@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed 08-11-23 10:15:50, Abhinav Singh wrote:
-> Sparse static analysis tools generate a warning with this message
-> "Using plain integer as NULL pointer". In this case this warning is
-> being shown because we are trying to initialize  pointer to NULL using
-> integer value 0.
+On Tue, 07 Nov 2023 14:45:08 +0100
+Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org> wrote:
+
+> From: Joel Granados <j.granados@samsung.com>
 > 
-> Signed-off-by: Abhinav Singh <singhabhinav9051571833@gmail.com>
+> This commit comes at the tail end of a greater effort to remove the
+> empty elements at the end of the ctl_table arrays (sentinels) which
+> will reduce the overall build time size of the kernel and run time
+> memory bloat by ~64 bytes per sentinel (further information Link :
+> https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> 
+> Remove sentinel element from kprobe_sysclts
 
-Nice cleanup. Feel free to add:
+Looks good to me.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-								Honza
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+Thanks,
+
+> 
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
 > ---
->  fs/dax.c       | 2 +-
->  fs/direct-io.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  kernel/kprobes.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 3380b43cb6bb..423fc1607dfa 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1128,7 +1128,7 @@ static int dax_iomap_copy_around(loff_t pos, uint64_t length, size_t align_size,
->  	/* zero the edges if srcmap is a HOLE or IOMAP_UNWRITTEN */
->  	bool zero_edge = srcmap->flags & IOMAP_F_SHARED ||
->  			 srcmap->type == IOMAP_UNWRITTEN;
-> -	void *saddr = 0;
-> +	void *saddr = NULL;
->  	int ret = 0;
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 0c6185aefaef..d049b602dd41 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -968,7 +968,6 @@ static struct ctl_table kprobe_sysctls[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_ONE,
+>  	},
+> -	{}
+>  };
 >  
->  	if (!zero_edge) {
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index 20533266ade6..60456263a338 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -1114,7 +1114,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
->  	loff_t offset = iocb->ki_pos;
->  	const loff_t end = offset + count;
->  	struct dio *dio;
-> -	struct dio_submit sdio = { 0, };
-> +	struct dio_submit sdio = { NULL, };
->  	struct buffer_head map_bh = { 0, };
->  	struct blk_plug plug;
->  	unsigned long align = offset | iov_iter_alignment(iter);
-> -- 
-> 2.39.2
+>  static void __init kprobe_sysctls_init(void)
 > 
+> -- 
+> 2.30.2
+> 
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
