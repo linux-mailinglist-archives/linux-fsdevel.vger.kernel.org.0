@@ -1,62 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-2361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5907E5173
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 08:56:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B51B7E517D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 08:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94207B21045
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 07:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9891C20D91
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 07:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A2ED51D;
-	Wed,  8 Nov 2023 07:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35670D51E;
+	Wed,  8 Nov 2023 07:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BSfJlJQ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRWF/y0n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8644BD313;
-	Wed,  8 Nov 2023 07:56:27 +0000 (UTC)
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F13170A;
-	Tue,  7 Nov 2023 23:56:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=vBOxS8CukZHDurA482Su8cBx8gX29bNB2eubg/7PT7U=; b=BSfJlJQ/mxsMKNWuRXiNAVm8o4
-	tGjAE57/0lmQeXY4k+OdYDzHzXCZTj1KpSHiUI7qyZZbL0CCDkbAX3QGog/jUG7qn/s2QYwMfxgJo
-	KM5bnWKyYi+dg8YVZkwjC/EhXFADL3J4mk4LUmRgzEq5ExzQ2r6EQC6vlCEkOgrpEOGOvLzr8IPcy
-	grw1ybattQbjzaRjv65eKOfWlfgMscYOdzslNBL99E0CP6/TwfsK/emHJbFdKzfRzj+91/SAUsgZq
-	C+lfEv79Nk7utSnakpmm7fZSNatXrdwqmvIMtAao+NP7UAk39MdW2lfM+Rb9A87FOD28vBynL9Ja7
-	hLOZR9uQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r0dQD-003DYx-2M;
-	Wed, 08 Nov 2023 07:56:21 +0000
-Date: Tue, 7 Nov 2023 23:56:21 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Qu Wenruo <quwenruo.btrfs@gmx.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fanotify support for btrfs sub-volumes
-Message-ID: <ZUs/Ja35dwo5i2e1@infradead.org>
-References: <ZUUDmu8fTB0hyCQR@infradead.org>
- <20231103-kursleiter-proklamieren-aae0a02aa1a4@brauner>
- <ZUibZgoQa9eNRsk4@infradead.org>
- <20231106-fragment-geweigert-1d80138523e5@brauner>
- <49454bf2-af6e-4dcf-b9a1-22acbfdc756d@gmx.com>
- <20231106-postfach-erhoffen-9a247559e10d@brauner>
- <ZUjcgU9ItPg/foNB@infradead.org>
- <20231106-datei-filzstift-c62abf899f8f@brauner>
- <ZUkeBM1sik1daE1N@infradead.org>
- <20231107-herde-konsens-7ee4644e8139@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA8DD50E;
+	Wed,  8 Nov 2023 07:58:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A22CC433CA;
+	Wed,  8 Nov 2023 07:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699430324;
+	bh=/7dt/Cvecp2TaRoRRfdH0FfeT15JD49KeWWQ74HCxkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fRWF/y0nr4Vo0b/zqASi2aeEg46eJaHit71ua87oNM+VcnMkIX15jzZ60Y1g0Qa7K
+	 b9VDjItdfrIIx1oBqTKK1FAKz0jJamxBeOkk7ezZgJ7eKrdA6MNJa06NJ9JGG5oDHM
+	 /OUySAEx9otUhxAVhvKHjZ29jBMx92N8ER6SUeDt2DvuKJVQkLkmCG8A+bZ23Z/dF+
+	 o2gKCbIv0uO+kBmCRyv/UJqxtpiYPj0itMo9HmxTNTwFE2oVgCkhQdC6MAwukAyMvE
+	 +4mrhbFVIQqPIHRl9kwp3s3pXXmaJEXW0TwUok7LFjcBFN/HZPL0ckGFzQ0U7t+g6p
+	 HDheGhUYdd+Tw==
+Date: Wed, 8 Nov 2023 08:58:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+	David Howells <dhowells@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <christian@brauner.io>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew House <mattlloydhouse@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 4/6] add statmount(2) syscall
+Message-ID: <20231108-zwerge-unheil-b3f48a84038d@brauner>
+References: <20231025140205.3586473-5-mszeredi@redhat.com>
+ <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,36 +58,26 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231107-herde-konsens-7ee4644e8139@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <4ab327f80c4f98dffa5736a1acba3e0d.paul@paul-moore.com>
 
-On Tue, Nov 07, 2023 at 09:58:48AM +0100, Christian Brauner wrote:
-> > Maybe you're just taking it to personal?  A place where systemd, lxc,
+> > +static int do_statmount(struct stmt_state *s)
+> > +{
+> > +	struct statmnt *sm = &s->sm;
+> > +	struct mount *m = real_mount(s->mnt);
+> > +	size_t copysize = min_t(size_t, s->bufsize, sizeof(*sm));
+> > +	int err;
+> > +
+> > +	err = security_sb_statfs(s->mnt->mnt_root);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	if (!capable(CAP_SYS_ADMIN) &&
+> > +	    !is_path_reachable(m, m->mnt.mnt_root, &s->root))
+> > +		return -EPERM;
 > 
-> Of course I'm taking that personal. It's a personal comment that
-> unnecessarily accompanies the message that you think I discount software
-> that isn't all that modern. Which is a fair point. It doesn't have to
-> come with garnish about me living in a bubble.
+> In order to be consistent with our typical access control ordering,
+> please move the security_sb_statfs() call down to here, after the
+> capability checks.
 
-І'm not sure why you're trying to overload words with meanings that
-weren't said.  If you list software that is both by it's place in the
-food chain and by its developer community very up to date to low-level
-Linux quirks (sometimes too much, btw - we really should accomodate
-them better), it shows a somewhat limited view, which is the definition
-of a bubble.  There is absolutely no implication that this is intentional
-or even malicious.
-
-> > definition of a mount point, and that one used on basically every
-> > other unix system.  It might not work as-is for software that actually
-> > particularly knows how to manage btrfs subvolumes, but those are, by
-> > defintion, not the problem anyway.
-> 
-> On current systems and since forever bind-mounts do not change device
-> numbers unless they are a new filesystem mount. Making subvolumes
-> vfsmounts breaks that. That'll mean a uapi change for
-> /proc/<pid>/mountinfo for a start.
-
-a bind mount can of course change the dev_t - if it points to a
-different super block at the moment.
+I've moved the security_sb_statfs() calls accordingly.
 
