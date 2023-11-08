@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-2338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA847E4DF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 01:28:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D9C7E4DF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 01:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D54B21144
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 00:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FB11C20C52
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 00:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91266EA3;
-	Wed,  8 Nov 2023 00:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21178384;
+	Wed,  8 Nov 2023 00:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="uI6qE7pG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JMleCSLs"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="u6d0eUMP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SFCgi0Ce"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B607E63D;
-	Wed,  8 Nov 2023 00:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D52815;
+	Wed,  8 Nov 2023 00:28:00 +0000 (UTC)
 Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0727210F9;
-	Tue,  7 Nov 2023 16:27:58 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailout.nyi.internal (Postfix) with ESMTP id 71E215C02BE;
-	Tue,  7 Nov 2023 19:27:57 -0500 (EST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E987110F8;
+	Tue,  7 Nov 2023 16:27:59 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailout.nyi.internal (Postfix) with ESMTP id 600C65C02CD;
+	Tue,  7 Nov 2023 19:27:59 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 07 Nov 2023 19:27:57 -0500
+  by compute2.internal (MEProxy); Tue, 07 Nov 2023 19:27:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
 	cc:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:sender:subject:subject:to:to; s=fm2; t=1699403277; x=
-	1699489677; bh=Hm0IoV3pDT/7pWb7KELHc2mklxHo80myTh5Vqb0pVUA=; b=u
-	I6qE7pGNXkx2BM35YFcr3pDtV/qb62c1nirCG+zOoAbFylgwKNq/TILtZ62Bel4f
-	RPNa6zHnkLvD72VyYI7S1Id5uGdoudUyEAOErsoLDCg6dasKzKLI9ydStR2k2TGp
-	B17Yjs9rRrl8rHkiKuXQ7WDyIudozHYmJa/VrlrBCbSe258aGrm50+Y6cT502UVP
-	04seFsP0AYt4xaRiHiiyvTsTCnk/0SXoCrgEn/zNp5rrPUtuDeza/UKWZ6WxJn3R
-	HVuXEWGgVRZXUf6VoTbeCovHvOdpALL8tuLz88uUsONgv6SwyRVKdEnHA1NsdtrI
-	nQPk+r0ZYYIXeLUmEFfbQ==
+	:reply-to:sender:subject:subject:to:to; s=fm2; t=1699403279; x=
+	1699489679; bh=HOoVPyQMSUyJ2ZjQyfX/E+uMFA1T0GfIkKxlOvitxrw=; b=u
+	6d0eUMPFusPkT2pdfprjz6f6pBUrmQun6Yc8oJq3GJ75OKpecqf3TwDqtOoiKqZg
+	YkxMnahzxPiOeH3rihxeuFMV8tOdh2LbJgk/r6/8w9udfLTRnr1vTnrYrQzzX/Fp
+	r6rT5eE2BWEuQKW8xeT3254k8EX74lgjnV7f7UNC8h/dlLBqLPyLWABXmGVVxojx
+	rUPOnpzaS52Pydyc1zs747txOQgmnDd1qxH83pgyPK4QOrkU3C4tMtYxMdeLftEe
+	IwXZXhQpBn0MdhMTGzf/VHHU5voqcBNh5mw9tigFghqHiA8gC7KiIGD0PLM4zkMK
+	23RntsIVRbcD0FsDiU+hQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1699403277; x=
-	1699489677; bh=Hm0IoV3pDT/7pWb7KELHc2mklxHo80myTh5Vqb0pVUA=; b=J
-	MleCSLsNIDP5HU7NRgSt8295vj+sci0P8Y/rMqmnYzKxOUrJzb0olNysQz5Kgomj
-	5olpKYTd9AQg8kvrTuRUSHZ9FOgeqa66YA0QO8fOapkQ5ujGRpJqYzEznA3Zkvcg
-	vy+pr1/0mBKj4eNfkxy33HX/Q6LSRNpD3LFR7zEL1R7wQo2ISDDxFmg4eTXyefI3
-	PPsAJ6lJapYXAloqLM+AQLAkb55vv4CipxRmzufuiCLUppDaaU9mNgBAQ3iv6YjJ
-	17My1s8eE34l99klZaZ4fLh1UrsGIVgHfBh7vJ72OopGsfCYDHOoMnQ0zgL6+CVr
-	XKL3P8qxySH1BZuNROv5g==
-X-ME-Sender: <xms:DdZKZTtkak7-K0MXhOYDZirSFR5PqqG6Lzm_Gt1VBJ6MJMk8PDsS0Q>
-    <xme:DdZKZUfLs9EVraXd3MgnG4CMqsvLCIJWu_igPNN3fuisgSO1kk6TiFDZhVgLj05E1
-    ebo71wqXtKBypiNB5I>
-X-ME-Received: <xmr:DdZKZWyvA8F32CY1rcCoq75-32sVidsISpu0vfHVhHs5oY-onrwchMi7I9BWai0x6gdHDg>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1699403279; x=
+	1699489679; bh=HOoVPyQMSUyJ2ZjQyfX/E+uMFA1T0GfIkKxlOvitxrw=; b=S
+	FCgi0CeSB5ACj7LBe2UYltaHpgv6FynEi6tzY60vllDWDKqjTXSt9usad3bRJZz4
+	xK2EPHzg9cPlqkL3iuIibGmpFZ2ihRTRV+y8LwcZoGfJQe5RGG/VBaKUIp1NbAmA
+	QqmuAkyDsI7jnDF8m/ZecrkY0ZrUEwX5ZccGyuC7KPS7Z1bKwnIvjbJxyAc97h1d
+	BO8nstoGAkyYQHV0PDxGqFVF5/GnjtLnoRPSDawBTCukJz9Y27vW/AUAHc/01f64
+	tFAMR4N2yFgkAKMxnP5oJm+2vwhKvc4YoBn5/7QWHPRKNLfVv2xk23kqZUCTlFSm
+	kox/kuYhR6Wc7kT62j3Jg==
+X-ME-Sender: <xms:D9ZKZaXhcOZuEQSONO2Tr33m0mTXeDo_WwHwxVaoOUxE1MNWyf3Eag>
+    <xme:D9ZKZWlt3OoI-bfcgxIxjYnWN7kTKo0XCXcRDsFr-RkEYq1J1_f3w33lpAJysvOej
+    1TjSTRV7y8tDoekyW0>
+X-ME-Received: <xmr:D9ZKZeZDU-zuLOCrIA7IsiuV-scX-eVGy8YWx4Wx6T7rMGtGM4ErRb4It27_zsKJCY7EnQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddukedgvddvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -65,13 +65,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddukedgvddvucetufdoteggod
     grthhtvghrnhepvdegffehledvleejvdethffgieefveevhfeigefffffgheeguedtieek
     tdeigeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
     epthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:DdZKZSMloCLUahVFU_n-exF6L65apga5N7mxx5p7lljKD5crSdzsEw>
-    <xmx:DdZKZT8GFXKZR6peEReiHw4KM8t45WgWJ3YRLBsjw1f3KYTQyxqChg>
-    <xmx:DdZKZSXfiluMA2t5O2Njgs60kabiuU5bIbHZPkoKLhHJDJh9lYkI6g>
-    <xmx:DdZKZfRK7T2RUBYyN6oqsNEj8u6GPHc_DEVBS4fbqY6tcw0UZUyDtA>
+X-ME-Proxy: <xmx:D9ZKZRX5X78QACyeabw6kmnXaW8kN7HS_hYQykmzkMI8nuvmATkPJQ>
+    <xmx:D9ZKZUmwRcf819Gd6NxqXTeUAqm2yETdlx2d4k75w1YOPfHr47WiEQ>
+    <xmx:D9ZKZWdBQMezXuIExSZ5wytRcFpAlBB8F8Q5_Lc-g_GHnh6LKXjNBg>
+    <xmx:D9ZKZe7xkuO-3xW-qVWP6nTaHESFzxlajJG0ffWj1pE24s8ajIrW2g>
 Feedback-ID: i21f147d5:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Nov 2023 19:27:55 -0500 (EST)
+ 7 Nov 2023 19:27:57 -0500 (EST)
 From: Tycho Andersen <tycho@tycho.pizza>
 To: cgroups@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
 	Tycho Andersen <tycho@tycho.pizza>,
 	Tycho Andersen <tandersen@netflix.com>
-Subject: [RFC 2/6] fs: introduce count_open_files()
-Date: Tue,  7 Nov 2023 17:26:43 -0700
-Message-Id: <20231108002647.73784-3-tycho@tycho.pizza>
+Subject: [RFC 3/6] misc: introduce misc_cg_charge()
+Date: Tue,  7 Nov 2023 17:26:44 -0700
+Message-Id: <20231108002647.73784-4-tycho@tycho.pizza>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231108002647.73784-1-tycho@tycho.pizza>
 References: <20231108002647.73784-1-tycho@tycho.pizza>
@@ -99,50 +99,72 @@ Content-Transfer-Encoding: 8bit
 
 From: Tycho Andersen <tandersen@netflix.com>
 
-In future patches, we'll need a count of the number of open file
-descriptors for misc NOFILE cgroup migration, so introduce a helper to do
-this.
+Similar to cases in e.g. the pids cgroup with pids_charge(), if a migration
+fails we will need to force-unwind it, which may put misc cgroups over
+their limits. We need to charge them anyway, which is what this helper is
+for.
 
 Signed-off-by: Tycho Andersen <tandersen@netflix.com>
 ---
- fs/file.c               | 10 ++++++++++
- include/linux/fdtable.h |  2 ++
- 2 files changed, 12 insertions(+)
+ include/linux/misc_cgroup.h |  1 +
+ kernel/cgroup/misc.c        | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
-diff --git a/fs/file.c b/fs/file.c
-index b1633c00bd3c..539bead2364e 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -285,6 +285,16 @@ static unsigned int count_possible_open_files(struct fdtable *fdt)
- 	return i;
+diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+index e799b1f8d05b..6ddffeeb6f97 100644
+--- a/include/linux/misc_cgroup.h
++++ b/include/linux/misc_cgroup.h
+@@ -57,6 +57,7 @@ struct misc_cg {
+ u64 misc_cg_res_total_usage(enum misc_res_type type);
+ int misc_cg_set_capacity(enum misc_res_type type, u64 capacity);
+ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount);
++void misc_cg_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount);
+ void misc_cg_uncharge(enum misc_res_type type, struct misc_cg *cg, u64 amount);
+ 
+ /**
+diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+index 79a3717a5803..bbce097270cf 100644
+--- a/kernel/cgroup/misc.c
++++ b/kernel/cgroup/misc.c
+@@ -121,6 +121,38 @@ static void misc_cg_cancel_charge(enum misc_res_type type, struct misc_cg *cg,
+ 		  misc_res_name[type]);
  }
  
-+u64 count_open_files(struct fdtable *fdt)
++/**
++ * misc_cg_charge() - Charge the cgroup, ignoring limits/capacity.
++ * @type: Misc res type to charge.
++ * @cg: Misc cgroup which will be charged.
++ * @amount: Amount to charge.
++ *
++ * Charge @amount to the misc cgroup. Caller must use the same cgroup during
++ * the uncharge call.
++ *
++ * Context: Any context.
++ */
++void misc_cg_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
 +{
-+	int i;
-+	u64 retval = 0;
++	struct misc_res *res;
++	struct misc_cg *i;
 +
-+	for (i = 0; i < DIV_ROUND_UP(fdt->max_fds, BITS_PER_LONG); i++)
-+		retval += hweight64((__u64)fdt->open_fds[i]);
-+	return retval;
++	if (!(valid_type(type) && cg && READ_ONCE(misc_res_capacity[type]))) {
++		WARN_ON_ONCE(!valid_type(type));
++		return;
++	}
++
++	if (!amount)
++		return;
++
++	for (i = cg; i; i = parent_misc(i)) {
++		res = &i->res[type];
++
++		atomic_long_add(amount, &res->usage);
++	}
 +}
++EXPORT_SYMBOL_GPL(misc_cg_charge);
 +
- /*
-  * Note that a sane fdtable size always has to be a multiple of
-  * BITS_PER_LONG, since we have bitmaps that are sized by this.
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index bc4c3287a65e..d74234c5d4e9 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -77,6 +77,8 @@ struct dentry;
- #define files_fdtable(files) \
- 	rcu_dereference_check_fdtable((files), (files)->fdt)
- 
-+u64 count_open_files(struct fdtable *fdt);
-+
- /*
-  * The caller must ensure that fd table isn't shared or hold rcu or file lock
-  */
+ /**
+  * misc_cg_try_charge() - Try charging the misc cgroup.
+  * @type: Misc res type to charge.
 -- 
 2.34.1
 
