@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-2420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420B77E5E42
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:10:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E387E5E40
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 20:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C971C20D66
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE94281887
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 19:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E759436B1C;
-	Wed,  8 Nov 2023 19:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EB2374F1;
+	Wed,  8 Nov 2023 19:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="NCaPyW35"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="cQvtzXfv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D12D374DB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDC4374D5
 	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 19:09:25 +0000 (UTC)
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECFFC2113
+Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3482110
 	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 11:09:24 -0800 (PST)
-Received: by mail-qt1-x82e.google.com with SMTP id d75a77b69052e-41cc0e9d92aso343751cf.3
+Received: by mail-qv1-xf2d.google.com with SMTP id 6a1803df08f44-6711dd6595fso418866d6.3
         for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 11:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699470562; x=1700075362; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1699470563; x=1700075363; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VYeMWvEhu1+Bmp78UF8eSUChUBLQrH7aUCmO3SKML2c=;
-        b=NCaPyW35S+4YGx/pAbzg6pjr0BEqOstO1eLiVjx9b4YrmEwheesFK1x/qpgJyNd+7H
-         C4+wmygW0JvA+UDp1CRvGCmfUA57NaUG3e9MDb9XYBNAi7q0dJmA/ax9pGHYFUamxbr4
-         4Juzd4pfFTFNPNkKQ1m65+kBTjajkT70G7lLxEeoLhTemiRD9P7rtFNc6hpJpriR+unB
-         55ZZ42BfwRwZGZ7bOdoQ1s1CoaXLKFYDgWxI2vXo4XgvWkimWuy+YQ7wjpEbQFRAFVx+
-         od5kFa64Ze8zjSvWfd7MXTn7TqhZW6Sw6P7uAsw9l0PZnvv6HreCCpRELTtacg3PN9tf
-         sF0Q==
+        bh=Qn4wfDb6jDre0GFiLqI3t3dfv/iDXvlKvBWKVyZYNgA=;
+        b=cQvtzXfvW8EczGn83PSMtx0Qw5TJ09QhUZiiMuAeHP8OG8Qq27NyFDJYQV4I3Kx0se
+         t6cANqrrtSrFptxX6t3SwA/2n3GH/WSiXUS3eFa/9J5nZ7jHqZTV2JDl7NN37Xb2BlMp
+         S2LHB/ZAnBRimju4iYFsTlX0g7a3/XdbHhHhUG5dQciD/bbCEBvgvFkyZXV30TSeWVLC
+         1MRwzVFddRj7MxXBLAOLUqeUve9XqOSTCEadc9WetKNhwZYQ0RljBkT9+pp9QJWr2AGE
+         QgQ/TEmMwxlI6XJq1LDHuTzMAHcqjFk87PE9xt2ptsDyOdhlgrL6Gw/MYXhNdVhBc8OZ
+         BpyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699470562; x=1700075362;
+        d=1e100.net; s=20230601; t=1699470563; x=1700075363;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VYeMWvEhu1+Bmp78UF8eSUChUBLQrH7aUCmO3SKML2c=;
-        b=AvLKiGpXkvTQBV72D+4ISwipDjVXAPLJif33BOrDova/v9P+6q/rbkh8i1IUq9nQDD
-         og4kXTpFBBdYew0lKsB6O65aY/UYy+MXBhwipTSWcP4YTch/fg6w3fnIQb0ggJ5tkqDg
-         iVjnOJ93VVe4zoHa+ZrolcG4Yp8gSrGKS07wY/O0HwlwvVEyfhpUvbVSxlwz3YmRu49n
-         mKoBSBQi/iUFY60z/OpsaldkFgpEKsGWDXMlZlRvJCgQMN4Bl30UhyMCeOT4dqrYqirm
-         9M15mnFd1NHJAMS4zt8Hs8RL+aIPNxh8olvQgL1MSS6tcfVrIdhNX7E4dhMLOTeHOJnJ
-         lX9g==
-X-Gm-Message-State: AOJu0Ywbg4BjzHzgFUugszdZeIRaGuJ+8IID3ORgnjaTZLNa6U6eIYxi
-	x1f4nNr2E4CCUwufwsfM3TY8IQ==
-X-Google-Smtp-Source: AGHT+IFGuR4wdqrJO0MUYjWDWLXDHuDrqM8uvxs+iZhuyOeC2t5axQRo6vZKvW9O1hp7MQvxlmLQvg==
-X-Received: by 2002:ac8:5952:0:b0:418:1059:dfb9 with SMTP id 18-20020ac85952000000b004181059dfb9mr2902511qtz.1.1699470562399;
-        Wed, 08 Nov 2023 11:09:22 -0800 (PST)
+        bh=Qn4wfDb6jDre0GFiLqI3t3dfv/iDXvlKvBWKVyZYNgA=;
+        b=SkSf8o3kMXawtxjqFitLRjaBDUJBWuNHhoDs0rnP0SYWCjCO1eCZFL0+R4ugjezA3k
+         OJ7SbCUUrmNoQxbq+a4lyfk9RgkwKW4DzAX/lorQq3s5y0/LctKVd8x3qp65PSCAlVMp
+         OhOsBHGyvtFy2MNFNuMgadgSdcuhE7u0mfTURPLde1MKIkcD1L1kJq2lXdMJcREwmU8d
+         yDVrybqmdgbdz1XoGIMeJEHf0mGDkFPaFK22MCzMZD643tSJAvjDqnGFOEIVeVpcwZcs
+         VaW7tz2MKXaCtJMJtwzbeqq3V2feycKcLuwAFfEF4k+NdEIfAs278lVoDH3wUbNrwp+7
+         jtyQ==
+X-Gm-Message-State: AOJu0Yxk2oB4+9XuyvLY/vWVXj3IYeepD/RinFerq1FTQ0wZzJ5mmeR9
+	6SpQWBetuRSFpoR8NxmHjqNe7wJBz60Cp/WJxZbpqw==
+X-Google-Smtp-Source: AGHT+IHURzhA1WV2kWdzm3EfHMJOEChXSbYb/jw8zKkSftyVmAe79UzIpCJONo3PgRzPf9Rn38yWUw==
+X-Received: by 2002:a05:6214:76e:b0:66d:ab4a:dc4e with SMTP id f14-20020a056214076e00b0066dab4adc4emr2501267qvz.1.1699470563547;
+        Wed, 08 Nov 2023 11:09:23 -0800 (PST)
 Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id o20-20020ac85554000000b0041cbf113c28sm1192141qtr.40.2023.11.08.11.09.21
+        by smtp.gmail.com with ESMTPSA id f2-20020ad45582000000b0066cfd398ab5sm1348860qvx.146.2023.11.08.11.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 11:09:21 -0800 (PST)
+        Wed, 08 Nov 2023 11:09:23 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-btrfs@vger.kernel.org,
 	kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org
-Subject: [PATCH v2 06/18] btrfs: split out ro->rw and rw->ro helpers into their own functions
-Date: Wed,  8 Nov 2023 14:08:41 -0500
-Message-ID: <dffde0e2d7c1caf220b08945c8927eee80fb9dcd.1699470345.git.josef@toxicpanda.com>
+Subject: [PATCH v2 07/18] btrfs: add a NOSPACECACHE mount option flag
+Date: Wed,  8 Nov 2023 14:08:42 -0500
+Message-ID: <f055629d0b79b0f8dd9ceb4527519c800c612694.1699470345.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1699470345.git.josef@toxicpanda.com>
 References: <cover.1699470345.git.josef@toxicpanda.com>
@@ -77,267 +77,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When we remount ro->rw or rw->ro we have some cleanup tasks that have to
-be managed.  Split these out into their own function to make
-btrfs_remount smaller.
+With the old mount API we'd pre-populate the mount options with the
+space cache settings of the file system, and then the user toggled them
+on or off with the mount options.  When we switch to the new mount API
+the mount options will be set before we get into opening the file
+system, so we need a flag to indicate that the user explicitly asked for
+-o nospace_cache so we can make the appropriate changes after the fact.
 
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/super.c | 233 ++++++++++++++++++++++++-----------------------
- 1 file changed, 120 insertions(+), 113 deletions(-)
+ fs/btrfs/disk-io.c | 1 +
+ fs/btrfs/fs.h      | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index aef7e67538a3..d7070269e3ea 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1659,6 +1659,119 @@ static inline void btrfs_remount_cleanup(struct btrfs_fs_info *fs_info,
- 		btrfs_set_free_space_cache_v1_active(fs_info, cache_opt);
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 072c45811c41..c70e507a28d0 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -2938,6 +2938,7 @@ void btrfs_clear_oneshot_options(struct btrfs_fs_info *fs_info)
+ {
+ 	btrfs_clear_opt(fs_info->mount_opt, USEBACKUPROOT);
+ 	btrfs_clear_opt(fs_info->mount_opt, CLEAR_CACHE);
++	btrfs_clear_opt(fs_info->mount_opt, NOSPACECACHE);
  }
  
-+static int btrfs_remount_rw(struct btrfs_fs_info *fs_info)
-+{
-+	int ret;
-+
-+	if (BTRFS_FS_ERROR(fs_info)) {
-+		btrfs_err(fs_info,
-+			  "Remounting read-write after error is not allowed");
-+		return -EINVAL;
-+	}
-+
-+	if (fs_info->fs_devices->rw_devices == 0)
-+		return -EACCES;
-+
-+	if (!btrfs_check_rw_degradable(fs_info, NULL)) {
-+		btrfs_warn(fs_info,
-+			   "too many missing devices, writable remount is not allowed");
-+		return -EACCES;
-+	}
-+
-+	if (btrfs_super_log_root(fs_info->super_copy) != 0) {
-+		btrfs_warn(fs_info,
-+			   "mount required to replay tree-log, cannot remount read-write");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * NOTE: when remounting with a change that does writes, don't put it
-+	 * anywhere above this point, as we are not sure to be safe to write
-+	 * until we pass the above checks.
-+	 */
-+	ret = btrfs_start_pre_rw_mount(fs_info);
-+	if (ret)
-+		return ret;
-+
-+	btrfs_clear_sb_rdonly(fs_info->sb);
-+
-+	set_bit(BTRFS_FS_OPEN, &fs_info->flags);
-+
-+	/*
-+	 * If we've gone from readonly -> read/write, we need to get our
-+	 * sync/async discard lists in the right state.
-+	 */
-+	btrfs_discard_resume(fs_info);
-+
-+	return 0;
-+}
-+
-+static int btrfs_remount_ro(struct btrfs_fs_info *fs_info)
-+{
-+	/*
-+	 * this also happens on 'umount -rf' or on shutdown, when
-+	 * the filesystem is busy.
-+	 */
-+	cancel_work_sync(&fs_info->async_reclaim_work);
-+	cancel_work_sync(&fs_info->async_data_reclaim_work);
-+
-+	btrfs_discard_cleanup(fs_info);
-+
-+	/* wait for the uuid_scan task to finish */
-+	down(&fs_info->uuid_tree_rescan_sem);
-+	/* avoid complains from lockdep et al. */
-+	up(&fs_info->uuid_tree_rescan_sem);
-+
-+	btrfs_set_sb_rdonly(fs_info->sb);
-+
-+	/*
-+	 * Setting SB_RDONLY will put the cleaner thread to
-+	 * sleep at the next loop if it's already active.
-+	 * If it's already asleep, we'll leave unused block
-+	 * groups on disk until we're mounted read-write again
-+	 * unless we clean them up here.
-+	 */
-+	btrfs_delete_unused_bgs(fs_info);
-+
-+	/*
-+	 * The cleaner task could be already running before we set the
-+	 * flag BTRFS_FS_STATE_RO (and SB_RDONLY in the superblock).
-+	 * We must make sure that after we finish the remount, i.e. after
-+	 * we call btrfs_commit_super(), the cleaner can no longer start
-+	 * a transaction - either because it was dropping a dead root,
-+	 * running delayed iputs or deleting an unused block group (the
-+	 * cleaner picked a block group from the list of unused block
-+	 * groups before we were able to in the previous call to
-+	 * btrfs_delete_unused_bgs()).
-+	 */
-+	wait_on_bit(&fs_info->flags, BTRFS_FS_CLEANER_RUNNING,
-+		    TASK_UNINTERRUPTIBLE);
-+
-+	/*
-+	 * We've set the superblock to RO mode, so we might have made
-+	 * the cleaner task sleep without running all pending delayed
-+	 * iputs. Go through all the delayed iputs here, so that if an
-+	 * unmount happens without remounting RW we don't end up at
-+	 * finishing close_ctree() with a non-empty list of delayed
-+	 * iputs.
-+	 */
-+	btrfs_run_delayed_iputs(fs_info);
-+
-+	btrfs_dev_replace_suspend_for_unmount(fs_info);
-+	btrfs_scrub_cancel(fs_info);
-+	btrfs_pause_balance(fs_info);
-+
-+	/*
-+	 * Pause the qgroup rescan worker if it is running. We don't want
-+	 * it to be still running after we are in RO mode, as after that,
-+	 * by the time we unmount, it might have left a transaction open,
-+	 * so we would leak the transaction and/or crash.
-+	 */
-+	btrfs_qgroup_wait_for_completion(fs_info, false);
-+
-+	return btrfs_commit_super(fs_info);
-+}
-+
- static int btrfs_remount(struct super_block *sb, int *flags, char *data)
- {
- 	struct btrfs_fs_info *fs_info = btrfs_sb(sb);
-@@ -1712,120 +1825,14 @@ static int btrfs_remount(struct super_block *sb, int *flags, char *data)
- 		}
- 	}
+ /*
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index 318df6f9d9cb..ecfa13a9c2cf 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -188,6 +188,7 @@ enum {
+ 	BTRFS_MOUNT_IGNOREBADROOTS		= (1UL << 27),
+ 	BTRFS_MOUNT_IGNOREDATACSUMS		= (1UL << 28),
+ 	BTRFS_MOUNT_NODISCARD			= (1UL << 29),
++	BTRFS_MOUNT_NOSPACECACHE		= (1UL << 30),
+ };
  
--	if ((bool)(*flags & SB_RDONLY) == sb_rdonly(sb))
--		goto out;
-+	ret = 0;
-+	if (!sb_rdonly(sb) && (*flags & SB_RDONLY))
-+		ret = btrfs_remount_ro(fs_info);
-+	else if (sb_rdonly(sb) && !(*flags & SB_RDONLY))
-+		ret = btrfs_remount_rw(fs_info);
-+	if (ret)
-+		goto restore;
- 
--	if (*flags & SB_RDONLY) {
--		/*
--		 * this also happens on 'umount -rf' or on shutdown, when
--		 * the filesystem is busy.
--		 */
--		cancel_work_sync(&fs_info->async_reclaim_work);
--		cancel_work_sync(&fs_info->async_data_reclaim_work);
--
--		btrfs_discard_cleanup(fs_info);
--
--		/* wait for the uuid_scan task to finish */
--		down(&fs_info->uuid_tree_rescan_sem);
--		/* avoid complains from lockdep et al. */
--		up(&fs_info->uuid_tree_rescan_sem);
--
--		btrfs_set_sb_rdonly(sb);
--
--		/*
--		 * Setting SB_RDONLY will put the cleaner thread to
--		 * sleep at the next loop if it's already active.
--		 * If it's already asleep, we'll leave unused block
--		 * groups on disk until we're mounted read-write again
--		 * unless we clean them up here.
--		 */
--		btrfs_delete_unused_bgs(fs_info);
--
--		/*
--		 * The cleaner task could be already running before we set the
--		 * flag BTRFS_FS_STATE_RO (and SB_RDONLY in the superblock).
--		 * We must make sure that after we finish the remount, i.e. after
--		 * we call btrfs_commit_super(), the cleaner can no longer start
--		 * a transaction - either because it was dropping a dead root,
--		 * running delayed iputs or deleting an unused block group (the
--		 * cleaner picked a block group from the list of unused block
--		 * groups before we were able to in the previous call to
--		 * btrfs_delete_unused_bgs()).
--		 */
--		wait_on_bit(&fs_info->flags, BTRFS_FS_CLEANER_RUNNING,
--			    TASK_UNINTERRUPTIBLE);
--
--		/*
--		 * We've set the superblock to RO mode, so we might have made
--		 * the cleaner task sleep without running all pending delayed
--		 * iputs. Go through all the delayed iputs here, so that if an
--		 * unmount happens without remounting RW we don't end up at
--		 * finishing close_ctree() with a non-empty list of delayed
--		 * iputs.
--		 */
--		btrfs_run_delayed_iputs(fs_info);
--
--		btrfs_dev_replace_suspend_for_unmount(fs_info);
--		btrfs_scrub_cancel(fs_info);
--		btrfs_pause_balance(fs_info);
--
--		/*
--		 * Pause the qgroup rescan worker if it is running. We don't want
--		 * it to be still running after we are in RO mode, as after that,
--		 * by the time we unmount, it might have left a transaction open,
--		 * so we would leak the transaction and/or crash.
--		 */
--		btrfs_qgroup_wait_for_completion(fs_info, false);
--
--		ret = btrfs_commit_super(fs_info);
--		if (ret)
--			goto restore;
--	} else {
--		if (BTRFS_FS_ERROR(fs_info)) {
--			btrfs_err(fs_info,
--				"Remounting read-write after error is not allowed");
--			ret = -EINVAL;
--			goto restore;
--		}
--		if (fs_info->fs_devices->rw_devices == 0) {
--			ret = -EACCES;
--			goto restore;
--		}
--
--		if (!btrfs_check_rw_degradable(fs_info, NULL)) {
--			btrfs_warn(fs_info,
--		"too many missing devices, writable remount is not allowed");
--			ret = -EACCES;
--			goto restore;
--		}
--
--		if (btrfs_super_log_root(fs_info->super_copy) != 0) {
--			btrfs_warn(fs_info,
--		"mount required to replay tree-log, cannot remount read-write");
--			ret = -EINVAL;
--			goto restore;
--		}
--
--		/*
--		 * NOTE: when remounting with a change that does writes, don't
--		 * put it anywhere above this point, as we are not sure to be
--		 * safe to write until we pass the above checks.
--		 */
--		ret = btrfs_start_pre_rw_mount(fs_info);
--		if (ret)
--			goto restore;
--
--		btrfs_clear_sb_rdonly(sb);
--
--		set_bit(BTRFS_FS_OPEN, &fs_info->flags);
--
--		/*
--		 * If we've gone from readonly -> read/write, we need to get
--		 * our sync/async discard lists in the right state.
--		 */
--		btrfs_discard_resume(fs_info);
--	}
--out:
- 	/*
- 	 * We need to set SB_I_VERSION here otherwise it'll get cleared by VFS,
- 	 * since the absence of the flag means it can be toggled off by remount.
+ /*
 -- 
 2.41.0
 
