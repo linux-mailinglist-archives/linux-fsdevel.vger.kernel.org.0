@@ -1,70 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-2404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C97F7E5B24
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 17:25:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83E27E5B29
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 17:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A196EB210DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:25:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D611C20C68
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Nov 2023 16:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC1831A92;
-	Wed,  8 Nov 2023 16:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPlufv1C"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7568331A98;
+	Wed,  8 Nov 2023 16:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F31FD6;
-	Wed,  8 Nov 2023 16:25:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BBB5C433C9;
-	Wed,  8 Nov 2023 16:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699460726;
-	bh=qD+sFBOP9V2yUmYRqtOB3VeOWhm29ZlZGuTsoaz/cM4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dPlufv1C6M7u5dLJzwxcRCXpDA0+ZgvcRrTe2ZqGH3BLqehtRYCWR6i1cL1M2WZw3
-	 zBqXj+z3CX/cBH0mDnRK+J3y9bRpJB+AcFtrOFH/pHZTrF9iNTm9MhA3mPNP1ZLCrg
-	 FEWSGkxIKc8R1WGnKVEc95ZpJR1M1keMyLMEqFy5+Nszf0NVJAJPn31Q49OxnPuJif
-	 AKSXzg7IZDHjEVpnUr3W/5oapj4V2707ml3npIpNNpbd+UIrSXLz4rXgza5C7gw5+R
-	 dMGnyYtQktoMsnQJ7cG2oh3p8ETYGci8MdSih6O2J4dZ7OGUWG+F0UHsVU9qHJx+gv
-	 8xKewJ9thyjmg==
-Date: Wed, 8 Nov 2023 08:25:25 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: add and use a per-mapping stable writes flag v2
-Message-ID: <20231108162525.GT1205143@frogsfrogsfrogs>
-References: <20231025141020.192413-1-hch@lst.de>
- <20231108080518.GA6374@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CB3D51D;
+	Wed,  8 Nov 2023 16:27:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE87BC433C8;
+	Wed,  8 Nov 2023 16:27:19 +0000 (UTC)
+Date: Wed, 8 Nov 2023 11:27:23 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: <j.granados@samsung.com>, Joel Granados via B4 Relay
+ <devnull+j.granados.samsung.com@kernel.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, willy@infradead.org, josh@joshtriplett.org, Kees Cook
+ <keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>, Iurii
+ Zaikin <yzaikin@google.com>, Mark Rutland <mark.rutland@arm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, Stephen
+ Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry
+ <wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider
+ <vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>, John Ogness
+ <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+ <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
+ kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 03/10] ftrace: Remove the now superfluous sentinel
+ elements from ctl_table array
+Message-ID: <20231108112723.275ae223@gandalf.local.home>
+In-Reply-To: <20231108192949.f19832c76d1cf18c5d614e72@kernel.org>
+References: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-0-e4ce1388dfa0@samsung.com>
+	<20231107-jag-sysctl_remove_empty_elem_kernel-v1-3-e4ce1388dfa0@samsung.com>
+	<20231108192949.f19832c76d1cf18c5d614e72@kernel.org>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108080518.GA6374@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 08, 2023 at 09:05:18AM +0100, Christoph Hellwig wrote:
-> Can we get at least patches 1 and 2 queued for for 6.7 given that
-> they fix a regression?
+On Wed, 8 Nov 2023 19:29:49 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-I would say that all four should go in 6.7 because patches 3-4 fix wrong
-behavior if the rtdev needs stablewrites but the datadev does not.
+> On Tue, 07 Nov 2023 14:45:03 +0100
+> Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org> wrote:
+> 
+> > From: Joel Granados <j.granados@samsung.com>
+> > 
+> > This commit comes at the tail end of a greater effort to remove the
+> > empty elements at the end of the ctl_table arrays (sentinels) which
+> > will reduce the overall build time size of the kernel and run time
+> > memory bloat by ~64 bytes per sentinel (further information Link :
+> > https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+> > 
+> > Remove sentinel elements from ftrace_sysctls and user_event_sysctls
+> >   
+> 
+> Both looks good to me. (since register_sysctl_init() uses ARRAY_SIZE()
+> macro to get the array size.)
+> 
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-There probably aren't many users of a RHEL-disabled feature atop
-specialty hardware, but IIRC it's still a data corruption vector.
+Agreed.
 
-(says me who blew up his last T10 PI drive last week :()
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
---D
+-- Steve
 
