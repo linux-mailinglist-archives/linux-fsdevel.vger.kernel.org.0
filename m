@@ -1,51 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-2641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515B77E7362
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:06:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4767E7360
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96CE5B21293
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 21:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793DC281401
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 21:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3F1374DF;
-	Thu,  9 Nov 2023 21:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3040374F6;
+	Thu,  9 Nov 2023 21:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g8GPU04k"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l8tn+xZh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C5E374FB
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 21:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AB5374EC
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 21:06:35 +0000 (UTC)
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD57D54
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 13:06:40 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A17186
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 13:06:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=Dr/RGrgySdjd8ncT62EyLWsleBevlgE8NPLHoUwdEOE=; b=g8GPU04kTpo7BHTzeRRy3dwoxQ
-	I52Y95/5wmMTznJ4m7GxTqNhGSkC15ilPGrzijw6EMgFnphA22M2IkjQ0n8bHZcuflKe5IGWFY+Dt
-	JjxF3jok9g5ZBOJbqYkNg7gidYlnW9ma3XxrbwfGTMdogvC/x1AIFv6v+/Pcv81abZlTS2Xjc40xs
-	QrDAbe4EmwhFL1LzXbae/COpQDkQIDL2PLX7qumMXvthB8lH5XN2PdcjNSHUfwlC+DlaSFeHQTc7T
-	5cm/YayWQXE0TbKYqyvZjewG69KjRSZGzJ0OcjEKkunnyeKLEyE2/y3PhAAE3ol0dewhngaujKOPc
-	AiHF4lvg==;
+	bh=gTy9AWa1qoaeSYWP7pvOeRn5/jbkYSHToiAygTFIVHw=; b=l8tn+xZhuHJgsQ1j+G9CDl+ysQ
+	aghQS3jFk/xlC9FFkEJBQORmzNO5gYYw2nL8r82bz/S796xu1Q/c5INHdaR59Ugior4aTFF3Zq0lr
+	DIxuawnmyu9VwbiW05UKu9JNBi0pWDivq1Yzm5RMrVi5xsWPBDFGlwD88/Gk5ZzNK2++LNXzK6aSB
+	xz6vWBs5ockrl9yngKSRHFKPSo04/24jYbiwGuxUvLAgbDK7cISePI/F4z+mslZNV4JiKDpjZAf3F
+	lgR+snleq7p6RGjLH3kPMOs6+xEK/yur5RXi9Uf7CPd3tZFYTiKs1T8BPCppNCnXWFu7seB4wcWfr
+	zyv/TicA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r1CE8-009RwB-1B; Thu, 09 Nov 2023 21:06:12 +0000
+	id 1r1CE8-009RwD-3s; Thu, 09 Nov 2023 21:06:12 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Hannes Reinecke <hare@suse.de>,
 	Luis Chamberlain <mcgrof@kernel.org>,
 	Pankaj Raghav <p.raghav@samsung.com>,
-	linux-fsdevel@vger.kernel.org,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Subject: [PATCH v2 6/7] buffer: Handle large folios in __block_write_begin_int()
-Date: Thu,  9 Nov 2023 21:06:07 +0000
-Message-Id: <20231109210608.2252323-7-willy@infradead.org>
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 7/7] buffer: Fix more functions for block size > PAGE_SIZE
+Date: Thu,  9 Nov 2023 21:06:08 +0000
+Message-Id: <20231109210608.2252323-8-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231109210608.2252323-1-willy@infradead.org>
 References: <20231109210608.2252323-1-willy@infradead.org>
@@ -57,58 +56,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When __block_write_begin_int() was converted to support folios, we
-did not expect large folios to be passed to it.  With the current
-work to support large block size storage devices, this will no longer
-be true so change the checks on 'from' and 'to' to be related to the
-size of the folio instead of PAGE_SIZE.  Also remove an assumption that
-the block size is smaller than PAGE_SIZE.
+Both __block_write_full_folio() and block_read_full_folio() assumed
+that block size <= PAGE_SIZE.  Replace the shift with a divide, which
+is probably cheaper than first calculating the shift.  That lets us
+remove block_size_bits() as these were the last callers.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reported-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
 ---
- fs/buffer.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ fs/buffer.c | 27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index faf1916200c2..ef444ab53a9b 100644
+index ef444ab53a9b..4eb44ccdc6be 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -2075,27 +2075,24 @@ iomap_to_bh(struct inode *inode, sector_t block, struct buffer_head *bh,
- int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
- 		get_block_t *get_block, const struct iomap *iomap)
- {
--	unsigned from = pos & (PAGE_SIZE - 1);
--	unsigned to = from + len;
-+	size_t from = offset_in_folio(folio, pos);
-+	size_t to = from + len;
- 	struct inode *inode = folio->mapping->host;
--	unsigned block_start, block_end;
-+	size_t block_start, block_end;
- 	sector_t block;
- 	int err = 0;
--	unsigned blocksize, bbits;
-+	size_t blocksize;
- 	struct buffer_head *bh, *head, *wait[2], **wait_bh=wait;
+@@ -1742,19 +1742,6 @@ void clean_bdev_aliases(struct block_device *bdev, sector_t block, sector_t len)
+ }
+ EXPORT_SYMBOL(clean_bdev_aliases);
  
- 	BUG_ON(!folio_test_locked(folio));
--	BUG_ON(from > PAGE_SIZE);
--	BUG_ON(to > PAGE_SIZE);
-+	BUG_ON(to > folio_size(folio));
- 	BUG_ON(from > to);
+-/*
+- * Size is a power-of-two in the range 512..PAGE_SIZE,
+- * and the case we care about most is PAGE_SIZE.
+- *
+- * So this *could* possibly be written with those
+- * constraints in mind (relevant mostly if some
+- * architecture has a slow bit-scan instruction)
+- */
+-static inline int block_size_bits(unsigned int blocksize)
+-{
+-	return ilog2(blocksize);
+-}
+-
+ static struct buffer_head *folio_create_buffers(struct folio *folio,
+ 						struct inode *inode,
+ 						unsigned int b_state)
+@@ -1807,7 +1794,7 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
+ 	sector_t block;
+ 	sector_t last_block;
+ 	struct buffer_head *bh, *head;
+-	unsigned int blocksize, bbits;
++	size_t blocksize;
+ 	int nr_underway = 0;
+ 	blk_opf_t write_flags = wbc_to_write_flags(wbc);
+ 
+@@ -1826,10 +1813,9 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
+ 
+ 	bh = head;
+ 	blocksize = bh->b_size;
+-	bbits = block_size_bits(blocksize);
+ 
+-	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
+-	last_block = (i_size_read(inode) - 1) >> bbits;
++	block = div_u64(folio_pos(folio), blocksize);
++	last_block = div_u64(i_size_read(inode) - 1, blocksize);
+ 
+ 	/*
+ 	 * Get all the dirty buffers mapped to disk addresses and
+@@ -2355,7 +2341,7 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+ 	struct inode *inode = folio->mapping->host;
+ 	sector_t iblock, lblock;
+ 	struct buffer_head *bh, *head, *arr[MAX_BUF_PER_PAGE];
+-	unsigned int blocksize, bbits;
++	size_t blocksize;
+ 	int nr, i;
+ 	int fully_mapped = 1;
+ 	bool page_error = false;
+@@ -2369,10 +2355,9 @@ int block_read_full_folio(struct folio *folio, get_block_t *get_block)
  
  	head = folio_create_buffers(folio, inode, 0);
  	blocksize = head->b_size;
 -	bbits = block_size_bits(blocksize);
--
--	block = (sector_t)folio->index << (PAGE_SHIFT - bbits);
-+	block = div_u64(folio_pos(folio), blocksize);
  
--	for(bh = head, block_start = 0; bh != head || !block_start;
-+	for (bh = head, block_start = 0; bh != head || !block_start;
- 	    block++, block_start=block_end, bh = bh->b_this_page) {
- 		block_end = block_start + blocksize;
- 		if (block_end <= from || block_start >= to) {
+-	iblock = (sector_t)folio->index << (PAGE_SHIFT - bbits);
+-	lblock = (limit+blocksize-1) >> bbits;
++	iblock = div_u64(folio_pos(folio), blocksize);
++	lblock = div_u64(limit + blocksize - 1, blocksize);
+ 	bh = head;
+ 	nr = 0;
+ 	i = 0;
 -- 
 2.42.0
 
