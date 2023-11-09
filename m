@@ -1,124 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-2619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2621-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112E87E714F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 19:21:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D611B7E7154
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 19:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62A6B20E8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054D71C20C26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38147347C9;
-	Thu,  9 Nov 2023 18:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rZdWSURd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDAF34CEC;
+	Thu,  9 Nov 2023 18:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7A61E51E
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 18:20:53 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B691FF6
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 10:20:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+1XudUvqm/WIWBS4EvGNVAwXp3WObNE1Fgj0Rzze6ic=; b=rZdWSURdB2Kgt2FSshUSi7pFz/
-	HV1Rg2oVQfiLVsewH/3Dx4+E9LVxBjzZz8eS0zCnaeiPGRevB3eW5XQlr5BkiP9EQ4nS7ppvUWQFs
-	nVicA3ub04gInw9xfudAkB3sR08Hq7HyHU+ShAsPQmM/bR26Imz5epKtXAKkvDFXRvn5KTCNZhL7P
-	4pYB2hyBS3jSepG4g4Oo/JuXa1v1lagk9PNWANBWVU7KxbH/CzYPtI+vlysxM6tCTiNBW7DF0dmOX
-	1KlusVIaM7J8GpA1uSlEduFbOKput1FoBH1Ws1NjxtCQqcsL+hRLLLftPKk1QJPDnNN3T5pI4o20T
-	zG/lXmJg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r19e6-00DXgq-1v;
-	Thu, 09 Nov 2023 18:20:50 +0000
-Date: Thu, 9 Nov 2023 18:20:50 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 17/22] don't try to cut corners in shrink_lock_dentry()
-Message-ID: <20231109182050.GA1957730@ZenIV>
-References: <20231109061932.GA3181489@ZenIV>
- <20231109062056.3181775-1-viro@zeniv.linux.org.uk>
- <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
- <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA0F341BF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 18:23:27 +0000 (UTC)
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E51DB30CF
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 10:23:26 -0800 (PST)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6b31cb3cc7eso1177409b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 10:23:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699554206; x=1700159006;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MqZmZaQnQHMv/T08XsHu4/lwHim+riyuEWyefi56ZZQ=;
+        b=ZlWXfatRIoOpdwbjnkzqbNgaJ6rtZH7GYGyzyF1W+hEGEGzllp/9fwpMTTJ9iM73VA
+         bIzNOjlyTf2M6ECRGXI8uJoyR0UnV0vCVVCp9JBgXh+wxcxSAMQuxbCiEs34xjPvWInF
+         YSrbcI5MOn4e7jSjJWbmqubJy+jjhBnKQ7B9h4jKwGev+TUvdep+0y7Qgaf8AszviX9y
+         NLwHkslVCay2vpJ4AGSbOG6YtACJfoaDd6Ou/uOBaPBehxO+kJJUmiR4eqecQTMjsr4A
+         XsykJR7X12tb5DDbWWA7eXnxp1ihXEoMQOagC3Ciw2xrgQnqz4qSPGgItohhRjAD4Jcu
+         8ltQ==
+X-Gm-Message-State: AOJu0YwyCIb+krPQaDCujdoAiHsV9koTr5IjMHSfQKVb317XRBgtB0Tb
+	9DaRiY4s4ZKN0oZnQ78dZV5ulDqi5ncmg1gZd+9fCcbNk6KQ
+X-Google-Smtp-Source: AGHT+IG9LKwcLSJ1suW3rUPoiF7yaD9jW9LcNQLeKR4EMZtRNJaPpjUd38ipJcktoR/1FhOyahobkb1LoYUREkyXQo9t93gyVwxj
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6a00:850a:b0:690:29c0:ef51 with SMTP id
+ ha10-20020a056a00850a00b0069029c0ef51mr18126pfb.1.1699554206425; Thu, 09 Nov
+ 2023 10:23:26 -0800 (PST)
+Date: Thu, 09 Nov 2023 10:23:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c0279e0609bc4c7a@google.com>
+Subject: [syzbot] Monthly udf report (Nov 2023)
+From: syzbot <syzbot+liste6fcb39e599cf6bcae03@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 09, 2023 at 09:39:09AM -0800, Linus Torvalds wrote:
-> On Wed, 8 Nov 2023 at 22:23, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >  static struct dentry *__lock_parent(struct dentry *dentry)
-> >  {
-> >         struct dentry *parent;
-> > -       rcu_read_lock();
-> > -       spin_unlock(&dentry->d_lock);
-> >  again:
-> >         parent = READ_ONCE(dentry->d_parent);
-> >         spin_lock(&parent->d_lock);
-> 
-> Can we rename this while at it?
-> 
-> That name *used* to make sense, in that the function was entered with
-> the dentry lock held, and then it returned with the dentry lock *and*
-> the parent lock held.
-> 
-> But now you've changed the rules so that the dentry lock is *not* held
-> at entry, so now the semantics of that function is essentially "lock
-> dentry and parent". Which I think means that the name should change to
-> reflect that.
-> 
-> Finally: it does look like most callers actually did hold the dentry
-> lock, and that you just moved the
-> 
->         spin_unlock(&dentry->d_lock);
-> 
-> from inside that function to the caller. I don't hate that, but now
-> that I look at it, I get the feeling that what we *should* have done
-> is
-> 
->   static struct dentry *__lock_parent(struct dentry *dentry)
->   {
->         struct dentry *parent = dentry->d_parent;
->         if (try_spin_lock(&parent->d_lock))
->                 return parent;
->         /* Uhhuh - need to get the parent lock first */
->         .. old code goes here ..
-> 
-> but that won't work with the new world order.
+Hello udf maintainers/developers,
 
-Can't - currently lock_for_kill() uses it in a loop.  Can't have trylocks
-in there, or realtime setups will get unhappy.  More to the point, the whole
-function is gone by the end of the series.  Along with lock_parent().
+This is a 31-day syzbot report for the udf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/udf
 
-The only reason why we needed that thing is that we lock the parent too
-early; that's where the last commit in the series is a big win.  There
-we remove from the parent's list of children in the very end, when we'd
-already made the victim negative (and unlocked it); there ->d_parent
-is stable and we can simply lock that, then lock dentry.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 14 issues are still open and 18 have been fixed so far.
 
-We still need a loop in lock_for_kill() to get the inode locked along
-with dentry, but that's less convoluted (the ordering between two
-->d_lock can change; ->i_lock is always safe to take before ->d_lock).
+Some of the still happening issues:
 
-> So I get the feeling that maybe instead of renaming it for the new
-> semantics, maybe the old semantics of "called with the dentry lock
-> held" were simply better"
+Ref Crashes Repro Title
+<1> 1759    Yes   WARNING in udf_truncate_extents
+                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2> 103     Yes   KASAN: use-after-free Write in udf_close_lvid
+                  https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
+<3> 28      Yes   WARNING in udf_new_block
+                  https://syzkaller.appspot.com/bug?extid=cc717c6c5fee9ed6e41d
+<4> 15      Yes   WARNING in invalidate_bh_lru
+                  https://syzkaller.appspot.com/bug?extid=9743a41f74f00e50fc77
+<5> 13      Yes   WARNING in udf_setsize (2)
+                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+<6> 6       Yes   UBSAN: array-index-out-of-bounds in udf_process_sequence
+                  https://syzkaller.appspot.com/bug?extid=abb7222a58e4ebc930ad
+<7> 5       Yes   KASAN: slab-out-of-bounds Write in udf_adinicb_writepage
+                  https://syzkaller.appspot.com/bug?extid=a3db10baf0c0ee459854
+<8> 2       Yes   KASAN: slab-use-after-free Read in udf_free_blocks
+                  https://syzkaller.appspot.com/bug?extid=0b7937459742a0a4cffd
 
-lock_parent() goes aways when d_prune_alias() is switched to shrink list;
-after that __lock_parent() is used only in that loop in lock_for_kill()
-and only until (22/22) when lock_for_kill() stops touching the parent.
-After that it's simply gone.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
