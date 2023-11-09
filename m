@@ -1,117 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-2584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E937E6DDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:43:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EF07E6DF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9E01C20BBA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFC628123C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3A6208CD;
-	Thu,  9 Nov 2023 15:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cRIn5/hn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDCF208D0;
+	Thu,  9 Nov 2023 15:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2237E208B1
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:43:14 +0000 (UTC)
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 923AE4ED5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:43:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27434208AA;
+	Thu,  9 Nov 2023 15:46:27 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 957EF4EF2;
+	Thu,  9 Nov 2023 07:46:26 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id EB3BF68AA6; Thu,  9 Nov 2023 16:46:19 +0100 (CET)
+Date: Thu, 9 Nov 2023 16:46:19 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, John Garry <john.g.garry@oracle.com>,
+	axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-api@vger.kernel.org, Alan Adamson <alan.adamson@oracle.com>
+Subject: Re: [PATCH 21/21] nvme: Support atomic writes
+Message-ID: <20231109154619.GA3491@lst.de>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com> <20230929102726.2985188-22-john.g.garry@oracle.com> <20231109153603.GA2188@lst.de> <ZUz98KriiLsM8oQd@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1699544591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xVC5kvj11UWNazgoKPaQxDH585CeKpol97QYH/btY2Y=;
-	b=cRIn5/hnElVTePcq0N4hui9EdkEbSeRs5uPwln7WSsqdaZwiIPrA0UWXOF6c6yI9xlANmj
-	Im4dVwsy/MJsZNJvarMIcYHsP2/3Oru2iHs9rL7w0RSQffu+uwy9iX29s+tu3H6NC+YKkx
-	5yiHgRK9ryEly4q9oloh0LPiSNFPxGo=
-Date: Thu, 09 Nov 2023 15:43:10 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: jeff.xie@linux.dev
-Message-ID: <27f7b8c52e2da5e8003de2226bff181fdc7a7f69@linux.dev>
-TLS-Required: No
-Subject: Re: [RFC][PATCH 3/4] filemap: implement filemap allocate post
- callback for page_owner
-To: "Matthew Wilcox" <willy@infradead.org>
-Cc: akpm@linux-foundation.org, iamjoonsoo.kim@lge.com, vbabka@suse.cz,
- cl@linux.com, penberg@kernel.org, rientjes@google.com,
- roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- chensong_2000@189.cn, xiehuan09@gmail.com
-In-Reply-To: <ZUzoAhpkrCNz9l1k@casper.infradead.org>
-References: <ZUzoAhpkrCNz9l1k@casper.infradead.org>
- <20231109032521.392217-1-jeff.xie@linux.dev>
- <20231109032521.392217-4-jeff.xie@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZUz98KriiLsM8oQd@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-November 9, 2023 at 10:09 PM, "Matthew Wilcox" <willy@infradead.org> wrot=
-e:
+On Thu, Nov 09, 2023 at 03:42:40PM +0000, Matthew Wilcox wrote:
+> That wasn't the model we had in mind.  In our thinking, it was fine to
+> send a write that crossed the atomic write limit, but the drive wouldn't
+> guarantee that it was atomic except at the atomic write boundary.
+> Eg with an AWUN of 16kB, you could send five 16kB writes, combine them
+> into a single 80kB write, and if the power failed midway through, the
+> drive would guarantee that it had written 0, 16kB, 32kB, 48kB, 64kB or
+> all 80kB.  Not necessarily in order; it might have written bytes 16-32kB,
+> 64-80kB and not the other three.
 
-
->=20
->=20On Thu, Nov 09, 2023 at 11:25:20AM +0800, Jeff Xie wrote:
->=20
->=20>=20
->=20> +static int filemap_alloc_post_page_owner(struct folio *folio, stru=
-ct task_struct *tsk,
-> >  + void *data, char *kbuf, size_t count)
-> >  +{
-> >  + int ret;
-> >  + int mapcount;
-> >  + dev_t s_dev;
-> >  + struct inode *inode;
-> >  + struct vm_area_struct *vma;
-> >  + struct mm_struct *mm;
-> >  + unsigned long virtual_start =3D 0x0;
-> >  + unsigned long virtual_end =3D 0x0;
-> >  + struct address_space *mapping =3D data;
-> >=20
->=20
-> This is just folio->mapping.
-
-Thanks, I need to know more about struct folio ;-)
-
->=20
->=20>=20
->=20> + mapcount =3D folio_mapcount(folio);
-> >  + if (mapcount && tsk && tsk->mm) {
-> >  + mm =3D tsk->mm;
-> >  + VMA_ITERATOR(vmi, mm, 0);
-> >  + mmap_read_lock(mm);
-> >  + for_each_vma(vmi, vma) {
-> >  + if (page_mapped_in_vma(&folio->page, vma)) {
-> >  + virtual_start =3D vma_address(&folio->page, vma);
-> >  + virtual_end =3D virtual_start + folio_nr_pages(folio) * PAGE_SIZE;
-> >  + break;
-> >  + }
-> >  + }
-> >  + mmap_read_unlock(mm);
-> >  + }
-> >=20
->=20
-> Why not just walk the rmap directly to find out where it's mapped in
-> any process instead of the one which allocated it?
-
-Since the page_owner's result only shows which PID allocated this page, w=
-e only need to obtain the address space of the corresponding process for =
-that PID.
-
---
-Jeff Xie
+I can see some use for that, but I'm really worried that debugging
+problems in the I/O merging and splitting will be absolute hell.
 
