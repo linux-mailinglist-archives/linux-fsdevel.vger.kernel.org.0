@@ -1,97 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-2611-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7567C7E706B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:37:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4F17E7073
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:39:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F5D4B20CF7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A3971C20B37
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE81023744;
-	Thu,  9 Nov 2023 17:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F25241EF;
+	Thu,  9 Nov 2023 17:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LTik8qcE"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DblzGIoM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F2F225D7
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:37:32 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA62268D;
-	Thu,  9 Nov 2023 09:37:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/zf0lTxBuvebjd5FmP2bSMJ+hk6qswmHlp1nwkj6kdY=; b=LTik8qcEySCdMDCuz34d3k9ufZ
-	tIgcA/qhbd4WYY5aZm5G/BJ2NEhNKKXaDkYnnyUJAuigl/iM5tH7dRWI1ba0FvgpOqW7c+UKRpfQO
-	RAvQnxfo8z2qPObIHJq1IJUTFhywlpF+wEQWWVRfnLbA9X5PZ5R4vGG5iuNEzgl7f+vo12OLuGXhO
-	pe5VQDHRK0lqSD/ljuVimzlylfGVsSxVegB1RP+IXwbzxtIF3T+hEZfu9w1iPpvBgX/zKeVbg2U0w
-	3vP9mNvXcffxVjBoGzc7OKfxYwn6qUASlkThQRGRrWJ66Pbuyc7n5VoIx/fr++kivBB8bQPN2Cpqp
-	mkWfeIrA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r18y9-008YXP-0x; Thu, 09 Nov 2023 17:37:29 +0000
-Date: Thu, 9 Nov 2023 17:37:28 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-erofs@lists.ozlabs.org, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [PATCH 1/3] mm: Add folio_zero_tail() and use it in ext4
-Message-ID: <ZU0Y2NEMMlkHYcr6@casper.infradead.org>
-References: <20231107212643.3490372-1-willy@infradead.org>
- <20231107212643.3490372-2-willy@infradead.org>
- <20231108150606.2ec3cafb290f757f0e4c92d8@linux-foundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC9E225D7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:39:30 +0000 (UTC)
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D333D58
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 09:39:29 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9db6cf8309cso195518466b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 09:39:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1699551567; x=1700156367; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHsMBWvJaFMu3UyYKs9v6HLN1W8UaRCCbIY128ntnHg=;
+        b=DblzGIoMn0xu2I6TKHcTKIx/Zpa/Lt5oDAzlrtwvRcs0a7bkUdfggyfxGqmGXoRsR5
+         DFjXRA+naCYiI4EAPDT0B0+gI8heqjfqXG2D7We334OBI3+XfA566lwcyudFE4LBy+8i
+         ByyngfgIWNi7srIAbjY+o1gdgE//5edzo1ehk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699551567; x=1700156367;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fHsMBWvJaFMu3UyYKs9v6HLN1W8UaRCCbIY128ntnHg=;
+        b=HstQ1FNCGbgWh4JFpvSpbM8cAY8gnz0Tz01G3NXF8wRxMmLLOCaTfZDLVW1PUlveon
+         QiN/nP8PgZYrWJnDtjT0VqfQMoTd4HCKo/GrzWIAER+r2WS2umHmmBRX/EButVewUkTn
+         2v4pT5jHpEcL3YCZhBunZ3IrudZlUZtcFTB1wAClYJW5v7lxrESAWk8gJe1rZ/HsKXHL
+         9wb0xzzWUHe4/YpmXnPherNkI1EyeiS7AQf0Zqza2yjY1Lng+d3QUgXKs5CPDXJvlb0+
+         vmhbltl9Y2A6fcXHDx2nEbxh6sdKNO79gkcHSw4zcGJEXrxjK0fv+uFlz83bqiPLZUsN
+         qOKA==
+X-Gm-Message-State: AOJu0YyXUCTGo1mnq1ClhHjU3H7lwu+J2y0we5hXZRH/t2be0B7yuGOb
+	WpzlpUB4SHgJtkTCCuPnNtF80I8bPpXY7uEf9Kc6ww==
+X-Google-Smtp-Source: AGHT+IFGJw4YPwW3PV7z9MFxqOpVAmSL0odGMgecRScHy8m0TEUPehOPSvIipZL7q2ylXOVRlcO7zA==
+X-Received: by 2002:a17:906:794a:b0:9c3:b609:7211 with SMTP id l10-20020a170906794a00b009c3b6097211mr5070360ejo.1.1699551567477;
+        Thu, 09 Nov 2023 09:39:27 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id kj3-20020a170907764300b009bf7a4d591csm2877687ejc.11.2023.11.09.09.39.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Nov 2023 09:39:26 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-9db6cf8309cso195514266b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 09:39:26 -0800 (PST)
+X-Received: by 2002:a17:907:2cc7:b0:9ae:6a60:81a2 with SMTP id
+ hg7-20020a1709072cc700b009ae6a6081a2mr4670918ejc.25.1699551566581; Thu, 09
+ Nov 2023 09:39:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108150606.2ec3cafb290f757f0e4c92d8@linux-foundation.org>
+References: <20231109061932.GA3181489@ZenIV> <20231109062056.3181775-1-viro@zeniv.linux.org.uk>
+ <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
+In-Reply-To: <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 9 Nov 2023 09:39:09 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
+Message-ID: <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
+Subject: Re: [PATCH 17/22] don't try to cut corners in shrink_lock_dentry()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 08, 2023 at 03:06:06PM -0800, Andrew Morton wrote:
-> >  
-> > +/**
-> > + * folio_zero_tail - Zero the tail of a folio.
-> > + * @folio: The folio to zero.
-> > + * @kaddr: The address the folio is currently mapped to.
-> > + * @offset: The byte offset in the folio to start zeroing at.
-> 
-> That's the argument ordering I would expect.
-> 
-> > + * If you have already used kmap_local_folio() to map a folio, written
-> > + * some data to it and now need to zero the end of the folio (and flush
-> > + * the dcache), you can use this function.  If you do not have the
-> > + * folio kmapped (eg the folio has been partially populated by DMA),
-> > + * use folio_zero_range() or folio_zero_segment() instead.
-> > + *
-> > + * Return: An address which can be passed to kunmap_local().
-> > + */
-> > +static inline __must_check void *folio_zero_tail(struct folio *folio,
-> > +		size_t offset, void *kaddr)
-> 
-> While that is not.  addr,len is far more common that len,addr?
+On Wed, 8 Nov 2023 at 22:23, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>  static struct dentry *__lock_parent(struct dentry *dentry)
+>  {
+>         struct dentry *parent;
+> -       rcu_read_lock();
+> -       spin_unlock(&dentry->d_lock);
+>  again:
+>         parent = READ_ONCE(dentry->d_parent);
+>         spin_lock(&parent->d_lock);
 
-But that's not len!  That's offset-in-the-folio.  ie we're doing:
+Can we rename this while at it?
 
-memset(folio_address(folio) + offset, 0, folio_size(folio) - offset);
+That name *used* to make sense, in that the function was entered with
+the dentry lock held, and then it returned with the dentry lock *and*
+the parent lock held.
 
-If we were doing:
+But now you've changed the rules so that the dentry lock is *not* held
+at entry, so now the semantics of that function is essentially "lock
+dentry and parent". Which I think means that the name should change to
+reflect that.
 
-memset(folio_address(folio), 0, len);
+Finally: it does look like most callers actually did hold the dentry
+lock, and that you just moved the
 
-then yes, your suggestion is the right order.
+        spin_unlock(&dentry->d_lock);
 
-Indeed, having the arguments in the current order would hopefully make
-filesystem authors realise that this _isn't_ "len".
+from inside that function to the caller. I don't hate that, but now
+that I look at it, I get the feeling that what we *should* have done
+is
+
+  static struct dentry *__lock_parent(struct dentry *dentry)
+  {
+        struct dentry *parent = dentry->d_parent;
+        if (try_spin_lock(&parent->d_lock))
+                return parent;
+        /* Uhhuh - need to get the parent lock first */
+        .. old code goes here ..
+
+but that won't work with the new world order.
+
+So I get the feeling that maybe instead of renaming it for the new
+semantics, maybe the old semantics of "called with the dentry lock
+held" were simply better"
+
+                  Linus
 
