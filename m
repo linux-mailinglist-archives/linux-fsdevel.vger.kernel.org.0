@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-2646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27657E73B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 979917E73BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49987B211E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 21:38:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D5F2B210EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 21:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B982938F85;
-	Thu,  9 Nov 2023 21:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3079338F8E;
+	Thu,  9 Nov 2023 21:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="KUznzj3v"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XKa2HVNX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937D138DD9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 21:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F46A38DDE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 21:38:23 +0000 (UTC)
 Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC8103C30;
-	Thu,  9 Nov 2023 13:38:21 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2854204;
+	Thu,  9 Nov 2023 13:38:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=/3x7Uzb2xVsM+qPa/s6ahfiXYwxF7KgqrBu++ys4yuQ=;
-	t=1699565902; x=1700775502; b=KUznzj3vFood3m4qndr+0Z80B26ACVzpDau6qD8FaPG4vyw
-	azKhDI/pUxt5lc/NGA8irE4Cdnrw/ZAKAYuDRtt/4LNJgBMdL7oUzJR63AubskA9uGPAROo6IiMtZ
-	2Pn2Ojmw4PDyF3Tk4HntXkax+8MUv/rlavzyBtENs1n4AIWe8VZbXjjnRJahgDfpzayaKJDoM3paN
-	pI6zRcnH6kpYDuQpjETJP7CHdl28yUMPzH8wuWhX/5irb0MW2ZmzYLoahgox/UARVARH8j7OEbTxq
-	JESXEl0lQkQPNbO9TvcPAQbyoVXoKbr9ioprsH+ibNFakONbac0H8PbJtr+U5W5Q==;
+	Resent-Cc:Resent-Message-ID; bh=scv5oorCJU13Z/yavLrg9Y3mxIkMMv5PMJeDsknaHgU=;
+	t=1699565902; x=1700775502; b=XKa2HVNXoLNcVy6ovLVdlyADfafidgPIBBkvJLqNzVTwVFl
+	8/th/JGWGudYkvn0xuM25Uj3i6tGZgpY3nHldccFvEWBSOS9hhqQ/WJ7DrkDGclCgBozijbYCN8jg
+	/tguvSZqzAjgDEdM0hHlUVJg5UXA+S6XmERW/bN32d3NoFSvspgANVhy60FNh3N9YvWqkr/zLsCuu
+	Lx8HINcnTq169EqJ46QlF+1XbfvMfWiP6LXPW0VL6LhDFWTS2ObiYB2g+VXYEe5OU467u+hRZGG3k
+	di6iKEHpE5IEohgJPT8sg+VqIyacbzIjVxGuTjAN1H1RtEGdvAwwZvCvV0T2gaNg==;
 Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.97)
 	(envelope-from <johannes@sipsolutions.net>)
-	id 1r1CjC-00000001znF-3teS;
-	Thu, 09 Nov 2023 22:38:19 +0100
+	id 1r1CjD-00000001znF-3lT7;
+	Thu, 09 Nov 2023 22:38:20 +0100
 From: Johannes Berg <johannes@sipsolutions.net>
 To: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -47,9 +47,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Nicolai Stange <nicstange@gmail.com>,
 	Ben Greear <greearb@candelatech.com>,
 	Johannes Berg <johannes.berg@intel.com>
-Subject: [RFC PATCH 3/6] debugfs: add API to allow debugfs operations cancellation
-Date: Thu,  9 Nov 2023 22:22:55 +0100
-Message-ID: <20231109222251.e6ade2190ef4.If54cd017d5734024e7bee5e4a237e17244050480@changeid>
+Subject: [RFC PATCH 4/6] wifi: cfg80211: add locked debugfs wrappers
+Date: Thu,  9 Nov 2023 22:22:56 +0100
+Message-ID: <20231109222251.dc646db745f3.I52daf6c4d8f70b5c5c2de7f0918c6748f11f1e8b@changeid>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231109212251.213873-7-johannes@sipsolutions.net>
 References: <20231109212251.213873-7-johannes@sipsolutions.net>
@@ -63,217 +63,252 @@ Content-Transfer-Encoding: 8bit
 
 From: Johannes Berg <johannes.berg@intel.com>
 
-In some cases there might be longer-running hardware accesses
-in debugfs files, or attempts to acquire locks, and we want
-to still be able to quickly remove the files.
+Add wrappers for debugfs files that should be called with
+the wiphy mutex held, while the file is also to be removed
+under the wiphy mutex. This could otherwise deadlock when
+a file is trying to acquire the wiphy mutex while the code
+removing it holds the mutex but waits for the removal.
 
-Introduce a cancellations API to use inside the debugfs handler
-functions to be able to cancel such operations on a per-file
-basis.
+This actually works by pushing the execution of the read
+or write handler to a wiphy work that can be cancelled
+using the debugfs cancellation API.
 
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- fs/debugfs/file.c       | 82 +++++++++++++++++++++++++++++++++++++++++
- fs/debugfs/inode.c      | 23 +++++++++++-
- fs/debugfs/internal.h   |  5 +++
- include/linux/debugfs.h | 19 ++++++++++
- 4 files changed, 128 insertions(+), 1 deletion(-)
+ include/net/cfg80211.h |  46 ++++++++++++
+ net/wireless/debugfs.c | 160 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 206 insertions(+)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index e499d38b1077..f6993c068322 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -109,6 +109,8 @@ int debugfs_file_get(struct dentry *dentry)
- 		lockdep_init_map(&fsd->lockdep_map, fsd->lock_name ?: "debugfs",
- 				 &fsd->key, 0);
- #endif
-+		INIT_LIST_HEAD(&fsd->cancellations);
-+		spin_lock_init(&fsd->cancellations_lock);
- 	}
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index b137a33a1b68..4ecfb06c413d 100644
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -9299,4 +9299,50 @@ bool cfg80211_valid_disable_subchannel_bitmap(u16 *bitmap,
+  */
+ void cfg80211_links_removed(struct net_device *dev, u16 link_mask);
  
- 	/*
-@@ -151,6 +153,86 @@ void debugfs_file_put(struct dentry *dentry)
++#ifdef CONFIG_CFG80211_DEBUGFS
++/**
++ * wiphy_locked_debugfs_read - do a locked read in debugfs
++ * @wiphy: the wiphy to use
++ * @file: the file being read
++ * @buf: the buffer to fill and then read from
++ * @bufsize: size of the buffer
++ * @userbuf: the user buffer to copy to
++ * @count: read count
++ * @ppos: read position
++ * @handler: the read handler to call (under wiphy lock)
++ * @data: additional data to pass to the read handler
++ */
++ssize_t wiphy_locked_debugfs_read(struct wiphy *wiphy, struct file *file,
++				  char *buf, size_t bufsize,
++				  char __user *userbuf, size_t count,
++				  loff_t *ppos,
++				  ssize_t (*handler)(struct wiphy *wiphy,
++						     struct file *file,
++						     char *buf,
++						     size_t bufsize,
++						     void *data),
++				  void *data);
++
++/**
++ * wiphy_locked_debugfs_write - do a locked write in debugfs
++ * @wiphy: the wiphy to use
++ * @file: the file being written to
++ * @buf: the buffer to copy the user data to
++ * @bufsize: size of the buffer
++ * @userbuf: the user buffer to copy from
++ * @count: read count
++ * @handler: the write handler to call (under wiphy lock)
++ * @data: additional data to pass to the write handler
++ */
++ssize_t wiphy_locked_debugfs_write(struct wiphy *wiphy, struct file *file,
++				   char *buf, size_t bufsize,
++				   const char __user *userbuf, size_t count,
++				   ssize_t (*handler)(struct wiphy *wiphy,
++						      struct file *file,
++						      char *buf,
++						      size_t count,
++						      void *data),
++				   void *data);
++#endif
++
+ #endif /* __NET_CFG80211_H */
+diff --git a/net/wireless/debugfs.c b/net/wireless/debugfs.c
+index 0878b162890a..40e49074e2ee 100644
+--- a/net/wireless/debugfs.c
++++ b/net/wireless/debugfs.c
+@@ -4,6 +4,7 @@
+  *
+  * Copyright 2009	Luis R. Rodriguez <lrodriguez@atheros.com>
+  * Copyright 2007	Johannes Berg <johannes@sipsolutions.net>
++ * Copyright (C) 2023 Intel Corporation
+  */
+ 
+ #include <linux/slab.h>
+@@ -109,3 +110,162 @@ void cfg80211_debugfs_rdev_add(struct cfg80211_registered_device *rdev)
+ 	DEBUGFS_ADD(long_retry_limit);
+ 	DEBUGFS_ADD(ht40allow_map);
  }
- EXPORT_SYMBOL_GPL(debugfs_file_put);
- 
-+/**
-+ * debugfs_enter_cancellation - enter a debugfs cancellation
-+ * @file: the file being accessed
-+ * @cancellation: the cancellation object, the cancel callback
-+ *	inside of it must be initialized
-+ *
-+ * When a debugfs file is removed it needs to wait for all active
-+ * operations to complete. However, the operation itself may need
-+ * to wait for hardware or completion of some asynchronous process
-+ * or similar. As such, it may need to be cancelled to avoid long
-+ * waits or even deadlocks.
-+ *
-+ * This function can be used inside a debugfs handler that may
-+ * need to be cancelled. As soon as this function is called, the
-+ * cancellation's 'cancel' callback may be called, at which point
-+ * the caller should proceed to call debugfs_leave_cancellation()
-+ * and leave the debugfs handler function as soon as possible.
-+ * Note that the 'cancel' callback is only ever called in the
-+ * context of some kind of debugfs_remove().
-+ *
-+ * This function must be paired with debugfs_leave_cancellation().
-+ */
-+void debugfs_enter_cancellation(struct file *file,
-+				struct debugfs_cancellation *cancellation)
-+{
-+	struct debugfs_fsdata *fsd;
-+	struct dentry *dentry = F_DENTRY(file);
 +
-+	INIT_LIST_HEAD(&cancellation->list);
-+
-+	if (WARN_ON(!d_is_reg(dentry)))
-+		return;
-+
-+	if (WARN_ON(!cancellation->cancel))
-+		return;
-+
-+	fsd = READ_ONCE(dentry->d_fsdata);
-+	if (WARN_ON(!fsd ||
-+		    ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-+		return;
-+
-+	spin_lock(&fsd->cancellations_lock);
-+	list_add(&cancellation->list, &fsd->cancellations);
-+	spin_unlock(&fsd->cancellations_lock);
-+
-+	/* if we're already removing wake it up to cancel */
-+	if (d_unlinked(dentry))
-+		complete(&fsd->active_users_drained);
-+}
-+EXPORT_SYMBOL_GPL(debugfs_enter_cancellation);
-+
-+/**
-+ * debugfs_leave_cancellation - leave cancellation section
-+ * @file: the file being accessed
-+ * @cancellation: the cancellation previously registered with
-+ *	debugfs_enter_cancellation()
-+ *
-+ * See the documentation of debugfs_enter_cancellation().
-+ */
-+void debugfs_leave_cancellation(struct file *file,
-+				struct debugfs_cancellation *cancellation)
-+{
-+	struct debugfs_fsdata *fsd;
-+	struct dentry *dentry = F_DENTRY(file);
-+
-+	if (WARN_ON(!d_is_reg(dentry)))
-+		return;
-+
-+	fsd = READ_ONCE(dentry->d_fsdata);
-+	if (WARN_ON(!fsd ||
-+		    ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-+		return;
-+
-+	spin_lock(&fsd->cancellations_lock);
-+	if (!list_empty(&cancellation->list))
-+		list_del(&cancellation->list);
-+	spin_unlock(&fsd->cancellations_lock);
-+}
-+EXPORT_SYMBOL_GPL(debugfs_leave_cancellation);
-+
- /*
-  * Only permit access to world-readable files when the kernel is locked down.
-  * We also need to exclude any file that has ways to write or alter it as root
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index a4c77aafb77b..2cbcc49a8826 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -247,6 +247,7 @@ static void debugfs_release_dentry(struct dentry *dentry)
- 		lockdep_unregister_key(&fsd->key);
- 		kfree(fsd->lock_name);
- #endif
-+		WARN_ON(!list_empty(&fsd->cancellations));
- 	}
- 
- 	kfree(fsd);
-@@ -754,8 +755,28 @@ static void __debugfs_file_removed(struct dentry *dentry)
- 	lock_map_acquire(&fsd->lockdep_map);
- 	lock_map_release(&fsd->lockdep_map);
- 
--	if (!refcount_dec_and_test(&fsd->active_users))
-+	/* if we hit zero, just wait for all to finish */
-+	if (!refcount_dec_and_test(&fsd->active_users)) {
- 		wait_for_completion(&fsd->active_users_drained);
-+		return;
-+	}
-+
-+	/* if we didn't hit zero, try to cancel any we can */
-+	while (refcount_read(&fsd->active_users)) {
-+		struct debugfs_cancellation *c;
-+
-+		spin_lock(&fsd->cancellations_lock);
-+		while ((c = list_first_entry_or_null(&fsd->cancellations,
-+						     typeof(*c), list))) {
-+			list_del_init(&c->list);
-+			spin_unlock(&fsd->cancellations_lock);
-+			c->cancel(dentry, c->cancel_data);
-+			spin_lock(&fsd->cancellations_lock);
-+		}
-+		spin_unlock(&fsd->cancellations_lock);
-+
-+		wait_for_completion(&fsd->active_users_drained);
-+	}
- }
- 
- static void remove_one(struct dentry *victim)
-diff --git a/fs/debugfs/internal.h b/fs/debugfs/internal.h
-index c7d61cfc97d2..5f279abd9351 100644
---- a/fs/debugfs/internal.h
-+++ b/fs/debugfs/internal.h
-@@ -8,6 +8,7 @@
- #ifndef _DEBUGFS_INTERNAL_H_
- #define _DEBUGFS_INTERNAL_H_
- #include <linux/lockdep.h>
-+#include <linux/list.h>
- 
- struct file_operations;
- 
-@@ -29,6 +30,10 @@ struct debugfs_fsdata {
- 			struct lock_class_key key;
- 			char *lock_name;
- #endif
-+
-+			/* lock for the cancellations list */
-+			spinlock_t cancellations_lock;
-+			struct list_head cancellations;
- 		};
- 	};
- };
-diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index ea2d919fd9c7..c9c65b132c0f 100644
---- a/include/linux/debugfs.h
-+++ b/include/linux/debugfs.h
-@@ -171,6 +171,25 @@ ssize_t debugfs_write_file_bool(struct file *file, const char __user *user_buf,
- ssize_t debugfs_read_file_str(struct file *file, char __user *user_buf,
- 			      size_t count, loff_t *ppos);
- 
-+/**
-+ * struct debugfs_cancellation - cancellation data
-+ * @list: internal, for keeping track
-+ * @cancel: callback to call
-+ * @cancel_data: extra data for the callback to call
-+ */
-+struct debugfs_cancellation {
-+	struct list_head list;
-+	void (*cancel)(struct dentry *, void *);
-+	void *cancel_data;
++struct debugfs_read_work {
++	struct wiphy_work work;
++	ssize_t (*handler)(struct wiphy *wiphy,
++			   struct file *file,
++			   char *buf,
++			   size_t count,
++			   void *data);
++	struct wiphy *wiphy;
++	struct file *file;
++	char *buf;
++	size_t bufsize;
++	void *data;
++	ssize_t ret;
++	struct completion completion;
 +};
 +
-+void __acquires(cancellation)
-+debugfs_enter_cancellation(struct file *file,
-+			   struct debugfs_cancellation *cancellation);
-+void __releases(cancellation)
-+debugfs_leave_cancellation(struct file *file,
-+			   struct debugfs_cancellation *cancellation);
++static void wiphy_locked_debugfs_read_work(struct wiphy *wiphy,
++					   struct wiphy_work *work)
++{
++	struct debugfs_read_work *w = container_of(work, typeof(*w), work);
 +
- #else
- 
- #include <linux/err.h>
++	w->ret = w->handler(w->wiphy, w->file, w->buf, w->bufsize, w->data);
++	complete(&w->completion);
++}
++
++static void wiphy_locked_debugfs_read_cancel(struct dentry *dentry,
++					     void *data)
++{
++	struct debugfs_read_work *w = data;
++
++	wiphy_work_cancel(w->wiphy, &w->work);
++	complete(&w->completion);
++}
++
++ssize_t wiphy_locked_debugfs_read(struct wiphy *wiphy, struct file *file,
++				  char *buf, size_t bufsize,
++				  char __user *userbuf, size_t count,
++				  loff_t *ppos,
++				  ssize_t (*handler)(struct wiphy *wiphy,
++						     struct file *file,
++						     char *buf,
++						     size_t bufsize,
++						     void *data),
++				  void *data)
++{
++	struct debugfs_read_work work = {
++		.handler = handler,
++		.wiphy = wiphy,
++		.file = file,
++		.buf = buf,
++		.bufsize = bufsize,
++		.data = data,
++		.ret = -ENODEV,
++		.completion = COMPLETION_INITIALIZER_ONSTACK(work.completion),
++	};
++	struct debugfs_cancellation cancellation = {
++		.cancel = wiphy_locked_debugfs_read_cancel,
++		.cancel_data = &work,
++	};
++
++	/* don't leak stack data or whatever */
++	memset(buf, 0, bufsize);
++
++	wiphy_work_init(&work.work, wiphy_locked_debugfs_read_work);
++	wiphy_work_queue(wiphy, &work.work);
++
++	debugfs_enter_cancellation(file, &cancellation);
++	wait_for_completion(&work.completion);
++	debugfs_leave_cancellation(file, &cancellation);
++
++	if (work.ret < 0)
++		return work.ret;
++
++	if (WARN_ON(work.ret > bufsize))
++		return -EINVAL;
++
++	return simple_read_from_buffer(userbuf, count, ppos, buf, work.ret);
++}
++EXPORT_SYMBOL_GPL(wiphy_locked_debugfs_read);
++
++struct debugfs_write_work {
++	struct wiphy_work work;
++	ssize_t (*handler)(struct wiphy *wiphy,
++			   struct file *file,
++			   char *buf,
++			   size_t count,
++			   void *data);
++	struct wiphy *wiphy;
++	struct file *file;
++	char *buf;
++	size_t count;
++	void *data;
++	ssize_t ret;
++	struct completion completion;
++};
++
++static void wiphy_locked_debugfs_write_work(struct wiphy *wiphy,
++					    struct wiphy_work *work)
++{
++	struct debugfs_write_work *w = container_of(work, typeof(*w), work);
++
++	w->ret = w->handler(w->wiphy, w->file, w->buf, w->count, w->data);
++	complete(&w->completion);
++}
++
++static void wiphy_locked_debugfs_write_cancel(struct dentry *dentry,
++					      void *data)
++{
++	struct debugfs_write_work *w = data;
++
++	wiphy_work_cancel(w->wiphy, &w->work);
++	complete(&w->completion);
++}
++
++ssize_t wiphy_locked_debugfs_write(struct wiphy *wiphy,
++				   struct file *file, char *buf, size_t bufsize,
++				   const char __user *userbuf, size_t count,
++				   ssize_t (*handler)(struct wiphy *wiphy,
++						      struct file *file,
++						      char *buf,
++						      size_t count,
++						      void *data),
++				   void *data)
++{
++	struct debugfs_write_work work = {
++		.handler = handler,
++		.wiphy = wiphy,
++		.file = file,
++		.buf = buf,
++		.count = count,
++		.data = data,
++		.ret = -ENODEV,
++		.completion = COMPLETION_INITIALIZER_ONSTACK(work.completion),
++	};
++	struct debugfs_cancellation cancellation = {
++		.cancel = wiphy_locked_debugfs_write_cancel,
++		.cancel_data = &work,
++	};
++
++	/* mostly used for strings so enforce NUL-termination for safety */
++	if (count >= bufsize)
++		return -EINVAL;
++
++	memset(buf, 0, bufsize);
++
++	if (copy_from_user(buf, userbuf, count))
++		return -EFAULT;
++
++	wiphy_work_init(&work.work, wiphy_locked_debugfs_write_work);
++	wiphy_work_queue(wiphy, &work.work);
++
++	debugfs_enter_cancellation(file, &cancellation);
++	wait_for_completion(&work.completion);
++	debugfs_leave_cancellation(file, &cancellation);
++
++	return work.ret;
++}
++EXPORT_SYMBOL_GPL(wiphy_locked_debugfs_write);
 -- 
 2.41.0
 
