@@ -1,141 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-2527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256DD7E6CB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:58:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217E97E6CDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53AE41C20A39
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 14:58:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91609B20D07
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1A01E52F;
-	Thu,  9 Nov 2023 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECCA1E52D;
+	Thu,  9 Nov 2023 15:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="tRxVX7Yc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EXVyeR8h"
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="h+o57ad7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E0B1D6A8;
-	Thu,  9 Nov 2023 14:58:27 +0000 (UTC)
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A678C325B;
-	Thu,  9 Nov 2023 06:58:26 -0800 (PST)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailout.west.internal (Postfix) with ESMTP id 9FB163200B77;
-	Thu,  9 Nov 2023 09:58:23 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Thu, 09 Nov 2023 09:58:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:sender
-	:subject:subject:to:to; s=fm2; t=1699541903; x=1699628303; bh=jW
-	dS6GkJOycSu70WYEYSDlUZAEtt7yUOuuE+eluEIcE=; b=tRxVX7Ycq9mg0RkTk5
-	68Lnt1Ue7Ljxgl1DKoOBsOMC6Yq3BBuOYVqAG6idR7uwYlBscvlKFPgDc+N8tt/D
-	Qa2f8D8juC+Pw8+NU7Wu4uNcRh697+bNLuKcmY0joqbzra/wDOwLWDVl/lXsWqak
-	TbmD3DsIenmyUMJZe4nKo7bNFUKkuOGPWJmkZh10zhxQqUIKVslQONA7uSd8Hof6
-	5XWFJA/4k6ETnqVP6tn8NydNQX6TWMTBs9ejDTD8iV80WsHUTmhwW2z8l8C8q6uq
-	bCZIJ/mAZt7v6eVxAttekDeW3/4VTL3S/PWydNUq3RnJ1ZtIYFxaBuufdG5f8wVk
-	4ibA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:sender:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1699541903; x=1699628303; bh=jWdS6GkJOycSu
-	70WYEYSDlUZAEtt7yUOuuE+eluEIcE=; b=EXVyeR8hvIv06aYAHOjdORgUpspXJ
-	ZwaTo7Xo0uJcHAjOidX8/U5AHdxK9VCa6+6ugr+0hUfA1KXG6Q52q3QPYs6JJVgX
-	iPOjARSs9a/NZiNGuHm/4A/bl1mT6RcGaUoe8jQH7iBNtBGs1VmMvv/D+R0hOLn1
-	NPc4r4qoC9xUzvm/g/CmMX/HzA9Gmbs4SLIrVOMlWd+ACR3VudinRttPmwYXL/WD
-	eydMs4cvyR4txcC0AFIFBrIoFcP2QPqQHU+FCraJcCvturcjfGapds0IHL0cG2J1
-	/ahbx/S5CSKRUJfWxmPg78SHMbFLLI541CIVKJtTKg0zUhnuFUfh1kLCA==
-X-ME-Sender: <xms:jvNMZTmQCy-4t-N65EHKGEkcNS-6V0lSO5eH8D-sZSv0gieJrzlePA>
-    <xme:jvNMZW26ARYnp2y5tG7btXygYraJQqb6dHHoHgkSXGKimfRjkHqNns2bEhHuUf5rv
-    16Vy9a_ZEs_xl2_nSg>
-X-ME-Received: <xmr:jvNMZZqmFkZKfK_-9sLNwCDH0CzCcafq2C070FA0Fuq4G2VmDXc1QKi68GG4_yvfFI_NeF6673Y_CiSoUMkGGZZp8OZ9>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddvuddgieelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghh
-    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
-    grthhtvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeel
-    hfelleetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:jvNMZbm3Lpjr6SN57Mbdg6s3jjq8AmaUfmSS6QrG2TvihklUZe4-qA>
-    <xmx:jvNMZR00xM0LhJdWXoDyxxLVWTyWYNyLxZCCQdOUVLpS294jmVXARw>
-    <xmx:jvNMZava_pRODLPqdYr_5ZXJYBjkjd_TUXCxBUvW-eM-o1udOoYXYw>
-    <xmx:j_NMZem5suVIzkjk9zhSJLCt36E0E-x9bqUOfz6dSbVUxtz3YxToxQ>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 9 Nov 2023 09:58:21 -0500 (EST)
-Date: Thu, 9 Nov 2023 07:58:19 -0700
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Christian Brauner <brauner@kernel.org>
-Cc: cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Haitao Huang <haitao.huang@linux.intel.com>,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [RFC 4/6] misc cgroup: introduce an fd counter
-Message-ID: <ZUzzi5rY92aQ3D/b@tycho.pizza>
-References: <20231108002647.73784-1-tycho@tycho.pizza>
- <20231108002647.73784-5-tycho@tycho.pizza>
- <20231108-ernst-produktiv-f0f5d2ceeade@brauner>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BC8D2EE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:07:01 +0000 (UTC)
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EDE35A9;
+	Thu,  9 Nov 2023 07:07:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=Eb8MG9TBz4s7MRmJjfR+Bq5zgXzHMYOhLNojz4j8puU=; t=1699542421; x=1700752021; 
+	b=h+o57ad7VbE6V682ZrJM0u1AUYYwmG8MchFwi4gU61IZ3YXuKF/dUGPTBikNAtfEnvdZgXKbdZB
+	y7KClNzpRbxZ0StFxJwxUdb2u7Nq314og0M35JNQbgHwtWkZClX7+p73p3fdKpKAlzPFD5ja1/4v/
+	+MPaOvrA1wwRn5Oac5LYw98K63kl6YRc7idaXTHtB4Kfepy+pfedzCUan0qb3CBRARbNh7V+syPxO
+	JnARg9UXy8gRULkqWekMoOOC0nvTg9CEsa9UH5Lei1dwWVlQngE1YEziZL0483pwZK7aZfTZq4EI5
+	Vl+OkJtnfclWJ2o0GWKuvJK4dbrPiNgJpEDw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1r16cO-00000001pgv-0fKp;
+	Thu, 09 Nov 2023 16:06:52 +0100
+From: Johannes Berg <johannes@sipsolutions.net>
+To: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Nicolai Stange <nicstange@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] debugfs: only clean up d_fsdata for d_is_reg()
+Date: Thu,  9 Nov 2023 16:06:40 +0100
+Message-ID: <20231109160639.514a2568f1e7.I64fe5615568e87f9ae2d7fb2ac4e5fa96924cb50@changeid>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108-ernst-produktiv-f0f5d2ceeade@brauner>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 09, 2023 at 10:53:17AM +0100, Christian Brauner wrote:
-> > @@ -411,9 +453,22 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
-> >  
-> >  	rcu_assign_pointer(newf->fdt, new_fdt);
-> >  
-> > -	return newf;
-> > +	if (!charge_current_fds(newf, count_open_files(new_fdt)))
-> > +		return newf;
-> 
-> 
-> > @@ -542,6 +600,10 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
-> >  	if (error)
-> >  		goto repeat;
-> >  
-> > +	error = -EMFILE;
-> > +	if (charge_current_fds(files, 1) < 0)
-> > +		goto out;
-> 
-> Whoops, I had that message ready to fire but didn't send it.
-> 
-> This may have a noticeable performance impact as charge_current_fds()
-> calls misc_cg_try_charge() which looks pretty expensive in this
-> codepath.
-> 
-> We're constantly getting patches to tweak performance during file open
-> and closing and adding a function that does require multiple atomics and
-> spinlocks won't exactly improve this.
+From: Johannes Berg <johannes.berg@intel.com>
 
-I don't see any spin locks in misc_cg_try_charge(), but it does walk
-up the tree, resulting in multiple atomic writes.
-If we didn't walk up the tree it would change the semantics, but
-Netflix probably wouldn't delegate this, so at least for our purposes
-having only one atomic would be sufficient. Is that more tenable?
+debugfs_create_automount() can store a function pointer in
+d_fsdata, and for directories it may be NULL. The commit
+7c8d469877b1 ("debugfs: add support for more elaborate
+->d_fsdata") ignored that, and while freeing NULL is just
+fine, if an automount is ever removed we'd attempt to
+kfree() the function pointer. This currently never happens
+since the only user (tracing) will never remove the
+automount dir.
 
-> On top of that I really dislike that we're pulling cgroups into this
-> code here at all.
-> 
-> Can you get a similar effect through a bpf program somehow that you
-> don't even tie this to cgroups?
+Later patches changed the logic here again to store the
+real fops, and store the allocation only after a debugfs
+file reference is obtained via debugfs_file_get().
 
-Possibly, I can look into it.
+Remove debugfs_release_dentry() so we won't attempt to
+do anything common with the different uses of d_fsdata,
+and put the freeing of the allocated data where it's last
+possibly used, in __debugfs_file_removed(), which is only
+called for regular files.
 
-Tycho
+Also check in debugfs_file_get() that it gets only called
+on regular files, just to make things clearer.
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+---
+ fs/debugfs/file.c  |  3 +++
+ fs/debugfs/inode.c | 14 +++++---------
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 1f971c880dde..1a20c7db8e11 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -84,6 +84,9 @@ int debugfs_file_get(struct dentry *dentry)
+ 	struct debugfs_fsdata *fsd;
+ 	void *d_fsd;
+ 
++	if (WARN_ON(!d_is_reg(dentry)))
++		return -EINVAL;
++
+ 	d_fsd = READ_ONCE(dentry->d_fsdata);
+ 	if (!((unsigned long)d_fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)) {
+ 		fsd = d_fsd;
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index 3f81f73c241a..3f00cd40c81d 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -235,14 +235,6 @@ static const struct super_operations debugfs_super_operations = {
+ 	.free_inode	= debugfs_free_inode,
+ };
+ 
+-static void debugfs_release_dentry(struct dentry *dentry)
+-{
+-	void *fsd = dentry->d_fsdata;
+-
+-	if (!((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT))
+-		kfree(dentry->d_fsdata);
+-}
+-
+ static struct vfsmount *debugfs_automount(struct path *path)
+ {
+ 	debugfs_automount_t f;
+@@ -252,7 +244,6 @@ static struct vfsmount *debugfs_automount(struct path *path)
+ 
+ static const struct dentry_operations debugfs_dops = {
+ 	.d_delete = always_delete_dentry,
+-	.d_release = debugfs_release_dentry,
+ 	.d_automount = debugfs_automount,
+ };
+ 
+@@ -734,6 +725,11 @@ static void __debugfs_file_removed(struct dentry *dentry)
+ 		return;
+ 	if (!refcount_dec_and_test(&fsd->active_users))
+ 		wait_for_completion(&fsd->active_users_drained);
++
++	/* this no longer matters */
++	dentry->d_fsdata = NULL;
++
++	kfree(fsd);
+ }
+ 
+ static void remove_one(struct dentry *victim)
+-- 
+2.41.0
+
 
