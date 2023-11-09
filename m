@@ -1,92 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-2465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2466-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EACC7E62BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 04:55:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DA57E62D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 05:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8075B20DA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 03:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1340281340
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 04:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AAA569C;
-	Thu,  9 Nov 2023 03:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037645685;
+	Thu,  9 Nov 2023 04:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="QwDsW709"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCuKaqWY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B860B5663
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 03:54:52 +0000 (UTC)
-X-Greylist: delayed 478 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 08 Nov 2023 19:54:52 PST
-Received: from mx.manguebit.com (mx.manguebit.com [IPv6:2a01:4f8:1c1e:a2ae::2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC9126A8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 19:54:52 -0800 (PST)
-Message-ID: <28c55c338790757034b7a207de64bb2e.pc@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1699501613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+jXEkxXPoQLyYRq9Hbw31kvg4sfgedU2UpPdnSNpznc=;
-	b=QwDsW709oH1qj/QTOmq50Pt1/iNaoCrRrTShIvXuyqw7klQi/Pm8NGamIlWzY61Fx4E2u7
-	5MNuAFyryhtFHHyh3rNDJ3dXHzWHHdooT6EDeTSIpsCwxeqCowkBMzilZ3+l60CxE7A4Ln
-	I+AF8Mt2FBG6/QJcHEZ3yfTaVVGbXg+SLTp19jCDvzEjr0PNHW/uXozOWZ9AZCdxF6Q4A5
-	ov/cLO8/1WBQl3teffTsD8o9EBhH3qIgzxImCogwErzA4ZIy4Sz0jjA4WoYnoB6NSATS79
-	uGGPl0AZtR4Df3bjpRIuTezeP2uZMjgXfGKdtDQwbmZYQYOedwJy69DElFMKrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1699501613; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+jXEkxXPoQLyYRq9Hbw31kvg4sfgedU2UpPdnSNpznc=;
-	b=RbYyON928G5oxfQe0M2nthgmHeAlI8skjlX+N8c86ocVoPOgZ0+K0q+ociH9e3LTPSJvHc
-	xMn6EmSCm43YxoXkOJOKKN9I9GD2hdMazBeHF4Xu0/j3h+pjKN2vTok5i9qjORkXZ0BM0j
-	ga+bgOu2iUqo3rgDjUgJkJ5r0dR/zPmuhdFzt4+P14Q1WxDyhUVU+YCRVi3ABkIeYsiMk+
-	hyA+PHmcOR0h6cAWNCQlkDY/GTmGoBvzUbbF90fcEL8YpQ8loBzJspKibNhhNNjnJdrznh
-	AwUGbGTHmGtQamJIMEsbbFIpbxPYWQxXjhoZFIqf4gSxi1t+1tt1jYB0vpgs1w==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pc@manguebit.com smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1699501613; a=rsa-sha256;
-	cv=none;
-	b=kJnyToDedV3rJ5YVdrGFM1cJV3mF0sGG6fymdIrP46RH1cvr+2tSOJ55VLvgiacswjJD3K
-	ZJuOZK5HihTt7kH2D8V7mvLXzKfvExHaCbDS5ntinvIQth3wkx/RI58taNXLQATC6RyF8q
-	bkV2cOEgZz/wx1MfyO7aGjAbJXRqNvm2F/RBMl3TotRryMKgtQk521M5BZxarRiKycxNec
-	8B+/uv1KdGdcuJVmR2XocLnSRXHL7WjqY1Ob1ygOUwB0gg3JenLJyxBMs5ri82LsIkIHJT
-	o2i1yhR+zMqD7jvxafUnH+5juGoREH/oBuPPZ15NzQ5xIDGAEA0pSN8Kx1n9cQ==
-From: Paulo Alcantara <pc@manguebit.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, David Howells
- <dhowells@redhat.com>, Steve French <sfrench@samba.org>,
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/4] smb: Do not test the return value of
- folio_start_writeback()
-In-Reply-To: <20231108204605.745109-4-willy@infradead.org>
-References: <20231108204605.745109-1-willy@infradead.org>
- <20231108204605.745109-4-willy@infradead.org>
-Date: Thu, 09 Nov 2023 00:46:49 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F50D289;
+	Thu,  9 Nov 2023 04:33:36 +0000 (UTC)
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDED7269E;
+	Wed,  8 Nov 2023 20:33:35 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-50970c2115eso527833e87.1;
+        Wed, 08 Nov 2023 20:33:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699504414; x=1700109214; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uARwUxv/UYrp6wNzIbsXPz6fPeG3+1Fv5fcoBTua164=;
+        b=fCuKaqWYzj+Jq0B9UHhZoZ2Q8jymTN1hIy/Ad/8Er/rx67Jjngvn8Uf+y+Bxtkn76P
+         1PERSQBdqD4Mj3mNsvGcHItnhHb//0VR/yuy/mVeg9btgFbTkUpGIhLoIZXJKsJbXF9r
+         TkWzOTahdnuTF7+DJr81u0k2C7S2WdQvvss/Fld9o6qqaopVr2ogFKQP6l7XTw3GsvEJ
+         P+sNjt+NGhBjntrF1X9TqtFcw25C/WIk9v3tqTaUHFG49XRc5JfnUttoiEduk2kmO1o5
+         123tLVjhTZAdEstq9qWTsKrKMBbIiqj6mNe142r120GVzRCv9Ub/NiOv+obHOkXmeXRx
+         Ie0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699504414; x=1700109214;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uARwUxv/UYrp6wNzIbsXPz6fPeG3+1Fv5fcoBTua164=;
+        b=gga9Afx5x03rFT2xdh1kIDL+T1Dw8Ass6BpxLWkCy2t3uLimAD4kal1WC6uGmNbJX2
+         75NbMlsaajUW+abCPuinzVxXSX7CCc5wVfCwvp4h1pq3Yr4Nx7uH23BabCBjpAQ/xKwS
+         lAqYNIkxtr4Wy9upKOn/0GCZI/LVga7EbvZ4F0f5zEY03C++U3DN5b2L9hjA0Ct8ekLH
+         /cPXjgebVJSwVWYXGFhGoxF3FyL7EEu8WSCCDIHZmUhuJa8ZmeLLGDtKazrY3cyR30Tr
+         2m3tXXDl0rHU+VEdT59nq2VYB/MmnV0zelHg5RlO+47OIKT4GvzDF0AYN3vcH9ZRoCvZ
+         P6xQ==
+X-Gm-Message-State: AOJu0Yx/MmqSRRb4Z73oXJ5ljWZQUOS40wCzXiXHSky5jvDSrTuoyjWI
+	CiQJ0d53pL1AOfD/CGVwx6SUvP0SC3xcze1Qh9A=
+X-Google-Smtp-Source: AGHT+IFxK/NdnqiJnvQ+O8Zvgtfo8sP9UTidQ/djiDCyJLw41a9fLg6N1910uFJqGkrMWCXHAOvKRn33p4aLDFMmX1w=
+X-Received: by 2002:a19:5e18:0:b0:509:cc4:f23a with SMTP id
+ s24-20020a195e18000000b005090cc4f23amr415376lfb.64.1699504413704; Wed, 08 Nov
+ 2023 20:33:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20231108204605.745109-1-willy@infradead.org> <20231108204605.745109-4-willy@infradead.org>
+ <28c55c338790757034b7a207de64bb2e.pc@manguebit.com>
+In-Reply-To: <28c55c338790757034b7a207de64bb2e.pc@manguebit.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 8 Nov 2023 22:33:21 -0600
+Message-ID: <CAH2r5mv5UHwe-8D7=qq4ctH=+ymE1Nxgsu=eYzf9MG9ycD9buw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] smb: Do not test the return value of folio_start_writeback()
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org, 
+	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
+Acked-by: Steve French <stfrench@microsoft.com>
 
-> In preparation for removing the return value entirely, stop testing it
-> in smb.
+On Wed, Nov 8, 2023 at 9:46=E2=80=AFPM Paulo Alcantara <pc@manguebit.com> w=
+rote:
 >
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/smb/client/file.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> "Matthew Wilcox (Oracle)" <willy@infradead.org> writes:
+>
+> > In preparation for removing the return value entirely, stop testing it
+> > in smb.
+> >
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >  fs/smb/client/file.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+>
 
-Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+
+--=20
+Thanks,
+
+Steve
 
