@@ -1,90 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-2502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C0367E6728
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 10:53:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452DE7E6236
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 03:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D819928130C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 09:53:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D802CB20EC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 02:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342A513AEA;
-	Thu,  9 Nov 2023 09:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWtoxDXZ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02F52FAE;
+	Thu,  9 Nov 2023 02:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666ED13AC2;
-	Thu,  9 Nov 2023 09:53:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EEAC433C7;
-	Thu,  9 Nov 2023 09:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699523602;
-	bh=DE6zRh88bFCXD27bxRqdFPBWWJlvXc87IUKONSgEtiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AWtoxDXZuMYt+P1ipspcysIalJ9bpOp+5lv5G9IiAHB0Vqa2sxPIKGKdUV+tjnNRm
-	 fMfZu/q3Jo94nNwRj3o3RmmrpxD92kQQmOKTjcguhdrEvhRrnRa6gCErhMssRWeSvC
-	 AF9CtwSxty+4LQl+i0E0NquiCtWQsib3YRXAqV9sbqvO4kQ/mY49lqSMmYtXiDQlU7
-	 FQjLY0BysizzUnvEk+9uBLKVX/wS81XLeP6CosCCDh9MsMQBJpzq9CfMA0e82ps3FU
-	 j4PEPzAVwSS7rdmlBMGRubsnx2JktM5SoMnZ46VSpCRF1cq52erYtIn8AIJD0xwtFd
-	 LUvKWPu7ZIrhg==
-Date: Thu, 9 Nov 2023 10:53:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Haitao Huang <haitao.huang@linux.intel.com>,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [RFC 4/6] misc cgroup: introduce an fd counter
-Message-ID: <20231108-ernst-produktiv-f0f5d2ceeade@brauner>
-References: <20231108002647.73784-1-tycho@tycho.pizza>
- <20231108002647.73784-5-tycho@tycho.pizza>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F94D27D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 02:32:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DBF0210E;
+	Wed,  8 Nov 2023 18:32:25 -0800 (PST)
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.57])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4SQm8Y1vPYzPpBr;
+	Thu,  9 Nov 2023 10:28:13 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.67) by
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Thu, 9 Nov 2023 10:32:16 +0800
+From: WoZ1zh1 <wozizhi@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<akpm@linux-foundation.org>, <oleg@redhat.com>, <jlayton@kernel.org>,
+	<dchinner@redhat.com>, <cyphar@cyphar.com>, <shr@devkernel.io>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<wozizhi@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH -next V2] proc: support file->f_pos checking in mem_lseek
+Date: Thu, 9 Nov 2023 18:26:58 +0800
+Message-ID: <20231109102658.2075547-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231108002647.73784-5-tycho@tycho.pizza>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.67]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
+X-CFilter-Loop: Reflected
 
-> @@ -411,9 +453,22 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds, int
->  
->  	rcu_assign_pointer(newf->fdt, new_fdt);
->  
-> -	return newf;
-> +	if (!charge_current_fds(newf, count_open_files(new_fdt)))
-> +		return newf;
+In mem_lseek, file->f_pos may overflow. And it's not a problem that
+mem_open set file mode with FMODE_UNSIGNED_OFFSET(memory_lseek). However,
+another file use mem_lseek do lseek can have not FMODE_UNSIGNED_OFFSET
+(kpageflags_proc_ops/proc_pagemap_operations...), so in order to prevent
+file->f_pos updated to an abnormal number, fix it by checking overflow and
+FMODE_UNSIGNED_OFFSET.
 
+Signed-off-by: WoZ1zh1 <wozizhi@huawei.com>
+---
+ fs/proc/base.c     | 30 ++++++++++++++++++++++--------
+ fs/read_write.c    |  5 -----
+ include/linux/fs.h |  5 ++++-
+ 3 files changed, 26 insertions(+), 14 deletions(-)
 
-> @@ -542,6 +600,10 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	if (error)
->  		goto repeat;
->  
-> +	error = -EMFILE;
-> +	if (charge_current_fds(files, 1) < 0)
-> +		goto out;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index dd31e3b6bf77..0fd986e861d9 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -903,18 +903,32 @@ static ssize_t mem_write(struct file *file, const char __user *buf,
+ 
+ loff_t mem_lseek(struct file *file, loff_t offset, int orig)
+ {
++	loff_t ret = 0;
++
++	spin_lock(&file->f_lock);
+ 	switch (orig) {
+-	case 0:
+-		file->f_pos = offset;
+-		break;
+-	case 1:
+-		file->f_pos += offset;
++	case SEEK_CUR:
++		offset += file->f_pos;
++	case SEEK_SET:
++		/* to avoid userland mistaking f_pos=-9 as -EBADF=-9 */
++		if ((unsigned long long)offset >= -MAX_ERRNO)
++			ret = -EOVERFLOW;
+ 		break;
+ 	default:
+-		return -EINVAL;
++		ret = -EINVAL;
+ 	}
+-	force_successful_syscall_return();
+-	return file->f_pos;
++	if (!ret) {
++		if (offset < 0 && !(unsigned_offsets(file))) {
++			ret = -EINVAL;
++		} else {
++			file->f_pos = offset;
++			ret = file->f_pos;
++			force_successful_syscall_return();
++		}
++	}
++
++	spin_unlock(&file->f_lock);
++	return ret;
+ }
+ 
+ static int mem_release(struct inode *inode, struct file *file)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 4771701c896b..2f456d5a1df5 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -34,11 +34,6 @@ const struct file_operations generic_ro_fops = {
+ 
+ EXPORT_SYMBOL(generic_ro_fops);
+ 
+-static inline bool unsigned_offsets(struct file *file)
+-{
+-	return file->f_mode & FMODE_UNSIGNED_OFFSET;
+-}
+-
+ /**
+  * vfs_setpos - update the file offset for lseek
+  * @file:	file structure in question
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98b7a7a8c42e..dde0756d2350 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2994,7 +2994,10 @@ extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
+ extern long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
+ 		loff_t *opos, size_t len, unsigned int flags);
+ 
+-
++static inline bool unsigned_offsets(struct file *file)
++{
++	return file->f_mode & FMODE_UNSIGNED_OFFSET;
++}
+ extern void
+ file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping);
+ extern loff_t noop_llseek(struct file *file, loff_t offset, int whence);
+-- 
+2.39.2
 
-Whoops, I had that message ready to fire but didn't send it.
-
-This may have a noticeable performance impact as charge_current_fds()
-calls misc_cg_try_charge() which looks pretty expensive in this
-codepath.
-
-We're constantly getting patches to tweak performance during file open
-and closing and adding a function that does require multiple atomics and
-spinlocks won't exactly improve this.
-
-On top of that I really dislike that we're pulling cgroups into this
-code here at all.
-
-Can you get a similar effect through a bpf program somehow that you
-don't even tie this to cgroups?
 
