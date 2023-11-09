@@ -1,120 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-2457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A147E61B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 02:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC1967E6427
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 08:05:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC91E1C20B7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 01:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F31511C2096E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 07:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33DED6;
-	Thu,  9 Nov 2023 01:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97C96AA7;
+	Thu,  9 Nov 2023 07:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vhiF8HHM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Et95KPOP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F6D807
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 01:08:38 +0000 (UTC)
-Received: from mail-oo1-xc34.google.com (mail-oo1-xc34.google.com [IPv6:2607:f8b0:4864:20::c34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA8DF25B8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 17:08:37 -0800 (PST)
-Received: by mail-oo1-xc34.google.com with SMTP id 006d021491bc7-581f78a0206so165327eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Nov 2023 17:08:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1699492117; x=1700096917; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7QtjMEn3JvZfL2+9Ot0aHfDjSbnUMOfTRHsLPFnN/cE=;
-        b=vhiF8HHMq4Wd8cn65pkEiTzZFRa9GxYRRZtdB96C6qVy7NACqOoJzmTeJiZyFWFmny
-         ARgHmOhotHju98RUn3mK9d4iZMGNKJSfyyss/ZULOD5dh/i1cx2TfHlRh6O+DVtmQpMM
-         Dt9+mi9o2Uj+vEnt84zDOdgT3j4C8Ytibet3WHgzmJX4mfsS6NfgRvq9WRy+yTf/qAvh
-         YsWKLLDiYJPc8Mf4hBxb7nxdVGsvuMemWO61R8M5YC8teqz7Nix6usKWXUfc1SdVDT8D
-         982RxBjYKNC9vEVJc/xbU8wP/1kBVn2/cSImQD/Lw8E9oMZbOiycrradqa2WkXNsWDVN
-         PyWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699492117; x=1700096917;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7QtjMEn3JvZfL2+9Ot0aHfDjSbnUMOfTRHsLPFnN/cE=;
-        b=JUtLKAIyVV2cvhEFYKqrSfwR0df0ItcHoAE5PQVXYP4aeoTNI21pF/bNjzntHlSmLL
-         ppggNfyugVNoBh6AVlz9uZTPdlTZvfa42g9MuhDkYff3rpLEcYS9ZAfi8h0OevQF2Rb8
-         qcM5QZ3RtGNY0bM+Srldz2Lz7CypoyChLqVZ/gFAwfJFGmm2sFaWqm7WJ+hdWdsSciGo
-         3xFHEFIihPVSpDIgScS8Ztxo1brKn2VdzjYv0dsX/HzsN4N2yCk5vAjYeQcNQYZXvnjA
-         Ku7CXX3tejItEqXlq1b9kcpmVH15zAebsnnzyeh1c5zK7xi+fS4H8mvJJLGaSp5oNpUt
-         eMwg==
-X-Gm-Message-State: AOJu0YxPPLwGcJY1ngmkro7XD2AN5MaCVJaLurQwh3L0hR2NgY73AAgp
-	IjKjXwvnCx6fGblJYUP/ZxZam7KTKcCzUNudiFKTbg==
-X-Google-Smtp-Source: AGHT+IFaOEA03XuxazKl3zVOaUpDe2bAHjHbEU9NUIQA9ZcNh5LArgqxcn+4MTtdSbfjNu4oRqbtO3sH2+Wygyf9VBk=
-X-Received: by 2002:a4a:e088:0:b0:587:873d:7e2c with SMTP id
- w8-20020a4ae088000000b00587873d7e2cmr3411182oos.1.1699492116891; Wed, 08 Nov
- 2023 17:08:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1153469F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:05:18 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB38186
+	for <linux-fsdevel@vger.kernel.org>; Wed,  8 Nov 2023 23:05:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1699513517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ib412gg361UBr3KGxp8suM9D8jIYCTiMjXkQ32rtHi4=;
+	b=Et95KPOPomZ3TdbRv5sclxUnJJcoK3nr9mrmosX+nZ39lyz37KN4ONDZz5BOD9A/BEDnP6
+	nFZQPPR12YxdBioUpdVF5nOz6dWDBhb5Y0w9/9dKKwQwp6l4qSdc1rm8PxDQmB1hGCmnyY
+	W6fpOTdo1f0jvhgbVTWMr7y2Wo1S6DI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-338--NJ9VRwwM5KQCsv56K8Lhg-1; Thu, 09 Nov 2023 02:05:13 -0500
+X-MC-Unique: -NJ9VRwwM5KQCsv56K8Lhg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 68D7985A58A;
+	Thu,  9 Nov 2023 07:05:13 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.85])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 9A3EB2166B26;
+	Thu,  9 Nov 2023 07:05:12 +0000 (UTC)
+Date: Thu, 9 Nov 2023 09:28:25 +0800
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Vivek Goyal <vgoyal@redhat.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+	mzxreary@0pointer.de, gmaglione@redhat.com, hi@alyssa.is
+Subject: Re: [PATCH v2] virtiofs: Export filesystem tags through sysfs
+Message-ID: <20231109012825.GB1101655@fedora>
+References: <20231108213333.132599-1-vgoyal@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-35-pbonzini@redhat.com>
-In-Reply-To: <20231105163040.14904-35-pbonzini@redhat.com>
-From: Anish Moorthy <amoorthy@google.com>
-Date: Wed, 8 Nov 2023 17:08:01 -0800
-Message-ID: <CAF7b7mpmuYLTY6OQfRRoOryfO-2e1ZumQ6SCQDHHPD5XFyhFTQ@mail.gmail.com>
-Subject: Re: [PATCH 34/34] KVM: selftests: Add a memory region subtest to
- validate invalid flags
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Sean Christopherson <seanjc@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
-	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
-	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
-	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
-	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uYOZS1syTIcNUvXa"
+Content-Disposition: inline
+In-Reply-To: <20231108213333.132599-1-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+
+
+--uYOZS1syTIcNUvXa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Applying [1] and [2] reveals that this also breaks non-x86 builds- the
-MEM_REGION_GPA/SLOT definitions are guarded behind an #ifdef
-__x86_64__, while the usages introduced here aren't.
+On Wed, Nov 08, 2023 at 04:33:33PM -0500, Vivek Goyal wrote:
+> virtiofs filesystem is mounted using a "tag" which is exported by the
+> virtiofs device. virtiofs driver knows about all the available tags but
+> these are not exported to user space.
+>=20
+> People have asked these tags to be exported to user space. Most recently
+> Lennart Poettering has asked for it as he wants to scan the tags and mount
+> virtiofs automatically in certain cases.
+>=20
+> https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+>=20
+> This patch exports tags through sysfs. One tag is associated with each
+> virtiofs device. A new "tag" file appears under virtiofs device dir.
+> Actual filesystem tag can be obtained by reading this "tag" file.
+>=20
+> For example, if a virtiofs device exports tag "myfs", a new file "tag"
+> will show up here. Tag has a newline char at the end.
+>=20
+> /sys/bus/virtio/devices/virtio<N>/tag
+>=20
+> # cat /sys/bus/virtio/devices/virtio<N>/tag
+> myfs
+>=20
+> Note, tag is available at KOBJ_BIND time and not at KOBJ_ADD event time.
+>=20
+> v2:
+> - Add a newline char at the end in tag file. (Alyssa Ross)
+> - Add a line in commit logs about tag file being available at KOBJ_BIND
+>   time and not KOBJ_ADD time.
+>=20
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+> ---
+>  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>=20
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 5f1be1da92ce..9f76c9697e6f 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -107,6 +107,21 @@ static const struct fs_parameter_spec virtio_fs_para=
+meters[] =3D {
+>  	{}
+>  };
+> =20
+> +/* Forward Declarations */
+> +static void virtio_fs_stop_all_queues(struct virtio_fs *fs);
+> +
+> +/* sysfs related */
+> +static ssize_t tag_show(struct device *dev, struct device_attribute *att=
+r,
+> +			char *buf)
+> +{
+> +	struct virtio_device *vdev =3D container_of(dev, struct virtio_device,
+> +						  dev);
+> +	struct virtio_fs *fs =3D vdev->priv;
+> +
+> +	return sysfs_emit(buf, "%s\n", fs->tag);
+> +}
+> +static DEVICE_ATTR_RO(tag);
 
-Should
+Is there a race between tag_show() and virtio_fs_remove()?
+virtio_fs_mutex is not held. I'm thinking of the case where userspace
+opens the sysfs file and invokes read(2) on one CPU while
+virtio_fs_remove() runs on another CPU.
 
-On Sun, Nov 5, 2023 at 8:35=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.com> =
-wrote:
->
-> +       test_invalid_memory_region_flags();
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-be #ifdef'd, perhaps? I'm not quite sure what the intent is.
+--uYOZS1syTIcNUvXa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Side note: I wasn't able to get [2] to apply by copy-pasting the diff
-and trying "git apply", and that was after checking out the relevant
-commit. Eventually I just did it manually. If anyone can successfully
-apply it, please let me know what you did so I can see what I was
-doing wrong :)
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://lore.kernel.org/kvm/20231108233723.3380042-1-amoorthy@google.co=
-m/
-[2] https://lore.kernel.org/kvm/affca7a8-116e-4b0f-9edf-6cdc05ba65ca@redhat=
-.com/
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmVMNbkACgkQnKSrs4Gr
+c8giAgf/SVXOUBhXSSZePRtGEIZ/hJ7mXPA0QTDAREXWl0wJHlijwBlWwPHJ6k0F
+Oi/AxJ9ypy0EBPn+UNkLUjALdP81XyGN17NgzuXiM+LYnpvUcIGFTyQWthHwOz1k
+Bqi4wtp7YRY9BZnWQE0TzlhKqny7of1SX/N0f+86bUTNPe6/ig9cwXt3np3bXdrR
+7ijo4CmN/Qa8HxTpyFQFDn0iWX/E9NITAumKMjKgmrLZxvQdyZsI9LGNcKOxzCQm
+jyOx1yEDZM2TrZqFwa6E5LI4bXfVlQUb70biKWOyJW3AAe0heZr+q7nim3TO8gkA
+cFTwNh4QXCTK+OTFwCS201PF/5hA2Q==
+=DP+h
+-----END PGP SIGNATURE-----
+
+--uYOZS1syTIcNUvXa--
+
 
