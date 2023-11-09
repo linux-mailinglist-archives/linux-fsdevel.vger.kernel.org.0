@@ -1,227 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-2604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F5A7E700F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 950587E6FFE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 835A5B20EB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:20:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66315B20CDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E8224F9;
-	Thu,  9 Nov 2023 17:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="SxWQW+li"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF1322320;
+	Thu,  9 Nov 2023 17:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D922316
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:20:21 +0000 (UTC)
-X-Greylist: delayed 242 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 09 Nov 2023 09:20:20 PST
-Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A935630D5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 09:20:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1699550175; x=1700154975;
-	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
-	MIME-Version:User-Agent:Subject:Content-Language:To:Cc:
-	References:From:Organization:In-Reply-To:Content-Type; bh=SmG+pH
-	Gby/d1jNB9hhaj194ZVLp7DEs/NppQplXd7PE=; b=SxWQW+liL1TDH4palyL/QB
-	mnVazOjiXbYjj11gYMRElcVK86AN+l/CAemS5AwRI/lqRydS1XTMm74Moz7GpEs/
-	C7cFBlJcDkDeIxumTTcznM0xSwb/OZt1Ssw81PfosKYNVjp5+RW7OwXde9Ug8e6l
-	6UQTG5wz9eBt8PkRzk1n0=
-X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 09 Nov 2023 12:16:15 -0500
-Received: from [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1b) 
-	with ESMTPSA id md5001003742284.msg; Thu, 09 Nov 2023 12:16:14 -0500
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 09 Nov 2023 12:16:14 -0500
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73d:b00:d023:ff5f:54c2:9ec4
-X-MDHelo: [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4]
-X-MDArrival-Date: Thu, 09 Nov 2023 12:16:14 -0500
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=1677793fa9=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
-Message-ID: <6fadc6aa-4078-4f12-a4c7-235267d6e0b1@auristor.com>
-Date: Thu, 9 Nov 2023 12:16:06 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861222308
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:16:26 +0000 (UTC)
+Received: from mail-pl1-f207.google.com (mail-pl1-f207.google.com [209.85.214.207])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3517730D5
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 09:16:26 -0800 (PST)
+Received: by mail-pl1-f207.google.com with SMTP id d9443c01a7336-1ccdf149e60so11203105ad.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 09:16:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699550185; x=1700154985;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3nvuStkJjLYEBBvyk6oppowE0GjZD5Nq75zlX0wJdtU=;
+        b=GDws7DGAmKcbIbE7WZ1B18kZeHOM1ap6IK0Ln6bYBkZAPaeJTKnriBwYpAKn69J/uw
+         KqURtKzO0i7WCEyOlzgiDzCn7uWfXkyQpkhvjVbify6Mb+vkeuAtCqjEpHJhoTTMNM9K
+         ZxkT1OLpqEmdJKnVJrLu8nS+cGL4gXywnPmOlTNFjxb3ad8GSxo91v2SZhSNt7eYzhYD
+         5im+iNSo31u8tJrF/c1nMLNZfDVP7mluwzV/EtrfcEKVvdyQFDeJsE3ioG9MQ3x9nVFn
+         Ovaa8jaxmWTUGg0aDuJISAb3HZnhSWaEYZT1gxPSitH6gzDfQEsPasf3B+7xakwISZhI
+         t5YA==
+X-Gm-Message-State: AOJu0YzBYhlgmNnHo/TdeE1MbcZ+bsv3BLPnook3aViEOprbzZ7sT8DM
+	5Luijr8+YNqSTqDOv8nHz7vFK8G4zA9r3kc0E+HXqsNgO2wC
+X-Google-Smtp-Source: AGHT+IE5+3A81GAJ1+aCXHStNxoEX4xBmDCrGeMX5aW+aInVyF2KjxeUsDaWZlw2RY7CmDbfBnAq4JvWTGXgRl1DLtdQaBowDExO
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/41] rxrpc: Fix RTT determination to use PING ACKs as a
- source
-Content-Language: en-US
-To: David Howells <dhowells@redhat.com>,
- Marc Dionne <marc.dionne@auristor.com>
-Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20231109154004.3317227-1-dhowells@redhat.com>
- <20231109154004.3317227-2-dhowells@redhat.com>
-From: Jeffrey E Altman <jaltman@auristor.com>
-Organization: AuriStor, Inc.
-In-Reply-To: <20231109154004.3317227-2-dhowells@redhat.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020604090104080309060304"
-X-MDCFSigsAdded: auristor.com
+X-Received: by 2002:a17:903:6cd:b0:1cc:3ac9:717b with SMTP id
+ kj13-20020a17090306cd00b001cc3ac9717bmr587738plb.6.1699550185738; Thu, 09 Nov
+ 2023 09:16:25 -0800 (PST)
+Date: Thu, 09 Nov 2023 09:16:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001959d30609bb5d94@google.com>
+Subject: [syzbot] [btrfs?] WARNING in create_pending_snapshot
+From: syzbot <syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com>
+To: boris@bur.io, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This is a cryptographically signed message in MIME format.
+Hello,
 
---------------ms020604090104080309060304
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+syzbot found the following issue on:
 
-On 11/9/2023 10:39 AM, David Howells wrote:
-> Fix RTT determination to use a PING ACK that is in marked as being in
-> response to a DATA packet as the response from which RTT can be calculated
-> from in lieu of a REQUESTED ACK.  The server may send the latter instead of
-> the former.
->
-> Fixes: 4700c4d80b7b ("rxrpc: Fix loss of RTT samples due to interposed ACK")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->   net/rxrpc/input.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-> index 030d64f282f3..fc0d404f3b91 100644
-> --- a/net/rxrpc/input.c
-> +++ b/net/rxrpc/input.c
-> @@ -806,6 +806,10 @@ static void rxrpc_input_ack(struct rxrpc_call *call, struct sk_buff *skb)
->   		rxrpc_complete_rtt_probe(call, skb->tstamp, acked_serial, ack_serial,
->   					 rxrpc_rtt_rx_ping_response);
->   		break;
-> +	case RXRPC_ACK_PING:
-> +		if (acked_serial == 0)
-> +			break;
-> +		fallthrough;
->   	case RXRPC_ACK_REQUESTED:
->   		rxrpc_complete_rtt_probe(call, skb->tstamp, acked_serial, ack_serial,
->   					 rxrpc_rtt_rx_requested_ack);
+HEAD commit:    305230142ae0 Merge tag 'pm-6.7-rc1-2' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11777b60e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=beb32a598fd79db9
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d81015bc10889fd12ea
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14900138e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10907197680000
 
-David,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0aab25a831ba/disk-30523014.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9d1b7b8fdf8a/vmlinux-30523014.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e9b6822fcd5f/bzImage-30523014.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/82e806de5984/mount_0.gz
 
-I do not believe the ack_reason matters within rxrpc_input_ack(). As 
-long as the acked_serial is non-zero,
-rxrpc_complete_rtt_probe() can be called to attempt to compute an RTT.   
-If there is an exact match for the
-acked_serial then an RTT can be computed and if acked_serial is later 
-than the pending rtt probe, the probe
-can be abandoned with the following caveats.
+The issue was bisected to:
 
- 1. Receiving an acked_serial that is later than the serial of the
-    transmitted probe indicates that a packet
-    transmitted after the probe was received first.  Or that reordering
-    of the transmitted packets occurred.
-    Or that the probe was never received by the peer; or that the peer's
-    response to the probe was lost in
-    transit.
- 2. The serial number namespace is unsigned 32-bit shared across all of
-    the call channels of the associated
-    rx connection.  As the serial numbers will wrap the use of after()
-    within rxrpc_complete_rtt_probe to
-    compare their values is questionable.   If serial numbers will be
-    compared in this manner then they
-    need to be locally tracked and compared as unsigned 64-bit values
-    where only the low 32-bits are
-    transmitted on the wire and any wire serial number equal to zero is
-    ignored.
+commit 6ed05643ddb166c0fddabac8ee092659006214a9
+Author: Boris Burkov <boris@bur.io>
+Date:   Wed Jun 28 18:00:05 2023 +0000
 
-Jeffrey Altman
+    btrfs: create qgroup earlier in snapshot creation
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=117a7050e80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=137a7050e80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=157a7050e80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com
+Fixes: 6ed05643ddb1 ("btrfs: create qgroup earlier in snapshot creation")
+
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -17)
+WARNING: CPU: 0 PID: 5057 at fs/btrfs/transaction.c:1778 create_pending_snapshot+0x25f4/0x2b70 fs/btrfs/transaction.c:1778
+Modules linked in:
+CPU: 0 PID: 5057 Comm: syz-executor225 Not tainted 6.6.0-syzkaller-15365-g305230142ae0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
+RIP: 0010:create_pending_snapshot+0x25f4/0x2b70 fs/btrfs/transaction.c:1778
+Code: f8 fd 48 c7 c7 00 43 ab 8b 89 de e8 76 4b be fd 0f 0b e9 30 f3 ff ff e8 7a 8d f8 fd 48 c7 c7 00 43 ab 8b 89 de e8 5c 4b be fd <0f> 0b e9 f8 f6 ff ff e8 60 8d f8 fd 48 c7 c7 00 43 ab 8b 89 de e8
+RSP: 0018:ffffc90003abf580 EFLAGS: 00010246
+RAX: 10fb7cf24e10ea00 RBX: 00000000ffffffef RCX: ffff888023ea9dc0
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90003abf870 R08: ffffffff81547c82 R09: 1ffff11017305172
+R10: dffffc0000000000 R11: ffffed1017305173 R12: ffff888078ae2878
+R13: 00000000ffffffef R14: 0000000000000000 R15: ffff888078ae2818
+FS:  000055555667d380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ff7bf2304 CR3: 0000000079f17000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ create_pending_snapshots+0x195/0x1d0 fs/btrfs/transaction.c:1967
+ btrfs_commit_transaction+0xf1c/0x3730 fs/btrfs/transaction.c:2440
+ create_snapshot+0x4a5/0x7e0 fs/btrfs/ioctl.c:845
+ btrfs_mksubvol+0x5d0/0x750 fs/btrfs/ioctl.c:995
+ btrfs_mksnapshot+0xb5/0xf0 fs/btrfs/ioctl.c:1041
+ __btrfs_ioctl_snap_create+0x344/0x460 fs/btrfs/ioctl.c:1294
+ btrfs_ioctl_snap_create+0x13c/0x190 fs/btrfs/ioctl.c:1321
+ btrfs_ioctl+0xbbf/0xd40
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7f2f791127b9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5dc597b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f2f791127b9
+RDX: 0000000020000a80 RSI: 0000000050009401 RDI: 0000000000000004
+RBP: 00007f2f7918b610 R08: 00007ffc5dc59988 R09: 00007ffc5dc59988
+R10: 00007ffc5dc59988 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc5dc59978 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---------------ms020604090104080309060304
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTEwOTE3
-MTYwNlowLwYJKoZIhvcNAQkEMSIEICXwczvuVLJs1AFPzljg/gZhfxs6ddLu1T6zrd2DE3Sq
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
-AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAQ8ay
-KLLdx0zDUwpG0u7Jwb+CjBYvqFn1A88SnDrAhshMu2CMWZy3UsRmcVI8t1JSPQXlI9XrosXw
-Agyy2SEyWei7V3G5gDEs9yo5yBhc+frN1vPSnTH1n3Vq9To8slI7b56R3suf41ZOjV6+eG6w
-95qdk9B1E+6/EoLq4VbvREvtvq0YHcSfVSogxMuWW3BS+1sGj9/lvWuKyXdj/IS8x/KnfOm2
-ioprCGd9g6pb7QYC+Ac7LAxhWlUlgFcnAGB3OAdhzUeIfLYSQ6X3zQTqUR8mxY/heRxF93qc
-rvbn7IdsT7ag2Gpv5168mT4USdZHBz18Zt7Wg9vLkZLVgIuVeAAAAAAAAA==
---------------ms020604090104080309060304--
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
