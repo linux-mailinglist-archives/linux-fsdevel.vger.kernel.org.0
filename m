@@ -1,61 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-2551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A082C7E6D98
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:41:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B86EF7E6D95
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:40:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00991B2135B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:40:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFD93B2120F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2E120B2F;
-	Thu,  9 Nov 2023 15:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8410208BC;
+	Thu,  9 Nov 2023 15:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JTndLm3P"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iApU+8g2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB53208B8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9F020332
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:40:35 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 636A5358C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:40:37 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07983358C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:40:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699544436;
+	s=mimecast20190719; t=1699544434;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YLzCXJfM4N3Nxzt33NeDjgrD44Y0SC0g5t67rlILCHA=;
-	b=JTndLm3Ps6V/T67ZDYejzwcQ73uOiXc+LFpJ3YAxuqdSu2Ilvs4S4L/TOxeUURvzk6/CkT
-	PLpfG3MEnjMA7tbcS3+TXsp6aAfOUcUi0HrE2m2b25Krvj1N0L5jiXrv987r847dMUZS6p
-	bJ4NjgqXewkQ4xXqvpaZycBLcZ4sp+o=
+	bh=EsdaavxzQFrCmF0h4nEsVxw66N+/bYbfxItJ2VZRPVw=;
+	b=iApU+8g2mZ5+94iYorfZhytrmBljaGC3waegzgX7VsF0ZbdmsH2OjqOCw1iPH45XbTGzFS
+	jUl6wFBYwqL1xWKtyqN+BGUL5E09FMuKLXcsl6WebmLahanYb0w6CL3Q64snTVZxuHD3nf
+	N+RsDt26pr78UUZIQxNiKwOTvjAc0f0=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-252-22SbOsg7Md2V9W2B0XUPJA-1; Thu,
- 09 Nov 2023 10:40:32 -0500
-X-MC-Unique: 22SbOsg7Md2V9W2B0XUPJA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-32-SI2N2WcWOviWEg6U-p1gFw-1; Thu,
+ 09 Nov 2023 10:40:27 -0500
+X-MC-Unique: SI2N2WcWOviWEg6U-p1gFw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 24FE72810D55;
-	Thu,  9 Nov 2023 15:40:21 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C53342810D52;
+	Thu,  9 Nov 2023 15:40:22 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.13])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5D989492BE7;
-	Thu,  9 Nov 2023 15:40:20 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id E15CF1C060AE;
+	Thu,  9 Nov 2023 15:40:21 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Marc Dionne <marc.dionne@auristor.com>
 Cc: David Howells <dhowells@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 07/41] afs: Automatically generate trace tag enums
-Date: Thu,  9 Nov 2023 15:39:30 +0000
-Message-ID: <20231109154004.3317227-8-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org,
+	Jeffrey E Altman <jaltman@auristor.com>
+Subject: [PATCH 08/41] afs: Add comments on abort handling
+Date: Thu,  9 Nov 2023 15:39:31 +0000
+Message-ID: <20231109154004.3317227-9-dhowells@redhat.com>
 In-Reply-To: <20231109154004.3317227-1-dhowells@redhat.com>
 References: <20231109154004.3317227-1-dhowells@redhat.com>
 Precedence: bulk
@@ -65,283 +66,180 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-Automatically generate trace tag enums from the symbol -> string mapping
-tables rather than having the enums as well, thereby reducing duplicated
-data.
+Add some comments on AFS abort code handling in the rotation algorithm and
+adjust the errors produced to match.
 
+Reported-by: Jeffrey E Altman <jaltman@auristor.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: linux-afs@lists.infradead.org
 ---
- include/trace/events/afs.h | 233 +++++--------------------------------
- 1 file changed, 27 insertions(+), 206 deletions(-)
+ fs/afs/rotate.c | 100 ++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 89 insertions(+), 11 deletions(-)
 
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index cfcd6452c156..597677acc6b1 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -18,97 +18,6 @@
- #ifndef __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
- #define __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
- 
--enum afs_call_trace {
--	afs_call_trace_alloc,
--	afs_call_trace_free,
--	afs_call_trace_get,
--	afs_call_trace_put,
--	afs_call_trace_wake,
--	afs_call_trace_work,
--};
--
--enum afs_server_trace {
--	afs_server_trace_alloc,
--	afs_server_trace_callback,
--	afs_server_trace_destroy,
--	afs_server_trace_free,
--	afs_server_trace_gc,
--	afs_server_trace_get_by_addr,
--	afs_server_trace_get_by_uuid,
--	afs_server_trace_get_caps,
--	afs_server_trace_get_install,
--	afs_server_trace_get_new_cbi,
--	afs_server_trace_get_probe,
--	afs_server_trace_give_up_cb,
--	afs_server_trace_purging,
--	afs_server_trace_put_call,
--	afs_server_trace_put_cbi,
--	afs_server_trace_put_find_rsq,
--	afs_server_trace_put_probe,
--	afs_server_trace_put_slist,
--	afs_server_trace_put_slist_isort,
--	afs_server_trace_put_uuid_rsq,
--	afs_server_trace_update,
--};
--
--
--enum afs_volume_trace {
--	afs_volume_trace_alloc,
--	afs_volume_trace_free,
--	afs_volume_trace_get_alloc_sbi,
--	afs_volume_trace_get_cell_insert,
--	afs_volume_trace_get_new_op,
--	afs_volume_trace_get_query_alias,
--	afs_volume_trace_put_cell_dup,
--	afs_volume_trace_put_cell_root,
--	afs_volume_trace_put_destroy_sbi,
--	afs_volume_trace_put_free_fc,
--	afs_volume_trace_put_put_op,
--	afs_volume_trace_put_query_alias,
--	afs_volume_trace_put_validate_fc,
--	afs_volume_trace_remove,
--};
--
--enum afs_cell_trace {
--	afs_cell_trace_alloc,
--	afs_cell_trace_free,
--	afs_cell_trace_get_queue_dns,
--	afs_cell_trace_get_queue_manage,
--	afs_cell_trace_get_queue_new,
--	afs_cell_trace_get_vol,
--	afs_cell_trace_insert,
--	afs_cell_trace_manage,
--	afs_cell_trace_put_candidate,
--	afs_cell_trace_put_destroy,
--	afs_cell_trace_put_queue_fail,
--	afs_cell_trace_put_queue_work,
--	afs_cell_trace_put_vol,
--	afs_cell_trace_see_source,
--	afs_cell_trace_see_ws,
--	afs_cell_trace_unuse_alias,
--	afs_cell_trace_unuse_check_alias,
--	afs_cell_trace_unuse_delete,
--	afs_cell_trace_unuse_fc,
--	afs_cell_trace_unuse_lookup,
--	afs_cell_trace_unuse_mntpt,
--	afs_cell_trace_unuse_no_pin,
--	afs_cell_trace_unuse_parse,
--	afs_cell_trace_unuse_pin,
--	afs_cell_trace_unuse_probe,
--	afs_cell_trace_unuse_sbi,
--	afs_cell_trace_unuse_ws,
--	afs_cell_trace_use_alias,
--	afs_cell_trace_use_check_alias,
--	afs_cell_trace_use_fc,
--	afs_cell_trace_use_fc_alias,
--	afs_cell_trace_use_lookup,
--	afs_cell_trace_use_mntpt,
--	afs_cell_trace_use_pin,
--	afs_cell_trace_use_probe,
--	afs_cell_trace_use_sbi,
--	afs_cell_trace_wait,
--};
--
- enum afs_fs_operation {
- 	afs_FS_FetchData		= 130,	/* AFS Fetch file data */
- 	afs_FS_FetchACL			= 131,	/* AFS Fetch file ACL */
-@@ -202,121 +111,6 @@ enum yfs_cm_operation {
- 	yfs_CB_CallBack			= 64204,
- };
- 
--enum afs_edit_dir_op {
--	afs_edit_dir_create,
--	afs_edit_dir_create_error,
--	afs_edit_dir_create_inval,
--	afs_edit_dir_create_nospc,
--	afs_edit_dir_delete,
--	afs_edit_dir_delete_error,
--	afs_edit_dir_delete_inval,
--	afs_edit_dir_delete_noent,
--};
--
--enum afs_edit_dir_reason {
--	afs_edit_dir_for_create,
--	afs_edit_dir_for_link,
--	afs_edit_dir_for_mkdir,
--	afs_edit_dir_for_rename_0,
--	afs_edit_dir_for_rename_1,
--	afs_edit_dir_for_rename_2,
--	afs_edit_dir_for_rmdir,
--	afs_edit_dir_for_silly_0,
--	afs_edit_dir_for_silly_1,
--	afs_edit_dir_for_symlink,
--	afs_edit_dir_for_unlink,
--};
--
--enum afs_eproto_cause {
--	afs_eproto_bad_status,
--	afs_eproto_cb_count,
--	afs_eproto_cb_fid_count,
--	afs_eproto_cellname_len,
--	afs_eproto_file_type,
--	afs_eproto_ibulkst_cb_count,
--	afs_eproto_ibulkst_count,
--	afs_eproto_motd_len,
--	afs_eproto_offline_msg_len,
--	afs_eproto_volname_len,
--	afs_eproto_yvl_fsendpt4_len,
--	afs_eproto_yvl_fsendpt6_len,
--	afs_eproto_yvl_fsendpt_num,
--	afs_eproto_yvl_fsendpt_type,
--	afs_eproto_yvl_vlendpt4_len,
--	afs_eproto_yvl_vlendpt6_len,
--	afs_eproto_yvl_vlendpt_type,
--};
--
--enum afs_io_error {
--	afs_io_error_cm_reply,
--	afs_io_error_extract,
--	afs_io_error_fs_probe_fail,
--	afs_io_error_vl_lookup_fail,
--	afs_io_error_vl_probe_fail,
--};
--
--enum afs_file_error {
--	afs_file_error_dir_bad_magic,
--	afs_file_error_dir_big,
--	afs_file_error_dir_missing_page,
--	afs_file_error_dir_name_too_long,
--	afs_file_error_dir_over_end,
--	afs_file_error_dir_small,
--	afs_file_error_dir_unmarked_ext,
--	afs_file_error_mntpt,
--	afs_file_error_writeback_fail,
--};
--
--enum afs_flock_event {
--	afs_flock_acquired,
--	afs_flock_callback_break,
--	afs_flock_defer_unlock,
--	afs_flock_extend_fail,
--	afs_flock_fail_other,
--	afs_flock_fail_perm,
--	afs_flock_no_lockers,
--	afs_flock_release_fail,
--	afs_flock_silly_delete,
--	afs_flock_timestamp,
--	afs_flock_try_to_lock,
--	afs_flock_vfs_lock,
--	afs_flock_vfs_locking,
--	afs_flock_waited,
--	afs_flock_waiting,
--	afs_flock_work_extending,
--	afs_flock_work_retry,
--	afs_flock_work_unlocking,
--	afs_flock_would_block,
--};
--
--enum afs_flock_operation {
--	afs_flock_op_copy_lock,
--	afs_flock_op_flock,
--	afs_flock_op_grant,
--	afs_flock_op_lock,
--	afs_flock_op_release_lock,
--	afs_flock_op_return_ok,
--	afs_flock_op_return_eagain,
--	afs_flock_op_return_edeadlk,
--	afs_flock_op_return_error,
--	afs_flock_op_set_lock,
--	afs_flock_op_unlock,
--	afs_flock_op_wake,
--};
--
--enum afs_cb_break_reason {
--	afs_cb_break_no_break,
--	afs_cb_break_no_promise,
--	afs_cb_break_for_callback,
--	afs_cb_break_for_deleted,
--	afs_cb_break_for_lapsed,
--	afs_cb_break_for_s_reinit,
--	afs_cb_break_for_unlink,
--	afs_cb_break_for_v_break,
--	afs_cb_break_for_volume_callback,
--	afs_cb_break_for_zap,
--};
--
- #endif /* end __AFS_DECLARE_TRACE_ENUMS_ONCE_ONLY */
+diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
+index a840c3588ebb..180bcad081dd 100644
+--- a/fs/afs/rotate.c
++++ b/fs/afs/rotate.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched/signal.h>
+ #include "internal.h"
+ #include "afs_fs.h"
++#include "protocol_uae.h"
  
  /*
-@@ -391,6 +185,7 @@ enum afs_cb_break_reason {
- 	EM(afs_cell_trace_unuse_fc,		"UNU fc    ") \
- 	EM(afs_cell_trace_unuse_lookup,		"UNU lookup") \
- 	EM(afs_cell_trace_unuse_mntpt,		"UNU mntpt ") \
-+	EM(afs_cell_trace_unuse_no_pin,		"UNU no-pin") \
- 	EM(afs_cell_trace_unuse_parse,		"UNU parse ") \
- 	EM(afs_cell_trace_unuse_pin,		"UNU pin   ") \
- 	EM(afs_cell_trace_unuse_probe,		"UNU probe ") \
-@@ -614,6 +409,32 @@ enum afs_cb_break_reason {
- 	EM(afs_cb_break_for_volume_callback,	"break-v-cb")		\
- 	E_(afs_cb_break_for_zap,		"break-zap")
+  * Begin iteration through a server list, starting with the vnode's last used
+@@ -143,6 +144,11 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 	case -ECONNABORTED:
+ 		/* The far side rejected the operation on some grounds.  This
+ 		 * might involve the server being busy or the volume having been moved.
++		 *
++		 * Note that various V* errors should not be sent to a cache manager
++		 * by a fileserver as they should be translated to more modern UAE*
++		 * errors instead.  IBM AFS and OpenAFS fileservers, however, do leak
++		 * these abort codes.
+ 		 */
+ 		switch (op->ac.abort_code) {
+ 		case VNOVOL:
+@@ -150,6 +156,11 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 			 * - May indicate that the VL is wrong - retry once and compare
+ 			 *   the results.
+ 			 * - May indicate that the fileserver couldn't attach to the vol.
++			 * - The volume might have been temporarily removed so that it can
++			 *   be replaced by a volume restore.  "vos" might have ended one
++			 *   transaction and has yet to create the next.
++			 * - The volume might not be blessed or might not be in-service
++			 *   (administrative action).
+ 			 */
+ 			if (op->flags & AFS_OPERATION_VNOVOL) {
+ 				op->error = -EREMOTEIO;
+@@ -183,16 +194,56 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 			_leave(" = t [vnovol]");
+ 			return true;
  
-+/*
-+ * Generate enums for tracing information.
-+ */
-+#ifndef __AFS_GENERATE_TRACE_ENUMS_ONCE_ONLY
-+#define __AFS_GENERATE_TRACE_ENUMS_ONCE_ONLY
+-		case VSALVAGE: /* TODO: Should this return an error or iterate? */
+ 		case VVOLEXISTS:
+-		case VNOSERVICE:
+ 		case VONLINE:
+-		case VDISKFULL:
+-		case VOVERQUOTA:
+-			op->error = afs_abort_to_error(op->ac.abort_code);
++			/* These should not be returned from the fileserver. */
++			pr_warn("Fileserver returned unexpected abort %d\n",
++				op->ac.abort_code);
++			op->error = -EREMOTEIO;
++			goto next_server;
 +
-+#undef EM
-+#undef E_
-+#define EM(a, b) a,
-+#define E_(a, b) a
++		case VNOSERVICE:
++			/* Prior to AFS 3.2 VNOSERVICE was returned from the fileserver
++			 * if the volume was neither in-service nor administratively
++			 * blessed.  All usage was replaced by VNOVOL because AFS 3.1 and
++			 * earlier cache managers did not handle VNOSERVICE and assumed
++			 * it was the client OSes errno 105.
++			 *
++			 * Starting with OpenAFS 1.4.8 VNOSERVICE was repurposed as the
++			 * fileserver idle dead time error which was sent in place of
++			 * RX_CALL_TIMEOUT (-3).  The error was intended to be sent if the
++			 * fileserver took too long to send a reply to the client.
++			 * RX_CALL_TIMEOUT would have caused the cache manager to mark the
++			 * server down whereas VNOSERVICE since AFS 3.2 would cause cache
++			 * manager to temporarily (up to 15 minutes) mark the volume
++			 * instance as unusable.
++			 *
++			 * The idle dead logic resulted in cache inconsistency since a
++			 * state changing call that the cache manager assumed was dead
++			 * could still be processed to completion by the fileserver.  This
++			 * logic was removed in OpenAFS 1.8.0 and VNOSERVICE is no longer
++			 * returned.  However, many 1.4.8 through 1.6.24 fileservers are
++			 * still in existence.
++			 *
++			 * AuriStorFS fileservers have never returned VNOSERVICE.
++			 *
++			 * VNOSERVICE should be treated as an alias for RX_CALL_TIMEOUT..
++			 */
++		case RX_CALL_TIMEOUT:
++			op->error = -ETIMEDOUT;
+ 			goto next_server;
+ 
++		case VSALVAGING: /* This error should not be leaked to cache managers
++				  * but is from OpenAFS demand attach fileservers.
++				  * It should be treated as an alias for VOFFLINE.
++				  */
++		case VSALVAGE: /* VSALVAGE should be treated as a synonym of VOFFLINE */
+ 		case VOFFLINE:
++			/* The volume is in use by the volserver or another volume utility
++			 * for an operation that might alter the contents.  The volume is
++			 * expected to come back but it might take a long time (could be
++			 * days).
++			 */
+ 			if (!test_and_set_bit(AFS_VOLUME_OFFLINE, &op->volume->flags)) {
+ 				afs_busy(op->volume, op->ac.abort_code);
+ 				clear_bit(AFS_VOLUME_BUSY, &op->volume->flags);
+@@ -207,11 +258,19 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 			}
+ 			goto busy;
+ 
+-		case VSALVAGING:
+-		case VRESTARTING:
++		case VRESTARTING: /* The fileserver is either shutting down or starting up. */
+ 		case VBUSY:
+-			/* Retry after going round all the servers unless we
+-			 * have a file lock we need to maintain.
++			/* The volume is in use by the volserver or another volume utility
++			 * for an operation that is not expected to alter the contents of
++			 * the volume.  VBUSY should not be returned for a ROVOL or
++			 * BACKVOL (but many OpenAFS fileserver versions are broken).  The
++			 * fileserver is supposed to continue serving content from ROVOLs
++			 * and BACKVOLs during an ITBusy transaction because the content
++			 * cannot change.  The volume is expected to come back but it
++			 * might take awhile.
++			 *
++			 * Retry after going round all the servers unless we have a file
++			 * lock we need to maintain.
+ 			 */
+ 			if (op->flags & AFS_OPERATION_NO_VSLEEP) {
+ 				op->error = -EBUSY;
+@@ -226,7 +285,7 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 				if (!afs_sleep_and_retry(op))
+ 					goto failed;
+ 
+-				 /* Retry with same server & address */
++				/* Retry with same server & address */
+ 				_leave(" = t [vbusy]");
+ 				return true;
+ 			}
+@@ -270,10 +329,29 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 
+ 			goto restart_from_beginning;
+ 
++		case VDISKFULL:
++		case UAENOSPC:
++			/* The partition is full.  Only applies to RWVOLs.
++			 * Translate locally and return ENOSPC.
++			 * No replicas to failover to.
++			 */
++			op->error = -ENOSPC;
++			goto failed_but_online;
 +
-+enum afs_call_trace		{ afs_call_traces } __mode(byte);
-+enum afs_cb_break_reason	{ afs_cb_break_reasons } __mode(byte);
-+enum afs_cell_trace		{ afs_cell_traces } __mode(byte);
-+enum afs_edit_dir_op		{ afs_edit_dir_ops } __mode(byte);
-+enum afs_edit_dir_reason	{ afs_edit_dir_reasons } __mode(byte);
-+enum afs_eproto_cause		{ afs_eproto_causes } __mode(byte);
-+enum afs_file_error		{ afs_file_errors } __mode(byte);
-+enum afs_flock_event		{ afs_flock_events } __mode(byte);
-+enum afs_flock_operation	{ afs_flock_operations } __mode(byte);
-+enum afs_io_error		{ afs_io_errors } __mode(byte);
-+enum afs_server_trace		{ afs_server_traces } __mode(byte);
-+enum afs_volume_trace		{ afs_volume_traces } __mode(byte);
++		case VOVERQUOTA:
++		case UAEDQUOT:
++			/* Volume is full.  Only applies to RWVOLs.
++			 * Translate locally and return EDQUOT.
++			 * No replicas to failover to.
++			 */
++			op->error = -EDQUOT;
++			goto failed_but_online;
 +
-+#endif /* end __AFS_GENERATE_TRACE_ENUMS_ONCE_ONLY */
-+
- /*
-  * Export enum symbols via userspace.
-  */
+ 		default:
++			op->error = afs_abort_to_error(op->ac.abort_code);
++		failed_but_online:
+ 			clear_bit(AFS_VOLUME_OFFLINE, &op->volume->flags);
+ 			clear_bit(AFS_VOLUME_BUSY, &op->volume->flags);
+-			op->error = afs_abort_to_error(op->ac.abort_code);
+ 			goto failed;
+ 		}
+ 
 
 
