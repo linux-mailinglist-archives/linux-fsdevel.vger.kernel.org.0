@@ -1,190 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-2602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95E67E7000
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 746487E700C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4129FB20C67
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:16:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE234B20CA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 17:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350D4225CA;
-	Thu,  9 Nov 2023 17:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDC322329;
+	Thu,  9 Nov 2023 17:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHiLSKvU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4482232D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:16:29 +0000 (UTC)
-Received: from mail-pg1-f207.google.com (mail-pg1-f207.google.com [209.85.215.207])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D07230D5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 09:16:29 -0800 (PST)
-Received: by mail-pg1-f207.google.com with SMTP id 41be03b00d2f7-5b806e55dd2so1130708a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 09:16:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699550188; x=1700154988;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8ik92Kb8UgHu1nXrWB5uLRqqbBTtMjzV+DKu4EtXnCA=;
-        b=Wa6Ses6J8PGxdwGGshkkQQm7RSQNiWlEK8WkOkf7b7MQuzdkr8Lz68uoXcPP37lx/q
-         Dc3eb1EDep57UfRXyCKBDjOEE71LEn1SX3aXKpin0/f3bNNMQSWicvnyn94Pc/xigIih
-         VJ3WoxJeE4MCiMZg8cnpz9v5juNg1Q7fLhbNdNrkfprPuxFUEAn3M/26bsnqXF2xYMNR
-         3N0X/myTv84Jz4OPhm+PQbA7VTWY0d2o38Ia0iRn1KJIurntxW+F/6GSFP8fw8lSRMJB
-         rKds/65/Clgq2LCQdxd0QRjJdDOEYpcX/OjDTGAIxPuOlWrYd/8K11L0YTkTXEva0HYJ
-         JW8w==
-X-Gm-Message-State: AOJu0Yw5tNd7gzJNWcH1f5Vez89VQmLgE2Cx9e1kN/MmxkQzjXC3HpxG
-	tTHngFlnjaC2qJ2dsB2pDe2JmqgGzqTWnEnnipm3SM6ZbMFxk3Lwbw==
-X-Google-Smtp-Source: AGHT+IF0TbJvKilgxVAad9fEdPkvKA7Dq7Gw6FY3fKi2d3XYn/e7BqKBg0qu10ZUudgFCGOs9nvR0e2P0sVRNHkWQl4Av7IZ2uo9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0559422316
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 17:20:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3F2C433C8;
+	Thu,  9 Nov 2023 17:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699550412;
+	bh=qrIpLt54IIKF4iVXr/dwpNzUgTbj28UvZxdtnPP3nDk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pHiLSKvUH3Eofk4/pcdYnta5amEYkRuKcjkKke1Wy9cigapMK6gCsRiKsnhbfsSH6
+	 YxqTsyKTyycChmnYnOcKXWsur8RP1hFEa+tmh8oNyC+zuwqS7/uhrto3ZgNm12xEwy
+	 kJXrK4/Ewe/4EAdITQjJSx+C+ixq6YwvKGurhUCxux9YTc8+5o6+4icvAb9w3+s1M7
+	 XaEDb1tEFDXPe1DUUGjWdc52GPi7T54k4C4zkfpB7JurzT1zELNCO4lUMKURpuc7XW
+	 qK1KqDY0rOgEnCGFAfCvBQr07N3EFudhwNkJMQBPShaEjUKdlE10zGZaJ9DN6RfTHU
+	 mbIiZUCCLKOFA==
+Date: Thu, 9 Nov 2023 18:20:08 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 17/22] don't try to cut corners in shrink_lock_dentry()
+Message-ID: <20231109-designen-menschheit-7e4120584db1@brauner>
+References: <20231109061932.GA3181489@ZenIV>
+ <20231109062056.3181775-1-viro@zeniv.linux.org.uk>
+ <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a17:90a:d70a:b0:280:941b:9471 with SMTP id
- y10-20020a17090ad70a00b00280941b9471mr550463pju.7.1699550186216; Thu, 09 Nov
- 2023 09:16:26 -0800 (PST)
-Date: Thu, 09 Nov 2023 09:16:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020a5790609bb5db8@google.com>
-Subject: [syzbot] [reiserfs?] kernel BUG in direntry_check_right
-From: syzbot <syzbot+e57bfc56c27a9285a838@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
 
-Hello,
+On Thu, Nov 09, 2023 at 06:20:51AM +0000, Al Viro wrote:
+> That is to say, do *not* treat the ->d_inode or ->d_parent changes
+> as "it's hard, return false; somebody must have grabbed it, so
+> even if has zero refcount, we don't need to bother killing it -
+> final dput() from whoever grabbed it would've done everything".
+> 
+> First of all, that is not guaranteed.  It might have been dropped
+> by shrink_kill() handling of victim's parent, which would've found
+> it already on a shrink list (ours) and decided that they don't need
+> to put it on their shrink list.
+> 
+> What's more, dentry_kill() is doing pretty much the same thing,
+> cutting its own set of corners (it assumes that dentry can't
+> go from positive to negative, so its inode can change but only once
+> and only in one direction).
+> 
+> Doing that right allows to get rid of that not-quite-duplication
+> and removes the only reason for re-incrementing refcount before
+> the call of dentry_kill().
+> 
+> Replacement is called lock_for_kill(); called under rcu_read_lock
+> and with ->d_lock held.  If it returns false, dentry has non-zero
+> refcount and the same locks are held.  If it returns true,
+> dentry has zero refcount and all locks required by __dentry_kill()
+> are taken.
+> 
+> Part of __lock_parent() had been lifted into lock_parent() to
+> allow its reuse.  Now it's called with rcu_read_lock already
+> held and dentry already unlocked.
+> 
+> Note that this is not the final change - locking requirements for
+> __dentry_kill() are going to change later in the series and the
+> set of locks taken by lock_for_kill() will be adjusted.
+> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
 
-syzbot found the following issue on:
+It's a bit unfortunate that __lock_parent() locks the parent *and* may
+lock the child which isn't really obvious from the name. It just becomes
+clear that this is assumed by how callers release the child's lock.
 
-HEAD commit:    305230142ae0 Merge tag 'pm-6.7-rc1-2' of git://git.kernel...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=106da588e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=beb32a598fd79db9
-dashboard link: https://syzkaller.appspot.com/bug?extid=e57bfc56c27a9285a838
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cb0588e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ce91ef680000
+>  fs/dcache.c | 159 ++++++++++++++++++++++------------------------------
+>  1 file changed, 66 insertions(+), 93 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 23afcd48c1a9..801502871671 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -625,8 +625,6 @@ static void __dentry_kill(struct dentry *dentry)
+>  static struct dentry *__lock_parent(struct dentry *dentry)
+>  {
+>  	struct dentry *parent;
+> -	rcu_read_lock();
+> -	spin_unlock(&dentry->d_lock);
+>  again:
+>  	parent = READ_ONCE(dentry->d_parent);
+>  	spin_lock(&parent->d_lock);
+> @@ -642,7 +640,6 @@ static struct dentry *__lock_parent(struct dentry *dentry)
+>  		spin_unlock(&parent->d_lock);
+>  		goto again;
+>  	}
+> -	rcu_read_unlock();
+>  	if (parent != dentry)
+>  		spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED);
+>  	else
+> @@ -657,7 +654,64 @@ static inline struct dentry *lock_parent(struct dentry *dentry)
+>  		return NULL;
+>  	if (likely(spin_trylock(&parent->d_lock)))
+>  		return parent;
+> -	return __lock_parent(dentry);
+> +	rcu_read_lock();
+> +	spin_unlock(&dentry->d_lock);
+> +	parent = __lock_parent(dentry);
+> +	rcu_read_unlock();
+> +	return parent;
+> +}
+> +
+> +/*
+> + * Lock a dentry for feeding it to __dentry_kill().
+> + * Called under rcu_read_lock() and dentry->d_lock; the former
+> + * guarantees that nothing we access will be freed under us.
+> + * Note that dentry is *not* protected from concurrent dentry_kill(),
+> + * d_delete(), etc.
+> + *
+> + * Return false if dentry is busy.  Otherwise, return true and have
+> + * that dentry's inode and parent both locked.
+> + */
+> +
+> +static bool lock_for_kill(struct dentry *dentry)
+> +{
+> +	struct inode *inode = dentry->d_inode;
+> +	struct dentry *parent = dentry->d_parent;
+> +
+> +	if (unlikely(dentry->d_lockref.count))
+> +		return false;
+> +
+> +	if (inode && unlikely(!spin_trylock(&inode->i_lock)))
+> +		goto slow;
+> +	if (dentry == parent)
+> +		return true;
+> +	if (likely(spin_trylock(&parent->d_lock)))
+> +		return true;
+> +
+> +	if (inode)
+> +		spin_unlock(&inode->i_lock);
+> +slow:
+> +	spin_unlock(&dentry->d_lock);
+> +
+> +	for (;;) {
+> +		if (inode)
+> +			spin_lock(&inode->i_lock);
+> +		parent = __lock_parent(dentry);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0aab25a831ba/disk-30523014.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9d1b7b8fdf8a/vmlinux-30523014.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e9b6822fcd5f/bzImage-30523014.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d31901503cbc/mount_0.gz
+We're under rcu here. Are we sure that this can't trigger rcu timeouts
+because we're spinning? Maybe there's a reason that's not an issue here.
 
-The issue was bisected to:
-
-commit d82dcd9e21b77d338dc4875f3d4111f0db314a7c
-Author: Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Fri Mar 31 12:32:18 2023 +0000
-
-    reiserfs: Add security prefix to xattr name in reiserfs_security_write()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=175ffa1f680000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14dffa1f680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10dffa1f680000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e57bfc56c27a9285a838@syzkaller.appspotmail.com
-Fixes: d82dcd9e21b7 ("reiserfs: Add security prefix to xattr name in reiserfs_security_write()")
-
-REISERFS (device loop0): using 3.5.x disk format
-REISERFS warning (device loop0): vs-13060 reiserfs_update_sd_size: stat data of object [1 2 0x0 SD] (nlink == 4) not found (pos 2)
-REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
-------------[ cut here ]------------
-kernel BUG at fs/reiserfs/item_ops.c:569!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5062 Comm: syz-executor395 Not tainted 6.6.0-syzkaller-15365-g305230142ae0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
-RIP: 0010:direntry_check_right+0x26b/0x280 fs/reiserfs/item_ops.c:569
-Code: df e9 38 ff ff ff 89 d9 80 e1 07 38 c1 0f 8c 3e ff ff ff be 04 00 00 00 48 89 df e8 7f 36 af ff e9 2c ff ff ff e8 d5 13 53 ff <0f> 0b e8 ce 13 53 ff 0f 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 f3
-RSP: 0018:ffffc90003afeed0 EFLAGS: 00010293
-RAX: ffffffff823ba82b RBX: 0000000000000020 RCX: ffff888079929dc0
-RDX: 0000000000000000 RSI: 0000000000000020 RDI: 0000000000000041
-RBP: 0000000000000021 R08: ffffffff823ba69e R09: ffffffff8235650d
-R10: 0000000000000004 R11: ffff888079929dc0 R12: 00000000fffffffe
-R13: 0000000000000000 R14: 0000000000000002 R15: ffff8880549c4120
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3e01595ed8 CR3: 0000000028720000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- check_right+0x4d1/0x770 fs/reiserfs/fix_node.c:355
- dc_check_balance_leaf fs/reiserfs/fix_node.c:1983 [inline]
- dc_check_balance fs/reiserfs/fix_node.c:2039 [inline]
- check_balance fs/reiserfs/fix_node.c:2086 [inline]
- fix_nodes+0x3ff3/0x8ce0 fs/reiserfs/fix_node.c:2636
- reiserfs_cut_from_item+0x466/0x2580 fs/reiserfs/stree.c:1740
- reiserfs_do_truncate+0x9b9/0x14c0 fs/reiserfs/stree.c:1971
- reiserfs_truncate_file+0x4da/0x820 fs/reiserfs/inode.c:2302
- reiserfs_file_release+0x8ca/0xaa0 fs/reiserfs/file.c:109
- __fput+0x3cc/0xa10 fs/file_table.c:394
- task_work_run+0x24a/0x300 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa34/0x2750 kernel/exit.c:871
- do_group_exit+0x206/0x2c0 kernel/exit.c:1021
- __do_sys_exit_group kernel/exit.c:1032 [inline]
- __se_sys_exit_group kernel/exit.c:1030 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7fe19c8650b9
-Code: Unable to access opcode bytes at 0x7fe19c86508f.
-RSP: 002b:00007ffdbbdc7968 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fe19c8650b9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fe19c8e0370 R08: ffffffffffffffb8 R09: 00007ffdbbdc7b88
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe19c8e0370
-R13: 0000000000000000 R14: 00007fe19c8e10e0 R15: 00007fe19c833980
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:direntry_check_right+0x26b/0x280 fs/reiserfs/item_ops.c:569
-Code: df e9 38 ff ff ff 89 d9 80 e1 07 38 c1 0f 8c 3e ff ff ff be 04 00 00 00 48 89 df e8 7f 36 af ff e9 2c ff ff ff e8 d5 13 53 ff <0f> 0b e8 ce 13 53 ff 0f 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 f3
-RSP: 0018:ffffc90003afeed0 EFLAGS: 00010293
-RAX: ffffffff823ba82b RBX: 0000000000000020 RCX: ffff888079929dc0
-RDX: 0000000000000000 RSI: 0000000000000020 RDI: 0000000000000041
-RBP: 0000000000000021 R08: ffffffff823ba69e R09: ffffffff8235650d
-R10: 0000000000000004 R11: ffff888079929dc0 R12: 00000000fffffffe
-R13: 0000000000000000 R14: 0000000000000002 R15: ffff8880549c4120
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3e01595ed8 CR3: 0000000028720000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+That spin_lock_nested(&dentry->d_lock, DENTRY_D_LOCK_NESTED) in
+__lock_parent() is there for the sake of lockdep to verify that the
+parent lock is always aqcuired before the child lock?
 
