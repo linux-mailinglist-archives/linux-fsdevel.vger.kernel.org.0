@@ -1,204 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-2506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0DF87E6AEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 14:04:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CC47E6B07
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 14:11:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1262E28170E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 13:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2278281107
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 13:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE8A12E76;
-	Thu,  9 Nov 2023 13:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8131A27E;
+	Thu,  9 Nov 2023 13:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OCN1jmCB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFH82BDq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319BC19450
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 13:04:37 +0000 (UTC)
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71E362D7C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 05:04:37 -0800 (PST)
-Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-45d8c405696so308274137.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 05:04:37 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6BB18C29
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 13:11:45 +0000 (UTC)
+Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9DA1FEB;
+	Thu,  9 Nov 2023 05:11:45 -0800 (PST)
+Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-7ba170ac211so319976241.2;
+        Thu, 09 Nov 2023 05:11:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699535076; x=1700139876; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rJHV5wjvEmu0+H0pswwKbUsYcGzXtjcRUmurBVcTMsY=;
-        b=OCN1jmCBXsiBSD+mwIzfmHx5YKhJ66D9CNptirK9Mcc9yOFraci2K5ZY5A4eZm+4Oa
-         CdINqhxA9XFRmiD/scENxGkc1pjhx2ZoFiSCJPP6697Rrhl9Xm1K+do+qVR9K+uPdBZG
-         ZCyAMLjFX5ucuWvH1nivqWmz/kZCwLVTkbwk7FF5sjDbMFFPL+bbnxBcRbDKiAu6WQ83
-         NyIw6UEJWxmg+JKyYGQxXwwmWw8sAJkKApFG8HuT78d8k8cAFSSIR/LI7tKCJ37NCRY+
-         UJ1Bpks+mp1pCaWi9PseRcd6KO08IYr3zLYSQvSzTDI+ibyRjwOVBeJ2qlJNCBzWfPYV
-         CQ1w==
+        d=gmail.com; s=20230601; t=1699535504; x=1700140304; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EvkssMDeIaGaw47ancvBHINlm0zu53iwpqFripVzOlY=;
+        b=JFH82BDq/jeLNPTqZWuVZrQqzLaQlc8ZLmnCWqzh4Q9PTeLcKuShwr9fboOHaJtsMn
+         apoKWjYR4j8TyGXzL1Gb39oJ3Mj3IGnQiphh29RrnZwVOEaunsEWoWMvIHKIIUkGAgDW
+         0CFo88v44lbzEsbKTun34RLF0A+IZuP23v/gw4WtdmZ3ePxMkvbl7Z69cl6rE62cFMoz
+         t1CpOraJS+KlJfpLzjMB81LJGO0nfTqslnJJdRPLVZoVRndCL348eCs2uTgQmI9LHR2/
+         NhSAlWmKdoYzkf5H8p8pWWYu9JMQqyeEUkhUq+M9XGWV/nxy1Va3AWruxqJGOykhdWvj
+         8PSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699535076; x=1700139876;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rJHV5wjvEmu0+H0pswwKbUsYcGzXtjcRUmurBVcTMsY=;
-        b=Yft4DbP1cVbTC6FXIgsQrpYrUAAExjN9SfhwHyWBd15Y5afCP47B4tDHlsWDjr/yEG
-         cKfQaD8x/8Zf1diUSXhoA8LYHHn3U6d7X4QiG5vaNxMqNfZyNx18mgIdzNPBAOplchH1
-         Wiyuo/+tn0Ae7ZwOsq6k7i4X5jTDdwg30UuirOnCvKcMNhgoezMFVklvr8xJKyoP2RHx
-         +PjVXmBF3zh2NWDxJEQLXh4cVEtR8bnmLKJjOgkVrML7i0O67uliCaR2KyLM4WYuZ2AI
-         6rvQmbcaUxtBFjIu2ZehZQeq2j8QLqzDENCfSRaWmZgWVngjTtFrsa3OqhevVqETplHA
-         i91g==
-X-Gm-Message-State: AOJu0Yyy670aRojlnmW0pAjCylusSdPBGfgX4QljafA4TVIo/VvrQXjQ
-	TlCkKihnU1H6plEZDxxh7mWIeBJ1Jfy/SRIS01LLxEQpD/rMihImY2U=
-X-Google-Smtp-Source: AGHT+IG9nwtGQRIOzqK10AkgRk7c+flhGsr/w/ZJgOnvHz+uB1IeZ5JtclgUH4I84oq/WNIfY/7UjG0NLcht5wwj2yQ=
-X-Received: by 2002:a1f:6e4e:0:b0:49d:fab:fa37 with SMTP id
- j75-20020a1f6e4e000000b0049d0fabfa37mr1381042vkc.4.1699535076016; Thu, 09 Nov
- 2023 05:04:36 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699535504; x=1700140304;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EvkssMDeIaGaw47ancvBHINlm0zu53iwpqFripVzOlY=;
+        b=iO07aQn0RyJ1CgfC0yjSTx/MYgMGKtyT97idrOJH9z5NYWfGTswwqP00YBoPykgnp1
+         wJJB7ceNKNlwKXbo5eTqBF2jp8DFTGYwgq3WSW+jHTg2kIRJo2Q6/4JM0040KwW9egaB
+         SQ6Bpcde63sg2cULAh3otrS7onriMKfQpYwbbfIP6rmdPT41yy0CM4ydq544rr09wjEe
+         j+lJW1ADi4wIbjk89BqyjZ7cSxhveXwVBP854iMLshphCN/xRo9YrIAIz2ldk3XTQjwq
+         7mgIjqulZVqMmyqvy9p/q0V6owt/wd9hpsj6v74cprSYNsSnH+1rwcpwjGPg2XPkizqE
+         OuEg==
+X-Gm-Message-State: AOJu0YxdBSmZPYFweT7JxwpQJzaJBYAjrBOZBU3+CGJyICK4m6RgBMTj
+	pQTPMObi6bhiO61/Zu2nqH90KJwvubRDFejpyubYXbWMgjw=
+X-Google-Smtp-Source: AGHT+IHNxCrVzzKqd6b0wdGufR0o6T6sn4oZ6aN0+VTd8EvYMCGFK2EgjaRk0MRIotBC6zBg0Idv04qxZNhnXnervG8=
+X-Received: by 2002:a05:6102:109d:b0:45e:461e:e59c with SMTP id
+ s29-20020a056102109d00b0045e461ee59cmr4502569vsr.34.1699535504188; Thu, 09
+ Nov 2023 05:11:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 9 Nov 2023 18:34:24 +0530
-Message-ID: <CA+G9fYue-dV7t-NrOhWwGshvyboXjb2B6HpCDVDe3bgG7fbnsg@mail.gmail.com>
-Subject: selftests: memfd: run_fuse_test.sh - fuse_evict_inode -
- fs/fuse/inode.c:162 - panic
-To: linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, regressions@lists.linux.dev
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Krister Johansen <kjlx@templeofstupid.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
+References: <20231106173903.1734114-1-willy@infradead.org> <20231106173903.1734114-12-willy@infradead.org>
+In-Reply-To: <20231106173903.1734114-12-willy@infradead.org>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Thu, 9 Nov 2023 22:11:27 +0900
+Message-ID: <CAKFNMomYhk2D6F9=mee4=H_QtvrfWYYSsiXrKjCms8pz61xhAQ@mail.gmail.com>
+Subject: Re: [PATCH 11/35] nilfs2: Convert nilfs_page_mkwrite() to use a folio
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Following kernel panic noticed while running selftests: memfd: run_fuse_test.sh
-on arm64 Juno-r2 and x86 devices running Linux next-20231109.
+On Tue, Nov 7, 2023 at 2:39=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
+>
+> Using the new folio APIs saves seven hidden calls to compound_head().
+>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/nilfs2/file.c | 28 +++++++++++++++-------------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I'm still in the middle of reviewing this series, but I had one
+question in a relevant part outside of this patch, so I'd like to ask
+you a question.
 
-log:
----
-# timeout set to 45
-# selftests: memfd: run_fuse_test.sh
-# opening: ./mnt/memfd
-# fuse: DONE
-[ 1931.860330] Unable to handle kernel paging request at virtual
-address 005a5a5a5a5a5a5a
-[ 1931.868645] Mem abort info:
-[ 1931.871505]   ESR = 0x0000000096000021
-[ 1931.875311]   EC = 0x25: DABT (current EL), IL = 32 bits
-[ 1931.880805]   SET = 0, FnV = 0
-[ 1931.883924]   EA = 0, S1PTW = 0
-[ 1931.887563]   FSC = 0x21: alignment fault
-[ 1931.891618] Data abort info:
-[ 1931.894542]   ISV = 0, ISS = 0x00000021, ISS2 = 0x00000000
-[ 1931.900219]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[ 1931.905305]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[ 1931.910692] [005a5a5a5a5a5a5a] address between user and kernel address ranges
-[ 1931.918091] Internal error: Oops: 0000000096000021 [#1] PREEMPT SMP
-[ 1931.924375] Modules linked in: gpio_sim onboard_usb_hub tda998x
-hdlcd crct10dif_ce cec drm_dma_helper dm_mod [last unloaded:
-gpio_mockup]
-[ 1931.936789] CPU: 1 PID: 20739 Comm: fusermount Not tainted
-6.6.0-next-20231109 #1
-[ 1931.944295] Hardware name: ARM Juno development board (r2) (DT)
-[ 1931.950224] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 1931.957205] pc : fuse_evict_inode
-(arch/arm64/include/asm/atomic_ll_sc.h:96 (discriminator 3)
-arch/arm64/include/asm/atomic.h:51 (discriminator 3)
-include/linux/atomic/atomic-arch-fallback.h:944 (discriminator 3)
-include/linux/atomic/atomic-instrumented.h:401 (discriminator 3)
-include/linux/refcount.h:272 (discriminator 3)
-include/linux/refcount.h:315 (discriminator 3)
-include/linux/refcount.h:333 (discriminator 3) fs/fuse/inode.c:137
-(discriminator 3) fs/fuse/inode.c:166 (discriminator 3))
-[ 1931.961586] lr : fuse_evict_inode (fs/fuse/inode.c:162)
-[ 1931.965868] sp : ffff80008792ba90
-[ 1931.969189] x29: ffff80008792ba90 x28: ffff000800b58040 x27: 0000000000000000
-[ 1931.976358] x26: 0000000000000000 x25: ffff800080508f98 x24: ffff80008316a008
-[ 1931.983519] x23: ffff80008316a008 x22: ffff80008424a020 x21: ffff00082a514c00
-[ 1931.990679] x20: 5a5a5a5a5a5a5a5a x19: ffff000838828780 x18: 0000000000000000
-[ 1931.997840] x17: ffff80008050e610 x16: ffff80008050e5bc x15: ffff80008050e3e8
-[ 1932.005003] x14: ffff80008050df10 x13: ffff800080769c60 x12: ffff8000851f6388
-[ 1932.012165] x11: 0000000000000645 x10: 0000000000000645 x9 : ffff800081c0e0b4
-[ 1932.019332] x8 : ffff80008792b988 x7 : 0000000000000000 x6 : ffff800084a75fe8
-[ 1932.026495] x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008424a968
-[ 1932.033659] x2 : 0000000000000002 x1 : ffff000800b58040 x0 : 0000000000000001
-[ 1932.040820] Call trace:
-[ 1932.043272] fuse_evict_inode
-(arch/arm64/include/asm/atomic_ll_sc.h:96 (discriminator 3)
-arch/arm64/include/asm/atomic.h:51 (discriminator 3)
-include/linux/atomic/atomic-arch-fallback.h:944 (discriminator 3)
-include/linux/atomic/atomic-instrumented.h:401 (discriminator 3)
-include/linux/refcount.h:272 (discriminator 3)
-include/linux/refcount.h:315 (discriminator 3)
-include/linux/refcount.h:333 (discriminator 3) fs/fuse/inode.c:137
-(discriminator 3) fs/fuse/inode.c:166 (discriminator 3))
-[ 1932.047296] evict (fs/inode.c:669)
-[ 1932.050279] iput_final (fs/inode.c:1776)
-[ 1932.053694] iput.part.0 (fs/inode.c:1803)
-[ 1932.057280] iput (fs/inode.c:1803)
-[ 1932.060085] dentry_unlink_inode (fs/dcache.c:402)
-[ 1932.064281] __dentry_kill (arch/arm64/include/asm/current.h:19
-arch/arm64/include/asm/preempt.h:47 fs/dcache.c:610)
-[ 1932.067956] shrink_dentry_list (include/linux/list.h:373
-(discriminator 2) fs/dcache.c:1179 (discriminator 2))
-[ 1932.072067] shrink_dcache_parent (fs/dcache.c:1652)
-[ 1932.076433] shrink_dcache_for_umount (fs/dcache.c:1682 fs/dcache.c:1698)
-[ 1932.081062] generic_shutdown_super (fs/super.c:647)
-[ 1932.085518] kill_anon_super (fs/super.c:1254)
-[ 1932.089277] fuse_kill_sb_anon (fs/fuse/fuse_i.h:895 fs/fuse/inode.c:1912)
-[ 1932.093298] deactivate_locked_super (fs/super.c:489)
-[ 1932.097753] deactivate_super (fs/super.c:522)
-[ 1932.101599] cleanup_mnt (fs/namespace.c:139 fs/namespace.c:1257)
-[ 1932.105097] __cleanup_mnt (fs/namespace.c:1264)
-[ 1932.108680] task_work_run (kernel/task_work.c:182)
-[ 1932.112266] do_notify_resume (include/linux/resume_user_mode.h:49
-arch/arm64/kernel/signal.c:1305)
-[ 1932.116283] el0_svc (arch/arm64/kernel/entry-common.c:137
-arch/arm64/kernel/entry-common.c:144
-arch/arm64/kernel/entry-common.c:679)
-[ 1932.119345] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:697)
-[ 1932.123710] el0t_64_sync (arch/arm64/kernel/entry.S:595)
-[ 1932.127383] Code: f9026a7f 17ffffd9 52800020 f9800291 (885f7e81)
-All code
-========
-   0: f9026a7f str xzr, [x19, #1232]
-   4: 17ffffd9 b 0xffffffffffffff68
-   8: 52800020 mov w0, #0x1                    // #1
-   c: f9800291 prfm pstl1strm, [x20]
-  10:* 885f7e81 ldxr w1, [x20] <-- trapping instruction
+In block_page_mkwrite() that nilfs_page_mkwrite() calls,
+__block_write_begin_int() was called with the range using
+folio_size(), as shown below:
 
-Code starting with the faulting instruction
-===========================================
-   0: 885f7e81 ldxr w1, [x20]
-[ 1932.133486] ---[ end trace 0000000000000000 ]---
-[ 1932.138111] Kernel panic - not syncing: Oops: Fatal exception
-[ 1932.143867] SMP: stopping secondary CPUs
-[ 1932.148008] Kernel Offset: disabled
-[ 1932.151498] CPU features: 0x1,0000020c,3c020000,0100421b
-[ 1932.156820] Memory Limit: none
-[ 1932.159880] ---[ end Kernel panic - not syncing: Oops: Fatal exception ]---
+        end =3D folio_size(folio);
+        /* folio is wholly or partially inside EOF */
+        if (folio_pos(folio) + end > size)
+                end =3D size - folio_pos(folio);
 
+        ret =3D __block_write_begin_int(folio, 0, end, get_block, NULL);
+        ...
 
-Links:
-- https://lkft.validation.linaro.org/scheduler/job/7006578#L6164
-- https://lkft.validation.linaro.org/scheduler/job/7006482#L9235
+On the other hand, __block_write_begin_int() takes a folio as an
+argument, but uses a PAGE_SIZE-based remainder calculation and BUG_ON
+checks:
 
-metadata:
-git_ref: master
-git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-git_sha: b622d91ca201bf97582e9b09ebbaab005ecee86f
-git_describe: next-20231109
-kernel_version: 6.6.0
-kernel-config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2Xv92VPrzXNNmQil9l8bJV2RQHs/config
-artifact-location:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2Xv92VPrzXNNmQil9l8bJV2RQHs/
-toolchain: gcc-13
+int __block_write_begin_int(struct folio *folio, loff_t pos, unsigned len,
+                get_block_t *get_block, const struct iomap *iomap)
+{
+        unsigned from =3D pos & (PAGE_SIZE - 1);
+        unsigned to =3D from + len;
+        ...
+        BUG_ON(from > PAGE_SIZE);
+        BUG_ON(to > PAGE_SIZE);
+        ...
 
+So, it looks like this function causes a kernel BUG if it's called
+from block_page_mkwrite() and folio_size() exceeds PAGE_SIZE.
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Is this constraint intentional or temporary in folio conversions ?
+
+Regards,
+Ryusuke Konishi
+
+>
+> diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+> index 740ce26d1e76..bec33b89a075 100644
+> --- a/fs/nilfs2/file.c
+> +++ b/fs/nilfs2/file.c
+> @@ -45,34 +45,36 @@ int nilfs_sync_file(struct file *file, loff_t start, =
+loff_t end, int datasync)
+>  static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
+>  {
+>         struct vm_area_struct *vma =3D vmf->vma;
+> -       struct page *page =3D vmf->page;
+> +       struct folio *folio =3D page_folio(vmf->page);
+>         struct inode *inode =3D file_inode(vma->vm_file);
+>         struct nilfs_transaction_info ti;
+> +       struct buffer_head *bh, *head;
+>         int ret =3D 0;
+>
+>         if (unlikely(nilfs_near_disk_full(inode->i_sb->s_fs_info)))
+>                 return VM_FAULT_SIGBUS; /* -ENOSPC */
+>
+>         sb_start_pagefault(inode->i_sb);
+> -       lock_page(page);
+> -       if (page->mapping !=3D inode->i_mapping ||
+> -           page_offset(page) >=3D i_size_read(inode) || !PageUptodate(pa=
+ge)) {
+> -               unlock_page(page);
+> +       folio_lock(folio);
+> +       if (folio->mapping !=3D inode->i_mapping ||
+> +           folio_pos(folio) >=3D i_size_read(inode) ||
+> +           !folio_test_uptodate(folio)) {
+> +               folio_unlock(folio);
+>                 ret =3D -EFAULT;  /* make the VM retry the fault */
+>                 goto out;
+>         }
+>
+>         /*
+> -        * check to see if the page is mapped already (no holes)
+> +        * check to see if the folio is mapped already (no holes)
+>          */
+> -       if (PageMappedToDisk(page))
+> +       if (folio_test_mappedtodisk(folio))
+>                 goto mapped;
+>
+> -       if (page_has_buffers(page)) {
+> -               struct buffer_head *bh, *head;
+> +       head =3D folio_buffers(folio);
+> +       if (head) {
+>                 int fully_mapped =3D 1;
+>
+> -               bh =3D head =3D page_buffers(page);
+> +               bh =3D head;
+>                 do {
+>                         if (!buffer_mapped(bh)) {
+>                                 fully_mapped =3D 0;
+> @@ -81,11 +83,11 @@ static vm_fault_t nilfs_page_mkwrite(struct vm_fault =
+*vmf)
+>                 } while (bh =3D bh->b_this_page, bh !=3D head);
+>
+>                 if (fully_mapped) {
+> -                       SetPageMappedToDisk(page);
+> +                       folio_set_mappedtodisk(folio);
+>                         goto mapped;
+>                 }
+>         }
+> -       unlock_page(page);
+> +       folio_unlock(folio);
+>
+>         /*
+>          * fill hole blocks
+> @@ -105,7 +107,7 @@ static vm_fault_t nilfs_page_mkwrite(struct vm_fault =
+*vmf)
+>         nilfs_transaction_commit(inode->i_sb);
+>
+>   mapped:
+> -       wait_for_stable_page(page);
+> +       folio_wait_stable(folio);
+>   out:
+>         sb_end_pagefault(inode->i_sb);
+>         return vmf_fs_error(ret);
+> --
+> 2.42.0
+>
 
