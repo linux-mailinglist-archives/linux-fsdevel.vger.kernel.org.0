@@ -1,116 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-2657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B407E7426
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 23:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9164F7E7439
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 23:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF0D28166C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413C1281094
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 22:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E6F38FA1;
-	Thu,  9 Nov 2023 22:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3EB38FA6;
+	Thu,  9 Nov 2023 22:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WVG0TMVl"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JPjB1Vgr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2590238F97
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 22:06:54 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 493D14206
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 14:06:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699567613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vTCrETe33lMmrS3iamQBvHr88tXqZxqdutyVeBzQWY0=;
-	b=WVG0TMVlpnI77ZLkf7rXQqwKFFm6vwa2Hm/RvfiwvBYNsxpHzlA1CWX05jRuhk5eGDSQ1S
-	KowFXL6SqKta3/jKIh+aCFAZoHDPtxYkBhc3uyr6dG4Hzw8qa7ofgU3fv0GSt3YSSvFFcP
-	6iiMtVYFq9nzYmVx/UuDVZl1lYqFP0c=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-Goh8HWQaMEyXDt1PmNGdJw-1; Thu,
- 09 Nov 2023 17:06:50 -0500
-X-MC-Unique: Goh8HWQaMEyXDt1PmNGdJw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0CE3C1C068C1;
-	Thu,  9 Nov 2023 22:06:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.13])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 38367C1290F;
-	Thu,  9 Nov 2023 22:06:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <6fadc6aa-4078-4f12-a4c7-235267d6e0b1@auristor.com>
-References: <6fadc6aa-4078-4f12-a4c7-235267d6e0b1@auristor.com> <20231109154004.3317227-1-dhowells@redhat.com> <20231109154004.3317227-2-dhowells@redhat.com>
-To: Jeffrey E Altman <jaltman@auristor.com>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/41] rxrpc: Fix RTT determination to use PING ACKs as a source
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B80038F97
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 22:11:46 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F79E1FF6;
+	Thu,  9 Nov 2023 14:11:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tRJ5cgcgY6rhfYTgPiiME6UbrPY/sU/021bhi9QLbcw=; b=JPjB1VgrnFh7mHgnK2Dquut/cc
+	iQY/Jt7D1UBinDdZ+SALNeDAbdzIx/WzHAZF+r7wc6FGQABqyugVQj02q+bOuTlpNEGTegeidRqzN
+	tR0CC4+68Wb5cKcrSQjznFZu1YmM+o4sF3DI3ZWhHjeaZzDJh8M3VXJg0zrTV0DlB8KL/76A6EA4m
+	0cOOqDJgUPqHiIzt4iAXb5bbAxEwm2a1dDAs+/6ub+CAZ/pDfy9Sp3lsnA8F9Ybihr74rkUncxQbW
+	XFOK2d2Le7WhNuezl8cwhRsbSS/6+YfwWsBtIDMM1gHAjkOO0gEqaYZetqYfK2fk2XuaV3qfPeVZQ
+	IHRzwBzw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r1DFU-00Dbab-0h;
+	Thu, 09 Nov 2023 22:11:40 +0000
+Date: Thu, 9 Nov 2023 22:11:40 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	Abhi Das <adas@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: RESOLVE_CACHED final path component fix
+Message-ID: <20231109221140.GJ1957730@ZenIV>
+References: <20231109190844.2044940-1-agruenba@redhat.com>
+ <20231109220018.GI1957730@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3327952.1699567608.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 09 Nov 2023 22:06:48 +0000
-Message-ID: <3327953.1699567608@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231109220018.GI1957730@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-I'm going to drop this patch from this series for now and send it separate=
-ly.
+On Thu, Nov 09, 2023 at 10:00:18PM +0000, Al Viro wrote:
+> On Thu, Nov 09, 2023 at 08:08:44PM +0100, Andreas Gruenbacher wrote:
+> > Jens,
+> > 
+> > since your commit 99668f618062, applications can request cached lookups
+> > with the RESOLVE_CACHED openat2() flag.  When adding support for that in
+> > gfs2, we found that this causes the ->permission inode operation to be
+> > called with the MAY_NOT_BLOCK flag set for directories along the path,
+> > which is good, but the ->permission check on the final path component is
+> > missing that flag.  The filesystem will then sleep when it needs to read
+> > in the ACL, for example.
+> > 
+> > This doesn't look like the intended RESOLVE_CACHED behavior.
+> > 
+> > The file permission checks in path_openat() happen as follows:
+> > 
+> > (1) link_path_walk() -> may_lookup() -> inode_permission() is called for
+> > each but the final path component. If the LOOKUP_RCU nameidata flag is
+> > set, may_lookup() passes the MAY_NOT_BLOCK flag on to
+> > inode_permission(), which passes it on to the permission inode
+> > operation.
+> > 
+> > (2) do_open() -> may_open() -> inode_permission() is called for the
+> > final path component. The MAY_* flags passed to inode_permission() are
+> > computed by build_open_flags(), outside of do_open(), and passed down
+> > from there. The MAY_NOT_BLOCK flag doesn't get set.
+> > 
+> > I think we can fix this in build_open_flags(), by setting the
+> > MAY_NOT_BLOCK flag when a RESOLVE_CACHED lookup is requested, right
+> > where RESOLVE_CACHED is mapped to LOOKUP_CACHED as well.
+> 
+> No.  This will expose ->permission() instances to previously impossible
+> cases of MAY_NOT_BLOCK lookups, and we already have enough trouble
+> in that area.  See RCU pathwalk patches I posted last cycle; I'm
+> planning to rebase what still needs to be rebased and feed the
+> fixes into mainline, but that won't happen until the end of this
+> week *AND* ->permission()-related part of code audit will need
+> to be repeated and extended.
+> 
+> Until then - no, with the side of fuck, no.
 
-> I do not believe the ack_reason matters within rxrpc_input_ack(). As lon=
-g as
-> the acked_serial is non-zero,
-> rxrpc_complete_rtt_probe() can be called to attempt to compute an RTT.  =
- If
-> there is an exact match for the
-> acked_serial then an RTT can be computed and if acked_serial is later th=
-an the
-> pending rtt probe, the probe
-> can be abandoned with the following caveats.
-> =
+Note that it's not just "->permission() might get called in RCU mode with
+combination of flags it never had seen before"; it actually would be
+called with MAY_NOT_BLOCK and without rcu_read_lock() held.
 
-> 1. Receiving an acked_serial that is later than the serial of the
->    transmitted probe indicates that a packet
->    transmitted after the probe was received first.  Or that reordering
->    of the transmitted packets occurred.
->    Or that the probe was never received by the peer; or that the peer's
->    response to the probe was lost in
->    transit.
-> 2. The serial number namespace is unsigned 32-bit shared across all of
->    the call channels of the associated
->    rx connection.  As the serial numbers will wrap the use of after()
->    within rxrpc_complete_rtt_probe to
->    compare their values is questionable.   If serial numbers will be
->    compared in this manner then they
->    need to be locally tracked and compared as unsigned 64-bit values
->    where only the low 32-bits are
->    transmitted on the wire and any wire serial number equal to zero is
->    ignored.
-
-I do ignore ack.serial =3D=3D 0 for this purpose.
-
-I'm not sure how expanding it internally to 64-bits actually helps since t=
-he
-upper 32 bits is not visible to the peer.
-
-David
-
+Which means that it can't make the usual assumptions about the objects
+not getting freed under it in such mode.  Sure, the inode itself is
+pinned in your new case, but anything that goes
+	if !MAY_NOT_BLOCK
+		grab a spinlock
+		grab a reference to X from inode
+		drop spinlock
+		use X, it's pinned down
+		drop a reference to X
+	else
+		READ_ONCE the reference to X
+		use X, its freeing is RCU-delayed
+would get screwed.  And that would need to be audited for all instances
+of ->permission() in the tree, along with all weird shit they might be
+pulling off.
 
