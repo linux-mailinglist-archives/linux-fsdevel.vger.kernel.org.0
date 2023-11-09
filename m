@@ -1,91 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-2617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A4F7E713F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 19:12:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B07C7E7141
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 19:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B1F281157
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AF3281108
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 18:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D552E341BF;
-	Thu,  9 Nov 2023 18:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F253588A;
+	Thu,  9 Nov 2023 18:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bhSZeMsZ"
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="i+4UJ10y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C2934183
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 18:12:07 +0000 (UTC)
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 828B03AB2
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 10:12:06 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-54366784377so1826023a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 10:12:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1699553525; x=1700158325; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uuevmYRRIdKxNZNfuKSveHcyymGTQi0WWKC3jfrfV2g=;
-        b=bhSZeMsZ9D+YmvK+nLhR1simIZefrAcAL7ilYiysUSonrjqz2ZUNM5GpezH8t0HHLQ
-         UAEtetl6X3tjGqQAoi0kElbSmGFPaGfAMMMsLmPzdaYL/x/6ZBUA5aFQpr0aMLfawmWL
-         H4iDsQ1FNRWvwu+b4dEVlP9Qhja5xdWhYm0l8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699553525; x=1700158325;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uuevmYRRIdKxNZNfuKSveHcyymGTQi0WWKC3jfrfV2g=;
-        b=ckbe2RnZ2IPb2ap3HPcp9N/L6Ap6noEsItBjM7MEJKQigTFVbaVbGwQaKny1IghF95
-         OAvb2paS+SgRrPZLRBECvQ3afJYnw6kwphHG44bsyaHkVYk9k4NxINSpKAP7Egvf2Yq8
-         Y+GQNmYrInha8ge4VaJeZhJoTVjnUMOSRrIVGfufEv/2cBr1n06bhATqi0XNBghZcKRB
-         hECLhVmC5mcUFizw/EwC4TS7sPUPny90JIJFuNVQ3tyCN61QkG/JXvZnxdIfNJfA7UbE
-         cOB2iZbWvuIZ/Fp8A6KTLnOxjkgPiESu8SozjxyaORyaLqSOoEbHRkutSG67c25FBZtd
-         7IcQ==
-X-Gm-Message-State: AOJu0YzXoee0HpLzBbxC93Bk62Ww4IWk/IQF1RScDmTrjCctMdwd33h2
-	r6RLHXtRlx90SQBoxoCGlRzR7VqvHL+RY5ucnnSA2Q==
-X-Google-Smtp-Source: AGHT+IGFbuG6NT1uKm9mcmOJF9gXS61cw9gq3O9cOKn3Eo1YgMa3zutvcdII7d9BjjAc5WPOzxmelg==
-X-Received: by 2002:a17:906:d553:b0:9dd:30c8:6f2f with SMTP id cr19-20020a170906d55300b009dd30c86f2fmr5488136ejc.27.1699553524820;
-        Thu, 09 Nov 2023 10:12:04 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id g2-20020a1709064e4200b009b2c9476726sm2826440ejw.21.2023.11.09.10.12.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Nov 2023 10:12:04 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-9e2838bcb5eso202166166b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 10:12:04 -0800 (PST)
-X-Received: by 2002:a17:906:ef03:b0:9dd:7574:5da9 with SMTP id
- f3-20020a170906ef0300b009dd75745da9mr5609054ejs.30.1699553524101; Thu, 09 Nov
- 2023 10:12:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AC2347A2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 18:12:20 +0000 (UTC)
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 971E43AB2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 10:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+	d=auristor.com; s=MDaemon; r=y; t=1699553538; x=1700158338;
+	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+	MIME-Version:User-Agent:Subject:Content-Language:To:Cc:
+	References:From:Organization:In-Reply-To:Content-Type; bh=MQhplA
+	e/sO9jH8ZxIC5uZQcGSA/WDm8kPbzRWk9x2z8=; b=i+4UJ10y9FcYR8zhB6jIUd
+	pFGccP22iE5+FZlc2nhbMDo9CUj2kzHjaPHx0Y2nMX437CB8hRNGZdRaQfQ/K541
+	qvOsHUkWhSdj0dDfszDwFwJF8Z4V/4LY+857MR5c4l5HrR+nC+zwpFysfSy5MgyM
+	wAlasPNEFIAvecCJBe6Wc=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 09 Nov 2023 13:12:18 -0500
+Received: from [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1b) 
+	with ESMTPSA id md5001003742340.msg; Thu, 09 Nov 2023 13:12:16 -0500
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 09 Nov 2023 13:12:16 -0500
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73d:b00:d023:ff5f:54c2:9ec4
+X-MDHelo: [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4]
+X-MDArrival-Date: Thu, 09 Nov 2023 13:12:16 -0500
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=1677793fa9=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
+Message-ID: <fb7a539a-9161-4ac6-a49c-16f48d8fe4d7@auristor.com>
+Date: Thu, 9 Nov 2023 13:12:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109061932.GA3181489@ZenIV> <20231109062056.3181775-1-viro@zeniv.linux.org.uk>
- <20231109062056.3181775-17-viro@zeniv.linux.org.uk> <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgapOW-HfnpE-UEfROxMB6ec84bDUDHcKWxyxp1v1o2Uw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 Nov 2023 10:11:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjN_=wV2QKUNS7bXr-Xx9QfWO_L8o1sZy2EMuwVxzneuw@mail.gmail.com>
-Message-ID: <CAHk-=wjN_=wV2QKUNS7bXr-Xx9QfWO_L8o1sZy2EMuwVxzneuw@mail.gmail.com>
-Subject: Re: [PATCH 17/22] don't try to cut corners in shrink_lock_dentry()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/41] afs: Handle the VIO abort explicitly
+Content-Language: en-US
+To: David Howells <dhowells@redhat.com>,
+ Marc Dionne <marc.dionne@auristor.com>
+Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20231109154004.3317227-1-dhowells@redhat.com>
+ <20231109154004.3317227-14-dhowells@redhat.com>
+From: Jeffrey E Altman <jaltman@auristor.com>
+Organization: AuriStor, Inc.
+In-Reply-To: <20231109154004.3317227-14-dhowells@redhat.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060009020505020306050909"
+X-MDCFSigsAdded: auristor.com
 
-On Thu, 9 Nov 2023 at 09:39, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+This is a cryptographically signed message in MIME format.
+
+--------------ms060009020505020306050909
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 11/9/2023 10:39 AM, David Howells wrote:
+> When processing the result of a call, handle the VIO abort specifically
+> rather than leaving it to a default case.  Rather than erroring out
+> unconditionally, see if there's another server if the volume has more than
+> one server available, otherwise return -EREMOTEIO.
 >
-> Can we rename this while at it?
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
+> ---
+>   fs/afs/rotate.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
 
-Never mind. I didn't notice that the thing disappears entirely in 22/22.
+OpenAFS fileservers can return VIO (112) either during an attempt to 
+load a vnode or to store a vnode. However, most IBM AFS derived cache 
+managers do not explicitly handle VIO errors and pass them to the vfs to 
+be interpreted as a local operating system error. For Linux that means 
+EHOSTDOWN. Therefore, AuriStorFS fileservers return UAEIO instead.
 
-Just ignore my blind ass.
+Please modify this patch to handle UAEIO the same as VIO.
 
-                Linus
+Thank you.
+
+Jeffrey Altman
+
+
+--------------ms060009020505020306050909
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
+MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
+xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
+fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
+EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
+9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
+IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
+gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
+eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
+WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
+utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
+Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
+a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
+AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
+Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
+wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
+15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
+o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
+3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
+VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
+CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
+dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
+L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
+5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
+dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
+eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
+YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
+dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
+Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
+dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
+bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
+CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
+bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
+0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
+6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
+QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
+Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
+db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
+rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
+UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
+p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
+MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
+A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
+ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTEwOTE4
+MTIwOFowLwYJKoZIhvcNAQkEMSIEILfIRV4bAONQEr0x3EDjNTYDsOZYjYQ4WrRig3RIBCRj
+MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
+MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
+AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
+dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
+AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEABoLF
+YPRdUkKFPrIAE5FlQ2nlxUxdLIe04Zr8169mzj9U4aKCNxJZX1Vchc8b0KyAKyG0Rg8k/Jm8
+8tnmpyzL3qlWOo32ARTw4zkusw363F+adXyyp9mtxxOyDRb9+HA5eUWUk/j/QROm+ucZlj6m
+MF+7msCfeiliy7IYenRjJoqt26XiTSzLD8jktXrTXs7mkGPI/JGiMB7HGTt8m77vE5i788Q0
+g0pk87KLVqHOk0IeWIeNpXOAyyKYczkttpXzplVxcmhkPFNwy20m4wC+JbMNPmuS05oVc01E
+wKO5p8hPz+1WvM0oPyC3bn1lsijmuZ9GZ6GJuK8WdjbUM2/EvwAAAAAAAA==
+--------------ms060009020505020306050909--
+
 
