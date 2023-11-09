@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-2575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D817E6DC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A36E7E6DCD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 16:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDCD3B21A3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:42:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE7A3B2146D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Nov 2023 15:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6D632C90;
-	Thu,  9 Nov 2023 15:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DA037172;
+	Thu,  9 Nov 2023 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FA6/L3y6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hEl6Z6yo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B532C82
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81723714F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 15:41:29 +0000 (UTC)
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A7A3A88
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:41:13 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29B61718
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 07:41:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699544473;
+	s=mimecast20190719; t=1699544487;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VaSmyeuqpIucFDHp6mQMoM/DxGHZmjfRDEONcw3Yp9E=;
-	b=FA6/L3y6h6wafNrt2Gej2rdPa8U1rQg+2lXQ2V5Cpmh2kf6Kh5ZF7jA8K6CEvffKFbf7J1
-	LrjJEoop8bKG/VXx2PR/ZB7e34f8BCN3KR3ChqMznd5gpz7II99SON27OoY1vLmdFiMjyr
-	//eWmJy8Lc00uUM6T0Qe3EWBnHkSCUk=
+	bh=6t8tdE8fU3HgyYVTv6Qhp6ao8beL9M3nm0ZF7eZfRh0=;
+	b=hEl6Z6yoO2C025GPu+ksP3Ume2my2PEaXKaBFeX1YaVSxOvDoamrwIpawdMwtZ1iMcCxlW
+	oTcRcjLaykF3ydl3+l0E1Um5Og49o1Z3E2W66Y6UCcLmaRS5G/GvDRgB1+W8vHJkIvM5Cp
+	LL+pXkaXEBCl1n1lOYx5c+L5ifjeasw=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-594-hM1l8p3mOkmppbKHim5QQQ-1; Thu, 09 Nov 2023 10:41:08 -0500
-X-MC-Unique: hM1l8p3mOkmppbKHim5QQQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-474-K9vUEzZFOqiPEEs3GYu1rA-1; Thu, 09 Nov 2023 10:41:26 -0500
+X-MC-Unique: K9vUEzZFOqiPEEs3GYu1rA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F10588D01C;
-	Thu,  9 Nov 2023 15:41:08 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0923E85A58B;
+	Thu,  9 Nov 2023 15:41:10 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.13])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9D76C25C1;
-	Thu,  9 Nov 2023 15:41:07 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 40A1440C6EB9;
+	Thu,  9 Nov 2023 15:41:09 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Marc Dionne <marc.dionne@auristor.com>
 Cc: David Howells <dhowells@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 34/41] afs: Make it possible to find the volumes that are using a server
-Date: Thu,  9 Nov 2023 15:39:57 +0000
-Message-ID: <20231109154004.3317227-35-dhowells@redhat.com>
+Subject: [PATCH 35/41] afs: Defer volume record destruction to a workqueue
+Date: Thu,  9 Nov 2023 15:39:58 +0000
+Message-ID: <20231109154004.3317227-36-dhowells@redhat.com>
 In-Reply-To: <20231109154004.3317227-1-dhowells@redhat.com>
 References: <20231109154004.3317227-1-dhowells@redhat.com>
 Precedence: bulk
@@ -65,410 +65,196 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Make it possible to find the afs_volume structs that are using an
-afs_server struct to aid in breaking volume callbacks.
-
-The way this is done is that each afs_volume already has an array of
-afs_server_entry records that point to the servers where that volume might
-be found.  An afs_volume backpointer and a list node is added to each entry
-and each entry is then added to an RCU-traversable list on the afs_server
-to which it points.
+Defer volume record destruction to a workqueue so that afs_put_volume()
+isn't going to run the destruction process in the callback workqueue whilst
+the server is holding up other clients whilst waiting for us to reply to a
+CB.CallBack notification RPC.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: linux-afs@lists.infradead.org
 ---
- fs/afs/cell.c        |   1 +
- fs/afs/internal.h    |  23 +++++----
- fs/afs/server.c      |   1 +
- fs/afs/server_list.c | 112 +++++++++++++++++++++++++++++++++++++++----
- fs/afs/vl_alias.c    |   2 +-
- fs/afs/volume.c      |  36 ++++++++------
- 6 files changed, 143 insertions(+), 32 deletions(-)
+ fs/afs/cell.c         |  2 +-
+ fs/afs/fs_operation.c |  2 +-
+ fs/afs/internal.h     |  3 ++-
+ fs/afs/super.c        |  7 +++----
+ fs/afs/vl_alias.c     |  6 +++---
+ fs/afs/volume.c       | 15 +++++++++------
+ 6 files changed, 19 insertions(+), 16 deletions(-)
 
 diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 988c2ac7cece..69716fc0ee36 100644
+index 69716fc0ee36..6b389f2bcd0c 100644
 --- a/fs/afs/cell.c
 +++ b/fs/afs/cell.c
-@@ -161,6 +161,7 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 	refcount_set(&cell->ref, 1);
- 	atomic_set(&cell->active, 0);
- 	INIT_WORK(&cell->manager, afs_manage_cell_work);
-+	spin_lock_init(&cell->vs_lock);
- 	cell->volumes = RB_ROOT;
- 	INIT_HLIST_HEAD(&cell->proc_volumes);
- 	seqlock_init(&cell->volume_lock);
+@@ -816,7 +816,7 @@ static void afs_manage_cell(struct afs_cell *cell)
+ 
+ final_destruction:
+ 	/* The root volume is pinning the cell */
+-	afs_put_volume(cell->net, cell->root_volume, afs_volume_trace_put_cell_root);
++	afs_put_volume(cell->root_volume, afs_volume_trace_put_cell_root);
+ 	cell->root_volume = NULL;
+ 	afs_put_cell(cell, afs_cell_trace_put_destroy);
+ }
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index 8c6d827f999d..10137681aa7d 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -265,7 +265,7 @@ int afs_put_operation(struct afs_operation *op)
+ 	}
+ 
+ 	afs_put_serverlist(op->net, op->server_list);
+-	afs_put_volume(op->net, op->volume, afs_volume_trace_put_put_op);
++	afs_put_volume(op->volume, afs_volume_trace_put_put_op);
+ 	key_put(op->key);
+ 	kfree(op);
+ 	return ret;
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 8410ec4d6035..a085492a7167 100644
+index a085492a7167..22cf782fe924 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -414,6 +414,7 @@ struct afs_cell {
- 	unsigned int		debug_id;
- 
- 	/* The volumes belonging to this cell */
-+	spinlock_t		vs_lock;	/* Lock for server->volumes */
- 	struct rb_root		volumes;	/* Tree of volumes on this server */
- 	struct hlist_head	proc_volumes;	/* procfs volume list */
- 	seqlock_t		volume_lock;	/* For volumes */
-@@ -564,6 +565,7 @@ struct afs_server {
- 	struct hlist_node	addr4_link;	/* Link in net->fs_addresses4 */
- 	struct hlist_node	addr6_link;	/* Link in net->fs_addresses6 */
- 	struct hlist_node	proc_link;	/* Link in net->fs_proc */
-+	struct list_head	volumes;	/* RCU list of afs_server_entry objects */
- 	struct work_struct	initcb_work;	/* Work for CB.InitCallBackState* */
- 	struct afs_server	*gc_next;	/* Next server in manager's list */
- 	time64_t		unuse_time;	/* Time at which last unused */
-@@ -605,12 +607,14 @@ struct afs_server {
-  */
- struct afs_server_entry {
- 	struct afs_server	*server;
-+	struct afs_volume	*volume;
-+	struct list_head	slink;		/* Link in server->volumes */
- };
- 
- struct afs_server_list {
- 	struct rcu_head		rcu;
--	afs_volid_t		vids[AFS_MAXTYPES]; /* Volume IDs */
- 	refcount_t		usage;
-+	bool			attached;	/* T if attached to servers */
- 	unsigned char		nr_servers;
- 	unsigned char		preferred;	/* Preferred server */
- 	unsigned short		vnovol_mask;	/* Servers to be skipped due to VNOVOL */
-@@ -623,10 +627,9 @@ struct afs_server_list {
-  * Live AFS volume management.
-  */
- struct afs_volume {
--	union {
--		struct rcu_head	rcu;
--		afs_volid_t	vid;		/* volume ID */
--	};
-+	struct rcu_head	rcu;
-+	afs_volid_t		vid;		/* The volume ID of this volume */
-+	afs_volid_t		vids[AFS_MAXTYPES]; /* All associated volume IDs */
- 	refcount_t		ref;
- 	time64_t		update_at;	/* Time at which to next update */
- 	struct afs_cell		*cell;		/* Cell to which belongs (pins ref) */
-@@ -1527,10 +1530,14 @@ static inline struct afs_server_list *afs_get_serverlist(struct afs_server_list
- }
- 
- extern void afs_put_serverlist(struct afs_net *, struct afs_server_list *);
--extern struct afs_server_list *afs_alloc_server_list(struct afs_cell *, struct key *,
--						     struct afs_vldb_entry *,
--						     u8);
-+struct afs_server_list *afs_alloc_server_list(struct afs_volume *volume,
-+					      struct key *key,
-+					      struct afs_vldb_entry *vldb);
- extern bool afs_annotate_server_list(struct afs_server_list *, struct afs_server_list *);
-+void afs_attach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *slist);
-+void afs_reattach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *slist,
-+				    struct afs_server_list *old);
-+void afs_detach_volume_from_servers(struct afs_volume *volume, struct afs_server_list *slist);
+@@ -636,6 +636,7 @@ struct afs_volume {
+ 	struct rb_node		cell_node;	/* Link in cell->volumes */
+ 	struct hlist_node	proc_link;	/* Link in cell->proc_volumes */
+ 	struct super_block __rcu *sb;		/* Superblock on which inodes reside */
++	struct work_struct	destructor;	/* Deferred destructor */
+ 	unsigned long		flags;
+ #define AFS_VOLUME_NEEDS_UPDATE	0	/* - T if an update needs performing */
+ #define AFS_VOLUME_UPDATING	1	/* - T if an update is in progress */
+@@ -1611,7 +1612,7 @@ extern struct afs_volume *afs_create_volume(struct afs_fs_context *);
+ extern int afs_activate_volume(struct afs_volume *);
+ extern void afs_deactivate_volume(struct afs_volume *);
+ extern struct afs_volume *afs_get_volume(struct afs_volume *, enum afs_volume_trace);
+-extern void afs_put_volume(struct afs_net *, struct afs_volume *, enum afs_volume_trace);
++void afs_put_volume(struct afs_volume *volume, enum afs_volume_trace reason);
+ extern int afs_check_volume_status(struct afs_volume *, struct afs_operation *);
  
  /*
-  * super.c
-diff --git a/fs/afs/server.c b/fs/afs/server.c
-index 9a524ca92636..811dbda88f9c 100644
---- a/fs/afs/server.c
-+++ b/fs/afs/server.c
-@@ -216,6 +216,7 @@ static struct afs_server *afs_alloc_server(struct afs_cell *cell,
- 	server->addr_version = alist->version;
- 	server->uuid = *uuid;
- 	rwlock_init(&server->fs_lock);
-+	INIT_LIST_HEAD(&server->volumes);
- 	INIT_WORK(&server->initcb_work, afs_server_init_callback_work);
- 	init_waitqueue_head(&server->probe_wq);
- 	INIT_LIST_HEAD(&server->probe_link);
-diff --git a/fs/afs/server_list.c b/fs/afs/server_list.c
-index b59896b1de0a..4d6369477f54 100644
---- a/fs/afs/server_list.c
-+++ b/fs/afs/server_list.c
-@@ -24,13 +24,13 @@ void afs_put_serverlist(struct afs_net *net, struct afs_server_list *slist)
- /*
-  * Build a server list from a VLDB record.
-  */
--struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
-+struct afs_server_list *afs_alloc_server_list(struct afs_volume *volume,
- 					      struct key *key,
--					      struct afs_vldb_entry *vldb,
--					      u8 type_mask)
-+					      struct afs_vldb_entry *vldb)
- {
- 	struct afs_server_list *slist;
- 	struct afs_server *server;
-+	unsigned int type_mask = 1 << volume->type;
- 	int ret = -ENOMEM, nr_servers = 0, i, j;
+diff --git a/fs/afs/super.c b/fs/afs/super.c
+index a01a0fb2cdbb..ae2d66a52add 100644
+--- a/fs/afs/super.c
++++ b/fs/afs/super.c
+@@ -381,8 +381,7 @@ static int afs_validate_fc(struct fs_context *fc)
+ 		ctx->key = key;
  
- 	for (i = 0; i < vldb->nr_servers; i++)
-@@ -44,15 +44,12 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
- 	refcount_set(&slist->usage, 1);
- 	rwlock_init(&slist->lock);
- 
--	for (i = 0; i < AFS_MAXTYPES; i++)
--		slist->vids[i] = vldb->vid[i];
--
- 	/* Make sure a records exists for each server in the list. */
- 	for (i = 0; i < vldb->nr_servers; i++) {
- 		if (!(vldb->fs_mask[i] & type_mask))
- 			continue;
- 
--		server = afs_lookup_server(cell, key, &vldb->fs_server[i],
-+		server = afs_lookup_server(volume->cell, key, &vldb->fs_server[i],
- 					   vldb->addr_version[i]);
- 		if (IS_ERR(server)) {
- 			ret = PTR_ERR(server);
-@@ -70,7 +67,7 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
- 				break;
- 		if (j < slist->nr_servers) {
- 			if (slist->servers[j].server == server) {
--				afs_put_server(cell->net, server,
-+				afs_put_server(volume->cell->net, server,
- 					       afs_server_trace_put_slist_isort);
- 				continue;
- 			}
-@@ -81,6 +78,7 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
+ 		if (ctx->volume) {
+-			afs_put_volume(ctx->net, ctx->volume,
+-				       afs_volume_trace_put_validate_fc);
++			afs_put_volume(ctx->volume, afs_volume_trace_put_validate_fc);
+ 			ctx->volume = NULL;
  		}
  
- 		slist->servers[j].server = server;
-+		slist->servers[j].volume = volume;
- 		slist->nr_servers++;
- 	}
+@@ -529,7 +528,7 @@ static void afs_destroy_sbi(struct afs_super_info *as)
+ {
+ 	if (as) {
+ 		struct afs_net *net = afs_net(as->net_ns);
+-		afs_put_volume(net, as->volume, afs_volume_trace_put_destroy_sbi);
++		afs_put_volume(as->volume, afs_volume_trace_put_destroy_sbi);
+ 		afs_unuse_cell(net, as->cell, afs_cell_trace_unuse_sbi);
+ 		put_net(as->net_ns);
+ 		kfree(as);
+@@ -615,7 +614,7 @@ static void afs_free_fc(struct fs_context *fc)
+ 	struct afs_fs_context *ctx = fc->fs_private;
  
-@@ -92,7 +90,7 @@ struct afs_server_list *afs_alloc_server_list(struct afs_cell *cell,
- 	return slist;
- 
- error_2:
--	afs_put_serverlist(cell->net, slist);
-+	afs_put_serverlist(volume->cell->net, slist);
- error:
- 	return ERR_PTR(ret);
- }
-@@ -127,3 +125,99 @@ bool afs_annotate_server_list(struct afs_server_list *new,
- 
- 	return true;
- }
-+
-+/*
-+ * Attach a volume to the servers it is going to use.
-+ */
-+void afs_attach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *slist)
-+{
-+	struct afs_server_entry *se, *pe;
-+	struct afs_server *server;
-+	struct list_head *p;
-+	unsigned int i;
-+
-+	spin_lock(&volume->cell->vs_lock);
-+
-+	for (i = 0; i < slist->nr_servers; i++) {
-+		se = &slist->servers[i];
-+		server = se->server;
-+
-+		list_for_each(p, &server->volumes) {
-+			pe = list_entry(p, struct afs_server_entry, slink);
-+			if (volume->vid <= pe->volume->vid)
-+				break;
-+		}
-+		list_add_tail_rcu(&se->slink, p);
-+	}
-+
-+	slist->attached = true;
-+	spin_unlock(&volume->cell->vs_lock);
-+}
-+
-+/*
-+ * Reattach a volume to the servers it is going to use when server list is
-+ * replaced.  We try to switch the attachment points to avoid rewalking the
-+ * lists.
-+ */
-+void afs_reattach_volume_to_servers(struct afs_volume *volume, struct afs_server_list *new,
-+				    struct afs_server_list *old)
-+{
-+	unsigned int n = 0, o = 0;
-+
-+	spin_lock(&volume->cell->vs_lock);
-+
-+	while (n < new->nr_servers || o < old->nr_servers) {
-+		struct afs_server_entry *pn = n < new->nr_servers ? &new->servers[n] : NULL;
-+		struct afs_server_entry *po = o < old->nr_servers ? &old->servers[o] : NULL;
-+		struct afs_server_entry *s;
-+		struct list_head *p;
-+		int diff;
-+
-+		if (pn && po && pn->server == po->server) {
-+			list_replace_rcu(&po->slink, &pn->slink);
-+			n++;
-+			o++;
-+			continue;
-+		}
-+
-+		if (pn && po)
-+			diff = memcmp(&pn->server->uuid, &po->server->uuid,
-+				      sizeof(pn->server->uuid));
-+		else
-+			diff = pn ? -1 : 1;
-+
-+		if (diff < 0) {
-+			list_for_each(p, &pn->server->volumes) {
-+				s = list_entry(p, struct afs_server_entry, slink);
-+				if (volume->vid <= s->volume->vid)
-+					break;
-+			}
-+			list_add_tail_rcu(&pn->slink, p);
-+			n++;
-+		} else {
-+			list_del_rcu(&po->slink);
-+			o++;
-+		}
-+	}
-+
-+	spin_unlock(&volume->cell->vs_lock);
-+}
-+
-+/*
-+ * Detach a volume from the servers it has been using.
-+ */
-+void afs_detach_volume_from_servers(struct afs_volume *volume, struct afs_server_list *slist)
-+{
-+	unsigned int i;
-+
-+	if (!slist->attached)
-+		return;
-+
-+	spin_lock(&volume->cell->vs_lock);
-+
-+	for (i = 0; i < slist->nr_servers; i++)
-+		list_del_rcu(&slist->servers[i].slink);
-+
-+	slist->attached = false;
-+	spin_unlock(&volume->cell->vs_lock);
-+}
+ 	afs_destroy_sbi(fc->s_fs_info);
+-	afs_put_volume(ctx->net, ctx->volume, afs_volume_trace_put_free_fc);
++	afs_put_volume(ctx->volume, afs_volume_trace_put_free_fc);
+ 	afs_unuse_cell(ctx->net, ctx->cell, afs_cell_trace_unuse_fc);
+ 	key_put(ctx->key);
+ 	kfree(ctx);
 diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
-index 43788d0c18e8..63e7ed324af9 100644
+index 63e7ed324af9..9f36e14f1c2d 100644
 --- a/fs/afs/vl_alias.c
 +++ b/fs/afs/vl_alias.c
-@@ -77,7 +77,7 @@ static int afs_compare_volume_slists(const struct afs_volume *vol_a,
- 	lb = rcu_dereference(vol_b->servers);
+@@ -156,7 +156,7 @@ static int afs_query_for_alias_one(struct afs_cell *cell, struct key *key,
+ 	/* And see if it's in the new cell. */
+ 	volume = afs_sample_volume(cell, key, pvol->name, pvol->name_len);
+ 	if (IS_ERR(volume)) {
+-		afs_put_volume(cell->net, pvol, afs_volume_trace_put_query_alias);
++		afs_put_volume(pvol, afs_volume_trace_put_query_alias);
+ 		if (PTR_ERR(volume) != -ENOMEDIUM)
+ 			return PTR_ERR(volume);
+ 		/* That volume is not in the new cell, so not an alias */
+@@ -174,8 +174,8 @@ static int afs_query_for_alias_one(struct afs_cell *cell, struct key *key,
+ 		rcu_read_unlock();
+ 	}
  
- 	for (i = 0; i < AFS_MAXTYPES; i++)
--		if (la->vids[i] != lb->vids[i])
-+		if (vol_a->vids[i] != vol_b->vids[i])
- 			return 0;
+-	afs_put_volume(cell->net, volume, afs_volume_trace_put_query_alias);
+-	afs_put_volume(cell->net, pvol, afs_volume_trace_put_query_alias);
++	afs_put_volume(volume, afs_volume_trace_put_query_alias);
++	afs_put_volume(pvol, afs_volume_trace_put_query_alias);
+ 	return ret;
+ }
  
- 	while (a < la->nr_servers && b < lb->nr_servers) {
 diff --git a/fs/afs/volume.c b/fs/afs/volume.c
-index 29d483c80281..25d2b44c7aa6 100644
+index 25d2b44c7aa6..1d3bd14dfa2f 100644
 --- a/fs/afs/volume.c
 +++ b/fs/afs/volume.c
-@@ -66,11 +66,11 @@ static void afs_remove_volume_from_cell(struct afs_volume *volume)
-  */
- static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
- 					   struct afs_vldb_entry *vldb,
--					   unsigned long type_mask)
-+					   struct afs_server_list **_slist)
- {
- 	struct afs_server_list *slist;
- 	struct afs_volume *volume;
--	int ret = -ENOMEM;
-+	int ret = -ENOMEM, i;
+@@ -11,6 +11,8 @@
  
- 	volume = kzalloc(sizeof(struct afs_volume), GFP_KERNEL);
- 	if (!volume)
-@@ -89,13 +89,16 @@ static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
+ static unsigned __read_mostly afs_volume_record_life = 60 * 60;
+ 
++static void afs_destroy_volume(struct work_struct *work);
++
+ /*
+  * Insert a volume into a cell.  If there's an existing volume record, that is
+  * returned instead with a ref held.
+@@ -85,6 +87,7 @@ static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
+ 
+ 	refcount_set(&volume->ref, 1);
+ 	INIT_HLIST_NODE(&volume->proc_link);
++	INIT_WORK(&volume->destructor, afs_destroy_volume);
+ 	rwlock_init(&volume->servers_lock);
  	rwlock_init(&volume->cb_v_break_lock);
  	memcpy(volume->name, vldb->name, vldb->name_len + 1);
- 
--	slist = afs_alloc_server_list(params->cell, params->key, vldb, type_mask);
-+	for (i = 0; i < AFS_MAXTYPES; i++)
-+		volume->vids[i] = vldb->vid[i];
-+
-+	slist = afs_alloc_server_list(volume, params->key, vldb);
- 	if (IS_ERR(slist)) {
- 		ret = PTR_ERR(slist);
- 		goto error_1;
- 	}
- 
--	refcount_set(&slist->usage, 1);
-+	*_slist = slist;
- 	rcu_assign_pointer(volume->servers, slist);
- 	trace_afs_volume(volume->vid, 1, afs_volume_trace_alloc);
- 	return volume;
-@@ -111,17 +114,19 @@ static struct afs_volume *afs_alloc_volume(struct afs_fs_context *params,
-  * Look up or allocate a volume record.
-  */
- static struct afs_volume *afs_lookup_volume(struct afs_fs_context *params,
--					    struct afs_vldb_entry *vldb,
--					    unsigned long type_mask)
-+					    struct afs_vldb_entry *vldb)
- {
-+	struct afs_server_list *slist;
- 	struct afs_volume *candidate, *volume;
- 
--	candidate = afs_alloc_volume(params, vldb, type_mask);
-+	candidate = afs_alloc_volume(params, vldb, &slist);
- 	if (IS_ERR(candidate))
- 		return candidate;
- 
- 	volume = afs_insert_volume_into_cell(params->cell, candidate);
--	if (volume != candidate)
-+	if (volume == candidate)
-+		afs_attach_volume_to_servers(volume, slist);
-+	else
- 		afs_put_volume(params->net, candidate, afs_volume_trace_put_cell_dup);
+@@ -127,7 +130,7 @@ static struct afs_volume *afs_lookup_volume(struct afs_fs_context *params,
+ 	if (volume == candidate)
+ 		afs_attach_volume_to_servers(volume, slist);
+ 	else
+-		afs_put_volume(params->net, candidate, afs_volume_trace_put_cell_dup);
++		afs_put_volume(candidate, afs_volume_trace_put_cell_dup);
  	return volume;
  }
-@@ -202,8 +207,7 @@ struct afs_volume *afs_create_volume(struct afs_fs_context *params)
- 		goto error;
- 	}
  
--	type_mask = 1UL << params->type;
--	volume = afs_lookup_volume(params, vldb, type_mask);
-+	volume = afs_lookup_volume(params, vldb);
- 
- error:
- 	kfree(vldb);
-@@ -215,14 +219,17 @@ struct afs_volume *afs_create_volume(struct afs_fs_context *params)
+@@ -217,8 +220,9 @@ struct afs_volume *afs_create_volume(struct afs_fs_context *params)
+ /*
+  * Destroy a volume record
   */
- static void afs_destroy_volume(struct afs_net *net, struct afs_volume *volume)
+-static void afs_destroy_volume(struct afs_net *net, struct afs_volume *volume)
++static void afs_destroy_volume(struct work_struct *work)
  {
-+	struct afs_server_list *slist = rcu_access_pointer(volume->servers);
-+
++	struct afs_volume *volume = container_of(work, struct afs_volume, destructor);
+ 	struct afs_server_list *slist = rcu_access_pointer(volume->servers);
+ 
  	_enter("%p", volume);
+@@ -229,7 +233,7 @@ static void afs_destroy_volume(struct afs_net *net, struct afs_volume *volume)
  
- #ifdef CONFIG_AFS_FSCACHE
- 	ASSERTCMP(volume->cache, ==, NULL);
- #endif
- 
-+	afs_detach_volume_from_servers(volume, slist);
+ 	afs_detach_volume_from_servers(volume, slist);
  	afs_remove_volume_from_cell(volume);
--	afs_put_serverlist(net, rcu_access_pointer(volume->servers));
-+	afs_put_serverlist(net, slist);
+-	afs_put_serverlist(net, slist);
++	afs_put_serverlist(volume->cell->net, slist);
  	afs_put_cell(volume->cell, afs_cell_trace_put_vol);
  	trace_afs_volume(volume->vid, refcount_read(&volume->ref),
  			 afs_volume_trace_free);
-@@ -342,8 +349,7 @@ static int afs_update_volume_status(struct afs_volume *volume, struct key *key)
+@@ -257,8 +261,7 @@ struct afs_volume *afs_get_volume(struct afs_volume *volume,
+ /*
+  * Drop a reference on a volume record.
+  */
+-void afs_put_volume(struct afs_net *net, struct afs_volume *volume,
+-		    enum afs_volume_trace reason)
++void afs_put_volume(struct afs_volume *volume, enum afs_volume_trace reason)
+ {
+ 	if (volume) {
+ 		afs_volid_t vid = volume->vid;
+@@ -268,7 +271,7 @@ void afs_put_volume(struct afs_net *net, struct afs_volume *volume,
+ 		zero = __refcount_dec_and_test(&volume->ref, &r);
+ 		trace_afs_volume(vid, r - 1, reason);
+ 		if (zero)
+-			afs_destroy_volume(net, volume);
++			schedule_work(&volume->destructor);
  	}
+ }
  
- 	/* See if the volume's server list got updated. */
--	new = afs_alloc_server_list(volume->cell, key,
--				    vldb, (1 << volume->type));
-+	new = afs_alloc_server_list(volume, key, vldb);
- 	if (IS_ERR(new)) {
- 		ret = PTR_ERR(new);
- 		goto error_vldb;
-@@ -364,9 +370,11 @@ static int afs_update_volume_status(struct afs_volume *volume, struct key *key)
- 
- 	volume->update_at = ktime_get_real_seconds() + afs_volume_record_life;
- 	write_unlock(&volume->servers_lock);
--	ret = 0;
- 
-+	if (discard == old)
-+		afs_reattach_volume_to_servers(volume, new, old);
- 	afs_put_serverlist(volume->cell->net, discard);
-+	ret = 0;
- error_vldb:
- 	kfree(vldb);
- error:
 
 
