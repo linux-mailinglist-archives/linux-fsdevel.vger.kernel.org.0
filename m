@@ -1,234 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-2672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767957E7834
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 04:44:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BDF7E7844
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 04:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1BBBB21039
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 03:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA2A1C20E31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 03:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398F61852;
-	Fri, 10 Nov 2023 03:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGDwh5U3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A9423D7;
+	Fri, 10 Nov 2023 03:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011D517E8
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 03:44:00 +0000 (UTC)
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8125444BD
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 19:44:00 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id a1e0cc1a2514c-7ba170ac211so663998241.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 19:44:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699587839; x=1700192639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yuFoI2Na3rqFjozzgKTbKsyvOJ0n/F0y8lqQAccbUmM=;
-        b=JGDwh5U3ZvT7QiXFf0/9oELPNvP5jOWbaGhLp7tx9pXjm1SWjw6sFLEg0ALU46WjqF
-         6OH8fVcmznZCfrEn3ypMBJGYAE+nHh24TO2IFwC+U+bCf+PU0eggB7jLTozws3L0ZtuC
-         laxlbO0iH0heWw+l8NsR1i8bFjNCs3AsOBYMPYRbU7gx0He1QxAkZRXieJXnehiUmbt9
-         9Xg5hK1l88w4+P0bKX3O600AyAUuwuFaSfp6wWy8us5Ne2mPiemGFghvgrJtAQZ0yxNt
-         3t9PkD6lbkyAiSA9Yj7tRVyAI4pDB9D8NDlwcW4+lnunHJ44auqJXoKpNb0k0/EFcKJE
-         nWIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699587839; x=1700192639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yuFoI2Na3rqFjozzgKTbKsyvOJ0n/F0y8lqQAccbUmM=;
-        b=mei+vRK+18EI5xbjJRNvxX2jK6CVe8pskPagJSy1LqsazXUtHxUbmohoR7BuF9P0Wx
-         H9z2ZwNycebQCRiYlCJ1VDbq2oJClUbaaWwKQTW7Ul8cCylYw/zVdQs5WRboeBPSR2qe
-         Wi/vhEtLaKdzWnw0tQEBwLM4nMRKpCZ4FdAY9BtqbPp9Gi8lT62+1RSZGuOQ0+JvX4r3
-         JaueU4+SQg6NsNjfGx73AY/PAooARGxLLk3VpSnIOGBFwbEEVirs9B6HdSe93L6Nfj3+
-         lCPis5pIQUWXLBMkLZ3q1Mc9ka+TSdCj85Odiw82fE0T27I2Cymmo4OgXPQelUcil8Yd
-         ndvw==
-X-Gm-Message-State: AOJu0Yxfyi4aaLmYXDpr5U7H2JtHHbdi3lb/zaguQWcDY3xZi4T5HDBq
-	bOwkePgxFsdVPim7RVefjE3wpmsn3U6zE0vsnUwLM06+6uw=
-X-Google-Smtp-Source: AGHT+IGGXTarWmCUIUNavfSsRKMw8vbhwTWEYJXQ7rrTgieopNbo8hZMdsnMudRkoM4SqO2vKhXzKiJmrnL4pU7wug0=
-X-Received: by 2002:a67:cc0a:0:b0:45d:9d0c:2e07 with SMTP id
- q10-20020a67cc0a000000b0045d9d0c2e07mr6984808vsl.6.1699587839496; Thu, 09 Nov
- 2023 19:43:59 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D416820E2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 03:48:54 +0000 (UTC)
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D77468C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 19:48:54 -0800 (PST)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A9MXqjf005487
+	for <linux-fsdevel@vger.kernel.org>; Thu, 9 Nov 2023 19:48:54 -0800
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u8nqkjakm-6
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 19:48:54 -0800
+Received: from twshared11278.41.prn1.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Thu, 9 Nov 2023 19:48:51 -0800
+Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
+	id 431BA3B41DBB1; Thu,  9 Nov 2023 19:48:38 -0800 (PST)
+From: Andrii Nakryiko <andrii@kernel.org>
+To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
+        <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: [PATCH v10 bpf-next 00/17] BPF token and BPF FS-based delegation
+Date: Thu, 9 Nov 2023 19:48:21 -0800
+Message-ID: <20231110034838.1295764-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.34.1
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 6ShUo-Tof1uBXhYzx8pvA6lDjQc7hzrC
+X-Proofpoint-GUID: 6ShUo-Tof1uBXhYzx8pvA6lDjQc7hzrC
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109210608.2252323-1-willy@infradead.org> <20231109210608.2252323-2-willy@infradead.org>
-In-Reply-To: <20231109210608.2252323-2-willy@infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Fri, 10 Nov 2023 12:43:43 +0900
-Message-ID: <CAKFNMo=1yLxL9RR4XBY6=SkWej7tstTEiFQjUFWjxMs+5=YPFw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] buffer: Return bool from grow_dev_folio()
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-09_17,2023-11-09_01,2023-05-22_02
 
-On Fri, Nov 10, 2023 at 6:07=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
->
-> Rename grow_dev_page() to grow_dev_folio() and make it return a bool.
-> Document what that bool means; it's more subtle than it first appears.
-> Also rename the 'failed' label to 'unlock' beacuse it's not exactly
-> 'failed'.  It just hasn't succeeded.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/buffer.c | 50 +++++++++++++++++++++++++-------------------------
->  1 file changed, 25 insertions(+), 25 deletions(-)
->
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 967f34b70aa8..8dad6c691e14 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1024,40 +1024,43 @@ static sector_t folio_init_buffers(struct folio *=
-folio,
->  }
->
->  /*
-> - * Create the page-cache page that contains the requested block.
-> + * Create the page-cache folio that contains the requested block.
->   *
->   * This is used purely for blockdev mappings.
-> + *
-> + * Returns false if we have a 'permanent' failure.  Returns true if
-> + * we succeeded, or the caller should retry.
->   */
-> -static int
-> -grow_dev_page(struct block_device *bdev, sector_t block,
-> -             pgoff_t index, int size, int sizebits, gfp_t gfp)
-> +static bool grow_dev_folio(struct block_device *bdev, sector_t block,
-> +               pgoff_t index, unsigned size, int sizebits, gfp_t gfp)
->  {
->         struct inode *inode =3D bdev->bd_inode;
->         struct folio *folio;
->         struct buffer_head *bh;
-> -       sector_t end_block;
-> -       int ret =3D 0;
-> +       sector_t end_block =3D 0;
->
->         folio =3D __filemap_get_folio(inode->i_mapping, index,
->                         FGP_LOCK | FGP_ACCESSED | FGP_CREAT, gfp);
->         if (IS_ERR(folio))
-> -               return PTR_ERR(folio);
-> +               return false;
->
->         bh =3D folio_buffers(folio);
->         if (bh) {
->                 if (bh->b_size =3D=3D size) {
->                         end_block =3D folio_init_buffers(folio, bdev,
->                                         (sector_t)index << sizebits, size=
+This patch set introduces an ability to delegate a subset of BPF subsystem
+functionality from privileged system-wide daemon (e.g., systemd or any other
+container manager) through special mount options for userns-bound BPF FS to
+a *trusted* unprivileged application. Trust is the key here. This
+functionality is not about allowing unconditional unprivileged BPF usage.
+Establishing trust, though, is completely up to the discretion of respective
+privileged application that would create and mount a BPF FS instance with
+delegation enabled, as different production setups can and do achieve it
+through a combination of different means (signing, LSM, code reviews, etc),
+and it's undesirable and infeasible for kernel to enforce any particular way
+of validating trustworthiness of particular process.
+
+The main motivation for this work is a desire to enable containerized BPF
+applications to be used together with user namespaces. This is currently
+impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespa=
+ced
+or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely r=
+ead
+arbitrary memory, and it's impossible to ensure that they only read memory =
+of
+processes belonging to any given namespace. This means that it's impossible=
+ to
+have a mechanically verifiable namespace-aware CAP_BPF capability, and as s=
+uch
+another mechanism to allow safe usage of BPF functionality is necessary.BPF=
+ FS
+delegation mount options and BPF token derived from such BPF FS instance is
+such a mechanism. Kernel makes no assumption about what "trusted" constitut=
+es
+in any particular case, and it's up to specific privileged applications and
+their surrounding infrastructure to decide that. What kernel provides is a =
+set
+of APIs to setup and mount special BPF FS instanecs and derive BPF tokens f=
+rom
+it. BPF FS and BPF token are both bound to its owning userns and in such a =
+way
+are constrained inside intended container. Users can then pass BPF token FD=
+ to
+privileged bpf() syscall commands, like BPF map creation and BPF program
+loading, to perform such operations without having init userns privileged.
+
+This version incorporates feedback and suggestions ([3]) received on v3 of
+this patch set, and instead of allowing to create BPF tokens directly assum=
+ing
+capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accept a few new
+delegation mount options. If these options are used and BPF FS itself is
+properly created, set up, and mounted inside the user namespaced container,
+user application is able to derive a BPF token object from BPF FS instance,
+and pass that token to bpf() syscall. As explained in patch #3, BPF token
+itself doesn't grant access to BPF functionality, but instead allows kernel=
+ to
+do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
+CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms o=
+ne
+half of a puzzle and allows container managers and sys admins to have safe =
+and
+flexible configuration options: determining which containers get delegation=
+ of
+BPF functionality through BPF FS, and then which applications within such
+containers are allowed to perform bpf() commands, based on namespaces
+capabilities.
+
+Previous attempt at addressing this very same problem ([0]) attempted to
+utilize authoritative LSM approach, but was conclusively rejected by upstre=
+am
+LSM maintainers. BPF token concept is not changing anything about LSM
+approach, but can be combined with LSM hooks for very fine-grained security
+policy. Some ideas about making BPF token more convenient to use with LSM (=
+in
+particular custom BPF LSM programs) was briefly described in recent LSF/MM/=
+BPF
+2023 presentation ([1]). E.g., an ability to specify user-provided data
+(context), which in combination with BPF LSM would allow implementing a very
+dynamic and fine-granular custom security policies on top of BPF token. In =
+the
+interest of minimizing API surface area and discussions this was relegated =
+to
+follow up patches, as it's not essential to the fundamental concept of
+delegatable BPF token.
+
+It should be noted that BPF token is conceptually quite similar to the idea=
+ of
+/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+difference is the idea of using virtual anon_inode file to hold BPF token a=
+nd
+allowing multiple independent instances of them, each (potentially) with its
+own set of restrictions. And also, crucially, BPF token approach is not usi=
+ng
+any special stateful task-scoped flags. Instead, bpf() syscall accepts
+token_fd parameters explicitly for each relevant BPF command. This addresses
+main concerns brought up during the /dev/bpf discussion, and fits better wi=
+th
+overall BPF subsystem design.
+
+This patch set adds a basic minimum of functionality to make BPF token idea
+useful and to discuss API and functionality. Currently only low-level libbpf
+APIs support creating and passing BPF token around, allowing to test kernel
+functionality, but for the most part is not sufficient for real-world
+applications, which typically use high-level libbpf APIs based on `struct
+bpf_object` type. This was done with the intent to limit the size of patch =
+set
+and concentrate on mostly kernel-side changes. All the necessary plumbing f=
+or
+libbpf will be sent as a separate follow up patch set kernel support makes =
+it
+upstream.
+
+Another part that should happen once kernel-side BPF token is established, =
+is
+a set of conventions between applications (e.g., systemd), tools (e.g.,
+bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
+instance(s) at well-defined locations to allow applications take advantage =
+of
+this in automatic fashion without explicit code changes on BPF application's
+side. But I'd like to postpone this discussion to after BPF token concept
+lands.
+
+  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
+  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_=
+LSFMM2023.pdf
+  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@f=
+b.com/
+  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@=
+brauner/
+
+v9-v10:
+  - slight adjustments in LSM parts (Paul);
+  - setting delegate_xxx  options require capable(CAP_SYS_ADMIN) (Christian=
 );
-> -                       goto done;
-> +                       goto unlock;
->                 }
-> +
-> +               /* Caller should retry if this call fails */
-> +               end_block =3D ~0ULL;
->                 if (!try_to_free_buffers(folio))
-> -                       goto failed;
-> +                       goto unlock;
->         }
->
+  - simplify BPF_TOKEN_CREATE UAPI by accepting BPF FS FD directly (Christi=
+an);
+v8->v9:
+  - fix issue in selftests due to sys/mount.h header (Jiri);
+  - fix warning in doc comments in LSM hooks (kernel test robot);
+v7->v8:
+  - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
+  - inline bpf_token_alloc() into bpf_token_create() to prevent accidental
+    divergence with security_bpf_token_create() hook (Paul);
+v6->v7:
+  - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, as
+    discussed with Paul, and now they also accept struct bpf_token;
+  - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
+    specifically) to set up security LSM blob (Paul);
+  - last patch also wires bpf_security_struct setup by SELinux, similar to =
+how
+    it's done for BPF map/prog, though I'm not sure if that's enough, so wo=
+rst
+    case it's easy to drop this patch if more full fledged SELinux
+    implementation will be done separately;
+  - small fixes for issues caught by code reviews (Jiri, Hou);
+  - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
+v5->v6:
+  - fix possible use of uninitialized variable in selftests (CI);
+  - don't use anon_inode, instead create one from BPF FS instance (Christia=
+n);
+  - don't store bpf_token inside struct bpf_map, instead pass it explicitly=
+ to
+    map_check_btf(). We do store bpf_token inside prog->aux, because it's u=
+sed
+    during verification and even can be checked during attach time for some
+    program types;
+  - LSM hooks are left intact pending the conclusion of discussion with Paul
+    Moore; I'd prefer to do LSM-related changes as a follow up patch set
+    anyways;
+v4->v5:
+  - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/syscall=
+.c
+    (Paul Moore);
+  - fix build warnings and errors in selftests and kernel, detected by CI a=
+nd
+    kernel test robot;
+v3->v4:
+  - add delegation mount options to BPF FS;
+  - BPF token is derived from the instance of BPF FS and associates itself
+    with BPF FS' owning userns;
+  - BPF token doesn't grant BPF functionality directly, it just turns
+    capable() checks into ns_capable() checks within BPF FS' owning user;
+  - BPF token cannot be pinned;
+v2->v3:
+  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+    BPF_OBJ_PIN for BPF token;
+v1->v2:
+  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
 
-> -       ret =3D -ENOMEM;
->         bh =3D folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
->         if (!bh)
-> -               goto failed;
-> +               goto unlock;
+Andrii Nakryiko (17):
+  bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
+  bpf: add BPF token delegation mount options to BPF FS
+  bpf: introduce BPF token object
+  bpf: add BPF token support to BPF_MAP_CREATE command
+  bpf: add BPF token support to BPF_BTF_LOAD command
+  bpf: add BPF token support to BPF_PROG_LOAD command
+  bpf: take into account BPF token when fetching helper protos
+  bpf: consistently use BPF token throughout BPF verifier logic
+  bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
+  bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
+  bpf,lsm: add BPF token LSM hooks
+  libbpf: add bpf_token_create() API
+  libbpf: add BPF token support to bpf_map_create() API
+  libbpf: add BPF token support to bpf_btf_load() API
+  libbpf: add BPF token support to bpf_prog_load() API
+  selftests/bpf: add BPF token-enabled tests
+  bpf,selinux: allocate bpf_security_struct per BPF token
 
-Regarding this folio_alloc_buffers() error path,
-If folio_buffers() was NULL, here end_block is 0, so this function
-returns false (which means "have a permanent failure").
+ drivers/media/rc/bpf-lirc.c                   |   2 +-
+ include/linux/bpf.h                           |  83 ++-
+ include/linux/filter.h                        |   2 +-
+ include/linux/lsm_hook_defs.h                 |  15 +-
+ include/linux/security.h                      |  43 +-
+ include/uapi/linux/bpf.h                      |  42 ++
+ kernel/bpf/Makefile                           |   2 +-
+ kernel/bpf/arraymap.c                         |   2 +-
+ kernel/bpf/bpf_lsm.c                          |  15 +-
+ kernel/bpf/cgroup.c                           |   6 +-
+ kernel/bpf/core.c                             |   3 +-
+ kernel/bpf/helpers.c                          |   6 +-
+ kernel/bpf/inode.c                            | 101 ++-
+ kernel/bpf/syscall.c                          | 215 ++++--
+ kernel/bpf/token.c                            | 249 +++++++
+ kernel/bpf/verifier.c                         |  13 +-
+ kernel/trace/bpf_trace.c                      |   2 +-
+ net/core/filter.c                             |  36 +-
+ net/ipv4/bpf_tcp_ca.c                         |   2 +-
+ net/netfilter/nf_bpf_link.c                   |   2 +-
+ security/security.c                           | 101 ++-
+ security/selinux/hooks.c                      |  47 +-
+ tools/include/uapi/linux/bpf.h                |  42 ++
+ tools/lib/bpf/bpf.c                           |  28 +-
+ tools/lib/bpf/bpf.h                           |  35 +-
+ tools/lib/bpf/libbpf.map                      |   1 +
+ .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+ .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+ .../testing/selftests/bpf/prog_tests/token.c  | 672 ++++++++++++++++++
+ 29 files changed, 1610 insertions(+), 167 deletions(-)
+ create mode 100644 kernel/bpf/token.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
 
-But, if folio_buffers() existed and they were freed with
-try_to_free_buffers() because of bh->b_size !=3D size, here end_block
-has been set to ~0ULL, so it seems to return true ("succeeded").
+--=20
+2.34.1
 
-Does this semantic change match your intent?
-
-Otherwise, I think end_block should be set to 0 just before calling
-folio_alloc_buffers().
-
-Regards,
-Ryusuke Konishi
-
->
->         /*
->          * Link the folio to the buffers and initialise them.  Take the
-> @@ -1069,20 +1072,19 @@ grow_dev_page(struct block_device *bdev, sector_t=
- block,
->         end_block =3D folio_init_buffers(folio, bdev,
->                         (sector_t)index << sizebits, size);
->         spin_unlock(&inode->i_mapping->private_lock);
-> -done:
-> -       ret =3D (block < end_block) ? 1 : -ENXIO;
-> -failed:
-> +unlock:
->         folio_unlock(folio);
->         folio_put(folio);
-> -       return ret;
-> +       return block < end_block;
->  }
->
->  /*
-> - * Create buffers for the specified block device block's page.  If
-> - * that page was dirty, the buffers are set dirty also.
-> + * Create buffers for the specified block device block's folio.  If
-> + * that folio was dirty, the buffers are set dirty also.  Returns false
-> + * if we've hit a permanent error.
->   */
-> -static int
-> -grow_buffers(struct block_device *bdev, sector_t block, int size, gfp_t =
-gfp)
-> +static bool grow_buffers(struct block_device *bdev, sector_t block,
-> +               unsigned size, gfp_t gfp)
->  {
->         pgoff_t index;
->         int sizebits;
-> @@ -1099,11 +1101,11 @@ grow_buffers(struct block_device *bdev, sector_t =
-block, int size, gfp_t gfp)
->                         "device %pg\n",
->                         __func__, (unsigned long long)block,
->                         bdev);
-> -               return -EIO;
-> +               return false;
->         }
->
-> -       /* Create a page with the proper size buffers.. */
-> -       return grow_dev_page(bdev, block, index, size, sizebits, gfp);
-> +       /* Create a folio with the proper size buffers */
-> +       return grow_dev_folio(bdev, block, index, size, sizebits, gfp);
->  }
->
->  static struct buffer_head *
-> @@ -1124,14 +1126,12 @@ __getblk_slow(struct block_device *bdev, sector_t=
- block,
->
->         for (;;) {
->                 struct buffer_head *bh;
-> -               int ret;
->
->                 bh =3D __find_get_block(bdev, block, size);
->                 if (bh)
->                         return bh;
->
-> -               ret =3D grow_buffers(bdev, block, size, gfp);
-> -               if (ret < 0)
-> +               if (!grow_buffers(bdev, block, size, gfp))
->                         return NULL;
->         }
->  }
-> --
-> 2.42.0
->
->
 
