@@ -1,107 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-2713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1517E7A70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 10:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C52667E7A72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 10:07:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF321C20DAA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 09:06:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026311C20BCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 09:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FFA10967;
-	Fri, 10 Nov 2023 09:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F641094C;
+	Fri, 10 Nov 2023 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="U+TV4QmH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mr3rv5/l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCD1094C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 09:06:41 +0000 (UTC)
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1B3AFAC;
-	Fri, 10 Nov 2023 01:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=aAA3dG3KqldTpNWyLJbx7Ihw915hKmwBjd6hcd38rpo=;
-	t=1699607200; x=1700816800; b=U+TV4QmHX9inmiakgvsXStLBoJG5IjvkhQp86rF9jRCEiS7
-	hwjlpSO1PK6on3C9ETbajn73FFlIAdMQjeKP3Hz3hH6JS6jnOyjO8JIruu1Azk2f7O9gk+O9zU0v6
-	o6jcpNJ+7pH4Dohfp1jNF0H9MT8kqDPQOCzmRb2THqYNKA/DCzHknRuqIxYojOXgfgKUu/OB4kieG
-	PP2mXmAhrlvjuAksMzozk0Bc2WeKhxd4MNNdy4L6vQWB1Ne98PWorkR0aBHlbNPQ33pbdYQZVvmhe
-	K/IhoTWbwkN4Nqdow5BeLXE5kjZnTYvZtygmpfM3p6Kpl84XrIQoH5aiX3QRUpbA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1r1NTI-00000002u7Q-0SQI;
-	Fri, 10 Nov 2023 10:06:36 +0100
-Message-ID: <5cffded318675a981779194a73d97b274338b7d1.camel@sipsolutions.net>
-Subject: Re: [PATCH] debugfs: only clean up d_fsdata for d_is_reg()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Rafael J.
-	Wysocki" <rafael@kernel.org>, Nicolai Stange <nicstange@gmail.com>
-Date: Fri, 10 Nov 2023 10:06:34 +0100
-In-Reply-To: <2023111055-gratitude-prance-6074@gregkh>
-References: 
-	<20231109160639.514a2568f1e7.I64fe5615568e87f9ae2d7fb2ac4e5fa96924cb50@changeid>
-	 <2023111055-gratitude-prance-6074@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593CCD307
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 09:07:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0569C433C8;
+	Fri, 10 Nov 2023 09:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699607256;
+	bh=vKAKC1nL6sEIub3jsYc6Rk9UP2CQn8JXQLHWvlUnsKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mr3rv5/l5+HdejWBX4kxd9IzSF27T0jYlnFBWaH68llxkaXANHTi68RYd6i/ws53h
+	 wNfaw2SEZquclIANHOL5f3/CwFCx9+qD+SBDwqW6H8Fld+mSWTUZ1c9TBwzCYeF/GK
+	 ueY16ddBSWM/FiWwYApLlr6LCNqfz7TX+fTVkGtkTbqOHgAEtqQuNkqb8mNFGlqg1f
+	 5Yuw/kZ+hbsM+10Rx8XA0ynxpjQ+ypOwvzPR/1vXte30RDz+KP1MhWxx9cpj3P5oVm
+	 WiGWWEhOv562J9PUkkyc14U42K2qcJvtsOVX8V4cyPvIms89EMcNLv0GibnDAB9dke
+	 obzUIWNAWtMLw==
+Date: Fri, 10 Nov 2023 10:07:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 17/22] don't try to cut corners in shrink_lock_dentry()
+Message-ID: <20231110-geklagt-parkbank-d1d03be3de23@brauner>
+References: <20231109061932.GA3181489@ZenIV>
+ <20231109062056.3181775-1-viro@zeniv.linux.org.uk>
+ <20231109062056.3181775-17-viro@zeniv.linux.org.uk>
+ <20231109-designen-menschheit-7e4120584db1@brauner>
+ <20231109214537.GH1957730@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231109214537.GH1957730@ZenIV>
 
-On Fri, 2023-11-10 at 04:56 +0100, Greg Kroah-Hartman wrote:
-> >=20
-> > Also check in debugfs_file_get() that it gets only called
-> > on regular files, just to make things clearer.
-> >=20
-> > +++ b/fs/debugfs/file.c
-> > @@ -84,6 +84,9 @@ int debugfs_file_get(struct dentry *dentry)
-> >  	struct debugfs_fsdata *fsd;
-> >  	void *d_fsd;
-> > =20
-> > +	if (WARN_ON(!d_is_reg(dentry)))
-> > +		return -EINVAL;
->=20
-> Note, the huge majority of Linux systems in the world run with "panic on
-> warn" enabled, so if this is something that could actually happen,
-> please just handle it and return the error, don't throw up a WARN()
-> splat as that will reboot the system, causing you to have grumpy users.
->=20
+On Thu, Nov 09, 2023 at 09:45:37PM +0000, Al Viro wrote:
+> On Thu, Nov 09, 2023 at 06:20:08PM +0100, Christian Brauner wrote:
+> 
+> > It's a bit unfortunate that __lock_parent() locks the parent *and* may
+> > lock the child which isn't really obvious from the name. It just becomes
+> > clear that this is assumed by how callers release the child's lock.
+> 
+> __lock_parent() is gone by the end of the series.
 
-Well, given the use of the d_fsdata, without this check you would get a
-crash a few lines down in the code because:
-
-1. if you call it with an automount dentry, the pointer is a function
-   pointer and you can't increment a refcount in .text memory
-
-2. if you call it with any other kind of entry other than regular, the
-   pointer is NULL and you can't increment a refcount at just over NULL
-   either
-
-I would think this cannot happen in the current kernel now, so the check
-is more (a) a sign to readers to show the intent of the function, and
-(b) a help for future users of debugfs to tell them in easier terms when
-they got it wrong. It just seemed nicer to not crash in weird ways (or
-corrupt .text if you don't have read-only text, but is that still a
-thing anywhere?) than crashing with strange errors (especially in 1.).
-
-But hey, I can just as well remove it.
-
-Note that the other part of the patch here is wrong anyway though, so
-this patch isn't any good. I posted the replacement here:
-https://lore.kernel.org/lkml/20231109222251.9e54cb55c700.I64fe5615568e87f9a=
-e2d7fb2ac4e5fa96924cb50@changeid/
-
-johannes
+Yes, I saw that once I got to the end of the series. Thanks.
 
