@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-2738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7337E8542
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 22:53:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B7A7E8543
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 22:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F3D1C20AD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 21:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 938041F20F07
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 21:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772BA3C697;
-	Fri, 10 Nov 2023 21:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E2D3C69E;
+	Fri, 10 Nov 2023 21:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="wyIbzAUs"
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="TPgx2fLW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B2E3C684
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 21:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8403B28A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 21:54:53 +0000 (UTC)
 Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF10131
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 13:53:02 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16588131
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 13:54:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1699653181; x=1700257981;
+	d=auristor.com; s=MDaemon; r=y; t=1699653291; x=1700258091;
 	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
-	MIME-Version:User-Agent:Subject:Content-Language:To:Cc:
-	References:From:Organization:In-Reply-To:Content-Type; bh=Yd8o7r
-	++LiyXZ9hBFQ4DzkUUfgfn3CPua3TWbJfzpb8=; b=wyIbzAUsAXyyaupH6lQQY/
-	/6mocgXSYSufWmv/sGxZLLPeWfYytTnC5SVWTshDK42TqQiCG0I8+0nUJV0T0pF1
-	YU8RnVpomG3edooywDTwj9I5B/Dxn0hY6PlgUkCVkHDfdrnNL24TgI9YP8Pcy1JT
-	Yc4R4LKqDC9JweHkpTwpE=
+	MIME-Version:User-Agent:From:Subject:To:Cc:References:
+	Content-Language:Organization:In-Reply-To:Content-Type; bh=izX1R
+	B2ZzQVEz2MbsAys0vtywpN62EHQD+a9blGRJPQ=; b=TPgx2fLWCmJzrTUIT2MM/
+	k9FH1Gqg1r+W+UiYwYDFAjRnut9mAXtjjeEe71XZ/Vwi5uP96G/Y+VT5kRsqIWDO
+	AYZlRb7AZ1S+/IIN+3enO//DhxjFgg5hIFZ4HwxvaZQeBI6QYwdy2zAVbh8SftgI
+	CQWF2IqvraPz8sVkyMyF80=
 X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 16:53:01 -0500
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 16:54:51 -0500
 Received: from [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1c) 
-	with ESMTPSA id md5001003743024.msg; Fri, 10 Nov 2023 16:53:00 -0500
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 16:53:00 -0500
+	with ESMTPSA id md5001003743026.msg; Fri, 10 Nov 2023 16:54:50 -0500
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 16:54:50 -0500
 	(not processed: message from trusted or authenticated source)
 X-MDRemoteIP: 2603:7000:73d:b00:d023:ff5f:54c2:9ec4
 X-MDHelo: [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4]
-X-MDArrival-Date: Fri, 10 Nov 2023 16:53:00 -0500
+X-MDArrival-Date: Fri, 10 Nov 2023 16:54:50 -0500
 X-MDOrigin-Country: US, NA
 X-Authenticated-Sender: jaltman@auristor.com
 X-Return-Path: prvs=1678d0c34b=jaltman@auristor.com
 X-Envelope-From: jaltman@auristor.com
 X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
-Message-ID: <a5a9f4df-0527-49d9-8cde-b21390627b34@auristor.com>
-Date: Fri, 10 Nov 2023 16:52:55 -0500
+Message-ID: <33913a7e-9bac-4812-964f-7efe305b50aa@auristor.com>
+Date: Fri, 10 Nov 2023 16:54:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,9 +55,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+From: Jeffrey E Altman <jaltman@auristor.com>
 Subject: Re: [PATCH 01/41] rxrpc: Fix RTT determination to use PING ACKs as a
  source
-Content-Language: en-US
 To: David Howells <dhowells@redhat.com>
 Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -67,19 +67,15 @@ References: <c19af528-1aad-412c-8362-275c791dd76f@auristor.com>
  <20231109154004.3317227-2-dhowells@redhat.com>
  <3327953.1699567608@warthog.procyon.org.uk>
  <3399756.1699637142@warthog.procyon.org.uk>
-From: Jeffrey E Altman <jaltman@auristor.com>
+Content-Language: en-US
 Organization: AuriStor, Inc.
 In-Reply-To: <3399756.1699637142@warthog.procyon.org.uk>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030204010404040605080609"
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms080604020005070300090702"
 X-MDCFSigsAdded: auristor.com
 
 This is a cryptographically signed message in MIME format.
 
---------------ms030204010404040605080609
-Content-Type: multipart/alternative;
- boundary="------------XLHZ3BCU99r0kgCd43gFUxXv"
-
---------------XLHZ3BCU99r0kgCd43gFUxXv
+--------------ms080604020005070300090702
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
@@ -106,57 +102,8 @@ will happen.
 
 Jeffrey
 
---------------XLHZ3BCU99r0kgCd43gFUxXv
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <div class="moz-cite-prefix">On 11/10/2023 12:25 PM, David Howells
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:3399756.1699637142@warthog.procyon.org.uk">
-      <pre class="moz-quote-pre" wrap="">Jeffrey E Altman <a class="moz-txt-link-rfc2396E" href="mailto:jaltman@auristor.com">&lt;jaltman@auristor.com&gt;</a> wrote:
-
-</pre>
-      <blockquote type="cite">
-        <blockquote type="cite">
-          <pre class="moz-quote-pre" wrap="">I do ignore ack.serial == 0 for this purpose.
-</pre>
-        </blockquote>
-        <pre class="moz-quote-pre" wrap="">
-Zero has the special meaning - this ACK is not explicitly in response to a
-received packet.
-
-However, as mentioned, the serial number counter wraps frequently and most
-RxRPC implementations
-do not transition from serial 0xffffffff -&gt; 0x00000001 when wrapping.
-</pre>
-      </blockquote>
-      <pre class="moz-quote-pre" wrap="">
-I don't skip zero serial numbers either.  I'm not sure whether it would be
-better to do so.</pre>
-    </blockquote>
-    <p>If a DATA packet is sent with serial number zero and an ACK
-      packet is sent in response to it <br>
-      with the ack.serial field set to the DATA packet serial number
-      (zero), then the receiver of the<br>
-      ACK will be unable to compute an RTT from that DATA packet.   It
-      will happen rarely but it<br>
-      will happen.</p>
-    <p><span style="white-space: pre-wrap">Jeffrey
-</span></p>
-  </body>
-</html>
-
---------------XLHZ3BCU99r0kgCd43gFUxXv--
-
---------------ms030204010404040605080609
+--------------ms080604020005070300090702
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -225,18 +172,18 @@ p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
 MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
 A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
 ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTExMDIx
-NTI1NVowLwYJKoZIhvcNAQkEMSIEIDwwKM/oRt08WOcCdZ9EXQJWA2Ir3SI2dT57bQaVTJ26
+NTQ0NlowLwYJKoZIhvcNAQkEMSIEILG70+d8sa5l7+TylFrpHa21fTYVjBxZKFEPJz5vFTPN
 MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
 MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
 AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
 dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
 AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAMPfD
-07lMfeBWvBPCADbe1j/KTIGgYeailfKJn1raiZZPyOJ2N13wBSymzaLM5YPSX5OF/TdjB/9/
-DeCSAPPNv77qmB9u6rQI0zBgcbhuEmvgG7D8i8NHJ4QrtSGjnghZ1nBxxsItcF1n5uSJDO/k
-wjNsg90rvyGEcaog4EDEIR4G2WhVx7VY7OHAM+FQabKvi40OIwEPBrC5LSV65Q7r1tlRWFQ/
-SGgxJRDZqU+72FrrsaDAshJuZi9PyMxehGcUHKAChBbsaGjoAMVnxZaWmA8lTEGqXrYp1bHq
-+ht+68Df8I6UgE+J1xwhqblTkJds5vWxK6uluwRFy24q8PP7/wAAAAAAAA==
---------------ms030204010404040605080609--
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAVORq
+76levCDGzfwzP6dBL1k2dCAfy5ih9SGgnTT2mknDuic6hKjeey0eHbsEmi8/Ix6e4d9kuCES
+E9bBDPCWvWyhszTEThTfKRAncCUQyxvJ59Ua3CrpZfQ39nRyuHyya/qj0ivhMvgmchMzlF5t
+fp4RGHN2vCrZBQkV2sOebQocEt3FnVJ9jzcSe+63ze+d4brz5WvtppvwJOHJLcuZGkDn39eY
++JcGRhkLUIjXy+kLZxD7lwpN1Hy30EU9aQTxznZYEsTKQItafHDqw44oBr2vgOp8c9kCmdap
+4i1TxVeIcz3YvZH4bB5a2LCO4HMoxLUv4AxarBxHM/411re96QAAAAAAAA==
+--------------ms080604020005070300090702--
 
 
