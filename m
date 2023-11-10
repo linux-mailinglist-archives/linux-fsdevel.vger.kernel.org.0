@@ -1,122 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-2728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2729-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3307E7D63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 16:24:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 116E37E7DA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 17:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483641C20A95
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 15:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420C21C20AC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 16:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E4C1CAA3;
-	Fri, 10 Nov 2023 15:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395C1DDC9;
+	Fri, 10 Nov 2023 16:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONmg828A"
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="q8IAZCGS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C001C6BF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 15:23:58 +0000 (UTC)
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 385483A886
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 07:23:57 -0800 (PST)
-Received: by mail-ua1-x929.google.com with SMTP id a1e0cc1a2514c-7bac330d396so868526241.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 07:23:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699629836; x=1700234636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HL+JX3U7OhquHqDKbaAlO31MPv1AOeAfBieIdS6H7i4=;
-        b=ONmg828ApZxGBjr7h3ZsDqXSZBUDrQfEn7KbBtn/vyCQN6uK3qyxsxL1MkX2bglSXv
-         IrmDpyXA//C8O3QiQyIdN9UatFnD2tHcnl7hQpB1p4ZetLt9a21D4pT4fwzMWPoslQTD
-         Nq8s+Azr7Et0NyRng11bFeX+Hw9ZV7HQ+iveJTA8QJTmTHqKqGNnhi34JSEy1y2MSTnG
-         FATd/ODRfFT3I0imhZRl8y0yhNo95wxUEMr+Cu/TPFiheZx8xgVSiwaSOLZ3A1ZF83Kt
-         E9yRknb6FY7Mk2w5T94EbwkQzFGsIE6bmkQwJogUl9HlphDIzW8IEOojuV8uS5SE0nDF
-         vYsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699629836; x=1700234636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HL+JX3U7OhquHqDKbaAlO31MPv1AOeAfBieIdS6H7i4=;
-        b=BYSGyTWrzfUdMt3db1DRyryUge6lBYyL7++GRzxYB0+l01UJP6ZAvIN9ISL0cs8aL7
-         ZX42F/8nKrgND3YG15DNYm4Ks7xwxhqQ/F8nTlnhWEs4IA1w9iZKIrAIQ4V0oPU4d3wr
-         eDEYLl3oBB5SQxeLW9o5uKHczpFHusFw0eF22yFB8v+9rRTmO0VtqPgshe1D7Tud3PMF
-         MPJu3ELldh4+A03WcnapwHG2C1f8u9iy/hujtdgu+UgmuF5WvsYhmOjPI/BEkOMbo78v
-         UI3vXks+Yf7S1QCyYNsdBYr3DW/kRLMSieZM/qqPYDZ8ojBatcyoDASdwG6KSbELtutP
-         93iA==
-X-Gm-Message-State: AOJu0YzlA5l7H1OcQauh10dAX92MQviveRhuNq2W7krovDiCu5nSFdun
-	rL9F6tPZrsUCgzZtcquqe8cHSqoAy6BA8/1t+Jo=
-X-Google-Smtp-Source: AGHT+IGTiz/64icETSz9hFpLN/EaDzvQyMct9izcwEQecvNOdXLrA6gz35HEEwQIw+lbJSOJiPpo3Jr0HdcWywbhNfM=
-X-Received: by 2002:a05:6102:160d:b0:45d:9223:9532 with SMTP id
- cu13-20020a056102160d00b0045d92239532mr9432041vsb.19.1699629836262; Fri, 10
- Nov 2023 07:23:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2AF1DA58
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 16:12:25 +0000 (UTC)
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15999362F1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 08:12:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+	d=auristor.com; s=MDaemon; r=y; t=1699632742; x=1700237542;
+	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+	MIME-Version:User-Agent:Subject:Content-Language:From:To:Cc:
+	References:Organization:In-Reply-To:Content-Type; bh=s/S2XJeP5uA
+	OK/Q5ok6yMZjpVOTgqNky4tFYkE1+jgc=; b=q8IAZCGSOUEzVCspxngZnT04hI8
+	f1Yaf7Ik9M3D/XxLMVjK3vQb1Z7j64WRnuVmfFCX2HyJbm2nn42H2VQo7ElrWSsU
+	nXaugTzlnupKy6fneV77Kibw9TeQSq7odyCzTS20mJyfW9IoUe4M0Rj8z+nYLo3v
+	IHoUu4X7QcF2BT5E=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 11:12:22 -0500
+Received: from [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1c) 
+	with ESMTPSA id md5001003742809.msg; Fri, 10 Nov 2023 11:12:21 -0500
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Fri, 10 Nov 2023 11:12:21 -0500
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73d:b00:d023:ff5f:54c2:9ec4
+X-MDHelo: [IPV6:2603:7000:73d:b00:d023:ff5f:54c2:9ec4]
+X-MDArrival-Date: Fri, 10 Nov 2023 11:12:21 -0500
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=1678d0c34b=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
+Message-ID: <65411680-edf9-4670-be49-b73cc845c1cf@auristor.com>
+Date: Fri, 10 Nov 2023 11:12:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109210608.2252323-1-willy@infradead.org> <20231109210608.2252323-6-willy@infradead.org>
- <CAKFNMokuZFWqoX_1uWm0-vTcbo_gESkNpv8J8Pw1G-Vwd=-D+w@mail.gmail.com> <ZU4x3IAGmLx457p0@casper.infradead.org>
-In-Reply-To: <ZU4x3IAGmLx457p0@casper.infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sat, 11 Nov 2023 00:23:39 +0900
-Message-ID: <CAKFNMomdqigLAQ_17KaBJzBkzv7wrmAgHs8KA5nJWTcAGc76MQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] buffer: Fix various functions for block size > PAGE_SIZE
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/41] rxrpc: Fix RTT determination to use PING ACKs as a
+ source
+Content-Language: en-US
+From: Jeffrey E Altman <jaltman@auristor.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <6fadc6aa-4078-4f12-a4c7-235267d6e0b1@auristor.com>
+ <20231109154004.3317227-1-dhowells@redhat.com>
+ <20231109154004.3317227-2-dhowells@redhat.com>
+ <3327953.1699567608@warthog.procyon.org.uk>
+ <c19af528-1aad-412c-8362-275c791dd76f@auristor.com>
+Organization: AuriStor, Inc.
+In-Reply-To: <c19af528-1aad-412c-8362-275c791dd76f@auristor.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020704020002070703040701"
+X-MDCFSigsAdded: auristor.com
 
-On Fri, Nov 10, 2023 at 10:36=E2=80=AFPM Matthew Wilcox wrote:
->
-> On Fri, Nov 10, 2023 at 04:48:02PM +0900, Ryusuke Konishi wrote:
-> > On Fri, Nov 10, 2023 at 6:06=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
-> > > +++ b/fs/buffer.c
-> > > @@ -199,7 +199,7 @@ __find_get_block_slow(struct block_device *bdev, =
-sector_t block)
-> > >         int all_mapped =3D 1;
-> > >         static DEFINE_RATELIMIT_STATE(last_warned, HZ, 1);
-> > >
-> > > -       index =3D block >> (PAGE_SHIFT - bd_inode->i_blkbits);
-> > > +       index =3D ((loff_t)block << bd_inode->i_blkbits) / PAGE_SIZE;
-> >
-> > Multiple 64-bit divisions are used in this patch, but why not use two
-> > stage shifts as shown below if there is no left shift overflow and the
-> > sign bit will not be set ?
-> >
-> >        index =3D ((loff_t)block << bd_inode->i_blkbits) >> PAGE_SHIFT;
->
-> Here's what the compiler turns that into:
->
->     3223:       49 8b 86 80 00 00 00    mov    0x80(%r14),%rax
->     322a:       4c 89 ee                mov    %r13,%rsi
->     322d:       ba 01 00 00 00          mov    $0x1,%edx
->     3232:       0f b6 88 c2 00 00 00    movzbl 0xc2(%rax),%ecx
-> ^ this is where we load i_blkbits into ecx
->     3239:       48 89 45 d0             mov    %rax,-0x30(%rbp)
->     323d:       4c 8b 60 30             mov    0x30(%rax),%r12
->     3241:       48 d3 e6                shl    %cl,%rsi
-> ^ shift left by %cl (the bottom byte of ecx)
->     3244:       31 c9                   xor    %ecx,%ecx
->     3246:       48 c1 ee 0c             shr    $0xc,%rsi
-> ^ shift right by 12
->     324a:       4c 89 e7                mov    %r12,%rdi
->     324d:       e8 00 00 00 00          call   3252 <__find_get_block+0x8=
-2>
->                         324e: R_X86_64_PLT32    __filemap_get_folio-0x4
+This is a cryptographically signed message in MIME format.
 
-Ah, similarly in my environment, these divisions by constant are
-optimized (and no link errors happen even on a 32-bit machine).
-Sorry for taking up your time with unnecessary comments along with
-that for patch 3/7.
+--------------ms020704020002070703040701
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Regards,
-Ryusuke Konishi
+On 11/10/2023 9:15 AM, Jeffrey E Altman wrote:
+>
+>> I'm not sure how expanding it internally to 64-bits actually helps 
+>> since the
+>> upper 32 bits is not visible to the peer.
+> rxrpc_complete_rtt_probe contains the following logic that relies on 
+> after() being able to detect
+> a serial number wrap.
+>
+>         /* If a later serial is being acked, then mark this slot as
+>          * being available.
+>          */
+>
+>         if (after(acked_serial, orig_serial)) {
+>             trace_rxrpc_rtt_rx(call, rxrpc_rtt_rx_obsolete, i,
+>                        orig_serial, acked_serial, 0, 0);
+>             clear_bit(i + RXRPC_CALL_RTT_PEND_SHIFT, &call->rtt_avail);
+>             smp_wmb();
+>             set_bit(i, &call->rtt_avail);
+>         }
+>
+> Otherwise, acked_serial = 0x01 will be considered smaller than 
+> orig_serial = 0xfffffffe and the slot will not be marked available.
+>
+> I will note that there is a similar problem with rxrpc_seq_t values 
+> which are u32 on the wire but which will wrap for calls that transmit 
+> more than approximately 5.5TB of data. Calls of this size are unlikely 
+> for a cache manager but are common for any service transmitting volume 
+> dumps. 
+
+I misread the definition of after() which is
+
+     static inline bool after(u32 seq1, u32 seq2)
+     {
+             return (s32)(seq1 - seq2) > 0;
+     }
+
+This is sufficient to detect the serial number and sequence number wrapping.
+
+What it doesn't provide is a method for rxrpc tracing and /proc file to 
+report on the total number of packets that have been sent or received on 
+a call or connection which might or might not be important depending 
+upon the use case.
+
+Jeffrey Altman
+
+
+--------------ms020704020002070703040701
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
+MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
+xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
+fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
+EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
+9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
+IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
+gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
+eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
+WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
+utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
+Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
+a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
+AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
+Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
+wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
+15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
+o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
+3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
+VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
+CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
+dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
+L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
+5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
+dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
+eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
+YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
+dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
+Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
+dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
+bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
+CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
+bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
+0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
+6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
+QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
+Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
+db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
+rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
+UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
+p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
+MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
+A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
+ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTExMDE2
+MTIxM1owLwYJKoZIhvcNAQkEMSIEIJwT/0k/76oMiiyT9iK+/82oaTWEGBMgiK/lWi0xEJpN
+MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
+MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
+AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
+dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
+AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEABLIS
+iGWtDBMDUr1eVu7ocXjmfVArHv0lcwqLBcHm0XndsTd64WUo3vo+ioVZIOIUlwMFzzMCy5bv
+sY0m5/W/E8w87k277Oa7dZW5HZ56zFQmtnAL7p9iaRme40wmynbscMkPQAtc0xzlQJgiR3FW
+cmujBvhECK5rmF787hORDKsFYRU0lr2wrDofyHZnFuI0kMMN9+j5ZvncEbb8kMbOi+rGL4AU
+Y87gFd45EGWHvSjkrZaFnqVC7QWY3n4BXKJzmm4+CbnNvtnkjhxxgPzeEtjb5/0j0430xeh9
+hrCBuQ2JKeIynuOXpec0R4WfOjPblUp04zf2wCy/cTKvl5FvxwAAAAAAAA==
+--------------ms020704020002070703040701--
+
 
