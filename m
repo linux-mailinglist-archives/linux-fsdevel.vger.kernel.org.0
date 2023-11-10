@@ -1,149 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-2706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3795D7E79D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 08:48:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6851B7E7A04
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 09:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA8C2816B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 07:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 656EF1C20DAF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 08:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB5B6FD0;
-	Fri, 10 Nov 2023 07:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E05D269;
+	Fri, 10 Nov 2023 08:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWuwp4bm"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Wx1OL1rG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DAA6ABB
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 07:48:20 +0000 (UTC)
-Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7123186B5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 23:48:19 -0800 (PST)
-Received: by mail-vs1-xe30.google.com with SMTP id ada2fe7eead31-45da062101bso824586137.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 23:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699602498; x=1700207298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+iiC78e6+ZJ3Pewjf0JiBNivCAkbOmRohLcjfJ+Rglw=;
-        b=AWuwp4bmoPI+GTsbLf4TdVMkgMCOW6Rl9AANR5uo7FI3ea4h6pQvF4U+3LAz5jUjGt
-         7EXbeS4n6C5x3PrCmkXMQpyUOy0EVMHroSVEPPH0LhcJyzV6uAAHQtL+4Ipk30/qjVAV
-         rThgo6NEn4p9DtThq0LujdtlUfFCSUX/1Zv7sZvP/Umdze4+AMD/Ig/96pEDdDaXVd8b
-         8ZkleBsN1tKD6swDYyQ8bf5mkWUqp1vm9FNBybJ9ZpVHSJMAcl4AV5QrH/QhfKs6uGx0
-         cfY9MBw+Ga8hoOj+VsABZAyAdBLEFqd5I87Ag7wQ9hXYmXiPikOYBVl01qW1xpqczT1V
-         N/7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699602498; x=1700207298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+iiC78e6+ZJ3Pewjf0JiBNivCAkbOmRohLcjfJ+Rglw=;
-        b=QrsseHCjLGnEiO8Rz9u9wokJLvcTEFA1i20gtUTkI7KvwSFnFxHp/pLc4HCRyP2C/b
-         36/nrAtTkOzN9dEj8sd1SKoFqoNoPOP4tghzWAjTxDbuMFvDCDx5uQFeZAHrorLz4fhA
-         CSpYWh8FdRlDgon4QRGF0ORJ3OF3EhGXEPJP7Y8l6UNBvEYCphqpsDf1F36BegUxXBS2
-         gLHdv85FfcSgurU0iA8ZWtHKvnT5nEsyBqLoD0osGSH38Cvnd+wQulipmAGmu2j7lqZF
-         u1hYFGcozhtz/x5ANj7maSE48rJhZzS1IstS6g401a/jQPv4Z8FY8RkOSomI3agSoxr2
-         p84g==
-X-Gm-Message-State: AOJu0Yzb6ecGIFs+KZBco0kNb03oEU9JpDDgPzEIJGa0tRNlIBkoLr+M
-	9qqwE9O5buQoIhSkcEkPMWq4koKad/6dF9UaaJ/Z+9JzIa4=
-X-Google-Smtp-Source: AGHT+IEuaBZ58Ew4O8rfCdIOsaIzcEvLiaCqe+1EO5koe9HplB3HUTReR78FkErhEKQalmF2I3PIm3dCFA1Qy/REMNk=
-X-Received: by 2002:a67:c29c:0:b0:45d:9113:328f with SMTP id
- k28-20020a67c29c000000b0045d9113328fmr7302203vsj.34.1699602498505; Thu, 09
- Nov 2023 23:48:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050979FA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 08:19:11 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B34D93D6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 00:19:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DCTMRDVT5eqicOSsgcioYngcYG7bdDF5xsH/HIP+0k4=; b=Wx1OL1rGUrfo+tI57FsXscQs/m
+	8fEeJM876393ZQLGCa5bLG6s/vHybdAGlPD1eGY1NKouX3wLGHhLBaeLLlsMhP6EkFwDGBIXlQfwp
+	GClgCtL5srR8g7LBbyf9PzVJOHUdj7xb3iF2jGiy/rBACsijLg0rVmoWVnWrymzih+fN+SorPVPm2
+	859lmzB5+tCBAXnkaFw8EZ1uHP0n9e0YMflxItNXG432uN1lNffBHLnLHV7GotQqh9rPGu2ZFvd3v
+	xVvh2ot3rM793Buny+YAzAI2PWj0rRluKcPDs98zgLYxREsuswKab0Ru0SYxTl2udDRzo6xsQnVfa
+	9rWLI5Eg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r1MjK-00DoTg-1R;
+	Fri, 10 Nov 2023 08:19:06 +0000
+Date: Fri, 10 Nov 2023 08:19:06 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+Message-ID: <20231110081906.GM1957730@ZenIV>
+References: <20231031061226.GC1957730@ZenIV>
+ <20231101062104.2104951-1-viro@zeniv.linux.org.uk>
+ <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
+ <20231101084535.GG1957730@ZenIV>
+ <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV>
+ <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109210608.2252323-1-willy@infradead.org> <20231109210608.2252323-6-willy@infradead.org>
-In-Reply-To: <20231109210608.2252323-6-willy@infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Fri, 10 Nov 2023 16:48:02 +0900
-Message-ID: <CAKFNMokuZFWqoX_1uWm0-vTcbo_gESkNpv8J8Pw1G-Vwd=-D+w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] buffer: Fix various functions for block size > PAGE_SIZE
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Nov 10, 2023 at 6:06=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
->
-> If i_blkbits is larger than PAGE_SHIFT, we shift by a negative number,
-> which is undefined.  It is safe to shift the block left as a block
-> device must be smaller than MAX_LFS_FILESIZE, which is guaranteed to
-> fit in loff_t.
->
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->  fs/buffer.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index ab345fd4da12..faf1916200c2 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -199,7 +199,7 @@ __find_get_block_slow(struct block_device *bdev, sect=
-or_t block)
->         int all_mapped =3D 1;
->         static DEFINE_RATELIMIT_STATE(last_warned, HZ, 1);
->
-> -       index =3D block >> (PAGE_SHIFT - bd_inode->i_blkbits);
-> +       index =3D ((loff_t)block << bd_inode->i_blkbits) / PAGE_SIZE;
+On Thu, Nov 09, 2023 at 09:57:39PM -0800, Linus Torvalds wrote:
 
-Multiple 64-bit divisions are used in this patch, but why not use two
-stage shifts as shown below if there is no left shift overflow and the
-sign bit will not be set ?
+> Anyway, what I'm actually getting at in a roundabout way is that maybe
+> we should make D_UNHASHED be another flag in d_flags, and *not* use
+> that d_hash.pprev field, and that would allow us to combine even more
+> of these tests in dput(), because now pretty much *all* of those
+> "retain_dentry()" checks would be about d_flags bits.
+> 
+> Hmm? As it is, it has that odd combination of d_flags and that
+> d_unhashed() test, so it's testing two different fields.
 
-       index =3D ((loff_t)block << bd_inode->i_blkbits) >> PAGE_SHIFT;
+Hmm, indeed.  The trouble is, we are getting tight on the ->d_flags bits.
+Only two unassigned bits left (0x08000000 and 0x80000000).
 
-Regards,
-Ryusuke Konishi
+DCACHE_COOKIE is defined (0x00002000), but unused.  Should've been
+taken out when dcookie stuff went.
 
->         folio =3D __filemap_get_folio(bd_mapping, index, FGP_ACCESSED, 0)=
-;
->         if (IS_ERR(folio))
->                 goto out;
-> @@ -1693,13 +1693,13 @@ void clean_bdev_aliases(struct block_device *bdev=
-, sector_t block, sector_t len)
->         struct inode *bd_inode =3D bdev->bd_inode;
->         struct address_space *bd_mapping =3D bd_inode->i_mapping;
->         struct folio_batch fbatch;
-> -       pgoff_t index =3D block >> (PAGE_SHIFT - bd_inode->i_blkbits);
-> +       pgoff_t index =3D ((loff_t)block << bd_inode->i_blkbits) / PAGE_S=
-IZE;
->         pgoff_t end;
->         int i, count;
->         struct buffer_head *bh;
->         struct buffer_head *head;
->
-> -       end =3D (block + len - 1) >> (PAGE_SHIFT - bd_inode->i_blkbits);
-> +       end =3D ((loff_t)(block + len - 1) << bd_inode->i_blkbits) / PAGE=
-_SIZE;
->         folio_batch_init(&fbatch);
->         while (filemap_get_folios(bd_mapping, &index, end, &fbatch)) {
->                 count =3D folio_batch_count(&fbatch);
-> @@ -2660,8 +2660,8 @@ int block_truncate_page(struct address_space *mappi=
-ng,
->                 return 0;
->
->         length =3D blocksize - length;
-> -       iblock =3D (sector_t)index << (PAGE_SHIFT - inode->i_blkbits);
-> -
-> +       iblock =3D ((loff_t)index * PAGE_SIZE) >> inode->i_blkbits;
-> +
->         folio =3D filemap_grab_folio(mapping, index);
->         if (IS_ERR(folio))
->                 return PTR_ERR(folio);
-> --
-> 2.42.0
->
->
+DCACHE_DENTRY_KILLED might be mergable with DCACHE_MAY_FREE now;
+worth looking into.  In effect, DCACHE_MAY_FREE is set iff
+we have both DCACHE_DENTRY_KILLED and DCACHE_SHRINK_LIST - and
+the only place that checks it is guaranteed to have had
+DCACHE_SHRINK_LIST.  Actually, that's nice - in terms of dentry
+states we have
+refcount > 0 <=> Busy
+refcount == 0 <=> Retained
+refcount < 0 && !KILLED <=> Dying
+refcount < 0 && KILLED && !SHRINK_LIST <=> Freeing
+refcount < 0 && KILLED && SHRINK_LIST <=> Husk.
+<makes a note in the docs being written>
+
+DCACHE_FALLTRHU is odd - it's never checked (or set, for that matter);
+might be killable, might be intended for some overlayfs plans.
+
+DCACHE_GENOCIDE might become killable, what with selinuxfs patch I've
+got (apparently OK with selinux folks, will sort it out after -rc1).
+
+OK, it's not as awful as I thought - one more bit won't hurt.
+I'll go through the unlocked callers and see if any of those is
+sensitive to separating setting that flag from hash list removal.
+There might be dragons...
+
+> Anyway, I really don't think it matters much, but since you brought up
+> the whole suboptimal code generation..
+
+FWIW, it's not all that suboptimal, at least with current gcc.  The thing
+I'm really not sure about is whether that patch makes the whole thing
+easier to follow - probably need to let it sit around for a week or so,
+then look at it again; right now I don't trust my taste regarding that
+particular change, having spent too much time today mucking with it ;-/
 
