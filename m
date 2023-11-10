@@ -1,130 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-2688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635DC7E787C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 04:51:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E177E7887
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 04:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6F46B21102
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 03:51:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0855CB20F72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Nov 2023 03:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D95134C5;
-	Fri, 10 Nov 2023 03:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C818186B;
+	Fri, 10 Nov 2023 03:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VfeFyRH0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D04125AD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 03:49:21 +0000 (UTC)
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB7F46B4
-	for <linux-fsdevel@vger.kernel.org>; Thu,  9 Nov 2023 19:49:20 -0800 (PST)
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3A9MYvSE018927
-	for <linux-fsdevel@vger.kernel.org>; Thu, 9 Nov 2023 19:49:20 -0800
-Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3u8xr3pwcn-11
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Thu, 09 Nov 2023 19:49:20 -0800
-Received: from twshared11278.41.prn1.facebook.com (2620:10d:c085:208::11) by
- mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Thu, 9 Nov 2023 19:49:16 -0800
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 747713B41DCBB; Thu,  9 Nov 2023 19:49:13 -0800 (PST)
-From: Andrii Nakryiko <andrii@kernel.org>
-To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
-        <brauner@kernel.org>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
-Subject: [PATCH v10 bpf-next 17/17] bpf,selinux: allocate bpf_security_struct per BPF token
-Date: Thu, 9 Nov 2023 19:48:38 -0800
-Message-ID: <20231110034838.1295764-18-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231110034838.1295764-1-andrii@kernel.org>
-References: <20231110034838.1295764-1-andrii@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7231841
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 03:56:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3A3C433C7;
+	Fri, 10 Nov 2023 03:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1699588565;
+	bh=IMcSxWrdruVQfP9e7fEBYYE2MC9+wNXShHGyUH6KxwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfeFyRH08ET2E+W5qX5XYRwEVUQqsY4RUP6Ef3UW6qr7You7M4p/XZfItRT4NwYBx
+	 CBelaxZt0DI2YKjkU5cMpfZ3djhZORuXyXkb2xmKCeM1fwdNXYjNkiUJ3THXFsuGsc
+	 Wxdj6Q62sapBwk1plBuu8pjQsIaLj7lNTWyXBloU=
+Date: Fri, 10 Nov 2023 04:56:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Nicolai Stange <nicstange@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH] debugfs: only clean up d_fsdata for d_is_reg()
+Message-ID: <2023111055-gratitude-prance-6074@gregkh>
+References: <20231109160639.514a2568f1e7.I64fe5615568e87f9ae2d7fb2ac4e5fa96924cb50@changeid>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: 7B6Xzlf8yvQXCoramQhzRzmNMpvKaWQy
-X-Proofpoint-ORIG-GUID: 7B6Xzlf8yvQXCoramQhzRzmNMpvKaWQy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-09_17,2023-11-09_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231109160639.514a2568f1e7.I64fe5615568e87f9ae2d7fb2ac4e5fa96924cb50@changeid>
 
-Utilize newly added bpf_token_create/bpf_token_free LSM hooks to
-allocate struct bpf_security_struct for each BPF token object in
-SELinux. This just follows similar pattern for BPF prog and map.
+On Thu, Nov 09, 2023 at 04:06:40PM +0100, Johannes Berg wrote:
+> From: Johannes Berg <johannes.berg@intel.com>
+> 
+> debugfs_create_automount() can store a function pointer in
+> d_fsdata, and for directories it may be NULL. The commit
+> 7c8d469877b1 ("debugfs: add support for more elaborate
+> ->d_fsdata") ignored that, and while freeing NULL is just
+> fine, if an automount is ever removed we'd attempt to
+> kfree() the function pointer. This currently never happens
+> since the only user (tracing) will never remove the
+> automount dir.
+> 
+> Later patches changed the logic here again to store the
+> real fops, and store the allocation only after a debugfs
+> file reference is obtained via debugfs_file_get().
+> 
+> Remove debugfs_release_dentry() so we won't attempt to
+> do anything common with the different uses of d_fsdata,
+> and put the freeing of the allocated data where it's last
+> possibly used, in __debugfs_file_removed(), which is only
+> called for regular files.
+> 
+> Also check in debugfs_file_get() that it gets only called
+> on regular files, just to make things clearer.
+> 
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+>  fs/debugfs/file.c  |  3 +++
+>  fs/debugfs/inode.c | 14 +++++---------
+>  2 files changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+> index 1f971c880dde..1a20c7db8e11 100644
+> --- a/fs/debugfs/file.c
+> +++ b/fs/debugfs/file.c
+> @@ -84,6 +84,9 @@ int debugfs_file_get(struct dentry *dentry)
+>  	struct debugfs_fsdata *fsd;
+>  	void *d_fsd;
+>  
+> +	if (WARN_ON(!d_is_reg(dentry)))
+> +		return -EINVAL;
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- security/selinux/hooks.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Note, the huge majority of Linux systems in the world run with "panic on
+warn" enabled, so if this is something that could actually happen,
+please just handle it and return the error, don't throw up a WARN()
+splat as that will reboot the system, causing you to have grumpy users.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 002351ab67b7..1501e95366a1 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6828,6 +6828,29 @@ static void selinux_bpf_prog_free(struct bpf_prog =
-*prog)
- 	prog->aux->security =3D NULL;
- 	kfree(bpfsec);
- }
-+
-+static int selinux_bpf_token_create(struct bpf_token *token, union bpf_a=
-ttr *attr,
-+				    struct path *path)
-+{
-+	struct bpf_security_struct *bpfsec;
-+
-+	bpfsec =3D kzalloc(sizeof(*bpfsec), GFP_KERNEL);
-+	if (!bpfsec)
-+		return -ENOMEM;
-+
-+	bpfsec->sid =3D current_sid();
-+	token->security =3D bpfsec;
-+
-+	return 0;
-+}
-+
-+static void selinux_bpf_token_free(struct bpf_token *token)
-+{
-+	struct bpf_security_struct *bpfsec =3D token->security;
-+
-+	token->security =3D NULL;
-+	kfree(bpfsec);
-+}
- #endif
-=20
- struct lsm_blob_sizes selinux_blob_sizes __ro_after_init =3D {
-@@ -7183,6 +7206,7 @@ static struct security_hook_list selinux_hooks[] __=
-ro_after_init =3D {
- 	LSM_HOOK_INIT(bpf_prog, selinux_bpf_prog),
- 	LSM_HOOK_INIT(bpf_map_free, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free, selinux_bpf_prog_free),
-+	LSM_HOOK_INIT(bpf_token_free, selinux_bpf_token_free),
- #endif
-=20
- #ifdef CONFIG_PERF_EVENTS
-@@ -7241,6 +7265,7 @@ static struct security_hook_list selinux_hooks[] __=
-ro_after_init =3D {
- #ifdef CONFIG_BPF_SYSCALL
- 	LSM_HOOK_INIT(bpf_map_create, selinux_bpf_map_create),
- 	LSM_HOOK_INIT(bpf_prog_load, selinux_bpf_prog_load),
-+	LSM_HOOK_INIT(bpf_token_create, selinux_bpf_token_create),
- #endif
- #ifdef CONFIG_PERF_EVENTS
- 	LSM_HOOK_INIT(perf_event_alloc, selinux_perf_event_alloc),
---=20
-2.34.1
+thanks,
 
+greg k-h
 
