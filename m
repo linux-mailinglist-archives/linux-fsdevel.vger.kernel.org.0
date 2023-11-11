@@ -1,43 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-2752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255F77E8AC4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 12:55:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980437E8C01
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 19:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4ED7B20B32
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 11:55:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C8C1C20757
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 18:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A488214017;
-	Sat, 11 Nov 2023 11:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48F71C280;
+	Sat, 11 Nov 2023 18:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uD3myK94"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0NvFGL5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18605689
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 11:55:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 423DAC433C7;
-	Sat, 11 Nov 2023 11:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1699703720;
-	bh=oUghxpRNPEGNJqTMMbcm4KyloCZMi03tXt/sHNuMuYs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0EC1BDFA
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 18:06:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C89C433C7;
+	Sat, 11 Nov 2023 18:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699725975;
+	bh=bTbUUGMGT4DE4ZVC8v2yuWZ8JBGapEtafRxfzYK5xeY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uD3myK943JMANfSvHD2O4AN6fdjac+EkJoJwwWqYL7LjqMiNYJpBou45djwR0kmfy
-	 Pz4uEXbtRHEfMIYVnC8jplUFVAxiKHeM/XxC1IMtaMd+jVLfypJS/EN/KmIna/DTBV
-	 GFKsn/pa74o6QScyXdGX5ccGa29J4ReQLuT0us6s=
-Date: Sat, 11 Nov 2023 06:55:18 -0500
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-	stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com,
-	hi@alyssa.is
-Subject: Re: [PATCH v2] virtiofs: Export filesystem tags through sysfs
-Message-ID: <2023111104-married-unstaffed-973e@gregkh>
-References: <20231108213333.132599-1-vgoyal@redhat.com>
+	b=U0NvFGL5ZS9FWVMXvkUUC6SyHnBecgFWD6DcrsFjZFQGoB96bkc6+0tNkYkvQDCPl
+	 VEkLMqsZIf3GihP2TJCRn3f54QnaBgewZOHnxJL891T46FsYB+sxuilJq5kbU/NWPy
+	 s+fDSySVFde34t+c88Zd+uutKn44ro0YBnb6SrEi+POUEAjM5IOoPs549nXmSASbSG
+	 0SV+T+xB/Ou3vk3kzmU7snC+1hV91hfF1uGtUsbc1IISCLNeCbCagu9yVDiSRgMkPO
+	 5+KKQDj1uzTO1UaeYXNuTGkCTaJAhHI1SbRwQoFZRU9sjCjX+hbe6Hz4/yvXJTiVuy
+	 4Phgt/UumN5rQ==
+Date: Sat, 11 Nov 2023 10:06:13 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] buffer: Fix more functions for block size >
+ PAGE_SIZE
+Message-ID: <20231111180613.GC998@sol.localdomain>
+References: <20231109210608.2252323-1-willy@infradead.org>
+ <20231109210608.2252323-8-willy@infradead.org>
+ <20231110045019.GB6572@sol.localdomain>
+ <ZU49o9oIfSc84pDt@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,44 +54,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231108213333.132599-1-vgoyal@redhat.com>
+In-Reply-To: <ZU49o9oIfSc84pDt@casper.infradead.org>
 
-On Wed, Nov 08, 2023 at 04:33:33PM -0500, Vivek Goyal wrote:
-> virtiofs filesystem is mounted using a "tag" which is exported by the
-> virtiofs device. virtiofs driver knows about all the available tags but
-> these are not exported to user space.
-> 
-> People have asked these tags to be exported to user space. Most recently
-> Lennart Poettering has asked for it as he wants to scan the tags and mount
-> virtiofs automatically in certain cases.
-> 
-> https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
-> 
-> This patch exports tags through sysfs. One tag is associated with each
-> virtiofs device. A new "tag" file appears under virtiofs device dir.
-> Actual filesystem tag can be obtained by reading this "tag" file.
-> 
-> For example, if a virtiofs device exports tag "myfs", a new file "tag"
-> will show up here. Tag has a newline char at the end.
-> 
-> /sys/bus/virtio/devices/virtio<N>/tag
-> 
-> # cat /sys/bus/virtio/devices/virtio<N>/tag
-> myfs
-> 
-> Note, tag is available at KOBJ_BIND time and not at KOBJ_ADD event time.
-> 
-> v2:
-> - Add a newline char at the end in tag file. (Alyssa Ross)
-> - Add a line in commit logs about tag file being available at KOBJ_BIND
->   time and not KOBJ_ADD time.
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> ---
->  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+On Fri, Nov 10, 2023 at 02:26:43PM +0000, Matthew Wilcox wrote:
+> Would you want to invest more engineering time in changing it?
 
-No documentation for your new sysfs file?  :(
+It seems logical to just keep the existing approach instead of spending time
+trying to justify changing it to a less efficient one (divides).
 
+- Eric
 
