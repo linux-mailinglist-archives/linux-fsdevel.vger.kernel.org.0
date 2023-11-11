@@ -1,118 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-2749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F330C7E89BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 09:13:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0858B7E8AC2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 12:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180D11C2093B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 08:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22EE41C20846
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 11:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9C011193;
-	Sat, 11 Nov 2023 08:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82A514265;
+	Sat, 11 Nov 2023 11:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LDZsNfK0"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a7gS8VLQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2F1094B;
-	Sat, 11 Nov 2023 08:13:33 +0000 (UTC)
-Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC583C0C;
-	Sat, 11 Nov 2023 00:13:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1699690407; bh=Qqrfldlz7J/reS2ISXYE9aOwEm9dnN1drwDuYH65t08=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LDZsNfK07NSlewqEX3WvJVIbtFXjjkNwZXZG68IAYeyFa0zd5DwrzzemqoeRgtO5y
-	 gdjqehYFyX+sr6Ltwy3CSnKPzzvAFNfbrwnZ3rzvJ/LSvOIV2CuECN9m9kW2xDmrlJ
-	 0Owah4DLkPpCPQUw0D2GW78V34J00E7qfn5sxRaM=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.56])
-	by newxmesmtplogicsvrsza12-0.qq.com (NewEsmtp) with SMTP
-	id 357A4425; Sat, 11 Nov 2023 16:13:23 +0800
-X-QQ-mid: xmsmtpt1699690403t4hmdfcmb
-Message-ID: <tencent_82622979A3A74448177BF772E6D1736E4305@qq.com>
-X-QQ-XMAILINFO: MtZ4zLDUQmWf9rinpoXhvRaEBOxbNV8HPBs3AjPrsECUKXlbUFihgTPBeiWXzL
-	 Xy22K48693IE4Wopx/x4O8DOC13QOLyhyHN0rV2Xl7v7xJrBdCjAhVGbWZAY06y/7/bWGwU0IbMJ
-	 I61veVK7gJ9WADW/PcGh7ZiZqe4jHYYzad10BqwznM5UkRLWf6PMeFRj48jwdqLYwU+a045eKa/f
-	 ZzQVUPm/xvnXpk1Mv4qWtGLSWdzaNRGPjZ9MeYnqYhycGMMYGVk75zz33AEYJD34nz+a5tjo51Ns
-	 nug9KxJXBkLSvSKfniOrOwCZrNeXvCUx8OXqx5r3h1NdrOhuqINx61588dSmrVJMhXdXpyy6fmvK
-	 b3YTE9+f7mhE6//AF6mJtxy6QnXErpkQ/tq8t0X/FjA6zjshtjzDAkJ8Al3o8nwCPTPl4duRWUtQ
-	 OoEeqryIdrlqN3QGJDOV9tTxyihF/EqNtWxGNATwTNQYIwdu6eG7JaWm5CdlDVbYiC0ksdz6G2k8
-	 Fr9xyoINSql+jFHBUK96nXi6XKavSNdMky119EkUWmSZmBPSJBpcFACiMoywvWmsosr/GnKtNp0l
-	 461hBvfVDxoXdFEjWTfXrQ7BXVqWLxDV79BuRtMaU2S89YK49o0Eo8OgcQ6122YK2sJ0SgTRmn81
-	 l0KdQMmSuAJUuSx4Jokeipq7WgOhboW5BNHKM1mpGieNpKxOKNCctpMbS8KgIRyawZ20FzlrjE4g
-	 KE3PeA1ZGs/D1lb+9P5okCuGe76Ced3d9QMD8EkzSRMmwyswm0fCyAInpIejkipG846tQIIpZS7h
-	 VbOFOnF87onXJL56DiEHxkXOrOv3HZyjzxWoAEBwh6mvquQUSg77ni5BnkZjrOX5sZGrQAVijwTk
-	 7m47qzcS8lHxuJkOwjbb7fVihG/WstNjMtnTISl3UPNj+rltM+gyzhH5CZx6mjz/SBAaN6hDeq20
-	 hV+pn3HR0=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: willy@infradead.org
-Cc: boris@bur.io,
-	clm@fb.com,
-	dsterba@suse.com,
-	eadavis@qq.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] test 305230142ae0
-Date: Sat, 11 Nov 2023 16:13:24 +0800
-X-OQ-MSGID: <20231111081323.4190569-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <ZU8dS0dlOGOblbxf@casper.infradead.org>
-References: <ZU8dS0dlOGOblbxf@casper.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7A13FFA
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 11:52:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5807CC433C8;
+	Sat, 11 Nov 2023 11:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1699703558;
+	bh=+XSoOsUIt+Qklc0oDQmck6hgWaZwqafHOVXnnzp3INY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a7gS8VLQXMJPQ7p1Z/w5kxb1bzJ1a6DogrBwWUxLBNZtWgvetyHZMDIt/WFIv0Oo5
+	 Rk3P/luja1a6OtBQXq8YOtWtA1EXz1FECoOWJiEDngzWh8bsYX7JD2o0owAqkIsi2e
+	 Vvt/oYUQ/Tp0yl2afjwV/j+UXyR0FzSf/6yGJSVw=
+Date: Sat, 11 Nov 2023 06:52:36 -0500
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vivek Goyal <vgoyal@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+	virtio-fs@redhat.com, mzxreary@0pointer.de, stefanha@redhat.com
+Subject: Re: [Virtio-fs] [PATCH] virtiofs: Export filesystem tags through
+ sysfs
+Message-ID: <2023111104-iron-colossal-960f@gregkh>
+References: <20231005203030.223489-1-vgoyal@redhat.com>
+ <CAJfpegspVnkXAa5xfvjEQ9r5__vXpcgR4qubdG8=p=aiS2goRg@mail.gmail.com>
+ <ZSRg2uiBNmY4mKHr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZSRg2uiBNmY4mKHr@redhat.com>
 
-On Sat, 11 Nov 2023 06:20:59 +0000, Matthew Wilcox wrote:
-> > +++ b/fs/btrfs/disk-io.c
-> > @@ -4931,7 +4931,8 @@ int btrfs_get_free_objectid(struct btrfs_root *root, u64 *objectid)
-> >  		goto out;
-> >  	}
-> >  
-> > -	*objectid = root->free_objectid++;
-> > +	while (find_qgroup_rb(root->fs_info, root->free_objectid++));
-> > +	*objectid = root->free_objectid;
+On Mon, Oct 09, 2023 at 04:21:46PM -0400, Vivek Goyal wrote:
+> On Mon, Oct 09, 2023 at 11:53:42AM +0200, Miklos Szeredi wrote:
+> > On Thu, 5 Oct 2023 at 22:30, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > virtiofs filesystem is mounted using a "tag" which is exported by the
+> > > virtiofs device. virtiofs driver knows about all the available tags but
+> > > these are not exported to user space.
+> > >
+> > > People have asked these tags to be exported to user space. Most recently
+> > > Lennart Poettering has asked for it as he wants to scan the tags and mount
+> > > virtiofs automatically in certain cases.
+> > >
+> > > https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+> > >
+> > > This patch exports tags through sysfs. One tag is associated with each
+> > > virtiofs device. A new "tag" file appears under virtiofs device dir.
+> > > Actual filesystem tag can be obtained by reading this "tag" file.
+> > >
+> > > For example, if a virtiofs device exports tag "myfs", a new file "tag"
+> > > will show up here.
+> > >
+> > > /sys/bus/virtio/devices/virtio<N>/tag
+> > >
+> > > # cat /sys/bus/virtio/devices/virtio<N>/tag
+> > > myfs
+> > >
+> > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > 
+> > Hi Vivek,
+> > 
+> > This needs something under Documentation/.
 > 
-> This looks buggy to me.  Let's say that free_objectid is currently 3.
+> Hi Miklos,
 > 
-> Before, it would assign 3 to *objectid, and increment free_objectid to
-> 4.  After (assuming the loop terminates on first iteration), it will
-> increment free_objectid to 4, then assign 4 to *objectid.
+> Hmm.., I can easily update the virtiofs documentation.
 > 
-> I think you meant to write:
+> Initially I was thinking to put something in Documentation/ABI/testing/
+> as well. But I don't see any virtio related. In fact can't find any
+> files related to "virtio" at all.
 > 
-> 	while (find_qgroup_rb(root->fs_info, root->free_objectid))
-> 		root->free_objectid++;
-> 	*objectid = root->free_objectid++;
-Yes, your guess is correct.
-> 
-> And the lesson here is that more compact code is not necessarily more
-> correct code.
-> 
-> (I'm not making any judgement about whether this is the correct fix;
-> I don't understand btrfs well enough to have an opinion.  Just that
-> this is not an equivalent transformation)
-I don't have much knowledge about btrfs too, but one thing is clear: the qgroupid 
-taken by create_snapshot() is calculated from btrfs_get_free_ojectid(). 
-At the same time, when calculating the new value in btrfs_get_free_ojectid(), 
-it is clearly unreasonable to not determine whether the new value exists in the
-qgroup_tree tree.
-Perhaps there are other methods to obtain a new qgroupid, but before obtaining 
-a new value, it is necessary to perform a duplicate value judgment on qgroup_tree,
-otherwise similar problems may still occur.
+> So I will just update the Documentation/filesystems/virtiofs.rst for now.
 
-edward
+No, please put it in Documentation/ABI/ that is where sysfs file
+information goes, and where our tools actually look for it (and test for
+it!)
 
+thanks,
+
+greg k-h
 
