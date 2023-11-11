@@ -1,109 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-2748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A4C7E89B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 09:04:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F330C7E89BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 09:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C123C1C208EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 08:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180D11C2093B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 08:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF07710A2C;
-	Sat, 11 Nov 2023 08:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9C011193;
+	Sat, 11 Nov 2023 08:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gJJB1zyV"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LDZsNfK0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5819210960
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 08:04:05 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B7C3C0C;
-	Sat, 11 Nov 2023 00:04:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=jDISXaSsB1SihV+ZlT+LjU2yE9U1277TzPJT1ZvBX0U=; b=gJJB1zyVzqjX9fnW2Un+NrhR6H
-	mpdXqhAj4Noenj2p0RI7fLryCoHa8j8ivJw+MzQS18WZOI6d5d9FjavHPsnlhSamUtX/VVzUpXXNC
-	B63cI4wBbmdfaCG2OcHgsczMn6dVDaxLfbmeq7S9L/wKYgsJK8n9REfHrxoGTrbQMDyEaYRGG80Gh
-	q+6kPnYY3gsEVbJAr2Ttbn+nSF3/UACpFl9tWulr9TEyU/sgWrrgtW1DMw+DyqPnFOGfKy8HoQdoj
-	XLNsceaW/jCrl/4gaOswA80P36rpbyhqvvbNfXT1F1wAVSez/RjuzZmV/YSrUiDn73YTPQGgJqGAS
-	s+bo+Osg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r1iyG-00EDaL-0G;
-	Sat, 11 Nov 2023 08:04:00 +0000
-Date: Sat, 11 Nov 2023 08:04:00 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-unionfs@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: [RFC][overlayfs] do we still need d_instantiate_anon() and export of
- d_alloc_anon()?
-Message-ID: <20231111080400.GO1957730@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2F1094B;
+	Sat, 11 Nov 2023 08:13:33 +0000 (UTC)
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC583C0C;
+	Sat, 11 Nov 2023 00:13:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1699690407; bh=Qqrfldlz7J/reS2ISXYE9aOwEm9dnN1drwDuYH65t08=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LDZsNfK07NSlewqEX3WvJVIbtFXjjkNwZXZG68IAYeyFa0zd5DwrzzemqoeRgtO5y
+	 gdjqehYFyX+sr6Ltwy3CSnKPzzvAFNfbrwnZ3rzvJ/LSvOIV2CuECN9m9kW2xDmrlJ
+	 0Owah4DLkPpCPQUw0D2GW78V34J00E7qfn5sxRaM=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.56])
+	by newxmesmtplogicsvrsza12-0.qq.com (NewEsmtp) with SMTP
+	id 357A4425; Sat, 11 Nov 2023 16:13:23 +0800
+X-QQ-mid: xmsmtpt1699690403t4hmdfcmb
+Message-ID: <tencent_82622979A3A74448177BF772E6D1736E4305@qq.com>
+X-QQ-XMAILINFO: MtZ4zLDUQmWf9rinpoXhvRaEBOxbNV8HPBs3AjPrsECUKXlbUFihgTPBeiWXzL
+	 Xy22K48693IE4Wopx/x4O8DOC13QOLyhyHN0rV2Xl7v7xJrBdCjAhVGbWZAY06y/7/bWGwU0IbMJ
+	 I61veVK7gJ9WADW/PcGh7ZiZqe4jHYYzad10BqwznM5UkRLWf6PMeFRj48jwdqLYwU+a045eKa/f
+	 ZzQVUPm/xvnXpk1Mv4qWtGLSWdzaNRGPjZ9MeYnqYhycGMMYGVk75zz33AEYJD34nz+a5tjo51Ns
+	 nug9KxJXBkLSvSKfniOrOwCZrNeXvCUx8OXqx5r3h1NdrOhuqINx61588dSmrVJMhXdXpyy6fmvK
+	 b3YTE9+f7mhE6//AF6mJtxy6QnXErpkQ/tq8t0X/FjA6zjshtjzDAkJ8Al3o8nwCPTPl4duRWUtQ
+	 OoEeqryIdrlqN3QGJDOV9tTxyihF/EqNtWxGNATwTNQYIwdu6eG7JaWm5CdlDVbYiC0ksdz6G2k8
+	 Fr9xyoINSql+jFHBUK96nXi6XKavSNdMky119EkUWmSZmBPSJBpcFACiMoywvWmsosr/GnKtNp0l
+	 461hBvfVDxoXdFEjWTfXrQ7BXVqWLxDV79BuRtMaU2S89YK49o0Eo8OgcQ6122YK2sJ0SgTRmn81
+	 l0KdQMmSuAJUuSx4Jokeipq7WgOhboW5BNHKM1mpGieNpKxOKNCctpMbS8KgIRyawZ20FzlrjE4g
+	 KE3PeA1ZGs/D1lb+9P5okCuGe76Ced3d9QMD8EkzSRMmwyswm0fCyAInpIejkipG846tQIIpZS7h
+	 VbOFOnF87onXJL56DiEHxkXOrOv3HZyjzxWoAEBwh6mvquQUSg77ni5BnkZjrOX5sZGrQAVijwTk
+	 7m47qzcS8lHxuJkOwjbb7fVihG/WstNjMtnTISl3UPNj+rltM+gyzhH5CZx6mjz/SBAaN6hDeq20
+	 hV+pn3HR0=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: willy@infradead.org
+Cc: boris@bur.io,
+	clm@fb.com,
+	dsterba@suse.com,
+	eadavis@qq.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] test 305230142ae0
+Date: Sat, 11 Nov 2023 16:13:24 +0800
+X-OQ-MSGID: <20231111081323.4190569-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <ZU8dS0dlOGOblbxf@casper.infradead.org>
+References: <ZU8dS0dlOGOblbxf@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	AFAICS, the main reason for exposing those used to be the need
-to store ovl_entry in allocated dentry; we needed to do that before it
-gets attached to inode, so the guts of d_obtain_alias() had to be
-exposed.
+On Sat, 11 Nov 2023 06:20:59 +0000, Matthew Wilcox wrote:
+> > +++ b/fs/btrfs/disk-io.c
+> > @@ -4931,7 +4931,8 @@ int btrfs_get_free_objectid(struct btrfs_root *root, u64 *objectid)
+> >  		goto out;
+> >  	}
+> >  
+> > -	*objectid = root->free_objectid++;
+> > +	while (find_qgroup_rb(root->fs_info, root->free_objectid++));
+> > +	*objectid = root->free_objectid;
+> 
+> This looks buggy to me.  Let's say that free_objectid is currently 3.
+> 
+> Before, it would assign 3 to *objectid, and increment free_objectid to
+> 4.  After (assuming the loop terminates on first iteration), it will
+> increment free_objectid to 4, then assign 4 to *objectid.
+> 
+> I think you meant to write:
+> 
+> 	while (find_qgroup_rb(root->fs_info, root->free_objectid))
+> 		root->free_objectid++;
+> 	*objectid = root->free_objectid++;
+Yes, your guess is correct.
+> 
+> And the lesson here is that more compact code is not necessarily more
+> correct code.
+> 
+> (I'm not making any judgement about whether this is the correct fix;
+> I don't understand btrfs well enough to have an opinion.  Just that
+> this is not an equivalent transformation)
+I don't have much knowledge about btrfs too, but one thing is clear: the qgroupid 
+taken by create_snapshot() is calculated from btrfs_get_free_ojectid(). 
+At the same time, when calculating the new value in btrfs_get_free_ojectid(), 
+it is clearly unreasonable to not determine whether the new value exists in the
+qgroup_tree tree.
+Perhaps there are other methods to obtain a new qgroupid, but before obtaining 
+a new value, it is necessary to perform a duplicate value judgment on qgroup_tree,
+otherwise similar problems may still occur.
 
-	These days overlayfs is stashing ovl_entry in the inode, so
-we are left with this:
-        dentry = d_find_any_alias(inode);
-        if (dentry)
-                goto out_iput;
+edward
 
-        dentry = d_alloc_anon(inode->i_sb);
-        if (unlikely(!dentry))
-                goto nomem;
-
-        if (upper_alias)
-                ovl_dentry_set_upper_alias(dentry);
-
-        ovl_dentry_init_reval(dentry, upper, OVL_I_E(inode));
-
-        return d_instantiate_anon(dentry, inode);
-
-ovl_dentry_init_reval() can bloody well be skipped, AFAICS - all it does
-is potentially clearing DCACHE_OP_{,WEAK_}REVALIDATE.  That's also done
-in ovl_lookup(), and in case we have d_splice_alias() return a non-NULL
-dentry we can simply copy it there.  Sure, somebody might race with
-us, pick dentry from hash and call ->d_revalidate() before we notice that
-DCACHE_OP_REVALIDATE could be cleaned.  So what?  That call of ->d_revalidate()
-will find nothing to do and return 1.  Which is the effect of having
-DCACHE_OP_REVALIDATE cleared, except for pointless method call.  Anyone
-who finds that dentry after the flag is cleared will skip the call.
-IOW, that race is harmless.
-
-And as for the ovl_dentry_set_upper_alias()... that information used to
-live in ovl_entry until the need to trim the thing down.  These days
-it's in a bit in dentry->d_fsdata.
-
-How painful would it be to switch to storing that in LSB of ovl_entry::__numlower,
-turning ovl_numlower() into
-	return oe ? oe->__numlower>>1 : 0
-and ovl_lowerdata() into
-	return lowerstack ? &lowerstack[(oe->__numlower>>1) - 1] : NULL
-with obvious adjustment to ovl_alloc_entry().
-
-An entry is coallocated with an array of struct ovl_path, with
-numlower elements.  More than 2G layers doesn't seem to be plausible -
-there are fat 64bit boxen, but 32Gb (kmalloc'ed, at that) just in
-the root ovl_entry alone feels somewhat over the top ;-)
-
-So stealing that bit shouldn't be a problem.  Is there anything I'm
-missing?
 
