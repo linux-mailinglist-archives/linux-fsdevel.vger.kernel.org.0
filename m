@@ -1,110 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-2741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1657E8719
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 01:57:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237E57E8756
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 02:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A377E281255
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 00:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0DC61F20F59
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 01:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F051FB4;
-	Sat, 11 Nov 2023 00:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tuqhm9i2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276621FC4;
+	Sat, 11 Nov 2023 01:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99601C20
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 00:57:00 +0000 (UTC)
-Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F8C448C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 16:56:57 -0800 (PST)
-Received: by mail-oo1-xc2f.google.com with SMTP id 006d021491bc7-581f78a0206so1366778eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 16:56:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1699664216; x=1700269016; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0WJjV0M8MGipSibP/l63xjUDxPGkLG8AjMcqPGszYTU=;
-        b=tuqhm9i2u/aQ7PoskTQCu9yyc1Xbr0z8N1FpX/NJnt+Tb7RWfemd7GMxL+oCL+3c0z
-         VJ9iZfdGDgmKXNccLi6CDEV49HMJD7gGULK+xPwBPAPd+jiDUGKu+7GYHP4D3cnGhX/e
-         PElAtWOw1HDPcu92ZzNYAJaFCK3+aFsM/ihEYzc25ofE1JSYsoEJyHogQhzAtOJ288dN
-         d23aBRx8DKj/EQwO2mPgALX9M35XdfcuTUAiH1hjLoEgEknuNoZpG5Aa9SMlx5lXBMQV
-         F26o41Jdu34xXCewj0+C+8NCE/IXTY/M8Bn/FlLN5IudCqGtdchy2ftPJ9Y18llLhRwA
-         LIqg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C92A1C3A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 01:08:26 +0000 (UTC)
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E606422D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 17:08:23 -0800 (PST)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1cc591d8177so28191005ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Nov 2023 17:08:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699664216; x=1700269016;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0WJjV0M8MGipSibP/l63xjUDxPGkLG8AjMcqPGszYTU=;
-        b=GPL3cNN1EF3aXH4JhG7pFTxJLKotoMgs3AuLBLDDO7MI3pCjOcDVwm+6TRBNhvZ12K
-         S7jDQUuFWmoTuMFdtJThdBfojxunS4TTofUqBI8DGVKQSeGCGwtwx0fXU/HBAH3dpvnJ
-         knepRWFOlteVANbgrHWXbCHcZm963ryNyeIOyPjavE/QiAUBpwrhlQwZQTQ3l19LgxO9
-         5On3vanbOlPGN2DH7zfgURnre9U9xFb4PCPUNkq91KZagUf5e62sS7KPPJrfFMBCzfKe
-         NviBaWeFx5+vgmxOn+/CNN0gCpyhTmRBnNmia8U/7TEoO8jVEz0aBkgwfCMpEcMGQW+s
-         zrhQ==
-X-Gm-Message-State: AOJu0Yy/y233mVBkKvXS6zPOeXdT1Dz8yj7SdhStEqxbSNP+mAbt0AMZ
-	FxVdkIGz1Hs43qbTVtgvVLuyuQ==
-X-Google-Smtp-Source: AGHT+IGX3k4QQhob2VPoP+c6SxcbxGB2OaDpjeV49tKk6N1SJY4rWQ5U6++lwQ6APk6XaIzKjwMPLA==
-X-Received: by 2002:a05:6358:e9c5:b0:16b:c414:ae2 with SMTP id hc5-20020a056358e9c500b0016bc4140ae2mr660358rwb.8.1699664216492;
-        Fri, 10 Nov 2023 16:56:56 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id w12-20020a63f50c000000b005b8ebef9fa0sm295729pgh.83.2023.11.10.16.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Nov 2023 16:56:55 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1r1cIu-00Ays6-25;
-	Sat, 11 Nov 2023 11:56:52 +1100
-Date: Sat, 11 Nov 2023 11:56:52 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH v9 0/3] [PATCH v9 0/3] Introduce provisioning primitives
-Message-ID: <ZU7RVKJIzm8ExGGH@dread.disaster.area>
-References: <20231110010139.3901150-1-sarthakkukreti@chromium.org>
+        d=1e100.net; s=20230601; t=1699664903; x=1700269703;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dwdFPnuTOA9bzSYhfknyestbGOHfAOANZJb099tUQ0g=;
+        b=fnaMMVZKZlVqzLzEp3ix5wv3w4a37rP38IpVRrF+eW7d6AJ5RBCzHTLmuRvX2mDNtS
+         tr5dFzulI9ccBXCBwm2TqWAE0Pzzb6yB9L44ExCMYKOZ8DCZKBpnuHtcWYj+5kwCWl+h
+         EZRECaIpaqQRNCzmJxrqVArTVDB9aUzYsP2kzTaAgyCpH6Y587i0NOy8lMpaEYHCqvq0
+         QlfaxXPVm4Bifn6LMVpQ4Ko8L3M3PsmxTR4bAvX/56r0dDFRhtiLkLJ+NkC2KQOlFOAl
+         DuFBPtZTlWoTozKXdV3P5lDbMGyviDIzJtRJUbPKWh8lT4ORtyy4DfHJhkvEMV19xtrP
+         P2Yg==
+X-Gm-Message-State: AOJu0Ywflrzn8B7VWeIZsOeFJde2YQlRt2JavGjj8KmyBksDDys572cI
+	pVD7M5qGwbVnT+pP1c6maT4lMAi85qG1oN0Qj2lyDOWRSFVDuAI=
+X-Google-Smtp-Source: AGHT+IF+oN9pCGz6CtQwFDycnMrLZbA5yVGGDmNRIscnoKmcaZaQf6Gfo4MxN3Qtqa06MwuRlceEYh0qLKl04qlDjngOhhlEd62X
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231110010139.3901150-1-sarthakkukreti@chromium.org>
+X-Received: by 2002:a17:903:25cf:b0:1cc:323c:fe4a with SMTP id
+ jc15-20020a17090325cf00b001cc323cfe4amr242167plb.12.1699664903193; Fri, 10
+ Nov 2023 17:08:23 -0800 (PST)
+Date: Fri, 10 Nov 2023 17:08:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000caca800609d612cc@google.com>
+Subject: [syzbot] Monthly fs report (Nov 2023)
+From: syzbot <syzbot+listd7ef1e6b20cd71d38256@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 09, 2023 at 05:01:35PM -0800, Sarthak Kukreti wrote:
-> Hi,
-> 
-> This patch series is version 9 of the patch series to introduce
-> block-level provisioning mechanism (original [1]), which is useful for
-> provisioning space across thinly provisioned storage architectures (loop
-> devices backed by sparse files, dm-thin devices, virtio-blk). This
-> series has minimal changes over v8[2], with a couple of patches dropped
-> (suggested by Dave).
-> 
-> This patch series is rebased from the linux-dm/dm-6.5-provision-support
-> [3] on to (a12deb44f973 Merge tag 'input-for-v6.7-rc0' ...). The final 
-> patch in the series is a blktest (suggested by Dave in 4) which was used
-> to test out the provisioning flow for loop devices on sparse files on an
-> ext4 filesystem.
+Hello fs maintainers/developers,
 
-What happened to the XFS patch I sent to support provisioning for
-fallocate() operations through XFS?
+This is a 31-day syzbot report for the fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/fs
 
-Cheers,
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 50 issues are still open and 331 have been fixed so far.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  3631    Yes   BUG: sleeping function called from invalid context in __getblk_gfp
+                   https://syzkaller.appspot.com/bug?extid=69b40dc5fd40f32c199f
+<2>  1500    Yes   possible deadlock in input_event (2)
+                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
+<3>  359     Yes   BUG: sleeping function called from invalid context in __bread_gfp
+                   https://syzkaller.appspot.com/bug?extid=5869fb71f59eac925756
+<4>  254     No    KASAN: slab-use-after-free Read in __ext4_iget
+                   https://syzkaller.appspot.com/bug?extid=5407ecf3112f882d2ef3
+<5>  145     Yes   possible deadlock in pipe_write
+                   https://syzkaller.appspot.com/bug?extid=011e4ea1da6692cf881c
+<6>  75      Yes   BUG: sleeping function called from invalid context in bdev_getblk
+                   https://syzkaller.appspot.com/bug?extid=51c61e2b1259fcd64071
+<7>  57      Yes   WARNING in path_openat
+                   https://syzkaller.appspot.com/bug?extid=be8872fcb764bf9fea73
+<8>  47      Yes   INFO: task hung in filename_create (4)
+                   https://syzkaller.appspot.com/bug?extid=72c5cf124089bc318016
+<9>  43      No    INFO: task hung in __fdget_pos (4)
+                   https://syzkaller.appspot.com/bug?extid=e245f0516ee625aaa412
+<10> 40      Yes   INFO: rcu detected stall in sys_clock_adjtime
+                   https://syzkaller.appspot.com/bug?extid=25b7addb06e92c482190
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
