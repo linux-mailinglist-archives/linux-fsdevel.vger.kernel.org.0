@@ -1,171 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-2757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DABE7E8CA2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 21:49:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614627E8DA3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 01:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6911C20866
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Nov 2023 20:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EB31F20F8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 00:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400981CFB3;
-	Sat, 11 Nov 2023 20:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6C51386;
+	Sun, 12 Nov 2023 00:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="ZwRxKRMg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8QGNaM9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0CB1B274;
-	Sat, 11 Nov 2023 20:48:49 +0000 (UTC)
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09CC42D73;
-	Sat, 11 Nov 2023 12:48:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
-	s=s31663417; t=1699735704; x=1700340504; i=quwenruo.btrfs@gmx.com;
-	bh=TgFPOslhJOQ9qs98yLRjNcSGkGecPQbUrWbyHjijZdU=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=ZwRxKRMgIl1MWZzW6+omuPubI6dfNBN034QeH00rW/4OQnI8FJQCrjabePshr0Lq
-	 HaVibQI0xVVKaBAP8Ta/ELZyHXuLIarDKwuwyevy7biuv6RKx6TMasY2Bdxx9mI4E
-	 a7icdjopw1Z3wYJyOdPCoBtVEkKfYRfx7k9HR8VjWQ3EagC/Jh3PHKHDgkUt9ocEr
-	 3rOatIoZDJfB+CxZgRVGLqCxtLtF/vp/xhFVxBJXJQdqghFrBp+H6/IdEqCORL3M7
-	 gjXsbCanxYAXtbJlQi6yl7Z9R/m9M9fMHMvMbVEmrsE2Yyb5QkUYpK13VRtKNi1CR
-	 ScM9LSEwXYmxZGQAzg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.117] ([122.151.37.21]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MyKDU-1rKQDc0kCy-00yhg8; Sat, 11
- Nov 2023 21:48:24 +0100
-Message-ID: <ae67f48e-a1f3-4d45-8eca-fa42f0fcb5b8@gmx.com>
-Date: Sun, 12 Nov 2023 07:18:16 +1030
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49747E
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 00:10:42 +0000 (UTC)
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECA89F;
+	Sat, 11 Nov 2023 16:10:41 -0800 (PST)
+Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-7b9dc244151so2799581241.1;
+        Sat, 11 Nov 2023 16:10:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699747840; x=1700352640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2PmY5bKxAuQtkgfmS+f6yOD+CB/aAYncwj1ahrJMD8=;
+        b=Q8QGNaM9hVWpfqAO0SUBHwUHbf976v3E3BKDOS5i6b4pwI5YuTkzcSEwtquwymF2eZ
+         FblwYw9TkXnxjAyMmuIs38G89bzNLsp4X30CNQ6o0q3U4vrI4y1Me5dmniYWvZOq9OnD
+         hhUOnaSoXmIWW9RlZo4c15fljUL6lSXqPJW6FrRyp0v/JBiUm4p8qB1LOpbAzmH+7/zg
+         eCHiB3fWBmRXVlZ/3vGVHIlVaQaJlHsf+pJbCDxLMoTBFuxv8s3MoriGzamv7Efpj9W6
+         ERNiUJb7yVJej/+pX1Y9WBXvtvm6ujsA/Ok7T00LKx68KG3qL11zlD/MO5TStN491zIf
+         uH9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699747840; x=1700352640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i2PmY5bKxAuQtkgfmS+f6yOD+CB/aAYncwj1ahrJMD8=;
+        b=DJAjQ6YtRbijQoMZ+ZFRgnzDzU2CVo4VGTz9BOtminYo+DchqgPpP7BUyLKHw3BqC1
+         9oq5cD+MAnvTq2vkgml3RtnVnsB0det2oLW6YQ+uMl7sc7TBFNuvVIbL9Y/BWro0r0c6
+         uhVSI0oYsio80hJeF4ZL96ye9AMlBxkpveUCIqK7hpdAIPtOXYH3TD4VuEuJGVb969Ul
+         +cIf+ZKQ/g7kgou/9fAu46T1W9FpF9TZQV8V4GIbidN/a2Go0uKiWUDtTiOR3GjZ7f6m
+         uYWmc/VvYrBITz3ao4nA4vyrkiZP3txQpwUSQnLxrve6i5vThbn6gpfZL/Bs/FZAmDG5
+         pC7A==
+X-Gm-Message-State: AOJu0YzmTLsVF3cWRCgp7y4F+x9TNZWtaHY4m+CdTLHz3/4AzS0Ve14/
+	L7joy7ThFuGDKbpCQudOm94RHOabw2TpaMJX9snRjtkG8eI=
+X-Google-Smtp-Source: AGHT+IHBUOVziRyuyoH3CzjsxdrRV1PVe1FO7k/uL5GYXARJhtihGc1mwvOKpKSwDz79z5PNPmFafqEoszP/zA7u1KE=
+X-Received: by 2002:a67:f4c9:0:b0:457:ca73:83d6 with SMTP id
+ s9-20020a67f4c9000000b00457ca7383d6mr3045848vsn.5.1699747839938; Sat, 11 Nov
+ 2023 16:10:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] test 305230142ae0
-To: Edward Adam Davis <eadavis@qq.com>, willy@infradead.org
-Cc: boris@bur.io, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <ZU8dS0dlOGOblbxf@casper.infradead.org>
- <tencent_82622979A3A74448177BF772E6D1736E4305@qq.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <tencent_82622979A3A74448177BF772E6D1736E4305@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20231106173903.1734114-1-willy@infradead.org> <CAKFNMomPu2r-KCrKgM0PTfPA3xWm+BaJc3oi-_kZeGG3fMr=_A@mail.gmail.com>
+In-Reply-To: <CAKFNMomPu2r-KCrKgM0PTfPA3xWm+BaJc3oi-_kZeGG3fMr=_A@mail.gmail.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Sun, 12 Nov 2023 09:10:23 +0900
+Message-ID: <CAKFNMomk6CcuaU5CbArbS0tMncz1LGNz=vLeOEx4xpmENfGWFQ@mail.gmail.com>
+Subject: Re: [PATCH 00/35] nilfs2: Folio conversions
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-nilfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+hLGTdZv3iptvCjS7ha0sAWDfEJNPI6Tt7PTlZss1eGzxUEnRDA
- 3Y3H3z9bpaGlJernznmFPWY6HDdNErxaot1rS+0Y/k/2EyRP1tnSLCmrHCMotDpZZyHrsa3
- 89UPcS+V+j5Nn7XmsivFDk2KBg1uwj+yiSunvkSbjdaiuD2rjsyKNO0duPLeU/lkE+9jcKj
- daTlkl/s972FmKs6f95gg==
-UI-OutboundReport: notjunk:1;M01:P0:/Bugbo+DcYE=;n3pcwbrm7CrlQo4cmn6tPc0Va5Y
- UCTKFhOLc4MojHJlLhKxbxU06JOe1wDFpunh4gqEnEwg34zY/epnipIxMC+fzXn/10wDRKzlu
- qFQ0TNZoIuXDA0PzaAJZDmrr2q2tc3024jFVUpZkSMQlZjTX95UF5sgvnkEvthdskBxqyH3r0
- EP5p/tdb9JzTqTKS39CHYrPmgLRLFMx9nnVLoGMTQMzGkFpSFN4uWWZ5Z5SLNnehEw9wQtbuE
- /mBGRSP+nbgfPJtsYBCIwkBZJx0fJrdO2oassDW0n1SUPQ0SnOQT7UJprKFGG1+UtHr29fTTW
- EUXU46AoeCLsieCGoF73MLb60UG2vdpgqcrGL0fcjWP0N0zdEKCO9o3YpS1wYZHt2Nj6Tymq1
- ECuYVUSn3XjtmXRuiDGBo64J118qKvmeIC5RP8F+3C4pXZ47lh4Sao9Jfj/s55Zbja26y48gy
- y792VobwF0kaDCIZg3IV1qncPgjqZdIPQn70LYkKAMDF7PI9fIk2aDNhNC7sxJjjVgbhKVLDj
- 8jgGBJ52RmAS7zpmD/LEh+ENFu2fzw4TXRs5XvTlXJ12Yab6wJ/jPOG9T3IgaplDfoHAhINri
- 8ICHA/8aTSi3Bz+uQyBnpwBi/u7psyGGhK3I1jBOj3QMnBo7ohZdNOoqbUXPrpwh0qfU3iGgU
- 6w6yAh9eIweq8PfAeqe9umJQxKPlh2NC2ETxXPdWBBhqkzIh0aoaPxqHUGyTB2/MUyOxSSaTR
- +lmPDT5pnhGVfJivjWtRbSv92TEESTs9Mgc7GJL3Yop1yaB0CmqdJhfP4gskkbJjuhAlMFzz3
- Uj5SrfdlkD5Jqf6xnqp3e8rEtBZfWeMMSyDcgGtDm6FQEnTzeEvz8kEdWxhvQMUnRYPMWx1o2
- JcmgF/2w1QMm/8BqFR74rcPTTd+IYqS2ABtE//RB2qeFfl6s49v9dZ8cXhH5kcHnCebEC3Qsi
- xfMTFdEjjFRZp22e4p9cyBXKG9c=
 
+On Tue, Nov 7, 2023 at 10:49=E2=80=AFAM Ryusuke Konishi wrote:
+>
+> On Tue, Nov 7, 2023 at 2:39=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
+> >
+> > This patch series does most of the page->folio conversions needed in
+> > nilfs2.  I haven't done the work to support large folios in nilfs2;
+> > I don't know if that conversion will be worth the effort.  There are
+> > still a few page uses left, but the infrastructure isn't quite there to
+> > get rid of them yet.
+> >
+> > Arguably, this is two separate series; the first takes care of the file
+> > paths and the second takes care of directories.  I've tried my best to
+> > include large folio support in the directory code because it'll be need=
+ed
+> > for large block size devices.  It also tries to stay as close as possib=
+le
+> > to the current ext2 code (so it also includes kmap_local support).
+> >
+> > These patches are only compile-tested.  xfstests doesn't seem to know
+> > about nilfs2.
+> >
+> > Matthew Wilcox (Oracle) (35):
+> >   nilfs2: Add nilfs_end_folio_io()
+> >   nilfs2: Convert nilfs_abort_logs to use folios
+> >   nilfs2: Convert nilfs_segctor_complete_write to use folios
+> >   nilfs2: Convert nilfs_forget_buffer to use a folio
+> >   nilfs2: Convert to nilfs_folio_buffers_clean()
+> >   nilfs2: Convert nilfs_writepage() to use a folio
+> >   nilfs2: Convert nilfs_mdt_write_page() to use a folio
+> >   nilfs2: Convert to nilfs_clear_folio_dirty()
+> >   nilfs2: Convert to __nilfs_clear_folio_dirty()
+> >   nilfs2: Convert nilfs_segctor_prepare_write to use folios
+> >   nilfs2: Convert nilfs_page_mkwrite() to use a folio
+> >   nilfs2: Convert nilfs_mdt_create_block to use a folio
+> >   nilfs2: Convert nilfs_mdt_submit_block to use a folio
+> >   nilfs2: Convert nilfs_gccache_submit_read_data to use a folio
+> >   nilfs2: Convert nilfs_btnode_create_block to use a folio
+> >   nilfs2: Convert nilfs_btnode_submit_block to use a folio
+> >   nilfs2: Convert nilfs_btnode_delete to use a folio
+> >   nilfs2: Convert nilfs_btnode_prepare_change_key to use a folio
+> >   nilfs2: Convert nilfs_btnode_commit_change_key to use a folio
+> >   nilfs2: Convert nilfs_btnode_abort_change_key to use a folio
+> >   nilfs2: Remove page_address() from nilfs_set_link
+> >   nilfs2: Remove page_address() from nilfs_add_link
+> >   nilfs2: Remove page_address() from nilfs_delete_entry
+> >   nilfs2: Return the mapped address from nilfs_get_page()
+> >   nilfs2: Pass the mapped address to nilfs_check_page()
+> >   nilfs2: Switch to kmap_local for directory handling
+> >   nilfs2: Add nilfs_get_folio()
+> >   nilfs2: Convert nilfs_readdir to use a folio
+> >   nilfs2: Convert nilfs_find_entry to use a folio
+> >   nilfs2: Convert nilfs_rename() to use folios
+> >   nilfs2: Convert nilfs_add_link() to use a folio
+> >   nilfs2: Convert nilfs_empty_dir() to use a folio
+> >   nilfs2: Convert nilfs_make_empty() to use a folio
+> >   nilfs2: Convert nilfs_prepare_chunk() and nilfs_commit_chunk() to
+> >     folios
+> >   nilfs2: Convert nilfs_page_bug() to nilfs_folio_bug()
+> >
+> >  fs/nilfs2/btnode.c  |  62 +++++------
+> >  fs/nilfs2/dir.c     | 248 ++++++++++++++++++++------------------------
+> >  fs/nilfs2/file.c    |  28 ++---
+> >  fs/nilfs2/gcinode.c |   4 +-
+> >  fs/nilfs2/inode.c   |  11 +-
+> >  fs/nilfs2/mdt.c     |  23 ++--
+> >  fs/nilfs2/namei.c   |  33 +++---
+> >  fs/nilfs2/nilfs.h   |  20 ++--
+> >  fs/nilfs2/page.c    |  93 +++++++++--------
+> >  fs/nilfs2/page.h    |  12 +--
+> >  fs/nilfs2/segment.c | 157 ++++++++++++++--------------
+> >  11 files changed, 338 insertions(+), 353 deletions(-)
+> >
+> > --
+> > 2.42.0
+> >
+>
+> Matthew, thank you so much for this hard work.
+> Even if full support for large folios cannot be achieved at this time
+> due to limitations in the nilfs2 implementation, I appreciate that you
+> are moving forward with the conversion work that should be done.
+>
+> I haven't reviewed each patch yet, but at least this series can be
+> built without problems in my environment too, and so far it is working
+> fine including GC and stress tests.
+>
+> I will review all the patches, but since there are so many, I will not
+> add LGTM replies to each one, but will only reply to those that have
+> comments (if any).
+>
+> Many thanks,
+> Ryusuke Konishi
 
+The following WARNING was detected during stress testing on a 32-bit VM:
 
-On 2023/11/11 18:43, Edward Adam Davis wrote:
-> On Sat, 11 Nov 2023 06:20:59 +0000, Matthew Wilcox wrote:
->>> +++ b/fs/btrfs/disk-io.c
->>> @@ -4931,7 +4931,8 @@ int btrfs_get_free_objectid(struct btrfs_root *r=
-oot, u64 *objectid)
->>>   		goto out;
->>>   	}
->>>
->>> -	*objectid =3D root->free_objectid++;
->>> +	while (find_qgroup_rb(root->fs_info, root->free_objectid++));
->>> +	*objectid =3D root->free_objectid;
->>
->> This looks buggy to me.  Let's say that free_objectid is currently 3.
->>
->> Before, it would assign 3 to *objectid, and increment free_objectid to
->> 4.  After (assuming the loop terminates on first iteration), it will
->> increment free_objectid to 4, then assign 4 to *objectid.
->>
->> I think you meant to write:
->>
->> 	while (find_qgroup_rb(root->fs_info, root->free_objectid))
->> 		root->free_objectid++;
->> 	*objectid =3D root->free_objectid++;
-> Yes, your guess is correct.
->>
->> And the lesson here is that more compact code is not necessarily more
->> correct code.
->>
->> (I'm not making any judgement about whether this is the correct fix;
->> I don't understand btrfs well enough to have an opinion.  Just that
->> this is not an equivalent transformation)
-> I don't have much knowledge about btrfs too, but one thing is clear: the=
- qgroupid
-> taken by create_snapshot() is calculated from btrfs_get_free_ojectid().
-> At the same time, when calculating the new value in btrfs_get_free_oject=
-id(),
-> it is clearly unreasonable to not determine whether the new value exists=
- in the
-> qgroup_tree tree.
+[  270.894814][ T5828] ------------[ cut here ]------------
+[  270.895409][ T5828] WARNING: CPU: 1 PID: 5828 at mm/highmem.c:611
+kunmap_local_indexed+0xd4/0xfc
+<snip>
+[  270.904260][ T5828] EIP: kunmap_local_indexed+0xd4/0xfc
+[  270.904940][ T5828] Code: 00 02 8b 80 5c 0e 00 00 85 c0 78 26 b8 01
+00 00 00 e8 80 22 df ff 64 a1 84 29 33 c2 85 c0 74 1a e8 75 f4 df ff
+5b 5e 5d c3 90 <0f> 0b eb 95 8d 74 26 00 0f 0b 8d b6 00 00 00 00 e8 13
+8a 80 00 eb
+[  270.907264][ T5828] EAX: 00000024 EBX: fff99000 ECX: 00068000 EDX: fff97=
+000
+[  270.908140][ T5828] ESI: 00000003 EDI: f6cc76c0 EBP: e353fda8 ESP: e353f=
+da0
+[  270.909020][ T5828] DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+EFLAGS: 00010206
+[  270.910043][ T5828] CR0: 80050033 CR2: b145b49c CR3: 23570000 CR4: 00350=
+ed0
+[  270.910927][ T5828] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000=
+000
+[  270.911799][ T5828] DR6: fffe0ff0 DR7: 00000400
+[  270.912369][ T5828] Call Trace:
+[  270.912771][ T5828]  ? show_regs+0x50/0x58
+[  270.913287][ T5828]  ? kunmap_local_indexed+0xd4/0xfc
+[  270.913908][ T5828]  ? __warn+0x6f/0x184
+[  270.914420][ T5828]  ? kunmap_local_indexed+0xd4/0xfc
+[  270.915063][ T5828]  ? report_bug+0x1b2/0x22c
+[  270.915610][ T5828]  ? timers_dead_cpu+0x12b/0x268
+[  270.916249][ T5828]  ? exc_overflow+0x38/0x38
+[  270.916826][ T5828]  ? handle_bug+0x2a/0x48
+[  270.917353][ T5828]  ? exc_invalid_op+0x1b/0x58
+[  270.917929][ T5828]  ? handle_exception+0x130/0x130
+[  270.918513][ T5828]  ? shrink_dentry_list+0x73/0x2bc
+[  270.919121][ T5828]  ? exc_overflow+0x38/0x38
+[  270.919728][ T5828]  ? kunmap_local_indexed+0xd4/0xfc
+[  270.920369][ T5828]  ? exc_overflow+0x38/0x38
+[  270.920913][ T5828]  ? kunmap_local_indexed+0xd4/0xfc
+[  270.921545][ T5828]  nilfs_delete_entry+0xa7/0x1ec [nilfs2]
+[  270.922255][ T5828]  nilfs_rename+0x359/0x374 [nilfs2]
+[  270.922899][ T5828]  ? find_held_lock+0x24/0x70
+[  270.923457][ T5828]  ? down_write_nested+0x6d/0xd0
+[  270.924043][ T5828]  vfs_rename+0x525/0xaa8
+[  270.924572][ T5828]  ? vfs_rename+0x525/0xaa8
+[  270.925156][ T5828]  ? security_path_rename+0x54/0x7c
+[  270.925794][ T5828]  do_renameat2+0x496/0x504
+[  270.926380][ T5828]  __ia32_sys_rename+0x34/0x3c
+[  270.926973][ T5828]  __do_fast_syscall_32+0x56/0xc8
+[  270.927598][ T5828]  do_fast_syscall_32+0x29/0x58
+[  270.928257][ T5828]  do_SYSENTER_32+0x15/0x18
+[  270.928871][ T5828]  entry_SYSENTER_32+0x98/0xf1
+[  270.929582][ T5828] EIP: 0xb146f579
+[  270.930064][ T5828] Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01
+10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89
+e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd
+80 90 8d 76
+[  270.932584][ T5828] EAX: ffffffda EBX: 03ac7650 ECX: 03ac76f0 EDX: b1456=
+ff4
+[  270.933446][ T5828] ESI: 02aae2c3 EDI: b14a4b80 EBP: bffd8638 ESP: bffd7=
+de8
+[  270.934311][ T5828] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b
+EFLAGS: 00000292
+[  270.935245][ T5828] Kernel panic - not syncing: kernel: panic_on_warn se=
+t ...
 
-Nope, it's totally wrong.
+This issue is reproducible and the result of bisect was the following patch=
+:
 
-Qgroupid is bound to subvolumeid, thus getting a different id for
-qgroupid is going to screw the whole thing up.
+> >   nilfs2: Switch to kmap_local for directory handling
 
-> Perhaps there are other methods to obtain a new qgroupid, but before obt=
-aining
-> a new value, it is necessary to perform a duplicate value judgment on qg=
-roup_tree,
-> otherwise similar problems may still occur.
+It seems that the problem was introduced in the conversion of
+"nilfs_rename() -> nilfs_delete_entry()" to kmap_local.
 
-If you don't really understand the context, the fix is never going to be
-correct.
+For the first part of this series  (PATH 01/35 - 20/35), my review is
+already finished, and I believe nothing breaks existing behavior.
+So I'm thinking of sending that part to the -mm tree first (on Monday
+or Tuesday), but if you have any opinions, please let me know.
+
+For the rest, I would like to continue problem analysis and review.
 
 Thanks,
-Qu
-
->
-> edward
->
->
+Ryusuke Konishi
 
