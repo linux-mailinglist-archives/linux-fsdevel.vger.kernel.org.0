@@ -1,70 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-2762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002117E8E62
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 05:53:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211347E8E63
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 05:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17AEC1C20869
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 04:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC531C2082C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 04:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A6E23BD;
-	Sun, 12 Nov 2023 04:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A522D4428;
+	Sun, 12 Nov 2023 04:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GIg+qXqs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mvD6qLIQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925D523B7
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 04:52:59 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 623432D6B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 20:52:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699764778; x=1731300778;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KNrqoAhaBmaC8C417KV79YPfsTBe/AyX3hjvicbv0d8=;
-  b=GIg+qXqsVPHmv8RcaB1Yfe1W3ZyJEdb6pRIX3MU7dncPA5Kgr7misKgQ
-   1Vg+2MR9u64PIJVaftVQMfcHHtvXygf7oCIgpaKSU2NvfuJHI4zPWGDa5
-   8CXwO5fhZN06nFg9GwxL/a78GU+Ef007kzQkI4XBwgei5LrABk+osGHPf
-   GX2rpBUPrlQRP6malCPetKvupNZTbR1uV5HUoi4l0/imrLvTN0kvGW59x
-   KyTqQxvzeQc6XxHU/VDrXVXd8AzuEUxl5EiG1+i1azTV9bOXUnxoC2ciV
-   kjxO5s3GiWY0iSmZnifYqScBtbCKu/HvafLHiD5y+89ZnmCDjDMf3MLnX
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10891"; a="454611420"
-X-IronPort-AV: E=Sophos;i="6.03,296,1694761200"; 
-   d="scan'208";a="454611420"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2023 20:52:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10891"; a="937481356"
-X-IronPort-AV: E=Sophos;i="6.03,296,1694761200"; 
-   d="scan'208";a="937481356"
-Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 11 Nov 2023 20:52:55 -0800
-Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r22Sq-000Ax4-2K;
-	Sun, 12 Nov 2023 04:52:52 +0000
-Date: Sun, 12 Nov 2023 12:52:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C58933F1
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 04:53:08 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D052C2D6B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 20:53:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=C7mbVvCxmmdoasQ2rmD+cwGlr698Dp5+DuFDa7Kru5M=; b=mvD6qLIQK7gTHrqN+6GT3YLZ8i
+	8qMs4rko4igZwCCtM8LA9qBLiORO6uVkonQaTQSGHcUnLAueFDcvmR+lr/EWZGByLZ8+B8KN3Q9jr
+	ZqMckFgWYrjRVjKA8jzYA25SUngWyjykrW5NCU4GXuaV8EsOrr2KAarMl3EdPhSW3g8XpKrmSYlv6
+	ciLuHUf954Zvjb2gYM9Sq47XkcDR4aAGiMxt0cMlUbPNxZaUTn3ique7KKnAFOoJD0vuEtmRqgIoT
+	bIE+Qf38xN88PLbWQ66BswF6EYIkwXWttM+uLr88MDp8ILoa7bCZNKFFmsHVKqOuMGrGP3jOWB8qZ
+	O8nIIsMw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r22Su-0066Sb-No; Sun, 12 Nov 2023 04:52:56 +0000
+Date: Sun, 12 Nov 2023 04:52:56 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Hannes Reinecke <hare@suse.de>,
 	Luis Chamberlain <mcgrof@kernel.org>,
 	Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] buffer: Fix grow_buffers() for block size >
+Subject: Re: [PATCH v2 7/7] buffer: Fix more functions for block size >
  PAGE_SIZE
-Message-ID: <202311121240.AN8GbAbe-lkp@intel.com>
-References: <20231109210608.2252323-4-willy@infradead.org>
+Message-ID: <ZVBaKPHNM+9Ry7eq@casper.infradead.org>
+References: <20231109210608.2252323-1-willy@infradead.org>
+ <20231109210608.2252323-8-willy@infradead.org>
+ <20231110045019.GB6572@sol.localdomain>
+ <ZU49o9oIfSc84pDt@casper.infradead.org>
+ <20231111180613.GC998@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,41 +58,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231109210608.2252323-4-willy@infradead.org>
+In-Reply-To: <20231111180613.GC998@sol.localdomain>
 
-Hi Matthew,
+On Sat, Nov 11, 2023 at 10:06:13AM -0800, Eric Biggers wrote:
+> On Fri, Nov 10, 2023 at 02:26:43PM +0000, Matthew Wilcox wrote:
+> > Would you want to invest more engineering time in changing it?
+> 
+> It seems logical to just keep the existing approach instead of spending time
+> trying to justify changing it to a less efficient one (divides).
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master next-20231110]
-[cannot apply to v6.6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/buffer-Return-bool-from-grow_dev_folio/20231110-051651
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20231109210608.2252323-4-willy%40infradead.org
-patch subject: [PATCH v2 3/7] buffer: Fix grow_buffers() for block size > PAGE_SIZE
-config: hexagon-comet_defconfig (https://download.01.org/0day-ci/archive/20231112/202311121240.AN8GbAbe-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231112/202311121240.AN8GbAbe-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311121240.AN8GbAbe-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: __muloti4
-   >>> referenced by buffer.c
-   >>>               fs/buffer.o:(bdev_getblk) in archive vmlinux.a
-   >>> referenced by buffer.c
-   >>>               fs/buffer.o:(bdev_getblk) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Except the existing approach doesn't work for block size > PAGE_SIZE
 
