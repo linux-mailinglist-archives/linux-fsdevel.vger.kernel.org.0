@@ -1,79 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-2779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9AA7E9156
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 16:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F02267E916C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 16:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE589280A99
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 15:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989E31F20F8C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CBA14286;
-	Sun, 12 Nov 2023 15:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B03814AA2;
+	Sun, 12 Nov 2023 15:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fwDKDwer"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069D912B8D
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 15:09:05 +0000 (UTC)
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEED82D64
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 07:09:04 -0800 (PST)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-5bd18d54a48so3272841a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 07:09:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699801744; x=1700406544;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=srdz066tvvTdM4CmNeOwelm2biHAQtgJiKmsTshSsQM=;
-        b=QAH4Kt1JQWxVf0UATqXguBBqN3k1cZuUyB3ILq9CYbBtNCuHhO+A1namFslNUCKD9i
-         L2lqVNSZOTB7RhvBF8/vSpI52VS/OXiakA1SmfJZYKaUWzhOqaFWp4cLB9DT90WbnEdz
-         1cIABosTXfdfuHykO/H+T57KekoDJJ6BVIyaVF+y7QaH6lcOwag11nyAwG4EoN/AxYxY
-         SnBa1YXJRHo2v7HKhikYiUZnO5WnnXsbp/fNNWJys4yHEAtermDv9qRvoyiL8AIgMPdv
-         lXBK6P+IlhY8TJqjCiCgYRD3u6EwtrEigL6B5XTv/gfHsFRUI97oixZWEKsF3hiij1dj
-         lq1Q==
-X-Gm-Message-State: AOJu0YwH4xc4/XUaUqz2fYpy8RK5v4AQoHzZM0XTUXOctg1RwQJm6bZP
-	BoJnLQPiTt7n7IJpuyB+zTpA/G9vhgUUkHO7/kXw+T1xq8TE
-X-Google-Smtp-Source: AGHT+IGs5Bkh6t4mkKR/0xr7IdzglfJ6hUWB8xmVEG9vXFMRG6t/rR+LHznVq6ba/NS14YuOHKxykcNXYixm3z/LZbZCrCy89uco
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044A14288
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 15:31:15 +0000 (UTC)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B71FF26A4;
+	Sun, 12 Nov 2023 07:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zUEpPvccKq1228cqSGVqzulj2S9OqfksLKj73WE+Ea8=; b=fwDKDwerXQt+5I6Oq5CpT5NEV6
+	dIODJwyfSfESZ1FA0Upu3ke9D3NTr4V+Bya/Eo8ivD6t1FCzZJnbWrHsyRoG24PeDhWg5jX5VdH7l
+	8JeQphD7K59GH0q9VKSxGwsE7RbSD+aXXjb75XPuIV4cGuLxjaS+nolKvDA+7wH3nwFgENlmFsqE6
+	fsOOqIOZqy/Nuh3fC+J/WJqM2fO84CsWHTnjFOI+VUP0ZCTZeQWZrlgBhfWSdh5QJOw/cDBN5bpWq
+	z/PrfJjs/ajEJ8GorbuEQHVgU6C8BOJUE54IIEIZLbgPJtVC7w7DpAaK8kRP4jWEF+WN1nec7RwTw
+	kbFN5gjw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r2CQY-008nil-SV; Sun, 12 Nov 2023 15:31:10 +0000
+Date: Sun, 12 Nov 2023 15:31:10 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "shiqiang.deng" <shiqiang.deng213@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] test_ida: Fix compilation errors
+Message-ID: <ZVDvvpuD98G+oioL@casper.infradead.org>
+References: <20231112070840.327190-1-shiqiang.deng213@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a02:523:b0:5bd:9b7f:b08d with SMTP id
- bx35-20020a056a02052300b005bd9b7fb08dmr1552203pgb.0.1699801744211; Sun, 12
- Nov 2023 07:09:04 -0800 (PST)
-Date: Sun, 12 Nov 2023 07:09:04 -0800
-In-Reply-To: <CAOQ4uxhnY+hzfCA7A2aTfVKsveR9g6Hn=FbFrjFuXs8w3sYX5Q@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000271e420609f5eff0@google.com>
-Subject: Re: [syzbot] [overlayfs?] memory leak in ovl_parse_param
-From: syzbot <syzbot+26eedf3631650972f17c@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231112070840.327190-1-shiqiang.deng213@gmail.com>
 
-Hello,
+On Sun, Nov 12, 2023 at 03:08:40PM +0800, shiqiang.deng wrote:
+> In lib/test_ida.c, we found that IDA_BUG_ON
+> uses the ida_dump() function. When __ Kernel__ is not defined,
+> a missing-prototypes error will occur during compilation.
+> Fix it now.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'm confused.  What were you doing to get this error?
 
-Reported-and-tested-by: syzbot+26eedf3631650972f17c@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         97d58994 ovl: fix memory leak in ovl_parse_param()
-git tree:       https://github.com/amir73il/linux ovl-fixes
-console output: https://syzkaller.appspot.com/x/log.txt?x=12394b97680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ecfdf78a410c834
-dashboard link: https://syzkaller.appspot.com/bug?extid=26eedf3631650972f17c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+> Signed-off-by: shiqiang.deng <shiqiang.deng213@gmail.com>
+> ---
+>  include/linux/idr.h | 4 ++++
+>  lib/idr.c           | 2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/idr.h b/include/linux/idr.h
+> index a0dce14090a9..e091efdc0cf7 100644
+> --- a/include/linux/idr.h
+> +++ b/include/linux/idr.h
+> @@ -109,6 +109,10 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
+>  #define idr_unlock_irqrestore(idr, flags) \
+>  				xa_unlock_irqrestore(&(idr)->idr_rt, flags)
+>  
+> +#ifndef __KERNEL__
+> +void ida_dump(struct ida *ida);
+> +#endif
+> +
+>  void idr_preload(gfp_t gfp_mask);
+>  
+>  int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
+> diff --git a/lib/idr.c b/lib/idr.c
+> index 13f2758c2377..66d0c6e30588 100644
+> --- a/lib/idr.c
+> +++ b/lib/idr.c
+> @@ -589,7 +589,7 @@ static void ida_dump_entry(void *entry, unsigned long index)
+>  	}
+>  }
+>  
+> -static void ida_dump(struct ida *ida)
+> +void ida_dump(struct ida *ida)
+>  {
+>  	struct xarray *xa = &ida->xa;
+>  	pr_debug("ida: %p node %p free %d\n", ida, xa->xa_head,
+> -- 
+> 2.30.0
+> 
 
