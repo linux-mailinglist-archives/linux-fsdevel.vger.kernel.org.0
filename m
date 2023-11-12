@@ -1,100 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-2780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02267E916C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 16:31:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280907E9272
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 21:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989E31F20F8C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 15:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129941C208FE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 20:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B03814AA2;
-	Sun, 12 Nov 2023 15:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20262182D5;
+	Sun, 12 Nov 2023 20:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fwDKDwer"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut0JJClr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044A14288
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 15:31:15 +0000 (UTC)
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B71FF26A4;
-	Sun, 12 Nov 2023 07:31:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zUEpPvccKq1228cqSGVqzulj2S9OqfksLKj73WE+Ea8=; b=fwDKDwerXQt+5I6Oq5CpT5NEV6
-	dIODJwyfSfESZ1FA0Upu3ke9D3NTr4V+Bya/Eo8ivD6t1FCzZJnbWrHsyRoG24PeDhWg5jX5VdH7l
-	8JeQphD7K59GH0q9VKSxGwsE7RbSD+aXXjb75XPuIV4cGuLxjaS+nolKvDA+7wH3nwFgENlmFsqE6
-	fsOOqIOZqy/Nuh3fC+J/WJqM2fO84CsWHTnjFOI+VUP0ZCTZeQWZrlgBhfWSdh5QJOw/cDBN5bpWq
-	z/PrfJjs/ajEJ8GorbuEQHVgU6C8BOJUE54IIEIZLbgPJtVC7w7DpAaK8kRP4jWEF+WN1nec7RwTw
-	kbFN5gjw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r2CQY-008nil-SV; Sun, 12 Nov 2023 15:31:10 +0000
-Date: Sun, 12 Nov 2023 15:31:10 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "shiqiang.deng" <shiqiang.deng213@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] test_ida: Fix compilation errors
-Message-ID: <ZVDvvpuD98G+oioL@casper.infradead.org>
-References: <20231112070840.327190-1-shiqiang.deng213@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597F5C8C6
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 20:14:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9EDC433C8;
+	Sun, 12 Nov 2023 20:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1699820074;
+	bh=oRGBYTEliw7AYNH0BwmcNNXHy3XA7EOZkxh+XB9u+Ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ut0JJClrFdy6dOuewkyVjfw1vgHAeJAl8qrEiyAKAlJAh0XDXXOgn6ChGU7/PI9WY
+	 4uqz1paKLXnHOT2mivdX7zlfp2SifYQyL10L129FKLp6fHTkpKa1EaLrAciVw1TPP5
+	 Nr0r9PR0tH7iLbZPFNl0SjxtdGUpcnJHG4uuxBidNyOqf7iqQjJRDRz2zUclNb+RNy
+	 ZocyNlCH0qSpUkqcWClsWjlxiiUgd+kpkeMh0ctD/tdPq7ZRmASNlWzc80FpF26ojo
+	 CuLRCH3HFRcupN3rxgy2I5ORlgvyoJxeNoQ8xb6mRGY36KqoisripSZK+KoyL3ToKR
+	 cDH4yN7xHSHJA==
+Date: Sun, 12 Nov 2023 21:14:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Charles Mirabile <cmirabil@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk, Seth Forshee <sforshee@kernel.org>
+Subject: Re: [PATCH v1 0/1] fs: Consider capabilities relative to namespace
+ for linkat permission check
+Message-ID: <20231112-bekriegen-branche-fbc86a9aaa5e@brauner>
+References: <20231110170615.2168372-1-cmirabil@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231112070840.327190-1-shiqiang.deng213@gmail.com>
+In-Reply-To: <20231110170615.2168372-1-cmirabil@redhat.com>
 
-On Sun, Nov 12, 2023 at 03:08:40PM +0800, shiqiang.deng wrote:
-> In lib/test_ida.c, we found that IDA_BUG_ON
-> uses the ida_dump() function. When __ Kernel__ is not defined,
-> a missing-prototypes error will occur during compilation.
-> Fix it now.
-
-I'm confused.  What were you doing to get this error?
-
-> Signed-off-by: shiqiang.deng <shiqiang.deng213@gmail.com>
-> ---
->  include/linux/idr.h | 4 ++++
->  lib/idr.c           | 2 +-
->  2 files changed, 5 insertions(+), 1 deletion(-)
+On Fri, Nov 10, 2023 at 12:06:14PM -0500, Charles Mirabile wrote:
+> This is a one line change that makes `linkat` aware of namespaces when
+> checking for capabilities.
 > 
-> diff --git a/include/linux/idr.h b/include/linux/idr.h
-> index a0dce14090a9..e091efdc0cf7 100644
-> --- a/include/linux/idr.h
-> +++ b/include/linux/idr.h
-> @@ -109,6 +109,10 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
->  #define idr_unlock_irqrestore(idr, flags) \
->  				xa_unlock_irqrestore(&(idr)->idr_rt, flags)
->  
-> +#ifndef __KERNEL__
-> +void ida_dump(struct ida *ida);
-> +#endif
-> +
->  void idr_preload(gfp_t gfp_mask);
->  
->  int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
-> diff --git a/lib/idr.c b/lib/idr.c
-> index 13f2758c2377..66d0c6e30588 100644
-> --- a/lib/idr.c
-> +++ b/lib/idr.c
-> @@ -589,7 +589,7 @@ static void ida_dump_entry(void *entry, unsigned long index)
->  	}
->  }
->  
-> -static void ida_dump(struct ida *ida)
-> +void ida_dump(struct ida *ida)
->  {
->  	struct xarray *xa = &ida->xa;
->  	pr_debug("ida: %p node %p free %d\n", ida, xa->xa_head,
-> -- 
-> 2.30.0
+> As far as I can tell, the call to `capable` in this code dates back to
+> before the `ns_capable` function existed, so I don't think the author
+> specifically intended to prefer regular `capable` over `ns_capable`,
+> and no one has noticed or cared to change it yet... until now!
 > 
+> It is already hard enough to use `linkat` to link temporarily files
+> into the filesystem without the `/proc` workaround, and when moving
+> a program that was working fine on bare metal into a container,
+> I got hung up on this additional snag due to the lack of namespace
+> awareness in `linkat`.
+
+I agree that it would be nice to relax this a bit to make this play
+nicer with containers.
+
+The current checks want to restrict scenarios where an application is
+able to create a hardlink for an arbitrary file descriptor it has
+received via e.g., SCM_RIGHTS or that it has inherited.
+
+So we want to somehow get a good enough approximation to the question
+whether the caller would have been able to open the source file.
+
+When we check for CAP_DAC_READ_SEARCH in the caller's namespace we
+presuppose that the file is accessible in the current namespace and that
+CAP_DAC_READ_SEARCH would have been enough to open it. Both aren't
+necessarily true. Neither need the file be accessible, e.g., due to a
+chroot or pivot_root nor need CAP_DAC_READ_SEARCH be enough. For
+example, the file could be accessible in the caller's namespace but due
+to uid/gid mapping the {g,u}id of the file doesn't have a mapping in the
+caller's namespace. So that doesn't really cut it imho.
+
+However, if we check for CAP_DAC_READ_SEARCH in the namespace the file
+was opened in that could work. We know that the file must've been
+accessible in the namespace the file was opened in and we
+know that the {g,u}id of the file must have been mapped in the namespace
+the file was opened in. So if we check that the caller does have
+CAP_DAC_READ_SEARCH in the opener's namespace we can approximate that
+the caller could've opened the file.
+
+So that should allow us to enabled this for containers.
 
