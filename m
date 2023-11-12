@@ -1,165 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-2760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426397E8E43
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 05:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1557E8E5D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 05:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639D21C2084A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 04:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DADA1C20841
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Nov 2023 04:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EBC1FD9;
-	Sun, 12 Nov 2023 04:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BE82581;
+	Sun, 12 Nov 2023 04:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="PS2Wx/dr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069961FA5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 04:18:27 +0000 (UTC)
-Received: from mail-pf1-f208.google.com (mail-pf1-f208.google.com [209.85.210.208])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79DDE30EB
-	for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 20:18:25 -0800 (PST)
-Received: by mail-pf1-f208.google.com with SMTP id d2e1a72fcca58-6c337818f4cso3459228b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Nov 2023 20:18:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699762705; x=1700367505;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qWEoTwBlXjGTTrl0xPgTiw5vgCy7bqROUuWjF1tWseI=;
-        b=wduSdPM9wxFqD18TVeCrTOeejDy6rgaqttRkneXzuDsJQmPvoqHRNZ4PO5SugNHVbU
-         Su+dJYj/LI4xLK1ZGIRRLkIN8MXvl5owAUxc3MQy4y2IgCWorkomy9a5aEhDM0W/29CF
-         in8XxhWMvS2nI/FQ7VRSFgRp+iZxxElV+34ItVMfXJi5KkWD++JP9V8aIjj+48xpQIHk
-         nU6d9vMh2bSwaPOKxHLJo7w7ZL6Wt8mi8Dn7lnVmxqx7suovkgiQkAxK3jbPxuFtV01j
-         giPC042MnuQyKlji19lHycohDVI7vmueUb4fVtzSFdrrJGOKFZ4sklzsdzklWfN4u9aR
-         2czw==
-X-Gm-Message-State: AOJu0YycXzntv7JPi3CDhWvy2VOTMT44X0FbLwLtrib9exxHFoPN+rwK
-	kzvCNh8JAdUmn3bjv+YpLA4+XwUqztbXbQiKVbyrvUIBj6Z/
-X-Google-Smtp-Source: AGHT+IHZ5YatetUTXqQsCd+tFcdXeuEetfUkqDqzA7IEbmiUgUyTV1jGMi+vSA4VND+qs4KiCqLnYHoIb85f+QrAzPtMoM9IiM0R
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17B41FCC;
+	Sun, 12 Nov 2023 04:48:57 +0000 (UTC)
+X-Greylist: delayed 85368 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 11 Nov 2023 20:48:54 PST
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 594CA273F;
+	Sat, 11 Nov 2023 20:48:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1699764532; bh=Nh9NEmXMKKSIzgHHFg3D8MirxmXG82ZjNkyrfeIx1BI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PS2Wx/drBxAj9JLyZxBhsKwKnMtF86ZEog5jf8n0oFvwhWfP3/6Oz4eV00MhMiaJE
+	 Ey5gHB327whmyEn7ywK1MPypHRQapMHMMi1nrB129/GXmUP9Y+QWWe00dcn3cGyr9U
+	 cxo6a1wqVHSDYRX4KNwV8tTxhJJycrV6T2gIe+r4=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.56])
+	by newxmesmtplogicsvrszb6-0.qq.com (NewEsmtp) with SMTP
+	id C3100069; Sun, 12 Nov 2023 12:48:49 +0800
+X-QQ-mid: xmsmtpt1699764529tja0crvr6
+Message-ID: <tencent_B9A7767566563D4D376C96BE36524B147409@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9EjBHd0TTbrkbHuSYIBIWvF3vPA65b4MQu58idl4QdNiQjcrTAI
+	 85fAVZygykgle7SXAFWUEjenICHrZX4Wvv7sxUS1UE+AojnUas8H9EPjKBxapK6hIL6hizBSjrL/
+	 6/oRYJfoqw8qkNULAE2iz0LmQDb+tXI9sFDxgwsBLPzr1u2Cc0N3zEl4Mt2g3glAIMoPPuDT42Sq
+	 tYDmUnBiNd8bCWrdoLJt1Ui/SQiZKZJfythEXz5CKGJC/Qsjk1mjn9+xZLy12gv0DPH7Zi7dn7Sx
+	 KBsq7BgdsphqAejjdu6KdMwxgqOG6+RWEnUKrne7CiUcxQj7InTzcRLd1k1zN6NzIKl6t9640W+c
+	 XtqTqW1nbL51jWAekL4r96mBblIv+cY4ukz+N1jKaAFqQPyvuUhwEMDmWhqLF0eo4d7gMYcGhb1R
+	 fccMzF9QMfiW6ILlxlCFVKSnQHRhgKezZu9mDphSBqy1V6iCpmAIx4mFg0OWV/zwxvtb1VofTPiw
+	 3vmQjLMW8x3SVScdhQBe2gPbgzb0gS1i2Wcmvu64Ahrjs5RZNryPo+ArFQfuRRxY169SQmQP2m1U
+	 TiQpLrTuYKx//0HOO+WQI1UWYN9lbOi3q8eGVVEReyRkIGTJ1Euv+M5Eo5/fEY99MvB7x/l05ebH
+	 mhlkn6DaESjddbq/kXtm+LX5yEEXxeSqnj8HxiWHgeRf8VMx56FUZoOunu/GzZg6rsQDkiF9g1vn
+	 bjYSaG5N7zBf8+NJ1ivMpGSS4tOsN6o0dCWM5eMl3B0ZkDdt/DsvavOj1WOYxTi7nVmGwAZeNjA+
+	 UrLESRYondWaeQEuYVzJExZGdV6bcZLVC8hfp2taVK631rgkgwMa+/WBhtMbYmrl67RFe0uIT8b7
+	 LDxWnDSxYqDrj+nORsb7c6LZMGc7V31MYsGMi3w0Jt1++81kAP7YvOhbrFf9y/I/VAcRGkQnnmjf
+	 d4q+i5p/8=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com
+Cc: boris@bur.io,
+	clm@fb.com,
+	dsterba@suse.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] btrfs: fix warning in create_pending_snapshot
+Date: Sun, 12 Nov 2023 12:48:50 +0800
+X-OQ-MSGID: <20231112044849.630843-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <0000000000001959d30609bb5d94@google.com>
+References: <0000000000001959d30609bb5d94@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:1884:b0:6c6:b762:ad8a with SMTP id
- x4-20020a056a00188400b006c6b762ad8amr574179pfh.0.1699762705017; Sat, 11 Nov
- 2023 20:18:25 -0800 (PST)
-Date: Sat, 11 Nov 2023 20:18:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003c31650609ecd824@google.com>
-Subject: [syzbot] [overlayfs?] memory leak in ovl_parse_param
-From: syzbot <syzbot+26eedf3631650972f17c@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: ***
 
-Hello,
+[syz logs]
+1.syz reported:
+open("./file0", O_RDONLY)               = 4
+ioctl(4, BTRFS_IOC_QUOTA_CTL, {cmd=BTRFS_QUOTA_CTL_ENABLE}) = 0
+openat(AT_FDCWD, "blkio.bfq.time_recursive", O_RDWR|O_CREAT|O_NOCTTY|O_TRUNC|O_APPEND|FASYNC|0x18, 000) = 5
+ioctl(5, BTRFS_IOC_QGROUP_CREATE, {create=1, qgroupid=256}) = 0
+openat(AT_FDCWD, ".", O_RDONLY)         = 6
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -17)
+WARNING: CPU: 0 PID: 5057 at fs/btrfs/transaction.c:1778 create_pending_snapshot+0x25f4/0x2b70 fs/btrfs/transaction.c:1778
+Modules linked in:
+CPU: 0 PID: 5057 Comm: syz-executor225 Not tainted 6.6.0-syzkaller-15365-g305230142ae0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
+RIP: 0010:create_pending_snapshot+0x25f4/0x2b70 fs/btrfs/transaction.c:1778
+Code: f8 fd 48 c7 c7 00 43 ab 8b 89 de e8 76 4b be fd 0f 0b e9 30 f3 ff ff e8 7a 8d f8 fd 48 c7 c7 00 43 ab 8b 89 de e8 5c 4b be fd <0f> 0b e9 f8 f6 ff ff e8 60 8d f8 fd 48 c7 c7 00 43 ab 8b 89 de e8
+RSP: 0018:ffffc90003abf580 EFLAGS: 00010246
+RAX: 10fb7cf24e10ea00 RBX: 00000000ffffffef RCX: ffff888023ea9dc0
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90003abf870 R08: ffffffff81547c82 R09: 1ffff11017305172
+R10: dffffc0000000000 R11: ffffed1017305173 R12: ffff888078ae2878
+R13: 00000000ffffffef R14: 0000000000000000 R15: ffff888078ae2818
+FS:  000055555667d380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ff7bf2304 CR3: 0000000079f17000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ create_pending_snapshots+0x195/0x1d0 fs/btrfs/transaction.c:1967
+ btrfs_commit_transaction+0xf1c/0x3730 fs/btrfs/transaction.c:2440
+ create_snapshot+0x4a5/0x7e0 fs/btrfs/ioctl.c:845
+ btrfs_mksubvol+0x5d0/0x750 fs/btrfs/ioctl.c:995
+ btrfs_mksnapshot+0xb5/0xf0 fs/btrfs/ioctl.c:1041
+ __btrfs_ioctl_snap_create+0x344/0x460 fs/btrfs/ioctl.c:1294
+ btrfs_ioctl_snap_create+0x13c/0x190 fs/btrfs/ioctl.c:1321
+ btrfs_ioctl+0xbbf/0xd40
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-syzbot found the following issue on:
+2. syz repro:
+r0 = open(&(0x7f0000000080)='./file0\x00', 0x0, 0x0)
+ioctl$BTRFS_IOC_QUOTA_CTL(r0, 0xc0109428, &(0x7f0000000000)={0x1})
+r1 = openat$cgroup_ro(0xffffffffffffff9c, &(0x7f0000000100)='blkio.bfq.time_recursive\x00', 0x275a, 0x0)
+ioctl$BTRFS_IOC_QGROUP_CREATE(r1, 0x4010942a, &(0x7f0000000640)={0x1, 0x100})
+r2 = openat(0xffffffffffffff9c, &(0x7f0000000500)='.\x00', 0x0, 0x0)
+ioctl$BTRFS_IOC_SNAP_CREATE(r0, 0x50009401, &(0x7f0000000a80)={{r2},
 
-HEAD commit:    13d88ac54ddd Merge tag 'vfs-6.7.fsid' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=121cf047680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ecfdf78a410c834
-dashboard link: https://syzkaller.appspot.com/bug?extid=26eedf3631650972f17c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15c7a6eb680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f8b787680000
+[Analysis]
+1. ioctl$BTRFS_IOC_QGROUP_CREATE(r1, 0x4010942a, &(0x7f0000000640)={0x1, 0x100})
+After executing create qgroup, a qgroup of "qgroupid=256" will be created, 
+which corresponds to the file "blkio.bfq.time_recursive".
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9bb27a01f17c/disk-13d88ac5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fb496feed171/vmlinux-13d88ac5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f4da22719ffa/bzImage-13d88ac5.xz
+2. ioctl$BTRFS_IOC_SNAP_CREATE(r0, 0x50009401, &(0x7f0000000a80)={{r2},
+Create snap is to create a subvolume for the file0.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+26eedf3631650972f17c@syzkaller.appspotmail.com
+Therefore, the qgroup created for the file 'blkio.bfq.time_recursive' cannot 
+be used for file0.
 
-executing program
-BUG: memory leak
-unreferenced object 0xffff8881009b40a8 (size 8):
-  comm "syz-executor225", pid 5035, jiffies 4294944336 (age 13.730s)
-  hex dump (first 8 bytes):
-    2e 00 00 00 00 00 00 00                          ........
-  backtrace:
-    [<ffffffff8163331d>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163331d>] slab_post_alloc_hook mm/slab.h:766 [inline]
-    [<ffffffff8163331d>] slab_alloc_node mm/slub.c:3478 [inline]
-    [<ffffffff8163331d>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
-    [<ffffffff8157e57c>] __do_kmalloc_node mm/slab_common.c:1006 [inline]
-    [<ffffffff8157e57c>] __kmalloc_node_track_caller+0x4c/0x150 mm/slab_common.c:1027
-    [<ffffffff8156da4c>] kstrdup+0x3c/0x70 mm/util.c:62
-    [<ffffffff81d0438a>] ovl_parse_param_lowerdir fs/overlayfs/params.c:496 [inline]
-    [<ffffffff81d0438a>] ovl_parse_param+0x70a/0xc70 fs/overlayfs/params.c:576
-    [<ffffffff8170542b>] vfs_parse_fs_param+0xfb/0x190 fs/fs_context.c:146
-    [<ffffffff81705556>] vfs_parse_fs_string+0x96/0xd0 fs/fs_context.c:188
-    [<ffffffff8170566f>] vfs_parse_monolithic_sep+0xdf/0x130 fs/fs_context.c:230
-    [<ffffffff816dff08>] do_new_mount fs/namespace.c:3333 [inline]
-    [<ffffffff816dff08>] path_mount+0xc48/0x10d0 fs/namespace.c:3664
-    [<ffffffff816e0b41>] do_mount fs/namespace.c:3677 [inline]
-    [<ffffffff816e0b41>] __do_sys_mount fs/namespace.c:3886 [inline]
-    [<ffffffff816e0b41>] __se_sys_mount fs/namespace.c:3863 [inline]
-    [<ffffffff816e0b41>] __x64_sys_mount+0x1a1/0x1f0 fs/namespace.c:3863
-    [<ffffffff84b67d8f>] do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-    [<ffffffff84b67d8f>] do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
-    [<ffffffff84c0008b>] entry_SYSCALL_64_after_hwframe+0x63/0x6b
+[Fix]
+After added new qgroup to qgroup tree, we need to sync free_objectid use
+the qgroupid, avoiding subvolume creation failure.
 
-BUG: memory leak
-unreferenced object 0xffff88814002d070 (size 8):
-  comm "syz-executor225", pid 5036, jiffies 4294944900 (age 8.090s)
-  hex dump (first 8 bytes):
-    2e 00 00 00 00 00 00 00                          ........
-  backtrace:
-    [<ffffffff8163331d>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff8163331d>] slab_post_alloc_hook mm/slab.h:766 [inline]
-    [<ffffffff8163331d>] slab_alloc_node mm/slub.c:3478 [inline]
-    [<ffffffff8163331d>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
-    [<ffffffff8157e57c>] __do_kmalloc_node mm/slab_common.c:1006 [inline]
-    [<ffffffff8157e57c>] __kmalloc_node_track_caller+0x4c/0x150 mm/slab_common.c:1027
-    [<ffffffff8156da4c>] kstrdup+0x3c/0x70 mm/util.c:62
-    [<ffffffff81d0438a>] ovl_parse_param_lowerdir fs/overlayfs/params.c:496 [inline]
-    [<ffffffff81d0438a>] ovl_parse_param+0x70a/0xc70 fs/overlayfs/params.c:576
-    [<ffffffff8170542b>] vfs_parse_fs_param+0xfb/0x190 fs/fs_context.c:146
-    [<ffffffff81705556>] vfs_parse_fs_string+0x96/0xd0 fs/fs_context.c:188
-    [<ffffffff8170566f>] vfs_parse_monolithic_sep+0xdf/0x130 fs/fs_context.c:230
-    [<ffffffff816dff08>] do_new_mount fs/namespace.c:3333 [inline]
-    [<ffffffff816dff08>] path_mount+0xc48/0x10d0 fs/namespace.c:3664
-    [<ffffffff816e0b41>] do_mount fs/namespace.c:3677 [inline]
-    [<ffffffff816e0b41>] __do_sys_mount fs/namespace.c:3886 [inline]
-    [<ffffffff816e0b41>] __se_sys_mount fs/namespace.c:3863 [inline]
-    [<ffffffff816e0b41>] __x64_sys_mount+0x1a1/0x1f0 fs/namespace.c:3863
-    [<ffffffff84b67d8f>] do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-    [<ffffffff84b67d8f>] do_syscall_64+0x3f/0x110 arch/x86/entry/common.c:82
-    [<ffffffff84c0008b>] entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-
-
+Reported-and-tested-by: syzbot+4d81015bc10889fd12ea@syzkaller.appspotmail.com
+Fixes: 6ed05643ddb1 ("btrfs: create qgroup earlier in snapshot creation")
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/btrfs/qgroup.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index edb84cc03237..9be5a836c9c0 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -218,6 +218,7 @@ static struct btrfs_qgroup *add_qgroup_rb(struct btrfs_fs_info *fs_info,
+ 			p = &(*p)->rb_right;
+ 		} else {
+ 			kfree(prealloc);
++			prealloc = NULL;
+ 			return qgroup;
+ 		}
+ 	}
+@@ -1697,6 +1698,7 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
+ 	struct btrfs_root *quota_root;
+ 	struct btrfs_qgroup *qgroup;
+ 	struct btrfs_qgroup *prealloc = NULL;
++	u64 objid;
+ 	int ret = 0;
+ 
+ 	if (btrfs_qgroup_mode(fs_info) == BTRFS_QGROUP_MODE_DISABLED)
+@@ -1727,6 +1729,8 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
+ 	spin_lock(&fs_info->qgroup_lock);
+ 	qgroup = add_qgroup_rb(fs_info, prealloc, qgroupid);
+ 	spin_unlock(&fs_info->qgroup_lock);
++	while (prealloc && !btrfs_get_free_objectid(fs_info->tree_root, 
++				&objid) && objid <= qgroupid);
+ 	prealloc = NULL;
+ 
+ 	ret = btrfs_sysfs_add_one_qgroup(fs_info, qgroup);
+-- 
+2.25.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
