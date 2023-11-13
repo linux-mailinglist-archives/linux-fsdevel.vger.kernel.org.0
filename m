@@ -1,528 +1,315 @@
-Return-Path: <linux-fsdevel+bounces-2790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822B57E9B67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 12:50:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCBA7E9C0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 13:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACC6BB20BA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 11:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4FF71F20F88
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 12:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C571D523;
-	Mon, 13 Nov 2023 11:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7270C1DA3D;
+	Mon, 13 Nov 2023 12:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqFf5Qs8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlvxRCSb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29C31CFA2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 11:50:18 +0000 (UTC)
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C94D5A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 03:50:15 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-7789a4c01easo284173585a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 03:50:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699876215; x=1700481015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HSRRpXTFZIQroPTaMyLSjgFmFwGHdLaN1T1FJpIGwl0=;
-        b=VqFf5Qs8Fq7W2R/JUbKvctHYjCdAB2rix8Qa/auATmjp2WeO5RjKeCtgEX8kkvjbJu
-         dZ2vy63g7/UaWIXA60DsxdHVbcDAtxoooyw5w69lAxTSzmvMJPbo/ZOyRYX4WxS6pfEj
-         2lUKw1cAB7t7vSZNqZTWg9XZj2A/xQz1JksR2Zf4iuY89lDWduIOETYIfVC/FGOZYVIa
-         p4zMlce21fjoXnoKHTKTc0RTaVdBSAzhfaUcqDtMXJWUnAg9n0lHw5K/QSS5KK4zRQ4r
-         zW9J4tIJXojAbt+cT4+uQNtvwI1Xbb+RwlX+YM0CLG2Be6BjrMd1WQXvbHsANj8ZdECn
-         0wdw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8F41D699
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 12:21:36 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F62D47
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 04:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1699878093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zIHSrYUcQnxoKXdjZZpZq5jMd/3daIfiQKpFrLHTsdU=;
+	b=FlvxRCSbov8rXM91fNKkRF9o8nuy8R4txs2FySiunWdxcYZ3q+jfMMQae+fNBUzDalBmrb
+	5AidbILvCT8/TXDMHibhNOjp4bTAT/SnwMZAHlQBISdYx/g+csWmDXzcBh75WAJ1kfM8Au
+	EOkfdce0hmnaU1LovkCB4SH3IX8aaxs=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-Z4kf8mX3NZS3pcnrpl_F7A-1; Mon, 13 Nov 2023 07:21:32 -0500
+X-MC-Unique: Z4kf8mX3NZS3pcnrpl_F7A-1
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-7ba6bf56798so1559263241.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 04:21:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699876215; x=1700481015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HSRRpXTFZIQroPTaMyLSjgFmFwGHdLaN1T1FJpIGwl0=;
-        b=YSMY+4Nf5xWxEa/wqAkY7XS9JrLYV0aq2qNiG+3kp1dzlpxl7jD0j1F4XHRIpF7bsi
-         d1jxXvSL2HHU4XVKu/a93tSLqkPxmPNvK3Qnr4HL56McjBBe29VfI16qSjqwO4wW7CtS
-         /BJt2ra/a604l/HYJ8nNNVh6WwrM8BSYZc/4oSlr/2iGdSZMrKlqMJblskK0lKRfCw0R
-         bJetFmpjtXmKhORMofQ7w+en77K9/DuLNWanwoG+Vs9++nXDAJ3mJrM+mGji4mmf5jDU
-         c9W5X/laWhej7+2pPSighlZyQ0rH67XK6anzF05ayg9z9exMxDLqmZuSxmwt+P9W/i8l
-         RYbA==
-X-Gm-Message-State: AOJu0YwROxC4bKnWhSs/bsbZ+8jhsPmJkM47/a8OLp7LIauT+cM1JGZG
-	UH0zoBn0/vZX9R4bpOL8n/gdYj90f/Ih1OgStVI=
-X-Google-Smtp-Source: AGHT+IEv5H4NknCHro96D2e+DOH5TOsvmL7Kfoqe0aBBQROu1n9YkAdYRwj35ZgvnGN3sxzNyvzcWqMbl+hQ18UYY8U=
-X-Received: by 2002:a05:6214:2e01:b0:66d:173a:aca7 with SMTP id
- mx1-20020a0562142e0100b0066d173aaca7mr6660853qvb.55.1699876214745; Mon, 13
- Nov 2023 03:50:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699878091; x=1700482891;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIHSrYUcQnxoKXdjZZpZq5jMd/3daIfiQKpFrLHTsdU=;
+        b=vU+o65ZZDGdI0BMU4B7IoNmbGyzv1RvTctfOnQ8FY4WwsulHOKiCxNwfTiKTHhS6Gn
+         d9e3mRQyBGnTVcEvvig3lfBTmnGwtQPdf7mbv6nwVfm8XhJUnZDG7Z5BYuEyympcDxc9
+         WObgX13GN30/YFHaLAAESwXsHgyNSnQLvglRYNZq68Ox0HE6FqHDQs21aE9Ot13JhvcN
+         lljR/hmygjKG94aw4Tlwyi0qcYP8B0xFLDmrWk0jTsNQoGU6nC0BHHf2Xj2UtG5ZebBO
+         D/D9Qih3xlP3o4y6vLUJFHZ4xxC5yz6grJzUrdPuNirvpLWpDqvlM8ylJQ8csFHGrGeJ
+         uVKA==
+X-Gm-Message-State: AOJu0Yz+e/M69kSAsqWZYV+LvEoJ3oT/JHnYdug3fRTgUqk4OsCiBMmN
+	Y805hLU2tfdCHN0oDv0Jnia/97JByn+QofCnaVorQ/j2NzY0ikKGQIwqnXKF6K1BvrC975ZCo3+
+	87VjhQjqSgxt0eRsc5ZLe1BUd0w==
+X-Received: by 2002:a67:f2c8:0:b0:457:670f:e2eb with SMTP id a8-20020a67f2c8000000b00457670fe2ebmr6417741vsn.20.1699878090974;
+        Mon, 13 Nov 2023 04:21:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFKSa6ruCnuzN9s2Ejc4l9S4h3ZVAauCQx41zE3qMS0kOL2lujOmHkFT5dC7rrBHQxe5Bi5+A==
+X-Received: by 2002:a67:f2c8:0:b0:457:670f:e2eb with SMTP id a8-20020a67f2c8000000b00457670fe2ebmr6417723vsn.20.1699878090682;
+        Mon, 13 Nov 2023 04:21:30 -0800 (PST)
+Received: from [192.168.157.67] ([12.191.197.195])
+        by smtp.googlemail.com with ESMTPSA id j22-20020ac874d6000000b00419801b1094sm1904299qtr.13.2023.11.13.04.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Nov 2023 04:21:29 -0800 (PST)
+Message-ID: <d3071794-7c02-4ca1-850d-1d5242de4f98@redhat.com>
+Date: Mon, 13 Nov 2023 13:21:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230629171157.54l44agwejgnquw3@quack3> <CAOQ4uxgxFtBZy4V8vccV2F7Lbg_9=OFNhgdgCP6Hu=o7gjcsVQ@mail.gmail.com>
- <20230703183029.nn5adeyphijv5wl6@quack3> <CAOQ4uxiS6R9hGFmputP6uRHGKywaCca0Ug53ihGcrgxkvMHomg@mail.gmail.com>
- <CAOQ4uxhk_rydFejNqsmn4AydZfuknp=vPunNODNcZ_8qW-AykQ@mail.gmail.com>
- <20230816094702.zztx3dctxvnfeh6o@quack3> <CAOQ4uxhp6o40gZKnyAcjB2vkmNF0WOD9V9p2i+eHXXjSf=YFtQ@mail.gmail.com>
- <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
- <20230817182220.vzzklvr7ejqlfnju@quack3> <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
- <20230823143708.nry64nytwbeijtsq@quack3> <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 13 Nov 2023 13:50:03 +0200
-Message-ID: <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
-Subject: Re: fanotify HSM open issues
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 00/34] KVM: guest_memfd() and per-page attributes
+Content-Language: en-US
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+ Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Sean Christopherson <seanjc@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Xu Yilun <yilun.xu@intel.com>,
+ Chao Peng <chao.p.peng@linux.intel.com>, Fuad Tabba <tabba@google.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>,
+ David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Ackerley Tng <ackerleytng@google.com>,
+ Maciej Szmigiero <mail@maciej.szmigiero.name>,
+ David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
+ Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
+ Liam Merwick <liam.merwick@oracle.com>,
+ Isaku Yamahata <isaku.yamahata@gmail.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20231105163040.14904-1-pbonzini@redhat.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20231105163040.14904-1-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 23, 2023 at 7:31=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Wed, Aug 23, 2023 at 5:37=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 18-08-23 10:01:40, Amir Goldstein wrote:
-> > > [adding fsdevel]
-> > >
-> > > On Thu, Aug 17, 2023 at 9:22=E2=80=AFPM Jan Kara <jack@suse.cz> wrote=
-:
-> > > >
-> > > > On Thu 17-08-23 10:13:20, Amir Goldstein wrote:
-> > > > > [CC Christian and Jens for the NOWAIT semantics]
-> > > > >
-> > > > > Jan,
-> > > > >
-> > > > > I was going to post start-write-safe patches [1], but now that th=
-is
-> > > > > design issue has emerged, with your permission, I would like to
-> > > > > take this discussion to fsdevel, so please reply to the list.
-> > > > >
-> > > > > For those who just joined, the context is fanotify HSM API [2]
-> > > > > proposal and avoiding the fanotify deadlocks I described in my
-> > > > > talk on LSFMM [3].
-> > > >
-> > > > OK, sure. I'm resending the reply which I sent only to you here.
-> > > >
-> > > > > On Wed, Aug 16, 2023 at 8:18=E2=80=AFPM Amir Goldstein <amir73il@=
-gmail.com> wrote:
-> > > > > > On Wed, Aug 16, 2023 at 12:47=E2=80=AFPM Jan Kara <jack@suse.cz=
-> wrote:
-> > > > > > > On Mon 14-08-23 16:57:48, Amir Goldstein wrote:
-> > > > > > > > On Mon, Jul 3, 2023 at 11:03=E2=80=AFPM Amir Goldstein <ami=
-r73il@gmail.com> wrote:
-> > > > > > > > > On Mon, Jul 3, 2023, 9:30 PM Jan Kara <jack@suse.cz> wrot=
-e:
-> > > > > > > > do_sendfile() or ovl_copy_up() from ovl1 to xfs1, end up ca=
-lling
-> > > > > > > > do_splice_direct() with sb_writers(xfs1) held.
-> > > > > > > > Internally, the splice operation calls into ovl_splice_read=
-(), which
-> > > > > > > > has to call the rw_verify_area() check with the fsnotify ho=
-ok on the
-> > > > > > > > underlying xfs file.
-> > > > > > >
-> > > > > > > Right, we can call rw_verify_area() only after overlayfs has =
-told us what
-> > > > > > > is actually the underlying file that is really used for readi=
-ng. Hum,
-> > > > > > > nasty.
-> > > > > > >
-> > > > > > > > This is a violation of start-write-safe permission hooks an=
-d the
-> > > > > > > > lockdep_assert that I added in fsnotify_permission() catche=
-s this
-> > > > > > > > violation.
-> > > > > > > >
-> > > > > > > > I believe that a similar issue exists with do_splice_direct=
-() from
-> > > > > > > > an fs that is loop mounted over an image file on xfs1 to xf=
-s1.
-> > > > > > >
-> > > > > > > I don't see how that would be possible. If you have a loop im=
-age file on
-> > > > > > > filesystem xfs1, then the filesystem stored in the image is s=
-ome xfs2.
-> > > > > > > Overlayfs case is special here because it doesn't really work=
- with
-> > > > > > > filesystems but rather directory subtrees and that causes the
-> > > > > > > complications.
-> > > > > > >
-> > > > > >
-> > > > > > I was referring to sendfile() from xfs2 to xfs1.
-> > > > > > sb_writers of xfs1 is held, but loop needs to read from the ima=
-ge file
-> > > > > > in xfs1. No?
-> > > >
-> > > > Yes, that seems possible and it would indeed trigger rw_verify_area=
-() in
-> > > > do_iter_read() on xfs1 while freeze protection for xfs1 is held.
-> > > >
-> > >
-> > > Recap for new people joining this thread.
-> > >
-> > > The following deadlock is possible in upstream kernel
-> > > if fanotify permission event handler tries to make
-> > > modifications to the filesystem it is watching in the context
-> > > of FAN_ACCESS_PERM handling in some cases:
-> > >
-> > > P1                             P2                      P3
-> > > -----------                    ------------            ------------
-> > > do_sendfile(fs1.out_fd, fs1.in_fd)
-> > > -> sb_start_write(fs1.sb)
-> > >   -> do_splice_direct()                         freeze_super(fs1.sb)
-> > >     -> rw_verify_area()                         -> sb_wait_write(fs1.=
-sb) ......
-> > >       -> security_file_permission()
-> > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
-> > >                                  -> do_unlinkat(fs1.dfd, ...)
-> > >                                    -> sb_start_write(fs1.sb) ......
-> > >
-> > > start-write-safe patches [1] (not posted) are trying to solve this
-> > > deadlock and prepare the ground for a new set of permission events
-> > > with cleaner/safer semantics.
-> > >
-> > > The cases described above of sendfile from a file in loop mounted
-> > > image over fs1 or overlayfs over fs1 into a file in fs1 can still dea=
-dlock
-> > > despite the start-write-safe patches [1].
-> >
-> > Yep, nice summary.
-> >
-> > > > > > > > My earlier patches had annotated the rw_verify_area() calls
-> > > > > > > > in splice iterators as "MAY_NOT_START_WRITE" and the
-> > > > > > > > userspace event listener was notified via flag whether modi=
-fying
-> > > > > > > > the content of the file was allowed or not.
-> > > > > > > >
-> > > > > > > > I do not care so much about HSM being able to fill content =
-of files
-> > > > > > > > from a nested context like this, but we do need some way fo=
-r
-> > > > > > > > userspace to at least deny this access to a file with no co=
-ntent.
-> > > > > > > >
-> > > > > > > > Another possibility I thought of is to change file_start_wr=
-ite()
-> > > > > > > > do use file_start_write_trylock() for files with FMODE_NONO=
-TIFY.
-> > > > > > > > This should make it safe to fill file content when event is=
- generated
-> > > > > > > > with sb_writers held (if freeze is in progress modification=
- will fail).
-> > > > > > > > Right?
-> > > > > > >
-> > > > > > > OK, so you mean that the HSM managing application will get an=
- fd with
-> > > > > > > FMODE_NONOTIFY set from an event and use it for filling in th=
-e file
-> > > > > > > contents and the kernel functions grabbing freeze protection =
-will detect
-> > > > > > > the file flag and bail with error instead of waiting? That so=
-unds like an
-> > > > > > > attractive solution - the HSM managing app could even reply w=
-ith error like
-> > > > > > > ERESTARTSYS to fanotify event and make the syscall restart (w=
-hich will
-> > > > > > > block until the fs is unfrozen and then we can try again) and=
- thus handle
-> > > > > > > the whole problem transparently for the application generatin=
-g the event.
-> > > > > > > But I'm just dreaming now, for start it would be fine to just=
- fail the
-> > > > > > > syscall.
-> > > > > > >
-> > > > > >
-> > > > > > IMO, a temporary error from an HSM controlled fs is not a big d=
-eal.
-> > > > > > Same as a temporary error from a network fs or FUSE - should be
-> > > > > > tolerable when the endpoint is not connected.
-> > > > > > One of my patches allows HSM returning an error that is not EPE=
-RM as
-> > > > > > response - this can be useful in such situations.
-> > > >
-> > > > OK.
-> > > >
-> > > > > > > I see only three possible problems with the solution. Firstly=
-, the HSM
-> > > > > > > application will have to be careful to only access the manage=
-d filesystem
-> > > > > > > with the fd returned from fanotify event as otherwise it coul=
-d deadlock on
-> > > > > > > frozen filesystem.
-> > > > > >
-> > > > > > Isn't that already the case to some extent?
-> > > > > > It is not wise for permission event handlers to perform operati=
-ons
-> > > > > > on fd without  FMODE_NONOTIFY.
-> > > >
-> > > > Yes, it isn't a new problem. The amount of bug reports in our bugzi=
-lla
-> > > > boiling down to this kind of self-deadlock just shows that fanotify=
- users
-> > > > get this wrong all the time.
-> > > >
-> > > > > > > That may seem obvious but practice shows that with
-> > > > > > > complex software stacks with many dependencies, this is far f=
-rom trivial.
-> > > > > >
-> > > > > > It will be especially important when we have permission events
-> > > > > > on directory operations that need to perform operations on O_PA=
-TH
-> > > > > > dirfd with FMODE_NONOTIFY.
-> > > > > >
-> > > > > > > Secondly, conditioning the trylock behavior on FMODE_NONOTIFY=
- seems
-> > > > > > > somewhat arbitary unless you understand our implementation is=
-sues and
-> > > > > > > possibly it could regress current unsuspecting users. So I'm =
-thinking
-> > > > > > > whether we shouldn't rather have an explicit open flag requir=
-ing erroring
-> > > > > > > out on frozen filesystem instead of blocking and the HSM appl=
-ication will
-> > > > > > > need to use it to evade freezing deadlocks. Or we can just de=
-pend on
-> > > > > > > RWF_NOWAIT flag (we currently block on frozen filesystem desp=
-ite this flag
-> > > > > > > but that can be viewed as a bug) but that's limited to writes=
- (i.e., no way
-> > > > > > > to e.g. do fallocate(2) without blocking on frozen fs).
-> > > > > >
-> > > > > > User cannot ask for fd with FMODE_NONOTIFY as it is - this is p=
-rovided
-> > > > > > as a means to an end by fanotify - so it would not be much diff=
-erent if
-> > > > > > the new events would provide an fd with FMODE_NONOTIFY |
-> > > > > > FMODE_NOWAIT. It will be up to documentation to say what is and=
- what
-> > > > > > is not allowed with the event->fd provided by fanotify.
-> > > > > >
-> > > > >
-> > > > > This part needs clarifying.
-> > > > > Technically, we can use the flag FMODE_NOWAIT to prevent waiting =
-in
-> > > > > file_start_write() *when* it is combined with FMODE_NONOTIFY.
-> > > > >
-> > > > > Yes, it would be a change of behavior, but I think it would be a =
-good change,
-> > > > > because current event->fd from FAN_ACCESS_PERM events is really n=
-ot
-> > > > > write-safe (could deadlock with freezing fs).
-> > > >
-> > > > As I wrote above I don't like the abuse of FMODE_NONOTIFY much.
-> > > > FMODE_NONOTIFY means we shouldn't generate new fanotify events when=
- using
-> > > > this fd. It says nothing about freeze handling or so. Furthermore a=
-s you
-> > > > observe FMODE_NONOTIFY cannot be set by userspace but practically a=
-ll
-> > > > current fanotify users need to also do IO on other files in order t=
-o handle
-> > > > fanotify event. So ideally we'd have a way to do IO to other files =
-in a
-> > > > manner safe wrt freezing. We could just update handling of RWF_NOWA=
-IT flag
-> > > > to only trylock freeze protection - that actually makes a lot of se=
-nse to
-> > > > me. The question is whether this is enough or not.
-> > > >
-> > >
-> > > Maybe, but RWF_NOWAIT doesn't take us far enough, because writing
-> > > to a file is not the only thing that HSM needs to do.
-> > > Eventually, event handler for lookup permission events should be
-> > > able to also create files without blocking on vfs level freeze protec=
-tion.
-> >
-> > So this is what I wanted to clarify. The lookup permission event never =
-gets
-> > called under a freeze protection so the deadlock doesn't exist there. I=
-n
-> > principle the problem exists only for access and modify events where we=
-'d
-> > be filling in file data and thus RWF_NOWAIT could be enough.
->
-> Yes, you are right.
-> It is possible that RWF_NOWAIT could be enough.
->
-> But the discovery of the loop/ovl corner cases has shaken my
-> confidence is the ability to guarantee that freeze protection is not
-> held somehow indirectly.
->
-> If I am not mistaken, FAN_OPEN_PERM suffers from the exact
-> same ovl corner case, because with splice from ovl1 to fs1,
-> fs1 freeze protection is held and:
->   ovl_splice_read(ovl1.file)
->     ovl_real_fdget()
->       ovl_open_realfile(fs1.file)
->          ... security_file_open(fs1.file)
->
-> > That being
-> > said I understand this may be assuming too much about the implementatio=
-ns
-> > of HSM daemons and as you write, we might want to provide a way to do I=
-O
-> > not blocking on freeze protection from any hook. But I wanted to point =
-this
-> > out explicitly so that it's a conscious decision.
-> >
+On 11/5/23 17:30, Paolo Bonzini wrote:
+> The "development cycle" for this version is going to be very short;
+> ideally, next week I will merge it as is in kvm/next, taking this through
+> the KVM tree for 6.8 immediately after the end of the merge window.
+> The series is still based on 6.6 (plus KVM changes for 6.7) so it
+> will require a small fixup for changes to get_file_rcu() introduced in
+> 6.7 by commit 0ede61d8589c ("file: convert to SLAB_TYPESAFE_BY_RCU").
+> The fixup will be done as part of the merge commit, and most of the text
+> above will become the commit message for the merge.
 
-I agree and I'd like to explain using an example, why RWF_NOWAIT is
-not enough for HSM needs.
+The changes from review are small enough and entirely in tests, so
+I went ahead and pushed it to kvm/next, together with "selftests: kvm/s390x: use vm_create_barebones()" which also fixed testcase failures (similar to the aarch64/page_fault_test.c hunk below).
 
-The reason is that often, when HSM needs to handle filling content
-in FAN_PRE_ACCESS, it is not just about writing to the accessed file.
-HSM needs to be able to avoid blocking on freeze protection
-for any operations on the filesystem, not just pwrite().
+The guestmemfd branch on kvm.git was force-pushed, and can be used for further
+development if you don't want to run 6.7-rc1 for whatever reason.
 
-For example, the POC HSM code [1], stores the DATA_DIR_fd
-from the lookup event and uses it in the handling of access events to
-update the metadata files that store which parts of the file were already
-filled (relying of fiemap is not always a valid option).
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 38882263278d..926241e23aeb 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -1359,7 +1359,6 @@ yet and must be cleared on entry.
+  	__u64 guest_phys_addr;
+  	__u64 memory_size; /* bytes */
+  	__u64 userspace_addr; /* start of the userspace allocated memory */
+-	__u64 pad[16];
+    };
+  
+    /* for kvm_userspace_memory_region::flags */
+diff --git a/tools/testing/selftests/kvm/aarch64/page_fault_test.c b/tools/testing/selftests/kvm/aarch64/page_fault_test.c
+index eb4217b7c768..08a5ca5bed56 100644
+--- a/tools/testing/selftests/kvm/aarch64/page_fault_test.c
++++ b/tools/testing/selftests/kvm/aarch64/page_fault_test.c
+@@ -705,7 +705,7 @@ static void run_test(enum vm_guest_mode mode, void *arg)
+  
+  	print_test_banner(mode, p);
+  
+-	vm = ____vm_create(mode);
++	vm = ____vm_create(VM_SHAPE(mode));
+  	setup_memslots(vm, p);
+  	kvm_vm_elf_load(vm, program_invocation_name);
+  	setup_ucall(vm);
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+index ea0ae7e25330..fd389663c49b 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -6,14 +6,6 @@
+   */
+  
+  #define _GNU_SOURCE
+-#include "test_util.h"
+-#include "kvm_util_base.h"
+-#include <linux/bitmap.h>
+-#include <linux/falloc.h>
+-#include <sys/mman.h>
+-#include <sys/types.h>
+-#include <sys/stat.h>
+-
+  #include <stdlib.h>
+  #include <string.h>
+  #include <unistd.h>
+@@ -21,6 +13,15 @@
+  #include <stdio.h>
+  #include <fcntl.h>
+  
++#include <linux/bitmap.h>
++#include <linux/falloc.h>
++#include <sys/mman.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
++#include "test_util.h"
++#include "kvm_util_base.h"
++
+  static void test_file_read_write(int fd)
+  {
+  	char buf[64];
+diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
+index e4d2cd9218b2..1b58f943562f 100644
+--- a/tools/testing/selftests/kvm/include/kvm_util_base.h
++++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
+@@ -819,6 +819,7 @@ static inline struct kvm_vm *vm_create_barebones(void)
+  	return ____vm_create(VM_SHAPE_DEFAULT);
+  }
+  
++#ifdef __x86_64__
+  static inline struct kvm_vm *vm_create_barebones_protected_vm(void)
+  {
+  	const struct vm_shape shape = {
+@@ -828,6 +829,7 @@ static inline struct kvm_vm *vm_create_barebones_protected_vm(void)
+  
+  	return ____vm_create(shape);
+  }
++#endif
+  
+  static inline struct kvm_vm *vm_create(uint32_t nr_runnable_vcpus)
+  {
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index d05d95cc3693..9b29cbf49476 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -1214,7 +1214,7 @@ void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t size,
+  		TEST_ASSERT(region && region->region.flags & KVM_MEM_GUEST_MEMFD,
+  			    "Private memory region not found for GPA 0x%lx", gpa);
+  
+-		offset = (gpa - region->region.guest_phys_addr);
++		offset = gpa - region->region.guest_phys_addr;
+  		fd_offset = region->region.guest_memfd_offset + offset;
+  		len = min_t(uint64_t, end - gpa, region->region.memory_size - offset);
+  
+diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
+index 343e807043e1..1efee1cfcff0 100644
+--- a/tools/testing/selftests/kvm/set_memory_region_test.c
++++ b/tools/testing/selftests/kvm/set_memory_region_test.c
+@@ -433,6 +433,7 @@ static void test_add_max_memory_regions(void)
+  }
+  
+  
++#ifdef __x86_64__
+  static void test_invalid_guest_memfd(struct kvm_vm *vm, int memfd,
+  				     size_t offset, const char *msg)
+  {
+@@ -523,14 +524,13 @@ static void test_add_overlapping_private_memory_regions(void)
+  	close(memfd);
+  	kvm_vm_free(vm);
+  }
++#endif
+  
+  int main(int argc, char *argv[])
+  {
+  #ifdef __x86_64__
+  	int i, loops;
+-#endif
+  
+-#ifdef __x86_64__
+  	/*
+  	 * FIXME: the zero-memslot test fails on aarch64 and s390x because
+  	 * KVM_RUN fails with ENOEXEC or EFAULT.
+@@ -542,6 +542,7 @@ int main(int argc, char *argv[])
+  
+  	test_add_max_memory_regions();
+  
++#ifdef __x86_64__
+  	if (kvm_has_cap(KVM_CAP_GUEST_MEMFD) &&
+  	    (kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_SW_PROTECTED_VM))) {
+  		test_add_private_memory_region();
+@@ -550,7 +551,6 @@ int main(int argc, char *argv[])
+  		pr_info("Skipping tests for KVM_MEM_GUEST_MEMFD memory regions\n");
+  	}
+  
+-#ifdef __x86_64__
+  	if (argc > 1)
+  		loops = atoi_positive("Number of iterations", argv[1]);
+  	else
+diff --git a/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+index 2f02f6128482..13e72fcec8dd 100644
+--- a/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
++++ b/tools/testing/selftests/kvm/x86_64/private_mem_kvm_exits_test.c
+@@ -1,6 +1,6 @@
+  // SPDX-License-Identifier: GPL-2.0-only
+  /*
+- * Copyright (C) 2022, Google LLC.
++ * Copyright (C) 2023, Google LLC.
+   */
+  #include <linux/kvm.h>
+  #include <pthread.h>
 
-That is the reason that in the POC patches [2], FMODE_NONOTIFY
-is propagated from dirfd to an fd opened with openat(dirfd, ...), so
-HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
+Paolo
 
-Another use case is that HSM may want to download content to a
-temp file on the same filesystem, verify the downloaded content and
-then clone the data into the accessed file range.
-
-I think that a PF_ flag (see below) would work best for all those cases.
-
-> > > In theory, I am not saying we should do it, but as a thought experime=
-nt:
-> > > if the requirement from permission event handler is that is must use =
-a
-> > > O_PATH | FMODE_NONOTIFY event->fd provided in the event to make
-> > > any filesystem modifications, then instead of aiming for NOWAIT
-> > > semantics using sb_start_write_trylock(), we could use a freeze level
-> > > SB_FREEZE_FSNOTIFY between
-> > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
-> > >
-> > > As a matter of fact, HSM is kind of a "VFS FAULT", so as long as we
-> > > make it clear how userspace should avoid nesting "VFS faults" there i=
-s
-> > > a model that can solve the deadlock correctly.
-> >
-> > OK, yes, in principle another freeze level which could be used by handl=
-ers
-> > of fanotify permission events would solve the deadlock as well. Just yo=
-u
-> > seem to like to tie this functionality to the particular fd returned fr=
-om
-> > fanotify and I'm not convinced that is a good idea. What if the applica=
-tion
-> > needs to do write to some other location besides the one fd it got pass=
-ed
-> > from fanotify event? E.g. imagine it wants to fetch a whole subtree on
-> > first access to any file in a subtree. Or maybe it wants to write to so=
-me
-> > DB file containing current state or something like that.
-> >
-> > One solution I can imagine is to create an open flag that can be specif=
-ied
-> > on open which would result in the special behavior wrt fs freezing. If =
-the
-> > special behavior would be just trylocking the freeze protection then it
-> > would be really easy. If the behaviour would be another freeze protecti=
-on
-> > level, then we'd need to make sure we don't generate another fanotify
-> > permission event with such fd - autorejecting any such access is an obv=
-ious
-> > solution but I'm not sure if practical for applications.
-> >
->
-> I had also considered marking the listener process with the FSNOTIFY
-> context and enforcing this context on fanotify_read().
-> In a way, this is similar to the NOIO and NOFS process context.
-> It could be used to both act as a stronger form of FMODE_NONOTIFY
-> and to activate the desired freeze protection behavior
-> (whether trylock or SB_FREEZE_FSNOTIFY level).
->
-
-My feeling is that the best approach would be a PF_NOWAIT task flag:
-
-- PF_NOWAIT will prevent blocking on freeze protection
-- PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
-- PF_NOWAIT could be auto-set on the reader of a permission event
-- PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
-- We could add user API to set this personality explicitly to any task
-- PF_NOWAIT without FMODE_NONOTIFY denies permission events
-
-Please let me know if you agree with this design and if so,
-which of the methods to set PF_NOWAIT are a must for the first version
-in your opinion?
-
-Do you think we should use this method to fix the existing deadlocks
-with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
-
-[...]
-
-> > > OK. ATM, the only solution I can think of that is both maintainable
-> > > and lets HSM live in complete harmony with fsfreeze is adding the
-> > > extra SB_FREEZE_FSNOTIFY level.
-> >
-> > To make things clear: if the only problems would be with those sendfile=
-(2)
-> > rare corner-cases, then I guess we can live with that and implement ret=
-ry
-> > in the kernel if userspace ever complains about unexpected short copy o=
-r
-> > EAGAIN...  The problem I see is that if we advise that all IO from the
-> > fanotify event handler should happen in the freeze-safe manner, then wi=
-th
-> > the non-blocking solution all HSM IO suddently starts failing as soon a=
-s
-> > the filesystem is frozen. And that is IMHO not nice.
->
-> I see what you mean. The SB_FREEZE_FSNOTIFY design is much more
-> clear in that respect.
->
-> > > I am not sure how big of an overhead that would be?
-> > > I imagine that sb_writers is large enough as it is w.r.t fitting into
-> > > cache lines?
-> > > I don't think that it adds much complexity or maintenance burden
-> > > to vfs?? I'm really not sure.
-> >
-> > Well, the overhead is effectively one percpu counter per superblock.
-> > Negligible in terms of CPU time, somewhat annoying in terms of memory b=
-ut
-> > bearable. So this may be a way forward.
-> >
->
-
-My feeling is that because we only need this to handle very obscure
-corner cases, that adding an extra freeze level is an overkill that
-cannot be justified, even if the actual impact on cpu and memory are
-rather low.
-
-The HSM API documentation will clearly state that EAGAIN may be
-expected when writing to the filesystem.
-
-IMO, for all practical matters, it is perfectly fine if HSM just denies
-access in those corner cases, but even a simple solution of triggering
-async download of file's content and returning a temporary to user
-is a decent solution for the rare corner cases.
-
-FYI, I've already gotten requests from people in the community that
-are waiting for this feature and are testing the POC patches,
-so my plan is to send out the permission hooks cleanup patches [3]
-soon and try to get the first part of the HSM API [4]
-(FAN_PRE_ACCESS and FAN_PRE_MODIFY permission events)
-ready for the next cycle.
-
-In any case, permission hooks cleanup patches are independent
-of the solution we will choose for the corner cases that they do
-not handle.
-
-Thanks,
-Amir.
-
-[2] https://github.com/amir73il/httpdirfs/commits/fan_lookup_perm
-[2] https://github.com/amir73il/linux/commits/fan_lookup_perm
-[3] https://github.com/amir73il/linux/commits/start-write-safe
-[4] https://github.com/amir73il/linux/commits/fan_pre_content
 
