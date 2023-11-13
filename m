@@ -1,103 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-2806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348727EA3A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 20:18:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA907EA474
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 21:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 655441C209BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 19:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7791F2262B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 20:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB02D2374F;
-	Mon, 13 Nov 2023 19:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFCD2420F;
+	Mon, 13 Nov 2023 20:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lVt4SgLr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8BAaJn4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7DA6ABC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 19:17:53 +0000 (UTC)
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDAEF1BE1;
-	Mon, 13 Nov 2023 11:17:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=SMqd4EqjIcBWaNJEJy3kwHzwVKqwQ0bk4Awnjz3pJgY=; b=lVt4SgLr063TeN8XyblCcp4C0i
-	OeBGqN0AScamXEG5FlRkrb4uHFcaZfguSGkgXkVYxxlhdj5j8cPjWbPXjIdGStGwTNO3jmFLdyEVa
-	mzTlBshUCglfjrfzOjPJ6XJpwj3+D7eNBT3r2AVfL87Dv756dYcYzW4rXDDVcGRdd9am+bYdx9DJx
-	pirfn0BmJdAH6qaxfwYkdkbqLTdJMbfjz6odx8+ngbkG/WeSwT0xaF++KkWZnXll+cJ2gL+5Vb4tU
-	QBVAj0MlIuyoK/jNBNF0QgZlVdj32fRbhathNAhoNcKfnmRF5wuT0LN84hazXm4cFVu5j153D3hAa
-	qcIfOVJw==;
-Received: from 189-68-155-43.dsl.telesp.net.br ([189.68.155.43] helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1r2cR2-002qRU-OW; Mon, 13 Nov 2023 20:17:25 +0100
-Message-ID: <eb176852-2912-1813-bcca-a7d1fe34f270@igalia.com>
-Date: Mon, 13 Nov 2023 16:17:11 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9582C24207
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 20:11:36 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4E5D5D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 12:11:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1699906294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l2g0BFIb+e/acjg8/FV7u7nWSHqvw3fPr5ELp3ST0hQ=;
+	b=O8BAaJn48ub7jawunXdi/Cg6dq8FkqnUFSh6PFMcuzPR3thmakzzIffcBg/zwZ0pUlOTAm
+	pVnXITjjo0OJDDQU8N/IZYnNlmpVw3i4773pOpbHd+LZAGDLcvKDIydIGLlEka95xO1vUw
+	wlCHBuNe0IeFZWMwo0Ca+wKcxEhU/jY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-215-D-2DbDoKP6GA32Vzh4tbQw-1; Mon, 13 Nov 2023 15:11:29 -0500
+X-MC-Unique: D-2DbDoKP6GA32Vzh4tbQw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A434685A5BD;
+	Mon, 13 Nov 2023 20:11:28 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.17.204])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 950871C060B9;
+	Mon, 13 Nov 2023 20:11:27 +0000 (UTC)
+Received: by fedora.redhat.com (Postfix, from userid 1000)
+	id 9EB8722CDCA; Mon, 13 Nov 2023 15:11:26 -0500 (EST)
+Date: Mon, 13 Nov 2023 15:11:26 -0500
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+	stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com,
+	hi@alyssa.is
+Subject: Re: [PATCH v2] virtiofs: Export filesystem tags through sysfs
+Message-ID: <ZVKC7obmBhCF0hRg@redhat.com>
+References: <20231108213333.132599-1-vgoyal@redhat.com>
+ <2023111104-married-unstaffed-973e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: [RFC PATCH 0/2] Introduce a way to expose the interpreted file
- with binfmt_misc
-Content-Language: en-US
-To: "Eric W. Biederman" <ebiederm@xmission.com>, sonicadvance1@gmail.com
-Cc: Kees Cook <keescook@chromium.org>, David Hildenbrand <david@redhat.com>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
- oleg@redhat.com, yzaikin@google.com, mcgrof@kernel.org,
- akpm@linux-foundation.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
- willy@infradead.org, dave@stgolabs.net, joshua@froggi.es
-References: <20230907204256.3700336-1-gpiccoli@igalia.com>
- <e673d8d6-bfa8-be30-d1c1-fe09b5f811e3@redhat.com>
- <202310091034.4F58841@keescook>
- <8dc5069f-5642-cc5b-60e0-0ed3789c780b@igalia.com>
- <871qctwlpx.fsf@email.froward.int.ebiederm.org>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <871qctwlpx.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2023111104-married-unstaffed-973e@gregkh>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On 13/11/2023 15:29, Eric W. Biederman wrote:
-> [...]
-> Currently there is a mechanism in the kernel for changing
-> /proc/self/exe.  Would that be reasonable to use in this case?
+On Sat, Nov 11, 2023 at 06:55:18AM -0500, Greg KH wrote:
+> On Wed, Nov 08, 2023 at 04:33:33PM -0500, Vivek Goyal wrote:
+> > virtiofs filesystem is mounted using a "tag" which is exported by the
+> > virtiofs device. virtiofs driver knows about all the available tags but
+> > these are not exported to user space.
+> > 
+> > People have asked these tags to be exported to user space. Most recently
+> > Lennart Poettering has asked for it as he wants to scan the tags and mount
+> > virtiofs automatically in certain cases.
+> > 
+> > https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+> > 
+> > This patch exports tags through sysfs. One tag is associated with each
+> > virtiofs device. A new "tag" file appears under virtiofs device dir.
+> > Actual filesystem tag can be obtained by reading this "tag" file.
+> > 
+> > For example, if a virtiofs device exports tag "myfs", a new file "tag"
+> > will show up here. Tag has a newline char at the end.
+> > 
+> > /sys/bus/virtio/devices/virtio<N>/tag
+> > 
+> > # cat /sys/bus/virtio/devices/virtio<N>/tag
+> > myfs
+> > 
+> > Note, tag is available at KOBJ_BIND time and not at KOBJ_ADD event time.
+> > 
+> > v2:
+> > - Add a newline char at the end in tag file. (Alyssa Ross)
+> > - Add a line in commit logs about tag file being available at KOBJ_BIND
+> >   time and not KOBJ_ADD time.
+> > 
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > ---
+> >  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 34 insertions(+)
 > 
-> It came from the checkpoint/restart work, but given that it is already
-> implemented it seems like the path of least resistance to get your
-> binfmt_misc that wants to look like binfmt_elf to use that mechanism.
-> 
-> Eric
-> 
+> No documentation for your new sysfs file?  :(
 
-Thanks Eric! I'm curious on how that would work: we'd change the symlink
-of the emulator? So, the *emulated* software, when reading that, would
-see the correct symlink?
+Hi Greg,
 
-Also, just to fully clarify: are you suggesting we hook the new
-binfmt_misc flag proposed here to the internal kernel way of changing
-the proc/self/exe symlink, or are you suggesting we use the prctl() tune
-from the emulator, like the userspace changing its own symlink?
+My bad. I forgot about it while posting V2.
 
-One of the biggest concerns I have with this kind of approach is that
-changing the symlink actually...changes it - the binary mapping itself,
-I mean.
-Whereas my way was a "fake" change, just expose one thing for the
-emulated app, but changes nothing else...
+As per your comment in another email, I will include some documentation
+in Documentation/ABI/. Not very sure what file name to choose. I will
+probably start with "sysfs-bus-virtio-devices-virtiofs".
 
-Cheers,
+Thanks
+Vivek
 
-
-Guilherme
 
