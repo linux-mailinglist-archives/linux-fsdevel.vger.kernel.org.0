@@ -1,144 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-2799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15B07EA1CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 18:21:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C637EA1E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 18:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B8B20A31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 17:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E5B81F21C9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 17:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFB6224D9;
-	Mon, 13 Nov 2023 17:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD9224D7;
+	Mon, 13 Nov 2023 17:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEE2/t5y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FYzTBB+c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1407224CE;
-	Mon, 13 Nov 2023 17:20:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6600C433C7;
-	Mon, 13 Nov 2023 17:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699896055;
-	bh=xAPJraPLQAkSEMrXbNNi6jnVOIDBHLRqKC+IUziKfv0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dEE2/t5yeQlHrX4qRNp8a2xVGp/zSrsUOLZtJjfwyLlI4zC1VrUhYtZQjrOxjSHul
-	 8nJlAJEh4Prmu8Rr3qjB3/SCk9lhLw+mNpceoAxGHdE0Y1JT0JJUkEChj2P9djSJWx
-	 fUG8TtajhlmY4lSoj8Ry4QfRHkTwB8DdYp/lghse/8BRVvK720VCM9uzQQ0jmJqY16
-	 fW4r53/T0pkOSV0Kv+hhHT2sx9GsKmZh/1eu/vsVfvuj7xkjUVoKpFQ8hh51TJp0JR
-	 xO2/jgnklHdisx8V+WoHOequXkLyLQatexoWCTIcFVEx3wQi1pAGJk4SDSny/Ieg2k
-	 +LNa9i0iS8RRA==
-Date: Mon, 13 Nov 2023 10:20:52 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel test robot <lkp@intel.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] buffer: Fix grow_buffers() for block size >
- PAGE_SIZE
-Message-ID: <20231113172052.GA3733520@dev-arch.thelio-3990X>
-References: <20231109210608.2252323-4-willy@infradead.org>
- <202311121240.AN8GbAbe-lkp@intel.com>
- <20231113091006.f9d4de1aaf7ed2f8beef07fb@linux-foundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16FA219FC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 17:33:35 +0000 (UTC)
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDF2C10D0;
+	Mon, 13 Nov 2023 09:33:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Oszu5XvrVNjHHpeK4r7h72jVIlFgy+VOxbgYat+iRyE=; b=FYzTBB+cC+G7OVtfs0tkFHV+y1
+	HKEc7qQeBcuzChdD76UPhjieh/h2iFH8z68QD2xTtYf4gLOlJJh6UO8srGtujduhUiYwTWytQuAP1
+	pIlzaZ/Jg7cLi+VzruoZoc2K4YC61d+AemRwb8GfoJaFWgN/9GDepi5EqyyorbZdw2/JMHefanrLW
+	hLOEhTYSqFeRMoC7gFS0qC9SEFwXK7LUeOAVoTQOv+hQ5TN3x+lZagRiKUJOKhk7bSgjqLdECJe1i
+	kLM2TsYYwST0WUrlNFMhCorQHSoBa9jYgvx5b9qvwzf3HyFWl/v3WvZlQN5g7HZ8KADUufDJXQyBX
+	Ebq7DVKQ==;
+Received: from 189-68-155-43.dsl.telesp.net.br ([189.68.155.43] helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1r2aoK-002oJt-CX; Mon, 13 Nov 2023 18:33:20 +0100
+Message-ID: <8dc5069f-5642-cc5b-60e0-0ed3789c780b@igalia.com>
+Date: Mon, 13 Nov 2023 14:33:13 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231113091006.f9d4de1aaf7ed2f8beef07fb@linux-foundation.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: [RFC PATCH 0/2] Introduce a way to expose the interpreted file
+ with binfmt_misc
+To: Kees Cook <keescook@chromium.org>, David Hildenbrand <david@redhat.com>,
+ sonicadvance1@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+ ebiederm@xmission.com, oleg@redhat.com, yzaikin@google.com,
+ mcgrof@kernel.org, akpm@linux-foundation.org, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, willy@infradead.org, dave@stgolabs.net,
+ joshua@froggi.es
+References: <20230907204256.3700336-1-gpiccoli@igalia.com>
+ <e673d8d6-bfa8-be30-d1c1-fe09b5f811e3@redhat.com>
+ <202310091034.4F58841@keescook>
+Content-Language: en-US
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <202310091034.4F58841@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 13, 2023 at 09:10:06AM -0800, Andrew Morton wrote:
-> On Sun, 12 Nov 2023 12:52:00 +0800 kernel test robot <lkp@intel.com> wrote:
+On 09/10/2023 14:37, Kees Cook wrote:
+> On Fri, Oct 06, 2023 at 02:07:16PM +0200, David Hildenbrand wrote:
+>> On 07.09.23 22:24, Guilherme G. Piccoli wrote:
+>>> Currently the kernel provides a symlink to the executable binary, in the
+>>> form of procfs file exe_file (/proc/self/exe_file for example). But what
+>>> happens in interpreted scenarios (like binfmt_misc) is that such link
+>>> always points to the *interpreter*. For cases of Linux binary emulators,
+>>> like FEX [0] for example, it's then necessary to somehow mask that and
+>>> emulate the true binary path.
+>>
+>> I'm absolutely no expert on that, but I'm wondering if, instead of modifying
+>> exe_file and adding an interpreter file, you'd want to leave exe_file alone
+>> and instead provide an easier way to obtain the interpreted file.
+>>
+>> Can you maybe describe why modifying exe_file is desired (about which
+>> consumers are we worrying? ) and what exactly FEX does to handle that (how
+>> does it mask that?).
+>>
+>> So a bit more background on the challenges without this change would be
+>> appreciated.
 > 
-> > Hi Matthew,
-> > 
-> > kernel test robot noticed the following build errors:
-> > 
-> > [auto build test ERROR on akpm-mm/mm-everything]
-> > [also build test ERROR on linus/master next-20231110]
-> > [cannot apply to v6.6]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/buffer-Return-bool-from-grow_dev_folio/20231110-051651
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> > patch link:    https://lore.kernel.org/r/20231109210608.2252323-4-willy%40infradead.org
-> > patch subject: [PATCH v2 3/7] buffer: Fix grow_buffers() for block size > PAGE_SIZE
-> > config: hexagon-comet_defconfig (https://download.01.org/0day-ci/archive/20231112/202311121240.AN8GbAbe-lkp@intel.com/config)
-> > compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231112/202311121240.AN8GbAbe-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202311121240.AN8GbAbe-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> > >> ld.lld: error: undefined symbol: __muloti4
-> >    >>> referenced by buffer.c
-> >    >>>               fs/buffer.o:(bdev_getblk) in archive vmlinux.a
-> >    >>> referenced by buffer.c
-> >    >>>               fs/buffer.o:(bdev_getblk) in archive vmlinux.a
-> > 
+> Yeah, it sounds like you're dealing with a process that examines
+> /proc/self/exe_file for itself only to find the binfmt_misc interpreter
+> when it was run via binfmt_misc?
 > 
-> What a peculiar compiler.
-> 
-> I assume this fixes?
-> 
-> --- a/fs/buffer.c~buffer-fix-grow_buffers-for-block-size-page_size-fix
-> +++ a/fs/buffer.c
-> @@ -1099,7 +1099,7 @@ static bool grow_buffers(struct block_de
->  	}
->  
->  	/* Create a folio with the proper size buffers */
-> -	return grow_dev_folio(bdev, block, pos / PAGE_SIZE, size, gfp);
-> +	return grow_dev_folio(bdev, block, pos >> PAGE_SHIFT, size, gfp);
->  }
->  
->  static struct buffer_head *
-> _
-> 
+> What actually breaks? Or rather, why does the process to examine
+> exe_file? I'm just trying to see if there are other solutions here that
+> would avoid creating an ambiguous interface...
 > 
 
-No, this is not a division libcall. This seems to be related to the
-types of the variables used in __builtin_mul_overflow() :/ for some odd
-reason, clang generates a libcall when passing in an 'unsigned long
-long' and 'unsigned int', which apparently has not been done before in
-the kernel?
+Thanks Kees and David! Did Ryan's thorough comment addressed your
+questions? Do you have any take on the TODOs?
 
-https://github.com/ClangBuiltLinux/linux/issues/1958
-https://godbolt.org/z/csfGc6z6c
+I can maybe rebase against 6.7-rc1 and resubmit , if that makes sense!
+But would be better having the TODOs addressed, I guess.
 
-A cast would work around this but that could have other implications I
-am not aware of (I've done little further investigation due to LPC):
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 4eb44ccdc6be..d39934783743 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1091,7 +1091,7 @@ static bool grow_buffers(struct block_device *bdev, sector_t block,
- 	 * Check for a block which lies outside our maximum possible
- 	 * pagecache index.
- 	 */
--	if (check_mul_overflow(block, size, &pos) || pos > MAX_LFS_FILESIZE) {
-+	if (check_mul_overflow(block, (u64)size, &pos) || pos > MAX_LFS_FILESIZE) {
- 		printk(KERN_ERR "%s: requested out-of-range block %llu for device %pg\n",
- 			__func__, (unsigned long long)block,
- 			bdev);
-
+Thanks in advance for reviews and feedback on this.
 Cheers,
-Nathan
+
+
+Guilherme
 
