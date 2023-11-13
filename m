@@ -1,196 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-2784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535847E9595
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 04:37:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CEC37E95B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 04:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9B06B20A27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 03:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDEEE1C20AB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 03:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72154BE7C;
-	Mon, 13 Nov 2023 03:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B7FC13E;
+	Mon, 13 Nov 2023 03:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i+0oSnA5"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZnbXTZQf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457BF8BF6;
-	Mon, 13 Nov 2023 03:37:24 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECC97D1;
-	Sun, 12 Nov 2023 19:37:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699846642; x=1731382642;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y+d5ffj+cXty8WEYU0vUgR9r7fyajtAWyyGi3xYe0Go=;
-  b=i+0oSnA5dFJENImLX9uLJ2SfhDUw/gT6wgwzhWtGJSyOjQYnywGugUM5
-   uBqZW1F9FZoVGQOZDJCGJRbyyFVvvHeeE33GJT4yAiJbBAN73szADqJ0y
-   M/aM8xovSE5mFsDHpUD2EwaN6DQHeymBmeamBryZHHmfTOQRGqYsho2at
-   d3uKSkNriRFq26n2wHvXu1J6PXhUK2aoqPgD3bZ2EMPwq3w+RQEiQ5d4k
-   SElmB0ZDxskPmaybFsS3+wzAraq8EPXai2H6ovDNg2SZIQv5h7aeQacJ8
-   yr/e2nnuP2Rczxn1fDKpmb8/fPSiXKloHaSfr/UaF21/+x0LtjMNt0GPW
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10892"; a="421469892"
-X-IronPort-AV: E=Sophos;i="6.03,298,1694761200"; 
-   d="scan'208";a="421469892"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2023 19:37:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10892"; a="764228152"
-X-IronPort-AV: E=Sophos;i="6.03,298,1694761200"; 
-   d="scan'208";a="764228152"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.93.6.77]) ([10.93.6.77])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2023 19:37:09 -0800
-Message-ID: <b897d2ac-8a07-40a7-af59-dd746c56081e@intel.com>
-Date: Mon, 13 Nov 2023 11:37:05 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FABAC12A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 03:49:03 +0000 (UTC)
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C2A111
+	for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 19:48:59 -0800 (PST)
+Received: by mail-yb1-xb31.google.com with SMTP id 3f1490d57ef6-daf7ed42ea6so930587276.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Nov 2023 19:48:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1699847339; x=1700452139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VECjXZvEz9F/cziS1IeNLo8/3SZHswbem1JCZfRASWA=;
+        b=ZnbXTZQfAUPiNt/IUDOFeBFaiYo2DGpmTa8MAlUPYUkb8AUFuB7OUHd6V5Q/yfdAqw
+         yS8E3yBTw11xDB+iZk3zT9ynnC9EdEc+rvdvtii0FbwNCVu03i5WyOzYkOLc5cbiHTqm
+         at11SDD20MGQSV4Lcn4YGDndH7OgdyiZHvjCbSScvjP/pvNr3NT8VIIubd0M2BQwtVl+
+         qCxg0CZshrsvgReCqNbcs8eZLxdxcY23eOHLGcbAY/MSstO5pP/Ib1Mw1uMZmzMoO+uJ
+         vG27l/HOZMIla4+WdcsBgtsAa1Zt+81MCCkxci8LmcJnyW8BDRV4lNpyLPnIjqLqWkxs
+         bTGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699847339; x=1700452139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VECjXZvEz9F/cziS1IeNLo8/3SZHswbem1JCZfRASWA=;
+        b=Lkjvfy0obJHAO1aycstGqtK6DnTGkffBlF8okuAt0t3ro7ZM/h/R49/jDv2zFk6UzO
+         GAolYkl8XveCCLceG/TQFbV+W59Nm6yi07FXZbKA/2xXDgaKHJrPUVtPZUVEHWh0X1q1
+         VDzDb8u/flqXmwNDg/vgl0O9kabbryeQKT6WKXNofOmPKHOXWQfHfZt0sFeE2HgcbmhY
+         bOXwqDmK/jAezUFXd42EwvUGFeOOqvDUERSPzRM0/nHiYvI2FvyTBkUXU+/jzy1e8XAT
+         hHRslffI9CnlVThNAdGPfnSC2rCsBOcW9nNVznFHYhWAldCv+msVypTETdACcc44Npim
+         IWPg==
+X-Gm-Message-State: AOJu0YwYnt4pZQt+hSuJE7Zmz36BjfSjqh4wkOmT5VAXfcZ5gx6xkI6z
+	budzOXTR1+DdBrHxrgHmsVqQ63dFmG7fy+zfH7c5
+X-Google-Smtp-Source: AGHT+IHJ2P1y2xo1Cet4L5ZfvkWuVLiWBQQ/A8LeQYJMga3tSnL4pKwHB5qBHcraxVL+wij0UVbabpG6UEM9GUHFmyQ=
+X-Received: by 2002:a25:69c7:0:b0:d9b:87f3:54f9 with SMTP id
+ e190-20020a2569c7000000b00d9b87f354f9mr5022379ybc.28.1699847338744; Sun, 12
+ Nov 2023 19:48:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Xu Yilun <yilun.xu@intel.com>,
- Chao Peng <chao.p.peng@linux.intel.com>, Fuad Tabba <tabba@google.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>,
- David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>, Vlastimil Babka <vbabka@suse.cz>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerley Tng <ackerleytng@google.com>,
- Maciej Szmigiero <mail@maciej.szmigiero.name>,
- David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
- Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
- Liam Merwick <liam.merwick@oracle.com>,
- Isaku Yamahata <isaku.yamahata@gmail.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20231105163040.14904-1-pbonzini@redhat.com>
- <20231105163040.14904-16-pbonzini@redhat.com>
- <956d8ee3-8b63-4a2d-b0c4-c0d3d74a0f6f@intel.com>
- <ZU51A3U6E3aZXayC@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZU51A3U6E3aZXayC@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231016220835.GH800259@ZenIV> <CAHC9VhTToc-rELe0EyOV4kRtOJuAmPzPB_QNn8Lw_EfMg+Edzw@mail.gmail.com>
+ <20231018043532.GS800259@ZenIV> <CAEjxPJ6W8170OtXxyxM2VH+hChtey6Ny814wzpd2Cda+Cmepew@mail.gmail.com>
+In-Reply-To: <CAEjxPJ6W8170OtXxyxM2VH+hChtey6Ny814wzpd2Cda+Cmepew@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 12 Nov 2023 22:48:48 -0500
+Message-ID: <CAHC9VhRLYUR+PyZ9hmNZxYQysXWFA0Wz6L50GV+UOts20jJJmg@mail.gmail.com>
+Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Brauner <brauner@kernel.org>, selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/2023 2:22 AM, Sean Christopherson wrote:
-> On Fri, Nov 10, 2023, Xiaoyao Li wrote:
->> On 11/6/2023 12:30 AM, Paolo Bonzini wrote:
->>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
->>> index 68a144cb7dbc..a6de526c0426 100644
->>> --- a/include/linux/kvm_host.h
->>> +++ b/include/linux/kvm_host.h
->>> @@ -589,8 +589,20 @@ struct kvm_memory_slot {
->>>    	u32 flags;
->>>    	short id;
->>>    	u16 as_id;
->>> +
->>> +#ifdef CONFIG_KVM_PRIVATE_MEM
->>> +	struct {
->>> +		struct file __rcu *file;
->>> +		pgoff_t pgoff;
->>> +	} gmem;
->>> +#endif
->>>    };
->>> +static inline bool kvm_slot_can_be_private(const struct kvm_memory_slot *slot)
->>> +{
->>> +	return slot && (slot->flags & KVM_MEM_GUEST_MEMFD);
->>> +}
->>> +
->>
->> maybe we can move this block and ...
->>
->> <snip>
->>
->>> @@ -2355,6 +2379,30 @@ bool kvm_arch_pre_set_memory_attributes(struct kvm *kvm,
->>>    					struct kvm_gfn_range *range);
->>>    bool kvm_arch_post_set_memory_attributes(struct kvm *kvm,
->>>    					 struct kvm_gfn_range *range);
->>> +
->>> +static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
->>> +{
->>> +	return IS_ENABLED(CONFIG_KVM_PRIVATE_MEM) &&
->>> +	       kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
->>> +}
->>> +#else
->>> +static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
->>> +{
->>> +	return false;
->>> +}
->>>    #endif /* CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES */
->>
->> this block to Patch 18?
-> 
-> It would work, but my vote is to keep them here to minimize the changes to common
-> KVM code in the x86 enabling.  It's not a strong preference though.  Of course,
-> at this point, fiddling with this sort of thing is probably a bad idea in terms
-> of landing guest_memfd.
+On Thu, Oct 19, 2023 at 9:10=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Wed, Oct 18, 2023 at 12:35=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
+> wrote:
+> >
+> > On Tue, Oct 17, 2023 at 04:28:53PM -0400, Paul Moore wrote:
+> > > Thanks Al.
+> > >
+> > > Giving this a very quick look, I like the code simplifications that
+> > > come out of this change and I'll trust you on the idea that this
+> > > approach is better from a VFS perspective.
+> > >
+> > > While the reject_all() permission hammer is good, I do want to make
+> > > sure we are covered from a file labeling perspective; even though the
+> > > DAC/reject_all() check hits first and avoids the LSM inode permission
+> > > hook, we still want to make sure the files are labeled properly.  It
+> > > looks like given the current SELinux Reference Policy this shouldn't
+> > > be a problem, it will be labeled like most everything else in
+> > > selinuxfs via genfscon (SELinux policy construct).  I expect those
+> > > with custom SELinux policies will have something similar in place wit=
+h
+> > > a sane default that would cover the /sys/fs/selinux/.swapover
+> > > directory but I did add the selinux-refpol list to the CC line just i=
+n
+> > > case I'm being dumb and forgetting something important with respect t=
+o
+> > > policy.
+> > >
+> > > The next step is to actually boot up a kernel with this patch and mak=
+e
+> > > sure it doesn't break anything.  Simply booting up a SELinux system
+> > > and running 'load_policy' a handful of times should exercise the
+> > > policy (re)load path, and if you want a (relatively) simple SELinux
+> > > test suite you can find one here:
+> > >
+> > > * https://github.com/SELinuxProject/selinux-testsuite
+> > >
+> > > The README.md should have the instructions necessary to get it
+> > > running.  If you can't do that, and no one else on the mailing list i=
+s
+> > > able to test this out, I'll give it a go but expect it to take a whil=
+e
+> > > as I'm currently swamped with reviews and other stuff.
+> >
+> > It does survive repeated load_policy (as well as semodule -d/semodule -=
+e,
+> > with expected effect on /booleans, AFAICS).  As for the testsuite...
+> > No regressions compared to clean -rc5, but then there are (identical)
+> > failures on both - "Failed 8/76 test programs. 88/1046 subtests failed.=
+"
+> > Incomplete defconfig, at a guess...
+>
+> All tests passed for me using the defconfig fragment from the selinux-tes=
+tsuite.
 
-Indeed. It's OK then.
+I just merged this into selinux/dev, thanks everyone.
 
->>> @@ -4844,6 +4875,10 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
->>>    #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
->>>    	case KVM_CAP_MEMORY_ATTRIBUTES:
->>>    		return kvm_supported_mem_attributes(kvm);
->>> +#endif
->>> +#ifdef CONFIG_KVM_PRIVATE_MEM
->>> +	case KVM_CAP_GUEST_MEMFD:
->>> +		return !kvm || kvm_arch_has_private_mem(kvm);
->>>    #endif
->>>    	default:
->>>    		break;
->>> @@ -5277,6 +5312,18 @@ static long kvm_vm_ioctl(struct file *filp,
->>>    	case KVM_GET_STATS_FD:
->>>    		r = kvm_vm_ioctl_get_stats_fd(kvm);
->>>    		break;
->>> +#ifdef CONFIG_KVM_PRIVATE_MEM
->>> +	case KVM_CREATE_GUEST_MEMFD: {
->>> +		struct kvm_create_guest_memfd guest_memfd;
->>
->> Do we need a guard of below?
->>
->> 		r = -EINVAL;
->> 		if (!kvm_arch_has_private_mem(kvm))
->> 			goto out;
-> 
-> Argh, yeah, that's weird since KVM_CAP_GUEST_MEMFD says "not supported" if the
-> VM doesn't support private memory.
-> 
-> Enforcing that would break guest_memfd_test.c though.  And having to create a
-> "special" VM just to test basic guest_memfd functionality would be quite
-> annoying.
-> 
-> So my vote is to do:
-> 
-> 	case KVM_CAP_GUEST_MEMFD:
-> 		return IS_ENABLED(CONFIG_KVM_PRIVATE_MEM);
-
-I'm fine with it.
-
-> There's no harm to KVM if userspace creates a file it can't use, and at some
-> point KVM will hopefully support guest_memfd irrespective of private memory.
-
+--=20
+paul-moore.com
 
