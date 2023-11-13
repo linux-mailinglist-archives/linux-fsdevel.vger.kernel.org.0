@@ -1,122 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-2807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA907EA474
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 21:11:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEE27EA578
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 22:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7791F2262B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 20:11:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F5721C209EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Nov 2023 21:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFCD2420F;
-	Mon, 13 Nov 2023 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5876F2D62B;
+	Mon, 13 Nov 2023 21:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O8BAaJn4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SWNKusEi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9582C24207
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 20:11:36 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4E5D5D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 12:11:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699906294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l2g0BFIb+e/acjg8/FV7u7nWSHqvw3fPr5ELp3ST0hQ=;
-	b=O8BAaJn48ub7jawunXdi/Cg6dq8FkqnUFSh6PFMcuzPR3thmakzzIffcBg/zwZ0pUlOTAm
-	pVnXITjjo0OJDDQU8N/IZYnNlmpVw3i4773pOpbHd+LZAGDLcvKDIydIGLlEka95xO1vUw
-	wlCHBuNe0IeFZWMwo0Ca+wKcxEhU/jY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-215-D-2DbDoKP6GA32Vzh4tbQw-1; Mon, 13 Nov 2023 15:11:29 -0500
-X-MC-Unique: D-2DbDoKP6GA32Vzh4tbQw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A434685A5BD;
-	Mon, 13 Nov 2023 20:11:28 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.17.204])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 950871C060B9;
-	Mon, 13 Nov 2023 20:11:27 +0000 (UTC)
-Received: by fedora.redhat.com (Postfix, from userid 1000)
-	id 9EB8722CDCA; Mon, 13 Nov 2023 15:11:26 -0500 (EST)
-Date: Mon, 13 Nov 2023 15:11:26 -0500
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-	stefanha@redhat.com, mzxreary@0pointer.de, gmaglione@redhat.com,
-	hi@alyssa.is
-Subject: Re: [PATCH v2] virtiofs: Export filesystem tags through sysfs
-Message-ID: <ZVKC7obmBhCF0hRg@redhat.com>
-References: <20231108213333.132599-1-vgoyal@redhat.com>
- <2023111104-married-unstaffed-973e@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABCF2D619
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 21:27:06 +0000 (UTC)
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBF3D67
+	for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 13:27:03 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-9d0b4dfd60dso746293066b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Nov 2023 13:27:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1699910822; x=1700515622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mttVMjujBnJtfA9qmPOIHfeRm+JAOLtRVgarlviBSVY=;
+        b=SWNKusEikZ1DnrYVHQ0hQIr0P5xQ6d7ccHuOGHJIjnhbSRJxEpYKgjbrhrwOYU93Tz
+         UXeeIK82VcqmypH86NZdLRny5x+n3RkaXs9A0Q8zejFkSAWi3wON91+UFgN0drxH7dZS
+         L1I8W1/dkxAmQBmo2KMtchZsfVIPIaVscjoQs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699910822; x=1700515622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mttVMjujBnJtfA9qmPOIHfeRm+JAOLtRVgarlviBSVY=;
+        b=RBkkaVbFil16wEHi13E2ITZzfHCaHbPpFI4k/TS5dZRS35wDLWDBHKRqFr5CEjdsud
+         36uykj7TeZbVc0bYpAlDmoDPxIGsoE8J4vOUP4T+SPyThzgwkiwK6I8TtGMBKVimeXZD
+         prf1cxDX1+0q4ei9/3fClFohLj/n1WWtLp3i1PcOSUfL8dTo/DKSDxQvrCIWq+Ux/gbL
+         d+H9pUrSZvr/YCYEXc8jiM0eqkEJWIMV7q942B+9ZVu0UC9JL4wnPjesiOr2fd2RnNbB
+         fQ2J5lK2xHSfx2czLYrk0HXcOAERAiziAAnNhXityK8bztyodInhEj4c/NkVhdsMYLkb
+         HbQw==
+X-Gm-Message-State: AOJu0YwMLpI+BaNw7tNo0sP9QZZx7NpPGnu5+PP39cUkW1PLu6JEGLsN
+	NWpi1gYseEuHnqaqfhaEzmbYxSon8Yi2tTL6K6/w0w==
+X-Google-Smtp-Source: AGHT+IGoL4C64VRkqMMt2Ko2g8gaFMw8YCcpuwoNcjFqFlvPZKJTDjJL2Bgl7LbSUmzZ0cB+I9TezFzC6HBD0IZ7Sjs=
+X-Received: by 2002:a17:906:dfca:b0:9e4:67d9:438 with SMTP id
+ jt10-20020a170906dfca00b009e467d90438mr5397879ejc.56.1699910821965; Mon, 13
+ Nov 2023 13:27:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2023111104-married-unstaffed-973e@gregkh>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+References: <20231110010139.3901150-1-sarthakkukreti@chromium.org> <ZU7RVKJIzm8ExGGH@dread.disaster.area>
+In-Reply-To: <ZU7RVKJIzm8ExGGH@dread.disaster.area>
+From: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Date: Mon, 13 Nov 2023 13:26:51 -0800
+Message-ID: <CAG9=OMPFEV9He+ggq2mcLULnUZ2jm8fGU=4ca8kBoWtvqYcGVg@mail.gmail.com>
+Subject: Re: [PATCH v9 0/3] [PATCH v9 0/3] Introduce provisioning primitives
+To: Dave Chinner <david@fromorbit.com>
+Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 11, 2023 at 06:55:18AM -0500, Greg KH wrote:
-> On Wed, Nov 08, 2023 at 04:33:33PM -0500, Vivek Goyal wrote:
-> > virtiofs filesystem is mounted using a "tag" which is exported by the
-> > virtiofs device. virtiofs driver knows about all the available tags but
-> > these are not exported to user space.
-> > 
-> > People have asked these tags to be exported to user space. Most recently
-> > Lennart Poettering has asked for it as he wants to scan the tags and mount
-> > virtiofs automatically in certain cases.
-> > 
-> > https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
-> > 
-> > This patch exports tags through sysfs. One tag is associated with each
-> > virtiofs device. A new "tag" file appears under virtiofs device dir.
-> > Actual filesystem tag can be obtained by reading this "tag" file.
-> > 
-> > For example, if a virtiofs device exports tag "myfs", a new file "tag"
-> > will show up here. Tag has a newline char at the end.
-> > 
-> > /sys/bus/virtio/devices/virtio<N>/tag
-> > 
-> > # cat /sys/bus/virtio/devices/virtio<N>/tag
-> > myfs
-> > 
-> > Note, tag is available at KOBJ_BIND time and not at KOBJ_ADD event time.
-> > 
-> > v2:
-> > - Add a newline char at the end in tag file. (Alyssa Ross)
-> > - Add a line in commit logs about tag file being available at KOBJ_BIND
-> >   time and not KOBJ_ADD time.
-> > 
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > ---
-> >  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> 
-> No documentation for your new sysfs file?  :(
+On Fri, Nov 10, 2023 at 4:56=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Thu, Nov 09, 2023 at 05:01:35PM -0800, Sarthak Kukreti wrote:
+> > Hi,
+> >
+> > This patch series is version 9 of the patch series to introduce
+> > block-level provisioning mechanism (original [1]), which is useful for
+> > provisioning space across thinly provisioned storage architectures (loo=
+p
+> > devices backed by sparse files, dm-thin devices, virtio-blk). This
+> > series has minimal changes over v8[2], with a couple of patches dropped
+> > (suggested by Dave).
+> >
+> > This patch series is rebased from the linux-dm/dm-6.5-provision-support
+> > [3] on to (a12deb44f973 Merge tag 'input-for-v6.7-rc0' ...). The final
+> > patch in the series is a blktest (suggested by Dave in 4) which was use=
+d
+> > to test out the provisioning flow for loop devices on sparse files on a=
+n
+> > ext4 filesystem.
+>
+> What happened to the XFS patch I sent to support provisioning for
+> fallocate() operations through XFS?
+>
+Apologies, I missed out on mentioning that the XFS patches work well
+with loop devices.
 
-Hi Greg,
+I might have misunderstood: were those patches only for sanity testing
+or would you prefer that I send those out as a part of this series? I
+can whip up a quick v10 if so!
 
-My bad. I forgot about it while posting V2.
+Cheers
 
-As per your comment in another email, I will include some documentation
-in Documentation/ABI/. Not very sure what file name to choose. I will
-probably start with "sysfs-bus-virtio-devices-virtiofs".
+Sarthak
 
-Thanks
-Vivek
 
+> Cheers,
+>
+> Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
 
