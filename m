@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-2854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29C77EB668
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 19:30:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA747EB68B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 19:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EA61C20AE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 18:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6531F25737
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 18:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE9926AD8;
-	Tue, 14 Nov 2023 18:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877C1C05;
+	Tue, 14 Nov 2023 18:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qXJfP5fa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zk4WZJHJ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yx1q809n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VZXg4bLa"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A077726AC6;
-	Tue, 14 Nov 2023 18:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B048B33CC6;
+	Tue, 14 Nov 2023 18:43:00 +0000 (UTC)
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A878B129;
-	Tue, 14 Nov 2023 10:30:28 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAA0F0;
+	Tue, 14 Nov 2023 10:42:59 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E54DC22545;
-	Tue, 14 Nov 2023 18:30:26 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 82C9421BD5;
+	Tue, 14 Nov 2023 18:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1699986626;
+	t=1699987377;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Q8pUm3nvakATJ1oIT3xnJbBHmvn4hznsYZTE0Am2dkc=;
-	b=qXJfP5faKKR9adN0n14oxXY3VYH/AB6VgZk1uROOxjNH/hjRf4WiI93bIZQ2Kb5DsLHdRz
-	mprtgSVM9HV57mec0W/B0I/d2E3VKVrf0NZosIn4viyVCAlIB5/9Byq9ue2OKnPuN/VmN1
-	aEITZ+DKGbdNXBSNP0zC/e3X3z0fm7s=
+	bh=wRq1xbyM4C5MmPxC/WtmQpu8C8x9/omYZNqYfVPmHuY=;
+	b=yx1q809nV9KgQ7sKf7rlj2fqnwWGpwO/qiBPulIoQFtnZ9+FUH5/oU1QDA2OKj4/P6oYNR
+	RSFBkeukE0oywZ+S3YltJAye72yDotK27EKa0bcTthBWVuIGNpEfi97Fz+SJa65XszzlgG
+	n+ectDuh2aCrdXRHxQKZ4zB+NfNgIBA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1699986626;
+	s=susede2_ed25519; t=1699987377;
 	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
 	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Q8pUm3nvakATJ1oIT3xnJbBHmvn4hznsYZTE0Am2dkc=;
-	b=zk4WZJHJOTyR4GptCdW8hCAzAXpQ30PYKfIhHCyFAAyqXQrm6QMrF56pG73htACYAUZz/j
-	LqXIqkW0Du4D1+CA==
+	bh=wRq1xbyM4C5MmPxC/WtmQpu8C8x9/omYZNqYfVPmHuY=;
+	b=VZXg4bLatWwSKDTikgVE3H3fDRO84c6efkTZUyMwS1B+Afh2ZL61mgmlwBedv48X7gVTKo
+	+MSsArqcG08GVHAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
 	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AC69713460;
-	Tue, 14 Nov 2023 18:30:26 +0000 (UTC)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 483E113416;
+	Tue, 14 Nov 2023 18:42:57 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
 	by imap2.suse-dmz.suse.de with ESMTPSA
-	id HpRBKcK8U2WALAAAMHmgww
-	(envelope-from <dsterba@suse.cz>); Tue, 14 Nov 2023 18:30:26 +0000
-Date: Tue, 14 Nov 2023 19:23:21 +0100
+	id fULZELG/U2WSMQAAMHmgww
+	(envelope-from <dsterba@suse.cz>); Tue, 14 Nov 2023 18:42:57 +0000
+Date: Tue, 14 Nov 2023 19:35:51 +0100
 From: David Sterba <dsterba@suse.cz>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org, brauner@kernel.org
-Subject: Re: [PATCH v2 11/18] btrfs: add reconfigure callback for fs_context
-Message-ID: <20231114182321.GG11264@twin.jikos.cz>
+Subject: Re: [PATCH v2 12/18] btrfs: add get_tree callback for new mount API
+Message-ID: <20231114183550.GH11264@twin.jikos.cz>
 Reply-To: dsterba@suse.cz
 References: <cover.1699470345.git.josef@toxicpanda.com>
- <0c2885bd48e23b46d4e60e6874c1e4f95e0e1ce8.1699470345.git.josef@toxicpanda.com>
+ <1dea0813411eb5c08ddcdefcdae006e751dd15eb.1699470345.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,7 +75,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0c2885bd48e23b46d4e60e6874c1e4f95e0e1ce8.1699470345.git.josef@toxicpanda.com>
+In-Reply-To: <1dea0813411eb5c08ddcdefcdae006e751dd15eb.1699470345.git.josef@toxicpanda.com>
 User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Authentication-Results: smtp-out1.suse.de;
 	none
@@ -101,228 +101,161 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	 RCVD_TLS_ALL(0.00)[];
 	 BAYES_HAM(-3.00)[100.00%]
 
-On Wed, Nov 08, 2023 at 02:08:46PM -0500, Josef Bacik wrote:
-> This is what is used to remount the file system with the new mount API.
-> Because the mount options are parsed separately and one at a time I've
-> added a helper to emit the mount options after the fact once the mount
-> is configured, this matches the dmesg output for what happens with the
-> old mount API.
+On Wed, Nov 08, 2023 at 02:08:47PM -0500, Josef Bacik wrote:
+> This is the actual mounting callback for the new mount API.  Implement
+> this using our current fill super as a guideline, making the appropriate
+> adjustments for the new mount API.
 > 
+> Our old mount operation had two fs_types, one to handle the actual
+> opening, and the one that we called to handle the actual opening and
+> then did the subvol lookup for returning the actual root dentry.  This
+> is mirrored here, but simply with different behaviors for ->get_tree.
+> We use the existence of ->s_fs_info to tell which part we're in.  The
+> initial call allocates the fs_info, then call mount_fc() with a
+> duplicated fc to do the actual open_ctree part.  Then we take that
+> vfsmount and use it to look up our subvolume that we're mounting and
+> return that as our s_root.  This idea was taken from Christians attempt
+> to convert us to the new mount api.
+> 
+> References: https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-2-045e9735a00b@kernel.org/
+> Reviewed-by: Christian Brauner <brauner@kernel.org>
 > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 > ---
->  fs/btrfs/super.c | 243 +++++++++++++++++++++++++++++++++++++++++++----
->  fs/btrfs/zoned.c |  16 ++--
->  fs/btrfs/zoned.h |   6 +-
->  3 files changed, 236 insertions(+), 29 deletions(-)
+>  fs/btrfs/super.c | 210 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 206 insertions(+), 4 deletions(-)
 > 
 > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index facea4632a8d..b5067cf637a2 100644
+> index b5067cf637a2..4ace42e08bff 100644
 > --- a/fs/btrfs/super.c
 > +++ b/fs/btrfs/super.c
-> @@ -734,10 +734,11 @@ static int btrfs_parse_param(struct fs_context *fc,
+> @@ -95,6 +95,7 @@ struct btrfs_fs_context {
+>  	unsigned long mount_opt;
+>  	unsigned long compress_type:4;
+>  	unsigned int compress_level;
+> +	refcount_t refs;
+>  };
+>  
+>  enum {
+> @@ -2833,6 +2834,181 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 >  	return 0;
 >  }
 >  
-> -static bool check_ro_option(struct btrfs_fs_info *fs_info, unsigned long opt,
-> +static bool check_ro_option(struct btrfs_fs_info *fs_info,
-> +			    unsigned long mount_opt, unsigned long opt,
->  			    const char *opt_name)
->  {
-> -	if (fs_info->mount_opt & opt) {
-> +	if (mount_opt & opt) {
->  		btrfs_err(fs_info, "%s must be used with ro mount option",
->  			  opt_name);
->  		return true;
-> @@ -745,33 +746,34 @@ static bool check_ro_option(struct btrfs_fs_info *fs_info, unsigned long opt,
->  	return false;
->  }
->  
-> -static bool check_options(struct btrfs_fs_info *info, unsigned long flags)
-> +static bool check_options(struct btrfs_fs_info *info, unsigned long *mount_opt,
-> +			  unsigned long flags)
->  {
->  	if (!(flags & SB_RDONLY) &&
-> -	    (check_ro_option(info, BTRFS_MOUNT_NOLOGREPLAY, "nologreplay") ||
-> -	     check_ro_option(info, BTRFS_MOUNT_IGNOREBADROOTS, "ignorebadroots") ||
-> -	     check_ro_option(info, BTRFS_MOUNT_IGNOREDATACSUMS, "ignoredatacsums")))
-> +	    (check_ro_option(info, *mount_opt, BTRFS_MOUNT_NOLOGREPLAY, "nologreplay") ||
-> +	     check_ro_option(info, *mount_opt, BTRFS_MOUNT_IGNOREBADROOTS, "ignorebadroots") ||
-> +	     check_ro_option(info, *mount_opt, BTRFS_MOUNT_IGNOREDATACSUMS, "ignoredatacsums")))
->  		return false;
->  
->  	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE) &&
-> -	    !btrfs_test_opt(info, FREE_SPACE_TREE) &&
-> -	    !btrfs_test_opt(info, CLEAR_CACHE)) {
-> +	    !btrfs_raw_test_opt(*mount_opt, FREE_SPACE_TREE) &&
-> +	    !btrfs_raw_test_opt(*mount_opt, CLEAR_CACHE)) {
->  		btrfs_err(info, "cannot disable free space tree");
->  		return false;
->  	}
->  	if (btrfs_fs_compat_ro(info, BLOCK_GROUP_TREE) &&
-> -	     !btrfs_test_opt(info, FREE_SPACE_TREE)) {
-> +	     !btrfs_raw_test_opt(*mount_opt, FREE_SPACE_TREE)) {
->  		btrfs_err(info, "cannot disable free space tree with block-group-tree feature");
->  		return false;
->  	}
->  
-> -	if (btrfs_check_mountopts_zoned(info))
-> +	if (btrfs_check_mountopts_zoned(info, mount_opt))
->  		return false;
->  
->  	if (!test_bit(BTRFS_FS_STATE_REMOUNTING, &info->fs_state)) {
-> -		if (btrfs_test_opt(info, SPACE_CACHE))
-> +		if (btrfs_raw_test_opt(*mount_opt, SPACE_CACHE))
->  			btrfs_info(info, "disk space caching is enabled");
-> -		if (btrfs_test_opt(info, FREE_SPACE_TREE))
-> +		if (btrfs_raw_test_opt(*mount_opt, FREE_SPACE_TREE))
->  			btrfs_info(info, "using free space tree");
->  	}
->  
-> @@ -1337,7 +1339,7 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
->  		}
->  	}
->  out:
-> -	if (!ret && !check_options(info, new_flags))
-> +	if (!ret && !check_options(info, &info->mount_opt, new_flags))
->  		ret = -EINVAL;
->  	return ret;
->  }
-> @@ -2377,6 +2379,203 @@ static int btrfs_remount(struct super_block *sb, int *flags, char *data)
->  	return ret;
->  }
->  
-> +static void btrfs_ctx_to_info(struct btrfs_fs_info *fs_info,
-> +			      struct btrfs_fs_context *ctx)
+> +static int btrfs_fc_test_super(struct super_block *s, struct fs_context *fc)
 > +{
-> +	fs_info->max_inline = ctx->max_inline;
-> +	fs_info->commit_interval = ctx->commit_interval;
-> +	fs_info->metadata_ratio = ctx->metadata_ratio;
-> +	fs_info->thread_pool_size = ctx->thread_pool_size;
-> +	fs_info->mount_opt = ctx->mount_opt;
-> +	fs_info->compress_type = ctx->compress_type;
-> +	fs_info->compress_level = ctx->compress_level;
+> +	struct btrfs_fs_info *p = fc->s_fs_info;
+
+That's a confusing variable name
+
+> +	struct btrfs_fs_info *fs_info = btrfs_sb(s);
+> +
+> +	return fs_info->fs_devices == p->fs_devices;
 > +}
 > +
-> +static void btrfs_info_to_ctx(struct btrfs_fs_info *fs_info,
-> +			      struct btrfs_fs_context *ctx)
+> +static int btrfs_get_tree_super(struct fs_context *fc)
 > +{
-> +	ctx->max_inline = fs_info->max_inline;
-> +	ctx->commit_interval = fs_info->commit_interval;
-> +	ctx->metadata_ratio = fs_info->metadata_ratio;
-> +	ctx->thread_pool_size = fs_info->thread_pool_size;
-> +	ctx->mount_opt = fs_info->mount_opt;
-> +	ctx->compress_type = fs_info->compress_type;
-> +	ctx->compress_level = fs_info->compress_level;
-> +}
-> +
-> +#define btrfs_info_if_set(fs_info, old_ctx, opt, fmt, args...)			\
-> +do {										\
-> +	if ((!old_ctx || !btrfs_raw_test_opt(old_ctx->mount_opt, opt)) &&	\
-> +	    btrfs_raw_test_opt(fs_info->mount_opt, opt))			\
-> +		btrfs_info(fs_info, fmt, ##args);				\
-> +} while (0)
-> +
-> +#define btrfs_info_if_unset(fs_info, old_ctx, opt, fmt, args...)	\
-> +do {									\
-> +	if ((old_ctx && btrfs_raw_test_opt(old_ctx->mount_opt, opt)) &&	\
-> +	    !btrfs_raw_test_opt(fs_info->mount_opt, opt))		\
-> +		btrfs_info(fs_info, fmt, ##args);			\
-> +} while (0)
-> +
-> +static void btrfs_emit_options(struct btrfs_fs_info *fs_info,
-> +			       struct btrfs_fs_context *old_ctx)
-> +{
-> +	btrfs_info_if_set(fs_info, old_ctx, NODATASUM, "setting nodatasum");
-> +	btrfs_info_if_set(fs_info, old_ctx, DEGRADED,
-> +			  "allowing degraded mounts");
-> +	btrfs_info_if_set(fs_info, old_ctx, NODATASUM, "setting nodatasum");
-> +	btrfs_info_if_set(fs_info, old_ctx, SSD, "enabling ssd optimizations");
-> +	btrfs_info_if_set(fs_info, old_ctx, SSD_SPREAD,
-> +			  "using spread ssd allocation scheme");
-> +	btrfs_info_if_set(fs_info, old_ctx, NOBARRIER, "turning off barriers");
-> +	btrfs_info_if_set(fs_info, old_ctx, NOTREELOG, "disabling tree log");
-> +	btrfs_info_if_set(fs_info, old_ctx, NOLOGREPLAY,
-> +			  "disabling log replay at mount time");
-> +	btrfs_info_if_set(fs_info, old_ctx, FLUSHONCOMMIT,
-> +			  "turning on flush-on-commit");
-> +	btrfs_info_if_set(fs_info, old_ctx, DISCARD_SYNC,
-> +			  "turning on sync discard");
-> +	btrfs_info_if_set(fs_info, old_ctx, DISCARD_ASYNC,
-> +			  "turning on async discard");
-> +	btrfs_info_if_set(fs_info, old_ctx, FREE_SPACE_TREE,
-> +			  "enabling free space tree");
-> +	btrfs_info_if_set(fs_info, old_ctx, SPACE_CACHE,
-> +			  "enabling disk space caching");
-> +	btrfs_info_if_set(fs_info, old_ctx, CLEAR_CACHE,
-> +			  "force clearing of disk cache");
-> +	btrfs_info_if_set(fs_info, old_ctx, AUTO_DEFRAG,
-> +			  "enabling auto defrag");
-> +	btrfs_info_if_set(fs_info, old_ctx, FRAGMENT_DATA,
-> +			  "fragmenting data");
-> +	btrfs_info_if_set(fs_info, old_ctx, FRAGMENT_METADATA,
-> +			  "fragmenting metadata");
-> +	btrfs_info_if_set(fs_info, old_ctx, REF_VERIFY,
-> +			  "doing ref verification");
-> +	btrfs_info_if_set(fs_info, old_ctx, USEBACKUPROOT,
-> +			  "trying to use backup root at mount time");
-> +	btrfs_info_if_set(fs_info, old_ctx, IGNOREBADROOTS,
-> +			  "ignoring bad roots");
-> +	btrfs_info_if_set(fs_info, old_ctx, IGNOREDATACSUMS,
-> +			  "ignoring data csums");
+> +	struct btrfs_fs_info *fs_info = fc->s_fs_info;
+> +	struct btrfs_fs_context *ctx = fc->fs_private;
+> +	struct btrfs_fs_devices *fs_devices = NULL;
+> +	struct block_device *bdev;
+> +	struct btrfs_device *device;
+> +	struct super_block *s;
 
-I think we can format this on >80 char lines, it would look better IMHO.
-If fs_info and old_ctx are named shorter then more of the string fits.
+Please use 'sb' for super block.
 
-> +	btrfs_info_if_unset(fs_info, old_ctx, NODATACOW, "setting datacow");
-> +	btrfs_info_if_unset(fs_info, old_ctx, SSD, "not using ssd optimizations");
-> +	btrfs_info_if_unset(fs_info, old_ctx, SSD_SPREAD,
-> +			    "not using spread ssd allocation scheme");
-> +	btrfs_info_if_unset(fs_info, old_ctx, NOBARRIER,
-> +			    "turning off barriers");
-> +	btrfs_info_if_unset(fs_info, old_ctx, NOTREELOG, "enabling tree log");
-> +	btrfs_info_if_unset(fs_info, old_ctx, SPACE_CACHE,
-> +			    "disabling disk space caching");
-> +	btrfs_info_if_unset(fs_info, old_ctx, FREE_SPACE_TREE,
-> +			    "disabling free space tree");
-> +	btrfs_info_if_unset(fs_info, old_ctx, AUTO_DEFRAG,
-> +			    "disabling auto defrag");
-> +	btrfs_info_if_unset(fs_info, old_ctx, COMPRESS,
-> +			    "use no compression");
-
-Same
-
+> +	blk_mode_t mode = sb_open_mode(fc->sb_flags);
+> +	int ret;
 > +
-> +	/* Did the compression settings change? */
-> +	if (btrfs_test_opt(fs_info, COMPRESS) &&
-> +	    (!old_ctx ||
-> +	     old_ctx->compress_type != fs_info->compress_type ||
-> +	     old_ctx->compress_level != fs_info->compress_level ||
-> +	     (!btrfs_raw_test_opt(old_ctx->mount_opt, FORCE_COMPRESS) &&
-> +	      btrfs_raw_test_opt(fs_info->mount_opt, FORCE_COMPRESS)))) {
-> +		char *compress_type = "none";
+> +	btrfs_ctx_to_info(fs_info, ctx);
+> +	mutex_lock(&uuid_mutex);
 > +
-> +		switch (fs_info->compress_type) {
-> +		case BTRFS_COMPRESS_ZLIB:
-> +			compress_type = "zlib";
-> +			break;
-> +		case BTRFS_COMPRESS_LZO:
-> +			compress_type = "lzo";
-> +			break;
-> +		case BTRFS_COMPRESS_ZSTD:
-> +			compress_type = "zstd";
-> +			break;
-> +		}
-
-We have btrfs_compress_type2str()
-
-> +
-> +		btrfs_info(fs_info, "%s %s compression, level %d",
-> +			   btrfs_test_opt(fs_info, FORCE_COMPRESS) ? "force" : "use",
-> +			   compress_type, fs_info->compress_level);
+> +	/*
+> +	 * With 'true' passed to btrfs_scan_one_device() (mount time) we expect
+> +	 * either a valid device or an error.
+> +	 */
+> +	device = btrfs_scan_one_device(fc->source, mode, true);
+> +	ASSERT(device != NULL);
+> +	if (IS_ERR(device)) {
+> +		mutex_unlock(&uuid_mutex);
+> +		return PTR_ERR(device);
 > +	}
 > +
-> +	if (fs_info->max_inline != BTRFS_DEFAULT_MAX_INLINE)
-> +		btrfs_info(fs_info, "max_inline at %llu",
-> +			   fs_info->max_inline);
+> +	fs_devices = device->fs_devices;
+> +	fs_info->fs_devices = fs_devices;
+> +
+> +	ret = btrfs_open_devices(fs_devices, mode, &btrfs_fs_type);
+> +	mutex_unlock(&uuid_mutex);
+
+Regarding the previous comments about mount and scanning, here the
+device is scanned and opened in one go, so all the other devices are
+expected to be scanned independently from before.
+
+This is not a prolbem, although it allows to something race in between
+the mount option scanning and here and call 'forget' on the devices.
+We've seen udev to race with mkfs to register the device, which is not a
+problem here, but if there's something calling 'forget' automatically
+then it will be.
+
+Since systemd started to mess with background mounts and scans we can
+never ber sure what's going to happen when triggered by system events.
+
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!(fc->sb_flags & SB_RDONLY) && fs_devices->rw_devices == 0) {
+> +		ret = -EACCES;
+> +		goto error;
+> +	}
+> +
+> +	bdev = fs_devices->latest_dev->bdev;
+> +
+> +	/*
+> +	 * If successful, this will transfer the fs_info into the super block,
+> +	 * and fc->s_fs_info will be NULL.  However if there's an existing
+> +	 * super, we'll still have fc->s_fs_info populated.  If we error
+> +	 * completely out it'll be cleaned up when we drop the fs_context,
+> +	 * otherwise it's tied to the lifetime of the super_block.
+> +	 *
+> +	 * Adding this comment because I was horribly confused about the error
+> +	 * handling from here on out.
+
+The last sentence does not need to be there, that we add comments to
+avoid confusion is kind of implicit.
+
+> +	 */
+> +	s = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
+> +	if (IS_ERR(s)) {
+> +		ret = PTR_ERR(s);
+> +		goto error;
+> +	}
+> +
+> +	if (s->s_root) {
+> +		btrfs_close_devices(fs_devices);
+> +		if ((fc->sb_flags ^ s->s_flags) & SB_RDONLY)
+> +			ret = -EBUSY;
+> +	} else {
+> +		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
+> +		shrinker_debugfs_rename(&s->s_shrink, "sb-btrfs:%s", s->s_id);
+
+In 6.7-rc1 there's a change do allocate shrinkers dynamically so this
+will need to be adjusted
+
+		shrinker_debugfs_rename(s->s_shrink, ...
+
+> +		btrfs_sb(s)->bdev_holder = &btrfs_fs_type;
+> +		ret = btrfs_fill_super(s, fs_devices, NULL);
+> +	}
+> +
+> +	if (ret) {
+> +		deactivate_locked_super(s);
+> +		return ret;
+> +	}
+> +
+> +	fc->root = dget(s->s_root);
+> +	return 0;
+> +
+> +error:
+> +	btrfs_close_devices(fs_devices);
+> +	return ret;
 > +}
 
