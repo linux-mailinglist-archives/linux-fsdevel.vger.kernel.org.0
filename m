@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-2857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9361F7EB8BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 22:41:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445FC7EB8BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 22:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50631C20869
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 21:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B011C20B1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 21:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113193306E;
-	Tue, 14 Nov 2023 21:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A7D3307D;
+	Tue, 14 Nov 2023 21:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127E72FC21;
-	Tue, 14 Nov 2023 21:41:46 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F30D2;
-	Tue, 14 Nov 2023 13:41:45 -0800 (PST)
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1cc9b626a96so46182635ad.2;
-        Tue, 14 Nov 2023 13:41:45 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404633072;
+	Tue, 14 Nov 2023 21:41:49 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCEAD2;
+	Tue, 14 Nov 2023 13:41:48 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1cc3542e328so46247045ad.1;
+        Tue, 14 Nov 2023 13:41:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699998105; x=1700602905;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=94ySD3WcUYe12j9i1bxOC4LnwfgGxbnyqO6cY7D/70w=;
-        b=ALz29v72Gsbkz4PNG2h41lEsX+9GGtI3Iv33EsZHaNqCg3HXsT2bBLw5o6BqgNXgo/
-         32AxZ93H+YeeREzkv1kMP37SMx3IXV1SJ3e78KlY4Ln+MxdTer11ywZ2pAFLJnJ5VZlm
-         WD46G+mawbamT39FW4l3/9WaLWND2id7FR48XQDePk5M17+bnwWRl4H5TVgzyd/M4bzn
-         fI8241GN0yTPoeLo+aNMPRC3clxOfZTjIMRZFj6kty06EIbWgzq+/T81FtynVaIXry05
-         FP7g/+CfAen2P+lx4q1g4cx+LwppGCvwJ5hQw8WKkuKGPA/j9RkcHgsRJaq7LLMNVYSu
-         xaMg==
-X-Gm-Message-State: AOJu0Yyf1AKsmz4OrUqaHsIN+BNtgcDIxzUShULSZ9l5tQvNNHjWDGFA
-	RJhDyUaFO+FJuQKN0T8Ru033GIIma7w=
-X-Google-Smtp-Source: AGHT+IEo1DVuMnTjmx0RDfE1/mCp7Xs//AkZQ8mUt8Cl1PXy/ZmmNHB82DpQwPwmL+8T6v4SC8OFZA==
-X-Received: by 2002:a17:902:e74a:b0:1cc:e76e:f214 with SMTP id p10-20020a170902e74a00b001cce76ef214mr3983629plf.29.1699998105116;
-        Tue, 14 Nov 2023 13:41:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1699998108; x=1700602908;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/FFQa2e9BQic5MUNwTejV3XIteTNLmmrUor8s5RN+Kc=;
+        b=PJ9A/xw9E84o2t+UDM/OB/dRbe0IM/G8S44VaAcVUlVXRsSI8TWA6vL8WLhRhQS6l5
+         A1kkESu4F3DVmzQYk0zRGnW58wrs6j6ZRc6ZoyBe/M2sRfUAMmcqLv4cc5VOwRmAKbRW
+         oUj4gZ0xNM3GXAjsGyEQq92Bd63MEvcixlKUKMPGmoi3sFsjVHWRLmM+TuM/0URQ+Lkx
+         t/B3vJYev9dqv9SSSB0lNtW5j2Lsx66OIUDVfYTUYhjjUniYw7YRQjJnia2bZlEEUAYT
+         CJlSHHEaXzFuPZyBAx8s2y/0fOQ7bXW1CnSJ2sL2svnWHQfYem3tVf2WxV4eLOmoEYeM
+         4Lzw==
+X-Gm-Message-State: AOJu0Yz4K8MZw66aKV/zc0CL9dDJ0wHVHoUpRQPuEHwEet1PvxZEKuxh
+	yf+qOVKo1AzyVf7GplBN++w=
+X-Google-Smtp-Source: AGHT+IER3ePTg/BeDrmersjmPt4kOAzVkMa6+a3RMV7Ao3IF71rzyhh2UkAIoi7BlrCvPobT9XK4pA==
+X-Received: by 2002:a17:902:7241:b0:1cc:76c4:5144 with SMTP id c1-20020a170902724100b001cc76c45144mr3184479pll.12.1699998108060;
+        Tue, 14 Nov 2023 13:41:48 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:2278:ad72:cefb:4d49])
-        by smtp.gmail.com with ESMTPSA id o16-20020a170902d4d000b001c3267ae317sm6133926plg.165.2023.11.14.13.41.44
+        by smtp.gmail.com with ESMTPSA id o16-20020a170902d4d000b001c3267ae317sm6133926plg.165.2023.11.14.13.41.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Nov 2023 13:41:44 -0800 (PST)
+        Tue, 14 Nov 2023 13:41:46 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -54,11 +54,18 @@ Cc: linux-scsi@vger.kernel.org,
 	Christoph Hellwig <hch@lst.de>,
 	Daejun Park <daejun7.park@samsung.com>,
 	Kanchan Joshi <joshi.k@samsung.com>,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH v4 00/15] Pass data lifetime information to SCSI disk devices
-Date: Tue, 14 Nov 2023 13:40:55 -0800
-Message-ID: <20231114214132.1486867-1-bvanassche@acm.org>
+	Bart Van Assche <bvanassche@acm.org>,
+	Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v4 01/15] fs: Rename the kernel-internal data lifetime constants
+Date: Tue, 14 Nov 2023 13:40:56 -0800
+Message-ID: <20231114214132.1486867-2-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.rc0.421.g78406f8d94-goog
+In-Reply-To: <20231114214132.1486867-1-bvanassche@acm.org>
+References: <20231114214132.1486867-1-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,89 +74,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Martin,
+Prepare for supporting more data lifetimes by changing data lifetime
+names into numeric constants.
 
-UFS vendors need the data lifetime information to achieve good performance.
-Providing data lifetime information to UFS devices can result in up to 40%
-lower write amplification. Hence this patch series that adds support in F2FS
-and also in the block layer for data lifetime information. The SCSI disk (sd)
-driver is modified such that it passes write hint information to SCSI devices
-via the GROUP NUMBER field.
+Cc: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Kanchan Joshi <joshi.k@samsung.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ fs/f2fs/segment.c  |  4 ++--
+ fs/inode.c         |  2 +-
+ include/linux/fs.h | 12 ++++++------
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-Please consider this patch series for the next merge window.
-
-Thank you,
-
-Bart.
-
-Changes compared to v3:
- - Renamed the data lifetime constants (WRITE_LIFE_*).
- - Fixed a checkpatch complaint by changing "unsigned" into "unsigned int".
- - Rebased this patch series on top of kernel v6.7-rc1.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 727d016318f9..098a574d8d84 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3281,9 +3281,9 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ int f2fs_rw_hint_to_seg_type(enum rw_hint hint)
+ {
+ 	switch (hint) {
+-	case WRITE_LIFE_SHORT:
++	case WRITE_LIFE_2:
+ 		return CURSEG_HOT_DATA;
+-	case WRITE_LIFE_EXTREME:
++	case WRITE_LIFE_5:
+ 		return CURSEG_COLD_DATA;
+ 	default:
+ 		return CURSEG_WARM_DATA;
+diff --git a/fs/inode.c b/fs/inode.c
+index edcd8a61975f..7965d5e07012 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -175,7 +175,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	i_gid_write(inode, 0);
+ 	atomic_set(&inode->i_writecount, 0);
+ 	inode->i_size = 0;
+-	inode->i_write_hint = WRITE_LIFE_NOT_SET;
++	inode->i_write_hint = WRITE_LIFE_0;
+ 	inode->i_blocks = 0;
+ 	inode->i_bytes = 0;
+ 	inode->i_generation = 0;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98b7a7a8c42e..59f9de9df0fe 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -314,12 +314,12 @@ struct readahead_control;
+  * Stored in struct inode as u8.
+  */
+ enum rw_hint {
+-	WRITE_LIFE_NOT_SET	= 0,
+-	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
+-	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
+-	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+-	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+-	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
++	WRITE_LIFE_0	= 0,
++	WRITE_LIFE_1	= RWH_WRITE_LIFE_NONE,
++	WRITE_LIFE_2	= RWH_WRITE_LIFE_SHORT,
++	WRITE_LIFE_3	= RWH_WRITE_LIFE_MEDIUM,
++	WRITE_LIFE_4	= RWH_WRITE_LIFE_LONG,
++	WRITE_LIFE_5	= RWH_WRITE_LIFE_EXTREME,
+ };
  
-Changes compared to v2:
- - Instead of storing data lifetime information in bi_ioprio, introduce the
-   new struct bio member bi_lifetime and also the struct request member
-   'lifetime'.
- - Removed the bio_set_data_lifetime() and bio_get_data_lifetime() functions
-   and replaced these with direct assignments.
- - Dropped all changes related to I/O priority.
- - Improved patch descriptions.
-
-Changes compared to v1:
- - Use six bits from the ioprio field for data lifetime information. The
-   bio->bi_write_hint / req->write_hint / iocb->ki_hint members that were
-   introduced in v1 have been removed again.
- - The F_GET_FILE_RW_HINT and F_SET_FILE_RW_HINT fcntls have been removed.
- - In the SCSI disk (sd) driver, query the stream status and check the PERM bit.
- - The GET STREAM STATUS command has been implemented in the scsi_debug driver.
-
-Bart Van Assche (15):
-  fs: Rename the kernel-internal data lifetime constants
-  fs: Move enum rw_hint into a new header file
-  block: Restore data lifetime support in struct bio and struct request
-  fs: Restore write hint support
-  fs/f2fs: Restore data lifetime support
-  scsi: core: Query the Block Limits Extension VPD page
-  scsi_proto: Add structures and constants related to I/O groups and
-    streams
-  sd: Translate data lifetime information
-  scsi_debug: Reduce code duplication
-  scsi_debug: Support the block limits extension VPD page
-  scsi_debug: Rework page code error handling
-  scsi_debug: Rework subpage code error handling
-  scsi_debug: Implement the IO Advice Hints Grouping mode page
-  scsi_debug: Implement GET STREAM STATUS
-  scsi_debug: Maintain write statistics per group number
-
- Documentation/filesystems/f2fs.rst |  70 ++++++++
- block/bio.c                        |   2 +
- block/blk-crypto-fallback.c        |   1 +
- block/blk-merge.c                  |   6 +
- block/blk-mq.c                     |   1 +
- block/bounce.c                     |   1 +
- block/fops.c                       |   3 +
- drivers/scsi/scsi.c                |   2 +
- drivers/scsi/scsi_debug.c          | 247 +++++++++++++++++++++--------
- drivers/scsi/scsi_sysfs.c          |  10 ++
- drivers/scsi/sd.c                  | 111 ++++++++++++-
- drivers/scsi/sd.h                  |   3 +
- fs/f2fs/data.c                     |   2 +
- fs/f2fs/f2fs.h                     |  10 ++
- fs/f2fs/segment.c                  |  99 +++++++++++-
- fs/f2fs/super.c                    |  32 +++-
- fs/fcntl.c                         |   1 +
- fs/inode.c                         |   3 +-
- fs/iomap/buffered-io.c             |   2 +
- fs/iomap/direct-io.c               |   1 +
- fs/mpage.c                         |   1 +
- include/linux/blk-mq.h             |   2 +
- include/linux/blk_types.h          |   2 +
- include/linux/fs.h                 |  16 +-
- include/linux/rw_hint.h            |  20 +++
- include/scsi/scsi_device.h         |   1 +
- include/scsi/scsi_proto.h          |  75 +++++++++
- 27 files changed, 638 insertions(+), 86 deletions(-)
- create mode 100644 include/linux/rw_hint.h
-
+ /* Match RWF_* bits to IOCB bits */
 
