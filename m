@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-2830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A6157EB3C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:33:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201397EB3C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:33:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E4A1B20CE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:33:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429821C20AD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E15441A88;
-	Tue, 14 Nov 2023 15:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F1441A93;
+	Tue, 14 Nov 2023 15:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKHreDh/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSWHdgjK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D5B41768
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:33:37 +0000 (UTC)
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC1E198
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:35 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32deb2809daso3441414f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:35 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28B241A82
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:33:38 +0000 (UTC)
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44EF6D40
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:37 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-32da9ef390fso3684517f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699976014; x=1700580814; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1699976015; x=1700580815; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EABgM0PGthLo9c3qNgFDIuspwPfs4M2r4qGK2JQEz90=;
-        b=fKHreDh/QFgFdmtxyNTbUCgmWouD6oaUo1OtGOuG3Fmr4PTxTwNdz/aTcl5hobd9ap
-         HVJss4yn31Dytgmlv6RpNUhjbST4SAem873ZKwLvGD3PM5qbzTBJib7uC4Xb/3v12m3k
-         1BL//s4voVl1YuYAsHNaDzBjw4zjEhy7GmUbRXY9XgzaRQuzFq55pNPtXIXQ+3ieuniz
-         cYFmzqEDWEQtgosa1PzYF/oL96Q3uoEWSwS+oRGcmAMw2f+MbIErHWXBYTjTNFK/uacs
-         umowIiwR7S1Z2l4Ft62QFkycmBKwTo/CRdXoyM+/YGnbvb1p2uO1cyioMDbCtJ3WxnUQ
-         rWxQ==
+        bh=+iUDFGsO/+8YjOBlEcGZTYITE7ntldQEt+ZaUoKpjOc=;
+        b=CSWHdgjKnbuSwcS9rQOYakZ/pvYqBL7wYm/S2DTyS5yZZxmnZplNDNUGZlPFKCSSDA
+         4nDgXA0FAcn2V8uKgD/WpXSq8QagxfngPZZjTIfIHaqHyk8TxV0Cbw5j6Cm6fDr+bBes
+         gBYYkBzsxeTlExMEnOMC1LAbDanZCAunUUKSdt0aTKqK1/Ryz8mrN8ZpQbCwlYimbs68
+         U/UozNaFnVzvhRycqySi9vuP3TwK2wg8nMZUSgDOuys6g6y+0AoRIoaFAkT+VWx9IaLu
+         Cx9jFEK6eI301z0InA8XBMcHl5cs66x064MpYGI/gtugRPGPD/TAp3/+tvD6jpfHY8LD
+         Ak+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699976014; x=1700580814;
+        d=1e100.net; s=20230601; t=1699976015; x=1700580815;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EABgM0PGthLo9c3qNgFDIuspwPfs4M2r4qGK2JQEz90=;
-        b=OzBCR2fEmIev1rwtZ07NJoDpEKdYBnkptJUI4Bnkvp/pJxmFYsn2g8V8Ny++itVQCA
-         aWGIVrnpQUDiEpoYhxas2FVkcX7WEylAN1lbGuzJLSvtmLMKrlVFNGJ+oNfqtqoNu8TB
-         28BN4c+fGc8Ug54gHn4RiVdXjdZlhGaTAc44B7wyfPnj53gp1wi1HiF7epvQp1mbZTyl
-         J5MwCckwLytXAe/8uJWKpaYFNHXUk29CWEIONvwJGCvVY+i3vhtBDFzzwa1c9A6GBiTz
-         oiI50taPeNPdh80tZaaEzvQIAKe5pvy37YKvD/jT04UA9PDLICVwfCTHGgyimy/H7Mf2
-         Ukbw==
-X-Gm-Message-State: AOJu0YzwMCnFQu5DMwu6NxwkeQEsN3avKmAOp1/k9Tv32KWIVtAHTuwg
-	q2Q+pGDemBQhlNislBNa4Gc=
-X-Google-Smtp-Source: AGHT+IEecxSDB/lBD3X6f2ebN2uzloTr+FAA+spHGTYnwqYaV7sxwUfdepuJGzIxv8srV/YDel/mnw==
-X-Received: by 2002:adf:a3da:0:b0:32f:7db1:22fb with SMTP id m26-20020adfa3da000000b0032f7db122fbmr6380350wrb.28.1699976014181;
-        Tue, 14 Nov 2023 07:33:34 -0800 (PST)
+        bh=+iUDFGsO/+8YjOBlEcGZTYITE7ntldQEt+ZaUoKpjOc=;
+        b=UDhIeCSGy1N7uQ7evP6Ycm3s/Joyaf5qrl6m6qe0c1Ctxz5Sg88BR/YUtgKtUnRUCw
+         SU8RrcEKX7WnILb+UfE3zzi/u7gdtfmLSvHbrbrIL5rqWQCKS7S/K6+AWJPLy5XtFxuW
+         tf9/tOK3xTnRMUa98YMj/Yl695/V7X5N9VB88ViJadGMGfNjfkAe80Oj9M4BX++5Rpxa
+         xaGSfAXLRwZjrb2Co+pr1jTzv83xG6tkCodC2MsLOHhHWqbFxF+jab19zGTc9WNABRKP
+         An6NOGPtB523JuClmVzf/Q7f94/aJAgbjUAg2A7RPbXla37lJhI8wNt6yyw5ZofZU1M3
+         7wTw==
+X-Gm-Message-State: AOJu0YzuJaxB2ZlhFrhVwyp5ktyFnW/nmTRfcVa0MSBY/EOfwiqxKp62
+	Hh0eElR/ay2Kl3w2UVzKKJEnGJ0Q9w0=
+X-Google-Smtp-Source: AGHT+IHxpld7SgoEEJ9lycz0UhiH9UAOUCT6NXWUm0BX06pwWtPKQzf2QmIQTKAgMkir3Q4AI9aqLw==
+X-Received: by 2002:adf:f0ce:0:b0:32f:7c6c:aa18 with SMTP id x14-20020adff0ce000000b0032f7c6caa18mr7233461wro.38.1699976015675;
+        Tue, 14 Nov 2023 07:33:35 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id o9-20020a5d58c9000000b0032d9caeab0fsm8146527wrf.77.2023.11.14.07.33.33
+        by smtp.gmail.com with ESMTPSA id o9-20020a5d58c9000000b0032d9caeab0fsm8146527wrf.77.2023.11.14.07.33.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Nov 2023 07:33:33 -0800 (PST)
+        Tue, 14 Nov 2023 07:33:35 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -66,9 +66,9 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/15] remap_range: move permission hooks out of do_clone_file_range()
-Date: Tue, 14 Nov 2023 17:33:12 +0200
-Message-Id: <20231114153321.1716028-7-amir73il@gmail.com>
+Subject: [PATCH 07/15] remap_range: move file_start_write() to after permission hook
+Date: Tue, 14 Nov 2023 17:33:13 +0200
+Message-Id: <20231114153321.1716028-8-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231114153321.1716028-1-amir73il@gmail.com>
 References: <20231114153321.1716028-1-amir73il@gmail.com>
@@ -80,60 +80,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In many of the vfs helpers, file permission hook is called before
-taking sb_start_write(), making them "start-write-safe".
-do_clone_file_range() is an exception to this rule.
+In vfs code, file_start_write() is usually called after the permission
+hook in rw_verify_area().  vfs_dedupe_file_range_one() is an exception
+to this rule.
 
-do_clone_file_range() has two callers - vfs_clone_file_range() and
-overlayfs. Move remap_verify_area() checks from do_clone_file_range()
-out to vfs_clone_file_range() to make them "start-write-safe".
-
-Overlayfs already has calls to rw_verify_area() with the same security
-permission hooks as remap_verify_area() has.
-The rest of the checks in remap_verify_area() are irrelevant for
-overlayfs that calls do_clone_file_range() offset 0 and positive length.
+In vfs_dedupe_file_range_one(), move file_start_write() to after the
+the rw_verify_area() checks to make them "start-write-safe".
 
 This is needed for fanotify "pre content" events.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/remap_range.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/remap_range.c | 32 +++++++++++++-------------------
+ 1 file changed, 13 insertions(+), 19 deletions(-)
 
 diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 87ae4f0dc3aa..42f79cb2b1b1 100644
+index 42f79cb2b1b1..de4b09d0ba1d 100644
 --- a/fs/remap_range.c
 +++ b/fs/remap_range.c
-@@ -385,14 +385,6 @@ loff_t do_clone_file_range(struct file *file_in, loff_t pos_in,
- 	if (!file_in->f_op->remap_file_range)
- 		return -EOPNOTSUPP;
+@@ -445,46 +445,40 @@ loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+ 	WARN_ON_ONCE(remap_flags & ~(REMAP_FILE_DEDUP |
+ 				     REMAP_FILE_CAN_SHORTEN));
  
--	ret = remap_verify_area(file_in, pos_in, len, false);
+-	ret = mnt_want_write_file(dst_file);
 -	if (ret)
 -		return ret;
 -
--	ret = remap_verify_area(file_out, pos_out, len, true);
--	if (ret)
--		return ret;
--
- 	ret = file_in->f_op->remap_file_range(file_in, pos_in,
- 			file_out, pos_out, len, remap_flags);
- 	if (ret < 0)
-@@ -410,6 +402,14 @@ loff_t vfs_clone_file_range(struct file *file_in, loff_t pos_in,
- {
- 	loff_t ret;
+ 	/*
+ 	 * This is redundant if called from vfs_dedupe_file_range(), but other
+ 	 * callers need it and it's not performance sesitive...
+ 	 */
+ 	ret = remap_verify_area(src_file, src_pos, len, false);
+ 	if (ret)
+-		goto out_drop_write;
++		return ret;
  
-+	ret = remap_verify_area(file_in, pos_in, len, false);
+ 	ret = remap_verify_area(dst_file, dst_pos, len, true);
+ 	if (ret)
+-		goto out_drop_write;
++		return ret;
+ 
+-	ret = -EPERM;
+ 	if (!allow_file_dedupe(dst_file))
+-		goto out_drop_write;
++		return -EPERM;
+ 
+-	ret = -EXDEV;
+ 	if (file_inode(src_file)->i_sb != file_inode(dst_file)->i_sb)
+-		goto out_drop_write;
++		return -EXDEV;
+ 
+-	ret = -EISDIR;
+ 	if (S_ISDIR(file_inode(dst_file)->i_mode))
+-		goto out_drop_write;
++		return -EISDIR;
+ 
+-	ret = -EINVAL;
+ 	if (!dst_file->f_op->remap_file_range)
+-		goto out_drop_write;
++		return -EINVAL;
+ 
+-	if (len == 0) {
+-		ret = 0;
+-		goto out_drop_write;
+-	}
++	if (len == 0)
++		return 0;
++
++	ret = mnt_want_write_file(dst_file);
 +	if (ret)
 +		return ret;
+ 
+ 	ret = dst_file->f_op->remap_file_range(src_file, src_pos, dst_file,
+ 			dst_pos, len, remap_flags | REMAP_FILE_DEDUP);
+-out_drop_write:
 +
-+	ret = remap_verify_area(file_out, pos_out, len, true);
-+	if (ret)
-+		return ret;
-+
- 	file_start_write(file_out);
- 	ret = do_clone_file_range(file_in, pos_in, file_out, pos_out, len,
- 				  remap_flags);
+ 	mnt_drop_write_file(dst_file);
+ 
+ 	return ret;
 -- 
 2.34.1
 
