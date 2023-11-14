@@ -1,105 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-2822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED1E7EB34C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:19:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7C37EB37B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9968C281238
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:19:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F3E1F24CA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5689B41746;
-	Tue, 14 Nov 2023 15:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B54041755;
+	Tue, 14 Nov 2023 15:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tx71B04j"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E+0fInP0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A794405D9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:19:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C274C433C8;
-	Tue, 14 Nov 2023 15:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699975155;
-	bh=kRFvVYyQo9h3UdVSK8tFC8FgB4YBcfgkeYjzV9XXjZ4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Tx71B04jtt9pLSKi0ZF7CcXShvUoFgliUCSrGttSL9fNsJG2G2HqTk/D/15o3F8wB
-	 fOLeFA3UxD4oX7NxkHb/LD4KHfzHgnCspZfyu1w0WNwufOHH5Wz1rD2I2xpSEiWmCD
-	 0ad7GcHrFMqKKmPK5Mi/01WNeu6ykPsVmxeTrEGi8T0iqF9Rq27jlYOA7p5aonHi53
-	 4Ilq+AhAQn5lHXy3OYHq5PvoTUcxHkEPu0kSvYbH3srPYCw2BTA0rGnJM0Pwevtu3s
-	 J4nYszk3aitrEzBuqSPXiJVmsBimWORwqRHqrfi+ugZxsess/pK5znwuq/r2Ol5txg
-	 vWvvWEXCCEe2A==
-User-agent: mu4e 1.8.10; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: chandanbabu@kernel.org
-Cc: ailiop@suse.com,dchinner@redhat.com,djwong@kernel.org,hch@lst.de,holger@applied-asynchrony.com,leah.rumancik@gmail.com,leo.lilong@huawei.com,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org,osandov@fb.com,willy@infradead.org
-Subject: [ANNOUNCE] xfs-linux: for-next updated to 7930d9e10370
-Date: Tue, 14 Nov 2023 20:44:03 +0530
-Message-ID: <878r70icr4.fsf@debian-BULLSEYE-live-builder-AMD64>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4AC41227;
+	Tue, 14 Nov 2023 15:26:14 +0000 (UTC)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A1B93;
+	Tue, 14 Nov 2023 07:26:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iksz4wvrrAe3MrzMi4Syux0ALWcXSqTNlCCEFGxtMiA=; b=E+0fInP01H8oXGNYXwy2zIWHxc
+	QnhFlc5yYUp9Gj19CLutDX/Au7blOKcbuaAZ7vAhDJWKiShkJeEvm3bpxRx9XkHieoHf5n7CgRceH
+	kOPPBN74RUaRwfYDzraLB9x1tCS4X1UP7l9kG8EyQT9hLTm7QdqdjF+FhKjwMtTiEpVZMlFgRamP8
+	pB/pFd64pY7g7lCRRplbmdzN3LuDOn/EPI/Tm+1JgvefXPFdOWUcD0mya1zBWbWPbkahqGpR705Bt
+	tt50Lb2viJo9DeQ3VTcEUlBST4ypo+zS5jxZxyf73x8l7k0pWWMIfTtQ/KHokXSSZ+vtm7qnShBFO
+	L+LzMFpA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r2vIf-00Fizn-1h;
+	Tue, 14 Nov 2023 15:26:01 +0000
+Date: Tue, 14 Nov 2023 15:26:01 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ian Kent <raven@themaw.net>
+Cc: Edward Adam Davis <eadavis@qq.com>,
+	syzbot+662f87a8ef490f45fa64@syzkaller.appspotmail.com,
+	autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] autofs: fix null deref in autofs_fill_super
+Message-ID: <20231114152601.GS1957730@ZenIV>
+References: <000000000000ae5995060a125650@google.com>
+ <tencent_3744B76B9760E6DA33798369C96563B2C405@qq.com>
+ <4fcf49456c32087f5306e84c4a8df5b2bd9f4146.camel@themaw.net>
+ <20231114044110.GR1957730@ZenIV>
+ <e2654c2c-947a-60e5-7b86-9a13590f6211@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2654c2c-947a-60e5-7b86-9a13590f6211@themaw.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi folks,
+On Tue, Nov 14, 2023 at 04:30:25PM +0800, Ian Kent wrote:
 
-The for-next branch of the xfs-linux repository at:
+> I'll prepare a patch, the main thing that I was concerned about was
+> 
+> whether the cause really was NULL root_inode but Edward more or less
+> 
+> tested that.
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+One thing: that was a massaged copy of the variant in my local tree, so
+this
 
-has just been updated.
+> > 		managed_dentry_set_managed(s->s_root);
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
-
-The new head of the for-next branch is commit:
-
-7930d9e10370 xfs: recovery should not clear di_flushiter unconditionally
-
-9 new commits:
-
-Anthony Iliopoulos (1):
-      [a2e4388adfa4] xfs: fix again select in kconfig XFS_ONLINE_SCRUB_STATS
-
-Christoph Hellwig (1):
-      [55f669f34184] xfs: only remap the written blocks in xfs_reflink_end_cow_extent
-
-Dave Chinner (2):
-      [038ca189c0d2] xfs: inode recovery does not validate the recovered inode
-      [7930d9e10370] xfs: recovery should not clear di_flushiter unconditionally
-
-Leah Rumancik (1):
-      [471de20303dd] xfs: up(ic_sema) if flushing data device fails
-
-Long Li (2):
-      [2a5db859c682] xfs: factor out xfs_defer_pending_abort
-      [f8f9d952e42d] xfs: abort intent items when recovery intents fail
-
-Matthew Wilcox (Oracle) (1):
-      [00080503612f] XFS: Update MAINTAINERS to catch all XFS documentation
-
-Omar Sandoval (1):
-      [f63a5b3769ad] xfs: fix internal error from AGFL exhaustion
-
-Code Diffstat:
-
- MAINTAINERS                     |  3 +--
- fs/xfs/Kconfig                  |  2 +-
- fs/xfs/libxfs/xfs_alloc.c       | 27 ++++++++++++++++++++++++---
- fs/xfs/libxfs/xfs_defer.c       | 28 ++++++++++++++++++----------
- fs/xfs/libxfs/xfs_defer.h       |  2 +-
- fs/xfs/libxfs/xfs_inode_buf.c   |  3 +++
- fs/xfs/xfs_inode_item_recover.c | 46 ++++++++++++++++++++++++++++++----------------
- fs/xfs/xfs_log.c                | 23 ++++++++++++-----------
- fs/xfs/xfs_log_recover.c        |  2 +-
- fs/xfs/xfs_reflink.c            |  1 +
- 10 files changed, 92 insertions(+), 45 deletions(-)
+might be worth an explanation; mainline has __managed_dentry_set_managed()
+here, and yes, it is safe since nothing can access it yet, but... it's
+not worth skipping on spin_lock/spin_unlock for ->d_flags update here.
 
