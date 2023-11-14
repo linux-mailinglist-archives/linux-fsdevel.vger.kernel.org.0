@@ -1,80 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-2823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7C37EB37B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:26:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71A67EB3B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F3E1F24CA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8927D28118B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B54041755;
-	Tue, 14 Nov 2023 15:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AAE41762;
+	Tue, 14 Nov 2023 15:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E+0fInP0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAJ5+QCz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4AC41227;
-	Tue, 14 Nov 2023 15:26:14 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A1B93;
-	Tue, 14 Nov 2023 07:26:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iksz4wvrrAe3MrzMi4Syux0ALWcXSqTNlCCEFGxtMiA=; b=E+0fInP01H8oXGNYXwy2zIWHxc
-	QnhFlc5yYUp9Gj19CLutDX/Au7blOKcbuaAZ7vAhDJWKiShkJeEvm3bpxRx9XkHieoHf5n7CgRceH
-	kOPPBN74RUaRwfYDzraLB9x1tCS4X1UP7l9kG8EyQT9hLTm7QdqdjF+FhKjwMtTiEpVZMlFgRamP8
-	pB/pFd64pY7g7lCRRplbmdzN3LuDOn/EPI/Tm+1JgvefXPFdOWUcD0mya1zBWbWPbkahqGpR705Bt
-	tt50Lb2viJo9DeQ3VTcEUlBST4ypo+zS5jxZxyf73x8l7k0pWWMIfTtQ/KHokXSSZ+vtm7qnShBFO
-	L+LzMFpA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r2vIf-00Fizn-1h;
-	Tue, 14 Nov 2023 15:26:01 +0000
-Date: Tue, 14 Nov 2023 15:26:01 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ian Kent <raven@themaw.net>
-Cc: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+662f87a8ef490f45fa64@syzkaller.appspotmail.com,
-	autofs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] autofs: fix null deref in autofs_fill_super
-Message-ID: <20231114152601.GS1957730@ZenIV>
-References: <000000000000ae5995060a125650@google.com>
- <tencent_3744B76B9760E6DA33798369C96563B2C405@qq.com>
- <4fcf49456c32087f5306e84c4a8df5b2bd9f4146.camel@themaw.net>
- <20231114044110.GR1957730@ZenIV>
- <e2654c2c-947a-60e5-7b86-9a13590f6211@themaw.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB644175A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:33:28 +0000 (UTC)
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C557ED
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:27 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-32d9d8284abso3684444f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:33:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699976005; x=1700580805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7nqa9o4c+gpu0UWvrG+3y9dNQVSnLE0jJX9P0bwTtOI=;
+        b=cAJ5+QCzM2y9i3YiPN/NTcGH00QL/3unxyRcxNxHSQktzGA5nV4YWBwPCr9YTZXCRj
+         lgSGuAX/gUDLuIvNvywe6AU9kaGNobKVQUJtif7fZpJKgKLYD4XB5z2gUq8pxH+KXHwQ
+         Mer3uFQlVGz4ZwkQ61Z1WpyBlUmj3NBCDRplMNcctjHvoC/Qi/jcVPe1VOWxPzYh0BSB
+         vcn/mwPpYMNY2bIE0TCIgYD7IWD2eS5KPEaorWYeJo0CdKSQbQU9RzXOJl+Ax50bg9Xn
+         D6bAXXfRXhyNgXpHIlwfp+3rczeFJYRHLHtuJJXOhrCPjuug6mEnOOBxA5oUBJjNMPg2
+         kXqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699976005; x=1700580805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7nqa9o4c+gpu0UWvrG+3y9dNQVSnLE0jJX9P0bwTtOI=;
+        b=hckTwrrh2l3DpA5HqUZzB96iMynVMBa4LQP/h+En33ZLsxkHFXpmHh+KWhAHbNhGeH
+         uZUAemahyL+Y+IAX4M/8k5y0Nmr9fAeDPbEzqk/wL8IoQNT1d005tCHnOK12aezlPro7
+         /vEasRj+eVqcf2ASQzkE/PKp9OEg+xJGWQPBwNvw+Rlo8uYgTG8h1RBrWqgg4p3cPAeZ
+         5sTzD27vCiwowcFw0kv4pXk/Kx3BlOq6Zm7h7/Ah2WMnlNaRQY5TFvu7c9JiulNtjkHY
+         ABZ5cwU89NkeCPVED1hqrxjmw+y0T0arJ9jevG2ct1jhIl5qRPT5lIHWpb2tv0LDVIPa
+         gOaA==
+X-Gm-Message-State: AOJu0YwMsAYQqPYc4m0HR0JOd54+WZar5cEVepXtUYzwDRdHESYoGuAs
+	iZWYUZADoloTlJiV+E0CjvQ=
+X-Google-Smtp-Source: AGHT+IGgiijUQ12guOXWhTZx+LfsYbjjI7Jtqd7GQEhtFyENCth5eG8mXm9Hdg28ybjYwaQchR8WZQ==
+X-Received: by 2002:adf:e588:0:b0:32d:96dd:704d with SMTP id l8-20020adfe588000000b0032d96dd704dmr6572118wrm.18.1699976005541;
+        Tue, 14 Nov 2023 07:33:25 -0800 (PST)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id o9-20020a5d58c9000000b0032d9caeab0fsm8146527wrf.77.2023.11.14.07.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Nov 2023 07:33:25 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	David Howells <dhowells@redhat.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 00/15] Tidy up file permission hooks
+Date: Tue, 14 Nov 2023 17:33:06 +0200
+Message-Id: <20231114153321.1716028-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2654c2c-947a-60e5-7b86-9a13590f6211@themaw.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 14, 2023 at 04:30:25PM +0800, Ian Kent wrote:
+Hi Christian,
 
-> I'll prepare a patch, the main thing that I was concerned about was
-> 
-> whether the cause really was NULL root_inode but Edward more or less
-> 
-> tested that.
+I realize you won't have time to review this week, but wanted to get
+this series out for review for a wider audience soon.
 
-One thing: that was a massaged copy of the variant in my local tree, so
-this
+During my work on fanotify "pre content" events [1], Jan and I noticed
+some inconsistencies in the call sites of security_file_permission()
+hooks inside rw_verify_area() and remap_verify_area().
 
-> > 		managed_dentry_set_managed(s->s_root);
+The majority of call sites are before file_start_write(), which is how
+we want them to be for fanotify "pre content" events.
 
-might be worth an explanation; mainline has __managed_dentry_set_managed()
-here, and yes, it is safe since nothing can access it yet, but... it's
-not worth skipping on spin_lock/spin_unlock for ->d_flags update here.
+For splice code, there are many duplicate calls to rw_verify_area()
+for the entire range as well as for partial ranges inside iterator.
+
+This cleanup series, mostly following Jan's suggestions, moves all
+the security_file_permission() hooks before file_start_write() and
+eliminates duplicate permission hook calls in the same call chain.
+
+The last 3 patches are helpers that I used in fanotify patches to
+assert that permission hooks are called with expected locking scope.
+
+My hope is to get this work reviewed and staged in the vfs tree
+for the 6.8 cycle, so that I can send Jan fanotify patches for
+"pre content" events based on a stable branch in the vfs tree.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/linux/commits/fan_pre_content
+
+Amir Goldstein (15):
+  ovl: add permission hooks outside of do_splice_direct()
+  splice: remove permission hook from do_splice_direct()
+  splice: move permission hook out of splice_direct_to_actor()
+  splice: move permission hook out of splice_file_to_pipe()
+  splice: remove permission hook from iter_file_splice_write()
+  remap_range: move permission hooks out of do_clone_file_range()
+  remap_range: move file_start_write() to after permission hook
+  btrfs: move file_start_write() to after permission hook
+  fs: move file_start_write() into vfs_iter_write()
+  fs: move permission hook out of do_iter_write()
+  fs: move permission hook out of do_iter_read()
+  fs: move kiocb_start_write() into vfs_iocb_iter_write()
+  fs: create __sb_write_started() helper
+  fs: create file_write_started() helper
+  fs: create {sb,file}_write_not_started() helpers
+
+ drivers/block/loop.c   |   2 -
+ fs/btrfs/ioctl.c       |  12 +--
+ fs/cachefiles/io.c     |   2 -
+ fs/coda/file.c         |   4 +-
+ fs/internal.h          |   8 +-
+ fs/nfsd/vfs.c          |   7 +-
+ fs/overlayfs/copy_up.c |  26 ++++++-
+ fs/overlayfs/file.c    |   3 -
+ fs/read_write.c        | 164 +++++++++++++++++++++++++++--------------
+ fs/remap_range.c       |  48 ++++++------
+ fs/splice.c            |  78 ++++++++++++--------
+ include/linux/fs.h     |  62 +++++++++++++++-
+ 12 files changed, 279 insertions(+), 137 deletions(-)
+
+-- 
+2.34.1
+
 
