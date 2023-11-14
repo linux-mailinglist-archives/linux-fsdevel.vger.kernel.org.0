@@ -1,261 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-2855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA747EB68B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 19:43:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B007EB807
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 21:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F6531F25737
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 18:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B6928137F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 20:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877C1C05;
-	Tue, 14 Nov 2023 18:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337C82FC25;
+	Tue, 14 Nov 2023 20:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yx1q809n";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VZXg4bLa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQWf97iC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B048B33CC6;
-	Tue, 14 Nov 2023 18:43:00 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DAA0F0;
-	Tue, 14 Nov 2023 10:42:59 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 82C9421BD5;
-	Tue, 14 Nov 2023 18:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1699987377;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wRq1xbyM4C5MmPxC/WtmQpu8C8x9/omYZNqYfVPmHuY=;
-	b=yx1q809nV9KgQ7sKf7rlj2fqnwWGpwO/qiBPulIoQFtnZ9+FUH5/oU1QDA2OKj4/P6oYNR
-	RSFBkeukE0oywZ+S3YltJAye72yDotK27EKa0bcTthBWVuIGNpEfi97Fz+SJa65XszzlgG
-	n+ectDuh2aCrdXRHxQKZ4zB+NfNgIBA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1699987377;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wRq1xbyM4C5MmPxC/WtmQpu8C8x9/omYZNqYfVPmHuY=;
-	b=VZXg4bLatWwSKDTikgVE3H3fDRO84c6efkTZUyMwS1B+Afh2ZL61mgmlwBedv48X7gVTKo
-	+MSsArqcG08GVHAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 483E113416;
-	Tue, 14 Nov 2023 18:42:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id fULZELG/U2WSMQAAMHmgww
-	(envelope-from <dsterba@suse.cz>); Tue, 14 Nov 2023 18:42:57 +0000
-Date: Tue, 14 Nov 2023 19:35:51 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org
-Subject: Re: [PATCH v2 12/18] btrfs: add get_tree callback for new mount API
-Message-ID: <20231114183550.GH11264@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1699470345.git.josef@toxicpanda.com>
- <1dea0813411eb5c08ddcdefcdae006e751dd15eb.1699470345.git.josef@toxicpanda.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019412C197
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 20:57:48 +0000 (UTC)
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 754D7FB;
+	Tue, 14 Nov 2023 12:57:47 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1cc3bb4c307so47831195ad.0;
+        Tue, 14 Nov 2023 12:57:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699995467; x=1700600267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ByB20yb9wGiRXez/eSin8PX+umJYL4MbxZSfdpoiwcU=;
+        b=bQWf97iCN3CQWq87biu6RSOz1Ip4t2+4krq/qPe3qBadiWiv4RsQiJxCNlPjwbaPQq
+         qfKFLcLQ9VPKlZAR3fCcqXgBclX696NQBc+7SsbvbEW5azGpZxg5T5ZX/o8x0uzp9GVW
+         h39my/kZ5WMo7b81mVN5qGHM4+MdunENNd0dR48ja1UW3PoHlsU+n9pHvJFuMkYW7tUX
+         ltcv3MO7VE/6hK6UB7rRO9ubWOXJMwK7oIN3VjVg1JKSMLqT26FyuWNaPlLgnZjujCoR
+         edbUoMBYNkeAIX8wIwSpKCV3Ji4yyt9c2kCip9kwY8QfmyvhJoocfFQIZz0zxtk7GwKi
+         pFcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699995467; x=1700600267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ByB20yb9wGiRXez/eSin8PX+umJYL4MbxZSfdpoiwcU=;
+        b=jU21n2G2SOc20jRVBjhI4s9J0dxfd0t2jTknacbDSWOZCWhjPRi9+3QR22JNk4m/B/
+         z6Krx88BB5dNw5I4X3UY4pfzR49NgNEb8zDI2sVQ+EG9a1HlH7QWLOVtnN3zVZdD3dix
+         XGRgtct7O1bkub9oheenkNxqGxu4u3thtrbnATFv2gDGKGyb7zsPO6CU/sK+aoDnOiYv
+         1/CuXn924SgmD4kZD1vY3oVg6Etc+eUvbJtRZfthBIShrGo/Q6narpFD2sU1ssedkzSK
+         NVnFWr7kwjm+aqZapfbboHuDbMPOjtm7yMGS6brNLaR8kQkmja9+7XzG/+Y43S/1D7Lj
+         wsmw==
+X-Gm-Message-State: AOJu0YxVL4/47OxFlrIwH98pgXkqvgLzzQhbT6U1ZkzuNoZBlGwJ+r41
+	qU70V3HOorB9fekMZqNy3ETqfQ6ZG8/yovZYa3xvQ03bePo=
+X-Google-Smtp-Source: AGHT+IGOzRDvH/ZidTAAKoTB2ZuRrBAWpo1zLdeQgI0TVdnwUZC5sv4irL6ta/IIK7SA7wg7RqmRDzwSVxUXdDmoD5o=
+X-Received: by 2002:a17:90b:4c85:b0:27d:8fbd:be8c with SMTP id
+ my5-20020a17090b4c8500b0027d8fbdbe8cmr9698901pjb.28.1699995466759; Tue, 14
+ Nov 2023 12:57:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1dea0813411eb5c08ddcdefcdae006e751dd15eb.1699470345.git.josef@toxicpanda.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-3.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-1.00)[-1.000];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
+References: <20231016220835.GH800259@ZenIV> <CAHC9VhTzEiKixwpKuit0CBq3S5F-CX3bT1raWdK8UPuN3xS-Bw@mail.gmail.com>
+In-Reply-To: <CAHC9VhTzEiKixwpKuit0CBq3S5F-CX3bT1raWdK8UPuN3xS-Bw@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 14 Nov 2023 15:57:35 -0500
+Message-ID: <CAEjxPJ4FD4m7wEO+FcH+=LyH2inTZqxi1OT5FkUH485s+cqM2Q@mail.gmail.com>
+Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+To: Paul Moore <paul@paul-moore.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 08, 2023 at 02:08:47PM -0500, Josef Bacik wrote:
-> This is the actual mounting callback for the new mount API.  Implement
-> this using our current fill super as a guideline, making the appropriate
-> adjustments for the new mount API.
-> 
-> Our old mount operation had two fs_types, one to handle the actual
-> opening, and the one that we called to handle the actual opening and
-> then did the subvol lookup for returning the actual root dentry.  This
-> is mirrored here, but simply with different behaviors for ->get_tree.
-> We use the existence of ->s_fs_info to tell which part we're in.  The
-> initial call allocates the fs_info, then call mount_fc() with a
-> duplicated fc to do the actual open_ctree part.  Then we take that
-> vfsmount and use it to look up our subvolume that we're mounting and
-> return that as our s_root.  This idea was taken from Christians attempt
-> to convert us to the new mount api.
-> 
-> References: https://lore.kernel.org/all/20230626-fs-btrfs-mount-api-v1-2-045e9735a00b@kernel.org/
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/btrfs/super.c | 210 ++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 206 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index b5067cf637a2..4ace42e08bff 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -95,6 +95,7 @@ struct btrfs_fs_context {
->  	unsigned long mount_opt;
->  	unsigned long compress_type:4;
->  	unsigned int compress_level;
-> +	refcount_t refs;
->  };
->  
->  enum {
-> @@ -2833,6 +2834,181 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
->  	return 0;
->  }
->  
-> +static int btrfs_fc_test_super(struct super_block *s, struct fs_context *fc)
-> +{
-> +	struct btrfs_fs_info *p = fc->s_fs_info;
+On Mon, Nov 13, 2023 at 11:19=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Mon, Oct 16, 2023 at 6:08=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk>=
+ wrote:
+> >
+> > [
+> > That thing sits in viro/vfs.git#work.selinuxfs; I have
+> > lock_rename()-related followups in another branch, so a pull would be m=
+ore
+> > convenient for me than cherry-pick.  NOTE: testing and comments would
+> > be very welcome - as it is, the patch is pretty much untested beyond
+> > "it builds".
+> > ]
+>
+> Hi Al,
+>
+> I will admit to glossing over the comment above when I merged this
+> into the selinux/dev branch last night.  As it's been a few weeks, I'm
+> not sure if the comment above still applies, but if it does let me
+> know and I can yank/revert the patch in favor of a larger pull.  Let
+> me know what you'd like to do.
 
-That's a confusing variable name
+Seeing this during testsuite runs:
 
-> +	struct btrfs_fs_info *fs_info = btrfs_sb(s);
-> +
-> +	return fs_info->fs_devices == p->fs_devices;
-> +}
-> +
-> +static int btrfs_get_tree_super(struct fs_context *fc)
-> +{
-> +	struct btrfs_fs_info *fs_info = fc->s_fs_info;
-> +	struct btrfs_fs_context *ctx = fc->fs_private;
-> +	struct btrfs_fs_devices *fs_devices = NULL;
-> +	struct block_device *bdev;
-> +	struct btrfs_device *device;
-> +	struct super_block *s;
-
-Please use 'sb' for super block.
-
-> +	blk_mode_t mode = sb_open_mode(fc->sb_flags);
-> +	int ret;
-> +
-> +	btrfs_ctx_to_info(fs_info, ctx);
-> +	mutex_lock(&uuid_mutex);
-> +
-> +	/*
-> +	 * With 'true' passed to btrfs_scan_one_device() (mount time) we expect
-> +	 * either a valid device or an error.
-> +	 */
-> +	device = btrfs_scan_one_device(fc->source, mode, true);
-> +	ASSERT(device != NULL);
-> +	if (IS_ERR(device)) {
-> +		mutex_unlock(&uuid_mutex);
-> +		return PTR_ERR(device);
-> +	}
-> +
-> +	fs_devices = device->fs_devices;
-> +	fs_info->fs_devices = fs_devices;
-> +
-> +	ret = btrfs_open_devices(fs_devices, mode, &btrfs_fs_type);
-> +	mutex_unlock(&uuid_mutex);
-
-Regarding the previous comments about mount and scanning, here the
-device is scanned and opened in one go, so all the other devices are
-expected to be scanned independently from before.
-
-This is not a prolbem, although it allows to something race in between
-the mount option scanning and here and call 'forget' on the devices.
-We've seen udev to race with mkfs to register the device, which is not a
-problem here, but if there's something calling 'forget' automatically
-then it will be.
-
-Since systemd started to mess with background mounts and scans we can
-never ber sure what's going to happen when triggered by system events.
-
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!(fc->sb_flags & SB_RDONLY) && fs_devices->rw_devices == 0) {
-> +		ret = -EACCES;
-> +		goto error;
-> +	}
-> +
-> +	bdev = fs_devices->latest_dev->bdev;
-> +
-> +	/*
-> +	 * If successful, this will transfer the fs_info into the super block,
-> +	 * and fc->s_fs_info will be NULL.  However if there's an existing
-> +	 * super, we'll still have fc->s_fs_info populated.  If we error
-> +	 * completely out it'll be cleaned up when we drop the fs_context,
-> +	 * otherwise it's tied to the lifetime of the super_block.
-> +	 *
-> +	 * Adding this comment because I was horribly confused about the error
-> +	 * handling from here on out.
-
-The last sentence does not need to be there, that we add comments to
-avoid confusion is kind of implicit.
-
-> +	 */
-> +	s = sget_fc(fc, btrfs_fc_test_super, set_anon_super_fc);
-> +	if (IS_ERR(s)) {
-> +		ret = PTR_ERR(s);
-> +		goto error;
-> +	}
-> +
-> +	if (s->s_root) {
-> +		btrfs_close_devices(fs_devices);
-> +		if ((fc->sb_flags ^ s->s_flags) & SB_RDONLY)
-> +			ret = -EBUSY;
-> +	} else {
-> +		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
-> +		shrinker_debugfs_rename(&s->s_shrink, "sb-btrfs:%s", s->s_id);
-
-In 6.7-rc1 there's a change do allocate shrinkers dynamically so this
-will need to be adjusted
-
-		shrinker_debugfs_rename(s->s_shrink, ...
-
-> +		btrfs_sb(s)->bdev_holder = &btrfs_fs_type;
-> +		ret = btrfs_fill_super(s, fs_devices, NULL);
-> +	}
-> +
-> +	if (ret) {
-> +		deactivate_locked_super(s);
-> +		return ret;
-> +	}
-> +
-> +	fc->root = dget(s->s_root);
-> +	return 0;
-> +
-> +error:
-> +	btrfs_close_devices(fs_devices);
-> +	return ret;
-> +}
+[ 3550.206423] SELinux:  Converting 1152 SID table entries...
+[ 3550.666195] ------------[ cut here ]------------
+[ 3550.666201] WARNING: CPU: 3 PID: 12300 at fs/inode.c:330 drop_nlink+0x57=
+/0x70
+[ 3550.666214] Modules linked in: tun af_key crypto_user
+scsi_transport_iscsi xt_multiport ip_gre gre ip_tunnel bluetooth
+ecdh_generic sctp ip6_udp_tunnel udp_tunnel overlay xt_CONNSECMARK
+xt_SECMARK ah6 ah4 vfat fat xt_CHECKSUM xt_MASQUERADE xt_conntrack
+ipt_REJECT nf_nat_tftp nf_conntrack_tftp nft_fib_inet bridge
+nft_fib_ipv4 nft_fib_ipv6 nft_fib stp llc nft_reject_inet
+nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat rfkill
+ip6table_nat ip6table_mangle ip6table_raw ip6table_security
+iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4
+iptable_mangle iptable_raw iptable_security ip_set nf_tables nfnetlink
+ip6table_filter iptable_filter vsock_loopback
+vmw_vsock_virtio_transport_common vmw_vsock_vmci_transport vsock
+intel_rapl_msr intel_rapl_common isst_if_mbox_msr isst_if_common
+vmw_balloon rapl joydev vmw_vmci i2c_piix4 auth_rpcgss loop sunrpc
+zram xfs vmwgfx drm_ttm_helper ttm crct10dif_pclmul drm_kms_helper
+crc32_pclmul crc32c_intel ghash_clmulni_intel drm vmw_pvscsi vmxnet3
+ata_generic
+[ 3550.666453]  pata_acpi serio_raw ip6_tables ip_tables
+pkcs8_key_parser fuse [last unloaded: setest_module_request(OE)]
+[ 3550.666476] CPU: 3 PID: 12300 Comm: load_policy Tainted: G    B
+ OE      6.7.0-rc1+ #68
+[ 3550.666488] RIP: 0010:drop_nlink+0x57/0x70
+[ 3550.666495] Code: 7b 28 e8 9c ab f4 ff 48 8b 5b 28 be 08 00 00 00
+48 8d bb 40 07 00 00 e8 c7 be f4 ff f0 48 ff 83 40 07 00 00 5b c3 cc
+cc cc cc <0f> 0b c7 43 48 ff ff ff ff 5b c3 cc cc cc cc 66 2e 0f 1f 84
+00 00
+[ 3550.666502] RSP: 0018:ffff88816efefb78 EFLAGS: 00010246
+[ 3550.666508] RAX: 0000000000000000 RBX: ffff8881007e7a48 RCX: dffffc00000=
+00000
+[ 3550.666513] RDX: 0000000000000003 RSI: ffffffff9a6f30b6 RDI: ffff8881007=
+e7a90
+[ 3550.666518] RBP: ffff88816efefbf0 R08: 0000000000000000 R09: 00000000000=
+00000
+[ 3550.666523] R10: ffffffff9d8952e7 R11: 0000000000000000 R12: 00000000655=
+3dd4c
+[ 3550.666527] R13: ffff8881007e7a48 R14: ffff8881d014a8c8 R15: ffff888319e=
+42e68
+[ 3550.666533] FS:  00007fa567f7fc40(0000) GS:ffff888dfed80000(0000)
+knlGS:0000000000000000
+[ 3550.666538] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 3550.666542] CR2: 00007f48f4049024 CR3: 00000001f8174003 CR4: 00000000007=
+706f0
+[ 3550.666569] PKRU: 55555554
+[ 3550.666573] Call Trace:
+[ 3550.666576]  <TASK>
+[ 3550.666580]  ? __warn+0xa5/0x200
+[ 3550.666590]  ? drop_nlink+0x57/0x70
+[ 3550.666598]  ? report_bug+0x1b2/0x1e0
+[ 3550.666612]  ? handle_bug+0x79/0xa0
+[ 3550.666621]  ? exc_invalid_op+0x17/0x40
+[ 3550.666629]  ? asm_exc_invalid_op+0x1a/0x20
+[ 3550.666643]  ? drop_nlink+0x16/0x70
+[ 3550.666651]  ? drop_nlink+0x57/0x70
+[ 3550.666659]  ? drop_nlink+0x16/0x70
+[ 3550.666666]  simple_recursive_removal+0x405/0x430
+[ 3550.666683]  sel_write_load+0x668/0xf30
+[ 3550.666727]  ? __pfx_sel_write_load+0x10/0x10
+[ 3550.666735]  ? __call_rcu_common.constprop.0+0x30b/0x980
+[ 3550.666747]  ? __might_sleep+0x2b/0xb0
+[ 3550.666756]  ? __pfx_lock_acquire+0x10/0x10
+[ 3550.666764]  ? inode_security+0x6d/0x90
+[ 3550.666775]  ? selinux_file_permission+0x1e4/0x220
+[ 3550.666787]  vfs_write+0x18f/0x700
+[ 3550.666799]  ? __pfx_vfs_write+0x10/0x10
+[ 3550.666809]  ? do_sys_openat2+0xcb/0x110
+[ 3550.666817]  ? __pfx_do_sys_openat2+0x10/0x10
+[ 3550.666827]  ? __fget_light+0xdf/0x100
+[ 3550.666838]  ksys_write+0xb7/0x140
+[ 3550.666847]  ? __pfx_ksys_write+0x10/0x10
+[ 3550.666856]  ? lockdep_hardirqs_on_prepare+0x12/0x200
+[ 3550.666864]  ? syscall_enter_from_user_mode+0x24/0x80
+[ 3550.666875]  do_syscall_64+0x43/0xf0
+[ 3550.666882]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
+[ 3550.666889] RIP: 0033:0x7fa56811c154
+[ 3550.666920] Code: 89 02 48 c7 c0 ff ff ff ff eb bd 66 2e 0f 1f 84
+00 00 00 00 00 90 f3 0f 1e fa 80 3d 8d b4 0d 00 00 74 13 b8 01 00 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20
+48 89
+[ 3550.666926] RSP: 002b:00007fffe6bdf948 EFLAGS: 00000202 ORIG_RAX:
+0000000000000001
+[ 3550.666933] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007fa5681=
+1c154
+[ 3550.666938] RDX: 000000000038f3d2 RSI: 00007fa55a400000 RDI: 00000000000=
+00004
+[ 3550.666942] RBP: 00007fffe6be0980 R08: 0000000000000073 R09: 00000000000=
+00001
+[ 3550.666947] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fa55a4=
+00000
+[ 3550.666951] R13: 000000000038f3d2 R14: 0000000000000003 R15: 00007fa5682=
+230a0
+[ 3550.666965]  </TASK>
+[ 3550.666969] irq event stamp: 0
+[ 3550.666972] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+[ 3550.666982] hardirqs last disabled at (0): [<ffffffff9a15878c>]
+copy_process+0x114c/0x3580
+[ 3550.666990] softirqs last  enabled at (0): [<ffffffff9a15878c>]
+copy_process+0x114c/0x3580
+[ 3550.666997] softirqs last disabled at (0): [<0000000000000000>] 0x0
+[ 3550.667007] ---[ end trace 0000000000000000 ]---
 
