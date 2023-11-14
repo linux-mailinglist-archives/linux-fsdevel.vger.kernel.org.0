@@ -1,120 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-2840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A03C7EB421
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:49:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E727EB425
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 16:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20A11C20A23
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE92C281261
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Nov 2023 15:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EAA41774;
-	Tue, 14 Nov 2023 15:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhllcM9A"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FBF41776;
+	Tue, 14 Nov 2023 15:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E9B4176E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:49:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B326C433C7;
-	Tue, 14 Nov 2023 15:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1699976978;
-	bh=PC0cKjpERz+TagjktWu/EvkBPPwibYdZVz71N3b40es=;
-	h=Subject:From:To:Cc:Date:From;
-	b=QhllcM9AnKqvPK+R7o97c/OhW+5zpebK4evChLwxYbgcP7RF33rQC28z7WVqv8AZJ
-	 kzKU43x/vg/xiOIWyem4E6plvGy73CGFALZs6EexOprewWKzXPjySk/kx+doNMPwVx
-	 tJ62tm0kdvSu94uUzpChpDJ4HXpYhplYqqrrKXCNUQHoaUydHlW92HrrcxSEb+A3uq
-	 5w8KPAhJo+ZU+n5H9d8+LHGWmExhAMZJXQMeHv8vXURxB+98L5y0+H+BfO150O/q/r
-	 BKhGm7hDlLjL4SBwwJM1quL8rsdEerbhHZ4E11aSLRWKAFcUOW/U9lw9VNvlh+O1jl
-	 ZepgcH5dLy7Ig==
-Subject: [PATCH RFC] libfs: getdents() should return 0 after reaching EOD
-From: Chuck Lever <cel@kernel.org>
-To: akpm@linux-foundation.org, brauner@kernel.org, hughd@google.com,
- jlayton@redhat.com, viro@zeniv.linux.org.uk
-Cc: Tavian Barnes <tavianator@tavianator.com>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Date: Tue, 14 Nov 2023 10:49:37 -0500
-Message-ID: 
- <169997697704.4588.14555611205729567800.stgit@bazille.1015granger.net>
-User-Agent: StGit/1.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E3C41765
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 15:50:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4A636182
+	for <linux-fsdevel@vger.kernel.org>; Tue, 14 Nov 2023 07:49:58 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39FD91FB;
+	Tue, 14 Nov 2023 07:50:43 -0800 (PST)
+Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.26])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 491403F641;
+	Tue, 14 Nov 2023 07:49:57 -0800 (PST)
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v1] mm: More ptep_get() conversion
+Date: Tue, 14 Nov 2023 15:49:45 +0000
+Message-Id: <20231114154945.490401-1-ryan.roberts@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-From: Chuck Lever <chuck.lever@oracle.com>
+Commit c33c794828f2 ("mm: ptep_get() conversion") converted all
+(non-arch) call sites to use ptep_get() instead of doing a direct
+dereference of the pte. Full rationale can be found in that commit's
+log.
 
-The new directory offset helpers don't conform with the convention
-of getdents() returning no more entries once a directory file
-descriptor has reached the current end-of-directory.
+Since then, three new call sites have snuck in, which directly
+dereference the pte, so let's fix those up.
 
-To address this, copy the logic from dcache_readdir() to mark the
-open directory file descriptor once EOD has been reached. Rewinding
-resets the mark.
+Unfortunately there is no reliable automated mechanism to catch these;
+I'm relying on a combination of Coccinelle (which throws up a lot of
+false positives) and some compiler magic to force a compiler error on
+dereference (While this approach finds dereferences, it also yields a
+non-booting kernel so can't be committed).
 
-Reported-by: Tavian Barnes <tavianator@tavianator.com>
-Closes: https://lore.kernel.org/linux-fsdevel/20231113180616.2831430-1-tavianator@tavianator.com/
-Fixes: 6faddda69f62 ("libfs: Add directory operations for stable offsets")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
- fs/libfs.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ mm/filemap.c     | 2 +-
+ mm/ksm.c         | 2 +-
+ mm/userfaultfd.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index e9440d55073c..1c866b087f0c 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -428,7 +428,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
- }
- 
--static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
-+static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- {
- 	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
- 	XA_STATE(xas, &so_ctx->xa, ctx->pos);
-@@ -437,7 +437,8 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 	while (true) {
- 		dentry = offset_find_next(&xas);
- 		if (!dentry)
--			break;
-+			/* readdir has reached the current EOD */
-+			return (void *)0x10;
- 
- 		if (!offset_dir_emit(ctx, dentry)) {
- 			dput(dentry);
-@@ -447,6 +448,7 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
- 		dput(dentry);
- 		ctx->pos = xas.xa_index + 1;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 9710f43a89ac..32eedf3afd45 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3443,7 +3443,7 @@ static vm_fault_t filemap_map_folio_range(struct vm_fault *vmf,
+ 		 * handled in the specific fault path, and it'll prohibit the
+ 		 * fault-around logic.
+ 		 */
+-		if (!pte_none(vmf->pte[count]))
++		if (!pte_none(ptep_get(&vmf->pte[count])))
+ 			goto skip;
+
+ 		count++;
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 7efcc68ccc6e..6a831009b4cb 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -468,7 +468,7 @@ static int break_ksm_pmd_entry(pmd_t *pmd, unsigned long addr, unsigned long nex
+ 			page = pfn_swap_entry_to_page(entry);
  	}
-+	return NULL;
+ 	/* return 1 if the page is an normal ksm page or KSM-placed zero page */
+-	ret = (page && PageKsm(page)) || is_ksm_zero_pte(*pte);
++	ret = (page && PageKsm(page)) || is_ksm_zero_pte(ptent);
+ 	pte_unmap_unlock(pte, ptl);
+ 	return ret;
  }
- 
- /**
-@@ -479,7 +481,12 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 	if (!dir_emit_dots(file, ctx))
- 		return 0;
- 
--	offset_iterate_dir(d_inode(dir), ctx);
-+	if (ctx->pos == 2)
-+		file->private_data = NULL;
-+	else if (file->private_data == (void *)0x10)
-+		return 0;
-+
-+	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
- 	return 0;
- }
- 
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 96d9eae5c7cc..0b6ca553bebe 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -312,7 +312,7 @@ static int mfill_atomic_pte_poison(pmd_t *dst_pmd,
 
+ 	ret = -EEXIST;
+ 	/* Refuse to overwrite any PTE, even a PTE marker (e.g. UFFD WP). */
+-	if (!pte_none(*dst_pte))
++	if (!pte_none(ptep_get(dst_pte)))
+ 		goto out_unlock;
+
+ 	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
+
+base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
+--
+2.25.1
 
 
