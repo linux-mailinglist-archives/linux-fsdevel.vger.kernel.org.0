@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-2920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF147ED32B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 21:46:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2597ED394
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 21:53:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242AD281013
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 20:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB14E1C20A1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 20:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABBD3A8FC;
-	Wed, 15 Nov 2023 20:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F7D43ADE;
+	Wed, 15 Nov 2023 20:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HCw+nv/7"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="q+zroC5T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E805347D1;
-	Wed, 15 Nov 2023 20:46:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFBCC433C8;
-	Wed, 15 Nov 2023 20:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26AE43AD4;
+	Wed, 15 Nov 2023 20:53:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C481C4E778;
+	Wed, 15 Nov 2023 20:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1700081198;
-	bh=vwn6DTlDFE5q9dtWZF5MxYqwb0JiFxM3PFr579afigs=;
+	s=korg; t=1700081600;
+	bh=DzANMoYqeSAvh3deZnCARuxjzAQskL4IaK422nG3KHk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HCw+nv/7h5kdTZvgz/9bQYquK2n1mXPeoDSNxAMgTwfGH558//pWt6pU5g3aWlT1R
-	 qZl0eOQTndkdqAeEmO9p43FIiIjp+V+mwRilW7ImT89stbtpZfLXgOccslKdbY5yDl
-	 mCcI1OyBT5PcHJKaSe/WEq3lVxUaV8QsVoydFfBw=
+	b=q+zroC5T3J/0x2GpWPh0QFkQ3ZHVjwnCZL1HgzakahsIZkQMPaBSGGoHzhtUqekBO
+	 VVpA4EbQhy/UsulfXEiGlJc8PQ/mel+rWqowiUaS7ToLgwXaRUOU/gBMl2u84ZbpsA
+	 jZDTB6ovrGMLjIOcCFftNPereTM+Z7WS5vAJYxpI=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,12 +53,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-mm@kvack.org,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.15 001/244] iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
-Date: Wed, 15 Nov 2023 15:33:13 -0500
-Message-ID: <20231115203548.468560615@linuxfoundation.org>
+Subject: [PATCH 5.10 001/191] iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
+Date: Wed, 15 Nov 2023 15:44:36 -0500
+Message-ID: <20231115204644.600507949@linuxfoundation.org>
 X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20231115203548.387164783@linuxfoundation.org>
-References: <20231115203548.387164783@linuxfoundation.org>
+In-Reply-To: <20231115204644.490636297@linuxfoundation.org>
+References: <20231115204644.490636297@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -70,7 +70,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -111,10 +111,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index ab5e577373093..3616fd4ba3953 100644
+index bb1430283c726..bf2561a5eb581 100644
 --- a/arch/x86/include/asm/uaccess.h
 +++ b/arch/x86/include/asm/uaccess.h
-@@ -543,7 +543,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned len);
+@@ -446,7 +446,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned len);
  #define copy_mc_to_kernel copy_mc_to_kernel
  
  unsigned long __must_check
@@ -124,10 +124,10 @@ index ab5e577373093..3616fd4ba3953 100644
  
  /*
 diff --git a/arch/x86/lib/copy_mc.c b/arch/x86/lib/copy_mc.c
-index 80efd45a77617..6e8b7e600def5 100644
+index c13e8c9ee926b..e058ef2d454d0 100644
 --- a/arch/x86/lib/copy_mc.c
 +++ b/arch/x86/lib/copy_mc.c
-@@ -70,23 +70,23 @@ unsigned long __must_check copy_mc_to_kernel(void *dst, const void *src, unsigne
+@@ -74,23 +74,23 @@ unsigned long __must_check copy_mc_to_kernel(void *dst, const void *src, unsigne
  }
  EXPORT_SYMBOL_GPL(copy_mc_to_kernel);
  
