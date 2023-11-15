@@ -1,123 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-2890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E9A7EC25A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 13:34:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C18D7EC33C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 14:04:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F25C281516
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 12:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF0A1C20997
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 13:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90A18B0C;
-	Wed, 15 Nov 2023 12:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DFE18B1B;
+	Wed, 15 Nov 2023 13:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="COo4qct5"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrmlXy76"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5207156F3;
-	Wed, 15 Nov 2023 12:34:17 +0000 (UTC)
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC5BC7;
-	Wed, 15 Nov 2023 04:34:16 -0800 (PST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 00CDF40E0030;
-	Wed, 15 Nov 2023 12:34:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JAL49dTD3Lvc; Wed, 15 Nov 2023 12:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1700051651; bh=KifOVDlMp/2ycw5mH0oTXzCLORPNzCMwO+1bbYkzOw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=COo4qct5KW0h1D+oINnaVz0DL8zmHPebfPPBxZnUP8cJkXf+aI6O6eBk+RXi1bcR8
-	 ZdLJHxKAJHQbzr70NhHkXe7dleR8epuhN7JUzA0s1xfBrNlga8ETET4qiSg+ONHDEC
-	 zCdnB99unmXHLxSydJoE8kROe7B05Sv2yL9cFrD5MV9N3hHLkgk7+tZYw/CtClepRy
-	 y4FQ/5ryU/7dsrAa2V2a6OKtkEpDkR08TPeCLHfC3pjkqFFtlqumroytPWKRebPkH5
-	 wBDv0JjoRXfGgHzJHveMc4lb5DD8v0kpbouuPWzh1mpmQencCGhBr/MldZDofX8D2i
-	 4YCCUH9zfgl5iqyfH53SLYLJeb9S63KRqKhfCLMHemNUlNl3b9caXqahvn2DaTgcYv
-	 Jhnooza2EpX07rCqCWwQaRtnvcZiIpPCiYhcBjAYuFM4uSCx+M7B+8sRVtzlDhPjR8
-	 r46NlZGyL+bpMtmEscKRQkz7JRFnM6DH4jSQE6bMJpB1bnpI3bSEEAnD7yJ3d6O3vf
-	 mHLOaBKASztaJnxFYTVkJjGf7d/H4uwcB+rUNVFgyQhhfsw5KjH/88VqXUgj7tejnj
-	 C2Q2LXt9Of0BO8lY8XiAUlrzR+MLjc1XH0GoRnAD8Nt72bI0Wx3c56ICCywKvvTsnJ
-	 cTbaK/x/EqjIiQdeBhOFOYNE=
-Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0572F17992
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 13:04:36 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C9B109
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 05:04:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700053474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ASjpeUJB5mjGnnSvE3V+nI6DjtGoKlE0YAKGN+OViqA=;
+	b=KrmlXy76TqXEwfuZOHKQSjIcwooEduCPqfYJABQO3rXz7TR+WnfareeJ0tp/t/tNLz09UP
+	EqrU7TtaZ59dvjZ/ga6PKoRWt5rFeb3Hy+3PQ8rCE99TJS4nu/FLO4Q5tj7zcnNCLYLHol
+	GSHZ543MDFH8V8j+q9Pvk6RO+p3b9yk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-443-L5oebJtMMmyTA4byX7W30A-1; Wed, 15 Nov 2023 08:04:31 -0500
+X-MC-Unique: L5oebJtMMmyTA4byX7W30A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF20140E0032;
-	Wed, 15 Nov 2023 12:33:58 +0000 (UTC)
-Date: Wed, 15 Nov 2023 13:33:54 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
-	james.morse@arm.com, tony.luck@intel.com,
-	gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alexey.kardashevskiy@amd.com,
-	yazen.ghannam@amd.com, avadnaik@amd.com
-Subject: Re: [RESEND v5 4/4] ACPI: APEI: EINJ: Add support for vendor defined
- error types
-Message-ID: <20231115123354.GDZVS6suUf0ZIVqlh6@fat_crate.local>
-References: <20231107213647.1405493-1-avadhut.naik@amd.com>
- <20231107213647.1405493-5-avadhut.naik@amd.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2A1B485A5BD;
+	Wed, 15 Nov 2023 13:04:31 +0000 (UTC)
+Received: from localhost (unknown [10.39.193.171])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id B9F3440C6EB9;
+	Wed, 15 Nov 2023 13:04:29 +0000 (UTC)
+Date: Wed, 15 Nov 2023 08:04:28 -0500
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Vivek Goyal <vgoyal@redhat.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, mzxreary@0pointer.de,
+	gmaglione@redhat.com, hi@alyssa.is
+Subject: Re: [PATCH v2] virtiofs: Export filesystem tags through sysfs
+Message-ID: <20231115130428.GC301867@fedora>
+References: <20231108213333.132599-1-vgoyal@redhat.com>
+ <20231109012825.GB1101655@fedora>
+ <ZVKvC0F1PSwqrACn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hzifRtHsLTRZAfE+"
 Content-Disposition: inline
-In-Reply-To: <20231107213647.1405493-5-avadhut.naik@amd.com>
+In-Reply-To: <ZVKvC0F1PSwqrACn@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Tue, Nov 07, 2023 at 03:36:47PM -0600, Avadhut Naik wrote:
-> From: Avadhut Naik <Avadhut.Naik@amd.com>
-> 
-> Vendor-Defined Error types are supported by the platform apart from
-> standard error types if bit 31 is set in the output of GET_ERROR_TYPE
-> Error Injection Action.[1] While the errors themselves and the length
-> of their associated "OEM Defined data structure" might vary between
-> vendors, the physical address of this structure can be computed through
-> vendor_extension and length fields of "SET_ERROR_TYPE_WITH_ADDRESS" and
-> "Vendor Error Type Extension" Structures respectively.[2][3]
-> 
-> Currently, however, the einj module only computes the physical address of
-> Vendor Error Type Extension Structure. Neither does it compute the physical
-> address of OEM Defined structure nor does it establish the memory mapping
-> required for injecting Vendor-defined errors. Consequently, userspace
-> tools have to establish the very mapping through /dev/mem, nopat kernel
-> parameter and system calls like mmap/munmap initially before injecting
-> Vendor-defined errors.
-> 
-> Circumvent the issue by computing the physical address of OEM Defined data
-> structure and establishing the required mapping with the structure. Create
-> a new file "oem_error", if the system supports Vendor-defined errors, to
-> export this mapping, through debugfs_create_blob(). Userspace tools can
-> then populate their respective OEM Defined structure instances and just
-> write to the file as part of injecting Vendor-defined Errors. Similarly,
-> the tools can also read from the file if the system firmware provides some
-> information through the OEM defined structure after error injection.
-> 
-> [1] ACPI specification 6.5, section 18.6.4
-> [2] ACPI specification 6.5, Table 18.31
-> [3] ACPI specification 6.5, Table 18.32
-> 
-> Suggested-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Signed-off-by: Avadhut Naik <Avadhut.Naik@amd.com>
-> ---
->  drivers/acpi/apei/einj.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
 
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+--hzifRtHsLTRZAfE+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Regards/Gruss,
-    Boris.
+On Mon, Nov 13, 2023 at 06:19:39PM -0500, Vivek Goyal wrote:
+> On Thu, Nov 09, 2023 at 09:28:25AM +0800, Stefan Hajnoczi wrote:
+> > On Wed, Nov 08, 2023 at 04:33:33PM -0500, Vivek Goyal wrote:
+> > > virtiofs filesystem is mounted using a "tag" which is exported by the
+> > > virtiofs device. virtiofs driver knows about all the available tags b=
+ut
+> > > these are not exported to user space.
+> > >=20
+> > > People have asked these tags to be exported to user space. Most recen=
+tly
+> > > Lennart Poettering has asked for it as he wants to scan the tags and =
+mount
+> > > virtiofs automatically in certain cases.
+> > >=20
+> > > https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+> > >=20
+> > > This patch exports tags through sysfs. One tag is associated with each
+> > > virtiofs device. A new "tag" file appears under virtiofs device dir.
+> > > Actual filesystem tag can be obtained by reading this "tag" file.
+> > >=20
+> > > For example, if a virtiofs device exports tag "myfs", a new file "tag"
+> > > will show up here. Tag has a newline char at the end.
+> > >=20
+> > > /sys/bus/virtio/devices/virtio<N>/tag
+> > >=20
+> > > # cat /sys/bus/virtio/devices/virtio<N>/tag
+> > > myfs
+> > >=20
+> > > Note, tag is available at KOBJ_BIND time and not at KOBJ_ADD event ti=
+me.
+> > >=20
+> > > v2:
+> > > - Add a newline char at the end in tag file. (Alyssa Ross)
+> > > - Add a line in commit logs about tag file being available at KOBJ_BI=
+ND
+> > >   time and not KOBJ_ADD time.
+> > >=20
+> > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > > ---
+> > >  fs/fuse/virtio_fs.c | 34 ++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 34 insertions(+)
+> > >=20
+> > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > > index 5f1be1da92ce..9f76c9697e6f 100644
+> > > --- a/fs/fuse/virtio_fs.c
+> > > +++ b/fs/fuse/virtio_fs.c
+> > > @@ -107,6 +107,21 @@ static const struct fs_parameter_spec virtio_fs_=
+parameters[] =3D {
+> > >  	{}
+> > >  };
+> > > =20
+> > > +/* Forward Declarations */
+> > > +static void virtio_fs_stop_all_queues(struct virtio_fs *fs);
+> > > +
+> > > +/* sysfs related */
+> > > +static ssize_t tag_show(struct device *dev, struct device_attribute =
+*attr,
+> > > +			char *buf)
+> > > +{
+> > > +	struct virtio_device *vdev =3D container_of(dev, struct virtio_devi=
+ce,
+> > > +						  dev);
+> > > +	struct virtio_fs *fs =3D vdev->priv;
+> > > +
+> > > +	return sysfs_emit(buf, "%s\n", fs->tag);
+> > > +}
+> > > +static DEVICE_ATTR_RO(tag);
+> >=20
+> > Is there a race between tag_show() and virtio_fs_remove()?
+> > virtio_fs_mutex is not held. I'm thinking of the case where userspace
+> > opens the sysfs file and invokes read(2) on one CPU while
+> > virtio_fs_remove() runs on another CPU.
+>=20
+> Hi Stefan,
+>=20
+> Good point. I started testing it and realized that something else
+> is providing mutual exclusion and race does not occur. I added
+> an artifial msleep(10 seconds) in tag_show() and removed the device
+> and let tag_show() continue, hoping kernel will crash. But that
+> did not happen.=20
+>=20
+> Further investation revealed that device_remove_file() call in=20
+> virtio_fs_remove() blocks till tag_show() has finished.
+>=20
+> I have not looked too deep but my guess is that is is probably
+> kernfs_node->kernfs_rwsem which is providing mutual exclusion
+> and eliminating this race.
+>=20
+> So I don't think we need to take virtio_fs_mutex in tag_show().
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Nice. That explains why other ->show() functions in the kernel also
+don't have much in the way of explicit synchronization.
+
+Thank you!
+
+Stefan
+
+--hzifRtHsLTRZAfE+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmVUwdwACgkQnKSrs4Gr
+c8hv7wf/bCWie2f+H+HjRJjEEkAEGz/NI3saCXMa0Nwj/aLG9c3oc9+Lqho2iMm3
+RJRhIq0UnNTTPiC0Afeqk8bbWQgzhViRP0TVy4izpWT7HKxGcBKLA/f7yisKxPWN
+FLsUvWtTm94dxbLWVZWQxFC8FwXm+aV9XH3ilp9iD3fCRQS6zgM15VO0IwuO5SNU
+SEngwuk00Tt4Y5HIeQZI6DFRC6w3nIPoxVYWS8Pfk2JIEgPjwhYIz83M6Mc/FzRe
+wmGf0N28TmY003wVj643EJZ553+DEpb+wFuTQVoE5FEpyynEHlnnJYKxd36S5VOe
+k76R3BmK0HuV3JWbiWQOg4QphgCCxw==
+=AyVr
+-----END PGP SIGNATURE-----
+
+--hzifRtHsLTRZAfE+--
+
 
