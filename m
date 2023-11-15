@@ -1,123 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-2914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6F97EC902
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 17:59:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A971D7ECCB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 20:32:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73FDC1F27DC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 16:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F65C1F264DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 19:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50F63EA97;
-	Wed, 15 Nov 2023 16:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802741A81;
+	Wed, 15 Nov 2023 19:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ISToxIFw"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GRhkWicR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0563EA87
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 16:59:12 +0000 (UTC)
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E36C193
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:59:09 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-507ad511315so10038304e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:59:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700067547; x=1700672347; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ac4Ls6gftQvQgbcRf5XLhX5PwcgnIwraX4CtQN05HrE=;
-        b=ISToxIFwv32EAIpVkhDLFkDZCmzsjj7iEL7z4lL9dWknjh7m/SwyKBjF4gmLs7MbOp
-         BBQDAjbMS1dSLB0rOsfeRW76HT+wYD78wxoI5/RfwL5PA07Is3NMz1Y/R2l8pz+ayAe0
-         edNZ/avSIq+f+GVmo8imQDB/SOG9TedAuXbl0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700067547; x=1700672347;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ac4Ls6gftQvQgbcRf5XLhX5PwcgnIwraX4CtQN05HrE=;
-        b=TOfKcGTOxUfG5t3gB8/1m1ZEOS4vtmxTXuFtelx55vAxK1BKNYlhkA6qJZTss1+adm
-         a204WYKmmkwQTcq9j1Mvei62Q/FDnEKAQZ6LrgwTfssf3kV86vQQPLeJLmiNMVrJR+aB
-         mBnVp/7cTzGBYJGy/bxLzpyVTYays6fSSKOWsZcsbNz+X6deE40R3QIMc35wtToGmb+D
-         jEBfLpxygmN4JgTL1XfKeWjIvgpZGDw2tnzkvLAgRtuzmca9JSFNXGXus0ZVRIJ1XUR7
-         pM4X34A1T+HmZsmMWqjXYKuiuFqPBrxe67Oqlm5on5g165ndBeEZt6HTSKD+f/ICVhJh
-         PQug==
-X-Gm-Message-State: AOJu0YykOV26G6Z7ED/8l5uqHzmaXgJF0sugorMER95FtOfgKngRcAwZ
-	XhFFII2AS+Xitt6amKzLcx9ji/p/IThtwdd0ZO+VcLfb
-X-Google-Smtp-Source: AGHT+IETnOzCCN3Xi0dDaV9sLtINbY69NmF/agmxxf/4LBT7rBeL0dv2dARbmJC34tpUqUXtXfnHmA==
-X-Received: by 2002:ac2:44d2:0:b0:4fb:9168:1fce with SMTP id d18-20020ac244d2000000b004fb91681fcemr8629210lfm.59.1700067547577;
-        Wed, 15 Nov 2023 08:59:07 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id f14-20020a056512092e00b005090fa217bbsm1692168lft.115.2023.11.15.08.59.06
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 08:59:06 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-507ad511315so10038236e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:59:06 -0800 (PST)
-X-Received: by 2002:a19:7119:0:b0:507:9787:6773 with SMTP id
- m25-20020a197119000000b0050797876773mr9107681lfc.36.1700067545585; Wed, 15
- Nov 2023 08:59:05 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483323DB91;
+	Wed, 15 Nov 2023 19:32:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9714C433C8;
+	Wed, 15 Nov 2023 19:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1700076726;
+	bh=/SprfMK39MSgjFMiw1J9eLDIGszjDz0qV1aULbNTrEw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GRhkWicRGHlhuy4qerN5tCddLAbW7XCL3Rh6aA0CvBnGPkqW/07ma0VOUUjSFyySy
+	 MjXtleRf43suihpbvBPSO/V+3IZQAIzxeNnIx1+AJI4SIUlCooE3KtEo7n4l5lqk/3
+	 DkBCYKGsDBe3aCI+DPvm8BF52g1ROoLegiG7CZXk=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Christian Brauner <christian@brauner.io>,
+	Matthew Wilcox <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Laight <David.Laight@ACULAB.COM>,
+	x86@kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6 006/603] iov_iter, x86: Be consistent about the __user tag on copy_mc_to_user()
+Date: Wed, 15 Nov 2023 14:09:11 -0500
+Message-ID: <20231115191613.572325746@linuxfoundation.org>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <20231115191613.097702445@linuxfoundation.org>
+References: <20231115191613.097702445@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231115154946.3933808-1-dhowells@redhat.com> <20231115154946.3933808-6-dhowells@redhat.com>
- <CAHk-=wgHciqm3iaq6hhtP64+Zsca6Y6z5UfzHzjfhUhA=jP0zA@mail.gmail.com> <3936726.1700066370@warthog.procyon.org.uk>
-In-Reply-To: <3936726.1700066370@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 Nov 2023 11:58:48 -0500
-X-Gmail-Original-Message-ID: <CAHk-=whEj_+oP0mwNr7eArnOzWf_380-+-6LD9RtQXVs29fYJQ@mail.gmail.com>
-Message-ID: <CAHk-=whEj_+oP0mwNr7eArnOzWf_380-+-6LD9RtQXVs29fYJQ@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] iov_iter: Create a function to prepare userspace
- VM for UBUF/IOVEC tests
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Jens Axboe <axboe@kernel.dk>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, 
-	David Laight <David.Laight@aculab.com>, Matthew Wilcox <willy@infradead.org>, 
-	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, loongarch@lists.linux.dev, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 Nov 2023 at 11:39, David Howells <dhowells@redhat.com> wrote:
->
-> I was trying to make it possible to do these tests before starting userspace
-> as there's a good chance that if the UBUF/IOVEC iterators don't work right
-> then your system can't be booted.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-Oh, I don't think that any unit test should bother to check for that
-kind of catastrophic case.
+------------------
 
-If something is so broken that the kernel doesn't boot properly even
-into some basic test infrastructure, then bisection will trivially
-find where that breakage was introduced.
+From: David Howells <dhowells@redhat.com>
 
-And if it's something as core as the iov iterators, it won't even get
-past the initial developer unless it's some odd build system
-interaction.
+[ Upstream commit 066baf92bed934c9fb4bcee97a193f47aa63431c ]
 
-So extreme cases aren't even worth checking for. What's worth testing
-is "the system boots and works, but I want to check the edge cases".
+copy_mc_to_user() has the destination marked __user on powerpc, but not on
+x86; the latter results in a sparse warning in lib/iov_iter.c.
 
-IOW, when it comes to things like user copies, it's things like
-alignment, and the page fault edge cases with EFAULT in particular.
-You can easily get the return value wrong for a user copy that ends up
-with an unaligned fault at the end of the last mapped page. Everything
-normal will still work fine, because nobody does something that odd.
+Fix this by applying the tag on x86 too.
 
-But those are best handled as user mode tests.
+Fixes: ec6347bb4339 ("x86, powerpc: Rename memcpy_mcsafe() to copy_mc_to_{user, kernel}()")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/r/20230925120309.1731676-3-dhowells@redhat.com
+cc: Dan Williams <dan.j.williams@intel.com>
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Ingo Molnar <mingo@redhat.com>
+cc: Borislav Petkov <bp@alien8.de>
+cc: Dave Hansen <dave.hansen@linux.intel.com>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Christian Brauner <christian@brauner.io>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: David Laight <David.Laight@ACULAB.COM>
+cc: x86@kernel.org
+cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/include/asm/uaccess.h | 2 +-
+ arch/x86/lib/copy_mc.c         | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-           Linus
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 8bae40a662827..5c367c1290c35 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -496,7 +496,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned len);
+ #define copy_mc_to_kernel copy_mc_to_kernel
+ 
+ unsigned long __must_check
+-copy_mc_to_user(void *to, const void *from, unsigned len);
++copy_mc_to_user(void __user *to, const void *from, unsigned len);
+ #endif
+ 
+ /*
+diff --git a/arch/x86/lib/copy_mc.c b/arch/x86/lib/copy_mc.c
+index 80efd45a77617..6e8b7e600def5 100644
+--- a/arch/x86/lib/copy_mc.c
++++ b/arch/x86/lib/copy_mc.c
+@@ -70,23 +70,23 @@ unsigned long __must_check copy_mc_to_kernel(void *dst, const void *src, unsigne
+ }
+ EXPORT_SYMBOL_GPL(copy_mc_to_kernel);
+ 
+-unsigned long __must_check copy_mc_to_user(void *dst, const void *src, unsigned len)
++unsigned long __must_check copy_mc_to_user(void __user *dst, const void *src, unsigned len)
+ {
+ 	unsigned long ret;
+ 
+ 	if (copy_mc_fragile_enabled) {
+ 		__uaccess_begin();
+-		ret = copy_mc_fragile(dst, src, len);
++		ret = copy_mc_fragile((__force void *)dst, src, len);
+ 		__uaccess_end();
+ 		return ret;
+ 	}
+ 
+ 	if (static_cpu_has(X86_FEATURE_ERMS)) {
+ 		__uaccess_begin();
+-		ret = copy_mc_enhanced_fast_string(dst, src, len);
++		ret = copy_mc_enhanced_fast_string((__force void *)dst, src, len);
+ 		__uaccess_end();
+ 		return ret;
+ 	}
+ 
+-	return copy_user_generic(dst, src, len);
++	return copy_user_generic((__force void *)dst, src, len);
+ }
+-- 
+2.42.0
+
+
+
 
