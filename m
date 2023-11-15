@@ -1,78 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-2910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098E77EC81B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 17:05:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764DD7EC838
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 17:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B39A1C20BBA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 16:05:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D70B20C07
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 16:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B35331742;
-	Wed, 15 Nov 2023 16:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EAB3309E;
+	Wed, 15 Nov 2023 16:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B5jNO081"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h1/7xNMi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043B628E1F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 16:04:58 +0000 (UTC)
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55DE5194
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:04:56 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-5079f3f3d7aso9860651e87.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:04:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14F31754
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 16:12:40 +0000 (UTC)
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DDC19D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:12:36 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-543456dbd7bso2001349a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:12:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700064294; x=1700669094; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1700064755; x=1700669555; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzZnZquzqfUk+KfrDds9CQaV555iZ1w7ZZ/4IXXyLOU=;
-        b=B5jNO081WHszP07ZsBKM1CDWKnvz3FH9mmZUeIJOBeQ4RtSAnsgAlB/4zNCkcM4btj
-         yDGuU/TQucx9vY2Jb0NlNiwMLl4aSHjmpEVeUYpX4EA5IB6tvF1LI2LIDmwHGCzJaKYX
-         ClTQWQx89VcjPw2bT8IytM4QZ8n5qS0hVIvp0=
+        bh=1ab4jnXj8Bjx21zU5WbouPNL4gj/h303kBNvkdQgDmY=;
+        b=h1/7xNMieJaAuf/jrXyUHehG13wEAiqZ5f8n7rRqeSoXwyqJpaPyqF+CWZ/Du51dXz
+         CtnC9ol4Qoa7nTY0AuL3KV6vgQ/KOXXm2rSmEbhZIvpWCi0UG4/xsKK1XUBKU7d7DbZX
+         OcRybgUOO5+gFWl/SjNuiPdfh+qS31MXFAvjI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700064294; x=1700669094;
+        d=1e100.net; s=20230601; t=1700064755; x=1700669555;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jzZnZquzqfUk+KfrDds9CQaV555iZ1w7ZZ/4IXXyLOU=;
-        b=mvHY1Lskbax+UpEdF5SfhUy/Y/1JRtsgVgNMrzQzxJTKiZKUS9Nox+fMGJzbAzmYeR
-         M6dokLeRfwSt2NMJ9r3zFNikmy0RMhfk2BR4hUNd58ZidtcNiVvJN/eRDZ0HkLJtQUjd
-         1KU9GLYAhF7wtw4kzGFQlwqCCV7EPitL7mue43iTthl3Xl1r8s8CLCoxiaJN4ZghxbM+
-         xwIrVFsUtbVgJDGKW0kFOuP4XleDIAxQ/I/uTOFmi7aOCm2yNfZaS6PyhkJBIw+NAkws
-         bcA23JAlXT/HrHcTw1/EksPJe43GivEkCZ1Ck5XCeIZazABQ677+/124dDHxN7zQV06E
-         0/CQ==
-X-Gm-Message-State: AOJu0Yxf7OPkXG3mwSkqgX2u3qji1U/foPJCR1ZqVNhYofBTdooqtl2S
-	KaSsIWu5twrS2Uj5Kl0r6jt2yW+ZrP6/tQji30pnaQEe
-X-Google-Smtp-Source: AGHT+IErTF5U20ix4FPUSjI/UBCpQweE3rbcPfGOhJL/Wx0g7havKmzTBxEGzQRVb3aEr817apF4fg==
-X-Received: by 2002:ac2:4907:0:b0:509:8e1b:c932 with SMTP id n7-20020ac24907000000b005098e1bc932mr8832531lfi.50.1700064294212;
-        Wed, 15 Nov 2023 08:04:54 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id xo15-20020a170907bb8f00b009ade1a4f795sm7222719ejc.168.2023.11.15.08.04.53
+        bh=1ab4jnXj8Bjx21zU5WbouPNL4gj/h303kBNvkdQgDmY=;
+        b=uYdxNWqRlxHoErIkbgbRjp5QZwk7dCtuDo+CU0o0zyGi22cC6FdYQXc+l9MZi8rEwA
+         qDrjr1IaJoPQ0M+yNIDIemoqtmaD0vdzBAoWoLum78hqWsZLk61nlRo3Ohx7WQsb5XKB
+         CcpKe9v2I5UKPyn9UD1P1A5n0oz4u17w9I5urkXgawgHKkJndxY74h+pAcv2MCKDdroM
+         8anLxgPexiPozW9afIxBHQrtc/FI8qltU1ypjvYAuKzXrMEY2f36hM0UDo1jY8NwFkNz
+         Oq1GYd03E3Dp0L3rJq3asuFj2AY8cLZ9SoimPvtuiw35mWxCW4qykdGpbKSxalm4Kvck
+         tftg==
+X-Gm-Message-State: AOJu0YyhHfjHwwHlJRtRe8Tgo04njhG9ScYW/TCarX+Sp9xiVuQ6hoyC
+	CZtbpFSIXRPzpEnSjy1OpeZnlZ0s6jUgRAVeflllm+er
+X-Google-Smtp-Source: AGHT+IHqfCkUn6STel6TWMzfnKSDF/u/7Kzz3BMbObtoOZXNIEdW7L/uU4CIwHLvIIjQbgjd4PLIzA==
+X-Received: by 2002:a17:906:8417:b0:9ba:8ed:ea58 with SMTP id n23-20020a170906841700b009ba08edea58mr4980961ejx.30.1700064755121;
+        Wed, 15 Nov 2023 08:12:35 -0800 (PST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id t2-20020a17090616c200b009ddaf5ebb6fsm7368375ejd.177.2023.11.15.08.12.34
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Nov 2023 08:04:53 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-543923af573so10788638a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:04:53 -0800 (PST)
-X-Received: by 2002:a05:6402:34f:b0:540:7a88:ac7c with SMTP id
- r15-20020a056402034f00b005407a88ac7cmr10183276edw.21.1700064293347; Wed, 15
- Nov 2023 08:04:53 -0800 (PST)
+        Wed, 15 Nov 2023 08:12:34 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-547e7de7b6fso951754a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 08:12:34 -0800 (PST)
+X-Received: by 2002:aa7:da07:0:b0:542:ff1b:6c7a with SMTP id
+ r7-20020aa7da07000000b00542ff1b6c7amr5958727eds.9.1700064753769; Wed, 15 Nov
+ 2023 08:12:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231115154946.3933808-1-dhowells@redhat.com>
-In-Reply-To: <20231115154946.3933808-1-dhowells@redhat.com>
+References: <20231115154946.3933808-1-dhowells@redhat.com> <20231115154946.3933808-6-dhowells@redhat.com>
+In-Reply-To: <20231115154946.3933808-6-dhowells@redhat.com>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 15 Nov 2023 11:04:36 -0500
-X-Gmail-Original-Message-ID: <CAHk-=whTqzkep-RFMcr=S8A2bVx5u_Dgk+f2GXFK-e470jkKjA@mail.gmail.com>
-Message-ID: <CAHk-=whTqzkep-RFMcr=S8A2bVx5u_Dgk+f2GXFK-e470jkKjA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] iov_iter: kunit: Cleanup, abstraction and more tests
+Date: Wed, 15 Nov 2023 11:12:17 -0500
+X-Gmail-Original-Message-ID: <CAHk-=wgHciqm3iaq6hhtP64+Zsca6Y6z5UfzHzjfhUhA=jP0zA@mail.gmail.com>
+Message-ID: <CAHk-=wgHciqm3iaq6hhtP64+Zsca6Y6z5UfzHzjfhUhA=jP0zA@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] iov_iter: Create a function to prepare userspace
+ VM for UBUF/IOVEC tests
 To: David Howells <dhowells@redhat.com>
 Cc: Christian Brauner <christian@brauner.io>, Jens Axboe <axboe@kernel.dk>, 
 	Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, 
@@ -80,31 +81,47 @@ Cc: Christian Brauner <christian@brauner.io>, Jens Axboe <axboe@kernel.dk>,
 	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
 	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
 	linux-mm@kvack.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, loongarch@lists.linux.dev, linux-s390@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 15 Nov 2023 at 10:50, David Howells <dhowells@redhat.com> wrote:
 >
->  (3) Add a function to set up a userspace VM, attach the VM to the kunit
->      testing thread, create an anonymous file, stuff some pages into the
->      file and map the file into the VM to act as a buffer that can be used
->      with UBUF/IOVEC iterators.
+> This requires access to otherwise unexported core symbols: mm_alloc(),
+> vm_area_alloc(), insert_vm_struct() arch_pick_mmap_layout() and
+> anon_inode_getfile_secure(), which I've exported _GPL.
 >
->      I map an anonymous file with pages attached rather than using MAP_ANON
->      so that I can check the pages obtained from iov_iter_extract_pages()
->      without worrying about them changing due to swap, migrate, etc..
->
->      [?] Is this the best way to do things?  Mirroring execve, it requires
->      a number of extra core symbols to be exported.  Should this be done in
->      the core code?
+> [?] Would it be better if this were done in core and not in a module?
 
-Do you really need to do this as a kunit test in the kernel itself?
+I'm not going to take this, even if it were to be sent to me through Christian.
 
-Why not just make it a user-space test as part of tools/testing/selftests?
+I think the exports really show that this shouldn't be done. And yes,
+doing it in core would avoid the exports, but would be even worse.
 
-That's what it smells like to me. You're doing user-level tests, but
-you're doing them in the wrong place, so you need to jump through all
-these hoops that you really shouldn't.
+Those functions exist for setting up user space. You should be doing
+this in user space.
 
-                Linus
+I'm getting really fed up with the problems that ther KUnit tests
+cause. We have a long history of self-inflicted pain due to "unit
+testing", where it has caused stupid problems like just overflowing
+the kernel stack etc.
+
+This needs to stop. And this is where I'm putting my foot down. No
+more KUnit tests that make up interfaces - or use interfaces - that
+they have absolutely no place using.
+
+From a quick look, what you were doing was checking that the patterns
+you set up in user space came through ok. Dammit, what's wrong with
+just using read()/write() on a pipe, or splice, or whatever. It will
+test exactly the same iov_iter thing.
+
+Kernel code should do things that can *only* be done in the kernel.
+This is not it.
+
+              Linus
 
