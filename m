@@ -1,139 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-2897-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C5B17EC681
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 15:59:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9068B7EC6BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 16:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB58E281562
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 14:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10AC21F27796
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Nov 2023 15:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AC433CDB;
-	Wed, 15 Nov 2023 14:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DAA381A8;
+	Wed, 15 Nov 2023 15:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H++OVUzw"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Kwb5EVWy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1473C33083
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 14:59:34 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2349DAB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 06:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700060372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hgSFAqsrrIeyfcEV4+4kyzG8JlxNH43PSFwHbBsH0s4=;
-	b=H++OVUzwxJdOrLzoU5/oas2bldm0iC0+5cyGLgfOu4XWyhgH0f/hJoXeOEvQnN50kUWycB
-	jGszMGa6lC5s3kfQlwb9vYBxs3RH5zVIXpzv2xaFsz+P7JomNnP9FKT1UNBe93ZMNCwAV3
-	++UnUDldVIdYDEVXgqhSvSI4EolBvug=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-NqVnE2VQNm60TzLstO6QCg-1; Wed, 15 Nov 2023 09:59:29 -0500
-X-MC-Unique: NqVnE2VQNm60TzLstO6QCg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF10E85A58A;
-	Wed, 15 Nov 2023 14:59:28 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id ADF1336EE;
-	Wed, 15 Nov 2023 14:59:25 +0000 (UTC)
-Date: Wed, 15 Nov 2023 22:59:20 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Niklas Cassel <Niklas.Cassel@wdc.com>
-Cc: Ming Lin <minggr@gmail.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Performance Difference between ext4 and Raw Block Device Access
- with buffer_io
-Message-ID: <ZVTcyKbHTasef1Py@fedora>
-References: <CAF1ivSY-V+afUxfH7SDyM9vG991u7EoDCteL1y5jurnKSzQ3YA@mail.gmail.com>
- <ZVSNIClnCnmay8e6@fedora>
- <ZVTTh/LdexBD7BdE@x1-carbon>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B08A2EB1E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 15:09:11 +0000 (UTC)
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F392C101
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 07:09:07 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9c603e2354fso193237066b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 07:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1700060946; x=1700665746; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W6hHqSZu67/CtnTRrNkj1UQoVeaRhr050XiIGsTlRr4=;
+        b=Kwb5EVWyBQDCxYKcHVX8ILRN7wQRMfv6tV7Hqn/8P2V1KUsQKa3jDu5LR9rdU7q2tV
+         SE5H2hYXPKfOxrmkblMG8t7TZr35iNSgF/5wwbH6TwGUrgQrKDyiyZhtlafgUwcK+qlK
+         S/z5fBN3M6w1Ug0YwrJP4D+I/7iudHv7usH8Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700060946; x=1700665746;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W6hHqSZu67/CtnTRrNkj1UQoVeaRhr050XiIGsTlRr4=;
+        b=f8gtzB67MiXC2DWG4Cq57h14oD3c++I7SBNpswyFKVMMZgVH2ror+X7qfIvoXZtcp7
+         a7xBiaUK9eGWJtqAg4MmEdk6B5yh7O7hfWnlsm9ZIIMNQo+e9q+iHYEdE7jvWZ7lGmea
+         fyTYYyi4ABu9eAjNVECmOqhQEGNUEs+l6dukHMK+2Za7xxBB3OWnhY+SYGYiAb6CZzaj
+         0QV8jbPRA0YBFOixfM7DL9KDWJ0lB1gTgn5in98k4q5OvkP//rwNBwpKnvPmiaWzoHKz
+         ltAkrogme4feULqE6MKiiD1Ywe/1j6/VFa7PGLkyhFSBEddeNOXiMFBdi/rM1qLJMbZ0
+         XA9A==
+X-Gm-Message-State: AOJu0YzOhZpwbw/B2BwTtQp7eDXx/AIzJfRGNtInbOexeoWxVKM407XJ
+	thfXMU2ED6Qi3gtGbQiT8sMu7FCsrpBv+hh25KxH/A==
+X-Google-Smtp-Source: AGHT+IFb2KNh5AZP77BbYskwsAo6K32Mv+EfIlsiVIDbQDXKb+1PjWA/a41YUQCybtarVTxc1QJ0f6Wdb1AoFMMZ2Z8=
+X-Received: by 2002:a17:907:9629:b0:9ee:295:5696 with SMTP id
+ gb41-20020a170907962900b009ee02955696mr6133965ejc.2.1700060946396; Wed, 15
+ Nov 2023 07:09:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZVTTh/LdexBD7BdE@x1-carbon>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 15 Nov 2023 16:08:55 +0100
+Message-ID: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+Subject: proposed libc interface and man page for statmount(2)
+To: libc-alpha@sourceware.org, linux-man <linux-man@vger.kernel.org>
+Cc: Alejandro Colomar <alx@kernel.org>, Linux API <linux-api@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
+	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+	Christian Brauner <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: multipart/mixed; boundary="000000000000ce9e4e060a324871"
 
-On Wed, Nov 15, 2023 at 02:20:02PM +0000, Niklas Cassel wrote:
-> On Wed, Nov 15, 2023 at 05:19:28PM +0800, Ming Lei wrote:
-> > On Mon, Nov 13, 2023 at 05:57:52PM -0800, Ming Lin wrote:
-> > > Hi,
-> > > 
-> > > We are currently conducting performance tests on an application that
-> > > involves writing/reading data to/from ext4 or a raw block device.
-> > > Specifically, for raw block device access, we have implemented a
-> > > simple "userspace filesystem" directly on top of it.
-> > > 
-> > > All write/read operations are being tested using buffer_io. However,
-> > > we have observed that the ext4+buffer_io performance significantly
-> > > outperforms raw_block_device+buffer_io:
-> > > 
-> > > ext4: write 18G/s, read 40G/s
-> > > raw block device: write 18G/s, read 21G/s
-> > 
-> > Can you share your exact test case?
-> > 
-> > I tried the following fio test on both ext4 over nvme and raw nvme, and the
-> > result is the opposite: raw block device throughput is 2X ext4, and it
-> > can be observed in both VM and read hardware.
-> > 
-> > 1) raw NVMe
-> > 
-> > fio --direct=0 --size=128G --bs=64k --runtime=20 --numjobs=8 --ioengine=psync \
-> >     --group_reporting=1 --filename=/dev/nvme0n1 --name=test-read --rw=read
-> > 
-> > 2) ext4
-> > 
-> > fio --size=1G --time_based --bs=4k --runtime=20 --numjobs=8 \
-> > 	--ioengine=psync --directory=$DIR --group_reporting=1 \
-> > 	--unlink=0 --direct=0 --fsync=0 --name=f1 --stonewall --rw=read
-> 
-> Hello Ming,
-> 
-> 1) uses bs=64k, 2) uses bs=4k, was this intentional?
+--000000000000ce9e4e060a324871
+Content-Type: text/plain; charset="UTF-8"
 
-It is a typo, actually both two are taking bs=64k.
+Hi,
 
-> 
-> 2) uses stonewall, but 1) doesn't, was this intentional?
+Attaching the proposed man page for the new statmount() syscall.
 
-To be honest, both are run from different existed two scripts,
-just run again by adding --stonewall to raw block test, not see
-difference.
+It describes a libc interface that is slightly different from the raw
+kernel API.   The differences from the two API's are also described in
+the man page.
 
-> 
-> For fairness, you might want to use the same size (1G vs 128G).
+Raw:
 
-For fs test, each io job creates one file and run IO against each file,
-but there is only one 'file' in raw block test, and all 8 jobs run
-IO on same block device.
+       long syscall(SYS_statmount, const struct mnt_id_req *req,
+                    struct statmount *buf, size_t bufsize, unsigned int flags);
 
-So just start one quick randread test, similar gap can be observed
-too compared with read test.
+Libc:
 
-> 
-> And perhaps clear the page cache before each fio invocation:
-> # echo 1 > /proc/sys/vm/drop_caches
+       struct statmount *statmount(uint64_t mnt_id, uint64_t request_mask,
+                                   struct statmount *buf, size_t bufsize,
+                                   unsigned int flags);
 
-Yes, it is always done before running the two buffered IO tests.
+I propose the libc one to allow automatically allocating the buffer if
+the buf argument is NULL, similar to getcwd(3).
 
+Comments?
 
-thanks,
-Ming
+Thanks,
+Miklos
 
+--000000000000ce9e4e060a324871
+Content-Type: application/x-troff-man; name="statmount.2"
+Content-Disposition: attachment; filename="statmount.2"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lozvxv5c0>
+X-Attachment-Id: f_lozvxv5c0
+
+LlwiIENvcHlyaWdodCAyMDIzIE1pa2xvcyBTemVyZWRpIDxtc3plcmVkaUByZWRoYXQuY29tPgou
+XCIKLlwiIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9yLWxhdGVyCi5cIgouVEgg
+c3RhdG1vdW50IDIgKGRhdGUpICJMaW51eCBtYW4tcGFnZXMgKHVucmVsZWFzZWQpIgouU0ggTkFN
+RQpzdGF0bW91bnQgXC0gZ2V0IGZpbGVzeXN0ZW0gc3RhdHVzCi5TSCBMSUJSQVJZClN0YW5kYXJk
+IEMgbGlicmFyeQouUkkgKCBsaWJjICIsICIgXC1sYyApCi5TSCBTWU5PUFNJUwoubmYKLyogUHJv
+dG90eXBlIGZvciB0aGUgZ2xpYmMgd3JhcHBlciBmdW5jdGlvbiAqLwouUAouQlIgIiNkZWZpbmUg
+X0dOVV9TT1VSQ0UiICIgICAgICAgICAvKiBTZWUgZmVhdHVyZV90ZXN0X21hY3Jvcyg3KSAqLyIK
+LkIgI2luY2x1ZGUgPHN5cy9tb3VudC5oPgouUAouQkkgInN0cnVjdCBzdGF0bW91bnQgKnN0YXRt
+b3VudCh1aW50NjRfdCAiIG1udF9pZCAiLCB1aW50NjRfdCAiIHJlcXVlc3RfbWFzayAiLCIKLkJJ
+ICIgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHN0YXRtb3VudCAqIiBidWYgIiwg
+c2l6ZV90ICIgYnVmc2l6ZSAiLCIKLkJJICIgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5z
+aWduZWQgaW50ICIgZmxhZ3MgIik7IgouUAovKiBQcm90b3R5cGUgZm9yIHRoZSByYXcgc3lzdGVt
+IGNhbGwgKi8KLlAKLkIgI2luY2x1ZGUgPGxpbnV4L21vdW50Lmg+Ci5CICNpbmNsdWRlIDxzeXMv
+c3lzY2FsbC5oPgouQiAjaW5jbHVkZSA8dW5pc3RkLmg+Ci5QCi5CSSAibG9uZyBzeXNjYWxsKFNZ
+U19zdGF0bW91bnQsIGNvbnN0IHN0cnVjdCBtbnRfaWRfcmVxICoiIHJlcSAiLCIKLkJJICIgICAg
+ICAgICAgICAgc3RydWN0IHN0YXRtb3VudCAqIiBidWYgIiwgc2l6ZV90ICIgYnVmc2l6ZSAiLCB1
+bnNpZ25lZCBpbnQgIiBmbGFncyAiKTsiCi5maQouUAooVGhlCi5JIHJlcQphcmd1bWVudCBjb250
+YWlucyB0aGUKLkkgbW50X2lkCmFuZAouSSByZXF1ZXN0X21hc2sKYXJndW1lbnRzIHBhY2tlZCBp
+bnRvIGEgc3RydWN0dXJlIGZvciBjb21wYXRpYmlsaXR5IHdpdGggMzJiaXQgYXJjaGl0ZWN0dXJl
+cy4pCi5TSCBERVNDUklQVElPTgpUaGUKLkJSIG1vdW50c3RhdCAoKQpzeXN0ZW0gY2FsbCByZXR1
+cm5zIGluZm9ybWF0aW9uIGFib3V0IGEgbW91bnQgc3BlY2lmaWVkIGJ5Ci5JUiBtbnRfaWQgLgou
+UApUaGUgbW91bnQgSUQgZm9yIGEgcGFydGljdWxhciBwYXRoIGNhbiBiZSBvYnRhaW5lZCBieSBj
+YWxsaW5nCi5CUiBzdGF0eCAoMikKd2l0aCB0aGUKLkIgU1RBVFhfTU5UX0lEX1VOSVFVRQptYXNr
+IGFuZCB1c2luZyB0aGUgcmV0dXJuZWQKLkkgbW50X2lkCmZpZWxkLiBUaGUgbW91bnQgSURzIHJl
+dHVybmVkIGJ5IHRoZQouQlIgbGlzdG1vdW50ICgyKQpzeXN0ZW0gY2FsbCBjYW4gYWxzbyBiZSB1
+c2VkLiAgTm90ZSwgaG93ZXZlciwgdGhhdCBtb3VudCBJRHMgZm91bmQgaW4KL3Byb2MvUElEL21v
+dW50aW5mbyBhcmUgbm90IHN1aXRhYmxlLgouUApUaGUKLkkgcmVxdWVzdF9tYXNrCmFyZ3VtZW50
+IGlzIHVzZWQgdG8gc3BlY2lmeSB3aGljaCBmaWVsZHMgdGhlIGNhbGxlciBpcyBpbnRlcmVzdGVk
+IGluLgpUaGUgZm9sbG93aW5nIGNvbnN0YW50cyBjYW4gYmUgT1JlZCB0b2dldGhlcjoKLlAKLmlu
+ICs0bgouVFMKbEIgbC4KU1RNVF9TQl9CQVNJQwlXYW50IHNiXy4uLgpTVE1UX01OVF9CQVNJQwlX
+YW50IG1udF8uLi4KU1RNVF9QUk9QQUdBVEVfRlJPTQlXYW50IHByb3BhZ2F0ZV9mcm9tClNUTVRf
+TU5UX1JPT1QJV2FudCBtbnRfcm9vdApTVE1UX01OVF9QT0lOVAlXYW50IG1udF9wb2ludApTVE1U
+X0ZTX1RZUEUJV2FudCBmc190eXBlCi5URQouaW4KLlAKLkkgYnVmCmFuZAouSSBidWZzaXplCmFs
+bG93IHBhc3NpbmcgaW4gYSBidWZmZXIgd2hlcmUgdGhlIHJldHVybmVkIGluZm9ybWF0aW9uIGlz
+IHRvIGJlIHN0b3JlZC4KLkkgYnVmc2l6ZQptYXkgYmUgbGFyZ2VyIHRoYW4KLkkgc2l6ZW9mKHN0
+cnVjdCBzdGF0bW91bnQpCnRvIGFsbG93IHBsYWNlbWVudCBvZiBzdHJpbmdzIGFmdGVyIHRoZSBz
+dHJ1Y3R1cmUuCi5QCk9uIHRoZSBnbGliYyBpbnRlcmZhY2UgdGhlCi5JIGJ1Zgphcmd1bWVudCBj
+YW4gYmUgTlVMTCwgaW4gd2hpY2ggY2FzZQouQlIgc3RhdG1vdW50ICgpCmFsbG9jYXRlcyB0aGUg
+YnVmZmVyIGR5bmFtaWNhbGx5IHVzaW5nCi5CUiBtYWxsb2MgKDMpCmFuZAouSSBidWZzaXplCmlz
+IGlnbm9yZWQuIFRoZSBjYWxsZXIgaXMgcmVzcG9uc2libGUgZm9yIGNhbGxpbmcKLkJSIGZyZWUg
+KDMpCm9uIHRoZSByZXR1cm5lZCBidWZmZXIuCi5QClRoZQouSSBmbGFncwphcmd1bWVudCBpcyBy
+ZXNlcnZlZCBmb3IgZnV0dXJlIHVzZSBhbmQgbXVzdCBiZSBzZXQgdG8gemVyby4KLlNTClJldHVy
+bmVkIGluZm9ybWF0aW9uClRoZSByZXN1bHQgYnVmZmVyIGlzIGEgc3RydWN0dXJlIG9mIHRoZSBm
+b2xsb3dpbmcgdHlwZToKLlAKLmluICs0bgouRVgKc3RydWN0IHN0YXRtb3VudCB7CiAgICB1aW50
+MzJfdCBzaXplOyAgICAgICAgICAgICAgICAvKiBBbHdheXMgZmlsbGVkIGluICovCiAgICAuLi4K
+ICAgIHVpbnQ2NF90IG1hc2s7ICAgICAgICAgICAgICAgIC8qIEFsd2F5cyBmaWxsZWQgaW4gKi8K
+ICAgIHVpbnQzMl90IHNiX2Rldl9tYWpvcjsKICAgIHVpbnQzMl90IHNiX2Rldl9taW5vcjsKICAg
+IHVpbnQ2NF90IHNiX21hZ2ljOwogICAgdWludDMyX3Qgc2JfZmxhZ3M7CiAgICB1aW50MzJfdCBm
+c190eXBlOyAgICAgICAgICAgICAgLyogW3N0cl0gKi8KICAgIHVpbnQ2NF90IG1udF9pZDsKICAg
+IHVpbnQ2NF90IG1udF9wYXJlbnRfaWQ7CiAgICB1aW50MzJfdCBtbnRfaWRfb2xkOwogICAgdWlu
+dDMyX3QgbW50X3BhcmVudF9pZF9vbGQ7CiAgICB1aW50NjRfdCBtbnRfYXR0cjsKICAgIHVpbnQ2
+NF90IG1udF9wcm9wYWdhdGlvbjsKICAgIHVpbnQ2NF90IG1udF9wZWVyX2dyb3VwOwogICAgdWlu
+dDY0X3QgbW50X21hc3RlcjsKICAgIHVpbnQ2NF90IHByb3BhZ2F0ZV9mcm9tOwogICAgdWludDMy
+X3QgbW50X3Jvb3Q7ICAgICAgICAgICAgIC8qIFtzdHJdICovCiAgICB1aW50MzJfdCBtbnRfcG9p
+bnQ7ICAgICAgICAgICAgLyogW3N0cl0gKi8KICAgIC4uLgogICAgY2hhciBzdHJbXTsKfTsKLkVF
+Ci5pbgouVFAKLkkgc2l6ZQpUaGUgbnVtYmVyIG9mIGJ5dGVzIGFjdHVhbGx5IHVzZWQsIGluY2x1
+ZGluZyBzdHJpbmdzLgouVFAKLkkgbWFzawpCaXR3aXNlIE9SIG9mIHRoZSBjb25zdGFudHMgdXNl
+ZCBmb3IKLkkgcmVxdWVzdF9tYXNrCmluZGljYXRpbmcgd2hpY2ggZmllbGRzIHdlcmUgZmlsbGVk
+LiAgVGhlIGNhbGxlciBzaG91bGQgY2hlY2sgdGhlCi5JIG1hc2sKYmVmb3JlIHVzaW5nIHRoZSB2
+YWx1ZSBvZiBhbnkgZmllbGQgYmVsb3cuCi5UUAouSVIgc2JfZGV2X21ham9yICIgYW5kICIgc2Jf
+ZGV2X21pbm9yClRoZSBkZXZpY2UgSUQgb2YgdGhlIG1vdW50ZWQgZmlsZXN5c3RlbS4KLlRQCi5J
+IHNiX21hZ2ljCkludGVnZXIgdmFsdWUgaW5kaWNhdGluZyB0aGUgdHlwZSBvZiBmaWxlc3lzdGVt
+LiAgU2VlCi5JIGZfdHlwZQouQlIgc3RhdGZzICgyKS4KLlRQCi5JIHNiX2ZsYWdzCkZpbGVzeXN0
+ZW0gZmxhZ3MgdGhhdCBhcmUgc2V0IG9uIG1vdW50IGNyZWF0aW9uIG9yIHJlY29uZmlndXJhdGlv
+biAocmVtb3VudCkuClRoaXMgY2FuIGJlIHRoZSBiaXR3aXNlIE9SIG9mCi5CUiBTQl9SRE9OTFkg
+IiwgIiBTQl9TWU5DSFJPTk9VUyAiLCAiIFNCX0RJUlNZTkMgIiBhbmQgIiBTQl9MQVpZVElNRSAu
+Ci5UUAouSSBmc190eXBlClRoZSBmaWxlc3lzdGVtIHR5cGUgbmFtZS4gIFVzZQouSSAiYnVmLT5z
+dHJbYnVmLT5mc190eXBlXSIKdG8gb2J0YWluIHRoZSBzdHJpbmcuCi5UUAouSSBtbnRfaWQKVGhl
+IHVuaXF1ZSBtb3VudCBJRCBvZiB0aGUgbW91bnQuICBUaGlzIHdpbGwgYmUgdGhlIHNhbWUgYXMg
+dGhlCi5JIG1udF9pZAphcmd1bWVudCBwYXNzZWQgdG8gdGhlCi5CUiBzdGF0bW91bnQgKCkKY2Fs
+bC4KLlRQCi5JIG1udF9wYXJlbnRfaWQKVGhlIHVuaXF1ZSBtb3VudCBJRCBvZiB0aGUgcGFyZW50
+IG1vdW50LiAgSWYgdGhpcyBtb3VudCBpcyB0aGUgcm9vdCBvZiBhIG1vdW50IHRyZWUsIHRoZW4g
+dGhlIHZhbHVlIHdpbGwgYmUgZXF1YWwgdG8KLklSIG1udF9pZCAuCi5UUAouSSBtbnRfaWRfb2xk
+ClJldXNlZCBtb3VudCBJRCBmb3VuZCBpbiAvcHJvYy9QSUQvbW91bnRpbmZvCi5UUAouSSBtbnRf
+cGFyZW50X2lkX29sZApSZXVzZWQgbW91bnQgSUQgb2YgdGhlIHBhcmVudCBtb3VudC4gIElmIHRo
+aXMgbW91bnQgaXMgdGhlIHJvb3Qgb2YgYSBtb3VudCB0cmVlLCB0aGVuIHRoZSB2YWx1ZSB3aWxs
+IGJlIGVxdWFsIHRvCi5JUiBtb3VudF9pZF9vbGQgLgouVFAKLkkgbW50X2F0dHIKTW91bnQgYXR0
+cmlidXRlcyBhcyB1c2VkIGluCi5CUiBmc21vdW50ICIoMikgYW5kICIgbW91bnRfc2V0YXR0ciAo
+MikuCi5UUAouSSBtbnRfcHJvcGFnYXRpb24KUHJvcGFnYXRpb24gc3RhdGUgb2YgdGhlIG1vdW50
+LiAgTWF5IGJlIGEgY29tYmluYXRpb24gb2YKLkJSIE1TX1NIQVJFRCAiIGFuZCAiIE1TX1NMQVZF
+Cm9yIGl0IG1heSBiZQouQlIgTVNfVU5CSU5EQUJMRSAiIG9yICIgTVNfUFJJVkFURS4KLlRQCi5J
+IG1udF9wZWVyX2dyb3VwCklEIG9mIHRoZSBzaGFyZWQgcGVlciBncm91cCB0aGlzIG1vdW50IGlz
+IGluLiAgRWFjaCBwZWVyIGdyb3VwIGhhcyBhIGFuCmF1dG9tYXRpY2FsbHkgZ2VuZXJhdGVkIHVu
+aXF1ZSBJRCwgYW5kIGFsbCBtb3VudHMgaW4gdGhlIHNhbWUgcGVlciBncm91cCB3aWxsCnNoYXJl
+IHRoaXMgSUQuCi5UUAouSSBtbnRfbWFzdGVyCklEIG9mIHRoZSBzaGFyZWQgcGVlciBncm91cCB0
+aGF0IHRoaXMgbW91bnQgcmVjZWl2ZXMgcHJvcGFnYXRpb24gZnJvbS4gIFRoaXMgaXMgdGhlIElE
+IG9mIHRoZSBpbW1lZGlhdGUgbWFzdGVyLCB3aGljaCBtYXkgbm90IGhhdmUgYW55IG1lbWJlcnMg
+aW4gdGhlIGN1cnJlbnQgbmFtZXNwYWNlLgouVFAKLkkgcHJvcGFnYXRlX2Zyb20KSUQgb2YgdGhl
+IGNsb3Nlc3Qgc2hhcmVkIHBlZXIgZ3JvdXAgdGhhdCB0aGlzIG1vdW50IHJlY2VpdmVzIHByb3Bh
+Z2F0aW9uIGZyb20KYW5kIGhhcyBhIG1lbWJlciBpbiB0aGUgY3VycmVudCBuYW1lc3BhY2UuICBJ
+ZiB0aGVyZSdzIG5vIHN1Y2ggcGVlciBncm91cCwgdGhpcwpmaWVsZCBpcyBzZXQgdG8gemVyby4K
+LlRQCi5JIG1udF9yb290ClJvb3Qgb2YgdGhlIG1vdW50IHdpdGhpbiB0aGUgZmlsZXN5c3RlbS4g
+VXNlCi5JICJidWYtPnN0cltidWYtPm1udF9yb290XSIKdG8gb2J0YWluIHRoZSBzdHJpbmcuCi5U
+UAouSSBtbnRfcG9pbnQKVGhlIG1vdW50IHBvaW50IHJlbGF0aXZlIHRvIHRoZSBwcm9jZXNzJ3Mg
+cm9vdC4gVXNlCi5JICJidWYtPnN0cltidWYtPm1udF9wb2ludF0iCnRvIG9idGFpbiB0aGUgc3Ry
+aW5nLgouVFAKLkkgc3RyClN0cmluZ3MgYXJlIHBsYWNlZCBhZnRlciB0aGlzIHBvaW50OyB0aGUg
+b2Zmc2V0cyBhZ2FpbnN0Ci5JIHN0cgphcmUgc3RvcmVkIGluIHRoZSByZXBzcGVjdGl2ZSBmaWVs
+ZHMuCi5QClNpbmNlIHN0cmluZ3MgYXJlIHN0b3JlZCBhcyBhbiBvZmZzZXQgcmVsYXRpdmUgdG8g
+dGhlCi5JIHN0cgpmaWVsZCwgdGhlIGJ5dGUgYXJyYXkgKHZvaWQgKilidWYgLi4uICgodm9pZCAq
+KWJ1ZilbYnVmLT5zaXplLTFdIGlzIHJlbG9jYXRhYmxlLgouU0ggUkVUVVJOIFZBTFVFCk9uIHN1
+Y2Nlc3MsIHRoZSBwb2ludGVyIHRvIHRoZSBidWZmZXIgaXMgcmV0dXJuZWQuICBJZgouSSBidWYK
+d2FzIG5vbi1OVUxMLCB0aGVuIHRoaXMgd2lsbCBiZSBlcXVhbCB0bwouSVIgYnVmIC4KSWYKLkkg
+YnVmCndhcyBOVUxMLCB0aGVuIHRoaXMgd2lsbCBiZSBhIGJ1ZmZlciBhbGxvY2F0ZWQgd2l0aAou
+QlIgbWFsbG9jICgpCi5QCk9uIGZhaWx1cmUsIE5VTEwgaXMgcmV0dXJuZWQgYW5kCi5JIGVycm5v
+CmlzIHNldCB0byBpbmRpY2F0ZSB0aGUgZXJyb3IuCi5QClRoZSByYXcgc3lzY2FsbCBpbnRlcmZh
+Y2UgcmV0dXJucyB6ZXJvIG9uIHN1Y2Nlc3MgYW5kIFwtMSBvbiBmYWlsdXJlLgoKLlNIIEVSUk9S
+UwouVFAKLkIgRU5PRU5UClRoZSBtb3VudCBkZXNpZ25hdGVkIGJ5Ci5JIG1udF9pZApkb2VzIG5v
+dCBleGlzdCBpbiB0aGUgY3VycmVudCBtb3VudCBuYW1lc3BhY2UuCi5UUAouQiBFUEVSTQpUaGUg
+bW91bnQgaXMgbm90IHJlYWNoYWJsZSBmcm9tIHRoZSBjdXJyZW50IHJvb3QgZGlyZWN0b3J5IGFu
+ZCB0aGUgY2FsbGluZyBwcm9jZXNzIGRvZXMgbm90IGhhdmUgdGhlCi5CIENBUF9TWVNfQURNSU4K
+Y2FwYWJpbGl0eS4KLlRQCi5CIEVJTlZBTApJbnZhbGlkIGZsYWcgc3BlY2lmaWVkIGluCi5JUiBm
+bGFncyAuCi5UUAouQiBFRkFVTFQKLkkgYnVmCm9yCi5JIHJlcQppcyBvdXRzaWRlIHRoZSBwcm9j
+ZXNz4oCZcyBhY2Nlc3NpYmxlIGFkZHJlc3Mgc3BhY2UuCi5UUAouQiBFT1ZFUkZMT1cKLkkgYnVm
+CmlzIG5vbi1OVUxMIGFuZAouSSBidWZzaXplCmlzIHRvbyBzbWFsbCB0byBhY2NvbW9kYXRlIHRo
+ZSByZXF1ZXN0ZWQgc3RyaW5nKHMpLgouVFAKLkIgRU5PTUVNCkZhaWxlZCB0byBhbGxvY2F0ZSBt
+ZW1vcnkgZHVyaW5nIHRoZQouQlIgc3RhdG1vdW50ICgpCmNhbGwuCi5TSCBTVEFOREFSRFMKTGlu
+dXguCi5TSCBISVNUT1JZCk5vdCB1cHN0cmVhbSB5ZXQuCi5TSCBTRUUgQUxTTwouQlIgZnNtb3Vu
+dCgyKSwKLkJSIGxpc3Rtb3VudCgyKSwKLkJSIHByb2MoNSksCi5CUiBzdGF0ZnMoMiksCi5CUiBz
+dGF0dmZzKDIpLAouQlIgc3RhdHgoMikK
+--000000000000ce9e4e060a324871--
 
