@@ -1,187 +1,312 @@
-Return-Path: <linux-fsdevel+bounces-2990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C637EE8EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:46:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B197EE8EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96279280F73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:46:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5054DB20B32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94DA495DE;
-	Thu, 16 Nov 2023 21:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABB2495DE;
+	Thu, 16 Nov 2023 21:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hSA7gZRv"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sMXVK0vC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2064.outbound.protection.outlook.com [40.107.237.64])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46403181;
-	Thu, 16 Nov 2023 13:46:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DhsnDlMxNF2Qo6qEaAxoeu3x0Ieb7GdbKIC/36w8lZQAHlHdozMGgVUbg/PCaAzSdUwXOlmjtVkMqKJz3GdbrCRYfrgXiGxuPDVQyqbcMJAXxDlXfw/J6x9nZ83Wk+dTm85h/3vU9p4e6NxxIDnOlytzQ8z3rz4SfItH0GPGGwbUJBbAB0hvX2zbO+MU6ulzbrfwVh3W/vKHoMCPt2hS+ykHQG19use7lGR5FgEVLiOA8BDCUDgb5jn53OgI/UhsampV9XnczUP/enWHhqfO/pYi9YMWlQsbNBKpxvWzbBzKosUVcKYbQAntuIORe1IJJRuJbi9B99R/FWbUb8Sf7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OkC3m0veB7xXlky/uZ1uL88zNrOLKeqBg5W/LkOWpXo=;
- b=MvA80oq5XPktv+oL27V+yfoApitcG0VJf6qBEkhikLFfqLgVMBAzl3nt77unCBkfKRJqtPM+CKbL9V7ltjN3ZnNR/L6u6uGHnNWS4n0qBI6H3FU3bAYH4xKLQ+iOiKORyEDADNLFY1DkJ42Pvn9CfmeWcdASvVdyEYFfqo65VoVioYBoSmLo97kNPBJMy271Dt4A/ncGtqoE459/5MM/lVUAfi0Xtb5ggJd8JkSj5qm11VibYjvUN/ZqejrqP+0WexS9kNXm13o8tjeZWvrvmzoHk9cnL7h709KhmEI6vXaHupsQKTy3dI9pkQh9bG7+3cgtCBm8lCDwgILlMvGR4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OkC3m0veB7xXlky/uZ1uL88zNrOLKeqBg5W/LkOWpXo=;
- b=hSA7gZRv73vJuiJEVRedV0zKkjAXUqLoETBGN1wTVSVXbuoomxCbcsjZMUJo0O637wmoDAKXjhu+X9TxkyWv7Y58jZblS5VYjtRaa/oudezPqzb0ebghcGwZ9/n9s3Q9X2tTFtbjEOmNTS0//hQAIOquYykg7QGSkr2tTNfCruA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB8403.namprd12.prod.outlook.com (2603:10b6:610:133::14)
- by SJ2PR12MB8875.namprd12.prod.outlook.com (2603:10b6:a03:543::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.17; Thu, 16 Nov
- 2023 21:46:46 +0000
-Received: from CH3PR12MB8403.namprd12.prod.outlook.com
- ([fe80::e2:9f06:b82e:9a0f]) by CH3PR12MB8403.namprd12.prod.outlook.com
- ([fe80::e2:9f06:b82e:9a0f%3]) with mapi id 15.20.7002.019; Thu, 16 Nov 2023
- 21:46:46 +0000
-Message-ID: <97a875be-3ebc-4d73-a4f1-2633b28b1111@amd.com>
-Date: Thu, 16 Nov 2023 15:46:45 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v5 1/4] ACPI: APEI: EINJ: Refactor
- available_error_type_show()
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>, Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-acpi@vger.kernel.org, rafael@kernel.org, lenb@kernel.org,
- james.morse@arm.com, tony.luck@intel.com, gregkh@linuxfoundation.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- alexey.kardashevskiy@amd.com, yazen.ghannam@amd.com
-References: <20231107213647.1405493-1-avadhut.naik@amd.com>
- <20231107213647.1405493-2-avadhut.naik@amd.com>
- <20231108201905.GCZUvtOSDkVqFPBmfk@fat_crate.local>
-From: Avadhut Naik <avadnaik@amd.com>
-In-Reply-To: <20231108201905.GCZUvtOSDkVqFPBmfk@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR01CA0019.prod.exchangelabs.com (2603:10b6:805:b6::32)
- To CH3PR12MB8403.namprd12.prod.outlook.com (2603:10b6:610:133::14)
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC2AEA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 13:49:37 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SWYbJ2H2BzMqSyh;
+	Thu, 16 Nov 2023 21:49:32 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SWYbH2nxPzMpnPl;
+	Thu, 16 Nov 2023 22:49:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1700171372;
+	bh=i2xecIaXPG8Bpk3/6L195RW2xiLR+TEf52D94v2JTas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sMXVK0vCaXldie0BiddYT0x43rNMxO1rIXmo+y0jFYNKX4jyPS4/oLWEgEzKl9VEf
+	 sjk9O0HoLbpIgrULtOKC1ayvL3pEqhJUXOfRD9g5EQbYT2GNDF9BY2zQiLxq3Rn7nc
+	 A5HZtZqIWPrKe/8Y/SqvSJqIU7LIwV3feJlAL1Ps=
+Date: Thu, 16 Nov 2023 16:49:09 -0500
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] Landlock: IOCTL support
+Message-ID: <20231116.haW5ca7aiyee@digikod.net>
+References: <20231103155717.78042-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8403:EE_|SJ2PR12MB8875:EE_
-X-MS-Office365-Filtering-Correlation-Id: 989cef03-980a-4d5d-5391-08dbe6ed8790
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	YxuFEb2ojnMbsjT9yBLMV9MR34FKqG3+NGtc7mBzBrP7RJYheW9zDmx2yUrKLT1wlxRBIsQdwNCulHJt1GTI5ZB+qRPYp3bih57yDkigOOtqYCegcNO6IEFzey47ddhZiwt3Jt90hgfxelIYfRmm9U/boYNG82R1/L5LUcqfjVmsb8WQiTNY58nJE/Qo4/QjDG4f/gNqheimkLbHWQYdiU1IYcCkZP3il8/CnlFd79MLFzAhmkJZB9mVMA+/gGrgWZqjRbdBhZdaznD02wdZD12wl5AE6Vtf6QIPnWF1bCSUVYgpWLI/Zzm8S6yzKSu+n00a1x72RkUPWpXa91NcxMHHqqJZ2q2ang4xNRarpDGc3+o5pG3Qpx4T/b9YMCYashnp4X79UVRIJlfMRAkD8lo6u15YJgTDUp1hf1aM4w4oyKj044dzeVNrPQFmhdunAp8NwOYMQBZfzsYbiHegB2jHW6izMJ5PE5VSXq+29y0a3Acak4Sz2lmOZdoDS12CL2HYiFn48MVoB50w+6AGEfgHjvPDz5PX5w++O9H+RdkqY1feTvaMSdq3Ons5XMl+siMPAtA4DPFd3nwXQ4FF7COF63eAuTXa5hhWE0R16XjD5m4gAXq96U+VKZvjAIJtGJ6AiWlII2wrDLLV6y0D5Q==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8403.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(396003)(376002)(366004)(346002)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(316002)(110136005)(31696002)(66556008)(66946007)(66476007)(6636002)(36756003)(8676002)(4326008)(8936002)(2906002)(26005)(41300700001)(53546011)(6512007)(2616005)(6506007)(31686004)(5660300002)(478600001)(6486002)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d0tlR1dmRnFTYVFRcFhTZmVJMkVKeGg4bHQrRGtldGMyOUxkcFowR2g0MHAw?=
- =?utf-8?B?NUdKV3M3ZlVuNUVldlUwYVZSaXVvNjQxeXlRSHdGb2lScUx5RWlCb2MrYW1o?=
- =?utf-8?B?c0tqWXBBTU4yWi94L0xGeWtBWDlHMHRrSnpMWG9pVkU2c0dIQktWZ1E2YTZv?=
- =?utf-8?B?MTlSTy92bVVQNFJwRm5wYnRBWGhqdVREMFlyeGlWTWRZdmV3dTB5ZnNHd0Q2?=
- =?utf-8?B?aFRhc1o4SWl2Nkcrd1VWQXRhVGJGdkphaDkwajREVDVQeFBaSUg5TVdyc3h0?=
- =?utf-8?B?N0JpWStIOC9YODAyUDNNb25ZT1lrdEY2ZzdxaXByanA3Y3hUSkVtZWRMSUxr?=
- =?utf-8?B?NFNwTjBGb3lvSDFkd0xhbzRwSEFyY2NvclJTU3dUTFZJNjdBNkwwOXhlV3N2?=
- =?utf-8?B?T3hJZytUNm92WFg3U0Z6L3NRZkxvdHlVcTVSK0hKd0RIUDhNMXdNc2owNkc1?=
- =?utf-8?B?Sm1wMVRTeWlCK0p2eEU5RGJHM0NvcUtlbHdyWjhTTURtR2g3MjJwQ3VJWjBL?=
- =?utf-8?B?cDRXakRRNk9nc05DWDhUbmVrQitBdlV6M2ZSVlRjL0FVZkFVeTJMbG5IOXVL?=
- =?utf-8?B?OEkyYldRUWRNWDdFRWphdWsveUQySDkwMk9zZGlyYTFTVzA2WTJCc3lPNGNZ?=
- =?utf-8?B?bjdzN2ExalpIeHNnTmluNUFZVU5UTXpOc0kzMHJFL01rNGp0VURBMnNDQzdx?=
- =?utf-8?B?SVY4amFJQjFKdG9tZStWVVJGdVFOTlNDeUVhMnVYRkdUdGNMKzdFMzVldmZ5?=
- =?utf-8?B?elFsNVdvSnl2M3ZJUVNYRC9DeGgxTU1NajV1NTZsUVBEaWhwaHpPS29DOTA3?=
- =?utf-8?B?UTdyUVMrTFk2dERhTmNPelRHS3NSNTRqWXpjQkRCUlRKc3YwdUlOYVFoODFR?=
- =?utf-8?B?aHV3SjVOanY1SVN6YldRWUV0VzdtUC9jbTgxenNUZ0hIS1ZNTlJFMTU4QXBq?=
- =?utf-8?B?Wm82N1RNZG9yMENpN0tObGtHQmRWWW9lcitwcFpzd29tS3NGMHBRNE1yTGNj?=
- =?utf-8?B?OGd5dVpyU1k1SVpTQ2dGM0FQWnVDRWRhdEY3SnZBcllTQk1iU2xMNDlPRWZn?=
- =?utf-8?B?MGZZYkdGMnI4VWl0WlQvTS8vRzBESE5KazJ1RS95Snlac1d1dURjTmNPTzNK?=
- =?utf-8?B?YXhNMzUrSDRkeVJOeGR6SFJUREY3c1BpK1l3M1NCU2tETHdlTFlGdGt3YzBn?=
- =?utf-8?B?YythK2k5OHI1Qk5RYi9rOFRKYjhtWnd6WURvUjEyd1h6VWdmWk9Nb1hUNWVX?=
- =?utf-8?B?NE5hT3JIeHFmdlpkbUgzbFh6VFpDdEl6c2R6NVFqQmhhYmJvNkJnN3JlOVFz?=
- =?utf-8?B?QlJnT3hnemNWT3V1djMzV3dmdXMwMllhdlVjZ0sxb2FFVGFHQ1dYdS9ETDhN?=
- =?utf-8?B?ZTBYTGhhS2ZMOXlRNm4wa09sSHZmNnVOWC9xaTNyZ0htWmFQM1o0TFIrRUZw?=
- =?utf-8?B?R1BqYnNDemxyelNFQkdld0VyeWtSTnFyUjRRaDhqYk8vdDJhM0p5UWdVeDd3?=
- =?utf-8?B?a0Z1WVo0MSs2WDRkNDRrb0RRNlptRXpkUmI4M0MxdDZkenBxbVIxSlEzNnl6?=
- =?utf-8?B?Vlo3R0xkR3BUSUhFOVoxalhWZ04wQnU4NVg4SWR3MHZwYW9TNUxJVTdvL21t?=
- =?utf-8?B?aDdEVEJ6Rkdnd1dXUUZFdmtQU3pma2VmUWgzSmVkb1EvSTA3U1Njek8wNWw0?=
- =?utf-8?B?cEZlaVdoZERuUmZnRFFZYys0cG1KbmRjS3Vwa2lmN1JFR0lRcm12RUpaTnA4?=
- =?utf-8?B?TUVuWks2aEF6bUo2bC9ucjl4aDRXK0IydktPcjRSWWp4S1Y5TEc5NGdqSWhJ?=
- =?utf-8?B?SHJLNWpDR240TDdrQ1RpWHplTU1LYmViUGZJZ3hlckZydW9lUHJYaVdMMkdl?=
- =?utf-8?B?K1owd1NqK0laMjNXT0RhVWJ5WmZqQ2o4WDRLbWlKWUhNcVlqSDVUbXZNQmlH?=
- =?utf-8?B?aUdEOHJORzJJUnZJazhpNjM3SFlsWDFBaFhNWXhmcktTdGY4QVJHVlhWajVx?=
- =?utf-8?B?am5rRHk5VTgxbGFUTjNZQS9WOFl1NkZnNTczMDdqOEJDR2VlVERJQXhOdmRD?=
- =?utf-8?B?UlpKV3lFa0wzeGRXVnkzaWdHdmM4Q2lvK1llNGZWNWNNVW5mbE1VdE56U0cw?=
- =?utf-8?Q?DqPjtzGDu2ls8jh6dizYZqP3N?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 989cef03-980a-4d5d-5391-08dbe6ed8790
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8403.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2023 21:46:46.0289
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 97laQPo8gtpqkGsfg90X1LaHorDh6Lpuc1UW88u67BzuWqG227la2v52w8f5Ouk0gVutoVeGxPZiWcP0Tv4ktw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8875
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231103155717.78042-1-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-Hi,
+On Fri, Nov 03, 2023 at 04:57:10PM +0100, Günther Noack wrote:
+> Hello!
+> 
+> These patches add simple ioctl(2) support to Landlock.
+> 
+> Objective
+> ~~~~~~~~~
+> 
+> Make ioctl(2) requests restrictable with Landlock,
+> in a way that is useful for real-world applications.
+> 
+> Proposed approach
+> ~~~~~~~~~~~~~~~~~
+> 
+> Introduce the LANDLOCK_ACCESS_FS_IOCTL right, which restricts the use
+> of ioctl(2) on file descriptors.
+> 
+> We attach IOCTL access rights to opened file descriptors, as we
+> already do for LANDLOCK_ACCESS_FS_TRUNCATE.
+> 
+> If LANDLOCK_ACCESS_FS_IOCTL is handled (restricted in the ruleset),
+> the LANDLOCK_ACCESS_FS_IOCTL access right governs the use of all IOCTL
+> commands.
+> 
+> We make an exception for the common and known-harmless IOCTL commands
+> FIOCLEX, FIONCLEX, FIONBIO and FIONREAD.  These IOCTL commands are
+> always permitted.  Their functionality is already available through
+> fcntl(2).
+> 
+> If additionally(!), the access rights LANDLOCK_ACCESS_FS_READ_FILE,
+> LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_DIR are
+> handled, these access rights also unlock some IOCTL commands which are
+> considered safe for use with files opened in these ways.
+> 
+> As soon as these access rights are handled, the affected IOCTL
+> commands can not be permitted through LANDLOCK_ACCESS_FS_IOCTL any
+> more, but only be permitted through the respective more specific
+> access rights.  A full list of these access rights is listed below in
+> this cover letter and in the documentation.
+> 
+> I believe that this approach works for the majority of use cases, and
+> offers a good trade-off between Landlock API and implementation
+> complexity and flexibility when the feature is used.
+> 
+> Current limitations
+> ~~~~~~~~~~~~~~~~~~~
+> 
+> With this patch set, ioctl(2) requests can *not* be filtered based on
+> file type, device number (dev_t) or on the ioctl(2) request number.
+> 
+> On the initial RFC patch set [1], we have reached consensus to start
+> with this simpler coarse-grained approach, and build additional IOCTL
+> restriction capabilities on top in subsequent steps.
+> 
+> [1] https://lore.kernel.org/linux-security-module/d4f1395c-d2d4-1860-3a02-2a0c023dd761@digikod.net/
+> 
+> Notable implications of this approach
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * Existing inherited file descriptors stay unaffected
+>   when a program enables Landlock.
+> 
+>   This means in particular that in common scenarios,
+>   the terminal's IOCTLs (ioctl_tty(2)) continue to work.
+> 
+> * ioctl(2) continues to be available for file descriptors acquired
+>   through means other than open(2).  Example: Network sockets,
+>   memfd_create(2), file descriptors that are already open before the
+>   Landlock ruleset is enabled.
+> 
+> Examples
+> ~~~~~~~~
+> 
+> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+> 
+>   LL_FS_RO=/ LL_FS_RW=. ./sandboxer /bin/bash
+> 
+> The LANDLOCK_ACCESS_FS_IOCTL right is part of the "read-write" rights
+> here, so we expect that newly opened files outside of $HOME don't work
+> with most IOCTL commands.
+> 
+>   * "stty" works: It probes terminal properties
+> 
+>   * "stty </dev/tty" fails: /dev/tty can be reopened, but the IOCTL is
+>     denied.
+> 
+>   * "eject" fails: ioctls to use CD-ROM drive are denied.
+> 
+>   * "ls /dev" works: It uses ioctl to get the terminal size for
+>     columnar layout
+> 
+>   * The text editors "vim" and "mg" work.  (GNU Emacs fails because it
+>     attempts to reopen /dev/tty.)
+> 
+> IOCTL groups
+> ~~~~~~~~~~~~
+> 
+> To decide which IOCTL commands should be blanket-permitted we went
+> through the list of IOCTL commands mentioned in fs/ioctl.c and looked
+> at them individually to understand what they are about.  The following
+> list is for reference.
+> 
+> We should always allow the following IOCTL commands, which are also
+> available through fcntl(2) with the F_SETFD and F_SETFL commands:
+> 
+>  * FIOCLEX, FIONCLEX - these work on the file descriptor and
+>    manipulate the close-on-exec flag
+>  * FIONBIO, FIOASYNC - these work on the struct file and enable
+>    nonblocking-IO and async flags
+> 
+> The following command is guarded and enabled by either of
+> LANDLOCK_ACCESS_FS_WRITE_FILE, LANDLOCK_ACCESS_FS_READ_FILE or
+> LANDLOCK_ACCESS_FS_READ_DIR (G2), once one of them is handled
+> (otherwise by LANDLOCK_ACCESS_FS_IOCTL):
+> 
+>  * FIOQSIZE - get the size of the opened file
+> 
+> The following commands are guarded and enabled by either of
+> LANDLOCK_ACCESS_FS_WRITE_FILE or LANDLOCK_ACCESS_FS_READ_FILE (G2),
+> once one of them is handled (otherwise by LANDLOCK_ACCESS_FS_IOCTL):
+> 
+> These are commands that read file system internals:
+> 
+>  * FS_IOC_FIEMAP - get information about file extent mapping
+>    (c.f. https://www.kernel.org/doc/Documentation/filesystems/fiemap.txt)
+>  * FIBMAP - get a file's file system block number
+>  * FIGETBSZ - get file system blocksize
+> 
+> The following commands are guarded and enabled by
+> LANDLOCK_ACCESS_FS_READ_FILE (G3), if it is handled (otherwise by
+> LANDLOCK_ACCESS_FS_IOCTL):
+> 
+>  * FIONREAD - get the number of bytes available for reading (the
+>    implementation is defined per file type)
+>  * FIDEDUPRANGE - manipulating shared physical storage between files.
+> 
+> The following commands are guarded and enabled by
+> LANDLOCK_ACCESS_FS_WRITE_FILE (G4), if it is handled (otherwise by
+> LANDLOCK_ACCESS_FS_IOCTL):
+> 
+>  * FICLONE, FICLONERANGE - making files share physical storage between
+>    multiple files.  These only work on some file systems, by design.
+>  * FS_IOC_RESVSP, FS_IOC_RESVSP64, FS_IOC_UNRESVSP, FS_IOC_UNRESVSP64,
+>    FS_IOC_ZERO_RANGE: Backwards compatibility with legacy XFS
+>    preallocation syscalls which predate fallocate(2).
+> 
+> The following commands are also mentioned in fs/ioctl.c, but are not
+> handled specially and are managed by LANDLOCK_ACCESS_FS_IOCTL together
+> with all other remaining IOCTL commands:
+> 
+>  * FIFREEZE, FITHAW - work on superblock(!) to freeze/thaw the file
+>    system. Requires CAP_SYS_ADMIN.
+>  * Accessing file attributes:
+>    * FS_IOC_GETFLAGS, FS_IOC_SETFLAGS - manipulate inode flags (ioctl_iflags(2))
+>    * FS_IOC_FSGETXATTR, FS_IOC_FSSETXATTR - more attributes
 
-On 11/8/2023 14:19, Borislav Petkov wrote:
-> On Tue, Nov 07, 2023 at 03:36:44PM -0600, Avadhut Naik wrote:
->> +static struct { u32 mask; const char *str; } const einj_error_type_string[] = {
->> +	{BIT(0), "Processor Correctable"},
->> +	{BIT(1), "Processor Uncorrectable non-fatal"},
->> +	{BIT(2), "Processor Uncorrectable fatal"},
->> +	{BIT(3), "Memory Correctable"},
->> +	{BIT(4), "Memory Uncorrectable non-fatal"},
->> +	{BIT(5), "Memory Uncorrectable fatal"},
->> +	{BIT(6), "PCI Express Correctable"},
->> +	{BIT(7), "PCI Express Uncorrectable non-fatal"},
->> +	{BIT(8), "PCI Express Uncorrectable fatal"},
->> +	{BIT(9), "Platform Correctable"},
->> +	{BIT(10), "Platform Uncorrectable non-fatal"},
->> +	{BIT(11), "Platform Uncorrectable fatal"},
->> +	{BIT(12), "CXL.cache Protocol Correctable"},
->> +	{BIT(13), "CXL.cache Protocol Uncorrectable non-fatal"},
->> +	{BIT(14), "CXL.cache Protocol Uncorrectable fatal"},
->> +	{BIT(15), "CXL.mem Protocol Correctable"},
->> +	{BIT(16), "CXL.mem Protocol Uncorrectable non-fatal"},
->> +	{BIT(17), "CXL.mem Protocol Uncorrectable fatal"},
-> 
-> Might as well put spaces between the '{' and '}' brackets for better
-> readability.
-> 
->>  static int available_error_type_show(struct seq_file *m, void *v)
->> @@ -607,8 +607,9 @@ static int available_error_type_show(struct seq_file *m, void *v)
->>  	if (rc)
->>  		return rc;
->>  	for (int pos = 0; pos < ARRAY_SIZE(einj_error_type_string); pos++)
->> -		if (available_error_type & BIT(pos))
->> -			seq_puts(m, einj_error_type_string[pos]);
->> +		if (available_error_type & einj_error_type_string[pos].mask)
-> 
-> Call that variable simply "error_type". Those are simple functions, one
-> can see that it is the available error type.
-> 
->> +			seq_printf(m, "0x%08x\t%s\n", einj_error_type_string[pos].mask,
->> +				   einj_error_type_string[pos].str);
->>  
->>  	return 0;
-> 
-> But those are just nitpicks.
-> 
-> Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-> 
-Thanks for reviewing. Will address this in v6.
-> Thx.
-> 
+This looks great!
 
--- 
-Thanks,
-Avadhut Naik
+It would be nice to copy these IOCTL descriptions to the user
+documentation too. That would help explain the rationale and let users
+know that they should not be worried about the related IOCTLs.
+
+> 
+> Open questions
+> ~~~~~~~~~~~~~~
+> 
+> This is unlikely to be the last iteration, but we are getting closer.
+> 
+> Some notable open questions are:
+> 
+>  * Code style
+>  
+>    * Should we move the IOCTL access right expansion logic into the
+>      outer layers in syscall.c?  Where it currently lives in
+>      ruleset.h, this logic feels too FS-specific, and it introduces
+>      the additional complication that we now have to track which
+>      access_mask_t-s are already expanded and which are not.  It might
+>      be simpler to do the expansion earlier.
+
+What about creating a new helper in fs.c that expands the FS access
+rights, something like this:
+
+int landlock_expand_fs_access(access_mask_t *access_mask)
+{
+	if (!*access_mask)
+		return -ENOMSG;
+
+	*access_mask = expand_all_ioctl(*access_mask, *access_mask);
+	return 0;
+}
+
+
+And in syscalls.c:
+
+	err =
+		landlock_expand_fs_access(&ruleset_attr.handled_access_fs);
+	if (err)
+		return err;
+
+	/* Checks arguments and transforms to kernel struct. */
+	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs,
+					  ruleset_attr.handled_access_net);
+
+
+And patch the landlock_create_ruleset() helper with that:
+
+-	if (!fs_access_mask && !net_access_mask)
++	if (WARN_ON_ONCE(!fs_access_mask) && !net_access_mask)
+		return ERR_PTR(-ENOMSG);
+
+> 
+>    * Rename IOCTL_CMD_G1, ..., IOCTL_CMD_G4 and give them better names.
+
+Why not something like LANDLOCK_ACCESS_FS_IOCTL_GROUP* to highlight that
+these are in fact (synthetic) access rights?
+
+I'm not sure we can find better than GROUP because even the content of
+these groups might change in the future with new access rights.
+
+> 
+>  * When LANDLOCK_ACCESS_FS_IOCTL is granted on a file hierarchy,
+>    should this grant the permission to use *any* IOCTL?  (Right now,
+>    it is any IOCTL except for the ones covered by the IOCTL groups,
+>    and it's a bit weird that the scope of LANDLOCK_ACCESS_FS_IOCTL
+>    becomes smaller when other access rights are also handled.
+
+Are you suggesting to handle differently this right if it is applied to
+a directory?
+
+If the scope of LANDLOCK_ACCESS_FS_IOCTL is well documented, that should
+be OK. But maybe we should rename this right to something like
+LANDLOCK_ACCESS_FS_IOCTL_DEFAULT to make it more obvious that it handles
+IOCTLs that are not handled by other access rights?
+
+
+> 
+>  * Backwards compatibility for user-space libraries.
+> 
+>    This is not documented yet, because it is currently not necessary
+>    yet.  But as soon as we have a hypothetical Landlock ABI v6 with a
+>    new IOCTL-enabled "GFX" access right, the "best effort" downgrade
+>    from v6 to v5 becomes more involved: If the caller handles
+>    GFX+IOCTL and permits GFX on a file, the correct downgrade to make
+>    this work on a Landlock v5 kernel is to handle IOCTL only, and
+>    permit IOCTL(!).
+
+I don't see any issue to this approach. If there is no way to handle GFX
+in v5, then there is nothing more we can do than allowing GFX (on the
+same file). Another way to say it is that in v5 we allow any IOCTL
+(including GFX ones) on the GFX files, an in v6 we *need* replace this
+IOCTL right with the newly available GFX right, *if it is handled* by
+the ruleset.
+
+If GFX would not be tied to a file, I think it would not be a good
+design for this access right. Currently all access rights are tied to
+objects/data, or relative to the sandbox (e.g. ptrace).
 
