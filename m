@@ -1,139 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-2982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21507EE832
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:17:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA34B7EE826
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:12:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76EDD2810ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 20:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1611C20878
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 20:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244A846530;
-	Thu, 16 Nov 2023 20:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1214D46442;
+	Thu, 16 Nov 2023 20:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aEIWJp9g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KQLkOjdE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FMF9PAQy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA93F1A7;
-	Thu, 16 Nov 2023 12:17:03 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB8042050A;
-	Thu, 16 Nov 2023 20:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1700165821;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p68fCcxQIS+Z2kIB9kk+gfIMOuRKaJTdSJTEFA3jvzs=;
-	b=aEIWJp9g36J1OtigwfhepU+GDYxMThoja07yXh6aLHiHe1RGtkXTJktFUdaPxoegls28J5
-	7mETEL3kgJID42kDUbl939Qgd9oFij1B8HlTTmBd463lebK6X4gkdYRiEUhmek1zmz2eJR
-	AFPePQLkg0DyuUFFbG0A9dcz9dLNmJ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1700165821;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p68fCcxQIS+Z2kIB9kk+gfIMOuRKaJTdSJTEFA3jvzs=;
-	b=KQLkOjdEpATQdOLHHeu4IntgKVUpk4kUZGD6EoTB7DGiZ2eNLjOqAErw9Uov5gDho8LqGj
-	wkf99XRFEFPSIzAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE2A1139C4;
-	Thu, 16 Nov 2023 20:17:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id CJm/Kb14VmXFbgAAMHmgww
-	(envelope-from <dsterba@suse.cz>); Thu, 16 Nov 2023 20:17:01 +0000
-Date: Thu, 16 Nov 2023 21:09:55 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Anand Jain <anand.jain@oracle.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org
-Subject: Re: [PATCH v2 05/18] btrfs: do not allow free space tree rebuild on
- extent tree v2
-Message-ID: <20231116200955.GK11264@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1699470345.git.josef@toxicpanda.com>
- <6a2c827b0ed8b24c3be1045ccac49b29e850118e.1699470345.git.josef@toxicpanda.com>
- <6bbfbf34-aa74-4501-b36d-317022f3bc1b@oracle.com>
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 167B7D6A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:12:20 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-28014fed9efso1014549a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1700165539; x=1700770339; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgNHea2v2D3O8dTZ/sAPUHfYW1P6pznus4pS0an/UkI=;
+        b=FMF9PAQy+KMNZyywHS3QaMw3KW8iD81ulTzSwGbjpqRp8iAw3Xypg72VqW2SOqEug8
+         bAGDeFOaG5eOaSQfujzTpEZ7ABEfEPR99qRCuEkzb1g8qK4ty/SSGh/OWCLHMDKqlKQM
+         vHbF7e58xXFbFtovJnodBSinozC+g3kXK74oGiDuypF+xiEp9e4ZZrfU0g8HiPg1BBD0
+         JZ7ef6SbeSxoZnMxfEBENhqsx+HIeMdNYkiUvDdZ/AX3uZUZNZ6ZDEyff8CmhO2nD4Dj
+         8Kr9x6MepXu4JLi8kSshGAFq1vU/Zh9FmLEnT6iGOOFnc9QzPEvg4Hvvwq5MvJbtgon5
+         ydkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700165539; x=1700770339;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QgNHea2v2D3O8dTZ/sAPUHfYW1P6pznus4pS0an/UkI=;
+        b=ZgJHtNeL5DTcDE/0pfgeffU38bhCHDxbtI5NPdJk0WhmhBu60wGCLdxcpK8t5F5THi
+         PUo68+3q+3Qe25slQj030E46DxpNaJrFju46XhXQ1hd+H8JeMl9cGsheOJhz0o5we1Fo
+         Rkij89RR1DBRzPd0PYKnhgWrmABPqIXSLCvsPVNkck+UWzpzTj3u03Afu7QKZssnlDHx
+         ne88c43U/nsCO5ienmjg6aeCiof575z32LN42rtJh2aVKrf4o+dcm+Aen/JNrzMbktRZ
+         N0RZ13i2XA6zfnAxJ6pzUjU+6jZddpvutL3qH2Eu96YDDHVNZaf6WLD+J4Oj28+BrxFN
+         mIZA==
+X-Gm-Message-State: AOJu0Yy1RhGrLkv15PLBkmmd9PRd8TRtrn/jkytTSSOitPa07hp9J7CT
+	C+nv9r6ltbIws4eUmhdGvVDgDw==
+X-Google-Smtp-Source: AGHT+IGlTO9JcHdCtKOhihATNGgTtRYC9vKdjkaqj9QXzXbsWQRaGgZTBC22Xdz+4dy/RIkiK9RklA==
+X-Received: by 2002:a17:90b:390a:b0:280:48d4:1eb3 with SMTP id ob10-20020a17090b390a00b0028048d41eb3mr15760995pjb.8.1700165539109;
+        Thu, 16 Nov 2023 12:12:19 -0800 (PST)
+Received: from ?IPV6:2804:1b3:a7c1:4617:716b:3ad5:e6b:26a9? ([2804:1b3:a7c1:4617:716b:3ad5:e6b:26a9])
+        by smtp.gmail.com with ESMTPSA id az2-20020a17090b028200b002800b26dbc1sm1940133pjb.32.2023.11.16.12.12.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Nov 2023 12:12:18 -0800 (PST)
+Message-ID: <938766c0-4cee-4363-a089-d5a6b10698d0@linaro.org>
+Date: Thu, 16 Nov 2023 17:12:13 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6bbfbf34-aa74-4501-b36d-317022f3bc1b@oracle.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	 ARC_NA(0.00)[];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
+User-Agent: Mozilla Thunderbird
+Subject: Re: proposed libc interface and man page for statmount(2)
+Content-Language: en-US
+To: Miklos Szeredi <miklos@szeredi.hu>, libc-alpha@sourceware.org,
+ linux-man <linux-man@vger.kernel.org>, Rich Felker <dalias@libc.org>
+Cc: Alejandro Colomar <alx@kernel.org>, Linux API
+ <linux-api@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+ David Howells <dhowells@redhat.com>, Christian Brauner
+ <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>,
+ Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Organization: Linaro
+In-Reply-To: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 15, 2023 at 05:49:48PM +0800, Anand Jain wrote:
-> On 11/9/23 03:08, Josef Bacik wrote:
-> > We currently don't allow these options to be set if we're extent tree v2
-> > via the mount option parsing.  However when we switch to the new mount
-> > API we'll no longer have the super block loaded, so won't be able to
-> > make this distinction at mount option parsing time.  Address this by
-> > checking for extent tree v2 at the point where we make the decision to
-> > rebuild the free space tree.
-> > 
-> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >   fs/btrfs/disk-io.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> > index b486cbec492b..072c45811c41 100644
-> > --- a/fs/btrfs/disk-io.c
-> > +++ b/fs/btrfs/disk-io.c
-> > @@ -2951,7 +2951,8 @@ int btrfs_start_pre_rw_mount(struct btrfs_fs_info *fs_info)
-> >   	bool rebuild_free_space_tree = false;
-> >   
-> >   	if (btrfs_test_opt(fs_info, CLEAR_CACHE) &&
-> > -	    btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE)) {
-> > +	    btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE) &&
-> > +	    !btrfs_fs_incompat(fs_info, EXTENT_TREE_V2)) {
-> >   		rebuild_free_space_tree = true;
-> >   	} else if (btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE) &&
-> >   		   !btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID)) {
+
+
+On 15/11/23 12:08, Miklos Szeredi wrote:
+> Hi,
 > 
-> If there is v3 you can consider to add a comment similar to that
-> is in btrfs_parse_options().
-> Also, IMO, it is a good idea to include a btrfs_info() statement
-> to indicate that the clear_cache option is ignored.
+> Attaching the proposed man page for the new statmount() syscall.
+> 
+> It describes a libc interface that is slightly different from the raw
+> kernel API.   The differences from the two API's are also described in
+> the man page.
+> 
+> Raw:
+> 
+>        long syscall(SYS_statmount, const struct mnt_id_req *req,
+>                     struct statmount *buf, size_t bufsize, unsigned int flags);
+> 
+> Libc:
+> 
+>        struct statmount *statmount(uint64_t mnt_id, uint64_t request_mask,
+>                                    struct statmount *buf, size_t bufsize,
+>                                    unsigned int flags);
+> 
+> I propose the libc one to allow automatically allocating the buffer if
+> the buf argument is NULL, similar to getcwd(3).
 
-Agreed, we have a lot of verbosity around the mount options, if some
-option combination is invalid or not working as expected a message
-should pe printed.
+The glibc getcwd implementation allocates a buffer with maximum size
+of max(PATH_MAX, getpagesize()) and iff getpwd syscall fails it will 
+fallback to a generic implementation that keep calling openat and realloc 
+the buf if required.  So for the generic case, it would require malloc
+plus realloc (to free some unused memory).
+
+Making statmount similar to getcwd would require something alike, where 
+the libc will loop to reallocate the buffer if syscall returns EOVERFLOW.
+I am not sure this would be the best interface, come up the initial buffer
+size and the increment might be tricky and not ideal for all usage cases.
+
+Maybe setting the initial size depending of request_mask bits, by assuming
+a reasonable size for STMT_FS_TYPE and PATH_MAX for STMT_MNT_ROOT/STMT_MNT_POINT
+would be a reasonable initial size. 
+
+It also always pull malloc, which is not ideal for the static linking case
+since the interface not always return the strings.
 
