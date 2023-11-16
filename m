@@ -1,88 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-2986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7327EE89D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:01:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685197EE8BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F007A28117D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F5D1F230D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374D845021;
-	Thu, 16 Nov 2023 21:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E9346531;
+	Thu, 16 Nov 2023 21:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HY01sky1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m9bZmFaK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECBCFD4D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 13:01:40 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5431614d90eso1901470a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 13:01:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1700168499; x=1700773299; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Y4PgOUAxNwJ79QhyHTDuCCcxTAOh8OUr8u8cGj3Rqw=;
-        b=HY01sky1DkR1tRPxMnZ6SABK1zH3SS6yLEiFs04+r7YkgIXwzPBmSFRbdXXmKIQBu4
-         y304N4x1HHBUumBZr+p+Hl/+w+PyU5HuBhfQte9L+RWIKYItW+a5rK2droiKim8fpcM2
-         AB/su/oEK65jxLTVJRxcTjlAbHB4/ufB64+Dw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700168499; x=1700773299;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Y4PgOUAxNwJ79QhyHTDuCCcxTAOh8OUr8u8cGj3Rqw=;
-        b=VGtMgoAeMTM/Qp/9u6SnjzYDGpBYsPuw/CemzOs9lidr/YcHTEXBMjytxrAHcS2bjw
-         FAMlc3mRQy0jhSh5VDt67G8NhUY3a3WfZo3s30Ythjnc0FZjH6mBHaR5+yZGLlrwpypj
-         6PlVVT57/qGeadR2jmRp8P7pyYgDMSS0sRJ/vBW9semNyNf+xma7X7BdQPisFjEquk/O
-         WO+C7J327l/vsWQAUA47wXba7fzeqoBzDxFshKXSbwrQwAVEiZjmDDppTQvDgATmAwRd
-         a+Px4lCjlZdyJZ1QbjhkqKi2JQlYWjblxSPrPEasVDsPZCualQP6ZI3lqzHsIMrXNAT/
-         sKOQ==
-X-Gm-Message-State: AOJu0YzxqFz2vW/zzdIsJQ8GAeUN9ru7cS0rKcsPAdsgstZOCSePgenn
-	Nq+7NUK8HW2xT1SH2nw3DVMacjFJB/6gq7WCgLJrSg==
-X-Google-Smtp-Source: AGHT+IHYshW+mG+gh3izJ3KPm1C4AIy9798YrS6zaKXKNLyM2TyVcs91f3L5hpvQ0JqbQWdSgXbJF93IVYu9wfq2zZg=
-X-Received: by 2002:a17:906:f6d4:b0:9be:30c2:b8fd with SMTP id
- jo20-20020a170906f6d400b009be30c2b8fdmr12599757ejb.66.1700168498829; Thu, 16
- Nov 2023 13:01:38 -0800 (PST)
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [IPv6:2001:41d0:203:375::b9])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891F9B0
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 13:18:29 -0800 (PST)
+Date: Thu, 16 Nov 2023 16:18:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1700169505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S3w7F7FTyUlc6SpBfGexPQfd+IQlL6+uxiGQCbZXlX8=;
+	b=m9bZmFaK7SyE3ZbXTM4OjHut/p3uYn/YlIM0DYkKx1JUNdx04CIqYDL2QQkA6Q9NMqbyL1
+	LV6O4RDm96SYaDwYhBQo5Dth7mUnz+bdGfIZpoofrk9KLThJU5kPQI4gtCRAlJ+EKEcRIq
+	vPECi5aXdmPTC3PGm+GqnbgtVJ/nRgE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH] fs: export getname()
+Message-ID: <20231116211822.leztxrldjzyqadtm@moria.home.lan>
+References: <20231116050832.GX1957730@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
- <87fs15qvu4.fsf@oldenburg.str.redhat.com>
-In-Reply-To: <87fs15qvu4.fsf@oldenburg.str.redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 16 Nov 2023 22:01:27 +0100
-Message-ID: <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
-Subject: Re: proposed libc interface and man page for statmount(2)
-To: Florian Weimer <fweimer@redhat.com>
-Cc: libc-alpha@sourceware.org, linux-man <linux-man@vger.kernel.org>, 
-	Alejandro Colomar <alx@kernel.org>, Linux API <linux-api@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
-	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
-	Christian Brauner <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231116050832.GX1957730@ZenIV>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 16 Nov 2023 at 21:36, Florian Weimer <fweimer@redhat.com> wrote:
+On Thu, Nov 16, 2023 at 05:08:32AM +0000, Al Viro wrote:
+> (in #work.namei; used for bcachefs locking fix)
+> From 74d016ecc1a7974664e98d1afbf649cd4e0e0423 Mon Sep 17 00:00:00 2001
+> From: Al Viro <viro@zeniv.linux.org.uk>
+> Date: Wed, 15 Nov 2023 22:41:27 -0500
+> Subject: [PATCH 1/2] new helper: user_path_locked_at()
+> 
+> Equivalent of kern_path_locked() taking dfd/userland name.
+> User introduced in the next commit.
 
-> In addition to Adhemerval's observation that we'd prefer to have some
-> hint regarding the buffer size, it's probably better to have entirely
-> separate interfaces because it makes static analysis easier.  With a
-> unified interface, we can still convey the information with an inline
-> wrapper function, but we can avoid that complexity.
+also applying this:
+-- >8 --
 
-I'm not against having separate allocating and the non-allocating interfaces.
+The locking fix in bch2_ioctl_subvolume_destroy() also needs getname()
+exported; previous patch provided filename_path_locked()
 
-But I don't think the allocating one needs a size hint.   Your
-suggestion of passing a buffer on the stack to the syscall and then
-copying to an exact sized malloc should take care of it.   If the
-stack buffer is sized generously, then the loop will never need to
-repeat for any real life case.
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
-Thanks,
-Miklos
+diff --git a/fs/namei.c b/fs/namei.c
+index eab372e04767..83dd8b51995a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -218,6 +218,7 @@ getname(const char __user * filename)
+ {
+ 	return getname_flags(filename, 0, NULL);
+ }
++EXPORT_SYMBOL(getname);
+ 
+ struct filename *
+ getname_kernel(const char * filename)
 
