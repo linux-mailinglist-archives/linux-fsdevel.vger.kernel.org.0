@@ -1,75 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-2926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1187ED8B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 01:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547587ED8CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 02:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E4E1F22BFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 00:53:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 790111C20964
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 01:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A5610E2;
-	Thu, 16 Nov 2023 00:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540781361;
+	Thu, 16 Nov 2023 01:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UZWZUX9E"
+	dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b="DiW1nVsA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47A8AF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 16:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700096014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=znt6kEL0rTUQG3De++r9zy5xy/7x4dgf5LbcuRAX3hc=;
-	b=UZWZUX9EvANAqk+M61s1rrx/Ma4rZgh2sikc5mvtAmOKJ+cUrD1JUalgcJCCrfeL0A0NDT
-	N1Wh/83T56601L9tYZhTCEIje6bkiPymztVdQM5t4tVeNbZh0ciRO/+XUIb5iY05sS684g
-	sOch9QiMtDNsbVMA/RLGzvX0fcKrlZQ=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625-ZhWNqwg-OQeEYP8nJZrnXg-1; Wed, 15 Nov 2023 19:53:33 -0500
-X-MC-Unique: ZhWNqwg-OQeEYP8nJZrnXg-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-66fd88c39f6so694006d6.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 16:53:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700096013; x=1700700813;
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBB9B192
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 17:07:56 -0800 (PST)
+Received: by mail-qk1-x72c.google.com with SMTP id af79cd13be357-7788f513872so13212585a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 17:07:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cs.cmu.edu; s=google-2021; t=1700096876; x=1700701676; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=znt6kEL0rTUQG3De++r9zy5xy/7x4dgf5LbcuRAX3hc=;
-        b=L1TqKcOx/+KkWfy3c6CT0t+T+lq+7/RAkVgE0gTU+9L9Wt/qGSohFggbxyRVTm8CeX
-         NBLpvkTaq8mxXEtKcW4ooIvLi8O5FtnfVj28hYL60ZylFT77sDnh4xE1DmxMv/jnfSy8
-         EaJnk+uA9RXOQPD+rXnY5eLlTg5/0TXbU+Q5j0v5BmkN6C92eVBI4F2bHLMmkeREjhAo
-         QvobDb2i6iwHqIi9ugl7Po8rvfz1hJz5MrdFw9+Y1f0nFNyyMNVLEqnwty8cCAyqRvz8
-         aSOFOqbtusTMFp9SLIRcGsAjrRTvyklcKy4b4D1NAIlsQB0ek8wugmqe0cHRMF94AJgg
-         gmlw==
-X-Gm-Message-State: AOJu0YyrbMR/GpxUriE+jyrHXA07V5k6E50emZTJ9UKuGmR9EXjXKRC6
-	cCHU1iFwoeiI4nuaPu6vkBH6N+yfSc2IqYa50MzXQCCR839SHKv1UDfbjjZnZqY4i/qJvIk+FNu
-	WJqT4U5RBQuDNT7SKa5VgcPzv1Q==
-X-Received: by 2002:a05:620a:1aa2:b0:77b:c622:e7fc with SMTP id bl34-20020a05620a1aa200b0077bc622e7fcmr7642451qkb.2.1700096012834;
-        Wed, 15 Nov 2023 16:53:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG2NYf9tfqb13m+SGN+0ipXdZK7klLe3TXnh3/9Hu+vqbKl87Ld8Jjamc9hsVTCcRocOMnLcA==
-X-Received: by 2002:a05:620a:1aa2:b0:77b:c622:e7fc with SMTP id bl34-20020a05620a1aa200b0077bc622e7fcmr7642438qkb.2.1700096012542;
-        Wed, 15 Nov 2023 16:53:32 -0800 (PST)
-Received: from x1n (cpe5c7695f3aee0-cm5c7695f3aede.cpe.net.cable.rogers.com. [99.254.144.39])
-        by smtp.gmail.com with ESMTPSA id h7-20020a05620a400700b00767e2668536sm3882456qko.17.2023.11.15.16.53.31
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ks3PBWIiV94MxOqwQB5+8Db6JJTMEhrY5Td5vGNu9Ss=;
+        b=DiW1nVsADuZDF8b+NIyhmPmVYUbe4H8CvzUPknqiqIyUgiqmkD1jGa/jkdXnMChJKx
+         lUjT1ZpBAqwmOmAEIiMQ8mDFI1XubjzoMqNGgOKro4qCXo4PPWkvZ/JV6HR1rFIKnITp
+         huDvER0n3yQQN1oG3jBuV2vYGsC91JYqlRIU2Da9H152mWMsTueKcPNGkpu7Mfs+RW9Z
+         Lgpx3Raidvn4UIr4ZHaasTlDBjL8S7i21uGIJMvbixHHjhGsPp+IY+DQFOPh2YbGt3yX
+         jhNw5pTtkpKUZF7d8VH+v/NjwKq7gzGto7jfh3fh/Nmqfk9ZZMAw3uZ7OX3MYpvLlWBJ
+         Hr8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700096876; x=1700701676;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ks3PBWIiV94MxOqwQB5+8Db6JJTMEhrY5Td5vGNu9Ss=;
+        b=pR/jrisVC9w+CgmgdRHFFfPx8bzGJcd/1CrTpFQ2O8AFMtUKi7H/mH1Yh/ROCpGbrJ
+         Jwv72zRZm/s2HbFYIyLgBq//xcKWM8OQrykP5bJs0uK+Z/G8BgCpkE9l/UtJktQJ71AN
+         kNuip2P6u9OMf/IKcyw6Pc6eVZ301e9GQd6IgTvEqPxs1b69b3K4IyuA317gMA4P5FYr
+         lFydZoNaACXPNlqqWgbliRhWVcTq9ItswlOW0xvwvdpHWIPc1eWKL7CD3Rle2TC1Tlb3
+         p5RGclcJKxPxcf+iFB6UjsTzFGTSON5B/5W2b+gdm90yAILwa0YIDjsxIEr1mP7XeDwv
+         rjzg==
+X-Gm-Message-State: AOJu0YwwfYw8E7vIq4JiR9Td6xYHHxusMoxwraECjwuR1xAGiTRmfe9V
+	OozbCp2jpkDlQT2JVQ1QXwKO3w==
+X-Google-Smtp-Source: AGHT+IHQBCuV3ZHYVIXo0mYxxtYvG/z3Rp1iF7T/0KnrIuWHrzL+jfuGD8XXyjG+QorM2yf5Z6lcFA==
+X-Received: by 2002:a05:620a:40c2:b0:76c:ea3f:9010 with SMTP id g2-20020a05620a40c200b0076cea3f9010mr9406602qko.16.1700096875996;
+        Wed, 15 Nov 2023 17:07:55 -0800 (PST)
+Received: from cs.cmu.edu (tunnel29655-pt.tunnel.tserv13.ash1.ipv6.he.net. [2001:470:7:582::2])
+        by smtp.gmail.com with ESMTPSA id x4-20020a05620a14a400b0077438383a07sm3904019qkj.80.2023.11.15.17.07.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 16:53:31 -0800 (PST)
-Date: Wed, 15 Nov 2023 19:53:29 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Andrei Vagin <avagin@gmail.com>
-Cc: syzbot <syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com>,
-	Muhammad Usama Anjum <musamaanjum@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] WARNING in pagemap_scan_pmd_entry
-Message-ID: <ZVVoCT_gNvbZg93f@x1n>
-References: <000000000000773fa7060a31e2cc@google.com>
- <CANaxB-yrvmv134dwTcMD9q5chXvm3YU1pDFhqvaRA8M1Gn7Guw@mail.gmail.com>
+        Wed, 15 Nov 2023 17:07:55 -0800 (PST)
+Date: Wed, 15 Nov 2023 20:07:53 -0500
+From: Jan Harkes <jaharkes@cs.cmu.edu>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-unionfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 09/15] fs: move file_start_write() into vfs_iter_write()
+Message-ID: <20231116010753.f3nptj4urhfcynnt@cs.cmu.edu>
+Mail-Followup-To: Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-unionfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	David Howells <dhowells@redhat.com>
+References: <20231114153254.1715969-1-amir73il@gmail.com>
+ <20231114153254.1715969-10-amir73il@gmail.com>
+ <20231114234209.f626le55r5if4fbp@cs.cmu.edu>
+ <CAOQ4uxjcnwuF1gMxe64WLODGA_MyAy8x-DtqkCUxqVQKk3Xbng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,87 +85,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANaxB-yrvmv134dwTcMD9q5chXvm3YU1pDFhqvaRA8M1Gn7Guw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjcnwuF1gMxe64WLODGA_MyAy8x-DtqkCUxqVQKk3Xbng@mail.gmail.com>
 
-Hi, Andrei, Muhammad,
-
-I had a look (as it triggered the guard I added before..), and I think I
-know what happened.  So far I think it's a question to the new ioctl()
-interface, which I'd like to double check with you all.  See below.
-
-On Wed, Nov 15, 2023 at 01:07:18PM -0800, Andrei Vagin wrote:
-> Cc: Peter and Muhammad
+On Wed, Nov 15, 2023 at 11:01:39AM +0200, Amir Goldstein wrote:
+> On Wed, Nov 15, 2023 at 1:42 AM Jan Harkes <jaharkes@cs.cmu.edu> wrote:
+> >  * Since freeze protection behaves as a lock, users have to preserve
+> >  * ordering of freeze protection and other filesystem locks. Generally,
+> >  * freeze protection should be the outermost lock. In particular, we
+> >  * have:
+> >  *
+> >  * sb_start_write
+> >  *   -> i_mutex                 (write path, truncate, directory ops,
+> >  *   ...)
+> >  *   -> s_umount                (freeze_super, thaw_super)
+> >
 > 
-> On Wed, Nov 15, 2023 at 6:41 AM syzbot
-> <syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    c42d9eeef8e5 Merge tag 'hardening-v6.7-rc2' of git://git.k..
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=13626650e80000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=84217b7fc4acdc59
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=e94c5aaf7890901ebf9b
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d73be0e80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13670da8e80000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/a595d90eb9af/disk-c42d9eee.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/c1e726fedb94/vmlinux-c42d9eee.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/cb43ae262d09/bzImage-c42d9eee.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 5071 at arch/x86/include/asm/pgtable.h:403 pte_uffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
+> This describes the locking order within a specific fs.
+> host_file is not in the same fs as code_inode.
+> 
+> IIUC, host_file is a sort of backing file for the code inode.
+> In cases like this, as in cachefiles and overlayfs, it is best
+> to order all backing fs locks strictly after all the frontend fs locks.
+> See ovl_write_iter() for example.
+> 
+> IOW, the new lock ordering is preferred:
+> file_start_write(coda_file)
+>   inode_lock(code_inode)
+>     file_start_write(host_file)
+>       inode_lock(host_inode)
 
-This is the guard I added to detect writable bit set even if uffd-wp bit is
-not yet cleared.  It means something obviously wrong happened.
+Well, if everybody else is doing it, I guess it must be ok.
 
-Here afaict the wrong thing is ioctl(PAGEMAP_SCAN) allows applying uffd-wp
-bit to VMA that is not even registered with userfault.  Then what happened
-is when the page is written, do_wp_page() will try to reuse the anonymous
-page with the uffd-wp bit set, set W bit on top of it.
-
-Below change works for me:
-
-===8<===
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index ef2eb12906da..8a2500fa4580 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1987,6 +1987,12 @@ static int pagemap_scan_test_walk(unsigned long start, unsigned long end,
-                vma_category |= PAGE_IS_WPALLOWED;
-        else if (p->arg.flags & PM_SCAN_CHECK_WPASYNC)
-                return -EPERM;
-+       else
-+               /*
-+                * Neither has the VMA enabled WP tracking, nor does the
-+                * user want to explicit fail the walk.  Skip the vma.
-+                */
-+               return 1;
-
-        if (vma->vm_flags & VM_PFNMAP)
-                return 1;
-===8<===
-
-This is based on my reading of the pagemap scan flags:
-
-- Write-protect the pages. The ``PM_SCAN_WP_MATCHING`` is used to write-protect
-  the pages of interest. The ``PM_SCAN_CHECK_WPASYNC`` aborts the operation if
-  non-Async Write Protected pages are found. The ``PM_SCAN_WP_MATCHING`` can be
-  used with or without ``PM_SCAN_CHECK_WPASYNC``.
-
-If PM_SCAN_CHECK_WPASYNC is used to enforce the check, we need to skip the
-vma that is not registered properly.  Does it look reasonable to you?
-
-Thanks,
-
--- 
-Peter Xu
-
+Jan
 
