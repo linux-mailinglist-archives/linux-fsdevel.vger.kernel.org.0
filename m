@@ -1,213 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-2976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2977-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B21C7EE686
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 19:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F207EE6EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 19:42:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC86B20BB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 18:14:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63756B20CAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 18:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2613364BC;
-	Thu, 16 Nov 2023 18:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58DEAE5;
+	Thu, 16 Nov 2023 18:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AJpgJsiH"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FiKuO3OL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61ECD192
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700158430;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ONyKyGrGZkXEZgyChUzOaaLcqNc/RranTIE1i+0V890=;
-	b=AJpgJsiH9Ajvd62BPUZP8N5sxI2FPVnRsC9UacPqWXw3HW1E+g24NKHMtGuWbbmuS88jhX
-	z0xauPOz24clvkvF6yZrvs2fGffJvz0qBqg28nwb6LfYjQXW8gCnBQeC8FIPAG3+AK0vHK
-	+n3nafvWMCB9IKxt2BKYJ0s8BGfj8Hk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-_g-hM0n0OqeIQqS-Cv4-Sw-1; Thu, 16 Nov 2023 13:13:47 -0500
-X-MC-Unique: _g-hM0n0OqeIQqS-Cv4-Sw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-408374a3d6bso6015585e9.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:13:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700158426; x=1700763226;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD43D4D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:41:59 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d9ace5370a0so1150329276.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1700160119; x=1700764919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ONyKyGrGZkXEZgyChUzOaaLcqNc/RranTIE1i+0V890=;
-        b=qwzGfjOQt/fBLHE8IBKVoqaAdmoXkuk7xOgJ4dY3O6UGwA3+faNHbxxUOSFp16tV2p
-         7wYVH1V+j0UoaDMAAyiHWMl7r1H9nHViLgixqYoupfIeP6AksRBFukaxSrca+y6KnQyX
-         onb7EzPti4UvkbC85lszBmcLRIgh/LhYf7CEOJrsY7WM4qbVPRLlkAltUj0k5evzZsoB
-         7SM1S/mnRROUV/1OVjxVzfvPUIJungyxb1eQUaTiZ9+DkuWGjIzFaevnTOLzLhzy5wKl
-         xYS0sewbBdFGL9Y+/jnd3YGxZAYYDoy4ax4WUeBkVSBRj1nbMlTAuer/+sXeAHH+t7EF
-         IKuQ==
-X-Gm-Message-State: AOJu0YxtHnUg3faDCO/MgkM/AqsHdqM0tJgz25jfnSM1gOt2AuH2hVJs
-	jWUVX8vzfHLLNOSnXWOrkmuuFuEQWZdzpXscY9q6UBAdeIzZgmHiDvsFegsM7C/O2l+DCyqRLYb
-	8aarKZjsqufl8NkOPi84gcLlN5A==
-X-Received: by 2002:a05:600c:4f92:b0:408:57bb:ef96 with SMTP id n18-20020a05600c4f9200b0040857bbef96mr2470539wmq.30.1700158426021;
-        Thu, 16 Nov 2023 10:13:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEvC/WDjQ3K/pm+VHYer9HJAY8r0bTQQnbWMq5G76YQXHZVSBBUucnoFb6okpNffqX20tYxrw==
-X-Received: by 2002:a05:600c:4f92:b0:408:57bb:ef96 with SMTP id n18-20020a05600c4f9200b0040857bbef96mr2470525wmq.30.1700158425516;
-        Thu, 16 Nov 2023 10:13:45 -0800 (PST)
-Received: from ?IPV6:2003:cb:c714:e000:d929:2324:97c7:112c? (p200300cbc714e000d929232497c7112c.dip0.t-ipconnect.de. [2003:cb:c714:e000:d929:2324:97c7:112c])
-        by smtp.gmail.com with ESMTPSA id f6-20020a7bcd06000000b0040a463cf09dsm4415094wmj.33.2023.11.16.10.13.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Nov 2023 10:13:45 -0800 (PST)
-Message-ID: <6308590a-d958-4ecc-a478-ba088cf7984d@redhat.com>
-Date: Thu, 16 Nov 2023 19:13:44 +0100
+        bh=u8WEQSBjc/MfcmSAT4ejxWpUPPmu2uF4kQuqYIUxqKA=;
+        b=FiKuO3OLOxYWZbRS088GinMafw6uUbhXXcBbEO20j/tWQcRp1dAjcGC0q3VWHbhB8V
+         IgOhkXjX93b/sNUO11ZBFkEvwNedL7qnxmRNq8+Lmtak4Wd6vU5oIh1nxChlzyB+777c
+         KI1VVHgBL/FMURxjzqKp3C3+hk9kEhvXW3AiIvxLuE5pB6IqQK8J94ziLaRyh7TlZwcy
+         XEXAeZJLLmUmWPxXxIxvhKJoYOJqX6l4aSIxzHCYGROeaNIN00/61kWhXRRKenbdbhvr
+         SbI7Ogm+/7Ecr9H04YvmeQ1LocZQhDT8hDsVbn9v+TBniRbj7i1FKZU+ECrpXWudRxPr
+         7wnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700160119; x=1700764919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u8WEQSBjc/MfcmSAT4ejxWpUPPmu2uF4kQuqYIUxqKA=;
+        b=pqLvWmCrLkJJDE9xv271KUbvqJrAk2XLM2GI0+klFPDXPbW2dmfYMTBe+BRj0GI4I3
+         xEV6o2wzKz8QL7ojyDBcKcVwI3nKkAhYDiLz4zN9IhvDDgK6Te+tWWLHoDPxL8mkKBdC
+         WP9iNfhOe1eaXb576DmCpJsBL5lX7PgGC9u3Uz4Tt6SGalrrKCs179fDBOpbhDgBuFZq
+         ENYD9ux06wU0PF1ws8z3UyS3/VmuedsfK6lq89/DVOa1MJJqjbx1GLxgOloOrsfGpU7k
+         NtjAhQZrWLsTzJvMMNOqfZj5Kr8SIilCpCYcdfNZ+SUf5/6R5m81pmIeXYrfjFrgBiZp
+         lGjQ==
+X-Gm-Message-State: AOJu0Yz+D+/dc0MXNEbKymCsdOhFksKwqyA+O3YPVWT2t/LBzLNxTvb7
+	p9r4AHEtwN34pb7B4SiijWWubv5wfFqLz85tXKCW
+X-Google-Smtp-Source: AGHT+IFrNERH99etoRYFFGcfGckM9eZr5jAdvP3Cqsg4T2YPSq7MZRtVHGkbsnW80wNaWxVnmZXI59XcmNXo2maxlb0=
+X-Received: by 2002:a25:7688:0:b0:d9b:e043:96fa with SMTP id
+ r130-20020a257688000000b00d9be04396famr15091479ybc.22.1700160118675; Thu, 16
+ Nov 2023 10:41:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [mm?] WARNING in unmap_page_range (2)
-Content-Language: en-US
-To: Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- syzbot <syzbot+7ca4b2719dc742b8d0a4@syzkaller.appspotmail.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
- wangkefeng.wang@huawei.com
-References: <000000000000b0e576060a30ee3b@google.com>
- <20231115140006.cc7de06f89b1f885f4583af0@linux-foundation.org>
- <a8349273-c512-4d23-bf85-5812d2a007d1@redhat.com> <ZVZYvleasZddv-TD@x1n>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZVZYvleasZddv-TD@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
+ <4f8c441e02222f063242adfbf4d733e1.paul@paul-moore.com> <5a7a675238c2e29d02ae23f0ec0e1569415eb89e.camel@huaweicloud.com>
+In-Reply-To: <5a7a675238c2e29d02ae23f0ec0e1569415eb89e.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 16 Nov 2023 13:41:47 -0500
+Message-ID: <CAHC9VhR29VEybYHsx65E=-YYNLuLHOVm6BF2H==bEcrcHU7Ksg@mail.gmail.com>
+Subject: Re: [PATCH v5 13/23] security: Introduce file_pre_free_security hook
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, 
+	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
+	mic@digikod.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> It should be fine, as:
-> 
-> static void make_uffd_wp_pte(struct vm_area_struct *vma,
-> 			     unsigned long addr, pte_t *pte)
-> {
-> 	pte_t ptent = ptep_get(pte);
-> 
-> #ifndef CONFIG_USERFAULTFD_
-> 
-> 	if (pte_present(ptent)) {
-> 		pte_t old_pte;
-> 
-> 		old_pte = ptep_modify_prot_start(vma, addr, pte);
-> 		ptent = pte_mkuffd_wp(ptent);
-> 		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
-> 	} else if (is_swap_pte(ptent)) {
-> 		ptent = pte_swp_mkuffd_wp(ptent);
-> 		set_pte_at(vma->vm_mm, addr, pte, ptent);
-> 	} else {                                      <----------------- this must be pte_none() already
-> 		set_pte_at(vma->vm_mm, addr, pte,
-> 			   make_pte_marker(PTE_MARKER_UFFD_WP));
-> 	}
-> }
+On Thu, Nov 16, 2023 at 4:47=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
+> > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> > >
+> > > In preparation for moving IMA and EVM to the LSM infrastructure, intr=
+oduce
+> > > the file_pre_free_security hook.
+> > >
+> > > IMA calculates at file close the new digest of the file content and w=
+rites
+> > > it to security.ima, so that appraisal at next file access succeeds.
+> > >
+> > > LSMs could also take some action before the last reference of a file =
+is
+> > > released.
+> > >
+> > > The new hook cannot return an error and cannot cause the operation to=
+ be
+> > > reverted.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > ---
+> > >  fs/file_table.c               |  1 +
+> > >  include/linux/lsm_hook_defs.h |  1 +
+> > >  include/linux/security.h      |  4 ++++
+> > >  security/security.c           | 11 +++++++++++
+> > >  4 files changed, 17 insertions(+)
+> > >
+> > > diff --git a/fs/file_table.c b/fs/file_table.c
+> > > index de4a2915bfd4..64ed74555e64 100644
+> > > --- a/fs/file_table.c
+> > > +++ b/fs/file_table.c
+> > > @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+> > >     eventpoll_release(file);
+> > >     locks_remove_file(file);
+> > >
+> > > +   security_file_pre_free(file);
+> >
+> > I worry that security_file_pre_free() is a misleading name as "free"
+> > tends to imply memory management tasks, which isn't the main focus of
+> > this hook.  What do you think of security_file_release() or
+> > security_file_put() instead?
+>
+> security_file_release() would be fine for me.
 
-Indeed! Is pte_swp_mkuffd_wp() reasonable for pte markers? I rememebr 
-that we don't support multiple markers yet, so it might be good enough.
+Okay, assuming no objections for anyone else let's go with that.
+Thanks for indulging my naming nitpick :)
 
-> 
->>
->> 2) We get the error on arm64, which does *not* support uffd-wp. Do we
->>     maybe end up calling make_uffd_wp_pte() and place a pte marker, even
->>     though we don't have CONFIG_PTE_MARKER_UFFD_WP?
->>
->>
->> static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
->> {
->> #ifdef CONFIG_PTE_MARKER_UFFD_WP
->> 	return is_pte_marker_entry(entry) &&
->> 	    (pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
->> #else
->> 	return false;
->> #endif
->> }
->>
->> Will always return false without CONFIG_PTE_MARKER_UFFD_WP.
->>
->> But make_uffd_wp_pte() might just happily place an entry. Hm.
->>
->>
->> The following might fix the problem:
->>
-
-[...]
-
-> 
-> I'd like to double check with Muhammad (as I didn't actually follow his
-> work in the latest versions.. quite a lot changed), but I _think_
-> fundamentally we missed something important in the fast path, and I think
-> it applies even to archs that support uffd..
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index e91085d79926..3b81baabd22a 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -2171,7 +2171,8 @@ static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long start,
->                  return 0;
->          }
-> 
-> -       if (!p->vec_out) {
-> +       if (!p->vec_out &&
-> +           (p->arg.flags & PM_SCAN_WP_MATCHING))
-
-Ouch, yes. So that's the global fence I was wondering where to find it.
-
--- 
-Cheers,
-
-David / dhildenb
-
+--=20
+paul-moore.com
 
