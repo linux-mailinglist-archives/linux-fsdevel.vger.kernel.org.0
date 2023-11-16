@@ -1,147 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-2960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711A67EE3EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 16:09:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473507EE480
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 16:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E921C20A15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 15:09:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAB62B20BA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 15:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6226F34554;
-	Thu, 16 Nov 2023 15:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A23B358BF;
+	Thu, 16 Nov 2023 15:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/FvYkxK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 165 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 16 Nov 2023 07:09:20 PST
-Received: from p3plwbeout17-05.prod.phx3.secureserver.net (p3plsmtp17-05-2.prod.phx3.secureserver.net [173.201.193.170])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 906CA93
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 07:09:20 -0800 (PST)
-Received: from mailex.mailcore.me ([94.136.40.141])
-	by :WBEOUT: with ESMTP
-	id 3dwtrfFAhvZgf3dwurp2ES; Thu, 16 Nov 2023 08:06:32 -0700
-X-CMAE-Analysis: v=2.4 cv=a8D1SWeF c=1 sm=1 tr=0 ts=65562ffa
- a=bheWAUFm1xGnSTQFbH9Kqg==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=ggZhUymU-5wA:10 a=BNY50KLci1gA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=FXvPX3liAAAA:8 a=PL5bajTykxBvxVk0eB4A:9 a=AjGcO6oz07-iQ99wixmX:22
- a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
-X-SID: 3dwtrfFAhvZgf
-Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=phoenix.fritz.box)
-	by smtp04.mailcore.me with esmtpa (Exim 4.94.2)
-	(envelope-from <phillip@squashfs.org.uk>)
-	id 1r3dwt-00087x-95; Thu, 16 Nov 2023 15:06:31 +0000
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: eadavis@qq.com
-Cc: akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	phillip@squashfs.org.uk,
-	squashfs-devel@lists.sourceforge.net,
-	syzbot+604424eb051c2f696163@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] squashfs: fix oob in squashfs_readahead
-Date: Thu, 16 Nov 2023 15:14:24 +0000
-Message-Id: <20231116151424.23597-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <tencent_35864B36740976B766CA3CC936A496AA3609@qq.com>
-References: <tencent_35864B36740976B766CA3CC936A496AA3609@qq.com>
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A2FA11D;
+	Thu, 16 Nov 2023 07:38:15 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2c509d5ab43so13640551fa.0;
+        Thu, 16 Nov 2023 07:38:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700149093; x=1700753893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DMIjDbu+Lair72CGj2Kst+Jg+KBTbdO+3ZYbTSukwbA=;
+        b=M/FvYkxKv78VeuLZ9EjTR7itvuzxwTdnJElkVhTM58PcgNgiuIKuLdhXcbdfmHEX/s
+         Qp5gaqqTl/YhZlN3ZRtULDT3cNnZ+tB8cSI9NShiBPZfHH/HNDXB4WIKG8cgt0jO82E+
+         uDnfIFttNFjJ8lZiNA0EuAV6dxQp3KKPfK+/u6qZTf3M2+hLbTwk6XgDJBWdCwHCETT2
+         A+C1LjS9W+/IBCA+6FRto1izW47MwAAjXZSkpT8OLFjl5W+DyNann2PyTzDSEdkSt85R
+         3kr2m6VpeAkzQUl6ACy1WjLEu9fa/c6JrtOSVsu3FsNIkExeWjQTd0/5WeTk1i0yUG8C
+         CLZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700149093; x=1700753893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DMIjDbu+Lair72CGj2Kst+Jg+KBTbdO+3ZYbTSukwbA=;
+        b=JKcUNTNrrVkpkCIaEIX7Ocnh/YzHZNlopnw24F8uMpSYESP6k+A4fx/IywdRWKwjJ8
+         7kHtsw5dW6JoII5GCoXEeUjw/8srk5b0vi2RiMTCIjLVXQ3ch2DFu+g9OOi4ws/mhrCS
+         UvaodqfI9nJFJp6fGCJOZCIS82sIfhqp35JO4daPTCnpCy+PrSg68u7XALrJuZuZ5CRk
+         5snCkHq4RZ/GpY9MMynfF7GFDqsJq8U4iH91zqU/dN3B59f6/QBjwkOzKBaQBVh4Dxor
+         WfjFn2aaQUmEIAKM0/2EF7KIE6gZVIDNywFGre6QgUyHJWO0ZnCDZ8fbAoqEMIEmLD02
+         rlmg==
+X-Gm-Message-State: AOJu0YxqwZp/wsE+lr4Yi64jQgnoZVuAjE6n8Hk5vtSily409ozo9JW6
+	0BQ1QAAkzE0qPMFM6Zz36KSBdwByBPLgxAzQRJU=
+X-Google-Smtp-Source: AGHT+IG1fdGaJQajef2978+PV4LZ/rM0rLVlWCg7oFRB/06sgDG3PW4A0flVpBqT2cVzGxzBJlBh3y/w/dbUUIV2Rfo=
+X-Received: by 2002:a2e:9f47:0:b0:2c5:31de:6c02 with SMTP id
+ v7-20020a2e9f47000000b002c531de6c02mr6529795ljk.15.1700149093016; Thu, 16 Nov
+ 2023 07:38:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailcore-Auth: 439999529
-X-Mailcore-Domain: 1394945
-X-123-reg-Authenticated:  phillip@squashfs.org.uk  
-X-Originating-IP: 82.69.79.175
-X-CMAE-Envelope: MS4xfB5rOlsiGop8HRtnu0KyA/F2yLCMHDiUDEG5UIulqyatT99bi2VOXEs8vuIFxZy253GAgcp2y6YI8YCPnIU7tKO0bluGutBeM0RAaUz1hSQhQrNkii0Q
- d89UWD78/d01l+wQckM+6EduHaJAnZiE19rjcFOF6yAniL65Zx3BIlE8YjiWcgGSpOYPKqEkYlEV9eqChuZWkOZIs9zgobyBBvE5hFZo4KJzcGrhuPIg8G30
- 6+cV38CbR9MEL0WDqPJAHw==
+References: <000000000000773fa7060a31e2cc@google.com> <CANaxB-yrvmv134dwTcMD9q5chXvm3YU1pDFhqvaRA8M1Gn7Guw@mail.gmail.com>
+ <ZVVoCT_gNvbZg93f@x1n>
+In-Reply-To: <ZVVoCT_gNvbZg93f@x1n>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Thu, 16 Nov 2023 07:38:00 -0800
+Message-ID: <CANaxB-zLxs2=gNgWTqstLvyPK8mSwpEu2ob35TtaKWheMejZOQ@mail.gmail.com>
+Subject: Re: [syzbot] [fs?] WARNING in pagemap_scan_pmd_entry
+To: Peter Xu <peterx@redhat.com>
+Cc: syzbot <syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com>, 
+	Muhammad Usama Anjum <musamaanjum@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> [Bug]
-> path_openat() called open_last_lookups() before calling do_open() and 
-> open_last_lookups() will eventually call squashfs_read_inode() to set 
-> inode->i_size, but before setting i_size, it is necessary to obtain file_size 
-> from the disk.
-> 
-> However, during the value retrieval process, the length of the value retrieved
-> from the disk was greater than output->length, resulting(-EIO) in the failure of 
-> squashfs_read_data(), further leading to i_size has not been initialized, 
-> i.e. its value is 0.
-> 
+On Wed, Nov 15, 2023 at 4:53=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> Hi, Andrei, Muhammad,
+>
+> I had a look (as it triggered the guard I added before..), and I think I
+> know what happened.  So far I think it's a question to the new ioctl()
+> interface, which I'd like to double check with you all.  See below.
+>
+> On Wed, Nov 15, 2023 at 01:07:18PM -0800, Andrei Vagin wrote:
+> > Cc: Peter and Muhammad
+> >
+> > On Wed, Nov 15, 2023 at 6:41=E2=80=AFAM syzbot
+> > <syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    c42d9eeef8e5 Merge tag 'hardening-v6.7-rc2' of git://=
+git.k..
+> > > git tree:       upstream
+> > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D13626650e=
+80000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D84217b7fc=
+4acdc59
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3De94c5aaf789=
+0901ebf9b
+> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils f=
+or Debian) 2.40
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15d73be=
+0e80000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13670da8e=
+80000
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/a595d90eb9af=
+/disk-c42d9eee.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/c1e726fedb94/vm=
+linux-c42d9eee.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/cb43ae262d=
+09/bzImage-c42d9eee.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the =
+commit:
+> > > Reported-by: syzbot+e94c5aaf7890901ebf9b@syzkaller.appspotmail.com
+> > >
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 1 PID: 5071 at arch/x86/include/asm/pgtable.h:403 pte_u=
+ffd_wp arch/x86/include/asm/pgtable.h:403 [inline]
+>
+> This is the guard I added to detect writable bit set even if uffd-wp bit =
+is
+> not yet cleared.  It means something obviously wrong happened.
+>
+> Here afaict the wrong thing is ioctl(PAGEMAP_SCAN) allows applying uffd-w=
+p
+> bit to VMA that is not even registered with userfault.  Then what happene=
+d
+> is when the page is written, do_wp_page() will try to reuse the anonymous
+> page with the uffd-wp bit set, set W bit on top of it.
 
-NACK
+Thank you for looking at this.
 
-This analysis is completely *wrong*.  First, if there was I/O error reading
-the inode it would never be created, and squasfs_readahead() would
-never be called on it, because it will never exist.
+>
+> Below change works for me:
+>
+> =3D=3D=3D8<=3D=3D=3D
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index ef2eb12906da..8a2500fa4580 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1987,6 +1987,12 @@ static int pagemap_scan_test_walk(unsigned long st=
+art, unsigned long end,
+>                 vma_category |=3D PAGE_IS_WPALLOWED;
+>         else if (p->arg.flags & PM_SCAN_CHECK_WPASYNC)
+>                 return -EPERM;
+> +       else
+> +               /*
+> +                * Neither has the VMA enabled WP tracking, nor does the
+> +                * user want to explicit fail the walk.  Skip the vma.
+> +                */
+> +               return 1;
 
-Second i_size isn't unintialised and it isn't 0 in value.  Where
-you got this bogus information from is because in your test patches,
-i.e.
+In this case, I think we need to check the PM_SCAN_WP_MATCHING flag
+and skip these vma-s only if it is set.
 
-https://lore.kernel.org/all/000000000000bb74b9060a14717c@google.com/
+If PM_SCAN_WP_MATCHING isn't set, this ioctl returns page flags and
+can be used without the intention of tracking memory changes.
 
-You have
+>
+>         if (vma->vm_flags & VM_PFNMAP)
+>                 return 1;
+> =3D=3D=3D8<=3D=3D=3D
+>
+> This is based on my reading of the pagemap scan flags:
+>
+> - Write-protect the pages. The ``PM_SCAN_WP_MATCHING`` is used to write-p=
+rotect
+>   the pages of interest. The ``PM_SCAN_CHECK_WPASYNC`` aborts the operati=
+on if
+>   non-Async Write Protected pages are found. The ``PM_SCAN_WP_MATCHING`` =
+can be
+>   used with or without ``PM_SCAN_CHECK_WPASYNC``.
+>
+> If PM_SCAN_CHECK_WPASYNC is used to enforce the check, we need to skip th=
+e
+> vma that is not registered properly.  Does it look reasonable to you?
 
-+	if (!file_end) {
-+		printk("i:%p, is:%d, %s\n", inode, i_size_read(inode), __func__);
-+		res = -EINVAL;
-+		goto out;
-+	}
-+
+I think the idea here could be to report page flags but doesn't
+write-protect such pages.
 
-You have used %d, and the result of i_size_read(inode) overflows, giving the
-bogus 0 value.
-
-The actual value is 1407374883553280, or 0x5000000000000, which is
-too big to fit into an unsigned int.
-
-> This resulted in the failure of squashfs_read_data(), where "SQUASHFS error: 
-> Failed to read block 0x6fc: -5" was output in the syz log.
-> This also resulted in the failure of squashfs_cache_get(), outputting "SQUASHFS
-> error: Unable to read metadata cache entry [6fa]" in the syz log.
-> 
-
-NO, *that* is caused by the failure to read some other inodes which
-as a result are correctly not created.  Nothing to do with the oops here.
-
-> [Fix]
-> Before performing a read ahead operation in squashfs_read_folio() and 
-> squashfs_readahead(), check if i_size is not 0 before continuing.
-> 
-
-A third NO, it is only 0 because the variable overflowed.
-
-Additionally, let's look at your "fix" here.
-
-> @@ -461,6 +461,11 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
->  	TRACE("Entered squashfs_readpage, page index %lx, start block %llx\n",
->  				page->index, squashfs_i(inode)->start);
->  
-> +	if (!file_end) {
-> +		res = -EINVAL;
-> +		goto out;
-> +	}
-> +
-
-file_end is computed by
-
-	int file_end = i_size_read(inode) >> msblk->block_log;
-
-So your "fix" will reject *any* file less than msblk->block_log in
-size as invalid, including perfectly valid zero size files (empty
-files are valid too).
-
-I already identified the cause and send a fix patch here:
-
-https://lore.kernel.org/all/20231113160901.6444-1-phillip@squashfs.org.uk/
-
-NACK
-
-Phillip
+Thanks,
+Andrei
 
