@@ -1,177 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-2997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8717EE967
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 23:40:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B91E7EE97A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 23:47:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E52DB20BFC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:40:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C08028109B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEF214AB2;
-	Thu, 16 Nov 2023 22:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F8D12E49;
+	Thu, 16 Nov 2023 22:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="ttlAA6m+"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mzx3Exc2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1CA1D4D;
-	Thu, 16 Nov 2023 14:40:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
-	s=s31663417; t=1700174415; x=1700779215; i=quwenruo.btrfs@gmx.com;
-	bh=FGy/fz1ZDkLXiSf9UT7wedokQxCPJmFYAXb+PdGb614=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=ttlAA6m+3OhsravnRnhTbt4BBHPh6tByT/PdtGFerZWueeBm9kSoZNy5nyFKgs2w
-	 IAvOESshlFao8E0fdaaJpbBwLtLOMnMD0Z46G3LmgAuyNqcWa+CbX87Yz1rdT2FPO
-	 N8EEtPSKpgavu9tItk7UB3chS7iHu/ZiEwcyYp+RliGLG4+aWbFqTlf6+nViRZOwG
-	 Iy0kCCe77DEhw2XF/hi4g6lOtUnIcL5aCDwPMLp9iP+fcFnu9LIJWINicf7qzud5q
-	 xUl6fr7g6gWrIbN6ULkfSAWCQJ6FfmwA7ns0Yu+OKRSwnggMVhVAtDtdpnz/TuLIr
-	 wifFc4g31o4E1nQyFw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.117] ([122.151.37.21]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1N7QxL-1rR4ol3LRt-017kjV; Thu, 16
- Nov 2023 23:40:15 +0100
-Message-ID: <9ecbebd3-4dc1-4560-9616-1af861c376e1@gmx.com>
-Date: Fri, 17 Nov 2023 09:10:10 +1030
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2082.outbound.protection.outlook.com [40.107.96.82])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F4C8130;
+	Thu, 16 Nov 2023 14:47:40 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OQF1N6iMUVJrZibZju5+wtmifwsxtsS7+0joK4o+hQlz7Ov0hxRQ8kNzJ2GSlhUdQqQ/2ZjS5pwKT+XG7xnlxRzu0WJG5LF0zgE1jltgDAwQCEhL7Ax1HYhMPLUSldybKacbHHoQ76Tl+Ejl9MhAB63INUhzrzuYxnePR+gK+s5zTTU1SUE37q8i6FlL9harVZnI4iHneeUgSQczChFhgo9nUCoCsPpGYkoOq/pooibinDvUiSN8K2zgWnXjcKnN7pn2H8A7Mu4tgcF0D9G+DfZ8OS4BYj7ZzeTY86hvHauSSi0AnxbEhW1CtTxQbjTKl85IpGQ40B0jeEk3xGPwTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6hEhOdhCPIRt7wo/PNs5gKMU8+R95dCjgQm+4eo0Pvk=;
+ b=G/0RqGk4yKvx2zUyenu6vMv2dnqKACYd9gNm5kRN3MMs0DHVSodljJ/CJ1ux3tAtcKiDJQ+/QdIi8ZXPJSSmEnQozANq86l4Qpv6zu+7SW9SLHQ9SzgGCgw5IH3nr4TjGD5PuhN0OfmxD4PICmgi3+RXJe+AC/R/w24Fn0JWmh4IeZEVYOtJLAQFyD3jXmYxxsfOY6jLUVUDFVKu7GNu6TxCuWOyHFYJVtEXpO0xlRKs/X9+rHt/yyeChJEQpHXOmy7TNmzH+lm3/kNJxNERLke+1ocrPN/HADTMnbbGTjZwvXGQQFhL6fg3ahOIutupnXi98Z55x0OtF+y/ofWg8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6hEhOdhCPIRt7wo/PNs5gKMU8+R95dCjgQm+4eo0Pvk=;
+ b=mzx3Exc2RbB2ECpa+LdZV81bi9q65bV22BCOBoWFA6xW+d5XxeJnskEfgfH7TAKPc89SveTQZa6RP8c1Bc3a3+AmTXp9EFOQVNEcZHx7cJBUFR4kdHjKWUtrtasi8nEIauBiq/jyMg5P3jx/BEIrLfKMiXrr9sr6PgaD1hA02tk=
+Received: from SN6PR08CA0031.namprd08.prod.outlook.com (2603:10b6:805:66::44)
+ by CH0PR12MB5155.namprd12.prod.outlook.com (2603:10b6:610:ba::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.21; Thu, 16 Nov
+ 2023 22:47:37 +0000
+Received: from SA2PEPF00001507.namprd04.prod.outlook.com
+ (2603:10b6:805:66:cafe::57) by SN6PR08CA0031.outlook.office365.com
+ (2603:10b6:805:66::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.21 via Frontend
+ Transport; Thu, 16 Nov 2023 22:47:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7002.19 via Frontend Transport; Thu, 16 Nov 2023 22:47:37 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.32; Thu, 16 Nov 2023 16:47:36 -0600
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <linux-acpi@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC: <rafael@kernel.org>, <gregkh@linuxfoundation.org>, <lenb@kernel.org>,
+	<james.morse@arm.com>, <tony.luck@intel.com>, <bp@alien8.de>,
+	<linux-kernel@vger.kernel.org>, <alexey.kardashevskiy@amd.com>,
+	<yazen.ghannam@amd.com>, <avadnaik@amd.com>
+Subject: [PATCH v6 0/4] Add support for Vendor Defined Error Types in Einj Module
+Date: Thu, 16 Nov 2023 16:47:21 -0600
+Message-ID: <20231116224725.3695952-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Mixed page compact code and (higher order) folios for filemap
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-References: <ec608bc8-e07b-49e6-a01e-487e691220f5@gmx.com>
- <ZVWjBVISMbP/UvGY@casper.infradead.org>
- <0e995d32-a984-4b65-b9e3-67fc62cc2596@gmx.com>
- <ZVYl8z5A1ucf/GYt@casper.infradead.org>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <ZVYl8z5A1ucf/GYt@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Tq3Qxc3YvvFvSyvyR/z7cbLil6IhBzrFgVyBtOH688XkOmWyOjx
- n11U7xp1SGI/Yztaox0Z9+5+E77KDHXey1uZa9jedjCcOzc2KrBZa9FbyaK3W2fQVBhjlV9
- A/INiw+roVbn93J195vCFYA5qZaqJFiLifnT/4HSpqHNHVMchB4x5CNiUAw+PFEDvzYs2O/
- KQt/Yno/YLWPzeX7iifqA==
-UI-OutboundReport: notjunk:1;M01:P0:3wwVXDwrmBA=;eD0D8eD93cbTgSigLGckCaESnYS
- AYDgzIx5czNE8cEigmjRc4+Bkwzfv5gO50AiEl8xqRXl8AaSYZIujtdjcbp1me22FeYiR+sO3
- NKuBH7SbMcwjLGnHU89eRHtSX531Zq4v/poKfotWlBEKLDHNGO0kR6qiS8UYQfn6rEh2EgsTG
- WTUKMNIbWkD/vwV1Kpk04i8eJagLBhc7AMAxJEosQWr4S8emeFe4R9Wct1JLWZdGiIoNAwcJe
- q9FEMuFszwJ4vDiCdHHyPp8iV9i3ej1AgN9tY85wSjUIJxUZ01RVfUIhWC5faT4En7eM2JkwT
- 7V3Nri+0i6BGKsQuVXcp/1ZGRCdC5+i9i3wNTXmSuVjTEmTA95DUUdpQNMGsdA7+6hxH1ufAT
- H1SjiSwZJqusx6j7ujVTZPiZDLUKsbY0M2FSdMg508nY5WF8LdrYG6aNGOH8QG7Fd/ZYSpoH0
- Txjipu1/KrMZv7EOpg7DBT31QLWyqlaA3sl5YEWU8OvoCPdzlBmFhwaAIVG+fNudwCLlSfrgY
- bFOYZRUN1JNXFjyeqSjVakEW8A9fkXE+69Fpr7NLGlNyOKUnJH9j2CfMWhxUDEnwmBcieOiYH
- +A2sZq4wniI212JU/GfV9uuype2KeSo3rt6eMKZZnqi8JRGBxIuAsE4kcWNtkLJ4e628FYY/T
- zziJUwIshBiqvFa36BMsC/lQLJ67vXGnC4cJDnRSJgcWuDPKLHO7lZ0aa0DFzvUR4bB6D0nTz
- HECwlKrUZNJfDZZ6t7ydXs+aw7zcv3hoOExX2Alnry2XtYR6VAAPZJajXiQVrWph7GqXCzYku
- olE52gx9y23MD002XpouMVHrRbbbZ12cp+tNbglDgMB2Q3N9fQr6FAl8/s7INZ/LhF7iGm0sj
- h90Ve/Xv4sqADT9MkVPSMZewVKjIunjB2EsTIVMAMh6jBaXbfTD36D9yImd9Zo6s8V5NPSLNM
- qoAX+Q==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|CH0PR12MB5155:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9b173c2-f0f4-46d4-a239-08dbe6f6080a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	KlWgkhpwg5DwI8zZ7NdaZUvqITCGzKXyjj9iQNc4w1L6sD07CXA7E412S7yYEwhUuKhlHjIXVVF4YHMoVtskNfgm2RXAzW1ZNAVk+q7pQAEMdMKFFdGGYM75pxjLSm9AEgrKhvsX3CPjswsH6X7+MlkZXbrVK/+IvfGUeLu4UGIXxir/ynhdjHmVsO9ibBE6VdDjs7+zevT3qrAQjf4VL7LJ6uWvDhN7jXAS0JVYrUgggokxditU6hMTHvKMUnmkTKwEYQAQsckLdZb6YvNKhikNqwewLiv6ycux+pdqZvuBreNAspuArSYuD+ZItHykjtJsWpzSz7F3HLCCgIP96CdbYaUfP1KIyQ6hWVnu/fImQQs6yRFch3XVEvRj/tStZXn0W1rVslI7zFl2sqk+Wb63vqZA4nCiPP9NmmCQRW7hSGPQ23AdHwNhCquWgsdlZLk63pP9E24BTABRVAAgQlwmN3kFOte02GBDkJJcQBWCpveq3BiXo7pcVhJFBdt7MU3MyoECYPCqTFcdCuP5h4jdYZOUivGEU9dFBZcKvpxWmo8i++8hq1ergEIJZd44m1kV7+b4CZRsvsiaAOY/5QWTNrHoemxTz17m0dEbqvhxhxoi0eQqg5jSUc4l82mlu6t9pWjXQNAVzc83V1xyPIGklNFTYTRsnmSvDsXRLfmtY/1TNBA5uy4KXNM5aW0uTSR3HUw8lpGGNmDWqrFNr2r7JzHoyGSDsrI9suc1/5Nva9hWzzO3SLhjq2UQ57f+lpHjI365TOrwMDj2UEQyCgppVmqgF+3yDnhiuzMjyuJUQ3TjHQOp0L5BO4g4h4Kk
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(396003)(346002)(376002)(230173577357003)(230273577357003)(230922051799003)(1800799009)(451199024)(186009)(64100799003)(82310400011)(46966006)(40470700004)(36840700001)(36860700001)(47076005)(356005)(83380400001)(81166007)(426003)(336012)(1076003)(16526019)(26005)(2616005)(6666004)(7696005)(86362001)(44832011)(110136005)(70586007)(4326008)(70206006)(478600001)(316002)(82740400003)(8676002)(8936002)(54906003)(2906002)(5660300002)(40480700001)(41300700001)(36756003)(40460700003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2023 22:47:37.3690
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9b173c2-f0f4-46d4-a239-08dbe6f6080a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001507.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5155
+
+This patchset adds support for Vendor Defined Error types in the einj
+module by exporting a binary blob file in module's debugfs directory.
+Userspace tools can write OEM Defined Structures into the blob file as
+part of injecting Vendor defined errors. Similarly, the very tools can
+also read from the blob file for information, if any, provided by the
+firmware after error injection.
+
+The first patch refactors available_error_type_show() function to ensure
+all errors supported by the platform are output through einj module's
+available_error_type file in debugfs.
+
+The second patch adds a write callback for binary blobs created through
+debugfs_create_blob() API.
+
+The third patch fixes the permissions of panicinfo file in debugfs to
+ensure it remains read-only
+
+The fourth patch adds the required support i.e. establishing the memory
+mapping and exporting it through debugfs blob file for Vendor-defined
+Error types.
+
+Changes in v2:
+ - Split the v1 patch, as was recommended, to have a separate patch for
+changes in debugfs.
+ - Refactored available_error_type_show() function into a separate patch.
+ - Changed file permissions to octal format to remove checkpatch warnings.
+
+Changes in v3:
+ - Use BIT macro for generating error masks instead of hex values since
+ACPI spec uses bit numbers.
+ - Handle the corner case of acpi_os_map_iomem() returning NULL through
+a local variable to a store the size of OEM defined data structure.
+
+Changes in v4:
+ - Fix permissions for panicinfo file in debugfs.
+ - Replace acpi_os_map_iomem() and acpi_os_unmap_iomem() calls with
+   acpi_os_map_memory() and acpi_os_unmap_memory() respectively to avert
+   sparse warnings as suggested by Alexey.
+
+Changes in v5:
+ - Change permissions of the "oem_error" file, being created in einj
+   module's debugfs directory, from "w" to "rw" since system firmware
+   in some cases might provide some information through OEM-defined
+   structure for tools to consume.
+ - Remove Reviewed-by: Alexey Kardashevskiy <aik@amd.com> from the
+   fourth patch since permissions of the oem_error file have changed.
+ - Add Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org> for
+   second and third patch.
+ - Rebase on top of tip master.
+
+Changes in v6:
+ - Minor formatting undertaken in the first and fourth patch per v5
+   feedback by Boris.
+ - Added check in the second patch to ensure that only owners can write
+   into the binary blob files. Mentioned the same in commit description.
+ - Modified commit description of the third patch per recommendations
+   provided by Tony.
+ - Add Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de> for first and
+   fourth patch.
+ - Add Reviewed-by: Tony Luck <tony.luck@intel.com> for second, third and
+   fourth patch.
 
 
+[NOTE:
 
-On 2023/11/17 00:53, Matthew Wilcox wrote:
-> On Thu, Nov 16, 2023 at 04:00:40PM +1030, Qu Wenruo wrote:
->> On 2023/11/16 15:35, Matthew Wilcox wrote:
->>> On Thu, Nov 16, 2023 at 02:11:00PM +1030, Qu Wenruo wrote:
->>>> E.g. if I allocated a folio with order 2, attached some private data =
-to
->>>> the folio, then call filemap_add_folio().
->>>>
->>>> Later some one called find_lock_page() and hit the 2nd page of that f=
-olio.
->>>>
->>>> I believe the regular IO is totally fine, but what would happen for t=
-he
->>>> page->private of that folio?
->>>> Would them all share the same value of the folio_attach_private()? Or
->>>> some different values?
->>>
->>> Well, there's no magic ...
->>>
->>> If you call find_lock_page(), you get back the precise page.  If you
->>> call page_folio() on that page, you get back the folio that you stored=
-.
->>> If you then dereference folio->private, you get the pointer that you
->>> passed to folio_attach_private().
->>>
->>> If you dereference page->private, *that is a bug*.  You might get
->>> NULL, you might get garbage.  Just like dereferencing page->index or
->>> page->mapping on tail pages.  page_private() will also do the wrong th=
-ing
->>> (we could fix that to embed a call to page_folio() ... it hasn't been
->>> necessary before now, but if it'll help convert btrfs, then let's do i=
-t).
->>
->> That would be great. The biggest problem I'm hitting so far is the page
->> cache for metadata.
->>
->> We're using __GFP_NOFAIL for the current per-page allocation, but IIRC
->> __GFP_NOFAIL is ignored for higher order (>2 ?) folio allocation.
->> And we may want that per-page allocation as the last resort effort
->> allocation anyway.
->>
->> Thus I'm checking if there is something we can do here.
->>
->> But I guess we can always go folio_private() instead as a workaround fo=
-r
->> now?
->
-> I don't understand enough about what you're doing to offer useful
-> advice.  Is this for bs>PS or is it arbitrary large folios for better
-> performance?  If the latter, you can always fall back to order-0 folios.
-> If the former, well, we need to adjust a few things anyway to handle
-> filesystems with a minimum order ...
->
-> In general, you should be using folio_private().  page->private and
-> page_private() will be removed eventually.
+ - The second patch already had the below tags for v5:
+    Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
+    Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Just another question.
+   Since the changes to the patch for v6 are very minimal i.e. addition of
+   a check to ensure that only owners write into the blobs, have retained
+   the tags for v6 as well.
 
-What about flags like PageDirty? Are they synced with folio?
+ - Similarly, the third patch already had the below tag for v5:
+    Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The declaration goes PF_HEAD for policy, thus for order 0 it makes no
-difference, but for higher order folios, we should switch to pure folio
-based operations other than mixing page and folios?
+   Since only the commit description was slightly changed for this patch
+   in v6, have retained the tag for v6 too.
 
-Thanks,
-Qu
->
-> The GFP_NOFAIL warning is:
->
->          WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
->
->
+   Having said so, if advised, will attempt to reacquire the tags.]
+
+
+Avadhut Naik (4):
+  ACPI: APEI: EINJ: Refactor available_error_type_show()
+  fs: debugfs: Add write functionality to debugfs blobs
+  platform/chrome: cros_ec_debugfs: Fix permissions for panicinfo
+  ACPI: APEI: EINJ: Add support for vendor defined error types
+
+ drivers/acpi/apei/einj.c                  | 71 +++++++++++++++--------
+ drivers/platform/chrome/cros_ec_debugfs.c |  2 +-
+ fs/debugfs/file.c                         | 28 +++++++--
+ 3 files changed, 72 insertions(+), 29 deletions(-)
+
+
+base-commit: a1cc6ec03d1e56b795607fce8442222b37d1dd99
+-- 
+2.34.1
+
 
