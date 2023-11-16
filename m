@@ -1,106 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-2957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAEC97EE2B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 15:24:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51F37EE2D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 15:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A017C1F26E3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 14:24:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D9B1C20A4D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 14:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A32F321AB;
-	Thu, 16 Nov 2023 14:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F58A33CDC;
+	Thu, 16 Nov 2023 14:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DYS5m2HL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ku/Uqn79"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B417C4;
-	Thu, 16 Nov 2023 06:23:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dgZYG76MUgPHX67tQhnkUTmVuk0UMwkw1IreH1RBeME=; b=DYS5m2HLHoY//Tuy5RMME89zll
-	oXwSQYYlbXkvfFm2iQ/PoV3DrK+KxyjHJp9qSez3cEJDNrFkpzzliOw11VIdnyVPAYna1DAN8ovoy
-	RVPskZbnE8TRDtt1ptf80glV4/0kDKIolfhVvU8q2ilfPg75Fu3l1Z/JmDkv06cod7YM1lcu3Fsa3
-	2X4DBQumiAoky4S8QPU4HW1/2reoxLoV6t9Ec1qmzA0sDlhpCV/tOfNBm/WDD96H4SyUQvXEuZPeB
-	jMkzrbdzBTGsqmojF8EgYM/lrlpnW83VXsT7Y9eeSYBAT371cxUOl6OwbWdonZatCw4vugfRr6gTT
-	JHI8nVSQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r3dHY-003SWQ-0b; Thu, 16 Nov 2023 14:23:48 +0000
-Date: Thu, 16 Nov 2023 14:23:47 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: Mixed page compact code and (higher order) folios for filemap
-Message-ID: <ZVYl8z5A1ucf/GYt@casper.infradead.org>
-References: <ec608bc8-e07b-49e6-a01e-487e691220f5@gmx.com>
- <ZVWjBVISMbP/UvGY@casper.infradead.org>
- <0e995d32-a984-4b65-b9e3-67fc62cc2596@gmx.com>
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25622182;
+	Thu, 16 Nov 2023 06:31:03 -0800 (PST)
+Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-5bdb0be3591so695061a12.2;
+        Thu, 16 Nov 2023 06:31:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700145062; x=1700749862; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZrBdEfRtcMzg4FNBtXal6+L9u7KqK/1Zsh9vyn/+eI=;
+        b=ku/Uqn79wWU/BsTQXyKyCk6za48oSUKBl+DV3BnTGs7QHlSROLklPxX8tx2yRE9dTk
+         Qg/90xC0rnz8Z/1vKkqJUghXCoKk49AWOoNAK31G1UmK1XfURFULk6OPmZocXX77Zqad
+         UIO7LEYDs564In5keFGUZrpl+SDWp0kKQDa/wkVOO8jDQON08p52i6GmkbQb+g4P+naG
+         fMnJbvUJCXbltpdAGg8t1yhuIWUH8VcnNZg9t4muS6NmUyKqj47LPCet8vBPXKYMaY+S
+         6LXPYtdR69xWZ/7HfqMWjkrJtxzK4a1Am5S3zrD/aYfb384mRHPsxCqAwwLCV7OzuVX7
+         KJCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700145062; x=1700749862;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yZrBdEfRtcMzg4FNBtXal6+L9u7KqK/1Zsh9vyn/+eI=;
+        b=X/0vrzwaUANlTOKsnrOpjmFpn+Pq4ZFYfhPdO5gfGqvyCSX157KkiuUx0gw2UA910P
+         KSKPn+4SOV8z/rLJD8+Cv2i5p8gQ+uJ7NahnJqV/Xoi1lDezLpMGxmT0FmKYWcrxqM5X
+         jVGdAjIM4HuHWZnIcj1H8B1R8xwOIwzeRyWlgA+GmdAdRyZ9CdEnCrnPj4vSuzO9XoPl
+         Hm0rVHRB+hbfkdYjeUemkVM2Hp0esgKChwTlW9EI9gsET4cDH/umweX9VPNfvqx9h3ou
+         ecBzq7jsfBkSvw038Edr0LmqZm8zbbWSrQI9omCF4EPTGgCSFKQ7KYgin51qEIgEarl0
+         4YWw==
+X-Gm-Message-State: AOJu0YzRzpmHvuhtJ9u4UdkWLDSj1A+8TOB8OSndPp9cc+e2TkkHkDIq
+	wtUWRq6nHdbwpeqkgXEbHl2V4f3OLDFNbC1rm9Q=
+X-Google-Smtp-Source: AGHT+IGk07vXIuijIon4E9WyjJOCuPdifH9cDKGcddyeaaqIcZqem5qgbH9FT3y1BQLddOMx3Qzd4v6kspbE8GYB6FE=
+X-Received: by 2002:a17:90b:4a0e:b0:280:46ac:be71 with SMTP id
+ kk14-20020a17090b4a0e00b0028046acbe71mr18416376pjb.15.1700145061930; Thu, 16
+ Nov 2023 06:31:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e995d32-a984-4b65-b9e3-67fc62cc2596@gmx.com>
+References: <20231016220835.GH800259@ZenIV> <CAHC9VhTzEiKixwpKuit0CBq3S5F-CX3bT1raWdK8UPuN3xS-Bw@mail.gmail.com>
+ <CAEjxPJ4FD4m7wEO+FcH+=LyH2inTZqxi1OT5FkUH485s+cqM2Q@mail.gmail.com>
+ <CAHC9VhQQ-xbV-dVvTm26LaQ8F+0iW+Z0SMXdZ9MeDBJ7z2x4xg@mail.gmail.com>
+ <CAEjxPJ5YiW62qQEfpEDfSrav_43J7SeYYbBqV8YPRdpqBizAQw@mail.gmail.com> <CAEjxPJ5rL9aYxZq8nbB-gBfmNUM_s6+h8Q7C2jYYyP5M9O6z3Q@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5rL9aYxZq8nbB-gBfmNUM_s6+h8Q7C2jYYyP5M9O6z3Q@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 16 Nov 2023 09:30:50 -0500
+Message-ID: <CAEjxPJ7-YtZSpiN63Gjc_zmnSh8yzH-iW_YkOnwbYNF0uNLPCA@mail.gmail.com>
+Subject: Re: [PATCH][RFC] selinuxfs: saner handling of policy reloads
+To: Paul Moore <paul@paul-moore.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 16, 2023 at 04:00:40PM +1030, Qu Wenruo wrote:
-> On 2023/11/16 15:35, Matthew Wilcox wrote:
-> > On Thu, Nov 16, 2023 at 02:11:00PM +1030, Qu Wenruo wrote:
-> > > E.g. if I allocated a folio with order 2, attached some private data to
-> > > the folio, then call filemap_add_folio().
-> > > 
-> > > Later some one called find_lock_page() and hit the 2nd page of that folio.
-> > > 
-> > > I believe the regular IO is totally fine, but what would happen for the
-> > > page->private of that folio?
-> > > Would them all share the same value of the folio_attach_private()? Or
-> > > some different values?
-> > 
-> > Well, there's no magic ...
-> > 
-> > If you call find_lock_page(), you get back the precise page.  If you
-> > call page_folio() on that page, you get back the folio that you stored.
-> > If you then dereference folio->private, you get the pointer that you
-> > passed to folio_attach_private().
-> > 
-> > If you dereference page->private, *that is a bug*.  You might get
-> > NULL, you might get garbage.  Just like dereferencing page->index or
-> > page->mapping on tail pages.  page_private() will also do the wrong thing
-> > (we could fix that to embed a call to page_folio() ... it hasn't been
-> > necessary before now, but if it'll help convert btrfs, then let's do it).
-> 
-> That would be great. The biggest problem I'm hitting so far is the page
-> cache for metadata.
-> 
-> We're using __GFP_NOFAIL for the current per-page allocation, but IIRC
-> __GFP_NOFAIL is ignored for higher order (>2 ?) folio allocation.
-> And we may want that per-page allocation as the last resort effort
-> allocation anyway.
-> 
-> Thus I'm checking if there is something we can do here.
-> 
-> But I guess we can always go folio_private() instead as a workaround for
-> now?
+On Thu, Nov 16, 2023 at 8:16=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Wed, Nov 15, 2023 at 8:35=E2=80=AFAM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > On Tue, Nov 14, 2023 at 5:24=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > >
+> > > On Tue, Nov 14, 2023 at 3:57=E2=80=AFPM Stephen Smalley
+> > > <stephen.smalley.work@gmail.com> wrote:
+> > > > On Mon, Nov 13, 2023 at 11:19=E2=80=AFAM Paul Moore <paul@paul-moor=
+e.com> wrote:
+> > > > > On Mon, Oct 16, 2023 at 6:08=E2=80=AFPM Al Viro <viro@zeniv.linux=
+.org.uk> wrote:
+> > > > > >
+> > > > > > [
+> > > > > > That thing sits in viro/vfs.git#work.selinuxfs; I have
+> > > > > > lock_rename()-related followups in another branch, so a pull wo=
+uld be more
+> > > > > > convenient for me than cherry-pick.  NOTE: testing and comments=
+ would
+> > > > > > be very welcome - as it is, the patch is pretty much untested b=
+eyond
+> > > > > > "it builds".
+> > > > > > ]
+> > > > >
+> > > > > Hi Al,
+> > > > >
+> > > > > I will admit to glossing over the comment above when I merged thi=
+s
+> > > > > into the selinux/dev branch last night.  As it's been a few weeks=
+, I'm
+> > > > > not sure if the comment above still applies, but if it does let m=
+e
+> > > > > know and I can yank/revert the patch in favor of a larger pull.  =
+Let
+> > > > > me know what you'd like to do.
+> > > >
+> > > > Seeing this during testsuite runs:
+> > > >
+> > > > [ 3550.206423] SELinux:  Converting 1152 SID table entries...
+> > > > [ 3550.666195] ------------[ cut here ]------------
+> > > > [ 3550.666201] WARNING: CPU: 3 PID: 12300 at fs/inode.c:330 drop_nl=
+ink+0x57/0x70
+> > >
+> > > How are you running the test suite Stephen?  I haven't hit this in my
+> > > automated testing and I did another test run manually to make sure I
+> > > wasn't missing it and everything ran clean.
+> > >
+> > > I'm running the latest selinux-testsuite on a current Rawhide system
+> > > with kernel 6.7.0-0.rc1.20231114git9bacdd89.17.1.secnext.fc40 (curren=
+t
+> > > Rawhide kernel + the LSM, SELinux, and audit dev trees).
+> >
+> > Technically this was with a kernel built from your dev branch plus
+> > Ondrej's selinux: introduce an initial SID for early boot processes
+> > patch, but I don't see how the latter could introduce such a bug. Will
+> > retry without it.
+>
+> Reproduced without Ondrej's patch; the trick seems to be accessing
+> selinuxfs files during the testsuite run (likely interleaving with
+> policy reloads).
+> while true; do cat /sys/fs/selinux/initial_contexts/kernel ; done &
+> while running the testsuite seems to trigger.
+> Could also try while true; do sudo load_policy; done & in parallel
+> with the above loop.
+> In any event, will retry with Al's updated branch with the fix he propose=
+d.
 
-I don't understand enough about what you're doing to offer useful
-advice.  Is this for bs>PS or is it arbitrary large folios for better
-performance?  If the latter, you can always fall back to order-0 folios.
-If the former, well, we need to adjust a few things anyway to handle
-filesystems with a minimum order ...
-
-In general, you should be using folio_private().  page->private and
-page_private() will be removed eventually.
-
-The GFP_NOFAIL warning is:
-
-        WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
-
+So far not showing up with Al's updated for-selinux branch. Difference
+between that and your dev branch for selinuxfs is what he showed
+earlier in the thread (pardon the whitespace damage):
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 36dc656a642a..0619a1cbbfbe 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -1960,6 +1960,7 @@ static struct dentry *sel_make_swapover_dir(struct su=
+per_b
+lock *sb,
+        inc_nlink(inode);
+        inode_lock(sb->s_root->d_inode);
+        d_add(dentry, inode);
++       inc_nlink(sb->s_root->d_inode);
+        inode_unlock(sb->s_root->d_inode);
+        return dentry;
+ }
 
