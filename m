@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-2948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAF37EDDD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 10:44:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA187EDDF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 10:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5545E1C20931
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 09:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05D4D1F23F00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 09:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880B52942C;
-	Thu, 16 Nov 2023 09:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D87328E38;
+	Thu, 16 Nov 2023 09:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A15187;
-	Thu, 16 Nov 2023 01:44:06 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SWFBc0RMwz9yTL7;
-	Thu, 16 Nov 2023 17:30:32 +0800 (CST)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 601B7196;
+	Thu, 16 Nov 2023 01:47:09 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SWFBf6RNHz9v7cG;
+	Thu, 16 Nov 2023 17:30:34 +0800 (CST)
 Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD35HQ65FVl8FXFAA--.37511S2;
-	Thu, 16 Nov 2023 10:43:37 +0100 (CET)
-Message-ID: <b0f6ece6579a5016243cca5c313d1a58cae6eff2.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 10/23] security: Introduce inode_post_setattr hook
+	by APP2 (Coremail) with SMTP id GxC2BwAHuGHy5FVlZM3CAA--.37379S2;
+	Thu, 16 Nov 2023 10:46:39 +0100 (CET)
+Message-ID: <5a7a675238c2e29d02ae23f0ec0e1569415eb89e.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 13/23] security: Introduce file_pre_free_security hook
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk, 
  brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
@@ -34,14 +34,13 @@ To: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
  stephen.smalley.work@gmail.com,  eparis@parisplace.org,
  casey@schaufler-ca.com, mic@digikod.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, Stefan
- Berger <stefanb@linux.ibm.com>
-Date: Thu, 16 Nov 2023 10:43:18 +0100
-In-Reply-To: <231ff26ec85f437261753faf03b384e6.paul@paul-moore.com>
-References: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
-	 <231ff26ec85f437261753faf03b384e6.paul@paul-moore.com>
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Thu, 16 Nov 2023 10:46:24 +0100
+In-Reply-To: <4f8c441e02222f063242adfbf4d733e1.paul@paul-moore.com>
+References: <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
+	 <4f8c441e02222f063242adfbf4d733e1.paul@paul-moore.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4-0ubuntu2 
@@ -51,23 +50,23 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD35HQ65FVl8FXFAA--.37511S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFy3tF1ftF4kGF13Cw4rXwb_yoW5Wry7pF
-	WrK3WYkwn5GFy7Wr93tF43uayS9ayrWr1UXrZIqr1jyFn8Kw13tF92kw1YkrW3Cr48G34F
-	qw129Fsxur98ArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:GxC2BwAHuGHy5FVlZM3CAA--.37379S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DtryfZw48JrWfKF13twb_yoW8Ar15pF
+	Z8t3W5KFWUtF17Grn3AFsF9a4rKrZ3Kr17ZFZagr10qrnxZr95KF42kFWY9r4DJrs7Ary0
+	ga12gry3WryDZrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5aFLwADsI
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0x
+	vE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj5KGKgABsL
 X-CFilter-Loop: Reflected
 
 On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
@@ -75,90 +74,53 @@ On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
 > >=20
 > > In preparation for moving IMA and EVM to the LSM infrastructure, introd=
 uce
-> > the inode_post_setattr hook.
+> > the file_pre_free_security hook.
 > >=20
-> > At inode_setattr hook, EVM verifies the file's existing HMAC value. At
-> > inode_post_setattr, EVM re-calculates the file's HMAC based on the modi=
-fied
-> > file attributes and other file metadata.
+> > IMA calculates at file close the new digest of the file content and wri=
+tes
+> > it to security.ima, so that appraisal at next file access succeeds.
 > >=20
-> > Other LSMs could similarly take some action after successful file attri=
-bute
-> > change.
+> > LSMs could also take some action before the last reference of a file is
+> > released.
 > >=20
 > > The new hook cannot return an error and cannot cause the operation to b=
 e
 > > reverted.
 > >=20
 > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > > ---
-> >  fs/attr.c                     |  1 +
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  7 +++++++
-> >  security/security.c           | 16 ++++++++++++++++
-> >  4 files changed, 26 insertions(+)
->=20
-> ...
->=20
-> > diff --git a/security/security.c b/security/security.c
-> > index 7935d11d58b5..ce3bc7642e18 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2222,6 +2222,22 @@ int security_inode_setattr(struct mnt_idmap *idm=
-ap,
-> >  }
-> >  EXPORT_SYMBOL_GPL(security_inode_setattr);
+> >  fs/file_table.c               |  1 +
+> >  include/linux/lsm_hook_defs.h |  1 +
+> >  include/linux/security.h      |  4 ++++
+> >  security/security.c           | 11 +++++++++++
+> >  4 files changed, 17 insertions(+)
+> >=20
+> > diff --git a/fs/file_table.c b/fs/file_table.c
+> > index de4a2915bfd4..64ed74555e64 100644
+> > --- a/fs/file_table.c
+> > +++ b/fs/file_table.c
+> > @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+> >  	eventpoll_release(file);
+> >  	locks_remove_file(file);
 > > =20
-> > +/**
-> > + * security_inode_post_setattr() - Update the inode after a setattr op=
-eration
-> > + * @idmap: idmap of the mount
-> > + * @dentry: file
-> > + * @ia_valid: file attributes set
-> > + *
-> > + * Update inode security field after successful setting file attribute=
-s.
-> > + */
-> > +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentr=
-y *dentry,
-> > +				 int ia_valid)
-> > +{
-> > +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > +		return;
+> > +	security_file_pre_free(file);
 >=20
-> I may be missing it, but I don't see the S_PRIVATE flag check in the
-> existing IMA or EVM hooks so I'm curious as to why it is added here?
-> Please don't misunderstand me, I think it makes sense to return early
-> on private dentrys/inodes, but why aren't we doing that now?
+> I worry that security_file_pre_free() is a misleading name as "free"
+> tends to imply memory management tasks, which isn't the main focus of
+> this hook.  What do you think of security_file_release() or
+> security_file_put() instead?
 
-My first motivation was that it is in the pre hooks, so it should be in
-the post hook as well.
-
-Thinking more about it, suppose that the post don't have the check,
-private inodes would gain an HMAC without checking the validity of the
-current HMAC first (done in the pre hooks), which would be even worse.
-
-So, my idea about this is that at least we are consistent.
-
-If IMA and EVM should look at private inodes is a different question,
-which would require a discussion.
+security_file_release() would be fine for me.
 
 Thanks
 
 Roberto
 
-> > +	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
-> > +}
-> > +
-> >  /**
-> >   * security_inode_getattr() - Check if getting file attributes is allo=
-wed
-> >   * @path: file
-> > --=20
-> > 2.34.1
+> >  	ima_file_free(file);
+> >  	if (unlikely(file->f_flags & FASYNC)) {
+> >  		if (file->f_op->fasync)
 >=20
 > --
 > paul-moore.com
