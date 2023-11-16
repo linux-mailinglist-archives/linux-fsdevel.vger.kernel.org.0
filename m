@@ -1,99 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-2930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7767EDA98
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 05:08:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1AD7EDACE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 05:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDFFB1C208E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 04:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4C2280CD0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 04:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD4BC2D4;
-	Thu, 16 Nov 2023 04:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D8FC146;
+	Thu, 16 Nov 2023 04:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cUShdtqX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 493 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Nov 2023 20:08:23 PST
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8511A4;
-	Wed, 15 Nov 2023 20:08:23 -0800 (PST)
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 1BF32160B3E;
-	Thu, 16 Nov 2023 04:00:08 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 028B46000A;
-	Thu, 16 Nov 2023 04:00:00 +0000 (UTC)
-Message-ID: <2d5db599144596bdc12533a366d5d2d8f375014e.camel@perches.com>
-Subject: Re: [PATCH v3 01/10] iov_iter: Fix some checkpatch complaints in
- kunit tests
-From: Joe Perches <joe@perches.com>
-To: David Howells <dhowells@redhat.com>, Christian Brauner
-	 <christian@brauner.io>
-Cc: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>, Linus
- Torvalds <torvalds@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
- David Laight <David.Laight@ACULAB.COM>, Matthew Wilcox
- <willy@infradead.org>, Brendan Higgins <brendanhiggins@google.com>, David
- Gow <davidgow@google.com>,  linux-fsdevel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-mm@kvack.org,  netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org,  kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>, Christian Brauner <brauner@kernel.org>, David
- Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>
-Date: Wed, 15 Nov 2023 20:00:00 -0800
-In-Reply-To: <20231115154946.3933808-2-dhowells@redhat.com>
-References: <20231115154946.3933808-1-dhowells@redhat.com>
-	 <20231115154946.3933808-2-dhowells@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5461D1A1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 20:33:47 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-778999c5ecfso20332485a.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Nov 2023 20:33:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1700109226; x=1700714026; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HOfDZdWy3FlMMU3byFQ5fyH9fZQUeVFWx7pZHVOBZ9I=;
+        b=cUShdtqX6NpRR3sTAX0J50EPelbnHmQNFwtWvwzNOaB5PsWSbAaumzdhhDAezZ/KVs
+         4uAi6bZhs7kWxiaREbmBkx5XOlv0YLLmHnOuaHpkfianch+ql9QBTSLz8ULbt4MoRQhP
+         HS49Y2z6QZAsdUpvur/XvuVba1Prftyd00XHMiGESmfqTkMiO89y110AJ5j6llyg0rd4
+         YD7CtJVPc4kiEp6m1LVvXvZuFGfh6vW8fiOQfNuQXj/6O7yuLxQdstH2aL6JGF64QybS
+         i3RTojbP3mpDQJCYFP1Xh4eVjB/pRvLS5ma7lWrP4rC9H6MczSvb/71xmqO9qtnNDdKN
+         yiyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700109226; x=1700714026;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HOfDZdWy3FlMMU3byFQ5fyH9fZQUeVFWx7pZHVOBZ9I=;
+        b=N1HE0US6Oa6uWgaNuwR3Xd8AIAap+q7qJhyXmJ8AjLzykXAPr+Q9fFN08Tmk2Wl0Rm
+         QheU1wxn5CNvlFweFmF1d5LnlOJNqjxhiVxlmm4PjPUiZqqhfEifIOYezG7IXfCt6QS9
+         av9ReYylhB+zOMTodLwBn+4y51D4GM9D9+TIMzBPLvvG9jR6ehy+mTZuFdZVgxpZ/szx
+         KsKJ1bmWh1kS9f1wGz4K7UBju+jXN6HD4Z2B9qZb3bY2qpSJO5PjHdAC5YpPE3ihG8Xc
+         1NEn4AzEg6kf5qSeXVjkI+G8J2NjgwxBrmsylTViXUsBiFXr9+QgRTZqFMO3FbdCZy9d
+         L6OA==
+X-Gm-Message-State: AOJu0YzIsmTdOp06qrVlCJMpcm9590M7M7KBoZETYu5Fwc5ti0XYQxs4
+	Do1M2jr0FzRh58Mee8YZ29F8
+X-Google-Smtp-Source: AGHT+IER1laoQSGviRJQuTFe6S8/gip4gdebLlsXd5eO0S7LgScOwZM8Bh3pBl2l/YUS5yGMypAquA==
+X-Received: by 2002:a05:620a:201c:b0:778:920a:7a70 with SMTP id c28-20020a05620a201c00b00778920a7a70mr8484989qka.66.1700109226313;
+        Wed, 15 Nov 2023 20:33:46 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id qc3-20020a05620a654300b0076d25b11b62sm4033067qkn.38.2023.11.15.20.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Nov 2023 20:33:45 -0800 (PST)
+Date: Wed, 15 Nov 2023 23:33:45 -0500
+Message-ID: <231ff26ec85f437261753faf03b384e6.paul@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v5 10/23] security: Introduce inode_post_setattr hook
+References: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Stat-Signature: 351xofsuni5kanig7iiz4sjma1jzxkft
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 028B46000A
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18a7JS4BL8h7HLIdDXMm2YCe3xiJn/hEoo=
-X-HE-Tag: 1700107200-315216
-X-HE-Meta: U2FsdGVkX18LEi6bPNImGq+TG8DpnNDiieNtyzLyawftOGFa1xnL3e2LfgJJyTLmLwogrMHbv17rz+M/8vJb8yVNQ1eCzPPOqKmiLWnXkWH0Z4A9nMD1IG6Np+PP3yRiu6HzLDt5vFNdyg6DurWOPJlIDfPWoBPm7Ey6IGQrJB9nzzek/4SHhy/NFXArWdJKtMpL5kSDR4003ihhuhR+s+TvBzrKMZcNgv7yMLgzT5KBcOkBLwkUfhN4pz6HD8ADTd57MGw8Q0+siSvVmwP7pkzt/Zvq1GRUig7ERppizdBVNRIz92TiEZDE+AHJ9Ti8
 
-On Wed, 2023-11-15 at 15:49 +0000, David Howells wrote:
-> Fix some checkpatch complaints in the new iov_iter kunit tests:
->=20
->  (1) Some lines had eight spaces instead of a tab at the start.
->=20
->  (2) Checkpatch doesn't like (void*)(unsigned long)0xnnnnnULL, so switch =
-to
->      using POISON_POINTER_DELTA plus an offset instead.
+On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> 
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the inode_post_setattr hook.
+> 
+> At inode_setattr hook, EVM verifies the file's existing HMAC value. At
+> inode_post_setattr, EVM re-calculates the file's HMAC based on the modified
+> file attributes and other file metadata.
+> 
+> Other LSMs could similarly take some action after successful file attribute
+> change.
+> 
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  fs/attr.c                     |  1 +
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 26 insertions(+)
 
-That's because checkpatch is fundamentally stupid and
-that's a false positive.
+...
 
-> diff --git a/lib/kunit_iov_iter.c b/lib/kunit_iov_iter.c
-[]
-> @@ -548,7 +548,7 @@ static void __init iov_kunit_extract_pages_kvec(struc=
-t kunit *test)
->  		size_t offset0 =3D LONG_MAX;
-> =20
->  		for (i =3D 0; i < ARRAY_SIZE(pagelist); i++)
-> -			pagelist[i] =3D (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
-> +			pagelist[i] =3D (void *)POISON_POINTER_DELTA + 0x5a;
+> diff --git a/security/security.c b/security/security.c
+> index 7935d11d58b5..ce3bc7642e18 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2222,6 +2222,22 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+>  }
+>  EXPORT_SYMBOL_GPL(security_inode_setattr);
+>  
+> +/**
+> + * security_inode_post_setattr() - Update the inode after a setattr operation
+> + * @idmap: idmap of the mount
+> + * @dentry: file
+> + * @ia_valid: file attributes set
+> + *
+> + * Update inode security field after successful setting file attributes.
+> + */
+> +void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+> +				 int ia_valid)
+> +{
+> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+> +		return;
 
-I think the original is easier to understand
-or would best be replaced by a single #define
-without the addition.
+I may be missing it, but I don't see the S_PRIVATE flag check in the
+existing IMA or EVM hooks so I'm curious as to why it is added here?
+Please don't misunderstand me, I think it makes sense to return early
+on private dentrys/inodes, but why aren't we doing that now?
 
-> @@ -626,7 +626,7 @@ static void __init iov_kunit_extract_pages_bvec(struc=
-t kunit *test)
->  		size_t offset0 =3D LONG_MAX;
-> =20
->  		for (i =3D 0; i < ARRAY_SIZE(pagelist); i++)
-> -			pagelist[i] =3D (void *)(unsigned long)0xaa55aa55aa55aa55ULL;
-> +			pagelist[i] =3D (void *)POISON_POINTER_DELTA + 0x5a;
+> +	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
+> +}
+> +
+>  /**
+>   * security_inode_getattr() - Check if getting file attributes is allowed
+>   * @path: file
+> -- 
+> 2.34.1
 
-etc...
-
+--
+paul-moore.com
 
