@@ -1,171 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-2979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0665F7EE6FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 19:46:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B147EE810
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C761C20A5F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 18:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BFF328106A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 20:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9906D30652;
-	Thu, 16 Nov 2023 18:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B8C328A2;
+	Thu, 16 Nov 2023 20:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Zw1VCBY1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ULLBsbmj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02919D4B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:46:17 -0800 (PST)
-Received: by mail-oi1-x231.google.com with SMTP id 5614622812f47-3b2ea7cc821so671045b6e.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 10:46:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700160377; x=1700765177; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H+G3Thi9QyaCj6G+9c//7y8tpV11xzrqy7tArsUAiXA=;
-        b=Zw1VCBY1r+zGu9M6JFNK6NZm9cwJTPF306Ly0oXrhXW8WotYpjix2J7T/hfgR5Ogt5
-         V9ofn7co3oYRzpIqPTSfQouAdMhKSCGwa8uR/BIQtNCvlbNQdZtqHDOy6erM839pHSfI
-         7NumeX0z1vC8zMSIWr00Jgf06SgzWx4g3vuWhdqhRZQ//tQCHIWuJKmvwQCsOe7LYE3G
-         yWYGekCQJDMUf8b0hkAPiHOH8h+ue6197JJqnagxlZpx2pzv09hx2tDW7agQV5R8olAg
-         viAVvXuuyqmbbG2rY1NDaTlW7P1lqtUo+mmWVKMQNitNFBj2JHyd3A4mtAYgkSXbs79E
-         8d/g==
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706E81A7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:04:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700165050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+4XQ4i8Y5DNwJiAj9ly/ReOTlxs9KYLdEh1NBejN2C4=;
+	b=ULLBsbmjFpAKMFDy1pMo30YfvOIAHW7SFTM+xEGk+YUDy8qhjbOpjyGmTBUlErICP2TxHD
+	QPazj7hRecNE1see8k1TP6+n+LOyhfQRSXF/N2YBlg6A7tqe8FigD9BdsxdipWDpzuoaYw
+	VzGZ5dEOmyshE4KqEM78lRHx4kJDcIs=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-302-VT-Vt-3INyqxZjl4VSFwJA-1; Thu, 16 Nov 2023 15:04:08 -0500
+X-MC-Unique: VT-Vt-3INyqxZjl4VSFwJA-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1ef39189888so290145fac.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:04:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700160377; x=1700765177;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H+G3Thi9QyaCj6G+9c//7y8tpV11xzrqy7tArsUAiXA=;
-        b=ZDQx4tCEm/TqLn5BLB6xOLjptYjsJXkds7Z5j5KFaXjnaBiBpEgAtLss76fLyvHxD8
-         kBjXgwMgoQ5a10wqSoWgECcAmquWgIC/eqJZ7NS8LTzDcnZsH4xkkJTXDTjyqq4i/xQb
-         3Tc7frqkXA3l6eK9LYPKINL3V+Jsg5ejB171REC/YBxdrNL3rI32+tFKvUiQu7BBPh2S
-         akHcUF5TbaX961iZZsbE57kCiYOVFOqQHaTH3xUj2B27llMjkjQKQn1721Mop5MeUpjW
-         gyyaWrG9lugdC3MrAMEEL7ZqhlVhB9RSQ4Fvan+UQLsH7W/13E7SMuy7zrpq0uHaLwps
-         kPEQ==
-X-Gm-Message-State: AOJu0YwGVovSEY/0vbO+jHTlxzi4/7sjT2bc4dde2rQ+VT+PDD8l6n23
-	SeaN4FvxekmbiayWyv4hljQyn/c5ntwR7aN81sQt
-X-Google-Smtp-Source: AGHT+IGAfgdZtmxubZhWLgb4REHHB7a+iMS46HjHd0YyX0scqg/dVHmKFiBP9iP4hjqFVyXuUq7chZhRosvMyhNi/Qo=
-X-Received: by 2002:a05:6358:52ce:b0:16b:c486:c315 with SMTP id
- z14-20020a05635852ce00b0016bc486c315mr12386060rwz.3.1700160377054; Thu, 16
- Nov 2023 10:46:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700165048; x=1700769848;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+4XQ4i8Y5DNwJiAj9ly/ReOTlxs9KYLdEh1NBejN2C4=;
+        b=wQ/wQx9jYhqiz0IrzdGM2Ybmddtg/4k3Wnsj6eztcBMv/+WQQPgGGBgb1K+uErUNg3
+         Si0Ps9vf88gaPkI6zJjqcNUQd1NmcdOr26Cf5Gusc3GLwrAWCJOtkBuYJ/cEw1FTGDMj
+         VXfAUyCx6mST2PxDp/DczsuZ6rP9Ft21eOUcspeEtHF5oOJcSwxFbKQUSUtBMEwFR+5E
+         ehDsYICUf5xefZAhwQLbTD2HhdeEwjzX6+WICLPGyMLa4WfY4MqpNhSg5Uwe5gCwA0Y8
+         myB/kEZdDNigrrmHSxG0MbYMptlYV1U0fiwty69Wd4bL9h+73xmzrTjYlbNxCvSoqjtO
+         yfLg==
+X-Gm-Message-State: AOJu0YxcDoQEV+UD2qH+lwZ36Ys2AMgNC/zlsrtszl0KziJOH47hERd6
+	3xi8IkTAwUwLR1C7y5CLVJDRSOquW5+HRojs5TQ9oVWweaBXArV56JzzOVRJhOhqt+SnvK8yj2x
+	Koy0sEVme6IFjgy0KZOOq6nhRuw==
+X-Received: by 2002:a05:6870:2301:b0:1ea:7463:1b8f with SMTP id w1-20020a056870230100b001ea74631b8fmr10381848oao.0.1700165048056;
+        Thu, 16 Nov 2023 12:04:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHDPS7+wKj9qqDek4+rigv0rYOE1IH7oReMKMjyyoPNCSs/XVBtexRivZXLqhWKUZiqpeXWhA==
+X-Received: by 2002:a05:6870:2301:b0:1ea:7463:1b8f with SMTP id w1-20020a056870230100b001ea74631b8fmr10381812oao.0.1700165047537;
+        Thu, 16 Nov 2023 12:04:07 -0800 (PST)
+Received: from x1n (cpe688f2e2cb7c3-cm688f2e2cb7c0.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id j17-20020ac86651000000b0041b3deef647sm33619qtp.8.2023.11.16.12.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Nov 2023 12:04:06 -0800 (PST)
+Date: Thu, 16 Nov 2023 15:04:04 -0500
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	syzbot <syzbot+7ca4b2719dc742b8d0a4@syzkaller.appspotmail.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+	wangkefeng.wang@huawei.com
+Subject: Re: [syzbot] [mm?] WARNING in unmap_page_range (2)
+Message-ID: <ZVZ1tLoOpRJu5n3g@x1n>
+References: <000000000000b0e576060a30ee3b@google.com>
+ <20231115140006.cc7de06f89b1f885f4583af0@linux-foundation.org>
+ <a8349273-c512-4d23-bf85-5812d2a007d1@redhat.com>
+ <ZVZYvleasZddv-TD@x1n>
+ <6308590a-d958-4ecc-a478-ba088cf7984d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231107134012.682009-11-roberto.sassu@huaweicloud.com>
- <231ff26ec85f437261753faf03b384e6.paul@paul-moore.com> <b0f6ece6579a5016243cca5c313d1a58cae6eff2.camel@huaweicloud.com>
-In-Reply-To: <b0f6ece6579a5016243cca5c313d1a58cae6eff2.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 16 Nov 2023 13:46:06 -0500
-Message-ID: <CAHC9VhSkomRmz9OQGaQ=4Ni=B+UEO=SLUtDtv7X_kbTSam=h=w@mail.gmail.com>
-Subject: Re: [PATCH v5 10/23] security: Introduce inode_post_setattr hook
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, 
-	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
-	mic@digikod.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Stefan Berger <stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6308590a-d958-4ecc-a478-ba088cf7984d@redhat.com>
 
-On Thu, Nov 16, 2023 at 4:44=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
-> > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > In preparation for moving IMA and EVM to the LSM infrastructure, intr=
-oduce
-> > > the inode_post_setattr hook.
-> > >
-> > > At inode_setattr hook, EVM verifies the file's existing HMAC value. A=
-t
-> > > inode_post_setattr, EVM re-calculates the file's HMAC based on the mo=
-dified
-> > > file attributes and other file metadata.
-> > >
-> > > Other LSMs could similarly take some action after successful file att=
-ribute
-> > > change.
-> > >
-> > > The new hook cannot return an error and cannot cause the operation to=
- be
-> > > reverted.
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > ---
-> > >  fs/attr.c                     |  1 +
-> > >  include/linux/lsm_hook_defs.h |  2 ++
-> > >  include/linux/security.h      |  7 +++++++
-> > >  security/security.c           | 16 ++++++++++++++++
-> > >  4 files changed, 26 insertions(+)
-> >
-> > ...
-> >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 7935d11d58b5..ce3bc7642e18 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -2222,6 +2222,22 @@ int security_inode_setattr(struct mnt_idmap *i=
-dmap,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(security_inode_setattr);
-> > >
-> > > +/**
-> > > + * security_inode_post_setattr() - Update the inode after a setattr =
-operation
-> > > + * @idmap: idmap of the mount
-> > > + * @dentry: file
-> > > + * @ia_valid: file attributes set
-> > > + *
-> > > + * Update inode security field after successful setting file attribu=
-tes.
-> > > + */
-> > > +void security_inode_post_setattr(struct mnt_idmap *idmap, struct den=
-try *dentry,
-> > > +                            int ia_valid)
-> > > +{
-> > > +   if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > > +           return;
-> >
-> > I may be missing it, but I don't see the S_PRIVATE flag check in the
-> > existing IMA or EVM hooks so I'm curious as to why it is added here?
-> > Please don't misunderstand me, I think it makes sense to return early
-> > on private dentrys/inodes, but why aren't we doing that now?
->
-> My first motivation was that it is in the pre hooks, so it should be in
-> the post hook as well.
->
-> Thinking more about it, suppose that the post don't have the check,
-> private inodes would gain an HMAC without checking the validity of the
-> current HMAC first (done in the pre hooks), which would be even worse.
->
-> So, my idea about this is that at least we are consistent.
->
-> If IMA and EVM should look at private inodes is a different question,
-> which would require a discussion.
+On Thu, Nov 16, 2023 at 07:13:44PM +0100, David Hildenbrand wrote:
+> > It should be fine, as:
+> > 
+> > static void make_uffd_wp_pte(struct vm_area_struct *vma,
+> > 			     unsigned long addr, pte_t *pte)
+> > {
+> > 	pte_t ptent = ptep_get(pte);
+> > 
+> > #ifndef CONFIG_USERFAULTFD_
+> > 
+> > 	if (pte_present(ptent)) {
+> > 		pte_t old_pte;
+> > 
+> > 		old_pte = ptep_modify_prot_start(vma, addr, pte);
+> > 		ptent = pte_mkuffd_wp(ptent);
+> > 		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
+> > 	} else if (is_swap_pte(ptent)) {
+> > 		ptent = pte_swp_mkuffd_wp(ptent);
+> > 		set_pte_at(vma->vm_mm, addr, pte, ptent);
+> > 	} else {                                      <----------------- this must be pte_none() already
+> > 		set_pte_at(vma->vm_mm, addr, pte,
+> > 			   make_pte_marker(PTE_MARKER_UFFD_WP));
+> > 	}
+> > }
+> 
+> Indeed! Is pte_swp_mkuffd_wp() reasonable for pte markers? I rememebr that
+> we don't support multiple markers yet, so it might be good enough.
 
-As I said above, I can understand why having the IS_PRIVATE() macro
-check might be a good idea, I am just concerned that the current
-IMA/EVM hooks don't check for S_PRIVATE and thus moving to this new
-LSM hook would potentially be a change in behavior (like I said, I
-could be missing a subtle detail).  I'd just like a quick confirmation
-from Mimi that either there is no difference because of X, or she is
-aware of the difference and is okay with it.  It's very possible she
-is fine with it, she did provide her 'Reviewed-by', but I worry this
-is the sort of thing that might have gone unnoticed during review.
+Not really that reasonable, but nothing harmful either that I see so far;
+the current code handles any pte marker without caring any of those hint
+bits.
 
---=20
-paul-moore.com
+I can also reproduce this syzbot error easily with !UFFD config on x86.
+Let me send the patchset to fix current known issues first.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
