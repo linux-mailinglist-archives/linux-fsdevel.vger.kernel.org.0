@@ -1,149 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-2951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC447EDE03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 10:53:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FA37EDE32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 11:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5E2280FB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 09:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3921F23E62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 10:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AB72942B;
-	Thu, 16 Nov 2023 09:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E39629437;
+	Thu, 16 Nov 2023 10:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f206.google.com (mail-pg1-f206.google.com [209.85.215.206])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54AEFC5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 01:53:26 -0800 (PST)
-Received: by mail-pg1-f206.google.com with SMTP id 41be03b00d2f7-5c16f262317so635746a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 01:53:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700128406; x=1700733206;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TGFeETijn5gpNnYM4nN6xlKFUYFfT5fG57XpqChy2YI=;
-        b=dfBOKSpQwKKmC7qFyGseX+LYTqkPH1ZXvNW7Rr7J/lVlPikDonPe5CnYULHm4fGUsG
-         B2oaK5uz57qN47R397y+sBwXVZoFKhjGXvrd0gs3m1JGOgqSfkWsGBM2MnwShJLaK4WR
-         sq8fkld6VbPLb7+skmvDXK0arrMQmRQf9ilg93wOPPkjfmMBeQ1LOEpyBLx5K95lFghf
-         CBxva9Z/FzKRpZZ5DtHzL/+TDuG0nKsB5+n9pQxWsQU7QF9/FPEEMCO6zDXEatf8s/Hp
-         OdwKFy6u6DptSp2bBj77utYqbVK0pdMZGQuvJS2lH6PYLAEyl191rCsPw5WBloFaIw3s
-         EDbQ==
-X-Gm-Message-State: AOJu0YyZ7VZS+ToJs3DiP/EKrAyRvQ8fRdBemOC1jN1RjeBCxefabAO5
-	UeKj5ukmvLNHdFcCuQ59G4OfLF4H7xb17jWUTtE/nOJYtLue
-X-Google-Smtp-Source: AGHT+IFogAZ4bvp2CXiUK3PU66MvCM4xJEc50QAjeA1rM2PjVZbIdOiEfChDQOJEzK8Koa8dun6hKvKBJEXoxbjN5QrEwSfcVe6q
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC2519E;
+	Thu, 16 Nov 2023 02:08:22 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SWFkc5w27z9ybvb;
+	Thu, 16 Nov 2023 17:54:48 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDHtXXq6VVl8pvFAA--.44935S2;
+	Thu, 16 Nov 2023 11:07:53 +0100 (CET)
+Message-ID: <49a7fd0a1f89188fa92f258e88c50eaeca0f4ac9.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 22/23] integrity: Move integrity functions to the LSM
+  infrastructure
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ jmorris@namei.org,  serge@hallyn.com, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com,  dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com,  eparis@parisplace.org,
+ casey@schaufler-ca.com, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Thu, 16 Nov 2023 11:07:34 +0100
+In-Reply-To: <f529266a02533411e72d706b908924e8.paul@paul-moore.com>
+References: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
+	 <f529266a02533411e72d706b908924e8.paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a63:1017:0:b0:589:5235:b3cb with SMTP id
- f23-20020a631017000000b005895235b3cbmr204427pgl.3.1700128405845; Thu, 16 Nov
- 2023 01:53:25 -0800 (PST)
-Date: Thu, 16 Nov 2023 01:53:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b3fe4d060a41fdeb@google.com>
-Subject: [syzbot] [udf?] WARNING in udf_prealloc_blocks (2)
-From: syzbot <syzbot+cc2b732891efbf755b78@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-CM-TRANSID:LxC2BwDHtXXq6VVl8pvFAA--.44935S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr43Kr4fGFyxJrW8Jw4ruFg_yoWrZF1xpF
+	W3Ka43Grn5ZFy2kF1vvF45ua1Sg392gFyUWr13Kw10yas8Zr10qF18AryruF98CrWrtw1r
+	tF4a9r4UC3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgADBF1jj5KGhAAAsk
+X-CFilter-Loop: Reflected
 
-Hello,
+On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
+> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> >=20
+> > Remove hardcoded calls to integrity functions from the LSM infrastructu=
+re
+> > and, instead, register them in integrity_lsm_init() with the IMA or EVM
+> > LSM ID (the first non-NULL returned by ima_get_lsm_id() and
+> > evm_get_lsm_id()).
+> >=20
+> > Also move the global declaration of integrity_inode_get() to
+> > security/integrity/integrity.h, so that the function can be still calle=
+d by
+> > IMA.
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > ---
+> >  include/linux/integrity.h      | 26 --------------------------
+> >  security/integrity/iint.c      | 30 +++++++++++++++++++++++++++++-
+> >  security/integrity/integrity.h |  7 +++++++
+> >  security/security.c            |  9 +--------
+> >  4 files changed, 37 insertions(+), 35 deletions(-)
+>=20
+> ...
+>=20
+> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> > index 0b0ac71142e8..882fde2a2607 100644
+> > --- a/security/integrity/iint.c
+> > +++ b/security/integrity/iint.c
+> > @@ -171,7 +171,7 @@ struct integrity_iint_cache *integrity_inode_get(st=
+ruct inode *inode)
+> >   *
+> >   * Free the integrity information(iint) associated with an inode.
+> >   */
+> > -void integrity_inode_free(struct inode *inode)
+> > +static void integrity_inode_free(struct inode *inode)
+> >  {
+> >  	struct integrity_iint_cache *iint;
+> > =20
+> > @@ -193,11 +193,39 @@ static void iint_init_once(void *foo)
+> >  	memset(iint, 0, sizeof(*iint));
+> >  }
+> > =20
+> > +static struct security_hook_list integrity_hooks[] __ro_after_init =3D=
+ {
+> > +	LSM_HOOK_INIT(inode_free_security, integrity_inode_free),
+> > +#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+> > +	LSM_HOOK_INIT(kernel_module_request, integrity_kernel_module_request)=
+,
+> > +#endif
+> > +};
+> > +
+> > +/*
+> > + * Perform the initialization of the 'integrity', 'ima' and 'evm' LSMs=
+ to
+> > + * ensure that the management of integrity metadata is working at the =
+time
+> > + * IMA and EVM hooks are registered to the LSM infrastructure, and to =
+keep
+> > + * the original ordering of IMA and EVM functions as when they were ha=
+rdcoded.
+> > + */
+> >  static int __init integrity_lsm_init(void)
+> >  {
+> > +	const struct lsm_id *lsmid;
+> > +
+> >  	iint_cache =3D
+> >  	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cach=
+e),
+> >  			      0, SLAB_PANIC, iint_init_once);
+> > +	/*
+> > +	 * Obtain either the IMA or EVM LSM ID to register integrity-specific
+> > +	 * hooks under that LSM, since there is no LSM ID assigned to the
+> > +	 * 'integrity' LSM.
+> > +	 */
+> > +	lsmid =3D ima_get_lsm_id();
+> > +	if (!lsmid)
+> > +		lsmid =3D evm_get_lsm_id();
+> > +	/* No point in continuing, since both IMA and EVM are disabled. */
+> > +	if (!lsmid)
+> > +		return 0;
+> > +
+> > +	security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), lsmi=
+d);
+>=20
+> Ooof.  I understand, or at least I think I understand, why the above
+> hack is needed, but I really don't like the idea of @integrity_hooks
+> jumping between IMA and EVM depending on how the kernel is configured.
+>=20
+> Just to make sure I'm understanding things correctly, the "integrity"
+> LSM exists to ensure the proper hook ordering between IMA/EVM, shared
+> metadata management for IMA/EVM, and a little bit of a hack to solve
+> some kernel module loading issues with signatures.  Is that correct?
+>=20
+> I see that patch 23/23 makes some nice improvements to the metadata
+> management, moving them into LSM security blobs, but it appears that
+> they are still shared, and thus the requirement is still there for
+> an "integrity" LSM to manage the shared blobs.
 
-syzbot found the following issue on:
+Yes, all is correct.
 
-HEAD commit:    1b907d050735 Merge tag '6.7-rc-smb3-client-fixes-part2' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10d7f898e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e7ba51eecd9cd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=cc2b732891efbf755b78
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> I'd like to hear everyone's honest opinion on this next question: do
+> we have any hope of separating IMA and EVM so they are independent
+> (ignore the ordering issues for a moment), or are we always going to
+> need to have the "integrity" LSM to manage shared resources, hooks,
+> etc.?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I think it should not be technically difficult to do it. But, it would
+be very important to understand all the implications of doing those
+changes.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/567b9cb02431/disk-1b907d05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7d18e697c356/vmlinux-1b907d05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b0d7c3147ec4/bzImage-1b907d05.xz
+Sorry, for now I don't see an immediate need to do that, other than
+solving this LSM naming issue. I tried to find the best solution I
+could.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cc2b732891efbf755b78@syzkaller.appspotmail.com
+Thanks
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 26000 at fs/udf/udfdecl.h:123 udf_add_free_space fs/udf/balloc.c:121 [inline]
-WARNING: CPU: 1 PID: 26000 at fs/udf/udfdecl.h:123 udf_table_prealloc_blocks fs/udf/balloc.c:572 [inline]
-WARNING: CPU: 1 PID: 26000 at fs/udf/udfdecl.h:123 udf_prealloc_blocks+0xf13/0x1310 fs/udf/balloc.c:705
-Modules linked in:
-CPU: 1 PID: 26000 Comm: syz-executor.1 Not tainted 6.6.0-syzkaller-16176-g1b907d050735 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
-RIP: 0010:udf_updated_lvid fs/udf/udfdecl.h:121 [inline]
-RIP: 0010:udf_add_free_space fs/udf/balloc.c:121 [inline]
-RIP: 0010:udf_table_prealloc_blocks fs/udf/balloc.c:572 [inline]
-RIP: 0010:udf_prealloc_blocks+0xf13/0x1310 fs/udf/balloc.c:705
-Code: 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 43 a2 84 fe e9 4b f7 ff ff e8 39 a2 84 fe 0f 0b e9 67 f8 ff ff e8 2d a2 84 fe <0f> 0b e9 c9 fe ff ff 89 d9 80 e1 07 fe c1 38 c1 0f 8c 08 f2 ff ff
-RSP: 0018:ffffc90015907180 EFLAGS: 00010287
-RAX: ffffffff830a2023 RBX: 0000000030303d6b RCX: 0000000000040000
-RDX: ffffc9000b843000 RSI: 00000000000376bd RDI: 00000000000376be
-RBP: ffffc900159072f0 R08: ffffffff830a1ee6 R09: 1ffffffff1e01a45
-R10: dffffc0000000000 R11: fffffbfff1e01a46 R12: ffff88801fd724c0
-R13: dffffc0000000000 R14: ffff88803d3c901c R15: ffff88802220c630
-FS:  00007fbe5ec496c0(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3093398000 CR3: 000000007b4ef000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- udf_prealloc_extents fs/udf/inode.c:1032 [inline]
- inode_getblk fs/udf/inode.c:890 [inline]
- udf_map_block+0x285d/0x5560 fs/udf/inode.c:444
- __udf_get_block+0x126/0x410 fs/udf/inode.c:458
- __block_write_begin_int+0x54d/0x1ac0 fs/buffer.c:2119
- __block_write_begin fs/buffer.c:2168 [inline]
- block_write_begin+0x9b/0x1e0 fs/buffer.c:2227
- udf_write_begin+0x10d/0x1a0 fs/udf/inode.c:261
- generic_perform_write+0x31b/0x630 mm/filemap.c:3918
- udf_file_write_iter+0x2fd/0x660 fs/udf/file.c:111
- call_write_iter include/linux/fs.h:2020 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x792/0xb20 fs/read_write.c:584
- ksys_write+0x1a0/0x2c0 fs/read_write.c:637
- do_syscall_x64 arch/x86/entry/common.c:51 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:82
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7fbe5de7cae9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbe5ec490c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fbe5df9c050 RCX: 00007fbe5de7cae9
-RDX: 000000006db6e559 RSI: 0000000020000080 RDI: 0000000000000007
-RBP: 00007fbe5dec847a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007fbe5df9c050 R15: 00007ffe85dd4218
- </TASK>
+Roberto
 
+> >  	init_ima_lsm();
+> >  	init_evm_lsm();
+> >  	return 0;
+>=20
+> --
+> paul-moore.com
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
