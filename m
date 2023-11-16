@@ -1,127 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-2980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B147EE810
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:04:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F21507EE832
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BFF328106A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 20:04:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76EDD2810ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 20:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B8C328A2;
-	Thu, 16 Nov 2023 20:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244A846530;
+	Thu, 16 Nov 2023 20:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ULLBsbmj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aEIWJp9g";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KQLkOjdE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706E81A7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700165050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA93F1A7;
+	Thu, 16 Nov 2023 12:17:03 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DB8042050A;
+	Thu, 16 Nov 2023 20:17:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1700165821;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+4XQ4i8Y5DNwJiAj9ly/ReOTlxs9KYLdEh1NBejN2C4=;
-	b=ULLBsbmjFpAKMFDy1pMo30YfvOIAHW7SFTM+xEGk+YUDy8qhjbOpjyGmTBUlErICP2TxHD
-	QPazj7hRecNE1see8k1TP6+n+LOyhfQRSXF/N2YBlg6A7tqe8FigD9BdsxdipWDpzuoaYw
-	VzGZ5dEOmyshE4KqEM78lRHx4kJDcIs=
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
- [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302-VT-Vt-3INyqxZjl4VSFwJA-1; Thu, 16 Nov 2023 15:04:08 -0500
-X-MC-Unique: VT-Vt-3INyqxZjl4VSFwJA-1
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1ef39189888so290145fac.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 12:04:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700165048; x=1700769848;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+4XQ4i8Y5DNwJiAj9ly/ReOTlxs9KYLdEh1NBejN2C4=;
-        b=wQ/wQx9jYhqiz0IrzdGM2Ybmddtg/4k3Wnsj6eztcBMv/+WQQPgGGBgb1K+uErUNg3
-         Si0Ps9vf88gaPkI6zJjqcNUQd1NmcdOr26Cf5Gusc3GLwrAWCJOtkBuYJ/cEw1FTGDMj
-         VXfAUyCx6mST2PxDp/DczsuZ6rP9Ft21eOUcspeEtHF5oOJcSwxFbKQUSUtBMEwFR+5E
-         ehDsYICUf5xefZAhwQLbTD2HhdeEwjzX6+WICLPGyMLa4WfY4MqpNhSg5Uwe5gCwA0Y8
-         myB/kEZdDNigrrmHSxG0MbYMptlYV1U0fiwty69Wd4bL9h+73xmzrTjYlbNxCvSoqjtO
-         yfLg==
-X-Gm-Message-State: AOJu0YxcDoQEV+UD2qH+lwZ36Ys2AMgNC/zlsrtszl0KziJOH47hERd6
-	3xi8IkTAwUwLR1C7y5CLVJDRSOquW5+HRojs5TQ9oVWweaBXArV56JzzOVRJhOhqt+SnvK8yj2x
-	Koy0sEVme6IFjgy0KZOOq6nhRuw==
-X-Received: by 2002:a05:6870:2301:b0:1ea:7463:1b8f with SMTP id w1-20020a056870230100b001ea74631b8fmr10381848oao.0.1700165048056;
-        Thu, 16 Nov 2023 12:04:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDPS7+wKj9qqDek4+rigv0rYOE1IH7oReMKMjyyoPNCSs/XVBtexRivZXLqhWKUZiqpeXWhA==
-X-Received: by 2002:a05:6870:2301:b0:1ea:7463:1b8f with SMTP id w1-20020a056870230100b001ea74631b8fmr10381812oao.0.1700165047537;
-        Thu, 16 Nov 2023 12:04:07 -0800 (PST)
-Received: from x1n (cpe688f2e2cb7c3-cm688f2e2cb7c0.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id j17-20020ac86651000000b0041b3deef647sm33619qtp.8.2023.11.16.12.04.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Nov 2023 12:04:06 -0800 (PST)
-Date: Thu, 16 Nov 2023 15:04:04 -0500
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	syzbot <syzbot+7ca4b2719dc742b8d0a4@syzkaller.appspotmail.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: [syzbot] [mm?] WARNING in unmap_page_range (2)
-Message-ID: <ZVZ1tLoOpRJu5n3g@x1n>
-References: <000000000000b0e576060a30ee3b@google.com>
- <20231115140006.cc7de06f89b1f885f4583af0@linux-foundation.org>
- <a8349273-c512-4d23-bf85-5812d2a007d1@redhat.com>
- <ZVZYvleasZddv-TD@x1n>
- <6308590a-d958-4ecc-a478-ba088cf7984d@redhat.com>
+	bh=p68fCcxQIS+Z2kIB9kk+gfIMOuRKaJTdSJTEFA3jvzs=;
+	b=aEIWJp9g36J1OtigwfhepU+GDYxMThoja07yXh6aLHiHe1RGtkXTJktFUdaPxoegls28J5
+	7mETEL3kgJID42kDUbl939Qgd9oFij1B8HlTTmBd463lebK6X4gkdYRiEUhmek1zmz2eJR
+	AFPePQLkg0DyuUFFbG0A9dcz9dLNmJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1700165821;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p68fCcxQIS+Z2kIB9kk+gfIMOuRKaJTdSJTEFA3jvzs=;
+	b=KQLkOjdEpATQdOLHHeu4IntgKVUpk4kUZGD6EoTB7DGiZ2eNLjOqAErw9Uov5gDho8LqGj
+	wkf99XRFEFPSIzAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE2A1139C4;
+	Thu, 16 Nov 2023 20:17:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id CJm/Kb14VmXFbgAAMHmgww
+	(envelope-from <dsterba@suse.cz>); Thu, 16 Nov 2023 20:17:01 +0000
+Date: Thu, 16 Nov 2023 21:09:55 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Anand Jain <anand.jain@oracle.com>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org,
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org
+Subject: Re: [PATCH v2 05/18] btrfs: do not allow free space tree rebuild on
+ extent tree v2
+Message-ID: <20231116200955.GK11264@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <cover.1699470345.git.josef@toxicpanda.com>
+ <6a2c827b0ed8b24c3be1045ccac49b29e850118e.1699470345.git.josef@toxicpanda.com>
+ <6bbfbf34-aa74-4501-b36d-317022f3bc1b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6308590a-d958-4ecc-a478-ba088cf7984d@redhat.com>
+In-Reply-To: <6bbfbf34-aa74-4501-b36d-317022f3bc1b@oracle.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	 ARC_NA(0.00)[];
+	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 REPLYTO_ADDR_EQ_FROM(0.00)[];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_COUNT_TWO(0.00)[2];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
 
-On Thu, Nov 16, 2023 at 07:13:44PM +0100, David Hildenbrand wrote:
-> > It should be fine, as:
+On Wed, Nov 15, 2023 at 05:49:48PM +0800, Anand Jain wrote:
+> On 11/9/23 03:08, Josef Bacik wrote:
+> > We currently don't allow these options to be set if we're extent tree v2
+> > via the mount option parsing.  However when we switch to the new mount
+> > API we'll no longer have the super block loaded, so won't be able to
+> > make this distinction at mount option parsing time.  Address this by
+> > checking for extent tree v2 at the point where we make the decision to
+> > rebuild the free space tree.
 > > 
-> > static void make_uffd_wp_pte(struct vm_area_struct *vma,
-> > 			     unsigned long addr, pte_t *pte)
-> > {
-> > 	pte_t ptent = ptep_get(pte);
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > ---
+> >   fs/btrfs/disk-io.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
 > > 
-> > #ifndef CONFIG_USERFAULTFD_
-> > 
-> > 	if (pte_present(ptent)) {
-> > 		pte_t old_pte;
-> > 
-> > 		old_pte = ptep_modify_prot_start(vma, addr, pte);
-> > 		ptent = pte_mkuffd_wp(ptent);
-> > 		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
-> > 	} else if (is_swap_pte(ptent)) {
-> > 		ptent = pte_swp_mkuffd_wp(ptent);
-> > 		set_pte_at(vma->vm_mm, addr, pte, ptent);
-> > 	} else {                                      <----------------- this must be pte_none() already
-> > 		set_pte_at(vma->vm_mm, addr, pte,
-> > 			   make_pte_marker(PTE_MARKER_UFFD_WP));
-> > 	}
-> > }
+> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> > index b486cbec492b..072c45811c41 100644
+> > --- a/fs/btrfs/disk-io.c
+> > +++ b/fs/btrfs/disk-io.c
+> > @@ -2951,7 +2951,8 @@ int btrfs_start_pre_rw_mount(struct btrfs_fs_info *fs_info)
+> >   	bool rebuild_free_space_tree = false;
+> >   
+> >   	if (btrfs_test_opt(fs_info, CLEAR_CACHE) &&
+> > -	    btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE)) {
+> > +	    btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE) &&
+> > +	    !btrfs_fs_incompat(fs_info, EXTENT_TREE_V2)) {
+> >   		rebuild_free_space_tree = true;
+> >   	} else if (btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE) &&
+> >   		   !btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE_VALID)) {
 > 
-> Indeed! Is pte_swp_mkuffd_wp() reasonable for pte markers? I rememebr that
-> we don't support multiple markers yet, so it might be good enough.
+> If there is v3 you can consider to add a comment similar to that
+> is in btrfs_parse_options().
+> Also, IMO, it is a good idea to include a btrfs_info() statement
+> to indicate that the clear_cache option is ignored.
 
-Not really that reasonable, but nothing harmful either that I see so far;
-the current code handles any pte marker without caring any of those hint
-bits.
-
-I can also reproduce this syzbot error easily with !UFFD config on x86.
-Let me send the patchset to fix current known issues first.
-
-Thanks,
-
--- 
-Peter Xu
-
+Agreed, we have a lot of verbosity around the mount options, if some
+option combination is invalid or not working as expected a message
+should pe printed.
 
