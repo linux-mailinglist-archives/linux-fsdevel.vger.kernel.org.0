@@ -1,80 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-2987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-2988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685197EE8BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:18:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90D57EE8DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 22:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F5D1F230D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EE11C209DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Nov 2023 21:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E9346531;
-	Thu, 16 Nov 2023 21:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9997F495DC;
+	Thu, 16 Nov 2023 21:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m9bZmFaK"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QvKaTL3n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [IPv6:2001:41d0:203:375::b9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891F9B0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 13:18:29 -0800 (PST)
-Date: Thu, 16 Nov 2023 16:18:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700169505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3w7F7FTyUlc6SpBfGexPQfd+IQlL6+uxiGQCbZXlX8=;
-	b=m9bZmFaK7SyE3ZbXTM4OjHut/p3uYn/YlIM0DYkKx1JUNdx04CIqYDL2QQkA6Q9NMqbyL1
-	LV6O4RDm96SYaDwYhBQo5Dth7mUnz+bdGfIZpoofrk9KLThJU5kPQI4gtCRAlJ+EKEcRIq
-	vPECi5aXdmPTC3PGm+GqnbgtVJ/nRgE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH] fs: export getname()
-Message-ID: <20231116211822.leztxrldjzyqadtm@moria.home.lan>
-References: <20231116050832.GX1957730@ZenIV>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49BD495C1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 21:43:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD9AC433C7;
+	Thu, 16 Nov 2023 21:43:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1700171014;
+	bh=twTNWRQdIKcOStkRGzXUGtwCSKQonpLZLAIQKx9vJcE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QvKaTL3ndxsh2tVl73T17w+fISLhZTW0gIn7pe8oxtPfAcZfG+MvZhirVrmwYyJr7
+	 2fEEHfjUG6qKjAICs1TWsSOFv3l5im7ASasMGpFlpSsu7TbZgogyvG+feNReCzbSBO
+	 Z1uVpoTJqjG/Fp+2L/pKCJOiRojj95iCYDg6HN3A=
+Date: Thu, 16 Nov 2023 13:43:32 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <syzbot+32d3767580a1ea339a81@syzkaller.appspotmail.com>,
+ <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+ <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] squashfs: squashfs_read_data need to check if the
+ length is 0
+Message-Id: <20231116134332.285510d340637171d2fe968c@linux-foundation.org>
+In-Reply-To: <20231116031352.40853-1-lizhi.xu@windriver.com>
+References: <0000000000000526f2060a30a085@google.com>
+	<20231116031352.40853-1-lizhi.xu@windriver.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231116050832.GX1957730@ZenIV>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 16, 2023 at 05:08:32AM +0000, Al Viro wrote:
-> (in #work.namei; used for bcachefs locking fix)
-> From 74d016ecc1a7974664e98d1afbf649cd4e0e0423 Mon Sep 17 00:00:00 2001
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> Date: Wed, 15 Nov 2023 22:41:27 -0500
-> Subject: [PATCH 1/2] new helper: user_path_locked_at()
-> 
-> Equivalent of kern_path_locked() taking dfd/userland name.
-> User introduced in the next commit.
+On Thu, 16 Nov 2023 11:13:52 +0800 Lizhi Xu <lizhi.xu@windriver.com> wrote:
 
-also applying this:
--- >8 --
+> when the length passed in is 0, the subsequent process should be exited.
 
-The locking fix in bch2_ioctl_subvolume_destroy() also needs getname()
-exported; previous patch provided filename_path_locked()
+Thanks, but when fixing a bug, please always describe the runtime
+effects of that bug.  Amongst other things, other people need this
+information to be able to decide which kernel versions need patching.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Reported-by: syzbot+32d3767580a1ea339a81@syzkaller.appspotmail.com
 
-diff --git a/fs/namei.c b/fs/namei.c
-index eab372e04767..83dd8b51995a 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -218,6 +218,7 @@ getname(const char __user * filename)
- {
- 	return getname_flags(filename, 0, NULL);
- }
-+EXPORT_SYMBOL(getname);
- 
- struct filename *
- getname_kernel(const char * filename)
+Which is a reason why we're now adding the "Closes:" tag after
+Reported-by:.
+
+I googled the sysbot email address and so added
+
+Closes: https://lkml.kernel.org/r/0000000000000526f2060a30a085@google.com
+
+to the changelog.
+
+I'll assume that a -stable kernel backport is needed.
+
+
 
