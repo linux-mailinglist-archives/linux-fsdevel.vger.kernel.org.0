@@ -1,44 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-3108-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463317EFB34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 23:13:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4A67EFB7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 23:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A2BB20BD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 22:13:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A152B20B8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 22:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B572F4503B;
-	Fri, 17 Nov 2023 22:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CD647765;
+	Fri, 17 Nov 2023 22:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KsVcxW1k"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZjwZV0tN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C08D4E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 14:13:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MFUtEs3y616hfbBRvmns6H6P0KpWMdLP/1PcgbIXsyE=; b=KsVcxW1kIZh/8ZC7W1s9I+sSCi
-	KDZQWW4kzUEmJp+7v3ZMyK2hqIbEz83kHfvoamNqw4TedRB9YrXvTVturP1q1WpngbgikQ0c+aSh4
-	b7s15mz+ZITKVVNUPRMnGunt9p0LxcSyJDdIVnEo8Wd64Sky23RZoJam3a4B6HRqqY8IbeJkbmHHB
-	yc5bd+Q8Ipkm7euGl1SUbSdUG9AZL7WWVNLOAtFbmnANov3CyygZpnHsc9Oa0tAt9Kb1qD+1bJxLV
-	9z8NVS+ZxciKHrsxBFqFCxej0P0IWVkXNacjd5q7CYg63Y5PheFVCOHVDFCocMBPm/Kh99+almDSj
-	4R6X9yzg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r475g-00BszZ-Iy; Fri, 17 Nov 2023 22:13:32 +0000
-Date: Fri, 17 Nov 2023 22:13:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: Rename mapping private members
-Message-ID: <ZVfljIc64nEw0ewn@casper.infradead.org>
-References: <20231117215823.2821906-1-willy@infradead.org>
- <20231117220437.GF36211@frogsfrogsfrogs>
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E61E6D50
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 14:33:30 -0800 (PST)
+Date: Fri, 17 Nov 2023 17:33:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1700260408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=op13F3XEN7FjDKlCWlYMcAKyKy+rR7LtkeYSw6GZX7w=;
+	b=ZjwZV0tN5AwYZkUFXKLEJ09DiglxyMaAjiwxGcFuTLiPvZu1fiILmcfbtxQ8Hf+RzTqezS
+	MoE8Pdnc2OcHN0a6/gVcuxR3Q5J1/Gj67jYjO3fMdtuzsslg3HAEaGsRMA0Hb4fDUiRZtF
+	b3io4pgMS0f6C2ZVDSvlF2q3F9yOf+U=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes
+Message-ID: <20231117223325.no4eqblc5zqte5xg@moria.home.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,28 +42,106 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231117220437.GF36211@frogsfrogsfrogs>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Nov 17, 2023 at 02:04:37PM -0800, Darrick J. Wong wrote:
-> On Fri, Nov 17, 2023 at 09:58:23PM +0000, Matthew Wilcox (Oracle) wrote:
-> > It is hard to find where mapping->private_lock, mapping->private_list and
-> > mapping->private_data are used, due to private_XXX being a relatively
-> > common name for variables and structure members in the kernel.  To fit
-> > with other members of struct address_space, rename them all to have an
-> > i_ prefix.  Tested with an allmodconfig build.
-> 
-> /me wonders if the prefix ought to be "as_" for address space instead of
-> inode.  Even though inode begat address_space, they're not the same
-> anymore.
+Hi Linus, bugfix pull request for you :)
 
-It'd be the first thing in fs.h to ase an as_ prefix.  Right now, we
-have i_pages, i_mmap_writable, i_mmap, i_mmap_rwsem.  We have a_ops
-(which differs from f_op, i_op, s_op, dq_op, s_qcop in being plural!).
-Everything else doesn't have anything close to a meaningful prefix --
-host, invalidate_lock, gfp_mask, nr_thps, nrpages, writeback_index,
-flags, wb_err.
+Cheers,
+Kent
 
-So i_ was the most common prefix, but if we wanted to go with a different
-prefix, we could go with a_.  Maybe we'll rename a_ops to a_op at
-some point.
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+
+are available in the Git repository at:
+
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2023-11-17
+
+for you to fetch changes up to ba276ce5865b5a22ee96c4c5664bfefd9c1bb593:
+
+  bcachefs: Fix missing locking for dentry->d_parent access (2023-11-16 16:57:19 -0500)
+
+----------------------------------------------------------------
+bcachefs bugfixes for 6.7
+
+Lots of small fixes for minor nits and compiler warnings. Bigger items:
+
+ - The six locks lost wakeup is finally fixed: six_read_trylock() was
+   checking for the waiting bit before decrementing the number of
+   readers - validated the fix with a torture test.
+
+ - Fix for a memory reclaim issue: when needing to reallocate a key
+   cache key, we now do our usual GFP_NOWAIT; unlock(); GFP_KERNEL
+   dance.
+
+ - Multiple deleted inodes btree fixes
+
+ - Fix an issue in fsck, where i_nlink would be recalculated incorrectly
+   for hardlinked files if a snapshot had ever been taken.
+
+ - Kill journal pre-reservations: This is a bigger patch than I would
+   normally send at this point, but it deletes code and it fixes some of
+   our tests that would sporadically die with the journal getting stuck,
+   and it's a performance improvement, too.
+
+----------------------------------------------------------------
+Daniel J Blueman (1):
+      bcachefs: Fix potential sleeping during mount
+
+Gustavo A. R. Silva (2):
+      bcachefs: Use DECLARE_FLEX_ARRAY() helper and fix multiple -Warray-bounds warnings
+      bcachefs: Fix multiple -Warray-bounds warnings
+
+Jiapeng Chong (1):
+      bcachefs: make bch2_target_to_text_sb static
+
+Kent Overstreet (18):
+      bcachefs: Use correct fgf_t type as function argument
+      bcachefs: Fix null ptr deref in bch2_backpointer_get_node()
+      bcachefs: Guard against insufficient devices to create stripes
+      bcachefs: Split out btree_key_cache_types.h
+      bcachefs: Run btree key cache shrinker less aggressively
+      bcachefs: btree_trans->write_locked
+      bcachefs: Make sure to drop/retake btree locks before reclaim
+      bcachefs: Check for nonce offset inconsistency in data_update path
+      bcachefs: Kill journal pre-reservations
+      bcachefs: Fix iterator leak in may_delete_deleted_inode()
+      bcachefs: Fix error path in bch2_mount()
+      bcachefs: Fix missing transaction commit
+      bcachefs: Disable debug log statements
+      bcachefs: Don't decrease BTREE_ITER_MAX when LOCKDEP=y
+      bcachefs: Fix bch2_check_nlinks() for snapshots
+      bcachefs: Fix no_data_io mode checksum check
+      bcachefs: six locks: Fix lost wakeup
+      bcachefs: Fix missing locking for dentry->d_parent access
+
+ fs/bcachefs/backpointers.c          |  10 +--
+ fs/bcachefs/bcachefs.h              |   2 +-
+ fs/bcachefs/btree_iter.c            |   2 -
+ fs/bcachefs/btree_key_cache.c       |  37 ++++----
+ fs/bcachefs/btree_key_cache_types.h |  34 ++++++++
+ fs/bcachefs/btree_trans_commit.c    | 169 ++++++++++++++++++++----------------
+ fs/bcachefs/btree_types.h           |  35 +-------
+ fs/bcachefs/btree_update_interior.c |  30 -------
+ fs/bcachefs/btree_update_interior.h |   1 -
+ fs/bcachefs/data_update.c           |  28 ++++++
+ fs/bcachefs/disk_groups.c           |   4 +-
+ fs/bcachefs/ec.c                    |  16 +++-
+ fs/bcachefs/fs-io-pagecache.c       |   2 +-
+ fs/bcachefs/fs-io-pagecache.h       |   2 +-
+ fs/bcachefs/fs.c                    |   8 +-
+ fs/bcachefs/fsck.c                  |   2 +-
+ fs/bcachefs/inode.c                 |   8 +-
+ fs/bcachefs/io_write.c              |   2 +-
+ fs/bcachefs/journal.c               |  31 -------
+ fs/bcachefs/journal.h               |  98 ---------------------
+ fs/bcachefs/journal_io.c            |   7 ++
+ fs/bcachefs/journal_reclaim.c       |  42 ++++-----
+ fs/bcachefs/journal_types.h         |  26 ------
+ fs/bcachefs/six.c                   |   7 +-
+ fs/bcachefs/subvolume_types.h       |   2 +-
+ fs/bcachefs/trace.h                 |  11 +--
+ fs/bcachefs/xattr.c                 |   9 ++
+ 27 files changed, 248 insertions(+), 377 deletions(-)
+ create mode 100644 fs/bcachefs/btree_key_cache_types.h
 
