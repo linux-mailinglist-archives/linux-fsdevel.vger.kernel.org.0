@@ -1,114 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-3033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEB17EF5C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 16:57:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A307EF5F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 17:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF741C20A64
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 15:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB40280FA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 16:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B483C49F;
-	Fri, 17 Nov 2023 15:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0552B3EA8E;
+	Fri, 17 Nov 2023 16:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SY3gTiTV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1690A5;
-	Fri, 17 Nov 2023 07:57:46 -0800 (PST)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5431614d90eso3172775a12.1;
-        Fri, 17 Nov 2023 07:57:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700236665; x=1700841465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+N8Rkxs1VdZPQNYmn5RsQKxDMuZgXUMJtgtu8KsLn60=;
-        b=epjJ1NHMn5+CoTBPqudJHiWFubTn4inB4G+QKnF4y4jJm6mFcLOVCY7Me8KcournOv
-         Ffmfds7e5+9dWBKoId4URRAv+y2jW6rMA8mdBVWzYH87SjuZ9WpsNrMLKqy7AugEe1iE
-         MKEa2YNhrJFY7oWUStB2xk9sgNnXOiqTpfPSN24Rw097BXAWEDWV/0CLZUxcDlJAG0dk
-         99EgZTo6QvI22fCv1IdJSed55JE11yBh1GLE2Y0t2JZK0Xagrd9CFkH+oe7d3UnjRzS7
-         1E45NbMVmgjVPkeP5hoRbeqSBWSBh13tGh6X5bN6t6gwqVfDpjxfpSsuaUWYh/v2HJPu
-         GzVA==
-X-Gm-Message-State: AOJu0YxQokOk/69P5SLpgZpMKyoeeJRnwOWnwHvcyMHYaBzHrR5hxn5K
-	vflHFSmdrxfaS1/f6npIVlc5D4ad9hwybQ==
-X-Google-Smtp-Source: AGHT+IHzfmp7wsrWkrW7vPT2jmpUi0Nr6N/beJL6XdXEDzanbwn9Hqzrp/FDoP4fBzF+8zONpFc25g==
-X-Received: by 2002:a05:6402:42d0:b0:548:656b:629b with SMTP id i16-20020a05640242d000b00548656b629bmr51755edc.25.1700236664789;
-        Fri, 17 Nov 2023 07:57:44 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id m21-20020aa7d355000000b00546dc1b5515sm831507edr.94.2023.11.17.07.57.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Nov 2023 07:57:44 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-9ae2cc4d17eso302832066b.1;
-        Fri, 17 Nov 2023 07:57:44 -0800 (PST)
-X-Received: by 2002:a17:907:7819:b0:9c3:d356:ad0c with SMTP id
- la25-20020a170907781900b009c3d356ad0cmr13299716ejc.24.1700236664516; Fri, 17
- Nov 2023 07:57:44 -0800 (PST)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700DC196
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 08:15:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=M8tcrjn8J3mAVtHdNJxXIwwBJZthYabYLJRVFBqKzTc=; b=SY3gTiTV79l8O4Ss4E5KcaLsWw
+	c/mTm3pDFVfZtoPBYeOI0beecuGWq/RPzxAQOtMKbCelZzN/3TKR3vQkSzT2aDOoigBuNUAjEEvmu
+	F8Wu6cCCHyAATta0Ds7kVHMGb+RDA/uuBB7BCvjoMEq5kXZNdyb9GY7XbliXk8LpZ98MJ5Xy9gfYA
+	jRRjGKJykJpmG2CVVyk6Ck1wDPJoz2jKLS0Ou7qByvYLB+H7CzDBjieCW0z1n2/GPDyahenZfS7Nc
+	21opa64JfAgeDZBGHWVHaDp1GWsZu4ozqjKLxGDNfu2g3g0KXDvwDAk4vBiaiTIAk6nykh3nAxveE
+	OTeL7ONA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r41Uc-00AKVL-DQ; Fri, 17 Nov 2023 16:14:54 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Naoya Horiguchi <naoya.horiguchi@nec.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/6] Convert aops->error_remove_page to ->error_remove_folio
+Date: Fri, 17 Nov 2023 16:14:41 +0000
+Message-Id: <20231117161447.2461643-1-willy@infradead.org>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231116155312.156593-1-dhowells@redhat.com> <20231116155312.156593-2-dhowells@redhat.com>
-In-Reply-To: <20231116155312.156593-2-dhowells@redhat.com>
-From: Marc Dionne <marc.dionne@auristor.com>
-Date: Fri, 17 Nov 2023 11:57:33 -0400
-X-Gmail-Original-Message-ID: <CAB9dFdvRa7Z9_zSap721gsTXJziQkuwpu=N3mP+432vxFGj2AA@mail.gmail.com>
-Message-ID: <CAB9dFdvRa7Z9_zSap721gsTXJziQkuwpu=N3mP+432vxFGj2AA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] afs: Fix afs_server_list to be cleaned up with RCU
-To: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 16, 2023 at 11:53=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
-> afs_server_list is accessed with the rcu_read_lock() held from
-> volume->servers, so it needs to be cleaned up correctly.
->
-> Fix this by using kfree_rcu() instead of kfree().
->
-> Fixes: 8a070a964877 ("afs: Detect cell aliases 1 - Cells with root volume=
-s")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->  fs/afs/internal.h    | 1 +
->  fs/afs/server_list.c | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-> index c9cef3782b4a..a812952be1c9 100644
-> --- a/fs/afs/internal.h
-> +++ b/fs/afs/internal.h
-> @@ -553,6 +553,7 @@ struct afs_server_entry {
->  };
->
->  struct afs_server_list {
-> +       struct rcu_head         rcu;
->         afs_volid_t             vids[AFS_MAXTYPES]; /* Volume IDs */
->         refcount_t              usage;
->         unsigned char           nr_servers;
-> diff --git a/fs/afs/server_list.c b/fs/afs/server_list.c
-> index ed9056703505..b59896b1de0a 100644
-> --- a/fs/afs/server_list.c
-> +++ b/fs/afs/server_list.c
-> @@ -17,7 +17,7 @@ void afs_put_serverlist(struct afs_net *net, struct afs=
-_server_list *slist)
->                 for (i =3D 0; i < slist->nr_servers; i++)
->                         afs_unuse_server(net, slist->servers[i].server,
->                                          afs_server_trace_put_slist);
-> -               kfree(slist);
-> +               kfree_rcu(slist, rcu);
->         }
->  }
+While this affects every filesystem, it's generally in a trivial way,
+so I haven't cc'd the maintainers as it won't affect them.  Really,
+this is a memory-failure patch series which converts a lot of uses of
+page APIs into folio APIs with the usual benefits.
 
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+It is only compile tested.  Nothing here should change any user-visible
+behaviour.
 
-Marc
+Matthew Wilcox (Oracle) (6):
+  memory-failure: Use a folio in me_pagecache_clean()
+  memory-failure: Use a folio in me_pagecache_dirty()
+  memory-failure: Convert delete_from_lru_cache() to take a folio
+  memory-failure: Use a folio in me_huge_page()
+  memory-failure: Convert truncate_error_page to truncate_error_folio
+  fs: Convert error_remove_page to error_remove_folio
+
+ Documentation/filesystems/locking.rst |  4 +-
+ Documentation/filesystems/vfs.rst     |  6 +--
+ block/fops.c                          |  2 +-
+ fs/afs/write.c                        |  2 +-
+ fs/bcachefs/fs.c                      |  2 +-
+ fs/btrfs/inode.c                      |  2 +-
+ fs/ceph/addr.c                        |  4 +-
+ fs/ext2/inode.c                       |  2 +-
+ fs/ext4/inode.c                       |  6 +--
+ fs/f2fs/compress.c                    |  2 +-
+ fs/f2fs/inode.c                       |  2 +-
+ fs/gfs2/aops.c                        |  4 +-
+ fs/hugetlbfs/inode.c                  |  6 +--
+ fs/nfs/file.c                         |  2 +-
+ fs/ntfs/aops.c                        |  6 +--
+ fs/ocfs2/aops.c                       |  2 +-
+ fs/xfs/xfs_aops.c                     |  2 +-
+ fs/zonefs/file.c                      |  2 +-
+ include/linux/fs.h                    |  2 +-
+ include/linux/mm.h                    |  3 +-
+ mm/memory-failure.c                   | 63 +++++++++++++--------------
+ mm/shmem.c                            |  6 +--
+ mm/truncate.c                         |  9 ++--
+ virt/kvm/guest_memfd.c                |  9 ++--
+ 24 files changed, 75 insertions(+), 75 deletions(-)
+
+-- 
+2.42.0
+
 
