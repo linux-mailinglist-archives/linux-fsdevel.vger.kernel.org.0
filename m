@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-3034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6505A7EF5F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 17:15:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8847EF5F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 17:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2571C20A92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 16:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7262812F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C9E374F2;
-	Fri, 17 Nov 2023 16:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7523DBB3;
+	Fri, 17 Nov 2023 16:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lBuDi0+u"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eajgtCer"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90281B3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 08:14:59 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D4F194
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 08:15:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=Vf86B2r48b06hq56Lphk6YasHUIlClzmrRVlrcnYbEU=; b=lBuDi0+uFlBwKBKbtjXDnKKGud
-	rX5G0hyB33CMmJ47hg3DEseAmCwagVH9GPP7WtDUCl092doyezqxJlxbydWz48xrawTeWv6CS1h6u
-	Gqfs5ac+eCkrxHEmynbYjj9QH1BNEUEt8VtTxSxCegbRs8TQE8/L6mrZKrhuBZ8tDOq6LFnnuh2eq
-	FdLtH0G1xGzwrnXnK2dAvTQZ2XVF8z9YiRa+qQcx9aO2aEAtlRsbZynXwSdNRn9bvBPn2+mVv5EQ3
-	lZCGmeyoIhijEKJdx/EA67UmxwYKaA4iox4SHDgH3PzWHVgiMrOYAMc7qv8CaQmWzEAA61Hi5zi4n
-	kIRbFC4A==;
+	bh=5qnFXc1Xogmh7PAIEEQ0Shj70PekKGvUt3R6/VGwhqA=; b=eajgtCermKMU/e17PoydSMDg9r
+	+kz5k6bnBxxa9t7In5z9eci5kjX7tVUaXqZh+9RxzYJvhLiGT60uRDBHbuA7no6VvrrnVthyJvuLV
+	pl8i/tVkgrMfhjjfvaaEHuvF3NDpQ24zf4m9HqFihpQ3vBLF/XeFwCdxQzgjv5m5frpWsQdT5zUDa
+	HPb1KANQtiPQum5YxUn4dme7qift/JXUa9/FMi4K2LX/2Jm5zmMt7AY6/sLWHv3umATpyaGAr/Fl3
+	FWf/7zyh0qZpLFdDLd5hEQ3ul1AJfw8Rt6Ix+cMsejBKKv50kztvCiYuXE8ayVRz2nOZBekrg05Dg
+	+MngwkxA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r41Uc-00AKYn-LM; Fri, 17 Nov 2023 16:14:54 +0000
+	id 1r41Uc-00AKZj-Na; Fri, 17 Nov 2023 16:14:54 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Naoya Horiguchi <naoya.horiguchi@nec.com>,
 	Andrew Morton <akpm@linux-foundation.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 3/6] memory-failure: Convert delete_from_lru_cache() to take a folio
-Date: Fri, 17 Nov 2023 16:14:44 +0000
-Message-Id: <20231117161447.2461643-4-willy@infradead.org>
+Subject: [PATCH 4/6] memory-failure: Use a folio in me_huge_page()
+Date: Fri, 17 Nov 2023 16:14:45 +0000
+Message-Id: <20231117161447.2461643-5-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20231117161447.2461643-1-willy@infradead.org>
 References: <20231117161447.2461643-1-willy@infradead.org>
@@ -50,80 +50,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All three callers now have a folio; pass it in instead of the page.
-Saves five calls to compound_head().
+This function was already explicitly calling compound_head();
+unfortunately the compiler can't know that and elide the redundant
+calls to compound_head() buried in page_mapping(), unlock_page(), etc.
+Switch to using a folio, which does let us elide these calls.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/memory-failure.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ mm/memory-failure.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index d2764fd3e448..e73f2047ffcb 100644
+index e73f2047ffcb..d97d247c0224 100644
 --- a/mm/memory-failure.c
 +++ b/mm/memory-failure.c
-@@ -902,26 +902,26 @@ static const char * const action_page_types[] = {
-  * The page count will stop it from being freed by unpoison.
-  * Stress tests should be aware of this memory leak problem.
+@@ -1182,25 +1182,25 @@ static int me_swapcache_clean(struct page_state *ps, struct page *p)
   */
--static int delete_from_lru_cache(struct page *p)
-+static int delete_from_lru_cache(struct folio *folio)
+ static int me_huge_page(struct page_state *ps, struct page *p)
  {
--	if (isolate_lru_page(p)) {
-+	if (folio_isolate_lru(folio)) {
- 		/*
- 		 * Clear sensible page flags, so that the buddy system won't
--		 * complain when the page is unpoison-and-freed.
-+		 * complain when the folio is unpoison-and-freed.
- 		 */
--		ClearPageActive(p);
--		ClearPageUnevictable(p);
-+		folio_clear_active(folio);
-+		folio_clear_unevictable(folio);
- 
- 		/*
- 		 * Poisoned page might never drop its ref count to 0 so we have
- 		 * to uncharge it manually from its memcg.
- 		 */
--		mem_cgroup_uncharge(page_folio(p));
-+		mem_cgroup_uncharge(folio);
- 
- 		/*
--		 * drop the page count elevated by isolate_lru_page()
-+		 * drop the refcount elevated by folio_isolate_lru()
- 		 */
--		put_page(p);
-+		folio_put(folio);
- 		return 0;
- 	}
- 	return -EIO;
-@@ -1019,7 +1019,7 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
++	struct folio *folio = page_folio(p);
+ 	int res;
+-	struct page *hpage = compound_head(p);
  	struct address_space *mapping;
- 	bool extra_pins;
+ 	bool extra_pins = false;
  
--	delete_from_lru_cache(p);
-+	delete_from_lru_cache(folio);
- 
- 	/*
- 	 * For anonymous folios the only reference left
-@@ -1146,7 +1146,7 @@ static int me_swapcache_dirty(struct page_state *ps, struct page *p)
- 	/* Trigger EIO in shmem: */
- 	folio_clear_uptodate(folio);
- 
--	ret = delete_from_lru_cache(p) ? MF_FAILED : MF_DELAYED;
-+	ret = delete_from_lru_cache(folio) ? MF_FAILED : MF_DELAYED;
- 	folio_unlock(folio);
- 
- 	if (ret == MF_DELAYED)
-@@ -1165,7 +1165,7 @@ static int me_swapcache_clean(struct page_state *ps, struct page *p)
- 
- 	delete_from_swap_cache(folio);
- 
--	ret = delete_from_lru_cache(p) ? MF_FAILED : MF_RECOVERED;
-+	ret = delete_from_lru_cache(folio) ? MF_FAILED : MF_RECOVERED;
- 	folio_unlock(folio);
- 
- 	if (has_extra_refcount(ps, p, false))
+-	mapping = page_mapping(hpage);
++	mapping = folio_mapping(folio);
+ 	if (mapping) {
+-		res = truncate_error_page(hpage, page_to_pfn(p), mapping);
++		res = truncate_error_page(&folio->page, page_to_pfn(p), mapping);
+ 		/* The page is kept in page cache. */
+ 		extra_pins = true;
+-		unlock_page(hpage);
++		folio_unlock(folio);
+ 	} else {
+-		unlock_page(hpage);
++		folio_unlock(folio);
+ 		/*
+ 		 * migration entry prevents later access on error hugepage,
+ 		 * so we can free and dissolve it into buddy to save healthy
+ 		 * subpages.
+ 		 */
+-		put_page(hpage);
++		folio_put(folio);
+ 		if (__page_handle_poison(p) >= 0) {
+ 			page_ref_inc(p);
+ 			res = MF_RECOVERED;
 -- 
 2.42.0
 
