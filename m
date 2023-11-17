@@ -1,1130 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-3101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC0F7EFACF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 22:28:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BC37EFAE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 22:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3DB1C20BC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 21:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FBD280DFF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 21:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3D44644D;
-	Fri, 17 Nov 2023 21:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F543AD9;
+	Fri, 17 Nov 2023 21:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DmNUhbfr"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dY0g61TI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F38543C23
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 13:19:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700255952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dIfOug0G0L22ejnADTbX2kdNvduHO7x8v+7cgMMwHK4=;
-	b=DmNUhbfrOBYJAPoo55bxmCUcDSn9AKYfWVBIE5iu0MR34qcBjxu1u82HA+TAzlG2RLzI00
-	Y52lq/2RhJYZK5/8z6iW2cYJccZcSsvhFusTQZif13uDwu4zgrvBzNSy+vDsDUs6L9GGa2
-	trhsNxclLYGewB0ig5Z7X0nNiIoufBo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-Mkzr6pISMsKxD0MDu_DnsA-1; Fri, 17 Nov 2023 16:19:08 -0500
-X-MC-Unique: Mkzr6pISMsKxD0MDu_DnsA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 884C6811E88;
-	Fri, 17 Nov 2023 21:19:07 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.16])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 60E32C15882;
-	Fri, 17 Nov 2023 21:19:04 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>,
-	Steve French <smfrench@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>,
-	linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <nspmangalore@gmail.com>,
-	Rohith Surabattula <rohiths.msft@gmail.com>
-Subject: [PATCH v2 51/51] cifs: Remove some code that's no longer used, part 3
-Date: Fri, 17 Nov 2023 21:15:43 +0000
-Message-ID: <20231117211544.1740466-52-dhowells@redhat.com>
-In-Reply-To: <20231117211544.1740466-1-dhowells@redhat.com>
-References: <20231117211544.1740466-1-dhowells@redhat.com>
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4E063C3B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 13:22:25 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-daf26d84100so2428341276.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 13:22:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1700256136; x=1700860936; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7VlTgLQgobFGG9PZZStnDlmcBu7nmiBF+q+s3UJ3hXY=;
+        b=dY0g61TIlRN+hRurbcp/9nn1mUxdFaB+a/xJadYgi4t8eIYBYVIAz/Ru5FfvpS0cja
+         2BUtKjga6tWLZGA2I4PBeEaOu5MWt9UwyrWFRSYTCY7sTtZV2RzRVwFkhqqA+O8OOsIy
+         JPeHLrHYuEJ8RL8U93ZQT18EvbHiTz5PCjWjbL3q7JfKiQdHoGzBvLNJDfNFE7mvHze9
+         sqqomks9/Mn7bOSHMfXsAZP738FRG5j5BHmBkTZ/1HB0nTisVNQ2xjKlLslMIgUyV4I5
+         wWiuBIK5GgAJjZpBK0+rlOlXQtrM2f8g5ue3QtlPuk12dYGh7Zujx4+wQP9y+yI7FtNQ
+         qG3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700256136; x=1700860936;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7VlTgLQgobFGG9PZZStnDlmcBu7nmiBF+q+s3UJ3hXY=;
+        b=qBS2jBEQ8M/9Sx5C3q/VEb0jNxL4J1ek9wSNnuEmATfIwM5WPsiToc6ZO+jvcHLdpa
+         al1qDUQJCSRsRJMNeeI51uM1gndwGPAEUYgpq5tqMm8SV0hNVsV9wF+j9nXF/iD+0chz
+         mm7DD+vyDAM2HEh41airrircrhatwx2Ql+2wtCzw1xz0VurY1mKDnxIPtRKkaX0uzbS1
+         TRfvrmOZ9tY602Zyk6Pm8+llVC26v6ok7vYg3EZKFNOAcpZwm7TydPcY/DNAPNC+Iqnm
+         UOs2JAbvftQ4bVvK9rOv2vbrGsHlUwsPpn9sVcwiR5AYQl/ILuo9iV1wG/qCVQPWT5RX
+         0reA==
+X-Gm-Message-State: AOJu0YzWUIwmZOE8rfHE36VPUrefjjl4YNOmr7H963vvcEp6QXeZUNJM
+	NZASZWgs5pQZ4+Sk8q2kpMl/UB5e8JtFbaFVWF+P
+X-Google-Smtp-Source: AGHT+IH5POWzxfJUHKpYri9R+UVG+Wr3w1T0ws/aAxZr3RWyKZUULPlBJx6xRvviFDadIjnVfDAi37L7P8ExDxDrolc=
+X-Received: by 2002:a25:2693:0:b0:da0:86e8:aea4 with SMTP id
+ m141-20020a252693000000b00da086e8aea4mr790094ybm.57.1700256136343; Fri, 17
+ Nov 2023 13:22:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+References: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
+ <f529266a02533411e72d706b908924e8.paul@paul-moore.com> <49a7fd0a1f89188fa92f258e88c50eaeca0f4ac9.camel@huaweicloud.com>
+In-Reply-To: <49a7fd0a1f89188fa92f258e88c50eaeca0f4ac9.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 17 Nov 2023 16:22:05 -0500
+Message-ID: <CAHC9VhRpG3wFbu6-EZw3t1TeKxBzYX86YzizE6x9JGeWmyxixA@mail.gmail.com>
+Subject: Re: [PATCH v5 22/23] integrity: Move integrity functions to the LSM infrastructure
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, 
+	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
+	mic@digikod.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove some code that was #if'd out with the netfslib conversion.  This is
-split into parts for file.c as the diff generator otherwise produces a hard
-to read diff for part of it where a big chunk is cut out.
+On Thu, Nov 16, 2023 at 5:08=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Wed, 2023-11-15 at 23:33 -0500, Paul Moore wrote:
+> > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/smb/client/file.c | 1003 ------------------------------------------
- 1 file changed, 1003 deletions(-)
+...
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index ffa8c59109ab..94c3a606cfe4 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -2701,470 +2701,6 @@ int cifs_flush(struct file *file, fl_owner_t id)
- 	return rc;
- }
- 
--#if 0 // TODO remove 3594
--static void collect_uncached_write_data(struct cifs_aio_ctx *ctx);
--
--static void
--cifs_uncached_writev_complete(struct work_struct *work)
--{
--	struct cifs_io_subrequest *wdata = container_of(work,
--					struct cifs_io_subrequest, work);
--	struct inode *inode = d_inode(wdata->cfile->dentry);
--	struct cifsInodeInfo *cifsi = CIFS_I(inode);
--
--	spin_lock(&inode->i_lock);
--	cifs_update_eof(cifsi, wdata->subreq.start, wdata->subreq.len);
--	if (cifsi->netfs.remote_i_size > inode->i_size)
--		i_size_write(inode, cifsi->netfs.remote_i_size);
--	spin_unlock(&inode->i_lock);
--
--	complete(&wdata->done);
--	collect_uncached_write_data(wdata->ctx);
--	/* the below call can possibly free the last ref to aio ctx */
--	cifs_put_writedata(wdata);
--}
--
--static int
--cifs_resend_wdata(struct cifs_io_subrequest *wdata, struct list_head *wdata_list,
--	struct cifs_aio_ctx *ctx)
--{
--	size_t wsize;
--	struct cifs_credits credits;
--	int rc;
--	struct TCP_Server_Info *server = wdata->server;
--
--	do {
--		if (wdata->cfile->invalidHandle) {
--			rc = cifs_reopen_file(wdata->cfile, false);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--
--		/*
--		 * Wait for credits to resend this wdata.
--		 * Note: we are attempting to resend the whole wdata not in
--		 * segments
--		 */
--		do {
--			rc = server->ops->wait_mtu_credits(server, wdata->subreq.len,
--						&wsize, &credits);
--			if (rc)
--				goto fail;
--
--			if (wsize < wdata->subreq.len) {
--				add_credits_and_wake_if(server, &credits, 0);
--				msleep(1000);
--			}
--		} while (wsize < wdata->subreq.len);
--		wdata->credits = credits;
--
--		rc = adjust_credits(server, &wdata->credits, wdata->subreq.len);
--
--		if (!rc) {
--			if (wdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else {
--#ifdef CONFIG_CIFS_SMB_DIRECT
--				if (wdata->mr) {
--					wdata->mr->need_invalidate = true;
--					smbd_deregister_mr(wdata->mr);
--					wdata->mr = NULL;
--				}
--#endif
--				rc = server->ops->async_writev(wdata);
--			}
--		}
--
--		/* If the write was successfully sent, we are done */
--		if (!rc) {
--			list_add_tail(&wdata->list, wdata_list);
--			return 0;
--		}
--
--		/* Roll back credits and retry if needed */
--		add_credits_and_wake_if(server, &wdata->credits, 0);
--	} while (rc == -EAGAIN);
--
--fail:
--	cifs_put_writedata(wdata);
--	return rc;
--}
--
--/*
-- * Select span of a bvec iterator we're going to use.  Limit it by both maximum
-- * size and maximum number of segments.
-- */
--static size_t cifs_limit_bvec_subset(const struct iov_iter *iter, size_t max_size,
--				     size_t max_segs, unsigned int *_nsegs)
--{
--	const struct bio_vec *bvecs = iter->bvec;
--	unsigned int nbv = iter->nr_segs, ix = 0, nsegs = 0;
--	size_t len, span = 0, n = iter->count;
--	size_t skip = iter->iov_offset;
--
--	if (WARN_ON(!iov_iter_is_bvec(iter)) || n == 0)
--		return 0;
--
--	while (n && ix < nbv && skip) {
--		len = bvecs[ix].bv_len;
--		if (skip < len)
--			break;
--		skip -= len;
--		n -= len;
--		ix++;
--	}
--
--	while (n && ix < nbv) {
--		len = min3(n, bvecs[ix].bv_len - skip, max_size);
--		span += len;
--		max_size -= len;
--		nsegs++;
--		ix++;
--		if (max_size == 0 || nsegs >= max_segs)
--			break;
--		skip = 0;
--		n -= len;
--	}
--
--	*_nsegs = nsegs;
--	return span;
--}
--
--static int
--cifs_write_from_iter(loff_t fpos, size_t len, struct iov_iter *from,
--		     struct cifsFileInfo *open_file,
--		     struct cifs_sb_info *cifs_sb, struct list_head *wdata_list,
--		     struct cifs_aio_ctx *ctx)
--{
--	int rc = 0;
--	size_t cur_len, max_len;
--	struct cifs_io_subrequest *wdata;
--	pid_t pid;
--	struct TCP_Server_Info *server;
--	unsigned int xid, max_segs = INT_MAX;
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	server = cifs_pick_channel(tlink_tcon(open_file->tlink)->ses);
--	xid = get_xid();
--
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (server->smbd_conn)
--		max_segs = server->smbd_conn->max_frmr_depth;
--#endif
--
--	do {
--		struct cifs_credits credits_on_stack;
--		struct cifs_credits *credits = &credits_on_stack;
--		unsigned int nsegs = 0;
--		size_t wsize;
--
--		if (signal_pending(current)) {
--			rc = -EINTR;
--			break;
--		}
--
--		if (open_file->invalidHandle) {
--			rc = cifs_reopen_file(open_file, false);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--		rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->wsize,
--						   &wsize, credits);
--		if (rc)
--			break;
--
--		max_len = min_t(const size_t, len, wsize);
--		if (!max_len) {
--			rc = -EAGAIN;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
--
--		cur_len = cifs_limit_bvec_subset(from, max_len, max_segs, &nsegs);
--		cifs_dbg(FYI, "write_from_iter len=%zx/%zx nsegs=%u/%lu/%u\n",
--			 cur_len, max_len, nsegs, from->nr_segs, max_segs);
--		if (cur_len == 0) {
--			rc = -EIO;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
--
--		wdata = cifs_writedata_alloc(cifs_uncached_writev_complete);
--		if (!wdata) {
--			rc = -ENOMEM;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
--
--		wdata->uncached	= true;
--		wdata->sync_mode = WB_SYNC_ALL;
--		wdata->subreq.start	= (__u64)fpos;
--		wdata->cfile	= cifsFileInfo_get(open_file);
--		wdata->server	= server;
--		wdata->pid	= pid;
--		wdata->subreq.len	= cur_len;
--		wdata->credits	= credits_on_stack;
--		wdata->subreq.io_iter	= *from;
--		wdata->ctx	= ctx;
--		kref_get(&ctx->refcount);
--
--		iov_iter_truncate(&wdata->subreq.io_iter, cur_len);
--
--		rc = adjust_credits(server, &wdata->credits, wdata->subreq.len);
--
--		if (!rc) {
--			if (wdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else
--				rc = server->ops->async_writev(wdata);
--		}
--
--		if (rc) {
--			add_credits_and_wake_if(server, &wdata->credits, 0);
--			cifs_put_writedata(wdata);
--			if (rc == -EAGAIN)
--				continue;
--			break;
--		}
--
--		list_add_tail(&wdata->list, wdata_list);
--		iov_iter_advance(from, cur_len);
--		fpos += cur_len;
--		len -= cur_len;
--	} while (len > 0);
--
--	free_xid(xid);
--	return rc;
--}
--
--static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
--{
--	struct cifs_io_subrequest *wdata, *tmp;
--	struct cifs_tcon *tcon;
--	struct cifs_sb_info *cifs_sb;
--	struct dentry *dentry = ctx->cfile->dentry;
--	ssize_t rc;
--
--	tcon = tlink_tcon(ctx->cfile->tlink);
--	cifs_sb = CIFS_SB(dentry->d_sb);
--
--	mutex_lock(&ctx->aio_mutex);
--
--	if (list_empty(&ctx->list)) {
--		mutex_unlock(&ctx->aio_mutex);
--		return;
--	}
--
--	rc = ctx->rc;
--	/*
--	 * Wait for and collect replies for any successful sends in order of
--	 * increasing offset. Once an error is hit, then return without waiting
--	 * for any more replies.
--	 */
--restart_loop:
--	list_for_each_entry_safe(wdata, tmp, &ctx->list, list) {
--		if (!rc) {
--			if (!try_wait_for_completion(&wdata->done)) {
--				mutex_unlock(&ctx->aio_mutex);
--				return;
--			}
--
--			if (wdata->result)
--				rc = wdata->result;
--			else
--				ctx->total_len += wdata->subreq.len;
--
--			/* resend call if it's a retryable error */
--			if (rc == -EAGAIN) {
--				struct list_head tmp_list;
--				struct iov_iter tmp_from = ctx->iter;
--
--				INIT_LIST_HEAD(&tmp_list);
--				list_del_init(&wdata->list);
--
--				if (ctx->direct_io)
--					rc = cifs_resend_wdata(
--						wdata, &tmp_list, ctx);
--				else {
--					iov_iter_advance(&tmp_from,
--						 wdata->subreq.start - ctx->pos);
--
--					rc = cifs_write_from_iter(wdata->subreq.start,
--						wdata->subreq.len, &tmp_from,
--						ctx->cfile, cifs_sb, &tmp_list,
--						ctx);
--
--					cifs_put_writedata(wdata);
--				}
--
--				list_splice(&tmp_list, &ctx->list);
--				goto restart_loop;
--			}
--		}
--		list_del_init(&wdata->list);
--		cifs_put_writedata(wdata);
--	}
--
--	cifs_stats_bytes_written(tcon, ctx->total_len);
--	set_bit(CIFS_INO_INVALID_MAPPING, &CIFS_I(dentry->d_inode)->flags);
--
--	ctx->rc = (rc == 0) ? ctx->total_len : rc;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (ctx->iocb && ctx->iocb->ki_complete)
--		ctx->iocb->ki_complete(ctx->iocb, ctx->rc);
--	else
--		complete(&ctx->done);
--}
--
--static ssize_t __cifs_writev(
--	struct kiocb *iocb, struct iov_iter *from, bool direct)
--{
--	struct file *file = iocb->ki_filp;
--	ssize_t total_written = 0;
--	struct cifsFileInfo *cfile;
--	struct cifs_tcon *tcon;
--	struct cifs_sb_info *cifs_sb;
--	struct cifs_aio_ctx *ctx;
--	int rc;
--
--	rc = generic_write_checks(iocb, from);
--	if (rc <= 0)
--		return rc;
--
--	cifs_sb = CIFS_FILE_SB(file);
--	cfile = file->private_data;
--	tcon = tlink_tcon(cfile->tlink);
--
--	if (!tcon->ses->server->ops->async_writev)
--		return -ENOSYS;
--
--	ctx = cifs_aio_ctx_alloc();
--	if (!ctx)
--		return -ENOMEM;
--
--	ctx->cfile = cifsFileInfo_get(cfile);
--
--	if (!is_sync_kiocb(iocb))
--		ctx->iocb = iocb;
--
--	ctx->pos = iocb->ki_pos;
--	ctx->direct_io = direct;
--	ctx->nr_pinned_pages = 0;
--
--	if (user_backed_iter(from)) {
--		/*
--		 * Extract IOVEC/UBUF-type iterators to a BVEC-type iterator as
--		 * they contain references to the calling process's virtual
--		 * memory layout which won't be available in an async worker
--		 * thread.  This also takes a pin on every folio involved.
--		 */
--		rc = netfs_extract_user_iter(from, iov_iter_count(from),
--					     &ctx->iter, 0);
--		if (rc < 0) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return rc;
--		}
--
--		ctx->nr_pinned_pages = rc;
--		ctx->bv = (void *)ctx->iter.bvec;
--		ctx->bv_need_unpin = iov_iter_extract_will_pin(from);
--	} else if ((iov_iter_is_bvec(from) || iov_iter_is_kvec(from)) &&
--		   !is_sync_kiocb(iocb)) {
--		/*
--		 * If the op is asynchronous, we need to copy the list attached
--		 * to a BVEC/KVEC-type iterator, but we assume that the storage
--		 * will be pinned by the caller; in any case, we may or may not
--		 * be able to pin the pages, so we don't try.
--		 */
--		ctx->bv = (void *)dup_iter(&ctx->iter, from, GFP_KERNEL);
--		if (!ctx->bv) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -ENOMEM;
--		}
--	} else {
--		/*
--		 * Otherwise, we just pass the iterator down as-is and rely on
--		 * the caller to make sure the pages referred to by the
--		 * iterator don't evaporate.
--		 */
--		ctx->iter = *from;
--	}
--
--	ctx->len = iov_iter_count(&ctx->iter);
--
--	/* grab a lock here due to read response handlers can access ctx */
--	mutex_lock(&ctx->aio_mutex);
--
--	rc = cifs_write_from_iter(iocb->ki_pos, ctx->len, &ctx->iter,
--				  cfile, cifs_sb, &ctx->list, ctx);
--
--	/*
--	 * If at least one write was successfully sent, then discard any rc
--	 * value from the later writes. If the other write succeeds, then
--	 * we'll end up returning whatever was written. If it fails, then
--	 * we'll get a new rc value from that.
--	 */
--	if (!list_empty(&ctx->list))
--		rc = 0;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (rc) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return rc;
--	}
--
--	if (!is_sync_kiocb(iocb)) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return -EIOCBQUEUED;
--	}
--
--	rc = wait_for_completion_killable(&ctx->done);
--	if (rc) {
--		mutex_lock(&ctx->aio_mutex);
--		ctx->rc = rc = -EINTR;
--		total_written = ctx->total_len;
--		mutex_unlock(&ctx->aio_mutex);
--	} else {
--		rc = ctx->rc;
--		total_written = ctx->total_len;
--	}
--
--	kref_put(&ctx->refcount, cifs_aio_ctx_release);
--
--	if (unlikely(!total_written))
--		return rc;
--
--	iocb->ki_pos += total_written;
--	return total_written;
--}
--
--ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
--{
--	struct file *file = iocb->ki_filp;
--
--	cifs_revalidate_mapping(file->f_inode);
--	return __cifs_writev(iocb, from, true);
--}
--
--ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
--{
--	return __cifs_writev(iocb, from, false);
--}
--#endif // TODO remove 3594
--
- static ssize_t
- cifs_writev(struct kiocb *iocb, struct iov_iter *from)
- {
-@@ -3253,450 +2789,6 @@ cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from)
- 	return written;
- }
- 
--#if 0 // TODO remove 4143
--static struct cifs_io_subrequest *cifs_readdata_alloc(work_func_t complete)
--{
--	struct cifs_io_subrequest *rdata;
--
--	rdata = kzalloc(sizeof(*rdata), GFP_KERNEL);
--	if (rdata) {
--		refcount_set(&rdata->subreq.ref, 1);
--		INIT_LIST_HEAD(&rdata->list);
--		init_completion(&rdata->done);
--		INIT_WORK(&rdata->work, complete);
--	}
--
--	return rdata;
--}
--
--void
--cifs_readdata_release(struct cifs_io_subrequest *rdata)
--{
--	if (rdata->ctx)
--		kref_put(&rdata->ctx->refcount, cifs_aio_ctx_release);
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (rdata->mr) {
--		smbd_deregister_mr(rdata->mr);
--		rdata->mr = NULL;
--	}
--#endif
--	if (rdata->cfile)
--		cifsFileInfo_put(rdata->cfile);
--
--	kfree(rdata);
--}
--
--static void collect_uncached_read_data(struct cifs_aio_ctx *ctx);
--
--static void
--cifs_uncached_readv_complete(struct work_struct *work)
--{
--	struct cifs_io_subrequest *rdata =
--		container_of(work, struct cifs_io_subrequest, work);
--
--	complete(&rdata->done);
--	collect_uncached_read_data(rdata->ctx);
--	/* the below call can possibly free the last ref to aio ctx */
--	cifs_put_readdata(rdata);
--}
--
--static int cifs_resend_rdata(struct cifs_io_subrequest *rdata,
--			struct list_head *rdata_list,
--			struct cifs_aio_ctx *ctx)
--{
--	size_t rsize;
--	struct cifs_credits credits;
--	int rc;
--	struct TCP_Server_Info *server;
--
--	/* XXX: should we pick a new channel here? */
--	server = rdata->server;
--
--	do {
--		if (rdata->cfile->invalidHandle) {
--			rc = cifs_reopen_file(rdata->cfile, true);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--		/*
--		 * Wait for credits to resend this rdata.
--		 * Note: we are attempting to resend the whole rdata not in
--		 * segments
--		 */
--		do {
--			rc = server->ops->wait_mtu_credits(server, rdata->subreq.len,
--						&rsize, &credits);
--
--			if (rc)
--				goto fail;
--
--			if (rsize < rdata->subreq.len) {
--				add_credits_and_wake_if(server, &credits, 0);
--				msleep(1000);
--			}
--		} while (rsize < rdata->subreq.len);
--		rdata->credits = credits;
--
--		rc = adjust_credits(server, &rdata->credits, rdata->subreq.len);
--		if (!rc) {
--			if (rdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else {
--#ifdef CONFIG_CIFS_SMB_DIRECT
--				if (rdata->mr) {
--					rdata->mr->need_invalidate = true;
--					smbd_deregister_mr(rdata->mr);
--					rdata->mr = NULL;
--				}
--#endif
--				rc = server->ops->async_readv(rdata);
--			}
--		}
--
--		/* If the read was successfully sent, we are done */
--		if (!rc) {
--			/* Add to aio pending list */
--			list_add_tail(&rdata->list, rdata_list);
--			return 0;
--		}
--
--		/* Roll back credits and retry if needed */
--		add_credits_and_wake_if(server, &rdata->credits, 0);
--	} while (rc == -EAGAIN);
--
--fail:
--	cifs_put_readdata(rdata);
--	return rc;
--}
--
--static int
--cifs_send_async_read(loff_t fpos, size_t len, struct cifsFileInfo *open_file,
--		     struct cifs_sb_info *cifs_sb, struct list_head *rdata_list,
--		     struct cifs_aio_ctx *ctx)
--{
--	struct cifs_io_subrequest *rdata;
--	unsigned int nsegs, max_segs = INT_MAX;
--	struct cifs_credits credits_on_stack;
--	struct cifs_credits *credits = &credits_on_stack;
--	size_t cur_len, max_len, rsize;
--	int rc;
--	pid_t pid;
--	struct TCP_Server_Info *server;
--
--	server = cifs_pick_channel(tlink_tcon(open_file->tlink)->ses);
--
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (server->smbd_conn)
--		max_segs = server->smbd_conn->max_frmr_depth;
--#endif
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	do {
--		if (open_file->invalidHandle) {
--			rc = cifs_reopen_file(open_file, true);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--		if (cifs_sb->ctx->rsize == 0)
--			cifs_sb->ctx->rsize =
--				server->ops->negotiate_rsize(tlink_tcon(open_file->tlink),
--							     cifs_sb->ctx);
--
--		rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->rsize,
--						   &rsize, credits);
--		if (rc)
--			break;
--
--		max_len = min_t(size_t, len, rsize);
--
--		cur_len = cifs_limit_bvec_subset(&ctx->iter, max_len,
--						 max_segs, &nsegs);
--		cifs_dbg(FYI, "read-to-iter len=%zx/%zx nsegs=%u/%lu/%u\n",
--			 cur_len, max_len, nsegs, ctx->iter.nr_segs, max_segs);
--		if (cur_len == 0) {
--			rc = -EIO;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
--
--		rdata = cifs_readdata_alloc(cifs_uncached_readv_complete);
--		if (!rdata) {
--			add_credits_and_wake_if(server, credits, 0);
--			rc = -ENOMEM;
--			break;
--		}
--
--		rdata->server	= server;
--		rdata->cfile	= cifsFileInfo_get(open_file);
--		rdata->subreq.start	= fpos;
--		rdata->subreq.len	= cur_len;
--		rdata->pid	= pid;
--		rdata->credits	= credits_on_stack;
--		rdata->ctx	= ctx;
--		kref_get(&ctx->refcount);
--
--		rdata->subreq.io_iter = ctx->iter;
--		iov_iter_truncate(&rdata->subreq.io_iter, cur_len);
--
--		rc = adjust_credits(server, &rdata->credits, rdata->subreq.len);
--
--		if (!rc) {
--			if (rdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else
--				rc = server->ops->async_readv(rdata);
--		}
--
--		if (rc) {
--			add_credits_and_wake_if(server, &rdata->credits, 0);
--			cifs_put_readdata(rdata);
--			if (rc == -EAGAIN)
--				continue;
--			break;
--		}
--
--		list_add_tail(&rdata->list, rdata_list);
--		iov_iter_advance(&ctx->iter, cur_len);
--		fpos += cur_len;
--		len -= cur_len;
--	} while (len > 0);
--
--	return rc;
--}
--
--static void
--collect_uncached_read_data(struct cifs_aio_ctx *ctx)
--{
--	struct cifs_io_subrequest *rdata, *tmp;
--	struct cifs_sb_info *cifs_sb;
--	int rc;
--
--	cifs_sb = CIFS_SB(ctx->cfile->dentry->d_sb);
--
--	mutex_lock(&ctx->aio_mutex);
--
--	if (list_empty(&ctx->list)) {
--		mutex_unlock(&ctx->aio_mutex);
--		return;
--	}
--
--	rc = ctx->rc;
--	/* the loop below should proceed in the order of increasing offsets */
--again:
--	list_for_each_entry_safe(rdata, tmp, &ctx->list, list) {
--		if (!rc) {
--			if (!try_wait_for_completion(&rdata->done)) {
--				mutex_unlock(&ctx->aio_mutex);
--				return;
--			}
--
--			if (rdata->result == -EAGAIN) {
--				/* resend call if it's a retryable error */
--				struct list_head tmp_list;
--				unsigned int got_bytes = rdata->got_bytes;
--
--				list_del_init(&rdata->list);
--				INIT_LIST_HEAD(&tmp_list);
--
--				if (ctx->direct_io) {
--					/*
--					 * Re-use rdata as this is a
--					 * direct I/O
--					 */
--					rc = cifs_resend_rdata(
--						rdata,
--						&tmp_list, ctx);
--				} else {
--					rc = cifs_send_async_read(
--						rdata->subreq.start + got_bytes,
--						rdata->subreq.len - got_bytes,
--						rdata->cfile, cifs_sb,
--						&tmp_list, ctx);
--
--					cifs_put_readdata(rdata);
--				}
--
--				list_splice(&tmp_list, &ctx->list);
--
--				goto again;
--			} else if (rdata->result)
--				rc = rdata->result;
--
--			/* if there was a short read -- discard anything left */
--			if (rdata->got_bytes && rdata->got_bytes < rdata->subreq.len)
--				rc = -ENODATA;
--
--			ctx->total_len += rdata->got_bytes;
--		}
--		list_del_init(&rdata->list);
--		cifs_put_readdata(rdata);
--	}
--
--	/* mask nodata case */
--	if (rc == -ENODATA)
--		rc = 0;
--
--	ctx->rc = (rc == 0) ? (ssize_t)ctx->total_len : rc;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (ctx->iocb && ctx->iocb->ki_complete)
--		ctx->iocb->ki_complete(ctx->iocb, ctx->rc);
--	else
--		complete(&ctx->done);
--}
--
--static ssize_t __cifs_readv(
--	struct kiocb *iocb, struct iov_iter *to, bool direct)
--{
--	size_t len;
--	struct file *file = iocb->ki_filp;
--	struct cifs_sb_info *cifs_sb;
--	struct cifsFileInfo *cfile;
--	struct cifs_tcon *tcon;
--	ssize_t rc, total_read = 0;
--	loff_t offset = iocb->ki_pos;
--	struct cifs_aio_ctx *ctx;
--
--	len = iov_iter_count(to);
--	if (!len)
--		return 0;
--
--	cifs_sb = CIFS_FILE_SB(file);
--	cfile = file->private_data;
--	tcon = tlink_tcon(cfile->tlink);
--
--	if (!tcon->ses->server->ops->async_readv)
--		return -ENOSYS;
--
--	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
--		cifs_dbg(FYI, "attempting read on write only file instance\n");
--
--	ctx = cifs_aio_ctx_alloc();
--	if (!ctx)
--		return -ENOMEM;
--
--	ctx->pos	= offset;
--	ctx->direct_io	= direct;
--	ctx->len	= len;
--	ctx->cfile	= cifsFileInfo_get(cfile);
--	ctx->nr_pinned_pages = 0;
--
--	if (!is_sync_kiocb(iocb))
--		ctx->iocb = iocb;
--
--	if (user_backed_iter(to)) {
--		/*
--		 * Extract IOVEC/UBUF-type iterators to a BVEC-type iterator as
--		 * they contain references to the calling process's virtual
--		 * memory layout which won't be available in an async worker
--		 * thread.  This also takes a pin on every folio involved.
--		 */
--		rc = netfs_extract_user_iter(to, iov_iter_count(to),
--					     &ctx->iter, 0);
--		if (rc < 0) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return rc;
--		}
--
--		ctx->nr_pinned_pages = rc;
--		ctx->bv = (void *)ctx->iter.bvec;
--		ctx->bv_need_unpin = iov_iter_extract_will_pin(to);
--		ctx->should_dirty = true;
--	} else if ((iov_iter_is_bvec(to) || iov_iter_is_kvec(to)) &&
--		   !is_sync_kiocb(iocb)) {
--		/*
--		 * If the op is asynchronous, we need to copy the list attached
--		 * to a BVEC/KVEC-type iterator, but we assume that the storage
--		 * will be retained by the caller; in any case, we may or may
--		 * not be able to pin the pages, so we don't try.
--		 */
--		ctx->bv = (void *)dup_iter(&ctx->iter, to, GFP_KERNEL);
--		if (!ctx->bv) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -ENOMEM;
--		}
--	} else {
--		/*
--		 * Otherwise, we just pass the iterator down as-is and rely on
--		 * the caller to make sure the pages referred to by the
--		 * iterator don't evaporate.
--		 */
--		ctx->iter = *to;
--	}
--
--	if (direct) {
--		rc = filemap_write_and_wait_range(file->f_inode->i_mapping,
--						  offset, offset + len - 1);
--		if (rc) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -EAGAIN;
--		}
--	}
--
--	/* grab a lock here due to read response handlers can access ctx */
--	mutex_lock(&ctx->aio_mutex);
--
--	rc = cifs_send_async_read(offset, len, cfile, cifs_sb, &ctx->list, ctx);
--
--	/* if at least one read request send succeeded, then reset rc */
--	if (!list_empty(&ctx->list))
--		rc = 0;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (rc) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return rc;
--	}
--
--	if (!is_sync_kiocb(iocb)) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return -EIOCBQUEUED;
--	}
--
--	rc = wait_for_completion_killable(&ctx->done);
--	if (rc) {
--		mutex_lock(&ctx->aio_mutex);
--		ctx->rc = rc = -EINTR;
--		total_read = ctx->total_len;
--		mutex_unlock(&ctx->aio_mutex);
--	} else {
--		rc = ctx->rc;
--		total_read = ctx->total_len;
--	}
--
--	kref_put(&ctx->refcount, cifs_aio_ctx_release);
--
--	if (total_read) {
--		iocb->ki_pos += total_read;
--		return total_read;
--	}
--	return rc;
--}
--
--ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
--{
--	return __cifs_readv(iocb, to, true);
--}
--
--ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
--{
--	return __cifs_readv(iocb, to, false);
--
--}
--#endif // end netfslib removal 4143
--
- ssize_t cifs_loose_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	ssize_t rc;
-@@ -3795,101 +2887,6 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
- 	return rc;
- }
- 
--#if 0 // TODO remove 4633
--static ssize_t
--cifs_read(struct file *file, char *read_data, size_t read_size, loff_t *offset)
--{
--	int rc = -EACCES;
--	unsigned int bytes_read = 0;
--	unsigned int total_read;
--	unsigned int current_read_size;
--	unsigned int rsize;
--	struct cifs_sb_info *cifs_sb;
--	struct cifs_tcon *tcon;
--	struct TCP_Server_Info *server;
--	unsigned int xid;
--	char *cur_offset;
--	struct cifsFileInfo *open_file;
--	struct cifs_io_parms io_parms = {0};
--	int buf_type = CIFS_NO_BUFFER;
--	__u32 pid;
--
--	xid = get_xid();
--	cifs_sb = CIFS_FILE_SB(file);
--
--	/* FIXME: set up handlers for larger reads and/or convert to async */
--	rsize = min_t(unsigned int, cifs_sb->ctx->rsize, CIFSMaxBufSize);
--
--	if (file->private_data == NULL) {
--		rc = -EBADF;
--		free_xid(xid);
--		return rc;
--	}
--	open_file = file->private_data;
--	tcon = tlink_tcon(open_file->tlink);
--	server = cifs_pick_channel(tcon->ses);
--
--	if (!server->ops->sync_read) {
--		free_xid(xid);
--		return -ENOSYS;
--	}
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
--		cifs_dbg(FYI, "attempting read on write only file instance\n");
--
--	for (total_read = 0, cur_offset = read_data; read_size > total_read;
--	     total_read += bytes_read, cur_offset += bytes_read) {
--		do {
--			current_read_size = min_t(uint, read_size - total_read,
--						  rsize);
--			/*
--			 * For windows me and 9x we do not want to request more
--			 * than it negotiated since it will refuse the read
--			 * then.
--			 */
--			if (!(tcon->ses->capabilities &
--				tcon->ses->server->vals->cap_large_files)) {
--				current_read_size = min_t(uint,
--					current_read_size, CIFSMaxBufSize);
--			}
--			if (open_file->invalidHandle) {
--				rc = cifs_reopen_file(open_file, true);
--				if (rc != 0)
--					break;
--			}
--			io_parms.pid = pid;
--			io_parms.tcon = tcon;
--			io_parms.offset = *offset;
--			io_parms.length = current_read_size;
--			io_parms.server = server;
--			rc = server->ops->sync_read(xid, &open_file->fid, &io_parms,
--						    &bytes_read, &cur_offset,
--						    &buf_type);
--		} while (rc == -EAGAIN);
--
--		if (rc || (bytes_read == 0)) {
--			if (total_read) {
--				break;
--			} else {
--				free_xid(xid);
--				return rc;
--			}
--		} else {
--			cifs_stats_bytes_read(tcon, total_read);
--			*offset += bytes_read;
--		}
--	}
--	free_xid(xid);
--	return total_read;
--}
--#endif // end netfslib remove 4633
--
--
- static vm_fault_t cifs_page_mkwrite(struct vm_fault *vmf)
- {
- 	return netfs_page_mkwrite(vmf, NULL);
+> > > +/*
+> > > + * Perform the initialization of the 'integrity', 'ima' and 'evm' LS=
+Ms to
+> > > + * ensure that the management of integrity metadata is working at th=
+e time
+> > > + * IMA and EVM hooks are registered to the LSM infrastructure, and t=
+o keep
+> > > + * the original ordering of IMA and EVM functions as when they were =
+hardcoded.
+> > > + */
+> > >  static int __init integrity_lsm_init(void)
+> > >  {
+> > > +   const struct lsm_id *lsmid;
+> > > +
+> > >     iint_cache =3D
+> > >         kmem_cache_create("iint_cache", sizeof(struct integrity_iint_=
+cache),
+> > >                           0, SLAB_PANIC, iint_init_once);
+> > > +   /*
+> > > +    * Obtain either the IMA or EVM LSM ID to register integrity-spec=
+ific
+> > > +    * hooks under that LSM, since there is no LSM ID assigned to the
+> > > +    * 'integrity' LSM.
+> > > +    */
+> > > +   lsmid =3D ima_get_lsm_id();
+> > > +   if (!lsmid)
+> > > +           lsmid =3D evm_get_lsm_id();
+> > > +   /* No point in continuing, since both IMA and EVM are disabled. *=
+/
+> > > +   if (!lsmid)
+> > > +           return 0;
+> > > +
+> > > +   security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), =
+lsmid);
+> >
+> > Ooof.  I understand, or at least I think I understand, why the above
+> > hack is needed, but I really don't like the idea of @integrity_hooks
+> > jumping between IMA and EVM depending on how the kernel is configured.
+> >
+> > Just to make sure I'm understanding things correctly, the "integrity"
+> > LSM exists to ensure the proper hook ordering between IMA/EVM, shared
+> > metadata management for IMA/EVM, and a little bit of a hack to solve
+> > some kernel module loading issues with signatures.  Is that correct?
+> >
+> > I see that patch 23/23 makes some nice improvements to the metadata
+> > management, moving them into LSM security blobs, but it appears that
+> > they are still shared, and thus the requirement is still there for
+> > an "integrity" LSM to manage the shared blobs.
+>
+> Yes, all is correct.
 
+Thanks for the clarification, more on this below.
+
+> > I'd like to hear everyone's honest opinion on this next question: do
+> > we have any hope of separating IMA and EVM so they are independent
+> > (ignore the ordering issues for a moment), or are we always going to
+> > need to have the "integrity" LSM to manage shared resources, hooks,
+> > etc.?
+>
+> I think it should not be technically difficult to do it. But, it would
+> be very important to understand all the implications of doing those
+> changes.
+>
+> Sorry, for now I don't see an immediate need to do that, other than
+> solving this LSM naming issue. I tried to find the best solution I
+> could.
+
+I first want to say that I think you've done a great job thus far, and
+I'm very grateful for the work you've done.  We can always use more
+help in the kernel security space and I'm very happy to see your
+contributions - thank you :)
+
+I'm concerned about the integrity LSM because it isn't really a LSM,
+it is simply an implementation artifact from a time when only one LSM
+was enabled.  Now that we have basic support for stacking LSMs, as we
+promote integrity/IMA/EVM I think this is the perfect time to move
+away from the "integrity" portion and integrate the necessary
+functionality into the IMA and EVM LSMs.  This is even more important
+now that we are looking at making the LSMs more visible to userspace
+via syscalls; how would you explain to a developer or user the need
+for an "integrity" LSM along with the IMA and EVM LSMs?
+
+Let's look at the three things the the integrity code provides in this patc=
+hset:
+
+* IMA/EVM hook ordering
+
+For better or worse, we have requirements on LSM ordering today that
+are enforced only by convention, the BPF LSM being the perfect
+example.  As long as we document this in Kconfig I think we are okay.
+
+* Shared metadata
+
+Looking at the integrity_iint_cache struct at the end of your patchset
+I see the following:
+
+  struct integrity_iint_cache {
+    struct mutex mutex;
+    struct inode *inode;
+    u64 version;
+    unsigned long flags;
+    unsigned long measured_pcrs;
+    unsigned long atomic_flags;
+    enum integrity_status ima_file_status:4;
+    enum integrity_status ima_mmap_status:4;
+    enum integrity_status ima_bprm_status:4;
+    enum integrity_status ima_read_status:4;
+    enum integrity_status ima_creds_status:4;
+    enum integrity_status evm_status:4;
+    struct ima_digest_data *ima_hash;
+  };
+
+Now that we are stashing the metadata in the inode, we should be able
+to remove the @inode field back pointer.  It seems like we could
+duplicate @mutex and @version without problem.
+
+I only see the @measured_pcrs, @atomic_flags used in the IMA code.
+
+I only see the @ima_XXX_status fields using in the IMA code, and the
+@evm_status used in the EVM code.
+
+I only see the @ima_hash field used by the IMA code.
+
+I do see both IMA and EVM using the @flags field, but only one case
+(IMA_NEW_FILE) where one LSM (EVM) looks for another flags (IMA).  I'm
+not sure how difficult that would be to untangle, but I imagine we
+could do something here; if we had to, we could make EVM be dependent
+on IMA in Kconfig and add a function call to check on the inode
+status.  Although I hope we could find a better solution.
+
+* Kernel module loading hook (integrity_kernel_module_request(...))
+
+My guess is that this is really an IMA hook, but I can't say for
+certain.  If it is needed for EVM we could always duplicate it across
+the IMA and EVM LSMs, it is trivially small and one extra strcmp() at
+kernel module load time doesn't seem awful to me.
+
+--=20
+paul-moore.com
 
