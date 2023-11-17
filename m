@@ -1,122 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-3013-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E47B7EF3BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 14:37:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD6D7EF458
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 15:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20DE1F26254
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 13:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7F1728143B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 14:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D54328C7;
-	Fri, 17 Nov 2023 13:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1E636AEA;
+	Fri, 17 Nov 2023 14:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FJ3q580j"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="c2yBqcWG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1067ED4B;
-	Fri, 17 Nov 2023 05:37:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nx/Pv1PYCiC9DG1C8Yjkw4xazpeJGYAfjvQtO3Qtn20=; b=FJ3q580jGlZInbLHGdhlB9N7Pt
-	F4s+C3nz+JJa8kXLtlM+K+3eW0mA/wJUsjVhbtInuZthow4RkWUn0AJbwxu+dV7Mq8IhHONUMDMN3
-	dkojxw82g6DS3T0bDLhQWwbrkTvPrbvFvpyO+RtrMjUASW/uYKwzppeBGukUJ91mbq+BlEBFjt166
-	iWwZgHMMq6EqWBUxVSeTQWl+mapiZQNweeKDIGZC1xJut34LCdpu8RUQMGYKzlp2FrgzpTQ8/G0tC
-	Zp1+1uYo9sxks7F8FIAEVjNYnnVB7+5Bv8spiyOEV/VKeB/8FnqMvKee62WT4upc0il49AAeiMEhB
-	P+5Bqfrw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1r3z1m-009g3V-Ul; Fri, 17 Nov 2023 13:36:59 +0000
-Date: Fri, 17 Nov 2023 13:36:58 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: Mixed page compact code and (higher order) folios for filemap
-Message-ID: <ZVdseuGiGlvatD5/@casper.infradead.org>
-References: <ec608bc8-e07b-49e6-a01e-487e691220f5@gmx.com>
- <ZVWjBVISMbP/UvGY@casper.infradead.org>
- <0e995d32-a984-4b65-b9e3-67fc62cc2596@gmx.com>
- <ZVYl8z5A1ucf/GYt@casper.infradead.org>
- <9ecbebd3-4dc1-4560-9616-1af861c376e1@gmx.com>
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEC09D4E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 06:22:50 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53e751aeb3cso2996590a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 06:22:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1700230969; x=1700835769; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZgEwr6cblUYmNXzrXsexyeMYJOZxnBeSbiEtnTE9Rpo=;
+        b=c2yBqcWG5wLmCrcCNj9D90lBtbOXBb2eOnN4JjxKfhw4w+bVYJCP6if9aNpWySwtae
+         +PKMTK9dejOhDBSsQf9xoJQTgPEERYNQ+hMG4OLQXohr4vvT/Dr2zqTCkV/TJZyQeOHp
+         xrqdyh82y1mTodRaH63hAuiY9Lzgg8CfnsEB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700230969; x=1700835769;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZgEwr6cblUYmNXzrXsexyeMYJOZxnBeSbiEtnTE9Rpo=;
+        b=C2jeAi6KlGps+H7jviwY0GRT/NF+kisLIwfwzt07xaT1B1IEcyVAQ1991acrNoQKYI
+         ufAfR0R8N1REirBNiLuTc0E72RAtOPWlups10ev2sXDjQW9YfDDAW71rtY8FS84kHc2T
+         7sZ96TggIPHABKATmFTJqV8s/1i9EyepioHU7xAoC28c3FqZl6qZ0MW4pLsMxMVt+kiA
+         1e4X+ooQY//BAAST0bwWNX214U0d9wwrHh0bXg55unKd3RRP3JWXDlo7l7aRvBWRaTet
+         yDG0GAoqNfs1CYTAhmse3JVi/LnFdeshlkKWK64oHHGKDxhmcv0D28hkCAylcIa/xoG4
+         RnDw==
+X-Gm-Message-State: AOJu0YxjZaUkH023aouSutrDMdP4oH80wAYFeBai2AsuPB7lr9akPNft
+	4dMkltw5pkbaEpbqTOikQTiOn4gSZqB54afT4kYA4w==
+X-Google-Smtp-Source: AGHT+IGgYlVlz5kZsNEul9P3cFAA/LVnHFSJhgqspvk+ptWMRVhNOBHlmFgmPRjE2MffzqftzNpdO3+Du9TZPBY14eo=
+X-Received: by 2002:a17:906:770d:b0:9dd:bd42:4ec7 with SMTP id
+ q13-20020a170906770d00b009ddbd424ec7mr13486494ejm.38.1700230968929; Fri, 17
+ Nov 2023 06:22:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ecbebd3-4dc1-4560-9616-1af861c376e1@gmx.com>
+References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+ <87fs15qvu4.fsf@oldenburg.str.redhat.com> <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
+In-Reply-To: <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 17 Nov 2023 15:22:37 +0100
+Message-ID: <CAJfpegv7mGhNCyOULTNNPVskGYoeQAVK=s+k=p_3crP6fm+PPQ@mail.gmail.com>
+Subject: Re: proposed libc interface and man page for statmount(2)
+To: Florian Weimer <fweimer@redhat.com>
+Cc: libc-alpha@sourceware.org, linux-man <linux-man@vger.kernel.org>, 
+	Alejandro Colomar <alx@kernel.org>, Linux API <linux-api@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
+	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+	Christian Brauner <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: multipart/mixed; boundary="000000000000f09207060a59de45"
 
-On Fri, Nov 17, 2023 at 09:10:10AM +1030, Qu Wenruo wrote:
-> On 2023/11/17 00:53, Matthew Wilcox wrote:
-> > On Thu, Nov 16, 2023 at 04:00:40PM +1030, Qu Wenruo wrote:
-> > > On 2023/11/16 15:35, Matthew Wilcox wrote:
-> > > > On Thu, Nov 16, 2023 at 02:11:00PM +1030, Qu Wenruo wrote:
-> > > > > E.g. if I allocated a folio with order 2, attached some private data to
-> > > > > the folio, then call filemap_add_folio().
-> > > > > 
-> > > > > Later some one called find_lock_page() and hit the 2nd page of that folio.
-> > > > > 
-> > > > > I believe the regular IO is totally fine, but what would happen for the
-> > > > > page->private of that folio?
-> > > > > Would them all share the same value of the folio_attach_private()? Or
-> > > > > some different values?
-> > > > 
-> > > > Well, there's no magic ...
-> > > > 
-> > > > If you call find_lock_page(), you get back the precise page.  If you
-> > > > call page_folio() on that page, you get back the folio that you stored.
-> > > > If you then dereference folio->private, you get the pointer that you
-> > > > passed to folio_attach_private().
-> > > > 
-> > > > If you dereference page->private, *that is a bug*.  You might get
-> > > > NULL, you might get garbage.  Just like dereferencing page->index or
-> > > > page->mapping on tail pages.  page_private() will also do the wrong thing
-> > > > (we could fix that to embed a call to page_folio() ... it hasn't been
-> > > > necessary before now, but if it'll help convert btrfs, then let's do it).
-> > > 
-> > > That would be great. The biggest problem I'm hitting so far is the page
-> > > cache for metadata.
-> > > 
-> > > We're using __GFP_NOFAIL for the current per-page allocation, but IIRC
-> > > __GFP_NOFAIL is ignored for higher order (>2 ?) folio allocation.
-> > > And we may want that per-page allocation as the last resort effort
-> > > allocation anyway.
-> > > 
-> > > Thus I'm checking if there is something we can do here.
-> > > 
-> > > But I guess we can always go folio_private() instead as a workaround for
-> > > now?
-> > 
-> > I don't understand enough about what you're doing to offer useful
-> > advice.  Is this for bs>PS or is it arbitrary large folios for better
-> > performance?  If the latter, you can always fall back to order-0 folios.
-> > If the former, well, we need to adjust a few things anyway to handle
-> > filesystems with a minimum order ...
-> > 
-> > In general, you should be using folio_private().  page->private and
-> > page_private() will be removed eventually.
-> 
-> Just another question.
-> 
-> What about flags like PageDirty? Are they synced with folio?
+--000000000000f09207060a59de45
+Content-Type: text/plain; charset="UTF-8"
 
-Yes.  You can SetPageDirty() in one function and then folio_test_dirty()
-in another.  Eventually all the PageFoo() functions will be removed,
-except PageHWPoison and PageAnonExclusive.
+On Thu, 16 Nov 2023 at 22:01, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> The declaration goes PF_HEAD for policy, thus for order 0 it makes no
-> difference, but for higher order folios, we should switch to pure folio
-> based operations other than mixing page and folios?
+> But I don't think the allocating one needs a size hint.   Your
+> suggestion of passing a buffer on the stack to the syscall and then
+> copying to an exact sized malloc should take care of it.   If the
+> stack buffer is sized generously, then the loop will never need to
+> repeat for any real life case.
 
-Every function in btrfs should be folio based.  There should be nothing
-in btrfs that deals with pages.  Take a look at iomap's buffered I/O
-paths for hints -- there's a per-block dirty and uptodate bit, but other
-than that, everything is done with folios.
+       int statmount(uint64_t mnt_id, uint64_t request_mask,
+                   struct statmount *buf, size_t bufsize, unsigned int flags);
+
+       struct statmount *statmount_alloc(uint64_t mnt_id,
+                   uint64_t request_mask, unsigned int flags);
+
+Updated man page attached.
+
+Thanks,
+Miklos
+
+--000000000000f09207060a59de45
+Content-Type: application/x-troff-man; name="statmount.2"
+Content-Disposition: attachment; filename="statmount.2"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lp2pltui0>
+X-Attachment-Id: f_lp2pltui0
+
+LlwiIENvcHlyaWdodCAyMDIzIE1pa2xvcyBTemVyZWRpIDxtc3plcmVkaUByZWRoYXQuY29tPgou
+XCIKLlwiIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9yLWxhdGVyCi5cIgouVEgg
+c3RhdG1vdW50IDIgKGRhdGUpICJMaW51eCBtYW4tcGFnZXMgKHVucmVsZWFzZWQpIgouU0ggTkFN
+RQpzdGF0bW91bnQsIHN0YXRtb3VudF9hbGxvYyBcLSBnZXQgZmlsZXN5c3RlbSBzdGF0dXMKLlNI
+IExJQlJBUlkKU3RhbmRhcmQgQyBsaWJyYXJ5Ci5SSSAoIGxpYmMgIiwgIiBcLWxjICkKLlNIIFNZ
+Tk9QU0lTCi5uZgouQlIgIiNkZWZpbmUgX0dOVV9TT1VSQ0UiICIgICAgICAgICAvKiBTZWUgZmVh
+dHVyZV90ZXN0X21hY3Jvcyg3KSAqLyIKLkIgI2luY2x1ZGUgPHN5cy9tb3VudC5oPgouUAouQkkg
+ImludCBzdGF0bW91bnQodWludDY0X3QgIiBtbnRfaWQgIiwgdWludDY0X3QgIiByZXF1ZXN0X21h
+c2sgIiwiCi5CSSAiICAgICAgICAgICAgc3RydWN0IHN0YXRtb3VudCAqIiBidWYgIiwgc2l6ZV90
+ICIgYnVmc2l6ZSAiLCB1bnNpZ25lZCBpbnQgIiBmbGFncyAiKTsiCi5QCi5CSSAic3RydWN0IHN0
+YXRtb3VudCAqc3RhdG1vdW50X2FsbG9jKHVpbnQ2NF90ICIgbW50X2lkICIsIgouQkkgIiAgICAg
+ICAgICAgIHVpbnQ2NF90ICIgcmVxdWVzdF9tYXNrICIsIHVuc2lnbmVkIGludCAiIGZsYWdzICIp
+OyIKLlNIIERFU0NSSVBUSU9OClRoZQouQlIgc3RhdG1vdW50ICgpCmFuZAouQlIgc3RhdG1vdW50
+X2FsbG9jICgpCmNhbGxzIHJldHVybnMgaW5mb3JtYXRpb24gYWJvdXQgYSBtb3VudCBzcGVjaWZp
+ZWQgYnkKLklSIG1udF9pZCAuCi5QClRoZSBtb3VudCBJRCBmb3IgYSBwYXJ0aWN1bGFyIHBhdGgg
+Y2FuIGJlIG9idGFpbmVkIGJ5IGNhbGxpbmcKLkJSIHN0YXR4ICgyKQp3aXRoIHRoZQouQiBTVEFU
+WF9NTlRfSURfVU5JUVVFCm1hc2sgYW5kIHVzaW5nIHRoZSByZXR1cm5lZAouSSBtbnRfaWQKZmll
+bGQuIFRoZSBtb3VudCBJRHMgcmV0dXJuZWQgYnkgdGhlCi5CUiBsaXN0bW91bnQgKDIpCnN5c3Rl
+bSBjYWxsIGNhbiBhbHNvIGJlIHVzZWQuICBOb3RlLCBob3dldmVyLCB0aGF0IG1vdW50IElEcyBm
+b3VuZCBpbgovcHJvYy9QSUQvbW91bnRpbmZvIGFyZSBub3Qgc3VpdGFibGUuCi5QClRoZQouSSBy
+ZXF1ZXN0X21hc2sKYXJndW1lbnQgaXMgdXNlZCB0byBzcGVjaWZ5IHdoaWNoIGZpZWxkcyB0aGUg
+Y2FsbGVyIGlzIGludGVyZXN0ZWQgaW4uClRoZSBmb2xsb3dpbmcgY29uc3RhbnRzIGNhbiBiZSBP
+UmVkIHRvZ2V0aGVyOgouUAouaW4gKzRuCi5UUwpsQiBsLgpTVE1UX1NCX0JBU0lDCVdhbnQgc2Jf
+Li4uClNUTVRfTU5UX0JBU0lDCVdhbnQgbW50Xy4uLgpTVE1UX1BST1BBR0FURV9GUk9NCVdhbnQg
+cHJvcGFnYXRlX2Zyb20KU1RNVF9NTlRfUk9PVAlXYW50IG1udF9yb290ClNUTVRfTU5UX1BPSU5U
+CVdhbnQgbW50X3BvaW50ClNUTVRfRlNfVFlQRQlXYW50IGZzX3R5cGUKLlRFCi5pbgouUAouQlIg
+c3RhdG1vdW50ICgpCnRha2VzCi5JIGJ1ZgphbmQKLkkgYnVmc2l6ZQphcmd1bWVudHMsIHdoaWNo
+IHNwZWNpZnkgdGhlIGJ1ZmZlciB3aGVyZSB0aGUgcmV0dXJuZWQgaW5mb3JtYXRpb24gaXMgdG8g
+YmUKc3RvcmVkLgouSSBidWZzaXplCm1heSBiZSBsYXJnZXIgdGhhbgouSSBzaXplb2Yoc3RydWN0
+IHN0YXRtb3VudCkKdG8gYWxsb3cgcGxhY2VtZW50IG9mIHN0cmluZ3MgYWZ0ZXIgdGhlIHN0cnVj
+dHVyZS4gIE5vdGUsIGhvd2V2ZXIsIHRoYXQgZGVmaW5pbmcKYSBieXRlIGFycmF5IGFuZCBjYXN0
+aW5nIGl0IHRvCi5JIHN0cnVjdCBzdGF0bW91bnQgKgppcyBub3QgcG9ydGFibGUgZHVlIHRvIHBv
+c3NpYmxlIG1pc2FsaWdubWVudCBvZiB0aGUgcmVzdWx0aW5nIHBvaW50ZXIuICBXaGVuCnN0cmlu
+Z3MgYXJlIHJlcXVlc3RlZCwgaXQgaXMgcmVjb21lbmRlZCB0byB1c2UgdGhlCi5CUiBzdGF0bW91
+bnRfYWxsb2MgKCkKaW50ZXJmYWNlLCB3aGljaCB0YWtlcyBjYXJlIG9mIHByb3BlciBzaXppbmcg
+b2YgdGhlIGJ1ZmZlci4KLlAKLkJSIHN0YXRtb3VudF9hbGxvYyAoKQphbGxvY2F0ZXMgdGhlIGJ1
+ZmZlciBkeW5hbWljYWxseSB1c2luZwouQlIgbWFsbG9jICgzKS4KVGhpcyBjYWxsIHRha2VzIGNh
+cmUgb2YgZGV0ZXJtaW5pbmcgdGhlIGNvcnJlY3Qgc2l6ZSBvZiB0aGUgYWxsb2NhdGlvbi4gVGhl
+IGNhbGxlciBpcyByZXNwb25zaWJsZSBmb3IgY2FsbGluZwouQlIgZnJlZSAoMykKb24gdGhlIHJl
+dHVybmVkIGJ1ZmZlci4KLlAKVGhlCi5JIGZsYWdzCmFyZ3VtZW50IGlzIHJlc2VydmVkIGZvciBm
+dXR1cmUgdXNlIGFuZCBtdXN0IGJlIHNldCB0byB6ZXJvLgouU1MKUmV0dXJuZWQgaW5mb3JtYXRp
+b24KVGhlIHJlc3VsdCBidWZmZXIgaXMgYSBzdHJ1Y3R1cmUgb2YgdGhlIGZvbGxvd2luZyB0eXBl
+OgouUAouaW4gKzRuCi5FWApzdHJ1Y3Qgc3RhdG1vdW50IHsKICAgIHVpbnQzMl90IHNpemU7ICAg
+ICAgICAgICAgICAgIC8qIEFsd2F5cyBmaWxsZWQgaW4gKi8KICAgIC4uLgogICAgdWludDY0X3Qg
+bWFzazsgICAgICAgICAgICAgICAgLyogQWx3YXlzIGZpbGxlZCBpbiAqLwogICAgdWludDMyX3Qg
+c2JfZGV2X21ham9yOwogICAgdWludDMyX3Qgc2JfZGV2X21pbm9yOwogICAgdWludDY0X3Qgc2Jf
+bWFnaWM7CiAgICB1aW50MzJfdCBzYl9mbGFnczsKICAgIHVpbnQzMl90IGZzX3R5cGU7ICAgICAg
+ICAgICAgICAvKiBbc3RyXSAqLwogICAgdWludDY0X3QgbW50X2lkOwogICAgdWludDY0X3QgbW50
+X3BhcmVudF9pZDsKICAgIHVpbnQzMl90IG1udF9pZF9vbGQ7CiAgICB1aW50MzJfdCBtbnRfcGFy
+ZW50X2lkX29sZDsKICAgIHVpbnQ2NF90IG1udF9hdHRyOwogICAgdWludDY0X3QgbW50X3Byb3Bh
+Z2F0aW9uOwogICAgdWludDY0X3QgbW50X3BlZXJfZ3JvdXA7CiAgICB1aW50NjRfdCBtbnRfbWFz
+dGVyOwogICAgdWludDY0X3QgcHJvcGFnYXRlX2Zyb207CiAgICB1aW50MzJfdCBtbnRfcm9vdDsg
+ICAgICAgICAgICAgLyogW3N0cl0gKi8KICAgIHVpbnQzMl90IG1udF9wb2ludDsgICAgICAgICAg
+ICAvKiBbc3RyXSAqLwogICAgLi4uCiAgICBjaGFyIHN0cltdOwp9OwouRUUKLmluCi5UUAouSSBz
+aXplClRoZSBudW1iZXIgb2YgYnl0ZXMgc3RvcmVkIGluIHRoZSBidWZmZXIuCi5UUAouSSBtYXNr
+CkJpdHdpc2UgT1Igb2YgdGhlIGNvbnN0YW50cyB1c2VkIGZvcgouSSByZXF1ZXN0X21hc2sKaW5k
+aWNhdGluZyB3aGljaCBmaWVsZHMgd2VyZSBmaWxsZWQuICBUaGUgY2FsbGVyIHNob3VsZCBjaGVj
+ayB0aGUKLkkgbWFzawpiZWZvcmUgdXNpbmcgdGhlIHZhbHVlIG9mIGFueSBmaWVsZCBiZWxvdy4K
+LlRQCi5JUiBzYl9kZXZfbWFqb3IgIiBhbmQgIiBzYl9kZXZfbWlub3IKVGhlIGRldmljZSBJRCBv
+ZiB0aGUgbW91bnRlZCBmaWxlc3lzdGVtLgouVFAKLkkgc2JfbWFnaWMKSW50ZWdlciB2YWx1ZSBp
+bmRpY2F0aW5nIHRoZSB0eXBlIG9mIGZpbGVzeXN0ZW0uICBTZWUKLkkgZl90eXBlCi5CUiBzdGF0
+ZnMgKDIpLgouVFAKLkkgc2JfZmxhZ3MKRmlsZXN5c3RlbSBmbGFncyB0aGF0IGFyZSBzZXQgb24g
+bW91bnQgY3JlYXRpb24gb3IgcmVjb25maWd1cmF0aW9uIChyZW1vdW50KS4KVGhpcyBjYW4gYmUg
+dGhlIGJpdHdpc2UgT1Igb2YKLkJSIFNCX1JET05MWSAiLCAiIFNCX1NZTkNIUk9OT1VTICIsICIg
+U0JfRElSU1lOQyAiIGFuZCAiIFNCX0xBWllUSU1FIC4KLlRQCi5JIGZzX3R5cGUKVGhlIGZpbGVz
+eXN0ZW0gdHlwZSBuYW1lLiAgVXNlCi5JICJidWYtPnN0cltidWYtPmZzX3R5cGVdIgp0byBvYnRh
+aW4gdGhlIHN0cmluZy4KLlRQCi5JIG1udF9pZApUaGUgdW5pcXVlIG1vdW50IElEIG9mIHRoZSBt
+b3VudC4gIFRoaXMgd2lsbCBiZSB0aGUgc2FtZSBhcyB0aGUKLkkgbW50X2lkCmFyZ3VtZW50IHBh
+c3NlZCB0byB0aGUKLkJSIHN0YXRtb3VudCAoKQpjYWxsLgouVFAKLkkgbW50X3BhcmVudF9pZApU
+aGUgdW5pcXVlIG1vdW50IElEIG9mIHRoZSBwYXJlbnQgbW91bnQuICBJZiB0aGlzIG1vdW50IGlz
+IHRoZSByb290IG9mIGEgbW91bnQgdHJlZSwgdGhlbiB0aGUgdmFsdWUgd2lsbCBiZSBlcXVhbCB0
+bwouSVIgbW50X2lkIC4KLlRQCi5JIG1udF9pZF9vbGQKUmV1c2VkIG1vdW50IElEIGZvdW5kIGlu
+IC9wcm9jL1BJRC9tb3VudGluZm8KLlRQCi5JIG1udF9wYXJlbnRfaWRfb2xkClJldXNlZCBtb3Vu
+dCBJRCBvZiB0aGUgcGFyZW50IG1vdW50LiAgSWYgdGhpcyBtb3VudCBpcyB0aGUgcm9vdCBvZiBh
+IG1vdW50IHRyZWUsIHRoZW4gdGhlIHZhbHVlIHdpbGwgYmUgZXF1YWwgdG8KLklSIG1vdW50X2lk
+X29sZCAuCi5UUAouSSBtbnRfYXR0cgpNb3VudCBhdHRyaWJ1dGVzIGFzIHVzZWQgaW4KLkJSIGZz
+bW91bnQgIigyKSBhbmQgIiBtb3VudF9zZXRhdHRyICgyKS4KLlRQCi5JIG1udF9wcm9wYWdhdGlv
+bgpQcm9wYWdhdGlvbiBzdGF0ZSBvZiB0aGUgbW91bnQuICBNYXkgYmUgYSBjb21iaW5hdGlvbiBv
+ZgouQlIgTVNfU0hBUkVEICIgYW5kICIgTVNfU0xBVkUKb3IgaXQgbWF5IGJlCi5CUiBNU19VTkJJ
+TkRBQkxFICIgb3IgIiBNU19QUklWQVRFLgouVFAKLkkgbW50X3BlZXJfZ3JvdXAKSUQgb2YgdGhl
+IHNoYXJlZCBwZWVyIGdyb3VwIHRoaXMgbW91bnQgaXMgaW4uICBFYWNoIHBlZXIgZ3JvdXAgaGFz
+IGFuCmF1dG9tYXRpY2FsbHkgZ2VuZXJhdGVkIHVuaXF1ZSBJRCwgYW5kIGFsbCBtb3VudHMgaW4g
+dGhlIHNhbWUgcGVlciBncm91cCB3aWxsCnNoYXJlIHRoaXMgSUQuCi5UUAouSSBtbnRfbWFzdGVy
+CklEIG9mIHRoZSBzaGFyZWQgcGVlciBncm91cCB0aGF0IHRoaXMgbW91bnQgcmVjZWl2ZXMgcHJv
+cGFnYXRpb24gZnJvbS4gIFRoaXMgaXMKdGhlIElEIG9mIHRoZSBpbW1lZGlhdGUgbWFzdGVyLCB3
+aGljaCBtYXkgbm90IGhhdmUgYW55IG1vdW50cyBpbiB0aGUgY3VycmVudApuYW1lc3BhY2UuCi5U
+UAouSSBwcm9wYWdhdGVfZnJvbQpJRCBvZiB0aGUgY2xvc2VzdCBzaGFyZWQgcGVlciBncm91cCB0
+aGF0IHRoaXMgbW91bnQgcmVjZWl2ZXMgcHJvcGFnYXRpb24gZnJvbQphbmQgaGFzIGEgbW91bnQg
+aW4gdGhlIGN1cnJlbnQgbmFtZXNwYWNlLiAgSWYgdGhlcmUncyBubyBzdWNoIHBlZXIgZ3JvdXAs
+IHRoaXMKZmllbGQgaXMgc2V0IHRvIHplcm8uCi5UUAouSSBtbnRfcm9vdApSb290IG9mIHRoZSBt
+b3VudCB3aXRoaW4gdGhlIGZpbGVzeXN0ZW0uIFVzZQouSSAiYnVmLT5zdHJbYnVmLT5tbnRfcm9v
+dF0iCnRvIG9idGFpbiB0aGUgc3RyaW5nLgouVFAKLkkgbW50X3BvaW50ClRoZSBtb3VudCBwb2lu
+dCByZWxhdGl2ZSB0byB0aGUgcHJvY2VzcydzIHJvb3QuIFVzZQouSSAiYnVmLT5zdHJbYnVmLT5t
+bnRfcG9pbnRdIgp0byBvYnRhaW4gdGhlIHN0cmluZy4KLlRQCi5JIHN0cgpTdHJpbmdzIGFyZSBw
+bGFjZWQgYWZ0ZXIgdGhpcyBwb2ludDsgdGhlIG9mZnNldHMgYWdhaW5zdAouSSBzdHIKYXJlIHN0
+b3JlZCBpbiB0aGUgcmVwc3BlY3RpdmUgZmllbGRzLgouUApTaW5jZSBzdHJpbmdzIGFyZSBzdG9y
+ZWQgYXMgYW4gb2Zmc2V0IHJlbGF0aXZlIHRvIHRoZQouSSBzdHIKZmllbGQsIHRoZSBieXRlIGFy
+cmF5ICh2b2lkICopYnVmIC4uLiAoKHZvaWQgKilidWYpW2J1Zi0+c2l6ZS0xXSBpcyByZWxvY2F0
+YWJsZS4KLlNIIFJFVFVSTiBWQUxVRQouQlIgc3RhdG1vdW50ICgpCnJldHVybnMgemVybyBvbiBz
+dWNjZXNzLgpPbiBmYWlsdXJlLCBcLTEgaXMgcmV0dXJuZWQgYW5kCi5JIGVycm5vCmlzIHNldCB0
+byBpbmRpY2F0ZSB0aGUgZXJyb3IuCi5QCi5CUiBzdGF0bW91bnRfYWxsb2MgKCkKcmV0dXJucyBh
+IHBvaW50ZXIgdG8gYSBidWZmZXIgYWxsb2NhdGVkIHdpdGgKLkJSIG1hbGxvYyAoMykKb24gc3Vj
+Y2Vzcy4gT24gZmFpbHVyZSBOVUxMIGlzIHJldHVybmVkIGFuZAouSSBlcnJubwppcyBzZXQgdG8g
+aW5kaWNhdGUgdGhlIGVycm9yLgouU0ggRVJST1JTCi5UUAouQiBFTk9FTlQKVGhlIG1vdW50IGRl
+c2lnbmF0ZWQgYnkKLkkgbW50X2lkCmRvZXMgbm90IGV4aXN0IGluIHRoZSBjdXJyZW50IG1vdW50
+IG5hbWVzcGFjZS4KLlRQCi5CIEVQRVJNClRoZSBtb3VudCBpcyBub3QgcmVhY2hhYmxlIGZyb20g
+dGhlIGN1cnJlbnQgcm9vdCBkaXJlY3RvcnkgYW5kIHRoZSBjYWxsaW5nIHByb2Nlc3MgZG9lcyBu
+b3QgaGF2ZSB0aGUKLkIgQ0FQX1NZU19BRE1JTgpjYXBhYmlsaXR5LgouVFAKLkIgRUlOVkFMCklu
+dmFsaWQgZmxhZyBzcGVjaWZpZWQgaW4KLklSIGZsYWdzIC4KLlRQCi5CIEVGQVVMVAouSSBidWYK
+b3IKLkkgcmVxCmlzIG91dHNpZGUgdGhlIHByb2Nlc3MncyBhY2Nlc3NpYmxlIGFkZHJlc3Mgc3Bh
+Y2UuCi5UUAouQiBFT1ZFUkZMT1cKLkkgYnVmc2l6ZQppcyB0b28gc21hbGwgdG8gYWNjb21vZGF0
+ZSB0aGUgcmVxdWVzdGVkIHN0cmluZyhzKS4gIFRoaXMgZXJyb3IgaXMgb25seSByZXR1cm5lZCBi
+eQouQlIgc3RhdG1vdW50ICgpLgouVFAKLkIgRU5PTUVNCkZhaWxlZCB0byBhbGxvY2F0ZSBtZW1v
+cnkuCi5TSCBTVEFOREFSRFMKTGludXguCi5TSCBISVNUT1JZCk5vdCB1cHN0cmVhbSB5ZXQuCi5T
+SCBTRUUgQUxTTwouQlIgZnNtb3VudCgyKSwKLkJSIGxpc3Rtb3VudCgyKSwKLkJSIG1vdW50X3Nl
+dGF0dHIoMiksCi5CUiBwcm9jKDUpLAouQlIgc3RhdGZzKDIpLAouQlIgc3RhdHZmcygyKSwKLkJS
+IHN0YXR4KDIpCg==
+--000000000000f09207060a59de45--
 
