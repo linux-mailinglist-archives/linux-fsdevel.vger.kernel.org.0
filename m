@@ -1,117 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-3004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A377B7EEA3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 01:16:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1F97EEAF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 03:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D436B1C20B0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 00:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5042810A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 02:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4910662D;
-	Fri, 17 Nov 2023 00:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KyM5OfKr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D71E469E;
+	Fri, 17 Nov 2023 02:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF953B8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 16:16:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700180165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6apKVHCejDBwt4J+kzqGjH7pHyP8+WMv9AObeB4sOHA=;
-	b=KyM5OfKrCcwNOt1raIRegPsrQzzEnsVtHWP7OTR39oY1fClc3oO6yBOMIQ7mglLMxs2zAH
-	Cz5v/7LJRWO9mXRJ1jetpf4pz0Els1jsN+P93TzSddm4wofBG+aJ7VJRWc1q7Qz20dQeVE
-	gFiTR0nc+K7EE5jy5syR/PzP9v61jJY=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-b78GtylgM2eas5B_H547_Q-1; Thu, 16 Nov 2023 19:16:03 -0500
-X-MC-Unique: b78GtylgM2eas5B_H547_Q-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5c17cff57f9so1595859a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 16:16:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700180162; x=1700784962;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6apKVHCejDBwt4J+kzqGjH7pHyP8+WMv9AObeB4sOHA=;
-        b=n1KAXDNnuGE6BLJCLp4OCG3bgo/j0Md9ZgUBcSouUKe79MOvBlHyCAZYAtW6p+b5GD
-         Ym8B1PRGQ/9pj/WMwZ7mRWqr5ZyxxDslanxmHN67W9whaoA+4YvMT3tfK3NIWmplu2sp
-         HO7zP2/I4CKbK77tMpeRRS3gjTsls9CvSL7+Bxf/DGDdeoJFXlEWZsk/qhdQrPPyJKY2
-         aTY++kKfcs/LPQ+N5INDS3s5LZA9oiaeWTf8V4xNgucYNpwtT3JdwgS2YnutZayq1AeE
-         CeWdBVjaQiz9qlD2KP9WlgXVUMpJ7/3dfQQZSv90J91nYtsjizGwc5oizds5TZxvnoIy
-         ROoQ==
-X-Gm-Message-State: AOJu0YxHzDCDrKfx7w+KyillJk+qSW9ZUX3zs3YfWXF1iiAlf8uOrY6l
-	DL/AAM0TDo3puSsrJ8EggR8onlLjlpEVLHrZvkuln7C1ZwnlHOWqpC9C8tDjHxtQAvWkHk4mLvk
-	KuGceqIpdUKS4rKjHn+Ruz5M+CO+jhbkNxDpn5ho=
-X-Received: by 2002:a05:6a21:19a:b0:187:c662:9b7e with SMTP id le26-20020a056a21019a00b00187c6629b7emr3196674pzb.25.1700180162456;
-        Thu, 16 Nov 2023 16:16:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHuu6yhl6PYfi2c3RpfXd9jLV6jHijWwt0Ez8Q6tompMv+QEx+QBeAuEm9mvgzA+/SAxy8OVA==
-X-Received: by 2002:a05:6a21:19a:b0:187:c662:9b7e with SMTP id le26-20020a056a21019a00b00187c6629b7emr3196660pzb.25.1700180162171;
-        Thu, 16 Nov 2023 16:16:02 -0800 (PST)
-Received: from [10.72.112.63] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 23-20020a17090a005700b0027d05817fcdsm333546pjb.0.2023.11.16.16.15.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Nov 2023 16:16:01 -0800 (PST)
-Message-ID: <3a5ed688-898c-7620-e06e-ab2ff2cfdca2@redhat.com>
-Date: Fri, 17 Nov 2023 08:15:57 +0800
+Received: from p3plwbeout17-03.prod.phx3.secureserver.net (p3plsmtp17-03-2.prod.phx3.secureserver.net [173.201.193.166])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50CEC1A7
+	for <linux-fsdevel@vger.kernel.org>; Thu, 16 Nov 2023 18:17:41 -0800 (PST)
+Received: from mailex.mailcore.me ([94.136.40.144])
+	by :WBEOUT: with ESMTP
+	id 3oQMrHXpzRBA43oQNrShF8; Thu, 16 Nov 2023 19:17:39 -0700
+X-CMAE-Analysis: v=2.4 cv=WanJ12tX c=1 sm=1 tr=0 ts=6556cd44
+ a=wXHyRMViKMYRd//SnbHIqA==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=TT3OXX8_H1iH7GK2:21 a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=BNY50KLci1gA:10
+ a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
+ a=TlpUs8yM1Nx5ixtUQMgA:9 a=QEXdDO2ut3YA:10 a=FdTzh2GWekK77mhwV6Dw:22
+ a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22 a=b0R6z3OkPTeaBGj_aaBY:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
+X-SID: 3oQMrHXpzRBA4
+Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=[192.168.178.90])
+	by smtp06.mailcore.me with esmtpa (Exim 4.94.2)
+	(envelope-from <phillip@squashfs.org.uk>)
+	id 1r3oQM-00063O-FT; Fri, 17 Nov 2023 02:17:39 +0000
+Message-ID: <748e3619-6569-2f71-7ed1-f67225892e14@squashfs.org.uk>
+Date: Fri, 17 Nov 2023 02:17:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [deadlock or dead code] ceph_encode_dentry_release() misuse of
- dget()
-Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-References: <20231116081919.GZ1957730@ZenIV>
- <44265305e099888191aa7482743f0fa7900e8336.camel@kernel.org>
- <20231116162814.GA1957730@ZenIV>
- <e96818f94a6ba3a040004b2cadd569fc2f224554.camel@kernel.org>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <e96818f94a6ba3a040004b2cadd569fc2f224554.camel@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] squashfs: squashfs_read_data need to check if the length
+ is 0
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+32d3767580a1ea339a81@syzkaller.appspotmail.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com
+References: <0000000000000526f2060a30a085@google.com>
+ <20231116031352.40853-1-lizhi.xu@windriver.com>
+ <20231116134332.285510d340637171d2fe968c@linux-foundation.org>
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20231116134332.285510d340637171d2fe968c@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Mailcore-Auth: 439999529
+X-Mailcore-Domain: 1394945
+X-123-reg-Authenticated:  phillip@squashfs.org.uk  
+X-Originating-IP: 82.69.79.175
+X-CMAE-Envelope: MS4xfPaHxhWB8AlONqti6fk0Il/mSHpwpY8m7Odf17tgDcdcVa1CwBZvmbUwDwIksFKL7MkNAhcfdeXF7uSpW5dQ2kru2gDgaNa+EYDLbf7hO/h94YRY6yy+
+ ybi9mio24R4INS/pa2jEADr4b4xjXG+1R8IiiMfdIuO5gMi9G1cGsFhg2ItLaMvviVf0ML4+BOiEshL0VdfEU3r63KFfmTy5anOp8fLJGnHh8Xya2XTpa/Qt
+ RSrcG0xvdAaQvS5pKHoSLQ==
 
+On 16/11/2023 21:43, Andrew Morton wrote:
+> On Thu, 16 Nov 2023 11:13:52 +0800 Lizhi Xu <lizhi.xu@windriver.com> wrote:
+> 
+>> when the length passed in is 0, the subsequent process should be exited.
+> 
+> Thanks, but when fixing a bug, please always describe the runtime
+> effects of that bug.  Amongst other things, other people need this
+> information to be able to decide which kernel versions need patching.
+> 
+>> Reported-by: syzbot+32d3767580a1ea339a81@syzkaller.appspotmail.com
+> 
+> Which is a reason why we're now adding the "Closes:" tag after
+> Reported-by:.
 
-On 11/17/23 00:50, Jeff Layton wrote:
-> On Thu, 2023-11-16 at 16:28 +0000, Al Viro wrote:
->> On Thu, Nov 16, 2023 at 07:50:03AM -0500, Jeff Layton wrote:
->>
->>>> Am I missing something subtle here?  Looks like that dget() is never
->>>> reached...
->>> No, I think you're correct. That looks like dead code to me too.
->>> Probably we can just remove that "if (!dir)" condition altogether.
->>>
->>> Did you want to send a patch, or would you rather Xiubo or I do it?
->> Up to you...  AFAICS, it had been dead code since ca6c8ae0f793 "ceph: pass
->> parent inode info to ceph_encode_dentry_release if we have it".  In other
->> words, that "if we have it" had already been true at that point.  Prior
->> to that commit dget() in there had been unconditional (and really a deadlock
->> fodder); making it conditional had made it actually unreachable and that
->> fixed the actual bug.
-> That makes sense.
->
-> Xiubo, would you mind spinning up a patch for this? You're probably in
-> the best position to make sure it gets tested these days.
+Which is also one reason why you should always run scripts/checkpatch.pl
+on your patch.  This alerted me to the need for a "Closes:" tag
+after Reported-by: on the last patch I sent.
 
-Hi Jeff, Al
+> 
+> I googled the sysbot email address and so added
+> 
+> Closes: https://lkml.kernel.org/r/0000000000000526f2060a30a085@google.com
+> 
+> to the changelog.
 
-Sure, I will fix this. Thanks very much.
+Thanks.  That is indeed the sysbot issue that the patch fixes.
 
-- Xiubo
+> 
+> I'll assume that a -stable kernel backport is needed.
+> 
+> 
 
+Yes.
 
-> Thanks!
+Phillip
 
 
