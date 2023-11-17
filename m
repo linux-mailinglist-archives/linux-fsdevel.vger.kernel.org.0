@@ -1,155 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-3046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773187EF7C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 20:22:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607A17EF832
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 21:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0BBB20AFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 19:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFFF280FB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Nov 2023 20:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B330543AC7;
-	Fri, 17 Nov 2023 19:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE1C43ABF;
+	Fri, 17 Nov 2023 20:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="UbrgR3ap"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JValne8f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01114D7A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 11:22:06 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5c8c8f731aaso4668427b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 11:22:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1700248926; x=1700853726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/xi7u3Y7qNG9P3BNy4D4RvC184shC/z1SCGNCrHqZ4=;
-        b=UbrgR3apl8PHCh55SLTtXSoDPp1A1m3dhuvHeAPnVEiFwoyYjNBUforcAbdxojO+00
-         70zGmYA9/UtrAZTCV6xJED4iVbGQpE1fygm/YAHuY48fdDXl7I/tEQQmEW3prd3ZyT8H
-         rehDypJO4v5qaPnAqNCI1iiawcCwX/9vgSk1/7g8bRQ1P+aNvkolzkFvtjlJ4s0ktZsK
-         N/lhRz1NSnLOIY/YcEbqDBIEIaOR1HPY2lO7bYO97s632iKnlqP/4JatgUwyw2IxvevL
-         mdOhdOd85KGK6QK65WQQZ6h12U2Rp0izwGFAd5z9knvJFm2R5gncycOoDI1Z2ngZwR/f
-         edtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700248926; x=1700853726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/xi7u3Y7qNG9P3BNy4D4RvC184shC/z1SCGNCrHqZ4=;
-        b=i53EUH2qdpFMYKZiuFsTdykcoTZDGDNwMcXYgnfIF7DJwdziBXFGGwuj+ZpIxWDxQO
-         C5lWPKKseli80wDi+nTU21Ih+EjtfQw4UjgvxdFi8XHz0ue9q6yeNloEUxDzGfuE0v4O
-         pjkpO3MBW51R4HGIGqvBm+iWaWZNhAnICtWI9ba+VQ6OeGXlSVMq+S1PxYQY4Unaya3/
-         sSN2k5t5JuITKoQhTlk4/YlkaNN/YKL6T5WQuPwt23lS45uxQaqk57VyquIv/1v5aUZB
-         Ae9rD59ZS9tIXexP1ZNad3si2nLe4lyzCHp/hhvDE/FyhafLnVMyrBz0zLPCDyWzI/Bi
-         vCBQ==
-X-Gm-Message-State: AOJu0YyzawdiXC971TVb8SioR8upmh9ZU/c5cGBrXWgndYtFZ5TmBCkm
-	Dbzozmm+wmzlbisaxLSCGqUiWQ==
-X-Google-Smtp-Source: AGHT+IFEvlArX22vzpf6YsXfJP8LoJErdLQbn1ROjFSSzzDvJLvdMIX9wYS6bgDIaMuAO/FySma8mQ==
-X-Received: by 2002:a81:a24c:0:b0:58e:a9d3:bf98 with SMTP id z12-20020a81a24c000000b0058ea9d3bf98mr587765ywg.27.1700248925882;
-        Fri, 17 Nov 2023 11:22:05 -0800 (PST)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id a124-20020a818a82000000b00598d67585d7sm640711ywg.117.2023.11.17.11.22.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Nov 2023 11:22:05 -0800 (PST)
-Date: Fri, 17 Nov 2023 14:22:04 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>,
-	Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/4] mm: Return void from folio_start_writeback() and
- related functions
-Message-ID: <20231117192204.GB1513185@perftesting>
-References: <20231108204605.745109-1-willy@infradead.org>
- <20231108204605.745109-5-willy@infradead.org>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B7BA8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 12:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700251898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ksp0B0U0jOk91nyenu4kLAdaKIM4KJ+zFPMizD4PhnM=;
+	b=JValne8fdK8QQNcT2nF5kA0XzQn137fDEq6GYyM+nOwyug5AhHdtllWbIOvF/YMCtZo8rO
+	YU92LDVnEfBH6J5B4oH1wPX4FkhIMLgUQFpL/2xlWtwpnYmdMxa0zCYfQgHQs328HfwpEA
+	CQblcxIjs8VslrcOImctktgK6p5OMcI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-QOrKvuqrOWOv0BEUCKU0YQ-1; Fri, 17 Nov 2023 15:11:35 -0500
+X-MC-Unique: QOrKvuqrOWOv0BEUCKU0YQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 02434848166;
+	Fri, 17 Nov 2023 20:11:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.16])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4779AC0BDC0;
+	Fri, 17 Nov 2023 20:11:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <9d2fc137b4295058ac3f88f1cca7a54bc67f01fd.camel@kernel.org>
+References: <9d2fc137b4295058ac3f88f1cca7a54bc67f01fd.camel@kernel.org> <20231013160423.2218093-1-dhowells@redhat.com> <20231013160423.2218093-13-dhowells@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <christian@brauner.io>,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
+Subject: Re: [RFC PATCH 12/53] netfs: Provide tools to create a buffer in an xarray
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231108204605.745109-5-willy@infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1709497.1700251890.1@warthog.procyon.org.uk>
+Date: Fri, 17 Nov 2023 20:11:30 +0000
+Message-ID: <1709498.1700251890@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Wed, Nov 08, 2023 at 08:46:05PM +0000, Matthew Wilcox (Oracle) wrote:
-> Nobody now checks the return value from any of these functions, so
-> add an assertion at the beginning of the function and return void.
+Jeff Layton <jlayton@kernel.org> wrote:
+
+> Some kerneldoc comments on these new helpers would be nice. I assume
+> that "index" and "to" are "start" and "end" for this, but it'd be nice
+> to make that explicit.
+
+These are internal to netfs not API functions, so they shouldn't appear in the
+API docs.  That's why the declaration is in internal.h, not netfs.h.
+
+That said, I could describe them better.
+
+> > +	ret = netfs_add_folios_to_buffer(buffer, mapping, want_index,
+> > +					 have_index - 1, gfp_mask);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +	have_folios += have_index - want_index;
+> > +
+> > +	ret = netfs_add_folios_to_buffer(buffer, mapping,
+> > +					 have_index + have_folios,
+> > +					 want_index + want_folios - 1,
+> > +					 gfp_mask);
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  include/linux/page-flags.h |  4 +--
->  mm/folio-compat.c          |  4 +--
->  mm/page-writeback.c        | 54 ++++++++++++++++++--------------------
->  3 files changed, 29 insertions(+), 33 deletions(-)
-> 
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index a440062e9386..735cddc13d20 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -772,8 +772,8 @@ static __always_inline void SetPageUptodate(struct page *page)
->  
->  CLEARPAGEFLAG(Uptodate, uptodate, PF_NO_TAIL)
->  
-> -bool __folio_start_writeback(struct folio *folio, bool keep_write);
-> -bool set_page_writeback(struct page *page);
-> +void __folio_start_writeback(struct folio *folio, bool keep_write);
-> +void set_page_writeback(struct page *page);
->  
->  #define folio_start_writeback(folio)			\
->  	__folio_start_writeback(folio, false)
-> diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-> index 10c3247542cb..aee3b9a16828 100644
-> --- a/mm/folio-compat.c
-> +++ b/mm/folio-compat.c
-> @@ -46,9 +46,9 @@ void mark_page_accessed(struct page *page)
->  }
->  EXPORT_SYMBOL(mark_page_accessed);
->  
-> -bool set_page_writeback(struct page *page)
-> +void set_page_writeback(struct page *page)
->  {
-> -	return folio_start_writeback(page_folio(page));
-> +	folio_start_writeback(page_folio(page));
->  }
->  EXPORT_SYMBOL(set_page_writeback);
->  
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 46f2f5d3d183..118f02b51c8d 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2982,67 +2982,63 @@ bool __folio_end_writeback(struct folio *folio)
->  	return ret;
->  }
->  
-> -bool __folio_start_writeback(struct folio *folio, bool keep_write)
-> +void __folio_start_writeback(struct folio *folio, bool keep_write)
->  {
->  	long nr = folio_nr_pages(folio);
->  	struct address_space *mapping = folio_mapping(folio);
-> -	bool ret;
->  	int access_ret;
->  
-> +	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-> +
+> I don't get it. Why are you calling netfs_add_folios_to_buffer twice
+> here? Why not just make one call? Either way, a comment here explaining
+> that would also be nice.
 
-At first I was writing a response asking why it was ok to expect that
-folio_test_set_writeback would always return true, but then I noticed this bit.
-And then I went looking around and it appears that we expect the folio to be
-locked when we call this function, so this is indeed safe.  But I'm stupid and
-had to go read a bunch of code to make sure this was actually safe.  Could you
-add a comment to that effect, or add a
+The ranges aren't contiguous.  They bracket the folios spliced from the
+mapping.  That being said, I seem to have lost a bit of maths somewhere.
 
-VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+Further, I'm not now using netfs_add_folios_to_buffer(), so I'll remove it.
 
-here as well to make it clear what we expect?  Otherwise the series looks good
-to me, you can add
+David
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-
-Thanks,
-
-Josef
 
