@@ -1,204 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-3112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82C97EFD18
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 03:12:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2DC7EFDCC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 06:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC631F2405E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 02:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFCE1F230EF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 05:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBA35672;
-	Sat, 18 Nov 2023 02:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="IIofTESo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E90D2EE;
+	Sat, 18 Nov 2023 05:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C02C595;
-	Fri, 17 Nov 2023 18:12:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1700273546; bh=/k6xsZAJrQge/K+7M9os/UTy9wmpwN2mfbv7SW8LR+o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IIofTESoNs8J3EsglZKPDXRhS6Ig9PpXzzwQ8KnsLdgvM+PWAE+SZ+Nr/vvEimp9v
-	 3TTuXCVMHTU86DNDto7uZto/2LC6u412v9C9sK2gbTXpYdtxOITVikiDmYmPjiupCS
-	 vmBMJOM2W6PzApfW//A5iZ9fIZILixcOKfOWJQBs=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.56])
-	by newxmesmtplogicsvrszc2-1.qq.com (NewEsmtp) with SMTP
-	id 3179A6DF; Sat, 18 Nov 2023 10:12:23 +0800
-X-QQ-mid: xmsmtpt1700273543tc1pcwi6o
-Message-ID: <tencent_C893AEDDAED20C8F27DD46FB92C9066E0906@qq.com>
-X-QQ-XMAILINFO: Odf6WZwpq0Z+XHIHIrt9Ib/9FEa/fY1da45ioe8Q5l7gZtJcGiVfwG2nP3j19L
-	 CROENrknxg4VqsqzxCehMwZxcsIAV8xjag8IyTtTrQ/1rbf4elGwxBMn2/oYvWv9Bdccmgfp5P5n
-	 4KJ9oejAjiEs7+zid7RcW8Iw2MI+051g0DM9wTw3jp3vJ8Q0Yz6zw1VNrh/nZgWXKPBX1gC+hLOg
-	 smf6VcMq4tU1pMxuiU3QF8RtLTKxc/2HZbIr640YHCVP8zAAGcgQ6WjGJumpllkC5sUGsRt/b9MM
-	 aXWEr/ZEVJ9J55YKmnirA/t1p7weig1zXdu5GqL3Z6USiHe8Xp3w/M6t31KzTqJ1iDXiU4DeTtR8
-	 FfDXvy6Y6+Zt074vBOS7zb9rYzQQd3XUW/jz0/0HJJUktG71RD4n0CpuhLcidCWpQdzbl9oAmFZy
-	 g6DrjqWYgthB+59zdMiVSnCkdHqRH+EyfO8hcDkbCpfyjSu+8WpLSJhybyWmE3YCSa6BWpwwHg/P
-	 q12xmeuyYdKzUWbZ6rZbvo8jAd+HZr8DIFiBN73JqP5hC6pnLY6O7QkUl5FvRX55TXLqXRDi026e
-	 6Se9UwozN+EWAPFK6gi10QY8g1WjrCo0aNAaRxQQwYNyUgp83CR1c/fLv0Yeq41tZe+F6UNx9Uyv
-	 aEMxL6FhGF11pLnIsnFKHpulO/ywHWnqBVvngpKKyP+h8jZuZK2IWBj65nE5a2F72B1VxOGlDU3o
-	 oRsD1i9vO4/CnFycah7e8WM+xvhV7170Hd1wyfLTlrOGb/8P8zu0CT5smG8p3eCVZgVJpOHfVS3O
-	 cH3N85POTPLIWukGfEMVOUqtQsW12XWzMT7gVqMbJ/lIUABLHi2alIynPFYZSJvHAIsmmwO1XqWX
-	 V5obuDU50NHnTF0z3AcoRvVH05I6E/JcjAuWLVWyEHqqnW1bZQJDVdD9yFt5YuKL177elofjeD
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: phillip@squashfs.org.uk
-Cc: akpm@linux-foundation.org,
-	eadavis@qq.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	squashfs-devel@lists.sourceforge.net,
-	syzbot+604424eb051c2f696163@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] squashfs: fix oob in squashfs_readahead
-Date: Sat, 18 Nov 2023 10:12:24 +0800
-X-OQ-MSGID: <20231118021223.3133094-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231116151424.23597-1-phillip@squashfs.org.uk>
-References: <20231116151424.23597-1-phillip@squashfs.org.uk>
+Received: from mail-pl1-f206.google.com (mail-pl1-f206.google.com [209.85.214.206])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7147810D0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 21:11:25 -0800 (PST)
+Received: by mail-pl1-f206.google.com with SMTP id d9443c01a7336-1ccdf149e60so33587145ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Nov 2023 21:11:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700284285; x=1700889085;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lWcN2Swm6eBSy3wsn/fR0wUJrZB2K0rIKojBtFvJvxY=;
+        b=Wa9nT5zPeD/NRvqZa/ziNv1uqSaWNh0Huy8V38OnHimp0qQd2QFh/pWKYKzMtu7grD
+         utWvL9ulWWEgiIsiHiF2DsOVaLj+GK+GmBgIbeoVvSvBfqp1G43zNQPeTENn4WhSqwIK
+         qNrbfEPQ2TDta9aLAq5sPSdLfL1pIOZTZraesxQR4yfGVTKvL+gJUI/8J1joW/0di5tr
+         ZmLL6zDf42F/EFRHYT6rISLXDtnyAT9g6pVO+DMd7c4e+jDJw8hMI3JmGMC/kzyfkJ+7
+         a/e0slqWqej9x2p3zzsqJURkmVjQoL3M+IoI+VbqkuFMvIcP3O2IWS6NV4AcenVIjOjx
+         5NCQ==
+X-Gm-Message-State: AOJu0Ywghy2NvsBEXblCYgNH2CPM9oGVkcycj4L/vTXeB/dnZxcACs1l
+	JOr4uAjjFT1uxXvAbxUUfFuZMxG5OUwQGV1hcz8PlQ7xBazD
+X-Google-Smtp-Source: AGHT+IHFNFhl+Z+0w/OIfFzgAmhojEud2JquzB2wDdenrvOkG4Y6yRK7wZPFphZoqdtc0pipSvt7lroKdn00M1tzl8uMd2RUu3oy
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a17:902:eacc:b0:1cc:478b:ef1 with SMTP id
+ p12-20020a170902eacc00b001cc478b0ef1mr391699pld.13.1700284284997; Fri, 17 Nov
+ 2023 21:11:24 -0800 (PST)
+Date: Fri, 17 Nov 2023 21:11:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d31668060a664897@google.com>
+Subject: [syzbot] [exfat?] UBSAN: shift-out-of-bounds in exfat_fill_super (2)
+From: syzbot <syzbot+d33808a177641a02213e@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 16 Nov 2023 15:14:24 +0000, Phillip Lougher wrote:
-> > [Bug]
-> > path_openat() called open_last_lookups() before calling do_open() and
-> > open_last_lookups() will eventually call squashfs_read_inode() to set
-> > inode->i_size, but before setting i_size, it is necessary to obtain file_size
-> > from the disk.
-> >
-> > However, during the value retrieval process, the length of the value retrieved
-> > from the disk was greater than output->length, resulting(-EIO) in the failure of
-> > squashfs_read_data(), further leading to i_size has not been initialized,
-> > i.e. its value is 0.
-> >
-> 
-> NACK
-> 
-> This analysis is completely *wrong*.  First, if there was I/O error reading
-> the inode it would never be created, and squasfs_readahead() would
-> never be called on it, because it will never exist.
-> 
-> Second i_size isn't unintialised and it isn't 0 in value.  Where
-> you got this bogus information from is because in your test patches,
-> i.e.
-[There is my debuging patch]
-diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
-index 581ce9519339..1c7c5500206b 100644
---- a/fs/squashfs/block.c
-+++ b/fs/squashfs/block.c
-@@ -314,9 +314,11 @@ int squashfs_read_data(struct super_block *sb, u64 index, int length,
- 		bio_uninit(bio);
- 		kfree(bio);
+Hello,
 
-+		printk("datal: %d \n", length);
- 		compressed = SQUASHFS_COMPRESSED(length);
- 		length = SQUASHFS_COMPRESSED_SIZE(length);
- 		index += 2;
-+		printk("datal2: %d, c:%d, i:%d \n", length, compressed, index);
+syzbot found the following issue on:
 
- 		TRACE("Block @ 0x%llx, %scompressed size %d\n", index - 2,
- 		      compressed ? "" : "un", length);
-@@ -324,6 +326,7 @@ int squashfs_read_data(struct super_block *sb, u64 index, int length,
- 	if (length < 0 || length > output->length ||
- 			(index + length) > msblk->bytes_used) {
- 		res = -EIO;
-+		printk("srd: l:%d, ol: %d, bu: %d \n", length, output->length, msblk->bytes_used);
- 		goto out;
- 	}
+HEAD commit:    9bacdd8996c7 Merge tag 'for-6.7-rc1-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12051eff680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af04b7c4d36966d8
+dashboard link: https://syzkaller.appspot.com/bug?extid=d33808a177641a02213e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-patch link: https://syzkaller.appspot.com/text?tag=Patch&x=1142f82f680000
+Unfortunately, I don't have any reproducer for this issue yet.
 
-[There is my test log]
-[  457.030754][ T8879] datal: 65473
-[  457.034334][ T8879] datal2: 32705, c:0, i:1788
-[  457.039253][ T8879] srd: l:32705, ol: 8192, bu: 1870
-[  457.044513][ T8879] SQUASHFS error: Failed to read block 0x6fc: -5
-[  457.052034][ T8879] SQUASHFS error: Unable to read metadata cache entry [6fa]
-log link: https://syzkaller.appspot.com/x/log.txt?x=137b0270e80000
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cf19f53338f0/disk-9bacdd89.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dd19b4c3f5a9/vmlinux-9bacdd89.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/227655c91334/bzImage-9bacdd89.xz
 
-[Answer your doubts]
-Based on the above test, it can be clearly determined that length=32705 is 
-greater than the maximum metadata size of 8192, resulting in squashfs_read_data() failed.
-This will further lead to squashfs_cache_get() returns "entry->error=entry->length=-EIO", 
-followed by squashfs_read_metadata() failed, which will ultimately result in i_size not 
-being initialized in squashfs_read_inode().
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d33808a177641a02213e@syzkaller.appspotmail.com
 
-The following are the relevant call stacks:
-  23 const struct inode_operations squashfs_dir_inode_ops = {
-  24         .lookup = squashfs_lookup,
-  25         .listxattr = squashfs_listxattr
-  26 };
-  NORMAL  +0 ~0 -0  fs/squashfs/namei.c
+UBSAN: shift-out-of-bounds in fs/exfat/super.c:503:32
+shift exponent 97 is too large for 64-bit type 'long long unsigned int'
+CPU: 1 PID: 11990 Comm: syz-executor.2 Not tainted 6.7.0-rc1-syzkaller-00012-g9bacdd8996c7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x125/0x1b0 lib/dump_stack.c:106
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2a6/0x480 lib/ubsan.c:387
+ exfat_read_boot_sector fs/exfat/super.c:503 [inline]
+ __exfat_fill_super fs/exfat/super.c:582 [inline]
+ exfat_fill_super.cold+0x119/0x12a fs/exfat/super.c:646
+ get_tree_bdev+0x3b5/0x650 fs/super.c:1598
+ vfs_get_tree+0x8c/0x370 fs/super.c:1771
+ do_new_mount fs/namespace.c:3337 [inline]
+ path_mount+0x1492/0x1ed0 fs/namespace.c:3664
+ do_mount fs/namespace.c:3677 [inline]
+ __do_sys_mount fs/namespace.c:3886 [inline]
+ __se_sys_mount fs/namespace.c:3863 [inline]
+ __x64_sys_mount+0x293/0x310 fs/namespace.c:3863
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7f057367e1ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f05743c0ee8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f05743c0f80 RCX: 00007f057367e1ea
+RDX: 00000000200001c0 RSI: 0000000020000a00 RDI: 00007f05743c0f40
+RBP: 00000000200001c0 R08: 00007f05743c0f80 R09: 0000000000000004
+R10: 0000000000000004 R11: 0000000000000202 R12: 0000000020000a00
+R13: 00007f05743c0f40 R14: 00000000000014e6 R15: 0000000020000240
+ </TASK>
+================================================================================
 
-  path_openat()->open_last_lookups()->lookup_open()
-    1         if (d_in_lookup(dentry)) {
- 3455                 struct dentry *res = dir_inode->i_op->lookup(dir_inode, dentry,                                                                                                                    1                                                              nd->flags);
 
- squashfs_lookup()->
-	 squashfs_iget()->
-	 squashfs_read_inode()-> 
-	 init inode->i_size, example: inode->i_size = sqsh_ino->file_size;
-> 
-> https://lore.kernel.org/all/000000000000bb74b9060a14717c@google.com/
-> 
-> You have
-> 
-> +	if (!file_end) {
-> +		printk("i:%p, is:%d, %s\n", inode, i_size_read(inode), __func__);
-> +		res = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> 
-> You have used %d, and the result of i_size_read(inode) overflows, giving the
-> bogus 0 value.
-> 
-> The actual value is 1407374883553280, or 0x5000000000000, which is
-> too big to fit into an unsigned int.
-> 
-> > This resulted in the failure of squashfs_read_data(), where "SQUASHFS error:
-> > Failed to read block 0x6fc: -5" was output in the syz log.
-> > This also resulted in the failure of squashfs_cache_get(), outputting "SQUASHFS
-> > error: Unable to read metadata cache entry [6fa]" in the syz log.
-> >
-> 
-> NO, *that* is caused by the failure to read some other inodes which
-> as a result are correctly not created.  Nothing to do with the oops here.
-> 
-> > [Fix]
-> > Before performing a read ahead operation in squashfs_read_folio() and
-> > squashfs_readahead(), check if i_size is not 0 before continuing.
-> >
-> 
-> A third NO, it is only 0 because the variable overflowed.
-> 
-> Additionally, let's look at your "fix" here.
-> 
-> > @@ -461,6 +461,11 @@ static int squashfs_read_folio(struct file *file, struct folio *folio)
-> >  	TRACE("Entered squashfs_readpage, page index %lx, start block %llx\n",
-> >  				page->index, squashfs_i(inode)->start);
-> >
-> > +	if (!file_end) {
-> > +		res = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> 
-> file_end is computed by
-> 
-> 	int file_end = i_size_read(inode) >> msblk->block_log;
-> 
-> So your "fix" will reject *any* file less than msblk->block_log in
-> size as invalid, including perfectly valid zero size files (empty
-> files are valid too).
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-edward
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
