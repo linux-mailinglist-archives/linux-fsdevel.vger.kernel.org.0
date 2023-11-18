@@ -1,110 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-3117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E9B7EFFD0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 14:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D59667F011E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 17:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1211C2091A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 13:23:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDFD1C20906
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Nov 2023 16:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08C213AEB;
-	Sat, 18 Nov 2023 13:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F3819478;
+	Sat, 18 Nov 2023 16:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm0MG3Rt"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SvkGV/ka"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61F39C;
-	Sat, 18 Nov 2023 05:23:09 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-6b77ab73c6fso2148525b3a.1;
-        Sat, 18 Nov 2023 05:23:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700313789; x=1700918589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nez5c+yncebw8/1HftCMnbIZdcHhIxUqVzyLpQiwwAg=;
-        b=Nm0MG3RtO8AIMt1mg4+zpsCecfgM/gO0xv91zdfBfDByiVhpzFMzrQrSV6p25/jav/
-         3aQ6V6/jgs9IuoNx83OjXbWbdxGSr2QpGL8hCm8awU4MmcGSCr0Ml2nRnUwBbhCNznxa
-         zRR8UvGSApQKdKrmeSHFepqQSwf1BKUhHUABjWtKZDuz7Rxy6giLLvtUNltfCT8letSr
-         /76i/sv2TGXCr+2CMTn/HBOcaJwWqM28hYJLO8HgW0/or1mKC8wvBUnGY28EY4H0UGd7
-         E/YPiO7lUCZ/aXXTHsDURk/7u/P4VPPDcV4b5nEP73CFdFJNHvDQ1Vu30z2xrOJNhwDa
-         eXog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700313789; x=1700918589;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nez5c+yncebw8/1HftCMnbIZdcHhIxUqVzyLpQiwwAg=;
-        b=dEBXPiajgegZPHXikkQ154rPbrSQqG+OHpwn1nTsxLXL1blNDletw/4Ut52ccwMwvB
-         ztJ2Dnl+Igke1FZ95FhQ20KX0puORFT5J19e5uAO0XqnCuaGLBtIPDLdiaG9H46Y2ljX
-         whEnA1UhW1ywXYlsc7iPxeif5r+nFwe2v79WJJ0DpSpQrBGJPatxsvtA105HP3I8qXv5
-         r9Bz50UQce8h+by6VSsnqtPbZrNj/l1zZzXjbXxgD3VWrUhX8CgRgoowjN5z44cFaiSl
-         2XRvGTWqV9V3x1l9im2cuVzQ2MRUlFWWaxeByzt4x/8lQhcOka2+ipd7nW7E3LA8Y0mC
-         9Q0w==
-X-Gm-Message-State: AOJu0YwubiEyl1SEvsoY+sUQLUrAIZL4dIJ4cl+lSJHUEz6hI5gryife
-	4M1zS93TwcBvdf0ToY6yDTg=
-X-Google-Smtp-Source: AGHT+IFITBKV+zIrqTycaVUInSj0j3i670pPDHtkSbXXun1jFqn6Vr9M2n744LKqw3VErgEkPtn9CQ==
-X-Received: by 2002:a05:6a00:2e88:b0:68b:e29c:b69 with SMTP id fd8-20020a056a002e8800b0068be29c0b69mr2952601pfb.9.1700313789009;
-        Sat, 18 Nov 2023 05:23:09 -0800 (PST)
-Received: from localhost.localdomain ([114.249.31.17])
-        by smtp.gmail.com with ESMTPSA id s21-20020a056a0008d500b00690c52267easm3008644pfu.40.2023.11.18.05.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Nov 2023 05:23:08 -0800 (PST)
-From: YangXin <yx.0xffff@gmail.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: namei: Fix spelling mistake "Retuns" to "Returns"
-Date: Sat, 18 Nov 2023 21:21:36 +0800
-Message-Id: <20231118132136.3084-1-yx.0xffff@gmail.com>
-X-Mailer: git-send-email 2.30.2
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78BBC5
+	for <linux-fsdevel@vger.kernel.org>; Sat, 18 Nov 2023 08:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uDOXa70xfwJLAjXc22jM86hB6FxAhRm2Vpp+9Az3n3M=; b=SvkGV/kaMiGVLZYXDX5ucqFFWb
+	K0yjs/a4ieZ79SkQPxk5VPfWbOblJHMNUsXwFjtb2Aymfsfg9PKbY3p/j4+L44pIf5l6bzTz+dKNb
+	SLJyMluHuDXhold5Ld1neCN03Qiiea3UlKttCF4RSqPkpfireEDwaCknfHtwpa+MxOKAKaCfcg/jh
+	tO6VmAvyiaY58Tyn+qfdEQzKhfRLxn2qIYFLwmBdomf8pnr/SntadGuwSSU3i2insjOpqpnOV9qRE
+	ucKETL2lUHFOcNoqouxGh/jEzB7+mEOH+Gt2hR2MWFPLiHcDzbk2mCG4vdOCXPWeq1DGed5iVENDE
+	c/TLRQQA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r4OBS-00HVCA-0A;
+	Sat, 18 Nov 2023 16:28:38 +0000
+Date: Sat, 18 Nov 2023 16:28:38 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Chuck Lever <cel@kernel.org>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, hughd@google.com,
+	jlayton@redhat.com, Tavian Barnes <tavianator@tavianator.com>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2] libfs: getdents() should return 0 after reaching EOD
+Message-ID: <20231118162838.GE1957730@ZenIV>
+References: <170007970281.4975.12356401645395490640.stgit@bazille.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <170007970281.4975.12356401645395490640.stgit@bazille.1015granger.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-There are two spelling mistake in comments. Fix it.
+On Wed, Nov 15, 2023 at 03:22:52PM -0500, Chuck Lever wrote:
 
-Signed-off-by: YangXin <yx.0xffff@gmail.com>
----
-Hi maintainers:
+>  static int offset_readdir(struct file *file, struct dir_context *ctx)
+>  {
+> +	struct dentry *cursor = file->private_data;
+>  	struct dentry *dir = file->f_path.dentry;
+>  
+>  	lockdep_assert_held(&d_inode(dir)->i_rwsem);
+> @@ -479,11 +481,19 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
+>  	if (!dir_emit_dots(file, ctx))
+>  		return 0;
+>  
+> -	offset_iterate_dir(d_inode(dir), ctx);
+> +	if (ctx->pos == 2)
+> +		cursor->d_flags &= ~DCACHE_EOD;
+> +	else if (cursor->d_flags & DCACHE_EOD)
+> +		return 0;
+> +
+> +	if (offset_iterate_dir(d_inode(dir), ctx))
+> +		cursor->d_flags |= DCACHE_EOD;
 
-Sorry for the formatting problems in the last Patch entry, here's my revised version
+This is simply grotesque - "it's better to keep ->private_data constant,
+so we will allocate a dentry, just to store the one bit of data we need to
+keep track of; oh, and let's grab a bit out of ->d_flags, while we are at it;
+we will ignore the usual locking rules for ->d_flags modifications, 'cause
+it's all serialized on ->f_pos_lock".
 
-thanks,
-YangXin
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+No.  If nothing else, this is harder to follow than the original.  It's
+far easier to verify that these struct file instances only use ->private_data
+as a flag and these accesses are serialized on ->f_pos_lock as claimed
+than go through the accesses to ->d_flags, prove that the one above is
+the only one that can happen to such dentries (while they are live, that
+is - once they are in __dentry_kill(), there will be modifications of ->d_flags)
+and that it can't happen to any other instances.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 83dd8b51995a..c422cec576a5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2468,7 +2468,7 @@ static int handle_lookup_down(struct nameidata *nd)
- 	return PTR_ERR(step_into(nd, WALK_NOFOLLOW, nd->path.dentry));
- }
- 
--/* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
-+/* Returns 0 and nd will be valid on success; Returns error, otherwise. */
- static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path)
- {
- 	const char *s = path_init(nd, flags);
-@@ -2523,7 +2523,7 @@ int filename_lookup(int dfd, struct filename *name, unsigned flags,
- 	return retval;
- }
- 
--/* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
-+/* Returns 0 and nd will be valid on success; Returns error, otherwise. */
- static int path_parentat(struct nameidata *nd, unsigned flags,
- 				struct path *parent)
- {
--- 
-2.30.2
-
+NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
