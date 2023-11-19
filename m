@@ -1,183 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-3172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F567F09CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 00:11:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7FF7F09E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 00:56:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E891C208C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 23:11:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83E7B207E2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 23:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E783C1A594;
-	Sun, 19 Nov 2023 23:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F003D1B268;
+	Sun, 19 Nov 2023 23:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Srs5e4BI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4PAv7liN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tl5mBXt2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70F1F137;
-	Sun, 19 Nov 2023 15:11:42 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2445C218E2;
-	Sun, 19 Nov 2023 23:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1700435501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TKLnl/b8FKP562p7zrfLcmIgpEtVLt1qt4EDjEmPx0s=;
-	b=Srs5e4BIjVBqkWA0tR1OgOyfaO1V1y+21/Awh6Q5mCwFcf8Hm9PWv5MdYHf2n8KalBaIdU
-	qJ0Ysb4qPrH08rGIfmJhLYgtpXCR3yG2mo7nCgYEQjhIa/RFy7T3kxbHQg9/SwmfNtwtcd
-	dvFsnedD4omSS2PGdEOVseXfaf/Wq+A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1700435501;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TKLnl/b8FKP562p7zrfLcmIgpEtVLt1qt4EDjEmPx0s=;
-	b=4PAv7liNx3tzKNeWwZji/+kmb3WJWBqzNRdXEcVsTL8vCBDEb5IgrTPDBgXHu7Ex9obz/e
-	hFO4tfC+nIgMqVBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D7C521377F;
-	Sun, 19 Nov 2023 23:11:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id arMlLyyWWmWVbQAAMHmgww
-	(envelope-from <krisman@suse.de>); Sun, 19 Nov 2023 23:11:40 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Christian Brauner <brauner@kernel.org>
-Cc: tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
-  ebiggers@kernel.org,  viro@zeniv.linux.org.uk,
-  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org,
-  linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
-In-Reply-To: <20231025-selektiert-leibarzt-5d0070d85d93@brauner> (Christian
-	Brauner's message of "Wed, 25 Oct 2023 15:32:02 +0200")
-References: <20230816050803.15660-1-krisman@suse.de>
-	<20231025-selektiert-leibarzt-5d0070d85d93@brauner>
-Date: Sun, 19 Nov 2023 18:11:39 -0500
-Message-ID: <87r0kl5oes.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FF019BAE
+	for <linux-fsdevel@vger.kernel.org>; Sun, 19 Nov 2023 23:56:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40F1C433C7;
+	Sun, 19 Nov 2023 23:56:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700438179;
+	bh=EtcwSMC+2X05pmB2XZm956sPJJv7BwUf2YkTNGJ38Es=;
+	h=Subject:From:To:Cc:Date:From;
+	b=Tl5mBXt2ZuhV2UXwJohYFa4npkQ+9I5tbjkfwdfH7ZTJ1VCuqFsw/kcXAtvycd3V2
+	 VtuJhnRWC9unIUrLGgxnyYKsxm73qr7pHT0owU3mJQxvpq1FdB47XEnyzWSchCP+F2
+	 c/XEP6NTBesnOquzS8lEktnLsAEF82RJnVMuK66IajcziI6+HUSqvwifKdYqkiW+8W
+	 NE5NLiHEElKQl9VBLnpvFi8kWc9SfU+XHK9ABP7MXYKxqj1i2J3chZnPlbEcSXuYd0
+	 uLwSDQksIE7JqLL/N/esjX4GFxBB01baK+ld2lemvJx8Xtrh6NBglTSLo122A71Zv1
+	 EivHA2HNbM16w==
+Subject: [PATCH v4] libfs: getdents() should return 0 after reaching EOD
+From: Chuck Lever <cel@kernel.org>
+To: akpm@linux-foundation.org, brauner@kernel.org, hughd@google.com,
+ jlayton@redhat.com, viro@zeniv.linux.org.uk
+Cc: Tavian Barnes <tavianator@tavianator.com>,
+ Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Date: Sun, 19 Nov 2023 18:56:17 -0500
+Message-ID: 
+ <170043792492.4628.15646203084646716134.stgit@bazille.1015granger.net>
+User-Agent: StGit/1.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Score: 5.60
-X-Spamd-Result: default: False [5.60 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 INVALID_MSGID(1.70)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_SPAM_SHORT(3.00)[0.999];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 RCVD_TLS_ALL(0.00)[]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Christian Brauner <brauner@kernel.org> writes:
+From: Chuck Lever <chuck.lever@oracle.com>
 
-> On Wed, 16 Aug 2023 01:07:54 -0400, Gabriel Krisman Bertazi wrote:
->> This is v6 of the negative dentry on case-insensitive directories.
->> Thanks Eric for the review of the last iteration.  This version
->> drops the patch to expose the helper to check casefolding directories,
->> since it is not necessary in ecryptfs and it might be going away.  It
->> also addresses some documentation details, fix a build bot error and
->> simplifies the commit messages.  See the changelog in each patch for
->> more details.
->> 
->> [...]
->
-> Ok, let's put it into -next so it sees some testing.
-> So it's too late for v6.7. Seems we forgot about this series.
-> Sorry about that.
+The new directory offset helpers don't conform with the convention
+of getdents() returning no more entries once a directory file
+descriptor has reached the current end-of-directory.
 
-Christian,
+To address this, copy the logic from dcache_readdir() to mark the
+open directory file descriptor once EOD has been reached. Seeking
+resets the mark.
 
-We are approaching -rc2 and, until last Friday, it didn't shown up in
-linux-next. So, to avoid turning a 6 month delay into 9 months, I pushed
-your signed tag to linux-next myself.
+Reported-by: Tavian Barnes <tavianator@tavianator.com>
+Closes: https://lore.kernel.org/linux-fsdevel/20231113180616.2831430-1-tavianator@tavianator.com/
+Fixes: 6faddda69f62 ("libfs: Add directory operations for stable offsets")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ fs/libfs.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-That obviously uncovered a merge conflict: in v6.6, ceph added fscrypt,
-and the caller had to be updated.  I fixed it and pushed again to
-linux-next to get more testing.
+v4 of this patch passes Tavian's reproducer and fstests over NFS and
+directly on a tmpfs mount.
 
-Now, I don't want to send it to Linus myself. This is 100% VFS/FS code,
-I'm not the maintainer and it will definitely raise eyebrows.  Can you
-please requeue and make sure it goes through this time?  I'm happy to
-drop my branch from linux-next once yours shows up.
+Changes since v3:
+- Ensure that llseek() resets the EOD mark too
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git/log/?h=negative-dentries
+Changes since v2:
+- Go back to marking EOD in the file->private_data field
 
-This branch has the latest version with the ceph conflict folded in.  I
-did it this way because I'd consider it was never picked up and there is
-no point in making the history complex by adding a fix on top of your
-signed tag, since it already fails to build ceph.
+Changes since RFC:
+- Keep file->private_data stable while directory descriptor remains open
 
-I can send it as a v7; but I prefer you just pull from the branch
-above. Or you can ack and I'll send to Linus.
-
-This is the diff from you signed tag:
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 629d8fb31d8f..21278a9d9baa 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1869,7 +1869,7 @@ static int ceph_d_revalidate(struct dentry *dentry, const struct qstr *name,
-        struct inode *dir, *inode;
-        struct ceph_mds_client *mdsc;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e9440d55073c..c2aa6fd4795c 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -399,6 +399,8 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+ 		return -EINVAL;
+ 	}
  
--       valid = fscrypt_d_revalidate(dentry, flags);
-+       valid = fscrypt_d_revalidate(dentry, name, flags);
-        if (valid <= 0)
-                return valid;
++	/* In this case, ->private_data is protected by f_pos_lock */
++	file->private_data = NULL;
+ 	return vfs_setpos(file, offset, U32_MAX);
+ }
  
-diff --git a/fs/ecryptfs/dentry.c b/fs/ecryptfs/dentry.c
-index 56093648d838..ce86891a1711 100644
---- a/fs/ecryptfs/dentry.c
-+++ b/fs/ecryptfs/dentry.c
-@@ -18,6 +18,7 @@
+@@ -428,7 +430,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+ 			  inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+ }
+ 
+-static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
++static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ {
+ 	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+ 	XA_STATE(xas, &so_ctx->xa, ctx->pos);
+@@ -437,7 +439,7 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ 	while (true) {
+ 		dentry = offset_find_next(&xas);
+ 		if (!dentry)
+-			break;
++			return ERR_PTR(-ENOENT);
+ 
+ 		if (!offset_dir_emit(ctx, dentry)) {
+ 			dput(dentry);
+@@ -447,6 +449,7 @@ static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ 		dput(dentry);
+ 		ctx->pos = xas.xa_index + 1;
+ 	}
++	return NULL;
+ }
+ 
  /**
-  * ecryptfs_d_revalidate - revalidate an ecryptfs dentry
-  * @dentry: The ecryptfs dentry
-+ * @name: The name under lookup
-  * @flags: lookup flags
-  *
-  * Called when the VFS needs to revalidate a dentry. This
-diff --git a/fs/gfs2/dentry.c b/fs/gfs2/dentry.c
-index 3dd93d36aaf2..5e4910e016a8 100644
---- a/fs/gfs2/dentry.c
-+++ b/fs/gfs2/dentry.c
-@@ -22,6 +22,7 @@
- /**
-  * gfs2_drevalidate - Check directory lookup consistency
-  * @dentry: the mapping to check
-+ * @name: The name under lookup
-  * @flags: lookup flags
-  *
-  * Check to make sure the lookup necessary to arrive at this inode from its
+@@ -479,7 +482,12 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
+ 	if (!dir_emit_dots(file, ctx))
+ 		return 0;
+ 
+-	offset_iterate_dir(d_inode(dir), ctx);
++	/* In this case, ->private_data is protected by f_pos_lock */
++	if (ctx->pos == 2)
++		file->private_data = NULL;
++	else if (file->private_data == ERR_PTR(-ENOENT))
++		return 0;
++	file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+ 	return 0;
+ }
+ 
 
--- 
-Gabriel Krisman Bertazi
+
 
