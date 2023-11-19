@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC837F07B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:58:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25B27F07B8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:58:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7301C2086A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:58:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F1B21C2096F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2486154B9;
-	Sun, 19 Nov 2023 16:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD7914F9A;
+	Sun, 19 Nov 2023 16:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 99B28138;
-	Sun, 19 Nov 2023 08:57:55 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 02FECD52;
+	Sun, 19 Nov 2023 08:58:00 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 936051476;
-	Sun, 19 Nov 2023 08:58:41 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD2BD1007;
+	Sun, 19 Nov 2023 08:58:46 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64E5A3F6C4;
-	Sun, 19 Nov 2023 08:57:50 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ACFC3F6C4;
+	Sun, 19 Nov 2023 08:57:55 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,9 +61,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 03/27] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count the number of pages
-Date: Sun, 19 Nov 2023 16:56:57 +0000
-Message-Id: <20231119165721.9849-4-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 04/27] mm: migrate/mempolicy: Add hook to modify migration target gfp
+Date: Sun, 19 Nov 2023 16:56:58 +0000
+Message-Id: <20231119165721.9849-5-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
@@ -75,48 +75,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
-after each cma_alloc() function call. This is done even though cma_alloc()
-can allocate an arbitrary number of CMA pages. When looking at
-/proc/vmstat, the number of successful (or failed) cma_alloc() calls
-doesn't tell much with regards to how many CMA pages were allocated via
-cma_alloc() versus via the page allocator (regular allocation request or
-PCP lists refill).
+It might be desirable for an architecture to modify the gfp flags used to
+allocate the destination page for migration based on the page that it is
+being replaced. For example, if an architectures has metadata associated
+with a page (like arm64, when the memory tagging extension is implemented),
+it can request that the destination page similarly has storage for tags
+already allocated.
 
-This can also be rather confusing to a user who isn't familiar with the
-code, since the unit of measurement for nr_free_cma is the number of pages,
-but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
-function calls.
-
-Let's make this consistent, and arguably more useful, by having
-CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
-CMA_ALLOC_FAIL count the number of pages cma_alloc() failed to allocate.
-
-For users that wish to track the number of cma_alloc() calls, there are
-tracepoints for that already implemented.
+No functional change.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- mm/cma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/migrate.h | 4 ++++
+ mm/mempolicy.c          | 2 ++
+ mm/migrate.c            | 3 +++
+ 3 files changed, 9 insertions(+)
 
-diff --git a/mm/cma.c b/mm/cma.c
-index 2b2494fd6b59..2b74db5116d5 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
- 	pr_debug("%s(): returned %p\n", __func__, page);
- out:
- 	if (page) {
--		count_vm_event(CMA_ALLOC_SUCCESS);
-+		count_vm_events(CMA_ALLOC_SUCCESS, count);
- 		cma_sysfs_account_success_pages(cma, count);
- 	} else {
--		count_vm_event(CMA_ALLOC_FAIL);
-+		count_vm_events(CMA_ALLOC_FAIL, count);
- 		if (cma)
- 			cma_sysfs_account_fail_pages(cma, count);
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 2ce13e8a309b..0acef592043c 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -60,6 +60,10 @@ struct movable_operations {
+ /* Defined in mm/debug.c: */
+ extern const char *migrate_reason_names[MR_TYPES];
+ 
++#ifndef arch_migration_target_gfp
++#define arch_migration_target_gfp(src, gfp) 0
++#endif
++
+ #ifdef CONFIG_MIGRATION
+ 
+ void putback_movable_pages(struct list_head *l);
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 10a590ee1c89..50bc43ab50d6 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1182,6 +1182,7 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
+ 
+ 		h = folio_hstate(src);
+ 		gfp = htlb_alloc_mask(h);
++		gfp |= arch_migration_target_gfp(src, gfp);
+ 		nodemask = policy_nodemask(gfp, pol, ilx, &nid);
+ 		return alloc_hugetlb_folio_nodemask(h, nid, nodemask, gfp);
  	}
+@@ -1190,6 +1191,7 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
+ 		gfp = GFP_TRANSHUGE;
+ 	else
+ 		gfp = GFP_HIGHUSER_MOVABLE | __GFP_RETRY_MAYFAIL | __GFP_COMP;
++	gfp |= arch_migration_target_gfp(src, gfp);
+ 
+ 	page = alloc_pages_mpol(gfp, order, pol, ilx, nid);
+ 	return page_rmappable_folio(page);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 35a88334bb3c..dd25ab69e3de 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2016,6 +2016,7 @@ struct folio *alloc_migration_target(struct folio *src, unsigned long private)
+ 		struct hstate *h = folio_hstate(src);
+ 
+ 		gfp_mask = htlb_modify_alloc_mask(h, gfp_mask);
++		gfp_mask |= arch_migration_target_gfp(src, gfp);
+ 		return alloc_hugetlb_folio_nodemask(h, nid,
+ 						mtc->nmask, gfp_mask);
+ 	}
+@@ -2032,6 +2033,7 @@ struct folio *alloc_migration_target(struct folio *src, unsigned long private)
+ 	zidx = zone_idx(folio_zone(src));
+ 	if (is_highmem_idx(zidx) || zidx == ZONE_MOVABLE)
+ 		gfp_mask |= __GFP_HIGHMEM;
++	gfp_mask |= arch_migration_target_gfp(src, gfp);
+ 
+ 	return __folio_alloc(gfp_mask, order, nid, mtc->nmask);
+ }
+@@ -2500,6 +2502,7 @@ static struct folio *alloc_misplaced_dst_folio(struct folio *src,
+ 			__GFP_NOWARN;
+ 		gfp &= ~__GFP_RECLAIM;
+ 	}
++	gfp |= arch_migration_target_gfp(src, gfp);
+ 	return __folio_alloc_node(gfp, order, nid);
+ }
+ 
 -- 
 2.42.1
 
