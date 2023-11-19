@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060F47F07F1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 18:00:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08DF7F07F4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 18:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B35280F62
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:00:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30777B209D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE89A179AB;
-	Sun, 19 Nov 2023 17:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C596A18040;
+	Sun, 19 Nov 2023 17:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36D3A10CA;
-	Sun, 19 Nov 2023 08:59:46 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 913AA1FCC;
+	Sun, 19 Nov 2023 08:59:51 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B3AD14BF;
-	Sun, 19 Nov 2023 09:00:32 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 635671007;
+	Sun, 19 Nov 2023 09:00:37 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00E483F6C4;
-	Sun, 19 Nov 2023 08:59:40 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36E813F6C4;
+	Sun, 19 Nov 2023 08:59:46 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,9 +61,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 24/27] arm64: mte: Handle fatal signal in reserve_tag_storage()
-Date: Sun, 19 Nov 2023 16:57:18 +0000
-Message-Id: <20231119165721.9849-25-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 25/27] KVM: arm64: Disable MTE if tag storage is enabled
+Date: Sun, 19 Nov 2023 16:57:19 +0000
+Message-Id: <20231119165721.9849-26-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
@@ -75,65 +75,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As long as a fatal signal is pending, alloc_contig_range() will fail with
--EINTR. This makes it impossible for tag storage allocation to succeed, and
-the page allocator will print an OOM splat.
+KVM allows MTE enabled VMs to be created when the backing VMA does not have
+MTE enabled.  Without changes to how KVM allocates memory for a VM, it is
+impossible at the moment to discern when the corresponding tag storage
+needs to be reserved.
 
-The process is going to be killed, so return 0 (success) from
-reserve_tag_storage() to allow the page allocator to make progress.
-set_pte_at() will map it with PAGE_FAULT_ON_ACCESS and subsequent accesses
-from different threads will cause a fault until the signal is delivered.
+For now, disable MTE in KVM if tag storage is enabled.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/kernel/mte_tag_storage.c | 17 +++++++++++++++++
- arch/arm64/mm/fault.c               |  5 +++++
- 2 files changed, 22 insertions(+)
+ arch/arm64/kvm/arm.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-index 6b11bb408b51..602fdc70db1c 100644
---- a/arch/arm64/kernel/mte_tag_storage.c
-+++ b/arch/arm64/kernel/mte_tag_storage.c
-@@ -572,6 +572,23 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
- 				break;
- 		}
- 
-+		/*
-+		 * alloc_contig_range() returns -EINTR from
-+		 * __alloc_contig_migrate_range() if a fatal signal is pending.
-+		 * As long as the signal hasn't been handled, it is impossible
-+		 * to reserve tag storage for any page. Stop trying to reserve
-+		 * tag storage, but return 0 so the page allocator can make
-+		 * forward progress, instead of printing an OOM splat.
-+		 *
-+		 * The tagged page with missing tag storage will be mapped with
-+		 * PAGE_FAULT_ON_ACCESS in set_pte_at(), which means accesses
-+		 * until the signal is delivered will cause a fault.
-+		 */
-+		if (ret == -EINTR) {
-+			ret = 0;
-+			goto out_error;
-+		}
-+
- 		if (ret)
- 			goto out_error;
- 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 964c5ae161a3..fdc98c5828bf 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -950,6 +950,11 @@ gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
- 
- void tag_clear_highpage(struct page *page)
- {
-+	if (tag_storage_enabled() && unlikely(!page_tag_storage_reserved(page))) {
-+		clear_page(page_address(page));
-+		return;
-+	}
-+
- 	/* Newly allocated page, shouldn't have been tagged yet */
- 	WARN_ON_ONCE(!try_page_mte_tagging(page));
- 	mte_zero_clear_page_tags(page_address(page));
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index e5f75f1f1085..5b33c532c62a 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -29,6 +29,7 @@
+ #include <linux/uaccess.h>
+ #include <asm/ptrace.h>
+ #include <asm/mman.h>
++#include <asm/mte_tag_storage.h>
+ #include <asm/tlbflush.h>
+ #include <asm/cacheflush.h>
+ #include <asm/cpufeature.h>
+@@ -86,7 +87,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		break;
+ 	case KVM_CAP_ARM_MTE:
+ 		mutex_lock(&kvm->lock);
+-		if (!system_supports_mte() || kvm->created_vcpus) {
++		if (!system_supports_mte() || tag_storage_enabled() ||
++		    kvm->created_vcpus) {
+ 			r = -EINVAL;
+ 		} else {
+ 			r = 0;
+@@ -279,7 +281,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = 1;
+ 		break;
+ 	case KVM_CAP_ARM_MTE:
+-		r = system_supports_mte();
++		r = system_supports_mte() && !tag_storage_enabled();
+ 		break;
+ 	case KVM_CAP_STEAL_TIME:
+ 		r = kvm_arm_pvtime_supported();
 -- 
 2.42.1
 
