@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5F47F07E5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:59:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7087F07E7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5719280E92
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5065D1F22A44
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CA182A0;
-	Sun, 19 Nov 2023 16:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304F17757;
+	Sun, 19 Nov 2023 16:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 25BF310FF;
-	Sun, 19 Nov 2023 08:59:25 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 829E31984;
+	Sun, 19 Nov 2023 08:59:30 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 182CE1477;
-	Sun, 19 Nov 2023 09:00:11 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BE0DDA7;
+	Sun, 19 Nov 2023 09:00:16 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D31763F6C4;
-	Sun, 19 Nov 2023 08:59:19 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21D8F3F6C4;
+	Sun, 19 Nov 2023 08:59:25 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,9 +61,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 20/27] mm: hugepage: Handle huge page fault on access
-Date: Sun, 19 Nov 2023 16:57:14 +0000
-Message-Id: <20231119165721.9849-21-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 21/27] mm: arm64: Handle tag storage pages mapped before mprotect(PROT_MTE)
+Date: Sun, 19 Nov 2023 16:57:15 +0000
+Message-Id: <20231119165721.9849-22-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
@@ -75,200 +75,196 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Handle PAGE_FAULT_ON_ACCESS faults for huge pages in a similar way to
-regular pages.
-
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
  arch/arm64/include/asm/mte_tag_storage.h |  1 +
- arch/arm64/include/asm/pgtable.h         |  7 ++
- arch/arm64/mm/fault.c                    | 81 ++++++++++++++++++++++++
- include/linux/huge_mm.h                  |  2 +
- include/linux/pgtable.h                  |  5 ++
- mm/huge_memory.c                         |  4 +-
- mm/memory.c                              |  3 +
- 7 files changed, 101 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/mte_tag_storage.c      | 15 +++++++
+ arch/arm64/mm/fault.c                    | 55 ++++++++++++++++++++++++
+ include/linux/migrate.h                  |  8 +++-
+ include/linux/migrate_mode.h             |  1 +
+ mm/internal.h                            |  6 ---
+ 6 files changed, 78 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/include/asm/mte_tag_storage.h
-index c70ced60a0cd..b97406d369ce 100644
+index b97406d369ce..6a8b19a6a758 100644
 --- a/arch/arm64/include/asm/mte_tag_storage.h
 +++ b/arch/arm64/include/asm/mte_tag_storage.h
-@@ -35,6 +35,7 @@ void free_tag_storage(struct page *page, int order);
+@@ -33,6 +33,7 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp);
+ void free_tag_storage(struct page *page, int order);
+ 
  bool page_tag_storage_reserved(struct page *page);
++bool page_is_tag_storage(struct page *page);
  
  vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf);
-+vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf);
- #else
- static inline bool tag_storage_enabled(void)
- {
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 8cc135f1c112..1704411c096d 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -477,6 +477,13 @@ static inline vm_fault_t arch_do_page_fault_on_access(struct vm_fault *vmf)
- 		return handle_page_missing_tag_storage(vmf);
- 	return VM_FAULT_SIGBUS;
+ vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf);
+diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
+index a1cc239f7211..5096ce859136 100644
+--- a/arch/arm64/kernel/mte_tag_storage.c
++++ b/arch/arm64/kernel/mte_tag_storage.c
+@@ -500,6 +500,21 @@ bool page_tag_storage_reserved(struct page *page)
+ 	return test_bit(PG_tag_storage_reserved, &page->flags);
  }
-+
-+static inline vm_fault_t arch_do_huge_page_fault_on_access(struct vm_fault *vmf)
-+{
-+	if (tag_storage_enabled())
-+		return handle_huge_page_missing_tag_storage(vmf);
-+	return VM_FAULT_SIGBUS;
-+}
- #endif /* CONFIG_ARCH_HAS_FAULT_ON_ACCESS */
  
- #define pmd_present_invalid(pmd)     (!!(pmd_val(pmd) & PMD_PRESENT_INVALID))
++bool page_is_tag_storage(struct page *page)
++{
++	unsigned long pfn = page_to_pfn(page);
++	struct range *tag_range;
++	int i;
++
++	for (i = 0; i < num_tag_regions; i++) {
++		tag_range = &tag_regions[i].tag_range;
++		if (tag_range->start <= pfn && pfn <= tag_range->end)
++			return true;
++	}
++
++	return false;
++}
++
+ int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
+ {
+ 	unsigned long start_block, end_block;
 diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index f5fa583acf18..6730a0812a24 100644
+index 6730a0812a24..964c5ae161a3 100644
 --- a/arch/arm64/mm/fault.c
 +++ b/arch/arm64/mm/fault.c
-@@ -1041,6 +1041,87 @@ vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf)
+@@ -12,6 +12,7 @@
+ #include <linux/extable.h>
+ #include <linux/kfence.h>
+ #include <linux/signal.h>
++#include <linux/migrate.h>
+ #include <linux/mm.h>
+ #include <linux/hardirq.h>
+ #include <linux/init.h>
+@@ -956,6 +957,50 @@ void tag_clear_highpage(struct page *page)
+ }
  
- 	return 0;
- 
-+out_retry:
-+	put_page(page);
-+	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
-+		vma_end_read(vma);
-+	if (fault_flag_allow_retry_first(vmf->flags)) {
-+		err = VM_FAULT_RETRY;
-+	} else {
-+		/* Replay the fault. */
-+		err = 0;
+ #ifdef CONFIG_ARM64_MTE_TAG_STORAGE
++
++#define MR_TAGGED_TAG_STORAGE	MR_ARCH_1
++
++extern bool isolate_lru_page(struct page *page);
++extern void putback_movable_pages(struct list_head *l);
++
++/* Returns with the page reference dropped. */
++static void migrate_tag_storage_page(struct page *page)
++{
++	struct migration_target_control mtc = {
++		.nid = NUMA_NO_NODE,
++		.gfp_mask = GFP_HIGHUSER_MOVABLE | __GFP_TAGGED,
++	};
++	unsigned long i, nr_pages = compound_nr(page);
++	LIST_HEAD(pagelist);
++	int ret, tries;
++
++	lru_cache_disable();
++
++	for (i = 0; i < nr_pages; i++) {
++		if (!isolate_lru_page(page + i)) {
++			ret = -EAGAIN;
++			goto out;
++		}
++		/* Isolate just grabbed another reference, drop ours. */
++		put_page(page + i);
++		list_add_tail(&(page + i)->lru, &pagelist);
 +	}
-+	return err;
++
++	tries = 5;
++	while (tries--) {
++		ret = migrate_pages(&pagelist, alloc_migration_target, NULL, (unsigned long)&mtc,
++				    MIGRATE_SYNC, MR_TAGGED_TAG_STORAGE, NULL);
++		if (ret == 0 || ret != -EBUSY)
++			break;
++	}
++
++out:
++	if (ret != 0)
++		putback_movable_pages(&pagelist);
++
++	lru_cache_enable();
 +}
 +
-+vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf)
-+{
-+	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
-+	struct vm_area_struct *vma = vmf->vma;
-+	pmd_t old_pmd, new_pmd;
-+	bool writable = false;
-+	struct page *page;
-+	vm_fault_t err;
-+	int ret;
-+
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(vmf->orig_pmd, *vmf->pmd))) {
-+		spin_unlock(vmf->ptl);
+ vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+@@ -1013,6 +1058,11 @@ vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf)
+ 	if (unlikely(is_migrate_isolate_page(page)))
+ 		goto out_retry;
+ 
++	if (unlikely(page_is_tag_storage(page))) {
++		migrate_tag_storage_page(page);
 +		return 0;
 +	}
 +
-+	old_pmd = vmf->orig_pmd;
-+	new_pmd = pmd_modify(old_pmd, vma->vm_page_prot);
-+
-+	/*
-+	 * Detect now whether the PMD could be writable; this information
-+	 * is only valid while holding the PT lock.
-+	 */
-+	writable = pmd_write(new_pmd);
-+	if (!writable && vma_wants_manual_pte_write_upgrade(vma) &&
-+	    can_change_pmd_writable(vma, vmf->address, new_pmd))
-+		writable = true;
-+
-+	page = vm_normal_page_pmd(vma, haddr, new_pmd);
-+	if (!page)
-+		goto out_map;
-+
-+	if (!(vma->vm_flags & VM_MTE))
-+		goto out_map;
-+
-+	get_page(page);
-+	vma_set_access_pid_bit(vma);
-+
-+	spin_unlock(vmf->ptl);
-+	writable = false;
-+
-+	if (unlikely(is_migrate_isolate_page(page)))
-+		goto out_retry;
-+
-+	ret = reserve_tag_storage(page, HPAGE_PMD_ORDER, GFP_HIGHUSER_MOVABLE);
-+	if (ret)
-+		goto out_retry;
-+
-+	put_page(page);
-+
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(old_pmd, *vmf->pmd))) {
-+		spin_unlock(vmf->ptl);
+ 	ret = reserve_tag_storage(page, 0, GFP_HIGHUSER_MOVABLE);
+ 	if (ret)
+ 		goto out_retry;
+@@ -1098,6 +1148,11 @@ vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf)
+ 	if (unlikely(is_migrate_isolate_page(page)))
+ 		goto out_retry;
+ 
++	if (unlikely(page_is_tag_storage(page))) {
++		migrate_tag_storage_page(page);
 +		return 0;
 +	}
 +
-+out_map:
-+	/* Restore the PMD */
-+	new_pmd = pmd_modify(old_pmd, vma->vm_page_prot);
-+	new_pmd = pmd_mkyoung(new_pmd);
-+	if (writable)
-+		new_pmd = pmd_mkwrite(new_pmd, vma);
-+	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, new_pmd);
-+	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
-+	spin_unlock(vmf->ptl);
+ 	ret = reserve_tag_storage(page, HPAGE_PMD_ORDER, GFP_HIGHUSER_MOVABLE);
+ 	if (ret)
+ 		goto out_retry;
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 0acef592043c..afca42ace735 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -10,8 +10,6 @@
+ typedef struct folio *new_folio_t(struct folio *folio, unsigned long private);
+ typedef void free_folio_t(struct folio *folio, unsigned long private);
+ 
+-struct migration_target_control;
+-
+ /*
+  * Return values from addresss_space_operations.migratepage():
+  * - negative errno on page migration failure;
+@@ -57,6 +55,12 @@ struct movable_operations {
+ 	void (*putback_page)(struct page *);
+ };
+ 
++struct migration_target_control {
++	int nid;		/* preferred node id */
++	nodemask_t *nmask;
++	gfp_t gfp_mask;
++};
 +
-+	return 0;
-+
- out_retry:
- 	put_page(page);
- 	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index fa0350b0812a..bb84291f9231 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -36,6 +36,8 @@ bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
- int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
- 		    unsigned long cp_flags);
-+bool can_change_pmd_writable(struct vm_area_struct *vma, unsigned long addr,
-+			     pmd_t pmd);
+ /* Defined in mm/debug.c: */
+ extern const char *migrate_reason_names[MR_TYPES];
  
- vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
- vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index e2c761dd6c41..de45f475bf8d 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1473,6 +1473,11 @@ static inline vm_fault_t arch_do_page_fault_on_access(struct vm_fault *vmf)
- {
- 	return VM_FAULT_SIGBUS;
- }
-+
-+static inline vm_fault_t arch_do_huge_page_fault_on_access(struct vm_fault *vmf)
-+{
-+	return VM_FAULT_SIGBUS;
-+}
- #endif
+diff --git a/include/linux/migrate_mode.h b/include/linux/migrate_mode.h
+index f37cc03f9369..c6c5c7726d26 100644
+--- a/include/linux/migrate_mode.h
++++ b/include/linux/migrate_mode.h
+@@ -29,6 +29,7 @@ enum migrate_reason {
+ 	MR_CONTIG_RANGE,
+ 	MR_LONGTERM_PIN,
+ 	MR_DEMOTION,
++	MR_ARCH_1,
+ 	MR_TYPES
+ };
  
- #endif /* CONFIG_MMU */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9beead961a65..d1402b43ea39 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1406,8 +1406,8 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	return VM_FAULT_FALLBACK;
- }
+diff --git a/mm/internal.h b/mm/internal.h
+index ddf6bb6c6308..96fff5dfc041 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -949,12 +949,6 @@ static inline bool is_migrate_highatomic_page(struct page *page)
  
--static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
--					   unsigned long addr, pmd_t pmd)
-+inline bool can_change_pmd_writable(struct vm_area_struct *vma,
-+				    unsigned long addr, pmd_t pmd)
- {
- 	struct page *page;
+ void setup_zone_pageset(struct zone *zone);
  
-diff --git a/mm/memory.c b/mm/memory.c
-index a04a971200b9..46b926625503 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5168,6 +5168,9 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 			return 0;
- 		}
- 		if (pmd_trans_huge(vmf.orig_pmd) || pmd_devmap(vmf.orig_pmd)) {
-+			if (fault_on_access_pmd(vmf.orig_pmd) && vma_is_accessible(vma))
-+				return arch_do_huge_page_fault_on_access(&vmf);
-+
- 			if (pmd_protnone(vmf.orig_pmd) && vma_is_accessible(vma))
- 				return do_huge_pmd_numa_page(&vmf);
- 
+-struct migration_target_control {
+-	int nid;		/* preferred node id */
+-	nodemask_t *nmask;
+-	gfp_t gfp_mask;
+-};
+-
+ /*
+  * mm/filemap.c
+  */
 -- 
 2.42.1
 
