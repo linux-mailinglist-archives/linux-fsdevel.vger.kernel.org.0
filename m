@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7087F07E7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:59:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A107F07E9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5065D1F22A44
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A159280F12
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304F17757;
-	Sun, 19 Nov 2023 16:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450C91803B;
+	Sun, 19 Nov 2023 16:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 829E31984;
-	Sun, 19 Nov 2023 08:59:30 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id B1ECA10FD;
+	Sun, 19 Nov 2023 08:59:35 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BE0DDA7;
-	Sun, 19 Nov 2023 09:00:16 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A8837FEC;
+	Sun, 19 Nov 2023 09:00:21 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21D8F3F6C4;
-	Sun, 19 Nov 2023 08:59:25 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77E993F6C4;
+	Sun, 19 Nov 2023 08:59:30 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,9 +61,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 21/27] mm: arm64: Handle tag storage pages mapped before mprotect(PROT_MTE)
-Date: Sun, 19 Nov 2023 16:57:15 +0000
-Message-Id: <20231119165721.9849-22-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 22/27] arm64: mte: swap: Handle tag restoring when missing tag storage
+Date: Sun, 19 Nov 2023 16:57:16 +0000
+Message-Id: <20231119165721.9849-23-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
@@ -75,196 +75,259 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Linux restores tags when a page is swapped in and there are tags associated
+with the swap entry which the new page will replace. The saved tags are
+restored even if the page will not be mapped as tagged, to protect against
+cases where the page is shared between different VMAs, and is tagged in
+some, but untagged in others. By using this approach, the process can still
+access the correct tags following an mprotect(PROT_MTE) on the non-MTE
+enabled VMA.
+
+But this poses a challenge for managing tag storage: in the scenario above,
+when a new page is allocated to be swapped in for the process where it will
+be mapped as untagged, the corresponding tag storage block is not reserved.
+mte_restore_page_tags_by_swp_entry(), when it restores the saved tags, will
+overwrite data in the tag storage block associated with the new page,
+leading to data corruption if the block is in use by a process.
+
+Get around this issue by saving the tags in a new xarray, this time indexed
+by the page pfn, and then restoring them when tag storage is reserved for
+the page.
+
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/include/asm/mte_tag_storage.h |  1 +
- arch/arm64/kernel/mte_tag_storage.c      | 15 +++++++
- arch/arm64/mm/fault.c                    | 55 ++++++++++++++++++++++++
- include/linux/migrate.h                  |  8 +++-
- include/linux/migrate_mode.h             |  1 +
- mm/internal.h                            |  6 ---
- 6 files changed, 78 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/mte_tag_storage.h |   9 ++
+ arch/arm64/include/asm/pgtable.h         |  11 +++
+ arch/arm64/kernel/mte_tag_storage.c      |  20 +++-
+ arch/arm64/mm/mteswap.c                  | 112 +++++++++++++++++++++++
+ 4 files changed, 148 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/include/asm/mte_tag_storage.h
-index b97406d369ce..6a8b19a6a758 100644
+index 6a8b19a6a758..a3c38099fe1a 100644
 --- a/arch/arm64/include/asm/mte_tag_storage.h
 +++ b/arch/arm64/include/asm/mte_tag_storage.h
-@@ -33,6 +33,7 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp);
- void free_tag_storage(struct page *page, int order);
- 
- bool page_tag_storage_reserved(struct page *page);
-+bool page_is_tag_storage(struct page *page);
+@@ -37,6 +37,15 @@ bool page_is_tag_storage(struct page *page);
  
  vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf);
  vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf);
++
++void tags_by_pfn_lock(void);
++void tags_by_pfn_unlock(void);
++
++void *mte_erase_tags_for_pfn(unsigned long pfn);
++bool mte_save_tags_for_pfn(void *tags, unsigned long pfn);
++void mte_restore_tags_for_pfn(unsigned long start_pfn, int order);
++
++vm_fault_t mte_try_transfer_swap_tags(swp_entry_t entry, struct page *page);
+ #else
+ static inline bool tag_storage_enabled(void)
+ {
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 1704411c096d..1a25b7d601c2 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1084,6 +1084,17 @@ static inline void arch_swap_invalidate_area(int type)
+ 		mte_invalidate_tags_area_by_swp_entry(type);
+ }
+ 
++#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
++#define __HAVE_ARCH_SWAP_PREPARE_TO_RESTORE
++static inline vm_fault_t arch_swap_prepare_to_restore(swp_entry_t entry,
++						      struct folio *folio)
++{
++	if (tag_storage_enabled())
++		return mte_try_transfer_swap_tags(entry, &folio->page);
++	return 0;
++}
++#endif
++
+ #define __HAVE_ARCH_SWAP_RESTORE
+ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
+ {
 diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-index a1cc239f7211..5096ce859136 100644
+index 5096ce859136..6b11bb408b51 100644
 --- a/arch/arm64/kernel/mte_tag_storage.c
 +++ b/arch/arm64/kernel/mte_tag_storage.c
-@@ -500,6 +500,21 @@ bool page_tag_storage_reserved(struct page *page)
- 	return test_bit(PG_tag_storage_reserved, &page->flags);
+@@ -547,8 +547,10 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
+ 	mutex_lock(&tag_blocks_lock);
+ 
+ 	/* Check again, this time with the lock held. */
+-	if (page_tag_storage_reserved(page))
+-		goto out_unlock;
++	if (page_tag_storage_reserved(page)) {
++		mutex_unlock(&tag_blocks_lock);
++		return 0;
++	}
+ 
+ 	/* Make sure existing entries are not freed from out under out feet. */
+ 	xa_lock_irqsave(&tag_blocks_reserved, flags);
+@@ -583,9 +585,10 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
+ 	}
+ 
+ 	page_set_tag_storage_reserved(page, order);
+-out_unlock:
+ 	mutex_unlock(&tag_blocks_lock);
+ 
++	mte_restore_tags_for_pfn(page_to_pfn(page), order);
++
+ 	return 0;
+ 
+ out_error:
+@@ -612,7 +615,8 @@ void free_tag_storage(struct page *page, int order)
+ 	struct tag_region *region;
+ 	unsigned long page_va;
+ 	unsigned long flags;
+-	int ret;
++	void *tags;
++	int i, ret;
+ 
+ 	ret = tag_storage_find_block(page, &start_block, &region);
+ 	if (WARN_ONCE(ret, "Missing tag storage block for pfn 0x%lx", page_to_pfn(page)))
+@@ -622,6 +626,14 @@ void free_tag_storage(struct page *page, int order)
+ 	/* Avoid writeback of dirty tag cache lines corrupting data. */
+ 	dcache_inval_tags_poc(page_va, page_va + (PAGE_SIZE << order));
+ 
++	tags_by_pfn_lock();
++	for (i = 0; i < (1 << order); i++) {
++		tags = mte_erase_tags_for_pfn(page_to_pfn(page + i));
++		if (unlikely(tags))
++			mte_free_tag_buf(tags);
++	}
++	tags_by_pfn_unlock();
++
+ 	end_block = start_block + order_to_num_blocks(order) * region->block_size;
+ 
+ 	xa_lock_irqsave(&tag_blocks_reserved, flags);
+diff --git a/arch/arm64/mm/mteswap.c b/arch/arm64/mm/mteswap.c
+index 2a43746b803f..20d718a514af 100644
+--- a/arch/arm64/mm/mteswap.c
++++ b/arch/arm64/mm/mteswap.c
+@@ -20,6 +20,114 @@ void mte_free_tag_buf(void *buf)
+ 	kfree(buf);
  }
  
-+bool page_is_tag_storage(struct page *page)
++#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
++static DEFINE_XARRAY(tags_by_pfn);
++
++void tags_by_pfn_lock(void)
 +{
-+	unsigned long pfn = page_to_pfn(page);
-+	struct range *tag_range;
-+	int i;
-+
-+	for (i = 0; i < num_tag_regions; i++) {
-+		tag_range = &tag_regions[i].tag_range;
-+		if (tag_range->start <= pfn && pfn <= tag_range->end)
-+			return true;
-+	}
-+
-+	return false;
++	xa_lock(&tags_by_pfn);
 +}
 +
- int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
- {
- 	unsigned long start_block, end_block;
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 6730a0812a24..964c5ae161a3 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -12,6 +12,7 @@
- #include <linux/extable.h>
- #include <linux/kfence.h>
- #include <linux/signal.h>
-+#include <linux/migrate.h>
- #include <linux/mm.h>
- #include <linux/hardirq.h>
- #include <linux/init.h>
-@@ -956,6 +957,50 @@ void tag_clear_highpage(struct page *page)
- }
- 
- #ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-+
-+#define MR_TAGGED_TAG_STORAGE	MR_ARCH_1
-+
-+extern bool isolate_lru_page(struct page *page);
-+extern void putback_movable_pages(struct list_head *l);
-+
-+/* Returns with the page reference dropped. */
-+static void migrate_tag_storage_page(struct page *page)
++void tags_by_pfn_unlock(void)
 +{
-+	struct migration_target_control mtc = {
-+		.nid = NUMA_NO_NODE,
-+		.gfp_mask = GFP_HIGHUSER_MOVABLE | __GFP_TAGGED,
-+	};
-+	unsigned long i, nr_pages = compound_nr(page);
-+	LIST_HEAD(pagelist);
-+	int ret, tries;
++	xa_unlock(&tags_by_pfn);
++}
 +
-+	lru_cache_disable();
++void *mte_erase_tags_for_pfn(unsigned long pfn)
++{
++	return __xa_erase(&tags_by_pfn, pfn);
++}
 +
-+	for (i = 0; i < nr_pages; i++) {
-+		if (!isolate_lru_page(page + i)) {
-+			ret = -EAGAIN;
-+			goto out;
++bool mte_save_tags_for_pfn(void *tags, unsigned long pfn)
++{
++	void *entry;
++	int ret;
++
++	ret = xa_reserve(&tags_by_pfn, pfn, GFP_KERNEL);
++	if (ret)
++		return true;
++
++	tags_by_pfn_lock();
++
++	if (page_tag_storage_reserved(pfn_to_page(pfn))) {
++		tags_by_pfn_unlock();
++		return false;
++	}
++
++	entry = __xa_store(&tags_by_pfn, pfn, tags, GFP_ATOMIC);
++	if (xa_is_err(entry)) {
++		xa_release(&tags_by_pfn, pfn);
++		goto out_unlock;
++	} else if (entry) {
++		mte_free_tag_buf(entry);
++	}
++
++out_unlock:
++	tags_by_pfn_unlock();
++	return true;
++}
++
++void mte_restore_tags_for_pfn(unsigned long start_pfn, int order)
++{
++	struct page *page = pfn_to_page(start_pfn);
++	unsigned long pfn;
++	void *tags;
++
++	tags_by_pfn_lock();
++
++	for (pfn = start_pfn; pfn < start_pfn + (1 << order); pfn++, page++) {
++		if (WARN_ON_ONCE(!page_tag_storage_reserved(page)))
++			continue;
++
++		tags = mte_erase_tags_for_pfn(pfn);
++		if (unlikely(tags)) {
++			/*
++			 * Mark the page as tagged so mte_sync_tags() doesn't
++			 * clear the tags.
++			 */
++			WARN_ON_ONCE(!try_page_mte_tagging(page));
++			mte_copy_page_tags_from_buf(page_address(page), tags);
++			set_page_mte_tagged(page);
++			mte_free_tag_buf(tags);
 +		}
-+		/* Isolate just grabbed another reference, drop ours. */
-+		put_page(page + i);
-+		list_add_tail(&(page + i)->lru, &pagelist);
 +	}
 +
-+	tries = 5;
-+	while (tries--) {
-+		ret = migrate_pages(&pagelist, alloc_migration_target, NULL, (unsigned long)&mtc,
-+				    MIGRATE_SYNC, MR_TAGGED_TAG_STORAGE, NULL);
-+		if (ret == 0 || ret != -EBUSY)
-+			break;
-+	}
-+
-+out:
-+	if (ret != 0)
-+		putback_movable_pages(&pagelist);
-+
-+	lru_cache_enable();
++	tags_by_pfn_unlock();
 +}
 +
- vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf)
++/*
++ * Note on locking: swap in/out is done with the folio locked, which eliminates
++ * races with mte_save/restore_page_tags_by_swp_entry.
++ */
++vm_fault_t mte_try_transfer_swap_tags(swp_entry_t entry, struct page *page)
++{
++	void *swap_tags, *pfn_tags;
++	bool saved;
++
++	/*
++	 * mte_restore_page_tags_by_swp_entry() will take care of copying the
++	 * tags over.
++	 */
++	if (likely(page_mte_tagged(page) || page_tag_storage_reserved(page)))
++		return 0;
++
++	swap_tags = xa_load(&tags_by_swp_entry, entry.val);
++	if (!swap_tags)
++		return 0;
++
++	pfn_tags = mte_allocate_tag_buf();
++	if (!pfn_tags)
++		return VM_FAULT_OOM;
++
++	memcpy(pfn_tags, swap_tags, MTE_PAGE_TAG_STORAGE_SIZE);
++	saved = mte_save_tags_for_pfn(pfn_tags, page_to_pfn(page));
++	if (!saved)
++		mte_free_tag_buf(pfn_tags);
++
++	return 0;
++}
++#endif
++
+ int mte_save_page_tags_by_swp_entry(struct page *page)
  {
- 	struct vm_area_struct *vma = vmf->vma;
-@@ -1013,6 +1058,11 @@ vm_fault_t handle_page_missing_tag_storage(struct vm_fault *vmf)
- 	if (unlikely(is_migrate_isolate_page(page)))
- 		goto out_retry;
+ 	void *tags, *ret;
+@@ -54,6 +162,10 @@ void mte_restore_page_tags_by_swp_entry(swp_entry_t entry, struct page *page)
+ 	if (!tags)
+ 		return;
  
-+	if (unlikely(page_is_tag_storage(page))) {
-+		migrate_tag_storage_page(page);
-+		return 0;
-+	}
++	/* Tags will be restored when tag storage is reserved. */
++	if (tag_storage_enabled() && unlikely(!page_tag_storage_reserved(page)))
++		return;
 +
- 	ret = reserve_tag_storage(page, 0, GFP_HIGHUSER_MOVABLE);
- 	if (ret)
- 		goto out_retry;
-@@ -1098,6 +1148,11 @@ vm_fault_t handle_huge_page_missing_tag_storage(struct vm_fault *vmf)
- 	if (unlikely(is_migrate_isolate_page(page)))
- 		goto out_retry;
- 
-+	if (unlikely(page_is_tag_storage(page))) {
-+		migrate_tag_storage_page(page);
-+		return 0;
-+	}
-+
- 	ret = reserve_tag_storage(page, HPAGE_PMD_ORDER, GFP_HIGHUSER_MOVABLE);
- 	if (ret)
- 		goto out_retry;
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 0acef592043c..afca42ace735 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -10,8 +10,6 @@
- typedef struct folio *new_folio_t(struct folio *folio, unsigned long private);
- typedef void free_folio_t(struct folio *folio, unsigned long private);
- 
--struct migration_target_control;
--
- /*
-  * Return values from addresss_space_operations.migratepage():
-  * - negative errno on page migration failure;
-@@ -57,6 +55,12 @@ struct movable_operations {
- 	void (*putback_page)(struct page *);
- };
- 
-+struct migration_target_control {
-+	int nid;		/* preferred node id */
-+	nodemask_t *nmask;
-+	gfp_t gfp_mask;
-+};
-+
- /* Defined in mm/debug.c: */
- extern const char *migrate_reason_names[MR_TYPES];
- 
-diff --git a/include/linux/migrate_mode.h b/include/linux/migrate_mode.h
-index f37cc03f9369..c6c5c7726d26 100644
---- a/include/linux/migrate_mode.h
-+++ b/include/linux/migrate_mode.h
-@@ -29,6 +29,7 @@ enum migrate_reason {
- 	MR_CONTIG_RANGE,
- 	MR_LONGTERM_PIN,
- 	MR_DEMOTION,
-+	MR_ARCH_1,
- 	MR_TYPES
- };
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index ddf6bb6c6308..96fff5dfc041 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -949,12 +949,6 @@ static inline bool is_migrate_highatomic_page(struct page *page)
- 
- void setup_zone_pageset(struct zone *zone);
- 
--struct migration_target_control {
--	int nid;		/* preferred node id */
--	nodemask_t *nmask;
--	gfp_t gfp_mask;
--};
--
- /*
-  * mm/filemap.c
-  */
+ 	if (try_page_mte_tagging(page)) {
+ 		mte_copy_page_tags_from_buf(page_address(page), tags);
+ 		set_page_mte_tagged(page);
 -- 
 2.42.1
 
