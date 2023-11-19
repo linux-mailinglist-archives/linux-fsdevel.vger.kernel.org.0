@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376027F07B0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:57:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DDE7F07B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 825A4B20A19
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0DF1C20934
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 16:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0699D14AB9;
-	Sun, 19 Nov 2023 16:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27143154B9;
+	Sun, 19 Nov 2023 16:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0E997C2;
-	Sun, 19 Nov 2023 08:57:40 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 37C04C2;
+	Sun, 19 Nov 2023 08:57:45 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C605EDA7;
-	Sun, 19 Nov 2023 08:58:25 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2411FFEC;
+	Sun, 19 Nov 2023 08:58:31 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C6E83F6C4;
-	Sun, 19 Nov 2023 08:57:34 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC6C63F6C4;
+	Sun, 19 Nov 2023 08:57:39 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,10 +61,12 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 00/27] Add support for arm64 MTE dynamic tag storage reuse
-Date: Sun, 19 Nov 2023 16:56:54 +0000
-Message-Id: <20231119165721.9849-1-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 01/27] arm64: mte: Rework naming for tag manipulation functions
+Date: Sun, 19 Nov 2023 16:56:55 +0000
+Message-Id: <20231119165721.9849-2-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,260 +75,480 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The series is based on v6.7-rc1 and can be cloned with:
+The tag save/restore/copy functions could be more explicit about from where
+the tags are coming from and where they are being copied to. Renaming the
+functions to make it easier to understand what they are doing:
 
-$ git clone https://gitlab.arm.com/linux-arm/linux-ae.git \
-	-b arm-mte-dynamic-carveout-rfc-v2
+- Rename the mte_clear_page_tags() 'addr' parameter to 'page_addr', to
+  match the other functions that take a page address as parameter.
 
-Introduction
-============
+- Rename mte_save/restore_tags() to
+  mte_save/restore_page_tags_by_swp_entry() to make it clear that they are
+  saved in a collection indexed by swp_entry (this will become important
+  when they will be also saved in a collection indexed by page pfn). Same
+  applies to mte_invalidate_tags{,_area}_by_swp_entry().
 
-Memory Tagging Extension (MTE) is implemented currently to have a static
-carve-out of the DRAM to store the allocation tags (a.k.a. memory colour).
-This is what we call the tag storage. Each 16 bytes have 4 bits of tags, so
-this means 1/32 of the DRAM, roughly 3% used for the tag storage.  This is
-done transparently by the hardware/interconnect (with firmware setup) and
-normally hidden from the OS. So a checked memory access to location X
-generates a tag fetch from location Y in the carve-out and this tag is
-compared with the bits 59:56 in the pointer. The correspondence from X to Y
-is linear (subject to a minimum block size to deal with some address
-interleaving). The software doesn't need to know about this correspondence
-as we have specific instructions like STG/LDG to location X that lead to a
-tag store/load to Y.
+- Rename mte_save/restore_page_tags() to make it clear where the tags are
+  going to be saved, respectively from where they are restored - in a
+  previously allocated memory buffer, not in an xarray, like when the tags
+  are saved when swapping. Rename the action to 'copy' instead of
+  'save'/'restore' to match the copy from user functions, which also copy
+  tags to memory.
 
-Now, not all memory used by applications is tagged (mmap(PROT_MTE)).  For
-example, some large allocations may not use PROT_MTE at all or only for the
-first and last page since initialising the tags takes time. The side-effect
-is that of that 3% of DRAM, only part of it, say 1%, is effectively used.
+- Rename mte_allocate/free_tag_storage() to mte_allocate/free_tag_buf() to
+  make it clear the functions have nothing to do with the memory where the
+  corresponding tags for a page live. Change the parameter type for
+  mte_free_tag_buf()) to be void *, to match the return value of
+  mte_allocate_tag_buf(). Also do that because that memory is opaque and it
+  is not meant to be directly deferenced.
 
-The series aims to take that unused tag storage and release it to the page
-allocator for normal data usage.
+In the name of consistency rename local variables from tag_storage to tags.
+Give a similar treatment to the hibernation code that saves and restores
+the tags for all tagged pages.
 
-The first complication is that a PROT_MTE page allocation at address X will
-need to reserve the tag storage page at location Y (and migrate any data in
-that page if it is in use).
+In the same spirit, rename MTE_PAGE_TAG_STORAGE to
+MTE_PAGE_TAG_STORAGE_SIZE to make it clear that it relates to the size of
+the memory needed to save the tags for a page. Oportunistically rename
+MTE_TAG_SIZE to MTE_TAG_SIZE_BITS to make it clear it is measured in bits,
+not bytes, like the rest of the size variable from the same header file.
 
-To make things worse, pages in the tag storage/carve-out range cannot use
-PROT_MTE themselves on current hardware, so this adds the second
-complication - a heterogeneous memory layout. The kernel needs to know
-where to allocate a PROT_MTE page from or migrate a current page if it
-becomes PROT_MTE (mprotect()) and the range it is in does not support
-tagging.
+Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+---
+ arch/arm64/include/asm/mte-def.h | 16 +++++-----
+ arch/arm64/include/asm/mte.h     | 23 +++++++++------
+ arch/arm64/include/asm/pgtable.h |  8 ++---
+ arch/arm64/kernel/elfcore.c      | 14 ++++-----
+ arch/arm64/kernel/hibernate.c    | 46 ++++++++++++++---------------
+ arch/arm64/lib/mte.S             | 18 ++++++------
+ arch/arm64/mm/mteswap.c          | 50 ++++++++++++++++----------------
+ 7 files changed, 90 insertions(+), 85 deletions(-)
 
-Some other complications are arm64-specific like cache coherency between
-tags and data accesses. There is a draft architecture spec which will be
-released soon, detailing how the hardware behaves.
-
-All of this will be entirely transparent to userspace. As with the current
-kernel (without this dynamic tag storage), a user only needs to ask for
-PROT_MTE mappings to get tagged pages.
-
-Implementation
-==============
-
-MTE tag storage reuse is accomplished with the following changes to the
-Linux kernel:
-
-1. The tag storage memory is exposed to the memory allocator as
-MIGRATE_CMA. The arm64 code manages this memory directly instead of using
-cma_declare_contiguous/cma_alloc for performance reasons.
-
-There is a limitation to this approach: MIGRATE_CMA cannot be used for
-tagged allocations, even if not all MIGRATE_CMA memory is tag storage.
-
-2. mprotect(PROT_MTE) is implemented by adding a fault-on-access mechanism
-for existing pages. When a page is next accessed, a fault is taken and the
-corresponding tag storage is reserved.
-
-3. When the code tries to copy tags to a page (when swapping in a newly
-allocated page, or during migration/THP collapse) which doesn't have the
-tag storage reserved, the tags are copied to an xarray and restored when
-tag storage is reserved for the destination page.
-
-KVM support has not been implemented yet, that because a non-MTE enabled
-VMA can back the memory of an MTE-enabled VM. It will be added after there
-is a consensus on the right approach on the memory management support.
-
-Overview of the patches
-=======================
-
-For people not interested in the arm64 details, you probably want to start
-with patches 1-10, which mostly deal with adding the necessary hooks to the
-memory management code, and patches 19 and 20 which add the page
-fault-on-access mechanism for regular pages, respectively huge pages. Patch
-21 is rather invasive, it moves the definition of struct
-migration_target_control out of mm/internal.h to migrate.h, and the arm64
-code also uses isolate_lru_page() and putback_movable_pages() when
-migrating a tag storage page out of a PROT_MTE VMA. And finally patch 26 is
-an optimization for a performance regression that has been reported with
-Chrome and it introduces CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY to allow arm64 to
-use take_page_off_buddy() to fast track reserving tag storage when the page
-is free.
-
-The rest of the patches are mostly arm64 specific.
-
-Patches 11-18 support for detecting the tag storage region and reserving
-tag storage when a tagged page is allocated.
-
-Patches 19-21 add the page fault-on-access on mechanism and use it to
-reserve tag storage when needed.
-
-Patches 22 and 23 handle saving tags temporarily to an xarray if the page
-doesn't have tag storage, and copying the tags over to the tagged page when
-tag storage is reserved.
-
-Changelog
-=========
-
-Changes since RFC v1 [1]:
-
-* The entire series has been reworked to remove MIGRATE_METADATA and put tag
-  storage pages on the MIGRATE_CMA freelists.
-
-* Changed how tags are saved and restored when copying them from one page to
-  another if the destination page doesn't have tag storage - now the tags are
-  restored when tag storage is reserved for the destination page instead of
-  restoring them in set_pte_at() -> mte_sync_tags().
-
-[1] https://lore.kernel.org/lkml/20230823131350.114942-1-alexandru.elisei@arm.com/
-
-Testing
-=======
-
-To enable MTE dynamic tag storage:
-
-- CONFIG_ARM64_MTE_TAG_STORAGE=y
-- system_supports_mte() returns true
-- kasan_hw_tags_enabled() returns false
-- correct DTB node (for the specification, see commit "arm64: mte: Reserve tag
-  storage memory")
-
-Check dmesg for the message "MTE tag storage region management enabled".
-
-I've tested the series using FVP with MTE enabled, but without support for
-dynamic tag storage reuse. To simulate it, I've added two fake tag storage
-regions in the DTB by splitting the upper 2GB memory region into 3: one region
-for normal RAM, followed by the tag storage for the lower 2GB of memory, then
-the tag storage for the normal RAM region. Like below:
-
-diff --git a/arch/arm64/boot/dts/arm/fvp-base-revc.dts b/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-index 60472d65a355..8c719825a9b3 100644
---- a/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-+++ b/arch/arm64/boot/dts/arm/fvp-base-revc.dts
-@@ -165,12 +165,30 @@ C1_L2: l2-cache1 {
-                };
-        };
+diff --git a/arch/arm64/include/asm/mte-def.h b/arch/arm64/include/asm/mte-def.h
+index 14ee86b019c2..eb0d76a6bdcf 100644
+--- a/arch/arm64/include/asm/mte-def.h
++++ b/arch/arm64/include/asm/mte-def.h
+@@ -5,14 +5,14 @@
+ #ifndef __ASM_MTE_DEF_H
+ #define __ASM_MTE_DEF_H
  
--       memory@80000000 {
-+       memory0: memory@80000000 {
-                device_type = "memory";
--               reg = <0x00000000 0x80000000 0 0x80000000>,
--                     <0x00000008 0x80000000 0 0x80000000>;
-+               reg = <0x00000000 0x80000000 0 0x80000000>;
-        };
+-#define MTE_GRANULE_SIZE	UL(16)
+-#define MTE_GRANULE_MASK	(~(MTE_GRANULE_SIZE - 1))
+-#define MTE_GRANULES_PER_PAGE	(PAGE_SIZE / MTE_GRANULE_SIZE)
+-#define MTE_TAG_SHIFT		56
+-#define MTE_TAG_SIZE		4
+-#define MTE_TAG_MASK		GENMASK((MTE_TAG_SHIFT + (MTE_TAG_SIZE - 1)), MTE_TAG_SHIFT)
+-#define MTE_PAGE_TAG_STORAGE	(MTE_GRANULES_PER_PAGE * MTE_TAG_SIZE / 8)
++#define MTE_GRANULE_SIZE		UL(16)
++#define MTE_GRANULE_MASK		(~(MTE_GRANULE_SIZE - 1))
++#define MTE_GRANULES_PER_PAGE		(PAGE_SIZE / MTE_GRANULE_SIZE)
++#define MTE_TAG_SHIFT			56
++#define MTE_TAG_SIZE_BITS		4
++#define MTE_TAG_MASK		GENMASK((MTE_TAG_SHIFT + (MTE_TAG_SIZE_BITS - 1)), MTE_TAG_SHIFT)
++#define MTE_PAGE_TAG_STORAGE_SIZE	(MTE_GRANULES_PER_PAGE * MTE_TAG_SIZE_BITS / 8)
  
-+       memory1: memory@880000000 {
-+               device_type = "memory";
-+               reg = <0x00000008 0x80000000 0 0x78000000>;
-+       };
+-#define __MTE_PREAMBLE		ARM64_ASM_PREAMBLE ".arch_extension memtag\n"
++#define __MTE_PREAMBLE			ARM64_ASM_PREAMBLE ".arch_extension memtag\n"
+ 
+ #endif /* __ASM_MTE_DEF_H  */
+diff --git a/arch/arm64/include/asm/mte.h b/arch/arm64/include/asm/mte.h
+index 91fbd5c8a391..8034695b3dd7 100644
+--- a/arch/arm64/include/asm/mte.h
++++ b/arch/arm64/include/asm/mte.h
+@@ -18,19 +18,24 @@
+ 
+ #include <asm/pgtable-types.h>
+ 
+-void mte_clear_page_tags(void *addr);
++void mte_clear_page_tags(void *page_addr);
 +
-+       tags0: tag-storage@8f8000000 {
-+                compatible = "arm,mte-tag-storage";
-+                reg = <0x00000008 0xf8000000 0 0x4000000>;
-+                block-size = <0x1000>;
-+                memory = <&memory0>;
-+        };
+ unsigned long mte_copy_tags_from_user(void *to, const void __user *from,
+ 				      unsigned long n);
+ unsigned long mte_copy_tags_to_user(void __user *to, void *from,
+ 				    unsigned long n);
+-int mte_save_tags(struct page *page);
+-void mte_save_page_tags(const void *page_addr, void *tag_storage);
+-void mte_restore_tags(swp_entry_t entry, struct page *page);
+-void mte_restore_page_tags(void *page_addr, const void *tag_storage);
+-void mte_invalidate_tags(int type, pgoff_t offset);
+-void mte_invalidate_tags_area(int type);
+-void *mte_allocate_tag_storage(void);
+-void mte_free_tag_storage(char *storage);
 +
-+        tags1: tag-storage@8fc000000 {
-+                compatible = "arm,mte-tag-storage";
-+                reg = <0x00000008 0xfc000000 0 0x3c00000>;
-+                block-size = <0x1000>;
-+                memory = <&memory1>;
-+        };
++int mte_save_page_tags_by_swp_entry(struct page *page);
++void mte_restore_page_tags_by_swp_entry(swp_entry_t entry, struct page *page);
 +
-        reserved-memory {
-                #address-cells = <2>;
-                #size-cells = <2>;
-
-
-
-Alexandru Elisei (27):
-  arm64: mte: Rework naming for tag manipulation functions
-  arm64: mte: Rename __GFP_ZEROTAGS to __GFP_TAGGED
-  mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count the number of pages
-  mm: migrate/mempolicy: Add hook to modify migration target gfp
-  mm: page_alloc: Add an arch hook to allow prep_new_page() to fail
-  mm: page_alloc: Allow an arch to hook early into free_pages_prepare()
-  mm: page_alloc: Add an arch hook to filter MIGRATE_CMA allocations
-  mm: page_alloc: Partially revert "mm: page_alloc: remove stale CMA
-    guard code"
-  mm: Allow an arch to hook into folio allocation when VMA is known
-  mm: Call arch_swap_prepare_to_restore() before arch_swap_restore()
-  arm64: mte: Reserve tag storage memory
-  arm64: mte: Add tag storage pages to the MIGRATE_CMA migratetype
-  arm64: mte: Make tag storage depend on ARCH_KEEP_MEMBLOCK
-  arm64: mte: Disable dynamic tag storage management if HW KASAN is
-    enabled
-  arm64: mte: Check that tag storage blocks are in the same zone
-  arm64: mte: Manage tag storage on page allocation
-  arm64: mte: Perform CMOs for tag blocks on tagged page allocation/free
-  arm64: mte: Reserve tag block for the zero page
-  mm: mprotect: Introduce PAGE_FAULT_ON_ACCESS for mprotect(PROT_MTE)
-  mm: hugepage: Handle huge page fault on access
-  mm: arm64: Handle tag storage pages mapped before mprotect(PROT_MTE)
-  arm64: mte: swap: Handle tag restoring when missing tag storage
-  arm64: mte: copypage: Handle tag restoring when missing tag storage
-  arm64: mte: Handle fatal signal in reserve_tag_storage()
-  KVM: arm64: Disable MTE if tag storage is enabled
-  arm64: mte: Fast track reserving tag storage when the block is free
-  arm64: mte: Enable dynamic tag storage reuse
-
- arch/arm64/Kconfig                       |  16 +
- arch/arm64/include/asm/assembler.h       |  10 +
- arch/arm64/include/asm/mte-def.h         |  16 +-
- arch/arm64/include/asm/mte.h             |  43 +-
- arch/arm64/include/asm/mte_tag_storage.h |  75 +++
- arch/arm64/include/asm/page.h            |   5 +-
- arch/arm64/include/asm/pgtable-prot.h    |   2 +
- arch/arm64/include/asm/pgtable.h         |  96 +++-
- arch/arm64/kernel/Makefile               |   1 +
- arch/arm64/kernel/elfcore.c              |  14 +-
- arch/arm64/kernel/hibernate.c            |  46 +-
- arch/arm64/kernel/mte.c                  |  12 +-
- arch/arm64/kernel/mte_tag_storage.c      | 686 +++++++++++++++++++++++
- arch/arm64/kernel/setup.c                |   7 +
- arch/arm64/kvm/arm.c                     |   6 +-
- arch/arm64/lib/mte.S                     |  34 +-
- arch/arm64/mm/copypage.c                 |  59 ++
- arch/arm64/mm/fault.c                    | 261 ++++++++-
- arch/arm64/mm/mteswap.c                  | 162 +++++-
- fs/proc/page.c                           |   1 +
- include/linux/gfp_types.h                |  14 +-
- include/linux/huge_mm.h                  |   2 +
- include/linux/kernel-page-flags.h        |   1 +
- include/linux/migrate.h                  |  12 +-
- include/linux/migrate_mode.h             |   1 +
- include/linux/mmzone.h                   |   5 +
- include/linux/page-flags.h               |  16 +-
- include/linux/pgtable.h                  |  54 ++
- include/trace/events/mmflags.h           |   5 +-
- mm/Kconfig                               |   7 +
- mm/cma.c                                 |   4 +-
- mm/huge_memory.c                         |   5 +-
- mm/internal.h                            |   9 -
- mm/memory-failure.c                      |   8 +-
- mm/memory.c                              |  10 +
- mm/mempolicy.c                           |   3 +
- mm/migrate.c                             |   3 +
- mm/page_alloc.c                          | 118 +++-
- mm/shmem.c                               |  14 +-
- mm/swapfile.c                            |   7 +
- 40 files changed, 1668 insertions(+), 182 deletions(-)
- create mode 100644 arch/arm64/include/asm/mte_tag_storage.h
- create mode 100644 arch/arm64/kernel/mte_tag_storage.c
-
-
-base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
++void mte_copy_page_tags_to_buf(const void *page_addr, void *to);
++void mte_copy_page_tags_from_buf(void *page_addr, const void *from);
++
++void mte_invalidate_tags_by_swp_entry(int type, pgoff_t offset);
++void mte_invalidate_tags_area_by_swp_entry(int type);
++
++void *mte_allocate_tag_buf(void);
++void mte_free_tag_buf(void *buf);
+ 
+ #ifdef CONFIG_ARM64_MTE
+ 
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index b19a8aee684c..9b32c74b4a1b 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1039,7 +1039,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ static inline int arch_prepare_to_swap(struct page *page)
+ {
+ 	if (system_supports_mte())
+-		return mte_save_tags(page);
++		return mte_save_page_tags_by_swp_entry(page);
+ 	return 0;
+ }
+ 
+@@ -1047,20 +1047,20 @@ static inline int arch_prepare_to_swap(struct page *page)
+ static inline void arch_swap_invalidate_page(int type, pgoff_t offset)
+ {
+ 	if (system_supports_mte())
+-		mte_invalidate_tags(type, offset);
++		mte_invalidate_tags_by_swp_entry(type, offset);
+ }
+ 
+ static inline void arch_swap_invalidate_area(int type)
+ {
+ 	if (system_supports_mte())
+-		mte_invalidate_tags_area(type);
++		mte_invalidate_tags_area_by_swp_entry(type);
+ }
+ 
+ #define __HAVE_ARCH_SWAP_RESTORE
+ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
+ {
+ 	if (system_supports_mte())
+-		mte_restore_tags(entry, &folio->page);
++		mte_restore_page_tags_by_swp_entry(entry, &folio->page);
+ }
+ 
+ #endif /* CONFIG_ARM64_MTE */
+diff --git a/arch/arm64/kernel/elfcore.c b/arch/arm64/kernel/elfcore.c
+index 2e94d20c4ac7..e9ae00dacad8 100644
+--- a/arch/arm64/kernel/elfcore.c
++++ b/arch/arm64/kernel/elfcore.c
+@@ -17,7 +17,7 @@
+ 
+ static unsigned long mte_vma_tag_dump_size(struct core_vma_metadata *m)
+ {
+-	return (m->dump_size >> PAGE_SHIFT) * MTE_PAGE_TAG_STORAGE;
++	return (m->dump_size >> PAGE_SHIFT) * MTE_PAGE_TAG_STORAGE_SIZE;
+ }
+ 
+ /* Derived from dump_user_range(); start/end must be page-aligned */
+@@ -38,7 +38,7 @@ static int mte_dump_tag_range(struct coredump_params *cprm,
+ 		 * have been all zeros.
+ 		 */
+ 		if (!page) {
+-			dump_skip(cprm, MTE_PAGE_TAG_STORAGE);
++			dump_skip(cprm, MTE_PAGE_TAG_STORAGE_SIZE);
+ 			continue;
+ 		}
+ 
+@@ -48,12 +48,12 @@ static int mte_dump_tag_range(struct coredump_params *cprm,
+ 		 */
+ 		if (!page_mte_tagged(page)) {
+ 			put_page(page);
+-			dump_skip(cprm, MTE_PAGE_TAG_STORAGE);
++			dump_skip(cprm, MTE_PAGE_TAG_STORAGE_SIZE);
+ 			continue;
+ 		}
+ 
+ 		if (!tags) {
+-			tags = mte_allocate_tag_storage();
++			tags = mte_allocate_tag_buf();
+ 			if (!tags) {
+ 				put_page(page);
+ 				ret = 0;
+@@ -61,16 +61,16 @@ static int mte_dump_tag_range(struct coredump_params *cprm,
+ 			}
+ 		}
+ 
+-		mte_save_page_tags(page_address(page), tags);
++		mte_copy_page_tags_to_buf(page_address(page), tags);
+ 		put_page(page);
+-		if (!dump_emit(cprm, tags, MTE_PAGE_TAG_STORAGE)) {
++		if (!dump_emit(cprm, tags, MTE_PAGE_TAG_STORAGE_SIZE)) {
+ 			ret = 0;
+ 			break;
+ 		}
+ 	}
+ 
+ 	if (tags)
+-		mte_free_tag_storage(tags);
++		mte_free_tag_buf(tags);
+ 
+ 	return ret;
+ }
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index 02870beb271e..a3b0e7b32457 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -215,41 +215,41 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 
+ #ifdef CONFIG_ARM64_MTE
+ 
+-static DEFINE_XARRAY(mte_pages);
++static DEFINE_XARRAY(tags_by_pfn);
+ 
+-static int save_tags(struct page *page, unsigned long pfn)
++static int save_page_tags_by_pfn(struct page *page, unsigned long pfn)
+ {
+-	void *tag_storage, *ret;
++	void *tags, *ret;
+ 
+-	tag_storage = mte_allocate_tag_storage();
+-	if (!tag_storage)
++	tags = mte_allocate_tag_buf();
++	if (!tags)
+ 		return -ENOMEM;
+ 
+-	mte_save_page_tags(page_address(page), tag_storage);
++	mte_copy_page_tags_to_buf(page_address(page), tags);
+ 
+-	ret = xa_store(&mte_pages, pfn, tag_storage, GFP_KERNEL);
++	ret = xa_store(&tags_by_pfn, pfn, tags, GFP_KERNEL);
+ 	if (WARN(xa_is_err(ret), "Failed to store MTE tags")) {
+-		mte_free_tag_storage(tag_storage);
++		mte_free_tag_buf(tags);
+ 		return xa_err(ret);
+ 	} else if (WARN(ret, "swsusp: %s: Duplicate entry", __func__)) {
+-		mte_free_tag_storage(ret);
++		mte_free_tag_buf(ret);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static void swsusp_mte_free_storage(void)
++static void swsusp_mte_free_tags(void)
+ {
+-	XA_STATE(xa_state, &mte_pages, 0);
++	XA_STATE(xa_state, &tags_by_pfn, 0);
+ 	void *tags;
+ 
+-	xa_lock(&mte_pages);
++	xa_lock(&tags_by_pfn);
+ 	xas_for_each(&xa_state, tags, ULONG_MAX) {
+-		mte_free_tag_storage(tags);
++		mte_free_tag_buf(tags);
+ 	}
+-	xa_unlock(&mte_pages);
++	xa_unlock(&tags_by_pfn);
+ 
+-	xa_destroy(&mte_pages);
++	xa_destroy(&tags_by_pfn);
+ }
+ 
+ static int swsusp_mte_save_tags(void)
+@@ -273,9 +273,9 @@ static int swsusp_mte_save_tags(void)
+ 			if (!page_mte_tagged(page))
+ 				continue;
+ 
+-			ret = save_tags(page, pfn);
++			ret = save_page_tags_by_pfn(page, pfn);
+ 			if (ret) {
+-				swsusp_mte_free_storage();
++				swsusp_mte_free_tags();
+ 				goto out;
+ 			}
+ 
+@@ -290,25 +290,25 @@ static int swsusp_mte_save_tags(void)
+ 
+ static void swsusp_mte_restore_tags(void)
+ {
+-	XA_STATE(xa_state, &mte_pages, 0);
++	XA_STATE(xa_state, &tags_by_pfn, 0);
+ 	int n = 0;
+ 	void *tags;
+ 
+-	xa_lock(&mte_pages);
++	xa_lock(&tags_by_pfn);
+ 	xas_for_each(&xa_state, tags, ULONG_MAX) {
+ 		unsigned long pfn = xa_state.xa_index;
+ 		struct page *page = pfn_to_online_page(pfn);
+ 
+-		mte_restore_page_tags(page_address(page), tags);
++		mte_copy_page_tags_from_buf(page_address(page), tags);
+ 
+-		mte_free_tag_storage(tags);
++		mte_free_tag_buf(tags);
+ 		n++;
+ 	}
+-	xa_unlock(&mte_pages);
++	xa_unlock(&tags_by_pfn);
+ 
+ 	pr_info("Restored %d MTE pages\n", n);
+ 
+-	xa_destroy(&mte_pages);
++	xa_destroy(&tags_by_pfn);
+ }
+ 
+ #else	/* CONFIG_ARM64_MTE */
+diff --git a/arch/arm64/lib/mte.S b/arch/arm64/lib/mte.S
+index 5018ac03b6bf..9f623e9da09f 100644
+--- a/arch/arm64/lib/mte.S
++++ b/arch/arm64/lib/mte.S
+@@ -119,7 +119,7 @@ SYM_FUNC_START(mte_copy_tags_to_user)
+ 	cbz	x2, 2f
+ 1:
+ 	ldg	x4, [x1]
+-	ubfx	x4, x4, #MTE_TAG_SHIFT, #MTE_TAG_SIZE
++	ubfx	x4, x4, #MTE_TAG_SHIFT, #MTE_TAG_SIZE_BITS
+ USER(2f, sttrb	w4, [x0])
+ 	add	x0, x0, #1
+ 	add	x1, x1, #MTE_GRANULE_SIZE
+@@ -132,11 +132,11 @@ USER(2f, sttrb	w4, [x0])
+ SYM_FUNC_END(mte_copy_tags_to_user)
+ 
+ /*
+- * Save the tags in a page
++ * Copy the tags in a page to a buffer
+  *   x0 - page address
+- *   x1 - tag storage, MTE_PAGE_TAG_STORAGE bytes
++ *   x1 - memory buffer, MTE_PAGE_TAG_STORAGE_SIZE bytes
+  */
+-SYM_FUNC_START(mte_save_page_tags)
++SYM_FUNC_START(mte_copy_page_tags_to_buf)
+ 	multitag_transfer_size x7, x5
+ 1:
+ 	mov	x2, #0
+@@ -153,14 +153,14 @@ SYM_FUNC_START(mte_save_page_tags)
+ 	b.ne	1b
+ 
+ 	ret
+-SYM_FUNC_END(mte_save_page_tags)
++SYM_FUNC_END(mte_copy_page_tags_to_buf)
+ 
+ /*
+- * Restore the tags in a page
++ * Restore the tags in a page from a buffer
+  *   x0 - page address
+- *   x1 - tag storage, MTE_PAGE_TAG_STORAGE bytes
++ *   x1 - memory buffer, MTE_PAGE_TAG_STORAGE_SIZE bytes
+  */
+-SYM_FUNC_START(mte_restore_page_tags)
++SYM_FUNC_START(mte_copy_page_tags_from_buf)
+ 	multitag_transfer_size x7, x5
+ 1:
+ 	ldr	x2, [x1], #8
+@@ -174,4 +174,4 @@ SYM_FUNC_START(mte_restore_page_tags)
+ 	b.ne	1b
+ 
+ 	ret
+-SYM_FUNC_END(mte_restore_page_tags)
++SYM_FUNC_END(mte_copy_page_tags_from_buf)
+diff --git a/arch/arm64/mm/mteswap.c b/arch/arm64/mm/mteswap.c
+index a31833e3ddc5..2a43746b803f 100644
+--- a/arch/arm64/mm/mteswap.c
++++ b/arch/arm64/mm/mteswap.c
+@@ -7,79 +7,79 @@
+ #include <linux/swapops.h>
+ #include <asm/mte.h>
+ 
+-static DEFINE_XARRAY(mte_pages);
++static DEFINE_XARRAY(tags_by_swp_entry);
+ 
+-void *mte_allocate_tag_storage(void)
++void *mte_allocate_tag_buf(void)
+ {
+ 	/* tags granule is 16 bytes, 2 tags stored per byte */
+-	return kmalloc(MTE_PAGE_TAG_STORAGE, GFP_KERNEL);
++	return kmalloc(MTE_PAGE_TAG_STORAGE_SIZE, GFP_KERNEL);
+ }
+ 
+-void mte_free_tag_storage(char *storage)
++void mte_free_tag_buf(void *buf)
+ {
+-	kfree(storage);
++	kfree(buf);
+ }
+ 
+-int mte_save_tags(struct page *page)
++int mte_save_page_tags_by_swp_entry(struct page *page)
+ {
+-	void *tag_storage, *ret;
++	void *tags, *ret;
+ 
+ 	if (!page_mte_tagged(page))
+ 		return 0;
+ 
+-	tag_storage = mte_allocate_tag_storage();
+-	if (!tag_storage)
++	tags = mte_allocate_tag_buf();
++	if (!tags)
+ 		return -ENOMEM;
+ 
+-	mte_save_page_tags(page_address(page), tag_storage);
++	mte_copy_page_tags_to_buf(page_address(page), tags);
+ 
+ 	/* lookup the swap entry.val from the page */
+-	ret = xa_store(&mte_pages, page_swap_entry(page).val, tag_storage,
++	ret = xa_store(&tags_by_swp_entry, page_swap_entry(page).val, tags,
+ 		       GFP_KERNEL);
+ 	if (WARN(xa_is_err(ret), "Failed to store MTE tags")) {
+-		mte_free_tag_storage(tag_storage);
++		mte_free_tag_buf(tags);
+ 		return xa_err(ret);
+ 	} else if (ret) {
+ 		/* Entry is being replaced, free the old entry */
+-		mte_free_tag_storage(ret);
++		mte_free_tag_buf(ret);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-void mte_restore_tags(swp_entry_t entry, struct page *page)
++void mte_restore_page_tags_by_swp_entry(swp_entry_t entry, struct page *page)
+ {
+-	void *tags = xa_load(&mte_pages, entry.val);
++	void *tags = xa_load(&tags_by_swp_entry, entry.val);
+ 
+ 	if (!tags)
+ 		return;
+ 
+ 	if (try_page_mte_tagging(page)) {
+-		mte_restore_page_tags(page_address(page), tags);
++		mte_copy_page_tags_from_buf(page_address(page), tags);
+ 		set_page_mte_tagged(page);
+ 	}
+ }
+ 
+-void mte_invalidate_tags(int type, pgoff_t offset)
++void mte_invalidate_tags_by_swp_entry(int type, pgoff_t offset)
+ {
+ 	swp_entry_t entry = swp_entry(type, offset);
+-	void *tags = xa_erase(&mte_pages, entry.val);
++	void *tags = xa_erase(&tags_by_swp_entry, entry.val);
+ 
+-	mte_free_tag_storage(tags);
++	mte_free_tag_buf(tags);
+ }
+ 
+-void mte_invalidate_tags_area(int type)
++void mte_invalidate_tags_area_by_swp_entry(int type)
+ {
+ 	swp_entry_t entry = swp_entry(type, 0);
+ 	swp_entry_t last_entry = swp_entry(type + 1, 0);
+ 	void *tags;
+ 
+-	XA_STATE(xa_state, &mte_pages, entry.val);
++	XA_STATE(xa_state, &tags_by_swp_entry, entry.val);
+ 
+-	xa_lock(&mte_pages);
++	xa_lock(&tags_by_swp_entry);
+ 	xas_for_each(&xa_state, tags, last_entry.val - 1) {
+-		__xa_erase(&mte_pages, xa_state.xa_index);
+-		mte_free_tag_storage(tags);
++		__xa_erase(&tags_by_swp_entry, xa_state.xa_index);
++		mte_free_tag_buf(tags);
+ 	}
+-	xa_unlock(&mte_pages);
++	xa_unlock(&tags_by_swp_entry);
+ }
 -- 
 2.42.1
 
