@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E217F07F0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 18:00:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060F47F07F1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 18:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020841C208C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:00:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B35280F62
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Nov 2023 17:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C66618033;
-	Sun, 19 Nov 2023 17:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE89A179AB;
+	Sun, 19 Nov 2023 17:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 18C4E170C;
-	Sun, 19 Nov 2023 08:59:41 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36D3A10CA;
+	Sun, 19 Nov 2023 08:59:46 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E785F1480;
-	Sun, 19 Nov 2023 09:00:26 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B3AD14BF;
+	Sun, 19 Nov 2023 09:00:32 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B408D3F6C4;
-	Sun, 19 Nov 2023 08:59:35 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00E483F6C4;
+	Sun, 19 Nov 2023 08:59:40 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -61,9 +61,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v2 23/27] arm64: mte: copypage: Handle tag restoring when missing tag storage
-Date: Sun, 19 Nov 2023 16:57:17 +0000
-Message-Id: <20231119165721.9849-24-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v2 24/27] arm64: mte: Handle fatal signal in reserve_tag_storage()
+Date: Sun, 19 Nov 2023 16:57:18 +0000
+Message-Id: <20231119165721.9849-25-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231119165721.9849-1-alexandru.elisei@arm.com>
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
@@ -75,108 +75,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are several situations where copy_highpage() can end up copying
-tags to a page which doesn't have its tag storage reserved.
+As long as a fatal signal is pending, alloc_contig_range() will fail with
+-EINTR. This makes it impossible for tag storage allocation to succeed, and
+the page allocator will print an OOM splat.
 
-One situation involves migration racing with mprotect(PROT_MTE): VMA is
-initially untagged, migration starts and destination page is allocated
-as untagged, mprotect(PROT_MTE) changes the VMA to tagged and userspace
-accesses the source page, thus making it tagged.  The migration code
-then calls copy_highpage(), which will copy the tags from the source
-page (now tagged) to the destination page (allocated as untagged).
-
-Yes another situation can happen during THP collapse. The huge page that
-will replace the HPAGE_PMD_NR contiguous mapped pages is allocated with
-__GFP_TAGGED not set. copy_highpage() will copy the tags from the pages
-being replaced to the huge page which doesn't have tag storage reserved.
-
-The situation gets even more complicated when the replacement huge page
-is a tag storage page. The tag storage huge page will be migrated after
-a fault on access, but the tags from the original pages must be copied
-over to the huge page that will be replacing the tag storage huge page.
+The process is going to be killed, so return 0 (success) from
+reserve_tag_storage() to allow the page allocator to make progress.
+set_pte_at() will map it with PAGE_FAULT_ON_ACCESS and subsequent accesses
+from different threads will cause a fault until the signal is delivered.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/mm/copypage.c | 59 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ arch/arm64/kernel/mte_tag_storage.c | 17 +++++++++++++++++
+ arch/arm64/mm/fault.c               |  5 +++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
-index a7bb20055ce0..7899f38773b9 100644
---- a/arch/arm64/mm/copypage.c
-+++ b/arch/arm64/mm/copypage.c
-@@ -13,6 +13,62 @@
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/mte.h>
-+#include <asm/mte_tag_storage.h>
-+
-+#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-+static inline bool try_transfer_saved_tags(struct page *from, struct page *to)
-+{
-+	void *tags;
-+	bool saved;
-+
-+	VM_WARN_ON_ONCE(!preemptible());
-+
-+	if (page_mte_tagged(from)) {
-+		if (likely(page_tag_storage_reserved(to)))
-+			return false;
-+
-+		tags = mte_allocate_tag_buf();
-+		if (WARN_ON(!tags))
-+			return true;
-+
-+		mte_copy_page_tags_to_buf(page_address(from), tags);
-+		saved = mte_save_tags_for_pfn(tags, page_to_pfn(to));
-+		if (!saved)
-+			mte_free_tag_buf(tags);
-+
-+		return saved;
-+	}
-+
-+	if (likely(!page_is_tag_storage(from)))
-+		return false;
-+
-+	tags_by_pfn_lock();
-+	tags = mte_erase_tags_for_pfn(page_to_pfn(from));
-+	tags_by_pfn_unlock();
-+
-+	if (likely(!tags))
-+		return false;
-+
-+	if (page_tag_storage_reserved(to)) {
-+		WARN_ON_ONCE(!try_page_mte_tagging(to));
-+		mte_copy_page_tags_from_buf(page_address(to), tags);
-+		set_page_mte_tagged(to);
-+		mte_free_tag_buf(tags);
-+		return true;
-+	}
-+
-+	saved = mte_save_tags_for_pfn(tags, page_to_pfn(to));
-+	if (!saved)
-+		mte_free_tag_buf(tags);
-+
-+	return saved;
-+}
-+#else
-+static inline bool try_transfer_saved_tags(struct page *from, struct page *to)
-+{
-+	return false;
-+}
-+#endif
+diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
+index 6b11bb408b51..602fdc70db1c 100644
+--- a/arch/arm64/kernel/mte_tag_storage.c
++++ b/arch/arm64/kernel/mte_tag_storage.c
+@@ -572,6 +572,23 @@ int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
+ 				break;
+ 		}
  
- void copy_highpage(struct page *to, struct page *from)
++		/*
++		 * alloc_contig_range() returns -EINTR from
++		 * __alloc_contig_migrate_range() if a fatal signal is pending.
++		 * As long as the signal hasn't been handled, it is impossible
++		 * to reserve tag storage for any page. Stop trying to reserve
++		 * tag storage, but return 0 so the page allocator can make
++		 * forward progress, instead of printing an OOM splat.
++		 *
++		 * The tagged page with missing tag storage will be mapped with
++		 * PAGE_FAULT_ON_ACCESS in set_pte_at(), which means accesses
++		 * until the signal is delivered will cause a fault.
++		 */
++		if (ret == -EINTR) {
++			ret = 0;
++			goto out_error;
++		}
++
+ 		if (ret)
+ 			goto out_error;
+ 
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 964c5ae161a3..fdc98c5828bf 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -950,6 +950,11 @@ gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
+ 
+ void tag_clear_highpage(struct page *page)
  {
-@@ -24,6 +80,9 @@ void copy_highpage(struct page *to, struct page *from)
- 	if (kasan_hw_tags_enabled())
- 		page_kasan_tag_reset(to);
- 
-+	if (tag_storage_enabled() && try_transfer_saved_tags(from, to))
++	if (tag_storage_enabled() && unlikely(!page_tag_storage_reserved(page))) {
++		clear_page(page_address(page));
 +		return;
++	}
 +
- 	if (system_supports_mte() && page_mte_tagged(from)) {
- 		/* It's a new page, shouldn't have been tagged yet */
- 		WARN_ON_ONCE(!try_page_mte_tagging(to));
+ 	/* Newly allocated page, shouldn't have been tagged yet */
+ 	WARN_ON_ONCE(!try_page_mte_tagging(page));
+ 	mte_zero_clear_page_tags(page_address(page));
 -- 
 2.42.1
 
