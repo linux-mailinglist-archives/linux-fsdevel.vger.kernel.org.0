@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A447F1A46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 753377F1A4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:35:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12C1281A09
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:35:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31EB2281B00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03522231A;
-	Mon, 20 Nov 2023 17:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AD222308;
+	Mon, 20 Nov 2023 17:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B5610E;
-	Mon, 20 Nov 2023 09:34:58 -0800 (PST)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A74136;
+	Mon, 20 Nov 2023 09:35:13 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYvNT60svz9xGYM;
-	Tue, 21 Nov 2023 01:18:17 +0800 (CST)
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4SYvSJ1llZz9y0NG;
+	Tue, 21 Nov 2023 01:21:36 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXU3NimFtlBH8KAQ--.51496S6;
-	Mon, 20 Nov 2023 18:34:30 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwAXU3NimFtlBH8KAQ--.51496S7;
+	Mon, 20 Nov 2023 18:34:43 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v6 04/25] ima: Align ima_inode_removexattr() definition with LSM infrastructure
-Date: Mon, 20 Nov 2023 18:32:57 +0100
-Message-Id: <20231120173318.1132868-5-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v6 05/25] ima: Align ima_post_read_file() definition with LSM infrastructure
+Date: Mon, 20 Nov 2023 18:32:58 +0100
+Message-Id: <20231120173318.1132868-6-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
 References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
@@ -65,10 +65,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXU3NimFtlBH8KAQ--.51496S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxCrW8Gr4UZr4kZryrWry7GFg_yoW5Gr17pF
-	s3K3WUC348XFy7Wr9YyF9rC34S9rW7Gr17X3yFg3Z2yFnxJr10qFWfXF1jk345Cr48KF1v
-	qFsFvwnxCF15trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwAXU3NimFtlBH8KAQ--.51496S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw43tF1xtw1kJr48CrWfKrg_yoW8trWxp3
+	Z8Ka4UGr9Ygry8CF97JFZxA34rWr9FgF4UWFZ3W3sIqF17Xrn0vrZxCF1q9r1rKrWkAr1Y
+	93yqgrZIk3WUtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -83,76 +83,59 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxCrW8Gr4UZr4kZryrWry7GFg_yoW5Gr17pF
 	1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
 	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x
 	07jxWrAUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqZQAAst
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj5apcwAAs-
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Change ima_inode_removexattr() definition, so that it can be registered as
-implementation of the inode_removexattr hook.
+Change ima_post_read_file() definition, by making "void *buf" a
+"char *buf", so that it can be registered as implementation of the
+post_read_file hook.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/ima.h                   | 7 +++++--
- security/integrity/ima/ima_appraise.c | 3 ++-
- security/security.c                   | 2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ include/linux/ima.h               | 4 ++--
+ security/integrity/ima/ima_main.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 077324309c11..678a03fddd7e 100644
+index 678a03fddd7e..31ef6c3c3207 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -200,7 +200,9 @@ static inline int ima_inode_remove_acl(struct mnt_idmap *idmap,
- {
- 	return ima_inode_set_acl(idmap, dentry, acl_name, NULL);
- }
--extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
-+
-+extern int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+				 const char *xattr_name);
- #else
- static inline bool is_ima_appraise_enabled(void)
- {
-@@ -231,7 +233,8 @@ static inline int ima_inode_set_acl(struct mnt_idmap *idmap,
+@@ -30,7 +30,7 @@ extern int ima_post_load_data(char *buf, loff_t size,
+ 			      enum kernel_load_data_id id, char *description);
+ extern int ima_read_file(struct file *file, enum kernel_read_file_id id,
+ 			 bool contents);
+-extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
++extern int ima_post_read_file(struct file *file, char *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct mnt_idmap *idmap,
+ 				struct dentry *dentry);
+@@ -108,7 +108,7 @@ static inline int ima_read_file(struct file *file, enum kernel_read_file_id id,
  	return 0;
  }
  
--static inline int ima_inode_removexattr(struct dentry *dentry,
-+static inline int ima_inode_removexattr(struct mnt_idmap *idmap,
-+					struct dentry *dentry,
- 					const char *xattr_name)
+-static inline int ima_post_read_file(struct file *file, void *buf, loff_t size,
++static inline int ima_post_read_file(struct file *file, char *buf, loff_t size,
+ 				     enum kernel_read_file_id id)
  {
  	return 0;
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index cb2d0d11aa77..36abc84ba299 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -790,7 +790,8 @@ int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	return 0;
- }
- 
--int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
-+int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+			  const char *xattr_name)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index b3f5e8401056..02021ee467d3 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -803,7 +803,7 @@ const int read_idmap[READING_MAX_ID] = {
+  * On success return 0.  On integrity appraisal error, assuming the file
+  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+  */
+-int ima_post_read_file(struct file *file, void *buf, loff_t size,
++int ima_post_read_file(struct file *file, char *buf, loff_t size,
+ 		       enum kernel_read_file_id read_id)
  {
- 	int result;
- 
-diff --git a/security/security.c b/security/security.c
-index ec5c8065ea36..358ec01a5492 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2430,7 +2430,7 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
- 		ret = cap_inode_removexattr(idmap, dentry, name);
- 	if (ret)
- 		return ret;
--	ret = ima_inode_removexattr(dentry, name);
-+	ret = ima_inode_removexattr(idmap, dentry, name);
- 	if (ret)
- 		return ret;
- 	return evm_inode_removexattr(idmap, dentry, name);
+ 	enum ima_hooks func;
 -- 
 2.34.1
 
