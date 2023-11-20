@@ -1,62 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-3217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D737B7F17C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 16:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE917F17C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 16:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5B7B21985
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:48:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5212BB219A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8F51DA50;
-	Mon, 20 Nov 2023 15:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBE21DA58;
+	Mon, 20 Nov 2023 15:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppz0eHQc"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gnyUGrmW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D373D1C299
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:48:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD520C433C7;
-	Mon, 20 Nov 2023 15:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700495326;
-	bh=nex+fKzH0+qHrxuqRWP3dqS+SUCPkXpmGhtV0jmVuQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppz0eHQc0ZY9uvj6KWerIA4dvRbY5XMkC6FENWNKzECfONigUUfPZDNl/FRvB9pcs
-	 eFjNOg5osyEYLhcD4TyYKeUoYBlZlww3Scct2B8nTFLXSDP55/9ukZmQ0YH27DRXV7
-	 9LJFwZ2BAcDsFVl19l293HZ6MtoIw4ukJrYXnUZVjVYssiCV1ctAKBwP9t0FqxM//k
-	 6Xy+TA+70DUyd8vSM4pqOWNqNkzJt/gE0dmy80y3UwWH2XTsSS7IP7RMlzZN5mavQa
-	 duko9TwoZmHuSmlviL8kbz73A3V/aL7tx6pPZEPsZA2cTPrwqmEVs+rPYEvSqyQ5Te
-	 msk+GixJM0OwQ==
-Date: Mon, 20 Nov 2023 16:48:42 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fanotify: allow "weak" fsid when watching a single
- filesystem
-Message-ID: <20231120-langsam-eindecken-2cc8ba9954b6@brauner>
-References: <20231118183018.2069899-1-amir73il@gmail.com>
- <20231118183018.2069899-3-amir73il@gmail.com>
- <CAOQ4uxjLVNqij3GUYrzo1ePyruPQO1S+L62kuMJCTeAVjVvm5w@mail.gmail.com>
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E62F9F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 07:49:40 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32f7abbb8b4so3024177f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 07:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1700495378; x=1701100178; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RAd0IIHuX/2oY04pHCXnq50Epg7Nd+f5sCggYZ6Tygg=;
+        b=gnyUGrmWZAymIZeIny41ZPhM+Fl6nkLFJLixIVDMLKsLXDP0Xa7O9K6RiH8hGQqBwp
+         bKRpLo8tZrwU399UuchFiAEXqZA1droSOgZDRSCJE25giTDE+C95PjOOwKJ8UCSogCW8
+         hjrlSltdmv5VFGfOLMlUcs/5uMlcNwbwNxMqOc35nWq/ViH/j3j2LnND21XDZiht+AGp
+         b4QB04ENSuTCIcuA6i/MxQdgx06BQBxG3e4TEvdKGRajkkBDlZT0CaIWDD9o4OEjqYgz
+         FvFXwd6e0fnbhCulKcb/DBxLdXdzwnfjFlx2T6wKEWY3Gk/pZPHApQKcKA2gkUKTGwfF
+         SNoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700495378; x=1701100178;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RAd0IIHuX/2oY04pHCXnq50Epg7Nd+f5sCggYZ6Tygg=;
+        b=Gxxp3xNFzACHJTwwVVg8vMFYevX7US2oGgjokCgC06jTlm+9XiUuRMCbN43yzwrtaO
+         tHZDRPJWMKuFksPGQMBoY/dXG5oVNsx0QmDAFWOQwHvJBS0PL4hBoO+Rw/03wxQsbj8g
+         1YWUCVW9JycLmwP02Fj/hzxGTGXUhntIyVZBp6lPTrWmq2JWu+VfjPN+Oc2fi56X8wdI
+         u9GT9oVUzB3INVVj2idJSvSK8iDiR3i4MSGZr0L2QgCBO7FyZh77v20EOnGQuA/gCmnB
+         kkqfoHz7cNu84FhmCOF5Yn6fplgsTX7iYPEIQUAdpu3Q1zRZv1X5FRnWoBjw/hFD1Tx3
+         aYsA==
+X-Gm-Message-State: AOJu0Yyjuqt0/+J81b0dTvJv4msx5qPVw56azqUYvhpqfewigmHejCLe
+	DaF0CYKhzKsuA1MhCNISVk49xg==
+X-Google-Smtp-Source: AGHT+IHlO3QPA9EVMaR+I4w/XoQOoZjMhwzYrFEC54gTJQMZUT+IHnpjrYufkdZU9KSfgUpw3DnpuA==
+X-Received: by 2002:a5d:44c4:0:b0:331:834b:61e5 with SMTP id z4-20020a5d44c4000000b00331834b61e5mr3087359wrr.42.1700495378505;
+        Mon, 20 Nov 2023 07:49:38 -0800 (PST)
+Received: from ?IPV6:2a02:6b6a:b5c7:0:237f:509f:1c65:1d08? ([2a02:6b6a:b5c7:0:237f:509f:1c65:1d08])
+        by smtp.gmail.com with ESMTPSA id s5-20020adfdb05000000b0032d8eecf901sm11756403wri.3.2023.11.20.07.49.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 07:49:37 -0800 (PST)
+Message-ID: <a0d67f2d-f66b-8873-7c11-31d90aae8e8c@bytedance.com>
+Date: Mon, 20 Nov 2023 15:49:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjLVNqij3GUYrzo1ePyruPQO1S+L62kuMJCTeAVjVvm5w@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: Conditions for FOLL_LONGTERM mapping in fsdax
+Content-Language: en-US
+From: Usama Arif <usama.arif@bytedance.com>
+To: dan.j.williams@intel.com, vishal.l.verma@intel.com, dave.jiang@intel.com,
+ nvdimm@lists.linux.dev
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ Fam Zheng <fam.zheng@bytedance.com>,
+ "liangma@liangbit.com" <liangma@liangbit.com>
+References: <172ab047-0dc7-1704-5f30-ec7cd3632e09@bytedance.com>
+ <454dbfa1-2120-1e40-2582-d661203decca@bytedance.com>
+In-Reply-To: <454dbfa1-2120-1e40-2582-d661203decca@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> OOPS, missed fsnotify_put_mark(mark);
-> better add a goto target out_put_mark as this is the second case now.
 
-I want to point out that going forward we should be able to make use of
-scoped cleanup macros. Please see include/linux/cleanup.h. I think we
-should start making liberal use of this. I know that Peter Ziljstra is
-already doing so for kernel/sched/.
+
+On 06/11/2023 18:15, Usama Arif wrote:
+> Hi,
+> 
+> We wanted to run a VM with a vfio device assigned to it and with its 
+> memory-backend-file residing in a persistent memory using fsdax (mounted 
+> as ext4). It doesnt currently work with the kernel as 
+> vfio_pin_pages_remote ends up requesting pages with FOLL_LONGTERM which 
+> is currently not supported. From reading the mailing list, what I 
+> understood was that this is to do with not having DMA supported on fsdax 
+> due to issues that come up during truncate/hole-punching. But it was 
+> solved with [1] by deferring fallocate(), truncate() on a dax mode file 
+> while any page/block in the file is under active DMA.
+> 
+> If I remove the check which fails the gup opertion with the below diff, 
+> the VM boots and the vfio device works without any issues. If I try to 
+> truncate the mem file in fsdax, I can see that the truncate command gets 
+> deferred (waits in ext4_break_layouts) and the vfio device keeps working 
+> and sending packets without any issues. Just wanted to check what is 
+> missing to allow FOLL_LONGTERM gup operations with fsdax? Is it just 
+> enough to remove the check? Thanks!
+> 
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index eb8d7baf9e4d..f77bb428cf9b 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -1055,9 +1055,6 @@ static int check_vma_flags(struct vm_area_struct 
+> *vma, unsigned long gup_flags)
+>          if (gup_flags & FOLL_ANON && !vma_is_anonymous(vma))
+>                  return -EFAULT;
+> 
+> -       if ((gup_flags & FOLL_LONGTERM) && vma_is_fsdax(vma))
+> -               return -EOPNOTSUPP;
+> -
+>          if (vma_is_secretmem(vma))
+>                  return -EFAULT;
+> 
+> 
+> [1] 
+> https://lore.kernel.org/all/152669371377.34337.10697370528066177062.stgit@dwillia2-desk3.amr.corp.intel.com/
+> 
+
+Hi,
+
+Just wanted to check if there were any comments on this?
+
+Thanks
+
+
+> Regards,
+> Usama
 
