@@ -1,98 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-3207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133237F1568
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC82E7F15D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E621C2182C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 14:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80BB1C21816
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 14:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9801C295;
-	Mon, 20 Nov 2023 14:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9CB1D526;
+	Mon, 20 Nov 2023 14:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b="cJPgdDl8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Itx5yq5l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458921AD
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 06:13:18 -0800 (PST)
-Received: by mail-qv1-xf35.google.com with SMTP id 6a1803df08f44-6707401e22eso12213596d6.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 06:13:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cs.cmu.edu; s=google-2021; t=1700489597; x=1701094397; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KaJIHjU9SSeB8VcTt1z8khmVq3zeeiMFdMXhhYmjcTQ=;
-        b=cJPgdDl8eMMX7C/rLHTag7dgxagaQlv37uJQpI2t/TNavkbbp07WzGUL1gDRR0EAm1
-         k4ktIZ9TlYdeFhKGoCtS9M9SqKoinzo1uVYAStqNKZhyerAcL1xE5jYSmmbtwdDauwqD
-         DG/6RdIfOdEAB8UGvuM6Kpixm190Gp+7Rw6iMFJiaeOqVwu7zRowPkbucCtBN0zqBdPM
-         wA6o6MuJgaiv4k/DfTyawn+y9DOobDP9tyXPT6xjByXV1DanB/MSVr1HpDmf4mC1wMfR
-         p63C4vnz18jDqADr9pYghaEOXetLlCDvA0rTOTPLSBoNBKqtDU9ZtUlXjGHd5ZPwAmSU
-         dozA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700489597; x=1701094397;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KaJIHjU9SSeB8VcTt1z8khmVq3zeeiMFdMXhhYmjcTQ=;
-        b=hW1pc2hFqe8QUzew+7aBA0v52Z4imx6MDy5troBgB9itWPRCUZ8JMiS4bGny187bwi
-         us+HYivWTh9RP8V3W9KqyVLah4I3gSc6hfjkU9/h0+0ey+Y0COjjS9WcM5VeeAYAHLBD
-         IN5E05J/i6Q8xtlRQZV3GkjWA7l/IVRGonQYPD7F2lN4vl5+UOYjTK81MNweaBUFDyTg
-         k6mHCX9TB5dkFQ7IzhKWrEqvfm255O5zq/eUD/PXhS3fftj+P9aYAKyKuRgiLjva6hR5
-         ri3rV3lu6oRQXFXtnzFT3eRMHA09iqeN/s3lWqi8nHSC4ohSY6jLePDpR33RxW1vuX39
-         hHXg==
-X-Gm-Message-State: AOJu0YwpG3GL/NNXtbsUvV1dVqVUL1nR1xULp+GpaXURsuApGvAadGel
-	bgf3bdnEScWt0CGtAAmBJJEldA==
-X-Google-Smtp-Source: AGHT+IEWgPSNRnnsRGsQIaT+S608gqcpptqMQ8i1PWXm/5WM9u45Z5TI7rtV5TValTqRdLVyBQBdkw==
-X-Received: by 2002:a0c:e4ca:0:b0:66d:49aa:6844 with SMTP id g10-20020a0ce4ca000000b0066d49aa6844mr8445982qvm.19.1700489597101;
-        Mon, 20 Nov 2023 06:13:17 -0800 (PST)
-Received: from cs.cmu.edu (tunnel29655-pt.tunnel.tserv13.ash1.ipv6.he.net. [2001:470:7:582::2])
-        by smtp.gmail.com with ESMTPSA id jy23-20020a0562142b5700b00679d8c2a6fasm948782qvb.64.2023.11.20.06.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 06:13:16 -0800 (PST)
-Date: Mon, 20 Nov 2023 09:13:14 -0500
-From: Jan Harkes <jaharkes@cs.cmu.edu>
-To: Amir Goldstein <amir73il@gmail.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1680C1D525
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 14:37:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC54C433C9;
+	Mon, 20 Nov 2023 14:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700491050;
+	bh=DLE1c+o1kmmWKQU5FsHxdwyQev10aAv8a+4Bsb27Pn8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Itx5yq5l6xnqscNORqVb5VmwZhXLupoQFckVYMxzef9qAm8tfCAHsX660QBqi66oI
+	 ZR1IhfrD7+0KX8AjzjDcFYMbcBE7YbqJEOmoPdZka24/mKfkOd05TGpCSj6oL7vn2b
+	 cWJX/pXVdrD4JB3d/f74eoXdBYkoNWv6hJwuPNvwkN0jJM4kamJ3it/FD1ir06jJ7r
+	 awGYEb2grK9P4j4ziVsxXqd3RbYn3nrbu5qWOIIVtV0cxvN3Xs3mkqEwN1T2W4S1TH
+	 i1Eb+6Md590FynuzxhRQmZDiI8AKtrvlfaEbUQZAT8ladOkALDKE/YOlyh1ov4lOHs
+	 imfgJpGfMF3bA==
+From: Christian Brauner <brauner@kernel.org>
+To: Chuck Lever <cel@kernel.org>
 Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] coda: change locking order in coda_file_write_iter()
-Message-ID: <20231120141314.soxwn4zuh57ktuxk@cs.cmu.edu>
-Mail-Followup-To: Amir Goldstein <amir73il@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20231120095110.2199218-1-amir73il@gmail.com>
+	Tavian Barnes <tavianator@tavianator.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	hughd@google.com,
+	viro@zeniv.linux.org.uk,
+	Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v4] libfs: getdents() should return 0 after reaching EOD
+Date: Mon, 20 Nov 2023 15:37:14 +0100
+Message-ID: <20231120-lageplan-grinsen-25b44b4fac10@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To:  <170043792492.4628.15646203084646716134.stgit@bazille.1015granger.net>
+References:  <170043792492.4628.15646203084646716134.stgit@bazille.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231120095110.2199218-1-amir73il@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1347; i=brauner@kernel.org; h=from:subject:message-id; bh=DLE1c+o1kmmWKQU5FsHxdwyQev10aAv8a+4Bsb27Pn8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRG50sW8Bcu4VibquLoq7V+jsex9S4hqW+11q5eU7a58 EPZsbbmjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlsOs/I8Gy3TlZd4s3cRymX K/c43BCLX8/ouvLTXm+LWfXbeafz/2P4KyWxwPr28oitm9eaBLll3KnaJBh46ZR52oIlCvN9ZT7 WcwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 20, 2023 at 11:51:10AM +0200, Amir Goldstein wrote:
-> The coda host file is a backing file for the coda inode on a different
-> filesystem than the coda inode.
+On Sun, 19 Nov 2023 18:56:17 -0500, Chuck Lever wrote:
+> The new directory offset helpers don't conform with the convention
+> of getdents() returning no more entries once a directory file
+> descriptor has reached the current end-of-directory.
 > 
-> Change the locking order to take the coda inode lock before taking
-> the backing host file freeze protection, same as in ovl_write_iter()
-> and in network filesystems that use cachefiles.
+> To address this, copy the logic from dcache_readdir() to mark the
+> open directory file descriptor once EOD has been reached. Seeking
+> resets the mark.
 > 
-> Link: https://lore.kernel.org/r/CAOQ4uxjcnwuF1gMxe64WLODGA_MyAy8x-DtqkCUxqVQKk3Xbng@mail.gmail.com/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> [...]
 
-Acked-by: Jan Harkes <jaharkes@cs.cmu.edu
+Should fix the regression report I also received earlier today. Thanks for the
+reviews with LPC and MS I couldn't really do any meaningful review.
 
-Looks good, it makes sense to use the same lock ordering as the other
-file systems. Thanks for pushing this along.
+---
 
-Jan
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] libfs: getdents() should return 0 after reaching EOD
+      https://git.kernel.org/vfs/vfs/c/796432efab1e
 
