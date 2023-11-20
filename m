@@ -1,192 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-3267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921B07F1E83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 22:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 876557F1FCA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 22:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB80A1C2149F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89C71C216BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0075936AFE;
-	Mon, 20 Nov 2023 21:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1573984B;
+	Mon, 20 Nov 2023 21:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YLhyT6Rm"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="yZJtJ41Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBC2E8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 13:06:21 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-59b5484fbe6so51011587b3.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 13:06:21 -0800 (PST)
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87867CA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 13:54:29 -0800 (PST)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-5ca164bc0bbso17742897b3.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 13:54:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700514380; x=1701119180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NG2FEhp12pFkNfvVzutmm+LjhzXXRny+ltBXXG6QNR4=;
-        b=YLhyT6RmzMxgdwWF3OzA1dbTAz8GYwlqdzU9jExIzFo7f7lyo2lc/g5s8M1FPVxNVx
-         9xH5Qe/wVsv58MHQpjcvW3LKQcQ5vIb9Aa73yrI/rkqK7MVSaCFxHqne8L13lT5gfTNd
-         jrz2ZdVN1Qe3itctMb74xkKwKI6nJ4cxYD4hmugMHvP5aWDW4emrejI+By1/ZbG0f7JT
-         cFXvDnsb5rYwIE/fidXu7jWV6ZgD3xHcJYQin5mUIyp4H3oCK5n4tdFaaQXQEZFpoH+G
-         SJuLfuXl8Rod2tCYybo07Z13jXhOFKBICD9TAWYrNxzyLdOcfmQ9oJDeTWht/WBRaKY0
-         ufgA==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1700517268; x=1701122068; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qgfLlb+6z+gQrU8H/byznudZx7zpZZmlYzoXRoWwu40=;
+        b=yZJtJ41Zzd0N0rWH+wLMtlNkimW9Jkzr7H2f1HOVKftAXzuDtOEdTjm5F7YlIVNMwf
+         lPlIGcKfhTwKc/5j53Kcv4P2sfKTsC3IorRPy4c8jx2y8yXGVZFxARLS9adexlBUzvnF
+         geRrczvuBb7dp3UNnlaCTPX4lnacWE5i0C6ws2sybNAgcsDylLXFt1XkBhwpw/PVprot
+         DVoMQSL87pF96xjuzdzfNCV7YS3ICUNe/u3XpplcJB5K/ROrS0FmzZasVVTQcMl6AIz0
+         SXiytGO8RNm5uQZVTrdY2s224Hc01K9fzDmo1g20VeqTXxqMmctwmb3MwgSZNBZt6r0u
+         BWeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700514380; x=1701119180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NG2FEhp12pFkNfvVzutmm+LjhzXXRny+ltBXXG6QNR4=;
-        b=G4K3480KPmyV3EhpPFyP1mPKvO31XEpceyGnj3YKEvPB7hV9u+LcOG6N4Wb5z+fYCg
-         D/1YSZosEEo4rS7POM2DM25a1iJ25fEpJTn+A/1fL+QHDy/DTgL0Ouuq6DhdioMJrEHn
-         PNuO3P8XvQm0S4Q4JZPJ02PdTGO+fK+NgmahZkGfKnRag2beP6lfnaLzIz5jG8SvSJJ+
-         UdqvzBojqh7dLOd/P2Pfo3oRKbCX1XbR8HCk5a0Qcjz9NCRvJ3E21PyuzHOnfQNpXIFf
-         z+dG4rwqk3qTQ6LKVFNl1wgwWL5uGQ/oN/V/tidV/OVgzALUPAClFsz15k/o2L7b16mS
-         v4cA==
-X-Gm-Message-State: AOJu0YwEzi1LRaic9N7MMjiD82S43V9bRXNPflSN+PkRuCd4BTPFKBvw
-	4ofUYfwzPL2uKveCdODWop2tjnb92f9Sr1tH8en+
-X-Google-Smtp-Source: AGHT+IH9dEFOAePFkBv2PMwl9MhCUaQv6Ntac6yIXsmvUTEQCyAzM8wMPOVAFCDufYnlm3OoAXU+qg91wHL5Jm2H0Ok=
-X-Received: by 2002:a81:ac17:0:b0:5ca:7629:7a9a with SMTP id
- k23-20020a81ac17000000b005ca76297a9amr4086414ywh.37.1700514380344; Mon, 20
- Nov 2023 13:06:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700517268; x=1701122068;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgfLlb+6z+gQrU8H/byznudZx7zpZZmlYzoXRoWwu40=;
+        b=aZVooZ8DarglsFxu9406PANDK3cf48sN3BwyJUwSp31p9e2nn7PV9BCCopPW19uCmT
+         aFwjYB8aPn610L3t3VH0OtNxW9T5iNSGqIwc49vNbtOfsy3VxXv5gb3DNtn+p7yZlg4z
+         rgMWGE41nGK9icb96pYbUgGGhDST5G/z5qbl83gGCy9f8MbcQ+sIxmHDT1hPLooS3aDP
+         qu2wIL+MwAHhqM5U9/MtG8md05/RUxsiNtUc7U7p6usoRIUhmBa7JWFO+sNsX/PWrgsu
+         wD30OD/QLMfkJrQQjNpdDJgLij6Q8VYLVd2mXLlXj/aYonMbh+EtbJ3Vt3PW8XEJOtSm
+         WsFA==
+X-Gm-Message-State: AOJu0Yxg/AuGj1g1HORlnAaYzlYx3Mu/lw6jzlu+SdUlfC2KWx6J+8zf
+	/11UitKfVvZsaitQYaqKicj/ug==
+X-Google-Smtp-Source: AGHT+IHu4up0d1PjwJ5sZfMcylq6WDY/XVA/Ogo++vf5V4EyntMkeGPl/n4NKNxfd3taxJ/hpw6gBg==
+X-Received: by 2002:a25:1084:0:b0:d9a:d16f:dddf with SMTP id 126-20020a251084000000b00d9ad16fdddfmr6885372ybq.24.1700517268676;
+        Mon, 20 Nov 2023 13:54:28 -0800 (PST)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id q6-20020a2599c6000000b00d995a8b956csm245519ybo.51.2023.11.20.13.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 13:54:27 -0800 (PST)
+Date: Mon, 20 Nov 2023 16:54:26 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Anand Jain <anand.jain@oracle.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [PATCH v2 04/18] btrfs: move space cache settings into open_ctree
+Message-ID: <20231120215426.GA1611727@perftesting>
+References: <cover.1699470345.git.josef@toxicpanda.com>
+ <c1f4384e79a163e4aef516472a8d6574dc54545d.1699470345.git.josef@toxicpanda.com>
+ <1f8c8d3f-8f7a-407b-8020-e961fe2f6024@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-In-Reply-To: <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 20 Nov 2023 16:06:09 -0500
-Message-ID: <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
-	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, 
-	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
-	mic@digikod.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f8c8d3f-8f7a-407b-8020-e961fe2f6024@oracle.com>
 
-On Mon, Nov 20, 2023 at 3:16=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
-> > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > Before the security field of kernel objects could be shared among LSM=
-s with
-> > > the LSM stacking feature, IMA and EVM had to rely on an alternative s=
-torage
-> > > of inode metadata. The association between inode metadata and inode i=
-s
-> > > maintained through an rbtree.
-> > >
-> > > Because of this alternative storage mechanism, there was no need to u=
-se
-> > > disjoint inode metadata, so IMA and EVM today still share them.
-> > >
-> > > With the reservation mechanism offered by the LSM infrastructure, the
-> > > rbtree is no longer necessary, as each LSM could reserve a space in t=
-he
-> > > security blob for each inode. However, since IMA and EVM share the
-> > > inode metadata, they cannot directly reserve the space for them.
-> > >
-> > > Instead, request from the 'integrity' LSM a space in the security blo=
-b for
-> > > the pointer of inode metadata (integrity_iint_cache structure). The o=
-ther
-> > > reason for keeping the 'integrity' LSM is to preserve the original or=
-dering
-> > > of IMA and EVM functions as when they were hardcoded.
-> > >
-> > > Prefer reserving space for a pointer to allocating the integrity_iint=
-_cache
-> > > structure directly, as IMA would require it only for a subset of inod=
-es.
-> > > Always allocating it would cause a waste of memory.
-> > >
-> > > Introduce two primitives for getting and setting the pointer of
-> > > integrity_iint_cache in the security blob, respectively
-> > > integrity_inode_get_iint() and integrity_inode_set_iint(). This would=
- make
-> > > the code more understandable, as they directly replace rbtree operati=
-ons.
-> > >
-> > > Locking is not needed, as access to inode metadata is not shared, it =
-is per
-> > > inode.
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > ---
-> > >  security/integrity/iint.c      | 71 +++++---------------------------=
---
-> > >  security/integrity/integrity.h | 20 +++++++++-
-> > >  2 files changed, 29 insertions(+), 62 deletions(-)
-> > >
-> > > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > > index 882fde2a2607..a5edd3c70784 100644
-> > > --- a/security/integrity/iint.c
-> > > +++ b/security/integrity/iint.c
-> > > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
-> > >     return 0;
-> > >  }
-> > >
-> > > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init =3D {
-> > > +   .lbs_inode =3D sizeof(struct integrity_iint_cache *),
-> > > +};
-> >
-> > I'll admit that I'm likely missing an important detail, but is there
-> > a reason why you couldn't stash the integrity_iint_cache struct
-> > directly in the inode's security blob instead of the pointer?  For
-> > example:
-> >
-> >   struct lsm_blob_sizes ... =3D {
-> >     .lbs_inode =3D sizeof(struct integrity_iint_cache),
-> >   };
-> >
-> >   struct integrity_iint_cache *integrity_inode_get(inode)
-> >   {
-> >     if (unlikely(!inode->isecurity))
-> >       return NULL;
-> >     return inode->i_security + integrity_blob_sizes.lbs_inode;
+On Wed, Nov 15, 2023 at 08:06:02AM +0800, Anand Jain wrote:
+> 
+> > @@ -3287,6 +3287,12 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+> >   	fs_info->csums_per_leaf = BTRFS_MAX_ITEM_SIZE(fs_info) / fs_info->csum_size;
+> >   	fs_info->stripesize = stripesize;
+> > +	/*
+> > +	 * Handle the space caching options appropriately now that we have the
+> > +	 * super loaded and validated.
+> > +	 */
+> > +	btrfs_set_free_space_cache_settings(fs_info);
+> > +
+> >   	ret = btrfs_parse_options(fs_info, options, sb->s_flags);
+> >   	if (ret)
+> >   		goto fail_alloc;
+> > @@ -3298,17 +3304,6 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+> >   	if (sectorsize < PAGE_SIZE) {
+> >   		struct btrfs_subpage_info *subpage_info;
+> > -		/*
+> > -		 * V1 space cache has some hardcoded PAGE_SIZE usage, and is
+> > -		 * going to be deprecated.
+> > -		 *
+> > -		 * Force to use v2 cache for subpage case.
+> > -		 */
+> > -		btrfs_clear_opt(fs_info->mount_opt, SPACE_CACHE);
+> > -		btrfs_set_and_info(fs_info, FREE_SPACE_TREE,
+> > -			"forcing free space tree for sector size %u with page size %lu",
+> > -			sectorsize, PAGE_SIZE);
+> > -
+> >   		btrfs_warn(fs_info,
+> >   		"read-write for sector size %u with page size %lu is experimental",
+> >   			   sectorsize, PAGE_SIZE);
+> > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> > index 639601d346d0..aef7e67538a3 100644
+> > --- a/fs/btrfs/super.c
+> > +++ b/fs/btrfs/super.c
+> > @@ -266,6 +266,31 @@ static bool check_options(struct btrfs_fs_info *info, unsigned long flags)
+> >   	return true;
 > >   }
->
-> It would increase memory occupation. Sometimes the IMA policy
-> encompasses a small subset of the inodes. Allocating the full
-> integrity_iint_cache would be a waste of memory, I guess?
+> > +void btrfs_set_free_space_cache_settings(struct btrfs_fs_info *fs_info)
+> > +{
+> > +	if (btrfs_fs_compat_ro(fs_info, FREE_SPACE_TREE))
+> > +		btrfs_set_opt(fs_info->mount_opt, FREE_SPACE_TREE);
+> > +	else if (btrfs_free_space_cache_v1_active(fs_info)) {
+> > +		if (btrfs_is_zoned(fs_info)) {
+> > +			btrfs_info(fs_info,
+> > +			"zoned: clearing existing space cache");
+> > +			btrfs_set_super_cache_generation(fs_info->super_copy, 0);
+> > +		} else {
+> > +			btrfs_set_opt(fs_info->mount_opt, SPACE_CACHE);
+> > +		}
+> > +	}
+> > +
+> > +	if (fs_info->sectorsize < PAGE_SIZE) {
+> > +		btrfs_clear_opt(fs_info->mount_opt, SPACE_CACHE);
+> > +		if (!btrfs_test_opt(fs_info, FREE_SPACE_TREE)) {
+> > +			btrfs_info(fs_info,
+> > +				   "forcing free space tree for sector size %u with page size %lu",
+> > +				   fs_info->sectorsize, PAGE_SIZE);
+> > +			btrfs_set_opt(fs_info->mount_opt, FREE_SPACE_TREE);
+> > +		}
+> > +	}
+> > +}
+> > +
+> >   static int parse_rescue_options(struct btrfs_fs_info *info, const char *options)
+> >   {
+> >   	char *opts;
+> > @@ -345,18 +370,6 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+> >   	bool saved_compress_force;
+> >   	int no_compress = 0;
+> > -	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+> > -		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> > -	else if (btrfs_free_space_cache_v1_active(info)) {
+> > -		if (btrfs_is_zoned(info)) {
+> > -			btrfs_info(info,
+> > -			"zoned: clearing existing space cache");
+> > -			btrfs_set_super_cache_generation(info->super_copy, 0);
+> > -		} else {
+> > -			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> > -		}
+> > -	}
+> > -
+> >   	/*
+> >   	 * Even the options are empty, we still need to do extra check
+> >   	 * against new flags
+> 
+> 
+> btrfs_remount() calls btrfs_parse_options(), which previously handled
+> space cache/tree flags set/reset. However, with the move of this
+> functionality to a separate function, btrfs_set_free_space_cache_settings(),
+> the btrfs_remount() thread no longer has the space cache/tree flags
+> set/reset. The changelog provides no explanation for this change.
+> Could this be a bug?
+> 
 
-Perhaps, but if it allows us to remove another layer of dynamic memory
-I would argue that it may be worth the cost.  It's also worth
-considering the size of integrity_iint_cache, while it isn't small, it
-isn't exactly huge either.
+All this bit does is set the mount_opt's based on the current state of the file
+system, so if we're mounting with no "-o space_cache=*" option, we'll derive it
+from wether FREE_SPACE_TREE is set or btrfs_free_space_cache_v1_active() returns
+true.
 
-> On the other hand... (did not think fully about that) if we embed the
-> full structure in the security blob, we already have a mutex available
-> to use, and we don't need to take the inode lock (?).
+So in your case if we mounted -o nospace_cache then we'll have cleared the
+v1_active bit and this won't do anything and we'll get -o nospace_cache again.
+The same goes for the free space tree, we're only allowed to change the disk
+option for this in certain cases.  And in those cases it'll clear the compat
+flag.
 
-That would be excellent, getting rid of a layer of locking would be signifi=
-cant.
+But this is definitely subtle, I'll expand the changelog.  Thanks,
 
-> I'm fully convinced that we can improve the implementation
-> significantly. I just was really hoping to go step by step and not
-> accumulating improvements as dependency for moving IMA and EVM to the
-> LSM infrastructure.
-
-I understand, and I agree that an iterative approach is a good idea, I
-just want to make sure we keep things tidy from a user perspective,
-i.e. not exposing the "integrity" LSM when it isn't required.
-
---
-paul-moore.com
+Josef
 
