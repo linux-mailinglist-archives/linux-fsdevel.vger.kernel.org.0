@@ -1,78 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-3269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CF07F211E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 00:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121497F21CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 00:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4A11C211C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 23:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36D2B21A6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 23:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0035E3AC0A;
-	Mon, 20 Nov 2023 23:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F180F3B7B3;
+	Mon, 20 Nov 2023 23:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C6sMwROr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73CFBC1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:01:06 -0800 (PST)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6bd00edc63fso7680685b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:01:06 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B9BAC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:57:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700524627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=znhhgLdmAWpUPn9GHqUr/8E6KWdCC2feKOkD+ky/o8U=;
+	b=C6sMwROrK3hb+pZRVRExPq+GleXzAcVw0DTG0GnUrZNNNeNnaux6keZnr6kbWxEZNb0djj
+	d5tAYjVH2DwPt2WQ5dtMYsIrCY/o4av9ipDtlwfvqKYYsZjxZR1JIDZckdDIfk6R7Ml5uZ
+	MADjGN5rJecJzefE/l2qPGtjxF0iV8E=
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
+ [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-153-54UVP_MXO8OxdRqnhjaJXg-1; Mon, 20 Nov 2023 18:57:06 -0500
+X-MC-Unique: 54UVP_MXO8OxdRqnhjaJXg-1
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1f9454a9f05so2485866fac.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:57:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700521266; x=1701126066;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1700524625; x=1701129425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUHvZqUtxIelqOkhWJ/rNyIb+FyfEgnajsCDcd1770s=;
-        b=V9V28qC/PbyacIK+nQ5gT9+9fgd3rmuFpR283tnP1l6vydI6Bn1g6RpVnvf8dpqebG
-         7q0pF2vrJQygjsl+FlDzbMMUNK8baEDnSQYvag9zwzzCKF/p8JDx7H2SRf7PybsDQPZv
-         zkdWlgu+aBD8AXSOWvYTZnO7SYaJn0A3XxXsziobArdyHiKWmJ+UZLHRXrp3bmLb+/3A
-         6UmfGL/7tSuiOlT1zvLVbRc3t54Pjhqrpo8E+c+4qLL5w1mmvWhFT0uVbGCufZh3ap8Q
-         Ac+ja/mUKTJTjyjoRM9YRQFlGx39Sp7V8t7l1YaQUmMRukV3BzBjfGml81mZJ2pJjeMu
-         oo4g==
-X-Gm-Message-State: AOJu0YzIhL8XrL/XbtIslrS9tJHk8KlxmdjBLZ4uC8REnmdbd/GvXUI5
-	ntsKkboUTCV0TDBy/P/qrUuf/opaf5IBk2S7u/bkU+gmcycv
-X-Google-Smtp-Source: AGHT+IFsaThVJyrbPxGaoq/F9sa+Xu+ULx9VWg5KB5Glx02QEN86inWnAmqiO01cPY08/Uhz2336VuPkShrD6jBlKUSQfiVxsIQf
+        bh=znhhgLdmAWpUPn9GHqUr/8E6KWdCC2feKOkD+ky/o8U=;
+        b=mnmGmnBMrEwJwD1N8M1+E0n3FVxbxG/mwCa66TY4r0PjqSDfpR5P9zT0pEEPRogxvs
+         oOyEoK3ZOu9t5GfPV9ktpS12WwIwnNN5edsM7o2yhtQNVO4toq01H50kPES9+PFTu8F/
+         3LpBAU2JcclgmLrkA0oDbr5i9/TgNhFaqsQjxvB92b6Bn6LZNeeDSQSrAt9k2eENSRUg
+         ORth4DxFULO53yIalkQjtILJYZnuli7nkcCMtcj3doT40F/OwAIuLmLeluGMWG5sXr5d
+         Alcci1HGwxezgLcvxEbgqeeCBl+kE2Ar5/ic38AQa8zbV9ADpszmHYLToI+jcRmKs1+E
+         IR3g==
+X-Gm-Message-State: AOJu0Yya2APhsmheIbqWWGs6pc5aebJO+MFTTBUT+FTIXvQVQ91V823v
+	HLn2h73D+CDqRMwUoqAKjjzROzbLjmGB4XmMt2b3QjoiMTx3XsgiJ+2OJNda4Id9ly6Sn0FGkjU
+	AFWyacV2VA/KSgBdUpXd8+Gkz4g==
+X-Received: by 2002:a05:6870:b4a6:b0:1d6:b7aa:c6ed with SMTP id y38-20020a056870b4a600b001d6b7aac6edmr10935789oap.56.1700524625747;
+        Mon, 20 Nov 2023 15:57:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE3kvlgcQckGHpb2R5jSIU328bNbYbFOFTRp64CPF5uDJXJxeJoHQaM1YVmEmBSMMZcmeugfA==
+X-Received: by 2002:a05:6870:b4a6:b0:1d6:b7aa:c6ed with SMTP id y38-20020a056870b4a600b001d6b7aac6edmr10935776oap.56.1700524625486;
+        Mon, 20 Nov 2023 15:57:05 -0800 (PST)
+Received: from ?IPV6:2403:580f:7fe0::101a? (2403-580f-7fe0--101a.ip6.aussiebb.net. [2403:580f:7fe0::101a])
+        by smtp.gmail.com with ESMTPSA id x19-20020a62fb13000000b006870ed427b2sm6758263pfm.94.2023.11.20.15.56.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 15:57:04 -0800 (PST)
+Message-ID: <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+Date: Tue, 21 Nov 2023 07:56:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:aa7:8115:0:b0:693:3851:bd82 with SMTP id
- b21-20020aa78115000000b006933851bd82mr2186063pfi.2.1700521266007; Mon, 20 Nov
- 2023 15:01:06 -0800 (PST)
-Date: Mon, 20 Nov 2023 15:01:05 -0800
-In-Reply-To: <00000000000040e14205ffbf333f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fe54ea060a9d752c@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in wnd_add_free_ext (2)
-From: syzbot <syzbot+5b2f934f08ab03d473ff@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: proposed libc interface and man page for statmount(2)
+To: Miklos Szeredi <miklos@szeredi.hu>, Florian Weimer <fweimer@redhat.com>
+Cc: libc-alpha@sourceware.org, linux-man <linux-man@vger.kernel.org>,
+ Alejandro Colomar <alx@kernel.org>, Linux API <linux-api@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+ Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>, Amir Goldstein
+ <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+ <87fs15qvu4.fsf@oldenburg.str.redhat.com>
+ <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
+ <87leawphcj.fsf@oldenburg.str.redhat.com>
+ <CAJfpegsCfuPuhtD+wfM3mUphqk9AxWrBZDa9-NxcdnsdAEizaw@mail.gmail.com>
+ <CAJfpegsBqbx5+VMHVHbYx2CdxxhtKHYD4V-nN5J3YCtXTdv=TQ@mail.gmail.com>
+ <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
+ <878r6soc13.fsf@oldenburg.str.redhat.com>
+ <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
+Content-Language: en-US
+From: Ian Kent <ikent@redhat.com>
+In-Reply-To: <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 20/11/23 20:34, Miklos Szeredi wrote:
+> On Mon, Nov 20, 2023 at 01:16:24PM +0100, Florian Weimer wrote:
+>> Is the ID something specific to the VFS layer itself, or does it come
+>> from file systems?
+> It comes from the VFS.
+>
+>
+>> POSIX has a seekdir/telldir interface like that, I don't think file
+>> system authors like it.  Some have added dedicated data structures for
+>> it to implement somewhat predictable behavior in the face of concurrent
+>> directory modification.  Would this interface suffer from similar
+>> issues?
+> The same issue was solved for /proc/$$/mountinfo using cursors.
 
-commit 4ad5c924df6cd6d85708fa23f9d9a2b78a2e428e
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Sep 22 10:07:59 2023 +0000
+The mounts are now using an rb-tree, I think the the cursor solution can
 
-    fs/ntfs3: Allow repeated call to ntfs3_put_sbi
+only work for a linear list, the case is very different.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15283368e80000
-start commit:   dd72f9c7e512 Merge tag 'spi-fix-v6-6-rc4' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4471dbb58008c9f2
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b2f934f08ab03d473ff
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15665425680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1618cd9d680000
 
-If the result looks correct, please mark the issue as fixed by replying with:
+>
+> This patchset removes the need for cursors, since the new unique mount ID can be
+> used to locate the current position without having to worry about deleted and
+> added mounts.
 
-#syz fix: fs/ntfs3: Allow repeated call to ntfs3_put_sbi
+IIRC the problem with proc mounts traversals was because the lock was taken
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+and dropped between reads so that mount entries could be deleted (not sure
+
+adding had quite the same problem) from the list in between reads.
+
+
+Sounds like I'll need to look at the code but first though but an rb-tree
+
+can have mounts removed and new mounts inserted if the locks are dropped
+
+if the retrieval is slit between multiple calls.
+
+
+So I'm struggling to see why this isn't the same problem and I don't think
+
+introducing cursors in this case would work (thankfully, lets do this again
+
+please).
+
+
+Ian
+
 
