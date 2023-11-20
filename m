@@ -1,214 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-3254-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1DA7F1BE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 19:04:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563187F1BF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 19:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26E151F2530B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11503281B9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031492FE20;
-	Mon, 20 Nov 2023 18:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5E30326;
+	Mon, 20 Nov 2023 18:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Y48fR4a1"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ezq8aiHQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 463B4AC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 10:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700503449; bh=YsSUzOehopsOuurjoEtRppweQH73o8CvXnhYaHqSYNA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Y48fR4a1Ue5dN+gcENJyMBe/drjiV2JVr9TJ5W51EETAC7PSyTDXh7nPOXBjXPWG4rVP3l5pMVcBO/+1zfjuvOPVOVZsPvTI5tAKoONrUA4jWZUQyGjsPMMRXKJV0BGgelmBZZa0AXZ5V7zqDg1o7m1mJvDOqFcmP0Td/g0ZrxPAhMlmNaBN4KPB/L/Vo55J/o4glEvtoPlpc8rAyLCSzO/1A8XQh+BMzVRe7M5OlREipzuSeWmtjEDM4Nn+xnrkSkLpKtFIIaisOEnr/aVtxp6PlkpLq6ydLg/t24Gstl+0RQkDIUyoTHT6R5l7MTizf3kkbUaM0px2CWGmH1yz6A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700503449; bh=0Cajj7CWL5u42Ymw4ZXt7+/Jl0xbYZhm0bGq/aHkHp+=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ill12XfQwbk6r1F8Imm5oSABKvBwfq2pzy1CylQ+REizhYulRW/zYRw5WwKjeau1on11YwjCFAiuuAgMvsjccp40yXF+cdBwCO/lgJb2+8aGBSswo5j9//frT41VoBezYkXPp5r2VZJpzfp9ky8j022rB97v/XqBCMTLhx+7UCW7s5b/sO9GO1jv6mt+ND/fRrE3qlpreChqLx5CC2E18LmzUg/dB8Xo5lsXrc2wZQPvcDIaQmZ+EenTB2DYT1SFWCurM0304+lIshyjcDYl+4xohjQf6oaZEF31KvvhqrsMv9jqyFw+lUQiscbKegJ/qN7M1UPAGtim7O1j8uXH1A==
-X-YMail-OSG: i3xlU9UVM1mvC3IPjn2QuideRSRibsfGRbWKrfJrAHBGD2jEboFXXaDDltovQfu
- EpOwZX5a.510h0YvsThKiaI5bvE0ZTuRm5upUnxOAgDisdXW53tUhdqckw_sWYPnvKTm0aBi8LVR
- WWZgJBH0Rhl9A9j1sIrIkxsPc.dHkxVip09lgKSMG6kNrD9PNgwpC8gzIZPqE8tApawhAPnz1hV0
- 9xs6hwBd0fNCgKoz7x9meXABK6k2JXidT2oqqpHRFarvL4OP3qvEVI8aFDc6nCQS9z7PaMiafRYU
- nCIDj3wqduW48ROIjTH.LYgUvf2cIvIxDmxCkGlfv5fmPfP98Q1f_bJM6FF1b92FrrM.z9kcu2oC
- uWSOnDjkHrnbjU80I_yaWjZ0fZS0dRIQWfiMWHoXftxYoqm5eH.ssr3cxcOAH9G4sJzDVi3khv0v
- pOcAcX5c8G63M.s.Xqea15NNBXVuvDYZ0rEzmMFQLaf0qbpwBmxSDeURozhuOHP.ofxnz6GCjB3k
- Q1Eaiu4tJ.zwMW.DYdMqhk9W2LF96ZBQYMBQY_z.TAYUUTTuluznc902_tR6zv3oyfGzLbzKYCiX
- Fho2NlqZwNkr2knvtAcyi_8a8nPYjKsLjHibEA9_SPj4MhPHdq0apCfiqLJytcJ4L8GqqdahMNRl
- Ls4UljVUAzELNncmxF2pISJZ5jo6cqRjIaT8NwgMyt0teWSJpd1LJ0UV.hULzlWKKnAByIjp9dDQ
- JTrpdNJLKh5zulxcBv.b5hGhgBzjJcdiUJL0WCRmCtP.OFIUZcUZrm5M7N3wjWjiPBjhQ7qCunOk
- IUHrcyDhFBrhYCxG3_IsFHjMaTA.4OPCTa8D8Rnsh6VqimJJhoM3oSJADi0kKmWYlQROpqz3KvGs
- blpJhcA.1JX8b79LAz4B2CimFpbMZgHKOftPVwSdps2WW.5sMSH31DRs03ojI29Wpvayd5q2Tacl
- v.hB6qFizEAYziT2_Xr2_F2RmysJahAqPv1yXc1ukzujjFLk_iXY0h5PG3qbDcS0CxzoUXmUJ.Mo
- RnqKUXQqEtPbJ4OAfYB3X_RNW.T3w0rVbavYE3gyTEQFzy8IgltoOWjbwDUSrmFPxdlUTbdT_vwW
- Sxv3g9dhf3alBXPAQPQhvISxi6IKd0v4ns4j8s3CjRG6E_hk.tjXnMvkgSSVKMDeDg6Va63w.ma8
- Gl76lnmm6uOOEdNy2qQodCZFvfO5i9xiIIdl1_APuhP2GH4DwGo4aei0V4TK9FGKbrU17kaDJ636
- Z.Vc41DMUEQfFDXPBCU6y4FGH3FP1F.z99_NMWQp_izS4WGIlwob.4zIvj6qkuzPccqJY3A51hqY
- UgsDDsH9HE2SN54YV5AB45WkRsrcH3V0mI9yeA_aaT0Up.JK0KGh_newgHMdL4uZRqzdY5S6lKFU
- z_hgar7oUZSO6uYuhv80yFCabJ.OGEyjO2SEk4kKe25vGUDVecYpLp1v9y7gy1pZjiH0qJe2Ghad
- oUa98D_BU2yZ5HzGwdI_H8tfG_ezIiruxwJzRoGpYwN_ghRmy8_xenf7pOe28fu6oqMpcKWvVL7T
- HkV.3nHiCFzreDyPGWCUikMR78K4kbayCD6144swLw.PNSMd9wHGbpR5Yp4kPjeM3Qsf8xXaE8j7
- C2v1Aavmt375OukEg_qgEJsxsgI9AQor5cNTuSdYVNK8zqgAKErEkpbMs3GTnEoSc.SDq.9UAgbN
- nCXCAGBWBZuOKIaINNqkkDx__wIXJ14Ja3OYAufxTyMZQthDZgQSIzER7FbHsxBW06hZCRdo8BPe
- di6zGpvuhtr3MUlavnRqk30srdTXG8QoU17XHorezj51il4SLyc0_D3fJ5Cx2xat4AB4718WvEjy
- euMmv64bEWu8dEH01pt9gVLJVA.3uiwrBy8RZUOyZ_IJ3smPS3GJYFO_lIpaH5dCwrRIhaFnL092
- 9N2UQYbObF4hSQ46S3C9usRGtl2DjRJTcJTs_cB4_xRnguzEeLxWkahUhmHxW0jsZQvykUV9khza
- 6T6hul82P3HOoDwB07xYfUk6fThuz9QyWZhhOzPgMB4QY19.nSvOB1bODOp1_042Xk6dVVleKi4d
- VI6PiM9JU6.ogNdKh_mZIXPWY76vjNPor2S5eDKim4mmYdOSEzRIyjIzC.PCGfTgmSiVZityE.nZ
- 48kLWF4tkgfJuUKZsV2qi5GLAJRT4J36i9GSF1lARncqN58niNRFfODfEhO57Fkl3EUhp8DGbUmj
- dXuW6Azo2b2uNTS_nOd4T4xhigGpInOwTDbLR3.d6DkR92tplk0EBv2po
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: b514ae89-a91e-4c32-9d1c-c882b7e7008c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 20 Nov 2023 18:04:09 +0000
-Received: by hermes--production-gq1-59b5df67b6-hs7p7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3916744e962c63c3de3d31fc01bce0cd;
-          Mon, 20 Nov 2023 18:04:02 +0000 (UTC)
-Message-ID: <13f7542f-4039-47a8-abde-45a702b85718@schaufler-ca.com>
-Date: Mon, 20 Nov 2023 10:03:59 -0800
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A18793
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 10:08:11 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50a938dda08so6610218e87.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 10:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1700503689; x=1701108489; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bt4pvFuDO1h6defOBt353/3Gu2TKhLOMI2PK2iWD2i4=;
+        b=Ezq8aiHQhFF2wx1WJIbDqwNZuCslHinBuAZuuGbxNdduPNRRqL+xvAnXsG+rtnS5WE
+         6/lqJhlGAKvatil/yHmZgE9s1RrtsuEjYitaehRlHhfKkHaKydykpDxc0a3K4QoDdlJ5
+         /WZtLnN7DuBSsgeilVtz2McRoOdJ31pDtvnrA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700503689; x=1701108489;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bt4pvFuDO1h6defOBt353/3Gu2TKhLOMI2PK2iWD2i4=;
+        b=XQWpxwX6kq/r4Uq00u9ltxH32RUiiqrk8GExmi0BYg7ehh6PrmlhWB9A88IjD7s58h
+         mkZOE+QYKcEG3rYuTAwisgUEUtn8F3Mx2MPg6mxxocqrDu94GO76HhpqyqVulS8BSozg
+         FpmcoZ0xPXPc4aLS5vUUipMkrwf0BxdzUxf2rwz2Z2M4qJCqfIGnhsOqrKyJVSxcb2k+
+         sN9m6jvikBPMBhO2Z0sX45IPu+G3FfHnSrSKLe9q36JQvQq9eU0Yj9ze+sM+zOvSqv3D
+         8LyaZgLMQHLmOjh4kBwhdojALY4AqlLXWHneswOgFzCCz5J3CKfsxUGU5cjrG1Yx4+lg
+         xzEQ==
+X-Gm-Message-State: AOJu0YyFNyfICTqpjAMmPEhdJhdDa3EOBGfyKDJgvPnDu8SfoGhqKGfZ
+	Eovm1pxdhEc4/8XsT09iswnz80SzeImssR92GsEi1w==
+X-Google-Smtp-Source: AGHT+IEdW7JBmN4W0bivWnKo0fcOkX0FTtZj+MXL3fYTo1Nfhlkh40eVIY6Wc3ywt9Nfoc990F1veQ==
+X-Received: by 2002:a19:c219:0:b0:504:7cc6:1ad7 with SMTP id l25-20020a19c219000000b005047cc61ad7mr5371745lfc.1.1700503689299;
+        Mon, 20 Nov 2023 10:08:09 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id e12-20020a056402104c00b00536ad96f867sm3811619edu.11.2023.11.20.10.08.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Nov 2023 10:08:08 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-548d1f8b388so1448687a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 10:08:08 -0800 (PST)
+X-Received: by 2002:a05:6402:150f:b0:548:7900:2d0c with SMTP id
+ f15-20020a056402150f00b0054879002d0cmr100825edw.40.1700503687823; Mon, 20 Nov
+ 2023 10:08:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/23] security: Introduce inode_post_removexattr hook
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
- jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
- mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Stefan Berger <stefanb@linux.ibm.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231107134012.682009-1-roberto.sassu@huaweicloud.com>
- <20231107134012.682009-12-roberto.sassu@huaweicloud.com>
- <85c5dda2-5a2f-4c73-82ae-8a333b69b4a7@schaufler-ca.com>
- <1999ed6f77100d9d2adc613c9748f15ab8fcf432.camel@huaweicloud.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <1999ed6f77100d9d2adc613c9748f15ab8fcf432.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20230816050803.15660-1-krisman@suse.de> <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+ <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com> <20231120-nihilismus-verehren-f2b932b799e0@brauner>
+In-Reply-To: <20231120-nihilismus-verehren-f2b932b799e0@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 20 Nov 2023 10:07:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+Message-ID: <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
+ case-insensitive ext4 and f2fs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, viro@zeniv.linux.org.uk, tytso@mit.edu, 
+	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, 
+	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/20/2023 9:31 AM, Roberto Sassu wrote:
-> On Tue, 2023-11-07 at 09:33 -0800, Casey Schaufler wrote:
->> On 11/7/2023 5:40 AM, Roberto Sassu wrote:
->>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>
->>> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
->>> the inode_post_removexattr hook.
->>>
->>> At inode_removexattr hook, EVM verifies the file's existing HMAC value. At
->>> inode_post_removexattr, EVM re-calculates the file's HMAC with the passed
->>> xattr removed and other file metadata.
->>>
->>> Other LSMs could similarly take some action after successful xattr removal.
->>>
->>> The new hook cannot return an error and cannot cause the operation to be
->>> reverted.
->>>
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->>> ---
->>>  fs/xattr.c                    |  9 +++++----
->>>  include/linux/lsm_hook_defs.h |  2 ++
->>>  include/linux/security.h      |  5 +++++
->>>  security/security.c           | 14 ++++++++++++++
->>>  4 files changed, 26 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/xattr.c b/fs/xattr.c
->>> index 09d927603433..84a4aa566c02 100644
->>> --- a/fs/xattr.c
->>> +++ b/fs/xattr.c
->>> @@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
->>>  		goto out;
->>>  
->>>  	error = __vfs_removexattr(idmap, dentry, name);
->>> +	if (error)
->>> +		goto out;
->> Shouldn't this be simply "return error" rather than a goto to nothing
->> but "return error"?
-> I got a review from Andrew Morton. His argument seems convincing, that
-> having less return places makes the code easier to handle.
+On Mon, 20 Nov 2023 at 07:06, Christian Brauner <brauner@kernel.org> wrote:
+>
+> My current understanding is that core dcache stuff is usually handled by
+> Al. And he's got a dcache branches sitting in his tree.
+>
+> So this isn't me ignoring you in any way. My hands are tied and so I
+> can't sort this out for you easily.
 
-That was in a case where you did more than just "return". Nonetheless,
-I think it's a matter of style that's not worth debating. Do as you will.
+Well, we all know - very much including Al - that Al isn't always the
+most responsive person, and tends to have his own ratholes that he
+dives deep into.
 
->
-> Thanks
->
-> Roberto
->
->>> -	if (!error) {
->>> -		fsnotify_xattr(dentry);
->>> -		evm_inode_post_removexattr(dentry, name);
->>> -	}
->>> +	fsnotify_xattr(dentry);
->>> +	security_inode_post_removexattr(dentry, name);
->>> +	evm_inode_post_removexattr(dentry, name);
->>>  
->>>  out:
->>>  	return error;
->>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>> index 67410e085205..88452e45025c 100644
->>> --- a/include/linux/lsm_hook_defs.h
->>> +++ b/include/linux/lsm_hook_defs.h
->>> @@ -149,6 +149,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
->>>  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
->>>  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
->>>  	 struct dentry *dentry, const char *name)
->>> +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
->>> +	 const char *name)
->>>  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
->>>  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
->>>  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index 664df46b22a9..922ea7709bae 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -380,6 +380,7 @@ int security_inode_getxattr(struct dentry *dentry, const char *name);
->>>  int security_inode_listxattr(struct dentry *dentry);
->>>  int security_inode_removexattr(struct mnt_idmap *idmap,
->>>  			       struct dentry *dentry, const char *name);
->>> +void security_inode_post_removexattr(struct dentry *dentry, const char *name);
->>>  int security_inode_need_killpriv(struct dentry *dentry);
->>>  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
->>>  int security_inode_getsecurity(struct mnt_idmap *idmap,
->>> @@ -940,6 +941,10 @@ static inline int security_inode_removexattr(struct mnt_idmap *idmap,
->>>  	return cap_inode_removexattr(idmap, dentry, name);
->>>  }
->>>  
->>> +static inline void security_inode_post_removexattr(struct dentry *dentry,
->>> +						   const char *name)
->>> +{ }
->>> +
->>>  static inline int security_inode_need_killpriv(struct dentry *dentry)
->>>  {
->>>  	return cap_inode_need_killpriv(dentry);
->>> diff --git a/security/security.c b/security/security.c
->>> index ce3bc7642e18..8aa6e9f316dd 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -2452,6 +2452,20 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
->>>  	return evm_inode_removexattr(idmap, dentry, name);
->>>  }
->>>  
->>> +/**
->>> + * security_inode_post_removexattr() - Update the inode after a removexattr op
->>> + * @dentry: file
->>> + * @name: xattr name
->>> + *
->>> + * Update the inode after a successful removexattr operation.
->>> + */
->>> +void security_inode_post_removexattr(struct dentry *dentry, const char *name)
->>> +{
->>> +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->>> +		return;
->>> +	call_void_hook(inode_post_removexattr, dentry, name);
->>> +}
->>> +
->>>  /**
->>>   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
->>>   * @dentry: associated dentry
+The good news is that I do know the dcache code pretty well, and while
+I really would like Al to deal with any locking issues (because
+"pretty well" is not "as well as Al Viro"), for just about any other
+issue I'll happily take pulls from you.
+
+I dislike case folding with a passion - it's about the worst design
+decision a filesystem can ever do - but the other side of that is that
+if you have to have case folding, the last thing you want to do is to
+have each filesystem deal with that sh*t-for-brains decision itself.
+
+So moving more support for case folding into the VFS so that the
+horrid thing at least gets better support is something I'm perfectly
+fine with despite my dislike of it.
+
+Of course, "do it in shared generic code" doesn't tend to really fix
+the braindamage, but at least it's now shared braindamage and not
+spread out all over. I'm looking at things like
+generic_ci_d_compare(), and it hurts to see the mindless "let's do
+lookups and compares one utf8 character at a time". What a disgrace.
+Somebody either *really* didn't care, or was a Unicode person who
+didn't understand the point of UTF-8.
+
+Oh well. I guess people went "this is going to suck anyway, so let's
+make sure it *really* sucks".
+
+The patches look fine to me. Al - do you even care about them?
+
+                   Linus
 
