@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66257F1B26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD71A7F1B2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8C8E1C21224
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3ED1C2165E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F90724A17;
-	Mon, 20 Nov 2023 17:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EAC225D4;
+	Mon, 20 Nov 2023 17:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA616F4;
-	Mon, 20 Nov 2023 09:41:36 -0800 (PST)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE85183;
+	Mon, 20 Nov 2023 09:41:50 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SYvbf4hxXz9xvh1;
-	Tue, 21 Nov 2023 01:27:58 +0800 (CST)
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYvXP2hwMz9yN0H;
+	Tue, 21 Nov 2023 01:25:09 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXBXXxmVtlIZIKAQ--.7181S6;
-	Mon, 20 Nov 2023 18:41:08 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwAXBXXxmVtlIZIKAQ--.7181S7;
+	Mon, 20 Nov 2023 18:41:22 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -51,9 +51,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	keyrings@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v6 24/25] integrity: Remove LSM
-Date: Mon, 20 Nov 2023 18:33:17 +0100
-Message-Id: <20231120173318.1132868-25-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v6 25/25] security: Enforce ordering of 'ima' and 'evm' LSMs
+Date: Mon, 20 Nov 2023 18:33:18 +0100
+Message-Id: <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
 References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
@@ -64,10 +64,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXBXXxmVtlIZIKAQ--.7181S6
-X-Coremail-Antispam: 1UD129KBjvJXoW3ZF43uw15Jr43KFy7Cr4xtFb_yoWDKr4rpF
-	4UKayUJr4UAFW09F4vyF15ur1fK34qgFWxW345Cw1kAFyqvw1qqFWDAryUuF1rGrWrK34I
-	qrsxKr45uF1DtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwAXBXXxmVtlIZIKAQ--.7181S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw1xtry5KF18uFW7GrW8Xrb_yoW8Aw4xpa
+	naqFW3Kr48JF1Igwn3Ja17GF1a9rWkCF13JrnxJw1DZa9Fqr1vyr43JrySvFyDXry8Aa4S
+	qr429w1rKws0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -82,356 +82,69 @@ X-Coremail-Antispam: 1UD129KBjvJXoW3ZF43uw15Jr43KFy7Cr4xtFb_yoWDKr4rpF
 	xVAFwI0_GcCE3s1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F
 	4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26rxl6s0DYxBIdaVFxhVjvjDU0xZFpf9x07jx
 	WrAUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqdgAAs+
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqdgABs-
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Since now IMA and EVM use their own integrity metadata, it is safe to
-remove the 'integrity' LSM, with its management of integrity metadata.
+The ordering of LSM_ORDER_LAST LSMs depends on how they are placed in the
+.lsm_info.init section of the kernel image.
 
-Keep the iint.c file only for loading IMA and EVM keys at boot, and for
-creating the integrity directory in securityfs (we need to keep it for
-retrocompatibility reasons).
+Without making any assumption on the LSM ordering based on how they are
+compiled, enforce that ordering at LSM infrastructure level.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- include/linux/fs.h                     |   2 -
- include/linux/integrity.h              |  14 --
- security/integrity/digsig_asymmetric.c |   1 -
- security/integrity/iint.c              | 197 +------------------------
- security/integrity/integrity.h         |  25 ----
- security/security.c                    |   2 -
- 6 files changed, 2 insertions(+), 239 deletions(-)
+ security/security.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98b7a7a8c42e..745c1faf6c5b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2104,7 +2104,6 @@ struct super_operations {
- #define S_NOCMTIME	(1 << 7)  /* Do not update file c/mtime */
- #define S_SWAPFILE	(1 << 8)  /* Do not truncate: swapon got its bmaps */
- #define S_PRIVATE	(1 << 9)  /* Inode is fs-internal */
--#define S_IMA		(1 << 10) /* Inode has an associated IMA struct */
- #define S_AUTOMOUNT	(1 << 11) /* Automount/referral quasi-directory */
- #define S_NOSEC		(1 << 12) /* no suid or xattr security attributes */
- #ifdef CONFIG_FS_DAX
-@@ -2156,7 +2155,6 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
- #define IS_NOCMTIME(inode)	((inode)->i_flags & S_NOCMTIME)
- #define IS_SWAPFILE(inode)	((inode)->i_flags & S_SWAPFILE)
- #define IS_PRIVATE(inode)	((inode)->i_flags & S_PRIVATE)
--#define IS_IMA(inode)		((inode)->i_flags & S_IMA)
- #define IS_AUTOMOUNT(inode)	((inode)->i_flags & S_AUTOMOUNT)
- #define IS_NOSEC(inode)		((inode)->i_flags & S_NOSEC)
- #define IS_DAX(inode)		((inode)->i_flags & S_DAX)
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index ef0f63ef5ebc..459b79683783 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -19,24 +19,10 @@ enum integrity_status {
- 	INTEGRITY_UNKNOWN,
- };
- 
--/* List of EVM protected security xattrs */
- #ifdef CONFIG_INTEGRITY
--extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
--extern void integrity_inode_free(struct inode *inode);
- extern void __init integrity_load_keys(void);
- 
- #else
--static inline struct integrity_iint_cache *
--				integrity_inode_get(struct inode *inode)
--{
--	return NULL;
--}
--
--static inline void integrity_inode_free(struct inode *inode)
--{
--	return;
--}
--
- static inline void integrity_load_keys(void)
- {
- }
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index 4d11c622fabd..de603cf42ac7 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -132,4 +132,3 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pr_debug("%s() = %d\n", __func__, ret);
- 	return ret;
- }
--
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 6cbf2aa5540e..068ac6c2ae1e 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -6,207 +6,14 @@
-  * Mimi Zohar <zohar@us.ibm.com>
-  *
-  * File: integrity_iint.c
-- *	- implements the integrity hooks: integrity_inode_alloc,
-- *	  integrity_inode_free
-- *	- cache integrity information associated with an inode
-- *	  using a rbtree tree.
-+ *	- initialize the integrity directory in securityfs
-+ *	- load IMA and EVM keys
-  */
--#include <linux/slab.h>
--#include <linux/init.h>
--#include <linux/spinlock.h>
--#include <linux/rbtree.h>
--#include <linux/file.h>
--#include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
--static struct rb_root integrity_iint_tree = RB_ROOT;
--static DEFINE_RWLOCK(integrity_iint_lock);
--static struct kmem_cache *iint_cache __ro_after_init;
--
- struct dentry *integrity_dir;
- 
--/*
-- * __integrity_iint_find - return the iint associated with an inode
-- */
--static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--	struct rb_node *n = integrity_iint_tree.rb_node;
--
--	while (n) {
--		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
--
--		if (inode < iint->inode)
--			n = n->rb_left;
--		else if (inode > iint->inode)
--			n = n->rb_right;
--		else
--			return iint;
--	}
--
--	return NULL;
--}
--
--/*
-- * integrity_iint_find - return the iint associated with an inode
-- */
--struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--
--	if (!IS_IMA(inode))
--		return NULL;
--
--	read_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	read_unlock(&integrity_iint_lock);
--
--	return iint;
--}
--
--#define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
--
--/*
-- * It is not clear that IMA should be nested at all, but as long is it measures
-- * files both on overlayfs and on underlying fs, we need to annotate the iint
-- * mutex to avoid lockdep false positives related to IMA + overlayfs.
-- * See ovl_lockdep_annotate_inode_mutex_key() for more details.
-- */
--static inline void iint_lockdep_annotate(struct integrity_iint_cache *iint,
--					 struct inode *inode)
--{
--#ifdef CONFIG_LOCKDEP
--	static struct lock_class_key iint_mutex_key[IMA_MAX_NESTING];
--
--	int depth = inode->i_sb->s_stack_depth;
--
--	if (WARN_ON_ONCE(depth < 0 || depth >= IMA_MAX_NESTING))
--		depth = 0;
--
--	lockdep_set_class(&iint->mutex, &iint_mutex_key[depth]);
--#endif
--}
--
--static void iint_init_always(struct integrity_iint_cache *iint,
--			     struct inode *inode)
--{
--	iint->ima_hash = NULL;
--	iint->version = 0;
--	iint->flags = 0UL;
--	iint->atomic_flags = 0UL;
--	iint->ima_file_status = INTEGRITY_UNKNOWN;
--	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
--	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
--	iint->ima_read_status = INTEGRITY_UNKNOWN;
--	iint->ima_creds_status = INTEGRITY_UNKNOWN;
--	iint->evm_status = INTEGRITY_UNKNOWN;
--	iint->measured_pcrs = 0;
--	mutex_init(&iint->mutex);
--	iint_lockdep_annotate(iint, inode);
--}
--
--static void iint_free(struct integrity_iint_cache *iint)
--{
--	kfree(iint->ima_hash);
--	mutex_destroy(&iint->mutex);
--	kmem_cache_free(iint_cache, iint);
--}
--
--/**
-- * integrity_inode_get - find or allocate an iint associated with an inode
-- * @inode: pointer to the inode
-- * @return: allocated iint
-- *
-- * Caller must lock i_mutex
-- */
--struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
--{
--	struct rb_node **p;
--	struct rb_node *node, *parent = NULL;
--	struct integrity_iint_cache *iint, *test_iint;
--
--	iint = integrity_iint_find(inode);
--	if (iint)
--		return iint;
--
--	iint = kmem_cache_alloc(iint_cache, GFP_NOFS);
--	if (!iint)
--		return NULL;
--
--	iint_init_always(iint, inode);
--
--	write_lock(&integrity_iint_lock);
--
--	p = &integrity_iint_tree.rb_node;
--	while (*p) {
--		parent = *p;
--		test_iint = rb_entry(parent, struct integrity_iint_cache,
--				     rb_node);
--		if (inode < test_iint->inode) {
--			p = &(*p)->rb_left;
--		} else if (inode > test_iint->inode) {
--			p = &(*p)->rb_right;
--		} else {
--			write_unlock(&integrity_iint_lock);
--			kmem_cache_free(iint_cache, iint);
--			return test_iint;
--		}
--	}
--
--	iint->inode = inode;
--	node = &iint->rb_node;
--	inode->i_flags |= S_IMA;
--	rb_link_node(node, parent, p);
--	rb_insert_color(node, &integrity_iint_tree);
--
--	write_unlock(&integrity_iint_lock);
--	return iint;
--}
--
--/**
-- * integrity_inode_free - called on security_inode_free
-- * @inode: pointer to the inode
-- *
-- * Free the integrity information(iint) associated with an inode.
-- */
--void integrity_inode_free(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--
--	if (!IS_IMA(inode))
--		return;
--
--	write_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
--	write_unlock(&integrity_iint_lock);
--
--	iint_free(iint);
--}
--
--static void iint_init_once(void *foo)
--{
--	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
--
--	memset(iint, 0, sizeof(*iint));
--}
--
--static int __init integrity_iintcache_init(void)
--{
--	iint_cache =
--	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
--			      0, SLAB_PANIC, iint_init_once);
--	return 0;
--}
--
--DEFINE_LSM(integrity) = {
--	.name = "integrity",
--	.init = integrity_iintcache_init,
--	.order = LSM_ORDER_LAST,
--};
--
- /*
-  * integrity_kernel_read - read data from the file
-  *
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 59eaddd84434..1f473fe876eb 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -156,31 +156,6 @@ struct ima_file_id {
- 	__u8 hash[HASH_MAX_DIGESTSIZE];
- } __packed;
- 
--/* integrity data associated with an inode */
--struct integrity_iint_cache {
--	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
--	struct mutex mutex;	/* protects: version, flags, digest */
--	struct inode *inode;	/* back pointer to inode in question */
--	u64 version;		/* track inode changes */
--	unsigned long flags;
--	unsigned long measured_pcrs;
--	unsigned long atomic_flags;
--	unsigned long real_ino;
--	dev_t real_dev;
--	enum integrity_status ima_file_status:4;
--	enum integrity_status ima_mmap_status:4;
--	enum integrity_status ima_bprm_status:4;
--	enum integrity_status ima_read_status:4;
--	enum integrity_status ima_creds_status:4;
--	enum integrity_status evm_status:4;
--	struct ima_digest_data *ima_hash;
--};
--
--/* rbtree tree calls to lookup, insert, delete
-- * integrity data associated with an inode.
-- */
--struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
--
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
- 
 diff --git a/security/security.c b/security/security.c
-index 7741d2d076c5..351a124b771c 100644
+index 351a124b771c..b98db79ca500 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/integrity.h>
- #include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
-@@ -1597,7 +1596,6 @@ static void inode_free_by_rcu(struct rcu_head *head)
+@@ -263,6 +263,18 @@ static void __init initialize_lsm(struct lsm_info *lsm)
+ 	}
+ }
+ 
++/* Find an LSM with a given name. */
++static struct lsm_info __init *find_lsm(const char *name)
++{
++	struct lsm_info *lsm;
++
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++)
++		if (!strcmp(lsm->name, name))
++			return lsm;
++
++	return NULL;
++}
++
+ /*
+  * Current index to use while initializing the lsm id list.
   */
- void security_inode_free(struct inode *inode)
- {
--	integrity_inode_free(inode);
- 	call_void_hook(inode_free_security, inode);
- 	/*
- 	 * The inode may still be referenced in a path walk and
+@@ -333,10 +345,23 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 
+ 	/* LSM_ORDER_LAST is always last. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		/* Do it later, to enforce the expected ordering. */
++		if (!strcmp(lsm->name, "ima") || !strcmp(lsm->name, "evm"))
++			continue;
++
+ 		if (lsm->order == LSM_ORDER_LAST)
+ 			append_ordered_lsm(lsm, "   last");
+ 	}
+ 
++	/* Ensure that the 'ima' and 'evm' LSMs are last and in this order. */
++	lsm = find_lsm("ima");
++	if (lsm)
++		append_ordered_lsm(lsm, "   last");
++
++	lsm = find_lsm("evm");
++	if (lsm)
++		append_ordered_lsm(lsm, "   last");
++
+ 	/* Disable all LSMs not in the ordered list. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if (exists_ordered_lsm(lsm))
 -- 
 2.34.1
 
