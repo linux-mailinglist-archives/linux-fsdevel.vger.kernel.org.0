@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1B67F1A2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:34:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D9F7F1A3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1551C21162
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C72FB20FD5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1890E2230F;
-	Mon, 20 Nov 2023 17:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D7C21A12;
+	Mon, 20 Nov 2023 17:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFA48124;
-	Mon, 20 Nov 2023 09:34:18 -0800 (PST)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E49711A;
+	Mon, 20 Nov 2023 09:34:31 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SYvRC5W01z9xvh9;
-	Tue, 21 Nov 2023 01:20:39 +0800 (CST)
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYvMy6ZPkz9xxmv;
+	Tue, 21 Nov 2023 01:17:50 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXU3NimFtlBH8KAQ--.51496S3;
-	Mon, 20 Nov 2023 18:33:50 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwAXU3NimFtlBH8KAQ--.51496S4;
+	Mon, 20 Nov 2023 18:34:03 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v6 01/25] ima: Align ima_inode_post_setattr() definition with LSM infrastructure
-Date: Mon, 20 Nov 2023 18:32:54 +0100
-Message-Id: <20231120173318.1132868-2-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v6 02/25] ima: Align ima_file_mprotect() definition with LSM infrastructure
+Date: Mon, 20 Nov 2023 18:32:55 +0100
+Message-Id: <20231120173318.1132868-3-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
 References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
@@ -65,12 +65,12 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXU3NimFtlBH8KAQ--.51496S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF45Zw48Zw4xCry5ur1DAwb_yoW5WFWfpa
-	95G3WDG34ruFy8Wr95Aa13A3yF9FyUWFy7W3yrK34IyFnxtr1jqFn3Kry7Cry5CrW8Kr90
-	qF1jgrs8C3WayrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwAXU3NimFtlBH8KAQ--.51496S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAryfJr4DurWftryDAr43Jrb_yoW5ZFWkpa
+	nxKasrGrWxJFy09r97XFW3Ca43K3yIgw1UXa9ag340vFn0qFnYqr13AF18ur1rZr9YyFn2
+	v3y7trW5A3WDtrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
 	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
 	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
 	WxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
@@ -81,82 +81,86 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxAF45Zw48Zw4xCry5ur1DAwb_yoW5WFWfpa
 	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MI
 	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E
 	14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU07r
-	cDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj5apawAEsj
+	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU0c1
+	8PUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqZAAAss
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Change ima_inode_post_setattr() definition, so that it can be registered as
-implementation of the inode_post_setattr hook (to be introduced).
+Change ima_file_mprotect() definition, so that it can be registered
+as implementation of the file_mprotect hook.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- fs/attr.c                             | 2 +-
- include/linux/ima.h                   | 4 ++--
- security/integrity/ima/ima_appraise.c | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ include/linux/ima.h               | 5 +++--
+ security/integrity/ima/ima_main.c | 6 ++++--
+ security/security.c               | 2 +-
+ 3 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index bdf5deb06ea9..9bddc0a6352c 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -502,7 +502,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
- 
- 	if (!error) {
- 		fsnotify_change(dentry, ia_valid);
--		ima_inode_post_setattr(idmap, dentry);
-+		ima_inode_post_setattr(idmap, dentry, ia_valid);
- 		evm_inode_post_setattr(dentry, ia_valid);
- 	}
- 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 86b57757c7b1..910a2f11a906 100644
+index 910a2f11a906..b66353f679e8 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -186,7 +186,7 @@ static inline void ima_post_key_create_or_update(struct key *keyring,
- #ifdef CONFIG_IMA_APPRAISE
- extern bool is_ima_appraise_enabled(void);
- extern void ima_inode_post_setattr(struct mnt_idmap *idmap,
--				   struct dentry *dentry);
-+				   struct dentry *dentry, int ia_valid);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
- extern int ima_inode_set_acl(struct mnt_idmap *idmap,
-@@ -206,7 +206,7 @@ static inline bool is_ima_appraise_enabled(void)
+@@ -23,7 +23,8 @@ extern void ima_post_create_tmpfile(struct mnt_idmap *idmap,
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long reqprot,
+ 			 unsigned long prot, unsigned long flags);
+-extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot);
++extern int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
++			     unsigned long prot);
+ extern int ima_load_data(enum kernel_load_data_id id, bool contents);
+ extern int ima_post_load_data(char *buf, loff_t size,
+ 			      enum kernel_load_data_id id, char *description);
+@@ -84,7 +85,7 @@ static inline int ima_file_mmap(struct file *file, unsigned long reqprot,
  }
  
- static inline void ima_inode_post_setattr(struct mnt_idmap *idmap,
--					  struct dentry *dentry)
-+					  struct dentry *dentry, int ia_valid)
+ static inline int ima_file_mprotect(struct vm_area_struct *vma,
+-				    unsigned long prot)
++				    unsigned long reqprot, unsigned long prot)
  {
- 	return;
+ 	return 0;
  }
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 870dde67707b..36c2938a5c69 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -629,6 +629,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
-  * ima_inode_post_setattr - reflect file metadata changes
-  * @idmap:  idmap of the mount the inode was found from
-  * @dentry: pointer to the affected dentry
-+ * @ia_valid: for the UID and GID status
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index cc1217ac2c6f..b3f5e8401056 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -455,7 +455,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
+ /**
+  * ima_file_mprotect - based on policy, limit mprotect change
+  * @vma: vm_area_struct protection is set to
+- * @prot: contains the protection that will be applied by the kernel.
++ * @reqprot: protection requested by the application
++ * @prot: protection that will be applied by the kernel
   *
-  * Changes to a dentry's metadata might result in needing to appraise.
+  * Files can be mmap'ed read/write and later changed to execute to circumvent
+  * IMA's mmap appraisal policy rules.  Due to locking issues (mmap semaphore
+@@ -465,7 +466,8 @@ int ima_file_mmap(struct file *file, unsigned long reqprot,
   *
-@@ -636,7 +637,7 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
-  * to lock the inode's i_mutex.
+  * On mprotect change success, return 0.  On failure, return -EACESS.
   */
- void ima_inode_post_setattr(struct mnt_idmap *idmap,
--			    struct dentry *dentry)
-+			    struct dentry *dentry, int ia_valid)
+-int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
++int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
++		      unsigned long prot)
  {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct integrity_iint_cache *iint;
+ 	struct ima_template_desc *template = NULL;
+ 	struct file *file;
+diff --git a/security/security.c b/security/security.c
+index d7b15ea67c3f..c87ba1bbd7dc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2819,7 +2819,7 @@ int security_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
+ 	ret = call_int_hook(file_mprotect, 0, vma, reqprot, prot);
+ 	if (ret)
+ 		return ret;
+-	return ima_file_mprotect(vma, prot);
++	return ima_file_mprotect(vma, reqprot, prot);
+ }
+ 
+ /**
 -- 
 2.34.1
 
