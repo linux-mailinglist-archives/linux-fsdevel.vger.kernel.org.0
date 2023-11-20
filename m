@@ -1,75 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-3264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF797F1E06
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:34:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EF77F1E14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5853D1C21144
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 20:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BC31F23710
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 20:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721B38DD7;
-	Mon, 20 Nov 2023 20:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838041EA74;
+	Mon, 20 Nov 2023 20:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XWaspkYY"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rwKW20YU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28121C7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:33:56 -0800 (PST)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-6c39ad730aaso3862587b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:33:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1700512435; x=1701117235; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=evAEpm60eEP3dXV5IIqup+kGHQJCYdmk5kN5UrPqUqI=;
-        b=XWaspkYYw44E33EzKaGnJUsIVM+Ss5R+yYkkZi0c9hwh1WD0cLRFNTtHoIbN9iv1Em
-         6XBfwne5kehR8C8byBlNCobcSlPrqAmgG3OGf628BLtRoDNubaDRu7NyVC87/JFxVkOe
-         sdxy8YKauDLBnAe1+J2REJsCWB1gNQJrRVieIX0RICJrEDA1tHgwBgHa+czTDzSz0lpE
-         405jzexLvDQq7cwBVKzqRRr42f6mQzxeOij9p7nwS2sjxsh8dD2MjwMscWqK+2mcEcTn
-         O3e3PjIDi6KdIS5gALCZ/YT3FsWhfv8mCu7NSAs3rnMAWuRp0KQggidp/k61xS0aWezK
-         csTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700512435; x=1701117235;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=evAEpm60eEP3dXV5IIqup+kGHQJCYdmk5kN5UrPqUqI=;
-        b=Qtjhigs29jqxAM7nB1C0Iwu20a0h90FZzeZEjONewhQBDYCZwwQCbZnl60pYrW0TTB
-         DgbHhgvkUygrTVSQgsx86k1GS6zuslB9h+8sb5orF0eV6PbvfN3juKs+s2cSLOI/H4ru
-         K2faSZ1M3GzqyUP/wIJtF3XyM3hT2BnLlMye57OT6gAr4LKX6xqrTCsPxzoz4Se2E7Qp
-         3WQqDfJabneig6xF1ZXO+oxPw7PEoibSglwCSy5C2qQDuRuu0k3vSH9jOdXHXeYUF83X
-         9l0xW7Q6fMu4vWnr0sHfK58SlkSigeIJJx8UhYAd9XWualR1WjtQiusGgTo45fNehQai
-         rS5w==
-X-Gm-Message-State: AOJu0Yy2JK+5noSy8WvMgkDZupGNgRHddXJgfgowtcUxFXzqCwABukYS
-	Opv9LLvENJOIBITghHpe6sJINQ==
-X-Google-Smtp-Source: AGHT+IEUIW0UoDRHG7vGbEKmmcfumQAR5wXy6IpLvsSKoDwysXkoX+X9La6bv+9CGvmyGf8BTbi2pQ==
-X-Received: by 2002:a05:6a20:c188:b0:187:9392:cfdd with SMTP id bg8-20020a056a20c18800b001879392cfddmr7866906pzb.24.1700512435511;
-        Mon, 20 Nov 2023 12:33:55 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id k81-20020a628454000000b00688965c5227sm6783104pfd.120.2023.11.20.12.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 12:33:54 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1r5Axs-00FH1P-0e;
-	Tue, 21 Nov 2023 07:33:52 +1100
-Date: Tue, 21 Nov 2023 07:33:52 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Sarthak Kukreti <sarthakkukreti@chromium.org>
-Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH v9 0/3] [PATCH v9 0/3] Introduce provisioning primitives
-Message-ID: <ZVvCsPelezZesshx@dread.disaster.area>
-References: <20231110010139.3901150-1-sarthakkukreti@chromium.org>
- <ZU7RVKJIzm8ExGGH@dread.disaster.area>
- <CAG9=OMPFEV9He+ggq2mcLULnUZ2jm8fGU=4ca8kBoWtvqYcGVg@mail.gmail.com>
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [IPv6:2001:1600:3:17::42af])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07615CF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:41:29 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+	by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SYztt1kg6zMq66T;
+	Mon, 20 Nov 2023 20:41:26 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SYztq5KzYzMpnPf;
+	Mon, 20 Nov 2023 21:41:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1700512886;
+	bh=xRfkEdADRqHdSbF919XNTTluDlJy6HnfHgKqS6AIcqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rwKW20YUQCp3YHhmpIEScOprNUAB5+vbZo9AkOUrrL9HUfeGdJgRDBsPD/wZ+ExZY
+	 nMyM0F8I3XTsCcXe6bZfGb6i96EisbMu9601vee9RFeEjWpQwtxfciZhQfUzSyY5UX
+	 4GxrlyqRFqcDuMCVOVPVpMX7PeRcYX0U/aR9+ebM=
+Date: Mon, 20 Nov 2023 21:41:20 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 3/7] selftests/landlock: Test IOCTL support
+Message-ID: <20231120.AejoJ2ooja0i@digikod.net>
+References: <20231117154920.1706371-1-gnoack@google.com>
+ <20231117154920.1706371-4-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,46 +51,523 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG9=OMPFEV9He+ggq2mcLULnUZ2jm8fGU=4ca8kBoWtvqYcGVg@mail.gmail.com>
+In-Reply-To: <20231117154920.1706371-4-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Nov 13, 2023 at 01:26:51PM -0800, Sarthak Kukreti wrote:
-> On Fri, Nov 10, 2023 at 4:56 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > On Thu, Nov 09, 2023 at 05:01:35PM -0800, Sarthak Kukreti wrote:
-> > > Hi,
-> > >
-> > > This patch series is version 9 of the patch series to introduce
-> > > block-level provisioning mechanism (original [1]), which is useful for
-> > > provisioning space across thinly provisioned storage architectures (loop
-> > > devices backed by sparse files, dm-thin devices, virtio-blk). This
-> > > series has minimal changes over v8[2], with a couple of patches dropped
-> > > (suggested by Dave).
-> > >
-> > > This patch series is rebased from the linux-dm/dm-6.5-provision-support
-> > > [3] on to (a12deb44f973 Merge tag 'input-for-v6.7-rc0' ...). The final
-> > > patch in the series is a blktest (suggested by Dave in 4) which was used
-> > > to test out the provisioning flow for loop devices on sparse files on an
-> > > ext4 filesystem.
-> >
-> > What happened to the XFS patch I sent to support provisioning for
-> > fallocate() operations through XFS?
-> >
-> Apologies, I missed out on mentioning that the XFS patches work well
-> with loop devices.
+On Fri, Nov 17, 2023 at 04:49:16PM +0100, Günther Noack wrote:
+> Exercises Landlock's IOCTL feature in different combinations of
+> handling and permitting the rights LANDLOCK_ACCESS_FS_IOCTL,
+> LANDLOCK_ACCESS_FS_READ_FILE, LANDLOCK_ACCESS_FS_WRITE_FILE and
+> LANDLOCK_ACCESS_FS_READ_DIR, and in different combinations of using
+> files and directories.
 > 
-> I might have misunderstood: were those patches only for sanity testing
-> or would you prefer that I send those out as a part of this series? I
-> can whip up a quick v10 if so!
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 423 ++++++++++++++++++++-
+>  1 file changed, 420 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index 256cd9a96eb7..564e73087e08 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -9,6 +9,7 @@
+>  
+>  #define _GNU_SOURCE
+>  #include <fcntl.h>
+> +#include <linux/fs.h>
+>  #include <linux/landlock.h>
+>  #include <linux/magic.h>
+>  #include <sched.h>
+> @@ -3380,7 +3381,7 @@ TEST_F_FORK(layout1, truncate_unhandled)
+>  			      LANDLOCK_ACCESS_FS_WRITE_FILE;
+>  	int ruleset_fd;
+>  
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, handled, rules);
+>  
+>  	ASSERT_LE(0, ruleset_fd);
+> @@ -3463,7 +3464,7 @@ TEST_F_FORK(layout1, truncate)
+>  			      LANDLOCK_ACCESS_FS_TRUNCATE;
+>  	int ruleset_fd;
+>  
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, handled, rules);
+>  
+>  	ASSERT_LE(0, ruleset_fd);
+> @@ -3690,7 +3691,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+>  	};
+>  	int fd, ruleset_fd;
+>  
+> -	/* Enable Landlock. */
+> +	/* Enables Landlock. */
+>  	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+>  	ASSERT_LE(0, ruleset_fd);
+>  	enforce_ruleset(_metadata, ruleset_fd);
+> @@ -3767,6 +3768,16 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_different_processes)
+>  	ASSERT_EQ(0, close(socket_fds[1]));
+>  }
+>  
+> +/* Invokes the FS_IOC_GETFLAGS IOCTL and returns its errno or 0. */
+> +static int test_fs_ioc_getflags_ioctl(int fd)
+> +{
+> +	uint32_t flags;
+> +
+> +	if (ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+>  TEST(memfd_ftruncate)
+>  {
+>  	int fd;
+> @@ -3783,6 +3794,412 @@ TEST(memfd_ftruncate)
+>  	ASSERT_EQ(0, close(fd));
+>  }
+>  
+> +/* clang-format off */
+> +FIXTURE(ioctl) {};
+> +/* clang-format on */
+> +
+> +FIXTURE_SETUP(ioctl)
+> +{
+> +	prepare_layout(_metadata);
+> +	create_file(_metadata, file1_s1d1);
+> +}
+> +
+> +FIXTURE_TEARDOWN(ioctl)
+> +{
+> +	EXPECT_EQ(0, remove_path(file1_s1d1));
+> +	cleanup_layout(_metadata);
+> +}
+> +
+> +FIXTURE_VARIANT(ioctl)
+> +{
+> +	const __u64 handled;
+> +	const __u64 permitted;
 
-I was implying that if you are going to be adding support to random
-block devices for people to actually test out, then you should be
-adding support to filesystems and writing new -fstests- to ensure
-that loop devices are actually provisioning blocks at exactly the
-locations that correspond to the physical file extents the
-filesystem provisioned, too.
+Why not "allowed" like the rule's field? Same for the variant names.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +	const mode_t open_mode;
+> +	/*
+> +	 * These are the expected IOCTL results for a representative IOCTL from
+> +	 * each of the IOCTL groups.  We only distinguish the 0 and EACCES
+> +	 * results here, and treat other errors as 0.
+
+In this case, why not use a boolean instead of a semi-correct error
+code?
+
+> +	 */
+> +	const int expected_fioqsize_result; /* G1 */
+> +	const int expected_fibmap_result; /* G2 */
+> +	const int expected_fionread_result; /* G3 */
+> +	const int expected_fs_ioc_zero_range_result; /* G4 */
+> +	const int expected_fs_ioc_getflags_result; /* other */
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_i_permitted_none) {
+
+You can remove all the variant's "ioctl_" prefixes.
+
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_EXECUTE,
+
+You could use 0 instead and don't add the related rule in this case.
+
+> +	.open_mode = O_RDWR,
+> +	.expected_fioqsize_result = EACCES,
+> +	.expected_fibmap_result = EACCES,
+> +	.expected_fionread_result = EACCES,
+> +	.expected_fs_ioc_zero_range_result = EACCES,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_i_permitted_i) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_IOCTL,
+> +	.open_mode = O_RDWR,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_unhandled) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_EXECUTE,
+> +	.permitted = LANDLOCK_ACCESS_FS_EXECUTE,
+> +	.open_mode = O_RDWR,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwd_permitted_r) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_READ_DIR,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	.open_mode = O_RDONLY,
+> +	/* If LANDLOCK_ACCESS_FS_IOCTL is not handled, all IOCTLs work. */
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwd_permitted_w) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_READ_DIR,
+> +	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +	.open_mode = O_WRONLY,
+> +	/* If LANDLOCK_ACCESS_FS_IOCTL is not handled, all IOCTLs work. */
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_ri_permitted_r) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	.open_mode = O_RDONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = EACCES,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_wi_permitted_w) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +	.open_mode = O_WRONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = EACCES,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_di_permitted_d) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_DIR,
+> +	.open_mode = O_RDWR,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = EACCES,
+> +	.expected_fionread_result = EACCES,
+> +	.expected_fs_ioc_zero_range_result = EACCES,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwi_permitted_rw) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		     LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +	.open_mode = O_RDWR,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwi_permitted_r) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	.open_mode = O_RDONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = EACCES,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwi_permitted_ri) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.open_mode = O_RDONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = 0,
+> +	.expected_fs_ioc_zero_range_result = EACCES,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwi_permitted_w) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE,
+> +	.open_mode = O_WRONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = EACCES,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = EACCES,
+> +};
+> +
+> +/* clang-format off */
+> +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_rwi_permitted_wi) {
+> +	/* clang-format on */
+> +	.handled = LANDLOCK_ACCESS_FS_READ_FILE |
+> +		   LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.permitted = LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_IOCTL,
+> +	.open_mode = O_WRONLY,
+> +	.expected_fioqsize_result = 0,
+> +	.expected_fibmap_result = 0,
+> +	.expected_fionread_result = EACCES,
+> +	.expected_fs_ioc_zero_range_result = 0,
+> +	.expected_fs_ioc_getflags_result = 0,
+> +};
+
+Great tests!
+
+> +
+> +static int test_fioqsize_ioctl(int fd)
+> +{
+> +	size_t sz;
+> +
+> +	if (ioctl(fd, FIOQSIZE, &sz) < 0)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +static int test_fibmap_ioctl(int fd)
+> +{
+> +	int blk = 0;
+> +
+> +	/*
+> +	 * We only want to distinguish here whether Landlock already caught it,
+> +	 * so we treat anything but EACCESS as success.  (It commonly returns
+> +	 * EPERM when missing CAP_SYS_RAWIO.)
+> +	 */
+> +	if (ioctl(fd, FIBMAP, &blk) < 0 && errno == EACCES)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +static int test_fionread_ioctl(int fd)
+> +{
+> +	size_t sz = 0;
+> +
+> +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno == EACCES)
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +#define FS_IOC_ZERO_RANGE _IOW('X', 57, struct space_resv)
+> +
+> +static int test_fs_ioc_zero_range_ioctl(int fd)
+> +{
+> +	struct space_resv {
+> +		__s16 l_type;
+> +		__s16 l_whence;
+> +		__s64 l_start;
+> +		__s64 l_len; /* len == 0 means until end of file */
+> +		__s32 l_sysid;
+> +		__u32 l_pid;
+> +		__s32 l_pad[4]; /* reserved area */
+> +	} reservation = {};
+> +	/*
+> +	 * This can fail for various reasons, but we only want to distinguish
+> +	 * here whether Landlock already caught it, so we treat anything but
+> +	 * EACCES as success.
+> +	 */
+> +	if (ioctl(fd, FS_IOC_ZERO_RANGE, &reservation) < 0 && errno == EACCES)
+
+What are the guarantees that an error different than EACCES would not
+mask EACCES and then make tests pass whereas they should not?
+
+> +		return errno;
+> +	return 0;
+> +}
+> +
+> +TEST_F_FORK(ioctl, handle_dir_access_file)
+> +{
+> +	const int flag = 0;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = dir_s1d1,
+> +			.access = variant->permitted,
+> +		},
+> +		{},
+> +	};
+> +	int fd, ruleset_fd;
+
+Please rename fd into something like file_fd.
+
+> +
+> +	/* Enables Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	fd = open(file1_s1d1, variant->open_mode);
+> +	ASSERT_LE(0, fd);
+> +
+> +	/*
+> +	 * Checks that IOCTL commands in each IOCTL group return the expected
+> +	 * errors.
+> +	 */
+> +	EXPECT_EQ(variant->expected_fioqsize_result, test_fioqsize_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fibmap_result, test_fibmap_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fionread_result, test_fionread_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_zero_range_result,
+> +		  test_fs_ioc_zero_range_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_getflags_result,
+> +		  test_fs_ioc_getflags_ioctl(fd));
+> +
+> +	/* Checks that unrestrictable commands are unrestricted. */
+> +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
+> +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
+> +
+> +	ASSERT_EQ(0, close(fd));
+> +}
+> +
+> +TEST_F_FORK(ioctl, handle_dir_access_dir)
+> +{
+> +	const char *const path = dir_s1d1;
+> +	const int flag = 0;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = path,
+> +			.access = variant->permitted,
+> +		},
+> +		{},
+> +	};
+> +	int fd, ruleset_fd;
+> +
+> +	/* Enables Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	/*
+> +	 * Ignore variant->open_mode for this test, as we intend to open a
+> +	 * directory.  If the directory can not be opened, the variant is
+> +	 * infeasible to test with an opened directory.
+> +	 */
+> +	fd = open(path, O_RDONLY);
+> +	if (fd < 0)
+> +		return;
+> +
+> +	/*
+> +	 * Checks that IOCTL commands in each IOCTL group return the expected
+> +	 * errors.
+> +	 */
+> +	EXPECT_EQ(variant->expected_fioqsize_result, test_fioqsize_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fibmap_result, test_fibmap_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fionread_result, test_fionread_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_zero_range_result,
+> +		  test_fs_ioc_zero_range_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_getflags_result,
+> +		  test_fs_ioc_getflags_ioctl(fd));
+> +
+> +	/* Checks that unrestrictable commands are unrestricted. */
+> +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
+> +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
+> +
+> +	ASSERT_EQ(0, close(fd));
+> +}
+> +
+> +TEST_F_FORK(ioctl, handle_file_access_file)
+> +{
+> +	const char *const path = file1_s1d1;
+> +	const int flag = 0;
+> +	const struct rule rules[] = {
+> +		{
+> +			.path = path,
+> +			.access = variant->permitted,
+> +		},
+> +		{},
+> +	};
+> +	int fd, ruleset_fd;
+> +
+> +	if (variant->permitted & LANDLOCK_ACCESS_FS_READ_DIR) {
+> +		/* This access right can not be granted on files. */
+> +		return;
+> +	}
+
+You should use SKIP().
+
+> +
+> +	/* Enables Landlock. */
+> +	ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
+> +	ASSERT_LE(0, ruleset_fd);
+> +	enforce_ruleset(_metadata, ruleset_fd);
+> +	ASSERT_EQ(0, close(ruleset_fd));
+> +
+> +	fd = open(path, variant->open_mode);
+> +	ASSERT_LE(0, fd);
+> +
+> +	/*
+> +	 * Checks that IOCTL commands in each IOCTL group return the expected
+> +	 * errors.
+> +	 */
+> +	EXPECT_EQ(variant->expected_fioqsize_result, test_fioqsize_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fibmap_result, test_fibmap_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fionread_result, test_fionread_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_zero_range_result,
+> +		  test_fs_ioc_zero_range_ioctl(fd));
+> +	EXPECT_EQ(variant->expected_fs_ioc_getflags_result,
+> +		  test_fs_ioc_getflags_ioctl(fd));
+> +
+> +	/* Checks that unrestrictable commands are unrestricted. */
+> +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
+> +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
+> +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
+> +
+> +	ASSERT_EQ(0, close(fd));
+> +}
+
+Don't you want to create and use a common helper with most of these
+TEST_F_FORK blocks? It would highlight what is the same or different,
+and it would also enables to extend the coverage to other file types
+(e.g. character device).
+
+> +
+>  /* clang-format off */
+>  FIXTURE(layout1_bind) {};
+>  /* clang-format on */
+> -- 
+> 2.43.0.rc1.413.gea7ed67945-goog
+> 
 
