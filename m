@@ -1,169 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-3192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B557F0D58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 09:17:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BA97F0F68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 10:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10931F21BCF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 08:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A3041C210CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 09:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61E5F4FB;
-	Mon, 20 Nov 2023 08:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A17125A6;
+	Mon, 20 Nov 2023 09:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyh/JBPr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E9EE3;
-	Mon, 20 Nov 2023 00:16:56 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYg0Z1Pc1z9v7GV;
-	Mon, 20 Nov 2023 16:00:14 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwDHxV_LFVtlN1ABAQ--.398S2;
-	Mon, 20 Nov 2023 09:16:26 +0100 (CET)
-Message-ID: <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob  for integrity_iint_cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- jmorris@namei.org,  serge@hallyn.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com,  dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com,  eparis@parisplace.org,
- casey@schaufler-ca.com, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 20 Nov 2023 09:16:09 +0100
-In-Reply-To: <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
-	 <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219F88F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 01:51:17 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-407da05f05aso12459425e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 01:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700473875; x=1701078675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZKc8pb/s+Fn8qCyGqru14gZ0/TpymXTT3FVYVlHlJQ=;
+        b=eyh/JBPrVaryx13zjb1+u1NppPFocT1XtnvdGXjFtvzlvw/ZS9gDpBwnb/6JEiLayN
+         SKWF98AO24EQrScIdG2Q5fGW/eQ8l10CD/2c0rQ1LwlurHXoXZ9LMo9TiGR6eF/sM06c
+         XdSp1Vi6YS7VdFoWPuSJeR7/6519OigS9lGEx7tzx1HJHHQ9XcjQwvUcRGY74yjBv19n
+         iN5jjKfp1DpLyZL1dc+s9T1JVrDuBO4GjR/mDUZukIjZbq/xG1+D7cCPyDbCDZGPYVGw
+         4a3U31FhYNR8MKMUfGy8NyM2ggESSJWsv9EdInuENe+AArNa/x1rn4lkhwGMtCN/ecC+
+         Qb8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700473875; x=1701078675;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MZKc8pb/s+Fn8qCyGqru14gZ0/TpymXTT3FVYVlHlJQ=;
+        b=CcB6Pr4GIyEJCFN4iUKmTyyn9TVr+ij/ERU8c8ZTLO7iKczmuFNUS5PnR+yQIyMq+3
+         TCawKnPBy/VIiC9VkofJKQsCClqHGJd3ejV5/5XWj88emjUgAVoheilBmEdzNxJX27Li
+         ZZCJ9KT5jHCaW0zJ3dtC4KhHlaMSH88nOFsO1x0fT8wgpB0L+EnyT8BydGE0A1Rp6ntd
+         94ItN2cptbTBism3wr/AlHBFiHruyPd39LJ/ofHx3/NEf6+bSvWqDG7NX3k17B1+fi+9
+         yK6gGkHELweqN4JarNIbaixHAFvZ2cXnvp8GNQGGUg+wTsuunM6xi+GXEiguWTEOrUjr
+         IJkQ==
+X-Gm-Message-State: AOJu0YyvRKRZONj4NZblv9Q/fsYawZ10YXaHU3yY1TlMOKpdBlx7sHuF
+	z9L9iJlYI1YOiig5iWgOIjk=
+X-Google-Smtp-Source: AGHT+IGxK186VBipWRshpRbl53kD1TkGs6yU5rV8nMg/wl4M8795hOnV3gFMtT1RMLOkvW6PW6x0bg==
+X-Received: by 2002:a05:600c:4f55:b0:402:f55c:faee with SMTP id m21-20020a05600c4f5500b00402f55cfaeemr5513188wmq.26.1700473875178;
+        Mon, 20 Nov 2023 01:51:15 -0800 (PST)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id i6-20020a05600c354600b004064288597bsm12934425wmq.30.2023.11.20.01.51.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 01:51:14 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	David Howells <dhowells@redhat.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] coda: change locking order in coda_file_write_iter()
+Date: Mon, 20 Nov 2023 11:51:10 +0200
+Message-Id: <20231120095110.2199218-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwDHxV_LFVtlN1ABAQ--.398S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF17Kw1kuFWrWr45ur1kGrg_yoWrJr43pF
-	W3Ka47Jr1kXFyI9rn2vF45uFWSgFWSgFWUGwn0kr1kAF98ur1Ygr15CryUuFyUGr98tw10
-	qr1a9ryUZ3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAHBF1jj5ahSwACsN
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
-> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> >=20
-> > Before the security field of kernel objects could be shared among LSMs =
-with
-> > the LSM stacking feature, IMA and EVM had to rely on an alternative sto=
-rage
-> > of inode metadata. The association between inode metadata and inode is
-> > maintained through an rbtree.
-> >=20
-> > Because of this alternative storage mechanism, there was no need to use
-> > disjoint inode metadata, so IMA and EVM today still share them.
-> >=20
-> > With the reservation mechanism offered by the LSM infrastructure, the
-> > rbtree is no longer necessary, as each LSM could reserve a space in the
-> > security blob for each inode. However, since IMA and EVM share the
-> > inode metadata, they cannot directly reserve the space for them.
-> >=20
-> > Instead, request from the 'integrity' LSM a space in the security blob =
-for
-> > the pointer of inode metadata (integrity_iint_cache structure). The oth=
-er
-> > reason for keeping the 'integrity' LSM is to preserve the original orde=
-ring
-> > of IMA and EVM functions as when they were hardcoded.
-> >=20
-> > Prefer reserving space for a pointer to allocating the integrity_iint_c=
-ache
-> > structure directly, as IMA would require it only for a subset of inodes=
-.
-> > Always allocating it would cause a waste of memory.
-> >=20
-> > Introduce two primitives for getting and setting the pointer of
-> > integrity_iint_cache in the security blob, respectively
-> > integrity_inode_get_iint() and integrity_inode_set_iint(). This would m=
-ake
-> > the code more understandable, as they directly replace rbtree operation=
-s.
-> >=20
-> > Locking is not needed, as access to inode metadata is not shared, it is=
- per
-> > inode.
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >  security/integrity/iint.c      | 71 +++++-----------------------------
-> >  security/integrity/integrity.h | 20 +++++++++-
-> >  2 files changed, 29 insertions(+), 62 deletions(-)
-> >=20
-> > diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> > index 882fde2a2607..a5edd3c70784 100644
-> > --- a/security/integrity/iint.c
-> > +++ b/security/integrity/iint.c
-> > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
-> >  	return 0;
-> >  }
-> > =20
-> > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init =3D {
-> > +	.lbs_inode =3D sizeof(struct integrity_iint_cache *),
-> > +};
->=20
-> I'll admit that I'm likely missing an important detail, but is there
-> a reason why you couldn't stash the integrity_iint_cache struct
-> directly in the inode's security blob instead of the pointer?  For
-> example:
->=20
->   struct lsm_blob_sizes ... =3D {
->     .lbs_inode =3D sizeof(struct integrity_iint_cache),
->   };
->=20
->   struct integrity_iint_cache *integrity_inode_get(inode)
->   {
->     if (unlikely(!inode->isecurity))
->       return NULL;
->     return inode->i_security + integrity_blob_sizes.lbs_inode;
->   }
+The coda host file is a backing file for the coda inode on a different
+filesystem than the coda inode.
 
-It would increase memory occupation. Sometimes the IMA policy
-encompasses a small subset of the inodes. Allocating the full
-integrity_iint_cache would be a waste of memory, I guess?
+Change the locking order to take the coda inode lock before taking
+the backing host file freeze protection, same as in ovl_write_iter()
+and in network filesystems that use cachefiles.
 
-On the other hand... (did not think fully about that) if we embed the
-full structure in the security blob, we already have a mutex available
-to use, and we don't need to take the inode lock (?).
+Link: https://lore.kernel.org/r/CAOQ4uxjcnwuF1gMxe64WLODGA_MyAy8x-DtqkCUxqVQKk3Xbng@mail.gmail.com/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-I'm fully convinced that we can improve the implementation
-significantly. I just was really hoping to go step by step and not
-accumulating improvements as dependency for moving IMA and EVM to the
-LSM infrastructure.
+Hi Jan,
 
-Thanks
+Can you please ack this patch so that I can add it to my series
+and send to Christian?
 
-Roberto
+Thanks,
+Amir.
+
+ fs/coda/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/coda/file.c b/fs/coda/file.c
+index 16acc58311ea..e62315c37386 100644
+--- a/fs/coda/file.c
++++ b/fs/coda/file.c
+@@ -79,14 +79,14 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (ret)
+ 		goto finish_write;
+ 
+-	file_start_write(host_file);
+ 	inode_lock(coda_inode);
++	file_start_write(host_file);
+ 	ret = vfs_iter_write(cfi->cfi_container, to, &iocb->ki_pos, 0);
+ 	coda_inode->i_size = file_inode(host_file)->i_size;
+ 	coda_inode->i_blocks = (coda_inode->i_size + 511) >> 9;
+ 	inode_set_mtime_to_ts(coda_inode, inode_set_ctime_current(coda_inode));
+-	inode_unlock(coda_inode);
+ 	file_end_write(host_file);
++	inode_unlock(coda_inode);
+ 
+ finish_write:
+ 	venus_access_intent(coda_inode->i_sb, coda_i2f(coda_inode),
+-- 
+2.34.1
 
 
