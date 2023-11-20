@@ -1,28 +1,28 @@
-Return-Path: <linux-fsdevel+bounces-3236-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38037F1A72
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:36:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789D07F1A99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 18:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3A221C21053
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:36:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 070A8B210F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 17:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C88C22325;
-	Mon, 20 Nov 2023 17:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E692232D;
+	Mon, 20 Nov 2023 17:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E807F136;
-	Mon, 20 Nov 2023 09:36:05 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4SYvPn20RLz9xvr5;
-	Tue, 21 Nov 2023 01:19:25 +0800 (CST)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD412C3;
+	Mon, 20 Nov 2023 09:37:27 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4SYvVr4G6Lz9xvh2;
+	Tue, 21 Nov 2023 01:23:48 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXU3NimFtlBH8KAQ--.51496S11;
-	Mon, 20 Nov 2023 18:35:37 +0100 (CET)
+	by APP2 (Coremail) with SMTP id GxC2BwAHuGEqmVtlz4kHAQ--.4148S2;
+	Mon, 20 Nov 2023 18:36:58 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	selinux@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v6 09/25] security: Align inode_setattr hook definition with EVM
-Date: Mon, 20 Nov 2023 18:33:02 +0100
-Message-Id: <20231120173318.1132868-10-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v6 10/25] security: Introduce inode_post_setattr hook
+Date: Mon, 20 Nov 2023 18:33:03 +0100
+Message-Id: <20231120173318.1132868-11-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
 References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
@@ -65,104 +65,129 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXU3NimFtlBH8KAQ--.51496S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw47tr4fJFWrKr17ury7Awb_yoW5ur18pF
-	45GasxGr4rXFy7Wr1vkFs8ua1S9FWfurWUArWqgw1SyF92qr1vgFyxGr1jkF15GrW8GrnF
-	qFsFvrs8Wrn8ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
-	80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-	c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4
-	kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
-	5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZV
-	WrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY
-	1x0267AKxVWxJr0_GcWlIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x
-	07jxWrAUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqaQACsj
+X-CM-TRANSID:GxC2BwAHuGEqmVtlz4kHAQ--.4148S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurykAw17WFW5XF48Cw18AFb_yoWrAr15pF
+	WrK3WDKw4rWFW7WrykJF47ua1SgFy5urWUXrWqgwn0yFn7tw1aqF43Ka4jkr13GrW8Gr9I
+	q3ZFvrsxCr15AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x
+	0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x02
+	62kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s
+	026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_
+	GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20x
+	vEc7CjxVAFwI0_Cr1j6rxdMIIF0xvE42xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280
+	aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43
+	ZEXa7IU07UUUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBF1jj5KqaQADsi
 X-CFilter-Loop: Reflected
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add the idmap parameter to the definition, so that evm_inode_setattr() can
-be registered as this hook implementation.
+In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+the inode_post_setattr hook.
+
+At inode_setattr hook, EVM verifies the file's existing HMAC value. At
+inode_post_setattr, EVM re-calculates the file's HMAC based on the modified
+file attributes and other file metadata.
+
+Other LSMs could similarly take some action after successful file attribute
+change.
+
+The new hook cannot return an error and cannot cause the operation to be
+reverted.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hook_defs.h | 3 ++-
- security/security.c           | 2 +-
- security/selinux/hooks.c      | 3 ++-
- security/smack/smack_lsm.c    | 4 +++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+ fs/attr.c                     |  1 +
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      |  7 +++++++
+ security/security.c           | 16 ++++++++++++++++
+ 4 files changed, 26 insertions(+)
 
+diff --git a/fs/attr.c b/fs/attr.c
+index 498e673bdf06..221d2bb0a906 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -502,6 +502,7 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
+ 
+ 	if (!error) {
+ 		fsnotify_change(dentry, ia_valid);
++		security_inode_post_setattr(idmap, dentry, ia_valid);
+ 		ima_inode_post_setattr(idmap, dentry, ia_valid);
+ 		evm_inode_post_setattr(idmap, dentry, ia_valid);
+ 	}
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index c925a0d26edf..752ed8a4f3c6 100644
+index 752ed8a4f3c6..091cddb4e6de 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -135,7 +135,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
- 	 bool rcu)
+@@ -137,6 +137,8 @@ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
--LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
-+LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
-+	 struct iattr *attr)
+ LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
+ 	 struct iattr *attr)
++LSM_HOOK(void, LSM_RET_VOID, inode_post_setattr, struct mnt_idmap *idmap,
++	 struct dentry *dentry, int ia_valid)
  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
  LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
  	 struct dentry *dentry, const char *name, const void *value,
-diff --git a/security/security.c b/security/security.c
-index 53793f3cb36a..7935d11d58b5 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2215,7 +2215,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
- 
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	ret = call_int_hook(inode_setattr, 0, dentry, attr);
-+	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
- 	if (ret)
- 		return ret;
- 	return evm_inode_setattr(idmap, dentry, attr);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index b340425ccfae..7363e0a07867 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3128,7 +3128,8 @@ static int selinux_inode_permission(struct inode *inode, int mask)
- 	return rc;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 750130a7b9dd..664df46b22a9 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -361,6 +361,8 @@ int security_inode_follow_link(struct dentry *dentry, struct inode *inode,
+ int security_inode_permission(struct inode *inode, int mask);
+ int security_inode_setattr(struct mnt_idmap *idmap,
+ 			   struct dentry *dentry, struct iattr *attr);
++void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++				 int ia_valid);
+ int security_inode_getattr(const struct path *path);
+ int security_inode_setxattr(struct mnt_idmap *idmap,
+ 			    struct dentry *dentry, const char *name,
+@@ -877,6 +879,11 @@ static inline int security_inode_setattr(struct mnt_idmap *idmap,
+ 	return 0;
  }
  
--static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
-+static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+				 struct iattr *iattr)
++static inline void
++security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++			    int ia_valid)
++{ }
++
+ static inline int security_inode_getattr(const struct path *path)
  {
- 	const struct cred *cred = current_cred();
- 	struct inode *inode = d_backing_inode(dentry);
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 53336d7daa93..3f60cc4b3b82 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1232,12 +1232,14 @@ static int smack_inode_permission(struct inode *inode, int mask)
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 7935d11d58b5..ce3bc7642e18 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2222,6 +2222,22 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+ }
+ EXPORT_SYMBOL_GPL(security_inode_setattr);
  
- /**
-  * smack_inode_setattr - Smack check for setting attributes
++/**
++ * security_inode_post_setattr() - Update the inode after a setattr operation
 + * @idmap: idmap of the mount
-  * @dentry: the object
-  * @iattr: for the force flag
-  *
-  * Returns 0 if access is permitted, an error code otherwise
-  */
--static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
-+static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-+			       struct iattr *iattr)
- {
- 	struct smk_audit_info ad;
- 	int rc;
++ * @dentry: file
++ * @ia_valid: file attributes set
++ *
++ * Update inode security field after successful setting file attributes.
++ */
++void security_inode_post_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++				 int ia_valid)
++{
++	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
++		return;
++	call_void_hook(inode_post_setattr, idmap, dentry, ia_valid);
++}
++
+ /**
+  * security_inode_getattr() - Check if getting file attributes is allowed
+  * @path: file
 -- 
 2.34.1
 
