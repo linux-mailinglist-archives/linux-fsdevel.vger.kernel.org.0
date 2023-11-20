@@ -1,147 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-3194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA44A7F1006
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 11:14:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A487F1247
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 12:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83461C21444
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 10:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1952826B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 11:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A989112B93;
-	Mon, 20 Nov 2023 10:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5F715E9D;
+	Mon, 20 Nov 2023 11:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2Xm9gmg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAc/1FJ0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC16A7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 02:14:30 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-507a3b8b113so5960594e87.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 02:14:30 -0800 (PST)
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FAEB3;
+	Mon, 20 Nov 2023 03:40:03 -0800 (PST)
+Received: by mail-qv1-xf2f.google.com with SMTP id 6a1803df08f44-677f832d844so11192166d6.2;
+        Mon, 20 Nov 2023 03:40:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700475269; x=1701080069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EIFEH9J46dnQc4NNK79UsV/YpAUrG1xOxVxexAT8zUM=;
-        b=d2Xm9gmgzQD7mHBLjSLvy0B4GTHCKl6+NWspEKJgFWzawKj+6gj6TvbSTIWH8GVAw0
-         xNRQE3BtmhJlngPjEm9W5QSu3au3pX/g9i+etrDYBmx1FuApTF6qPUPdrACHlhIxAvWQ
-         O2+b1iTocvVPoOV81/HH4rQVHBLAX9JIlYWb4o9IUrXcIM63Xif8d5QjUyqmqekP8fLS
-         F2dtrj0xOT4+pDoawet5H2UYhsu97J0lRk0rR3a89D2N2a0LiAZmUAeAsLm8y3cdkZxN
-         etXOE1vtws3X70a540AbKWPqcenlSYLNEjlfFLB/2Gmvxa2JlKc3s1Kbf+atta+jJhbB
-         Fxkg==
+        d=gmail.com; s=20230601; t=1700480403; x=1701085203; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EPsFAkvYjtvlQaVQ8lVtTBL0jOv+UC6tPuVf4HtGQTw=;
+        b=dAc/1FJ0xgbeVcHb7XwZrzohlBfFzT5bjLPRFap5dksW4z20NZnjz7c5IhmCoTnbNA
+         jYxjLtaXA/JhnpgRkSnjXbJRVDSn+IYRWy+hagYR6tlE6W7om6fM/syzsB4x4pyujXYv
+         hRWDh51JDPyQireBP5AR6Z+dt7x3M2+k8wDveAGtgw5GOOfDEth8QGB6cKQk9XUYs3lL
+         eKt5lXRvFMbBnRzcpI5E3OFbC9ZXY1xNcjrd3PxrGyZ8h4TfJpSscZHu47Czj2sontzV
+         FVDjTikv+wroK8BpZEZe22AFO54Yk6ItvblQIeX6urXQl1m+bnbhgfaGmqW9daFJrxvO
+         s95A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700475269; x=1701080069;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1700480403; x=1701085203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EIFEH9J46dnQc4NNK79UsV/YpAUrG1xOxVxexAT8zUM=;
-        b=Uz5w1dpoc7izGSLXzDIP4kehCarG+fdtqM4vucM/5tfBfs8nfSbT+8Ru1MANHGASaL
-         b58LCHl4tINYeg04mCdDUc54/Q3KxpQclig/qOumzcYbJfSzpF9rAmK9sdzowrhLTNDK
-         EaRUXzpvp7J9j514eTngX75HhRJcGdvizhsiVTI6+jhFEkZurjAkrcmoH1AsvBxRSiS0
-         bmJSw//aR6IdVSqQ9e8wu1S7Dd/5pXzHThzZG+rn7ja2pLy9eI0VkpVMvcbTk4Qty364
-         xqLu6rNm6L4ri/oKJ6c/GemLxXNTweBFDCRGm7oBvAE5RIj+O0WXWOUhY0D12s0z6hTF
-         1bSA==
-X-Gm-Message-State: AOJu0Ywm9kOaPjXGJhYpqjH9uXAzShQx+LUMtJAXO0dBZNEUNL39Yaxn
-	kNQyO5fd3Dr0BSkfukcaLa8=
-X-Google-Smtp-Source: AGHT+IHJFl6lVDLKoa5bRCqPnEN33PhV5IJtJ3jpYe1vavpty6S3awDwBhML9M+98Sro/1PFVXNutQ==
-X-Received: by 2002:ac2:4566:0:b0:509:4ab3:a8a3 with SMTP id k6-20020ac24566000000b005094ab3a8a3mr5681280lfm.22.1700475268592;
-        Mon, 20 Nov 2023 02:14:28 -0800 (PST)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id b15-20020a056000054f00b0031980294e9fsm10678282wrf.116.2023.11.20.02.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 02:14:27 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] cachefiles: move kiocb_start_write() after error injection
-Date: Mon, 20 Nov 2023 12:14:24 +0200
-Message-Id: <20231120101424.2201480-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=EPsFAkvYjtvlQaVQ8lVtTBL0jOv+UC6tPuVf4HtGQTw=;
+        b=QtclNyJBr6CxeCezyvzGqaITowVghh8CjztjSP02zeALbt5fl5lkpATaE9sQ5SOMg6
+         BoX8HeoutA2fDX9mfvq92g5gaLhmc6EmzUzDAGpOD/8+6Y6I485B0pg6slKINd+XCH8G
+         4JblVuIFGiyv37IXAEBRR7Jw8R7L2h6WqwTKAkNSF25DBc9rJcbjzOt7rhV/KhYYMcVI
+         t0vQFb5ZKeYeyZ3PLWuLRoHDYBbPv1lu+jxJC8hLvKQTU6Xqx8AQkr9KX9+nIFp5cQXa
+         NxZ/M3P2qs/e/99VSdYV2NyAanIxq7AGvj1/EB+9EwYD6Tpcu0Wg9pxqroB9Xz5gFOal
+         6ksA==
+X-Gm-Message-State: AOJu0YwlbEmpSO3rFz46wWmVu22FKvGmd7wNELecF/exIP5p537geIQQ
+	XG2BpM5lkZAJvf/x61b1L4vCVoDPw9s8pVFuV6kVbjwJ1ig=
+X-Google-Smtp-Source: AGHT+IEElqSiu2ywMYnbkqfVvL2CyBcS7CW3W7d2zWtUcyd6jDZg/9qFkpvTvz2cr/4TaBAPzARgstkZYrD6GfjNo/g=
+X-Received: by 2002:a05:6214:2629:b0:679:d3af:504a with SMTP id
+ gv9-20020a056214262900b00679d3af504amr5191142qvb.7.1700480402741; Mon, 20 Nov
+ 2023 03:40:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231111080400.GO1957730@ZenIV> <CAOQ4uxhQdHsegbwdqy_04eHVG+wkntA2g2qwt9wH8hb=-PtT2A@mail.gmail.com>
+ <20231111185034.GP1957730@ZenIV> <CAOQ4uxjYaHk6rWUgvsFA4403Uk-hBqjGegV4CCOHZyh2LSYf4w@mail.gmail.com>
+ <CAOQ4uxiJSum4a2F5FEA=a8JKwWh1XhFOpWaH8xas_uWKf+29cw@mail.gmail.com>
+ <20231118200247.GF1957730@ZenIV> <CAOQ4uxjFrdKS3_yyeAcfemL-8dXm3JDWLwAmD9w3bY90=xfCjw@mail.gmail.com>
+ <20231119072652.GA38156@ZenIV> <CAOQ4uxiu_qY-cSh5FcbWMh8yF6mumik8Jsv3qeTQ4qPi+80Rrw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiu_qY-cSh5FcbWMh8yF6mumik8Jsv3qeTQ4qPi+80Rrw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 20 Nov 2023 13:39:51 +0200
+Message-ID: <CAOQ4uxjW4yv8x0Ej7A1Y0Q=r4AkBeLbHL0yx0BpyoYrP2ehW4A@mail.gmail.com>
+Subject: Re: [RFC][overlayfs] do we still need d_instantiate_anon() and export
+ of d_alloc_anon()?
+To: Al Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-We want to move kiocb_start_write() into vfs_iocb_iter_write(), but
-first we need to move it passed cachefiles_inject_write_error() and
-prevent calling kiocb_end_write() if error was injected.
+> > Another fun question: ovl_copy_up_one() has
+> >         if (parent) {
+> >                 ovl_path_upper(parent, &parentpath);
+> >                 ctx.destdir = parentpath.dentry;
+> >                 ctx.destname = dentry->d_name;
+> >
+> >                 err = vfs_getattr(&parentpath, &ctx.pstat,
+> >                                   STATX_ATIME | STATX_MTIME,
+> >                                   AT_STATX_SYNC_AS_STAT);
+> >                 if (err)
+> >                         return err;
+> >         }
+> > What stabilizes dentry->d_name here?  I might be missing something about the
+> > locking environment here, so it might be OK, but...
+>
+> Honestly, I don't think that anything stabilizes it...
+> As long as this cannot result in UAF, we don't care,
+> because messing with upper fs directly yields undefined results.
+> But I suspect that we do need to take_dentry_name_snapshot()
+> to protect against UAF. Right?
+>
 
-We set the IOCB_WRITE flag after cachefiles_inject_write_error()
-and use it as indication that kiocb_start_write() was called in the
-cleanup/completion handler.
+Sorry, I got confused. It is not about the stability of d_name in the
+underlying layer. dentry is the overlayfs dentry that is being copied up.
 
-Link: https://lore.kernel.org/r/CAOQ4uxihfJJRxxUhAmOwtD97Lg8PL8RgXw88rH1UfEeP8AtP+w@mail.gmail.com/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+In principle, dentry->d_name is stable "during copy up" due to the fact
+that ovl_rename() calls ovl_copy_up(old) and ovl_copy_up(new) before
+starting to rename.
 
-Hi David,
+If ovl_dentry_has_upper_alias(dentry), as is the case if ovl_rename()
+has already started, then ctx.destname will not actually be dereferenced
+and racing with future ovl_rename() is not an issue.
 
-Can you please review this patch so that I can add it to my series
-and send it to Christian?
+If dentry does need to be copied up, then if ovl_rename() starts after
+ovl_copy_up_start(), either ovl_copy_up(old) or ovl_copy_up(new)
+will block until ovl_copy_up_end().
 
-I do not have a cachefiles setup - this is only build tested.
+I think this would be easier to document and nicer to follow if we read
+dentry->d_name inside ovl_do_copy_up() only if we are actually going
+to need to use it.
+
+I will try to write it up.
 
 Thanks,
 Amir.
-
- fs/cachefiles/io.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index 009d23cd435b..3e000d6ef9fc 100644
---- a/fs/cachefiles/io.c
-+++ b/fs/cachefiles/io.c
-@@ -259,7 +259,8 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
- 
- 	_enter("%ld", ret);
- 
--	kiocb_end_write(iocb);
-+	if (iocb->ki_flags & IOCB_WRITE)
-+		kiocb_end_write(iocb);
- 
- 	if (ret < 0)
- 		trace_cachefiles_io_error(object, inode, ret,
-@@ -305,7 +306,6 @@ int __cachefiles_write(struct cachefiles_object *object,
- 	refcount_set(&ki->ki_refcnt, 2);
- 	ki->iocb.ki_filp	= file;
- 	ki->iocb.ki_pos		= start_pos;
--	ki->iocb.ki_flags	= IOCB_DIRECT | IOCB_WRITE;
- 	ki->iocb.ki_ioprio	= get_current_ioprio();
- 	ki->object		= object;
- 	ki->start		= start_pos;
-@@ -319,16 +319,17 @@ int __cachefiles_write(struct cachefiles_object *object,
- 		ki->iocb.ki_complete = cachefiles_write_complete;
- 	atomic_long_add(ki->b_writing, &cache->b_writing);
- 
--	kiocb_start_write(&ki->iocb);
--
- 	get_file(ki->iocb.ki_filp);
- 	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
- 
- 	trace_cachefiles_write(object, file_inode(file), ki->iocb.ki_pos, len);
- 	old_nofs = memalloc_nofs_save();
- 	ret = cachefiles_inject_write_error();
--	if (ret == 0)
-+	if (ret == 0) {
-+		ki->iocb.ki_flags = IOCB_DIRECT | IOCB_WRITE;
-+		kiocb_start_write(&ki->iocb);
- 		ret = vfs_iocb_iter_write(file, &ki->iocb, iter);
-+	}
- 	memalloc_nofs_restore(old_nofs);
- 	switch (ret) {
- 	case -EIOCBQUEUED:
--- 
-2.34.1
-
 
