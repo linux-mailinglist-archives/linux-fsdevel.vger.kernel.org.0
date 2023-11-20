@@ -1,79 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-3263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD6C7F1DEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:19:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF797F1E06
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 21:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87BB21C214A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 20:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5853D1C21144
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 20:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD1E374D5;
-	Mon, 20 Nov 2023 20:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1721B38DD7;
+	Mon, 20 Nov 2023 20:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AQPgeOPp"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XWaspkYY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39CCC7
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:19:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700511578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H2AukUqWSZiqaAFj2u264/6PVKSFcwl+GsaA16JCZnM=;
-	b=AQPgeOPpGeg310ni8OqxKiEzJ6qAsLCCcLZ4EytXbhH/nabLKmjnvkt9PnAM8clOGdq0ze
-	JHfAS34yZ9q/9CiuGKH8c0IRL2hunbW09Ij8caE8H7OrvmwzuI2tAkNNi2jPzNVnbd5pcC
-	CKsaD25ytMGE5hJOvs+XBdAttQW7lco=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-2tok77_rOkWoEPyNIj7jMg-1; Mon, 20 Nov 2023 15:19:35 -0500
-X-MC-Unique: 2tok77_rOkWoEPyNIj7jMg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5FCA785A58A;
-	Mon, 20 Nov 2023 20:19:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.16])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1C012C1596F;
-	Mon, 20 Nov 2023 20:19:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOQ4uxhNhmGrb7_Lwp9pt-hyaBUQz9++PH0KR1r3=cjKVCJJfQ@mail.gmail.com>
-References: <CAOQ4uxhNhmGrb7_Lwp9pt-hyaBUQz9++PH0KR1r3=cjKVCJJfQ@mail.gmail.com> <20231120101424.2201480-1-amir73il@gmail.com> <20231120165646.GA1606827@perftesting>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: dhowells@redhat.com, Josef Bacik <josef@toxicpanda.com>,
-    Christian Brauner <brauner@kernel.org>,
-    Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-    Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] cachefiles: move kiocb_start_write() after error injection
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28121C7
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:33:56 -0800 (PST)
+Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-6c39ad730aaso3862587b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 12:33:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1700512435; x=1701117235; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=evAEpm60eEP3dXV5IIqup+kGHQJCYdmk5kN5UrPqUqI=;
+        b=XWaspkYYw44E33EzKaGnJUsIVM+Ss5R+yYkkZi0c9hwh1WD0cLRFNTtHoIbN9iv1Em
+         6XBfwne5kehR8C8byBlNCobcSlPrqAmgG3OGf628BLtRoDNubaDRu7NyVC87/JFxVkOe
+         sdxy8YKauDLBnAe1+J2REJsCWB1gNQJrRVieIX0RICJrEDA1tHgwBgHa+czTDzSz0lpE
+         405jzexLvDQq7cwBVKzqRRr42f6mQzxeOij9p7nwS2sjxsh8dD2MjwMscWqK+2mcEcTn
+         O3e3PjIDi6KdIS5gALCZ/YT3FsWhfv8mCu7NSAs3rnMAWuRp0KQggidp/k61xS0aWezK
+         csTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700512435; x=1701117235;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=evAEpm60eEP3dXV5IIqup+kGHQJCYdmk5kN5UrPqUqI=;
+        b=Qtjhigs29jqxAM7nB1C0Iwu20a0h90FZzeZEjONewhQBDYCZwwQCbZnl60pYrW0TTB
+         DgbHhgvkUygrTVSQgsx86k1GS6zuslB9h+8sb5orF0eV6PbvfN3juKs+s2cSLOI/H4ru
+         K2faSZ1M3GzqyUP/wIJtF3XyM3hT2BnLlMye57OT6gAr4LKX6xqrTCsPxzoz4Se2E7Qp
+         3WQqDfJabneig6xF1ZXO+oxPw7PEoibSglwCSy5C2qQDuRuu0k3vSH9jOdXHXeYUF83X
+         9l0xW7Q6fMu4vWnr0sHfK58SlkSigeIJJx8UhYAd9XWualR1WjtQiusGgTo45fNehQai
+         rS5w==
+X-Gm-Message-State: AOJu0Yy2JK+5noSy8WvMgkDZupGNgRHddXJgfgowtcUxFXzqCwABukYS
+	Opv9LLvENJOIBITghHpe6sJINQ==
+X-Google-Smtp-Source: AGHT+IEUIW0UoDRHG7vGbEKmmcfumQAR5wXy6IpLvsSKoDwysXkoX+X9La6bv+9CGvmyGf8BTbi2pQ==
+X-Received: by 2002:a05:6a20:c188:b0:187:9392:cfdd with SMTP id bg8-20020a056a20c18800b001879392cfddmr7866906pzb.24.1700512435511;
+        Mon, 20 Nov 2023 12:33:55 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id k81-20020a628454000000b00688965c5227sm6783104pfd.120.2023.11.20.12.33.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Nov 2023 12:33:54 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1r5Axs-00FH1P-0e;
+	Tue, 21 Nov 2023 07:33:52 +1100
+Date: Tue, 21 Nov 2023 07:33:52 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Sarthak Kukreti <sarthakkukreti@chromium.org>
+Cc: dm-devel@lists.linux.dev, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCH v9 0/3] [PATCH v9 0/3] Introduce provisioning primitives
+Message-ID: <ZVvCsPelezZesshx@dread.disaster.area>
+References: <20231110010139.3901150-1-sarthakkukreti@chromium.org>
+ <ZU7RVKJIzm8ExGGH@dread.disaster.area>
+ <CAG9=OMPFEV9He+ggq2mcLULnUZ2jm8fGU=4ca8kBoWtvqYcGVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2457304.1700511572.1@warthog.procyon.org.uk>
-Date: Mon, 20 Nov 2023 20:19:32 +0000
-Message-ID: <2457305.1700511572@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG9=OMPFEV9He+ggq2mcLULnUZ2jm8fGU=4ca8kBoWtvqYcGVg@mail.gmail.com>
 
-Amir Goldstein <amir73il@gmail.com> wrote:
+On Mon, Nov 13, 2023 at 01:26:51PM -0800, Sarthak Kukreti wrote:
+> On Fri, Nov 10, 2023 at 4:56 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Thu, Nov 09, 2023 at 05:01:35PM -0800, Sarthak Kukreti wrote:
+> > > Hi,
+> > >
+> > > This patch series is version 9 of the patch series to introduce
+> > > block-level provisioning mechanism (original [1]), which is useful for
+> > > provisioning space across thinly provisioned storage architectures (loop
+> > > devices backed by sparse files, dm-thin devices, virtio-blk). This
+> > > series has minimal changes over v8[2], with a couple of patches dropped
+> > > (suggested by Dave).
+> > >
+> > > This patch series is rebased from the linux-dm/dm-6.5-provision-support
+> > > [3] on to (a12deb44f973 Merge tag 'input-for-v6.7-rc0' ...). The final
+> > > patch in the series is a blktest (suggested by Dave in 4) which was used
+> > > to test out the provisioning flow for loop devices on sparse files on an
+> > > ext4 filesystem.
+> >
+> > What happened to the XFS patch I sent to support provisioning for
+> > fallocate() operations through XFS?
+> >
+> Apologies, I missed out on mentioning that the XFS patches work well
+> with loop devices.
+> 
+> I might have misunderstood: were those patches only for sanity testing
+> or would you prefer that I send those out as a part of this series? I
+> can whip up a quick v10 if so!
 
-> I'll use whatever the maintainers of cachefiles and vfs prefer.
+I was implying that if you are going to be adding support to random
+block devices for people to actually test out, then you should be
+adding support to filesystems and writing new -fstests- to ensure
+that loop devices are actually provisioning blocks at exactly the
+locations that correspond to the physical file extents the
+filesystem provisioned, too.
 
-I'm working towards testing your patch.  Using IOCB_WRITE as a flag like that
-does seem a bit weird, though.
-
-David
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
