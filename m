@@ -1,130 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-3215-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169937F1779
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 16:38:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FD47F17A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 16:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D8CB21903
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:38:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC52BB21922
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Nov 2023 15:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9621DA26;
-	Mon, 20 Nov 2023 15:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386151DA36;
+	Mon, 20 Nov 2023 15:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XggcxYpd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4BNIYSA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5901D546;
-	Mon, 20 Nov 2023 15:38:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDA8C433C8;
-	Mon, 20 Nov 2023 15:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D631CF9C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 15:42:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0DC6C433C8;
+	Mon, 20 Nov 2023 15:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700494691;
-	bh=V/gEbXHf7msuIYmekR4+CzwjOqMIaKw26uDtvj0+qFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XggcxYpdOUX2bbB8XTJAwJYcatmv0J9n0vYM4cR4w7viqBhtBRsz7CTZ9T+cqbUIL
-	 44Aj/5aqonkcHTjvUrEjR9s7FRvivyFau/DZyMdBS/23foob8BJ18/ODKMotPsNt90
-	 ka20WHes20fBe0hfg9bWBTKJgBGDgfLFduMUGGkUN0JjrhUp6BnEsqMYOdWsB7tTmQ
-	 zq8iL6dA/lgOiTSC/pL35W7gUFWVkWnIy23mqKPPHpuFnE8aati9dM7xDgw8TDXBqS
-	 DEGdC6qmJZW4mq8vl5J0WeOmqNuAzsCtqvbD6Fak09QFFxc95clvVGo4nC4Xa+cBRL
-	 +yow5ssMmjaNw==
-Date: Mon, 20 Nov 2023 16:38:05 +0100
+	s=k20201202; t=1700494954;
+	bh=Ec52klbY35lJdHqfaeV6a8M0GtAsBsRL4qBkgpTYu+c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=I4BNIYSAr4Dj1MnxT6ZrYHnkn2DLnsVwMFFLu/qOVZTrPwc3qXzt/TImagFU9EIOf
+	 2lLAbqYDTSgZBvWb9Ivy7i+Bq3S+qpc+U+dOsRMp1bvEz1WvKEx9r0v7hgMupwbaed
+	 tnA3bJtClig9Zf1nYE0n+IQUKvS5STBqMFdzgaTQCMevLMJtASSYT6JqY+EkC5O5PR
+	 E5MbusW2MuWZ4rswYEDOVu8lkeZc63FQK0rE6eo3eHi68nrV0QOss7FxN3YIQk78GW
+	 w2Cx6hUW7HdiXZbNDG6wDjaF3CaXkledCdGoyOIyLoRnTPMqDSuFEc3OnUwXPTlOd9
+	 rMmNTyQWShbIQ==
 From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Florian Weimer <fweimer@redhat.com>, libc-alpha@sourceware.org,
-	linux-man <linux-man@vger.kernel.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Linux API <linux-api@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>,
-	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>,
-	Amir Goldstein <amir73il@gmail.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: proposed libc interface and man page for statmount(2)
-Message-ID: <20231120-wachhalten-darfst-ed3244509881@brauner>
-References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
- <87fs15qvu4.fsf@oldenburg.str.redhat.com>
- <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
- <87leawphcj.fsf@oldenburg.str.redhat.com>
- <CAJfpegsCfuPuhtD+wfM3mUphqk9AxWrBZDa9-NxcdnsdAEizaw@mail.gmail.com>
- <CAJfpegsBqbx5+VMHVHbYx2CdxxhtKHYD4V-nN5J3YCtXTdv=TQ@mail.gmail.com>
- <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
+To: YangXin <yx.0xffff@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: namei: Fix spelling mistake "Retuns" to "Returns"
+Date: Mon, 20 Nov 2023 16:42:09 +0100
+Message-ID: <20231120-sackgasse-umspielen-4487ee8910b0@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231118132136.3084-1-yx.0xffff@gmail.com>
+References: <20231118132136.3084-1-yx.0xffff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=880; i=brauner@kernel.org; h=from:subject:message-id; bh=Ec52klbY35lJdHqfaeV6a8M0GtAsBsRL4qBkgpTYu+c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRG1wVabJobc/nyRJ0ivrt+1xaqmh259FvhxuXQt0sOc 219Vi2p0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRidYM/5MYTmuumVT67uhF L//LJW9udCg7urx58GfvjgTdws0sxm8YGVas29MpoPpgY7rqpzj9h8fEI7ofZe5aIiSrffXUrhI 9a34A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 20, 2023 at 12:55:17PM +0100, Miklos Szeredi wrote:
-> On Fri, Nov 17, 2023 at 04:50:25PM +0100, Miklos Szeredi wrote:
-> > I wonder... Is there a reason this shouldn't be done statelessly by
-> > adding an "continue after this ID" argument to listmount(2)?  The
-> > caller will just need to pass the last mount ID received in the array
-> > to the next listmount(2) call and iterate until a short count is
-> > returned.
-> 
-> No comments so far... maybe more explanation is needed.
-> 
-> New signature of listmount() would be:
-> 
-> ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
-> 		  uint64_t *buf, size_t bufsize, unsigned int flags);
-> 
-> And the usage would be:
-> 
-> 	for (last = 0; nres == bufsize; last = buf[bufsize-1]) {
-> 		nres = listmount(parent, last, buf, bufsize, flags);
-> 		for (i = 0; i < nres; i++) {
-> 			/* process buf[i] */
-> 		}
-> 	}
+On Sat, 18 Nov 2023 21:21:36 +0800, YangXin wrote:
+> There are two spelling mistake in comments. Fix it.
 > 
 > 
-> Here's a kernel patch against the version in Christian's tree.  The syscall
-> signature doesn't need changing, since we have a spare u64 in the mnt_id_req for
-> listmount.
-> 
-> The major difference is in the order that the mount ID's are listed, which is
-> now strictly increasing.  Doing the recursive listing in DFS order is nicer, but
-> I don't think it's important enough.
-> 
-> Comments?
 
-Sure. We can also add a size argument to struct mnt_id_req then you can
-version it by size and extend it easily later (see sched_{g,s}etattr()
-that do similar things):
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-struct mnt_id_req {
-	__u32 size;
-	__u64 mnt_id;
-	__u64 request_mask;
-	union {
-		__u64 request_mask;
-		__u64 last_mnt_id;
-	};
-};
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-foo(struct mnt_id_req __user *ureq)
-{
-	u32 size;
-	struct mnt_id_req kreq;
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-	ret = get_user(size, &ureq->size);
-	if (ret)
-		return ret;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-        if (size < MNT_ID_REQ_SIZE_VER0 || size > PAGE_SIZE)
-		return -EINVAL;
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-	ret = copy_struct_from_user(&kreq, sizeof(kreq), ureq, size);
-	if (ret)
-		return ret;
-}
+[1/1] fs: namei: Fix spelling mistake "Retuns" to "Returns"
+      https://git.kernel.org/vfs/vfs/c/136aef2de55c
 
