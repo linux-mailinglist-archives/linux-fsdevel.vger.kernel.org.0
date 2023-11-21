@@ -1,429 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-3309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A297F2E63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 14:34:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C1B7F30A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 15:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12ABB21742
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 13:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA61282DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 14:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAF451C37;
-	Tue, 21 Nov 2023 13:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E139654FB6;
+	Tue, 21 Nov 2023 14:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQSxXRKp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FhGgruZs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82AFED6E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 05:33:52 -0800 (PST)
-Received: by mail-qt1-x832.google.com with SMTP id d75a77b69052e-41eae4f0ee6so32083461cf.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 05:33:52 -0800 (PST)
+Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B37791996
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 06:25:40 -0800 (PST)
+Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5ca8c606bb7so21321187b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 06:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700573631; x=1701178431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4oHQ6PX/8KpSmBhuF0g2rqcRuQGmolvsWl6Rj8dXzaE=;
-        b=AQSxXRKpPs7tHdHhNUkZ5hNkdkopXhymDDnly4OFXO6jM3/IfpkBORaWxW5P9gjwj7
-         e8o5lQ8A8/gZqlEj0niWwXRc/fG2w/mHL+M0LSbs+ULRm19yFi6+P4U/v7UJU4hYreE3
-         5PN5pYFi1PBygR/WcOrHLM/Rxo/JNp8st4iBGKXyB+dDDXztdsE3KsvHWGe7eJMOZsV+
-         DgcNI6hGMo1UMxRUdO9Ulkp+rnnrQs+WG/Zq2YW3jDkS2N7UO64F+Vi8IJ2wUTleVcnJ
-         9kkcsQeT1aMBx6Col1nIGiZ/OyIzXlPATISkBVXdxf7bqUCo2WGkOMrGvs2mJbZL558n
-         kAzA==
+        d=linaro.org; s=google; t=1700576739; x=1701181539; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dCTl+by/8OgzPkqiTTy1mu7iUQvkaM00OdF6QByqCRc=;
+        b=FhGgruZs5WQMJqYwgCqX69RUiOZAWt18vg+4MnG2tk2BVTFtcWomFpNh/5WgHKgUTG
+         9tHYJjR6VR0gs/6mMYNa2TprKEIAXxsPYTqihSgSsjak+MrJ5GI4qdt+lhop4bHQRABL
+         nvKi8WzVZWVJfKN8M+1BuFsPj2EtZDaFCoHSHGR2A+JFyp7srUxH9QgKie7t4mafS+EL
+         Xpy1mne8HKC9FZDN4/DXW+7W1k7Ga/Gy6YoBLl+h10hbgxaexjbS72I6BUV89wkQz2Pn
+         8kJaqcL09gLUUJvTZ8oO4q1+rsig9An2gWLnxWt+74QQFgC9qJChuxUOXyrUcJPjrvrk
+         aP8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700573631; x=1701178431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4oHQ6PX/8KpSmBhuF0g2rqcRuQGmolvsWl6Rj8dXzaE=;
-        b=uhuewMdHEBRaBz4XlKc4/73JN2ySIcE2gesf3sj4762GcAtk3VBli6WkJCWrbXusmb
-         WKbS4EjGseDLHYmza61O/Zklu2ej8e1HHJbH9c7dgr9rR4WZhlXnHJv02nsBxKu39NiJ
-         qAIPU1Olw917/YgvOYj0z8p2vudV5OIrVyjSmYgIbLw43XbQ9l6Gb3c0i0w/uhwLm/1h
-         Fd9S28oC/lpVTAP/q4MtcUjnSEF2y5FSZwxAsECgT2xmTNk8hCYbFit3UkCiLZoaJrx7
-         UZusnfCbyIjuAteLwnWiZ8ccrWPif8ETqXZyxjSgHBEu3PxhMAAv+Ro2eFVlY0nP34T4
-         FCWA==
-X-Gm-Message-State: AOJu0YybDF8OSaSpnxUf6E8Hp3nL3unJJ3gZ9MVAXNpqL0xsgCOtQLNq
-	CxyBg76i076YehQ7i1IUXCFJGzx1v8pzz7WPYE70TE8FBqs=
-X-Google-Smtp-Source: AGHT+IGwMG5uynehB9hxdzzosGX3BE1M09CzkQbnbeQ8dgkMmcsExJ/ukeW+qoj8M5UBdi4RzX5IwSh+WassqyBJyvA=
-X-Received: by 2002:ac8:7d08:0:b0:417:b545:e962 with SMTP id
- g8-20020ac87d08000000b00417b545e962mr10247666qtb.7.1700573631458; Tue, 21 Nov
- 2023 05:33:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700576739; x=1701181539;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dCTl+by/8OgzPkqiTTy1mu7iUQvkaM00OdF6QByqCRc=;
+        b=fqmQPFJTIIjG5cuJVUyMYLfpF3g54ksUh2u7CIcorsXu5AUfknUjCWDh6q/VavDg0p
+         xNKx3Hem8rdk/t562FWnxffjrS1783liEwIPdH22yEoUV/8UaZE7oqA6AZ2/onbdkF4C
+         W9QQ+I5fkcaQ3aH6/Lu7HMzQVj7nzMA5vYVeGZfF3eT9fIVlnaV1DqvaKnJCdLHB9vpZ
+         3kk3aPViDwSLTnsnz9yjwa54z2JUK+gzioh95K808JWu/kBLcRSjCqC77cy2vAz/ON0d
+         T0jnVZEie8HAwn44kLhwqXxDmnR3PXOd0zpfJiOkDxrSOm212bapjxZ91nDGbhu9izIE
+         oENA==
+X-Gm-Message-State: AOJu0Yzf0uVcl/s4w5YV16LqFB+QP5JkbDlMAUCOXc5pOBuvVqGqW/8G
+	CRKELPiErmkOhYKnK7ajKwuoxyQssBubZpjkiscGXAhSN5IMaoqHIuw=
+X-Google-Smtp-Source: AGHT+IFzC/P9VBpC/SW7HcjRqPIjGI6/u3317qHHutxgt4On71zUFgu360yHalbn7IBXSLbaUggzuHxl91TG21rj54k=
+X-Received: by 2002:a81:6588:0:b0:59a:d42c:5d50 with SMTP id
+ z130-20020a816588000000b0059ad42c5d50mr9563819ywb.52.1700576739223; Tue, 21
+ Nov 2023 06:25:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231118183018.2069899-1-amir73il@gmail.com> <20231118183018.2069899-3-amir73il@gmail.com>
- <CAOQ4uxjLVNqij3GUYrzo1ePyruPQO1S+L62kuMJCTeAVjVvm5w@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjLVNqij3GUYrzo1ePyruPQO1S+L62kuMJCTeAVjVvm5w@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 21 Nov 2023 15:33:40 +0200
-Message-ID: <CAOQ4uxgfyAcD_pZ8egQuEoiNstgrD8E0YPDps5Am=St9jY6rXw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fanotify: allow "weak" fsid when watching a single filesystem
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 21 Nov 2023 19:55:27 +0530
+Message-ID: <CA+G9fYvcaozQvas-h55FPjXk+uomF2CyeYbWGCsXM8yGo4SZgA@mail.gmail.com>
+Subject: SuperH: fs/namespace.c: In function '__se_sys_listmount':
+ syscalls.h:258:9: internal compiler error: in change_address_1, at emit-rtl.c:2275
+To: linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	regressions@lists.linux.dev, lkft-triage@lists.linaro.org, 
+	Linux-sh list <linux-sh@vger.kernel.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Ian Kent <raven@themaw.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, dalias@libc.org, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 20, 2023 at 9:42=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Sat, Nov 18, 2023 at 8:30=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > So far, fanotify returns -ENODEV or -EXDEV when trying to set a mark
-> > on a filesystem with a "weak" fsid, namely, zero fsid (e.g. fuse), or
-> > non-uniform fsid (e.g. btrfs non-root subvol).
-> >
-> > When group is watching inodes all from the same filesystem (or subvol),
-> > allow adding inode marks with "weak" fsid, because there is no ambiguit=
-y
-> > regarding which filesystem reports the event.
-> >
-> > The first mark added to a group determines if this group is single or
-> > multi filesystem, depending on the fsid at the path of the added mark.
-> >
-> > If the first mark added has a "strong" fsid, marks with "weak" fsid
-> > cannot be added and vice versa.
-> >
-> > If the first mark added has a "weak" fsid, following marks must have
-> > the same "weak" fsid and the same sb as the first mark.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/notify/fanotify/fanotify.c      | 15 +----
-> >  fs/notify/fanotify/fanotify.h      |  6 ++
-> >  fs/notify/fanotify/fanotify_user.c | 97 ++++++++++++++++++++++++------
-> >  include/linux/fsnotify_backend.h   |  1 +
-> >  4 files changed, 90 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotif=
-y.c
-> > index aff1ab3c32aa..1e4def21811e 100644
-> > --- a/fs/notify/fanotify/fanotify.c
-> > +++ b/fs/notify/fanotify/fanotify.c
-> > @@ -29,12 +29,6 @@ static unsigned int fanotify_hash_path(const struct =
-path *path)
-> >                 hash_ptr(path->mnt, FANOTIFY_EVENT_HASH_BITS);
-> >  }
-> >
-> > -static inline bool fanotify_fsid_equal(__kernel_fsid_t *fsid1,
-> > -                                      __kernel_fsid_t *fsid2)
-> > -{
-> > -       return fsid1->val[0] =3D=3D fsid2->val[0] && fsid1->val[1] =3D=
-=3D fsid2->val[1];
-> > -}
-> > -
-> >  static unsigned int fanotify_hash_fsid(__kernel_fsid_t *fsid)
-> >  {
-> >         return hash_32(fsid->val[0], FANOTIFY_EVENT_HASH_BITS) ^
-> > @@ -851,7 +845,8 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsn=
-otify_iter_info *iter_info)
-> >                 if (!(mark->flags & FSNOTIFY_MARK_FLAG_HAS_FSID))
-> >                         continue;
-> >                 fsid =3D FANOTIFY_MARK(mark)->fsid;
-> > -               if (WARN_ON_ONCE(!fsid.val[0] && !fsid.val[1]))
-> > +               if (!(mark->flags & FSNOTIFY_MARK_FLAG_WEAK_FSID) &&
-> > +                   WARN_ON_ONCE(!fsid.val[0] && !fsid.val[1]))
-> >                         continue;
-> >                 return fsid;
-> >         }
-> > @@ -933,12 +928,8 @@ static int fanotify_handle_event(struct fsnotify_g=
-roup *group, u32 mask,
-> >                         return 0;
-> >         }
-> >
-> > -       if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
-> > +       if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
-> >                 fsid =3D fanotify_get_fsid(iter_info);
-> > -               /* Racing with mark destruction or creation? */
-> > -               if (!fsid.val[0] && !fsid.val[1])
-> > -                       return 0;
-> > -       }
-> >
-> >         event =3D fanotify_alloc_event(group, mask, data, data_type, di=
-r,
-> >                                      file_name, &fsid, match_mask);
-> > diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotif=
-y.h
-> > index 2847fa564298..9c97ae638ac5 100644
-> > --- a/fs/notify/fanotify/fanotify.h
-> > +++ b/fs/notify/fanotify/fanotify.h
-> > @@ -504,6 +504,12 @@ static inline __kernel_fsid_t *fanotify_mark_fsid(=
-struct fsnotify_mark *mark)
-> >         return &FANOTIFY_MARK(mark)->fsid;
-> >  }
-> >
-> > +static inline bool fanotify_fsid_equal(__kernel_fsid_t *fsid1,
-> > +                                      __kernel_fsid_t *fsid2)
-> > +{
-> > +       return fsid1->val[0] =3D=3D fsid2->val[0] && fsid1->val[1] =3D=
-=3D fsid2->val[1];
-> > +}
-> > +
-> >  static inline unsigned int fanotify_mark_user_flags(struct fsnotify_ma=
-rk *mark)
-> >  {
-> >         unsigned int mflags =3D 0;
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fa=
-notify_user.c
-> > index e3d836d4d156..1cc68ea56c17 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -23,7 +23,7 @@
-> >
-> >  #include <asm/ioctls.h>
-> >
-> > -#include "../../mount.h"
-> > +#include "../fsnotify.h"
-> >  #include "../fdinfo.h"
-> >  #include "fanotify.h"
-> >
-> > @@ -1192,11 +1192,68 @@ static bool fanotify_mark_add_to_mask(struct fs=
-notify_mark *fsn_mark,
-> >         return recalc;
-> >  }
-> >
-> > +struct fan_fsid {
-> > +       struct super_block *sb;
-> > +       __kernel_fsid_t id;
-> > +       bool weak;
-> > +};
-> > +
-> > +static int fanotify_check_mark_fsid(struct fsnotify_group *group,
-> > +                                   struct fsnotify_mark *mark,
-> > +                                   struct fan_fsid *fsid)
-> > +{
-> > +       struct fsnotify_mark_connector *conn;
-> > +       struct fsnotify_mark *old;
-> > +       struct super_block *old_sb =3D NULL;
-> > +
-> > +       *fanotify_mark_fsid(mark) =3D fsid->id;
-> > +       mark->flags |=3D FSNOTIFY_MARK_FLAG_HAS_FSID;
-> > +       if (fsid->weak)
-> > +               mark->flags |=3D FSNOTIFY_MARK_FLAG_WEAK_FSID;
-> > +
-> > +       /* First mark added will determine if group is single or multi =
-fsid */
-> > +       if (list_empty(&group->marks_list))
-> > +               return 0;
-> > +
-> > +       /* Find sb of an existing mark */
-> > +       list_for_each_entry(old, &group->marks_list, g_list) {
-> > +               conn =3D READ_ONCE(old->connector);
-> > +               if (!conn)
-> > +                       continue;
-> > +               old_sb =3D fsnotify_connector_sb(conn);
-> > +               if (old_sb)
-> > +                       break;
-> > +       }
-> > +
-> > +       /* Only detached marks left? */
-> > +       if (!old_sb)
-> > +               return 0;
-> > +
-> > +       /* Do not allow mixing of marks with weak and strong fsid */
-> > +       if ((mark->flags ^ old->flags) & FSNOTIFY_MARK_FLAG_WEAK_FSID)
-> > +               return -EXDEV;
-> > +
-> > +       /* Allow mixing of marks with strong fsid from different fs */
-> > +       if (!fsid->weak)
-> > +               return 0;
-> > +
-> > +       /* Do not allow mixing marks with weak fsid from different fs *=
-/
-> > +       if (old_sb !=3D fsid->sb)
-> > +               return -EXDEV;
-> > +
-> > +       /* Do not allow mixing marks from different btrfs sub-volumes *=
-/
-> > +       if (!fanotify_fsid_equal(fanotify_mark_fsid(old),
-> > +                                fanotify_mark_fsid(mark)))
-> > +               return -EXDEV;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_gro=
-up *group,
-> >                                                    fsnotify_connp_t *co=
-nnp,
-> >                                                    unsigned int obj_typ=
-e,
-> >                                                    unsigned int fan_fla=
-gs,
-> > -                                                  __kernel_fsid_t *fsi=
-d)
-> > +                                                  struct fan_fsid *fsi=
-d)
-> >  {
-> >         struct ucounts *ucounts =3D group->fanotify_data.ucounts;
-> >         struct fanotify_mark *fan_mark;
-> > @@ -1225,8 +1282,9 @@ static struct fsnotify_mark *fanotify_add_new_mar=
-k(struct fsnotify_group *group,
-> >
-> >         /* Cache fsid of filesystem containing the marked object */
-> >         if (fsid) {
-> > -               fan_mark->fsid =3D *fsid;
-> > -               mark->flags |=3D FSNOTIFY_MARK_FLAG_HAS_FSID;
-> > +               ret =3D fanotify_check_mark_fsid(group, mark, fsid);
-> > +               if (ret)
->
-> OOPS, missed fsnotify_put_mark(mark);
-> better add a goto target out_put_mark as this is the second case now.
+The SuperH tinyconfig and allnoconfig builds started failing from 20231120 tag
+Please find the following builds warnings / errors.
 
-FYI, I pushed the fix to:
-https://github.com/amir73il/linux/commits/fanotify_fsid
+sh:
+  build:
+    * gcc-11-tinyconfig
 
-Let me know if you want me to post v2 for this.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Thanks,
-Amir.
+Build errors:
+----------
+make --silent --keep-going --jobs=8
+O=/home/tuxbuild/.cache/tuxmake/builds/1/build ARCH=sh
+CROSS_COMPILE=sh4-linux-gnu- 'CC=sccache sh4-linux-gnu-gcc'
+'HOSTCC=sccache gcc'
+  Generating include/generated/machtypes.h
+<stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+during RTL pass: final
+In file included from /builds/linux/fs/namespace.c:11:
+/builds/linux/fs/namespace.c: In function '__se_sys_listmount':
+/builds/linux/include/linux/syscalls.h:258:9: internal compiler error:
+in change_address_1, at emit-rtl.c:2275
+  258 |         }
+         \
+      |         ^
+/builds/linux/include/linux/syscalls.h:233:9: note: in expansion of
+macro '__SYSCALL_DEFINEx'
+  233 |         __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
+      |         ^~~~~~~~~~~~~~~~~
+/builds/linux/include/linux/syscalls.h:225:36: note: in expansion of
+macro 'SYSCALL_DEFINEx'
+  225 | #define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name,
+__VA_ARGS__)
+      |                                    ^~~~~~~~~~~~~~~
+/builds/linux/fs/namespace.c:5019:1: note: in expansion of macro
+'SYSCALL_DEFINE4'
+ 5019 | SYSCALL_DEFINE4(listmount, const struct mnt_id_req __user *, req,
+      | ^~~~~~~~~~~~~~~
+0x129d9d7 internal_error(char const*, ...)
+???:0
+0x5dbc4d fancy_abort(char const*, int, char const*)
+???:0
+0x7ddd3e adjust_address_1(rtx_def*, machine_mode, poly_int<1u, long>,
+int, int, int, poly_int<1u, long>)
+???:0
+0x81dd91 output_operand(rtx_def*, int)
+???:0
+0x81e5a4 output_asm_insn(char const*, rtx_def**)
+???:0
+0x8226a8 final_scan_insn(rtx_insn*, _IO_FILE*, int, int, int*)
+???:0
+Please submit a full bug report,
+with preprocessed source if appropriate.
+Please include the complete backtrace with any bug report.
+See <file:///usr/share/doc/gcc-11/README.Bugs> for instructions.
+{standard input}: Assembler messages:
+{standard input}:11800: Warning: end of file not at end of a line;
+newline inserted
+{standard input}:11856: Error: missing operand
+{standard input}:11856: Error: invalid operands for opcode
+{standard input}:11837: Error: displacement to undefined symbol .L2699
+overflows 8-bit field
+{standard input}:11690: Error: pcrel too far
+{standard input}:11705: Error: pcrel too far
+{standard input}:11707: Error: pcrel too far
+{standard input}:11712: Error: pcrel too far
+{standard input}:11719: Error: pcrel too far
+{standard input}:11732: Error: pcrel too far
+{standard input}:11737: Error: pcrel too far
+{standard input}:11760: Error: pcrel too far
+{standard input}:11772: Error: pcrel too far
+{standard input}:11777: Error: pcrel too far
+{standard input}:11778: Error: pcrel too far
+{standard input}:11788: Error: pcrel too far
+{standard input}:11791: Error: pcrel too far
+{standard input}:11807: Error: pcrel too far
+{standard input}:11809: Error: pcrel too far
+{standard input}:11844: Error: pcrel too far
+make[4]: *** [/builds/linux/scripts/Makefile.build:243: fs/namespace.o] Error 1
 
->
-> > +                       goto out_dec_ucounts;
-> >         } else {
-> >                 fan_mark->fsid.val[0] =3D fan_mark->fsid.val[1] =3D 0;
-> >         }
-> > @@ -1289,7 +1347,7 @@ static int fanotify_may_update_existing_mark(stru=
-ct fsnotify_mark *fsn_mark,
-> >  static int fanotify_add_mark(struct fsnotify_group *group,
-> >                              fsnotify_connp_t *connp, unsigned int obj_=
-type,
-> >                              __u32 mask, unsigned int fan_flags,
-> > -                            __kernel_fsid_t *fsid)
-> > +                            struct fan_fsid *fsid)
-> >  {
-> >         struct fsnotify_mark *fsn_mark;
-> >         bool recalc;
-> > @@ -1337,7 +1395,7 @@ static int fanotify_add_mark(struct fsnotify_grou=
-p *group,
-> >
-> >  static int fanotify_add_vfsmount_mark(struct fsnotify_group *group,
-> >                                       struct vfsmount *mnt, __u32 mask,
-> > -                                     unsigned int flags, __kernel_fsid=
-_t *fsid)
-> > +                                     unsigned int flags, struct fan_fs=
-id *fsid)
-> >  {
-> >         return fanotify_add_mark(group, &real_mount(mnt)->mnt_fsnotify_=
-marks,
-> >                                  FSNOTIFY_OBJ_TYPE_VFSMOUNT, mask, flag=
-s, fsid);
-> > @@ -1345,7 +1403,7 @@ static int fanotify_add_vfsmount_mark(struct fsno=
-tify_group *group,
-> >
-> >  static int fanotify_add_sb_mark(struct fsnotify_group *group,
-> >                                 struct super_block *sb, __u32 mask,
-> > -                               unsigned int flags, __kernel_fsid_t *fs=
-id)
-> > +                               unsigned int flags, struct fan_fsid *fs=
-id)
-> >  {
-> >         return fanotify_add_mark(group, &sb->s_fsnotify_marks,
-> >                                  FSNOTIFY_OBJ_TYPE_SB, mask, flags, fsi=
-d);
-> > @@ -1353,7 +1411,7 @@ static int fanotify_add_sb_mark(struct fsnotify_g=
-roup *group,
-> >
-> >  static int fanotify_add_inode_mark(struct fsnotify_group *group,
-> >                                    struct inode *inode, __u32 mask,
-> > -                                  unsigned int flags, __kernel_fsid_t =
-*fsid)
-> > +                                  unsigned int flags, struct fan_fsid =
-*fsid)
-> >  {
-> >         pr_debug("%s: group=3D%p inode=3D%p\n", __func__, group, inode)=
-;
-> >
-> > @@ -1564,20 +1622,25 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, fl=
-ags, unsigned int, event_f_flags)
-> >         return fd;
-> >  }
-> >
-> > -static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *=
-fsid)
-> > +static int fanotify_test_fsid(struct dentry *dentry, unsigned int flag=
-s,
-> > +                             struct fan_fsid *fsid)
-> >  {
-> > +       unsigned int mark_type =3D flags & FANOTIFY_MARK_TYPE_BITS;
-> >         __kernel_fsid_t root_fsid;
-> >         int err;
-> >
-> >         /*
-> >          * Make sure dentry is not of a filesystem with zero fsid (e.g.=
- fuse).
-> >          */
-> > -       err =3D vfs_get_fsid(dentry, fsid);
-> > +       err =3D vfs_get_fsid(dentry, &fsid->id);
-> >         if (err)
-> >                 return err;
-> >
-> > -       if (!fsid->val[0] && !fsid->val[1])
-> > -               return -ENODEV;
-> > +       /* Allow weak fsid when marking inodes */
-> > +       fsid->sb =3D dentry->d_sb;
-> > +       fsid->weak =3D mark_type =3D=3D FAN_MARK_INODE;
-> > +       if (!fsid->id.val[0] && !fsid->id.val[1])
-> > +               return fsid->weak ? 0 : -ENODEV;
-> >
-> >         /*
-> >          * Make sure dentry is not of a filesystem subvolume (e.g. btrf=
-s)
-> > @@ -1587,10 +1650,10 @@ static int fanotify_test_fsid(struct dentry *de=
-ntry, __kernel_fsid_t *fsid)
-> >         if (err)
-> >                 return err;
-> >
-> > -       if (root_fsid.val[0] !=3D fsid->val[0] ||
-> > -           root_fsid.val[1] !=3D fsid->val[1])
-> > -               return -EXDEV;
-> > +       if (!fanotify_fsid_equal(&root_fsid, &fsid->id))
-> > +               return fsid->weak ? 0 : -EXDEV;
-> >
-> > +       fsid->weak =3D false;
-> >         return 0;
-> >  }
-> >
-> > @@ -1675,7 +1738,7 @@ static int do_fanotify_mark(int fanotify_fd, unsi=
-gned int flags, __u64 mask,
-> >         struct fsnotify_group *group;
-> >         struct fd f;
-> >         struct path path;
-> > -       __kernel_fsid_t __fsid, *fsid =3D NULL;
-> > +       struct fan_fsid __fsid, *fsid =3D NULL;
-> >         u32 valid_mask =3D FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
-> >         unsigned int mark_type =3D flags & FANOTIFY_MARK_TYPE_BITS;
-> >         unsigned int mark_cmd =3D flags & FANOTIFY_MARK_CMD_BITS;
-> > @@ -1827,7 +1890,7 @@ static int do_fanotify_mark(int fanotify_fd, unsi=
-gned int flags, __u64 mask,
-> >         }
-> >
-> >         if (fid_mode) {
-> > -               ret =3D fanotify_test_fsid(path.dentry, &__fsid);
-> > +               ret =3D fanotify_test_fsid(path.dentry, flags, &__fsid)=
-;
-> >                 if (ret)
-> >                         goto path_put_and_out;
-> >
-> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_=
-backend.h
-> > index a80b525ca653..7f63be5ca0f1 100644
-> > --- a/include/linux/fsnotify_backend.h
-> > +++ b/include/linux/fsnotify_backend.h
-> > @@ -529,6 +529,7 @@ struct fsnotify_mark {
-> >  #define FSNOTIFY_MARK_FLAG_NO_IREF             0x0200
-> >  #define FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS    0x0400
-> >  #define FSNOTIFY_MARK_FLAG_HAS_FSID            0x0800
-> > +#define FSNOTIFY_MARK_FLAG_WEAK_FSID           0x1000
-> >         unsigned int flags;             /* flags [mark->lock] */
-> >  };
-> >
-> > --
-> > 2.34.1
-> >
+
+kernel: 6.7.0-rc2
+git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+git_ref: master
+git_sha: 07b677953b9dca02928be323e2db853511305fa9
+git_describe: next-20231121
+Test details: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20231121
+
+Regressions (compared to build next-20231117)
+------------------------------------------------------------------------
+
+sh:
+  build:
+    * gcc-8-allnoconfig
+    * gcc-11-tinyconfig
+    * gcc-11-allnoconfig
+    * gcc-8-tinyconfig
+
+Links:
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20231121/testrun/21199202/suite/build/test/gcc-11-tinyconfig/history/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20231121/testrun/21199202/suite/build/test/gcc-11-tinyconfig/log
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
