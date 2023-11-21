@@ -1,170 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-3272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8561C7F2286
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 01:51:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB437F22AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 01:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 077AB1F25F02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 00:51:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E421C21650
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 00:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF1D1842;
-	Tue, 21 Nov 2023 00:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A9B185F;
+	Tue, 21 Nov 2023 00:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gE696MN7"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="v1yEOt4g";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A28uO3lt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com (sonic316-27.consmr.mail.ne1.yahoo.com [66.163.187.153])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA2DCA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 20 Nov 2023 16:51:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700527863; bh=X6NNrh2o9TkByhBWiubp9qwlQAP2OzbbUw3CuaiiYt4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gE696MN7CmATorwHr2JjXJaoQNL40hRgJ+cYESBnbzVDtVPmqT3VJc9V2qrJlzMI4lp7zBAPQ5PBVe/UAYPz4HqXD6khLzSwEwLx5eMXMNBUpIGJoWKiznMiTzu7C+UZIgI0CEOqp3HQOhXMnydGk5GmjBfNK+XyGvSUIsNQfOWYdO28Je6bttyedLshlF+6o3qfh8IflG+l6elX5or3Mue5rqMWugAKQBA0RyBtL6St/tV0XTgzEjcy2FRzWhHbD+AAgpkEjiRMo0FR5eFZCYxa7Ve71L+uwLRV31RWgutMHcVWg87MmzfOwrX6Rq+PfsLntxI5RNtF6lu3TxX7gA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1700527863; bh=kmDhWoqSbEAqPNzl2xg7xH/nF3Vp1fYXhkvFIclEdTW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=gKB5VX19b9sjmgbIYKG13TCGWgcBtI/3SjHk4aGtPuetlKBKyT0qrhsUTA/daOmb5UpBtYklivT6DyKd78c7Ndgdp9S8wu7vLN+poEOcw1gZ4vV9JmyVV0gQf7w/Npi0MLLoU4UrQ7MBnRIPyyHGOIpmGbZ7jPZhdkP3RZldcBGU/p5YpkI+BVdGZZ1K3hPz272zNp/d7+4i6n41pb+7UaqHGJt2zkZE1jbv+++Lcq2mFn51phJ5S2fbrczTWHfaMSq2FHfWCGZRfXdMINfzdu4GeTggcEu3PkAvZNbOsY999JmUwI0UfepDQkI4jkCSONSK+ZrwwgjDkvzFnbR+wg==
-X-YMail-OSG: ylTlCfAVM1mNJDd8QjJ0ZLL.iLXAIZPAxbCtvzHeK8uGpJxFlIS4KnTw4dErzhw
- fqwYAvTC2PxROLx4IPUjI.lG_3ni32g5.kRQXWgD28KXfH0lxU4PNQySgyZywT9RtshfuWR3HFRP
- YWCfqhF2lO22bB4buWxosIa3.RJV18t9EyF3kC3b4R5lZYdgAHwqWDhoKzZ_iyUxV09ZjApUuFMG
- DzNb8mb5_vxaSiyZfJT4.62rHnfMVPjaK82kUNEthikwKQ_lLzGiuoC6p3TXNf6LhVHqlb1tX70A
- GA7gRZxJ08.sjsA79C5PQK2fPRX8vTejKAwkJdAEgwu6chRf03aOAS9LuPtf8WY9kVD9CChGKSyv
- lwCDRt2wK.3BzElbggPPGp8jVBMmEYOGlmTjzP7n9YvVCJtKxB3bjmugxkSmJfNIY5l0w8gyWxxt
- iycZSgqieeQwWd00tLd8m8K0ISiqys_DXcRubnHOVCJT2mPtOfMBl_uI6wwFra9tGPHv9BpW2eZw
- Ja1TghgzisgEx5sCxwM7O990YaaY0IOKWTPWj9y_mgJGCNzCWxoEaMXhwht4oQ.dxbRFkfansHOk
- FMiFv2GzRvzj0rW55PKVKGgrQVUk3tLQnSjNXZ74shCGHmLBg6_58K1B9YkQJKg538__08pC9nBs
- cbMW_k0ZBilAzNjfqcG0mfywGZany6RT8L_R5h99Po4yj4vYTAiGLyeFnej8.J_xECkXaYxkMQgG
- NM.B3jbJxk9UP7ZCwbKmxF.XVj7QSYVfRDQIQmOyaB2GUqKvrj99uM6ztjsyzmj61ngKDKfswbDl
- eoniJYtrGwVubTE_HlyenAiks5V2EQio._WN2YNW89824ceg7nMRXz6MOrAFJ.hA7SH2NdjmdX0B
- PKiOKPrhe7duwWa42yKcwKlVSpuY56jcIQ79R_vvgKYND9FGFnfMsbLJBI_f5rTyL7t3m0B6sY.q
- DtKSbLRM4ZcpOM9CpvmQP9Am3BgYm4kQYXAOY5NZL3P42Is8r1aEQXI7Wi35GuJck5bUo6uYB4Wf
- SsL1_.ZX5BkpciZZCAF.LfpFm.xmDRo9T.Ywmjpl57YQllo201amuihrxGHPvxNcX32uu8Cy2A47
- mR4FaHMNjL8Gf8S0YFXIXa64_fmk4w9IJrMpkVMyW96vffn1s2xTia.uf.XDSxEDEbVCpsO5s8_6
- 4c.yejFWarQ8Ga3kdYP_8ksYFuEl2THKuE7GEzQydMlBc4vxtZwIfADIqMcWyIENCj0vPJWV6Frx
- PdaHBsnwzlhjfE12thBW7GT1xUYLq0r3xz0rvyVSQw5fuyjI2jvbErd6sJ8iry2jxpzQ2Q.pgW1I
- fix5Y2CAAHQjUVBvoTDqHl90oj2mHj36sFL6n.mJue1_yDegNZs452ptcwSowzZEygAs2k9xXiP7
- .5ufFmeOzMMo2A54yz3wKMHSMEgS82WSNs6AbAvLu2A_WY23BjZ.0UP_rbEOQqRQDpL7VB3UpAxX
- pwdLS3vLCrjN8cCzG5bT_jgEV3_QJkZtv_bkXnyTzHiMsUskqkeE2XZ6woPjvgfqlg1hWb7ln1p5
- j2GUVmQ_Gx6XlmuwEXLQsf7AMF73_Ok57brHY3Xt6cOdswIAhSus3OmxEEDGnYL7m9Jo2hSerSk4
- Epg5WiRmr0HW8znp70EVs3bSazyo1umQQL0XYKjlZO20oXov4NbzcXu3WANxKd8XKpvJ3kjwIRxN
- tbffOz2PAWhFHfUCLzAP6bEt2p5eRHIyl4AMZiBTpwkSrkH4FXRsh7JYeNa.lUz0is.NEuDCvwGT
- rWEmyTBz.QuX4zfcb3of9K3MqxtFxnFkhRypxRtIVceGZ.90e2EjhKYAB7NKo2NgTwRCU3CtsdWy
- VoxOkCKsQmuRVPB2bA_pR0q.uQ0irqnqVaSglF34Rr9gqt6BRG9yfGuGxYgaWi5IOoA_HczUUju3
- Oic.VSBN6XOTK6i8t64CD4QDJ9NySXsSiigtd7Kup159H_fEpURwt5YWTSr2TlpPaTXm_N4tuKQF
- CSGbhm2b3MltMqC6NH24K1Uq6oQuWo4RUUTv8IQdh0eT2v2SuDHoU2z6xT84PuYN6go.8Iy0Lqso
- Sz6z50fJkrFL2Qr4BiwS.wjMRLegBLOMn0k7alzJ42FNFQLQKFiBnvVD0HYJzu6hxV6eRYV5D60T
- JI6GQcFKuBff9M2of1AmMnF.04IM6QepkjvrV32hzYu_lYhPgey35wRsgGs0qJAGR21OLjpC861w
- e.TyXO5Z1JN5t98T65VHw3ooV.unQIe.7JCc1He.U_MqFzcAoTS94yyvsV2sNMLduwEM-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 8d70e5ed-64ab-4e7f-8a95-7b16a6fffe37
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Nov 2023 00:51:03 +0000
-Received: by hermes--production-gq1-6775bfb8fc-ljztx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4e636f04e136106655e334c750e19110;
-          Tue, 21 Nov 2023 00:50:58 +0000 (UTC)
-Message-ID: <24a9f95d-6a28-47d3-a0cf-48e1698e2445@schaufler-ca.com>
-Date: Mon, 20 Nov 2023 16:50:56 -0800
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04EDD91;
+	Mon, 20 Nov 2023 16:58:56 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailout.nyi.internal (Postfix) with ESMTP id 925595C08FE;
+	Mon, 20 Nov 2023 19:58:54 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 20 Nov 2023 19:58:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+	1700528334; x=1700614734; bh=V+uiXlKPvNiSTddVjBYykRHs2cpkUMtUO9f
+	attfUkdY=; b=v1yEOt4gnlEQrivyQwP3ZY95Ms11uhGl1TurWuaSnyAmzdPCQUM
+	DkZDOXX3ERnlKhrTkigZfd35v1PiYv3q6+cY4VsqkyV+lt0c+e8kw1yo50o1XwRt
+	t3v8XrZppNt7cALQd/uiq/N84sR/+AbH0LrPl4wM6ZBiVuA9Bl/6sWep8uWnFijj
+	BJCe73UHw0O0IX6FP976puwDAnIip/kRjbeQCqv+HWnR6L1z7JO4IWAHEYGcUhuU
+	CZurn2fxJZVDKwGE9VaLubsX8GoR/cIskAE7X9jWwSG7mMFJGj4VMnX9jKHv+KvH
+	i4sdy/7fMirYbiW+Y4k7JJ/jGjrssSI4P1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1700528334; x=1700614734; bh=V+uiXlKPvNiSTddVjBYykRHs2cpkUMtUO9f
+	attfUkdY=; b=A28uO3ltBUV/O2YSABG7oN9i5ukIwzLRoX4n8JxbRCDi+ogVdS1
+	jZ8K/aI6LOoQQpXpJBGzt8t6W+vztioh8P92xivcz/ex6glmlzXMeB0NK3BbTZyp
+	PlylwKjLWMC0LXecW4PzMvSjiQOct8UzI6rigN7Hy9HL76OKgDipoND1g8qGrDIp
+	qrnzNliK2CxqpzrxxMT0CbIIcLRWCnozrKd4O/K5fk87KtkZdUH+rMYd/fz5/yFN
+	AF6E+O9A0UsfEGUDAfRA0embYQbGhF3ss2zYx4oPPpwUOa1ROP6Aqpicvbp2p8D6
+	JOH/Q5Mr4b9VGDjNYmC8RYDQsEN/sq2iqhA==
+X-ME-Sender: <xms:zgBcZUSAW0zyQFEpnO_8lhED1scIY1B_ZsRcQR8JMZGdb9pjh0vV_A>
+    <xme:zgBcZRzR2DYw-hktv59IlWIBPI6xsN3me0kmQwcUkhVqM6bXPi3n3vg0DXOPQYxsh
+    u00V1k6wIWd>
+X-ME-Received: <xmr:zgBcZR2JYCuFCnkgizmtpldGu7B3T_S87p2gvAvvv6YyHmrwAOFtrdBtMtGov3zsUgHAnHRLaHm2R-y6tqes6aL0anSrx0keyvbSdqU57UAQAMSyuV9qVn1b>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudegkedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:zgBcZYDb6QS0jvb4PH_mMgfhaiHvD73L74InZHVsU9IqOr8pvvdflg>
+    <xmx:zgBcZdg5C8ki3U2EDpkRCqsNLQu49heLXiaGZovAykdP93-BOtJaVA>
+    <xmx:zgBcZUpNxtMEnoG5U6cMQFu7ttmzSE9orjCrTDfosDn_cAyU_NlkQw>
+    <xmx:zgBcZSbyk-g-1F-fnFJAlH7GlF9ZQ9ABczU_SgDpgwHfy8PbCzSLoA>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 20 Nov 2023 19:58:48 -0500 (EST)
+Message-ID: <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
+Date: Tue, 21 Nov 2023 08:58:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 25/25] security: Enforce ordering of 'ima' and 'evm'
- LSMs
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: proposed libc interface and man page for statmount(2)
 Content-Language: en-US
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
- jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
- mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231120173318.1132868-1-roberto.sassu@huaweicloud.com>
- <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231120173318.1132868-26-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+To: Ian Kent <ikent@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+ Florian Weimer <fweimer@redhat.com>
+Cc: libc-alpha@sourceware.org, linux-man <linux-man@vger.kernel.org>,
+ Alejandro Colomar <alx@kernel.org>, Linux API <linux-api@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+ David Howells <dhowells@redhat.com>, Christian Brauner
+ <christian@brauner.io>, Amir Goldstein <amir73il@gmail.com>,
+ Arnd Bergmann <arnd@arndb.de>
+References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+ <87fs15qvu4.fsf@oldenburg.str.redhat.com>
+ <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
+ <87leawphcj.fsf@oldenburg.str.redhat.com>
+ <CAJfpegsCfuPuhtD+wfM3mUphqk9AxWrBZDa9-NxcdnsdAEizaw@mail.gmail.com>
+ <CAJfpegsBqbx5+VMHVHbYx2CdxxhtKHYD4V-nN5J3YCtXTdv=TQ@mail.gmail.com>
+ <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
+ <878r6soc13.fsf@oldenburg.str.redhat.com>
+ <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
+ <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+From: Ian Kent <raven@themaw.net>
+In-Reply-To: <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11/20/2023 9:33 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On 21/11/23 07:56, Ian Kent wrote:
+> On 20/11/23 20:34, Miklos Szeredi wrote:
+>> On Mon, Nov 20, 2023 at 01:16:24PM +0100, Florian Weimer wrote:
+>>> Is the ID something specific to the VFS layer itself, or does it come
+>>> from file systems?
+>> It comes from the VFS.
+>>
+>>
+>>> POSIX has a seekdir/telldir interface like that, I don't think file
+>>> system authors like it.  Some have added dedicated data structures for
+>>> it to implement somewhat predictable behavior in the face of concurrent
+>>> directory modification.  Would this interface suffer from similar
+>>> issues?
+>> The same issue was solved for /proc/$$/mountinfo using cursors.
 >
-> The ordering of LSM_ORDER_LAST LSMs depends on how they are placed in the
-> .lsm_info.init section of the kernel image.
+> The mounts are now using an rb-tree, I think the the cursor solution can
 >
-> Without making any assumption on the LSM ordering based on how they are
-> compiled, enforce that ordering at LSM infrastructure level.
+> only work for a linear list, the case is very different.
 >
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/security.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
 >
-> diff --git a/security/security.c b/security/security.c
-> index 351a124b771c..b98db79ca500 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -263,6 +263,18 @@ static void __init initialize_lsm(struct lsm_info *lsm)
->  	}
->  }
->  
-> +/* Find an LSM with a given name. */
-> +static struct lsm_info __init *find_lsm(const char *name)
-> +{
-> +	struct lsm_info *lsm;
-> +
-> +	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++)
-> +		if (!strcmp(lsm->name, name))
-> +			return lsm;
-> +
-> +	return NULL;
-> +}
-> +
->  /*
->   * Current index to use while initializing the lsm id list.
->   */
-> @@ -333,10 +345,23 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->  
->  	/* LSM_ORDER_LAST is always last. */
->  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-> +		/* Do it later, to enforce the expected ordering. */
-> +		if (!strcmp(lsm->name, "ima") || !strcmp(lsm->name, "evm"))
-> +			continue;
-> +
+>>
+>> This patchset removes the need for cursors, since the new unique 
+>> mount ID can be
+>> used to locate the current position without having to worry about 
+>> deleted and
+>> added mounts.
+>
+> IIRC the problem with proc mounts traversals was because the lock was 
+> taken
+>
+> and dropped between reads so that mount entries could be deleted (not 
+> sure
+>
+> adding had quite the same problem) from the list in between reads.
+>
+>
+> Sounds like I'll need to look at the code but first though but an rb-tree
+>
+> can have mounts removed and new mounts inserted if the locks are dropped
+>
+> if the retrieval is slit between multiple calls.
+>
+>
+> So I'm struggling to see why this isn't the same problem and I don't 
+> think
+>
+> introducing cursors in this case would work (thankfully, lets do this 
+> again
+>
+> please).
 
-Hard coding the ordering of LSMs is incredibly ugly and unlikely to scale.
-Not to mention perplexing the next time someone creates an LSM that "has to be last".
+Mmm ... apologies for the poor description above.
 
-Why isn't LSM_ORDER_LAST sufficient? If it really isn't, how about adding
-and using LSM_ORDER_LAST_I_REALLY_MEAN_IT* ?
+That last bit is definitely "lets 'not' do this again please!"
 
-Alternatively, a declaration of ordering requirements with regard to other
-LSMs in lsm_info. You probably don't care where ima is relative to Yama,
-but you need to be after SELinux and before evm. lsm_info could have 
-must_precede and must_follow lists. Maybe a must_not_combine list, too,
-although I'm hoping to make that unnecessary. 
 
-And you should be using LSM_ID values instead of LSM names.
+Ian
 
----
-* Naming subject to Paul's sensibilities, of course.
-
->  		if (lsm->order == LSM_ORDER_LAST)
->  			append_ordered_lsm(lsm, "   last");
->  	}
->  
-> +	/* Ensure that the 'ima' and 'evm' LSMs are last and in this order. */
-> +	lsm = find_lsm("ima");
-> +	if (lsm)
-> +		append_ordered_lsm(lsm, "   last");
-> +
-> +	lsm = find_lsm("evm");
-> +	if (lsm)
-> +		append_ordered_lsm(lsm, "   last");
-> +
->  	/* Disable all LSMs not in the ordered list. */
->  	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
->  		if (exists_ordered_lsm(lsm))
 
