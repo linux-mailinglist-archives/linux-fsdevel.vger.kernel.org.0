@@ -1,122 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-3336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EB07F37AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 21:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DA97F37CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 22:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F932B216C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 20:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C818B217EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 21:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF99A47799;
-	Tue, 21 Nov 2023 20:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDB851038;
+	Tue, 21 Nov 2023 21:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b="bAwn9NJ3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RHig11LW"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="sqTMrify"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA839188;
-	Tue, 21 Nov 2023 12:43:05 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id A89DD5C0742;
-	Tue, 21 Nov 2023 15:43:02 -0500 (EST)
-Received: from imap45 ([10.202.2.95])
-  by compute5.internal (MEProxy); Tue, 21 Nov 2023 15:43:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=owlfolio.org; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:sender
-	:subject:subject:to:to; s=fm3; t=1700599382; x=1700685782; bh=cP
-	+4Qdty6Ljkpn+y6fboIIavjZKfR1zjbDxx2nbUIFU=; b=bAwn9NJ3+05S40b+eO
-	kl/0W6aIkS95XzxogpgShnf7tDnsrqgKA2kJeaUDtWHI+bVRCYzUkK1fvYa68/oz
-	FaGopVcbHWkDXADUovAv8J+8FLn1ib8RsrIBOV6ImNQvp+qfn5uT+ILmycqSaI0H
-	vhWPZH4TiMU8DSqfO9zPT1uIVZavoQLzr7G8Xdquz0upH03+9aRqmzno0GFxmyMD
-	qn30BazpYWnJatJrTkbf+U/K3J7R+MmV0LBZqYhREib/o7rlesyq4hAPsfQvRar6
-	vwWZWF/LX2bzyJXgXtZtNHML5ca9H5njKD6ZBMFnIgWZaQ1ouXagNGGb/LwjHx+t
-	Bn/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:sender:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm1; t=1700599382; x=1700685782; bh=cP+4Qdty6Ljkp
-	n+y6fboIIavjZKfR1zjbDxx2nbUIFU=; b=RHig11LWilXrXEkwF6b4y6XMfX+E/
-	dz0xkIJVYHtmexR1EFQpb1vJYvQSZtKLqyvWL7bMWHfn2Ni+EXEmZA7R/iJpbEQI
-	vz8RK5To8NLvZz5XMjg4fx2DZ2tLqDwensBWFtbuHwQVotWclyYJlm3pB7x+N5kO
-	Pw3IMD4oG9GFRYVqW3Pa2wKPpC+ht9IKXsFDEcNAyM4OE2+tkhUj0OfrnLXhSnJW
-	jGYLO68UwFnv8cgyv597+dhlEfrsVqdzp6y9eDn8CtY9QB1/mcuwIPDqiUXqKkX7
-	66BhjLk4RgJDWLdeMxdlgfH6pyZ9bedwJTvdoxuUgg6M1XFZdpunL7TxQ==
-X-ME-Sender: <xms:VRZdZSSrahJN9hlxrV-5hE7qEMwyIbZ4ATvZFUQP9LTER36m7I-7OQ>
-    <xme:VRZdZXxSU_KMvlQGmqccaPVBSek-wy91AFimCNFx5Fpetyzrtv51MaI3OD276PZRj
-    nfvtlD7OluIqg-qfvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudegledgudefvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdgk
-    rggtkhcuhggvihhnsggvrhhgfdcuoeiirggtkhesohiflhhfohhlihhordhorhhgqeenuc
-    ggtffrrghtthgvrhhnpefhleefheduhfelgeehgeejveehueeihedvgfeuueetteelieei
-    teehfefhleduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpeiirggtkhesohiflhhfohhlihhordhorhhg
-X-ME-Proxy: <xmx:VRZdZf3eRZMU6GUBrFb4HV4lWpNxZs2H8GioLjST2bSGWSaRqMLqiA>
-    <xmx:VRZdZeCrNrcRbo3jfcKAoVMMJqsRNNtYw9oWDQ8S7CGLhOPJgH5Obw>
-    <xmx:VRZdZbgydg_il2MZV7y_pTSaSe0O9mQzbwh5HcIuKGCtvX983jSvbA>
-    <xmx:VhZdZeoV9OZIL5gwZCVfI7UnFreGewzGo-dXiYLH_nTKRHBUj0GEEw>
-Feedback-ID: i876146a2:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A37C5272007C; Tue, 21 Nov 2023 15:43:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1178-geeaf0069a7-fm-20231114.001-geeaf0069
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EF1188
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 13:00:40 -0800 (PST)
+Received: by mail-yb1-xb43.google.com with SMTP id 3f1490d57ef6-dae0ab8ac3eso5569930276.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 13:00:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1700600440; x=1701205240; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Et1T/4CIg1bn0RJ/0qLXSU1v0CZNumbOb0QRnvPzlCY=;
+        b=sqTMrifyIFlkQGEO9spnXBEulrX28mcMN54AstPJ5v8VVBii6IQ5b4aZyadwdnpbxr
+         Gx2/Nq/r4Aoa47XZ3+Cv9zI1ZsL7bhFUWkR/twLRdDb6Oj3KHjfhRs9CAC13v3RseLyk
+         i1E3PyHBkZwXxsNnC4QZ6QveS86HaheG8fW8Oexpo5Up7z8RpcpRt1hE4oTIKPwsseQl
+         wAVn3iYJF0WGaPGbPWUjlk7h6XTedKNeIZND8K2H2uJH2SXuBh32bYCpXzvVUCCO1yBd
+         HQtwXpZTdj1FTO+WgiQLRru9rCMlY67YdtlEfuS+acjeR2P2p37nxFvrgpyiGX+UJpfT
+         hiyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700600440; x=1701205240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Et1T/4CIg1bn0RJ/0qLXSU1v0CZNumbOb0QRnvPzlCY=;
+        b=OU2eNfmmk5EZVEnahQp6OD82cjcAU3jrGKLenrBUaZojpaWmZs9nFQGoVcHv3YJyC6
+         B3tnlh83LyE1VNa10xZAukQBSi2mz2KY7gRC7R2btxvf7XWF3ZcgoyCRgTpMxYmXe3cN
+         d9L0bBkjzPzf27c1acHDsAQBHMg5VlVoj1iSy82frW6oOd7/AWtdiAsJgBFDEnN1m29v
+         o/jZyUlrnT5so/d7I41eINyi96i51/lyjQhk/wcvT1M6Aud7P1GjFht9z0G4BDF1bnUr
+         87LEBfaeo/n36IEy4pFpzCRuz1PGpOUS3xnEh9X/bn2DXZc9Se4xAaOd6WsQIVYsqUwp
+         Xtyg==
+X-Gm-Message-State: AOJu0YwJUCRELMKhN9FG/JOXF7o7pAGTobhjQWicmYsaj3fUNbMlFmBB
+	bOfezOQSwLGq/ZnYA3V9vV7RsA==
+X-Google-Smtp-Source: AGHT+IHA0vyj1VjKT6uNBssGhzuHuXq63pevVtGPB6A2hsws/7W0yt51WcO77L+7tzeaMlzsN0NNmg==
+X-Received: by 2002:a25:60d6:0:b0:d9a:66a1:a957 with SMTP id u205-20020a2560d6000000b00d9a66a1a957mr184606ybb.13.1700600439791;
+        Tue, 21 Nov 2023 13:00:39 -0800 (PST)
+Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id v127-20020a254885000000b00da041da21e7sm932379yba.65.2023.11.21.13.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Nov 2023 13:00:38 -0800 (PST)
+Date: Tue, 21 Nov 2023 16:00:32 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: allow calling kiocb_end_write() unmatched with
+ kiocb_start_write()
+Message-ID: <20231121210032.GA1675377@perftesting>
+References: <20231121132551.2337431-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c1a2c685-6985-4010-933e-a633be647b49@app.fastmail.com>
-In-Reply-To: 
- <CAJfpegt-rNHdH1OdZHoNu86W6m-OHjWn8yT6LezFzPNxymWLzw@mail.gmail.com>
-References: 
- <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
- <87fs15qvu4.fsf@oldenburg.str.redhat.com>
- <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
- <87leawphcj.fsf@oldenburg.str.redhat.com>
- <CAJfpegsCfuPuhtD+wfM3mUphqk9AxWrBZDa9-NxcdnsdAEizaw@mail.gmail.com>
- <CAJfpegsBqbx5+VMHVHbYx2CdxxhtKHYD4V-nN5J3YCtXTdv=TQ@mail.gmail.com>
- <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
- <878r6soc13.fsf@oldenburg.str.redhat.com>
- <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
- <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
- <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
- <c3209598-c8bc-5cc9-cec5-441f87c2042b@themaw.net>
- <bcbc0c84-0937-c47a-982c-446ab52160a2@themaw.net>
- <CAJfpegt-rNHdH1OdZHoNu86W6m-OHjWn8yT6LezFzPNxymWLzw@mail.gmail.com>
-Date: Tue, 21 Nov 2023 15:42:41 -0500
-From: "Zack Weinberg" <zack@owlfolio.org>
-To: "Miklos Szeredi" <miklos@szeredi.hu>, "Ian Kent" <raven@themaw.net>
-Cc: "Ian Kent" <ikent@redhat.com>, "Florian Weimer" <fweimer@redhat.com>,
- "GNU libc development" <libc-alpha@sourceware.org>,
- 'linux-man' <linux-man@vger.kernel.org>,
- "Alejandro Colomar" <alx@kernel.org>,
- "Linux API" <linux-api@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- "Karel Zak" <kzak@redhat.com>, "David Howells" <dhowells@redhat.com>,
- "Christian Brauner" <christian@brauner.io>,
- "Amir Goldstein" <amir73il@gmail.com>, "Arnd Bergmann" <arnd@arndb.de>
-Subject: Re: proposed libc interface and man page for statmount(2)
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231121132551.2337431-1-amir73il@gmail.com>
 
-On Tue, Nov 21, 2023, at 2:42 PM, Miklos Szeredi wrote:
->
-> handle = listmount_open(mnt_id, flags);
-> for (;;) {
->     child_id = listmount_next(handle);
->     if (child_id == 0)
->         break;
->     /* do something with child_id */
-> }
-> listmount_close(handle)
+On Tue, Nov 21, 2023 at 03:25:51PM +0200, Amir Goldstein wrote:
+> We want to move kiocb_start_write() into vfs_iocb_iter_write(), after
+> the permission hook, but leave kiocb_end_write() in the write completion
+> handler of the callers of vfs_iocb_iter_write().
+> 
+> After this change, there will be no way of knowing in completion handler,
+> if write has failed before or after calling kiocb_start_write().
+> 
+> Add a flag IOCB_WRITE_STARTED, which is set and cleared internally by
+> kiocb_{start,end}_write(), so that kiocb_end_write() could be called for
+> cleanup of async write, whether it was successful or whether it failed
+> before or after calling kiocb_start_write().
+> 
+> This flag must not be copied by stacked filesystems (e.g. overlayfs)
+> that clone the iocb to another iocb for io request on a backing file.
+> 
+> Link: https://lore.kernel.org/r/CAOQ4uxihfJJRxxUhAmOwtD97Lg8PL8RgXw88rH1UfEeP8AtP+w@mail.gmail.com/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Why can't these be plain old open, read, and close? Starting from a pathname in /proc or /sys. Doesn't allow lseek.
+This is only a problem for cachefiles and overlayfs, and really just for
+cachefiles because of the error handling thing.
 
-zw
+What if instead we made vfs_iocb_iter_write() call kiocb_end_write() in the ret
+!= EIOCBQUEUED case, that way it is in charge of the start and the end, and the
+only case where the file system has to worry about is the actual io completion
+path when the kiocb is completed.
+
+The result is something like what I've pasted below, completely uncompiled and
+untested.  Thanks,
+
+Josef
+
+diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+index 009d23cd435b..5857241c5918 100644
+--- a/fs/cachefiles/io.c
++++ b/fs/cachefiles/io.c
+@@ -259,7 +259,8 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
+ 
+ 	_enter("%ld", ret);
+ 
+-	kiocb_end_write(iocb);
++	if (ki->was_async)
++		kiocb_end_write(iocb);
+ 
+ 	if (ret < 0)
+ 		trace_cachefiles_io_error(object, inode, ret,
+@@ -319,8 +320,6 @@ int __cachefiles_write(struct cachefiles_object *object,
+ 		ki->iocb.ki_complete = cachefiles_write_complete;
+ 	atomic_long_add(ki->b_writing, &cache->b_writing);
+ 
+-	kiocb_start_write(&ki->iocb);
+-
+ 	get_file(ki->iocb.ki_filp);
+ 	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
+ 
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index 131621daeb13..19d2682d28f9 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -295,11 +295,6 @@ static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
+ 	struct kiocb *iocb = &aio_req->iocb;
+ 	struct kiocb *orig_iocb = aio_req->orig_iocb;
+ 
+-	if (iocb->ki_flags & IOCB_WRITE) {
+-		kiocb_end_write(iocb);
+-		ovl_file_modified(orig_iocb->ki_filp);
+-	}
+-
+ 	orig_iocb->ki_pos = iocb->ki_pos;
+ 	ovl_aio_put(aio_req);
+ }
+@@ -310,6 +305,11 @@ static void ovl_aio_rw_complete(struct kiocb *iocb, long res)
+ 						   struct ovl_aio_req, iocb);
+ 	struct kiocb *orig_iocb = aio_req->orig_iocb;
+ 
++	if (iocb->ki_flags & IOCB_WRITE) {
++		kiocb_end_write(iocb);
++		ovl_file_modified(orig_iocb->ki_filp);
++	}
++
+ 	ovl_aio_cleanup_handler(aio_req);
+ 	orig_iocb->ki_complete(orig_iocb, res);
+ }
+@@ -458,7 +458,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		aio_req->iocb.ki_flags = ifl;
+ 		aio_req->iocb.ki_complete = ovl_aio_queue_completion;
+ 		refcount_set(&aio_req->ref, 2);
+-		kiocb_start_write(&aio_req->iocb);
+ 		ret = vfs_iocb_iter_write(real.file, &aio_req->iocb, iter);
+ 		ovl_aio_put(aio_req);
+ 		if (ret != -EIOCBQUEUED)
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 4771701c896b..6ec3abed43dc 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -821,7 +821,10 @@ ssize_t vfs_iocb_iter_read(struct file *file, struct kiocb *iocb,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	kiocb_start_write(iocb);
+ 	ret = call_read_iter(file, iocb, iter);
++	if (ret != -EIOCBQUEUED)
++		kiocb_end_write(iocb);
+ out:
+ 	if (ret >= 0)
+ 		fsnotify_access(file);
 
