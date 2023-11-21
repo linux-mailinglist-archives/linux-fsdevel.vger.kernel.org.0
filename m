@@ -1,79 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-3321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574D87F32E8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 16:58:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB117F3464
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 18:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA263282E6A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 15:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396831C2104F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 17:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C05059143;
-	Tue, 21 Nov 2023 15:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D500C5674C;
+	Tue, 21 Nov 2023 17:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BukZWAwW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AF3D45
-	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 07:58:05 -0800 (PST)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6bd5730bef9so6811306b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 07:58:05 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3E412A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 09:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1700586071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v93FwVXoTzkwCTHloTDbAyzgq12DcyzYpNvU8V0mZJE=;
+	b=BukZWAwWoMzDnykIthbpTWJ20Htab7d/JFNhjEAivJgpF3MMFRDqTHDhczlSz2nbrasmOl
+	CP5KoyjwzSoZflizWQkJ9+l4zkgBPebSWM3Mk/Uw9WW+xY9j/B+00EQqza+Y3qb+FXjhw5
+	E+5MM7FENi3MCmp+ollVwLNwi6F5AaQ=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-500-MbhEzHf2PfSL9yjuUkjNDw-1; Tue, 21 Nov 2023 12:01:09 -0500
+X-MC-Unique: MbhEzHf2PfSL9yjuUkjNDw-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3b3edaef525so7498052b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Nov 2023 09:01:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700582285; x=1701187085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mtd40gvVZOgliZlu2JdNIeTyUfDE7Z/9wGS/OB7/wxc=;
-        b=Ag5gbnS3kJuaPeclYc6u6pP0C4AJs+i+j3DX1REZ+V+otnfa8qSjBVinyn+zdXy5lt
-         pTWmUE0mLwyu9SsvPKliWWUemEOhjv/eXIKIABZJQSy3KHYhGAuKdPflxd5Kjjdl4qiq
-         dutTMOoSX6zmOhyKQqPOk820vkg2Yz7BubGzozUtHD8XRAjOcU/XOj9wHqcXjnzvR4C4
-         NrALQO/biqOT9IleN9cV3c8ju15ZvSJR/uROAG7glAbQY0H8VILA/yXRrACt0FK1TA6P
-         lsstFFV7zu+Dqiv+UUoIzH8i317BmbjeUFy4BOPRWN5wIDqAm7HNnGS77wMasg45uES4
-         fWEg==
-X-Gm-Message-State: AOJu0YzIev/uRZE3GjmRjfEyzOK5yIbNLp21qgE7sp0GM2uu5RnUn5JY
-	MPZn2wWq6Vc68HVy62r+t1519ysPTwieUAJvChSvzNwqCchq
-X-Google-Smtp-Source: AGHT+IHELjvdHTY2zj4TwvzBjmYjsWI+xOBCOLYeJxvpvDnYxDNJqankuMtl8QGZRNJdh1bCLF9cVLeOAEq8HhRNWKvvoyLJKEAC
+        d=1e100.net; s=20230601; t=1700586069; x=1701190869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v93FwVXoTzkwCTHloTDbAyzgq12DcyzYpNvU8V0mZJE=;
+        b=p+//dU4yFNQt/22ZGaR4dKeGS+y0fJnrnbKIDI3mCFNEWEvGAdmiH9M10fcyXhnEgc
+         I89uQ98v+ZLPzTVNkwpKI5cNN4fuQhsS1THfMkObwscq4Qco4NMaODhxDwPB/PBRdX8l
+         QcRAMr6BWr+wdS7bH+v44QqzbhnC3JdtL2schlq4EWI5I8qqqtFRTptIMngv8XHXkSwN
+         L0u8n+UhYnQIN0kxImaHX1fkcfmAgAqP+QZg/lNY2sxE19SOVzrO2kWJgm4gLXumSV4p
+         s+6XHsqOc09vs6+caIzgwX5QAtJhIjP+9RY7YyHfFJdCQfBj3NZ8UoSWyOIcTjMxynN6
+         Lt8A==
+X-Gm-Message-State: AOJu0YysmAkKsle74xK0pN0HXa79ZsgS29QHTo+Kj/Rfc9Slub6BIG5p
+	YPrDGJA7C+YTFrNzHWl4lNMAS+Xmyt9Bwbu1SlGAEclicxSJuxqqkKO6eZpCNvvaFH0d6OMikLe
+	aGSGW/HpWNCznJGlZPYXaAQwUcAuB323ouP/AMLGchQ==
+X-Received: by 2002:a05:6358:7e47:b0:169:a9d4:3faf with SMTP id p7-20020a0563587e4700b00169a9d43fafmr12581525rwm.11.1700586069082;
+        Tue, 21 Nov 2023 09:01:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHzwqwXTcQOMVq6+W/ToO1AFQnqdGCzNKV3DK3CezCKFyIOZTTVBddsfYxnVHAme/q2N84DW6rxhPtI5xPi31c=
+X-Received: by 2002:a05:6358:7e47:b0:169:a9d4:3faf with SMTP id
+ p7-20020a0563587e4700b00169a9d43fafmr12581454rwm.11.1700586068588; Tue, 21
+ Nov 2023 09:01:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:10c1:b0:690:bc3f:4fe2 with SMTP id
- d1-20020a056a0010c100b00690bc3f4fe2mr1005253pfu.1.1700582285241; Tue, 21 Nov
- 2023 07:58:05 -0800 (PST)
-Date: Tue, 21 Nov 2023 07:58:05 -0800
-In-Reply-To: <000000000000b0cabf05f90bcb15@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000005f3f6060aabab28@google.com>
-Subject: Re: [syzbot] [ntfs3?] general protection fault in ni_readpage_cmpr
-From: syzbot <syzbot+af224b63e76b2d869bc3@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, neilb@suse.de, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	torvalds@linux-foundation.org
+References: <20231105163040.14904-1-pbonzini@redhat.com> <20231105163040.14904-35-pbonzini@redhat.com>
+ <CAF7b7mpmuYLTY6OQfRRoOryfO-2e1ZumQ6SCQDHHPD5XFyhFTQ@mail.gmail.com> <13677ced-e464-4cdb-82ae-4236536e169c@sirena.org.uk>
+In-Reply-To: <13677ced-e464-4cdb-82ae-4236536e169c@sirena.org.uk>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 21 Nov 2023 18:00:56 +0100
+Message-ID: <CABgObfZdk9Jn60QLJGweVZMN_yWsxo1d7W3Mu-NNTPZVO0uCnw@mail.gmail.com>
+Subject: Re: [PATCH 34/34] KVM: selftests: Add a memory region subtest to
+ validate invalid flags
+To: Mark Brown <broonie@kernel.org>
+Cc: Anish Moorthy <amoorthy@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Sean Christopherson <seanjc@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Xu Yilun <yilun.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Fuad Tabba <tabba@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Vlastimil Babka <vbabka@suse.cz>, Vishal Annapurve <vannapurve@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Maciej Szmigiero <mail@maciej.szmigiero.name>, 
+	David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>, 
+	Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>, 
+	Liam Merwick <liam.merwick@oracle.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Nov 20, 2023 at 3:09=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Wed, Nov 08, 2023 at 05:08:01PM -0800, Anish Moorthy wrote:
+> > Applying [1] and [2] reveals that this also breaks non-x86 builds- the
+> > MEM_REGION_GPA/SLOT definitions are guarded behind an #ifdef
+> > __x86_64__, while the usages introduced here aren't.
+> >
+> > Should
+> >
+> > On Sun, Nov 5, 2023 at 8:35=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.c=
+om> wrote:
+> > >
+> > > +       test_invalid_memory_region_flags();
+> >
+> > be #ifdef'd, perhaps? I'm not quite sure what the intent is.
+>
+> This has been broken in -next for a week now, do we have any progress
+> on a fix or should we just revert the patch?
 
-commit 013ff63b649475f0ee134e2c8d0c8e65284ede50
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Jun 30 12:17:02 2023 +0000
+Sorry, I was away last week. I have now posted a patch.
 
-    fs/ntfs3: Add more attributes checks in mi_enum_attr()
+Paolo
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14b8bcbf680000
-start commit:   1b29d271614a Merge tag 'staging-6.4-rc7' of git://git.kern..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac246111fb601aec
-dashboard link: https://syzkaller.appspot.com/bug?extid=af224b63e76b2d869bc3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1241fd03280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1476e8f3280000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Add more attributes checks in mi_enum_attr()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
