@@ -1,164 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-3335-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3386A7F3726
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 21:12:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EB07F37AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 21:43:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642071C20B3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 20:12:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F932B216C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 20:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED070487AD;
-	Tue, 21 Nov 2023 20:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF99A47799;
+	Tue, 21 Nov 2023 20:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=owlfolio.org header.i=@owlfolio.org header.b="bAwn9NJ3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RHig11LW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C06112;
-	Tue, 21 Nov 2023 12:12:40 -0800 (PST)
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-58a106dd421so289204eaf.0;
-        Tue, 21 Nov 2023 12:12:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700597559; x=1701202359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5z/CJO7e3iTwW4OMryoZAQBQUEGSEP4jZRhULM4OHDs=;
-        b=niODAcAYzbWEiM4h00v4dGeZa1l50jnblAiSSSTVxyaXgJs9dYkynkt8jJ7Y0hBiJg
-         kzW/N4FzmAL0Hw2leXPBwZ0KJMsF/i8sqONruOxI0O6WTnUBb9zAzvdkoYsb2oGgroWd
-         PwM8GDbtZI+UltWgBgdOc4U5sD0KcCtUWnuZ1NUvu3vdqyU3WdK7z/tJ29OJZyXdfXkK
-         l6MeSWpMwolqd+StjrYRCsRf8RWlrucCDu9uAMH1b3kxSw0cHDYFHQUZhiAnZiZ+rIRn
-         dBFxtXcyUS/sg2vpPBAdoUqkASzZwpHHA0ZXSZKjyv+SbRmf8/DfeGGrwwUBnhPjXnBD
-         1Rdw==
-X-Gm-Message-State: AOJu0YzRSHkWcHHLbVvb7lqVysoIkI7/4clFaJMYW6pYDXzZZ2JhBDnF
-	N6v5q9+6xDrJNbo6IMmuRI2J1B8sUDt/ga8L7Z4=
-X-Google-Smtp-Source: AGHT+IEPpI7LCkGuTlQ2ai4rgFgZxkdyiflGAcrmt0ZxmM0ZeZKNY3C9NGeoHJYYe5NxiwO+1ax2JVnzEJE83F9MLsI=
-X-Received: by 2002:a05:6820:311:b0:58c:e80a:537d with SMTP id
- l17-20020a056820031100b0058ce80a537dmr459120ooe.1.1700597559366; Tue, 21 Nov
- 2023 12:12:39 -0800 (PST)
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA839188;
+	Tue, 21 Nov 2023 12:43:05 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id A89DD5C0742;
+	Tue, 21 Nov 2023 15:43:02 -0500 (EST)
+Received: from imap45 ([10.202.2.95])
+  by compute5.internal (MEProxy); Tue, 21 Nov 2023 15:43:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=owlfolio.org; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm3; t=1700599382; x=1700685782; bh=cP
+	+4Qdty6Ljkpn+y6fboIIavjZKfR1zjbDxx2nbUIFU=; b=bAwn9NJ3+05S40b+eO
+	kl/0W6aIkS95XzxogpgShnf7tDnsrqgKA2kJeaUDtWHI+bVRCYzUkK1fvYa68/oz
+	FaGopVcbHWkDXADUovAv8J+8FLn1ib8RsrIBOV6ImNQvp+qfn5uT+ILmycqSaI0H
+	vhWPZH4TiMU8DSqfO9zPT1uIVZavoQLzr7G8Xdquz0upH03+9aRqmzno0GFxmyMD
+	qn30BazpYWnJatJrTkbf+U/K3J7R+MmV0LBZqYhREib/o7rlesyq4hAPsfQvRar6
+	vwWZWF/LX2bzyJXgXtZtNHML5ca9H5njKD6ZBMFnIgWZaQ1ouXagNGGb/LwjHx+t
+	Bn/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1700599382; x=1700685782; bh=cP+4Qdty6Ljkp
+	n+y6fboIIavjZKfR1zjbDxx2nbUIFU=; b=RHig11LWilXrXEkwF6b4y6XMfX+E/
+	dz0xkIJVYHtmexR1EFQpb1vJYvQSZtKLqyvWL7bMWHfn2Ni+EXEmZA7R/iJpbEQI
+	vz8RK5To8NLvZz5XMjg4fx2DZ2tLqDwensBWFtbuHwQVotWclyYJlm3pB7x+N5kO
+	Pw3IMD4oG9GFRYVqW3Pa2wKPpC+ht9IKXsFDEcNAyM4OE2+tkhUj0OfrnLXhSnJW
+	jGYLO68UwFnv8cgyv597+dhlEfrsVqdzp6y9eDn8CtY9QB1/mcuwIPDqiUXqKkX7
+	66BhjLk4RgJDWLdeMxdlgfH6pyZ9bedwJTvdoxuUgg6M1XFZdpunL7TxQ==
+X-ME-Sender: <xms:VRZdZSSrahJN9hlxrV-5hE7qEMwyIbZ4ATvZFUQP9LTER36m7I-7OQ>
+    <xme:VRZdZXxSU_KMvlQGmqccaPVBSek-wy91AFimCNFx5Fpetyzrtv51MaI3OD276PZRj
+    nfvtlD7OluIqg-qfvA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudegledgudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdgk
+    rggtkhcuhggvihhnsggvrhhgfdcuoeiirggtkhesohiflhhfohhlihhordhorhhgqeenuc
+    ggtffrrghtthgvrhhnpefhleefheduhfelgeehgeejveehueeihedvgfeuueetteelieei
+    teehfefhleduieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpeiirggtkhesohiflhhfohhlihhordhorhhg
+X-ME-Proxy: <xmx:VRZdZf3eRZMU6GUBrFb4HV4lWpNxZs2H8GioLjST2bSGWSaRqMLqiA>
+    <xmx:VRZdZeCrNrcRbo3jfcKAoVMMJqsRNNtYw9oWDQ8S7CGLhOPJgH5Obw>
+    <xmx:VRZdZbgydg_il2MZV7y_pTSaSe0O9mQzbwh5HcIuKGCtvX983jSvbA>
+    <xmx:VhZdZeoV9OZIL5gwZCVfI7UnFreGewzGo-dXiYLH_nTKRHBUj0GEEw>
+Feedback-ID: i876146a2:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A37C5272007C; Tue, 21 Nov 2023 15:43:01 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1178-geeaf0069a7-fm-20231114.001-geeaf0069
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231116224725.3695952-1-avadhut.naik@amd.com>
-In-Reply-To: <20231116224725.3695952-1-avadhut.naik@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 21 Nov 2023 21:12:28 +0100
-Message-ID: <CAJZ5v0icY=_s6hZGajv4cQr4yYoWZACy5sKQGD4qKsf+z2H5UA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Add support for Vendor Defined Error Types in Einj Module
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-acpi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	rafael@kernel.org, gregkh@linuxfoundation.org, lenb@kernel.org, 
-	james.morse@arm.com, tony.luck@intel.com, bp@alien8.de, 
-	linux-kernel@vger.kernel.org, alexey.kardashevskiy@amd.com, 
-	yazen.ghannam@amd.com, avadnaik@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <c1a2c685-6985-4010-933e-a633be647b49@app.fastmail.com>
+In-Reply-To: 
+ <CAJfpegt-rNHdH1OdZHoNu86W6m-OHjWn8yT6LezFzPNxymWLzw@mail.gmail.com>
+References: 
+ <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
+ <87fs15qvu4.fsf@oldenburg.str.redhat.com>
+ <CAJfpegvqBtePer8HRuShe3PAHLbCg9YNUpOWzPg-+=gGwQJWpw@mail.gmail.com>
+ <87leawphcj.fsf@oldenburg.str.redhat.com>
+ <CAJfpegsCfuPuhtD+wfM3mUphqk9AxWrBZDa9-NxcdnsdAEizaw@mail.gmail.com>
+ <CAJfpegsBqbx5+VMHVHbYx2CdxxhtKHYD4V-nN5J3YCtXTdv=TQ@mail.gmail.com>
+ <ZVtEkeTuqAGG8Yxy@maszat.piliscsaba.szeredi.hu>
+ <878r6soc13.fsf@oldenburg.str.redhat.com>
+ <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
+ <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+ <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
+ <c3209598-c8bc-5cc9-cec5-441f87c2042b@themaw.net>
+ <bcbc0c84-0937-c47a-982c-446ab52160a2@themaw.net>
+ <CAJfpegt-rNHdH1OdZHoNu86W6m-OHjWn8yT6LezFzPNxymWLzw@mail.gmail.com>
+Date: Tue, 21 Nov 2023 15:42:41 -0500
+From: "Zack Weinberg" <zack@owlfolio.org>
+To: "Miklos Szeredi" <miklos@szeredi.hu>, "Ian Kent" <raven@themaw.net>
+Cc: "Ian Kent" <ikent@redhat.com>, "Florian Weimer" <fweimer@redhat.com>,
+ "GNU libc development" <libc-alpha@sourceware.org>,
+ 'linux-man' <linux-man@vger.kernel.org>,
+ "Alejandro Colomar" <alx@kernel.org>,
+ "Linux API" <linux-api@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ "Karel Zak" <kzak@redhat.com>, "David Howells" <dhowells@redhat.com>,
+ "Christian Brauner" <christian@brauner.io>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Arnd Bergmann" <arnd@arndb.de>
+Subject: Re: proposed libc interface and man page for statmount(2)
+Content-Type: text/plain
 
-On Thu, Nov 16, 2023 at 11:47=E2=80=AFPM Avadhut Naik <avadhut.naik@amd.com=
-> wrote:
+On Tue, Nov 21, 2023, at 2:42 PM, Miklos Szeredi wrote:
 >
-> This patchset adds support for Vendor Defined Error types in the einj
-> module by exporting a binary blob file in module's debugfs directory.
-> Userspace tools can write OEM Defined Structures into the blob file as
-> part of injecting Vendor defined errors. Similarly, the very tools can
-> also read from the blob file for information, if any, provided by the
-> firmware after error injection.
->
-> The first patch refactors available_error_type_show() function to ensure
-> all errors supported by the platform are output through einj module's
-> available_error_type file in debugfs.
->
-> The second patch adds a write callback for binary blobs created through
-> debugfs_create_blob() API.
->
-> The third patch fixes the permissions of panicinfo file in debugfs to
-> ensure it remains read-only
->
-> The fourth patch adds the required support i.e. establishing the memory
-> mapping and exporting it through debugfs blob file for Vendor-defined
-> Error types.
->
-> Changes in v2:
->  - Split the v1 patch, as was recommended, to have a separate patch for
-> changes in debugfs.
->  - Refactored available_error_type_show() function into a separate patch.
->  - Changed file permissions to octal format to remove checkpatch warnings=
-.
->
-> Changes in v3:
->  - Use BIT macro for generating error masks instead of hex values since
-> ACPI spec uses bit numbers.
->  - Handle the corner case of acpi_os_map_iomem() returning NULL through
-> a local variable to a store the size of OEM defined data structure.
->
-> Changes in v4:
->  - Fix permissions for panicinfo file in debugfs.
->  - Replace acpi_os_map_iomem() and acpi_os_unmap_iomem() calls with
->    acpi_os_map_memory() and acpi_os_unmap_memory() respectively to avert
->    sparse warnings as suggested by Alexey.
->
-> Changes in v5:
->  - Change permissions of the "oem_error" file, being created in einj
->    module's debugfs directory, from "w" to "rw" since system firmware
->    in some cases might provide some information through OEM-defined
->    structure for tools to consume.
->  - Remove Reviewed-by: Alexey Kardashevskiy <aik@amd.com> from the
->    fourth patch since permissions of the oem_error file have changed.
->  - Add Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org> for
->    second and third patch.
->  - Rebase on top of tip master.
->
-> Changes in v6:
->  - Minor formatting undertaken in the first and fourth patch per v5
->    feedback by Boris.
->  - Added check in the second patch to ensure that only owners can write
->    into the binary blob files. Mentioned the same in commit description.
->  - Modified commit description of the third patch per recommendations
->    provided by Tony.
->  - Add Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de> for first and
->    fourth patch.
->  - Add Reviewed-by: Tony Luck <tony.luck@intel.com> for second, third and
->    fourth patch.
->
->
-> [NOTE:
->
->  - The second patch already had the below tags for v5:
->     Reviewed-by: Alexey Kardashevskiy <aik@amd.com>
->     Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
->    Since the changes to the patch for v6 are very minimal i.e. addition o=
-f
->    a check to ensure that only owners write into the blobs, have retained
->    the tags for v6 as well.
->
->  - Similarly, the third patch already had the below tag for v5:
->     Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
->    Since only the commit description was slightly changed for this patch
->    in v6, have retained the tag for v6 too.
->
->    Having said so, if advised, will attempt to reacquire the tags.]
->
->
-> Avadhut Naik (4):
->   ACPI: APEI: EINJ: Refactor available_error_type_show()
->   fs: debugfs: Add write functionality to debugfs blobs
->   platform/chrome: cros_ec_debugfs: Fix permissions for panicinfo
->   ACPI: APEI: EINJ: Add support for vendor defined error types
->
->  drivers/acpi/apei/einj.c                  | 71 +++++++++++++++--------
->  drivers/platform/chrome/cros_ec_debugfs.c |  2 +-
->  fs/debugfs/file.c                         | 28 +++++++--
->  3 files changed, 72 insertions(+), 29 deletions(-)
->
->
-> base-commit: a1cc6ec03d1e56b795607fce8442222b37d1dd99
-> --
+> handle = listmount_open(mnt_id, flags);
+> for (;;) {
+>     child_id = listmount_next(handle);
+>     if (child_id == 0)
+>         break;
+>     /* do something with child_id */
+> }
+> listmount_close(handle)
 
-All patches in the series applied as 6.8 material, thanks!
+Why can't these be plain old open, read, and close? Starting from a pathname in /proc or /sys. Doesn't allow lseek.
+
+zw
 
