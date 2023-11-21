@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-3273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB437F22AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 01:59:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC047F22F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 02:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E421C21650
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 00:59:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA046281F0A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 01:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A9B185F;
-	Tue, 21 Nov 2023 00:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962C35CAF;
+	Tue, 21 Nov 2023 01:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="v1yEOt4g";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A28uO3lt"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="g95WT1DG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rf3eWgdR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04EDD91;
-	Mon, 20 Nov 2023 16:58:56 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id 925595C08FE;
-	Mon, 20 Nov 2023 19:58:54 -0500 (EST)
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D566BC;
+	Mon, 20 Nov 2023 17:12:47 -0800 (PST)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailout.nyi.internal (Postfix) with ESMTP id DABF45C0AE5;
+	Mon, 20 Nov 2023 20:12:45 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 20 Nov 2023 19:58:54 -0500
+  by compute7.internal (MEProxy); Mon, 20 Nov 2023 20:12:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-	1700528334; x=1700614734; bh=V+uiXlKPvNiSTddVjBYykRHs2cpkUMtUO9f
-	attfUkdY=; b=v1yEOt4gnlEQrivyQwP3ZY95Ms11uhGl1TurWuaSnyAmzdPCQUM
-	DkZDOXX3ERnlKhrTkigZfd35v1PiYv3q6+cY4VsqkyV+lt0c+e8kw1yo50o1XwRt
-	t3v8XrZppNt7cALQd/uiq/N84sR/+AbH0LrPl4wM6ZBiVuA9Bl/6sWep8uWnFijj
-	BJCe73UHw0O0IX6FP976puwDAnIip/kRjbeQCqv+HWnR6L1z7JO4IWAHEYGcUhuU
-	CZurn2fxJZVDKwGE9VaLubsX8GoR/cIskAE7X9jWwSG7mMFJGj4VMnX9jKHv+KvH
-	i4sdy/7fMirYbiW+Y4k7JJ/jGjrssSI4P1w==
+	1700529165; x=1700615565; bh=hQ6LSIMI9JojpXHU1pL4rCJ9vV5P1fOwNTs
+	de3nw9MM=; b=g95WT1DG5it1PGKDVe//gduLFqz48SodXtCLK2XiMbsyXBjLwBU
+	6KGxhWNF/VshZ31mXXyE16+Syqq/DtuGaIoB1WY74B4lvB7LxsCe0DXEEFQfmIBJ
+	Ld/4j7piKTEZnu/vQaTKSSwBSnVRA6TZk44GSubBHusZ6/cw+rFYdvRtW8ZF3gJA
+	NkproMlJKMBq+Csv6fvB6n4HOTydGBUcouiLUlWNkeMSOwatn2lapc7afGSgAIiV
+	HZAevrBkTRUVh72/5gYXTBBpDXsiD4rV3J3PBxlA6I6TwORv3RdbIlENoGixA2JT
+	mRBb30Ry2ka6w+9ew6Z2ovbxz+ho5keAdcA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
 	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1700528334; x=1700614734; bh=V+uiXlKPvNiSTddVjBYykRHs2cpkUMtUO9f
-	attfUkdY=; b=A28uO3ltBUV/O2YSABG7oN9i5ukIwzLRoX4n8JxbRCDi+ogVdS1
-	jZ8K/aI6LOoQQpXpJBGzt8t6W+vztioh8P92xivcz/ex6glmlzXMeB0NK3BbTZyp
-	PlylwKjLWMC0LXecW4PzMvSjiQOct8UzI6rigN7Hy9HL76OKgDipoND1g8qGrDIp
-	qrnzNliK2CxqpzrxxMT0CbIIcLRWCnozrKd4O/K5fk87KtkZdUH+rMYd/fz5/yFN
-	AF6E+O9A0UsfEGUDAfRA0embYQbGhF3ss2zYx4oPPpwUOa1ROP6Aqpicvbp2p8D6
-	JOH/Q5Mr4b9VGDjNYmC8RYDQsEN/sq2iqhA==
-X-ME-Sender: <xms:zgBcZUSAW0zyQFEpnO_8lhED1scIY1B_ZsRcQR8JMZGdb9pjh0vV_A>
-    <xme:zgBcZRzR2DYw-hktv59IlWIBPI6xsN3me0kmQwcUkhVqM6bXPi3n3vg0DXOPQYxsh
-    u00V1k6wIWd>
-X-ME-Received: <xmr:zgBcZR2JYCuFCnkgizmtpldGu7B3T_S87p2gvAvvv6YyHmrwAOFtrdBtMtGov3zsUgHAnHRLaHm2R-y6tqes6aL0anSrx0keyvbSdqU57UAQAMSyuV9qVn1b>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudegkedgfedtucetufdoteggodetrfdotf
+	1700529165; x=1700615565; bh=hQ6LSIMI9JojpXHU1pL4rCJ9vV5P1fOwNTs
+	de3nw9MM=; b=rf3eWgdRWucatQDu3IySA97TVfxtyhxagJ/+SgpwtB57/JSNvgJ
+	cptXe7C5K7o+vkAGZfpNwO9keLtKUWhdRsMQAqTPCIa15ByUUfcm6hLIAyOJt6h5
+	PZEX0cOqiLrfpgXB+UNMurtqYHuhzKtLpB0I7rGZRemX+PzIXkd85Ff625lghVBT
+	W4mL42UcMZBkdODw73MGhXT/5qAte5UxWS1iD/0jj42O15I9nkQ/x3k6xaJ77Q9d
+	RDmM3oPGDtwBHDnj+eHprfcnT0Yqywv6SO5d8UKs4jCA19g4gTglVG3GWwZEcXZi
+	ow94udOyWe08VvFYOBXhTgvxcPiZ1SoAf1Q==
+X-ME-Sender: <xms:DQRcZcwrvXKS6PmTnbimQfqdb0l_--UcMwpGRsLRXGTdfrqFYxUwGQ>
+    <xme:DQRcZQQK61-yK0RaT9ROmQt3rW_0GCvnpRHPPm6vIKDzEbL0FjjC45kNNbx3DrFG7
+    sro9d0iMbj2>
+X-ME-Received: <xmr:DQRcZeUzI61p9yb5L-xRTwv2YhSq3Mp0ADxxMvSW4bpo9s0PeVTKdNFqsw3GoHlDAmkRkVoT_euqgkjjxI15j4HpH0F2FYHvJGKZ-qRnBasRXAtliOyU95hB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudegkedgfedvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
+    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtkeertddtfeejnecuhfhrohhmpefkrghn
     ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epgedvteevvdefiedvueeujeegtedvheelhfehtefhkefgjeeuffeguefgkeduhfejnecu
+    epueejtdffffeuheefgfdvfeekudffvdejveevudekveevkeehtdehgeekueejvdevnecu
     vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
     esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:zgBcZYDb6QS0jvb4PH_mMgfhaiHvD73L74InZHVsU9IqOr8pvvdflg>
-    <xmx:zgBcZdg5C8ki3U2EDpkRCqsNLQu49heLXiaGZovAykdP93-BOtJaVA>
-    <xmx:zgBcZUpNxtMEnoG5U6cMQFu7ttmzSE9orjCrTDfosDn_cAyU_NlkQw>
-    <xmx:zgBcZSbyk-g-1F-fnFJAlH7GlF9ZQ9ABczU_SgDpgwHfy8PbCzSLoA>
+X-ME-Proxy: <xmx:DQRcZahCnAoDHpRZOguqTd26TqBjpbgR7mEq7u9drldjwR73wOhxEg>
+    <xmx:DQRcZeAVj0fEKrQOed-DBWnmLeBhDyk8FYM1wmedgGRJk63pKPMfPw>
+    <xmx:DQRcZbIs-vCX5ydFNPnhjAR-StdaseLaZcTmh8wlQD-8L9-yWrIVsw>
+    <xmx:DQRcZS7gZsNuOksxxOeYOkAQL1QFamjF4sghDhi7LrAxaFZvFhyJ4A>
 Feedback-ID: i31e841b0:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 Nov 2023 19:58:48 -0500 (EST)
-Message-ID: <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
-Date: Tue, 21 Nov 2023 08:58:44 +0800
+ 20 Nov 2023 20:12:40 -0500 (EST)
+Message-ID: <c3209598-c8bc-5cc9-cec5-441f87c2042b@themaw.net>
+Date: Tue, 21 Nov 2023 09:12:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,7 +77,6 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.15.1
-Subject: Re: proposed libc interface and man page for statmount(2)
 Content-Language: en-US
 To: Ian Kent <ikent@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
  Florian Weimer <fweimer@redhat.com>
@@ -97,65 +96,90 @@ References: <CAJfpegsMahRZBk2d2vRLgO8ao9QUP28BwtfV1HXp5hoTOH6Rvw@mail.gmail.com>
  <878r6soc13.fsf@oldenburg.str.redhat.com>
  <ZVtScPlr-bkXeHPz@maszat.piliscsaba.szeredi.hu>
  <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+ <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
 From: Ian Kent <raven@themaw.net>
-In-Reply-To: <15b01137-6ed4-0cd8-4f61-4ee870236639@redhat.com>
+Subject: Re: proposed libc interface and man page for statmount(2)
+In-Reply-To: <6aa721ad-6d62-d1e8-0e65-5ddde61ce281@themaw.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 21/11/23 07:56, Ian Kent wrote:
-> On 20/11/23 20:34, Miklos Szeredi wrote:
->> On Mon, Nov 20, 2023 at 01:16:24PM +0100, Florian Weimer wrote:
->>> Is the ID something specific to the VFS layer itself, or does it come
->>> from file systems?
->> It comes from the VFS.
+On 21/11/23 08:58, Ian Kent wrote:
+> On 21/11/23 07:56, Ian Kent wrote:
+>> On 20/11/23 20:34, Miklos Szeredi wrote:
+>>> On Mon, Nov 20, 2023 at 01:16:24PM +0100, Florian Weimer wrote:
+>>>> Is the ID something specific to the VFS layer itself, or does it come
+>>>> from file systems?
+>>> It comes from the VFS.
+>>>
+>>>
+>>>> POSIX has a seekdir/telldir interface like that, I don't think file
+>>>> system authors like it.  Some have added dedicated data structures for
+>>>> it to implement somewhat predictable behavior in the face of 
+>>>> concurrent
+>>>> directory modification.  Would this interface suffer from similar
+>>>> issues?
+>>> The same issue was solved for /proc/$$/mountinfo using cursors.
+>>
+>> The mounts are now using an rb-tree, I think the the cursor solution can
+>>
+>> only work for a linear list, the case is very different.
 >>
 >>
->>> POSIX has a seekdir/telldir interface like that, I don't think file
->>> system authors like it.  Some have added dedicated data structures for
->>> it to implement somewhat predictable behavior in the face of concurrent
->>> directory modification.  Would this interface suffer from similar
->>> issues?
->> The same issue was solved for /proc/$$/mountinfo using cursors.
->
-> The mounts are now using an rb-tree, I think the the cursor solution can
->
-> only work for a linear list, the case is very different.
->
->
+>>>
+>>> This patchset removes the need for cursors, since the new unique 
+>>> mount ID can be
+>>> used to locate the current position without having to worry about 
+>>> deleted and
+>>> added mounts.
 >>
->> This patchset removes the need for cursors, since the new unique 
->> mount ID can be
->> used to locate the current position without having to worry about 
->> deleted and
->> added mounts.
+>> IIRC the problem with proc mounts traversals was because the lock was 
+>> taken
+>>
+>> and dropped between reads so that mount entries could be deleted (not 
+>> sure
+>>
+>> adding had quite the same problem) from the list in between reads.
+>>
+>>
+>> Sounds like I'll need to look at the code but first though but an 
+>> rb-tree
+>>
+>> can have mounts removed and new mounts inserted if the locks are dropped
+>>
+>> if the retrieval is slit between multiple calls.
+>>
+>>
+>> So I'm struggling to see why this isn't the same problem and I don't 
+>> think
+>>
+>> introducing cursors in this case would work (thankfully, lets do this 
+>> again
+>>
+>> please).
 >
-> IIRC the problem with proc mounts traversals was because the lock was 
-> taken
+> Mmm ... apologies for the poor description above.
 >
-> and dropped between reads so that mount entries could be deleted (not 
-> sure
->
-> adding had quite the same problem) from the list in between reads.
->
->
-> Sounds like I'll need to look at the code but first though but an rb-tree
->
-> can have mounts removed and new mounts inserted if the locks are dropped
->
-> if the retrieval is slit between multiple calls.
->
->
-> So I'm struggling to see why this isn't the same problem and I don't 
-> think
->
-> introducing cursors in this case would work (thankfully, lets do this 
-> again
->
-> please).
+> That last bit is definitely "lets 'not' do this again please!"
 
-Mmm ... apologies for the poor description above.
+IMHO keeping it simpler is much better.
 
-That last bit is definitely "lets 'not' do this again please!"
+
+The interface where a buffer is passed and overflow returns an error so 
+that one
+
+can retry is far simpler and the in-kernel simplification of taking the 
+lock over
+
+the whole retrieval is far less problematic.
+
+
+If there's anything that could be useful then it's keeping a count of 
+the mounts
+
+in a given namespace (I think we have such a count in nsproxy struct 
+already) and
+
+adding a way to get that for storage needs estimation.
 
 
 Ian
