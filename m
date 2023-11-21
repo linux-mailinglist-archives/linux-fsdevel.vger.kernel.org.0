@@ -1,131 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-3305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70ACD7F2BDF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 12:36:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729F87F2C24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 12:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F05C7B21C87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 11:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2FB7B218AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Nov 2023 11:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A8E495D0;
-	Tue, 21 Nov 2023 11:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmeiffTg"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12C748CCF;
+	Tue, 21 Nov 2023 11:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2D648796;
-	Tue, 21 Nov 2023 11:35:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A8579C43397;
-	Tue, 21 Nov 2023 11:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700566534;
-	bh=oGAuwTicPekfqewJ5UASm1lSeWTImG5/jlwpiQOtNH4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=DmeiffTgUDp1rTSuWTBIH0noGc9+pfAunRCpFV9RP0agCAYOJzagLRJov8sQNK0xv
-	 SJHrbaVQHLiOupZd7a2mFgTPUOXUp1/154spaLavMpRostzBSiepUHgTynMYwynL7V
-	 3IWdHMmh7cu/rNHtFrBKwX7bDNuHcCaINujM6HooCmFdJFFadfIQHJoVQ8MqKvWSDD
-	 bxrOGJZrSBVZwMWvNFFVIEvPlI0+Enpzu1MjAdxxvMQPGBbfA23rjxAKKejtTee+aF
-	 3ONz2EzCq/xDGO7VFGmvWMcRlw7AADadVcVnoVlD2K5aWeX8+w9EOgavdmRMLJlO6E
-	 GM4SDwgE1dRgA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEB9C61D96;
-	Tue, 21 Nov 2023 11:35:34 +0000 (UTC)
-From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Tue, 21 Nov 2023 12:35:14 +0100
-Subject: [PATCH v2 4/4] coda: Remove the now superfluous sentinel elements
- from ctl_table array
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 78170122;
+	Tue, 21 Nov 2023 03:54:43 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBD48FEC;
+	Tue, 21 Nov 2023 03:55:29 -0800 (PST)
+Received: from arm.com (e121798.cambridge.arm.com [10.1.197.44])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD1103F7A6;
+	Tue, 21 Nov 2023 03:54:38 -0800 (PST)
+Date: Tue, 21 Nov 2023 11:54:36 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Peter Collingbourne <pcc@google.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, steven.price@arm.com,
+	anshuman.khandual@arm.com, vincenzo.frascino@arm.com,
+	david@redhat.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 20/37] mm: compaction: Reserve metadata storage in
+ compaction_alloc()
+Message-ID: <ZVyafCOxqfa7T130@arm.com>
+References: <20230823131350.114942-1-alexandru.elisei@arm.com>
+ <20230823131350.114942-21-alexandru.elisei@arm.com>
+ <CAMn1gO67Lz_Xw5SCrq3fF4rOCSw3sXYK8qC77TTGnJeWd0b0Sg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id:
- <20231121-jag-sysctl_remove_empty_elem_fs-v2-4-39eab723a034@samsung.com>
-References:
- <20231121-jag-sysctl_remove_empty_elem_fs-v2-0-39eab723a034@samsung.com>
-In-Reply-To:
- <20231121-jag-sysctl_remove_empty_elem_fs-v2-0-39eab723a034@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, willy@infradead.org, 
- josh@joshtriplett.org, Kees Cook <keescook@chromium.org>, 
- David Howells <dhowells@redhat.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Benjamin LaHaise <bcrl@kvack.org>, 
- Eric Biederman <ebiederm@xmission.com>, 
- Trond Myklebust <trond.myklebust@hammerspace.com>, 
- Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Jan Kara <jack@suse.cz>, 
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
- Anton Altaparmakov <anton@tuxera.com>, Namjae Jeon <linkinjeon@kernel.org>, 
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
- Joseph Qi <joseph.qi@linux.alibaba.com>, Iurii Zaikin <yzaikin@google.com>, 
- Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>, 
- coda@cs.cmu.edu
-Cc: linux-cachefs@redhat.com, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-mm@kvack.org, 
- linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
- ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
- linux-xfs@vger.kernel.org, codalist@coda.cs.cmu.edu, 
- Joel Granados <j.granados@samsung.com>
-X-Mailer: b4 0.13-dev-86aa5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=826; i=j.granados@samsung.com;
- h=from:subject:message-id; bh=EW/W6zZslOuVBpUJvlaE+2AnAGMLV/WhhzCxxx+6aVM=;
- b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBlXJYEhjHRDFWxlKQCSEU/qOb5kLqYz6u3U07bi
- 5UcDbFrWhKJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZVyWBAAKCRC6l81St5ZB
- T28vC/0S1zrvnTbJB+9oXn+IU0QpNx0mcFoiShnCrNbA/8SKyDultWZ4UpuxummzF7Lp+lD5UN+
- 4kqlWdmqD0V15U9xcN+pg38JPAovwP6moJBKy0HxvGy5aKxZ7+Y4R2MALVzBu8ZHTVamwzcZBoQ
- y0Xxbaj4s9W7qSDKOoaeDdm3TElOl7O20irSXZ9xiPuhHRXyCKA3vGE0thmz9U0qY1cg6LkLgPm
- v7Bu7tG7wm6zAxw+5LxN1bNfF50whGqTLF4dxL892xn7dKSHteqNMG72ZipSkLz6DTnnZ16ywxy
- tGL1fmgTYzVDSWs26SDMONstCNERLXUuQgaWOxESQeWhJqyuEmU0SQpHvkMFZvGrrbfBvWc86uV
- UydKbDOAO1UEpnjCajlfO8PErya2zHHi6+08qjXLmzyXf6q6ubr31K9RqsKpvaZ6Ot3MGk/sRDV
- 2H+R3PXl3yyyRe8rC/hT8qKksu59/IYAi6vOcEVkAes4tJCtjzMJ4au9zv7osWjoRyWUs=
-X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received:
- by B4 Relay for j.granados@samsung.com/default with auth_id=70
-X-Original-From: Joel Granados <j.granados@samsung.com>
-Reply-To: <j.granados@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMn1gO67Lz_Xw5SCrq3fF4rOCSw3sXYK8qC77TTGnJeWd0b0Sg@mail.gmail.com>
 
-From: Joel Granados <j.granados@samsung.com>
+Hi Peter,
 
-This commit comes at the tail end of a greater effort to remove the
-empty elements at the end of the ctl_table arrays (sentinels) which
-will reduce the overall build time size of the kernel and run time
-memory bloat by ~64 bytes per sentinel (further information Link :
-https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
+On Mon, Nov 20, 2023 at 08:49:32PM -0800, Peter Collingbourne wrote:
+> Hi Alexandru,
+> 
+> On Wed, Aug 23, 2023 at 6:16 AM Alexandru Elisei
+> <alexandru.elisei@arm.com> wrote:
+> >
+> > If the source page being migrated has metadata associated with it, make
+> > sure to reserve the metadata storage when choosing a suitable destination
+> > page from the free list.
+> >
+> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > ---
+> >  mm/compaction.c | 9 +++++++++
+> >  mm/internal.h   | 1 +
+> >  2 files changed, 10 insertions(+)
+> >
+> > diff --git a/mm/compaction.c b/mm/compaction.c
+> > index cc0139fa0cb0..af2ee3085623 100644
+> > --- a/mm/compaction.c
+> > +++ b/mm/compaction.c
+> > @@ -570,6 +570,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+> >         bool locked = false;
+> >         unsigned long blockpfn = *start_pfn;
+> >         unsigned int order;
+> > +       int ret;
+> >
+> >         /* Strict mode is for isolation, speed is secondary */
+> >         if (strict)
+> > @@ -626,6 +627,11 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+> >
+> >                 /* Found a free page, will break it into order-0 pages */
+> >                 order = buddy_order(page);
+> > +               if (metadata_storage_enabled() && cc->reserve_metadata) {
+> > +                       ret = reserve_metadata_storage(page, order, cc->gfp_mask);
+> 
+> At this point the zone lock is held and preemption is disabled, which
+> makes it invalid to call reserve_metadata_storage.
 
-Remove empty sentinel from coda_table
+You are correct, I missed that. I dropped reserving tag storage during
+compaction in the next iteration, so fortunately I unintentionally fixed
+it.
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
- fs/coda/sysctl.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
+Alex
 
-diff --git a/fs/coda/sysctl.c b/fs/coda/sysctl.c
-index a247c14aaab7..9f2d5743e2c8 100644
---- a/fs/coda/sysctl.c
-+++ b/fs/coda/sysctl.c
-@@ -36,7 +36,6 @@ static struct ctl_table coda_table[] = {
- 		.mode		= 0600,
- 		.proc_handler	= proc_dointvec
- 	},
--	{}
- };
- 
- void coda_sysctl_init(void)
-
--- 
-2.30.2
-
+> 
+> Peter
+> 
+> > +                       if (ret)
+> > +                               goto isolate_fail;
+> > +               }
+> >                 isolated = __isolate_free_page(page, order);
+> >                 if (!isolated)
+> >                         break;
+> > @@ -1757,6 +1763,9 @@ static struct folio *compaction_alloc(struct folio *src, unsigned long data)
+> >         struct compact_control *cc = (struct compact_control *)data;
+> >         struct folio *dst;
+> >
+> > +       if (metadata_storage_enabled())
+> > +               cc->reserve_metadata = folio_has_metadata(src);
+> > +
+> >         if (list_empty(&cc->freepages)) {
+> >                 isolate_freepages(cc);
+> >
+> > diff --git a/mm/internal.h b/mm/internal.h
+> > index d28ac0085f61..046cc264bfbe 100644
+> > --- a/mm/internal.h
+> > +++ b/mm/internal.h
+> > @@ -492,6 +492,7 @@ struct compact_control {
+> >                                          */
+> >         bool alloc_contig;              /* alloc_contig_range allocation */
+> >         bool source_has_metadata;       /* source pages have associated metadata */
+> > +       bool reserve_metadata;
+> >  };
+> >
+> >  /*
+> > --
+> > 2.41.0
+> >
 
