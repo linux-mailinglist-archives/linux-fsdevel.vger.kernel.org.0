@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-3382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AD57F4250
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:45:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F8A7F4251
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66365B216EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0896D280E34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00155645A;
-	Wed, 22 Nov 2023 09:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AE656469;
+	Wed, 22 Nov 2023 09:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/t21EOt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpTv0RoK"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25B45579B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153535579B;
+	Wed, 22 Nov 2023 09:45:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60BAC433C9;
 	Wed, 22 Nov 2023 09:45:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBB3C433C7;
-	Wed, 22 Nov 2023 09:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700646329;
-	bh=p7vhwNE+CJYbXpRAkTVE4uNTVeLjV9vl6fV2mHCV5l8=;
+	s=k20201202; t=1700646336;
+	bh=x72fc+VK4oqJgPWdK4g1pRbvmyi52iEXFShOF15RYHs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=J/t21EOtX9LkHO6S2pMhuc938Wc3YdgkYmn0ooGJB+tFn7kn2xaS1fJa9v/tWKi43
-	 ZTDDKJiFXArP+8mEXvmx2sBLcyO6KjFUwilZJ9QSpTmZBHex9DHtV7uGhhjFfTOdHA
-	 BFtt+5Y6vqCpuXIYKBUJbZqMwDI8e9aBheS5w/j6wc1DsyC3Z2ID5HtMpFHCoHTcJo
-	 rWLQurPTEuIvboKnpuVymwk7QeZNeC8YHWb609HHt82+32TM1oD3/3qoKdGeGwAAaa
-	 xy2l0tOR5Nb7hVNhSMufPGx6/Ar5BoHrwMGH9nsGTb2eLlGyS1xBLrlgKhaomAQEKx
-	 tYJH4Vzj89TFg==
+	b=EpTv0RoKA17/YgCmkJvV8UuVMOQQW4ty21K7jgH8A/zDrtvbdpHZTrkYfvOzn+Jrc
+	 PH9eCQwcx73OSxmNFKy6ELZOWGHDJDHp0DJAay+QyWiC3TQTN3uXMeyeM6Ok7/BnDh
+	 QqagZTyt/OwGcuBf3c5ln+69zT4wXopP+IhTN341xkPTlZ+qaoT1p+o9IVqjmGFiCh
+	 Q2mpgFpunOaHVub8T0um/ENHsTvoE9G7IVDz4lazbW0UPSQxbUJXEMd6NA/7iB/2k6
+	 rs4/3VYRT42yIe5Zv6PcFG1LwXPMzzULY2KwPyMGGSbntuGWCJu60ncwjmLo15AQCa
+	 BBo0vEZz1QLog==
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 22 Nov 2023 09:42:31 +0000
-Subject: [PATCH v7 21/39] arm64/gcs: Allocate a new GCS for threads with
- GCS enabled
+Date: Wed, 22 Nov 2023 09:42:32 +0000
+Subject: [PATCH v7 22/39] arm64/gcs: Implement shadow stack prctl()
+ interface
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-arm64-gcs-v7-21-201c483bd775@kernel.org>
+Message-Id: <20231122-arm64-gcs-v7-22-201c483bd775@kernel.org>
 References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
 In-Reply-To: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -68,216 +68,203 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5979; i=broonie@kernel.org;
- h=from:subject:message-id; bh=p7vhwNE+CJYbXpRAkTVE4uNTVeLjV9vl6fV2mHCV5l8=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlXc0GtL0+c11OyZaFaNeVlqO8pwcT9Q3SQtGvl
- DiVL+0NZkSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZV3NBgAKCRAk1otyXVSH
- 0I5ZB/9ZoJk5A/i0hsPYxTWiFmHCmO/wYkYfWs9TeOH7TaQylRIdkTSuSPmzgHhApbE5QeBZyaU
- uS997l8TNA33lJJ2js6ybFa7dhO+PFXo/WWqrdncps5Mt7P8IC0Zd/Z4jyBPVQumNeLPc2oJD5D
- uW83f704kQiGeBYcxmPTNph0Iy2NoFCK2tjIHAQ/zeTosrqitio0MFnrAvbvWNl5t/K3F67Tp6B
- Bf7jfpqYvIL/b83Z9wbP3/iID7f1dllpQQH5JL/Ig4/pVRu10RPXKm8ia5gAOIBI4b2tXMldcdb
- 2y5Sqo6qdVr9SvMj0mxKxslcvS7VqlDB4ZvxXeja7O8Ko7EQ
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5675; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=x72fc+VK4oqJgPWdK4g1pRbvmyi52iEXFShOF15RYHs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlXc0HgY785xSQh4xaC5GmEKN/hUf0aNGwZWzsN
+ J+sB9i9FraJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZV3NBwAKCRAk1otyXVSH
+ 0AVEB/9YxdfnJWe4XxsXvdgrnhh9yBgTzfPpy2Cfm+j5T5DjzF64dE8vzpwqEryRhKs6H0GDUgS
+ f3Jbjko6vejw/6rhQCpSZ8l5czU1WZGMsl/06vE7gRABuHVq5MwmtZvHXeUsAHT0lRk7eSUotPZ
+ C/ZwzmQLUgbPJovfzpfOAsLW5P0b/EapVNA2oFIdHZtMM//qhB7pyw6q51/cZ90L6yAuUYN7fyS
+ 0pJ8ll7w0v7j6BQ5KvRe+p08dRCuinUdbs2R5crhSIdKxhW15xbYoFkFVL33HR2qasw0LE/AlOu
+ /tAyjhhLeY0t8V+jk4kMFBDWkGOb4SlNjRsZuVJeFVbOOcUy
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-When a new thread is created by a thread with GCS enabled the GCS needs
-to be specified along with the regular stack.  clone3() has been
-extended to support this case, allowing userspace to explicitly request
-the size for the GCS to be created, but plain clone() is not extensible
-and existing clone3() users will not specify a size.
+Implement the architecture neutral prtctl() interface for setting the
+shadow stack status, this supports setting and reading the current GCS
+configuration for the current thread.
 
-For compatibility with these cases and also x86 (which did not initially
-implement clone3() support for shadow stacks) if no GCS is specified we
-will allocate one thread so when a thread is created which has GCS
-enabled allocate one for it.  We follow the extensively discussed x86
-implementation and allocate min(RLIMIT_STACK, 4G).  Since the GCS only
-stores the call stack and not any variables this should be more than
-sufficient for most applications.
+Userspace can enable basic GCS functionality and additionally also
+support for GCS pushes and arbatrary GCS stores.  It is expected that
+this prctl() will be called very early in application startup, for
+example by the dynamic linker, and not subsequently adjusted during
+normal operation.  Users should carefully note that after enabling GCS
+for a thread GCS will become active with no call stack so it is not
+normally possible to return from the function that invoked the prctl().
 
-GCSs allocated via this mechanism then it will be freed when the thread
-exits.
+State is stored per thread, enabling GCS for a thread causes a GCS to be
+allocated for that thread.
+
+Userspace may lock the current GCS configuration by specifying
+PR_SHADOW_STACK_ENABLE_LOCK, this prevents any further changes to the
+GCS configuration via any means.
+
+If GCS is not being enabled then all flags other than _LOCK are ignored,
+it is not possible to enable stores or pops without enabling GCS.
+
+When disabling the GCS we do not free the allocated stack, this allows
+for inspection of the GCS after disabling as part of fault reporting.
+Since it is not an expected use case and since it presents some
+complications in determining what to do with previously initialsed data
+on the GCS attempts to reenable GCS after this are rejected.  This can
+be revisted if a use case arises.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/gcs.h |  9 ++++++
- arch/arm64/kernel/process.c  | 25 +++++++++++++++
- arch/arm64/mm/gcs.c          | 76 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 110 insertions(+)
+ arch/arm64/include/asm/gcs.h       | 22 ++++++++++
+ arch/arm64/include/asm/processor.h |  1 +
+ arch/arm64/mm/gcs.c                | 82 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
 
 diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
-index 04594ef59dad..c1f274fdb9c0 100644
+index c1f274fdb9c0..48c97e63e56a 100644
 --- a/arch/arm64/include/asm/gcs.h
 +++ b/arch/arm64/include/asm/gcs.h
-@@ -8,6 +8,8 @@
- #include <asm/types.h>
- #include <asm/uaccess.h>
- 
-+struct kernel_clone_args;
-+
- static inline void gcsb_dsync(void)
- {
- 	asm volatile(".inst 0xd503227f" : : : "memory");
-@@ -58,6 +60,8 @@ static inline bool task_gcs_el0_enabled(struct task_struct *task)
- void gcs_set_el0_mode(struct task_struct *task);
- void gcs_free(struct task_struct *task);
- void gcs_preserve_current_state(void);
-+unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
-+				     const struct kernel_clone_args *args);
- 
- #else
- 
-@@ -69,6 +73,11 @@ static inline bool task_gcs_el0_enabled(struct task_struct *task)
- static inline void gcs_set_el0_mode(struct task_struct *task) { }
- static inline void gcs_free(struct task_struct *task) { }
- static inline void gcs_preserve_current_state(void) { }
-+static inline unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
-+						   const struct kernel_clone_args *args)
-+{
-+	return -ENOTSUPP;
-+}
- 
- #endif
- 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index fd80b43c2969..588d2bc4b329 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -285,9 +285,29 @@ static void flush_gcs(void)
- 	write_sysreg_s(0, SYS_GCSPR_EL0);
+@@ -50,6 +50,9 @@ static inline u64 gcsss2(void)
+ 	return Xt;
  }
  
-+static int copy_thread_gcs(struct task_struct *p,
-+			   const struct kernel_clone_args *args)
++#define PR_SHADOW_STACK_SUPPORTED_STATUS_MASK \
++	(PR_SHADOW_STACK_ENABLE | PR_SHADOW_STACK_WRITE | PR_SHADOW_STACK_PUSH)
++
+ #ifdef CONFIG_ARM64_GCS
+ 
+ static inline bool task_gcs_el0_enabled(struct task_struct *task)
+@@ -63,6 +66,20 @@ void gcs_preserve_current_state(void);
+ unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
+ 				     const struct kernel_clone_args *args);
+ 
++static inline int gcs_check_locked(struct task_struct *task,
++				   unsigned long new_val)
 +{
-+	unsigned long gcs;
++	unsigned long cur_val = task->thread.gcs_el0_mode;
 +
-+	gcs = gcs_alloc_thread_stack(p, args);
-+	if (IS_ERR_VALUE(gcs))
-+		return PTR_ERR((void *)gcs);
++	cur_val &= task->thread.gcs_el0_locked;
++	new_val &= task->thread.gcs_el0_locked;
 +
-+	/* Ensure the current state of the GCS is seen by CoW */
-+	gcsb_dsync();
++	if (cur_val != new_val)
++		return -EBUSY;
 +
 +	return 0;
 +}
 +
  #else
  
- static void flush_gcs(void) { }
-+static int copy_thread_gcs(struct task_struct *p,
-+			   const struct kernel_clone_args *args)
+ static inline bool task_gcs_el0_enabled(struct task_struct *task)
+@@ -78,6 +95,11 @@ static inline unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
+ {
+ 	return -ENOTSUPP;
+ }
++static inline int gcs_check_locked(struct task_struct *task,
++				   unsigned long new_val)
 +{
 +	return 0;
 +}
  
  #endif
  
-@@ -369,6 +389,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 	unsigned long stack_start = args->stack;
- 	unsigned long tls = args->tls;
- 	struct pt_regs *childregs = task_pt_regs(p);
-+	int ret;
- 
- 	memset(&p->thread.cpu_context, 0, sizeof(struct cpu_context));
- 
-@@ -410,6 +431,10 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 			p->thread.uw.tp_value = tls;
- 			p->thread.tpidr2_el0 = 0;
- 		}
-+
-+		ret = copy_thread_gcs(p, args);
-+		if (ret != 0)
-+			return ret;
- 	} else {
- 		/*
- 		 * A kthread has no context to ERET to, so ensure any buggy
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index c28681cf9721..029d20ea7878 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -181,6 +181,7 @@ struct thread_struct {
+ 	u64			tpidr2_el0;
+ #ifdef CONFIG_ARM64_GCS
+ 	unsigned int		gcs_el0_mode;
++	unsigned int		gcs_el0_locked;
+ 	u64			gcspr_el0;
+ 	u64			gcs_base;
+ 	u64			gcs_size;
 diff --git a/arch/arm64/mm/gcs.c b/arch/arm64/mm/gcs.c
-index b0a67efc522b..0d4881173b5f 100644
+index 0d4881173b5f..315bd698de86 100644
 --- a/arch/arm64/mm/gcs.c
 +++ b/arch/arm64/mm/gcs.c
-@@ -8,6 +8,82 @@
- #include <asm/cpufeature.h>
- #include <asm/page.h>
- 
-+static unsigned long alloc_gcs(unsigned long addr, unsigned long size,
-+			       unsigned long token_offset, bool set_res_tok)
+@@ -113,3 +113,85 @@ void gcs_free(struct task_struct *task)
+ 	task->thread.gcs_base = 0;
+ 	task->thread.gcs_size = 0;
+ }
++
++int arch_set_shadow_stack_status(struct task_struct *task, unsigned long arg)
 +{
-+	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
-+	struct mm_struct *mm = current->mm;
-+	unsigned long mapped_addr, unused;
++	unsigned long gcs, size;
++	int ret;
 +
-+	if (addr)
-+		flags |= MAP_FIXED_NOREPLACE;
++	if (!system_supports_gcs())
++		return -EINVAL;
 +
-+	mmap_write_lock(mm);
-+	mapped_addr = do_mmap(NULL, addr, size, PROT_READ | PROT_WRITE, flags,
-+			      VM_SHADOW_STACK, 0, &unused, NULL);
-+	mmap_write_unlock(mm);
++	if (is_compat_thread(task_thread_info(task)))
++		return -EINVAL;
 +
-+	return mapped_addr;
-+}
++	/* Reject unknown flags */
++	if (arg & ~PR_SHADOW_STACK_SUPPORTED_STATUS_MASK)
++		return -EINVAL;
 +
-+static unsigned long gcs_size(unsigned long size)
-+{
-+	if (size)
-+		return PAGE_ALIGN(size);
++	ret = gcs_check_locked(task, arg);
++	if (ret != 0)
++		return ret;
 +
-+	/* Allocate RLIMIT_STACK/2 with limits of PAGE_SIZE..2G */
-+	size = PAGE_ALIGN(min_t(unsigned long long,
-+				rlimit(RLIMIT_STACK) / 2, SZ_2G));
-+	return max(PAGE_SIZE, size);
-+}
++	/* If we are enabling GCS then make sure we have a stack */
++	if (arg & PR_SHADOW_STACK_ENABLE) {
++		if (!task_gcs_el0_enabled(task)) {
++			/* Do not allow GCS to be reenabled */
++			if (task->thread.gcs_base)
++				return -EINVAL;
 +
-+unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
-+				     const struct kernel_clone_args *args)
-+{
-+	unsigned long addr, size;
++			if (task != current)
++				return -EBUSY;
 +
-+	/* If the user specified a GCS use it. */
-+	if (args->shadow_stack_size) {
-+		if (!system_supports_gcs())
-+			return (unsigned long)ERR_PTR(-EINVAL);
++			size = gcs_size(0);
++			gcs = alloc_gcs(task->thread.gcspr_el0, size,
++					0, 0);
++			if (!gcs)
++				return -ENOMEM;
 +
-+		size = args->shadow_stack_size;
++			task->thread.gcspr_el0 = gcs + size - sizeof(u64);
++			task->thread.gcs_base = gcs;
++			task->thread.gcs_size = size;
++			if (task == current)
++				write_sysreg_s(task->thread.gcspr_el0,
++					       SYS_GCSPR_EL0);
 +
-+		if (size < 8)
-+			return (unsigned long)ERR_PTR(-EINVAL);
-+
-+	} else {
-+		/*
-+		 * Otherwise fall back to legacy clone() support and
-+		 * implicitly allocate a GCS if we need a new one.
-+		 */
-+
-+		if (!system_supports_gcs())
-+			return 0;
-+
-+		if (!task_gcs_el0_enabled(tsk))
-+			return 0;
-+
-+		if ((args->flags & (CLONE_VFORK | CLONE_VM)) != CLONE_VM) {
-+			tsk->thread.gcspr_el0 = read_sysreg_s(SYS_GCSPR_EL0);
-+			return 0;
 +		}
-+
-+		size = args->stack_size;
 +	}
 +
-+	size = gcs_size(size);
-+	addr = alloc_gcs(0, size, 0, 0);
-+	if (IS_ERR_VALUE(addr))
-+		return addr;
++	task->thread.gcs_el0_mode = arg;
++	if (task == current)
++		gcs_set_el0_mode(task);
 +
-+	tsk->thread.gcs_base = addr;
-+	tsk->thread.gcs_size = size;
-+	tsk->thread.gcspr_el0 = addr + size - sizeof(u64);
-+
-+	return addr;
++	return 0;
 +}
 +
- /*
-  * Apply the GCS mode configured for the specified task to the
-  * hardware.
++int arch_get_shadow_stack_status(struct task_struct *task,
++				 unsigned long __user *arg)
++{
++	if (!system_supports_gcs())
++		return -EINVAL;
++
++	if (is_compat_thread(task_thread_info(task)))
++		return -EINVAL;
++
++	return put_user(task->thread.gcs_el0_mode, arg);
++}
++
++int arch_lock_shadow_stack_status(struct task_struct *task,
++				  unsigned long arg)
++{
++	if (!system_supports_gcs())
++		return -EINVAL;
++
++	if (is_compat_thread(task_thread_info(task)))
++		return -EINVAL;
++
++	/*
++	 * We support locking unknown bits so applications can prevent
++	 * any changes in a future proof manner.
++	 */
++	task->thread.gcs_el0_locked |= arg;
++
++	return 0;
++}
 
 -- 
 2.39.2
