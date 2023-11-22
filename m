@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-3405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003637F4625
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:29:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007B47F4623
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30441C20AA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8098F280F1B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097E11A58E;
-	Wed, 22 Nov 2023 12:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639ED4C60E;
+	Wed, 22 Nov 2023 12:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFL7mgeY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HiffeyuH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12A07D69
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:24 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2c5039d4e88so85463261fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:23 -0800 (PST)
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C46CD40
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:25 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-40b31232bf0so5273505e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700656042; x=1701260842; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1700656043; x=1701260843; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z+QF6uKC8YtRGB7BtCuFu9zr93E6M01rnQS6SDNvYGk=;
-        b=jFL7mgeY4vCxCuDiiI0p9GBiN6fORpXq5Rk3yw6857MD0SrOPPxWshvyl7kEEwwGXX
-         Xg/6q4ryAA2QMOEcmnLCg6I6BlmhNe81UVFhIxRygnYxfDcvQX0VoOYG3oYMX7he/SYS
-         e/cIli0EhCHVfpLJeVPqCTbbTN8C90TJwTIdK0enqdrwaQvZJ3ODdxwPjbKxypXFPWHN
-         6p4HdAw4iAmcq+IfmYEOZ4xwkQlPZ1LFWIp8l0KIwlCA1kVCBxmr3QrRwOb5aAii0p9f
-         phwGXd8EtHa19PT42pDLOrOI7OF69brfE39OPQlw/q/f3/D5UmlYLZ1kfyl7AgM7eVjZ
-         bEtQ==
+        bh=WcAsvQKeH8bD+t1fjlddSBVl33kkt23lj2i5eRHaGwA=;
+        b=HiffeyuHnkeH+FATQVxtnFKVmXquGuk5YUiSHqpcJweYv/8I429/tSSNjfpzLUwRXF
+         7YglvrhkC1TN6X+RsAmYs3Z30MNWE3k7mvMLSVGqHXqFkiv2Z88se+LTNp74kzvwPaXn
+         q7YPJ7GzoZRd7zVBZhYh249YpZyL8wjjEP7xe+jwsFHtmaaKqADoh0pG9IqqH33tNnBz
+         ALDe4NIXX+mwaRBdJtn/k4FeXQATAEByXydj5Sj9jx3B6MsQ8O44VfyD1niFWPsrKbtG
+         ERgmDTSMbkFr4j++gFcqE75uIaSzWimzMXwIYzkNzGYE3a++IWCeTDPkuZYyPPFCUla3
+         xaZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700656042; x=1701260842;
+        d=1e100.net; s=20230601; t=1700656043; x=1701260843;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Z+QF6uKC8YtRGB7BtCuFu9zr93E6M01rnQS6SDNvYGk=;
-        b=UjkW7IFdD06ZVdsM/aMzJhemck/IynGchv982dvmbqjGczSe4q1L5ZcUmhs2BWQr3I
-         D60fnqBAKar/sBw9IzUb+LAJqvXPO3LJGwiiIljMBpvIGorwvvQ7RRXdjlJtcYaLFjd6
-         tMyBKKYh7VW/PrtjhIw8WSeRFqVzf5ZtNrYchyysbdMmFUtlbmnwr0Ywz+XLziEDA7HO
-         zmjCTCVkXqBrWh4ryGmuEG0AGR8SefyW3kRXrADkV1QtkRNFDER6y+WNejO2oRMtueAw
-         v3iUJtpFxusztn9Qd/M7tp56tlRXmb23vz249ZNK6rjt/Lr4IIyWANECKwb+05skI7DX
-         ox/g==
-X-Gm-Message-State: AOJu0YxrEa3rVlmsf60qisHzOZaC4/FclkA8mqJMtuK7tcvuXLLMFybu
-	VWfz7ZgvdDo5+DzmoZojNBs=
-X-Google-Smtp-Source: AGHT+IEBAxWOVBl+vQMEt3D2dqixxSEjeezS0dHhR0NDZx4rWyH/CddkRE1a0c3FUaAM0ojwmPhBuA==
-X-Received: by 2002:a2e:7306:0:b0:2c8:35fb:af1d with SMTP id o6-20020a2e7306000000b002c835fbaf1dmr1680387ljc.6.1700656042021;
-        Wed, 22 Nov 2023 04:27:22 -0800 (PST)
+        bh=WcAsvQKeH8bD+t1fjlddSBVl33kkt23lj2i5eRHaGwA=;
+        b=F0v7bS72A64rdFT1/bpxNAWkUQxoe00689EhOeXRGXZPNDS7150XPG7dXhGezIhAl6
+         OmG9rFFmIop8euPTGVfy9Qn+qvJz22O0t/oaZOUGEITHMtTsx3OE4Ir4MdDUbOmPpXc+
+         kjFygQ741TD30MP1wer68beVGwVkeYXh1BsQ20E6n0XJn+SjAiH/EtZZ1oGt7/LP/Y6s
+         1JzpztMsWDCndxQ0FlbvEPplOiF/vTlCFsn9WLXpQ6K/lxrvJeCStLbv2w3ox3HMoUbT
+         inshV1dR9F9u5nwFE7lf5p10jXbsh5/FU/ffYJFabKzDWGz5L3v69waYBIhUL/itV6P1
+         EmCA==
+X-Gm-Message-State: AOJu0YzV1+X6O5Ibv5Z0N07LIa+q9Kr98ehTcJPBOlDAUXG9hu6uDdSW
+	fpxECTHLxgTMzawGwPYTvec=
+X-Google-Smtp-Source: AGHT+IFa6t6v3VdOtA/5/w7d/0wbdv+lE0fjWfOCpettExcJ89Fk+ZMnA+GwJ+TgLpwhSthUZhquDw==
+X-Received: by 2002:a7b:cb8e:0:b0:40a:4c7e:6f3e with SMTP id m14-20020a7bcb8e000000b0040a4c7e6f3emr185525wmi.21.1700656043450;
+        Wed, 22 Nov 2023 04:27:23 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.20
+        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 04:27:21 -0800 (PST)
+        Wed, 22 Nov 2023 04:27:22 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
@@ -62,9 +62,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 01/16] ovl: add permission hooks outside of do_splice_direct()
-Date: Wed, 22 Nov 2023 14:27:00 +0200
-Message-Id: <20231122122715.2561213-2-amir73il@gmail.com>
+Subject: [PATCH v2 02/16] splice: remove permission hook from do_splice_direct()
+Date: Wed, 22 Nov 2023 14:27:01 +0200
+Message-Id: <20231122122715.2561213-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231122122715.2561213-1-amir73il@gmail.com>
 References: <20231122122715.2561213-1-amir73il@gmail.com>
@@ -76,83 +76,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The main callers of do_splice_direct() also call rw_verify_area() for
-the entire range that is being copied, e.g. by vfs_copy_file_range()
-or do_sendfile() before calling do_splice_direct().
+All callers of do_splice_direct() have a call to rw_verify_area() for
+the entire range that is being copied, e.g. by vfs_copy_file_range() or
+do_sendfile() before calling do_splice_direct().
 
-The only caller that does not have those checks for entire range is
-ovl_copy_up_file().  In preparation for removing the checks inside
-do_splice_direct(), add rw_verify_area() call in ovl_copy_up_file().
-
-For extra safety, perform minimal sanity checks from rw_verify_area()
-for non negative offsets also in the copy up do_splice_direct() loop
-without calling the file permission hooks.
+The rw_verify_area() check inside do_splice_direct() is redundant and
+is called after sb_start_write(), so it is not "start-write-safe".
+Remove this redundant check.
 
 This is needed for fanotify "pre content" events.
 
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/overlayfs/copy_up.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ fs/splice.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 4382881b0709..106f8643af3b 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -230,6 +230,19 @@ static int ovl_copy_fileattr(struct inode *inode, const struct path *old,
- 	return ovl_real_fileattr_set(new, &newfa);
- }
+diff --git a/fs/splice.c b/fs/splice.c
+index d983d375ff11..6e917db6f49a 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1166,6 +1166,7 @@ static void direct_file_splice_eof(struct splice_desc *sd)
+  *    (splice in + splice out, as compared to just sendfile()). So this helper
+  *    can splice directly through a process-private pipe.
+  *
++ * Callers already called rw_verify_area() on the entire range.
+  */
+ long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
+ 		      loff_t *opos, size_t len, unsigned int flags)
+@@ -1187,10 +1188,6 @@ long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
+ 	if (unlikely(out->f_flags & O_APPEND))
+ 		return -EINVAL;
  
-+static int ovl_verify_area(loff_t pos, loff_t pos2, loff_t len, loff_t totlen)
-+{
-+	loff_t tmp;
-+
-+	if (WARN_ON_ONCE(pos != pos2))
-+		return -EIO;
-+	if (WARN_ON_ONCE(pos < 0 || len < 0 || totlen < 0))
-+		return -EIO;
-+	if (WARN_ON_ONCE(check_add_overflow(pos, len, &tmp)))
-+		return -EIO;
-+	return 0;
-+}
-+
- static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
- 			    struct file *new_file, loff_t len)
- {
-@@ -244,13 +257,20 @@ static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
- 	int error = 0;
- 
- 	ovl_path_lowerdata(dentry, &datapath);
--	if (WARN_ON(datapath.dentry == NULL))
-+	if (WARN_ON_ONCE(datapath.dentry == NULL) ||
-+	    WARN_ON_ONCE(len < 0))
- 		return -EIO;
- 
- 	old_file = ovl_path_open(&datapath, O_LARGEFILE | O_RDONLY);
- 	if (IS_ERR(old_file))
- 		return PTR_ERR(old_file);
- 
-+	error = rw_verify_area(READ, old_file, &old_pos, len);
-+	if (!error)
-+		error = rw_verify_area(WRITE, new_file, &new_pos, len);
-+	if (error)
-+		goto out_fput;
-+
- 	/* Try to use clone_file_range to clone up within the same fs */
- 	ovl_start_write(dentry);
- 	cloned = do_clone_file_range(old_file, 0, new_file, 0, len, 0);
-@@ -309,6 +329,10 @@ static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
- 			}
- 		}
- 
-+		error = ovl_verify_area(old_pos, new_pos, this_len, len);
-+		if (error)
-+			break;
-+
- 		ovl_start_write(dentry);
- 		bytes = do_splice_direct(old_file, &old_pos,
- 					 new_file, &new_pos,
+-	ret = rw_verify_area(WRITE, out, opos, len);
+-	if (unlikely(ret < 0))
+-		return ret;
+-
+ 	ret = splice_direct_to_actor(in, &sd, direct_splice_actor);
+ 	if (ret > 0)
+ 		*ppos = sd.pos;
 -- 
 2.34.1
 
