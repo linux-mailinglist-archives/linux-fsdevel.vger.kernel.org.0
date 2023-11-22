@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-3477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5277F5222
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 22:12:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D27F5223
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 22:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0099DB20F46
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561272816F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B891BDCB;
-	Wed, 22 Nov 2023 21:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70661C2AD;
+	Wed, 22 Nov 2023 21:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMN/NCn/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU3eyIJ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4E821A4;
-	Wed, 22 Nov 2023 13:12:05 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id d2e1a72fcca58-6b5cac99cfdso225062b3a.2;
-        Wed, 22 Nov 2023 13:12:05 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 986F9D47;
+	Wed, 22 Nov 2023 13:12:08 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id d2e1a72fcca58-6b709048f32so265316b3a.0;
+        Wed, 22 Nov 2023 13:12:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700687525; x=1701292325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ndk4aGNdhF9GXKkpyyjsozTJ5amtXqJPp+cG2mKjtD0=;
-        b=VMN/NCn/0ASAQmZ66hu4oESJL0srvFqyTlN0Uzf4h/QE9KDJ14ibkDOxebGQDBkWe4
-         hzTSwiH8UTDvauJj5bIk4mEmxcGkF2eAXJglQCPFyE5yETJaV/jFigT3ZW9Dfgb+FY8h
-         RPRa6ZUjSpEZ007Cb7K8XcWpgh41vN7M6Ai6aq9fbnfjRJdv+phB0zTLpl7IFVbbid3A
-         B+iBWdf/vv9Ydfe/D6kWQJkpNmcpS1FStiGWo4NcsnPrSPNlTgYtuomKRVgdmX6fhjKg
-         mDONSLCe5wFPb89F3oDFROwkdMNqk8i5Tjt1Imb8ab6Zuc1su/nUQEgMGmbtEuDRx5BG
-         sjbA==
+        d=gmail.com; s=20230601; t=1700687528; x=1701292328; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UftY+9nJn82Vz5RJpbG87UiQLd2iCLBgMyI8O4iubXI=;
+        b=EU3eyIJ/OBG42+qF2vpTOldu0KNB6DVzZQCeaQEQGVPoYN//InAIWxAtun2WfIbfzH
+         TWL/XIqYPkNYEO0ZcxkFbx5D0BWnzTmRCjmaeR3eE7HpgzthwbT3vkWN4waN4E4fv4lj
+         ejhd+zXWGt2stqG8f3YZabC7dhahyRFITCiMxPGVDI1sUv9dGbQLI/kYdqeetVG/pnpo
+         bHBy6XrK0QUFX9YoK5H199sT2humxLXx/3L2chjv8RHA4KcGrqsSvZRjfv30JMHC7dcG
+         wEYsucJjsdGiZORhNIk4n+tgfJC53U1lsbcr1pC7bZUgw9Bz3ZnVgt0o6khP8OP6TOGp
+         TE4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700687525; x=1701292325;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ndk4aGNdhF9GXKkpyyjsozTJ5amtXqJPp+cG2mKjtD0=;
-        b=JeJQ3VqkcpnGaCbvXw6Vl7bbQE0SYJzbEkILqXoR8OxZQBGxNnv6frIEMnwnmbLEPk
-         p9qnPOptTurKSEHtSQOpxlGVGOB22fpv1TeeVsoHD/pW7cv3XMkg9ObxF4EFhW4KRcps
-         rGlkzA6vVN/hFDFU//KYHHAGx17IWuATqkRFNcsccKlt+JRTOtgSj+OkOOLZ7op2zRn5
-         Betn7mZMwxzSQNS8Xp82YGa41WZBJKfucWv/wA/sPhGhiDA4SCkhpG+c+jHqslvaisjG
-         LNm3vwcSAOFfhh28FR2ZyVIXnKE/mPR9e7mpjNRDmQ3ASb5f7oIubDg4bvcmOKGNJZ4v
-         S1Rw==
-X-Gm-Message-State: AOJu0YzOgWEEJC+DERJKHSMA6Fmle4jOvorap+aXMZXnPehYaWJZf8CN
-	SsEZ/Ir+ZUfyjMnfhfstEQ==
-X-Google-Smtp-Source: AGHT+IHtVS6qiXCVuICpjIo9v1ArG+K49q8MxhuOD/We1+xNdIENUBBwie8jAWodVY5lm/jNcHZQ+w==
-X-Received: by 2002:a05:6a20:12cd:b0:189:3748:f060 with SMTP id v13-20020a056a2012cd00b001893748f060mr3765980pzg.26.1700687525147;
-        Wed, 22 Nov 2023 13:12:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700687528; x=1701292328;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UftY+9nJn82Vz5RJpbG87UiQLd2iCLBgMyI8O4iubXI=;
+        b=fFKtZMn/rKIod9M/FtNiwFu98MJDfLm9Hfzh40zNv3kgktPIN0voao6anea9YcbUqA
+         sHVrNVPAHqDuu4ubAAlBnF+qeAgMbT3fOtskJeuxVdhiErpiW+4Mdh3PhiqqBYjM6rq2
+         lkXJZ6DYHkMBuu32pN8IKbgDCaS/t41bT1EMDfhFxeo8/L9nyveFOfP+KRMwzrSq016/
+         GLKCh+31GpLjooUWWgNoGGk04Viv+iof+SbWuRUdE17ukE2aSQHonKawRrQWUF2ZTfND
+         6VX2otg6qz0WRQ3iN+sUKg6ITAlBXEv5IBLPJnrQtjrA7Lg5ZB9TnchWDmZ/86QuUUiO
+         7aFw==
+X-Gm-Message-State: AOJu0Yz3APQDHBHmgxDc2CIDoDPbHRiMOs2xRbk4rEA5WtKVEd03ku5C
+	B04r0jQ/9wT4014SUL3y7w==
+X-Google-Smtp-Source: AGHT+IFApmrVmTMi/koEr4L/CLh547UBRzR9U2yTau9qj52IoeLKDXr1/nWf98+BfkPjiCFsngGxIQ==
+X-Received: by 2002:a05:6a00:4ac7:b0:6c2:cf23:3e21 with SMTP id ds7-20020a056a004ac700b006c2cf233e21mr4101209pfb.17.1700687527998;
+        Wed, 22 Nov 2023 13:12:07 -0800 (PST)
 Received: from fedora.mshome.net ([75.167.214.230])
-        by smtp.gmail.com with ESMTPSA id j18-20020a635512000000b005bdbce6818esm132136pgb.30.2023.11.22.13.12.02
+        by smtp.gmail.com with ESMTPSA id j18-20020a635512000000b005bdbce6818esm132136pgb.30.2023.11.22.13.12.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 13:12:04 -0800 (PST)
+        Wed, 22 Nov 2023 13:12:07 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org
@@ -73,10 +74,12 @@ Cc: linux-doc@vger.kernel.org,
 	tj@kernel.org,
 	ying.huang@intel.com,
 	Gregory Price <gregory.price@memverge.com>
-Subject: [RFC PATCH 00/11] mm/mempolicy: Make task->mempolicy externally modifiable via syscall and procfs
-Date: Wed, 22 Nov 2023 16:11:49 -0500
-Message-Id: <20231122211200.31620-1-gregory.price@memverge.com>
+Subject: [RFC PATCH 01/11] mm/mempolicy: refactor do_set_mempolicy for code re-use
+Date: Wed, 22 Nov 2023 16:11:50 -0500
+Message-Id: <20231122211200.31620-2-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20231122211200.31620-1-gregory.price@memverge.com>
+References: <20231122211200.31620-1-gregory.price@memverge.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,85 +88,86 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patch set changes task->mempolicy to be modifiable by tasks other
-than just current.
-
-The ultimate goal is to make mempolicy more flexible and extensible,
-such as adding interleave weights (which may need to change at runtime
-due to hotplug events).  Making mempolicy externally modifiable allows
-for userland daemons to make runtime performance adjustments to running
-tasks without that software needing to be made numa-aware.
-
-This initial RFC involves 3 major updates the mempolicy.
-
-1. Refactor modifying interfaces to accept a task as an argument,
-   and change existing callers to send `current` in to retain
-   the existing behavior.
-
-2. Change locking behaviors to ensure task->mpol is referenced
-   safely by acquiring the task_lock where required.  Since
-   allocators take the alloc lock (task lock), this successfully
-   prevents changes from being made during allocations.
-
-3. Add external interfaces which allow for a task mempolicy to be
-   modified by another task.  This is implemented in 4 syscalls
-   and a procfs interface:
-        sys_set_task_mempolicy
-        sys_get_task_mempolicy
-        sys_set_task_mempolicy_home_node
-        sys_task_mbind
-        /proc/[pid]/mempolicy
-
-The new syscalls are the same as their current-task counterparts,
-except that they take a pid as an argument.  The exception is
-task_mbind, which required a new struct due to the number of args.
-
-The /proc/pid/mempolicy re-uses the interface mpol_parse_str format
-to enable get/set of mempolicy via procsfs.
-
-mpol_parse_str format:
-            <mode>[=<flags>][:<nodelist>]
-
-Example usage:
-
-echo "default" > /proc/pid/mempolicy
-echo "prefer=relative:0" > /proc/pid/mempolicy
-echo "interleave:0-3" > /proc/pid/mempolicy
-
-Changing the mempolicy does not induce memory migrations via the
-procfs interface (which is the exact same behavior as set_mempolicy).
+Refactors do_set_mempolicy into replace_mempolicy and do_set_mempolicy
+so that replace_mempolicy can be re-used with new code, not just
+the system call.
 
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
+---
+ mm/mempolicy.c | 36 +++++++++++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 13 deletions(-)
 
-Gregory Price (11):
-  mm/mempolicy: refactor do_set_mempolicy for code re-use
-  mm/mempolicy: swap cond reference counting logic in do_get_mempolicy
-  mm/mempolicy: refactor set_mempolicy stack to take a task argument
-  mm/mempolicy: modify get_mempolicy call stack to take a task argument
-  mm/mempolicy: modify set_mempolicy_home_node to take a task argument
-  mm/mempolicy: modify do_mbind to operate on task argument instead of
-    current
-  mm/mempolicy: add task mempolicy syscall variants
-  mm/mempolicy: export replace_mempolicy for use by procfs
-  mm/mempolicy: build mpol_parse_str unconditionally
-  mm/mempolicy: mpol_parse_str should ignore trailing characters in
-    nodelist
-  fs/proc: Add mempolicy attribute to allow read/write of task mempolicy
-
- arch/x86/entry/syscalls/syscall_32.tbl |   4 +
- arch/x86/entry/syscalls/syscall_64.tbl |   4 +
- fs/proc/Makefile                       |   1 +
- fs/proc/base.c                         |   1 +
- fs/proc/internal.h                     |   1 +
- fs/proc/mempolicy.c                    | 117 +++++++
- include/linux/mempolicy.h              |  13 +-
- include/linux/syscalls.h               |  14 +
- include/uapi/asm-generic/unistd.h      |  10 +-
- include/uapi/linux/mempolicy.h         |  10 +
- mm/mempolicy.c                         | 432 +++++++++++++++++++------
- 11 files changed, 502 insertions(+), 105 deletions(-)
- create mode 100644 fs/proc/mempolicy.c
-
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 10a590ee1c89..410754d56e46 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -809,28 +809,20 @@ static int mbind_range(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	return vma_replace_policy(vma, new_pol);
+ }
+ 
+-/* Set the process memory policy */
+-static long do_set_mempolicy(unsigned short mode, unsigned short flags,
+-			     nodemask_t *nodes)
++/* Attempt to replace mempolicy, release the old one if successful */
++static long replace_mempolicy(struct mempolicy *new, nodemask_t *nodes)
+ {
+-	struct mempolicy *new, *old;
++	struct mempolicy *old = NULL;
+ 	NODEMASK_SCRATCH(scratch);
+ 	int ret;
+ 
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
+-	new = mpol_new(mode, flags, nodes);
+-	if (IS_ERR(new)) {
+-		ret = PTR_ERR(new);
+-		goto out;
+-	}
+-
+ 	task_lock(current);
+ 	ret = mpol_set_nodemask(new, nodes, scratch);
+ 	if (ret) {
+ 		task_unlock(current);
+-		mpol_put(new);
+ 		goto out;
+ 	}
+ 
+@@ -838,14 +830,32 @@ static long do_set_mempolicy(unsigned short mode, unsigned short flags,
+ 	current->mempolicy = new;
+ 	if (new && new->mode == MPOL_INTERLEAVE)
+ 		current->il_prev = MAX_NUMNODES-1;
++out:
+ 	task_unlock(current);
+ 	mpol_put(old);
+-	ret = 0;
+-out:
++
+ 	NODEMASK_SCRATCH_FREE(scratch);
+ 	return ret;
+ }
+ 
++/* Set the process memory policy */
++static long do_set_mempolicy(unsigned short mode, unsigned short flags,
++			     nodemask_t *nodes)
++{
++	struct mempolicy *new;
++	int ret;
++
++	new = mpol_new(mode, flags, nodes);
++	if (IS_ERR(new))
++		return PTR_ERR(new);
++
++	ret = replace_mempolicy(new, nodes);
++	if (ret)
++		mpol_put(new);
++
++	return ret;
++}
++
+ /*
+  * Return nodemask for policy for get_mempolicy() query
+  *
 -- 
 2.39.1
 
