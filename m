@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-3392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3507F4280
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:47:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9347F4283
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9920828185C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E182818A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4556476;
-	Wed, 22 Nov 2023 09:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E55647E;
+	Wed, 22 Nov 2023 09:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syOMsnFW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9kSWTAV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312801DA53;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DA1DA53;
+	Wed, 22 Nov 2023 09:47:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88DA2C433CB;
 	Wed, 22 Nov 2023 09:47:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C568C4167D;
-	Wed, 22 Nov 2023 09:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700646421;
-	bh=qxIqlAUMc2bBTJ1O51B6Tb6fnmxFBkD4x3sOYOI7QNE=;
+	s=k20201202; t=1700646429;
+	bh=b3DUElLZ+Soh0Lccqy2ZSImkcM7zO9jMiCyb9nDJSwQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=syOMsnFWzOG+xmHUkIsaKs6NTpc6AaYK4nG1MDHbqXgrSkOqjN7up45LrEl5p7Kj8
-	 Ym73t13eE56T+NFw9qfvMT6cKIN/58qjCmJqzZxAJ1kGvbKFLul5nd9dC6SQUz1jrA
-	 EXxSfZQgZcLsl/twjdlg0vE6CSiRLXxi/NK/28aJYlwlXlwyWmtSXRBJT/xwFsHoxv
-	 cnjdJbcrEHQku+7vy1h9M37JgKh9Q68/onZlKJEqYCHDVnv0PkCs/RRlNmSkgV+RF4
-	 oOhzEu7XmVtkSX4RB82dUstRQ0AKsXe8scyUjoFXpHdqZZGidv6d7sY3xjsf23P0T0
-	 9QQcGPMdtp0aw==
+	b=Y9kSWTAVK98zhtVsyhDnKInGWdD30T07Ake/yR4jhC/+XLRShZE6i/o1V6NRBUhLz
+	 Dxrc74iwZWGjxvodTdGkItzPGoLKXLdxFS2Kgf26ynO1y5UO6mFbuGEYFRezPYZ3SN
+	 BJ6+Cpt7eYespf4hYmoUEvmoRFweNTPbyCFCCMewFKq5ZNXVlAgNurJYmvFMgcKAoz
+	 6A5VkqVZkQux3aS2rdDhZOMzrDvsDBVF7gmWW8Wtj1s1MwxG9PDWzmbqkEHXCrQaYg
+	 nTZt+W8U2etS7jdzyurIciWhdn9ueX+xYQm+Qiv9r0ECdsUBfiYa9tDRxTCLuOOVc8
+	 ssLs3BiYaclDw==
 From: Mark Brown <broonie@kernel.org>
-Date: Wed, 22 Nov 2023 09:42:41 +0000
-Subject: [PATCH v7 31/39] kselftest/arm64: Allow signals tests to specify
- an expected si_code
+Date: Wed, 22 Nov 2023 09:42:42 +0000
+Subject: [PATCH v7 32/39] kselftest/arm64: Always run signals tests with
+ GCS enabled
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-arm64-gcs-v7-31-201c483bd775@kernel.org>
+Message-Id: <20231122-arm64-gcs-v7-32-201c483bd775@kernel.org>
 References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
 In-Reply-To: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -68,84 +68,112 @@ Cc: "H.J. Lu" <hjl.tools@gmail.com>,
  linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2627; i=broonie@kernel.org;
- h=from:subject:message-id; bh=qxIqlAUMc2bBTJ1O51B6Tb6fnmxFBkD4x3sOYOI7QNE=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlXc0OiKQHWj96U6Iv+vrEb7owlLDF7A+UeVAJW
- s3BN30QZ7mJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZV3NDgAKCRAk1otyXVSH
- 0Cj/B/4v4VwoMeU53pDf1fNeG//YL1WSnuk6c3A7i2dDESTIut5NK5DCoQTU6va5PSrNx6bHcHQ
- U209ci3F/Zr+o/E5MK0xtlUtuT0eeijo8MCPj04SF2s9C7Dh86AMZ5nTAvggAIsFDYLgQgOmNM+
- XlQhib+aoBQStnNJmu+VdxLsNvBqIxdMk0E5RP7S8lMT9FNHmPXIsAfuYt4IpvN/kglnDyFWP2g
- AlBAMocbBXbx6N9D+rWLO3KOz7hiQ9AVkz/OUwp5hFzfb6hy96kQW529H3py/8jX/rxRH/DfOlw
- srt4yM6xjmvQ1TSj6Nvsge/pgI2bILXYvrzKkwYSC4BlkQsu
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3590; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=b3DUElLZ+Soh0Lccqy2ZSImkcM7zO9jMiCyb9nDJSwQ=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlXc0Pq69NiV0DZvuQOBOHTJq4Hskdu8ueWsh0A
+ OXrPDovxWCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZV3NDwAKCRAk1otyXVSH
+ 0AvKB/4gIm6EQumGj0Sww0FN0GocO/C+BLqTbwD6sziQA+cF0OfObYvSHOKFbMlhgZBDcbxRj+H
+ 28uewK7t1SSYel2V8C+ykywrGEfBsUBjsriI5E5CfKOsPUhqtYwfEvHNoVySVobx5Rc1uodWehE
+ wD4kxoZug4GzX0A1HdT4HPvZzCYUzCDXeyINi68DPqWrwit2CvDnkhjf8gGKqotnS4KnvHmhtcG
+ C29Newlq2zS23qzht35JcPjfcn8Y1kR1IcN6GlS81iqTMkIEXYrjUAOl11+nDynG8e7kSOrapK7
+ 71JfVueE4JJPVZeyyV05a7VJNsMwlN+yEcRjJzeJj1TAN/mD
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Currently we ignore si_code unless the expected signal is a SIGSEGV, in
-which case we enforce it being SEGV_ACCERR. Allow test cases to specify
-exactly which si_code should be generated so we can validate this, and
-test for other segfault codes.
+Since it is not possible to return from the function that enabled GCS
+without disabling GCS it is very inconvenient to use the signal handling
+tests to cover GCS when GCS is not enabled by the toolchain and runtime,
+something that no current distribution does. Since none of the testcases
+do anything with stacks that would cause problems with GCS we can sidestep
+this issue by unconditionally enabling GCS on startup and exiting with a
+call to exit() rather than a return from main().
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../testing/selftests/arm64/signal/test_signals.h  |  4 +++
- .../selftests/arm64/signal/test_signals_utils.c    | 29 ++++++++++++++--------
- 2 files changed, 23 insertions(+), 10 deletions(-)
+ .../testing/selftests/arm64/signal/test_signals.c  | 17 ++++++++++++-
+ .../selftests/arm64/signal/test_signals_utils.h    | 29 ++++++++++++++++++++++
+ 2 files changed, 45 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/arm64/signal/test_signals.h b/tools/testing/selftests/arm64/signal/test_signals.h
-index 7ada43688c02..ee75a2c25ce7 100644
---- a/tools/testing/selftests/arm64/signal/test_signals.h
-+++ b/tools/testing/selftests/arm64/signal/test_signals.h
-@@ -71,6 +71,10 @@ struct tdescr {
- 	 * Zero when no signal is expected on success
- 	 */
- 	int			sig_ok;
+diff --git a/tools/testing/selftests/arm64/signal/test_signals.c b/tools/testing/selftests/arm64/signal/test_signals.c
+index 00051b40d71e..30e95f50db19 100644
+--- a/tools/testing/selftests/arm64/signal/test_signals.c
++++ b/tools/testing/selftests/arm64/signal/test_signals.c
+@@ -7,6 +7,10 @@
+  * Each test provides its own tde struct tdescr descriptor to link with
+  * this wrapper. Framework provides common helpers.
+  */
++
++#include <sys/auxv.h>
++#include <sys/prctl.h>
++
+ #include <kselftest.h>
+ 
+ #include "test_signals.h"
+@@ -16,6 +20,16 @@ struct tdescr *current = &tde;
+ 
+ int main(int argc, char *argv[])
+ {
 +	/*
-+	 * expected si_code for sig_ok, or 0 to not check
++	 * Ensure GCS is at least enabled throughout the tests if
++	 * supported, otherwise the inability to return from the
++	 * function that enabled GCS makes it very inconvenient to set
++	 * up test cases.  The prctl() may fail if GCS was locked by
++	 * libc setup code.
 +	 */
-+	int			sig_ok_code;
- 	/* signum expected on unsupported CPU features. */
- 	int			sig_unsupp;
- 	/* a timeout in second for test completion */
-diff --git a/tools/testing/selftests/arm64/signal/test_signals_utils.c b/tools/testing/selftests/arm64/signal/test_signals_utils.c
-index 89ef95c1af0e..63deca32b0df 100644
---- a/tools/testing/selftests/arm64/signal/test_signals_utils.c
-+++ b/tools/testing/selftests/arm64/signal/test_signals_utils.c
-@@ -143,16 +143,25 @@ static bool handle_signal_ok(struct tdescr *td,
- 			"current->token ZEROED...test is probably broken!\n");
- 		abort();
++	if (getauxval(AT_HWCAP2) & HWCAP2_GCS)
++		gcs_set_state(PR_SHADOW_STACK_ENABLE);
++
+ 	ksft_print_msg("%s :: %s\n", current->name, current->descr);
+ 	if (test_setup(current) && test_init(current)) {
+ 		test_run(current);
+@@ -23,5 +37,6 @@ int main(int argc, char *argv[])
  	}
--	/*
--	 * Trying to narrow down the SEGV to the ones generated by Kernel itself
--	 * via arm64_notify_segfault(). This is a best-effort check anyway, and
--	 * the si_code check may need to change if this aspect of the kernel
--	 * ABI changes.
--	 */
--	if (td->sig_ok == SIGSEGV && si->si_code != SEGV_ACCERR) {
--		fprintf(stdout,
--			"si_code != SEGV_ACCERR...test is probably broken!\n");
--		abort();
-+	if (td->sig_ok_code) {
-+		if (si->si_code != td->sig_ok_code) {
-+			fprintf(stdout, "si_code is %d not %d\n",
-+				si->si_code, td->sig_ok_code);
-+			abort();
-+		}
-+	} else {
-+		/*
-+		 * Trying to narrow down the SEGV to the ones
-+		 * generated by Kernel itself via
-+		 * arm64_notify_segfault(). This is a best-effort
-+		 * check anyway, and the si_code check may need to
-+		 * change if this aspect of the kernel ABI changes.
-+		 */
-+		if (td->sig_ok == SIGSEGV && si->si_code != SEGV_ACCERR) {
-+			fprintf(stdout,
-+				"si_code != SEGV_ACCERR...test is probably broken!\n");
-+			abort();
-+		}
- 	}
- 	td->pass = 1;
- 	/*
+ 	test_result(current);
+ 
+-	return current->result;
++	/* Do not return in case GCS was enabled */
++	exit(current->result);
+ }
+diff --git a/tools/testing/selftests/arm64/signal/test_signals_utils.h b/tools/testing/selftests/arm64/signal/test_signals_utils.h
+index 762c8fe9c54a..1e80808ee105 100644
+--- a/tools/testing/selftests/arm64/signal/test_signals_utils.h
++++ b/tools/testing/selftests/arm64/signal/test_signals_utils.h
+@@ -18,6 +18,35 @@ void test_cleanup(struct tdescr *td);
+ int test_run(struct tdescr *td);
+ void test_result(struct tdescr *td);
+ 
++#ifndef __NR_prctl
++#define __NR_prctl 167
++#endif
++
++/*
++ * The prctl takes 1 argument but we need to ensure that the other
++ * values passed in registers to the syscall are zero since the kernel
++ * validates them.
++ */
++#define gcs_set_state(state)					\
++	({								\
++		register long _num  __asm__ ("x8") = __NR_prctl;	\
++		register long _arg1 __asm__ ("x0") =  PR_SET_SHADOW_STACK_STATUS; \
++		register long _arg2 __asm__ ("x1") = (long)(state);	\
++		register long _arg3 __asm__ ("x2") = 0;			\
++		register long _arg4 __asm__ ("x3") = 0;			\
++		register long _arg5 __asm__ ("x4") = 0;			\
++	                                                                      \
++		__asm__  volatile (					\
++			"svc #0\n"					\
++			: "=r"(_arg1)					\
++			: "r"(_arg1), "r"(_arg2),			\
++			  "r"(_arg3), "r"(_arg4),			\
++			  "r"(_arg5), "r"(_num)				\
++			: "memory", "cc"				\
++			);						\
++		_arg1;							\
++	})
++
+ static inline bool feats_ok(struct tdescr *td)
+ {
+ 	if (td->feats_incompatible & td->feats_supported)
 
 -- 
 2.39.2
