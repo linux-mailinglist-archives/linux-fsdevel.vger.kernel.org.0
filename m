@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-3411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C667F462B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:30:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78D07F4631
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FEA3B20DEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1471280D31
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B916054BC6;
-	Wed, 22 Nov 2023 12:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05C85A119;
+	Wed, 22 Nov 2023 12:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFNJ6kjA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbQ3AgFe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4065392
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:40 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-40859c464daso32515715e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:40 -0800 (PST)
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8B41AC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:41 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-4083f61322fso34004955e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700656058; x=1701260858; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1700656060; x=1701260860; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rq/epNnQwlHfqFRrcdPyAqTuEwGawgUhoK0qjSLejTY=;
-        b=JFNJ6kjA89Guf+TltHG45J6vAyPeYEZT2QXnt3/skMzgWTT9lDb/OTBUWYKWp/A9/T
-         tpxHF7BEWRLT/6pFqJxRTYUSu03hN+7qDdR5y+RGqe4DMADT3zn3ERh6+hUWTRwIl9+I
-         siZW/vMdm2NJ5dpZlF4ABtX10QDfyI4toLLxc/UC/uaURy6vq/A6LO1ZH0WN7W1/r/wM
-         7Jf5DPhNXlIkhX8TGj6uX7egPdCJk3Y0B8vzqJv39hSck9rhMP0uQL+3F2gTEiuESvox
-         wXRI0XZ8oKwBynl6t5zk4VX4tEtXX8KNi1VIf+kr9MdwUGouvmY1tt4ezNhxJNrV/Nck
-         ImFw==
+        bh=Q/NtyG2csDvfekP/QlGFua/QNT8LSYgZ+R+0ttn+W20=;
+        b=GbQ3AgFeLGa2zcx7QX2A1Lx/Ztd405naYIfnlEwnOz8WhpW6Ea0d/8dWFA56M0tYIY
+         XCMCQva3eMB4jT8QdfeKL6nCkhsdT5sEe06HrFCn+SkxFMUOHHqqVgduIgDHNTK6m53+
+         I7B2AXo87VmHoQiX6jlZzny0ceA1kH8fsvH9nblaIeDkCUnl+GNhZN+MMsGJcJYxBFA6
+         A1WSa6YNiQM9YQ1J6J/f7HG64mu8V9oMEOzdqUPnsclz1ygvVOVJmH1ZQAEJVnc3VB6z
+         XJ/Jt3+31l6as8BQN9xxRA+kNDYlSorbnOtCdFPjzpG2uJyxqjevfOEgjx9pqXHrdq3t
+         U2KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700656058; x=1701260858;
+        d=1e100.net; s=20230601; t=1700656060; x=1701260860;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rq/epNnQwlHfqFRrcdPyAqTuEwGawgUhoK0qjSLejTY=;
-        b=ETGWWwKOdEwHLRAO3JvwNPYivuhsaXCjDtltBOAFQwi7jO1LooxX9l78D7LrN2C3w+
-         61vfFgDPZDd16n57egbbJ9SETdIFscSfeGcU1Yua2xqt95fVQ6jEMqmchxUVQH26R6Ak
-         a8BDc8jidJngThF+635/hr0r2enQmeOymOlmgS4mcucyi8/+unio8//yCVXM4/581EiP
-         7xVBRudhgxWd1gRg24uNRHYfipM1XpfZc8p6WE2Xz7Ee1J5tBIn2lu0eEuNcxP0+hneD
-         RUfLhbCV/MAWrN7b600CniaPoFYe//MJmFjen1Tp8TmrAs2c8ffOju2SMlocCMmWdTff
-         UKRA==
-X-Gm-Message-State: AOJu0YzSqvhiWCtZOKajpWk6awJRZcRGmkzrcgwdErNeF0Nbl1NfIMSE
-	yGNFBQj6lOpEBdcQgx8aCfE=
-X-Google-Smtp-Source: AGHT+IGEXNxoY0fG9bhMMi9ZFOM+LW8SGzJkXDyF8TfqWHNldODOACrfQorMycLNy3SZQGFkSu2uGA==
-X-Received: by 2002:a05:600c:1d0f:b0:409:c1e:7fe8 with SMTP id l15-20020a05600c1d0f00b004090c1e7fe8mr1697974wms.19.1700656058668;
-        Wed, 22 Nov 2023 04:27:38 -0800 (PST)
+        bh=Q/NtyG2csDvfekP/QlGFua/QNT8LSYgZ+R+0ttn+W20=;
+        b=Zx51XNlfKtlRvgYqIsPJsmsW0sKVxkwC1JtLQHtloBJcMTOQ1LemG5Eosb3h+XMlkC
+         kYqrPkRnQpaDZJsmY9XRPJdll3BKrmr5MvzjTrNNQvVxPtx4JlWAXmkA+BI1iDeEnyGE
+         YfKpj9GPc6P3QtPLyU7iPdw4bDz1sldr8rNzaG9P3NB0Q1NUHWhAuHw1r+Oss6epMY5q
+         P6mufAtwWoyqOmiJu9dW1uYtI/cN0A6MO2b0IwGXrBW+mHFdXeilxJ8sxSm1gNFi7vj5
+         3/+uw/Xr652gNC+RGP4DiyuyxyeA2FLHgV9j+b747mgMQk8Sy/ERwwkDJniGxK8Djiu9
+         ewug==
+X-Gm-Message-State: AOJu0YyHqvzP5OiCAwiIoVKdO0PE+m6ZLqF/10CCRC9uARChDYnm4Kuy
+	sUyhwXuairNmRNVR966zjqs=
+X-Google-Smtp-Source: AGHT+IFwTgaeYuDnvTKeFAITYvlJKsz5NMgCcgLwaja4X5I+NiZORddiUpb53XfLWEpgMVLvKxB5Mg==
+X-Received: by 2002:a05:600c:1c9d:b0:406:f832:6513 with SMTP id k29-20020a05600c1c9d00b00406f8326513mr1723448wms.3.1700656060036;
+        Wed, 22 Nov 2023 04:27:40 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.37
+        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 04:27:38 -0800 (PST)
+        Wed, 22 Nov 2023 04:27:39 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
@@ -62,9 +62,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 13/16] fs: move kiocb_start_write() into vfs_iocb_iter_write()
-Date: Wed, 22 Nov 2023 14:27:12 +0200
-Message-Id: <20231122122715.2561213-14-amir73il@gmail.com>
+Subject: [PATCH v2 14/16] fs: create __sb_write_started() helper
+Date: Wed, 22 Nov 2023 14:27:13 +0200
+Message-Id: <20231122122715.2561213-15-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231122122715.2561213-1-amir73il@gmail.com>
 References: <20231122122715.2561213-1-amir73il@gmail.com>
@@ -76,112 +76,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In vfs code, sb_start_write() is usually called after the permission hook
-in rw_verify_area().  vfs_iocb_iter_write() is an exception to this rule,
-where kiocb_start_write() is called by its callers.
+Similar to sb_write_started() for use by other sb freeze levels.
 
-Move kiocb_start_write() from the callers into vfs_iocb_iter_write()
-after the rw_verify_area() checks, to make them "start-write-safe".
-
-The semantics of vfs_iocb_iter_write() is changed, so that the caller is
-responsible for calling kiocb_end_write() on completion only if async
-iocb was queued.  The completion handlers of both callers were adapted
-to this semantic change.
+Unlike the boolean sb_write_started(), this helper returns a tristate
+to distiguish the cases of lockdep disabled or unknown lock state.
 
 This is needed for fanotify "pre content" events.
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Suggested-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/cachefiles/io.c  | 5 ++---
- fs/overlayfs/file.c | 8 ++++----
- fs/read_write.c     | 7 +++++++
- 3 files changed, 13 insertions(+), 7 deletions(-)
+ include/linux/fs.h | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index 009d23cd435b..5857241c5918 100644
---- a/fs/cachefiles/io.c
-+++ b/fs/cachefiles/io.c
-@@ -259,7 +259,8 @@ static void cachefiles_write_complete(struct kiocb *iocb, long ret)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98b7a7a8c42e..e8aa48797bf4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1645,9 +1645,22 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
+ #define __sb_writers_release(sb, lev)	\
+ 	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
  
- 	_enter("%ld", ret);
- 
--	kiocb_end_write(iocb);
-+	if (ki->was_async)
-+		kiocb_end_write(iocb);
- 
- 	if (ret < 0)
- 		trace_cachefiles_io_error(object, inode, ret,
-@@ -319,8 +320,6 @@ int __cachefiles_write(struct cachefiles_object *object,
- 		ki->iocb.ki_complete = cachefiles_write_complete;
- 	atomic_long_add(ki->b_writing, &cache->b_writing);
- 
--	kiocb_start_write(&ki->iocb);
--
- 	get_file(ki->iocb.ki_filp);
- 	cachefiles_grab_object(object, cachefiles_obj_get_ioreq);
- 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 690b173f34fc..4e46420c8fdd 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -295,10 +295,8 @@ static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
- 	struct kiocb *iocb = &aio_req->iocb;
- 	struct kiocb *orig_iocb = aio_req->orig_iocb;
- 
--	if (iocb->ki_flags & IOCB_WRITE) {
--		kiocb_end_write(iocb);
-+	if (iocb->ki_flags & IOCB_WRITE)
- 		ovl_file_modified(orig_iocb->ki_filp);
--	}
- 
- 	orig_iocb->ki_pos = iocb->ki_pos;
- 	ovl_aio_put(aio_req);
-@@ -310,6 +308,9 @@ static void ovl_aio_rw_complete(struct kiocb *iocb, long res)
- 						   struct ovl_aio_req, iocb);
- 	struct kiocb *orig_iocb = aio_req->orig_iocb;
- 
-+	if (iocb->ki_flags & IOCB_WRITE)
-+		kiocb_end_write(iocb);
-+
- 	ovl_aio_cleanup_handler(aio_req);
- 	orig_iocb->ki_complete(orig_iocb, res);
- }
-@@ -456,7 +457,6 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		aio_req->iocb.ki_flags = ifl;
- 		aio_req->iocb.ki_complete = ovl_aio_queue_completion;
- 		refcount_set(&aio_req->ref, 2);
--		kiocb_start_write(&aio_req->iocb);
- 		ret = vfs_iocb_iter_write(real.file, &aio_req->iocb, iter);
- 		ovl_aio_put(aio_req);
- 		if (ret != -EIOCBQUEUED)
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 9410c3e6a04e..ed0ea1132cee 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -862,6 +862,10 @@ static ssize_t do_iter_write(struct file *file, struct iov_iter *iter,
- 	return do_loop_readv_writev(file, iter, pos, WRITE, flags);
- }
- 
-+/*
-+ * Caller is responsible for calling kiocb_end_write() on completion
-+ * if async iocb was queued.
++/**
++ * __sb_write_started - check if sb freeze level is held
++ * @sb: the super we write to
++ *
++ * > 0 sb freeze level is held
++ *   0 sb freeze level is not held
++ * < 0 !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
 + */
- ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
- 			    struct iov_iter *iter)
++static inline int __sb_write_started(const struct super_block *sb, int level)
++{
++	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
++}
++
+ static inline bool sb_write_started(const struct super_block *sb)
  {
-@@ -882,7 +886,10 @@ ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
- 	if (ret < 0)
- 		return ret;
+-	return lockdep_is_held_type(sb->s_writers.rw_sem + SB_FREEZE_WRITE - 1, 1);
++	return __sb_write_started(sb, SB_FREEZE_WRITE);
+ }
  
-+	kiocb_start_write(iocb);
- 	ret = call_write_iter(file, iocb, iter);
-+	if (ret != -EIOCBQUEUED)
-+		kiocb_end_write(iocb);
- 	if (ret > 0)
- 		fsnotify_modify(file);
- 
+ /**
 -- 
 2.34.1
 
