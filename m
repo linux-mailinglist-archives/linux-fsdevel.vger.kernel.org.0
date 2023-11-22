@@ -1,40 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-3425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5777F468A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:45:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A49D7F46A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5EA1C208D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D1B1C2032E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B9C4AF71;
-	Wed, 22 Nov 2023 12:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06C14BA9B;
+	Wed, 22 Nov 2023 12:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAGLmXve"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tc/2BAOy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D65495FB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 12:44:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66ADC433CA;
-	Wed, 22 Nov 2023 12:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C304D126;
+	Wed, 22 Nov 2023 12:49:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B8AC433C7;
+	Wed, 22 Nov 2023 12:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700657098;
-	bh=uKuNPUXLK2gLNkKe02Yai19TRRbzLMVmA8ccRa9KuT8=;
-	h=From:Date:Subject:References:In-Reply-To:To:From;
-	b=WAGLmXvek6I8o1UXBXRZ+3ezbedQFioQ2B06F/QUW9CfTzWLescH+j08J0dThEhYA
-	 m+WGfJHA6e3bv2du+c8+tuyKi96OknqfL3Cu4tPF/SHt8xF/Zeup+811iNErDl+evz
-	 SC1ZQ8HqDUjQfGo+TXwDQDRnYjScXSGynihJ5RyozXc/xGdqg+tK0WhTIbeIoCCoWf
-	 E6HjKsTH7rUV1KaCpzoZf2+QdYI8rHx/TI2i+0VJfawwwTFln3n3LVK9bHhKUcCTLr
-	 ZQdhvnlRC3+/3xaQ1E760lEVuBmpckK1TV0OFq9lQGPmZZda5qo95yJXt55BY6/u5g
-	 kvbB96XqQJkNw==
+	s=k20201202; t=1700657341;
+	bh=6OXBSUL+nsBWDSWY/Q2r+0obUk1WW2944LvuwrKFOOg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Tc/2BAOyq/CL424TPKJ+8ok4iD2CSlMj4gj7I88R2wR3SRpoXrwpPP4CcDv0rCy4Q
+	 imtDsj4NMmiBNZozdVII4r1Tu0lKWkktCHU3pI4LzAIFYMYIaMFpbulm6tUMVwguK4
+	 qTlrJ2u4/DeMIiXbQyzfXkH/WxJG3G65JVkRZ5lf6r4VzUJTQXH/UjyJJ0V5cZAl2s
+	 w/spDO6VPLhtfPliBsbbdWVAXUjht3ojtCQDl0LfCWNNwph8Zdy7ZX7mLHL0no3jWG
+	 z8IdhyFNF5VEPzmpKIFkxea1CvPQqUVZAxIi/ByG3Lv1c90SwdjDEIcrL99R5YQgIg
+	 fP3gmG5BvwYWQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Nov 2023 13:44:40 +0100
-Subject: [PATCH 4/4] fs: reformat idmapped mounts entry
+Subject: [PATCH v2 0/4] eventfd: simplify signal helpers
+Date: Wed, 22 Nov 2023 13:48:21 +0100
+Message-Id: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,82 +44,87 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-vfs-mnt_idmap-v1-4-dae4abdde5bd@kernel.org>
-References: <20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org>
-In-Reply-To: <20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
- Christian Brauner <brauner@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJX4XWUC/32OTQ6CMBBGr0K6dkhbYpu48h6GRX8GaMRiZkijI
+ dzdwgFcvsV737cJRkrI4tZsgrAkTkuuoC+NCJPLI0KKlYWWupNWdVAGBiyY1yECpzG7GaSXURn
+ rosEgqvgmHNLnjD76yt4xgieXw3SkXo5XpLaY1gIFdRhT4nWh7/miqMP7O1gUSLBDdCZco1ba3
+ 59IGed2oVH0+77/ALQAWw7XAAAA
+To: linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, 
+ Vitaly Kuznetsov <vkuznets@redhat.com>, 
+ Sean Christopherson <seanjc@google.com>, 
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, 
+ Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+ Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, 
+ Xu Yilun <yilun.xu@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
+ Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Frederic Barrat <fbarrat@linux.ibm.com>, 
+ Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Eric Farman <farman@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>, 
+ Halil Pasic <pasic@linux.ibm.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, 
+ Peter Oberparleiter <oberpar@linux.ibm.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Tony Krowiak <akrowiak@linux.ibm.com>, 
+ Jason Herne <jjherne@linux.ibm.com>, 
+ Harald Freudenberger <freude@linux.ibm.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ Diana Craciun <diana.craciun@oss.nxp.com>, 
+ Alex Williamson <alex.williamson@redhat.com>, 
+ Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>, 
+ Benjamin LaHaise <bcrl@kvack.org>, Christian Brauner <brauner@kernel.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Shakeel Butt <shakeelb@google.com>, Muchun Song <muchun.song@linux.dev>, 
+ Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org, 
+ intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+ linux-usb@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+ netdev@vger.kernel.org, linux-aio@kvack.org, cgroups@vger.kernel.org, 
+ linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>, 
+ Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
 X-Mailer: b4 0.13-dev-26615
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1909; i=brauner@kernel.org;
- h=from:subject:message-id; bh=uKuNPUXLK2gLNkKe02Yai19TRRbzLMVmA8ccRa9KuT8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTGfj/CaldwV7Pw5bzDoYxifnLrmvKUNX7NY9A7uFV2M
- jPTtlXuHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABP54MPwP1zZa5GjjSNz/Zbd
- bQ7tPhWSbAtLzTNDstc2uxfumymzmZHhj/Kb45t+cm1xPc+s56Zp1Hr4Be/78MNfN7XWvFE8l/G
- CHwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=564; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=6OXBSUL+nsBWDSWY/Q2r+0obUk1WW2944LvuwrKFOOg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTG/lhzPFmKbc7Vgs4lut/eP1hw9bOuxtyeI9s4tYwWe
+ yZZxby53lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRf4IM/8NUuv3TH0hJOWz8
+ c65PTujVFLaLGrq6vFP/9yxi7X77UInhf0113erTobU10gp/tt37unHeHp8P0ZHTLq5c7sWdN//
+ 2D04A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Reformat idmapped mounts to clearly mark where it belongs.
+Hey everyone,
+
+This simplifies the eventfd_signal() and eventfd_signal_mask() helpers
+significantly. They can be made void and not take any unnecessary
+arguments.
+
+I've added a few more simplifications based on Sean's suggestion.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Changes in v2:
+- further simplify helpers
+- Link to v1: https://lore.kernel.org/r/20230713-vfs-eventfd-signal-v1-0-7fda6c5d212b@kernel.org
+
 ---
- MAINTAINERS            | 20 ++++++++++----------
- include/linux/uidgid.h |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 97f51d5ec1cf..d0a7b6f357ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8177,6 +8177,16 @@ F:	fs/exportfs/
- F:	fs/fhandle.c
- F:	include/linux/exportfs.h
- 
-+FILESYSTEMS [IDMAPPED MOUNTS]
-+M:	Christian Brauner <brauner@kernel.org>
-+M:	Seth Forshee <sforshee@kernel.org>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/filesystems/idmappings.rst
-+F:	fs/mnt_idmapping.c
-+F:	include/linux/mnt_idmapping.*
-+F:	tools/testing/selftests/mount_setattr/
-+
- FILESYSTEMS [IOMAP]
- M:	Christian Brauner <brauner@kernel.org>
- R:	Darrick J. Wong <djwong@kernel.org>
-@@ -10252,16 +10262,6 @@ S:	Maintained
- W:	https://github.com/o2genum/ideapad-slidebar
- F:	drivers/input/misc/ideapad_slidebar.c
- 
--IDMAPPED MOUNTS
--M:	Christian Brauner <brauner@kernel.org>
--M:	Seth Forshee <sforshee@kernel.org>
--L:	linux-fsdevel@vger.kernel.org
--S:	Maintained
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git
--F:	Documentation/filesystems/idmappings.rst
--F:	include/linux/mnt_idmapping.*
--F:	tools/testing/selftests/mount_setattr/
--
- IDT VersaClock 5 CLOCK DRIVER
- M:	Luca Ceresoli <luca@lucaceresoli.net>
- S:	Maintained
-diff --git a/include/linux/uidgid.h b/include/linux/uidgid.h
-index 7806e93b907d..415a7ca2b882 100644
---- a/include/linux/uidgid.h
-+++ b/include/linux/uidgid.h
-@@ -195,7 +195,7 @@ static inline u32 map_id_down(struct uid_gid_map *map, u32 id)
- 	return id;
- }
- 
--static inline u32 map_id_up(struct uid_gid_map *map, u32 id);
-+static inline u32 map_id_up(struct uid_gid_map *map, u32 id)
- {
- 	return id;
- }
 
--- 
-2.42.0
+
+---
+base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
+change-id: 20230713-vfs-eventfd-signal-0b0d167ad6ec
 
 
