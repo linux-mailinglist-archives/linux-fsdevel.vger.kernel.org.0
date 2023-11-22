@@ -1,135 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-3377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AEE7F4235
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:45:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B337F41DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 10:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA317B2133D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B202817C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 09:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2021104;
-	Wed, 22 Nov 2023 09:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0Z/U7xM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9221F250F2;
+	Wed, 22 Nov 2023 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF716407;
-	Wed, 22 Nov 2023 09:44:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6165C433CD;
-	Wed, 22 Nov 2023 09:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700646292;
-	bh=HrTZdiDMDN2AL5+FFpvaO5U1EqVinVUtyfSdqXL4wYA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=p0Z/U7xMPKgM32RdtDRReCBHmtw+qLgWMkmr9fAlX9sTPpSTX1kzT1b4Ax8iNZTQ1
-	 SDpqnAv/m3xI6cskZjeIJXtgnHudh+xvZe8lSAZLVs7RjUByzMaLt84cVni6atFfi1
-	 +X3DScY2qReqW23WxMSFy7bEE8mBc2v/XGgaKns+PNuVAPlMnGMDRcv9OEpAI4D/om
-	 CpDnm2ALUXUkqaRpqSUp+bCmc6Y3gqo06ZtP0UHlplrxt73e4QcDOclNWVf+LnjHaN
-	 QXl+y5Ql95Ai80nNQ7l/b37t+jrxyuqXFBUhUW9i2y6qZpxx91LF6ySTkMQLR3is6Y
-	 lXvqWl1Km6fLA==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 22 Nov 2023 09:42:26 +0000
-Subject: [PATCH v7 16/39] arm64/idreg: Add overrride for GCS
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567AC1A2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 01:42:28 -0800 (PST)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5aaae6f46e1so9610302a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 01:42:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700646148; x=1701250948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KEa5dCxl6pESrXC5qpG46AnVrTQTNBV9WlYgIg05mbo=;
+        b=Ep3ZZMv9rHu/VGMM8aIC6hzpygjw53T80zE6NTuMQidPzJeNb8reqvocKKSdyKoua0
+         H8FSJ6Ka8rHPsoAb/cFRRAIjY94MYT4Fq7/7b31EU47qeYoq+s/mB6UOu4oHIJjwDShV
+         3TbEOuB2wt7IYxgdEleaZuWQkJn12HVwKPs6oTi0a40uF+8dU3glk/sdqOp3doIJ9NMZ
+         aLB1WlE+jyBowpfpm2mUNZ8LN3kj0MI58qaMl7lOzpqKIxlFHfJjW+gIO91IhlgkNsd3
+         R4gn/+jGLbt4oyoXb+m7M+4vQVSHXHshA3fgCggMtLvHR+ObBtrAcBBmEj3s5msOf9kM
+         rIig==
+X-Gm-Message-State: AOJu0Yws+FBBCeXmZ8vDE9l9RdMBbPzeF2L4tK6NM0YVACZW/IKCvSL2
+	7UX1ysUtJIZCnfVsEkm4vf5JbZTBSHDLMCoRK02beefkLiBm
+X-Google-Smtp-Source: AGHT+IHiOp2h/Vp6GVyBdvHa4oWfw2RVdXX2xB3H3tL+Q5mrUZQ0kkT4DyXhPAOMv8bKckGvHcqVRoMYSAEN/Qed+A6fRT64ShX9
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-arm64-gcs-v7-16-201c483bd775@kernel.org>
-References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
-In-Reply-To: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
- Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
- Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>, 
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, 
- Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Florian Weimer <fweimer@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
- linux-arch@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1992; i=broonie@kernel.org;
- h=from:subject:message-id; bh=HrTZdiDMDN2AL5+FFpvaO5U1EqVinVUtyfSdqXL4wYA=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlXc0CojGZj7s7XLMcN8F+/cIfToo5TSu1/o7Jx
- iRDev9LKKeJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZV3NAgAKCRAk1otyXVSH
- 0IzPCACBRiVUTa+NHQT8XYai1y7/yLDxXJtjiAwGWCackHesESEtvValhKUigkGVJTRmqHLXptp
- cfwVGt2mctgc4HJtz8X8e6HP2UNCAeeD3OzagUJnZaDRGgKuFx6WxtnBaxjDKorTWBOhf6WqttU
- iV+LqXArWC0PbuMC2DgqoQwv6zSNVIeG0//Fhbwj7qd/pve5AUJV5aFS8zHE0FBOSbKfDl5y15z
- Xn+yX4gbWJIf0xIN4DDjLjwN3Jl0uM2gMo9nMACXRJvrQLhHqw3BjMF7ida4CqfIiVvU/BTHlpI
- jlGGSl6tFko0XV6J3tsrAJW+uVFoylFuxbpJ/cMFFFqzZs5R
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-Received: by 2002:a63:db17:0:b0:5bd:bcde:c677 with SMTP id
+ e23-20020a63db17000000b005bdbcdec677mr341171pgg.2.1700646147844; Wed, 22 Nov
+ 2023 01:42:27 -0800 (PST)
+Date: Wed, 22 Nov 2023 01:42:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087f5e5060aba893e@google.com>
+Subject: [syzbot] Monthly f2fs report (Nov 2023)
+From: syzbot <syzbot+lista1e65ffd6781d1c11435@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hook up an override for GCS, allowing it to be disabled from the command
-line by specifying arm64.nogcs in case there are problems.
+Hello f2fs maintainers/developers,
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This is a 31-day syzbot report for the f2fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/f2fs
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 34 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 290     Yes   INFO: task hung in f2fs_balance_fs
+                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
+<2> 86      Yes   INFO: task hung in f2fs_issue_checkpoint
+                  https://syzkaller.appspot.com/bug?extid=8c1c6ffb39e290968f8d
+<3> 10      Yes   kernel BUG in f2fs_evict_inode (2)
+                  https://syzkaller.appspot.com/bug?extid=31e4659a3fe953aec2f4
+
 ---
- Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
- arch/arm64/kernel/idreg-override.c              | 2 ++
- 2 files changed, 8 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 65731b060e3f..e2282f310ad7 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -418,9 +418,15 @@
- 	arm64.nobti	[ARM64] Unconditionally disable Branch Target
- 			Identification support
- 
-+	arm64.nogcs	[ARM64] Unconditionally disable Guarded Control Stack
-+			support
-+
- 	arm64.nomops	[ARM64] Unconditionally disable Memory Copy and Memory
- 			Set instructions support
- 
-+	arm64.nopauth	[ARM64] Unconditionally disable Pointer Authentication
-+			support
-+
- 	arm64.nomte	[ARM64] Unconditionally disable Memory Tagging Extension
- 			support
- 
-diff --git a/arch/arm64/kernel/idreg-override.c b/arch/arm64/kernel/idreg-override.c
-index 3addc09f8746..cc059ba39d58 100644
---- a/arch/arm64/kernel/idreg-override.c
-+++ b/arch/arm64/kernel/idreg-override.c
-@@ -99,6 +99,7 @@ static const struct ftr_set_desc pfr1 __initconst = {
- 	.override	= &id_aa64pfr1_override,
- 	.fields		= {
- 		FIELD("bt", ID_AA64PFR1_EL1_BT_SHIFT, NULL ),
-+		FIELD("gcs", ID_AA64PFR1_EL1_GCS_SHIFT, NULL),
- 		FIELD("mte", ID_AA64PFR1_EL1_MTE_SHIFT, NULL),
- 		FIELD("sme", ID_AA64PFR1_EL1_SME_SHIFT, pfr1_sme_filter),
- 		{}
-@@ -178,6 +179,7 @@ static const struct {
- 	{ "arm64.nosve",		"id_aa64pfr0.sve=0" },
- 	{ "arm64.nosme",		"id_aa64pfr1.sme=0" },
- 	{ "arm64.nobti",		"id_aa64pfr1.bt=0" },
-+	{ "arm64.nogcs",		"id_aa64pfr1.gcs=0" },
- 	{ "arm64.nopauth",
- 	  "id_aa64isar1.gpi=0 id_aa64isar1.gpa=0 "
- 	  "id_aa64isar1.api=0 id_aa64isar1.apa=0 "
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--- 
-2.39.2
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
