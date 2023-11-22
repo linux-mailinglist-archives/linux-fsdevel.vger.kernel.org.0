@@ -1,231 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-3460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE707F504A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 991967F5090
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12461C20A82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7631C20B3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20955C90E;
-	Wed, 22 Nov 2023 19:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35D55E0BE;
+	Wed, 22 Nov 2023 19:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZJTAHvm6"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VRmy3WrW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8578BC1
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 11:11:59 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2c6b30aca06so1542151fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 11:11:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700680317; x=1701285117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=76U5LuXklWAyniR6ra54O/gPKsBzjp+msKjwOE8hsp8=;
-        b=ZJTAHvm6iYti3SO3QhkT/q6cqN1s7YjM/kQn48dmVpZBCpoW7uM6HS+JacKr6rbMbl
-         QRf8eUSnedjMiAWlJCU27sRZQs/iyXkUi4TFZlmBrOFk3IDBbrjSK7GVf2qowoDPnMni
-         in6oD5ZiYlTu53ImYTcgR1LwClNLiGh+X8//k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700680317; x=1701285117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=76U5LuXklWAyniR6ra54O/gPKsBzjp+msKjwOE8hsp8=;
-        b=QMZN1mf64lO9H7/aCx8JXX7ShasZU26abu6ODzDOozsqdsKtv3bPjxVEfDVs0zvt3c
-         ooyVmTvwGXc9mkCtHh5qh/7HlMkDD8ORXR0eoTuEe7bCraZSTLGTPSj46psbnnMWGX8A
-         M5gbaoF+sbs7sn6S1yHyGUcpPvBSEbFod6iQQrsRzLOj1l3BCaQOpym/z5H3DFiGB0hs
-         iEiiP8a2vCBHspFhWfqLb5Qp76/Ald81HpN01Ymg1vbKanyJ581s59MM2hNFxSroPmfG
-         DTbHCH8sU2oukbVFHOR3o7+bKJHWgAYfo+wWSreKOtsjGyAkpGv8iSmv0wMt/o/REpwK
-         mdMg==
-X-Gm-Message-State: AOJu0YwKx87MZd/94+TcB2YkFd1GUt3+vyg/v9COKzLYeUEg+7A7DKv6
-	9MY1EjgZhLA9CEH0VJvrDhpz0KQcwf/vi0H0L78J8wba
-X-Google-Smtp-Source: AGHT+IHLJmXke1vm4c0LNqcguzeOhSwjXsNn1gKen7C8GEmBpe1VV3XX4r34QrZvOOlaqtEP6Q9qVg==
-X-Received: by 2002:a2e:9192:0:b0:2bc:c750:d9be with SMTP id f18-20020a2e9192000000b002bcc750d9bemr2426146ljg.29.1700680317453;
-        Wed, 22 Nov 2023 11:11:57 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id b22-20020a05651c033600b002bfe8537f37sm24200ljp.33.2023.11.22.11.11.56
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 11:11:56 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5079f3f3d7aso63881e87.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 11:11:56 -0800 (PST)
-X-Received: by 2002:ac2:5159:0:b0:502:f7a4:c31f with SMTP id
- q25-20020ac25159000000b00502f7a4c31fmr2521099lfd.45.1700680316053; Wed, 22
- Nov 2023 11:11:56 -0800 (PST)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E742D18E;
+	Wed, 22 Nov 2023 11:30:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=p1irU5/sMV7m/y1pOMYTaih3tLiq5FQfX+AGXmsO5cU=; b=VRmy3WrW8+pNBsWOfDxL2s3pUK
+	4ILG+s+rBsn3aSTA4U1blwa1fJXQ+ZpkggvOqaLfnADIYbA87Qo4cFraQgYStoZ/lRSxvQ56/ViFA
+	tCJ0VsCWD8U6HO/zCG6BoGOHVXXg7UfUZFLw1KHk1lOY6q38c1bk0bhWCJJCVxCocMYr/ZeVL9CvP
+	/hblKokHWEGibFcKO3nYnnYX4HTr3SYdR2YSu+lx46CO/muf7KYlc+2lEjIC+Vz0uTEWod/bUGBhm
+	g5JXG1aR/Z+kMTRenMZ29fJzTDZvhrnci4xFcCfnc+DvsmjoE74Ts5m8XPsCiiTBDtIgYaqbHw6CM
+	i1ZsnxGA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r5svc-001ksS-1G;
+	Wed, 22 Nov 2023 19:30:28 +0000
+Date: Wed, 22 Nov 2023 19:30:28 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Mo Zou <lostzoumo@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHES][CFT] rename deadlock fixes
+Message-ID: <20231122193028.GE38156@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231031061226.GC1957730@ZenIV> <20231101062104.2104951-1-viro@zeniv.linux.org.uk>
- <20231101062104.2104951-9-viro@zeniv.linux.org.uk> <20231101084535.GG1957730@ZenIV>
- <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
- <20231101181910.GH1957730@ZenIV> <20231110042041.GL1957730@ZenIV>
- <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
- <ZV2rdE1XQWwJ7s75@gmail.com> <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
- <CAHk-=wg6D_d-zaRfXZ=sUX1fbTJykQ4KxXCmEk3aq73wVk_ORA@mail.gmail.com>
-In-Reply-To: <CAHk-=wg6D_d-zaRfXZ=sUX1fbTJykQ4KxXCmEk3aq73wVk_ORA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 22 Nov 2023 11:11:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj2ky85K5HYYLeLCP23qyTJpirnpiVSu5gWyT_GRXbJaQ@mail.gmail.com>
-Message-ID: <CAHk-=wj2ky85K5HYYLeLCP23qyTJpirnpiVSu5gWyT_GRXbJaQ@mail.gmail.com>
-Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
- call of retain_dentry() into fast_dput())
-To: Guo Ren <guoren@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000001e2d76060ac27e88"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
---0000000000001e2d76060ac27e88
-Content-Type: text/plain; charset="UTF-8"
+	Directory locking used to provide the following warranties:
+1.  Any read operations (lookup, readdir) are done with directory locked at
+least shared.
+2.  Any link creation or removal is done with directory locked exclusive.
+3.  Any link count changes are done with the object locked exclusive.
+4.  Any emptiness checks (for rmdir() or overwriting rename()) are done with
+the victim locked exclusive.
+5.  Any rename of a non-directory is done with the object locked exclusive
+(the last part is needed by nfsd).
 
-On Wed, 22 Nov 2023 at 09:52, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Still not actually tested, but the code generation on x86 looks
-> reasonable, so it migth be worth looking at whether it helps the
-> RISC-V case.
+	As far as directory contents is concerned, it very nearly amounted
+to "all reads are done with directory locked shared, all modifications
+- exclusive".  There had been one gap in that, though - rename() can change
+the parent of subdirectory and strictly speaking that does modify
+the contents - ".." entry might need to be altered to match the new parent.
+For almost all filesystems it posed no problem - location and representation
+of ".." entry is fs-dependent, but it tends to be unaffected by any other
+directory modifications.
 
-Doing some more munging, and actually looking at RISC-V code
-generation too (I obviously had to enable ARCH_USE_CMPXCHG_LOCKREF for
-RISC-V).
+	However, in some cases it's not true - for example, a filesystem
+might have the contents of small directories kept directly in the
+inode, switched to separate allocation when enough entries are added.
+For such beasts we need an exclusion between modifying ".." and (at least)
+switchover from small to large directory format.
 
-I get this:
+	One solution would be an fs-private locking inside the method,
+another - having cross-directory ->rename() take the normal lock on
+directory being moved.
 
-  lockref_get:
-        addi    sp,sp,-32
-        sd      s0,16(sp)
-        sd      s1,8(sp)
-        sd      ra,24(sp)
-        addi    s0,sp,32
-        li      a1,65536
-        ld      a5,0(a0)
-        mv      s1,a0
-        addi    a1,a1,-1
-        li      a0,100
-  .L43:
-        sext.w  a3,a5
-        li      a4,1
-        srliw   a2,a5,16
-        and     a3,a3,a1
-        slli    a4,a4,32
-        bne     a2,a3,.L49
-        add     a4,a5,a4
-  0:
-        lr.d a3, 0(s1)
-        bne a3, a5, 1f
-        sc.d.rl a2, a4, 0(s1)
-        bnez a2, 0b
-        fence rw, rw
-  1:
-        bne     a5,a3,.L52
-        ld      ra,24(sp)
-        ld      s0,16(sp)
-        ld      s1,8(sp)
-        addi    sp,sp,32
-        jr      ra
-  ...
+	Or one could make vfs_rename() itself lock that directory instead,
+sparing the ->rename() instances all that headache.  That had been done in
+6.5; unfortunately, locking the moved subdirectory had been done in *all*
+cases, cross-directory or not.	And that turns out to be more than a bit
+of harmless overlocking - deadlock prevention relies upon the fact that
+we never lock two directories that are not descendents of each other
+without holding ->s_vfs_rename_mutex.  Kudos to Mo Zou for pointing to
+the holes in proof of correctness - that's what uncovered the problem...
 
-so now that single update is indeed just one single instruction:
+	We could revert to pre-6.5 locking scheme, but there's a less
+painful solution; the cause of problem is same-directory case and in those
+there's no reason for ->rename() to touch the ".." entry at all - the
+parent does not change, so the modification of ".." would be tautological.
 
-        add     a4,a5,a4
+	Let's keep locking moved subdirectory in cross-directory move;
+that spares ->rename() instances the need to do home-grown exclusion.
+They need to be careful in one respect - if they do rely upon the exclusion
+between the change of ".." and other directory modifications, they should
+only touch ".." if the parent does get changed.  Exclusion is still provided
+by the caller for such (cross-directory) renames.
 
-is that "increment count in the high 32 bits".
+	The series lives in 
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #work.rename;
+individual patches in followups.  It does surivive local beating, but
+it needs more - additional review and testing would be very welcome.
 
-The ticket lock being unlocked checks are those
+	It starts with making sure that ->rename() instances are
+careful.  Then the locking rules for rename get changed, so that we don't
+lock moved subdirectory in same-directory case.  The proof of correctness
+gets updated^Wfixed - the current one had several holes.
 
-        li      a1,65536
-        sext.w  a3,a5
-        srliw   a2,a5,16
-        and     a3,a3,a1
-        bne     a2,a3,.L49
+1/9..6/9) (me and Jan) don't do tautological ".." changes in instances.
+      reiserfs: Avoid touching renamed directory if parent does not change
+      ocfs2: Avoid touching renamed directory if parent does not change
+      udf_rename(): only access the child content on cross-directory rename
+      ext2: Avoid reading renamed directory if parent does not change
+      ext4: don't access the source subdirectory content on same-directory rename
+      f2fs: Avoid reading renamed directory if parent does not change
 
-instructions if I read it right.
+7/9) rename(): fix the locking of subdirectories
 
-That actually looks fairly close to optimal, although the frame setup
-is kind of sad.
+	We should never lock two subdirectories without having taken
+->s_vfs_rename_mutex; inode pointer order or not, the "order" proposed
+in 28eceeda130f "fs: Lock moved directories" is not transitive, with
+the usual consequences.
 
-(The above does not include the "loop if the cmpxchg failed" part of
-the code generation)
+	The rationale for locking renamed subdirectory in all cases was
+the possibility of race between rename modifying .. in a subdirectory to
+reflect the new parent and another thread modifying the same subdirectory.
+For a lot of filesystems that's not a problem, but for some it can lead
+to trouble (e.g. the case when short directory contents is kept in the
+inode, but creating a file in it might push it across the size limit
+and copy its contents into separate data block(s)).
 
-Anyway, apart from enabling LOCKREF, the patch to get this for RISC-V
-is attached.
+	However, we need that only in case when the parent does change -
+otherwise ->rename() doesn't need to do anything with .. entry in the
+first place.  Some instances are lazy and do a tautological update anyway,
+but it's really not hard to avoid.
 
-I'm not going to play with this any more, but you might want to check
-whether this actually does work on RISC-V.
+Amended locking rules for rename():
+	find the parent(s) of source and target
+	if source and target have the same parent
+		lock the common parent
+	else
+		lock ->s_vfs_rename_mutex
+		lock both parents, in ancestor-first order; if neither
+		is an ancestor of another, lock the parent of source
+		first.
+	find the source and target.
+	if source and target have the same parent
+		if operation is an overwriting rename of a subdirectory
+			lock the target subdirectory
+	else
+		if source is a subdirectory
+			lock the source
+		if target is a subdirectory
+			lock the target
+	lock non-directories involved, in inode pointer order if both
+	source and target are such.
 
-Becaue I only looked at the code generation, I didn't actually look at
-whether it *worked*.
+That way we are guaranteed that parents are locked (for obvious reasons),
+that any renamed non-directory is locked (nfsd relies upon that),
+that any victim is locked (emptiness check needs that, among other things)
+and subdirectory that changes parent is locked (needed to protect the update
+of .. entries).  We are also guaranteed that any operation locking more
+than one directory either takes ->s_vfs_rename_mutex or locks a parent
+followed by its child.
 
-                Linus
+8/9) kill lock_two_inodes()
+	Folded into the sole caller and simplified - it doesn't
+need to deal with the mix of directories and non-directories anymore.
 
---0000000000001e2d76060ac27e88
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-lockref-improve-code-generation-for-ref-updates.patch"
-Content-Disposition: attachment; 
-	filename="0001-lockref-improve-code-generation-for-ref-updates.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lpa54btf0>
-X-Attachment-Id: f_lpa54btf0
+9/9) rename(): avoid a deadlock in the case of parents having no common ancestor
 
-RnJvbSAxNjhmMzU4NTBjMTU0Njg5NDFlNTk3OTA3ZTMzZGFhY2QxNzlkNTRhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFdlZCwgMjIgTm92IDIwMjMgMDk6MzM6MjkgLTA4MDAKU3ViamVjdDog
-W1BBVENIXSBsb2NrcmVmOiBpbXByb3ZlIGNvZGUgZ2VuZXJhdGlvbiBmb3IgcmVmIHVwZGF0ZXMK
-Ck91ciBsb2NrcmVmIGRhdGEgc3RydWN0dXJlIGlzIHR3byAzMi1iaXQgd29yZHMgbGFpZCBvdXQg
-bmV4dCB0byBlYWNoCm90aGVyLCBjb21iaW5pbmcgdGhlIHNwaW5sb2NrIGFuZCB0aGUgY291bnQg
-aW50byBvbmUgZW50aXR5IHRoYXQgY2FuIGJlCmFjY2Vzc2VkIGF0b21pY2FsbHkgdG9nZXRoZXIu
-CgpJbiBwYXJ0aWN1bGFyLCB0aGUgc3RydWN0dXJlIGlzIGxhaWQgb3V0IHNvIHRoYXQgdGhlIGNv
-dW50IGlzIHRoZSB1cHBlcgozMiBiaXQgd29yZCAob24gbGl0dGxlLWVuZGlhbiksIHNvIHRoYXQg
-eW91IGNhbiBkbyBiYXNpYyBhcml0aG1ldGljIG9uCnRoZSBjb3VudCBpbiA2NCBiaXRzOiBpbnN0
-ZWFkIG9mIGFkZGluZyBvbmUgdG8gdGhlIDMyLWJpdCB3b3JkLCB5b3UgY2FuCmp1c3QgYWRkIGEg
-dmFsdWUgc2hpZnRlZCBieSAzMiB0byB0aGUgZnVsbCA2NC1iaXQgd29yZC4KClNhZGx5LCBuZWl0
-aGVyIGdjYyBub3IgY2xhbmcgYXJlIHF1aXRlIGNsZXZlciBlbm91Z2ggdG8gd29yayB0aGF0IG91
-dCBvbgp0aGVpciBvd24sIHNvIHRoaXMgZG9lcyB0aGF0ICJtYW51YWxseSIuCgpBbHNvLCB0cnkg
-dG8gZG8gYW55IGNvbXBhcmVzIGFnYWluc3QgemVybyB2YWx1ZXMsIHdoaWNoIGdlbmVyYWxseQpp
-bXByb3ZlcyB0aGUgY29kZSBnZW5lcmF0aW9uLiAgU28gcmF0aGVyIHRoYW4gY2hlY2sgdGhhdCB0
-aGUgdmFsdWUgd2FzCmF0IGxlYXN0IDEgYmVmb3JlIGEgZGVjcmVtZW50LCBjaGVjayB0aGF0IGl0
-J3MgcG9zaXRpdmUgb3IgemVybyBhZnRlcgp0aGUgZGVjcmVtZW50LiAgV2UgZG9uJ3Qgd29ycnkg
-YWJvdXQgdGhlIG92ZXJmbG93IHBvaW50IGluIGxvY2tyZWZzLgoKQ2M6IEd1byBSZW4gPGd1b3Jl
-bkBrZXJuZWwub3JnPgpTaWduZWQtb2ZmLWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGlu
-dXgtZm91bmRhdGlvbi5vcmc+Ci0tLQogbGliL2xvY2tyZWYuYyB8IDI5ICsrKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgOSBkZWxl
-dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9saWIvbG9ja3JlZi5jIGIvbGliL2xvY2tyZWYuYwppbmRl
-eCAyYWZlNGM1ZDg5MTkuLmYzYzMwYzUzOGFmMSAxMDA2NDQKLS0tIGEvbGliL2xvY2tyZWYuYwor
-KysgYi9saWIvbG9ja3JlZi5jCkBAIC0yNiw2ICsyNiwxNyBAQAogCX0JCQkJCQkJCQlcCiB9IHdo
-aWxlICgwKQogCisvKgorICogVGhlIGNvbXBpbGVyIGlzbid0IHNtYXJ0IGVub3VnaCB0byB0aGUg
-dGhlIGNvdW50CisgKiBpbmNyZW1lbnQgaW4gdGhlIGhpZ2ggMzIgYml0cyBvZiB0aGUgNjQtYml0
-IHZhbHVlLAorICogc28gZG8gdGhpcyBvcHRpbWl6YXRpb24gYnkgaGFuZC4KKyAqLworI2lmIGRl
-ZmluZWQoX19MSVRUTEVfRU5ESUFOKSAmJiBCSVRTX1BFUl9MT05HID09IDY0CisgI2RlZmluZSBM
-T0NLUkVGX0FERChuLHgpICgobikubG9ja19jb3VudCArPSAodW5zaWduZWQgbG9uZykoeCk8PDMy
-KQorI2Vsc2UKKyAjZGVmaW5lIExPQ0tSRUZfQUREKG4seCkgKChuKS5jb3VudCArPSAodW5zaWdu
-ZWQgbG9uZykoeCk8PDMyKQorI2VuZGlmCisKICNlbHNlCiAKICNkZWZpbmUgQ01QWENIR19MT09Q
-KENPREUsIFNVQ0NFU1MpIGRvIHsgfSB3aGlsZSAoMCkKQEAgLTQyLDcgKzUzLDcgQEAKIHZvaWQg
-bG9ja3JlZl9nZXQoc3RydWN0IGxvY2tyZWYgKmxvY2tyZWYpCiB7CiAJQ01QWENIR19MT09QKAot
-CQluZXcuY291bnQrKzsKKwkJTE9DS1JFRl9BREQobmV3LDEpOwogCSwKIAkJcmV0dXJuOwogCSk7
-CkBAIC02Myw5ICs3NCw5IEBAIGludCBsb2NrcmVmX2dldF9ub3RfemVybyhzdHJ1Y3QgbG9ja3Jl
-ZiAqbG9ja3JlZikKIAlpbnQgcmV0dmFsOwogCiAJQ01QWENIR19MT09QKAotCQluZXcuY291bnQr
-KzsKIAkJaWYgKG9sZC5jb3VudCA8PSAwKQogCQkJcmV0dXJuIDA7CisJCUxPQ0tSRUZfQUREKG5l
-dywxKTsKIAksCiAJCXJldHVybiAxOwogCSk7CkBAIC05MSw4ICsxMDIsOCBAQCBpbnQgbG9ja3Jl
-Zl9wdXRfbm90X3plcm8oc3RydWN0IGxvY2tyZWYgKmxvY2tyZWYpCiAJaW50IHJldHZhbDsKIAog
-CUNNUFhDSEdfTE9PUCgKLQkJbmV3LmNvdW50LS07Ci0JCWlmIChvbGQuY291bnQgPD0gMSkKKwkJ
-TE9DS1JFRl9BREQobmV3LC0xKTsKKwkJaWYgKG5ldy5jb3VudCA8PSAwKQogCQkJcmV0dXJuIDA7
-CiAJLAogCQlyZXR1cm4gMTsKQEAgLTExOSw4ICsxMzAsOCBAQCBFWFBPUlRfU1lNQk9MKGxvY2ty
-ZWZfcHV0X25vdF96ZXJvKTsKIGludCBsb2NrcmVmX3B1dF9yZXR1cm4oc3RydWN0IGxvY2tyZWYg
-KmxvY2tyZWYpCiB7CiAJQ01QWENIR19MT09QKAotCQluZXcuY291bnQtLTsKLQkJaWYgKG9sZC5j
-b3VudCA8PSAwKQorCQlMT0NLUkVGX0FERChuZXcsLTEpOworCQlpZiAobmV3LmNvdW50IDwgMCkK
-IAkJCXJldHVybiAtMTsKIAksCiAJCXJldHVybiBuZXcuY291bnQ7CkBAIC0xMzcsOCArMTQ4LDgg
-QEAgRVhQT1JUX1NZTUJPTChsb2NrcmVmX3B1dF9yZXR1cm4pOwogaW50IGxvY2tyZWZfcHV0X29y
-X2xvY2soc3RydWN0IGxvY2tyZWYgKmxvY2tyZWYpCiB7CiAJQ01QWENIR19MT09QKAotCQluZXcu
-Y291bnQtLTsKLQkJaWYgKG9sZC5jb3VudCA8PSAxKQorCQlMT0NLUkVGX0FERChuZXcsLTEpOwor
-CQlpZiAobmV3LmNvdW50IDw9IDApCiAJCQlicmVhazsKIAksCiAJCXJldHVybiAxOwpAQCAtMTc0
-LDkgKzE4NSw5IEBAIGludCBsb2NrcmVmX2dldF9ub3RfZGVhZChzdHJ1Y3QgbG9ja3JlZiAqbG9j
-a3JlZikKIAlpbnQgcmV0dmFsOwogCiAJQ01QWENIR19MT09QKAotCQluZXcuY291bnQrKzsKIAkJ
-aWYgKG9sZC5jb3VudCA8IDApCiAJCQlyZXR1cm4gMDsKKwkJTE9DS1JFRl9BREQobmV3LDEpOwog
-CSwKIAkJcmV0dXJuIDE7CiAJKTsKLS0gCjIuNDMuMC41LmczOGZiMTM3YmRiCgo=
---0000000000001e2d76060ac27e88--
+... and fix the directory locking documentation and proof of correctness.
+Holding ->s_vfs_rename_mutex *almost* prevents ->d_parent changes; the
+case where we really don't want it is splicing the root of disconnected
+tree to somewhere.
+
+In other words, ->s_vfs_rename_mutex is sufficient to stabilize "X is an
+ancestor of Y" only if X and Y are already in the same tree.  Otherwise
+it can go from false to true, and one can construct a deadlock on that.
+
+Make lock_two_directories() report an error in such case and update the
+callers of lock_rename()/lock_rename_child() to handle such errors.
+The ones that could get an error, that is - e.g. debugfs_rename() is
+never asked to change the parent and shouldn't be using lock_rename()
+in the first place; that's a separate series, though.
 
