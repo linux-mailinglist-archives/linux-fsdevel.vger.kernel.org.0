@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-3415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C337F462F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D89A17F462E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAC52B212C8
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E47BB21168
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A80056468;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E875644A;
 	Wed, 22 Nov 2023 12:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vnp8Uiiw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIJiLrUd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A1B7D70
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:36 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-40b27726369so14075305e9.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:36 -0800 (PST)
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7636D62
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:37 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-409299277bbso30173905e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 04:27:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700656054; x=1701260854; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1700656056; x=1701260856; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ayra2lBpzB2l6/vIVCHvT5UirKLd3Mhm4ZIGyoDxSzk=;
-        b=Vnp8UiiwNn7DOFO530G3KBmdLVz9oMiAVt00BCRWSQMhpByLDPtu8452KtczosDIqE
-         0/xAV8wuhmgUFHA4yAG64ioYSEArl+sza7a5nlZEl6uP8qoV4Toxj/FZxIX/GSHC0bWP
-         yaGAAS6ausQh2V77U78AY0FWqoBoInMVVtNmtjKsSpaYfzG19ee0WLtkqGCUgPmhd82Y
-         Ab2IVgEHwmUoNJj0SNM45W5c0Be7KZhnfOOMGrwG/dKtnxBke6qaftIMXIFCZIK8HZtb
-         n2L+LX+ImdKsRNN82L5mGG5akychrGOYH5QaDvKTRohaGyZKoT0fbsM3eQ40jyDc4TUR
-         tgXg==
+        bh=tfYQppQSLMX/y7n8JpLStAWWk81BSauB7nth4ozE5Ig=;
+        b=EIJiLrUd+A0D5/PCmkKDGnak8TNyPrHbAwQsyYyLhP5StUJKjWHQfrV6s+Q5m8+UFg
+         o9qRrF6beXbVqA2/kcfe4hWFF3o5HldIw1xX1mRnaDStWijMXrXL0lDWs+GNrq76IyAg
+         6w0VO4HPL79H8KMkpK2rtFCxiMyz7tZYaANQ89JLn00RtLgX8JsmBPBctlCrT2sAXeQY
+         XPo7/NxumGD6wMjGKmTgCQQjZsxZs/rvuHKo64RuKTt67OVMyMf+KbzAOgqLROlnKdXw
+         7OS6oOFyD3ML88piNXUjsSnDaoU0UkAtxKXy4WBEabpx1FqgI1YV/OK5OENRYhgl6vay
+         QewA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700656054; x=1701260854;
+        d=1e100.net; s=20230601; t=1700656056; x=1701260856;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ayra2lBpzB2l6/vIVCHvT5UirKLd3Mhm4ZIGyoDxSzk=;
-        b=ikZQQNEAQoVHSxlHAF8q9uSSPHnnTlxFHUBXzyIBxhmXCmQvVy0ui5r62ZUjfG2Dj3
-         pffIfnmH6zA8fzf8yKInQ0SziDJiSdgdc9uhoZ8c0Hco2XKUYsoz2TmrpAPyV5pHjhAK
-         vBp5+vPma2WnLM1L9QegTATO+PX0L8xHdntF4Grsw+dtQL/xxIgHmXaNNHTTzVaApK2g
-         uixUCk2X2jY8MvYI/9vJVPID9CZVHk5fuRWdF8e/AiXKmzK5T5K2voPc7PrWNuH60CBf
-         ORnqbk7VRkkOpc5mEL3PM7PnGohrKi7jhJ9jFqhJrwgAfMeJlJ+IhtuRQwvOk9c98J1q
-         7DJQ==
-X-Gm-Message-State: AOJu0Yy+RcGOhNY6jvWCHdjccgF2Kwm4cm7Tasl6l+xXo734avfdjXiu
-	U300D81v9g8WqYokuOuNuBE=
-X-Google-Smtp-Source: AGHT+IG0PKSxMb0pgM6G9SZ9vRJM5+GgaT3+/HYIPmG09SkNj2rjYesZnTcSD1Knq0rziydbp9ae9w==
-X-Received: by 2002:a05:600c:314e:b0:407:462a:7e9f with SMTP id h14-20020a05600c314e00b00407462a7e9fmr2012624wmo.27.1700656054541;
-        Wed, 22 Nov 2023 04:27:34 -0800 (PST)
+        bh=tfYQppQSLMX/y7n8JpLStAWWk81BSauB7nth4ozE5Ig=;
+        b=umg+OdeLmQ/Ky3fzTPbeAHSpeJTqSrBwH47gPJXPloMfRvj4dHOG3Dkt5ic2l07Mqx
+         sgaYPYjvoSbFJRDlRvadnC25Q3A3PBbAYTvSak44WhVSnpNtnPND8z/ZjFZ/Amez4Mxt
+         dfS5dNwts9ozw1slNuNp8YmLu6S0zuQX0HQbmN7mI78wWfTvnHOsif6Yc55YPDJUmvsi
+         Ab1bUEz0erd4xLEk5bUNuWOpJ3ZOAWa1zqeM0TwkWARypF+P4GmGKbv6KbpKy66bkf5y
+         IObyNeKwzQrPHHa1w5nKvMUDlQxFo567AMmi1JKrahQu4Z407uo/1x4Q2cOPK53WtVlc
+         LqHg==
+X-Gm-Message-State: AOJu0YywbfV1y0lEHeCw7m5ffqsHn2BJ0Wud13Ws90rY+rHncmtiPtr4
+	abJYn7FaiOLgrE4zSBp2Eg0EY+nHMK8=
+X-Google-Smtp-Source: AGHT+IG1MWaKVveOYbTm87ufR9NY6GAaL0tfklyuGtxSw9nAXJyYYKYr3ivpW8WXDcJd/zV7O1MOhQ==
+X-Received: by 2002:a05:600c:4706:b0:408:c6ec:1ac9 with SMTP id v6-20020a05600c470600b00408c6ec1ac9mr1646667wmo.28.1700656055827;
+        Wed, 22 Nov 2023 04:27:35 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.33
+        by smtp.gmail.com with ESMTPSA id f14-20020a05600c154e00b0040588d85b3asm2055556wmg.15.2023.11.22.04.27.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 04:27:34 -0800 (PST)
+        Wed, 22 Nov 2023 04:27:35 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>,
@@ -62,9 +62,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 10/16] fs: move file_start_write() into vfs_iter_write()
-Date: Wed, 22 Nov 2023 14:27:09 +0200
-Message-Id: <20231122122715.2561213-11-amir73il@gmail.com>
+Subject: [PATCH v2 11/16] fs: move permission hook out of do_iter_write()
+Date: Wed, 22 Nov 2023 14:27:10 +0200
+Message-Id: <20231122122715.2561213-12-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231122122715.2561213-1-amir73il@gmail.com>
 References: <20231122122715.2561213-1-amir73il@gmail.com>
@@ -76,12 +76,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All the callers of vfs_iter_write() call file_start_write() just before
-calling vfs_iter_write() except for target_core_file's fd_do_rw().
+In many of the vfs helpers, the rw_verity_area() checks are called before
+taking sb_start_write(), making them "start-write-safe".
+do_iter_write() is an exception to this rule.
 
-Move file_start_write() from the callers into vfs_iter_write().
-fd_do_rw() calls vfs_iter_write() with a non-regular file, so
-file_start_write() is a no-op.
+do_iter_write() has two callers - vfs_iter_write() and vfs_writev().
+Move rw_verify_area() and other checks from do_iter_write() out to
+its callers to make them "start-write-safe".
+
+Move also the fsnotify_modify() hook to align with similar pattern
+used in vfs_write() and other vfs helpers.
 
 This is needed for fanotify "pre content" events.
 
@@ -89,105 +93,123 @@ Suggested-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- drivers/block/loop.c |  2 --
- fs/coda/file.c       |  2 --
- fs/nfsd/vfs.c        |  2 --
- fs/overlayfs/file.c  |  2 --
- fs/read_write.c      | 13 ++++++++++---
- 5 files changed, 10 insertions(+), 11 deletions(-)
+ fs/read_write.c | 78 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 47 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 9f2d412fc560..8a8cd4fc9238 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -245,9 +245,7 @@ static int lo_write_bvec(struct file *file, struct bio_vec *bvec, loff_t *ppos)
- 
- 	iov_iter_bvec(&i, ITER_SOURCE, bvec, 1, bvec->bv_len);
- 
--	file_start_write(file);
- 	bw = vfs_iter_write(file, &i, ppos, 0);
--	file_end_write(file);
- 
- 	if (likely(bw ==  bvec->bv_len))
- 		return 0;
-diff --git a/fs/coda/file.c b/fs/coda/file.c
-index e62315c37386..148856a582a9 100644
---- a/fs/coda/file.c
-+++ b/fs/coda/file.c
-@@ -80,12 +80,10 @@ coda_file_write_iter(struct kiocb *iocb, struct iov_iter *to)
- 		goto finish_write;
- 
- 	inode_lock(coda_inode);
--	file_start_write(host_file);
- 	ret = vfs_iter_write(cfi->cfi_container, to, &iocb->ki_pos, 0);
- 	coda_inode->i_size = file_inode(host_file)->i_size;
- 	coda_inode->i_blocks = (coda_inode->i_size + 511) >> 9;
- 	inode_set_mtime_to_ts(coda_inode, inode_set_ctime_current(coda_inode));
--	file_end_write(host_file);
- 	inode_unlock(coda_inode);
- 
- finish_write:
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 5d704461e3b4..35c9546b3396 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1186,9 +1186,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp, struct nfsd_file *nf,
- 	since = READ_ONCE(file->f_wb_err);
- 	if (verf)
- 		nfsd_copy_write_verifier(verf, nn);
--	file_start_write(file);
- 	host_err = vfs_iter_write(file, &iter, &pos, flags);
--	file_end_write(file);
- 	if (host_err < 0) {
- 		commit_reset_write_verifier(nn, rqstp, host_err);
- 		goto out_nfserr;
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 131621daeb13..690b173f34fc 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -436,9 +436,7 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
- 	if (is_sync_kiocb(iocb)) {
- 		rwf_t rwf = iocb_to_rw_flags(ifl);
- 
--		file_start_write(real.file);
- 		ret = vfs_iter_write(real.file, iter, &iocb->ki_pos, rwf);
--		file_end_write(real.file);
- 		/* Update size */
- 		ovl_file_modified(file);
- 	} else {
 diff --git a/fs/read_write.c b/fs/read_write.c
-index 313f7eaaa9a7..87ca50f16a23 100644
+index 87ca50f16a23..6c40468efe19 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -850,7 +850,7 @@ ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
- EXPORT_SYMBOL(vfs_iter_read);
- 
+@@ -852,28 +852,10 @@ EXPORT_SYMBOL(vfs_iter_read);
  static ssize_t do_iter_write(struct file *file, struct iov_iter *iter,
--		loff_t *pos, rwf_t flags)
-+			     loff_t *pos, rwf_t flags)
+ 			     loff_t *pos, rwf_t flags)
  {
- 	size_t tot_len;
- 	ssize_t ret = 0;
-@@ -905,11 +905,18 @@ ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
- EXPORT_SYMBOL(vfs_iocb_iter_write);
- 
- ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
--		rwf_t flags)
-+		       rwf_t flags)
- {
-+	int ret;
+-	size_t tot_len;
+-	ssize_t ret = 0;
+-
+-	if (!(file->f_mode & FMODE_WRITE))
+-		return -EBADF;
+-	if (!(file->f_mode & FMODE_CAN_WRITE))
+-		return -EINVAL;
+-
+-	tot_len = iov_iter_count(iter);
+-	if (!tot_len)
+-		return 0;
+-	ret = rw_verify_area(WRITE, file, pos, tot_len);
+-	if (ret < 0)
+-		return ret;
+-
+ 	if (file->f_op->write_iter)
+-		ret = do_iter_readv_writev(file, iter, pos, WRITE, flags);
+-	else
+-		ret = do_loop_readv_writev(file, iter, pos, WRITE, flags);
+-	if (ret > 0)
+-		fsnotify_modify(file);
+-	return ret;
++		return do_iter_readv_writev(file, iter, pos, WRITE, flags);
 +
++	return do_loop_readv_writev(file, iter, pos, WRITE, flags);
+ }
+ 
+ ssize_t vfs_iocb_iter_write(struct file *file, struct kiocb *iocb,
+@@ -907,13 +889,28 @@ EXPORT_SYMBOL(vfs_iocb_iter_write);
+ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ 		       rwf_t flags)
+ {
+-	int ret;
++	size_t tot_len;
++	ssize_t ret;
+ 
++	if (!(file->f_mode & FMODE_WRITE))
++		return -EBADF;
++	if (!(file->f_mode & FMODE_CAN_WRITE))
++		return -EINVAL;
  	if (!file->f_op->write_iter)
  		return -EINVAL;
--	return do_iter_write(file, iter, ppos, flags);
+ 
++	tot_len = iov_iter_count(iter);
++	if (!tot_len)
++		return 0;
++
++	ret = rw_verify_area(WRITE, file, ppos, tot_len);
++	if (ret < 0)
++		return ret;
++
+ 	file_start_write(file);
+ 	ret = do_iter_write(file, iter, ppos, flags);
++	if (ret > 0)
++		fsnotify_modify(file);
+ 	file_end_write(file);
+ 
+ 	return ret;
+@@ -938,20 +935,39 @@ static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
+ }
+ 
+ static ssize_t vfs_writev(struct file *file, const struct iovec __user *vec,
+-		   unsigned long vlen, loff_t *pos, rwf_t flags)
++			  unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+ 	struct iovec iovstack[UIO_FASTIOV];
+ 	struct iovec *iov = iovstack;
+ 	struct iov_iter iter;
+-	ssize_t ret;
++	size_t tot_len;
++	ssize_t ret = 0;
+ 
+-	ret = import_iovec(ITER_SOURCE, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
+-	if (ret >= 0) {
+-		file_start_write(file);
+-		ret = do_iter_write(file, &iter, pos, flags);
+-		file_end_write(file);
+-		kfree(iov);
+-	}
++	if (!(file->f_mode & FMODE_WRITE))
++		return -EBADF;
++	if (!(file->f_mode & FMODE_CAN_WRITE))
++		return -EINVAL;
++
++	ret = import_iovec(ITER_SOURCE, vec, vlen, ARRAY_SIZE(iovstack), &iov,
++			   &iter);
++	if (ret < 0)
++		return ret;
++
++	tot_len = iov_iter_count(&iter);
++	if (!tot_len)
++		goto out;
++
++	ret = rw_verify_area(WRITE, file, pos, tot_len);
++	if (ret < 0)
++		goto out;
 +
 +	file_start_write(file);
-+	ret = do_iter_write(file, iter, ppos, flags);
++	ret = do_iter_write(file, &iter, pos, flags);
++	if (ret > 0)
++		fsnotify_modify(file);
 +	file_end_write(file);
-+
-+	return ret;
++out:
++	kfree(iov);
+ 	return ret;
  }
- EXPORT_SYMBOL(vfs_iter_write);
  
 -- 
 2.34.1
