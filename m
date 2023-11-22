@@ -1,288 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-3444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599B27F49DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 16:07:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B368C7F49F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 16:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6581C20C35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:07:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 397F8B21132
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191874E1BA;
-	Wed, 22 Nov 2023 15:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I3VUEh0n";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HaijsBJy"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9D44E619;
+	Wed, 22 Nov 2023 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AC519D;
-	Wed, 22 Nov 2023 07:06:45 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C1BAC1F385;
-	Wed, 22 Nov 2023 15:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1700665603; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OrnR+VJ3e8KBiB9GJuzndO2GMUtaDExl7p2e9XDoJNY=;
-	b=I3VUEh0nmQg+RePNSu00a2BA3dlsre6v2YtGb07RjTtCKrjUi1ICIvIdzbKon9Yt4/fQBk
-	VJ9Wpf2K7cyzFS9zBCBUo6IIvILDDyL1bskUFqE+WQg5nj7WUeYGI/EZaADq7d9raLMLVq
-	j2J5KyiS0r9zuduA6j3dmaOBYhZXsr0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1700665603;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OrnR+VJ3e8KBiB9GJuzndO2GMUtaDExl7p2e9XDoJNY=;
-	b=HaijsBJyT5xIphmfAgcIDItAfIvsHToSSGgn6ij0vk97n2OBQT7+g9z+2+NA7fWsCj8Wob
-	+nqu+eTHutvkdWDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B44C113467;
-	Wed, 22 Nov 2023 15:06:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id EEn8KwMZXmXdGgAAMHmgww
-	(envelope-from <jack@suse.cz>); Wed, 22 Nov 2023 15:06:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4E863A07DC; Wed, 22 Nov 2023 16:06:43 +0100 (CET)
-Date: Wed, 22 Nov 2023 16:06:43 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
-	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.a.wang@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Farman <farman@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Tony Krowiak <akrowiak@linux.ibm.com>,
-	Jason Herne <jjherne@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Diana Craciun <diana.craciun@oss.nxp.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeelb@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] eventfd: make eventfd_signal{_mask}() void
-Message-ID: <20231122150643.5b57p5yxhfuxa764@quack3>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-4-bd549b14ce0c@kernel.org>
+Received: from mail-pg1-f205.google.com (mail-pg1-f205.google.com [209.85.215.205])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D051ED53
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 07:10:32 -0800 (PST)
+Received: by mail-pg1-f205.google.com with SMTP id 41be03b00d2f7-5bd0c909c50so7666862a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 07:10:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700665832; x=1701270632;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cNISjNqOME+dw6YEeAsd8Brez3ACNxa0qo7QYk0nRrk=;
+        b=W05c92DqXvm8no+Kg8UP5iqbWsU6bMbYLzN0kG0SfvjZbtDuOX/mbX8zjaB30uYrZZ
+         SubUs1PoxelJA7iLFs78WMW8HQXsaRI63eAiDy2WR9hBLxQ1Sdu1LrYc6upDYKODv54+
+         VgVjmpk9GN2q3KG8IIyAC9NWOs77g9BPUDwAyH1r6EtFAz6rPJ2B9k2v8NzUEWupO6d5
+         SVVSvy/hlCExjwkIfggOGyOltK1M5jdiP3kggtbmm1aZ2B4+rfeBRfKzM5bWlWkm9MMs
+         v878MYGKZ6QLxuUuFAn15pLJGTVi//4N/JRvAUnjCd/w9t7xwLKRovdq8v3RKF13FX9N
+         Jh/w==
+X-Gm-Message-State: AOJu0YwdLuXrKAdjf8FKxM+/b5b4JZaRGkEvjP+KeAhhjPxnmv16m+/H
+	tX7yufjeYfWB1yOKHNVbnlrbDF9+cINrt8K7M2/2tN4Z2m7G
+X-Google-Smtp-Source: AGHT+IHbSXBA5o+nIc1fBib+40xR7K8epiWQcjBOGTb/NlajdNKU3+Or0JWAiBpmBYy0rwJvDpiD7vM3SoIzAtYMQovG8PRn1Fnp
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-4-bd549b14ce0c@kernel.org>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -6.30
-X-Spamd-Result: default: False [-6.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 REPLY(-4.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_GT_50(0.00)[78];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[vger.kernel.org,lst.de,suse.cz,redhat.com,google.com,linutronix.de,alien8.de,linux.intel.com,kernel.org,infradead.org,xen.org,intel.com,gmail.com,ffwll.ch,ziepe.ca,linux.ibm.com,arndb.de,linuxfoundation.org,linux.alibaba.com,oss.nxp.com,kvack.org,cmpxchg.org,linux.dev,nvidia.com,lists.freedesktop.org,lists.ozlabs.org,lists.linux-foundation.org,kernel.dk];
-	 RCVD_COUNT_TWO(0.00)[2];
-	 SUSPICIOUS_RECIPS(1.50)[]
+X-Received: by 2002:a17:90a:9f90:b0:283:a0b1:cedc with SMTP id
+ o16-20020a17090a9f9000b00283a0b1cedcmr587333pjp.4.1700665832137; Wed, 22 Nov
+ 2023 07:10:32 -0800 (PST)
+Date: Wed, 22 Nov 2023 07:10:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ce703b060abf1e06@google.com>
+Subject: [syzbot] [ext4?] WARNING in ext4_dio_write_end_io
+From: syzbot <syzbot+47479b71cdfc78f56d30@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.cz, joseph.qi@linux.alibaba.com, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ritesh.list@gmail.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 22-11-23 13:48:25, Christian Brauner wrote:
-> No caller care about the return value.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Hello,
 
-Yup. Feel free to add:
+syzbot found the following issue on:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+HEAD commit:    98b1cc82c4af Linux 6.7-rc2
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15e09a9f680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6ae1a4ee971a7305
+dashboard link: https://syzkaller.appspot.com/bug?extid=47479b71cdfc78f56d30
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c09a00e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151d5320e80000
 
-								Honza
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/39c6cdad13fc/disk-98b1cc82.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5a77b5daef9b/vmlinux-98b1cc82.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5e09ae712e0d/bzImage-98b1cc82.xz
 
-> ---
->  fs/eventfd.c            | 40 +++++++++++++++-------------------------
->  include/linux/eventfd.h | 16 +++++++---------
->  2 files changed, 22 insertions(+), 34 deletions(-)
-> 
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index a9a6de920fb4..13be2fb7fc96 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -43,10 +43,19 @@ struct eventfd_ctx {
->  	int id;
->  };
->  
-> -__u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
-> +/**
-> + * eventfd_signal - Adds @n to the eventfd counter.
-> + * @ctx: [in] Pointer to the eventfd context.
-> + * @mask: [in] poll mask
-> + *
-> + * This function is supposed to be called by the kernel in paths that do not
-> + * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
-> + * value, and we signal this as overflow condition by returning a EPOLLERR
-> + * to poll(2).
-> + */
-> +void eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
->  {
->  	unsigned long flags;
-> -	__u64 n = 1;
->  
->  	/*
->  	 * Deadlock or stack overflow issues can happen if we recurse here
-> @@ -57,37 +66,18 @@ __u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask)
->  	 * safe context.
->  	 */
->  	if (WARN_ON_ONCE(current->in_eventfd))
-> -		return 0;
-> +		return;
->  
->  	spin_lock_irqsave(&ctx->wqh.lock, flags);
->  	current->in_eventfd = 1;
-> -	if (ULLONG_MAX - ctx->count < n)
-> -		n = ULLONG_MAX - ctx->count;
-> -	ctx->count += n;
-> +	if (ctx->count < ULLONG_MAX)
-> +		ctx->count++;
->  	if (waitqueue_active(&ctx->wqh))
->  		wake_up_locked_poll(&ctx->wqh, EPOLLIN | mask);
->  	current->in_eventfd = 0;
->  	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-> -
-> -	return n == 1;
-> -}
-> -
-> -/**
-> - * eventfd_signal - Adds @n to the eventfd counter.
-> - * @ctx: [in] Pointer to the eventfd context.
-> - *
-> - * This function is supposed to be called by the kernel in paths that do not
-> - * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
-> - * value, and we signal this as overflow condition by returning a EPOLLERR
-> - * to poll(2).
-> - *
-> - * Returns the amount by which the counter was incremented.
-> - */
-> -__u64 eventfd_signal(struct eventfd_ctx *ctx)
-> -{
-> -	return eventfd_signal_mask(ctx, 0);
->  }
-> -EXPORT_SYMBOL_GPL(eventfd_signal);
-> +EXPORT_SYMBOL_GPL(eventfd_signal_mask);
->  
->  static void eventfd_free_ctx(struct eventfd_ctx *ctx)
->  {
-> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-> index 4f8aac7eb62a..fea7c4eb01d6 100644
-> --- a/include/linux/eventfd.h
-> +++ b/include/linux/eventfd.h
-> @@ -35,8 +35,7 @@ void eventfd_ctx_put(struct eventfd_ctx *ctx);
->  struct file *eventfd_fget(int fd);
->  struct eventfd_ctx *eventfd_ctx_fdget(int fd);
->  struct eventfd_ctx *eventfd_ctx_fileget(struct file *file);
-> -__u64 eventfd_signal(struct eventfd_ctx *ctx);
-> -__u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask);
-> +void eventfd_signal_mask(struct eventfd_ctx *ctx, __poll_t mask);
->  int eventfd_ctx_remove_wait_queue(struct eventfd_ctx *ctx, wait_queue_entry_t *wait,
->  				  __u64 *cnt);
->  void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt);
-> @@ -58,14 +57,8 @@ static inline struct eventfd_ctx *eventfd_ctx_fdget(int fd)
->  	return ERR_PTR(-ENOSYS);
->  }
->  
-> -static inline int eventfd_signal(struct eventfd_ctx *ctx)
-> +static inline void eventfd_signal_mask(struct eventfd_ctx *ctx, unsigned mask)
->  {
-> -	return -ENOSYS;
-> -}
-> -
-> -static inline int eventfd_signal_mask(struct eventfd_ctx *ctx, unsigned mask)
-> -{
-> -	return -ENOSYS;
->  }
->  
->  static inline void eventfd_ctx_put(struct eventfd_ctx *ctx)
-> @@ -91,5 +84,10 @@ static inline void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
->  
->  #endif
->  
-> +static inline void eventfd_signal(struct eventfd_ctx *ctx)
-> +{
-> +	eventfd_signal_mask(ctx, 0);
-> +}
-> +
->  #endif /* _LINUX_EVENTFD_H */
->  
-> 
-> -- 
-> 2.42.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The issue was bisected to:
+
+commit 91562895f8030cb9a0470b1db49de79346a69f91
+Author: Jan Kara <jack@suse.cz>
+Date:   Fri Oct 13 12:13:50 2023 +0000
+
+    ext4: properly sync file size update after O_SYNC direct IO
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d0f0c8e80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1430f0c8e80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1030f0c8e80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+47479b71cdfc78f56d30@syzkaller.appspotmail.com
+Fixes: 91562895f803 ("ext4: properly sync file size update after O_SYNC direct IO")
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 4481 at fs/ext4/file.c:391 ext4_dio_write_end_io+0x1db/0x220 fs/ext4/file.c:391
+Modules linked in:
+CPU: 1 PID: 4481 Comm: kworker/1:2 Not tainted 6.7.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+Workqueue: dio/sda1 iomap_dio_complete_work
+RIP: 0010:ext4_dio_write_end_io+0x1db/0x220 fs/ext4/file.c:391
+Code: e8 6a 37 56 ff 4c 89 e2 4c 89 f6 48 89 ef e8 8c f6 ff ff 89 c3 eb 92 4c 89 ff e8 70 c7 ac ff e9 66 ff ff ff e8 46 37 56 ff 90 <0f> 0b 90 e9 34 ff ff ff e8 58 c7 ac ff e9 e9 fe ff ff 4c 89 ff e8
+RSP: 0018:ffffc9000dd97c40 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 00000000000081fd RCX: ffffffff8231521e
+RDX: ffff88802a403b80 RSI: ffffffff823152ea RDI: 0000000000000006
+RBP: ffff88807cf83eb0 R08: 0000000000000006 R09: 0000000000004000
+R10: 00000000000081fd R11: 0000000000000001 R12: 0000000000004000
+R13: 0000000000004000 R14: 0000000000000000 R15: ffff88807cf83e10
+FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbc3a9779ee CR3: 0000000077984000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ iomap_dio_complete+0x149/0x9f0 fs/iomap/direct-io.c:91
+ iomap_dio_complete_work+0x56/0x80 fs/iomap/direct-io.c:146
+ process_one_work+0x886/0x15d0 kernel/workqueue.c:2630
+ process_scheduled_works kernel/workqueue.c:2703 [inline]
+ worker_thread+0x8b9/0x1290 kernel/workqueue.c:2784
+ kthread+0x2c6/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
