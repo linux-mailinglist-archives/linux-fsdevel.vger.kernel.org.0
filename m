@@ -1,79 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-3438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566587F4946
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:48:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6937F4961
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E651C20AD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 14:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFAB41C20BE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 14:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4938D15ACF;
-	Wed, 22 Nov 2023 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB735676A;
+	Wed, 22 Nov 2023 14:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFZTJARF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1393112
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 06:48:13 -0800 (PST)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1cf632d951fso42327145ad.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 06:48:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700664493; x=1701269293;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfUef9tj9kWRG/hnj63YvOvnIkXS0rMCQtJAytUlGk8=;
-        b=PBy/eBG/Uk5aeypofMzhCFYfZi4DUMj/HYhw9kcQK1fmCIwiiq8E6OCKeA7jTas4nB
-         Hjo/gTfHpRPqRusyLP2MiYRwfKDhipvtSDPirCx+lyo7jJM6rDasLvWxKg7Tv7LVzdVV
-         X2XGmK1a3wOdypR2+rVCweHMdnrzhMglWUUdhQa8q5S334t5BfP6uuqawWPYKKkN6v9r
-         CN/TmSxYEj5flOb8V27fGj4KIVUGYrbHdrGH6CIssT9PHDEITKVoa3emz7+INVFa+ZSm
-         vrF9F1uEc19pdC31WHgb1+Oogan9A+GpNnjjqPruGSIffct/2FZA7RKMx3XmOx+SxBpj
-         gRWQ==
-X-Gm-Message-State: AOJu0YyqYphlgeMoOFmNnMPgJRNwAqogAQ9xAY5PBRxvaovTqWacTpiL
-	csxdFDP993jA5jw9uVpvo/VxzqrgKhqreEJcApDaT3pQqyON
-X-Google-Smtp-Source: AGHT+IGq7r6T25A3qPazOzUj0YDkw7al03zhP0GBv38qY3FOLZ1Idk9W9LaKs0J37RKiQ9EjayKjiAW3KL9Qkt9T7aav4YO9BgNV
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EBE19E;
+	Wed, 22 Nov 2023 06:51:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700664701; x=1732200701;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Lp3IDM3ar4jYOzHbknAigUjAPfa74EA/HlhJuCNIfU=;
+  b=RFZTJARF7G0F4/0tmBnfccuZRtbRAgC9sUNRAVYBjn5Gy0GYQbXTH7Fl
+   AU4IGs1YEAxciute8I3PlHvJMcZs2hgTNMSNKrkAFc0LxImmN1OmVtm+X
+   qV7wVscQSNX3PSaqk5jF6KYb/mluYTiVh6aOW9rlx0CwH4JwmO7BOFMEP
+   9m55363ih+vtjNxuYg3dprwR3LRvG6K8VRnA/T9nUSt8AZ/Pb9gG25z22
+   re2zR5E3zUT3WDbCaDcYXg0IV0pwo3vtYzdkxtD7WdvUmfLWqYgAVvPcd
+   BwYJ+8vBN5/YwDNswBFnUYes4TJB1tqMMmb44i+UDAkp9SFRJZw8/dd8c
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="10729190"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="10729190"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 06:51:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="14944713"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa001.jf.intel.com with ESMTP; 22 Nov 2023 06:51:20 -0800
+Date: Wed, 22 Nov 2023 22:49:27 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
+	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.a.wang@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Farman <farman@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tony Krowiak <akrowiak@linux.ibm.com>,
+	Jason Herne <jjherne@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Diana Craciun <diana.craciun@oss.nxp.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeelb@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
+Message-ID: <ZV4U96z12KSi4GGw@yilunxu-OptiPlex-7050>
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+ <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a17:902:dac8:b0:1cc:3147:6937 with SMTP id
- q8-20020a170902dac800b001cc31476937mr655370plx.4.1700664493183; Wed, 22 Nov
- 2023 06:48:13 -0800 (PST)
-Date: Wed, 22 Nov 2023 06:48:13 -0800
-In-Reply-To: <0000000000009b49ce0606fd665a@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff9bd1060abececf@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in attr_data_get_block (3)
-From: syzbot <syzbot+a9850b21d99643eadbb8@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, 
-	clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nathan@kernel.org, ndesaulniers@google.com, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, tintinm2017@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
 
-syzbot suspects this issue was fixed by commit:
+On Wed, Nov 22, 2023 at 01:48:23PM +0100, Christian Brauner wrote:
+> Ever since the evenfd type was introduced back in 2007 in commit
+> e1ad7468c77d ("signal/timer/event: eventfd core") the eventfd_signal()
+> function only ever passed 1 as a value for @n. There's no point in
+> keeping that additional argument.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  arch/x86/kvm/hyperv.c                     |  2 +-
+>  arch/x86/kvm/xen.c                        |  2 +-
+>  drivers/accel/habanalabs/common/device.c  |  2 +-
+>  drivers/fpga/dfl.c                        |  2 +-
+>  drivers/gpu/drm/drm_syncobj.c             |  6 +++---
+>  drivers/gpu/drm/i915/gvt/interrupt.c      |  2 +-
+>  drivers/infiniband/hw/mlx5/devx.c         |  2 +-
+>  drivers/misc/ocxl/file.c                  |  2 +-
+>  drivers/s390/cio/vfio_ccw_chp.c           |  2 +-
+>  drivers/s390/cio/vfio_ccw_drv.c           |  4 ++--
+>  drivers/s390/cio/vfio_ccw_ops.c           |  6 +++---
+>  drivers/s390/crypto/vfio_ap_ops.c         |  2 +-
+>  drivers/usb/gadget/function/f_fs.c        |  4 ++--
+>  drivers/vdpa/vdpa_user/vduse_dev.c        |  6 +++---
+>  drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c    |  2 +-
+>  drivers/vfio/pci/vfio_pci_core.c          |  6 +++---
+>  drivers/vfio/pci/vfio_pci_intrs.c         | 12 ++++++------
+>  drivers/vfio/platform/vfio_platform_irq.c |  4 ++--
+>  drivers/vhost/vdpa.c                      |  4 ++--
+>  drivers/vhost/vhost.c                     | 10 +++++-----
+>  drivers/vhost/vhost.h                     |  2 +-
+>  drivers/virt/acrn/ioeventfd.c             |  2 +-
+>  drivers/xen/privcmd.c                     |  2 +-
+>  fs/aio.c                                  |  2 +-
+>  fs/eventfd.c                              |  9 +++------
+>  include/linux/eventfd.h                   |  4 ++--
+>  mm/memcontrol.c                           | 10 +++++-----
+>  mm/vmpressure.c                           |  2 +-
+>  samples/vfio-mdev/mtty.c                  |  4 ++--
+>  virt/kvm/eventfd.c                        |  4 ++--
+>  30 files changed, 60 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index dd7a783d53b5..e73f88050f08 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -1872,7 +1872,7 @@ static irqreturn_t dfl_irq_handler(int irq, void *arg)
+>  {
+>  	struct eventfd_ctx *trigger = arg;
+>  
+> -	eventfd_signal(trigger, 1);
+> +	eventfd_signal(trigger);
 
-commit 4ad5c924df6cd6d85708fa23f9d9a2b78a2e428e
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Fri Sep 22 10:07:59 2023 +0000
+For FPGA part,
 
-    fs/ntfs3: Allow repeated call to ntfs3_put_sbi
+Acked-by: Xu Yilun <yilun.xu@intel.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17484614e80000
-start commit:   e402b08634b3 Merge tag 'soc-fixes-6.6' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12da82ece7bf46f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9850b21d99643eadbb8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12b684e6680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ede4d6680000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Allow repeated call to ntfs3_put_sbi
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>  	return IRQ_HANDLED;
+>  }
 
