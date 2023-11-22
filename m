@@ -1,88 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-3446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524837F4A06
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 16:15:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B36E7F4A1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 16:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBBCB20EAF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4E21C20C19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38E44E62A;
-	Wed, 22 Nov 2023 15:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C44B54278;
+	Wed, 22 Nov 2023 15:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="bVMz+7jE"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WnPr6GfR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4921A3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 07:14:49 -0800 (PST)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-5cc3dd21b0cso10623237b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 07:14:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1700666089; x=1701270889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXrN2Z+btaH3S8Seo0og7ZDAgKyAbSKX6WBPHRe3mP8=;
-        b=bVMz+7jEtvmdQrbHzXtiny6y30UeMaysh6CZQ0t+lp8xdwQ06YOXiuy8aY15PElSJ/
-         nFYCogzAw1PVG4oYMgz2S2Jzhmz0W99WOkJR7QIKThIKAtkK6kYOku0fjTnJVhOBwCwz
-         FFjpBwjMVCDn/YZcEJh6ZX9XfkXv26kSyMEOE3DGv0pwFURXVyOyi77sBjyVVth1nGyT
-         16UCxhit1Xkk5dq7qx42HKcV/X8SWtNtdAp+SLbBLyaZUC1acJEHZR1zqWOVdB6OQ/UF
-         VEf9UiPH4oofvLq5PRtURITEdg3wTxpQ1srJz1BoJ62oL0Syoky2hndYtc95/lq5ra/U
-         2fgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700666089; x=1701270889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qXrN2Z+btaH3S8Seo0og7ZDAgKyAbSKX6WBPHRe3mP8=;
-        b=KqHkG9R9jxmL1tzK4tXFBzb0v7n9/BOhXahl5PfSjMCyXeN7/F1RtBEf4R1wgEti1a
-         cIK4QahAr6zy2J8L1IEHH5pdGgXzDueB4KPhidwcTw7biruDmcCie8UH+Sy66Ef2hnAm
-         puij1FhOPOEAEcrI5pRPaZ2t9kjq/qtS9DCqBZip2LNdeuCnH5rIHryc9gvZ0k2W9Pjn
-         0mw6b0b38ZC7AbTUZhxDDRQnXOQAeL0xQdVZ3WKZuaxtCf47OsZT9dvso3A5z9b5e5qt
-         EioFqZMBZZqva8XHgNdrCSq5QImaM9uBuIf0pUx7PNT/rgqsS3Q8m46b6FD6gLcWxEgT
-         TZNA==
-X-Gm-Message-State: AOJu0Yxlpd1AIRAUrmynJfqAbOn3TuO6pH8gIvsonAWRgu6196e6ZRfe
-	dX/GdN4AY+QHEDPfryrJNDPXTg==
-X-Google-Smtp-Source: AGHT+IHUSwNYmVURFV6yXQpIYf4FviEhYm4keQXR1RUq0qF8P1dbYC86rk8R+aOuwmh/85wMvxF3VQ==
-X-Received: by 2002:a81:a089:0:b0:5c9:d870:cb18 with SMTP id x131-20020a81a089000000b005c9d870cb18mr2661259ywg.21.1700666088802;
-        Wed, 22 Nov 2023 07:14:48 -0800 (PST)
-Received: from localhost (cpe-76-182-20-124.nc.res.rr.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id m124-20020a0dca82000000b005cac0365acesm505351ywd.22.2023.11.22.07.14.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 07:14:48 -0800 (PST)
-Date: Wed, 22 Nov 2023 10:14:47 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>
-Subject: Re: [PATCH 3/4] mnt_idmapping: decouple from namespaces
-Message-ID: <20231122151447.GA1739682@perftesting>
-References: <20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org>
- <20231122-vfs-mnt_idmap-v1-3-dae4abdde5bd@kernel.org>
- <20231122142657.GF1733890@perftesting>
- <20231122-runden-bangen-787f0a1907ca@brauner>
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB4EAF9;
+	Wed, 22 Nov 2023 07:19:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700666375; x=1732202375;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=nrNPcz4uYEQBP3pOrCUXcuO8X6G/FSLQKBhZfBz9dLY=;
+  b=WnPr6GfRsmHheX8m0dMDThH9SdbMmURgop2QVRUSnHTfuQkivH84A0t1
+   lc+YRQ2nV87kyMZ5PhHTkOrh7Excs6jGFS/xofM/urtHV4kBMLhIvg1YF
+   gVEFTOsy20Pn+yYCZ3a0AUvM63kxv2GSXq49MzmfaAS3T1NpXGd/0MHyG
+   5DH8aPv7m1cOXumvpMhYld46TIkpCZqp+oNcfN62jj09wTcEajPR8hT1h
+   LuXAbfqp+oJY4ozRFRLCITIyEab3FsYIEtaPnftYgNfGlVQORA1+U0LD9
+   pwP+0AqQNgTATs0DjAIhfs1z99yaaRKKfBL7A3LnvNKXz+B4G4tssZRi8
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="390932784"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="390932784"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 07:19:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="833052538"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="833052538"
+Received: from tjquresh-mobl.ger.corp.intel.com (HELO localhost) ([10.252.41.76])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 07:19:09 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, Vitaly
+ Kuznetsov <vkuznets@redhat.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, David Woodhouse
+ <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, Oded Gabbay
+ <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>, Tom Rix
+ <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun
+ <yilun.xu@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang
+ <zhi.a.wang@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tvrtko.ursulin@linux.intel.com>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Leon Romanovsky <leon@kernel.org>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Frederic Barrat <fbarrat@linux.ibm.com>, Andrew
+ Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Eric Farman
+ <farman@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>, Halil
+ Pasic <pasic@linux.ibm.com>, Vineeth Vijayan <vneethv@linux.ibm.com>,
+ Peter Oberparleiter <oberpar@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Tony
+ Krowiak <akrowiak@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>,
+ Harald Freudenberger <freude@linux.ibm.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Diana Craciun <diana.craciun@oss.nxp.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Eric Auger
+ <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>, Benjamin LaHaise
+ <bcrl@kvack.org>, Christian Brauner <brauner@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Shakeel Butt <shakeelb@google.com>, Muchun
+ Song <muchun.song@linux.dev>, Kirti Wankhede <kwankhede@nvidia.com>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-fpga@vger.kernel.org,
+ intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-rdma@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-usb@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+ linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org, Jens
+ Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+ <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+Date: Wed, 22 Nov 2023 17:19:06 +0200
+Message-ID: <877cm9n7dh.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231122-runden-bangen-787f0a1907ca@brauner>
+Content-Type: text/plain
 
-On Wed, Nov 22, 2023 at 03:34:39PM +0100, Christian Brauner wrote:
-> > You accidentally put a ; here, and then fix it up in the next patch, it needs to
-> > be fixed here.  Thanks,
-> 
-> Bah, fixed this now. Thanks!
+On Wed, 22 Nov 2023, Christian Brauner <brauner@kernel.org> wrote:
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index 33a918f9566c..dc9e01053235 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -74,20 +74,17 @@ __u64 eventfd_signal_mask(struct eventfd_ctx *ctx, __u64 n, __poll_t mask)
+>  /**
+>   * eventfd_signal - Adds @n to the eventfd counter.
 
-You can add
+This still refers to @n here, and in patch 4.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+BR,
+Jani.
 
-Thanks,
+>   * @ctx: [in] Pointer to the eventfd context.
+> - * @n: [in] Value of the counter to be added to the eventfd internal counter.
+> - *          The value cannot be negative.
+>   *
+>   * This function is supposed to be called by the kernel in paths that do not
+>   * allow sleeping. In this function we allow the counter to reach the ULLONG_MAX
+>   * value, and we signal this as overflow condition by returning a EPOLLERR
+>   * to poll(2).
+>   *
+> - * Returns the amount by which the counter was incremented.  This will be less
+> - * than @n if the counter has overflowed.
+> + * Returns the amount by which the counter was incremented.
+>   */
+> -__u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+> +__u64 eventfd_signal(struct eventfd_ctx *ctx)
+>  {
+> -	return eventfd_signal_mask(ctx, n, 0);
+> +	return eventfd_signal_mask(ctx, 1, 0);
+>  }
+>  EXPORT_SYMBOL_GPL(eventfd_signal);
+>  
 
-Josef
+-- 
+Jani Nikula, Intel
 
