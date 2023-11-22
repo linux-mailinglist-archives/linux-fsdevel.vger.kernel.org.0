@@ -1,35 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-3463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D34D7F50C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 668097F50C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E86A1C20B1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978571C20B34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554D05B1E1;
-	Wed, 22 Nov 2023 19:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6775C915;
+	Wed, 22 Nov 2023 19:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="K/Tc2GyY"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="flAxY/Wb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989421A4;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1531A8;
 	Wed, 22 Nov 2023 11:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=BlfFBoYl8WljiWMPq8jOBx3qNB8G8Xt5J/at8Fwypa8=; b=K/Tc2GyYjNHRjlY66jCcTKv40h
-	uI2eHqgIdzYpfZ8iPDPnzytxzUnw8C0mRdemI1USPVe0uuygI28Nzjm0arhCOluRn6lc6XrntEs5+
-	rUK7HHMr9xc2gQKMIhJ+WIuq8K8TBbFRtgMI45u6VyMP5TIWWxzdjA+r1X1NRGOpr5JpWWBdMa4ZW
-	dJjn6DdaHNIs/wqMAfvUz9aa5VbLxEaeR18lZi+Q7x6NHo/YNOu9ArS3vGuSQTQXgsb7izY0ElA7v
-	jLnL47vLk9zswGvFOm99fDOeT4GbsXJikaM48F7HxYvVntvW9MxwZJVQL6HePppULdL35ahLasKKf
-	lFDbKPhw==;
+	bh=74v1Dg7yBE+4rxKY7xG9GKf0VfPvIUvY43ZeQBhdM3Q=; b=flAxY/WbiiMK3fPdqrhtjrTbxn
+	knWsKpeOfxS/4NrPxAIcl8WOgTbfTXsv0aD4CodgCbFtRtHRh66vrZXa+5JY3Rgn7LEdSvGS1DiMO
+	kSrZkHjLnDAcilDWdjOzrILwGHoUz/p/al5cIA2WRE9QA9jcYJgZDkgvXuukrsHhU8Db9IqZR8gma
+	4EbU61wQYxwy/NpdYp7IL+2NKlEDEQX/7r9fWfe7WVxxh1WvoMtG8BCEniS6YnOodUM/LCcyJ0E8i
+	lS7BEu4tFzW7o6EBDkkcrKvhMHj4sFIRILfKgOG6AFT1RAapGtNYrUBIStplYTjITEstVZC8PnDi5
+	AvB/GrOw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r5t1o-001l1e-1Y;
+	id 1r5t1o-001l1g-2B;
 	Wed, 22 Nov 2023 19:36:52 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -37,12 +37,13 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Mo Zou <lostzoumo@gmail.com>,
 	Jan Kara <jack@suse.cz>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] reiserfs: Avoid touching renamed directory if parent does not change
-Date: Wed, 22 Nov 2023 19:36:44 +0000
-Message-Id: <20231122193652.419091-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 2/9] ocfs2: Avoid touching renamed directory if parent does not change
+Date: Wed, 22 Nov 2023 19:36:45 +0000
+Message-Id: <20231122193652.419091-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231122193028.GE38156@ZenIV>
+In-Reply-To: <20231122193652.419091-1-viro@zeniv.linux.org.uk>
 References: <20231122193028.GE38156@ZenIV>
+ <20231122193652.419091-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,135 +56,49 @@ Sender: Al Viro <viro@ftp.linux.org.uk>
 From: Jan Kara <jack@suse.cz>
 
 The VFS will not be locking moved directory if its parent does not
-change. Change reiserfs rename code to avoid touching renamed directory
-if its parent does not change as without locking that can corrupt the
+change. Change ocfs2 rename code to avoid touching renamed directory if
+its parent does not change as without locking that can corrupt the
 filesystem.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/reiserfs/namei.c | 54 ++++++++++++++++++++++++---------------------
- 1 file changed, 29 insertions(+), 25 deletions(-)
+ fs/ocfs2/namei.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 994d6e6995ab..5996197ba40c 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -1324,8 +1324,8 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 	struct inode *old_inode, *new_dentry_inode;
- 	struct reiserfs_transaction_handle th;
- 	int jbegin_count;
--	umode_t old_inode_mode;
- 	unsigned long savelink = 1;
-+	bool update_dir_parent = false;
- 
- 	if (flags & ~RENAME_NOREPLACE)
- 		return -EINVAL;
-@@ -1375,8 +1375,7 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 		return -ENOENT;
+diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+index 814733ba2f4b..9221a33f917b 100644
+--- a/fs/ocfs2/namei.c
++++ b/fs/ocfs2/namei.c
+@@ -1336,7 +1336,7 @@ static int ocfs2_rename(struct mnt_idmap *idmap,
+ 		goto bail;
  	}
  
--	old_inode_mode = old_inode->i_mode;
--	if (S_ISDIR(old_inode_mode)) {
-+	if (S_ISDIR(old_inode->i_mode)) {
- 		/*
- 		 * make sure that directory being renamed has correct ".."
- 		 * and that its new parent directory has not too many links
-@@ -1389,24 +1388,28 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 			}
+-	if (S_ISDIR(old_inode->i_mode)) {
++	if (S_ISDIR(old_inode->i_mode) && new_dir != old_dir) {
+ 		u64 old_inode_parent;
+ 
+ 		update_dot_dot = 1;
+@@ -1353,8 +1353,7 @@ static int ocfs2_rename(struct mnt_idmap *idmap,
+ 			goto bail;
  		}
  
--		/*
--		 * directory is renamed, its parent directory will be changed,
--		 * so find ".." entry
--		 */
--		dot_dot_de.de_gen_number_bit_string = NULL;
--		retval =
--		    reiserfs_find_entry(old_inode, "..", 2, &dot_dot_entry_path,
-+		if (old_dir != new_dir) {
-+			/*
-+			 * directory is renamed, its parent directory will be
-+			 * changed, so find ".." entry
-+			 */
-+			dot_dot_de.de_gen_number_bit_string = NULL;
-+			retval =
-+			    reiserfs_find_entry(old_inode, "..", 2,
-+					&dot_dot_entry_path,
- 					&dot_dot_de);
--		pathrelse(&dot_dot_entry_path);
--		if (retval != NAME_FOUND) {
--			reiserfs_write_unlock(old_dir->i_sb);
--			return -EIO;
--		}
-+			pathrelse(&dot_dot_entry_path);
-+			if (retval != NAME_FOUND) {
-+				reiserfs_write_unlock(old_dir->i_sb);
-+				return -EIO;
-+			}
- 
--		/* inode number of .. must equal old_dir->i_ino */
--		if (dot_dot_de.de_objectid != old_dir->i_ino) {
--			reiserfs_write_unlock(old_dir->i_sb);
--			return -EIO;
-+			/* inode number of .. must equal old_dir->i_ino */
-+			if (dot_dot_de.de_objectid != old_dir->i_ino) {
-+				reiserfs_write_unlock(old_dir->i_sb);
-+				return -EIO;
-+			}
-+			update_dir_parent = true;
+-		if (!new_inode && new_dir != old_dir &&
+-		    new_dir->i_nlink >= ocfs2_link_max(osb)) {
++		if (!new_inode && new_dir->i_nlink >= ocfs2_link_max(osb)) {
+ 			status = -EMLINK;
+ 			goto bail;
  		}
- 	}
- 
-@@ -1486,7 +1489,7 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 
- 		reiserfs_prepare_for_journal(old_inode->i_sb, new_de.de_bh, 1);
- 
--		if (S_ISDIR(old_inode->i_mode)) {
-+		if (update_dir_parent) {
- 			if ((retval =
- 			     search_by_entry_key(new_dir->i_sb,
- 						 &dot_dot_de.de_entry_key,
-@@ -1534,14 +1537,14 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 							 new_de.de_bh);
- 			reiserfs_restore_prepared_buffer(old_inode->i_sb,
- 							 old_de.de_bh);
--			if (S_ISDIR(old_inode_mode))
-+			if (update_dir_parent)
- 				reiserfs_restore_prepared_buffer(old_inode->
- 								 i_sb,
- 								 dot_dot_de.
- 								 de_bh);
- 			continue;
+@@ -1601,6 +1600,9 @@ static int ocfs2_rename(struct mnt_idmap *idmap,
+ 			mlog_errno(status);
+ 			goto bail;
  		}
--		if (S_ISDIR(old_inode_mode)) {
-+		if (update_dir_parent) {
- 			if (item_moved(&dot_dot_ih, &dot_dot_entry_path) ||
- 			    !entry_points_to_object("..", 2, &dot_dot_de,
- 						    old_dir)) {
-@@ -1559,7 +1562,7 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 			}
- 		}
- 
--		RFALSE(S_ISDIR(old_inode_mode) &&
-+		RFALSE(update_dir_parent &&
- 		       !buffer_journal_prepared(dot_dot_de.de_bh), "");
- 
- 		break;
-@@ -1592,11 +1595,12 @@ static int reiserfs_rename(struct mnt_idmap *idmap,
- 		savelink = new_dentry_inode->i_nlink;
- 	}
- 
--	if (S_ISDIR(old_inode_mode)) {
-+	if (update_dir_parent) {
- 		/* adjust ".." of renamed directory */
- 		set_ino_in_dir_entry(&dot_dot_de, INODE_PKEY(new_dir));
- 		journal_mark_dirty(&th, dot_dot_de.de_bh);
--
 +	}
++
 +	if (S_ISDIR(old_inode->i_mode)) {
- 		/*
- 		 * there (in new_dir) was no directory, so it got new link
- 		 * (".."  of renamed directory)
+ 		drop_nlink(old_dir);
+ 		if (new_inode) {
+ 			drop_nlink(new_inode);
 -- 
 2.39.2
 
