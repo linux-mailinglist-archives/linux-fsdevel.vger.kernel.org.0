@@ -1,35 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-3467-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD767F50C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:37:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F0F7F50CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B94BB20F20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994682816B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 19:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3824F5D4BA;
-	Wed, 22 Nov 2023 19:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE335E0DA;
+	Wed, 22 Nov 2023 19:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="j/zHIGdb"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DQlLrAJ9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE2B1B2;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D833A1B5;
 	Wed, 22 Nov 2023 11:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=1kXdQTzP9QbMwip9HhQkODeDCTy6uPz4pJDbGLrfwH4=; b=j/zHIGdbj57GVSf3DgjFtbdzKE
-	YXPaab07VjQSO1hmibpG7Yx3cWdhR6Gt7FJ3w44L7KwZ+vQ16Xm2JYzQ47NgaIioMCP6/HINChePB
-	f9BnMFXX3+IZzeLoCwZmE+JGw6KJqao1AGBWgNv7jG1nZWOI355W9J63abY9m5dxqknDvV1hLqZf6
-	S//r8xOmWheYW872BRLirbQJW8c8LFS7D2t+uNB2TradI9dAqRwrQoxFgxiblODgGndnFa92Jvt3v
-	zExswAs4CxD3Z7cXEkzeINfSkXTYumauvHRuO8aJtGzPAuZp7m7PV8jpHXBNK6+bSAf0lNVZTgzEH
-	P/mGlS3w==;
+	bh=2Ih+XGz67G/g1oREsd3pNbBpUO9/7/Wqei4gcLL9Zq8=; b=DQlLrAJ9HgsRqZMo+pE35Io3lM
+	mJkanKmP4JmFqOriWCBDgTPVYaaAls7n31yHBIvgRdjVli8qpL0MEmXOnP8GJuoOr3hr8A/edD7KW
+	udJAPMID8KvgVzhIu28qvl/mr9kso2tmmUcjFstT8M0wHjBuZemn+1H+qvYu8xnzxN9vyohuHHuVe
+	icfwVk+PWnDpHHRDtNN4+8DCkwNCbWldU1pRzlwX/HdORE5tg7z3XFag7uxiizEYBKZIDXq0U5BCq
+	z9FYaqm409dJ5bBvmUMF0NbZkn6ilSasW6gHWbG/5oONxHgnoFj9yMNkDeRhNqjqHBRLcGRPTtfsw
+	CIH7EbFw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r5t1p-001l1o-0z;
+	id 1r5t1p-001l20-1M;
 	Wed, 22 Nov 2023 19:36:53 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -37,9 +37,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Mo Zou <lostzoumo@gmail.com>,
 	Jan Kara <jack@suse.cz>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] f2fs: Avoid reading renamed directory if parent does not change
-Date: Wed, 22 Nov 2023 19:36:49 +0000
-Message-Id: <20231122193652.419091-6-viro@zeniv.linux.org.uk>
+Subject: [PATCH 7/9] rename(): fix the locking of subdirectories
+Date: Wed, 22 Nov 2023 19:36:50 +0000
+Message-Id: <20231122193652.419091-7-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231122193652.419091-1-viro@zeniv.linux.org.uk>
 References: <20231122193028.GE38156@ZenIV>
@@ -53,85 +53,279 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Jan Kara <jack@suse.cz>
+	We should never lock two subdirectories without having taken
+->s_vfs_rename_mutex; inode pointer order or not, the "order" proposed
+in 28eceeda130f "fs: Lock moved directories" is not transitive, with
+the usual consequences.
 
-The VFS will not be locking moved directory if its parent does not
-change.  Change f2fs rename code to avoid reading renamed directory if
-its parent does not change.  Having it uninlined while we are reading
-it would cause trouble and we won't be able to rely upon ->i_rwsem
-on the directory being renamed in cases that do not alter its parent.
+	The rationale for locking renamed subdirectory in all cases was
+the possibility of race between rename modifying .. in a subdirectory to
+reflect the new parent and another thread modifying the same subdirectory.
+For a lot of filesystems that's not a problem, but for some it can lead
+to trouble (e.g. the case when short directory contents is kept in the
+inode, but creating a file in it might push it across the size limit
+and copy its contents into separate data block(s)).
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+	However, we need that only in case when the parent does change -
+otherwise ->rename() doesn't need to do anything with .. entry in the
+first place.  Some instances are lazy and do a tautological update anyway,
+but it's really not hard to avoid.
+
+Amended locking rules for rename():
+	find the parent(s) of source and target
+	if source and target have the same parent
+		lock the common parent
+	else
+		lock ->s_vfs_rename_mutex
+		lock both parents, in ancestor-first order; if neither
+		is an ancestor of another, lock the parent of source
+		first.
+	find the source and target.
+	if source and target have the same parent
+		if operation is an overwriting rename of a subdirectory
+			lock the target subdirectory
+	else
+		if source is a subdirectory
+			lock the source
+		if target is a subdirectory
+			lock the target
+	lock non-directories involved, in inode pointer order if both
+	source and target are such.
+
+That way we are guaranteed that parents are locked (for obvious reasons),
+that any renamed non-directory is locked (nfsd relies upon that),
+that any victim is locked (emptiness check needs that, among other things)
+and subdirectory that changes parent is locked (needed to protect the update
+of .. entries).  We are also guaranteed that any operation locking more
+than one directory either takes ->s_vfs_rename_mutex or locks a parent
+followed by its child.
+
+Cc: stable@vger.kernel.org
+Fixes: 28eceeda130f "fs: Lock moved directories"
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/f2fs/namei.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ .../filesystems/directory-locking.rst         | 29 ++++-----
+ Documentation/filesystems/locking.rst         |  5 +-
+ Documentation/filesystems/porting.rst         | 18 ++++++
+ fs/namei.c                                    | 60 ++++++++++++-------
+ 4 files changed, 74 insertions(+), 38 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d0053b0284d8..fdc97df6bb85 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -963,6 +963,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	struct f2fs_dir_entry *old_dir_entry = NULL;
- 	struct f2fs_dir_entry *old_entry;
- 	struct f2fs_dir_entry *new_entry;
-+	bool old_is_dir = S_ISDIR(old_inode->i_mode);
- 	int err;
+diff --git a/Documentation/filesystems/directory-locking.rst b/Documentation/filesystems/directory-locking.rst
+index dccd61c7c5c3..193c22687851 100644
+--- a/Documentation/filesystems/directory-locking.rst
++++ b/Documentation/filesystems/directory-locking.rst
+@@ -22,13 +22,16 @@ exclusive.
+ 3) object removal.  Locking rules: caller locks parent, finds victim,
+ locks victim and calls the method.  Locks are exclusive.
  
- 	if (unlikely(f2fs_cp_error(sbi)))
-@@ -1017,7 +1018,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		goto out;
+-4) rename() that is _not_ cross-directory.  Locking rules: caller locks the
+-parent and finds source and target.  We lock both (provided they exist).  If we
+-need to lock two inodes of different type (dir vs non-dir), we lock directory
+-first.  If we need to lock two inodes of the same type, lock them in inode
+-pointer order.  Then call the method.  All locks are exclusive.
+-NB: we might get away with locking the source (and target in exchange
+-case) shared.
++4) rename() that is _not_ cross-directory.  Locking rules: caller locks
++the parent and finds source and target.  Then we decide which of the
++source and target need to be locked.  Source needs to be locked if it's a
++non-directory; target - if it's a non-directory or about to be removed.
++Take the locks that need to be taken, in inode pointer order if need
++to take both (that can happen only when both source and target are
++non-directories - the source because it wouldn't be locked otherwise
++and the target because mixing directory and non-directory is allowed
++only with RENAME_EXCHANGE, and that won't be removing the target).
++After the locks had been taken, call the method.  All locks are exclusive.
+ 
+ 5) link creation.  Locking rules:
+ 
+@@ -44,20 +47,17 @@ rules:
+ 
+ 	* lock the filesystem
+ 	* lock parents in "ancestors first" order. If one is not ancestor of
+-	  the other, lock them in inode pointer order.
++	  the other, lock the parent of source first.
+ 	* find source and target.
+ 	* if old parent is equal to or is a descendent of target
+ 	  fail with -ENOTEMPTY
+ 	* if new parent is equal to or is a descendent of source
+ 	  fail with -ELOOP
+-	* Lock both the source and the target provided they exist. If we
+-	  need to lock two inodes of different type (dir vs non-dir), we lock
+-	  the directory first. If we need to lock two inodes of the same type,
+-	  lock them in inode pointer order.
++	* Lock subdirectories involved (source before target).
++	* Lock non-directories involved, in inode pointer order.
+ 	* call the method.
+ 
+-All ->i_rwsem are taken exclusive.  Again, we might get away with locking
+-the source (and target in exchange case) shared.
++All ->i_rwsem are taken exclusive.
+ 
+ The rules above obviously guarantee that all directories that are going to be
+ read, modified or removed by method will be locked by caller.
+@@ -67,6 +67,7 @@ If no directory is its own ancestor, the scheme above is deadlock-free.
+ 
+ Proof:
+ 
++[XXX: will be updated once we are done massaging the lock_rename()]
+ 	First of all, at any moment we have a linear ordering of the
+ 	objects - A < B iff (A is an ancestor of B) or (B is not an ancestor
+         of A and ptr(A) < ptr(B)).
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 7be2900806c8..bd12f2f850ad 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -101,7 +101,7 @@ symlink:	exclusive
+ mkdir:		exclusive
+ unlink:		exclusive (both)
+ rmdir:		exclusive (both)(see below)
+-rename:		exclusive (all)	(see below)
++rename:		exclusive (both parents, some children)	(see below)
+ readlink:	no
+ get_link:	no
+ setattr:	exclusive
+@@ -123,6 +123,9 @@ get_offset_ctx  no
+ 	Additionally, ->rmdir(), ->unlink() and ->rename() have ->i_rwsem
+ 	exclusive on victim.
+ 	cross-directory ->rename() has (per-superblock) ->s_vfs_rename_sem.
++	->unlink() and ->rename() have ->i_rwsem exclusive on all non-directories
++	involved.
++	->rename() has ->i_rwsem exclusive on any subdirectory that changes parent.
+ 
+ See Documentation/filesystems/directory-locking.rst for more detailed discussion
+ of the locking scheme for directory operations.
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 878e72b2f8b7..9100969e7de6 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -1061,3 +1061,21 @@ export_operations ->encode_fh() no longer has a default implementation to
+ encode FILEID_INO32_GEN* file handles.
+ Filesystems that used the default implementation may use the generic helper
+ generic_encode_ino32_fh() explicitly.
++
++---
++
++**mandatory**
++
++If ->rename() update of .. on cross-directory move needs an exclusion with
++directory modifications, do *not* lock the subdirectory in question in your
++->rename() - it's done by the caller now [that item should've been added in
++28eceeda130f "fs: Lock moved directories"].
++
++---
++
++**mandatory**
++
++On same-directory ->rename() the (tautological) update of .. is not protected
++by any locks; just don't do it if the old parent is the same as the new one.
++We really can't lock two subdirectories in same-directory rename - not without
++deadlocks.
+diff --git a/fs/namei.c b/fs/namei.c
+index 71c13b2990b4..29bafbdb44ca 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3021,20 +3021,14 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
+ 	p = d_ancestor(p2, p1);
+ 	if (p) {
+ 		inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
+-		inode_lock_nested(p1->d_inode, I_MUTEX_CHILD);
++		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT2);
+ 		return p;
  	}
  
--	if (S_ISDIR(old_inode->i_mode)) {
-+	if (old_is_dir && old_dir != new_dir) {
- 		old_dir_entry = f2fs_parent_dir(old_inode, &old_dir_page);
- 		if (!old_dir_entry) {
- 			if (IS_ERR(old_dir_page))
-@@ -1029,7 +1030,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	if (new_inode) {
+ 	p = d_ancestor(p1, p2);
+-	if (p) {
+-		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
+-		inode_lock_nested(p2->d_inode, I_MUTEX_CHILD);
+-		return p;
+-	}
+-
+-	lock_two_inodes(p1->d_inode, p2->d_inode,
+-			I_MUTEX_PARENT, I_MUTEX_PARENT2);
+-	return NULL;
++	inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
++	inode_lock_nested(p2->d_inode, I_MUTEX_PARENT2);
++	return p;
+ }
  
- 		err = -ENOTEMPTY;
--		if (old_dir_entry && !f2fs_empty_dir(new_inode))
-+		if (old_is_dir && !f2fs_empty_dir(new_inode))
- 			goto out_dir;
+ /*
+@@ -4716,11 +4710,12 @@ SYSCALL_DEFINE2(link, const char __user *, oldname, const char __user *, newname
+  *
+  *	a) we can get into loop creation.
+  *	b) race potential - two innocent renames can create a loop together.
+- *	   That's where 4.4 screws up. Current fix: serialization on
++ *	   That's where 4.4BSD screws up. Current fix: serialization on
+  *	   sb->s_vfs_rename_mutex. We might be more accurate, but that's another
+  *	   story.
+- *	c) we have to lock _four_ objects - parents and victim (if it exists),
+- *	   and source.
++ *	c) we may have to lock up to _four_ objects - parents and victim (if it exists),
++ *	   and source (if it's a non-directory or a subdirectory that moves to
++ *	   different parent).
+  *	   And that - after we got ->i_mutex on parents (until then we don't know
+  *	   whether the target exists).  Solution: try to be smart with locking
+  *	   order for inodes.  We rely on the fact that tree topology may change
+@@ -4752,6 +4747,7 @@ int vfs_rename(struct renamedata *rd)
+ 	bool new_is_dir = false;
+ 	unsigned max_links = new_dir->i_sb->s_max_links;
+ 	struct name_snapshot old_name;
++	bool lock_old_subdir, lock_new_subdir;
  
- 		err = -ENOENT;
-@@ -1054,7 +1055,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
+ 	if (source == target)
+ 		return 0;
+@@ -4805,15 +4801,32 @@ int vfs_rename(struct renamedata *rd)
+ 	take_dentry_name_snapshot(&old_name, old_dentry);
+ 	dget(new_dentry);
+ 	/*
+-	 * Lock all moved children. Moved directories may need to change parent
+-	 * pointer so they need the lock to prevent against concurrent
+-	 * directory changes moving parent pointer. For regular files we've
+-	 * historically always done this. The lockdep locking subclasses are
+-	 * somewhat arbitrary but RENAME_EXCHANGE in particular can swap
+-	 * regular files and directories so it's difficult to tell which
+-	 * subclasses to use.
++	 * Lock children.
++	 * The source subdirectory needs to be locked on cross-directory
++	 * rename or cross-directory exchange since its parent changes.
++	 * The target subdirectory needs to be locked on cross-directory
++	 * exchange due to parent change and on any rename due to becoming
++	 * a victim.
++	 * Non-directories need locking in all cases (for NFS reasons);
++	 * they get locked after any subdirectories (in inode address order).
++	 *
++	 * NOTE: WE ONLY LOCK UNRELATED DIRECTORIES IN CROSS-DIRECTORY CASE.
++	 * NEVER, EVER DO THAT WITHOUT ->s_vfs_rename_mutex.
+ 	 */
+-	lock_two_inodes(source, target, I_MUTEX_NORMAL, I_MUTEX_NONDIR2);
++	lock_old_subdir = new_dir != old_dir;
++	lock_new_subdir = new_dir != old_dir || !(flags & RENAME_EXCHANGE);
++	if (is_dir) {
++		if (lock_old_subdir)
++			inode_lock_nested(source, I_MUTEX_CHILD);
++		if (target && (!new_is_dir || lock_new_subdir))
++			inode_lock(target);
++	} else if (new_is_dir) {
++		if (lock_new_subdir)
++			inode_lock_nested(target, I_MUTEX_CHILD);
++		inode_lock(source);
++	} else {
++		lock_two_nondirectories(source, target);
++	}
  
- 		inode_set_ctime_current(new_inode);
- 		f2fs_down_write(&F2FS_I(new_inode)->i_sem);
--		if (old_dir_entry)
-+		if (old_is_dir)
- 			f2fs_i_links_write(new_inode, false);
- 		f2fs_i_links_write(new_inode, false);
- 		f2fs_up_write(&F2FS_I(new_inode)->i_sem);
-@@ -1074,12 +1075,12 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			goto out_dir;
- 		}
- 
--		if (old_dir_entry)
-+		if (old_is_dir)
- 			f2fs_i_links_write(new_dir, true);
+ 	error = -EPERM;
+ 	if (IS_SWAPFILE(source) || (target && IS_SWAPFILE(target)))
+@@ -4861,8 +4874,9 @@ int vfs_rename(struct renamedata *rd)
+ 			d_exchange(old_dentry, new_dentry);
  	}
- 
- 	f2fs_down_write(&F2FS_I(old_inode)->i_sem);
--	if (!old_dir_entry || whiteout)
-+	if (!old_is_dir || whiteout)
- 		file_lost_pino(old_inode);
- 	else
- 		/* adjust dir's i_pino to pass fsck check */
-@@ -1105,8 +1106,8 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		iput(whiteout);
- 	}
- 
--	if (old_dir_entry) {
--		if (old_dir != new_dir && !whiteout)
-+	if (old_is_dir) {
-+		if (old_dir_entry && !whiteout)
- 			f2fs_set_link(old_inode, old_dir_entry,
- 						old_dir_page, new_dir);
- 		else
+ out:
+-	inode_unlock(source);
+-	if (target)
++	if (!is_dir || lock_old_subdir)
++		inode_unlock(source);
++	if (target && (!new_is_dir || lock_new_subdir))
+ 		inode_unlock(target);
+ 	dput(new_dentry);
+ 	if (!error) {
 -- 
 2.39.2
 
