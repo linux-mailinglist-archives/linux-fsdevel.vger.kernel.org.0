@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-3422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C41E7F4688
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:45:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5EC7F4689
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 13:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292E21F21CF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4692810C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 12:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8373AC29;
-	Wed, 22 Nov 2023 12:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEE23D3A9;
+	Wed, 22 Nov 2023 12:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkXobvd6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQahI3T8"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088314D10B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 12:44:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0859C433C7;
-	Wed, 22 Nov 2023 12:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C64D10B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 12:44:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04915C433C9;
+	Wed, 22 Nov 2023 12:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700657094;
-	bh=bh+RhuUSY0u6U+8qlDB7mjHHPW8EueOuRxZPnyhYibc=;
+	s=k20201202; t=1700657095;
+	bh=JwWBrAaZpvHJTpdhGpdS9t7GETXOmA8d0qV90iLlbSg=;
 	h=From:Date:Subject:References:In-Reply-To:To:From;
-	b=EkXobvd6+XGKRu54sXwZZZZFgRelQjWH+YiEgKpfpRHcIiw14C37/273itgDknhH4
-	 TFjMATCRqQED5iMMx88QoQROLnd3DcNI+0nNvQ9F28d5j2nSvrVn8dVSgFI0HXdeoV
-	 mr0aBOsDABtZzmnuvYTg8fXrSFrIw7CvYToXMUGAMGBxqSGuOnITBYDDoDNdBQoPk+
-	 amKZAFoHILv8qtUr72WirGyeF+yPTp26j+/wxwEmYjPCcz1jM+AOi/B2lceMqFt7BH
-	 U37MUeKLrW6q+Veqr4QIRJiOXjlDHWQiubn9wVJPGBRX4Jq9z+RJmU8H3rPT0TZugD
-	 sUziyaif57FHg==
+	b=fQahI3T8oG+OG9IW///0Ux/6vVKTrKlNelWCKgUzlPHKGZSFdjZxWJFlIp0KckBSo
+	 9oYjcbIwMXQG5JdLURr7axl2E7dQYJkwGVvvQ2vO0cM12dAxLK5PWo4AoJIR62VTq1
+	 uLt4ekebML/DFagoAchCtpXeKqAUqSDmM5CnlpxSaiaqVJvWZ9QYMigwfbk3AW1bmt
+	 Rn2RSh8cLnvLdCSyNUot7f++A3T/90pui9WcvaBcL+lOmZ3a/uAWjZJI9sfP4/+Pi8
+	 PrEej/OgZwNyu53PWcx4FFdCppvaHEiONmHBKfW8G/G+I7P2X4L1VlNg1m0yb9FqGe
+	 rUo1yjP3vYgLA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 22 Nov 2023 13:44:37 +0100
-Subject: [PATCH 1/4] mnt_idmapping: remove check_fsmapping()
+Date: Wed, 22 Nov 2023 13:44:38 +0100
+Subject: [PATCH 2/4] mnt_idmapping: remove nop check
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,90 +43,121 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231122-vfs-mnt_idmap-v1-1-dae4abdde5bd@kernel.org>
+Message-Id: <20231122-vfs-mnt_idmap-v1-2-dae4abdde5bd@kernel.org>
 References: <20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org>
 In-Reply-To: <20231122-vfs-mnt_idmap-v1-0-dae4abdde5bd@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-26615
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2388; i=brauner@kernel.org;
- h=from:subject:message-id; bh=bh+RhuUSY0u6U+8qlDB7mjHHPW8EueOuRxZPnyhYibc=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTGfj/88nD9/WNBZWmnS66zrLp0/8Yxm58Ce8OvOP306
- PXcJlkxq6OUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiFyYyMnR1CPOy8Knqf7SN
- E+zSKWe/9TuJ68KydQLrvrwX3nTtHgsjw7R2w9P1DV33u54xflQ/UZJfEPrmeJvFh/dzYn6suBl
- 3lA8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4252; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=JwWBrAaZpvHJTpdhGpdS9t7GETXOmA8d0qV90iLlbSg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTGfj98ateVo0IzWc6dZ+R51yLYUy20a329cto/0UsXd
+ mxd23LqekcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEnvcyMizOlu9qNE58rfVD
+ /Jz/H1YOfrUT2sfmycvOr9+VtkSOKY3hD6/TJgnrwN8yxdMqRJTusfw+Ozf6uRKDhrF4cL6JmOx
+ HfgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-The helper is a bit pointless. Just open-code the check.
+All mounts default to nop_mnt_idmap and we don't allow creating idmapped
+mounts that reuse the idmapping of the filesystem. So unless someone
+passes a non-superblock namespace to these helpers this check will
+always be false. Remove it and replace it with a simple check for
+nop_mnt_idmap.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/mnt_idmapping.c            | 17 ++---------------
- fs/namespace.c                |  2 +-
- include/linux/mnt_idmapping.h |  3 ---
- 3 files changed, 3 insertions(+), 19 deletions(-)
+ fs/mnt_idmapping.c | 36 ++++++++----------------------------
+ 1 file changed, 8 insertions(+), 28 deletions(-)
 
 diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-index 57d1dedf3f8f..2674942311c3 100644
+index 2674942311c3..35d78cb3c38a 100644
 --- a/fs/mnt_idmapping.c
 +++ b/fs/mnt_idmapping.c
-@@ -25,19 +25,6 @@ struct mnt_idmap nop_mnt_idmap = {
- };
- EXPORT_SYMBOL_GPL(nop_mnt_idmap);
+@@ -39,26 +39,6 @@ static inline bool initial_idmapping(const struct user_namespace *ns)
+ 	return ns == &init_user_ns;
+ }
  
 -/**
-- * check_fsmapping - check whether an mount idmapping is allowed
-- * @idmap: idmap of the relevent mount
-- * @sb:    super block of the filesystem
+- * no_idmapping - check whether we can skip remapping a kuid/gid
+- * @mnt_userns: the mount's idmapping
+- * @fs_userns: the filesystem's idmapping
 - *
-- * Return: true if @idmap is allowed, false if not.
+- * This function can be used to check whether a remapping between two
+- * idmappings is required.
+- * An idmapped mount is a mount that has an idmapping attached to it that
+- * is different from the filsystem's idmapping and the initial idmapping.
+- * If the initial mapping is used or the idmapping of the mount and the
+- * filesystem are identical no remapping is required.
+- *
+- * Return: true if remapping can be skipped, false if not.
 - */
--bool check_fsmapping(const struct mnt_idmap *idmap,
--		     const struct super_block *sb)
+-static inline bool no_idmapping(const struct user_namespace *mnt_userns,
+-				const struct user_namespace *fs_userns)
 -{
--	return idmap->owner != sb->s_user_ns;
+-	return initial_idmapping(mnt_userns) || mnt_userns == fs_userns;
 -}
 -
  /**
-  * initial_idmapping - check whether this is the initial mapping
-  * @ns: idmapping to check
-@@ -94,8 +81,8 @@ static inline bool no_idmapping(const struct user_namespace *mnt_userns,
-  */
- 
- vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
--				   struct user_namespace *fs_userns,
--				   kuid_t kuid)
-+		     struct user_namespace *fs_userns,
-+		     kuid_t kuid)
- {
+  * make_vfsuid - map a filesystem kuid according to an idmapping
+  * @idmap: the mount's idmapping
+@@ -68,8 +48,8 @@ static inline bool no_idmapping(const struct user_namespace *mnt_userns,
+  * Take a @kuid and remap it from @fs_userns into @idmap. Use this
+  * function when preparing a @kuid to be reported to userspace.
+  *
+- * If no_idmapping() determines that this is not an idmapped mount we can
+- * simply return @kuid unchanged.
++ * If initial_idmapping() determines that this is not an idmapped mount
++ * we can simply return @kuid unchanged.
+  * If initial_idmapping() tells us that the filesystem is not mounted with an
+  * idmapping we know the value of @kuid won't change when calling
+  * from_kuid() so we can simply retrieve the value via __kuid_val()
+@@ -87,7 +67,7 @@ vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
  	uid_t uid;
  	struct user_namespace *mnt_userns = idmap->owner;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index fbf0e596fcd3..736baf07115c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4288,7 +4288,7 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- 	 * Creating an idmapped mount with the filesystem wide idmapping
- 	 * doesn't make sense so block that. We don't allow mushy semantics.
- 	 */
--	if (!check_fsmapping(kattr->mnt_idmap, m->mnt_sb))
-+	if (kattr->mnt_userns == m->mnt_sb->s_user_ns)
- 		return -EINVAL;
  
- 	/*
-diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index b8da2db4ecd2..cd4d5c8781f5 100644
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -244,7 +244,4 @@ static inline kgid_t mapped_fsgid(struct mnt_idmap *idmap,
- 	return from_vfsgid(idmap, fs_userns, VFSGIDT_INIT(current_fsgid()));
- }
+-	if (no_idmapping(mnt_userns, fs_userns))
++	if (idmap == &nop_mnt_idmap)
+ 		return VFSUIDT_INIT(kuid);
+ 	if (initial_idmapping(fs_userns))
+ 		uid = __kuid_val(kuid);
+@@ -108,8 +88,8 @@ EXPORT_SYMBOL_GPL(make_vfsuid);
+  * Take a @kgid and remap it from @fs_userns into @idmap. Use this
+  * function when preparing a @kgid to be reported to userspace.
+  *
+- * If no_idmapping() determines that this is not an idmapped mount we can
+- * simply return @kgid unchanged.
++ * If initial_idmapping() determines that this is not an idmapped mount
++ * we can simply return @kgid unchanged.
+  * If initial_idmapping() tells us that the filesystem is not mounted with an
+  * idmapping we know the value of @kgid won't change when calling
+  * from_kgid() so we can simply retrieve the value via __kgid_val()
+@@ -125,7 +105,7 @@ vfsgid_t make_vfsgid(struct mnt_idmap *idmap,
+ 	gid_t gid;
+ 	struct user_namespace *mnt_userns = idmap->owner;
  
--bool check_fsmapping(const struct mnt_idmap *idmap,
--		     const struct super_block *sb);
--
- #endif /* _LINUX_MNT_IDMAPPING_H */
+-	if (no_idmapping(mnt_userns, fs_userns))
++	if (idmap == &nop_mnt_idmap)
+ 		return VFSGIDT_INIT(kgid);
+ 	if (initial_idmapping(fs_userns))
+ 		gid = __kgid_val(kgid);
+@@ -154,7 +134,7 @@ kuid_t from_vfsuid(struct mnt_idmap *idmap,
+ 	uid_t uid;
+ 	struct user_namespace *mnt_userns = idmap->owner;
+ 
+-	if (no_idmapping(mnt_userns, fs_userns))
++	if (idmap == &nop_mnt_idmap)
+ 		return AS_KUIDT(vfsuid);
+ 	uid = from_kuid(mnt_userns, AS_KUIDT(vfsuid));
+ 	if (uid == (uid_t)-1)
+@@ -182,7 +162,7 @@ kgid_t from_vfsgid(struct mnt_idmap *idmap,
+ 	gid_t gid;
+ 	struct user_namespace *mnt_userns = idmap->owner;
+ 
+-	if (no_idmapping(mnt_userns, fs_userns))
++	if (idmap == &nop_mnt_idmap)
+ 		return AS_KGIDT(vfsgid);
+ 	gid = from_kgid(mnt_userns, AS_KGIDT(vfsgid));
+ 	if (gid == (gid_t)-1)
 
 -- 
 2.42.0
