@@ -1,88 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-3473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470B97F5197
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:26:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0EB27F51B1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB36BB20F96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9D8B20CD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612FB5CD1E;
-	Wed, 22 Nov 2023 20:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E035CD01;
+	Wed, 22 Nov 2023 20:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BY+U2osZ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KKYvlDuk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12BA29A;
-	Wed, 22 Nov 2023 12:26:27 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-359c22c44d6so629325ab.2;
-        Wed, 22 Nov 2023 12:26:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700684785; x=1701289585; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MYNW2A2wXnMUotvyb3lU3//WT+ELjlFrTwfx+eM2UFY=;
-        b=BY+U2osZRKvoMw9Vo+OdWRQP3vfbAlq7j+ipaaRlahG5hkxiPwb8ssXwRKKuwGbZT0
-         +UWiYv7C0Weov3kwGVT73vNLH8IUqXZ6NYD+m88qjOUjQFh6gy8Z3J/QgepujxVZtY5V
-         OCfXTu0qjABjdcEUlBDLXcSwt5PWG1IhS890A7h9/QOfYRqhj2PH29vQPkoYRUrY340a
-         t4w9V7ca89m0YKwp/Ae4nFdDvSMWHcfcqmTtzZUcf8iSZp1JEFtdSDwClee1UJBJwJ56
-         wMcXxdO9lrCfnzW6LMWidt6CFBriVjYah3qyeqdE2SkhfbM1WhhETNGcGvqQSq0jIs5C
-         nZYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700684785; x=1701289585;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MYNW2A2wXnMUotvyb3lU3//WT+ELjlFrTwfx+eM2UFY=;
-        b=dB9m/7iewo4kcNl+VMaXYLEFTtDNgY29HIofOi1qwEhzy9gaNEV6mu/NpPea6tlP/B
-         bTbJRY1xxAjLkpmXOr/UdY52mbLPx4lC6odtFtPULkxccsPhPhMq1JIneKUNxZW03QI2
-         5k2BJ+6+scDA3Pgrt/GwbiAaPscuVO21LP6FPa4U1EKyM67+1dzUKUcKbJhdCdqQ7TKK
-         qxiYq7RNGSJjWfGAzP0fMbXxaowJioMwSVQAu06BK55GYBHRilrsnIUDbT592SWhhHQ1
-         tgzh/7OengGdA0cOf39nkfPx4uhNkzuv1A7NNoZIuiD2TIUl3XvLoaKjn2HcjZS51JF1
-         WB3A==
-X-Gm-Message-State: AOJu0YxyC4N1oyKDWMjdX7D3uho1bgnk+/5riICwK2ncTeMn13NGNpcH
-	h5FyDnJ5vQJQhYD9RaTUGeh2GmwuGwo=
-X-Google-Smtp-Source: AGHT+IG/oEoeRQ8bRQnwsot1BUJe0ZNuEd5dSXHtE+mpDE3Oxpp+K+1934xc8T/eLceqjGwDwvyE0Q==
-X-Received: by 2002:a05:6e02:1c2d:b0:359:3ac2:5123 with SMTP id m13-20020a056e021c2d00b003593ac25123mr4920456ilh.23.1700684785468;
-        Wed, 22 Nov 2023 12:26:25 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id b20-20020a63d314000000b005c215baacc1sm94413pgg.70.2023.11.22.12.26.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Nov 2023 12:26:24 -0800 (PST)
-Date: Thu, 23 Nov 2023 01:56:21 +0530
-Message-Id: <87msv5r0uq.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use iomap
-In-Reply-To: <ZV399sCMq+p57Yh3@infradead.org>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E191BF;
+	Wed, 22 Nov 2023 12:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Xr3fIxd6ShAqICy5ksdIon7PqrY/ojAeg18qArUzk6A=; b=KKYvlDukgHRf+nguuPK0ae5+u/
+	OXrvbkccPXPLZCxlORrI9UqhuEUvOYRWn+F9MhvJc4Ic7blUtkdu1r8/jTDdQyMPMKiWdhPZDb9CR
+	dcYg0VJIEp/M3HQi110IkSjsgjwm1ccfgdiaMFFOblx8vPI23bvEfoiR/5ACeI+kstejVCcs0UCrq
+	GpH/GFfTuSBtUpQKzIZcwSPGBDe5b9WB5WgcYwTYDHEZIXac8c+thhN6wMON9gqSl9+3T7XuiCjWK
+	AUBG7pM9Ohz2Ho50hJaYLiCIDdB5hqsZbk2a5KH2RBVXRyVkGG48s77Xkfq0/Y5KqdUdX2DDFAWEs
+	GdtwzRng==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r5tts-001m5b-0v;
+	Wed, 22 Nov 2023 20:32:44 +0000
+Date: Wed, 22 Nov 2023 20:32:44 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: brauner@kernel.org, tytso@mit.edu, ebiggers@kernel.org,
+	jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v6 4/9] fs: Add DCACHE_CASEFOLDED_NAME flag
+Message-ID: <20231122203244.GG38156@ZenIV>
+References: <20230816050803.15660-1-krisman@suse.de>
+ <20230816050803.15660-5-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230816050803.15660-5-krisman@suse.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Wed, Aug 16, 2023 at 01:07:58AM -0400, Gabriel Krisman Bertazi wrote:
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+> 
+> This flag marks a negative or positive dentry as being created after a
+> case-insensitive lookup operation.  It is useful to differentiate
+> dentries this way to detect whether the negative dentry can be trusted
+> during a case-insensitive lookup.
 
-> On Wed, Nov 22, 2023 at 01:29:46PM +0100, Jan Kara wrote:
->> writeback bit set. XFS plays the revalidation sequence counter games
->> because of this so we'd have to do something similar for ext2. Not that I'd
->> care as much about ext2 writeback performance but it should not be that
->> hard and we'll definitely need some similar solution for ext4 anyway. Can
->> you give that a try (as a followup "performance improvement" patch).
->
-> Darrick has mentioned that he is looking into lifting more of the
-> validation sequence counter validation into iomap.
->
-> In the meantime I have a series here that at least maps multiple blocks
-> inside a folio in a single go, which might be worth trying with ext2 as
-> well:
->
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/iomap-map-multiple-blocks
-
-Sure, thanks for providing details. I will check this.
-
--ritesh
+What should happen to that flag when d_splice_alias() picks an existing
+alias?  AFAICS, you set it in ->lookup() for the dentry passed to ->lookup(),
+but the alias picked by that sucker won't see anything of that sort, will
+it?
 
