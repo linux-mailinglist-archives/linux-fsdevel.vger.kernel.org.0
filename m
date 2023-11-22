@@ -1,175 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-3439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6937F4961
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:52:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF2F7F499E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 16:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFAB41C20BE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 14:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 800C8B21064
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 15:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB735676A;
-	Wed, 22 Nov 2023 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E464E1BA;
+	Wed, 22 Nov 2023 15:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RFZTJARF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QicsN6xa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EBE19E;
-	Wed, 22 Nov 2023 06:51:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700664701; x=1732200701;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Lp3IDM3ar4jYOzHbknAigUjAPfa74EA/HlhJuCNIfU=;
-  b=RFZTJARF7G0F4/0tmBnfccuZRtbRAgC9sUNRAVYBjn5Gy0GYQbXTH7Fl
-   AU4IGs1YEAxciute8I3PlHvJMcZs2hgTNMSNKrkAFc0LxImmN1OmVtm+X
-   qV7wVscQSNX3PSaqk5jF6KYb/mluYTiVh6aOW9rlx0CwH4JwmO7BOFMEP
-   9m55363ih+vtjNxuYg3dprwR3LRvG6K8VRnA/T9nUSt8AZ/Pb9gG25z22
-   re2zR5E3zUT3WDbCaDcYXg0IV0pwo3vtYzdkxtD7WdvUmfLWqYgAVvPcd
-   BwYJ+8vBN5/YwDNswBFnUYes4TJB1tqMMmb44i+UDAkp9SFRJZw8/dd8c
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="10729190"
-X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="10729190"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 06:51:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
-   d="scan'208";a="14944713"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa001.jf.intel.com with ESMTP; 22 Nov 2023 06:51:20 -0800
-Date: Wed, 22 Nov 2023 22:49:27 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
-	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.a.wang@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Farman <farman@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Tony Krowiak <akrowiak@linux.ibm.com>,
-	Jason Herne <jjherne@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Diana Craciun <diana.craciun@oss.nxp.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeelb@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2464C3C7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 15:04:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF2DC433C8;
+	Wed, 22 Nov 2023 15:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700665481;
+	bh=R8l/800C1t4aeVBv808obaihkNgtc2OcSDWhmOQIVs4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QicsN6xaV/J0EboMHe/oyVshptt+RDyn3ZHegvST+aCdKef7yhpE7km402Hcd9Dc9
+	 ZwSVO9GUqlNAg3W3SFImgwlQFzcaeRjXGsZ+2Qvhe2mpR+1F/DoPytn29X4dYd0ctv
+	 vNQl8MFK3TKzyVDZQimLuRvL1uRJ9vJVnjYOc1NC81BlXUFEXe7OFlCZTIBhovHFx/
+	 cUIS2MqZck/BTcdzM5ssmy9A9/36SRhDUbY8YHfou/97C8LEe8uCE+PPJO+RgfeTMz
+	 BY02t//Rw3NI4LVn3ytOyJFMqbp0NIpl7l+pdc/7kk3hqDdnZPA7sHDzYzvWUiayIM
+	 Fj5sj5G/IsfPw==
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Howells <dhowells@redhat.com>,
 	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
-Message-ID: <ZV4U96z12KSi4GGw@yilunxu-OptiPlex-7050>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/16] Tidy up file permission hooks
+Date: Wed, 22 Nov 2023 16:04:27 +0100
+Message-ID: <20231122-gelingen-lasten-d8d28a056638@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231122122715.2561213-1-amir73il@gmail.com>
+References: <20231122122715.2561213-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2934; i=brauner@kernel.org; h=from:subject:message-id; bh=R8l/800C1t4aeVBv808obaihkNgtc2OcSDWhmOQIVs4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTGSVTNW39Fs6C99HF9S4ETR6mDsJDaZOd/O7Yc5vkRf tB7zzbWjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInUxzP8r7GZt23VMp57Ej/4 mYXeSs0xYZj/8XBHh8rk4B3i15MreBn+SrovevLpgpXV9gXSOVyPRSTY7+zd+e64oUmWhM18nQ1 9vAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 22, 2023 at 01:48:23PM +0100, Christian Brauner wrote:
-> Ever since the evenfd type was introduced back in 2007 in commit
-> e1ad7468c77d ("signal/timer/event: eventfd core") the eventfd_signal()
-> function only ever passed 1 as a value for @n. There's no point in
-> keeping that additional argument.
+On Wed, 22 Nov 2023 14:26:59 +0200, Amir Goldstein wrote:
+> During my work on fanotify "pre content" events [1], Jan and I noticed
+> some inconsistencies in the call sites of security_file_permission()
+> hooks inside rw_verify_area() and remap_verify_area().
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  arch/x86/kvm/hyperv.c                     |  2 +-
->  arch/x86/kvm/xen.c                        |  2 +-
->  drivers/accel/habanalabs/common/device.c  |  2 +-
->  drivers/fpga/dfl.c                        |  2 +-
->  drivers/gpu/drm/drm_syncobj.c             |  6 +++---
->  drivers/gpu/drm/i915/gvt/interrupt.c      |  2 +-
->  drivers/infiniband/hw/mlx5/devx.c         |  2 +-
->  drivers/misc/ocxl/file.c                  |  2 +-
->  drivers/s390/cio/vfio_ccw_chp.c           |  2 +-
->  drivers/s390/cio/vfio_ccw_drv.c           |  4 ++--
->  drivers/s390/cio/vfio_ccw_ops.c           |  6 +++---
->  drivers/s390/crypto/vfio_ap_ops.c         |  2 +-
->  drivers/usb/gadget/function/f_fs.c        |  4 ++--
->  drivers/vdpa/vdpa_user/vduse_dev.c        |  6 +++---
->  drivers/vfio/fsl-mc/vfio_fsl_mc_intr.c    |  2 +-
->  drivers/vfio/pci/vfio_pci_core.c          |  6 +++---
->  drivers/vfio/pci/vfio_pci_intrs.c         | 12 ++++++------
->  drivers/vfio/platform/vfio_platform_irq.c |  4 ++--
->  drivers/vhost/vdpa.c                      |  4 ++--
->  drivers/vhost/vhost.c                     | 10 +++++-----
->  drivers/vhost/vhost.h                     |  2 +-
->  drivers/virt/acrn/ioeventfd.c             |  2 +-
->  drivers/xen/privcmd.c                     |  2 +-
->  fs/aio.c                                  |  2 +-
->  fs/eventfd.c                              |  9 +++------
->  include/linux/eventfd.h                   |  4 ++--
->  mm/memcontrol.c                           | 10 +++++-----
->  mm/vmpressure.c                           |  2 +-
->  samples/vfio-mdev/mtty.c                  |  4 ++--
->  virt/kvm/eventfd.c                        |  4 ++--
->  30 files changed, 60 insertions(+), 63 deletions(-)
+> The majority of call sites are before file_start_write(), which is how
+> we want them to be for fanotify "pre content" events.
 > 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index dd7a783d53b5..e73f88050f08 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -1872,7 +1872,7 @@ static irqreturn_t dfl_irq_handler(int irq, void *arg)
->  {
->  	struct eventfd_ctx *trigger = arg;
->  
-> -	eventfd_signal(trigger, 1);
-> +	eventfd_signal(trigger);
+> [...]
 
-For FPGA part,
+Applied to the vfs.rw branch of the vfs/vfs.git tree.
+Patches in the vfs.rw branch should appear in linux-next soon.
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
->  	return IRQ_HANDLED;
->  }
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.rw
+
+[01/16] ovl: add permission hooks outside of do_splice_direct()
+        https://git.kernel.org/vfs/vfs/c/52009acbab21
+[02/16] splice: remove permission hook from do_splice_direct()
+        https://git.kernel.org/vfs/vfs/c/095b2d7c4b93
+[03/16] splice: move permission hook out of splice_direct_to_actor()
+        https://git.kernel.org/vfs/vfs/c/ead0aac245dd
+[04/16] splice: move permission hook out of splice_file_to_pipe()
+        https://git.kernel.org/vfs/vfs/c/74a66b648378
+[05/16] splice: remove permission hook from iter_file_splice_write()
+        https://git.kernel.org/vfs/vfs/c/e341582fdb7c
+[06/16] remap_range: move permission hooks out of do_clone_file_range()
+        https://git.kernel.org/vfs/vfs/c/6ddfddac4922
+[07/16] remap_range: move file_start_write() to after permission hook
+        https://git.kernel.org/vfs/vfs/c/a1fffabd504c
+[08/16] btrfs: move file_start_write() to after permission hook
+        https://git.kernel.org/vfs/vfs/c/ca267f48c8e9
+[09/16] coda: change locking order in coda_file_write_iter()
+        https://git.kernel.org/vfs/vfs/c/aee32ff62e8b
+[10/16] fs: move file_start_write() into vfs_iter_write()
+        https://git.kernel.org/vfs/vfs/c/f02abb810579
+[11/16] fs: move permission hook out of do_iter_write()
+        https://git.kernel.org/vfs/vfs/c/11dc9bc73318
+[12/16] fs: move permission hook out of do_iter_read()
+        https://git.kernel.org/vfs/vfs/c/c8b86e93b6e2
+[13/16] fs: move kiocb_start_write() into vfs_iocb_iter_write()
+        https://git.kernel.org/vfs/vfs/c/a4e6c478189e
+[14/16] fs: create __sb_write_started() helper
+        https://git.kernel.org/vfs/vfs/c/2a7b49f698d0
+[15/16] fs: create file_write_started() helper
+        https://git.kernel.org/vfs/vfs/c/0d3b7690bd1f
+[16/16] fs: create {sb,file}_write_not_started() helpers
+        https://git.kernel.org/vfs/vfs/c/c88b5e392b2e
 
