@@ -1,108 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-3471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23637F516B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:21:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992A37F518F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 21:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF551C20B79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F82B281592
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 20:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E255A14002;
-	Wed, 22 Nov 2023 20:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5EE54BE0;
+	Wed, 22 Nov 2023 20:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="IrY2Wn5O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGjin5zD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A673B9A;
-	Wed, 22 Nov 2023 12:20:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uoaIxjf4dzgVF6LqwbixeuWhgvgd9c6WsrC3GpE+d/s=; b=IrY2Wn5Oe5jfRXdNhzZlLs8kZo
-	QFzv90A6C9COCCEZeRPKml7WibZD+hdWxYaLFriHmmxRNLsBv+sabZlS5oaVs+CTxURJVe+stqNkZ
-	EKLou2k6lNa8HPq3LNL78tX92prFmoLhh12wJ0d+iO5G5NzzE38wCWYGQhBMEA6NCsr82hi6Gkuu8
-	VRcW4nUCNx04ykC4wEtwmse0foWfgaia/GsDohCWp3mpwGc9C3JjIAJJqxI8KMcL/w84JA0REqVlh
-	PfmQQVu8dZJUMsjeOJbqqAo3VWro3ZSkc/5b0aQnCYRn6S07XdZbfSJlDTQLZAnONowZlYVg0dyv3
-	vo3Ya96A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r5tiG-001lqO-2f;
-	Wed, 22 Nov 2023 20:20:44 +0000
-Date: Wed, 22 Nov 2023 20:20:44 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: brauner@kernel.org, tytso@mit.edu, ebiggers@kernel.org,
-	jaegeuk@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v6 5/9] libfs: Validate negative dentries in
- case-insensitive directories
-Message-ID: <20231122202044.GF38156@ZenIV>
-References: <20230816050803.15660-1-krisman@suse.de>
- <20230816050803.15660-6-krisman@suse.de>
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E051BD;
+	Wed, 22 Nov 2023 12:25:38 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1cf7a8ab047so1337015ad.1;
+        Wed, 22 Nov 2023 12:25:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700684737; x=1701289537; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hzi/6nr8G3rFSkHQnNd7E57nhi4Dd5Gq1IEfsvXSnMY=;
+        b=OGjin5zDyu7MbEUL3lvWSnSAsPKm+f2UZguvxYg9YnjDilLM3rDKvoRpT2FCBn0aJT
+         P2sEe8lTX9dOaq0IN/TLRQ+3FfBTdX8SGBP1Dd2RVhzCni5WkAI3Dmk5rfd8wB2vbw7l
+         X/fDCuUVbVtZg+bfPOI5IFeDgPWV1O5Fga5NJMUuje48/beEktxpVlOXSNLTO66EMA4N
+         D5RC+cRKKJEgmIvED45xVzF3v4T/Ja4tQYxHnPvqArIOEArxuheoBPeVKRWKpGE6E/ay
+         ul7zMzSDA0v3rSukOR98gEWl+t/HdY0i8jgd1+KbYWUFn4G1n9Ch0CrvW8HnCHTqaYH3
+         Jyaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700684737; x=1701289537;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hzi/6nr8G3rFSkHQnNd7E57nhi4Dd5Gq1IEfsvXSnMY=;
+        b=vpdB5J7mY4kxIivZLPgHuqkfe8TeF06HFh0wNC1fZ8OT3i4g2iZZQCqh0oXFkZHt26
+         aHzL44yqbLrqsvASXVScsM/FF5+RfCiAyngCW3MFyYSEucrutyyNN1nXy6qpgDgx3m1o
+         AEAik7yGbWw/sVKO7cziJEuYxgBIVOtcLCBHKA7r7rAr7PcnzQ1AEEAUtpE5RSHnh278
+         aDP3rVt219WsdAaql9+WeVhauI2o3xAsPF3uaeXaiQYjgwElwlJNOzNC8aWDiZbb7yNG
+         OVbY2PF69R18Hr9aCU01P+ikp/BNCyZD09h+Wznp/xBmf1JaGmOuOIIsyyltz1SAWzsC
+         iKaw==
+X-Gm-Message-State: AOJu0Yxtv0AEiEfn9TYVFhf5MOTlzsK1WJQz+2CXZVOtL4z+PAzoOVi3
+	rWd2mdnyEYTAUylslXd5NHIyW6jxIPE=
+X-Google-Smtp-Source: AGHT+IGZK7/rcOxH21viffOSIaWdySK067OXhrnWtIvcdQ5ZsN7BDo0OHpzbSoPRrMut8Aq+az+6Yw==
+X-Received: by 2002:a17:903:124b:b0:1cf:5cf3:b180 with SMTP id u11-20020a170903124b00b001cf5cf3b180mr4388851plh.8.1700684737613;
+        Wed, 22 Nov 2023 12:25:37 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id ij14-20020a170902ab4e00b001bdeedd8579sm83935plb.252.2023.11.22.12.25.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Nov 2023 12:25:36 -0800 (PST)
+Date: Thu, 23 Nov 2023 01:55:27 +0530
+Message-Id: <87pm01r0w8.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use iomap
+In-Reply-To: <20231122122946.wg3jqvem6fkg3tgw@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230816050803.15660-6-krisman@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 16, 2023 at 01:07:59AM -0400, Gabriel Krisman Bertazi wrote:
+Jan Kara <jack@suse.cz> writes:
 
-> +static int generic_ci_d_revalidate(struct dentry *dentry,
-> +				   const struct qstr *name,
-> +				   unsigned int flags)
-> +{
-> +	const struct dentry *parent;
-> +	const struct inode *dir;
-> +
-> +	if (!d_is_negative(dentry))
-> +		return 1;
-> +
-> +	parent = READ_ONCE(dentry->d_parent);
-> +	dir = READ_ONCE(parent->d_inode);
-> +
-> +	if (!dir || !IS_CASEFOLDED(dir))
-> +		return 1;
-> +
-> +	/*
-> +	 * Negative dentries created prior to turning the directory
-> +	 * case-insensitive cannot be trusted, since they don't ensure
-> +	 * any possible case version of the filename doesn't exist.
-> +	 */
-> +	if (!d_is_casefolded_name(dentry))
-> +		return 0;
-> +
-> +	/*
-> +	 * If the lookup is for creation, then a negative dentry can only be
-> +	 * reused if it's a case-sensitive match, not just a case-insensitive
-> +	 * one.  This is needed to make the new file be created with the name
-> +	 * the user specified, preserving case.
-> +	 *
-> +	 * LOOKUP_CREATE or LOOKUP_RENAME_TARGET cover most creations.  In these
-> +	 * cases, ->d_name is stable and can be compared to 'name' without
-> +	 * taking ->d_lock because the caller must hold dir->i_rwsem.  (This
-> +	 * is because the directory lock blocks the dentry from being
-> +	 * concurrently instantiated, and negative dentries are never moved.)
-> +	 *
-> +	 * All other creations actually use flags==0.  These come from the edge
-> +	 * case of filesystems calling functions like lookup_one() that do a
-> +	 * lookup without setting the lookup flags at all.  Such lookups might
-> +	 * or might not be for creation, and if not don't guarantee stable
-> +	 * ->d_name.  Therefore, invalidate all negative dentries when flags==0.
-> +	 */
-> +	if (flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET)) {
-> +		if (dentry->d_name.len != name->len ||
-> +		    memcmp(dentry->d_name.name, name->name, name->len))
-> +			return 0;
+> On Tue 21-11-23 00:35:20, Ritesh Harjani (IBM) wrote:
+>> This patch converts ext2 regular file's buffered-io path to use iomap.
+>> - buffered-io path using iomap_file_buffered_write
+>> - DIO fallback to buffered-io now uses iomap_file_buffered_write
+>> - writeback path now uses a new aops - ext2_file_aops
+>> - truncate now uses iomap_truncate_page
+>> - mmap path of ext2 continues to use generic_file_vm_ops
+>> 
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>
+> Looks nice and simple. Just one comment below:
+>
+>> +static void ext2_file_readahead(struct readahead_control *rac)
+>> +{
+>> +	return iomap_readahead(rac, &ext2_iomap_ops);
+>> +}
+>
+> As Matthew noted, the return of void here looks strange.
+>
 
-Frankly, I would rather moved that to fs/dcache.c and used dentry_cmp() instead
-of memcmp() here.  Avoids the discussion of ->d_name stability for this one.
+yes, I will fix it.
+
+>> +static int ext2_write_map_blocks(struct iomap_writepage_ctx *wpc,
+>> +				 struct inode *inode, loff_t offset)
+>> +{
+>> +	if (offset >= wpc->iomap.offset &&
+>> +	    offset < wpc->iomap.offset + wpc->iomap.length)
+>> +		return 0;
+>> +
+>> +	return ext2_iomap_begin(inode, offset, inode->i_sb->s_blocksize,
+>> +				IOMAP_WRITE, &wpc->iomap, NULL);
+>> +}
+>
+> So this will end up mapping blocks for writeback one block at a time if I'm
+> understanding things right because ext2_iomap_begin() never sets extent
+> larger than 'length' in the iomap result. Hence the wpc checking looks
+> pointless (and actually dangerous - see below). So this will probably get
+> more expensive than necessary by calling into ext2_get_blocks() for each
+> block? Perhaps we could first call ext2_iomap_begin() for reading with high
+> length to get as many mapped blocks as we can and if we find unmapped block
+> (should happen only for writes through mmap), we resort to what you have
+> here... Hum, but this will not work because of the races with truncate
+> which could remove blocks whose mapping we have cached in wpc. We can
+> safely provide a mapping under a folio only once it is locked or has
+> writeback bit set. XFS plays the revalidation sequence counter games
+> because of this so we'd have to do something similar for ext2. Not that I'd
+> care as much about ext2 writeback performance but it should not be that
+> hard and we'll definitely need some similar solution for ext4 anyway. Can
+> you give that a try (as a followup "performance improvement" patch).
+>
+
+Yes, looking into ->map_blocks was on my todo list, since this RFC only
+maps 1 block at a time which can be expensive. I missed adding that as a
+comment in cover letter.
+
+But also thanks for providing many details on the same. I am taking a
+look at it and will get back with more details on how can we get this
+working, as it will be anyway required for ext4 too.
+
+-ritesh
 
