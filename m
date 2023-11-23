@@ -1,55 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-3504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFDF7F57AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 06:10:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FCA7F58C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 08:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B02C1C20C91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 05:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DF5281842
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 07:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BDDBA34;
-	Thu, 23 Nov 2023 05:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638E91401F;
+	Thu, 23 Nov 2023 07:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ib38JnkE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vPYSXaRA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1467AD8;
-	Wed, 22 Nov 2023 21:09:52 -0800 (PST)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47FE91;
+	Wed, 22 Nov 2023 23:02:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iITGfQea8BxCiD9vKqR4Ix99Hb6hdNI5sOzOQogEaHk=; b=Ib38JnkE8qFEfCsu6aaCR/9lHx
-	SMAuzxYNMe57P3S2yZ+Jw3sFPbIN2FDzhDJdjTipjmREeWsMJMU9bz/9gtgibiJOz/22oIQewboOf
-	tG2X8/Hjx6DGB/GY+Z2gUUevGHcPgAZrRYpzFj9XC62UIchkqR/KHWqJl8ykOShhPoW3iPAxomT5j
-	CGPvkfO5sRHRlLYG5LvHSi6OYIYamRv9t9bv/o+P8+wu+pRxlbE9kc7VpS2zAqgQoujiADDzQpxdF
-	yTTiXRP3iC1vH3WjCFTtCwdHZb+peIKUQnpEYL2xZRTRzD6/RbZt9kzOoTN4K+Vl2iW+65S153WS+
-	pArIhMlw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r61yB-001vUi-2H;
-	Thu, 23 Nov 2023 05:09:43 +0000
-Date: Thu, 23 Nov 2023 05:09:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Gabriel Krisman Bertazi <krisman@suse.de>, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
-Message-ID: <20231123050943.GM38156@ZenIV>
-References: <20230816050803.15660-1-krisman@suse.de>
- <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
- <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
- <20231120-nihilismus-verehren-f2b932b799e0@brauner>
- <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
- <20231121022734.GC38156@ZenIV>
- <20231122211901.GJ38156@ZenIV>
- <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+	bh=wGp8wkm1UDcmb84ZHwflLaHhqE+fC1a0uk/PE7zSUac=; b=vPYSXaRALrc/Uz1cQO2Sq51v8I
+	TS2Lzn2E+ZJpBPpkCKccvCz/HQ4y3E2VDGpjaffHXmho0yEteK2TSeMDi+EY05egavpeCk9WBky9Z
+	RYXMrzDICyh444lnHviZf9DzcZv9czI1pLQWUQ4D5Z0vYUmFqqBv0MGltYbGfdcZnYIFgFchc4j79
+	Ioz7b1XA5yq3bMUvWHnlK8UfqZ87JlSC+G6DZiHHlvHeuRMTR0oaxkfQYDar0OPsGphLTfFYKv3jB
+	AAt/eK4j6kDzkt/rAhHTUhCpkF5NzkaRho1EQgiAi7azLW7Xpsasev88kZSetEb4bHcNkAXOiTNOw
+	0OZI+4aQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r63ir-003yVI-0J;
+	Thu, 23 Nov 2023 07:02:01 +0000
+Date: Wed, 22 Nov 2023 23:02:01 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use
+ iomap
+Message-ID: <ZV746epxvXHbdivA@infradead.org>
+References: <cover.1700506526.git.ritesh.list@gmail.com>
+ <f5e84d3a63de30def2f3800f534d14389f6ba137.1700506526.git.ritesh.list@gmail.com>
+ <20231122122946.wg3jqvem6fkg3tgw@quack3>
+ <ZV399sCMq+p57Yh3@infradead.org>
+ <ZV6AJHd0jJ14unJn@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,45 +53,27 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <ZV6AJHd0jJ14unJn@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Nov 22, 2023 at 04:18:56PM -0800, Linus Torvalds wrote:
-> On Wed, 22 Nov 2023 at 13:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > The serious gap, AFAICS, is the interplay with open-by-fhandle.
-> 
-> So I'm obviously not a fan of igncase filesystems, but I don't think
-> this series actually changes any of that.
-> 
-> > It's not unfixable, but we need to figure out what to do when
-> > lookup runs into a disconnected directory alias.  d_splice_alias()
-> > will move it in place, all right, but any state ->lookup() has
-> > hung off the dentry that had been passed to it will be lost.
-> 
-> I guess this migth be about the new DCACHE_CASEFOLDED_NAME bit.
-> 
-> At least for now, that is only used by generic_ci_d_revalidate() for
-> negative dentries, so it shouldn't matter for that d_splice_alias()
-> that only does positive dentries. No?
-> 
-> Or is there something else you worry about?
+On Thu, Nov 23, 2023 at 09:26:44AM +1100, Dave Chinner wrote:
+> I think that was me
 
-Dentries created by d_obtain_alias() will never go anywhere near
-generic_set_encrypted_ci_d_ops().  They do *not* get ->d_op set
-that way.  When ext4_lookup() does a lookup in c-i directory it
-does have ->d_op set on dentry it got from the caller.  Which is
-promptly discarded when d_splice_alias() finds a preexisting
-alias for it.
+No, it was Darrick.  We talkd about a lot of things, but not this :)
 
-Positive dentries eventually become negative; not invalidating them
-when that happens is a large part of the point of this series.
-->d_revalidate() is taught to check if they are marked with that
-bit, but... they won't have that ->d_revalidate() associated with
-them, will they?  ->d_hash() and ->d_compare() come from the
-parent, but ->d_revalidate() comes from dentry itself.
+> , as part of aligning the writeback path with
+> the ->iomap_valid() checks in the write path after we lock the folio
+> we instantiated for the write.
+> 
+> It's basically the same thing - once we have a locked folio, we have
+> to check that the cached iomap is still valid before we use it for
+> anything.
 
-In other words, generic_ci_d_revalidate() won't see the lack of
-that bit on dentry, etc. - it won't be called for that dentry
-in the first place.
+Yes.  Currently we do that in the wb ops ->map_blocks.  This can get
+called multiple times per folio, which is a bit silly.  With the series
+I just posted the link to we at least stop doing that if the folio
+is mapped contiguously, which solves all practical cases, as the
+sequence check is almost free compared to the actual block mapping.
+
+For steps beyond that I'll reply to Darrick's mail.
 
