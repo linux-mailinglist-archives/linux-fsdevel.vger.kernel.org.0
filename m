@@ -1,31 +1,31 @@
-Return-Path: <linux-fsdevel+bounces-3527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535F77F5F79
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE797F5F7A
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 13:53:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E81BAB21500
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 12:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A576281FE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 12:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C726AF0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0202E636;
 	Thu, 23 Nov 2023 12:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA2E1A8;
-	Thu, 23 Nov 2023 04:52:06 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SbdKs2yRcz4f3kkH;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C52D4A;
+	Thu, 23 Nov 2023 04:52:07 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SbdKs6CLBz4f3kK0;
 	Thu, 23 Nov 2023 20:52:01 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 256811A050A;
+	by mail.maildlp.com (Postfix) with ESMTP id 950711A017D;
 	Thu, 23 Nov 2023 20:52:04 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDn6xHdSl9lSfnfBg--.20473S15;
-	Thu, 23 Nov 2023 20:52:03 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDn6xHdSl9lSfnfBg--.20473S16;
+	Thu, 23 Nov 2023 20:52:04 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -39,9 +39,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yi.zhang@huaweicloud.com,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com
-Subject: [RFC PATCH 11/18] iomap: add a fs private parameter to iomap_ioend
-Date: Thu, 23 Nov 2023 20:51:13 +0800
-Message-Id: <20231123125121.4064694-12-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH 12/18] iomap: don't increase i_size if it's not a write operation
+Date: Thu, 23 Nov 2023 20:51:14 +0800
+Message-Id: <20231123125121.4064694-13-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231123125121.4064694-1-yi.zhang@huaweicloud.com>
 References: <20231123125121.4064694-1-yi.zhang@huaweicloud.com>
@@ -52,61 +52,61 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDn6xHdSl9lSfnfBg--.20473S15
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4fKrWDur4fKFW7Ar1xGrg_yoWkZwb_Aa
-	yvgr4kur4rJF1S9w1I9r4xXFZrC348Gr18WryrtryfGFnxJan5AwnakrW3Aw4fG3WxGFn3
-	Jw4kXr1ftry7WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbqxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
-	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
-	F7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
-	1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JV
-	WxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbmZ
-	X7UUUUU==
+X-CM-TRANSID:cCh0CgDn6xHdSl9lSfnfBg--.20473S16
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15ZFWfGFyfAw48ZrWfuFg_yoW8Xr4fpr
+	Waka10kF9Yqr1qgr4kGF95Xa4jkan5Zr18CrW5Kry3uws8Ar13KrnYgay5uFW8JrnxAr4Y
+	vr4kKayFq3W3CrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
+	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
+	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
+	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
+	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
+	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
+	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
+	SdkUUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add a private parameter to iomap_ioend structure, letting filesystems
-can pass something they needed from .prepare_ioend() to IO end.
+Increase i_size in iomap_zero_range() looks not needed, the caller
+should handle it. Especially, when truncate partial block, we should
+not increase i_size beyond the new EOF here. It dosn't affect xfs and
+gfs2 now because they reset the new file size after zero out, it doesn't
+matter that a brief increase in i_size. But it will affect ext4 because
+it set file size before truncate, so avoid increasing if it's not a
+write path.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/iomap/buffered-io.c | 1 +
- include/linux/iomap.h  | 1 +
- 2 files changed, 2 insertions(+)
+ fs/iomap/buffered-io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 2bc0aa23fde3..fd4d43bafd1b 100644
+index fd4d43bafd1b..3b9ba390dd1b 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1676,6 +1676,7 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
- 	ioend->io_offset = offset;
- 	ioend->io_bio = bio;
- 	ioend->io_sector = sector;
-+	ioend->io_private = NULL;
- 	return ioend;
- }
+@@ -852,13 +852,13 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 	 * cache.  It's up to the file system to write the updated size to disk,
+ 	 * preferably after I/O completion so that no stale data is exposed.
+ 	 */
+-	if (pos + ret > old_size) {
++	if ((iter->flags & IOMAP_WRITE) && pos + ret > old_size) {
+ 		i_size_write(iter->inode, pos + ret);
+ 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+ 	}
+ 	__iomap_put_folio(iter, pos, ret, folio);
  
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 96dd0acbba44..8b3296a5474d 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -300,6 +300,7 @@ struct iomap_ioend {
- 	sector_t		io_sector;	/* start sector of ioend */
- 	struct bio		*io_bio;	/* bio being built */
- 	struct bio		io_inline_bio;	/* MUST BE LAST! */
-+	void			*io_private;	/* fs private pointer */
- };
- 
- struct iomap_writeback_ops {
+-	if (old_size < pos)
++	if ((iter->flags & IOMAP_WRITE) && old_size < pos)
+ 		pagecache_isize_extended(iter->inode, old_size, pos);
+ 	if (ret < len)
+ 		iomap_write_failed(iter->inode, pos + ret, len - ret);
 -- 
 2.39.2
 
