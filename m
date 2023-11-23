@@ -1,184 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-3498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8567F54EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 00:43:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163707F5537
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 01:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6FF281714
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Nov 2023 23:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50CE281721
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 00:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2529D2137A;
-	Wed, 22 Nov 2023 23:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FC6A3B;
+	Thu, 23 Nov 2023 00:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xLIzK0cA"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EJky0xgk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [IPv6:2001:41d0:203:375::b4])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64ADC19E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 15:43:08 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700696585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sbglU1gTjhMh5AV26uS1M/ul7lMfc0IAqkXH+wYP664=;
-	b=xLIzK0cADyb6SJHKhuqfQBRvKu9L5jzZLrfLilqAL1w2M26wvojb5PZEzhu/+eLi8Wckbz
-	MCN4NFH+TbNoEmOGyM5qO/Iy1gC/kt6/af/7Y3fDg7wBO/wljRKUxiC9TcbuE+zHiIED3O
-	+GYr/8KE92BVPCnagTflDLY6jtHZ1hc=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: 
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-aio@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/aio: obey min_nr when doing wakeups
-Date: Wed, 22 Nov 2023 18:42:53 -0500
-Message-ID: <20231122234257.179390-1-kent.overstreet@linux.dev>
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC361B2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 16:19:17 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-5094727fa67so411425e87.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 16:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1700698756; x=1701303556; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/KrFqq6blt1lo7Kf9Cf57uU43ncdJqUq9kktaS62s5k=;
+        b=EJky0xgk2GYWbBh5GeWhNGifrsZa+aw6znG5la1SOCQqVEpkEb4v3IMKgb+hdQcmVq
+         7Ds/LPPcA9aWIVl5flUrRux+cXotIZ/8kAtSq7t1TCEVJdtK1HiF3/gmfp5Arc/Hg4Qz
+         O2P35VKdqIRcGI7YCIB+IdXqXpDDUzhMHcJhs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700698756; x=1701303556;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/KrFqq6blt1lo7Kf9Cf57uU43ncdJqUq9kktaS62s5k=;
+        b=t0DNHN1dbOE64Kt8ey9+bQHFhFkhUwo3FEkH8UoAyQJdBkJ4HbG4uOXHKPsYSKj1Py
+         j2JE7SptNocuCaEdoCaiHUXhBt1Uckjh5rin5v97pWvdtCqjYhVzvIPgs3C/ud9Fwwrw
+         kW7t6lYWH3Np6nG5AM3H89pmc4kxBF4lOBxw4oV0O5wpNIQ/1gUHmSjTphTkXKfPB8bW
+         mWHMgaYMNu6dtaEcYdUsOwcX5fWznijvFeGNe2EV12FPJB6JHoQyrMOwvOsM3qV6tk4j
+         FbLrGgLXRKhSUVVonboMc/4obYM3NpLqWhgX0j0T21UyUwUomsyb7XFbVcLCXnGhb49B
+         smKw==
+X-Gm-Message-State: AOJu0Ywk1ErRdfasF745OWVjqTM+oz8aUGFPpSUkzuGW8KRJf24751a4
+	/xIvCl5gGx73Co1Faty2C0YfThOwb7VxvmNsLFUYhvp6
+X-Google-Smtp-Source: AGHT+IFI0Hqu2+3+dO4wp8UCflaAuFBaiPO3oed123aKWfOD3byYee17c0+/1xfJ+U0awZC7niFBSA==
+X-Received: by 2002:ac2:5110:0:b0:50a:6f8a:6461 with SMTP id q16-20020ac25110000000b0050a6f8a6461mr2414425lfb.58.1700698755582;
+        Wed, 22 Nov 2023 16:19:15 -0800 (PST)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
+        by smtp.gmail.com with ESMTPSA id d9-20020a50fe89000000b00544f8271b5fsm38349edt.8.2023.11.22.16.19.14
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Nov 2023 16:19:14 -0800 (PST)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5480edd7026so478470a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Nov 2023 16:19:14 -0800 (PST)
+X-Received: by 2002:a17:906:cc:b0:9fe:3447:a84d with SMTP id
+ 12-20020a17090600cc00b009fe3447a84dmr2475163eji.23.1700698754069; Wed, 22 Nov
+ 2023 16:19:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20230816050803.15660-1-krisman@suse.de> <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+ <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20231120-nihilismus-verehren-f2b932b799e0@brauner> <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+ <20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
+In-Reply-To: <20231122211901.GJ38156@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 22 Nov 2023 16:18:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+Message-ID: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
+ case-insensitive ext4 and f2fs
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Gabriel Krisman Bertazi <krisman@suse.de>, tytso@mit.edu, 
+	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org, 
+	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Unclear who's maintaining fs/aio.c these days - who wants to take this?
--- >8 --
+On Wed, 22 Nov 2023 at 13:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> The serious gap, AFAICS, is the interplay with open-by-fhandle.
 
-I've been observing workloads where IPIs due to wakeups in
-aio_complete() are ~15% of total CPU time in the profile. Most of those
-wakeups are unnecessary when completion batching is in use in
-io_getevents().
+So I'm obviously not a fan of igncase filesystems, but I don't think
+this series actually changes any of that.
 
-This plumbs min_nr through via the wait eventry, so that aio_complete()
-can avoid doing unnecessary wakeups.
+> It's not unfixable, but we need to figure out what to do when
+> lookup runs into a disconnected directory alias.  d_splice_alias()
+> will move it in place, all right, but any state ->lookup() has
+> hung off the dentry that had been passed to it will be lost.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Benjamin LaHaise <bcrl@kvack.org
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-aio@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/aio.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 56 insertions(+), 10 deletions(-)
+I guess this migth be about the new DCACHE_CASEFOLDED_NAME bit.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index f8589caef9c1..c69e7caacd1b 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1106,6 +1106,11 @@ static inline void iocb_destroy(struct aio_kiocb *iocb)
- 	kmem_cache_free(kiocb_cachep, iocb);
- }
- 
-+struct aio_waiter {
-+	struct wait_queue_entry	w;
-+	size_t			min_nr;
-+};
-+
- /* aio_complete
-  *	Called when the io request on the given iocb is complete.
-  */
-@@ -1114,7 +1119,7 @@ static void aio_complete(struct aio_kiocb *iocb)
- 	struct kioctx	*ctx = iocb->ki_ctx;
- 	struct aio_ring	*ring;
- 	struct io_event	*ev_page, *event;
--	unsigned tail, pos, head;
-+	unsigned tail, pos, head, avail;
- 	unsigned long	flags;
- 
- 	/*
-@@ -1156,6 +1161,10 @@ static void aio_complete(struct aio_kiocb *iocb)
- 	ctx->completed_events++;
- 	if (ctx->completed_events > 1)
- 		refill_reqs_available(ctx, head, tail);
-+
-+	avail = tail > head
-+		? tail - head
-+		: tail + ctx->nr_events - head;
- 	spin_unlock_irqrestore(&ctx->completion_lock, flags);
- 
- 	pr_debug("added to ring %p at [%u]\n", iocb, tail);
-@@ -1176,8 +1185,18 @@ static void aio_complete(struct aio_kiocb *iocb)
- 	 */
- 	smp_mb();
- 
--	if (waitqueue_active(&ctx->wait))
--		wake_up(&ctx->wait);
-+	if (waitqueue_active(&ctx->wait)) {
-+		struct aio_waiter *curr, *next;
-+		unsigned long flags;
-+
-+		spin_lock_irqsave(&ctx->wait.lock, flags);
-+		list_for_each_entry_safe(curr, next, &ctx->wait.head, w.entry)
-+			if (avail >= curr->min_nr) {
-+				list_del_init_careful(&curr->w.entry);
-+				wake_up_process(curr->w.private);
-+			}
-+		spin_unlock_irqrestore(&ctx->wait.lock, flags);
-+	}
- }
- 
- static inline void iocb_put(struct aio_kiocb *iocb)
-@@ -1290,7 +1309,9 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
- 			struct io_event __user *event,
- 			ktime_t until)
- {
--	long ret = 0;
-+	struct hrtimer_sleeper	t;
-+	struct aio_waiter	w;
-+	long ret = 0, ret2 = 0;
- 
- 	/*
- 	 * Note that aio_read_events() is being called as the conditional - i.e.
-@@ -1306,12 +1327,37 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
- 	 * the ringbuffer empty. So in practice we should be ok, but it's
- 	 * something to be aware of when touching this code.
- 	 */
--	if (until == 0)
--		aio_read_events(ctx, min_nr, nr, event, &ret);
--	else
--		wait_event_interruptible_hrtimeout(ctx->wait,
--				aio_read_events(ctx, min_nr, nr, event, &ret),
--				until);
-+	aio_read_events(ctx, min_nr, nr, event, &ret);
-+	if (until == 0 || ret < 0 || ret >= min_nr)
-+		return ret;
-+
-+	hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	if (until != KTIME_MAX) {
-+		hrtimer_set_expires_range_ns(&t.timer, until, current->timer_slack_ns);
-+		hrtimer_sleeper_start_expires(&t, HRTIMER_MODE_REL);
-+	}
-+
-+	init_wait(&w.w);
-+
-+	while (1) {
-+		unsigned long nr_got = ret;
-+
-+		w.min_nr = min_nr - ret;
-+
-+		ret2 = prepare_to_wait_event(&ctx->wait, &w.w, TASK_INTERRUPTIBLE) ?:
-+			!t.task ? -ETIME : 0;
-+
-+		if (aio_read_events(ctx, min_nr, nr, event, &ret) || ret2)
-+			break;
-+
-+		if (nr_got == ret)
-+			schedule();
-+	}
-+
-+	finish_wait(&ctx->wait, &w.w);
-+	hrtimer_cancel(&t.timer);
-+	destroy_hrtimer_on_stack(&t.timer);
-+
- 	return ret;
- }
- 
--- 
-2.42.0
+At least for now, that is only used by generic_ci_d_revalidate() for
+negative dentries, so it shouldn't matter for that d_splice_alias()
+that only does positive dentries. No?
 
+Or is there something else you worry about?
+
+Side note: Gabriel, as things are now, instead of that
+
+        if (!d_is_casefolded_name(dentry))
+                return 0;
+
+in generic_ci_d_revalidate(), I would suggest that any time a
+directory is turned into a case-folded one, you'd just walk all the
+dentries for that directory and invalidate negative ones at that
+point. Or was there some reason I missed that made it a good idea to
+do it at run-time after-the-fact?
+
+             Linus
 
