@@ -1,208 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-3500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3501-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFBC7F554D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 01:26:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7907F55C4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 02:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79BCBB20DF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 00:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A5F1C20C2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 01:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADD017EF;
-	Thu, 23 Nov 2023 00:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83DE17D8;
+	Thu, 23 Nov 2023 01:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a0RMRtdr"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Wxreso/B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AAFA1B3;
-	Wed, 22 Nov 2023 16:26:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700699164; x=1732235164;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=kMJqNQrPFkouBUmP1tIxtozSsYheDkR/LnL4F11wiis=;
-  b=a0RMRtdr45SnsHLYk3kiLIfZs2Z292eQtCjDOGkSajq4kJgqoPyPz1Z8
-   xhWoNH51ino8oe9+Nmimsn7SFdTQgw8cA/qSM06asNrV9XlVmhWFA6efE
-   bx/KJxGEkz9CgKaAcRip2AVvQj244oSCMbQ2SV3R4DIR0CTNKXPPkI00S
-   8UPzwDbKGWrNEIvyOLU2GF23JoceIic+G88FMkrhNsWS/7MACg0sIjNMf
-   ijDW0ytrIcjGYvd6MSyu2liYjeaUIruC6bgfya5Y7v4Nc28NcFQbnBBQQ
-   f0zW1UCdi/Sb7g9NYp8o9b8iKurHqbTYEdk8doLf35VPgtN8OmhSA3u25
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="389323011"
-X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="asc'?scan'208";a="389323011"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 16:26:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="716903060"
-X-IronPort-AV: E=Sophos;i="6.04,220,1695711600"; 
-   d="asc'?scan'208";a="716903060"
-Received: from debian-skl.sh.intel.com (HELO debian-skl) ([10.239.160.45])
-  by orsmga003.jf.intel.com with ESMTP; 22 Nov 2023 16:25:45 -0800
-Date: Thu, 23 Nov 2023 08:24:24 +0800
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
-	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.a.wang@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Farman <farman@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Tony Krowiak <akrowiak@linux.ibm.com>,
-	Jason Herne <jjherne@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Diana Craciun <diana.craciun@oss.nxp.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeelb@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] i915: make inject_virtual_interrupt() void
-Message-ID: <ZV6buHrQy2+CJ7xX@debian-scheme>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
- <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A6193;
+	Wed, 22 Nov 2023 17:12:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PY9S8RVi0dnKEfdrmFsdECJKTXexMrbF0x58rHr1R88=; b=Wxreso/B/Dh4LiFC6ky64hsoHG
+	DKfrqS4iEfOeCiGHQM3PUKYAigdumD8QkqkM/jQrNnbtL9PALDBmElowJuy/vjcngWK/ssk9wCGgQ
+	9pha+U/3DXFwYydFhuh4n7vom/JGSpqnpVBwi+vRhCN8hnowSDsERumqVCzFcF7HL6DLpsuRZubIe
+	uJoNVzHTqKya2IYBdJncmhtD0Bn+TQOhAMAr00YOEQHEi8wtDoZdFTERTgT8I5sMuO+JlcgvipYjn
+	EkSBN+YD++43nTzDFqkcoWXhZ5Q2CL49AFsyyFeDNtwvVfXowGcRIQ0Ki4Id8+pI9hJb3vx5I5gQL
+	SNSRS68A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r5yGG-001rH6-1H;
+	Thu, 23 Nov 2023 01:12:08 +0000
+Date: Thu, 23 Nov 2023 01:12:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Gabriel Krisman Bertazi <krisman@suse.de>, tytso@mit.edu,
+	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
+ case-insensitive ext4 and f2fs
+Message-ID: <20231123011208.GK38156@ZenIV>
+References: <20230816050803.15660-1-krisman@suse.de>
+ <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+ <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20231120-nihilismus-verehren-f2b932b799e0@brauner>
+ <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+ <20231121022734.GC38156@ZenIV>
+ <20231122211901.GJ38156@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ehCOKC0wDaVXxQlM"
-Content-Disposition: inline
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
-
-
---ehCOKC0wDaVXxQlM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231122211901.GJ38156@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2023.11.22 13:48:22 +0100, Christian Brauner wrote:
-> The single caller of inject_virtual_interrupt() ignores the return value
-> anyway. This allows us to simplify eventfd_signal() in follow-up
-> patches.
->=20
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  drivers/gpu/drm/i915/gvt/interrupt.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/=
-gvt/interrupt.c
-> index de3f5903d1a7..9665876b4b13 100644
-> --- a/drivers/gpu/drm/i915/gvt/interrupt.c
-> +++ b/drivers/gpu/drm/i915/gvt/interrupt.c
-> @@ -422,7 +422,7 @@ static void init_irq_map(struct intel_gvt_irq *irq)
->  #define MSI_CAP_DATA(offset) (offset + 8)
->  #define MSI_CAP_EN 0x1
-> =20
-> -static int inject_virtual_interrupt(struct intel_vgpu *vgpu)
-> +static void inject_virtual_interrupt(struct intel_vgpu *vgpu)
->  {
->  	unsigned long offset =3D vgpu->gvt->device_info.msi_cap_offset;
->  	u16 control, data;
-> @@ -434,10 +434,10 @@ static int inject_virtual_interrupt(struct intel_vg=
-pu *vgpu)
-> =20
->  	/* Do not generate MSI if MSIEN is disabled */
->  	if (!(control & MSI_CAP_EN))
-> -		return 0;
-> +		return;
-> =20
->  	if (WARN(control & GENMASK(15, 1), "only support one MSI format\n"))
-> -		return -EINVAL;
-> +		return;
-> =20
->  	trace_inject_msi(vgpu->id, addr, data);
-> =20
-> @@ -451,10 +451,10 @@ static int inject_virtual_interrupt(struct intel_vg=
-pu *vgpu)
->  	 * returned and don't inject interrupt into guest.
->  	 */
->  	if (!test_bit(INTEL_VGPU_STATUS_ATTACHED, vgpu->status))
-> -		return -ESRCH;
-> -	if (vgpu->msi_trigger && eventfd_signal(vgpu->msi_trigger, 1) !=3D 1)
-> -		return -EFAULT;
-> -	return 0;
-> +		return;
-> +	if (!vgpu->msi_trigger)
-> +		return;
-> +	eventfd_signal(vgpu->msi_trigger, 1);
->  }
+On Wed, Nov 22, 2023 at 09:19:01PM +0000, Al Viro wrote:
+> On Tue, Nov 21, 2023 at 02:27:34AM +0000, Al Viro wrote:
+> 
+> > I will review that series; my impression from the previous iterations
+> > had been fairly unpleasant, TBH, but I hadn't rechecked since April
+> > or so.
+> 
+> The serious gap, AFAICS, is the interplay with open-by-fhandle.
+> It's not unfixable, but we need to figure out what to do when
+> lookup runs into a disconnected directory alias.  d_splice_alias()
+> will move it in place, all right, but any state ->lookup() has
+> hung off the dentry that had been passed to it will be lost.
+> 
+> And I seriously suspect that we want to combine that state
+> propagation with d_splice_alias() (or its variant to be used in
+> such cases), rather than fixing the things up afterwards.
+> 
+> In particular, propagating ->d_op is really not trivial at that
+> point; it is safe to do to ->lookup() argument prior to d_splice_alias()
+> (even though that's too subtle and brittle, IMO), but after
+> d_splice_alias() has succeeded, the damn thing is live and can
+> be hit by hash lookups, revalidate, etc.
+> 
+> The only things that can't happen to it are ->d_delete(), ->d_prune(),
+> ->d_iput() and ->d_init().  Everything else is fair game.
+> 
+> And then there's an interesting question about the interplay with
+> reparenting.  It's OK to return an error rather than reparent,
+> but we need some way to tell if we need to do so.
 
-I think it's a little simpler to write as
-    if (vgpu->msi_trigger)
-            eventfd_signal(vgpu->msi_trigger, 1);
+Hmm... int (*d_transfer)(struct dentry *alias, struct dentry *new)?
+Called if d_splice_alias() picks that sucker, under rename_lock,
+before the call of __d_move().  Can check IS_ROOT(alias) (due to
+rename_lock), so can tell attaching from reparenting, returning
+an error - failed d_splice_alias().
 
-Looks fine with me.
+Perhaps would be even better inside __d_move(), once all ->d_lock
+are taken...  Turn the current bool exchange in there into honest
+enum (exchange/move/splice) and call ->d_transfer() on splice.
+In case of failure it's still not too late to back out - __d_move()
+would return an int, ignored in d_move() and d_exchange() and
+treated as "fail in unlikely case it's non-zero" in d_splice_alias()
+and __d_unalias()...
 
-Reviewed-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Comments?  Note that e.g.
+        res = d_splice_alias(inode, dentry);
+        if (!IS_ERR(fid)) {
+                if (!res)
+                        v9fs_fid_add(dentry, &fid);
+                else if (!IS_ERR(res))
+                        v9fs_fid_add(res, &fid);
+                else
+                        p9_fid_put(fid);
+        }
 
-Thanks!
+in 9p ->lookup() would turn into
 
-> =20
->  static void propagate_event(struct intel_gvt_irq *irq,
->=20
-> --=20
-> 2.42.0
->=20
+	v9fs_fid_add(dentry, &fid);
+        return d_splice_alias(inode, dentry);
 
---ehCOKC0wDaVXxQlM
-Content-Type: application/pgp-signature; name="signature.asc"
+with ->d_transfer(alias, new) being simply
 
------BEGIN PGP SIGNATURE-----
+	struct hlist_node *p = new->d_fsdata;
+	hlist_del_init(p);
+	__add_fid(alias, hlist_entry(p, struct p9_fid, dlist));
+	return 0;
 
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCZV6bswAKCRCxBBozTXgY
-JySHAJ4qE2jv0i0ZauQv+Bv/bGwHt0ZrbACeJadIIL6gQC6kmoICLhyqplCwOeo=
-=1+t0
------END PGP SIGNATURE-----
-
---ehCOKC0wDaVXxQlM--
+assuming the call from __d_move()...
 
