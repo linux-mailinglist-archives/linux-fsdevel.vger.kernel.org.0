@@ -1,75 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-3564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3371E7F6910
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 23:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D10387F6986
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 00:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F512818B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 22:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF00281898
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 23:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D7713FFE;
-	Thu, 23 Nov 2023 22:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D1C405DA;
+	Thu, 23 Nov 2023 23:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bqBo9D1G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iux8csEa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9704A1B6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 14:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700779173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uxvMU/Xo7MVeCzgBFSVtpLXkJ+M09hdrAxYgaD5WzoM=;
-	b=bqBo9D1GQbQTfWyBjiMq8BjVmYXzKgT+sNqENpXefUnQ3LrIPZjCho2tGSF/yIDTtRHaX4
-	7LSbEqQlBu8JWEtbvirFk7HnYBOJFnkEzWIgq0MSUHhdNAOnCqrzyMhvfYm2Bnl29Gknom
-	o3zEqj+PisH4a5Vy6FuyL8oUemIZmqY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-264-M5LHOwqwM6KO6n1EbfYr2w-1; Thu, 23 Nov 2023 17:39:32 -0500
-X-MC-Unique: M5LHOwqwM6KO6n1EbfYr2w-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-679d8383224so3241736d6.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 14:39:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700779172; x=1701383972;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uxvMU/Xo7MVeCzgBFSVtpLXkJ+M09hdrAxYgaD5WzoM=;
-        b=WOF4ka48R+4cm6ueHT/W4k8sNTH36OIP15HIfkR0lK9kEneJuB6DKoeaADp3zBRnRY
-         GP8Hr+ocFsgWhHIEJXlf/zmFCEfifzuv+HQkk+ixh3ZHBWAP/4/JrYBvjId1aWBLppbN
-         NpGjGs11HkD6CEy513LjTNoDIh7F6jZX5BPCPRNmMbrt9dAuMg0EqdPNTngwqiM0JgJw
-         xBYzMI+gBywETkLVgUW2jusU66f2JA/KwgevnbsxmHjSDlLTb+UFbaX22b2RS8euDIe/
-         zqBw9shf8paLtXEAdzVSpsNdthsnvx856Sfthx32OFAhSPbHgFTwU9hlqJ6O34ecx1wA
-         MiWg==
-X-Gm-Message-State: AOJu0YyUcabCAiLkqh/rbqQlLvZXhDXmkytFYczYfqu9a8Z5s+J/IqIr
-	3AeFCLLxbEG7uubpEUZUtdT0VhgK7BLXmxx52HnNaRStOoLo8iZclNgd9+zCkVA71vjKqOSB9Qx
-	x+K52xpbI9gV1ABoR+D3Njvb2BoOSVT3Bog==
-X-Received: by 2002:ad4:4242:0:b0:67a:11a9:e579 with SMTP id l2-20020ad44242000000b0067a11a9e579mr743242qvq.3.1700779171814;
-        Thu, 23 Nov 2023 14:39:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFvUeYsikfky/jSIEaAUmbV6X8zYGpERKvvHbE6LK2W5XgyAicVdgusWE5DO059Yw/o9j2ixA==
-X-Received: by 2002:ad4:4242:0:b0:67a:11a9:e579 with SMTP id l2-20020ad44242000000b0067a11a9e579mr743224qvq.3.1700779171591;
-        Thu, 23 Nov 2023 14:39:31 -0800 (PST)
-Received: from x1n.redhat.com (cpe688f2e2cb7c3-cm688f2e2cb7c0.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id n11-20020ad444ab000000b0067a08bba0bbsm774131qvt.0.2023.11.23.14.39.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Nov 2023 14:39:31 -0800 (PST)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: peterx@redhat.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <songmuchun@bytedance.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/Kconfig: Make hugetlbfs a menuconfig
-Date: Thu, 23 Nov 2023 17:39:29 -0500
-Message-ID: <20231123223929.1059375-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.41.0
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0BB3FE3F;
+	Thu, 23 Nov 2023 23:40:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345EAC433C8;
+	Thu, 23 Nov 2023 23:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700782808;
+	bh=igir30jG+cvp7fVhdQ5LA77yamuAtAL/40S8t5CSTO0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iux8csEaIIP5t+/NYUBIhjL0zb+5FDhYTgNBgYQ4kaTYi/VxvlsXFINvtLrSnC7FU
+	 +wq8lMU1W9BVTHlJNS7uV4JUhsmE0aJSnXYXw+rbdajiDT6Y7h99DAqN/kMXHtaCme
+	 zQKM5y9hekMOgXYuqdOomUiHD1hINvM/C2yn/tl+ifpvg+lJr/5W7lj6dW7tIXIWLQ
+	 DDxDZyErhr+3DBMBddu7y9X1MVtKOe5czQAipW8RMdGFZfOMRVp6ly1ki2W8uyYcKU
+	 pWFKGz/p4CZwVSuslBqn+OW0ikW1BoCK5q2c0gCV5eDvnZXn9AxlWjnCVn7t3F9gPq
+	 6KwThDEbRdouw==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev
+Cc: ebiggers@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	casey@schaufler-ca.com,
+	amir73il@gmail.com,
+	kpsingh@kernel.org,
+	roberto.sassu@huawei.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v13 bpf-next 0/6] bpf: File verification with LSM and fsverity
+Date: Thu, 23 Nov 2023 15:39:30 -0800
+Message-Id: <20231123233936.3079687-1-song@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,67 +61,103 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hugetlb vmemmap default option (HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON)
-is a sub-option to hugetlbfs, but it shows in the same level as hugetlbfs
-itself, under "Pesudo filesystems".
+Changes v12 => v13:
+1. Only keep 4/9 through 9/9 of v12, as the first 3 patches already
+   applied;
+2. Use new macro __bpf_kfunc_[start|end]_defs().
 
-Make the vmemmap option a sub-option to hugetlbfs, by changing hugetlbfs
-into a menuconfig.
+Changes v11 => v12:
+1. Fix typo (data_ptr => sig_ptr) in bpf_get_file_xattr().
 
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Muchun Song <songmuchun@bytedance.com>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- fs/Kconfig | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+Changes v10 => v11:
+1. Let __bpf_dynptr_data() return const void *. (Andrii)
+2. Optimize code to reuse output from __bpf_dynptr_size(). (Andrii)
+3. Add __diag_ignore_all("-Wmissing-declarations") for kfunc definition.
+4. Fix an off indentation. (Andrii)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index fd1f655b4f1f..8636198a8689 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -254,7 +254,7 @@ config TMPFS_QUOTA
- config ARCH_SUPPORTS_HUGETLBFS
- 	def_bool n
- 
--config HUGETLBFS
-+menuconfig HUGETLBFS
- 	bool "HugeTLB file system support"
- 	depends on X86 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
- 	depends on (SYSFS || SYSCTL)
-@@ -266,14 +266,7 @@ config HUGETLBFS
- 
- 	  If unsure, say N.
- 
--config HUGETLB_PAGE
--	def_bool HUGETLBFS
--
--config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
--	def_bool HUGETLB_PAGE
--	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
--	depends on SPARSEMEM_VMEMMAP
--
-+if HUGETLBFS
- config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
- 	bool "HugeTLB Vmemmap Optimization (HVO) defaults to on"
- 	default n
-@@ -282,6 +275,15 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
- 	  The HugeTLB VmemmapvOptimization (HVO) defaults to off. Say Y here to
- 	  enable HVO by default. It can be disabled via hugetlb_free_vmemmap=off
- 	  (boot command line) or hugetlb_optimize_vmemmap (sysctl).
-+endif # HUGETLBFS
-+
-+config HUGETLB_PAGE
-+	def_bool HUGETLBFS
-+
-+config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
-+	def_bool HUGETLB_PAGE
-+	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
-+	depends on SPARSEMEM_VMEMMAP
- 
- config ARCH_HAS_GIGANTIC_PAGE
- 	bool
--- 
-2.41.0
+Changes v9 => v10:
+1. Remove WARN_ON_ONCE() from check_reg_const_str. (Alexei)
 
+Changes v8 => v9:
+1. Fix test_progs kfunc_dynptr_param/dynptr_data_null.
+
+Changes v7 => v8:
+1. Do not use bpf_dynptr_slice* in the kernel. Add __bpf_dynptr_data* and
+   use them in ther kernel. (Andrii)
+
+Changes v6 => v7:
+1. Change "__const_str" annotation to "__str". (Alexei, Andrii)
+2. Add KF_TRUSTED_ARGS flag for both new kfuncs. (KP)
+3. Only allow bpf_get_file_xattr() to read xattr with "user." prefix.
+4. Add Acked-by from Eric Biggers.
+
+Changes v5 => v6:
+1. Let fsverity_init_bpf() return void. (Eric Biggers)
+2. Sort things in alphabetic orders. (Eric Biggers)
+
+Changes v4 => v5:
+1. Revise commit logs. (Alexei)
+
+Changes v3 => v4:
+1. Fix error reported by CI.
+2. Update comments of bpf_dynptr_slice* that they may return error pointer.
+
+Changes v2 => v3:
+1. Rebase and resolve conflicts.
+
+Changes v1 => v2:
+1. Let bpf_get_file_xattr() use const string for arg "name". (Alexei)
+2. Add recursion prevention with allowlist. (Alexei)
+3. Let bpf_get_file_xattr() use __vfs_getxattr() to avoid recursion,
+   as vfs_getxattr() calls into other LSM hooks.
+4. Do not use dynptr->data directly, use helper insteadd. (Andrii)
+5. Fixes with bpf_get_fsverity_digest. (Eric Biggers)
+6. Add documentation. (Eric Biggers)
+7. Fix some compile warnings. (kernel test robot)
+
+This set enables file verification with BPF LSM and fsverity.
+
+In this solution, fsverity is used to provide reliable and efficient hash
+of files; and BPF LSM is used to implement signature verification (against
+asymmetric keys), and to enforce access control.
+
+This solution can be used to implement access control in complicated cases.
+For example: only signed python binary and signed python script and access
+special files/devices/ports.
+
+Thanks,
+Song
+
+Song Liu (6):
+  bpf: Add kfunc bpf_get_file_xattr
+  bpf, fsverity: Add kfunc bpf_get_fsverity_digest
+  Documentation/bpf: Add documentation for filesystem kfuncs
+  selftests/bpf: Sort config in alphabetic order
+  selftests/bpf: Add tests for filesystem kfuncs
+  selftests/bpf: Add test that uses fsverity and xattr to sign a file
+
+ Documentation/bpf/fs_kfuncs.rst               |  21 +++
+ Documentation/bpf/index.rst                   |   1 +
+ fs/verity/fsverity_private.h                  |  10 ++
+ fs/verity/init.c                              |   1 +
+ fs/verity/measure.c                           |  84 +++++++++
+ kernel/trace/bpf_trace.c                      |  63 +++++++
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  10 ++
+ tools/testing/selftests/bpf/config            |   3 +-
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 132 ++++++++++++++
+ .../bpf/prog_tests/verify_pkcs7_sig.c         | 163 +++++++++++++++++-
+ .../selftests/bpf/progs/test_fsverity.c       |  46 +++++
+ .../selftests/bpf/progs/test_get_xattr.c      |  37 ++++
+ .../selftests/bpf/progs/test_sig_in_xattr.c   |  82 +++++++++
+ .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
+ .../testing/selftests/bpf/verify_sig_setup.sh |  25 +++
+ 15 files changed, 677 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/bpf/fs_kfuncs.rst
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_fsverity.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_get_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
+
+--
+2.34.1
 
