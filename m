@@ -1,51 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-3503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224657F5750
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 05:09:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFDF7F57AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 06:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DEA81C20CC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 04:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B02C1C20C91
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 05:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E0BBA34;
-	Thu, 23 Nov 2023 04:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BDDBA34;
+	Thu, 23 Nov 2023 05:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW2DeccM"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ib38JnkE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA17DB658;
-	Thu, 23 Nov 2023 04:09:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C3DC433C7;
-	Thu, 23 Nov 2023 04:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700712585;
-	bh=Bw7Y1tSIteesdKurZaVVowFevEIWL8qOrFUxj6OO8og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UW2DeccMXA1iij26Yvi2JJnQj5PBKI4wUmc+Wo2TqjqLkSTAJoR9Xnh56yOjNDZN1
-	 kXuurynouJxCJRhg94PSRMJdC5nXhEG6iJ3608NPf+AoB5ylVojn4K94dbMpMj/o0V
-	 ghyjBNb6DTKFnEAzZ+bBw9tU+guIl60Kn8DtuBRX3Jdrgf43S2tJt+OzfcJBb0T7Ol
-	 MTGngPb+MluhGMf7JsdUtaLqvrK75cpC/lKjxqjhTUOkqE5LjbRC3MDVcih+envSuW
-	 IlmR34h9evh8tH3YDmPy+MAld+VjlmlN23EXw8yhbtdHpJOhiBepNm6hRnbyEApgRE
-	 wfF6tK92eg/pg==
-Date: Wed, 22 Nov 2023 20:09:44 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use
- iomap
-Message-ID: <20231123040944.GB36168@frogsfrogsfrogs>
-References: <cover.1700506526.git.ritesh.list@gmail.com>
- <f5e84d3a63de30def2f3800f534d14389f6ba137.1700506526.git.ritesh.list@gmail.com>
- <20231122122946.wg3jqvem6fkg3tgw@quack3>
- <ZV399sCMq+p57Yh3@infradead.org>
- <ZV6AJHd0jJ14unJn@dread.disaster.area>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1467AD8;
+	Wed, 22 Nov 2023 21:09:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iITGfQea8BxCiD9vKqR4Ix99Hb6hdNI5sOzOQogEaHk=; b=Ib38JnkE8qFEfCsu6aaCR/9lHx
+	SMAuzxYNMe57P3S2yZ+Jw3sFPbIN2FDzhDJdjTipjmREeWsMJMU9bz/9gtgibiJOz/22oIQewboOf
+	tG2X8/Hjx6DGB/GY+Z2gUUevGHcPgAZrRYpzFj9XC62UIchkqR/KHWqJl8ykOShhPoW3iPAxomT5j
+	CGPvkfO5sRHRlLYG5LvHSi6OYIYamRv9t9bv/o+P8+wu+pRxlbE9kc7VpS2zAqgQoujiADDzQpxdF
+	yTTiXRP3iC1vH3WjCFTtCwdHZb+peIKUQnpEYL2xZRTRzD6/RbZt9kzOoTN4K+Vl2iW+65S153WS+
+	pArIhMlw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r61yB-001vUi-2H;
+	Thu, 23 Nov 2023 05:09:43 +0000
+Date: Thu, 23 Nov 2023 05:09:43 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Gabriel Krisman Bertazi <krisman@suse.de>, tytso@mit.edu,
+	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
+	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
+ case-insensitive ext4 and f2fs
+Message-ID: <20231123050943.GM38156@ZenIV>
+References: <20230816050803.15660-1-krisman@suse.de>
+ <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+ <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20231120-nihilismus-verehren-f2b932b799e0@brauner>
+ <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+ <20231121022734.GC38156@ZenIV>
+ <20231122211901.GJ38156@ZenIV>
+ <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,51 +58,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZV6AJHd0jJ14unJn@dread.disaster.area>
+In-Reply-To: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Nov 23, 2023 at 09:26:44AM +1100, Dave Chinner wrote:
-> On Wed, Nov 22, 2023 at 05:11:18AM -0800, Christoph Hellwig wrote:
-> > On Wed, Nov 22, 2023 at 01:29:46PM +0100, Jan Kara wrote:
-> > > writeback bit set. XFS plays the revalidation sequence counter games
-> > > because of this so we'd have to do something similar for ext2. Not that I'd
-> > > care as much about ext2 writeback performance but it should not be that
-> > > hard and we'll definitely need some similar solution for ext4 anyway. Can
-> > > you give that a try (as a followup "performance improvement" patch).
-> > 
-> > Darrick has mentioned that he is looking into lifting more of the
-> > validation sequence counter validation into iomap.
+On Wed, Nov 22, 2023 at 04:18:56PM -0800, Linus Torvalds wrote:
+> On Wed, 22 Nov 2023 at 13:19, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > The serious gap, AFAICS, is the interplay with open-by-fhandle.
 > 
-> I think that was me, as part of aligning the writeback path with
-> the ->iomap_valid() checks in the write path after we lock the folio
-> we instantiated for the write.
+> So I'm obviously not a fan of igncase filesystems, but I don't think
+> this series actually changes any of that.
 > 
-> It's basically the same thing - once we have a locked folio, we have
-> to check that the cached iomap is still valid before we use it for
-> anything.
+> > It's not unfixable, but we need to figure out what to do when
+> > lookup runs into a disconnected directory alias.  d_splice_alias()
+> > will move it in place, all right, but any state ->lookup() has
+> > hung off the dentry that had been passed to it will be lost.
 > 
-> I need to find the time to get back to that, though.
-
-Heh, we probably both have been chatting with willy on and off about
-iomap.
-
-The particular idea I had is to add a u64 counter to address_space that
-we can bump in the same places where we bump xfs_inode_fork::if_seq
-right now..  ->iomap_begin would sample this address_space::i_mappingseq
-counter (with locks held), and now buffered writes and writeback can
-check iomap::mappingseq == address_space::i_mappingseq to decide if it's
-time to revalidate.
-
-Anyway, I'll have time to go play with that (and further purging of
-function pointers) next week or whenever is "after I put out v28 of
-online repair".  ATM I have a rewrite of log intent recovery cooking
-too, but that's going to need at least a week or two of recoveryloop
-testing before I put that on the list.
-
---D
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> I guess this migth be about the new DCACHE_CASEFOLDED_NAME bit.
 > 
+> At least for now, that is only used by generic_ci_d_revalidate() for
+> negative dentries, so it shouldn't matter for that d_splice_alias()
+> that only does positive dentries. No?
+> 
+> Or is there something else you worry about?
+
+Dentries created by d_obtain_alias() will never go anywhere near
+generic_set_encrypted_ci_d_ops().  They do *not* get ->d_op set
+that way.  When ext4_lookup() does a lookup in c-i directory it
+does have ->d_op set on dentry it got from the caller.  Which is
+promptly discarded when d_splice_alias() finds a preexisting
+alias for it.
+
+Positive dentries eventually become negative; not invalidating them
+when that happens is a large part of the point of this series.
+->d_revalidate() is taught to check if they are marked with that
+bit, but... they won't have that ->d_revalidate() associated with
+them, will they?  ->d_hash() and ->d_compare() come from the
+parent, but ->d_revalidate() comes from dentry itself.
+
+In other words, generic_ci_d_revalidate() won't see the lack of
+that bit on dentry, etc. - it won't be called for that dentry
+in the first place.
 
