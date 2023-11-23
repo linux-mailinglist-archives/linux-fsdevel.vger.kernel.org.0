@@ -1,118 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-3551-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3552-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5882A7F6468
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 17:54:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD9C7F64D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 18:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5E2DB2101D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 16:54:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74F49B2114C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 17:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32553E480;
-	Thu, 23 Nov 2023 16:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ds5PwlSd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A23FE26;
+	Thu, 23 Nov 2023 17:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFA2101
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 08:54:11 -0800 (PST)
-Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-58ceabd7cdeso555405eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 08:54:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700758451; x=1701363251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pC5ab+aapTW6lbry5H7V57VoJ5KNrSMIolfIaIMsjo0=;
-        b=ds5PwlSd0UD3osZg3a+izq49/kdHVh+ETFV8buD/adchMf9IRa8NGnItxFfGO1BU5M
-         AWbYW5vRWoAqhyyeyAJrwHJav1PyC4zsvITv7WR3CV3VJUhopSTJZ3d0lpnYcDx1UeOl
-         sI8gSP42SNvuRuGAsydBktb7CuYgeqMcKlpvqgP8gBMeB5y47Er1hwF69LO/LJnzmOzv
-         hnwcDCtxar/HtiK6knljhXSnv0SIfTHeGmsBEmIZVQgEiNOLGewLBJ3VXwFFjV/WeR8E
-         4HzdMJRdKl6NcmXnN1G8tEKAwGjs06ypBFXn+7hlJadXWZUIGpdsmh0GRtqNqeMbZtji
-         6BAw==
+Received: from mail-pj1-f80.google.com (mail-pj1-f80.google.com [209.85.216.80])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008FF1B3
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 09:06:26 -0800 (PST)
+Received: by mail-pj1-f80.google.com with SMTP id 98e67ed59e1d1-28035cf4306so2132713a91.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 09:06:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700758451; x=1701363251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pC5ab+aapTW6lbry5H7V57VoJ5KNrSMIolfIaIMsjo0=;
-        b=a7kCEbPR8wgyepc8AXI1qzhs3d6ygNtM/gjJiTogc3lRs//oa9x62MeSudgfi4ECfV
-         nGeaI+HAm3omvCUSvJSfeWv72ggzm+ld1HOyBE7Jk0OSy3P662un4gQ6iW3NPshtVDSZ
-         agHDg4YWT/DSS5qig6tQwTphoXSG1gbZQhyCGWq0/HFGtMWJ/r3zJWk5Aa17nrgX/Q0A
-         x/eqOSkxRHlyxWqy+97Z8GXtPjVec5hLhe8A5VO5PPzw0PsQPKke4J2qqlX1x1Rkmd22
-         6mrBHefrM6xKwyB1X7NVg2bJyMijL9jg/f22bPVyewjfkkK6NeKPmnNbm/jXqzrZY6Io
-         e7XQ==
-X-Gm-Message-State: AOJu0YzHwOfu33waIS0dXlhSnj+/aIwxMS7Kas0BwXycib8YKmi53MSh
-	Qi9U5PuRW16w16D+1KIJNXaLH/92M2V0VNlxhP4=
-X-Google-Smtp-Source: AGHT+IHW6xQUxo0A93bqVx7i0FascGU2+nR6o/e9oVAgPQEEc/W7ahYaaA1YH1Z+UvB5FNPk870KrQm/NhcOvzk2WBU=
-X-Received: by 2002:a05:6358:720d:b0:16b:f8f5:e20 with SMTP id
- h13-20020a056358720d00b0016bf8f50e20mr7317970rwa.30.1700758450982; Thu, 23
- Nov 2023 08:54:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700759186; x=1701363986;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yf11zIw9U1hiIYNefzB8bU+cyfTgmWMokVCBDmAj/ig=;
+        b=szPIsWLg+cHb8Ws+B+SP58mg/2zYRjXisjZzk2MLqql65rFla3s32VIX09vdbMRyTJ
+         +5LRG2MTBBpNYaiw/0a7KscoH0f3Nng701noVYSY+JgtZXM5/1WRp4a505yBhzGcRGlO
+         KpX4gVyl+/9NjEDbwlOKW2k45A+56ybvqTaYJnJKhNWyMwuGrk3And65+Ouu0L4SQ3Se
+         uoxj2OWbGyVlLsYqO2Oy+AmM8805Gb7gcg3OAcFCevkDJp9s6x7/lon9U4UreyoDvbD7
+         2X/mbzj2BHSzOctPkyZ3j8fDWlB85Dm8FqAb1faXu0VOmV2L3gUjBQJpbhDNdAuTDlo0
+         wUtA==
+X-Gm-Message-State: AOJu0Yz8C5Y45Af2e70Q27ONR4LZ/7V1D4NbKiKGXu8uQOHF6sjO33C3
+	SaN5qnpJu7qtlBLxeFADeUlqSr89Et3doKBw7HsEgCz4yQrm
+X-Google-Smtp-Source: AGHT+IFaW8lUP9iGdpM+V8LEdM2TkTQRYLAg8rSW6D5JBfiJHnbvXaMthVVsXAcs2MxWDZvsTXddYbcGvOx6c4/HRWVcUCElTkx0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122122715.2561213-1-amir73il@gmail.com> <20231122122715.2561213-6-amir73il@gmail.com>
- <ZV8Dk7UOLejEhzQN@infradead.org> <CAOQ4uxhxG_G6pjVTikakuUpru1XfaJoKWs4+HwNxCE5PxGTq_Q@mail.gmail.com>
- <ZV9sTfUfM9PU1IFw@infradead.org> <CAOQ4uxiDbGCn3vB4VwQyzdE9k8JjCeMGOqsVN=J5=-KCkvuQ2g@mail.gmail.com>
- <20231123-geboren-deutlich-b5efc843f530@brauner>
-In-Reply-To: <20231123-geboren-deutlich-b5efc843f530@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 23 Nov 2023 18:53:59 +0200
-Message-ID: <CAOQ4uxhteMfu+mo1Y-mpF8+92X4MwXw0CNajoCDhBQLP02GYTA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/16] splice: remove permission hook from iter_file_splice_write()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>, 
-	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a17:90b:3547:b0:27d:3322:68aa with SMTP id
+ lt7-20020a17090b354700b0027d332268aamr789618pjb.2.1700759183501; Thu, 23 Nov
+ 2023 09:06:23 -0800 (PST)
+Date: Thu, 23 Nov 2023 09:06:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fb2f84060ad4da7f@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in indx_insert_into_buffer
+From: syzbot <syzbot+c5b339d16ffa61fd512d@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 23, 2023 at 6:22=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > > diff --git a/fs/splice.c b/fs/splice.c
-> > > index d983d375ff1130..982a0872fa03e9 100644
-> > > --- a/fs/splice.c
-> > > +++ b/fs/splice.c
-> > > @@ -684,6 +684,7 @@ iter_file_splice_write(struct pipe_inode_info *pi=
-pe, struct file *out,
-> > >
-> > >         splice_from_pipe_begin(&sd);
-> > >         while (sd.total_len) {
-> > > +               struct kiocb kiocb;
-> > >                 struct iov_iter from;
-> > >                 unsigned int head, tail, mask;
-> > >                 size_t left;
-> > > @@ -733,7 +734,10 @@ iter_file_splice_write(struct pipe_inode_info *p=
-ipe, struct file *out,
-> > >                 }
-> > >
-> > >                 iov_iter_bvec(&from, ITER_SOURCE, array, n, sd.total_=
-len - left);
-> > > -               ret =3D vfs_iter_write(out, &from, &sd.pos, 0);
-> > > +               init_sync_kiocb(&kiocb, out);
-> > > +               kiocb.ki_pos =3D sd.pos;
-> > > +               ret =3D out->f_op->write_iter(&kiocb, &from);
-> > > +               sd.pos =3D kiocb.ki_pos;
-> > >                 if (ret <=3D 0)
-> > >                         break;
-> > >
-> >
-> > Are we open coding call_write_iter() now?
-> > Is that a trend that I am not aware of?
->
-> I'll fold that in as-is but I'll use call_write_iter() for now.
-> We can remove that later. For now consistency matters more.
+Hello,
 
-Stating the obvious - please don't forget to edit the commit message
-removing mention of the helper.
+syzbot found the following issue on:
 
-Thanks,
-Amir.
+HEAD commit:    037266a5f723 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fa37b7680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af04b7c4d36966d8
+dashboard link: https://syzkaller.appspot.com/bug?extid=c5b339d16ffa61fd512d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b86f2f680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116b289f680000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-037266a5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3611d88a1ea6/vmlinux-037266a5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/92866a30a4f7/bzImage-037266a5.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/083e689d86f3/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c5b339d16ffa61fd512d@syzkaller.appspotmail.com
+
+R13: 0000000000000021 R14: 431bde82d7b634db R15: 00007ffc52cb10d0
+ </TASK>
+------------[ cut here ]------------
+memcpy: detected field-spanning write (size 3960) of single field "hdr1" at fs/ntfs3/index.c:1912 (size 16)
+WARNING: CPU: 2 PID: 5214 at fs/ntfs3/index.c:1912 indx_insert_into_buffer.isra.0+0xfb5/0x1280 fs/ntfs3/index.c:1912
+Modules linked in:
+CPU: 2 PID: 5214 Comm: syz-executor117 Not tainted 6.7.0-rc1-syzkaller-00344-g037266a5f723 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:indx_insert_into_buffer.isra.0+0xfb5/0x1280 fs/ntfs3/index.c:1912
+Code: c1 ca c1 fe c6 05 a3 cb 3d 0c 01 90 48 8b 74 24 70 b9 10 00 00 00 48 c7 c2 80 cf 03 8b 48 c7 c7 e0 cf 03 8b e8 8c e9 87 fe 90 <0f> 0b 90 90 e9 1b fe ff ff 48 c7 44 24 68 00 00 00 00 31 db e9 10
+RSP: 0018:ffffc900035c76e8 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 00000000fffffff4 RCX: ffffffff814ca799
+RDX: ffff8880287393c0 RSI: ffffffff814ca7a6 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000005 R12: ffff888021065c00
+R13: ffff8880143ecc20 R14: ffff888029712800 R15: ffff888018fae018
+FS:  0000555556341380(0000) GS:ffff88806b800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd80dde5e00 CR3: 0000000026243000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ indx_insert_entry+0x1a5/0x460 fs/ntfs3/index.c:1981
+ ni_add_name+0x4d9/0x820 fs/ntfs3/frecord.c:3055
+ ni_rename+0xa1/0x1a0 fs/ntfs3/frecord.c:3087
+ ntfs_rename+0x91f/0xec0 fs/ntfs3/namei.c:322
+ vfs_rename+0x13e0/0x1c30 fs/namei.c:4844
+ do_renameat2+0xc3c/0xdc0 fs/namei.c:4996
+ __do_sys_rename fs/namei.c:5042 [inline]
+ __se_sys_rename fs/namei.c:5040 [inline]
+ __x64_sys_rename+0x81/0xa0 fs/namei.c:5040
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fd8160252a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc52cb1068 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007ffc52cb1090 RCX: 00007fd8160252a9
+RDX: 00007fd816024370 RSI: 0000000020000a40 RDI: 0000000020000300
+RBP: 0000000000000002 R08: 00007ffc52cb0e06 R09: 00007ffc52cb10b0
+R10: 0000000000000002 R11: 0000000000000246 R12: 00007ffc52cb108c
+R13: 0000000000000021 R14: 431bde82d7b634db R15: 00007ffc52cb10d0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
