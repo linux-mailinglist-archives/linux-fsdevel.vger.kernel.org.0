@@ -1,138 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-3554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D549C7F6596
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 18:38:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B500B7F65A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 18:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133851C21020
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 17:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60411C20EA3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 17:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC7E405F8;
-	Thu, 23 Nov 2023 17:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C99405F7;
+	Thu, 23 Nov 2023 17:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="TR6RKpJt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRshLENg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55014189;
-	Thu, 23 Nov 2023 09:37:47 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D88FDFF809;
-	Thu, 23 Nov 2023 17:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1700761066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aE8aUEa9aAZvs4jBkIx+0j52NfPIGVPGiVlPWv3lCf4=;
-	b=TR6RKpJtGtwhTO/9QTjmH69srCGp1iqc+0yDO4y3r5dOxuneAh0a64obgAT3tKkJii1V2o
-	u18GtIPMuhkXOfnrnZAEDioqxM4aCdy6SQyNRebdb4qeHVoWor1NEr6F4a6KEmXGuNOYuh
-	deAnY5WhiI1kOeQNvOXOgghf9uzP0jKheNnfN0AdF2UhfFonstsYq1wkWiIl9tpyIL6rRc
-	/wMCdUJehUSjH+ojEHcOtmDnkLkphUcJwxs+e9YAtaEz7/FKyHPPCC6qP/DPPf8TCiBZI2
-	3XZ1rh085NeBrVCikkNnXV3jXGxGI6JJikPo/4NaPc70hhLkmJpV/NdJAVHrkw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>,
-  tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
-  ebiggers@kernel.org,  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org,
-  linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
-In-Reply-To: <20231123171255.GN38156@ZenIV> (Al Viro's message of "Thu, 23 Nov
-	2023 17:12:55 +0000")
-References: <20230816050803.15660-1-krisman@suse.de>
-	<20231025-selektiert-leibarzt-5d0070d85d93@brauner>
-	<655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
-	<20231120-nihilismus-verehren-f2b932b799e0@brauner>
-	<CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
-	<20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
-	<CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-	<20231123171255.GN38156@ZenIV>
-Date: Thu, 23 Nov 2023 12:37:43 -0500
-Message-ID: <87h6lcid5k.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D8C3FB2B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 17:40:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14110C433D9;
+	Thu, 23 Nov 2023 17:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700761205;
+	bh=O9W6/GX6YEbHEjBdyX568Y7GKhj2VDUTeGTyhBOEuiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jRshLENg0OhwIa7EuXgjOFUR0TLSauxJDN9FdI0dxz6H5uCFTe3w9jcLveyMMgExg
+	 BtWWR7DS2t0/I3aXymNEtaicJSrhb8k8iu+641Aa0BekwbxHUH0JIhLexX2Cgpu9LB
+	 8xqnuhr/7EYk8itKbKj1pLxqjin678xhUfBz8rNwhHIAA+fYDMyIGGc2dcs+Q4YJBp
+	 a1+uksx/lK8ziBIzLOSkXDzeOvVql6Tvpsg+Sy+FKHnDxeZthw2LTG8EhIjvIA5NLe
+	 M0TA1IPIhHp6wF3DGDWVybjwzJYOzjai3dZVKxkX7lsTd3vLfGQK3rrs/JjOCNa4e+
+	 e07Q5WXa7OnWA==
+Date: Thu, 23 Nov 2023 18:40:01 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-aio@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/aio: obey min_nr when doing wakeups
+Message-ID: <20231123-jazzfest-gesund-3105db71afca@brauner>
+References: <20231122234257.179390-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231122234257.179390-1-kent.overstreet@linux.dev>
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Wed, Nov 22, 2023 at 06:42:53PM -0500, Kent Overstreet wrote:
+> Unclear who's maintaining fs/aio.c these days - who wants to take this?
+> -- >8 --
+> 
+> I've been observing workloads where IPIs due to wakeups in
+> aio_complete() are ~15% of total CPU time in the profile. Most of those
+> wakeups are unnecessary when completion batching is in use in
+> io_getevents().
+> 
+> This plumbs min_nr through via the wait eventry, so that aio_complete()
+> can avoid doing unnecessary wakeups.
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Benjamin LaHaise <bcrl@kvack.org
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-aio@kvack.org
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/aio.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 56 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/aio.c b/fs/aio.c
+> index f8589caef9c1..c69e7caacd1b 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1106,6 +1106,11 @@ static inline void iocb_destroy(struct aio_kiocb *iocb)
+>  	kmem_cache_free(kiocb_cachep, iocb);
+>  }
+>  
+> +struct aio_waiter {
+> +	struct wait_queue_entry	w;
+> +	size_t			min_nr;
+> +};
+> +
+>  /* aio_complete
+>   *	Called when the io request on the given iocb is complete.
+>   */
+> @@ -1114,7 +1119,7 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  	struct kioctx	*ctx = iocb->ki_ctx;
+>  	struct aio_ring	*ring;
+>  	struct io_event	*ev_page, *event;
+> -	unsigned tail, pos, head;
+> +	unsigned tail, pos, head, avail;
+>  	unsigned long	flags;
+>  
+>  	/*
+> @@ -1156,6 +1161,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  	ctx->completed_events++;
+>  	if (ctx->completed_events > 1)
+>  		refill_reqs_available(ctx, head, tail);
+> +
+> +	avail = tail > head
+> +		? tail - head
+> +		: tail + ctx->nr_events - head;
+>  	spin_unlock_irqrestore(&ctx->completion_lock, flags);
+>  
+>  	pr_debug("added to ring %p at [%u]\n", iocb, tail);
+> @@ -1176,8 +1185,18 @@ static void aio_complete(struct aio_kiocb *iocb)
+>  	 */
+>  	smp_mb();
+>  
+> -	if (waitqueue_active(&ctx->wait))
+> -		wake_up(&ctx->wait);
+> +	if (waitqueue_active(&ctx->wait)) {
+> +		struct aio_waiter *curr, *next;
+> +		unsigned long flags;
+> +
+> +		spin_lock_irqsave(&ctx->wait.lock, flags);
+> +		list_for_each_entry_safe(curr, next, &ctx->wait.head, w.entry)
+> +			if (avail >= curr->min_nr) {
+> +				list_del_init_careful(&curr->w.entry);
+> +				wake_up_process(curr->w.private);
+> +			}
+> +		spin_unlock_irqrestore(&ctx->wait.lock, flags);
+> +	}
+>  }
+>  
+>  static inline void iocb_put(struct aio_kiocb *iocb)
+> @@ -1290,7 +1309,9 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
+>  			struct io_event __user *event,
+>  			ktime_t until)
+>  {
+> -	long ret = 0;
+> +	struct hrtimer_sleeper	t;
+> +	struct aio_waiter	w;
+> +	long ret = 0, ret2 = 0;
+>  
+>  	/*
+>  	 * Note that aio_read_events() is being called as the conditional - i.e.
+> @@ -1306,12 +1327,37 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
+>  	 * the ringbuffer empty. So in practice we should be ok, but it's
+>  	 * something to be aware of when touching this code.
+>  	 */
+> -	if (until == 0)
+> -		aio_read_events(ctx, min_nr, nr, event, &ret);
+> -	else
+> -		wait_event_interruptible_hrtimeout(ctx->wait,
+> -				aio_read_events(ctx, min_nr, nr, event, &ret),
+> -				until);
+> +	aio_read_events(ctx, min_nr, nr, event, &ret);
+> +	if (until == 0 || ret < 0 || ret >= min_nr)
+> +		return ret;
+> +
+> +	hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +	if (until != KTIME_MAX) {
+> +		hrtimer_set_expires_range_ns(&t.timer, until, current->timer_slack_ns);
+> +		hrtimer_sleeper_start_expires(&t, HRTIMER_MODE_REL);
+> +	}
+> +
+> +	init_wait(&w.w);
+> +
+> +	while (1) {
+> +		unsigned long nr_got = ret;
+> +
+> +		w.min_nr = min_nr - ret;
 
-> On Thu, Nov 23, 2023 at 10:57:22AM -0500, Gabriel Krisman Bertazi wrote:
->> Linus Torvalds <torvalds@linux-foundation.org> writes:
->> 
->> > Side note: Gabriel, as things are now, instead of that
->> >
->> >         if (!d_is_casefolded_name(dentry))
->> >                 return 0;
->> >
->> > in generic_ci_d_revalidate(), I would suggest that any time a
->> > directory is turned into a case-folded one, you'd just walk all the
->> > dentries for that directory and invalidate negative ones at that
->> > point. Or was there some reason I missed that made it a good idea to
->> > do it at run-time after-the-fact?
->> >
->> 
->> The problem I found with that approach, which I originally tried, was
->> preventing concurrent lookups from racing with the invalidation and
->> creating more 'case-sensitive' negative dentries.  Did I miss a way to
->> synchronize with concurrent lookups of the children of the dentry?  We
->> can trivially ensure the dentry doesn't have positive children by
->> holding the parent lock, but that doesn't protect from concurrent
->> lookups creating negative dentries, as far as I understand.
->
-> AFAICS, there is a problem with dentries that never came through
-> ->lookup().  Unless I'm completely misreading your code, your
-> generic_ci_d_revalidate() is not called for them.  Ever.
->
-> Hash lookups are controlled by ->d_op of parent; that's where ->d_hash()
-> and ->d_compare() come from.  Revalidate comes from *child*.  You need
-> ->d_op->d_revalidate of child dentry to be set to your generic_ci_d_revalidate().
->
-> The place where it gets set is generic_set_encrypted_ci_d_ops().  Look
-> at its callchain; in case of ext4 it gets called from ext4_lookup_dentry(),
-> which is called from ext4_lookup().  And dentry passed to it is the
-> argument of ->lookup().
->
-> Now take a look at open-by-fhandle stuff; all methods in there
-> (->fh_to_dentry(), ->fh_to_parent(), ->get_parent()) end up
-> returning d_obtain_alias(some inode).
->
-> We *do* call ->lookup(), all right - in reconnect_one(), while
-> trying to connect those suckers with the main tree.  But the way
-> it works is that d_splice_alias() in ext4_lookup() moves the
-> existing alias for subdirectory, connecting it to the parent.
-> That's not the dentry ext4_lookup() had set ->d_op on - that's
-> the dentry that came from d_obtain_alias().  And those do not
-> have ->d_op set by anything in your tree.
->
-> That's the problem I'd been talking about - there is a class of situations
-> where the work done by ext4_lookup() to set the state of dentry gets
-> completely lost.  After lookup you do have a dentry in the right place,
-> with the right name and inode, etc., but with NULL
-> ->d_op->d_revalidate.
+Hm, can this underflow?
 
-I get the problem now. I admit to not understanding all the details yet,
-which is why I haven't answered directly, but I understand already how
-it can get borked.  I'm studying your explanation.
+> +
+> +		ret2 = prepare_to_wait_event(&ctx->wait, &w.w, TASK_INTERRUPTIBLE) ?:
+> +			!t.task ? -ETIME : 0;
 
-Originally, ->d_op could be propagated trivially since we had sb->s_d_op
-set, which would be set by __d_alloc, but that is no longer the case
-since we combined fscrypt and CI support.
+I'd like to avoid the nested ?: as that's rather hard to read.
+I _think_ this is equivalent to:
 
-What I still don't understand is why we shouldn't fixup ->d_op when
-calling d_obtain_alias (before __d_instantiate_anon) and you say we
-better do it in d_splice_alias.  The ->d_op is going to be the same
-across the filesystem when the casefold feature is enabled, regardless
-if the directory is casefolded.  If we set it there, the alias already
-has the right d_op from the start.
+if (!ret2 && !t.task)
+	ret = -ETIME;
 
--- 
-Gabriel Krisman Bertazi
+I can just fix this in-tree though. Did I parse that correctly?
+
+> +
+> +		if (aio_read_events(ctx, min_nr, nr, event, &ret) || ret2)
+> +			break;
+> +
+> +		if (nr_got == ret)
+> +			schedule();
+> +	}
+> +
+> +	finish_wait(&ctx->wait, &w.w);
+> +	hrtimer_cancel(&t.timer);
+> +	destroy_hrtimer_on_stack(&t.timer);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.42.0
+> 
 
