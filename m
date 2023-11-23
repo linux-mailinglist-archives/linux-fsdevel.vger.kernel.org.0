@@ -1,174 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-3558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50517F66ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 20:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D75FC7F67C1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 20:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E07B21532
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 19:07:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F653B214EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 19:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D94C3A7;
-	Thu, 23 Nov 2023 19:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0145F4D599;
+	Thu, 23 Nov 2023 19:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="fsUH7Ekv"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dp3Pv+Rb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA6610C2;
-	Thu, 23 Nov 2023 11:06:49 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F3D62E0004;
-	Thu, 23 Nov 2023 19:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1700766408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uDXbPwWFJuD//zN6fX5C4MbLAREp00KDAGauJPXX/nA=;
-	b=fsUH7EkvMY8tJycvoSELkAmUl6MVnc0PCQKAtetqwIZ4oxZRr1YpCrPhtUqrZ+A0/RWp6Q
-	3w1KYkDlVXjAJGhXIpr0P7swmTKMfX9MoWAmcey2Z9j+n7eTJyM6848RxMFi6Nje5kjoGo
-	yADLk1EaOapkr7pBS4f0uccThKtcPbDBibIXz1gcOVtVmugTsz+w3kxEoB0y73gCnsrcIE
-	Ck3TvVx5kbxLZXBF5IpTrWP3HtyiudNQDftBhWt2FVSpTeyOFrvDLEtp4/bfnfGxw5yB1N
-	0Nh5L2i0QE26gjXIswrUQnpm4aJ9JBJUXA1KF/13L55DcCEvP7LnNLZd4sk9ZQ==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>,
-  tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
-  ebiggers@kernel.org,  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org,
-  linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
-In-Reply-To: <20231123182426.GO38156@ZenIV> (Al Viro's message of "Thu, 23 Nov
-	2023 18:24:26 +0000")
-References: <20230816050803.15660-1-krisman@suse.de>
-	<20231025-selektiert-leibarzt-5d0070d85d93@brauner>
-	<655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
-	<20231120-nihilismus-verehren-f2b932b799e0@brauner>
-	<CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
-	<20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
-	<CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-	<20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
-Date: Thu, 23 Nov 2023 14:06:39 -0500
-Message-ID: <87bkbki91c.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB8CD65
+	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 11:43:30 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-6bd20c30831so204679b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 11:43:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1700768610; x=1701373410; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WpkzZHg09ad7VkHOnG/quo/T41ONjJ1411UTG4haLXU=;
+        b=dp3Pv+RbN7GZ2lrzjUffbQSF0LOT7BAeVxL6NUaQWXL7BGCA8WDsDwdIv1vBi/bJh+
+         x+kueLLHCLnZJPbC862Wr+FeUwslFH4KsQDxtO27+z0Knohfoc1/nZaiTZIc1t1+Rm5F
+         bvX5ONi4yF1JFQpbP3Y8QFG7vPyFuxrLoF8RUWAS0rpopJh1ZZOocP0Uy5U4Mbs71JTW
+         VqkNsfgKvCuwd0Zp3UY9OofwAtmwZAmjrrLLpSdFn8xdFL18Apgz7eraE8iP8965BEqc
+         m07TYmEVY2jR+/GcdHXejKJSgc79oFbqpKjLmiJQ2p1a0vrTf4zkItE1lOEdMbMyzUCQ
+         ca8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700768610; x=1701373410;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WpkzZHg09ad7VkHOnG/quo/T41ONjJ1411UTG4haLXU=;
+        b=nfWbbgjYKAneXJ69+hKiUyGW6p0CY3a7+I60htRKF8mxsiRt2SyUPqpkRyc8CBSX9h
+         dk8Qn3mLMkdOr/ZABZnyfYzntCIXviC1VQ8P6w/pcCZwJ76K138SAZruF2P+5dPR4PvW
+         6k1cWpgveQmn8R/yWKEFkEDyJK6SpPpmWwOXKVJ0WPL5LUSPQfYVD+Gqq4FFM0njZ+g1
+         97B0oy/maVhDk4N0NjaVIVOgWi3xjAOgVqIRubUC2ugA6LanfQSM6Jd4JLcIrUowc1kO
+         oQglpJx1SnWy9lIGhPrzRgWuphhyBd5+YrX7e3r6QxFQ7kHp4Eq3deG4qBV4dPLVrOw4
+         mrbQ==
+X-Gm-Message-State: AOJu0YyPLwDO47QGQ6wVrkhV13xV+zXwGlzqNwDYBPb91dfvK8QO/25z
+	YnTRVSoVZmGEs4DRtfunub373w==
+X-Google-Smtp-Source: AGHT+IEPG4J941SLrpY4uC/ri/G2ja2akCNdtY4pHEKeo+HpcNnwpEYC41wSse9D2H40uEI86qohgw==
+X-Received: by 2002:a05:6a00:9381:b0:6bc:ff89:a2fc with SMTP id ka1-20020a056a00938100b006bcff89a2fcmr544106pfb.2.1700768610318;
+        Thu, 23 Nov 2023 11:43:30 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id n17-20020a056a0007d100b006cb65cfde6dsm1567524pfu.200.2023.11.23.11.43.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Nov 2023 11:43:29 -0800 (PST)
+Message-ID: <cb41cf91-1c75-4edc-b00f-59763344b15c@kernel.dk>
+Date: Thu, 23 Nov 2023 12:43:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] eventfd: simplify signal helpers
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
+ Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
+ Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+ Xu Yilun <yilun.xu@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>,
+ Zhi Wang <zhi.a.wang@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Frederic Barrat <fbarrat@linux.ibm.com>, Andrew Donnellan
+ <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Eric Farman <farman@linux.ibm.com>, Matthew Rosato <mjrosato@linux.ibm.com>,
+ Halil Pasic <pasic@linux.ibm.com>, Vineeth Vijayan <vneethv@linux.ibm.com>,
+ Peter Oberparleiter <oberpar@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Tony Krowiak <akrowiak@linux.ibm.com>,
+ Jason Herne <jjherne@linux.ibm.com>,
+ Harald Freudenberger <freude@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Diana Craciun <diana.craciun@oss.nxp.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
+ Benjamin LaHaise <bcrl@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeelb@google.com>, Muchun Song <muchun.song@linux.dev>,
+ Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-usb@vger.kernel.org, virtualization@lists.linux-foundation.org,
+ netdev@vger.kernel.org, linux-aio@kvack.org, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, Pavel Begunkov <asml.silence@gmail.com>,
+ io-uring@vger.kernel.org
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On 11/22/23 5:48 AM, Christian Brauner wrote:
+> Hey everyone,
+> 
+> This simplifies the eventfd_signal() and eventfd_signal_mask() helpers
+> significantly. They can be made void and not take any unnecessary
+> arguments.
+> 
+> I've added a few more simplifications based on Sean's suggestion.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> 
+> Changes in v2:
+> - further simplify helpers
+> - Link to v1: https://lore.kernel.org/r/20230713-vfs-eventfd-signal-v1-0-7fda6c5d212b@kernel.org
 
-> On Thu, Nov 23, 2023 at 12:37:43PM -0500, Gabriel Krisman Bertazi wrote:
->> > That's the problem I'd been talking about - there is a class of situations
->> > where the work done by ext4_lookup() to set the state of dentry gets
->> > completely lost.  After lookup you do have a dentry in the right place,
->> > with the right name and inode, etc., but with NULL
->> > ->d_op->d_revalidate.
->> 
->> I get the problem now. I admit to not understanding all the details yet,
->> which is why I haven't answered directly, but I understand already how
->> it can get borked.  I'm studying your explanation.
->> 
->> Originally, ->d_op could be propagated trivially since we had sb->s_d_op
->> set, which would be set by __d_alloc, but that is no longer the case
->> since we combined fscrypt and CI support.
->>
->> What I still don't understand is why we shouldn't fixup ->d_op when
->> calling d_obtain_alias (before __d_instantiate_anon) and you say we
->> better do it in d_splice_alias.  The ->d_op is going to be the same
->> across the filesystem when the casefold feature is enabled, regardless
->> if the directory is casefolded.  If we set it there, the alias already
->> has the right d_op from the start.
->
-> *blink*
->
-> A paragraph above you've said that it's not constant over the entire
-> filesystem.
+Only oddity I spotted was the kerneldoc, which someone else already
+brought up.
 
-The same ->d_op is used by every dentry in the filesystem if the superblock
-has the casefold bit enabled, regardless of whether a specific inode is
-casefolded or not. See generic_set_encrypted_ci_d_ops in my tree. It is
-called unconditionally by ext4_lookup and only checks the superblock:
-
-void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
-{
-        if (dentry->d_sb->s_encoding) {
-		d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
-		return;
-	}
-        ...
-
-What I meant was that this used to be set once at sb->s_d_op, and
-propagated during dentry allocation.  Therefore, the propagation to the
-alias would happen inside __d_alloc.  Once we enabled fscrypt and
-casefold to work together, sb->s_d_op is NULL and we always set the same
-handler for every dentry during lookup.
-
-> Look, it's really simple - any setup work of that sort done in ->lookup()
-> is either misplaced, or should be somehow transferred over to the alias
-> if one gets picked.
->
-> As for d_obtain_alias()... AFAICS, it's far more limited in what information
-> it could access.  It knows the inode, but it has no idea about the parent
-> to be.
-
-Since it has the inode, d_obtain_alias has the superblock.  I think that's all
-we need for generic_set_encrypted_ci_d_ops.
-
-> The more I look at that, the more it feels like we need a method that would
-> tell the filesystem that this dentry is about to be spliced here.  9p is
-> another place where it would obviously simplify the things; ocfs2 'attach
-> lock' stuff is another case where the things get much more complicated
-> by having to do that stuff after splicing, etc.
->
-> It's not even hard to do:
->
-> 1. turn bool exchange in __d_move() arguments into 3-value thing - move,
-> exchange or splice.  Have the callers in d_splice_alias() and __d_unalias()
-> pass "splice" instead of false (aka normal move).
->
-> 2. make __d_move() return an int (normally 0)
->
-> 3. if asked to splice and if there's target->d_op->d_transfer(), let
-> __d_move() call it right after
->         spin_lock_nested(&dentry->d_lock, 2);
-> 	spin_lock_nested(&target->d_lock, 3);
-> in there.  Passing it target and dentry, obviously.  In unlikely case
-> of getting a non-zero returned by the method, undo locks and return
-> that value to __d_move() caller.
->
-> 4. d_move() and d_exchange() would ignore the value returned by __d_move();
-> __d_unalias() turn
->         __d_move(alias, dentry, false);
-> 	ret = 0;
-> into
-> 	ret = __d_move(alias, dentry, Splice);
-> d_splice_alias() turn
-> 				__d_move(new, dentry, false);
-> 				write_sequnlock(&rename_lock);
-> into
-> 				err = __d_move(new, dentry, Splice);
-> 				write_sequnlock(&rename_lock);
-> 				if (unlikely(err)) {
-> 					dput(new);
-> 					new = ERR_PTR(err);
-> 				}
-> (actually, dput()-on-error part would be common to all 3 branches
-> in there, so it would probably get pulled out of that if-else if-else).
->
-> I can cook a patch doing that (and convert the obvious beneficiaries already
-> in the tree to it) and throw it into dcache branch - just need to massage
-> the series in there for repost...
-
-if you can write that, I'll definitely appreciate it. It will surely
-take me much longer to figure it out myself.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
 
