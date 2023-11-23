@@ -1,55 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-3502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE547F55D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 02:22:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224657F5750
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 05:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 541702816AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 01:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DEA81C20CC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 04:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED20E17C4;
-	Thu, 23 Nov 2023 01:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E0BBA34;
+	Thu, 23 Nov 2023 04:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="to4eAhiT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW2DeccM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3AA8C1;
-	Wed, 22 Nov 2023 17:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/mZMOzxCPM/ZibIQSk7rG0+sywHsfsDjvGaZysxq5uU=; b=to4eAhiTPVblR/t8ZNnrZz/2q/
-	UszqFZ4wwMC9625WO4oKhBXgmrjEcb5VkbS+vbkBfTy3Ky+UrGGgpKjIMOs2YQ5SqJ8tnxT9Tdh6o
-	dAq+luwZ5QaxLd3Wzp14Tr0L/TuBIJf6l1LQYxYtaXFXbOQxSnyG4lQVvtmCK1WYu/ZLeyUG9/AE5
-	BvVTh6M1SURTHp26Ns+n6bDBwjavRaHIlaDjZVfhp2TlbjlCRbAv/g8tZQomC/EY9aq0jM+QH/eO3
-	3drUHhnp/vaHXH+mLAfPd3ddS0m9k8iXIoa9wWegwnMylSKosBJfM8cLMcj0BqwJKFzRttFry6zXE
-	0BuGhHNw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r5yQG-001rSd-0s;
-	Thu, 23 Nov 2023 01:22:28 +0000
-Date: Thu, 23 Nov 2023 01:22:28 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Gabriel Krisman Bertazi <krisman@suse.de>, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
- case-insensitive ext4 and f2fs
-Message-ID: <20231123012228.GL38156@ZenIV>
-References: <20230816050803.15660-1-krisman@suse.de>
- <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
- <655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
- <20231120-nihilismus-verehren-f2b932b799e0@brauner>
- <CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
- <20231121022734.GC38156@ZenIV>
- <20231122211901.GJ38156@ZenIV>
- <20231123011208.GK38156@ZenIV>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA17DB658;
+	Thu, 23 Nov 2023 04:09:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C3DC433C7;
+	Thu, 23 Nov 2023 04:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700712585;
+	bh=Bw7Y1tSIteesdKurZaVVowFevEIWL8qOrFUxj6OO8og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UW2DeccMXA1iij26Yvi2JJnQj5PBKI4wUmc+Wo2TqjqLkSTAJoR9Xnh56yOjNDZN1
+	 kXuurynouJxCJRhg94PSRMJdC5nXhEG6iJ3608NPf+AoB5ylVojn4K94dbMpMj/o0V
+	 ghyjBNb6DTKFnEAzZ+bBw9tU+guIl60Kn8DtuBRX3Jdrgf43S2tJt+OzfcJBb0T7Ol
+	 MTGngPb+MluhGMf7JsdUtaLqvrK75cpC/lKjxqjhTUOkqE5LjbRC3MDVcih+envSuW
+	 IlmR34h9evh8tH3YDmPy+MAld+VjlmlN23EXw8yhbtdHpJOhiBepNm6hRnbyEApgRE
+	 wfF6tK92eg/pg==
+Date: Wed, 22 Nov 2023 20:09:44 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use
+ iomap
+Message-ID: <20231123040944.GB36168@frogsfrogsfrogs>
+References: <cover.1700506526.git.ritesh.list@gmail.com>
+ <f5e84d3a63de30def2f3800f534d14389f6ba137.1700506526.git.ritesh.list@gmail.com>
+ <20231122122946.wg3jqvem6fkg3tgw@quack3>
+ <ZV399sCMq+p57Yh3@infradead.org>
+ <ZV6AJHd0jJ14unJn@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,83 +54,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231123011208.GK38156@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <ZV6AJHd0jJ14unJn@dread.disaster.area>
 
-On Thu, Nov 23, 2023 at 01:12:08AM +0000, Al Viro wrote:
-> On Wed, Nov 22, 2023 at 09:19:01PM +0000, Al Viro wrote:
-> > On Tue, Nov 21, 2023 at 02:27:34AM +0000, Al Viro wrote:
+On Thu, Nov 23, 2023 at 09:26:44AM +1100, Dave Chinner wrote:
+> On Wed, Nov 22, 2023 at 05:11:18AM -0800, Christoph Hellwig wrote:
+> > On Wed, Nov 22, 2023 at 01:29:46PM +0100, Jan Kara wrote:
+> > > writeback bit set. XFS plays the revalidation sequence counter games
+> > > because of this so we'd have to do something similar for ext2. Not that I'd
+> > > care as much about ext2 writeback performance but it should not be that
+> > > hard and we'll definitely need some similar solution for ext4 anyway. Can
+> > > you give that a try (as a followup "performance improvement" patch).
 > > 
-> > > I will review that series; my impression from the previous iterations
-> > > had been fairly unpleasant, TBH, but I hadn't rechecked since April
-> > > or so.
-> > 
-> > The serious gap, AFAICS, is the interplay with open-by-fhandle.
-> > It's not unfixable, but we need to figure out what to do when
-> > lookup runs into a disconnected directory alias.  d_splice_alias()
-> > will move it in place, all right, but any state ->lookup() has
-> > hung off the dentry that had been passed to it will be lost.
-> > 
-> > And I seriously suspect that we want to combine that state
-> > propagation with d_splice_alias() (or its variant to be used in
-> > such cases), rather than fixing the things up afterwards.
-> > 
-> > In particular, propagating ->d_op is really not trivial at that
-> > point; it is safe to do to ->lookup() argument prior to d_splice_alias()
-> > (even though that's too subtle and brittle, IMO), but after
-> > d_splice_alias() has succeeded, the damn thing is live and can
-> > be hit by hash lookups, revalidate, etc.
-> > 
-> > The only things that can't happen to it are ->d_delete(), ->d_prune(),
-> > ->d_iput() and ->d_init().  Everything else is fair game.
-> > 
-> > And then there's an interesting question about the interplay with
-> > reparenting.  It's OK to return an error rather than reparent,
-> > but we need some way to tell if we need to do so.
+> > Darrick has mentioned that he is looking into lifting more of the
+> > validation sequence counter validation into iomap.
 > 
-> Hmm... int (*d_transfer)(struct dentry *alias, struct dentry *new)?
-> Called if d_splice_alias() picks that sucker, under rename_lock,
-> before the call of __d_move().  Can check IS_ROOT(alias) (due to
-> rename_lock), so can tell attaching from reparenting, returning
-> an error - failed d_splice_alias().
+> I think that was me, as part of aligning the writeback path with
+> the ->iomap_valid() checks in the write path after we lock the folio
+> we instantiated for the write.
 > 
-> Perhaps would be even better inside __d_move(), once all ->d_lock
-> are taken...  Turn the current bool exchange in there into honest
-> enum (exchange/move/splice) and call ->d_transfer() on splice.
-> In case of failure it's still not too late to back out - __d_move()
-> would return an int, ignored in d_move() and d_exchange() and
-> treated as "fail in unlikely case it's non-zero" in d_splice_alias()
-> and __d_unalias()...
+> It's basically the same thing - once we have a locked folio, we have
+> to check that the cached iomap is still valid before we use it for
+> anything.
 > 
-> Comments?  Note that e.g.
->         res = d_splice_alias(inode, dentry);
->         if (!IS_ERR(fid)) {
->                 if (!res)
->                         v9fs_fid_add(dentry, &fid);
->                 else if (!IS_ERR(res))
->                         v9fs_fid_add(res, &fid);
->                 else
->                         p9_fid_put(fid);
->         }
-> 
-> in 9p ->lookup() would turn into
-> 
-> 	v9fs_fid_add(dentry, &fid);
->         return d_splice_alias(inode, dentry);
-> 
-> with ->d_transfer(alias, new) being simply
-> 
-> 	struct hlist_node *p = new->d_fsdata;
-> 	hlist_del_init(p);
-> 	__add_fid(alias, hlist_entry(p, struct p9_fid, dlist));
-> 	return 0;
-> 
-> assuming the call from __d_move()...
+> I need to find the time to get back to that, though.
 
-Incidentally, 9p and this one would not be the only places that could use it -
-affs - alias->d_fsdata = new->d_fsdata
-afs - ditto
-ocfs2 - smells like another possible benefitiary (attaching locks, etc.
-would be saner if done before d_splice_alias(), with ->d_transfer()
-moving the lock to the alias)...
+Heh, we probably both have been chatting with willy on and off about
+iomap.
+
+The particular idea I had is to add a u64 counter to address_space that
+we can bump in the same places where we bump xfs_inode_fork::if_seq
+right now..  ->iomap_begin would sample this address_space::i_mappingseq
+counter (with locks held), and now buffered writes and writeback can
+check iomap::mappingseq == address_space::i_mappingseq to decide if it's
+time to revalidate.
+
+Anyway, I'll have time to go play with that (and further purging of
+function pointers) next week or whenever is "after I put out v28 of
+online repair".  ATM I have a rewrite of log intent recovery cooking
+too, but that's going to need at least a week or two of recoveryloop
+testing before I put that on the list.
+
+--D
+
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
