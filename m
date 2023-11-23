@@ -1,122 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-3536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F167F5F8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 13:53:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E1D7F5FC9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 14:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC92B21D23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 12:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0927281DE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Nov 2023 13:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F3733074;
-	Thu, 23 Nov 2023 12:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57353250E9;
+	Thu, 23 Nov 2023 13:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSfg5H2P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A993189;
-	Thu, 23 Nov 2023 04:52:10 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SbdKx0g1hz4f3kKp;
-	Thu, 23 Nov 2023 20:52:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id CC5741A04B4;
-	Thu, 23 Nov 2023 20:52:07 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDn6xHdSl9lSfnfBg--.20473S23;
-	Thu, 23 Nov 2023 20:52:07 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	hch@infradead.org,
-	djwong@kernel.org,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [RFC PATCH 18/18] ext4: enable large folio for regular file which has been switched to use iomap
-Date: Thu, 23 Nov 2023 20:51:21 +0800
-Message-Id: <20231123125121.4064694-20-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231123125121.4064694-1-yi.zhang@huaweicloud.com>
-References: <20231123125121.4064694-1-yi.zhang@huaweicloud.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454CB24A05;
+	Thu, 23 Nov 2023 13:12:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B246C433C7;
+	Thu, 23 Nov 2023 13:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700745135;
+	bh=VBAn7FZcvw1drif9KzTmaabLPVAYO4zX2eeQPqBTwFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nSfg5H2PW95uhmCyWswaCk18HBzNnUr8lrZC9/jswVOaVEk9Necoc/3PSsg/eWI+c
+	 nUSNVQiBVNuTkdJG4ZroseK0fKTuKodiCnTfp5VBFncFM3thhaeXbqdq7/1OyUlFkh
+	 hvhoTdxdxKP2qiIgsXRrtgQ8aW/glFRtrG5pk0o8niH7Far3mtrppzle/A5KWCQFN1
+	 0J9D7XnhqZQWKtQ8+7lAsz1DeizPazr+k6Se4xCbJkyOxPi+pXbCyvcnpPCySfoTu/
+	 nxY4zeQuXLH9O0FYHNYyhAuFpYV+0VZCYLV3awl8R2o5zjol3Qy1blkTCXoR/k3lKT
+	 V10Lsp2N5sNOQ==
+Date: Thu, 23 Nov 2023 14:11:56 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Zhenyu Wang <zhenyuw@linux.intel.com>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
+	Oded Gabbay <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Farman <farman@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Tony Krowiak <akrowiak@linux.ibm.com>,
+	Jason Herne <jjherne@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Diana Craciun <diana.craciun@oss.nxp.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
+	Benjamin LaHaise <bcrl@kvack.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeelb@google.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+	linux-aio@kvack.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] i915: make inject_virtual_interrupt() void
+Message-ID: <20231123-randlage-instinkt-e458628d2d7c@brauner>
+References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+ <20231122-vfs-eventfd-signal-v2-1-bd549b14ce0c@kernel.org>
+ <ZV6buHrQy2+CJ7xX@debian-scheme>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDn6xHdSl9lSfnfBg--.20473S23
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr13WFWUCrWxJFWrtw1kXwb_yoW8Xry3pF
-	sxK3W8GrWkX34q9a1Sgr1xZr1Uta1xGw4UuFWF93Z8ur9rX34ftF4jyF1fAa18JrWrA3yI
-	qFy2kr13Z3W3C3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	SdkUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZV6buHrQy2+CJ7xX@debian-scheme>
 
-From: Zhang Yi <yi.zhang@huawei.com>
+> > +	if (!vgpu->msi_trigger)
+> > +		return;
+> > +	eventfd_signal(vgpu->msi_trigger, 1);
+> >  }
+> 
+> I think it's a little simpler to write as
+>     if (vgpu->msi_trigger)
+>             eventfd_signal(vgpu->msi_trigger, 1);
 
-After switching to use iomap for regular file in the default mode, we
-can enable large foilo for it together, that could bring a lot of
-performance gains.
-
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ialloc.c | 4 +++-
- fs/ext4/inode.c  | 4 +++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 0aae2810dbf6..a72c7167c33f 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1336,8 +1336,10 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
- 		}
- 	}
- 
--	if (ext4_should_use_buffered_iomap(inode))
-+	if (ext4_should_use_buffered_iomap(inode)) {
- 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
-+		mapping_set_large_folios(inode->i_mapping);
-+	}
- 
- 	if (ext4_handle_valid(handle)) {
- 		ei->i_sync_tid = handle->h_transaction->t_tid;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 33920dc461a8..f8801d3378e3 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5477,8 +5477,10 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 	if (ret)
- 		goto bad_inode;
- 
--	if (ext4_should_use_buffered_iomap(inode))
-+	if (ext4_should_use_buffered_iomap(inode)) {
- 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
-+		mapping_set_large_folios(inode->i_mapping);
-+	}
- 
- 	if (S_ISREG(inode->i_mode)) {
- 		inode->i_op = &ext4_file_inode_operations;
--- 
-2.39.2
-
+Good point. I folded that suggestion into the patch.
 
