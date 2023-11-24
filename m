@@ -1,167 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-3781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29E17F850C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4FB7F8519
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89CB228A788
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4F028A115
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234823BB20;
-	Fri, 24 Nov 2023 20:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B4E3BB26;
+	Fri, 24 Nov 2023 20:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqBMYlOn"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fii3w53d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C57CB10F0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 12:04:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700856291; x=1732392291;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=6YrsduC7BxSi8XqGqziZewRNjlyKnLey0YuZmFxTuxQ=;
-  b=dqBMYlOnx2+7IQ6Ai84Oij9tO4zIFWROsELtAYGq2HWGziGwuCM5TZL5
-   kk1hvI4Gt+7xVsEyi/jtRTuz/sGf0CUKRQeiqs3ZlTuHi8t0p7MTHAmYa
-   Zk9i/t3aniutrhlr1ZdvRdySL9qiAvmslvVQHP0G0R/UltyxMXbTqZ9MI
-   Ks2PDG+kBLkadmLs04VSWnZ5dZMlQtPYhm8Lvyek102p9rLKZGDWDnGIi
-   gFQ5AA/clC5+gg1fSKlPwBe/1Rf8piNRaAcEHfCt+7w8nIFIuyKdd8OwZ
-   9AcoYkKH/XymmqM7jn8Z3d8M76TMj5atAmXPr0/K35+B77zFtMPR22zsl
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="5691027"
-X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
-   d="scan'208";a="5691027"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 12:04:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
-   d="scan'208";a="9219872"
-Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 24 Nov 2023 12:04:49 -0800
-Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r6cPu-0003F6-2o;
-	Fri, 24 Nov 2023 20:04:46 +0000
-Date: Sat, 25 Nov 2023 04:04:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.csum-x86 4/18] net/core/datagram.c:754:23: sparse:
- sparse: incorrect type in argument 1 (different base types)
-Message-ID: <202311250254.UC1kAFDI-lkp@intel.com>
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4411C10F0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 12:12:41 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-54acdd65c88so1701525a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 12:12:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1700856759; x=1701461559; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCf2e1EXSjwPuuSKzIrJH5yWdmYJqYZ2ahdEqbl+dh8=;
+        b=fii3w53dj5vUs+qziU2lhHlCCT8x42om3PueoXKw2Ih+1en2VjHXlEoncpujII/8JL
+         kfa0KjPyDOBg1FRrcimzvokWUkzcjKv7z4OLo8O0VjdNwY32DsYgFMiQEh+VgKLKSSaM
+         wIxE1wGG0V+VG4WQGDGpxGDtNzH9a2C7IgNnY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700856759; x=1701461559;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TCf2e1EXSjwPuuSKzIrJH5yWdmYJqYZ2ahdEqbl+dh8=;
+        b=Af5C3n9TyTlfVVV8qzLm0zAwNstWs6P57m413i9ZQTVr/3/93ggLMl6gYa2cb4tbQh
+         UC3ck+OoKtr6PoJIWLDyQlEmEEtxP01i4oZwIgSx+jVgb8YA8jvpd0AdR/qTKSa5JRd3
+         LZF4I2laYAikD0VYmFydQtrI3keYn81NcazAxq7rXH7eYjKJWWOEuyMvvGeBBTYan2Mr
+         e7JjBvWoWDl7rK2Ys7C4mYrWDJOn3A/xQxxcG7Mekwqo1VvZ3FxOHIZACobOMwVHRA2f
+         DOVZ0czAoG3GJ6dAdle3JrvvxzWlKq9H5saCFexX20qvsTDkmT75IiltB/UtTsdPsu7E
+         GlpA==
+X-Gm-Message-State: AOJu0YxBEfP3HAOpH+HKY9wnWWO+dVOy4GtvL90mamsMgFEY7v0eI28s
+	6IQdojGP+Jnut7BCVbFrvih3y3A8xpTQ7rz6PYqglF0Y
+X-Google-Smtp-Source: AGHT+IFZswSwR5FFV9OK+RWS7Z6Bv6y/yaN4knBrmp7b7rY9AB/gbphO0yAyYtBtUpN7jqEuOTxnoQ==
+X-Received: by 2002:a05:6402:6c2:b0:54b:1361:700 with SMTP id n2-20020a05640206c200b0054b13610700mr772347edy.29.1700856759521;
+        Fri, 24 Nov 2023 12:12:39 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id e12-20020a50fb8c000000b0053e88c4d004sm2079102edq.66.2023.11.24.12.12.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Nov 2023 12:12:38 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a00191363c1so340666166b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 12:12:38 -0800 (PST)
+X-Received: by 2002:a17:906:a1c8:b0:9a1:891b:6eed with SMTP id
+ bx8-20020a170906a1c800b009a1891b6eedmr3423738ejb.76.1700856758205; Fri, 24
+ Nov 2023 12:12:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231124-vfs-fixes-3420a81c0abe@brauner> <CAHk-=wiJFsu70BqrgxtoAfMHeJVJMfsWzQ42PXFduGNhFSVGDA@mail.gmail.com>
+ <CAHk-=wg0oDAKb6Qip-KtA5iFViy6EPWHt2DfCcG8LCXTb7i00w@mail.gmail.com>
+In-Reply-To: <CAHk-=wg0oDAKb6Qip-KtA5iFViy6EPWHt2DfCcG8LCXTb7i00w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 24 Nov 2023 12:12:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjCS30Mqy9b=op2f=ir9iPQfQ2Efjo1b8yMeJrXcWTtWA@mail.gmail.com>
+Message-ID: <CAHk-=wjCS30Mqy9b=op2f=ir9iPQfQ2Efjo1b8yMeJrXcWTtWA@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs fixes
+To: Christian Brauner <brauner@kernel.org>, Omar Sandoval <osandov@fb.com>, 
+	David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.csum-x86
-head:   f6c1313680f1d2319d2061c63abeb76f820319b8
-commit: 90c2bfd06916ac7c05129b36683bfd3424d8e0e4 [4/18] Fix the csum_and_copy_..._user() idiocy
-config: powerpc64-randconfig-r121-20231124 (https://download.01.org/0day-ci/archive/20231125/202311250254.UC1kAFDI-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20231125/202311250254.UC1kAFDI-lkp@intel.com/reproduce)
+On Fri, 24 Nov 2023 at 10:52, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Gaah. I guess it's the VM_IOREMAP case that is the cause of all this horridness.
+>
+> So we'd have to know not to mess with IO mappings. Annoying.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311250254.UC1kAFDI-lkp@intel.com/
+Doing a debian code search, I see a number of programs that do a
+"stat()" on the kcore file, to get some notion of "system memory
+size". I don't think it's valid, but whatever. We probably shouldn't
+change it.
 
-sparse warnings: (new ones prefixed by >>)
-   net/core/datagram.c:745:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
-   net/core/datagram.c:745:55: sparse:     expected restricted __wsum [usertype] v
-   net/core/datagram.c:745:55: sparse:     got restricted __wsum_fault [usertype] next
-   net/core/datagram.c:745:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
-   net/core/datagram.c:745:54: sparse:     expected restricted __wsum [usertype] csum2
-   net/core/datagram.c:745:54: sparse:     got restricted __wsum_fault
->> net/core/datagram.c:754:23: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault @@
-   net/core/datagram.c:754:23: sparse:     expected restricted __wsum [usertype] v
-   net/core/datagram.c:754:23: sparse:     got restricted __wsum_fault
->> net/core/datagram.c:754:23: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __wsum [usertype] next @@     got restricted __wsum_fault @@
-   net/core/datagram.c:754:23: sparse:     expected restricted __wsum [usertype] next
-   net/core/datagram.c:754:23: sparse:     got restricted __wsum_fault
-   net/core/datagram.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
---
->> net/core/skbuff.c:3385:24: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:3385:24: sparse:     expected restricted __wsum [usertype] v
-   net/core/skbuff.c:3385:24: sparse:     got restricted __wsum_fault
->> net/core/skbuff.c:3385:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __wsum [usertype] csum @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:3385:22: sparse:     expected restricted __wsum [usertype] csum
-   net/core/skbuff.c:3385:22: sparse:     got restricted __wsum_fault
-   net/core/skbuff.c:3414:41: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:3414:41: sparse:     expected restricted __wsum [usertype] v
-   net/core/skbuff.c:3414:41: sparse:     got restricted __wsum_fault
->> net/core/skbuff.c:3414:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:3414:39: sparse:     expected restricted __wsum [usertype] csum2
-   net/core/skbuff.c:3414:39: sparse:     got restricted __wsum_fault
-   net/core/skbuff.c:6971:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
-   net/core/skbuff.c:6971:55: sparse:     expected restricted __wsum [usertype] v
-   net/core/skbuff.c:6971:55: sparse:     got restricted __wsum_fault [usertype] next
-   net/core/skbuff.c:6971:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:6971:54: sparse:     expected restricted __wsum [usertype] csum2
-   net/core/skbuff.c:6971:54: sparse:     got restricted __wsum_fault
-   net/core/skbuff.c:6958:23: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:6958:23: sparse:     expected restricted __wsum [usertype] v
-   net/core/skbuff.c:6958:23: sparse:     got restricted __wsum_fault
->> net/core/skbuff.c:6958:23: sparse: sparse: incorrect type in initializer (different base types) @@     expected restricted __wsum [usertype] next @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:6958:23: sparse:     expected restricted __wsum [usertype] next
-   net/core/skbuff.c:6958:23: sparse:     got restricted __wsum_fault
-   net/core/skbuff.c: note: in included file (through include/net/net_namespace.h, include/linux/inet.h):
-   include/linux/skbuff.h:2703:28: sparse: sparse: self-comparison always evaluates to false
-   net/core/skbuff.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
---
-   drivers/net/ethernet/3com/typhoon.c:769:21: sparse: sparse: restricted __be16 degrades to integer
->> drivers/net/ethernet/3com/typhoon.c:1418:42: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault @@
-   drivers/net/ethernet/3com/typhoon.c:1418:42: sparse:     expected restricted __wsum [usertype] v
-   drivers/net/ethernet/3com/typhoon.c:1418:42: sparse:     got restricted __wsum_fault
->> drivers/net/ethernet/3com/typhoon.c:1418:42: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] sum @@     got restricted __wsum_fault @@
-   drivers/net/ethernet/3com/typhoon.c:1418:42: sparse:     expected restricted __wsum [usertype] sum
-   drivers/net/ethernet/3com/typhoon.c:1418:42: sparse:     got restricted __wsum_fault
-   drivers/net/ethernet/3com/typhoon.c:525:39: sparse: sparse: context imbalance in 'typhoon_process_response' - different lock contexts for basic block
-   drivers/net/ethernet/3com/typhoon.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/netdevice.h):
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
+I also see some programs that actually read the ELF notes and sections
+for dumping purposes.
 
-vim +754 net/core/datagram.c
+But does anybody actually run gdb on that thing or similar? That's the
+original model for that file, but it was always more of a gimmick than
+anything else.
 
-6d0d419914286a David Howells 2023-09-25  748  
-6d0d419914286a David Howells 2023-09-25  749  static __always_inline
-6d0d419914286a David Howells 2023-09-25  750  size_t memcpy_to_iter_csum(void *iter_to, size_t progress,
-6d0d419914286a David Howells 2023-09-25  751  			   size_t len, void *from, void *priv2)
-6d0d419914286a David Howells 2023-09-25  752  {
-6d0d419914286a David Howells 2023-09-25  753  	__wsum *csum = priv2;
-dc32bff195b45e David Howells 2023-09-25 @754  	__wsum next = csum_partial_copy_nocheck(from, iter_to, len);
-6d0d419914286a David Howells 2023-09-25  755  
-dc32bff195b45e David Howells 2023-09-25  756  	*csum = csum_block_add(*csum, next, progress);
-6d0d419914286a David Howells 2023-09-25  757  	return 0;
-6d0d419914286a David Howells 2023-09-25  758  }
-6d0d419914286a David Howells 2023-09-25  759  
+Because we could just say "read zeroes from KCORE_VMALLOC" and be done
+with it that way.
 
-:::::: The code at line 754 was first introduced by commit
-:::::: dc32bff195b45e8571c442954beee259e9500dac iov_iter, net: Fold in csum_and_memcpy()
-
-:::::: TO: David Howells <dhowells@redhat.com>
-:::::: CC: Christian Brauner <brauner@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+                  Linus
 
