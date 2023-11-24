@@ -1,95 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-3657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA727F6E06
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 09:24:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE277F6E0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 09:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CE0281733
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 08:24:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5881C20E91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 08:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A71FBE62;
-	Fri, 24 Nov 2023 08:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7EDBA38;
+	Fri, 24 Nov 2023 08:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPGk9fnQ"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QSjuy2Ja"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740249471;
-	Fri, 24 Nov 2023 08:24:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BA6C433C7;
-	Fri, 24 Nov 2023 08:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700814281;
-	bh=pLRUlHYGVhu8BUklUaIDxuuBipDIZz/0vTGfjdNnKY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EPGk9fnQWWWRuEpyadDVK4qAcVhv/V38KizImZG/s36KWYsaNDoov9umKYVz9DD9h
-	 YrvwomQIlxnAlkv5Srf5v+SuUrIlyyeMM/bMDiQuI/lLc2rFHFXJ2dwFVU/gNXdBqp
-	 +ElGRS8CX4k5mBYCIs+sfFLbd9RrsFmA4Eq7E/odbkYQ3Bdyr+2u+sFp4OlFTE5GGc
-	 6WD4TdUnwjFRjWX9vT2RtwG+N9e0wQZXZoDB2F+UxmV//f7hMRQq4wr0xv18fI7SuX
-	 ac0O4/9k1ubvOR7EHwi7D2bEcevZ3c2LUDMU76xGFie80pF6BPp9b+ZA1YL9iTP/Xu
-	 clMAQx+ySSAjg==
-Date: Fri, 24 Nov 2023 09:24:35 +0100
-From: Christian Brauner <brauner@kernel.org>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F872D4E;
+	Fri, 24 Nov 2023 00:26:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uhBeOG3BwxHguj8NUhTFptKTzBfCf52z03Q5KQI6/Yk=; b=QSjuy2JaUJAi9EVLEXkdfE5exB
+	qFOicfr8A1FnSrLlNaZbymorl5K9KNPaNcVl4vhZ83q43ie8/lm0udu9eeTqp1TKczxzpllNsEMWh
+	Xp3ZYqsIUpBAeM+jF4tIBG6E1WeSNqrg0jxj7yvxM7H9AAdzdFTsdKnE09er1q+z9kXU7QfkBtj5f
+	i7pIXeSM7GySx14bsx34LD/JowUZljXeePfEjMYHw07YQYTUqQuWTo8tbxgNknLe1Z6dkFxiLcefx
+	LO/jO6p08zjasUAApsTwP+8BV6IxF1B9BAdEwg9+HYp127ZMpyn/naiUWsAnY8PgtFVVd+vCKaCMr
+	ImZrE16A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r6RW1-002SmS-27;
+	Fri, 24 Nov 2023 08:26:21 +0000
+Date: Fri, 24 Nov 2023 08:26:21 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Howells <dhowells@redhat.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-	linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-	stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] scsi: target: core: add missing file_{start,end}_write()
-Message-ID: <20231124-zanken-ammoniak-0d5a19006645@brauner>
-References: <20231123092000.2665902-1-amir73il@gmail.com>
- <2f3bf38b-a803-43e5-a9b9-54a88f837125@kernel.dk>
- <CAOQ4uxj6BBSgGKWQn=2ocsL_rd-PbjPAiK2w9rsqnxpNamxr9g@mail.gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/20] [software coproarchaeology] dentry.h: kill a
+ mysterious comment
+Message-ID: <20231124082621.GW38156@ZenIV>
+References: <20231124060553.GA575483@ZenIV>
+ <20231124060644.576611-1-viro@zeniv.linux.org.uk>
+ <20231124060644.576611-9-viro@zeniv.linux.org.uk>
+ <CAOQ4uxgRiQCG_Q5TP+05_N4V=iFTemzGTd62ePgAgotK52EAAQ@mail.gmail.com>
+ <20231124081141.GV38156@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj6BBSgGKWQn=2ocsL_rd-PbjPAiK2w9rsqnxpNamxr9g@mail.gmail.com>
+In-Reply-To: <20231124081141.GV38156@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Nov 24, 2023 at 09:54:49AM +0200, Amir Goldstein wrote:
-> On Thu, Nov 23, 2023 at 10:04 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >
-> > On 11/23/23 2:20 AM, Amir Goldstein wrote:
-> > > The callers of vfs_iter_write() are required to hold file_start_write().
-> > > file_start_write() is a no-op for the S_ISBLK() case, but it is really
-> > > needed when the backing file is a regular file.
-> > >
-> > > We are going to move file_{start,end}_write() into vfs_iter_write(), but
-> > > we need to fix this first, so that the fix could be backported to stable
-> > > kernels.
-> >
-> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
-> >
+On Fri, Nov 24, 2023 at 08:11:41AM +0000, Al Viro wrote:
+> On Fri, Nov 24, 2023 at 09:37:16AM +0200, Amir Goldstein wrote:
 > 
-> Christian,
+> > Since you like pre-git archeology...
+> > 
+> > Mind digging up what this comment in fs.h is about:
+> > 
+> > /* needed for stackable file system support */
+> > extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
 > 
-> Shall we just stash this at the bottom of vfs.rw and fixup
-> "move file_{start,end}_write() into vfs_iter_write()" patch?
-
-Ok.
-
+> Umm...  I think it was about ecryptfs and its ilk, but it was a long
+> time ago...
 > 
-> I see no strong reason to expedite a fix for something rare
-> that has been broken for a long time.
-
-Agreed.
-
+> <looks>
 > 
-> If Martin decides to expedite it, we can alway rebase vfs.rw
-> once the fix is merged to master.
+> 2.3.99pre6, along with exporting it:
+> -/* for stackable file systems (lofs, wrapfs, etc.) */
+> -EXPORT_SYMBOL(add_to_page_cache);
+> +/* for stackable file systems (lofs, wrapfs, cryptfs, etc.) */
+> +EXPORT_SYMBOL(default_llseek);
+> +EXPORT_SYMBOL(dentry_open);
+> 
+> Back then ->llseek == NULL used to mean default_llseek; that had
+> been changed much later.  And that was before vfs_llseek() as well,
+> so any layered filesystem had to open-code it - which required
+> default_llseek().
+> 
+> The comment is certainly stale, though - stackable filesystems do *not*
+> need it (vfs_llseek() is there), but every file_operation that used
+> to have NULL ->llseek does.
+> 
+> > Or we can just remove it without digging up what the comment used
+> > to refer to ;)
+> 
+> Too late - it will have to be removed with that ;-)
 
-It's now the first commit on that branch. Let me know if I should drop it.
+BTW, there's this, covering more than just BK times:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
 
