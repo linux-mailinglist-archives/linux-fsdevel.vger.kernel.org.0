@@ -1,68 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-3640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2E37F6C32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:15:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E14DA7F6C59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA199280FBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 981411F20F23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3812B7465;
-	Fri, 24 Nov 2023 06:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B54A95E;
+	Fri, 24 Nov 2023 06:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="RLknA5n6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfdjMt9u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C09EAD6F;
-	Thu, 23 Nov 2023 22:15:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iitzqEcqy2/NvHpJVilvHrDiSq6ioct471RtcAQWPEc=; b=RLknA5n6GG7PuJuFB/06MrnTp5
-	K9hmIcs/BPIcg4G6vog2iZx2aNKOQgUTSGSbk0pcleHaJ7d7t/7B5FRcyRHynMjvzWTKe2i6JdEOm
-	9IqomBGGvJA89OOvgrEimkS/GYCWd0ORsUE2+HZLzeJYWxZQXhgCz3D8XDcjSK0kD2e467a/3p8S1
-	00+I2xUzkUGIcW+OI38iiIT1ibkJjuM3mLvbkBJ2Zxr3I0tZATM5y1V3g/cIsOfIJuJigZ74Taj6y
-	c4fV3B8tsVQVt1dLi76J0NmYEEl3gG6PZTIK06g7Z6IizA2nQIjxkjxghs/feEyc7FtZbP/KdANep
-	vO2vZqqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r6PTC-002QBO-37;
-	Fri, 24 Nov 2023 06:15:19 +0000
-Date: Fri, 24 Nov 2023 06:15:18 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mo Zou <lostzoumo@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] rename(): avoid a deadlock in the case of parents
- having no common ancestor
-Message-ID: <20231124061518.GS38156@ZenIV>
-References: <20231122193028.GE38156@ZenIV>
- <20231122193652.419091-1-viro@zeniv.linux.org.uk>
- <20231122193652.419091-9-viro@zeniv.linux.org.uk>
- <20231123103622.4mfjwrmxr4tl53hi@quack3>
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FB2AB0;
+	Thu, 23 Nov 2023 22:36:12 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-548696eac92so2062954a12.3;
+        Thu, 23 Nov 2023 22:36:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700807770; x=1701412570; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VEd0FiGVy5VmF1ZrlmZcok7cqApIhcHDIftpbUYcko0=;
+        b=EfdjMt9uuWtiW7IEaLNngRCDkaoZCEwcfstetKbQsGrJb9hkO28g9BiTdwqn0n9Hxl
+         15/hlyKPzvC/IfAnK00P5MOw7EuuxvVHbEE8KVBHDFMRqWlfse7a2YUUm+iqP5dxk4M6
+         c8Cj0+L0KoflauVKeKXAQJ+cPlKpifdn+7wyQQR+i85UNrUAyIpx+p5WHwJ/MclMsxLL
+         2NyFx7XFdpcNlhvGoWcmMkDhTuuEfMrwy0ZNAtasaBALK66O9M8uyAS2cwSesu+fEHUn
+         fHqROuJoGQIe8ISexAo3tX+BlJsCwkWq9JI0wW1sdYrUwhEv3klCAeBgGJMGokpL4ANM
+         nsjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700807770; x=1701412570;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEd0FiGVy5VmF1ZrlmZcok7cqApIhcHDIftpbUYcko0=;
+        b=Bmb7aGXLQC7f+iK27UNyK/3lgQJiF4HFEgbApA3XcaJKiY9OwNAazlAWqPhE0Xdhjj
+         uwAAuYVfJugdXwugDqAePFSbAdcy0CLnp1J+em7t8/cwqwwlj7K2t07vIsV4HdA81DnN
+         q4iuCCv4cqQDivSLyobS77JuxQ0y96Qqbrc27i2pFdPMFcYTFSNi02F/WKf5c4MJ6QON
+         fI/QZ1cZAwbLRJ1wWD7f0Hb8OVm2rt3Vc8tN/O2DltgIzRxFkAayBtk5TpJUYBjlLEpt
+         xQCwYeGyJyXBNldoQNize7HnTVDSoaXhP3fb3jdUYekK/FGkPUcrP9/9a9Rw4gxmCr1V
+         HtRQ==
+X-Gm-Message-State: AOJu0YxVp/HO3oWP1eLG5SxG3y55AscZ+HvgUnTOVZg2TcT0ga4oxYpi
+	g5s0ojNv52xEIMn3x0pPwZ7ZZA+435UgtJuIKRJcxXOCKDI=
+X-Google-Smtp-Source: AGHT+IH6iWRv195qNazMTDd6j0f6sJgF97e7g/dgDK5e0EOnFVkxS7bWoTLgAO2i4siw6TUUEqKix9mMqW3w6lGzDts=
+X-Received: by 2002:a50:9e49:0:b0:547:6663:a164 with SMTP id
+ z67-20020a509e49000000b005476663a164mr821557ede.40.1700807770436; Thu, 23 Nov
+ 2023 22:36:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231123103622.4mfjwrmxr4tl53hi@quack3>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20231124060553.GA575483@ZenIV> <20231124060644.576611-1-viro@zeniv.linux.org.uk>
+ <20231124060644.576611-15-viro@zeniv.linux.org.uk>
+In-Reply-To: <20231124060644.576611-15-viro@zeniv.linux.org.uk>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Fri, 24 Nov 2023 07:35:34 +0100
+Message-ID: <CALXu0UcCGjyM6hFfdjG1eHJcmeR=9BVSaq7Vj9rtvKxb9szJdQ@mail.gmail.com>
+Subject: d_genocide()? What about d_holodomor(), d_massmurder(),
+ d_execute_warcrimes()? Re: [PATCH 15/20] d_genocide(): move the extern into fs/internal.h
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 23, 2023 at 11:36:22AM +0100, Jan Kara wrote:
+On Fri, 24 Nov 2023 at 07:08, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/internal.h          | 1 +
+>  include/linux/dcache.h | 3 ---
+>  2 files changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 9e9fc629f935..d9a920e2636e 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -219,6 +219,7 @@ extern void shrink_dcache_for_umount(struct super_block *);
+>  extern struct dentry *__d_lookup(const struct dentry *, const struct qstr *);
+>  extern struct dentry *__d_lookup_rcu(const struct dentry *parent,
+>                                 const struct qstr *name, unsigned *seq);
+> +extern void d_genocide(struct dentry *);
 
-> It would look more natural to me if s_vfs_rename_mutex got dropped in the
-> callers (lock_rename(), lock_rename_child()) which have acquired the lock
-> instead of here. I agree it results in a bit more boiler plate code though.
+Seriously, who came up with THAT name? "Genocide" is not a nice term,
+not even if you ignore political correctness.
+Or what will be next? d_holodomor()? d_massmurder()? d_execute_warcrimes()?
 
-finish_locking_two_parents(), perhaps? ;-)
+Ced
 
-Seriously, though - it starts with ->s_vfs_rename_mutex and ends with
-the environment for vfs_rename() or with all locks dropped.
+>
+>  /*
+>   * pipe.c
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index 8c5e3bdf1147..b4324d47f249 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -243,9 +243,6 @@ extern void d_invalidate(struct dentry *);
+>  /* only used at mount-time */
+>  extern struct dentry * d_make_root(struct inode *);
+>
+> -/* <clickety>-<click> the ramfs-type tree */
+> -extern void d_genocide(struct dentry *);
+> -
+>  extern void d_mark_tmpfile(struct file *, struct inode *);
+>  extern void d_tmpfile(struct file *, struct inode *);
+>
+> --
+> 2.39.2
+>
+>
+
+
+--
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
