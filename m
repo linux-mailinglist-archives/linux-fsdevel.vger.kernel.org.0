@@ -1,88 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-3684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F507F7858
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:54:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD98D7F7877
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7ECB213F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2FB1C20D40
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA8431759;
-	Fri, 24 Nov 2023 15:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD6333CC4;
+	Fri, 24 Nov 2023 16:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WMwF5Kzh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPTG2Rvj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A1371B5
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:53:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700841233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p6KID36QJgaLKX8qd4kBeMGTdnpd7Zl3i2+K28yL5TI=;
-	b=WMwF5KzhpLkfJL7eKT7swOGLnYMjWRdBBMmUOh6ygRWwtNRbjEI8G+36M/AlT6XNu0U59Q
-	pKH9tMpRxDmvrKZ4N89MR1MulWS2xozUU8S3+aZcebJ1X6LGPVbb02RNd3p9rsF2iByoDp
-	a5XAj6TcqXlz593IFLKHNpROqVPH6ew=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-16V90mzhNPKi9sxTe4Uqvw-1; Fri, 24 Nov 2023 10:53:50 -0500
-X-MC-Unique: 16V90mzhNPKi9sxTe4Uqvw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C4E6A821938;
-	Fri, 24 Nov 2023 15:53:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 85D5340C6EBB;
-	Fri, 24 Nov 2023 15:53:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20231124150822.2121798-1-jannh@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A2C33098
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 16:02:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF82C433C7;
+	Fri, 24 Nov 2023 16:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700841726;
+	bh=margAB1FzEUm28u+SgniGfAuXbnIN6dTK7wX7ICYgeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rPTG2RvjkMuXUNhYhCCpRkG9RWlYusNzNY8XVGNsFSwmwojcfr807/m/8S1bsnSL3
+	 RS87G+2bFn/fJXYKzCSGpYaqm56tO+XtMYAoe0Mpur3NGPNMMo6rwxsEFbQ1KKNC7j
+	 wOYT5+m+P1LFDRfeUDcax3hvJQzZR4dXyrXlMfjrnfEHSbEajqd2fTCpCCcnQYSgCB
+	 OwjMNCiCQKmkCleo77Z2TJXIHLZ5ADqSqPU/4o6OlaPOMkeYShs7bIq9AIgv3ACpW4
+	 MG83wjLWH/KRYQCA+JmD6cLfisi16jk7pCNDbuUFglJXvsrSKrmO3z5Y6IWppJdbKN
+	 aFAPCO4rEbksw==
+Date: Fri, 24 Nov 2023 17:02:02 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jann Horn <jannh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fs/pipe: Fix lockdep false-positive in watchqueue
+ pipe_write()
+Message-ID: <20231124-gearbeitet-unberechenbar-70241992a995@brauner>
 References: <20231124150822.2121798-1-jannh@google.com>
-To: Jann Horn <jannh@google.com>
-Cc: dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fs/pipe: Fix lockdep false-positive in watchqueue pipe_write()
+ <1210483.1700841227@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1210482.1700841227.1@warthog.procyon.org.uk>
-Date: Fri, 24 Nov 2023 15:53:47 +0000
-Message-ID: <1210483.1700841227@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1210483.1700841227@warthog.procyon.org.uk>
 
-Jann Horn <jannh@google.com> wrote:
+On Fri, Nov 24, 2023 at 03:53:47PM +0000, David Howells wrote:
+> Jann Horn <jannh@google.com> wrote:
+> 
+> > +	/*
+> > +	 * Reject writing to watch queue pipes before the point where we lock
+> > +	 * the pipe.
+> > +	 * Otherwise, lockdep would be unhappy if the caller already has another
+> > +	 * pipe locked.
+> > +	 * If we had to support locking a normal pipe and a notification pipe at
+> > +	 * the same time, we could set up lockdep annotations for that, but
+> > +	 * since we don't actually need that, it's simpler to just bail here.
+> > +	 */
+> > +	if (pipe_has_watch_queue(pipe))
+> > +		return -EXDEV;
+> > +
+> 
+> Linus wanted it to be possible for the user to write to a notificaiton pipe.
 
-> +	/*
-> +	 * Reject writing to watch queue pipes before the point where we lock
-> +	 * the pipe.
-> +	 * Otherwise, lockdep would be unhappy if the caller already has another
-> +	 * pipe locked.
-> +	 * If we had to support locking a normal pipe and a notification pipe at
-> +	 * the same time, we could set up lockdep annotations for that, but
-> +	 * since we don't actually need that, it's simpler to just bail here.
-> +	 */
-> +	if (pipe_has_watch_queue(pipe))
-> +		return -EXDEV;
-> +
-
-Linus wanted it to be possible for the user to write to a notificaiton pipe.
-
-David
-
+Since it has been disabled from the start and nothing has ever actually
+materialized we just don't need to care. If we start caring this needs
+more work anyway iirc.
 
