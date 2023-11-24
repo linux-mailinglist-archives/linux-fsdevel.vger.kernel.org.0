@@ -1,162 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-3727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F8E7F7983
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:40:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50CFF7F79A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D9B1C20FC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DBC91C20D88
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB56364A5;
-	Fri, 24 Nov 2023 16:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3235834186;
+	Fri, 24 Nov 2023 16:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mGN39DXq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dVt0mTA/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B516B1FC6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 08:39:37 -0800 (PST)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700843975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3H2EngB4IC7J9sBiro1fbNUKQKRJyLxYEzCizNHIL5o=;
-	b=mGN39DXq4SgDm8jtg/clJ70sX/mHBpPI6KT3KlLWh/qAVEU0LxE9gfefLsntV2VzlDHlZs
-	OoohQ0F3izzGlI/E+Ar5n5s16PjcSzURaqyF72QsRRD7xKnJM9z83fL65uGa+LO5X5POrU
-	gXiSXTTKbIdnGK6p3S1Wf2b1V41zG/0=
-From: Sergei Shtepa <sergei.shtepa@linux.dev>
-To: axboe@kernel.dk,
-	hch@infradead.org,
-	corbet@lwn.net,
-	snitzer@kernel.org
-Cc: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Sergei Shtepa <sergei.shtepa@veeam.com>
-Subject: [PATCH v6 10/11] blksnap: Kconfig and Makefile
-Date: Fri, 24 Nov 2023 17:38:35 +0100
-Message-Id: <20231124163836.27256-11-sergei.shtepa@linux.dev>
-In-Reply-To: <20231124163836.27256-1-sergei.shtepa@linux.dev>
-References: <20231124163836.27256-1-sergei.shtepa@linux.dev>
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F304E1733;
+	Fri, 24 Nov 2023 08:47:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700844437; x=1732380437;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sT2XVFcBH/DcAfOKfdIHo1zJ81GhWWUwC7YdVboVPM8=;
+  b=dVt0mTA/UNxvyFN45tacqikO3xleilFxRS8x9m+YNBTBo0HsyragullG
+   veySFUwhZhdtBrpCLeYURnoVXJrHETALpXHgn9oz2nw1tEYgpaJZMOcw2
+   uhgsVI8x1MDZy4y7wr4ZaBNqebPHfrdY3OmCTpzWw8SEqhmKN5O8508jb
+   +/IWAFXldX1pY7pQxmEhh96FNyejmr1sHUQ9Z2T6cRFmkHQjKnd8ac8ZN
+   pHUkHfg1HrUaLcFSouoY53lUf8kygwtVH960DR0G9EdMp0ExyNhGvRzzh
+   E56Lls3ulTY2NRqjRllnvWmpdxpc4zOagGWnUlvqXs+BlbWSODkpgFkqX
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="423583743"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="423583743"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 08:47:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="771302257"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="771302257"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 08:47:16 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1r6ZKk-0000000GmKc-1K72;
+	Fri, 24 Nov 2023 18:47:14 +0200
+Date: Fri, 24 Nov 2023 18:47:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [GIT PULL] ext2, quota, and udf fixes for 6.6-rc1
+Message-ID: <ZWDTkmQZ7uojegiS@smile.fi.intel.com>
+References: <20230830102434.xnlh66omhs6ninet@quack3>
+ <ZS5hhpG97QSvgYPf@smile.fi.intel.com>
+ <9ba95b5e-72cb-445a-99b7-54dad4dab148@leemhuis.info>
+ <5884527d-a4a2-44e2-96bc-4b300c9e2fb8@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5884527d-a4a2-44e2-96bc-4b300c9e2fb8@leemhuis.info>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Sergei Shtepa <sergei.shtepa@veeam.com>
+On Wed, Nov 22, 2023 at 09:15:06AM +0100, Linux regression tracking #update (Thorsten Leemhuis) wrote:
+> On 22.10.23 15:46, Linux regression tracking #adding (Thorsten Leemhuis)
+> wrote:
+> > On 17.10.23 12:27, Andy Shevchenko wrote:
+> >> On Wed, Aug 30, 2023 at 12:24:34PM +0200, Jan Kara wrote:
+> >>>   Hello Linus,
+> >>>
+> >>>   could you please pull from
+> >>>
+> >>> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v6.6-rc1
+> >>
+> >> This merge commit (?) broke boot on Intel Merrifield.
+> >> It has earlycon enabled and only what I got is watchdog
+> >> trigger without a bit of information printed out.
+> >>
+> >> I tried to give a two bisects with the same result.
+> > 
+> > #regzbot ^introduced 024128477809f8
+> > #regzbot title quota: boot on Intel Merrifield after merge commit
+> > 1500e7e0726e
+> > #regzbot ignore-activity
+> 
+> Removing this from the tracking. To quote Linus from
+> https://lore.kernel.org/all/CAHk-=wgEHNFHpcvnp2X6-fjBngrhPYO=oHAR905Q_qk-njV31A@mail.gmail.com/
+> 
+> """
+> The quota thing remains unexplained, and honestly seems like a timing
+> issue that just happens to hit Andy. Very strange, but I suspect that
+> without more reports (that may or may not ever happen), we're stuck.
+> """
+> 
+> No other reports showed up afaik.
 
-Allows to build a module and add the blksnap to the kernel tree.
+Yeah, have no time to dig into this more... Maybe later, who knows?
 
-Co-developed-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
----
- drivers/block/Kconfig          |  2 ++
- drivers/block/Makefile         |  2 ++
- drivers/block/blksnap/Kconfig  | 31 +++++++++++++++++++++++++++++++
- drivers/block/blksnap/Makefile | 15 +++++++++++++++
- 4 files changed, 50 insertions(+)
- create mode 100644 drivers/block/blksnap/Kconfig
- create mode 100644 drivers/block/blksnap/Makefile
-
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index 5b9d4aaebb81..74d2d55526a3 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -404,4 +404,6 @@ config BLKDEV_UBLK_LEGACY_OPCODES
- 
- source "drivers/block/rnbd/Kconfig"
- 
-+source "drivers/block/blksnap/Kconfig"
-+
- endif # BLK_DEV
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index 101612cba303..9a2a9a56a247 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -40,3 +40,5 @@ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk/
- obj-$(CONFIG_BLK_DEV_UBLK)			+= ublk_drv.o
- 
- swim_mod-y	:= swim.o swim_asm.o
-+
-+obj-$(CONFIG_BLKSNAP) += blksnap/
-diff --git a/drivers/block/blksnap/Kconfig b/drivers/block/blksnap/Kconfig
-new file mode 100644
-index 000000000000..f52272c12e1b
---- /dev/null
-+++ b/drivers/block/blksnap/Kconfig
-@@ -0,0 +1,31 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Block device snapshot module configuration
-+#
-+
-+config BLKSNAP
-+	tristate "Block Devices Snapshots Module (blksnap)"
-+	help
-+	  Allow to create snapshots and track block changes for block devices.
-+	  Designed for creating backups for block devices. Snapshots are
-+	  temporary and are released when backup is completed. Change block
-+	  tracking allows to create incremental or differential backups.
-+
-+config BLKSNAP_DIFF_BLKDEV
-+	bool "Use an optimized algorithm to store difference on a block device"
-+	depends on BLKSNAP
-+	default y
-+	help
-+	  The difference storage for a snapshot can be a regular file or a
-+	  block device. We can work with a block device through the interface
-+	  of a regular file. However, direct management of I/O units should
-+	  allow for higher performance.
-+
-+config BLKSNAP_CHUNK_DIFF_BIO_SYNC
-+	bool "Use a synchronous I/O unit processing algorithm for the snapshot image"
-+	depends on BLKSNAP
-+	default n
-+	help
-+	  Theoretical asynchronous algorithm for processing I/O units should
-+	  have higher performance. However, an attempt to confirm this on test
-+	  runs did not bring any results.
-diff --git a/drivers/block/blksnap/Makefile b/drivers/block/blksnap/Makefile
-new file mode 100644
-index 000000000000..8d528b95579a
---- /dev/null
-+++ b/drivers/block/blksnap/Makefile
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+blksnap-y := 		\
-+	cbt_map.o	\
-+	chunk.o		\
-+	diff_area.o	\
-+	diff_buffer.o	\
-+	diff_storage.o	\
-+	event_queue.o	\
-+	main.o		\
-+	snapimage.o	\
-+	snapshot.o	\
-+	tracker.o
-+
-+obj-$(CONFIG_BLKSNAP)	 += blksnap.o
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
+
 
 
