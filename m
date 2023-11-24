@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-3628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C867F6C18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:07:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B86D7F6C17
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EB41C20C95
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1644A281142
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DA7AD55;
-	Fri, 24 Nov 2023 06:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D48AD4B;
+	Fri, 24 Nov 2023 06:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QsAPWECo"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="b2Bq2tgz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EA24C11;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F861BC2;
 	Thu, 23 Nov 2023 22:06:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=r3JK578nvtRlEYlNy4HHNA64A/oAo9K1qeY4IrJLMig=; b=QsAPWECon8p/NpfQGwzXLYe2ks
-	12oFosRYi6VLL/kLJA1/GQeO2o1NZKNR0t0AeWviZJdzl0JOG0REjzGQYTt62huj+9G6+oVZIxCfI
-	UgySibO5LppS8k8K6owd1Tx44nHfOTgwatSJ7VuoQvr9/ytnkOymAMbgHeiKJp3Kz6okDJTrlZY04
-	RfEWBgXx7bU9U4ulQ+bQAbMVz5tUCoycmq+mpvFP1Nm+S5t7Wqkl4SmKqkHy7+NrCaRK/RC/qcHjI
-	yhFSTZ2gOoNYaxFyOUDIotSwF2V76gIZkMCKqmpvDR9Ks9Kh41OXsN9iklO3A69rwpN4aodWjyjRj
-	X6VAzxWg==;
+	bh=Uudj7kC5X7EPH72uDZs9RHVMmZaQqoTHgWgAXC5FG5U=; b=b2Bq2tgz7MuCyU4P1LAKbg2hCp
+	6DrIF63BbJgJgvys1j48vNBZS/EECYwMEQRaTI2+ulUbRST3tSMj7eFKSoHz6F0O69IBhC5ckLiUr
+	4mmZkqfvDdhZViGl+U42xm0FYh8lNAiVTS+MXHThfw8Y0j/4X1b3HhZEqRzZ4Ubadk7WnOzyhNBfS
+	jH5F+kqKY5GbJgDqB5X0LrCFrZETFeCo+TpPV4ojLl4tVJ+liv4SxkcX6cHMMpHl02j+X6rAnwk4D
+	bY7W6AHKow4xwDKUfQA9etqqWa5SS/3mRfOGAEN9U8Ms5FK/RfRytYASHv26IvqaRuCnJPVcPcuFh
+	buPdTsoA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r6PKw-002Q1L-2H;
+	id 1r6PKw-002Q1R-2o;
 	Fri, 24 Nov 2023 06:06:46 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/20] nsfs: use d_make_root()
-Date: Fri, 24 Nov 2023 06:06:37 +0000
-Message-Id: <20231124060644.576611-13-viro@zeniv.linux.org.uk>
+Subject: [PATCH 14/20] simple_fill_super(): don't bother with d_genocide() on failure
+Date: Fri, 24 Nov 2023 06:06:38 +0000
+Message-Id: <20231124060644.576611-14-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231124060644.576611-1-viro@zeniv.linux.org.uk>
 References: <20231124060553.GA575483@ZenIV>
@@ -52,34 +52,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Normally d_make_root() is used to create the root dentry of superblock;
-here we use it for a different purpose, but... idiomatic or not, we
-need the same operation.
+Failing ->fill_super() will be followed by ->kill_sb(), which should
+include kill_litter_super() if the call of simple_fill_super() had
+been asked to create anything besides the root dentry.  So there's
+no need to empty the partially populated tree - it will be trimmed
+by inevitable kill_litter_super().
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/nsfs.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ fs/libfs.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 9a4b228d42fa..34e1e3e36733 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -90,12 +90,9 @@ static int __ns_get_path(struct path *path, struct ns_common *ns)
- 	inode->i_fop = &ns_file_operations;
- 	inode->i_private = ns;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e9440d55073c..6fa8ad36049f 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -912,7 +912,6 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 		      const struct tree_descr *files)
+ {
+ 	struct inode *inode;
+-	struct dentry *root;
+ 	struct dentry *dentry;
+ 	int i;
  
--	dentry = d_alloc_anon(mnt->mnt_sb);
--	if (!dentry) {
--		iput(inode);
-+	dentry = d_make_root(inode);	/* not the normal use, but... */
-+	if (!dentry)
+@@ -935,8 +934,8 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 	inode->i_op = &simple_dir_inode_operations;
+ 	inode->i_fop = &simple_dir_operations;
+ 	set_nlink(inode, 2);
+-	root = d_make_root(inode);
+-	if (!root)
++	s->s_root = d_make_root(inode);
++	if (!s->s_root)
  		return -ENOMEM;
--	}
--	d_instantiate(dentry, inode);
- 	dentry->d_fsdata = (void *)ns->ops;
- 	d = atomic_long_cmpxchg(&ns->stashed, 0, (unsigned long)dentry);
- 	if (d) {
+ 	for (i = 0; !files->name || files->name[0]; i++, files++) {
+ 		if (!files->name)
+@@ -948,13 +947,13 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 				"with an index of 1!\n", __func__,
+ 				s->s_type->name);
+ 
+-		dentry = d_alloc_name(root, files->name);
++		dentry = d_alloc_name(s->s_root, files->name);
+ 		if (!dentry)
+-			goto out;
++			return -ENOMEM;
+ 		inode = new_inode(s);
+ 		if (!inode) {
+ 			dput(dentry);
+-			goto out;
++			return -ENOMEM;
+ 		}
+ 		inode->i_mode = S_IFREG | files->mode;
+ 		simple_inode_init_ts(inode);
+@@ -962,13 +961,7 @@ int simple_fill_super(struct super_block *s, unsigned long magic,
+ 		inode->i_ino = i;
+ 		d_add(dentry, inode);
+ 	}
+-	s->s_root = root;
+ 	return 0;
+-out:
+-	d_genocide(root);
+-	shrink_dcache_parent(root);
+-	dput(root);
+-	return -ENOMEM;
+ }
+ EXPORT_SYMBOL(simple_fill_super);
+ 
 -- 
 2.39.2
 
