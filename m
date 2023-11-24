@@ -1,176 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-3772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6931B7F7F7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:41:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632B57F7A93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56456B209FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D76E281598
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5936628DA1;
-	Fri, 24 Nov 2023 18:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4B639FC3;
+	Fri, 24 Nov 2023 17:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gQoq5aZg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SR34irpS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6F033CCC;
-	Fri, 24 Nov 2023 18:41:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AC51C433C8;
-	Fri, 24 Nov 2023 18:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1700851306;
-	bh=rSKjR4kPDiHrtOEUb2nxNXOqHhNE005/NufjuESuqNQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gQoq5aZg9LmZmvmulfNk5InSDNXh4ZZXF3xBPymaE933L/bc8me8vGf3RNx0SqYRn
-	 nHdn/r56TReCvwbgDm2iAPf1wj08aUwsAI5IhAMs0GE2vmvMSKeLZYNBnnx8j0BrQt
-	 lTzjMSBAb5W564NEPF0QImaJqEgDDNxbuXw2izWE=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Damian Tometzki <damian@riscv-rocks.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	linux-cifs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	David Howells <dhowells@redhat.com>,
-	Steve French <stfrench@microsoft.com>
-Subject: [PATCH 6.5 396/491] cifs: Fix encryption of cleared, but unset rq_iter data buffers
-Date: Fri, 24 Nov 2023 17:50:32 +0000
-Message-ID: <20231124172036.511408593@linuxfoundation.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231124172024.664207345@linuxfoundation.org>
-References: <20231124172024.664207345@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7545E171D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700848277; x=1732384277;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=1gOSGqHr2oFSCkFY/LYbsCiRzMT+F9vwSVPP7+cOIJM=;
+  b=SR34irpSwZ7Sj3TETGLkHUbv5i0voGj+8vE8fjA5Z1Ho9nZe7LAV5WJG
+   v8xGNiTlRgNvvc7gPI14gbreIdZAf1/qgbJ7Mo23CwMtd2noGj0eHUtO3
+   SxHmhhgFWjFywMxshHkpYCMxlvxyzkdTke5u9jNyD0VmMvSjNicrNqJyv
+   NJoesaEBIRSMhs2Erj97MGHOTE8I0lliOi/qif9BjdPp+OO9DkabaZJHR
+   nE1imgay0ye5SQUf1yKaCH11JdK7ym1KZ1vSSE0V3NKJsLujLbrUbAS9B
+   8aP2kSqnUb+OPg59Cg+oLyuW+2XRVFqa6c3QmsyT5DRkfZid+Mvl51LRc
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="382853554"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="382853554"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 09:51:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="761011124"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="761011124"
+Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 24 Nov 2023 09:51:15 -0800
+Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r6aKf-00039H-1X;
+	Fri, 24 Nov 2023 17:51:13 +0000
+Date: Sat, 25 Nov 2023 01:50:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:work.csum-x86 4/18] net/core/datagram.c:745:55: sparse:
+ sparse: incorrect type in argument 1 (different base types)
+Message-ID: <202311250023.ySjyjo9L-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-6.5-stable review patch.  If anyone has any objections, please let me know.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.csum-x86
+head:   f6c1313680f1d2319d2061c63abeb76f820319b8
+commit: 90c2bfd06916ac7c05129b36683bfd3424d8e0e4 [4/18] Fix the csum_and_copy_..._user() idiocy
+config: x86_64-randconfig-123-20231124 (https://download.01.org/0day-ci/archive/20231125/202311250023.ySjyjo9L-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231125/202311250023.ySjyjo9L-lkp@intel.com/reproduce)
 
-------------------
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311250023.ySjyjo9L-lkp@intel.com/
 
-From: David Howells <dhowells@redhat.com>
+sparse warnings: (new ones prefixed by >>)
+>> net/core/datagram.c:745:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
+   net/core/datagram.c:745:55: sparse:     expected restricted __wsum [usertype] v
+   net/core/datagram.c:745:55: sparse:     got restricted __wsum_fault [usertype] next
+>> net/core/datagram.c:745:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
+   net/core/datagram.c:745:54: sparse:     expected restricted __wsum [usertype] csum2
+   net/core/datagram.c:745:54: sparse:     got restricted __wsum_fault
+   net/core/datagram.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
+   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
+   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
+   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
+--
+>> net/core/skbuff.c:6971:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
+   net/core/skbuff.c:6971:55: sparse:     expected restricted __wsum [usertype] v
+   net/core/skbuff.c:6971:55: sparse:     got restricted __wsum_fault [usertype] next
+>> net/core/skbuff.c:6971:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
+   net/core/skbuff.c:6971:54: sparse:     expected restricted __wsum [usertype] csum2
+   net/core/skbuff.c:6971:54: sparse:     got restricted __wsum_fault
+   net/core/skbuff.c: note: in included file (through include/net/net_namespace.h, include/linux/inet.h):
+   include/linux/skbuff.h:2703:28: sparse: sparse: self-comparison always evaluates to false
+   net/core/skbuff.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
+   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
+   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
+   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
 
-commit 37de5a80e932f828c34abeaae63170d73930dca3 upstream.
+vim +745 net/core/datagram.c
 
-Each smb_rqst struct contains two things: an array of kvecs (rq_iov) that
-contains the protocol data for an RPC op and an iterator (rq_iter) that
-contains the data payload of an RPC op.  When an smb_rqst is allocated
-rq_iter is it always cleared, but we don't set it up unless we're going to
-use it.
+   737	
+   738	static __always_inline
+   739	size_t copy_to_user_iter_csum(void __user *iter_to, size_t progress,
+   740				      size_t len, void *from, void *priv2)
+   741	{
+   742		__wsum *csum = priv2;
+   743		__wsum_fault next = csum_and_copy_to_user(from + progress, iter_to, len);
+   744	
+ > 745		*csum = csum_block_add(*csum, from_wsum_fault(next), progress);
+   746		return !wsum_is_fault(next) ? 0 : len;
+   747	}
+   748	
 
-The functions that determines the size of the ciphertext buffer that will
-be needed to encrypt a request, cifs_get_num_sgs(), assumes that rq_iter is
-always initialised - and employs user_backed_iter() to check that the
-iterator isn't user-backed.  This used to incidentally work, because
-->user_backed was set to false because the iterator has never been
-initialised, but with commit f1b4cb650b9a0eeba206d8f069fcdc532bfbcd74[1]
-which changes user_backed_iter() to determine this based on the iterator
-type insted, a warning is now emitted:
-
-        WARNING: CPU: 7 PID: 4584 at fs/smb/client/cifsglob.h:2165 smb2_get_aead_req+0x3fc/0x420 [cifs]
-        ...
-        RIP: 0010:smb2_get_aead_req+0x3fc/0x420 [cifs]
-        ...
-         crypt_message+0x33e/0x550 [cifs]
-         smb3_init_transform_rq+0x27d/0x3f0 [cifs]
-         smb_send_rqst+0xc7/0x160 [cifs]
-         compound_send_recv+0x3ca/0x9f0 [cifs]
-         cifs_send_recv+0x25/0x30 [cifs]
-         SMB2_tcon+0x38a/0x820 [cifs]
-         cifs_get_smb_ses+0x69c/0xee0 [cifs]
-         cifs_mount_get_session+0x76/0x1d0 [cifs]
-         dfs_mount_share+0x74/0x9d0 [cifs]
-         cifs_mount+0x6e/0x2e0 [cifs]
-         cifs_smb3_do_mount+0x143/0x300 [cifs]
-         smb3_get_tree+0x15e/0x290 [cifs]
-         vfs_get_tree+0x2d/0xe0
-         do_new_mount+0x124/0x340
-         __se_sys_mount+0x143/0x1a0
-
-The problem is that rq_iter was never set, so the type is 0 (ie. ITER_UBUF)
-which causes user_backed_iter() to return true.  The code doesn't
-malfunction because it checks the size of the iterator - which is 0.
-
-Fix cifs_get_num_sgs() to ignore rq_iter if its count is 0, thereby
-bypassing the warnings.
-
-It might be better to explicitly initialise rq_iter to a zero-length
-ITER_BVEC, say, as it can always be reinitialised later.
-
-Fixes: d08089f649a0 ("cifs: Change the I/O paths to use an iterator rather than a page list")
-Reported-by: Damian Tometzki <damian@riscv-rocks.de>
-Closes: https://lore.kernel.org/r/ZUfQo47uo0p2ZsYg@fedora.fritz.box/
-Tested-by: Damian Tometzki <damian@riscv-rocks.de>
-Cc: stable@vger.kernel.org
-cc: Eric Biggers <ebiggers@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f1b4cb650b9a0eeba206d8f069fcdc532bfbcd74 [1]
-Reviewed-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/smb/client/cifsglob.h |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -2113,6 +2113,7 @@ static inline int cifs_get_num_sgs(const
- 	unsigned int len, skip;
- 	unsigned int nents = 0;
- 	unsigned long addr;
-+	size_t data_size;
- 	int i, j;
- 
- 	/*
-@@ -2128,17 +2129,21 @@ static inline int cifs_get_num_sgs(const
- 	 * rqst[1+].rq_iov[0+] data to be encrypted/decrypted
- 	 */
- 	for (i = 0; i < num_rqst; i++) {
-+		data_size = iov_iter_count(&rqst[i].rq_iter);
-+
- 		/* We really don't want a mixture of pinned and unpinned pages
- 		 * in the sglist.  It's hard to keep track of which is what.
- 		 * Instead, we convert to a BVEC-type iterator higher up.
- 		 */
--		if (WARN_ON_ONCE(user_backed_iter(&rqst[i].rq_iter)))
-+		if (data_size &&
-+		    WARN_ON_ONCE(user_backed_iter(&rqst[i].rq_iter)))
- 			return -EIO;
- 
- 		/* We also don't want to have any extra refs or pins to clean
- 		 * up in the sglist.
- 		 */
--		if (WARN_ON_ONCE(iov_iter_extract_will_pin(&rqst[i].rq_iter)))
-+		if (data_size &&
-+		    WARN_ON_ONCE(iov_iter_extract_will_pin(&rqst[i].rq_iter)))
- 			return -EIO;
- 
- 		for (j = 0; j < rqst[i].rq_nvec; j++) {
-@@ -2154,7 +2159,8 @@ static inline int cifs_get_num_sgs(const
- 			}
- 			skip = 0;
- 		}
--		nents += iov_iter_npages(&rqst[i].rq_iter, INT_MAX);
-+		if (data_size)
-+			nents += iov_iter_npages(&rqst[i].rq_iter, INT_MAX);
- 	}
- 	nents += DIV_ROUND_UP(offset_in_page(sig) + SMB2_SIGNATURE_SIZE, PAGE_SIZE);
- 	return nents;
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
