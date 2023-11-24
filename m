@@ -1,88 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-3743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AE97F79FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:03:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEA17F7A01
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:03:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C89D51C20F6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC581C20FF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D943B2E831;
-	Fri, 24 Nov 2023 17:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B36335EFB;
+	Fri, 24 Nov 2023 17:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3OadON0"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HAUFzsZI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368C364A4;
-	Fri, 24 Nov 2023 17:02:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6680C433C8;
-	Fri, 24 Nov 2023 17:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700845373;
-	bh=spAQEHLnkWTw0So+tleUMpl17On0BgAWnZncp1uMdDg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3OadON014nWHsSs5rlBRKuXRvvJGgy+8YNd/bysrt6RcyglTmsjpcSpYDHApHyyN
-	 gHbfKDRKprR98OGshDHJLUAh/Xe0U3Ky2XKLAnBtAtj8arR9rm+x51hTept0N7XuNm
-	 hTW/7442ToWXrTiLKfurDJCvfm4x1/REhoCI2Nc2Gi0wp2zNVIYEQ6wD7Qs/WAtb32
-	 dZrKdzwyXLX1Vb5ZDlClv0LypdPMp6xzwu1fB+m2vyM1pU6167qMe5MOCTLa+kC4TY
-	 yCL2BVOnVw3bXsaviPOKI6XBn1ajDe0yhCYa69TsbAwFf1XL83PUc0WPKsxSyfN73e
-	 zfqQAOnpOTWOQ==
-Date: Fri, 24 Nov 2023 17:02:50 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
-	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 22/25] kselftest/arm64: add HWCAP test for FEAT_S1POE
-Message-ID: <ZWDXOt/aw73DWAmN@finisterre.sirena.org.uk>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
- <20231124163510.1835740-23-joey.gouly@arm.com>
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E6811718
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:03:39 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-2809748bdb0so458109a91.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:03:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1700845418; x=1701450218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EttzaI0nhO53eCepTQDlN4y1aR++7e9+n9jNRJSBAnI=;
+        b=HAUFzsZI2Mbe//QMJ9qZ0qOduLtiU/G5Cayf5GCyLZzSHg+4BLErpmMjIIEI5taAZo
+         MGKdFuGcfeBo7Z5iWgp53OgvLpXbMrUMnvMDwANX8U2CrMdOHn1D9RVYLygzOhAHridc
+         Wtk7iQVdMP1a6pPikuye1fi97oFJ28nCaroqmrT0IiU3Jbb2g5FbzSmFbWOXPFvUx6On
+         d98ejXcJqvtec5E/st5pg7SM36ftePSwvQc4U3DVU+2ErlFq5HqKKFXT5kSirD6r+Vn7
+         FFPUnYkc6PXc8rnMjlie3AeTVV1iMCrs6nZ7mSeD8iKwsVxFxql8Gd8pclFTchp6lHXG
+         rGzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700845418; x=1701450218;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EttzaI0nhO53eCepTQDlN4y1aR++7e9+n9jNRJSBAnI=;
+        b=O1G9ictKHhGbWMzePT4EZxg3wsLj0pL6yaLxFqtn6qmfz+h7WICJrTiWX7ce2N3VWg
+         PjQWi6rUsAbgwIUVqNF23+bO1VV42+rj8DDGdhurnULxIk8RFSxeyTCfnXQI5Rb2RvqY
+         Hquby6JI44qNnyM+W0HxzyaxIN5FrFP54csZp/NXmd5xt2C11xtKSCarXvX429b13C58
+         4WFyT7WgEvmYWCg4ujFNrnFT/yxcfYLgVb66UX3YJd2Gh29k/A7Z0qqT2AySPmO2QaAa
+         pMQISqHdvdFJVKlMX63PiqmE2jbiFTGcC5RInyQCjf59MfZA1LBNRsAfBj54s3mCu/au
+         QXRQ==
+X-Gm-Message-State: AOJu0YxGK2VBL0vAU0BBxvE5UYPYHQfCdfopmTsOpv2ZJImyTmE2e1T6
+	QGk2Cf8LP7iZNY0W8NtzLE6aPQ==
+X-Google-Smtp-Source: AGHT+IGjjL47Qg76W6NQQX8rc0L7riURgvwZXOQh1P8ZYDi+tPV1SXHJVTouJXnyPT02+qTwWoeFJA==
+X-Received: by 2002:a17:90a:7408:b0:285:6f2b:4e82 with SMTP id a8-20020a17090a740800b002856f2b4e82mr3395923pjg.1.1700845418428;
+        Fri, 24 Nov 2023 09:03:38 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id k2-20020a17090a590200b0028571e2a759sm2616351pji.48.2023.11.24.09.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Nov 2023 09:03:37 -0800 (PST)
+Message-ID: <7a54a166-56fd-4d6c-a5bf-792aa58a8fe5@kernel.dk>
+Date: Fri, 24 Nov 2023 10:03:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Cy6DkPtJZtCWNOXe"
-Content-Disposition: inline
-In-Reply-To: <20231124163510.1835740-23-joey.gouly@arm.com>
-X-Cookie: Slow day.  Practice crawling.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/11] blksnap - block devices snapshots module
+Content-Language: en-US
+To: Sergei Shtepa <sergei.shtepa@linux.dev>, hch@infradead.org,
+ corbet@lwn.net, snitzer@kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, linux-block@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Sergei Shtepa <sergei.shtepa@veeam.com>
+References: <20231124165933.27580-1-sergei.shtepa@linux.dev>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231124165933.27580-1-sergei.shtepa@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 11/24/23 9:59 AM, Sergei Shtepa wrote:
+> From: Sergei Shtepa <sergei.shtepa@veeam.com>
+> 
+> Hi all.
+> 
+> I am happy to offer an improved version of the Block Devices Snapshots
+> Module. It allows creating non-persistent snapshots of any block devices.
+> The main purpose of such snapshots is to provide backups of block devices.
+> See more in Documentation/block/blksnap.rst.
 
---Cy6DkPtJZtCWNOXe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please stop posting the same version, this is the third one of the
+morning. What's going on?
 
-On Fri, Nov 24, 2023 at 04:35:07PM +0000, Joey Gouly wrote:
-> Check that when POE is enabled, the POR_EL0 register is accessible.
+-- 
+Jens Axboe
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---Cy6DkPtJZtCWNOXe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmVg1zkACgkQJNaLcl1U
-h9DF+Qf+McRE5ZenovytNZGzGU8V8IA6TSVcpZqxQ3RA5hJ+YJrVA3LQk7CD5tHD
-zB2hHviuiPzojikWvl+ePw3fTZKb2EvJA71mTNhXr3X8MaHj01lIP4JIbcvKNBy2
-gkAzwct73nwr//NpZxtBHgLh0gdNKWj6vKnVzB9gNZVfdilsvUef0YQSC/AfHW0m
-YUwFr+14yRKtxhffk2Z90cw1JquBirIA+CJX9Dj76oNfhHgKThgwGCfNbgTkz+Yv
-T1KD/Db4kD6cWmAxmRGFhERi88XQrGMhpwSu793LBJSBO4eL1akCb6nKG8wBkqRo
-XdB6Kk2IQ2ZRPNSc/vPOdmb6ybl2dQ==
-=+Tza
------END PGP SIGNATURE-----
-
---Cy6DkPtJZtCWNOXe--
 
