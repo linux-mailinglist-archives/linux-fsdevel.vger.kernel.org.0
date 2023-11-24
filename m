@@ -1,96 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-3664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31287F702E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 10:41:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4597F7161
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 11:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843681F20F78
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 09:41:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA5E1C209EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 10:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D416428;
-	Fri, 24 Nov 2023 09:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C3F1A5AC;
+	Fri, 24 Nov 2023 10:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYvu8MeE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 331 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 24 Nov 2023 01:41:40 PST
-Received: from mail.lichtvoll.de (lichtvoll.de [IPv6:2001:67c:14c:12f::11:100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092BCD54;
-	Fri, 24 Nov 2023 01:41:39 -0800 (PST)
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 536DB81E3F3;
-	Fri, 24 Nov 2023 10:36:06 +0100 (CET)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Cedric Blancher <cedric.blancher@gmail.com>,
- Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: d_genocide()? What about d_holodomor(), d_massmurder(),
- d_execute_warcrimes()? Re: [PATCH 15/20] d_genocide(): move the extern into
- fs/internal.h
-Date: Fri, 24 Nov 2023 10:36:05 +0100
-Message-ID: <10399078.nUPlyArG6x@lichtvoll.de>
-In-Reply-To: <20231124074856.GA581958@ZenIV>
-References:
- <20231124060553.GA575483@ZenIV> <20231124065759.GT38156@ZenIV>
- <20231124074856.GA581958@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B181A584
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 10:27:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33F0C433C8;
+	Fri, 24 Nov 2023 10:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700821678;
+	bh=qVwJcFDiIpymt6eUkHVD8R3OpoVEzT8XHjqe8OUw3gY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sYvu8MeE8IkSjV0il7aiZosZ3Ymd/EG2GU0ZPtN5SOXpcSpNNccXSaX6RKlIjaO7U
+	 jvzp0UG0cp3SOzwlvfN0gdnHpTOEgaS/DXk49f+e9ywvaHydsCwhclZcOkluy1fQDb
+	 sD5ZtP0dSOQL1ukPvfGAkae4ZCkjpSLMFkEPNHNJ1RkEiDinqraTlWCapZ2moQGS68
+	 XOib7SnGPn9thxaCkYqdZG84EVhknmbxJMXiDLZ/mP3b7wcfAYvYCG9BEUqDBPQlAX
+	 mp+M5zXVjvfmJLkZmuY4OVi1DG18xNl76hTe9eqiprWEJ5HUcI9y9vuvjdDvNNoI5X
+	 sfriUGYRWbqPA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri, 24 Nov 2023 11:27:28 +0100
+Message-ID: <20231124-vfs-fixes-3420a81c0abe@brauner>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5043; i=brauner@kernel.org; h=from:subject:message-id; bh=qVwJcFDiIpymt6eUkHVD8R3OpoVEzT8XHjqe8OUw3gY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQmVE3I2WdSLlbuwSx69I7K3XS/i/s2F1zgC9+W4Pns1 D1WD0PljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImYzmdkOPZDQmJrhfnLmA83 ZVyW8B3lczkmpzB52Srt3C7eErHFlxn+GUg4V/3hj+N4rxjw7m6x1+TfW4vXlPKXnXz+dUbror0 TWAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Al Viro - 24.11.23, 08:48:57 CET:
-> On Fri, Nov 24, 2023 at 06:57:59AM +0000, Al Viro wrote:
-> > > > +extern void d_genocide(struct dentry *);
-> > > 
-> > > Seriously, who came up with THAT name? "Genocide" is not a nice
-> > > term,
-> > > not even if you ignore political correctness.
-> > > Or what will be next? d_holodomor()? d_massmurder()?
-> > > d_execute_warcrimes()?> 
-> > kill_them_all(), on the account of that being what it's doing?
-> 
-> To elaborate a bit: what that function does (well, tries to do - it has
-> serious limitations, which is why there is only one caller remaining and
-> that one is used only when nothing else can access the filesystem
-> anymore) is "kill given dentry, along with all its children, all their
-> children, etc."
+Hey Linus,
 
-I never got why in the context of computers anything is ever being killed. 
-It does not live to begin with.
+/* Summary */
+This contains the usual miscellaneous fixes:
 
-You can stop something, remove it, delete it, destroy it, pause it, resume 
-it, overwrite it and you can do it really quickly or (almost) instantly or 
-slowly or recursively or some combination of those, but kill? You cannot 
-kill what does not live. 
+* Avoid calling back into LSMs from vfs_getattr_nosec() calls.
 
-d_delete/destroy/remove_recursively() could be a suitable function name. 
-Pick one.
+  IMA used to query inode properties accessing raw inode fields without
+  dedicated helpers. That was finally fixed a few releases ago by
+  forcing IMA to use vfs_getattr_nosec() helpers.
 
-Similar it is with the term children or parent. There are no children in 
-computer software. Period. But here it may be more difficult to find 
-alternative wording. Would still be good to find something, cause I was 
-quite taken aback by the wording of the OOM killer. (Actually I was taken 
-aback that an operating system could even have something that forcefully 
-quits a process without saving data. It never matched my expectations of 
-reliability and stability.)
+  The goal of the vfs_getattr_nosec() helper is to query for attributes
+  without calling into the LSM layer which would be quite problematic
+  because incredibly IMA is called from __fput()...
 
-So how about stopping to put meaning into computer software source code 
-that simply is not there to begin with? How about starting to use terms 
-that describe what is actually being done and what is actually there?
+  __fput()
+    -> ima_file_free()
 
--- 
-Martin
+  What it does is to call back into the filesystem to update the file's
+  IMA xattr. Querying the inode without using vfs_getattr_nosec() meant
+  that IMA didn't handle stacking filesystems such as overlayfs
+  correctly. So the switch to vfs_getattr_nosec() is quite correct. But
+  the switch to vfs_getattr_nosec() revealed another bug when used on
+  stacking filesystems:
 
+  __fput()
+    -> ima_file_free()
+       -> vfs_getattr_nosec()
+          -> i_op->getattr::ovl_getattr()
+             -> vfs_getattr()
+                -> i_op->getattr::$WHATEVER_UNDERLYING_FS_getattr()
+                   -> security_inode_getattr() # calls back into LSMs
 
+  Now, if that __fput() happens from task_work_run() of an exiting task
+  current->fs and various other pointer could already be NULL. So
+  anything in the LSM layer relying on that not being NULL would be
+  quite surprised.
+
+  Fix that by passing the information that this is a security request
+  through to the stacking filesystem by adding a new internal
+  ATT_GETATTR_NOSEC flag. Now the callchain becomes:
+
+  __fput()
+    -> ima_file_free()
+       -> vfs_getattr_nosec()
+          -> i_op->getattr::ovl_getattr()
+             -> if (AT_GETATTR_NOSEC)
+                       vfs_getattr_nosec()
+                else
+                       vfs_getattr()
+                -> i_op->getattr::$WHATEVER_UNDERLYING_FS_getattr()
+
+* Fix a bug introduced with the iov_iter rework from last cycle.
+
+  This broke /proc/kcore by copying too much and without the correct
+  offset.
+
+* Add a missing NULL check when allocating the root inode in
+  autofs_fill_super().
+
+* Fix stable writes for multi-device filesystems (xfs, btrfs etc) and
+  the block device pseudo filesystem.
+
+  Stable writes used to be a superblock flag only, making it a per
+  filesystem property. Add an additional AS_STABLE_WRITES mapping flag
+  to allow for fine-grained control.
+
+* Ensure that offset_iterate_dir() returns 0 after reaching the end of a
+  directory so it adheres to getdents() convention.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (16)
+gcc: gcc (Debian 13.2.0-5) 13.2.0
+
+All patches are based on v6.7-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed. Passes xfstests.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
+
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7-rc3.fixes
+
+for you to fetch changes up to 796432efab1e372d404e7a71cc6891a53f105051:
+
+  libfs: getdents() should return 0 after reaching EOD (2023-11-20 15:34:22 +0100)
+
+Please consider pulling these changes from the signed vfs-6.7-rc3.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.7-rc3.fixes
+
+----------------------------------------------------------------
+Christoph Hellwig (4):
+      filemap: add a per-mapping stable writes flag
+      block: update the stable_writes flag in bdev_add
+      xfs: clean up FS_XFLAG_REALTIME handling in xfs_ioctl_setattr_xflags
+      xfs: respect the stable writes flag on the RT device
+
+Chuck Lever (1):
+      libfs: getdents() should return 0 after reaching EOD
+
+Ian Kent (1):
+      autofs: add: new_inode check in autofs_fill_super()
+
+Omar Sandoval (1):
+      iov_iter: fix copy_page_to_iter_nofault()
+
+Stefan Berger (1):
+      fs: Pass AT_GETATTR_NOSEC flag to getattr interface function
+
+ block/bdev.c               |  2 ++
+ fs/autofs/inode.c          | 56 +++++++++++++++++-----------------------------
+ fs/ecryptfs/inode.c        | 12 ++++++++--
+ fs/inode.c                 |  2 ++
+ fs/libfs.c                 | 14 +++++++++---
+ fs/overlayfs/inode.c       | 10 ++++-----
+ fs/overlayfs/overlayfs.h   |  8 +++++++
+ fs/stat.c                  |  6 ++++-
+ fs/xfs/xfs_inode.h         |  8 +++++++
+ fs/xfs/xfs_ioctl.c         | 30 ++++++++++++++++---------
+ fs/xfs/xfs_iops.c          |  7 ++++++
+ include/linux/pagemap.h    | 17 ++++++++++++++
+ include/uapi/linux/fcntl.h |  3 +++
+ lib/iov_iter.c             |  2 +-
+ mm/page-writeback.c        |  2 +-
+ 15 files changed, 121 insertions(+), 58 deletions(-)
 
