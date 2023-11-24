@@ -1,120 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-3577-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596887F6ABC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 03:37:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FD57F6AC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 03:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCEF4B20F18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 02:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06EC1C20B2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 02:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CF4258C;
-	Fri, 24 Nov 2023 02:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E647015AE;
+	Fri, 24 Nov 2023 02:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rxOvgmZb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iynmg/72"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CF2101
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 18:37:46 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700793464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jTrWgPTmhL+pfMdbtv8oZ0hXd6mtQwXeT2Ul7xLq8pM=;
-	b=rxOvgmZby8bs+M3u65ZmeIsiqbfYUlsFgcTKzcFbx4s3TWRBH3/Fy2bflm9Ge7uAnlhMg7
-	NRSN9f6J3N1rxV/qkm6ezPqAmqnkBD83WnvIhOO9PFpHKRVf5fljDi2N+FXichstd1OsF7
-	OsnIgQ0FQNEpn6Pdym/EEmcM2fMpV7o=
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AAE7F7;
+	Fri, 24 Nov 2023 02:53:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDB37C43391;
+	Fri, 24 Nov 2023 02:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700794399;
+	bh=5M3+92F0iChKVoQ1twE8+XXhAzcqbgOUEwMilpjwqyo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Iynmg/72Ug17efHiljMHOv8nZNs4Jb+PdE30s6S5pEq4HVwh7Bnq9/X3KykVjfvgE
+	 ZCfLk7qFFWVTq6Ut9Ns0B+xTB2osn+X4+ahehzNcz9Xxfv2yFc42xVWm4QYrey1YGl
+	 8zTah/uYcOov3JURz2m82+fhtv/AlNrHf6dcIHGXSzHDpcy0I+Uc4udn+FAdLvTjXY
+	 DXJmox6McF08lzaufo67xpueI4kNUSECtORBop5zoyQqleeXtwzhTRNAh0K6Am0Mas
+	 NpOEdYHoHzoxI5l89C8ZCKETbnZJmLXosbh0wvqmsFAb3lq40PdPuqAaMoVWcjeG7Y
+	 ihcGBGTW948uQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-507a62d4788so2076130e87.0;
+        Thu, 23 Nov 2023 18:53:19 -0800 (PST)
+X-Gm-Message-State: AOJu0YyDDGvFENfHNgL7/SY7wbFzsRsWYo7Yfn2MLtNBfHykWc744P0F
+	AfME26Tjk1aSzzzNfm1j9JlBOq/w9JpQO2EPWI0=
+X-Google-Smtp-Source: AGHT+IEzKjUfshYTK3HnsJOzq3hrs1jTxii2+mmJjlmBQi9TmLWj3IY1DYbGu5j9tiqYXNIELQThSElyZWg+vq2KsqA=
+X-Received: by 2002:a05:6512:3e7:b0:509:8e3f:a443 with SMTP id
+ n7-20020a05651203e700b005098e3fa443mr572729lfq.52.1700794397895; Thu, 23 Nov
+ 2023 18:53:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: Re: [PATCH] fs/Kconfig: Make hugetlbfs a menuconfig
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <de256121-f613-42d3-b267-9cd9fbfc8946@infradead.org>
-Date: Fri, 24 Nov 2023 10:37:06 +0800
-Cc: Peter Xu <peterx@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mike Kravetz <mike.kravetz@oracle.com>,
- Muchun Song <songmuchun@bytedance.com>,
- linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <7830CCC4-B1E4-4CCD-B96B-61744FAF2C79@linux.dev>
-References: <20231123223929.1059375-1-peterx@redhat.com>
- <de256121-f613-42d3-b267-9cd9fbfc8946@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>,
- Peter Xu <peterx@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
+In-Reply-To: <20231123233936.3079687-2-song@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Thu, 23 Nov 2023 18:53:05 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6NLk-x1CxEHMzPZ9Rmved4GeSX_K2Syp8YPQ4A-NdsbQ@mail.gmail.com>
+Message-ID: <CAPhsuW6NLk-x1CxEHMzPZ9Rmved4GeSX_K2Syp8YPQ4A-NdsbQ@mail.gmail.com>
+Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
+To: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Cc: ebiggers@kernel.org, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, martin.lau@linux.dev, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, casey@schaufler-ca.com, amir73il@gmail.com, 
+	kpsingh@kernel.org, roberto.sassu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Nov 23, 2023 at 3:40=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> It is common practice for security solutions to store tags/labels in
+> xattrs. To implement similar functionalities in BPF LSM, add new kfunc
+> bpf_get_file_xattr().
+>
+> The first use case of bpf_get_file_xattr() is to implement file
+> verifications with asymmetric keys. Specificially, security applications
+> could use fsverity for file hashes and use xattr to store file signatures=
+.
+> (kfunc for fsverity hash will be added in a separate commit.)
+>
+> Currently, only xattrs with "user." prefix can be read with kfunc
+> bpf_get_file_xattr(). As use cases evolve, we may add a dedicated prefix
+> for bpf_get_file_xattr().
+>
+> To avoid recursion, bpf_get_file_xattr can be only called from LSM hooks.
+>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  kernel/trace/bpf_trace.c | 63 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index f0b8b7c29126..55758a6fbe90 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/key.h>
+>  #include <linux/verification.h>
+>  #include <linux/namei.h>
+> +#include <linux/fileattr.h>
+>
+>  #include <net/bpf_sk_storage.h>
+>
+> @@ -1431,6 +1432,68 @@ static int __init bpf_key_sig_kfuncs_init(void)
+>  late_initcall(bpf_key_sig_kfuncs_init);
+>  #endif /* CONFIG_KEYS */
+>
+> +/* filesystem kfuncs */
+> +__bpf_kfunc_start_defs();
+> +
+> +/**
+> + * bpf_get_file_xattr - get xattr of a file
+> + * @file: file to get xattr from
+> + * @name__str: name of the xattr
+> + * @value_ptr: output buffer of the xattr value
+> + *
+> + * Get xattr *name__str* of *file* and store the output in *value_ptr*.
+> + *
+> + * For security reasons, only *name__str* with prefix "user." is allowed=
+.
+> + *
+> + * Return: 0 on success, a negative value on error.
+> + */
+> +__bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__=
+str,
+> +                                  struct bpf_dynptr_kern *value_ptr)
+> +{
+> +       struct dentry *dentry;
+> +       u32 value_len;
+> +       void *value;
+> +
+> +       if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> +               return -EPERM;
+> +
+> +       value_len =3D __bpf_dynptr_size(value_ptr);
+> +       value =3D __bpf_dynptr_data_rw(value_ptr, value_len);
+> +       if (!value)
+> +               return -EINVAL;
+> +
+> +       dentry =3D file_dentry(file);
+> +       return __vfs_getxattr(dentry, dentry->d_inode, name__str, value, =
+value_len);
+> +}
+> +
+> +__bpf_kfunc_end_defs();
+> +
+> +BTF_SET8_START(fs_kfunc_set_ids)
+> +BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+> +BTF_SET8_END(fs_kfunc_set_ids)
+> +
+> +static int bpf_get_file_xattr_filter(const struct bpf_prog *prog, u32 kf=
+unc_id)
+> +{
+> +       if (!btf_id_set8_contains(&fs_kfunc_set_ids, kfunc_id))
+> +               return 0;
+> +
+> +       /* Only allow to attach from LSM hooks, to avoid recursion */
+> +       return prog->type !=3D BPF_PROG_TYPE_LSM ? -EACCES : 0;
+> +}
+> +
+> +const struct btf_kfunc_id_set bpf_fs_kfunc_set =3D {
 
+Missed static here. If there will be v14, I will fix it here.
 
-> On Nov 24, 2023, at 08:19, Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
-> BTW:
-> 
-> On 11/23/23 14:39, Peter Xu wrote:
->> Hugetlb vmemmap default option (HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON)
->> is a sub-option to hugetlbfs, but it shows in the same level as hugetlbfs
->> itself, under "Pesudo filesystems".
->> Make the vmemmap option a sub-option to hugetlbfs, by changing hugetlbfs
->> into a menuconfig.
->> 
->> Cc: Mike Kravetz <mike.kravetz@oracle.com>
->> Cc: Muchun Song <songmuchun@bytedance.com>
->> Cc: linux-fsdevel@vger.kernel.org
->> Signed-off-by: Peter Xu <peterx@redhat.com>
->> ---
->> fs/Kconfig | 20 +++++++++++---------
->> 1 file changed, 11 insertions(+), 9 deletions(-)
->> 
->> diff --git a/fs/Kconfig b/fs/Kconfig
->> index fd1f655b4f1f..8636198a8689 100644
->> --- a/fs/Kconfig
->> +++ b/fs/Kconfig
->> @@ -254,7 +254,7 @@ config TMPFS_QUOTA
->> config ARCH_SUPPORTS_HUGETLBFS
->> def_bool n
->> 
->> -config HUGETLBFS
->> +menuconfig HUGETLBFS
->> bool "HugeTLB file system support"
->> depends on X86 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
->> depends on (SYSFS || SYSCTL)
->> @@ -266,14 +266,7 @@ config HUGETLBFS
->> 
->>  If unsure, say N.
->> 
->> -config HUGETLB_PAGE
->> - def_bool HUGETLBFS
->> -
->> -config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
->> - def_bool HUGETLB_PAGE
->> - depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
->> - depends on SPARSEMEM_VMEMMAP
->> -
->> +if HUGETLBFS
->> config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
->> bool "HugeTLB Vmemmap Optimization (HVO) defaults to on"
->> default n
->> @@ -282,6 +275,15 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
->>  The HugeTLB VmemmapvOptimization (HVO) defaults to off. Say Y here to
-> 
-> Is this small 'v'            ^ a typo?
+Thanks,
+Song
 
-Yes. Thanks for pointing it out. Although it is not related to this
-patch, but it will be nice for me to carry this tiny typo fix. Hi,
-Peter, would you like help me do this?
-
-Thanks.
-
+> +       .owner =3D THIS_MODULE,
+> +       .set =3D &fs_kfunc_set_ids,
+> +       .filter =3D bpf_get_file_xattr_filter,
+> +};
+> +
+> +static int __init bpf_fs_kfuncs_init(void)
+> +{
+> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc=
+_set);
+> +}
+> +
+> +late_initcall(bpf_fs_kfuncs_init);
+> +
+>  static const struct bpf_func_proto *
+>  bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *=
+prog)
+>  {
+> --
+> 2.34.1
+>
 
