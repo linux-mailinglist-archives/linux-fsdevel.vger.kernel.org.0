@@ -1,186 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-3573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB277F69C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 01:24:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9530B7F6A32
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 02:37:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C63DB20CA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 00:24:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3381BB20FD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 01:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671B39E;
-	Fri, 24 Nov 2023 00:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hgAuAymp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76426801;
+	Fri, 24 Nov 2023 01:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBA0D6C
-	for <linux-fsdevel@vger.kernel.org>; Thu, 23 Nov 2023 16:24:33 -0800 (PST)
-Date: Thu, 23 Nov 2023 19:24:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700785471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WSQSWkENNHXrr1vd8S2sz7OZma/XY3Oo3PCMS6hFtjI=;
-	b=hgAuAympFxgPQIOYNaXA816El6fQZMXGPmkb9Bx/GN/ahhKbChQYxYRl0NEJSiDbOzzMAD
-	RftSbRnrfXSn84zFcb2EPqycUCaDPfSBngQBGWFbcU4OxEeQKcUN2ck7wMLC7Ga8vA2T/H
-	0yYOLy//hayS0QlP6jbnZ2ffHExApvw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-aio@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/aio: obey min_nr when doing wakeups
-Message-ID: <20231124002428.iqwnjtrpgsi6iv6m@moria.home.lan>
-References: <20231122234257.179390-1-kent.overstreet@linux.dev>
- <20231123-jazzfest-gesund-3105db71afca@brauner>
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2C7D50;
+	Thu, 23 Nov 2023 17:37:09 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SbyJc1Y0pz4f3jqx;
+	Fri, 24 Nov 2023 09:37:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id ECB2E1A01A9;
+	Fri, 24 Nov 2023 09:37:06 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgCnqxEx_l9ldXQRBw--.60281S3;
+	Fri, 24 Nov 2023 09:37:04 +0800 (CST)
+Subject: Re: [RFC PATCH 11/18] iomap: add a fs private parameter to
+ iomap_ioend
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+ djwong@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20231123125121.4064694-1-yi.zhang@huaweicloud.com>
+ <20231123125121.4064694-12-yi.zhang@huaweicloud.com>
+ <ZV9xgAXbJMCJqWvt@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <12a61016-1df7-5cf7-94e3-3a07103cbbb6@huaweicloud.com>
+Date: Fri, 24 Nov 2023 09:36:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231123-jazzfest-gesund-3105db71afca@brauner>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZV9xgAXbJMCJqWvt@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgCnqxEx_l9ldXQRBw--.60281S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF4fAF43XF4DZFW8Jw1UKFg_yoW3JrgE9r
+	ZF9w4kK390kFn7Wa4DWF1rGFZxCryUWwn8A3y3Jry7Aa1kZF4kZF1vyrZ2yFWrGF48K3s8
+	Cr95Xa47ZF12qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU1zuWJUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, Nov 23, 2023 at 06:40:01PM +0100, Christian Brauner wrote:
-> On Wed, Nov 22, 2023 at 06:42:53PM -0500, Kent Overstreet wrote:
-> > Unclear who's maintaining fs/aio.c these days - who wants to take this?
-> > -- >8 --
-> > 
-> > I've been observing workloads where IPIs due to wakeups in
-> > aio_complete() are ~15% of total CPU time in the profile. Most of those
-> > wakeups are unnecessary when completion batching is in use in
-> > io_getevents().
-> > 
-> > This plumbs min_nr through via the wait eventry, so that aio_complete()
-> > can avoid doing unnecessary wakeups.
-> > 
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Benjamin LaHaise <bcrl@kvack.org
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: linux-aio@kvack.org
-> > Cc: linux-fsdevel@vger.kernel.org
-> > ---
-> >  fs/aio.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++---------
-> >  1 file changed, 56 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/fs/aio.c b/fs/aio.c
-> > index f8589caef9c1..c69e7caacd1b 100644
-> > --- a/fs/aio.c
-> > +++ b/fs/aio.c
-> > @@ -1106,6 +1106,11 @@ static inline void iocb_destroy(struct aio_kiocb *iocb)
-> >  	kmem_cache_free(kiocb_cachep, iocb);
-> >  }
-> >  
-> > +struct aio_waiter {
-> > +	struct wait_queue_entry	w;
-> > +	size_t			min_nr;
-> > +};
-> > +
-> >  /* aio_complete
-> >   *	Called when the io request on the given iocb is complete.
-> >   */
-> > @@ -1114,7 +1119,7 @@ static void aio_complete(struct aio_kiocb *iocb)
-> >  	struct kioctx	*ctx = iocb->ki_ctx;
-> >  	struct aio_ring	*ring;
-> >  	struct io_event	*ev_page, *event;
-> > -	unsigned tail, pos, head;
-> > +	unsigned tail, pos, head, avail;
-> >  	unsigned long	flags;
-> >  
-> >  	/*
-> > @@ -1156,6 +1161,10 @@ static void aio_complete(struct aio_kiocb *iocb)
-> >  	ctx->completed_events++;
-> >  	if (ctx->completed_events > 1)
-> >  		refill_reqs_available(ctx, head, tail);
-> > +
-> > +	avail = tail > head
-> > +		? tail - head
-> > +		: tail + ctx->nr_events - head;
-> >  	spin_unlock_irqrestore(&ctx->completion_lock, flags);
-> >  
-> >  	pr_debug("added to ring %p at [%u]\n", iocb, tail);
-> > @@ -1176,8 +1185,18 @@ static void aio_complete(struct aio_kiocb *iocb)
-> >  	 */
-> >  	smp_mb();
-> >  
-> > -	if (waitqueue_active(&ctx->wait))
-> > -		wake_up(&ctx->wait);
-> > +	if (waitqueue_active(&ctx->wait)) {
-> > +		struct aio_waiter *curr, *next;
-> > +		unsigned long flags;
-> > +
-> > +		spin_lock_irqsave(&ctx->wait.lock, flags);
-> > +		list_for_each_entry_safe(curr, next, &ctx->wait.head, w.entry)
-> > +			if (avail >= curr->min_nr) {
-> > +				list_del_init_careful(&curr->w.entry);
-> > +				wake_up_process(curr->w.private);
-> > +			}
-> > +		spin_unlock_irqrestore(&ctx->wait.lock, flags);
-> > +	}
-> >  }
-> >  
-> >  static inline void iocb_put(struct aio_kiocb *iocb)
-> > @@ -1290,7 +1309,9 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
-> >  			struct io_event __user *event,
-> >  			ktime_t until)
-> >  {
-> > -	long ret = 0;
-> > +	struct hrtimer_sleeper	t;
-> > +	struct aio_waiter	w;
-> > +	long ret = 0, ret2 = 0;
-> >  
-> >  	/*
-> >  	 * Note that aio_read_events() is being called as the conditional - i.e.
-> > @@ -1306,12 +1327,37 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
-> >  	 * the ringbuffer empty. So in practice we should be ok, but it's
-> >  	 * something to be aware of when touching this code.
-> >  	 */
-> > -	if (until == 0)
-> > -		aio_read_events(ctx, min_nr, nr, event, &ret);
-> > -	else
-> > -		wait_event_interruptible_hrtimeout(ctx->wait,
-> > -				aio_read_events(ctx, min_nr, nr, event, &ret),
-> > -				until);
-> > +	aio_read_events(ctx, min_nr, nr, event, &ret);
-> > +	if (until == 0 || ret < 0 || ret >= min_nr)
-> > +		return ret;
-> > +
-> > +	hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> > +	if (until != KTIME_MAX) {
-> > +		hrtimer_set_expires_range_ns(&t.timer, until, current->timer_slack_ns);
-> > +		hrtimer_sleeper_start_expires(&t, HRTIMER_MODE_REL);
-> > +	}
-> > +
-> > +	init_wait(&w.w);
-> > +
-> > +	while (1) {
-> > +		unsigned long nr_got = ret;
-> > +
-> > +		w.min_nr = min_nr - ret;
+On 2023/11/23 23:36, Christoph Hellwig wrote:
+> On Thu, Nov 23, 2023 at 08:51:13PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Add a private parameter to iomap_ioend structure, letting filesystems
+>> can pass something they needed from .prepare_ioend() to IO end.
 > 
-> Hm, can this underflow?
+> On it's own this looks fine.  Note that I have a series that I probably
+> should send out ASAP:
+> 
+>    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/iomap-map-multiple-blocks
+> 
+> that makes each ioend only have the embdeed bio, and bi_private in that
+> is unused, so you could just use that if we go down that route.
+> 
 
-No, because if ret >= min_nr aio_read_events() returned true, and we're
-done.
+Thanks for this improvement, I will analyze the changes of this series
+in depth.
 
-> > +
-> > +		ret2 = prepare_to_wait_event(&ctx->wait, &w.w, TASK_INTERRUPTIBLE) ?:
-> > +			!t.task ? -ETIME : 0;
-> 
-> I'd like to avoid the nested ?: as that's rather hard to read.
-> I _think_ this is equivalent to:
-> 
-> if (!ret2 && !t.task)
-> 	ret = -ETIME;
-> 
-> I can just fix this in-tree though. Did I parse that correctly?
+Thanks,
+Yi.
 
-You did, except it needs to be ret2 = -ETIME - we don't return that to
-userspace.
 
