@@ -1,145 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-3746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5277F7A0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C387F7A15
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AA3281A75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80C1281BD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F21364A1;
-	Fri, 24 Nov 2023 17:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02394364D4;
+	Fri, 24 Nov 2023 17:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s098XSVg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHfGx7AA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495682D631;
-	Fri, 24 Nov 2023 17:06:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E892C433C7;
-	Fri, 24 Nov 2023 17:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2365331730;
+	Fri, 24 Nov 2023 17:07:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DA1C433CD;
+	Fri, 24 Nov 2023 17:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700845602;
-	bh=PPv7r8G9gWCUU0EJn3vhveqcEwikXh9jLw+nzQQY9WI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s098XSVgPCPMuCM9JTGjDOF6ArkD588pr3xbbacn2qrOnd9HdljQZka8/F74S7hX/
-	 NCrzX39xQUb9ZC1YaRAG/Qblvr+/P97J4ZA0u56pvC3u9G+kuEwR4nl6VwlkZy78Pt
-	 psqbG3gpul7rn/IGgdWC86LMED9JYliFM2YB+zwCcpl3grRq9jv6vibKGKBot89jut
-	 Tj+gLKs6zd24iD6Jzn8vw2OAum0VVLRac51PEJZjO2Ei0fRwFK/fSMxRvvbTXifNfw
-	 Xq70m4AbVloSNq5hz05Q8J/FhfY9FYKrXWXUfR/MIo9HqWCCtNUzAEc+U1fypTaVxx
-	 6W6AIfwVULQxA==
-Date: Fri, 24 Nov 2023 18:06:34 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>
-Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Quentin Monnet <quentin@isovalent.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	gyroidos@aisec.fraunhofer.de
-Subject: Re: [RESEND RFC PATCH v2 11/14] vfs: Wire up security hooks for
- lsm-based device guard in userns
-Message-ID: <20231124-neidisch-drehbaren-d80ef7aa6390@brauner>
-References: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
- <20231025094224.72858-12-michael.weiss@aisec.fraunhofer.de>
+	s=k20201202; t=1700845667;
+	bh=cnsIeUB3QWfjt+PPATu/fFPdUe8LeGe+3jxHVgdEdwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EHfGx7AAatARRcfU+6WWe8TQOVA8irrUSOs22TkTQH/kmu19FcFePN+Ek2j0sZIS8
+	 UUkb1qY599ngUgnlMi22YIwIQB7MFPYXg+Z5XI8MmUQBCS8JwDbUWK0pDhGt5YivMv
+	 Fpap6EqQcQclwIV/3kfssgNkeaiTOZJ20WollKWi8g34UYBH3d5iryBEdDSXlBJqrU
+	 2Ezu5t8Y+m9gXpu3mHB6mlcdS7/BMUUSQErYQYD0/QdulGLVQ0xiC8jefm0q27NLMA
+	 a7cemUXEV1gloCekfJQkstXmDQlqAw/vDfIJJXFWz/vn52MlGnvtBUkY5CXpt5/ZHN
+	 f3tki/A3CGh3A==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2c871890c12so27745121fa.2;
+        Fri, 24 Nov 2023 09:07:47 -0800 (PST)
+X-Gm-Message-State: AOJu0Yw74c+/jlJmLMeJN8W1Wq70mllyO/bJxqemulNFvRjXspz3AY/Z
+	CQJx+s7lBTJIRSfe4rwjkZDvrQUoU8OhozraqGU=
+X-Google-Smtp-Source: AGHT+IEnxzHxnp7pO7/lcj86dKEOjoxyqJGpnUjkhlmbDBvY9baA9RBd0DTJkLfmgVjbeQl4yVF9iIJsodkqcgX+fFg=
+X-Received: by 2002:a2e:93cf:0:b0:2c5:6e01:58b8 with SMTP id
+ p15-20020a2e93cf000000b002c56e0158b8mr2491614ljh.37.1700845666059; Fri, 24
+ Nov 2023 09:07:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231025094224.72858-12-michael.weiss@aisec.fraunhofer.de>
+References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
+ <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
+In-Reply-To: <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
+From: Song Liu <song@kernel.org>
+Date: Fri, 24 Nov 2023 09:07:33 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+Message-ID: <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
+To: Christian Brauner <brauner@kernel.org>
+Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev, ebiggers@kernel.org, 
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	viro@zeniv.linux.org.uk, casey@schaufler-ca.com, amir73il@gmail.com, 
+	kpsingh@kernel.org, roberto.sassu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 25, 2023 at 11:42:21AM +0200, Michael Weiß wrote:
-> Wire up security_inode_mknod_capns() in fs/namei.c. If implemented
-> and access is granted by an lsm, check ns_capable() instead of the
-> global CAP_MKNOD.
-> 
-> Wire up security_sb_alloc_userns() in fs/super.c. If implemented
-> and access is granted by an lsm, the created super block will allow
-> access to device nodes also if it was created in a non-inital userns.
-> 
-> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
-> ---
->  fs/namei.c | 16 +++++++++++++++-
->  fs/super.c |  6 +++++-
->  2 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index f601fcbdc4d2..1f68d160e2c0 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3949,6 +3949,20 @@ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
->  }
->  EXPORT_SYMBOL(user_path_create);
->  
-> +static bool mknod_capable(struct inode *dir, struct dentry *dentry,
-> +			  umode_t mode, dev_t dev)
-> +{
-> +	/*
-> +	 * In case of a security hook implementation check mknod in user
-> +	 * namespace. Otherwise just check global capability.
-> +	 */
-> +	int error = security_inode_mknod_nscap(dir, dentry, mode, dev);
-> +	if (!error)
-> +		return ns_capable(current_user_ns(), CAP_MKNOD);
-> +	else
-> +		return capable(CAP_MKNOD);
-> +}
-> +
->  /**
->   * vfs_mknod - create device node or file
->   * @idmap:	idmap of the mount the inode was found from
-> @@ -3975,7 +3989,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
->  		return error;
->  
->  	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
-> -	    !capable(CAP_MKNOD))
-> +	    !mknod_capable(dir, dentry, mode, dev))
->  		return -EPERM;
->  
->  	if (!dir->i_op->mknod)
-> diff --git a/fs/super.c b/fs/super.c
-> index 2d762ce67f6e..bb01db6d9986 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -362,7 +362,11 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  	}
->  	s->s_bdi = &noop_backing_dev_info;
->  	s->s_flags = flags;
-> -	if (s->s_user_ns != &init_user_ns)
-> +	/*
-> +	 * We still have to think about this here. Several concerns exist
-> +	 * about the security model, especially about malicious fuse.
-> +	 */
-> +	if (s->s_user_ns != &init_user_ns && security_sb_alloc_userns(s))
->  		s->s_iflags |= SB_I_NODEV;
+On Fri, Nov 24, 2023 at 12:44=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Thu, Nov 23, 2023 at 03:39:31PM -0800, Song Liu wrote:
+> > It is common practice for security solutions to store tags/labels in
+> > xattrs. To implement similar functionalities in BPF LSM, add new kfunc
+> > bpf_get_file_xattr().
+> >
+> > The first use case of bpf_get_file_xattr() is to implement file
+> > verifications with asymmetric keys. Specificially, security application=
+s
+> > could use fsverity for file hashes and use xattr to store file signatur=
+es.
+> > (kfunc for fsverity hash will be added in a separate commit.)
+> >
+> > Currently, only xattrs with "user." prefix can be read with kfunc
+> > bpf_get_file_xattr(). As use cases evolve, we may add a dedicated prefi=
+x
+> > for bpf_get_file_xattr().
+> >
+> > To avoid recursion, bpf_get_file_xattr can be only called from LSM hook=
+s.
+> >
+> > Signed-off-by: Song Liu <song@kernel.org>
+> > ---
+>
+> Looks ok to me. But see below for a question.
+>
+> If you ever allow the retrieval of additional extended attributes
+> through bfs_get_file_xattr() or other bpf interfaces we would like to be
+> Cced, please. The xattr stuff is (/me looks for suitable words)...
+>
+> Over the last months we've moved POSIX_ACL retrieval out of these
+> low-level functions. They now have a dedicated api. The same is going to
+> happen for fscaps as well.
+>
+> But even with these out of the way we would want the bpf helpers to
+> always maintain an allowlist of retrievable attributes.
 
-Hm, no.
+Agreed. We will be very specific which attributes are available to bpf
+helpers/kfuncs.
 
-We dont want to have security hooks called in alloc_super(). That's just
-the wrong layer for this. This is deeply internal stuff where we should
-avoid interfacing with other subsystems.
+>
+> >  kernel/trace/bpf_trace.c | 63 ++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 63 insertions(+)
+> >
+> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > index f0b8b7c29126..55758a6fbe90 100644
+> > --- a/kernel/trace/bpf_trace.c
+> > +++ b/kernel/trace/bpf_trace.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/key.h>
+> >  #include <linux/verification.h>
+> >  #include <linux/namei.h>
+> > +#include <linux/fileattr.h>
+> >
+> >  #include <net/bpf_sk_storage.h>
+> >
+> > @@ -1431,6 +1432,68 @@ static int __init bpf_key_sig_kfuncs_init(void)
+> >  late_initcall(bpf_key_sig_kfuncs_init);
+> >  #endif /* CONFIG_KEYS */
+> >
+> > +/* filesystem kfuncs */
+> > +__bpf_kfunc_start_defs();
+> > +
+> > +/**
+> > + * bpf_get_file_xattr - get xattr of a file
+> > + * @file: file to get xattr from
+> > + * @name__str: name of the xattr
+> > + * @value_ptr: output buffer of the xattr value
+> > + *
+> > + * Get xattr *name__str* of *file* and store the output in *value_ptr*=
+.
+> > + *
+> > + * For security reasons, only *name__str* with prefix "user." is allow=
+ed.
+> > + *
+> > + * Return: 0 on success, a negative value on error.
+> > + */
+> > +__bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name=
+__str,
+> > +                                struct bpf_dynptr_kern *value_ptr)
+> > +{
+> > +     struct dentry *dentry;
+> > +     u32 value_len;
+> > +     void *value;
+> > +
+> > +     if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> > +             return -EPERM;
+> > +
+> > +     value_len =3D __bpf_dynptr_size(value_ptr);
+> > +     value =3D __bpf_dynptr_data_rw(value_ptr, value_len);
+> > +     if (!value)
+> > +             return -EINVAL;
+> > +
+> > +     dentry =3D file_dentry(file);
+> > +     return __vfs_getxattr(dentry, dentry->d_inode, name__str, value, =
+value_len);
+>
+> By calling __vfs_getxattr() from bpf_get_file_xattr() you're skipping at
+> least inode_permission() from xattr_permission(). I'm probably just
+> missing or forgot the context. But why is that ok?
 
-Removing SB_I_NODEV here is also problematic or at least overly broad
-because you allow to circumvent this for _every_ filesystems including
-stuff like proc and so on where that doesn't make any sense.
+AFAICT, the XATTR_USER_PREFIX above is equivalent to the prefix
+check in xattr_permission().
+
+For inode_permission(), I think it is not required because we already
+have the "struct file" of  the target file. Did I misunderstand something
+here?
+
+Thanks,
+Song
+
+> > +}
+> > +
+
+[...]
 
