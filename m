@@ -1,165 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-3648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6017F6D28
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 08:48:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A6B7F6D2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 08:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC16281B18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F34B21266
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCB3B641;
-	Fri, 24 Nov 2023 07:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9D98F48;
+	Fri, 24 Nov 2023 07:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgJMC0Yj"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TdTMLY1k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A108C18;
-	Fri, 24 Nov 2023 07:48:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C4BC433C7;
-	Fri, 24 Nov 2023 07:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700812116;
-	bh=wuXwn6H3IYOQTJYurH/LAKoS23w/GwU7ryzU1+Vs8b4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cgJMC0Yj3JRcUDF8O8XpdEdYA/5STjclZLwUWXfVMJwJnFCmcyrJDVup7Rscs2p84
-	 1lIevByzmjhiYL9n/DPGwW0r1qVsQ45xdWW1cCKjcoubJ/Np/IRSX/dXnPPAZi1lyB
-	 ETOprEE5xY+akdxk7DWnyVkIziLf3Nu7PWCfTmFB985JDwr0PPgc9yJ4BLOQhlh8Nx
-	 7J3VH6h2rRYlPJhbqQ9tIol8mM/LtKts+YBDNQd03tji9lqn5ZFKRzSp7zz5eJxPSA
-	 m4YJmobEWMvUVEr6S2NJRsz4v9jSzMIYOHwn/4yZmgFOE0FpvuIzzDTt4O8YISu59u
-	 jwN2CAG1O1gvw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Paul Durrant <paul@xen.org>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.a.wang@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Eric Farman <farman@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Tony Krowiak <akrowiak@linux.ibm.com>,
-	Jason Herne <jjherne@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Diana Craciun <diana.craciun@oss.nxp.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Eric Auger <eric.auger@redhat.com>,
-	Fei Li <fei1.li@intel.com>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeelb@google.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-fpga@vger.kernel.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-rdma@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org,
-	linux-aio@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] eventfd: simplify signal helpers
-Date: Fri, 24 Nov 2023 08:47:57 +0100
-Message-ID: <20231124-traurig-halunken-6defdd66e8f2@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE4DD73;
+	Thu, 23 Nov 2023 23:48:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=28ZlngaXvYd70NmiLVOgj+NejQ6ZUD3E3kKj3Lcl1lE=; b=TdTMLY1k87Tw14a+6kU+4Ty53L
+	p+L5YjjM9q52xjNsO4xcLYPGjwx7N6B2y1D04waeHJNrPkJeWNx0NWNOjDJxP8VqFBfbRD5F9nwZg
+	xKS0tJ/Qb1ThAcYhyWszcL4I0uzxTxLKtymx3zDtErFZ9tyCjC1S0g7gB/f/ncYV+iMVAs8d28mmD
+	0gdJ8poMY+wj3EP1zIo6JVV/DqMXaqQrULYsXLrMcQS2XC+oEED3RiA/vo2RqED1nq5WjBo/25O7X
+	U387UjiprwRrJMZws3Bz7ijxgd1EHyBANKHm8JrSUFzkcYD4VKE2reC057MlHFdPtsMr80kc+YHAw
+	BpdYQYlg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r6Qvp-002RzH-07;
+	Fri, 24 Nov 2023 07:48:57 +0000
+Date: Fri, 24 Nov 2023 07:48:57 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Cedric Blancher <cedric.blancher@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: d_genocide()? What about d_holodomor(), d_massmurder(),
+ d_execute_warcrimes()? Re: [PATCH 15/20] d_genocide(): move the extern into
+ fs/internal.h
+Message-ID: <20231124074856.GA581958@ZenIV>
+References: <20231124060553.GA575483@ZenIV>
+ <20231124060644.576611-1-viro@zeniv.linux.org.uk>
+ <20231124060644.576611-15-viro@zeniv.linux.org.uk>
+ <CALXu0UcCGjyM6hFfdjG1eHJcmeR=9BVSaq7Vj9rtvKxb9szJdQ@mail.gmail.com>
+ <20231124065759.GT38156@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1378; i=brauner@kernel.org; h=from:subject:message-id; bh=wuXwn6H3IYOQTJYurH/LAKoS23w/GwU7ryzU1+Vs8b4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQmhOr8Nb88ObVn73mvUyobyi/8m/y5yi2fL80o6/sb9 3cTN/yd21HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR7iBGhq1L7YSDDTVSee+x X1xccNDei/91c9MuqdqsiYtj7lg17WdkWCP3faH/qkmK79OnL3ut4/Vo+e0nB564XJ5mY6ruNdX 4JgMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231124065759.GT38156@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 22 Nov 2023 13:48:21 +0100, Christian Brauner wrote:
-> Hey everyone,
+On Fri, Nov 24, 2023 at 06:57:59AM +0000, Al Viro wrote:
+> > > +extern void d_genocide(struct dentry *);
+> > 
+> > Seriously, who came up with THAT name? "Genocide" is not a nice term,
+> > not even if you ignore political correctness.
+> > Or what will be next? d_holodomor()? d_massmurder()? d_execute_warcrimes()?
 > 
-> This simplifies the eventfd_signal() and eventfd_signal_mask() helpers
-> significantly. They can be made void and not take any unnecessary
-> arguments.
-> 
-> I've added a few more simplifications based on Sean's suggestion.
-> 
-> [...]
+> kill_them_all(), on the account of that being what it's doing?
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+To elaborate a bit: what that function does (well, tries to do - it has
+serious limitations, which is why there is only one caller remaining and
+that one is used only when nothing else can access the filesystem anymore)
+is "kill given dentry, along with all its children, all their children,
+etc."
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I sincerely doubt that you will be able to come up with _any_ word
+describing such action in any real-world context that would not come
+with very nasty associations.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Context: a bunch of filesystems have directory tree entirely in dcache;
+creating a file or directory bumps the reference count of dentry in
+question, so instead of going back to 0 after e.g. mkdir(2) returns
+it is left with refcount 1, which prevents its eviction.  In effect,
+all positive dentries in there are artificially kept busy.  On
+rmdir(2) or unlink(2) that extra reference is dropped and they
+get evicted.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+For filesystems like e.g. tmpfs that's a fairly obvious approach -
+they don't *have* any backing store, so dcache is not just caching
+the underlying objects - it's all there is.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+For such filesystems there is a quick way to do an equivalent of
+rm -rf - simply go over the subtree you want to remove and decrement
+refcounts of everything positive.  That's fine on filesystem shutdown,
+but for anything in use it is *too* quick - you'd better not do that
+if there are mountpoints in the subtree you are removing, etc.
 
-[1/4] i915: make inject_virtual_interrupt() void
-      https://git.kernel.org/vfs/vfs/c/858848719210
-[2/4] eventfd: simplify eventfd_signal()
-      https://git.kernel.org/vfs/vfs/c/ded0f31f825f
-[3/4] eventfd: simplify eventfd_signal_mask()
-      https://git.kernel.org/vfs/vfs/c/45ee1c990e88
-[4/4] eventfd: make eventfd_signal{_mask}() void
-      https://git.kernel.org/vfs/vfs/c/37d5d473e749
+At the moment we have 3 callers in the kernel; one in selinuxfs, removing
+stale directories on policy reload (not quite safe, but if attacker can
+do selinux policy reload, you are beyond lost), another in
+simple_fill_super() failure handling (safe, since filesystem is not
+mounted at the time, but actually pointless - normal cleanup after
+failure will take them out just fine) and the last one in
+kill_litter_super().  That one is actually fine - we are shutting the
+filesystem down and nobody can access it at that point unless the
+kernel is deeply broken.
+
+By the end of this series only that one caller remains, which is
+reason for taking the declaration from include/linux/dcache.h to
+fs/internal.h - making sure no new callers get added.  Not because
+of the identifier having nasty connotations, but because it's
+pretty hard to use correctly.
 
