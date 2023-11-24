@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-3624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3AD7F6C15
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:07:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D577F6C11
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 07:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF4861C20D8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A882818DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 06:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF813944D;
-	Fri, 24 Nov 2023 06:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04E9524E;
+	Fri, 24 Nov 2023 06:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kk9mlYny"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wVhX3ODB"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1984019B2;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3478619B3;
 	Thu, 23 Nov 2023 22:06:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=j1g94EEn9QzZxdqnRvLZaGyMCAZewgrVxXtJR079IYU=; b=kk9mlYnyXFgJJ2TMPmZsErrlCH
-	Qy6alHqDszAIo8ZSpXIHiIpeiMFzDxj+VdFnrXOfJk9SkBOE5T3lGuq1fYxCfdygeu/Uz8TuqXqxl
-	Uh8daWUJbpO1Q/9mxcq++wB43DUK45xDIG7SJcW2q2w2kBsrPItjPog9OPzpQP6bTRaTkHJNp7pVM
-	bb+F62YQIhQ6/T8hhtkN9Vhz2gz9agr59A3gLuKTB6spOyWBYiuzbPv65QD8hlkHSV6hE+o6slKM+
-	7RaQWrz80Yd5Wlkapn29l+YcTC5+ogYW2Koat054gx8c+Wxm+U/AWN4BAYjeVO9+IJdkTY/MBlc6g
-	P3xUytRQ==;
+	bh=Cet6Nt7zHt9dF+avtU3X4iivMWHATqCMWAfCRcJL1cU=; b=wVhX3ODBvSIZDQuNZLMmjsbO65
+	vP/bNlyV2VhaieRId7MaWGpKvBGwmR5ksCX1JhYy8W1q0mTQNeRXinTRxCn++ns/E178TZXypQSNH
+	lacVubiRsJxVm9Hc42qJEVuAsDjAiTM9uQfv5cPZP01ZNKnORGjCnMCQdUbO6LEm+zfCWeF1wp43g
+	i9Nlib//RInFqLYm8izX/nm6YWIejLfbMoleepbyY9AgjS+NiDW5ebAOhhQLQw219Kft3STGEgx3y
+	JN8wW4eqqlGks+cMsAzJyQ2wACRIYIqtEpLBeYeyt/KYjOVK5Sfxs6TR2fOVOYwhsb1Cp3M3RONvs
+	yj0VmMiw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r6PKu-002Q0I-1Q;
+	id 1r6PKu-002Q0M-2d;
 	Fri, 24 Nov 2023 06:06:44 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/20] selinux: saner handling of policy reloads
-Date: Fri, 24 Nov 2023 06:06:25 +0000
-Message-Id: <20231124060644.576611-1-viro@zeniv.linux.org.uk>
+Subject: [PATCH 02/20] ovl: stop using d_alloc_anon()/d_instantiate_anon()
+Date: Fri, 24 Nov 2023 06:06:26 +0000
+Message-Id: <20231124060644.576611-2-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20231124060553.GA575483@ZenIV>
+In-Reply-To: <20231124060644.576611-1-viro@zeniv.linux.org.uk>
 References: <20231124060553.GA575483@ZenIV>
+ <20231124060644.576611-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,296 +52,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On policy reload selinuxfs replaces two subdirectories (/booleans
-and /class) with new variants.  Unfortunately, that's done with
-serious abuses of directory locking.
+From: Amir Goldstein <amir73il@gmail.com>
 
-1) lock_rename() should be done to parents, not to objects being
-exchanged
+Commit f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and
+d_alloc_anon()") was introduced so overlayfs could initialize a non-dir
+disconnected overlay dentry before overlay inode is attached to it.
 
-2) there's a bunch of reasons why it should not be done for directories
-that do not have a common ancestor; most of those do not apply to
-selinuxfs, but even in the best case the proof is subtle and brittle.
+Since commit ("0af950f57fef ovl: move ovl_entry into ovl_inode"), all
+ovl_obtain_alias() can do is set DCACHE_OP_*REVALIDATE flags in ->d_flags
+and OVL_E_UPPER_ALIAS flag in ->d_fsdata.
 
-3) failure halfway through the creation of /class will leak
-names and values arrays.
+The DCACHE_OP_*REVALIDATE flags and OVL_E_UPPER_ALIAS flag are irrelevant
+for a disconnected non-dir dentry, so it is better to use d_obtain_alias()
+instead of open coding it.
 
-4) use of d_genocide() is also rather brittle; it's probably not much of
-a bug per se, but e.g. an overmount of /sys/fs/selinuxfs/classes/shm/index
-with any regular file will end up with leaked mount on policy reload.
-Sure, don't do it, but...
-
-Let's stop messing with disconnected directories; just create
-a temporary (/.swapover) with no permissions for anyone (on the
-level of ->permission() returing -EPERM, no matter who's calling
-it) and build the new /booleans and /class in there; then
-lock_rename on root and that temporary directory and d_exchange()
-old and new both for class and booleans.  Then unlock and use
-simple_recursive_removal() to take the temporary out; it's much
-more robust.
-
-And instead of bothering with separate pathways for freeing
-new (on failure halfway through) and old (on success) names/values,
-do all freeing in one place.  With temporaries swapped with the
-old ones when we are past all possible failures.
-
-The only user-visible difference is that /.swapover shows up
-(but isn't possible to open, look up into, etc.) for the
-duration of policy reload.
-
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-[PM: applied some fixes from Al post merge]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/selinux/selinuxfs.c | 144 ++++++++++++++++-------------------
- 1 file changed, 66 insertions(+), 78 deletions(-)
+ fs/overlayfs/export.c | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 6c596ae7fef9..0619a1cbbfbe 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -336,12 +336,9 @@ static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
- 			unsigned long *ino);
- 
- /* declaration for sel_make_policy_nodes */
--static struct dentry *sel_make_disconnected_dir(struct super_block *sb,
-+static struct dentry *sel_make_swapover_dir(struct super_block *sb,
- 						unsigned long *ino);
- 
--/* declaration for sel_make_policy_nodes */
--static void sel_remove_entries(struct dentry *de);
--
- static ssize_t sel_read_mls(struct file *filp, char __user *buf,
- 				size_t count, loff_t *ppos)
+diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+index 7e16bbcad95e..9e316d5f936e 100644
+--- a/fs/overlayfs/export.c
++++ b/fs/overlayfs/export.c
+@@ -289,7 +289,6 @@ static struct dentry *ovl_obtain_alias(struct super_block *sb,
  {
-@@ -508,13 +505,13 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
- 				struct selinux_policy *newpolicy)
- {
- 	int ret = 0;
--	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir, *old_dentry;
--	unsigned int tmp_bool_num, old_bool_num;
--	char **tmp_bool_names, **old_bool_names;
--	int *tmp_bool_values, *old_bool_values;
-+	struct dentry *tmp_parent, *tmp_bool_dir, *tmp_class_dir;
-+	unsigned int bool_num = 0;
-+	char **bool_names = NULL;
-+	int *bool_values = NULL;
- 	unsigned long tmp_ino = fsi->last_ino; /* Don't increment last_ino in this function */
+ 	struct dentry *lower = lowerpath ? lowerpath->dentry : NULL;
+ 	struct dentry *upper = upper_alias ?: index;
+-	struct dentry *dentry;
+ 	struct inode *inode = NULL;
+ 	struct ovl_entry *oe;
+ 	struct ovl_inode_params oip = {
+@@ -320,27 +319,7 @@ static struct dentry *ovl_obtain_alias(struct super_block *sb,
+ 	if (upper)
+ 		ovl_set_flag(OVL_UPPERDATA, inode);
  
--	tmp_parent = sel_make_disconnected_dir(fsi->sb, &tmp_ino);
-+	tmp_parent = sel_make_swapover_dir(fsi->sb, &tmp_ino);
- 	if (IS_ERR(tmp_parent))
- 		return PTR_ERR(tmp_parent);
- 
-@@ -532,8 +529,8 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
- 		goto out;
- 	}
- 
--	ret = sel_make_bools(newpolicy, tmp_bool_dir, &tmp_bool_num,
--			     &tmp_bool_names, &tmp_bool_values);
-+	ret = sel_make_bools(newpolicy, tmp_bool_dir, &bool_num,
-+			     &bool_names, &bool_values);
- 	if (ret)
- 		goto out;
- 
-@@ -542,38 +539,30 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
- 	if (ret)
- 		goto out;
- 
-+	lock_rename(tmp_parent, fsi->sb->s_root);
-+
- 	/* booleans */
--	old_dentry = fsi->bool_dir;
--	lock_rename(tmp_bool_dir, old_dentry);
- 	d_exchange(tmp_bool_dir, fsi->bool_dir);
- 
--	old_bool_num = fsi->bool_num;
--	old_bool_names = fsi->bool_pending_names;
--	old_bool_values = fsi->bool_pending_values;
+-	dentry = d_find_any_alias(inode);
+-	if (dentry)
+-		goto out_iput;
 -
--	fsi->bool_num = tmp_bool_num;
--	fsi->bool_pending_names = tmp_bool_names;
--	fsi->bool_pending_values = tmp_bool_values;
+-	dentry = d_alloc_anon(inode->i_sb);
+-	if (unlikely(!dentry))
+-		goto nomem;
 -
--	sel_remove_old_bool_data(old_bool_num, old_bool_names, old_bool_values);
-+	swap(fsi->bool_num, bool_num);
-+	swap(fsi->bool_pending_names, bool_names);
-+	swap(fsi->bool_pending_values, bool_values);
- 
- 	fsi->bool_dir = tmp_bool_dir;
--	unlock_rename(tmp_bool_dir, old_dentry);
- 
- 	/* classes */
--	old_dentry = fsi->class_dir;
--	lock_rename(tmp_class_dir, old_dentry);
- 	d_exchange(tmp_class_dir, fsi->class_dir);
- 	fsi->class_dir = tmp_class_dir;
--	unlock_rename(tmp_class_dir, old_dentry);
-+
-+	unlock_rename(tmp_parent, fsi->sb->s_root);
- 
- out:
-+	sel_remove_old_bool_data(bool_num, bool_names, bool_values);
- 	/* Since the other temporary dirs are children of tmp_parent
- 	 * this will handle all the cleanup in the case of a failure before
- 	 * the swapover
- 	 */
--	sel_remove_entries(tmp_parent);
--	dput(tmp_parent); /* d_genocide() only handles the children */
-+	simple_recursive_removal(tmp_parent, NULL);
- 
- 	return ret;
- }
-@@ -1351,54 +1340,48 @@ static const struct file_operations sel_commit_bools_ops = {
- 	.llseek		= generic_file_llseek,
- };
- 
--static void sel_remove_entries(struct dentry *de)
--{
--	d_genocide(de);
--	shrink_dcache_parent(de);
--}
+-	if (upper_alias)
+-		ovl_dentry_set_upper_alias(dentry);
 -
- static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_dir,
- 			  unsigned int *bool_num, char ***bool_pending_names,
- 			  int **bool_pending_values)
- {
- 	int ret;
--	ssize_t len;
--	struct dentry *dentry = NULL;
--	struct inode *inode = NULL;
--	struct inode_security_struct *isec;
--	char **names = NULL, *page;
-+	char **names, *page;
- 	u32 i, num;
--	int *values = NULL;
--	u32 sid;
- 
--	ret = -ENOMEM;
- 	page = (char *)get_zeroed_page(GFP_KERNEL);
- 	if (!page)
--		goto out;
-+		return -ENOMEM;
- 
--	ret = security_get_bools(newpolicy, &num, &names, &values);
-+	ret = security_get_bools(newpolicy, &num, &names, bool_pending_values);
- 	if (ret)
- 		goto out;
- 
-+	*bool_num = num;
-+	*bool_pending_names = names;
-+
- 	for (i = 0; i < num; i++) {
--		ret = -ENOMEM;
-+		struct dentry *dentry;
-+		struct inode *inode;
-+		struct inode_security_struct *isec;
-+		ssize_t len;
-+		u32 sid;
-+
-+		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
-+		if (len >= PAGE_SIZE) {
-+			ret = -ENAMETOOLONG;
-+			break;
-+		}
- 		dentry = d_alloc_name(bool_dir, names[i]);
--		if (!dentry)
--			goto out;
-+		if (!dentry) {
-+			ret = -ENOMEM;
-+			break;
-+		}
- 
--		ret = -ENOMEM;
- 		inode = sel_make_inode(bool_dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
- 		if (!inode) {
- 			dput(dentry);
--			goto out;
--		}
+-	ovl_dentry_init_reval(dentry, upper, OVL_I_E(inode));
 -
--		ret = -ENAMETOOLONG;
--		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
--		if (len >= PAGE_SIZE) {
--			dput(dentry);
--			iput(inode);
--			goto out;
-+			ret = -ENOMEM;
-+			break;
- 		}
- 
- 		isec = selinux_inode(inode);
-@@ -1416,23 +1399,8 @@ static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_
- 		inode->i_ino = i|SEL_BOOL_INO_OFFSET;
- 		d_add(dentry, inode);
- 	}
--	*bool_num = num;
--	*bool_pending_names = names;
--	*bool_pending_values = values;
+-	return d_instantiate_anon(dentry, inode);
 -
--	free_page((unsigned long)page);
--	return 0;
- out:
- 	free_page((unsigned long)page);
--
--	if (names) {
--		for (i = 0; i < num; i++)
--			kfree(names[i]);
--		kfree(names);
--	}
--	kfree(values);
--	sel_remove_entries(bool_dir);
--
- 	return ret;
+-nomem:
+-	dput(dentry);
+-	dentry = ERR_PTR(-ENOMEM);
+-out_iput:
+-	iput(inode);
+-	return dentry;
++	return d_obtain_alias(inode);
  }
  
-@@ -1961,20 +1929,40 @@ static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
- 	return dentry;
- }
- 
--static struct dentry *sel_make_disconnected_dir(struct super_block *sb,
-+static int reject_all(struct mnt_idmap *idmap, struct inode *inode, int mask)
-+{
-+	return -EPERM;	// no access for anyone, root or no root.
-+}
-+
-+static const struct inode_operations swapover_dir_inode_operations = {
-+	.lookup		= simple_lookup,
-+	.permission	= reject_all,
-+};
-+
-+static struct dentry *sel_make_swapover_dir(struct super_block *sb,
- 						unsigned long *ino)
- {
--	struct inode *inode = sel_make_inode(sb, S_IFDIR | S_IRUGO | S_IXUGO);
-+	struct dentry *dentry = d_alloc_name(sb->s_root, ".swapover");
-+	struct inode *inode;
- 
--	if (!inode)
-+	if (!dentry)
- 		return ERR_PTR(-ENOMEM);
- 
--	inode->i_op = &simple_dir_inode_operations;
--	inode->i_fop = &simple_dir_operations;
-+	inode = sel_make_inode(sb, S_IFDIR);
-+	if (!inode) {
-+		dput(dentry);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	inode->i_op = &swapover_dir_inode_operations;
- 	inode->i_ino = ++(*ino);
- 	/* directory inodes start off with i_nlink == 2 (for "." entry) */
- 	inc_nlink(inode);
--	return d_obtain_alias(inode);
-+	inode_lock(sb->s_root->d_inode);
-+	d_add(dentry, inode);
-+	inc_nlink(sb->s_root->d_inode);
-+	inode_unlock(sb->s_root->d_inode);
-+	return dentry;
- }
- 
- #define NULL_FILE_NAME "null"
+ /* Get the upper or lower dentry in stack whose on layer @idx */
 -- 
 2.39.2
 
