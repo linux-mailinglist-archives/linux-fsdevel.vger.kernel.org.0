@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-3740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6B87F79ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:00:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5F97F79F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD76D281E9F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFE141C210A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC1D381DB;
-	Fri, 24 Nov 2023 17:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDC039FC6;
+	Fri, 24 Nov 2023 17:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Vz45gGWB"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YS/3MDkQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b0])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9188C1BDF
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:00:26 -0800 (PST)
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [IPv6:2001:41d0:1004:224b::bc])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50561BCF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:00:30 -0800 (PST)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1700845224;
+	t=1700845228;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3H2EngB4IC7J9sBiro1fbNUKQKRJyLxYEzCizNHIL5o=;
-	b=Vz45gGWBhO5z+XKwoOw0E6D48Hta7AOYAEttidaa3w/z4W5sITlJaeXjSXd85Nt+hl3kCU
-	aTXHFwqMqwV7hj0k8jUi9LEvpxFLXXr4H0TTC/BuUMrA9KKE5gAvN0U8zPgoak0/Y9qGD0
-	EHNGghNq4QYnKjn5s5T4+I7bOJV0p9k=
+	bh=QWk7YTMvB3DTfZc9sNUwNxdg+CAbRo1hOQbqO2wSQ6A=;
+	b=YS/3MDkQDJLZ1KOe1iNDAZDteB/JflqObZ/sxnSGYirEVXMmWDGjQitpPoxMWbwITRRGcK
+	lCaiEJ8jACRUkhE5INGw8DLQ17uYGYUcBA+kCBAPjM3CKQX83iJY0AdVDX5aUYv45OjLes
+	yYiDU6Zy3ApLCGmeU0KMq1smX6MXIK4=
 From: Sergei Shtepa <sergei.shtepa@linux.dev>
 To: axboe@kernel.dk,
 	hch@infradead.org,
@@ -43,10 +43,11 @@ Cc: mingo@redhat.com,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Sergei Shtepa <sergei.shtepa@veeam.com>
-Subject: [PATCH v6 10/11] blksnap: Kconfig and Makefile
-Date: Fri, 24 Nov 2023 17:59:32 +0100
-Message-Id: <20231124165933.27580-11-sergei.shtepa@linux.dev>
+	Sergei Shtepa <sergei.shtepa@veeam.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v6 11/11] blksnap: prevents using devices with data integrity or inline encryption
+Date: Fri, 24 Nov 2023 17:59:33 +0100
+Message-Id: <20231124165933.27580-12-sergei.shtepa@linux.dev>
 In-Reply-To: <20231124165933.27580-1-sergei.shtepa@linux.dev>
 References: <20231124165933.27580-1-sergei.shtepa@linux.dev>
 Precedence: bulk
@@ -60,99 +61,86 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Sergei Shtepa <sergei.shtepa@veeam.com>
 
-Allows to build a module and add the blksnap to the kernel tree.
+There is an opinion that the use of the blksnap module may violate the
+security of encrypted data. The difference storage file may be located
+on an unreliable disk or even network storage. To implement secure
+compatibility with hardware inline encrypted devices will require
+discussion of algorithms and restrictions. For example, a restriction
+on the location of the difference storage only in virtual memory might
+help. Currently, there is no need for compatibility of the blksnap
+module and hardware inline encryption.
 
-Co-developed-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christoph Hellwig <hch@infradead.org>
+I see no obstacles to ensuring the compatibility of the blksnap module
+and block devices with data integrity. However, this functionality was
+not planned or tested. Perhaps in the future this compatibility can be
+implemented.
+
+Theoretically possible that the block device was added to the snapshot
+before crypto_profile and integrity.profile were initialized.
+Checking the values of bi_crypt_context and bi_integrity ensures that
+the blksnap will not perform any actions with I/O units with which it
+is not compatible.
+
+Reported-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>
 ---
- drivers/block/Kconfig          |  2 ++
- drivers/block/Makefile         |  2 ++
- drivers/block/blksnap/Kconfig  | 31 +++++++++++++++++++++++++++++++
- drivers/block/blksnap/Makefile | 15 +++++++++++++++
- 4 files changed, 50 insertions(+)
- create mode 100644 drivers/block/blksnap/Kconfig
- create mode 100644 drivers/block/blksnap/Makefile
+ drivers/block/blksnap/snapshot.c | 17 +++++++++++++++++
+ drivers/block/blksnap/tracker.c  | 14 ++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index 5b9d4aaebb81..74d2d55526a3 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -404,4 +404,6 @@ config BLKDEV_UBLK_LEGACY_OPCODES
+diff --git a/drivers/block/blksnap/snapshot.c b/drivers/block/blksnap/snapshot.c
+index 21d94f12b5fc..a7675fdcf359 100644
+--- a/drivers/block/blksnap/snapshot.c
++++ b/drivers/block/blksnap/snapshot.c
+@@ -149,6 +149,23 @@ int snapshot_add_device(const uuid_t *id, struct tracker *tracker)
+ 	int ret = 0;
+ 	struct snapshot *snapshot = NULL;
  
- source "drivers/block/rnbd/Kconfig"
++#ifdef CONFIG_BLK_DEV_INTEGRITY
++	if (tracker->orig_bdev->bd_disk->queue->integrity.profile) {
++		pr_err("Blksnap is not compatible with data integrity\n");
++		ret = -EPERM;
++		goto out_up;
++	} else
++		pr_debug("Data integrity not found\n");
++#endif
++
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++	if (tracker->orig_bdev->bd_disk->queue->crypto_profile) {
++		pr_err("Blksnap is not compatible with hardware inline encryption\n");
++		ret = -EPERM;
++		goto out_up;
++	} else
++		pr_debug("Inline encryption not found\n");
++#endif
+ 	snapshot = snapshot_get_by_id(id);
+ 	if (!snapshot)
+ 		return -ESRCH;
+diff --git a/drivers/block/blksnap/tracker.c b/drivers/block/blksnap/tracker.c
+index 2b8978a2f42e..b38ead9afa69 100644
+--- a/drivers/block/blksnap/tracker.c
++++ b/drivers/block/blksnap/tracker.c
+@@ -57,6 +57,20 @@ static bool tracker_submit_bio(struct bio *bio)
+ 	if (diff_area_is_corrupted(tracker->diff_area))
+ 		return false;
  
-+source "drivers/block/blksnap/Kconfig"
-+
- endif # BLK_DEV
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index 101612cba303..9a2a9a56a247 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -40,3 +40,5 @@ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk/
- obj-$(CONFIG_BLK_DEV_UBLK)			+= ublk_drv.o
++#ifdef CONFIG_BLK_INLINE_ENCRYPTION
++	if (bio->bi_crypt_context) {
++		pr_err_once("Hardware inline encryption is not supported\n");
++		diff_area_set_corrupted(tracker->diff_area, -EPERM);
++		return false;
++	}
++#endif
++#ifdef CONFIG_BLK_DEV_INTEGRITY
++	if (bio->bi_integrity) {
++		pr_err_once("Data integrity is not supported\n");
++		diff_area_set_corrupted(tracker->diff_area, -EPERM);
++		return false;
++	}
++#endif
+ 	return diff_area_cow(bio, tracker->diff_area, &copy_iter);
+ }
  
- swim_mod-y	:= swim.o swim_asm.o
-+
-+obj-$(CONFIG_BLKSNAP) += blksnap/
-diff --git a/drivers/block/blksnap/Kconfig b/drivers/block/blksnap/Kconfig
-new file mode 100644
-index 000000000000..f52272c12e1b
---- /dev/null
-+++ b/drivers/block/blksnap/Kconfig
-@@ -0,0 +1,31 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Block device snapshot module configuration
-+#
-+
-+config BLKSNAP
-+	tristate "Block Devices Snapshots Module (blksnap)"
-+	help
-+	  Allow to create snapshots and track block changes for block devices.
-+	  Designed for creating backups for block devices. Snapshots are
-+	  temporary and are released when backup is completed. Change block
-+	  tracking allows to create incremental or differential backups.
-+
-+config BLKSNAP_DIFF_BLKDEV
-+	bool "Use an optimized algorithm to store difference on a block device"
-+	depends on BLKSNAP
-+	default y
-+	help
-+	  The difference storage for a snapshot can be a regular file or a
-+	  block device. We can work with a block device through the interface
-+	  of a regular file. However, direct management of I/O units should
-+	  allow for higher performance.
-+
-+config BLKSNAP_CHUNK_DIFF_BIO_SYNC
-+	bool "Use a synchronous I/O unit processing algorithm for the snapshot image"
-+	depends on BLKSNAP
-+	default n
-+	help
-+	  Theoretical asynchronous algorithm for processing I/O units should
-+	  have higher performance. However, an attempt to confirm this on test
-+	  runs did not bring any results.
-diff --git a/drivers/block/blksnap/Makefile b/drivers/block/blksnap/Makefile
-new file mode 100644
-index 000000000000..8d528b95579a
---- /dev/null
-+++ b/drivers/block/blksnap/Makefile
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+blksnap-y := 		\
-+	cbt_map.o	\
-+	chunk.o		\
-+	diff_area.o	\
-+	diff_buffer.o	\
-+	diff_storage.o	\
-+	event_queue.o	\
-+	main.o		\
-+	snapimage.o	\
-+	snapshot.o	\
-+	tracker.o
-+
-+obj-$(CONFIG_BLKSNAP)	 += blksnap.o
 -- 
 2.20.1
 
