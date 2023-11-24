@@ -1,87 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-3750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7357F7A3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A57F7A24
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD870281C30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7851281720
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB35381BE;
-	Fri, 24 Nov 2023 17:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80493364B1;
+	Fri, 24 Nov 2023 17:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=veeam.com header.i=@veeam.com header.b="fCG8Pel2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cekIu3Px"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 360 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 24 Nov 2023 09:18:34 PST
-Received: from mx1.veeam.com (mx1.veeam.com [216.253.77.21])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1BF41718;
-	Fri, 24 Nov 2023 09:18:34 -0800 (PST)
-Received: from mail.veeam.com (prgmbx02.amust.local [172.24.128.103])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mx1.veeam.com (Postfix) with ESMTPS id B83DB400A9;
-	Fri, 24 Nov 2023 12:12:32 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com;
-	s=mx1-2022; t=1700845952;
-	bh=nrXhCkGTaOqUdOGnrTj2EvYUPyfJBBoTTlxHnvJ4qkw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To:From;
-	b=fCG8Pel2PwaEyTHJHhbrJ0SfLKowU22VKykGLlxSR6NQdNzJA5sL4w/E5cFF94vVY
-	 v9ZuIdlcX1EJUZC5rIHuWdtRAhukNlb5fgjLQIT1I0WgRUtwL93U6bM6bCUE9wgNMV
-	 vsj3+S4oelmJfCqbUFfS7hn667QdD5BmgLQTJDRvE97dN0O2wbOVxZ5rxHDe28P7JX
-	 UjWqPsWiJdACzOWykzv23bew4SLG58IucRTBH321om/y3XxfQ4krFcPEg+JOXtY8e1
-	 9tTVWJUpSxWvudNXVorn2H79jCWVcrXxUHlxVCykAGYElm4xmJbeLLhKAqh9LRjH7D
-	 9WmiacGijFckw==
-Received: from [172.24.10.107] (172.24.10.107) by prgmbx02.amust.local
- (172.24.128.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.27; Fri, 24 Nov
- 2023 18:12:31 +0100
-Message-ID: <14d5d31e-0dbe-8d04-91a6-82a886f8e92a@veeam.com>
-Date: Fri, 24 Nov 2023 18:12:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64232D787;
+	Fri, 24 Nov 2023 17:16:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52C0C433C7;
+	Fri, 24 Nov 2023 17:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700846168;
+	bh=/haiSAT5M/9mgny5Bgw0OmBZUFXuDa30Ns4h8PlXCg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cekIu3PxBZAfCxSQrqXkd2K6+BafRjSDVRkMPzHcchLFliVfQwdLZ+F22vQcjNhV0
+	 cn+20Tu3ADPzdvPCd1WWLVhAhSwK7bXV/JT5+TgxdsTQAk7DGdvWLSBEVbrpsIsU6p
+	 dLLYkx+xvaSr83KKxQx9c4I1V3OAEuXJ4SamKSe1xd5ZkG18YWb3SMyIIoIpO9E6uW
+	 4mEwnvE/eZ/AoqizeU04qaj0+50XyW54Yhegtk1boGdnVhAYCGHs2zTsCFPiE0084Q
+	 A8CctZ49HlJsDe7WB0FhIlro8+f4SDslgf7vfvSnOeXwRlG41ODUR3U9GevjdgLqFV
+	 Tuix+eeljrz0A==
+Date: Fri, 24 Nov 2023 17:16:05 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
+	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 19/25] kselftest/arm64: move get_header()
+Message-ID: <ZWDaVZec1VkMGIOn@finisterre.sirena.org.uk>
+References: <20231124163510.1835740-1-joey.gouly@arm.com>
+ <20231124163510.1835740-20-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 00/11] blksnap - block devices snapshots module
-Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, Sergei Shtepa <sergei.shtepa@linux.dev>,
-	"hch@infradead.org" <hch@infradead.org>, "corbet@lwn.net" <corbet@lwn.net>,
-	"snitzer@kernel.org" <snitzer@kernel.org>
-CC: "mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
-	<brauner@kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>
-References: <20231124165933.27580-1-sergei.shtepa@linux.dev>
- <7a54a166-56fd-4d6c-a5bf-792aa58a8fe5@kernel.dk>
-From: Sergei Shtepa <sergei.shtepa@veeam.com>
-In-Reply-To: <7a54a166-56fd-4d6c-a5bf-792aa58a8fe5@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29F44B155A637662
-X-Veeam-MMEX: True
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NwUACMYn7wUsX8LP"
+Content-Disposition: inline
+In-Reply-To: <20231124163510.1835740-20-joey.gouly@arm.com>
+X-Cookie: Slow day.  Practice crawling.
 
-I'm very sorry.
 
-Script get_maintainer.pl returns a very large list.
-I get "Error: too many recipients from 86.49.140.21"
-when trying to send an email from the smtp.migadu.com.
+--NwUACMYn7wUsX8LP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But it seems that for the third time it was possible to send
-a whole set of patches.
+On Fri, Nov 24, 2023 at 04:35:04PM +0000, Joey Gouly wrote:
+> Put this function in the header so that it can be used by other tests, without
+> needing to link to testcases.c.
 
-I'm sorry for the inconvenience.
-Sending patches by mail gives me pain...
-It seems that I have already gone through all the rakes,
-but there are new ones.
+It would've been good to explain a bit more of the context here but
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--NwUACMYn7wUsX8LP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmVg2lQACgkQJNaLcl1U
+h9BFQwf9FT1sWuszIxMwfuTQ24zmcCPHWMYZBNChucruZbaD0pGFcmy+KXlwh11r
+XLTTWMvXlJt9PfLUrxQETK8uwQydTwYtoJpfeUVZj1OHsujYaDtLl6um5KnPN7sS
+n483rh3jdFtm0lviuhlZlOx/flRX0ZzsA9TcY5RC8/13Au8YVwfuGZ4VDeDEUkiD
+lUUoYJg34CFGtQfA/yYwfaCFuOgz/jOcxRZl6+k7naYavRA0ojxRZ2bo438eWT8I
+A+E8iyaNDPIqDkKKeVhY8zjiGj8zj6Zzp4mdyOElkkzUTjaIrXOY0zynTzQoNyDN
+0gMLqEAQKV/02I3gmC17KUmQ/3dJWQ==
+=NaLT
+-----END PGP SIGNATURE-----
+
+--NwUACMYn7wUsX8LP--
 
