@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-3753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952627F7A61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD267F7A62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33F2B21005
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB2F6B21100
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1419439FC8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2483381CC;
 	Fri, 24 Nov 2023 17:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2/+Mpyoi"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Es9cdRn2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x54a.google.com (mail-ed1-x54a.google.com [IPv6:2a00:1450:4864:20::54a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E561A1725
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:30:34 -0800 (PST)
-Received: by mail-ed1-x54a.google.com with SMTP id 4fb4d7f45d1cf-54af782f653so500621a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:30:34 -0800 (PST)
+Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 714B41701
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:30:37 -0800 (PST)
+Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-a047cdc0294so153075066b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:30:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700847033; x=1701451833; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1700847036; x=1701451836; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=htkkmhnB8YP/fghitgYQJQw3N64RwGKcz1JP0qCYN4U=;
-        b=2/+Mpyoit2qSHZo6oBCbRq6QW+JXUf7jc8mYg/VLd7KBtux80P8vzBXtEte1wBaqQm
-         qSLpHnCnkZ4bzS1BVPHIpxTMCnK/1X0g0FT8HIXPuvEObeweAVFG+d3uk/Xb/Qu5zVAM
-         OdBovc/xkbjJwM8Wmlp01+Cm9ph4MACJmTDSpO0LxkSfX86l3XR0OyJtkQ7fe6aFO4gF
-         fBLyesp6V0HlU32mCmZxVquxQwM2Q+TOfU2JtFhfcpHVgJXre+5EbVTuQQUNI3I1xOVL
-         5xSrsxNyG8eRt+ok+/MrRFfuGpITfnH0v4+Ln+lilaojySIza2drD+JSutwdnDBOEQsT
-         m1jg==
+        bh=tHuLL/RrZm9MFgLTJrL/JWVFan8E6pN9n/zvC9iRwos=;
+        b=Es9cdRn2sPYEhxUNfzFCyVyuPmzuh8IGLWCBaxOMeqoJLZr068L/C4TrMfoyURQt07
+         ExbdYm5DoBIAiE+ufgv1mb49v6lwL0+oNtTk4tJn9NurdGE+2yKRrENObosdoWVg/DHZ
+         DNtccLB7FGZ1YWtt9LEZwxquWRlpWCxqH2RxohDYyReeBEIUCmdVlY/kup2grcRc188G
+         0G42sHe+RRBr2fMmL2cH5DkHOPpKT743OGC4BMQvl2WCcfejajfPHbiCvsUG0m6jvCPB
+         PTWhO4eVu8cThI2BMuigUNMqeFUIOX2AOxNtJwmglSDfPd18YFGi/QZxTA6yj/UL4xMW
+         DYMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700847033; x=1701451833;
+        d=1e100.net; s=20230601; t=1700847036; x=1701451836;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=htkkmhnB8YP/fghitgYQJQw3N64RwGKcz1JP0qCYN4U=;
-        b=cKxC8rIhbap/SOGobyYdyLqzEq/z84oJeBjjhzJEJmkVDtgonsWP5+I2TauI+kld7U
-         /IPWFr+xM8FHpqJfRXKqvaDH7t56QKYOpQdQb6K2J7+YRTAxMuC4GFAEd3bhNuZNnNrE
-         kTVu2ZRziyjoVr0mE13JjsdWKT5A7pNSgzarQH4cKIdbDu6ofzg62DQ+c1gSuiqnCGjt
-         COoL9rliWBVsdR6vnUtuJzv8al1DcqRZImYc3SXuCwSXvdT54cUgUAYTWGkdTyCBFotE
-         vBKIvVHeMDmdtbtqOl513q3ZZMYzoE9OPqKmtNc3pE7QUUivDCNNx0q4e+odTxO19fOS
-         6dng==
-X-Gm-Message-State: AOJu0Yy5KvKE8ZH2UTCKPGRzZDrypgvSbsF8jwef3rh+ESOc1JL3RsPr
-	9vzZHCy0+Vlp2Nvv4WR/70OlDr1CpFM=
-X-Google-Smtp-Source: AGHT+IFD6pvC2bIUmE05s8isjudW7s380IZ2nghEWms8TE3dGKr6bxAr2LNOyFhXZRuM37n/OaQafaXZkVk=
+        bh=tHuLL/RrZm9MFgLTJrL/JWVFan8E6pN9n/zvC9iRwos=;
+        b=hc+ZcQQuKQ44wddUSiKDqL9NMrGZtwlZiA3Yxs5FQCdlozoiUQQ/e+JFlVPgdfMFSS
+         aoD0lgtBA4bZ5yEhgN7dcCqzCpEU5UiadkW4Z0F/kXOTFcNs9EEvHH5KCfBSAoK4/7Cy
+         BnS4KLXwiX4imLq5TCQzxNhAEfVLiz/opmGQGlVKIRaWXXLQNEU5BwH9vjT9IroXPyUh
+         3f+bmTlou4DX9XLBJWv4R8jPCNOCzCJVbbNg4Fxdf3CcERVh/HgUuykJjhGSaXRF//1I
+         dgVh90048aGeA6T/y+wwXf8PUf0LcR9w1lorhQ2rEzUkxHcofkHCrJYj0cSb+02SRxo4
+         Q+5g==
+X-Gm-Message-State: AOJu0YwN37ZV7c5lzMsPYgULPpMKseC1ep2xGBW3JcqJ1532on2rkCDc
+	xpD/01M4tYFeXPffUOnCZvjp/y7fV98=
+X-Google-Smtp-Source: AGHT+IGc9qOP8qXncKlYFF1SOvM4i8WMlDCp1BbsVq0O5n/FmiWyx4WcGVp8y8fbwUcs5B0RxD6Fee+IgF4=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a05:6402:254d:b0:542:d5b2:a6c9 with SMTP id
- l13-20020a056402254d00b00542d5b2a6c9mr52257edb.0.1700847033541; Fri, 24 Nov
- 2023 09:30:33 -0800 (PST)
-Date: Fri, 24 Nov 2023 18:30:18 +0100
+ (user=gnoack job=sendgmr) by 2002:a17:906:3102:b0:9ae:4a0b:d7aa with SMTP id
+ 2-20020a170906310200b009ae4a0bd7aamr35202ejx.6.1700847035976; Fri, 24 Nov
+ 2023 09:30:35 -0800 (PST)
+Date: Fri, 24 Nov 2023 18:30:19 +0100
 In-Reply-To: <20231124173026.3257122-1-gnoack@google.com>
-Message-Id: <20231124173026.3257122-2-gnoack@google.com>
+Message-Id: <20231124173026.3257122-3-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231124173026.3257122-1-gnoack@google.com>
 X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
-Subject: [PATCH v6 1/9] landlock: Remove remaining "inline" modifiers in .c files
+Subject: [PATCH v6 2/9] selftests/landlock: Rename "permitted" to "allowed" in
+ ftruncate tests
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -77,133 +78,88 @@ Content-Transfer-Encoding: quoted-printable
 Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- security/landlock/fs.c      | 26 +++++++++++++-------------
- security/landlock/ruleset.c |  2 +-
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index bc7c126deea2..9ba989ef46a5 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -193,7 +193,7 @@ int landlock_append_fs_rule(struct landlock_ruleset *co=
-nst ruleset,
-  *
-  * Returns NULL if no rule is found or if @dentry is negative.
-  */
--static inline const struct landlock_rule *
-+static const struct landlock_rule *
- find_rule(const struct landlock_ruleset *const domain,
- 	  const struct dentry *const dentry)
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
+ftests/landlock/fs_test.c
+index 18e1f86a6234..971a7bb404d6 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -3627,7 +3627,7 @@ FIXTURE_TEARDOWN(ftruncate)
+ FIXTURE_VARIANT(ftruncate)
  {
-@@ -220,7 +220,7 @@ find_rule(const struct landlock_ruleset *const domain,
-  * sockfs, pipefs), but can still be reachable through
-  * /proc/<pid>/fd/<file-descriptor>
-  */
--static inline bool is_nouser_or_private(const struct dentry *dentry)
-+static bool is_nouser_or_private(const struct dentry *dentry)
- {
- 	return (dentry->d_sb->s_flags & SB_NOUSER) ||
- 	       (d_is_positive(dentry) &&
-@@ -264,7 +264,7 @@ static const struct landlock_ruleset *get_current_fs_do=
-main(void)
-  *
-  * @layer_masks_child2: Optional child masks.
-  */
--static inline bool no_more_access(
-+static bool no_more_access(
- 	const layer_mask_t (*const layer_masks_parent1)[LANDLOCK_NUM_ACCESS_FS],
- 	const layer_mask_t (*const layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS],
- 	const bool child1_is_directory,
-@@ -316,7 +316,7 @@ static inline bool no_more_access(
-  *
-  * Returns true if the request is allowed, false otherwise.
-  */
--static inline bool
-+static bool
- scope_to_request(const access_mask_t access_request,
- 		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
- {
-@@ -335,7 +335,7 @@ scope_to_request(const access_mask_t access_request,
-  * Returns true if there is at least one access right different than
-  * LANDLOCK_ACCESS_FS_REFER.
-  */
--static inline bool
-+static bool
- is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
- 	  const access_mask_t access_request)
- {
-@@ -551,9 +551,9 @@ static bool is_access_to_paths_allowed(
- 	return allowed_parent1 && allowed_parent2;
- }
+ 	const __u64 handled;
+-	const __u64 permitted;
++	const __u64 allowed;
+ 	const int expected_open_result;
+ 	const int expected_ftruncate_result;
+ };
+@@ -3636,7 +3636,7 @@ FIXTURE_VARIANT(ftruncate)
+ FIXTURE_VARIANT_ADD(ftruncate, w_w) {
+ 	/* clang-format on */
+ 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
+-	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
++	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
+ 	.expected_open_result =3D 0,
+ 	.expected_ftruncate_result =3D 0,
+ };
+@@ -3645,7 +3645,7 @@ FIXTURE_VARIANT_ADD(ftruncate, w_w) {
+ FIXTURE_VARIANT_ADD(ftruncate, t_t) {
+ 	/* clang-format on */
+ 	.handled =3D LANDLOCK_ACCESS_FS_TRUNCATE,
+-	.permitted =3D LANDLOCK_ACCESS_FS_TRUNCATE,
++	.allowed =3D LANDLOCK_ACCESS_FS_TRUNCATE,
+ 	.expected_open_result =3D 0,
+ 	.expected_ftruncate_result =3D 0,
+ };
+@@ -3654,7 +3654,7 @@ FIXTURE_VARIANT_ADD(ftruncate, t_t) {
+ FIXTURE_VARIANT_ADD(ftruncate, wt_w) {
+ 	/* clang-format on */
+ 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
+-	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
++	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
+ 	.expected_open_result =3D 0,
+ 	.expected_ftruncate_result =3D EACCES,
+ };
+@@ -3663,8 +3663,7 @@ FIXTURE_VARIANT_ADD(ftruncate, wt_w) {
+ FIXTURE_VARIANT_ADD(ftruncate, wt_wt) {
+ 	/* clang-format on */
+ 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
+-	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE |
+-		     LANDLOCK_ACCESS_FS_TRUNCATE,
++	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
+ 	.expected_open_result =3D 0,
+ 	.expected_ftruncate_result =3D 0,
+ };
+@@ -3673,7 +3672,7 @@ FIXTURE_VARIANT_ADD(ftruncate, wt_wt) {
+ FIXTURE_VARIANT_ADD(ftruncate, wt_t) {
+ 	/* clang-format on */
+ 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
+-	.permitted =3D LANDLOCK_ACCESS_FS_TRUNCATE,
++	.allowed =3D LANDLOCK_ACCESS_FS_TRUNCATE,
+ 	.expected_open_result =3D EACCES,
+ };
 =20
--static inline int check_access_path(const struct landlock_ruleset *const d=
-omain,
--				    const struct path *const path,
--				    access_mask_t access_request)
-+static int check_access_path(const struct landlock_ruleset *const domain,
-+			     const struct path *const path,
-+			     access_mask_t access_request)
- {
- 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
-=20
-@@ -565,8 +565,8 @@ static inline int check_access_path(const struct landlo=
-ck_ruleset *const domain,
- 	return -EACCES;
- }
-=20
--static inline int current_check_access_path(const struct path *const path,
--					    const access_mask_t access_request)
-+static int current_check_access_path(const struct path *const path,
-+				     const access_mask_t access_request)
- {
- 	const struct landlock_ruleset *const dom =3D get_current_fs_domain();
-=20
-@@ -575,7 +575,7 @@ static inline int current_check_access_path(const struc=
-t path *const path,
- 	return check_access_path(dom, path, access_request);
- }
-=20
--static inline access_mask_t get_mode_access(const umode_t mode)
-+static access_mask_t get_mode_access(const umode_t mode)
- {
- 	switch (mode & S_IFMT) {
- 	case S_IFLNK:
-@@ -600,7 +600,7 @@ static inline access_mask_t get_mode_access(const umode=
-_t mode)
- 	}
- }
-=20
--static inline access_mask_t maybe_remove(const struct dentry *const dentry=
-)
-+static access_mask_t maybe_remove(const struct dentry *const dentry)
- {
- 	if (d_is_negative(dentry))
- 		return 0;
-@@ -1086,7 +1086,7 @@ static int hook_path_truncate(const struct path *cons=
-t path)
-  * Returns the access rights that are required for opening the given file,
-  * depending on the file type and open mode.
-  */
--static inline access_mask_t
-+static access_mask_t
- get_required_file_open_access(const struct file *const file)
- {
- 	access_mask_t access =3D 0;
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index ffedc99f2b68..789c81b26a50 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -305,7 +305,7 @@ int landlock_insert_rule(struct landlock_ruleset *const=
- ruleset,
- 	return insert_rule(ruleset, id, &layers, ARRAY_SIZE(layers));
- }
-=20
--static inline void get_hierarchy(struct landlock_hierarchy *const hierarch=
-y)
-+static void get_hierarchy(struct landlock_hierarchy *const hierarchy)
- {
- 	if (hierarchy)
- 		refcount_inc(&hierarchy->usage);
+@@ -3683,7 +3682,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+ 	const struct rule rules[] =3D {
+ 		{
+ 			.path =3D path,
+-			.access =3D variant->permitted,
++			.access =3D variant->allowed,
+ 		},
+ 		{},
+ 	};
+@@ -3724,7 +3723,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_differen=
+t_processes)
+ 		const struct rule rules[] =3D {
+ 			{
+ 				.path =3D path,
+-				.access =3D variant->permitted,
++				.access =3D variant->allowed,
+ 			},
+ 			{},
+ 		};
 --=20
 2.43.0.rc1.413.gea7ed67945-goog
 
