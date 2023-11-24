@@ -1,107 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-3674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84337F7773
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:17:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB38C7F7788
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E29F1F20F3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:17:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1997C1C20F58
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3507F2E82E;
-	Fri, 24 Nov 2023 15:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4A82E84C;
+	Fri, 24 Nov 2023 15:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YjYhRRjM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyqkkMlC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CE0919A2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:16:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700839015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qu5XgvxXAyH+ZZ5B41lPzFlUvRTTIlHyTD7FWxrfkec=;
-	b=YjYhRRjMOWR92Uo3+TqCKW2HWc1xSAUwjzOecxAJabQ1blPCKTeef6bm+wsFsrqxyPXpq0
-	mZ9ut62hKhZvJUphXizDPs9vTOBFspxnF9e+yP4ucl6aW7ftcsydgqA4P2eedLos++eMy8
-	P1Op/yjAODmQ8i0ElHqEMOk8ZF5XjKE=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-404-nInPQSS3Oz6aaWLlmYosJA-1; Fri, 24 Nov 2023 10:16:54 -0500
-X-MC-Unique: nInPQSS3Oz6aaWLlmYosJA-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-77d7daa3d77so8198485a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:16:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700839014; x=1701443814;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qu5XgvxXAyH+ZZ5B41lPzFlUvRTTIlHyTD7FWxrfkec=;
-        b=GLsj16a+Ih7Ij/MCOqoV3xfH0KZWgrnwXUvFamg7R39p52Jgb6haE1ZcnUMb/GbjPE
-         fZDvzIiUuiNpUwzRVAvk/epx70kaXT2nMXrEAkr7zxuoo1gvu4NRNN7CFn2RxShzkEvw
-         eqUB7Vx1uXM3/K7+9DJB/z78Jm/+MbOWkNx5yFQgFo8ym+pSuVHSbC4nTt+syBrvtHOA
-         MyxO0v7fn4EUD1P48WSBRjz8wpiXwHaw3NHDPhIeY+AMal2hqA2XhjlwSlFuj7StyHmB
-         IsbZdz3TFfIPvb/+jgMJ1/vhLlMT6Oc73w5jJi8Z8JWXRjKMjdi5Q39TtJV1TcP1SFhS
-         aGbA==
-X-Gm-Message-State: AOJu0Yya8Zxrh++O8ddRLYQ8HTo+HHu+XqSgn26l9LijM5ncAw3PiqTZ
-	YC0JMUQLmooWQAW5M531exf+2gdafaluPANdIxzswovR2J1bU/Em8xyV4Z03Ucv0qKr0tS2sWrg
-	msXJqjGb8MnmX3fYdKJaKyAYydA==
-X-Received: by 2002:a05:620a:294b:b0:77d:6a8f:abe with SMTP id n11-20020a05620a294b00b0077d6a8f0abemr3730030qkp.2.1700839014238;
-        Fri, 24 Nov 2023 07:16:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHiV7RVK5n3/J6Z2BUdBRcsJkNG7QL8NPXj8wfk67EQSwKUHdH0oqC8FQJ6z1t7hbeF9gdeaA==
-X-Received: by 2002:a05:620a:294b:b0:77d:6a8f:abe with SMTP id n11-20020a05620a294b00b0077d6a8f0abemr3729999qkp.2.1700839013922;
-        Fri, 24 Nov 2023 07:16:53 -0800 (PST)
-Received: from x1n (cpe688f2e2cb7c3-cm688f2e2cb7c0.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id x20-20020a05620a0b5400b0077d71262d38sm1283844qkg.60.2023.11.24.07.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Nov 2023 07:16:53 -0800 (PST)
-Date: Fri, 24 Nov 2023 10:16:51 -0500
-From: Peter Xu <peterx@redhat.com>
-To: Muchun Song <muchun.song@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Muchun Song <songmuchun@bytedance.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/Kconfig: Make hugetlbfs a menuconfig
-Message-ID: <ZWC-YwFlifVFsUOa@x1n>
-References: <20231123223929.1059375-1-peterx@redhat.com>
- <de256121-f613-42d3-b267-9cd9fbfc8946@infradead.org>
- <7830CCC4-B1E4-4CCD-B96B-61744FAF2C79@linux.dev>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE68C2E82A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 15:19:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40332C43391;
+	Fri, 24 Nov 2023 15:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700839161;
+	bh=AxnCrub8TDnlTzblxU/JgLVOnW/iV5OidhqOG/icin8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WyqkkMlCeftsYMjf0Vqa9+3fFEH7Yd7j5SJtfDSTGcgjjGmLLywaWqcJm0A4iJbBt
+	 fLaz4Un0Zy8VnrXcU9qQmhIbgi69X1z4E/JOJWcT5er5dK4US8pHeJor5Sb4YJVezx
+	 lx+pYJwu0e2870JDjgTFk3dlfKe750bY6oMD3l3iFOdWPsl1RPWmtTTTrg+I9QjA/f
+	 yWjPmfjhQfKvyEiuDYRVOM2ZxjXh6/QhKJ5/lAnY4EJnxxKAh7aK7o7+KQssdE8+F7
+	 3wa4ORDQ8BXEzjs/e0LvmOJHB2ip49l3l3CCqjp/HgrYxoTgJiTh+AV9NwainAvh2U
+	 IgI12j2v/SSzA==
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] fs/pipe: Fix lockdep false-positive in watchqueue pipe_write()
+Date: Fri, 24 Nov 2023 16:19:00 +0100
+Message-ID: <20231124-detailgetreu-solidarisch-ae74c731c362@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231124150822.2121798-1-jannh@google.com>
+References: <20231124150822.2121798-1-jannh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7830CCC4-B1E4-4CCD-B96B-61744FAF2C79@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1607; i=brauner@kernel.org; h=from:subject:message-id; bh=AxnCrub8TDnlTzblxU/JgLVOnW/iV5OidhqOG/icin8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQm7HusxnmZrd2q/KC2xjO1VZ/blq7bwnmhK7fyxqam6 80lT8+wdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEToeR4deDnK0M+7dV3649 /of30JbNaQp23OfXLTXmYdt0Ny5RYRbD/7Lu4Oxpx2oesq7Ta8vpT8+PNtRa25BS3CjzxtuJ4cU pZgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 24, 2023 at 10:37:06AM +0800, Muchun Song wrote:
-> >> +if HUGETLBFS
-> >> config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
-> >> bool "HugeTLB Vmemmap Optimization (HVO) defaults to on"
-> >> default n
-> >> @@ -282,6 +275,15 @@ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
-> >>  The HugeTLB VmemmapvOptimization (HVO) defaults to off. Say Y here to
-> > 
-> > Is this small 'v'            ^ a typo?
+On Fri, 24 Nov 2023 16:08:22 +0100, Jann Horn wrote:
+> When you try to splice between a normal pipe and a notification pipe,
+> get_pipe_info(..., true) fails, so splice() falls back to treating the
+> notification pipe like a normal pipe - so we end up in
+> iter_file_splice_write(), which first locks the input pipe, then calls
+> vfs_iter_write(), which locks the output pipe.
 > 
-> Yes. Thanks for pointing it out. Although it is not related to this
-> patch, but it will be nice for me to carry this tiny typo fix. Hi,
-> Peter, would you like help me do this?
+> Lockdep complains about that, because we're taking a pipe lock while
+> already holding another pipe lock.
+> 
+> [...]
 
-Sure, this patch is indeed more or less moving that around; I can touch
-that up.  I'll resend.
+Yeah, that looks to be a improvement in general, since you can't upgrade
+a regular pipe to a O_NOTIFICATION pipe. IOW, peforming that check with
+pipe_lock() isn't necessary.
 
-Thanks,
+(The check for watch queue in pipe_set_size() called from pipe_fcntl()
+ also wouldn't need to be done with __pipe_lock() held fwiw.)
 
--- 
-Peter Xu
+---
 
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/pipe: Fix lockdep false-positive in watchqueue pipe_write()
+      https://git.kernel.org/vfs/vfs/c/efb8f498327c
 
