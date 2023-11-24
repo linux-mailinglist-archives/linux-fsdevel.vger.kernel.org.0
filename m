@@ -1,89 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-3784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820417F8576
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 22:28:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A127F858B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 22:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA32282733
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEF228159A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556403BB4D;
-	Fri, 24 Nov 2023 21:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2133BB3B;
+	Fri, 24 Nov 2023 21:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gBho6sCN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hw8/Lzju"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21AD419B1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:28:43 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-507f1c29f25so3212716e87.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:28:43 -0800 (PST)
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D47B199A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:57 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9fd0059a967so654695766b.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700861321; x=1701466121; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1700862115; x=1701466915; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UE+udvWHynzozj92dDUIlgeAGu8LTQ+iWilnuivlMqc=;
-        b=gBho6sCNs9cgETHAPp8Io4gkWNqWBYUNcmKlU6uO3eK/KmC973ImyHddQrTxdLpvfX
-         smpGYEEFqX54bAv5Bny+KHjGqLJKlUnL24u0TlD4ck6AGVGT016FTzIzlEZAUmFmh7OT
-         VOQwsYBrPcvkyACgG6YSzch0pXIjIFoNp7snI=
+        bh=DnKDKbUOd1WxbpDbxgYGPaEFH1QtfgYmXWR7clpWkts=;
+        b=hw8/Lzju34oPqCwtW9K+Ik359I2sQBTHXMjwvM1VpVG3tnmd7irO9ywXrdv/8toqDb
+         auG+QAhSieej4w97kyz7RDQz3exhMSaboVWx9jTyOK9+aPNzlAqW2CfieOPUnjX6rdl2
+         BCzVUvHFmVG5U21bv06mEiaK5RGr8LuV6yid8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700861321; x=1701466121;
+        d=1e100.net; s=20230601; t=1700862115; x=1701466915;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UE+udvWHynzozj92dDUIlgeAGu8LTQ+iWilnuivlMqc=;
-        b=Z7kHe7ALrkn+TVeQIKc3UPPD8RXzwYgu4LdnfQfYksSBzaaOCpINpbnSEtolg02YDc
-         k8inmHU9HP82tAvwAiai2E6ZTQzwIr3sfc4T88a1Mf3A95WPRFIhG1AMJE4CTP/fn0u9
-         e6Sgu+u3S0P6jk09XW8k1oHLnvXXvSay59vqFgW416p1Q3vvv4d8G5V2f0Ex/EArmGMw
-         8Gymo6mZMMqCtRODDaVIfV78MpfnCb1RaKJG15p5BbJIJoZwpGs8XnO5bD5yVdmS8ViT
-         KM3GFxNy6z8KyupjfQ2Jv4LelaAbmakTTHNKhMWCjhE25pb2GExukJEmfPXpU2hDN99o
-         ummw==
-X-Gm-Message-State: AOJu0Ywcb/XD+3xEbjrf1/JiJvKnbKvmcN1ANzn8YJtCxd2jp3ufGANt
-	jdBfbFVZ1dTc1Tm5JW8H+OUgt4YP+uhLgidUUxSXW0B8
-X-Google-Smtp-Source: AGHT+IHlN0w3cuSBHObWu8HKboT6jLsgdu9QO9y/mLh+dd5qJ1+R5MNLmKOjqTmW2MmDaRVbrQ+10A==
-X-Received: by 2002:a05:6512:a92:b0:500:99a9:bc40 with SMTP id m18-20020a0565120a9200b0050099a9bc40mr3805267lfu.69.1700861321159;
-        Fri, 24 Nov 2023 13:28:41 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id cf17-20020a056512281100b0050aa94e6d15sm611281lfb.9.2023.11.24.13.28.40
+        bh=DnKDKbUOd1WxbpDbxgYGPaEFH1QtfgYmXWR7clpWkts=;
+        b=TAVCVmeTcRVbjnhi1qjBq5cKgqntWZfDcQ/LdAHJbc/JIJv+JjZsiKiXuNpXrVQTZj
+         gX1Z4wGfknnyX0nvYX60dKmBk0UeT75ld7KsTbwjhiDBgjHS16h6g8p6tunO9AOB3ff+
+         jSlwNh5Gd2ygS/qwGe9Z3eRF9gghnPatA+Rx8rerfATgPX/9HY472CPqCb+2kPRoyLOF
+         PC8ERTn1F03EaHPVPlx7QkP/290s4Dc4krXeY8+qbPzloQp+r108c2G8ubUqRWn/WIo+
+         F0Z60aubJgLRVuxTIr+/3w1NNA6hgxZ9B7LQJUTpL8jSFXwxb97DOLLCAHjWZYuofbP5
+         H2dQ==
+X-Gm-Message-State: AOJu0Yy24JDwT+HsZJjZxQwveZfZvdAXZ82Lm2rQvsGKMI4XKmbGKESk
+	A2LmYf+TP9wMIrz+1Arj/0wBcezdbdzorp9MWHB4RGlX
+X-Google-Smtp-Source: AGHT+IFoaGGx9CURvTAXbSmBWjIVox/4ZzDTToWRXzW+zjZwUYh7y+QkxhBWp0kt0GW12X+faWN9kg==
+X-Received: by 2002:a17:907:da3:b0:9fa:d1df:c2c4 with SMTP id go35-20020a1709070da300b009fad1dfc2c4mr7525928ejc.36.1700862115382;
+        Fri, 24 Nov 2023 13:41:55 -0800 (PST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id sa20-20020a1709076d1400b00a0a5a794575sm630803ejc.216.2023.11.24.13.41.54
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Nov 2023 13:28:40 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-50797cf5b69so3203203e87.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:28:40 -0800 (PST)
-X-Received: by 2002:a05:6512:3b0a:b0:509:4b78:69b5 with SMTP id
- f10-20020a0565123b0a00b005094b7869b5mr3916662lfv.36.1700861320031; Fri, 24
- Nov 2023 13:28:40 -0800 (PST)
+        Fri, 24 Nov 2023 13:41:55 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a002562bd8bso449764166b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:54 -0800 (PST)
+X-Received: by 2002:a17:906:518c:b0:9ee:29fe:9499 with SMTP id
+ y12-20020a170906518c00b009ee29fe9499mr7818143ejk.4.1700862114559; Fri, 24 Nov
+ 2023 13:41:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231124060200.GR38156@ZenIV>
-In-Reply-To: <20231124060200.GR38156@ZenIV>
+References: <20231124060553.GA575483@ZenIV>
+In-Reply-To: <20231124060553.GA575483@ZenIV>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 24 Nov 2023 13:28:23 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjsmOgYVFEQqikxtpH6w6kJ3YePTHhGVDhZSMLYvXpP8A@mail.gmail.com>
-Message-ID: <CAHk-=wjsmOgYVFEQqikxtpH6w6kJ3YePTHhGVDhZSMLYvXpP8A@mail.gmail.com>
-Subject: Re: [RFC][PATCHSET v3] simplifying fast_dput(), dentry_kill() et.al.
+Date: Fri, 24 Nov 2023 13:41:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgZNitYwL0kC4GWxWo9zfNXX-8Nhe=D6VtAhP9CAG_xcw@mail.gmail.com>
+Message-ID: <CAHk-=wgZNitYwL0kC4GWxWo9zfNXX-8Nhe=D6VtAhP9CAG_xcw@mail.gmail.com>
+Subject: Re: [PATCHES] assorted dcache stuff
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 23 Nov 2023 at 22:02, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Thu, 23 Nov 2023 at 22:05, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
->         The series below is the fallout of trying to document the dentry
-> refcounting and life cycle - basically, getting rid of the bits that
-> had been too subtle and ugly to write them up.
+>         Assorted dcache cleanups.
 
-Apart from my RCU note, this looks like "Al knows what he's doing" to me.
+Looks obvious enough to me.
 
-Although I'm inclined to agree with Amir on the "no need to call out
-kabi" on patch#3. It's also not like we've ever cared: as long as you
-convert all users, kabi is simply not relevant.
+Famous last words.
 
-            Linus
+                  Linus
 
