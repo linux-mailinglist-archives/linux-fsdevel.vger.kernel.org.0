@@ -1,53 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-3788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDDA7F8645
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 23:59:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7927F86B8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Nov 2023 00:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B30428173F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 22:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9CF1C20E7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 23:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1239FC8;
-	Fri, 24 Nov 2023 22:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301C93D99A;
+	Fri, 24 Nov 2023 23:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="etw+B/63"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKB5kkOA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3594828DA1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 22:58:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A37F8C433C7;
-	Fri, 24 Nov 2023 22:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C6171A4;
+	Fri, 24 Nov 2023 23:30:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DFCC433C8;
+	Fri, 24 Nov 2023 23:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700866735;
-	bh=6JB2cmvFWNvbLTHf+R4y9qgwUrffC1tyRDmPTqkNXIE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=etw+B/63RkQEOkN3ww9VTmsbXl6RL95UORtpGz/pklCS7bf/iLZqu75A0Ewn1upqz
-	 I+9WQvDm1ZFVTW8LkTrncxRiX5PF7lwuFg0r+fACh8XBtmq/GGQUHLZWcEeiq1aSSw
-	 10b/ANLJRbKEGKdnpMvz7vdDwTJ4VKM5dvomB9HLVNRLokrjMlTLg95IK0151ezd6V
-	 IMSPDzxJ1kW0T03QuTDNwTGDuzvf11x0wL8CQYm8MMwuDVsB09MnjoOFbm2yJoLJcn
-	 CPihLZOGYphImXMPIG9PWPMOjVeuPOnNpd32hbeita/ejg1hnLOcV6MfGJnUFPJqLh
-	 yR9OeJJltquyA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 33C03CE0BDB; Fri, 24 Nov 2023 14:58:55 -0800 (PST)
-Date: Fri, 24 Nov 2023 14:58:55 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 02/21] coda_flag_children(): cope with dentries
- turning negative
-Message-ID: <6435833a-bdcb-4114-b29d-28b7f436d47d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20231124060200.GR38156@ZenIV>
- <20231124060422.576198-1-viro@zeniv.linux.org.uk>
- <20231124060422.576198-2-viro@zeniv.linux.org.uk>
- <CAHk-=whGKvjHCtJ6W4pQ0_h_k9fiFQ8V2GpM=BqYnB2X=SJ+XQ@mail.gmail.com>
+	s=k20201202; t=1700868656;
+	bh=t45L2cR6WsMeQVkO+rF2xoZAYVELMmfW6YLlhdfc/LM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKB5kkOA7/uoP3ChC1UFTfFRUQRkiABc1n6UBo9BEG5UmDUAslrr+82HANpQ8IvxS
+	 7p+Foq2BrpCLZ8onXEoC5N+RSQSZ7sf+KQh+0+qMTKXmCNCzt4DNue3KK7H3IkxDO5
+	 FbhBoOR5DdiRtKXEhQavJMCrEztbiwUZzp/RvBHYjPTvD8igZ45oKJreR8qPmkc0tA
+	 X/pq5M+3fdUZ5uAzpQ95GjI31yJzZT5/Bx3pO2fz0n68pbp+X8yZKfLASTl/3aP0Zp
+	 SLBqQ6wKPYzuidoorcp+fv+Gpaxn2o/6oLJWsYXqScF+kOLeWFwG1ShubWMXj7AAqy
+	 W9NnwimBvwUtQ==
+Date: Fri, 24 Nov 2023 15:30:56 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>,
+	Chandan Babu R <chandanbabu@kernel.org>
+Cc: xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Carlos Maiolino <cmaiolino@redhat.com>,
+	Catherine Hoang <catherine.hoang@oracle.com>
+Subject: [MEGAPATCHSET v28] xfs: online repair, second part of part 1
+Message-ID: <20231124233056.GH36190@frogsfrogsfrogs>
+References: <20230926231410.GF11439@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,80 +51,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whGKvjHCtJ6W4pQ0_h_k9fiFQ8V2GpM=BqYnB2X=SJ+XQ@mail.gmail.com>
+In-Reply-To: <20230926231410.GF11439@frogsfrogsfrogs>
 
-On Fri, Nov 24, 2023 at 01:22:19PM -0800, Linus Torvalds wrote:
-> On Thu, 23 Nov 2023 at 22:04, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > ->d_lock on parent does not stabilize ->d_inode of child.
-> > We don't do much with that inode in there, but we need
-> > at least to avoid struct inode getting freed under us...
-> 
-> Gaah. We've gone back and forth on this. Being non-preemptible is
-> already equivalent to rcu read locking.
-> 
-> >From Documentation/RCU/rcu_dereference.rst:
-> 
->                             With the new consolidated
->         RCU flavors, an RCU read-side critical section is entered
->         using rcu_read_lock(), anything that disables bottom halves,
->         anything that disables interrupts, or anything that disables
->         preemption.
-> 
-> so I actually think the coda code is already mostly fine, because that
-> parent spin_lock may not stabilize d_child per se, but it *does* imply
-> a RCU read lock.
-> 
-> So I think you should drop the rcu_read_lock/rcu_read_unlock from that patch.
-> 
-> But that
-> 
->                 struct inode *inode = d_inode_rcu(de);
-> 
-> conversion is required to get a stable inode pointer.
-> 
-> So half of this patch is unnecessary.
-> 
-> Adding Paul to the cc just to verify that the docs are up-to-date and
-> that we're still good here.
-> 
-> Because we've gone back-and-forth on the "spinlocks are an implied RCU
-> read-side critical section" a couple of times.
+Hi everyone,
 
-Yes, spinlocks are implied RCU read-side critical sections.  Even in -rt,
-where non-raw spinlocks are preemptible, courtesy of this:
+I've rebased the online fsck development branches atop 6.7, applied the
+changes requested during the review of v27, and reworked the automatic
+space reaping code to avoid open-coding EFI log item handling, and
+cleaned up a few other things.
 
-	static __always_inline void __rt_spin_lock(spinlock_t *lock)
-	{
-		rtlock_might_resched();
-		rtlock_lock(&lock->lock);
-		rcu_read_lock();
-		migrate_disable();
-	}
+In other words, I'm formally submitting part 1 for inclusion in 6.8.
 
-So given -rt's preemptible spinlocks still being RCU readers, I need to
-explicitly call this out in the documentation.
+Just like the last several submissions, I would like people to focus the
+following:
 
-How about as shown below for a start?
+- Are the major subsystems sufficiently documented that you could figure
+  out what the code does?
 
-							Thanx, Paul
+- Do you see any problems that are severe enough to cause long term
+  support hassles? (e.g. bad API design, writing weird metadata to disk)
 
-------------------------------------------------------------------------
+- Can you spot mis-interactions between the subsystems?
 
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
-index 659d5913784d..2524dcdadde2 100644
---- a/Documentation/RCU/rcu_dereference.rst
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -408,7 +408,10 @@ member of the rcu_dereference() to use in various situations:
- 	RCU flavors, an RCU read-side critical section is entered
- 	using rcu_read_lock(), anything that disables bottom halves,
- 	anything that disables interrupts, or anything that disables
--	preemption.
-+	preemption.  Please note that spinlock critical sections
-+	are also implied RCU read-side critical sections, even when
-+	they are preemptible, as they are in kernels built with
-+	CONFIG_PREEMPT_RT=y.
- 
- 2.	If the access might be within an RCU read-side critical section
- 	on the one hand, or protected by (say) my_lock on the other,
+- What were my blind spots in devising this feature?
+
+- Are there missing pieces that you'd like to help build?
+
+- Can I just merge all of this?
+
+The one thing that is /not/ in scope for this review are requests for
+more refactoring of existing subsystems.  I'm still running QA round the
+clock.  To spare vger, I'm only sending a few patchsets this time.  I
+will of course stress test the new mailing infrastructure on 31 Dec with
+a full posting, like I always do.
+
+--D
 
