@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-3775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA377F84C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:37:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D7B7F84C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A838B1C273BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1231C1C272AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F4E3A8DC;
-	Fri, 24 Nov 2023 19:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8933CF2;
+	Fri, 24 Nov 2023 19:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hYZnUyJC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CNDJ0ddk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980BF19D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:35:53 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AD81B6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:36:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700854552;
+	s=mimecast20190719; t=1700854617;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WpgGA1S9tEUCceeDcgeme0U/Hx75ujMCHkDsInmVnz8=;
-	b=hYZnUyJCtuxBJF3BJhLagfPVn9Du7PDIAMMowAboQjEov7BA1gd/fhhJZNwKa/3wA38+Tu
-	tn2PDd/VxHGnHmIoBPo2s6d4pnLnJve/WdlNYItwEsADxdPAK1YLyiXVHDduSXk2jtxFfT
-	NmOIpiqHKnFTm5vpXQ+a8ysSFTZVDpY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=yhz7X34rtir/QI6I24qRvGRWw3KId1ROlCi2joxVTvo=;
+	b=CNDJ0ddkHrI9A3VF3AkFwvdzImtlL0A/L1L3PY63xAvpg4p2rkgOX2xXOUxvh0C/pWptsZ
+	XWxaw+yEvWQ98e6/NRLKd7M6An2HzKZDlfVQtn89Wl5INE8HzjYXTT5JioJOGBTVM7cbPD
+	FLtsxc+ptDLiZrnp0J67UNf9yQ44e0A=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-171-O2jBN9yoNTSY6rc6Z7jRfw-1; Fri, 24 Nov 2023 14:35:51 -0500
-X-MC-Unique: O2jBN9yoNTSY6rc6Z7jRfw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-32f8371247fso1216928f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:35:51 -0800 (PST)
+ us-mta-179-nDsv3m0gMLOsZGXxJ7N6OQ-1; Fri, 24 Nov 2023 14:36:55 -0500
+X-MC-Unique: nDsv3m0gMLOsZGXxJ7N6OQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-332ed7c0955so315093f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:36:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700854550; x=1701459350;
+        d=1e100.net; s=20230601; t=1700854614; x=1701459414;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :references:cc:to:content-language:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WpgGA1S9tEUCceeDcgeme0U/Hx75ujMCHkDsInmVnz8=;
-        b=kxo0InknqbxZHqCCVR8fMHT6G950EuW5z0QcjEt1Mh08C8iAQBJl1+YHlCvObiM8HC
-         SsgNs919gnmKuXTTek5VoQSKrEF/cePpG+9EYge1DHBl2MJJX9Y17IBf096mSQfbI0T9
-         jLTWO0t2wdU0TwkzqzIdXl3sT4StQ3G4tUVM3sY5nCYg16SMCL2DFo8glIMNTJjkQUW6
-         35+/r/OTkqMrtVzFIULEH9dMioQ4ij7XL8ZH/spYmjUA0odqtXpCS/1zj6/YaTf0vg+U
-         WMRnYqvhd1h6Gzit+hMnln5Z00V7ej6qT5VMmCzJs5EqtTJBb24tsvcGWEAnF5IJqJuw
-         1hxA==
-X-Gm-Message-State: AOJu0YxX4rO2UhsiTs4AZLcaLDe8f56V+kmzM5AchYy+ZuhyCvR5UTE1
-	/HKFjUzpHlP97rO7FTH/OpcVVQEZkFfYT5SrPWLW1s46Uc8qbJ63FnjX88vmIZOzvXT1VEcd890
-	hXaumnsko96+3MmeaFMNqGUu9ow==
-X-Received: by 2002:a5d:484b:0:b0:331:82c4:929f with SMTP id n11-20020a5d484b000000b0033182c4929fmr2558490wrs.27.1700854550034;
-        Fri, 24 Nov 2023 11:35:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGgpR5xD7cIvx/57aWOuiJdZd42w0gDGPcl6JL7MayZiXmJSxWmriDosq0n4Yf76TvU+Hgk/Q==
-X-Received: by 2002:a5d:484b:0:b0:331:82c4:929f with SMTP id n11-20020a5d484b000000b0033182c4929fmr2558467wrs.27.1700854549666;
-        Fri, 24 Nov 2023 11:35:49 -0800 (PST)
+        bh=yhz7X34rtir/QI6I24qRvGRWw3KId1ROlCi2joxVTvo=;
+        b=oBlmmJdK8yhgiyV2Wu9ILe34820f0gEUqPoMPqGYECQp/X/OJCDehA67ZjgARVWK0B
+         lRkTgtyOkW9uQ6uAqm8oodJcO8iG5rdU/heD9TKbM1d+Ys/3hirabZeEoNeljHsHDv4c
+         WUBaLHYqtcMfd+Qv0WOAMQmSrztTon8YuikcOvhCdjPR8l6+DwNDeKrQl/PUAGLqSxKV
+         NzL9Aa0zm3FjDBJhAXJM9D3UgfAZ+T9EoKUl+zrZ+aPti6SxCeHbcway95Xc44RkC28P
+         AlFU7oe4mF5PPbQ1Ez+hW4cbFlxcR+lEk0vzkRZ9QtjDExTfr+aBXN7uE3pdFUCOobmM
+         ql0Q==
+X-Gm-Message-State: AOJu0Yw7f/OTfPOztp60xQ7Zfn7H7uXg7Yg93hAK98YWbPPXd/GHK4DE
+	KFLfm94O9M203KCsInrdMTpp8BsnPVLMByq3ITn1/nEw7qQ63mwAI3uR8AKyo4SZV0Dpo4a8YAW
+	yE/eSXXsS/Yzt7DpUD4idhs0+VA==
+X-Received: by 2002:a05:6000:b8b:b0:332:c699:f7b0 with SMTP id dl11-20020a0560000b8b00b00332c699f7b0mr3529170wrb.31.1700854614556;
+        Fri, 24 Nov 2023 11:36:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEtWiibCD3+vrVp4mDgf1cyQncOLRSHqFl89/CuHG7jW1X5In5uJNqN36gsj25aPlrpopXgNQ==
+X-Received: by 2002:a05:6000:b8b:b0:332:c699:f7b0 with SMTP id dl11-20020a0560000b8b00b00332c699f7b0mr3529146wrb.31.1700854614204;
+        Fri, 24 Nov 2023 11:36:54 -0800 (PST)
 Received: from ?IPV6:2003:cb:c721:a000:7426:f6b4:82a3:c6ab? (p200300cbc721a0007426f6b482a3c6ab.dip0.t-ipconnect.de. [2003:cb:c721:a000:7426:f6b4:82a3:c6ab])
-        by smtp.gmail.com with ESMTPSA id r5-20020a5d4985000000b00332d3b89561sm1764366wrq.97.2023.11.24.11.35.47
+        by smtp.gmail.com with ESMTPSA id r5-20020a5d4985000000b00332d3b89561sm1764366wrq.97.2023.11.24.11.36.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Nov 2023 11:35:49 -0800 (PST)
-Message-ID: <dadc9d17-f311-47f1-a264-28b42bed0ab0@redhat.com>
-Date: Fri, 24 Nov 2023 20:35:47 +0100
+        Fri, 24 Nov 2023 11:36:53 -0800 (PST)
+Message-ID: <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
+Date: Fri, 24 Nov 2023 20:36:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,8 +69,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 05/27] mm: page_alloc: Add an arch hook to allow
- prep_new_page() to fail
+Subject: Re: [PATCH RFC v2 06/27] mm: page_alloc: Allow an arch to hook early
+ into free_pages_prepare()
 Content-Language: en-US
 To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
  will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
@@ -87,7 +87,7 @@ Cc: pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
  linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
  linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-6-alexandru.elisei@arm.com>
+ <20231119165721.9849-7-alexandru.elisei@arm.com>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -134,21 +134,17 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20231119165721.9849-6-alexandru.elisei@arm.com>
+In-Reply-To: <20231119165721.9849-7-alexandru.elisei@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.11.23 17:56, Alexandru Elisei wrote:
-> Introduce arch_prep_new_page(), which will be used by arm64 to reserve tag
-> storage for an allocated page. Reserving tag storage can fail, for example,
-> if the tag storage page has a short pin on it, so allow prep_new_page() ->
-> arch_prep_new_page() to similarly fail.
+On 19.11.23 17:57, Alexandru Elisei wrote:
+> Add arch_free_pages_prepare() hook that is called before that page flags
+> are cleared. This will be used by arm64 when explicit management of tag
+> storage pages is enabled.
 
-But what are the side-effects of this? How does the calling code recover?
-
-E.g., what if we need to populate a page into user space, but that 
-particular page we allocated fails to be prepared? So we inject a signal 
-into that poor process?
+Can you elaborate a bit what exactly will be done by that code with that 
+information?
 
 -- 
 Cheers,
