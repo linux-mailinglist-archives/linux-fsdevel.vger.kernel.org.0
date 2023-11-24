@@ -1,151 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-3675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3677-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E587F7785
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:19:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF747F778B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67FE1C210E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:19:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED0BFB2139D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40B12E844;
-	Fri, 24 Nov 2023 15:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423892E82C;
+	Fri, 24 Nov 2023 15:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PSBuLy+o"
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="lhD5AU7Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72A8D19BE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:19:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700839146;
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2425171D;
+	Fri, 24 Nov 2023 07:20:48 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D8504000B;
+	Fri, 24 Nov 2023 15:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1700839247;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sUP0938eWxrh/qcHUeeo6YZetnQrjCIIyWqIBPJP/FA=;
-	b=PSBuLy+otRIBqwjnDCFFN8NtaOdKxHHcPIhnEUTHLpVv08jVIn/h08OuKmDU9hKiRFTKU/
-	KsgGYP732peyUzk3SYAl6Jq5zH2n3W43zmXgKlCG7J6HXoJRglZG4gTLirx0LYJT1V+g6B
-	649/0/elvpV8zMKsitPeBmBs6/TuOl8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-282-E0TMX0MEMxmLOyg1bsgLjQ-1; Fri, 24 Nov 2023 10:19:05 -0500
-X-MC-Unique: E0TMX0MEMxmLOyg1bsgLjQ-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-67a0921b293so4055626d6.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:19:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700839144; x=1701443944;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sUP0938eWxrh/qcHUeeo6YZetnQrjCIIyWqIBPJP/FA=;
-        b=up3N1tvS1PAOATVl6Yc2leRy2PgEajdwNGOlyg3jdjLKfBqUX6wlnVxzGA2maOFe+u
-         7HM4S/mIZ3hij82ztNM/4muEU+Tr4S9h6P5hyxyelLz/JNcB76JAcgpfBjQlNg4XCB5e
-         8WJjk5f8Bb69yrQhekFec/cyVlpW1Uf0uln6xT970jSXDl9wRChPQoFycXuUUyIf4nUW
-         A3K2hG2nBqvJpY2c7V0d3gAFd8JgOpXFfQy0BFjJBMEP25FedEzJGBODCtu6kQKigRYe
-         EUgWzrXNwsWqOpm8VuxJoREhG6GMFp1Hnro6o8Q9ubgI1MTYxy1XDJcNgWkXtaJ4suOH
-         NBCw==
-X-Gm-Message-State: AOJu0YxarWEyTjhOG/lhbuieTa+nJtuH7TPl7tNi1q0Zmf/vgrToWd/6
-	9kTDIlb0WsjbMt9tKizkiKciCjCPGjHG//Sig9CaMiwokz0GfbFCXTPyUjeVyopMFuPW6nxQK0L
-	Lqz1Mm2lx5GOy2KtnpjTpdoJuig==
-X-Received: by 2002:a05:6214:e62:b0:679:dfc4:a5b with SMTP id jz2-20020a0562140e6200b00679dfc40a5bmr3427593qvb.5.1700839144712;
-        Fri, 24 Nov 2023 07:19:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH65tZjZ4kmXbh/d9VdlWOCPV9PyBUVtyw/3egpKaKfZhkxUJBi3CqSgdCBKJPV4rh40sArzw==
-X-Received: by 2002:a05:6214:e62:b0:679:dfc4:a5b with SMTP id jz2-20020a0562140e6200b00679dfc40a5bmr3427564qvb.5.1700839144350;
-        Fri, 24 Nov 2023 07:19:04 -0800 (PST)
-Received: from x1n.redhat.com (cpe688f2e2cb7c3-cm688f2e2cb7c0.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id kr6-20020ac861c6000000b004180fb5c6adsm1339987qtb.25.2023.11.24.07.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Nov 2023 07:19:03 -0800 (PST)
-From: Peter Xu <peterx@redhat.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: peterx@redhat.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Muchun Song <songmuchun@bytedance.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] fs/Kconfig: Make hugetlbfs a menuconfig
-Date: Fri, 24 Nov 2023 10:19:02 -0500
-Message-ID: <20231124151902.1075697-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.41.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KP9kE/qZ9mZ3UkVY03ruuvTkwENKgMzDkSDUS7WTkLg=;
+	b=lhD5AU7Qe1kTAfOW+1UpIAHQWuMOQ6yr2r5z/v2J0mpDrMmvWJtWs0MeE8CJJa1Y0TMoHM
+	b5UFHmUnbAzpLpnIAyoa8MAgUqvT1+8Is4wSqyx4tAlWm7KX4uo+UGOG57+QANq1yaXpf0
+	hisz9KIiRxt6gPrJBkvO4QrG5mpxAsztruGoKDfiJDknG5+U3HbJmGPjp1y2N14v5j5E5v
+	0q69wJjdvmPKRE7O5yrBnIbPsp+YdxElXEyr1g2THU26QnV88esgweZBouIGvQXmPxl+Pc
+	OOHxu4SytSoxkXYopPAcXD6Mgvs7G/Q6KBtwqNh/DNvQo0WMM9en4B4dtAT30g==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>,
+  tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
+  ebiggers@kernel.org,  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org,
+  linux-ext4@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v6 0/9] Support negative dentries on
+ case-insensitive ext4 and f2fs
+In-Reply-To: <20231123195327.GP38156@ZenIV> (Al Viro's message of "Thu, 23 Nov
+	2023 19:53:27 +0000")
+References: <20231025-selektiert-leibarzt-5d0070d85d93@brauner>
+	<655a9634.630a0220.d50d7.5063SMTPIN_ADDED_BROKEN@mx.google.com>
+	<20231120-nihilismus-verehren-f2b932b799e0@brauner>
+	<CAHk-=whTCWwfmSzv3uVLN286_WZ6coN-GNw=4DWja7NZzp5ytg@mail.gmail.com>
+	<20231121022734.GC38156@ZenIV> <20231122211901.GJ38156@ZenIV>
+	<CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+	<20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
+	<20231123195327.GP38156@ZenIV>
+Date: Fri, 24 Nov 2023 10:20:39 -0500
+Message-ID: <87plzzgou0.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-GND-Sasl: gabriel@krisman.be
 
-Hugetlb vmemmap default option (HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON)
-is a sub-option to hugetlbfs, but it shows in the same level as hugetlbfs
-itself, under "Pesudo filesystems".
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-Make the vmemmap option a sub-option to hugetlbfs, by changing hugetlbfs
-into a menuconfig.  When moving it, fix a typo 'v' spot by Randy.
+> On Thu, Nov 23, 2023 at 02:06:39PM -0500, Gabriel Krisman Bertazi wrote:
+>
+>> > A paragraph above you've said that it's not constant over the entire
+>> > filesystem.
+>> 
+>> The same ->d_op is used by every dentry in the filesystem if the superblock
+>> has the casefold bit enabled, regardless of whether a specific inode is
+>> casefolded or not. See generic_set_encrypted_ci_d_ops in my tree. It is
+>> called unconditionally by ext4_lookup and only checks the superblock:
+>> 
+>> void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
+>> {
+>>         if (dentry->d_sb->s_encoding) {
+>> 		d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
+>> 		return;
+>> 	}
+>>         ...
+>> 
+>> What I meant was that this used to be set once at sb->s_d_op, and
+>> propagated during dentry allocation.  Therefore, the propagation to the
+>> alias would happen inside __d_alloc.  Once we enabled fscrypt and
+>> casefold to work together, sb->s_d_op is NULL
+>
+> Why?  That's what I don't understand - if you really want it for
+> all dentries on that filesystem, that's what ->s_d_op is for.
+> If it is not, you have that problem, no matter which way you flip ->d_op
+> value.
 
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Muchun Song <songmuchun@bytedance.com>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
-v2:
-- Fix a typo in the relevant area [Randy]
----
- fs/Kconfig | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+I'm not sure why it changed.  I'm guessing that, since it doesn't make
+sense to set fscrypt_d_revalidate for every dentry in the
+!case-insensitive case, they just kept the same behavior for
+case-insensitive+fscrypt.  This is what I get from looking at the git
+history.
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index fd1f655b4f1f..0b404e61c80b 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -254,7 +254,7 @@ config TMPFS_QUOTA
- config ARCH_SUPPORTS_HUGETLBFS
- 	def_bool n
- 
--config HUGETLBFS
-+menuconfig HUGETLBFS
- 	bool "HugeTLB file system support"
- 	depends on X86 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
- 	depends on (SYSFS || SYSCTL)
-@@ -266,22 +266,24 @@ config HUGETLBFS
- 
- 	  If unsure, say N.
- 
--config HUGETLB_PAGE
--	def_bool HUGETLBFS
--
--config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
--	def_bool HUGETLB_PAGE
--	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
--	depends on SPARSEMEM_VMEMMAP
--
-+if HUGETLBFS
- config HUGETLB_PAGE_OPTIMIZE_VMEMMAP_DEFAULT_ON
- 	bool "HugeTLB Vmemmap Optimization (HVO) defaults to on"
- 	default n
- 	depends on HUGETLB_PAGE_OPTIMIZE_VMEMMAP
- 	help
--	  The HugeTLB VmemmapvOptimization (HVO) defaults to off. Say Y here to
-+	  The HugeTLB Vmemmap Optimization (HVO) defaults to off. Say Y here to
- 	  enable HVO by default. It can be disabled via hugetlb_free_vmemmap=off
- 	  (boot command line) or hugetlb_optimize_vmemmap (sysctl).
-+endif # HUGETLBFS
-+
-+config HUGETLB_PAGE
-+	def_bool HUGETLBFS
-+
-+config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
-+	def_bool HUGETLB_PAGE
-+	depends on ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
-+	depends on SPARSEMEM_VMEMMAP
- 
- config ARCH_HAS_GIGANTIC_PAGE
- 	bool
+I will get a new series reverting to use ->s_d_op, folding the
+dentry_cmp behavior you mentioned, and based on what you merge in your
+branch.
+
+>> and we always set the same
+>> handler for every dentry during lookup.
+>
+> Not every dentry goes through lookup - see upthread for details.
+
+Yes, I got that already.  This should be "we always set the same handler
+for every dentry that goes through lookup and bork whatever doesn't come
+through lookup."
+
 -- 
-2.41.0
-
+Gabriel Krisman Bertazi
 
