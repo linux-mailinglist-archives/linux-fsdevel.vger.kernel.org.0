@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-3776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D7B7F84C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:37:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536A07F84D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 20:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1231C1C272AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:37:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58EE5B24C6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E8933CF2;
-	Fri, 24 Nov 2023 19:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C237F39FC2;
+	Fri, 24 Nov 2023 19:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CNDJ0ddk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cmi8JwnF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AD81B6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:36:57 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1B4C2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:41:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700854617;
+	s=mimecast20190719; t=1700854861;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yhz7X34rtir/QI6I24qRvGRWw3KId1ROlCi2joxVTvo=;
-	b=CNDJ0ddkHrI9A3VF3AkFwvdzImtlL0A/L1L3PY63xAvpg4p2rkgOX2xXOUxvh0C/pWptsZ
-	XWxaw+yEvWQ98e6/NRLKd7M6An2HzKZDlfVQtn89Wl5INE8HzjYXTT5JioJOGBTVM7cbPD
-	FLtsxc+ptDLiZrnp0J67UNf9yQ44e0A=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=l7H6pu8nkSic7rPSXh8wGAQ480LZx0Q6bv1ihMXvDxs=;
+	b=cmi8JwnFJlOjPQmdBDqQemlGTEGXufH3vxEoWO973EuK0V1YiFZHiqcZ3E3+v1fbm5kRex
+	ZKqdDm2+fzWkMW0Tts1gIIgPTTp8NRDqBgeKSni33PQyM/jA5vLUxKlK2Gu2uDy8B7i+dL
+	Ec9IpgQijuvptx4/ivOEVwFLEx3kXrk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-179-nDsv3m0gMLOsZGXxJ7N6OQ-1; Fri, 24 Nov 2023 14:36:55 -0500
-X-MC-Unique: nDsv3m0gMLOsZGXxJ7N6OQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-332ed7c0955so315093f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:36:55 -0800 (PST)
+ us-mta-433-Yjc7JD3cNTO3Wwi3U09JqQ-1; Fri, 24 Nov 2023 14:41:00 -0500
+X-MC-Unique: Yjc7JD3cNTO3Wwi3U09JqQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-40b2a386e8dso12465675e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 11:40:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700854614; x=1701459414;
+        d=1e100.net; s=20230601; t=1700854859; x=1701459659;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :references:cc:to:content-language:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yhz7X34rtir/QI6I24qRvGRWw3KId1ROlCi2joxVTvo=;
-        b=oBlmmJdK8yhgiyV2Wu9ILe34820f0gEUqPoMPqGYECQp/X/OJCDehA67ZjgARVWK0B
-         lRkTgtyOkW9uQ6uAqm8oodJcO8iG5rdU/heD9TKbM1d+Ys/3hirabZeEoNeljHsHDv4c
-         WUBaLHYqtcMfd+Qv0WOAMQmSrztTon8YuikcOvhCdjPR8l6+DwNDeKrQl/PUAGLqSxKV
-         NzL9Aa0zm3FjDBJhAXJM9D3UgfAZ+T9EoKUl+zrZ+aPti6SxCeHbcway95Xc44RkC28P
-         AlFU7oe4mF5PPbQ1Ez+hW4cbFlxcR+lEk0vzkRZ9QtjDExTfr+aBXN7uE3pdFUCOobmM
-         ql0Q==
-X-Gm-Message-State: AOJu0Yw7f/OTfPOztp60xQ7Zfn7H7uXg7Yg93hAK98YWbPPXd/GHK4DE
-	KFLfm94O9M203KCsInrdMTpp8BsnPVLMByq3ITn1/nEw7qQ63mwAI3uR8AKyo4SZV0Dpo4a8YAW
-	yE/eSXXsS/Yzt7DpUD4idhs0+VA==
-X-Received: by 2002:a05:6000:b8b:b0:332:c699:f7b0 with SMTP id dl11-20020a0560000b8b00b00332c699f7b0mr3529170wrb.31.1700854614556;
-        Fri, 24 Nov 2023 11:36:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEtWiibCD3+vrVp4mDgf1cyQncOLRSHqFl89/CuHG7jW1X5In5uJNqN36gsj25aPlrpopXgNQ==
-X-Received: by 2002:a05:6000:b8b:b0:332:c699:f7b0 with SMTP id dl11-20020a0560000b8b00b00332c699f7b0mr3529146wrb.31.1700854614204;
-        Fri, 24 Nov 2023 11:36:54 -0800 (PST)
+        bh=l7H6pu8nkSic7rPSXh8wGAQ480LZx0Q6bv1ihMXvDxs=;
+        b=vqpCTj2ShjsrRZQu5mFEiDpGiiFbB0ItHi9SdBdL0k0/GkHeNij6/gYbNDrjnpt38X
+         gfPKsebTDLsLYs9R6qwuwbwmXE/COcLrJ8rJqnolvqLY4DG75lzcAi6hGJ8v3oiMSn5p
+         VygQIxARSd38El/ZJxWNaN9e9VZNtsvZaGZgEhlaW3B1joHxC2g38x0v4GaA0uSraXyt
+         mVG+NxoxCOo0Ydhqdx86nhh+xAnDr4islMXoJiX9rc0m9jyZNAQ1/9wRCMf4vCtF7B8L
+         2WrpLP1c1nt2Rq3hK3S4v+8vJN97fkbdP3Lt+DOHp/zxFtjlzwJsf1d1l4FRqJLtPDZt
+         BnLw==
+X-Gm-Message-State: AOJu0YzdKitXF7pQ8lA5E0u24ZjmFPpD9gZQjtXVRl/zad2Ocrpxiruu
+	d9asB9WBdCwgdYsBHCWl/SAHGQ2WGas0kPnzS402+CtVCYpkomCYC2nuPdvLnAOUU1cdKPbKiwY
+	dinAYoYX314OeLntPuj+OEq0/hw==
+X-Received: by 2002:a05:600c:1c0d:b0:40b:3d92:de42 with SMTP id j13-20020a05600c1c0d00b0040b3d92de42mr1468710wms.8.1700854858882;
+        Fri, 24 Nov 2023 11:40:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHIa0Ag7nDmLb2STet/Q4xvrchyDOT8XsLNG+hJoGxgGenmCCkTOk+e6C/hGzb6XbqyhNhLmA==
+X-Received: by 2002:a05:600c:1c0d:b0:40b:3d92:de42 with SMTP id j13-20020a05600c1c0d00b0040b3d92de42mr1468683wms.8.1700854858417;
+        Fri, 24 Nov 2023 11:40:58 -0800 (PST)
 Received: from ?IPV6:2003:cb:c721:a000:7426:f6b4:82a3:c6ab? (p200300cbc721a0007426f6b482a3c6ab.dip0.t-ipconnect.de. [2003:cb:c721:a000:7426:f6b4:82a3:c6ab])
-        by smtp.gmail.com with ESMTPSA id r5-20020a5d4985000000b00332d3b89561sm1764366wrq.97.2023.11.24.11.36.52
+        by smtp.gmail.com with ESMTPSA id m18-20020a05600c3b1200b00405959469afsm5921177wms.3.2023.11.24.11.40.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Nov 2023 11:36:53 -0800 (PST)
-Message-ID: <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
-Date: Fri, 24 Nov 2023 20:36:52 +0100
+        Fri, 24 Nov 2023 11:40:58 -0800 (PST)
+Message-ID: <c49cd89d-41cf-495b-9b96-4434ab407967@redhat.com>
+Date: Fri, 24 Nov 2023 20:40:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,8 +69,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 06/27] mm: page_alloc: Allow an arch to hook early
- into free_pages_prepare()
+Subject: Re: [PATCH RFC v2 12/27] arm64: mte: Add tag storage pages to the
+ MIGRATE_CMA migratetype
 Content-Language: en-US
 To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
  will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
@@ -87,7 +87,7 @@ Cc: pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
  linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
  linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
 References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-7-alexandru.elisei@arm.com>
+ <20231119165721.9849-13-alexandru.elisei@arm.com>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -134,17 +134,138 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20231119165721.9849-7-alexandru.elisei@arm.com>
+In-Reply-To: <20231119165721.9849-13-alexandru.elisei@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 19.11.23 17:57, Alexandru Elisei wrote:
-> Add arch_free_pages_prepare() hook that is called before that page flags
-> are cleared. This will be used by arm64 when explicit management of tag
-> storage pages is enabled.
+> Add the MTE tag storage pages to the MIGRATE_CMA migratetype, which allows
+> the page allocator to manage them like regular pages.
+> 
+> Ths migratype lends the pages some very desirable properties:
+> 
+> * They cannot be longterm pinned, meaning they will always be migratable.
+> 
+> * The pages can be allocated explicitely by using their PFN (with
+>    alloc_contig_range()) when they are needed to store tags.
+> 
+> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> ---
+>   arch/arm64/Kconfig                  |  1 +
+>   arch/arm64/kernel/mte_tag_storage.c | 68 +++++++++++++++++++++++++++++
+>   include/linux/mmzone.h              |  5 +++
+>   mm/internal.h                       |  3 --
+>   4 files changed, 74 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index fe8276fdc7a8..047487046e8f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2065,6 +2065,7 @@ config ARM64_MTE
+>   if ARM64_MTE
+>   config ARM64_MTE_TAG_STORAGE
+>   	bool "Dynamic MTE tag storage management"
+> +	select CONFIG_CMA
+>   	help
+>   	  Adds support for dynamic management of the memory used by the hardware
+>   	  for storing MTE tags. This memory, unlike normal memory, cannot be
+> diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
+> index fa6267ef8392..427f4f1909f3 100644
+> --- a/arch/arm64/kernel/mte_tag_storage.c
+> +++ b/arch/arm64/kernel/mte_tag_storage.c
+> @@ -5,10 +5,12 @@
+>    * Copyright (C) 2023 ARM Ltd.
+>    */
+>   
+> +#include <linux/cma.h>
+>   #include <linux/memblock.h>
+>   #include <linux/mm.h>
+>   #include <linux/of_device.h>
+>   #include <linux/of_fdt.h>
+> +#include <linux/pageblock-flags.h>
+>   #include <linux/range.h>
+>   #include <linux/string.h>
+>   #include <linux/xarray.h>
+> @@ -189,6 +191,14 @@ static int __init fdt_init_tag_storage(unsigned long node, const char *uname,
+>   		return ret;
+>   	}
+>   
+> +	/* Pages are managed in pageblock_nr_pages chunks */
+> +	if (!IS_ALIGNED(tag_range->start | range_len(tag_range), pageblock_nr_pages)) {
+> +		pr_err("Tag storage region 0x%llx-0x%llx not aligned to pageblock size 0x%llx",
+> +		       PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->end),
+> +		       PFN_PHYS(pageblock_nr_pages));
+> +		return -EINVAL;
+> +	}
+> +
+>   	ret = tag_storage_get_memory_node(node, &mem_node);
+>   	if (ret)
+>   		return ret;
+> @@ -254,3 +264,61 @@ void __init mte_tag_storage_init(void)
+>   		pr_info("MTE tag storage region management disabled");
+>   	}
+>   }
+> +
+> +static int __init mte_tag_storage_activate_regions(void)
+> +{
+> +	phys_addr_t dram_start, dram_end;
+> +	struct range *tag_range;
+> +	unsigned long pfn;
+> +	int i, ret;
+> +
+> +	if (num_tag_regions == 0)
+> +		return 0;
+> +
+> +	dram_start = memblock_start_of_DRAM();
+> +	dram_end = memblock_end_of_DRAM();
+> +
+> +	for (i = 0; i < num_tag_regions; i++) {
+> +		tag_range = &tag_regions[i].tag_range;
+> +		/*
+> +		 * Tag storage region was clipped by arm64_bootmem_init()
+> +		 * enforcing addressing limits.
+> +		 */
+> +		if (PFN_PHYS(tag_range->start) < dram_start ||
+> +				PFN_PHYS(tag_range->end) >= dram_end) {
+> +			pr_err("Tag storage region 0x%llx-0x%llx outside addressable memory",
+> +			       PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->end));
+> +			ret = -EINVAL;
+> +			goto out_disabled;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * MTE disabled, tag storage pages can be used like any other pages. The
+> +	 * only restriction is that the pages cannot be used by kexec because
+> +	 * the memory remains marked as reserved in the memblock allocator.
+> +	 */
+> +	if (!system_supports_mte()) {
+> +		for (i = 0; i< num_tag_regions; i++) {
+> +			tag_range = &tag_regions[i].tag_range;
+> +			for (pfn = tag_range->start; pfn <= tag_range->end; pfn++)
+> +				free_reserved_page(pfn_to_page(pfn));
+> +		}
+> +		ret = 0;
+> +		goto out_disabled;
+> +	}
+> +
+> +	for (i = 0; i < num_tag_regions; i++) {
+> +		tag_range = &tag_regions[i].tag_range;
+> +		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += pageblock_nr_pages)
+> +			init_cma_reserved_pageblock(pfn_to_page(pfn));
+> +		totalcma_pages += range_len(tag_range);
+> +	}
 
-Can you elaborate a bit what exactly will be done by that code with that 
-information?
+You shouldn't be doing that manually in arm code. Likely you want some 
+cma.c helper for something like that.
+
+But, can you elaborate on why you took this hacky (sorry) approach as 
+documented in the cover letter:
+
+"The arm64 code manages this memory directly instead of using
+cma_declare_contiguous/cma_alloc for performance reasons."
+
+What is the exact problem?
 
 -- 
 Cheers,
