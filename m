@@ -1,119 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-3762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632B57F7A93
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A30D27F7BD2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 19:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D76E281598
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD0C2821FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 18:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4B639FC3;
-	Fri, 24 Nov 2023 17:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8E439FF8;
+	Fri, 24 Nov 2023 18:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SR34irpS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWCVMqtk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7545E171D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 09:51:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700848277; x=1732384277;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=1gOSGqHr2oFSCkFY/LYbsCiRzMT+F9vwSVPP7+cOIJM=;
-  b=SR34irpSwZ7Sj3TETGLkHUbv5i0voGj+8vE8fjA5Z1Ho9nZe7LAV5WJG
-   v8xGNiTlRgNvvc7gPI14gbreIdZAf1/qgbJ7Mo23CwMtd2noGj0eHUtO3
-   SxHmhhgFWjFywMxshHkpYCMxlvxyzkdTke5u9jNyD0VmMvSjNicrNqJyv
-   NJoesaEBIRSMhs2Erj97MGHOTE8I0lliOi/qif9BjdPp+OO9DkabaZJHR
-   nE1imgay0ye5SQUf1yKaCH11JdK7ym1KZ1vSSE0V3NKJsLujLbrUbAS9B
-   8aP2kSqnUb+OPg59Cg+oLyuW+2XRVFqa6c3QmsyT5DRkfZid+Mvl51LRc
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="382853554"
-X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
-   d="scan'208";a="382853554"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 09:51:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="761011124"
-X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
-   d="scan'208";a="761011124"
-Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 24 Nov 2023 09:51:15 -0800
-Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r6aKf-00039H-1X;
-	Fri, 24 Nov 2023 17:51:13 +0000
-Date: Sat, 25 Nov 2023 01:50:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:work.csum-x86 4/18] net/core/datagram.c:745:55: sparse:
- sparse: incorrect type in argument 1 (different base types)
-Message-ID: <202311250023.ySjyjo9L-lkp@intel.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B522139FEA;
+	Fri, 24 Nov 2023 18:08:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B38CC433C9;
+	Fri, 24 Nov 2023 18:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700849338;
+	bh=+Onur62i+JRm8hJ4GcCqwMgzvptXqa0TFT19YK6FOgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pWCVMqtkqXftVtN9joPIEwEYC8AlmmadpDBhBJUmc8X7rNJZn991L6GelQikqJ1Bf
+	 kXMtzeeU24PZHElIOMKyDaboNLUZyGOZtnenAQ27mbDzRpH143SFNLwrXAYn5XMKeA
+	 +oOrZcutqPo6LgBt5FfHLgbzSUvh5XEGvCskX8OO0aylLp5TpWZcehCp5uzT6VHmDZ
+	 msQnrOmjV2CBRJJi0Jy6jgU2tIapJTh8Dc3mV9j4oUh2Tin/Vd8es4SPVs8z/vLt6B
+	 cwyXpKCJYMZv9ylKef5vNxZH2HRbwVRNmhl2iiK+3PK7w//WngOggTC6V8Vph0ZBcq
+	 zESHmGtnQd0gw==
+Date: Fri, 24 Nov 2023 19:08:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>
+Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	gyroidos@aisec.fraunhofer.de
+Subject: Re: [RESEND RFC PATCH v2 00/14] device_cgroup: guard mknod for
+ non-initial user namespace
+Message-ID: <20231124-tropfen-kautschukbaum-bee7c7dec096@brauner>
+References: <20231025094224.72858-1-michael.weiss@aisec.fraunhofer.de>
+ <20231124-filzen-bohrinsel-7ff9c7f44fe1@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20231124-filzen-bohrinsel-7ff9c7f44fe1@brauner>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.csum-x86
-head:   f6c1313680f1d2319d2061c63abeb76f820319b8
-commit: 90c2bfd06916ac7c05129b36683bfd3424d8e0e4 [4/18] Fix the csum_and_copy_..._user() idiocy
-config: x86_64-randconfig-123-20231124 (https://download.01.org/0day-ci/archive/20231125/202311250023.ySjyjo9L-lkp@intel.com/config)
-compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231125/202311250023.ySjyjo9L-lkp@intel.com/reproduce)
+On Fri, Nov 24, 2023 at 05:47:32PM +0100, Christian Brauner wrote:
+> > - Integrate this as LSM (Christian, Paul)
+> 
+> Huh, my rant made you write an LSM. I'm not sure if that's a good or bad
+> thing...
+> 
+> So I dislike this less than the initial version that just worked around
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311250023.ySjyjo9L-lkp@intel.com/
+Hm, I wonder if we're being to timid or too complex in how we want to
+solve this problem.
 
-sparse warnings: (new ones prefixed by >>)
->> net/core/datagram.c:745:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
-   net/core/datagram.c:745:55: sparse:     expected restricted __wsum [usertype] v
-   net/core/datagram.c:745:55: sparse:     got restricted __wsum_fault [usertype] next
->> net/core/datagram.c:745:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
-   net/core/datagram.c:745:54: sparse:     expected restricted __wsum [usertype] csum2
-   net/core/datagram.c:745:54: sparse:     got restricted __wsum_fault
-   net/core/datagram.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
---
->> net/core/skbuff.c:6971:55: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __wsum [usertype] v @@     got restricted __wsum_fault [usertype] next @@
-   net/core/skbuff.c:6971:55: sparse:     expected restricted __wsum [usertype] v
-   net/core/skbuff.c:6971:55: sparse:     got restricted __wsum_fault [usertype] next
->> net/core/skbuff.c:6971:54: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] csum2 @@     got restricted __wsum_fault @@
-   net/core/skbuff.c:6971:54: sparse:     expected restricted __wsum [usertype] csum2
-   net/core/skbuff.c:6971:54: sparse:     got restricted __wsum_fault
-   net/core/skbuff.c: note: in included file (through include/net/net_namespace.h, include/linux/inet.h):
-   include/linux/skbuff.h:2703:28: sparse: sparse: self-comparison always evaluates to false
-   net/core/skbuff.c: note: in included file (through include/linux/skbuff.h, include/net/net_namespace.h, include/linux/inet.h):
-   include/net/checksum.h:36:17: sparse: sparse: incorrect type in return expression (different base types) @@     expected restricted __wsum_fault @@     got restricted __wsum [usertype] @@
-   include/net/checksum.h:36:17: sparse:     expected restricted __wsum_fault
-   include/net/checksum.h:36:17: sparse:     got restricted __wsum [usertype]
+The device cgroup management logic is hacked into multiple layers and is
+frankly pretty appalling.
 
-vim +745 net/core/datagram.c
+What I think device access management wants to look like is that you can
+implement a policy in an LSM - be it bpf or regular selinux - and have
+this guarded by the main hooks:
 
-   737	
-   738	static __always_inline
-   739	size_t copy_to_user_iter_csum(void __user *iter_to, size_t progress,
-   740				      size_t len, void *from, void *priv2)
-   741	{
-   742		__wsum *csum = priv2;
-   743		__wsum_fault next = csum_and_copy_to_user(from + progress, iter_to, len);
-   744	
- > 745		*csum = csum_block_add(*csum, from_wsum_fault(next), progress);
-   746		return !wsum_is_fault(next) ? 0 : len;
-   747	}
-   748	
+security_file_open()
+security_inode_mknod()
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+So, look at:
+
+vfs_get_tree()
+-> security_sb_set_mnt_opts()
+   -> bpf_sb_set_mnt_opts()
+
+A bpf LSM program should be able to strip SB_I_NODEV from sb->s_iflags
+today via bpf_sb_set_mnt_opts() without any kernel changes at all.
+
+I assume that a bpf LSM can also keep state in sb->s_security just like
+selinux et al? If so then a device access management program or whatever
+can be stored in sb->s_security.
+
+That device access management program would then be run on each call to:
+
+security_file_open()
+-> bpf_file_open()
+
+and
+
+security_inode_mknod()
+-> bpf_sb_set_mnt_opts()
+
+and take access decisions.
+
+This obviously makes device access management something that's tied
+completely to a filesystem. So, you could have the same device node on
+two tmpfs filesystems both mounted in the same userns.
+
+The first tmpfs has SB_I_NODEV and doesn't allow you to open that
+device. The second tmpfs has a bpf LSM program attached to it that has
+stripped SB_I_NODEV and manages device access and allows callers to open
+that device.
+
+I guess it's even possible to restrict this on a caller basis by marking
+them with a "container id" when the container is started. That can be
+done with that task storage thing also via a bpf LSM hook. And then
+you can further restrict device access to only those tasks that have a
+specific container id in some range or some token or something.
+
+I might just be fantasizing abilities into bpf that it doesn't have so
+anyone with the knowledge please speak up.
+
+If this is feasible then the only thing we need to figure out is what to
+do with the legacy cgroup access management and specifically the
+capable(CAP_SYS_ADMIN) check that's more of a hack than anything else.
+
+So, we could introduce a sysctl that makes it possible to turn this
+check into ns_capable(sb->s_userns, CAP_SYS_ADMIN). Because due to
+SB_I_NODEV it is inherently safe to do that. It's just that a lot of
+container runtimes need to have time to adapt to a world where you may
+be able to create a device but not be able to then open it. This isn't
+rocket science but it will take time.
+
+But in the end this will mean we get away with minimal kernel changes
+and using a lot of existing infrastructure.
+
+Thoughts?
 
