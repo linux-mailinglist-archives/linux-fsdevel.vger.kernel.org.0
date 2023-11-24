@@ -1,71 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-3680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478067F77E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:33:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81C77F77EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27DF1F20F4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70D11C20F02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 15:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7112EAED;
-	Fri, 24 Nov 2023 15:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D82FC21;
+	Fri, 24 Nov 2023 15:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JSl3JGGC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNr9RKGR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F1219D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:33:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700840024;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LbHOKemj3x3i/RRfgL4O8FQ7JtEapB4R9zBWaNJlTbY=;
-	b=JSl3JGGCDSSIA6Hj6ZFsjULyHEV7lT7GSPK472O45rEsczZGKFE/h4uJLf/F9WIiWuvZ66
-	7MCJ24h8Rh8jDpymjhiku6lAs9Oj521n/DR/FAK6433RZC5HJncn5PEOJwZVdPW4C7gdx1
-	HYvfv08UUA24b4KH1hVzQsfvnEkPX5g=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-oiTfhCSzPOGE4YlKer0wwg-1; Fri, 24 Nov 2023 10:33:43 -0500
-X-MC-Unique: oiTfhCSzPOGE4YlKer0wwg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DEF7B811E7E;
-	Fri, 24 Nov 2023 15:33:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id CEC1B2166B26;
-	Fri, 24 Nov 2023 15:33:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20231120041422.75170-1-zhujia.zj@bytedance.com>
-References: <20231120041422.75170-1-zhujia.zj@bytedance.com>
-To: Jia Zhu <zhujia.zj@bytedance.com>
-Cc: dhowells@redhat.com, linux-cachefs@redhat.com,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, jefflexu@linux.alibaba.com,
-    hsiangkao@linux.alibaba.com
-Subject: Re: [PATCH V6 RESEND 0/5] cachefiles: Introduce failover mechanism for on-demand mode
+Received: from mail-ed1-x54a.google.com (mail-ed1-x54a.google.com [IPv6:2a00:1450:4864:20::54a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D711992
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
+Received: by mail-ed1-x54a.google.com with SMTP id 4fb4d7f45d1cf-548eadba14dso1238350a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 07:39:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1700840358; x=1701445158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
+        b=HNr9RKGRXJwapoKyJR+qMqL/0whUhS20vQf6uKw9t+utB0G5kgaa5l47Scy4qh/PHH
+         yBS7QhGgV1oY4JTEDtc9gFktzBn0wVVne+CsT4i+eIR4Jg5FB+pSYGimy8Liatp1V3gB
+         ciYhMYE1smCvV7jNgan/PiJEbMwRij818KjLwGdn5BJWBiflTEyh0U4Oqz9+j4Pd/jo6
+         X3TPEbylCYcSM867ICph6PbYA+bvuT3LUHgcR+t+1nYx5vMg1hc8ZN7XT8sau08OLO0t
+         Q0GJLqLF2ETAyj2V//JJ7MJtkvwR5W0VmEZ1oYsm0RUPpP4ZW1IbT2tQ9A/RaMoBzOFm
+         gTCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700840358; x=1701445158;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+MdY+CEN7lfJq7E8LmxU/yKl+DLnEKriP7xWtMKyRLI=;
+        b=HetP7nVzl/bFZWG71XrPCmbNi/dAXh8B1t0CILcLlANH1aJ5meNC6z2U775RPxUVnb
+         huloNj2SEJcdyRJW1XN56vx0FUjdebbrNo5BCM/vhkgvyW5+QXNdAjpPSJUmrYsr52H5
+         t2lJ8OQ8IH0bfGIbRD9FtBq+rJQdMByX0hJlCst9XEwM4AR5lkb1IKMJ+JgNkRxTpmKM
+         TfWpXSt1v+tA/1haUGCQNdKB6whxWlShWoXp+Sgb4tntijefYJ0JGiV3WQU00zfBBhl4
+         B+9ajK4ECOHxmySo1RZKlGbRmGqyp/IwdTkdqJeXk+ng2gvc7dGijf4P0flaffTRwpmm
+         uokw==
+X-Gm-Message-State: AOJu0YyBB/NU+zK/BfeJ/P3JavpwZkEKvbBcwAzeyas7zkzBXsxq9tLv
+	tzmqCBK+Ka99O1JO2y+oKW30I6iH/FU=
+X-Google-Smtp-Source: AGHT+IHnNoF6BgJwUOugkI+xgyGHb4W13m56l8pHQe9JmK/keKOh4nXrtdmg1SmVuxwcdqwLJoPICe66tEw=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
+ (user=gnoack job=sendgmr) by 2002:a05:6402:4402:b0:54a:e7a4:e56 with SMTP id
+ y2-20020a056402440200b0054ae7a40e56mr46013eda.2.1700840357610; Fri, 24 Nov
+ 2023 07:39:17 -0800 (PST)
+Date: Fri, 24 Nov 2023 16:39:02 +0100
+In-Reply-To: <20231120.fau2Oi6queij@digikod.net>
+Message-Id: <ZWDDlvXCdShpFIZ5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1172305.1700840020.1@warthog.procyon.org.uk>
-Date: Fri, 24 Nov 2023 15:33:40 +0000
-Message-ID: <1172306.1700840020@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Mime-Version: 1.0
+References: <20231117154920.1706371-1-gnoack@google.com> <20231117154920.1706371-3-gnoack@google.com>
+ <20231120.fau2Oi6queij@digikod.net>
+Subject: Re: [PATCH v5 2/7] landlock: Add IOCTL access right
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+On Mon, Nov 20, 2023 at 08:43:30PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Nov 17, 2023 at 04:49:15PM +0100, G=C3=BCnther Noack wrote:
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 1)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 2)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 3)
+> > +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4	(LANDLOCK_LAST_PUBLIC_ACCESS_F=
+S << 4)
+>=20
+> Please move this LANDLOCK_ACCESS_FS_IOCTL_* block to fs.h
+>=20
+> We can still create the public and private masks in limits.h but add a
+> static_assert() to make sure there is no overlap.
 
+Done.
+
+
+> >  	/* Checks content (and 32-bits cast). */
+> > -	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=3D
+> > -	    LANDLOCK_MASK_ACCESS_FS)
+> > +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_PUBLIC_ACCESS_FS)=
+ !=3D
+> > +	    LANDLOCK_MASK_PUBLIC_ACCESS_FS)
+>=20
+> It would now be possible to add LANDLOCK_ACCESS_FS_IOCTL_GROUP* to a
+> rule, which is not part of the API/ABI. I've sent a patch with new tests
+> to make sure this is covered:
+> https://lore.kernel.org/r/20231120193914.441117-2-mic@digikod.net
+>=20
+> I'll push it in my -next branch if everything is OK before pushing your
+> next series. Please review it.
+
+Thanks, good catch!
+
+Looking at add_rule_path_beneath(), it indeed does not look like I have cov=
+ered
+that case in my patch.  I'll put an explicit check for it, like this:
+
+  /*
+   * Checks that allowed_access matches the @ruleset constraints and only
+   * consists of publicly visible access rights (as opposed to synthetic
+   * ones).
+   */
+  mask =3D landlock_get_raw_fs_access_mask(ruleset, 0) &
+         LANDLOCK_MASK_PUBLIC_ACCESS_FS;
+  if ((path_beneath_attr.allowed_access | mask) !=3D mask)
+          return -EINVAL;
+
+I assume that the tests that you added were failing?  Or was there an obscu=
+re
+code path that caught it anyway?
+
+Thanks,
+=E2=80=94G=C3=BCnther
 
