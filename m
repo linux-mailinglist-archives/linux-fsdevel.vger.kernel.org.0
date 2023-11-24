@@ -1,85 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-3785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A127F858B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 22:42:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C2F7F85AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 22:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEF228159A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988411C213CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 21:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2133BB3B;
-	Fri, 24 Nov 2023 21:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C043C494;
+	Fri, 24 Nov 2023 21:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hw8/Lzju"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PuirzZON"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D47B199A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:57 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9fd0059a967so654695766b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1700862115; x=1701466915; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnKDKbUOd1WxbpDbxgYGPaEFH1QtfgYmXWR7clpWkts=;
-        b=hw8/Lzju34oPqCwtW9K+Ik359I2sQBTHXMjwvM1VpVG3tnmd7irO9ywXrdv/8toqDb
-         auG+QAhSieej4w97kyz7RDQz3exhMSaboVWx9jTyOK9+aPNzlAqW2CfieOPUnjX6rdl2
-         BCzVUvHFmVG5U21bv06mEiaK5RGr8LuV6yid8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700862115; x=1701466915;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DnKDKbUOd1WxbpDbxgYGPaEFH1QtfgYmXWR7clpWkts=;
-        b=TAVCVmeTcRVbjnhi1qjBq5cKgqntWZfDcQ/LdAHJbc/JIJv+JjZsiKiXuNpXrVQTZj
-         gX1Z4wGfknnyX0nvYX60dKmBk0UeT75ld7KsTbwjhiDBgjHS16h6g8p6tunO9AOB3ff+
-         jSlwNh5Gd2ygS/qwGe9Z3eRF9gghnPatA+Rx8rerfATgPX/9HY472CPqCb+2kPRoyLOF
-         PC8ERTn1F03EaHPVPlx7QkP/290s4Dc4krXeY8+qbPzloQp+r108c2G8ubUqRWn/WIo+
-         F0Z60aubJgLRVuxTIr+/3w1NNA6hgxZ9B7LQJUTpL8jSFXwxb97DOLLCAHjWZYuofbP5
-         H2dQ==
-X-Gm-Message-State: AOJu0Yy24JDwT+HsZJjZxQwveZfZvdAXZ82Lm2rQvsGKMI4XKmbGKESk
-	A2LmYf+TP9wMIrz+1Arj/0wBcezdbdzorp9MWHB4RGlX
-X-Google-Smtp-Source: AGHT+IFoaGGx9CURvTAXbSmBWjIVox/4ZzDTToWRXzW+zjZwUYh7y+QkxhBWp0kt0GW12X+faWN9kg==
-X-Received: by 2002:a17:907:da3:b0:9fa:d1df:c2c4 with SMTP id go35-20020a1709070da300b009fad1dfc2c4mr7525928ejc.36.1700862115382;
-        Fri, 24 Nov 2023 13:41:55 -0800 (PST)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id sa20-20020a1709076d1400b00a0a5a794575sm630803ejc.216.2023.11.24.13.41.54
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Nov 2023 13:41:55 -0800 (PST)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a002562bd8bso449764166b.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 13:41:54 -0800 (PST)
-X-Received: by 2002:a17:906:518c:b0:9ee:29fe:9499 with SMTP id
- y12-20020a170906518c00b009ee29fe9499mr7818143ejk.4.1700862114559; Fri, 24 Nov
- 2023 13:41:54 -0800 (PST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C08B198D;
+	Fri, 24 Nov 2023 13:54:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700862894; x=1732398894;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jGRZBAZBF364mV5fItFOiFIV3VjaPOBDqkOVnrlj6us=;
+  b=PuirzZONBttUV+TIE8CNigyCXNB86iwyH3Cf6FK8HdnKVWP+uq/NF01o
+   vJHvxaUxDKFt/dYKOVNfOcVaxoT8by+RXjWr8Osm4GdHKqzqwQRmxqSTR
+   HvzRKsHxU0xuT11H70pS0c/aRuL1S2eEsUSsbmqdBm4Cyzm5JHPe0RPAf
+   WJaSri7am1LSAfORmhKbM9cjgDSNCKFQ1EScrzi3R+USQdaZ6MF35sGpd
+   d64rCaW5MRrKrAstEGw8U5djjer++S8hQFR1OFn6wER/79oIpEOn8vjNf
+   ZfpHCxtVDpntnkpay9anKjYAIJfOLpN8HJzdZPybW/O5IvrjVzI3L51M5
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="391344092"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="391344092"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2023 13:54:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10904"; a="802229620"
+X-IronPort-AV: E=Sophos;i="6.04,224,1695711600"; 
+   d="scan'208";a="802229620"
+Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 24 Nov 2023 13:54:50 -0800
+Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r6e8N-0003Jb-30;
+	Fri, 24 Nov 2023 21:54:47 +0000
+Date: Sat, 25 Nov 2023 05:54:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, ebiggers@kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, casey@schaufler-ca.com,
+	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v13 bpf-next 6/6] selftests/bpf: Add test that uses
+ fsverity and xattr to sign a file
+Message-ID: <202311250314.KGxKh0fm-lkp@intel.com>
+References: <20231123233936.3079687-7-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231124060553.GA575483@ZenIV>
-In-Reply-To: <20231124060553.GA575483@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 24 Nov 2023 13:41:37 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgZNitYwL0kC4GWxWo9zfNXX-8Nhe=D6VtAhP9CAG_xcw@mail.gmail.com>
-Message-ID: <CAHk-=wgZNitYwL0kC4GWxWo9zfNXX-8Nhe=D6VtAhP9CAG_xcw@mail.gmail.com>
-Subject: Re: [PATCHES] assorted dcache stuff
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231123233936.3079687-7-song@kernel.org>
 
-On Thu, 23 Nov 2023 at 22:05, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         Assorted dcache cleanups.
+Hi Song,
 
-Looks obvious enough to me.
+kernel test robot noticed the following build errors:
 
-Famous last words.
+[auto build test ERROR on bpf-next/master]
 
-                  Linus
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/bpf-Add-kfunc-bpf_get_file_xattr/20231124-074239
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20231123233936.3079687-7-song%40kernel.org
+patch subject: [PATCH v13 bpf-next 6/6] selftests/bpf: Add test that uses fsverity and xattr to sign a file
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231125/202311250314.KGxKh0fm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311250314.KGxKh0fm-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> progs/test_sig_in_xattr.c:36:26: error: invalid application of 'sizeof' to an incomplete type 'struct fsverity_digest'
+      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
+         |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
+   progs/test_sig_in_xattr.c:36:40: note: forward declaration of 'struct fsverity_digest'
+      36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_SIZE];
+         |                                        ^
+   1 error generated.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
