@@ -1,323 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-3730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129A37F79BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:57:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C187F79C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 17:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E156B21191
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EE18B21014
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 16:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D002AF00;
-	Fri, 24 Nov 2023 16:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADC435F03;
+	Fri, 24 Nov 2023 16:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c8bpFJF/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wsLWmHbs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EDE173D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 08:57:43 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-d9cb79eb417so2023011276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 08:57:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700845062; x=1701449862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TYTsHHxJlfG14dn+7UEWrCdCwra+hwU+w+BoD3ZTwsk=;
-        b=c8bpFJF/+836jE7LohXY1eFXWDiB21DZWZeK9Di2Q4zCGIMzXlQrErhcGHZc9uaqFt
-         MmqrPqGxuybO9rxse32Wo7AxpPndaWO47DE+oWsH4wdzkrd4iCCYPWXDxSMI8rPap9b8
-         /+Z2ZaItr2LVUDebELgVpV9dS1Yf8vM0hTgr6ZDaYzQgcRejwJhNJRsZ+0EJg7wCVpgu
-         Jr/M5PXYPoMZoa5IvMfMMOkQItSSTuu48LurlgzKZgYIuKVmyny3VvSks3hC5DW+amtg
-         z9kdiFli+6luUir9EYgvAV0BLJQ+xPHvtbzFX5o19n9a78TbwQq5mb8Pek2CqMGCiPj/
-         vzKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700845062; x=1701449862;
-        h=content-transfer-encoding:cc:to:from:subject:references
-         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TYTsHHxJlfG14dn+7UEWrCdCwra+hwU+w+BoD3ZTwsk=;
-        b=PdQHoVszJjXr/gZoPFTDS5cxLykb3g0yUM3HKWcTQi0yop44vVd1uvKi9tzgnnYzU2
-         OODFw1Wt53RKQqRIDzzLHLxQN3s0p1dj3SQ75CdK8AdHkBE3rrGCIUgM1mWbCNi7BhPs
-         u26VGxvOBd0JL6XvsgnQ6vqZ1qWhemdLsnvT1+QlLDvOT0W86Kss90tzeMM+wE/q9TR6
-         qGLSXWOUPY13T5ZoAYTrU8fuALBV5zXM2JaS2aJtIE53BXRSJu919DGxeEZD9u1MrZMm
-         kAaCeTkZ4sr9SysU8UuVz4CL2ie25rlwV21dihQbTcBovRWjLH5w20AxHNq2SnQ01DAF
-         OmCQ==
-X-Gm-Message-State: AOJu0YydgP243zKTtA/bBAI8MWRfbGPHk/EOKVTDNOMZQQZOLT0BscVr
-	jHKw/TveCg/BPXvXXZ2j0X5B242ckSA=
-X-Google-Smtp-Source: AGHT+IGFAJ4m7iIGrj1H30McVPi7RXdRkuKrD0XqfpaoK4iYzPfQs8iy6yRVVhFO4Ahngifkhppf1AwMqwU=
-X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
- (user=gnoack job=sendgmr) by 2002:a25:6f8b:0:b0:db4:4df:8c0d with SMTP id
- k133-20020a256f8b000000b00db404df8c0dmr105078ybc.11.1700845062654; Fri, 24
- Nov 2023 08:57:42 -0800 (PST)
-Date: Fri, 24 Nov 2023 17:57:31 +0100
-In-Reply-To: <20231120.AejoJ2ooja0i@digikod.net>
-Message-Id: <ZWDV-45LBwKvvgx1@google.com>
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D291319BB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 08:59:40 -0800 (PST)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1700845179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Llur2xd2DQIb1oMAVoovZBVxb7nT5qajqEXqLmUktk4=;
+	b=wsLWmHbssbEwLle3CJI8BSME2l1mUe4YkwMIxCt1lTycO2dePLkyJtwSSWifepgcUYKaMB
+	viFYlyMZxTlFiwVPFgnYsoNmoj4yIZm9UjsOIzAWaCsBYJu1tv2S3XL4/AQh6f8sbKTCAy
+	wwrS40gj+YDMew7pKD8OtRv6DzPOR9s=
+From: Sergei Shtepa <sergei.shtepa@linux.dev>
+To: axboe@kernel.dk,
+	hch@infradead.org,
+	corbet@lwn.net,
+	snitzer@kernel.org
+Cc: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Sergei Shtepa <sergei.shtepa@veeam.com>
+Subject: [PATCH v6 00/11] blksnap - block devices snapshots module
+Date: Fri, 24 Nov 2023 17:59:22 +0100
+Message-Id: <20231124165933.27580-1-sergei.shtepa@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231117154920.1706371-1-gnoack@google.com> <20231117154920.1706371-4-gnoack@google.com>
- <20231120.AejoJ2ooja0i@digikod.net>
-Subject: Re: [PATCH v5 3/7] selftests/landlock: Test IOCTL support
-From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
-To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi!
+From: Sergei Shtepa <sergei.shtepa@veeam.com>
 
-On Mon, Nov 20, 2023 at 09:41:20PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Fri, Nov 17, 2023 at 04:49:16PM +0100, G=C3=BCnther Noack wrote:
-> > +FIXTURE_VARIANT(ioctl)
-> > +{
-> > +	const __u64 handled;
-> > +	const __u64 permitted;
->=20
-> Why not "allowed" like the rule's field? Same for the variant names.
+Hi all.
 
-Just for consistency with the ftruncate tests which also named it like that=
-... %-)
+I am happy to offer an improved version of the Block Devices Snapshots
+Module. It allows creating non-persistent snapshots of any block devices.
+The main purpose of such snapshots is to provide backups of block devices.
+See more in Documentation/block/blksnap.rst.
 
-Sounds good though, I'll just rename it in both places.
+The Block Device Filtering Mechanism is added to the block layer. This
+allows attaching and detaching block device filters to the block layer.
+Filters allow extending the functionality of the block layer. See more
+in Documentation/block/blkfilter.rst.
 
+The tool, library and tests for working with blksnap can be found on github.
+Link: https://github.com/veeam/blksnap/tree/stable-v2.0
+From the documentation, it is possible to learn how to manage the module
+using the library and console tool.
 
-> > +	const mode_t open_mode;
-> > +	/*
-> > +	 * These are the expected IOCTL results for a representative IOCTL fr=
-om
-> > +	 * each of the IOCTL groups.  We only distinguish the 0 and EACCES
-> > +	 * results here, and treat other errors as 0.
->=20
-> In this case, why not use a boolean instead of a semi-correct error
-> code?
+In the new version, the method of saving snapshot difference has been
+changed. Why this should have been done, Dave Chinner <david@fromorbit.com>
+described in detail in the comments to the previous version.
+Link: https://lore.kernel.org/lkml/20230612135228.10702-1-sergei.shtepa@veeam.com/T/#mfe9b8f46833011deea4b24714212230ac38db978
 
-I found it slightly less convoluted.  When we use booleans here, we need to=
- map
-between error codes and booleans at a different layer.  At the same time, w=
-e
-already have various test_foo_ioctl() and test_foo() functions, and they ar=
-e
-sometimes also used in other contexts like test_fs_ioc_getflags_ioctl().  T=
-hese
-test_foo() helpers generally return error codes so far, and it felt more
-important to stay consistent with that.  If we want to keep that both, the =
-only
-other place to map between booleans and error codes would be with ternary
-operators or such in the EXPECT_EQ clauses, but that also felt like it woul=
-d
-turn unreadable... %-)
+The module is incompatible with features hardware inline encryption and
+data integrity. Thanks to Eric Biggers <ebiggers@kernel.org>.
+Link: https://lore.kernel.org/lkml/20230612135228.10702-1-sergei.shtepa@veeam.com/T/#m3f13e580876bff1d283eb2a79d1ecdef3b98cc42
+Unfortunately, I didn't have a chance to check it, since I don't have such
+equipment.
 
-I can change it if you feel strongly about it though. Let me know.
+And it is impossible to determine the presence of a blk-crypto-fallback at
+the block layer filter level. The filter receives already encrypted data.
+The original device continues to work without problems, but the data in
+the snapshot is encrypted. Perhaps they can be decrypted if specify the
+correct key when mounting the file system for snapshot image.
 
-> > +	 */
-> > +	const int expected_fioqsize_result; /* G1 */
-> > +	const int expected_fibmap_result; /* G2 */
-> > +	const int expected_fionread_result; /* G3 */
-> > +	const int expected_fs_ioc_zero_range_result; /* G4 */
-> > +	const int expected_fs_ioc_getflags_result; /* other */
-> > +};
-> > +
-> > +/* clang-format off */
-> > +FIXTURE_VARIANT_ADD(ioctl, ioctl_handled_i_permitted_none) {
->=20
-> You can remove all the variant's "ioctl_" prefixes.
+Tested on amd64 and ppc64le with a page size of 64KiB and a storage block
+size of 4KiB.
 
-Done.
+Based on LK v6.7-rc2.
+Compatible with branch 'for-next'.
+link: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git 
 
+P.S.
+I'm sorry if I didn't add to 'CC' someone. Script get_maintainer.pl returns
+a very large list. I get "Error: too many recipients from 86.49.140.21"
+when trying to send an email from the smtp.migadu.com.
 
-> > +	/* clang-format on */
-> > +	.handled =3D LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_IOCTL,
-> > +	.permitted =3D LANDLOCK_ACCESS_FS_EXECUTE,
->=20
-> You could use 0 instead and don't add the related rule in this case.
+v6 changes:
+- The difference storage has been changed.
+  In the previous version, the file was created only to reserve sector
+  ranges on a block device. The data was stored directly to the block
+  device in these sector ranges. Now saving and reading data is done using
+  'VFS' using vfs_iter_write() and vfs_iter_read() functions. This allows
+  not to depend on the filesystem and use, for example, tmpfs. Using an
+  unnamed temporary file allows hiding it from other processes and
+  automatically release it when the snapshot is closed.
+  However, now the module does not allow adding a block device to the
+  snapshot on which the difference storage is located. There is no way to
+  ensure the immutability of file metadata when writing data to a file.
+  This means that the metadata of the filesystem may change, which may
+  cause damage to the snapshot.
+- _IOW and _IOR were mixed up - fixed. 
+- Protection against the use of the snapshots for block devices with
+  hardware inline encryption and data integrity was implemented.
+  Compatibility with them was not planned and has not been tested at the
+  moment.
 
-Done.
+v5 changes:
+- Rebase for "kernel/git/axboe/linux-block.git" branch "for-6.5/block".
+  Link: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.5/block
 
+v4 changes:
+- Structures for describing the state of chunks are allocated dynamically.
+  This reduces memory consumption, since the struct chunk is allocated only
+  for those blocks for which the snapshot image state differs from the
+  original block device.
+- The algorithm for calculating the chunk size depending on the size of the
+  block device has been changed. For large block devices, it is now
+  possible to allocate a larger number of chunks, and their size is smaller.
+- For block devices, a 'filter' file has been added to /sys/block/<device>.
+  It displays the name of the filter that is attached to the block device.
+- Fixed a problem with the lack of protection against re-adding a block
+  device to a snapshot.
+- Fixed a bug in the algorithm of allocating the next bio for a chunk.
+  This problem was occurred on large disks, for which a chunk consists of
+  at least two bio.
+- The ownership mechanism of the diff_area structure has been changed.
+  This fixed the error of prematurely releasing the diff_area structure
+  when destroying the snapshot.
+- Documentation corrected.
+- The Sparse analyzer is passed.
+- Use __u64 type instead pointers in UAPI.
 
-> Great tests!
+v3 changes:
+- New block device I/O controls BLKFILTER_ATTACH and BLKFILTER_DETACH allow
+  to attach and detach filters.
+- New block device I/O control BLKFILTER_CTL allow sending command to
+  attached block device filter.
+- The copy-on-write algorithm for processing I/O units has been optimized
+  and has become asynchronous.
+- The snapshot image reading algorithm has been optimized and has become
+  asynchronous.
+- Optimized the finite state machine for processing chunks.
+- Fixed a tracking block size calculation bug.
 
-Thanks :)
+v2 changes:
+- Added documentation for Block Device Filtering Mechanism.
+- Added documentation for Block Devices Snapshots Module (blksnap).
+- The MAINTAINERS file has been updated.
+- Optimized queue code for snapshot images.
+- Fixed comments, log messages and code for better readability.
 
-
-> > +static int test_fioqsize_ioctl(int fd)
-> > +{
-> > +	size_t sz;
-> > +
-> > +	if (ioctl(fd, FIOQSIZE, &sz) < 0)
-> > +		return errno;
-> > +	return 0;
-> > +}
-> > +
-> > +static int test_fibmap_ioctl(int fd)
-> > +{
-> > +	int blk =3D 0;
-> > +
-> > +	/*
-> > +	 * We only want to distinguish here whether Landlock already caught i=
-t,
-> > +	 * so we treat anything but EACCESS as success.  (It commonly returns
-> > +	 * EPERM when missing CAP_SYS_RAWIO.)
-> > +	 */
-> > +	if (ioctl(fd, FIBMAP, &blk) < 0 && errno =3D=3D EACCES)
-> > +		return errno;
-> > +	return 0;
-> > +}
-> > +
-> > +static int test_fionread_ioctl(int fd)
-> > +{
-> > +	size_t sz =3D 0;
-> > +
-> > +	if (ioctl(fd, FIONREAD, &sz) < 0 && errno =3D=3D EACCES)
-> > +		return errno;
-> > +	return 0;
-> > +}
-> > +
-> > +#define FS_IOC_ZERO_RANGE _IOW('X', 57, struct space_resv)
-> > +
-> > +static int test_fs_ioc_zero_range_ioctl(int fd)
-> > +{
-> > +	struct space_resv {
-> > +		__s16 l_type;
-> > +		__s16 l_whence;
-> > +		__s64 l_start;
-> > +		__s64 l_len; /* len =3D=3D 0 means until end of file */
-> > +		__s32 l_sysid;
-> > +		__u32 l_pid;
-> > +		__s32 l_pad[4]; /* reserved area */
-> > +	} reservation =3D {};
-> > +	/*
-> > +	 * This can fail for various reasons, but we only want to distinguish
-> > +	 * here whether Landlock already caught it, so we treat anything but
-> > +	 * EACCES as success.
-> > +	 */
-> > +	if (ioctl(fd, FS_IOC_ZERO_RANGE, &reservation) < 0 && errno =3D=3D EA=
-CCES)
->=20
-> What are the guarantees that an error different than EACCES would not
-> mask EACCES and then make tests pass whereas they should not?
-
-It is indeed possible that one of these ioctls legitimately returns EACCES =
-after
-Landlock was letting that ioctl through, and then we could not tell apart
-whether Landlock blocked it or whether the underlying IOCTL command returne=
-d
-that.  I double checked that this is not the case for these specific
-invocations.  But with some other IOCTL commands in these groups, I believe=
- I
-was getting EACCES sometimes from the IOCTL.  So we only use one representa=
-tive
-IOCTL from each IOCTL group, for which it happened to work.
-
-To convince yourself, you can see in the tests that we have both "success" =
-and
-"blocked" examples in the tests for each of these IOCTL commands, and the
-Landlock rules are the only difference between these examples. Therefore, w=
-e
-know that it is actually Landlock returning the EACCES and not the underlyi=
-ng
-IOCTL.
-
-> > +		return errno;
-> > +	return 0;
-> > +}
-> > +
-> > +TEST_F_FORK(ioctl, handle_dir_access_file)
-> > +{
-> > +	const int flag =3D 0;
-> > +	const struct rule rules[] =3D {
-> > +		{
-> > +			.path =3D dir_s1d1,
-> > +			.access =3D variant->permitted,
-> > +		},
-> > +		{},
-> > +	};
-> > +	int fd, ruleset_fd;
->=20
-> Please rename fd into something like file_fd.
-
-Done.
+v1 changes:
+- Forgotten "static" declarations have been added.
+- The text of the comments has been corrected.
+- It is possible to connect only one filter, since there are no others in
+  upstream.
+- Do not have additional locks for attach/detach filter.
+- blksnap.h moved to include/uapi/.
+- #pragma once and commented code removed.
+- uuid_t removed from user API.
+- Removed default values for module parameters from the configuration file.
+- The debugging code for tracking memory leaks has been removed.
+- Simplified Makefile.
+- Optimized work with large memory buffers, CBT tables are now in virtual
+  memory.
+- The allocation code of minor numbers has been optimized.
+- The implementation of the snapshot image block device has been
+  simplified, now it is a bio-based block device.
+- Removed initialization of global variables with null values.
+- only one bio is used to copy one chunk.
+- Checked on ppc64le.
 
 
-> > +TEST_F_FORK(ioctl, handle_file_access_file)
-> > +{
-> > +	const char *const path =3D file1_s1d1;
-> > +	const int flag =3D 0;
-> > +	const struct rule rules[] =3D {
-> > +		{
-> > +			.path =3D path,
-> > +			.access =3D variant->permitted,
-> > +		},
-> > +		{},
-> > +	};
-> > +	int fd, ruleset_fd;
-> > +
-> > +	if (variant->permitted & LANDLOCK_ACCESS_FS_READ_DIR) {
-> > +		/* This access right can not be granted on files. */
-> > +		return;
-> > +	}
->=20
-> You should use SKIP().
+Sergei Shtepa (11):
+  documentation: Block Device Filtering Mechanism
+  block: Block Device Filtering Mechanism
+  documentation: Block Devices Snapshots Module
+  blksnap: header file of the module interface
+  blksnap: module management interface functions
+  blksnap: handling and tracking I/O units
+  blksnap: difference storage and chunk
+  blksnap: event queue from the difference storage
+  blksnap: snapshot and snapshot image block device
+  blksnap: Kconfig and Makefile
+  blksnap: prevents using devices with data integrity or inline
+    encryption
 
-Done.
+ Documentation/block/blkfilter.rst             |  66 ++
+ Documentation/block/blksnap.rst               | 352 +++++++++
+ Documentation/block/index.rst                 |   2 +
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |  17 +
+ block/Makefile                                |   3 +-
+ block/bdev.c                                  |   2 +
+ block/blk-core.c                              |  35 +-
+ block/blk-filter.c                            | 238 +++++++
+ block/blk.h                                   |  11 +
+ block/genhd.c                                 |  10 +
+ block/ioctl.c                                 |   7 +
+ block/partitions/core.c                       |   9 +
+ drivers/block/Kconfig                         |   2 +
+ drivers/block/Makefile                        |   2 +
+ drivers/block/blksnap/Kconfig                 |  31 +
+ drivers/block/blksnap/Makefile                |  15 +
+ drivers/block/blksnap/cbt_map.c               | 228 ++++++
+ drivers/block/blksnap/cbt_map.h               |  90 +++
+ drivers/block/blksnap/chunk.c                 | 667 ++++++++++++++++++
+ drivers/block/blksnap/chunk.h                 | 142 ++++
+ drivers/block/blksnap/diff_area.c             | 601 ++++++++++++++++
+ drivers/block/blksnap/diff_area.h             | 175 +++++
+ drivers/block/blksnap/diff_buffer.c           | 115 +++
+ drivers/block/blksnap/diff_buffer.h           |  37 +
+ drivers/block/blksnap/diff_storage.c          | 291 ++++++++
+ drivers/block/blksnap/diff_storage.h          | 104 +++
+ drivers/block/blksnap/event_queue.c           |  81 +++
+ drivers/block/blksnap/event_queue.h           |  64 ++
+ drivers/block/blksnap/main.c                  | 475 +++++++++++++
+ drivers/block/blksnap/params.h                |  16 +
+ drivers/block/blksnap/snapimage.c             | 134 ++++
+ drivers/block/blksnap/snapimage.h             |  10 +
+ drivers/block/blksnap/snapshot.c              | 457 ++++++++++++
+ drivers/block/blksnap/snapshot.h              |  64 ++
+ drivers/block/blksnap/tracker.c               | 358 ++++++++++
+ drivers/block/blksnap/tracker.h               |  78 ++
+ include/linux/blk-filter.h                    |  51 ++
+ include/linux/blk_types.h                     |   1 +
+ include/linux/blkdev.h                        |   1 +
+ include/linux/sched.h                         |   1 +
+ include/uapi/linux/blk-filter.h               |  35 +
+ include/uapi/linux/blksnap.h                  | 388 ++++++++++
+ include/uapi/linux/fs.h                       |   3 +
+ 44 files changed, 5468 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/block/blkfilter.rst
+ create mode 100644 Documentation/block/blksnap.rst
+ create mode 100644 block/blk-filter.c
+ create mode 100644 drivers/block/blksnap/Kconfig
+ create mode 100644 drivers/block/blksnap/Makefile
+ create mode 100644 drivers/block/blksnap/cbt_map.c
+ create mode 100644 drivers/block/blksnap/cbt_map.h
+ create mode 100644 drivers/block/blksnap/chunk.c
+ create mode 100644 drivers/block/blksnap/chunk.h
+ create mode 100644 drivers/block/blksnap/diff_area.c
+ create mode 100644 drivers/block/blksnap/diff_area.h
+ create mode 100644 drivers/block/blksnap/diff_buffer.c
+ create mode 100644 drivers/block/blksnap/diff_buffer.h
+ create mode 100644 drivers/block/blksnap/diff_storage.c
+ create mode 100644 drivers/block/blksnap/diff_storage.h
+ create mode 100644 drivers/block/blksnap/event_queue.c
+ create mode 100644 drivers/block/blksnap/event_queue.h
+ create mode 100644 drivers/block/blksnap/main.c
+ create mode 100644 drivers/block/blksnap/params.h
+ create mode 100644 drivers/block/blksnap/snapimage.c
+ create mode 100644 drivers/block/blksnap/snapimage.h
+ create mode 100644 drivers/block/blksnap/snapshot.c
+ create mode 100644 drivers/block/blksnap/snapshot.h
+ create mode 100644 drivers/block/blksnap/tracker.c
+ create mode 100644 drivers/block/blksnap/tracker.h
+ create mode 100644 include/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blksnap.h
 
+-- 
+2.20.1
 
-> > +	/* Enables Landlock. */
-> > +	ruleset_fd =3D create_ruleset(_metadata, variant->handled, rules);
-> > +	ASSERT_LE(0, ruleset_fd);
-> > +	enforce_ruleset(_metadata, ruleset_fd);
-> > +	ASSERT_EQ(0, close(ruleset_fd));
-> > +
-> > +	fd =3D open(path, variant->open_mode);
-> > +	ASSERT_LE(0, fd);
-> > +
-> > +	/*
-> > +	 * Checks that IOCTL commands in each IOCTL group return the expected
-> > +	 * errors.
-> > +	 */
-> > +	EXPECT_EQ(variant->expected_fioqsize_result, test_fioqsize_ioctl(fd))=
-;
-> > +	EXPECT_EQ(variant->expected_fibmap_result, test_fibmap_ioctl(fd));
-> > +	EXPECT_EQ(variant->expected_fionread_result, test_fionread_ioctl(fd))=
-;
-> > +	EXPECT_EQ(variant->expected_fs_ioc_zero_range_result,
-> > +		  test_fs_ioc_zero_range_ioctl(fd));
-> > +	EXPECT_EQ(variant->expected_fs_ioc_getflags_result,
-> > +		  test_fs_ioc_getflags_ioctl(fd));
-> > +
-> > +	/* Checks that unrestrictable commands are unrestricted. */
-> > +	EXPECT_EQ(0, ioctl(fd, FIOCLEX));
-> > +	EXPECT_EQ(0, ioctl(fd, FIONCLEX));
-> > +	EXPECT_EQ(0, ioctl(fd, FIONBIO, &flag));
-> > +	EXPECT_EQ(0, ioctl(fd, FIOASYNC, &flag));
-> > +
-> > +	ASSERT_EQ(0, close(fd));
-> > +}
->=20
-> Don't you want to create and use a common helper with most of these
-> TEST_F_FORK blocks? It would highlight what is the same or different,
-> and it would also enables to extend the coverage to other file types
-> (e.g. character device).
-
-I did not find a good way to factor this out, to be honest, and so preferre=
-d to
-keep it unrolled.
-
-I try to follow the rule of not putting too many "if" conditions and logic =
-into
-my tests (it helps to keep the tests straightforward and understandable), a=
-nd I
-find it more straightforward to spell out these few EXPECT_EQs three times =
-than
-introducing a "test_all_ioctl_expectations()" helper function :)
-
-=E2=80=94G=C3=BCnther
 
