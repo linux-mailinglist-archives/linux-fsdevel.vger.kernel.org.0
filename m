@@ -1,191 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-3665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3666-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4597F7161
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 11:28:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69667F747A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 14:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA5E1C209EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 10:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D81B1B21468
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Nov 2023 13:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C3F1A5AC;
-	Fri, 24 Nov 2023 10:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A85D282D6;
+	Fri, 24 Nov 2023 13:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYvu8MeE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CivbeWF1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B181A584
-	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 10:27:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33F0C433C8;
-	Fri, 24 Nov 2023 10:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700821678;
-	bh=qVwJcFDiIpymt6eUkHVD8R3OpoVEzT8XHjqe8OUw3gY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sYvu8MeE8IkSjV0il7aiZosZ3Ymd/EG2GU0ZPtN5SOXpcSpNNccXSaX6RKlIjaO7U
-	 jvzp0UG0cp3SOzwlvfN0gdnHpTOEgaS/DXk49f+e9ywvaHydsCwhclZcOkluy1fQDb
-	 sD5ZtP0dSOQL1ukPvfGAkae4ZCkjpSLMFkEPNHNJ1RkEiDinqraTlWCapZ2moQGS68
-	 XOib7SnGPn9thxaCkYqdZG84EVhknmbxJMXiDLZ/mP3b7wcfAYvYCG9BEUqDBPQlAX
-	 mp+M5zXVjvfmJLkZmuY4OVi1DG18xNl76hTe9eqiprWEJ5HUcI9y9vuvjdDvNNoI5X
-	 sfriUGYRWbqPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Fri, 24 Nov 2023 11:27:28 +0100
-Message-ID: <20231124-vfs-fixes-3420a81c0abe@brauner>
-X-Mailer: git-send-email 2.42.0
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A1E10E4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 05:02:21 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5ca2e530041so26273177b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Nov 2023 05:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1700830940; x=1701435740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7QLdx6V0Pi5RjnCun1VCFK5ZInXyA7/UKfeRX+qbzaM=;
+        b=CivbeWF1MAKfShm2G1ASkUe/eBMnKMPBVUq6ifIIlxFEVYgPvp4bGtrKWxiuQRpUmJ
+         RXmLV7rg5bTpT5OkStg0VO1ImmIsWeEtRvv7F14+/394+J98it1LcEhnrM3rHaZcApVx
+         w7un0UPhIXEqtGtF1gpKwDjcCPxaWxnL1Cz4IqCgrEcjJKvrm7zOisSNLeiP9oiHb5d+
+         EFbQ5/YnoCC8fvXTD0EckOKwWcP4RPfLQgPxVKRBiWBG6v5TYYh3aS3/duocOGlutL3r
+         +0ttd7YJZ7TTqDRBq2cEvLLGWmNBa2214ROiAB2qnFBFDPHuPmQl3MUW8TgR3a13nhHZ
+         AAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700830940; x=1701435740;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7QLdx6V0Pi5RjnCun1VCFK5ZInXyA7/UKfeRX+qbzaM=;
+        b=DdDxLKQPDm6awgZYZ0uscVMY3T+UadaXpoUNNzUIX7rIjgxNUnRHP/vDglRy9TDShP
+         tUvqJXr0V46mnELi9KxVvdSrLQWqcbsUaqTTJ4M9tvyUvIxxzpMc54VHF7bYRsmDA62o
+         6e86uQczj78QzvY+emHebZwKPnNpk47ruq3Vm51S1Vpl9JWa7LUk6rPuqjp0uH6VRr4l
+         tRNEeX4D5xe2oVfuaGhyYL4Oz5pRCeiRVjN7ZU742LbmeBUrKdX8Op2PkNWcw3uFZySY
+         tjG4A7L0jWpNJ9otc7lyNkLhrlEfhY6QJfDI7aOd88WuW4NaZpXYqim7oIvVi7I/CJJ1
+         dS7Q==
+X-Gm-Message-State: AOJu0Yy1ve9bb0w3aY8nSc39sCfzfvMOVK57syEJH3cyb3e4D6p7HtBh
+	O/I7Mmg4/PKmfGZmYSSG4/V2H1NRKqg=
+X-Google-Smtp-Source: AGHT+IHngrcQ9tnVfhXBbFbWqQBX4q2a3/yEkCYmKDpByMVhWjObjAFao9FxKzNDjzH/yqw6LZP4sWZ/4xM=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:9429:6eed:3418:ad8a])
+ (user=gnoack job=sendgmr) by 2002:a81:5758:0:b0:5ce:1b3f:f20d with SMTP id
+ l85-20020a815758000000b005ce1b3ff20dmr59290ywb.3.1700830940574; Fri, 24 Nov
+ 2023 05:02:20 -0800 (PST)
+Date: Fri, 24 Nov 2023 14:02:12 +0100
+In-Reply-To: <20231117.aen7feDah5aD@digikod.net>
+Message-Id: <ZWCe1FnVVlYQmQFG@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5043; i=brauner@kernel.org; h=from:subject:message-id; bh=qVwJcFDiIpymt6eUkHVD8R3OpoVEzT8XHjqe8OUw3gY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQmVE3I2WdSLlbuwSx69I7K3XS/i/s2F1zgC9+W4Pns1 D1WD0PljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImYzmdkOPZDQmJrhfnLmA83 ZVyW8B3lczkmpzB52Srt3C7eErHFlxn+GUg4V/3hj+N4rxjw7m6x1+TfW4vXlPKXnXz+dUbror0 TWAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20231103155717.78042-1-gnoack@google.com> <20231116.haW5ca7aiyee@digikod.net>
+ <ZVd8RP01oNc5K92c@google.com> <20231117.aen7feDah5aD@digikod.net>
+Subject: Re: [PATCH v4 0/7] Landlock: IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
+On Fri, Nov 17, 2023 at 09:44:31PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Nov 17, 2023 at 03:44:20PM +0100, G=C3=BCnther Noack wrote:
+> > On Thu, Nov 16, 2023 at 04:49:09PM -0500, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > > On Fri, Nov 03, 2023 at 04:57:10PM +0100, G=C3=BCnther Noack wrote:
+> > > And patch the landlock_create_ruleset() helper with that:
+> > >=20
+> > > -	if (!fs_access_mask && !net_access_mask)
+> > > +	if (WARN_ON_ONCE(!fs_access_mask) && !net_access_mask)
+> > > 		return ERR_PTR(-ENOMSG);
+> >=20
+> > Why would you want to warn on the case where fs_access_mask is zero?
+>=20
+> Because in my suggestion the real check is moved/copied to
+> landlock_expand_fs_access(), which is called before, and it should then
+> not be possible to have this case here.
 
-/* Summary */
-This contains the usual miscellaneous fixes:
+Oh, I see, I misread that code.  I guess it does not apply to the version t=
+hat
+we ended up with.
 
-* Avoid calling back into LSMs from vfs_getattr_nosec() calls.
 
-  IMA used to query inode properties accessing raw inode fields without
-  dedicated helpers. That was finally fixed a few releases ago by
-  forcing IMA to use vfs_getattr_nosec() helpers.
+> > > >  * When LANDLOCK_ACCESS_FS_IOCTL is granted on a file hierarchy,
+> > > >    should this grant the permission to use *any* IOCTL?  (Right now=
+,
+> > > >    it is any IOCTL except for the ones covered by the IOCTL groups,
+> > > >    and it's a bit weird that the scope of LANDLOCK_ACCESS_FS_IOCTL
+> > > >    becomes smaller when other access rights are also handled.
+> > >=20
+> > > Are you suggesting to handle differently this right if it is applied =
+to
+> > > a directory?
+> >=20
+> > No - this applies to files as well.  I am suggesting that granting
+> > LANDLOCK_ACCESS_FS_IOCTL on a file or file hierarchy should always give=
+ access
+> > to *all* ioctls, both the ones in the synthetic groups and the remainin=
+g ones.
+> >=20
+> > Let me spell out the scenario:
+> >=20
+> > Steps to reproduce:
+> >   - handle: LANDLOCK_ACCESS_FS_IOCTL | LANDLOCK_ACCESS_FS_READ_FILE
+> >   - permit: LANDLOCK_ACCESS_FS_IOCTL
+> >             on file f
+> >   - open file f (for write-only)
+> >   - attempt to use ioctl(fd, FIOQSIZE, ...)
+> >=20
+> > With this patch set:
+> >   - ioctl(fd, FIOQSIZE, ...) fails,
+> >     because FIOQSIZE is part of IOCTL_CMD_G1
+> >     and because LANDLOCK_ACCESS_FS_READ_FILE is handled,
+> >     IOCTL_CMD_G1 is only unlocked through LANDLOCK_ACCESS_FS_READ_FILE
+>=20
+> Correct, and it looks consistent to me.
+>=20
+> >=20
+> > Alternative proposal:
+> >   - ioctl(fd, FIOQSIZE, ...) should maybe work,
+> >     because LANDLOCK_ACCESS_FS_IOCTL is permitted on f
+> >=20
+> >     Implementation-wise, this would mean to add
+> >=20
+> >     expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_IOCTL, ioctl_group=
+s)
+> >=20
+> >     to expand_all_ioctl().
+> >=20
+> > I feel that this alternative might be less surprising, because granting=
+ the
+> > IOCTL right would grant all the things that were restricted when handli=
+ng the
+> > IOCTL right, and it would be more "symmetric".
+> >=20
+> > What do you think?
+>=20
+> I though that we discussed about that and we agree that it was the way
+> to go. Cf. the table of handled/allowed/not-allowed.
 
-  The goal of the vfs_getattr_nosec() helper is to query for attributes
-  without calling into the LSM layer which would be quite problematic
-  because incredibly IMA is called from __fput()...
+We can go with the current implementation as well, I don't feel very strong=
+ly
+about it.
 
-  __fput()
-    -> ima_file_free()
 
-  What it does is to call back into the filesystem to update the file's
-  IMA xattr. Querying the inode without using vfs_getattr_nosec() meant
-  that IMA didn't handle stacking filesystems such as overlayfs
-  correctly. So the switch to vfs_getattr_nosec() is quite correct. But
-  the switch to vfs_getattr_nosec() revealed another bug when used on
-  stacking filesystems:
+> Why would LANDLOCK_ACCESS_FS_IOCTL grant access to FIOQSIZE in the case
+> of a directory but not a file? These would be two different semantics.
 
-  __fput()
-    -> ima_file_free()
-       -> vfs_getattr_nosec()
-          -> i_op->getattr::ovl_getattr()
-             -> vfs_getattr()
-                -> i_op->getattr::$WHATEVER_UNDERLYING_FS_getattr()
-                   -> security_inode_getattr() # calls back into LSMs
+If the ruleset were enforced in that proposal, as in the example above, it =
+would
+not distinguish whether the affected filesystem paths are files or director=
+ies.
 
-  Now, if that __fput() happens from task_work_run() of an exiting task
-  current->fs and various other pointer could already be NULL. So
-  anything in the LSM layer relying on that not being NULL would be
-  quite surprised.
+If LANDLOCK_ACCESS_FS_IOCTL is handled, the semantics would be:
 
-  Fix that by passing the information that this is a security request
-  through to the stacking filesystem by adding a new internal
-  ATT_GETATTR_NOSEC flag. Now the callchain becomes:
+  * If you permit LANDLOCK_ACCESS_FS_READ_FILE on a directory or file,
+    it would become possible to use these ioctl commands on the affected fi=
+les
+    which are relevant and harmless for reading files.  (As before)
 
-  __fput()
-    -> ima_file_free()
-       -> vfs_getattr_nosec()
-          -> i_op->getattr::ovl_getattr()
-             -> if (AT_GETATTR_NOSEC)
-                       vfs_getattr_nosec()
-                else
-                       vfs_getattr()
-                -> i_op->getattr::$WHATEVER_UNDERLYING_FS_getattr()
+  * If you permit LANDLOCK_ACCESS_FS_IOCTL on a directory or file,
+    it would become possible to use *all* ioctl commands on the affected fi=
+les.
 
-* Fix a bug introduced with the iov_iter rework from last cycle.
+    (That is the difference.  In the current implementation, this only affe=
+cts
+     the ioctl commands which are *not* in the synthetic groups.  In the
+     alternative proposal, it would affect *all* ioctl commands.
 
-  This broke /proc/kcore by copying too much and without the correct
-  offset.
+     I think this might be simpler to reason about, because the set of ioct=
+l
+     commands which are affected by permitting(!) LANDLOCK_ACCESS_FS_IOCTL =
+would
+     always be the same (namely, all ioctl commands), and it would not be
+     dependent on whether other access rights are handled.)
 
-* Add a missing NULL check when allocating the root inode in
-  autofs_fill_super().
 
-* Fix stable writes for multi-device filesystems (xfs, btrfs etc) and
-  the block device pseudo filesystem.
+I don't think it is at odds with the backwards-compatibility concerns which=
+ we
+previously discussed.  The synthetic groups still exist, it's just the
+"permitting LANDLOCK_ACCESS_FS_IOCTL on a file or directory" which affects =
+a
+different set of IOCTL commands.
 
-  Stable writes used to be a superblock flag only, making it a per
-  filesystem property. Add an additional AS_STABLE_WRITES mapping flag
-  to allow for fine-grained control.
 
-* Ensure that offset_iterate_dir() returns 0 after reaching the end of a
-  directory so it adheres to getdents() convention.
+> > > If the scope of LANDLOCK_ACCESS_FS_IOCTL is well documented, that sho=
+uld
+> > > be OK. But maybe we should rename this right to something like
+> > > LANDLOCK_ACCESS_FS_IOCTL_DEFAULT to make it more obvious that it hand=
+les
+> > > IOCTLs that are not handled by other access rights?
+> >=20
+> > Hmm, I'm not convinced this is a good name.  It makes sense in the cont=
+ext of
+> > allowing "all the other ioctls" for a file or file hierarchy, but when =
+setting
+> > LANDLOCK_ACCESS_FS_IOCTL in handled_access_fs, that flag turns off *all=
+* ioctls,
+> > so "default" doesn't seem appropriate to me.
+>=20
+> It should turn off all IOCTLs that are not handled by another access
+> right.  The handled access rights should be expanded the same way as the
+> allowed access rights.
 
-/* Testing */
-clang: Debian clang version 16.0.6 (16)
-gcc: gcc (Debian 13.2.0-5) 13.2.0
+If you handle LANDLOCK_ACCESS_FS_IOCTL, and you don't permit anything on fi=
+les
+or directories, all IOCTL commands will be forbidden, independent of what e=
+lse
+is handled.
 
-All patches are based on v6.7-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed. Passes xfstests.
+The opposite is not true:
 
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next and no merge conflicts showed up doing a test-merge with
-current mainline.
+If you handle LANDLOCK_ACCESS_FS_READ_FILE, and you don't handle
+LANDLOCK_ACCESS_FS_IOCTL, all IOCTL commands will happily work.
 
-The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+So if you see it through that lens, you could say that it is only the
+LANDLOCK_ACCESS_FS_IOCTL bit in the "handled" mask which forbids any IOCTL
+commands at all.
 
-  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-are available in the Git repository at:
+I hope this makes sense.  It's not my intent to open this
+backwards-compatibility can of worms from scratch... :)
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.7-rc3.fixes
-
-for you to fetch changes up to 796432efab1e372d404e7a71cc6891a53f105051:
-
-  libfs: getdents() should return 0 after reaching EOD (2023-11-20 15:34:22 +0100)
-
-Please consider pulling these changes from the signed vfs-6.7-rc3.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.7-rc3.fixes
-
-----------------------------------------------------------------
-Christoph Hellwig (4):
-      filemap: add a per-mapping stable writes flag
-      block: update the stable_writes flag in bdev_add
-      xfs: clean up FS_XFLAG_REALTIME handling in xfs_ioctl_setattr_xflags
-      xfs: respect the stable writes flag on the RT device
-
-Chuck Lever (1):
-      libfs: getdents() should return 0 after reaching EOD
-
-Ian Kent (1):
-      autofs: add: new_inode check in autofs_fill_super()
-
-Omar Sandoval (1):
-      iov_iter: fix copy_page_to_iter_nofault()
-
-Stefan Berger (1):
-      fs: Pass AT_GETATTR_NOSEC flag to getattr interface function
-
- block/bdev.c               |  2 ++
- fs/autofs/inode.c          | 56 +++++++++++++++++-----------------------------
- fs/ecryptfs/inode.c        | 12 ++++++++--
- fs/inode.c                 |  2 ++
- fs/libfs.c                 | 14 +++++++++---
- fs/overlayfs/inode.c       | 10 ++++-----
- fs/overlayfs/overlayfs.h   |  8 +++++++
- fs/stat.c                  |  6 ++++-
- fs/xfs/xfs_inode.h         |  8 +++++++
- fs/xfs/xfs_ioctl.c         | 30 ++++++++++++++++---------
- fs/xfs/xfs_iops.c          |  7 ++++++
- include/linux/pagemap.h    | 17 ++++++++++++++
- include/uapi/linux/fcntl.h |  3 +++
- lib/iov_iter.c             |  2 +-
- mm/page-writeback.c        |  2 +-
- 15 files changed, 121 insertions(+), 58 deletions(-)
+=E2=80=94G=C3=BCnther
 
