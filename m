@@ -1,162 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-3799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D637F8A59
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Nov 2023 12:51:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC77F8A5D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Nov 2023 12:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16721C20C9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Nov 2023 11:51:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A2D1C20BA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Nov 2023 11:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E01DF6C;
-	Sat, 25 Nov 2023 11:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YMhbw28i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292F1E544;
+	Sat, 25 Nov 2023 11:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93461707
-	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Nov 2023 03:51:13 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-548c6efc020so30806a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Nov 2023 03:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1700913072; x=1701517872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSEpBwNYCgg88z1pn2eCQM4nuIQU17ETnUjE06VyojM=;
-        b=YMhbw28ivea7RwLuaQ0iHal2IGiUjpktxHlUw/dmnLwUx1JYYiAKSIPQRI3PmMglLP
-         QGfiXicH+jm9daH/PnYpMpK//wvWmyQkf+g8a/b3fRqbXQnpfVHyRVKzApXlvJkMTXEL
-         198bnyBtzxDRCMrJZQzcZS/eij40GLgyVoiFRIlRUZXla+6IsZYjpZjNX0bQJQL7Hzwe
-         ySisu0Te+eAtVuGYewkifCf1ib44Rg77vMktE9zgOLrRXFbqkK2OanpeuFH5i5+ZHEJi
-         H7zHNg7ZFmwmO9drk5pO0Vm/3B6XQRFLzWoBfk+6olS3VLB0u5sQvKFC3kmbr9PhmbJp
-         SEcA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410E410E4
+	for <linux-fsdevel@vger.kernel.org>; Sat, 25 Nov 2023 03:54:04 -0800 (PST)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1cfaeab7dafso9168685ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Nov 2023 03:54:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700913072; x=1701517872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jSEpBwNYCgg88z1pn2eCQM4nuIQU17ETnUjE06VyojM=;
-        b=Zceh/j7cPYiTSRFQqfpGlOWBvqDPHEFNIZd4jNcw+I8Od2MmtXBL28ClrO/F1/BEuO
-         kcGu7vww6U8G4UMMOSsqV6zmiyzt8yxZaa9IBa2FYjeZrUDczpBhCMTm2EdBLDT8LD3m
-         gbMTeWxZ/saYpifEozeG3b70+SHo6DJoJRnh2Sz7Da8CsHD9OiGH82TtE0H994E0uBa+
-         X01PFleDoDT++Gi95LfhFLg+DQVzA/eXkKBCn9zRUxU6fuiefBu0o9RPs8n4dID3LoTN
-         yF1uEikIvgTcRf5UvxOi/ZXNSKJruD4eo90cX1uE5fZ0FsyQ1SJoVYkx+zWN+WP1kNV3
-         lm2w==
-X-Gm-Message-State: AOJu0YwKpNK9h4nqVMgb5rAQl3QOhnXzQfNhPTDiVx+WR5Opt9eIpqjR
-	Qw7Qy4EyLZYgVK/KBxenwCG2XrUWkA7mPUXFjcn3mQ==
-X-Google-Smtp-Source: AGHT+IGoe2yVXCakrbBcYSygUfnvoIydCcAi63CU/Fzkr87vR7R//qJFC1/czFU0zF9rWsFzx5EEC7O8YIc1PRg8pCo=
-X-Received: by 2002:a05:6402:11c6:b0:54a:ee8b:7a99 with SMTP id
- j6-20020a05640211c600b0054aee8b7a99mr185429edw.0.1700913072223; Sat, 25 Nov
- 2023 03:51:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1700913244; x=1701518044;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/KRHX69P+c/HonL20U6p52M6bOssV1LeZSiVOwq9udg=;
+        b=iKT/Q/pt7ZGCD/LjWIJro2Lif7JcG8fWqBxEzPE8L7w4WrvaeC6Cfi14kjE7HL0Xet
+         6fJHPi2US7Up4ZPUen1RCT9lwev/WHyyB4AIInlU5GdNMMCHS7CBPHAf4xr+3MRalmgH
+         c4Ya79fCgLlnI2l7uOJSp5yRFt+qt+FEpxesHrL49c9aZeqhWPSLwBnuwGp9vqPkByT+
+         5eW2WlSvjzEg6wP7OXNv7wuWzRRtfZuh4HYZF4wPYgJc0cQFI2i2Xi3SBceNuE3jQ9rl
+         MG4XuKAHjhTWrBrkuHkg9Sznp2pbCcoX/BUFs+v4EynBZur/OGwcnDmTkOJbT+274hnE
+         gzCA==
+X-Gm-Message-State: AOJu0YzDJqGm950w3JJr2fAO0II5Y8rjsY+ZoFUblLDz3O6D+UyGTywf
+	8TYMp7x37DOyS3bAfJ7x2702Hp+bdX7qR945KQjQOUWFZKH0
+X-Google-Smtp-Source: AGHT+IHy5N+EUzhnu1BqL7Tre6DLYWnMI3bWa4fghmRRJW5x6mn1VxPp8iENwnRyZhLbrcEvUJ7+Wd0weLI92G6ARV1U74tRU3FD
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxjssgw1tZrUQvtHHVacSgR9NE0yF8DA3+R5LNFAocCvVQ@mail.gmail.com>
- <000000000000258ac60606589787@google.com> <CAG48ez2UkCR7LMaQfCQVLW4VOZG9CuPDMHG7cBtaAitM=zPBCg@mail.gmail.com>
- <CAG48ez2_XT1XDML756zM2D07BjcJnw22pFiHHrOm-yHvGJHvdw@mail.gmail.com> <CAOQ4uxj+enOZJiAJaCRnfb1soFS7aonJjHmLXiP3heQAFQoBqg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj+enOZJiAJaCRnfb1soFS7aonJjHmLXiP3heQAFQoBqg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Sat, 25 Nov 2023 12:50:36 +0100
-Message-ID: <CAG48ez03BMw2EQq3Xjh4qn477V0qN1fG4M=8tO4EBsNTFD3wVQ@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] KASAN: invalid-free in ovl_copy_up_one
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: syzbot <syzbot+477d8d8901756d1cbba1@syzkaller.appspotmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
+X-Received: by 2002:a17:903:4282:b0:1cc:1e05:e0e7 with SMTP id
+ ju2-20020a170903428200b001cc1e05e0e7mr1181364plb.2.1700913243801; Sat, 25 Nov
+ 2023 03:54:03 -0800 (PST)
+Date: Sat, 25 Nov 2023 03:54:03 -0800
+In-Reply-To: <000000000000d40c3c05fdc05cd1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b0cfb7060af8b9e1@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: slab-use-after-free Read in udf_free_blocks
+From: syzbot <syzbot+0b7937459742a0a4cffd@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, hch@lst.de, jack@suse.com, jack@suse.cz, 
+	linkinjeon@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 25, 2023 at 10:21=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
-> wrote:
->
-> On Fri, Nov 24, 2023 at 5:26=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Fri, Nov 24, 2023 at 4:11=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> > >
-> > > On Wed, Sep 27, 2023 at 5:10=E2=80=AFPM syzbot
-> > > <syzbot+477d8d8901756d1cbba1@syzkaller.appspotmail.com> wrote:
-> > > > syzbot has tested the proposed patch and the reproducer did not tri=
-gger any issue:
-> > > >
-> > > > Reported-and-tested-by: syzbot+477d8d8901756d1cbba1@syzkaller.appsp=
-otmail.com
-> > > >
-> > > > Tested on:
-> > > >
-> > > > commit:         8e9b46c4 ovl: do not encode lower fh with upper sb_=
-wri..
-> > > > git tree:       https://github.com/amir73il/linux.git ovl_want_writ=
-e
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10d10ff=
-a680000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dbb54ecd=
-fa197f132
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D477d8d890=
-1756d1cbba1
-> > > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils=
- for Debian) 2.40
-> > >
-> > > It looks like the fix was submitted without the Reported-by tag, so
-> > > syzkaller doesn't recognize that the fix has landed... I'll tell
-> > > syzkaller now which commit the fix is supposed to be in, please
-> > > correct me if this is wrong:
-> > >
-> > > #syz fix: ovl: do not encode lower fh with upper sb_writers held
-> >
-> > (Ah, and just for the record: I hadn't realized when writing this that
-> > the fix was actually in a newer version of the same patch... "git
->
-> That is correct.
-> I am very thankful for syzbot with helping me catch bugs during developme=
-nt
-> and I would gladly attribute the bot and its owners, but I don't that
-> Reported-and-tested-by is an adequate tag for a bug that never existed as
-> far as git history.
->
-> Even Tested-by: syzbot could be misleading to stable kernel bots
-> that may conclude that the patch is a fix that needs to apply to stable.
->
-> I am open to suggestions.
->
-> Also maybe
->
-> #syz correction:
->
-> To tell syzbot we are not fixing a bug in upstream, but in a previous
-> version of a patch that it had tested.
+syzbot has bisected this issue to:
 
-Sorry, I think I got that wrong; the syzbot manual
-(https://github.com/google/syzkaller/blob/master/docs/syzbot.md#rebuilt-tre=
-esamended-patches)
-instead suggests:
+commit 36273e5b4e3a934c6d346c8f0b16b97e018094af
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Sun Nov 13 16:29:02 2022 +0000
 
-"First, adding Reported-by tags to amended commits may be misleading.
-A Reported-by tag suggests that the commit fixes a bug in some
-previous commit, but here it's not the case (it only fixes a bug in a
-previous version of itself which is not in the tree). In such case
-it's recommended to include a Tested-by or a Reviewed-by tag with the
-hash instead. Technically, syzbot accepts any tag, so With-inputs-from
-would work too."
+    udf: remove ->writepage
 
-> > range-diff 44ef23e481b02df2f17599a24f81cf0045dc5256~1..44ef23e481b02df2=
-f17599a24f81cf0045dc5256
-> > 5b02bfc1e7e3811c5bf7f0fa626a0694d0dbbd77~1..5b02bfc1e7e3811c5bf7f0fa626=
-a0694d0dbbd77"
-> > shows an added "ovl_get_index_name", I guess that's the fix?)
->
-> No, that added ovl_get_index_name() seems like a fluke of the range-diff =
-tool.
-> All the revisions of this patch always had this same minor change in this=
- line:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14d71cece80000
+start commit:   123212f53f3e Add linux-next specific files for 20230707
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16d71cece80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d71cece80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=15ec80b62f588543
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b7937459742a0a4cffd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15be1190a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d4666aa80000
 
-Ah, bleh, of course. I haven't used range-diff in a while and misread
-the output...
+Reported-by: syzbot+0b7937459742a0a4cffd@syzkaller.appspotmail.com
+Fixes: 36273e5b4e3a ("udf: remove ->writepage")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
