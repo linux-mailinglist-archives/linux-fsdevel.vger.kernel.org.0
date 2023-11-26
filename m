@@ -1,348 +1,298 @@
-Return-Path: <linux-fsdevel+bounces-3856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947647F9346
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 16:09:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBD17F93F6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 17:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B754E1C20CDE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 15:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B928B28116C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 16:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756A88BF2;
-	Sun, 26 Nov 2023 15:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA3AD2F9;
+	Sun, 26 Nov 2023 16:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUCHjuIu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C3B79C5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 15:09:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A48C433C8;
-	Sun, 26 Nov 2023 15:09:22 +0000 (UTC)
-Date: Sun, 26 Nov 2023 10:09:20 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D52ED285
+	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 16:39:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06320C433C7;
+	Sun, 26 Nov 2023 16:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701016784;
+	bh=tIh3IxwNS29dNJ3HvAPy1m57H4bzmZ7DsCrTkXy01uE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VUCHjuIui+4iY8UjwIHbAlwLJd3lPEIfMeqlSJ23P4ujsNUP0LqmF6H0jQ7OC57Gk
+	 zIQWAHT0yqDdGeGgCCA6zNaNJmSQ0uJZ+sQ0qJvrlr+vKWjUfv22hSoP+7jYLbIgNy
+	 T6a9uBZhe8BugRRJqg4M/YUdVsD71ndv+e4r+rKyxnJ8fevAbqIrzv45yBz5zrWXPi
+	 TFSFVyRczCXGNZiY1dRSVpVtTxtETEjgFEiL61HDWBs/BQxj7zAct+LLCBz+slqskV
+	 rUxaXfDbOOg9L7UJFJRq5cXvSuCuYTlwcCvWGK1EV/l7n/kg5i60sjBJ9LhbXuSNU3
+	 31G+HRjx9XLYA==
+Date: Sun, 26 Nov 2023 11:39:37 -0500
+From: Guo Ren <guoren@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [GIT PULL] tracing/eventfs: Fixes for v6.7-rc2
-Message-ID: <20231126100920.094bf6ad@rorschach.local.home>
-In-Reply-To: <20231126100356.389c325d@rorschach.local.home>
-References: <20231126100356.389c325d@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+Message-ID: <ZWN0ycxvzNzVXyNQ@gmail.com>
+References: <20231031061226.GC1957730@ZenIV>
+ <20231101062104.2104951-1-viro@zeniv.linux.org.uk>
+ <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
+ <20231101084535.GG1957730@ZenIV>
+ <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV>
+ <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+ <ZV2rdE1XQWwJ7s75@gmail.com>
+ <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
 
-On Sun, 26 Nov 2023 10:04:57 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, Nov 22, 2023 at 09:20:53AM -0800, Linus Torvalds wrote:
+> On Tue, 21 Nov 2023 at 23:19, Guo Ren <guoren@kernel.org> wrote:
+> >
+> > We discussed x86 qspinlock code generation. It looked not too bad as I
+> > thought because qspinlock_spin_value_unlocked is much cheaper than the
+> > ticket-lock. But the riscv ticket-lock code generation is terrible
+> > because of the shift left & right 16-bit.
+> > https://lore.kernel.org/all/ZNG2tHFOABSXGCVi@gmail.com
+> 
+> No, it's not the 16-bit shifts in the spin_value_unlocked() check,
+> that just generates simple and straightforward code:
+> 
+>   a0:   0107569b                srlw    a3,a4,0x10
+>   a4:   00c77733                and     a4,a4,a2
+>   a8:   04e69063                bne     a3,a4,e8 <.L12>
+> 
+> (plus two stupid instructions for generating the immediate in a2 for
+> 0xffff, but hey, that's the usual insane RISC-V encoding thing - you
+> can load a 20-bit U-immediate only shifted up by 12, if it's in the
+> lower bits you're kind of screwed and limited to 12-bit immediates).
+> 
+> The *bad* code generation is from the much simpler
+> 
+>         new.count++;
+> 
+> which sadly neither gcc not clang is quite smart enough to understand
+> that "hey, I can do that in 64 bits".
+> 
+> It's incrementing the higher 32-bit word in a 64-bit union, and with a
+> smarter compiler it *should* basically become
+> 
+>         lock_count += 1 << 32;
+> 
+> but the compiler isn't that clever, so it splits the 64-bit word into
+> two 32-bit words, increments one of them, and then merges the two
+> words back into 64 bits:
+> 
+>   98:   4207d693                sra     a3,a5,0x20
+>   9c:   02079713                sll     a4,a5,0x20
+>   a0:   0016869b                addw    a3,a3,1
+>   a4:   02069693                sll     a3,a3,0x20
+>   a8:   02075713                srl     a4,a4,0x20
+>   ac:   00d76733                or      a4,a4,a3
+> 
+> which is pretty sad.
+9c & a8 is for word-zero-extend; riscv would have zext.w in the future.
+Your patch may improve above with:
+	li      a4,1
+	slli    a4,a4,32
+	add     a4,a5,a4
 
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+v.s.
+	sra     a3,a5,0x20
+	zext.w	a4,a5
+	addw    a3,a3,1
+	or      a4,a4,a3
+You win one instruction "or a4,a4,a3", which is less than one cycle.
 
-Ignore Mathieu's email address above. It was just a glitch in my scripts ;-)
+The zext.w is important, and it could replace sll+srl a lot, so I think
+it's a current ISA design short.
 
--- Steve
+Here, what I want to improve is to prevent stack frame setup in the fast
+path, and that's the most benefit my patch could give out. Unnecessary
+memory access is the most important performance killer in SMP.
+
+My patch removes the stack frame setup from the fast path.
+void lockref_get(struct lockref *lockref)
+{
+  78:   00053783                ld      a5,0(a0)
+000000000000007c <.LBB212>:
+  7c:   00010637                lui     a2,0x10
+
+0000000000000080 <.LBE212>:
+  80:   06400593                li      a1,100
+
+0000000000000084 <.LBB216>:
+  84:   fff60613                add     a2,a2,-1 # ffff <.LLST8+0xf4aa>
+
+0000000000000088 <.L8>:
+  88:   0007871b                sext.w  a4,a5
+
+000000000000008c <.LBB217>:
+  8c:   0107d69b                srlw    a3,a5,0x10
+  90:   00c77733                and     a4,a4,a2
+  94:   04e69063                bne     a3,a4,d4 <.L12> --------+
+						      		|
+0000000000000098 <.LBB218>:					|
+  98:   4207d693                sra     a3,a5,0x20		|
+  9c:   02079713                sll     a4,a5,0x20		|
+  a0:   0016869b                addw    a3,a3,1			|
+  a4:   02069693                sll     a3,a3,0x20		|
+  a8:   02075713                srl     a4,a4,0x20		|
+  ac:   00d76733                or      a4,a4,a3		|
+								|
+00000000000000b0 <.L0^B1>:					|
+  b0:   100536af                lr.d    a3,(a0)			|
+  b4:   00f69863                bne     a3,a5,c4 <.L1^B1>	|
+  b8:   1ae5382f                sc.d.rl a6,a4,(a0)		|
+  bc:   fe081ae3                bnez    a6,b0 <.L0^B1>		|
+  c0:   0330000f                fence   rw,rw			|
+								|
+00000000000000c4 <.L1^B1>:					|
+  c4:   04d78a63                beq     a5,a3,118 <.L18>	|
+								|
+00000000000000c8 <.LBE228>:					|
+  c8:   fff5859b                addw    a1,a1,-1		|	
+								|
+00000000000000cc <.LBB229>:					|
+  cc:   00068793                mv      a5,a3			|
+								|
+00000000000000d0 <.LBE229>:					|
+  d0:   fa059ce3                bnez    a1,88 <.L8>		|
+						     		|
+00000000000000d4 <.L12>: <--------------------------------------+
+{						      slow_path
+  d4:   fe010113                add     sp,sp,-32
+  d8:   00113c23                sd      ra,24(sp)
+  dc:   00813823                sd      s0,16(sp)
+  e0:   02010413                add     s0,sp,32
+
 
 > 
-> Linus,
+> If you want to do the optimization that the compiler misses by hand,
+> it would be something like the attached patch.
 > 
-> eventfs fixes:
+> NOTE! Very untested. But that *should* cause the compiler to just
+> generate a single "add" instruction (in addition to generating the
+> constant 0x100000000, of course).
 > 
-> - With the usage of simple_recursive_remove() recommended by Al Viro,
->   the code should not be calling "d_invalidate()" itself. Doing so
->   is causing crashes. The code was calling d_invalidate() on the race
->   of trying to look up a file while the parent was being deleted.
->   This was detected, and the added dentry was having d_invalidate() called
->   on it, but the deletion of the directory was also calling d_invalidate()
->   on that same dentry.
+> Of course, on a LL/SC architecture like RISC-V, in an *optimal* world,
+> the whole sequence would actually be done with one single LL/SC,
+> rather than the "load,add,cmpxchg" thing.
 > 
-> - A fix to not free the eventfs_inode (ei) until the last dput() was called
->   on its ei->dentry made the ei->dentry exist even after it was marked
->   for free by setting the ei->is_freed. But code elsewhere still was
->   checking if ei->dentry was NULL if ei->is_freed is set and would
->   trigger WARN_ON if that was the case. That's no longer true and there
->   should not be any warnings when it is true.
+> But then you'd have to do absolutely everything by hand in assembly.
+No, it's not worth to do that.
+ - There are only atomic primitives in Linux, but no ll/sc primitive in
+   the real world. The world belongs to AMO and the only usage of ll/sc
+   is to implement AMO and CAS.
+ - Using single ll/sc primitive instead of cmpxchg is similar to your
+   patch, and you may win 1 cycle or not.
+ - The critical work here are reducing bus transactions, preventing
+   cache dance, and forward progress guarantee.
+
+Here is my optimization advice:
+
+#define CMPXCHG_LOOP(CODE, SUCCESS) do {                                        \
+        int retry = 100;                                                        \
+        struct lockref old;                                                     \
+        BUILD_BUG_ON(sizeof(old) != 8);                                         \
++       prefetchw(lockref);                                                     \
+        old.lock_count = READ_ONCE(lockref->lock_count);                        \
+        while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {     \
+                struct lockref new = old;                                       \
+                CODE                                                            \
+                if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,          \
+                                                 &old.lock_count,               \
+                                                 new.lock_count))) {            \
+                        SUCCESS;                                                \
+                }                                                               \
+
+Micro-arch could give prefetchw more guarantee:
+ - Prefetch.w must guarantee cache line exclusiveness even when a
+   shareable state cache line hits.
+ - Hold the exclusive cache line for several cycles until the next
+   store or timeout
+ - Mask interrupt during the holding cycles (Optional)
+
+The lockref slow path is killed in this micro-architecture, which
+means there is no chance to execute the spinlock.
+
+I've written down more details in my ppt:
+https://docs.google.com/presentation/d/1UudBcj4cL_cjJexMpZNF9ppRzYxeYqsdBotIvU7sO2Q/edit?usp=sharing
+
+This type of prefetchw could help large-size atomic operations within
+one cache line. Compared to the transaction memory model, prefetchw
+could give a forward progress guarantee and easier landing in Linux
+without any new primitive.
+
 > 
-> - Use GFP_NOFS for allocations done under eventfs_mutex.
->   The eventfs_mutex can be taken on file system reclaim, make sure
->   that allocations done under that mutex do not trigger file system
->   reclaim.
+>                   Linus
+
+>  lib/lockref.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
 > 
-> - Clean up code by moving the taking of inode_lock out of the helper
->   functions and into where they are needed, and not use the
->   parameter to know to take it or not. It must always be held but
->   some callers of the helper function have it taken when they were
->   called.
-> 
-> - Warn if the inode_lock is not held in the helper functions.
-> 
-> - Warn if eventfs_start_creating() is called without a parent.
->   As eventfs is underneath tracefs, all files created will have
->   a parent (the top one will have a tracefs parent).
-> 
-> Tracing update;
-> 
-> - Add Mathieu Desnoyers as an official reviewer of the tracing sub system.
-> 
-> 
-> Please pull the latest trace-v6.7-rc2 tree, which can be found at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> trace-v6.7-rc2
-> 
-> Tag SHA1: 94eabb90d0195e49d78e7714be7b239284ee1e96
-> Head SHA1: 76d9eafff4484547ed9e606c8227ac9799a9f2da
-> 
-> 
-> Mathieu Desnoyers (1):
->       MAINTAINERS: TRACING: Add Mathieu Desnoyers as Reviewer
-> 
-> Steven Rostedt (Google) (6):
->       eventfs: Remove expectation that ei->is_freed means ei->dentry == NULL
->       eventfs: Do not invalidate dentry in create_file/dir_dentry()
->       eventfs: Use GFP_NOFS for allocation when eventfs_mutex is held
->       eventfs: Move taking of inode_lock into dcache_dir_open_wrapper()
->       eventfs: Do not allow NULL parent to eventfs_start_creating()
->       eventfs: Make sure that parent->d_inode is locked in creating files/dirs
-> 
-> ----
->  MAINTAINERS              |  1 +
->  fs/tracefs/event_inode.c | 65 +++++++++++++++++++-----------------------------
->  fs/tracefs/inode.c       | 13 +++-------
->  3 files changed, 31 insertions(+), 48 deletions(-)
-> ---------------------------
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ea790149af79..a2d4ef4d90f6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22078,6 +22078,7 @@ F:	drivers/watchdog/tqmx86_wdt.c
->  TRACING
->  M:	Steven Rostedt <rostedt@goodmis.org>
->  M:	Masami Hiramatsu <mhiramat@kernel.org>
-> +R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->  L:	linux-kernel@vger.kernel.org
->  L:	linux-trace-kernel@vger.kernel.org
->  S:	Maintained
-> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-> index f8a594a50ae6..0b90869fd805 100644
-> --- a/fs/tracefs/event_inode.c
-> +++ b/fs/tracefs/event_inode.c
-> @@ -27,16 +27,16 @@
->  /*
->   * eventfs_mutex protects the eventfs_inode (ei) dentry. Any access
->   * to the ei->dentry must be done under this mutex and after checking
-> - * if ei->is_freed is not set. The ei->dentry is released under the
-> - * mutex at the same time ei->is_freed is set. If ei->is_freed is set
-> - * then the ei->dentry is invalid.
-> + * if ei->is_freed is not set. When ei->is_freed is set, the dentry
-> + * is on its way to being freed after the last dput() is made on it.
->   */
->  static DEFINE_MUTEX(eventfs_mutex);
+> diff --git a/lib/lockref.c b/lib/lockref.c
+> index 2afe4c5d8919..481b102a6476 100644
+> --- a/lib/lockref.c
+> +++ b/lib/lockref.c
+> @@ -26,6 +26,17 @@
+>  	}									\
+>  } while (0)
 >  
->  /*
->   * The eventfs_inode (ei) itself is protected by SRCU. It is released from
->   * its parent's list and will have is_freed set (under eventfs_mutex).
-> - * After the SRCU grace period is over, the ei may be freed.
-> + * After the SRCU grace period is over and the last dput() is called
-> + * the ei is freed.
->   */
->  DEFINE_STATIC_SRCU(eventfs_srcu);
->  
-> @@ -95,7 +95,7 @@ static int eventfs_set_attr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	if (!(dentry->d_inode->i_mode & S_IFDIR)) {
->  		if (!ei->entry_attrs) {
->  			ei->entry_attrs = kzalloc(sizeof(*ei->entry_attrs) * ei->nr_entries,
-> -						  GFP_KERNEL);
-> +						  GFP_NOFS);
->  			if (!ei->entry_attrs) {
->  				ret = -ENOMEM;
->  				goto out;
-> @@ -326,7 +326,8 @@ create_file_dentry(struct eventfs_inode *ei, int idx,
->  	struct eventfs_attr *attr = NULL;
->  	struct dentry **e_dentry = &ei->d_children[idx];
->  	struct dentry *dentry;
-> -	bool invalidate = false;
+> +/*
+> + * The compiler isn't smart enough to the the count
+> + * increment in the high 32 bits of the 64-bit value,
+> + * so do this optimization by hand.
+> + */
+> +#if defined(__LITTLE_ENDIAN) && BITS_PER_LONG == 64
+> + #define LOCKREF_INC(n) ((n).lock_count += 1ul<<32)
+> +#else
+> + #define LOCKREF_INC(n) ((n).count++)
+> +#endif
 > +
-> +	WARN_ON_ONCE(!inode_is_locked(parent->d_inode));
+>  #else
 >  
->  	mutex_lock(&eventfs_mutex);
->  	if (ei->is_freed) {
-> @@ -348,15 +349,8 @@ create_file_dentry(struct eventfs_inode *ei, int idx,
->  
->  	mutex_unlock(&eventfs_mutex);
->  
-> -	/* The lookup already has the parent->d_inode locked */
-> -	if (!lookup)
-> -		inode_lock(parent->d_inode);
-> -
->  	dentry = create_file(name, mode, attr, parent, data, fops);
->  
-> -	if (!lookup)
-> -		inode_unlock(parent->d_inode);
-> -
->  	mutex_lock(&eventfs_mutex);
->  
->  	if (IS_ERR_OR_NULL(dentry)) {
-> @@ -365,12 +359,14 @@ create_file_dentry(struct eventfs_inode *ei, int idx,
->  		 * created the dentry for this e_dentry. In which case
->  		 * use that one.
->  		 *
-> -		 * Note, with the mutex held, the e_dentry cannot have content
-> -		 * and the ei->is_freed be true at the same time.
-> +		 * If ei->is_freed is set, the e_dentry is currently on its
-> +		 * way to being freed, don't return it. If e_dentry is NULL
-> +		 * it means it was already freed.
->  		 */
-> -		dentry = *e_dentry;
-> -		if (WARN_ON_ONCE(dentry && ei->is_freed))
-> +		if (ei->is_freed)
->  			dentry = NULL;
-> +		else
-> +			dentry = *e_dentry;
->  		/* The lookup does not need to up the dentry refcount */
->  		if (dentry && !lookup)
->  			dget(dentry);
-> @@ -387,17 +383,14 @@ create_file_dentry(struct eventfs_inode *ei, int idx,
->  		 * Otherwise it means two dentries exist with the same name.
->  		 */
->  		WARN_ON_ONCE(!ei->is_freed);
-> -		invalidate = true;
-> +		dentry = NULL;
->  	}
->  	mutex_unlock(&eventfs_mutex);
->  
-> -	if (invalidate)
-> -		d_invalidate(dentry);
-> -
-> -	if (lookup || invalidate)
-> +	if (lookup)
->  		dput(dentry);
->  
-> -	return invalidate ? NULL : dentry;
-> +	return dentry;
->  }
->  
->  /**
-> @@ -437,9 +430,10 @@ static struct dentry *
->  create_dir_dentry(struct eventfs_inode *pei, struct eventfs_inode *ei,
->  		  struct dentry *parent, bool lookup)
+>  #define CMPXCHG_LOOP(CODE, SUCCESS) do { } while (0)
+> @@ -42,7 +53,7 @@
+>  void lockref_get(struct lockref *lockref)
 >  {
-> -	bool invalidate = false;
->  	struct dentry *dentry = NULL;
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+> +		LOCKREF_INC(new);
+>  	,
+>  		return;
+>  	);
+> @@ -63,7 +74,7 @@ int lockref_get_not_zero(struct lockref *lockref)
+>  	int retval;
 >  
-> +	WARN_ON_ONCE(!inode_is_locked(parent->d_inode));
-> +
->  	mutex_lock(&eventfs_mutex);
->  	if (pei->is_freed || ei->is_freed) {
->  		mutex_unlock(&eventfs_mutex);
-> @@ -456,15 +450,8 @@ create_dir_dentry(struct eventfs_inode *pei, struct eventfs_inode *ei,
->  	}
->  	mutex_unlock(&eventfs_mutex);
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+> +		LOCKREF_INC(new);
+>  		if (old.count <= 0)
+>  			return 0;
+>  	,
+> @@ -174,7 +185,7 @@ int lockref_get_not_dead(struct lockref *lockref)
+>  	int retval;
 >  
-> -	/* The lookup already has the parent->d_inode locked */
-> -	if (!lookup)
-> -		inode_lock(parent->d_inode);
-> -
->  	dentry = create_dir(ei, parent);
->  
-> -	if (!lookup)
-> -		inode_unlock(parent->d_inode);
-> -
->  	mutex_lock(&eventfs_mutex);
->  
->  	if (IS_ERR_OR_NULL(dentry) && !ei->is_freed) {
-> @@ -473,8 +460,8 @@ create_dir_dentry(struct eventfs_inode *pei, struct eventfs_inode *ei,
->  		 * created the dentry for this e_dentry. In which case
->  		 * use that one.
->  		 *
-> -		 * Note, with the mutex held, the e_dentry cannot have content
-> -		 * and the ei->is_freed be true at the same time.
-> +		 * If ei->is_freed is set, the e_dentry is currently on its
-> +		 * way to being freed.
->  		 */
->  		dentry = ei->dentry;
->  		if (dentry && !lookup)
-> @@ -493,16 +480,14 @@ create_dir_dentry(struct eventfs_inode *pei, struct eventfs_inode *ei,
->  		 * Otherwise it means two dentries exist with the same name.
->  		 */
->  		WARN_ON_ONCE(!ei->is_freed);
-> -		invalidate = true;
-> +		dentry = NULL;
->  	}
->  	mutex_unlock(&eventfs_mutex);
-> -	if (invalidate)
-> -		d_invalidate(dentry);
->  
-> -	if (lookup || invalidate)
-> +	if (lookup)
->  		dput(dentry);
->  
-> -	return invalidate ? NULL : dentry;
-> +	return dentry;
->  }
->  
->  /**
-> @@ -632,7 +617,7 @@ static int add_dentries(struct dentry ***dentries, struct dentry *d, int cnt)
->  {
->  	struct dentry **tmp;
->  
-> -	tmp = krealloc(*dentries, sizeof(d) * (cnt + 2), GFP_KERNEL);
-> +	tmp = krealloc(*dentries, sizeof(d) * (cnt + 2), GFP_NOFS);
->  	if (!tmp)
->  		return -1;
->  	tmp[cnt] = d;
-> @@ -698,6 +683,7 @@ static int dcache_dir_open_wrapper(struct inode *inode, struct file *file)
->  		return -ENOMEM;
->  	}
->  
-> +	inode_lock(parent->d_inode);
->  	list_for_each_entry_srcu(ei_child, &ei->children, list,
->  				 srcu_read_lock_held(&eventfs_srcu)) {
->  		d = create_dir_dentry(ei, ei_child, parent, false);
-> @@ -730,6 +716,7 @@ static int dcache_dir_open_wrapper(struct inode *inode, struct file *file)
->  			cnt++;
->  		}
->  	}
-> +	inode_unlock(parent->d_inode);
->  	srcu_read_unlock(&eventfs_srcu, idx);
->  	ret = dcache_dir_open(inode, file);
->  
-> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-> index 5b54948514fe..ae648deed019 100644
-> --- a/fs/tracefs/inode.c
-> +++ b/fs/tracefs/inode.c
-> @@ -509,20 +509,15 @@ struct dentry *eventfs_start_creating(const char *name, struct dentry *parent)
->  	struct dentry *dentry;
->  	int error;
->  
-> +	/* Must always have a parent. */
-> +	if (WARN_ON_ONCE(!parent))
-> +		return ERR_PTR(-EINVAL);
-> +
->  	error = simple_pin_fs(&trace_fs_type, &tracefs_mount,
->  			      &tracefs_mount_count);
->  	if (error)
->  		return ERR_PTR(error);
->  
-> -	/*
-> -	 * If the parent is not specified, we create it in the root.
-> -	 * We need the root dentry to do this, which is in the super
-> -	 * block. A pointer to that is in the struct vfsmount that we
-> -	 * have around.
-> -	 */
-> -	if (!parent)
-> -		parent = tracefs_mount->mnt_root;
-> -
->  	if (unlikely(IS_DEADDIR(parent->d_inode)))
->  		dentry = ERR_PTR(-ENOENT);
->  	else
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+> +		LOCKREF_INC(new);
+>  		if (old.count < 0)
+>  			return 0;
+>  	,
 
 
