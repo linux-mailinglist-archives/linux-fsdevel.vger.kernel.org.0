@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-3844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C5E7F92A9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 13:47:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AF27F92AA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 13:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7997BB20D83
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 12:47:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015192811CC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 12:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293B9D305;
-	Sun, 26 Nov 2023 12:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBBED313;
+	Sun, 26 Nov 2023 12:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vo7JB0Qn"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uSLC1Xi9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD92E5;
-	Sun, 26 Nov 2023 04:47:39 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1367AE5;
+	Sun, 26 Nov 2023 04:47:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=nO66HhDVj8qK+jri+LLhFBDwrCdlEsgQHS76+niCImc=; b=Vo7JB0QnB3MzgqOklRJt+XL8nq
-	MUR5y32Hh3qVcbveYww8wlDpS3LVOlfj4YWp5pxv0YMlWUp/5lrNBNudiKb20zJsBuQ/b2+nyGThg
-	6YcwfmoJqQqsYsXWzUfYbjs12IACHESnBkM3WCntqAesy9nN0mJQb4+19G6HI+XDqFSPC8Fe049pW
-	P9H2XxygtCdxFs/ZqZOi/YGWua/FARzJ8denfNvPxQ6aVQ/ZDEC/Cp7gKagrAcZwDa5KQThUUlGTV
-	xvgQWcwDd6gLJCXP1QxrKZtkc14QATiPqgvMf2susJp/5I+R/kY4ErJNKZJC4G3jMkcDQe9PAk39V
-	DabdRsvQ==;
+	bh=v1PUYd9IhEWG+moQCvLaYD8aOxotdARhrKE2eE2JJ/E=; b=uSLC1Xi9Y9AO4iRi5mVnOWLrln
+	M10PIAuVcZQCILhzW5KSAm2av7CYhVep5t5RzwbBnr3GbduP1KxEaEbEfcWDBNlYqW2PmgufGEy/f
+	8KwFOU0PAmm6vMFwOdkivqFI37xzRuiMCGF2PVLmYpdusgqlahj/EcKgZEf6slQuSRk82vgv6MI/4
+	aiMN203q8OMcNEMBSGNTnczY7HESS2ToVvJMEL0kFpXvCHoGXZTTVn3JGQa05HY9QEIxRXgveBkl8
+	naEd2ueBXuEQpbzJMt4TVQVEGpUpu5g0zdcyHDJ4IVg2bRnlE/vw1WfJup/QdW3CvmbS112v7Vtjm
+	JzOTT2TA==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1r7EXv-00BCEh-1a;
-	Sun, 26 Nov 2023 12:47:36 +0000
+	id 1r7EXy-00BCGH-0L;
+	Sun, 26 Nov 2023 12:47:38 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Christian Brauner <brauner@kernel.org>
 Cc: "Darrick J. Wong" <djwong@kernel.org>,
@@ -40,9 +40,9 @@ Cc: "Darrick J. Wong" <djwong@kernel.org>,
 	Ritesh Harjani <ritesh.list@gmail.com>,
 	linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/13] iomap: move the io_folios field out of struct iomap_ioend
-Date: Sun, 26 Nov 2023 13:47:10 +0100
-Message-Id: <20231126124720.1249310-4-hch@lst.de>
+Subject: [PATCH 04/13] iomap: drop the obsolete PF_MEMALLOC check in iomap_do_writepage
+Date: Sun, 26 Nov 2023 13:47:11 +0100
+Message-Id: <20231126124720.1249310-5-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231126124720.1249310-1-hch@lst.de>
 References: <20231126124720.1249310-1-hch@lst.de>
@@ -55,71 +55,51 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The io_folios member in struct iomap_ioend counts the number of folios
-added to an ioend.  It is only used at submission time and can thus be
-moved to iomap_writepage_ctx instead.
+The iomap writepage implementation has been removed in commit
+478af190cb6c ("iomap: remove iomap_writepage") and this code is now only
+called through ->writepages which never happens from memory reclaim.
+Remove the canary in the coal mine now that the coal mine has been shut
+down.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/buffered-io.c | 7 ++++---
- include/linux/iomap.h  | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ fs/iomap/buffered-io.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index b1bcc43baf0caf..b28c57f8603303 100644
+index b28c57f8603303..8148e4c9765dac 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1685,10 +1685,11 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
- 	ioend->io_flags = wpc->iomap.flags;
- 	ioend->io_inode = inode;
- 	ioend->io_size = 0;
--	ioend->io_folios = 0;
- 	ioend->io_offset = offset;
- 	ioend->io_bio = bio;
- 	ioend->io_sector = sector;
-+
-+	wpc->nr_folios = 0;
- 	return ioend;
- }
+@@ -1910,20 +1910,6 @@ static int iomap_do_writepage(struct folio *folio,
  
-@@ -1732,7 +1733,7 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
- 	 * also prevents long tight loops ending page writeback on all the
- 	 * folios in the ioend.
- 	 */
--	if (wpc->ioend->io_folios >= IOEND_BATCH_SIZE)
-+	if (wpc->nr_folios >= IOEND_BATCH_SIZE)
- 		return false;
- 	return true;
- }
-@@ -1829,7 +1830,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		count++;
- 	}
- 	if (count)
--		wpc->ioend->io_folios++;
-+		wpc->nr_folios++;
+ 	trace_iomap_writepage(inode, folio_pos(folio), folio_size(folio));
  
- 	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
- 	WARN_ON_ONCE(!folio_test_locked(folio));
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 96dd0acbba44ac..b2a05dff914d0c 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -293,7 +293,6 @@ struct iomap_ioend {
- 	struct list_head	io_list;	/* next ioend in chain */
- 	u16			io_type;
- 	u16			io_flags;	/* IOMAP_F_* */
--	u32			io_folios;	/* folios added to ioend */
- 	struct inode		*io_inode;	/* file being written to */
- 	size_t			io_size;	/* size of the extent */
- 	loff_t			io_offset;	/* offset in the file */
-@@ -329,6 +328,7 @@ struct iomap_writepage_ctx {
- 	struct iomap		iomap;
- 	struct iomap_ioend	*ioend;
- 	const struct iomap_writeback_ops *ops;
-+	u32			nr_folios;	/* folios added to the ioend */
- };
+-	/*
+-	 * Refuse to write the folio out if we're called from reclaim context.
+-	 *
+-	 * This avoids stack overflows when called from deeply used stacks in
+-	 * random callers for direct reclaim or memcg reclaim.  We explicitly
+-	 * allow reclaim from kswapd as the stack usage there is relatively low.
+-	 *
+-	 * This should never happen except in the case of a VM regression so
+-	 * warn about it.
+-	 */
+-	if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
+-			PF_MEMALLOC))
+-		goto redirty;
+-
+ 	/*
+ 	 * Is this folio beyond the end of the file?
+ 	 *
+@@ -1989,8 +1975,6 @@ static int iomap_do_writepage(struct folio *folio,
  
- void iomap_finish_ioends(struct iomap_ioend *ioend, int error);
+ 	return iomap_writepage_map(wpc, wbc, inode, folio, end_pos);
+ 
+-redirty:
+-	folio_redirty_for_writepage(wbc, folio);
+ unlock:
+ 	folio_unlock(folio);
+ 	return 0;
 -- 
 2.39.2
 
