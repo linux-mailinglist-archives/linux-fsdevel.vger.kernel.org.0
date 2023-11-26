@@ -1,248 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-3864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D127F954C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 21:24:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3AE7F955D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 21:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078E8280E4B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 20:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FF5280CB9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Nov 2023 20:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EAD134BF;
-	Sun, 26 Nov 2023 20:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BriM+Poi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96EB12E5B;
+	Sun, 26 Nov 2023 20:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16FDE10F
-	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 12:24:17 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-50ba75e33f3so2287269e87.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 12:24:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1701030255; x=1701635055; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9m0VkYBMPQAAqcfnyKJyHPhdZmsbJX1nKe+Mjna/jI=;
-        b=BriM+PoioiwhH59fxPGHivCY0jBSA8ktRxlBqDTfTuaYhVYqyI9XdTAR3woB444vKV
-         +Fl6b51yY1X3sBy8hrEcCBt64DVknlIxujPCVnnKmDvyORrskNMWKQyw917smq50jq6O
-         P7FFhvZXEQ5jepvPTcWs7pl3cGGB+A8UQfpvo=
+Received: from mail-pl1-f205.google.com (mail-pl1-f205.google.com [209.85.214.205])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD16CE
+	for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 12:58:23 -0800 (PST)
+Received: by mail-pl1-f205.google.com with SMTP id d9443c01a7336-1cfaeab7dafso17598205ad.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 12:58:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701030255; x=1701635055;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z9m0VkYBMPQAAqcfnyKJyHPhdZmsbJX1nKe+Mjna/jI=;
-        b=cFIrxGzEg2CJ8lGfR4rtQubUsZKmm+Jcsadfz4St1tEBgueNxfpFAhg/leJEvMupkD
-         7oEa45KSGWOJUlpJ7YWJT52XCcFQ12M/2yXjFgOenH5+jRCA4IfjCPtkucl+e55okJLh
-         KlXsfhzAN0FtmjZ4WVjTkkeY6Il3Lolw6Ll7XIP354rWXtKkXCfk9c+c11wcXQZAKp0r
-         wgSMDXDcl88k9Ch8MTEUd57VXpAHCuvFahdIQbpyy65QNHt3qsPwrsQ3JgRGR7+KIZsY
-         wIfUoaJZ0DeqTrvMO3s3mI5KS9LfMx5oA/u1Ie033ZWtl2Goz3e9C7YjQfK/y+m6XQcK
-         v2ew==
-X-Gm-Message-State: AOJu0YxK2haMrkrocQiXFkRWzUNAAr0nrqribIrpbvnNtZeRESsd4gml
-	rTWLLCx0rO2p4ki7U9M5K1jgsyxcTWRhujEkrttIMLNG
-X-Google-Smtp-Source: AGHT+IHsLcfvpzQTBa/d9wHDiZM1WM3of07k7mtFDDW5ZTsrgLseow73aFtoVDOkU/D1DKXU9cbpzQ==
-X-Received: by 2002:ac2:4db1:0:b0:50a:a6d2:bcd0 with SMTP id h17-20020ac24db1000000b0050aa6d2bcd0mr4875476lfe.61.1701030254857;
-        Sun, 26 Nov 2023 12:24:14 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id x13-20020a170906710d00b009b2ca104988sm4897546ejj.98.2023.11.26.12.24.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Nov 2023 12:24:14 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a00c200782dso515205066b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Nov 2023 12:24:14 -0800 (PST)
-X-Received: by 2002:a17:906:28e:b0:a0a:f934:6075 with SMTP id
- 14-20020a170906028e00b00a0af9346075mr3560404ejf.39.1701030253926; Sun, 26 Nov
- 2023 12:24:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701032303; x=1701637103;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ItywWWmtVPRH3yz41L5uTtuSiiqLDq62KMdXCLlngzQ=;
+        b=DRcJ+5kw6pz3UY3BtvNEFJbOB4NFYcSYpOcUFQ4Ehamyq2ZpKHVDC64xHdzND66LSw
+         r8Negta45GjtRPRG428cBO21iwAFfN3FtOpl7gqrQE2e31WUSy+Xvh6obxopL85tWwSm
+         OCmw8YEnE0soif+17g8vKdSh/ncNW+ZxhPV3CjILN5wj71QqQHyueTru+mg3pUudkVKt
+         K4kYYX09Yq6/gkz1EyP1Jl/Z6FKgNHSR5KF7gSVvWbeOnL9qCN6msKIBp/Rhw1c3XIwd
+         akX2mx/gTEqoE7ruZSSYEiJ7WEa4VZBU8R2mepCN5XLPbtObBEufPT4BVhsYcNz4mmj+
+         /ezg==
+X-Gm-Message-State: AOJu0YyNPSa35nLn7/ED/vfsk75MHXTZiI/ng6lRH9u+/x7nVtgl0Jyk
+	hEsP5NslWzZUUSWdrwgfmDd04pxWOXwP15PMqAeMTNZiHfAj
+X-Google-Smtp-Source: AGHT+IHLtbInkGp62/2wt3pz/eF/Q8Sis4M4DCYC5EHqefGZrp+J97JPbt7cTS5jD6JrJAr1PbzgaWe9fz5ee80lX8omgw8IVm+7
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202311201406.2022ca3f-oliver.sang@intel.com>
-In-Reply-To: <202311201406.2022ca3f-oliver.sang@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 26 Nov 2023 12:23:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjMKONPsXAJ=yJuPBEAx6HdYRkYE8TdYVBvpm3=x_EnCw@mail.gmail.com>
-Message-ID: <CAHk-=wjMKONPsXAJ=yJuPBEAx6HdYRkYE8TdYVBvpm3=x_EnCw@mail.gmail.com>
-Subject: Re: [linus:master] [file] 0ede61d858: will-it-scale.per_thread_ops
- -2.9% regression
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, intel-gfx@lists.freedesktop.org, 
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev, bpf@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: multipart/mixed; boundary="00000000000009cc68060b13f8a2"
-
---00000000000009cc68060b13f8a2
+X-Received: by 2002:a17:903:3295:b0:1cc:23d2:bb94 with SMTP id
+ jh21-20020a170903329500b001cc23d2bb94mr2056401plb.1.1701032302910; Sun, 26
+ Nov 2023 12:58:22 -0800 (PST)
+Date: Sun, 26 Nov 2023 12:58:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002aa189060b147268@google.com>
+Subject: [syzbot] [fscrypt?] possible deadlock in find_and_lock_process_key
+From: syzbot <syzbot+9d04b061c581795e18ce@syzkaller.appspotmail.com>
+To: ebiggers@kernel.org, jaegeuk@kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, 19 Nov 2023 at 23:11, kernel test robot <oliver.sang@intel.com> wro=
-te:
->
-> kernel test robot noticed a -2.9% regression of will-it-scale.per_thread_=
-ops on:
->
-> commit: 0ede61d8589cc2d93aa78230d74ac58b5b8d0244 ("file: convert to SLAB_=
-TYPESAFE_BY_RCU")
+Hello,
 
-Ok, so __fget_light() is one of our more performance-critical things,
-and that commit ends up making it call a rather more expensive version
-in __get_file_rcu(), so we have:
+syzbot found the following issue on:
 
->      30.90 =C4=85  4%     -20.6       10.35 =C4=85  2%  perf-profile.self=
-.cycles-pp.__fget_light
->       0.00           +26.5       26.48        perf-profile.self.cycles-pp=
-.__get_file_rcu
+HEAD commit:    9b6de136b5f0 Merge tag 'loongarch-fixes-6.7-1' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11258d67680000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aec35c1281ec0aaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d04b061c581795e18ce
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-and that "20% decrease balanced by 26% increase elsewhere" then
-directly causes the ~3% regression.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I took a look at the code generation, and honestly, I think we're
-better off just making __fget_files_rcu() have special logic for this
-all, and not use __get_file_rcu().
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-9b6de136.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/434b9bf68626/vmlinux-9b6de136.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd40dbf2926d/bzImage-9b6de136.xz
 
-The 'fd' case really is special because we need to do that
-non-speculative pointer access.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d04b061c581795e18ce@syzkaller.appspotmail.com
 
-Because it turns out that we already have to use array_index_nospec()
-to safely generate that pointer to the fd entry, and once you have to
-do that "use non-speculative accesses to generate a safe pointer", you
-might as well just go whole hog.
+======================================================
+WARNING: possible circular locking dependency detected
+6.7.0-rc2-syzkaller-00029-g9b6de136b5f0 #0 Not tainted
+------------------------------------------------------
+syz-executor.1/27256 is trying to acquire lock:
+ffffffff8d114b60 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:303 [inline]
+ffffffff8d114b60 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slab.h:710 [inline]
+ffffffff8d114b60 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slab.c:3221 [inline]
+ffffffff8d114b60 (fs_reclaim){+.+.}-{0:0}, at: __kmem_cache_alloc_node+0x42/0x460 mm/slab.c:3521
 
-So this takes a different approach, and uses the
-array_index_mask_nospec() thing that we have exactly to generate that
-non-speculative mask for these things:
+but task is already holding lock:
+ffff8880354d2e98 (&type->lock_class#5){++++}-{3:3}, at: find_and_lock_process_key+0x97/0x390 fs/crypto/keysetup_v1.c:112
 
-        /* Mask is a 0 for invalid fd's, ~0 for valid ones */
-        mask =3D array_index_mask_nospec(fd, fdt->max_fds);
+which lock already depends on the new lock.
 
-and then it does something you can consider either horribly clever, or
-horribly ugly (this first part is basically just
-array_index_nospec()):
 
-        /* fdentry points to the 'fd' offset, or fdt->fd[0] */
-        fdentry =3D fdt->fd + (fd&mask);
+the existing dependency chain (in reverse order) is:
 
-and then we can just *unconditionally* do the load - but since we
-might be loading fd[0] for an invalid case, we need to mask the result
-too:
+-> #3 (&type->lock_class#5){++++}-{3:3}:
+       down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
+       find_and_lock_process_key+0x97/0x390 fs/crypto/keysetup_v1.c:112
+       fscrypt_setup_v1_file_key_via_subscribed_keyrings+0x115/0x2d0 fs/crypto/keysetup_v1.c:310
+       setup_file_encryption_key fs/crypto/keysetup.c:485 [inline]
+       fscrypt_setup_encryption_info+0xb69/0x1080 fs/crypto/keysetup.c:590
+       fscrypt_get_encryption_info+0x3d1/0x4b0 fs/crypto/keysetup.c:675
+       fscrypt_setup_filename+0x238/0xd80 fs/crypto/fname.c:458
+       ext4_fname_setup_filename+0xa3/0x250 fs/ext4/crypto.c:28
+       ext4_add_entry+0x32b/0xe40 fs/ext4/namei.c:2403
+       ext4_rename+0x165e/0x2880 fs/ext4/namei.c:3932
+       ext4_rename2+0x1bc/0x270 fs/ext4/namei.c:4212
+       vfs_rename+0x13e0/0x1c30 fs/namei.c:4844
+       do_renameat2+0xc3c/0xdc0 fs/namei.c:4996
+       __do_sys_renameat fs/namei.c:5036 [inline]
+       __se_sys_renameat fs/namei.c:5033 [inline]
+       __x64_sys_renameat+0xc6/0x100 fs/namei.c:5033
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-        /* Do the load, then mask any invalid result */
-        file =3D rcu_dereference_raw(*fdentry);
-        file =3D (void *)(mask & (unsigned long)file);
+-> #2 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0x10ff/0x15e0 fs/jbd2/transaction.c:463
+       jbd2__journal_start+0x391/0x840 fs/jbd2/transaction.c:520
+       __ext4_journal_start_sb+0x343/0x5d0 fs/ext4/ext4_jbd2.c:112
+       ext4_sample_last_mounted fs/ext4/file.c:835 [inline]
+       ext4_file_open+0x632/0xc80 fs/ext4/file.c:864
+       do_dentry_open+0x8d6/0x18c0 fs/open.c:948
+       do_open fs/namei.c:3622 [inline]
+       path_openat+0x1e5a/0x2c50 fs/namei.c:3779
+       do_filp_open+0x1de/0x430 fs/namei.c:3809
+       do_sys_openat2+0x176/0x1e0 fs/open.c:1440
+       do_sys_open fs/open.c:1455 [inline]
+       __do_sys_openat fs/open.c:1471 [inline]
+       __se_sys_openat fs/open.c:1466 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1466
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-but now we have done everything without any conditionals, and the only
-conditional is now "did we load NULL" - which includes that "we masked
-the bad value".
+-> #1 (sb_internal){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1635 [inline]
+       sb_start_intwrite include/linux/fs.h:1757 [inline]
+       ext4_evict_inode+0xe5b/0x1a40 fs/ext4/inode.c:212
+       evict+0x2ed/0x6b0 fs/inode.c:664
+       iput_final fs/inode.c:1775 [inline]
+       iput.part.0+0x560/0x7b0 fs/inode.c:1801
+       iput+0x5c/0x80 fs/inode.c:1791
+       dentry_unlink_inode+0x292/0x430 fs/dcache.c:401
+       __dentry_kill+0x3b8/0x640 fs/dcache.c:607
+       shrink_dentry_list+0x11e/0x4a0 fs/dcache.c:1201
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1282
+       super_cache_scan+0x327/0x540 fs/super.c:228
+       do_shrink_slab+0x428/0x1120 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa83/0x1310 mm/shrinker.c:626
+       shrink_one+0x4f7/0x700 mm/vmscan.c:4724
+       shrink_many mm/vmscan.c:4776 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4893 [inline]
+       shrink_node+0x20cd/0x3790 mm/vmscan.c:5833
+       kswapd_shrink_node mm/vmscan.c:6638 [inline]
+       balance_pgdat+0x9d2/0x1a90 mm/vmscan.c:6828
+       kswapd+0x5be/0xbf0 mm/vmscan.c:7088
+       kthread+0x2c6/0x3a0 kernel/kthread.c:388
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
 
-Then we just do that atomic_long_inc_not_zero() on the file, and
-re-check the pointer chain we used.
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x2464/0x3b10 kernel/locking/lockdep.c:5136
+       lock_acquire kernel/locking/lockdep.c:5753 [inline]
+       lock_acquire+0x1ae/0x520 kernel/locking/lockdep.c:5718
+       __fs_reclaim_acquire mm/page_alloc.c:3693 [inline]
+       fs_reclaim_acquire+0x100/0x150 mm/page_alloc.c:3707
+       might_alloc include/linux/sched/mm.h:303 [inline]
+       slab_pre_alloc_hook mm/slab.h:710 [inline]
+       slab_alloc_node mm/slab.c:3221 [inline]
+       __kmem_cache_alloc_node+0x42/0x460 mm/slab.c:3521
+       __do_kmalloc_node mm/slab_common.c:1006 [inline]
+       __kmalloc+0x49/0x90 mm/slab_common.c:1020
+       kmalloc include/linux/slab.h:604 [inline]
+       setup_v1_file_key_derived fs/crypto/keysetup_v1.c:278 [inline]
+       fscrypt_setup_v1_file_key+0x167/0x550 fs/crypto/keysetup_v1.c:299
+       fscrypt_setup_v1_file_key_via_subscribed_keyrings+0x159/0x2d0 fs/crypto/keysetup_v1.c:321
+       setup_file_encryption_key fs/crypto/keysetup.c:485 [inline]
+       fscrypt_setup_encryption_info+0xb69/0x1080 fs/crypto/keysetup.c:590
+       fscrypt_get_encryption_info+0x3d1/0x4b0 fs/crypto/keysetup.c:675
+       fscrypt_prepare_readdir include/linux/fscrypt.h:1004 [inline]
+       ext4_readdir+0x1175/0x3730 fs/ext4/dir.c:137
+       iterate_dir+0x1e5/0x5b0 fs/readdir.c:106
+       __do_sys_getdents64 fs/readdir.c:405 [inline]
+       __se_sys_getdents64 fs/readdir.c:390 [inline]
+       __x64_sys_getdents64+0x14f/0x2e0 fs/readdir.c:390
+       do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+       do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-I made files_lookup_fd_raw() do the same thing.
+other info that might help us debug this:
 
-The end result is much nicer code generation at least from my quick
-check. And I assume the regression will be gone, and hopefully even
-turned into an improvement since this is so hot.
+Chain exists of:
+  fs_reclaim --> jbd2_handle --> &type->lock_class#5
 
-Comments? I also looked at that odd OPTIMIZER_HIDE_VAR() that
-__get_file_rcu() does, and I don't get it. Both things come from
-volatile accesses, I don't see the point of those games, but I also
-didn't care, since it's no longer in a critical code path.
+ Possible unsafe locking scenario:
 
-Christian?
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&type->lock_class#5);
+                               lock(jbd2_handle);
+                               lock(&type->lock_class#5);
+  lock(fs_reclaim);
 
-NOTE! This patch is not well tested. I verified an earlier version of
-this, but have been playing with it since, so caveat emptor.
+ *** DEADLOCK ***
 
-IOW, I might have messed up some "trivial cleanup" when prepping for
-sending it out...
+3 locks held by syz-executor.1/27256:
+ #0: ffff88802cf39148 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe7/0x170 fs/file.c:1177
+ #1: ffff88810704e6c0 (&type->i_mutex_dir_key#3){++++}-{3:3}, at: iterate_dir+0xe4/0x5b0 fs/readdir.c:99
+ #2: ffff8880354d2e98 (&type->lock_class#5){++++}-{3:3}, at: find_and_lock_process_key+0x97/0x390 fs/crypto/keysetup_v1.c:112
 
-              Linus
+stack backtrace:
+CPU: 2 PID: 27256 Comm: syz-executor.1 Not tainted 6.7.0-rc2-syzkaller-00029-g9b6de136b5f0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ check_noncircular+0x317/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x2464/0x3b10 kernel/locking/lockdep.c:5136
+ lock_acquire kernel/locking/lockdep.c:5753 [inline]
+ lock_acquire+0x1ae/0x520 kernel/locking/lockdep.c:5718
+ __fs_reclaim_acquire mm/page_alloc.c:3693 [inline]
+ fs_reclaim_acquire+0x100/0x150 mm/page_alloc.c:3707
+ might_alloc include/linux/sched/mm.h:303 [inline]
+ slab_pre_alloc_hook mm/slab.h:710 [inline]
+ slab_alloc_node mm/slab.c:3221 [inline]
+ __kmem_cache_alloc_node+0x42/0x460 mm/slab.c:3521
+ __do_kmalloc_node mm/slab_common.c:1006 [inline]
+ __kmalloc+0x49/0x90 mm/slab_common.c:1020
+ kmalloc include/linux/slab.h:604 [inline]
+ setup_v1_file_key_derived fs/crypto/keysetup_v1.c:278 [inline]
+ fscrypt_setup_v1_file_key+0x167/0x550 fs/crypto/keysetup_v1.c:299
+ fscrypt_setup_v1_file_key_via_subscribed_keyrings+0x159/0x2d0 fs/crypto/keysetup_v1.c:321
+ setup_file_encryption_key fs/crypto/keysetup.c:485 [inline]
+ fscrypt_setup_encryption_info+0xb69/0x1080 fs/crypto/keysetup.c:590
+ fscrypt_get_encryption_info+0x3d1/0x4b0 fs/crypto/keysetup.c:675
+ fscrypt_prepare_readdir include/linux/fscrypt.h:1004 [inline]
+ ext4_readdir+0x1175/0x3730 fs/ext4/dir.c:137
+ iterate_dir+0x1e5/0x5b0 fs/readdir.c:106
+ __do_sys_getdents64 fs/readdir.c:405 [inline]
+ __se_sys_getdents64 fs/readdir.c:390 [inline]
+ __x64_sys_getdents64+0x14f/0x2e0 fs/readdir.c:390
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fb94fa7cae9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb9507a70c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 00007fb94fb9bf80 RCX: 00007fb94fa7cae9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007fb94fac847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fb94fb9bf80 R15: 00007fff154447b8
+ </TASK>
 
---00000000000009cc68060b13f8a2
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lpfx3pqa0>
-X-Attachment-Id: f_lpfx3pqa0
 
-IGZzL2ZpbGUuYyAgICAgICAgICAgICAgIHwgNDggKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLS0tLS0tCiBpbmNsdWRlL2xpbnV4L2ZkdGFibGUuaCB8IDE1ICsrKysr
-KysrKystLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCA0MCBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlv
-bnMoLSkKCmRpZmYgLS1naXQgYS9mcy9maWxlLmMgYi9mcy9maWxlLmMKaW5kZXggNWZiMGIxNDZl
-NzllLi5jNzRhNmU4Njg3ZDkgMTAwNjQ0Ci0tLSBhL2ZzL2ZpbGUuYworKysgYi9mcy9maWxlLmMK
-QEAgLTk1OSwzMSArOTU5LDQyIEBAIHN0YXRpYyBpbmxpbmUgc3RydWN0IGZpbGUgKl9fZmdldF9m
-aWxlc19yY3Uoc3RydWN0IGZpbGVzX3N0cnVjdCAqZmlsZXMsCiAJCXN0cnVjdCBmaWxlICpmaWxl
-OwogCQlzdHJ1Y3QgZmR0YWJsZSAqZmR0ID0gcmN1X2RlcmVmZXJlbmNlX3JhdyhmaWxlcy0+ZmR0
-KTsKIAkJc3RydWN0IGZpbGUgX19yY3UgKipmZGVudHJ5OworCQl1bnNpZ25lZCBsb25nIG1hc2s7
-CiAKLQkJaWYgKHVubGlrZWx5KGZkID49IGZkdC0+bWF4X2ZkcykpCisJCS8qIE1hc2sgaXMgYSAw
-IGZvciBpbnZhbGlkIGZkJ3MsIH4wIGZvciB2YWxpZCBvbmVzICovCisJCW1hc2sgPSBhcnJheV9p
-bmRleF9tYXNrX25vc3BlYyhmZCwgZmR0LT5tYXhfZmRzKTsKKworCQkvKiBmZGVudHJ5IHBvaW50
-cyB0byB0aGUgJ2ZkJyBvZmZzZXQsIG9yIGZkdC0+ZmRbMF0gKi8KKwkJZmRlbnRyeSA9IGZkdC0+
-ZmQgKyAoZmQmbWFzayk7CisKKwkJLyogRG8gdGhlIGxvYWQsIHRoZW4gbWFzayBhbnkgaW52YWxp
-ZCByZXN1bHQgKi8KKwkJZmlsZSA9IHJjdV9kZXJlZmVyZW5jZV9yYXcoKmZkZW50cnkpOworCQlm
-aWxlID0gKHZvaWQgKikobWFzayAmICh1bnNpZ25lZCBsb25nKWZpbGUpOworCisJCWlmICh1bmxp
-a2VseSghZmlsZSkpCiAJCQlyZXR1cm4gTlVMTDsKIAotCQlmZGVudHJ5ID0gZmR0LT5mZCArIGFy
-cmF5X2luZGV4X25vc3BlYyhmZCwgZmR0LT5tYXhfZmRzKTsKKwkJLyoKKwkJICogT2ssIHdlIGhh
-dmUgYSBmaWxlIHBvaW50ZXIgdGhhdCB3YXMgdmFsaWQgYXQKKwkJICogc29tZSBwb2ludCwgYnV0
-IGl0IG1pZ2h0IGhhdmUgYmVjb21lIHN0YWxlIHNpbmNlLgorCQkgKgorCQkgKiBXZSBuZWVkIHRv
-IGNvbmZpcm0gaXQgYnkgaW5jcmVtZW50aW5nIHRoZSByZWZjb3VudAorCQkgKiBhbmQgdGhlbiBj
-aGVjayB0aGUgbG9va3VwIGFnYWluLgorCQkgKgorCQkgKiBhdG9taWNfbG9uZ19pbmNfbm90X3pl
-cm8oKSBnaXZlcyB1cyBhIGZ1bGwgbWVtb3J5CisJCSAqIGJhcnJpZXIuIFdlIG9ubHkgcmVhbGx5
-IG5lZWQgYW4gJ2FjcXVpcmUnIG9uZSB0bworCQkgKiBwcm90ZWN0IHRoZSBsb2FkcyBiZWxvdywg
-YnV0IHdlIGRvbid0IGhhdmUgdGhhdC4KKwkJICovCisJCWlmICh1bmxpa2VseSghYXRvbWljX2xv
-bmdfaW5jX25vdF96ZXJvKCZmaWxlLT5mX2NvdW50KSkpCisJCQljb250aW51ZTsKIAogCQkvKgot
-CQkgKiBPaywgd2UgaGF2ZSBhIGZpbGUgcG9pbnRlci4gSG93ZXZlciwgYmVjYXVzZSB3ZSBkbwot
-CQkgKiB0aGlzIGFsbCBsb2NrbGVzc2x5IHVuZGVyIFJDVSwgd2UgbWF5IGJlIHJhY2luZyB3aXRo
-Ci0JCSAqIHRoYXQgZmlsZSBiZWluZyBjbG9zZWQuCi0JCSAqCiAJCSAqIFN1Y2ggYSByYWNlIGNh
-biB0YWtlIHR3byBmb3JtczoKIAkJICoKIAkJICogIChhKSB0aGUgZmlsZSByZWYgYWxyZWFkeSB3
-ZW50IGRvd24gdG8gemVybyBhbmQgdGhlCiAJCSAqICAgICAgZmlsZSBoYXNuJ3QgYmVlbiByZXVz
-ZWQgeWV0IG9yIHRoZSBmaWxlIGNvdW50CiAJCSAqICAgICAgaXNuJ3QgemVybyBidXQgdGhlIGZp
-bGUgaGFzIGFscmVhZHkgYmVlbiByZXVzZWQuCi0JCSAqLwotCQlmaWxlID0gX19nZXRfZmlsZV9y
-Y3UoZmRlbnRyeSk7Ci0JCWlmICh1bmxpa2VseSghZmlsZSkpCi0JCQlyZXR1cm4gTlVMTDsKLQot
-CQlpZiAodW5saWtlbHkoSVNfRVJSKGZpbGUpKSkKLQkJCWNvbnRpbnVlOwotCi0JCS8qCisJCSAq
-CiAJCSAqICAoYikgdGhlIGZpbGUgdGFibGUgZW50cnkgaGFzIGNoYW5nZWQgdW5kZXIgdXMuCiAJ
-CSAqICAgICAgIE5vdGUgdGhhdCB3ZSBkb24ndCBuZWVkIHRvIHJlLWNoZWNrIHRoZSAnZmR0LT5m
-ZCcKIAkJICogICAgICAgcG9pbnRlciBoYXZpbmcgY2hhbmdlZCwgYmVjYXVzZSBpdCBhbHdheXMg
-Z29lcwpAQCAtOTkxLDcgKzEwMDIsOCBAQCBzdGF0aWMgaW5saW5lIHN0cnVjdCBmaWxlICpfX2Zn
-ZXRfZmlsZXNfcmN1KHN0cnVjdCBmaWxlc19zdHJ1Y3QgKmZpbGVzLAogCQkgKgogCQkgKiBJZiBz
-bywgd2UgbmVlZCB0byBwdXQgb3VyIHJlZiBhbmQgdHJ5IGFnYWluLgogCQkgKi8KLQkJaWYgKHVu
-bGlrZWx5KHJjdV9kZXJlZmVyZW5jZV9yYXcoZmlsZXMtPmZkdCkgIT0gZmR0KSkgeworCQlpZiAo
-dW5saWtlbHkoZmlsZSAhPSByY3VfZGVyZWZlcmVuY2VfcmF3KCpmZGVudHJ5KSkgfHwKKwkJICAg
-IHVubGlrZWx5KHJjdV9kZXJlZmVyZW5jZV9yYXcoZmlsZXMtPmZkdCkgIT0gZmR0KSkgewogCQkJ
-ZnB1dChmaWxlKTsKIAkJCWNvbnRpbnVlOwogCQl9CkBAIC0xMTI4LDEzICsxMTQwLDEzIEBAIHN0
-YXRpYyB1bnNpZ25lZCBsb25nIF9fZmdldF9saWdodCh1bnNpZ25lZCBpbnQgZmQsIGZtb2RlX3Qg
-bWFzaykKIAkgKiBhdG9taWNfcmVhZF9hY3F1aXJlKCkgcGFpcnMgd2l0aCBhdG9taWNfZGVjX2Fu
-ZF90ZXN0KCkgaW4KIAkgKiBwdXRfZmlsZXNfc3RydWN0KCkuCiAJICovCi0JaWYgKGF0b21pY19y
-ZWFkX2FjcXVpcmUoJmZpbGVzLT5jb3VudCkgPT0gMSkgeworCWlmIChsaWtlbHkoYXRvbWljX3Jl
-YWRfYWNxdWlyZSgmZmlsZXMtPmNvdW50KSA9PSAxKSkgewogCQlmaWxlID0gZmlsZXNfbG9va3Vw
-X2ZkX3JhdyhmaWxlcywgZmQpOwogCQlpZiAoIWZpbGUgfHwgdW5saWtlbHkoZmlsZS0+Zl9tb2Rl
-ICYgbWFzaykpCiAJCQlyZXR1cm4gMDsKIAkJcmV0dXJuICh1bnNpZ25lZCBsb25nKWZpbGU7CiAJ
-fSBlbHNlIHsKLQkJZmlsZSA9IF9fZmdldChmZCwgbWFzayk7CisJCWZpbGUgPSBfX2ZnZXRfZmls
-ZXMoZmlsZXMsIGZkLCBtYXNrKTsKIAkJaWYgKCFmaWxlKQogCQkJcmV0dXJuIDA7CiAJCXJldHVy
-biBGRFBVVF9GUFVUIHwgKHVuc2lnbmVkIGxvbmcpZmlsZTsKZGlmZiAtLWdpdCBhL2luY2x1ZGUv
-bGludXgvZmR0YWJsZS5oIGIvaW5jbHVkZS9saW51eC9mZHRhYmxlLmgKaW5kZXggYmM0YzMyODdh
-NjVlLi5hOGE4YjRkMjQ2MTkgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvZmR0YWJsZS5oCisr
-KyBiL2luY2x1ZGUvbGludXgvZmR0YWJsZS5oCkBAIC04MywxMiArODMsMTcgQEAgc3RydWN0IGRl
-bnRyeTsKIHN0YXRpYyBpbmxpbmUgc3RydWN0IGZpbGUgKmZpbGVzX2xvb2t1cF9mZF9yYXcoc3Ry
-dWN0IGZpbGVzX3N0cnVjdCAqZmlsZXMsIHVuc2lnbmVkIGludCBmZCkKIHsKIAlzdHJ1Y3QgZmR0
-YWJsZSAqZmR0ID0gcmN1X2RlcmVmZXJlbmNlX3JhdyhmaWxlcy0+ZmR0KTsKKwl1bnNpZ25lZCBs
-b25nIG1hc2sgPSBhcnJheV9pbmRleF9tYXNrX25vc3BlYyhmZCwgZmR0LT5tYXhfZmRzKTsKKwlz
-dHJ1Y3QgZmlsZSAqbmVlZHNfbWFza2luZzsKIAotCWlmIChmZCA8IGZkdC0+bWF4X2Zkcykgewot
-CQlmZCA9IGFycmF5X2luZGV4X25vc3BlYyhmZCwgZmR0LT5tYXhfZmRzKTsKLQkJcmV0dXJuIHJj
-dV9kZXJlZmVyZW5jZV9yYXcoZmR0LT5mZFtmZF0pOwotCX0KLQlyZXR1cm4gTlVMTDsKKwkvKgor
-CSAqICdtYXNrJyBpcyB6ZXJvIGZvciBhbiBvdXQtb2YtYm91bmRzIGZkLCBhbGwgb25lcyBmb3Ig
-b2suCisJICogJ2ZkfH5tYXNrJyBpcyAnZmQnIGZvciBvaywgb3IgMCBmb3Igb3V0IG9mIGJvdW5k
-cy4KKwkgKgorCSAqIEFjY2Vzc2luZyBmZHQtPmZkWzBdIGlzIG9rLCBidXQgbmVlZHMgbWFza2lu
-ZyBvZiB0aGUgcmVzdWx0LgorCSAqLworCW5lZWRzX21hc2tpbmcgPSByY3VfZGVyZWZlcmVuY2Vf
-cmF3KGZkdC0+ZmRbZmQmbWFza10pOworCXJldHVybiAoc3RydWN0IGZpbGUgKikobWFzayAmICh1
-bnNpZ25lZCBsb25nKW5lZWRzX21hc2tpbmcpOwogfQogCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBm
-aWxlICpmaWxlc19sb29rdXBfZmRfbG9ja2VkKHN0cnVjdCBmaWxlc19zdHJ1Y3QgKmZpbGVzLCB1
-bnNpZ25lZCBpbnQgZmQpCg==
---00000000000009cc68060b13f8a2--
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
