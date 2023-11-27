@@ -1,38 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-3900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E00E7F9A2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:48:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131A07F9A34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED7F1C208C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C384A280D55
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A74DF53;
-	Mon, 27 Nov 2023 06:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BADD2EE;
+	Mon, 27 Nov 2023 06:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="X33IAizB"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DL1ZcP/K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA800133;
-	Sun, 26 Nov 2023 22:48:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PRdjsHwBJnTnCFJ6KWMNGkw3R1XwKUQdbL+BMJT0K70=; b=X33IAizBXxOu44K+tKNOQcX6aN
-	L3R58WnMzMuH49yXIvG7omqQGa3O2DELuiG9T0RDZfJfL9RxoTFv7kUL42tZGssHxvodfBhu53zAl
-	oziCAbD1I4rfcGgYF7+pmO1j4z7VlfcJSt54k/bu5RznWMw8UGAKzI85OeNE+/rj2cbLblF4OE6VJ
-	eTO7WwvbpkhSAH2j8YC9xxeFsHPww+97YyGIXXbr6H0E8B8/2bjSezQMUryHuqSaucYpxVB9Oms42
-	fJOuOXLDq1bOpbdO9PADT2+G/2FCegqrb+HsEfhKX3cA8yGKyYkW0zp9+6loKz3FcpZ/JElMbJsDK
-	wQbg0j1Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r7VP7-003r7k-26;
-	Mon, 27 Nov 2023 06:47:37 +0000
-Date: Mon, 27 Nov 2023 06:47:37 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [IPv6:2001:41d0:1004:224b::bb])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AF0F134;
+	Sun, 26 Nov 2023 22:50:04 -0800 (PST)
+Date: Mon, 27 Nov 2023 01:49:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1701067801;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HkjYQiNIVrfX2OBhuLTiiwzS64/a/ylKVqG71mkDtoA=;
+	b=DL1ZcP/KviDDoXIKv0QIFRLZT2BpMmMrebGvWHdGh9aTKtxpmaDswg71Y2nAKp49rM9zFi
+	oCfHCq5KhNQGYzCFdxPL2IiRC5e4TQlt44fRgVAiZlc1g3fzyjxEcQWPI04lYpzGeBzudu
+	z+mDuhqyi808TBjcj4dzEHnQIZ2UEX0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
 To: Yu Kuai <yukuai1@huaweicloud.com>
 Cc: hch@infradead.org, ming.lei@redhat.com, axboe@kernel.dk,
 	roger.pau@citrix.com, colyli@suse.de, kent.overstreet@gmail.com,
@@ -40,25 +37,26 @@ Cc: hch@infradead.org, ming.lei@redhat.com, axboe@kernel.dk,
 	vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
 	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
 	jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
-	josef@toxicpanda.com, dsterba@suse.com, brauner@kernel.org,
-	nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
-	konishi.ryusuke@gmail.com, dchinner@redhat.com,
-	linux@weissschuh.net, min15.li@samsung.com, yukuai3@huawei.com,
-	dlemoal@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
-	hare@suse.de, p.raghav@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH block/for-next v2 00/16] block: remove field 'bd_inode'
- from block_device
-Message-ID: <20231127064737.GH38156@ZenIV>
+	josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org,
+	chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
+	dchinner@redhat.com, linux@weissschuh.net, min15.li@samsung.com,
+	yukuai3@huawei.com, dlemoal@kernel.org, willy@infradead.org,
+	akpm@linux-foundation.org, hare@suse.de, p.raghav@samsung.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH block/for-next v2 07/16] bcachefs: use new helper to get
+ inode from block_device
+Message-ID: <20231127064953.uo7bf2o62nroyjxs@moria.home.lan>
 References: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
+ <20231127062116.2355129-8-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,26 +65,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20231127062116.2355129-8-yukuai1@huaweicloud.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 27, 2023 at 02:21:00PM +0800, Yu Kuai wrote:
+On Mon, Nov 27, 2023 at 02:21:07PM +0800, Yu Kuai wrote:
 > From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Changes in v2:
->  - split different portions into different patches, as greg k-h
->  suggested.
->  - use container_of() instead of "bdev + 1" to get the address of
->  bd_inode in the new helper, as grep k-h suggested.
+> Which is more efficiency, and also prepare to remove the field
+> 'bd_inode' from block_device.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-You might have misinterpreted gregkh - in your place I would rather
-do a one-patch never-rebased branch (introduction of bdev_inode() in
-form that returns bdev->bd_inode), with followup in your branch that
-switches it to your variant.  Then conversions of ->bd_inode users,
-to be either picked by individual filesystems of staying in your branch.
-Any filesystem tree could merge from your never-rebased branch, after
-which they could switch their ->bd_inode uses to the new helper, without
-introducing any bisection hazards or interdependencies.
-After the next -rc1, once all ->bd_inode users are gone from the tree -
-remove the field.
+Acked-by: Kent Overstreet <kent.overstreet@linux.dev>
+
+> ---
+>  fs/bcachefs/util.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+> index 2984b57b2958..fe7ccb3a3517 100644
+> --- a/fs/bcachefs/util.h
+> +++ b/fs/bcachefs/util.h
+> @@ -518,7 +518,7 @@ int bch2_bio_alloc_pages(struct bio *, size_t, gfp_t);
+>  
+>  static inline sector_t bdev_sectors(struct block_device *bdev)
+>  {
+> -	return bdev->bd_inode->i_size >> 9;
+> +	return bdev_inode(bdev)->i_size >> 9;
+>  }
+>  
+>  #define closure_bio_submit(bio, cl)					\
+> -- 
+> 2.39.2
+> 
 
