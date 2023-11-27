@@ -1,144 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-3876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986C37F988F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:11:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06BA7F98B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4486A280E85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 05:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E1F280E4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 05:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32A5663;
-	Mon, 27 Nov 2023 05:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA1A5692;
+	Mon, 27 Nov 2023 05:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="JBZAqiCR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3k/sLxR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3213A131;
-	Sun, 26 Nov 2023 21:10:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
-	s=s31663417; t=1701061846; x=1701666646; i=quwenruo.btrfs@gmx.com;
-	bh=XcdFJcpkxmmR77v6KlNlZpmMrmuNub8Ji5+Dg+2spRE=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=JBZAqiCRHHCnrNHD56nMu5C2jK4QjCcYIHXOdEttdcuKOxQmQiVWlgxaZM60iRm6
-	 i/cA3QOCnNFkt4+OuveECvi39zYmMRoz8ZSowjjc6qzAUY98oQnLZSE9vRapFNEi2
-	 MQXLoOgmaiRL9WPw1sQthAmzphlrZMDnBbIoCKZxPVdMiik2B541yOu2B9NCWhzA8
-	 InA0PE8SNk5NnffgOE6kv4bwrriR6F2oVMuVm4joLg3jHftFa/xTcrcvYkV5lxQN0
-	 ZWGHrT5UXMgQk023oQoAOq+wU+66ItAl8LbEcg79bv5kDHGO+lubiRSAUTtAdZxlo
-	 c/VdKQsipJinOBRqjw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.117] ([122.151.37.21]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MMXQF-1qpftK1QrH-00JXUP; Mon, 27
- Nov 2023 06:10:45 +0100
-Message-ID: <793cd840-49cb-4458-9137-30f899100870@gmx.com>
-Date: Mon, 27 Nov 2023 15:40:41 +1030
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F557B5;
+	Sun, 26 Nov 2023 21:33:41 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3b842c1511fso2433259b6e.1;
+        Sun, 26 Nov 2023 21:33:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701063220; x=1701668020; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/FD4q+YVmvTaZu+k/5gCWbJStI77UMa1v3g64Mxy4Ys=;
+        b=B3k/sLxRMBKJXzzDNehH5jEI2r2sWNwa4tySiE5TEE68anhUqGWWtGf/LKNgA+XQK5
+         F0upnZUi3brC7Eo9CS/p900RTRjRoB070j9FJ/lUWQER67ZcNwUTq6ZhydC/EE3QQanM
+         Qy4iSnAMhIsE3HFRFoHA7NbQmlBqlXRmmSyNDk/o4YdQbFe34aBYaeDPuhQ4WRbUuxiD
+         G1kgGHv9ciOovAzgozvegFeB43HAYlGbRbXhe823i+R8/4mg4z0mpJ+ALyDBaVb6zLmm
+         klZlKX9cvkJ1ZditWKxmg1V9G7ldm7CYM1+LDUuig+iq6hKOtk/TwjycGTnNmJft+ApH
+         lMPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701063220; x=1701668020;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/FD4q+YVmvTaZu+k/5gCWbJStI77UMa1v3g64Mxy4Ys=;
+        b=NFDmQ+CgpwXDPd1F/D1z+0izP9k4DGgIrmJeCnBGhzW4U5N2OCSv1pREy2mc9fhc7E
+         ZgO9vExQS/9bHQ8uYhmxvphDTT9d2YzWfMWquccUs6JBN37/qrHKBzNA0gfCXVTBZ4Ov
+         tid6iDnglNDA9yg/e8PTsbNn0nknX51unUJmrA6G0QTU9M354ajuyVNjUg2dkjjNW0T7
+         YU+0WP8lQnZye8nx1G0P4umQEh3lPojjE6UsGJToXGkA2MO6mE4AlcTSIUSLK9x4V1CZ
+         8A3LZiJkvZFF66hwk1CUGw6vfUqmhcDgYcVNBHcUsRZploWERPKNNDGBfQfJCA+BfySP
+         L3sA==
+X-Gm-Message-State: AOJu0YwE5+1XpQcMBy8YpbRTXhsZ7JhvSqdfhCbXt/2M/39vIvf+oT0D
+	HBbWbo48jy+/VAR/E5BuwKiFQlVhAB4=
+X-Google-Smtp-Source: AGHT+IGSoWL1BwvvlYVQB0+fIBvqo4vWXxhpCpl+FI65VPMgMMTQ5TA4O1ooaAlFwe+zp8M/3vspEQ==
+X-Received: by 2002:a05:6808:2026:b0:3b2:d8cb:8e14 with SMTP id q38-20020a056808202600b003b2d8cb8e14mr14805270oiw.28.1701063219888;
+        Sun, 26 Nov 2023 21:33:39 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id r13-20020a63fc4d000000b005bd980cca56sm7035577pgk.29.2023.11.26.21.33.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Nov 2023 21:33:39 -0800 (PST)
+Date: Mon, 27 Nov 2023 11:03:35 +0530
+Message-Id: <878r6jsqts.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>, Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 03/13] iomap: move the io_folios field out of struct iomap_ioend
+In-Reply-To: <20231126124720.1249310-4-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Should we still go __GFP_NOFAIL? (Was Re: [PATCH] btrfs: refactor
- alloc_extent_buffer() to allocate-then-attach method)
-Content-Language: en-US
-To: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <ffeb6b667a9ff0cf161f7dcd82899114782c0834.1700609426.git.wqu@suse.com>
- <20231122143815.GD11264@twin.jikos.cz>
- <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HA71Waw9i/Kr/7bDfxY3jfGsB3LMGT6HC5tBFOCNG/0iKKowOMc
- xL9EGL6tjpkghIUxxGTOq9pGVPBrOFkNFVpCypmO2BXX1S1v+M/WfUzHr371AgPu91/t5Mp
- w8GRG01lhX0uXn5prfqcC0c1EH1dDSuKW2a/YVqBqaN13/py4u3FNbiiuCF5akz2Bo3yydv
- I/yV/iRtjEv8cgSnjxyyw==
-UI-OutboundReport: notjunk:1;M01:P0:jt0p9G6uRFM=;KmKkmfu+f3CvqRP+2bKHm7D6YRv
- nTg7fk5x7igfzt+4juNLbOyewDtYQu9HPFXlr611cy8mz2vh5OgQ34uZVEW6rpPr0Ul3dqRgq
- QD5M4w5CoLckY9Bs7NGO83qddDZLiD5CoioJ++C8Faf9lGfHZMmRX3if8glSmA7gdarCaPQq1
- ZsxJ4AN+4e8HqIpxXVF1GD9VE4XpTyS8yQcagIKdDSofdFmLCp9ql37OzLxmi4pmRtlrEenRU
- lGT9hBPi2XeO6IZ/AX55t4NB65Lnb2k5VoeFJA7icBVWX8UTrV5/APjz1kTKFrX2ygDwplBWk
- BnM4znjLpJrhFuRDnLdpjiOS3vK1YDwO7tlXxhr2rTThVAg+ge/9qv1GOYYOaPF++vQxZ08I8
- ocUGjJth8ZmaSQW7h/R2YtoLFJBwmSqcFE6lI27S/90J0Lrx4BmC/JBkBjK2sfUgFlAoBnBKW
- KJXXwn2S4E4yF+l088BhJfS3D0bY2+nIv4RXiPPwwKfQtpR/HgxgYs2dcDPa78XlBOqu/h7LR
- nx+7NwSjcLBJMgjx+1+gMjNc07t9p0/0HiY6OwJijtup9jQNyOB8q6T8qb2LcBP4SIEZ21LaM
- +0P0HBZkEI8zOg9j0Ai7jorZSqJ+CxKUwlo2C/qG2w+w+YCDmcBG/+No2+Z/PCcVW2ss5xKrA
- dWGaaYuv1DOLTAdRjKTJkFAMD1YeMeKKfsrguXhiO8lrGmf6f7jxDGvZ+fejo3vg7ARTuxs1Q
- cOp7FBr5JAhyW2zSMJThOwEkaqL2mCUmYkEbT63astubfem+sRT0R9GT9G6gbR/lzCaRzhmdi
- 6pD77EV4WsNGF82D2796lrfwMTS6bG0MZzG7IiPSN8pMu9rX92mxXC7eIoBDNTE8Ybbyppu+L
- 5M4z25wzTDSDXI9m5ioaane/f87f7vDQ/BvOmU0cq1oCq2YqAbr1aNXoyWNtXTyX7CQtQ6rfB
- XfQUZj30cgmKYqu1lRW2c9Ln9D4=
 
-On 2023/11/23 06:33, Qu Wenruo wrote:
-[...]
->> I wonder if we still can keep the __GFP_NOFAIL for the fallback
->> allocation, it's there right now and seems to work on sysmtems under
->> stress and does not cause random failures due to ENOMEM.
->>
-> Oh, I forgot the __NOFAIL gfp flags, that's not hard to fix, just
-> re-introduce the gfp flags to btrfs_alloc_page_array().
+Christoph Hellwig <hch@lst.de> writes:
 
-BTW, I think it's a good time to start a new discussion on whether we
-should go __GFP_NOFAIL.
-(Although I have updated the patch to keep the GFP_NOFAIL behavior)
-
-I totally understand that we need some memory for tree block during
-transaction commitment and other critical sections.
-
-And it's not that uncommon to see __GFP_NOFAIL usage in other mainstream
-filesystems.
-
-But my concern is, we also have a lot of memory allocation which can
-lead to a lot of problems either, like btrfs_csum_one_bio() or even
-join_transaction().
-
-I doubt if btrfs (or any other filesystems) would be to blamed if we're
-really running out of memory.
-Should the memory hungry user space programs to be firstly killed far
-before we failed to allocate memory?
-
-
-Furthermore, at least for btrfs, I don't think we would hit a situation
-where memory allocation failure for metadata would lead to any data
-corruption.
-The worst case is we hit transaction abort, and the fs flips RO.
-
-Thus I'm wondering if we really need __NOFAIL for btrfs?
-
-Thanks,
-Qu
+> The io_folios member in struct iomap_ioend counts the number of folios
+> added to an ioend.  It is only used at submission time and can thus be
+> moved to iomap_writepage_ctx instead.
 >
-> Thanks,
-> Qu
->
+
+No objections there. We indeed used io_folios to limit the ioend bio
+chain lengths and we do this only at the submission time, which is where
+wpc is also used for.
+
+Looks good to me. Please feel free to add - 
+
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
 
