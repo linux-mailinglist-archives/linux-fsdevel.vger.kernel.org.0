@@ -1,95 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-3928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D5B7FA00F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 13:53:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEAF7FA041
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B25FB210B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 12:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAB228168A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 13:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2377B28DA4;
-	Mon, 27 Nov 2023 12:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989FF2C85F;
+	Mon, 27 Nov 2023 13:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169DC1B4;
-	Mon, 27 Nov 2023 04:53:27 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Sf59Z0gMNz4f3js3;
-	Mon, 27 Nov 2023 20:53:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id EAAAA1A08C3;
-	Mon, 27 Nov 2023 20:53:23 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP1 (Coremail) with SMTP id cCh0CgA3iA5CkWRl_EpWCA--.4504S3;
-	Mon, 27 Nov 2023 20:53:23 +0800 (CST)
-Subject: Re: [PATCH 09/13] iomap: don't chain bios
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
- Chandan Babu R <chandan.babu@oracle.com>,
- Ritesh Harjani <ritesh.list@gmail.com>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20231126124720.1249310-1-hch@lst.de>
- <20231126124720.1249310-10-hch@lst.de>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <0f136350-3242-3e20-3b8a-56a39c66b001@huaweicloud.com>
-Date: Mon, 27 Nov 2023 20:53:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31C2F10F;
+	Mon, 27 Nov 2023 05:03:13 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82C4A2F4;
+	Mon, 27 Nov 2023 05:04:00 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B14753F73F;
+	Mon, 27 Nov 2023 05:03:07 -0800 (PST)
+Date: Mon, 27 Nov 2023 13:03:04 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 06/27] mm: page_alloc: Allow an arch to hook early
+ into free_pages_prepare()
+Message-ID: <ZWSTiCghf8nMFy4G@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-7-alexandru.elisei@arm.com>
+ <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20231126124720.1249310-10-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgA3iA5CkWRl_EpWCA--.4504S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gry3Cr48uF1fWr1DZr1UWrg_yoWkJrb_Wa
-	yfXF18Cw1DXaykZa17KFy7JrWkKrWUX3s5ZrnxJrs3X34rA3s8Zr95KrnI9r1Fq3Z5WF4S
-	g3W5W3yUZr42kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
 
-Hi, Christoph.
+Hi,
 
-On 2023/11/26 20:47, Christoph Hellwig wrote:
-> Back in the days when a single bio could only be filled to the hardware
-> limits, and we scheduled a work item for each bio completion, chaining
-> multiple bios for a single ioend made a lot of sense to reduce the number
-> of completions.  But these days bios can be filled until we reach the
-> number of vectors or total size limit, which means we can always fit at
-> least 1 megabyte worth of data in the worst case, but usually a lot more
-> due to large folios.  The only thing bio chaining is buying us now is
-> to reduce the size of the allocation from an ioend with an embedded bio
-> into a plain bio, which is a 52 bytes differences on 64-bit systems.
+On Fri, Nov 24, 2023 at 08:36:52PM +0100, David Hildenbrand wrote:
+> On 19.11.23 17:57, Alexandru Elisei wrote:
+> > Add arch_free_pages_prepare() hook that is called before that page flags
+> > are cleared. This will be used by arm64 when explicit management of tag
+> > storage pages is enabled.
 > 
-> This is not worth the added complexity, so remove the bio chaining and
-> only use the bio embedded into the ioend.  This will help to simplify
-> further changes to the iomap writeback code.
+> Can you elaborate a bit what exactly will be done by that code with that
+> information?
+
+Of course.
+
+The MTE code that is in the kernel today uses the PG_arch_2 page flag, which it
+renames to PG_mte_tagged, to track if a page has been mapped with tagging
+enabled. That flag is cleared by free_pages_prepare() when it does:
+
+	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+
+When tag storage management is enabled, tag storage is reserved for a page if
+and only if the page is mapped as tagged. When a page is freed, the code looks
+at the PG_mte_tagged flag to determine if the page was mapped as tagged, and
+therefore has tag storage reserved, to determine if the corresponding tag
+storage should also be freed.
+
+I have considered using arch_free_page(), but free_pages_prepare() calls the
+function after the flags are cleared.
+
+Does that answer your question?
+
+Alex
+
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-A nice cleanup! I'm just a little curious about the writeback performance
-impact of this patch. Do you have any actual test data on xfs?
-
-Thanks,
-Yi.
-
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
