@@ -1,123 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-4001-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0A07FADA8
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1097FADA9
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 23:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E6A21C20C3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 22:43:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AFC81C20BF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 22:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99B148CE8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF7B48CF9;
 	Mon, 27 Nov 2023 22:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ID45RUGi"
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64E48136;
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5540137;
 	Mon, 27 Nov 2023 14:43:43 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-50baa1ca01cso3471956e87.2;
-        Mon, 27 Nov 2023 14:43:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701125021; x=1701729821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=foiBk/ZA1mkomKbuyODxXA1fCwhGzz9IZsGMizOPkiU=;
-        b=ID45RUGiAP9CsqTJQ6PG3qEofa1Jm1dGaNypCaqKwK3FOP993WYQgCsYw65D0vhuxR
-         a22pSzZjFvil5KdRsu+0skwLLHsGVqIxQluWYcKEr2axHGfFFaPZs/qhv1WPidcahWcK
-         JI0W1tMG8mR0jwO16//7+AV/BjvbvXwciraS6TnW4Z04eSY8yt1mUupb1lF7uOGaMmgZ
-         0IDVMS7UaoW+vscxPWa+r6pXirmqKyZR6ya2OvD44TGmJCda2WfcXFe9psv+Ow1/V8/j
-         iwMulrjJHKJGRHjACeZLa72ExNf0fPBzJ56PwqdWkBEyujDIIkSPl4j/RbIWccZdd63o
-         cFPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701125021; x=1701729821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=foiBk/ZA1mkomKbuyODxXA1fCwhGzz9IZsGMizOPkiU=;
-        b=BqDom476G4kakuQunDU1zwmxS5rxMHgE10iMLxM3JNbVJ+Yk+NJXRDSdJBnJxMdDvK
-         P6sLMvtoKscRk0iuoz516GP0iF95GncwjnIaajUyQO6/IsZU7uxayrYI3tDdbpmrwQYA
-         uKGKwaaJ/kTwTl4MEXGrZhILQKr21sFp1x/qENwtCUeYNZIyuiSR3ICTKhg/X30D9UOr
-         /CEv970QcC6/p6oLq0qopoFy2m4nBniEyz25Pi7vtGlp4Jai4lhh/g1TvDSBCQ2GiksN
-         t/3qA3g6epwac2CacSJy4jebxdwCdyKLoX5sjxtMxUfnnr2YiTLoBuZratUAtVzCVrkz
-         Wq9A==
-X-Gm-Message-State: AOJu0YxfUL8u57VPWGZlWwinoxScTpkVeFvvitvQ3Iek3/7FvyBK585v
-	5aZFq5RZBdwSdUFJ919KiBr4Y3LKkoPEpYaxVRY=
-X-Google-Smtp-Source: AGHT+IHmKb1gb9jA3n4dwJiAK1+CB/eZJpIxFw9Q9aAnrqj2qZiA88GwtrrQcHlpzJ/KjU7jlNfUvL7JildP+Eayilk=
-X-Received: by 2002:ac2:4c4b:0:b0:507:a9e1:5a3b with SMTP id
- o11-20020ac24c4b000000b00507a9e15a3bmr7415709lfk.0.1701125021321; Mon, 27 Nov
- 2023 14:43:41 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2996021923;
+	Mon, 27 Nov 2023 22:43:42 +0000 (UTC)
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A69051379A;
+	Mon, 27 Nov 2023 22:43:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NT+lFZkbZWXsRAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 27 Nov 2023 22:43:37 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ8C1XPdyVKuq=cL4CqOi2+ag-=tEbaC=0a3Zro9ZZU5Xw1cjw@mail.gmail.com>
- <ZVxUXZrlIaRJKghT@archie.me> <CAKYAXd_WFKXt1GqzFyfrJo6KHf6iaDwp-n3Qb1Hu63wokNhO9g@mail.gmail.com>
-In-Reply-To: <CAKYAXd_WFKXt1GqzFyfrJo6KHf6iaDwp-n3Qb1Hu63wokNhO9g@mail.gmail.com>
-From: Seamus de Mora <seamusdemora@gmail.com>
-Date: Mon, 27 Nov 2023 16:43:05 -0600
-Message-ID: <CAJ8C1XOzdscAUGCBh9Mbu9cm-oAqRA4mBoGjSFCxydJSCkzkUw@mail.gmail.com>
-Subject: Re: Add sub-topic on 'exFAT' in man mount
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Linux Manual Pages <linux-man@vger.kernel.org>, 
-	Linux Filesystems Development <linux-fsdevel@vger.kernel.org>, Alejandro Colomar <alx@kernel.org>, 
-	Sungjong Seo <sj1557.seo@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
+ "Oleg Nesterov" <oleg@redhat.com>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Jeff Layton" <jlayton@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Juri Lelli" <juri.lelli@redhat.com>,
+ "Vincent Guittot" <vincent.guittot@linaro.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
+In-reply-to: <20231127223054.GL38156@ZenIV>
+References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>,
+ <20231127223054.GL38156@ZenIV>
+Date: Tue, 28 Nov 2023 09:43:30 +1100
+Message-id: <170112501017.7109.11367576354770728388@noble.neil.brown.name>
+X-Spamd-Bar: ++++++
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none);
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of neilb@suse.de) smtp.mailfrom=neilb@suse.de
+X-Rspamd-Server: rspamd2
+X-Spamd-Result: default: False [6.66 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 R_SPF_SOFTFAIL(4.60)[~all:c];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.00)[16.34%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-0.13)[-0.134];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCPT_COUNT_TWELVE(0.00)[13];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
+X-Spam-Score: 6.66
+X-Rspamd-Queue-Id: 2996021923
 
-On Sun, Nov 26, 2023 at 5:59=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org>=
- wrote:
->
-> 2023-11-21 15:55 GMT+09:00, Bagas Sanjaya <bagasdotme@gmail.com>:
-> > On Mon, Nov 20, 2023 at 04:55:18PM -0600, Seamus de Mora wrote:
-> >> I'd like to volunteer to add some information to the mount manual.
-> >>
-> >> I'm told that exFAT was added to the kernel about 4 years ago, but
-> >> last I checked, there was nothing about it in man mount.  I feel this
-> >> could be addressed best by adding a sub-topic on exFAT under the topic
-> >> `FILESYSTEM-SPECIFIC MOUNT OPTIONS`.
-> >>
-> >> If my application is of interest, please let me know what steps I need
-> >> to take - or how to approach this task.
-> >>
-> >
-> > I'm adding from Alejandro's reply.
-> >
-> > You can start reading the source in fs/exfat in linux.git tree [1].
-> > Then you can write the documentation for exfat in Documentation/exfat.r=
-st
-> > (currently doesn't exist yet), at the same time of your manpage
-> > contribution.
-> >
-> > Cc'ing exfat maintainers for better treatment.
-> Thanks Bagas for forwarding this to us!
->
-> Hi Seamus,
->
-> Some of mount options are same with fatfs's ones. You can refer the
-> descriptions of fatfs
-> documentation(Documentation/filesystems/vfat.rst).
-> If you have any questions about other options or documentation for
-> exfat, please give an email me.
->
-> Thanks!
-> >
-> > Thanks.
-> >
-> > [1]:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/fs/exfat
+On Tue, 28 Nov 2023, Al Viro wrote:
+> On Tue, Nov 28, 2023 at 09:05:21AM +1100, NeilBrown wrote:
+>=20
+> > A simple way to fix this is to treat nfsd threads like normal processes
+> > for task_work.  Thus the pending files are queued for the thread, and
+> > the same thread finishes the work.
+> >=20
+> > Currently KTHREADs are assumed never to call task_work_run().  With this
+> > patch that it still the default but it is implemented by storing the
+> > magic value TASK_WORKS_DISABLED in ->task_works.  If a kthread, such as
+> > nfsd, will call task_work_run() periodically, it sets ->task_works
+> > to NULL to indicate this.
+>=20
+> >  		svc_recv(rqstp);
+> >  		validate_process_creds();
+> > +		if (task_work_pending(current))
+> > +			task_work_run();
+>=20
+> What locking environment and call chain do you have here?  And what happens=
+ if
+> you get something stuck in ->release()?
 
-Thanks for the offer Namjae; I'm sure I'll take you up on that when I
-get ready to actually produce something. For now, I am reading and
-trying to get myself up to speed to tackle this. So far, the going has
-been a bit slow as I have a couple of commitments I need to finish.
+No locking. This is in the top level function of the kthread.
+A ->release function that waits for an NFS filesystem to flush out data
+through a filesystem exported by this nfsd might hit problems.
+But that really requires us nfs-exporting and nfs filesystem which is
+loop-back mounted.  While we do support nfs-reexport and nfs-loop-back
+mounts, I don't think we make any pretence of supporting a combination.
 
-Rgds,
-~S
+Is that the sort of thing you were think of?
+
+>=20
+> > =20
+> >  	p->pdeath_signal =3D 0;
+> > -	p->task_works =3D NULL;
+> > +	p->task_works =3D args->kthread ? TASK_WORKS_DISABLED : NULL;
+>=20
+> Umm... why not have them set (by helper in kernel/task_work.c) to
+> &work_exited?  Then the task_work_run parts wouldn't be needed at all...
+>=20
+
+I hadn't tried to understand what work_exited was for - but now I see
+that its purpose is precisely to block further work from being queued -
+exactly what I need.
+Thanks - I make that change for a v2.
+
+I've realised that I'll also need to change the flush_delayed_fput() in
+fsd_file_close_inode_sync() to task_work_run().
+
+Thanks,
+NeilBrown
+
+
 
