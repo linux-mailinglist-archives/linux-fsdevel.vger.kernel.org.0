@@ -1,88 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-3965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40ED57FA7E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1417FA883
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 19:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9585281843
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 17:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5A1328186C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149C1381B3;
-	Mon, 27 Nov 2023 17:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C40D3C467;
+	Mon, 27 Nov 2023 18:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gw1zVvuh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul4K9Hg/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97939E1;
-	Mon, 27 Nov 2023 09:26:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2Z43JYeJALNXrDXAND8tVgEUdl1r9pBa63R4laSFKqM=; b=gw1zVvuh8EL0p0oUze6hyvfNHv
-	Q1k2kELI/tfU7FJvRftUSSYminTgjCUIyV8flY8/cy8AzeaDI/GwgLF8WBRC1sZ9Y9b2XP7Vj1Wz6
-	5BEsDmiJxnj47A0QtB4nkww+jX4+7m1XfXiOD09D6LKlUsSVnEmB5quKvuFxWw6CQM2HKNsRXlJxh
-	B1A8qX/Sd2t2K8HFLjkg1Vf22wP4cqc8vcVsK6y4yjiXrZxR8ouzDufbLmcs/7Zs8BqKvAoRLxukV
-	7eXR8oTigPqum+b1duZbOcxp7xbIMEhx3+SNnHil8qVpPk4mqdnWFUcIZWwSRK8orVQl4ijuSQ7AD
-	zTIiRkHg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r7fMe-0044ay-0E;
-	Mon, 27 Nov 2023 17:25:44 +0000
-Date: Mon, 27 Nov 2023 17:25:44 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: fun with d_invalidate() vs. d_splice_alias() was Re: [f2fs-dev]
- [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
-Message-ID: <20231127172544.GJ38156@ZenIV>
-References: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
- <20231123171255.GN38156@ZenIV>
- <20231123182426.GO38156@ZenIV>
- <20231123215234.GQ38156@ZenIV>
- <20231125220136.GB38156@ZenIV>
- <20231126045219.GD38156@ZenIV>
- <20231126184141.GF38156@ZenIV>
- <20231127063842.GG38156@ZenIV>
- <87jzq3nqos.fsf@email.froward.int.ebiederm.org>
- <878r6jnq1t.fsf@email.froward.int.ebiederm.org>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE2F3BB36;
+	Mon, 27 Nov 2023 18:01:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF0DC433C7;
+	Mon, 27 Nov 2023 18:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701108083;
+	bh=Ctz2/d8fKRCj3eHDttwdg2nfR3buzb2KJwcp2lA0lBU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ul4K9Hg/bVzcrzbZ2AsrPwCEGW8K6+dumYyBXoP4AvyoIZwc3cLerYqpaR8F1FbXz
+	 tumsWkfgwMVR+9dX31+U5LckZTLkhGbMLRKsEAA6zIOMJfs3+2U9x29oHEl+CUUtCL
+	 +kTSPuih54Nl8IBrNoNmgOYL0TASzMSZx/55I6idiLeV3BMiguZnutSRrGLRUC8Rw1
+	 KaUANBSZAb8QM0/rOGoq3jXutCrMxGndXtubHs6JoOFoYVlaZnLxoBML5/gGjlIVp8
+	 KBTbYz+C6znLEW9fWgHP4bPWl7K53NFHLzcGOmAlgvCHT9dZdKnhmVfLJnWW3BGasa
+	 gxs48H8FgkjIA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1r7fv7-00GsvN-5x;
+	Mon, 27 Nov 2023 18:01:21 +0000
+Date: Mon, 27 Nov 2023 18:01:18 +0000
+Message-ID: <86bkbfcbyp.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	will@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 06/25] KVM: arm64: Save/restore POE registers
+In-Reply-To: <20231124163510.1835740-7-joey.gouly@arm.com>
+References: <20231124163510.1835740-1-joey.gouly@arm.com>
+	<20231124163510.1835740-7-joey.gouly@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878r6jnq1t.fsf@email.froward.int.ebiederm.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com, broonie@kernel.org, catalin.marinas@arm.com, dave.hansen@linux.intel.com, oliver.upton@linux.dev, shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Nov 27, 2023 at 10:01:34AM -0600, Eric W. Biederman wrote:
-> "Eric W. Biederman" <ebiederm@xmission.com> writes:
+On Fri, 24 Nov 2023 16:34:51 +0000,
+Joey Gouly <joey.gouly@arm.com> wrote:
 > 
-> > I am confused what is going on with ext4 and f2fs.  I think they
-> > are calling d_invalidate when all they need to call is d_drop.
-> 
-> ext4 and f2f2 are buggy in how they call d_invalidate, if I am reading
-> the code correctly.
-> 
-> d_invalidate calls detach_mounts.
-> 
-> detach_mounts relies on setting D_CANT_MOUNT on the top level dentry to
-> prevent races with new mounts.
+> Define the new system registers that POE introduces and context switch them.
+
+I would really like to see a discussion on the respective lifetimes of
+these two registers (see below).
+
 >
-> ext4 and f2fs (in their case insensitive code) are calling d_invalidate
-> before dont_mount has been called to set D_CANT_MOUNT.
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_arm.h           |  4 ++--
+>  arch/arm64/include/asm/kvm_host.h          |  4 ++++
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 10 ++++++++++
+>  arch/arm64/kvm/sys_regs.c                  |  2 ++
+>  4 files changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index b85f46a73e21..597470e0b87b 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -346,14 +346,14 @@
+>   */
+>  #define __HFGRTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51))
+>  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
+> -#define __HFGRTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
+> +#define __HFGRTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
+>  
+>  #define __HFGWTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51) |	\
+>  				 BIT(46) | BIT(42) | BIT(40) | BIT(28) | \
+>  				 GENMASK(26, 25) | BIT(21) | BIT(18) |	\
+>  				 GENMASK(15, 14) | GENMASK(10, 9) | BIT(2))
+>  #define __HFGWTR_EL2_MASK	GENMASK(49, 0)
+> -#define __HFGWTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
+> +#define __HFGWTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
+>  
+>  #define __HFGITR_EL2_RES0	GENMASK(63, 57)
+>  #define __HFGITR_EL2_MASK	GENMASK(54, 0)
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 824f29f04916..fa9ebd8fce40 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -401,6 +401,10 @@ enum vcpu_sysreg {
+>  	PIR_EL1,       /* Permission Indirection Register 1 (EL1) */
+>  	PIRE0_EL1,     /*  Permission Indirection Register 0 (EL1) */
+>  
+> +	/* Permission Overlay Extension registers */
+> +	POR_EL1,	/* Permission Overlay Register 1 (EL1) */
+> +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
+> +
+>  	/* 32bit specific registers. */
+>  	DACR32_EL2,	/* Domain Access Control Register */
+>  	IFSR32_EL2,	/* Instruction Fault Status Register */
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> index bb6b571ec627..22f07ee43e7e 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> @@ -19,6 +19,9 @@
+>  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
+> +
+> +	if (system_supports_poe())
+> +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
 
-Not really - note that the place where we check cant_mount() is under
-the lock on the mountpoint's inode, so anything inside ->unlink() or
-->rmdir() is indistinguishable from the places where we do dont_mount()
-in vfs_{unlink,rmdir}.
+So this is saved as eagerly as it gets. Why? If it only affects EL0,
+it can be saved/restored in a much lazier way.
+
+>  }
+>  
+>  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+> @@ -59,6 +62,8 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
+>  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
+
+And the fact that you only touch PIRE0_EL1 here seems to be a good
+indication that the above can be relaxed.
+
+>  	}
+> +	if (system_supports_poe())
+
+nit: missing new line before the if().
+
+> +		ctxt_sys_reg(ctxt, POR_EL1)	= read_sysreg_el1(SYS_POR);
+>  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
+>  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
+>  
+> @@ -89,6 +94,9 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
+>  static inline void __sysreg_restore_common_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	write_sysreg(ctxt_sys_reg(ctxt, MDSCR_EL1),  mdscr_el1);
+> +
+> +	if (system_supports_poe())
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, POR_EL0),	SYS_POR_EL0);
+
+Same thing here about the eager restore.
+
+>  }
+>  
+>  static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
+> @@ -135,6 +143,8 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+>  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
+>  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
+>  	}
+> +	if (system_supports_poe())
+
+new line.
+
+> +		write_sysreg_el1(ctxt_sys_reg(ctxt, POR_EL1),	SYS_POR);
+>  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
+>  
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 4735e1b37fb3..a54e5eadbf29 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2269,6 +2269,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
+>  	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
+>  	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
+> +	{ SYS_DESC(SYS_POR_EL1), NULL, reset_unknown, POR_EL1 },
+>  	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
+>  
+>  	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
+> @@ -2352,6 +2353,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	  .access = access_pmovs, .reg = PMOVSSET_EL0,
+>  	  .get_user = get_pmreg, .set_user = set_pmreg },
+>  
+> +	{ SYS_DESC(SYS_POR_EL0), NULL, reset_unknown, POR_EL0 },
+>  	{ SYS_DESC(SYS_TPIDR_EL0), NULL, reset_unknown, TPIDR_EL0 },
+>  	{ SYS_DESC(SYS_TPIDRRO_EL0), NULL, reset_unknown, TPIDRRO_EL0 },
+>  	{ SYS_DESC(SYS_TPIDR2_EL0), undef_access },
+
+Another thing that is missing is the trap routing for NV in
+emulated-nested.c. Please fill in the various tables there.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
