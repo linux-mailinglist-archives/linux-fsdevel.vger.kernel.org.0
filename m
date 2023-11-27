@@ -1,322 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-3943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FED17FA3CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 15:57:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C877B7FA3EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 16:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84FDB211FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F36B28150D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1C130FBD;
-	Mon, 27 Nov 2023 14:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnyRB/OG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10E03173A;
+	Mon, 27 Nov 2023 15:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6729330355
-	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Nov 2023 14:57:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7229FC433C8;
-	Mon, 27 Nov 2023 14:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701097058;
-	bh=GRj7LsQSUWYmRMU2YyAwde/ZV9w1XX8CagjHL/emYac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mnyRB/OGQ3anq/nvmKZCbYI88/GUAOPMlRvj2Rrz7zDX0HCxkISQqlhmVdw7kCDQL
-	 RzGEM78C6YY5nEoOB5KJN+h+OcNtKbEDK1cc7sY6Es8vyWa9T2EwpZDEf0tlEzLx4A
-	 X1FP4JQIzF0ax51iLnljf3IA6L5q8L5e8+t/P2fdRfJcsT2YKNuxTdLzE1mm8wSiCP
-	 dMAvx1YS8uHujNBXVgWmQr/W7L0KhU9eT4HWRtU7cxfSgtiLoycPscuQJDkADUSWJr
-	 wHgiY7aiTDMbmRKOphY6mbKdpdFsuOcypoR0aiLxL0Ulv3LGKhiuGMdW3WuOiNVwz9
-	 82Pjpe85R7gTw==
-Date: Mon, 27 Nov 2023 15:57:34 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: fanotify HSM open issues
-Message-ID: <20231127-amtszeit-tattoo-e6c93811147e@brauner>
-References: <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
- <20230817182220.vzzklvr7ejqlfnju@quack3>
- <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
- <20230823143708.nry64nytwbeijtsq@quack3>
- <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
- <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
- <20231120140605.6yx3jryuylgcphhr@quack3>
- <CAOQ4uxg_U5v9TuEeagb6ybPobG-jJkP+sFcf+-yYoWr07wswSQ@mail.gmail.com>
- <20231127-bausatz-hausputz-9dbee07b9637@brauner>
- <CAOQ4uxihZ7fu0cGX4GTF9VrxPXZpMy2NKrpYfWMBDVFjhsyFeg@mail.gmail.com>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 38867AA;
+	Mon, 27 Nov 2023 07:01:14 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CEEE2F4;
+	Mon, 27 Nov 2023 07:02:01 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 947493F6C4;
+	Mon, 27 Nov 2023 07:01:08 -0800 (PST)
+Date: Mon, 27 Nov 2023 15:01:05 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 12/27] arm64: mte: Add tag storage pages to the
+ MIGRATE_CMA migratetype
+Message-ID: <ZWSvMYMjFLFZ-abv@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-13-alexandru.elisei@arm.com>
+ <c49cd89d-41cf-495b-9b96-4434ab407967@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxihZ7fu0cGX4GTF9VrxPXZpMy2NKrpYfWMBDVFjhsyFeg@mail.gmail.com>
+In-Reply-To: <c49cd89d-41cf-495b-9b96-4434ab407967@redhat.com>
 
-On Mon, Nov 27, 2023 at 04:48:23PM +0200, Amir Goldstein wrote:
-> On Mon, Nov 27, 2023 at 3:56 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Mon, Nov 20, 2023 at 06:59:47PM +0200, Amir Goldstein wrote:
-> > > On Mon, Nov 20, 2023 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > Hi Amir,
-> > > >
-> > > > sorry for a bit delayed reply, I did not get to "swapping in" HSM
-> > > > discussion during the Plumbers conference :)
-> > > >
-> > > > On Mon 13-11-23 13:50:03, Amir Goldstein wrote:
-> > > > > On Wed, Aug 23, 2023 at 7:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > On Wed, Aug 23, 2023 at 5:37 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > > > Recap for new people joining this thread.
-> > > > > > > >
-> > > > > > > > The following deadlock is possible in upstream kernel
-> > > > > > > > if fanotify permission event handler tries to make
-> > > > > > > > modifications to the filesystem it is watching in the context
-> > > > > > > > of FAN_ACCESS_PERM handling in some cases:
-> > > > > > > >
-> > > > > > > > P1                             P2                      P3
-> > > > > > > > -----------                    ------------            ------------
-> > > > > > > > do_sendfile(fs1.out_fd, fs1.in_fd)
-> > > > > > > > -> sb_start_write(fs1.sb)
-> > > > > > > >   -> do_splice_direct()                         freeze_super(fs1.sb)
-> > > > > > > >     -> rw_verify_area()                         -> sb_wait_write(fs1.sb) ......
-> > > > > > > >       -> security_file_permission()
-> > > > > > > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
-> > > > > > > >                                  -> do_unlinkat(fs1.dfd, ...)
-> > > > > > > >                                    -> sb_start_write(fs1.sb) ......
-> > > > > > > >
-> > > > > > > > start-write-safe patches [1] (not posted) are trying to solve this
-> > > > > > > > deadlock and prepare the ground for a new set of permission events
-> > > > > > > > with cleaner/safer semantics.
-> > > > > > > >
-> > > > > > > > The cases described above of sendfile from a file in loop mounted
-> > > > > > > > image over fs1 or overlayfs over fs1 into a file in fs1 can still
-> > > > > > > > deadlock despite the start-write-safe patches [1].
-> > > > > > >
-> > > > > > > Yep, nice summary.
-> > > > ...
-> > > > > > > > > As I wrote above I don't like the abuse of FMODE_NONOTIFY much.
-> > > > > > > > > FMODE_NONOTIFY means we shouldn't generate new fanotify events when using
-> > > > > > > > > this fd. It says nothing about freeze handling or so. Furthermore as you
-> > > > > > > > > observe FMODE_NONOTIFY cannot be set by userspace but practically all
-> > > > > > > > > current fanotify users need to also do IO on other files in order to handle
-> > > > > > > > > fanotify event. So ideally we'd have a way to do IO to other files in a
-> > > > > > > > > manner safe wrt freezing. We could just update handling of RWF_NOWAIT flag
-> > > > > > > > > to only trylock freeze protection - that actually makes a lot of sense to
-> > > > > > > > > me. The question is whether this is enough or not.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > Maybe, but RWF_NOWAIT doesn't take us far enough, because writing
-> > > > > > > > to a file is not the only thing that HSM needs to do.
-> > > > > > > > Eventually, event handler for lookup permission events should be
-> > > > > > > > able to also create files without blocking on vfs level freeze protection.
-> > > > > > >
-> > > > > > > So this is what I wanted to clarify. The lookup permission event never gets
-> > > > > > > called under a freeze protection so the deadlock doesn't exist there. In
-> > > > > > > principle the problem exists only for access and modify events where we'd
-> > > > > > > be filling in file data and thus RWF_NOWAIT could be enough.
-> > > > > >
-> > > > > > Yes, you are right.
-> > > > > > It is possible that RWF_NOWAIT could be enough.
-> > > > > >
-> > > > > > But the discovery of the loop/ovl corner cases has shaken my
-> > > > > > confidence is the ability to guarantee that freeze protection is not
-> > > > > > held somehow indirectly.
-> > > > > >
-> > > > > > If I am not mistaken, FAN_OPEN_PERM suffers from the exact
-> > > > > > same ovl corner case, because with splice from ovl1 to fs1,
-> > > > > > fs1 freeze protection is held and:
-> > > > > >   ovl_splice_read(ovl1.file)
-> > > > > >     ovl_real_fdget()
-> > > > > >       ovl_open_realfile(fs1.file)
-> > > > > >          ... security_file_open(fs1.file)
-> > > > > >
-> > > > > > > That being
-> > > > > > > said I understand this may be assuming too much about the implementations
-> > > > > > > of HSM daemons and as you write, we might want to provide a way to do IO
-> > > > > > > not blocking on freeze protection from any hook. But I wanted to point this
-> > > > > > > out explicitly so that it's a conscious decision.
-> > > > > > >
-> > > > >
-> > > > > I agree and I'd like to explain using an example, why RWF_NOWAIT is
-> > > > > not enough for HSM needs.
-> > > > >
-> > > > > The reason is that often, when HSM needs to handle filling content
-> > > > > in FAN_PRE_ACCESS, it is not just about writing to the accessed file.
-> > > > > HSM needs to be able to avoid blocking on freeze protection
-> > > > > for any operations on the filesystem, not just pwrite().
-> > > > >
-> > > > > For example, the POC HSM code [1], stores the DATA_DIR_fd
-> > > > > from the lookup event and uses it in the handling of access events to
-> > > > > update the metadata files that store which parts of the file were already
-> > > > > filled (relying of fiemap is not always a valid option).
-> > > > >
-> > > > > That is the reason that in the POC patches [2], FMODE_NONOTIFY
-> > > > > is propagated from dirfd to an fd opened with openat(dirfd, ...), so
-> > > > > HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
-> > > > >
-> > > > > Another use case is that HSM may want to download content to a
-> > > > > temp file on the same filesystem, verify the downloaded content and
-> > > > > then clone the data into the accessed file range.
-> > > > >
-> > > > > I think that a PF_ flag (see below) would work best for all those cases.
-> > > >
-> > > > Ok, I agree that just using RWF_NOWAIT from the HSM daemon need not be
-> > > > enough for all sensible usecases to avoid deadlocks with freezing. However
-> > > > note that if we want to really properly handle all possible operations, we
-> > > > need to start handling error from all sb_start_write() and
-> > > > file_start_write() calls and there are quite a few of those.
-> > > >
-> > >
-> > > Darn, forgot about those.
-> > > I am starting to reconsider adding a freeze level.
-> > > I cannot shake the feeling that there is a simpler solution that escapes us...
-> > > Maybe fs anti-freeze (see blow).
-> > >
-> > > > > > > > In theory, I am not saying we should do it, but as a thought experiment:
-> > > > > > > > if the requirement from permission event handler is that is must use a
-> > > > > > > > O_PATH | FMODE_NONOTIFY event->fd provided in the event to make
-> > > > > > > > any filesystem modifications, then instead of aiming for NOWAIT
-> > > > > > > > semantics using sb_start_write_trylock(), we could use a freeze level
-> > > > > > > > SB_FREEZE_FSNOTIFY between
-> > > > > > > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
-> > > > > > > >
-> > > > > > > > As a matter of fact, HSM is kind of a "VFS FAULT", so as long as we
-> > > > > > > > make it clear how userspace should avoid nesting "VFS faults" there is
-> > > > > > > > a model that can solve the deadlock correctly.
-> > > > > > >
-> > > > > > > OK, yes, in principle another freeze level which could be used by handlers
-> > > > > > > of fanotify permission events would solve the deadlock as well. Just you
-> > > > > > > seem to like to tie this functionality to the particular fd returned from
-> > > > > > > fanotify and I'm not convinced that is a good idea. What if the application
-> > > > > > > needs to do write to some other location besides the one fd it got passed
-> > > > > > > from fanotify event? E.g. imagine it wants to fetch a whole subtree on
-> > > > > > > first access to any file in a subtree. Or maybe it wants to write to some
-> > > > > > > DB file containing current state or something like that.
-> > > > > > >
-> > > > > > > One solution I can imagine is to create an open flag that can be specified
-> > > > > > > on open which would result in the special behavior wrt fs freezing. If the
-> > > > > > > special behavior would be just trylocking the freeze protection then it
-> > > > > > > would be really easy. If the behaviour would be another freeze protection
-> > > > > > > level, then we'd need to make sure we don't generate another fanotify
-> > > > > > > permission event with such fd - autorejecting any such access is an obvious
-> > > > > > > solution but I'm not sure if practical for applications.
-> > > > > > >
-> > > > > >
-> > > > > > I had also considered marking the listener process with the FSNOTIFY
-> > > > > > context and enforcing this context on fanotify_read().
-> > > > > > In a way, this is similar to the NOIO and NOFS process context.
-> > > > > > It could be used to both act as a stronger form of FMODE_NONOTIFY
-> > > > > > and to activate the desired freeze protection behavior
-> > > > > > (whether trylock or SB_FREEZE_FSNOTIFY level).
-> > > > > >
-> > > > >
-> > > > > My feeling is that the best approach would be a PF_NOWAIT task flag:
-> > > > >
-> > > > > - PF_NOWAIT will prevent blocking on freeze protection
-> > > > > - PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
-> > > > > - PF_NOWAIT could be auto-set on the reader of a permission event
-> > > > > - PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
-> > > > > - We could add user API to set this personality explicitly to any task
-> > > > > - PF_NOWAIT without FMODE_NONOTIFY denies permission events
-> > > > >
-> > > > > Please let me know if you agree with this design and if so,
-> > > > > which of the methods to set PF_NOWAIT are a must for the first version
-> > > > > in your opinion?
-> > > >
-> > > > Yeah, the PF flag could work. It can be set for the process(es) responsible
-> > > > for processing the fanotify events and filling in filesystem contents. I
-> > > > don't think automatic setting of this flag is desirable though as it has
-> > > > quite wide impact and some of the consequences could be surprising.  I
-> > > > rather think it should be a conscious decision when setting up the process
-> > > > processing the events. So I think API to explicitly set / clear the flag
-> > > > would be the best. Also I think it would be better to capture in the name
-> > > > that this is really about fs freezing. So maybe PF_NOWAIT_FREEZE or
-> > > > something like that?
-> > > >
-> > >
-> > > Sure.
-> > >
-> > > > Also we were thinking about having an open(2) flag for this (instead of PF
-> > > > flag) in the past. That would allow finer granularity control of the
-> > > > behavior but I guess you are worried that it would not cover all the needed
-> > > > operations?
-> > > >
-> > >
-> > > Yeh, it seems like an API that is going to be harder to write safe HSM
-> > > programs with.
-> > >
-> > > > > Do you think we should use this method to fix the existing deadlocks
-> > > > > with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
-> > > >
-> > > > No, I think if someone cares about these, they should explicitly set the
-> > > > PF flag in their task processing the events.
-> > > >
-> > >
-> > > OK.
-> > >
-> > > I see an exit hatch in this statement -
-> > > If we are going leave the responsibility to avoid deadlock in corner
-> > > cases completely in the hands of the application, then I do not feel
-> > > morally obligated to create the PF_NOWAIT_FREEZE API *before*
-> > > providing the first HSM API.
-> > >
-> > > If the HSM application is running in a controlled system, on a filesystem
-> > > where fsfreeze is not expected or not needed, then a fully functional and
-> > > safe HSM does not require PF_NOWAIT_FREEZE API.
-> > >
-> > > Perhaps an API to make an fs unfreezable is just as practical and a much
-> > > easier option for the first version of HSM API?
-> > >
-> > > Imagine that HSM opens an fd and sends an EXCLUSIVE_FSFREEZER
-> > > ioctl. Then no other task can freeze the fs, for as long as the fd is open
-> > > apart from the HSM itself using this fd.
-> >
-> > This would mean you also prevent FREEZE_HOLDER_KERNEL requests which xfs
-> > uses for filesystem scrubbing iirc. I would reckon that you also run
-> > into problems with device mapper workloads where freeze/thaw requests
-> > from the block layer and into the filesystem layer are quite common.
-> 
-> I agree. These cases will not play nicely with EXCLUSIVE_FSFREEZER.
-> The only case where the EXCLUSIVE_FSFREEZER API makes sense
-> is when the admin does not expect to meet any fsfreeze on the target fs and
-> wants to enforce that.
-> 
-> >
-> > Have you given any thought to the idea - similar to a FUSE daemon - that
-> > you could register with a given filesystem as an HSM? Maybe integration
-> > like this is really undesirable for some reason but that may be an
-> > alternative.
-> 
-> I am not sure what you mean by "register with a given filesystem"?
-> The comparison to FUSE daemon buffels me.  The main point with fanotify
-> HSM was for the user to be able to work natively on the target filesystem
-> without any "passthrough".
-> 
-> FUSE passthrough is a valid way to implement HSM.
-> Many HSM already use FUSE and many HSM will continue to use FUSE.
-> Improving FUSE passthough performance (e.g. FUSE BPF) is another
-> way to improve HSM.
-> 
-> Compared to fanotify HSM, FUSE passthrough is more versalite, but it
-> is also more resource expensive and some native fs features (e.g. ioctls)
-> will never work properly with FUSE passthrough.
-> 
-> Not sure if that answers your question?
+Hi David,
 
-This isn't about FUSE passthrough. Maybe the analogy doesn't work.
+On Fri, Nov 24, 2023 at 08:40:55PM +0100, David Hildenbrand wrote:
+> On 19.11.23 17:57, Alexandru Elisei wrote:
+> > Add the MTE tag storage pages to the MIGRATE_CMA migratetype, which allows
+> > the page allocator to manage them like regular pages.
+> > 
+> > Ths migratype lends the pages some very desirable properties:
+> > 
+> > * They cannot be longterm pinned, meaning they will always be migratable.
+> > 
+> > * The pages can be allocated explicitely by using their PFN (with
+> >    alloc_contig_range()) when they are needed to store tags.
+> > 
+> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > ---
+> >   arch/arm64/Kconfig                  |  1 +
+> >   arch/arm64/kernel/mte_tag_storage.c | 68 +++++++++++++++++++++++++++++
+> >   include/linux/mmzone.h              |  5 +++
+> >   mm/internal.h                       |  3 --
+> >   4 files changed, 74 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index fe8276fdc7a8..047487046e8f 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -2065,6 +2065,7 @@ config ARM64_MTE
+> >   if ARM64_MTE
+> >   config ARM64_MTE_TAG_STORAGE
+> >   	bool "Dynamic MTE tag storage management"
+> > +	select CONFIG_CMA
+> >   	help
+> >   	  Adds support for dynamic management of the memory used by the hardware
+> >   	  for storing MTE tags. This memory, unlike normal memory, cannot be
+> > diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
+> > index fa6267ef8392..427f4f1909f3 100644
+> > --- a/arch/arm64/kernel/mte_tag_storage.c
+> > +++ b/arch/arm64/kernel/mte_tag_storage.c
+> > @@ -5,10 +5,12 @@
+> >    * Copyright (C) 2023 ARM Ltd.
+> >    */
+> > +#include <linux/cma.h>
+> >   #include <linux/memblock.h>
+> >   #include <linux/mm.h>
+> >   #include <linux/of_device.h>
+> >   #include <linux/of_fdt.h>
+> > +#include <linux/pageblock-flags.h>
+> >   #include <linux/range.h>
+> >   #include <linux/string.h>
+> >   #include <linux/xarray.h>
+> > @@ -189,6 +191,14 @@ static int __init fdt_init_tag_storage(unsigned long node, const char *uname,
+> >   		return ret;
+> >   	}
+> > +	/* Pages are managed in pageblock_nr_pages chunks */
+> > +	if (!IS_ALIGNED(tag_range->start | range_len(tag_range), pageblock_nr_pages)) {
+> > +		pr_err("Tag storage region 0x%llx-0x%llx not aligned to pageblock size 0x%llx",
+> > +		       PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->end),
+> > +		       PFN_PHYS(pageblock_nr_pages));
+> > +		return -EINVAL;
+> > +	}
+> > +
+> >   	ret = tag_storage_get_memory_node(node, &mem_node);
+> >   	if (ret)
+> >   		return ret;
+> > @@ -254,3 +264,61 @@ void __init mte_tag_storage_init(void)
+> >   		pr_info("MTE tag storage region management disabled");
+> >   	}
+> >   }
+> > +
+> > +static int __init mte_tag_storage_activate_regions(void)
+> > +{
+> > +	phys_addr_t dram_start, dram_end;
+> > +	struct range *tag_range;
+> > +	unsigned long pfn;
+> > +	int i, ret;
+> > +
+> > +	if (num_tag_regions == 0)
+> > +		return 0;
+> > +
+> > +	dram_start = memblock_start_of_DRAM();
+> > +	dram_end = memblock_end_of_DRAM();
+> > +
+> > +	for (i = 0; i < num_tag_regions; i++) {
+> > +		tag_range = &tag_regions[i].tag_range;
+> > +		/*
+> > +		 * Tag storage region was clipped by arm64_bootmem_init()
+> > +		 * enforcing addressing limits.
+> > +		 */
+> > +		if (PFN_PHYS(tag_range->start) < dram_start ||
+> > +				PFN_PHYS(tag_range->end) >= dram_end) {
+> > +			pr_err("Tag storage region 0x%llx-0x%llx outside addressable memory",
+> > +			       PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->end));
+> > +			ret = -EINVAL;
+> > +			goto out_disabled;
+> > +		}
+> > +	}
+> > +
+> > +	/*
+> > +	 * MTE disabled, tag storage pages can be used like any other pages. The
+> > +	 * only restriction is that the pages cannot be used by kexec because
+> > +	 * the memory remains marked as reserved in the memblock allocator.
+> > +	 */
+> > +	if (!system_supports_mte()) {
+> > +		for (i = 0; i< num_tag_regions; i++) {
+> > +			tag_range = &tag_regions[i].tag_range;
+> > +			for (pfn = tag_range->start; pfn <= tag_range->end; pfn++)
+> > +				free_reserved_page(pfn_to_page(pfn));
+> > +		}
+> > +		ret = 0;
+> > +		goto out_disabled;
+> > +	}
+> > +
+> > +	for (i = 0; i < num_tag_regions; i++) {
+> > +		tag_range = &tag_regions[i].tag_range;
+> > +		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += pageblock_nr_pages)
+> > +			init_cma_reserved_pageblock(pfn_to_page(pfn));
+> > +		totalcma_pages += range_len(tag_range);
+> > +	}
+> 
+> You shouldn't be doing that manually in arm code. Likely you want some cma.c
+> helper for something like that.
 
-What I just meant is similar to how fanotify registers itself as
-watching an inode or a mount or superblock one could have a new HSM
-watch type that lets the fs detect that it is watched by an HSM and then
-refuse to be frozen or other special behavior you might need. I don't
-know much about HSMs so I might just be talking nonsense.
+If you referring to the last loop (the one that does
+ini_cma_reserved_pageblock()), indeed, there's already a function which
+does that, cma_init_reserved_areas() -> cma_activate_area().
+
+> 
+> But, can you elaborate on why you took this hacky (sorry) approach as
+> documented in the cover letter:
+
+No worries, it is indeed a bit hacky :)
+
+> 
+> "The arm64 code manages this memory directly instead of using
+> cma_declare_contiguous/cma_alloc for performance reasons."
+> 
+> What is the exact problem?
+
+I am referring to the performance degredation that is fixed in patch #26,
+"arm64: mte: Fast track reserving tag storage when the block is free" [1].
+The issue is that alloc_contig_range() -> __alloc_contig_migrate_range()
+calls lru_cache_disable(), which IPIs all the CPUs in the system, and that
+leads to a 10-20% performance degradation on Chrome. It has been observed
+that most of the time the tag storage pages are free, and the
+lru_cache_disable() calls are unnecessary.
+
+The performance degradation is almost entirely eliminated by having the code
+take the tag storage page directly from the free list if it's free, instead
+of calling alloc_contig_range().
+
+Do you believe it would be better to use the cma code, and modify it to use
+this fast path to take the page drectly from the buddy allocator?
+
+I can definitely try to integrate the code with cma_alloc(), but I think
+keeping the fast path for reserving tag storage is extremely desirable,
+since it makes such a huge difference to performance.
+
+[1] https://lore.kernel.org/linux-trace-kernel/20231119165721.9849-27-alexandru.elisei@arm.com/
+
+Thanks,
+Alex
+
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+> 
 
