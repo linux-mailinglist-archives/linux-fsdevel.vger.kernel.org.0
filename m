@@ -1,31 +1,31 @@
-Return-Path: <linux-fsdevel+bounces-3884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3FD7F997D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:23:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A717F9994
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94676280EA0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:23:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEDDEB21757
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660AF15487;
-	Mon, 27 Nov 2023 06:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C0179B7;
+	Mon, 27 Nov 2023 06:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3573F131;
-	Sun, 26 Nov 2023 22:22:08 -0800 (PST)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42726134;
+	Sun, 26 Nov 2023 22:22:10 -0800 (PST)
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4SdwV353Jqz4f3kGH;
-	Mon, 27 Nov 2023 14:22:03 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SdwV26Vl1z4f3mJ1;
+	Mon, 27 Nov 2023 14:22:02 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 7DF281A08FC;
-	Mon, 27 Nov 2023 14:22:05 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 46AD71A0AC3;
+	Mon, 27 Nov 2023 14:22:07 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDX2hB+NWRlrcU8CA--.57866S10;
-	Mon, 27 Nov 2023 14:22:04 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDX2hB+NWRlrcU8CA--.57866S11;
+	Mon, 27 Nov 2023 14:22:06 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: hch@infradead.org,
 	ming.lei@redhat.com,
@@ -83,9 +83,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH block/for-next v2 06/16] scsicam: use new helper to get inode from block_device
-Date: Mon, 27 Nov 2023 14:21:06 +0800
-Message-Id: <20231127062116.2355129-7-yukuai1@huaweicloud.com>
+Subject: [PATCH block/for-next v2 07/16] bcachefs: use new helper to get inode from block_device
+Date: Mon, 27 Nov 2023 14:21:07 +0800
+Message-Id: <20231127062116.2355129-8-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
 References: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
@@ -96,11 +96,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDX2hB+NWRlrcU8CA--.57866S10
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw1ruF1rJryfZrykJFy8Grg_yoW3Gwb_CF
-	W09ryxWr1rArs7Kw45JFs5Zryqvw4rXF109F4Fq3savayUXFn5tr4vqr17Zw47Wr4DA3Z8
-	JFnrXryYkrsrKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbqxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+X-CM-TRANSID:cCh0CgDX2hB+NWRlrcU8CA--.57866S11
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw1xZr17AF15GFy3Gw17KFg_yoWxtrb_XF
+	1xZF47Xw4rJFn2q3Z8JrsYvr4I9w4fWrW2vFZ8AF17G3WDGFZ5XFZ5Gr98XrsrGrs7Ga4x
+	X34fJrW7uryS9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbq8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
 	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
 	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
 	F7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_Gc
@@ -112,8 +112,8 @@ X-Coremail-Antispam: 1UD129KBjvdXoWrKw1ruF1rJryfZrykJFy8Grg_yoW3Gwb_CF
 	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc4
 	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AK
 	xVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUbmZ
-	X7UUUUU==
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjfUOBTY
+	UUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
@@ -123,22 +123,22 @@ Which is more efficiency, and also prepare to remove the field
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/scsi/scsicam.c | 2 +-
+ fs/bcachefs/util.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/scsicam.c b/drivers/scsi/scsicam.c
-index e2c7d8ef205f..de40a5ef7d96 100644
---- a/drivers/scsi/scsicam.c
-+++ b/drivers/scsi/scsicam.c
-@@ -32,7 +32,7 @@
-  */
- unsigned char *scsi_bios_ptable(struct block_device *dev)
- {
--	struct address_space *mapping = bdev_whole(dev)->bd_inode->i_mapping;
-+	struct address_space *mapping = bdev_inode(bdev_whole(dev))->i_mapping;
- 	unsigned char *res = NULL;
- 	struct folio *folio;
+diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+index 2984b57b2958..fe7ccb3a3517 100644
+--- a/fs/bcachefs/util.h
++++ b/fs/bcachefs/util.h
+@@ -518,7 +518,7 @@ int bch2_bio_alloc_pages(struct bio *, size_t, gfp_t);
  
+ static inline sector_t bdev_sectors(struct block_device *bdev)
+ {
+-	return bdev->bd_inode->i_size >> 9;
++	return bdev_inode(bdev)->i_size >> 9;
+ }
+ 
+ #define closure_bio_submit(bio, cl)					\
 -- 
 2.39.2
 
