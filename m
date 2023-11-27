@@ -1,47 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-3999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CAE7FAD31
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 23:16:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F557FAD77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 23:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BD71B213EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 22:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AEB1C20CDF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 22:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF73648CCA;
-	Mon, 27 Nov 2023 22:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94980495CC;
+	Mon, 27 Nov 2023 22:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7/5u7od"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ki96iRt+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416A146543;
-	Mon, 27 Nov 2023 22:16:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 698ABC433C7;
-	Mon, 27 Nov 2023 22:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701123367;
-	bh=KbzJsoazLxCd2BbBFJe0yrPuXWbbj41CPsXDmVkbnlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W7/5u7odSgDcr2BZlmpNy1S21R3etVUBzXNDTaHq4Dk2PTruYFrXj0A2hW1KAk71o
-	 edP+r0uMmfj1SgZEYaOWDiUoQHgBstwrK6FVcab3oBYGpjIy/4B/STG1uMLLWcxyjl
-	 evZ24DVTpGyPSivLlskhsN+5QpXLPX80OM60qy+2gW8vWLSDzqiXGVdYh3qBKjxba2
-	 hnvT4qOGhzErqNg5+8CoK6Z2peD6BkNQM84GsSZBkNfI3hOWfIvsXxmu9DpXiiEvSB
-	 XshUMntkc0rk4ouzy0J+Z0k99QL3H/0Ly/U6vHXezlIczWrfs9YXRYzrNP88N5b9jZ
-	 tGS9nsOHBr5xg==
-Date: Mon, 27 Nov 2023 14:16:05 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: syzbot <syzbot+9d04b061c581795e18ce@syzkaller.appspotmail.com>
-Cc: jaegeuk@kernel.org, linux-fscrypt@vger.kernel.org,
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B287EA;
+	Mon, 27 Nov 2023 14:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3PzatJTAFuI9AA1q1PyzjD6sj+4//yZnqVg5MvBFhPA=; b=Ki96iRt+2k9IAxyOJxJ69225dH
+	3s3CGMlrXW/53HNxRWoBDzzXcnGWu5Ff4/gLdtkaJtQinjTzDpWqihWFUR25cxJRqFS+0UQluG7SR
+	0S52ZJhREva+EtvoYVhP/jbOuuWKnTXsj5HEhwqtCNpmLpxgQ1c4L9pqHYrBvzspDphzrZAmK8luR
+	OFJVf0yBF0Bxj4qrXQ1GwEUWhW4fXKlxwc0MmJNGS/BBJTCff5TPyNdLFolh5sGo0U2MTz5EgwxO6
+	ZAI6uCvgmRosdhvpHCxf3munWLk4SEXl86W/ambCxIHb40BdfE1S7tzfNLE45+EJOsR9z7+M7wEKm
+	u1k/McjA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r7k7y-004Ai6-2j;
+	Mon, 27 Nov 2023 22:30:54 +0000
+Date: Mon, 27 Nov 2023 22:30:54 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [syzbot] [fscrypt?] possible deadlock in
- find_and_lock_process_key
-Message-ID: <20231127221605.GB1463@sol.localdomain>
-References: <0000000000002aa189060b147268@google.com>
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
+Message-ID: <20231127223054.GL38156@ZenIV>
+References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,33 +54,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000002aa189060b147268@google.com>
+In-Reply-To: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Nov 26, 2023 at 12:58:22PM -0800, syzbot wrote:
-> -> #3 (&type->lock_class#5){++++}-{3:3}:
->        down_read+0x9a/0x330 kernel/locking/rwsem.c:1526
->        find_and_lock_process_key+0x97/0x390 fs/crypto/keysetup_v1.c:112
->        fscrypt_setup_v1_file_key_via_subscribed_keyrings+0x115/0x2d0 fs/crypto/keysetup_v1.c:310
->        setup_file_encryption_key fs/crypto/keysetup.c:485 [inline]
->        fscrypt_setup_encryption_info+0xb69/0x1080 fs/crypto/keysetup.c:590
->        fscrypt_get_encryption_info+0x3d1/0x4b0 fs/crypto/keysetup.c:675
->        fscrypt_setup_filename+0x238/0xd80 fs/crypto/fname.c:458
->        ext4_fname_setup_filename+0xa3/0x250 fs/ext4/crypto.c:28
->        ext4_add_entry+0x32b/0xe40 fs/ext4/namei.c:2403
->        ext4_rename+0x165e/0x2880 fs/ext4/namei.c:3932
->        ext4_rename2+0x1bc/0x270 fs/ext4/namei.c:4212
->        vfs_rename+0x13e0/0x1c30 fs/namei.c:4844
->        do_renameat2+0xc3c/0xdc0 fs/namei.c:4996
->        __do_sys_renameat fs/namei.c:5036 [inline]
->        __se_sys_renameat fs/namei.c:5033 [inline]
->        __x64_sys_renameat+0xc6/0x100 fs/namei.c:5033
->        do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->        do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
->        entry_SYSCALL_64_after_hwframe+0x63/0x6b
+On Tue, Nov 28, 2023 at 09:05:21AM +1100, NeilBrown wrote:
 
-#syz dup: possible deadlock in start_this_handle (4)
+> A simple way to fix this is to treat nfsd threads like normal processes
+> for task_work.  Thus the pending files are queued for the thread, and
+> the same thread finishes the work.
+> 
+> Currently KTHREADs are assumed never to call task_work_run().  With this
+> patch that it still the default but it is implemented by storing the
+> magic value TASK_WORKS_DISABLED in ->task_works.  If a kthread, such as
+> nfsd, will call task_work_run() periodically, it sets ->task_works
+> to NULL to indicate this.
 
-See https://lore.kernel.org/linux-fscrypt/Y%2F6aDmrx8Q9ob+Zi@sol.localdomain/
+>  		svc_recv(rqstp);
+>  		validate_process_creds();
+> +		if (task_work_pending(current))
+> +			task_work_run();
 
-- Eric
+What locking environment and call chain do you have here?  And what happens if
+you get something stuck in ->release()?
+
+>  
+>  	p->pdeath_signal = 0;
+> -	p->task_works = NULL;
+> +	p->task_works = args->kthread ? TASK_WORKS_DISABLED : NULL;
+
+Umm... why not have them set (by helper in kernel/task_work.c) to
+&work_exited?  Then the task_work_run parts wouldn't be needed at all...
 
