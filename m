@@ -1,111 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-3875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A2B7F9881
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:01:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986C37F988F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1FCDB20B2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 05:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4486A280E85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 05:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D7B53B8;
-	Mon, 27 Nov 2023 05:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32A5663;
+	Mon, 27 Nov 2023 05:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jciNYYpa"
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="JBZAqiCR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0253F12F;
-	Sun, 26 Nov 2023 21:01:37 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1cfc2bcffc7so4952635ad.1;
-        Sun, 26 Nov 2023 21:01:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701061296; x=1701666096; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0LGWhMOdJ9kEgvG9PE0ksbBVphAsskS0KLGQgZ0nnow=;
-        b=jciNYYpaVXZd0kXntc8SRgZ1qG4OeB16LlAAo/uhnbglAUZU0Oo5qfjEafAEv2O0Db
-         RXxVnTAg2xKV8Ya9jUNKM7P64FvAiaaweN8N5yzuY5BIFa1omKGjxvVSsd4jOZZymHBa
-         yuUVdPdR6cvEx4+jJh8xRLW0Tq108/vWq+G24T6rmX+ZxBePHyH+rMnWRZfYqi3ZjdFM
-         5YcJrWRoNcU58fxrOobsJx/SAMYoygUHNxoRfdUm3MekaNIiDPsmuRzJnHY3HIQv4PcJ
-         OYJzTMTfgzi3CAwKMHI8dcAhf1N7Ep+kovwLanDb09IZbbtC5ZTFHm+uk87gNPL0L2Rw
-         UmDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701061296; x=1701666096;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0LGWhMOdJ9kEgvG9PE0ksbBVphAsskS0KLGQgZ0nnow=;
-        b=hz9OlabZgKJuZbmi5r5GBfh3EO2npHoc7TAra6SZrjnhjRhLrXqgnnykidp39fwz/g
-         bvfUMcqN4VsGRXy0dAmea3pFpHI43qjJaIRiAE7t+DXzMUctvqJPFx1ozGBq8AvX9+MU
-         wzswn3LLRKuRJFCSnOyjo2Z3jsCn/lR6TXnJq9WnL9RnT6tIj/60N46GCnROmjYHyAkm
-         wkLmPN+X5N+KyZj63yxLtRSkttnHM8bNHe+Cp8jkCeU5WIM5kvvAL92laPQCH3T2NjmQ
-         Gi9Z6QciMf/oP7DP9WG4lvh6eTTLnmR0G2ki97B8tV+4IO6NgcR7PkLlaP2Ibjn74DFD
-         xTJA==
-X-Gm-Message-State: AOJu0YzR7zmFFvz/79DmhHYN4zZMpJOd9m+BAAWQOSP0+hPBI+Y82Y/2
-	8LujG7PX784QdQ82zxvbcOOiCydMf0g=
-X-Google-Smtp-Source: AGHT+IHKa4SduOKsqzkUj52RxHRbPhr9y4uhhDweSW+e9raPF4aSMXQq0BFFLMf/DhWzlfCDB7Uw2Q==
-X-Received: by 2002:a17:902:ed41:b0:1cf:cbec:ead5 with SMTP id y1-20020a170902ed4100b001cfcbecead5mr2370817plb.26.1701061295871;
-        Sun, 26 Nov 2023 21:01:35 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id o11-20020a170902d4cb00b001cc0e3a29a8sm5808541plg.89.2023.11.26.21.01.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Nov 2023 21:01:35 -0800 (PST)
-Date: Mon, 27 Nov 2023 10:31:31 +0530
-Message-Id: <87bkbfssb8.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>, Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/13] iomap: treat inline data in iomap_writepage_map as an I/O error
-In-Reply-To: <20231126124720.1249310-3-hch@lst.de>
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3213A131;
+	Sun, 26 Nov 2023 21:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
+	s=s31663417; t=1701061846; x=1701666646; i=quwenruo.btrfs@gmx.com;
+	bh=XcdFJcpkxmmR77v6KlNlZpmMrmuNub8Ji5+Dg+2spRE=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=JBZAqiCRHHCnrNHD56nMu5C2jK4QjCcYIHXOdEttdcuKOxQmQiVWlgxaZM60iRm6
+	 i/cA3QOCnNFkt4+OuveECvi39zYmMRoz8ZSowjjc6qzAUY98oQnLZSE9vRapFNEi2
+	 MQXLoOgmaiRL9WPw1sQthAmzphlrZMDnBbIoCKZxPVdMiik2B541yOu2B9NCWhzA8
+	 InA0PE8SNk5NnffgOE6kv4bwrriR6F2oVMuVm4joLg3jHftFa/xTcrcvYkV5lxQN0
+	 ZWGHrT5UXMgQk023oQoAOq+wU+66ItAl8LbEcg79bv5kDHGO+lubiRSAUTtAdZxlo
+	 c/VdKQsipJinOBRqjw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.117] ([122.151.37.21]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MMXQF-1qpftK1QrH-00JXUP; Mon, 27
+ Nov 2023 06:10:45 +0100
+Message-ID: <793cd840-49cb-4458-9137-30f899100870@gmx.com>
+Date: Mon, 27 Nov 2023 15:40:41 +1030
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Should we still go __GFP_NOFAIL? (Was Re: [PATCH] btrfs: refactor
+ alloc_extent_buffer() to allocate-then-attach method)
+Content-Language: en-US
+To: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>
+Cc: linux-btrfs@vger.kernel.org,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <ffeb6b667a9ff0cf161f7dcd82899114782c0834.1700609426.git.wqu@suse.com>
+ <20231122143815.GD11264@twin.jikos.cz>
+ <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HA71Waw9i/Kr/7bDfxY3jfGsB3LMGT6HC5tBFOCNG/0iKKowOMc
+ xL9EGL6tjpkghIUxxGTOq9pGVPBrOFkNFVpCypmO2BXX1S1v+M/WfUzHr371AgPu91/t5Mp
+ w8GRG01lhX0uXn5prfqcC0c1EH1dDSuKW2a/YVqBqaN13/py4u3FNbiiuCF5akz2Bo3yydv
+ I/yV/iRtjEv8cgSnjxyyw==
+UI-OutboundReport: notjunk:1;M01:P0:jt0p9G6uRFM=;KmKkmfu+f3CvqRP+2bKHm7D6YRv
+ nTg7fk5x7igfzt+4juNLbOyewDtYQu9HPFXlr611cy8mz2vh5OgQ34uZVEW6rpPr0Ul3dqRgq
+ QD5M4w5CoLckY9Bs7NGO83qddDZLiD5CoioJ++C8Faf9lGfHZMmRX3if8glSmA7gdarCaPQq1
+ ZsxJ4AN+4e8HqIpxXVF1GD9VE4XpTyS8yQcagIKdDSofdFmLCp9ql37OzLxmi4pmRtlrEenRU
+ lGT9hBPi2XeO6IZ/AX55t4NB65Lnb2k5VoeFJA7icBVWX8UTrV5/APjz1kTKFrX2ygDwplBWk
+ BnM4znjLpJrhFuRDnLdpjiOS3vK1YDwO7tlXxhr2rTThVAg+ge/9qv1GOYYOaPF++vQxZ08I8
+ ocUGjJth8ZmaSQW7h/R2YtoLFJBwmSqcFE6lI27S/90J0Lrx4BmC/JBkBjK2sfUgFlAoBnBKW
+ KJXXwn2S4E4yF+l088BhJfS3D0bY2+nIv4RXiPPwwKfQtpR/HgxgYs2dcDPa78XlBOqu/h7LR
+ nx+7NwSjcLBJMgjx+1+gMjNc07t9p0/0HiY6OwJijtup9jQNyOB8q6T8qb2LcBP4SIEZ21LaM
+ +0P0HBZkEI8zOg9j0Ai7jorZSqJ+CxKUwlo2C/qG2w+w+YCDmcBG/+No2+Z/PCcVW2ss5xKrA
+ dWGaaYuv1DOLTAdRjKTJkFAMD1YeMeKKfsrguXhiO8lrGmf6f7jxDGvZ+fejo3vg7ARTuxs1Q
+ cOp7FBr5JAhyW2zSMJThOwEkaqL2mCUmYkEbT63astubfem+sRT0R9GT9G6gbR/lzCaRzhmdi
+ 6pD77EV4WsNGF82D2796lrfwMTS6bG0MZzG7IiPSN8pMu9rX92mxXC7eIoBDNTE8Ybbyppu+L
+ 5M4z25wzTDSDXI9m5ioaane/f87f7vDQ/BvOmU0cq1oCq2YqAbr1aNXoyWNtXTyX7CQtQ6rfB
+ XfQUZj30cgmKYqu1lRW2c9Ln9D4=
 
-Christoph Hellwig <hch@lst.de> writes:
+On 2023/11/23 06:33, Qu Wenruo wrote:
+[...]
+>> I wonder if we still can keep the __GFP_NOFAIL for the fallback
+>> allocation, it's there right now and seems to work on sysmtems under
+>> stress and does not cause random failures due to ENOMEM.
+>>
+> Oh, I forgot the __NOFAIL gfp flags, that's not hard to fix, just
+> re-introduce the gfp flags to btrfs_alloc_page_array().
 
-> iomap_writepage_map aready warns about inline data, but then just ignores
-> it.  Treat it as an error and return -EIO.
+BTW, I think it's a good time to start a new discussion on whether we
+should go __GFP_NOFAIL.
+(Although I have updated the patch to keep the GFP_NOFAIL behavior)
+
+I totally understand that we need some memory for tree block during
+transaction commitment and other critical sections.
+
+And it's not that uncommon to see __GFP_NOFAIL usage in other mainstream
+filesystems.
+
+But my concern is, we also have a lot of memory allocation which can
+lead to a lot of problems either, like btrfs_csum_one_bio() or even
+join_transaction().
+
+I doubt if btrfs (or any other filesystems) would be to blamed if we're
+really running out of memory.
+Should the memory hungry user space programs to be firstly killed far
+before we failed to allocate memory?
+
+
+Furthermore, at least for btrfs, I don't think we would hit a situation
+where memory allocation failure for metadata would lead to any data
+corruption.
+The worst case is we hit transaction abort, and the fs flips RO.
+
+Thus I'm wondering if we really need __NOFAIL for btrfs?
+
+Thanks,
+Qu
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/iomap/buffered-io.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-
-The code change looks very obvious. But sorry that I have some queries
-which I would like to clarify - 
-
-The dirty page we are trying to write can always belong to the dirty
-inode with inline data in it right? 
-So it is then the FS responsibility to un-inline the inode in the
-->map_blocks call is it?
-
-Looking at the gfs2 code, it might as well return iomap->type as
-IOMAP_INLINE for IOMAP_WRITE request in it's iomap_writeback_ops no?
-    iomap_writeback_ops -> gfs2_map_blocks -> __gfs2_iomap_get
-
+> Thanks,
+> Qu
 >
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 98d52feb220f0a..b1bcc43baf0caf 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1818,8 +1818,10 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  		if (error)
->  			break;
->  		trace_iomap_writepage_map(inode, &wpc->iomap);
-> -		if (WARN_ON_ONCE(wpc->iomap.type == IOMAP_INLINE))
-> -			continue;
-> +		if (WARN_ON_ONCE(wpc->iomap.type == IOMAP_INLINE)) {
-> +			error = -EIO;
-> +			break;
-> +		}
->  		if (wpc->iomap.type == IOMAP_HOLE)
->  			continue;
->  		iomap_add_to_ioend(inode, pos, folio, ifs, wpc, wbc,
-> -- 
-> 2.39.2
-
--ritesh
 
