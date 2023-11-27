@@ -1,111 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-3969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DF67FA8C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 19:18:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7A27FA8D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 19:19:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32927B210AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A32281695
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4D83DB84;
-	Mon, 27 Nov 2023 18:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfDGvv4H"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AA13D3B7;
+	Mon, 27 Nov 2023 18:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B23219A;
-	Mon, 27 Nov 2023 10:18:30 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-50baa7cdf6dso2968748e87.0;
-        Mon, 27 Nov 2023 10:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701109109; x=1701713909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jo6SKwc0bY8i8SUjlRjEpXwXn1ruEfDXTADvoI5y4Tk=;
-        b=kfDGvv4HehLGMVOnFACiCBZJJAPVGppf7LezHDGbPARluIPVU3IVsBsALaGKqU+WKQ
-         KU6Ppj5C+Ksxz+JdLvrpHvZsDuJqmhV4Fhz30U+mvdbmkIAP1sMLKZXfS5EsNjB0EX27
-         rAjAR4jTqI/qtQ3VdQsfl04Gr8y+2MV3Jb2yLjHjg0DoibPFWaorpUaVoh7hg6QBUZIn
-         RqdZZWB83Gm2OwP7w4s+obEsHJ/talAY/Ai3OjafUWPvW6CosBEQ6Zk71UcFWYdQGYbs
-         aFcI4jIDQ2DzCrPkFQG6Bz69DCd7WShVqg414D4p+nKo/4DSwQxvduuRuHVT4mP7xvEP
-         vBsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701109109; x=1701713909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jo6SKwc0bY8i8SUjlRjEpXwXn1ruEfDXTADvoI5y4Tk=;
-        b=VweKnb6i3QsVSZQYe+fIOuyQP1Edrk2Tp2rGnhxuUVIR4Dc5yk3SiGPlt3EzOrIpmZ
-         SEr7QmR5OK9t7pmARma4rp1X2Z0nI6Cfc5nugAl7F/qQftlqzwlABrTOr0wfhGOHpbx/
-         CSwOZqL2yPErNm8FlYn/9+VZEqteUJP4Hw3jEC1ZQrgmo8ksBuQO6RddmXjwwRG603zp
-         +HNVXrf14Ljao+zTmUcslh5GjfLGIi1b9PS3ypmN6M36M3k52psOmCOdRhWzXQgLn+j/
-         a6DtIy5GEbeShs6dpNCQi5vjLvM9dzxWCeAPesdAH+jTYMdd9VTJy2qV2MAv+Zvo6qvh
-         LVzQ==
-X-Gm-Message-State: AOJu0Yz7XUUAMCgov0B6oSBegO0FVB47xV2jdkIx8cBxuwNb1QZxmP2H
-	Sac/1+7tefEMvvgU+u6C1ovBu60O36VlpP7RIx4=
-X-Google-Smtp-Source: AGHT+IHbvd9iyISjPAtVPzH7AFlFRQZGO/trLwfpSepF8cc826O3Jh5693WAfIpFxBMigSXJ0/jOl6h9J6g07yvqZn0=
-X-Received: by 2002:a19:6d0a:0:b0:50a:10a6:1448 with SMTP id
- i10-20020a196d0a000000b0050a10a61448mr6893129lfc.59.1701109108576; Mon, 27
- Nov 2023 10:18:28 -0800 (PST)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A652A198;
+	Mon, 27 Nov 2023 10:19:41 -0800 (PST)
+Received: from in01.mta.xmission.com ([166.70.13.51]:44548)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1r7gCp-007QBU-6v; Mon, 27 Nov 2023 11:19:39 -0700
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:58050 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1r7gCo-006hy6-31; Mon, 27 Nov 2023 11:19:38 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>,
+  tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
+  ebiggers@kernel.org,  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org,
+  linux-ext4@vger.kernel.org,  Miklos Szeredi <miklos@szeredi.hu>
+References: <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
+	<20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
+	<20231123215234.GQ38156@ZenIV> <20231125220136.GB38156@ZenIV>
+	<20231126045219.GD38156@ZenIV> <20231126184141.GF38156@ZenIV>
+	<20231127063842.GG38156@ZenIV>
+	<87jzq3nqos.fsf@email.froward.int.ebiederm.org>
+	<20231127160318.GI38156@ZenIV> <20231127161426.GA964333@ZenIV>
+Date: Mon, 27 Nov 2023 12:19:09 -0600
+In-Reply-To: <20231127161426.GA964333@ZenIV> (Al Viro's message of "Mon, 27
+	Nov 2023 16:14:26 +0000")
+Message-ID: <87v89nkqjm.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231110034838.1295764-1-andrii@kernel.org> <20231110034838.1295764-4-andrii@kernel.org>
- <20231127-anvertrauen-geldhahn-08f009fe1af1@brauner>
-In-Reply-To: <20231127-anvertrauen-geldhahn-08f009fe1af1@brauner>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 27 Nov 2023 10:18:16 -0800
-Message-ID: <CAEf4BzZnumK6bzsP70EAZTeMmSYjbFkZSa0FNxX=wjC9+D2t0g@mail.gmail.com>
-Subject: Re: [PATCH v10 bpf-next 03/17] bpf: introduce BPF token object
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1r7gCo-006hy6-31;;;mid=<87v89nkqjm.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18q4nSddb4xv1hV6x7/Ii/Wh0OYvIlQsaU=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 544 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 12 (2.3%), b_tie_ro: 11 (1.9%), parse: 1.80
+	(0.3%), extract_message_metadata: 23 (4.2%), get_uri_detail_list: 4.2
+	(0.8%), tests_pri_-2000: 15 (2.8%), tests_pri_-1000: 11 (2.0%),
+	tests_pri_-950: 1.84 (0.3%), tests_pri_-900: 1.23 (0.2%),
+	tests_pri_-90: 87 (16.0%), check_bayes: 84 (15.4%), b_tokenize: 11
+	(2.0%), b_tok_get_all: 10 (1.8%), b_comp_prob: 3.8 (0.7%),
+	b_tok_touch_all: 54 (9.9%), b_finish: 1.39 (0.3%), tests_pri_0: 369
+	(67.9%), check_dkim_signature: 0.71 (0.1%), check_dkim_adsp: 3.5
+	(0.6%), poll_dns_idle: 1.04 (0.2%), tests_pri_10: 2.2 (0.4%),
+	tests_pri_500: 13 (2.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: fun with d_invalidate() vs. d_splice_alias() was Re: [f2fs-dev]
+ [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On Mon, Nov 27, 2023 at 8:05=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > +     if (path.mnt->mnt_root !=3D path.dentry) {
->
-> You want to verify that you can only create tokens from the root of the
-> bpffs mount. So for
->
->   sudo mount -t bpf bpf /mnt
->
-> you want bpf tokens to be creatable from:
->
->   fd =3D open("/mnt")
->
-> or from bind-mounts of the fs root:
->
->   sudo mount --bind /mnt /srv
->   fd =3D open("/srv")
->
-> but not from
->
->   sudo mount --bind /mnt/foo /opt
->   fd =3D open("/opt")
->
-> But I think your current check allows for that because if you bind-mount
-> /mnt/foo to /opt then fd =3D open("/opt")
->
->   path.mnt->mnt_root =3D=3D foo and path.dentry =3D=3D foo
->
-> I think
->
-> path.dentry !=3D path.mnt->mnt_sb->s_root
->
-> should give you what you want.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-Ah, subtle difference (for me :)). Yes, I'd like the actual root of
-bpffs to be used, will adjust the check, thanks!
+> On Mon, Nov 27, 2023 at 04:03:18PM +0000, Al Viro wrote:
+>> On Mon, Nov 27, 2023 at 09:47:47AM -0600, Eric W. Biederman wrote:
+>> 
+>> > There is a lot going on there.  I remember one of the relevant
+>> > restrictions was marking dentries dont_mount, and inodes S_DEAD
+>> > in unlink and rmdir.
+>> > 
+>> > But even without out that marking if d_invalidate is called
+>> > from d_revalidate the inode and all of it's dentries must be
+>> > dead because the inode is stale and most go.  There should
+>> > be no resurrecting it at that point.
+>> > 
+>> > I suspect the most fruitful way to think of the d_invalidate vs
+>> > d_splice_alias races is an unlink vs rename race.
+>> > 
+>> > I don't think the mechanism matters, but deeply and fundamentally
+>> > if we detect a directory inode is dead we need to stick with
+>> > that decision and not attempt to resurrect it with d_splice_alias.
+>> 
+>> Wrong.  Deeply and fundamentally we detect a dentry that does not
+>> match the directory contents according to the server.
+>> 
+>> For example, due to rename done on server.  With object in question
+>> perfectly alive there - fhandle still works, etc.
+>> 
+>> However, it's no longer where it used to be.  And we would bloody better
+>> not have lookups for the old name result in access to that object.
+>> We also should never allow the access to *new* name lead to two live
+>> dentries for the same directory inode.
+>> 
+>> Again, this is not about rmdir() or unlink() - invalidation can happen
+>> for object that is still open, still accessed and still very much alive.
+>> Does that all the time for any filesystem with ->d_revalidate().
+>
+> Put another way, there used to be very odd song and dance in ->d_revalidate()
+> instances along the lines of "we can't possibly tell the caller to invalidate
+> a mountpoint"; it was racy in the best case and during the rewrite of
+> d_invalidate() to teach it how to evict submounts those attempts had been
+> dropped - ->d_revalidate() returning 0 does end up with mounts dissolved
+> by d_invalidate() from caller.
+>
+> It always had been racy, starting with the checks that used to be in
+> ->d_revalidate() instances way before all those changes.  So the switch
+> of d_invalidate() to dissolving submounts had been a step in the right
+> direction, but it's not being careful enough.
+>
+> Again, it's about d_invalidate() caused by pathwalk running into a dentry that
+> doesn't match the reality vs. d_splice_alias() finding that it matches the
+> inode we had looked up elsewhere.
+
+My point is we should have a atomic way to decide the disposition of
+such a dentry, and it's children.
+
+Either we should decide it is useless and remove it and all of it's
+children.
+
+Or we should decide it was renamed and just handle it that way.
+
+If we can record such a decision on the dentry or possibly on the inode
+then we can resolve the race by having it be a proper race of which
+comes first.
+
+It isn't a proper delete of the inode so anything messing with the inode
+and marking it S_DEAD is probably wrong.
+
+The code could do something like mark the dentry dont_mount which should
+be enough to for d_splice_alias to say oops, something is not proper
+here.  Let the d_invalidate do it's thing.
+
+Or the code could remove the dentry from inode->i_dentry and keep
+d_splice alias from finding it, and it's children completely.
+That is different from unhashing it.
+
+Anyway that is my memory and my general sense of what is going on.
+I help it helps.
+
+Eric
 
