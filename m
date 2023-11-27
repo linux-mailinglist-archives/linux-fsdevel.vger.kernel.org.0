@@ -1,97 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-3929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDEAF7FA041
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:03:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6D27FA053
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:07:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAB228168A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 13:03:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B67B1C20E0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 13:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989FF2C85F;
-	Mon, 27 Nov 2023 13:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354762D79D;
+	Mon, 27 Nov 2023 13:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31C2F10F;
-	Mon, 27 Nov 2023 05:03:13 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82C4A2F4;
-	Mon, 27 Nov 2023 05:04:00 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B14753F73F;
-	Mon, 27 Nov 2023 05:03:07 -0800 (PST)
-Date: Mon, 27 Nov 2023 13:03:04 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
-	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/27] mm: page_alloc: Allow an arch to hook early
- into free_pages_prepare()
-Message-ID: <ZWSTiCghf8nMFy4G@raptor>
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-7-alexandru.elisei@arm.com>
- <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD1C10F;
+	Mon, 27 Nov 2023 05:07:30 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sf5Tl4wF0z4f3jJ0;
+	Mon, 27 Nov 2023 21:07:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 75CE61A0C58;
+	Mon, 27 Nov 2023 21:07:26 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDX2hCKlGRldTJXCA--.14854S3;
+	Mon, 27 Nov 2023 21:07:25 +0800 (CST)
+Subject: Re: [PATCH block/for-next v2 01/16] block: add a new helper to get
+ inode from block_device
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: ming.lei@redhat.com, axboe@kernel.dk, roger.pau@citrix.com,
+ colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+ dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
+ konishi.ryusuke@gmail.com, dchinner@redhat.com, linux@weissschuh.net,
+ min15.li@samsung.com, dlemoal@kernel.org, willy@infradead.org,
+ akpm@linux-foundation.org, hare@suse.de, p.raghav@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
+ <20231127062116.2355129-2-yukuai1@huaweicloud.com>
+ <ZWRDeQ4K8BiYnV+X@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6acdeece-7163-3219-95e2-827e54eadd0c@huaweicloud.com>
+Date: Mon, 27 Nov 2023 21:07:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
+In-Reply-To: <ZWRDeQ4K8BiYnV+X@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDX2hCKlGRldTJXCA--.14854S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF1fWFWkJw1kuFy8XF43KFg_yoW8KrWDp3
+	y7KFn8tw1DJryFgan7tw1jqrn0g3W7GrWUZ34rZrsxurZ8WFy2qF10krsrXFyIyr48Jw4I
+	qF45AF43Xry2grJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_WFyU
+	JVCq3wCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26rxl6s0DYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUd8n5UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 Hi,
 
-On Fri, Nov 24, 2023 at 08:36:52PM +0100, David Hildenbrand wrote:
-> On 19.11.23 17:57, Alexandru Elisei wrote:
-> > Add arch_free_pages_prepare() hook that is called before that page flags
-> > are cleared. This will be used by arm64 when explicit management of tag
-> > storage pages is enabled.
+ÔÚ 2023/11/27 15:21, Christoph Hellwig Ð´µÀ:
+> On Mon, Nov 27, 2023 at 02:21:01PM +0800, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> block_devcie is allocated from bdev_alloc() by bdev_alloc_inode(), and
+>> currently block_device contains a pointer that point to the address of
+>> inode, while such inode is allocated together:
 > 
-> Can you elaborate a bit what exactly will be done by that code with that
-> information?
+> This is going the wrong way.  Nothing outside of core block layer code
+> should ever directly use the bdev inode.  We've been rather sloppy
+> and added a lot of direct reference to it, but they really need to
+> go away and be replaced with well defined high level operation on
+> struct block_device.  Once that is done we can remove the bd_inode
+> pointer, but replacing it with something that pokes even more deeply
+> into bdev internals is a bad idea.
 
-Of course.
+Thanks for the advice, however, after collecting how other modules are
+using bdev inode, I got two main questions:
 
-The MTE code that is in the kernel today uses the PG_arch_2 page flag, which it
-renames to PG_mte_tagged, to track if a page has been mapped with tagging
-enabled. That flag is cleared by free_pages_prepare() when it does:
+1) Is't okay to add a new helper to pass in bdev for following apis?
+If so, then almost all the fs and driver can avoid to access bd_inode
+dirctly.
 
-	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
+errseq_check(&bdev->bd_inode->i_mapping->wb_err, wb_err);
+errseq_check_and_advance(&bdev->bd_inode->i_mapping->wb_err, &wb_err);
+mapping_gfp_constraint(bdev->bd_inode->i_mapping, gfp);
+i_size_read(bdev->bd_inode)
+find_get_page(bdev->bd_inode->i_mapping, offset);
+find_or_create_page(bdev->bd_inode->i_mapping, index, gfp);
+read_cache_page_gfp(bdev->bd_inode->i_mapping, index, gfp);
+invalidate_inode_pages2(bdev->bd_inode->i_mapping);
+invalidate_inode_pages2_range(bdev->bd_inode->i_mapping, start, end);
+read_mapping_folio(bdev->bd_inode->i_mapping, index, file);
+read_mapping_page(bdev->bd_inode->i_mapping, index, file);
+balance_dirty_pages_ratelimited(bdev->bd_inode->i_mapping)
+file_ra_state_init(ra, bdev->bd_inode->i_mapping);
+page_cache_sync_readahead(bdev->bd_inode->i_mapping, ra, file, index, 
+req_count);
+inode_to_bdi(bdev->bd_inode)
 
-When tag storage management is enabled, tag storage is reserved for a page if
-and only if the page is mapped as tagged. When a page is freed, the code looks
-at the PG_mte_tagged flag to determine if the page was mapped as tagged, and
-therefore has tag storage reserved, to determine if the corresponding tag
-storage should also be freed.
+2) For the file fs/buffer.c, there are some special usage like
+following that I don't think it's good to add a helper:
 
-I have considered using arch_free_page(), but free_pages_prepare() calls the
-function after the flags are cleared.
+spin_lock(&bd_inode->i_mapping->private_lock);
 
-Does that answer your question?
+Is't okay to move following apis from fs/buffer.c directly to
+block/bdev.c?
 
-Alex
+__find_get_block
+bdev_getblk
 
+Thanks,
+Kuai
+
+> .
 > 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+
 
