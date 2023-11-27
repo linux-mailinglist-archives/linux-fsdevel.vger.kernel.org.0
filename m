@@ -1,665 +1,406 @@
-Return-Path: <linux-fsdevel+bounces-3938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88E57FA298
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 15:26:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB9C7FA35F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 15:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08B31C20E34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41435281860
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 14:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200CA31735;
-	Mon, 27 Nov 2023 14:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDDB28DA0;
+	Mon, 27 Nov 2023 14:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H24Jwfo0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCNzVmd7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA4DDDDB;
-	Mon, 27 Nov 2023 14:25:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BACC433C7;
-	Mon, 27 Nov 2023 14:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701095150;
-	bh=xmqcNXFL+UZOd5jzvehCL75gvxD8i43FF4J9jjW5yEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H24Jwfo0/lls7RheDJq4EcB3XCOVerv2qfOyqWX1LFdHchVHm/LEjDN9QD3/Jsn9v
-	 nRkidFF7VJQwQTwdWfbmfHc6m0JNkLATs1g6Aan+oX18MvhUcFGaLK+KvuFK8u/wrn
-	 /ccEl2qc8D4MOwm2V27zY97QcBCY5XnaB0+Y+X0MOiQTs7Lwp0ztGLi5P+p5iJv2+2
-	 julswv+oyb2f4x2Vq3WjGxxOOy8ezGsClI3xQTm/iTbk3XwO3Nl5o1e7bDPG/xvQmJ
-	 JagkSmCK2esDG5KwgKtR0T6/59+t6YWQ0pBC0vcF+RW0ngitR05jsRtM/zFpzgjSWc
-	 QLSUQGohF/l7w==
-Date: Mon, 27 Nov 2023 15:25:45 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keescook@chromium.org,
-	kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH v10 bpf-next 03/17] bpf: introduce BPF token object
-Message-ID: <20231127-ansonsten-brotaufstrich-316b2cbba41b@brauner>
-References: <20231110034838.1295764-1-andrii@kernel.org>
- <20231110034838.1295764-4-andrii@kernel.org>
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548AEAA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Nov 2023 06:48:36 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-67a0d865738so20744476d6.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Nov 2023 06:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701096515; x=1701701315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I0Ul4XVGih6xQ7ke173wyERiwHDHdvgZUzqySV5TO6w=;
+        b=gCNzVmd7O8Uuj88vCPrvr7Qpur09Wo5Xt4qw/5qcETPQmglMcUbtFgr9wq+nTcI1gz
+         D19waR87z88FiwLeW/9wOLZ6EEOICOrah17bkAQQ2DBW+9uaET2IQA7bKKj6eYs6hWF0
+         WByksm/aHFmGMNM+mycHJgiB92b95gBZ3q+nO6l/rujqbSdYpP+nFjjxkVZLZkgJB9BD
+         qiyjUlOZsyrt6F+yjLYBq9yGCtPmfy+qPcBm4H/4VJDYSiaKEnZ5jN7O308EWeyUIAso
+         UvDi90e3K/K5DA94xMHoV2t5V0rP2VOl2LnKHWJyqy3XwOqdHbDDKcEdmUPmf5+cdGQw
+         uI3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701096515; x=1701701315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I0Ul4XVGih6xQ7ke173wyERiwHDHdvgZUzqySV5TO6w=;
+        b=dKhbI7LnDAbWdktQrEsz6Of2SZv/r8v+HIsUoT/0Mpx/kJ9wx36QFb95XfZ2/jKPc9
+         g2ftXwalK3TsKAgr49VDvtN9OdsYQMW1RN+25Y9UgDZkSs3edX3iuyLDRwEUO4DypFt0
+         5APcFF1NpHIG6gLXDNRy+m08u9xP7+WaBQwPtdfB/Ec9c8iCq41+fgQMV+73LRm4Qogt
+         Qz8ZkBcjQwipEmwMNRMVTyH+iBPeprqvFF8YKpI3p2VKPqrH0vCrz4e8bxgcvF9OeTz8
+         v12s8RcSLF2PK2jtEaA5mau/ET20jhcBZ46EaC8XmttlKssqmegp4ErjuacI9YD4rHI0
+         K6WA==
+X-Gm-Message-State: AOJu0Yx9XuUfvVMTEML98NqUAqyo6r0BSVTH13ioRxqKSyUJd3DoHaW5
+	zpVXioXgdSwPS6bGLft9ZdYM1Hyv0LxKx3r43vQxntMwmIg=
+X-Google-Smtp-Source: AGHT+IHBCSQ7JC3j2qWxJutAdPsvw1/lgucd0TVrbFOFRUXgIuQLAeEcUd/2lFLK8LWGTt0Hf4vz9CBPuVhqpc5kk38=
+X-Received: by 2002:ad4:4242:0:b0:67a:5197:dd7e with SMTP id
+ l2-20020ad44242000000b0067a5197dd7emr1353297qvq.11.1701096515301; Mon, 27 Nov
+ 2023 06:48:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231110034838.1295764-4-andrii@kernel.org>
+References: <20230816094702.zztx3dctxvnfeh6o@quack3> <CAOQ4uxhp6o40gZKnyAcjB2vkmNF0WOD9V9p2i+eHXXjSf=YFtQ@mail.gmail.com>
+ <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
+ <20230817182220.vzzklvr7ejqlfnju@quack3> <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
+ <20230823143708.nry64nytwbeijtsq@quack3> <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
+ <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
+ <20231120140605.6yx3jryuylgcphhr@quack3> <CAOQ4uxg_U5v9TuEeagb6ybPobG-jJkP+sFcf+-yYoWr07wswSQ@mail.gmail.com>
+ <20231127-bausatz-hausputz-9dbee07b9637@brauner>
+In-Reply-To: <20231127-bausatz-hausputz-9dbee07b9637@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 27 Nov 2023 16:48:23 +0200
+Message-ID: <CAOQ4uxihZ7fu0cGX4GTF9VrxPXZpMy2NKrpYfWMBDVFjhsyFeg@mail.gmail.com>
+Subject: Re: fanotify HSM open issues
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, Jens Axboe <axboe@kernel.dk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 09, 2023 at 07:48:24PM -0800, Andrii Nakryiko wrote:
-> Add new kind of BPF kernel object, BPF token. BPF token is meant to
-> allow delegating privileged BPF functionality, like loading a BPF
-> program or creating a BPF map, from privileged process to a *trusted*
-> unprivileged process, all while having a good amount of control over which
-> privileged operations could be performed using provided BPF token.
-> 
-> This is achieved through mounting BPF FS instance with extra delegation
-> mount options, which determine what operations are delegatable, and also
-> constraining it to the owning user namespace (as mentioned in the
-> previous patch).
-> 
-> BPF token itself is just a derivative from BPF FS and can be created
-> through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
-> FS FD, which can be attained through open() API by opening BPF FS mount
-> point. Currently, BPF token "inherits" delegated command, map types,
-> prog type, and attach type bit sets from BPF FS as is. In the future,
-> having an BPF token as a separate object with its own FD, we can allow
-> to further restrict BPF token's allowable set of things either at the
-> creation time or after the fact, allowing the process to guard itself
-> further from unintentionally trying to load undesired kind of BPF
-> programs. But for now we keep things simple and just copy bit sets as is.
-> 
-> When BPF token is created from BPF FS mount, we take reference to the
-> BPF super block's owning user namespace, and then use that namespace for
-> checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
-> capabilities that are normally only checked against init userns (using
-> capable()), but now we check them using ns_capable() instead (if BPF
-> token is provided). See bpf_token_capable() for details.
-> 
-> Such setup means that BPF token in itself is not sufficient to grant BPF
-> functionality. User namespaced process has to *also* have necessary
-> combination of capabilities inside that user namespace. So while
-> previously CAP_BPF was useless when granted within user namespace, now
-> it gains a meaning and allows container managers and sys admins to have
-> a flexible control over which processes can and need to use BPF
-> functionality within the user namespace (i.e., container in practice).
-> And BPF FS delegation mount options and derived BPF tokens serve as
-> a per-container "flag" to grant overall ability to use bpf() (plus further
-> restrict on which parts of bpf() syscalls are treated as namespaced).
-> 
-> Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
-> within the BPF FS owning user namespace, rounding up the ns_capable()
-> story of BPF token.
-> 
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->  include/linux/bpf.h            |  41 +++++++
->  include/uapi/linux/bpf.h       |  37 ++++++
->  kernel/bpf/Makefile            |   2 +-
->  kernel/bpf/inode.c             |  17 ++-
->  kernel/bpf/syscall.c           |  17 +++
->  kernel/bpf/token.c             | 200 +++++++++++++++++++++++++++++++++
->  tools/include/uapi/linux/bpf.h |  37 ++++++
->  7 files changed, 341 insertions(+), 10 deletions(-)
->  create mode 100644 kernel/bpf/token.c
-> 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index aeffd71cda3c..fc4b5856bbde 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -51,6 +51,10 @@ struct module;
->  struct bpf_func_state;
->  struct ftrace_ops;
->  struct cgroup;
-> +struct bpf_token;
-> +struct user_namespace;
-> +struct super_block;
-> +struct inode;
->  
->  extern struct idr btf_idr;
->  extern spinlock_t btf_idr_lock;
-> @@ -1574,6 +1578,13 @@ struct bpf_mount_opts {
->  	u64 delegate_attachs;
->  };
->  
-> +struct bpf_token {
-> +	struct work_struct work;
-> +	atomic64_t refcnt;
-> +	struct user_namespace *userns;
-> +	u64 allowed_cmds;
-> +};
-> +
->  struct bpf_struct_ops_value;
->  struct btf_member;
->  
-> @@ -2031,6 +2042,7 @@ static inline void bpf_enable_instrumentation(void)
->  	migrate_enable();
->  }
->  
-> +extern const struct super_operations bpf_super_ops;
->  extern const struct file_operations bpf_map_fops;
->  extern const struct file_operations bpf_prog_fops;
->  extern const struct file_operations bpf_iter_fops;
-> @@ -2165,6 +2177,8 @@ static inline void bpf_map_dec_elem_count(struct bpf_map *map)
->  
->  extern int sysctl_unprivileged_bpf_disabled;
->  
-> +bool bpf_token_capable(const struct bpf_token *token, int cap);
-> +
->  static inline bool bpf_allow_ptr_leaks(void)
->  {
->  	return perfmon_capable();
-> @@ -2199,8 +2213,17 @@ int bpf_link_new_fd(struct bpf_link *link);
->  struct bpf_link *bpf_link_get_from_fd(u32 ufd);
->  struct bpf_link *bpf_link_get_curr_or_next(u32 *id);
->  
-> +void bpf_token_inc(struct bpf_token *token);
-> +void bpf_token_put(struct bpf_token *token);
-> +int bpf_token_create(union bpf_attr *attr);
-> +struct bpf_token *bpf_token_get_from_fd(u32 ufd);
-> +
-> +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd);
-> +
->  int bpf_obj_pin_user(u32 ufd, int path_fd, const char __user *pathname);
->  int bpf_obj_get_user(int path_fd, const char __user *pathname, int flags);
-> +struct inode *bpf_get_inode(struct super_block *sb, const struct inode *dir,
-> +			    umode_t mode);
->  
->  #define BPF_ITER_FUNC_PREFIX "bpf_iter_"
->  #define DEFINE_BPF_ITER_FUNC(target, args...)			\
-> @@ -2563,6 +2586,24 @@ static inline int bpf_obj_get_user(const char __user *pathname, int flags)
->  	return -EOPNOTSUPP;
->  }
->  
-> +static inline bool bpf_token_capable(const struct bpf_token *token, int cap)
-> +{
-> +	return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> +}
-> +
-> +static inline void bpf_token_inc(struct bpf_token *token)
-> +{
-> +}
-> +
-> +static inline void bpf_token_put(struct bpf_token *token)
-> +{
-> +}
-> +
-> +static inline struct bpf_token *bpf_token_get_from_fd(u32 ufd)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
->  static inline void __dev_flush(void)
->  {
->  }
-> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> index 0f6cdf52b1da..9e62ef957c4f 100644
-> --- a/include/uapi/linux/bpf.h
-> +++ b/include/uapi/linux/bpf.h
-> @@ -847,6 +847,36 @@ union bpf_iter_link_info {
->   *		Returns zero on success. On error, -1 is returned and *errno*
->   *		is set appropriately.
->   *
-> + * BPF_TOKEN_CREATE
-> + *	Description
-> + *		Create BPF token with embedded information about what
-> + *		BPF-related functionality it allows:
-> + *		- a set of allowed bpf() syscall commands;
-> + *		- a set of allowed BPF map types to be created with
-> + *		BPF_MAP_CREATE command, if BPF_MAP_CREATE itself is allowed;
-> + *		- a set of allowed BPF program types and BPF program attach
-> + *		types to be loaded with BPF_PROG_LOAD command, if
-> + *		BPF_PROG_LOAD itself is allowed.
-> + *
-> + *		BPF token is created (derived) from an instance of BPF FS,
-> + *		assuming it has necessary delegation mount options specified.
-> + *		This BPF token can be passed as an extra parameter to various
-> + *		bpf() syscall commands to grant BPF subsystem functionality to
-> + *		unprivileged processes.
-> + *
-> + *		When created, BPF token is "associated" with the owning
-> + *		user namespace of BPF FS instance (super block) that it was
-> + *		derived from, and subsequent BPF operations performed with
-> + *		BPF token would be performing capabilities checks (i.e.,
-> + *		CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN) within
-> + *		that user namespace. Without BPF token, such capabilities
-> + *		have to be granted in init user namespace, making bpf()
-> + *		syscall incompatible with user namespace, for the most part.
-> + *
-> + *	Return
-> + *		A new file descriptor (a nonnegative integer), or -1 if an
-> + *		error occurred (in which case, *errno* is set appropriately).
-> + *
->   * NOTES
->   *	eBPF objects (maps and programs) can be shared between processes.
->   *
-> @@ -901,6 +931,8 @@ enum bpf_cmd {
->  	BPF_ITER_CREATE,
->  	BPF_LINK_DETACH,
->  	BPF_PROG_BIND_MAP,
-> +	BPF_TOKEN_CREATE,
-> +	__MAX_BPF_CMD,
->  };
->  
->  enum bpf_map_type {
-> @@ -1709,6 +1741,11 @@ union bpf_attr {
->  		__u32		flags;		/* extra flags */
->  	} prog_bind_map;
->  
-> +	struct { /* struct used by BPF_TOKEN_CREATE command */
-> +		__u32		flags;
-> +		__u32		bpffs_fd;
-> +	} token_create;
-> +
->  } __attribute__((aligned(8)));
->  
->  /* The description below is an attempt at providing documentation to eBPF
-> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> index f526b7573e97..4ce95acfcaa7 100644
-> --- a/kernel/bpf/Makefile
-> +++ b/kernel/bpf/Makefile
-> @@ -6,7 +6,7 @@ cflags-nogcse-$(CONFIG_X86)$(CONFIG_CC_IS_GCC) := -fno-gcse
->  endif
->  CFLAGS_core.o += $(call cc-disable-warning, override-init) $(cflags-nogcse-yy)
->  
-> -obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o log.o
-> +obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o log.o token.o
->  obj-$(CONFIG_BPF_SYSCALL) += bpf_iter.o map_iter.o task_iter.o prog_iter.o link_iter.o
->  obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o percpu_freelist.o bpf_lru_list.o lpm_trie.o map_in_map.o bloom_filter.o
->  obj-$(CONFIG_BPF_SYSCALL) += local_storage.o queue_stack_maps.o ringbuf.o
-> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> index 53313a95fdc6..6ce3f9696e72 100644
-> --- a/kernel/bpf/inode.c
-> +++ b/kernel/bpf/inode.c
-> @@ -99,9 +99,9 @@ static const struct inode_operations bpf_prog_iops = { };
->  static const struct inode_operations bpf_map_iops  = { };
->  static const struct inode_operations bpf_link_iops  = { };
->  
-> -static struct inode *bpf_get_inode(struct super_block *sb,
-> -				   const struct inode *dir,
-> -				   umode_t mode)
-> +struct inode *bpf_get_inode(struct super_block *sb,
-> +			    const struct inode *dir,
-> +			    umode_t mode)
->  {
->  	struct inode *inode;
->  
-> @@ -602,11 +602,13 @@ static int bpf_show_options(struct seq_file *m, struct dentry *root)
->  {
->  	struct bpf_mount_opts *opts = root->d_sb->s_fs_info;
->  	umode_t mode = d_inode(root)->i_mode & S_IALLUGO & ~S_ISVTX;
-> +	u64 mask;
->  
->  	if (mode != S_IRWXUGO)
->  		seq_printf(m, ",mode=%o", mode);
->  
-> -	if (opts->delegate_cmds == ~0ULL)
-> +	mask = (1ULL << __MAX_BPF_CMD) - 1;
-> +	if ((opts->delegate_cmds & mask) == mask)
->  		seq_printf(m, ",delegate_cmds=any");
->  	else if (opts->delegate_cmds)
->  		seq_printf(m, ",delegate_cmds=0x%llx", opts->delegate_cmds);
-> @@ -639,7 +641,7 @@ static void bpf_free_inode(struct inode *inode)
->  	free_inode_nonrcu(inode);
->  }
->  
-> -static const struct super_operations bpf_super_ops = {
-> +const struct super_operations bpf_super_ops = {
->  	.statfs		= simple_statfs,
->  	.drop_inode	= generic_delete_inode,
->  	.show_options	= bpf_show_options,
-> @@ -817,10 +819,7 @@ static int bpf_get_tree(struct fs_context *fc)
->  
->  static void bpf_free_fc(struct fs_context *fc)
->  {
-> -	struct bpf_mount_opts *opts = fc->s_fs_info;
-> -
-> -	if (opts)
-> -		kfree(opts);
-> +	kfree(fc->s_fs_info);
->  }
->  
->  static const struct fs_context_operations bpf_context_ops = {
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index ad4d8e433ccc..a7bf4322f51c 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -5346,6 +5346,20 @@ static int bpf_prog_bind_map(union bpf_attr *attr)
->  	return ret;
->  }
->  
-> +#define BPF_TOKEN_CREATE_LAST_FIELD token_create.bpffs_fd
-> +
-> +static int token_create(union bpf_attr *attr)
-> +{
-> +	if (CHECK_ATTR(BPF_TOKEN_CREATE))
-> +		return -EINVAL;
-> +
-> +	/* no flags are supported yet */
-> +	if (attr->token_create.flags)
-> +		return -EINVAL;
-> +
-> +	return bpf_token_create(attr);
-> +}
-> +
->  static int __sys_bpf(int cmd, bpfptr_t uattr, unsigned int size)
->  {
->  	union bpf_attr attr;
-> @@ -5479,6 +5493,9 @@ static int __sys_bpf(int cmd, bpfptr_t uattr, unsigned int size)
->  	case BPF_PROG_BIND_MAP:
->  		err = bpf_prog_bind_map(&attr);
->  		break;
-> +	case BPF_TOKEN_CREATE:
-> +		err = token_create(&attr);
-> +		break;
->  	default:
->  		err = -EINVAL;
->  		break;
-> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> new file mode 100644
-> index 000000000000..0d5cb87fecf6
-> --- /dev/null
-> +++ b/kernel/bpf/token.c
-> @@ -0,0 +1,200 @@
-> +#include <linux/bpf.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/fdtable.h>
-> +#include <linux/file.h>
-> +#include <linux/fs.h>
-> +#include <linux/kernel.h>
-> +#include <linux/idr.h>
-> +#include <linux/namei.h>
-> +#include <linux/user_namespace.h>
-> +
-> +bool bpf_token_capable(const struct bpf_token *token, int cap)
-> +{
-> +	/* BPF token allows ns_capable() level of capabilities */
-> +	if (token) {
-> +		if (ns_capable(token->userns, cap))
-> +			return true;
-> +		if (cap != CAP_SYS_ADMIN && ns_capable(token->userns, CAP_SYS_ADMIN))
-> +			return true;
-> +	}
-> +	/* otherwise fallback to capable() checks */
-> +	return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
-> +}
-> +
-> +void bpf_token_inc(struct bpf_token *token)
-> +{
-> +	atomic64_inc(&token->refcnt);
-> +}
-> +
-> +static void bpf_token_free(struct bpf_token *token)
-> +{
-> +	put_user_ns(token->userns);
-> +	kvfree(token);
-> +}
-> +
-> +static void bpf_token_put_deferred(struct work_struct *work)
-> +{
-> +	struct bpf_token *token = container_of(work, struct bpf_token, work);
-> +
-> +	bpf_token_free(token);
-> +}
-> +
-> +void bpf_token_put(struct bpf_token *token)
-> +{
-> +	if (!token)
-> +		return;
-> +
-> +	if (!atomic64_dec_and_test(&token->refcnt))
-> +		return;
-> +
-> +	INIT_WORK(&token->work, bpf_token_put_deferred);
-> +	schedule_work(&token->work);
-> +}
-> +
-> +static int bpf_token_release(struct inode *inode, struct file *filp)
-> +{
-> +	struct bpf_token *token = filp->private_data;
-> +
-> +	bpf_token_put(token);
-> +	return 0;
-> +}
-> +
-> +static void bpf_token_show_fdinfo(struct seq_file *m, struct file *filp)
-> +{
-> +	struct bpf_token *token = filp->private_data;
-> +	u64 mask;
-> +
-> +	BUILD_BUG_ON(__MAX_BPF_CMD >= 64);
-> +	mask = (1ULL << __MAX_BPF_CMD) - 1;
-> +	if ((token->allowed_cmds & mask) == mask)
-> +		seq_printf(m, "allowed_cmds:\tany\n");
-> +	else
-> +		seq_printf(m, "allowed_cmds:\t0x%llx\n", token->allowed_cmds);
-> +}
-> +
-> +#define BPF_TOKEN_INODE_NAME "bpf-token"
-> +
-> +static const struct inode_operations bpf_token_iops = { };
-> +
-> +static const struct file_operations bpf_token_fops = {
-> +	.release	= bpf_token_release,
-> +	.show_fdinfo	= bpf_token_show_fdinfo,
-> +};
-> +
-> +int bpf_token_create(union bpf_attr *attr)
-> +{
-> +	struct bpf_mount_opts *mnt_opts;
-> +	struct bpf_token *token = NULL;
-> +	struct user_namespace *userns;
-> +	struct inode *inode;
-> +	struct file *file;
-> +	struct path path;
-> +	struct fd f;
-> +	umode_t mode;
-> +	int err, fd;
-> +
-> +	f = fdget(attr->token_create.bpffs_fd);
-> +	if (!f.file)
-> +		return -EBADF;
-> +
-> +	path = f.file->f_path;
-> +	path_get(&path);
-> +	fdput(f);
-> +
-> +	if (path.mnt->mnt_root != path.dentry) {
-> +		err = -EINVAL;
-> +		goto out_path;
-> +	}
-> +	if (path.mnt->mnt_sb->s_op != &bpf_super_ops) {
-> +		err = -EINVAL;
-> +		goto out_path;
-> +	}
-> +	err = path_permission(&path, MAY_ACCESS);
-> +	if (err)
-> +		goto out_path;
-> +
-> +	userns = path.dentry->d_sb->s_user_ns;
+On Mon, Nov 27, 2023 at 3:56=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Mon, Nov 20, 2023 at 06:59:47PM +0200, Amir Goldstein wrote:
+> > On Mon, Nov 20, 2023 at 4:06=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Hi Amir,
+> > >
+> > > sorry for a bit delayed reply, I did not get to "swapping in" HSM
+> > > discussion during the Plumbers conference :)
+> > >
+> > > On Mon 13-11-23 13:50:03, Amir Goldstein wrote:
+> > > > On Wed, Aug 23, 2023 at 7:31=E2=80=AFPM Amir Goldstein <amir73il@gm=
+ail.com> wrote:
+> > > > > On Wed, Aug 23, 2023 at 5:37=E2=80=AFPM Jan Kara <jack@suse.cz> w=
+rote:
+> > > > > > > Recap for new people joining this thread.
+> > > > > > >
+> > > > > > > The following deadlock is possible in upstream kernel
+> > > > > > > if fanotify permission event handler tries to make
+> > > > > > > modifications to the filesystem it is watching in the context
+> > > > > > > of FAN_ACCESS_PERM handling in some cases:
+> > > > > > >
+> > > > > > > P1                             P2                      P3
+> > > > > > > -----------                    ------------            ------=
+------
+> > > > > > > do_sendfile(fs1.out_fd, fs1.in_fd)
+> > > > > > > -> sb_start_write(fs1.sb)
+> > > > > > >   -> do_splice_direct()                         freeze_super(=
+fs1.sb)
+> > > > > > >     -> rw_verify_area()                         -> sb_wait_wr=
+ite(fs1.sb) ......
+> > > > > > >       -> security_file_permission()
+> > > > > > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
+> > > > > > >                                  -> do_unlinkat(fs1.dfd, ...)
+> > > > > > >                                    -> sb_start_write(fs1.sb) =
+......
+> > > > > > >
+> > > > > > > start-write-safe patches [1] (not posted) are trying to solve=
+ this
+> > > > > > > deadlock and prepare the ground for a new set of permission e=
+vents
+> > > > > > > with cleaner/safer semantics.
+> > > > > > >
+> > > > > > > The cases described above of sendfile from a file in loop mou=
+nted
+> > > > > > > image over fs1 or overlayfs over fs1 into a file in fs1 can s=
+till
+> > > > > > > deadlock despite the start-write-safe patches [1].
+> > > > > >
+> > > > > > Yep, nice summary.
+> > > ...
+> > > > > > > > As I wrote above I don't like the abuse of FMODE_NONOTIFY m=
+uch.
+> > > > > > > > FMODE_NONOTIFY means we shouldn't generate new fanotify eve=
+nts when using
+> > > > > > > > this fd. It says nothing about freeze handling or so. Furth=
+ermore as you
+> > > > > > > > observe FMODE_NONOTIFY cannot be set by userspace but pract=
+ically all
+> > > > > > > > current fanotify users need to also do IO on other files in=
+ order to handle
+> > > > > > > > fanotify event. So ideally we'd have a way to do IO to othe=
+r files in a
+> > > > > > > > manner safe wrt freezing. We could just update handling of =
+RWF_NOWAIT flag
+> > > > > > > > to only trylock freeze protection - that actually makes a l=
+ot of sense to
+> > > > > > > > me. The question is whether this is enough or not.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Maybe, but RWF_NOWAIT doesn't take us far enough, because wri=
+ting
+> > > > > > > to a file is not the only thing that HSM needs to do.
+> > > > > > > Eventually, event handler for lookup permission events should=
+ be
+> > > > > > > able to also create files without blocking on vfs level freez=
+e protection.
+> > > > > >
+> > > > > > So this is what I wanted to clarify. The lookup permission even=
+t never gets
+> > > > > > called under a freeze protection so the deadlock doesn't exist =
+there. In
+> > > > > > principle the problem exists only for access and modify events =
+where we'd
+> > > > > > be filling in file data and thus RWF_NOWAIT could be enough.
+> > > > >
+> > > > > Yes, you are right.
+> > > > > It is possible that RWF_NOWAIT could be enough.
+> > > > >
+> > > > > But the discovery of the loop/ovl corner cases has shaken my
+> > > > > confidence is the ability to guarantee that freeze protection is =
+not
+> > > > > held somehow indirectly.
+> > > > >
+> > > > > If I am not mistaken, FAN_OPEN_PERM suffers from the exact
+> > > > > same ovl corner case, because with splice from ovl1 to fs1,
+> > > > > fs1 freeze protection is held and:
+> > > > >   ovl_splice_read(ovl1.file)
+> > > > >     ovl_real_fdget()
+> > > > >       ovl_open_realfile(fs1.file)
+> > > > >          ... security_file_open(fs1.file)
+> > > > >
+> > > > > > That being
+> > > > > > said I understand this may be assuming too much about the imple=
+mentations
+> > > > > > of HSM daemons and as you write, we might want to provide a way=
+ to do IO
+> > > > > > not blocking on freeze protection from any hook. But I wanted t=
+o point this
+> > > > > > out explicitly so that it's a conscious decision.
+> > > > > >
+> > > >
+> > > > I agree and I'd like to explain using an example, why RWF_NOWAIT is
+> > > > not enough for HSM needs.
+> > > >
+> > > > The reason is that often, when HSM needs to handle filling content
+> > > > in FAN_PRE_ACCESS, it is not just about writing to the accessed fil=
+e.
+> > > > HSM needs to be able to avoid blocking on freeze protection
+> > > > for any operations on the filesystem, not just pwrite().
+> > > >
+> > > > For example, the POC HSM code [1], stores the DATA_DIR_fd
+> > > > from the lookup event and uses it in the handling of access events =
+to
+> > > > update the metadata files that store which parts of the file were a=
+lready
+> > > > filled (relying of fiemap is not always a valid option).
+> > > >
+> > > > That is the reason that in the POC patches [2], FMODE_NONOTIFY
+> > > > is propagated from dirfd to an fd opened with openat(dirfd, ...), s=
+o
+> > > > HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
+> > > >
+> > > > Another use case is that HSM may want to download content to a
+> > > > temp file on the same filesystem, verify the downloaded content and
+> > > > then clone the data into the accessed file range.
+> > > >
+> > > > I think that a PF_ flag (see below) would work best for all those c=
+ases.
+> > >
+> > > Ok, I agree that just using RWF_NOWAIT from the HSM daemon need not b=
+e
+> > > enough for all sensible usecases to avoid deadlocks with freezing. Ho=
+wever
+> > > note that if we want to really properly handle all possible operation=
+s, we
+> > > need to start handling error from all sb_start_write() and
+> > > file_start_write() calls and there are quite a few of those.
+> > >
+> >
+> > Darn, forgot about those.
+> > I am starting to reconsider adding a freeze level.
+> > I cannot shake the feeling that there is a simpler solution that escape=
+s us...
+> > Maybe fs anti-freeze (see blow).
+> >
+> > > > > > > In theory, I am not saying we should do it, but as a thought =
+experiment:
+> > > > > > > if the requirement from permission event handler is that is m=
+ust use a
+> > > > > > > O_PATH | FMODE_NONOTIFY event->fd provided in the event to ma=
+ke
+> > > > > > > any filesystem modifications, then instead of aiming for NOWA=
+IT
+> > > > > > > semantics using sb_start_write_trylock(), we could use a free=
+ze level
+> > > > > > > SB_FREEZE_FSNOTIFY between
+> > > > > > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
+> > > > > > >
+> > > > > > > As a matter of fact, HSM is kind of a "VFS FAULT", so as long=
+ as we
+> > > > > > > make it clear how userspace should avoid nesting "VFS faults"=
+ there is
+> > > > > > > a model that can solve the deadlock correctly.
+> > > > > >
+> > > > > > OK, yes, in principle another freeze level which could be used =
+by handlers
+> > > > > > of fanotify permission events would solve the deadlock as well.=
+ Just you
+> > > > > > seem to like to tie this functionality to the particular fd ret=
+urned from
+> > > > > > fanotify and I'm not convinced that is a good idea. What if the=
+ application
+> > > > > > needs to do write to some other location besides the one fd it =
+got passed
+> > > > > > from fanotify event? E.g. imagine it wants to fetch a whole sub=
+tree on
+> > > > > > first access to any file in a subtree. Or maybe it wants to wri=
+te to some
+> > > > > > DB file containing current state or something like that.
+> > > > > >
+> > > > > > One solution I can imagine is to create an open flag that can b=
+e specified
+> > > > > > on open which would result in the special behavior wrt fs freez=
+ing. If the
+> > > > > > special behavior would be just trylocking the freeze protection=
+ then it
+> > > > > > would be really easy. If the behaviour would be another freeze =
+protection
+> > > > > > level, then we'd need to make sure we don't generate another fa=
+notify
+> > > > > > permission event with such fd - autorejecting any such access i=
+s an obvious
+> > > > > > solution but I'm not sure if practical for applications.
+> > > > > >
+> > > > >
+> > > > > I had also considered marking the listener process with the FSNOT=
+IFY
+> > > > > context and enforcing this context on fanotify_read().
+> > > > > In a way, this is similar to the NOIO and NOFS process context.
+> > > > > It could be used to both act as a stronger form of FMODE_NONOTIFY
+> > > > > and to activate the desired freeze protection behavior
+> > > > > (whether trylock or SB_FREEZE_FSNOTIFY level).
+> > > > >
+> > > >
+> > > > My feeling is that the best approach would be a PF_NOWAIT task flag=
+:
+> > > >
+> > > > - PF_NOWAIT will prevent blocking on freeze protection
+> > > > - PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
+> > > > - PF_NOWAIT could be auto-set on the reader of a permission event
+> > > > - PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
+> > > > - We could add user API to set this personality explicitly to any t=
+ask
+> > > > - PF_NOWAIT without FMODE_NONOTIFY denies permission events
+> > > >
+> > > > Please let me know if you agree with this design and if so,
+> > > > which of the methods to set PF_NOWAIT are a must for the first vers=
+ion
+> > > > in your opinion?
+> > >
+> > > Yeah, the PF flag could work. It can be set for the process(es) respo=
+nsible
+> > > for processing the fanotify events and filling in filesystem contents=
+. I
+> > > don't think automatic setting of this flag is desirable though as it =
+has
+> > > quite wide impact and some of the consequences could be surprising.  =
+I
+> > > rather think it should be a conscious decision when setting up the pr=
+ocess
+> > > processing the events. So I think API to explicitly set / clear the f=
+lag
+> > > would be the best. Also I think it would be better to capture in the =
+name
+> > > that this is really about fs freezing. So maybe PF_NOWAIT_FREEZE or
+> > > something like that?
+> > >
+> >
+> > Sure.
+> >
+> > > Also we were thinking about having an open(2) flag for this (instead =
+of PF
+> > > flag) in the past. That would allow finer granularity control of the
+> > > behavior but I guess you are worried that it would not cover all the =
+needed
+> > > operations?
+> > >
+> >
+> > Yeh, it seems like an API that is going to be harder to write safe HSM
+> > programs with.
+> >
+> > > > Do you think we should use this method to fix the existing deadlock=
+s
+> > > > with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
+> > >
+> > > No, I think if someone cares about these, they should explicitly set =
+the
+> > > PF flag in their task processing the events.
+> > >
+> >
+> > OK.
+> >
+> > I see an exit hatch in this statement -
+> > If we are going leave the responsibility to avoid deadlock in corner
+> > cases completely in the hands of the application, then I do not feel
+> > morally obligated to create the PF_NOWAIT_FREEZE API *before*
+> > providing the first HSM API.
+> >
+> > If the HSM application is running in a controlled system, on a filesyst=
+em
+> > where fsfreeze is not expected or not needed, then a fully functional a=
+nd
+> > safe HSM does not require PF_NOWAIT_FREEZE API.
+> >
+> > Perhaps an API to make an fs unfreezable is just as practical and a muc=
+h
+> > easier option for the first version of HSM API?
+> >
+> > Imagine that HSM opens an fd and sends an EXCLUSIVE_FSFREEZER
+> > ioctl. Then no other task can freeze the fs, for as long as the fd is o=
+pen
+> > apart from the HSM itself using this fd.
+>
+> This would mean you also prevent FREEZE_HOLDER_KERNEL requests which xfs
+> uses for filesystem scrubbing iirc. I would reckon that you also run
+> into problems with device mapper workloads where freeze/thaw requests
+> from the block layer and into the filesystem layer are quite common.
 
-I would add one more restriction in here:
+I agree. These cases will not play nicely with EXCLUSIVE_FSFREEZER.
+The only case where the EXCLUSIVE_FSFREEZER API makes sense
+is when the admin does not expect to meet any fsfreeze on the target fs and
+wants to enforce that.
 
-@@ -136,6 +136,16 @@ int bpf_token_create(union bpf_attr *attr)
-                goto out_path;
+>
+> Have you given any thought to the idea - similar to a FUSE daemon - that
+> you could register with a given filesystem as an HSM? Maybe integration
+> like this is really undesirable for some reason but that may be an
+> alternative.
 
-        userns = path.dentry->d_sb->s_user_ns;
-+
-+       /*
-+        * Enforce that creators of bpf tokens are in the same user
-+        * namespace as the bpffs instance. This makes reasoning about
-+        * permissions a lot easier and we can always relax this later.
-+        */
-+       if (current_user_ns() != userns) {
-+               err = -EINVAL;
-+               goto out_path;
-+       }
-        if (!ns_capable(userns, CAP_BPF)) {
-                err = -EPERM;
-                goto out_path;
+I am not sure what you mean by "register with a given filesystem"?
+The comparison to FUSE daemon buffels me.  The main point with fanotify
+HSM was for the user to be able to work natively on the target filesystem
+without any "passthrough".
 
-> +	if (!ns_capable(userns, CAP_BPF)) {
-> +		err = -EPERM;
-> +		goto out_path;
-> +	}
-> +
-> +	mode = S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask());
-> +	inode = bpf_get_inode(path.mnt->mnt_sb, NULL, mode);
-> +	if (IS_ERR(inode)) {
-> +		err = PTR_ERR(inode);
-> +		goto out_path;
-> +	}
-> +
-> +	inode->i_op = &bpf_token_iops;
-> +	inode->i_fop = &bpf_token_fops;
-> +	clear_nlink(inode); /* make sure it is unlinked */
-> +
-> +	file = alloc_file_pseudo(inode, path.mnt, BPF_TOKEN_INODE_NAME, O_RDWR, &bpf_token_fops);
-> +	if (IS_ERR(file)) {
-> +		iput(inode);
-> +		err = PTR_ERR(file);
-> +		goto out_path;
-> +	}
-> +
-> +	token = kvzalloc(sizeof(*token), GFP_USER);
-> +	if (!token) {
-> +		err = -ENOMEM;
-> +		goto out_file;
-> +	}
-> +
-> +	atomic64_set(&token->refcnt, 1);
-> +
-> +	/* remember bpffs owning userns for future ns_capable() checks */
-> +	token->userns = get_user_ns(userns);
+FUSE passthrough is a valid way to implement HSM.
+Many HSM already use FUSE and many HSM will continue to use FUSE.
+Improving FUSE passthough performance (e.g. FUSE BPF) is another
+way to improve HSM.
 
-Now that you made the changes I suggested in an earlier review such that
-a bpf token thingy is a bpffs fd and not an anonymous inode fd, it
-carries the user namespace with it so this is really not necessary. I
-would've just used the file and passed that to bpf_token_capable() and
-then also passed that file to the security hooks. But this way is fine
-too I guess.
+Compared to fanotify HSM, FUSE passthrough is more versalite, but it
+is also more resource expensive and some native fs features (e.g. ioctls)
+will never work properly with FUSE passthrough.
 
-> +
-> +	mnt_opts = path.dentry->d_sb->s_fs_info;
-> +	token->allowed_cmds = mnt_opts->delegate_cmds;
-> +
-> +	fd = get_unused_fd_flags(O_CLOEXEC);
-> +	if (fd < 0) {
-> +		err = fd;
-> +		goto out_token;
-> +	}
-> +
-> +	file->private_data = token;
-> +	fd_install(fd, file);
-> +
-> +	path_put(&path);
-> +	return fd;
-> +
-> +out_token:
-> +	bpf_token_free(token);
-> +out_file:
-> +	fput(file);
-> +out_path:
-> +	path_put(&path);
-> +	return err;
-> +}
-> +
-> +struct bpf_token *bpf_token_get_from_fd(u32 ufd)
-> +{
-> +	struct fd f = fdget(ufd);
-> +	struct bpf_token *token;
-> +
-> +	if (!f.file)
-> +		return ERR_PTR(-EBADF);
-> +	if (f.file->f_op != &bpf_token_fops) {
-> +		fdput(f);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	token = f.file->private_data;
-> +	bpf_token_inc(token);
-> +	fdput(f);
-> +
-> +	return token;
-> +}
-> +
-> +bool bpf_token_allow_cmd(const struct bpf_token *token, enum bpf_cmd cmd)
-> +{
-> +	if (!token)
-> +		return false;
-> +
-> +	return token->allowed_cmds & (1ULL << cmd);
-> +}
-> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-> index 0f6cdf52b1da..9e62ef957c4f 100644
-> --- a/tools/include/uapi/linux/bpf.h
-> +++ b/tools/include/uapi/linux/bpf.h
-> @@ -847,6 +847,36 @@ union bpf_iter_link_info {
->   *		Returns zero on success. On error, -1 is returned and *errno*
->   *		is set appropriately.
->   *
-> + * BPF_TOKEN_CREATE
-> + *	Description
-> + *		Create BPF token with embedded information about what
-> + *		BPF-related functionality it allows:
-> + *		- a set of allowed bpf() syscall commands;
-> + *		- a set of allowed BPF map types to be created with
-> + *		BPF_MAP_CREATE command, if BPF_MAP_CREATE itself is allowed;
-> + *		- a set of allowed BPF program types and BPF program attach
-> + *		types to be loaded with BPF_PROG_LOAD command, if
-> + *		BPF_PROG_LOAD itself is allowed.
-> + *
-> + *		BPF token is created (derived) from an instance of BPF FS,
-> + *		assuming it has necessary delegation mount options specified.
-> + *		This BPF token can be passed as an extra parameter to various
-> + *		bpf() syscall commands to grant BPF subsystem functionality to
-> + *		unprivileged processes.
-> + *
-> + *		When created, BPF token is "associated" with the owning
-> + *		user namespace of BPF FS instance (super block) that it was
-> + *		derived from, and subsequent BPF operations performed with
-> + *		BPF token would be performing capabilities checks (i.e.,
-> + *		CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN) within
-> + *		that user namespace. Without BPF token, such capabilities
-> + *		have to be granted in init user namespace, making bpf()
-> + *		syscall incompatible with user namespace, for the most part.
-> + *
-> + *	Return
-> + *		A new file descriptor (a nonnegative integer), or -1 if an
-> + *		error occurred (in which case, *errno* is set appropriately).
-> + *
->   * NOTES
->   *	eBPF objects (maps and programs) can be shared between processes.
->   *
-> @@ -901,6 +931,8 @@ enum bpf_cmd {
->  	BPF_ITER_CREATE,
->  	BPF_LINK_DETACH,
->  	BPF_PROG_BIND_MAP,
-> +	BPF_TOKEN_CREATE,
-> +	__MAX_BPF_CMD,
->  };
->  
->  enum bpf_map_type {
-> @@ -1709,6 +1741,11 @@ union bpf_attr {
->  		__u32		flags;		/* extra flags */
->  	} prog_bind_map;
->  
-> +	struct { /* struct used by BPF_TOKEN_CREATE command */
-> +		__u32		flags;
-> +		__u32		bpffs_fd;
-> +	} token_create;
-> +
->  } __attribute__((aligned(8)));
->  
->  /* The description below is an attempt at providing documentation to eBPF
-> -- 
-> 2.34.1
-> 
+Not sure if that answers your question?
+
+Thanks,
+Amir.
 
