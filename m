@@ -1,190 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-3957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1276D7FA613
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 17:18:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBAE7FA616
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 17:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EC31C20E83
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 16:18:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C92B21400
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 16:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A1036AE6;
-	Mon, 27 Nov 2023 16:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1A2364C7;
+	Mon, 27 Nov 2023 16:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RDetjsoN"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="t//eltwI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CF4CE;
-	Mon, 27 Nov 2023 08:18:14 -0800 (PST)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ARGAmYN028142;
-	Mon, 27 Nov 2023 16:17:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Nuqo+n/8UjwMTVEGeTCKZXosXYxmJFELkiNy1EQyEtU=;
- b=RDetjsoNSqPUBKvTXa+yBZv9cgM4/tRINJ+ZyFlcz1qb0NPkwaJ9GrMBibq2hn3f/5CW
- ND1Z7IaAgMUmx8uAabK1Nl5ilpXMpDVf5OETx+5lnUl5qjNiC64q4PtX+8SqtYwOBCmV
- cCdB5Av3LEQ8B9AclxR0DdyVukfpIFH1S5BSEVkhag7d6PmJLZ/11f75vPfjUtjUQPYI
- jOo6tGPT4DyW3BR3TU2aC4jIDdJImhwHQ23EQAgB/MazLxGxSnFqR3kagn1nPRlsiNCG
- WCPnPGg83TnSm3tABpWGa1/oTgd04gU/8Zbwm9/NU76VRx9DKmCqXe7D4H0BVmUgqgtH kg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3umxd509yt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Nov 2023 16:17:19 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3ARGCcKr005148;
-	Mon, 27 Nov 2023 16:17:18 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3umxd509xr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Nov 2023 16:17:18 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AREJqSO025580;
-	Mon, 27 Nov 2023 16:17:17 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ukvrk9n1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 27 Nov 2023 16:17:17 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ARGHGcJ22413978
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 27 Nov 2023 16:17:16 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15FA45805A;
-	Mon, 27 Nov 2023 16:17:16 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A9CF5803F;
-	Mon, 27 Nov 2023 16:17:11 +0000 (GMT)
-Received: from li-479af74c-31f9-11b2-a85c-e4ddee11713b.ibm.com (unknown [9.61.23.212])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 27 Nov 2023 16:17:11 +0000 (GMT)
-Message-ID: <403a25d73a752da129affe0092e5b85a179f827b.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/4] eventfd: simplify eventfd_signal()
-From: Eric Farman <farman@linux.ibm.com>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        Vitaly
- Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org,
-        David Woodhouse
- <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>,
-        Oded Gabbay
- <ogabbay@kernel.org>, Wu Hao <hao.wu@intel.com>,
-        Tom Rix <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>,
-        Xu Yilun <yilun.xu@intel.com>, Zhenyu
- Wang <zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Jani
- Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Leon Romanovsky
- <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Frederic Barrat
- <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>, Arnd
- Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter
- <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        Jason Herne
- <jjherne@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Diana Craciun
- <diana.craciun@oss.nxp.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>, Fei Li <fei1.li@intel.com>,
-        Benjamin
- LaHaise <bcrl@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal
- Hocko <mhocko@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        Kirti Wankhede <kwankhede@nvidia.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fpga@vger.kernel.org, intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-usb@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-aio@kvack.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov
- <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Date: Mon, 27 Nov 2023 11:17:10 -0500
-In-Reply-To: <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
-References: <20231122-vfs-eventfd-signal-v2-0-bd549b14ce0c@kernel.org>
-	 <20231122-vfs-eventfd-signal-v2-2-bd549b14ce0c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72259EA
+	for <linux-fsdevel@vger.kernel.org>; Mon, 27 Nov 2023 08:19:48 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-db4050e68f3so4083354276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Nov 2023 08:19:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1701101987; x=1701706787; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kwZ0Ti+Lc1rloQrH2BoZMnYd6KfEMAUA/GS0pz2k0H8=;
+        b=t//eltwIZeTV1Q0oUYMD4ER6mqN8wP8Rh7ECPL7KtKiV+Tev+Bg955FEOCAspuz0xQ
+         sbo+rCq0/o8ySYOT5MQbKupaPSJft6cIugQ+gZCGgXUoAYCR4Utb91xyUkFv6o8j3sKZ
+         UCsQiHj5sHbdCG/z7Mnq89PjwAs0LQZPocbAliH1ycQMcMcVG3hal5J3EhPcEBnJyBMW
+         ZEWVwgopALFl3NrqRXfgUKOlzvSn3uCD/13Z0/tn7R7bNdeGE4qAo1griiY7M0QhZqAV
+         QoVmoOjahd3xhUXcV9MqgiIv/VwVWxPn6/per3bCZSOKdVyT3e2l35uSUi4ZFJ+VADIe
+         5kkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701101987; x=1701706787;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kwZ0Ti+Lc1rloQrH2BoZMnYd6KfEMAUA/GS0pz2k0H8=;
+        b=apwsZ6nF8n6N/mL1AdahyPsrZFfzBZ8AWRJCVVqEMtZyXd8HxlK6Jbkmm+uKNph3b8
+         D33rk1SmDV7u13GIeHWxvEH9P3QwQWQGof1TscPdah/4cgn0Oqk9guI116qsD/65oT2i
+         JsatGCk28V37xhBUQrFOWlr/mjRwGjqoq+QvlaQBlTItx85SJmQG0rfcCvtc+7mLwxiZ
+         Drg4GxeqBkZAOc2xgXVawKrByIpJct4nzgugMndjY8bpKpiQgfpBAyNvp/xO4Q/e59Av
+         Gaukcp21WzWZfUhmvO82hCkrt0QHk7NGU4cPMOQ7K7EmeJ2qSe2MWbsKXmLNjPAPB0Z5
+         Fe+Q==
+X-Gm-Message-State: AOJu0YyfEjMS0cdEPAwuLnypN5qR/LIlPgIFdsI0kPQpvxXXFAqq8JnC
+	CKrA4hmPhPTVfor/c1f1+EBLMg==
+X-Google-Smtp-Source: AGHT+IGJFdfzSN5YB7+Uyuw1BE3DNlZyzo3XPIoFN5qIppeRZKRCBYzf5BgGcuGWHArdbpf4DpqVrg==
+X-Received: by 2002:a25:4d41:0:b0:db0:366a:73ab with SMTP id a62-20020a254d41000000b00db0366a73abmr8099886ybb.57.1701101987603;
+        Mon, 27 Nov 2023 08:19:47 -0800 (PST)
+Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id e131-20020a25e789000000b00d815cb9accbsm3136525ybh.32.2023.11.27.08.19.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Nov 2023 08:19:47 -0800 (PST)
+Date: Mon, 27 Nov 2023 11:19:46 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Should we still go __GFP_NOFAIL? (Was Re: [PATCH] btrfs:
+ refactor alloc_extent_buffer() to allocate-then-attach method)
+Message-ID: <20231127161946.GD2366036@perftesting>
+References: <ffeb6b667a9ff0cf161f7dcd82899114782c0834.1700609426.git.wqu@suse.com>
+ <20231122143815.GD11264@twin.jikos.cz>
+ <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
+ <793cd840-49cb-4458-9137-30f899100870@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XoaaD6-mJ7FXgBebGO5fJDYPNfCOc-S6
-X-Proofpoint-GUID: dFRt_wiBkITiSbtkagN5iZ6G9Z4ZE_Ku
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-27_14,2023-11-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
- mlxlogscore=786 impostorscore=0 spamscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311060000 definitions=main-2311270111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <793cd840-49cb-4458-9137-30f899100870@gmx.com>
 
-T24gV2VkLCAyMDIzLTExLTIyIGF0IDEzOjQ4ICswMTAwLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90
-ZToKPiBFdmVyIHNpbmNlIHRoZSBldmVuZmQgdHlwZSB3YXMgaW50cm9kdWNlZCBiYWNrIGluIDIw
-MDcgaW4gY29tbWl0CgpzL2V2ZW5mZC9ldmVudGZkLwoKPiBlMWFkNzQ2OGM3N2QgKCJzaWduYWwv
-dGltZXIvZXZlbnQ6IGV2ZW50ZmQgY29yZSIpIHRoZQo+IGV2ZW50ZmRfc2lnbmFsKCkKPiBmdW5j
-dGlvbiBvbmx5IGV2ZXIgcGFzc2VkIDEgYXMgYSB2YWx1ZSBmb3IgQG4uIFRoZXJlJ3Mgbm8gcG9p
-bnQgaW4KPiBrZWVwaW5nIHRoYXQgYWRkaXRpb25hbCBhcmd1bWVudC4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBDaHJpc3RpYW4gQnJhdW5lciA8YnJhdW5lckBrZXJuZWwub3JnPgo+IC0tLQo+IMKgYXJj
-aC94ODYva3ZtL2h5cGVydi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCB8wqAgMiArLQo+IMKgYXJjaC94ODYva3ZtL3hlbi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArLQo+IMKgZHJpdmVycy9hY2NlbC9oYWJhbmFs
-YWJzL2NvbW1vbi9kZXZpY2UuY8KgIHzCoCAyICstCj4gwqBkcml2ZXJzL2ZwZ2EvZGZsLmPCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyICstCj4gwqBk
-cml2ZXJzL2dwdS9kcm0vZHJtX3N5bmNvYmouY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAg
-NiArKystLS0KPiDCoGRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9pbnRlcnJ1cHQuY8KgwqDCoMKg
-wqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvaW5maW5pYmFuZC9ody9tbHg1L2RldnguY8KgwqDCoMKg
-wqDCoMKgwqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvbWlzYy9vY3hsL2ZpbGUuY8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDIgKy0KPiDCoGRyaXZlcnMvczM5MC9jaW8vdmZp
-b19jY3dfY2hwLmPCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArLQo+IMKgZHJpdmVycy9zMzkw
-L2Npby92ZmlvX2Njd19kcnYuY8KgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCA0ICsrLS0KPiDCoGRy
-aXZlcnMvczM5MC9jaW8vdmZpb19jY3dfb3BzLmPCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgNiAr
-KystLS0KPiDCoGRyaXZlcnMvczM5MC9jcnlwdG8vdmZpb19hcF9vcHMuY8KgwqDCoMKgwqDCoMKg
-wqAgfMKgIDIgKy0KCkFja2VkLWJ5OiBFcmljIEZhcm1hbiA8ZmFybWFuQGxpbnV4LmlibS5jb20+
-ICAjIHMzOTAKCg==
+On Mon, Nov 27, 2023 at 03:40:41PM +1030, Qu Wenruo wrote:
+> On 2023/11/23 06:33, Qu Wenruo wrote:
+> [...]
+> > > I wonder if we still can keep the __GFP_NOFAIL for the fallback
+> > > allocation, it's there right now and seems to work on sysmtems under
+> > > stress and does not cause random failures due to ENOMEM.
+> > > 
+> > Oh, I forgot the __NOFAIL gfp flags, that's not hard to fix, just
+> > re-introduce the gfp flags to btrfs_alloc_page_array().
+> 
+> BTW, I think it's a good time to start a new discussion on whether we
+> should go __GFP_NOFAIL.
+> (Although I have updated the patch to keep the GFP_NOFAIL behavior)
+> 
+> I totally understand that we need some memory for tree block during
+> transaction commitment and other critical sections.
+> 
+> And it's not that uncommon to see __GFP_NOFAIL usage in other mainstream
+> filesystems.
+> 
+> But my concern is, we also have a lot of memory allocation which can
+> lead to a lot of problems either, like btrfs_csum_one_bio() or even
+> join_transaction().
+> 
+> I doubt if btrfs (or any other filesystems) would be to blamed if we're
+> really running out of memory.
+> Should the memory hungry user space programs to be firstly killed far
+> before we failed to allocate memory?
+> 
+> 
+> Furthermore, at least for btrfs, I don't think we would hit a situation
+> where memory allocation failure for metadata would lead to any data
+> corruption.
+> The worst case is we hit transaction abort, and the fs flips RO.
+> 
+> Thus I'm wondering if we really need __NOFAIL for btrfs?
 
+It's my preference that we don't use GFP_NOFAIL at all, anywhere.  We don't
+really have this option for some things, mostly lock_extent/unlock_extent, but
+for extent buffers we check for errors here and generally can safely handle
+ENOMEM in these cases.  I would prefer to drop it.  Thanks,
+
+Josef
 
