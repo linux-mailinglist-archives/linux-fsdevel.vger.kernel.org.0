@@ -1,226 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-3966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1417FA883
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 19:01:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FA07FA88D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 19:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5A1328186C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:01:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C8A9B20EE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 18:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C40D3C467;
-	Mon, 27 Nov 2023 18:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE85D3C46F;
+	Mon, 27 Nov 2023 18:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul4K9Hg/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mW9c8qb3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE2F3BB36;
-	Mon, 27 Nov 2023 18:01:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF0DC433C7;
-	Mon, 27 Nov 2023 18:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38EB31A69;
+	Mon, 27 Nov 2023 18:05:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6991AC433CC;
+	Mon, 27 Nov 2023 18:05:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701108083;
-	bh=Ctz2/d8fKRCj3eHDttwdg2nfR3buzb2KJwcp2lA0lBU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ul4K9Hg/bVzcrzbZ2AsrPwCEGW8K6+dumYyBXoP4AvyoIZwc3cLerYqpaR8F1FbXz
-	 tumsWkfgwMVR+9dX31+U5LckZTLkhGbMLRKsEAA6zIOMJfs3+2U9x29oHEl+CUUtCL
-	 +kTSPuih54Nl8IBrNoNmgOYL0TASzMSZx/55I6idiLeV3BMiguZnutSRrGLRUC8Rw1
-	 KaUANBSZAb8QM0/rOGoq3jXutCrMxGndXtubHs6JoOFoYVlaZnLxoBML5/gGjlIVp8
-	 KBTbYz+C6znLEW9fWgHP4bPWl7K53NFHLzcGOmAlgvCHT9dZdKnhmVfLJnWW3BGasa
-	 gxs48H8FgkjIA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1r7fv7-00GsvN-5x;
-	Mon, 27 Nov 2023 18:01:21 +0000
-Date: Mon, 27 Nov 2023 18:01:18 +0000
-Message-ID: <86bkbfcbyp.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	will@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 06/25] KVM: arm64: Save/restore POE registers
-In-Reply-To: <20231124163510.1835740-7-joey.gouly@arm.com>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
-	<20231124163510.1835740-7-joey.gouly@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1701108338;
+	bh=I4cr8al69u7n26e5t0ihNqRDMaXoR9QOTRsmk3jV9IU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mW9c8qb3M96C+SClh5vbdVXSjhefINoZAlnSGvW/oR1sCYEXBo3K5yo0FQRd4Ymbb
+	 vgd2B7WjhIhd0jwD0SZw81sKVTwceUU8RmoYpcz6vIGhljSIWlpeu9WNJwgDg0/zFT
+	 zsjMrjPzCyv/x74SC7THxJMjWUzPPwQWcbs/Y38Ivd0Uv/GlzpVcDfv1cbx7nB+PRS
+	 9pX9TW8WwQawlOR1VI0pIO4XELm2hUuBYDYXByKUTtgQJrzkMFkyOYZpjQnR+uCZuU
+	 +8l07z/Nmhu2MiMvL8Fm6XZ4WW28fZWUOAl30mH/h5XJIM1BVrU3qOPq9sYn/BWpyX
+	 FS3WkvQqlKblw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-507962561adso6916028e87.0;
+        Mon, 27 Nov 2023 10:05:38 -0800 (PST)
+X-Gm-Message-State: AOJu0YzeD5VkM1CgLved8IBqtxrtlFALOHOD6+Fxhd2GgTPma/HeFVbC
+	ezSCYfQG4Kn7Vx7BrZjM/SKYwNv0S1xR7kSjXcU=
+X-Google-Smtp-Source: AGHT+IHpHOF2tpOxGvEefqG/FN+XyP9DjAVhFdfuv0rXg8CrbMLAIQH8UXDvKsyQARU0dWJeMkCrlAFX4y2yL/MA+Pc=
+X-Received: by 2002:a05:6512:32a7:b0:507:a5e2:7c57 with SMTP id
+ q7-20020a05651232a700b00507a5e27c57mr8184056lfe.18.1701108336477; Mon, 27 Nov
+ 2023 10:05:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com, broonie@kernel.org, catalin.marinas@arm.com, dave.hansen@linux.intel.com, oliver.upton@linux.dev, shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
+ <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner> <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+ <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner>
+In-Reply-To: <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner>
+From: Song Liu <song@kernel.org>
+Date: Mon, 27 Nov 2023 10:05:23 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
+Message-ID: <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
+Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
+To: Christian Brauner <brauner@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	fsverity@lists.linux.dev, ebiggers@kernel.org, andrii@kernel.org, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, casey@schaufler-ca.com, 
+	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 24 Nov 2023 16:34:51 +0000,
-Joey Gouly <joey.gouly@arm.com> wrote:
-> 
-> Define the new system registers that POE introduces and context switch them.
+Hi Christian,
 
-I would really like to see a discussion on the respective lifetimes of
-these two registers (see below).
+Thanks again for your comments.
 
+On Mon, Nov 27, 2023 at 2:50=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_arm.h           |  4 ++--
->  arch/arm64/include/asm/kvm_host.h          |  4 ++++
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 10 ++++++++++
->  arch/arm64/kvm/sys_regs.c                  |  2 ++
->  4 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index b85f46a73e21..597470e0b87b 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -346,14 +346,14 @@
->   */
->  #define __HFGRTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51))
->  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
-> -#define __HFGRTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
-> +#define __HFGRTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
->  
->  #define __HFGWTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51) |	\
->  				 BIT(46) | BIT(42) | BIT(40) | BIT(28) | \
->  				 GENMASK(26, 25) | BIT(21) | BIT(18) |	\
->  				 GENMASK(15, 14) | GENMASK(10, 9) | BIT(2))
->  #define __HFGWTR_EL2_MASK	GENMASK(49, 0)
-> -#define __HFGWTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
-> +#define __HFGWTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
->  
->  #define __HFGITR_EL2_RES0	GENMASK(63, 57)
->  #define __HFGITR_EL2_MASK	GENMASK(54, 0)
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 824f29f04916..fa9ebd8fce40 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -401,6 +401,10 @@ enum vcpu_sysreg {
->  	PIR_EL1,       /* Permission Indirection Register 1 (EL1) */
->  	PIRE0_EL1,     /*  Permission Indirection Register 0 (EL1) */
->  
-> +	/* Permission Overlay Extension registers */
-> +	POR_EL1,	/* Permission Overlay Register 1 (EL1) */
-> +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
-> +
->  	/* 32bit specific registers. */
->  	DACR32_EL2,	/* Domain Access Control Register */
->  	IFSR32_EL2,	/* Instruction Fault Status Register */
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> index bb6b571ec627..22f07ee43e7e 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> @@ -19,6 +19,9 @@
->  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
->  {
->  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
-> +
-> +	if (system_supports_poe())
-> +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
+[...]
+> >
+> > AFAICT, the XATTR_USER_PREFIX above is equivalent to the prefix
+> > check in xattr_permission().
+> >
+> > For inode_permission(), I think it is not required because we already
+> > have the "struct file" of  the target file. Did I misunderstand somethi=
+ng
+> > here?
+>
+> I had overlooked that you don't allow writing xattrs. But there's still
+> some issues:
+>
+> So if you look at the system call interface:
+>
+> fgetxattr(fd)
+> -> getxattr()
+>    -> do_getxattr()
+>       -> vfs_getxattr()
+>          -> xattr_permission()
+>          -> __vfs_getxattr()
+>
+> and io_uring:
+>
+> do_getxattr()
+> -> vfs_getxattr()
+>    -> xattr_permission()
+>    -> __vfs_getxattr()
+>
+> you can see that xattr_permission() is a _read/write-time check_, not an
+> open check. That's because the read/write permissions may depend on what
+> xattr is read/written. Since you don't know what xattr will be
+> read/written at open-time.
+>
+> So there needs to be a good reason for bpf_get_file_xattr() to deviate
+> from the system call and io_uring interface. And I'd like to hear it,
+> please. :)
+>
+> I think I might see the argument because you document the helper as "may
+> only be called from BPF LSM function" in which case you're trying to say
+> that bpf_get_file_xattr() is equivalent to a call to __vfs_getxattr()
+> from an LSM to get at it's own security xattr.
+>
+> But if that's the case you really should have a way to verify that these
+> helpers are only callable from a specific BPF context. Because you
+> otherwise omit read/write-time permission checking when retrieving
+> xattrs which is a potentialy security issue and may be abused by a BPF
+> program to skip permission checks that are otherwise enforced.
 
-So this is saved as eagerly as it gets. Why? If it only affects EL0,
-it can be saved/restored in a much lazier way.
+What do you mean by "a specific BPF context"? Current implementation
+makes sure the helper only works on LSM hooks with "struct file *" in the
+argument list. Specifically, we can only use them from the following hooks:
 
->  }
->  
->  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
-> @@ -59,6 +62,8 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
->  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
->  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
+    security_binder_transfer_file
+    security_bprm_creds_from_file
+    security_file_permission
+    security_file_alloc_security
+    security_file_free_security
+    security_file_ioctl
+    security_mmap_file
+    security_file_lock
+    security_file_fcntl
+    security_file_set_fowner
+    security_file_receive
+    security_file_open
+    security_file_truncate
+    security_kernel_read_file
+    security_kernel_post_read_file
 
-And the fact that you only touch PIRE0_EL1 here seems to be a good
-indication that the above can be relaxed.
+Note that, we disallow pointer-walking with the kfunc, so the kfunc is not
+allowed from hooks with indirect access to "struct file". For example, we
+cannot use it with security_bprm_creds_for_exec(struct linux_binprm *bprm)
+as this hook only has bprm, and calling bpf_get_file_xattr(bprm->file) is
+not allowed.
 
->  	}
-> +	if (system_supports_poe())
+> Is there a way for BPF to enforce/verify that a function is only called
+> from a specific BPF program? It should be able to recognize that, no?
+> And then refuse to load that BPF program if a helper is called outside
+> it's intended context.
 
-nit: missing new line before the if().
+Similarly, I am not quite sure what you mean by "a specific BPF program".
+My answer to this is probably the same as above.
 
-> +		ctxt_sys_reg(ctxt, POR_EL1)	= read_sysreg_el1(SYS_POR);
->  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
->  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
->  
-> @@ -89,6 +94,9 @@ static inline void __sysreg_save_el2_return_state(struct kvm_cpu_context *ctxt)
->  static inline void __sysreg_restore_common_state(struct kvm_cpu_context *ctxt)
->  {
->  	write_sysreg(ctxt_sys_reg(ctxt, MDSCR_EL1),  mdscr_el1);
-> +
-> +	if (system_supports_poe())
-> +		write_sysreg_s(ctxt_sys_reg(ctxt, POR_EL0),	SYS_POR_EL0);
+Going back to xattr_permission itself. AFAICT, it does 3 checks:
 
-Same thing here about the eager restore.
+1. MAY_WRITE check;
+2. prefix check;
+3. inode_permission().
 
->  }
->  
->  static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
-> @@ -135,6 +143,8 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
->  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIR_EL1),	SYS_PIR);
->  		write_sysreg_el1(ctxt_sys_reg(ctxt, PIRE0_EL1),	SYS_PIRE0);
->  	}
-> +	if (system_supports_poe())
+We don't need MAY_WRITE check as bpf_get_file_xattr is read only.
+We have the prefix check embedded in bpf_get_file_xattr():
 
-new line.
+       if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+               return -EPERM;
 
-> +		write_sysreg_el1(ctxt_sys_reg(ctxt, POR_EL1),	SYS_POR);
->  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
->  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
->  
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 4735e1b37fb3..a54e5eadbf29 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2269,6 +2269,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_MAIR_EL1), access_vm_reg, reset_unknown, MAIR_EL1 },
->  	{ SYS_DESC(SYS_PIRE0_EL1), NULL, reset_unknown, PIRE0_EL1 },
->  	{ SYS_DESC(SYS_PIR_EL1), NULL, reset_unknown, PIR_EL1 },
-> +	{ SYS_DESC(SYS_POR_EL1), NULL, reset_unknown, POR_EL1 },
->  	{ SYS_DESC(SYS_AMAIR_EL1), access_vm_reg, reset_amair_el1, AMAIR_EL1 },
->  
->  	{ SYS_DESC(SYS_LORSA_EL1), trap_loregion },
-> @@ -2352,6 +2353,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	  .access = access_pmovs, .reg = PMOVSSET_EL0,
->  	  .get_user = get_pmreg, .set_user = set_pmreg },
->  
-> +	{ SYS_DESC(SYS_POR_EL0), NULL, reset_unknown, POR_EL0 },
->  	{ SYS_DESC(SYS_TPIDR_EL0), NULL, reset_unknown, TPIDR_EL0 },
->  	{ SYS_DESC(SYS_TPIDRRO_EL0), NULL, reset_unknown, TPIDRRO_EL0 },
->  	{ SYS_DESC(SYS_TPIDR2_EL0), undef_access },
+inode_permission() is a little trickier here, which checks against idmap.
+However, I don't think the check makes sense in the context of LSM.
+In this case, we have two processes: one security daemon, which
+owns the BPF LSM program, and a process being monitored.
+idmap here, from file_mnt_idmap(file), is the idmap from the being
+monitored process. However, whether the BPF LSM program have the
+permission to read the xattr should be determined by the security
+daemon.
 
-Another thing that is missing is the trap routing for NV in
-emulated-nested.c. Please fill in the various tables there.
+Overall, we can technically add xattr_permission() check here. But I
+don't think that's the right check for the LSM use case.
+
+Does this make sense? Did I miss or misunderstand something?
 
 Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Song
 
