@@ -1,99 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-3953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A03C7FA593
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 17:03:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24CE7FA59C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 17:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B55A1C20C70
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 16:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBB528189A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 16:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC50335884;
-	Mon, 27 Nov 2023 16:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CD7358A0;
+	Mon, 27 Nov 2023 16:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Akrn0yg6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjTVUCOh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA24ECE;
-	Mon, 27 Nov 2023 08:03:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WADlmt0rPTmLzYraJFSvoEJCh9ofuPI7Y7W8RJprDbQ=; b=Akrn0yg6UNfIbJGcGj1gbFDffH
-	QIiDenv6JZ2RDn2pjA3OeCYK75MjVSpT4f2X6lA/UZKayOJUfNFTOyOqNWjJzMvRwrBNZcEsgt0/J
-	jD6Zfk0Woz1EEiCu7CFCexbj37ld5f/45w9CVV6O2VycoKwHfXou96aq/2M5/GBNMC9cCcMMkVXhe
-	7XSB7xEOXzp6paAz/XeQihFCiS9dOcIRw41n0mjMSS5hE5s0PwUs1zMVYSYlu4ofsbG0cxgd3XZUN
-	aX18iCmp3A46c0raVJMvy813mkyebxJz9qOFukVDVQcXgOuMPDcooXx9aQd0ADW3mgYc1+kCLit3j
-	UN3GesQQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r7e4s-0042ow-0w;
-	Mon, 27 Nov 2023 16:03:18 +0000
-Date: Mon, 27 Nov 2023 16:03:18 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, ebiggers@kernel.org,
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
-	linux-ext4@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: fun with d_invalidate() vs. d_splice_alias() was Re: [f2fs-dev]
- [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
-Message-ID: <20231127160318.GI38156@ZenIV>
-References: <20231122211901.GJ38156@ZenIV>
- <CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
- <20231123171255.GN38156@ZenIV>
- <20231123182426.GO38156@ZenIV>
- <20231123215234.GQ38156@ZenIV>
- <20231125220136.GB38156@ZenIV>
- <20231126045219.GD38156@ZenIV>
- <20231126184141.GF38156@ZenIV>
- <20231127063842.GG38156@ZenIV>
- <87jzq3nqos.fsf@email.froward.int.ebiederm.org>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AF134562;
+	Mon, 27 Nov 2023 16:05:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865E7C433C7;
+	Mon, 27 Nov 2023 16:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701101136;
+	bh=a3dPZOgLadrVfGvUrqvDctf6C+XVyQnBesre8gLOQn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jjTVUCOhRq1YVBFYeHLrr2Jf9axuSgEkUD/ORdEM0/EhG0yNIn0NJ+BCAVEV+yoas
+	 zDiUAtFI9BC4KKANHXRLt9cY7WgLSLsXbar9kXwnhFOhEBCYgydkccVwsvjz4XaMcE
+	 Pbe/wF49wNxevIQi6OzOmTVJzhD/Ypf2bEIC9EB/VA01GzrqfniDBFiFsP4mcwdN1A
+	 H5DLodEnswX8z3hj7kmur3JaMg5p+JzNyoAW0CyoS3TBvjTuf8UVoIFoholCe89IGL
+	 wB8vJZqrJU0Y8n1ZDzk2jDKYSU49roDnI/emYRLRWSMWSmY0qDWo6zflXjEOhcSkc1
+	 J6iER1f7853XA==
+Date: Mon, 27 Nov 2023 17:05:31 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v10 bpf-next 03/17] bpf: introduce BPF token object
+Message-ID: <20231127-anvertrauen-geldhahn-08f009fe1af1@brauner>
+References: <20231110034838.1295764-1-andrii@kernel.org>
+ <20231110034838.1295764-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87jzq3nqos.fsf@email.froward.int.ebiederm.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20231110034838.1295764-4-andrii@kernel.org>
 
-On Mon, Nov 27, 2023 at 09:47:47AM -0600, Eric W. Biederman wrote:
+> +	if (path.mnt->mnt_root != path.dentry) {
 
-> There is a lot going on there.  I remember one of the relevant
-> restrictions was marking dentries dont_mount, and inodes S_DEAD
-> in unlink and rmdir.
-> 
-> But even without out that marking if d_invalidate is called
-> from d_revalidate the inode and all of it's dentries must be
-> dead because the inode is stale and most go.  There should
-> be no resurrecting it at that point.
-> 
-> I suspect the most fruitful way to think of the d_invalidate vs
-> d_splice_alias races is an unlink vs rename race.
-> 
-> I don't think the mechanism matters, but deeply and fundamentally
-> if we detect a directory inode is dead we need to stick with
-> that decision and not attempt to resurrect it with d_splice_alias.
+You want to verify that you can only create tokens from the root of the
+bpffs mount. So for
 
-Wrong.  Deeply and fundamentally we detect a dentry that does not
-match the directory contents according to the server.
+  sudo mount -t bpf bpf /mnt
 
-For example, due to rename done on server.  With object in question
-perfectly alive there - fhandle still works, etc.
+you want bpf tokens to be creatable from:
 
-However, it's no longer where it used to be.  And we would bloody better
-not have lookups for the old name result in access to that object.
-We also should never allow the access to *new* name lead to two live
-dentries for the same directory inode.
+  fd = open("/mnt")
 
-Again, this is not about rmdir() or unlink() - invalidation can happen
-for object that is still open, still accessed and still very much alive.
-Does that all the time for any filesystem with ->d_revalidate().
+or from bind-mounts of the fs root:
+
+  sudo mount --bind /mnt /srv
+  fd = open("/srv")
+
+but not from
+
+  sudo mount --bind /mnt/foo /opt
+  fd = open("/opt")
+
+But I think your current check allows for that because if you bind-mount
+/mnt/foo to /opt then fd = open("/opt")
+
+  path.mnt->mnt_root == foo and path.dentry == foo
+
+I think
+
+path.dentry != path.mnt->mnt_sb->s_root
+
+should give you what you want.
 
