@@ -1,82 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-3877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06BA7F98B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:33:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8507F9942
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E1F280E4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 05:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8551C2088B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 06:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA1A5692;
-	Mon, 27 Nov 2023 05:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3k/sLxR"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911A6DDDA;
+	Mon, 27 Nov 2023 06:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F557B5;
-	Sun, 26 Nov 2023 21:33:41 -0800 (PST)
-Received: by mail-oi1-x230.google.com with SMTP id 5614622812f47-3b842c1511fso2433259b6e.1;
-        Sun, 26 Nov 2023 21:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701063220; x=1701668020; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/FD4q+YVmvTaZu+k/5gCWbJStI77UMa1v3g64Mxy4Ys=;
-        b=B3k/sLxRMBKJXzzDNehH5jEI2r2sWNwa4tySiE5TEE68anhUqGWWtGf/LKNgA+XQK5
-         F0upnZUi3brC7Eo9CS/p900RTRjRoB070j9FJ/lUWQER67ZcNwUTq6ZhydC/EE3QQanM
-         Qy4iSnAMhIsE3HFRFoHA7NbQmlBqlXRmmSyNDk/o4YdQbFe34aBYaeDPuhQ4WRbUuxiD
-         G1kgGHv9ciOovAzgozvegFeB43HAYlGbRbXhe823i+R8/4mg4z0mpJ+ALyDBaVb6zLmm
-         klZlKX9cvkJ1ZditWKxmg1V9G7ldm7CYM1+LDUuig+iq6hKOtk/TwjycGTnNmJft+ApH
-         lMPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701063220; x=1701668020;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/FD4q+YVmvTaZu+k/5gCWbJStI77UMa1v3g64Mxy4Ys=;
-        b=NFDmQ+CgpwXDPd1F/D1z+0izP9k4DGgIrmJeCnBGhzW4U5N2OCSv1pREy2mc9fhc7E
-         ZgO9vExQS/9bHQ8uYhmxvphDTT9d2YzWfMWquccUs6JBN37/qrHKBzNA0gfCXVTBZ4Ov
-         tid6iDnglNDA9yg/e8PTsbNn0nknX51unUJmrA6G0QTU9M354ajuyVNjUg2dkjjNW0T7
-         YU+0WP8lQnZye8nx1G0P4umQEh3lPojjE6UsGJToXGkA2MO6mE4AlcTSIUSLK9x4V1CZ
-         8A3LZiJkvZFF66hwk1CUGw6vfUqmhcDgYcVNBHcUsRZploWERPKNNDGBfQfJCA+BfySP
-         L3sA==
-X-Gm-Message-State: AOJu0YwE5+1XpQcMBy8YpbRTXhsZ7JhvSqdfhCbXt/2M/39vIvf+oT0D
-	HBbWbo48jy+/VAR/E5BuwKiFQlVhAB4=
-X-Google-Smtp-Source: AGHT+IGSoWL1BwvvlYVQB0+fIBvqo4vWXxhpCpl+FI65VPMgMMTQ5TA4O1ooaAlFwe+zp8M/3vspEQ==
-X-Received: by 2002:a05:6808:2026:b0:3b2:d8cb:8e14 with SMTP id q38-20020a056808202600b003b2d8cb8e14mr14805270oiw.28.1701063219888;
-        Sun, 26 Nov 2023 21:33:39 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id r13-20020a63fc4d000000b005bd980cca56sm7035577pgk.29.2023.11.26.21.33.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Nov 2023 21:33:39 -0800 (PST)
-Date: Mon, 27 Nov 2023 11:03:35 +0530
-Message-Id: <878r6jsqts.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>, Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 03/13] iomap: move the io_folios field out of struct iomap_ioend
-In-Reply-To: <20231126124720.1249310-4-hch@lst.de>
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 557B1E4;
+	Sun, 26 Nov 2023 22:21:58 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SdwTp0cTZz4f3m7D;
+	Mon, 27 Nov 2023 14:21:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 71ECC1A092C;
+	Mon, 27 Nov 2023 14:21:54 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDX2hB+NWRlrcU8CA--.57866S4;
+	Mon, 27 Nov 2023 14:21:53 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: hch@infradead.org,
+	ming.lei@redhat.com,
+	axboe@kernel.dk,
+	roger.pau@citrix.com,
+	colyli@suse.de,
+	kent.overstreet@gmail.com,
+	joern@lazybastard.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	sth@linux.ibm.com,
+	hoeppner@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	nico@fluxnic.net,
+	xiang@kernel.org,
+	chao@kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	agruenba@redhat.com,
+	jack@suse.com,
+	konishi.ryusuke@gmail.com,
+	dchinner@redhat.com,
+	linux@weissschuh.net,
+	min15.li@samsung.com,
+	yukuai3@huawei.com,
+	dlemoal@kernel.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	hare@suse.de,
+	p.raghav@samsung.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-nilfs@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH block/for-next v2 00/16] block: remove field 'bd_inode' from block_device
+Date: Mon, 27 Nov 2023 14:21:00 +0800
+Message-Id: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDX2hB+NWRlrcU8CA--.57866S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4fKw15Jr18CF1kZr1rtFb_yoW8urWfpr
+	9xKFWrJ3yjkryrua1Iqw45X345Ja1kKayxuF97Aw4ruFW8G34furWktrsxGrW0qrZrJrWj
+	gF13t34DJF4xXaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x0JUd8n5UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Christoph Hellwig <hch@lst.de> writes:
+From: Yu Kuai <yukuai3@huawei.com>
 
-> The io_folios member in struct iomap_ioend counts the number of folios
-> added to an ioend.  It is only used at submission time and can thus be
-> moved to iomap_writepage_ctx instead.
->
+Changes in v2:
+ - split different portions into different patches, as greg k-h
+ suggested.
+ - use container_of() instead of "bdev + 1" to get the address of
+ bd_inode in the new helper, as grep k-h suggested.
 
-No objections there. We indeed used io_folios to limit the ioend bio
-chain lengths and we do this only at the submission time, which is where
-wpc is also used for.
+Yu Kuai (16):
+  block: add a new helper to get inode from block_device
+  xen/blkback: use new helper to get inode from block_device
+  bcache: use new helper to get inode from block_device
+  mtd: block2mtd: use new helper to get inode from block_device
+  s390/dasd: use new helper to get inode from block_device
+  scsicam: use new helper to get inode from block_device
+  bcachefs: use new helper to get inode from block_device
+  btrfs: use new helper to get inode from block_device
+  cramfs: use new helper to get inode from block_device
+  erofs: use new helper to get inode from block_device
+  ext4: use new helper to get inode from block_device
+  gfs2: use new helper to get inode from block_device
+  jbd2: use new helper to get inode from block_device
+  nilfs2: use new helper to get inode from block_device
+  buffer: use new helper to get inode from block_device
+  block: use new helper to get inode from block_device
 
-Looks good to me. Please feel free to add - 
+ block/bdev.c                       | 44 +++++++++++++++---------------
+ block/blk-zoned.c                  |  4 +--
+ block/fops.c                       |  4 +--
+ block/genhd.c                      |  8 +++---
+ block/ioctl.c                      |  8 +++---
+ block/partitions/core.c            |  9 +++---
+ drivers/block/xen-blkback/xenbus.c |  2 +-
+ drivers/md/bcache/super.c          |  2 +-
+ drivers/mtd/devices/block2mtd.c    | 12 ++++----
+ drivers/s390/block/dasd_ioctl.c    |  2 +-
+ drivers/scsi/scsicam.c             |  2 +-
+ fs/bcachefs/util.h                 |  2 +-
+ fs/btrfs/disk-io.c                 |  6 ++--
+ fs/btrfs/volumes.c                 |  4 +--
+ fs/btrfs/zoned.c                   |  2 +-
+ fs/buffer.c                        |  8 +++---
+ fs/cramfs/inode.c                  |  2 +-
+ fs/erofs/data.c                    |  2 +-
+ fs/ext4/dir.c                      |  2 +-
+ fs/ext4/ext4_jbd2.c                |  2 +-
+ fs/ext4/super.c                    |  8 +++---
+ fs/gfs2/glock.c                    |  2 +-
+ fs/gfs2/ops_fstype.c               |  2 +-
+ fs/jbd2/journal.c                  |  3 +-
+ fs/jbd2/recovery.c                 |  2 +-
+ fs/nilfs2/segment.c                |  2 +-
+ include/linux/blk_types.h          | 15 ++++++++--
+ include/linux/blkdev.h             |  4 +--
+ include/linux/buffer_head.h        |  4 +--
+ 29 files changed, 91 insertions(+), 78 deletions(-)
 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+-- 
+2.39.2
 
 
