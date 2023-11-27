@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-3910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CDF7F9B0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 08:37:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895B97F9B15
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 08:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821B41C20935
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BC7280E73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 07:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48A5107BB;
-	Mon, 27 Nov 2023 07:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926E61096F;
+	Mon, 27 Nov 2023 07:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2pZ6x9S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCApJVMc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BB8D9;
-	Sun, 26 Nov 2023 23:37:13 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id 98e67ed59e1d1-2855b566683so2635280a91.1;
-        Sun, 26 Nov 2023 23:37:13 -0800 (PST)
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 628B3E6;
+	Sun, 26 Nov 2023 23:43:35 -0800 (PST)
+Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3b8603e0fbaso844250b6e.0;
+        Sun, 26 Nov 2023 23:43:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701070632; x=1701675432; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701071014; x=1701675814; darn=vger.kernel.org;
         h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=FUu1ozhNiu4LligkZTn+LqP7bN+oRsiEJ1o1KiSI+R8=;
-        b=N2pZ6x9S99NQR+Xc/A4B8y25r5Z4jxCSALqetiAlymBBrbAfSYw/7PgaO+81Sw6zj3
-         gDzy17EkdFXkCOGB9G5lH+ZJQhcQsKqI6OhdCOWAc3qKFVAR13lrkJaxvqCO+Aaveewn
-         v7flDfjAkxqloap2B1736PeNagZduWNHAyTWIuKKohUupjZyX+4bbOvaE1rfKbmcEj0N
-         5nwuy6RXXXiM94bz4BG3We1i+43TM2yLKw3jxShaflyKGsQP4uuFXZfGtk1tpsryBUIU
-         R0SaGkHAyInslFiOWyYfO9PV8xUHH6nyIor0y35eFQnvuoMFg250nKKJfKsB7cocQ+Fp
-         4yDQ==
+        bh=eEp1eL0mhAV0UufmpMlyF9Fycg/v4NqkyxmqGqPMx7c=;
+        b=eCApJVMcDbW+X5t8nhNymBiKhcMnQZOd8u5/6v+pMkuehVvn+NU7hM1KWJv1Dhlk77
+         F2m2X9rDmAFWU/is6PfuTyZEA9BC+i0eoF5Xe17qFwiwhlRyVWRXsU+THuL61s6OF32Q
+         A9B6ioKCcqBEuVtnjev49F5sF3d+3c2bctD3Yym4c53q2wWuaTdS2VJol5BbyYmbGf2k
+         JH4nTZMgrMB3l1eL2aTpg+M2qpXnPFGXhqGBpb4YVr6eduqfCbRkjUecTUc3J/07sJKN
+         zauTXOA6fOHSlnrXbq5564qvQPEEN4NfgHdhpaWnAeWjd29IRnyVMx1X1f/MpSUBZ8Ry
+         lj3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701070632; x=1701675432;
+        d=1e100.net; s=20230601; t=1701071014; x=1701675814;
         h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FUu1ozhNiu4LligkZTn+LqP7bN+oRsiEJ1o1KiSI+R8=;
-        b=hl+uSG8PpigiQbsMOO+Nar3pPS+zSYBxdoRYicl/7EHtYYGwch8rEu64/ewmbXer37
-         U1kHRQtJSkdJ3KQhLaaxaYJwpOIEU8JZKPw/cheSo0qtSfaDHoKbFjasElBzDOI38dH5
-         g9qyuH5+yvl/h91P3FgkhAS6oxBLeaDXGNTcrelsOCiR2v9rv7DShzF6M/P6ewZVmbXs
-         HyK7NvlFeLqhbjwgs6lpM0thjrfX7khQkk9EyvBEwFTrpydzLima6laOQKD6pE66bQLb
-         onp2JVtXsx/AYkrB053GjCayZz0brsMG9vYK/uWnOBSKwe3rxKcwcxsoPYQZln1MFItw
-         Si+A==
-X-Gm-Message-State: AOJu0YxJ7ZrsFC1RPTXgPrECbb1VUglMuEHLNkBZikhXGF2H+dokiMwk
-	oQC9XwrQgF/pbd2f8wZtRDDwQcp8Rqc=
-X-Google-Smtp-Source: AGHT+IHsl9riyWM5MyCZZamVaodiOoSb+sGK0ZXI1/KKg0kr38BgB4XXn+daV/ROYTHt+iA+kuypmA==
-X-Received: by 2002:a17:90a:43c3:b0:285:eb8:b6f5 with SMTP id r61-20020a17090a43c300b002850eb8b6f5mr18625852pjg.0.1701070613017;
-        Sun, 26 Nov 2023 23:36:53 -0800 (PST)
+        bh=eEp1eL0mhAV0UufmpMlyF9Fycg/v4NqkyxmqGqPMx7c=;
+        b=wAap5YVGvu8jPM1qO+8ilQlBNIovV1/+nJyvCx0y2G0ZIlZZYN4JbKAvjQLJHhZqPB
+         wp6bKtMze7fqfNw05rZK8IjBH0t5JgUu2sJvu06yAZHDTsaQgAng5ItVjZOt3iukyt8S
+         S9YSNfOxO7Q3PvkeOTUMkiBT3YiSTu5Q/6U0PUDYtylUH0nPRkgX9pX87gZPohtX6i56
+         48rBi9kAsnj2tgTBi1Yi0g18XGt6ssPa88QcNMj4cqrJbjYKIpE/XQVXHFNgbJ+P0ekv
+         SnRRbEgffjS4sysMN5WLmSO8YFrE2ICdA1aPFqwf8JGHoXmG+Has2uzHyKhs3VECZMzi
+         1tjA==
+X-Gm-Message-State: AOJu0Yxkw9yohnSGulzlo5MI8ngmRyb0/11q1N79nbS/YCFY6cPgbzip
+	IfItpPspynLfXd/wvQ6OA+hiav2is4w=
+X-Google-Smtp-Source: AGHT+IEp9mSIbzrB1sUCgzRsyBnGDaEa6e7LIl4NFZQT15VO0MRL7aA5v6WsH3Ev4Df73H+jMfK9Zw==
+X-Received: by 2002:a05:6870:2182:b0:1f9:8f1b:86f7 with SMTP id l2-20020a056870218200b001f98f1b86f7mr13438791oae.42.1701071014141;
+        Sun, 26 Nov 2023 23:43:34 -0800 (PST)
 Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id rs11-20020a17090b2b8b00b002802d9d4e96sm7104249pjb.54.2023.11.26.23.36.50
+        by smtp.gmail.com with ESMTPSA id j6-20020a056a00234600b006c7c6ae3755sm6616937pfj.80.2023.11.26.23.43.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Nov 2023 23:36:52 -0800 (PST)
-Date: Mon, 27 Nov 2023 13:06:48 +0530
-Message-Id: <87wmu3r6jz.fsf@doe.com>
+        Sun, 26 Nov 2023 23:43:33 -0800 (PST)
+Date: Mon, 27 Nov 2023 13:13:29 +0530
+Message-Id: <87ttp7r68u.fsf@doe.com>
 From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
 Cc: "Darrick J. Wong" <djwong@kernel.org>, Chandan Babu R <chandan.babu@oracle.com>, Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 06/13] iomap: move all remaining per-folio logic into xfs_writepage_map
-In-Reply-To: <20231126124720.1249310-7-hch@lst.de>
+Subject: Re: [PATCH 07/13] iomap: clean up the iomap_new_ioend calling convention
+In-Reply-To: <20231126124720.1249310-8-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,20 +66,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
 Christoph Hellwig <hch@lst.de> writes:
 
-> Move the tracepoint and the iomap check from iomap_do_writepage into
-> iomap_writepage_map.  This keeps all logic in one places, and leaves
-> iomap_do_writepage just as the wrapper for the callback conventions of
-> write_cache_pages, which will go away when that is convertd to an
-                                                     ^^^ converted
-> iterator.
+> Switch to the same argument order as iomap_writepage_map and remove the
+> ifs argument that can be trivially recalculated.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/iomap/buffered-io.c | 34 +++++++++++-----------------------
->  1 file changed, 11 insertions(+), 23 deletions(-)
+>  fs/iomap/buffered-io.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 
-Straight forward refactoring. The change looks good to me. Please feel
-free to add - 
+Straight forward change. Looks good to me. Please feel free to add - 
 
-Reivewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
