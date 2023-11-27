@@ -1,205 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-3920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-3921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433D27F9DEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 11:50:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336237F9E41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 12:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83FD0B20F4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 10:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7832813E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Nov 2023 11:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB4118C24;
-	Mon, 27 Nov 2023 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftMg0vzH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E339E19460;
+	Mon, 27 Nov 2023 11:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E14136;
+	Mon, 27 Nov 2023 03:14:01 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE32882D;
-	Mon, 27 Nov 2023 10:50:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A62C433C7;
-	Mon, 27 Nov 2023 10:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701082237;
-	bh=3AYPU0frHlMPVrdGxo06XIPS+4pu4DqK6g4kMCoC8ss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftMg0vzHLhGm6NyG3Ds3de8VbM6wW771lfXbrFlS8CZF9b9u+ilwF8ghBZiFGXZbm
-	 k+qFiD29r0tMlFI5s4FprIs69Uc67o5J8S6hSZGVCXmlPFCJYGzpf1dyhWZTX28R7E
-	 NmWCKw4fH665hmfbFeqMk9cRpG14RwUtRnuaHO+NlZEpa/hl/f6AcuZ0XVg1CFplpQ
-	 AhHy3JmGDvDm4yhZUgQdBbMYpVtXQEYdZ+4IwkfjmcAWUjsa0cGne1jc5+oVw4wSFa
-	 leRxcjTgketq59GOV2GhK5O1WUFzKUUeNLpGcm/XFxgxg8Eo+LqQTUBlGdqCHkPD0A
-	 1c1ObzE5KQpqw==
-Date: Mon, 27 Nov 2023 11:50:31 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>, ast@kernel.org, daniel@iogearbox.net
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
-	ebiggers@kernel.org, andrii@kernel.org, martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk, casey@schaufler-ca.com, amir73il@gmail.com,
-	kpsingh@kernel.org, roberto.sassu@huawei.com
-Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
-Message-ID: <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner>
-References: <20231123233936.3079687-1-song@kernel.org>
- <20231123233936.3079687-2-song@kernel.org>
- <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
- <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E414521C6F;
+	Mon, 27 Nov 2023 11:13:59 +0000 (UTC)
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C5491367B;
+	Mon, 27 Nov 2023 11:13:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Pc/rIfd5ZGXRZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 27 Nov 2023 11:13:59 +0000
+Message-ID: <81628606-ca9b-866f-5e71-91001e856871@suse.cz>
+Date: Mon, 27 Nov 2023 12:13:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v13 17/35] KVM: Add transparent hugepage support for
+ dedicated guest memory
+Content-Language: en-US
+To: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Huacai Chen <chenhuacai@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Xu Yilun <yilun.xu@intel.com>,
+ Chao Peng <chao.p.peng@linux.intel.com>, Fuad Tabba <tabba@google.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Anish Moorthy <amoorthy@google.com>,
+ David Matlack <dmatlack@google.com>, Yu Zhang <yu.c.zhang@linux.intel.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Vishal Annapurve <vannapurve@google.com>,
+ Ackerley Tng <ackerleytng@google.com>,
+ Maciej Szmigiero <mail@maciej.szmigiero.name>,
+ David Hildenbrand <david@redhat.com>, Quentin Perret <qperret@google.com>,
+ Michael Roth <michael.roth@amd.com>, Wang <wei.w.wang@intel.com>,
+ Liam Merwick <liam.merwick@oracle.com>,
+ Isaku Yamahata <isaku.yamahata@gmail.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20231027182217.3615211-18-seanjc@google.com>
+ <7c0844d8-6f97-4904-a140-abeabeb552c1@intel.com>
+ <ZUEML6oJXDCFJ9fg@google.com>
+ <92ba7ddd-2bc8-4a8d-bd67-d6614b21914f@intel.com>
+ <ZUJVfCkIYYFp5VwG@google.com>
+ <CABgObfaw4Byuzj5J3k48jdwT0HCKXLJNiuaA9H8Dtg+GOq==Sw@mail.gmail.com>
+ <ZUJ-cJfofk2d_I0B@google.com>
+ <4ca2253d-276f-43c5-8e9f-0ded5d5b2779@redhat.com>
+ <ZULSkilO-tdgDGyT@google.com>
+ <CABgObfbq_Hg0B=jvsSDqYH3CSpX+RsxfwB-Tc-eYF4uq2Qw9cg@mail.gmail.com>
+ <ZUPCWfO1iO77-KDA@google.com>
+ <CABgObfa=DH7FySBviF63OS9sVog_wt-AqYgtUAGKqnY5Bizivw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CABgObfa=DH7FySBviF63OS9sVog_wt-AqYgtUAGKqnY5Bizivw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+X-Spamd-Bar: +++++++++++++++
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	dmarc=none;
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of vbabka@suse.cz) smtp.mailfrom=vbabka@suse.cz
+X-Rspamd-Server: rspamd2
+X-Spamd-Result: default: False [15.89 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 R_SPF_SOFTFAIL(4.60)[~all];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DMARC_NA(1.20)[suse.cz];
+	 NEURAL_SPAM_SHORT(3.00)[1.000];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 RCPT_COUNT_TWELVE(0.00)[44];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[intel.com,kernel.org,linux.dev,ellerman.id.au,brainfault.org,sifive.com,dabbelt.com,eecs.berkeley.edu,zeniv.linux.org.uk,infradead.org,linux-foundation.org,vger.kernel.org,lists.infradead.org,lists.linux.dev,lists.ozlabs.org,kvack.org,linux.intel.com,google.com,digikod.net,maciej.szmigiero.name,redhat.com,amd.com,oracle.com,gmail.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: 15.89
+X-Rspamd-Queue-Id: E414521C6F
+X-Spam: Yes
 
-On Fri, Nov 24, 2023 at 09:07:33AM -0800, Song Liu wrote:
-> On Fri, Nov 24, 2023 at 12:44 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, Nov 23, 2023 at 03:39:31PM -0800, Song Liu wrote:
-> > > It is common practice for security solutions to store tags/labels in
-> > > xattrs. To implement similar functionalities in BPF LSM, add new kfunc
-> > > bpf_get_file_xattr().
-> > >
-> > > The first use case of bpf_get_file_xattr() is to implement file
-> > > verifications with asymmetric keys. Specificially, security applications
-> > > could use fsverity for file hashes and use xattr to store file signatures.
-> > > (kfunc for fsverity hash will be added in a separate commit.)
-> > >
-> > > Currently, only xattrs with "user." prefix can be read with kfunc
-> > > bpf_get_file_xattr(). As use cases evolve, we may add a dedicated prefix
-> > > for bpf_get_file_xattr().
-> > >
-> > > To avoid recursion, bpf_get_file_xattr can be only called from LSM hooks.
-> > >
-> > > Signed-off-by: Song Liu <song@kernel.org>
-> > > ---
-> >
-> > Looks ok to me. But see below for a question.
-> >
-> > If you ever allow the retrieval of additional extended attributes
-> > through bfs_get_file_xattr() or other bpf interfaces we would like to be
-> > Cced, please. The xattr stuff is (/me looks for suitable words)...
-> >
-> > Over the last months we've moved POSIX_ACL retrieval out of these
-> > low-level functions. They now have a dedicated api. The same is going to
-> > happen for fscaps as well.
-> >
-> > But even with these out of the way we would want the bpf helpers to
-> > always maintain an allowlist of retrievable attributes.
+On 11/2/23 16:46, Paolo Bonzini wrote:
+> On Thu, Nov 2, 2023 at 4:38 PM Sean Christopherson <seanjc@google.com> wrote:
+>> Actually, looking that this again, there's not actually a hard dependency on THP.
+>> A THP-enabled kernel _probably_  gives a higher probability of using hugepages,
+>> but mostly because THP selects COMPACTION, and I suppose because using THP for
+>> other allocations reduces overall fragmentation.
 > 
-> Agreed. We will be very specific which attributes are available to bpf
-> helpers/kfuncs.
+> Yes, that's why I didn't even bother enabling it unless THP is
+> enabled, but it makes even more sense to just try.
 > 
-> >
-> > >  kernel/trace/bpf_trace.c | 63 ++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 63 insertions(+)
-> > >
-> > > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > > index f0b8b7c29126..55758a6fbe90 100644
-> > > --- a/kernel/trace/bpf_trace.c
-> > > +++ b/kernel/trace/bpf_trace.c
-> > > @@ -24,6 +24,7 @@
-> > >  #include <linux/key.h>
-> > >  #include <linux/verification.h>
-> > >  #include <linux/namei.h>
-> > > +#include <linux/fileattr.h>
-> > >
-> > >  #include <net/bpf_sk_storage.h>
-> > >
-> > > @@ -1431,6 +1432,68 @@ static int __init bpf_key_sig_kfuncs_init(void)
-> > >  late_initcall(bpf_key_sig_kfuncs_init);
-> > >  #endif /* CONFIG_KEYS */
-> > >
-> > > +/* filesystem kfuncs */
-> > > +__bpf_kfunc_start_defs();
-> > > +
-> > > +/**
-> > > + * bpf_get_file_xattr - get xattr of a file
-> > > + * @file: file to get xattr from
-> > > + * @name__str: name of the xattr
-> > > + * @value_ptr: output buffer of the xattr value
-> > > + *
-> > > + * Get xattr *name__str* of *file* and store the output in *value_ptr*.
-> > > + *
-> > > + * For security reasons, only *name__str* with prefix "user." is allowed.
-> > > + *
-> > > + * Return: 0 on success, a negative value on error.
-> > > + */
-> > > +__bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
-> > > +                                struct bpf_dynptr_kern *value_ptr)
-> > > +{
-> > > +     struct dentry *dentry;
-> > > +     u32 value_len;
-> > > +     void *value;
-> > > +
-> > > +     if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> > > +             return -EPERM;
-> > > +
-> > > +     value_len = __bpf_dynptr_size(value_ptr);
-> > > +     value = __bpf_dynptr_data_rw(value_ptr, value_len);
-> > > +     if (!value)
-> > > +             return -EINVAL;
-> > > +
-> > > +     dentry = file_dentry(file);
-> > > +     return __vfs_getxattr(dentry, dentry->d_inode, name__str, value, value_len);
-> >
-> > By calling __vfs_getxattr() from bpf_get_file_xattr() you're skipping at
-> > least inode_permission() from xattr_permission(). I'm probably just
-> > missing or forgot the context. But why is that ok?
+>> So rather than honor KVM_GUEST_MEMFD_ALLOW_HUGEPAGE iff THP is enabled, I think
+>> we should do the below (I verified KVM can create hugepages with THP=n).  We'll
+>> need another capability, but (a) we probably should have that anyways and (b) it
+>> provides a cleaner path to adding PUD-sized hugepage support in the future.
 > 
-> AFAICT, the XATTR_USER_PREFIX above is equivalent to the prefix
-> check in xattr_permission().
+> I wonder if we need KVM_CAP_GUEST_MEMFD_HUGEPAGE_PMD_SIZE though. This
+> should be a generic kernel API and in fact the sizes are available in
+> a not-so-friendly format in /sys/kernel/mm/hugepages.
 > 
-> For inode_permission(), I think it is not required because we already
-> have the "struct file" of  the target file. Did I misunderstand something
-> here?
+> We should just add /sys/kernel/mm/hugepages/sizes that contains
+> "2097152 1073741824" on x86 (only the former if 1G pages are not
+> supported).
+> 
+> Plus: is this the best API if we need something else for 1G pages?
+> 
+> Let's drop *this* patch and proceed incrementally. (Again, this is
+> what I want to do with this final review: identify places that are
+> stil sticky, and don't let them block the rest).
+> 
+> Coincidentially we have an open spot next week at plumbers. Let's
+> extend Fuad's section to cover more guestmem work.
 
-I had overlooked that you don't allow writing xattrs. But there's still
-some issues:
+Hi,
 
-So if you look at the system call interface:
+was there any outcome wrt this one? Based on my experience with THP's it
+would be best if userspace didn't have to opt-in, nor care about the
+supported size. If the given size is unaligned, provide a mix of large pages
+up to an aligned size, and for the rest fallback to base pages, which should
+be better than -EINVAL on creation (is it possible with the current
+implementation? I'd hope so so?). A way to opt-out from huge pages could be
+useful although there's always the risk of some initial troubles resulting
+in various online sources cargo-cult recommending to opt-out forever.
 
-fgetxattr(fd)
--> getxattr()
-   -> do_getxattr()
-      -> vfs_getxattr()
-         -> xattr_permission()
-         -> __vfs_getxattr()
-
-and io_uring:
-
-do_getxattr()
--> vfs_getxattr()
-   -> xattr_permission()
-   -> __vfs_getxattr()
-
-you can see that xattr_permission() is a _read/write-time check_, not an
-open check. That's because the read/write permissions may depend on what
-xattr is read/written. Since you don't know what xattr will be
-read/written at open-time.
-
-So there needs to be a good reason for bpf_get_file_xattr() to deviate
-from the system call and io_uring interface. And I'd like to hear it,
-please. :)
-
-I think I might see the argument because you document the helper as "may
-only be called from BPF LSM function" in which case you're trying to say
-that bpf_get_file_xattr() is equivalent to a call to __vfs_getxattr()
-from an LSM to get at it's own security xattr.
-
-But if that's the case you really should have a way to verify that these
-helpers are only callable from a specific BPF context. Because you
-otherwise omit read/write-time permission checking when retrieving
-xattrs which is a potentialy security issue and may be abused by a BPF
-program to skip permission checks that are otherwise enforced.
-
-Is there a way for BPF to enforce/verify that a function is only called
-from a specific BPF program? It should be able to recognize that, no?
-And then refuse to load that BPF program if a helper is called outside
-it's intended context.
+Vlastimil
 
