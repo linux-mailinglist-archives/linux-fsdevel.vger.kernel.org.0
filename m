@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-4067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A6C7FC372
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:36:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787787FC373
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B50D282753
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3459C2828CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565BF37D12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTHgE9PP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28EF3D0AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3FE37D37;
-	Tue, 28 Nov 2023 17:18:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7251DC433C7;
-	Tue, 28 Nov 2023 17:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701191905;
-	bh=V7IKAf0Hbu6oP2LSWp5l10ZwtBSliEPvVOx9m0gWfYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DTHgE9PPklBAMdua0Gq+s/PRw++bw+Gj2frl4hyn3VWGoVDnO+zsrE+nNNl9kJCnm
-	 Aif6OPqLGkuMeO87bQeZNkZxecGgE35op+PwvNVEC2SVi6UE42oxDvc1NCf0whVyze
-	 u8jJwbYkbzVJX9f4i+TBbmFu3kC7Li++6kX/8uQ9anTcQ4LX74JdAzadEKlFWGdl5W
-	 h4rVFVKK67H6Cj6TLoi6TfcG2mi/7B1FgCnuhoSHVgdEqmLzIa4r2Lgph6KRcxAgDc
-	 GLP7RCT6Ldry21zdNGa0876otyOA+nuP48lukN/ibWTlhZV9gY3exB+auhSbDec+Yn
-	 v/iSmyghEjysQ==
-Date: Tue, 28 Nov 2023 09:18:23 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Sergei Shtepa <sergei.shtepa@linux.dev>
-Cc: axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org,
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 27FE019A2;
+	Tue, 28 Nov 2023 09:21:39 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 388A1C15;
+	Tue, 28 Nov 2023 09:22:26 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D45D33F6C4;
+	Tue, 28 Nov 2023 09:21:33 -0800 (PST)
+Date: Tue, 28 Nov 2023 17:21:31 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
 	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Sergei Shtepa <sergei.shtepa@veeam.com>
-Subject: Re: [PATCH v6 11/11] blksnap: prevents using devices with data
- integrity or inline encryption
-Message-ID: <20231128171823.GA1148@sol.localdomain>
-References: <20231124165933.27580-1-sergei.shtepa@linux.dev>
- <20231124165933.27580-12-sergei.shtepa@linux.dev>
- <20231127224719.GD1463@sol.localdomain>
- <6cabaa42-c366-4928-8294-ad261dae0043@linux.dev>
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	hughd@google.com, pcc@google.com, steven.price@arm.com,
+	anshuman.khandual@arm.com, vincenzo.frascino@arm.com,
+	david@redhat.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 04/27] mm: migrate/mempolicy: Add hook to modify
+ migration target gfp
+Message-ID: <ZWYhm34kA95ntoaq@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-5-alexandru.elisei@arm.com>
+ <20231125100322.GH636165@kernel.org>
+ <ZWSDGGJDWDtY0G35@raptor>
+ <20231128064957.GI636165@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,32 +56,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6cabaa42-c366-4928-8294-ad261dae0043@linux.dev>
+In-Reply-To: <20231128064957.GI636165@kernel.org>
 
-On Tue, Nov 28, 2023 at 12:00:17PM +0100, Sergei Shtepa wrote:
-> But I haven't tested the code on a device where hardware inline encryption is
-> available. I would be glad if anyone could help with this.
+Hi,
+
+On Tue, Nov 28, 2023 at 08:49:57AM +0200, Mike Rapoport wrote:
+> On Mon, Nov 27, 2023 at 11:52:56AM +0000, Alexandru Elisei wrote:
+> > Hi Mike,
 > > 
-> > Anyway, this patch is better than ignoring the problem.  It's worth noting,
-> > though, that this patch does not prevent blksnap from being set up on a block
-> > device on which blk-crypto-fallback is already being used (or will be used).
-> > When that happens, I/O will suddenly start failing.  For usability reasons,
-> > ideally that would be prevented somehow.
+> > I really appreciate you having a look!
+> > 
+> > On Sat, Nov 25, 2023 at 12:03:22PM +0200, Mike Rapoport wrote:
+> > > On Sun, Nov 19, 2023 at 04:56:58PM +0000, Alexandru Elisei wrote:
+> > > > It might be desirable for an architecture to modify the gfp flags used to
+> > > > allocate the destination page for migration based on the page that it is
+> > > > being replaced. For example, if an architectures has metadata associated
+> > > > with a page (like arm64, when the memory tagging extension is implemented),
+> > > > it can request that the destination page similarly has storage for tags
+> > > > already allocated.
+> > > > 
+> > > > No functional change.
+> > > > 
+> > > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > > > ---
+> > > >  include/linux/migrate.h | 4 ++++
+> > > >  mm/mempolicy.c          | 2 ++
+> > > >  mm/migrate.c            | 3 +++
+> > > >  3 files changed, 9 insertions(+)
+> > > > 
+> > > > diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> > > > index 2ce13e8a309b..0acef592043c 100644
+> > > > --- a/include/linux/migrate.h
+> > > > +++ b/include/linux/migrate.h
+> > > > @@ -60,6 +60,10 @@ struct movable_operations {
+> > > >  /* Defined in mm/debug.c: */
+> > > >  extern const char *migrate_reason_names[MR_TYPES];
+> > > >  
+> > > > +#ifndef arch_migration_target_gfp
+> > > > +#define arch_migration_target_gfp(src, gfp) 0
+> > > > +#endif
+> > > > +
+> > > >  #ifdef CONFIG_MIGRATION
+> > > >  
+> > > >  void putback_movable_pages(struct list_head *l);
+> > > > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > > > index 10a590ee1c89..50bc43ab50d6 100644
+> > > > --- a/mm/mempolicy.c
+> > > > +++ b/mm/mempolicy.c
+> > > > @@ -1182,6 +1182,7 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
+> > > >  
+> > > >  		h = folio_hstate(src);
+> > > >  		gfp = htlb_alloc_mask(h);
+> > > > +		gfp |= arch_migration_target_gfp(src, gfp);
+> > > 
+> > > I think it'll be more robust to have arch_migration_target_gfp() to modify
+> > > the flags and return the new mask with added (or potentially removed)
+> > > flags.
+> > 
+> > I did it this way so an arch won't be able to remove flags set by the MM code.
+> > There's a similar pattern in do_mmap() -> calc_vm_flag_bits() ->
+> > arch_calc_vm_flag_bits().
 > 
-> I didn't observe any failures during testing. It's just that the snapshot
-> image shows files with encrypted names and data. Backup in this case is
-> useless. Unfortunately, there is no way to detect a blk-crypto-fallback on
-> the block device filter level.
+> Ok, just add a sentence about it to the commit message.
 
-Huh, I thought that this patch is supposed to exclude blk-crypto-fallback too.
-__submit_bio() calls bio->bi_bdev->bd_filter->ops->submit_bio(bio) before
-blk_crypto_bio_prep(), so doesn't your check of ->bi_crypt_context exclude
-blk-crypto-fallback?
+Great, will do that!
 
-I think you're right that it might actually be fine to use blksnap with
-blk-crypto-fallback, provided that the encryption is done first.  I would like
-to see a proper explanation of that, though.  And we still have this patch which
-claims that it doesn't work, which is confusing.
+Thanks,
+Alex
 
-- Eric
+>  
+> > Thanks,
+> > Alex
+> > 
+> > > 
+> > > >  		nodemask = policy_nodemask(gfp, pol, ilx, &nid);
+> > > >  		return alloc_hugetlb_folio_nodemask(h, nid, nodemask, gfp);
+> > > >  	}
+> > > > @@ -1190,6 +1191,7 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
+> > > >  		gfp = GFP_TRANSHUGE;
+> > > >  	else
+> > > >  		gfp = GFP_HIGHUSER_MOVABLE | __GFP_RETRY_MAYFAIL | __GFP_COMP;
+> > > > +	gfp |= arch_migration_target_gfp(src, gfp);
+> > > >  
+> > > >  	page = alloc_pages_mpol(gfp, order, pol, ilx, nid);
+> > > >  	return page_rmappable_folio(page);
+> > > 
+> > > -- 
+> > > Sincerely yours,
+> > > Mike.
+> > > 
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+> 
 
