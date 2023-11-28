@@ -1,110 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-4117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CED37FCBA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 01:43:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D12A7FCB88
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 01:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8821C20F26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 00:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC811C20D1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 00:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5B1851
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 00:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D892382
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 00:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RCU1zb38"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8OY25HX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3789319A6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 15:53:59 -0800 (PST)
-Received: by mail-oo1-xc30.google.com with SMTP id 006d021491bc7-58d5979c676so2047363eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 15:53:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1701215638; x=1701820438; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IEFdBGBIPfDPsFioHp1AVnDQQb24hQej9vfPWpRMMTA=;
-        b=RCU1zb38W1lDnFGuc/2CUsbLnoo9xXAJSrXg0v2WFXuB5lsnFzUs2hH4BE6DXrHKLy
-         1rMNTQ3c8Yx7INXmJNwkJaZhLhKO/fOzPqfqSYhqUZ1wnFHGOMZez+wLEERKha1Cmxzj
-         UyQzurKjXdTTf8oAqDGdOV+fZleg3V/L9XhgQc9thk17Hi0vLgbgqHa9neDAf13jZW0p
-         PQiRw15NyExgFvO0p88kYGEhcfN6mrm/Pu3xzZcbvMUIVdbr8ppGEf+mWabuaq+Hjj3h
-         bTTDZkWzutTErpZHE26ZdRxikFAEXVLtZN+ODOHULs5bGeJvDCpk/HwhWDLl7vwzcKc3
-         x1Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701215638; x=1701820438;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IEFdBGBIPfDPsFioHp1AVnDQQb24hQej9vfPWpRMMTA=;
-        b=Mqzo4ev4K6Q93Hvk/rjq6E4VRCwq660HTPbgQEEfrywZU06GBTIUMK/4klHQLafBDH
-         1kmiEX6i+9+t8Um3LdAubHc+0sUbwLPxgh8M5aannmp9Wa1nMLC4uFthgkd2teLUYqkr
-         c2kjol0UCyw++7H4+ewjy5V2k4Kt+8710n8NRMLBvj/g3GjHpWkQTDUTCiOU+qW609eq
-         xKQmc/cxmH5J9sKtWYIxpY8BG0M4jGfanj7MNMzOvOFyc/CFp6rXwDojSeVjOVqPWale
-         exw9Rp62tFo8wqRo0YZW08fJW1MssyDGz/SQ8cAGSWXfqXdSTBnvTy25w+8sbrKrqid/
-         O8Vg==
-X-Gm-Message-State: AOJu0Yyfm9m5XnHISEkn7wMMAnIhddPpgV7yvXy8ts/t0jIxX9ekNwZt
-	hFr1rZ96g1GATVb2JVS8Zimaeg==
-X-Google-Smtp-Source: AGHT+IG+JvDO46eVb/i8IDuwEuHhA2SVxYkTSZoGtbM2c6nncwzUAA0+bA0p676nl1Is/JNEkvg0HA==
-X-Received: by 2002:a05:6820:160a:b0:58d:9bb6:c38c with SMTP id bb10-20020a056820160a00b0058d9bb6c38cmr7347167oob.3.1701215638582;
-        Tue, 28 Nov 2023 15:53:58 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-134-23-187.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.134.23.187])
-        by smtp.gmail.com with ESMTPSA id 63-20020a4a0342000000b0058ad7b0b1a8sm2117307ooi.13.2023.11.28.15.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 15:53:58 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1r87tt-005jIw-Fu;
-	Tue, 28 Nov 2023 19:53:57 -0400
-Date: Tue, 28 Nov 2023 19:53:57 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
-	alim.akhtar@samsung.com, alyssa@rosenzweig.io,
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com,
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net,
-	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
-	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
-	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, mst@redhat.com,
-	m.szyprowski@samsung.com, netdev@vger.kernel.org,
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
-	samuel@sholland.org, suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com,
-	virtualization@lists.linux.dev, wens@csie.org, will@kernel.org,
-	yu-cheng.yu@intel.com
-Subject: Re: [PATCH 16/16] vfio: account iommu allocations
-Message-ID: <20231128235357.GF1312390@ziepe.ca>
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-17-pasha.tatashin@soleen.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394CD481C4;
+	Tue, 28 Nov 2023 23:55:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E808C433C8;
+	Tue, 28 Nov 2023 23:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701215758;
+	bh=nG35m4Vhxm9XNz4uNcrivh81CH8gXfwdbwOCLLaDjvc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=H8OY25HXkY/+389x+INNuMR+qeYUfXBigl+TQ7yAxhaZCU2brkK4nogY/bpNaednx
+	 eyA8WkmW9/XasYQRRbV6/fe0ZtW7HhsdUDbnsUvXTGsCwaEa3fJqMJ+qFsagq+T5gp
+	 lGcZpOVRCfS+Umh3ydNyuzYAycGIBI+GWma7AcfXrkFXHdfR0ytlq57gbopfowsNOf
+	 b3p+enhLs9ZST689HKcd26/WSI4vLmFCtTevslR76NUgCqL5kWh5navmy875BjRrxt
+	 RSu0jCUVT9ZozQjrpLxS64m+XTeE6Ihup65O7D1z+27s9hnWdWjyASyJdXX1msEOyS
+	 rG5QV+USiLINw==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Tue, 28 Nov 2023 16:55:43 -0700
+Subject: [PATCH] buffer: Add cast in grow_buffers() to avoid a
+ multiplication libcall
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231128204938.1453583-17-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20231128-avoid-muloti4-grow_buffers-v1-1-bc3d0f0ec483@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAP59ZmUC/x3MSwqDMBAA0KvIrDtgxijqVYoUrRMdUCOT+gHx7
+ g0u3+ZdEFiFA9TJBcq7BPFLhHkl8B3bZWCUPhoopcwYKrHdvfQ4b5P/icVB/fHpNudYA+ZFYSm
+ 1LrdUQQxWZSfnk7+b+/4DPVXPLWwAAAA=
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org, ndesaulniers@google.com, 
+ linux-fsdevel@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2587; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=nG35m4Vhxm9XNz4uNcrivh81CH8gXfwdbwOCLLaDjvc=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDKlpdXztleunX9qzhVOy9p1PwwUxDZcIfr4gH47l9UYWy
+ au1A+U7SlkYxLgYZMUUWaofqx43NJxzlvHGqUkwc1iZQIYwcHEKwEQcZzL8FTQ6/lwk/XxE19F7
+ 888s45repZ9x9tWDORZ/2feuuL5yoiIjw8xI/6QEJVeNr7IKusv42E9tfqIae+iJtXvb2SqjmPg
+ fnAA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Tue, Nov 28, 2023 at 08:49:38PM +0000, Pasha Tatashin wrote:
-> iommu allocations should be accounted in order to allow admins to
-> monitor and limit the amount of iommu memory.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+When building with clang after commit 697607935295 ("buffer: fix
+grow_buffers() for block size > PAGE_SIZE"), there is an error at link
+time due to the generation of a 128-bit multiplication libcall:
 
-You should send the seperately and directly to Alex.
+  ld.lld: error: undefined symbol: __muloti4
+  >>> referenced by buffer.c:0 (fs/buffer.c:0)
+  >>>               fs/buffer.o:(bdev_getblk) in archive vmlinux.a
 
-Jason
+Due to the width mismatch between the factors and the sign mismatch
+between the factors and the result, clang generates IR that performs
+this overflow check with 65-bit signed multiplication and LLVM does not
+improve on it during optimization, so the 65-bit multiplication is
+extended to 128-bit during legalization, resulting in the libcall on
+most targets.
+
+To avoid the initial situation that causes clang to generate the
+problematic IR, cast size (which is an 'unsigned int') to the same
+type/width as block (which is currently a 'u64'/'unsigned long long').
+GCC appears to already do this internally because there is no binary
+difference with the cast for arm, arm64, riscv, or x86_64.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/1958
+Link: https://github.com/llvm/llvm-project/issues/38013
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Closes: https://lore.kernel.org/CA+G9fYuA_PTd7R2NsBvtNb7qjwp4avHpCmWi4=OmY4jndDcQYA@mail.gmail.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+I am aware the hash in the commit message is not stable due to being on
+the mm-unstable branch but I figured I would write the commit message as
+if it would be standalone, in case this should not be squashed into the
+original change. I did not add a comment to the source around this
+workaround but I can if so desired.
+---
+ fs/buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 4eb44ccdc6be..3a8c8322ed28 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1091,7 +1091,7 @@ static bool grow_buffers(struct block_device *bdev, sector_t block,
+ 	 * Check for a block which lies outside our maximum possible
+ 	 * pagecache index.
+ 	 */
+-	if (check_mul_overflow(block, size, &pos) || pos > MAX_LFS_FILESIZE) {
++	if (check_mul_overflow(block, (sector_t)size, &pos) || pos > MAX_LFS_FILESIZE) {
+ 		printk(KERN_ERR "%s: requested out-of-range block %llu for device %pg\n",
+ 			__func__, (unsigned long long)block,
+ 			bdev);
+
+---
+base-commit: 5cdba94229e58a39ca389ad99763af29e6b0c5a5
+change-id: 20231128-avoid-muloti4-grow_buffers-5664204f5429
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
