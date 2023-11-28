@@ -1,519 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-4057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29097FBFA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 17:52:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65237FBFD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 17:57:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD1E3B215BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDEB1C20C7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92E25D4BD;
-	Tue, 28 Nov 2023 16:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA64221A1A;
+	Tue, 28 Nov 2023 16:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzmDg5xP"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DcmDT7nH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE477D51
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:52:14 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id ada2fe7eead31-4629c0109a6so1779858137.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:52:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701190334; x=1701795134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCRl7JsQD/bezTW7QjYsV7pXuJOZJO6W5H9wzekJX7k=;
-        b=KzmDg5xP8DKEVD8kSbjFY4/+XypGTuyKOcRRIzyifcz7k/b8AJWvx6HcvWxVX0B78+
-         UJAT8W8azsJngbTVcjSiVrPHPjEv0xqgqb5eL/+l0aTZeWQzUV7Ys3cdGTbXah5PFZEV
-         bnNzPdkb9v5IusBlpYm27tljoCgXRTM3L0wx2pWQcYLo12b29l2A+IX5AkLBoCT89JBW
-         y0gEtE9mMtfl6Z6JSRYik8fCIpAaI4y4mFahqvyYNzplMHVTH64aAN00J0C9cPrrJ4mG
-         ClP97/BU/QNCkVkucoYCqVe96YVmmGmjXQJJ2klF1AliGgD0y6iGJoZw3QDc6lUctcED
-         adXA==
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F84FD62
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:57:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701190657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Mhz2aAjozGznk5js3AKekQTCp0LGPxPOzTnF3OrDrGk=;
+	b=DcmDT7nHwttuTinhgZ24+i8amJxNNGQJW3QwvNLDU/pKBoNiybFcAGaJO1T31yGOY1J1Y+
+	AVx3ib0g+L2zDqElnT80HtS2dyRLAAWB72PL5RCOfVbAEG6maYykdh187PqvRFKPZkYTZd
+	FF7nGHcPigQO5g5TV7VjQDznNaXUlQU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-120--0Hy8aEBPYy6zAkZebDZsw-1; Tue, 28 Nov 2023 11:57:35 -0500
+X-MC-Unique: -0Hy8aEBPYy6zAkZebDZsw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-40b32faeb7eso33036535e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:57:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701190334; x=1701795134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCRl7JsQD/bezTW7QjYsV7pXuJOZJO6W5H9wzekJX7k=;
-        b=rue63ojasI/3MSfpaw1aCD47zwsKbdywCHWd79KOAY34PBS346DrpPUYfKCEcImxdg
-         Y2vAQdKxlGy6AKPYTVwkQ/N/Q17s+DAYHsqvf2Nc9FUdqx9mRucL6Qqgmu0c7ptXLS3k
-         5jweQ1YxdsHZTw9fAj51aCi/CoBgz4xuoI0B2pfvkr6FoNiLbmzqqYIaLHy6rmtcW4Yn
-         ah+yTUOHVVeIZNAroy1A6vUC2Ha/aSk5mPImHHqYDTaVE7Ub4N35rfEZTyAtLWUp17Bs
-         AeilzmHPxCtqLjpz3umu/x0pjxyapYbOAQZGK7nYuEbX8SbaFaBUBUUqW8IWfQiiw1pt
-         qshA==
-X-Gm-Message-State: AOJu0Yw0qsTAvJiy5uz973TfxB6NDdp6kcdLFsWyF/Yu9/MDCrxErfi2
-	yoWxYXOmhu4zuoDv84EhgJv+ob31GPgp8b+wUaY=
-X-Google-Smtp-Source: AGHT+IF+DesX0AXJ3Bgw2IRClVsFnQMC8cdxxosBWc7gW7a9cxfyJo70jR1/2UfA7WsfRmyZ5i0L4B4x8dj8XAu61tc=
-X-Received: by 2002:a67:fb46:0:b0:462:f980:9eb9 with SMTP id
- e6-20020a67fb46000000b00462f9809eb9mr7696718vsr.11.1701190333859; Tue, 28 Nov
- 2023 08:52:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701190654; x=1701795454;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mhz2aAjozGznk5js3AKekQTCp0LGPxPOzTnF3OrDrGk=;
+        b=gfrEWm30t3ER1AyAU2CQ1TVEfPOtXrItJ1fCy13Quir3Qsm7D1c4eL42vtPLzA0DD2
+         NOFAM+WwHaHOnfyw6KIKxvAVI/iH9WT3ldY3U70Q0UH3kmqLwTee+zQEl92m8Hdc/hqZ
+         xGmas0/OFy/id1nmqkOuwlYc+ziEtL+Xf+tvC40DEiqFx+7KR7Vi10eikZuSbUJtWqXF
+         lJZpyFdw6+ViWwfkHdMqfef19mni/RnNCEbjnL5hieRr8612m057GRbY6JFPMqT8Nm7X
+         O7JbFtYmtgHijQ7opvSP4IfoOzgCUta6PbK2uxpM43eMF5H6E6QomOlhE4mUy5htqeLK
+         gAsQ==
+X-Gm-Message-State: AOJu0YyboTl4vMWsH90NcTrcc1a+i3W5/UCfB+e6hfmvDlgj+vDfslU3
+	wdZkPujEfNr3ToApnpw3jOrCOTG+pBWl1LPnGl4QIdhBkfqOPU+5D99j9vUoQJiEib35g0h8gEN
+	wjd0VP+l/MYHfenuyDCNo0uKndQ==
+X-Received: by 2002:a05:600c:5486:b0:40b:4aee:ea9e with SMTP id iv6-20020a05600c548600b0040b4aeeea9emr1841384wmb.17.1701190654571;
+        Tue, 28 Nov 2023 08:57:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE2rxk0Q3GVvHMRjedMUVFzyjVJeCSZm/niH70YFfgmRZLrknHuTNDj9GCIicfRzDSV2e5yEg==
+X-Received: by 2002:a05:600c:5486:b0:40b:4aee:ea9e with SMTP id iv6-20020a05600c548600b0040b4aeeea9emr1841351wmb.17.1701190654112;
+        Tue, 28 Nov 2023 08:57:34 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:1d00:99ec:9656:7475:678d? (p200300cbc7081d0099ec96567475678d.dip0.t-ipconnect.de. [2003:cb:c708:1d00:99ec:9656:7475:678d])
+        by smtp.gmail.com with ESMTPSA id m6-20020a5d4a06000000b003330aede2aesm2717126wrq.112.2023.11.28.08.57.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Nov 2023 08:57:33 -0800 (PST)
+Message-ID: <0a0f9345-3138-4e89-80cd-c7edaf2ff62d@redhat.com>
+Date: Tue, 28 Nov 2023 17:57:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
- <20230817182220.vzzklvr7ejqlfnju@quack3> <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
- <20230823143708.nry64nytwbeijtsq@quack3> <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
- <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
- <20231120140605.6yx3jryuylgcphhr@quack3> <CAOQ4uxg_U5v9TuEeagb6ybPobG-jJkP+sFcf+-yYoWr07wswSQ@mail.gmail.com>
- <20231127191153.GH2366036@perftesting> <CAOQ4uxjLZZavhkKaWFa8T7+bCR+N2VRVsv4VusXvN5UMJjBiRA@mail.gmail.com>
- <20231128145547.GA2382537@perftesting>
-In-Reply-To: <20231128145547.GA2382537@perftesting>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 28 Nov 2023 18:52:00 +0200
-Message-ID: <CAOQ4uxhjEb-wXjoZDSHoH+bwebQzSSAVnPicEB8y6sJsDHLohQ@mail.gmail.com>
-Subject: Re: fanotify HSM open issues
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 05/27] mm: page_alloc: Add an arch hook to allow
+ prep_new_page() to fail
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+ maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+ yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+ vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
+ pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+ vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+ hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-6-alexandru.elisei@arm.com>
+ <dadc9d17-f311-47f1-a264-28b42bed0ab0@redhat.com> <ZWSHF2hVOPTBIQLY@raptor>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZWSHF2hVOPTBIQLY@raptor>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 28, 2023 at 4:55=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> =
-wrote:
->
-> On Tue, Nov 28, 2023 at 01:05:50PM +0200, Amir Goldstein wrote:
-> > On Mon, Nov 27, 2023 at 9:11=E2=80=AFPM Josef Bacik <josef@toxicpanda.c=
-om> wrote:
-> > >
-> > > On Mon, Nov 20, 2023 at 06:59:47PM +0200, Amir Goldstein wrote:
-> > > > On Mon, Nov 20, 2023 at 4:06=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
-te:
-> > > > >
-> > > > > Hi Amir,
-> > > > >
-> > > > > sorry for a bit delayed reply, I did not get to "swapping in" HSM
-> > > > > discussion during the Plumbers conference :)
-> > > > >
-> > > > > On Mon 13-11-23 13:50:03, Amir Goldstein wrote:
-> > > > > > On Wed, Aug 23, 2023 at 7:31=E2=80=AFPM Amir Goldstein <amir73i=
-l@gmail.com> wrote:
-> > > > > > > On Wed, Aug 23, 2023 at 5:37=E2=80=AFPM Jan Kara <jack@suse.c=
-z> wrote:
-> > > > > > > > > Recap for new people joining this thread.
-> > > > > > > > >
-> > > > > > > > > The following deadlock is possible in upstream kernel
-> > > > > > > > > if fanotify permission event handler tries to make
-> > > > > > > > > modifications to the filesystem it is watching in the con=
-text
-> > > > > > > > > of FAN_ACCESS_PERM handling in some cases:
-> > > > > > > > >
-> > > > > > > > > P1                             P2                      P3
-> > > > > > > > > -----------                    ------------            --=
-----------
-> > > > > > > > > do_sendfile(fs1.out_fd, fs1.in_fd)
-> > > > > > > > > -> sb_start_write(fs1.sb)
-> > > > > > > > >   -> do_splice_direct()                         freeze_su=
-per(fs1.sb)
-> > > > > > > > >     -> rw_verify_area()                         -> sb_wai=
-t_write(fs1.sb) ......
-> > > > > > > > >       -> security_file_permission()
-> > > > > > > > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
-> > > > > > > > >                                  -> do_unlinkat(fs1.dfd, =
-...)
-> > > > > > > > >                                    -> sb_start_write(fs1.=
-sb) ......
-> > > > > > > > >
-> > > > > > > > > start-write-safe patches [1] (not posted) are trying to s=
-olve this
-> > > > > > > > > deadlock and prepare the ground for a new set of permissi=
-on events
-> > > > > > > > > with cleaner/safer semantics.
-> > > > > > > > >
-> > > > > > > > > The cases described above of sendfile from a file in loop=
- mounted
-> > > > > > > > > image over fs1 or overlayfs over fs1 into a file in fs1 c=
-an still
-> > > > > > > > > deadlock despite the start-write-safe patches [1].
-> > > > > > > >
-> > > > > > > > Yep, nice summary.
-> > > > > ...
-> > > > > > > > > > As I wrote above I don't like the abuse of FMODE_NONOTI=
-FY much.
-> > > > > > > > > > FMODE_NONOTIFY means we shouldn't generate new fanotify=
- events when using
-> > > > > > > > > > this fd. It says nothing about freeze handling or so. F=
-urthermore as you
-> > > > > > > > > > observe FMODE_NONOTIFY cannot be set by userspace but p=
-ractically all
-> > > > > > > > > > current fanotify users need to also do IO on other file=
-s in order to handle
-> > > > > > > > > > fanotify event. So ideally we'd have a way to do IO to =
-other files in a
-> > > > > > > > > > manner safe wrt freezing. We could just update handling=
- of RWF_NOWAIT flag
-> > > > > > > > > > to only trylock freeze protection - that actually makes=
- a lot of sense to
-> > > > > > > > > > me. The question is whether this is enough or not.
-> > > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > Maybe, but RWF_NOWAIT doesn't take us far enough, because=
- writing
-> > > > > > > > > to a file is not the only thing that HSM needs to do.
-> > > > > > > > > Eventually, event handler for lookup permission events sh=
-ould be
-> > > > > > > > > able to also create files without blocking on vfs level f=
-reeze protection.
-> > > > > > > >
-> > > > > > > > So this is what I wanted to clarify. The lookup permission =
-event never gets
-> > > > > > > > called under a freeze protection so the deadlock doesn't ex=
-ist there. In
-> > > > > > > > principle the problem exists only for access and modify eve=
-nts where we'd
-> > > > > > > > be filling in file data and thus RWF_NOWAIT could be enough=
-.
-> > > > > > >
-> > > > > > > Yes, you are right.
-> > > > > > > It is possible that RWF_NOWAIT could be enough.
-> > > > > > >
-> > > > > > > But the discovery of the loop/ovl corner cases has shaken my
-> > > > > > > confidence is the ability to guarantee that freeze protection=
- is not
-> > > > > > > held somehow indirectly.
-> > > > > > >
-> > > > > > > If I am not mistaken, FAN_OPEN_PERM suffers from the exact
-> > > > > > > same ovl corner case, because with splice from ovl1 to fs1,
-> > > > > > > fs1 freeze protection is held and:
-> > > > > > >   ovl_splice_read(ovl1.file)
-> > > > > > >     ovl_real_fdget()
-> > > > > > >       ovl_open_realfile(fs1.file)
-> > > > > > >          ... security_file_open(fs1.file)
-> > > > > > >
-> > > > > > > > That being
-> > > > > > > > said I understand this may be assuming too much about the i=
-mplementations
-> > > > > > > > of HSM daemons and as you write, we might want to provide a=
- way to do IO
-> > > > > > > > not blocking on freeze protection from any hook. But I want=
-ed to point this
-> > > > > > > > out explicitly so that it's a conscious decision.
-> > > > > > > >
-> > > > > >
-> > > > > > I agree and I'd like to explain using an example, why RWF_NOWAI=
-T is
-> > > > > > not enough for HSM needs.
-> > > > > >
-> > > > > > The reason is that often, when HSM needs to handle filling cont=
-ent
-> > > > > > in FAN_PRE_ACCESS, it is not just about writing to the accessed=
- file.
-> > > > > > HSM needs to be able to avoid blocking on freeze protection
-> > > > > > for any operations on the filesystem, not just pwrite().
-> > > > > >
-> > > > > > For example, the POC HSM code [1], stores the DATA_DIR_fd
-> > > > > > from the lookup event and uses it in the handling of access eve=
-nts to
-> > > > > > update the metadata files that store which parts of the file we=
-re already
-> > > > > > filled (relying of fiemap is not always a valid option).
-> > > > > >
-> > > > > > That is the reason that in the POC patches [2], FMODE_NONOTIFY
-> > > > > > is propagated from dirfd to an fd opened with openat(dirfd, ...=
-), so
-> > > > > > HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
-> > > > > >
-> > > > > > Another use case is that HSM may want to download content to a
-> > > > > > temp file on the same filesystem, verify the downloaded content=
- and
-> > > > > > then clone the data into the accessed file range.
-> > > > > >
-> > > > > > I think that a PF_ flag (see below) would work best for all tho=
-se cases.
-> > > > >
-> > > > > Ok, I agree that just using RWF_NOWAIT from the HSM daemon need n=
-ot be
-> > > > > enough for all sensible usecases to avoid deadlocks with freezing=
-. However
-> > > > > note that if we want to really properly handle all possible opera=
-tions, we
-> > > > > need to start handling error from all sb_start_write() and
-> > > > > file_start_write() calls and there are quite a few of those.
-> > > > >
-> > > >
-> > > > Darn, forgot about those.
-> > > > I am starting to reconsider adding a freeze level.
-> > > > I cannot shake the feeling that there is a simpler solution that es=
-capes us...
-> > > > Maybe fs anti-freeze (see blow).
-> > > >
-> > > > > > > > > In theory, I am not saying we should do it, but as a thou=
-ght experiment:
-> > > > > > > > > if the requirement from permission event handler is that =
-is must use a
-> > > > > > > > > O_PATH | FMODE_NONOTIFY event->fd provided in the event t=
-o make
-> > > > > > > > > any filesystem modifications, then instead of aiming for =
-NOWAIT
-> > > > > > > > > semantics using sb_start_write_trylock(), we could use a =
-freeze level
-> > > > > > > > > SB_FREEZE_FSNOTIFY between
-> > > > > > > > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
-> > > > > > > > >
-> > > > > > > > > As a matter of fact, HSM is kind of a "VFS FAULT", so as =
-long as we
-> > > > > > > > > make it clear how userspace should avoid nesting "VFS fau=
-lts" there is
-> > > > > > > > > a model that can solve the deadlock correctly.
-> > > > > > > >
-> > > > > > > > OK, yes, in principle another freeze level which could be u=
-sed by handlers
-> > > > > > > > of fanotify permission events would solve the deadlock as w=
-ell. Just you
-> > > > > > > > seem to like to tie this functionality to the particular fd=
- returned from
-> > > > > > > > fanotify and I'm not convinced that is a good idea. What if=
- the application
-> > > > > > > > needs to do write to some other location besides the one fd=
- it got passed
-> > > > > > > > from fanotify event? E.g. imagine it wants to fetch a whole=
- subtree on
-> > > > > > > > first access to any file in a subtree. Or maybe it wants to=
- write to some
-> > > > > > > > DB file containing current state or something like that.
-> > > > > > > >
-> > > > > > > > One solution I can imagine is to create an open flag that c=
-an be specified
-> > > > > > > > on open which would result in the special behavior wrt fs f=
-reezing. If the
-> > > > > > > > special behavior would be just trylocking the freeze protec=
-tion then it
-> > > > > > > > would be really easy. If the behaviour would be another fre=
-eze protection
-> > > > > > > > level, then we'd need to make sure we don't generate anothe=
-r fanotify
-> > > > > > > > permission event with such fd - autorejecting any such acce=
-ss is an obvious
-> > > > > > > > solution but I'm not sure if practical for applications.
-> > > > > > > >
-> > > > > > >
-> > > > > > > I had also considered marking the listener process with the F=
-SNOTIFY
-> > > > > > > context and enforcing this context on fanotify_read().
-> > > > > > > In a way, this is similar to the NOIO and NOFS process contex=
-t.
-> > > > > > > It could be used to both act as a stronger form of FMODE_NONO=
-TIFY
-> > > > > > > and to activate the desired freeze protection behavior
-> > > > > > > (whether trylock or SB_FREEZE_FSNOTIFY level).
-> > > > > > >
-> > > > > >
-> > > > > > My feeling is that the best approach would be a PF_NOWAIT task =
-flag:
-> > > > > >
-> > > > > > - PF_NOWAIT will prevent blocking on freeze protection
-> > > > > > - PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
-> > > > > > - PF_NOWAIT could be auto-set on the reader of a permission eve=
-nt
-> > > > > > - PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
-> > > > > > - We could add user API to set this personality explicitly to a=
-ny task
-> > > > > > - PF_NOWAIT without FMODE_NONOTIFY denies permission events
-> > > > > >
-> > > > > > Please let me know if you agree with this design and if so,
-> > > > > > which of the methods to set PF_NOWAIT are a must for the first =
-version
-> > > > > > in your opinion?
-> > > > >
-> > > > > Yeah, the PF flag could work. It can be set for the process(es) r=
-esponsible
-> > > > > for processing the fanotify events and filling in filesystem cont=
-ents. I
-> > > > > don't think automatic setting of this flag is desirable though as=
- it has
-> > > > > quite wide impact and some of the consequences could be surprisin=
-g.  I
-> > > > > rather think it should be a conscious decision when setting up th=
-e process
-> > > > > processing the events. So I think API to explicitly set / clear t=
-he flag
-> > > > > would be the best. Also I think it would be better to capture in =
-the name
-> > > > > that this is really about fs freezing. So maybe PF_NOWAIT_FREEZE =
-or
-> > > > > something like that?
-> > > > >
-> > > >
-> > > > Sure.
-> > > >
-> > > > > Also we were thinking about having an open(2) flag for this (inst=
-ead of PF
-> > > > > flag) in the past. That would allow finer granularity control of =
-the
-> > > > > behavior but I guess you are worried that it would not cover all =
-the needed
-> > > > > operations?
-> > > > >
-> > > >
-> > > > Yeh, it seems like an API that is going to be harder to write safe =
-HSM
-> > > > programs with.
-> > > >
-> > > > > > Do you think we should use this method to fix the existing dead=
-locks
-> > > > > > with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
-> > > > >
-> > > > > No, I think if someone cares about these, they should explicitly =
-set the
-> > > > > PF flag in their task processing the events.
-> > > > >
-> > > >
-> > > > OK.
-> > > >
-> > > > I see an exit hatch in this statement -
-> > > > If we are going leave the responsibility to avoid deadlock in corne=
-r
-> > > > cases completely in the hands of the application, then I do not fee=
-l
-> > > > morally obligated to create the PF_NOWAIT_FREEZE API *before*
-> > > > providing the first HSM API.
-> > > >
-> > > > If the HSM application is running in a controlled system, on a file=
-system
-> > > > where fsfreeze is not expected or not needed, then a fully function=
-al and
-> > > > safe HSM does not require PF_NOWAIT_FREEZE API.
-> > > >
-> > > > Perhaps an API to make an fs unfreezable is just as practical and a=
- much
-> > > > easier option for the first version of HSM API?
-> > > >
-> > > > Imagine that HSM opens an fd and sends an EXCLUSIVE_FSFREEZER
-> > > > ioctl. Then no other task can freeze the fs, for as long as the fd =
-is open
-> > > > apart from the HSM itself using this fd.
-> > > >
-> > > > HSM itself can avoid deadlocks if it collaborates the fs freezes wi=
-th
-> > > > making fs modifications from within HSM events.
-> > > >
-> > > > Do you think that may be an acceptable way out or the corner?
-> > >
-> > > This is kind of a corner case that I think is acceptable to just leav=
-e up to
-> > > application developers.  Speaking as a potential consumer of this wor=
-k we don't
-> > > use fsfreeze so aren't concerned wit this in practice, and arguably i=
-f you're
-> > > using this interface you know what you're doing.  As long as the shar=
-p edge is
-> > > well documented I think that's fine for v1.
-> > >
-> >
-> > I agree that this is good enough for v1.
-> > The only question is can we (and should we) do better than good enough =
-for v1.
-> >
-> > > Long term I like the EXCLUSIVE_FSFREEZER option, noting Christian's c=
-omment
-> > > about the xfs scrubbing use case.  We all know that "freeze this file=
- system" is
-> > > an operation that is going to take X amount of time, so as long as we=
- provide
-> > > the application a way to block fsfreeze to avoid the deadlock then I =
-think
-> > > that's a reasonable solution.  Additionally it would allow us an aven=
-ue to
-> > > gracefully handle errors.  If we race and see that the fs is already =
-frozen well
-> > > then we can go back to the HSM with an error saying he's out of luck,=
- and he can
-> > > return -EAGAIN or something through fanotify to unwind and try again =
-later.
-> > >
-> >
-> > Actually, "fs is already frozen" is not a deadlock case.
-> > If "fs is already frozen" then fsfreeze was successful and HSM should j=
-ust
-> > wait in line like everyone else until fs is unfrozen.
-> >
-> > The deadlock case is "fs is being frozen" (i.e. sb->s_writers.frozen is
-> > in state SB_FREEZE_WRITE), which cannot make progress because
-> > an existing holder of sb write is blocked on an HSM event, which in tur=
-n
-> > is trying to start a new sb write.
->
-> Right, and now I'm confused.  You have your patchset to re-order the perm=
-ission
-> checks to before the sb_start_write(), so an HSM watching FAN_OPEN_PERM i=
-s no
-> longer holding the sb write lock and thus can't deadlock, correct?
+On 27.11.23 13:09, Alexandru Elisei wrote:
+> Hi,
+> 
+> Thank you so much for your comments, there are genuinely useful.
+> 
+> On Fri, Nov 24, 2023 at 08:35:47PM +0100, David Hildenbrand wrote:
+>> On 19.11.23 17:56, Alexandru Elisei wrote:
+>>> Introduce arch_prep_new_page(), which will be used by arm64 to reserve tag
+>>> storage for an allocated page. Reserving tag storage can fail, for example,
+>>> if the tag storage page has a short pin on it, so allow prep_new_page() ->
+>>> arch_prep_new_page() to similarly fail.
+>>
+>> But what are the side-effects of this? How does the calling code recover?
+>>
+>> E.g., what if we need to populate a page into user space, but that
+>> particular page we allocated fails to be prepared? So we inject a signal
+>> into that poor process?
+> 
+> When the page fails to be prepared, it is put back to the tail of the
+> freelist with __free_one_page(.., FPI_TO_TAIL). If all the allocation paths
+> are exhausted and no page has been found for which tag storage has been
+> reserved, then that's treated like an OOM situation.
+> 
+> I have been thinking about this, and I think I can simplify the code by
+> making tag reservation a best effort approach. The page can be allocated
+> even if reserving tag storage fails, but the page is marked as invalid in
+> set_pte_at() (PAGE_NONE + an extra bit to tell arm64 that it needs tag
+> storage) and next time it is accessed, arm64 will reserve tag storage in
+> the fault handling code (the mechanism for that is implemented in patch #19
+> of the series, "mm: mprotect: Introduce PAGE_FAULT_ON_ACCESS for
+> mprotect(PROT_MTE)").
+> 
+> With this new approach, prep_new_page() stays the way it is, and no further
+> changes are required for the page allocator, as there are already arch
+> callbacks that can be used for that, for example tag_clear_highpage() and
+> arch_alloc_page(). The downside is extra page faults, which might impact
+> performance.
+> 
+> What do you think?
 
-Correct.
+That sounds a lot more robust, compared to intermittent failures to 
+allocate pages.
 
->
-> The new things you are proposing (FAN_PRE_ACESS and FAN_PRE_MODIFY) also =
-do not
-> happen inside of an sb_start_write(), correct?
->
+-- 
+Cheers,
 
-Almost correct.
+David / dhildenb
 
-The callers of the security_file_permission() hook do not hold sb_start_wri=
-te()
-*directly*, but it can be held *indirectly* in splice(file_in_fs1, file_in_=
-fs2).
-That is the corner case I was trying to explain.
-
-When fs1 (splice source fs) is a loop mounted fs and the loop image file
-is on fs2 (a.k.a the "host" fs), which also happens to be to splice dest fs=
-,
-splice grabs sb_start_write() on fs2.
-
-After the patches in vfs.rw, splice() no longer calls security_file_permiss=
-ion()
-directly on the file in the loop mounted fs1, but the reads from loopdev
-translate to reads on the image file, which can call security_file_permissi=
-on()
-on the loop image file on the "host" fs (fs2), while sb_start_write() is he=
-ld.
-
-IOW, if HSM needs to fill the content on the loop image file and fsfreeze o=
-n
-the "host" fs that is the destination of splice, gets in the middle, there =
-is
-a chance for a deadlock, because freeze will never make progress and
-HSM filling of the loop image file is blocked.
-
-Yes, it is a corner case, but it exists and a similar one exists with a spl=
-ice
-from an overlayfs file into a file on a "host" fs, which also happens to be=
- the
-lower layer of overlayfs (I have a test case that triggered this).
-
-> So where is the deadlock you're trying to fix?  The one you describe in t=
-his
-> thread is what the patchset I reviewed last week was fixing, so in my eye=
-s it
-> looks like we're good?  It seems you're worried about the HSM app getting=
- stuck
-> on an fsfreeze when it's trying to populate the content, but that's not a=
-ctually
-> deadlocked, it just has to wait for the fs to be unfrozen, the fsfreeze
-> operation will be able to complete and then thaw will be able to happen b=
-ecause
-> there's no nested sb_write with the new flags, and with your patchset the=
-re's no
-> sb_write with FAN_OPEN_PERM.
->
-> Sorry I hate it when people come in the middle of a conversation and I ha=
-ve to
-> re-explain myself, so feel free to ignore me.  But I've read the whole th=
-read a
-> few times and I can't quite figure out what this new deadlock is you're w=
-orried
-> about
-
-Quite the contrary, I never managed to explain the remaining deadlock
-to the wider crowd (except for Jan), so I am glad that you and Christian
-are taking an interest.
-
-Thanks,
-Amir.
 
