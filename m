@@ -1,77 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-4042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E017FBD7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0467FBDC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D4A28127A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589F6283193
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C785C074;
-	Tue, 28 Nov 2023 14:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EED45CD2C;
+	Tue, 28 Nov 2023 15:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="zwaLhgJN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zp1CRPHZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF06D10F6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:55:50 -0800 (PST)
-Received: by mail-yb1-xb42.google.com with SMTP id 3f1490d57ef6-db40898721fso5188069276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:55:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1701183350; x=1701788150; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6hfxZGEzsMn6pr3PbGHAQMPYIzDR4bpjU2UUNvRRumg=;
-        b=zwaLhgJNCTblwrxlJ6cC5yN/bmSbOxLSJpTznl4gjkJI7uugJpkWbG7taecD4SVwdV
-         gGqgiHaLljjKE7oWNVPInb32PXbch5McvL9u0pvUz3hNtgJr9mxjc0o7wpkYtV/KjuN8
-         JUdlCQ36UPAwOJKU50EKBhGxIYydXlAM1qBf5+uAJn2bhvNXjTZhkPB3GUpZPVDPX/gU
-         5ir9bHBIZZO6cxNN0foew0aRqYN6tUgefZ1esqdnkH4kzTfzd6VRedyIzkEJYidZVdGt
-         BvyZQEEPCSInAy0AncL/X9UpAJNAOaQJIbn1ddyLCKoCkxl2xdgt9Vw1mPk7Pj6c61Zd
-         +oZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701183350; x=1701788150;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6hfxZGEzsMn6pr3PbGHAQMPYIzDR4bpjU2UUNvRRumg=;
-        b=bf4UBffuNyv6Eyp/W2svivnmbfn1xGxG/ZTk1pRIdkGoUy2vVk0IPeq6qVfFgg8EKC
-         jAHEGX33IUhbc3Nu+XJkBjOpyA2PF8uRPQl50fAqT/7el0+xSDSJWPM6Oyf5PtCqi1IK
-         2aBoyd9dJmmuiRT396kORQ8SXirECJEOvljE29FWZkgEzumi6cMZzAhhqHTqM1APkmtw
-         DiwhrYXTuj1X30OBtd+LdggjIVtllITpFJZ9O14N5yT//nFexLLr5/lrKtYK/DiGctwC
-         CUt2Rf4CWnhpjErrCGJgQZuOXxYUbpg2BSuI9awx29/I32z/PaLyCMecisQVp24bjMVd
-         4bGQ==
-X-Gm-Message-State: AOJu0YxvCOn/VIhHKtn3UN6jl5Fi/6dB+UsB4w6GE+G5zf5QJa/BkBCZ
-	30lrDFAmwDTLi4czqOGv5DX9RoIF/tz73eMHdQIJx1G9
-X-Google-Smtp-Source: AGHT+IFUt2i864MDa9bG8vTVS4tjsJBuHDXsXJIsZH9X+7TLarfItbt1OkuTLPrI1Ojcb3o6dz+3TA==
-X-Received: by 2002:a25:e795:0:b0:db4:7ac:feb5 with SMTP id e143-20020a25e795000000b00db407acfeb5mr13767212ybh.15.1701183349860;
-        Tue, 28 Nov 2023 06:55:49 -0800 (PST)
-Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id y16-20020a258610000000b00d9c7bf8f32fsm3549450ybk.42.2023.11.28.06.55.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 06:55:49 -0800 (PST)
-Date: Tue, 28 Nov 2023 09:55:47 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: fanotify HSM open issues
-Message-ID: <20231128145547.GA2382537@perftesting>
-References: <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
- <20230817182220.vzzklvr7ejqlfnju@quack3>
- <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
- <20230823143708.nry64nytwbeijtsq@quack3>
- <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
- <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
- <20231120140605.6yx3jryuylgcphhr@quack3>
- <CAOQ4uxg_U5v9TuEeagb6ybPobG-jJkP+sFcf+-yYoWr07wswSQ@mail.gmail.com>
- <20231127191153.GH2366036@perftesting>
- <CAOQ4uxjLZZavhkKaWFa8T7+bCR+N2VRVsv4VusXvN5UMJjBiRA@mail.gmail.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B665C081;
+	Tue, 28 Nov 2023 15:11:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFC5C433C8;
+	Tue, 28 Nov 2023 15:10:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701184261;
+	bh=A2e4Zu1xuXIH5aOiqDfkKoKHysPswpglpEU1MVS4blw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zp1CRPHZ6pLu8HW2zRDnHBw1nsy1C833JZvVCn7RIIbEnXewZelaBPskrs2PFsvhd
+	 5PAAqpyoXGkz/V/AGvHzgl0kyZ59TTJ5Szx0vzB0O2YnESGrUrS+Ic0JIYI59DUGMX
+	 WVlNFcwHdVbDBzjCBxNzC7AlVKrVWtoONHg+GJAX6iZ5W53wffUpo9HFdXjWpGdgjt
+	 ZoMp+6uqy4P4OR9kkwejo3hRw6XLmh/acJhd+PPRkErTEa8ApQ1CoYIKwzKY7K21Zv
+	 XzmKxMP+GLTACFS70YUR50p44huVadO7b/OcdrUNLZqp9DqWtz4hLwSQvas6hMWz0+
+	 NIub70NUcgwkQ==
+Date: Tue, 28 Nov 2023 16:10:55 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, fsverity@lists.linux.dev,
+	ebiggers@kernel.org, andrii@kernel.org, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, casey@schaufler-ca.com, amir73il@gmail.com,
+	kpsingh@kernel.org, roberto.sassu@huawei.com
+Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
+Message-ID: <20231128-einfiel-eichenbaum-6c66745f9f74@brauner>
+References: <20231123233936.3079687-1-song@kernel.org>
+ <20231123233936.3079687-2-song@kernel.org>
+ <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner>
+ <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
+ <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner>
+ <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
+ <20231128-hermachen-westen-74b7951e8e38@brauner>
+ <CAPhsuW6R-1ZjToupiDtRWjxpcdTA0dw0Sk7zDi9+5AUciTJ6LA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,281 +60,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjLZZavhkKaWFa8T7+bCR+N2VRVsv4VusXvN5UMJjBiRA@mail.gmail.com>
+In-Reply-To: <CAPhsuW6R-1ZjToupiDtRWjxpcdTA0dw0Sk7zDi9+5AUciTJ6LA@mail.gmail.com>
 
-On Tue, Nov 28, 2023 at 01:05:50PM +0200, Amir Goldstein wrote:
-> On Mon, Nov 27, 2023 at 9:11 PM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Mon, Nov 20, 2023 at 06:59:47PM +0200, Amir Goldstein wrote:
-> > > On Mon, Nov 20, 2023 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > Hi Amir,
-> > > >
-> > > > sorry for a bit delayed reply, I did not get to "swapping in" HSM
-> > > > discussion during the Plumbers conference :)
-> > > >
-> > > > On Mon 13-11-23 13:50:03, Amir Goldstein wrote:
-> > > > > On Wed, Aug 23, 2023 at 7:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > On Wed, Aug 23, 2023 at 5:37 PM Jan Kara <jack@suse.cz> wrote:
-> > > > > > > > Recap for new people joining this thread.
-> > > > > > > >
-> > > > > > > > The following deadlock is possible in upstream kernel
-> > > > > > > > if fanotify permission event handler tries to make
-> > > > > > > > modifications to the filesystem it is watching in the context
-> > > > > > > > of FAN_ACCESS_PERM handling in some cases:
-> > > > > > > >
-> > > > > > > > P1                             P2                      P3
-> > > > > > > > -----------                    ------------            ------------
-> > > > > > > > do_sendfile(fs1.out_fd, fs1.in_fd)
-> > > > > > > > -> sb_start_write(fs1.sb)
-> > > > > > > >   -> do_splice_direct()                         freeze_super(fs1.sb)
-> > > > > > > >     -> rw_verify_area()                         -> sb_wait_write(fs1.sb) ......
-> > > > > > > >       -> security_file_permission()
-> > > > > > > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
-> > > > > > > >                                  -> do_unlinkat(fs1.dfd, ...)
-> > > > > > > >                                    -> sb_start_write(fs1.sb) ......
-> > > > > > > >
-> > > > > > > > start-write-safe patches [1] (not posted) are trying to solve this
-> > > > > > > > deadlock and prepare the ground for a new set of permission events
-> > > > > > > > with cleaner/safer semantics.
-> > > > > > > >
-> > > > > > > > The cases described above of sendfile from a file in loop mounted
-> > > > > > > > image over fs1 or overlayfs over fs1 into a file in fs1 can still
-> > > > > > > > deadlock despite the start-write-safe patches [1].
-> > > > > > >
-> > > > > > > Yep, nice summary.
-> > > > ...
-> > > > > > > > > As I wrote above I don't like the abuse of FMODE_NONOTIFY much.
-> > > > > > > > > FMODE_NONOTIFY means we shouldn't generate new fanotify events when using
-> > > > > > > > > this fd. It says nothing about freeze handling or so. Furthermore as you
-> > > > > > > > > observe FMODE_NONOTIFY cannot be set by userspace but practically all
-> > > > > > > > > current fanotify users need to also do IO on other files in order to handle
-> > > > > > > > > fanotify event. So ideally we'd have a way to do IO to other files in a
-> > > > > > > > > manner safe wrt freezing. We could just update handling of RWF_NOWAIT flag
-> > > > > > > > > to only trylock freeze protection - that actually makes a lot of sense to
-> > > > > > > > > me. The question is whether this is enough or not.
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > Maybe, but RWF_NOWAIT doesn't take us far enough, because writing
-> > > > > > > > to a file is not the only thing that HSM needs to do.
-> > > > > > > > Eventually, event handler for lookup permission events should be
-> > > > > > > > able to also create files without blocking on vfs level freeze protection.
-> > > > > > >
-> > > > > > > So this is what I wanted to clarify. The lookup permission event never gets
-> > > > > > > called under a freeze protection so the deadlock doesn't exist there. In
-> > > > > > > principle the problem exists only for access and modify events where we'd
-> > > > > > > be filling in file data and thus RWF_NOWAIT could be enough.
-> > > > > >
-> > > > > > Yes, you are right.
-> > > > > > It is possible that RWF_NOWAIT could be enough.
-> > > > > >
-> > > > > > But the discovery of the loop/ovl corner cases has shaken my
-> > > > > > confidence is the ability to guarantee that freeze protection is not
-> > > > > > held somehow indirectly.
-> > > > > >
-> > > > > > If I am not mistaken, FAN_OPEN_PERM suffers from the exact
-> > > > > > same ovl corner case, because with splice from ovl1 to fs1,
-> > > > > > fs1 freeze protection is held and:
-> > > > > >   ovl_splice_read(ovl1.file)
-> > > > > >     ovl_real_fdget()
-> > > > > >       ovl_open_realfile(fs1.file)
-> > > > > >          ... security_file_open(fs1.file)
-> > > > > >
-> > > > > > > That being
-> > > > > > > said I understand this may be assuming too much about the implementations
-> > > > > > > of HSM daemons and as you write, we might want to provide a way to do IO
-> > > > > > > not blocking on freeze protection from any hook. But I wanted to point this
-> > > > > > > out explicitly so that it's a conscious decision.
-> > > > > > >
-> > > > >
-> > > > > I agree and I'd like to explain using an example, why RWF_NOWAIT is
-> > > > > not enough for HSM needs.
-> > > > >
-> > > > > The reason is that often, when HSM needs to handle filling content
-> > > > > in FAN_PRE_ACCESS, it is not just about writing to the accessed file.
-> > > > > HSM needs to be able to avoid blocking on freeze protection
-> > > > > for any operations on the filesystem, not just pwrite().
-> > > > >
-> > > > > For example, the POC HSM code [1], stores the DATA_DIR_fd
-> > > > > from the lookup event and uses it in the handling of access events to
-> > > > > update the metadata files that store which parts of the file were already
-> > > > > filled (relying of fiemap is not always a valid option).
-> > > > >
-> > > > > That is the reason that in the POC patches [2], FMODE_NONOTIFY
-> > > > > is propagated from dirfd to an fd opened with openat(dirfd, ...), so
-> > > > > HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
-> > > > >
-> > > > > Another use case is that HSM may want to download content to a
-> > > > > temp file on the same filesystem, verify the downloaded content and
-> > > > > then clone the data into the accessed file range.
-> > > > >
-> > > > > I think that a PF_ flag (see below) would work best for all those cases.
-> > > >
-> > > > Ok, I agree that just using RWF_NOWAIT from the HSM daemon need not be
-> > > > enough for all sensible usecases to avoid deadlocks with freezing. However
-> > > > note that if we want to really properly handle all possible operations, we
-> > > > need to start handling error from all sb_start_write() and
-> > > > file_start_write() calls and there are quite a few of those.
-> > > >
-> > >
-> > > Darn, forgot about those.
-> > > I am starting to reconsider adding a freeze level.
-> > > I cannot shake the feeling that there is a simpler solution that escapes us...
-> > > Maybe fs anti-freeze (see blow).
-> > >
-> > > > > > > > In theory, I am not saying we should do it, but as a thought experiment:
-> > > > > > > > if the requirement from permission event handler is that is must use a
-> > > > > > > > O_PATH | FMODE_NONOTIFY event->fd provided in the event to make
-> > > > > > > > any filesystem modifications, then instead of aiming for NOWAIT
-> > > > > > > > semantics using sb_start_write_trylock(), we could use a freeze level
-> > > > > > > > SB_FREEZE_FSNOTIFY between
-> > > > > > > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
-> > > > > > > >
-> > > > > > > > As a matter of fact, HSM is kind of a "VFS FAULT", so as long as we
-> > > > > > > > make it clear how userspace should avoid nesting "VFS faults" there is
-> > > > > > > > a model that can solve the deadlock correctly.
-> > > > > > >
-> > > > > > > OK, yes, in principle another freeze level which could be used by handlers
-> > > > > > > of fanotify permission events would solve the deadlock as well. Just you
-> > > > > > > seem to like to tie this functionality to the particular fd returned from
-> > > > > > > fanotify and I'm not convinced that is a good idea. What if the application
-> > > > > > > needs to do write to some other location besides the one fd it got passed
-> > > > > > > from fanotify event? E.g. imagine it wants to fetch a whole subtree on
-> > > > > > > first access to any file in a subtree. Or maybe it wants to write to some
-> > > > > > > DB file containing current state or something like that.
-> > > > > > >
-> > > > > > > One solution I can imagine is to create an open flag that can be specified
-> > > > > > > on open which would result in the special behavior wrt fs freezing. If the
-> > > > > > > special behavior would be just trylocking the freeze protection then it
-> > > > > > > would be really easy. If the behaviour would be another freeze protection
-> > > > > > > level, then we'd need to make sure we don't generate another fanotify
-> > > > > > > permission event with such fd - autorejecting any such access is an obvious
-> > > > > > > solution but I'm not sure if practical for applications.
-> > > > > > >
-> > > > > >
-> > > > > > I had also considered marking the listener process with the FSNOTIFY
-> > > > > > context and enforcing this context on fanotify_read().
-> > > > > > In a way, this is similar to the NOIO and NOFS process context.
-> > > > > > It could be used to both act as a stronger form of FMODE_NONOTIFY
-> > > > > > and to activate the desired freeze protection behavior
-> > > > > > (whether trylock or SB_FREEZE_FSNOTIFY level).
-> > > > > >
-> > > > >
-> > > > > My feeling is that the best approach would be a PF_NOWAIT task flag:
-> > > > >
-> > > > > - PF_NOWAIT will prevent blocking on freeze protection
-> > > > > - PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
-> > > > > - PF_NOWAIT could be auto-set on the reader of a permission event
-> > > > > - PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
-> > > > > - We could add user API to set this personality explicitly to any task
-> > > > > - PF_NOWAIT without FMODE_NONOTIFY denies permission events
-> > > > >
-> > > > > Please let me know if you agree with this design and if so,
-> > > > > which of the methods to set PF_NOWAIT are a must for the first version
-> > > > > in your opinion?
-> > > >
-> > > > Yeah, the PF flag could work. It can be set for the process(es) responsible
-> > > > for processing the fanotify events and filling in filesystem contents. I
-> > > > don't think automatic setting of this flag is desirable though as it has
-> > > > quite wide impact and some of the consequences could be surprising.  I
-> > > > rather think it should be a conscious decision when setting up the process
-> > > > processing the events. So I think API to explicitly set / clear the flag
-> > > > would be the best. Also I think it would be better to capture in the name
-> > > > that this is really about fs freezing. So maybe PF_NOWAIT_FREEZE or
-> > > > something like that?
-> > > >
-> > >
-> > > Sure.
-> > >
-> > > > Also we were thinking about having an open(2) flag for this (instead of PF
-> > > > flag) in the past. That would allow finer granularity control of the
-> > > > behavior but I guess you are worried that it would not cover all the needed
-> > > > operations?
-> > > >
-> > >
-> > > Yeh, it seems like an API that is going to be harder to write safe HSM
-> > > programs with.
-> > >
-> > > > > Do you think we should use this method to fix the existing deadlocks
-> > > > > with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
-> > > >
-> > > > No, I think if someone cares about these, they should explicitly set the
-> > > > PF flag in their task processing the events.
-> > > >
-> > >
-> > > OK.
-> > >
-> > > I see an exit hatch in this statement -
-> > > If we are going leave the responsibility to avoid deadlock in corner
-> > > cases completely in the hands of the application, then I do not feel
-> > > morally obligated to create the PF_NOWAIT_FREEZE API *before*
-> > > providing the first HSM API.
-> > >
-> > > If the HSM application is running in a controlled system, on a filesystem
-> > > where fsfreeze is not expected or not needed, then a fully functional and
-> > > safe HSM does not require PF_NOWAIT_FREEZE API.
-> > >
-> > > Perhaps an API to make an fs unfreezable is just as practical and a much
-> > > easier option for the first version of HSM API?
-> > >
-> > > Imagine that HSM opens an fd and sends an EXCLUSIVE_FSFREEZER
-> > > ioctl. Then no other task can freeze the fs, for as long as the fd is open
-> > > apart from the HSM itself using this fd.
-> > >
-> > > HSM itself can avoid deadlocks if it collaborates the fs freezes with
-> > > making fs modifications from within HSM events.
-> > >
-> > > Do you think that may be an acceptable way out or the corner?
-> >
-> > This is kind of a corner case that I think is acceptable to just leave up to
-> > application developers.  Speaking as a potential consumer of this work we don't
-> > use fsfreeze so aren't concerned wit this in practice, and arguably if you're
-> > using this interface you know what you're doing.  As long as the sharp edge is
-> > well documented I think that's fine for v1.
-> >
+On Tue, Nov 28, 2023 at 06:19:35AM -0800, Song Liu wrote:
+> Hi Christian,
 > 
-> I agree that this is good enough for v1.
-> The only question is can we (and should we) do better than good enough for v1.
-> 
-> > Long term I like the EXCLUSIVE_FSFREEZER option, noting Christian's comment
-> > about the xfs scrubbing use case.  We all know that "freeze this file system" is
-> > an operation that is going to take X amount of time, so as long as we provide
-> > the application a way to block fsfreeze to avoid the deadlock then I think
-> > that's a reasonable solution.  Additionally it would allow us an avenue to
-> > gracefully handle errors.  If we race and see that the fs is already frozen well
-> > then we can go back to the HSM with an error saying he's out of luck, and he can
-> > return -EAGAIN or something through fanotify to unwind and try again later.
+> On Tue, Nov 28, 2023 at 1:13 AM Christian Brauner <brauner@kernel.org> wrote:
 > >
+> > On Mon, Nov 27, 2023 at 10:05:23AM -0800, Song Liu wrote:
+> [...]
+> > >
+> > > Overall, we can technically add xattr_permission() check here. But I
+> > > don't think that's the right check for the LSM use case.
+> > >
+> > > Does this make sense? Did I miss or misunderstand something?
+> >
+> > If the helper is only callable from an LSM context then this should be
+> > fine.
 > 
-> Actually, "fs is already frozen" is not a deadlock case.
-> If "fs is already frozen" then fsfreeze was successful and HSM should just
-> wait in line like everyone else until fs is unfrozen.
-> 
-> The deadlock case is "fs is being frozen" (i.e. sb->s_writers.frozen is
-> in state SB_FREEZE_WRITE), which cannot make progress because
-> an existing holder of sb write is blocked on an HSM event, which in turn
-> is trying to start a new sb write.
+> If everything looks good, would you please give an official Acked-by or
+> Reviewed-by?
 
-Right, and now I'm confused.  You have your patchset to re-order the permission
-checks to before the sb_start_write(), so an HSM watching FAN_OPEN_PERM is no
-longer holding the sb write lock and thus can't deadlock, correct?
-
-The new things you are proposing (FAN_PRE_ACESS and FAN_PRE_MODIFY) also do not
-happen inside of an sb_start_write(), correct?
-
-So where is the deadlock you're trying to fix?  The one you describe in this
-thread is what the patchset I reviewed last week was fixing, so in my eyes it
-looks like we're good?  It seems you're worried about the HSM app getting stuck
-on an fsfreeze when it's trying to populate the content, but that's not actually
-deadlocked, it just has to wait for the fs to be unfrozen, the fsfreeze
-operation will be able to complete and then thaw will be able to happen because
-there's no nested sb_write with the new flags, and with your patchset there's no
-sb_write with FAN_OPEN_PERM.
-
-Sorry I hate it when people come in the middle of a conversation and I have to
-re-explain myself, so feel free to ignore me.  But I've read the whole thread a
-few times and I can't quite figure out what this new deadlock is you're worried
-about.  Thanks,
-
-Josef
+Yeah looks ok to me,
+Acked-by: Christian Brauner <brauner@kernel.org>
 
