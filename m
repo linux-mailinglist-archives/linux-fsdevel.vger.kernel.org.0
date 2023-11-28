@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-4031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F3C7FBC32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:07:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFCC87FBC38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15576B21883
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:07:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CB54B2173C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749C35AB8B;
-	Tue, 28 Nov 2023 14:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC645AB8B;
+	Tue, 28 Nov 2023 14:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5E7B5;
-	Tue, 28 Nov 2023 06:07:31 -0800 (PST)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A02D64;
+	Tue, 28 Nov 2023 06:07:42 -0800 (PST)
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B5A721992;
-	Tue, 28 Nov 2023 14:07:29 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 01DF81F74B;
+	Tue, 28 Nov 2023 14:07:41 +0000 (UTC)
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 696C11343E;
-	Tue, 28 Nov 2023 14:07:29 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81EC31343E;
+	Tue, 28 Nov 2023 14:07:40 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5JUxFyH0ZWXyNgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Tue, 28 Nov 2023 14:07:29 +0000
-Date: Tue, 28 Nov 2023 15:07:28 +0100
+	id +hArHCz0ZWUHNwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 28 Nov 2023 14:07:40 +0000
+Date: Tue, 28 Nov 2023 15:07:38 +0100
 From: Michal Hocko <mhocko@suse.com>
 To: Gregory Price <gourry.memverge@gmail.com>
 Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
@@ -44,11 +44,11 @@ Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
 	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
 	tj@kernel.org, ying.huang@intel.com,
 	Gregory Price <gregory.price@memverge.com>
-Subject: Re: [RFC PATCH 04/11] mm/mempolicy: modify get_mempolicy call stack
+Subject: Re: [RFC PATCH 05/11] mm/mempolicy: modify set_mempolicy_home_node
  to take a task argument
-Message-ID: <ZWX0IMfR3S3rRzen@tiehlicka>
+Message-ID: <ZWX0KkaUGJoUdmQS@tiehlicka>
 References: <20231122211200.31620-1-gregory.price@memverge.com>
- <20231122211200.31620-5-gregory.price@memverge.com>
+ <20231122211200.31620-6-gregory.price@memverge.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,15 +57,15 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231122211200.31620-5-gregory.price@memverge.com>
+In-Reply-To: <20231122211200.31620-6-gregory.price@memverge.com>
 X-Spamd-Bar: +++++++++++++++
 X-Spam-Score: 15.00
 X-Rspamd-Server: rspamd1
-Authentication-Results: smtp-out1.suse.de;
+Authentication-Results: smtp-out2.suse.de;
 	dkim=none;
-	spf=fail (smtp-out1.suse.de: domain of mhocko@suse.com does not designate 2a07:de40:b281:104:10:150:64:97 as permitted sender) smtp.mailfrom=mhocko@suse.com;
+	spf=fail (smtp-out2.suse.de: domain of mhocko@suse.com does not designate 2a07:de40:b281:104:10:150:64:97 as permitted sender) smtp.mailfrom=mhocko@suse.com;
 	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.com (policy=quarantine)
-X-Rspamd-Queue-Id: 8B5A721992
+X-Rspamd-Queue-Id: 01DF81F74B
 X-Spamd-Result: default: False [15.00 / 50.00];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 R_SPF_FAIL(1.00)[-all];
@@ -78,7 +78,7 @@ X-Spamd-Result: default: False [15.00 / 50.00];
 	 MIME_GOOD(-0.10)[text/plain];
 	 NEURAL_HAM_LONG(-1.00)[-1.000];
 	 DMARC_POLICY_QUARANTINE(1.50)[suse.com : No valid SPF, No valid DKIM,quarantine];
-	 BAYES_HAM(-0.00)[23.75%];
+	 BAYES_HAM(-0.00)[43.15%];
 	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 MID_RHS_NOT_FQDN(0.50)[];
@@ -94,61 +94,30 @@ X-Spamd-Result: default: False [15.00 / 50.00];
 	 SUSPICIOUS_RECIPS(1.50)[]
 X-Spam: Yes
 
-On Wed 22-11-23 16:11:53, Gregory Price wrote:
+On Wed 22-11-23 16:11:54, Gregory Price wrote:
 [...]
-> @@ -928,7 +929,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
->  		 * vma/shared policy at addr is NULL.  We
->  		 * want to return MPOL_DEFAULT in this case.
->  		 */
-> -		mm = current->mm;
-> +		if (task == current) {
-> +			/*
-> +			 * original behavior allows a kernel task changing its
-> +			 * own policy to avoid the condition in get_task_mm,
-> +			 * so we'll directly access
-> +			 */
-> +			mm = task->mm;
-> +			mmget(mm);
+> +
+> +	/*
+> +	 * Behavior when task == current allows a task modifying itself
+> +	 * to bypass the check in get_task_mm and acquire the mm directly
+> +	 */
+> +	if (task == current) {
+> +		mm = task->mm;
+> +		mmget(mm);
+> +	} else
+> +		mm = get_task_mm(task);
 
-Do we actually have any kernel thread that would call this? Does it
-actually make sense to support?
+Similar question as in the previous patch. When is a kthread legit to do
+manipulate borrowed mm memory policy?
 
-> +		} else
-> +			mm = get_task_mm(task);
->  		mmap_read_lock(mm);
->  		vma = vma_lookup(mm, addr);
->  		if (!vma) {
-> @@ -947,8 +957,10 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
->  		return -EINVAL;
->  	else {
->  		/* take a reference of the task policy now */
-> -		pol = current->mempolicy;
-> +		task_lock(task);
-> +		pol = task->mempolicy;
->  		mpol_get(pol);
-> +		task_unlock(task);
->  	}
->  
->  	if (!pol) {
-> @@ -962,12 +974,13 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
->  			vma = NULL;
->  			mmap_read_unlock(mm);
->  			err = lookup_node(mm, addr);
-> +			mmput(mm);
->  			if (err < 0)
->  				goto out;
->  			*policy = err;
-> -		} else if (pol == current->mempolicy &&
-> +		} else if (pol == task->mempolicy &&
->  				pol->mode == MPOL_INTERLEAVE) {
-> -			*policy = next_node_in(current->il_prev, pol->nodes);
-> +			*policy = next_node_in(task->il_prev, pol->nodes);
+> +
+> +	if (!mm)
+> +		return -ENODEV;
 
-This is racy without task_lock which I do not think is helde but it also
-seems this is not a big deal. pol is ref. counted so it won't go away
-and if the task->mempolicy changes then the return value could be bogus
-but this seems acceptable. It would be good to put a comment here that
-this is actually deliberate.
+Is this an expected error? No mm means task dying and mm has been
+already released. Should we simply return ESRCH wouldbe a better error
+code IMO. This should never happen for the current task so it sould be
+safe to add.
 
 -- 
 Michal Hocko
