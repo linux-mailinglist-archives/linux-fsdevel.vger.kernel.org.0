@@ -1,89 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-4037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2347FBC96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:19:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F647FBCA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481CE282477
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2387C1C20E34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB845B216;
-	Tue, 28 Nov 2023 14:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBA85ABB3;
+	Tue, 28 Nov 2023 14:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grnybKhE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M9AKXn6o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C848D72
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:21:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701181290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6PBOG7uTuPrKERcez1Y3MMxHTda3oU4ZYJf1T2X8ASo=;
+	b=M9AKXn6oN9G6Shwvb5XjvMb7Op/AXru5KurKTbGXILdIgCDTltuha/7WdLLuUZfMPMgPhW
+	j5PMYywUtSuZqHSdhNiRk+5xhPyR3rH9HXdjxgLKaZzLunViWRvhNN1E5wXs+FrxWspkYp
+	y7qNeKBYVaPWDBAewMmeDzWC5DjxSMo=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-u32DRhyoNDeiqwLc2n0fEg-1; Tue,
+ 28 Nov 2023 09:21:27 -0500
+X-MC-Unique: u32DRhyoNDeiqwLc2n0fEg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6375ABB0;
-	Tue, 28 Nov 2023 14:19:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6699EC433CA;
-	Tue, 28 Nov 2023 14:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701181189;
-	bh=8ajioNJSIiEHiX4GCTg+Gw12QS+3ZPXGmlmY0t7+FfE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=grnybKhEPIVczjN2qVvT7MlpD3sBcyS4vuozE0Qo/sPnRMKsVtdEL7GRq1zifxX9P
-	 wBEoBtWuslDjXeBgr+tpxmPfTpk7QB1XTU2AuHLGdp7Yw6k6QG0p4cjzSCb0e2S7yB
-	 PsKwGsBf0zMq/7NG6xoo6QEpcpENveQqaGz74hUvUOuKXoC1wPScgB/oFVkOlJQyOI
-	 PzmLdNUB3DC8KcfthaSVy3e1aayzISgl/laWL0OpCF3B7uycXinxoETge72YscC+Qw
-	 NID8Cf8TM6khsUDO/FEIlBC2gjH7cnzPZ3TsAt923MltGC7H53TrbI5w0KqKtSA9dz
-	 wbhVjNRFMaJ4Q==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2c876e44157so67823961fa.2;
-        Tue, 28 Nov 2023 06:19:49 -0800 (PST)
-X-Gm-Message-State: AOJu0Yxe9nlP/YXC0W/V5zXbIYiADjxRbZwfQoCllAY3c3AMzl5LH0Am
-	hM2IHa4DM9fZjfrbnchfgCBLeup0ZqEfnb1SVAw=
-X-Google-Smtp-Source: AGHT+IEuF1AK6ax2QR9Zic8F0Fz2+XjLrZxFO+nxs8N2t+fmpVcV0T3eR++s6Mkt/JQMtB9Jby7xh2t7hGHvFSHK3Fs=
-X-Received: by 2002:a05:651c:1548:b0:2c9:9a1f:2957 with SMTP id
- y8-20020a05651c154800b002c99a1f2957mr7666369ljp.53.1701181187635; Tue, 28 Nov
- 2023 06:19:47 -0800 (PST)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C48511C060D1;
+	Tue, 28 Nov 2023 14:21:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.14])
+	by smtp.corp.redhat.com (Postfix) with SMTP id E36FD5028;
+	Tue, 28 Nov 2023 14:21:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 28 Nov 2023 15:20:21 +0100 (CET)
+Date: Tue, 28 Nov 2023 15:20:18 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
+Message-ID: <20231128142018.GA24108@redhat.com>
+References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
+ <20231128140156.GC22743@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231123233936.3079687-1-song@kernel.org> <20231123233936.3079687-2-song@kernel.org>
- <20231124-heilung-wohnumfeld-6b7797c4d41a@brauner> <CAPhsuW7BFzsBv48xgbY4-2xhG1-GazBuQq_pnaUrJqY1q_H27w@mail.gmail.com>
- <20231127-auffiel-wutentbrannt-7b8b3efb09e4@brauner> <CAPhsuW4qP=VYhQ8BTOA3WFhu2LW+cjQ0YtdAVcj-kY_3r4yjnA@mail.gmail.com>
- <20231128-hermachen-westen-74b7951e8e38@brauner>
-In-Reply-To: <20231128-hermachen-westen-74b7951e8e38@brauner>
-From: Song Liu <song@kernel.org>
-Date: Tue, 28 Nov 2023 06:19:35 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6R-1ZjToupiDtRWjxpcdTA0dw0Sk7zDi9+5AUciTJ6LA@mail.gmail.com>
-Message-ID: <CAPhsuW6R-1ZjToupiDtRWjxpcdTA0dw0Sk7zDi9+5AUciTJ6LA@mail.gmail.com>
-Subject: Re: [PATCH v13 bpf-next 1/6] bpf: Add kfunc bpf_get_file_xattr
-To: Christian Brauner <brauner@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	fsverity@lists.linux.dev, ebiggers@kernel.org, andrii@kernel.org, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, casey@schaufler-ca.com, 
-	amir73il@gmail.com, kpsingh@kernel.org, roberto.sassu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128140156.GC22743@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Hi Christian,
-
-On Tue, Nov 28, 2023 at 1:13=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On 11/28, Oleg Nesterov wrote:
 >
-> On Mon, Nov 27, 2023 at 10:05:23AM -0800, Song Liu wrote:
-[...]
-> >
-> > Overall, we can technically add xattr_permission() check here. But I
-> > don't think that's the right check for the LSM use case.
-> >
-> > Does this make sense? Did I miss or misunderstand something?
+> On a related note... Neil, Al, et al, can you look at
 >
-> If the helper is only callable from an LSM context then this should be
-> fine.
+> 	[PATCH 1/3] fput: don't abuse task_work_add() when possible
+> 	https://lore.kernel.org/all/20150908171446.GA14589@redhat.com/
 
-If everything looks good, would you please give an official Acked-by or
-Reviewed-by?
+Cough... Now that I look at this 8 years old patch again I think
+it is wrong, fput() can race with task_work_cancel() so it is not
+safe to dereference the first pending work in theory :/
 
-Thanks,
-Song
+Oleg.
+
 
