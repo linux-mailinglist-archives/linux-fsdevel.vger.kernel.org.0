@@ -1,70 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-4055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991357FBF3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 17:34:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2A17FBF7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 17:47:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35E51B216C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:34:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC2051C20D2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59A55CD14;
-	Tue, 28 Nov 2023 16:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="14yXKjeK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w54tU1SL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283B45E0D6;
+	Tue, 28 Nov 2023 16:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7B4BD5D;
-	Tue, 28 Nov 2023 08:33:51 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A7ED5D;
+	Tue, 28 Nov 2023 08:47:28 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BBD7D21940;
-	Tue, 28 Nov 2023 16:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1701189229;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hq0WlH0mXIm7CC6RbZLQt0x0AsWjrpBw0tLGnSU8jww=;
-	b=14yXKjeKd27P9ViqKHBnlqxaIG1hHD8CGVhQnvW1Is6RjIWztyUOuIGrVct/pZHIh/wFMz
-	Kh0xOvzIjRoNnz1Pu7LpZmA8JvW99EHXDIFeYsGPCqsRFF0eX3PjZcmN9KbpLc5fQWfGuk
-	ouV0TjubBqb8U6AgOpwYvSzaoiE0114=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1701189229;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hq0WlH0mXIm7CC6RbZLQt0x0AsWjrpBw0tLGnSU8jww=;
-	b=w54tU1SLUpSmKUOAgGkHDb2MRcSE7OKrt8Lq7u2piglcj2jj8fwLT6B+jje+Nntc8b4kIU
-	tzahGaKSpo5vH4Bg==
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 067CB219A1;
+	Tue, 28 Nov 2023 16:47:27 +0000 (UTC)
 Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 89ECB133B5;
-	Tue, 28 Nov 2023 16:33:49 +0000 (UTC)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id D1EA6133B5;
+	Tue, 28 Nov 2023 16:47:26 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id e4ixIG0WZmX/WQAAn2gu4w
-	(envelope-from <dsterba@suse.cz>); Tue, 28 Nov 2023 16:33:49 +0000
-Date: Tue, 28 Nov 2023 17:26:36 +0100
+	id uh4GM54ZZmUUXgAAn2gu4w
+	(envelope-from <dsterba@suse.cz>); Tue, 28 Nov 2023 16:47:26 +0000
+Date: Tue, 28 Nov 2023 17:40:10 +0100
 From: David Sterba <dsterba@suse.cz>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Should we still go __GFP_NOFAIL? (Was Re: [PATCH] btrfs:
- refactor alloc_extent_buffer() to allocate-then-attach method)
-Message-ID: <20231128162636.GK18929@twin.jikos.cz>
+To: Anand Jain <anand.jain@oracle.com>
+Cc: syzbot <syzbot+10d5b62a8d7046b86d22@syzkaller.appspotmail.com>,
+	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_use_block_rsv
+Message-ID: <20231128164010.GM18929@twin.jikos.cz>
 Reply-To: dsterba@suse.cz
-References: <ffeb6b667a9ff0cf161f7dcd82899114782c0834.1700609426.git.wqu@suse.com>
- <20231122143815.GD11264@twin.jikos.cz>
- <71d723c9-8f36-4fd1-bea7-7d962da465e2@gmx.com>
- <793cd840-49cb-4458-9137-30f899100870@gmx.com>
+References: <0000000000004d4716060af08a45@google.com>
+ <531f8f07-6c4c-66bb-1d8e-7637222154af@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,109 +53,125 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <793cd840-49cb-4458-9137-30f899100870@gmx.com>
+In-Reply-To: <531f8f07-6c4c-66bb-1d8e-7637222154af@oracle.com>
 User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Bar: ++++++++
+X-Spam-Score: 9.00
+X-Rspamd-Server: rspamd1
 Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	 ARC_NA(0.00)[];
+	dkim=none;
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of dsterba@suse.cz) smtp.mailfrom=dsterba@suse.cz;
+	dmarc=none
+X-Rspamd-Queue-Id: 067CB219A1
+X-Spamd-Result: default: False [9.00 / 50.00];
 	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
+	 BAYES_SPAM(0.00)[40.64%];
 	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
 	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCPT_COUNT_FIVE(0.00)[5];
+	 R_SPF_SOFTFAIL(4.60)[~all];
 	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FREEMAIL_TO(0.00)[gmx.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-0.984];
+	 RCPT_COUNT_SEVEN(0.00)[9];
 	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
 	 MIME_TRACE(0.00)[0:+];
+	 SUBJECT_HAS_QUESTION(0.00)[];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=6ae1a4ee971a7305];
+	 TAGGED_RCPT(0.00)[10d5b62a8d7046b86d22];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DMARC_NA(1.20)[suse.cz];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from];
 	 RCVD_TLS_ALL(0.00)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Score: -4.00
+	 SUSPICIOUS_RECIPS(1.50)[]
 
-On Mon, Nov 27, 2023 at 03:40:41PM +1030, Qu Wenruo wrote:
-> On 2023/11/23 06:33, Qu Wenruo wrote:
-> [...]
-> >> I wonder if we still can keep the __GFP_NOFAIL for the fallback
-> >> allocation, it's there right now and seems to work on sysmtems under
-> >> stress and does not cause random failures due to ENOMEM.
-> >>
-> > Oh, I forgot the __NOFAIL gfp flags, that's not hard to fix, just
-> > re-introduce the gfp flags to btrfs_alloc_page_array().
+On Sun, Nov 26, 2023 at 06:59:41AM +0800, Anand Jain wrote:
 > 
-> BTW, I think it's a good time to start a new discussion on whether we
-> should go __GFP_NOFAIL.
-> (Although I have updated the patch to keep the GFP_NOFAIL behavior)
 > 
-> I totally understand that we need some memory for tree block during
-> transaction commitment and other critical sections.
+> On 25/11/2023 10:08, syzbot wrote:
+> > syzbot has bisected this issue to:
+> > 
+> > commit a5b8a5f9f8355d27a4f8d0afa93427f16d2f3c1e
+> > Author: Anand Jain <anand.jain@oracle.com>
+> > Date:   Thu Sep 28 01:09:47 2023 +0000
+> > 
+> >      btrfs: support cloned-device mount capability
+> > 
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1446d344e80000
+> > start commit:   d3fa86b1a7b4 Merge tag 'net-6.7-rc3' of git://git.kernel.o..
+> > git tree:       upstream
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=1646d344e80000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1246d344e80000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6ae1a4ee971a7305
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=10d5b62a8d7046b86d22
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1431040ce80000
+> > 
+> > Reported-by: syzbot+10d5b62a8d7046b86d22@syzkaller.appspotmail.com
+> > Fixes: a5b8a5f9f835 ("btrfs: support cloned-device mount capability")
+> > 
+> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 > 
-> And it's not that uncommon to see __GFP_NOFAIL usage in other mainstream
-> filesystems.
+> 
+> It is completely strange that this issue bisects to the commit
+> a5b8a5f9f835 ('btrfs: support cloned-device mount capability').
+> I am unable to reproduce this as well.
 
-The use of NOFAIL is either carefuly evaluated or it's there for
-historical reasons. The comment for the flag says that,
-https://elixir.bootlin.com/linux/latest/source/include/linux/gfp_types.h#L198
-and I know MM people see the flag as problematic and that it should not
-be used if possible.
+I think it's because of changed timing or it can be an inconclusive
+bisect. Things around space handling depend on timing, the test would
+need to be run a few times to be sure.
 
-> But my concern is, we also have a lot of memory allocation which can
-> lead to a lot of problems either, like btrfs_csum_one_bio() or even
-> join_transaction().
+The report provides an image so it may be good to analyze if it's scaled
+properly or if the reproducer does something strange.
 
-While I agree that there are many places that can fail due to memory
-allocations, the extent buffer requires whole 4 pages, other structures
-could be taken from the generic slabs or our named caches. The latter
-has lower chance to fail.
-
-> I doubt if btrfs (or any other filesystems) would be to blamed if we're
-> really running out of memory.
-
-Well, people blame btrfs for everything.
-
-> Should the memory hungry user space programs to be firstly killed far
-> before we failed to allocate memory?
-
-That's up to the allocator and I think it does a good job of providing
-the memory to kernel rather than to user space programs.
-
-We do the critical allocations as GFP_NOFS which so far provides the "do
-not fail" guarantees. It's a long going discussion,
-https://lwn.net/Articles/653573/ (2015). We can let many allocations
-fail with a fallback, but still a lot of them would lead to transaction
-abort. And as Josef said, there are some that can't fail because they're
-too deep or there's no clear exit path.
-
-> Furthermore, at least for btrfs, I don't think we would hit a situation
-> where memory allocation failure for metadata would lead to any data
-> corruption.
-> The worst case is we hit transaction abort, and the fs flips RO.
-
-Yeah, corruption can't happen as long as we have all the error handling
-in place and the transaction abort as the ultimate fallback.
-
-> Thus I'm wondering if we really need __NOFAIL for btrfs?
-
-It's hard to say if or when the NOFAIL semantics actually apply. Let's
-say there are applications doing metadata operations, the system is
-under load, memory is freed slowly by writing data etc. Application that
-waits inside the eb allocation will continue eventually. Without the
-NOFAIL it would exit early.
-
-As a middle ground, we may want something like "try hard" that would not
-fail too soon but it could eventually. That's __GFP_RETRY_MAYFAIL .
-
-Right now there are several changes around the extent buffers, I'd like
-do the conversion first and then replace/drop the NOFAIL flag so we
-don't mix too many changes in one release. The extent buffers are
-critical so one step a time, with lots of testing.
+> -------------------
+> WARNING: CPU: 1 PID: 58 at fs/btrfs/block-rsv.c:523 
+> btrfs_use_block_rsv+0x60d/0x860 fs/btrfs/block-rsv.c:523
+> <snap>
+> Call Trace:
+>   <TASK>
+>   btrfs_alloc_tree_block+0x1e0/0x12c0 fs/btrfs/extent-tree.c:5114
+>   btrfs_force_cow_block+0x3e5/0x19e0 fs/btrfs/ctree.c:563
+>   btrfs_cow_block+0x2b6/0xb30 fs/btrfs/ctree.c:741
+>   push_leaf_left+0x315/0x4d0 fs/btrfs/ctree.c:3485
+>   split_leaf+0x9c3/0x13b0 fs/btrfs/ctree.c:3681
+>   search_leaf fs/btrfs/ctree.c:1944 [inline]
+>   btrfs_search_slot+0x24ba/0x2fd0 fs/btrfs/ctree.c:2131
+>   btrfs_insert_empty_items+0xb6/0x1b0 fs/btrfs/ctree.c:4285
+>   btrfs_insert_empty_item fs/btrfs/ctree.h:657 [inline]
+>   insert_reserved_file_extent+0x7aa/0x950 fs/btrfs/inode.c:2907
+>   insert_ordered_extent_file_extent fs/btrfs/inode.c:3005 [inline]
+>   btrfs_finish_one_ordered+0x12dc/0x20d0 fs/btrfs/inode.c:3113
+>   btrfs_work_helper+0x210/0xbf0 fs/btrfs/async-thread.c:315
+>   process_one_work+0x886/0x15d0 kernel/workqueue.c:2630
+>   process_scheduled_works kernel/workqueue.c:2703 [inline]
+>   worker_thread+0x8b9/0x1290 kernel/workqueue.c:2784
+>   kthread+0x2c6/0x3a0 kernel/kthread.c:388
+>   ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>   ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+> -----------------
+> 
+> btrfs_use_block_rsv()
+> <snap>
+>          /*
+>           * The global reserve still exists to save us from ourselves, 
+> so don't
+>           * warn_on if we are short on our delayed refs reserve.
+>           */
+>          if (block_rsv->type != BTRFS_BLOCK_RSV_DELREFS &&
+>              btrfs_test_opt(fs_info, ENOSPC_DEBUG)) {
+>                  static DEFINE_RATELIMIT_STATE(_rs,
+>                                  DEFAULT_RATELIMIT_INTERVAL * 10,
+>                                  /*DEFAULT_RATELIMIT_BURST*/ 1);
+>                  if (__ratelimit(&_rs))
+>                          WARN(1, KERN_DEBUG
+>                                  "BTRFS: block rsv %d returned %d\n",
+>                                  block_rsv->type, ret);
+>          }
+> ----------
 
