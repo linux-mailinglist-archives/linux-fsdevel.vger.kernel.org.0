@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-4066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0037FC36D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:36:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A6C7FC372
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5B74B20DF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B50D282753
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BE13D0BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565BF37D12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTHgE9PP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7074710EB;
-	Tue, 28 Nov 2023 09:18:07 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9871BC15;
-	Tue, 28 Nov 2023 09:18:54 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C82A3F6C4;
-	Tue, 28 Nov 2023 09:18:02 -0800 (PST)
-Date: Tue, 28 Nov 2023 17:17:59 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3FE37D37;
+	Tue, 28 Nov 2023 17:18:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7251DC433C7;
+	Tue, 28 Nov 2023 17:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701191905;
+	bh=V7IKAf0Hbu6oP2LSWp5l10ZwtBSliEPvVOx9m0gWfYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTHgE9PPklBAMdua0Gq+s/PRw++bw+Gj2frl4hyn3VWGoVDnO+zsrE+nNNl9kJCnm
+	 Aif6OPqLGkuMeO87bQeZNkZxecGgE35op+PwvNVEC2SVi6UE42oxDvc1NCf0whVyze
+	 u8jJwbYkbzVJX9f4i+TBbmFu3kC7Li++6kX/8uQ9anTcQ4LX74JdAzadEKlFWGdl5W
+	 h4rVFVKK67H6Cj6TLoi6TfcG2mi/7B1FgCnuhoSHVgdEqmLzIa4r2Lgph6KRcxAgDc
+	 GLP7RCT6Ldry21zdNGa0876otyOA+nuP48lukN/ibWTlhZV9gY3exB+auhSbDec+Yn
+	 v/iSmyghEjysQ==
+Date: Tue, 28 Nov 2023 09:18:23 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Sergei Shtepa <sergei.shtepa@linux.dev>
+Cc: axboe@kernel.dk, hch@infradead.org, corbet@lwn.net, snitzer@kernel.org,
 	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
-	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 06/27] mm: page_alloc: Allow an arch to hook early
- into free_pages_prepare()
-Message-ID: <ZWYgx28LB28x5Pkb@raptor>
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-7-alexandru.elisei@arm.com>
- <45466b05-d620-41e5-8a2b-05c420b8fa7b@redhat.com>
- <ZWSTiCghf8nMFy4G@raptor>
- <2e2d3f51-34e3-4982-b982-ab7b555cba21@redhat.com>
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Sergei Shtepa <sergei.shtepa@veeam.com>
+Subject: Re: [PATCH v6 11/11] blksnap: prevents using devices with data
+ integrity or inline encryption
+Message-ID: <20231128171823.GA1148@sol.localdomain>
+References: <20231124165933.27580-1-sergei.shtepa@linux.dev>
+ <20231124165933.27580-12-sergei.shtepa@linux.dev>
+ <20231127224719.GD1463@sol.localdomain>
+ <6cabaa42-c366-4928-8294-ad261dae0043@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,53 +56,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e2d3f51-34e3-4982-b982-ab7b555cba21@redhat.com>
+In-Reply-To: <6cabaa42-c366-4928-8294-ad261dae0043@linux.dev>
 
-Hi,
-
-On Tue, Nov 28, 2023 at 05:58:55PM +0100, David Hildenbrand wrote:
-> On 27.11.23 14:03, Alexandru Elisei wrote:
-> > Hi,
+On Tue, Nov 28, 2023 at 12:00:17PM +0100, Sergei Shtepa wrote:
+> But I haven't tested the code on a device where hardware inline encryption is
+> available. I would be glad if anyone could help with this.
 > > 
-> > On Fri, Nov 24, 2023 at 08:36:52PM +0100, David Hildenbrand wrote:
-> > > On 19.11.23 17:57, Alexandru Elisei wrote:
-> > > > Add arch_free_pages_prepare() hook that is called before that page flags
-> > > > are cleared. This will be used by arm64 when explicit management of tag
-> > > > storage pages is enabled.
-> > > 
-> > > Can you elaborate a bit what exactly will be done by that code with that
-> > > information?
-> > 
-> > Of course.
-> > 
-> > The MTE code that is in the kernel today uses the PG_arch_2 page flag, which it
-> > renames to PG_mte_tagged, to track if a page has been mapped with tagging
-> > enabled. That flag is cleared by free_pages_prepare() when it does:
-> > 
-> > 	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
-> > 
-> > When tag storage management is enabled, tag storage is reserved for a page if
-> > and only if the page is mapped as tagged. When a page is freed, the code looks
-> > at the PG_mte_tagged flag to determine if the page was mapped as tagged, and
-> > therefore has tag storage reserved, to determine if the corresponding tag
-> > storage should also be freed.
-> > 
-> > I have considered using arch_free_page(), but free_pages_prepare() calls the
-> > function after the flags are cleared.
-> > 
-> > Does that answer your question?
+> > Anyway, this patch is better than ignoring the problem.  It's worth noting,
+> > though, that this patch does not prevent blksnap from being set up on a block
+> > device on which blk-crypto-fallback is already being used (or will be used).
+> > When that happens, I/O will suddenly start failing.  For usability reasons,
+> > ideally that would be prevented somehow.
 > 
-> Yes, please add some of that to the patch description!
+> I didn't observe any failures during testing. It's just that the snapshot
+> image shows files with encrypted names and data. Backup in this case is
+> useless. Unfortunately, there is no way to detect a blk-crypto-fallback on
+> the block device filter level.
 
-Will do!
+Huh, I thought that this patch is supposed to exclude blk-crypto-fallback too.
+__submit_bio() calls bio->bi_bdev->bd_filter->ops->submit_bio(bio) before
+blk_crypto_bio_prep(), so doesn't your check of ->bi_crypt_context exclude
+blk-crypto-fallback?
 
-Thanks,
-Alex
+I think you're right that it might actually be fine to use blksnap with
+blk-crypto-fallback, provided that the encryption is done first.  I would like
+to see a proper explanation of that, though.  And we still have this patch which
+claims that it doesn't work, which is confusing.
 
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+- Eric
 
