@@ -1,342 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-4071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713807FC379
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:37:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F557FC37D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 19:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948611C20A69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4C841F20F58
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037BA3D0BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6663D0C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 18:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RL+QBZcz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f/mCSIvF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B95B4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 09:50:08 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9D702D46
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 09:55:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701193808;
+	s=mimecast20190719; t=1701194123;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8Y799twHekt/GgWBkSL5N9lUQou5nD0zXqSUc2yV/jQ=;
-	b=RL+QBZcz6YvnuzQXszWT+9Gt0gsVatNuuDmkEkf1YsCVcPlzvdM+Y+1V9lfMXjuqevpOQB
-	Lmbx2hkM7CKb0Oo6JUHXonjF/s3ZRzzqIU4cGj6yTVUhLTzYiRmSz71RRGJZeeFndBTBkM
-	hcFHlYWWb2PBv5GOLGsNIjp6XsVxWNI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=6IpfI+5hX9oWAaqFKgR7pMHL53l1oeTSERZKZMVDwEk=;
+	b=f/mCSIvFS5vPHFQLJhvf20dSqTvhs5WhErtK3D/iWyoObOJ9TZDJygzJdYFsN2SNbkQ8b6
+	soc5JTLMeAbjyxnsgSAq9XUW0sQx8heh2E7xvF3b3LaNZTs3J/KXcfwcm43NguwWDznSYG
+	7vky1Ox0oQthk7HTpXO3L4Ymxd9K6UI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339-cS_t7oo0P5e-QzF-jWT-KA-1; Tue, 28 Nov 2023 12:50:05 -0500
-X-MC-Unique: cS_t7oo0P5e-QzF-jWT-KA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8ADEC101A53B;
-	Tue, 28 Nov 2023 17:50:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 34BFB2166B26;
-	Tue, 28 Nov 2023 17:50:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, linux-cifs@vger.kernel.org,
-    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix issues with copy_file_range and FALLOC_FL_INSERT/ZERO_RANGE
+ us-mta-692-0ZoIWBQONb2LAauQmpjbQA-1; Tue, 28 Nov 2023 12:55:22 -0500
+X-MC-Unique: 0ZoIWBQONb2LAauQmpjbQA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-33309619b52so6771f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 09:55:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701194121; x=1701798921;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IpfI+5hX9oWAaqFKgR7pMHL53l1oeTSERZKZMVDwEk=;
+        b=SKFvjwa496kvAGRI/KPXNI0iT5GYOZvopVsqucXPU7B8yarS32uEff7tXeNnAcb0h4
+         QekI0THEHvrOR1YIHAJiQtIc1761BIKn2zm/FqI+/1+0GkcrThDHWhZh9x9Rg30czmkc
+         2eaBTwT6qnoE0N6llLet96Ow3KdH6AElzfNWxyAFYaKDhbn4DEEwgLGzyQQMRY2eBEG+
+         Unfx1CLywmG84TnMc1nYOcNR/2JH+Tl6FbZd9fcumZzBodoPvKchWb2dLfCVTK+c0gMT
+         avbOoVTN4NER1JdOjzuhtN7TtHW8CNz/VZFUaK1fhQY+AySK78vozGsfiG1sM81CCAIK
+         lBYQ==
+X-Gm-Message-State: AOJu0Yz0yy0b8WnzrVYndcs0NseFc8k+7Fy1Pu4GfE9lco389vPSX6kU
+	LKcmMoDkPYU2D4eAO1ZcsIp40sQzCyR4cmKKjYAUbkHFgbdP4k/XWkm1w7NfR/A3row0Jbv9tgR
+	3D1teygaPa2fLkb+UHO/D0fw0kg==
+X-Received: by 2002:adf:e9c6:0:b0:332:ff64:ff50 with SMTP id l6-20020adfe9c6000000b00332ff64ff50mr6720295wrn.3.1701194120768;
+        Tue, 28 Nov 2023 09:55:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFxtIUmo/xgDPU+4SynBCZAKg3hJMQbTbqo7KrIGmu/9sGiONimAtj8MpqI83o1bVOsygmqVw==
+X-Received: by 2002:adf:e9c6:0:b0:332:ff64:ff50 with SMTP id l6-20020adfe9c6000000b00332ff64ff50mr6720265wrn.3.1701194120413;
+        Tue, 28 Nov 2023 09:55:20 -0800 (PST)
+Received: from ?IPV6:2003:cb:c708:1d00:99ec:9656:7475:678d? (p200300cbc7081d0099ec96567475678d.dip0.t-ipconnect.de. [2003:cb:c708:1d00:99ec:9656:7475:678d])
+        by smtp.gmail.com with ESMTPSA id x1-20020adfec01000000b00332cfd83b8dsm15601843wrn.96.2023.11.28.09.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Nov 2023 09:55:20 -0800 (PST)
+Message-ID: <1c79ad05-cb52-4820-b2aa-bbe07ff82b19@redhat.com>
+Date: Tue, 28 Nov 2023 18:55:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2056122.1701193802.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 28 Nov 2023 17:50:02 +0000
-Message-ID: <2056123.1701193802@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 19/27] mm: mprotect: Introduce PAGE_FAULT_ON_ACCESS
+ for mprotect(PROT_MTE)
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
+ will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
+ james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ mhiramat@kernel.org, rppt@kernel.org, hughd@google.com
+Cc: pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+ vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+ hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-20-alexandru.elisei@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20231119165721.9849-20-alexandru.elisei@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-    =
+On 19.11.23 17:57, Alexandru Elisei wrote:
+> To enable tagging on a memory range, userspace can use mprotect() with the
+> PROT_MTE access flag. Pages already mapped in the VMA don't have the
+> associated tag storage block reserved, so mark the PTEs as
+> PAGE_FAULT_ON_ACCESS to trigger a fault next time they are accessed, and
+> reserve the tag storage on the fault path.
 
-Fix a number of issues in the cifs filesystem implementations of
-copy_file_range(), FALLOC_FL_INSERT_RANGE and FALLOC_FL_ZERO_RANGE:
+That sounds alot like fake PROT_NONE. Would there be a way to unify hat 
+handling and simply reuse pte_protnone()? For example, could we special 
+case on VMA flags?
 
- (1) In cifs_file_copychunk_range(), set i_size after doing the
-     copychunk_range operation as this value may be used by various things
-     internally.  stat() hides the issue because setting ->time to 0 cause=
-s
-     cifs_getatr() to revalidate the attributes.
+Like, don't do NUMA hinting in these special VMAs. Then, have something 
+like:
 
- (2) In smb3_zero_range(), set i_size after extending the file on the
-     server.
+if (pte_protnone(vmf->orig_pte))
+	return handle_pte_protnone(vmf);
 
- (3) In smb3_insert_range(), set i_size after extending the file on the
-     server and before we do the copy to open the gap (as we don't clean u=
-p
-     the EOF marker if the copy fails).
+In there, special case on the VMA flags.
 
- (4) Add a new MM function, discard_inode_pages_range(), which is
-     equivalent to truncate_inode_pages_range(), but rounds out the range
-     to include the entire folio at each end.
+I *suspect* that handle_page_missing_tag_storage() stole (sorry :P) some 
+code from the prot_none handling path. At least the recovery path and 
+writability handling looks like it better be located shared in 
+handle_pte_protnone() as well.
 
-     [!] This might be better done by adding a flag to
-         truncate_inode_pages_range().
+That might take some magic out of this patch.
 
- (5) In cifs_file_copychunk_range(), fix the invalidation of the
-     destination range.
+-- 
+Cheers,
 
-     We shouldn't just invalidate the whole file as dirty data in the file
-     may get lost and we can't just call truncate_inode_pages_range() as
-     that will simply partially clear a partial folio at each end whilst
-     invalidating and discarding all the folios in the middle.  We need to
-     force all the folios covering the range to be reloaded.
-
-     Further, we shouldn't simply round out the range to PAGE_SIZE at each
-     end as cifs should move to support multipage folios.
-
-     So change the invalidation to flush the folio at each end of the rang=
-e
-     (which we can do simply by asking to flush a byte in it), then use
-     discard_inode_pages_range() to fully invalidate the entire range of
-     folios.
-
-Fixes: 620d8745b35d ("Introduce cifs_copy_file_range()")
-Fixes: 72c419d9b073 ("cifs: fix smb3_zero_range so it can expand the file-=
-size when required")
-Fixes: 7fe6fe95b936 ("cifs: add FALLOC_FL_INSERT_RANGE support")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/smb/client/cifsfs.c  |   24 +++++++++++++++++++++---
- fs/smb/client/smb2ops.c |   13 +++++++++++--
- include/linux/mm.h      |    2 ++
- mm/truncate.c           |   37 +++++++++++++++++++++++++++++++++----
- 4 files changed, 67 insertions(+), 9 deletions(-)
-
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index ea3a7a668b45..9b6e3cfd5a59 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1267,6 +1267,7 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 	struct cifsFileInfo *smb_file_target;
- 	struct cifs_tcon *src_tcon;
- 	struct cifs_tcon *target_tcon;
-+	unsigned long long destend;
- 	ssize_t rc;
- =
-
- 	cifs_dbg(FYI, "copychunk range\n");
-@@ -1306,13 +1307,30 @@ ssize_t cifs_file_copychunk_range(unsigned int xid=
-,
- 	if (rc)
- 		goto unlock;
- =
-
--	/* should we flush first and last page first */
--	truncate_inode_pages(&target_inode->i_data, 0);
-+	destend =3D destoff + len - 1;
-+
-+	/* Flush the folios at either end of the destination range to prevent
-+	 * accidental loss of dirty data outside of the range.
-+	 */
-+	rc =3D filemap_write_and_wait_range(target_inode->i_mapping, destoff, de=
-stoff);
-+	if (rc)
-+		goto unlock;
-+	if (destend > destoff) {
-+		rc =3D filemap_write_and_wait_range(target_inode->i_mapping, destend, d=
-estend);
-+		if (rc)
-+			goto unlock;
-+	}
-+
-+	/* Discard all the folios that overlap the destination region. */
-+	discard_inode_pages_range(&target_inode->i_data, destoff, destend);
- =
-
- 	rc =3D file_modified(dst_file);
--	if (!rc)
-+	if (!rc) {
- 		rc =3D target_tcon->ses->server->ops->copychunk_range(xid,
- 			smb_file_src, smb_file_target, off, len, destoff);
-+		if (rc > 0 && destoff + rc > i_size_read(target_inode))
-+			truncate_setsize(target_inode, destoff + rc);
-+	}
- =
-
- 	file_accessed(src_file);
- =
-
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index a959ed2c9b22..65a00c8b8494 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -3307,6 +3307,7 @@ static long smb3_zero_range(struct file *file, struc=
-t cifs_tcon *tcon,
- 	struct inode *inode =3D file_inode(file);
- 	struct cifsInodeInfo *cifsi =3D CIFS_I(inode);
- 	struct cifsFileInfo *cfile =3D file->private_data;
-+	unsigned long long new_size;
- 	long rc;
- 	unsigned int xid;
- 	__le64 eof;
-@@ -3337,10 +3338,15 @@ static long smb3_zero_range(struct file *file, str=
-uct cifs_tcon *tcon,
- 	/*
- 	 * do we also need to change the size of the file?
- 	 */
--	if (keep_size =3D=3D false && i_size_read(inode) < offset + len) {
--		eof =3D cpu_to_le64(offset + len);
-+	new_size =3D offset + len;
-+	if (keep_size =3D=3D false && (unsigned long long)i_size_read(inode) < n=
-ew_size) {
-+		eof =3D cpu_to_le64(new_size);
- 		rc =3D SMB2_set_eof(xid, tcon, cfile->fid.persistent_fid,
- 				  cfile->fid.volatile_fid, cfile->pid, &eof);
-+		if (rc >=3D 0) {
-+			truncate_setsize(inode, new_size);
-+			fscache_resize_cookie(cifs_inode_cookie(inode), new_size);
-+		}
- 	}
- =
-
-  zero_range_exit:
-@@ -3735,6 +3741,9 @@ static long smb3_insert_range(struct file *file, str=
-uct cifs_tcon *tcon,
- 	if (rc < 0)
- 		goto out_2;
- =
-
-+	truncate_setsize(inode, old_eof + len);
-+	fscache_resize_cookie(cifs_inode_cookie(inode), i_size_read(inode));
-+
- 	rc =3D smb2_copychunk_range(xid, cfile, cfile, off, count, off + len);
- 	if (rc < 0)
- 		goto out_2;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 64cd1ee4aacc..e930c930e3f5 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -3416,6 +3416,8 @@ extern unsigned long vm_unmapped_area(struct vm_unma=
-pped_area_info *info);
- extern void truncate_inode_pages(struct address_space *, loff_t);
- extern void truncate_inode_pages_range(struct address_space *,
- 				       loff_t lstart, loff_t lend);
-+extern void discard_inode_pages_range(struct address_space *mapping,
-+				      loff_t lstart, loff_t lend);
- extern void truncate_inode_pages_final(struct address_space *);
- =
-
- /* generic vm_area_ops exported for stackable file systems */
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 52e3a703e7b2..b91d67de449c 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -295,10 +295,11 @@ long mapping_evict_folio(struct address_space *mappi=
-ng, struct folio *folio)
- }
- =
-
- /**
-- * truncate_inode_pages_range - truncate range of pages specified by star=
-t & end byte offsets
-+ * __truncate_inode_pages_range - truncate range of pages specified by st=
-art & end byte offsets
-  * @mapping: mapping to truncate
-  * @lstart: offset from which to truncate
-  * @lend: offset to which to truncate (inclusive)
-+ * @round_out: Discard all overlapping folios
-  *
-  * Truncate the page cache, removing the pages that are between
-  * specified offsets (and zeroing out partial pages
-@@ -318,8 +319,9 @@ long mapping_evict_folio(struct address_space *mapping=
-, struct folio *folio)
-  * truncate_inode_pages_range is able to handle cases where lend + 1 is n=
-ot
-  * page aligned properly.
-  */
--void truncate_inode_pages_range(struct address_space *mapping,
--				loff_t lstart, loff_t lend)
-+static void __truncate_inode_pages_range(struct address_space *mapping,
-+					 loff_t lstart, loff_t lend,
-+					 bool round_out)
- {
- 	pgoff_t		start;		/* inclusive */
- 	pgoff_t		end;		/* exclusive */
-@@ -367,7 +369,15 @@ void truncate_inode_pages_range(struct address_space =
-*mapping,
- 	same_folio =3D (lstart >> PAGE_SHIFT) =3D=3D (lend >> PAGE_SHIFT);
- 	folio =3D __filemap_get_folio(mapping, lstart >> PAGE_SHIFT, FGP_LOCK, 0=
-);
- 	if (!IS_ERR(folio)) {
--		same_folio =3D lend < folio_pos(folio) + folio_size(folio);
-+		loff_t fend =3D folio_pos(folio) + folio_size(folio) - 1;
-+
-+		if (unlikely(round_out)) {
-+			if (folio_pos(folio) < lstart)
-+				lstart =3D folio_pos(folio);
-+			if (lend < fend)
-+				lend =3D fend;
-+		}
-+		same_folio =3D lend <=3D fend;
- 		if (!truncate_inode_partial_folio(folio, lstart, lend)) {
- 			start =3D folio_next_index(folio);
- 			if (same_folio)
-@@ -382,6 +392,12 @@ void truncate_inode_pages_range(struct address_space =
-*mapping,
- 		folio =3D __filemap_get_folio(mapping, lend >> PAGE_SHIFT,
- 						FGP_LOCK, 0);
- 		if (!IS_ERR(folio)) {
-+			if (unlikely(round_out)) {
-+				loff_t fend =3D folio_pos(folio) + folio_size(folio) - 1;
-+
-+				if (lend < fend)
-+					lend =3D fend;
-+			}
- 			if (!truncate_inode_partial_folio(folio, lstart, lend))
- 				end =3D folio->index;
- 			folio_unlock(folio);
-@@ -420,8 +436,21 @@ void truncate_inode_pages_range(struct address_space =
-*mapping,
- 		folio_batch_release(&fbatch);
- 	}
- }
-+
-+void truncate_inode_pages_range(struct address_space *mapping,
-+				loff_t lstart, loff_t lend)
-+{
-+	__truncate_inode_pages_range(mapping, lstart, lend, false);
-+}
- EXPORT_SYMBOL(truncate_inode_pages_range);
- =
-
-+void discard_inode_pages_range(struct address_space *mapping,
-+			       loff_t lstart, loff_t lend)
-+{
-+	__truncate_inode_pages_range(mapping, lstart, lend, true);
-+}
-+EXPORT_SYMBOL(discard_inode_pages_range);
-+
- /**
-  * truncate_inode_pages - truncate *all* the pages from an offset
-  * @mapping: mapping to truncate
+David / dhildenb
 
 
