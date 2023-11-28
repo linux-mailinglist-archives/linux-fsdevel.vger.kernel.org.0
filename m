@@ -1,63 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-4027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78407FBBF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:54:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769367FBC00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A986E282ED4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 13:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326002828A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 13:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B374E58AD6;
-	Tue, 28 Nov 2023 13:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TWXu+afn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7416F59B65;
+	Tue, 28 Nov 2023 13:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C41B5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 05:54:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701179651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ww4tb37z+QtlEnTPZlBwHCJJj+TrIqx4ZMKlc8ERHeA=;
-	b=TWXu+afnO1uXU3HKvtpXoG43aVwrQL1XqwIm/c85bgehxYrbxwgAVmCK54USC+MHZTWMHE
-	Iyx8xNMt4fA0o2XGEvq24XbFvEnRBa9RsEKiiXS/f8MAHuG0hzaWYUeVhCSUm2mEPz9Ygx
-	1OOojqtgREid9+lsZUbRDtWHVQ/kJ0I=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-58-lwrmL7D6NWaWrcZVqNIhYw-1; Tue, 28 Nov 2023 08:54:08 -0500
-X-MC-Unique: lwrmL7D6NWaWrcZVqNIhYw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CD511811E8F;
-	Tue, 28 Nov 2023 13:54:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.14])
-	by smtp.corp.redhat.com (Postfix) with SMTP id A0B4E1C060AE;
-	Tue, 28 Nov 2023 13:54:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 28 Nov 2023 14:53:02 +0100 (CET)
-Date: Tue, 28 Nov 2023 14:52:59 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>, Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
-Message-ID: <20231128135258.GB22743@redhat.com>
-References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
- <20231128-arsch-halbieren-b2a95645de53@brauner>
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F58D1;
+	Tue, 28 Nov 2023 05:56:25 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E6897227A87; Tue, 28 Nov 2023 14:56:19 +0100 (CET)
+Date: Tue, 28 Nov 2023 14:56:19 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+	sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH 17/21] fs: xfs: iomap atomic write support
+Message-ID: <20231128135619.GA12202@lst.de>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com> <20230929102726.2985188-18-john.g.garry@oracle.com> <20231109152615.GB1521@lst.de> <a50a16ca-d4b9-a4d8-4230-833d82752bd2@oracle.com> <c78bcca7-8f09-41c7-adf0-03b42cde70d6@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,37 +41,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231128-arsch-halbieren-b2a95645de53@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+In-Reply-To: <c78bcca7-8f09-41c7-adf0-03b42cde70d6@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 11/28, Christian Brauner wrote:
->
-> Should be simpler if you invert the logic?
->
-> COMPLETELY UNTESTED
+On Tue, Nov 28, 2023 at 08:56:37AM +0000, John Garry wrote:
+> Are you suggesting some sort of hybrid between the atomic write series you 
+> had a few years ago and this solution?
 
-Agreed, this looks much better to me. But perhaps we can just add the new
-PF_KTHREAD_XXX flag and change fput
+Very roughly, yes.
 
+> To me that would be continuing with the following:
+> - per-IO RWF_ATOMIC (and not O_ATOMIC semantics of nothing is written until 
+> some data sync)
 
-	--- a/fs/file_table.c
-	+++ b/fs/file_table.c
-	@@ -445,7 +445,8 @@ void fput(struct file *file)
-		if (atomic_long_dec_and_test(&file->f_count)) {
-			struct task_struct *task = current;
-	 
-	-		if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-	+		if (likely(!in_interrupt() &&
-	+		    task->flags & (PF_KTHREAD|PF_KTHREAD_XXX) != PF_KTHREAD) {
-				init_task_work(&file->f_rcuhead, ____fput);
-				if (!task_work_add(task, &file->f_rcuhead, TWA_RESUME))
-					return;
+Yes.
 
-?
+> - writes must be a power-of-two and at a naturally-aligned offset
 
-Then nfsd() can simply set PF_KTHREAD_XXX. This looks even simpler to me.
+Where offset is offset in the file?  It would not require it.  You
+probably want to do it for optimal performance, but requiring it
+feeels rather limited.
 
-Oleg.
+> - relying on atomic write HW support always
 
+And I think that's where we have different opinions.  I think the hw
+offload is a nice optimization and we should use it wherever we can.
+But building the entire userspace API around it feels like a mistake.
+
+> BTW, we also have rtvol support which does not use forcealign as it already 
+> can guarantee alignment, but still does rely on the same principle of 
+> requiring alignment - would you want CoW support there also?
+
+Upstream doesn't have out of place write support for the RT subvolume
+yet.  But Darrick has a series for it and we're actively working on
+upstreaming it.
 
