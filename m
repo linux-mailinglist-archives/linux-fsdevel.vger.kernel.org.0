@@ -1,195 +1,361 @@
-Return-Path: <linux-fsdevel+bounces-4041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9A07FBD37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:51:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E017FBD7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E83F1F20F99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:51:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D4A28127A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B715C06A;
-	Tue, 28 Nov 2023 14:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C785C074;
+	Tue, 28 Nov 2023 14:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="xnWvHOZ2"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="zwaLhgJN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2054.outbound.protection.outlook.com [40.107.243.54])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2247710E4;
-	Tue, 28 Nov 2023 06:51:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=faLTWgLz9q/Ed5nrkYTlLWcqF9tgFPBwjkBqpTy0IRP/WV0kSXNGkxCU/fjeAUtfiIkU/WvdLBcomh1PgFL1Nm6I8/YmNmH8zmWaCHE7sVpRGUipud6ULdynEt52VMfcKpbWDFjFLbwh2rgvZnJJiSnitnBp5kbbJ9HixugnxHnlQHM12+JDXMXgbJei4twG8Q1Vbw4m1jA2A22R2cQsNy7hEg5ASx5SoxGejNdxOTGuqagNimRTEgJgOZM90es2tr7ZfPE1ZD93pbrx7RrndA31FudNZpoo0RWDJgzPFJIkrtTL1BAFcG53lCSVx7gkBXMm2KdRS3XqcivR6/b3yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Hn8zTSBx0EECv8Se1zHPIwuPb6kgjkjZ5pWXIZ28jvU=;
- b=RQido1zZtvf3Im3FEdINaxqfUGZoT+ZgLI6KhX8INQRGi9BNRWLYCCzzt9Parpi/issDI1VR1mwNzKtckxuXfyhPrykJ4mr35sypt0ATO7zEu1XmSNgt9ogcGO6Ri2iUzv/snAd1pvnDlHn+V4tm5Lnl3qp2fnc2YFnoKCjXuxn5lbI37Odzg/3KPfKTxjyzOVdRo6DvvpcAVPrGbOMEWGpjyDGDzg2wrvNcrxFtFMU7XlQBvZai5yHqpfTzYlowdyxcGv2URVKBX2wb7vVCemdQaXa5fT+MTynIsNRzkwAfSL4Ts9Rplo48fWuKVPkTWAiHklArS6CvIRac8BIHTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Hn8zTSBx0EECv8Se1zHPIwuPb6kgjkjZ5pWXIZ28jvU=;
- b=xnWvHOZ2jxtIMGBkC+TDqJRvnmF9ZWBdjpHr6qyDFRX6PNZdwZ6sgx7Yz+aRr1LkkS/RwRHuQC5ZmMxC7nAyFI7kCtkMuBX9yx8VZTRybH696OA2akn6svRqdMB2aE5sRJbG3s5q1isd728rVtMm8HFyd7ZdENgn3fDGdrHCYeI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
- by CH3PR17MB6665.namprd17.prod.outlook.com (2603:10b6:610:130::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.22; Tue, 28 Nov
- 2023 14:51:17 +0000
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::381c:7f11:1028:15f4]) by SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::381c:7f11:1028:15f4%5]) with mapi id 15.20.7046.015; Tue, 28 Nov 2023
- 14:51:17 +0000
-Date: Tue, 28 Nov 2023 09:51:08 -0500
-From: Gregory Price <gregory.price@memverge.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	arnd@arndb.de, tglx@linutronix.de, luto@kernel.org,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, tj@kernel.org, ying.huang@intel.com
-Subject: Re: [RFC PATCH 06/11] mm/mempolicy: modify do_mbind to operate on
- task argument instead of current
-Message-ID: <ZWX+XL7+gmr/l/go@memverge.com>
-References: <20231122211200.31620-1-gregory.price@memverge.com>
- <20231122211200.31620-7-gregory.price@memverge.com>
- <ZWX0-hEjqkmnR1Nq@tiehlicka>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZWX0-hEjqkmnR1Nq@tiehlicka>
-X-ClientProxiedBy: PH0PR07CA0016.namprd07.prod.outlook.com
- (2603:10b6:510:5::21) To SJ0PR17MB5512.namprd17.prod.outlook.com
- (2603:10b6:a03:394::19)
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF06D10F6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:55:50 -0800 (PST)
+Received: by mail-yb1-xb42.google.com with SMTP id 3f1490d57ef6-db40898721fso5188069276.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:55:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1701183350; x=1701788150; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6hfxZGEzsMn6pr3PbGHAQMPYIzDR4bpjU2UUNvRRumg=;
+        b=zwaLhgJNCTblwrxlJ6cC5yN/bmSbOxLSJpTznl4gjkJI7uugJpkWbG7taecD4SVwdV
+         gGqgiHaLljjKE7oWNVPInb32PXbch5McvL9u0pvUz3hNtgJr9mxjc0o7wpkYtV/KjuN8
+         JUdlCQ36UPAwOJKU50EKBhGxIYydXlAM1qBf5+uAJn2bhvNXjTZhkPB3GUpZPVDPX/gU
+         5ir9bHBIZZO6cxNN0foew0aRqYN6tUgefZ1esqdnkH4kzTfzd6VRedyIzkEJYidZVdGt
+         BvyZQEEPCSInAy0AncL/X9UpAJNAOaQJIbn1ddyLCKoCkxl2xdgt9Vw1mPk7Pj6c61Zd
+         +oZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701183350; x=1701788150;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6hfxZGEzsMn6pr3PbGHAQMPYIzDR4bpjU2UUNvRRumg=;
+        b=bf4UBffuNyv6Eyp/W2svivnmbfn1xGxG/ZTk1pRIdkGoUy2vVk0IPeq6qVfFgg8EKC
+         jAHEGX33IUhbc3Nu+XJkBjOpyA2PF8uRPQl50fAqT/7el0+xSDSJWPM6Oyf5PtCqi1IK
+         2aBoyd9dJmmuiRT396kORQ8SXirECJEOvljE29FWZkgEzumi6cMZzAhhqHTqM1APkmtw
+         DiwhrYXTuj1X30OBtd+LdggjIVtllITpFJZ9O14N5yT//nFexLLr5/lrKtYK/DiGctwC
+         CUt2Rf4CWnhpjErrCGJgQZuOXxYUbpg2BSuI9awx29/I32z/PaLyCMecisQVp24bjMVd
+         4bGQ==
+X-Gm-Message-State: AOJu0YxvCOn/VIhHKtn3UN6jl5Fi/6dB+UsB4w6GE+G5zf5QJa/BkBCZ
+	30lrDFAmwDTLi4czqOGv5DX9RoIF/tz73eMHdQIJx1G9
+X-Google-Smtp-Source: AGHT+IFUt2i864MDa9bG8vTVS4tjsJBuHDXsXJIsZH9X+7TLarfItbt1OkuTLPrI1Ojcb3o6dz+3TA==
+X-Received: by 2002:a25:e795:0:b0:db4:7ac:feb5 with SMTP id e143-20020a25e795000000b00db407acfeb5mr13767212ybh.15.1701183349860;
+        Tue, 28 Nov 2023 06:55:49 -0800 (PST)
+Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id y16-20020a258610000000b00d9c7bf8f32fsm3549450ybk.42.2023.11.28.06.55.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 06:55:49 -0800 (PST)
+Date: Tue, 28 Nov 2023 09:55:47 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: fanotify HSM open issues
+Message-ID: <20231128145547.GA2382537@perftesting>
+References: <CAOQ4uxixuw9d1TGNpzc7cSPyzRN6spu48Y+4QPqFBsvOYS89kQ@mail.gmail.com>
+ <20230817182220.vzzklvr7ejqlfnju@quack3>
+ <CAOQ4uxhRwq7MpN4rx1NbVccbPsW7Bkh9YdzrWYjZYFP8EAMR7g@mail.gmail.com>
+ <20230823143708.nry64nytwbeijtsq@quack3>
+ <CAOQ4uxh87hQUVrVYOkq+5pndVnMYhgHS0rBzXXjZe5ji7L-uTg@mail.gmail.com>
+ <CAOQ4uxjMjGgeCJ+pGJAiTYUxfHXABmbbe8_L6S3QAE_uMv5E6A@mail.gmail.com>
+ <20231120140605.6yx3jryuylgcphhr@quack3>
+ <CAOQ4uxg_U5v9TuEeagb6ybPobG-jJkP+sFcf+-yYoWr07wswSQ@mail.gmail.com>
+ <20231127191153.GH2366036@perftesting>
+ <CAOQ4uxjLZZavhkKaWFa8T7+bCR+N2VRVsv4VusXvN5UMJjBiRA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|CH3PR17MB6665:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4810fc7d-0249-4544-5943-08dbf02179a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	71PBl1X4/90/P4PmUZBXSRSL+Hw7aFQLuJvIPjHGcji2ngKZNd/GtkNkkDqGjkfAJkq+Zdh1rCgj2a3KZb335g/6TJ0kgMIdz3GEOmtoH4dyQqpsHyZFQh8CYZCZOMbGqeUkaYaZF3+zYGmAyHZkn3Pro2S4N5VhBlU0xGTXez7na20pbRdm5gnCmyCa++4JLW/DjLRzw9LsZMMkBB5AVy69JyaHevlYln6M9UQjB2Km6Zx3HUTaRvnyjbGlP/6XI/BqD0kKf5pVxtnCboTyaHbcxu+c/zf97SeM2ApJCo1zluKpkyN389GC02kqeQhjd8QCnM8yb3uyl1uOQKYCQ0qSlJGj7QXMDyZUKF2EWE4Fqfi+37iatQcVCCh52zEmbEk3hmmsiSEtZ2HJhsR0J9mwO3l3IqVL6kcrs69CqQ+wcHuT9NfY/GwKsuXvMScicayslVfZnbOAAvC+ZfKOev9r7FgELbY0k5Hf3CW1VvSg+ideKGpy/sX172NfcrSiCofa97Q8c/iBZVHIcqFiXhs4iwYTBm4u8At3Ajjv0ui3i2PxQNJrJ+yE+s5/Rx56e0fSKbEExJrKtlG7JhiuDiQZBdtF9BGb7DFLwxeOGytjNBa8YP2yXcwFtpjDLjk6
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(39850400004)(396003)(376002)(346002)(230273577357003)(230173577357003)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(86362001)(2906002)(5660300002)(6512007)(6506007)(8676002)(4326008)(7416002)(41300700001)(44832011)(8936002)(83380400001)(316002)(38100700002)(36756003)(2616005)(478600001)(6486002)(6666004)(66476007)(66946007)(6916009)(26005)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gyyk/Iy4Cvamq0arg7zCpgtUF4FFWXj0WoXRNm84sE+0BPED70VtMxgGXbBa?=
- =?us-ascii?Q?Lnti6Q+EDHfH2HmgM9RPBXqQ/HbuBJ2oQWtNsIgISucPBswnFgyN09IzKJze?=
- =?us-ascii?Q?o0j3qESMs9D0qWGCwRBDIMmr63HCUmWAcHpZR3G0d/JjJyfdxamen/NFTiza?=
- =?us-ascii?Q?8O7oiQEd0VZ3tcL+4ANF+tLEmvSDYiorZAb3FqqPLhvdb6uW1FvJhnDBvkMT?=
- =?us-ascii?Q?WMm0JwEj3K1qPqOkeYFXzVMHffXwErKwBcXuWzSyxzd3AFSSPmQ5Rem7I1nP?=
- =?us-ascii?Q?31I1fa22ehf7jvqrJM6V2pnZWWINAlaM/FqLV8G+CIYQD1Gnq3esU68ssJLn?=
- =?us-ascii?Q?aBd6LtD0nncrbj3cEXNVgz36jHPTcXa+txZN6ZSX2zRKo9DEMwJ6ZCo4yvSL?=
- =?us-ascii?Q?1bA8BDAF3yBY8m207DTYKOjwdZfjgAYIe6+iOkdPaftaMjdXeBW/7PA+ZxU8?=
- =?us-ascii?Q?zOPIxfbF9u8b/E2pUPWPbpDoVRtTlOjwJG6yDpa5x3mjYum2YKBs2HqNL04c?=
- =?us-ascii?Q?9AyBmEXlpdWfVkO4x/udibgTAGCwEH8toncBUpTISh0dt6nbbShMs5mowHY/?=
- =?us-ascii?Q?PsgQ9C85FCV4dTrkvpWiMeiybMDW9u9cDsuUVLed2PiOkgaWCD0voUtP90MF?=
- =?us-ascii?Q?4FkQtZR6JVKXAP1y6SnLfOpo/oCgkKKql+ceOOVVKWK8VoN0drpJSjuHpnS/?=
- =?us-ascii?Q?lFIMHKJEBCCTZmSMtcL4LsNedX3N5LM1iuy6xcRTjodzdgppp/jxsgD6Cedf?=
- =?us-ascii?Q?KAbszsU96HqMWYczVdqEHtThu1s0yORWEevt+O7O9ltELea2bzZPcf8FGhSv?=
- =?us-ascii?Q?pKq9kai+WjIGA1HMfhry9He1sOD6piCfiwlOkT1DCuIolcdpE98nQbJllkqf?=
- =?us-ascii?Q?84gh3yhSCZ/fBZWGvwZAerwbshvlR42/UnEUvWh00L8VIGuipIUcQZZE00Mc?=
- =?us-ascii?Q?CWYI+KfoKPiZNqb7fldVe5rLbyN6SwpUWWCECzwS3pfXSzK0JlKF/izuJ2SJ?=
- =?us-ascii?Q?RVGf3RafSuYN8KnuyaQydpSpPzyQJTSIyb5iiuV7CMJqH0At/GG0PrNKGmo6?=
- =?us-ascii?Q?VkTyGpdPq4dLo5Hgrq9dzqpD0z4+FojfioyLSK6a/kkQzT4DViOt3+dcyspz?=
- =?us-ascii?Q?gKPRPKPcO0IPB8uHp9oLKFNXlZLENaDq2rz9E3RQiYVdlvBqOPiNfhquLD6L?=
- =?us-ascii?Q?EGstIcPx0O50Jdk4LOWSxCC8crkCWZ3Na2jYfdsJhjK4XLUQ6mCqCNzRlBgI?=
- =?us-ascii?Q?1kGgGhmGO4sz1vVhGCdVxZd6kd8fV5iyqd9R5AfO7SjFrW9xVMYgHPKziQWy?=
- =?us-ascii?Q?ks33geCxYIGnbNxqHc3t/7E91voG2qSZ2rWO3OHGq47jR4So4xlnlBpTp9H/?=
- =?us-ascii?Q?dwIS3JkN+BQZx8N7aF0pS2Rmud3xrrmkIgU5de07gD+xKfVrpPlZQBEyhg5N?=
- =?us-ascii?Q?0gQ0lCCBsGpiJ0U7HgtJWUhZ+JwJR/OadRfuaL6BqJJbUqgvBlJsmt/bnt3m?=
- =?us-ascii?Q?inDjEzA8ng0PeMfNVfn/If/nwhD7FVno0tJQ7/SsJK5+IEUEZ+4EUlj2dau/?=
- =?us-ascii?Q?cQxyqVKRtOiZ+Xm3Q/2VcuYEBrhZfCGbZH690IWZ93plADeFF19sDFonN9iU?=
- =?us-ascii?Q?dA=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4810fc7d-0249-4544-5943-08dbf02179a3
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2023 14:51:16.9337
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2vTYPlIXuVqEoU3frhq0qus2YCCPhKuV+iv6xXe93YXRPvlKMdWY5b3Ik2YiDwznCUE5dfFOaQAJIsAHKrtl+wyrB2VTrwXuKbhSlTigD/w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR17MB6665
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjLZZavhkKaWFa8T7+bCR+N2VRVsv4VusXvN5UMJjBiRA@mail.gmail.com>
 
-On Tue, Nov 28, 2023 at 03:11:06PM +0100, Michal Hocko wrote:
-> On Wed 22-11-23 16:11:55, Gregory Price wrote:
-> [...]
-> > + * Like get_vma_policy and get_task_policy, must hold alloc/task_lock
-> > + * while calling this.
-> > + */
-> > +static struct mempolicy *get_task_vma_policy(struct task_struct *task,
-> > +					     struct vm_area_struct *vma,
-> > +					     unsigned long addr, int order,
-> > +					     pgoff_t *ilx)
-> [...]
+On Tue, Nov 28, 2023 at 01:05:50PM +0200, Amir Goldstein wrote:
+> On Mon, Nov 27, 2023 at 9:11 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > On Mon, Nov 20, 2023 at 06:59:47PM +0200, Amir Goldstein wrote:
+> > > On Mon, Nov 20, 2023 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Hi Amir,
+> > > >
+> > > > sorry for a bit delayed reply, I did not get to "swapping in" HSM
+> > > > discussion during the Plumbers conference :)
+> > > >
+> > > > On Mon 13-11-23 13:50:03, Amir Goldstein wrote:
+> > > > > On Wed, Aug 23, 2023 at 7:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > > > On Wed, Aug 23, 2023 at 5:37 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > > > > Recap for new people joining this thread.
+> > > > > > > >
+> > > > > > > > The following deadlock is possible in upstream kernel
+> > > > > > > > if fanotify permission event handler tries to make
+> > > > > > > > modifications to the filesystem it is watching in the context
+> > > > > > > > of FAN_ACCESS_PERM handling in some cases:
+> > > > > > > >
+> > > > > > > > P1                             P2                      P3
+> > > > > > > > -----------                    ------------            ------------
+> > > > > > > > do_sendfile(fs1.out_fd, fs1.in_fd)
+> > > > > > > > -> sb_start_write(fs1.sb)
+> > > > > > > >   -> do_splice_direct()                         freeze_super(fs1.sb)
+> > > > > > > >     -> rw_verify_area()                         -> sb_wait_write(fs1.sb) ......
+> > > > > > > >       -> security_file_permission()
+> > > > > > > >         -> fsnotify_perm() --> FAN_ACCESS_PERM
+> > > > > > > >                                  -> do_unlinkat(fs1.dfd, ...)
+> > > > > > > >                                    -> sb_start_write(fs1.sb) ......
+> > > > > > > >
+> > > > > > > > start-write-safe patches [1] (not posted) are trying to solve this
+> > > > > > > > deadlock and prepare the ground for a new set of permission events
+> > > > > > > > with cleaner/safer semantics.
+> > > > > > > >
+> > > > > > > > The cases described above of sendfile from a file in loop mounted
+> > > > > > > > image over fs1 or overlayfs over fs1 into a file in fs1 can still
+> > > > > > > > deadlock despite the start-write-safe patches [1].
+> > > > > > >
+> > > > > > > Yep, nice summary.
+> > > > ...
+> > > > > > > > > As I wrote above I don't like the abuse of FMODE_NONOTIFY much.
+> > > > > > > > > FMODE_NONOTIFY means we shouldn't generate new fanotify events when using
+> > > > > > > > > this fd. It says nothing about freeze handling or so. Furthermore as you
+> > > > > > > > > observe FMODE_NONOTIFY cannot be set by userspace but practically all
+> > > > > > > > > current fanotify users need to also do IO on other files in order to handle
+> > > > > > > > > fanotify event. So ideally we'd have a way to do IO to other files in a
+> > > > > > > > > manner safe wrt freezing. We could just update handling of RWF_NOWAIT flag
+> > > > > > > > > to only trylock freeze protection - that actually makes a lot of sense to
+> > > > > > > > > me. The question is whether this is enough or not.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Maybe, but RWF_NOWAIT doesn't take us far enough, because writing
+> > > > > > > > to a file is not the only thing that HSM needs to do.
+> > > > > > > > Eventually, event handler for lookup permission events should be
+> > > > > > > > able to also create files without blocking on vfs level freeze protection.
+> > > > > > >
+> > > > > > > So this is what I wanted to clarify. The lookup permission event never gets
+> > > > > > > called under a freeze protection so the deadlock doesn't exist there. In
+> > > > > > > principle the problem exists only for access and modify events where we'd
+> > > > > > > be filling in file data and thus RWF_NOWAIT could be enough.
+> > > > > >
+> > > > > > Yes, you are right.
+> > > > > > It is possible that RWF_NOWAIT could be enough.
+> > > > > >
+> > > > > > But the discovery of the loop/ovl corner cases has shaken my
+> > > > > > confidence is the ability to guarantee that freeze protection is not
+> > > > > > held somehow indirectly.
+> > > > > >
+> > > > > > If I am not mistaken, FAN_OPEN_PERM suffers from the exact
+> > > > > > same ovl corner case, because with splice from ovl1 to fs1,
+> > > > > > fs1 freeze protection is held and:
+> > > > > >   ovl_splice_read(ovl1.file)
+> > > > > >     ovl_real_fdget()
+> > > > > >       ovl_open_realfile(fs1.file)
+> > > > > >          ... security_file_open(fs1.file)
+> > > > > >
+> > > > > > > That being
+> > > > > > > said I understand this may be assuming too much about the implementations
+> > > > > > > of HSM daemons and as you write, we might want to provide a way to do IO
+> > > > > > > not blocking on freeze protection from any hook. But I wanted to point this
+> > > > > > > out explicitly so that it's a conscious decision.
+> > > > > > >
+> > > > >
+> > > > > I agree and I'd like to explain using an example, why RWF_NOWAIT is
+> > > > > not enough for HSM needs.
+> > > > >
+> > > > > The reason is that often, when HSM needs to handle filling content
+> > > > > in FAN_PRE_ACCESS, it is not just about writing to the accessed file.
+> > > > > HSM needs to be able to avoid blocking on freeze protection
+> > > > > for any operations on the filesystem, not just pwrite().
+> > > > >
+> > > > > For example, the POC HSM code [1], stores the DATA_DIR_fd
+> > > > > from the lookup event and uses it in the handling of access events to
+> > > > > update the metadata files that store which parts of the file were already
+> > > > > filled (relying of fiemap is not always a valid option).
+> > > > >
+> > > > > That is the reason that in the POC patches [2], FMODE_NONOTIFY
+> > > > > is propagated from dirfd to an fd opened with openat(dirfd, ...), so
+> > > > > HSM has an indirect way to get a FMODE_NONOTIFY fd on any file.
+> > > > >
+> > > > > Another use case is that HSM may want to download content to a
+> > > > > temp file on the same filesystem, verify the downloaded content and
+> > > > > then clone the data into the accessed file range.
+> > > > >
+> > > > > I think that a PF_ flag (see below) would work best for all those cases.
+> > > >
+> > > > Ok, I agree that just using RWF_NOWAIT from the HSM daemon need not be
+> > > > enough for all sensible usecases to avoid deadlocks with freezing. However
+> > > > note that if we want to really properly handle all possible operations, we
+> > > > need to start handling error from all sb_start_write() and
+> > > > file_start_write() calls and there are quite a few of those.
+> > > >
+> > >
+> > > Darn, forgot about those.
+> > > I am starting to reconsider adding a freeze level.
+> > > I cannot shake the feeling that there is a simpler solution that escapes us...
+> > > Maybe fs anti-freeze (see blow).
+> > >
+> > > > > > > > In theory, I am not saying we should do it, but as a thought experiment:
+> > > > > > > > if the requirement from permission event handler is that is must use a
+> > > > > > > > O_PATH | FMODE_NONOTIFY event->fd provided in the event to make
+> > > > > > > > any filesystem modifications, then instead of aiming for NOWAIT
+> > > > > > > > semantics using sb_start_write_trylock(), we could use a freeze level
+> > > > > > > > SB_FREEZE_FSNOTIFY between
+> > > > > > > > SB_FREEZE_WRITE and SB_FREEZE_PAGEFAULT.
+> > > > > > > >
+> > > > > > > > As a matter of fact, HSM is kind of a "VFS FAULT", so as long as we
+> > > > > > > > make it clear how userspace should avoid nesting "VFS faults" there is
+> > > > > > > > a model that can solve the deadlock correctly.
+> > > > > > >
+> > > > > > > OK, yes, in principle another freeze level which could be used by handlers
+> > > > > > > of fanotify permission events would solve the deadlock as well. Just you
+> > > > > > > seem to like to tie this functionality to the particular fd returned from
+> > > > > > > fanotify and I'm not convinced that is a good idea. What if the application
+> > > > > > > needs to do write to some other location besides the one fd it got passed
+> > > > > > > from fanotify event? E.g. imagine it wants to fetch a whole subtree on
+> > > > > > > first access to any file in a subtree. Or maybe it wants to write to some
+> > > > > > > DB file containing current state or something like that.
+> > > > > > >
+> > > > > > > One solution I can imagine is to create an open flag that can be specified
+> > > > > > > on open which would result in the special behavior wrt fs freezing. If the
+> > > > > > > special behavior would be just trylocking the freeze protection then it
+> > > > > > > would be really easy. If the behaviour would be another freeze protection
+> > > > > > > level, then we'd need to make sure we don't generate another fanotify
+> > > > > > > permission event with such fd - autorejecting any such access is an obvious
+> > > > > > > solution but I'm not sure if practical for applications.
+> > > > > > >
+> > > > > >
+> > > > > > I had also considered marking the listener process with the FSNOTIFY
+> > > > > > context and enforcing this context on fanotify_read().
+> > > > > > In a way, this is similar to the NOIO and NOFS process context.
+> > > > > > It could be used to both act as a stronger form of FMODE_NONOTIFY
+> > > > > > and to activate the desired freeze protection behavior
+> > > > > > (whether trylock or SB_FREEZE_FSNOTIFY level).
+> > > > > >
+> > > > >
+> > > > > My feeling is that the best approach would be a PF_NOWAIT task flag:
+> > > > >
+> > > > > - PF_NOWAIT will prevent blocking on freeze protection
+> > > > > - PF_NOWAIT + FMODE_NOWAIT would imply RWF_NOWAIT
+> > > > > - PF_NOWAIT could be auto-set on the reader of a permission event
+> > > > > - PF_NOWAIT could be set on init of group FAN_CLASS_PRE_PATH
+> > > > > - We could add user API to set this personality explicitly to any task
+> > > > > - PF_NOWAIT without FMODE_NONOTIFY denies permission events
+> > > > >
+> > > > > Please let me know if you agree with this design and if so,
+> > > > > which of the methods to set PF_NOWAIT are a must for the first version
+> > > > > in your opinion?
+> > > >
+> > > > Yeah, the PF flag could work. It can be set for the process(es) responsible
+> > > > for processing the fanotify events and filling in filesystem contents. I
+> > > > don't think automatic setting of this flag is desirable though as it has
+> > > > quite wide impact and some of the consequences could be surprising.  I
+> > > > rather think it should be a conscious decision when setting up the process
+> > > > processing the events. So I think API to explicitly set / clear the flag
+> > > > would be the best. Also I think it would be better to capture in the name
+> > > > that this is really about fs freezing. So maybe PF_NOWAIT_FREEZE or
+> > > > something like that?
+> > > >
+> > >
+> > > Sure.
+> > >
+> > > > Also we were thinking about having an open(2) flag for this (instead of PF
+> > > > flag) in the past. That would allow finer granularity control of the
+> > > > behavior but I guess you are worried that it would not cover all the needed
+> > > > operations?
+> > > >
+> > >
+> > > Yeh, it seems like an API that is going to be harder to write safe HSM
+> > > programs with.
+> > >
+> > > > > Do you think we should use this method to fix the existing deadlocks
+> > > > > with FAN_OPEN_PERM and FAN_ACCESS_PERM? without opt-in?
+> > > >
+> > > > No, I think if someone cares about these, they should explicitly set the
+> > > > PF flag in their task processing the events.
+> > > >
+> > >
+> > > OK.
+> > >
+> > > I see an exit hatch in this statement -
+> > > If we are going leave the responsibility to avoid deadlock in corner
+> > > cases completely in the hands of the application, then I do not feel
+> > > morally obligated to create the PF_NOWAIT_FREEZE API *before*
+> > > providing the first HSM API.
+> > >
+> > > If the HSM application is running in a controlled system, on a filesystem
+> > > where fsfreeze is not expected or not needed, then a fully functional and
+> > > safe HSM does not require PF_NOWAIT_FREEZE API.
+> > >
+> > > Perhaps an API to make an fs unfreezable is just as practical and a much
+> > > easier option for the first version of HSM API?
+> > >
+> > > Imagine that HSM opens an fd and sends an EXCLUSIVE_FSFREEZER
+> > > ioctl. Then no other task can freeze the fs, for as long as the fd is open
+> > > apart from the HSM itself using this fd.
+> > >
+> > > HSM itself can avoid deadlocks if it collaborates the fs freezes with
+> > > making fs modifications from within HSM events.
+> > >
+> > > Do you think that may be an acceptable way out or the corner?
+> >
+> > This is kind of a corner case that I think is acceptable to just leave up to
+> > application developers.  Speaking as a potential consumer of this work we don't
+> > use fsfreeze so aren't concerned wit this in practice, and arguably if you're
+> > using this interface you know what you're doing.  As long as the sharp edge is
+> > well documented I think that's fine for v1.
+> >
 > 
-> You should add lockdep annotation for alloc_lock/task_lock here for clarity and 
-> also...  
-> > @@ -1844,16 +1899,7 @@ struct mempolicy *__get_vma_policy(struct vm_area_struct *vma,
-> >  struct mempolicy *get_vma_policy(struct vm_area_struct *vma,
-> >  				 unsigned long addr, int order, pgoff_t *ilx)
-> >  {
-> > -	struct mempolicy *pol;
-> > -
-> > -	pol = __get_vma_policy(vma, addr, ilx);
-> > -	if (!pol)
-> > -		pol = get_task_policy(current);
-> > -	if (pol->mode == MPOL_INTERLEAVE) {
-> > -		*ilx += vma->vm_pgoff >> order;
-> > -		*ilx += (addr - vma->vm_start) >> (PAGE_SHIFT + order);
-> > -	}
-> > -	return pol;
-> > +	return get_task_vma_policy(current, vma, addr, order, ilx);
+> I agree that this is good enough for v1.
+> The only question is can we (and should we) do better than good enough for v1.
 > 
-> I do not think that all get_vma_policy take task_lock (just random check
-> dequeue_hugetlb_folio_vma->huge_node->get_vma_policy AFAICS)
+> > Long term I like the EXCLUSIVE_FSFREEZER option, noting Christian's comment
+> > about the xfs scrubbing use case.  We all know that "freeze this file system" is
+> > an operation that is going to take X amount of time, so as long as we provide
+> > the application a way to block fsfreeze to avoid the deadlock then I think
+> > that's a reasonable solution.  Additionally it would allow us an avenue to
+> > gracefully handle errors.  If we race and see that the fs is already frozen well
+> > then we can go back to the HSM with an error saying he's out of luck, and he can
+> > return -EAGAIN or something through fanotify to unwind and try again later.
+> >
 > 
+> Actually, "fs is already frozen" is not a deadlock case.
+> If "fs is already frozen" then fsfreeze was successful and HSM should just
+> wait in line like everyone else until fs is unfrozen.
+> 
+> The deadlock case is "fs is being frozen" (i.e. sb->s_writers.frozen is
+> in state SB_FREEZE_WRITE), which cannot make progress because
+> an existing holder of sb write is blocked on an HSM event, which in turn
+> is trying to start a new sb write.
 
-hm, i might have gotten turned around on this one.  Forgot to check for
-external references to get_vma_policy.  I thought I considered it, but i
-clearly did not leave myself any notes if I did.
+Right, and now I'm confused.  You have your patchset to re-order the permission
+checks to before the sb_start_write(), so an HSM watching FAN_OPEN_PERM is no
+longer holding the sb write lock and thus can't deadlock, correct?
 
-This pattern is troublesome, we're holding the task lock during the
-callback stack in __get_vma_policy - just incase that returns NULL so we
-can return the task policy instead.  If that vma is shared, it will take
-the vma shared policy lock (sp->lock)
+The new things you are proposing (FAN_PRE_ACESS and FAN_PRE_MODIFY) also do not
+happen inside of an sb_start_write(), correct?
 
-I almost want to change this interface to return NULL if the VMA doesn't
-have one, and change callers to fetch the task policy explicitly instead
-of implicitly returning the task policy.  At least then we'd only take
-the task lock on an explicit access to the *Task* policy.
+So where is the deadlock you're trying to fix?  The one you describe in this
+thread is what the patchset I reviewed last week was fixing, so in my eyes it
+looks like we're good?  It seems you're worried about the HSM app getting stuck
+on an fsfreeze when it's trying to populate the content, but that's not actually
+deadlocked, it just has to wait for the fs to be unfrozen, the fsfreeze
+operation will be able to complete and then thaw will be able to happen because
+there's no nested sb_write with the new flags, and with your patchset there's no
+sb_write with FAN_OPEN_PERM.
 
-> Also I do not see policy_nodemask to be handled anywhere. That one is
-> used along with get_vma_policy (sometimes hidden like in
-> alloc_pages_mpol). It has a dependency on
-> cpuset_nodemask_valid_mems_allowed. That means that e.g. mbind on a
-> remote task would be constrained by current task cpuset when allocating
-> migration targets for the target task. I am wondering how many other
-> dependencies like that are lurking there.
+Sorry I hate it when people come in the middle of a conversation and I have to
+re-explain myself, so feel free to ignore me.  But I've read the whole thread a
+few times and I can't quite figure out what this new deadlock is you're worried
+about.  Thanks,
 
-bah!
-
-thought i dug all these out, but i missed alloc_migration_target_by_mpol
-from do_mbind.
-
-I'll need to take another look at the calls to cpusets interfaces to
-make sure i dig this out.  The number of hidden accesses to current is
-really nasty :[ 
-
-> -- 
-> Michal Hocko
-> SUSE Labs
+Josef
 
