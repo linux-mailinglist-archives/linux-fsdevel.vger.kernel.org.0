@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-4079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C807FC9A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 23:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8E17FC9A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 23:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C710F1C20A61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 22:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14FF1C2042D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 22:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3279650254
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 22:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025EC50254
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 22:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="g5Vb4oi5"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="lPw/pXat"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C6A19B0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 12:49:43 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id a1e0cc1a2514c-7bae8dd095cso1913870241.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 12:49:43 -0800 (PST)
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CF681BC0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 12:49:44 -0800 (PST)
+Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-67a2443658aso17314536d6.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 12:49:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701204582; x=1701809382; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1701204583; x=1701809383; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5Yy4hUPviTRiK7d1jgshQ8ZyWUkBDBJBzqyGrbBWtJ8=;
-        b=g5Vb4oi5Zx3aFEDyKfWTbwOlIcwaOHeUedveBZxtW9O2ESckd6O9ikmKLFeclMxkmi
-         NU8PNoIGofZtybx+VH1+u280+w86nS3t5yphDls5ezJfVjuy1cNlkLim5uQ0bzn2ivSx
-         qCWYycazdV2ruZRikhMyqbdRga0nB5YMqzDJZYVlm8Y3jv+MbshATpVJhXfBw4cj2Pxm
-         mT26FZkUFF9OlRoWyiDdn4FWwD3OqnYngdTNE3ePexff8FG6AKYHJdhO1x5oNWiX0Dp/
-         5cd+3rfwhw6aSNHOWBZ+1djNsy77ZqJXuFcDtPunDbgzjik4nhGJ1qg9qvCF0HPxiKHn
-         GGNQ==
+        bh=k1GabcB3edaQg1Ui1Yy9urjYmEO9oSCGrDI9SMXfmmE=;
+        b=lPw/pXataJO+RjwebVUSmEpOcfobofIULaZj4GRfpdPpg2cJWAj1LrMMJP4B/7JFLK
+         IzYuttpohe07zT2thfL1nKoQ6zAR5n3OCQr10wq3ak33LujLelehQlzLkPNNzHaa4qEx
+         uEk6atWS7S/6DUcwX4MOBvqKdRdrLWEnoKG86Liv2kiAkdJuq1FdN9CwgVFQ1THCWkp6
+         yEu5Es0WRND0YpayMkr75ttBmiKfpow+vPfPVsWlcqV83XLmLBqS3nDzbSXF4xpqk+9o
+         Oi/0vwT2KM/2sKhzaV03hX/yby4Ku/pvarvnq0jGwOm3zWEDppEAg7XvCkYxNgw2JNeq
+         YlbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701204582; x=1701809382;
+        d=1e100.net; s=20230601; t=1701204583; x=1701809383;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5Yy4hUPviTRiK7d1jgshQ8ZyWUkBDBJBzqyGrbBWtJ8=;
-        b=hbYv+PUQ38zXin6kP+1Uk46Y7fhxa5arMgiZxbvjBG8O1oK/c5Ub/IoZh17qHUnVZy
-         KLSnfUSXswRfheJ0U31mE0+pUkitrN6zvpulj2FZDZEMoezYMfXWPCmaOaxFM3Ygv4u2
-         flSRdCS3GB6I/+2yI+vq7czkWQLFjdDX7GvGTL4qLb4kE6BdHFc0XIQD7qvHF/jhSlmo
-         zKSEaQjHZX80BoladgG++z4ejBKY3ZLi53FrdNtoHgc3Q+C9TQZ1O7RhRBqb7qsF7jCz
-         nnf6vSgmU/RF1InbrsBkt76eV077RMMsj+/m2U0NFhBUMR2Zp4oQd7eDQmKVZMrjZ4d5
-         jXhg==
-X-Gm-Message-State: AOJu0YyHDfL5q8pM1qxrBI7GnZMh2AGBzYCkVJLfk4sm2fVDUhtaCQ7t
-	L3esHx7WmNo5R4Czu9pIVcJwqA==
-X-Google-Smtp-Source: AGHT+IH8/bEeoEWe4piY4GbZu9GZ1mU2v9u0hs2sQwvgjF+pi6uXD6MYgG32AAFD5esMsPCrla3XFw==
-X-Received: by 2002:a05:6102:cd4:b0:462:ad06:c90b with SMTP id g20-20020a0561020cd400b00462ad06c90bmr19786797vst.18.1701204582009;
-        Tue, 28 Nov 2023 12:49:42 -0800 (PST)
+        bh=k1GabcB3edaQg1Ui1Yy9urjYmEO9oSCGrDI9SMXfmmE=;
+        b=qS/6hpPkv6xaQMX7Go3WNMRLeYpdMY2FCEMPtk56KjQ713jc2CzkgrxyMkjXuZ1Z+J
+         HR453KH4RjIQOu7bplt8xRF7TntWhvOC3XYK7DtB2okByKdbK44WC4hdaedfrG80LWFP
+         6UXfrjISs8ieUSqEe5aUHHaF7d5s2doXossM3A6h6fNuh+1PdwmXmdvH7TqlFN9stPA3
+         ifG48KmNlOQzi47kfxCt6gHNm+SqEI4FQkdbWzE/SSKx9IDaVAVcjOwIaRCOKiv7YKym
+         3//pHkUrpkTNcXWPx0su2Den1T3QyE3LVNm3mmekURm9l6gYHpnQ7USHpnVCh0P5/vSD
+         4Juw==
+X-Gm-Message-State: AOJu0Yz6TX1oh9R+3LPGi9Pt9AkLlA0L7sB3wuq86BV8dPKajbiXMH5O
+	C5xXJWEQt2GMFyMYtH+0SHwWQQ==
+X-Google-Smtp-Source: AGHT+IFZ2J6ifaJU9E1oZ5e/lDPloT8/cUCHwQamxmJzlr5gT1J0RGoEUSTPlGzdwJlACbJO6NjPTw==
+X-Received: by 2002:ad4:580a:0:b0:67a:26ad:fabc with SMTP id dd10-20020ad4580a000000b0067a26adfabcmr10428038qvb.22.1701204583234;
+        Tue, 28 Nov 2023 12:49:43 -0800 (PST)
 Received: from soleen.c.googlers.com.com (55.87.194.35.bc.googleusercontent.com. [35.194.87.55])
-        by smtp.gmail.com with ESMTPSA id d11-20020a0cfe8b000000b0067a56b6adfesm1056863qvs.71.2023.11.28.12.49.41
+        by smtp.gmail.com with ESMTPSA id d11-20020a0cfe8b000000b0067a56b6adfesm1056863qvs.71.2023.11.28.12.49.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 12:49:41 -0800 (PST)
+        Tue, 28 Nov 2023 12:49:42 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	alex.williamson@redhat.com,
@@ -106,9 +106,9 @@ To: akpm@linux-foundation.org,
 	wens@csie.org,
 	will@kernel.org,
 	yu-cheng.yu@intel.com
-Subject: [PATCH 01/16] iommu/vt-d: add wrapper functions for page allocations
-Date: Tue, 28 Nov 2023 20:49:23 +0000
-Message-ID: <20231128204938.1453583-2-pasha.tatashin@soleen.com>
+Subject: [PATCH 02/16] iommu/amd: use page allocation function provided by iommu-pages.h
+Date: Tue, 28 Nov 2023 20:49:24 +0000
+Message-ID: <20231128204938.1453583-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 In-Reply-To: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
 References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
@@ -120,595 +120,526 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to improve observability and accountability of IOMMU layer, we
-must account the number of pages that are allocated by functions that
-are calling directly into buddy allocator.
-
-This is achieved by first wrapping the allocation related functions into a
-separate inline functions in new file:
-
-drivers/iommu/iommu-pages.h
-
-Convert all page allocation calls under iommu/intel to use these new
-functions.
+Convert iommu/amd/* files to use the new page allocation functions
+provided in iommu-pages.h.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- drivers/iommu/intel/dmar.c          |  10 +-
- drivers/iommu/intel/iommu.c         |  47 +++----
- drivers/iommu/intel/iommu.h         |   2 -
- drivers/iommu/intel/irq_remapping.c |  10 +-
- drivers/iommu/intel/pasid.c         |  12 +-
- drivers/iommu/intel/svm.c           |   7 +-
- drivers/iommu/iommu-pages.h         | 199 ++++++++++++++++++++++++++++
- 7 files changed, 236 insertions(+), 51 deletions(-)
- create mode 100644 drivers/iommu/iommu-pages.h
+ drivers/iommu/amd/amd_iommu.h     |  8 ---
+ drivers/iommu/amd/init.c          | 91 ++++++++++++++-----------------
+ drivers/iommu/amd/io_pgtable.c    | 13 +++--
+ drivers/iommu/amd/io_pgtable_v2.c | 20 +++----
+ drivers/iommu/amd/iommu.c         | 13 +++--
+ 5 files changed, 64 insertions(+), 81 deletions(-)
 
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index a3414afe11b0..a6937e1e20a5 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -32,6 +32,7 @@
- 
- #include "iommu.h"
- #include "../irq_remapping.h"
-+#include "../iommu-pages.h"
- #include "perf.h"
- #include "trace.h"
- #include "perfmon.h"
-@@ -1185,7 +1186,7 @@ static void free_iommu(struct intel_iommu *iommu)
- 	}
- 
- 	if (iommu->qi) {
--		free_page((unsigned long)iommu->qi->desc);
-+		iommu_free_page(iommu->qi->desc);
- 		kfree(iommu->qi->desc_status);
- 		kfree(iommu->qi);
- 	}
-@@ -1714,6 +1715,7 @@ int dmar_enable_qi(struct intel_iommu *iommu)
- {
- 	struct q_inval *qi;
- 	struct page *desc_page;
-+	int order;
- 
- 	if (!ecap_qis(iommu->ecap))
- 		return -ENOENT;
-@@ -1734,8 +1736,8 @@ int dmar_enable_qi(struct intel_iommu *iommu)
- 	 * Need two pages to accommodate 256 descriptors of 256 bits each
- 	 * if the remapping hardware supports scalable mode translation.
- 	 */
--	desc_page = alloc_pages_node(iommu->node, GFP_ATOMIC | __GFP_ZERO,
--				     !!ecap_smts(iommu->ecap));
-+	order = ecap_smts(iommu->ecap) ? 1 : 0;
-+	desc_page = __iommu_alloc_pages_node(iommu->node, GFP_ATOMIC, order);
- 	if (!desc_page) {
- 		kfree(qi);
- 		iommu->qi = NULL;
-@@ -1746,7 +1748,7 @@ int dmar_enable_qi(struct intel_iommu *iommu)
- 
- 	qi->desc_status = kcalloc(QI_LENGTH, sizeof(int), GFP_ATOMIC);
- 	if (!qi->desc_status) {
--		free_page((unsigned long) qi->desc);
-+		iommu_free_page(qi->desc);
- 		kfree(qi);
- 		iommu->qi = NULL;
- 		return -ENOMEM;
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 3531b956556c..04f852175cbe 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -28,6 +28,7 @@
- #include "../dma-iommu.h"
- #include "../irq_remapping.h"
- #include "../iommu-sva.h"
-+#include "../iommu-pages.h"
- #include "pasid.h"
- #include "cap_audit.h"
- #include "perfmon.h"
-@@ -367,22 +368,6 @@ static int __init intel_iommu_setup(char *str)
+diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
+index 86be1edd50ee..bf697d566e0b 100644
+--- a/drivers/iommu/amd/amd_iommu.h
++++ b/drivers/iommu/amd/amd_iommu.h
+@@ -136,14 +136,6 @@ static inline int get_pci_sbdf_id(struct pci_dev *pdev)
+ 	return PCI_SEG_DEVID_TO_SBDF(seg, devid);
  }
- __setup("intel_iommu=", intel_iommu_setup);
  
--void *alloc_pgtable_page(int node, gfp_t gfp)
+-static inline void *alloc_pgtable_page(int nid, gfp_t gfp)
 -{
 -	struct page *page;
--	void *vaddr = NULL;
 -
--	page = alloc_pages_node(node, gfp | __GFP_ZERO, 0);
--	if (page)
--		vaddr = page_address(page);
--	return vaddr;
+-	page = alloc_pages_node(nid, gfp | __GFP_ZERO, 0);
+-	return page ? page_address(page) : NULL;
 -}
 -
--void free_pgtable_page(void *vaddr)
--{
--	free_page((unsigned long)vaddr);
--}
--
- static inline int domain_type_is_si(struct dmar_domain *domain)
- {
- 	return domain->domain.type == IOMMU_DOMAIN_IDENTITY;
-@@ -617,7 +602,7 @@ struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
- 		if (!alloc)
- 			return NULL;
+ bool translation_pre_enabled(struct amd_iommu *iommu);
+ bool amd_iommu_is_attach_deferred(struct device *dev);
+ int __init add_special_device(u8 type, u8 id, u32 *devid, bool cmd_line);
+diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+index 64bcf3df37ee..5b8a80fc7e50 100644
+--- a/drivers/iommu/amd/init.c
++++ b/drivers/iommu/amd/init.c
+@@ -35,6 +35,7 @@
  
--		context = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
-+		context = iommu_alloc_page_node(iommu->node, GFP_ATOMIC);
- 		if (!context)
- 			return NULL;
- 
-@@ -791,17 +776,17 @@ static void free_context_table(struct intel_iommu *iommu)
- 	for (i = 0; i < ROOT_ENTRY_NR; i++) {
- 		context = iommu_context_addr(iommu, i, 0, 0);
- 		if (context)
--			free_pgtable_page(context);
-+			iommu_free_page(context);
- 
- 		if (!sm_supported(iommu))
- 			continue;
- 
- 		context = iommu_context_addr(iommu, i, 0x80, 0);
- 		if (context)
--			free_pgtable_page(context);
-+			iommu_free_page(context);
- 	}
- 
--	free_pgtable_page(iommu->root_entry);
-+	iommu_free_page(iommu->root_entry);
- 	iommu->root_entry = NULL;
- }
- 
-@@ -939,7 +924,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
- 		if (!dma_pte_present(pte)) {
- 			uint64_t pteval;
- 
--			tmp_page = alloc_pgtable_page(domain->nid, gfp);
-+			tmp_page = iommu_alloc_page_node(domain->nid, gfp);
- 
- 			if (!tmp_page)
- 				return NULL;
-@@ -951,7 +936,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
- 
- 			if (cmpxchg64(&pte->val, 0ULL, pteval))
- 				/* Someone else set it while we were thinking; use theirs. */
--				free_pgtable_page(tmp_page);
-+				iommu_free_page(tmp_page);
- 			else
- 				domain_flush_cache(domain, pte, sizeof(*pte));
- 		}
-@@ -1064,7 +1049,7 @@ static void dma_pte_free_level(struct dmar_domain *domain, int level,
- 		      last_pfn < level_pfn + level_size(level) - 1)) {
- 			dma_clear_pte(pte);
- 			domain_flush_cache(domain, pte, sizeof(*pte));
--			free_pgtable_page(level_pte);
-+			iommu_free_page(level_pte);
- 		}
- next:
- 		pfn += level_size(level);
-@@ -1088,7 +1073,7 @@ static void dma_pte_free_pagetable(struct dmar_domain *domain,
- 
- 	/* free pgd */
- 	if (start_pfn == 0 && last_pfn == DOMAIN_MAX_PFN(domain->gaw)) {
--		free_pgtable_page(domain->pgd);
-+		iommu_free_page(domain->pgd);
- 		domain->pgd = NULL;
- 	}
- }
-@@ -1190,7 +1175,7 @@ static int iommu_alloc_root_entry(struct intel_iommu *iommu)
- {
- 	struct root_entry *root;
- 
--	root = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
-+	root = iommu_alloc_page_node(iommu->node, GFP_ATOMIC);
- 	if (!root) {
- 		pr_err("Allocating root entry for %s failed\n",
- 			iommu->name);
-@@ -1863,7 +1848,7 @@ static void domain_exit(struct dmar_domain *domain)
- 		LIST_HEAD(freelist);
- 
- 		domain_unmap(domain, 0, DOMAIN_MAX_PFN(domain->gaw), &freelist);
--		put_pages_list(&freelist);
-+		iommu_free_pages_list(&freelist);
- 	}
- 
- 	if (WARN_ON(!list_empty(&domain->devices)))
-@@ -2637,7 +2622,7 @@ static int copy_context_table(struct intel_iommu *iommu,
- 			if (!old_ce)
- 				goto out;
- 
--			new_ce = alloc_pgtable_page(iommu->node, GFP_KERNEL);
-+			new_ce = iommu_alloc_page_node(iommu->node, GFP_KERNEL);
- 			if (!new_ce)
- 				goto out_unmap;
- 
-@@ -3570,7 +3555,7 @@ static int intel_iommu_memory_notifier(struct notifier_block *nb,
- 					start_vpfn, mhp->nr_pages,
- 					list_empty(&freelist), 0);
- 			rcu_read_unlock();
--			put_pages_list(&freelist);
-+			iommu_free_pages_list(&freelist);
- 		}
- 		break;
- 	}
-@@ -4001,7 +3986,7 @@ static int md_domain_init(struct dmar_domain *domain, int guest_width)
- 	domain->max_addr = 0;
- 
- 	/* always allocate the top pgd */
--	domain->pgd = alloc_pgtable_page(domain->nid, GFP_ATOMIC);
-+	domain->pgd = iommu_alloc_page_node(domain->nid, GFP_ATOMIC);
- 	if (!domain->pgd)
- 		return -ENOMEM;
- 	domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
-@@ -4148,7 +4133,7 @@ int prepare_domain_attach_device(struct iommu_domain *domain,
- 		pte = dmar_domain->pgd;
- 		if (dma_pte_present(pte)) {
- 			dmar_domain->pgd = phys_to_virt(dma_pte_addr(pte));
--			free_pgtable_page(pte);
-+			iommu_free_page(pte);
- 		}
- 		dmar_domain->agaw--;
- 	}
-@@ -4295,7 +4280,7 @@ static void intel_iommu_tlb_sync(struct iommu_domain *domain,
- 				      start_pfn, nrpages,
- 				      list_empty(&gather->freelist), 0);
- 
--	put_pages_list(&gather->freelist);
-+	iommu_free_pages_list(&gather->freelist);
- }
- 
- static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index 65d37a138c75..b505f3f44d0a 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -894,8 +894,6 @@ void domain_update_iommu_cap(struct dmar_domain *domain);
- 
- int dmar_ir_support(void);
- 
--void *alloc_pgtable_page(int node, gfp_t gfp);
--void free_pgtable_page(void *vaddr);
- void iommu_flush_write_buffer(struct intel_iommu *iommu);
- struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devfn);
- struct iommu_domain *intel_nested_domain_alloc(struct iommu_domain *parent,
-diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_remapping.c
-index 29b9e55dcf26..72e1c1342c13 100644
---- a/drivers/iommu/intel/irq_remapping.c
-+++ b/drivers/iommu/intel/irq_remapping.c
-@@ -22,6 +22,7 @@
- 
- #include "iommu.h"
+ #include "amd_iommu.h"
  #include "../irq_remapping.h"
-+#include "../iommu-pages.h"
- #include "cap_audit.h"
- 
- enum irq_mode {
-@@ -536,8 +537,8 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
- 	if (!ir_table)
- 		return -ENOMEM;
- 
--	pages = alloc_pages_node(iommu->node, GFP_KERNEL | __GFP_ZERO,
--				 INTR_REMAP_PAGE_ORDER);
-+	pages = __iommu_alloc_pages_node(iommu->node, GFP_KERNEL,
-+					 INTR_REMAP_PAGE_ORDER);
- 	if (!pages) {
- 		pr_err("IR%d: failed to allocate pages of order %d\n",
- 		       iommu->seq_id, INTR_REMAP_PAGE_ORDER);
-@@ -622,7 +623,7 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
- out_free_bitmap:
- 	bitmap_free(bitmap);
- out_free_pages:
--	__free_pages(pages, INTR_REMAP_PAGE_ORDER);
-+	__iommu_free_pages(pages, INTR_REMAP_PAGE_ORDER);
- out_free_table:
- 	kfree(ir_table);
- 
-@@ -643,8 +644,7 @@ static void intel_teardown_irq_remapping(struct intel_iommu *iommu)
- 			irq_domain_free_fwnode(fn);
- 			iommu->ir_domain = NULL;
- 		}
--		free_pages((unsigned long)iommu->ir_table->base,
--			   INTR_REMAP_PAGE_ORDER);
-+		iommu_free_pages(iommu->ir_table->base, INTR_REMAP_PAGE_ORDER);
- 		bitmap_free(iommu->ir_table->bitmap);
- 		kfree(iommu->ir_table);
- 		iommu->ir_table = NULL;
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index 74e8e4c17e81..1856e74bba78 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -20,6 +20,7 @@
- 
- #include "iommu.h"
- #include "pasid.h"
 +#include "../iommu-pages.h"
  
  /*
-  * Intel IOMMU system wide PASID name space:
-@@ -116,8 +117,7 @@ int intel_pasid_alloc_table(struct device *dev)
- 
- 	size = max_pasid >> (PASID_PDE_SHIFT - 3);
- 	order = size ? get_order(size) : 0;
--	pages = alloc_pages_node(info->iommu->node,
--				 GFP_KERNEL | __GFP_ZERO, order);
-+	pages = __iommu_alloc_pages_node(info->iommu->node, GFP_KERNEL, order);
- 	if (!pages) {
- 		kfree(pasid_table);
+  * definitions for the ACPI scanning code
+@@ -648,8 +649,8 @@ static int __init find_last_devid_acpi(struct acpi_table_header *table, u16 pci_
+ /* Allocate per PCI segment device table */
+ static inline int __init alloc_dev_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	pci_seg->dev_table = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA32,
+-						      get_order(pci_seg->dev_table_size));
++	pci_seg->dev_table = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
++					       get_order(pci_seg->dev_table_size));
+ 	if (!pci_seg->dev_table)
  		return -ENOMEM;
-@@ -154,10 +154,10 @@ void intel_pasid_free_table(struct device *dev)
- 	max_pde = pasid_table->max_pasid >> PASID_PDE_SHIFT;
- 	for (i = 0; i < max_pde; i++) {
- 		table = get_pasid_table_from_pde(&dir[i]);
--		free_pgtable_page(table);
-+		iommu_free_page(table);
- 	}
  
--	free_pages((unsigned long)pasid_table->table, pasid_table->order);
-+	iommu_free_pages(pasid_table->table, pasid_table->order);
- 	kfree(pasid_table);
+@@ -658,17 +659,16 @@ static inline int __init alloc_dev_table(struct amd_iommu_pci_seg *pci_seg)
+ 
+ static inline void free_dev_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	free_pages((unsigned long)pci_seg->dev_table,
+-		    get_order(pci_seg->dev_table_size));
++	iommu_free_pages(pci_seg->dev_table,
++			 get_order(pci_seg->dev_table_size));
+ 	pci_seg->dev_table = NULL;
  }
  
-@@ -203,7 +203,7 @@ static struct pasid_entry *intel_pasid_get_entry(struct device *dev, u32 pasid)
- retry:
- 	entries = get_pasid_table_from_pde(&dir[dir_index]);
- 	if (!entries) {
--		entries = alloc_pgtable_page(info->iommu->node, GFP_ATOMIC);
-+		entries = iommu_alloc_page_node(info->iommu->node, GFP_ATOMIC);
- 		if (!entries)
- 			return NULL;
+ /* Allocate per PCI segment IOMMU rlookup table. */
+ static inline int __init alloc_rlookup_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	pci_seg->rlookup_table = (void *)__get_free_pages(
+-						GFP_KERNEL | __GFP_ZERO,
+-						get_order(pci_seg->rlookup_table_size));
++	pci_seg->rlookup_table = iommu_alloc_pages(GFP_KERNEL,
++						   get_order(pci_seg->rlookup_table_size));
+ 	if (pci_seg->rlookup_table == NULL)
+ 		return -ENOMEM;
  
-@@ -215,7 +215,7 @@ static struct pasid_entry *intel_pasid_get_entry(struct device *dev, u32 pasid)
- 		 */
- 		if (cmpxchg64(&dir[dir_index].val, 0ULL,
- 			      (u64)virt_to_phys(entries) | PASID_PTE_PRESENT)) {
--			free_pgtable_page(entries);
-+			iommu_free_page(entries);
- 			goto retry;
- 		}
- 		if (!ecap_coherent(info->iommu->ecap)) {
-diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
-index 50a481c895b8..4cf8826b30e1 100644
---- a/drivers/iommu/intel/svm.c
-+++ b/drivers/iommu/intel/svm.c
-@@ -23,6 +23,7 @@
- #include "pasid.h"
- #include "perf.h"
- #include "../iommu-sva.h"
-+#include "../iommu-pages.h"
- #include "trace.h"
+@@ -677,16 +677,15 @@ static inline int __init alloc_rlookup_table(struct amd_iommu_pci_seg *pci_seg)
  
- static irqreturn_t prq_event_thread(int irq, void *d);
-@@ -67,7 +68,7 @@ int intel_svm_enable_prq(struct intel_iommu *iommu)
- 	struct page *pages;
- 	int irq, ret;
+ static inline void free_rlookup_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	free_pages((unsigned long)pci_seg->rlookup_table,
+-		   get_order(pci_seg->rlookup_table_size));
++	iommu_free_pages(pci_seg->rlookup_table,
++			 get_order(pci_seg->rlookup_table_size));
+ 	pci_seg->rlookup_table = NULL;
+ }
  
--	pages = alloc_pages(GFP_KERNEL | __GFP_ZERO, PRQ_ORDER);
-+	pages = __iommu_alloc_pages(GFP_KERNEL, PRQ_ORDER);
- 	if (!pages) {
- 		pr_warn("IOMMU: %s: Failed to allocate page request queue\n",
- 			iommu->name);
-@@ -118,7 +119,7 @@ int intel_svm_enable_prq(struct intel_iommu *iommu)
- 	dmar_free_hwirq(irq);
- 	iommu->pr_irq = 0;
- free_prq:
--	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
-+	iommu_free_pages(iommu->prq, PRQ_ORDER);
- 	iommu->prq = NULL;
+ static inline int __init alloc_irq_lookup_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	pci_seg->irq_lookup_table = (void *)__get_free_pages(
+-					     GFP_KERNEL | __GFP_ZERO,
+-					     get_order(pci_seg->rlookup_table_size));
++	pci_seg->irq_lookup_table = iommu_alloc_pages(GFP_KERNEL,
++						      get_order(pci_seg->rlookup_table_size));
+ 	kmemleak_alloc(pci_seg->irq_lookup_table,
+ 		       pci_seg->rlookup_table_size, 1, GFP_KERNEL);
+ 	if (pci_seg->irq_lookup_table == NULL)
+@@ -698,8 +697,8 @@ static inline int __init alloc_irq_lookup_table(struct amd_iommu_pci_seg *pci_se
+ static inline void free_irq_lookup_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+ 	kmemleak_free(pci_seg->irq_lookup_table);
+-	free_pages((unsigned long)pci_seg->irq_lookup_table,
+-		   get_order(pci_seg->rlookup_table_size));
++	iommu_free_pages(pci_seg->irq_lookup_table,
++			 get_order(pci_seg->rlookup_table_size));
+ 	pci_seg->irq_lookup_table = NULL;
+ }
  
- 	return ret;
-@@ -141,7 +142,7 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
- 		iommu->iopf_queue = NULL;
+@@ -707,8 +706,8 @@ static int __init alloc_alias_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+ 	int i;
+ 
+-	pci_seg->alias_table = (void *)__get_free_pages(GFP_KERNEL,
+-					get_order(pci_seg->alias_table_size));
++	pci_seg->alias_table = iommu_alloc_pages(GFP_KERNEL,
++						 get_order(pci_seg->alias_table_size));
+ 	if (!pci_seg->alias_table)
+ 		return -ENOMEM;
+ 
+@@ -723,8 +722,8 @@ static int __init alloc_alias_table(struct amd_iommu_pci_seg *pci_seg)
+ 
+ static void __init free_alias_table(struct amd_iommu_pci_seg *pci_seg)
+ {
+-	free_pages((unsigned long)pci_seg->alias_table,
+-		   get_order(pci_seg->alias_table_size));
++	iommu_free_pages(pci_seg->alias_table,
++			 get_order(pci_seg->alias_table_size));
+ 	pci_seg->alias_table = NULL;
+ }
+ 
+@@ -735,8 +734,8 @@ static void __init free_alias_table(struct amd_iommu_pci_seg *pci_seg)
+  */
+ static int __init alloc_command_buffer(struct amd_iommu *iommu)
+ {
+-	iommu->cmd_buf = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-						  get_order(CMD_BUFFER_SIZE));
++	iommu->cmd_buf = iommu_alloc_pages(GFP_KERNEL,
++					   get_order(CMD_BUFFER_SIZE));
+ 
+ 	return iommu->cmd_buf ? 0 : -ENOMEM;
+ }
+@@ -844,19 +843,19 @@ static void iommu_disable_command_buffer(struct amd_iommu *iommu)
+ 
+ static void __init free_command_buffer(struct amd_iommu *iommu)
+ {
+-	free_pages((unsigned long)iommu->cmd_buf, get_order(CMD_BUFFER_SIZE));
++	iommu_free_pages(iommu->cmd_buf, get_order(CMD_BUFFER_SIZE));
+ }
+ 
+ static void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu,
+ 					 gfp_t gfp, size_t size)
+ {
+ 	int order = get_order(size);
+-	void *buf = (void *)__get_free_pages(gfp, order);
++	void *buf = iommu_alloc_pages(gfp, order);
+ 
+ 	if (buf &&
+ 	    check_feature(FEATURE_SNP) &&
+ 	    set_memory_4k((unsigned long)buf, (1 << order))) {
+-		free_pages((unsigned long)buf, order);
++		iommu_free_pages(buf, order);
+ 		buf = NULL;
  	}
  
--	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
-+	iommu_free_pages(iommu->prq, PRQ_ORDER);
- 	iommu->prq = NULL;
+@@ -866,7 +865,7 @@ static void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu,
+ /* allocates the memory where the IOMMU will log its events to */
+ static int __init alloc_event_buffer(struct amd_iommu *iommu)
+ {
+-	iommu->evt_buf = iommu_alloc_4k_pages(iommu, GFP_KERNEL | __GFP_ZERO,
++	iommu->evt_buf = iommu_alloc_4k_pages(iommu, GFP_KERNEL,
+ 					      EVT_BUFFER_SIZE);
  
- 	return 0;
-diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-new file mode 100644
-index 000000000000..2332f807d514
---- /dev/null
-+++ b/drivers/iommu/iommu-pages.h
-@@ -0,0 +1,199 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2023, Google LLC.
-+ * Pasha Tatashin <pasha.tatashin@soleen.com>
-+ */
-+
-+#ifndef __IOMMU_PAGES_H
-+#define __IOMMU_PAGES_H
-+
-+#include <linux/vmstat.h>
-+#include <linux/gfp.h>
-+#include <linux/mm.h>
-+
-+/*
-+ * All page allocation that are performed in the IOMMU subsystem must use one of
-+ * the functions below.  This is necessary for the proper accounting as IOMMU
-+ * state can be rather large, i.e. multiple gigabytes in size.
-+ */
-+
-+/**
-+ * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
-+ * specific NUMA node.
-+ * @nid: memory NUMA node id
-+ * @gfp: buddy allocator flags
-+ * @order: page order
-+ *
-+ * returns the head struct page of the allocated page.
-+ */
-+static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
-+						    int order)
-+{
-+	struct page *pages;
-+
-+	pages = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
-+	if (!pages)
-+		return NULL;
-+
-+	return pages;
-+}
-+
-+/**
-+ * __iommu_alloc_pages - allocate a zeroed page of a given order.
-+ * @gfp: buddy allocator flags
-+ * @order: page order
-+ *
-+ * returns the head struct page of the allocated page.
-+ */
-+static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
-+{
-+	struct page *pages;
-+
-+	pages = alloc_pages(gfp | __GFP_ZERO, order);
-+	if (!pages)
-+		return NULL;
-+
-+	return pages;
-+}
-+
-+/**
-+ * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-+ * @nid: memory NUMA node id
-+ * @gfp: buddy allocator flags
-+ *
-+ * returns the struct page of the allocated page.
-+ */
-+static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
-+{
-+	return __iommu_alloc_pages_node(nid, gfp, 0);
-+}
-+
-+/**
-+ * __iommu_alloc_page - allocate a zeroed page
-+ * @gfp: buddy allocator flags
-+ *
-+ * returns the struct page of the allocated page.
-+ */
-+static inline struct page *__iommu_alloc_page(gfp_t gfp)
-+{
-+	return __iommu_alloc_pages(gfp, 0);
-+}
-+
-+/**
-+ * __iommu_free_pages - free page of a given order
-+ * @pages: head struct page of the page
-+ * @order: page order
-+ */
-+static inline void __iommu_free_pages(struct page *pages, int order)
-+{
-+	if (!pages)
-+		return;
-+
-+	__free_pages(pages, order);
-+}
-+
-+/**
-+ * __iommu_free_page - free page
-+ * @page: struct page of the page
-+ */
-+static inline void __iommu_free_page(struct page *page)
-+{
-+	__iommu_free_pages(page, 0);
-+}
-+
-+/**
-+ * iommu_alloc_pages_node - allocate a zeroed page of a given order from
-+ * specific NUMA node.
-+ * @nid: memory NUMA node id
-+ * @gfp: buddy allocator flags
-+ * @order: page order
-+ *
-+ * returns the virtual address of the allocated page
-+ */
-+static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
-+{
-+	struct page *pages = __iommu_alloc_pages_node(nid, gfp, order);
-+
-+	if (!pages)
-+		return NULL;
-+
-+	return page_address(pages);
-+}
-+
-+/**
-+ * iommu_alloc_pages - allocate a zeroed page of a given order
-+ * @gfp: buddy allocator flags
-+ * @order: page order
-+ *
-+ * returns the virtual address of the allocated page
-+ */
-+static inline void *iommu_alloc_pages(gfp_t gfp, int order)
-+{
-+	struct page *pages = __iommu_alloc_pages(gfp, order);
-+
-+	if (!pages)
-+		return NULL;
-+
-+	return page_address(pages);
-+}
-+
-+/**
-+ * iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-+ * @nid: memory NUMA node id
-+ * @gfp: buddy allocator flags
-+ *
-+ * returns the virtual address of the allocated page
-+ */
-+static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
-+{
-+	return iommu_alloc_pages_node(nid, gfp, 0);
-+}
-+
-+/**
-+ * iommu_alloc_page - allocate a zeroed page
-+ * @gfp: buddy allocator flags
-+ *
-+ * returns the virtual address of the allocated page
-+ */
-+static inline void *iommu_alloc_page(gfp_t gfp)
-+{
-+	return iommu_alloc_pages(gfp, 0);
-+}
-+
-+/**
-+ * iommu_free_pages - free page of a given order
-+ * @virt: virtual address of the page to be freed.
-+ * @order: page order
-+ */
-+static inline void iommu_free_pages(void *virt, int order)
-+{
-+	if (!virt)
-+		return;
-+
-+	__iommu_free_pages(virt_to_page(virt), order);
-+}
-+
-+/**
-+ * iommu_free_page - free page
-+ * @virt: virtual address of the page to be freed.
-+ */
-+static inline void iommu_free_page(void *virt)
-+{
-+	iommu_free_pages(virt, 0);
-+}
-+
-+/**
-+ * iommu_free_pages_list - free a list of pages.
-+ * @pages: the head of the lru list to be freed.
-+ */
-+static inline void iommu_free_pages_list(struct list_head *pages)
-+{
-+	while (!list_empty(pages)) {
-+		struct page *p = list_entry(pages->prev, struct page, lru);
-+
-+		list_del(&p->lru);
-+		put_page(p);
-+	}
-+}
-+
-+#endif	/* __IOMMU_PAGES_H */
+ 	return iommu->evt_buf ? 0 : -ENOMEM;
+@@ -900,14 +899,13 @@ static void iommu_disable_event_buffer(struct amd_iommu *iommu)
+ 
+ static void __init free_event_buffer(struct amd_iommu *iommu)
+ {
+-	free_pages((unsigned long)iommu->evt_buf, get_order(EVT_BUFFER_SIZE));
++	iommu_free_pages(iommu->evt_buf, get_order(EVT_BUFFER_SIZE));
+ }
+ 
+ /* allocates the memory where the IOMMU will log its events to */
+ static int __init alloc_ppr_log(struct amd_iommu *iommu)
+ {
+-	iommu->ppr_log = iommu_alloc_4k_pages(iommu, GFP_KERNEL | __GFP_ZERO,
+-					      PPR_LOG_SIZE);
++	iommu->ppr_log = iommu_alloc_4k_pages(iommu, GFP_KERNEL, PPR_LOG_SIZE);
+ 
+ 	return iommu->ppr_log ? 0 : -ENOMEM;
+ }
+@@ -936,14 +934,14 @@ static void iommu_enable_ppr_log(struct amd_iommu *iommu)
+ 
+ static void __init free_ppr_log(struct amd_iommu *iommu)
+ {
+-	free_pages((unsigned long)iommu->ppr_log, get_order(PPR_LOG_SIZE));
++	iommu_free_pages(iommu->ppr_log, get_order(PPR_LOG_SIZE));
+ }
+ 
+ static void free_ga_log(struct amd_iommu *iommu)
+ {
+ #ifdef CONFIG_IRQ_REMAP
+-	free_pages((unsigned long)iommu->ga_log, get_order(GA_LOG_SIZE));
+-	free_pages((unsigned long)iommu->ga_log_tail, get_order(8));
++	iommu_free_pages(iommu->ga_log, get_order(GA_LOG_SIZE));
++	iommu_free_pages(iommu->ga_log_tail, get_order(8));
+ #endif
+ }
+ 
+@@ -988,13 +986,11 @@ static int iommu_init_ga_log(struct amd_iommu *iommu)
+ 	if (!AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir))
+ 		return 0;
+ 
+-	iommu->ga_log = (u8 *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-					get_order(GA_LOG_SIZE));
++	iommu->ga_log = iommu_alloc_pages(GFP_KERNEL, get_order(GA_LOG_SIZE));
+ 	if (!iommu->ga_log)
+ 		goto err_out;
+ 
+-	iommu->ga_log_tail = (u8 *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-					get_order(8));
++	iommu->ga_log_tail = iommu_alloc_pages(GFP_KERNEL, get_order(8));
+ 	if (!iommu->ga_log_tail)
+ 		goto err_out;
+ 
+@@ -1007,7 +1003,7 @@ static int iommu_init_ga_log(struct amd_iommu *iommu)
+ 
+ static int __init alloc_cwwb_sem(struct amd_iommu *iommu)
+ {
+-	iommu->cmd_sem = iommu_alloc_4k_pages(iommu, GFP_KERNEL | __GFP_ZERO, 1);
++	iommu->cmd_sem = iommu_alloc_4k_pages(iommu, GFP_KERNEL, 1);
+ 
+ 	return iommu->cmd_sem ? 0 : -ENOMEM;
+ }
+@@ -1015,7 +1011,7 @@ static int __init alloc_cwwb_sem(struct amd_iommu *iommu)
+ static void __init free_cwwb_sem(struct amd_iommu *iommu)
+ {
+ 	if (iommu->cmd_sem)
+-		free_page((unsigned long)iommu->cmd_sem);
++		iommu_free_page((void *)iommu->cmd_sem);
+ }
+ 
+ static void iommu_enable_xt(struct amd_iommu *iommu)
+@@ -1080,7 +1076,6 @@ static bool __copy_device_table(struct amd_iommu *iommu)
+ 	u32 lo, hi, devid, old_devtb_size;
+ 	phys_addr_t old_devtb_phys;
+ 	u16 dom_id, dte_v, irq_v;
+-	gfp_t gfp_flag;
+ 	u64 tmp;
+ 
+ 	/* Each IOMMU use separate device table with the same size */
+@@ -1114,9 +1109,8 @@ static bool __copy_device_table(struct amd_iommu *iommu)
+ 	if (!old_devtb)
+ 		return false;
+ 
+-	gfp_flag = GFP_KERNEL | __GFP_ZERO | GFP_DMA32;
+-	pci_seg->old_dev_tbl_cpy = (void *)__get_free_pages(gfp_flag,
+-						    get_order(pci_seg->dev_table_size));
++	pci_seg->old_dev_tbl_cpy = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
++						     get_order(pci_seg->dev_table_size));
+ 	if (pci_seg->old_dev_tbl_cpy == NULL) {
+ 		pr_err("Failed to allocate memory for copying old device table!\n");
+ 		memunmap(old_devtb);
+@@ -2800,8 +2794,8 @@ static void early_enable_iommus(void)
+ 
+ 		for_each_pci_segment(pci_seg) {
+ 			if (pci_seg->old_dev_tbl_cpy != NULL) {
+-				free_pages((unsigned long)pci_seg->old_dev_tbl_cpy,
+-						get_order(pci_seg->dev_table_size));
++				iommu_free_pages(pci_seg->old_dev_tbl_cpy,
++						 get_order(pci_seg->dev_table_size));
+ 				pci_seg->old_dev_tbl_cpy = NULL;
+ 			}
+ 		}
+@@ -2814,8 +2808,8 @@ static void early_enable_iommus(void)
+ 		pr_info("Copied DEV table from previous kernel.\n");
+ 
+ 		for_each_pci_segment(pci_seg) {
+-			free_pages((unsigned long)pci_seg->dev_table,
+-				   get_order(pci_seg->dev_table_size));
++			iommu_free_pages(pci_seg->dev_table,
++					 get_order(pci_seg->dev_table_size));
+ 			pci_seg->dev_table = pci_seg->old_dev_tbl_cpy;
+ 		}
+ 
+@@ -3018,8 +3012,8 @@ static bool __init check_ioapic_information(void)
+ 
+ static void __init free_dma_resources(void)
+ {
+-	free_pages((unsigned long)amd_iommu_pd_alloc_bitmap,
+-		   get_order(MAX_DOMAIN_ID/8));
++	iommu_free_pages(amd_iommu_pd_alloc_bitmap,
++			 get_order(MAX_DOMAIN_ID / 8));
+ 	amd_iommu_pd_alloc_bitmap = NULL;
+ 
+ 	free_unity_maps();
+@@ -3091,9 +3085,8 @@ static int __init early_amd_iommu_init(void)
+ 	/* Device table - directly used by all IOMMUs */
+ 	ret = -ENOMEM;
+ 
+-	amd_iommu_pd_alloc_bitmap = (void *)__get_free_pages(
+-					    GFP_KERNEL | __GFP_ZERO,
+-					    get_order(MAX_DOMAIN_ID/8));
++	amd_iommu_pd_alloc_bitmap = iommu_alloc_pages(GFP_KERNEL,
++						      get_order(MAX_DOMAIN_ID / 8));
+ 	if (amd_iommu_pd_alloc_bitmap == NULL)
+ 		goto out;
+ 
+diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
+index 6c0621f6f572..f8b7d4c39a9f 100644
+--- a/drivers/iommu/amd/io_pgtable.c
++++ b/drivers/iommu/amd/io_pgtable.c
+@@ -22,6 +22,7 @@
+ 
+ #include "amd_iommu_types.h"
+ #include "amd_iommu.h"
++#include "../iommu-pages.h"
+ 
+ static void v1_tlb_flush_all(void *cookie)
+ {
+@@ -156,7 +157,7 @@ static bool increase_address_space(struct protection_domain *domain,
+ 	bool ret = true;
+ 	u64 *pte;
+ 
+-	pte = alloc_pgtable_page(domain->nid, gfp);
++	pte = iommu_alloc_page_node(domain->nid, gfp);
+ 	if (!pte)
+ 		return false;
+ 
+@@ -187,7 +188,7 @@ static bool increase_address_space(struct protection_domain *domain,
+ 
+ out:
+ 	spin_unlock_irqrestore(&domain->lock, flags);
+-	free_page((unsigned long)pte);
++	iommu_free_page(pte);
+ 
+ 	return ret;
+ }
+@@ -250,7 +251,7 @@ static u64 *alloc_pte(struct protection_domain *domain,
+ 
+ 		if (!IOMMU_PTE_PRESENT(__pte) ||
+ 		    pte_level == PAGE_MODE_NONE) {
+-			page = alloc_pgtable_page(domain->nid, gfp);
++			page = iommu_alloc_page_node(domain->nid, gfp);
+ 
+ 			if (!page)
+ 				return NULL;
+@@ -259,7 +260,7 @@ static u64 *alloc_pte(struct protection_domain *domain,
+ 
+ 			/* pte could have been changed somewhere. */
+ 			if (!try_cmpxchg64(pte, &__pte, __npte))
+-				free_page((unsigned long)page);
++				iommu_free_page(page);
+ 			else if (IOMMU_PTE_PRESENT(__pte))
+ 				*updated = true;
+ 
+@@ -430,7 +431,7 @@ static int iommu_v1_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+ 	}
+ 
+ 	/* Everything flushed out, free pages now */
+-	put_pages_list(&freelist);
++	iommu_free_pages_list(&freelist);
+ 
+ 	return ret;
+ }
+@@ -579,7 +580,7 @@ static void v1_free_pgtable(struct io_pgtable *iop)
+ 	/* Make changes visible to IOMMUs */
+ 	amd_iommu_domain_update(dom);
+ 
+-	put_pages_list(&freelist);
++	iommu_free_pages_list(&freelist);
+ }
+ 
+ static struct io_pgtable *v1_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+diff --git a/drivers/iommu/amd/io_pgtable_v2.c b/drivers/iommu/amd/io_pgtable_v2.c
+index f818a7e254d4..1e08dab93686 100644
+--- a/drivers/iommu/amd/io_pgtable_v2.c
++++ b/drivers/iommu/amd/io_pgtable_v2.c
+@@ -18,6 +18,7 @@
+ 
+ #include "amd_iommu_types.h"
+ #include "amd_iommu.h"
++#include "../iommu-pages.h"
+ 
+ #define IOMMU_PAGE_PRESENT	BIT_ULL(0)	/* Is present */
+ #define IOMMU_PAGE_RW		BIT_ULL(1)	/* Writeable */
+@@ -99,11 +100,6 @@ static inline int page_size_to_level(u64 pg_size)
+ 	return PAGE_MODE_1_LEVEL;
+ }
+ 
+-static inline void free_pgtable_page(u64 *pt)
+-{
+-	free_page((unsigned long)pt);
+-}
+-
+ static void free_pgtable(u64 *pt, int level)
+ {
+ 	u64 *p;
+@@ -125,10 +121,10 @@ static void free_pgtable(u64 *pt, int level)
+ 		if (level > 2)
+ 			free_pgtable(p, level - 1);
+ 		else
+-			free_pgtable_page(p);
++			iommu_free_page(p);
+ 	}
+ 
+-	free_pgtable_page(pt);
++	iommu_free_page(pt);
+ }
+ 
+ /* Allocate page table */
+@@ -156,14 +152,14 @@ static u64 *v2_alloc_pte(int nid, u64 *pgd, unsigned long iova,
+ 		}
+ 
+ 		if (!IOMMU_PTE_PRESENT(__pte)) {
+-			page = alloc_pgtable_page(nid, gfp);
++			page = iommu_alloc_page_node(nid, gfp);
+ 			if (!page)
+ 				return NULL;
+ 
+ 			__npte = set_pgtable_attr(page);
+ 			/* pte could have been changed somewhere. */
+ 			if (cmpxchg64(pte, __pte, __npte) != __pte)
+-				free_pgtable_page(page);
++				iommu_free_page(page);
+ 			else if (IOMMU_PTE_PRESENT(__pte))
+ 				*updated = true;
+ 
+@@ -185,7 +181,7 @@ static u64 *v2_alloc_pte(int nid, u64 *pgd, unsigned long iova,
+ 		if (pg_size == IOMMU_PAGE_SIZE_1G)
+ 			free_pgtable(__pte, end_level - 1);
+ 		else if (pg_size == IOMMU_PAGE_SIZE_2M)
+-			free_pgtable_page(__pte);
++			iommu_free_page(__pte);
+ 	}
+ 
+ 	return pte;
+@@ -380,7 +376,7 @@ static struct io_pgtable *v2_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
+ 	int ret;
+ 	int ias = IOMMU_IN_ADDR_BIT_SIZE;
+ 
+-	pgtable->pgd = alloc_pgtable_page(pdom->nid, GFP_ATOMIC);
++	pgtable->pgd = iommu_alloc_page_node(pdom->nid, GFP_ATOMIC);
+ 	if (!pgtable->pgd)
+ 		return NULL;
+ 
+@@ -403,7 +399,7 @@ static struct io_pgtable *v2_alloc_pgtable(struct io_pgtable_cfg *cfg, void *coo
+ 	return &pgtable->iop;
+ 
+ err_free_pgd:
+-	free_pgtable_page(pgtable->pgd);
++	iommu_free_page(pgtable->pgd);
+ 
+ 	return NULL;
+ }
+diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+index fcc987f5d4ed..9a228a95da0e 100644
+--- a/drivers/iommu/amd/iommu.c
++++ b/drivers/iommu/amd/iommu.c
+@@ -42,6 +42,7 @@
+ #include "amd_iommu.h"
+ #include "../dma-iommu.h"
+ #include "../irq_remapping.h"
++#include "../iommu-pages.h"
+ 
+ #define CMD_SET_TYPE(cmd, t) ((cmd)->data[1] |= ((t) << 28))
+ 
+@@ -1642,7 +1643,7 @@ static void free_gcr3_tbl_level1(u64 *tbl)
+ 
+ 		ptr = iommu_phys_to_virt(tbl[i] & PAGE_MASK);
+ 
+-		free_page((unsigned long)ptr);
++		iommu_free_page(ptr);
+ 	}
+ }
+ 
+@@ -1670,7 +1671,7 @@ static void free_gcr3_table(struct protection_domain *domain)
+ 	else
+ 		BUG_ON(domain->glx != 0);
+ 
+-	free_page((unsigned long)domain->gcr3_tbl);
++	iommu_free_page(domain->gcr3_tbl);
+ }
+ 
+ /*
+@@ -1697,7 +1698,7 @@ static int setup_gcr3_table(struct protection_domain *domain, int pasids)
+ 	if (levels > amd_iommu_max_glx_val)
+ 		return -EINVAL;
+ 
+-	domain->gcr3_tbl = alloc_pgtable_page(domain->nid, GFP_ATOMIC);
++	domain->gcr3_tbl = iommu_alloc_page_node(domain->nid, GFP_ATOMIC);
+ 	if (domain->gcr3_tbl == NULL)
+ 		return -ENOMEM;
+ 
+@@ -2092,7 +2093,7 @@ static void protection_domain_free(struct protection_domain *domain)
+ 		free_gcr3_table(domain);
+ 
+ 	if (domain->iop.root)
+-		free_page((unsigned long)domain->iop.root);
++		iommu_free_page(domain->iop.root);
+ 
+ 	if (domain->id)
+ 		domain_id_free(domain->id);
+@@ -2107,7 +2108,7 @@ static int protection_domain_init_v1(struct protection_domain *domain, int mode)
+ 	BUG_ON(mode < PAGE_MODE_NONE || mode > PAGE_MODE_6_LEVEL);
+ 
+ 	if (mode != PAGE_MODE_NONE) {
+-		pt_root = (void *)get_zeroed_page(GFP_KERNEL);
++		pt_root = iommu_alloc_page(GFP_KERNEL);
+ 		if (!pt_root)
+ 			return -ENOMEM;
+ 	}
+@@ -2783,7 +2784,7 @@ static u64 *__get_gcr3_pte(u64 *root, int level, u32 pasid, bool alloc)
+ 			if (!alloc)
+ 				return NULL;
+ 
+-			root = (void *)get_zeroed_page(GFP_ATOMIC);
++			root = iommu_alloc_page(GFP_ATOMIC);
+ 			if (root == NULL)
+ 				return NULL;
+ 
 -- 
 2.43.0.rc2.451.g8631bc7472-goog
 
