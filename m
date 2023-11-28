@@ -1,165 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-4014-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2A97FB3E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 09:18:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFC87FB4E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 09:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C3F28224C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 08:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2907B1C211FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 08:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6EA179BE;
-	Tue, 28 Nov 2023 08:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="W2yx2WsK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BE2E3E5;
+	Tue, 28 Nov 2023 08:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19095B0;
-	Tue, 28 Nov 2023 00:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1701159511;
-	bh=bALKkCMp4lwFvbZNSnYUsuxiPjBZcOtLPTfv5JH7kEI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W2yx2WsKSKX+OxGDFmsqxigPuTgF7gXV5uUuM1cjTjiMJJPTck/FA5tPFo/sJKb36
-	 1mbhhZfmKMRRb9N0vtU1BV0SzPDGW6lmu1Tex4fcrh7kV4Qf3z6Vjk5OibJPIdVwai
-	 Ccq9HpQqWDDyeLlcWeZ3SdowZByoz58cE27ue6lg=
-Date: Tue, 28 Nov 2023 09:18:30 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Kees Cook <keescook@chromium.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Iurii Zaikin <yzaikin@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/7] sysctl: constify sysctl ctl_tables
-Message-ID: <475cd5fa-f0cc-4b8b-9e04-458f6d143178@t-8ch.de>
-References: <CGME20231125125305eucas1p2ebdf870dd8ef46ea9d346f727b832439@eucas1p2.samsung.com>
- <20231125-const-sysctl-v1-0-5e881b0e0290@weissschuh.net>
- <20231127101323.sdnibmf7c3d5ovye@localhost>
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43EBC192;
+	Tue, 28 Nov 2023 00:53:56 -0800 (PST)
+Received: from [192.168.1.123] (ip5b4280bd.dynamic.kabel-deutschland.de [91.66.128.189])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: buczek)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0A4D961E5FE01;
+	Tue, 28 Nov 2023 09:53:41 +0100 (CET)
+Message-ID: <4455a6c3-db6f-4303-940e-96a88b466c06@molgen.mpg.de>
+Date: Tue, 28 Nov 2023 09:53:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231127101323.sdnibmf7c3d5ovye@localhost>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Heisenbug: I/O freeze can be resolved by cat $task/cmdline of
+ unrelated process
+Content-Language: en-US
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ bagasdotme@gmail.com, neilb@suse.de,
+ "Dr. David Alan Gilbert" <dave@treblig.org>
+References: <77184fcc-46ab-4d69-b163-368264fa49f7@molgen.mpg.de>
+ <9822F555-42F5-44AD-8056-469E85A86C3D@oracle.com>
+From: Donald Buczek <buczek@molgen.mpg.de>
+In-Reply-To: <9822F555-42F5-44AD-8056-469E85A86C3D@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Joel,
+Just a quick followup to the problem I've reported (system freezing and could be unblocked by reading /proc/PID/cmdline of a nfsd process):
 
-On 2023-11-27 11:13:23+0100, Joel Granados wrote:
-> In general I would like to see more clarity with the motivation and I
-> would also expect some system testing. My comments inline:
+While we've rebootet the system multiple-times (through bios, not just kexec) the problem persisted. But after we've power-cycled the system once, the problem was gone. I guess, this points to a problem below ring 0 or hardware and Linux is not to blame.
 
-Thanks for your feedback, response are below.
+Thanks everybody who answered!
 
-> On Sat, Nov 25, 2023 at 01:52:49PM +0100, Thomas Weißschuh wrote:
-> > Problem description:
-> > 
-> > The kernel contains a lot of struct ctl_table throught the tree.
-> > These are very often 'static' definitions.
-> > It would be good to mark these tables const to avoid accidental or
-> > malicious modifications.
+Best
 
-> It is unclear to me what you mean here with accidental or malicious
-> modifications. Do you have a specific attack vector in mind? Do you
-> have an example of how this could happen maliciously? With
-> accidental, do you mean in proc/sysctl.c? Can you expand more on the
-> accidental part?
+  Donald
 
-There is no specific attack vector I have in mind. The goal is to remove
-mutable data, especially if it contains pointers, that could be used by
-an attacker as a step in an exploit. See for example [0], [1].
+On 11/6/23 14:58, Chuck Lever III wrote:
+>> On Nov 5, 2023, at 4:40 AM, Donald Buczek <buczek@molgen.mpg.de> wrote:
+>>
+>> Hello, experts,
+>>
+>> we have a strange new problem on a backup server (high metadata I/O 24/7, xfs -> mdraid). The system worked for years and with v5.15.86 for 8 month. Then we've updated to 6.1.52 and after a few hours it froze: No more I/O activity to one of its filesystems, processes trying to access it blocked until we reboot.
+>>
+>> Of course, at first we blamed the kernel as this happened after an upgrade. But after several experiments with different kernel versions, we've returned to the v5.15.86 kernel we used before, but still experienced the problem. Then we suspected, that a microcode update (for AMD EPYC 7261), which happened as a side effect of the first reboot, might be the culprit and removed it. That didn't fix it either. For all I can say, all software is back to the state which worked before.
+>>
+>> Now the strange part: What we usually do, when we have a situation like this, is that we run a script which takes several procfs and sysfs information which happened to be useful in the past. It was soon discovered, that just running this script unblocks the system. I/O continues as if nothing ever happened. Then we singled-stepped the operations of the script to find out, what action exactly gets the system to resume. It is this part:
+>>
+>>     for task in /proc/*/task/*; do
+>>         echo  "# # $task: $(cat $task/comm) : $(cat $task/cmdline | xargs -0 echo)"
+>>         cmd cat $task/stack
+>>     done
+>>
+>> which can further be reduced to
+>>
+>>     for task in /proc/*/task/*; do echo $task $(cat $task/cmdline | xargs -0 echo); done
+>>
+>> This is absolutely reproducible. Above line unblocks the system reliably.
+>>
+>> Another remarkable thing: We've modified above code to do the processes slowly one by one and checking after each step if I/O resumed. And each time we've tested that, it was one of the 64 nfsd processes (but not the very first one tried). While the systems exports filesystems, we have absolutely no reason to assume, that any client actually tries to access this nfs server. Additionally, when the full script is run, the stack traces show all nfsd tasks in their normal idle state ( [<0>] svc_recv+0x7bd/0x8d0 [sunrpc] ).
+>>
+>> Does anybody have an idea, how a `cat /proc/PID/cmdline` on a specific assumed-to-be-idle nfsd thread could have such an "healing" effect?
+>>
+>> I'm well aware, that, for example, a hardware problem might result in just anything and that the question might not be answerable at all. If so: please excuse the noise.
+> 
+> I'm with Neil on this: I believe the nfsd thread happens to be in the
+> wrong place at the wrong time. When idle, an nfsd thread is nothing
+> more than a plain kthread waiting in the kernel's scheduler.
+> 
+> If you have an opportunity, try testing without starting up the NFSD
+> service. You might find that the symptoms move to another thread or
+> subsystem.
+> 
+> 
+> --
+> Chuck Lever
+> 
+> 
 
-Accidental can be any out-of-bounds write throughout the kernel.
-
-> What happens with the code that modifies these outside the sysctl core?
-> Like for example in sysctl_route_net_init where the table is modified
-> depending on the net->user_ns? Would these non-const ctl_table pointers
-> be ok? would they be handled differently?
-
-It is still completely fine to modify the tables before registering,
-like sysctl_route_net_init is doing. That code should not need any
-changes.
-
-Modifying the table inside the handler function would bypass the
-validation done when registering so sounds like a bad idea in general.
-It would still be possible however for a subsystem to do so by just not
-making their sysctl table const and then modifying the table directly.
- 
-> > Unfortunately the tables can not be made const because the core
-> > registration functions expect mutable tables.
-> > 
-> > This is for two reasons:
-> > 
-> > 1) sysctl_{set,clear}_perm_empty_ctl_header in the sysctl core modify
-> >    the table. This should be fixable by only modifying the header
-> >    instead of the table itself.
-> > 2) The table is passed to the handler function as a non-const pointer.
-> > 
-> > This series is an aproach on fixing reason 2).
-
-> So number 2 will be sent in another set?
-
-If the initial feedback to the RFC and general process is positive, yes.
-
-> > 
-> > Full process:
-> > 
-> > * Introduce field proc_handler_new for const handlers (this series)
-> > * Migrate all core handlers to proc_handler_new (this series, partial)
-> >   This can hopefully be done in a big switch, as it only involves
-> >   functions and structures owned by the core sysctl code.
-> > * Migrate all other sysctl handlers to proc_handler_new.
-> > * Drop the old proc_handler_field.
-> > * Fix the sysctl core to not modify the tables anymore.
-> > * Adapt public sysctl APIs to take "const struct ctl_table *".
-> > * Teach checkpatch.pl to warn on non-const "struct ctl_table"
-> >   definitions.
-> > * Migrate definitions of "struct ctl_table" to "const" where applicable.
-> >  
-> > 
-> > Notes:
-> > 
-> > Just casting the function pointers around would trigger
-> > CFI (control flow integrity) warnings.
-> > 
-> > The name of the new handler "proc_handler_new" is a bit too long messing
-> > up the alignment of the table definitions.
-> > Maybe "proc_handler2" or "proc_handler_c" for (const) would be better.
-
-> indeed the name does not say much. "_new" looses its meaning quite fast
-> :)
-
-Hopefully somebody comes up with a better name!
-
-> In my experience these tree wide modifications are quite tricky. Have you
-> run any tests to see that everything is as it was? sysctl selftests and
-> 0-day come to mind.
-
-I managed to miss one change in my initial submission:
-With the hunk below selftests and typing emails work.
-
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1151,7 +1151,7 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
-                        else
-                                err |= sysctl_check_table_array(path, entry);
-                }
--               if (!entry->proc_handler)
-+               if (!entry->proc_handler && !entry->proc_handler_new)
-                        err |= sysctl_err(path, entry, "No proc_handler");
- 
-                if ((entry->mode & (S_IRUGO|S_IWUGO)) != entry->mode)
-
-> [..]
-
-[0] 43a7206b0963 ("driver core: class: make class_register() take a const *")
-[1] https://lore.kernel.org/lkml/20230930050033.41174-1-wedsonaf@gmail.com/
-
-
-Thomas
+-- 
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 1433
 
