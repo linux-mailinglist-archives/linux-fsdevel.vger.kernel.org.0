@@ -1,168 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-4006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684EE7FAEE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 01:16:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B60D7FAFA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 02:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8FCB212D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 00:16:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D0501C20DD7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 01:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717F07F4;
-	Tue, 28 Nov 2023 00:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3A54C95;
+	Tue, 28 Nov 2023 01:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B562192;
-	Mon, 27 Nov 2023 16:16:16 -0800 (PST)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 08EC121940;
-	Tue, 28 Nov 2023 00:16:15 +0000 (UTC)
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E086136C7;
-	Tue, 28 Nov 2023 00:16:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id it1xB0oxZWXoWwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 28 Nov 2023 00:16:10 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D5231B8;
+	Mon, 27 Nov 2023 17:36:04 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SfQ5T4M2kz4f3k64;
+	Tue, 28 Nov 2023 09:35:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 671EC1A0AA3;
+	Tue, 28 Nov 2023 09:36:00 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDn6hD8Q2VlfLiHCA--.59632S3;
+	Tue, 28 Nov 2023 09:35:59 +0800 (CST)
+Subject: Re: [PATCH block/for-next v2 01/16] block: add a new helper to get
+ inode from block_device
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: ming.lei@redhat.com, axboe@kernel.dk, roger.pau@citrix.com,
+ colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
+ gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
+ dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
+ adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
+ konishi.ryusuke@gmail.com, dchinner@redhat.com, linux@weissschuh.net,
+ min15.li@samsung.com, dlemoal@kernel.org, willy@infradead.org,
+ akpm@linux-foundation.org, hare@suse.de, p.raghav@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+ gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20231127062116.2355129-1-yukuai1@huaweicloud.com>
+ <20231127062116.2355129-2-yukuai1@huaweicloud.com>
+ <ZWRDeQ4K8BiYnV+X@infradead.org>
+ <6acdeece-7163-3219-95e2-827e54eadd0c@huaweicloud.com>
+ <ZWTErvnMf7HiO1Wj@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <bc64da80-e9bd-84cb-f173-876623303131@huaweicloud.com>
+Date: Tue, 28 Nov 2023 09:35:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: "Al Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Oleg Nesterov" <oleg@redhat.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Peter Zijlstra" <peterz@infradead.org>,
- "Juri Lelli" <juri.lelli@redhat.com>,
- "Vincent Guittot" <vincent.guittot@linaro.org>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
-In-reply-to: <ZWUfNyO6OG/+aFuo@tissot.1015granger.net>
-References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>,
- <ZWUfNyO6OG/+aFuo@tissot.1015granger.net>
-Date: Tue, 28 Nov 2023 11:16:06 +1100
-Message-id: <170113056683.7109.13851405274459689039@noble.neil.brown.name>
-X-Spamd-Bar: ++++++
-Authentication-Results: smtp-out1.suse.de;
-	dkim=none;
-	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none);
-	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of neilb@suse.de) smtp.mailfrom=neilb@suse.de
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [6.49 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 R_SPF_SOFTFAIL(4.60)[~all:c];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_SPAM_LONG(2.70)[0.771];
-	 RCPT_COUNT_TWELVE(0.00)[13];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
-X-Spam-Score: 6.49
-X-Rspamd-Queue-Id: 08EC121940
+In-Reply-To: <ZWTErvnMf7HiO1Wj@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDn6hD8Q2VlfLiHCA--.59632S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF1rGFWkXF1DXFy3WF45ZFb_yoW8Wry7pF
+	Wjkan8GF1DAFnrur4kWa1xK3yFy3sFkrW7GFy8CryxA3y5WF9FgFyfKw4UJFyDGr4DJr4q
+	qa10vFy3Xa48WaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9I14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_WFyU
+	JVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjfUojjgUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, 28 Nov 2023, Chuck Lever wrote:
-> On Tue, Nov 28, 2023 at 09:05:21AM +1100, NeilBrown wrote:
-> >=20
-> > I have evidence from a customer site of 256 nfsd threads adding files to
-> > delayed_fput_lists nearly twice as fast they are retired by a single
-> > work-queue thread running delayed_fput().  As you might imagine this
-> > does not end well (20 million files in the queue at the time a snapshot
-> > was taken for analysis).
-> >=20
-> > While this might point to a problem with the filesystem not handling the
-> > final close efficiently, such problems should only hurt throughput, not
-> > lead to memory exhaustion.
->=20
-> I have this patch queued for v6.8:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=3Dn=
-fsd-next&id=3Dc42661ffa58acfeaf73b932dec1e6f04ce8a98c0
->=20
+Hi,
 
-Thanks....
-I think that change is good, but I don't think it addresses the problem
-mentioned in the description, and it is not directly relevant to the
-problem I saw ... though it is complicated.
+ÔÚ 2023/11/28 0:32, Christoph Hellwig Ð´µÀ:
+> On Mon, Nov 27, 2023 at 09:07:22PM +0800, Yu Kuai wrote:
+>> 1) Is't okay to add a new helper to pass in bdev for following apis?
+> 
+> 
+> For some we already have them (e.g. bdev_nr_bytes to read the bdev)
+> size, for some we need to add them.  The big thing that seems to
+> stick out is page cache API, and I think that is where we need to
+> define maintainable APIs for file systems and others to use the
+> block device page cache.  Probably only in folio versions and not
+> pages once if we're touching the code anyay
 
-The problem "workqueue ...  hogged cpu..." probably means that
-nfsd_file_dispose_list() needs a cond_resched() call in the loop.
-That will stop it from hogging the CPU whether it is tied to one CPU or
-free to roam.
+Thanks for the advice! In case I'm understanding correctly, do you mean
+that all other fs/drivers that is using pages versions can safely switch
+to folio versions now?
 
-Also that work is calling filp_close() which primarily calls
-filp_flush().
-It also calls fput() but that does minimal work.  If there is much work
-to do then that is offloaded to another work-item.  *That* is the
-workitem that I had problems with.
-
-The problem I saw was with an older kernel which didn't have the nfsd
-file cache and so probably is calling filp_close more often.  So maybe
-my patch isn't so important now.  Particularly as nfsd now isn't closing
-most files in-task but instead offloads that to another task.  So the
-final fput will not be handled by the nfsd task either.
-
-But I think there is room for improvement.  Gathering lots of files
-together into a list and closing them sequentially is not going to be as
-efficient as closing them in parallel.
-
->=20
-> > For normal threads, the thread that closes the file also calls the
-> > final fput so there is natural rate limiting preventing excessive growth
-> > in the list of delayed fputs.  For kernel threads, and particularly for
-> > nfsd, delayed in the final fput do not impose any throttling to prevent
-> > the thread from closing more files.
->=20
-> I don't think we want to block nfsd threads waiting for files to
-> close. Won't that be a potential denial of service?
-
-Not as much as the denial of service caused by memory exhaustion due to
-an indefinitely growing list of files waiting to be closed by a single
-thread of workqueue.
-
-I think it is perfectly reasonable that when handling an NFSv4 CLOSE,
-the nfsd thread should completely handle that request including all the
-flush and ->release etc.  If that causes any denial of service, then
-simple increase the number of nfsd threads.
-
-For NFSv3 it is more complex.  On the kernel where I saw a problem the
-filp_close happen after each READ or WRITE (though I think the customer
-was using NFSv4...).  With the file cache there is no thread that is
-obviously responsible for the close.
-To get the sort of throttling that I think is need, we could possibly
-have each "nfsd_open" check if there are pending closes, and to wait for
-some small amount of progress.
-
-But don't think it is reasonable for the nfsd threads to take none of
-the burden of closing files as that can result in imbalance.
-
-I'll need to give this more thought.
+By the way, my orginal idea was trying to add a new field 'bd_flags'
+in block_devcie, and then add a new bit so that bio_check_ro() will
+only warn once for each partition. Now that this patchset will be quite
+complex, I'll add a new bool field 'bd_ro_warned' to fix the above
+problem first, and then add 'bd_flags' once this patchset is done.
 
 Thanks,
-NeilBrown
+Kuai
+
+> 
+>> 2) For the file fs/buffer.c, there are some special usage like
+>> following that I don't think it's good to add a helper:
+>>
+>> spin_lock(&bd_inode->i_mapping->private_lock);
+>>
+>> Is't okay to move following apis from fs/buffer.c directly to
+>> block/bdev.c?
+>>
+>> __find_get_block
+>> bdev_getblk
+> 
+> I'm not sure moving is a good idea, but we might end up the
+> some kind of low-level access from buffer.c, be that special
+> helpers, a separate header or something else.  Let's sort out
+> the rest of the kernel first.
+> 
+> .
+> 
 
 
