@@ -1,63 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-4038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F647FBCA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:21:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66E17FBCB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2387C1C20E34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:21:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7102D282E69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 14:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBA85ABB3;
-	Tue, 28 Nov 2023 14:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M9AKXn6o"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1585AB9D;
+	Tue, 28 Nov 2023 14:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C848D72
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 06:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701181290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6PBOG7uTuPrKERcez1Y3MMxHTda3oU4ZYJf1T2X8ASo=;
-	b=M9AKXn6oN9G6Shwvb5XjvMb7Op/AXru5KurKTbGXILdIgCDTltuha/7WdLLuUZfMPMgPhW
-	j5PMYywUtSuZqHSdhNiRk+5xhPyR3rH9HXdjxgLKaZzLunViWRvhNN1E5wXs+FrxWspkYp
-	y7qNeKBYVaPWDBAewMmeDzWC5DjxSMo=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-u32DRhyoNDeiqwLc2n0fEg-1; Tue,
- 28 Nov 2023 09:21:27 -0500
-X-MC-Unique: u32DRhyoNDeiqwLc2n0fEg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB9718D;
+	Tue, 28 Nov 2023 06:28:58 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C48511C060D1;
-	Tue, 28 Nov 2023 14:21:26 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.14])
-	by smtp.corp.redhat.com (Postfix) with SMTP id E36FD5028;
-	Tue, 28 Nov 2023 14:21:23 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 28 Nov 2023 15:20:21 +0100 (CET)
-Date: Tue, 28 Nov 2023 15:20:18 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
-Message-ID: <20231128142018.GA24108@redhat.com>
-References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
- <20231128140156.GC22743@redhat.com>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D179521995;
+	Tue, 28 Nov 2023 14:28:56 +0000 (UTC)
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9F5D313763;
+	Tue, 28 Nov 2023 14:28:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OByqIij5ZWW3PQAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 28 Nov 2023 14:28:56 +0000
+Date: Tue, 28 Nov 2023 15:28:55 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Gregory Price <gregory.price@memverge.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, arnd@arndb.de, tglx@linutronix.de,
+	luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	tj@kernel.org, ying.huang@intel.com,
+	Gregory Price <gregory.price@memverge.com>
+Subject: Re: [RFC PATCH 02/11] mm/mempolicy: swap cond reference counting
+ logic in do_get_mempolicy
+Message-ID: <ZWX5J5frMXCnO1HW@tiehlicka>
+References: <20231122211200.31620-1-gregory.price@memverge.com>
+ <20231122211200.31620-3-gregory.price@memverge.com>
+ <ZWX0Dq6_-0NAFgSl@tiehlicka>
+ <ZWX0ytAwmOdooHdZ@memverge.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,21 +59,74 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231128140156.GC22743@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+In-Reply-To: <ZWX0ytAwmOdooHdZ@memverge.com>
+X-Spamd-Bar: +++++++++++++++
+X-Spam-Score: 15.00
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	spf=fail (smtp-out1.suse.de: domain of mhocko@suse.com does not designate 2a07:de40:b281:104:10:150:64:97 as permitted sender) smtp.mailfrom=mhocko@suse.com;
+	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.com (policy=quarantine)
+X-Rspamd-Queue-Id: D179521995
+X-Spamd-Result: default: False [15.00 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_SPF_FAIL(1.00)[-all];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-0.82)[-0.820];
+	 MIME_GOOD(-0.10)[text/plain];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 DMARC_POLICY_QUARANTINE(1.50)[suse.com : No valid SPF, No valid DKIM,quarantine];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.18)[-0.923];
+	 RCPT_COUNT_TWELVE(0.00)[19];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.00)[41.14%]
+X-Spam: Yes
 
-On 11/28, Oleg Nesterov wrote:
->
-> On a related note... Neil, Al, et al, can you look at
->
-> 	[PATCH 1/3] fput: don't abuse task_work_add() when possible
-> 	https://lore.kernel.org/all/20150908171446.GA14589@redhat.com/
+[restoring the CC list, I supect you didn't want this to be a private
+discussion]
 
-Cough... Now that I look at this 8 years old patch again I think
-it is wrong, fput() can race with task_work_cancel() so it is not
-safe to dereference the first pending work in theory :/
+On Tue 28-11-23 09:10:18, Gregory Price wrote:
+> On Tue, Nov 28, 2023 at 03:07:10PM +0100, Michal Hocko wrote:
+> > On Wed 22-11-23 16:11:51, Gregory Price wrote:
+> > [...]
+> > > @@ -982,11 +991,11 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+> > >  	}
+> > >  
+> > >   out:
+> > > -	mpol_cond_put(pol);
+> > > +	mpol_put(pol);
+> > >  	if (vma)
+> > >  		mmap_read_unlock(mm);
+> > >  	if (pol_refcount)
+> > > -		mpol_put(pol_refcount);
+> > > +		mpol_cond_put(pol_refcount);
+> > 
+> > Maybe I am just misreading the patch but pol_refcount should be always
+> > NULL with this patch
+> > 
+> 
+> earlier:
+> 
+> +               pol = pol_refcount = __get_vma_policy(vma, addr, &ilx);
+> 
+> i can split this into two lines if preferred.
+> 
+> If addr is not set, then yes pol_refcount is always null.
 
-Oleg.
+My bad, missed that. Making that two lines would be easier to read but
+nothing I would insist on of course.
 
+-- 
+Michal Hocko
+SUSE Labs
 
