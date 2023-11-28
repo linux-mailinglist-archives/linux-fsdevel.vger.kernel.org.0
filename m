@@ -1,90 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-4049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872C07FBEBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:56:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EC77FBED6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 17:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42451282678
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 15:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13FC51C20BBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Nov 2023 16:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF0535294;
-	Tue, 28 Nov 2023 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3421E4BF;
+	Tue, 28 Nov 2023 16:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naYslMMs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a7+3iv2s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E39D3526C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 15:56:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48D8C433C8;
-	Tue, 28 Nov 2023 15:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701186991;
-	bh=WctrKyB1AYxWkSdaGspZTSgYuwbAZhrEyHsHzSrFTMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=naYslMMsoUul56kbv74256RVWEv6Lfccp1UL+DFJyA6GsYijzO5ayk1d7QxbTwuKA
-	 e28XNZBVQzyGM7pwsqmLgLxrsJFiLLlarNbYwmcb4LskBGc8krhgfhnXv89ks+e+69
-	 uN7f40nLN8d366ijMPXaD9LDxIvnVg3j0HGClxPU4ce36Dujz5m5pVbqW8BK4MzAyl
-	 DvY+BfMkfqpYCve82B/5IkR9JyZ/gNTF10DbXxWFAI1WlRmfMMxErhCHsx9wMQ7gTm
-	 Ky9Zk6Qu8FTt6Jtdfjh3J2VyEYuX+WI06hpqlpU8QXWyuY5FcZv+6lpupGWANUM7sX
-	 v6bZPL18dfs2w==
-Date: Tue, 28 Nov 2023 16:56:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] super: massage wait event mechanism
-Message-ID: <20231128-begleichen-probanden-8c0ec2dc7280@brauner>
-References: <20231127-vfs-super-massage-wait-v1-0-9ab277bfd01a@kernel.org>
- <20231127-vfs-super-massage-wait-v1-1-9ab277bfd01a@kernel.org>
- <20231127164637.GA2398@lst.de>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B949131
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:03:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701187425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dP5KrxTVSniSY5EKn+1whInNpNpKvz47uFsYRNbSIfU=;
+	b=a7+3iv2sJdXDJbCHLyv7LJmGJgaKWqW+WPXbslzHZUMw2aiWjoC3d1D5VfCJsxia4BJ4Vf
+	C+cD4HfKBqatb3bCb6JWPpp5g/WXvR0nlwsEmMmwVwPlityVDjTSs9JyicVD3tVI2NFooi
+	ezFLLuEijenFBSoTf8/raEqupRDYXbA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-322-2SEgOkbpNci8xyI0eErAuQ-1; Tue, 28 Nov 2023 11:03:43 -0500
+X-MC-Unique: 2SEgOkbpNci8xyI0eErAuQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-332e2e0b98bso4087504f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 08:03:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701187422; x=1701792222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dP5KrxTVSniSY5EKn+1whInNpNpKvz47uFsYRNbSIfU=;
+        b=gYji0l5p2qh4m3plj7pEWyIiE/lGkdJ8HGd+qt8SU1ME2WUccT0tqwTXwS8exF6Wyv
+         alc85H5SiukHu4rnjs1/4SN2OCvwKIjuRsz9RW2WKSFjoC6TICpMfsBUvKL2npo83xcH
+         +fcFRFiew2Wy23sDIIBH2KPox66u8kNS3BeWVsa5QzMNqcWwAuC5ElJporyYJoOFxHQD
+         1AYP4ruh7SHO3sjD03ONPdGuUTdiHSwOHc7SrTs9371Rzerb3kjSWRwAXWZKKfNTRPVj
+         6WxZPmFPPGHnkhlIyeZVYcni9Hof9wN6WWzoU6s77CUpJdMNVBrL/PacPYGcJnvh5/GP
+         Nihg==
+X-Gm-Message-State: AOJu0YyVHnjq/0gWdhpi0VryBTn5R7ieVM0hL6VGDyk+H1qLpLVA4sPs
+	Xa90tb3EFKg9tb85M/GP1WuEVzlx59KuFS9suYHki7ayEVo7QsMZqvk80kDg0w00hwRnkMoNJvN
+	3AUatU7tKFGj/jK35nuWc6eWTMxaQPU88Fw==
+X-Received: by 2002:adf:fdd2:0:b0:333:f42:da7c with SMTP id i18-20020adffdd2000000b003330f42da7cmr1411009wrs.12.1701187422422;
+        Tue, 28 Nov 2023 08:03:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFF0/vjcHQJgRjLn+YMRrmRzcBT/v6nI4n+3fYoa/+cVZ0kQZ66HeAXSc5ies1QQ/IS6vrEMA==
+X-Received: by 2002:adf:fdd2:0:b0:333:f42:da7c with SMTP id i18-20020adffdd2000000b003330f42da7cmr1410984wrs.12.1701187422121;
+        Tue, 28 Nov 2023 08:03:42 -0800 (PST)
+Received: from maszat.piliscsaba.szeredi.hu (89-148-117-163.pool.digikabel.hu. [89.148.117.163])
+        by smtp.gmail.com with ESMTPSA id w27-20020adf8bdb000000b00332e5624a31sm14745352wra.84.2023.11.28.08.03.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 08:03:40 -0800 (PST)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Karel Zak <kzak@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	Ian Kent <raven@themaw.net>,
+	David Howells <dhowells@redhat.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 0/4] listmount changes
+Date: Tue, 28 Nov 2023 17:03:31 +0100
+Message-ID: <20231128160337.29094-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231127164637.GA2398@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 27, 2023 at 05:46:37PM +0100, Christoph Hellwig wrote:
-> On Mon, Nov 27, 2023 at 12:51:30PM +0100, Christian Brauner wrote:
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/super.c | 51 ++++++++++++++-------------------------------------
-> >  1 file changed, 14 insertions(+), 37 deletions(-)
-> > 
-> > diff --git a/fs/super.c b/fs/super.c
-> > index aa4e5c11ee32..f3227b22879d 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -81,16 +81,13 @@ static inline void super_unlock_shared(struct super_block *sb)
-> >  	super_unlock(sb, false);
-> >  }
-> >  
-> > +static bool super_load_flags(const struct super_block *sb, unsigned int flags)
-> >  {
-> >  	/*
-> >  	 * Pairs with smp_store_release() in super_wake() and ensures
-> > +	 * that we see @flags after we're woken.
-> >  	 */
-> > +	return smp_load_acquire(&sb->s_flags) & flags;
-> 
-> I find the name for this helper very confusing.  Yes, eventually it
-> is clear that the load maps to a load instruction with acquire semantics
-> here, but it's a really unusual naming I think.  Unfortunately I can't
-> offer a better one either.
+This came out from me thinking about the best libc API.  It contains a few
+changes that simplify and (I think) improve the interface. 
 
-I'll just drop the load from the middle then.
+Tree:
 
-> 
-> Otherwise this looks good except for the fact that I really hate
-> code using smp_load_acquire / smp_store_release directly because of
-> all the mental load it causes.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git#vfs.mount
+  commit 229dc17d71b0 ("listmount: guard against speculation")
 
-Hm, it's pretty common in our code in so many places...
+Miklos Szeredi (4):
+  listmount: rip out flags
+  listmount: list mounts in ID order
+  listmount: small changes in semantics
+  listmount: allow continuing
+
+ fs/namespace.c             | 93 +++++++++++++++-----------------------
+ include/uapi/linux/mount.h | 13 ++++--
+ 2 files changed, 45 insertions(+), 61 deletions(-)
+
+-- 
+2.41.0
+
 
