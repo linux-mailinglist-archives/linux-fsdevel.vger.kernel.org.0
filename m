@@ -1,148 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-4281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C292E7FE353
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:40:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585E97FE355
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C660282254
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8E06B2103C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B773B191
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2828B47A63
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="sD6GEzvN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NCHDWAyy"
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="WhHz31W2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 828F3A3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 14:21:33 -0800 (PST)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailout.nyi.internal (Postfix) with ESMTP id EB8005C01A7;
-	Wed, 29 Nov 2023 17:21:32 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute7.internal (MEProxy); Wed, 29 Nov 2023 17:21:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-	1701296492; x=1701382892; bh=CHVAaxoz+v0cO/tXy5Ic9W/7NgStREtjOnp
-	zZW3AZV0=; b=sD6GEzvN74fPu2D2TxG2HfB7esqZLm9HJNM82O4n+4U6Y9BmLfF
-	O1D5R0klYwvBDibpUTF7fQuvBIt+UKPPUy89fcNtBY669yam5eK2+H/2LRJOZo6x
-	KH3eXgX2AXyVfgFnOvVLipBHyN3ejrGujDX3RHZWUNVsXNyFfANj296Z5ZvuRVLJ
-	YbKGNtpZb9WNr1U4oW4mS17UI7cAbkh3bAJjQ69xs2TDWicvLiZ1qk006TsUEai2
-	/eqNewhqmZ1So9iMkvehbUya3+KEjWBB5Jdp/Ju42D7giEW2vN2UDxV3RTUw6XI5
-	7eHRVv3wump0k2pBr7lLCEDTLYcza6WeyQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1701296492; x=1701382892; bh=CHVAaxoz+v0cO/tXy5Ic9W/7NgStREtjOnp
-	zZW3AZV0=; b=NCHDWAyyUwMZbjj0aJraKa481gs1/Tj/XDE8UFrgnUug8T07j87
-	0DFlTnqAf1w9+OtVCshUb3nYaHrBBf/Kmi0qkiZbur5KlzXnliq+S3pUngeeySBQ
-	euBwNd0KIBsxtMRu8pgeNVo0Yd0KEi0D9Pq5l7uXl8g8youXWlg5TRdxniPCHjDc
-	L72JtPI/6Tzd+cUYOu/jZmIjWkZpmrXul2GLjcUu5PD2T2snVg4y7BVasqfGoOoS
-	QHzhbxJEvc+WkbjTjSNYfhCOO3ESmI9FV0KhyVeS9WTO3GtAPo6z1pr3mD8Eoi71
-	IcFu900nIcKJFUilP6OeVm5kvD7/wzdWtnA==
-X-ME-Sender: <xms:bLlnZazUjutFlJsEPM-wcGLtCzldE1OhaQfXjCstvbrDffrzTLFqdQ>
-    <xme:bLlnZWQxaR3cEP_Eu4JEy7DTaOqChP7u7Jr59jzJ-NT04PUngJIfNSCL_DPrfUyjx
-    aJqe9Ai-lgq3DoL>
-X-ME-Received: <xmr:bLlnZcU3uj-jjxZEikhPFRKpcJUBpCQk1jPPgBQzT1znCUUuZfGPb0A9hLm8EAwIxFKfChTQEWDi7SOsoKpi4a7k8Wwl1ywV66IfrUbORRCXPlyA87t->
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeihedgudehjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgse
-    htjeertddtvdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgu
-    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepve
-    fhgfdvledtudfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrsh
-    gthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:bLlnZQgp5PRQZZhfP8ftCDCbnisP78b1hIX6VSLrT5YAnV0UC-PVVQ>
-    <xmx:bLlnZcBspkFnFtUEbvna3NYpxnBnIMCYLIByPSvQJ82InnZs1SYZvw>
-    <xmx:bLlnZRJqd7tMuJH38tiEa7hFXz28aiph-5OP7QeszBqpDr0vEi6J6w>
-    <xmx:bLlnZY2bqv92vNXMkIJwOTulq61zwk1CdfT6zcNUz2MnM9ylZNvX4g>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Nov 2023 17:21:31 -0500 (EST)
-Message-ID: <c652fc1f-cef6-46a9-a47b-d23fb877c5cf@fastmail.fm>
-Date: Wed, 29 Nov 2023 23:21:30 +0100
+Received: from mx.manguebit.com (mx.manguebit.com [IPv6:2a01:4f8:1c1e:a2ae::2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F3C93;
+	Wed, 29 Nov 2023 14:28:28 -0800 (PST)
+Message-ID: <9704ab96ba04eb3591a62ef5e6a97af6@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1701296903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BkiCn+ZBHH24INxGvzouPbpLPO6ebH5aGUWUB6yyWcg=;
+	b=WhHz31W2aBR0XLcDuNNDfLgL8lrKKa+XEVQeMWaC4/K5MF1HvkxE1V9Ng1FIy59+J5W5/7
+	4dsQVdnXif1y3A9s97/osj7MxBpFEuo7S5UdY/GVZoBl0MlhcKDUDXww8NK7/dwbx3OwZS
+	oaLLaBMdluTq+jFOliLSl2aYq4KlCs/e+OWXIov3nCTqEqMq6/QVjJN7neRKbWpKW2SxjV
+	q+BhPH1cEOaoPceVOpszjmkjcQIwvvgfshb3mMhe+seX1NADnS1n+LtJBVFoNNBrTtpC9d
+	WqH4GSRQQfMeZenLRpBNbYYbYo/e8UYIS6evQ2mK8Ms/7bVwWjRYuaJq1zMQdA==
+ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1701296903; a=rsa-sha256;
+	cv=none;
+	b=TqhJuXPmxilTH3NSJNy68x8csCJmocB2wH1vhLgGtT+pDWSu+zBtqkpG96de9EKPax/HgQ
+	h/mt2yZGTqb0RaIcHr0oOSUVtgZaNbycv7CtgrALOe/wAWlm8Up3rYzISLXndrlCgSKIbl
+	+DjkmFRRJg+KLPxpaFcwa4W855Mu7ImV/ZsU9EjKseMp+GYNWk0HLAB407EOVMedPwI4iR
+	FBhD3Ty2n+MJMul8J/PBXHoUnMiDpR7MHzSuaxnkFWwr4uNP5UnSn7jf7Sy8ClUf7TrG9g
+	MixPKAJxb5PNHUP7QfcO6coHI4OJ8shZa6hfLxoHbDLfOPYDUQfswbDPpDQs7A==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pc@manguebit.com smtp.mailfrom=pc@manguebit.com
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1701296903; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BkiCn+ZBHH24INxGvzouPbpLPO6ebH5aGUWUB6yyWcg=;
+	b=nW4EEQnu49ugaefARUGs4lgqy0B/8qXJLClwgOd8XECMuRCq+fQWS/Av5ALm6mjeRd/oKi
+	fA9FmNPzC0w8P3s1aKE+rKbcrTbeSy89zv36AReJpTwKZw/Im/BfVuQlR91zJB5U6H1am4
+	ec7vW66HoBI6cHxNb965/txrjmGCAiYZtYwMpML3itbIslH/zs964kA9bsVjHJDOUxw3fP
+	whmLm2vU66EmkDwnuFxisot//UtMEmaFd4G5akbWYhm78/RkdnYIVh+wVmkNHeLRHNRtL+
+	q+Sx9+Osjl3wCg+A665fSI6SctqtOXD/pzglZFF3VsTtRzhasb0cbU7j3K+YqQ==
+From: Paulo Alcantara <pc@manguebit.com>
+To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>, Shyam Prasad N
+ <nspmangalore@gmail.com>, Rohith Surabattula <rohiths.msft@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Jeff Layton <jlayton@kernel.org>,
+ linux-cifs@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] cifs: Fix flushing, invalidation and file size with
+ copy_file_range()
+In-Reply-To: <20231129165619.2339490-4-dhowells@redhat.com>
+References: <20231129165619.2339490-1-dhowells@redhat.com>
+ <20231129165619.2339490-4-dhowells@redhat.com>
+Date: Wed, 29 Nov 2023 19:28:19 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] fuse: Handle no_open/no_opendir in atomic_open
-Content-Language: en-US, de-DE
-To: Yuan Yao <yuanyaogoog@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, dsingh@ddn.com,
- hbirthelmer@ddn.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
- bschubert@ddn.com, keiichiw@chromium.org, takayas@chromium.org
-References: <CAOJyEHaoRF7uVdJs25EaeBMbezT0DHV-Qx_6Zu+Kbdxs84BpkA@mail.gmail.com>
- <20231129064607.382933-1-yuanyaogoog@chromium.org>
- <20231129064607.382933-2-yuanyaogoog@chromium.org>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <20231129064607.382933-2-yuanyaogoog@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+David Howells <dhowells@redhat.com> writes:
 
-
-On 11/29/23 07:46, Yuan Yao wrote:
-> Currently, if the fuse server supporting the no_open/no_opendir feature
-> uses atomic_open to open a file, the corresponding no_open/no_opendir
-> flag is not set in kernel. This leads to the kernel unnecessarily
-> sending extra FUSE_RELEASE request, receiving an empty reply from
-> server when closes that file.
-> 
-> This patch addresses the issue by setting the no_open/no_opendir feature
-> bit to true if the kernel receives a valid dentry with an empty file
-> handler.
-> 
-> Signed-off-by: Yuan Yao <yuanyaogoog@chromium.org>
+> Fix a number of issues in the cifs filesystem implementation of the
+> copy_file_range() syscall in cifs_file_copychunk_range().
+>
+> Firstly, the invalidation of the destination range is handled incorrectly:
+> We shouldn't just invalidate the whole file as dirty data in the file may
+> get lost and we can't just call truncate_inode_pages_range() to invalidate
+> the destination range as that will erase parts of a partial folio at each
+> end whilst invalidating and discarding all the folios in the middle.  We
+> need to force all the folios covering the range to be reloaded, but we
+> mustn't lose dirty data in them that's not in the destination range.
+>
+> Further, we shouldn't simply round out the range to PAGE_SIZE at each end
+> as cifs should move to support multipage folios.
+>
+> Secondly, there's an issue whereby a write may have extended the file
+> locally, but not have been written back yet.  This can leaves the local
+> idea of the EOF at a later point than the server's EOF.  If a copy request
+> is issued, this will fail on the server with STATUS_INVALID_VIEW_SIZE
+> (which gets translated to -EIO locally) if the copy source extends past the
+> server's EOF.
+>
+> Fix this by:
+>
+>  (0) Flush the source region (already done).  The flush does nothing and
+>      the EOF isn't moved if the source region has no dirty data.
+>
+>  (1) Move the EOF to the end of the source region if it isn't already at
+>      least at this point.
+>
+>      [!] Rather than moving the EOF, it might be better to split the copy
+>      range into a part to be copied and a part to be cleared with
+>      FSCTL_SET_ZERO_DATA.
+>
+>  (2) Find the folio (if present) at each end of the range, flushing it and
+>      increasing the region-to-be-invalidated to cover those in their
+>      entirety.
+>
+>  (3) Fully discard all the folios covering the range as we want them to be
+>      reloaded.
+>
+>  (4) Then perform the copy.
+>
+> Thirdly, set i_size after doing the copychunk_range operation as this value
+> may be used by various things internally.  stat() hides the issue because
+> setting ->time to 0 causes cifs_getatr() to revalidate the attributes.
+>
+> These were causing the generic/075 xfstest to fail.
+>
+> Fixes: 620d8745b35d ("Introduce cifs_copy_file_range()")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Paulo Alcantara <pc@manguebit.com>
+> cc: Shyam Prasad N <nspmangalore@gmail.com>
+> cc: Rohith Surabattula <rohiths.msft@gmail.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-mm@kvack.org
 > ---
->   fs/fuse/dir.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 9956fae7f875..edee4f715f39 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -8,6 +8,7 @@
->   
->   #include "fuse_i.h"
->   
-> +#include <linux/fuse.h>
->   #include <linux/pagemap.h>
->   #include <linux/file.h>
->   #include <linux/fs_context.h>
-> @@ -869,6 +870,13 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
->   		goto out_err;
->   	}
->   
-> +	if (ff->fh == 0) {
-> +		if (ff->open_flags & FOPEN_KEEP_CACHE)
-> +			fc->no_open = 1;
-> +		if (ff->open_flags & FOPEN_CACHE_DIR)
-> +			fc->no_opendir = 1;
-> +	}
-> +
->   	/* prevent racing/parallel lookup on a negative hashed */
->   	if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
->   		d_drop(entry);
+>  fs/smb/client/cifsfs.c | 80 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 77 insertions(+), 3 deletions(-)
 
+Looks good,
 
-Thanks, I first need to fix all the issues Al found (and need to find 
-the time for that, hopefully during the next days) and will then add 
-this to my series.
-
-(We also need to document for userspace that the atomic_open method 
-shall not fill in fi->fh in atomic-open, if it wants the no-open feature).
-
-Thanks,
-Bernd
+Acked-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
 
