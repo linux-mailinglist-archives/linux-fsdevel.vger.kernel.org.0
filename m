@@ -1,133 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-4214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3727FDD50
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:38:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F187FDD52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9C1282581
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC351F20F86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AD93B295
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29413B783
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HL8VxN2Y"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gyVeEX6f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE5FD6E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 07:21:23 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a02c48a0420so942759866b.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 07:21:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1701271281; x=1701876081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NE3dLucEMCrnv4EmFzHeQRoc9bwd9ajHXtVS/RD86kw=;
-        b=HL8VxN2Y5cAUycxhQpQc79hZOciIIg/kE6LSlnT+71Rf+4RGYpHvzhjgbKumhTCC62
-         mb2rOl1iT+Nj+4Q5oefxfVxPjX9g+1vahzq1/bkzy/D2wKBv0rczK0UoZXCowSkaIQ4P
-         /+sHOKqJf2EO6e5/PCwZueY9sVorfBTiELGL0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701271281; x=1701876081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NE3dLucEMCrnv4EmFzHeQRoc9bwd9ajHXtVS/RD86kw=;
-        b=vQh9p1HAaInh7Muo2+J4RWcY+sgIBD5+1oCPjttXAJ5GchKznnlI+3VCave7PS1FvQ
-         ZCTbpqEU4aQeNdtb8G7owklr2uUDhIyRFxfCPZH5I7rsj9jz8XNyGmR2rmreoJraP9iu
-         De9uVwQ9LiGpmHq2SsBAY52Jse5zq3ZxpDbM5D/kDRUtsdbPNnYNtaCIkQ1FKzs+1JS+
-         29GmFNrBDwC//U0g9+An6W/0/fUnbDee9SPT8oo7NBUqtDKKnoNoUsDMetMdch4amLLO
-         Rcitertj4MVKxHSX+Q0mQAOKUBKMpnWE4FaAL7NLmtx3zPHLg2medIz0ihwd7vfROLNR
-         Spzg==
-X-Gm-Message-State: AOJu0YzJVwWETWn904HIyTn6GL2gPkao0N/Nfzk+2B8q733+FSCpfr6N
-	5srHJYaZOI+Ws79/JLYL8U3uD829PKZKJzMad+fw1Q==
-X-Google-Smtp-Source: AGHT+IEpvkJudB3KItLXyCsQ4qh+BdxdjDi6za6xDSgLypfaL0uypeOqCP4hF7mTU7ymlCpLmbR9mMU8hbOaMgfRnqo=
-X-Received: by 2002:a17:906:f34e:b0:a0e:7563:51bd with SMTP id
- hg14-20020a170906f34e00b00a0e756351bdmr6955733ejb.53.1701271281702; Wed, 29
- Nov 2023 07:21:21 -0800 (PST)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27C3210E5;
+	Wed, 29 Nov 2023 07:23:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7wC+SUX8Lci4mgC43CU9lNbkaIyYQmQqt28/ZZo7MdQ=; b=gyVeEX6f4oIWr2q5CEBXAuvFHX
+	L37ewXQQCp97LuXd0NiaKmcLhHzgr7ud1rq8JsFVvO5qMYWUFb21Sr7j2PtB0g86Y/p+1OQjgwzYW
+	g+LHXhLTi5LWseAZNSd+t187jv9HgYH/+5cflPOVNL4fpwvXeS/c0di/iLR6ZLGkQCF0WOUSw8V7J
+	RWDGsdSQFlY7Xo4KGoodUI3ENP7k6VnrV/T0zBGm/wjFyhDmmSlTH8MVh0uC7hGTRr1+vYzhKruYS
+	h4Wvp95Jh8msaACPgUlESic0u3FzS6utXWuXU+WhidPrRGT8w+qI6253g2cNF7zKiE59vQZaIKgtA
+	/ZLtF3bA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r8MP4-00DWAy-Cf; Wed, 29 Nov 2023 15:23:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A817530017D; Wed, 29 Nov 2023 16:23:05 +0100 (CET)
+Date: Wed, 29 Nov 2023 16:23:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20231129152305.GB23596@noisy.programming.kicks-ass.net>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-alice-file-v1-1-f81afe8c7261@google.com>
+ <ZWdVEk4QjbpTfnbn@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
- <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
- <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
- <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
- <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
- <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
- <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
- <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
- <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com>
- <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
- <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com> <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 29 Nov 2023 16:21:10 +0100
-Message-ID: <CAJfpegtH1DP19cAuKgYAssZ8nkKhnyX42AYWtAT3h=nmi2j31A@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZWdVEk4QjbpTfnbn@casper.infradead.org>
 
-On Wed, 29 Nov 2023 at 16:06, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Wed, Nov 29, 2023 at 4:14=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Wed, 29 Nov 2023 at 08:25, Amir Goldstein <amir73il@gmail.com> wrote=
-:
-> >
-> > > My proposed solution is to change the semantics with the init flag
-> > > FUSE_PASSTHROUGH to disallow mmap on FOPEN_DIRECT_IO
-> > > files.
-> >
-> > Why?  FOPEN_DIRECT_IO and FUSE_PASSTHROUGH should mix much more
-> > readily than FOPEN_DIRECT_IO with page cache.
-> >
->
-> Am I misunderstanding how mmap works with FOPEN_DIRECT_IO file?
-> My understanding is that mmap of FOPEN_DIRECT_IO reads/writes
-> from page cache of fuse inode.
->
-> To clarify, the plan is to never allow mixing open of passthrough and
-> cached files on the same inode.
+On Wed, Nov 29, 2023 at 03:13:22PM +0000, Matthew Wilcox wrote:
 
-Yep.
+> > @@ -157,6 +158,12 @@ void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
+> >  }
+> >  EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+> >  
+> > +struct file *rust_helper_get_file(struct file *f)
+> > +{
+> > +	return get_file(f);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_get_file);
+> 
+> This is ridiculous.  A function call instead of doing the
+> atomic_long_inc() in Rust?
 
-But passthrough mmap + direct I/O should work, no?
+Yeah, I complained about something similar a while ago. And recently
+talked to Boqun about this as well,
 
-> It is allowed to open FOPEN_DIRECT_IO file for inode either in cached
-> or passthrough mode, but it is NOT allowed to mmap a FOPEN_DIRECT_IO
-> file for inode in passthrough mode.
->
-> However, if inode only has file open in FOPEN_DIRECT_IO mode, then inode
-> mode is neutral. If we allow mmap in this state then a later open in pass=
-thourgh
-> mode and mmap in passthrough mode will collide with the direct mode mmap.
+Bindgen *could* in theory 'compile' the inline C headers into (unsafe)
+Rust, the immediate problem is that Rust has a wildly different inline
+asm syntax (because Rust needs terrible syntax or whatever).
 
-We can keep track of when there are any page cache mmaps.  Does that
-not solve this?
+Boqun said it should all be fixable, but is a non-trivial amount of
+work.
 
->
-> Therefore, my proposal is than when filesystem is FUSE_PASSTHROUGH capabl=
-e,
-> only passthrough file and cached file may be mmaped, but never allow to
-> mmap a FOPEN_DIRECT_IO file.
->
-> Does that make sense?
-
-I'm not sure I understand how this is supposed to work.   Disallowing
-mmap will break applications.
-
-Thanks,
-Miklos
 
