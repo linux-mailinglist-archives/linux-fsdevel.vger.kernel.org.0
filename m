@@ -1,153 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-4245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912757FE120
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 21:34:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E627FE121
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 21:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E621C20A12
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67AD1C2096B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1E460EC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D0660EE9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="LXdK4D//"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syQ2+UVh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C855210C2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 11:45:44 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2c871d566cfso2287791fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 11:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701287143; x=1701891943; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNNsoM3smwE3RnQXjosvlH5YCUc/qVQE7cVYHj28TpE=;
-        b=LXdK4D//aEMP9BGxDDgf86iGwwP755ud2a5fDDm/H2p6QdLjemMKdW6OURufzQsPsY
-         0eLaXgTBlg6Ro0WFppwNRmOJLM1GDxyvkcB5TIzwaa1UbSsi7lsRSu+qu1QqrpGx2WuC
-         PMdM6kTA5x1LLeGlJbl22YhycJKkzgKrJu76H5g6PWBs4oxqQRSTNqluBFW5+ez9Jziz
-         4aIESjCEFR56CJFlo89lMbSGxS5kd6/vIt4XU6zdtPKVphOyJms1zwcJv0kWIeUQ3+tq
-         DwWxhQoRd48Vb+sQo8NASWDsRlac17f1RpzDbTnO7V3cede7ZgbiDEwo9K3QOihi0Ay/
-         uOvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701287143; x=1701891943;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fNNsoM3smwE3RnQXjosvlH5YCUc/qVQE7cVYHj28TpE=;
-        b=cVwVcf/y+FYikY44JDPl2OGREjEMxAzlYRUmtQ0zYhEv7J+PBzDiC0/Fkcq6HYmH8j
-         1esSb8OVE/CWn7otmhb4aoTDIGghGbsQJNQSoSIpTyxohObC4kSEN24nFr6ionMLLmnQ
-         hGiFqV4h3UhQJOZAf5m+QZNtxeMpzMs3rXvlN85meO7DVEgFSdDuJk+e2d1aMxZswPKf
-         gwGnC/W2aiRREq6ZibioLtfWkDa9MOjqnxIIM03ZnSrBIbMaMKFzVsbs5FrLV9OOpcKf
-         UtHeULGEcON9T6c1MLsIaJx0yZpjh8+gHL1dJmtXMLU/axKEeul4QWDa7bLjlKC0bsce
-         N45w==
-X-Gm-Message-State: AOJu0YwelhaQ0OCsJOIZpUShSnjtQbL6UyvcIGqoeOxJQ1EI49++STk0
-	vAdWbg+GY9RexQxwlzjE4uxqd45iPwRR7JJDI1G8eg==
-X-Google-Smtp-Source: AGHT+IHo1CBmTuUhAhmoXR/KJsiUOGXe0H72uTjo3bJ8/f4ydzGN+L/1B0mI7eNNH55dLwJ3p7aHezZlyWQqax7aj9w=
-X-Received: by 2002:a2e:9b59:0:b0:2c6:ece6:5b65 with SMTP id
- o25-20020a2e9b59000000b002c6ece65b65mr12569535ljj.10.1701287142874; Wed, 29
- Nov 2023 11:45:42 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EAB1DFCE;
+	Wed, 29 Nov 2023 19:47:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 894CCC433C9;
+	Wed, 29 Nov 2023 19:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701287274;
+	bh=YG8IdGIKyEPPRl3BRdJ7ECZAIkh6utCR8Z3bE/lJTKg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=syQ2+UVhgwDKeVwkvcw3WWJMrIMwVFdqOaBnQdnY0Rlt9K0r4cb1XvV4Wn5nXHhiV
+	 gvTopNRfVdRFpnAxCIj73GZetoCy3oRvVWaF9UN49jRb7Z9PaP9OSK8xd3kbYWQPAf
+	 1DVl4x39hf55wBk5hq0wuuTKmwCIa53KirnCxp64qhjbH1nsW/rX0ljX0eKOsDQczo
+	 5NnQ+5y5F2fyYIQD1SrPwraAux7InBikg0rKMW1QXBI4LRkHIbJph2j7VkE0B5XT6p
+	 6lO6X2oBE1/m0yp44YgdR/5dTD+ohUFD0wP52uflq/4L+T9N3OYm8sxTaYYY5dT5A+
+	 NahbHETz7zMtA==
+Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1r8QXH-0001z1-Ua;
+	Wed, 29 Nov 2023 19:47:52 +0000
+Date: Wed, 29 Nov 2023 19:47:50 +0000
+Message-ID: <87h6l48hp5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com,
+	broonie@kernel.org,
+	catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com,
+	oliver.upton@linux.dev,
+	shuah@kernel.org,
+	will@kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 06/25] KVM: arm64: Save/restore POE registers
+In-Reply-To: <20231129151123.GA2423241@e124191.cambridge.arm.com>
+References: <20231124163510.1835740-1-joey.gouly@arm.com>
+	<20231124163510.1835740-7-joey.gouly@arm.com>
+	<86bkbfcbyp.wl-maz@kernel.org>
+	<20231129151123.GA2423241@e124191.cambridge.arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-9-pasha.tatashin@soleen.com> <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
- <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
- <20231128235037.GC1312390@ziepe.ca> <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
-In-Reply-To: <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Nov 2023 14:45:03 -0500
-Message-ID: <CA+CK2bCcfS1Fo8RvTeGXj_ejPRX9--sh5Jz8nzhkZnut4juDmg@mail.gmail.com>
-Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by iommu-pages.h
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org, alex.williamson@redhat.com, 
-	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
-	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
-	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
-	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
-	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
-	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
-	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
-	samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
-	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
-	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.104.136.29
+X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com, broonie@kernel.org, catalin.marinas@arm.com, dave.hansen@linux.intel.com, oliver.upton@linux.dev, shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-> >> We can separate the metric into two:
-> >> iommu pagetable only
-> >> iommu everything
-> >>
-> >> or into three:
-> >> iommu pagetable only
-> >> iommu dma
-> >> iommu everything
-> >>
-> >> What do you think?
-> >
-> > I think I said this at LPC - if you want to have fine grained
-> > accounting of memory by owner you need to go talk to the cgroup people
-> > and come up with something generic. Adding ever open coded finer
-> > category breakdowns just for iommu doesn't make alot of sense.
-> >
-> > You can make some argument that the pagetable memory should be counted
-> > because kvm counts it's shadow memory, but I wouldn't go into further
-> > detail than that with hand coded counters..
+On Wed, 29 Nov 2023 15:11:23 +0000,
+Joey Gouly <joey.gouly@arm.com> wrote:
+> 
+> Hi Marc,
+> 
+> Thanks for taking a look.
+> 
+> On Mon, Nov 27, 2023 at 06:01:18PM +0000, Marc Zyngier wrote:
+> > On Fri, 24 Nov 2023 16:34:51 +0000,
+> > Joey Gouly <joey.gouly@arm.com> wrote:
+> > > 
+> > > Define the new system registers that POE introduces and context switch them.
+> > 
+> > I would really like to see a discussion on the respective lifetimes of
+> > these two registers (see below).
+> > 
+> > >
+> > > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > > Cc: Marc Zyngier <maz@kernel.org>
+> > > Cc: Oliver Upton <oliver.upton@linux.dev>
+> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > Cc: Will Deacon <will@kernel.org>
+> > > ---
+> > >  arch/arm64/include/asm/kvm_arm.h           |  4 ++--
+> > >  arch/arm64/include/asm/kvm_host.h          |  4 ++++
+> > >  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 10 ++++++++++
+> > >  arch/arm64/kvm/sys_regs.c                  |  2 ++
+> > >  4 files changed, 18 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> > > index b85f46a73e21..597470e0b87b 100644
+> > > --- a/arch/arm64/include/asm/kvm_arm.h
+> > > +++ b/arch/arm64/include/asm/kvm_arm.h
+> > > @@ -346,14 +346,14 @@
+> > >   */
+> > >  #define __HFGRTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51))
+> > >  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
+> > > -#define __HFGRTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
+> > > +#define __HFGRTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
+> > >  
+> > >  #define __HFGWTR_EL2_RES0	(GENMASK(63, 56) | GENMASK(53, 51) |	\
+> > >  				 BIT(46) | BIT(42) | BIT(40) | BIT(28) | \
+> > >  				 GENMASK(26, 25) | BIT(21) | BIT(18) |	\
+> > >  				 GENMASK(15, 14) | GENMASK(10, 9) | BIT(2))
+> > >  #define __HFGWTR_EL2_MASK	GENMASK(49, 0)
+> > > -#define __HFGWTR_EL2_nMASK	(GENMASK(58, 57) | GENMASK(55, 54) | BIT(50))
+> > > +#define __HFGWTR_EL2_nMASK	(GENMASK(60, 57) | GENMASK(55, 54) | BIT(50))
+> > >  
+> > >  #define __HFGITR_EL2_RES0	GENMASK(63, 57)
+> > >  #define __HFGITR_EL2_MASK	GENMASK(54, 0)
+> > > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> > > index 824f29f04916..fa9ebd8fce40 100644
+> > > --- a/arch/arm64/include/asm/kvm_host.h
+> > > +++ b/arch/arm64/include/asm/kvm_host.h
+> > > @@ -401,6 +401,10 @@ enum vcpu_sysreg {
+> > >  	PIR_EL1,       /* Permission Indirection Register 1 (EL1) */
+> > >  	PIRE0_EL1,     /*  Permission Indirection Register 0 (EL1) */
+> > >  
+> > > +	/* Permission Overlay Extension registers */
+> > > +	POR_EL1,	/* Permission Overlay Register 1 (EL1) */
+> > > +	POR_EL0,	/* Permission Overlay Register 0 (EL0) */
+> > > +
+> > >  	/* 32bit specific registers. */
+> > >  	DACR32_EL2,	/* Domain Access Control Register */
+> > >  	IFSR32_EL2,	/* Instruction Fault Status Register */
+> > > diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> > > index bb6b571ec627..22f07ee43e7e 100644
+> > > --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> > > +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> > > @@ -19,6 +19,9 @@
+> > >  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
+> > >  {
+> > >  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
+> > > +
+> > > +	if (system_supports_poe())
+> > > +		ctxt_sys_reg(ctxt, POR_EL0)	= read_sysreg_s(SYS_POR_EL0);
+> > 
+> > So this is saved as eagerly as it gets. Why? If it only affects EL0,
+> > it can be saved/restored in a much lazier way.
+> 
+> Just to confirm I understand what you mean, the current code looks like:
+> 
+> 	vcpu_load()                // Lazy save
+> 
+> 	while (ret > 0)
+> 		check_vcpu_requests()
+> 		kvm_arm_vcpu_enter_exit()  // Eager save/restore
+> 		ret = handle_exit()
+> 
+> 	vcpu_put()                // Lazy restore
+
+Yes, with the additional caveat that VHE and nVHE/hVHE have different
+views of what can be lazy or not.
+
 >
-> Right, pagetable memory is interesting since it's something that any
-> random kernel user can indirectly allocate via iommu_domain_alloc() and
-> iommu_map(), and some of those users may even be doing so on behalf of
-> userspace. I have no objection to accounting and potentially applying
-> limits to *that*.
+> POR_EL0 does affect EL2, if it does some form of {get,put}_user.
+> This happens in vgic_its_process_commands (as part of handle_exit), also the
+> stolen time code (in check_vcpu_requests) and could possibly happen if perf
+> tries to walk the user stack.
+>
+> So I think that it does need to happen eagerly, such that the host-userspace's
+> POR_EL0 is used to access the VM's memory, not the guest-userspace's POR_EL0.
 
-Yes, in the next version, I will separate pagetable only from the
-rest, for the limits.
+OK, I didn't quite see that initially, thanks for the explanation.
+I find it rather ugly that userspace can directly affect these
+functionalities, but hey, why not.
 
-> Beyond that, though, there is nothing special about "the IOMMU
-> subsystem". The amount of memory an IOMMU driver needs to allocate for
-> itself in order to function is not of interest beyond curiosity, it just
-> is what it is; limiting it would only break the IOMMU, and if a user
+> Does that make sense? It will need a comment, I agree.
 
-Agree about the amount of memory IOMMU allocates for itself, but that
-should be small, if it is not, we have to at least show where the
-memory is used.
+Yes, that'd be good indeed.
 
-> thinks it's "too much", the only actionable thing that might help is to
-> physically remove devices from the system. Similar for DMA buffers; it
-> might be intriguing to account those, but it's not really an actionable
-> metric - in the overwhelming majority of cases you can't simply tell a
-> driver to allocate less than what it needs. And that is of course
-> assuming if we were to account *all* DMA buffers, since whether they
-> happen to have an IOMMU translation or not is irrelevant (we'd have
-> already accounted the pagetables as pagetables if so).
+> 
+> > 
+> > >  }
+> > >  
+> > >  static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+> > > @@ -59,6 +62,8 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+> > >  		ctxt_sys_reg(ctxt, PIR_EL1)	= read_sysreg_el1(SYS_PIR);
+> > >  		ctxt_sys_reg(ctxt, PIRE0_EL1)	= read_sysreg_el1(SYS_PIRE0);
+> > 
+> > And the fact that you only touch PIRE0_EL1 here seems to be a good
+> > indication that the above can be relaxed.
+> 
+> PIREO_EL1 is not directly accessible from EL0. I'll have a think
+> about this a bit more, and if there is a potential similar issue
+> here.
 
-DMA mappings should be observable (do not have to be limited). At the
-very least, it can help with explaining the kernel memory overhead
-anomalies on production systems.
+Ah, re-reading the spec, I see that there is a PIRE0_EL2 that is in
+use for VHE, meaning that in that case restoring POR_EL0 is enough to
+get the correct permissions. For nVHE/hVHE, this function is part of
+the 'eager' lot, so it doesn't matter.
 
-> I bet "the networking subsystem" also consumes significant memory on the
+So this code is correct in the end, and all that's missing is some
+comments and the NV stuff.
 
-It does, and GPU drivers also may consume a significant amount of memory.
+Thanks,
 
-> same kind of big systems where IOMMU pagetables would be of any concern.
-> I believe some of the some of the "serious" NICs can easily run up
-> hundreds of megabytes if not gigabytes worth of queues, SKB pools, etc.
-> - would you propose accounting those too?
+	M.
 
-Yes. Any kind of kernel memory that is proportional to the workload
-should be accountable. Someone is using those resources compared to
-the idling system, and that someone should be charged.
-
-Pasha
+-- 
+Without deviation from the norm, progress is not possible.
 
