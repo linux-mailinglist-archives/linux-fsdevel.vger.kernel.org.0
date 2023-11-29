@@ -1,103 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-4154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A7A77FD0F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 09:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D43207FD0FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 09:34:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC85EB20B0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:34:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07249B20C07
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE1D63D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD30125AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CxWXG8PP"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nxgS31Td"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CC719B7;
-	Tue, 28 Nov 2023 22:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TWq/t0u67v2rmHoA0biAg96aAnVgN6dEVTLzGtd0tU4=; b=CxWXG8PPt4BemfhTFre5zsLu0F
-	bsXzraNfKCISHJW9w2B1vELyX1JjscoqQVo2AbqQ6pDlDlnfWpIPBU9tLYsAGGa2YMNT0/MAczYXb
-	/1Uibq1gSwa0jX9P9h5znTyj9eI628wOkY61VYdE22YnKQBGxeLUoIgV1FT2amd5NH3SSgwMoquHM
-	2B+ZJjKyvC9RCyvkuhNnfca/k5VSqjuPaAB39aQUwjJbUm55mpY4dEkjYLv+hpy4o9+kX9+NwL+uk
-	PAW1iGQ2RpX40izmC5Je+A9K+asRhrX3bXb1G/1dIftZKkXGsoZlODjuCj1258k0e6/dUrVAX+zDT
-	Jfz+aPIA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r8E82-007F1O-15;
-	Wed, 29 Nov 2023 06:32:58 +0000
-Date: Tue, 28 Nov 2023 22:32:58 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use
- iomap
-Message-ID: <ZWbbGjDKbZjS5Kb0@infradead.org>
-References: <cover.1700506526.git.ritesh.list@gmail.com>
- <f5e84d3a63de30def2f3800f534d14389f6ba137.1700506526.git.ritesh.list@gmail.com>
- <20231122122946.wg3jqvem6fkg3tgw@quack3>
- <ZV399sCMq+p57Yh3@infradead.org>
- <ZV6AJHd0jJ14unJn@dread.disaster.area>
- <20231123040944.GB36168@frogsfrogsfrogs>
- <ZV76nfRd6BUzXYqe@infradead.org>
- <20231129053721.GC36168@frogsfrogsfrogs>
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB6719AD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 22:46:31 -0800 (PST)
+Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-53fa455cd94so4236361a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 22:46:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1701240390; x=1701845190; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7gmMYycPJ9Nj6UjViaTSe3GuqILx7vRiV7qJZJ/dAg0=;
+        b=nxgS31TdlVG2mATVXXGy6j5/duRGbIpbg8wN4HbxU7Ux08AW6Aqm9r7GQEIOKTws02
+         zuoFX4nek942P2LAUSdzAUMpg6m9yYFDLXWTZVkRhMluHu74eCgILStLb2sr7iqnWPwh
+         8vISzpX4D97PDE5tQg3sZJYntpDxdombCXOzo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701240390; x=1701845190;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7gmMYycPJ9Nj6UjViaTSe3GuqILx7vRiV7qJZJ/dAg0=;
+        b=ICL6fCp5F14guBxQZM0cRS7V395jLlF4ZFaUpBfKqGGM+TMf9g4PxJABEs6c5R98S1
+         pLboTwmfQQPjZCclYZ4WSaOzDLjGkT3ES5WGGDwG36yXRzy2o19Y0xzbeIUdwBhAaET8
+         VuONTBAvesyi+pQyzsqzjFJwOJmXFONIWt6U8zyEHjQAv00TzFJwb4QG3MlXaQXT/w4T
+         IDj3wWWJkpWL5SMu2kS+0/+DuU1lk3bhNhOOuiTcUd+qPCkm9heOMyZtqlqwG5kWLYt/
+         TJ4hrOGJYgUuQOExYIguosp5sLOxWAe0bC0mVoMS0Hzz4S/dDl1A4oZeZl1StxrfafkW
+         U+ZQ==
+X-Gm-Message-State: AOJu0YwUgFKg6JQKVzBsPc/kKvYNPNIfFNYyrodpsGswV1QLIaIDwuSA
+	3bAJOLAc9ucQvmu5wj3mHmsp
+X-Google-Smtp-Source: AGHT+IFrY1MgVqCXKlkNL3KmfWt1yHVeibG1JZN+1YZj/UGDQgYSTEtIlqrrsG59FQCnczt5X7KhYQ==
+X-Received: by 2002:a05:6a20:1593:b0:18c:c37:35dc with SMTP id h19-20020a056a20159300b0018c0c3735dcmr16117270pzj.16.1701240390556;
+        Tue, 28 Nov 2023 22:46:30 -0800 (PST)
+Received: from yuanyao.c.googlers.com.com (0.223.81.34.bc.googleusercontent.com. [34.81.223.0])
+        by smtp.gmail.com with ESMTPSA id ju12-20020a170903428c00b001bbb8d5166bsm11463203plb.123.2023.11.28.22.46.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 22:46:30 -0800 (PST)
+From: Yuan Yao <yuanyaogoog@chromium.org>
+To: bernd.schubert@fastmail.fm,
+	yuanyaogoog@chromium.org
+Cc: linux-fsdevel@vger.kernel.org,
+	miklos@szeredi.hu,
+	dsingh@ddn.com,
+	hbirthelmer@ddn.com,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	bschubert@ddn.com,
+	keiichiw@chromium.org,
+	takayas@chromium.org
+Subject: [PATCH 0/1] Adapt atomic open to fuse no_open/no_open_dir
+Date: Wed, 29 Nov 2023 06:46:06 +0000
+Message-ID: <20231129064607.382933-1-yuanyaogoog@chromium.org>
+X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
+In-Reply-To: <CAOJyEHaoRF7uVdJs25EaeBMbezT0DHV-Qx_6Zu+Kbdxs84BpkA@mail.gmail.com>
+References: <CAOJyEHaoRF7uVdJs25EaeBMbezT0DHV-Qx_6Zu+Kbdxs84BpkA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231129053721.GC36168@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 28, 2023 at 09:37:21PM -0800, Darrick J. Wong wrote:
-> TBH I've been wondering what would happen if we bumped i_mappingseq on
-> updates of either data or cow fork instead of the shift+or'd thing that
-> we use now for writeback and/or pagecache write.
-> 
-> I suppose the nice thing about the current encodings is that we elide
-> revalidations when the cow fork changes but mapping isn't shared.
+This patch implements my purpose from previous mail, adapting the atomic
+open to work with no_open/no_open_dir features. I tested this patch by
+creating and subsequently closing 10,000 empty files using virtio-fs.
+The total execution time demonstrated a reduction of around 15%
+comparing to the unpatched version. Hope this patch could be integrated 
+to the v11 version.
 
-changed?  But yes.
+Yuan Yao (1):
+  fuse: Handle no_open/no_opendir in atomic_open
 
-> 
-> > > Anyway, I'll have time to go play with that (and further purging of
-> > > function pointers)
-> > 
-> > Do we have anything where the function pointer overhead is actually
-> > hurting us right now?
-> 
-> Not that I know of, but moving to a direct call model means that the fs
-> would know based on the iomap_XXX_iter function signature whether or not
-> iomap needs a srcmap; and then it can modify its iomap_begin function
-> accordingly.
-> 
-> Right now all those rules aren't especially obvious or well documented.
-> Maybe I can convince myself that improved documentation will suffice to
-> eliminate Ted's confusion. :)
+ fs/fuse/dir.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Well, with an iter model I think we can actually kill the srcmap
-entirely, as we could be doing two separate overlapping iterations at
-the same time.  Which would probably be nice for large unaligned writes
-as the write size won't be limited by the existing mapping only used
-to read in the unaligned blocks at the beginning end end.
-
-> > One thing I'd like to move to is to merge the iomap_begin and iomap_end
-> > callbacks into one similar to willy's series from 2020.  The big
-> 
-> Got a link to that?  I need my memory refreshed, having DROP TABLE MEM2020;
-> pretty please.
-
-https://lore.kernel.org/all/20200811205314.GF6107@magnolia/T/
+-- 
+2.43.0.rc1.413.gea7ed67945-goog
 
 
