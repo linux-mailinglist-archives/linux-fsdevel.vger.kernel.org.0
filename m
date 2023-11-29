@@ -1,51 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-4185-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A12C7FD6E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:37:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D192B7FD6E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEB1DB2143E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA8028130C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05B1DDC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460F01DDDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0hNlRoq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E61C1F4;
-	Wed, 29 Nov 2023 03:56:41 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D149B2F4;
-	Wed, 29 Nov 2023 03:57:28 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B3893F5A1;
-	Wed, 29 Nov 2023 03:56:36 -0800 (PST)
-Date: Wed, 29 Nov 2023 11:56:33 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
-	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 20/27] mm: hugepage: Handle huge page fault on
- access
-Message-ID: <ZWcm8UyW_aLOwqyz@raptor>
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-21-alexandru.elisei@arm.com>
- <2cb6090d-b71f-472f-ab89-715b75dba067@redhat.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C431DA3A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:25:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF41C433C8;
+	Wed, 29 Nov 2023 12:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701260719;
+	bh=FOMIVzNSmunlOQkj2N1GOTigb1C3ORGVmb978/3mPrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T0hNlRoqJR2Se2wPnCPVZAZ9l5kTZ1YHoJSJUP7lF2941rhEcmH+/GofzUpbSUZSQ
+	 q/FubmDdA0O8ux4bcvyKdY6iZl08/5SOBW2R4B70wfJS6GsWw8UdDARPsht3E0+Fhn
+	 9g1hVmM6Joir1vlhU8bcxiVhtt4CWBvqVrwb2ICbYY78qXiY+QZpfRjjMwAODHuL0y
+	 zXE2i4TqZ5gctr8Q72l71SbyoEzPJxBHgQyFpZXplOFP98gG140i/S/bEqgQGXjsDB
+	 EVsJIfDjXXojm+v6Ejy7sOQE4IXyTJFj5yfeSWR19wdZam6vDCjhk7BRJo18yKoEIT
+	 bP44PjUVNgXkg==
+Date: Wed, 29 Nov 2023 07:25:13 -0500
+From: Guo Ren <guoren@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+Message-ID: <ZWctqTvE+JC6T6RK@gmail.com>
+References: <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
+ <20231101084535.GG1957730@ZenIV>
+ <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV>
+ <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+ <ZV2rdE1XQWwJ7s75@gmail.com>
+ <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
+ <CAHk-=wg6D_d-zaRfXZ=sUX1fbTJykQ4KxXCmEk3aq73wVk_ORA@mail.gmail.com>
+ <CAHk-=wj2ky85K5HYYLeLCP23qyTJpirnpiVSu5gWyT_GRXbJaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,29 +59,208 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2cb6090d-b71f-472f-ab89-715b75dba067@redhat.com>
+In-Reply-To: <CAHk-=wj2ky85K5HYYLeLCP23qyTJpirnpiVSu5gWyT_GRXbJaQ@mail.gmail.com>
 
-Hi,
-
-On Tue, Nov 28, 2023 at 06:56:34PM +0100, David Hildenbrand wrote:
-> On 19.11.23 17:57, Alexandru Elisei wrote:
-> > Handle PAGE_FAULT_ON_ACCESS faults for huge pages in a similar way to
-> > regular pages.
-> > 
-> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > ---
+On Wed, Nov 22, 2023 at 11:11:38AM -0800, Linus Torvalds wrote:
+> On Wed, 22 Nov 2023 at 09:52, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Still not actually tested, but the code generation on x86 looks
+> > reasonable, so it migth be worth looking at whether it helps the
+> > RISC-V case.
 > 
-> Same comments :)
-
-Yes, will have a look at this fault handling path too :)
-
-Thanks,
-Alex
-
+> Doing some more munging, and actually looking at RISC-V code
+> generation too (I obviously had to enable ARCH_USE_CMPXCHG_LOCKREF for
+> RISC-V).
 > 
+> I get this:
+> 
+>   lockref_get:
+>         addi    sp,sp,-32
+>         sd      s0,16(sp)
+>         sd      s1,8(sp)
+>         sd      ra,24(sp)
+>         addi    s0,sp,32
+>         li      a1,65536
+>         ld      a5,0(a0)
+>         mv      s1,a0
+>         addi    a1,a1,-1
+>         li      a0,100
+>   .L43:
+>         sext.w  a3,a5
+>         li      a4,1
+>         srliw   a2,a5,16
+>         and     a3,a3,a1
+>         slli    a4,a4,32
+>         bne     a2,a3,.L49
+>         add     a4,a5,a4
+>   0:
+>         lr.d a3, 0(s1)
+>         bne a3, a5, 1f
+>         sc.d.rl a2, a4, 0(s1)
+>         bnez a2, 0b
+>         fence rw, rw
+>   1:
+>         bne     a5,a3,.L52
+>         ld      ra,24(sp)
+>         ld      s0,16(sp)
+>         ld      s1,8(sp)
+>         addi    sp,sp,32
+>         jr      ra
+>   ...
+> 
+> so now that single update is indeed just one single instruction:
+> 
+>         add     a4,a5,a4
+> 
+> is that "increment count in the high 32 bits".
+> 
+> The ticket lock being unlocked checks are those
+> 
+>         li      a1,65536
+>         sext.w  a3,a5
+>         srliw   a2,a5,16
+>         and     a3,a3,a1
+>         bne     a2,a3,.L49
+> 
+> instructions if I read it right.
+> 
+> That actually looks fairly close to optimal, although the frame setup
+> is kind of sad.
+> 
+> (The above does not include the "loop if the cmpxchg failed" part of
+> the code generation)
+> 
+> Anyway, apart from enabling LOCKREF, the patch to get this for RISC-V
+> is attached.
+> 
+> I'm not going to play with this any more, but you might want to check
+> whether this actually does work on RISC-V.
+> 
+> Becaue I only looked at the code generation, I didn't actually look at
+> whether it *worked*.
+> 
+>                 Linus
+
+> From 168f35850c15468941e597907e33daacd179d54a Mon Sep 17 00:00:00 2001
+> From: Linus Torvalds <torvalds@linux-foundation.org>
+> Date: Wed, 22 Nov 2023 09:33:29 -0800
+> Subject: [PATCH] lockref: improve code generation for ref updates
+> 
+> Our lockref data structure is two 32-bit words laid out next to each
+> other, combining the spinlock and the count into one entity that can be
+> accessed atomically together.
+> 
+> In particular, the structure is laid out so that the count is the upper
+> 32 bit word (on little-endian), so that you can do basic arithmetic on
+> the count in 64 bits: instead of adding one to the 32-bit word, you can
+> just add a value shifted by 32 to the full 64-bit word.
+> 
+> Sadly, neither gcc nor clang are quite clever enough to work that out on
+> their own, so this does that "manually".
+> 
+> Also, try to do any compares against zero values, which generally
+> improves the code generation.  So rather than check that the value was
+> at least 1 before a decrement, check that it's positive or zero after
+> the decrement.  We don't worry about the overflow point in lockrefs.
+> 
+> Cc: Guo Ren <guoren@kernel.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> ---
+>  lib/lockref.c | 29 ++++++++++++++++++++---------
+>  1 file changed, 20 insertions(+), 9 deletions(-)
+> 
+> diff --git a/lib/lockref.c b/lib/lockref.c
+> index 2afe4c5d8919..f3c30c538af1 100644
+> --- a/lib/lockref.c
+> +++ b/lib/lockref.c
+> @@ -26,6 +26,17 @@
+>  	}									\
+>  } while (0)
+>  
+> +/*
+> + * The compiler isn't smart enough to the the count
+> + * increment in the high 32 bits of the 64-bit value,
+> + * so do this optimization by hand.
+> + */
+> +#if defined(__LITTLE_ENDIAN) && BITS_PER_LONG == 64
+> + #define LOCKREF_ADD(n,x) ((n).lock_count += (unsigned long)(x)<<32)
+> +#else
+> + #define LOCKREF_ADD(n,x) ((n).count += (unsigned long)(x)<<32)
+#define LOCKREF_ADD(n,x) ((n).count += (unsigned long)(x))
+?
+
+> +#endif
+> +
+>  #else
+>  
+>  #define CMPXCHG_LOOP(CODE, SUCCESS) do { } while (0)
+> @@ -42,7 +53,7 @@
+>  void lockref_get(struct lockref *lockref)
+>  {
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+> +		LOCKREF_ADD(new,1);
+>  	,
+>  		return;
+>  	);
+> @@ -63,9 +74,9 @@ int lockref_get_not_zero(struct lockref *lockref)
+>  	int retval;
+>  
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+>  		if (old.count <= 0)
+>  			return 0;
+> +		LOCKREF_ADD(new,1);
+>  	,
+>  		return 1;
+>  	);
+> @@ -91,8 +102,8 @@ int lockref_put_not_zero(struct lockref *lockref)
+>  	int retval;
+>  
+>  	CMPXCHG_LOOP(
+> -		new.count--;
+> -		if (old.count <= 1)
+> +		LOCKREF_ADD(new,-1);
+> +		if (new.count <= 0)
+>  			return 0;
+>  	,
+>  		return 1;
+> @@ -119,8 +130,8 @@ EXPORT_SYMBOL(lockref_put_not_zero);
+>  int lockref_put_return(struct lockref *lockref)
+>  {
+>  	CMPXCHG_LOOP(
+> -		new.count--;
+> -		if (old.count <= 0)
+> +		LOCKREF_ADD(new,-1);
+> +		if (new.count < 0)
+>  			return -1;
+>  	,
+>  		return new.count;
+> @@ -137,8 +148,8 @@ EXPORT_SYMBOL(lockref_put_return);
+>  int lockref_put_or_lock(struct lockref *lockref)
+>  {
+>  	CMPXCHG_LOOP(
+> -		new.count--;
+> -		if (old.count <= 1)
+> +		LOCKREF_ADD(new,-1);
+> +		if (new.count <= 0)
+>  			break;
+>  	,
+>  		return 1;
+> @@ -174,9 +185,9 @@ int lockref_get_not_dead(struct lockref *lockref)
+>  	int retval;
+>  
+>  	CMPXCHG_LOOP(
+> -		new.count++;
+>  		if (old.count < 0)
+>  			return 0;
+> +		LOCKREF_ADD(new,1);
+>  	,
+>  		return 1;
+>  	);
 > -- 
-> Cheers,
+> 2.43.0.5.g38fb137bdb
 > 
-> David / dhildenb
-> 
+
 
