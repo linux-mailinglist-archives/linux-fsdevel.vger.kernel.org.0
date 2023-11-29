@@ -1,33 +1,35 @@
-Return-Path: <linux-fsdevel+bounces-4171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031BE7FD47E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 11:41:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3915E7FD47C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 11:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15C52812B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 10:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9131C20869
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 10:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8A61B283
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 10:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9C81B273
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 10:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out0-200.mail.aliyun.com (out0-200.mail.aliyun.com [140.205.0.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 420F6D6C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 01:43:20 -0800 (PST)
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047207;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VYcwPuU_1701250997;
-Received: from localhost(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VYcwPuU_1701250997)
+Received: from out0-215.mail.aliyun.com (out0-215.mail.aliyun.com [140.205.0.215])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528AE1990
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 01:43:21 -0800 (PST)
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047206;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VYcTs42_1701250998;
+Received: from localhost(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VYcTs42_1701250998)
           by smtp.aliyun-inc.com;
-          Wed, 29 Nov 2023 17:43:18 +0800
+          Wed, 29 Nov 2023 17:43:19 +0800
 From: "Zhao Chen" <winters.zc@antgroup.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: miklos@szeredi.hu
-Subject: [PATCH v2 RESEND 0/2] Introduce sysfs API for resend pending requests
-Date: Wed, 29 Nov 2023 17:43:15 +0800
-Message-Id: <20231129094317.453025-1-winters.zc@antgroup.com>
+Subject: [PATCH v2 RESEND 1/2] fuse: Introduce sysfs API for resend pending reque
+Date: Wed, 29 Nov 2023 17:43:16 +0800
+Message-Id: <20231129094317.453025-2-winters.zc@antgroup.com>
 X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+In-Reply-To: <20231129094317.453025-1-winters.zc@antgroup.com>
+References: <20231129094317.453025-1-winters.zc@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -36,43 +38,165 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-After the FUSE daemon crashes, the fuse mount point becomes inaccessible.
-In some production environments, a watchdog daemon is used to preserve
-the FUSE connection's file descriptor (fd). When the FUSE daemon crashes,
-a new FUSE daemon is started and takes over the fd from the watchdog
-daemon, allowing it to continue providing services.
+From: Peng Tao <bergwolf@antgroup.com>
 
-However, if any inflight requests are lost during the crash, the user
-process becomes stuck as it does not receive any replies.
+When a FUSE daemon panic and failover, we aim to minimize the impact on
+applications by reusing the existing FUSE connection. During this
+process, another daemon is employed to preserve the FUSE connection's file
+descriptor.
 
-To resolve this issue, this patchset introduces a sysfs API that enable
-resending these pending requests to the FUSE daemon again, allowing the
-stuck user process to recover.
+However, it is possible for some inflight requests to be lost and never
+returned. As a result, applications awaiting replies would become stuck
+forever. To address this, we can resend these pending requests to the
+FUSE daemon, which is done by fuse_resend_pqueue(), ensuring they are
+properly processed again.
 
-When using the resend API, FUSE daemon needs to ensure proper recording
-and avoidance of processing duplicate non-idempotent requests to prevent
-potential consistency issues. The high bit of the fuse request id is
-utilized for indicating the resend request.
-
+Signed-off-by: Peng Tao <bergwolf@antgroup.com>
+Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
 ---
-v1->v2:
- - remove flush sysfs API in the original mail
- - add using high bit of request ID for indicating resend requests
- - add wakeup in fuse_resend_pqueue()
+ fs/fuse/control.c | 20 ++++++++++++++++
+ fs/fuse/dev.c     | 59 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/fuse_i.h  |  5 +++-
+ 3 files changed, 83 insertions(+), 1 deletion(-)
 
-Peng Tao (1):
-  fuse: Introduce sysfs API for resend pending reque
-
-Zhao Chen (1):
-  fuse: Use the high bit of request ID for indicating resend requests
-
- fs/fuse/control.c         | 20 +++++++++++
- fs/fuse/dev.c             | 70 ++++++++++++++++++++++++++++++++++++---
- fs/fuse/fuse_i.h          |  5 ++-
- fs/fuse/inode.c           |  3 +-
- include/uapi/linux/fuse.h | 11 ++++++
- 5 files changed, 103 insertions(+), 6 deletions(-)
-
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 284a35006462..fd2258d701dd 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -44,6 +44,18 @@ static ssize_t fuse_conn_abort_write(struct file *file, const char __user *buf,
+ 	return count;
+ }
+ 
++static ssize_t fuse_conn_resend_write(struct file *file, const char __user *buf,
++				      size_t count, loff_t *ppos)
++{
++	struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
++
++	if (fc) {
++		fuse_resend_pqueue(fc);
++		fuse_conn_put(fc);
++	}
++	return count;
++}
++
+ static ssize_t fuse_conn_waiting_read(struct file *file, char __user *buf,
+ 				      size_t len, loff_t *ppos)
+ {
+@@ -190,6 +202,12 @@ static const struct file_operations fuse_ctl_abort_ops = {
+ 	.llseek = no_llseek,
+ };
+ 
++static const struct file_operations fuse_ctl_resend_ops = {
++	.open = nonseekable_open,
++	.write = fuse_conn_resend_write,
++	.llseek = no_llseek,
++};
++
+ static const struct file_operations fuse_ctl_waiting_ops = {
+ 	.open = nonseekable_open,
+ 	.read = fuse_conn_waiting_read,
+@@ -274,6 +292,8 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+ 				 NULL, &fuse_ctl_waiting_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "abort", S_IFREG | 0200, 1,
+ 				 NULL, &fuse_ctl_abort_ops) ||
++	    !fuse_ctl_add_dentry(parent, fc, "resend", S_IFREG | 0200, 1,
++				 NULL, &fuse_ctl_resend_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "max_background", S_IFREG | 0600,
+ 				 1, NULL, &fuse_conn_max_background_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1a8f82f478cb..c91cb2bd511b 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2223,6 +2223,65 @@ int fuse_dev_release(struct inode *inode, struct file *file)
+ }
+ EXPORT_SYMBOL_GPL(fuse_dev_release);
+ 
++/*
++ * Resending all processing queue requests.
++ *
++ * In the event of a FUSE daemon panic and failover, we aim to minimize the
++ * impact on applications by reusing the existing FUSE connection. During this
++ * process, another daemon is employed to preserve the FUSE connection's file
++ * descriptor.
++ *
++ * However, it is possible for some inflight requests to be lost and never
++ * returned. As a result, applications awaiting replies would become stuck
++ * forever. To address this, we can resend these pending requests to the FUSE
++ * daemon, ensuring they are properly processed again.
++ *
++ * Please note that this strategy is applicable only to idempotent requests or
++ * if the FUSE daemon takes careful measures to avoid processing duplicated
++ * non-idempotent requests.
++ */
++void fuse_resend_pqueue(struct fuse_conn *fc)
++{
++	struct fuse_dev *fud;
++	struct fuse_req *req, *next;
++	struct fuse_iqueue *fiq = &fc->iq;
++	LIST_HEAD(to_queue);
++	unsigned int i;
++
++	spin_lock(&fc->lock);
++	if (!fc->connected) {
++		spin_unlock(&fc->lock);
++		return;
++	}
++
++	list_for_each_entry(fud, &fc->devices, entry) {
++		struct fuse_pqueue *fpq = &fud->pq;
++
++		spin_lock(&fpq->lock);
++		list_for_each_entry_safe(req, next, &fpq->io, list) {
++			spin_lock(&req->waitq.lock);
++			if (!test_bit(FR_LOCKED, &req->flags)) {
++				__fuse_get_request(req);
++				list_move(&req->list, &to_queue);
++			}
++			spin_unlock(&req->waitq.lock);
++		}
++		for (i = 0; i < FUSE_PQ_HASH_SIZE; i++)
++			list_splice_tail_init(&fpq->processing[i], &to_queue);
++		spin_unlock(&fpq->lock);
++	}
++	spin_unlock(&fc->lock);
++
++	list_for_each_entry_safe(req, next, &to_queue, list) {
++		__set_bit(FR_PENDING, &req->flags);
++	}
++
++	spin_lock(&fiq->lock);
++	/* iq and pq requests are both oldest to newest */
++	list_splice(&to_queue, &fiq->pending);
++	fiq->ops->wake_pending_and_unlock(fiq);
++}
++
+ static int fuse_dev_fasync(int fd, struct file *file, int on)
+ {
+ 	struct fuse_dev *fud = fuse_get_dev(file);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 1df83eebda92..5142537c3471 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -45,7 +45,7 @@
+ #define FUSE_NAME_MAX 1024
+ 
+ /** Number of dentries for each connection in the control filesystem */
+-#define FUSE_CTL_NUM_DENTRIES 5
++#define FUSE_CTL_NUM_DENTRIES 6
+ 
+ /** List of active connections */
+ extern struct list_head fuse_conn_list;
+@@ -1122,6 +1122,9 @@ void fuse_request_end(struct fuse_req *req);
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
+ 
++/* Resend all requests in processing queue so they can represent to userspace */
++void fuse_resend_pqueue(struct fuse_conn *fc);
++
+ /**
+  * Invalidate inode attributes
+  */
 -- 
 2.32.0.3.g01195cf9f
 
