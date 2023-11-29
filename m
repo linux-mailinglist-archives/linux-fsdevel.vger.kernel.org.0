@@ -1,176 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-4237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D347FDF82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7FF7FDF83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29E01C204BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6291C209CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA375DF10
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AC85DF08
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM/zah9o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+r6OyfX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810D2BC;
-	Wed, 29 Nov 2023 09:08:20 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id af79cd13be357-77dd54d9da2so5486585a.0;
-        Wed, 29 Nov 2023 09:08:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701277699; x=1701882499; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TqpbWl3d4t7hd7UzjUjrZAkkyJ8NQqp/9vDtc/IE+6s=;
-        b=VM/zah9oJ9oDtJWw6px6aOW3yezQrVHgTRYZN/aVPug2KQv1+xf22M2plfz4x+fonZ
-         Z0WgT9vCfgLSvt90ZTplR2FsnRuU/Dq0um4pDTX0fHSj5i26wrqodSlN9ntGSHkd8o8X
-         KlO6ubHvErZAyeWi49v3fOEzpztvPZGIQmjUcz6fRMDhS2gar9S1DXothH/AORQJMcMg
-         1j7BWg+xvacUP6GnnlMZ0LbG37+31adPtadmKn7xSIPJhjbe2XuAWvdVyTzQyTaHcxFT
-         i8DV9XcVXfzVSMQyUlvNp80EAxLv+nE5MrjmTQUjRVNt2L4+cu9u/tMHH6FNXSIL8jpi
-         XcMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701277699; x=1701882499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TqpbWl3d4t7hd7UzjUjrZAkkyJ8NQqp/9vDtc/IE+6s=;
-        b=r8Ki6WLwh2XIYY0ZEqRSWjDk8owabFi/1tOt7uG+IG9l8D2RYfV4ys156T5KQARp3E
-         q4oHkPlLRyQSKJehVCLyCuVIAoLDyQTYFGjxo+NA8FpxCvgYdj5mENCOKY1e75zZXXza
-         ep0KNjdKlDg7OTIIPGzX0KKictdDAHFKRhWoPTHtw+mBX/bRnWL3us4ljT1A3VCRgMs9
-         AJugg18K+shAYbH0gWDldYzPOtKG26YZ/0BZ2YxE/naZMgOALwGX50ivYh6AsoDSF4e8
-         yP8fukwLqebHjVerM8fRan8sRDURgRhprdFuzGjq3dUDhP8A/tWXxK08Va1CjloXdDN/
-         rl4A==
-X-Gm-Message-State: AOJu0YyJQ9ByJoO6kfdhB3CdhpwGMUbhK58IeSQrYqLIen9UOVX54v6n
-	A+iENY6nfHhSqWxI8O0QPbo=
-X-Google-Smtp-Source: AGHT+IFnOswN6PitZD9K0blChM5gWwA6ocFLICLCsqV5hyKCfq/pDMc/huFj8zMq/d2itJpsfbP0EQ==
-X-Received: by 2002:a05:620a:1266:b0:77d:5f72:3c82 with SMTP id b6-20020a05620a126600b0077d5f723c82mr18621228qkl.32.1701277699615;
-        Wed, 29 Nov 2023 09:08:19 -0800 (PST)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id rk9-20020a05620a900900b0077dd0ec0320sm413785qkn.130.2023.11.29.09.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 09:08:19 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailauth.nyi.internal (Postfix) with ESMTP id 9D98F27C0054;
-	Wed, 29 Nov 2023 12:08:18 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 29 Nov 2023 12:08:18 -0500
-X-ME-Sender: <xms:AHBnZf-T4zoGMSjWiYoHVOc454Cwp1QSjzd1Xq7O31IhoUnO8HeKRA>
-    <xme:AHBnZbs552LAuIG9QgzNQr1iWbt199SWDRLQ0oxxx5u8hIaRpSGpF31Yzt_wRiZ2m
-    1yTuDhmXNcU0BZ-NA>
-X-ME-Received: <xmr:AHBnZdDuFTRrpSfSH1K-Ny74M87OJ3lK7GbVt8bfe0DdS5gNuAT8YODZRQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeihedgleegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:AHBnZbf6iK6vMZ_RRHx6pGJi2ozhUUcZOApUvEb-QvvXoMxE_VShhw>
-    <xmx:AHBnZUPuinDjp9b7wo3m8867wWgpX22NQ7D9qUhDKhq8zWS2oAfYug>
-    <xmx:AHBnZdlA4v32DwcBzGnD3Do-1yOHc4c4-M358TfUpbIwC7_jCc2AKw>
-    <xmx:AnBnZSUoZ1bG97raNN2xn2ubWQcXcoxau0HwsZiPUCHEB9UC2scf-g>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Nov 2023 12:08:15 -0500 (EST)
-Date: Wed, 29 Nov 2023 09:08:14 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Alice Ryhl <aliceryhl@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,	Thomas Gleixner <tglx@linutronix.de>,
- Daniel Xu <dxu@dxuuu.xyz>,	linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
-Message-ID: <ZWdv_jsaDFJxZk7G@Boquns-Mac-mini.home>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
- <20231129-alice-file-v1-1-f81afe8c7261@google.com>
- <ZWdVEk4QjbpTfnbn@casper.infradead.org>
- <20231129152305.GB23596@noisy.programming.kicks-ass.net>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC351C293;
+	Wed, 29 Nov 2023 17:13:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04ADEC433C9;
+	Wed, 29 Nov 2023 17:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701278036;
+	bh=rwJvppmrLy1P/MmPKSamrNN7Qxe5PzI8xPdRqi5d0VM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=u+r6OyfX0aEHZDbfGWAJ7VuOmIawZC6PpoVobG1JmykL9aSG0hlltlzDyZqIjibIT
+	 gyCV3iJOMlgPlbzHaIDC+gyqeywkfnxQpGu6Xj2NOE4EmtDn+ANIlxUDaocq1bGS1s
+	 t4OPgBQoxw5FNjSYW5VmR8REfBHRBVS6pnZRCIJ/yYwLnmZmghgwU17WZQQ9n0EwkF
+	 nZZtmaohPylpJvq8nbWn/Q6n2FOJkOL9zuiB55dDMcRx3bvkQtgsPmz24CdF6ooXoD
+	 aeKscXlyPsP1rfbgycZ8iCvssYmdcx8+p9PygktKdD6QbrmYY2Rd95qqYIz70DgI3Z
+	 cR9AoEhMCsgGg==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2c9b1839e90so11383631fa.1;
+        Wed, 29 Nov 2023 09:13:55 -0800 (PST)
+X-Gm-Message-State: AOJu0YxTDNoSPugAKWIOKC6EeM+KUMnWqYFGPc3tNaA95LJvEU2yl7p8
+	vahvz5sRFpOZyBZU/RjzryA90kE3WHfBzmQO46I=
+X-Google-Smtp-Source: AGHT+IExa5zwajC/GzqsEbFlosESXxxXS3HE7q1ADy5OKUBLi4tjjkw2bL5QtF3VQO1Jfq0SC8DxdAXc77R2cVLltiA=
+X-Received: by 2002:a2e:b04e:0:b0:2c9:bf97:81c1 with SMTP id
+ d14-20020a2eb04e000000b002c9bf9781c1mr857584ljl.22.1701278034233; Wed, 29 Nov
+ 2023 09:13:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231129152305.GB23596@noisy.programming.kicks-ass.net>
+References: <20231129003656.1165061-1-song@kernel.org> <20231129003656.1165061-7-song@kernel.org>
+ <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
+ <CAPhsuW5Kvcj8cOFf0ZeLZ428+=pjXQfCqx7aYBCthVgtRN2J3g@mail.gmail.com> <CAADnVQLnMfu91VMVzdh=_qMNhzwvks69XHa5RPbsXk1c437-Hg@mail.gmail.com>
+In-Reply-To: <CAADnVQLnMfu91VMVzdh=_qMNhzwvks69XHa5RPbsXk1c437-Hg@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 29 Nov 2023 09:13:42 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7xGNybcovxTO+T_R7FqYpPvU7J1EX2OCOfbtASRG9yAg@mail.gmail.com>
+Message-ID: <CAPhsuW7xGNybcovxTO+T_R7FqYpPvU7J1EX2OCOfbtASRG9yAg@mail.gmail.com>
+Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
+ fsverity and xattr to sign a file
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
+	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Kernel Team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 29, 2023 at 04:23:05PM +0100, Peter Zijlstra wrote:
-> On Wed, Nov 29, 2023 at 03:13:22PM +0000, Matthew Wilcox wrote:
-> 
-> > > @@ -157,6 +158,12 @@ void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
-> > >  
-> > > +struct file *rust_helper_get_file(struct file *f)
-> > > +{
-> > > +	return get_file(f);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(rust_helper_get_file);
-> > 
-> > This is ridiculous.  A function call instead of doing the
-> > atomic_long_inc() in Rust?
-> 
-> Yeah, I complained about something similar a while ago. And recently
-> talked to Boqun about this as well,
-> 
-> Bindgen *could* in theory 'compile' the inline C headers into (unsafe)
-> Rust, the immediate problem is that Rust has a wildly different inline
-> asm syntax (because Rust needs terrible syntax or whatever).
-> 
-> Boqun said it should all be fixable, but is a non-trivial amount of
-> work.
-> 
+On Wed, Nov 29, 2023 at 6:56=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Nov 29, 2023 at 3:20=E2=80=AFAM Song Liu <song@kernel.org> wrote:
+> >
+> > On Tue, Nov 28, 2023 at 10:47=E2=80=AFPM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Tue, Nov 28, 2023 at 4:37=E2=80=AFPM Song Liu <song@kernel.org> wr=
+ote:
+> > > > +char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_D=
+IGEST_SIZE];
+> > >
+> > > when vmlinux is built without CONFIG_FS_VERITY the above fails
+> > > in a weird way:
+> > >   CLNG-BPF [test_maps] test_sig_in_xattr.bpf.o
+> > > progs/test_sig_in_xattr.c:36:26: error: invalid application of
+> > > 'sizeof' to an incomplete type 'struct fsverity_digest'
+> > >    36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) +
+> > > SHA256_DIGEST_SIZE];
+> > >       |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
+> > >
+> > > Is there a way to somehow print a hint during the build what
+> > > configs users need to enable to pass the build ?
+> >
+> > Patch 5/6 added CONFIG_FS_VERITY to tools/testing/selftests/bpf/config.
+> > This is a more general question for all required CONFIG_* specified in =
+the
+> > file (and the config files for other selftests).
+> >
+> > In selftests/bpf/Makefile, we have logic to find vmlinux. We can add si=
+milar
+> > logic to find .config used to build the vmlinux, and grep for each requ=
+ired
+> > CONFIG_* from the .config file. Does this sound like a viable solution?
+>
+> No need for new logic to parse .config.
+> libbpf does it already and
+> extern bool CONFIG_FS_VERITY __kconfig __weak;
+> works.
+>
+> Since you hard code MAGIC_SIZE anyway I'm asking
+> to hard code sizeof(struct fsverity_digest) as well, since the bpf prog
+> doesn't access it directly. It only needs to know its size.
+>
+> While inside:
+> int BPF_PROG(test_file_open, struct file *f)
+> {
+>   if (!CONFIG_FS_VERITY) {
+>      skip_fs_verity_test =3D true;
+>      return 0;
+>   }
+>
+> and report it as a clean error message in test_progs.
 
-Right, but TBH, I was only thinking about "inlining" our atomic
-primitives back then. The idea is since atomic primitives only have
-small body (most of which is asm code), it's relatively easy to
-translate that from a C function into a Rust one. And what's left is
-translating asm blocks. Things get interesting here:
+Yeah, this makes sense. Let me update the tests.
 
+Thanks,
+Song
 
-Originally I think the translation, despite the different syntax, might
-be relatively easy, for example, considering smp_store_release() on
-ARM64, we are going to translate from
-
-	asm volatile ("stlr %w1, %0"				\
-			: "=Q" (*__p)				\
-			: "rZ" (*(__u32 *)__u.__c)		\
-			: "memory");
-
-to something like:
-
-	asm!("stlr {val}, [{ptr}]",
-	     val = in(reg) __u.__c,
-	     ptr = in(reg) __p);
-
-, the translation is non-trivial, but it's not that hard, since it's
-basically find-and-replace.
-
-But but but, I then realized we have asm goto in C but Rust doesn't
-support them, and I haven't thought through how hard tht would be..
-
-Regards,
-Boqun
+> We keep adding new config requirements selftests/bpf/config which
+> forces all developers to keep adding new configs to their builds.
+> In the past, when we didn't have BPF CI, that was necessary, but now
+> BPF CI does it for us.
+> With clean error message from test_progs the developers can either
+> ignore the error and proceed with their work or adjust their .config
+> eventually. While hard selftest build error forces all devs to
+> update .config right away and build error has no info of what needs
+> to be done which is not developer friendly.
+>
+> pw-bot: cr
+>
 
