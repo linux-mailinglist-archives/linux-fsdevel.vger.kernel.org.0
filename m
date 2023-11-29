@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-4249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66DA7FE126
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 21:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF317FE127
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 21:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C84861C20898
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37BE2281FA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330275EE62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395760EE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mib6icO4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQwqVlfR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959EF122
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:18 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b2fa4ec5eso1113235e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:18 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C16F10C3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:19 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b2ddab817so1123925e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701288437; x=1701893237; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701288438; x=1701893238; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LTuA/BYq0/ZLLoJDYu3P0IgZk++nACMYQTxnr/DZNfs=;
-        b=Mib6icO4PlCj+RMp4uF6EsffmeT1rpT0dtTnqJ/nA/v8Sgf0OPc3j2T9ud4zgKmFWJ
-         OuDmKU93KfQnqpuQV7m0AqzUYZwae/KzRAKM9mQaLAos7eO2EoWYMwOQQ+VP3fJxqRBM
-         wBNv4VMMB0IqScJm42qVVsQbSlOyLlAljXQBPu2nWuozTrH1rT64AwJ8xFLG2uLoq1rm
-         f4iAickKHcb9M5iGA+ab5ccVofG4pBWYDhzebtztetZpJ4EWZgRrCUQmOZtL+MU85P/P
-         nckLu0cHsPLeR+AFx6bYClzR0ljvu2YWDj9pOGtTLeX3QHIQhr7W7zC/3X1L3UfBgLIP
-         jSbw==
+        bh=Mu+FvYJP4hLa4bumSUKSMjyLY9zr55bzmXAW4NgivPE=;
+        b=AQwqVlfRMk1lAn+V2EfhGSzGq8Mgur/Q65CFr1hcOw3DUAgvnGzhKVUVB9zXnLtmwA
+         WCT/SS65BnvtDOo2mRWfwoKAlSRvV4jU85NhCVdKzC4qtaBtQ175QJvT7S+H/aYddQOe
+         OSJCRim3oPHhH+axo8HF+bCI5X/AdWDDayNXUdIq8Za4247c/DewkCBeuw3gvk03LNyc
+         fZxYsFnurvTtFf9hrQv82eQqZh6yT6qUw3lGu31584U2EHehfNOlh/m7ddcijMYhLxCS
+         pR+l+o4husN1RCjqL5SIe/cN4oDmAbih+pGA2VTBBID496ABqRn7PRWlFqk4dQrh8Wkf
+         boWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701288437; x=1701893237;
+        d=1e100.net; s=20230601; t=1701288438; x=1701893238;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LTuA/BYq0/ZLLoJDYu3P0IgZk++nACMYQTxnr/DZNfs=;
-        b=ai0KX+O+rXGHY1giX7d7JilaW4Y/2Q+iVI7kXN+6ocqtilDnnJt9OzcehMeeqbMAIo
-         lmPHWEc7apkcNzl6BQMG8btaLHwPzqXc4ZWFeQKgVze030F3uY2IKNcTMUQ2ajQ45PYV
-         +4ijaaRsPg4pr+woT3kN/Pza7k4CsVSbqOsgllSbocBeo3O90rMfv7tAXF1/n0vewvJ5
-         tt/pVZQKXtmsjc1AJcrOKjT+GwSEW1QDZZZrWHNevNjZRg5FtGxzNFJjcNMdgkNWx0qn
-         RRaF7rqG/3YVazF1x6i3/Rcxqp58Wpepp90KfDkF4a90tseu292UzPB+J87xtPAxvI43
-         7nrw==
-X-Gm-Message-State: AOJu0YyISzHG7Cv4jKht5g4mTFz+omxg9VpmHi0xQVcKgQgPmtHsM7yN
-	JRVtmtop6DVG5kaIYUa4a/M=
-X-Google-Smtp-Source: AGHT+IHaNIVrK6YZclxVHEcbUn61tx2ri2dlo6EoRblmQsf2fgCp34i98wex5rpuZivWE/uUkEyKxA==
-X-Received: by 2002:a05:600c:1ca5:b0:40b:3e7e:af56 with SMTP id k37-20020a05600c1ca500b0040b3e7eaf56mr10800764wms.26.1701288436645;
-        Wed, 29 Nov 2023 12:07:16 -0800 (PST)
+        bh=Mu+FvYJP4hLa4bumSUKSMjyLY9zr55bzmXAW4NgivPE=;
+        b=GRo4X8AnAXLNdKM682nsDyHxCH7OcB1pfkERBJHnkyMdFpZl/sJetU9JFKYwwlJTFI
+         7182xN9U+t3dQvWdeFnBgTgdrlpmbEAjtbJXQfgrRNe48JduoV1Ym759v6z67BDQRJLa
+         +TumkUDlUA9e8phhCmB2RF5W2GzGOKHb+sAWF+/rb7jXLvQLj51ZGISaW/eTlihx7KaO
+         AUz49Z2wJlbNcQtz3wNksFtcd4QNOHJxPiS4Dr9xnTFA6j5i1s97SKHw8jyiy3ywE+NX
+         NRlROXkmSuhoJZEMwfDoDCE0Ru00DD3Im+Ve37vXska5ORBGU4kflS1GB56Wxs6GHhSF
+         aCpQ==
+X-Gm-Message-State: AOJu0YzcPUBgAZvEIYMh97J6WWIsZZ5ggxxwa2at44sP+70DXvABliad
+	oDQw5uv/OIe7mcEAE4yXvq8=
+X-Google-Smtp-Source: AGHT+IEOYql683V6Aav6wdj0xIQgh66wVr7OgojCFV+fc5DQBGNBgB2dQHLupZq87klcgB77FMwD3g==
+X-Received: by 2002:a05:600c:524a:b0:40b:4ba1:c502 with SMTP id fc10-20020a05600c524a00b0040b4ba1c502mr4870341wmb.37.1701288438016;
+        Wed, 29 Nov 2023 12:07:18 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id a8-20020adffb88000000b00333083a20e5sm7412719wrr.113.2023.11.29.12.07.15
+        by smtp.gmail.com with ESMTPSA id a8-20020adffb88000000b00333083a20e5sm7412719wrr.113.2023.11.29.12.07.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 12:07:16 -0800 (PST)
+        Wed, 29 Nov 2023 12:07:17 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>,
 	Jeff Layton <jlayton@kernel.org>
@@ -64,9 +64,9 @@ Cc: Josef Bacik <josef@toxicpanda.com>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] fs: fork do_splice_copy_file_range() from do_splice_direct()
-Date: Wed, 29 Nov 2023 22:07:08 +0200
-Message-Id: <20231129200709.3154370-2-amir73il@gmail.com>
+Subject: [PATCH 2/2] fs: move file_start_write() into direct_splice_actor()
+Date: Wed, 29 Nov 2023 22:07:09 +0200
+Message-Id: <20231129200709.3154370-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231129200709.3154370-1-amir73il@gmail.com>
 References: <20231129200709.3154370-1-amir73il@gmail.com>
@@ -78,232 +78,84 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The new helper is meant to be called from context of ->copy_file_range()
-methods instead of do_splice_direct().
+The two callers of do_splice_direct() hold file_start_write() on the
+output file.
 
-Currently, the only difference is that do_splice_copy_file_range() does
-not take a splice flags argument and it asserts that file_start_write()
-was called.
+This may cause file permission hooks to be called indirectly on an
+overlayfs lower layer, which is on the same filesystem of the output
+file and could lead to deadlock with fanotify permission events.
 
-Soon, do_splice_direct() will be called without file_start_write() held.
+To fix this potential deadlock, move file_start_write() from the callers
+into the direct_splice_actor(), so file_start_write() will not be held
+while reading the input file.
 
-Use the new helper from __ceph_copy_file_range(), that was incorrectly
-passing the copy_file_range() flags argument as splice flags argument
-to do_splice_direct(). the value of flags was 0, so no actual bug fix.
-
-Move the definition of both helpers to linux/splice.h.
-
+Suggested-by: Josef Bacik <josef@toxicpanda.com>
+Link: https://lore.kernel.org/r/20231128214258.GA2398475@perftesting/
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/ceph/file.c         |  9 ++---
- fs/read_write.c        |  6 ++--
- fs/splice.c            | 82 ++++++++++++++++++++++++++++++------------
- include/linux/fs.h     |  2 --
- include/linux/splice.h | 13 ++++---
- 5 files changed, 75 insertions(+), 37 deletions(-)
+ fs/overlayfs/copy_up.c | 2 --
+ fs/read_write.c        | 2 --
+ fs/splice.c            | 8 +++++++-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 3b5aae29e944..7c2db78e2c6e 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -12,6 +12,7 @@
- #include <linux/falloc.h>
- #include <linux/iversion.h>
- #include <linux/ktime.h>
-+#include <linux/splice.h>
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 7a44c8212331..294b330aba9f 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -333,11 +333,9 @@ static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
+ 		if (error)
+ 			break;
  
- #include "super.h"
- #include "mds_client.h"
-@@ -3010,8 +3011,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		 * {read,write}_iter, which will get caps again.
- 		 */
- 		put_rd_wr_caps(src_ci, src_got, dst_ci, dst_got);
--		ret = do_splice_direct(src_file, &src_off, dst_file,
--				       &dst_off, src_objlen, flags);
-+		ret = do_splice_copy_file_range(src_file, &src_off, dst_file,
-+						&dst_off, src_objlen);
- 		/* Abort on short copies or on error */
- 		if (ret < (long)src_objlen) {
- 			doutc(cl, "Failed partial copy (%zd)\n", ret);
-@@ -3065,8 +3066,8 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 	 */
- 	if (len && (len < src_ci->i_layout.object_size)) {
- 		doutc(cl, "Final partial copy of %zu bytes\n", len);
--		bytes = do_splice_direct(src_file, &src_off, dst_file,
--					 &dst_off, len, flags);
-+		bytes = do_splice_copy_file_range(src_file, &src_off, dst_file,
-+						  &dst_off, len);
- 		if (bytes > 0)
- 			ret += bytes;
- 		else
+-		ovl_start_write(dentry);
+ 		bytes = do_splice_direct(old_file, &old_pos,
+ 					 new_file, &new_pos,
+ 					 this_len, SPLICE_F_MOVE);
+-		ovl_end_write(dentry);
+ 		if (bytes <= 0) {
+ 			error = bytes;
+ 			break;
 diff --git a/fs/read_write.c b/fs/read_write.c
-index f791555fa246..555514cdad53 100644
+index 555514cdad53..b7110ee77c1c 100644
 --- a/fs/read_write.c
 +++ b/fs/read_write.c
-@@ -1423,10 +1423,8 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
- 				struct file *file_out, loff_t pos_out,
- 				size_t len, unsigned int flags)
- {
--	lockdep_assert(file_write_started(file_out));
--
--	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
--				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
-+	return do_splice_copy_file_range(file_in, &pos_in, file_out, &pos_out,
-+				len > MAX_RW_COUNT ? MAX_RW_COUNT : len);
- }
- EXPORT_SYMBOL(generic_copy_file_range);
- 
+@@ -1286,10 +1286,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		retval = rw_verify_area(WRITE, out.file, &out_pos, count);
+ 		if (retval < 0)
+ 			goto fput_out;
+-		file_start_write(out.file);
+ 		retval = do_splice_direct(in.file, &pos, out.file, &out_pos,
+ 					  count, fl);
+-		file_end_write(out.file);
+ 	} else {
+ 		if (out.file->f_flags & O_NONBLOCK)
+ 			fl |= SPLICE_F_NONBLOCK;
 diff --git a/fs/splice.c b/fs/splice.c
-index 3fce5f6072dd..3bb4936f8b70 100644
+index 3bb4936f8b70..261adfdfed9d 100644
 --- a/fs/splice.c
 +++ b/fs/splice.c
-@@ -1158,8 +1158,15 @@ static int direct_splice_actor(struct pipe_inode_info *pipe,
+@@ -1157,8 +1157,12 @@ static int direct_splice_actor(struct pipe_inode_info *pipe,
+ 			       struct splice_desc *sd)
  {
  	struct file *file = sd->u.file;
++	long ret;
  
--	return do_splice_from(pipe, file, sd->opos, sd->total_len,
--			      sd->flags);
-+	return do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
-+}
-+
-+static int copy_file_range_splice_actor(struct pipe_inode_info *pipe,
-+					struct splice_desc *sd)
-+{
-+	struct file *file = sd->u.file;
-+
-+	return do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
+-	return do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
++	file_start_write(file);
++	ret = do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
++	file_end_write(file);
++	return ret;
  }
  
- static void direct_file_splice_eof(struct splice_desc *sd)
-@@ -1170,25 +1177,10 @@ static void direct_file_splice_eof(struct splice_desc *sd)
- 		file->f_op->splice_eof(file);
- }
- 
--/**
-- * do_splice_direct - splices data directly between two files
-- * @in:		file to splice from
-- * @ppos:	input file offset
-- * @out:	file to splice to
-- * @opos:	output file offset
-- * @len:	number of bytes to splice
-- * @flags:	splice modifier flags
-- *
-- * Description:
-- *    For use by do_sendfile(). splice can easily emulate sendfile, but
-- *    doing it in the application would incur an extra system call
-- *    (splice in + splice out, as compared to just sendfile()). So this helper
-- *    can splice directly through a process-private pipe.
-- *
-- * Callers already called rw_verify_area() on the entire range.
-- */
--long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
--		      loff_t *opos, size_t len, unsigned int flags)
-+static long do_splice_direct_actor(struct file *in, loff_t *ppos,
-+				   struct file *out, loff_t *opos,
-+				   size_t len, unsigned int flags,
-+				   splice_direct_actor *actor)
- {
- 	struct splice_desc sd = {
- 		.len		= len,
-@@ -1207,14 +1199,60 @@ long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
- 	if (unlikely(out->f_flags & O_APPEND))
- 		return -EINVAL;
- 
--	ret = splice_direct_to_actor(in, &sd, direct_splice_actor);
-+	ret = splice_direct_to_actor(in, &sd, actor);
- 	if (ret > 0)
- 		*ppos = sd.pos;
- 
- 	return ret;
- }
-+/**
-+ * do_splice_direct - splices data directly between two files
-+ * @in:		file to splice from
-+ * @ppos:	input file offset
-+ * @out:	file to splice to
-+ * @opos:	output file offset
-+ * @len:	number of bytes to splice
-+ * @flags:	splice modifier flags
-+ *
-+ * Description:
-+ *    For use by do_sendfile(). splice can easily emulate sendfile, but
-+ *    doing it in the application would incur an extra system call
-+ *    (splice in + splice out, as compared to just sendfile()). So this helper
-+ *    can splice directly through a process-private pipe.
-+ *
-+ * Callers already called rw_verify_area() on the entire range.
-+ */
-+long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
-+		      loff_t *opos, size_t len, unsigned int flags)
-+{
-+	return do_splice_direct_actor(in, ppos, out, opos, len, flags,
-+				      direct_splice_actor);
-+}
- EXPORT_SYMBOL(do_splice_direct);
- 
-+/**
-+ * do_splice_copy_file_range - splices data for copy_file_range()
-+ * @in:		file to splice from
-+ * @ppos:	input file offset
-+ * @out:	file to splice to
-+ * @opos:	output file offset
-+ * @len:	number of bytes to splice
-+ *
-+ * Description:
-+ *    For use by generic_copy_file_range() and ->copy_file_range() methods.
-+ *
-+ * Callers already called rw_verify_area() on the entire range.
-+ */
-+long do_splice_copy_file_range(struct file *in, loff_t *ppos, struct file *out,
-+			       loff_t *opos, size_t len)
-+{
-+	lockdep_assert(file_write_started(out));
-+
-+	return do_splice_direct_actor(in, ppos, out, opos, len, 0,
-+				      copy_file_range_splice_actor);
-+}
-+EXPORT_SYMBOL(do_splice_copy_file_range);
-+
- static int wait_for_space(struct pipe_inode_info *pipe, unsigned flags)
- {
- 	for (;;) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ae0e2fb7bcea..04422a0eccdd 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3052,8 +3052,6 @@ ssize_t copy_splice_read(struct file *in, loff_t *ppos,
- 			 size_t len, unsigned int flags);
- extern ssize_t iter_file_splice_write(struct pipe_inode_info *,
- 		struct file *, loff_t *, size_t, unsigned int);
--extern long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
--		loff_t *opos, size_t len, unsigned int flags);
- 
- 
- extern void
-diff --git a/include/linux/splice.h b/include/linux/splice.h
-index 6c461573434d..11e62b641d69 100644
---- a/include/linux/splice.h
-+++ b/include/linux/splice.h
-@@ -80,11 +80,14 @@ extern ssize_t add_to_pipe(struct pipe_inode_info *,
- long vfs_splice_read(struct file *in, loff_t *ppos,
- 		     struct pipe_inode_info *pipe, size_t len,
- 		     unsigned int flags);
--extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
--				      splice_direct_actor *);
--extern long do_splice(struct file *in, loff_t *off_in,
--		      struct file *out, loff_t *off_out,
--		      size_t len, unsigned int flags);
-+ssize_t splice_direct_to_actor(struct file *file, struct splice_desc *sd,
-+			       splice_direct_actor *actor);
-+long do_splice(struct file *in, loff_t *off_in, struct file *out,
-+	       loff_t *off_out, size_t len, unsigned int flags);
-+long do_splice_direct(struct file *in, loff_t *ppos, struct file *out,
-+		      loff_t *opos, size_t len, unsigned int flags);
-+long do_splice_copy_file_range(struct file *in, loff_t *ppos, struct file *out,
-+			       loff_t *opos, size_t len);
- 
- extern long do_tee(struct file *in, struct file *out, size_t len,
- 		   unsigned int flags);
+ static int copy_file_range_splice_actor(struct pipe_inode_info *pipe,
+@@ -1240,6 +1244,8 @@ EXPORT_SYMBOL(do_splice_direct);
+  *
+  * Description:
+  *    For use by generic_copy_file_range() and ->copy_file_range() methods.
++ *    Like do_splice_direct(), but vfs_copy_file_range() already called
++ *    start_file_write() on @out file.
+  *
+  * Callers already called rw_verify_area() on the entire range.
+  */
 -- 
 2.34.1
 
