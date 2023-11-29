@@ -1,100 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-4180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7390F7FD6DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:36:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CAF7FD6DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3F6F1C20865
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339931C20843
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1098F1DDC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjYPeSRD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981E51DDD8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449ED1C6BC;
-	Wed, 29 Nov 2023 11:20:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA706C433CD;
-	Wed, 29 Nov 2023 11:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701256838;
-	bh=KUFCyIKDrWkKpHdCK1qNaFg2Eg/KOUrc6RUjBFQbwIo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BjYPeSRDNWOs+hUKEKp2KWFQSrSjNEQbOM83PXCggZSbxw5i7GCmb9p0aPc2RlRtM
-	 Zx5Z6TXu22Lf8gFlzQOw7T5RkIXw3muK73LzHH0fQc8WSeccEpZtgY/zgkVS86D85G
-	 hndBmAqkfapKu54uzibKM3zeds+IRGsZmpwpH652UpPAJZ9OW3DAtCwhkmmJbu8KT1
-	 uZZaeVfY1TkwXrlvgG3gtlVW4BsjrOe6efYZb2LLN5DraJxF9tBVKiEy1E1GNGkUvt
-	 z9OT5NQP4lHZjxeH9QroeNW0/yE97vBbBQGWDCiEWutqzQAG5TN5O7V41dRGuaREAq
-	 DjtvBf8NI9P6Q==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2c8880fbb33so85676051fa.0;
-        Wed, 29 Nov 2023 03:20:38 -0800 (PST)
-X-Gm-Message-State: AOJu0Yy5x/DFYeZm7VePZKV1ko0FsZN5i0k032VbZx83+0hsz2kdusdj
-	LOaqJQ5+ExCpEVVHJSmYnqI9jGyoXt9P35KpCmQ=
-X-Google-Smtp-Source: AGHT+IEjdhP/jWajvm2a3me+Nb8Q/i1sz23TsNWjlSfv7oJFBl/SAzvensNAtTmNXoX9t96FXxBT3dwxmHMvrVy3Jb8=
-X-Received: by 2002:a05:651c:1214:b0:2c9:c05b:9870 with SMTP id
- i20-20020a05651c121400b002c9c05b9870mr857219lja.23.1701256837010; Wed, 29 Nov
- 2023 03:20:37 -0800 (PST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B63884;
+	Wed, 29 Nov 2023 03:30:28 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AEB72F4;
+	Wed, 29 Nov 2023 03:31:15 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0D8A3F5A1;
+	Wed, 29 Nov 2023 03:30:22 -0800 (PST)
+Date: Wed, 29 Nov 2023 11:30:20 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 18/27] arm64: mte: Reserve tag block for the zero
+ page
+Message-ID: <ZWcgzPcld1YksCtZ@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-19-alexandru.elisei@arm.com>
+ <c027ea00-a955-4c3c-b1ea-2c3f6906790d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231129003656.1165061-1-song@kernel.org> <20231129003656.1165061-7-song@kernel.org>
- <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
-In-Reply-To: <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 29 Nov 2023 03:20:23 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5Kvcj8cOFf0ZeLZ428+=pjXQfCqx7aYBCthVgtRN2J3g@mail.gmail.com>
-Message-ID: <CAPhsuW5Kvcj8cOFf0ZeLZ428+=pjXQfCqx7aYBCthVgtRN2J3g@mail.gmail.com>
-Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
- fsverity and xattr to sign a file
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c027ea00-a955-4c3c-b1ea-2c3f6906790d@redhat.com>
 
-On Tue, Nov 28, 2023 at 10:47=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Nov 28, 2023 at 4:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> > +char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGES=
-T_SIZE];
->
-> when vmlinux is built without CONFIG_FS_VERITY the above fails
-> in a weird way:
->   CLNG-BPF [test_maps] test_sig_in_xattr.bpf.o
-> progs/test_sig_in_xattr.c:36:26: error: invalid application of
-> 'sizeof' to an incomplete type 'struct fsverity_digest'
->    36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) +
-> SHA256_DIGEST_SIZE];
->       |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Is there a way to somehow print a hint during the build what
-> configs users need to enable to pass the build ?
+On Tue, Nov 28, 2023 at 06:06:54PM +0100, David Hildenbrand wrote:
+> On 19.11.23 17:57, Alexandru Elisei wrote:
+> > On arm64, the zero page receives special treatment by having the tagged
+> > flag set on MTE initialization, not when the page is mapped in a process
+> > address space. Reserve the corresponding tag block when tag storage
+> > management is being activated.
+> 
+> Out of curiosity: why does the shared zeropage require tagged storage? What
+> about the huge zeropage?
 
-Patch 5/6 added CONFIG_FS_VERITY to tools/testing/selftests/bpf/config.
-This is a more general question for all required CONFIG_* specified in the
-file (and the config files for other selftests).
+There are two different tags that are used for tag checking: the logical
+tag, the tag embedded in bits 59:56 of an address, and the physical tag
+corresponding to the address. This tag is stored in a separate memory
+location, called tag storage. When an access is performed, hardware
+compares the logical tag (from the address) with the physical tag (from the
+tag storage). If they match, the access is permitted.
 
-In selftests/bpf/Makefile, we have logic to find vmlinux. We can add simila=
-r
-logic to find .config used to build the vmlinux, and grep for each required
-CONFIG_* from the .config file. Does this sound like a viable solution?
+The physical tag is set with special instructions.
+
+Userspace pointers have bits 59:56 zero. If the pointer is in a VMA with
+MTE enabled, then for userspace to be able to access this address, the
+physical tag must also be 0b0000.
+
+To make it easier on userspace, when a page is first mapped as tagged, its
+tags are cleared by the kernel; this way, userspace can access the address
+immediately, without clearing the physical tags beforehand. Another reason
+for clearing the physical tags when a page is mapped as tagged would be to
+avoid leaking uninitialized tags to userspace.
+
+The zero page is special, because the physical tags are not zeroed every
+time the page is mapped in a process; instead, the zero page is marked as
+tagged (by setting a page flag) and the physical tags are zeroed only once,
+when MTE is enabled at boot.
+
+All of this means that when tag storage is enabled, which happens after MTE
+is enabled, the tag storage corresponding to the zero page is already in
+use and must be rezerved, and it can never be used for data allocations.
+
+I hope all of the above makes sense. I can also put it in the commit
+message :)
+
+As for the zero huge page, the MTE code in the kernel treats it like a
+regular page, and it zeroes the tags when it is mapped as tagged in a
+process. I agree that this might not be the best solution from a
+performance perspective, but it has worked so far.
+
+With tag storage management enabled, set_pte_at()->mte_sync_tags() will
+discover that the huge zero page doesn't have tag storage reserved, the
+table entry will be mapped as invalid to use the page fault-on-access
+mechanism that I introduce later in the series [1] to reserve tag storage,
+and after that set_pte_at() will zero the physical tags.
+
+[1] https://lore.kernel.org/all/20231119165721.9849-20-alexandru.elisei@arm.com/
 
 Thanks,
-Song
+Alex
+
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
