@@ -1,133 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-4203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5537FD998
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 15:37:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0287FD999
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 15:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D860F28272B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB5CB1C209BF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FE832C74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C1932C80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S70NsF+l"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hthlFLVj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD76200C7
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 14:09:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71893C433CB;
-	Wed, 29 Nov 2023 14:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701266996;
-	bh=EDjusMs1DYoal+gcKiDBBMs5RwqSkiX1BaWanw29mek=;
-	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-	b=S70NsF+lAeEKDe9aRjxDyN4QIpnKFQCfHQHTV3jMcfr09ENsZNDoH2MIz0QT3GZJB
-	 cvA1513h1hM0UwYjuCrtascIqOwYYeuQpTao0DOeuvepTAwNLmx/elQssrnl0qnX6R
-	 Bo7Wy9/gajPr+Y7aSWU2HMjLpJF68aBwFyuJmkqGboXpISwa+pUdtQaiX8n3ZF3P0I
-	 x6Eh8919OGWBcw3Cv7uVNqIuhWf3q9xA+SuxaBjYMxazf6IoBkBFJGSlmuhCm+/1AE
-	 h0mTLB9lfPA1Y13S4UzhrUSTIVFPO9ns8ZOvgjPBumG3RAp5cCtNJZlJG/G13T/Hqt
-	 H2ookyDKu+opA==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-58dd6d9ae96so168775eaf.1;
-        Wed, 29 Nov 2023 06:09:56 -0800 (PST)
-X-Gm-Message-State: AOJu0YzPxW679nRKSEB3EdNIzzz1dm/fKudwJsLrhTIq6rtTip8+dsrx
-	sKQQhnLyL1+ZatrJWKSpGIMpTV0BvNIJMZ0z41o=
-X-Google-Smtp-Source: AGHT+IH8UvJdRPohiGCK0IAkKoQtYgYCFbUsrpA81a095NPNU2VfFFGotqSU8/GlMaQqJugBatWABvX0vMmPgues8NM=
-X-Received: by 2002:a05:6820:1c99:b0:58d:d938:26ac with SMTP id
- ct25-20020a0568201c9900b0058dd93826acmr857952oob.8.1701266995541; Wed, 29 Nov
- 2023 06:09:55 -0800 (PST)
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2350B6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:14:03 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-54b0e553979so6537106a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:14:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1701267242; x=1701872042; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mWRzSS/o94V0X2ansQHgqbwk9Hw4ZmwzrPeu+w1E518=;
+        b=hthlFLVjkAazs2h3d/PlikvWTRl0FZ3VgJ3fj2HmKR3swhqPokh2PBgWAxBSNHH5Ll
+         axrPLEaK+qe4kBNgrS3Oa/YIOPKlgtAiGJN6YXCFs5tinH5mAIqV5FMQ9q4+FMA0mTKK
+         /vRPooxN7u2zDfw6rw4pUk4Uwfy/7kv78m+Dw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701267242; x=1701872042;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mWRzSS/o94V0X2ansQHgqbwk9Hw4ZmwzrPeu+w1E518=;
+        b=SyzSDCBx8eqGALurvnYWJ5U1VaSV92zjScF3W2WSSooUNo1VsYFvEazObRX5Dg3mhC
+         6QO8xtAnjOD1/SWZ6KHG4o06vaSFruAjDmngP8C+Ay/2IRbI5XqDpEjLd8Ej+Q9XaKBb
+         gFezMyxlUb7h9aENMZyTpAR/lMBPwBysffCURKKwni35iCQamZozgLRefqTZd41vbO0u
+         ebZYwUA3dAVYFND9eYZ8rYUCQ6epANJKIk2ZpSnhUW7pnQD4iKL1XrrfTeUZ5hcEGP3M
+         +JG5K4nxzGH4iXS2BNex8eD4aeyoaU5aacbloQZH0HBeyAgrrWpG6NPsJnRESusRvlMJ
+         MvyA==
+X-Gm-Message-State: AOJu0Yx66axXrhb1KeZ7tfcRRV0DEWXQ9l2bCheICtnIA2OmOxUtyCty
+	MudfmENIbZRlqdHijg6ATdzpmu9AtMGNuEnyItqDig==
+X-Google-Smtp-Source: AGHT+IFKYbY/9N0/tbiLjxdKdT7etiDvRaBiqWAsyfUfVa2tzwvgl8t/Msglrylws2CC6cazGPp/8ASBv8Cb1LVAd4c=
+X-Received: by 2002:a17:906:4a0b:b0:9fe:ebb:b2b8 with SMTP id
+ w11-20020a1709064a0b00b009fe0ebbb2b8mr13075553eju.68.1701267242413; Wed, 29
+ Nov 2023 06:14:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:ac9:5bce:0:b0:507:5de0:116e with HTTP; Wed, 29 Nov 2023
- 06:09:54 -0800 (PST)
-In-Reply-To: <0000000000009401fb060b28a2e1@google.com>
-References: <0000000000009401fb060b28a2e1@google.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 29 Nov 2023 23:09:54 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-WLUQcyMAWd_R4PKRcciRh=faNnixv38abWmj7V=To9Q@mail.gmail.com>
-Message-ID: <CAKYAXd-WLUQcyMAWd_R4PKRcciRh=faNnixv38abWmj7V=To9Q@mail.gmail.com>
-Subject: Re: [syzbot] Monthly exfat report (Nov 2023)
-To: syzbot <syzbot+listb51f932ee38ecac1b05d@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
+ <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
+ <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
+ <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
+ <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
+ <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
+ <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
+ <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
+ <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
+ <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com> <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 29 Nov 2023 15:13:50 +0100
+Message-ID: <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com>
+Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
+	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
+	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
 Content-Type: text/plain; charset="UTF-8"
 
-2023-11-28 6:03 GMT+09:00, syzbot
-<syzbot+listb51f932ee38ecac1b05d@syzkaller.appspotmail.com>:
-> Hello exfat maintainers/developers,
-Hi,
->
-> This is a 31-day syzbot report for the exfat subsystem.
-> All related reports/information can be found at:
-> https://syzkaller.appspot.com/upstream/s/exfat
->
-> During the period, 1 new issues were detected and 0 were fixed.
-> In total, 7 issues are still open and 12 have been fixed so far.
->
-> Some of the still happening issues:
->
-> Ref Crashes Repro Title
-> <1> 225     No    INFO: task hung in path_openat (7)
-There is no reproducer and I couldn't find where it is connected to exfat.
->
-> https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
-> <2> 150     No    INFO: task hung in exfat_sync_fs
-There is no reproducer... Let me know how to reproduce it.
-This can happen when disk speed is very low and a lot of writes occur.
-Is that so?
+On Wed, 29 Nov 2023 at 08:25, Amir Goldstein <amir73il@gmail.com> wrote:
 
->
-> https://syzkaller.appspot.com/bug?extid=205c2644abdff9d3f9fc
-> <3> 119     Yes   WARNING in drop_nlink (2)
-I'm curious how this issue was classified as an exfat issue.
-When looking at the backtrace, this issue appears to be an hfsplus issue.
+> My proposed solution is to change the semantics with the init flag
+> FUSE_PASSTHROUGH to disallow mmap on FOPEN_DIRECT_IO
+> files.
 
- hfsplus_unlink+0x3fe/0x790 fs/hfsplus/dir.c:381
- hfsplus_rename+0xc8/0x1c0 fs/hfsplus/dir.c:547
- vfs_rename+0xaba/0xde0 fs/namei.c:4844
->
-> https://syzkaller.appspot.com/bug?extid=651ca866e5e2b4b5095b
-> <4> 38      Yes   INFO: task hung in exfat_write_inode
-I could not reproduce this by using C reproducer provided by you.
-Can you confirm that this really cannot be reproduced using it?
+Why?  FOPEN_DIRECT_IO and FUSE_PASSTHROUGH should mix much more
+readily than FOPEN_DIRECT_IO with page cache.
 
+> So with a filesystem that supports FUSE_PASSTHROUGH,
+> FOPEN_DIRECT_IO files can only be used for direct read/write io and
+> mmap maps either the fuse inode pages or the backing inode pages.
 >
-> https://syzkaller.appspot.com/bug?extid=2f73ed585f115e98aee8
-> <5> 1       No    UBSAN: shift-out-of-bounds in exfat_fill_super (2)
-This is false alarm. ->sect_size_bits could not be greater than 12 by
-the check below.
+> This also means that FUSE_DIRECT_IO_RELAX conflicts with
+> FUSE_PASSTHROUGH.
+>
+> Should we also deny mixing FUSE_HAS_INODE_DAX with
+> FUSE_PASSTHROUGH? Anything else from virtiofs?
 
-        /*
-         * sect_size_bits could be at least 9 and at most 12.
-         */
-        if (p_boot->sect_size_bits < EXFAT_MIN_SECT_SIZE_BITS ||
-            p_boot->sect_size_bits > EXFAT_MAX_SECT_SIZE_BITS) {
-                exfat_err(sb, "bogus sector size bits : %u",
-                                p_boot->sect_size_bits);
-                return -EINVAL;
-        }
+Virtiofs/DAX and passthrough are similar features in totally different
+environments.   We just need to make sure the code paths don't
+collide.
+
+> While I have your attention, I am trying to consolidate the validation
+> of FOPEN_ mode vs inode state into fuse_finish_open().
 >
-> https://syzkaller.appspot.com/bug?extid=d33808a177641a02213e
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> To disable reminders for individual bugs, reply with the following command:
-> #syz set <Ref> no-reminders
->
-> To change bug's subsystems, reply with:
-> #syz set <Ref> subsystems: new-subsystem
->
-> You may send multiple commands in a single email message.
->
+> What do you think about this partial patch that also moves
+> fuse_finish_open() to after fuse_release_nowrite().
+> Is it legit?
+
+I suspect it won't work due to the i_size reset being in
+fuse_finish_open().  But I feel there's not enough context to
+understand why this is needed.
+
+Thanks,
+Miklos
 
