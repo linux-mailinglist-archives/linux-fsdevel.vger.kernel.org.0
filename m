@@ -1,126 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-4270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2497FE347
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:38:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8463E7FE34F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809DD1C20445
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4066628222F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E192C47A58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7BD47A4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IB53PCzW"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="UNFt8p/f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8544661FBC;
-	Wed, 29 Nov 2023 21:50:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 41392C2BCFE;
-	Wed, 29 Nov 2023 21:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701294658;
-	bh=fGkhj5/NF9UPawvhqYtWeLh70xVuDREL8YeiOyAcAQA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IB53PCzW++dHYvwKAxy9kOqiyPyUek3biP1aF4qO+xxCiRDBxWIsvoQgfusBoAUhC
-	 yPGQL94ljCFqKIBx4pBRDlJDGJJC8pzejcgg7fwE7cYMmyR5VIO6kgDA8G0tKWFDaE
-	 bbFuPFjpreoMnn5mME0Y8Tuqs20jJ+Hd35oXKkVxID942x3Q4rW2JEJbO7adRrm0Ls
-	 cGcoDHR3+4Zo/1+djNBX8tcKchb8aotvtqjnkt3ZYxbRVbtRpmndCnwzlAsXB7pY99
-	 MZytrt3cW9mz5QqWcWmbRIJeZo89PVPFo/z8rRENvBWkvZteNZ/dyBKmFDFXxqH8Ov
-	 6EW1MI9msi4YQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32624C4167B;
-	Wed, 29 Nov 2023 21:50:58 +0000 (UTC)
-From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 29 Nov 2023 15:50:34 -0600
-Subject: [PATCH 16/16] vfs: return -EOPNOTSUPP for fscaps from vfs_*xattr()
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9774FC9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 14:00:21 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id d75a77b69052e-423dccefb68so11785681cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 14:00:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1701295221; x=1701900021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiOfm5uGDMrP0UYnHwC5BRUcA0oU3b2DbcdcIFPiI/Q=;
+        b=UNFt8p/fEXprRIha0J4eUYVKdi0rMA0hG/lMPhmctuPcjQJK6pEQ9RvLTiv8Kch8sH
+         DmwAsrHbMES4yL1KDjQeRA+RNsyN36dikvvVwKZyg04i0/Y5jSjtVNFtzgx4xf57isnG
+         8aS2PljASnxisy6dFJi89LsColXBx0oKXkEkkefCKjWRjwbeoBeu105E8AOy0pwcip5j
+         zeh9l8zPvy1Dat+KfgtfVl2BkSgeEcaVJ3aqwdKM3BpStr4wjn0SvPmqg94RkJspa+fq
+         oT+8Zjc2Ft7qT0u0d80xNtngesAUklPc6F2Nx4AXZaFm+ctalbeH6XBjIFjPqRHZF9eQ
+         EUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701295221; x=1701900021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiOfm5uGDMrP0UYnHwC5BRUcA0oU3b2DbcdcIFPiI/Q=;
+        b=PmRUdT+rKPbsF1SWXfnCJPwjDegw+mdwY8xHze/wr5XGH/GttaLMIsRp4NUqMHdEz0
+         2lNoTil59QPIudicv4TQCFeVbSxZv+KnNO7R0xYvv8v4/PZ+bomRzPC8NaR1IGDg+Jxg
+         yPXwwZTc79y5Nk0JpDzoNBBlPEdrTY3sJtoR2uY8Dwn/g7JkMnZyKNeUTWGxSJkeMVLZ
+         OXaqTePrmvgq9RuzbgEFBe+KMiLSvbjt2YedMRvYcRgkUmOq1sZX54XS4hpfynsuRNKf
+         dM2M4oWMB4ovEUIVMa+uyy/MlkHEBaRD2zLGjua8UAT7IdP9xW+1/LRbkQB+KKaoPbtf
+         dESg==
+X-Gm-Message-State: AOJu0YwnPGvbWz6KL4yv3TpkbiCMuWD7n4Kkq39dGndEUappsrVidKtT
+	MTbNU2A5e0umdG6gCvTAP/b3XoUUo+TiIKufS8NKeg==
+X-Google-Smtp-Source: AGHT+IGmE/x/Q9wBAAP4WSVeu6Pzwkh80gJNXkwIoavJV9VXufokUhNCLXMfXFExg6GRm7Q1Y/p8TrFXYkay1vjqtA4=
+X-Received: by 2002:ac8:5ac4:0:b0:41c:d62b:fb51 with SMTP id
+ d4-20020ac85ac4000000b0041cd62bfb51mr39263562qtd.26.1701295220560; Wed, 29
+ Nov 2023 14:00:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20231129-idmap-fscap-refactor-v1-16-da5a26058a5b@kernel.org>
-References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
-In-Reply-To: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
- Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
- James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
- linux-unionfs@vger.kernel.org, 
- "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1541; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=fGkhj5/NF9UPawvhqYtWeLh70xVuDREL8YeiOyAcAQA=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBlZ7I+wlKgt++JWupSZaBp9QGfd?=
- =?utf-8?q?Bkmz7IEI8ioxj4s_f1+aQbyJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZWeyPgAKCRBTA5mu5fQxyTvfB/_9YWexz1iQXD9/hl9qna/DWzl4zGo/SAzZV9?=
- =?utf-8?q?yU+WAg1lMJqq4GFg0sAtqm2p8er4jQP8TEmJ1gfT+Rp_OwnKnhV4uu4HWyEr7dNuR?=
- =?utf-8?q?ZPmxzAryHGI1rMeQqZmBuQ6oItUJeIE00YEKRTgMVm18qFcraMmUQVYcD_o8vPfg2?=
- =?utf-8?q?zw4i4XaDyCATxBE4yxIWmTjTHvJxdui3jxNCN1DDq9wMrXGKX2OZsyeCDw9VhgdNL?=
- =?utf-8?q?6EYyF2_xIHyfPKGASENkIpB05s2Aq3zudSepjo7YMWyfxSC3ghhvdqjksN1MMdM8J?=
- =?utf-8?q?Ff8oAsfPKxEyobr3TadT?= DOjWk90F22+U7CvJPhBxhcP09S5qxG
-X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
- fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
-X-Endpoint-Received:
- by B4 Relay for sforshee@kernel.org/default with auth_id=103
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+ <20231128204938.1453583-10-pasha.tatashin@soleen.com> <20231128235254.GE1312390@ziepe.ca>
+In-Reply-To: <20231128235254.GE1312390@ziepe.ca>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Nov 2023 16:59:43 -0500
+Message-ID: <CA+CK2bC=vMU54wXz1GSzpOcLFCuX5vuE6tD49JF8cMbz4tis-g@mail.gmail.com>
+Subject: Re: [PATCH 09/16] iommu/iommufd: use page allocation function
+ provided by iommu-pages.h
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
+	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
+	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
+	wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that the new vfs-level interfaces are fully supported and all code
-has been converted to use them, stop permitting use of the top-level vfs
-xattr interfaces for capabilities xattrs. Unlike with ACLs we still need
-to be able to work with fscaps xattrs using lower-level interfaces in a
-handful of places, so only use of the top-level xattr interfaces is
-restricted.
+On Tue, Nov 28, 2023 at 6:52=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Tue, Nov 28, 2023 at 08:49:31PM +0000, Pasha Tatashin wrote:
+> > Convert iommu/iommufd/* files to use the new page allocation functions
+> > provided in iommu-pages.h.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >  drivers/iommu/iommufd/iova_bitmap.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> This is a short term allocation, it should not be counted, that is why
+> it is already not using GFP_KERNEL_ACCOUNT.
 
-Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
----
- fs/xattr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 372644b15457..4b779779ad8c 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -540,6 +540,9 @@ vfs_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	const void  *orig_value = value;
- 	int error;
- 
-+	if (!strcmp(name, XATTR_NAME_CAPS))
-+		return -EOPNOTSUPP;
-+
- retry_deleg:
- 	inode_lock(inode);
- 	error = __vfs_setxattr_locked(idmap, dentry, name, value, size,
-@@ -655,6 +658,9 @@ vfs_getxattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct inode *inode = dentry->d_inode;
- 	int error;
- 
-+	if (!strcmp(name, XATTR_NAME_CAPS))
-+		return -EOPNOTSUPP;
-+
- 	error = xattr_permission(idmap, inode, name, MAY_READ);
- 	if (error)
- 		return error;
-@@ -794,6 +800,9 @@ vfs_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	struct inode *delegated_inode = NULL;
- 	int error;
- 
-+	if (!strcmp(name, XATTR_NAME_CAPS))
-+		return -EOPNOTSUPP;
-+
- retry_deleg:
- 	inode_lock(inode);
- 	error = __vfs_removexattr_locked(idmap, dentry,
-
--- 
-2.43.0
-
+I made this change for completeness. I changed all calls to
+get_free_page/alloc_page etc under driver/iommu to use the
+iommu_alloc_* variants, this also helps future developers in this area
+to use the right allocation functions.
+The accounting is implemented using cheap per-cpu counters, so should
+not affect the performance, I think it is OK to keep them here.
 
