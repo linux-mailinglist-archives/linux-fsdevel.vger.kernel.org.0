@@ -1,124 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-4156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE967FD0FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 09:35:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0190C7FD0FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 09:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297BF1C20921
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:35:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE638282752
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFFA125AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676F01097A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 08:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BqLTFAPS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFhfVJ3l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07E201735
-	for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 22:46:37 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id d9443c01a7336-1ce28faa92dso49491315ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Nov 2023 22:46:37 -0800 (PST)
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB05170B;
+	Tue, 28 Nov 2023 22:47:44 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-332c7d4a6a7so4211834f8f.2;
+        Tue, 28 Nov 2023 22:47:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701240396; x=1701845196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1701240462; x=1701845262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RyxKGsDDmionjo2B8miY6iT9daY13roQZ6KjJIz8GxU=;
-        b=BqLTFAPSs6vp7tZc5N6YUjK1ZFb6s3/RIiG8FWvjZ4ukzi2F1RPfAgpmzYe1O0SLSU
-         tjlC4ueVlMBnIyVQcoLn3/Ik+DmtrghSr2JZR23BnAnPbHGdoK/jDLWb+/C2paWE3D4a
-         olLvC79OLcj6ii24mtsqJz4kXaqurnCpgzSik=
+        bh=uoQz0W1zrsabXG6C9p+w20DAO2gb0rfGAOA6XEqMdok=;
+        b=mFhfVJ3l1DvSpGqovl2S6YYC9ePV0URA06pTksM9kq4KT90o3XqG7waOL+biIe+d5E
+         E0dDPsqM8cQlvumPzca6R4CILbSD2jUfuOIe06kjMpZ+0ldYWsFGIEAlGWz9ThYuRwhq
+         RDL5njc4yzUFu/b90hb7FmhmovsJZKp/46pFifuJm2E/0UYWFnJzW2/277oFIlQi9f1Z
+         hh+k+d5mBrYinTmevn0ZMZypCIvwXF9OywubQEo5IG0XxOnBl+RzvpNVCVTE8++rF5Le
+         WsahbPA1PSZIDRdFQ9s3LgGu0ll/QzehFsxJmznn8IhmEU8IZka4tf999n5W6s6oOIET
+         GP7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701240396; x=1701845196;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1701240462; x=1701845262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RyxKGsDDmionjo2B8miY6iT9daY13roQZ6KjJIz8GxU=;
-        b=Hnu6TlQDRnLCnwoGP2vch8BvsTPPqSPBBxvaBkBOyiXjHLYdrX0mGSPSL874Ngr79M
-         gvWC4LqcOFsBCuP6HWuRup2ix8DEVSRapcf/7KnAi3IwZLwLVEerNaBC2aAnrowS1LNb
-         oHhYnolSAkJo8+ypdI0Ck8vw1niql5ZFe7UeG+OSBfzFGDA82Fu+Wfb73H8LPrRSV/8L
-         JxQazeGFRpFOekhYigb0odAaTsg4cl9oR7174zkDEb+UZ5NtGTepRhPX1/jZfst0Rovh
-         yeHg/g8bsN4Za+682JJBXKMm3JmgeLXA/RlMBXMsnMAvLRsXM0S1pAozI9up3Y68KOEu
-         WEGA==
-X-Gm-Message-State: AOJu0YwUrbXJtnyoDRc04Wlnhj3+EsnxE0BcDJWT9Re9sZJ77Nu2BIOS
-	vACvAkc78g0PLNbCjGHo8PBOHN++1uNpI1IuScGe
-X-Google-Smtp-Source: AGHT+IG23nU4vS1DYp5SlYmmlq7+8C9LOr6OEIhmtL9SDb8Kwd2Yx1xArFoilngLPfE1+7D2X/qp6Q==
-X-Received: by 2002:a17:902:e552:b0:1cf:fe32:6319 with SMTP id n18-20020a170902e55200b001cffe326319mr4506271plf.53.1701240396455;
-        Tue, 28 Nov 2023 22:46:36 -0800 (PST)
-Received: from yuanyao.c.googlers.com.com (0.223.81.34.bc.googleusercontent.com. [34.81.223.0])
-        by smtp.gmail.com with ESMTPSA id ju12-20020a170903428c00b001bbb8d5166bsm11463203plb.123.2023.11.28.22.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 22:46:36 -0800 (PST)
-From: Yuan Yao <yuanyaogoog@chromium.org>
-To: bernd.schubert@fastmail.fm,
-	yuanyaogoog@chromium.org
-Cc: linux-fsdevel@vger.kernel.org,
-	miklos@szeredi.hu,
-	dsingh@ddn.com,
-	hbirthelmer@ddn.com,
-	brauner@kernel.org,
-	viro@zeniv.linux.org.uk,
-	bschubert@ddn.com,
-	keiichiw@chromium.org,
-	takayas@chromium.org
-Subject: [PATCH 1/1] fuse: Handle no_open/no_opendir in atomic_open
-Date: Wed, 29 Nov 2023 06:46:07 +0000
-Message-ID: <20231129064607.382933-2-yuanyaogoog@chromium.org>
-X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
-In-Reply-To: <20231129064607.382933-1-yuanyaogoog@chromium.org>
-References: <CAOJyEHaoRF7uVdJs25EaeBMbezT0DHV-Qx_6Zu+Kbdxs84BpkA@mail.gmail.com>
- <20231129064607.382933-1-yuanyaogoog@chromium.org>
+        bh=uoQz0W1zrsabXG6C9p+w20DAO2gb0rfGAOA6XEqMdok=;
+        b=sqQ0GtlZ8D02g6F3oABaYPw2DX5Au+Bd2G/FluFiKhisATmNJBJMwdir+QdmO4lBl4
+         pwWT356D+MRga4gHgCFNq5eVnr8xR3Xd1i1OiPPgFCFWh73nHa5dfWnJJWv2cS2BcTEW
+         WKSEu9m1Jd4JjfesDcRom1KJ40t9Xrhi29DX9sw4MreLOVHE5F/HVY2NKZAV+l7UtOGr
+         JJR8+OQsR0IWVA0W+wOQTgQGDOTy8IFYNolyDlXqrnK4MVyk8T/T4p9kShBSQc/iGrAk
+         RaoBnjN+zqBDYNJS85h9ELCU8v074UXLI079cR+d0fiysSVe6R6p7RSGkpRFphdnXc2d
+         ohfg==
+X-Gm-Message-State: AOJu0YxM3/lg3Xf0q7gLc1eJClELRD5uJaodV/npjZ+dNz4jWIrcwLTD
+	5GBb3ApniIxZoMY2h9xEojTDPzcyFo+Swfvu+UNsEKygRdg=
+X-Google-Smtp-Source: AGHT+IFN+lb5qvDxfIaWhrx1aSH/XLg8D+DoimtQZ2lwqG3I1fCwH1BzVpWtfsFQfVvr8RIBHZUK6gYVD0WhHS8je20=
+X-Received: by 2002:a05:6000:225:b0:332:ce72:d589 with SMTP id
+ l5-20020a056000022500b00332ce72d589mr11654697wrz.3.1701240462397; Tue, 28 Nov
+ 2023 22:47:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231129003656.1165061-1-song@kernel.org> <20231129003656.1165061-7-song@kernel.org>
+In-Reply-To: <20231129003656.1165061-7-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 28 Nov 2023 22:47:31 -0800
+Message-ID: <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
+Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
+ fsverity and xattr to sign a file
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
+	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Kernel Team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, if the fuse server supporting the no_open/no_opendir feature
-uses atomic_open to open a file, the corresponding no_open/no_opendir
-flag is not set in kernel. This leads to the kernel unnecessarily
-sending extra FUSE_RELEASE request, receiving an empty reply from
-server when closes that file.
+On Tue, Nov 28, 2023 at 4:37=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> +char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_DIGEST_=
+SIZE];
 
-This patch addresses the issue by setting the no_open/no_opendir feature
-bit to true if the kernel receives a valid dentry with an empty file
-handler.
+when vmlinux is built without CONFIG_FS_VERITY the above fails
+in a weird way:
+  CLNG-BPF [test_maps] test_sig_in_xattr.bpf.o
+progs/test_sig_in_xattr.c:36:26: error: invalid application of
+'sizeof' to an incomplete type 'struct fsverity_digest'
+   36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) +
+SHA256_DIGEST_SIZE];
+      |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Yuan Yao <yuanyaogoog@chromium.org>
----
- fs/fuse/dir.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 9956fae7f875..edee4f715f39 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -8,6 +8,7 @@
- 
- #include "fuse_i.h"
- 
-+#include <linux/fuse.h>
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/fs_context.h>
-@@ -869,6 +870,13 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 		goto out_err;
- 	}
- 
-+	if (ff->fh == 0) {
-+		if (ff->open_flags & FOPEN_KEEP_CACHE)
-+			fc->no_open = 1;
-+		if (ff->open_flags & FOPEN_CACHE_DIR)
-+			fc->no_opendir = 1;
-+	}
-+
- 	/* prevent racing/parallel lookup on a negative hashed */
- 	if (!(flags & O_CREAT) && !d_in_lookup(entry)) {
- 		d_drop(entry);
--- 
-2.43.0.rc1.413.gea7ed67945-goog
-
+Is there a way to somehow print a hint during the build what
+configs users need to enable to pass the build ?
 
