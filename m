@@ -1,143 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-4238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7FF7FDF83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:43:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBF97FDF84
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6291C209CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4ED282757
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AC85DF08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72A95DF01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+r6OyfX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OtYewhT3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC351C293;
-	Wed, 29 Nov 2023 17:13:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04ADEC433C9;
-	Wed, 29 Nov 2023 17:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701278036;
-	bh=rwJvppmrLy1P/MmPKSamrNN7Qxe5PzI8xPdRqi5d0VM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u+r6OyfX0aEHZDbfGWAJ7VuOmIawZC6PpoVobG1JmykL9aSG0hlltlzDyZqIjibIT
-	 gyCV3iJOMlgPlbzHaIDC+gyqeywkfnxQpGu6Xj2NOE4EmtDn+ANIlxUDaocq1bGS1s
-	 t4OPgBQoxw5FNjSYW5VmR8REfBHRBVS6pnZRCIJ/yYwLnmZmghgwU17WZQQ9n0EwkF
-	 nZZtmaohPylpJvq8nbWn/Q6n2FOJkOL9zuiB55dDMcRx3bvkQtgsPmz24CdF6ooXoD
-	 aeKscXlyPsP1rfbgycZ8iCvssYmdcx8+p9PygktKdD6QbrmYY2Rd95qqYIz70DgI3Z
-	 cR9AoEhMCsgGg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2c9b1839e90so11383631fa.1;
-        Wed, 29 Nov 2023 09:13:55 -0800 (PST)
-X-Gm-Message-State: AOJu0YxTDNoSPugAKWIOKC6EeM+KUMnWqYFGPc3tNaA95LJvEU2yl7p8
-	vahvz5sRFpOZyBZU/RjzryA90kE3WHfBzmQO46I=
-X-Google-Smtp-Source: AGHT+IExa5zwajC/GzqsEbFlosESXxxXS3HE7q1ADy5OKUBLi4tjjkw2bL5QtF3VQO1Jfq0SC8DxdAXc77R2cVLltiA=
-X-Received: by 2002:a2e:b04e:0:b0:2c9:bf97:81c1 with SMTP id
- d14-20020a2eb04e000000b002c9bf9781c1mr857584ljl.22.1701278034233; Wed, 29 Nov
- 2023 09:13:54 -0800 (PST)
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD2FC9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 09:14:36 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id 46e09a7af769-6d64c1155a8so18408a34.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 09:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1701278076; x=1701882876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MVsHkDnPJv0j8Tyw7llEjBSU+xBdT2jqqtQEJ/0zHok=;
+        b=OtYewhT3wmSbRL7ryhSGj0r15FYQ7Y7RS8yNJv7JnCy4UbHx0U7mQ1W7jo42tx/M2Y
+         Ie28l5Km/fGm/OXKTp8I1lnDi/dR2KHFAS9SjNa3PO3eaMczQaaTNcZlxArvnQR5ARr0
+         3vAHzm98zbFAy1f+GzAeAcbIbkVvE8JUnRKm+9dlQG5sk7iFVKK2fjpod9ihR03+qKHG
+         1EzJ0YCnPlPl/4ktMeFqXBZAud3heEanQVCwXxYviq/7OMVwQ18LYXlE/Xd8ELI/MYVM
+         DTnJmS1UQyrFlFcrXPPJiucu40+KtOKlvl9Dv9r/kwF4kUsIJNvAHlUG5ruPOlrnExgS
+         BmWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701278076; x=1701882876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MVsHkDnPJv0j8Tyw7llEjBSU+xBdT2jqqtQEJ/0zHok=;
+        b=i9GQYVgNh7BdD2pjNZKCdqy5JHOnSqeBkHKA4nzlX9hps2610EfKGZ/24UgW/Ub4/B
+         gZqvdUymUfjItx88E6g3JiMmWTuzdRY34ZGllTdtoVtTULDGruPm//LgmtD0dAEH5/8V
+         S4fFTwQbrIIQOT9NOPrcTFbP0X5BhQ6qC9yy8/vIZivKrEWRIdATvwIyHzBLpNzcSKPK
+         YPHxy7n0YfdnioJ5Z06GRi0LegdPX1bT5G9kQ3QfpX41UgC92iSJrKMzlLQAQDxO/obi
+         gzj1PvdNIy3kA9r+AdpBDsv0BOuN219Swg68ZZslX4wbdYpDSI/wTiT9RnUE+uORgU6J
+         1Tng==
+X-Gm-Message-State: AOJu0YyHC0Fvei0No6Hlrq1XdTqVYAJ/kXL1sJtEd65kgo9gQhSgL2k/
+	rYQ9tMxmH5rV9y3U4SuZXgM0FglAwivifPQlrfbd0w==
+X-Google-Smtp-Source: AGHT+IG/Y/jre/2EQ/tO3gsWKMCBwDqTqTUvW8ZnVpGn4c1xWujT3jYFmjBsMcCjYyA3TQyN5J0+PC1fAeByipFxMuM=
+X-Received: by 2002:a05:6358:9998:b0:16b:fbd7:e34a with SMTP id
+ j24-20020a056358999800b0016bfbd7e34amr20723935rwb.5.1701278075870; Wed, 29
+ Nov 2023 09:14:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231129003656.1165061-1-song@kernel.org> <20231129003656.1165061-7-song@kernel.org>
- <CAADnVQJb3Ur--A8jaiVqpea1kFXMCd46uP+X4ydcOVG3a5Ve3Q@mail.gmail.com>
- <CAPhsuW5Kvcj8cOFf0ZeLZ428+=pjXQfCqx7aYBCthVgtRN2J3g@mail.gmail.com> <CAADnVQLnMfu91VMVzdh=_qMNhzwvks69XHa5RPbsXk1c437-Hg@mail.gmail.com>
-In-Reply-To: <CAADnVQLnMfu91VMVzdh=_qMNhzwvks69XHa5RPbsXk1c437-Hg@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 29 Nov 2023 09:13:42 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW7xGNybcovxTO+T_R7FqYpPvU7J1EX2OCOfbtASRG9yAg@mail.gmail.com>
-Message-ID: <CAPhsuW7xGNybcovxTO+T_R7FqYpPvU7J1EX2OCOfbtASRG9yAg@mail.gmail.com>
-Subject: Re: [PATCH v14 bpf-next 6/6] selftests/bpf: Add test that uses
- fsverity and xattr to sign a file
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, fsverity@lists.linux.dev, 
-	Eric Biggers <ebiggers@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Amir Goldstein <amir73il@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Kernel Team <kernel-team@meta.com>
+References: <20231129-zwiespalt-exakt-f1446d88a62a@brauner> <20231129165551.3476910-1-aliceryhl@google.com>
+In-Reply-To: <20231129165551.3476910-1-aliceryhl@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 29 Nov 2023 18:14:24 +0100
+Message-ID: <CAH5fLgi6n6WiueLkzvZ7ywt5hXWAJFAyseRr3O=KRAHUQ=hNrQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] rust: file: add `FileDescriptorReservation`
+To: brauner@kernel.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, 
+	gary@garyguo.net, gregkh@linuxfoundation.org, joel@joelfernandes.org, 
+	keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, 
+	wedsonaf@gmail.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 29, 2023 at 6:56=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Wed, Nov 29, 2023 at 3:20=E2=80=AFAM Song Liu <song@kernel.org> wrote:
-> >
-> > On Tue, Nov 28, 2023 at 10:47=E2=80=AFPM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Tue, Nov 28, 2023 at 4:37=E2=80=AFPM Song Liu <song@kernel.org> wr=
-ote:
-> > > > +char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) + SHA256_D=
-IGEST_SIZE];
-> > >
-> > > when vmlinux is built without CONFIG_FS_VERITY the above fails
-> > > in a weird way:
-> > >   CLNG-BPF [test_maps] test_sig_in_xattr.bpf.o
-> > > progs/test_sig_in_xattr.c:36:26: error: invalid application of
-> > > 'sizeof' to an incomplete type 'struct fsverity_digest'
-> > >    36 | char digest[MAGIC_SIZE + sizeof(struct fsverity_digest) +
-> > > SHA256_DIGEST_SIZE];
-> > >       |                          ^     ~~~~~~~~~~~~~~~~~~~~~~~~
-> > >
-> > > Is there a way to somehow print a hint during the build what
-> > > configs users need to enable to pass the build ?
-> >
-> > Patch 5/6 added CONFIG_FS_VERITY to tools/testing/selftests/bpf/config.
-> > This is a more general question for all required CONFIG_* specified in =
-the
-> > file (and the config files for other selftests).
-> >
-> > In selftests/bpf/Makefile, we have logic to find vmlinux. We can add si=
-milar
-> > logic to find .config used to build the vmlinux, and grep for each requ=
-ired
-> > CONFIG_* from the .config file. Does this sound like a viable solution?
->
-> No need for new logic to parse .config.
-> libbpf does it already and
-> extern bool CONFIG_FS_VERITY __kconfig __weak;
-> works.
->
-> Since you hard code MAGIC_SIZE anyway I'm asking
-> to hard code sizeof(struct fsverity_digest) as well, since the bpf prog
-> doesn't access it directly. It only needs to know its size.
->
-> While inside:
-> int BPF_PROG(test_file_open, struct file *f)
-> {
->   if (!CONFIG_FS_VERITY) {
->      skip_fs_verity_test =3D true;
->      return 0;
->   }
->
-> and report it as a clean error message in test_progs.
+On Wed, Nov 29, 2023 at 5:55=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
 
-Yeah, this makes sense. Let me update the tests.
-
-Thanks,
-Song
-
-> We keep adding new config requirements selftests/bpf/config which
-> forces all developers to keep adding new configs to their builds.
-> In the past, when we didn't have BPF CI, that was necessary, but now
-> BPF CI does it for us.
-> With clean error message from test_progs the developers can either
-> ignore the error and proceed with their work or adjust their .config
-> eventually. While hard selftest build error forces all devs to
-> update .config right away and build error has no info of what needs
-> to be done which is not developer friendly.
+> >> +    pub fn commit(self, file: ARef<File>) {
+> >> +        // SAFETY: `self.fd` was previously returned by `get_unused_f=
+d_flags`, and `file.ptr` is
+> >> +        // guaranteed to have an owned ref count by its type invarian=
+ts.
+> >> +        unsafe { bindings::fd_install(self.fd, file.0.get()) };
+> >
+> > Why file.0.get()? Where did that come from?
 >
-> pw-bot: cr
+> This gets a raw pointer to the C type.
 >
+> The `.0` part is a field access. `ARef` struct is a tuple struct, so its
+> fields are unnamed. However, the fields can still be accessed by index.
+
+Oh, sorry, this is wrong. Let me try again:
+
+This gets a raw pointer to the C type. The `.0` part accesses the
+field of type `Opaque<bindings::file>` in the Rust wrapper. Recall
+that File is defined like this:
+
+pub struct File(Opaque<bindings::file>);
+
+The above syntax defines a tuple struct, which means that the fields
+are unnamed. The `.0` syntax accesses the first field of a tuple
+struct [1].
+
+The `.get()` method is from the `Opaque` struct, which returns a raw
+pointer to the C type being wrapped.
+
+Alice
+
+[1]: https://doc.rust-lang.org/std/keyword.struct.html#:~:text=3DTuple%20st=
+ructs%20are%20similar%20to,with%20regular%20tuples%2C%20namely%20foo.
 
