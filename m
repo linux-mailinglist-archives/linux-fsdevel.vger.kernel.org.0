@@ -1,79 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-4258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A0B7FE365
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 587F87FE366
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44721C20AEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:41:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FCD1C20AD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2330B47A52
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AE23B1BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="HJAXN7iB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 218A995
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 13:42:05 -0800 (PST)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-5be10675134so270809a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 13:42:05 -0800 (PST)
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EED69A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 13:49:47 -0800 (PST)
+Received: by mail-qt1-x831.google.com with SMTP id d75a77b69052e-41cc44736f2so1437931cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 13:49:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1701294586; x=1701899386; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpfJU5sAguyt0/G2iahMIWT2bpNq5anO26/F530wIyY=;
+        b=HJAXN7iBuM+uFe3zpc3uYLzvOrZnIW7Rgobqx2d537etXTr6TuiIL3TGjesui2UVtu
+         ym9h1km+8brtg4+qvFbTJ/KGkB99nz+J6BlPVefUjP75DT0T/iqdEU+11sUDRcgH3HJ7
+         +4Klj115UftA0kmoj7LInHKSZYOWoxkXk74aDAVJeXJYH/g4lbTzhcqpJfAn+0kxnqI6
+         6ZIMCtFpmruYQfbTX7FbF8JoNHYNSbkrGeodxLLP4hU6ZiF/yZoFz3lefYVEoGFGYl6I
+         zYtXzMAoNccvxhAZjunXzc3FpJAW2TyZSzZiRTwxPfJkj2eXwSkRa9IMyH1vfOM/YI6j
+         7icA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701294124; x=1701898924;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/NbCxHxoX/8oZaN5a+Csa1q9zeATXJUOImFIfAeLV9A=;
-        b=n1qlYXYyq7u9vsDJnzSvDCey8iK/7usDBwlK6Kg5xHVuwAFLt9KMQKsb6MiCI1IJrQ
-         Zb2zQBxLU75DEet+f+/SyCTd0dKEVlMiaMEwZKCkDk1+doo+yBCu1BlVGKhsYRko5vFO
-         fLslAOoZfchSZRT3rXLA6mQlhuIg40C6h+fLLkvRtF6drKuq6GiQ5ahBEObrX5L6pcEu
-         jbHECfHIH9fmmKJpzH/ww7U5V8P9Hjz0xb8VXF5RYNyvGdzU43CcRdfeUa256Fsfhs70
-         ELOI5za9gT7+JI4+k1Z/vKqneIo+51wr/AMpOpgrYsnK0jhOAmg3ZgV7qR9U2N/FXe6T
-         Kc+Q==
-X-Gm-Message-State: AOJu0YyNYPmA42doGCzME/yKTaKUAD8Lp1AQYUDgoiKFdSug6ZLVGqg1
-	DM2mUfh5uCas8QObjoLiZCZDI4j3GJ5YeC4MUOgo2D18l92W
-X-Google-Smtp-Source: AGHT+IETi66dWW6/8wkIKVCpieF7K0d2+NGao1l0CjphPq9lMagnrVVW0dwnje+k6Qh7AN7/WuIPFTQPMEGbEwJR1N4giQSK5hhd
+        d=1e100.net; s=20230601; t=1701294586; x=1701899386;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cpfJU5sAguyt0/G2iahMIWT2bpNq5anO26/F530wIyY=;
+        b=CuDxkNe2gH0sHgyUJw3IVfWgVWdkSe1VpeWO9u8GpbunePogI/gXy0csepCNeHh21M
+         bFSRgEQrMKguZY7iJ0hRPElkcNdx+E2HGjghk8hvPrbPeXufj+wmHzkalSWWI1GmBR3D
+         YWFUw6LHYQ9Jq3q39lWWmB3ZKu7umMhI3fUhIRbmuA10lXLw1Tm/ZmTyq+PsEdfP6sza
+         E1h4QzG2rs8Oym92oMUHeIID37+hY6ucC8IZHyhFkRbVvogbrzjbxTX0sK8EpL7BljRn
+         R+FTb2Zn0u5rWJr2JgMWxSAaQjjCz/xLyUSCF+TWBKBQ1siLqQbr6sbrPTP5m8oYBHnQ
+         TH1A==
+X-Gm-Message-State: AOJu0YxXd6ITGWnXvZdabCb9GtyEPTwGMohJpaFIO50osE3RoPLDMN54
+	DVmxy9XKZPO47nG11JqyzUXytR2JCkd4M0aNgvvKyw==
+X-Google-Smtp-Source: AGHT+IHQGnPttzbf2bAdb5gwZpT0Nh8amOSeNRZF+eb1/SrYiR5d7rhV+9FkDuUK6ClQ83baR1dhxHx1LVYRiRyKJoI=
+X-Received: by 2002:a05:622a:34c:b0:41e:213d:3c8e with SMTP id
+ r12-20020a05622a034c00b0041e213d3c8emr22630747qtw.32.1701294586528; Wed, 29
+ Nov 2023 13:49:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a63:1009:0:b0:5b9:6677:b8d with SMTP id
- f9-20020a631009000000b005b966770b8dmr3298317pgl.6.1701294124632; Wed, 29 Nov
- 2023 13:42:04 -0800 (PST)
-Date: Wed, 29 Nov 2023 13:42:04 -0800
-In-Reply-To: <000000000000db858c05f06f30b0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f5144d060b5167d8@google.com>
-Subject: Re: [syzbot] [exfat?] INFO: task hung in exfat_write_inode
-From: syzbot <syzbot+2f73ed585f115e98aee8@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, namjae.jeon@samsung.com, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+ <20231128204938.1453583-5-pasha.tatashin@soleen.com> <ca7a025d-8154-4509-b8ab-2a17e53ccbef@app.fastmail.com>
+In-Reply-To: <ca7a025d-8154-4509-b8ab-2a17e53ccbef@app.fastmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Nov 2023 16:49:10 -0500
+Message-ID: <CA+CK2bB-TMCgpjvuXRigNaaA2Zmj=r3PHTQMaqs5W-9FkE3roQ@mail.gmail.com>
+Subject: Re: [PATCH 04/16] iommu/io-pgtable-dart: use page allocation function
+ provided by iommu-pages.h
+To: Janne Grunau <j@jannau.net>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, Alyssa Rosenzweig <alyssa@rosenzweig.io>, asahi@lists.linux.dev, 
+	Lu Baolu <baolu.lu@linux.intel.com>, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, David Woodhouse <dwmw2@infradead.org>, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com, 
+	Joerg Roedel <joro@8bytes.org>, Kevin Tian <kevin.tian@intel.com>, krzysztof.kozlowski@linaro.org, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, Hector Martin <marcan@marcan.st>, mhiramat@kernel.org, 
+	mst@redhat.com, m.szyprowski@samsung.com, netdev@vger.kernel.org, 
+	paulmck@kernel.org, rdunlap@infradead.org, 
+	Robin Murphy <robin.murphy@arm.com>, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	Sven Peter <sven@svenpeter.dev>, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
+	wens@csie.org, Will Deacon <will@kernel.org>, yu-cheng.yu@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+> Reviewed-by: Janne Grunau <j@jannau.net>
 
-commit 907fa893258ba6076f5fff32900a461decb9e8c5
-Author: Namjae Jeon <namjae.jeon@samsung.com>
-Date:   Thu May 21 23:10:10 2020 +0000
-
-    exfat: add the dummy mount options to be backward compatible with staging/exfat
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=138aca9ae80000
-start commit:   f9ff5644bcc0 Merge tag 'hsi-for-6.2' of git://git.kernel.o..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=104aca9ae80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=178aca9ae80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c163713cf9186fe7
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f73ed585f115e98aee8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d6fe00480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d2fc63880000
-
-Reported-by: syzbot+2f73ed585f115e98aee8@syzkaller.appspotmail.com
-Fixes: 907fa893258b ("exfat: add the dummy mount options to be backward compatible with staging/exfat")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thank you,
+Pasha
 
