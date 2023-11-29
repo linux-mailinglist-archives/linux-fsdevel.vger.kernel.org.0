@@ -1,126 +1,307 @@
-Return-Path: <linux-fsdevel+bounces-4221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1037FDD58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DFA7FDD59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06ADA1C20995
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D881C20995
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EDE3B788
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326C83B78E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCZSiTDy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FBEABF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 08:28:23 -0800 (PST)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6cba754b041so8034423b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 08:28:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701275303; x=1701880103;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MsXGXgaZSNXxAkrghgvic5qFLjCKx/nr13WFl9UgcEE=;
-        b=qDix9vffogKDuPtJcullv1f08kpd0E2zdHx7yrVu00VaarpBzckJilHci5yNgG0Vo7
-         cfR/ZwD+3KT4WGspn4HR49FqSxSdBhg5JAXN3qxurcONL8LKNljC/aEdw5pCdsDv3XWP
-         imWVfFS0mSZxeT2rRPbiGYW8o9hEQRV6NiIbO0OzCsB1aynJJIwEulX+PM61XYFsr22m
-         PY/C9zQ8sIPW1eJbzenxiXjc/JzV7dc8HyKaT8d813HLxdrvNBlyCzpRecs0KWMDzPzN
-         wFnvhxbrbOzfcvY9OqmN7ChOw7rVt6N/dRSKrtovk9DZG5wLmfZ+OQKcqaFUCg4m4cfW
-         9dQA==
-X-Gm-Message-State: AOJu0YwIO/zT0Hya71cEyDLQotzx9CsdubkMaw7lkH3e+QG1GE7ToJ9p
-	4q4V+cvGQ0Enc4Wtxu5DHij16Q+H2EtaJn7u2V9kM7wid0zI
-X-Google-Smtp-Source: AGHT+IGE03yNZju61/42IbmlFpq1TvMMX2G1dPos+w6BW70zkA5PmJurtsjQpMDQuBK41XWhlMaAmp27PBBg1QLclAndv61EQ4h7
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B896837159;
+	Wed, 29 Nov 2023 16:28:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81749C433C7;
+	Wed, 29 Nov 2023 16:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701275316;
+	bh=f7sE6c3E0+0jgF8zsKAYtcZCuTU2f+uzjGyuSGgxOH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QCZSiTDyQ0iGnQdck4efPrXzsrTNKQ1H5tPeHWVoTCbRQyL/EbNmuDQBZ+Iuvh0q2
+	 N71o3u6LZCemEAXckzdwbTOXYeI3tlqmGDPWdj8dwykxjB3XybyamPa6GvgoMChY6K
+	 Zved9ThdmAgbDcIyagmjEqFxa/fQepqmwYsXDv4oTvb6CKfkxSJ62gfz5L/BDM2xg1
+	 3zdsGc0d0a6XImk+sTE0NK3Az6CuEgciGsdz5NePmr4QKF9ToPhzRqKG1pawRYohhM
+	 xTZLiKLUX82Ln4v6koKdpxuIfbT/ePxyU/D0QIbV2QrfLTD96mKFFK/rik8svYPgKI
+	 fHzU9gTJ6mZBA==
+Date: Wed, 29 Nov 2023 17:28:27 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
+Message-ID: <20231129-etappen-knapp-08e2e3af539f@brauner>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-alice-file-v1-5-f81afe8c7261@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6a00:1785:b0:6cd:e206:e0bd with SMTP id
- s5-20020a056a00178500b006cde206e0bdmr32459pfg.2.1701275303122; Wed, 29 Nov
- 2023 08:28:23 -0800 (PST)
-Date: Wed, 29 Nov 2023 08:28:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001b9dbd060b4d06a8@google.com>
-Subject: [syzbot] [exfat?] KMSAN: uninit-value in exfat_set_entry_time
-From: syzbot <syzbot+d41ef22a1e1ce5b449b2@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231129-alice-file-v1-5-f81afe8c7261@google.com>
 
-Hello,
+On Wed, Nov 29, 2023 at 01:12:17PM +0000, Alice Ryhl wrote:
+> Adds a wrapper around `kuid_t` called `Kuid`. This allows us to define
+> various operations on kuids such as equality and current_euid. It also
+> lets us provide conversions from kuid into userspace values.
+> 
+> Rust Binder needs these operations because it needs to compare kuids for
+> equality, and it needs to tell userspace about the pid and uid of
+> incoming transactions.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/bindings/bindings_helper.h |  1 +
+>  rust/helpers.c                  | 45 ++++++++++++++++++++++++++
+>  rust/kernel/cred.rs             |  5 +--
+>  rust/kernel/task.rs             | 71 ++++++++++++++++++++++++++++++++++++++++-
+>  4 files changed, 119 insertions(+), 3 deletions(-)
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 81b13a953eae..700f01840188 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/errname.h>
+>  #include <linux/file.h>
+>  #include <linux/fs.h>
+> +#include <linux/pid_namespace.h>
+>  #include <linux/security.h>
+>  #include <linux/slab.h>
+>  #include <linux/refcount.h>
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index fd633d9db79a..58e3a9dff349 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -142,6 +142,51 @@ void rust_helper_put_task_struct(struct task_struct *t)
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_put_task_struct);
+>  
+> +kuid_t rust_helper_task_uid(struct task_struct *task)
+> +{
+> +	return task_uid(task);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_task_uid);
+> +
+> +kuid_t rust_helper_task_euid(struct task_struct *task)
+> +{
+> +	return task_euid(task);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_task_euid);
+> +
+> +#ifndef CONFIG_USER_NS
+> +uid_t rust_helper_from_kuid(struct user_namespace *to, kuid_t uid)
+> +{
+> +	return from_kuid(to, uid);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_from_kuid);
+> +#endif /* CONFIG_USER_NS */
+> +
+> +bool rust_helper_uid_eq(kuid_t left, kuid_t right)
+> +{
+> +	return uid_eq(left, right);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_uid_eq);
+> +
+> +kuid_t rust_helper_current_euid(void)
+> +{
+> +	return current_euid();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_current_euid);
+> +
+> +struct user_namespace *rust_helper_current_user_ns(void)
+> +{
+> +	return current_user_ns();
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_current_user_ns);
+> +
+> +pid_t rust_helper_task_tgid_nr_ns(struct task_struct *tsk,
+> +				  struct pid_namespace *ns)
+> +{
+> +	return task_tgid_nr_ns(tsk, ns);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_task_tgid_nr_ns);
 
-syzbot found the following issue on:
+I'm a bit puzzled by all these rust_helper_*() calls. Can you explain
+why they are needed? Because they are/can be static inlines and that
+somehow doesn't work?
 
-HEAD commit:    305230142ae0 Merge tag 'pm-6.7-rc1-2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=155bcf18e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=956549bd1d1e9efd
-dashboard link: https://syzkaller.appspot.com/bug?extid=d41ef22a1e1ce5b449b2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+> +
+>  struct kunit *rust_helper_kunit_get_current_test(void)
+>  {
+>  	return kunit_get_current_test();
+> diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
+> index 3794937b5294..fbc749788bfa 100644
+> --- a/rust/kernel/cred.rs
+> +++ b/rust/kernel/cred.rs
+> @@ -8,6 +8,7 @@
+>  
+>  use crate::{
+>      bindings,
+> +    task::Kuid,
+>      types::{AlwaysRefCounted, Opaque},
+>  };
+>  
+> @@ -52,9 +53,9 @@ pub fn get_secid(&self) -> u32 {
+>      }
+>  
+>      /// Returns the effective UID of the given credential.
+> -    pub fn euid(&self) -> bindings::kuid_t {
+> +    pub fn euid(&self) -> Kuid {
+>          // SAFETY: By the type invariant, we know that `self.0` is valid.
+> -        unsafe { (*self.0.get()).euid }
+> +        Kuid::from_raw(unsafe { (*self.0.get()).euid })
+>      }
+>  }
+>  
+> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+> index b2299bc7ac1f..1a27b968a907 100644
+> --- a/rust/kernel/task.rs
+> +++ b/rust/kernel/task.rs
+> @@ -5,7 +5,12 @@
+>  //! C header: [`include/linux/sched.h`](../../../../include/linux/sched.h).
+>  
+>  use crate::{bindings, types::Opaque};
+> -use core::{marker::PhantomData, ops::Deref, ptr};
+> +use core::{
+> +    cmp::{Eq, PartialEq},
+> +    marker::PhantomData,
+> +    ops::Deref,
+> +    ptr,
+> +};
+>  
+>  /// Returns the currently running task.
+>  #[macro_export]
+> @@ -78,6 +83,12 @@ unsafe impl Sync for Task {}
+>  /// The type of process identifiers (PIDs).
+>  type Pid = bindings::pid_t;
+>  
+> +/// The type of user identifiers (UIDs).
+> +#[derive(Copy, Clone)]
+> +pub struct Kuid {
+> +    kuid: bindings::kuid_t,
+> +}
+> +
+>  impl Task {
+>      /// Returns a task reference for the currently executing task/thread.
+>      ///
+> @@ -132,12 +143,34 @@ pub fn pid(&self) -> Pid {
+>          unsafe { *ptr::addr_of!((*self.0.get()).pid) }
+>      }
+>  
+> +    /// Returns the UID of the given task.
+> +    pub fn uid(&self) -> Kuid {
+> +        // SAFETY: By the type invariant, we know that `self.0` is valid.
+> +        Kuid::from_raw(unsafe { bindings::task_uid(self.0.get()) })
+> +    }
+> +
+> +    /// Returns the effective UID of the given task.
+> +    pub fn euid(&self) -> Kuid {
+> +        // SAFETY: By the type invariant, we know that `self.0` is valid.
+> +        Kuid::from_raw(unsafe { bindings::task_euid(self.0.get()) })
+> +    }
+> +
+>      /// Determines whether the given task has pending signals.
+>      pub fn signal_pending(&self) -> bool {
+>          // SAFETY: By the type invariant, we know that `self.0` is valid.
+>          unsafe { bindings::signal_pending(self.0.get()) != 0 }
+>      }
+>  
+> +    /// Returns the given task's pid in the current pid namespace.
+> +    pub fn pid_in_current_ns(&self) -> Pid {
+> +        // SAFETY: We know that `self.0.get()` is valid by the type invariant. The rest is just FFI
+> +        // calls.
+> +        unsafe {
+> +            let namespace = bindings::task_active_pid_ns(bindings::get_current());
+> +            bindings::task_tgid_nr_ns(self.0.get(), namespace)
+> +        }
+> +    }
+> +
+>      /// Wakes up the task.
+>      pub fn wake_up(&self) {
+>          // SAFETY: By the type invariant, we know that `self.0.get()` is non-null and valid.
+> @@ -147,6 +180,42 @@ pub fn wake_up(&self) {
+>      }
+>  }
+>  
+> +impl Kuid {
+> +    /// Get the current euid.
+> +    pub fn current_euid() -> Kuid {
+> +        // SAFETY: Just an FFI call.
+> +        Self {
+> +            kuid: unsafe { bindings::current_euid() },
+> +        }
+> +    }
+> +
+> +    /// Create a `Kuid` given the raw C type.
+> +    pub fn from_raw(kuid: bindings::kuid_t) -> Self {
+> +        Self { kuid }
+> +    }
+> +
+> +    /// Turn this kuid into the raw C type.
+> +    pub fn into_raw(self) -> bindings::kuid_t {
+> +        self.kuid
+> +    }
+> +
+> +    /// Converts this kernel UID into a UID that userspace understands. Uses the namespace of the
+> +    /// current task.
+> +    pub fn into_uid_in_current_ns(self) -> bindings::uid_t {
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Hm, I wouldn't special-case this. Just expose from_kuid() and let it
+take a namespace argument, no? You don't need to provide bindings for
+namespaces ofc.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/16a813d08871/disk-30523014.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/226b88790aa7/vmlinux-30523014.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b1b45d0d85fa/bzImage-30523014.xz
+> +        // SAFETY: Just an FFI call.
+> +        unsafe { bindings::from_kuid(bindings::current_user_ns(), self.kuid) }
+> +    }
+> +}
+> +
+> +impl PartialEq for Kuid {
+> +    fn eq(&self, other: &Kuid) -> bool {
+> +        // SAFETY: Just an FFI call.
+> +        unsafe { bindings::uid_eq(self.kuid, other.kuid) }
+> +    }
+> +}
+> +
+> +impl Eq for Kuid {}
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d41ef22a1e1ce5b449b2@syzkaller.appspotmail.com
+Do you need that?
 
-=====================================================
-BUG: KMSAN: uninit-value in exfat_set_entry_time+0x2dc/0x320 fs/exfat/misc.c:99
- exfat_set_entry_time+0x2dc/0x320 fs/exfat/misc.c:99
- __exfat_write_inode+0x7ca/0xdd0 fs/exfat/inode.c:59
- exfat_write_inode+0xd9/0x180 fs/exfat/inode.c:97
- write_inode fs/fs-writeback.c:1473 [inline]
- __writeback_single_inode+0x843/0x12b0 fs/fs-writeback.c:1690
- writeback_sb_inodes+0xb73/0x1c00 fs/fs-writeback.c:1916
- wb_writeback+0x4a1/0xdf0 fs/fs-writeback.c:2092
- wb_do_writeback fs/fs-writeback.c:2239 [inline]
- wb_workfn+0x3a4/0x1710 fs/fs-writeback.c:2279
- process_one_work kernel/workqueue.c:2630 [inline]
- process_scheduled_works+0x104e/0x1e70 kernel/workqueue.c:2703
- worker_thread+0xf45/0x1490 kernel/workqueue.c:2784
- kthread+0x3ed/0x540 kernel/kthread.c:388
- ret_from_fork+0x66/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
-
-Local variable ts created at:
- __exfat_write_inode+0x105/0xdd0 fs/exfat/inode.c:29
- exfat_write_inode+0xd9/0x180 fs/exfat/inode.c:97
-
-CPU: 1 PID: 8475 Comm: kworker/u4:5 Not tainted 6.6.0-syzkaller-15365-g305230142ae0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
-Workqueue: writeback wb_workfn (flush-7:4)
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +
+>  // SAFETY: The type invariants guarantee that `Task` is always ref-counted.
+>  unsafe impl crate::types::AlwaysRefCounted for Task {
+>      fn inc_ref(&self) {
+> 
+> -- 
+> 2.43.0.rc1.413.gea7ed67945-goog
+> 
 
