@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-4193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6895C7FD98D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 15:35:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523387FD98E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 15:36:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8971C203D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F631282378
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4731C6A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784C3218B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 14:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jbrtbR+e"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZPSHsaSF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B55B2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 05:11:31 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id 3f1490d57ef6-db402e6f61dso7808614276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 05:11:31 -0800 (PST)
+Received: from mail-lj1-x24a.google.com (mail-lj1-x24a.google.com [IPv6:2a00:1450:4864:20::24a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647EE10E5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 05:12:06 -0800 (PST)
+Received: by mail-lj1-x24a.google.com with SMTP id 38308e7fff4ca-2c9bbb18743so9854011fa.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 05:12:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701263490; x=1701868290; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1701263524; x=1701868324; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+PIqA5OWa+CUhuOr08fI/v9F95ZV2PMUhXtjoxfvkw=;
-        b=jbrtbR+eeVkBLFt/BX0FL6SIkn4LGE/FDZkIJSwEH0SbY34WaGJ8BQK/MaWUqhJrFW
-         QpFN2AljKfuPtdTIb9yNFPK8war4fcZVV272UY6BMKh4fr8RLn9JznEyccThFow5lJgs
-         Z3l6aSu5iXFJOUPqCvT+uyplCOR4AWzIDkTSvbYpKVHLtPZi4advoPxPAp8MvgJ0hQvW
-         2bCfuI5csWgGqeZ/uaMBF+M7+ueO2ILP8TeDIgBlol+fySHsTXckNZ6s4wHKh3J3o6mf
-         +Y7IUZ8RgBSrGsFOiU6esYlqjX4x+YRTSVV74xihLmE13lrvBX5wg4z1WA5mWtbS+zBs
-         3Npg==
+        bh=esiXX39j7TBHYEJzpKp+/f8CbFmH8JGrCtrqMVnVTxs=;
+        b=ZPSHsaSFsodDALg4wMXiPT1b9FBJ7F87h0+ORAPJ8RwYh6FjbWH8okFnbR+EMypaUp
+         0zik3t8ZadLYLgDxVhdcfyb9vQ+x5IDXVhiovvvgb10YljIJP0DTbVlNwLbjJIpBkmS7
+         zxCiIaj7dIjPSscCe9TKhBfGbj2PcQ72l+D2EABofmVVfbNMe1CCcsm5ws0/uEtGrsGn
+         SuTOVxD2gDziukuxCxp8w9Y8BhM4HB/OSVtjW+vCC2a+L/eW2MhotwuXQ3kDgkIubeq/
+         lsSoPOapIA9kN2Heg8nPpt4evQ+j2OgyJiCMsIz27ihE7/6OEUYtmFyJimvNzA043+A1
+         UpjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701263490; x=1701868290;
+        d=1e100.net; s=20230601; t=1701263524; x=1701868324;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+PIqA5OWa+CUhuOr08fI/v9F95ZV2PMUhXtjoxfvkw=;
-        b=rlRGkil9n/hvMG0Z/S0QwfZzuLIElA0VRHVhd5demu+clHYhncZRBvvwujzxcWCM8u
-         k+dgaDYupW98CPo5umy6klhqcETzbLwgjmEUXUdYRH4x9GAx9s7nBQU8ixJgYlnz6vco
-         PpKSq2bco+SN8qhRBcwNAHzv7uupafpxNo/KefYGBguvfl1yzzQI9sDkMFMWm87AxAt0
-         TGlGHz1UL4fatHKCwylPr+RYyNbFFgysXg0PRZWIS4eJZ349//g3OfVDzi4y//hW/POL
-         HFHlo81SoQ/DoPec7xfLr4Q9Vsts+dq5dnELfKkUpZmw0DIwPONK639xZdHcclnfHo6Z
-         ZXOw==
-X-Gm-Message-State: AOJu0Ywb50T3cnQnL1cbOgCngdJvONxQS4xKSrSf6qiWtW7QVDYkpnWw
-	TCtS5D/3TZMjTKdyldkfuqrd7+ZseJWOw8Y=
-X-Google-Smtp-Source: AGHT+IHmespvZy5s7Ip3mJ0mf6eFh6ZLQ6vzLqsvwESBu9GnbHUlPsKFocbK51mB9QzS1IwGPqksJwjBqcM/HnY=
+        bh=esiXX39j7TBHYEJzpKp+/f8CbFmH8JGrCtrqMVnVTxs=;
+        b=QoWKpf7QoTKhwAHrmzSZp6WIaAZS5blvR0+b/oMlfgBg2hjmbAMwFRpmAdxmZ22Jfh
+         f8UVXwNff5nBIUKbCRvYMqPkKN4TA2Vi1DNtw3BHeDLDye7/LGrywS7rErgeDdO9oPY4
+         8B3xBdVqnPna6qOyvhlUah61jqVw7sU6aUAW6zsfQpSzh1giIxY6SI/QRSkxdSGmJdcr
+         zE05eATLZrxzev2dwrJFliXAN/sPkVIc6YMG58eCPisyoGJRvsEiuryd2I3ZGYQDqGpJ
+         y9FIjleI9ekFyG6lJJB7ash7gHtCpcyI/2ERfZ8Tt6bxvqUOruBUsor6E2vE9+e/ZiTz
+         K0HA==
+X-Gm-Message-State: AOJu0YyjgMSZLnHqUDN7VobOZuNdNQqhOjTm0dzqSwzR+DrqDoJRQfhg
+	BCU4Cufcyk6uwlVqTug0w3QLeZqbiyi1u/o=
+X-Google-Smtp-Source: AGHT+IEHkVVfWS9BaS8ByCS7vIZyPFgO7jKlTCeXF8NGMQTxeGrWD+UWcjF+D+ckG3L8k8lP8kqV0TrhZRqV9G0=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a25:bac9:0:b0:daf:52c3:c373 with SMTP id
- a9-20020a25bac9000000b00daf52c3c373mr273071ybk.8.1701263490273; Wed, 29 Nov
- 2023 05:11:30 -0800 (PST)
-Date: Wed, 29 Nov 2023 13:11:25 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a2e:9110:0:b0:2c9:bc04:c096 with SMTP id
+ m16-20020a2e9110000000b002c9bc04c096mr38076ljg.8.1701263524554; Wed, 29 Nov
+ 2023 05:12:04 -0800 (PST)
+Date: Wed, 29 Nov 2023 13:11:56 +0000
 In-Reply-To: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -59,22 +59,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6420; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=47u/r70ygVSpW6vTYUCJ4BVeloqGeXZGkJcYMBqQg5o=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlZzhqhiX8DHIjTD2wKQWwc5SHo00Hr117qRf8U
- TxwjCk011eJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZWc4agAKCRAEWL7uWMY5
- RlqSD/9V5u/KKAdd4dXT2nyIcvtct0CAtU1kWe8krQxKvkXaq8ZGPyvco0tDjo+c5HOtgJdzHzi
- 9qi4W29Lt1TXWnku8QlgiagDyAnR5evvmSeU2/KS4kqWwJ6idD8HucS3wKMNrz8nwIo78z3rgYw
- iKlmXEBG7iu2HLzV7ydPqa6kxTeBtp35JZmxK+1ALPqdaqPDQeGeKFv7w4UZ4lrwN0sEO9A7JlK
- ugnfZy4Mq80QPK6EB33wbykZBTRZ+PVg6hu4FzF2QtcgO3UOgZ3vXG3dp3oVGoAeXEWqVfp+6g4
- zbodTxkRiu3oG1RvhUq6kdMUi/xGV7auHqnPi+UdDEYkgZBCjZ3Y68PlpoH2Lxv6tQ1z/cvOLfH
- +cEW17uRBvtCPOPas1jWn3zQYlTeirdGoZ7OI9fmdUu+/Ml6rSyfHRYxWUtGUH4oHk+xK1gioV2
- E0cEehl7bhy2UsgiTXobXdP13h+V/FoXriA0yhAbC3TOi0+kPmVRGQ2WvUJmAuVUgWQXKhbEjRN
- S6zpacIfQ+HZKP299C7x99V5gZytW/6SuwT0JQiYVM53oT50hj0bL9VbWQV7bX9rY0VuDzn/no/
- qhJEBQ3JuvngATVmkctd1htWsNSZBdLOPPqKM7OIUNaBKWORXXEYnK5uqfC6jLyrYxFbA4I8XEb yEY0RLsm5tug3VA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4281; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=SUMv8jXGAij3l0jBYJ4Ms5z5jJZ9MMahswDWLeA0kW4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlZzMyLtWU3gmtQGN7swi+G8KMYaE/xHeadwZsb
+ f4gruq0HDuJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZWczMgAKCRAEWL7uWMY5
+ RljxD/45lWUS95ldd319LMIbnsKDH8muiHzIgmCnI/Ux8ekOfs63WXOW6PMtpqlv2iZobLGYJv0
+ P9w0M1AKHI9s8ubw8ZFE+DOe6aa/2VTShlRKLi+Ka60afXjsTAEOY7l7vlDeDkU2qc5yMDNqErg
+ hykmgusYIDJpSoOc8OaPMuR+V8jwxue/cP233vUY1HLlTf0TD3j0wOXn7cd+7zqH9iitsRnNyY4
+ Osu/48J1Wgic6eeI4i6+z478nY0uXs1fAWFBz8veBAwl9LCzi4avMG4SG/9Jv/CVB6Beq21tH5P
+ GezShTMCYkKx08ZCrK0ckmIlfVaoVcMNInULaCznCgTrOv1iIZS63z8hlYkIOQskVbG17LXo9nF
+ RfjdNRMH2YwYuxW3wdkNXJBc1oEGQCqWF7vqYchI3ryaNgpdFUcMJxupAe046aPUyBBOLJPuVIJ
+ 3r84UtEGw+76Z+VbNDnAQdyHNFhKpvAvN6iX2nh5Am6ytp3eqYCNQiQ1RvXKbrMqR0+n8JhJoEt
+ cL7Sv4Ias/SNUymafiEKQymxb4Af3F8BgKMANSHTU3Zm+Frzxm44c4xBp3X01IaPO335vmvao+a
+ TEKWUG+9kx2sOIv7JKHksvoWevZD+SHwwAGCtGE7CCtoOoFg5iWOY51/afby0TdZEsmJeidtTsP je6av9Munk+4B6w==
 X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
-Message-ID: <20231129-alice-file-v1-3-f81afe8c7261@google.com>
-Subject: [PATCH 3/7] rust: security: add abstraction for secctx
+Message-ID: <20231129-alice-file-v1-4-f81afe8c7261@google.com>
+Subject: [PATCH 4/7] rust: file: add `FileDescriptorReservation`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -89,193 +89,118 @@ Cc: Alice Ryhl <aliceryhl@google.com>, Dan Williams <dan.j.williams@intel.com>,
 	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
 	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
 	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 
-Adds an abstraction for viewing the string representation of a security
-context.
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
 
-This is needed by Rust Binder because it has feature where a process can
-view the string representation of the security context for incoming
-transactions. The process can use that to authenticate incoming
-transactions, and since the feature is provided by the kernel, the
-process can trust that the security context is legitimate.
+Allow for the creation of a file descriptor in two steps: first, we
+reserve a slot for it, then we commit or drop the reservation. The first
+step may fail (e.g., the current process ran out of available slots),
+but commit and drop never fail (and are mutually exclusive).
 
+This is needed by Rust Binder when fds are sent from one process to
+another. It has to be a two-step process to properly handle the case
+where multiple fds are sent: The operation must fail or succeed
+atomically, which we achieve by first reserving the fds we need, and
+only installing the files once we have reserved enough fds to send the
+files.
+
+Fd reservations assume that the value of `current` does not change
+between the call to get_unused_fd_flags and the call to fd_install (or
+put_unused_fd). By not implementing the Send trait, this abstraction
+ensures that the `FileDescriptorReservation` cannot be moved into a
+different process.
+
+Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers.c                  | 21 +++++++++
- rust/kernel/cred.rs             |  8 ++++
- rust/kernel/lib.rs              |  1 +
- rust/kernel/security.rs         | 78 +++++++++++++++++++++++++++++++++
- 5 files changed, 109 insertions(+)
- create mode 100644 rust/kernel/security.rs
+ rust/kernel/file.rs | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 6d1bd2229aab..81b13a953eae 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -11,6 +11,7 @@
- #include <linux/errname.h>
- #include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/refcount.h>
- #include <linux/wait.h>
-diff --git a/rust/helpers.c b/rust/helpers.c
-index 10ed69f76424..fd633d9db79a 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -30,6 +30,7 @@
- #include <linux/mutex.h>
- #include <linux/refcount.h>
- #include <linux/sched/signal.h>
-+#include <linux/security.h>
- #include <linux/spinlock.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
-@@ -177,6 +178,26 @@ void rust_helper_put_cred(const struct cred *cred)
- }
- EXPORT_SYMBOL_GPL(rust_helper_put_cred);
+diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+index f1f71c3d97e2..2186a6ea3f2f 100644
+--- a/rust/kernel/file.rs
++++ b/rust/kernel/file.rs
+@@ -11,7 +11,7 @@
+     error::{code::*, Error, Result},
+     types::{ARef, AlwaysRefCounted, Opaque},
+ };
+-use core::ptr;
++use core::{marker::PhantomData, ptr};
  
-+#ifndef CONFIG_SECURITY
-+void rust_helper_security_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	security_cred_getsecid(c, secid);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_cred_getsecid);
-+
-+int rust_helper_security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
-+{
-+	return security_secid_to_secctx(secid, secdata, seclen);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_secid_to_secctx);
-+
-+void rust_helper_security_release_secctx(char *secdata, u32 seclen)
-+{
-+	security_release_secctx(secdata, seclen);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_release_secctx);
-+#endif
-+
- /*
-  * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
-  * use it in contexts where Rust expects a `usize` like slice (array) indices.
-diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
-index 497058ec89bb..3794937b5294 100644
---- a/rust/kernel/cred.rs
-+++ b/rust/kernel/cred.rs
-@@ -43,6 +43,14 @@ pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
-         unsafe { &*ptr.cast() }
+ /// Flags associated with a [`File`].
+ pub mod flags {
+@@ -180,6 +180,68 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
      }
+ }
  
-+    /// Get the id for this security context.
-+    pub fn get_secid(&self) -> u32 {
-+        let mut secid = 0;
-+        // SAFETY: The invariants of this type ensures that the pointer is valid.
-+        unsafe { bindings::security_cred_getsecid(self.0.get(), &mut secid) };
-+        secid
-+    }
-+
-     /// Returns the effective UID of the given credential.
-     pub fn euid(&self) -> bindings::kuid_t {
-         // SAFETY: By the type invariant, we know that `self.0` is valid.
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 097fe9bb93ed..342cb02c495a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -42,6 +42,7 @@
- pub mod kunit;
- pub mod prelude;
- pub mod print;
-+pub mod security;
- mod static_assert;
- #[doc(hidden)]
- pub mod std_vendor;
-diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-new file mode 100644
-index 000000000000..69c10ed89a57
---- /dev/null
-+++ b/rust/kernel/security.rs
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Linux Security Modules (LSM).
-+//!
-+//! C header: [`include/linux/security.h`](../../../../include/linux/security.h).
-+
-+use crate::{
-+    bindings,
-+    error::{to_result, Result},
-+};
-+
-+/// A security context string.
++/// A file descriptor reservation.
 +///
-+/// The struct has the invariant that it always contains a valid security context.
-+pub struct SecurityCtx {
-+    secdata: *mut core::ffi::c_char,
-+    seclen: usize,
++/// This allows the creation of a file descriptor in two steps: first, we reserve a slot for it,
++/// then we commit or drop the reservation. The first step may fail (e.g., the current process ran
++/// out of available slots), but commit and drop never fail (and are mutually exclusive).
++///
++/// Dropping the reservation happens in the destructor of this type.
++///
++/// # Invariants
++///
++/// The fd stored in this struct must correspond to a reserved file descriptor of the current task.
++pub struct FileDescriptorReservation {
++    fd: u32,
++    /// Prevent values of this type from being moved to a different task.
++    ///
++    /// This is necessary because the C FFI calls assume that `current` is set to the task that
++    /// owns the fd in question.
++    _not_send_sync: PhantomData<*mut ()>,
 +}
 +
-+impl SecurityCtx {
-+    /// Get the security context given its id.
-+    pub fn from_secid(secid: u32) -> Result<Self> {
-+        let mut secdata = core::ptr::null_mut();
-+        let mut seclen = 0;
-+        // SAFETY: Just a C FFI call. The pointers are valid for writes.
-+        unsafe {
-+            to_result(bindings::security_secid_to_secctx(
-+                secid,
-+                &mut secdata,
-+                &mut seclen,
-+            ))?;
++impl FileDescriptorReservation {
++    /// Creates a new file descriptor reservation.
++    pub fn new(flags: u32) -> Result<Self> {
++        // SAFETY: FFI call, there are no safety requirements on `flags`.
++        let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
++        if fd < 0 {
++            return Err(Error::from_errno(fd));
 +        }
-+
-+        // If the above call did not fail, then we have a valid security
-+        // context, so the invariants are not violated.
 +        Ok(Self {
-+            secdata,
-+            seclen: usize::try_from(seclen).unwrap(),
++            fd: fd as _,
++            _not_send_sync: PhantomData,
 +        })
 +    }
 +
-+    /// Returns whether the security context is empty.
-+    pub fn is_empty(&self) -> bool {
-+        self.seclen == 0
++    /// Returns the file descriptor number that was reserved.
++    pub fn reserved_fd(&self) -> u32 {
++        self.fd
 +    }
 +
-+    /// Returns the length of this security context.
-+    pub fn len(&self) -> usize {
-+        self.seclen
-+    }
++    /// Commits the reservation.
++    ///
++    /// The previously reserved file descriptor is bound to `file`. This method consumes the
++    /// [`FileDescriptorReservation`], so it will not be usable after this call.
++    pub fn commit(self, file: ARef<File>) {
++        // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`, and `file.ptr` is
++        // guaranteed to have an owned ref count by its type invariants.
++        unsafe { bindings::fd_install(self.fd, file.0.get()) };
 +
-+    /// Returns the bytes for this security context.
-+    pub fn as_bytes(&self) -> &[u8] {
-+        let mut ptr = self.secdata;
-+        if ptr.is_null() {
-+            // Many C APIs will use null pointers for strings of length zero, but
-+            // `slice::from_raw_parts` doesn't allow the pointer to be null even if the length is
-+            // zero. Replace the pointer with a dangling but non-null pointer in this case.
-+            debug_assert_eq!(self.seclen, 0);
-+            ptr = core::ptr::NonNull::dangling().as_ptr();
-+        }
-+
-+        // SAFETY: The call to `security_secid_to_secctx` guarantees that the pointer is valid for
-+        // `seclen` bytes. Furthermore, if the length is zero, then we have ensured that the
-+        // pointer is not null.
-+        unsafe { core::slice::from_raw_parts(ptr.cast(), self.seclen) }
++        // `fd_install` consumes both the file descriptor and the file reference, so we cannot run
++        // the destructors.
++        core::mem::forget(self);
++        core::mem::forget(file);
 +    }
 +}
 +
-+impl Drop for SecurityCtx {
++impl Drop for FileDescriptorReservation {
 +    fn drop(&mut self) {
-+        // SAFETY: This frees a pointer that came from a successful call to
-+        // `security_secid_to_secctx`.
-+        unsafe {
-+            bindings::security_release_secctx(self.secdata, self.seclen as u32);
-+        }
++        // SAFETY: `self.fd` was returned by a previous call to `get_unused_fd_flags`.
++        unsafe { bindings::put_unused_fd(self.fd) };
 +    }
 +}
++
+ /// Represents the `EBADF` error code.
+ ///
+ /// Used for methods that can only fail with `EBADF`.
+
 -- 
 2.43.0.rc1.413.gea7ed67945-goog
 
