@@ -1,135 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-4252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3617FE35A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC38E7FE35F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95CBFB208AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC91B20FF3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CD13B198
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CD547A52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FdbZffxY"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="hxMTv5v4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D84h9p23"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44C8D10C9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:45:02 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-507bd19eac8so365506e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:45:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701290700; x=1701895500; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tlZYiStM5KCC7J/v+177rjHqt9KWJCfJWFMkelab9t4=;
-        b=FdbZffxY5wQE+/0cxXCbRI/zPDDidiVXjjUtYaRCjcBeQNV8h6tZEhOFNmoiYL7FiG
-         h1K6pRO8QjrrRpKLtVPO4KusIRh7cFjdTbXZrtnRwsrN9zOW761HtsD0DnDQGZcBO4B4
-         zZlRZaXN56UCW9RjgD3piveQC/RlmHoA707iaWD4ZKMsSGCKKX0wS590lk9hL1bOd4IZ
-         7f3rTyKVruPGPNdmdliTvnn9TTnMX3gBAn3rgBg3AHi7tU6xptVxJXv22YHnauF+xp/J
-         vi7OWlea2BYfXpETx4UFSoOwGVhEA35lLfaJJPqVDZIFT4A3eDZKoi2IYAMKrMsVwmSJ
-         8bzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701290700; x=1701895500;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tlZYiStM5KCC7J/v+177rjHqt9KWJCfJWFMkelab9t4=;
-        b=iCJ2sz91bhUugDesMZkDv/G7GFTSLKciZUZ/qTtpKXYKz0HhIez46oZ1JVXcMkmzZF
-         lscBiv1e9C7ETZ4vDa5fsHWtLTFpPopoWbd0JHhmDDYbuJPcgbDPAAd0RQcY8OsBEN62
-         GrYduDLKnvPDbNU2fDLcxcFB7wPgEBUw46CNofOvIKTNgltLDQKYR7V1/7Y3NrN+ExhR
-         vAC/H05TLzP8lPaRfTJUhwi0cOb2k1/srYmRymSakcu4wFWOmXOI7miBeqJ22cPElb84
-         ga8v9ofcFkVNFD450eQSTzacwN3+gnS8t5xeK0a7sWOOZ9AVVmx1n40DIy7kKzjlgYzi
-         L9Uw==
-X-Gm-Message-State: AOJu0Ywq36UXxnTS6ZX5Xoyy2VlW/YXetsy3ck97uxFpJGP/gxzvDVya
-	sVav+mFRNO2Z7XirUp/vmPt8NCWWh7YR1jLU+IBFDw==
-X-Google-Smtp-Source: AGHT+IGMB2fUN71OTthlqnqBV10GCXDIRhuYgMFmlKYXWcCU4XgzYTup+BcRc5IJEjmMB4Fgw8Ibq0j5FX6Di+vVaiM=
-X-Received: by 2002:ac2:4a6f:0:b0:50b:cb50:401 with SMTP id
- q15-20020ac24a6f000000b0050bcb500401mr153882lfp.34.1701290700342; Wed, 29 Nov
- 2023 12:45:00 -0800 (PST)
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99641D67
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:46:06 -0800 (PST)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailout.nyi.internal (Postfix) with ESMTP id 61AAD5C019D;
+	Wed, 29 Nov 2023 15:46:03 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Wed, 29 Nov 2023 15:46:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+	1701290763; x=1701377163; bh=ggWcIRidBgPzI2loCGTssv7w49TyGbGKxbj
+	01ZMHTug=; b=hxMTv5v4DTSgN22QPOsvGhmYLirFQz4HTUATCUEZvfSc7XVQqQ3
+	1uGnD6QCxMhWfIA92f58YIaOnIqv1TsWM455ZKZ1+uInsEM1JxBoI4D3dY3V4EHY
+	Nf66sWatQIviYDtov8k/ST861JdYTUkmp75Xo7ey6MQj8FTfubazxn8Nn3SX4A78
+	dboTbTl/vt7Ce0VfGprSB4wvsHG18dzkxVlF+3bmA6H0pc3336b2V/azcUtf5TaG
+	gw7rf4Q+6LBKQix5MpVVyjq2lP0w99r7tyf+jpQj1xPe0J3gpcjX7IdK7tKhdkmz
+	iIvJbIJ3bv/CT3MamlIkvxuBs6fT1fHdrpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1701290763; x=1701377163; bh=ggWcIRidBgPzI2loCGTssv7w49TyGbGKxbj
+	01ZMHTug=; b=D84h9p23Jl4KTU9dRXZhC0OMJqF9T6MKeDUEEUu31ZuoQ6gzIPE
+	qfnvfcpdpsMSx94jxPgHTj2Cwdmdi5YrQDKo5t3ts3UcNde7kZo8ZeMSpTXqqd76
+	AnqGi6kwtC+jWmOwZ4ZbgnhigD1widkiLD3iheQbcnNbleYLQWPQdenRR6eBcMUP
+	IgVTxmqC9K2yj70f9Q+31JUAzjr30+Cy45MI4JXKDGh2ggDeT2UBZG1Ftg4WBBJy
+	f4hUejuFz5rOkU+TwVIMd9lfJEek2ja5Izg7mhVwNNLdvplQJ59QOmxJW9TQreU/
+	n+x/WMgW/5VWTmSBU/0V4qUPsmLMQyfiOSA==
+X-ME-Sender: <xms:CqNnZdjJZeZ4s0sigO3M_qMs90cPVKvHJI9Ba2wdMscL2naSTsAFpA>
+    <xme:CqNnZSAdxTc46RfBw4bp7RU01vPBm_p61NX2Szwb06mLJ4kOISZtbJ_lbOPA9LggY
+    cHSZuLPsqNIUYfL>
+X-ME-Received: <xmr:CqNnZdF--GdnQe2deIEPenP8jkjl9O7-eaU_9w8wtuiJPOPwA2YPw60dDqbwI42S4uYuyXYgfincVL2cMbvD0u71eWTjAR_GJk82OiSoP_N-zdId7xQT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeihedgudefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegv
+    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
+    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduveduveelgeelffffkedukeeg
+    veelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
+    rdhfmh
+X-ME-Proxy: <xmx:CqNnZSQxTfIW3ien_AXA-gFtWHA__Hm_-F1z3kLIa5UObKfVYkuz3A>
+    <xmx:CqNnZawIeEZNmUm6XFGp8blQRzHzqyhr20lpToTwRIaVO37tF08OCA>
+    <xmx:CqNnZY7VXICgaQx4LEQ7ANi9hj9kILV6WbDs2yJ4yMOgzkx5qsTbtw>
+    <xmx:C6NnZVwvMNiQ4HKtHXTsKvkJmwhiJiBKKcABDm-085ERLzoK4YDvnQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Nov 2023 15:46:01 -0500 (EST)
+Message-ID: <2f6513fa-68d8-43c8-87a4-62416c3e1bfd@fastmail.fm>
+Date: Wed, 29 Nov 2023 21:46:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-9-pasha.tatashin@soleen.com> <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
- <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
- <20231128235037.GC1312390@ziepe.ca> <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
- <CA+CK2bCcfS1Fo8RvTeGXj_ejPRX9--sh5Jz8nzhkZnut4juDmg@mail.gmail.com> <20231129200305.GI1312390@ziepe.ca>
-In-Reply-To: <20231129200305.GI1312390@ziepe.ca>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Nov 2023 15:44:21 -0500
-Message-ID: <CA+CK2bA05Bh+H4qsP7ZM6ZcnBXu64frEfpCDYZuLOQ4UxJC4EA@mail.gmail.com>
-Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by iommu-pages.h
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Robin Murphy <robin.murphy@arm.com>, akpm@linux-foundation.org, 
-	alex.williamson@redhat.com, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jasowang@redhat.com, jernej.skrabec@gmail.com, 
-	jonathanh@nvidia.com, joro@8bytes.org, kevin.tian@intel.com, 
-	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
-	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
-	samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
-	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
-	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
+To: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Daniel Rosenberg <drosen@google.com>,
+ Paul Lawrence <paullawrence@google.com>,
+ Alessio Balsini <balsini@android.com>, Christian Brauner
+ <brauner@kernel.org>, fuse-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+References: <20231016160902.2316986-1-amir73il@gmail.com>
+ <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
+ <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
+ <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
+ <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
+ <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
+ <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com>
+ <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
+ <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com>
+ <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
+ <CAJfpegtH1DP19cAuKgYAssZ8nkKhnyX42AYWtAT3h=nmi2j31A@mail.gmail.com>
+ <CAOQ4uxgW6xpWW=jLQJuPKOCxN=i_oNeRwNnMEpxOhVD7RVwHHw@mail.gmail.com>
+ <CAJfpegtOt6MDFM3vsK+syJhpLMSm7wBazkXuxjRTXtAsn9gCuA@mail.gmail.com>
+ <CAOQ4uxiCjX2uQqdikWsjnPtpNeHfFk_DnWO3Zz2QS3ULoZkGiA@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAOQ4uxiCjX2uQqdikWsjnPtpNeHfFk_DnWO3Zz2QS3ULoZkGiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 29, 2023 at 3:03=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Wed, Nov 29, 2023 at 02:45:03PM -0500, Pasha Tatashin wrote:
->
-> > > same kind of big systems where IOMMU pagetables would be of any conce=
-rn.
-> > > I believe some of the some of the "serious" NICs can easily run up
-> > > hundreds of megabytes if not gigabytes worth of queues, SKB pools, et=
-c.
-> > > - would you propose accounting those too?
-> >
-> > Yes. Any kind of kernel memory that is proportional to the workload
-> > should be accountable. Someone is using those resources compared to
-> > the idling system, and that someone should be charged.
->
-> There is a difference between charged and accounted
->
-> You should be running around adding GFP_KERNEL_ACCOUNT, yes. I already
-> did a bunch of that work. Split that out from this series and send it
-> to the right maintainers.
 
-I will do that.
 
->
-> Adding a counter for allocations and showing in procfs is a very
-> different question. IMHO that should not be done in micro, the
-> threshold to add a new counter should be high.
+On 11/29/23 18:39, Amir Goldstein wrote:
+> On Wed, Nov 29, 2023 at 6:55 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>
+>> On Wed, 29 Nov 2023 at 16:52, Amir Goldstein <amir73il@gmail.com> wrote:
+>>
+>>> direct I/O read()/write() is never a problem.
+>>>
+>>> The question is whether mmap() on a file opened with FOPEN_DIRECT_IO
+>>> when the inode is in passthrough mode, also uses fuse_passthrough_mmap()?
+>>
+>> I think it should.
+>>
+>>> or denied, similar to how mmap with ff->open_flags & FOPEN_DIRECT_IO &&
+>>> vma->vm_flags & VM_MAYSHARE) && !fc->direct_io_relax
+>>> is denied?
+>>
+>> What would be the use case for FOPEN_DIRECT_IO with passthrough mmap?
+>>
+> 
+> I don't have a use case. That's why I was wondering if we should
+> support it at all, but will try to make it work.
 
-I agree, /proc/meminfo, should not include everything, however overall
-network consumption that includes memory allocated by network driver
-would be useful to have, may be it should be exported by device
-drivers and added to the protocol memory. We already have network
-protocol memory consumption in procfs:
+What is actually the use case for FOPEN_DIRECT_IO and passthrough? 
+Avoiding double page cache?
 
-# awk '{printf "%-10s %s\n", $1, $4}' /proc/net/protocols | grep  -v '\-1'
-protocol   memory
-UDPv6      22673
-TCPv6      16961
+> 
+>>> A bit more challenging, because we will need to track unmounts, or at
+>>> least track
+>>> "was_cached_mmaped" state per file, but doable.
+>>
+>> Tracking unmaps via fuse_vma_close() should not be difficult.
+>>
+> 
+> OK. so any existing mmap, whether on FOPEN_DIRECT_IO or not
+> always prevents an inode from being "neutral".
+> 
 
-> There is definately room for a generic debugging feature to break down
-> GFP_KERNEL_ACCOUNT by owernship somehow. Maybe it can already be done
-> with BPF. IDK
+
+Thanks,
+Bernd
 
