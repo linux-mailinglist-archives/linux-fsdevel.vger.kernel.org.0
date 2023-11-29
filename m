@@ -1,122 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-4181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CAF7FD6DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:36:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F89E7FD6DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 13:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339931C20843
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE644282E28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981E51DDD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980AF1DDEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 12:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uU4whDs6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B63884;
-	Wed, 29 Nov 2023 03:30:28 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AEB72F4;
-	Wed, 29 Nov 2023 03:31:15 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C0D8A3F5A1;
-	Wed, 29 Nov 2023 03:30:22 -0800 (PST)
-Date: Wed, 29 Nov 2023 11:30:20 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
-	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 18/27] arm64: mte: Reserve tag block for the zero
- page
-Message-ID: <ZWcgzPcld1YksCtZ@raptor>
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-19-alexandru.elisei@arm.com>
- <c027ea00-a955-4c3c-b1ea-2c3f6906790d@redhat.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088EA12B72;
+	Wed, 29 Nov 2023 11:38:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3E3C433C8;
+	Wed, 29 Nov 2023 11:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701257916;
+	bh=/djex4o3dqe1i42wuz9PG0/vgKzpHPhwIhOIgQXXL1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uU4whDs6Z1YKngjCmn5gwHACPMm29u1VKm7mUddhCUXuq3xjutAf+mwQ/z0cYHqWF
+	 90EhlUizj3sy+E1Rq3Y8iPk5NYo9RQILX5fukZP6uGVqJjGImZB4ky8MmYNdunLRRq
+	 Nx6ghWr+yFeY24UfDxeln7sZz8WV2RrCRITCFjhyLHO3lPf4Pcjmj8JtmwTIZ/27EZ
+	 nVkcvIeafQJrWpbdTPhMPWp0WxHUYVJoPYs2khEESigfzVGG1E0VX1ZJMCtcAfQf97
+	 zStLnBYhhxojdu5mIQuSjv41ED45qupXM8dXXCF8u7OMJW96GaKp1TFP+wHsMvmtwy
+	 9mweFFhWj56tQ==
+Date: Wed, 29 Nov 2023 12:38:30 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>, Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
+Message-ID: <20231129-fundort-kalligrafie-d4777374ad7a@brauner>
+References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
+ <20231128-arsch-halbieren-b2a95645de53@brauner>
+ <20231128135258.GB22743@redhat.com>
+ <20231128-elastisch-freuden-f9de91041218@brauner>
+ <20231128165945.GD22743@redhat.com>
+ <20231128172959.GA27265@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c027ea00-a955-4c3c-b1ea-2c3f6906790d@redhat.com>
+In-Reply-To: <20231128172959.GA27265@redhat.com>
 
-On Tue, Nov 28, 2023 at 06:06:54PM +0100, David Hildenbrand wrote:
-> On 19.11.23 17:57, Alexandru Elisei wrote:
-> > On arm64, the zero page receives special treatment by having the tagged
-> > flag set on MTE initialization, not when the page is mapped in a process
-> > address space. Reserve the corresponding tag block when tag storage
-> > management is being activated.
+On Tue, Nov 28, 2023 at 06:29:59PM +0100, Oleg Nesterov wrote:
+> Forgot to menstion,
 > 
-> Out of curiosity: why does the shared zeropage require tagged storage? What
-> about the huge zeropage?
-
-There are two different tags that are used for tag checking: the logical
-tag, the tag embedded in bits 59:56 of an address, and the physical tag
-corresponding to the address. This tag is stored in a separate memory
-location, called tag storage. When an access is performed, hardware
-compares the logical tag (from the address) with the physical tag (from the
-tag storage). If they match, the access is permitted.
-
-The physical tag is set with special instructions.
-
-Userspace pointers have bits 59:56 zero. If the pointer is in a VMA with
-MTE enabled, then for userspace to be able to access this address, the
-physical tag must also be 0b0000.
-
-To make it easier on userspace, when a page is first mapped as tagged, its
-tags are cleared by the kernel; this way, userspace can access the address
-immediately, without clearing the physical tags beforehand. Another reason
-for clearing the physical tags when a page is mapped as tagged would be to
-avoid leaking uninitialized tags to userspace.
-
-The zero page is special, because the physical tags are not zeroed every
-time the page is mapped in a process; instead, the zero page is marked as
-tagged (by setting a page flag) and the physical tags are zeroed only once,
-when MTE is enabled at boot.
-
-All of this means that when tag storage is enabled, which happens after MTE
-is enabled, the tag storage corresponding to the zero page is already in
-use and must be rezerved, and it can never be used for data allocations.
-
-I hope all of the above makes sense. I can also put it in the commit
-message :)
-
-As for the zero huge page, the MTE code in the kernel treats it like a
-regular page, and it zeroes the tags when it is mapped as tagged in a
-process. I agree that this might not be the best solution from a
-performance perspective, but it has worked so far.
-
-With tag storage management enabled, set_pte_at()->mte_sync_tags() will
-discover that the huge zero page doesn't have tag storage reserved, the
-table entry will be mapped as invalid to use the page fault-on-access
-mechanism that I introduce later in the series [1] to reserve tag storage,
-and after that set_pte_at() will zero the physical tags.
-
-[1] https://lore.kernel.org/all/20231119165721.9849-20-alexandru.elisei@arm.com/
-
-Thanks,
-Alex
-
+> On 11/28, Oleg Nesterov wrote:
+> >
+> > but please
+> > note irq_thread()->task_work_add(on_exit_work).
 > 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+> and this means that Neil's and your more patch were wrong ;)
+
+Hm, that's all the more reason to not hang this off of PF_KTHREAD then.
+I mean, it's functional but we likely wouldn't have run into this
+confusion if this would be PF_FPUT_DELAYED, for example.
 
