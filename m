@@ -1,152 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-4284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBF17FE4EF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 01:35:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408807FE4F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 01:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EFF9B20AA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 00:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F5B1F20CD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 00:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4091FAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 00:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D8A4C9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 00:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AwPlFmo/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXLEwFJ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C096D5C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 15:18:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1701299880; x=1701559080;
-	bh=ioPvELIdRThD715hd8zdKjIZrjzPAQE7wm474WJAqF4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=AwPlFmo/rkoaSEPLXDBUp5RYZFXhpXPmSN6/Sm6NfyJ+oigu8XxK4W/gqsAM1FEqU
-	 fhrkTv5wjXZgD7Aq+B5tak0rHosBg877xvVCiaGbHI4JOcVwGc6ECWq42tjDcBc936
-	 HcNJC2aaJQxe4qrvtg+gj+CWdXuJTMrbdcXS99DIiSf2sX9h1Njl+xvIrgrUlDpJgZ
-	 ECqqyFTfFyLl5pTQtR9LACRlHFZZQSHFfVzylMJeRMvi4V+9gekLxNnCy07U0exkYw
-	 X1hjuGlRj/Ebqqy68A6T0xpwvuprtuwAD4a462iDagk8Mi7gGhB0Dkkjur7lB1SmXb
-	 ts/cDgCkDR89w==
-Date: Wed, 29 Nov 2023 23:17:48 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: brauner@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org
-Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
-Message-ID: <1cT5uqAdTaJ2sJVCILPrVHczVq1z2BZfCXy3wOHJKhMx7RFSATPcdAFpYT9y6h6nZBvHcQsYbeJMXMqB6u3i85yDRIO6iGwUoerIaSWdEn4=@proton.me>
-In-Reply-To: <20231129212707.3520214-1-aliceryhl@google.com>
-References: <20231129-geleckt-verebben-04ea0c08a53c@brauner> <20231129212707.3520214-1-aliceryhl@google.com>
-Feedback-ID: 71780778:user:proton
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959654CB33;
+	Wed, 29 Nov 2023 23:44:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A61ADC433C8;
+	Wed, 29 Nov 2023 23:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701301466;
+	bh=CcEO7YNSYuxPBMvFIa6ONPKbf+zpneW4HNRhzxmoH5c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IXLEwFJ/44zyHlOzc45h/mjiYkURlcO6yxc2snQjyOv6QJIayDWnOS0X38ZH94hPF
+	 X0yXjZBXYmzfUnArytNE9B1bxMEiA4/lwfqj1ve/cGFjBl6sCS6eoVG+MWPUUtdk2o
+	 hfdLS2/iojaO2IzmKyzOVooXnVxuou9nO5iCexcrT9CxQKCoeCw7rGefNNTYChiKCS
+	 Eda/4CxiJ/ffpTNJvPV1QuGTk9ZIMUfwNYOWB29GwBdlUZ0QGSM31pjjPMm4NZxG8N
+	 Q6GN9ymFLmFkYsGfamAeC1q4eJSH8gVahoA7dfyo7q6qzrb4ywphI6mMTxsIE0GT2L
+	 Z99Nmt46y6Iwg==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	fsverity@lists.linux.dev
+Cc: ebiggers@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	casey@schaufler-ca.com,
+	amir73il@gmail.com,
+	kpsingh@kernel.org,
+	roberto.sassu@huawei.com,
+	kernel-team@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v15 bpf-next 0/6] bpf: File verification with LSM and fsverity
+Date: Wed, 29 Nov 2023 15:44:11 -0800
+Message-Id: <20231129234417.856536-1-song@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 29.11.23 22:27, Alice Ryhl wrote:
-> Another example:
->=20
-> =09void set_nonblocking_and_fput(struct file *file) {
-> =09=09// Let's just ignore the lock for this example.
-> =09=09file->f_flags |=3D O_NONBLOCK;
->=20
-> =09=09fput(file);
-> =09}
->=20
-> This method takes a file, sets it to non-blocking, and then destroys the
-> ref-count. What are the ownership semantics? Well, the caller should own
-> an `fget` ref-count, and we consume that ref-count. The equivalent Rust
-> code would be to take an `ARef<File>`:
->=20
-> =09fn set_nonblocking_and_fput(file: ARef<File>) {
-> =09=09file.set_flag(O_NONBLOCK);
->=20
-> =09=09// When `file` goes out of scope here, the destructor
-> =09=09// runs and calls `fput`. (Since that's what we defined
-> =09=09// `ARef` to do on drop in `fn dec_ref`.)
-> =09}
->=20
-> You can also explicitly call the destructor with `drop(file)`:
->=20
-> =09fn set_nonblocking_and_fput(file: ARef<File>) {
-> =09=09file.set_flag(O_NONBLOCK);
-> =09=09drop(file);
->=20
-> =09=09// When `file` goes out of scope, the destructor does
-> =09=09// *not* run. This is because `drop(file)` is a move
-> =09=09// (due to the signature of drop), and if you perform a
-> =09=09// move, then the destructor no longer runs at the end
-> =09=09// of the scope.
+Changes v14 => v15:
+1. Fix selftest build without CONFIG_FS_VERITY. (Alexei)
+2. Add Acked-by from KP.
 
-I want to note that while the destructor does not run at the end of the
-scope, it still *does* run: the `drop(file)` call runs the destructor.
+Changes v13 => v14:
+1. Add "static" for bpf_fs_kfunc_set.
+2. Add Acked-by from Christian Brauner.
 
-> =09}
->=20
-> And note that this would not compile, because we give up ownership of
-> the `ARef` by passing it to `drop`:
->=20
-> =09fn set_nonblocking_and_fput(file: ARef<File>) {
-> =09=09drop(file);
-> =09=09file.set_flag(O_NONBLOCK);
-> =09}
->
+Changes v12 => v13:
+1. Only keep 4/9 through 9/9 of v12, as the first 3 patches already
+   applied;
+2. Use new macro __bpf_kfunc_[start|end]_defs().
 
-[...]
+Changes v11 => v12:
+1. Fix typo (data_ptr => sig_ptr) in bpf_get_file_xattr().
 
->>> +// SAFETY: The type invariants guarantee that `File` is always ref-cou=
-nted.
->>> +unsafe impl AlwaysRefCounted for File {
->>> +    fn inc_ref(&self) {
->>> +        // SAFETY: The existence of a shared reference means that the =
-refcount is nonzero.
->>> +        unsafe { bindings::get_file(self.0.get()) };
->>> +    }
->>
->> Why inc_ref() and not just get_file()?
->=20
-> Whenever you see an impl block that uses the keyword "for", then the
-> code is implementing a trait. In this case, the trait being implemented
-> is AlwaysRefCounted, which allows File to work with ARef.
->=20
-> It has to be `inc_ref` because that's what AlwaysRefCounted calls this
-> method.
+Changes v10 => v11:
+1. Let __bpf_dynptr_data() return const void *. (Andrii)
+2. Optimize code to reuse output from __bpf_dynptr_size(). (Andrii)
+3. Add __diag_ignore_all("-Wmissing-declarations") for kfunc definition.
+4. Fix an off indentation. (Andrii)
 
-I am not sure if the Rust term "trait" is well-known, so for a bit more
-context, I am quoting the Rust Book [1]:
+Changes v9 => v10:
+1. Remove WARN_ON_ONCE() from check_reg_const_str. (Alexei)
 
-    A *trait* defines functionality a particular type has and can share
-    with other types. We can use traits to define shared behavior in an
-    abstract way. We can use *trait bounds* to specify that a generic type
-    can be any type that has certain behavior.
+Changes v8 => v9:
+1. Fix test_progs kfunc_dynptr_param/dynptr_data_null.
 
-[1]: https://doc.rust-lang.org/book/ch10-02-traits.html
+Changes v7 => v8:
+1. Do not use bpf_dynptr_slice* in the kernel. Add __bpf_dynptr_data* and
+   use them in ther kernel. (Andrii)
 
-We have created an abstraction over reference counting:
-the trait `AlwaysRefCounted` and the struct `ARef<T>` where `T`
-implements `AlwaysRefCounted`.
-As Alice already explained, `ARef<T>` is a pointer that owns a refcount
-on the object. Because `ARef<T>` needs to know how to increment and
-decrement that counter. For example, when you want to create another
-`ARef<T>` you can `clone()` it and therefore `ARef<T>` needs to
-increment the refcount. And when you drop it, `ARef<T>` needs to
-decrement it.
-The "`ARef<T>` knows how to inc/dec the refcount" part is done by the
-`AlwaysRefCounted` trait. And there we chose to name the functions
-`inc_ref` and `dec_ref`, since these are the *general*/*abstract*
-operations and not any specific refcount adjustment.
+Changes v6 => v7:
+1. Change "__const_str" annotation to "__str". (Alexei, Andrii)
+2. Add KF_TRUSTED_ARGS flag for both new kfuncs. (KP)
+3. Only allow bpf_get_file_xattr() to read xattr with "user." prefix.
+4. Add Acked-by from Eric Biggers.
 
+Changes v5 => v6:
+1. Let fsverity_init_bpf() return void. (Eric Biggers)
+2. Sort things in alphabetic orders. (Eric Biggers)
 
+Changes v4 => v5:
+1. Revise commit logs. (Alexei)
 
-Hope that also helped and did not create confusion.
+Changes v3 => v4:
+1. Fix error reported by CI.
+2. Update comments of bpf_dynptr_slice* that they may return error pointer.
+
+Changes v2 => v3:
+1. Rebase and resolve conflicts.
+
+Changes v1 => v2:
+1. Let bpf_get_file_xattr() use const string for arg "name". (Alexei)
+2. Add recursion prevention with allowlist. (Alexei)
+3. Let bpf_get_file_xattr() use __vfs_getxattr() to avoid recursion,
+   as vfs_getxattr() calls into other LSM hooks.
+4. Do not use dynptr->data directly, use helper insteadd. (Andrii)
+5. Fixes with bpf_get_fsverity_digest. (Eric Biggers)
+6. Add documentation. (Eric Biggers)
+7. Fix some compile warnings. (kernel test robot)
+
+This set enables file verification with BPF LSM and fsverity.
+
+In this solution, fsverity is used to provide reliable and efficient hash
+of files; and BPF LSM is used to implement signature verification (against
+asymmetric keys), and to enforce access control.
+
+This solution can be used to implement access control in complicated cases.
+For example: only signed python binary and signed python script and access
+special files/devices/ports.
+
+Thanks,
+Song
+
+Song Liu (6):
+  bpf: Add kfunc bpf_get_file_xattr
+  bpf, fsverity: Add kfunc bpf_get_fsverity_digest
+  Documentation/bpf: Add documentation for filesystem kfuncs
+  selftests/bpf: Sort config in alphabetic order
+  selftests/bpf: Add tests for filesystem kfuncs
+  selftests/bpf: Add test that uses fsverity and xattr to sign a file
+
+ Documentation/bpf/fs_kfuncs.rst               |  21 +++
+ Documentation/bpf/index.rst                   |   1 +
+ fs/verity/fsverity_private.h                  |  10 ++
+ fs/verity/init.c                              |   1 +
+ fs/verity/measure.c                           |  84 +++++++++
+ kernel/trace/bpf_trace.c                      |  67 +++++++
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |  10 ++
+ tools/testing/selftests/bpf/config            |   3 +-
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 134 ++++++++++++++
+ .../bpf/prog_tests/verify_pkcs7_sig.c         | 165 +++++++++++++++++-
+ .../selftests/bpf/progs/test_fsverity.c       |  48 +++++
+ .../selftests/bpf/progs/test_get_xattr.c      |  37 ++++
+ .../selftests/bpf/progs/test_sig_in_xattr.c   |  83 +++++++++
+ .../bpf/progs/test_verify_pkcs7_sig.c         |   8 +-
+ .../testing/selftests/bpf/verify_sig_setup.sh |  25 +++
+ 15 files changed, 688 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/bpf/fs_kfuncs.rst
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_fsverity.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_get_xattr.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_sig_in_xattr.c
 
 --
-Cheers,
-Benno
-
+2.34.1
 
