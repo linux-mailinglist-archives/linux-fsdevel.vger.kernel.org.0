@@ -1,114 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-4205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070307FDD35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:36:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C55D7FDD38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04EB1F20F2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD2A51C20954
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29918374DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260DF2E647
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="G1+EBO0I"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="L+9hVabP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B70AD71
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:41:37 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-54af4f2838dso7459189a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:41:37 -0800 (PST)
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205DED5C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:42:34 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-54b450bd014so4901529a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:42:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1701268895; x=1701873695; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1701268952; x=1701873752; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ashHbLgjB5VwyZxWlyhUbauOEA+rSvNdvJ02T1Z5CVU=;
-        b=G1+EBO0IT8s03uAys6Itp6BiIALUoQmxSOgJI5Ug8DNOji9KUgMvHZd84E9FIfoZLc
-         JdIHWwZnnqFZ6m58mNBXOI+igjughr33rXPy4ncXvyMma//G50E1R1QAJPtn7XG77SU1
-         O7mNmH/qQx5x5GY8kYC+Awcnt48W5LLpytaTY=
+        bh=6w05lBhliqG02QD74yDtfVUAWC7biZGqwSccI+QzqRQ=;
+        b=L+9hVabPSPZdeBOJqShj6iRPu8VIaNVjCBEn9hfzZcbeVhZD2TxRJpjtwn43P5j71K
+         3riUzQT8ydmz8lQvfqrJ2yMA+DDfCSppE888AafpurETPb9fjOE88nEyuIPhDQKDY40K
+         Fe1PERK32x0b3lLXaaVEegl7WgUdSlUZeL9cg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701268895; x=1701873695;
+        d=1e100.net; s=20230601; t=1701268952; x=1701873752;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ashHbLgjB5VwyZxWlyhUbauOEA+rSvNdvJ02T1Z5CVU=;
-        b=DkVmEq0ioMvMj843iPzm0R8vGjPJk8MzYSlLTJGI1RGcRdwWUMGmGLqUajd9EjhkwQ
-         ru7UCAkdkQ46RfDOXf3INc1cG/VPM64qaErNd6L97p5YC2bXT8Zy95RiiCL7QxU4t6mB
-         /KFK8LRE28nUyYR/bljEKj+XiKc0TW0YebdlZpXiSe2HJlrWD5SslHkmsD415FJQ1ML3
-         Zi3OFqjelr4KSMeQ928QrfCPtBeoBzDTDIAQZVT2B4rxl30L2Dtr96MSlhDTrGZH3TrI
-         3IVPDio/wMccdVci7ZTJ5VWxOB2n+B0H4aOyqB6hu4IjY6iQ7uOeZqL2hpkUSiFl0MEP
-         O2MA==
-X-Gm-Message-State: AOJu0Yw9Hmgp7ydeYz1dgX10z1s6iv4draHnemYuWkcA+6lHKcw2BVaM
-	jdIRQru32TLfHjOLAhelOpz+xZy9YxgXuOxoiJ/fQpDaZYxGIviK
-X-Google-Smtp-Source: AGHT+IEiRN9ZbNNb7SSogtcORsnPx0u5jGStWANmL5M3P+SmilVbX47A4REPRxt9xuT7sbyBZSS3YwG81jxxv5KsXCc=
-X-Received: by 2002:a17:906:eb01:b0:9ff:64d2:6b28 with SMTP id
- mb1-20020a170906eb0100b009ff64d26b28mr11422138ejb.55.1701268895155; Wed, 29
- Nov 2023 06:41:35 -0800 (PST)
+        bh=6w05lBhliqG02QD74yDtfVUAWC7biZGqwSccI+QzqRQ=;
+        b=q1RUuMSa1QoK+PDAghZuFIO+Nyk19zlWBM8lKVPDj+rV466PACeeAJ6fjFbleuFiNv
+         /LapwqI2cn9XYY95ZYNHePYPRYufrLvxVfZqvS/pGUw/mWcOa47hoSeyr+JPL31ke/rs
+         HnslzQTOsAAjKk9OOMSFtWm71fBAYCtBpJi9GfIEjthY8eXEudF937lmJpmL7Uv6yciD
+         P8bxbcumZkZ/xNtDxxTJtmgutQgGKZRDO4B1IlSl7sy64aNk95Iv/vc68Aq6WWKD2lPp
+         DOENo+gJir7En5qrO9LHcd+A1hKTG7i+J5QcKr/Qv41bdn+mGeGzPIOgvomT3KuCYID2
+         wzVg==
+X-Gm-Message-State: AOJu0YwXH1x0NHpMrOTKNzFnbyQwfqsLWpT7BF/TdzuqYyxKPJl23nCY
+	QJtNZ2WwW9tlma+F8s9T/O46lToW8J8rmVchTItpwnau
+X-Google-Smtp-Source: AGHT+IGSjmoAhJybhOkEIX/F3Ywm3YKqniym2x37i5OEpWDDIIMG8hevgQciWqQarcgStD7cT1sT7w==
+X-Received: by 2002:a50:aaca:0:b0:545:4bf3:ac89 with SMTP id r10-20020a50aaca000000b005454bf3ac89mr14395499edc.23.1701268952369;
+        Wed, 29 Nov 2023 06:42:32 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id b19-20020a056402279300b0054b5d5248easm3575656ede.86.2023.11.29.06.42.31
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Nov 2023 06:42:31 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a00cbb83c82so975238666b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 06:42:31 -0800 (PST)
+X-Received: by 2002:a17:906:70c8:b0:9e2:9647:9a54 with SMTP id
+ g8-20020a17090670c800b009e296479a54mr11284943ejk.3.1701268950876; Wed, 29 Nov
+ 2023 06:42:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231129094317.453025-1-winters.zc@antgroup.com> <20231129094317.453025-2-winters.zc@antgroup.com>
-In-Reply-To: <20231129094317.453025-2-winters.zc@antgroup.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 29 Nov 2023 15:41:23 +0100
-Message-ID: <CAJfpegscW2xFSNd-EFhD2OzAyDt0r4OffKKuS_uwUx09O+hcvg@mail.gmail.com>
-Subject: Re: [PATCH v2 RESEND 1/2] fuse: Introduce sysfs API for resend
- pending reque
-To: Zhao Chen <winters.zc@antgroup.com>
-Cc: linux-fsdevel@vger.kernel.org
+References: <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
+ <20231101084535.GG1957730@ZenIV> <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV> <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+ <ZV2rdE1XQWwJ7s75@gmail.com> <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
+ <CAHk-=wg6D_d-zaRfXZ=sUX1fbTJykQ4KxXCmEk3aq73wVk_ORA@mail.gmail.com>
+ <CAHk-=wj2ky85K5HYYLeLCP23qyTJpirnpiVSu5gWyT_GRXbJaQ@mail.gmail.com> <ZWctqTvE+JC6T6RK@gmail.com>
+In-Reply-To: <ZWctqTvE+JC6T6RK@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 29 Nov 2023 06:42:13 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wibyYXdVyyoOxZqQK576=r5d02ikCtbJ4-eyEWkh92rPg@mail.gmail.com>
+Message-ID: <CAHk-=wibyYXdVyyoOxZqQK576=r5d02ikCtbJ4-eyEWkh92rPg@mail.gmail.com>
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+To: Guo Ren <guoren@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 29 Nov 2023 at 10:43, Zhao Chen <winters.zc@antgroup.com> wrote:
+On Wed, 29 Nov 2023 at 04:25, Guo Ren <guoren@kernel.org> wrote:
 >
-> From: Peng Tao <bergwolf@antgroup.com>
->
-> When a FUSE daemon panic and failover, we aim to minimize the impact on
-> applications by reusing the existing FUSE connection. During this
-> process, another daemon is employed to preserve the FUSE connection's file
-> descriptor.
->
-> However, it is possible for some inflight requests to be lost and never
-> returned. As a result, applications awaiting replies would become stuck
-> forever. To address this, we can resend these pending requests to the
-> FUSE daemon, which is done by fuse_resend_pqueue(), ensuring they are
-> properly processed again.
->
-> Signed-off-by: Peng Tao <bergwolf@antgroup.com>
-> Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
-> ---
->  fs/fuse/control.c | 20 ++++++++++++++++
->  fs/fuse/dev.c     | 59 +++++++++++++++++++++++++++++++++++++++++++++++
->  fs/fuse/fuse_i.h  |  5 +++-
->  3 files changed, 83 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-> index 284a35006462..fd2258d701dd 100644
-> --- a/fs/fuse/control.c
-> +++ b/fs/fuse/control.c
-> @@ -44,6 +44,18 @@ static ssize_t fuse_conn_abort_write(struct file *file, const char __user *buf,
->         return count;
->  }
->
-> +static ssize_t fuse_conn_resend_write(struct file *file, const char __user *buf,
-> +                                     size_t count, loff_t *ppos)
-> +{
-> +       struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
-> +
-> +       if (fc) {
-> +               fuse_resend_pqueue(fc);
-> +               fuse_conn_put(fc);
-> +       }
-> +       return count;
-> +}
-> +
+> > +#if defined(__LITTLE_ENDIAN) && BITS_PER_LONG == 64
+> > + #define LOCKREF_ADD(n,x) ((n).lock_count += (unsigned long)(x)<<32)
+> > +#else
+> > + #define LOCKREF_ADD(n,x) ((n).count += (unsigned long)(x)<<32)
+> #define LOCKREF_ADD(n,x) ((n).count += (unsigned long)(x))
+> ?
 
-How about triggering this with a notification (FUSE_NOTIFY_RESEND)?
+Yes. I obviously only tested the little-endian case, and the BE case
+was a bit too much cut-and-paste..
 
-Thanks,
-Miklos
+             Linus
 
