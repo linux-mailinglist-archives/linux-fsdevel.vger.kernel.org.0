@@ -1,147 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-4230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ED67FDF77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:42:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8947FDF79
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 19:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB77DB20A90
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA787B20B10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5F646B96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7128A5DF0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 18:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZHu6Iwec"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDn1bH1b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84800D71
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 08:55:54 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5cd6a86a898so86291247b3.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 08:55:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701276953; x=1701881753; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=unbZFkiD0dHweTLgp1OYP68ojVuVgwsL9BVcNl+eCj0=;
-        b=ZHu6IwecdEJq762miAS3Om9MTNmVo8wTHYwvvBUO9TFlduLm2RhZPyjKON/lhUc40n
-         Y7z6t4Ws5yrtGwOpdxFnTtz+DCoNhslTrjCwyUtKvZ1nUyfpM/7aAM8OFr96JWKKpg0w
-         u/sj0wG66pfilbDxeIFiNg0E22XHst6ybyCS8ucnMtUCkhl31D6dB9U13Tm/zlXXUsGR
-         mMpI57qoQriXTWaYZJPRW50t4AKy3xAgZHQAyr7MMLJtLbwaprUihbGY2ZE2sCI0wMvD
-         uSHZpsbwfao/FQUH2IjMBeXye3i3DsZgEFSU/Sr4SQ/V/ZQxbel9Kx36WhQxkfHWgbuG
-         0jGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701276953; x=1701881753;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=unbZFkiD0dHweTLgp1OYP68ojVuVgwsL9BVcNl+eCj0=;
-        b=u/170Hyuppvg5KGD7EBiGFBd4K27z6DyBwVTK7o5FuHMXjKL5Ss6TBrswwArdfInZ8
-         gYKTj55oRRUcIv1uGlqJy7HyTVjsmcMgmMzdDVJat26+JRGZtVLe0TRut6SeWVJdxSj6
-         Q3oPEj/BDH+PDCc7KWecku3VfWRiJTY6EOOu0VoBSuDu1cm+toGL0Sjyt4N3fnaHnHYc
-         QXrPgmg7dpUnPNGknLwhZEeUMs3K/3AjUTmiVG6sEFY6HFBJsVTgc8r+xOQ5nqzIM0zT
-         Y7uoYghDF984djkC10Q67FraSEH3SkVAJAX6oMhwLEA9/TNfLwdIznq+9fvRG3UWscik
-         RUOw==
-X-Gm-Message-State: AOJu0Yyrixu1EySGBD8l3yS372P1t6SaCiuzVgn5Q64PZAYmfe5XWKuP
-	5pxH8h3DV/wATActcJSlZajNGPiUWFygR/o=
-X-Google-Smtp-Source: AGHT+IEpWMlZIbVFMqFnLabAnmVr/lPqw+N8K9vWZ1Skq6PXRN+J94RDlgF3JQbaZlH+xbk7iE6skGya8a4JWqA=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:690c:3183:b0:5ca:4a99:7008 with SMTP
- id fd3-20020a05690c318300b005ca4a997008mr630558ywb.10.1701276953779; Wed, 29
- Nov 2023 08:55:53 -0800 (PST)
-Date: Wed, 29 Nov 2023 16:55:51 +0000
-In-Reply-To: <20231129-zwiespalt-exakt-f1446d88a62a@brauner>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A21BC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 08:56:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701276990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mwPpdhlYYaHD0bYeEis0CU8df9ASTS3wuKo9KB9sGXI=;
+	b=PDn1bH1bN0Tlwi8UVxl27x/26iAkhSoYl2xgql4kQed/MTxAxJK/YlH/OEKlqSdZCvrJkX
+	lzGmwJGu1Dkxrl3QO8ySctLJhZsRmxSu1G8l/xX+l7CVVHCiWY4PNxkFQvnX6k3AflB1YQ
+	y5Pq2ukqYe2EKam0HH+V+tJvEohcV/I=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-15-LUmdmRd7NrCAEP8vXLpuJw-1; Wed, 29 Nov 2023 11:56:24 -0500
+X-MC-Unique: LUmdmRd7NrCAEP8vXLpuJw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 16518185A794;
+	Wed, 29 Nov 2023 16:56:24 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.161])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 9A1C51C060BB;
+	Wed, 29 Nov 2023 16:56:22 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	Rohith Surabattula <rohiths.msft@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	linux-cifs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] cifs: Fixes for copy_file_range() and FALLOC_FL_INSERT/ZERO_RANGE
+Date: Wed, 29 Nov 2023 16:56:16 +0000
+Message-ID: <20231129165619.2339490-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231129-zwiespalt-exakt-f1446d88a62a@brauner>
-X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
-Message-ID: <20231129165551.3476910-1-aliceryhl@google.com>
-Subject: Re: [PATCH 4/7] rust: file: add `FileDescriptorReservation`
-From: Alice Ryhl <aliceryhl@google.com>
-To: brauner@kernel.org
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, 
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
-	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
-	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
-	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, 
-	wedsonaf@gmail.com, willy@infradead.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-Christian Brauner <brauner@kernel.org> writes:
-> Can we follow the traditional file terminology, i.e.,
-> get_unused_fd_flags() and fd_install()? At least at the beginning this
-> might be quite helpful instead of having to mentally map new() and
-> commit() onto the C functions.
+Hi Steve,
 
-Sure, I'll do that in the next version.
+Here are three patches for cifs:
 
->> +    /// Prevent values of this type from being moved to a different task.
->> +    ///
->> +    /// This is necessary because the C FFI calls assume that `current` is set to the task that
->> +    /// owns the fd in question.
->> +    _not_send_sync: PhantomData<*mut ()>,
-> 
-> I don't fully understand this. Can you explain in a little more detail
-> what you mean by this and how this works?
+ (1) Fix FALLOC_FL_ZERO_RANGE support to change i_size if the file is
+     extended.
 
-Yeah, so, this has to do with the Rust trait `Send` that controls
-whether it's okay for a value to get moved from one thread to another.
-In this case, we don't want it to be `Send` so that it can't be moved to
-another thread, since current might be different there.
+ (2) Fix FALLOC_FL_INSERT_RANGE support to change i_size after it moves the
+     EOF on the server.
 
-The `Send` trait is automatically applied to structs whenever *all*
-fields of the struct are `Send`. So to ensure that a struct is not
-`Send`, you add a field that is not `Send`.
+ (3) Fix copy_file_range() support to handle invalidation and flushing of
+     overlapping dirty data correctly, to move the EOF on the server to
+     deal with lazy flushing of locally dirty data and to set the i_size
+     afterwards if the copy extended the file.
 
-The `PhantomData` type used here is a special zero-sized type.
-Basically, it says "pretend this struct has a field of type `*mut ()`,
-but don't actually add the field". So for the purposes of `Send`, it has
-a non-Send field, but since its wrapped in `PhantomData`, the field is
-not there at runtime.
+I've pushed the patches here also:
 
->> +        Ok(Self {
->> +            fd: fd as _,
-> 
-> This is a cast to a u32?
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-fixes
 
-Yes.
+David
 
-> Can you please draft a quick example how that return value would be
-> expected to be used by a caller? It's really not clear
+David Howells (3):
+  cifs: Fix FALLOC_FL_ZERO_RANGE by setting i_size if EOF moved
+  cifs: Fix FALLOC_FL_INSERT_RANGE by setting i_size after EOF moved
+  cifs: Fix flushing, invalidation and file size with copy_file_range()
 
-The most basic usage would look like this:
+ fs/smb/client/cifsfs.c  | 80 +++++++++++++++++++++++++++++++++++++++--
+ fs/smb/client/smb2ops.c | 13 +++++--
+ 2 files changed, 88 insertions(+), 5 deletions(-)
 
-	// First, reserve the fd.
-	let reservation = FileDescriptorReservation::new(O_CLOEXEC)?;
-
-	// Then, somehow get a file to put in it.
-	let file = get_file_using_fallible_operation()?;
-
-	// Finally, commit it to the fd.
-	reservation.commit(file);
-
-In Rust Binder, reservations are used here:
-https://github.com/Darksonn/linux/blob/dca45e6c7848e024709b165a306cdbe88e5b086a/drivers/android/allocation.rs#L199-L210
-https://github.com/Darksonn/linux/blob/dca45e6c7848e024709b165a306cdbe88e5b086a/drivers/android/allocation.rs#L512-L541
-
->> +    pub fn commit(self, file: ARef<File>) {
->> +        // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`, and `file.ptr` is
->> +        // guaranteed to have an owned ref count by its type invariants.
->> +        unsafe { bindings::fd_install(self.fd, file.0.get()) };
-> 
-> Why file.0.get()? Where did that come from?
-
-This gets a raw pointer to the C type.
-
-The `.0` part is a field access. `ARef` struct is a tuple struct, so its
-fields are unnamed. However, the fields can still be accessed by index.
-
-Alice
 
