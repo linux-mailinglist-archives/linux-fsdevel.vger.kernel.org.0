@@ -1,162 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-4250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF317FE127
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 21:35:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB4F7FE358
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 23:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37BE2281FA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 481F8282528
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395760EE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 20:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0158947A45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 22:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQwqVlfR"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZEJ8FSSi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C16F10C3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:19 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-40b2ddab817so1123925e9.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:07:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701288438; x=1701893238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mu+FvYJP4hLa4bumSUKSMjyLY9zr55bzmXAW4NgivPE=;
-        b=AQwqVlfRMk1lAn+V2EfhGSzGq8Mgur/Q65CFr1hcOw3DUAgvnGzhKVUVB9zXnLtmwA
-         WCT/SS65BnvtDOo2mRWfwoKAlSRvV4jU85NhCVdKzC4qtaBtQ175QJvT7S+H/aYddQOe
-         OSJCRim3oPHhH+axo8HF+bCI5X/AdWDDayNXUdIq8Za4247c/DewkCBeuw3gvk03LNyc
-         fZxYsFnurvTtFf9hrQv82eQqZh6yT6qUw3lGu31584U2EHehfNOlh/m7ddcijMYhLxCS
-         pR+l+o4husN1RCjqL5SIe/cN4oDmAbih+pGA2VTBBID496ABqRn7PRWlFqk4dQrh8Wkf
-         boWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701288438; x=1701893238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mu+FvYJP4hLa4bumSUKSMjyLY9zr55bzmXAW4NgivPE=;
-        b=GRo4X8AnAXLNdKM682nsDyHxCH7OcB1pfkERBJHnkyMdFpZl/sJetU9JFKYwwlJTFI
-         7182xN9U+t3dQvWdeFnBgTgdrlpmbEAjtbJXQfgrRNe48JduoV1Ym759v6z67BDQRJLa
-         +TumkUDlUA9e8phhCmB2RF5W2GzGOKHb+sAWF+/rb7jXLvQLj51ZGISaW/eTlihx7KaO
-         AUz49Z2wJlbNcQtz3wNksFtcd4QNOHJxPiS4Dr9xnTFA6j5i1s97SKHw8jyiy3ywE+NX
-         NRlROXkmSuhoJZEMwfDoDCE0Ru00DD3Im+Ve37vXska5ORBGU4kflS1GB56Wxs6GHhSF
-         aCpQ==
-X-Gm-Message-State: AOJu0YzcPUBgAZvEIYMh97J6WWIsZZ5ggxxwa2at44sP+70DXvABliad
-	oDQw5uv/OIe7mcEAE4yXvq8=
-X-Google-Smtp-Source: AGHT+IEOYql683V6Aav6wdj0xIQgh66wVr7OgojCFV+fc5DQBGNBgB2dQHLupZq87klcgB77FMwD3g==
-X-Received: by 2002:a05:600c:524a:b0:40b:4ba1:c502 with SMTP id fc10-20020a05600c524a00b0040b4ba1c502mr4870341wmb.37.1701288438016;
-        Wed, 29 Nov 2023 12:07:18 -0800 (PST)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id a8-20020adffb88000000b00333083a20e5sm7412719wrr.113.2023.11.29.12.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 12:07:17 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] fs: move file_start_write() into direct_splice_actor()
-Date: Wed, 29 Nov 2023 22:07:09 +0200
-Message-Id: <20231129200709.3154370-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231129200709.3154370-1-amir73il@gmail.com>
-References: <20231129200709.3154370-1-amir73il@gmail.com>
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343AA10CB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 12:43:43 -0800 (PST)
+Date: Wed, 29 Nov 2023 15:43:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1701290621;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=VAfvTVgkT1TJqyKd1et+j08YoV+NfvuOHQ/uuVLCDts=;
+	b=ZEJ8FSSi/bpE8wwFLHlzVDiewRK7yIqiubswyI2W8D8MbvxLTMV1i6F7VkfEKBBnFtk7Q0
+	53/+ap7tGPOEwhjw5RYZ28AVQ+bnvH4A8kxMwcLXfxsPe8Ekk6eprTRPG6I78NMAR2oH+j
+	LDWdag5TvUhDTF5tqBt3kerfurXiWHI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] more bcachefs fixes
+Message-ID: <20231129204336.4yfhhptdgrfaguur@moria.home.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-The two callers of do_splice_direct() hold file_start_write() on the
-output file.
+Hi Linus, some more bcachefs fixes. Nothing too crazy to report,
+changelog should have it all.
 
-This may cause file permission hooks to be called indirectly on an
-overlayfs lower layer, which is on the same filesystem of the output
-file and could lead to deadlock with fanotify permission events.
+Cheers,
+Kent
 
-To fix this potential deadlock, move file_start_write() from the callers
-into the direct_splice_actor(), so file_start_write() will not be held
-while reading the input file.
+The following changes since commit 98b1cc82c4affc16f5598d4fa14b1858671b2263:
 
-Suggested-by: Josef Bacik <josef@toxicpanda.com>
-Link: https://lore.kernel.org/r/20231128214258.GA2398475@perftesting/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/overlayfs/copy_up.c | 2 --
- fs/read_write.c        | 2 --
- fs/splice.c            | 8 +++++++-
- 3 files changed, 7 insertions(+), 5 deletions(-)
+  Linux 6.7-rc2 (2023-11-19 15:02:14 -0800)
 
-diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
-index 7a44c8212331..294b330aba9f 100644
---- a/fs/overlayfs/copy_up.c
-+++ b/fs/overlayfs/copy_up.c
-@@ -333,11 +333,9 @@ static int ovl_copy_up_file(struct ovl_fs *ofs, struct dentry *dentry,
- 		if (error)
- 			break;
- 
--		ovl_start_write(dentry);
- 		bytes = do_splice_direct(old_file, &old_pos,
- 					 new_file, &new_pos,
- 					 this_len, SPLICE_F_MOVE);
--		ovl_end_write(dentry);
- 		if (bytes <= 0) {
- 			error = bytes;
- 			break;
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 555514cdad53..b7110ee77c1c 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1286,10 +1286,8 @@ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
- 		retval = rw_verify_area(WRITE, out.file, &out_pos, count);
- 		if (retval < 0)
- 			goto fput_out;
--		file_start_write(out.file);
- 		retval = do_splice_direct(in.file, &pos, out.file, &out_pos,
- 					  count, fl);
--		file_end_write(out.file);
- 	} else {
- 		if (out.file->f_flags & O_NONBLOCK)
- 			fl |= SPLICE_F_NONBLOCK;
-diff --git a/fs/splice.c b/fs/splice.c
-index 3bb4936f8b70..261adfdfed9d 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1157,8 +1157,12 @@ static int direct_splice_actor(struct pipe_inode_info *pipe,
- 			       struct splice_desc *sd)
- {
- 	struct file *file = sd->u.file;
-+	long ret;
- 
--	return do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
-+	file_start_write(file);
-+	ret = do_splice_from(pipe, file, sd->opos, sd->total_len, sd->flags);
-+	file_end_write(file);
-+	return ret;
- }
- 
- static int copy_file_range_splice_actor(struct pipe_inode_info *pipe,
-@@ -1240,6 +1244,8 @@ EXPORT_SYMBOL(do_splice_direct);
-  *
-  * Description:
-  *    For use by generic_copy_file_range() and ->copy_file_range() methods.
-+ *    Like do_splice_direct(), but vfs_copy_file_range() already called
-+ *    start_file_write() on @out file.
-  *
-  * Callers already called rw_verify_area() on the entire range.
-  */
--- 
-2.34.1
+are available in the Git repository at:
 
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2023-11-29
+
+for you to fetch changes up to 415e5107b0dce0e5407ae4a46700cd7e8859e252:
+
+  bcachefs: Extra kthread_should_stop() calls for copygc (2023-11-28 22:58:23 -0500)
+
+----------------------------------------------------------------
+More bcachefs bugfixes for 6.7
+
+Bigger/user visible fixes:
+
+ - bcache & bcachefs were broken with CFI enabled; patch for closures to
+   fix type punning
+
+ - mark erasure coding as extra-experimental; there are incompatible
+   disk space accounting changes coming for erasure coding, and I'm
+   still seeing checksum errors in some tests
+
+ - several fixes for durability-related issues (durability is a device
+   specific setting where we can tell bcachefs that data on a given
+   device should be counted as replicated x times )
+
+ - a fix for a rare livelock when a btree node merge then updates a
+   parent node that is almost full
+
+ - fix a race in the device removal path, where dropping a pointer in a
+   btree node to a device would be clobbered by an in flight btree write
+   updating the btree node key on completion
+
+ - fix one SRCU lock hold time warning in the btree gc code - ther's
+   still a bunch more of these to fix
+
+ - fix a rare race where we'd start copygc before initializing the "are
+   we rw" percpu refcount; copygc would think we were already ro and die
+   immediately
+
+https://evilpiepirate.org/~testdashboard/ci?branch=bcachefs-for-upstream
+
+----------------------------------------------------------------
+Brian Foster (1):
+      bcachefs: preserve device path as device name
+
+Kent Overstreet (22):
+      closures: CLOSURE_CALLBACK() to fix type punning
+      bcachefs: Put erasure coding behind an EXPERIMENTAL kconfig option
+      bcachefs: bch2_moving_ctxt_flush_all()
+      bcachefs: Make sure bch2_move_ratelimit() also waits for move_ops
+      bcachefs: Don't stop copygc thread on device resize
+      bcachefs: Start gc, copygc, rebalance threads after initing writes ref
+      bcachefs: Fix an endianness conversion
+      bcachefs: Proper refcounting for journal_keys
+      bcachefs: deallocate_extra_replicas()
+      bcachefs: Data update path won't accidentaly grow replicas
+      bcachefs: Fix ec + durability calculation
+      bcachefs: bpos is misaligned on big endian
+      bcachefs: Fix zstd compress workspace size
+      bcachefs: Add missing validation for jset_entry_data_usage
+      bcachefs: Fix bucket data type for stripe buckets
+      bcachefs: Fix split_race livelock
+      bcachefs: trace_move_extent_start_fail() now includes errcode
+      bcachefs: -EROFS doesn't count as move_extent_start_fail
+      bcachefs: move journal seq assertion
+      bcachefs: Fix race between btree writes and metadata drop
+      bcachefs: Convert gc_alloc_start() to for_each_btree_key2()
+      bcachefs: Extra kthread_should_stop() calls for copygc
+
+ drivers/md/bcache/btree.c           |  14 ++--
+ drivers/md/bcache/journal.c         |  20 +++---
+ drivers/md/bcache/movinggc.c        |  16 ++---
+ drivers/md/bcache/request.c         |  74 ++++++++++-----------
+ drivers/md/bcache/request.h         |   2 +-
+ drivers/md/bcache/super.c           |  40 ++++++------
+ drivers/md/bcache/writeback.c       |  16 ++---
+ fs/bcachefs/Kconfig                 |  12 ++++
+ fs/bcachefs/alloc_foreground.c      |  30 +++++++++
+ fs/bcachefs/bcachefs.h              |   4 +-
+ fs/bcachefs/bcachefs_format.h       |   8 ++-
+ fs/bcachefs/btree_gc.c              |   9 +--
+ fs/bcachefs/btree_io.c              |   7 +-
+ fs/bcachefs/btree_iter.c            |   6 +-
+ fs/bcachefs/btree_journal_iter.c    |  18 +++++-
+ fs/bcachefs/btree_journal_iter.h    |  10 ++-
+ fs/bcachefs/btree_update_interior.c |  14 +++-
+ fs/bcachefs/buckets.c               |  10 +--
+ fs/bcachefs/compress.c              |  16 +++--
+ fs/bcachefs/data_update.c           |  92 +++++++++++++++++++++++---
+ fs/bcachefs/data_update.h           |   9 ++-
+ fs/bcachefs/errcode.h               |   3 +-
+ fs/bcachefs/extents.c               |  30 ++++-----
+ fs/bcachefs/fs-io-direct.c          |   8 +--
+ fs/bcachefs/fs.c                    |   3 +-
+ fs/bcachefs/io_read.c               |   2 +-
+ fs/bcachefs/io_write.c              |  14 ++--
+ fs/bcachefs/io_write.h              |   3 +-
+ fs/bcachefs/journal.c               |   2 +
+ fs/bcachefs/journal.h               |   4 +-
+ fs/bcachefs/journal_io.c            |  29 ++++++---
+ fs/bcachefs/journal_io.h            |   2 +-
+ fs/bcachefs/move.c                  | 126 ++++++++++++------------------------
+ fs/bcachefs/move.h                  |  19 ++++++
+ fs/bcachefs/movinggc.c              |   2 +-
+ fs/bcachefs/recovery.c              |  11 ++--
+ fs/bcachefs/replicas.c              |  69 +++++++++++---------
+ fs/bcachefs/replicas.h              |   2 +
+ fs/bcachefs/snapshot.c              |   2 +-
+ fs/bcachefs/super-io.c              |   5 ++
+ fs/bcachefs/super.c                 |  34 ++++++----
+ fs/bcachefs/super_types.h           |   1 +
+ fs/bcachefs/trace.h                 |   6 +-
+ include/linux/closure.h             |   9 ++-
+ lib/closure.c                       |   5 +-
+ 45 files changed, 495 insertions(+), 323 deletions(-)
 
