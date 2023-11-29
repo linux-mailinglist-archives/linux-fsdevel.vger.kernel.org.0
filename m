@@ -1,143 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-4213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94807FDD4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:38:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3727FDD50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 17:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24AD8B20D57
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9C1282581
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB813B2AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AD93B295
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Nov 2023 16:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="HL8VxN2Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7ECEDD;
-	Wed, 29 Nov 2023 07:19:53 -0800 (PST)
-Received: from in02.mta.xmission.com ([166.70.13.52]:41778)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1r8MLv-00Cf3p-Sp; Wed, 29 Nov 2023 08:19:51 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:49158 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1r8MLu-005gWB-Nk; Wed, 29 Nov 2023 08:19:51 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>,
-  tytso@mit.edu,  linux-f2fs-devel@lists.sourceforge.net,
-  ebiggers@kernel.org,  jaegeuk@kernel.org,  linux-ext4@vger.kernel.org,
-  Miklos Szeredi <miklos@szeredi.hu>,  Gabriel Krisman Bertazi
- <gabriel@krisman.be>
-In-Reply-To: <20231129045313.GA1130947@ZenIV> (Al Viro's message of "Wed, 29
-	Nov 2023 04:53:13 +0000")
-References: <20231122211901.GJ38156@ZenIV>
-	<CAHk-=wh5WYPN7BLSUjUr_VBsPTxHOcMHo1gOH2P4+5NuXAsCKA@mail.gmail.com>
-	<20231123171255.GN38156@ZenIV> <20231123182426.GO38156@ZenIV>
-	<20231123215234.GQ38156@ZenIV> <20231125220136.GB38156@ZenIV>
-	<20231126045219.GD38156@ZenIV> <20231126184141.GF38156@ZenIV>
-	<20231127063842.GG38156@ZenIV> <20231129045313.GA1130947@ZenIV>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
-Date: Wed, 29 Nov 2023 09:19:41 -0600
-Message-ID: <87v89kio36.fsf@email.froward.int.ebiederm.org>
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BE5FD6E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 07:21:23 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-a02c48a0420so942759866b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 07:21:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1701271281; x=1701876081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NE3dLucEMCrnv4EmFzHeQRoc9bwd9ajHXtVS/RD86kw=;
+        b=HL8VxN2Y5cAUycxhQpQc79hZOciIIg/kE6LSlnT+71Rf+4RGYpHvzhjgbKumhTCC62
+         mb2rOl1iT+Nj+4Q5oefxfVxPjX9g+1vahzq1/bkzy/D2wKBv0rczK0UoZXCowSkaIQ4P
+         /+sHOKqJf2EO6e5/PCwZueY9sVorfBTiELGL0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701271281; x=1701876081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NE3dLucEMCrnv4EmFzHeQRoc9bwd9ajHXtVS/RD86kw=;
+        b=vQh9p1HAaInh7Muo2+J4RWcY+sgIBD5+1oCPjttXAJ5GchKznnlI+3VCave7PS1FvQ
+         ZCTbpqEU4aQeNdtb8G7owklr2uUDhIyRFxfCPZH5I7rsj9jz8XNyGmR2rmreoJraP9iu
+         De9uVwQ9LiGpmHq2SsBAY52Jse5zq3ZxpDbM5D/kDRUtsdbPNnYNtaCIkQ1FKzs+1JS+
+         29GmFNrBDwC//U0g9+An6W/0/fUnbDee9SPT8oo7NBUqtDKKnoNoUsDMetMdch4amLLO
+         Rcitertj4MVKxHSX+Q0mQAOKUBKMpnWE4FaAL7NLmtx3zPHLg2medIz0ihwd7vfROLNR
+         Spzg==
+X-Gm-Message-State: AOJu0YzJVwWETWn904HIyTn6GL2gPkao0N/Nfzk+2B8q733+FSCpfr6N
+	5srHJYaZOI+Ws79/JLYL8U3uD829PKZKJzMad+fw1Q==
+X-Google-Smtp-Source: AGHT+IEpvkJudB3KItLXyCsQ4qh+BdxdjDi6za6xDSgLypfaL0uypeOqCP4hF7mTU7ymlCpLmbR9mMU8hbOaMgfRnqo=
+X-Received: by 2002:a17:906:f34e:b0:a0e:7563:51bd with SMTP id
+ hg14-20020a170906f34e00b00a0e756351bdmr6955733ejb.53.1701271281702; Wed, 29
+ Nov 2023 07:21:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1r8MLu-005gWB-Nk;;;mid=<87v89kio36.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/b6JS6EkjAv/7bqf1Ls+CX0i6iy1ZrEtE=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: 
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 555 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 11 (2.0%), b_tie_ro: 10 (1.8%), parse: 1.33
-	(0.2%), extract_message_metadata: 18 (3.2%), get_uri_detail_list: 3.1
-	(0.6%), tests_pri_-2000: 12 (2.2%), tests_pri_-1000: 3.6 (0.6%),
-	tests_pri_-950: 1.52 (0.3%), tests_pri_-900: 1.28 (0.2%),
-	tests_pri_-90: 133 (23.9%), check_bayes: 130 (23.5%), b_tokenize: 8
-	(1.5%), b_tok_get_all: 69 (12.5%), b_comp_prob: 5 (0.9%),
-	b_tok_touch_all: 44 (7.8%), b_finish: 0.86 (0.2%), tests_pri_0: 354
-	(63.8%), check_dkim_signature: 0.65 (0.1%), check_dkim_adsp: 2.8
-	(0.5%), poll_dns_idle: 0.80 (0.1%), tests_pri_10: 3.1 (0.6%),
-	tests_pri_500: 12 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: fun with d_invalidate() vs. d_splice_alias() was Re: [f2fs-dev]
- [PATCH v6 0/9] Support negative dentries on case-insensitive ext4 and f2fs
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
+ <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
+ <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
+ <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
+ <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
+ <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
+ <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
+ <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
+ <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
+ <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com>
+ <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
+ <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com> <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 29 Nov 2023 16:21:10 +0100
+Message-ID: <CAJfpegtH1DP19cAuKgYAssZ8nkKhnyX42AYWtAT3h=nmi2j31A@mail.gmail.com>
+Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
+	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
+	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
+	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
-
-> On Mon, Nov 27, 2023 at 06:38:43AM +0000, Al Viro wrote:
+On Wed, 29 Nov 2023 at 16:06, Amir Goldstein <amir73il@gmail.com> wrote:
 >
->> > FWIW, I suspect that the right answer would be along the lines of
->> > 	* if d_splice_alias() does move an exsiting (attached) alias in
->> > place, it ought to dissolve all mountpoints in subtree being moved.
->> > There might be subtleties,
+> On Wed, Nov 29, 2023 at 4:14=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
+> wrote:
+> >
+> > On Wed, 29 Nov 2023 at 08:25, Amir Goldstein <amir73il@gmail.com> wrote=
+:
+> >
+> > > My proposed solution is to change the semantics with the init flag
+> > > FUSE_PASSTHROUGH to disallow mmap on FOPEN_DIRECT_IO
+> > > files.
+> >
+> > Why?  FOPEN_DIRECT_IO and FUSE_PASSTHROUGH should mix much more
+> > readily than FOPEN_DIRECT_IO with page cache.
+> >
 >
-> Are there ever...  Starting with the "our test for loop creation
-> (alias is a direct ancestor, need to fail with -ELOOP) is dependent
-> upon rename_lock being held all along".
+> Am I misunderstanding how mmap works with FOPEN_DIRECT_IO file?
+> My understanding is that mmap of FOPEN_DIRECT_IO reads/writes
+> from page cache of fuse inode.
 >
-> Folks, what semantics do we want for dissolving mounts on splice?
-> The situation when it happens is when we have a subtree on e.g. NFS
-> and have some mounts (on client) inside that.  Then somebody on
-> server moves the root of that subtree somewhere else and we try
-> to do a lookup in new place.  Options:
+> To clarify, the plan is to never allow mixing open of passthrough and
+> cached files on the same inode.
+
+Yep.
+
+But passthrough mmap + direct I/O should work, no?
+
+> It is allowed to open FOPEN_DIRECT_IO file for inode either in cached
+> or passthrough mode, but it is NOT allowed to mmap a FOPEN_DIRECT_IO
+> file for inode in passthrough mode.
 >
-> 1) our dentry for directory that got moved on server is moved into
-> new place, along with the entire subtree *and* everything mounted
-> on it.  Very dubious semantics, especially since if we look the
-> old location up before looking for new one, the mounts will be
-> dissolved; no way around that.
+> However, if inode only has file open in FOPEN_DIRECT_IO mode, then inode
+> mode is neutral. If we allow mmap in this state then a later open in pass=
+thourgh
+> mode and mmap in passthrough mode will collide with the direct mode mmap.
+
+We can keep track of when there are any page cache mmaps.  Does that
+not solve this?
+
 >
-> 2) lookup fails.  It's already possible; e.g. if server has
-> /srv/nfs/1/2/3 moved to /srv/nfs/x, then /srv/nfs/1/2 moved
-> to /srv/nfs/x/y and client has a process with cwd in /mnt/nfs/1/2/3
-> doing a lookup for "y", there's no way in hell to handle that -
-> the lookup will return the fhandle of /srv/nfs/x, which is the
-> same thing the client has for /mnt/nfs/1/2; we *can't* move that
-> dentry to /mnt/nfs/1/2/3/y - not without creating a detached loop.
-> We can also run into -ESTALE if one of the trylocks in
-> __d_unalias() fails.  Having the same happen if there are mounts
-> in the subtree we are trying to splice would be unpleasant, but
-> not fatal.  The trouble is, that won't be a transient failure -
-> not until somebody tries to look the old location up.
+> Therefore, my proposal is than when filesystem is FUSE_PASSTHROUGH capabl=
+e,
+> only passthrough file and cached file may be mmaped, but never allow to
+> mmap a FOPEN_DIRECT_IO file.
 >
-> 3) dissolve the mounts.  Doable, but it's not easy; especially
-> since we end up having to redo the loop-prevention check after
-> the mounts had been dissolved.  And that check may be failing
-> by that time, with no way to undo that dissolving...
+> Does that make sense?
 
-To be clear this is a change in current semantics and has a minuscule
-change of resulting in a regression.  That should be called out in the
-change log.
+I'm not sure I understand how this is supposed to work.   Disallowing
+mmap will break applications.
 
-If we choose to change the semantics I would suggest that the new
-semantics be:
-
-If a different name for a directory already exists:
-	* Detach the mounts unconditionally (leaving dentry descendants alone).
-	* Attempt the current splice.
-          - If the splice succeeds ( return the new dentry )
-	  - If the splice fails ( fail the lookup, and d_invalidate the existing name )
-
-Unconditionally dissolving the mounts before attempting the rename
-should simplify everything.
-
-In the worst case a race between d_invalidate and d_splice_alias will
-now become a race to see who can detach the mounts first.
-
-Eric
+Thanks,
+Miklos
 
