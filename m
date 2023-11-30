@@ -1,128 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-4460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D577FF9C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 19:44:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD277FF9CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 19:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F728174E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF8D1C2048F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8E65A0EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B965917D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GHLBUrD1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="It08oP9y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OeZt2ivh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5294D7F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 09:12:18 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 10F791FCF8;
-	Thu, 30 Nov 2023 17:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1701364337; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WZeeIh04fDIk5KnkyAYQqT46cx0oYQ9WFlXOHsOAYHQ=;
-	b=GHLBUrD1qRqm2mPBni6qfzJyV2l7mrvIZzokZwr/9aBtlvsijDYN7JU934YzegDeDVDmmN
-	VV4rHC3IVtlAhbBGUeRV29EAakLzHU/SyZtOIt7Hofnz4XJ5/3HUaY3o40l5Ai42euPpRR
-	IXoJjiK1ibz/jmaPjBTIXjYitY99Rb8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1701364337;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WZeeIh04fDIk5KnkyAYQqT46cx0oYQ9WFlXOHsOAYHQ=;
-	b=It08oP9yFMTBK+79nNWf2uZtVNiL7mkRlFdNc5rQsr2FEQvMy/pdDy/c97Eij3fHFBEBCe
-	VAfxu54caYSFwdAA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id EDF71138E5;
-	Thu, 30 Nov 2023 17:12:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id orsQOnDCaGUrHgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 30 Nov 2023 17:12:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 6DAE9A07E0; Thu, 30 Nov 2023 18:12:16 +0100 (CET)
-Date: Thu, 30 Nov 2023 18:12:16 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F6E131
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 09:34:38 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-9e1021dbd28so175281866b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 09:34:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701365677; x=1701970477; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAiTLeok3pWR7bJEa2gXBR7B6+4Qbh/sFxK+I+6xlP0=;
+        b=OeZt2ivhJmnWM/+TAoAp0MrF0jNEmTFRlxiBAsampF2/jcFo3UIkkPw8axRNvba+VG
+         qAF9TiB12tqQATOE+dvp96+5lSZoopgaUUpA/0MaLIytD+PgMqiuU7tSFxaU8ANcmQgF
+         c1F0XWRmOvPJZRVcZhsu0Bcnmli0HeYGPnr+HwcqqaK3+KM7es0UyUhvgs6m1hGcDBNd
+         YSLKus0RmdMFpoRGsronz/m55DP3v85sI8ZTlBDwq4TRJ4SHXEljsPFz6lB2soAQ3k7N
+         vmhGSwLyLexk1Fro1/upU4riF8ZbEwE47YKHk26yWdHSQNlobsWzEtSLup9ThS4HAHvB
+         OVbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701365677; x=1701970477;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zAiTLeok3pWR7bJEa2gXBR7B6+4Qbh/sFxK+I+6xlP0=;
+        b=gtVi0dLEkxzZ0JqKsd4uGiins/xarlXdxPznIeaL4f91ulhgcSZkLGLGnQH04ZTwp7
+         ZBeZTvbmBiifV4CQa77qfUgM9YyN73fs7XLb68XOzgJgKa3VtCLGOk9uo32m9L8XZpEM
+         amzDRmtoD4vaYSI7/CkojkbwFER0EBdwgJfJYHnYYENJmYLXck/ouEOxUhHtssbC45/e
+         t8XeUOkJdfQ4VnY5J6g1EUKARqUVRq7cCgzFKyUBKTPlRbjRP7Tm6ypKOnXFG7fKRxIm
+         dMc/3eWaSEoaMdPhA9bQgI2GZ7qEEdfBW3dDEfCSlLMVmDfi2Nm3NX5VSQO7nmUZEH7/
+         g69w==
+X-Gm-Message-State: AOJu0Yz3W1nwKzH+pZ5W8mQJ7tcte3S0n0S/eK615fjAHbPiLahNkiFc
+	CMhypVyPuMG9m5KZdAa9p8t5UOhr8Ls=
+X-Google-Smtp-Source: AGHT+IHXOMmGcOnCiagsqIi+UXKO6NqkBKGB86qgP9SPvNuxeEdEcklT5tgnv0s2eCcejt2KlOmXCA==
+X-Received: by 2002:a05:600c:444d:b0:40b:5464:b241 with SMTP id v13-20020a05600c444d00b0040b5464b241mr24421wmn.4.1701364632211;
+        Thu, 30 Nov 2023 09:17:12 -0800 (PST)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id s15-20020a05600c384f00b0040b35195e54sm2631833wmr.5.2023.11.30.09.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Nov 2023 09:17:11 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fanotify: allow "weak" fsid when watching a
- single filesystem
-Message-ID: <20231130171216.qrrtlitprrkrbt54@quack3>
-References: <20231130165619.3386452-1-amir73il@gmail.com>
- <20231130165619.3386452-3-amir73il@gmail.com>
+Subject: [PATCH REPOST v2 0/2] Support fanotify FAN_REPORT_FID on all filesystems
+Date: Thu, 30 Nov 2023 19:17:05 +0200
+Message-Id: <20231130171707.3387792-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231130165619.3386452-3-amir73il@gmail.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.72 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[4];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.93)[94.60%]
-X-Spam-Score: -2.72
+Content-Transfer-Encoding: 8bit
 
-On Thu 30-11-23 18:56:19, Amir Goldstein wrote:
-> So far, fanotify returns -ENODEV or -EXDEV when trying to set a mark
-> on a filesystem with a "weak" fsid, namely, zero fsid (e.g. fuse), or
-> non-uniform fsid (e.g. btrfs non-root subvol).
-> 
-> When group is watching inodes all from the same filesystem (or subvol),
-> allow adding inode marks with "weak" fsid, because there is no ambiguity
-> regarding which filesystem reports the event.
-> 
-> The first mark added to a group determines if this group is single or
-> multi filesystem, depending on the fsid at the path of the added mark.
-> 
-> If the first mark added has a "strong" fsid, marks with "weak" fsid
-> cannot be added and vice versa.
-> 
-> If the first mark added has a "weak" fsid, following marks must have
-> the same "weak" fsid and the same sb as the first mark.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Jan,
 
-Yep, this is good. Can you please repost the whole series so that b4 can
-easily pick it up from the list ;)? Thanks!
+In the vfs fanotify update for v6.7-rc1 [1], we considerably increased
+the amount of filesystems that can setup inode marks with FAN_REPORT_FID:
+- NFS export is no longer required for setting up inode marks
+- All the simple fs gained a non-zero fsid
 
-								Honza
+This leaves the following in-tree filesystems where inode marks with
+FAN_REPORT_FID cannot be set:
+- nfs, fuse, afs, coda (zero fsid)
+- btrfs non-root subvol (fsid not a unique identifier of sb)
+
+This patch set takes care of these remaining cases, by allowing inode
+marks, as long as all inode marks in the group are contained to the same
+filesystem and same fsid (i.e. subvol).
+
+I've written some basic sanity tests [2] and a man-page update draft [3].
+The LTP tests excersize the new code by running tests that did not run
+before on ntfs-3g fuse filesystem and skipping the test cases with mount
+and sb marks.
+
+I've also tested fsnotifywait --recursive on fuse and on btrfs subvol.
+It works as expected - if tree travesal crosses filesystem or subvol
+boundary, setting the subdir mark fails with -EXDEV.
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20231107-vfs-fsid-5037e344d215@brauner/
+[2] https://github.com/amir73il/ltp/commits/fanotify_fsid
+[3] https://github.com/amir73il/man-pages/commits/fanotify_fsid
+
+Changes since v1:
+- Add missing fsnotify_put_mark()
+- Improve readablity of fanotify_test_fsid()
+- Rename fanotify_check_mark_fsid() => fanotify_set_mark_fsid()
+- Remove fanotify_mark_fsid() wrapper
+
+Amir Goldstein (2):
+  fanotify: store fsid in mark instead of in connector
+  fanotify: allow "weak" fsid when watching a single filesystem
+
+ fs/notify/fanotify/fanotify.c      |  34 ++------
+ fs/notify/fanotify/fanotify.h      |  16 ++++
+ fs/notify/fanotify/fanotify_user.c | 124 ++++++++++++++++++++++++-----
+ fs/notify/mark.c                   |  52 ++----------
+ include/linux/fsnotify_backend.h   |  14 ++--
+ 5 files changed, 140 insertions(+), 100 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
