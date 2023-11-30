@@ -1,88 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-4420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2784E7FF652
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B502D7FF653
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB85B20A2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55A85B20A01
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EE854FA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7CF4A3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bqW4S8AB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZRhiFQB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D460710DE;
-	Thu, 30 Nov 2023 07:02:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1701356545; x=1701615745;
-	bh=uo2vqq/xcRDYM6o4gUKdCIhET5kcnBqayNRuV/1IFZY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=bqW4S8ABCR3oUPVl1gnYRytnSkn8znO+ZjOvjkZXuN3fewQK/9el9fndFgKOY0Igh
-	 soPaRM72dS+exH3qAMUp+teBMOiNFRjfzKtEBHMtD8f5BLG/FteB8PhalP+zdGE+Xz
-	 cZkPHR5xpZeIUitKd3zrO9biSOIfu5xp8cdyLuqGKn4WpXH9zhOi/7HocLwu7wCItW
-	 pbvA+B7SwXq57f0QQnePsuJKy3CVaxM391XEEtzi1kEpxmwZrGwiESzZMeI4CgtMn5
-	 AoYsbTT2ZY/DbpwIdDEgGmpixtghJGotnDrmsukaH9atODdyP5gMsclqLBHVr8QMmg
-	 K0fyn3KHoVRjQ==
-Date: Thu, 30 Nov 2023 15:02:06 +0000
-To: Matthew Wilcox <willy@infradead.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC83410E0;
+	Thu, 30 Nov 2023 07:25:06 -0800 (PST)
+Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-67a3f1374bdso5931186d6.2;
+        Thu, 30 Nov 2023 07:25:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701357906; x=1701962706; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iYxckIwC9xbehezW7h9apLIAUAGmTaUwXE2pwY1GWQE=;
+        b=lZRhiFQBXHvVsL353F44BE+L3vRTbhaV4okHoj6nsepw8bJMP80C099GqUqsQRa75I
+         af9suGQt+qR/bE5wWeq+Ls5aKt6dCPp6QXFTTNnXZ/sr2ZkQFVEg1dTcSxRrLUbUKUZn
+         aS+RMnw2kjp8PrE190hzh6bip9nBVwUr2tcXFTIYOfR/Q/PB4GcT5On/T9dLHwrah14u
+         hSk+1zB1/r0HTpeBEAV544QP3uFNsztplwDxHVsUFMJkNc0ZR2JjLDjHKi1G5SuA1wvN
+         oVGpowIhxkCskCWZVL3OTU05lstfQMXj6yYS4M1ASnl6gXOB0hQnNfQvXqVSRzRGRZax
+         1HKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701357906; x=1701962706;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iYxckIwC9xbehezW7h9apLIAUAGmTaUwXE2pwY1GWQE=;
+        b=iL5RSWfPLIOvug3PcR5BUHvGVCCOUXQvepk5z/fCNq/NDbg2W/HrU4uFORrArNj2ME
+         sRuoheIjJ69UfhTOMGxCkwLxCKCAIhFhTVhZTXhNQOHrK8MCxUH3aM8/y5kko3+iTCPw
+         YuxlOBncL3KsbLFJucKf921qqta85hTY9VfmcuwogRYWm9OB6XNj3c44btugCG/DY1xh
+         EYzwk4w26RrL9ubRkfCtyQ+mvKa8xwb0z8/6Drb3xR4RGebdjNgyaPOI7eNTVx/UtIYi
+         K5jsVzhRpjPOB4sjg6MICDD9LFGRACx1HnJrP7D9dq968iPemk9UPt1bc7CwhNhbrP76
+         3+Iw==
+X-Gm-Message-State: AOJu0YxM5ImDLTV5bTS7cm9ql1FonbXnApPkixH7uQSjkTyDczkq5ZFz
+	7cXLHSv74XiUNEJZZ6fyBH4=
+X-Google-Smtp-Source: AGHT+IGYKAB7Rm1Ig/GKPQgPdLfR9ZiX98pKpWHGlLUCA9EIQ7LZNda66HQcT7bQvwSH2nx4TDR1yQ==
+X-Received: by 2002:a05:6214:5581:b0:67a:65d9:6c53 with SMTP id mi1-20020a056214558100b0067a65d96c53mr7128461qvb.1.1701357906005;
+        Thu, 30 Nov 2023 07:25:06 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id a13-20020a0ce34d000000b0067a28752199sm584504qvm.10.2023.11.30.07.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Nov 2023 07:25:05 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailauth.nyi.internal (Postfix) with ESMTP id AC26927C0054;
+	Thu, 30 Nov 2023 10:25:04 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 30 Nov 2023 10:25:04 -0500
+X-ME-Sender: <xms:T6loZf8Cbq1-7yH_cPzJSa0NAoLqUxoeNCt7xpKFIYjqI41xT7j0ww>
+    <xme:T6loZbt8ktt839eSyjrnW7OJZ9tEshpHbtHlhvEwND-k_X8euXgjpTXKC7NC4JSuQ
+    Vr6NRjPVZMsLtTuWg>
+X-ME-Received: <xmr:T6loZdB1Mzc6h8Df0OQrv45wcrQj3aDYVdyJzUJSeHnrA55d7l4U2EX86A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeijedgjeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeelueeiffdugeeliedvjeethfettdeiffffueeiffelhfejgefghedtjedv
+    ffffhfenucffohhmrghinhepghhithhhuhgsrdgtohhmpddttddttddqihhnlhhinhgvqd
+    grshhmrdhmugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvge
+    ehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhm
+    sehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:T6loZbd1Zf0tXvcvRUqz_qvwWrflkmrZx90cRrP1pIBzdKuhPCGA0A>
+    <xmx:T6loZUNN7X49LlG1y1Hmh6ACPa3grQ6ja5BPNvia0bhl1ZoOgLB-cA>
+    <xmx:T6loZdmzHhO-zUP0mrsFVFc_qMmBup_EAgyj070eofPLAH3gkVCROw>
+    <xmx:UKloZXiOE3anisBEA2h_yZkN0uamiSK1sjwWvq3VOqPkD_KZSyhy2g>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Nov 2023 10:25:03 -0500 (EST)
+Date: Thu, 30 Nov 2023 07:25:01 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Alice Ryhl <aliceryhl@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,	Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Xu <dxu@dxuuu.xyz>,	linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,	linux-fsdevel@vger.kernel.org,
+	Josh Triplett <josh@joshtriplett.org>
 Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
-Message-ID: <gCUdcb9uUpv_4hv0AbhQ4V8q5t25Aia9QWHVS8rRmqi7sQHWKSY2ucSiYBmnej98lEWs3WB2oumjDts9reSos9UFkxxBWlAGUsJn51pXRaQ=@proton.me>
-In-Reply-To: <ZWdVEk4QjbpTfnbn@casper.infradead.org>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com> <20231129-alice-file-v1-1-f81afe8c7261@google.com> <ZWdVEk4QjbpTfnbn@casper.infradead.org>
-Feedback-ID: 71780778:user:proton
+Message-ID: <ZWipTZysC2YL7qsq@Boquns-Mac-mini.home>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-alice-file-v1-1-f81afe8c7261@google.com>
+ <ZWdVEk4QjbpTfnbn@casper.infradead.org>
+ <20231129152305.GB23596@noisy.programming.kicks-ass.net>
+ <ZWdv_jsaDFJxZk7G@Boquns-Mac-mini.home>
+ <20231130104226.GB20191@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231130104226.GB20191@noisy.programming.kicks-ass.net>
 
-On 11/29/23 16:13, Matthew Wilcox wrote:
-> On Wed, Nov 29, 2023 at 12:51:07PM +0000, Alice Ryhl wrote:
->> This introduces a struct for the EBADF error type, rather than just
->> using the Error type directly. This has two advantages:
->> * `File::from_fd` returns a `Result<ARef<File>, BadFdError>`, which the
->>   compiler will represent as a single pointer, with null being an error.
->>   This is possible because the compiler understands that `BadFdError`
->>   has only one possible value, and it also understands that the
->>   `ARef<File>` smart pointer is guaranteed non-null.
->> * Additionally, we promise to users of the method that the method can
->>   only fail with EBADF, which means that they can rely on this promise
->>   without having to inspect its implementation.
->> That said, there are also two disadvantages:
->> * Defining additional error types involves boilerplate.
->> * The question mark operator will only utilize the `From` trait once,
->>   which prevents you from using the question mark operator on
->>   `BadFdError` in methods that return some third error type that the
->>   kernel `Error` is convertible into. (However, it works fine in methods
->>   that return `Error`.)
->=20
-> I haven't looked at how Rust-for-Linux handles errors yet, but it's
-> disappointing to see that it doesn't do something like the PTR_ERR /
-> ERR_PTR / IS_ERR C thing under the hood.
+On Thu, Nov 30, 2023 at 11:42:26AM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 29, 2023 at 09:08:14AM -0800, Boqun Feng wrote:
+> 
+> > But but but, I then realized we have asm goto in C but Rust doesn't
+> > support them, and I haven't thought through how hard tht would be..
+> 
+> You're kidding right?
+> 
 
-In this case we are actually doing that: `ARef<T>` is a non-null pointer
-to a `T` and since `BadFdError` is a unit struct (i.e. there exists only
-a single value it can take) `Result<ARef<T>, BadFdError>` has the same
-size as a pointer. This is because the Rust compiler represents the
-`Err` variant as null.
+I'm not, but I've found this:
 
-We also do have support for `ERR_PTR`, but that requires `unsafe`, since
-we do not know which kind of pointer the C side returned (was it an
-`ARef<T>`, `&mut T`, `&T` etc.?) and can therefore only support `*mut T`.
+	https://github.com/Amanieu/rfcs/blob/inline-asm/text/0000-inline-asm.md#asm-goto
 
---=20
-Cheers,
-Benno
+seems to me, the plan for this is something like below:
+
+	asm!(
+		"cmp {}, 42",
+		"jeq {}",
+		in(reg) val,
+		label { println!("a"); },
+		fallthrough { println!("b"); }
+    	);
+
+But it's not implemented yet. Cc Josh in case that he knows more about
+this.
+
+Regards,
+Boqun
+
+> I thought we *finally* deprecated all compilers that didn't support
+> asm-goto and x86 now mandates asm-goto to build, and then this toy
+> language comes around ?
+> 
+> What a load of crap ... 
 
