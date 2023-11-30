@@ -1,137 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-4351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8697FED05
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 11:39:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5447FED06
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 11:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3784EB20D17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3972B20F13
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B673C06F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3624818E01
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXKJQhdF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCd2GImu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6415F8495
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 10:01:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E0BC433C8;
-	Thu, 30 Nov 2023 10:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701338459;
-	bh=mXRqrFM+aVKneL3d4wYNbix8eaz7ITX9BjXWcAUu8xE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sXKJQhdFDvdI/0rzfJUWtzE5/4gKFeV3QfBC1F98uKIfnkLHzOTuRudSLGlSLG60U
-	 VQ8tDbDqCFCS1Qzvd1wU9j70wFSnu5hEpfzG7/kX8PiSoq6byrkWTVwhd5uslO/G9q
-	 +Ol0QV5ZF+MM+uOizOX02viirRwtu0gnFEiWmPghjYMyrpIzr9XAvh/y1ERHoZTfdz
-	 qNdRxdQotWahlflZRYcYkHTpyxtsQI84w0Dh3MnsfAid5ezgyjcPM/Y9nmTbfXqKCG
-	 rtTptIcC6au6W1CI3/Q5CHpbKVedi8Jym2gdIB2WS0wUp6XNHGF4bD4dEAzV4JTqJ1
-	 qfUQj9UvIN8ww==
-Date: Thu, 30 Nov 2023 05:00:54 -0500
-From: Guo Ren <guoren@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
- call of retain_dentry() into fast_dput())
-Message-ID: <ZWhdVpij9iCeMnog@gmail.com>
-References: <20231101062104.2104951-9-viro@zeniv.linux.org.uk>
- <20231101084535.GG1957730@ZenIV>
- <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
- <20231101181910.GH1957730@ZenIV>
- <20231110042041.GL1957730@ZenIV>
- <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
- <ZV2rdE1XQWwJ7s75@gmail.com>
- <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
- <ZWN0ycxvzNzVXyNQ@gmail.com>
- <CAHk-=wiehwt_aYcmAyZXyM7LWbXsne6+JWqLkMtnv=4CJT1gwQ@mail.gmail.com>
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA3110E2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 02:07:36 -0800 (PST)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-67a095fbe27so15608796d6.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 02:07:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701338855; x=1701943655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JuFUAZ9yjl5PI8N+K9CR3oKMRQ/lDeYn7m/q3UNsL6w=;
+        b=WCd2GImu8c9/TyJb0B/4cq5L4SYVaN62I6mZML9EgMq3V5iepJj7MuNmiDk8676UxB
+         9X5bsvNLg3JfyH4n7gWd3Yel3vwBSZtzUaOXob9thjHWZZs7H/1p9ZrZcGHDblJSKpEL
+         rK6Wwf3W+zjdjQoGwrzoMy85ne++AuqZJOvNlfZFjrTEmSt7F4q9ug3pJnI+ZlQQVcF0
+         6Lm0+OUDSj4zj8riv+iOIef2euzMxDtD4qbRslGCrJD634guAx8eXgEzh7DjVLXV5SRQ
+         I4SArcP/6rH98MB+DZc3+kYBpBN6rEEoX0SjlZIcWFSNFMaBryqdGTogD3ZNYgOEzKb2
+         da0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701338855; x=1701943655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JuFUAZ9yjl5PI8N+K9CR3oKMRQ/lDeYn7m/q3UNsL6w=;
+        b=MohGsTxynDjo1bONbY5i2MAsCYVwDZ4A3FZhnhhHcey2ZAexx66gg2BMSW6RhmqP3u
+         T87ZjDaZcuiGafS66+B4Zet2ujhFRjB9bu0/V+REz2EaZ4jO+/+HadibrSpW/9reTINh
+         8MKvIMtASQ3J/yW8HcEJGavCosrn/ZvpAsS5EUwxxrnmbr/H8TMDlRuWj/DHsBu2bgjA
+         dwjh5HSxnj9g0Oslwx6sB4ljnnI/F3emX1gDdz+NeBWbGcJvwuScZKOd4BWMpFWz1g8T
+         +8/QfRjBfy2MzDK1FSf7Cih9F7k0l6EpH5i90t8KnvVHDWALy1+XCnMMPdoRP31j1Dp4
+         nmeQ==
+X-Gm-Message-State: AOJu0YwL51kdnKipJe1gUWWN8dfjCUCdg1fU1eST3kxR8Dt3+wfGic7J
+	hVK2MlodE66yN4YmrBv/+itJ9BkKXkVSeKTLMzU=
+X-Google-Smtp-Source: AGHT+IHS0BK2rlXLb4DMQdba/5dfzSxK58ootapSd21rzq37MAbGNnEUqlWP3mnHbdJs1emw79hnIeOcUy6yFQK/70o=
+X-Received: by 2002:a05:6214:5181:b0:677:f219:27e6 with SMTP id
+ kl1-20020a056214518100b00677f21927e6mr33486261qvb.28.1701338855076; Thu, 30
+ Nov 2023 02:07:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiehwt_aYcmAyZXyM7LWbXsne6+JWqLkMtnv=4CJT1gwQ@mail.gmail.com>
+References: <20231129200709.3154370-1-amir73il@gmail.com> <CAOQ4uxhCC+ZpULkBf_WfsyRBToNxksesBAk5nCsGYWkuNFu6JA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhCC+ZpULkBf_WfsyRBToNxksesBAk5nCsGYWkuNFu6JA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 30 Nov 2023 12:07:23 +0200
+Message-ID: <CAOQ4uxhcYXzaeV=gymHN3-N-Mn30+_==5KRFzyp7Xs_nuBoMZw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Avert possible deadlock with splice() and fanotify
+To: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 26, 2023 at 08:51:35AM -0800, Linus Torvalds wrote:
-> On Sun, 26 Nov 2023 at 08:39, Guo Ren <guoren@kernel.org> wrote:
+On Thu, Nov 30, 2023 at 10:32=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+>
+> On Wed, Nov 29, 2023 at 10:07=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
 > >
-> > Here is my optimization advice:
+> > Christian,
 > >
-> > #define CMPXCHG_LOOP(CODE, SUCCESS) do {                                        \
-> >         int retry = 100;                                                        \
-> >         struct lockref old;                                                     \
-> >         BUILD_BUG_ON(sizeof(old) != 8);                                         \
-> > +       prefetchw(lockref);                                                     \\
-> 
-> No.
-> 
-> We're not adding software prefetches to generic code. Been there, done
-> that. They *never* improve performance on good hardware. They end up
-> helping on some random (usually particularly bad) microarchitecture,
-> and then they hurt everybody else.
-> 
-> And the real optimization advice is: "don't run on crap hardware".
-> 
-> It really is that simple. Good hardware does OoO and sees the future write.
-That needs the expensive mechanism DynAMO [1], but some power-efficient
-core lacks the capability. Yes, powerful OoO hardware could virtually
-satisfy you by a minimum number of retries, but why couldn't we
-explicitly tell hardware for "prefetchw"?
+> > Josef has helped me see the light and figure out how to avoid the
+> > possible deadlock, which involves:
+> > - splice() from source file in a loop mounted fs to dest file in
+> >   a host fs, where the loop image file is
+> > - fsfreeze on host fs
+> > - write to host fs in context of fanotify permission event handler
+> >   (FAN_ACCESS_PERM) on the splice source file
+> >
+> > The first patch should not be changing any logic.
+> > I only build tested the ceph patch, so hoping to get an
+> > Acked-by/Tested-by from Jeff.
+> >
+> > The second patch rids us of the deadlock by not holding
+> > file_start_write() while reading from splice source file.
+> >
+>
+> OOPS, I missed another corner case:
+> The COPY_FILE_SPLICE fallback of server-side-copy in nfsd/ksmbd
+> needs to use the start-write-safe variant of do_splice_direct(),
+> because in this case src and dst can be on any two fs.
+> Expect an extra patch in v2.
+>
 
-Advanced hardware would treat cmpxchg as interconnect transactions when
-cache miss(far atomic), which means L3 cache wouldn't return a unique
-cacheline even when cmpxchg fails. The cmpxchg loop would continue to
-read data bypassing the L1/L2 cache, which means every failure cmpxchg
-is a cache-miss read. Because of the "new.count++"/CODE data dependency,
-the continuous cmpxchg requests must wait first finish. This will cause
-a gap between cmpxchg requests, which will cause most CPU's cmpxchgs
-continue failling during serious contention.
+For the interested, see server-side-copy patch below.
+Pushed to branch start-write-safe [1], but will wait with v2 until
+I get comments on v1.
 
-   cas: Compare-And-Swap
+Thanks,
+Amir.
 
-   L1&L2          L3 cache
- +------+       +-----------
- | CPU1 | wait  |
- | cas2 |------>| CPU1_cas1 --+
- +------+       |             |
- +------+       |             |
- | CPU2 | wait  |             |
- | cas2 |------>| CPU2_cas1 --+--> If queued with CPU1_cas1 CPU2_cas1
- +------+       |             |    CPU3_cas1, and most of CPUs would
- +------+       |             |    fail and retry.
- | CPU3 | wait  |             |
- | cas2 |------>| CPU3_cas1---+
- +------+       +----------
+[1] https://github.com/amir73il/linux/commits/start-write-safe
 
-The entire system moves forward with inefficiency:
- - A large number of invalid read requests CPU->L3
- - High power consumption
- - Poor performance
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Thu Nov 30 11:42:50 2023 +0200
 
-But, the “far atomic” is suitable for scenarios where contention is
-not particularly serious. So it is reasonable to let the software give
-prompts. That is "prefetchw":
- - The prefetchw is the preparation of "load + cmpxchg loop."
- - The prefetchw is not for single AMO or CAS or Store.
+    fs: use do_splice_direct() for nfsd/ksmbd server-side-copy
 
-[1] https://dl.acm.org/doi/10.1145/3579371.3589065
+    nfsd/ksmbd call vfs_copy_file_range() with flag COPY_FILE_SPLICE to
+    perform kernel copy between two files on any two filesystems.
 
-> 
-> > Micro-arch could give prefetchw more guarantee:
-> 
-> Well, in practice, they never do, and in fact they are often buggy and
-> cause problems because they weren't actually tested very much.
-> 
->                  Linus
-> 
+    Splicing input file, while holding file_start_write() on the output fil=
+e
+    which is on a different sb, posses a risk for fanotify related deadlock=
+s.
+
+    We only need to call splice_file_range() from within the context of
+    ->copy_file_range() filesystem methods with file_start_write() held.
+
+    To avoid the possible deadlocks, always use do_splice_direct() instead =
+of
+    splice_file_range() for the kernel copy fallback in vfs_copy_file_range=
+()
+    without holding file_start_write().
+
+    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 0bc99f38e623..12583e32aa6d 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1565,11 +1565,18 @@ ssize_t vfs_copy_file_range(struct file
+*file_in, loff_t pos_in,
+         * and which filesystems do not, that will allow userspace tools to
+         * make consistent desicions w.r.t using copy_file_range().
+         *
+-        * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLIC=
+E.
++        * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLIC=
+E
++        * for server-side-copy between any two sb.
++        *
++        * In any case, we call do_splice_direct() and not splice_file_rang=
+e(),
++        * without file_start_write() held, to avoid possible deadlocks rel=
+ated
++        * to splicing from input file, while file_start_write() is held on
++        * the output file on a different sb.
+         */
+-       ret =3D generic_copy_file_range(file_in, pos_in, file_out, pos_out,=
+ len,
+-                                     flags);
++       file_end_write(file_out);
+
++       ret =3D do_splice_direct(file_in, &pos_in, file_out, &pos_out,
++                              min_t(size_t, len, MAX_RW_COUNT), 0);
+ done:
+        if (ret > 0) {
+                fsnotify_access(file_in);
+@@ -1581,8 +1588,6 @@ ssize_t vfs_copy_file_range(struct file
+*file_in, loff_t pos_in,
+        inc_syscr(current);
+        inc_syscw(current);
+
+-       file_end_write(file_out);
+-
+        return ret;
+ }
+ EXPORT_SYMBOL(vfs_copy_file_range);
 
