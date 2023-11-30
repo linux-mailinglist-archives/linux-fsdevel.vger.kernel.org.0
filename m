@@ -1,276 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-4393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C755D7FF2B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:42:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A0E7FF2B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D47EB20FDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 728A52826AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF5151006
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2802D51016
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNST6ohY"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j0M+lOl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1130.google.com (mail-yw1-x1130.google.com [IPv6:2607:f8b0:4864:20::1130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45AD51722
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 05:47:01 -0800 (PST)
-Received: by mail-yw1-x1130.google.com with SMTP id 00721157ae682-5d3c7ef7b31so15127b3.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 05:47:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701352020; x=1701956820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xWWZHpRpLbi/UkKJ0KuLH66OlUq4z+GDBS+zNfYvrIg=;
-        b=DNST6ohYz2qPG8ScqYY9q2CWys6QTwguH5BInhvGR4gUX1y48lpH4KCxNAmISevzb9
-         QM5tUFlE5e7LFdglbMRH8DQ4p6iVqM19kZRTxDsyqC8CJcIgtuqyj2CVnakoNybalMvc
-         gSyqFnK4Tc85h43qHOoqttqEg0XWJcSNTsNCFOebL92nJNqcRVjIbf/M5GoualIAWURJ
-         TbmfNxHCkuEQ2R9GWttSiXr4/tS2DOKkmzAPm/HsWllWrQuzkvFA2K6NlxWKCz7myv5X
-         mgIoephQfPklcuJ4g9WXRqw79USo+k/4Ia15dw4Ph5vnRImRqquK5qQjG+d+GYnsIh2u
-         uCEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701352020; x=1701956820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xWWZHpRpLbi/UkKJ0KuLH66OlUq4z+GDBS+zNfYvrIg=;
-        b=ZB4Svq2dl1b6zO+Aqlepgx+PWsfS2iWEZ8oLZX6mU+5cTmbQziHyAfznG6xviphG3s
-         hDYnACYSaQARvssW6hnUpUHmlK+iMAsD/ApJQ0RdG5K3O2VQmkzNiPeV2AUwD/VdHBBl
-         juod9+HmiZuJTSbIpGM/cvoDMuMKEpchf9bVgtEOcLpj1cDFvu0RaQcF2EsFEcv+3uxJ
-         Sx3lNV3fFIVszTA1tcWvD168Gf2r9MKrgT8PoSQpFKjAvuEbXDhySji/S2L7Sl4fm0D/
-         MpV3o1PzaKxLt9R5t3IgMGiPZScJxVOTBjQM/VyOfyqIsDt240lOhkKFWwZ1gR8YGXnU
-         4Rwg==
-X-Gm-Message-State: AOJu0YxkCslf9Bxq7xNCuK2tZN88ZADUUgBIeFEDjnX1bhaavT2MmOb0
-	DguEpgMgRWYLOP5wW+c59upH94hvujieXOs9Dx8=
-X-Google-Smtp-Source: AGHT+IH0aEdTVLUMCcT122thJ8ukibkhK8M/OYn/ElbSSC9681OdYfy1Uaw/lmn6K/jsxZVz+w3O/loUb3L1YzXFQOQ=
-X-Received: by 2002:a0d:cf83:0:b0:5cd:de71:f765 with SMTP id
- r125-20020a0dcf83000000b005cdde71f765mr20500005ywd.13.1701352020132; Thu, 30
- Nov 2023 05:47:00 -0800 (PST)
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97900170C;
+	Thu, 30 Nov 2023 05:53:35 -0800 (PST)
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUDnXcU001367;
+	Thu, 30 Nov 2023 13:53:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=HeP1XueRhjsHpWAhcUWUNoyK0cnx/fEeEMwzhs6stek=;
+ b=j0M+lOl+IpGdqDyYvXUzR7gbQAgSqThCFgfMYqKNSKd8sbyOQiIWq+1rSYlpbnJ3T/1w
+ UyxeBzbZEw+DYcO38YmgbMINrTYt1GhA2kJaUxURDpSWzF0Gmno2dgqpG2oCY7KatdDp
+ tvq39mWK1Q7+n/43FwGJuq0m4XMGg31GJvBieIkV6++gBIBORymAPwoqAjXMun7RmB9R
+ FR1UiaQ2+kOsywwmAsyfRnl193efWwThZC1jaKbht1dvmZVjRRZ3vQofcrOQtJBfO/T7
+ jwpcd0f5E0wtKZMt1/UWMtcmhfkG8Ef//wsoBrHsOOeg96ZT4dBM81ZtuCACOUdjJHp+ Dw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3upu2vh3b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Nov 2023 13:53:25 +0000
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AUDniCu002718;
+	Thu, 30 Nov 2023 13:53:24 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3upu2vh3ap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Nov 2023 13:53:24 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUDnBHU029486;
+	Thu, 30 Nov 2023 13:53:23 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ukwfke1qv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Nov 2023 13:53:23 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AUDrLWM23528130
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 30 Nov 2023 13:53:22 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D6CD82004D;
+	Thu, 30 Nov 2023 13:53:21 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7149B20043;
+	Thu, 30 Nov 2023 13:53:19 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.43.76.38])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 30 Nov 2023 13:53:19 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com
+Subject: [RFC 0/7] ext4: Allocator changes for atomic write support with DIO
+Date: Thu, 30 Nov 2023 19:23:08 +0530
+Message-Id: <cover.1701339358.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hBD7kWuO7Nb_vj1mPT_00MLQichdLJ_H
+X-Proofpoint-ORIG-GUID: zeJyHyfHU1L2PEvisQEtnw9KtFa1_K0H
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231129200709.3154370-1-amir73il@gmail.com> <CAOQ4uxhCC+ZpULkBf_WfsyRBToNxksesBAk5nCsGYWkuNFu6JA@mail.gmail.com>
- <CAOQ4uxhcYXzaeV=gymHN3-N-Mn30+_==5KRFzyp7Xs_nuBoMZw@mail.gmail.com> <20231130133703.f4xt6n53raenxgoj@quack3>
-In-Reply-To: <20231130133703.f4xt6n53raenxgoj@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 30 Nov 2023 15:46:49 +0200
-Message-ID: <CAOQ4uxgRsQdEmEfL-QTyEFEvCjOktijPyTM1NjB0OmVM480abg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Avert possible deadlock with splice() and fanotify
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>, 
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-30_12,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311300102
 
-On Thu, Nov 30, 2023 at 3:37=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 30-11-23 12:07:23, Amir Goldstein wrote:
-> > On Thu, Nov 30, 2023 at 10:32=E2=80=AFAM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > >
-> > > On Wed, Nov 29, 2023 at 10:07=E2=80=AFPM Amir Goldstein <amir73il@gma=
-il.com> wrote:
-> > > >
-> > > > Christian,
-> > > >
-> > > > Josef has helped me see the light and figure out how to avoid the
-> > > > possible deadlock, which involves:
-> > > > - splice() from source file in a loop mounted fs to dest file in
-> > > >   a host fs, where the loop image file is
-> > > > - fsfreeze on host fs
-> > > > - write to host fs in context of fanotify permission event handler
-> > > >   (FAN_ACCESS_PERM) on the splice source file
-> > > >
-> > > > The first patch should not be changing any logic.
-> > > > I only build tested the ceph patch, so hoping to get an
-> > > > Acked-by/Tested-by from Jeff.
-> > > >
-> > > > The second patch rids us of the deadlock by not holding
-> > > > file_start_write() while reading from splice source file.
-> > > >
-> > >
-> > > OOPS, I missed another corner case:
-> > > The COPY_FILE_SPLICE fallback of server-side-copy in nfsd/ksmbd
-> > > needs to use the start-write-safe variant of do_splice_direct(),
-> > > because in this case src and dst can be on any two fs.
-> > > Expect an extra patch in v2.
-> > >
-> >
-> > For the interested, see server-side-copy patch below.
-> > Pushed to branch start-write-safe [1], but will wait with v2 until
-> > I get comments on v1.
-> >
-> > Thanks,
-> > Amir.
-> >
-> > [1] https://github.com/amir73il/linux/commits/start-write-safe
-> >
-> > Author: Amir Goldstein <amir73il@gmail.com>
-> > Date:   Thu Nov 30 11:42:50 2023 +0200
-> >
-> >     fs: use do_splice_direct() for nfsd/ksmbd server-side-copy
-> >
-> >     nfsd/ksmbd call vfs_copy_file_range() with flag COPY_FILE_SPLICE to
-> >     perform kernel copy between two files on any two filesystems.
-> >
-> >     Splicing input file, while holding file_start_write() on the output=
- file
-> >     which is on a different sb, posses a risk for fanotify related dead=
-locks.
-> >
-> >     We only need to call splice_file_range() from within the context of
-> >     ->copy_file_range() filesystem methods with file_start_write() held=
-.
-> >
-> >     To avoid the possible deadlocks, always use do_splice_direct() inst=
-ead of
-> >     splice_file_range() for the kernel copy fallback in vfs_copy_file_r=
-ange()
-> >     without holding file_start_write().
-> >
-> >     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > diff --git a/fs/read_write.c b/fs/read_write.c
-> > index 0bc99f38e623..12583e32aa6d 100644
-> > --- a/fs/read_write.c
-> > +++ b/fs/read_write.c
-> > @@ -1565,11 +1565,18 @@ ssize_t vfs_copy_file_range(struct file
-> > *file_in, loff_t pos_in,
-> >          * and which filesystems do not, that will allow userspace tool=
-s to
-> >          * make consistent desicions w.r.t using copy_file_range().
-> >          *
-> > -        * We also get here if caller (e.g. nfsd) requested COPY_FILE_S=
-PLICE.
-> > +        * We also get here if caller (e.g. nfsd) requested COPY_FILE_S=
-PLICE
-> > +        * for server-side-copy between any two sb.
-> > +        *
-> > +        * In any case, we call do_splice_direct() and not splice_file_=
-range(),
-> > +        * without file_start_write() held, to avoid possible deadlocks=
- related
-> > +        * to splicing from input file, while file_start_write() is hel=
-d on
-> > +        * the output file on a different sb.
-> >          */
-> > -       ret =3D generic_copy_file_range(file_in, pos_in, file_out, pos_=
-out, len,
-> > -                                     flags);
-> > +       file_end_write(file_out);
-> >
-> > +       ret =3D do_splice_direct(file_in, &pos_in, file_out, &pos_out,
-> > +                              min_t(size_t, len, MAX_RW_COUNT), 0);
-> >  done:
-> >         if (ret > 0) {
-> >                 fsnotify_access(file_in);
-> > @@ -1581,8 +1588,6 @@ ssize_t vfs_copy_file_range(struct file
-> > *file_in, loff_t pos_in,
-> >         inc_syscr(current);
-> >         inc_syscw(current);
-> >
-> > -       file_end_write(file_out);
-> > -
->
-> This file_end_write() is also used by the paths using ->copy_file_range()
-> and ->remap_file_range() so you need to balance those...
+This patch series builds on top of John Gary's atomic direct write 
+patch series [1] and enables this support in ext4. This is a 2 step
+process:
 
-You're right! already found that bug and fixed in my branch:
+1. Enable aligned allocation in ext4 mballoc. This allows us to allocate
+power-of-2 aligned physical blocks, which is needed for atomic writes.
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 0bc99f38e623..e0c2c1b5962b 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1421,6 +1421,10 @@ ssize_t generic_copy_file_range(struct file
-*file_in, loff_t pos_in,
-                                struct file *file_out, loff_t pos_out,
-                                size_t len, unsigned int flags)
- {
-+       /* May only be called from within ->copy_file_range() methods */
-+       if (WARN_ON_ONCE(flags))
-+               return -EINVAL;
-+
-        return splice_file_range(file_in, &pos_in, file_out, &pos_out,
-                                 min_t(size_t, len, MAX_RW_COUNT));
- }
-@@ -1541,19 +1545,22 @@ ssize_t vfs_copy_file_range(struct file
-*file_in, loff_t pos_in,
-                ret =3D file_out->f_op->copy_file_range(file_in, pos_in,
-                                                      file_out, pos_out,
-                                                      len, flags);
--               goto done;
--       }
--
--       if (!splice && file_in->f_op->remap_file_range &&
--           file_inode(file_in)->i_sb =3D=3D file_inode(file_out)->i_sb) {
-+       } else if (!splice && file_in->f_op->remap_file_range &&
-+                  file_inode(file_in)->i_sb =3D=3D file_inode(file_out)->i=
-_sb) {
-                ret =3D file_in->f_op->remap_file_range(file_in, pos_in,
-                                file_out, pos_out,
-                                min_t(loff_t, MAX_RW_COUNT, len),
-                                REMAP_FILE_CAN_SHORTEN);
--               if (ret > 0)
--                       goto done;
-+               /* fallback to splice */
-+               if (ret <=3D 0)
-+                       splice =3D true;
-        }
+2. Hook the direct IO path in ext4 to use aligned allocation to obtain 
+physical blocks at a given alignment, which is needed for atomic IO. If 
+for any reason we are not able to obtain blocks at given alignment we
+fail the atomic write.
 
-+       file_end_write(file_out);
-+
-+       if (!splice)
-+               goto done;
-+
-        /*
-         * We can get here for same sb copy of filesystems that do not impl=
-ement
-         * ->copy_file_range() in case filesystem does not support clone or=
- in
-@@ -1565,11 +1572,16 @@ ssize_t vfs_copy_file_range(struct file
-*file_in, loff_t pos_in,
-         * and which filesystems do not, that will allow userspace tools to
-         * make consistent desicions w.r.t using copy_file_range().
-         *
--        * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLIC=
-E.
-+        * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLIC=
-E
-+        * for server-side-copy between any two sb.
-+        *
-+        * In any case, we call do_splice_direct() and not splice_file_rang=
-e(),
-+        * without file_start_write() held, to avoid possible deadlocks rel=
-ated
-+        * to splicing from input file, while file_start_write() is held on
-+        * the output file on a different sb.
-         */
--       ret =3D generic_copy_file_range(file_in, pos_in, file_out, pos_out,=
- len,
--                                     flags);
--
-+       ret =3D do_splice_direct(file_in, &pos_in, file_out, &pos_out,
-+                              min_t(size_t, len, MAX_RW_COUNT), 0);
- done:
-        if (ret > 0) {
-                fsnotify_access(file_in);
-@@ -1581,8 +1593,6 @@ ssize_t vfs_copy_file_range(struct file
-*file_in, loff_t pos_in,
-        inc_syscr(current);
-        inc_syscw(current);
+Currently this RFC does not impose any restrictions for atomic and non-atomic
+allocations to any inode,  which also leaves policy decisions to user-space
+as much as possible. So, for example, the user space can:
 
--       file_end_write(file_out);
--
-        return ret;
- }
- EXPORT_SYMBOL(vfs_copy_file_range);
+ * Do an atomic direct IO at any alignment and size provided it
+   satisfies underlying device constraints. The only restriction for now
+   is that it should be power of 2 len and atleast of FS block size.
+
+ * Do any combination of non atomic and atomic writes on the same file
+   in any order. As long as the user space is passing the RWF_ATOMIC flag 
+   to pwritev2() it is guaranteed to do an atomic IO (or fail if not
+   possible).
+
+There are some TODOs on the allocator side which are remaining like...
+
+1.  Fallback to original request size when normalized request size (due to
+    preallocation) allocation is not possible.
+2.  Testing some edge cases.
+
+But since all the basic test scenarios were covered, hence we wanted to get
+this RFC out for discussion on atomic write support for DIO in ext4.
+
+Further points for discussion -
+
+1. We might need an inode flag to identify that the inode has blocks/extents
+atomically allocated. So that other userspace tools do not move the blocks of
+the inode for e.g. during resize/fsck etc.
+  a. Should inode be marked as atomic similar to how we have IS_DAX(inode)
+  implementation? Any thoughts?
+
+2. Should there be support for open flags like O_ATOMIC. So that in case if
+user wants to do only atomic writes to an open fd, then all writes can be
+considered atomic.
+
+3. Do we need to have any feature compat flags for FS? (IMO) It doesn't look
+like since say if there are block allocations done which were done atomically,
+it should not matter to FS w.r.t compatibility.
+
+4. Mostly aligned allocations are required when we don't have data=journal
+mode. So should we return -EIO with data journalling mode for DIO request?
+
+Script to test using pwritev2() can be found here: 
+https://gist.github.com/OjaswinM/e67accee3cbb7832bd3f1a9543c01da9
+
+Regards,
+ojaswin
+
+[1] https://lore.kernel.org/linux-fsdevel/20230929102726.2985188-1-john.g.garry@oracle.com
+
+
+Ojaswin Mujoo (7):
+  iomap: Don't fall back to buffered write if the write is atomic
+  ext4: Factor out size and start prediction from
+    ext4_mb_normalize_request()
+  ext4: add aligned allocation support in mballoc
+  ext4: allow inode preallocation for aligned alloc
+  block: export blkdev_atomic_write_valid() and refactor api
+  ext4: Add aligned allocation support for atomic direct io
+  ext4: Support atomic write for statx
+
+ block/fops.c                |  18 ++-
+ fs/ext4/ext4.h              |  10 +-
+ fs/ext4/extents.c           |  14 ++
+ fs/ext4/file.c              |  49 ++++++
+ fs/ext4/inode.c             | 142 ++++++++++++++++-
+ fs/ext4/mballoc.c           | 302 +++++++++++++++++++++++++-----------
+ fs/iomap/direct-io.c        |   8 +-
+ include/linux/blkdev.h      |   2 +
+ include/trace/events/ext4.h |   2 +
+ 9 files changed, 442 insertions(+), 105 deletions(-)
+
+-- 
+2.39.3
+
 
