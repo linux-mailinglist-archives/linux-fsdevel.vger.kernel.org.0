@@ -1,146 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-4410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB817FF250
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:38:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF7C7FF254
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D531C20400
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F351C206FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89026495DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F5751006
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKH2GVzt"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DMAA83gE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EF495EA;
-	Thu, 30 Nov 2023 14:18:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5879C433C7;
-	Thu, 30 Nov 2023 14:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701353919;
-	bh=KWh6WrvRBA/2y9C3DeEyxrAn6hfNwQA1TgM/LAr/cbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rKH2GVztBJVr9VrPuidBNfh17LuITLFr0quPg6mvsC8ofPB4+mMGM4vHBUJ9ViEjt
-	 lHo9Wqx8mtKuDeoJj6EdWARnmohWzMl+MuP6cyIBqsIvOz+8uA2fra+Ybse0ENEbq4
-	 lL3uRUVXHPM/RsIn5KCMFyRhONgSJ0tmjMX0X8G3qGQmbKW990CnipJrJPatZcoTIP
-	 mme0Ut6q5B0GxCQhT/0jLItZV95iEjo4Bpg0qY9DJXy2yb9deIDk+bijdnrUyzFv93
-	 7mWLPSBe1C82QttfBNTeYVAoQenI1D/4Awu8m0WwGvk4t8F0cCAJUA3qUiRJALm4Yn
-	 loYtiDl6b9QfQ==
-Date: Thu, 30 Nov 2023 15:18:33 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, keescook@chromium.org,
-	kernel-team@meta.com, sargun@sargun.me
-Subject: Re: [PATCH v11 bpf-next 02/17] bpf: add BPF token delegation mount
- options to BPF FS
-Message-ID: <20231130-zivildienst-weckt-4888b2689eea@brauner>
-References: <20231127190409.2344550-1-andrii@kernel.org>
- <20231127190409.2344550-3-andrii@kernel.org>
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496E993
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:23:02 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-35d380a75a8so92015ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701354181; x=1701958981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OHIryu2wZ1gnh4ifYho13U48w2JoFY0bqo6Bee42wTo=;
+        b=DMAA83gEb8g54KZDzu2hoHV3bwOd0RIRbHRNE2T9WO7beH/4I/y6+sD0myMJlkCyGu
+         2M9+L4SGVkU0jqV99X4rbAl9oWmJR4i/M761h6zsFaTly050SwlfHPv9MZdP7hj7vIx1
+         u5QcC96akOgurqPxXTJw81Du0onq1gGE8b1rKGXLZVHvQyOWe7U63zYZAjXUr2941cr/
+         2iLi+Gl2QQzunV3KBsqmEXeQBceb2uFaTnWhHjSgg5i3dMoTCq1rWmRd8MJPvQcsH69Q
+         2WPXDISTf2BRV035bGXgTju+6w3RJI76VWuFuQUzv4x940W707Mk3VXRdeeESN75bQYZ
+         GLeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701354181; x=1701958981;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OHIryu2wZ1gnh4ifYho13U48w2JoFY0bqo6Bee42wTo=;
+        b=TaTOpefJTD/n/eC6mou/Gy80+epOnHBPI7Afn6bflUX54L6jYzgIBFCOIYFam53KsK
+         oAXQfkNzlBGyjHAkEZ9pUYZyQ8QRVVlt6KxlmqW+FSinSVfxnx3s/3CR/DQV/cvr1hLC
+         3mbVjDei6apWuyLN0nAbtbu657pL5vukZwOdlnhRFTBU72MV69n0PWdv6EkmBWX0FEhR
+         yFfENr6uN1++tAXLjohxRmnUr+u2jswACcGxUo3B9Cpnv0UhWTYESAV293rg5hjnQd+Q
+         Fmw0lQHjIqWMzxYPcennieipkavS+8OCo3UIkC37/yeUCyogUADPd2y/r3k7pTHHNAqe
+         SKlw==
+X-Gm-Message-State: AOJu0Ywc2d3dUtve913ml0otUq6MMyLc5G9ZRPKpuK1w8p9wFUV8FSdw
+	t/MQhy6Y2aRGPxVs2RcMNbjo8A==
+X-Google-Smtp-Source: AGHT+IFGk7gPyfMn9OnHzF5Hgb2va1r4f+rEmgW/X7MZQbHpp6eVzhhGocDS/Hy/xqUtun6U1MQsTA==
+X-Received: by 2002:a05:6602:2bd5:b0:792:6068:dcc8 with SMTP id s21-20020a0566022bd500b007926068dcc8mr2170647iov.2.1701354181550;
+        Thu, 30 Nov 2023 06:23:01 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id n26-20020a02cc1a000000b00463fb834b8csm308647jap.151.2023.11.30.06.23.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Nov 2023 06:23:00 -0800 (PST)
+Message-ID: <342126a9-c25e-47be-8274-b19865f53f3d@kernel.dk>
+Date: Thu, 30 Nov 2023 07:22:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231127190409.2344550-3-andrii@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/5] file: remove pointless wrapper
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.com>, Carlos Llamas <cmllamas@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
+ <20231130-vfs-files-fixes-v1-2-e73ca6f4ea83@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231130-vfs-files-fixes-v1-2-e73ca6f4ea83@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 27, 2023 at 11:03:54AM -0800, Andrii Nakryiko wrote:
-> Add few new mount options to BPF FS that allow to specify that a given
-> BPF FS instance allows creation of BPF token (added in the next patch),
-> and what sort of operations are allowed under BPF token. As such, we get
-> 4 new mount options, each is a bit mask
->   - `delegate_cmds` allow to specify which bpf() syscall commands are
->     allowed with BPF token derived from this BPF FS instance;
->   - if BPF_MAP_CREATE command is allowed, `delegate_maps` specifies
->     a set of allowable BPF map types that could be created with BPF token;
->   - if BPF_PROG_LOAD command is allowed, `delegate_progs` specifies
->     a set of allowable BPF program types that could be loaded with BPF token;
->   - if BPF_PROG_LOAD command is allowed, `delegate_attachs` specifies
->     a set of allowable BPF program attach types that could be loaded with
->     BPF token; delegate_progs and delegate_attachs are meant to be used
->     together, as full BPF program type is, in general, determined
->     through both program type and program attach type.
-> 
-> Currently, these mount options accept the following forms of values:
->   - a special value "any", that enables all possible values of a given
->   bit set;
->   - numeric value (decimal or hexadecimal, determined by kernel
->   automatically) that specifies a bit mask value directly;
->   - all the values for a given mount option are combined, if specified
->   multiple times. E.g., `mount -t bpf nodev /path/to/mount -o
->   delegate_maps=0x1 -o delegate_maps=0x2` will result in a combined 0x3
->   mask.
-> 
-> Ideally, more convenient (for humans) symbolic form derived from
-> corresponding UAPI enums would be accepted (e.g., `-o
-> delegate_progs=kprobe|tracepoint`) and I intend to implement this, but
-> it requires a bunch of UAPI header churn, so I postponed it until this
-> feature lands upstream or at least there is a definite consensus that
-> this feature is acceptable and is going to make it, just to minimize
-> amount of wasted effort and not increase amount of non-essential code to
-> be reviewed.
-> 
-> Attentive reader will notice that BPF FS is now marked as
-> FS_USERNS_MOUNT, which theoretically makes it mountable inside non-init
-> user namespace as long as the process has sufficient *namespaced*
-> capabilities within that user namespace. But in reality we still
-> restrict BPF FS to be mountable only by processes with CAP_SYS_ADMIN *in
-> init userns* (extra check in bpf_fill_super()). FS_USERNS_MOUNT is added
-> to allow creating BPF FS context object (i.e., fsopen("bpf")) from
-> inside unprivileged process inside non-init userns, to capture that
-> userns as the owning userns. It will still be required to pass this
-> context object back to privileged process to instantiate and mount it.
-> 
-> This manipulation is important, because capturing non-init userns as the
-> owning userns of BPF FS instance (super block) allows to use that userns
-> to constraint BPF token to that userns later on (see next patch). So
-> creating BPF FS with delegation inside unprivileged userns will restrict
-> derived BPF token objects to only "work" inside that intended userns,
-> making it scoped to a intended "container". Also, setting these
-> delegation options requires capable(CAP_SYS_ADMIN), so unprivileged
-> process cannot set this up without involvement of a privileged process.
-> 
-> There is a set of selftests at the end of the patch set that simulates
-> this sequence of steps and validates that everything works as intended.
-> But careful review is requested to make sure there are no missed gaps in
-> the implementation and testing.
-> 
-> This somewhat subtle set of aspects is the result of previous
-> discussions ([0]) about various user namespace implications and
-> interactions with BPF token functionality and is necessary to contain
-> BPF token inside intended user namespace.
-> 
->   [0] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@brauner/
-> 
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
+On 11/30/23 5:49 AM, Christian Brauner wrote:
+> Only io_uring uses __close_fd_get_file(). All it does is hide
+> current->files but io_uring accesses files_struct directly right now
+> anyway so it's a bit pointless. Just rename pick_file() to
+> file_close_fd_locked() and let io_uring use it. Add a lockdep assert in
+> there that we expect the caller to hold file_lock while we're at it.
 
-I still think this is a little weird because this isn't really
-unprivileged bpf and it isn't really safe bpf as well.
+LGTM.
 
-All this does is allow an administrator to punch a big fat hole into an
-unprivileged container so workloads get to play with their favorite toy.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-I think that having a way to have signed bpf programs in addition to
-this would be much more interesting to generic workloads that don't know
-who or what they can trust.
+-- 
+Jens Axboe
 
-And there's a few things to remember:
 
-* This absolutely isn't a safety mechanism.
-* This absolutely isn't safe to enable generically in containers.
-* This is a workaround and not a solution to unprivileged bpf.
-
-And this is an ACK solely on the code of this patch, not the concept.
-Acked-by: Christian Brauner <brauner@kernel.org> (reluctantly)
 
