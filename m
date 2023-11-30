@@ -1,72 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-4425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E917FF65D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:41:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905ED7FF662
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D57B20E86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0F0280718
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B98B54667
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Fq856kW6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075D854FA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29AF110EF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 07:47:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1701359229; x=1701618429;
-	bh=cEvdKECLsg9a2eLWYuxUSspqEsF3BY9+NgXdkgl9pLA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Fq856kW64t+MOtZ9Ri2JEdAgatjjoQSLmYDevIA3Kcr7RHttrKN4KbdCnbI9PusHJ
-	 rwtQHx187GizzkFthkPho86Be0FHErw0oRWfivHdt55oypqmOy3Vv/BhzEiUIyMqD+
-	 aUy7/X5YKAMNwD3j+31Gl4UZSSr3m1IU8J2JQaeGcAE0P7bWJ57bXlm/V/cofOl7F5
-	 O2nhxEx9Q38GQaDffOZbXGoeNZhnIpSkz31NsFCMhC4faMKuUAgKBQFGYfzMWK/wMb
-	 VUkmLOkkeW7ebZcomEoR8Ho6MNXhze1jkG+Z4tl6lssBaugVSYQTdAV/Z2ptY8jy7k
-	 IpPHjB3xADRAA==
-Date: Thu, 30 Nov 2023 15:46:55 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
-Message-ID: <2gTL0hxPpSCcVa7uvDLOLcjqd_sgtacZ_6XWaEANBH9Gnz72M1JDmjcWNO9Z7UbIeWNoNqx8y-lb3MAq75pEXL6EQEIED0XLxuHvqaQ9K-g=@proton.me>
-In-Reply-To: <2023113041-bring-vagrancy-a417@gregkh>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com> <20231129-alice-file-v1-1-f81afe8c7261@google.com> <ksVe7fwt0AVWlCOtxIOb-g34okhYeBQUiXvpWLvqfxcyWXXuUuwWEIhUHigcAXJDFRCDr8drPYD1O1VTrDhaeZQ5mVxjCJqT32-2gHozHIo=@proton.me> <2023113041-bring-vagrancy-a417@gregkh>
-Feedback-ID: 71780778:user:proton
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF7D31703
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 07:47:44 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 11A4421AAE;
+	Thu, 30 Nov 2023 15:47:43 +0000 (UTC)
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id EECE1138E5;
+	Thu, 30 Nov 2023 15:47:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id gfgAOp6uaGUvCAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 30 Nov 2023 15:47:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 491A4A07E0; Thu, 30 Nov 2023 16:47:38 +0100 (CET)
+Date: Thu, 30 Nov 2023 16:47:38 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fanotify: allow "weak" fsid when watching a single
+ filesystem
+Message-ID: <20231130154738.rcdkvqhuztp5pz5y@quack3>
+References: <20231118183018.2069899-1-amir73il@gmail.com>
+ <20231118183018.2069899-3-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231118183018.2069899-3-amir73il@gmail.com>
+X-Spamd-Bar: ++++
+Authentication-Results: smtp-out1.suse.de;
+	dkim=none;
+	dmarc=none;
+	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
+X-Rspamd-Server: rspamd2
+X-Spamd-Result: default: False [4.39 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 ARC_NA(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 DMARC_NA(1.20)[suse.cz];
+	 R_SPF_SOFTFAIL(4.60)[~all];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: 4.39
+X-Rspamd-Queue-Id: 11A4421AAE
 
-On 11/30/23 15:59, Greg Kroah-Hartman wrote:
-> On Thu, Nov 30, 2023 at 02:53:35PM +0000, Benno Lossin wrote:
->> On 11/29/23 13:51, Alice Ryhl wrote:
->>> +/// Flags associated with a [`File`].
->>> +pub mod flags {
->>> +    /// File is opened in append mode.
->>> +    pub const O_APPEND: u32 =3D bindings::O_APPEND;
->>
->> Why do all of these constants begin with `O_`?
->=20
-> Because that is how they are defined in the kernel in the C code.  Why
-> would they not be the same here?
+On Sat 18-11-23 20:30:18, Amir Goldstein wrote:
+> So far, fanotify returns -ENODEV or -EXDEV when trying to set a mark
+> on a filesystem with a "weak" fsid, namely, zero fsid (e.g. fuse), or
+> non-uniform fsid (e.g. btrfs non-root subvol).
+> 
+> When group is watching inodes all from the same filesystem (or subvol),
+> allow adding inode marks with "weak" fsid, because there is no ambiguity
+> regarding which filesystem reports the event.
+> 
+> The first mark added to a group determines if this group is single or
+> multi filesystem, depending on the fsid at the path of the added mark.
+> 
+> If the first mark added has a "strong" fsid, marks with "weak" fsid
+> cannot be added and vice versa.
+> 
+> If the first mark added has a "weak" fsid, following marks must have
+> the same "weak" fsid and the same sb as the first mark.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Then why does the C side name them that way? Is it because `O_*` is
-supposed to mean something, or is it done due to namespacing?
+Looks mostly good to me, some small comments below.
 
-In Rust we have namespacing, so we generally drop common prefixes.
+> @@ -1192,11 +1192,68 @@ static bool fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
+>  	return recalc;
+>  }
+>  
+> +struct fan_fsid {
+> +	struct super_block *sb;
+> +	__kernel_fsid_t id;
+> +	bool weak;
+> +};
+> +
+> +static int fanotify_check_mark_fsid(struct fsnotify_group *group,
+> +				    struct fsnotify_mark *mark,
+> +				    struct fan_fsid *fsid)
 
---=20
-Cheers,
-Benno
+I'd call this fanotify_set_mark_fsid() because that's what it does and
+as part of that it also checks whether it can actually set the fsid...
+
+> @@ -1564,20 +1622,25 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+>  	return fd;
+>  }
+>  
+> -static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *fsid)
+> +static int fanotify_test_fsid(struct dentry *dentry, unsigned int flags,
+> +			      struct fan_fsid *fsid)
+>  {
+> +	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+>  	__kernel_fsid_t root_fsid;
+>  	int err;
+>  
+>  	/*
+>  	 * Make sure dentry is not of a filesystem with zero fsid (e.g. fuse).
+>  	 */
+> -	err = vfs_get_fsid(dentry, fsid);
+> +	err = vfs_get_fsid(dentry, &fsid->id);
+>  	if (err)
+>  		return err;
+>  
+> -	if (!fsid->val[0] && !fsid->val[1])
+> -		return -ENODEV;
+> +	/* Allow weak fsid when marking inodes */
+> +	fsid->sb = dentry->d_sb;
+> +	fsid->weak = mark_type == FAN_MARK_INODE;
+> +	if (!fsid->id.val[0] && !fsid->id.val[1])
+> +		return fsid->weak ? 0 : -ENODEV;
+>  
+>  	/*
+>  	 * Make sure dentry is not of a filesystem subvolume (e.g. btrfs)
+> @@ -1587,10 +1650,10 @@ static int fanotify_test_fsid(struct dentry *dentry, __kernel_fsid_t *fsid)
+>  	if (err)
+>  		return err;
+>  
+> -	if (root_fsid.val[0] != fsid->val[0] ||
+> -	    root_fsid.val[1] != fsid->val[1])
+> -		return -EXDEV;
+> +	if (!fanotify_fsid_equal(&root_fsid, &fsid->id))
+> +		return fsid->weak ? 0 : -EXDEV;
+>  
+> +	fsid->weak = false;
+>  	return 0;
+>  }
+
+So the handling of 'weak' confuses me here as it combines determining
+whether fsid is weak with determining whether we accept it or not. Maybe my
+brain is just fried... Can we maybe simplify to something like:
+
+	fsid->sb = dentry->d_sb;
+	if (!fsid->id.val[0] && !fsid->id.val[1]) {
+		fsid->weak = true;
+		goto check;
+	}
+
+	... fetch root_fsid ...
+
+	if (!fanotify_fsid_equal(&root_fsid, &fsid->id))
+		fsid->weak = true;
+
+check:
+	/* Allow weak fsids only for inode marks... */
+	if (fsid->weak && mark_type != FAN_MARK_INODE)
+		return -EXDEV;
+	return 0;
+
+This is how I understand the logic from your description but I'm not 100%
+sure this is equivalent to your code above ;).
+
+Thanks!
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
