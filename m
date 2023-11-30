@@ -1,105 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-4326-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287077FE92D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 07:33:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9E07FE92E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 07:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71572821F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 06:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC96B1C20BE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 06:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCA420DCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 06:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546881DFEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 06:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDLvhxS9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwX80EGM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632261A8;
-	Wed, 29 Nov 2023 21:27:34 -0800 (PST)
-Received: by mail-oi1-x229.google.com with SMTP id 5614622812f47-3b58d96a3bbso303264b6e.1;
-        Wed, 29 Nov 2023 21:27:34 -0800 (PST)
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56AA1717;
+	Wed, 29 Nov 2023 21:32:31 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-db510605572so509812276.0;
+        Wed, 29 Nov 2023 21:32:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701322053; x=1701926853; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IidPzN7+YRKzkATE+W2PQahD3S4vek9uP5XdTqFDrDo=;
-        b=fDLvhxS9Z1Y/QUPqo3+yTce8sLfPp0ltICjnghL+4O0SlDjDSj2dApU/NJj6ZhoJ09
-         FEPSgN45r34UVggT0p60bvkJ5KQYb8ri9ZdIPyHy9gs/wsD2gMbmNF3/3qwGRoxneTJH
-         /nKfWB1GWcINWb7euneaneRQDfdBT0oOem1ic7d5QpSwOR29AO6vBLDTioo3idv/Y5kg
-         ldcDq/oQIL5ilxxE+tHqonZLr0r9BW0MeHWWljrWLKPDpqWebYDXaWW+rhPESWsQu55N
-         NQwKrowQ9d5fBaWBYq6X2JXSWfSTEhn+7Zv+cbPZhebFAZjmxDY9aD2fTMte6fkY5mHw
-         I5Lg==
+        d=gmail.com; s=20230601; t=1701322351; x=1701927151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KzcdX3G/l13x66KSxdI5x0zUnfQyH8pp0lMS/qUmaXQ=;
+        b=SwX80EGM9VR/C+ZWnvk63cKDDCO2oEhhLFv89BFqpLCpMWwVa4PBzL0Khgq45K5sKQ
+         jyuhyUpWFJLx8X3PwFG33JsQlVc24aLLViY9L4SRsZnTJ0i10BTj5lLs/k0JTVJlpKB2
+         POaZzyKllavchO3mzEEX2UEDsHTFKnsQNyc+Vv0pQsJuoBpAoirwcwUQNm1VTbebKTvX
+         Y3mFQhFFj1LupcZxxF+D+sFDhHTzbRV6w/3tQSwXraQBzryt59lhXWZ206Pib/V5ELBC
+         Fjo+OkW6qJEqaAUQDtHqaUhNLLZ2IM6wkll493yiIYKgBftH95FcFWeZUtklXCd6ez9p
+         HX3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701322053; x=1701926853;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IidPzN7+YRKzkATE+W2PQahD3S4vek9uP5XdTqFDrDo=;
-        b=KyeUL0pBnzKXOr4ic7lfHTrf3YP6c+G8UtyfBjclfe7xVXeGHaxWCf7aaiKHslEjka
-         Ox99Bgna6ly7Y021hXUgo4sa+D8g2HsxbK3vo0L4q36d2k0qCtOzIxQmJalS60mpVAgl
-         DnwLXCNuElx9WTvL70jV6TLxkhOB4TAnfFvoXJzgWHJWcfhfKlKERGohIDgZ9D2p265u
-         u0fxXZla3NxlmTgW372dXEdPmcqPXGJBcihj6Y94cfqu07l+8c6+78aXGdPE2WzpZG+3
-         2g1j8VAf3GwBewjfwRyn6hGm1D9jt23+roUBQfOFDamiNizIQJLkcmo+QUW/tO3p2zx7
-         U68g==
-X-Gm-Message-State: AOJu0Yz8RDzxnOkxLcs9Da1v5uywS6lJUMnr2kbip9T2Qkm34sYR397/
-	6zlAZGQ/uYHq+1x4dAMN8kJTus8Nylo=
-X-Google-Smtp-Source: AGHT+IF/CNjVO+RqmIPkEehbBQJr1V92AefHbatormtRrvwCfpcy8A85GnlT4Tt/EVvzM4gzFcgeQA==
-X-Received: by 2002:a05:6808:399a:b0:3b8:990b:752b with SMTP id gq26-20020a056808399a00b003b8990b752bmr4290032oib.3.1701322052633;
-        Wed, 29 Nov 2023 21:27:32 -0800 (PST)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id c20-20020aa78814000000b006bd26bdc909sm319275pfo.72.2023.11.29.21.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 21:27:31 -0800 (PST)
-Date: Thu, 30 Nov 2023 10:57:28 +0530
-Message-Id: <87wmtzhku7.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use iomap
-In-Reply-To: <ZWgPzfd8P+F/qQlh@infradead.org>
+        d=1e100.net; s=20230601; t=1701322351; x=1701927151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzcdX3G/l13x66KSxdI5x0zUnfQyH8pp0lMS/qUmaXQ=;
+        b=JG0FrqQytwJ/b1OvwBcDtN+L6yuDp+nj3W/mdATgg830wx4xEdRAFck5h12MDPB0mB
+         LUZ2y6d2US/ogj9YoB8IDepKIdmVD82AtGHl+MxEgHEcgYjvyH/Jtlu5eA/WfMyGpmlq
+         Jpt978hgQqjlCKitAZGE62HX5wYW4yX4koVZSRFc5OnE7gJ6CRAmd4hqTszAnmc4e9sM
+         R00HpqbkYSdnSGotbCgsV0MjKbXM4jKEpD5kflJG5FpZOxZZtZDlmaCypBzgd+Qitdt4
+         xoE04Nk+aq0zb1fTob8olEWFmoPPYTlLm3xLYBh0ZTxCjSlLD5VfE9ZCFJcbOvf/4wG4
+         Te3A==
+X-Gm-Message-State: AOJu0YzJfC60q6xeONg7ChPz3yk6Z5xQmDXA+JUZhua2Hcii/tub12n+
+	RIwLVET6lB5p2soHWFreHGRm4yvHhZxbGsAXWFY=
+X-Google-Smtp-Source: AGHT+IFhpfUEWzyOk2tHJj3SJo7J92Bms3ThL3HO7eHzD0VJ4uYO4OZtZXkKFhIM0XiJOdYC4nQOD8G+OZ+NRh38lOo=
+X-Received: by 2002:a25:fb10:0:b0:da1:b041:70ac with SMTP id
+ j16-20020a25fb10000000b00da1b04170acmr19113357ybe.10.1701322350801; Wed, 29
+ Nov 2023 21:32:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org> <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+In-Reply-To: <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 30 Nov 2023 07:32:19 +0200
+Message-ID: <CAOQ4uxiz+ng5qEY4qkE_q8Gv3jrd6b7mZnppkDoJthhD+Ud4Ow@mail.gmail.com>
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
+	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, 
+	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Wed, Nov 29, 2023 at 11:51=E2=80=AFPM Seth Forshee (DigitalOcean)
+<sforshee@kernel.org> wrote:
+>
+> Add inode operations for getting, setting and removing filesystem
+> capabilities rather than passing around raw xattr data. This provides
+> better type safety for ids contained within xattrs.
+>
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
+>  include/linux/fs.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98b7a7a8c42e..a0a77f67b999 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2002,6 +2002,11 @@ struct inode_operations {
+>                                      int);
+>         int (*set_acl)(struct mnt_idmap *, struct dentry *,
+>                        struct posix_acl *, int);
+> +       int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> +                         struct vfs_caps *);
+> +       int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> +                         const struct vfs_caps *, int flags);
+> +       int (*remove_fscaps)(struct mnt_idmap *, struct dentry *);
+>         int (*fileattr_set)(struct mnt_idmap *idmap,
+>                             struct dentry *dentry, struct fileattr *fa);
+>         int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+>
 
-> On Thu, Nov 30, 2023 at 08:54:31AM +0530, Ritesh Harjani wrote:
->> So I took a look at this. Here is what I think -
->> So this is useful of-course when we have a large folio. Because
->> otherwise it's just one block at a time for each folio. This is not a
->> problem once FS buffered-io handling code moves to iomap (because we
->> can then enable large folio support to it).
->
-> Yes.
->
->> However, this would still require us to pass a folio to ->map_blocks
->> call to determine the size of the folio (which I am not saying can't be
->> done but just stating my observations here).
->
-> XFS currently maps based on the underlyig reservation (delalloc extent)
-> and not the actual map size.   This works because on-disk extents are
-> allocated as unwritten extents, and only the actual written part is
-> the converted.  But if you only want to allocate blocks for the part
-> actually written you actually need to pass in the dirty range and not
-> just use the whole folio.  This would be the incremental patch to do
-> that:
+Please document in Documentation/filesystems/{vfs,locking}.rst
 
-yes. dirty range indeed.
-
->
-> http://git.infradead.org/users/hch/xfs.git/commitdiff/0007893015796ef2ba16bb8b98c4c9fb6e9e6752
->
-> But unless your block allocator is very cheap doing what XFS does is
-> probably going to work much better.
->
->> ...ok so here is the PoC for seq counter check for ext2. Next let me
->> try to see if we can lift this up from the FS side to iomap - 
->
-> This looks good to me from a very superficial view.  Dave is the expert
-> on this, though.
-
-Sure.
+Thanks,
+Amir.
 
