@@ -1,144 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-4387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91AA7FF2A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:41:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A59B7FF2A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 058B51C20BD6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8C35B211BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678FC51014
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314255100B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D9910D9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 05:30:12 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0691B1FCF1;
-	Thu, 30 Nov 2023 13:30:10 +0000 (UTC)
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id DC571138E5;
-	Thu, 30 Nov 2023 13:30:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id Wq3INWGOaGXCYAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 30 Nov 2023 13:30:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 176A1A07DB; Thu, 30 Nov 2023 14:30:09 +0100 (CET)
-Date: Thu, 30 Nov 2023 14:30:09 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
-	Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs: fork do_splice_copy_file_range() from
- do_splice_direct()
-Message-ID: <20231130133009.pufons7adm7mjndl@quack3>
-References: <20231129200709.3154370-1-amir73il@gmail.com>
- <20231129200709.3154370-2-amir73il@gmail.com>
- <CAOQ4uxixp3YRE0xRDe5EkTmTvnRU_qeJ=R=MqxRWkqHRtLf+4A@mail.gmail.com>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8537BD48;
+	Thu, 30 Nov 2023 05:32:24 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA30DC15;
+	Thu, 30 Nov 2023 05:33:10 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 415D63F5A1;
+	Thu, 30 Nov 2023 05:32:19 -0800 (PST)
+Date: Thu, 30 Nov 2023 13:32:16 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Hyesoo Yu <hyesoo.yu@samsung.com>, catalin.marinas@arm.com,
+	will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
+	james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 19/27] mm: mprotect: Introduce
+ PAGE_FAULT_ON_ACCESS for mprotect(PROT_MTE)
+Message-ID: <ZWiO4PWfK2gKDLGr@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <CGME20231119165921epcas2p3dce0532847d59a9c3973b4e41102e27d@epcas2p3.samsung.com>
+ <20231119165721.9849-20-alexandru.elisei@arm.com>
+ <20231129092725.GD2988384@tiffany>
+ <ZWh6vl8DfXQbKo9O@raptor>
+ <4e7a4054-092c-4e34-ae00-0105d7c9343c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxixp3YRE0xRDe5EkTmTvnRU_qeJ=R=MqxRWkqHRtLf+4A@mail.gmail.com>
-X-Spamd-Bar: ++++++
-Authentication-Results: smtp-out2.suse.de;
-	dkim=none;
-	dmarc=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [6.88 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 ARC_NA(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 MIME_GOOD(-0.10)[text/plain];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 DMARC_NA(1.20)[suse.cz];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.51)[80.10%]
-X-Spam-Score: 6.88
-X-Rspamd-Queue-Id: 0691B1FCF1
+In-Reply-To: <4e7a4054-092c-4e34-ae00-0105d7c9343c@redhat.com>
 
-On Thu 30-11-23 12:09:09, Amir Goldstein wrote:
-> On Wed, Nov 29, 2023 at 10:07 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > The new helper is meant to be called from context of ->copy_file_range()
-> > methods instead of do_splice_direct().
-> >
-> > Currently, the only difference is that do_splice_copy_file_range() does
-> > not take a splice flags argument and it asserts that file_start_write()
-> > was called.
-> >
-> > Soon, do_splice_direct() will be called without file_start_write() held.
-> >
-> > Use the new helper from __ceph_copy_file_range(), that was incorrectly
-> > passing the copy_file_range() flags argument as splice flags argument
-> > to do_splice_direct(). the value of flags was 0, so no actual bug fix.
-> >
-> > Move the definition of both helpers to linux/splice.h.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-...
-> > +/**
-> > + * do_splice_copy_file_range - splices data for copy_file_range()
-> > + * @in:                file to splice from
-> > + * @ppos:      input file offset
-> > + * @out:       file to splice to
-> > + * @opos:      output file offset
-> > + * @len:       number of bytes to splice
-> > + *
-> > + * Description:
-> > + *    For use by generic_copy_file_range() and ->copy_file_range() methods.
-> > + *
-> > + * Callers already called rw_verify_area() on the entire range.
-> > + */
-> > +long do_splice_copy_file_range(struct file *in, loff_t *ppos, struct file *out,
-> > +                              loff_t *opos, size_t len)
+Hi,
+
+On Thu, Nov 30, 2023 at 01:49:34PM +0100, David Hildenbrand wrote:
+> > > > +
+> > > > +out_retry:
+> > > > +	put_page(page);
+> > > > +	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+> > > > +		vma_end_read(vma);
+> > > > +	if (fault_flag_allow_retry_first(vmf->flags)) {
+> > > > +		err = VM_FAULT_RETRY;
+> > > > +	} else {
+> > > > +		/* Replay the fault. */
+> > > > +		err = 0;
+> > > 
+> > > Hello!
+> > > 
+> > > Unfortunately, if the page continues to be pinned, it seems like fault will continue to occur.
+> > > I guess it makes system stability issue. (but I'm not familiar with that, so please let me know if I'm mistaken!)
+> > > 
+> > > How about migrating the page when migration problem repeats.
+> > 
+> > Yes, I had the same though in the previous iteration of the series, the
+> > page was migrated out of the VMA if tag storage couldn't be reserved.
+> > 
+> > Only short term pins are allowed on MIGRATE_CMA pages, so I expect that the
+> > pin will be released before the fault is replayed. Because of this, and
+> > because it makes the code simpler, I chose not to migrate the page if tag
+> > storage couldn't be reserved.
 > 
-> FYI, I renamed do_splice_vfs_copy_file_range => splice_file_range in v2
-> for brevity.
+> There are still some cases that are theoretically problematic: vmsplice()
+> can pin pages forever and doesn't use FOLL_LONGTERM yet.
+> 
+> All these things also affect other users that rely on movability (e.g., CMA,
+> memory hotunplug).
 
-Yeah, after the rename things look better :). Otherwise I didn't find any
-problem so feel free to add:
+I wasn't aware of that, thank you for the information. Then to ensure that the
+process doesn't hang by replying the loop indefinitely, I'll migrate the page if
+tag storage cannot be reserved. Looking over the code again, I think I can reuse
+the same function that migrates tag storage pages out of the MTE VMA (added in
+patch #21), so no major changes needed.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Thanks,
+Alex
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+> 
 
