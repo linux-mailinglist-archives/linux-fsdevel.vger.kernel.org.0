@@ -1,181 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-4332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65CF97FEAC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 09:34:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B037FEAC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 09:34:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4E86B20EB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 08:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B75CB20DD9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 08:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1002D60C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 08:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECC936AF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7xfodtm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbte8gMx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B6910F4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 23:30:12 -0800 (PST)
-Received: by mail-qv1-xf35.google.com with SMTP id 6a1803df08f44-67a16594723so3898706d6.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Nov 2023 23:30:12 -0800 (PST)
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BABBD6C;
+	Wed, 29 Nov 2023 23:46:04 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1cff3a03dfaso6144885ad.3;
+        Wed, 29 Nov 2023 23:46:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701329411; x=1701934211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hi1iWfX1RuPQz0xVjHcG/PTXQmXIZNrPf1TE5/7Flgo=;
-        b=T7xfodtmdem+RxT6Qyv/Kl/aeCnEh9cI3UjiuzLz+faGJXTT+p2C0zs43089Nyhutj
-         OzWa2WtYMn2uO62CAsU9kikNZSnYXnMuLi5YNp3gy/R9D03doAYp1OW+Wf7Xo4zr2Gn0
-         dvVlsP+QgLpZCV8RB+DYpi2FNMwo3WAZqGqpYkloUjmjemUl8CWMNBpRKa8/590mkqgW
-         UwcG7HFGvQ0wRnkDGfrUsd2PHypY/0H7I5i7T20f5g63QZehoTpFtUQ46ghK9yCkZTz9
-         UYoT5qCSWK07ZgxLGLJRzqVxgwjQx3YH4OvybdxIldXrqr/mEm6yJa6eqt9fww9MX+wW
-         UVPw==
+        d=gmail.com; s=20230601; t=1701330363; x=1701935163; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OXM8avw6NMV5Un81T8LwPDiKIZR86V58yoXZIsXTdfo=;
+        b=fbte8gMx8l1w4JFe2ivQy3X4JPYGJ7tYTyYpmnpw7yiCQaQmYcoqhV78wX1MheJ2Mx
+         Yu9Mb1Z1PMjnt2Sw0ymFnX8Cgi9vFhvHnA2YiAmiOAvGhg5ENQlwsgLIwaDC99le8Jwk
+         uVtLjeJkQF2C+YnJs9GrPp7CTHW+No4un/8AP1ggSiahOSBxixXaqG8YjEl0YRo1Zaqm
+         s+DtTxOyHReF5Z93H9tj21ids0ki0g2v6gkUCYRrOpWqlHdXM/YXgp5KttfIH6GrgaGD
+         y+bkDHnhQborisig12RRbMG3e3eFIVvUrmpOz+HfAuWXZSKn2iU55/s+GmRRXtTuUr4v
+         KcBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701329411; x=1701934211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hi1iWfX1RuPQz0xVjHcG/PTXQmXIZNrPf1TE5/7Flgo=;
-        b=ZYU/Jekg3MtGbYggTk0cGhuFkyDHLUTDuxJPzK02EN2bi0SMcTDY7eTzzqq5XebS7K
-         lvEHp7S8I8wIJFu7agHDV2Lx6NfbLYqj6yii47DWKYtuyzu50W6u4YPbRpw1T/FiDvTr
-         ogKeuYygatx5SLUOYZ9S2Gi/v7wgPtZ2/Bo8TC1drVIXF2Y631nwdJPDa5IIdrTo53eW
-         HW+c3CE+VVyMtrs8PEEt/ZyHHTnP0LDdv/ZQqd4xXS41FK6IJZDdMBgD/j2593tMMrXB
-         iPkonNqdiEfC5RqdVsqasKitHmkVagTRHVRPalQNVHBCWU54QsE6IOY5AmFQ4xBk0lkL
-         gfog==
-X-Gm-Message-State: AOJu0Yx2CM1poGvaKf1f2ytV6jplULiDn+Rtm2umzms0KSomPeUxjSEG
-	330k+UVZONEvFB+kirY59nPor9NbnxkST7Qn5dY=
-X-Google-Smtp-Source: AGHT+IH1S3XPhectdYbgV85AFXxYj48gSYf7xxPJdOOtL5NdqFvOk6tjcxoT88q6P/BzPcOxa6DMmNsgOGYyCS2GFAc=
-X-Received: by 2002:ad4:528a:0:b0:67a:2875:3ab5 with SMTP id
- v10-20020ad4528a000000b0067a28753ab5mr15768554qvr.65.1701329411445; Wed, 29
- Nov 2023 23:30:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701330363; x=1701935163;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OXM8avw6NMV5Un81T8LwPDiKIZR86V58yoXZIsXTdfo=;
+        b=ZF3PcX+5iEGSQBfNVcdiDw7oZbase6u1vj9ryHNB1kuoaVzL6KOzYjvL/G9IByhuO8
+         HhCIdlD6AgkDiSm6iAyUgeQyy7mAQmm1o/GPe/GyxCTT6DJr/uoPwMCAoSrbThDyy1hg
+         BtdjDIp4GybaVDsVGOeH4+iuQJ3e/WOaLpSLUghKPI3FyXDfy6v53Dv5uYMguij2pkBV
+         EmUInOgn9OOJQ3pD4JkizS/kVUqsXCyrLUl/jaCoTsu5CB1SFKWsWSE8DsJgTFl05xmd
+         rAgypR7i5d+1VF/kIDM23dHQDsF/JfnvxWj8CsX1mJGg4/zsr0sCjYkB87Acs2xeifll
+         C4yg==
+X-Gm-Message-State: AOJu0Yyp8RRfYcphX7eYc0AZUNIUQhVvnktyzckfWS9qqVfh9ZRq9XQK
+	k8xaTxYFqS99fz//ON35FSEEo5oTMm8=
+X-Google-Smtp-Source: AGHT+IHTtgyVwFFq/qs+ELRnXoOh95+lK5cdiA/gDjLMMZWVajsRND3yFYJgIopIv9dvZc6a1/TwyA==
+X-Received: by 2002:a17:903:454:b0:1ca:a07b:36d with SMTP id iw20-20020a170903045400b001caa07b036dmr21571730plb.48.1701330362871;
+        Wed, 29 Nov 2023 23:46:02 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id 19-20020a170902c11300b001c88f77a156sm36035pli.153.2023.11.29.23.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Nov 2023 23:46:02 -0800 (PST)
+Date: Thu, 30 Nov 2023 13:15:58 +0530
+Message-Id: <87ttp3hefd.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use iomap
+In-Reply-To: <8734wnj53k.fsf@doe.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
- <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com>
- <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
- <CAJfpegtH1DP19cAuKgYAssZ8nkKhnyX42AYWtAT3h=nmi2j31A@mail.gmail.com>
- <CAOQ4uxgW6xpWW=jLQJuPKOCxN=i_oNeRwNnMEpxOhVD7RVwHHw@mail.gmail.com>
- <CAJfpegtOt6MDFM3vsK+syJhpLMSm7wBazkXuxjRTXtAsn9gCuA@mail.gmail.com>
- <CAOQ4uxiCjX2uQqdikWsjnPtpNeHfFk_DnWO3Zz2QS3ULoZkGiA@mail.gmail.com>
- <2f6513fa-68d8-43c8-87a4-62416c3e1bfd@fastmail.fm> <44ff6b37-7c4b-485d-8ebf-de5fadd3c527@spawn.link>
- <de783ce4-6ac1-42ca-94a2-a15aa1795b5d@fastmail.fm>
-In-Reply-To: <de783ce4-6ac1-42ca-94a2-a15aa1795b5d@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 30 Nov 2023 09:29:58 +0200
-Message-ID: <CAOQ4uxgK+-Kbg5TJLQR65X33VyE4zZinZ8G-8dTBTNK5bRLkRw@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Daniel Rosenberg <drosen@google.com>, Paul Lawrence <paullawrence@google.com>, 
-	Alessio Balsini <balsini@android.com>, Christian Brauner <brauner@kernel.org>, 
-	fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 30, 2023 at 12:01=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 11/29/23 22:39, Antonio SJ Musumeci wrote:
-> > On 11/29/23 14:46, Bernd Schubert wrote:
-> >>
-> >>
-> >> On 11/29/23 18:39, Amir Goldstein wrote:
-> >>> On Wed, Nov 29, 2023 at 6:55=E2=80=AFPM Miklos Szeredi <miklos@szered=
-i.hu> wrote:
-> >>>>
-> >>>> On Wed, 29 Nov 2023 at 16:52, Amir Goldstein <amir73il@gmail.com> wr=
-ote:
-> >>>>
-> >>>>> direct I/O read()/write() is never a problem.
-> >>>>>
-> >>>>> The question is whether mmap() on a file opened with FOPEN_DIRECT_I=
-O
-> >>>>> when the inode is in passthrough mode, also uses fuse_passthrough_m=
-map()?
-> >>>>
-> >>>> I think it should.
-> >>>>
-> >>>>> or denied, similar to how mmap with ff->open_flags & FOPEN_DIRECT_I=
-O &&
-> >>>>> vma->vm_flags & VM_MAYSHARE) && !fc->direct_io_relax
-> >>>>> is denied?
-> >>>>
-> >>>> What would be the use case for FOPEN_DIRECT_IO with passthrough mmap=
-?
-> >>>>
-> >>>
-> >>> I don't have a use case. That's why I was wondering if we should
-> >>> support it at all, but will try to make it work.
-> >>
-> >> What is actually the use case for FOPEN_DIRECT_IO and passthrough?
-> >> Avoiding double page cache?
-> >>
-> >>>
-> >>>>> A bit more challenging, because we will need to track unmounts, or =
-at
-> >>>>> least track
-> >>>>> "was_cached_mmaped" state per file, but doable.
-> >>>>
-> >>>> Tracking unmaps via fuse_vma_close() should not be difficult.
-> >>>>
-> >>>
-> >>> OK. so any existing mmap, whether on FOPEN_DIRECT_IO or not
-> >>> always prevents an inode from being "neutral".
-> >>>
-> >>
-> >>
-> >> Thanks,
-> >> Bernd
-> >>
-> >
-> >   > Avoiding double page cache?
-> >
-> > Currently my users enable direct_io because 1) it is typically
-> > materially faster than not 2) avoiding double page caching (it is a
-> > union filesystem).
->
-> 3) You want coherency for network file systems (our use case).
->
-> So performance kind of means it is preferred to have it enabled for
-> passthrough. And with that MAP_SHARED gets rather important, imho. I
-> don't know if recent gcc versions still do it, but gcc used to write
-> files using MAP_SHARED. In the HPC AI world python tools also tend to do
-> IO with MAP_SHARED.
->
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-I see. good to know.
-That means that an inode in passthrough mode should always imply
-direct_io_relax behavior.
+> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+>
+>> Christoph Hellwig <hch@infradead.org> writes:
+>>
+>>> On Wed, Nov 22, 2023 at 01:29:46PM +0100, Jan Kara wrote:
+>>>> writeback bit set. XFS plays the revalidation sequence counter games
+>>>> because of this so we'd have to do something similar for ext2. Not that I'd
+>>>> care as much about ext2 writeback performance but it should not be that
+>>>> hard and we'll definitely need some similar solution for ext4 anyway. Can
+>>>> you give that a try (as a followup "performance improvement" patch).
 
-The way that passthrough mode and network file systems use cases can
-overlap is by per-inode basis, which is the typical case for HSM (out use c=
-ase):
-- some inodes are local and some are remote
-- local inodes are open passthrough mode
-- remote inodes are open in direct or cached mode
-- inode can change state local =3D> remote (a.k.a local storage evict) when=
- there
-  are no files open on the inode
-- inode can change state remote =3D> local if there are no files open in
-  cached mode and no mmaps (*)
-- specifically, remote files open in direct mode, do not block the transiti=
-on
-  remote =3D> local, where later opens will be in passthrough mode, but
-  the files already open in direct mode will not enjoy the performance boos=
-t
+ok. So I am re-thinknig over this on why will a filesystem like ext2
+would require sequence counter check. We don't have collapse range
+or COW sort of operations, it is only the truncate which can race,
+but that should be taken care by folio_lock. And even if the partial
+truncate happens on a folio, since the logical to physical block mapping
+never changes, it should not matter if the writeback wrote data to a
+cached entry, right?
 
-* If we relax the last condition we will end up with cache incoherency
-   that exists in overlayfs after copy up, when lower file is still mmaped
+-ritesh
 
-Thanks,
-Amir.
+>>>
+>>> Darrick has mentioned that he is looking into lifting more of the
+>>> validation sequence counter validation into iomap.
+>>>
+>>> In the meantime I have a series here that at least maps multiple blocks
+>>> inside a folio in a single go, which might be worth trying with ext2 as
+>>> well:
+>>>
+>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/iomap-map-multiple-blocks
+>>
+>> Sure, thanks for providing details. I will check this.
+>>
+>
+> So I took a look at this. Here is what I think -
+> So this is useful of-course when we have a large folio. Because
+> otherwise it's just one block at a time for each folio. This is not a
+> problem once FS buffered-io handling code moves to iomap (because we
+> can then enable large folio support to it).
+>
+> However, this would still require us to pass a folio to ->map_blocks
+> call to determine the size of the folio (which I am not saying can't be
+> done but just stating my observations here).
+>
+> Now coming to implementing validation seq check. I am hoping, it should
+> be straight forward at least for ext2, because it mostly just have to
+> protect against truncate operation (which can change the block mapping)...
+>
+> ...ok so here is the PoC for seq counter check for ext2. Next let me
+> try to see if we can lift this up from the FS side to iomap - 
+>
+>
+> From 86b7bdf79107c3d0a4f37583121d7c136db1bc5c Mon Sep 17 00:00:00 2001
+> From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> Subject: [PATCH] ext2: Implement seq check for mapping multiblocks in ->map_blocks
+>
+> This implements inode block seq counter (ib_seq) which helps in validating 
+> whether the cached wpc (struct iomap_writepage_ctx) still has the valid 
+> entries or not. Block mapping can get changed say due to a racing truncate. 
+>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/ext2/balloc.c |  1 +
+>  fs/ext2/ext2.h   |  6 ++++++
+>  fs/ext2/inode.c  | 51 +++++++++++++++++++++++++++++++++++++++++++-----
+>  fs/ext2/super.c  |  2 +-
+>  4 files changed, 54 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+> index e124f3d709b2..e97040194da4 100644
+> --- a/fs/ext2/balloc.c
+> +++ b/fs/ext2/balloc.c
+> @@ -495,6 +495,7 @@ void ext2_free_blocks(struct inode * inode, ext2_fsblk_t block,
+>  	}
+>  
+>  	ext2_debug ("freeing block(s) %lu-%lu\n", block, block + count - 1);
+> +	ext2_inc_ib_seq(EXT2_I(inode));
+>  
+>  do_more:
+>  	overflow = 0;
+> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+> index 677a9ad45dcb..882c14d20183 100644
+> --- a/fs/ext2/ext2.h
+> +++ b/fs/ext2/ext2.h
+> @@ -663,6 +663,7 @@ struct ext2_inode_info {
+>  	struct rw_semaphore xattr_sem;
+>  #endif
+>  	rwlock_t i_meta_lock;
+> +	unsigned int ib_seq;
+>  
+>  	/*
+>  	 * truncate_mutex is for serialising ext2_truncate() against
+> @@ -698,6 +699,11 @@ static inline struct ext2_inode_info *EXT2_I(struct inode *inode)
+>  	return container_of(inode, struct ext2_inode_info, vfs_inode);
+>  }
+>  
+> +static inline void ext2_inc_ib_seq(struct ext2_inode_info *ei)
+> +{
+> +	WRITE_ONCE(ei->ib_seq, READ_ONCE(ei->ib_seq) + 1);
+> +}
+> +
+>  /* balloc.c */
+>  extern int ext2_bg_has_super(struct super_block *sb, int group);
+>  extern unsigned long ext2_bg_num_gdb(struct super_block *sb, int group);
+> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+> index f4e0b9a93095..a5490d641c26 100644
+> --- a/fs/ext2/inode.c
+> +++ b/fs/ext2/inode.c
+> @@ -406,6 +406,8 @@ static int ext2_alloc_blocks(struct inode *inode,
+>  	ext2_fsblk_t current_block = 0;
+>  	int ret = 0;
+>  
+> +	ext2_inc_ib_seq(EXT2_I(inode));
+> +
+>  	/*
+>  	 * Here we try to allocate the requested multiple blocks at once,
+>  	 * on a best-effort basis.
+> @@ -966,14 +968,53 @@ ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+>  	return mpage_writepages(mapping, wbc, ext2_get_block);
+>  }
+>  
+> +struct ext2_writepage_ctx {
+> +	struct iomap_writepage_ctx ctx;
+> +	unsigned int		ib_seq;
+> +};
+> +
+> +static inline
+> +struct ext2_writepage_ctx *EXT2_WPC(struct iomap_writepage_ctx *ctx)
+> +{
+> +	return container_of(ctx, struct ext2_writepage_ctx, ctx);
+> +}
+> +
+> +static bool ext2_imap_valid(struct iomap_writepage_ctx *wpc, struct inode *inode,
+> +			    loff_t offset)
+> +{
+> +	if (offset < wpc->iomap.offset ||
+> +	    offset >= wpc->iomap.offset + wpc->iomap.length)
+> +		return false;
+> +
+> +	if (EXT2_WPC(wpc)->ib_seq != READ_ONCE(EXT2_I(inode)->ib_seq))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  static int ext2_write_map_blocks(struct iomap_writepage_ctx *wpc,
+>  				 struct inode *inode, loff_t offset)
+>  {
+> -	if (offset >= wpc->iomap.offset &&
+> -	    offset < wpc->iomap.offset + wpc->iomap.length)
+> +	loff_t maxblocks = (loff_t)INT_MAX;
+> +	u8 blkbits = inode->i_blkbits;
+> +	u32 bno;
+> +	bool new, boundary;
+> +	int ret;
+> +
+> +	if (ext2_imap_valid(wpc, inode, offset))
+>  		return 0;
+>  
+> -	return ext2_iomap_begin(inode, offset, inode->i_sb->s_blocksize,
+> +	EXT2_WPC(wpc)->ib_seq = READ_ONCE(EXT2_I(inode)->ib_seq);
+> +
+> +	ret = ext2_get_blocks(inode, offset >> blkbits, maxblocks << blkbits,
+> +			      &bno, &new, &boundary, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +	/*
+> +	 * ret can be 0 in case of a hole which is possible for mmaped writes.
+> +	 */
+> +	ret = ret ? ret : 1;
+> +	return ext2_iomap_begin(inode, offset, (loff_t)ret << blkbits,
+>  				IOMAP_WRITE, &wpc->iomap, NULL);
+>  }
+>  
+> @@ -984,9 +1025,9 @@ static const struct iomap_writeback_ops ext2_writeback_ops = {
+>  static int ext2_file_writepages(struct address_space *mapping,
+>  				struct writeback_control *wbc)
+>  {
+> -	struct iomap_writepage_ctx wpc = { };
+> +	struct ext2_writepage_ctx wpc = { };
+>  
+> -	return iomap_writepages(mapping, wbc, &wpc, &ext2_writeback_ops);
+> +	return iomap_writepages(mapping, wbc, &wpc.ctx, &ext2_writeback_ops);
+>  }
+>  
+>  static int
+> diff --git a/fs/ext2/super.c b/fs/ext2/super.c
+> index 645ee6142f69..cd1d1678e35b 100644
+> --- a/fs/ext2/super.c
+> +++ b/fs/ext2/super.c
+> @@ -188,7 +188,7 @@ static struct inode *ext2_alloc_inode(struct super_block *sb)
+>  #ifdef CONFIG_QUOTA
+>  	memset(&ei->i_dquot, 0, sizeof(ei->i_dquot));
+>  #endif
+> -
+> +	WRITE_ONCE(ei->ib_seq, 0);
+>  	return &ei->vfs_inode;
+>  }
+>  
+>
+> 2.30.2
 
