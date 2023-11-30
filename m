@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-4373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668FA7FEF4E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 13:41:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB377FEF4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 13:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFDC281D08
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 12:41:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F7D7B20C32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 12:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDB347A48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 12:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C1847A50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 12:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ep0gjFbr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2QmaEhh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96D847A58;
-	Thu, 30 Nov 2023 12:33:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899E6C433C7;
-	Thu, 30 Nov 2023 12:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4804779B;
+	Thu, 30 Nov 2023 12:36:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF1C4C433C8;
+	Thu, 30 Nov 2023 12:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701347628;
-	bh=51fXWxq6Hw7XhjVhkMIm4RN54bM85K0YyitPMl6vCWY=;
+	s=k20201202; t=1701347774;
+	bh=EtiRcH4voLF+iaE6Nt64ffXFd88eaIh4a9FFJs3FC8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ep0gjFbrZeKdMPFrdioQYJ/GelBiEo1WtAb9TifyEqp37liL/MxNn/C6l9VWg8GWp
-	 vbvQnua6tP41WQ8lwJyb6h6+t2DFtdGOZ0juP9fM869yHsfI5GsKEzl3ZFbJhTUXo3
-	 oqPpV8/GenMcDeEDwzF9zvMlc3pFOCPxY+fQBeeDvEIs0n8f51xl1Lq5UeFwGYkS0A
-	 XFGIj26d/KjPCNUQaUdZm1r6WZxXve1VeZSKGZkNPZNR4FImwaAprz4uTobqhHk6IN
-	 7yMJEwhwcu0w/pszoWeDbvAmIQ0nP4mpSP5EM9SfRkpqPXKfAkeP9lQwBjoqXyxOt6
-	 7q92Ne2ygVWZQ==
-Date: Thu, 30 Nov 2023 13:33:39 +0100
+	b=o2QmaEhhoDDSdbFFx2qGmUEuyScr1iGmxSPJtl7f55G3T1z9lN0PdcTPrWuemXoUO
+	 IfwzJciOhNTLWL+S71VQnZ7ftEFRkip8GPgjsH0CfyfOjVGmpyg/odMwndGQbGwLZf
+	 YYuW1Qu5o2zrpedLP4lYrQQgKlPdFgUv1EeUjfk3Xb3/DFNmMAcmz97JWUNBRlz3qO
+	 RZNiwGA8YzLFqk4qRALooT6zm3UdGub8EqrCd73VmL7/HdEAlU2q3r9zTAuUU8vk4O
+	 //g4EdtXEG7l8auwNdWNfABGig40Q2jISdg/tYToSdaTbuyjxiY9eZRYWPpJfQUmBt
+	 GCmS/ytNEh53A==
+Date: Thu, 30 Nov 2023 13:36:06 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, a.hindborg@samsung.com,
-	alex.gaynor@gmail.com, arve@android.com, bjorn3_gh@protonmail.com,
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com,
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
 	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com,
 	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
 	joel@joelfernandes.org, keescook@chromium.org,
@@ -45,11 +45,10 @@ Cc: Alice Ryhl <aliceryhl@google.com>, a.hindborg@samsung.com,
 	rust-for-linux@vger.kernel.org, surenb@google.com,
 	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk,
 	wedsonaf@gmail.com, willy@infradead.org
-Subject: Re: [PATCH 4/7] rust: file: add `FileDescriptorReservation`
-Message-ID: <20231130-bestrafen-absieht-27dc986abc53@brauner>
-References: <20231130-windungen-flogen-7b92c4013b82@brauner>
- <20231130115451.138496-1-aliceryhl@google.com>
- <nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=@proton.me>
+Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20231130-zweig-mitleid-2ba3ef78145e@brauner>
+References: <20231130-sackgasse-abdichtung-62c23edd9a9f@brauner>
+ <20231130121013.140671-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,111 +57,112 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQfWIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=@proton.me>
+In-Reply-To: <20231130121013.140671-1-aliceryhl@google.com>
 
-On Thu, Nov 30, 2023 at 12:17:14PM +0000, Benno Lossin wrote:
-> On 30.11.23 12:54, Alice Ryhl wrote:
-> > Christian Brauner <brauner@kernel.org> writes:
-> >> On Thu, Nov 30, 2023 at 09:17:56AM +0000, Alice Ryhl wrote:
-> >>> Christian Brauner <brauner@kernel.org> writes:
-> >>>>>>> +    /// Prevent values of this type from being moved to a different task.
-> >>>>>>> +    ///
-> >>>>>>> +    /// This is necessary because the C FFI calls assume that `current` is set to the task that
-> >>>>>>> +    /// owns the fd in question.
-> >>>>>>> +    _not_send_sync: PhantomData<*mut ()>,
-> >>>>>>
-> >>>>>> I don't fully understand this. Can you explain in a little more detail
-> >>>>>> what you mean by this and how this works?
-> >>>>>
-> >>>>> Yeah, so, this has to do with the Rust trait `Send` that controls
-> >>>>> whether it's okay for a value to get moved from one thread to another.
-> >>>>> In this case, we don't want it to be `Send` so that it can't be moved to
-> >>>>> another thread, since current might be different there.
-> >>>>>
-> >>>>> The `Send` trait is automatically applied to structs whenever *all*
-> >>>>> fields of the struct are `Send`. So to ensure that a struct is not
-> >>>>> `Send`, you add a field that is not `Send`.
-> >>>>>
-> >>>>> The `PhantomData` type used here is a special zero-sized type.
-> >>>>> Basically, it says "pretend this struct has a field of type `*mut ()`,
-> >>>>> but don't actually add the field". So for the purposes of `Send`, it has
-> >>>>> a non-Send field, but since its wrapped in `PhantomData`, the field is
-> >>>>> not there at runtime.
-> >>>>
-> >>>> This probably a stupid suggestion, question. But while PhantomData gives
-> >>>> the right hint of what is happening I wouldn't mind if that was very
-> >>>> explicitly called NoSendTrait or just add the explanatory comment. Yes,
-> >>>> that's a lot of verbiage but you'd help us a lot.
-> >>>
-> >>> I suppose we could add a typedef:
-> >>>
-> >>> type NoSendTrait = PhantomData<*mut ()>;
-> >>>
-> >>> and use that as the field type. The way I did it here is the "standard"
-> >>> way of doing it, and if you look at code outside the kernel, you will
-> >>> also find them using `PhantomData` like this. However, I don't mind
-> >>> adding the typedef if you think it is helpful.
-> >>
-> >> I'm fine with just a comment as well. I just need to be able to read
-> >> this a bit faster. I'm basically losing half a day just dealing with
-> >> this patchset and that's not realistic if I want to keep up with other
-> >> patches that get sent.
-> >>
-> >> And if you resend and someone else review you might have to answer the
-> >> same question again.
+On Thu, Nov 30, 2023 at 12:10:12PM +0000, Alice Ryhl wrote:
+> Christian Brauner <brauner@kernel.org> writes:
+> >> This is the backdoor. You use it when *you* know that the file is okay
 > > 
-> > What do you think about this wording?
+> > And a huge one.
 > > 
-> > /// Prevent values of this type from being moved to a different task.
-> > ///
-> > /// This field has the type `PhantomData<*mut ()>`, which does not
-> > /// implement the Send trait. By adding a field with this property, we
-> > /// ensure that the `FileDescriptorReservation` struct will not
-> > /// implement the Send trait either. This has the consequence that the
-> > /// compiler will prevent you from moving values of type
-> > /// `FileDescriptorReservation` into a different task, which we want
-> > /// because other tasks might have a different value of `current`. We
-> > /// want to avoid that because `fd_install` assumes that the value of
-> > /// `current` is unchanged since the call to `get_unused_fd_flags`.
-> > ///
-> > /// The `PhantomData` type has size zero, so the field does not exist at
-> > /// runtime.
+> >> to access, but Rust doesn't. It's unsafe because it's not checked by
+> >> Rust.
+> >> 
+> >> For example you could do this:
+> >> 
+> >> 	let ptr = unsafe { bindings::fdget(fd) };
+> >> 
+> >> 	// SAFETY: We just called `fdget`.
+> >> 	let file = unsafe { File::from_ptr(ptr) };
+> >> 	use_file(file);
+> >> 
+> >> 	// SAFETY: We're not using `file` after this call.
+> >> 	unsafe { bindings::fdput(ptr) };
+> >> 
+> >> It's used in Binder here:
+> >> https://github.com/Darksonn/linux/blob/dca45e6c7848e024709b165a306cdbe88e5b086a/drivers/android/rust_binder.rs#L331-L332
+> >> 
+> >> Basically, I use it to say "C code has called fdget for us so it's okay
+> >> to access the file", whenever userspace uses a syscall to call into the
+> >> driver.
 > > 
-> > Alice
+> > Yeah, ok, because the fd you're operating on may be coming from fdget(). Iirc,
+> > binder is almost by default used multi-threaded with a shared file descriptor
+> > table? But while that means fdget() will usually bump the reference count you
+> > can't be sure. Hmkay.
 > 
-> I don't think it is a good idea to add this big comment to every
-> `PhantomData` field. I would much rather have a type alias:
+> Even if the syscall used `fget` instead of `fdget`, I would still be
+> using `from_ptr` here. The `ARef` type only really makes sense when *we*
+> have ownership of the ref-count, but in this case we don't own it. We're
+> just given a promise that the caller is keeping it alive for us using
+> some mechanism or another.
 > 
->     /// Zero-sized type to mark types not [`Send`].
->     ///
->     /// Add this type as a field to your struct if your type should not be sent to a different task.
->     /// Since [`Send`] is an auto trait, adding a single field that is [`!Send`] will ensure that the
->     /// whole type is [`!Send`].
->     ///
->     /// If a type is [`!Send`] it is impossible to give control over an instance of the type to another
->     /// task. This is useful when a type stores task-local information for example file descriptors.
->     pub type NotSend = PhantomData<*mut ()>;
+> >>>> +// SAFETY: It's OK to access `File` through shared references from other threads because we're
+> >>>> +// either accessing properties that don't change or that are properly synchronised by C code.
+> >>> 
+> >>> Uhm, what guarantees are you talking about specifically, please?
+> >>> Examples would help.
+> >>> 
+> >>>> +unsafe impl Sync for File {}
+> >> 
+> >> The Sync trait defines whether a value may be accessed from several
+> >> threads in parallel (using shared/immutable references). In our case,
+> > 
+> > So let me put this into my own words and you correct me, please:
+> > 
+> > So, this really just means that if I have two processes both with their own
+> > fdtable and they happen to hold fds that refer to the same @file:
+> > 
+> > P1				P2
+> > struct fd fd1 = fdget(1234);
+> >                                  struct fd fd2 = fdget(5678);
+> > if (!fd1.file)                   if (!fd2.file)
+> > 	return -EBADF;                 return -EBADF;
+> > 
+> > // fd1.file == fd2.file
+> > 
+> > the only if the Sync trait is implemented both P1 and P2 can in parallel call
+> > file->f_op->poll(@file)?
+> > 
+> > So if the Sync trait isn't implemented then the compiler will prohibit that P1
+> > and P2 at the same time call file->f_op->poll(@file)? And that's all that's
+> > meant by a shared reference? It's really about sharing the pointer.
 > 
-> If you have suggestions for improving the doc comment or the name,
-> please go ahead.
+> Yeah, what you're saying sounds correct. For a type that is not Sync,
+> you would need a lock around the call to `poll` before the compiler
+> would accept the call.
 > 
-> This doesn't mean that there should be no comment on the `NotSend`
-> field of `FileDescriptorReservation`, but I don't want to repeat
-> the `Send` stuff all over the place (since it comes up a lot):
+> (Or some other mechanism to convince the compiler that no other thread
+> is looking at the file at the same time. Of course, a lock is just one
+> way to do that.)
 > 
->     /// Ensure that `FileDescriptorReservation` cannot be sent to a different task, since there the
->     /// value of `current` is different. We want to avoid that because `fd_install` assumes that the
->     /// value of `current` is unchanged since the call to `get_unused_fd_flags`.
->     _not_send: NotSend,
+> > The thing is that "shared reference" gets a bit in our way here:
+> > 
+> > (1) If you have SCM_RIGHTs in the mix then P1 can open fd1 to @file and then
+> >     send that @file to P2 which now has fd2 refering to @file as well. The
+> >     @file->f_count is bumped in that process. So @file->f_count is now 2.
+> > 
+> >     Now both P1 and P2 call fdget(). Since they don't have a shared fdtable
+> >     none of them take an additional reference to @file. IOW, @file->f_count
+> >     may remain 2 all throughout the @file->f_op->*() operation.
+> > 
+> >     So they share a reference to that file and elide both the
+> >     atomic_inc_not_zero() and the atomic_dec_not_zero().
+> > 
+> > (2) io_uring has fixed files whose reference count always stays at 1.
+> >     So all io_uring operations on such fixed files share a single reference.
+> > 
+> > So that's why this is a bit confusing at first to read "shared reference".
+> > 
+> > Please add a comment on top of unsafe impl Sync for File {}
+> > explaining/clarifying this a little that it's about calling methods on the same
+> > file.
+> 
+> Yeah, I agree, the terminology gets a bit mixed up here because we both
+> use the word "reference" for different things.
 
-Seems sane to me. But I would suggest to move away from the "send"
-terminology?
+> 
+> How about this comment?
 
-* CurrentOnly
-* AccessCurrentTask vs AccessForeignTask
-* NoForeignTaskAccess
-* TaskLocalContext
-* TaskCurrentAccess
-
-Or some other variant thereof.
+Sounds good.
 
