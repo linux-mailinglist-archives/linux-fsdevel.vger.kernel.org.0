@@ -1,130 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-4422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5BB7FF656
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:40:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3617FF658
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F97FB20A88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158742809A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB51B54BE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C5954FB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnMyeLUt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/ylpSyc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C541A3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 07:29:14 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id 46e09a7af769-6d7eca548ccso594820a34.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 07:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701358154; x=1701962954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r26KwxGxjCzTtz0BfXFAKaRwCiL4PU2PKobfslkRRNQ=;
-        b=lnMyeLUtpdMPSHyA1DVWmGhQ4Qs1gAOPbw8aOkudpYhUWMgRDmVYBOpKqlljtjM4yu
-         7gVTu2e42UUB3/XEWAkpGWA0U1ApCwAYPeu+0jlcEcDSz4Fw0TL6CmYYhN8jZDbAl8P3
-         eP8NwEabfOVXMZGPi8G33RJTMC5817uV7tzNd+39fXznI4r4H4vRgbauxpyYnqQVkLiZ
-         Jlhw5rw2KSALTos+XR18+GryYWoLhXV+fF77D2rW9l52++EMfVz4gnnQ60MArS/ruOQf
-         B12I7gKzxNV8nFEjCANpLM/N9BelGtRkUuZkLdDicf1lHWhW1S5j3i7GlxcgDVQHx2kM
-         EgCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701358154; x=1701962954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r26KwxGxjCzTtz0BfXFAKaRwCiL4PU2PKobfslkRRNQ=;
-        b=MWEzdnphQ75NJLcsbJFn8sf1b4JwXi3GwiSJjwbpCBkI3CpilN2w2PUkEttV+A0muw
-         sSYfk3TquWCaXtePHtA5dUc4NZhLhWPHM/AY9Ki89pgyYYMiKbzGIBW8vf8Ajtyhwz1T
-         6+YgQ7NcYll99xwBdartJ0OA5/hQY+BqGwyLivTadI0KbL390Xh1/H66l1R0M2izvciq
-         yQS8GRskiJcc8Rct3xfQiO6If0obr84j4xmBrtKKLb4ZtSV1aa61WmoyQf1kUgmFi6a0
-         DN6AJWRsvWillUU0J5NUX4OcRODWHtdL3OfD2iTnXaAO1YGs9F0OgTUfTBBxU2IWg94j
-         j76w==
-X-Gm-Message-State: AOJu0YyXlY1vNDYMDv2kxPRY02Xs6h/MvS3K5LdFl5rJrseWA2pOqqgw
-	JZFQR73EAfl65UUbmPgeDzhqpS94yK35S5j8eBY=
-X-Google-Smtp-Source: AGHT+IGRzULRdicVhx+AUiLhF5oSWEXwmAKZYGc+SrunHljKis1dl6C2ZepcEE+K7+WhnyRGHG9LwfczFIUFEK3cSOs=
-X-Received: by 2002:a05:6830:618c:b0:6d8:5421:1e10 with SMTP id
- cb12-20020a056830618c00b006d854211e10mr5812783otb.33.1701358153906; Thu, 30
- Nov 2023 07:29:13 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BB9524C9;
+	Thu, 30 Nov 2023 15:36:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED53FC433C7;
+	Thu, 30 Nov 2023 15:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701358597;
+	bh=IuyTo/SqtMXTfOfDJB4gGYsTQYZhhJVyRktybDYXRIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u/ylpSyc9vHCYJYK+PI9TH6o4AxCANtjq/SDm3RtWDQZJMymqlXqGtI6x1aMB+nXo
+	 WN96cL2pW6gCjBvM5V2Yu39UXl85WEQo4uCLYALsmBBONAdr0uIFrzGRwF7FY/bZYd
+	 RqjrYpP7XHCKvQWSOBmZTNIvnWaJrYPCRQwoNNgumOsi4UYuuXlWjfYGeuvdiJO+Lu
+	 /Ft+F55LVl7YM+uIRFL/tDCuvDTf9i9etnhDGU7AmnVlqZkPidlAIkCWGqdYacdaAK
+	 RO7YwB9+n7gRsChyBLHoRDaxmG3BhCPwiseVd1svwlCmEzsKiCg3LxWrE7Yq0SsHAI
+	 huqcdUxGNgbRQ==
+Date: Thu, 30 Nov 2023 09:36:35 -0600
+From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
+	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+	James Morris <jmorris@namei.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+Message-ID: <ZWisA4miKciDEhE6@do-x1extreme>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+ <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+ <CAOQ4uxiz+ng5qEY4qkE_q8Gv3jrd6b7mZnppkDoJthhD+Ud4Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231118183018.2069899-1-amir73il@gmail.com> <20231118183018.2069899-2-amir73il@gmail.com>
- <20231130142539.g4hhcsk4hk2oimdv@quack3>
-In-Reply-To: <20231130142539.g4hhcsk4hk2oimdv@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 30 Nov 2023 17:29:02 +0200
-Message-ID: <CAOQ4uxhOc0JBQ6JcHfHxOfi57OzHWdK=i-onP8++pX2PuAdw3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fanotify: store fsid in mark instead of in connector
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiz+ng5qEY4qkE_q8Gv3jrd6b7mZnppkDoJthhD+Ud4Ow@mail.gmail.com>
 
-On Thu, Nov 30, 2023 at 4:25=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Sat 18-11-23 20:30:17, Amir Goldstein wrote:
-> > Some filesystems like fuse and nfs have zero or non-unique fsid.
-> > We would like to avoid reporting ambiguous fsid in events, so we need
-> > to avoid marking objects with same fsid and different sb.
+On Thu, Nov 30, 2023 at 07:32:19AM +0200, Amir Goldstein wrote:
+> On Wed, Nov 29, 2023 at 11:51 PM Seth Forshee (DigitalOcean)
+> <sforshee@kernel.org> wrote:
 > >
-> > To make this easier to enforce, store the fsid in the marks of the grou=
-p
-> > instead of in the shared conenctor.
+> > Add inode operations for getting, setting and removing filesystem
+> > capabilities rather than passing around raw xattr data. This provides
+> > better type safety for ids contained within xattrs.
 > >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> Very nice! I like the result. Just a few nits below.
->
-> > +static inline __kernel_fsid_t *fanotify_mark_fsid(struct fsnotify_mark=
- *mark)
-> > +{
-> > +     return &FANOTIFY_MARK(mark)->fsid;
-> > +}
->
-> I guess, there's no big win in using this helper compared to using
-> FANOTIFY_MARK(mark)->fsid so I'd just drop this helper.
+> > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> > ---
+> >  include/linux/fs.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 98b7a7a8c42e..a0a77f67b999 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2002,6 +2002,11 @@ struct inode_operations {
+> >                                      int);
+> >         int (*set_acl)(struct mnt_idmap *, struct dentry *,
+> >                        struct posix_acl *, int);
+> > +       int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> > +                         struct vfs_caps *);
+> > +       int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> > +                         const struct vfs_caps *, int flags);
+> > +       int (*remove_fscaps)(struct mnt_idmap *, struct dentry *);
+> >         int (*fileattr_set)(struct mnt_idmap *idmap,
+> >                             struct dentry *dentry, struct fileattr *fa);
+> >         int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+> >
+> 
+> Please document in Documentation/filesystems/{vfs,locking}.rst
 
-ok.
-
->
-> > @@ -530,6 +528,7 @@ struct fsnotify_mark {
-> >  #define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY       0x0100
-> >  #define FSNOTIFY_MARK_FLAG_NO_IREF           0x0200
-> >  #define FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS  0x0400
-> > +#define FSNOTIFY_MARK_FLAG_HAS_FSID          0x0800
-> >       unsigned int flags;             /* flags [mark->lock] */
-> >  };
->
-> So this flag is in fact private to fanotify notification framework. Eithe=
-r
-> we could just drop this flag and use
->
->   FANOTIFY_MARK(mark)->fsid[0] !=3D 0 || FANOTIFY_MARK(mark)->fsid[1] !=
-=3D 0
-
-Cannot.
-Zero fsid is now a valid fsid in an inode mark (e.g. fuse).
-The next patch also adds the flag FSNOTIFY_MARK_FLAG_WEAK_FSID
-
->
-> instead or we could at least add a comment that this flags is in fact
-> private to fanotify?
-
-There is already a comment, because all the flags above are fanotify flags:
-
-        /* fanotify mark flags */
-#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY  0x0100
-#define FSNOTIFY_MARK_FLAG_NO_IREF              0x0200
-#define FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS     0x0400
-
-Thanks,
-Amir.
+Done for v2.
 
