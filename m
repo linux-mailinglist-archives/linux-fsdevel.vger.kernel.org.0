@@ -1,161 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-4405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F647FF246
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:38:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C977FF248
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A5A2849F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1582284A60
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45C651007
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B045100B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLKZxx9R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24BB11735;
-	Thu, 30 Nov 2023 06:09:08 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 120501FCEC;
-	Thu, 30 Nov 2023 14:09:04 +0000 (UTC)
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 05C6913A5C;
-	Thu, 30 Nov 2023 14:09:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id C75jAYCXaGUVawAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 30 Nov 2023 14:09:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 98437A07DB; Thu, 30 Nov 2023 15:08:59 +0100 (CET)
-Date: Thu, 30 Nov 2023 15:08:59 +0100
-From: Jan Kara <jack@suse.cz>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 2/3] ext2: Convert ext2 regular file buffered I/O to use
- iomap
-Message-ID: <20231130140859.hdgvf24ystz2ghdv@quack3>
-References: <20231130101845.mt3hhwbbpnhroefg@quack3>
- <87fs0nik0g.fsf@doe.com>
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB3FB83
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:16:30 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40b54261534so8349185e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701353789; x=1701958589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5xVtaW4O+Lj2QiYnGcxjEnUEyEc4cPIcDNiZYKXETYQ=;
+        b=KLKZxx9RqoQEBi3JonXgtM+gdJSnaAFjUC7ArSSYckwOVa7RRz9Gk9C/CTGozRjY8z
+         wONJxEHqq9FPQyUVD8l1aowdUXlOJPxKbrV5xzCKjbv8pqrtj3D8AM0ZziQgmihmU2Dl
+         fkFkV668POgi3OL1T81qBh8aAXD2rSZlPeIka76YMRtny19fSN1AYD27CfHoyLtpI2Wf
+         T4z8dUOp1X2WSeNIC0w7QHcZPSp265ksm4Z1NcPu83DA9SZ8BKJYyXK2+enPP0i36erX
+         LHnVZb15TFKnH/PJtLUGEqsFmTYTBPKaDI4zGktPiE7D4dBaiSevJ7b+h4lXADjZb3q+
+         hRSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701353789; x=1701958589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5xVtaW4O+Lj2QiYnGcxjEnUEyEc4cPIcDNiZYKXETYQ=;
+        b=N6/qb2cFPi2g+OUtY5r2KqUbXOjcaPDmxjq3FN1fI+r1Eacq9fHE9EW9M/g85Zist0
+         21sOGw15f/xNM+9d7J7AghN1+y852N27R+TT8ZJMTFIafok/nfFs5rlsLV+frtI3Ndoy
+         0jIYiN0WwVZJw0bGe556BQwUaPJ9bf0sFjd/a4Lz23oPiqqpY1m/yW5gxbpiL6JqwFcs
+         JK+sBF0pTJwzqkNFHTJhjonxhHmV6/NwmpB4wtbyuxlfpirkLtyHrFj1+wIfw3WfpB0c
+         shElctmZRSKlRfgda585FURv1/mgktFmZVV2mZEMaazaGEFDJ8WPTd0pGpURBdHuUeOE
+         2QeQ==
+X-Gm-Message-State: AOJu0Yy7vhlPRxoeyRcG2m7SXuxplX9iHaGu1DDt1GgjQY0HWTSv3t+Y
+	vI690pcwDbC25IH2jdKxSQE=
+X-Google-Smtp-Source: AGHT+IG1dU7ttuXYeXJh54W525e0L3u5hSBNzH9f/aTPLDY3pAtN6d0ESJ6iBtC/wmo20+SuXVrkJQ==
+X-Received: by 2002:a05:600c:1d05:b0:40b:3faa:c964 with SMTP id l5-20020a05600c1d0500b0040b3faac964mr12146216wms.27.1701353789047;
+        Thu, 30 Nov 2023 06:16:29 -0800 (PST)
+Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
+        by smtp.gmail.com with ESMTPSA id g16-20020a05600c4ed000b0040b47c53610sm2170966wmq.14.2023.11.30.06.16.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Nov 2023 06:16:28 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Jan Kara <jack@suse.cz>,
+	David Howells <dhowells@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/3] Avert possible deadlock with splice() and fanotify
+Date: Thu, 30 Nov 2023 16:16:21 +0200
+Message-Id: <20231130141624.3338942-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87fs0nik0g.fsf@doe.com>
-X-Spamd-Bar: +++++
-Authentication-Results: smtp-out2.suse.de;
-	dkim=none;
-	dmarc=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [5.90 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 ARC_NA(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 NEURAL_HAM_LONG(-0.99)[-0.991];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 MX_GOOD(-0.01)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: 5.90
-X-Rspamd-Queue-Id: 120501FCEC
+Content-Transfer-Encoding: 8bit
 
-On Thu 30-11-23 16:29:59, Ritesh Harjani wrote:
-> Jan Kara <jack@suse.cz> writes:
-> 
-> > On Thu 30-11-23 13:15:58, Ritesh Harjani wrote:
-> >> Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
-> >> 
-> >> > Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
-> >> >
-> >> >> Christoph Hellwig <hch@infradead.org> writes:
-> >> >>
-> >> >>> On Wed, Nov 22, 2023 at 01:29:46PM +0100, Jan Kara wrote:
-> >> >>>> writeback bit set. XFS plays the revalidation sequence counter games
-> >> >>>> because of this so we'd have to do something similar for ext2. Not that I'd
-> >> >>>> care as much about ext2 writeback performance but it should not be that
-> >> >>>> hard and we'll definitely need some similar solution for ext4 anyway. Can
-> >> >>>> you give that a try (as a followup "performance improvement" patch).
-> >> 
-> >> ok. So I am re-thinknig over this on why will a filesystem like ext2
-> >> would require sequence counter check. We don't have collapse range
-> >> or COW sort of operations, it is only the truncate which can race,
-> >> but that should be taken care by folio_lock. And even if the partial
-> >> truncate happens on a folio, since the logical to physical block mapping
-> >> never changes, it should not matter if the writeback wrote data to a
-> >> cached entry, right?
-> >
-> > Yes, so this is what I think I've already mentioned. As long as we map just
-> > the block at the current offset (or a block under currently locked folio),
-> > we are fine and we don't need any kind of sequence counter. But as soon as
-> > we start caching any kind of mapping in iomap_writepage_ctx we need a way
-> > to protect from races with truncate. So something like the sequence counter.
-> >
-> 
-> Why do we need to protect from the race with truncate, is my question here.
-> So, IMO, truncate will truncate the folio cache first before releasing the FS
-> blocks. Truncation of the folio cache and the writeback path are
-> protected using folio_lock()
-> Truncate will clear the dirty flag of the folio before
-> releasing the folio_lock() right, so writeback will not even proceed for
-> folios which are not marked dirty (even if we have a cached wpc entry for
-> which folio is released from folio cache).
-> 
-> Now coming to the stale cached wpc entry for which truncate is doing a
-> partial truncation. Say, truncate ended up calling
-> truncate_inode_partial_folio(). Now for such folio (it remains dirty
-> after partial truncation) (for which there is a stale cached wpc entry),
-> when writeback writes to the underlying stale block, there is no harm
-> with that right?
-> 
-> Also this will "only" happen for folio which was partially truncated.
-> So why do we need to have sequence counter for protecting against this
-> race is my question. 
+Christian,
 
-That's a very good question and it took me a while to formulate my "this
-sounds problematic" feeling into a particular example :) We can still have
-a race like:
+Josef has helped me see the light and figure out how to avoid the
+possible deadlock, which involves:
+- splice() from source file in a loop mounted fs to dest file in
+  a host fs, where the loop image file is
+- fsfreeze on host fs
+- write to host fs in context of fanotify permission event handler
+  (FAN_ACCESS_PERM) on the splice source file
 
-write_cache_pages()
-  cache extent covering 0..1MB range
-  write page at offset 0k
-					truncate(file, 4k)
-					  drops all relevant pages
-					  frees fs blocks
-					pwrite(file, 4k, 4k)
-					  creates dirty page in the page cache
-  writes page at offset 4k to a stale block
+The first patch should not be changing any logic.
+I only build tested the ceph patch, so hoping to get an
+Acked-by/Tested-by from Jeff.
 
-								Honza
+The following patches rids us of the deadlock by not holding
+file_start_write() while reading from splice source file in the
+cases where source and destination can be on different arbitrary
+filesystems.
+
+The patches apply and tested on top of vfs.rw branch.
+
+Thanks,
+Amir.
+
+Changes since v1:
+- Add patch to deal with nfsd/ksmbd server-side-copy
+- Shorten helper name to splice_file_range()
+- Added assertion for flags value in generic_copy_file_range()
+- Added RVB from Jan
+
+Amir Goldstein (3):
+  fs: fork splice_file_range() from do_splice_direct()
+  fs: move file_start_write() into direct_splice_actor()
+  fs: use do_splice_direct() for nfsd/ksmbd server-side-copy
+
+ fs/ceph/file.c         |  9 +++--
+ fs/overlayfs/copy_up.c |  2 -
+ fs/read_write.c        | 42 +++++++++++---------
+ fs/splice.c            | 88 +++++++++++++++++++++++++++++++-----------
+ include/linux/fs.h     |  2 -
+ include/linux/splice.h | 13 ++++---
+ 6 files changed, 103 insertions(+), 53 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
