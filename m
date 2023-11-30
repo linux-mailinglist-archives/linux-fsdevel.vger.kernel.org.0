@@ -1,96 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-4349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74237FED03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 11:39:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA6AA7FED04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 11:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D8A1C20C39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89ABBB20F16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509F63C073
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F004B3C06B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 10:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="h7IIHhg1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHdfCe8k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 119 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 30 Nov 2023 01:30:47 PST
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29CEDC
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 01:30:47 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SgrXQ0sZRzMqSxl;
-	Thu, 30 Nov 2023 09:30:46 +0000 (UTC)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4SgrXP1q5Rz3g;
-	Thu, 30 Nov 2023 10:30:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1701336646;
-	bh=jCjvPr/6h0MOipCt2pUCTUTvAIXA4IKCWKEbGBr9Asw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h7IIHhg1ayxw7rC+w1OGSWTUStSS6kJc0fO+6sh6MXkTUIVo6aCZzmpDXY3gWXB3L
-	 uzIgUXVnaO39YUX8hCxZwhpgpDKMzmoYfD0E3LsRjfxbXedXRZRaZOCEhEpoTAInOJ
-	 0/YV4RO47DjQRCTKjt0v9VtGw0W0zP0OGNDC/5+s=
-Date: Thu, 30 Nov 2023 10:30:43 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 5/9] selftests/landlock: Test IOCTL support
-Message-ID: <20231128.Zei2voh9iuro@digikod.net>
-References: <20231124173026.3257122-1-gnoack@google.com>
- <20231124173026.3257122-6-gnoack@google.com>
+Received: from mail-lj1-x24a.google.com (mail-lj1-x24a.google.com [IPv6:2a00:1450:4864:20::24a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CD28D48
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 01:36:07 -0800 (PST)
+Received: by mail-lj1-x24a.google.com with SMTP id 38308e7fff4ca-2c892080ad3so12282071fa.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 01:36:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1701336965; x=1701941765; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rtfFST1hu6uQIKluftk2Tkqzt/TD9qBiJocJOhpEzS8=;
+        b=KHdfCe8keuWUgAPjOeEBq96V8I+CZ69pSO8tI5z7racW97tRUBucF7XQPu5yVYdQQ7
+         +/DBWgGuXANUs37ZI6dKFc9o7iE+YwowB6u+nlEeFXLgVOiiKzsIx9iseSVZ8DUoFKN+
+         bUGxVZ4uH5i3E9f7OSZovdBpLgynqvavU7hk0J5RvnQ0ZRQ66Ru3a8+7XEaOAtVwXMyN
+         Ur49PBPfJEOk+PwY4YrpkQqprniBQ/z+VtBnq48CvZBrDnM6VwBYO0DDhGN2Q4X0ssdI
+         TxGoO1kly1HyyouhobuXJtP1ynSbO0TpmKXZr2vi0hWeW1MnKlsqqa0xyKHPe+S8HDT7
+         y+kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701336965; x=1701941765;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rtfFST1hu6uQIKluftk2Tkqzt/TD9qBiJocJOhpEzS8=;
+        b=UyNNy6cz5va7khxCiOMEehwJJ6UtXk0gJR+mdDiJFouitWPq58ZeAKecpHURXajT4F
+         jpl52A9zbp17wrROehxOwIQJmIWEe7C8MeAhp+jEo203VYJQI1S+Bv1O+s05M3NnS1XG
+         b1OCV/tWz343++lOwjoooXxgKqVhMYrzSQiUF3qLLfQRYF8GALiOUJV3fQaLQcaWGrMG
+         0UcG7tmOUL3HXbmH7q8W4LzkA9jKBz+DQ8m1mnBCiwzpPoee7mdjlaXrn2CeKU6qZ62z
+         znt02NPTKetOoeMVBBxH786BZuHCwbKDfv7w6xnxbCxry/TT8jywKV6223mpwo1SXqqx
+         rOSw==
+X-Gm-Message-State: AOJu0YwpiKjt6UQaVvyj5Zg6ls3iXf9ZK/o3DrmLY1PnzU37lNa3nk6P
+	P2QTMlBmnUdfnl+F+QM+zh7V4qkzaDaLOdI=
+X-Google-Smtp-Source: AGHT+IGr3t6cRp0wtyHhcLDzWjsIAFKJ15RL7mKVn9SyM4cYRc5icSBSb3WXOwXPFhH5FEUuXjC70CHhIaK8Z5c=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6512:3e0c:b0:50b:d3ab:daaa with SMTP
+ id i12-20020a0565123e0c00b0050bd3abdaaamr5314lfv.0.1701336965612; Thu, 30 Nov
+ 2023 01:36:05 -0800 (PST)
+Date: Thu, 30 Nov 2023 09:36:03 +0000
+In-Reply-To: <20231129-etappen-knapp-08e2e3af539f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231124173026.3257122-6-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+References: <20231129-etappen-knapp-08e2e3af539f@brauner>
+X-Mailer: git-send-email 2.43.0.rc1.413.gea7ed67945-goog
+Message-ID: <20231130093603.113036-1-aliceryhl@google.com>
+Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
+From: Alice Ryhl <aliceryhl@google.com>
+To: brauner@kernel.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, 
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, 
+	wedsonaf@gmail.com, willy@infradead.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Nov 24, 2023 at 06:30:22PM +0100, Günther Noack wrote:
-> Exercises Landlock's IOCTL feature in different combinations of
-> handling and permitting the rights LANDLOCK_ACCESS_FS_IOCTL,
-> LANDLOCK_ACCESS_FS_READ_FILE, LANDLOCK_ACCESS_FS_WRITE_FILE and
-> LANDLOCK_ACCESS_FS_READ_DIR, and in different combinations of using
-> files and directories.
+Christian Brauner <brauner@kernel.org> writes:
+> I'm a bit puzzled by all these rust_helper_*() calls. Can you explain
+> why they are needed? Because they are/can be static inlines and that
+> somehow doesn't work?
+
+Yes, it's because the methods are inline. Rust can only call C methods
+that are actually exported by the C code.
+
+>> +    /// Converts this kernel UID into a UID that userspace understands. Uses the namespace of the
+>> +    /// current task.
+>> +    pub fn into_uid_in_current_ns(self) -> bindings::uid_t {
 > 
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  tools/testing/selftests/landlock/fs_test.c | 431 ++++++++++++++++++++-
->  1 file changed, 428 insertions(+), 3 deletions(-)
+> Hm, I wouldn't special-case this. Just expose from_kuid() and let it
+> take a namespace argument, no? You don't need to provide bindings for
+> namespaces ofc.
+
+To make `from_kuid` safe, I would need to wrap the namespace type too. I
+could do that, but it would be more code than this method because I need
+another wrapper struct and so on.
+
+Personally I would prefer to special-case it until someone needs the
+non-special-case. Then, they can delete this method when they introduce
+the non-special-case.
+
+But I'll do it if you think I should.
+
+>> +impl PartialEq for Kuid {
+>> +    fn eq(&self, other: &Kuid) -> bool {
+>> +        // SAFETY: Just an FFI call.
+>> +        unsafe { bindings::uid_eq(self.kuid, other.kuid) }
+>> +    }
+>> +}
+>> +
+>> +impl Eq for Kuid {}
 > 
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index 0e86c14e7bb6..94f54a61e508 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -9,6 +9,7 @@
->  
->  #define _GNU_SOURCE
->  #include <fcntl.h>
-> +#include <linux/fs.h>
->  #include <linux/landlock.h>
->  #include <linux/magic.h>
->  #include <sched.h>
-> @@ -672,6 +673,9 @@ static int create_ruleset(struct __test_metadata *const _metadata,
->  	}
->  
->  	for (i = 0; rules[i].path; i++) {
-> +		if (!rules[i].access)
-> +			continue;
+> Do you need that?
 
-I hope this change will not hide some bugs in future changes. We could
-set .path to NULL instead but I think your approach is OK.
+Yes. This is the code that tells the compiler what `==` means for the
+`Kuid` type. Binder uses it here:
 
-> +
->  		add_path_beneath(_metadata, ruleset_fd, rules[i].access,
->  				 rules[i].path);
->  	}
+https://github.com/Darksonn/linux/blob/dca45e6c7848e024709b165a306cdbe88e5b086a/drivers/android/context.rs#L174
+
+Alice
 
