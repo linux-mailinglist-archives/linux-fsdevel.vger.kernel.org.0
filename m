@@ -1,195 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-4382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36167FF29E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7A87FF2A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D25828264B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402891C20BD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247F751008
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14FD51007
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbiuyWLr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CkdoPy5t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED0B2B9DD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 12:49:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF09C433C9;
-	Thu, 30 Nov 2023 12:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701348578;
-	bh=v8xFV2oXorsf2WY8P2pU/42bWbrkyQrwPNydx5WgnfI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rbiuyWLr/uDEqVeyaiTpR4FpKQlGPmnamnx65+cxjxEzf2WqWm2BoSxwSJ9KuA7P3
-	 DbYwVLT7+hHk52KI9ADpn47fdwcF0q1EdBXivvfd+huDq3RebOWVL3mFktjvv5XfXr
-	 r4QhBR4xJpJVGV2KQWKF+qVhM4+zLB4CmOTBoURQcZFbZx/zZu6r7nMinD2NqKs++D
-	 Whd2RS/eW00mFAET96HR4mjtRcpJutU2QIT7LO7+8pGAKaM1MYcrZ2Qj5su/rApLnv
-	 r2Gabf4mAWk2H409fk75fsVRac5jkh1LMhE6Mha64DeasicRcvyahVXtFWs51hx/WH
-	 zS2a55iUv1KPw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 30 Nov 2023 13:49:11 +0100
-Subject: [PATCH RFC 5/5] file: remove __receive_fd()
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7F8710C9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 04:49:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701348580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EnBEPg3GHi1Q+xUTeF0QPxeBJXMhNl/wGhqix5nD240=;
+	b=CkdoPy5tMWP0pnmjtxrXRDCGMhFnXqa77y6W1vnokyWxB4upNAiJLVK0ULzUXu2jOmlr8V
+	tO6ZaRV3+DxOMq05gmmuWVczwVvy0bs0LiBFTPXRhorV5zJ0Ya5SRmpVKsRIG1lusMsJuU
+	/5RsNCtCCVytq9WQ0lM2fKU5XEBCtWU=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-lY9MxG19N0eOSTABQ-nRZg-1; Thu, 30 Nov 2023 07:49:38 -0500
+X-MC-Unique: lY9MxG19N0eOSTABQ-nRZg-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-50bc433c9ccso1028172e87.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 04:49:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701348577; x=1701953377;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnBEPg3GHi1Q+xUTeF0QPxeBJXMhNl/wGhqix5nD240=;
+        b=s1uD6yxoSY5qjWEIcuZhKnXhznYXHCuhHlgci4xrX0fGEkSEIRUNnGr8omI/Bn1/ow
+         jalcqDXDOTgu0EiPNUrMb9EIaBHZ4P/Y7kmSZo+CY4T+IHbhtPYzay2VXSN3WVAAo61+
+         V0koX/JbjZle9VVPTnd+Nw9u0ssXw3P0KypZygBneX/92Jp0lynsIGNDu8EEPPFCuJBb
+         DoVrUpmYXDrn4aWVcLY4LvllsFTE8VT5fCA17ZRJkdcWU8NtYT4Nb/ebu4Cljq+nH1iG
+         Nt6zkXCI5F/83astZbeC1ChQNHQUpybPDMg9JWXthPtTKgVPzEOzWCUyEf2UICjc6iqs
+         n6Gw==
+X-Gm-Message-State: AOJu0YxAhTbZqXUzfUHPVR0YLDI+N1oZl7dUyiJVnayysd3ydtJGlBSs
+	9Ghz+U8MoKgQl6LO2Oc30RUDD5B7174l6/NULBAIQfxEBiKd8ersdQUsFYFUoa1gD3kIgIZrhnS
+	tJAlfWemDiARHAylACgN32pMj5Q==
+X-Received: by 2002:ac2:44ba:0:b0:50b:ca71:4129 with SMTP id c26-20020ac244ba000000b0050bca714129mr1389903lfm.58.1701348577354;
+        Thu, 30 Nov 2023 04:49:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGz5VuDRF3qSzNNkHYw5OfrBg9j+9t8BoZjOCfVF5tg+RVdeWrUxPX0uBR3Vcs37p9k5XosKw==
+X-Received: by 2002:ac2:44ba:0:b0:50b:ca71:4129 with SMTP id c26-20020ac244ba000000b0050bca714129mr1389861lfm.58.1701348576878;
+        Thu, 30 Nov 2023 04:49:36 -0800 (PST)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id bd22-20020a05600c1f1600b004090798d29csm1977198wmb.15.2023.11.30.04.49.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Nov 2023 04:49:36 -0800 (PST)
+Message-ID: <4e7a4054-092c-4e34-ae00-0105d7c9343c@redhat.com>
+Date: Thu, 30 Nov 2023 13:49:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 19/27] mm: mprotect: Introduce PAGE_FAULT_ON_ACCESS
+ for mprotect(PROT_MTE)
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>,
+ Hyesoo Yu <hyesoo.yu@samsung.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+ maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+ yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+ mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+ vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
+ pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+ vincenzo.frascino@arm.com, eugenis@google.com, kcc@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <CGME20231119165921epcas2p3dce0532847d59a9c3973b4e41102e27d@epcas2p3.samsung.com>
+ <20231119165721.9849-20-alexandru.elisei@arm.com>
+ <20231129092725.GD2988384@tiffany> <ZWh6vl8DfXQbKo9O@raptor>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZWh6vl8DfXQbKo9O@raptor>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20231130-vfs-files-fixes-v1-5-e73ca6f4ea83@kernel.org>
-References: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
-In-Reply-To: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>, 
- Carlos Llamas <cmllamas@google.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Linus Torvalds <torvalds@linux-foundation.org>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.13-dev-7edf1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4483; i=brauner@kernel.org;
- h=from:subject:message-id; bh=v8xFV2oXorsf2WY8P2pU/42bWbrkyQrwPNydx5WgnfI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRmtFzdXlnuJ9lwrIbth4p64jxu/RU67kuDlvpfVgwz2
- 2MX8M6oo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKK7IwMC9fc11ty8tqtmHWf
- NG8us+k4eLujbdWa05FRjpuP7552ZQYjw4IPOo/efl8pdMLx/ssL7oZrxGuK6k4ofPbQ+Hzl5qe
- kEDYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Honestly, there's little value in having a helper with and without that
-int __user *ufd argument. It's just messy and doesn't really give us
-anything. Just expose receive_fd() with that argument and get rid of
-that helper.
+>>> +
+>>> +out_retry:
+>>> +	put_page(page);
+>>> +	if (vmf->flags & FAULT_FLAG_VMA_LOCK)
+>>> +		vma_end_read(vma);
+>>> +	if (fault_flag_allow_retry_first(vmf->flags)) {
+>>> +		err = VM_FAULT_RETRY;
+>>> +	} else {
+>>> +		/* Replay the fault. */
+>>> +		err = 0;
+>>
+>> Hello!
+>>
+>> Unfortunately, if the page continues to be pinned, it seems like fault will continue to occur.
+>> I guess it makes system stability issue. (but I'm not familiar with that, so please let me know if I'm mistaken!)
+>>
+>> How about migrating the page when migration problem repeats.
+> 
+> Yes, I had the same though in the previous iteration of the series, the
+> page was migrated out of the VMA if tag storage couldn't be reserved.
+> 
+> Only short term pins are allowed on MIGRATE_CMA pages, so I expect that the
+> pin will be released before the fault is replayed. Because of this, and
+> because it makes the code simpler, I chose not to migrate the page if tag
+> storage couldn't be reserved.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- drivers/vdpa/vdpa_user/vduse_dev.c |  2 +-
- fs/file.c                          | 11 +++--------
- include/linux/file.h               |  5 +----
- include/net/scm.h                  |  2 +-
- kernel/pid.c                       |  2 +-
- kernel/seccomp.c                   |  2 +-
- 6 files changed, 8 insertions(+), 16 deletions(-)
+There are still some cases that are theoretically problematic: 
+vmsplice() can pin pages forever and doesn't use FOLL_LONGTERM yet.
 
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index 6cb5ce4a8b9a..1d24da79c399 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -1157,7 +1157,7 @@ static long vduse_dev_ioctl(struct file *file, unsigned int cmd,
- 			fput(f);
- 			break;
- 		}
--		ret = receive_fd(f, perm_to_file_flags(entry.perm));
-+		ret = receive_fd(f, NULL, perm_to_file_flags(entry.perm));
- 		fput(f);
- 		break;
- 	}
-diff --git a/fs/file.c b/fs/file.c
-index c8eaa0b29a08..3b683b9101d8 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -1296,7 +1296,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
- }
- 
- /**
-- * __receive_fd() - Install received file into file descriptor table
-+ * receive_fd() - Install received file into file descriptor table
-  * @file: struct file that was received from another process
-  * @ufd: __user pointer to write new fd number to
-  * @o_flags: the O_* flags to apply to the new fd entry
-@@ -1310,7 +1310,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
-  *
-  * Returns newly install fd or -ve on error.
-  */
--int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
-+int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
- {
- 	int new_fd;
- 	int error;
-@@ -1335,6 +1335,7 @@ int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
- 	__receive_sock(file);
- 	return new_fd;
- }
-+EXPORT_SYMBOL_GPL(receive_fd);
- 
- int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
- {
-@@ -1350,12 +1351,6 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
- 	return new_fd;
- }
- 
--int receive_fd(struct file *file, unsigned int o_flags)
--{
--	return __receive_fd(file, NULL, o_flags);
--}
--EXPORT_SYMBOL_GPL(receive_fd);
--
- static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
- {
- 	int err = -EBADF;
-diff --git a/include/linux/file.h b/include/linux/file.h
-index c0d5219c2852..a50545ef1197 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -96,10 +96,7 @@ DEFINE_CLASS(get_unused_fd, int, if (_T >= 0) put_unused_fd(_T),
- 
- extern void fd_install(unsigned int fd, struct file *file);
- 
--extern int __receive_fd(struct file *file, int __user *ufd,
--			unsigned int o_flags);
--
--extern int receive_fd(struct file *file, unsigned int o_flags);
-+extern int receive_fd(struct file *file, int __user *ufd, unsigned int o_flags);
- 
- int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
- 
-diff --git a/include/net/scm.h b/include/net/scm.h
-index 8aae2468bae0..cf68acec4d70 100644
---- a/include/net/scm.h
-+++ b/include/net/scm.h
-@@ -214,7 +214,7 @@ static inline int scm_recv_one_fd(struct file *f, int __user *ufd,
- {
- 	if (!ufd)
- 		return -EFAULT;
--	return __receive_fd(f, ufd, flags);
-+	return receive_fd(f, ufd, flags);
- }
- 
- #endif /* __LINUX_NET_SCM_H */
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 6500ef956f2f..b52b10865454 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -700,7 +700,7 @@ static int pidfd_getfd(struct pid *pid, int fd)
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = receive_fd(file, O_CLOEXEC);
-+	ret = receive_fd(file, NULL, O_CLOEXEC);
- 	fput(file);
- 
- 	return ret;
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index 255999ba9190..aca7b437882e 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -1072,7 +1072,7 @@ static void seccomp_handle_addfd(struct seccomp_kaddfd *addfd, struct seccomp_kn
- 	 */
- 	list_del_init(&addfd->list);
- 	if (!addfd->setfd)
--		fd = receive_fd(addfd->file, addfd->flags);
-+		fd = receive_fd(addfd->file, NULL, addfd->flags);
- 	else
- 		fd = receive_fd_replace(addfd->fd, addfd->file, addfd->flags);
- 	addfd->ret = fd;
+All these things also affect other users that rely on movability (e.g., 
+CMA, memory hotunplug).
 
 -- 
-2.42.0
+Cheers,
+
+David / dhildenb
 
 
