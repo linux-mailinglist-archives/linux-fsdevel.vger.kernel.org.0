@@ -1,171 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-4402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7638C7FF241
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:38:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926297FF244
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F46B217DD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B59871C206FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3655100C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B325100F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZqBLLreS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="avlGWeL7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D861FD4;
-	Thu, 30 Nov 2023 05:53:57 -0800 (PST)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUCrWA3025556;
-	Thu, 30 Nov 2023 13:53:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=+KBImv1Kwt2AH4T96+jehckjTlPaL/qSymwuwqCxsAg=;
- b=ZqBLLreSH5NBgrAzh6GPuF4HceTE702NAOA9srBr+eWV7KlJXhG2VYp5UJIm5oy1bxu4
- FqdXTgFGJ5tYRmWp28M9cU6jzpPZIkCJptLE/nlDIr1xIyj5ucxwwgIChr6bx68/kgNu
- GWaY3DOwHfxSRMbF4DPBrfeMnIgN/gRbaEXv4/gCMm2rSrCxPwWiJV7VNb2t7IwtI78s
- 3pA8ZuxN8BCKJJjjMpSjtUeDokCOhXO4YG0nkOjXSchbiHmVgDs7efrBrsxKfLehHRof
- xyEjbfNfhk6pbsvkUPf98R9zxDe5JHLoNzOChT5S0UwLDbJ2e1HVNnqils2vBpK5QpZ6 qg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uptsv9vpp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Nov 2023 13:53:51 +0000
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3AUDVmVJ027422;
-	Thu, 30 Nov 2023 13:53:51 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uptsv9vp4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Nov 2023 13:53:50 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUDn0vH022631;
-	Thu, 30 Nov 2023 13:53:50 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ukv8nxdjq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Nov 2023 13:53:49 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AUDrkVb63701370
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 Nov 2023 13:53:48 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9695820043;
-	Thu, 30 Nov 2023 13:53:46 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0E3A120040;
-	Thu, 30 Nov 2023 13:53:44 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.43.76.38])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 30 Nov 2023 13:53:43 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com
-Subject: [RFC 7/7] ext4: Support atomic write for statx
-Date: Thu, 30 Nov 2023 19:23:16 +0530
-Message-Id: <e299f66d5b8f77c8e17970868d83fa1ff7655faa.1701339358.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1701339358.git.ojaswin@linux.ibm.com>
-References: <cover.1701339358.git.ojaswin@linux.ibm.com>
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCFE10D0;
+	Thu, 30 Nov 2023 06:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701353098; x=1732889098;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xqtTZvY053veljR4ETMpWFPpHyKU0+OBKnIK2FZ1Hl0=;
+  b=avlGWeL7GR+bfL4sLs8D28WpOgVx3rntBWjjPBJdKGaYjItkV057D1h2
+   KOMi7hYeHo8KWjIxpO48etDu3gzRVLOK+DyZ9xuI1jhqvQ+Nkua7GL0Dn
+   IJlPSXhbEBn7THFH8C90SnkLy7IIrkeaZfnQZgVEGt/pXL291otCBF3jH
+   dxwFI85OuM2xLn/6Fo8uOp2ErW9TnNjE8J/LWkuJfrkHHS7gJFmC8slrK
+   ZPvJk9lgsOEmFdHxjceNmeS67A3UIFaWUEzdM/rkOGjdtNXr4xmj8jCky
+   sZFXw+s3VllVS7etz+dm0bDt4xrcgg+SSMumLp8cPOMra2AqZJgRCYqja
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10910"; a="226591"
+X-IronPort-AV: E=Sophos;i="6.04,239,1695711600"; 
+   d="scan'208";a="226591"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2023 06:04:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10910"; a="1016636131"
+X-IronPort-AV: E=Sophos;i="6.04,239,1695711600"; 
+   d="scan'208";a="1016636131"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 30 Nov 2023 06:03:57 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r8hdz-00025l-1H;
+	Thu, 30 Nov 2023 14:03:55 +0000
+Date: Thu, 30 Nov 2023 22:03:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
+	alex.williamson@redhat.com, alim.akhtar@samsung.com,
+	alyssa@rosenzweig.io, asahi@lists.linux.dev,
+	baolu.lu@linux.intel.com, bhelgaas@google.com,
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
+	iommu@lists.linux.dev, jasowang@redhat.com,
+	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com,
+	joro@8bytes.org, kevin.tian@intel.com,
+	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 13/16] iommu: observability of the IOMMU allocations
+Message-ID: <202311302108.WERv9oSO-lkp@intel.com>
+References: <20231128204938.1453583-14-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -KeN6sr_sn17w2SrVL9t35CbXj7Q8qNh
-X-Proofpoint-ORIG-GUID: MXWF82-sNdeumF3xiLVzTrUYOn44tg3T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-30_12,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- suspectscore=0 mlxlogscore=999 impostorscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311300102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128204938.1453583-14-pasha.tatashin@soleen.com>
 
-Support providing info on atomic write unit min and max for an inode.
+Hi Pasha,
 
-For simplicity, currently we limit the min at the FS block size, but a
-lower limit could be supported in future.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/inode.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on awilliam-vfio/for-linus linus/master v6.7-rc3]
+[cannot apply to joro-iommu/next awilliam-vfio/next next-20231130]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index d185ec54ffa3..c8f974d0f113 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5621,6 +5621,7 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	struct ext4_inode *raw_inode;
- 	struct ext4_inode_info *ei = EXT4_I(inode);
- 	unsigned int flags;
-+	struct block_device *bdev = inode->i_sb->s_bdev;
- 
- 	if ((request_mask & STATX_BTIME) &&
- 	    EXT4_FITS_IN_INODE(raw_inode, ei, i_crtime)) {
-@@ -5639,8 +5640,6 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 		stat->result_mask |= STATX_DIOALIGN;
- 		if (dio_align == 1) {
--			struct block_device *bdev = inode->i_sb->s_bdev;
--
- 			/* iomap defaults */
- 			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
- 			stat->dio_offset_align = bdev_logical_block_size(bdev);
-@@ -5650,6 +5649,41 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		}
- 	}
- 
-+	if ((request_mask & STATX_WRITE_ATOMIC)) {
-+		unsigned int awumin, awumax;
-+		unsigned int blocksize = 1 << inode->i_blkbits;
-+
-+		awumin = queue_atomic_write_unit_min_bytes(bdev->bd_queue);
-+		awumax = queue_atomic_write_unit_max_bytes(bdev->bd_queue);
-+
-+		if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) ||
-+		    EXT4_SB(inode->i_sb)->s_cluster_ratio > 1) {
-+			/*
-+			 * Currently not supported for non extent files or
-+			 * with bigalloc
-+			 */
-+			stat->atomic_write_unit_min = 0;
-+			stat->atomic_write_unit_max = 0;
-+		} else if (awumin && awumax) {
-+			/*
-+			 * For now we support atomic writes which are
-+			 * at least block size bytes. If that exceeds the
-+			 * max atomic unit, then don't advertise support
-+			 */
-+			stat->atomic_write_unit_min = max(awumin, blocksize);
-+
-+			if (awumax < stat->atomic_write_unit_min) {
-+				stat->atomic_write_unit_min = 0;
-+				stat->atomic_write_unit_max = 0;
-+			} else {
-+				stat->atomic_write_unit_max = awumax;
-+				stat->attributes |= STATX_ATTR_WRITE_ATOMIC;
-+			}
-+		}
-+		stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC;
-+		stat->result_mask |= STATX_WRITE_ATOMIC;
-+	}
-+
- 	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
- 	if (flags & EXT4_APPEND_FL)
- 		stat->attributes |= STATX_ATTR_APPEND;
+url:    https://github.com/intel-lab-lkp/linux/commits/Pasha-Tatashin/iommu-vt-d-add-wrapper-functions-for-page-allocations/20231129-054908
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20231128204938.1453583-14-pasha.tatashin%40soleen.com
+patch subject: [PATCH 13/16] iommu: observability of the IOMMU allocations
+config: sparc64-randconfig-r054-20231130 (https://download.01.org/0day-ci/archive/20231130/202311302108.WERv9oSO-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231130/202311302108.WERv9oSO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311302108.WERv9oSO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/iommu/iommufd/iova_bitmap.c:11:
+   drivers/iommu/iommufd/../iommu-pages.h: In function '__iommu_alloc_account':
+>> drivers/iommu/iommufd/../iommu-pages.h:29:48: error: 'NR_IOMMU_PAGES' undeclared (first use in this function)
+      29 |         mod_node_page_state(page_pgdat(pages), NR_IOMMU_PAGES, pgcnt);
+         |                                                ^~~~~~~~~~~~~~
+   drivers/iommu/iommufd/../iommu-pages.h:29:48: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/iommu/iommufd/../iommu-pages.h: In function '__iommu_free_account':
+   drivers/iommu/iommufd/../iommu-pages.h:41:48: error: 'NR_IOMMU_PAGES' undeclared (first use in this function)
+      41 |         mod_node_page_state(page_pgdat(pages), NR_IOMMU_PAGES, -pgcnt);
+         |                                                ^~~~~~~~~~~~~~
+
+
+vim +/NR_IOMMU_PAGES +29 drivers/iommu/iommufd/../iommu-pages.h
+
+    13	
+    14	/*
+    15	 * All page allocation that are performed in the IOMMU subsystem must use one of
+    16	 * the functions below.  This is necessary for the proper accounting as IOMMU
+    17	 * state can be rather large, i.e. multiple gigabytes in size.
+    18	 */
+    19	
+    20	/**
+    21	 * __iommu_alloc_account - account for newly allocated page.
+    22	 * @pages: head struct page of the page.
+    23	 * @order: order of the page
+    24	 */
+    25	static inline void __iommu_alloc_account(struct page *pages, int order)
+    26	{
+    27		const long pgcnt = 1l << order;
+    28	
+  > 29		mod_node_page_state(page_pgdat(pages), NR_IOMMU_PAGES, pgcnt);
+    30	}
+    31	
+
 -- 
-2.39.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
