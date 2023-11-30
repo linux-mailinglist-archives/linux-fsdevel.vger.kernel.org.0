@@ -1,249 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-4312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF907FE712
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 03:40:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD297FE714
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 03:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7EDE1F20CD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 02:40:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F4528220A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 02:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA37134B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 02:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0E9F9E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 02:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTkuFrHq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA7F198;
-	Wed, 29 Nov 2023 17:33:54 -0800 (PST)
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6cdcef8b400so467387b3a.1;
-        Wed, 29 Nov 2023 17:33:54 -0800 (PST)
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5B6D5C;
+	Wed, 29 Nov 2023 18:27:49 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-50bc811d12fso667503e87.1;
+        Wed, 29 Nov 2023 18:27:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701311267; x=1701916067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fs2Qbf7gFiyubdVRtAJXZWd4e/yXPtXupOcM8TnNWjQ=;
+        b=VTkuFrHqLi4p8c6Fb6N7JT4HeyiOaEdsqliOrwGYM8qqypFjH66Ik76JRvRotlRstT
+         cJ9le19N21rPmjZMLI1IjA6lFLxTZ5KpIPCXQ7X/Zb6I9fyvkO6wZYEiaxLAI0PEX0+n
+         jspYtyPMmNhQMl6XU4C75gYAj1OgDyygY4V6Yyq49g/+xQihwKCJuR1upIqnJ3VxWFBX
+         ZE47NqT2IT6SVZlbFg/KLqWK8ac9VCVgUZyQvRDDAReCUMvmIe6sktTdwsB7S0drTA2H
+         lEicF+VMxX4OFCdR0krfgoLKXvD9lYj4qDOiTWcpEsb/Tzhx07cHe/GQCgJCBw1aZrDM
+         LA3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701308033; x=1701912833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1701311267; x=1701916067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VO2APHX5Y1ZuvGQDWFcsGuWp91fbUyR5eRl/Zk7oIZw=;
-        b=mqCt2g57QA/94IuTFHpYanalw0acrLL9nld/0SkG8bkKZD4Sdvcq8d/n7CT6Z/PakG
-         Zia5aU01Hw/YA3Ij+6wQhds6srecBxAIU+yG42SfOl0wQN+GvSgCxjrTxI5ggRl3blxP
-         Vq9rUJnmMBmL6a2toeyGtAIJ88HTQIeIcUvLI/Fovk9O5B5X3FmtyifDCAW2XjOw0Fn7
-         7L5iaYpPohSlUeV2pwNhVmrPUBbqa7+E25SqrgoEEUOPyZJ92g00r7IVLS51D66JcttB
-         O7Kc+PRmdDd1xLmNK5iu/UWlvBSS7KqkQeG1/MLrbI2Nco+8IFZMTF+zUbMm6FDtvzhY
-         oiKw==
-X-Gm-Message-State: AOJu0YzX1SZ0BhD01ec1VMfG5+9GBQSQvcht2uY98RW0LzNJkmtpUFNz
-	ZCibdmHyi7xqO+ZylT7uQWI=
-X-Google-Smtp-Source: AGHT+IGCtwO9slEOkiMAkvbM+PGSw6qcjIDpIZyO8DaMqgEtygnTku0yl6OsOSk1QG9N6OdiowXPOw==
-X-Received: by 2002:a05:6a20:7d8f:b0:18c:8ff1:f0b with SMTP id v15-20020a056a207d8f00b0018c8ff10f0bmr13599599pzj.56.1701308033506;
-        Wed, 29 Nov 2023 17:33:53 -0800 (PST)
-Received: from bvanassche-glaptop2.roam.corp.google.com (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id g4-20020a17090ace8400b00277560ecd5dsm2021936pju.46.2023.11.29.17.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Nov 2023 17:33:53 -0800 (PST)
-From: Bart Van Assche <bvanassche@acm.org>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Daejun Park <daejun7.park@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Douglas Gilbert <dgilbert@interlog.com>
-Subject: [PATCH v5 17/17] scsi_debug: Maintain write statistics per group number
-Date: Wed, 29 Nov 2023 17:33:22 -0800
-Message-ID: <20231130013322.175290-18-bvanassche@acm.org>
-X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
-In-Reply-To: <20231130013322.175290-1-bvanassche@acm.org>
-References: <20231130013322.175290-1-bvanassche@acm.org>
+        bh=fs2Qbf7gFiyubdVRtAJXZWd4e/yXPtXupOcM8TnNWjQ=;
+        b=j6hzGj5oeYiiqXjl74rjcBBzym2yIjHhnLW7gWV5Or5oj0O8wxV1cyDMYN+aeZQU9T
+         wti6TnPDRYzQ9oWaJbnNBxAYBX624qdwInrxD6okwzUKLnyN0zJe74kHx6Gpbe29PLdc
+         yKjyVtcbl+w3tXI7gQMhLKIx5UGBbT56H+UuB+uBPdvD2j1SDc4GZ/Yi0lhpaZVeMqVy
+         WKQPVmvWBZpU0xCD4GzglctbptaiL39uT0Rv2l4WjLxqRo/OZabHNz5VJnq6jFMLc32P
+         Q4niXuZTVvcQcZEkoH0CHiEyBcx8GlDANGCUWAl2S0APxYzDs4eX3LKo+pRskcC8/UA6
+         F6lg==
+X-Gm-Message-State: AOJu0Yxlsf+MVPEVKA8oioGmIEvr6RlI5uRsFKocow8wF6W6HNWwvbs3
+	fhyYQZMAqLwuStII+H2XOyJyo8vBHhf/fYDurVg=
+X-Google-Smtp-Source: AGHT+IECATlAJ9Xw7a71zSU7LDRNoRULn3qkGW6SO3ISO7FTCzP+J8weaGa2npL+0/hjQRprHqCQm+wQ0xUycMNXMaQ=
+X-Received: by 2002:ac2:4ec7:0:b0:50b:bf07:5a84 with SMTP id
+ p7-20020ac24ec7000000b0050bbf075a84mr3681468lfr.56.1701311267349; Wed, 29 Nov
+ 2023 18:27:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231129165619.2339490-1-dhowells@redhat.com> <20231129165619.2339490-4-dhowells@redhat.com>
+ <9704ab96ba04eb3591a62ef5e6a97af6@manguebit.com>
+In-Reply-To: <9704ab96ba04eb3591a62ef5e6a97af6@manguebit.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 29 Nov 2023 20:27:36 -0600
+Message-ID: <CAH2r5mvwzU1N5osqUPcuyHtXapuaJt-o9orHFr42MRGoCzy+2Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] cifs: Fix flushing, invalidation and file size with copy_file_range()
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: David Howells <dhowells@redhat.com>, linux-cifs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Track per GROUP NUMBER how many write commands have been processed. Make
-this information available in sysfs. Reset these statistics if any data
-is written into the sysfs attribute.
+updated all three patches with the acked-by and put in cifs-2.6.git for-nex=
+t
 
-Note: SCSI devices should only interpret the information in the GROUP
-NUMBER field as a stream identifier if the ST_ENBLE bit has been set to
-one. This patch follows a simpler approach: count the number of writes
-per GROUP NUMBER whether or not the group number represents a stream
-identifier.
 
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- drivers/scsi/scsi_debug.c | 49 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 4 deletions(-)
+On Wed, Nov 29, 2023 at 4:28=E2=80=AFPM Paulo Alcantara <pc@manguebit.com> =
+wrote:
+>
+> David Howells <dhowells@redhat.com> writes:
+>
+> > Fix a number of issues in the cifs filesystem implementation of the
+> > copy_file_range() syscall in cifs_file_copychunk_range().
+> >
+> > Firstly, the invalidation of the destination range is handled incorrect=
+ly:
+> > We shouldn't just invalidate the whole file as dirty data in the file m=
+ay
+> > get lost and we can't just call truncate_inode_pages_range() to invalid=
+ate
+> > the destination range as that will erase parts of a partial folio at ea=
+ch
+> > end whilst invalidating and discarding all the folios in the middle.  W=
+e
+> > need to force all the folios covering the range to be reloaded, but we
+> > mustn't lose dirty data in them that's not in the destination range.
+> >
+> > Further, we shouldn't simply round out the range to PAGE_SIZE at each e=
+nd
+> > as cifs should move to support multipage folios.
+> >
+> > Secondly, there's an issue whereby a write may have extended the file
+> > locally, but not have been written back yet.  This can leaves the local
+> > idea of the EOF at a later point than the server's EOF.  If a copy requ=
+est
+> > is issued, this will fail on the server with STATUS_INVALID_VIEW_SIZE
+> > (which gets translated to -EIO locally) if the copy source extends past=
+ the
+> > server's EOF.
+> >
+> > Fix this by:
+> >
+> >  (0) Flush the source region (already done).  The flush does nothing an=
+d
+> >      the EOF isn't moved if the source region has no dirty data.
+> >
+> >  (1) Move the EOF to the end of the source region if it isn't already a=
+t
+> >      least at this point.
+> >
+> >      [!] Rather than moving the EOF, it might be better to split the co=
+py
+> >      range into a part to be copied and a part to be cleared with
+> >      FSCTL_SET_ZERO_DATA.
+> >
+> >  (2) Find the folio (if present) at each end of the range, flushing it =
+and
+> >      increasing the region-to-be-invalidated to cover those in their
+> >      entirety.
+> >
+> >  (3) Fully discard all the folios covering the range as we want them to=
+ be
+> >      reloaded.
+> >
+> >  (4) Then perform the copy.
+> >
+> > Thirdly, set i_size after doing the copychunk_range operation as this v=
+alue
+> > may be used by various things internally.  stat() hides the issue becau=
+se
+> > setting ->time to 0 causes cifs_getatr() to revalidate the attributes.
+> >
+> > These were causing the generic/075 xfstest to fail.
+> >
+> > Fixes: 620d8745b35d ("Introduce cifs_copy_file_range()")
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <sfrench@samba.org>
+> > cc: Paulo Alcantara <pc@manguebit.com>
+> > cc: Shyam Prasad N <nspmangalore@gmail.com>
+> > cc: Rohith Surabattula <rohiths.msft@gmail.com>
+> > cc: Matthew Wilcox <willy@infradead.org>
+> > cc: Jeff Layton <jlayton@kernel.org>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: linux-mm@kvack.org
+> > ---
+> >  fs/smb/client/cifsfs.c | 80 ++++++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 77 insertions(+), 3 deletions(-)
+>
+> Looks good,
+>
+> Acked-by: Paulo Alcantara (SUSE) <pc@manguebit.com>
+>
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 16091e2913d5..e8cbfc118a24 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -898,6 +898,8 @@ static int sdeb_zbc_nr_conv = DEF_ZBC_NR_CONV_ZONES;
- static int submit_queues = DEF_SUBMIT_QUEUES;  /* > 1 for multi-queue (mq) */
- static int poll_queues; /* iouring iopoll interface.*/
- 
-+static atomic_long_t writes_by_group_number[64];
-+
- static char sdebug_proc_name[] = MY_NAME;
- static const char *my_name = MY_NAME;
- 
-@@ -3346,7 +3348,8 @@ static inline struct sdeb_store_info *devip2sip(struct sdebug_dev_info *devip,
- 
- /* Returns number of bytes copied or -1 if error. */
- static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
--			    u32 sg_skip, u64 lba, u32 num, bool do_write)
-+			    u32 sg_skip, u64 lba, u32 num, bool do_write,
-+			    u8 group_number)
- {
- 	int ret;
- 	u64 block, rest = 0;
-@@ -3365,6 +3368,10 @@ static int do_device_access(struct sdeb_store_info *sip, struct scsi_cmnd *scp,
- 		return 0;
- 	if (scp->sc_data_direction != dir)
- 		return -1;
-+
-+	if (do_write && group_number < ARRAY_SIZE(writes_by_group_number))
-+		atomic_long_inc(&writes_by_group_number[group_number]);
-+
- 	fsp = sip->storep;
- 
- 	block = do_div(lba, sdebug_store_sectors);
-@@ -3738,7 +3745,7 @@ static int resp_read_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, false);
-+	ret = do_device_access(sip, scp, 0, lba, num, false, 0);
- 	sdeb_read_unlock(sip);
- 	if (unlikely(ret == -1))
- 		return DID_ERROR << 16;
-@@ -3923,6 +3930,7 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- {
- 	bool check_prot;
- 	u32 num;
-+	u8 group = 0;
- 	u32 ei_lba;
- 	int ret;
- 	u64 lba;
-@@ -3934,11 +3942,13 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		ei_lba = 0;
- 		lba = get_unaligned_be64(cmd + 2);
- 		num = get_unaligned_be32(cmd + 10);
-+		group = cmd[14] & 0x3f;
- 		check_prot = true;
- 		break;
- 	case WRITE_10:
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
-+		group = cmd[6] & 0x3f;
- 		num = get_unaligned_be16(cmd + 7);
- 		check_prot = true;
- 		break;
-@@ -3953,15 +3963,18 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
- 		num = get_unaligned_be32(cmd + 6);
-+		group = cmd[6] & 0x3f;
- 		check_prot = true;
- 		break;
- 	case 0x53:	/* XDWRITEREAD(10) */
- 		ei_lba = 0;
- 		lba = get_unaligned_be32(cmd + 2);
-+		group = cmd[6] & 0x1f;
- 		num = get_unaligned_be16(cmd + 7);
- 		check_prot = false;
- 		break;
- 	default:	/* assume WRITE(32) */
-+		group = cmd[6] & 0x3f;
- 		lba = get_unaligned_be64(cmd + 12);
- 		ei_lba = get_unaligned_be32(cmd + 20);
- 		num = get_unaligned_be32(cmd + 28);
-@@ -4016,7 +4029,7 @@ static int resp_write_dt0(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 		}
- 	}
- 
--	ret = do_device_access(sip, scp, 0, lba, num, true);
-+	ret = do_device_access(sip, scp, 0, lba, num, true, group);
- 	if (unlikely(scsi_debug_lbp()))
- 		map_region(sip, lba, num);
- 	/* If ZBC zone then bump its write pointer */
-@@ -4068,12 +4081,14 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 	u32 lb_size = sdebug_sector_size;
- 	u32 ei_lba;
- 	u64 lba;
-+	u8 group;
- 	int ret, res;
- 	bool is_16;
- 	static const u32 lrd_size = 32; /* + parameter list header size */
- 
- 	if (cmd[0] == VARIABLE_LENGTH_CMD) {
- 		is_16 = false;
-+		group = cmd[6] & 0x3f;
- 		wrprotect = (cmd[10] >> 5) & 0x7;
- 		lbdof = get_unaligned_be16(cmd + 12);
- 		num_lrd = get_unaligned_be16(cmd + 16);
-@@ -4084,6 +4099,7 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 		lbdof = get_unaligned_be16(cmd + 4);
- 		num_lrd = get_unaligned_be16(cmd + 8);
- 		bt_len = get_unaligned_be32(cmd + 10);
-+		group = cmd[14] & 0x3f;
- 		if (unlikely(have_dif_prot)) {
- 			if (sdebug_dif == T10_PI_TYPE2_PROTECTION &&
- 			    wrprotect) {
-@@ -4172,7 +4188,7 @@ static int resp_write_scat(struct scsi_cmnd *scp,
- 			}
- 		}
- 
--		ret = do_device_access(sip, scp, sg_off, lba, num, true);
-+		ret = do_device_access(sip, scp, sg_off, lba, num, true, group);
- 		/* If ZBC zone then bump its write pointer */
- 		if (sdebug_dev_is_zoned(devip))
- 			zbc_inc_wp(devip, lba, num);
-@@ -7259,6 +7275,30 @@ static ssize_t tur_ms_to_ready_show(struct device_driver *ddp, char *buf)
- }
- static DRIVER_ATTR_RO(tur_ms_to_ready);
- 
-+static ssize_t group_number_stats_show(struct device_driver *ddp, char *buf)
-+{
-+	char *p = buf, *end = buf + PAGE_SIZE;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(writes_by_group_number); i++)
-+		p += scnprintf(p, end - p, "%d %ld\n", i,
-+			       atomic_long_read(&writes_by_group_number[i]));
-+
-+	return p - buf;
-+}
-+
-+static ssize_t group_number_stats_store(struct device_driver *ddp,
-+					const char *buf, size_t count)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(writes_by_group_number); i++)
-+		atomic_long_set(&writes_by_group_number[i], 0);
-+
-+	return count;
-+}
-+static DRIVER_ATTR_RW(group_number_stats);
-+
- /* Note: The following array creates attribute files in the
-    /sys/bus/pseudo/drivers/scsi_debug directory. The advantage of these
-    files (over those found in the /sys/module/scsi_debug/parameters
-@@ -7305,6 +7345,7 @@ static struct attribute *sdebug_drv_attrs[] = {
- 	&driver_attr_cdb_len.attr,
- 	&driver_attr_tur_ms_to_ready.attr,
- 	&driver_attr_zbc.attr,
-+	&driver_attr_group_number_stats.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(sdebug_drv);
+
+--=20
+Thanks,
+
+Steve
 
