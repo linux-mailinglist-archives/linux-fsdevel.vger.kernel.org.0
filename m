@@ -1,244 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-4479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5A67FF9EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 19:48:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474207FFCCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 21:40:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47366B20E0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:48:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6338B20B86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 20:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1795A0F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbsshsmG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EAF55C12
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 20:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45815A0E9;
-	Thu, 30 Nov 2023 18:33:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823CDC433C7;
-	Thu, 30 Nov 2023 18:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701369237;
-	bh=7ELPf3nERtF6awPsUVC8nyPoyDtWE9Mg6PIh+5YhoxQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=sbsshsmGBZ3JH5/bnJliBLXUDfLtaO/tbunF1KXjgqx/cGjb5nSoxqypj73uLG3ez
-	 sqnPrd7E0FIRyL4IiJgXlbCxcDgFE1jYifNCu+tShKYtvXStzz+/dd0eBuR2A2W4uG
-	 qByA+u7EV3pZXLc4Gfy8c5BWu891qTyN/G/pQtbNxebcHm+sr5s5KHpHQ65wFnIZLs
-	 OpMh22AQEAPD6cHns3ZzxsXDjI/CQjQ9zudUkcxQEvF1SrdpogFpPRV4yjC8tBhjg9
-	 BPRYhfA+RdE0OOWmsg7wfRzACfHzO5UslNqAF3EOkIQT3MCNjNpCCrUUpsYjGUlo78
-	 6ZDuzRjOsRgPg==
-Message-ID: <c1ed879359246bc69c029399b75a6892c9298f67.camel@kernel.org>
-Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: NeilBrown <neilb@suse.de>, Christian Brauner <brauner@kernel.org>, Al
- Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Date: Thu, 30 Nov 2023 13:33:55 -0500
-In-Reply-To: <ZWjPfZ9tuFXJP6us@tissot.1015granger.net>
-References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
-	 <ZWUfNyO6OG/+aFuo@tissot.1015granger.net>
-	 <170113056683.7109.13851405274459689039@noble.neil.brown.name>
-	 <20231128-blumig-anreichern-b9d8d1dc49b3@brauner>
-	 <170121362397.7109.17858114692838122621@noble.neil.brown.name>
-	 <ZWdE/7bNvxcsY3ae@tissot.1015granger.net>
-	 <2fd83daa77c6cf0825fd8ebc33f5dd2c5370bc5a.camel@kernel.org>
-	 <ZWjPfZ9tuFXJP6us@tissot.1015granger.net>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-	kZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
-Content-Type: text/plain; charset="ISO-8859-15"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AAD810DE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 10:52:55 -0800 (PST)
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AUEfCsK026626
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 10:52:55 -0800
+Received: from mail.thefacebook.com ([163.114.132.120])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3upeus6ky0-8
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 10:52:55 -0800
+Received: from twshared15991.38.frc1.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.34; Thu, 30 Nov 2023 10:52:44 -0800
+Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
+	id BDD663C60289A; Thu, 30 Nov 2023 10:52:29 -0800 (PST)
+From: Andrii Nakryiko <andrii@kernel.org>
+To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
+        <brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <keescook@chromium.org>, <kernel-team@meta.com>, <sargun@sargun.me>
+Subject: [PATCH v12 bpf-next 00/17] BPF token and BPF FS-based delegation
+Date: Thu, 30 Nov 2023 10:52:12 -0800
+Message-ID: <20231130185229.2688956-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.34.1
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: J5Qp8JrsYFnFqhfvdF_7U1pYkto5km2J
+X-Proofpoint-ORIG-GUID: J5Qp8JrsYFnFqhfvdF_7U1pYkto5km2J
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.1 (3.50.1-1.fc39) 
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-30_18,2023-11-30_01,2023-05-22_02
 
-On Thu, 2023-11-30 at 13:07 -0500, Chuck Lever wrote:
-> On Thu, Nov 30, 2023 at 12:47:58PM -0500, Jeff Layton wrote:
-> > On Wed, 2023-11-29 at 09:04 -0500, Chuck Lever wrote:
-> > > On Wed, Nov 29, 2023 at 10:20:23AM +1100, NeilBrown wrote:
-> > > > On Wed, 29 Nov 2023, Christian Brauner wrote:
-> > > > > [Reusing the trimmed Cc]
-> > > > >=20
-> > > > > On Tue, Nov 28, 2023 at 11:16:06AM +1100, NeilBrown wrote:
-> > > > > > On Tue, 28 Nov 2023, Chuck Lever wrote:
-> > > > > > > On Tue, Nov 28, 2023 at 09:05:21AM +1100, NeilBrown wrote:
-> > > > > > > >=20
-> > > > > > > > I have evidence from a customer site of 256 nfsd threads ad=
-ding files to
-> > > > > > > > delayed_fput_lists nearly twice as fast they are retired by=
- a single
-> > > > > > > > work-queue thread running delayed_fput().  As you might ima=
-gine this
-> > > > > > > > does not end well (20 million files in the queue at the tim=
-e a snapshot
-> > > > > > > > was taken for analysis).
-> > > > > > > >=20
-> > > > > > > > While this might point to a problem with the filesystem not=
- handling the
-> > > > > > > > final close efficiently, such problems should only hurt thr=
-oughput, not
-> > > > > > > > lead to memory exhaustion.
-> > > > > > >=20
-> > > > > > > I have this patch queued for v6.8:
-> > > > > > >=20
-> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git=
-/commit/?h=3Dnfsd-next&id=3Dc42661ffa58acfeaf73b932dec1e6f04ce8a98c0
-> > > > > > >=20
-> > > > > >=20
-> > > > > > Thanks....
-> > > > > > I think that change is good, but I don't think it addresses the=
- problem
-> > > > > > mentioned in the description, and it is not directly relevant t=
-o the
-> > > > > > problem I saw ... though it is complicated.
-> > > > > >=20
-> > > > > > The problem "workqueue ...  hogged cpu..." probably means that
-> > > > > > nfsd_file_dispose_list() needs a cond_resched() call in the loo=
-p.
-> > > > > > That will stop it from hogging the CPU whether it is tied to on=
-e CPU or
-> > > > > > free to roam.
-> > > > > >=20
-> > > > > > Also that work is calling filp_close() which primarily calls
-> > > > > > filp_flush().
-> > > > > > It also calls fput() but that does minimal work.  If there is m=
-uch work
-> > > > > > to do then that is offloaded to another work-item.  *That* is t=
-he
-> > > > > > workitem that I had problems with.
-> > > > > >=20
-> > > > > > The problem I saw was with an older kernel which didn't have th=
-e nfsd
-> > > > > > file cache and so probably is calling filp_close more often.  S=
-o maybe
-> > > > > > my patch isn't so important now.  Particularly as nfsd now isn'=
-t closing
-> > > > > > most files in-task but instead offloads that to another task.  =
-So the
-> > > > > > final fput will not be handled by the nfsd task either.
-> > > > > >=20
-> > > > > > But I think there is room for improvement.  Gathering lots of f=
-iles
-> > > > > > together into a list and closing them sequentially is not going=
- to be as
-> > > > > > efficient as closing them in parallel.
-> > > > > >=20
-> > > > > > >=20
-> > > > > > > > For normal threads, the thread that closes the file also ca=
-lls the
-> > > > > > > > final fput so there is natural rate limiting preventing exc=
-essive growth
-> > > > > > > > in the list of delayed fputs.  For kernel threads, and part=
-icularly for
-> > > > > > > > nfsd, delayed in the final fput do not impose any throttlin=
-g to prevent
-> > > > > > > > the thread from closing more files.
-> > > > > > >=20
-> > > > > > > I don't think we want to block nfsd threads waiting for files=
+This patch set introduces an ability to delegate a subset of BPF subsystem
+functionality from privileged system-wide daemon (e.g., systemd or any other
+container manager) through special mount options for userns-bound BPF FS to
+a *trusted* unprivileged application. Trust is the key here. This
+functionality is not about allowing unconditional unprivileged BPF usage.
+Establishing trust, though, is completely up to the discretion of respective
+privileged application that would create and mount a BPF FS instance with
+delegation enabled, as different production setups can and do achieve it
+through a combination of different means (signing, LSM, code reviews, etc),
+and it's undesirable and infeasible for kernel to enforce any particular way
+of validating trustworthiness of particular process.
+
+The main motivation for this work is a desire to enable containerized BPF
+applications to be used together with user namespaces. This is currently
+impossible, as CAP_BPF, required for BPF subsystem usage, cannot be namespa=
+ced
+or sandboxed, as a general rule. E.g., tracing BPF programs, thanks to BPF
+helpers like bpf_probe_read_kernel() and bpf_probe_read_user() can safely r=
+ead
+arbitrary memory, and it's impossible to ensure that they only read memory =
+of
+processes belonging to any given namespace. This means that it's impossible=
  to
-> > > > > > > close. Won't that be a potential denial of service?
-> > > > > >=20
-> > > > > > Not as much as the denial of service caused by memory exhaustio=
-n due to
-> > > > > > an indefinitely growing list of files waiting to be closed by a=
- single
-> > > > > > thread of workqueue.
-> > > > >=20
-> > > > > It seems less likely that you run into memory exhausting than a D=
-OS
-> > > > > because nfsd() is busy closing fds. Especially because you defaul=
-t to
-> > > > > single nfsd thread afaict.
-> > > >=20
-> > > > An nfsd thread would not end up being busy closing fds any more tha=
-n it
-> > > > can already be busy reading data or busy syncing out changes or bus=
-ying
-> > > > renaming a file.
-> > > > Which it is say: of course it can be busy doing this, but doing thi=
-s sort
-> > > > of thing is its whole purpose in life.
-> > > >=20
-> > > > If an nfsd thread only completes the close that it initiated the cl=
-ose
-> > > > on (which is what I am currently proposing) then there would be at =
-most
-> > > > one, or maybe 2, fds to close after handling each request.
-> > >=20
-> > > Closing files more aggressively would seem to entirely defeat the
-> > > purpose of the file cache, which is to avoid the overhead of opens
-> > > and closes on frequently-used files.
-> > >=20
-> > > And usually Linux prefers to let the workload consume as many free
-> > > resources as possible before it applies back pressure or cache
-> > > eviction.
-> > >=20
-> > > IMO the first step should be removing head-of-queue blocking from
-> > > the file cache's background closing mechanism. That might be enough
-> > > to avoid forming a backlog in most cases.
-> >=20
-> > That's not quite what task_work does. Neil's patch wouldn't result in
-> > closes happening more aggressively. It would just make it so that we
-> > don't queue the delayed part of the fput process to a workqueue like we
-> > do today.
-> >=20
-> > Instead, the nfsd threads would have to clean that part up themselves,
-> > like syscalls do before returning to userland. I think that idea makes
-> > sense overall since that mirrors what we already do in userland.
-> >=20
-> > In the event that all of the nfsd threads are tied up in slow task_work
-> > jobs...tough luck. That at least makes it more of a self-limiting
-> > problem since RPCs will start being queueing, rather than allowing dead
-> > files to just pile onto the list.
->=20
-> Thanks for helping me understand the proposal. task_work would cause
-> nfsd threads to wait for flush/close operations that others have
-> already started; it would not increase the rate of closing cached
-> file descriptors.
->=20
+have a mechanically verifiable namespace-aware CAP_BPF capability, and as s=
+uch
+another mechanism to allow safe usage of BPF functionality is necessary.BPF=
+ FS
+delegation mount options and BPF token derived from such BPF FS instance is
+such a mechanism. Kernel makes no assumption about what "trusted" constitut=
+es
+in any particular case, and it's up to specific privileged applications and
+their surrounding infrastructure to decide that. What kernel provides is a =
+set
+of APIs to setup and mount special BPF FS instanecs and derive BPF tokens f=
+rom
+it. BPF FS and BPF token are both bound to its owning userns and in such a =
+way
+are constrained inside intended container. Users can then pass BPF token FD=
+ to
+privileged bpf() syscall commands, like BPF map creation and BPF program
+loading, to perform such operations without having init userns privileged.
 
-Note that task_work is completely a per-task thing. Each nfsd thread now
-becomes responsible for cleaning up the files that were closed as part
-of processing the last RPC that it processed.
+This version incorporates feedback and suggestions ([3]) received on v3 of
+this patch set, and instead of allowing to create BPF tokens directly assum=
+ing
+capable(CAP_SYS_ADMIN), we instead enhance BPF FS to accept a few new
+delegation mount options. If these options are used and BPF FS itself is
+properly created, set up, and mounted inside the user namespaced container,
+user application is able to derive a BPF token object from BPF FS instance,
+and pass that token to bpf() syscall. As explained in patch #3, BPF token
+itself doesn't grant access to BPF functionality, but instead allows kernel=
+ to
+do namespaced capabilities checks (ns_capable() vs capable()) for CAP_BPF,
+CAP_PERFMON, CAP_NET_ADMIN, and CAP_SYS_ADMIN, as applicable. So it forms o=
+ne
+half of a puzzle and allows container managers and sys admins to have safe =
+and
+flexible configuration options: determining which containers get delegation=
+ of
+BPF functionality through BPF FS, and then which applications within such
+containers are allowed to perform bpf() commands, based on namespaces
+capabilities.
 
-Closes that occur during the processing of an RPC would be finished
-before the thread picks up a new RPC to process, but I don't see how the
-thread would be responsible for closes that happen in a different task
-altogether.
+Previous attempt at addressing this very same problem ([0]) attempted to
+utilize authoritative LSM approach, but was conclusively rejected by upstre=
+am
+LSM maintainers. BPF token concept is not changing anything about LSM
+approach, but can be combined with LSM hooks for very fine-grained security
+policy. Some ideas about making BPF token more convenient to use with LSM (=
+in
+particular custom BPF LSM programs) was briefly described in recent LSF/MM/=
+BPF
+2023 presentation ([1]). E.g., an ability to specify user-provided data
+(context), which in combination with BPF LSM would allow implementing a very
+dynamic and fine-granular custom security policies on top of BPF token. In =
+the
+interest of minimizing API surface area and discussions this was relegated =
+to
+follow up patches, as it's not essential to the fundamental concept of
+delegatable BPF token.
 
+It should be noted that BPF token is conceptually quite similar to the idea=
+ of
+/dev/bpf device file, proposed by Song a while ago ([2]). The biggest
+difference is the idea of using virtual anon_inode file to hold BPF token a=
+nd
+allowing multiple independent instances of them, each (potentially) with its
+own set of restrictions. And also, crucially, BPF token approach is not usi=
+ng
+any special stateful task-scoped flags. Instead, bpf() syscall accepts
+token_fd parameters explicitly for each relevant BPF command. This addresses
+main concerns brought up during the /dev/bpf discussion, and fits better wi=
+th
+overall BPF subsystem design.
 
-> The thing that nfsd_filesystem_wq does is compartmentalize the
-> flush/close workload so that a heavy flush/close workload in one
-> net namespace does not negatively impact other namespaces. IIUC,
-> then, task_work does not discriminate between namespaces -- if one
-> namespace is creating a backlog of dirty files to close, all nfsd
-> threads would need to handle that backlog, and thus all namespaces
-> would bear (a part of) that backlog.
->=20
+This patch set adds a basic minimum of functionality to make BPF token idea
+useful and to discuss API and functionality. Currently only low-level libbpf
+APIs support creating and passing BPF token around, allowing to test kernel
+functionality, but for the most part is not sufficient for real-world
+applications, which typically use high-level libbpf APIs based on `struct
+bpf_object` type. This was done with the intent to limit the size of patch =
+set
+and concentrate on mostly kernel-side changes. All the necessary plumbing f=
+or
+libbpf will be sent as a separate follow up patch set kernel support makes =
+it
+upstream.
 
-Closes that are queued to the nfsd_filesystem_wq won't be affected by=20
-this patch, since those files get closed in the context of a workqueue
-thread. In most cases, those are v2/3 files that have timed out.
+Another part that should happen once kernel-side BPF token is established, =
+is
+a set of conventions between applications (e.g., systemd), tools (e.g.,
+bpftool), and libraries (e.g., libbpf) on exposing delegatable BPF FS
+instance(s) at well-defined locations to allow applications take advantage =
+of
+this in automatic fashion without explicit code changes on BPF application's
+side. But I'd like to postpone this discussion to after BPF token concept
+lands.
 
-FWIW, I expect that this patch will mostly affect NFSv4, since those get
-closed more directly by nfsd. I wonder if we might want to consider
-doing something like this with lockd as well.
+  [0] https://lore.kernel.org/bpf/20230412043300.360803-1-andrii@kernel.org/
+  [1] http://vger.kernel.org/bpfconf2023_material/Trusted_unprivileged_BPF_=
+LSFMM2023.pdf
+  [2] https://lore.kernel.org/bpf/20190627201923.2589391-2-songliubraving@f=
+b.com/
+  [3] https://lore.kernel.org/bpf/20230704-hochverdient-lehne-eeb9eeef785e@=
+brauner/
+
+v11->v12:
+  - enforce exact userns match in bpf_token_capable() and
+    bpf_token_allow_cmd() checks, for added strictness (Christian);
+v10->v11:
+  - fix BPF FS root check to disallow using bind-mounted subdirectory of BPF
+    FS instance (Christian);
+  - further restrict BPF_TOKEN_CREATE command to be executed from inside
+    exactly the same user namespace as the one used to create BPF FS instan=
+ce
+    (Christian);
+v9->v10:
+  - slight adjustments in LSM parts (Paul);
+  - setting delegate_xxx  options require capable(CAP_SYS_ADMIN) (Christian=
+);
+  - simplify BPF_TOKEN_CREATE UAPI by accepting BPF FS FD directly (Christi=
+an);
+v8->v9:
+  - fix issue in selftests due to sys/mount.h header (Jiri);
+  - fix warning in doc comments in LSM hooks (kernel test robot);
+v7->v8:
+  - add bpf_token_allow_cmd and bpf_token_capable hooks (Paul);
+  - inline bpf_token_alloc() into bpf_token_create() to prevent accidental
+    divergence with security_bpf_token_create() hook (Paul);
+v6->v7:
+  - separate patches to refactor bpf_prog_alloc/bpf_map_alloc LSM hooks, as
+    discussed with Paul, and now they also accept struct bpf_token;
+  - added bpf_token_create/bpf_token_free to allow LSMs (SELinux,
+    specifically) to set up security LSM blob (Paul);
+  - last patch also wires bpf_security_struct setup by SELinux, similar to =
+how
+    it's done for BPF map/prog, though I'm not sure if that's enough, so wo=
+rst
+    case it's easy to drop this patch if more full fledged SELinux
+    implementation will be done separately;
+  - small fixes for issues caught by code reviews (Jiri, Hou);
+  - fix for test_maps test that doesn't use LIBBPF_OPTS() macro (CI);
+v5->v6:
+  - fix possible use of uninitialized variable in selftests (CI);
+  - don't use anon_inode, instead create one from BPF FS instance (Christia=
+n);
+  - don't store bpf_token inside struct bpf_map, instead pass it explicitly=
+ to
+    map_check_btf(). We do store bpf_token inside prog->aux, because it's u=
+sed
+    during verification and even can be checked during attach time for some
+    program types;
+  - LSM hooks are left intact pending the conclusion of discussion with Paul
+    Moore; I'd prefer to do LSM-related changes as a follow up patch set
+    anyways;
+v4->v5:
+  - add pre-patch unifying CAP_NET_ADMIN handling inside kernel/bpf/syscall=
+.c
+    (Paul Moore);
+  - fix build warnings and errors in selftests and kernel, detected by CI a=
+nd
+    kernel test robot;
+v3->v4:
+  - add delegation mount options to BPF FS;
+  - BPF token is derived from the instance of BPF FS and associates itself
+    with BPF FS' owning userns;
+  - BPF token doesn't grant BPF functionality directly, it just turns
+    capable() checks into ns_capable() checks within BPF FS' owning user;
+  - BPF token cannot be pinned;
+v2->v3:
+  - make BPF_TOKEN_CREATE pin created BPF token in BPF FS, and disallow
+    BPF_OBJ_PIN for BPF token;
+v1->v2:
+  - fix build failures on Kconfig with CONFIG_BPF_SYSCALL unset;
+  - drop BPF_F_TOKEN_UNKNOWN_* flags and simplify UAPI (Stanislav).
+
+Andrii Nakryiko (17):
+  bpf: align CAP_NET_ADMIN checks with bpf_capable() approach
+  bpf: add BPF token delegation mount options to BPF FS
+  bpf: introduce BPF token object
+  bpf: add BPF token support to BPF_MAP_CREATE command
+  bpf: add BPF token support to BPF_BTF_LOAD command
+  bpf: add BPF token support to BPF_PROG_LOAD command
+  bpf: take into account BPF token when fetching helper protos
+  bpf: consistently use BPF token throughout BPF verifier logic
+  bpf,lsm: refactor bpf_prog_alloc/bpf_prog_free LSM hooks
+  bpf,lsm: refactor bpf_map_alloc/bpf_map_free LSM hooks
+  bpf,lsm: add BPF token LSM hooks
+  libbpf: add bpf_token_create() API
+  libbpf: add BPF token support to bpf_map_create() API
+  libbpf: add BPF token support to bpf_btf_load() API
+  libbpf: add BPF token support to bpf_prog_load() API
+  selftests/bpf: add BPF token-enabled tests
+  bpf,selinux: allocate bpf_security_struct per BPF token
+
+ drivers/media/rc/bpf-lirc.c                   |   2 +-
+ include/linux/bpf.h                           |  83 ++-
+ include/linux/filter.h                        |   2 +-
+ include/linux/lsm_hook_defs.h                 |  15 +-
+ include/linux/security.h                      |  43 +-
+ include/uapi/linux/bpf.h                      |  42 ++
+ kernel/bpf/Makefile                           |   2 +-
+ kernel/bpf/arraymap.c                         |   2 +-
+ kernel/bpf/bpf_lsm.c                          |  15 +-
+ kernel/bpf/cgroup.c                           |   6 +-
+ kernel/bpf/core.c                             |   3 +-
+ kernel/bpf/helpers.c                          |   6 +-
+ kernel/bpf/inode.c                            | 101 ++-
+ kernel/bpf/syscall.c                          | 215 ++++--
+ kernel/bpf/token.c                            | 263 +++++++
+ kernel/bpf/verifier.c                         |  13 +-
+ kernel/trace/bpf_trace.c                      |   2 +-
+ net/core/filter.c                             |  36 +-
+ net/ipv4/bpf_tcp_ca.c                         |   2 +-
+ net/netfilter/nf_bpf_link.c                   |   2 +-
+ security/security.c                           | 101 ++-
+ security/selinux/hooks.c                      |  47 +-
+ tools/include/uapi/linux/bpf.h                |  42 ++
+ tools/lib/bpf/bpf.c                           |  28 +-
+ tools/lib/bpf/bpf.h                           |  35 +-
+ tools/lib/bpf/libbpf.map                      |   1 +
+ .../selftests/bpf/prog_tests/libbpf_probes.c  |   4 +
+ .../selftests/bpf/prog_tests/libbpf_str.c     |   6 +
+ .../testing/selftests/bpf/prog_tests/token.c  | 672 ++++++++++++++++++
+ 29 files changed, 1624 insertions(+), 167 deletions(-)
+ create mode 100644 kernel/bpf/token.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/token.c
+
 --=20
-Jeff Layton <jlayton@kernel.org>
+2.34.1
+
 
