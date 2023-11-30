@@ -1,92 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-4413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7757FF25B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:39:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E697FF267
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 15:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE328B20B99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E261C206FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD985100B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B595100B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 14:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vS4LbRqb"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EcxO0yOL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HFhoU+4q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0761283
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:23:49 -0800 (PST)
-Received: by mail-il1-x134.google.com with SMTP id e9e14a558f8ab-35d380a75a8so93425ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:23:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701354228; x=1701959028; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lS0Bb664e7dDhqEK4tmnmL3WT5B1tiGpNiflIpYRIH0=;
-        b=vS4LbRqbB4QkUCAvFNi1xWeopq+3tXKpLoNNUD/TKj0y7Tf4DEfI0j5PD1KJCuG7yI
-         AbC20q8Ld4nCQfk6QcTbPIFHioX5QlriFroi5EvY95b/lg9k5GCugJSlvkUTRrN+38Se
-         Ty0I9xAVrJypMnaooRPw1RYwFRzVBA30w8+hHUf8gfNb+c4ZUlEKSgolL1wmQWGyfrIr
-         yw6OHdJbkwPYuA+LNyksU/N/wsPipKW4Zp0+n9PGoB9z8SGnhnzHXU9RO6o7jrStBYph
-         R0wrZWeFZmd55B7uAW81IrNlyjxRxV6Z7QakMAXoF+/FY2ZPohrd3sopOKDGKhyV8etT
-         hghg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701354228; x=1701959028;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lS0Bb664e7dDhqEK4tmnmL3WT5B1tiGpNiflIpYRIH0=;
-        b=kFdfHE4lcZOlwzim8qKKsmrfL3cAF7odhsx1/Bjz+pJuAsbS6V/U/Ge1//By5siw30
-         etgdOW8juxjSivbeEiKMaV658UJquDj0WLHpyhAKhoF3AiTQz0BJf7CEsDQaVYbAMvQR
-         P85t0y2UWfrvlKOO0IjfhqiHY+45M2pPT/gGT5n20f5e2HMPoIA67Of+RiH1hc1yVKcU
-         qmv2T+mtcGYXmSiKLFfr7288YulS3j0KE81kMj3UkN3b/Vn6HCIkQqNe5vb+b9GzOuc5
-         +E6rNc0OSEAqtjIT8mKUyCGgCh/ZM92ScgFktOFkFZpJe3TZUVefQuZlVRnOAsPTxuD3
-         YnRw==
-X-Gm-Message-State: AOJu0YwQhXKZMjW8KDUnyyC3xmPlmrQJuDQvzZfrbKh/wk4c6BxU8MEB
-	hVdoxHtzepGT5eCo6AGGx1Fumg==
-X-Google-Smtp-Source: AGHT+IHq6NfdNGFhQH8bopaFcHEgx/sBmpoBoWekvn3o2jk7A4MxcMan5/onknXISzljLwsZOYjsiA==
-X-Received: by 2002:a05:6602:2bd5:b0:792:6068:dcc8 with SMTP id s21-20020a0566022bd500b007926068dcc8mr2173115iov.2.1701354228365;
-        Thu, 30 Nov 2023 06:23:48 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id n26-20020a02cc1a000000b00463fb834b8csm308647jap.151.2023.11.30.06.23.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Nov 2023 06:23:47 -0800 (PST)
-Message-ID: <c8ee9ca8-cd2b-445f-bda9-21529abe1c11@kernel.dk>
-Date: Thu, 30 Nov 2023 07:23:47 -0700
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090EE19F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 06:25:46 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 83F9B1FCEE;
+	Thu, 30 Nov 2023 14:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1701354344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/PgcoP0LDtbM572w05qOKvKaad05A1aFH8Svgqws/VE=;
+	b=EcxO0yOLyEdsmR6L/W8yqNevNLoL6ApoUZekyoJDgfflpqE8Uwl4/TFoTpVdlMgLgLBEn1
+	U5VYrcOQJGRF6JjnA2lyOuVGSIY9Np6CvMNo2xLQ/XKZ3/ZpoQ8us/LmM/0ZZs7d1JCQQ7
+	fsdAM5ZQKyqcCKYCn4mhUyZxmrhiEAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1701354344;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/PgcoP0LDtbM572w05qOKvKaad05A1aFH8Svgqws/VE=;
+	b=HFhoU+4qebyyCaZcVuR60bruXqYhnkkfF5Fy1RzdRxstZHN3h6vFXsyB6UkqIXtuPN5o8L
+	C1NSlhWoY010HMDA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7080513A5C;
+	Thu, 30 Nov 2023 14:25:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id ipYtG2ibaGW9bwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 30 Nov 2023 14:25:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BB6D0A07DB; Thu, 30 Nov 2023 15:25:39 +0100 (CET)
+Date: Thu, 30 Nov 2023 15:25:39 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fanotify: store fsid in mark instead of in connector
+Message-ID: <20231130142539.g4hhcsk4hk2oimdv@quack3>
+References: <20231118183018.2069899-1-amir73il@gmail.com>
+ <20231118183018.2069899-2-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/5] file: minor fixes
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Jan Kara <jack@suse.com>, Carlos Llamas <cmllamas@google.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231118183018.2069899-2-amir73il@gmail.com>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.01
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 RCPT_COUNT_THREE(0.00)[4];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-2.41)[97.27%]
 
-On 11/30/23 5:49 AM, Christian Brauner wrote:
-> * reduce number of helpers
-> * rename close_fd_get_file() helprs to reflect the fact that they don't
->   take a refcount
-> * rename rcu_head struct back to callback_head now that we only use it
->   for task work and not rcu anymore
+On Sat 18-11-23 20:30:17, Amir Goldstein wrote:
+> Some filesystems like fuse and nfs have zero or non-unique fsid.
+> We would like to avoid reporting ambiguous fsid in events, so we need
+> to avoid marking objects with same fsid and different sb.
+> 
+> To make this easier to enforce, store the fsid in the marks of the group
+> instead of in the shared conenctor.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Series looks good to me:
+Very nice! I like the result. Just a few nits below.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> +static inline __kernel_fsid_t *fanotify_mark_fsid(struct fsnotify_mark *mark)
+> +{
+> +	return &FANOTIFY_MARK(mark)->fsid;
+> +}
 
+I guess, there's no big win in using this helper compared to using
+FANOTIFY_MARK(mark)->fsid so I'd just drop this helper.
+
+> @@ -530,6 +528,7 @@ struct fsnotify_mark {
+>  #define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x0100
+>  #define FSNOTIFY_MARK_FLAG_NO_IREF		0x0200
+>  #define FSNOTIFY_MARK_FLAG_HAS_IGNORE_FLAGS	0x0400
+> +#define FSNOTIFY_MARK_FLAG_HAS_FSID		0x0800
+>  	unsigned int flags;		/* flags [mark->lock] */
+>  };
+
+So this flag is in fact private to fanotify notification framework. Either
+we could just drop this flag and use
+
+  FANOTIFY_MARK(mark)->fsid[0] != 0 || FANOTIFY_MARK(mark)->fsid[1] != 0
+
+instead or we could at least add a comment that this flags is in fact
+private to fanotify?
+
+								Honza
 -- 
-Jens Axboe
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
