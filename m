@@ -1,320 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-4521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2B1800046
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 01:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC9D800047
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 01:36:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C86A1C20866
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACCA1C20A85
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7BA18C03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAFE1C681
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cAYiTDaG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8FA7171E;
-	Thu, 30 Nov 2023 15:21:08 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4ShBZx2clnz9xFr4;
-	Fri,  1 Dec 2023 07:04:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 7D90B14068D;
-	Fri,  1 Dec 2023 07:21:00 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAXU3OdGGllXRuuAQ--.2350S6;
-	Fri, 01 Dec 2023 00:20:59 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	kolga@netapp.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	dhowells@redhat.com,
-	jarkko@kernel.org,
-	stephen.smalley.work@gmail.com,
-	eparis@parisplace.org,
-	casey@schaufler-ca.com,
-	mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v7 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
-Date: Fri,  1 Dec 2023 00:19:48 +0100
-Message-Id: <20231130231948.2545638-5-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231130231948.2545638-1-roberto.sassu@huaweicloud.com>
-References: <20231130231948.2545638-1-roberto.sassu@huaweicloud.com>
+Received: from sonic306-28.consmr.mail.ne1.yahoo.com (sonic306-28.consmr.mail.ne1.yahoo.com [66.163.189.90])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9806F10E2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 15:31:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701387069; bh=KKWxRGo/AX4QeEd47QnRsF18S9N8KhU2b2kKz79X0vI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cAYiTDaGs/kbdlVsXQ3ZuZVFA5TRYHo2+eObt78zh4Sa23pTNIXCb/lNwfjGhZBRE3yRDmtIX7ekIJPpwWEIOPPY/UaKk1sSPFJQ14e0f/0z4OETF936AMsR5Py5CsCkP9lgWuoBA1FD0m8YyDCXpN0IbgR0FVNGsaQDR/zLSCjHbJKZlWGblz+piMqqMGDGX7F75nObo2xfDYJCNWoeYETeUOkMOD0rPg6oJpthTviKibT5+69+TZGpCI6jeBo22c6QbrLjbFTSylFNzn2ZhJoOyRQxdd1kkqF6TofdTqCVgU01rkWlgc8FPnFmesSRu0SY4b7YHDNAFrOEK9zqNw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1701387069; bh=rlV0Ex3CXOdWAchqeNEt2KMDS+yjt068Dx8Y7mNlP0H=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=F0tqQYfSlXR4YHDbnzWKlMxzGKOqi/su9mCSbDwgEAtnFN8aZA551z+edpGH8RIBhrU9hiF7Pl+7ha3w/6gCwm8esgiP3WIckyBeEf1oSBnH5ooSU6fmVbjDA9HUzADBNMiJ06j7AWDYbP+my52iF0aqYypFewN7p0zfWSuBgh+u6RRyCa8vFxVz39iSP1iHPqDIoF90GVzDYOaDoiUSPATBIsSKlBfc06uuehmfN6TyJZ+vIv+aAAsYiLMkyDh624Pe+9+0VPYch2vdO28ufKxjetDg+cLvaumm8nt94e9uVs8ijabUjBbDvPf+nMkBXs6ztQwytL4MeJW+1SJO8g==
+X-YMail-OSG: RmbhXsgVM1lLhcaU1ne7mR6zpkzpbo7bxmuwrCU.Q2Jz597RECpRfmbO46DOQRX
+ U0xQ5xBsTHuxbwW_TtCdMT2eNLcqB.9MNEIycPBCvxEIMauu4wwWKuCNsriWG17YzxZZSU5mRqMT
+ nD2EjYEowKyCkwCd1Te9jq5klHYvLtxbd4bFcCFL2P1w8RMBLElSfcjca4Z8tSv0mGlkUiuzaWwG
+ RBl1UsJIZ5mMgUmfLV5UijO4mDS6IGYD9xt0Ka4LyErovbxYQNiSnLkPVFektkl4NsrfOmngA95N
+ kkBMRRM69yRal17E5bEl.GEetKRGjxFXrkeFBPBnvUB39vRXM1uJr9lofNBLfPsBFlSRztA01Tb1
+ 2.Ko5WaSMvaFu9MtaEtE8do0rdNJt710nw7v4t951twzPFAuFYKdfw3g6c3dDKSk32l.YGN7bxxE
+ iJ.JRQQCbY2fVGo1dbzVUND6NRrYIQQx_mvHV_T77J0EKmoB5PjOdBf8h3yto2zOuIw_4K1oqMnB
+ lpX7Mviw3TRipQFQS.QYCDE0eCrAnoXTzzpMDP9ypX_zjfS1v60CersA1yjK9TZayQa1yj27zYCe
+ MqYpm4V95Z_gsdrtiyAUPvbihlhUN_RJxGrK_Gf7hMtPu3r94bBvxh7bkXd_8nCtKEtlSLmD47FF
+ rL47IUcSP1slx3.T45INLMwoMSBAiBt8hZjKCp7v.tuhuOFWTq83ZX3Bgm4YIJx5fzbP2zmEoE0V
+ n1LFMQTdBQksBp0SXQqDx5iGuZbQ4LT9sghGEct1VVnED8JCl2Q3eoXI.pGSoorwhte1qgKTgB_Y
+ xuaouXmoDT.pBkhmN9HyNa6U0Sm69lEVSV7MWzTkWql9x5iU_JFiGZ6p1NBE6s_iQp.lA6QAwhzv
+ l7pBzDvxyID3ETrwqjWvJ9.N6uLcX5usJoNfYoNZdWLEaczXKlQpCi2qL7sH9JJ8dD4sshLILMF4
+ QMrLaD3CLaY1swMQoVUdBU2lVc2D9.bsMFz2bGIVsj3Agb_IkaYkjxIEdPSVSDpBpGgTUUPw4NiI
+ Ao05t..Gn2zuzLJfUL009ZMhDF4WfKZKBYTRnYgcjk3mn4KMX8U7jd_9GUG88mGLAjM1mLgP5T0U
+ l3ThDS8_119wMrFkYqawFpQWOXjUZwEfgOQG5Kn1mbNoTj5nmKB3xYWfcd38qV7rG2wkR_lh9ycY
+ whKVcjiTWBN5oiWwxSoVp_kqeBKKpx4XHDzeg881QDlQu3me_cv1ca_fNGAB99dOfyaXmQTkbUWX
+ NJC8kNTy0LDvsElYl9Lmhrj5AjcN2Ri0YkP2q4xFd4y8a7fpzpgLjhHO0eS9BJiE6TdSiwpl3emt
+ m0A.hvUkcnwaYyGVzRQzDxOkSPpGHBeR.4DWH5YTHt_RDKH4BuKHZ7c9LTOiZaRcuZ.k4f.4tkEQ
+ Uiv_EUfa.VV4Hz7bjE09A.6Gv6o_jhTzwt81RjilE.3Ws3mQcEVTF3ukpaJ8mqn6mP.awZ8KDNNl
+ c4UZwqxoCu_QiO3p9xrMPy7QT6pgKk5NYYh2waRQ4m.kFmActr1jtPHLJqlOWJ.lozojt9n_iOTn
+ FO8xYwqitXkjIyaGYjkPmQz1y4CL4XcVfOZtYyg8zVYvt9_gz.2FVxfLyx_va6B2DA49sQn_93rK
+ rQZNJx9uSXy3CFcNCVYg1kjBy1w4QY5wUFHRZGYWsRb8tZS5L0TK1T2nESfRDavmjKYLisghlkj7
+ QNaBx6K.HzYUPfhwXbfw__R9b4WYTEanMfFbzlUq6ybAO3uyGIkBuLxX3wgyowoV81LjD6.NLO_8
+ Tr6qwmL2AbRU1yUYwz0NvLO7oRfcZKTbTyNhfFDcEa3Ita4cJaCOJHIHz.C.BtPZGz9py3l2F7px
+ qS9ntBjFItpwyIUQpTPVTOqAiUrPEPCu1vpDogaG10Ly6jwQgX8ORMLQrTjxa7GTdDUcLAIe4XKE
+ nW0i27YVQWZ_adsvQMLe9r.GPfyE4j1frSwX6yX6oeFmhTn9LlGIalDQxI_0o8bgkXsGa1EmQVA_
+ RiYxlCnPZCXI8CHTSqZnmZZV_VYrYTtWvVrbEwin5pQwPjFwuRO3LIu0gblUo89NKTFmd1lcO4Uq
+ E4myoOch9OkxyCzxMlGldOuEwJVh3bsESE2by.o8attKx1pqXAA2bgsWIe0PizFVqkhPGZgZzKmE
+ LHQofP7vj1d2bnbsYYOa_eTnTKkZ9riIwU1ZpMfp7Sfvq5ElUqDevvvjbb7D_ZCPKwCd1L0GRpnU
+ 7gjcZZv9chYJT1qs_._JbUfhRbjnWUQMCk.NIUdYOkvfvi1zd1H8_u5XZrnz_GC.vNA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 765f1964-0fb7-4d81-8316-507c573fc21a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 30 Nov 2023 23:31:09 +0000
+Received: by hermes--production-gq1-5cf8f76c44-fz47x (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 19b1fe304cad48eecfc9a1ec502551f6;
+          Thu, 30 Nov 2023 23:31:04 +0000 (UTC)
+Message-ID: <018438d4-44b9-4734-9c0c-8a65f9c605a4@schaufler-ca.com>
+Date: Thu, 30 Nov 2023 15:31:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Petr Tesarik <petrtesarik@huaweicloud.com>, Paul Moore <paul@paul-moore.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
+ jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
+ tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+ <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+ <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+ <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
+ <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
+ <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
+ <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
+ <366a6e5f-d43d-4266-8421-a8a05938a8fd@schaufler-ca.com>
+ <66ec6876-483a-4403-9baa-487ebad053f2@huaweicloud.com>
+ <a121c359-03c9-42b1-aa19-1e9e34f6a386@schaufler-ca.com>
+ <9297638a-8dab-42ba-8b60-82c03497c9cd@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <9297638a-8dab-42ba-8b60-82c03497c9cd@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAXU3OdGGllXRuuAQ--.2350S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxKryfJr43ZrW5Zw1rurW5Awb_yoW3WrWDpF
-	42gayUJwn8ZFWj9F4vyFy5Zr4fKFyvgFZ7Ww1Ykw1kAFyqvr1jqFs8AryUZF15GrW5t34I
-	qrs0kr4UZ3WDtrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20x
-	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
-	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIx
-	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI
-	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
-	80aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UdfHUUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBF1jj5MfaQABsC
+X-Mailer: WebService/1.1.21896 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 11/30/2023 1:34 PM, Roberto Sassu wrote:
+> On 11/30/2023 5:15 PM, Casey Schaufler wrote:
+>> On 11/30/2023 12:30 AM, Petr Tesarik wrote:
+>>> Hi all,
+>>>
+>>> On 11/30/2023 1:41 AM, Casey Schaufler wrote:
+>>>> ...
+>>>> It would be nice if the solution directly addresses the problem.
+>>>> EVM needs to be after the LSMs that use xattrs, not after all LSMs.
+>>>> I suggested LSM_ORDER_REALLY_LAST in part to identify the notion as
+>>>> unattractive.
+>>> Excuse me to chime in, but do we really need the ordering in code?
+>>
+>> tl;dr - Yes.
+>>
+>>>   FWIW
+>>> the linker guarantees that objects appear in the order they are seen
+>>> during the link (unless --sort-section overrides that default, but this
+>>> option is not used in the kernel). Since *.a archive files are used in
+>>> kbuild, I have also verified that their use does not break the
+>>> assumption; they are always created from scratch.
+>>>
+>>> In short, to enforce an ordering, you can simply list the corresponding
+>>> object files in that order in the Makefile. Of course, add a big fat
+>>> warning comment, so people understand the order is not arbitrary.
+>>
+>> Not everyone builds custom kernels.
+>
+> Sorry, I didn't understand your comment.
 
-Before the security field of kernel objects could be shared among LSMs with
-the LSM stacking feature, IMA and EVM had to rely on an alternative storage
-of inode metadata. The association between inode metadata and inode is
-maintained through an rbtree.
+Most people run a disto supplied kernel. If the LSM ordering were determined
+only at compile time you could never run a kernel that omitted an LSM.
 
-With the reservation mechanism offered by the LSM infrastructure, the
-rbtree is no longer necessary, as each LSM could reserve a space in the
-security blob for each inode.
+> Everyone builds the kernel, also Linux distros. What Petr was
+> suggesting was that it does not matter how you build the kernel, the
+> linker will place the LSMs in the order they appear in the Makefile.
+> And for this particular case, we have:
+>
+> obj-$(CONFIG_IMA)                       += ima/
+> obj-$(CONFIG_EVM)                       += evm/
+>
+> In the past, I also verified that swapping these two resulted in the
+> swapped order of LSMs. Petr confirmed that it would always happen.
 
-With the 'integrity' LSM removed, and with the 'ima' LSM taking its role,
-reserve space from the 'ima' LSM for a pointer to the integrity_iint_cache
-structure directly, rather than embedding the whole structure in the inode
-security blob, to minimize the changes and to avoid waste of memory.
+LSM execution order is not based on compilation order. It is specified
+by CONFIG_LSM, and may be modified by the LSM_ORDER value. I don't
+understand why the linker is even being brought into the discussion.
 
-If IMA is disabled, EVM faces the same problems as before making it an
-LSM, metadata verification fails for new files due to not setting the
-IMA_NEW_FILE flag in ima_post_path_mknod(), and evm_verifyxattr()
-returns INTEGRITY_UNKNOWN since IMA didn't call integrity_inode_get().
-
-The only difference caused to moving the integrity metadata management
-to the 'ima' LSM is the fact that EVM cannot take advantage of cached
-verification results, and has to do the verification again. However,
-this case should never happen, since the only public API available to
-all kernel components, evm_verifyxattr(), does not work if IMA is
-disabled.
-
-Introduce two primitives for getting and setting the pointer of
-integrity_iint_cache in the security blob, respectively
-integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
-the code more understandable, as they directly replace rbtree operations.
-
-Locking is not needed, as access to inode metadata is not shared, it is per
-inode.
-
-Keep the blob size and the new primitives definition at the common level in
-security/integrity rather than moving them in IMA itself, so that EVM can
-still call integrity_inode_get() and integrity_iint_find() while IMA is
-disabled. Just add an extra check in integrity_inode_get() to return NULL
-if that is the case.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/iint.c         | 70 ++++---------------------------
- security/integrity/ima/ima_main.c |  1 +
- security/integrity/integrity.h    | 20 ++++++++-
- 3 files changed, 29 insertions(+), 62 deletions(-)
-
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index c36054041b84..8fc9455dda11 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -14,56 +14,25 @@
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
--#include <linux/rbtree.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
- #include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
--static struct rb_root integrity_iint_tree = RB_ROOT;
--static DEFINE_RWLOCK(integrity_iint_lock);
- static struct kmem_cache *iint_cache __ro_after_init;
- 
- struct dentry *integrity_dir;
- 
--/*
-- * __integrity_iint_find - return the iint associated with an inode
-- */
--static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--	struct rb_node *n = integrity_iint_tree.rb_node;
--
--	while (n) {
--		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
--
--		if (inode < iint->inode)
--			n = n->rb_left;
--		else if (inode > iint->inode)
--			n = n->rb_right;
--		else
--			return iint;
--	}
--
--	return NULL;
--}
--
- /*
-  * integrity_iint_find - return the iint associated with an inode
-  */
- struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
- {
--	struct integrity_iint_cache *iint;
--
- 	if (!IS_IMA(inode))
- 		return NULL;
- 
--	read_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	read_unlock(&integrity_iint_lock);
--
--	return iint;
-+	return integrity_inode_get_iint(inode);
- }
- 
- #define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
-@@ -123,9 +92,7 @@ static void iint_free(struct integrity_iint_cache *iint)
-  */
- struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- {
--	struct rb_node **p;
--	struct rb_node *node, *parent = NULL;
--	struct integrity_iint_cache *iint, *test_iint;
-+	struct integrity_iint_cache *iint;
- 
- 	/*
- 	 * After removing the 'integrity' LSM, the 'ima' LSM calls
-@@ -144,31 +111,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- 
- 	iint_init_always(iint, inode);
- 
--	write_lock(&integrity_iint_lock);
--
--	p = &integrity_iint_tree.rb_node;
--	while (*p) {
--		parent = *p;
--		test_iint = rb_entry(parent, struct integrity_iint_cache,
--				     rb_node);
--		if (inode < test_iint->inode) {
--			p = &(*p)->rb_left;
--		} else if (inode > test_iint->inode) {
--			p = &(*p)->rb_right;
--		} else {
--			write_unlock(&integrity_iint_lock);
--			kmem_cache_free(iint_cache, iint);
--			return test_iint;
--		}
--	}
--
- 	iint->inode = inode;
--	node = &iint->rb_node;
- 	inode->i_flags |= S_IMA;
--	rb_link_node(node, parent, p);
--	rb_insert_color(node, &integrity_iint_tree);
-+	integrity_inode_set_iint(inode, iint);
- 
--	write_unlock(&integrity_iint_lock);
- 	return iint;
- }
- 
-@@ -185,10 +131,8 @@ void integrity_inode_free(struct inode *inode)
- 	if (!IS_IMA(inode))
- 		return;
- 
--	write_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
--	write_unlock(&integrity_iint_lock);
-+	iint = integrity_iint_find(inode);
-+	integrity_inode_set_iint(inode, NULL);
- 
- 	iint_free(iint);
- }
-@@ -212,6 +156,10 @@ int __init integrity_iintcache_init(void)
- 	return 0;
- }
- 
-+struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
-+	.lbs_inode = sizeof(struct integrity_iint_cache *),
-+};
-+
- /*
-  * integrity_kernel_read - read data from the file
-  *
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 3f59cce3fa02..52b4a3bba45a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1162,6 +1162,7 @@ DEFINE_LSM(ima) = {
- 	.name = "ima",
- 	.init = init_ima_lsm,
- 	.order = LSM_ORDER_LAST,
-+	.blobs = &integrity_blob_sizes,
- };
- 
- late_initcall(init_ima);	/* Start IMA after the TPM is available */
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 26d3b08dca1c..2fb35c67d64d 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -158,7 +158,6 @@ struct ima_file_id {
- 
- /* integrity data associated with an inode */
- struct integrity_iint_cache {
--	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
- 	struct mutex mutex;	/* protects: version, flags, digest */
- 	struct inode *inode;	/* back pointer to inode in question */
- 	u64 version;		/* track inode changes */
-@@ -194,6 +193,25 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- #define INTEGRITY_KEYRING_MAX		4
- 
- extern struct dentry *integrity_dir;
-+extern struct lsm_blob_sizes integrity_blob_sizes;
-+
-+static inline struct integrity_iint_cache *
-+integrity_inode_get_iint(const struct inode *inode)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	return *iint_sec;
-+}
-+
-+static inline void integrity_inode_set_iint(const struct inode *inode,
-+					    struct integrity_iint_cache *iint)
-+{
-+	struct integrity_iint_cache **iint_sec;
-+
-+	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
-+	*iint_sec = iint;
-+}
- 
- struct modsig;
- 
--- 
-2.34.1
-
+>
+> Thanks
+>
+> Roberto
 
