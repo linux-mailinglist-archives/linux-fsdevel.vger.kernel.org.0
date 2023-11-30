@@ -1,106 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-4429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EAF7FF668
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:41:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8B27FF669
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE548B20B8C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDD71C20B03
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CED55772
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B1E55762
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GviJu+aq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1xfiPH0v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE08495FD;
-	Thu, 30 Nov 2023 15:51:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30322C433C7;
-	Thu, 30 Nov 2023 15:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701359506;
-	bh=8E9/vTx9o6GaP1uXrlutaPjQ7icCEGqhFquEYUs3ewY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GviJu+aqYlfOyzM8qE1UeR+XYNLAMlutaEqCSJqhigGB/R3bWtl4Otr6eQJQAkwNz
-	 b4Jr4nVUOArCI8D2ylbTK/Dz9jPBOBkI0gnCCTC+hoO0M7wuQ0BPRzfHu1GmADZGCC
-	 NiNJf6vyh24WP4F9o7aUiro2Rjlg/9TzqdEVYLroHPZpzO7jivFhggAhTZgbm7i7v+
-	 eiDYPlg5aFsX/UNg/lmYUSJPtIav5kO7H+sBREN8mPstH4yCGcpn7Knq8fC6cDu5VJ
-	 9T50hg0ek+U3Icz3Z8SW0WtO8KlDKnCiMPTaT/Iy/RSXBImpdTJI5w5BetDd+fXvv0
-	 clZ4jkOVhiEHQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1r8jKJ-000Hdh-HL;
-	Thu, 30 Nov 2023 15:51:43 +0000
-Date: Thu, 30 Nov 2023 15:51:43 +0000
-Message-ID: <86zfyvb5o0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	will@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 06/25] KVM: arm64: Save/restore POE registers
-In-Reply-To: <20231124163510.1835740-7-joey.gouly@arm.com>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
-	<20231124163510.1835740-7-joey.gouly@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8FC524A9;
+	Thu, 30 Nov 2023 15:56:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66DDC433C7;
+	Thu, 30 Nov 2023 15:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1701359777;
+	bh=Atqz2R8S5CFNofHmkfbPck2yrnj1PJGSJBWuitp3Lps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1xfiPH0vRvQNxh0H18ebsiz+QfXIO8h49qtn0BttXKyyJSgU0KjgGqV7EineszNcM
+	 YfXWi3JxZnBYtdyoZLPf+lHo4BaXOhVIFSsRS6ZLrN4JIawZIMxnELgiDZvOoDIXKG
+	 IS9mpPQxycqq6pikqdDmy03gNorSUfMJRnf9Zav0=
+Date: Thu, 30 Nov 2023 15:56:14 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
+Message-ID: <2023113010-situated-brunch-d52d@gregkh>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-alice-file-v1-1-f81afe8c7261@google.com>
+ <ksVe7fwt0AVWlCOtxIOb-g34okhYeBQUiXvpWLvqfxcyWXXuUuwWEIhUHigcAXJDFRCDr8drPYD1O1VTrDhaeZQ5mVxjCJqT32-2gHozHIo=@proton.me>
+ <2023113041-bring-vagrancy-a417@gregkh>
+ <2gTL0hxPpSCcVa7uvDLOLcjqd_sgtacZ_6XWaEANBH9Gnz72M1JDmjcWNO9Z7UbIeWNoNqx8y-lb3MAq75pEXL6EQEIED0XLxuHvqaQ9K-g=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com, broonie@kernel.org, catalin.marinas@arm.com, dave.hansen@linux.intel.com, oliver.upton@linux.dev, shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2gTL0hxPpSCcVa7uvDLOLcjqd_sgtacZ_6XWaEANBH9Gnz72M1JDmjcWNO9Z7UbIeWNoNqx8y-lb3MAq75pEXL6EQEIED0XLxuHvqaQ9K-g=@proton.me>
 
-On Fri, 24 Nov 2023 16:34:51 +0000,
-Joey Gouly <joey.gouly@arm.com> wrote:
+On Thu, Nov 30, 2023 at 03:46:55PM +0000, Benno Lossin wrote:
+> On 11/30/23 15:59, Greg Kroah-Hartman wrote:
+> > On Thu, Nov 30, 2023 at 02:53:35PM +0000, Benno Lossin wrote:
+> >> On 11/29/23 13:51, Alice Ryhl wrote:
+> >>> +/// Flags associated with a [`File`].
+> >>> +pub mod flags {
+> >>> +    /// File is opened in append mode.
+> >>> +    pub const O_APPEND: u32 = bindings::O_APPEND;
+> >>
+> >> Why do all of these constants begin with `O_`?
+> > 
+> > Because that is how they are defined in the kernel in the C code.  Why
+> > would they not be the same here?
 > 
-> Define the new system registers that POE introduces and context switch them.
+> Then why does the C side name them that way? Is it because `O_*` is
+> supposed to mean something, or is it done due to namespacing?
 
-Thinking about it some more, I don't think this is enough.
+Because this is a unix-like system, we all "know" what they mean. :)
 
-One fundamental thing that POE changes is that read permissions can
-now be removed from S1 by the guest. Which means that if we take a
-(for example) a permission fault at S2 and perform (as we do today) a
-"AT S1E1R" to obtain the faulting IPA, we can end-up with a failing
-translation because POE, under control of the guest, has removed the
-read permission.
+See 'man 2 open' for details.
 
-Which is why FEAT_ATS1A exists, and ignores permission overlays so
-that we can get to the IPA.
+> In Rust we have namespacing, so we generally drop common prefixes.
 
-I think this means we need to teach __translate_far_to_hpfar() about
-AT S1E1A
+Fine, but we know what this namespace is, please don't override it to be
+something else.
 
-Thanks,
+thanks,
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+greg k-h
 
