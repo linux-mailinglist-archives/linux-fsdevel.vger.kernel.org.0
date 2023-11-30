@@ -1,53 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-4424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDDB7FF65A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:40:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E917FF65D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 17:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA031C20A3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D57B20E86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE4454FB1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B98B54667
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 16:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuppY99F"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Fq856kW6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31920524AD;
-	Thu, 30 Nov 2023 15:38:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A9FC433C7;
-	Thu, 30 Nov 2023 15:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701358685;
-	bh=TYH67YY/vrV7LCaHvewMgY+OV3nAVb1Ax/9cHSFKzoI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nuppY99F8p1LDyn+nSkuEYzAS+YVKpAhQxNpDdUjTgsoDe6BTntotyOg8I0NpXbs3
-	 7K6zIDKIBLTZk/DbWA81w1Q9qoEd+l6w2kKNfOouBPx3d10zvSbhzAEMp/U+O6EdHe
-	 nkj3cz7G23WGV6UPExAS+M+5hWgqO7RFReEWtVUJ4Nd4Kl12d4nolLDeG+QYZT9CYR
-	 hntPSnx+3+diLqCdBPHx0dFk+OSND3/PXkkPsbOEikaGZ2U1HjXTyE3NfPjUdfa+MY
-	 8mF1juW8ISvVagOeSxOsh+fZCPLKlCOQodVkZyd0pC6AxQ/BVTR6ruDUf3JZ51rfYX
-	 uslOgzqOWGqYg==
-Date: Thu, 30 Nov 2023 09:38:03 -0600
-From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
-	Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-	James Morris <jmorris@namei.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH 09/16] fs: add vfs_set_fscaps()
-Message-ID: <ZWisW4g7RgTe958F@do-x1extreme>
-References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
- <20231129-idmap-fscap-refactor-v1-9-da5a26058a5b@kernel.org>
- <CAOQ4uxjhFKmHSUKiFOraDZojD0qGC=ChJJwtfrncuvTYi9NTKw@mail.gmail.com>
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29AF110EF
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 07:47:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1701359229; x=1701618429;
+	bh=cEvdKECLsg9a2eLWYuxUSspqEsF3BY9+NgXdkgl9pLA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Fq856kW64t+MOtZ9Ri2JEdAgatjjoQSLmYDevIA3Kcr7RHttrKN4KbdCnbI9PusHJ
+	 rwtQHx187GizzkFthkPho86Be0FHErw0oRWfivHdt55oypqmOy3Vv/BhzEiUIyMqD+
+	 aUy7/X5YKAMNwD3j+31Gl4UZSSr3m1IU8J2JQaeGcAE0P7bWJ57bXlm/V/cofOl7F5
+	 O2nhxEx9Q38GQaDffOZbXGoeNZhnIpSkz31NsFCMhC4faMKuUAgKBQFGYfzMWK/wMb
+	 VUkmLOkkeW7ebZcomEoR8Ho6MNXhze1jkG+Z4tl6lssBaugVSYQTdAV/Z2ptY8jy7k
+	 IpPHjB3xADRAA==
+Date: Thu, 30 Nov 2023 15:46:55 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
+Message-ID: <2gTL0hxPpSCcVa7uvDLOLcjqd_sgtacZ_6XWaEANBH9Gnz72M1JDmjcWNO9Z7UbIeWNoNqx8y-lb3MAq75pEXL6EQEIED0XLxuHvqaQ9K-g=@proton.me>
+In-Reply-To: <2023113041-bring-vagrancy-a417@gregkh>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com> <20231129-alice-file-v1-1-f81afe8c7261@google.com> <ksVe7fwt0AVWlCOtxIOb-g34okhYeBQUiXvpWLvqfxcyWXXuUuwWEIhUHigcAXJDFRCDr8drPYD1O1VTrDhaeZQ5mVxjCJqT32-2gHozHIo=@proton.me> <2023113041-bring-vagrancy-a417@gregkh>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,105 +46,27 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjhFKmHSUKiFOraDZojD0qGC=ChJJwtfrncuvTYi9NTKw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 30, 2023 at 10:01:55AM +0200, Amir Goldstein wrote:
-> On Wed, Nov 29, 2023 at 11:50 PM Seth Forshee (DigitalOcean)
-> <sforshee@kernel.org> wrote:
-> >
-> > Provide a type-safe interface for setting filesystem capabilities and a
-> > generic implementation suitable for most filesystems.
-> >
-> > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > ---
-> >  fs/xattr.c         | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/fs.h |  2 ++
-> >  2 files changed, 89 insertions(+)
-> >
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 3abaf9bef0a5..03cc824e4f87 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -247,6 +247,93 @@ int vfs_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-> >  }
-> >  EXPORT_SYMBOL(vfs_get_fscaps);
-> >
-> > +static int generic_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +                             const struct vfs_caps *caps, int flags)
-> > +{
-> > +       struct inode *inode = d_inode(dentry);
-> > +       struct vfs_ns_cap_data nscaps;
-> > +       int size;
-> > +
-> > +       size = vfs_caps_to_xattr(idmap, i_user_ns(inode), caps,
-> > +                                &nscaps, sizeof(nscaps));
-> > +       if (size < 0)
-> > +               return size;
-> > +
-> > +       return __vfs_setxattr_noperm(idmap, dentry, XATTR_NAME_CAPS,
-> > +                                    &nscaps, size, flags);
-> > +}
-> > +
-> > +/**
-> > + * vfs_set_fscaps - set filesystem capabilities
-> > + * @idmap: idmap of the mount the inode was found from
-> > + * @dentry: the dentry on which to set filesystem capabilities
-> > + * @caps: the filesystem capabilities to be written
-> > + * @flags: setxattr flags to use when writing the capabilities xattr
-> > + *
-> > + * This function writes the supplied filesystem capabilities to the dentry.
-> > + *
-> > + * Return: 0 on success, a negative errno on error.
-> > + */
-> > +int vfs_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-> > +                  const struct vfs_caps *caps, int flags)
-> > +{
-> > +       struct inode *inode = d_inode(dentry);
-> > +       struct inode *delegated_inode = NULL;
-> > +       struct vfs_ns_cap_data nscaps;
-> > +       int size, error;
-> > +
-> > +       /*
-> > +        * Unfortunately EVM wants to have the raw xattr value to compare to
-> > +        * the on-disk version, so we need to pass the raw xattr to the
-> > +        * security hooks. But we also want to do security checks before
-> > +        * breaking leases, so that means a conversion to the raw xattr here
-> > +        * which will usually be reduntant with the conversion we do for
-> > +        * writing the xattr to disk.
-> > +        */
-> > +       size = vfs_caps_to_xattr(idmap, i_user_ns(inode), caps, &nscaps,
-> > +                                sizeof(nscaps));
-> > +       if (size < 0)
-> > +               return size;
-> > +
-> > +retry_deleg:
-> > +       inode_lock(inode);
-> > +
-> > +       error = xattr_permission(idmap, inode, XATTR_NAME_CAPS, MAY_WRITE);
-> > +       if (error)
-> > +               goto out_inode_unlock;
-> > +       error = security_inode_setxattr(idmap, dentry, XATTR_NAME_CAPS, &nscaps,
-> > +                                       size, flags);
-> > +       if (error)
-> > +               goto out_inode_unlock;
-> > +
-> > +       error = try_break_deleg(inode, &delegated_inode);
-> > +       if (error)
-> > +               goto out_inode_unlock;
-> > +
-> > +       if (inode->i_opflags & IOP_XATTR) {
-> > +               if (inode->i_op->set_fscaps)
-> > +                       error = inode->i_op->set_fscaps(idmap, dentry, caps, flags);
-> > +               else
-> > +                       error = generic_set_fscaps(idmap, dentry, caps, flags);
-> 
-> I think the non-generic case is missing fsnotify_xattr().
-> 
-> See vfs_set_acl() for comparison.
+On 11/30/23 15:59, Greg Kroah-Hartman wrote:
+> On Thu, Nov 30, 2023 at 02:53:35PM +0000, Benno Lossin wrote:
+>> On 11/29/23 13:51, Alice Ryhl wrote:
+>>> +/// Flags associated with a [`File`].
+>>> +pub mod flags {
+>>> +    /// File is opened in append mode.
+>>> +    pub const O_APPEND: u32 =3D bindings::O_APPEND;
+>>
+>> Why do all of these constants begin with `O_`?
+>=20
+> Because that is how they are defined in the kernel in the C code.  Why
+> would they not be the same here?
 
-Good catch. I'm going to have another look at some of this in light of
-some of your other feedback, but I'll get it fixed one way or another in
-v2.
+Then why does the C side name them that way? Is it because `O_*` is
+supposed to mean something, or is it done due to namespacing?
+
+In Rust we have namespacing, so we generally drop common prefixes.
+
+--=20
+Cheers,
+Benno
 
