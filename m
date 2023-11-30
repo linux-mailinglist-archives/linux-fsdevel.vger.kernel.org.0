@@ -1,122 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-4478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2902A7FF9EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 19:47:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5A67FF9EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 19:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2AEFB20E0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:47:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47366B20E0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2795A0E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1795A0F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Nov 2023 18:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adaktQGm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbsshsmG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E4E310E6;
-	Thu, 30 Nov 2023 10:17:25 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-a195e0145acso45840766b.2;
-        Thu, 30 Nov 2023 10:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701368244; x=1701973044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AUIjlhGrTCTJrqHaZjfICGnj00MmGrI2My3h00EAwwQ=;
-        b=adaktQGmuhlUpATa8rAJ+K4ZSg4dGwSw4clQSopSJkgjIh4gmCKXzder1UhZmAGzrF
-         TEmPoz7Df66nqpVN5OatU5oQrK3SaHmap9EBQtBhL0enCw59gRscMwQGYH219vcBGp9k
-         hfh98m3/yNhx/G/aL4ttGJdt4l0S5jvd2pFzAYXsMjM0r1rdrNQ72wgwgOMsyU7yf5FJ
-         zYTI8Brm7LkEwlGxsqeUHIcw1a2IHyIP4xtYx/L1qzNO5kOw8soe5dzezVg9M4vGVVRh
-         Czpzdr47HpWxFGc4Es1llwj9Aaut0XZYGBQzmm3i6qOoS1wLJhw/GOT5l31WoCEXN9cC
-         Q/7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701368244; x=1701973044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AUIjlhGrTCTJrqHaZjfICGnj00MmGrI2My3h00EAwwQ=;
-        b=o7PuOlXV8Zp2UrDZfFqMbcGFDLr0ETCQSATzl6S3jmDzMG15iRE4H5yhV0fs9kJklG
-         FWwV0H5S/bpltqOoLTrQqLh7BbhvllZEAS4g9j9zK+dMP6tnfvWZhTWAE1bLts7UYbGQ
-         YjZVCTZ+g7gk5FQvWZfLixghenDzgp9NeRvgw+3Jb3muaB9T/Xd5rQhciBpU5zXCT4Mz
-         y9XebXC1CgCgQgKt1/+J9YhG/MVB2/Zw2HOHCqwlGraEIH3rk73sxl0QxfX345SH710X
-         Zhjl+4QMwqOMCXKM+m3v1dbp0Hl/KPxxSg7HT1V4bdUk5v/NNT8fX6YGkCzUCWHDIb8/
-         eZyg==
-X-Gm-Message-State: AOJu0YzoQ+4+GHMsUkThRDgKjAjvPC0vjc7r65o9DwTZS1tkWiWPwn5f
-	hEMEZoDGSqVFOJEy34voDOMC3hVKoHwH5kEYvCHAz0WC
-X-Google-Smtp-Source: AGHT+IFJZP+RKDKBSfiySbRt/YdnMzp5WC7WmUAF0E2nLx9EsIl6Q+l26jvjkX8V9USQK5qdRhwPBjcrILuMmKFsag8=
-X-Received: by 2002:a17:906:590a:b0:a19:a19b:4274 with SMTP id
- h10-20020a170906590a00b00a19a19b4274mr7871ejq.223.1701368034201; Thu, 30 Nov
- 2023 10:13:54 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45815A0E9;
+	Thu, 30 Nov 2023 18:33:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823CDC433C7;
+	Thu, 30 Nov 2023 18:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701369237;
+	bh=7ELPf3nERtF6awPsUVC8nyPoyDtWE9Mg6PIh+5YhoxQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=sbsshsmGBZ3JH5/bnJliBLXUDfLtaO/tbunF1KXjgqx/cGjb5nSoxqypj73uLG3ez
+	 sqnPrd7E0FIRyL4IiJgXlbCxcDgFE1jYifNCu+tShKYtvXStzz+/dd0eBuR2A2W4uG
+	 qByA+u7EV3pZXLc4Gfy8c5BWu891qTyN/G/pQtbNxebcHm+sr5s5KHpHQ65wFnIZLs
+	 OpMh22AQEAPD6cHns3ZzxsXDjI/CQjQ9zudUkcxQEvF1SrdpogFpPRV4yjC8tBhjg9
+	 BPRYhfA+RdE0OOWmsg7wfRzACfHzO5UslNqAF3EOkIQT3MCNjNpCCrUUpsYjGUlo78
+	 6ZDuzRjOsRgPg==
+Message-ID: <c1ed879359246bc69c029399b75a6892c9298f67.camel@kernel.org>
+Subject: Re: [PATCH/RFC] core/nfsd: allow kernel threads to use task_work.
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: NeilBrown <neilb@suse.de>, Christian Brauner <brauner@kernel.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Date: Thu, 30 Nov 2023 13:33:55 -0500
+In-Reply-To: <ZWjPfZ9tuFXJP6us@tissot.1015granger.net>
+References: <170112272125.7109.6245462722883333440@noble.neil.brown.name>
+	 <ZWUfNyO6OG/+aFuo@tissot.1015granger.net>
+	 <170113056683.7109.13851405274459689039@noble.neil.brown.name>
+	 <20231128-blumig-anreichern-b9d8d1dc49b3@brauner>
+	 <170121362397.7109.17858114692838122621@noble.neil.brown.name>
+	 <ZWdE/7bNvxcsY3ae@tissot.1015granger.net>
+	 <2fd83daa77c6cf0825fd8ebc33f5dd2c5370bc5a.camel@kernel.org>
+	 <ZWjPfZ9tuFXJP6us@tissot.1015granger.net>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
+	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
+	3bri75n1TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y+jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5dHxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBMBAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4hN9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPepnaQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQRERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8EewP8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0XzhaKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyA
+	nLqRgDgR+wTQT6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7hdMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjruymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItuAXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfDFOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbosZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDvqrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51asjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qGIcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbLUO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0
+	b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSUapy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5ddhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7eflPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7BAKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuac
+	BOTtmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65ke5Ag0ETpXRPAEQAJkVmzCmF+IEenf9a2nZRXMluJohnfl2wCMmw5qNzyk0f+mYuTwTCpw7BE2H0yXk4ZfAuA+xdj14K0A1Dj52j/fKRuDqoNAhQe0b6ipo85Sz98G+XnmQOMeFVp5G1Z7r/QP/nus3mXvtFsu9lLSjMA0cam2NLDt7vx3l9kUYlQBhyIE7/DkKg+3fdqRg7qJoMHNcODtQY+n3hMyaVpplJ/l0DdQDbRSZi5AzDM3DWZEShhuP6/E2LN4O3xWnZukEiz688d1ppl7vBZO9wBql6Ft9Og74diZrTN6lXGGjEWRvO55h6ijMsLCLNDRAVehPhZvSlPldtUuvhZLAjdWpwmzbRIwgoQcO51aWeKthpcpj8feDdKdlVjvJO9fgFD5kqZ
+	QiErRVPpB7VzA/pYV5Mdy7GMbPjmO0IpoL0tVZ8JvUzUZXB3ErS/dJflvboAAQeLpLCkQjqZiQ/DCmgJCrBJst9Xc7YsKKS379Tc3GU33HNSpaOxs2NwfzoesyjKU+P35czvXWTtj7KVVSj3SgzzFk+gLx8y2Nvt9iESdZ1Ustv8tipDsGcvIZ43MQwqU9YbLg8k4V9ch+Mo8SE+C0jyZYDCE2ZGf3OztvtSYMsTnF6/luzVyej1AFVYjKHORzNoTwdHUeC+9/07GO0bMYTPXYvJ/vxBFm3oniXyhgb5FtABEBAAGJAh8EGAECAAkFAk6V0TwCGwwACgkQAA5oQRlWghXhZRAAyycZ2DDyXh2bMYvI8uHgCbeXfL3QCvcw2XoZTH2l2umPiTzrCsDJhgwZfG9BDyOHaYhPasd5qgrUBtjjUiNKjVM+Cx1DnieR0dZWafnqGv682avPblfi70XXr2juRE/fSZoZkyZhm+nsLuIcXTnzY4D572JGrpRMTpNpGmitBdh1l/9O7Fb64uLOtA5Qj5jcHHOjL0DZpjmFWYKlSAHmURHrE8M0qRryQXvlhoQxlJR4nvQrjOPMsqWD5F9mcRyowOzr8amasLv43w92rD2nHoBK6rbFE/qC7AAjABEsZq8+TQmueN0maIXUQu7TBzejsEbV0i29z+kkrjU2NmK5pcxgAtehVxpZJ14LqmN6E0suTtzjNT1eMoqOPrMSx+6vOCIuvJ/MVYnQgHhjtPPnU86mebTY5Loy9YfJAC2EVpxtcCbx2KiwErTndEyWL+GL53LuScUD7tW8vYbGIp4RlnUgPLbqpgssq2gwYO9m75FGuKuB2+2bCGajqalid5nzeq9v7cYLLRgArJfOIBWZrHy2m0C+pFu9DSuV6SNr2dvMQUv1V58h0FaSOxHVQnJdnoHn13g/CKKvyg2EMrMt/EfcXgvDwQbnG9we4xJiWOIOcsvrWcB6C6lWBDA+In7w7SXnnok
+	kZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.1 (3.50.1-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231127190409.2344550-1-andrii@kernel.org> <20231127190409.2344550-3-andrii@kernel.org>
- <20231130163655.GC32077@kernel.org> <CAEf4BzZ0JWFrS_DLk_YOGNqyh39kqFcCNbd_D6mCM6d0mzxO_Q@mail.gmail.com>
-In-Reply-To: <CAEf4BzZ0JWFrS_DLk_YOGNqyh39kqFcCNbd_D6mCM6d0mzxO_Q@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 30 Nov 2023 10:13:41 -0800
-Message-ID: <CAEf4BzbN2xovoTyQeK1sHZdB-YMeiC=U7oOmUcpcb5_ZHEcFgA@mail.gmail.com>
-Subject: Re: [PATCH v11 bpf-next 02/17] bpf: add BPF token delegation mount
- options to BPF FS
-To: Simon Horman <horms@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 30, 2023 at 10:03=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Nov 30, 2023 at 8:37=E2=80=AFAM Simon Horman <horms@kernel.org> w=
-rote:
-> >
-> > On Mon, Nov 27, 2023 at 11:03:54AM -0800, Andrii Nakryiko wrote:
-> >
-> > ...
-> >
-> > > @@ -764,7 +817,10 @@ static int bpf_get_tree(struct fs_context *fc)
-> > >
-> > >  static void bpf_free_fc(struct fs_context *fc)
-> > >  {
-> > > -     kfree(fc->fs_private);
-> > > +     struct bpf_mount_opts *opts =3D fc->s_fs_info;
-> > > +
-> > > +     if (opts)
-> > > +             kfree(opts);
-> > >  }
-> >
-> > Hi Andrii,
-> >
-> > as it looks like there will be a v12, I have a minor nit to report: The=
-re
-> > is no need to check if opts is non-NULL because kfree() is basically a
-> > no-op if it's argument is NULL.
-> >
-> > So perhaps this can become (completely untested!):
-> >
-> > static void bpf_free_fc(struct fs_context *fc)
-> > {
-> >         kfree(fc->s_fs_info);
-> > }
-> >
->
-> sure, I can drop the check, I wasn't sure if it's canonical or not to
-> check the argument for NULL before calling kfree(). For user-space
-> it's definitely quite expected to not have to check for null before
-> calling free().
+On Thu, 2023-11-30 at 13:07 -0500, Chuck Lever wrote:
+> On Thu, Nov 30, 2023 at 12:47:58PM -0500, Jeff Layton wrote:
+> > On Wed, 2023-11-29 at 09:04 -0500, Chuck Lever wrote:
+> > > On Wed, Nov 29, 2023 at 10:20:23AM +1100, NeilBrown wrote:
+> > > > On Wed, 29 Nov 2023, Christian Brauner wrote:
+> > > > > [Reusing the trimmed Cc]
+> > > > >=20
+> > > > > On Tue, Nov 28, 2023 at 11:16:06AM +1100, NeilBrown wrote:
+> > > > > > On Tue, 28 Nov 2023, Chuck Lever wrote:
+> > > > > > > On Tue, Nov 28, 2023 at 09:05:21AM +1100, NeilBrown wrote:
+> > > > > > > >=20
+> > > > > > > > I have evidence from a customer site of 256 nfsd threads ad=
+ding files to
+> > > > > > > > delayed_fput_lists nearly twice as fast they are retired by=
+ a single
+> > > > > > > > work-queue thread running delayed_fput().  As you might ima=
+gine this
+> > > > > > > > does not end well (20 million files in the queue at the tim=
+e a snapshot
+> > > > > > > > was taken for analysis).
+> > > > > > > >=20
+> > > > > > > > While this might point to a problem with the filesystem not=
+ handling the
+> > > > > > > > final close efficiently, such problems should only hurt thr=
+oughput, not
+> > > > > > > > lead to memory exhaustion.
+> > > > > > >=20
+> > > > > > > I have this patch queued for v6.8:
+> > > > > > >=20
+> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git=
+/commit/?h=3Dnfsd-next&id=3Dc42661ffa58acfeaf73b932dec1e6f04ce8a98c0
+> > > > > > >=20
+> > > > > >=20
+> > > > > > Thanks....
+> > > > > > I think that change is good, but I don't think it addresses the=
+ problem
+> > > > > > mentioned in the description, and it is not directly relevant t=
+o the
+> > > > > > problem I saw ... though it is complicated.
+> > > > > >=20
+> > > > > > The problem "workqueue ...  hogged cpu..." probably means that
+> > > > > > nfsd_file_dispose_list() needs a cond_resched() call in the loo=
+p.
+> > > > > > That will stop it from hogging the CPU whether it is tied to on=
+e CPU or
+> > > > > > free to roam.
+> > > > > >=20
+> > > > > > Also that work is calling filp_close() which primarily calls
+> > > > > > filp_flush().
+> > > > > > It also calls fput() but that does minimal work.  If there is m=
+uch work
+> > > > > > to do then that is offloaded to another work-item.  *That* is t=
+he
+> > > > > > workitem that I had problems with.
+> > > > > >=20
+> > > > > > The problem I saw was with an older kernel which didn't have th=
+e nfsd
+> > > > > > file cache and so probably is calling filp_close more often.  S=
+o maybe
+> > > > > > my patch isn't so important now.  Particularly as nfsd now isn'=
+t closing
+> > > > > > most files in-task but instead offloads that to another task.  =
+So the
+> > > > > > final fput will not be handled by the nfsd task either.
+> > > > > >=20
+> > > > > > But I think there is room for improvement.  Gathering lots of f=
+iles
+> > > > > > together into a list and closing them sequentially is not going=
+ to be as
+> > > > > > efficient as closing them in parallel.
+> > > > > >=20
+> > > > > > >=20
+> > > > > > > > For normal threads, the thread that closes the file also ca=
+lls the
+> > > > > > > > final fput so there is natural rate limiting preventing exc=
+essive growth
+> > > > > > > > in the list of delayed fputs.  For kernel threads, and part=
+icularly for
+> > > > > > > > nfsd, delayed in the final fput do not impose any throttlin=
+g to prevent
+> > > > > > > > the thread from closing more files.
+> > > > > > >=20
+> > > > > > > I don't think we want to block nfsd threads waiting for files=
+ to
+> > > > > > > close. Won't that be a potential denial of service?
+> > > > > >=20
+> > > > > > Not as much as the denial of service caused by memory exhaustio=
+n due to
+> > > > > > an indefinitely growing list of files waiting to be closed by a=
+ single
+> > > > > > thread of workqueue.
+> > > > >=20
+> > > > > It seems less likely that you run into memory exhausting than a D=
+OS
+> > > > > because nfsd() is busy closing fds. Especially because you defaul=
+t to
+> > > > > single nfsd thread afaict.
+> > > >=20
+> > > > An nfsd thread would not end up being busy closing fds any more tha=
+n it
+> > > > can already be busy reading data or busy syncing out changes or bus=
+ying
+> > > > renaming a file.
+> > > > Which it is say: of course it can be busy doing this, but doing thi=
+s sort
+> > > > of thing is its whole purpose in life.
+> > > >=20
+> > > > If an nfsd thread only completes the close that it initiated the cl=
+ose
+> > > > on (which is what I am currently proposing) then there would be at =
+most
+> > > > one, or maybe 2, fds to close after handling each request.
+> > >=20
+> > > Closing files more aggressively would seem to entirely defeat the
+> > > purpose of the file cache, which is to avoid the overhead of opens
+> > > and closes on frequently-used files.
+> > >=20
+> > > And usually Linux prefers to let the workload consume as many free
+> > > resources as possible before it applies back pressure or cache
+> > > eviction.
+> > >=20
+> > > IMO the first step should be removing head-of-queue blocking from
+> > > the file cache's background closing mechanism. That might be enough
+> > > to avoid forming a backlog in most cases.
+> >=20
+> > That's not quite what task_work does. Neil's patch wouldn't result in
+> > closes happening more aggressively. It would just make it so that we
+> > don't queue the delayed part of the fput process to a workqueue like we
+> > do today.
+> >=20
+> > Instead, the nfsd threads would have to clean that part up themselves,
+> > like syscalls do before returning to userland. I think that idea makes
+> > sense overall since that mirrors what we already do in userland.
+> >=20
+> > In the event that all of the nfsd threads are tied up in slow task_work
+> > jobs...tough luck. That at least makes it more of a self-limiting
+> > problem since RPCs will start being queueing, rather than allowing dead
+> > files to just pile onto the list.
+>=20
+> Thanks for helping me understand the proposal. task_work would cause
+> nfsd threads to wait for flush/close operations that others have
+> already started; it would not increase the rate of closing cached
+> file descriptors.
+>=20
 
-Heh, turns out I already simplified this, but it's in the next patch.
-I'll move it into patch #2, though, where it actually belongs.
+Note that task_work is completely a per-task thing. Each nfsd thread now
+becomes responsible for cleaning up the files that were closed as part
+of processing the last RPC that it processed.
 
->
->
-> > ...
+Closes that occur during the processing of an RPC would be finished
+before the thread picks up a new RPC to process, but I don't see how the
+thread would be responsible for closes that happen in a different task
+altogether.
+
+
+> The thing that nfsd_filesystem_wq does is compartmentalize the
+> flush/close workload so that a heavy flush/close workload in one
+> net namespace does not negatively impact other namespaces. IIUC,
+> then, task_work does not discriminate between namespaces -- if one
+> namespace is creating a backlog of dirty files to close, all nfsd
+> threads would need to handle that backlog, and thus all namespaces
+> would bear (a part of) that backlog.
+>=20
+
+Closes that are queued to the nfsd_filesystem_wq won't be affected by=20
+this patch, since those files get closed in the context of a workqueue
+thread. In most cases, those are v2/3 files that have timed out.
+
+FWIW, I expect that this patch will mostly affect NFSv4, since those get
+closed more directly by nfsd. I wonder if we might want to consider
+doing something like this with lockd as well.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
