@@ -1,130 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-4541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DF58003F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 07:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 342628003F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 07:34:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59279B20EA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F86B20EB5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA216E575
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD3611700
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OwCL54H8"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ZQD9YICi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38AC5D40
-	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:36 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-50bc7706520so2438064e87.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:36 -0800 (PST)
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968FE1718;
+	Thu, 30 Nov 2023 22:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1701407734; x=1702012534; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5dinIoxlujtALpDGgIpx/RvOFCz/Yn1MlWegXqKVFc8=;
-        b=OwCL54H8IQjDDxlcrwD6PaGHrxYa0TAv4ewp+FMv5oZuPvQW7yvamSqrJf7h8UaxUr
-         jBAUhKVDP//ezYQDFoeV6JnXrz9BKQxAf642m7lZyuaazibV1rVVuZgD4Ye3rzu0dro5
-         u0tGPEySkGlA+MZ2Vvdi9FO1mo3KL/VB+msBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701407734; x=1702012534;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5dinIoxlujtALpDGgIpx/RvOFCz/Yn1MlWegXqKVFc8=;
-        b=iwikxmFAs/1t+kxtBpPOEN2b+/9lP5ONGZU9BXZtRyHezkvThbSJpfr77Fzqj6gdZ0
-         KOettOYd+shuhAXx6jMzO82uQqlE3IDI423PGW+ChhDEADd4U+4ommurtdqqxn3i4fQC
-         vqoqPBRGep+AU5AJ04RMZB7WWtZ18wrxLa1rx0TWUswKuZrNPOucenlQqUVZJAWEgH+s
-         VjJxDqILvkOJcGHYl/93fzFTr97GoyXr0ga7DRh7jsEEbOCfr7DjTFSWFfskuX+xGa2R
-         zEWZ0JalPSNWdY4amNWm5mF24w+cn+9UQ+kUL+W3yu4QZxtAmoh+5fGbtioLwXXITubV
-         aN9A==
-X-Gm-Message-State: AOJu0YzfK4H0wysbosFZYNxMEsD/Y4faRg4lqmpR9YvBNBcLvSVRT7hk
-	q96WwsWXK5YS0p5ledIfLcv6CkFJrVzgAeZSoCnWF4qT
-X-Google-Smtp-Source: AGHT+IHYdA7Ro2NMgLtl2yJOYLFR3dZ4GW5cQPYBKgMhhrx58M6jcCVAWFnf+lKRRZ0ApLZJbVldGQ==
-X-Received: by 2002:ac2:410d:0:b0:50b:c722:cff6 with SMTP id b13-20020ac2410d000000b0050bc722cff6mr349583lfi.19.1701407734116;
-        Thu, 30 Nov 2023 21:15:34 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id g18-20020ac24d92000000b0050aaa64cd0dsm327696lfe.13.2023.11.30.21.15.33
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Nov 2023 21:15:33 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50bd8efb765so477292e87.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:33 -0800 (PST)
-X-Received: by 2002:a05:6512:3b2:b0:50b:c88d:e861 with SMTP id
- v18-20020a05651203b200b0050bc88de861mr299687lfp.54.1701407733004; Thu, 30 Nov
- 2023 21:15:33 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1701411077; x=1732947077;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=imOUrKzRu91zDn/pGcYIGFr1s3jxwBoPXiydnadbZRo=;
+  b=ZQD9YICiL1RXbU7GXib5e9B+dg1PGg+0uIZ4+J1kR6aUBem2W+IO61TK
+   TilVLHs4W73DRqJKFtI6fNzILdzpd2J5YEXGk1OT1jhBQNgMa59V1C6Jj
+   TrnttqgjCW4FZE2ce4DHPbGgEpi80P6biiMO05WDqkS4Ke1Gygb49X7m5
+   E=;
+X-IronPort-AV: E=Sophos;i="6.04,241,1695686400"; 
+   d="scan'208";a="619218272"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-pdx-2b-m6i4x-32fb4f1a.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 06:11:16 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (pdx2-ws-svc-p26-lb5-vlan2.pdx.amazon.com [10.39.38.66])
+	by email-inbound-relay-pdx-2b-m6i4x-32fb4f1a.us-west-2.amazon.com (Postfix) with ESMTPS id A946AC1C42;
+	Fri,  1 Dec 2023 06:11:14 +0000 (UTC)
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:20288]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.133:2525] with esmtp (Farcaster)
+ id e3fac716-f7f9-4c80-b8e5-d8dc0bace6c5; Fri, 1 Dec 2023 06:11:14 +0000 (UTC)
+X-Farcaster-Flow-ID: e3fac716-f7f9-4c80-b8e5-d8dc0bace6c5
+Received: from EX19D010UWA004.ant.amazon.com (10.13.138.204) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 1 Dec 2023 06:11:14 +0000
+Received: from u0acfa43c8cad58.ant.amazon.com (10.187.170.26) by
+ EX19D010UWA004.ant.amazon.com (10.13.138.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 1 Dec 2023 06:11:13 +0000
+From: Munehisa Kamata <kamatam@amazon.com>
+To: <casey@schaufler-ca.com>
+CC: <akpm@linux-foundation.org>, <kamatam@amazon.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] proc: Update inode upon changing task security attribute
+Date: Thu, 30 Nov 2023 22:10:56 -0800
+Message-ID: <20231201061056.71730-1-kamatam@amazon.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <0cffc85b-c378-421f-baa1-fe52a193b2a1@schaufler-ca.com>
+References: <0cffc85b-c378-421f-baa1-fe52a193b2a1@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
- <20231101181910.GH1957730@ZenIV> <20231110042041.GL1957730@ZenIV>
- <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
- <ZV2rdE1XQWwJ7s75@gmail.com> <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
- <ZWN0ycxvzNzVXyNQ@gmail.com> <CAHk-=wiehwt_aYcmAyZXyM7LWbXsne6+JWqLkMtnv=4CJT1gwQ@mail.gmail.com>
- <ZWhdVpij9iCeMnog@gmail.com> <CAHk-=wgSsUKn0piCv_=7XZh6L07BNQHLH3CX1YUQ0G=MEpRSJA@mail.gmail.com>
- <ZWlUy1wElujRfDLA@gmail.com>
-In-Reply-To: <ZWlUy1wElujRfDLA@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 1 Dec 2023 14:15:15 +0900
-X-Gmail-Original-Message-ID: <CAHk-=wgfcR+XQXhivpgFCzkOEvcgnMKOrOAeqGGD7hfksmM3ow@mail.gmail.com>
-Message-ID: <CAHk-=wgfcR+XQXhivpgFCzkOEvcgnMKOrOAeqGGD7hfksmM3ow@mail.gmail.com>
-Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
- call of retain_dentry() into fast_dput())
-To: Guo Ren <guoren@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWA004.ant.amazon.com (10.13.139.16) To
+ EX19D010UWA004.ant.amazon.com (10.13.138.204)
 
-On Fri, 1 Dec 2023 at 12:36, Guo Ren <guoren@kernel.org> wrote:
+On Thu, 2023-11-30 16:31:11 -0800, Casey Schaufler wrote:
 >
-> I modify your code to guarantee the progress of the comparison failure
-> situation:
+> On 11/30/2023 12:35 PM, Munehisa Kamata wrote:
+> > On Thu, 2023-11-30 18:00:13 +0000, Casey Schaufler wrote:
+> >> On 11/29/2023 7:07 PM, Munehisa Kamata wrote:
+> >>> Hi Casey,
+> >>>
+> >>> On Wed, 2023-11-29 18:28:55 -0800, Casey Schaufler wrote:
+> >>>> On 11/29/2023 4:37 PM, Munehisa Kamata wrote:
+> >>>>> I'm not clear whether VFS is a better (or worse) place[1] to fix the
+> >>>>> problem described below and would like to hear opinion.
+> >>>> Please To: or at least Cc: me on all Smack related issues.
+> >>> Will do that next.
+> >>>
+> >>>>> If the /proc/[pid] directory is bind-mounted on a system with Smack
+> >>>>> enabled, and if the task updates its current security attribute, the task
+> >>>>> may lose access to files in its own /proc/[pid] through the mountpoint.
+> >>>>>
+> >>>>>  $ sudo capsh --drop=cap_mac_override --
+> >>>>>  # mkdir -p dir
+> >>>>>  # mount --bind /proc/$$ dir
+> >>>>>  # echo AAA > /proc/$$/task/current		# assuming built-in echo
+> >>>> I don't see "current" in /proc/$$/task. Did you mean /proc/$$/attr?
+> >>> Ahh, yes, I meant /proc/$$/attr/current. Sorry about that...
+> >>>
+> >>>>>  # cat /proc/$$/task/current			# revalidate
+> >>>>>  AAA
+> >>>>>  # echo BBB > dir/attr/current
+> >>>>>  # cat dir/attr/current
+> >>>>>  cat: dir/attr/current: Permission denied
+> >>>>>  # ls dir/
+> >>>>>  ls: cannot access dir/: Permission denied
+> >> I don't see this behavior. What kernel version are you using?
+> >> I have a 6.5 kernel.
+> > I verified the behavior with 6.7-rc3. 
+> >
+> > Here is more "raw" log from my machine:
+> >
+> >  [ec2-user@ip-10-0-32-198 ~]$ uname -r
+> >  6.7.0-rc3-proc-fix+
+> >  [ec2-user@ip-10-0-32-198 ~]$ sudo capsh --drop=cap_mac_override --
+> >  [root@ip-10-0-32-198 ec2-user]# mount --bind /proc/$$ dir
+> >  [root@ip-10-0-32-198 ec2-user]# echo AAA > /proc/$$/attr/current
+> >  [root@ip-10-0-32-198 ec2-user]# cat /proc/$$/attr/current; echo
+> >  AAA
+> >  [root@ip-10-0-32-198 ec2-user]# echo BBB > dir/attr/current
+> >  [root@ip-10-0-32-198 ec2-user]# cat dir/attr/current
+> >  cat: dir/attr/current: Permission denied
+> >
+> > If something frequently scans /proc, such as ps, top or whatever, on your
+> > machine, the inode may get updated quickly (i.e. revalidated during path
+> > lookup) and then you may only have a short window to observe the behavior. 
+> 
+> I was able to reproduce the issue with a 6.5 kernel. The window seems
+> to be really short.
 
-Are you sure you want to prefetch when the value doesn't even match
-the existing value? Aren't you better off just looping doing just
-reads until you at least have a valid value to exchange?
+Creating a PID namespace before the bind-mount may make the window lasts
+longer (or forever).
 
-Otherwise you might easily find that your cmpxchg loops cause
-horrendous cacheline ping-pong patterns.
+ $ sudo unshare -pf --mount-proc
+ 
+> Would it be completely unreasonable for your sandboxing application to
+> call syncfs(2) after writing to current?
 
-Of course, if your hardware is bad at releasing the written state,
-that may actually be what you want, to see changes in a timely manner.
+It doesn't help. It won't revalidate dentries.
 
-At least some of our cmpxchg uses are the "try_cmpxchg()" pattern,
-which wouldn't even loop - and won't write at all - on a value
-mismatch.
-
-And some of those try_cmpxchg cases are a lot more important than the
-lockref code. Things like spin_trylock() etc. Of course, for best
-results you might want to have an actual architecture-specific helper
-for the try_cmpxchg case, and use the compiler for "outputs in
-condition codes" (but then you need to have fallback cases for older
-compilers that don't support it).
-
-See the code code for example of the kinds of nasty support code you need with
-
-  /*
-   * Macros to generate condition code outputs from inline assembly,
-   * The output operand must be type "bool".
-   */
-  #ifdef __GCC_ASM_FLAG_OUTPUTS__
-  # define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
-  # define CC_OUT(c) "=@cc" #c
-  #else
-  # define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
-  # define CC_OUT(c) [_cc_ ## c] "=qm"
-  #endif
-
-and then a lot of "CC_SET()/CC_OUT()" use in the inline asms in
-<asm/cmpxchg.h>...
-
-IOW, you really should time this and then add the timing information
-to whatever commit message.
-
-             Linus
+> >
+> >>>>>  # cat /proc/$$/attr/current			# revalidate
+> >>>>>  BBB
+> >>>>>  # cat dir/attr/current
+> >>>>>  BBB
+> >>>>>  # echo CCC > /proc/$$/attr/current
+> >>>>>  # cat dir/attr/current
+> >>>>>  cat: dir/attr/current: Permission denied
+> >>>>>
+> >>>>> This happens because path lookup doesn't revalidate the dentry of the
+> >>>>> /proc/[pid] when traversing the filesystem boundary, so the inode security
+> >>>>> blob of the /proc/[pid] doesn't get updated with the new task security
+> >>>>> attribute. Then, this may lead security modules to deny an access to the
+> >>>>> directory. Looking at the code[2] and the /proc/pid/attr/current entry in
+> >>>>> proc man page, seems like the same could happen with SELinux. Though, I
+> >>>>> didn't find relevant reports.
+> >>>>>
+> >>>>> The steps above are quite artificial. I actually encountered such an
+> >>>>> unexpected denial of access with an in-house application sandbox
+> >>>>> framework; each app has its own dedicated filesystem tree where the
+> >>>>> process's /proc/[pid] is bind-mounted to and the app enters into via
+> >>>>> chroot.
+> >>>>>
+> >>>>> With this patch, writing to /proc/[pid]/attr/current (and its per-security
+> >>>>> module variant) updates the inode security blob of /proc/[pid] or
+> >>>>> /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
+> >>>>>
+> >>>>> [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
+> >>>>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
+> >>>>>
+> >>>>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> >>>>> Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+> >>>>> ---
+> >>>>>  fs/proc/base.c | 23 ++++++++++++++++++++---
+> >>>>>  1 file changed, 20 insertions(+), 3 deletions(-)
+> >>>>>
+> >>>>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> >>>>> index dd31e3b6bf77..bdb7bea53475 100644
+> >>>>> --- a/fs/proc/base.c
+> >>>>> +++ b/fs/proc/base.c
+> >>>>> @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+> >>>>>  {
+> >>>>>  	struct inode * inode = file_inode(file);
+> >>>>>  	struct task_struct *task;
+> >>>>> +	const char *name = file->f_path.dentry->d_name.name;
+> >>>>>  	void *page;
+> >>>>>  	int rv;
+> >>>>>  
+> >>>>> @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+> >>>>>  	if (rv < 0)
+> >>>>>  		goto out_free;
+> >>>>>  
+> >>>>> -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+> >>>>> -				  file->f_path.dentry->d_name.name, page,
+> >>>>> -				  count);
+> >>>>> +	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
+> >>>>>  	mutex_unlock(&current->signal->cred_guard_mutex);
+> >>>>> +
+> >>>>> +	/*
+> >>>>> +	 *  Update the inode security blob in advance if the task's security
+> >>>>> +	 *  attribute was updated
+> >>>>> +	 */
+> >>>>> +	if (rv > 0 && !strcmp(name, "current")) {
+> >>>>> +		struct pid *pid;
+> >>>>> +		struct proc_inode *cur, *ei;
+> >>>>> +
+> >>>>> +		rcu_read_lock();
+> >>>>> +		pid = get_task_pid(current, PIDTYPE_PID);
+> >>>>> +		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
+> >>>>> +			ei = cur;
+> >>>>> +		put_pid(pid);
+> >>>>> +		pid_update_inode(current, &ei->vfs_inode);
+> >>>>> +		rcu_read_unlock();
+> >>>>> +	}
+> >>>>> +
+> >>>>>  out_free:
+> >>>>>  	kfree(page);
+> >>>>>  out:
+> 
 
