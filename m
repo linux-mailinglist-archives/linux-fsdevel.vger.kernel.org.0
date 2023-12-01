@@ -1,111 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-4669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EEE801900
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 01:40:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C60E801902
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 01:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA263281AFA
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 00:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFAF1C20AD6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 00:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7282A8BF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 00:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD76D23A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 00:40:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id A186B9A;
-	Fri,  1 Dec 2023 15:54:50 -0800 (PST)
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3B1NrZqS019545;
-	Fri, 1 Dec 2023 17:53:35 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3B1NrW9C019544;
-	Fri, 1 Dec 2023 17:53:32 -0600
-Date: Fri, 1 Dec 2023 17:53:32 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
-Message-ID: <20231201235332.GA19345@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com> <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com> <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com> <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com> <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com> <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com> <20231201010549.GA8923@wind.enjellic.com> <660e8516-ec1b-41b4-9e04-2b9fabbe59ca@schaufler-ca.com>
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C18DD
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 15:57:22 -0800 (PST)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-6cde4342fe9so3087657b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 15:57:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701475041; x=1702079841;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kjqfKH8JvaG9Z/SqXxhblf/a00V2R0Ggq3QtYOjAI8Y=;
+        b=ApnWizjR29gvtpl36x6peDu5v7XLDyzjMFYcSHPGFHI/fDdny5JsowvUXK5CsQ0gmB
+         ZhAyX97UZJ0ZLG2gfETtvTlu4+9RGZRk/u97X/XOjYofTqzZG3NwTLK3wPNt/BDk4aUu
+         9ChvI8x/2xQSrKRlgSnko72ppTfmHzj0qq+g5wxXKvynEZOLnbT2rPaMv9P1mXTPLfDD
+         +xV3YRJVW0aMjq0OSBu9zR4xFKnhhl5fcSt5ZGXtGh7DUxSx0GxuhjTY+RQKLnf6Cyy3
+         /yLlRxYlr9lmkNWBHzr+LS+MORaZk3oxyYYsuHFUzkGyiFfy5tAOBQMmfMMSQUoJqIJa
+         KTyg==
+X-Gm-Message-State: AOJu0YzQY4aTTKB1KugRFybrSZZe2wjVQjemnyfSLwqCLJfDEXPhessB
+	/ICR6MTcfHMMUkpIeDszpR57U7qAAoIO18hOwX4smGi3fxdz
+X-Google-Smtp-Source: AGHT+IELM0fBx9fOf0rQ8pZ6h0rW43hS1lIsnd5aooH7E0TXVdzGupxSxTuUV88qqkRSdD+WHBQU+U9/bWwvxKjSYdKs+qchb4QP
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <660e8516-ec1b-41b4-9e04-2b9fabbe59ca@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 01 Dec 2023 17:53:35 -0600 (CST)
+MIME-Version: 1.0
+X-Received: by 2002:a05:6a00:1908:b0:690:d251:28b9 with SMTP id
+ y8-20020a056a00190800b00690d25128b9mr6006920pfi.4.1701475041636; Fri, 01 Dec
+ 2023 15:57:21 -0800 (PST)
+Date: Fri, 01 Dec 2023 15:57:21 -0800
+In-Reply-To: <000000000000f0bfe70605025941@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000737829060b7b8775@google.com>
+Subject: Re: [syzbot] [gfs2?] kernel BUG in gfs2_quota_cleanup
+From: syzbot <syzbot+3b6e67ac2b646da57862@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rpeterso@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 01, 2023 at 10:54:54AM -0800, Casey Schaufler wrote:
+syzbot has found a reproducer for the following issue on:
 
-Good evening Casey, thanks for taking the time to respond.
+HEAD commit:    994d5c58e50e Merge tag 'hardening-v6.7-rc4' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=165bc8d2e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2c74446ab4f0028
+dashboard link: https://syzkaller.appspot.com/bug?extid=3b6e67ac2b646da57862
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1268c086e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164b3faae80000
 
-> On 11/30/2023 5:05 PM, Dr. Greg wrote:
-> > A suggestion has been made in this thread that there needs to be broad
-> > thinking on this issue, and by extension, other tough problems.  On
-> > that note, we would be interested in any thoughts regarding the notion
-> > of a long term solution for this issue being the migration of EVM to a
-> > BPF based implementation?
-> >
-> > There appears to be consensus that the BPF LSM will always go last, a
-> > BPF implementation would seem to address the EVM ordering issue.
-> >
-> > In a larger context, there have been suggestions in other LSM threads
-> > that BPF is the future for doing LSM's.  Coincident with that has come
-> > some disagreement about whether or not BPF embodies sufficient
-> > functionality for this role.
-> >
-> > The EVM codebase is reasonably modest with a very limited footprint of
-> > hooks that it handles.  A BPF implementation on this scale would seem
-> > to go a long ways in placing BPF sufficiency concerns to rest.
-> >
-> > Thoughts/issues?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/dceb288ab9b9/disk-994d5c58.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/00a42d6cc05c/vmlinux-994d5c58.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/039fd7f1b283/bzImage-994d5c58.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4022e7b58a1d/mount_0.gz
 
-> Converting EVM to BPF looks like a 5 to 10 year process. Creating a
-> EVM design description to work from, building all the support functions
-> required, then getting sufficient reviews and testing isn't going to be
-> a walk in the park. That leaves out the issue of distribution of the
-> EVM-BPF programs. Consider how the rush to convert kernel internals to
-> Rust is progressing. EVM isn't huge, but it isn't trivial, either. Tetsuo
-> had a good hard look at converting TOMOYO to BPF, and concluded that it
-> wasn't practical. TOMOYO is considerably less complicated than EVM.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3b6e67ac2b646da57862@syzkaller.appspotmail.com
 
-Interesting, thanks for the reflections.
+gfs2: fsid=syz:syz.0: first mount done, others may mount
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/quota.c:1508!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5060 Comm: syz-executor505 Not tainted 6.7.0-rc3-syzkaller-00134-g994d5c58e50e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+RIP: 0010:gfs2_quota_cleanup+0x6b5/0x6c0 fs/gfs2/quota.c:1508
+Code: fe e9 cf fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 2d fe ff ff 4c 89 ef e8 b6 19 23 fe e9 20 fe ff ff e8 ec 11 c7 fd 90 <0f> 0b e8 84 9c 4f 07 0f 1f 40 00 66 0f 1f 00 55 41 57 41 56 41 54
+RSP: 0018:ffffc9000409f9e0 EFLAGS: 00010293
+RAX: ffffffff83c76854 RBX: 0000000000000002 RCX: ffff888026001dc0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: ffffc9000409fb00 R08: ffffffff83c762b0 R09: 1ffff1100fd38015
+R10: dffffc0000000000 R11: ffffed100fd38016 R12: dffffc0000000000
+R13: ffff88807e9c0828 R14: ffff888014693580 R15: ffff88807e9c0000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f16d1bd70f8 CR3: 0000000027199000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ gfs2_put_super+0x2e1/0x940 fs/gfs2/super.c:611
+ generic_shutdown_super+0x13a/0x2c0 fs/super.c:696
+ kill_block_super+0x44/0x90 fs/super.c:1667
+ deactivate_locked_super+0xc1/0x130 fs/super.c:484
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1256
+ task_work_run+0x24a/0x300 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa34/0x2750 kernel/exit.c:871
+ do_group_exit+0x206/0x2c0 kernel/exit.c:1021
+ __do_sys_exit_group kernel/exit.c:1032 [inline]
+ __se_sys_exit_group kernel/exit.c:1030 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1030
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7f16d1b4b789
+Code: Unable to access opcode bytes at 0x7f16d1b4b75f.
+RSP: 002b:00007ffcad68ef38 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f16d1b4b789
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+RBP: 00007f16d1bd92d0 R08: ffffffffffffffb8 R09: 00007ffcad68f010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f16d1bd92d0
+R13: 0000000000000000 R14: 00007f16d1bda040 R15: 00007f16d1b19cc0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:gfs2_quota_cleanup+0x6b5/0x6c0 fs/gfs2/quota.c:1508
+Code: fe e9 cf fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c 2d fe ff ff 4c 89 ef e8 b6 19 23 fe e9 20 fe ff ff e8 ec 11 c7 fd 90 <0f> 0b e8 84 9c 4f 07 0f 1f 40 00 66 0f 1f 00 55 41 57 41 56 41 54
+RSP: 0018:ffffc9000409f9e0 EFLAGS: 00010293
+RAX: ffffffff83c76854 RBX: 0000000000000002 RCX: ffff888026001dc0
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+RBP: ffffc9000409fb00 R08: ffffffff83c762b0 R09: 1ffff1100fd38015
+R10: dffffc0000000000 R11: ffffed100fd38016 R12: dffffc0000000000
+R13: ffff88807e9c0828 R14: ffff888014693580 R15: ffff88807e9c0000
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f16d1bd70f8 CR3: 000000000d730000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-On a functional line basis, EVM is 14% of the TOMOYO codebase, not
-counting the IMA code.
 
-Given your observations, one would than presume around a decade of
-development effort to deliver a full featured LSM, ie. SELINUX, SMACK,
-APPARMOR, TOMOYO in BPF form.
-
-Very useful information, we can now return the thread to what appears
-is going to be the vexing implementation of:
-
-lsm_set_order(LSM_ORDER_FU_I_REALLY_AM_GOING_TO_BE_THE_LAST_ONE_TO_RUN);
-
-:-)
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
