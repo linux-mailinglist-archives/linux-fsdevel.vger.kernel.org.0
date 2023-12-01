@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-4580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D263D800D53
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 15:37:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A464800D55
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 15:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B56B20C1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:37:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1463B20E43
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBED3E470
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A153E477
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1oVyBIUs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qHs+efl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3992A10FD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 06:30:55 -0800 (PST)
-Received: by mail-ej1-x649.google.com with SMTP id a640c23a62f3a-a1a4bc50361so22019366b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 06:30:55 -0800 (PST)
+Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A8710F3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 06:30:58 -0800 (PST)
+Received: by mail-ed1-x549.google.com with SMTP id 4fb4d7f45d1cf-54c64c3a702so316619a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 06:30:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701441053; x=1702045853; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1701441056; x=1702045856; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ig8lIHEbad4HUQf1qWZKpo59x8aQCHJymOa08eKBFx0=;
-        b=1oVyBIUsouOcLSZL0KpiVzSvm24+sCx4rGl2eT/OEGp8ns7agR7MBWdgs0mcwuy/a6
-         pPscaVQB/vU1w7cSYPfbTTYtemeyFlioFOYK2DgMWew0PXjYEvwf8/xYKX8l2ISwiH3V
-         ZddkgypcANEfH6ZAGYieOEOv6do00ZGN7+5I57lD0n3oRYwJjQIay+FCGpbWn08qwXKL
-         BAkHDzCgWOApe3lFhLW6cIqgWLU4APXNv8UDW5sbHNK/WTHtwAzuDcj6bnyd692EL8Xz
-         Y/3HmjjFwnJ4oJ1rkEw66e2XwEFDCimXTW3YCYd82iHzY0qhws8OsSycHLjZ5JG7RrUh
-         cPrg==
+        bh=NzXi78AHjIIVJFmJ8Pjwy9iFwVciKDRlY3Gz48xNASk=;
+        b=qHs+efl+gKpPZseCZdbBm2cAFKE2mIQki/zon67m/NWJaySGYW1zrEe9FaVBMCa6rn
+         MyroHYxzyOh9ycHJup/ktzuOjXeGqBzH24XAiirWGHcWeHOB0G42uIz8V3fx5IOfEk0y
+         o0I8nglUecoWcj66tjZP24WN0iJC1eX1uFiBgmG+5VwI8JNQ4YV/qHCKpo/hTiDbc3Dj
+         MwXuPUhG9DVi3qQqsVNaumJHx8YctSOGaGSWGVtJjK4WbPaqdheJAFLAxJtiChzL76jw
+         k9154RRmBOCRHS2SESfRSjizl745+hkZbk68SVM2yYnc1DP26tk+IuMbxVQIuPD0hvfk
+         SbVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701441053; x=1702045853;
+        d=1e100.net; s=20230601; t=1701441056; x=1702045856;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=ig8lIHEbad4HUQf1qWZKpo59x8aQCHJymOa08eKBFx0=;
-        b=f+zeGqMu2Y17gKvrGLJiV9fibUW6BJBXmgfbDdlvBSzN/s8byd4k10VNNB+LufzeQf
-         aRkSxOV4SbtWbrwxbrcn38k3Imv8x8IsDT+/D2Wu8uP+LiUUSAAkL5tSP/SF0M/aww11
-         8ncv4immtvvYJYQrGQneBIisqSJJbXjC7+JhYUrS2gIQ9veVmeLyOYbLBkQhr7haexTy
-         y5L3bhYexLXYdxkYwNhT2KDENCfr/wWNuDThuA5KrGP7tHP1TtTUDLwDoNFxln/U3WrL
-         zFXD0OWWN+uQkoOmxiycR1aRFxpEMbWKFpiZvAyA356mralHlX1nk68QTwc0Tvt/AAxH
-         5F2A==
-X-Gm-Message-State: AOJu0YxRCuOrx/nx20DocP8ymGQTON0sTEBJeOFZjXHmBdHIfdpKTtJ6
-	LTtu1e3Sdw5KOTDxFKZc7hYyp5oZUPg=
-X-Google-Smtp-Source: AGHT+IHfTcA/cPDDFNQfDjlpw7cTfYp/i+bSjjm6XSymoV1IkAVTFLqRIOscEJMnTIKp+5zW2ztp1v2adDA=
+        bh=NzXi78AHjIIVJFmJ8Pjwy9iFwVciKDRlY3Gz48xNASk=;
+        b=QGCdJkmi+cj82RgQ7SLAdX9gpDA5U7J0EgM+7LStzVgOD9FvsLrg2ugpUTG9gwc7m5
+         C7EDLJNVJbKgVoauJcFnzqaaeme0m5jNujwxKbVaf0QI/mGQauPoe6PiVnK0tueGl1TY
+         Y0nnJLY1+WiU4ALyJR/hbC25ppOUYsAspS3acMkxtRlXf8j24aGUbyq2rs0NkPbXhZmF
+         mjXbGjObvoQ4jvHoO/ENnoMO2Cbd9331lf0RPJR/hAykDIXk3T1D5ZP3KXx+UeUXK2bc
+         Q98rwe3lLzmWCDokg6NfRWoi9eDuEbeaxLk2eQWWo3Fozn1fMcY57SExHMu7FmS44vmX
+         /TEw==
+X-Gm-Message-State: AOJu0YwPjFfVKZGYkQ2FMEYwsVdcrj/EzVlCUUxh7gjCv2ecpdguKPtM
+	Al1r70fSeCZWnBP+H9qzsyGQavqChC0=
+X-Google-Smtp-Source: AGHT+IHrfjV9UWblloFL5FiPtnKNBSA+8TPUWL6LBb0pU0Mkj2XV9draZ8tZxUqjUfruJWzLqENcfHs7u8Y=
 X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:fab0:4182:b9df:bfec])
- (user=gnoack job=sendgmr) by 2002:a17:907:7891:b0:9b9:ff14:9ecb with SMTP id
- ku17-20020a170907789100b009b9ff149ecbmr7475ejc.4.1701441053451; Fri, 01 Dec
- 2023 06:30:53 -0800 (PST)
-Date: Fri,  1 Dec 2023 15:30:35 +0100
+ (user=gnoack job=sendgmr) by 2002:a50:fb81:0:b0:54c:6fc0:484d with SMTP id
+ e1-20020a50fb81000000b0054c6fc0484dmr2579edq.4.1701441056664; Fri, 01 Dec
+ 2023 06:30:56 -0800 (PST)
+Date: Fri,  1 Dec 2023 15:30:36 +0100
 In-Reply-To: <20231201143042.3276833-1-gnoack@google.com>
-Message-Id: <20231201143042.3276833-3-gnoack@google.com>
+Message-Id: <20231201143042.3276833-4-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20231201143042.3276833-1-gnoack@google.com>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
-Subject: [PATCH v7 2/9] selftests/landlock: Rename "permitted" to "allowed" in
- ftruncate tests
+Subject: [PATCH v7 3/9] landlock: Optimize the number of calls to
+ get_access_mask slightly
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: linux-security-module@vger.kernel.org, 
 	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
@@ -75,91 +75,35 @@ Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+This call is now going through a function pointer,
+and it is not as obvious any more that it will be inlined.
+
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ security/landlock/ruleset.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
-ftests/landlock/fs_test.c
-index a1d17ab527ae..50818904397c 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -3688,7 +3688,7 @@ FIXTURE_TEARDOWN(ftruncate)
- FIXTURE_VARIANT(ftruncate)
- {
- 	const __u64 handled;
--	const __u64 permitted;
-+	const __u64 allowed;
- 	const int expected_open_result;
- 	const int expected_ftruncate_result;
- };
-@@ -3697,7 +3697,7 @@ FIXTURE_VARIANT(ftruncate)
- FIXTURE_VARIANT_ADD(ftruncate, w_w) {
- 	/* clang-format on */
- 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
--	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
- 	.expected_open_result =3D 0,
- 	.expected_ftruncate_result =3D 0,
- };
-@@ -3706,7 +3706,7 @@ FIXTURE_VARIANT_ADD(ftruncate, w_w) {
- FIXTURE_VARIANT_ADD(ftruncate, t_t) {
- 	/* clang-format on */
- 	.handled =3D LANDLOCK_ACCESS_FS_TRUNCATE,
--	.permitted =3D LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_TRUNCATE,
- 	.expected_open_result =3D 0,
- 	.expected_ftruncate_result =3D 0,
- };
-@@ -3715,7 +3715,7 @@ FIXTURE_VARIANT_ADD(ftruncate, t_t) {
- FIXTURE_VARIANT_ADD(ftruncate, wt_w) {
- 	/* clang-format on */
- 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
--	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE,
- 	.expected_open_result =3D 0,
- 	.expected_ftruncate_result =3D EACCES,
- };
-@@ -3724,8 +3724,7 @@ FIXTURE_VARIANT_ADD(ftruncate, wt_w) {
- FIXTURE_VARIANT_ADD(ftruncate, wt_wt) {
- 	/* clang-format on */
- 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
--	.permitted =3D LANDLOCK_ACCESS_FS_WRITE_FILE |
--		     LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
- 	.expected_open_result =3D 0,
- 	.expected_ftruncate_result =3D 0,
- };
-@@ -3734,7 +3733,7 @@ FIXTURE_VARIANT_ADD(ftruncate, wt_wt) {
- FIXTURE_VARIANT_ADD(ftruncate, wt_t) {
- 	/* clang-format on */
- 	.handled =3D LANDLOCK_ACCESS_FS_WRITE_FILE | LANDLOCK_ACCESS_FS_TRUNCATE,
--	.permitted =3D LANDLOCK_ACCESS_FS_TRUNCATE,
-+	.allowed =3D LANDLOCK_ACCESS_FS_TRUNCATE,
- 	.expected_open_result =3D EACCES,
- };
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 789c81b26a50..e0a5fbf9201a 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -723,11 +723,12 @@ landlock_init_layer_masks(const struct landlock_rules=
+et *const domain,
+ 	/* Saves all handled accesses per layer. */
+ 	for (layer_level =3D 0; layer_level < domain->num_layers; layer_level++) =
+{
+ 		const unsigned long access_req =3D access_request;
++		const access_mask_t access_mask =3D
++			get_access_mask(domain, layer_level);
+ 		unsigned long access_bit;
 =20
-@@ -3744,7 +3743,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
- 	const struct rule rules[] =3D {
- 		{
- 			.path =3D path,
--			.access =3D variant->permitted,
-+			.access =3D variant->allowed,
- 		},
- 		{},
- 	};
-@@ -3785,7 +3784,7 @@ TEST_F_FORK(ftruncate, open_and_ftruncate_in_differen=
-t_processes)
- 		const struct rule rules[] =3D {
- 			{
- 				.path =3D path,
--				.access =3D variant->permitted,
-+				.access =3D variant->allowed,
- 			},
- 			{},
- 		};
+ 		for_each_set_bit(access_bit, &access_req, num_access) {
+-			if (BIT_ULL(access_bit) &
+-			    get_access_mask(domain, layer_level)) {
++			if (BIT_ULL(access_bit) & access_mask) {
+ 				(*layer_masks)[access_bit] |=3D
+ 					BIT_ULL(layer_level);
+ 				handled_accesses |=3D BIT_ULL(access_bit);
 --=20
 2.43.0.rc2.451.g8631bc7472-goog
 
