@@ -1,124 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-4537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E1A80028F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 05:32:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15F9800292
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 05:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA55281454
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:32:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D3DB20BFA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76ECB79EC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAB7BE4C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7LoTtFO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huzU+PLc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F6510F0;
-	Thu, 30 Nov 2023 18:42:59 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id 46e09a7af769-6d63e0412faso308369a34.1;
-        Thu, 30 Nov 2023 18:42:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701398579; x=1702003379; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MM6zOSHfotTy5a3LWtQadC0cfDBk1X3drmNbLjZWVJ4=;
-        b=a7LoTtFOeFoZn/FFM8bmEft14BvGtOiqDYlj7t5verf7jao3HBO5LSpW/EM2I4RJZm
-         hMWkSULWWhi4tIEnkdnUUuSiRgzBmvNyHE6wDTMjWyQsUleOkxwWAQ4m9qmJlMxX29qQ
-         k0vo20xWVV2J+1Tfo2d45Wh/bzSa7SceM46ONCn3E1kIXn+W2HhzAYB5pwqoKb47RKwv
-         HaFKhB3BpJqUWqNSaaH0SDXCZzm7FWp1iKmz+CvuO6Q0dr2jIDBmpjVLnbYx2MIioNr0
-         GInPaixyk0esyYsGB6uvxCX6nKgcwQt5qmWb7RlvoZOYPHnfks8siVOdkPRzJUC46Ph8
-         gO0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701398579; x=1702003379;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MM6zOSHfotTy5a3LWtQadC0cfDBk1X3drmNbLjZWVJ4=;
-        b=phOqSWPSQ5R+1RlfoMWEjTBQ00Z0SgV6dxvLzS6GdqUwrEVpxsvrA3nDTV4hD0xIfo
-         f4Z4V2duYTxD7OqReDrXXpUmOig+mVg7YTLZnqehxz1wAReB/prJf/sZ9wvlJgD4ZsLB
-         nTOSC75m7aN9rRpBpVJ28FDO0I/tTLL+GoaDJys0eINgX2S+ohOvmjwpypEvCpQ8oPQx
-         YzXMC0krI9qrTw8LNJP3YkHVAXOA/mVmuspHUlSZBnwsyITsWTYe8qwqm9XU3m3WONxK
-         cZn3QwLSZt+b2D26A16Fk1Q1tMTSkMJQWE01iYxfRKP/6MEZzaghrGm5As1yFEYP+9H1
-         7U1g==
-X-Gm-Message-State: AOJu0YwAQsFt7WJe9UJfv89a/qh8mUIzsUPYlrzHng3dGfXAVEz2Aq3f
-	isHWSV4IGFplXCyQS2TY0JQ=
-X-Google-Smtp-Source: AGHT+IGAmKyOWThKwBSLYYZ7hWRY5tfC/8Cayt9qi7FXH3blX7nQbeynFVsLjcG/JK2m7QrnKT03Yw==
-X-Received: by 2002:a05:6808:2121:b0:3b8:5fb1:3574 with SMTP id r33-20020a056808212100b003b85fb13574mr23156182oiw.0.1701398578738;
-        Thu, 30 Nov 2023 18:42:58 -0800 (PST)
-Received: from [127.0.0.1] (059149129201.ctinets.com. [59.149.129.201])
-        by smtp.gmail.com with ESMTPSA id c14-20020a62e80e000000b006cdf2097fd1sm1292442pfi.151.2023.11.30.18.42.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Nov 2023 18:42:58 -0800 (PST)
-Message-ID: <27ad4e0d-ba00-449b-84b9-90f3ba7e4232@gmail.com>
-Date: Fri, 1 Dec 2023 10:42:53 +0800
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1706217CF
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 03:36:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A581C433C7;
+	Fri,  1 Dec 2023 03:36:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701401813;
+	bh=ACS9FO5IQkDDlE4McWV0/ZkmDMDQVO5KpOjNAEj9bHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=huzU+PLcW/2rWEkD2bwcyR+c+9ncOBQvm8F3jyyb8GfgAhq7TsUBAPjkC50fRjYf0
+	 N0+ne50r3EavxY4FAKSIWX6e0r5JHki/8zRfwia/Ze2eLzjTxLJpLEds+J7YyCBp9E
+	 fCClYxLcIRU6JgUsRYkMD2q1p7HzW/ZqKR9T6DaLoui403uaknsSzs7YhrTn5mwYVf
+	 3Xqez11cLbHXNg60s320oNpyCxwCIO6zectmN9aamLQlH2TVL3OTqbO/cMF3sg8OCZ
+	 HHqbfTrTL6D0zJyEWqb/mM5+lja8CHN7Tm0KZPbR7ip+sT7jcCcEtJugE/BKhaAFAH
+	 zQsCW9BDWtOJw==
+Date: Thu, 30 Nov 2023 22:36:43 -0500
+From: Guo Ren <guoren@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+Message-ID: <ZWlUy1wElujRfDLA@gmail.com>
+References: <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV>
+ <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+ <ZV2rdE1XQWwJ7s75@gmail.com>
+ <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
+ <ZWN0ycxvzNzVXyNQ@gmail.com>
+ <CAHk-=wiehwt_aYcmAyZXyM7LWbXsne6+JWqLkMtnv=4CJT1gwQ@mail.gmail.com>
+ <ZWhdVpij9iCeMnog@gmail.com>
+ <CAHk-=wgSsUKn0piCv_=7XZh6L07BNQHLH3CX1YUQ0G=MEpRSJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: fuse: dax: set fc->dax to NULL in
- fuse_dax_conn_free()
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: vgoyal@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, jefflexu@linux.alibaba.com
-References: <20231116075726.28634-1-hbh25y@gmail.com>
- <CAJfpegvN5Rzy1_2v3oaf1Rp_LP_t3w6W_-Ozn1ADoCLGSKBk+Q@mail.gmail.com>
-Content-Language: en-US
-From: Hangyu Hua <hbh25y@gmail.com>
-In-Reply-To: <CAJfpegvN5Rzy1_2v3oaf1Rp_LP_t3w6W_-Ozn1ADoCLGSKBk+Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wgSsUKn0piCv_=7XZh6L07BNQHLH3CX1YUQ0G=MEpRSJA@mail.gmail.com>
 
-On 30/11/2023 18:54, Miklos Szeredi wrote:
-> On Thu, 16 Nov 2023 at 08:57, Hangyu Hua <hbh25y@gmail.com> wrote:
->>
->> fuse_dax_conn_free() will be called when fuse_fill_super_common() fails
->> after fuse_dax_conn_alloc(). Then deactivate_locked_super() in
->> virtio_fs_get_tree() will call virtio_kill_sb() to release the discarded
->> superblock. This will call fuse_dax_conn_free() again in fuse_conn_put(),
->> resulting in a possible double free.
->>
->> Fixes: 1dd539577c42 ("virtiofs: add a mount option to enable dax")
->> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
->> ---
->>   fs/fuse/dax.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
->> index 23904a6a9a96..12ef91d170bb 100644
->> --- a/fs/fuse/dax.c
->> +++ b/fs/fuse/dax.c
->> @@ -1222,6 +1222,7 @@ void fuse_dax_conn_free(struct fuse_conn *fc)
->>          if (fc->dax) {
->>                  fuse_free_dax_mem_ranges(&fc->dax->free_ranges);
->>                  kfree(fc->dax);
->> +               fc->dax = NULL;
+On Fri, Dec 01, 2023 at 10:09:01AM +0900, Linus Torvalds wrote:
+> On Thu, 30 Nov 2023 at 19:01, Guo Ren <guoren@kernel.org> wrote:
+> >
+> > That needs the expensive mechanism DynAMO [1], but some power-efficient
+> > core lacks the capability. Yes, powerful OoO hardware could virtually
+> > satisfy you by a minimum number of retries, but why couldn't we
+> > explicitly tell hardware for "prefetchw"?
 > 
-> Is there a reason not to simply remove the fuse_dax_conn_free() call
-> from the cleanup path in fuse_fill_super_common()?
+> Because every single time we've had a prefetch in the kernel, it has
+> caused problems. A bit like cpu_relax() - these things get added for
+> random hardware where it helps, and then a few years later it turns
+> out that it hurts almost everywhere else.
+> 
+> We've had particular problems with 'prefetch' because it turns out
+> that (a) nobody sane uses them so (b) hardware is often buggy. And
+> here "buggy" may be just performance (ie "prefetch actually stalls on
+> TLB lookup" etc broken behavior that means that prefetch is not even
+> remotely like a no-op that just hints to the cache subsystem), but
+> sometimes even in actual semantics (ie "prefetch causes spurious
+> faulting behavior")
+Thanks for sharing your experience, I now know the problem with generic
+prefetchw.
 
-I think setting fc->dax to NULL keeps the memory allocation and release 
-functions together in fuse_fill_super_common more readable. What do you 
-think?
-
-Thanks,
-Hangyu
+But what to do with these codes?
+➜  linux git:(master) ✗ grep prefetchw mm/ fs/ kernel/ -r
+mm/slub.c:      prefetchw(object + s->offset);
+mm/slab.c:      prefetchw(objp);
+mm/page_alloc.c:        prefetchw(p);
+mm/page_alloc.c:                prefetchw(p + 1);
+mm/vmscan.c:#define prefetchw_prev_lru_folio(_folio, _base, _field)
+mm/vmscan.c:                    prefetchw(&prev->_field);
+mm/vmscan.c:#define prefetchw_prev_lru_folio(_folio, _base, _field) do
+mm/vmscan.c:            prefetchw_prev_lru_folio(folio, src, flags);
+fs/mpage.c:             prefetchw(&folio->flags);
+fs/f2fs/data.c:                 prefetchw(&page->flags);
+fs/ext4/readpage.c:             prefetchw(&folio->flags);
+kernel/bpf/cpumap.c:                    prefetchw(page);
+kernel/locking/qspinlock.c:                     prefetchw(next);
+➜  linux git:(master) ✗ grep prefetchw drivers/ -r | wc -l
+80
+...
 
 > 
-> Thanks,
-> Miklos
+> > Advanced hardware would treat cmpxchg as interconnect transactions when
+> > cache miss(far atomic), which means L3 cache wouldn't return a unique
+> > cacheline even when cmpxchg fails. The cmpxchg loop would continue to
+> > read data bypassing the L1/L2 cache, which means every failure cmpxchg
+> > is a cache-miss read.
 > 
+> Honestly, I wouldn't call that "advanced hardware". I would call that
+> ridiculous.
+Ridiculous Hardware:
+When CAS fails, the hardware still keeps "far atomic" mode.
+
+Correct Hardware:
+When CAS fails, the hardware should change to "near-atomic," which means
+acquiring an exclusive cache line and making progress.
+
 > 
->>          }
->>   }
->>
->> --
->> 2.34.1
->>
+> If the cmpxchg isn't guaranteed to make progress, then the cmpxchg is
+> broken. It's really that simple.
+I totally agree, and it's a correct guide, Thx.
+
+> 
+> It does sound like on your hardware, maybe you just want to make the
+> RISC-V cmpxchg function always do a "prefetchw" if the 'sc.d' fails,
+> something like
+> 
+>                         "0:     lr.w %0, %2\n"                          \
+>                         "       bne  %0, %z3, 1f\n"                     \
+>                         "       sc.w %1, %z4, %2\n"                     \
+> -                       "       bnez %1, 0b\n"                          \
+> +                       "       beqz %1, 1f\n"                          \
+> +                       "       prefetchw %2\n"                         \
+> +                       "       j 0b\n"                                 \
+>                         "1:\n"                                          \
+
+I modify your code to guarantee the progress of the comparison failure
+situation:
+Final version (for easy read):
+                         "0:     lr.w %0, %2\n"                          \
+                         "       bne  %0, %z3, 2f\n"                     \
+                         "       sc.w %1, %z4, %2\n"                     \
+                         "       beqz %1, 1f\n"                          \
+                         "       prefetchw %2\n"                         \
+                         "       j 0b\n"                         	 \
+                         "2:\n"                                          \
+                         "       prefetchw %2\n"                         \
+                         "1:\n"                                          \
+
+Diff version:
+                         "0:     lr.w %0, %2\n"                          \
+ -                       "       bne  %0, %z3, 1f\n"                     \
+ +                       "       bne  %0, %z3, 2f\n"                     \
+                         "       sc.w %1, %z4, %2\n"                     \
+ -                       "       bnez %1, 0b\n"                          \
+ +                       "       beqz %1, 1f\n"                          \
+ +                       "       prefetchw %2\n"                         \
+ +                       "       j 0b\n"                         	 \
+ +                       "2:\n"                                          \
+ +                       "       prefetchw %2\n"                         \
+                         "1:\n"                                          \
+
+> 
+> (quick entirely untested hack, you get the idea). A better
+> implementation might use "asm goto" and expose the different error
+> cases to the compiler so that it can move things around, but I'm not
+> convinced it's worth the effort.
+> 
+> But no, we're *not* adding a prefetchw to generic code just because
+> apparently some RISC-V code is doing bad things. You need to keep
+> workarounds for RISC-V behavior to RISC-V.
+> 
+> And yes, the current "retry count" in our lockref implementation comes
+> from another "some hardware does bad things for cmpxchg". But that
+> workaround at most causes a few extra (regular) ALU instructions, and
+> while not optimal, it's at least not going to cause any bigger
+> problems.
+> 
+>            Linus
+> 
 
