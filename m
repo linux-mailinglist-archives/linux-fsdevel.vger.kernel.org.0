@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-4524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54422800049
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 01:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5170B80004A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 01:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0AD28164E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D4F828164E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4231C681
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95421CAA7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 00:36:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7331715;
-	Thu, 30 Nov 2023 15:44:01 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4ShC911BlYz9y8Th;
-	Fri,  1 Dec 2023 07:30:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id DA6DC14065C;
-	Fri,  1 Dec 2023 07:43:48 +0800 (CST)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53AE2133;
+	Thu, 30 Nov 2023 16:01:11 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4ShCXm45tlz9y9TW;
+	Fri,  1 Dec 2023 07:47:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 80487140133;
+	Fri,  1 Dec 2023 08:01:08 +0800 (CST)
 Received: from [10.81.202.161] (unknown [10.81.202.161])
-	by APP2 (Coremail) with SMTP id GxC2BwCnpV8kHmllcimqAQ--.14981S2;
-	Fri, 01 Dec 2023 00:43:48 +0100 (CET)
-Message-ID: <9c7860ed-b761-417b-a9ad-bd680f2c8d16@huaweicloud.com>
-Date: Fri, 1 Dec 2023 00:43:28 +0100
+	by APP1 (Coremail) with SMTP id LxC2BwBXlHQ0ImllMJCuAQ--.12372S2;
+	Fri, 01 Dec 2023 01:01:07 +0100 (CET)
+Message-ID: <f37c47d0-5b20-4293-8bd0-5d465f328ffc@huaweicloud.com>
+Date: Fri, 1 Dec 2023 01:00:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -34,145 +34,296 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+Subject: Re: [PATCH v7 23/23] integrity: Switch from rbtree to LSM-managed
  blob for integrity_iint_cache
 Content-Language: en-US
-To: Casey Schaufler <casey@schaufler-ca.com>,
- Petr Tesarik <petrtesarik@huaweicloud.com>, Paul Moore <paul@paul-moore.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
  jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
- tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tom@talpey.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
+ jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ casey@schaufler-ca.com, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
  linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
  selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
- <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
- <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
- <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
- <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
- <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
- <366a6e5f-d43d-4266-8421-a8a05938a8fd@schaufler-ca.com>
- <66ec6876-483a-4403-9baa-487ebad053f2@huaweicloud.com>
- <a121c359-03c9-42b1-aa19-1e9e34f6a386@schaufler-ca.com>
- <9297638a-8dab-42ba-8b60-82c03497c9cd@huaweicloud.com>
- <018438d4-44b9-4734-9c0c-8a65f9c605a4@schaufler-ca.com>
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <018438d4-44b9-4734-9c0c-8a65f9c605a4@schaufler-ca.com>
+References: <20231130231948.2545638-1-roberto.sassu@huaweicloud.com>
+ <20231130231948.2545638-5-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231130231948.2545638-5-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCnpV8kHmllcimqAQ--.14981S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJFWfZrWkGFy5CFy3XF4kXrb_yoW5KFyfpa
-	yxtFW7KFWqyr48Kwn2ya15WFyjyws3Aa45Gr1UJF10k3s8Wr1Ivr4Igr4a9FyDCrsakry0
-	qrWav34avrs8AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
-	J73DUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBF1jj5MfhQAAsv
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwBXlHQ0ImllMJCuAQ--.12372S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKryfJFyrCry8Cr1UZF4kXrb_yoWfCryUpF
+	42gay8Jw1DZFWj9F4vyFs8uF4Sga4vgFWkWw1Ykw1kAFyqvr1jqFs5AryUuF15GrZ8Kw1I
+	qrn0kr45u3WDtrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBF1jj5ceegAAsV
 
-On 12/1/2023 12:31 AM, Casey Schaufler wrote:
-> On 11/30/2023 1:34 PM, Roberto Sassu wrote:
->> On 11/30/2023 5:15 PM, Casey Schaufler wrote:
->>> On 11/30/2023 12:30 AM, Petr Tesarik wrote:
->>>> Hi all,
->>>>
->>>> On 11/30/2023 1:41 AM, Casey Schaufler wrote:
->>>>> ...
->>>>> It would be nice if the solution directly addresses the problem.
->>>>> EVM needs to be after the LSMs that use xattrs, not after all LSMs.
->>>>> I suggested LSM_ORDER_REALLY_LAST in part to identify the notion as
->>>>> unattractive.
->>>> Excuse me to chime in, but do we really need the ordering in code?
->>>
->>> tl;dr - Yes.
->>>
->>>>    FWIW
->>>> the linker guarantees that objects appear in the order they are seen
->>>> during the link (unless --sort-section overrides that default, but this
->>>> option is not used in the kernel). Since *.a archive files are used in
->>>> kbuild, I have also verified that their use does not break the
->>>> assumption; they are always created from scratch.
->>>>
->>>> In short, to enforce an ordering, you can simply list the corresponding
->>>> object files in that order in the Makefile. Of course, add a big fat
->>>> warning comment, so people understand the order is not arbitrary.
->>>
->>> Not everyone builds custom kernels.
->>
->> Sorry, I didn't understand your comment.
+On 12/1/2023 12:19 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> Most people run a disto supplied kernel. If the LSM ordering were determined
-> only at compile time you could never run a kernel that omitted an LSM.
+> Before the security field of kernel objects could be shared among LSMs with
+> the LSM stacking feature, IMA and EVM had to rely on an alternative storage
+> of inode metadata. The association between inode metadata and inode is
+> maintained through an rbtree.
+> 
+> With the reservation mechanism offered by the LSM infrastructure, the
+> rbtree is no longer necessary, as each LSM could reserve a space in the
+> security blob for each inode.
+> 
+> With the 'integrity' LSM removed, and with the 'ima' LSM taking its role,
+> reserve space from the 'ima' LSM for a pointer to the integrity_iint_cache
+> structure directly, rather than embedding the whole structure in the inode
+> security blob, to minimize the changes and to avoid waste of memory.
+> 
+> If IMA is disabled, EVM faces the same problems as before making it an
+> LSM, metadata verification fails for new files due to not setting the
+> IMA_NEW_FILE flag in ima_post_path_mknod(), and evm_verifyxattr()
+> returns INTEGRITY_UNKNOWN since IMA didn't call integrity_inode_get().
+> 
+> The only difference caused to moving the integrity metadata management
+> to the 'ima' LSM is the fact that EVM cannot take advantage of cached
+> verification results, and has to do the verification again. However,
+> this case should never happen, since the only public API available to
+> all kernel components, evm_verifyxattr(), does not work if IMA is
+> disabled.
 
-Ah, ok. We are talking about the LSMs with order LSM_ORDER_LAST which 
-are always enabled and the last.
+This needs some explanation on how EVM can be used currently. EVM 
+verifies inode metadata in the set* LSM hooks, eventually updates the 
+HMAC in the post_set* hooks.
 
-This is the code in security.c to handle them:
+If integrity metadata are not available (IMA is disabled), EVM has to do 
+the inode metadata verification every time, which means that this patch 
+set would introduce a performance regression compared to when integrity 
+metadata were always available and managed by the 'integrity' LSM.
 
-         /* LSM_ORDER_LAST is always last. */
-         for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-                 if (lsm->order == LSM_ORDER_LAST)
-                         append_ordered_lsm(lsm, "   last");
-         }
+However, the get* LSM hooks are not mediated, user space can freely get 
+a corrupted inode metadata and EVM would not tell anything.
 
-Those LSMs are not affected by lsm= in the kernel command line, or the 
-order in the kernel configuration (those are the mutable LSMs).
+So, at this point it is clear that the main use case of EVM was a kernel 
+component querying EVM about the integrity of inode metadata, by calling 
+evm_verifyxattr(). One suitable place where this function can be called 
+is the d_instantiate LSM hook, when an LSM is getting xattrs from the 
+filesystem to populate the inode security blob.
 
-In this case, clearly, what matters is how LSMs are stored in the 
-.lsm_info.init section. See the DEFINE_LSM() macro:
-
-#define DEFINE_LSM(lsm)                                                \
-         static struct lsm_info __lsm_##lsm                             \
-                 __used __section(".lsm_info.init")                     \
-                 __aligned(sizeof(unsigned long))
-
-With Petr, we started to wonder if somehow the order in which LSMs are 
-placed in this section is deterministic. I empirically tried to swap the 
-order in which IMA and EVM are compiled in the Makefile, and that led to 
-'evm' being placed in the LSM list before 'ima'.
-
-The question is if this behavior is deterministic, or there is a case 
-where 'evm' is before 'ima', despite they are in the inverse order in 
-the Makefile.
-
-Petr looked at the kernel linking process, which is relevant for the 
-order of LSMs in the .lsm_info.init section, and he found that the order 
-in the section always corresponds to the order in the Makefile.
-
-Thanks
+But as I mentioned, evm_verifyxattr() does not work if IMA is disabled, 
+so there should not be systems using this configuration for which we are 
+introducing a performance regression.
 
 Roberto
->> Everyone builds the kernel, also Linux distros. What Petr was
->> suggesting was that it does not matter how you build the kernel, the
->> linker will place the LSMs in the order they appear in the Makefile.
->> And for this particular case, we have:
->>
->> obj-$(CONFIG_IMA)                       += ima/
->> obj-$(CONFIG_EVM)                       += evm/
->>
->> In the past, I also verified that swapping these two resulted in the
->> swapped order of LSMs. Petr confirmed that it would always happen.
+
+> Introduce two primitives for getting and setting the pointer of
+> integrity_iint_cache in the security blob, respectively
+> integrity_inode_get_iint() and integrity_inode_set_iint(). This would make
+> the code more understandable, as they directly replace rbtree operations.
 > 
-> LSM execution order is not based on compilation order. It is specified
-> by CONFIG_LSM, and may be modified by the LSM_ORDER value. I don't
-> understand why the linker is even being brought into the discussion.
+> Locking is not needed, as access to inode metadata is not shared, it is per
+> inode.
 > 
->>
->> Thanks
->>
->> Roberto
+> Keep the blob size and the new primitives definition at the common level in
+> security/integrity rather than moving them in IMA itself, so that EVM can
+> still call integrity_inode_get() and integrity_iint_find() while IMA is
+> disabled. Just add an extra check in integrity_inode_get() to return NULL
+> if that is the case.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   security/integrity/iint.c         | 70 ++++---------------------------
+>   security/integrity/ima/ima_main.c |  1 +
+>   security/integrity/integrity.h    | 20 ++++++++-
+>   3 files changed, 29 insertions(+), 62 deletions(-)
+> 
+> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> index c36054041b84..8fc9455dda11 100644
+> --- a/security/integrity/iint.c
+> +++ b/security/integrity/iint.c
+> @@ -14,56 +14,25 @@
+>   #include <linux/slab.h>
+>   #include <linux/init.h>
+>   #include <linux/spinlock.h>
+> -#include <linux/rbtree.h>
+>   #include <linux/file.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/security.h>
+>   #include <linux/lsm_hooks.h>
+>   #include "integrity.h"
+>   
+> -static struct rb_root integrity_iint_tree = RB_ROOT;
+> -static DEFINE_RWLOCK(integrity_iint_lock);
+>   static struct kmem_cache *iint_cache __ro_after_init;
+>   
+>   struct dentry *integrity_dir;
+>   
+> -/*
+> - * __integrity_iint_find - return the iint associated with an inode
+> - */
+> -static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
+> -{
+> -	struct integrity_iint_cache *iint;
+> -	struct rb_node *n = integrity_iint_tree.rb_node;
+> -
+> -	while (n) {
+> -		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
+> -
+> -		if (inode < iint->inode)
+> -			n = n->rb_left;
+> -		else if (inode > iint->inode)
+> -			n = n->rb_right;
+> -		else
+> -			return iint;
+> -	}
+> -
+> -	return NULL;
+> -}
+> -
+>   /*
+>    * integrity_iint_find - return the iint associated with an inode
+>    */
+>   struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
+>   {
+> -	struct integrity_iint_cache *iint;
+> -
+>   	if (!IS_IMA(inode))
+>   		return NULL;
+>   
+> -	read_lock(&integrity_iint_lock);
+> -	iint = __integrity_iint_find(inode);
+> -	read_unlock(&integrity_iint_lock);
+> -
+> -	return iint;
+> +	return integrity_inode_get_iint(inode);
+>   }
+>   
+>   #define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
+> @@ -123,9 +92,7 @@ static void iint_free(struct integrity_iint_cache *iint)
+>    */
+>   struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+>   {
+> -	struct rb_node **p;
+> -	struct rb_node *node, *parent = NULL;
+> -	struct integrity_iint_cache *iint, *test_iint;
+> +	struct integrity_iint_cache *iint;
+>   
+>   	/*
+>   	 * After removing the 'integrity' LSM, the 'ima' LSM calls
+> @@ -144,31 +111,10 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+>   
+>   	iint_init_always(iint, inode);
+>   
+> -	write_lock(&integrity_iint_lock);
+> -
+> -	p = &integrity_iint_tree.rb_node;
+> -	while (*p) {
+> -		parent = *p;
+> -		test_iint = rb_entry(parent, struct integrity_iint_cache,
+> -				     rb_node);
+> -		if (inode < test_iint->inode) {
+> -			p = &(*p)->rb_left;
+> -		} else if (inode > test_iint->inode) {
+> -			p = &(*p)->rb_right;
+> -		} else {
+> -			write_unlock(&integrity_iint_lock);
+> -			kmem_cache_free(iint_cache, iint);
+> -			return test_iint;
+> -		}
+> -	}
+> -
+>   	iint->inode = inode;
+> -	node = &iint->rb_node;
+>   	inode->i_flags |= S_IMA;
+> -	rb_link_node(node, parent, p);
+> -	rb_insert_color(node, &integrity_iint_tree);
+> +	integrity_inode_set_iint(inode, iint);
+>   
+> -	write_unlock(&integrity_iint_lock);
+>   	return iint;
+>   }
+>   
+> @@ -185,10 +131,8 @@ void integrity_inode_free(struct inode *inode)
+>   	if (!IS_IMA(inode))
+>   		return;
+>   
+> -	write_lock(&integrity_iint_lock);
+> -	iint = __integrity_iint_find(inode);
+> -	rb_erase(&iint->rb_node, &integrity_iint_tree);
+> -	write_unlock(&integrity_iint_lock);
+> +	iint = integrity_iint_find(inode);
+> +	integrity_inode_set_iint(inode, NULL);
+>   
+>   	iint_free(iint);
+>   }
+> @@ -212,6 +156,10 @@ int __init integrity_iintcache_init(void)
+>   	return 0;
+>   }
+>   
+> +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+> +	.lbs_inode = sizeof(struct integrity_iint_cache *),
+> +};
+> +
+>   /*
+>    * integrity_kernel_read - read data from the file
+>    *
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 3f59cce3fa02..52b4a3bba45a 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -1162,6 +1162,7 @@ DEFINE_LSM(ima) = {
+>   	.name = "ima",
+>   	.init = init_ima_lsm,
+>   	.order = LSM_ORDER_LAST,
+> +	.blobs = &integrity_blob_sizes,
+>   };
+>   
+>   late_initcall(init_ima);	/* Start IMA after the TPM is available */
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 26d3b08dca1c..2fb35c67d64d 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -158,7 +158,6 @@ struct ima_file_id {
+>   
+>   /* integrity data associated with an inode */
+>   struct integrity_iint_cache {
+> -	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
+>   	struct mutex mutex;	/* protects: version, flags, digest */
+>   	struct inode *inode;	/* back pointer to inode in question */
+>   	u64 version;		/* track inode changes */
+> @@ -194,6 +193,25 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>   #define INTEGRITY_KEYRING_MAX		4
+>   
+>   extern struct dentry *integrity_dir;
+> +extern struct lsm_blob_sizes integrity_blob_sizes;
+> +
+> +static inline struct integrity_iint_cache *
+> +integrity_inode_get_iint(const struct inode *inode)
+> +{
+> +	struct integrity_iint_cache **iint_sec;
+> +
+> +	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
+> +	return *iint_sec;
+> +}
+> +
+> +static inline void integrity_inode_set_iint(const struct inode *inode,
+> +					    struct integrity_iint_cache *iint)
+> +{
+> +	struct integrity_iint_cache **iint_sec;
+> +
+> +	iint_sec = inode->i_security + integrity_blob_sizes.lbs_inode;
+> +	*iint_sec = iint;
+> +}
+>   
+>   struct modsig;
+>   
 
 
