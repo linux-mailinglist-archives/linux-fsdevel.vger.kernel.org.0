@@ -1,93 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-4574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A655800D47
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 15:36:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0CF800D48
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 15:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D1AB20D08
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D00771C2095E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C48C3E470
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6CA3E478
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 14:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8FvqvOH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r0m9sutm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5F52554A
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 13:24:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6747C433C9;
-	Fri,  1 Dec 2023 13:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701437068;
-	bh=uRgAR/56w9wrRlY/QzWRUlSjwWNjO57UA/xB9q2FvXk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V8FvqvOHrV4E3XjCky27ISWNl2E5UoeN529yLfTLkTCBb6IIAc9wKSQZdiY0oicFN
-	 g5HqP2f+T5KXow5iTJ7a7uJ9gPFg+v+6OHfkIcgsh7mnY/cpkMbMIISwCOFRcjU455
-	 22MwNMGLxx7hBXfY2/zrSU4pEXcm2HOlLcqbSxPsHwxnd7ruop+XlLPgtTk7pbvt+K
-	 K/EOqA8cviBvWgYNqUBxbeZwZ1X/RV9Vxgv8heRSjkP9/ihTbDTSQEsh0K6jvY2hV+
-	 n1R7niDHxQmBPap+q4FpTv+77LMFB3+DvUhWkMSyLnspkWoLZi/+RqaHzHeJiu8zi/
-	 42fnCM4PY+a3w==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Carlos Llamas <cmllamas@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH RFC 0/5] file: minor fixes
-Date: Fri,  1 Dec 2023 14:23:58 +0100
-Message-ID: <20231201-aufzeichnen-ratsam-e353e76e0527@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
-References: <20231130-vfs-files-fixes-v1-0-e73ca6f4ea83@kernel.org>
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9443913E;
+	Fri,  1 Dec 2023 05:27:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BXafAH8BWhpG1fug+rYpt7+DF2WwHDSy3uyXtRATKBk=; b=r0m9sutmr5xmt6az4XdA/s9puy
+	39xESoVJx9QhEJZHFTVdpltFC2CUtssZRepC6G0/fP0pUgM/lnsMsM4v2xhTQYVSLRPsAeNiXHqfi
+	vmq0ipcVerKP7IssioLADTR1Lsh9pAzdQ+cBtUS1XSK/9wqqNJ6nUh66OL1V407hB9mHGN1IuNJ3P
+	Pm0d1kXhp9sg4rrgz9S4ORZdFZCSCTFHcoU0gJSoBLU+/D+hjHv7d8oiiplH6Srz8ACkFI7h7/5pa
+	dq7uNxx9yF08s3gl+3kpO3+Xbc1Xw5m3OBMeW0hIroetRwD7oTdX5wc1PxAOnXaqqkIrnL0qjK+w2
+	feN+UV6g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r93YV-00FY5Z-Kf; Fri, 01 Dec 2023 13:27:43 +0000
+Date: Fri, 1 Dec 2023 13:27:43 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	"Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	dchinner@redhat.com
+Subject: Re: [RFC 1/7] iomap: Don't fall back to buffered write if the write
+ is atomic
+Message-ID: <ZWnfT1+afsZ9JaZP@casper.infradead.org>
+References: <cover.1701339358.git.ojaswin@linux.ibm.com>
+ <09ec4c88b565c85dee91eccf6e894a0c047d9e69.1701339358.git.ojaswin@linux.ibm.com>
+ <ZWj6Tt1zKUL4WPGr@dread.disaster.area>
+ <85d1b27c-f4ef-43dd-8eed-f497817ab86d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1431; i=brauner@kernel.org; h=from:subject:message-id; bh=uRgAR/56w9wrRlY/QzWRUlSjwWNjO57UA/xB9q2FvXk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRm3stdzBDUHbHLmHnC3S2T8z9HODVntnHYTzq4mcfjW pSJov+hjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkYejL8r4v9as8zZ6K5tGNn 0L1VH1I6X8ewi86bpXe8xaJk2832QIZ/6pOufNDOc3LK+VZw5aCyrP3dKdnKkqvcdke1dMZt13v ICwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85d1b27c-f4ef-43dd-8eed-f497817ab86d@oracle.com>
 
-On Thu, 30 Nov 2023 13:49:06 +0100, Christian Brauner wrote:
-> * reduce number of helpers
-> * rename close_fd_get_file() helprs to reflect the fact that they don't
->   take a refcount
-> * rename rcu_head struct back to callback_head now that we only use it
->   for task work and not rcu anymore
+On Fri, Dec 01, 2023 at 10:42:57AM +0000, John Garry wrote:
+> Sure, and I think that we need a better story for supporting buffered IO for
+> atomic writes.
 > 
+> Currently we have:
+> - man pages tell us RWF_ATOMIC is only supported for direct IO
+> - statx gives atomic write unit min/max, not explicitly telling us it's for
+> direct IO
+> - RWF_ATOMIC is ignored for !O_DIRECT
+> 
+> So I am thinking of expanding statx support to enable querying of atomic
+> write capabilities for buffered IO and direct IO separately.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Or ... we could support RWF_ATOMIC in the page cache?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I haven't particularly been following the atomic writes patchset, but
+for filesystems which support large folios, we now create large folios
+in the write path.  I see four problems to solve:
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+1. We might already have a smaller folio in the page cache from an
+   earlier access,  We'd have to kick it out before creating a new folio
+   that is the appropriate size.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+2. We currently believe it's always OK to fall back to allocating smaller
+   folios if memory allocation fails.  We'd need to change that policy
+   (which we need to modify anyway for the bs>PS support).
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+3. We need to somewhere keep the information that writeback of this
+   folio has to use the atomic commands.  Maybe it becomes a per-inode
+   flag so that all writeback from this inode now uses the atomic
+   commands?
 
-[1/5] file: s/close_fd_get_file()/file_close_fd()/g
-      https://git.kernel.org/vfs/vfs/c/3c66314bc279
-[2/5] file: remove pointless wrapper
-      https://git.kernel.org/vfs/vfs/c/316e9855e905
-[3/5] fs: replace f_rcuhead with f_tw
-      https://git.kernel.org/vfs/vfs/c/a057c426045d
-[4/5] file: stop exposing receive_fd_user()
-      https://git.kernel.org/vfs/vfs/c/64d002ef7cbf
-[5/5] file: remove __receive_fd()
-      https://git.kernel.org/vfs/vfs/c/e333c8549ed7
+4. If somebody does a weird thing like truncate/holepunch into the
+   middle of the folio, we need to define what we do.  It's conceptually
+   a bizarre thing to do, so I can't see any user actually wanting to
+   do that ... but we need to define the semantics.
+
+Maybe there are things I haven't thought of.  And of course, some
+filesystems don't support large folios yet.
 
