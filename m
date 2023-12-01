@@ -1,73 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-4540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3529A800293
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 05:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DF58003F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 07:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB954B20BFA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:33:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59279B20EA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4026BBE45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 04:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA216E575
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 06:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Yi44Mdno"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OwCL54H8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF4C7170D;
-	Thu, 30 Nov 2023 20:10:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2eHCtyGFeHq/1tIF1Jd0bNN81hKLOiwuQegOxUiD9H8=; b=Yi44Mdno5Jfc8Un+WKQBaikx++
-	SyMfPnZ927vBHrPWV1pQXZ+RQ+G3DvHKjM+M9/+HDph0ZlKXQqonkZ0jciPBH6ntkt4aIMz6Cr11s
-	gb/DGtSJJ5EQxE8vcUjmGf+ylvDAWZDHvMfl4qcdakuvmVLutud/JHD1d+eEwvCJRdSdVImS5kv1w
-	qsE0IwrHGwwnqnKoG7nt6LastrGAx61KMGgwDh22eRm1Hlx7hT1oII5GyFbev3zs/RdnKlrmKm5F3
-	b/iuJKV9Bw60H6+lm9vr8O15+F66DeL3bERw7X3YxXXxr7k3uJVhxNbQIlu1AmFf7jvc0m+nTTB5J
-	gRZ6/+Kw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r8uqd-005gh0-1X;
-	Fri, 01 Dec 2023 04:09:51 +0000
-Date: Fri, 1 Dec 2023 04:09:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, linux-doc@vger.kernel.org,
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()]  1b738f196e:
- stress-ng.sysinfo.ops_per_sec -27.2% regression
-Message-ID: <20231201040951.GO38156@ZenIV>
-References: <202311300906.1f989fa8-oliver.sang@intel.com>
- <20231130075535.GN38156@ZenIV>
- <ZWlBNSblpWghkJyW@xsang-OptiPlex-9020>
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38AC5D40
+	for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:36 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-50bc7706520so2438064e87.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1701407734; x=1702012534; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dinIoxlujtALpDGgIpx/RvOFCz/Yn1MlWegXqKVFc8=;
+        b=OwCL54H8IQjDDxlcrwD6PaGHrxYa0TAv4ewp+FMv5oZuPvQW7yvamSqrJf7h8UaxUr
+         jBAUhKVDP//ezYQDFoeV6JnXrz9BKQxAf642m7lZyuaazibV1rVVuZgD4Ye3rzu0dro5
+         u0tGPEySkGlA+MZ2Vvdi9FO1mo3KL/VB+msBc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701407734; x=1702012534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5dinIoxlujtALpDGgIpx/RvOFCz/Yn1MlWegXqKVFc8=;
+        b=iwikxmFAs/1t+kxtBpPOEN2b+/9lP5ONGZU9BXZtRyHezkvThbSJpfr77Fzqj6gdZ0
+         KOettOYd+shuhAXx6jMzO82uQqlE3IDI423PGW+ChhDEADd4U+4ommurtdqqxn3i4fQC
+         vqoqPBRGep+AU5AJ04RMZB7WWtZ18wrxLa1rx0TWUswKuZrNPOucenlQqUVZJAWEgH+s
+         VjJxDqILvkOJcGHYl/93fzFTr97GoyXr0ga7DRh7jsEEbOCfr7DjTFSWFfskuX+xGa2R
+         zEWZ0JalPSNWdY4amNWm5mF24w+cn+9UQ+kUL+W3yu4QZxtAmoh+5fGbtioLwXXITubV
+         aN9A==
+X-Gm-Message-State: AOJu0YzfK4H0wysbosFZYNxMEsD/Y4faRg4lqmpR9YvBNBcLvSVRT7hk
+	q96WwsWXK5YS0p5ledIfLcv6CkFJrVzgAeZSoCnWF4qT
+X-Google-Smtp-Source: AGHT+IHYdA7Ro2NMgLtl2yJOYLFR3dZ4GW5cQPYBKgMhhrx58M6jcCVAWFnf+lKRRZ0ApLZJbVldGQ==
+X-Received: by 2002:ac2:410d:0:b0:50b:c722:cff6 with SMTP id b13-20020ac2410d000000b0050bc722cff6mr349583lfi.19.1701407734116;
+        Thu, 30 Nov 2023 21:15:34 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id g18-20020ac24d92000000b0050aaa64cd0dsm327696lfe.13.2023.11.30.21.15.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Nov 2023 21:15:33 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50bd8efb765so477292e87.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Nov 2023 21:15:33 -0800 (PST)
+X-Received: by 2002:a05:6512:3b2:b0:50b:c88d:e861 with SMTP id
+ v18-20020a05651203b200b0050bc88de861mr299687lfp.54.1701407733004; Thu, 30 Nov
+ 2023 21:15:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZWlBNSblpWghkJyW@xsang-OptiPlex-9020>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAHk-=wgP27-D=2YvYNQd3OBfBDWK6sb_urYdt6xEPKiev6y_2Q@mail.gmail.com>
+ <20231101181910.GH1957730@ZenIV> <20231110042041.GL1957730@ZenIV>
+ <CAHk-=wgaLBRwPE0_VfxOrCzFsHgV-pR35=7V3K=EHOJV36vaPQ@mail.gmail.com>
+ <ZV2rdE1XQWwJ7s75@gmail.com> <CAHk-=wj5pRLTd8i-2W2xyUi4HDDcRuKfqZDs=Fem9n5BLw4bsw@mail.gmail.com>
+ <ZWN0ycxvzNzVXyNQ@gmail.com> <CAHk-=wiehwt_aYcmAyZXyM7LWbXsne6+JWqLkMtnv=4CJT1gwQ@mail.gmail.com>
+ <ZWhdVpij9iCeMnog@gmail.com> <CAHk-=wgSsUKn0piCv_=7XZh6L07BNQHLH3CX1YUQ0G=MEpRSJA@mail.gmail.com>
+ <ZWlUy1wElujRfDLA@gmail.com>
+In-Reply-To: <ZWlUy1wElujRfDLA@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 1 Dec 2023 14:15:15 +0900
+X-Gmail-Original-Message-ID: <CAHk-=wgfcR+XQXhivpgFCzkOEvcgnMKOrOAeqGGD7hfksmM3ow@mail.gmail.com>
+Message-ID: <CAHk-=wgfcR+XQXhivpgFCzkOEvcgnMKOrOAeqGGD7hfksmM3ow@mail.gmail.com>
+Subject: Re: lockless case of retain_dentry() (was Re: [PATCH 09/15] fold the
+ call of retain_dentry() into fast_dput())
+To: Guo Ren <guoren@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Dec 01, 2023 at 10:13:09AM +0800, Oliver Sang wrote:
+On Fri, 1 Dec 2023 at 12:36, Guo Ren <guoren@kernel.org> wrote:
+>
+> I modify your code to guarantee the progress of the comparison failure
+> situation:
 
-> > Very interesting...  Out of curiosity, what effect would the following
-> > have on top of 1b738f196e?
-> 
-> I applied the patch upon 1b738f196e (as below fec356fd0c), but seems less
-> useful.
+Are you sure you want to prefetch when the value doesn't even match
+the existing value? Aren't you better off just looping doing just
+reads until you at least have a valid value to exchange?
 
-I would be rather surprised if it fixed anything; it's just that 1b738f196e
-changes two things - locking rules for __dentry_kill() and, in some cases,
-the order of dentry eviction in shrink_dentry_list().  That delta on top of
-it restores the original order in shrink_dentry_list(), leaving pretty much
-the changes in lock_for_kill()/dput()/__dentry_kill().
+Otherwise you might easily find that your cmpxchg loops cause
+horrendous cacheline ping-pong patterns.
 
-Interesting...  Looks like there are serious changes in context switch
-frequencies, but I don't see where could that have come from...
+Of course, if your hardware is bad at releasing the written state,
+that may actually be what you want, to see changes in a timely manner.
+
+At least some of our cmpxchg uses are the "try_cmpxchg()" pattern,
+which wouldn't even loop - and won't write at all - on a value
+mismatch.
+
+And some of those try_cmpxchg cases are a lot more important than the
+lockref code. Things like spin_trylock() etc. Of course, for best
+results you might want to have an actual architecture-specific helper
+for the try_cmpxchg case, and use the compiler for "outputs in
+condition codes" (but then you need to have fallback cases for older
+compilers that don't support it).
+
+See the code code for example of the kinds of nasty support code you need with
+
+  /*
+   * Macros to generate condition code outputs from inline assembly,
+   * The output operand must be type "bool".
+   */
+  #ifdef __GCC_ASM_FLAG_OUTPUTS__
+  # define CC_SET(c) "\n\t/* output condition code " #c "*/\n"
+  # define CC_OUT(c) "=@cc" #c
+  #else
+  # define CC_SET(c) "\n\tset" #c " %[_cc_" #c "]\n"
+  # define CC_OUT(c) [_cc_ ## c] "=qm"
+  #endif
+
+and then a lot of "CC_SET()/CC_OUT()" use in the inline asms in
+<asm/cmpxchg.h>...
+
+IOW, you really should time this and then add the timing information
+to whatever commit message.
+
+             Linus
 
