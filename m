@@ -1,281 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-4531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32584800196
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 03:31:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3858800199
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 03:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D9E1C20AD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 02:31:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720182815CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 02:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EDE4426
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 02:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="desUbD1p"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36145882A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 02:31:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D907E10D0;
-	Thu, 30 Nov 2023 16:50:01 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50bc8b7d8ffso2332662e87.0;
-        Thu, 30 Nov 2023 16:50:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701391800; x=1701996600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XqzRhhGrZoC77SS6CL7pdFs8CHWp/wWWuAFxkrL+mk4=;
-        b=desUbD1phZdDlM/KDCekwDVj880QStk63dP6k6hYPs950RQ5JLFQK2T13YNlqtUjh9
-         cQYhLZY9clfP8hPtBifjEXedR3UwzSVvm1Xy7augAQ+oCCrfYIkGqrF5Ny4h5Tr9lFOh
-         vX5eXHcSyg5ZVFVacSnSsrjPzrTe3MCMe/vuU2zJ/9Pc4CB1ftDACz/qQMbrC8Lm/+7J
-         nTmmgap+q1h9nLzFACfDFLWKMyO78GSmItpIQEh1vzNI5IlFbVIgfbdWH5V4OOtB+4jr
-         KZBTVKZAukiRbiO5Y1HpCtjVW/kgO+OjGlKCZcTTnTdvSrjtclPkOi7M5x83NE8kLK58
-         nPuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701391800; x=1701996600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XqzRhhGrZoC77SS6CL7pdFs8CHWp/wWWuAFxkrL+mk4=;
-        b=jdPcmQfTQM5KJhJbp/D/AmRE75tTwSGSmubLnM4KzpSha13bGe1gnAvmSQkuUcpP+L
-         kHsARUACNt06GOfEldkl5XM+plDqoImDj5qmZEjImNubqmecFzvPnHgMkjthquA1EbM7
-         SUpllw7xH0ifagh7X6qVqAp0iOnIubHPGs6Hf87ba8QoGNNeB7obS0RH1YwWG0h2VQPl
-         ISRQ7PkNSC34BzhcQWXYTbXAfuBC3CJBCcGKBPNOkDwPwAmP5N/Xh0617UWi/86HKjJ8
-         tQIe+B6Fwd+Kd7tksnEdOi7ItvhLevihehT4WRHgS/ICU4ZWviwF7cza/TLkMLJ0lKBp
-         DwDg==
-X-Gm-Message-State: AOJu0YzmZytB0mkUmV6hMccv0Ca0cr57DKk9mrjIsd+nG72PIA3WqYxS
-	Hf/ltSCy+Ak0NWYwe1O9wgx7YLsbQyYp6hZjRtU=
-X-Google-Smtp-Source: AGHT+IGkaaqQCCGExitNdERhjSlPmkgnOyZ+fu0oCv4R1hJOoipxICR+Px6hgYy1FF10R3vkHk4hg9Czpa2BWVBmTeE=
-X-Received: by 2002:ac2:59dc:0:b0:50b:d764:2919 with SMTP id
- x28-20020ac259dc000000b0050bd7642919mr133143lfn.177.1701391799795; Thu, 30
- Nov 2023 16:49:59 -0800 (PST)
+X-Greylist: delayed 1748 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 30 Nov 2023 17:36:20 PST
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 68973D50;
+	Thu, 30 Nov 2023 17:36:20 -0800 (PST)
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 3B115q1E009250;
+	Thu, 30 Nov 2023 19:05:52 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 3B115nMV009249;
+	Thu, 30 Nov 2023 19:05:49 -0600
+Date: Thu, 30 Nov 2023 19:05:49 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, mic@digikod.net, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed blob for integrity_iint_cache
+Message-ID: <20231201010549.GA8923@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com> <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com> <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com> <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com> <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com> <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20231201002201.2981258-1-dhowells@redhat.com> <20231201002201.2981258-3-dhowells@redhat.com>
-In-Reply-To: <20231201002201.2981258-3-dhowells@redhat.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 30 Nov 2023 18:49:48 -0600
-Message-ID: <CAH2r5mu7e5-ORZbUyutteWVx2Nk6FPHfx7mMGCWSCEBAO6tdqg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cifs: Fix flushing, invalidation and file size with FICLONE
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Shyam Prasad N <nspmangalore@gmail.com>, Rohith Surabattula <rohiths.msft@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 30 Nov 2023 19:05:52 -0600 (CST)
 
-merged the two into cifs-2.6.git for-next pending additional testing
-and review (added Cc: stable as well)
+On Wed, Nov 29, 2023 at 07:46:43PM +0100, Roberto Sassu wrote:
 
-On Thu, Nov 30, 2023 at 6:22=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Fix a number of issues in the cifs filesystem implementation of the FICLO=
-NE
-> ioctl in cifs_remap_file_range().  This is analogous to the previously
-> fixed bug in cifs_file_copychunk_range() and can share the helper
-> functions.
->
-> Firstly, the invalidation of the destination range is handled incorrectly=
-:
-> We shouldn't just invalidate the whole file as dirty data in the file may
-> get lost and we can't just call truncate_inode_pages_range() to invalidat=
-e
-> the destination range as that will erase parts of a partial folio at each
-> end whilst invalidating and discarding all the folios in the middle.  We
-> need to force all the folios covering the range to be reloaded, but we
-> mustn't lose dirty data in them that's not in the destination range.
->
-> Further, we shouldn't simply round out the range to PAGE_SIZE at each end
-> as cifs should move to support multipage folios.
->
-> Secondly, there's an issue whereby a write may have extended the file
-> locally, but not have been written back yet.  This can leaves the local
-> idea of the EOF at a later point than the server's EOF.  If a clone reque=
-st
-> is issued, this will fail on the server with STATUS_INVALID_VIEW_SIZE
-> (which gets translated to -EIO locally) if the clone source extends past
-> the server's EOF.
->
-> Fix this by:
->
->  (0) Flush the source region (already done).  The flush does nothing and
->      the EOF isn't moved if the source region has no dirty data.
->
->  (1) Move the EOF to the end of the source region if it isn't already at
->      least at this point.  If we can't do this, for instance if the serve=
-r
->      doesn't support it, just flush the entire source file.
->
->  (2) Find the folio (if present) at each end of the range, flushing it an=
-d
->      increasing the region-to-be-invalidated to cover those in their
->      entirety.
->
->  (3) Fully discard all the folios covering the range as we want them to b=
-e
->      reloaded.
->
->  (4) Then perform the extent duplication.
->
-> Thirdly, set i_size after doing the duplicate_extents operation as this
-> value may be used by various things internally.  stat() hides the issue
-> because setting ->time to 0 causes cifs_getatr() to revalidate the
-> attributes.
->
-> These were causing the cifs/001 xfstest to fail.
->
-> Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Christoph Hellwig <hch@lst.de>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: Shyam Prasad N <nspmangalore@gmail.com>
-> cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->  fs/smb/client/cifsfs.c | 68 +++++++++++++++++++++++++++++++++++-------
->  1 file changed, 57 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index 8097a9b3e98c..c5fc0a35bb19 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -1268,9 +1268,12 @@ static loff_t cifs_remap_file_range(struct file *s=
-rc_file, loff_t off,
->  {
->         struct inode *src_inode =3D file_inode(src_file);
->         struct inode *target_inode =3D file_inode(dst_file);
-> +       struct cifsInodeInfo *src_cifsi =3D CIFS_I(src_inode);
-> +       struct cifsInodeInfo *target_cifsi =3D CIFS_I(target_inode);
->         struct cifsFileInfo *smb_file_src =3D src_file->private_data;
-> -       struct cifsFileInfo *smb_file_target;
-> -       struct cifs_tcon *target_tcon;
-> +       struct cifsFileInfo *smb_file_target =3D dst_file->private_data;
-> +       struct cifs_tcon *target_tcon, *src_tcon;
-> +       unsigned long long destend, fstart, fend, new_size;
->         unsigned int xid;
->         int rc;
->
-> @@ -1281,13 +1284,13 @@ static loff_t cifs_remap_file_range(struct file *=
-src_file, loff_t off,
->
->         xid =3D get_xid();
->
-> -       if (!src_file->private_data || !dst_file->private_data) {
-> +       if (!smb_file_src || !smb_file_target) {
->                 rc =3D -EBADF;
->                 cifs_dbg(VFS, "missing cifsFileInfo on copy range src fil=
-e\n");
->                 goto out;
->         }
->
-> -       smb_file_target =3D dst_file->private_data;
-> +       src_tcon =3D tlink_tcon(smb_file_src->tlink);
->         target_tcon =3D tlink_tcon(smb_file_target->tlink);
->
->         /*
-> @@ -1300,20 +1303,63 @@ static loff_t cifs_remap_file_range(struct file *=
-src_file, loff_t off,
->         if (len =3D=3D 0)
->                 len =3D src_inode->i_size - off;
->
-> -       cifs_dbg(FYI, "about to flush pages\n");
-> -       /* should we flush first and last page first */
-> -       truncate_inode_pages_range(&target_inode->i_data, destoff,
-> -                                  PAGE_ALIGN(destoff + len)-1);
-> +       cifs_dbg(FYI, "clone range\n");
-> +
-> +       /* Flush the source buffer */
-> +       rc =3D filemap_write_and_wait_range(src_inode->i_mapping, off,
-> +                                         off + len - 1);
-> +       if (rc)
-> +               goto unlock;
-> +
-> +       /* The server-side copy will fail if the source crosses the EOF m=
-arker.
-> +        * Advance the EOF marker after the flush above to the end of the=
- range
-> +        * if it's short of that.
-> +        */
-> +       if (src_cifsi->netfs.remote_i_size < off + len) {
-> +               rc =3D cifs_precopy_set_eof(src_inode, src_cifsi, src_tco=
-n, xid, off + len);
-> +               if (rc < 0)
-> +                       goto unlock;
-> +       }
-> +
-> +       new_size =3D destoff + len;
-> +       destend =3D destoff + len - 1;
->
-> -       if (target_tcon->ses->server->ops->duplicate_extents)
-> +       /* Flush the folios at either end of the destination range to pre=
-vent
-> +        * accidental loss of dirty data outside of the range.
-> +        */
-> +       fstart =3D destoff;
-> +       fend =3D destend;
-> +
-> +       rc =3D cifs_flush_folio(target_inode, destoff, &fstart, &fend, tr=
-ue);
-> +       if (rc)
-> +               goto unlock;
-> +       rc =3D cifs_flush_folio(target_inode, destend, &fstart, &fend, fa=
-lse);
-> +       if (rc)
-> +               goto unlock;
-> +
-> +       /* Discard all the folios that overlap the destination region. */
-> +       cifs_dbg(FYI, "about to discard pages %llx-%llx\n", fstart, fend)=
-;
-> +       truncate_inode_pages_range(&target_inode->i_data, fstart, fend);
-> +
-> +       fscache_invalidate(cifs_inode_cookie(target_inode), NULL,
-> +                          i_size_read(target_inode), 0);
-> +
-> +       rc =3D -EOPNOTSUPP;
-> +       if (target_tcon->ses->server->ops->duplicate_extents) {
->                 rc =3D target_tcon->ses->server->ops->duplicate_extents(x=
-id,
->                         smb_file_src, smb_file_target, off, len, destoff)=
-;
-> -       else
-> -               rc =3D -EOPNOTSUPP;
-> +               if (rc =3D=3D 0 && new_size > i_size_read(target_inode)) =
-{
-> +                       truncate_setsize(target_inode, new_size);
-> +                       netfs_resize_file(&target_cifsi->netfs, new_size)=
-;
-> +                       fscache_resize_cookie(cifs_inode_cookie(target_in=
-ode),
-> +                                             new_size);
-> +               }
-> +       }
->
->         /* force revalidate of size and timestamps of target file now
->            that target is updated on the server */
->         CIFS_I(target_inode)->time =3D 0;
-> +unlock:
->         /* although unlocking in the reverse order from locking is not
->            strictly necessary here it is a little cleaner to be consisten=
-t */
->         unlock_two_nondirectories(src_inode, target_inode);
->
->
+Good evening, I hope the week has gone well for everyone.
 
+> On 11/29/2023 6:22 PM, Paul Moore wrote:
+> >On Wed, Nov 29, 2023 at 7:28???AM Roberto Sassu
+> ><roberto.sassu@huaweicloud.com> wrote:
+> >>
+> >>On Mon, 2023-11-20 at 16:06 -0500, Paul Moore wrote:
+> >>>On Mon, Nov 20, 2023 at 3:16???AM Roberto Sassu
+> >>><roberto.sassu@huaweicloud.com> wrote:
+> >>>>On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
+> >>>>>On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+> >>>>>>
+> >>>>>>Before the security field of kernel objects could be shared among 
+> >>>>>>LSMs with
+> >>>>>>the LSM stacking feature, IMA and EVM had to rely on an alternative 
+> >>>>>>storage
+> >>>>>>of inode metadata. The association between inode metadata and inode is
+> >>>>>>maintained through an rbtree.
+> >>>>>>
+> >>>>>>Because of this alternative storage mechanism, there was no need to 
+> >>>>>>use
+> >>>>>>disjoint inode metadata, so IMA and EVM today still share them.
+> >>>>>>
+> >>>>>>With the reservation mechanism offered by the LSM infrastructure, the
+> >>>>>>rbtree is no longer necessary, as each LSM could reserve a space in 
+> >>>>>>the
+> >>>>>>security blob for each inode. However, since IMA and EVM share the
+> >>>>>>inode metadata, they cannot directly reserve the space for them.
+> >>>>>>
+> >>>>>>Instead, request from the 'integrity' LSM a space in the security 
+> >>>>>>blob for
+> >>>>>>the pointer of inode metadata (integrity_iint_cache structure). The 
+> >>>>>>other
+> >>>>>>reason for keeping the 'integrity' LSM is to preserve the original 
+> >>>>>>ordering
+> >>>>>>of IMA and EVM functions as when they were hardcoded.
+> >>>>>>
+> >>>>>>Prefer reserving space for a pointer to allocating the 
+> >>>>>>integrity_iint_cache
+> >>>>>>structure directly, as IMA would require it only for a subset of 
+> >>>>>>inodes.
+> >>>>>>Always allocating it would cause a waste of memory.
+> >>>>>>
+> >>>>>>Introduce two primitives for getting and setting the pointer of
+> >>>>>>integrity_iint_cache in the security blob, respectively
+> >>>>>>integrity_inode_get_iint() and integrity_inode_set_iint(). This would 
+> >>>>>>make
+> >>>>>>the code more understandable, as they directly replace rbtree 
+> >>>>>>operations.
+> >>>>>>
+> >>>>>>Locking is not needed, as access to inode metadata is not shared, it 
+> >>>>>>is per
+> >>>>>>inode.
+> >>>>>>
+> >>>>>>Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> >>>>>>Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> >>>>>>Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> >>>>>>---
+> >>>>>>  security/integrity/iint.c      | 71 
+> >>>>>>  +++++-----------------------------
+> >>>>>>  security/integrity/integrity.h | 20 +++++++++-
+> >>>>>>  2 files changed, 29 insertions(+), 62 deletions(-)
+> >>>>>>
+> >>>>>>diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+> >>>>>>index 882fde2a2607..a5edd3c70784 100644
+> >>>>>>--- a/security/integrity/iint.c
+> >>>>>>+++ b/security/integrity/iint.c
+> >>>>>>@@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+> >>>>>>     return 0;
+> >>>>>>  }
+> >>>>>>
+> >>>>>>+struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+> >>>>>>+   .lbs_inode = sizeof(struct integrity_iint_cache *),
+> >>>>>>+};
+> >>>>>
+> >>>>>I'll admit that I'm likely missing an important detail, but is there
+> >>>>>a reason why you couldn't stash the integrity_iint_cache struct
+> >>>>>directly in the inode's security blob instead of the pointer?  For
+> >>>>>example:
+> >>>>>
+> >>>>>   struct lsm_blob_sizes ... = {
+> >>>>>     .lbs_inode = sizeof(struct integrity_iint_cache),
+> >>>>>   };
+> >>>>>
+> >>>>>   struct integrity_iint_cache *integrity_inode_get(inode)
+> >>>>>   {
+> >>>>>     if (unlikely(!inode->isecurity))
+> >>>>>       return NULL;
+> >>>>>     return inode->i_security + integrity_blob_sizes.lbs_inode;
+> >>>>>   }
+> >>>>
+> >>>>It would increase memory occupation. Sometimes the IMA policy
+> >>>>encompasses a small subset of the inodes. Allocating the full
+> >>>>integrity_iint_cache would be a waste of memory, I guess?
+> >>>
+> >>>Perhaps, but if it allows us to remove another layer of dynamic memory
+> >>>I would argue that it may be worth the cost.  It's also worth
+> >>>considering the size of integrity_iint_cache, while it isn't small, it
+> >>>isn't exactly huge either.
+> >>>
+> >>>>On the other hand... (did not think fully about that) if we embed the
+> >>>>full structure in the security blob, we already have a mutex available
+> >>>>to use, and we don't need to take the inode lock (?).
+> >>>
+> >>>That would be excellent, getting rid of a layer of locking would be 
+> >>>significant.
+> >>>
+> >>>>I'm fully convinced that we can improve the implementation
+> >>>>significantly. I just was really hoping to go step by step and not
+> >>>>accumulating improvements as dependency for moving IMA and EVM to the
+> >>>>LSM infrastructure.
+> >>>
+> >>>I understand, and I agree that an iterative approach is a good idea, I
+> >>>just want to make sure we keep things tidy from a user perspective,
+> >>>i.e. not exposing the "integrity" LSM when it isn't required.
+> >>
+> >>Ok, I went back to it again.
+> >>
+> >>I think trying to separate integrity metadata is premature now, too
+> >>many things at the same time.
+> >
+> >I'm not bothered by the size of the patchset, it is more important
+> >that we do The Right Thing.  I would like to hear in more detail why
+> >you don't think this will work, I'm not interested in hearing about
+> >difficult it may be, I'm interested in hearing about what challenges
+> >we need to solve to do this properly.
+> 
+> The right thing in my opinion is to achieve the goal with the minimal 
+> set of changes, in the most intuitive way.
+> 
+> Until now, there was no solution that could achieve the primary goal of 
+> this patch set (moving IMA and EVM to the LSM infrastructure) and, at 
+> the same time, achieve the additional goal you set of removing the 
+> 'integrity' LSM.
+> 
+> If you see the diff, the changes compared to v5 that was already 
+> accepted by Mimi are very straightforward. If the assumption I made that 
+> in the end the 'ima' LSM could take over the role of the 'integrity' 
+> LSM, that for me is the preferable option.
+> 
+> Given that the patch set is not doing any design change, but merely 
+> moving calls and storing pointers elsewhere, that leaves us with the 
+> option of thinking better what to do next, including like you suggested 
+> to make IMA and EVM use disjoint metadata.
 
---=20
-Thanks,
+A suggestion has been made in this thread that there needs to be broad
+thinking on this issue, and by extension, other tough problems.  On
+that note, we would be interested in any thoughts regarding the notion
+of a long term solution for this issue being the migration of EVM to a
+BPF based implementation?
 
-Steve
+There appears to be consensus that the BPF LSM will always go last, a
+BPF implementation would seem to address the EVM ordering issue.
+
+In a larger context, there have been suggestions in other LSM threads
+that BPF is the future for doing LSM's.  Coincident with that has come
+some disagreement about whether or not BPF embodies sufficient
+functionality for this role.
+
+The EVM codebase is reasonably modest with a very limited footprint of
+hooks that it handles.  A BPF implementation on this scale would seem
+to go a long ways in placing BPF sufficiency concerns to rest.
+
+Thoughts/issues?
+
+> Thanks
+> 
+> Roberto
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
 
