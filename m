@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-4637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B683801693
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62047801694
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC57F1C20AFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DBDA281C1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A733F8C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0293F8D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="1XvDMNHj"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="te1o93ld"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D176210D
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 14:12:17 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5d3ffa1ea24so14610537b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 14:12:17 -0800 (PST)
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 878F510D0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 14:12:19 -0800 (PST)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5cece20f006so29772347b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 14:12:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1701468737; x=1702073537; darn=vger.kernel.org;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1701468739; x=1702073539; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xJBhhgJ+1T9YX1Azl50SzieInTuno7x/kRfcGFlFKhk=;
-        b=1XvDMNHjmsg1O2b89cOD0fX2jISRqcWq9WFoV5788CPayCC0YPtDi3wANdjWo2LTV8
-         XPM4bBE2jC8wQzJ1GChUs+AFRFURxzb/T+bZ+U0COEFF8s2pxOR3r1pSaJBSj/KoA+Dv
-         yzp6WUX4xbR3jEmsL/ZHUOu59RPUzDJYJLuoueAl5VedMDvlub7wkzeFXwCnOGoXFa3r
-         Q8Is/ofhHaLgXJCZUW4C38olJGVhcqa0go3YwgVQRVWugvvbsri83XC5sJr2MitO0BAQ
-         drOBV401QkF1B9L9VRz7ROkM9NNifBhGjLeEATWmcR+gCAgegs3JSbVQxJLXBDx3iMN1
-         BZ1Q==
+        bh=Cn/5d23+Piiaq9wfrRh434zM+tA72DN+x3v+pwhuqj8=;
+        b=te1o93ldXA8bGPpTugHIdBQXZbUqnFxjPgdM+XseecIqy2KSdnC2xMk4JbyfOwZAru
+         Uf4ggk70UcK8ULMamB+DXy1s+MLDu/oxLNyMMriy9s/FWPLiLdbsm7P8Shv2ZGbInaaj
+         xU9bbF4TmJp5w/4cuqOS5nnSUnAyvsVYbfzKuA+z2TCB2+Io+hFyv+qEeiKKe35xQumu
+         MfhYquLYoAxUFF8JigQKp1JIhVlFw2hCeWkK9rjBfOgtTI2qyKJ1PS4djrlyc37rXjvJ
+         GEXmE4Gb3kwSQ19btVa52U4NMQassVSHd4ITwvHAQctlKpBxW5NAmCZ6f2hFUGGOd47s
+         /3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701468737; x=1702073537;
+        d=1e100.net; s=20230601; t=1701468739; x=1702073539;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xJBhhgJ+1T9YX1Azl50SzieInTuno7x/kRfcGFlFKhk=;
-        b=vo444O8hqc3eC/xGx+Lss1oQuHcCsABhcF4hfkYyE4VDueyDTwXGgZdEGOweI1T4To
-         Ociiudln5nZStSq0zZM9g2HOSY7ctrgtfQYGG5VLUv1LNdhkVQweeZvUseRIBrXWKr8G
-         Tf1C57DIHhsIgQ+L0CeZ5ZZV4/uxezdFWq8zhuj0Fs059W/sZZ4BKz7PK219N4GhcWnn
-         /5AZ2o3N/N/Q7sJC1kEgYMlTqUOKoii6pFBEzMGuAJ3PzhxpmEVceTqcLVsn7DMu/9+I
-         PNQZ6NKBLbx5vglYvSr5/KYf5xx2xNA0GqBX5vlWtrtXcykYddi8ECuVNuhVpG3ff78A
-         Cvzg==
-X-Gm-Message-State: AOJu0Yz5dc/YrSbWJs8yKY2iZwoh7pmBftOyiScUECq/YVSHxPNAHYX/
-	PJ1yFOKdpIVBNqAS1igKjfzUsg==
-X-Google-Smtp-Source: AGHT+IEpiSNvOiaKjibA/IViu1TIx8ICi0Ven/x7rIS7LMv7zL85hNSe7A2i3HsIVEp7yzw53XnwMg==
-X-Received: by 2002:a0d:c985:0:b0:5cd:6d0e:5369 with SMTP id l127-20020a0dc985000000b005cd6d0e5369mr378564ywd.34.1701468737049;
-        Fri, 01 Dec 2023 14:12:17 -0800 (PST)
+        bh=Cn/5d23+Piiaq9wfrRh434zM+tA72DN+x3v+pwhuqj8=;
+        b=VIduxpqJylHWwxNljO4/jPf8EgUYwjcNN8sTPTxYXT5/b9Uy5t+KE5JVrtRpUSDimB
+         m9fCKNg/+yhmsggU0N/4JTqCPn5jjGGPdxRcJaKi6rN7l0u/wgFIdafP69Kcn/CZZhTN
+         10ksBeOlxBqa4aGgbsDOB32hA4pSxqTdJA7w6dV/XTAmBbjuDazLRxegfMnk/LVEV1vB
+         yXiF9dxln8v6wbsAHY1aSzm9dPW2QvSh98gFIZZLoKaYzx0C7YPICfl6DTMOvncXBiHP
+         AoOVkMjtexlmD2eatQakJtMUybajXTSwseZwulGXBChznhjhAz5Z2zhfU4nvVT4af1BI
+         q5rg==
+X-Gm-Message-State: AOJu0YwTjWnTilciZDML0it+naSuG3qSY6ZaUN2SZX6NB7mrCG2c5BxL
+	sNc21HyAqvsSVLCuNvuAHtOnTCn83H1I7K+nUQddtw==
+X-Google-Smtp-Source: AGHT+IGwKgKwJieuod2BvgdYGZbGi6RK3u0kD5BnpiTCasyQjPg9Qmn5EOtaFfHx3/XBEyUTpFupSw==
+X-Received: by 2002:a81:99d4:0:b0:5d7:1940:f3f1 with SMTP id q203-20020a8199d4000000b005d71940f3f1mr149497ywg.89.1701468738787;
+        Fri, 01 Dec 2023 14:12:18 -0800 (PST)
 Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id h13-20020a81b40d000000b005d1b2153b7bsm1365091ywi.18.2023.12.01.14.12.16
+        by smtp.gmail.com with ESMTPSA id t7-20020a815f07000000b005d0fea7ad01sm1392549ywb.122.2023.12.01.14.12.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Dec 2023 14:12:16 -0800 (PST)
+        Fri, 01 Dec 2023 14:12:17 -0800 (PST)
 From: Josef Bacik <josef@toxicpanda.com>
 To: linux-btrfs@vger.kernel.org,
 	kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org
 Cc: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Subject: [PATCH v4 17/46] btrfs: add encryption to CONFIG_BTRFS_DEBUG
-Date: Fri,  1 Dec 2023 17:11:14 -0500
-Message-ID: <162cd559b6a47e1df6e49b15acb24942577280f5.1701468306.git.josef@toxicpanda.com>
+Subject: [PATCH v4 18/46] btrfs: add get_devices hook for fscrypt
+Date: Fri,  1 Dec 2023 17:11:15 -0500
+Message-ID: <7d727ad8e77df8e05f8e1374abbd4745603221d8.1701468306.git.josef@toxicpanda.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <cover.1701468305.git.josef@toxicpanda.com>
 References: <cover.1701468305.git.josef@toxicpanda.com>
@@ -74,36 +74,74 @@ Content-Transfer-Encoding: 8bit
 
 From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 
-Since encryption is currently under BTRFS_DEBUG, this adds its
-dependencies: inline encryption from fscrypt, and the inline encryption
-fallback path from the block layer.
+Since extent encryption requires inline encryption, even though we
+expect to use the inlinecrypt software fallback most of the time, we
+need to enumerate all the devices in use by btrfs.
 
 Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
 Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/ioctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/fscrypt.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 9968a36079c4..0e8e2ca48a2e 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4573,6 +4573,7 @@ long btrfs_ioctl(struct file *file, unsigned int
- 		return btrfs_ioctl_get_fslabel(fs_info, argp);
- 	case FS_IOC_SETFSLABEL:
- 		return btrfs_ioctl_set_fslabel(file, argp);
-+#ifdef CONFIG_BTRFS_DEBUG
- 	case FS_IOC_SET_ENCRYPTION_POLICY: {
- 		if (!IS_ENABLED(CONFIG_FS_ENCRYPTION))
- 			return -EOPNOTSUPP;
-@@ -4601,6 +4602,7 @@ long btrfs_ioctl(struct file *file, unsigned int
- 		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
- 	case FS_IOC_GET_ENCRYPTION_NONCE:
- 		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
-+#endif /* CONFIG_BTRFS_DEBUG */
- 	case FITRIM:
- 		return btrfs_ioctl_fitrim(fs_info, argp);
- 	case BTRFS_IOC_SNAP_CREATE:
+diff --git a/fs/btrfs/fscrypt.c b/fs/btrfs/fscrypt.c
+index 9103da28af7e..2d037b105b5f 100644
+--- a/fs/btrfs/fscrypt.c
++++ b/fs/btrfs/fscrypt.c
+@@ -11,7 +11,9 @@
+ #include "ioctl.h"
+ #include "messages.h"
+ #include "root-tree.h"
++#include "super.h"
+ #include "transaction.h"
++#include "volumes.h"
+ #include "xattr.h"
+ 
+ /*
+@@ -178,8 +180,43 @@ static bool btrfs_fscrypt_empty_dir(struct inode *inode)
+ 	return inode->i_size == BTRFS_EMPTY_DIR_SIZE;
+ }
+ 
++static struct block_device **btrfs_fscrypt_get_devices(struct super_block *sb,
++						       unsigned int *num_devs)
++{
++	struct btrfs_fs_info *fs_info = btrfs_sb(sb);
++	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
++	int nr_devices = fs_devices->open_devices;
++	struct block_device **devs;
++	struct btrfs_device *device;
++	int i = 0;
++
++	devs = kmalloc_array(nr_devices, sizeof(*devs), GFP_NOFS | GFP_NOWAIT);
++	if (!devs)
++		return ERR_PTR(-ENOMEM);
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(device, &fs_devices->devices, dev_list) {
++		if (!test_bit(BTRFS_DEV_STATE_IN_FS_METADATA,
++						&device->dev_state) ||
++		    !device->bdev ||
++		    test_bit(BTRFS_DEV_STATE_REPLACE_TGT, &device->dev_state))
++			continue;
++
++		devs[i++] = device->bdev;
++
++		if (i >= nr_devices)
++			break;
++
++	}
++	rcu_read_unlock();
++
++	*num_devs = i;
++	return devs;
++}
++
+ const struct fscrypt_operations btrfs_fscrypt_ops = {
+ 	.get_context = btrfs_fscrypt_get_context,
+ 	.set_context = btrfs_fscrypt_set_context,
+ 	.empty_dir = btrfs_fscrypt_empty_dir,
++	.get_devices = btrfs_fscrypt_get_devices,
+ };
 -- 
 2.41.0
 
