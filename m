@@ -1,114 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-4603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B1D801305
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 19:47:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6C2801306
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 19:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360E51C208B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 18:47:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CCEB20BC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 18:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9375F54BC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 18:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F9C54BC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 18:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NGszqyCT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8XQxcls"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 152360 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 01 Dec 2023 09:37:23 PST
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6884B2;
-	Fri,  1 Dec 2023 09:37:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=733i7nh34fae7nqvhxrtxokxny.protonmail; t=1701452241; x=1701711441;
-	bh=SDEs+kKoImcW0/37ZK07RqKOEiMzhsKpKss6HpH9yX8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NGszqyCTA9a++ZSjmKG7lMsbXMaRsYWcE1OOO82R9qa95qsfTr+JngRey35OgZdnf
-	 q8MOOHsKA7qRcFaqREzbnppBsmo1EcJ5ya4zmvuQXSApR+2svSWP95OwDbjdHhj3tD
-	 26S3dYAXNkw3i3P0+X6festAERaAmDJ1CBEDuop4czT9JR559meWHij2vGgPA35jBH
-	 KG1S+NAMLsYbTOrbsybnT0KK7ilCDSHlqCMFQkxVvl/T+1UYnOx0IW+GEG4Jb6TU7t
-	 GNRon9RiE6BmQZOgJdK+bz5bydWReHzyb1cS7NRs4iT553RjNIS4B6HgcEWMjFY73/
-	 nbOHG+G+GTqnQ==
-Date: Fri, 01 Dec 2023 17:37:06 +0000
-To: David Laight <David.Laight@ACULAB.COM>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Theodore Ts'o <tytso@mit.edu>, Alice Ryhl <aliceryhl@google.com>, "a.hindborg@samsung.com" <a.hindborg@samsung.com>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "arve@android.com" <arve@android.com>, "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, "brauner@kernel.org" <brauner@kernel.org>, "cmllamas@google.com" <cmllamas@google.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dxu@dxuuu.xyz" <dxu@dxuuu.xyz>, "gary@garyguo.net" <gary@garyguo.net>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "joel@joelfernandes.org" <joel@joelfernandes.org>, "keescook@chromium.org" <keescook@chromium.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "maco@android.com" <maco@android.com>, "ojeda@kernel.org" <ojeda@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>, "surenb@google.com" <surenb@google.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "tkjos@android.com" <tkjos@android.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "wedsonaf@gmail.com" <wedsonaf@gmail.com>, "willy@infradead.org" <willy@infradead.org>
-Subject: RE: [PATCH 1/7] rust: file: add Rust abstraction for `struct file`
-Message-ID: <ajiq9UHMeP48LeNuGAPzLS38mW-fCL0OlXZKOCzg1D9H1JSQo2NroOEEjzLuuClpn7b3Do-IuDO8DqAT3z9s8ozEHAdqyGhHXUl0fvUKDDg=@proton.me>
-In-Reply-To: <70efae6ae16647ddbb2b2c887e90e7c8@AcuMS.aculab.com>
-References: <386bbdee165d47338bc451a04e788dd6@AcuMS.aculab.com> <20231201122740.2214259-1-aliceryhl@google.com> <20231201150442.GC509422@mit.edu> <zWaYgly6VpMZcvVUAILQWBSs9VnO7nFiAiCo4eTzT4SJEfqXY8G8w7f6az7kz9wEB4pA8EbajkQZRX4CuifI00Ce3EA_4muXjz_kfdAuzOU=@proton.me> <70efae6ae16647ddbb2b2c887e90e7c8@AcuMS.aculab.com>
-Feedback-ID: 71780778:user:proton
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A2722080;
+	Fri,  1 Dec 2023 17:38:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733D4C433C8;
+	Fri,  1 Dec 2023 17:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701452315;
+	bh=Dz0B5fxn/oqyZ4YCUdxRSHvWd24ECZxBcKDsdAS+OP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L8XQxclsI+SfocWX7pLQg4yTcgnoloNmJKFzNin3DuEOugJh6FR9HozYzAHV3NTwh
+	 +3ZjARg0I6K6FNsw7aF4/04ubGHDL9VORUBV3a5oydbq9Jz6LcqULE6mTTiv2pELXa
+	 Qi58qBD5KnMEvY+VEffgOPWBYOuSj8TVjtzBi4YZguMJl9PBI2ueUi9rqiqFIgNIiT
+	 qtn4Z/loHTRwmOgKYcpX7SPoBfgz4E5035z6IMV1rEjT3C0jvvYimsU+eUqEraINyZ
+	 B2kChFVseZHPmy1CLml9Q0M0DNC/mRetdSHHKQMjdErEtwviYgUDS54kZUsN3VNRvH
+	 Te6+37vaI5zGw==
+Date: Fri, 1 Dec 2023 11:38:33 -0600
+From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+Message-ID: <ZWoaGU6xpF3S793+@do-x1extreme>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+ <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+ <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
 
-On 12/1/23 18:25, David Laight wrote:
-> From: Benno Lossin
->> Sent: 01 December 2023 15:14
->>
->> On 12/1/23 16:04, Theodore Ts'o wrote:
->>> On Fri, Dec 01, 2023 at 12:27:40PM +0000, Alice Ryhl wrote:
->>>>
->>>> You can import it with a use statement. For example:
->>>>
->>>> use kernel::file::flags::O_RDONLY;
->>>> // use as O_RDONLY
->>>
->>> That's good to hear,
->=20
-> Except that the examples here seem to imply you can't import
-> all of the values without listing them all.
+On Fri, Dec 01, 2023 at 06:02:55PM +0100, Christian Brauner wrote:
+> On Wed, Nov 29, 2023 at 03:50:25PM -0600, Seth Forshee (DigitalOcean) wrote:
+> > Add inode operations for getting, setting and removing filesystem
+> > capabilities rather than passing around raw xattr data. This provides
+> > better type safety for ids contained within xattrs.
+> > 
+> > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> > ---
+> >  include/linux/fs.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 98b7a7a8c42e..a0a77f67b999 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2002,6 +2002,11 @@ struct inode_operations {
+> >  				     int);
+> >  	int (*set_acl)(struct mnt_idmap *, struct dentry *,
+> >  		       struct posix_acl *, int);
+> > +	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> > +			  struct vfs_caps *);
+> > +	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> > +			  const struct vfs_caps *, int flags);
+> 
+> If it's really a flags argument, then unsigned int, please,
 
-Alice has given an example above, but you might not have noticed:
-
-    use kernel::file::flags::*;
-   =20
-    // usage:
-
-    O_RDONLY
-    O_APPEND
-
-> From what I've seen of the rust patches the language seems
-> to have a lower SNR than ADA or VHDL.
-> Too much syntatic 'goop' makes it difficult to see what code
-> is actually doing.
-
-This is done for better readability, e.g. when you do not have
-rust-analyzer to help you jump to the right definition. But there are
-certainly instances where we use the `::*` imports (just look at the
-first patch).
-
-> ....
->> Alternatively if we end up with multiple flags modules you can do this
->> (the sixth option from Alice):
->>
->>     use kernel::file::flags as file_flags;
->>     use kernel::foo::flags as foo_flags;
->>
->>     // usage:
->>
->>     file_flags::O_RDONLY
->>
->>     foo_flags::O_RDONLY
->=20
-> That looks useful for the 'obfuscated rust' competition.
-> Consider:
-> =09use kernel::file::flags as foo_flags;
-> =09use kernel::foo::flags as file_flags;
-
-This is no worse than C preprocessor macros doing funky stuff.
-We will just have to catch this in review.
-
---=20
-Cheers,
-Benno
-
+This is the flags for setxattr, which is an int everywhere. Or almost
+everywhere; I just noticed that it is actually an unsigned int in struct
+xattr_ctx. But for consistency I think it makes sense to have it be an
+int here too. Though maybe naming it setxattr_flags would be helpful for
+clarity.
 
