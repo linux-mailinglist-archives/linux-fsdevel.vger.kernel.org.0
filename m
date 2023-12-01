@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-4556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F71800866
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 11:37:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C5E800867
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 11:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D01F20F41
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00C07B2111E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D54210E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59773210E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vu1qqeD+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55200C7
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 02:12:05 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3FD361FD63;
-	Fri,  1 Dec 2023 10:12:02 +0000 (UTC)
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D6711344E;
-	Fri,  1 Dec 2023 10:12:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id +b3QCnKxaWUQcwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Fri, 01 Dec 2023 10:12:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A7FDEA07DB; Fri,  1 Dec 2023 11:11:57 +0100 (CET)
-Date: Fri, 1 Dec 2023 11:11:57 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 16/16] fs: create {sb,file}_write_not_started() helpers
-Message-ID: <20231201101157.ngebxqwhcwrurjvw@quack3>
-References: <20231122122715.2561213-1-amir73il@gmail.com>
- <20231122122715.2561213-17-amir73il@gmail.com>
- <20231123173532.6h7gxacrlg4pyooh@quack3>
- <CAOQ4uxjrvWXR6MwiUUfEQdw1hDNmzO6KfhzWjc20VYp9Rf_ypw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3EC1DDCC;
+	Fri,  1 Dec 2023 10:27:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8C3C433C9;
+	Fri,  1 Dec 2023 10:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701426462;
+	bh=2fsxldjXdLT1vLmTSL0O0eM3f9o5dOmCk2EixIWt25Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vu1qqeD+amM3RPPGUCpm0/0tkYu09IWWI/UVpYypRMBc8k7lcceWL9aT+Anhls2Nb
+	 H84Zcoh4dRCJkFiHHMhr7IrK9+NOhaELc7Y6EpSJX28BEtbjnNImbKm5+IIpBGU+zO
+	 ahPXK/We8kIRq5PjejjUVsAsV1u0y8cRPpcq+rpEvsFAM4aA+L/PXC4cD450NjojqV
+	 31bUqzomYoF1WEN99f6GzfkrJQJL5OKsyoJCRn0UNEJuCzuMiNpxg32vf62cvjyonk
+	 qLJ+d8RxAPLu7xU/yCmxqxXB+B5tBG7QXBDFML1BIauaHVIpZTYYKEuGbrFS1ZF+TA
+	 EiSyG+oS1Vwfw==
+Date: Fri, 1 Dec 2023 11:27:33 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: benno.lossin@proton.me, a.hindborg@samsung.com, alex.gaynor@gmail.com,
+	arve@android.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz,
+	gary@garyguo.net, gregkh@linuxfoundation.org,
+	joel@joelfernandes.org, keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
+	rust-for-linux@vger.kernel.org, surenb@google.com,
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk,
+	wedsonaf@gmail.com, willy@infradead.org
+Subject: Re: [PATCH 2/7] rust: cred: add Rust abstraction for `struct cred`
+Message-ID: <20231201-zacken-gewachsen-73fe323b067b@brauner>
+References: <W6StBLpVsvvGchAT5ZEvH9JJyzu401dMqR3yN73NZPjPeZRoaKAuoYe40QWErmPwrnJVTH7BbLKtWXDOMYny5xjwd3CSLyz5IYYReB6-450=@proton.me>
+ <20231201090636.2179663-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,114 +57,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjrvWXR6MwiUUfEQdw1hDNmzO6KfhzWjc20VYp9Rf_ypw@mail.gmail.com>
-X-Spamd-Bar: ++++++++
-X-Spam-Score: 8.69
-X-Rspamd-Server: rspamd1
-Authentication-Results: smtp-out2.suse.de;
-	dkim=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz;
-	dmarc=none
-X-Rspamd-Queue-Id: 3FD361FD63
-X-Spamd-Result: default: False [8.69 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-0.999];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[]
+In-Reply-To: <20231201090636.2179663-1-aliceryhl@google.com>
 
-On Fri 24-11-23 10:20:25, Amir Goldstein wrote:
-> On Fri, Nov 24, 2023 at 6:17 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 22-11-23 14:27:15, Amir Goldstein wrote:
-> > > Create new helpers {sb,file}_write_not_started() that can be used
-> > > to assert that sb_start_write() is not held.
-> > >
-> > > This is needed for fanotify "pre content" events.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > I'm not against this but I'm somewhat wondering, where exactly do you plan
-> > to use this :) (does not seem to be in this patch set).
+On Fri, Dec 01, 2023 at 09:06:35AM +0000, Alice Ryhl wrote:
+> Benno Lossin <benno.lossin@proton.me> writes:
+> > On 11/29/23 13:51, Alice Ryhl wrote:
+> >> +    /// Returns the credentials of the task that originally opened the file.
+> >> +    pub fn cred(&self) -> &Credential {
+> >> +        // This `read_volatile` is intended to correspond to a READ_ONCE call.
+> >> +        //
+> >> +        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
+> >> +        //
+> >> +        // TODO: Replace with `read_once` when available on the Rust side.
+> >> +        let ptr = unsafe { core::ptr::addr_of!((*self.0.get()).f_cred).read_volatile() };
+> >> +
+> >> +        // SAFETY: The signature of this function ensures that the caller will only access the
+> >> +        // returned credential while the file is still valid, and the credential must stay valid
+> >> +        // while the file is valid.
+> > 
+> > About the last part of this safety comment, is this a guarantee from the
+> > C side? If yes, then I would phrase it that way:
+> > 
+> >     ... while the file is still valid, and the C side ensures that the
+> >     credentials stay valid while the file is valid.
 > 
-> As I wrote in the cover letter:
-> "The last 3 patches are helpers that I used in fanotify patches to
->  assert that permission hooks are called with expected locking scope."
+> Yes, that's my intention with this code.
 > 
-> But this is just half of the story.
+> But I guess this is a good question for Christian Brauner to confirm:
 > 
-> The full story is that I added it in fsnotify_file_perm() hook to check
-> that we caught all the places that permission hook was called with
-> sb_writers held:
+> If I read the credential from the `f_cred` field, is it guaranteed that
+> the pointer remains valid for at least as long as the file?
 > 
->  static inline int fsnotify_file_perm(struct file *file, int mask)
->  {
->        struct inode *inode = file_inode(file);
->        __u32 fsnotify_mask;
-> 
->        /*
->         * Content of file may be written on pre-content events, so sb freeze
->         * protection must not be held.
->         */
->        lockdep_assert_once(file_write_not_started(file));
-> 
->        /*
->         * Pre-content events are only reported for regular files and dirs.
->         */
->        if (mask & MAY_READ) {
-> 
-> 
-> And the assert triggered in a nested overlay case (overlay over overlay).
-> So I cannot keep the assert in the final patch as is.
-> I can probably move it into (mask & MAY_WRITE) case, because
-> I don't know of any existing write permission hook that is called with
-> sb_wrtiers held.
-> 
-> I also plan to use sb_write_not_started() in fsnotify_lookup_perm().
-> 
-> I think that:
-> "This is needed for fanotify "pre content" events."
-> sums this up nicely without getting into gory details ;)
-> 
-> > Because one easily
-> > forgets about the subtle implementation details and uses
-> > !sb_write_started() instead of sb_write_not_started()...
-> >
-> 
-> I think I had a comment in one version that said:
-> "This is NOT the same as !sb_write_started()"
-> 
-> We can add it back if you think it is useful, but FWIW, anyone
-> can use !sb_write_started() wrongly today whether we add
-> sb_write_not_started() or not.
-> 
-> But this would be pretty easy to detect - running a build without
-> CONFIG_LOCKDEP will catch this misuse pretty quickly.
+> Or should I do some dance along the lines of "lock file, increment
+> refcount on credential, unlock file"?
 
-Yeah, fair enough. Thanks for explanation!
+The lifetime of the f_cred reference is at least as long as the lifetime
+of the file:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+// file not yet visible anywhere
+some_file = alloc_file*()
+-> init_file()
+   {
+           file->f_cred = get_cred(cred /* usually current_cred() */)
+   }
+
+
+// install into fd_table -> irreversible, thing visible, possibly shared
+fd_install(1234, some_file)
+
+// last fput
+fput()
+// atomic_dec_and_test() dance:
+-> file_free() // either "delayed" through task work, workqueue, or
+	       // sometimes freed right away if file hasn't been opened,
+	       // i.e., if fd_install() wasn't called
+   -> put_cred(file->f_cred)
+
+In order to access anything you must hold a reference to the file or
+files->file_lock. IOW, no poking around in f->f_cred or any field for
+that matter just under rcu_read_lock() for example. Because files are
+SLAB_TYPESAFE_BY_RCU. You might be poking in someone else's creds then.
 
