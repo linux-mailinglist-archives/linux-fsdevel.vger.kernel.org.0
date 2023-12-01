@@ -1,170 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-4618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F530801677
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FC7801678
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:36:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01CD1F20D3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361A21F21005
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D253F8CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD73F8C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hX6VTg28"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Inm+JbqU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B573BF4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 13:59:26 -0800 (PST)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-5d400779f16so10606707b3.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 13:59:26 -0800 (PST)
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D991D10D0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 14:07:38 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6cde11fb647so2663078b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 14:07:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701467966; x=1702072766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+exs5h/ORFFX83E63BLP4xoRIe35RXovt/mscKVvNI=;
-        b=hX6VTg28CCxCeP57YZmXo477YSgmH93Dw4fBMR4wa6zhQtrlFGN42dTJW7ffMyR2CE
-         vAl1PUUYT91fOBJfopsUCUmAArwAU/VlXXeMGz5isSl2Of77vITRovW1K3zBV9xyb6x/
-         KF/Q9DLL8h61WDxD5pTUbV55HXMS1+wiPLdBdZlMrzgejIPbQuH9TyOBSG6+RPX7iyxJ
-         H8lRnSppJWjq8j4vS8hgcP5RY9WmKYYEZv4al4VbPGw/seqJTkfGMlmuoO1bX93eVAb5
-         nrrvinDEAAMx+dOteVgfbjAyhpSDOX90IBDRwxDtT8COoK3qtagPQW8Pz4x5gnhfgFzM
-         7Yhg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701468458; x=1702073258; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQfhMuRIsbbhA4byoTnf3ILysjsRNS3/HHA853GOzAw=;
+        b=Inm+JbqUEbLotO33+3ph5QBp9+pGeMBsAjteoY+2Kw1/u8nKSa1iimV7dkbevZ7SW1
+         Hs6XygpS8kfGMNbCi/uYixbefpCsE1iaJfVbP3niSPCfxOrEpRJjLaVRVP8+eg3umRuD
+         SLeimMybkiUCL3b7q25MQMOxLNU9KtXQdeOWW51axpxG+Bgz19NxRJIMWjhO4VQNDk/t
+         TuYmq/JIdNV53/Qc2X4yn7cFhu66f9cVut4kG1pp38KOTWaKw/ahH1TZFUNa54u5LS9g
+         GgREGEO42kXKas4TctciR27zGBQT1jia0lnCtgaVFi6rMCWeZXFop/jL/HsO3XPdlddo
+         J4aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701467966; x=1702072766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+exs5h/ORFFX83E63BLP4xoRIe35RXovt/mscKVvNI=;
-        b=H3FO8Ozw8nxaZsRniDsFog3Zkv0bfUNemTDB5Y+yH8YRLlsJkaDuBd5HmRkDsdFWBx
-         Kjf0NyVCIc++T1TYCVfRRk8GKKQFITTyv0iI1CtrCZy7V5LCwBiVOQzFZb82w4lzgn68
-         yJkK5KmTxnwDmLCI3bi/wXwHGqaVKFyNwOb0edqZkIZR4Ny5aEwTxqo9h6R2nkHvLGDm
-         FBrlphQ2NpcYzggI+2jbYS5X+XY5NfEam+2ciJipW0WH/oXyFRB4uDaVV1JyEPi0ifRD
-         XHcINmZ2DR1v5tIuo//qE08GNmhsVNse7UUClHBd9yyqwpC8xP9wWVPu87zB7LyQR2Yk
-         Ddzw==
-X-Gm-Message-State: AOJu0YxzFsu2t5+9jjR7Pdx1PMrB+QRtP+dc0V7TRudKR/gGQNmrGSBq
-	+TkQfGVCMVu3eKNtmFlMyL4iQOuA/J4Qs0sgebOHRQ==
-X-Google-Smtp-Source: AGHT+IH5pinfBxSB4oGxosUPol8k+50xPe9U5E7xmyyM7NKUdtj+66RiOT8P6mzKNjGWMLXdmWbEEzCJywNKZK4Oneo=
-X-Received: by 2002:a0d:e684:0:b0:5d7:1a33:5ad3 with SMTP id
- p126-20020a0de684000000b005d71a335ad3mr115182ywe.32.1701467965712; Fri, 01
- Dec 2023 13:59:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701468458; x=1702073258;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YQfhMuRIsbbhA4byoTnf3ILysjsRNS3/HHA853GOzAw=;
+        b=EVZZvspnRwqUJXLNJHqXFd6CIeOuDuYafQEW1EprimKxLVniVKY5H03Ld/n/Py4qck
+         IUBDGyQuwoPQs+VZ2XRJDoTk5fXkSQNQbcJQ1WFKU84/Z5tHGvhspZA4+Ylsx0T56BIo
+         BGML0j1qK5s1qK4djZy8mYSQq5BLKC9Tr9ONWljRmpR9Us8w0x60IrV5WJ571GSXzbvR
+         PqXDorXvUYtz8b8fmkLsWZwNlAqaTNXGmzud5JjoPeZZT736qk0TvEF2v5QlfknNICkE
+         KCVROtuu9T7DByTUgscQW2l/tuJ3oAdbxrE8YLnhjbP6HCobxeC/LT1QklhMCXheJf3E
+         naGA==
+X-Gm-Message-State: AOJu0Yz/xqILVvr+H62u+lsp+qXmc63hjjd4c+p9+QIXwc/lCAhRJNYg
+	9ugUMBbC3ehqvRcqyqtrKKZp29PMlw+3GOrb4RQ=
+X-Google-Smtp-Source: AGHT+IHn0EpeSi5B2rQLxrrOISHjlpMWaKQpxCq9eItPt05oGFOnoWDLHFaXbAeEnMdp+k89dFb5Tg==
+X-Received: by 2002:a05:6a20:1594:b0:18f:97c:9773 with SMTP id h20-20020a056a20159400b0018f097c9773mr248569pzj.91.1701468458314;
+        Fri, 01 Dec 2023 14:07:38 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id du22-20020a056a002b5600b006cdc6a2bd89sm3571728pfb.141.2023.12.01.14.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Dec 2023 14:07:37 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1r9Bfa-002ZyI-2n;
+	Sat, 02 Dec 2023 09:07:34 +1100
+Date: Sat, 2 Dec 2023 09:07:34 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	"Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	dchinner@redhat.com
+Subject: Re: [RFC 1/7] iomap: Don't fall back to buffered write if the write
+ is atomic
+Message-ID: <ZWpZJicSjW2XqMmp@dread.disaster.area>
+References: <cover.1701339358.git.ojaswin@linux.ibm.com>
+ <09ec4c88b565c85dee91eccf6e894a0c047d9e69.1701339358.git.ojaswin@linux.ibm.com>
+ <ZWj6Tt1zKUL4WPGr@dread.disaster.area>
+ <85d1b27c-f4ef-43dd-8eed-f497817ab86d@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231121171643.3719880-1-surenb@google.com> <20231121171643.3719880-6-surenb@google.com>
- <b3c882d2-0135-430c-8179-784f78be0902@arm.com> <a41c759f-78d8-44ed-b708-1bb737a8e6c1@redhat.com>
-In-Reply-To: <a41c759f-78d8-44ed-b708-1bb737a8e6c1@redhat.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 1 Dec 2023 13:59:14 -0800
-Message-ID: <CAJuCfpGtfxmyGDeCH9+YMMd-aX2z9pgdBch+DD7vGZzcfaC+kw@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org, 
-	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com, 
-	hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
-	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
-	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85d1b27c-f4ef-43dd-8eed-f497817ab86d@oracle.com>
 
-On Fri, Dec 1, 2023 at 12:47=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 01.12.23 10:29, Ryan Roberts wrote:
-> > On 21/11/2023 17:16, Suren Baghdasaryan wrote:
-> >> Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
-> >> into destination buffer while checking the contents of both after
-> >> the move. After the operation the content of the destination buffer
-> >> should match the original source buffer's content while the source
-> >> buffer should be zeroed. Separate tests are designed for PMD aligned a=
-nd
-> >> unaligned cases because they utilize different code paths in the kerne=
-l.
-> >>
-> >> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> >> ---
-> >>   tools/testing/selftests/mm/uffd-common.c     |  24 +++
-> >>   tools/testing/selftests/mm/uffd-common.h     |   1 +
-> >>   tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++=
-++
-> >>   3 files changed, 214 insertions(+)
-> >>
-> >> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/=
-selftests/mm/uffd-common.c
-> >> index fb3bbc77fd00..b0ac0ec2356d 100644
-> >> --- a/tools/testing/selftests/mm/uffd-common.c
-> >> +++ b/tools/testing/selftests/mm/uffd-common.c
-> >> @@ -631,6 +631,30 @@ int copy_page(int ufd, unsigned long offset, bool=
- wp)
-> >>      return __copy_page(ufd, offset, false, wp);
-> >>   }
-> >>
-> >> +int move_page(int ufd, unsigned long offset, unsigned long len)
-> >> +{
-> >> +    struct uffdio_move uffdio_move;
-> >> +
-> >> +    if (offset + len > nr_pages * page_size)
-> >> +            err("unexpected offset %lu and length %lu\n", offset, len=
-);
-> >> +    uffdio_move.dst =3D (unsigned long) area_dst + offset;
-> >> +    uffdio_move.src =3D (unsigned long) area_src + offset;
-> >> +    uffdio_move.len =3D len;
-> >> +    uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-> >> +    uffdio_move.move =3D 0;
-> >> +    if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-> >> +            /* real retval in uffdio_move.move */
-> >> +            if (uffdio_move.move !=3D -EEXIST)
-> >> +                    err("UFFDIO_MOVE error: %"PRId64,
-> >> +                        (int64_t)uffdio_move.move);
-> >
-> > Hi Suren,
-> >
-> > FYI this error is triggering in mm-unstable (715b67adf4c8):
-> >
-> > Testing move-pmd on anon... ERROR: UFFDIO_MOVE error: -16 (errno=3D16,
-> > @uffd-common.c:648)
-> >
-> > I'm running in a VM on Apple M2 (arm64). I haven't debugged any further=
-, but
-> > happy to go deeper if you can direct.
->
-> Does it trigger reliably? Which pagesize is that kernel using?
->
-> I can spot that uffd_move_pmd_test()/uffd_move_pmd_handle_fault() uses
-> default_huge_page_size(), which reads the default hugetlb size.
->
-> That, however, does not necessarily correspond to the THP size. That one
-> can be obtained using read_pmd_pagesize() in vm_util.c
+On Fri, Dec 01, 2023 at 10:42:57AM +0000, John Garry wrote:
+> On 30/11/2023 21:10, Dave Chinner wrote:
+> > On Thu, Nov 30, 2023 at 07:23:09PM +0530, Ojaswin Mujoo wrote:
+> > > Currently, iomap only supports atomic writes for direct IOs and there is
+> > > no guarantees that a buffered IO will be atomic. Hence, if the user has
+> > > explicitly requested the direct write to be atomic and there's a
+> > > failure, return -EIO instead of falling back to buffered IO.
+> > > 
+> > > Signed-off-by: Ojaswin Mujoo<ojaswin@linux.ibm.com>
+> > > ---
+> > >   fs/iomap/direct-io.c | 8 +++++++-
+> > >   1 file changed, 7 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index 6ef25e26f1a1..3e7cd9bc8f4d 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -662,7 +662,13 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >   			if (ret != -EAGAIN) {
+> > >   				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
+> > >   								iomi.len);
+> > > -				ret = -ENOTBLK;
+> > > +				/*
+> > > +				 * if this write was supposed to be atomic,
+> > > +				 * return the err rather than trying to fall
+> > > +				 * back to buffered IO.
+> > > +				 */
+> > > +				if (!atomic_write)
+> > > +					ret = -ENOTBLK;
+> > This belongs in the caller when it receives an -ENOTBLK from
+> > iomap_dio_rw(). The iomap code is saying "this IO cannot be done
+> > with direct IO" by returning this value, and then the caller can
+> > make the determination of whether to run a buffered IO or not.
+> > 
+> > For example, a filesystem might still be able to perform an atomic
+> > IO via a COW-based buffered IO slow path. Sure, ext4 can't do this,
+> > but the above patch would prevent filesystems that could from being
+> > able to implement such a fallback....
+> 
+> Sure, and I think that we need a better story for supporting buffered IO for
+> atomic writes.
+> 
+> Currently we have:
+> - man pages tell us RWF_ATOMIC is only supported for direct IO
+> - statx gives atomic write unit min/max, not explicitly telling us it's for
+> direct IO
+> - RWF_ATOMIC is ignored for !O_DIRECT
+> 
+> So I am thinking of expanding statx support to enable querying of atomic
+> write capabilities for buffered IO and direct IO separately.
 
-Oh, I didn't realize that default_huge_page_size() is not always the
-actual THP size. Will fix.
+You're over complicating this way too much by trying to restrict the
+functionality down to just what you want to implement right now.
 
->
-> I quickly scanned the code (still want to take a deeper look), but all
-> PAE checks looked sane to me.
->
-> I think the issue is folio split handling. I replied to the patch.
+RWF_ATOMIC is no different to RWF_NOWAIT. The API doesn't decide
+what can be supported - the filesystems themselves decide what part
+of the API they can support and implement those pieces.
 
-Thanks for your hint! That's very possibly the reason for the test
-failure. I'm in the process of trying to reproduce this issue on
-ARM64. If I'm unable to do so then I'll create a patch to split
-PTE-mapped THP when encountered and will ask Ryan to try that.
-Thanks,
-Suren.
+TO go back to RWF_NOWAIT, for a long time we (XFS) only supported
+RWF_NOWAIT on DIO, and buffered reads and writes were given
+-EOPNOTSUPP by the filesystem. Then other filesystems started
+supporting DIO with RWF_NOWAIT. Then buffered read support was added
+to the page cache and XFS, and as other filesystems were converted
+they removed the RWF_NOWAIT exclusion check from their read IO
+paths.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+We are now in the same place with buffered write support for
+RWF_NOWAIT. XFS, the page cache and iomap allow buffered writes w/
+RWF_NOWAIT, but ext4, btrfs and f2fs still all return -EOPNOTSUPP
+because they don't support non-blocking buffered writes yet.
+
+This is the same model we should be applying with RWF_ATOMIC - we
+know that over time we'll be able to expand support for atomic
+writes across both direct and buffered IO, so we should not be
+restricting the API or infrastructure to only allow RWF_ATOMIC w/
+DIO. Just have the filesystems reject RWF_ATOMIC w/ -EOPNOTSUPP if
+they don't support it, and for those that do it is conditional on
+whther the filesystem supports it for the given type of IO being
+done.
+
+Seriously - an application can easily probe for RWF_ATOMIC support
+without needing information to be directly exposed in statx() - just
+open a O_TMPFILE, issue the type of RWF_ATOMIC IO you require to be
+supported, and if it returns -EOPNOTSUPP then it you can't use
+RWF_ATOMIC optimisations in the application....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
