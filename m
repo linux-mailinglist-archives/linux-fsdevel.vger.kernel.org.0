@@ -1,106 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-4555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40303800863
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 11:37:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F71800866
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 11:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701D21C20A3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D01F20F41
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2587210E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6NkvaBp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D54210E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 10:37:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55200C7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 02:12:05 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D811FAA;
-	Fri,  1 Dec 2023 10:11:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5380AC433C9;
-	Fri,  1 Dec 2023 10:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701425509;
-	bh=/JWY5TUxCA/GJX+P6jgYK+fCZpvQBUeUInU5i90en3A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=b6NkvaBphDzf4Kp5Xpiq8JFOupM7o1eMlJw+JuP9g1x3TN8izHuV3jaGeeHpRcLYl
-	 656ymcV/jbGV4+esZRHbadTz3YT83999EPNVUDdl6+xYgQqoN3et1VEPtbx8lQEGa2
-	 z2eXWFquZgnVLkzKDZVryjFtiD4rTqse27QdWJAMuKQFfOIG+gnWrWakK/JiK8QlLk
-	 uta/Kra+QaowOVMFpIjFGJkoLaerqV4vtNo6qStoHY9EunNILYOH5psJmeV7JVrd/p
-	 tCP3855dzdTsvmcuUL2FFJ19Nd9wrSu/DPLyNzvXZ8WpKzqvWLR3DmVdBbF5FAKIh2
-	 CBIRY+7xgynzQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Lukas Schauer <lukas@schauer.dev>,
-	linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] pipe: wakeup wr_wait after setting max_usage
-Date: Fri,  1 Dec 2023 11:11:28 +0100
-Message-ID: <20231201-orchideen-modewelt-e009de4562c6@brauner>
-X-Mailer: git-send-email 2.42.0
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3FD361FD63;
+	Fri,  1 Dec 2023 10:12:02 +0000 (UTC)
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D6711344E;
+	Fri,  1 Dec 2023 10:12:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id +b3QCnKxaWUQcwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Fri, 01 Dec 2023 10:12:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A7FDEA07DB; Fri,  1 Dec 2023 11:11:57 +0100 (CET)
+Date: Fri, 1 Dec 2023 11:11:57 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 16/16] fs: create {sb,file}_write_not_started() helpers
+Message-ID: <20231201101157.ngebxqwhcwrurjvw@quack3>
+References: <20231122122715.2561213-1-amir73il@gmail.com>
+ <20231122122715.2561213-17-amir73il@gmail.com>
+ <20231123173532.6h7gxacrlg4pyooh@quack3>
+ <CAOQ4uxjrvWXR6MwiUUfEQdw1hDNmzO6KfhzWjc20VYp9Rf_ypw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1679; i=brauner@kernel.org; h=from:subject:message-id; bh=gSHge1TL79kU/FECQt7i56GDWKWuGhAqgzr7xsLilzI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRmbvR3etLYvvaeiqWAEMNS5Vmv3JZ/t/jRdlP1GItc/ cXrW350d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkKisjQ/+66BgWxaO3OXND r2y8e5nB4P7dvexH/5debLJbWJlwIo+RYd+LLw/2G5bxG9RvW8lY0eQj1Pri/f3nlQFLdvWdPmL 4gR8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjrvWXR6MwiUUfEQdw1hDNmzO6KfhzWjc20VYp9Rf_ypw@mail.gmail.com>
+X-Spamd-Bar: ++++++++
+X-Spam-Score: 8.69
+X-Rspamd-Server: rspamd1
+Authentication-Results: smtp-out2.suse.de;
+	dkim=none;
+	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz;
+	dmarc=none
+X-Rspamd-Queue-Id: 3FD361FD63
+X-Spamd-Result: default: False [8.69 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 TO_DN_SOME(0.00)[];
+	 R_SPF_SOFTFAIL(4.60)[~all];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-0.999];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 R_DKIM_NA(2.20)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DMARC_NA(1.20)[suse.cz];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[]
 
-From: Lukas Schauer <lukas@schauer.dev>
+On Fri 24-11-23 10:20:25, Amir Goldstein wrote:
+> On Fri, Nov 24, 2023 at 6:17 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 22-11-23 14:27:15, Amir Goldstein wrote:
+> > > Create new helpers {sb,file}_write_not_started() that can be used
+> > > to assert that sb_start_write() is not held.
+> > >
+> > > This is needed for fanotify "pre content" events.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > I'm not against this but I'm somewhat wondering, where exactly do you plan
+> > to use this :) (does not seem to be in this patch set).
+> 
+> As I wrote in the cover letter:
+> "The last 3 patches are helpers that I used in fanotify patches to
+>  assert that permission hooks are called with expected locking scope."
+> 
+> But this is just half of the story.
+> 
+> The full story is that I added it in fsnotify_file_perm() hook to check
+> that we caught all the places that permission hook was called with
+> sb_writers held:
+> 
+>  static inline int fsnotify_file_perm(struct file *file, int mask)
+>  {
+>        struct inode *inode = file_inode(file);
+>        __u32 fsnotify_mask;
+> 
+>        /*
+>         * Content of file may be written on pre-content events, so sb freeze
+>         * protection must not be held.
+>         */
+>        lockdep_assert_once(file_write_not_started(file));
+> 
+>        /*
+>         * Pre-content events are only reported for regular files and dirs.
+>         */
+>        if (mask & MAY_READ) {
+> 
+> 
+> And the assert triggered in a nested overlay case (overlay over overlay).
+> So I cannot keep the assert in the final patch as is.
+> I can probably move it into (mask & MAY_WRITE) case, because
+> I don't know of any existing write permission hook that is called with
+> sb_wrtiers held.
+> 
+> I also plan to use sb_write_not_started() in fsnotify_lookup_perm().
+> 
+> I think that:
+> "This is needed for fanotify "pre content" events."
+> sums this up nicely without getting into gory details ;)
+> 
+> > Because one easily
+> > forgets about the subtle implementation details and uses
+> > !sb_write_started() instead of sb_write_not_started()...
+> >
+> 
+> I think I had a comment in one version that said:
+> "This is NOT the same as !sb_write_started()"
+> 
+> We can add it back if you think it is useful, but FWIW, anyone
+> can use !sb_write_started() wrongly today whether we add
+> sb_write_not_started() or not.
+> 
+> But this would be pretty easy to detect - running a build without
+> CONFIG_LOCKDEP will catch this misuse pretty quickly.
 
-Commit c73be61cede5 ("pipe: Add general notification queue support") a
-regression was introduced that would lock up resized pipes under certain
-conditions. See the reproducer in [1].
+Yeah, fair enough. Thanks for explanation!
 
-The commit resizing the pipe ring size was moved to a different
-function, doing that moved the wakeup for pipe->wr_wait before actually
-raising pipe->max_usage. If a pipe was full before the resize occured it
-would result in the wakeup never actually triggering pipe_write.
-
-Set @max_usage and @nr_accounted before waking writers if this isn't a
-watch queue.
-
-Fixes: c73be61cede5 ("pipe: Add general notification queue support")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=212295 [1]
-Cc: <stable@vger.kernel.org>
-[Christian Brauner <brauner@kernel.org>: rewrite to account for watch queues]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/pipe.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 226e7f66b590..8d9286a1f2e8 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1324,6 +1324,11 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	pipe->tail = tail;
- 	pipe->head = head;
- 
-+	if (!pipe_has_watch_queue(pipe)) {
-+		pipe->max_usage = nr_slots;
-+		pipe->nr_accounted = nr_slots;
-+	}
-+
- 	spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 	/* This might have made more room for writers */
-@@ -1375,8 +1380,6 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned int arg)
- 	if (ret < 0)
- 		goto out_revert_acct;
- 
--	pipe->max_usage = nr_slots;
--	pipe->nr_accounted = nr_slots;
- 	return pipe->max_usage * PAGE_SIZE;
- 
- out_revert_acct:
+								Honza
 -- 
-2.42.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
