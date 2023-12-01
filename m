@@ -1,66 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-4565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23B8800B0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 13:37:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48344800B0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 13:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 820FEB20BD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 12:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AE51C20803
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 12:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E923A25549
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 12:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D959C2555A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 12:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RSyiSAtt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MyZfR5+S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x24a.google.com (mail-lj1-x24a.google.com [IPv6:2a00:1450:4864:20::24a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E358319F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 03:35:42 -0800 (PST)
-Received: by mail-lj1-x24a.google.com with SMTP id 38308e7fff4ca-2c9c5db77b8so14299511fa.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 03:35:42 -0800 (PST)
+Received: from mail-lf1-x14a.google.com (mail-lf1-x14a.google.com [IPv6:2a00:1450:4864:20::14a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 890991708
+	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 03:47:53 -0800 (PST)
+Received: by mail-lf1-x14a.google.com with SMTP id 2adb3069b0e04-50bc102a951so2493201e87.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 03:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701430541; x=1702035341; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1701431272; x=1702036072; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEkAP1I3qkXnBXX51BCMUCkxCSmzCgvaSA2DFugwU0k=;
-        b=RSyiSAttj6AD0qcDKZRtFj4CyqlYT8YxZ7cw64/dQXoKu9MmAKHyBRsLnrcKqd6g3j
-         Vx1XIZdXNzihq2Y6fQmgNey96WlGv9CO0vqY2U1c2e+lyledj1LNHnUPIEXIzyzMhPW0
-         tx/MLqRbsI0Vlwdcqz/One6ot1LRfUG6ymJtm7WkFHgqi5aJCZjF3MGA4iuwWyizXgO4
-         w7l9FULQE6l0e7DCJLFNzp0k6gGATb8jUuZ9wJEsujmiHbE1XfVbrazkrAwwu0X/eaHj
-         b1gg4/OucszMKoRTHKxFdHV3VU9MZpoPq3mBSXx+L5eHO42cNlr+8kc5L5oYfKVE/mML
-         C6ww==
+        bh=6g1GqQ4TrIojcjyDirpeDTGx+n3XD+xjD29/oGpLNfI=;
+        b=MyZfR5+SGN0FhAH/+aiSSa5Fxv2pKfXcJ+75yqnXxvQjqbNBeRDcQcievpFYglujkc
+         DhXM1fo4edTrakiCOx0FM97hNtPZ2d3TUjRlBcWqMTBlNK/4vsxmoZySEsnRr/lIbh0o
+         u13iyIyylhncz+mzUvZwCrjXs/UfStO5j6AhlIKNWYz42BpacRM98h6iUwOnQglafX7W
+         GAOwVQGkKhXO/IieXBopZMOZFizm3nmcYWuhdnIU+tIqdfdw17KzDTYq5s5QV8bCEyoc
+         SPyvuLP+6BEN9O+/33w0xAM3ikaYuwNxU1t2+J1Z4htSXGgZ+ufmSa90DdR6GLXR/fFD
+         0xdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701430541; x=1702035341;
+        d=1e100.net; s=20230601; t=1701431272; x=1702036072;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qEkAP1I3qkXnBXX51BCMUCkxCSmzCgvaSA2DFugwU0k=;
-        b=i0jR5DmFfLoXoif26BR7TPfQllGs/lPzbKrW+VSRgOHVQZCy5ghoxE4Q7suX2/fAld
-         070LpjCDKUFXfUcWnE7QNx3ODezLDX00LZ7iEb2O86Z8tLBN8lHcpVe3g2pY4rWPc+f7
-         zgleXa0WFeiZwL1pWlb7dO1R41i1zK0JiKOQlRP7udrl/q/M4VqN0YS1I9Tf10f2yyhF
-         ePAb4xnrm18GZ65AyqfTVT1yIqDp1rwSK7D9u8w3ZlXz3SKHmL2NHpXqvHQuZGS7CDvf
-         1SnHlGt5UnQd8q/as/BZnaDeH+7arqX5OP9j/5w1KeKdyaeD6j1VOTJZs7jNAYlNNzvi
-         joig==
-X-Gm-Message-State: AOJu0Yy1+pJqCrlSoTzrOGyIlc3/T+bquaMlSXPMhl5cXHhKYX8lvFqu
-	cyWvhb4RqRdjTTJnx68+Qh1WTdFrNm2ZfS4=
-X-Google-Smtp-Source: AGHT+IFeTcBN1rZeBuZXq6yiD1BS3gZazpYc5NDt39EiWjUlJlgLZM3L2VCrcBV0qyu1cAqEZnjYwmFr2+yoba0=
+        bh=6g1GqQ4TrIojcjyDirpeDTGx+n3XD+xjD29/oGpLNfI=;
+        b=uD9whBKgAR7hDHEz64n0n2AT3pOagON2jagf/m6rSLgnAh86EVH8CrDluRRvTIC1KN
+         CTOwwu/C344dPGC8OQoIM1yScYJti8Qj37Yez7oEZdHYPweUUNpbrUgNoCsOO/CUCWfV
+         DJ/59zPO7Vuh8TP7tapj7cMNIy7ClgC2rym/TswRvdgkj8FhphGeDFEadMMcRymy9W+A
+         Fjl6vym+R6L+8wmJGmHBtbIHbPGPOSXblzSrtTiD8j1sgdMnZX5Nc2nm9zYa6+bwUjfH
+         NmsXjoqM4IEM3nxPqaSJXgnq0EJNvut9g2wRbqAXZwfxc5b3V+tC+S0V3jmGpVVTY2bz
+         GOzw==
+X-Gm-Message-State: AOJu0Yx3JXyR3EXn6pBRFwdt+YP+Gvd486xFQ2ceKSn//hPdIrIeluA0
+	Pzw3mkfjin591OGdRa82XQCdpUtaUeAFscY=
+X-Google-Smtp-Source: AGHT+IGmdHD9ndeAoG99U6CjjEVBhoGpQPpovxP6HXHrU+LrFLBMj6V3Szk+lEYNslRiUnlO96T3DeFoBd52niY=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a2e:86cd:0:b0:2c9:aecd:306 with SMTP id
- n13-20020a2e86cd000000b002c9aecd0306mr53095ljj.0.1701430541098; Fri, 01 Dec
- 2023 03:35:41 -0800 (PST)
-Date: Fri,  1 Dec 2023 11:35:38 +0000
-In-Reply-To: <LNSA8EeuwLGDBzY1W8GaP1L6gucAPE_34myHWuyg3ziYuheiFLk3WfVBPppzwDZwoGVTCqL8EBjAaxsNshTY6AQq_sNtK9hmea7FeaNJuCo=@proton.me>
+ (user=aliceryhl job=sendgmr) by 2002:a19:c207:0:b0:509:440f:3c5 with SMTP id
+ l7-20020a19c207000000b00509440f03c5mr41495lfc.1.1701431271741; Fri, 01 Dec
+ 2023 03:47:51 -0800 (PST)
+Date: Fri,  1 Dec 2023 11:47:48 +0000
+In-Reply-To: <bH_zaB8RmZZW2QrGBx1ud7-YfKmh6QvTU0jYKC0ns7jjoDkCWYnW3u1qX_YrN5P0VwsZGd7U5r8p-7DxH7pb4-6UUE0htwTkFNdDIYZb4os=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <LNSA8EeuwLGDBzY1W8GaP1L6gucAPE_34myHWuyg3ziYuheiFLk3WfVBPppzwDZwoGVTCqL8EBjAaxsNshTY6AQq_sNtK9hmea7FeaNJuCo=@proton.me>
+References: <bH_zaB8RmZZW2QrGBx1ud7-YfKmh6QvTU0jYKC0ns7jjoDkCWYnW3u1qX_YrN5P0VwsZGd7U5r8p-7DxH7pb4-6UUE0htwTkFNdDIYZb4os=@proton.me>
 X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
-Message-ID: <20231201113538.2202170-1-aliceryhl@google.com>
-Subject: Re: [PATCH 6/7] rust: file: add `DeferredFdCloser`
+Message-ID: <20231201114749.2207060-1-aliceryhl@google.com>
+Subject: Re: [PATCH 7/7] rust: file: add abstraction for `poll_table`
 From: Alice Ryhl <aliceryhl@google.com>
 To: benno.lossin@proton.me
 Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
@@ -75,37 +75,24 @@ Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com,
 Content-Type: text/plain; charset="utf-8"
 
 Benno Lossin <benno.lossin@proton.me> writes:
->> +        // SAFETY: The `inner` pointer points at a valid and fully initialized task work that is
->> +        // ready to be scheduled.
->> +        unsafe { bindings::task_work_add(current, inner, TWA_RESUME) };
+>> +#[pinned_drop]
+>> +impl PinnedDrop for PollCondVar {
+>> +    fn drop(self: Pin<&mut Self>) {
+>> +        // Clear anything registered using `register_wait`.
+>> +        self.inner.notify(1, bindings::POLLHUP | bindings::POLLFREE);
 > 
-> I am a bit confused, when does `do_close_fd` actually run? Does
-> `TWA_RESUME` mean that `inner` is scheduled to run after the current
-> task has been completed?
+> Isn't notifying only a single thread problematic, since a user could
+> misuse the `PollCondVar` (since all functions of `CondVar` are also
+> accessible) and also `.wait()` on the condvar? When dropping a
+> `PollCondVar` it might notify only the user `.wait()`, but not the
+> `PollTable`. Or am I missing something?
 
-When the current syscall returns to userspace.
+Using POLLFREE clears everything. However, this should probably be updated to
+use `wake_up_pollfree` instead.
 
->> +    // SAFETY: This function is an implementation detail of `close_fd`, so its safety comments
->> +    // should be read in extension of that method.
->> +    unsafe extern "C" fn do_close_fd(inner: *mut bindings::callback_head) {
->> +        // SAFETY: In `close_fd` we use this method together with a pointer that originates from a
->> +        // `Box<DeferredFdCloserInner>`, and we have just been given ownership of that allocation.
->> +        let inner = unsafe { Box::from_raw(inner as *mut DeferredFdCloserInner) };
-> 
-> In order for this call to be sound, `inner` must be an exclusive
-> pointer (including any possible references into the `callback_head`).
-> Is this the case?
-
-Yes, when this is called, it's been removed from the linked list of task
-work. That's why we can kfree it.
-
->> +        // SAFETY: Since `DeferredFdCloserInner` is `#[repr(C)]`, casting the pointers gives a
->> +        // pointer to the `twork` field.
->> +        let inner = Box::into_raw(self.inner) as *mut bindings::callback_head;
-> 
-> Here you can just use `.cast::<...>()`.
-
-Will do.
+Note that calls to `.wait()` are definitely gone by the time the destructor
+runs, since such calls borrows the `PollCondVar`, preventing you from running
+the destructor.
 
 Alice
 
