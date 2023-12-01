@@ -1,207 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-4614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B4880166E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:35:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E067801670
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 23:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9103B20C44
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD277B20D1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528823F8CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43107619C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Dec 2023 22:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cj4L7pIX"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="tmtPZpbg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF7310C2
-	for <linux-fsdevel@vger.kernel.org>; Fri,  1 Dec 2023 12:47:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701463632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=roRHhLauepkrd5alx72dFMXjJCaurGVuqpPk08xyld4=;
-	b=cj4L7pIXVjAzwDDpqCXgaESdD9y/+Hszmw3IKc3hl2DL0ftedbNzwTrw7my8RIjV7kr597
-	f5MoZm8fQvfWA/wb20BRDZ/kCSSVnLqCzeP3EvHGm4L2IQn6C78croZhRXEPG9VqfvsDjv
-	3xzDkT3gewE0kHGjPLiM90O25GQ2lNo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-sek2DQG_M0yLINQtERwvEg-1; Fri, 01 Dec 2023 15:47:11 -0500
-X-MC-Unique: sek2DQG_M0yLINQtERwvEg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-407d3e55927so19978585e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Dec 2023 12:47:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701463630; x=1702068430;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roRHhLauepkrd5alx72dFMXjJCaurGVuqpPk08xyld4=;
-        b=N282axTMNydGyktRn1VARWhfgGHGpE3mdPqShXqvScIgvWOqMXX9QisEkhBq+h1VUd
-         bvCMQh0cT38JtRhUajgoJaQ6VWXFJrsoIpVaOPr7liazosDZWBGmZapoEoOrXh/fv4TG
-         lF7WB+fcJoysaeMmp7IpR2m9SG9T6GaPR0FRI7aq/hbD1AdkPbPqJKhoyQ1AYmwHtAKo
-         hx1c3Amin63Mf4+pgvbwO/4964JKemBNUftK84hQ4uFmT9mBVxa8FLCh8eOww+xwDQVL
-         9T2t7ilAX7tJe4icNDE8p2/k4aQNB35QAe5jR70cCMh9JDL8N6rfGb8oC2OKDPuSp0tJ
-         o6wg==
-X-Gm-Message-State: AOJu0Yw+N+2S7GBft1yd7RsD3Wi/saLL9ps7CqsGRbwDGi3bsJ+MJKOS
-	GxEeInQ1/By9F15Vac+HjxLLh6II7mai+gmMVhh1ApmdUePPReScs80IiVuYXb9xlwmkT267Vwa
-	+Rde5uKaINA0tSfFLncgfUS4dyg==
-X-Received: by 2002:adf:ef0e:0:b0:333:2fd2:5d4e with SMTP id e14-20020adfef0e000000b003332fd25d4emr1458938wro.128.1701463629944;
-        Fri, 01 Dec 2023 12:47:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZKMjh8pTfwrN7X75z4hiGXRlcazvFaCrgi3fYPEKkR9z/8z96TQOeqZHjl2bfL/NASM0NAw==
-X-Received: by 2002:adf:ef0e:0:b0:333:2fd2:5d4e with SMTP id e14-20020adfef0e000000b003332fd25d4emr1458915wro.128.1701463629604;
-        Fri, 01 Dec 2023 12:47:09 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f28:7800:30d7:645a:7306:e437? (p200300d82f28780030d7645a7306e437.dip0.t-ipconnect.de. [2003:d8:2f28:7800:30d7:645a:7306:e437])
-        by smtp.gmail.com with ESMTPSA id c12-20020a056000104c00b00333339e5f42sm1767916wrx.32.2023.12.01.12.47.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Dec 2023 12:47:09 -0800 (PST)
-Message-ID: <a41c759f-78d8-44ed-b708-1bb737a8e6c1@redhat.com>
-Date: Fri, 1 Dec 2023 21:47:07 +0100
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E421012A;
+	Fri,  1 Dec 2023 12:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1701464392; x=1733000392;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=nCap8NwzKwphCukdUu1OlpulweBp55bEAVvRfRiRsUE=;
+  b=tmtPZpbga/5zaP3+9H5UXuW+ZTP9KA1zU96y38I/GzFHM2fSVXrAEr0v
+   p+Ma59GZclHXwgWsIfVbNczLHzytH3aejuQBFsgx8MzuR1X1Dd14r9dVE
+   S2hVMubfV6KuIaTkUQs0X8bxVuUdyDe9d2rzIhDBvMh6myJ6J+J4+XmK3
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.04,242,1695686400"; 
+   d="scan'208";a="688425735"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO email-inbound-relay-pdx-2a-m6i4x-af372327.us-west-2.amazon.com) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2023 20:59:51 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (pdx2-ws-svc-p26-lb5-vlan2.pdx.amazon.com [10.39.38.66])
+	by email-inbound-relay-pdx-2a-m6i4x-af372327.us-west-2.amazon.com (Postfix) with ESMTPS id 1601560A61;
+	Fri,  1 Dec 2023 20:59:51 +0000 (UTC)
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:56175]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.133:2525] with esmtp (Farcaster)
+ id 98e2ec98-9b24-410c-804e-0c935446c316; Fri, 1 Dec 2023 20:59:50 +0000 (UTC)
+X-Farcaster-Flow-ID: 98e2ec98-9b24-410c-804e-0c935446c316
+Received: from EX19D010UWA004.ant.amazon.com (10.13.138.204) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 1 Dec 2023 20:59:50 +0000
+Received: from dev-dsk-kamatam-2b-b66a5860.us-west-2.amazon.com (10.169.6.191)
+ by EX19D010UWA004.ant.amazon.com (10.13.138.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.39; Fri, 1 Dec 2023 20:59:50 +0000
+From: Munehisa Kamata <kamatam@amazon.com>
+To: <adobriyan@gmail.com>, <casey@schaufler-ca.com>
+CC: <akpm@linux-foundation.org>, <kamatam@amazon.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security attribute
+Date: Fri, 1 Dec 2023 20:59:40 +0000
+Message-ID: <20231201205940.23095-1-kamatam@amazon.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
+References: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Content-Language: en-US
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
- aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
- hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
- rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
- jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com,
- kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com
-References: <20231121171643.3719880-1-surenb@google.com>
- <20231121171643.3719880-6-surenb@google.com>
- <b3c882d2-0135-430c-8179-784f78be0902@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b3c882d2-0135-430c-8179-784f78be0902@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWB004.ant.amazon.com (10.13.139.164) To
+ EX19D010UWA004.ant.amazon.com (10.13.138.204)
 
-On 01.12.23 10:29, Ryan Roberts wrote:
-> On 21/11/2023 17:16, Suren Baghdasaryan wrote:
->> Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
->> into destination buffer while checking the contents of both after
->> the move. After the operation the content of the destination buffer
->> should match the original source buffer's content while the source
->> buffer should be zeroed. Separate tests are designed for PMD aligned and
->> unaligned cases because they utilize different code paths in the kernel.
->>
->> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->> ---
->>   tools/testing/selftests/mm/uffd-common.c     |  24 +++
->>   tools/testing/selftests/mm/uffd-common.h     |   1 +
->>   tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
->>   3 files changed, 214 insertions(+)
->>
->> diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
->> index fb3bbc77fd00..b0ac0ec2356d 100644
->> --- a/tools/testing/selftests/mm/uffd-common.c
->> +++ b/tools/testing/selftests/mm/uffd-common.c
->> @@ -631,6 +631,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
->>   	return __copy_page(ufd, offset, false, wp);
->>   }
->>   
->> +int move_page(int ufd, unsigned long offset, unsigned long len)
->> +{
->> +	struct uffdio_move uffdio_move;
->> +
->> +	if (offset + len > nr_pages * page_size)
->> +		err("unexpected offset %lu and length %lu\n", offset, len);
->> +	uffdio_move.dst = (unsigned long) area_dst + offset;
->> +	uffdio_move.src = (unsigned long) area_src + offset;
->> +	uffdio_move.len = len;
->> +	uffdio_move.mode = UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
->> +	uffdio_move.move = 0;
->> +	if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
->> +		/* real retval in uffdio_move.move */
->> +		if (uffdio_move.move != -EEXIST)
->> +			err("UFFDIO_MOVE error: %"PRId64,
->> +			    (int64_t)uffdio_move.move);
+
+Hi Alexey,
+
+On Fri, 2023-12-01 09:30:00 +0000, Alexey Dobriyan wrote:
+>
+> On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
+> > 
+> > fyi...
+> > 
+> > (yuk!)
+> > 
+> > 
+> > 
+> > Begin forwarded message:
+> > 
+> > Date: Thu, 30 Nov 2023 00:37:04 +0000
+> > From: Munehisa Kamata <kamatam@amazon.com>
+> > To: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+> > Cc: <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>, "Munehisa Kamata" <kamatam@amazon.com>
+> > Subject: [PATCH] proc: Update inode upon changing task security attribute
+> > 
+> > 
+> > I'm not clear whether VFS is a better (or worse) place[1] to fix the
+> > problem described below and would like to hear opinion.
+> > 
+> > If the /proc/[pid] directory is bind-mounted on a system with Smack
+> > enabled, and if the task updates its current security attribute, the task
+> > may lose access to files in its own /proc/[pid] through the mountpoint.
+> > 
+> >  $ sudo capsh --drop=cap_mac_override --
+> >  # mkdir -p dir
+> >  # mount --bind /proc/$$ dir
+> >  # echo AAA > /proc/$$/task/current		# assuming built-in echo
+> >  # cat /proc/$$/task/current			# revalidate
+> >  AAA
+> >  # echo BBB > dir/attr/current
+> >  # cat dir/attr/current
+> >  cat: dir/attr/current: Permission denied
+> >  # ls dir/
+> >  ls: cannot access dir/: Permission denied
+> >  # cat /proc/$$/attr/current			# revalidate
+> >  BBB
+> >  # cat dir/attr/current
+> >  BBB
+> >  # echo CCC > /proc/$$/attr/current
+> >  # cat dir/attr/current
+> >  cat: dir/attr/current: Permission denied
+> > 
+> > This happens because path lookup doesn't revalidate the dentry of the
+> > /proc/[pid] when traversing the filesystem boundary, so the inode security
+> > blob of the /proc/[pid] doesn't get updated with the new task security
+> > attribute. Then, this may lead security modules to deny an access to the
+> > directory. Looking at the code[2] and the /proc/pid/attr/current entry in
+> > proc man page, seems like the same could happen with SELinux. Though, I
+> > didn't find relevant reports.
+> > 
+> > The steps above are quite artificial. I actually encountered such an
+> > unexpected denial of access with an in-house application sandbox
+> > framework; each app has its own dedicated filesystem tree where the
+> > process's /proc/[pid] is bind-mounted to and the app enters into via
+> > chroot.
+> > 
+> > With this patch, writing to /proc/[pid]/attr/current (and its per-security
+> > module variant) updates the inode security blob of /proc/[pid] or
+> > /proc/[pid]/task/[tid] (when pid != tid) with the new attribute.
+> > 
+> > [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/selinux/hooks.c#n4220
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+> > ---
+> >  fs/proc/base.c | 23 ++++++++++++++++++++---
+> >  1 file changed, 20 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index dd31e3b6bf77..bdb7bea53475 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+> >  {
+> >  	struct inode * inode = file_inode(file);
+> >  	struct task_struct *task;
+> > +	const char *name = file->f_path.dentry->d_name.name;
+> >  	void *page;
+> >  	int rv;
+> >  
+> > @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+> >  	if (rv < 0)
+> >  		goto out_free;
+> >  
+> > -	rv = security_setprocattr(PROC_I(inode)->op.lsm,
+> > -				  file->f_path.dentry->d_name.name, page,
+> > -				  count);
+> > +	rv = security_setprocattr(PROC_I(inode)->op.lsm, name, page, count);
+> >  	mutex_unlock(&current->signal->cred_guard_mutex);
+> > +
+> > +	/*
+> > +	 *  Update the inode security blob in advance if the task's security
+> > +	 *  attribute was updated
+> > +	 */
+> > +	if (rv > 0 && !strcmp(name, "current")) {
+> > +		struct pid *pid;
+> > +		struct proc_inode *cur, *ei;
+> > +
+> > +		rcu_read_lock();
+> > +		pid = get_task_pid(current, PIDTYPE_PID);
+> > +		hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
+> > +			ei = cur;
 > 
-> Hi Suren,
+> Should this "break;"? Why is only the last inode in the list updated?
+> Should it be the first? All of them?
+
+If it picks up the first node, it may end up updating /proc/[pid]/task/[tid]
+rather than /proc/[pid] (when pid == tid) and the task may be denied access
+to its own /proc/[pid] afterward.
+
+I think updating all of them won't hurt. But, as long as /proc/[pid] is
+accessible, the rest of the inodes should be updated upon path lookup via
+revalidation as usual.
+
+When pid != tid, it only updates /proc/[pid]/task/[tid] and the thread may
+lose an access to /proc/[pid], but I think it's okay as it's a matter of
+security policy enforced by security modules. Casey, do you have any
+comments here?  
+
+
+Regards,
+Munehisa
+
+ 
+> > +		put_pid(pid);
+> > +		pid_update_inode(current, &ei->vfs_inode);
+> > +		rcu_read_unlock();
+> > +	}
 > 
-> FYI this error is triggering in mm-unstable (715b67adf4c8):
-> 
-> Testing move-pmd on anon... ERROR: UFFDIO_MOVE error: -16 (errno=16,
-> @uffd-common.c:648)
-> 
-> I'm running in a VM on Apple M2 (arm64). I haven't debugged any further, but
-> happy to go deeper if you can direct.
-
-Does it trigger reliably? Which pagesize is that kernel using?
-
-I can spot that uffd_move_pmd_test()/uffd_move_pmd_handle_fault() uses 
-default_huge_page_size(), which reads the default hugetlb size.
-
-That, however, does not necessarily correspond to the THP size. That one 
-can be obtained using read_pmd_pagesize() in vm_util.c
-
-I quickly scanned the code (still want to take a deeper look), but all 
-PAE checks looked sane to me.
-
-I think the issue is folio split handling. I replied to the patch.
-
--- 
-Cheers,
-
-David / dhildenb
-
 
