@@ -1,142 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-4687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16EB801DBD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 17:31:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F2D801E7E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 21:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBD9281469
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 16:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CDE280D19
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 20:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490A21112
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 16:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC28F18047
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 20:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMkNgR8j"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jDJlzbWv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351E412E
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Dec 2023 07:06:45 -0800 (PST)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-67a338dfca7so22106976d6.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Dec 2023 07:06:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701529604; x=1702134404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AcudOB9JkUUlY1ny//imrBUzLwpMxJ+A6w38gq7e7K0=;
-        b=HMkNgR8jHSomXsDOfAjTC9Ot8X2WKOCxoPKANnqJUZDMXx6Sc/UCbb34c0janGxTcN
-         uFVK9641YormbZNucgQD1EJ/avWaMdmSN1NwzjtVzo0MrPgAraDNuFbfI0mB8slVCvFJ
-         2tOnHvzqCLp/mnut3hSRSuOBagTG/Rht09wKJxZZ3QuKzQxj0zvLXDLPKkWYQiNEFMyK
-         8fBOsV7ZsLxrwfbWivcn52mYbwI5U3W9Zy9LkjNfBsp+M2R7jb2ppZi3NY/4JDj/8wE1
-         ZpFQl0sjKS5fdbpRz+T1eu+CGeYCfv6PFPdjBRQVkAyYg1GFe89LK1O59hyIGVmT0oe0
-         LdeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701529604; x=1702134404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AcudOB9JkUUlY1ny//imrBUzLwpMxJ+A6w38gq7e7K0=;
-        b=PIEUDVYKkMHQE/o0j9QJkTgkDjjBykzpfhyZW/6e2eEPFMnKMVh40V7Vxys8a74tvp
-         +q7aqjyTPIwv6jIfkF53b4P67VpdyCw6BQyWhnIGlVRxjG3SFV33DzqrFFBLwy/34dYk
-         qeib+dCht7NgGPIqjMD0osppT2zWh6R5XAj2QxisKZ6bc9m6xfvpDeovh2sXTZwMyHOM
-         1Q2v6HQ3e1wUXjOKQWdwbAV7NNpN5zv96rLG8piXq4JPk1Nz0L3SR0dwPddjLO/555JY
-         oKjnMtYkZCkrzAUbIuLYs1rwM3S0cfblrs0EbNWRjgLA4YMDxMLFR38oRwvH13c9gpjs
-         MrRw==
-X-Gm-Message-State: AOJu0Yz8M6pydQiq/Ms4GFM+a1pPYLXjLx/7Hbdu76AfWwPlM0qPpDl7
-	skhUV0D9FNy0tji9IeHhdP6qljfTzVONqVRvoLCXgZDOcSo=
-X-Google-Smtp-Source: AGHT+IFJmQcyOubV+Jc9CbYVsQhGymRiZVb7tucii8lsLsikgLo7v0GUbGPjlC2uHxohYl/XUhSNFlJKLr3qV3UJNoE=
-X-Received: by 2002:a0c:f810:0:b0:67a:956d:98d5 with SMTP id
- r16-20020a0cf810000000b0067a956d98d5mr1637054qvn.29.1701529604289; Sat, 02
- Dec 2023 07:06:44 -0800 (PST)
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30FFC119;
+	Sat,  2 Dec 2023 11:02:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=17v8pwtEO/9J4h+31aN7yWQ25FC4gANK2/bSdLAYPAE=; b=jDJlzbWvQenbWgKJqXxA+N8i1c
+	iSZBWulz0POYLy/Kwj/tCqG0pTBoeXOVvyiFJ46htqAHd2me9MM5UJGk3Fol/W+FgjeLmlyuKcIZ7
+	z7XAOeQ3i+z6nglG3Pbt2qZWjjOFX2QUU3yCDVrLmg0Yezcl40rm/Wk165vGa+zdYiMK0TysBT1sm
+	qGcRH1Ti/SDAj3idiOfUIbiI5VgrI8RK9qjfmUWGRt2JxfWZxIwcDkd4sqsX3IUU10gXlVDEqsEZl
+	9EdATz7UNyvSQV1NMfRJLxcylgNs1ZqswM4KBYLuzuJMpz25ex4mHYqmE5EXeGX3VltSC3ZviPICv
+	LVhxBmDw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1r9VFS-00GhRF-9D; Sat, 02 Dec 2023 19:01:54 +0000
+Date: Sat, 2 Dec 2023 19:01:54 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: attreyee-muk <tintinm2017@gmail.com>
+Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Tried making changes
+Message-ID: <ZWt/IpxyUu+4+bxE@casper.infradead.org>
+References: <20231202043859.356901-1-tintinm2017@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230920024001.493477-1-tfanelli@redhat.com> <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
- <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
-In-Reply-To: <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 2 Dec 2023 17:06:32 +0200
-Message-ID: <CAOQ4uxgW58Umf_ENqpsGrndUB=+8tuUsjT+uCUp16YRSuvG2wQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Bernd Schubert <bernd.schubert@fastmail.fm>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Tyler Fanelli <tfanelli@redhat.com>, linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, 
-	gmaglione@redhat.com, hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231202043859.356901-1-tintinm2017@gmail.com>
 
-On Mon, Nov 6, 2023 at 4:08=E2=80=AFPM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
-> Hi Miklos,
->
-> On 9/20/23 10:15, Miklos Szeredi wrote:
-> > On Wed, 20 Sept 2023 at 04:41, Tyler Fanelli <tfanelli@redhat.com> wrot=
-e:
-> >>
-> >> At the moment, FUSE_INIT's DIRECT_IO_RELAX flag only serves the purpos=
-e
-> >> of allowing shared mmap of files opened/created with DIRECT_IO enabled=
-.
-> >> However, it leaves open the possibility of further relaxing the
-> >> DIRECT_IO restrictions (and in-effect, the cache coherency guarantees =
-of
-> >> DIRECT_IO) in the future.
-> >>
-> >> The DIRECT_IO_ALLOW_MMAP flag leaves no ambiguity of its purpose. It
-> >> only serves to allow shared mmap of DIRECT_IO files, while still
-> >> bypassing the cache on regular reads and writes. The shared mmap is th=
-e
-> >> only loosening of the cache policy that can take place with the flag.
-> >> This removes some ambiguity and introduces a more stable flag to be us=
-ed
-> >> in FUSE_INIT. Furthermore, we can document that to allow shared mmap'i=
-ng
-> >> of DIRECT_IO files, a user must enable DIRECT_IO_ALLOW_MMAP.
-> >>
-> >> Tyler Fanelli (2):
-> >>    fs/fuse: Rename DIRECT_IO_RELAX to DIRECT_IO_ALLOW_MMAP
-> >>    docs/fuse-io: Document the usage of DIRECT_IO_ALLOW_MMAP
-> >
-> > Looks good.
-> >
-> > Applied, thanks.  Will send the PR during this merge window, since the
-> > rename could break stuff if already released.
->
-> I'm just porting back this feature to our internal fuse module and it
-> looks these rename patches have been forgotten?
->
->
+On Sat, Dec 02, 2023 at 10:09:00AM +0530, attreyee-muk wrote:
+> Respected Maintainers, 
+> 
+> I have tried to solve the bug - UBSAN: shift-out-of-bounds in exfat_fill_super, reported by Syzbot [link - https://syzkaller.appspot.com/bug?extid=d33808a177641a02213e]
 
-Hi Miklos, Bernd,
+Hi Attreyee,
 
-I was looking at the DIRECT_IO_ALLOW_MMAP code and specifically at
-commit b5a2a3a0b776 ("fuse: write back dirty pages before direct write in
-direct_io_relax mode") and I was wondering - isn't dirty pages writeback
-needed *before* invalidate_inode_pages2() in fuse_file_mmap() for
-direct_io_allow_mmap case?
+Working on syzbot reports is quite an art.  The important thing to know
+for solving this one is that syzbot will fuzz filesystems.  That is, it
+will start with a valid filesystem and change bits on disk, then see if
+that creates any issues.
 
-For FUSE_PASSTHROUGH, I am going to need to call fuse_vma_close()
-for munmap of files also in direct-io mode [1], so I was considering instal=
-ling
-fuse_file_vm_ops for the FOPEN_DIRECT_IO case, same as caching case,
-and regardless of direct_io_allow_mmap.
+> The issue is in line 503 of fs/exfat/super.c - by analyzing the code, I
+> understood that the it is checking if the calculated size of the exFAT
+> File Allocation Table is very small as compared to the expected
+> size,based on the number of clusters. If the condition is met, then an
+> error will be logged. But here inside the if statement, I believe that
+> the value of number of bits in sbi->num_FAT_sectors ,at some point is
+> coming more than the value of p_boot->sect_size_bits. As a result, a
+> shift-out-of-bounds error is being generated. 
 
-I was asking myself if there was a good reason why fuse_page_mkwrite()/
-fuse_wait_on_page_writeback()/fuse_vma_close()/write_inode_now()
-should NOT be called for the FOPEN_DIRECT_IO case regardless of
-direct_io_allow_mmap?
+No, that's not what's happening in this report.  p_boot->sect_size_bits
+somehow has value 97.  And it's Undefined Behaviour in C to shift by more
+than the number of bits in the type.  But I don't see how that happens:
 
-I mean, maybe an unmap of a read-only private map does not need to
-flush dirty pages (IDK), but caching mode seems to do it anyway?
+fs/exfat/exfat_raw.h:#define EXFAT_MAX_SECT_SIZE_BITS           12
 
-Thanks,
-Amir.
+        if (p_boot->sect_size_bits < EXFAT_MIN_SECT_SIZE_BITS ||
+            p_boot->sect_size_bits > EXFAT_MAX_SECT_SIZE_BITS) {
 
-[1] https://lore.kernel.org/linux-fsdevel/CAJfpegtOt6MDFM3vsK+syJhpLMSm7wBa=
-zkXuxjRTXtAsn9gCuA@mail.gmail.com/
+so something weird has happened; probably there's some other bug
+somewhere else that has caused p_boot to be corrupted.  Whatever it is,
+it's unlikely that you'll be able to find it.  Probably this is why
+there's no reproducer.
+
 
