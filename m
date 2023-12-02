@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-4690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A25801F05
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 23:31:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064B1801F0A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 23:32:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97411C2042B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:31:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EDD1F20F60
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289C419BAB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AE6224C0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="elr09MWO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HqKQgTMB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59230129
-	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Dec 2023 13:22:20 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1cfcc9b3b5cso16206505ad.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Dec 2023 13:22:20 -0800 (PST)
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC3B125
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Dec 2023 13:22:25 -0800 (PST)
+Received: by mail-pl1-x62d.google.com with SMTP id d9443c01a7336-1d08a924fcfso1112695ad.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Dec 2023 13:22:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701552140; x=1702156940; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1701552144; x=1702156944; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2dZKi9NMCd2PNGrGsX8s5UPrOfKzB/ri42Q6YHImLKk=;
-        b=elr09MWOGl290voBUBoq7u39jrDe/xO30ixZh0QZYZAORAFEjs89UMRw2WMEGRbvFa
-         /98vrGb1rWz/B/I6YM2/FuEfvvidMrgNoP4f2KPMTvvENFaKwQMrorysQEYSvoY0b//W
-         QpTvfB8ega9RBGbfdj4sdCZ1fQ/Pc6afycvvs=
+        bh=kr8v5ioi9yhGCNoI15AUxdx1ZJerS/H1pXIO2zt31RE=;
+        b=HqKQgTMBVxs/PT2XUTy4QRahXlfSOpb+2P7T6oLQzKCBFsyL7sId4K0GghvgK21Uv5
+         H5hmnBcZgSJAEkhxmg+UmVxXMrgpE0bVBwDomQhPXq2/gEX0wmzoCY5h0EdL4M5urKgz
+         uNQvfiQYtnror4SJNB7CNjTQ9HpIyDwmvJ07A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701552140; x=1702156940;
+        d=1e100.net; s=20230601; t=1701552144; x=1702156944;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2dZKi9NMCd2PNGrGsX8s5UPrOfKzB/ri42Q6YHImLKk=;
-        b=iXA04mMRNr/MvXbVx/f/wDJlc0uWTlcHX5YOj723Y1fFkHVdFnFZJUP6+/sMbLJsdv
-         1ct/nGq2ss6dHsNnGw2EnM78PRyO+pYKI+J1Hxuwy/fR3P5NIUp0HD7IMSc0a3Y2IISD
-         eA+VackFZgkDhteNlOjsAjm6xXL+WOlRQsywcj1+AefRbrnxyWWbNaB68xWnswPOlEPk
-         MvkGggo957i7QbZxdEOmoRDg00Tv9KDakSe4Gb3UZVKWVYZjIfiktzkYhb8pMGEiCRdF
-         +ht7AnJxKqIpYYd4+Mm3v0HE6o+opuo2/s0pdG3WRoss38avO9P4wzb6LMoZ5MyoYw/y
-         DD+w==
-X-Gm-Message-State: AOJu0YzNtZ7A8ytC8b4BJV1fAvy/3oAjtk3oiXR3iCtWSC9lv+YKSPwU
-	Z4NeAJXOm7+1vWJpqi1GCzvFiw==
-X-Google-Smtp-Source: AGHT+IHQYZH3IlFcYH3VAbROSWfHbY4Lp+ss4pOueqIveJc3aQKHWsO1MW/WUU32lw84L7HJ6zBcSw==
-X-Received: by 2002:a17:902:e844:b0:1cf:c3fb:a982 with SMTP id t4-20020a170902e84400b001cfc3fba982mr1644556plg.63.1701552139834;
-        Sat, 02 Dec 2023 13:22:19 -0800 (PST)
+        bh=kr8v5ioi9yhGCNoI15AUxdx1ZJerS/H1pXIO2zt31RE=;
+        b=r1KCDJEEXZ8mEBkS0hO3e80T3rvop72g85cTDInnY5uNLHvFlB0yE5zp6N3e+RfEFM
+         xJR9qOlIscMq/GeFqaHgyyUwFBw2Pu7llPDQ7Re34jJOlsz67k58A8eMB+hH5CFd99pk
+         WSvKwyNjXQqtMcPKtWrsqz2btsBDo9WTGIHjJUrtQbfbtMFlk9lkz/8jhFmH7gJ0PaFO
+         5SKDS6pJYfUyQfxHxZzdsscRkdEmK0PDr8lSWVff027On+AN/c1CcHaFl7iFPni/bhXm
+         wirW3bMp5BRRPNAfB6QBwoj6q/7Ld9CbOouIJ0yzXMRX6YxuSPncnlpUF/IJya+/FL2r
+         RNbQ==
+X-Gm-Message-State: AOJu0Yy8Lgj86nZWLxphTefPzT0QFHVPJOmo9u9bBAxwbTBc5sksUmw6
+	JLnCOuGs+NpG+F0Ykp4A22P/8eMFRDTnnAvcSBI=
+X-Google-Smtp-Source: AGHT+IG017mNZBo0bndQaUaGGGrBkKnojaT6BI2kua61y2eLW7fMhSCLv7G5Ou/R8iC3O1oe/Lf23A==
+X-Received: by 2002:a17:903:22c5:b0:1d0:6ffd:e2c7 with SMTP id y5-20020a17090322c500b001d06ffde2c7mr2044102plg.97.1701552144686;
+        Sat, 02 Dec 2023 13:22:24 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id iz2-20020a170902ef8200b001b9e9edbf43sm261943plb.171.2023.12.02.13.22.18
+        by smtp.gmail.com with ESMTPSA id m10-20020a170902db0a00b001cfb971edf2sm5607037plx.13.2023.12.02.13.22.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Dec 2023 13:22:18 -0800 (PST)
+        Sat, 02 Dec 2023 13:22:23 -0800 (PST)
 From: Kees Cook <keescook@chromium.org>
 To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 Cc: Kees Cook <keescook@chromium.org>,
@@ -60,9 +60,9 @@ Cc: Kees Cook <keescook@chromium.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/5] pstore: inode: Use __free(iput) for inode allocations
-Date: Sat,  2 Dec 2023 13:22:14 -0800
-Message-Id: <20231202212217.243710-4-keescook@chromium.org>
+Subject: [PATCH 5/5] pstore: inode: Use cleanup.h for struct pstore_private
+Date: Sat,  2 Dec 2023 13:22:15 -0800
+Message-Id: <20231202212217.243710-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231202211535.work.571-kees@kernel.org>
 References: <20231202211535.work.571-kees@kernel.org>
@@ -72,72 +72,87 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1577; i=keescook@chromium.org;
- h=from:subject; bh=LrFJJwbwaP3diV7F4yBd+rDDPSuUzm8XAAzIy+IkY44=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBla6AGPooNcpMsUpMnk7AZ7HA4049QAKPudX3SC
- 5es+XxUF3uJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZWugBgAKCRCJcvTf3G3A
- Jq24D/0dySbOgDPtHzuco4GLjV8/iYcSa9kl2NxlYzcrytw4fgSpsF8oNM8CLBO/GXJ5Daol0AC
- Bt8jiWEvGaGCBkZQNHWCIGJGMAtRJyDYsJZSo5rR3SBjHlROGmwejZSlN2jXViiCOqlVt5YpuWR
- eHbR+BGWN+kRXzxEcpstmju+PVhbOto4kr1BCnJiVPxQA6zonvrcinQGGOXfW4FQrX2/+F0bQLc
- 53nLZwcp0uDrnn8GDTUT7qZtSGqmQeUZwEtg4evOEM00CZXSJC6DCqntTn2k7+hCKznMz5IiJtE
- hrTtOUNTs2+FivyzNehv/RqK29xEV9jqkmeo9TLdLQ7N4mTEAb+uV4yKv21mg501odxycBHoamE
- e0BCS6k6HsaMHaIDM6SrTWfFPgi6o2ns4Uf3FUsQ3/6OTUEnqH+dtWaCnqjZMmJEBMlrg0HtjmQ
- trCoUfAwQWB9c+MtiAHDLQGqn4uw4bmmTaR1tTY+raBeV5lT60xOjJxBrNpM7zQ5SLLC+FQuOEd
- zQkKLeHJij3Bufk0646mwUGtWowKcPno5w9lNbO0WEv1cVhI3EoEew402Iu8IJQwWujM/0iBI1v
- J0eRgwkEoAE8Ed/6YEelW+hrgLvz3ABThVaktG2XO7jnh2Pki7SBtdv7e/MojC5x3QYA33h3xzw or4Uvecyt9Mh/aA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1987; i=keescook@chromium.org;
+ h=from:subject; bh=2VOJhxKhawry4zB5INkZO9i8H3FTFJSHkB6X8kUlVPU=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBla6AGDW8hXonEKigawraWf7F2wiPHsStg+E08f
+ Sxgn4os0kCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZWugBgAKCRCJcvTf3G3A
+ JhTDEACNiMPD3b67gn9zNW4/ju9hFrGMsJjSQ7KEHIZH8TvkblvRnwZFbrVAPlbHrhqyzPnosiv
+ RrgJmNPJReV/CWU6tQkLFnyPFYc9GKeS0lBBFOcMLGu/XDM9G/Sjv+ZeYTyfyOW6IeluJIuMPBf
+ EJyjm2w/tlZMPldQNw5gwettLVjEjThBz1y/LgIQwtWWgiUzfLyYeApXA1LCey9bZ2OkCUchwgW
+ 0BKcL2Puv1CtHOHwZ/FQ/MyqA2ADGyA4mrpGl7d4toQk4uECTTsv+qOtu/6wKASvbYy4QIJmLWE
+ xkeWVRWohYcqWeUg9DoahE3IcWnA0ry6NNlMLpUtEmhx+U7CqpYXT5ejREJ3h1deBf8Gwivt1de
+ UoDxTsF8u5rZwsrK6livq2nG+q45XPK+SCG6CzZ+bCU4FxSdppDD9d7KyQr1p2YWc8KqZvCSIdK
+ UCZepXh6abHECZC7ZgiPujvwxB3UBFpStBlAeWso5EUm800a0CUyB6/poJiZyAUd6O7/Hh2GOds
+ jnhPwrkBxp+1gXEEjY4QOy+zay5bdrkNrVQ6ZsF5UwBRGPUx0o+WG6TKpWWoILlQ4mJ1YeZMgj3
+ 6c0WQUcvUTwxxJtuLLMynSwKn6uBKeMJRkc+EY51mYXZ4kw+4CricAYkzOAVyvaeCuKucDZCiFH Ngx7gfISAw/fzgA==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Simplify error path for failures where "inode" needs to be freed.
+Simplify error path when "private" needs to be freed.
 
 Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: linux-hardening@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/pstore/inode.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/pstore/inode.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 0d89e0014b6f..20a88e34ea7c 100644
+index 20a88e34ea7c..7d49f0c70dff 100644
 --- a/fs/pstore/inode.c
 +++ b/fs/pstore/inode.c
-@@ -337,7 +337,7 @@ int pstore_put_backend_records(struct pstore_info *psi)
- int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+@@ -61,6 +61,7 @@ static void free_pstore_private(struct pstore_private *private)
+ 	}
+ 	kfree(private);
+ }
++DEFINE_FREE(pstore_private, struct pstore_private *, free_pstore_private(_T));
+ 
+ static void *pstore_ftrace_seq_start(struct seq_file *s, loff_t *pos)
+ {
+@@ -338,9 +339,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
  {
  	struct dentry		*dentry;
--	struct inode		*inode;
-+	struct inode		*inode __free(iput) = NULL;
- 	int			rc = 0;
+ 	struct inode		*inode __free(iput) = NULL;
+-	int			rc = 0;
  	char			name[PSTORE_NAMELEN];
- 	struct pstore_private	*private, *pos;
-@@ -369,7 +369,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+-	struct pstore_private	*private, *pos;
++	struct pstore_private	*private __free(pstore_private) = NULL, *pos;
+ 	size_t			size = record->size + record->ecc_notice_size;
  
- 	private = kzalloc(sizeof(*private), GFP_KERNEL);
- 	if (!private)
--		goto fail_inode;
-+		return -ENOMEM;
+ 	if (WARN_ON(!inode_is_locked(d_inode(root))))
+@@ -356,7 +356,6 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+ 			return -EEXIST;
+ 	}
+ 
+-	rc = -ENOMEM;
+ 	inode = pstore_get_inode(root->d_sb);
+ 	if (!inode)
+ 		return -ENOMEM;
+@@ -373,7 +372,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
  
  	dentry = d_alloc_name(root, name);
  	if (!dentry)
-@@ -384,7 +384,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
- 		inode_set_mtime_to_ts(inode,
- 				      inode_set_ctime_to_ts(inode, record->time));
+-		goto fail_private;
++		return -ENOMEM;
  
--	d_add(dentry, inode);
-+	d_add(dentry, no_free_ptr(inode));
+ 	private->dentry = dentry;
+ 	private->record = record;
+@@ -386,13 +385,9 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
  
- 	list_add(&private->list, &records_list);
+ 	d_add(dentry, no_free_ptr(inode));
  
-@@ -392,8 +392,6 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+-	list_add(&private->list, &records_list);
++	list_add(&(no_free_ptr(private))->list, &records_list);
  
- fail_private:
- 	free_pstore_private(private);
--fail_inode:
--	iput(inode);
- 	return rc;
+ 	return 0;
+-
+-fail_private:
+-	free_pstore_private(private);
+-	return rc;
  }
  
+ /*
 -- 
 2.34.1
 
