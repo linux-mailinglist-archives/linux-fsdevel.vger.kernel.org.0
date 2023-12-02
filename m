@@ -1,70 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-4684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA72801D47
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 15:32:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4EA801DBC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 17:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBDA1F2116C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 14:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7602D1C20917
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 16:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE4818C1E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 14:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="hLiFpoHz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B1D219E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 16:31:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:242:246e::2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC0212D;
-	Sat,  2 Dec 2023 04:31:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=H0UlL9cUU9+r/u+rnhBZIO7E5lcj+Pco9fQUjVp1II8=;
-	t=1701520273; x=1702729873; b=hLiFpoHz1BnyQdwsk4bnsR2IQi94/7vt2HXPSkaUlI8EZkz
-	hYGSWieVFK6tNDpcj+LgNyO3dxhqTpYTDPe2ztqh3EqqnX4ls/+ArQN/TGq6dDnRfF3ZFCHDMXxJv
-	8BsXkHycCqEMmjzA18v9mthaDpDTxzKldv7XtvxiTM+3LOM1YNzI3WwnVhfgRFcE+taAH0O8faHnt
-	sny2Rey5X3+bFw0++UYZNaKjJqhZFPCj74Ou6EO5zMD13Xx99SMyRW73T5MTCW7N0wYk6MFELPcsk
-	5nIrsHtU7ZEiooUiSzkRTa1moZzGfmZ6XsHATWlx2jVUwQYeTV2SRrjiXRKzII7Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1r9P9J-0000000CTbn-340C;
-	Sat, 02 Dec 2023 13:31:10 +0100
-Date: Sat, 02 Dec 2023 13:31:07 +0100
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>,
- Johannes Berg <johannes.berg@intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_Revert_=22debugfs=3A_annotate_de?= =?US-ASCII?Q?bugfs_handlers_vs=2E_removal_with_lockdep=22?=
-In-Reply-To: <2023120226-cytoplast-purge-bf13@gregkh>
-References: <20231202114936.fd55431ab160.I911aa53abeeca138126f690d383a89b13eb05667@changeid> <2023120226-cytoplast-purge-bf13@gregkh>
-Message-ID: <67A82FD5-0566-4A3E-9C38-B1EE129FC6CF@sipsolutions.net>
+Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE12194
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Dec 2023 06:45:22 -0800 (PST)
+Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1fb2132b0edso142174fac.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Dec 2023 06:45:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701528322; x=1702133122;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cGD7R9zZwJRT70SwWZQhFuzSd0jIirMnne4LVz9XikI=;
+        b=f+yw0zTiFAx3b6Nf975ADeFRty/lfqlp2f04yY1yTl29ZG1CWHxBYXFizh214OrkV4
+         xTqQYvOZUB5w66TF6cSB3NN6iU1jrmk/cpmnwiEg8AHrrJeg3YyCmfMaeG9YI2ymi8D6
+         zbFBseMMdsA7rEbuckyaAbyUFt+zpGxyDZuUbpm+IxyQsGjft/hklQsu9eFfEonF0Tou
+         nsmuMofVHMwFjZtEGkIS0IscKkD5iWPhAr69kXHpXZ7sYtyt8J0otaPHyGxpSawLlAEV
+         zOeMCBDnQJxyolprlLfjb0iUUFY5ifhyVwUIeNwQynO4tBPLc3cdQwNLBpUfXSV9b3A3
+         Vt1A==
+X-Gm-Message-State: AOJu0Yzelf7k+dI3fFiqmtCJV8VoN1eAG+/0+RKuiXbn9LESL7aBLnO5
+	FKseE3my2d+0q2+JzhFushHzoeuTu39TOttQSZnASdGMyVOT
+X-Google-Smtp-Source: AGHT+IF+n1TxdK7ECbK/InLKRmAh59e9PNNRYmuRbhMaqLWrr0O7bek/khmvd3K5Ix95D/mBrYubh7cTZO9u2ytkG51dwJaAyvC4
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-malware-bazaar: not-scanned
+X-Received: by 2002:a05:6871:520e:b0:1fa:db12:ed96 with SMTP id
+ ht14-20020a056871520e00b001fadb12ed96mr860280oac.5.1701528322005; Sat, 02 Dec
+ 2023 06:45:22 -0800 (PST)
+Date: Sat, 02 Dec 2023 06:45:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000355f33060b87efe9@google.com>
+Subject: [syzbot] Monthly nilfs report (Dec 2023)
+From: syzbot <syzbot+listd429f3c4d04e394c92ae@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello nilfs maintainers/developers,
 
+This is a 31-day syzbot report for the nilfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nilfs
 
-On 2 December 2023 12:33:57 CET, Greg Kroah-Hartman <gregkh@linuxfoundatio=
-n=2Eorg> wrote:
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 5 issues are still open and 36 have been fixed so far.
 
->Looks good, want me to take this or are you?
+Some of the still happening issues:
 
-Now I don't have anything dependent on it, so I guess it'd make sense if y=
-ou do=2E=20
+Ref Crashes Repro Title
+<1> 387     Yes   kernel BUG at fs/buffer.c:LINE!
+                  https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+<2> 341     Yes   WARNING in nilfs_sufile_set_segment_usage
+                  https://syzkaller.appspot.com/bug?extid=14e9f834f6ddecece094
+<3> 41      Yes   kernel BUG in folio_end_writeback
+                  https://syzkaller.appspot.com/bug?extid=7e5cf1d80677ec185e63
+<4> 6       Yes   kernel BUG in end_buffer_async_write
+                  https://syzkaller.appspot.com/bug?extid=5c04210f7c7f897c1e7f
 
-Thanks!
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-johannes 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
