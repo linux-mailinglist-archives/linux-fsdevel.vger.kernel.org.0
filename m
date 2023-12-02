@@ -1,66 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-4695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA25B801F0B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 23:32:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C50801F0C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 23:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE6CB20AA8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8BF1C2074C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05809224C0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="L00IxRP0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E15B224D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Dec 2023 22:32:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F1BE5;
-	Sat,  2 Dec 2023 13:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mzmbYFT6eXgeUvFzA1AjZh/++WkproRxrIlBwE1gCY0=; b=L00IxRP0LYY+aPJJMHp1lU47ZA
-	J176Pu7GbGT10FCC346cVLmX3g4rokO0HR8qfU7qotr7mZRJxwPbvsTyIGYtKqUjjY6C63yY4Jke0
-	Yytq/fZRQsrgejmnx9MZDzaUzJuZ/SkWZ44LwDPyeWhEtGySoc/T/EWn8uCH2HvyFGjz/SsJqXTlJ
-	51L/vgsBow83BFz5+SBn8AQpHa5PE31NM3JiuftoaVkYrOsK5SZaA0uqdoMDGhFkSs68EWHG5IjDI
-	Ja6wcomXEuo3azj/d/V5rZFelUc41t3Vfy9vL5qf5O6FOnJPAmn7dTkYCjhlcQD8ft6zLjVDRmTp8
-	ACZNl36A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r9XXa-006Nv1-0M;
-	Sat, 02 Dec 2023 21:28:46 +0000
-Date: Sat, 2 Dec 2023 21:28:46 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kees Cook <keescook@chromium.org>
-Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-fsdevel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 3/5] fs: Add DEFINE_FREE for struct inode
-Message-ID: <20231202212846.GQ38156@ZenIV>
-References: <20231202211535.work.571-kees@kernel.org>
- <20231202212217.243710-3-keescook@chromium.org>
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE42C4
+	for <linux-fsdevel@vger.kernel.org>; Sat,  2 Dec 2023 13:33:05 -0800 (PST)
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-587a58f3346so4203598eaf.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Dec 2023 13:33:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701552784; x=1702157584;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zKqRgYm0AgRjE4xdVrUEcvGqaGktrF3meejJYcgoL68=;
+        b=JWkKsnloJ3t6DULtOKTEGhnO5oKPWdyb7ya8LEecPfxauzqWiG9fdkVZ/XP6TGW+YO
+         b7nEXT5Dbf5qwPEIiNZCZs+cEhSUYc/GAYs+BO3jD8FmMO11lCekMGoE7CEullw3gaH5
+         1jc3RKgTWAF412Ks/MUi1kt31+glhbPQK3NZxUKjkOyfjxt1aoPoBV0Vg7wLDQUThFOX
+         RKDh9RqFeSePjoL0LUeuRGmrvu49oHL2xo4e7wFUaDPrQx8kvDrm+EsiX6NF1SkW9ZmH
+         5EP2487wjAqgkev0hmtGCxOJtw1TWM3RG5j//CHYBuFgWhu70i8/Ac8UW9TQOx0djvbQ
+         2+0Q==
+X-Gm-Message-State: AOJu0YzkKmmhbR/KQgupLkupA0Fwb62uF11FXDHQht11RSCQcUyk47kO
+	Uvzt/pzTMkhSNrlO+uSBs94oSEuUcRxAXqLCi+lFC65SCKu0
+X-Google-Smtp-Source: AGHT+IFqucHa4qMk8RwcwCv8DbQzN4BAF0j4cNTlp1+iRF4gCgFVtyQXoYcZ5tycjVuxqOzZsBm5nFDyG77vYxFKL9qzpSe1l8Zl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231202212217.243710-3-keescook@chromium.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a4a:b243:0:b0:58d:6882:9000 with SMTP id
+ i3-20020a4ab243000000b0058d68829000mr1032039ooo.0.1701552784595; Sat, 02 Dec
+ 2023 13:33:04 -0800 (PST)
+Date: Sat, 02 Dec 2023 13:33:04 -0800
+In-Reply-To: <000000000000f0bfe70605025941@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004ae32c060b8da1dc@google.com>
+Subject: Re: [syzbot] [gfs2?] kernel BUG in gfs2_quota_cleanup
+From: syzbot <syzbot+3b6e67ac2b646da57862@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, eadavis@qq.com, gfs2@lists.linux.dev, 
+	juntong.deng@outlook.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rpeterso@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Dec 02, 2023 at 01:22:13PM -0800, Kees Cook wrote:
-> Allow __free(iput) markings for easier cleanup on inode allocations.
+syzbot has bisected this issue to:
 
-NAK.  That's a bloody awful idea for that particular data type, since
-	1) ERR_PTR(...) is not uncommon and passing it to iput() is a bug.
-	2) the common pattern is to have reference-consuming primitives,
-with failure exits normally *not* having to do iput() at all.
+commit bdcb8aa434c6d36b5c215d02a9ef07551be25a37
+Author: Juntong Deng <juntong.deng@outlook.com>
+Date:   Sun Oct 29 21:10:06 2023 +0000
 
-Please, don't.
+    gfs2: Fix slab-use-after-free in gfs2_qd_dealloc
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=169c7b52e80000
+start commit:   994d5c58e50e Merge tag 'hardening-v6.7-rc4' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=159c7b52e80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=119c7b52e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c2c74446ab4f0028
+dashboard link: https://syzkaller.appspot.com/bug?extid=3b6e67ac2b646da57862
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1268c086e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164b3faae80000
+
+Reported-by: syzbot+3b6e67ac2b646da57862@syzkaller.appspotmail.com
+Fixes: bdcb8aa434c6 ("gfs2: Fix slab-use-after-free in gfs2_qd_dealloc")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
