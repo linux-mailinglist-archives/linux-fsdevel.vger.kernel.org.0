@@ -1,263 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-4706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC5780256B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 17:30:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF82802746
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 21:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB2228060B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 16:30:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03EC6B20818
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 20:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9619315AE2
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 16:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6859218646
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Dec 2023 20:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="At/6BHR4"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="sJFG5M3h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D796ED;
-	Sun,  3 Dec 2023 07:37:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1701617821;
-	bh=TTuJ6Udpup4SD2uOIIkzQFANYG602HzCvVFlx6oIxmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=At/6BHR4M88kALlZGhzJHgia2zi9meV3s9btRZolmf8OfDUgm5k8rRxnOtxj0P4P5
-	 KpQGfIGWnRTO31UjJlE/Z036mRD981Bn6ML6JFK4fFtqyeJXvz5cmKFUvcbP9GGfAK
-	 o8jTs+2NLEMimrtxexKppnkD1zETQnrWpwkluJ3E=
-Date: Sun, 3 Dec 2023 16:37:01 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Kees Cook <keescook@chromium.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Iurii Zaikin <yzaikin@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/7] sysctl: constify sysctl ctl_tables
-Message-ID: <e3932680-d284-4e13-9c0c-f202d588bf60@t-8ch.de>
-References: <CGME20231125125305eucas1p2ebdf870dd8ef46ea9d346f727b832439@eucas1p2.samsung.com>
- <20231125-const-sysctl-v1-0-5e881b0e0290@weissschuh.net>
- <20231127101323.sdnibmf7c3d5ovye@localhost>
- <475cd5fa-f0cc-4b8b-9e04-458f6d143178@t-8ch.de>
- <20231201163120.depfyngsxdiuchvc@localhost>
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F78C0
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Dec 2023 12:11:21 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-50be03cc8a3so2388536e87.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Dec 2023 12:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1701634280; x=1702239080; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UoYaUinr8b+tkgabYLkrdYXM9IqNfemzC0q7KxnZpVg=;
+        b=sJFG5M3hk/oUBPvmoSbh5OqLmVEc642ghqbWsZPSAJsbonAs59qNTH7cZO0IsdPww9
+         C2SeEMm+5hSJ+0wLcmmt3cZkv1A7fw8u05fVcyjaMJWQtRTXnSF1nvNtpcRGSi1p89A9
+         MNYJYkcjQC5sd02Np3BEyy0M7QKIbDo9uiTI269Op45Z6bYWZm9DhBIK0d/x/R3sNX17
+         nCaphaM5VfykKUBZXEu8ZD4koEnYFeMEKTyefCnaS96nqGv8FY2GAdh9AvTsxMYxgTic
+         9a3BLg0xR8tM1KDmOADNE8g6WqtAbrFoHfxSaFxFxqdrcGzmpQubkUJiJmCrOxM+6AEn
+         cbNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701634280; x=1702239080;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UoYaUinr8b+tkgabYLkrdYXM9IqNfemzC0q7KxnZpVg=;
+        b=tMS9IMkCRGZMUbmI3HLAJ3ItZoI1UVtqboe8ZJDxpu0r5GZghoMLfaziqITLz04Q1t
+         hgABUxACZM9R4RP+oDKwPL1a74hSv0oxEqJxv7IM7wCKZcApPfZdx4SQACS2NUBP0AyF
+         ab73LJG6dGdHIWod1FJYdx6XFB/ihGsZJ6Si2o0lf3ScxX4sFkIiXzmLMVxxPiYkJPvQ
+         eXEK2gjTOaxVl5S99FyaBSYyuJCVuqfivZhUmo9vdEnr7eENx9CeBpv7GmokLimWABVp
+         VuqCLH9BVeLMfKq+r52o90LvlYiMtka1ngurTPNslRVuLr2DVKxmqYt0GnK5+RgwGIME
+         HRKA==
+X-Gm-Message-State: AOJu0YzlihpK12pDqgaa7OiYPaYLvXIT3NOsU6KyPSy1jDBO5ewIqFKy
+	r9M5DebuPtbipgIzd+1pIboHiO4+fA73s/mNhGvq5szM
+X-Google-Smtp-Source: AGHT+IGWlpgNCA9Q8/cPm4KtNT3CYX8uIzwpV+RPWmgRycZGdrepquy/In0NZxihv4PP/XXQNagpmw==
+X-Received: by 2002:a19:500d:0:b0:50b:f1e9:b0ea with SMTP id e13-20020a19500d000000b0050bf1e9b0eamr414905lfb.100.1701634279645;
+        Sun, 03 Dec 2023 12:11:19 -0800 (PST)
+Received: from smtpclient.apple ([2a00:1370:81a4:169c:2d98:8daa:a4e8:b964])
+        by smtp.gmail.com with ESMTPSA id be17-20020a056512251100b0050bc39bdd43sm43774lfb.211.2023.12.03.12.11.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Dec 2023 12:11:19 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231201163120.depfyngsxdiuchvc@localhost>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
+Subject: Issue with 8K folio size in __filemap_get_folio()
+Message-Id: <B467D07C-00D2-47C6-A034-2D88FE88A092@dubeyko.com>
+Date: Sun, 3 Dec 2023 23:11:14 +0300
+Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3696.120.41.1.4)
 
-Hi Joel,
+Hi Matthew,
 
-On 2023-12-01 17:31:20+0100, Joel Granados wrote:
-> Hey Thomas.
-> 
-> Thx for the clarifications. I did more of a deep dive into your set and
-> have additional comments (in line). I think const-ing all this is a good
-> approach. The way forward is to be able to see the entire patch set of
-> changes in a V1 or a shared repo somewhere to have a better picture of
-> what is going on. By the "entire patchset" I mean all the changes that
-> you described in the "full process".
+I believe we have issue in __filemap_get_folio() logic for the case of =
+8K folio size (order is equal to 1).
 
-All the changes will be a lot. I don't think the incremental value to
-migrate all proc_handlers versus the work is useful for the discussion.
-I can however write up my proposed changes for the sysctl core properly
-and submit them as part of the next revision.
+Let=E2=80=99s imagine we have such code and folio is not created yet for =
+index =3D=3D 0:
 
-> On Tue, Nov 28, 2023 at 09:18:30AM +0100, Thomas Weißschuh wrote:
-> > Hi Joel,
-> > 
-> > On 2023-11-27 11:13:23+0100, Joel Granados wrote:
-> > > In general I would like to see more clarity with the motivation and I
-> > > would also expect some system testing. My comments inline:
-> > 
-> > Thanks for your feedback, response are below.
-> > 
-> > > On Sat, Nov 25, 2023 at 01:52:49PM +0100, Thomas Weißschuh wrote:
-> > > > Problem description:
-> > > > 
-> > > > The kernel contains a lot of struct ctl_table throught the tree.
-> > > > These are very often 'static' definitions.
-> > > > It would be good to mark these tables const to avoid accidental or
-> > > > malicious modifications.
-> > 
-> > > It is unclear to me what you mean here with accidental or malicious
-> > > modifications. Do you have a specific attack vector in mind? Do you
-> > > have an example of how this could happen maliciously? With
-> > > accidental, do you mean in proc/sysctl.c? Can you expand more on the
-> > > accidental part?
-> > 
-> > There is no specific attack vector I have in mind. The goal is to remove
-> > mutable data, especially if it contains pointers, that could be used by
-> > an attacker as a step in an exploit. See for example [0], [1].
+fgf_t fgp_flags =3D FGP_WRITEBEGIN;
 
-> I think you should work "remove mutable data" as part of you main
-> motivation when you send the non-RFC patch. I would also including [0]
-> and [1] (and any other previous work) to help contextualize.
+mapping_set_large_folios(mapping);
+fgp_flags |=3D fgf_set_order(8192);
 
-Ack.
+folio =3D __filemap_get_folio(mapping, 0, fgf_flags, =
+mapping_gfp_mask(mapping));
 
-> 
-> > 
-> > Accidental can be any out-of-bounds write throughout the kernel.
-> > 
-> > > What happens with the code that modifies these outside the sysctl core?
-> > > Like for example in sysctl_route_net_init where the table is modified
-> > > depending on the net->user_ns? Would these non-const ctl_table pointers
-> > > be ok? would they be handled differently?
-> > 
-> > It is still completely fine to modify the tables before registering,
-> > like sysctl_route_net_init is doing. That code should not need any
-> > changes.
-> > 
-> > Modifying the table inside the handler function would bypass the
-> > validation done when registering so sounds like a bad idea in general.
+As a result, we received folio with size 4K but not 8K as it was =
+expected:
 
-> This is done before registering. So the approach *is* sound.
+struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t =
+index,
+		fgf_t fgp_flags, gfp_t gfp)
+{
 
-Absolutely. Though, I wouldn't be surprised if some other subsystem is
-doing this stuff in the handler.
+	folio =3D filemap_get_entry(mapping, index);
+	if (xa_is_value(folio))
+		folio =3D NULL;
+	if (!folio)
+		goto no_page;   <=E2=80=94=E2=80=94 we have no folio, so =
+we jump to no_page
 
-> > It would still be possible however for a subsystem to do so by just not
-> > making their sysctl table const and then modifying the table directly.
+/* skipped */
 
-> Indeed. Which might be intended or migth be someone that just forgets to
-> put const. I think you mentioned that there would be some sort of static
-> check for this (coccinelle or smach, or something else)? 
+no_page:
+	if (!folio && (fgp_flags & FGP_CREAT)) {
+		unsigned order =3D FGF_GET_ORDER(fgp_flags);  <=E2=80=94=E2=
+=80=94 we have order =3D=3D 1
+		int err;
 
-My intention was to put the struct into scripts/const_structs.checkpatch
-so checkpatch.pl warns about non-const instances.
+/* skipped */
 
-> >  
-> > > > Unfortunately the tables can not be made const because the core
-> > > > registration functions expect mutable tables.
-> > > > 
-> > > > This is for two reasons:
-> > > > 
-> > > > 1) sysctl_{set,clear}_perm_empty_ctl_header in the sysctl core modify
-> > > >    the table. This should be fixable by only modifying the header
-> > > >    instead of the table itself.
-> > > > 2) The table is passed to the handler function as a non-const pointer.
-> > > > 
-> > > > This series is an aproach on fixing reason 2).
-> > 
-> > > So number 2 will be sent in another set?
+		if (!mapping_large_folio_support(mapping)) <=E2=80=94 we =
+set up the support of large folios
+			order =3D 0;
+		if (order > MAX_PAGECACHE_ORDER)
+			order =3D MAX_PAGECACHE_ORDER;
+		/* If we're not aligned, allocate a smaller folio */
+		if (index & ((1UL << order) - 1))
+			order =3D __ffs(index);
 
-> Sorry, this was supposed to be "number 1", but you got my meaning :)
+/* we still have order is equal to 1 here */
 
-I was not entirely sure :-)
-As mentioned above I do have a proposal for 1) and will submit this as
-part of the next revision.
-Or maybe as a standalone non-RFC patchset, because IMHO this is valuable
-on its own.
+		do {
+			gfp_t alloc_gfp =3D gfp;
 
-> > 
-> > If the initial feedback to the RFC and general process is positive, yes.
+			err =3D -ENOMEM;
+			if (order =3D=3D 1)
+				order =3D 0;  <=E2=80=94=E2=80=94 we =
+correct the order to zero because order was 1
 
-> Off the top of my head, putting  that type in the header instead of the
-> ctl_table seems ok. I would include it in non-RFC version together with
-> 2.
-> 
-> > 
-> > > > 
-> > > > Full process:
-> > > > 
-> > > > * Introduce field proc_handler_new for const handlers (this series)
+			if (order > 0)
+				alloc_gfp |=3D __GFP_NORETRY | =
+__GFP_NOWARN;
+			folio =3D filemap_alloc_folio(alloc_gfp, order);
 
-> I don't understand why we need a new handler. Couldn't we just change
-> the existing handler to receive `const struct ctl_table` and change all
-> the `proc_do*` handlers?
+/* Finally, we allocated folio with 4K instead of 8K */
 
-The idea was that there are a lot of nonstandard proc handlers.
-By doing it in steps we would avoid having to change all nonstandard
-handlers in one go.
-I looked a bit around and it seems that only 20% of sysctls use
-nonstandard handlers.
-Let's see if it's feasible to do those in one step.
-It would indeed avoid a bunch of complexity all over the place.
+			if (!folio)
+				continue;
 
-> I'm guessing its because you want to do this in steps? if that is the
-> case, it would be very helpfull to see (in some repo or V1) the steps
-> to change all the handlers in the non-RFC version 
-> 
-> > > > * Migrate all core handlers to proc_handler_new (this series, partial)
-> > > >   This can hopefully be done in a big switch, as it only involves
-> > > >   functions and structures owned by the core sysctl code.
-> It would be helpful to see what the "big switch" would look like. If it
-> is all sysctl code and cannot be chunked up because of dependencies,
-> then it should be ok to do it in one go.
-> 
-> > > > * Migrate all other sysctl handlers to proc_handler_new.
-> > > > * Drop the old proc_handler_field.
-> > > > * Fix the sysctl core to not modify the tables anymore.
-> > > > * Adapt public sysctl APIs to take "const struct ctl_table *".
-> > > > * Teach checkpatch.pl to warn on non-const "struct ctl_table"
-> > > >   definitions.
+/* skipped */
+		} while (order-- > 0);
 
-> Have you considered how to ignore the cases where the ctl_tables are
-> supposed to be non-const when they are defined (like in the network
-> code that we were discussing earlier)
+/* skipped */
+	}
 
-As it would be a checkpatch warning it can be ignore while writing the
-patch and it won't trigger afterwards.
+	if (!folio)
+		return ERR_PTR(-ENOENT);
+	return folio;
+}
 
-> > > > * Migrate definitions of "struct ctl_table" to "const" where applicable.
-> These migrations are treewide and are usually reviewed by a wider
-> audience. You might need to chunk it up to make the review more palpable
-> for the other maintainers.
+So, why do we correct the order to zero always if order is equal to one?
+It sounds for me like incorrect logic. Even if we consider the troubles
+with memory allocation, then we will try allocate, for example, 16K, =
+exclude 8K,
+and, finally, will try to allocate 4K. This logic puzzles me anyway.
+Do I miss something here?
 
-Ack.
+Thanks,
+Slava.
 
-> > > >  
-> > > > 
-> > > > Notes:
-> > > > 
-> > > > Just casting the function pointers around would trigger
-> > > > CFI (control flow integrity) warnings.
-> > > > 
-> > > > The name of the new handler "proc_handler_new" is a bit too long messing
-> > > > up the alignment of the table definitions.
-> > > > Maybe "proc_handler2" or "proc_handler_c" for (const) would be better.
-> > 
-> > > indeed the name does not say much. "_new" looses its meaning quite fast
-> > > :)
-> > 
-> > Hopefully somebody comes up with a better name!
 
-> I would like to avoid this all together and just do add the const to the
-> existing "proc_handler"
 
-Ack.
 
-> > 
-> > > In my experience these tree wide modifications are quite tricky. Have you
-> > > run any tests to see that everything is as it was? sysctl selftests and
-> > > 0-day come to mind.
-> > 
-> > I managed to miss one change in my initial submission:
-> > With the hunk below selftests and typing emails work.
-> > 
-> > --- a/fs/proc/proc_sysctl.c
-> > +++ b/fs/proc/proc_sysctl.c
-> > @@ -1151,7 +1151,7 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
-> >                         else
-> >                                 err |= sysctl_check_table_array(path, entry);
-> >                 }
-> > -               if (!entry->proc_handler)
-> > +               if (!entry->proc_handler && !entry->proc_handler_new)
-> >                         err |= sysctl_err(path, entry, "No proc_handler");
-> >  
-> >                 if ((entry->mode & (S_IRUGO|S_IWUGO)) != entry->mode)
-> > 
-> > > [..]
-> > 
-> > [0] 43a7206b0963 ("driver core: class: make class_register() take a const *")
-> > [1] https://lore.kernel.org/lkml/20230930050033.41174-1-wedsonaf@gmail.com/
-
-Thanks for the feedback!
-
-Thomas
 
