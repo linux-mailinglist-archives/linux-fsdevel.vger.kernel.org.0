@@ -1,216 +1,269 @@
-Return-Path: <linux-fsdevel+bounces-4754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED92E8030A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 11:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8356F8030AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 11:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AEF1F2106B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7411F20EE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF86224C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B73224D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H5q2Dmz8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o0GKZPum";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GVl05G3q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD09FD;
-	Mon,  4 Dec 2023 00:56:33 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231204085631euoutp016a240434f45d9e7636d711aefd006cc2~dlR5hufzV1564315643euoutp01a;
-	Mon,  4 Dec 2023 08:56:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231204085631euoutp016a240434f45d9e7636d711aefd006cc2~dlR5hufzV1564315643euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701680192;
-	bh=u5ANKrFOExU1KsjAsnD9uwlOV/7Kro3AtqZhq74Bz2E=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=H5q2Dmz8YbYW6HDuVxHJFTBQ750+njvkBd+kNR/cQIRXJCoP3s9LE17vWc0expRGf
-	 zkLEfnyEsJLvTppqN4ePO9ILunthWdlyfBuilsHn6Nc8vkzc5pCSEwjZTyBvRyIRbX
-	 MNlAQC1rB/12jRnNU4fZrP78QFg78wskifY9eZ6Q=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231204085631eucas1p2162e2397cad033945a4f9963fd768b57~dlR5U3MvS2294222942eucas1p2E;
-	Mon,  4 Dec 2023 08:56:31 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 3B.2D.09814.F349D656; Mon,  4
-	Dec 2023 08:56:31 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231204085631eucas1p1df3dd15338e0357dedfcc0b8aa64c2c8~dlR4zmVq01870318703eucas1p1Y;
-	Mon,  4 Dec 2023 08:56:31 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231204085631eusmtrp223eb7e06b481cedd1f0e528a502c34c1~dlR4wvyTd0289802898eusmtrp2C;
-	Mon,  4 Dec 2023 08:56:31 +0000 (GMT)
-X-AuditID: cbfec7f4-727ff70000002656-d9-656d943f2436
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id FC.4E.09274.E349D656; Mon,  4
-	Dec 2023 08:56:30 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231204085630eusmtip21962b3da8cd158ad7892bdaee280e817~dlR4etFaf2690626906eusmtip2b;
-	Mon,  4 Dec 2023 08:56:30 +0000 (GMT)
-Received: from localhost (106.110.32.133) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 4 Dec 2023 08:56:30 +0000
-Date: Mon, 4 Dec 2023 09:56:28 +0100
-From: Joel Granados <j.granados@samsung.com>
-To: Petr Mladek <pmladek@suse.com>
-CC: Luis Chamberlain <mcgrof@kernel.org>, <willy@infradead.org>,
-	<josh@joshtriplett.org>, Kees Cook <keescook@chromium.org>, Eric Biederman
-	<ebiederm@xmission.com>, Iurii Zaikin <yzaikin@google.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, John Stultz
-	<jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Andy Lutomirski
-	<luto@amacapital.net>, Will Drewry <wad@chromium.org>, Ingo Molnar
-	<mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
-	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel Bristot de
-	Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
-	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky
-	<senozhatsky@chromium.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller"
-	<davem@davemloft.net>, Balbir Singh <bsingharora@gmail.com>, Alexei
-	Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John
-	Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
-	<jolsa@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kexec@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: Re: [PATCH 07/10] printk: Remove the now superfluous sentinel
- elements from ctl_table array
-Message-ID: <20231204085628.pf7yxppacf4pm2cv@localhost>
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A50CA8;
+	Mon,  4 Dec 2023 01:03:18 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B48wdo8031622;
+	Mon, 4 Dec 2023 09:03:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=6Ax4+f+MwzV4DGnyjMmazCBeZFOZlZjsyNBYtb0jBaA=;
+ b=o0GKZPumoQOIdK1O0iUHEL3UKABDHzazxssS6ZYf3rTLKCpfdyt3rUevQRfcef4Oo2Wq
+ FKMu+rXaytpKOqozvDELlWZkhyJ8vijCS6pu5vSS/vSG+XRsliMxb5Gnn1pJzxcbpMAb
+ NMOl8YAQmDWjhT8zCqzPioTFyo7MugJGGCrsSntD/wCLBm3kdk9JsotD5N7X/tNIzmr9
+ FsboE6jPnZ/c6GD1NNlvCA/7NB2HyeUJTIAZ1auF+JvEGcPqIjWCT9P68ocyznK8TjR/
+ ijFs/mGNe/JvUq9bzhZlOWIlecZ2tmdUBHtQ5eXLYBnVw208VQyxhLU4bgkV3sXD6ica hA== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usavx86pb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 09:03:03 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B47MAcd020749;
+	Mon, 4 Dec 2023 09:03:02 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu15htpj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 09:03:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N4T5j9CY8Tjgi1E8Qb7mi7gxtpNYWzrszsyAg8Ay4cfq6S2vDdzwNNvnBtQvNu9wO3/wOb24nZ0Q11NYPXSiO51nVZQfvWGilHeIME1TAwXFZ0uB5jEYm131XCQn83ZF/tXe4m3yXRrIssQQho2lmOXVIPsAi6HBiWIjKHR8Xvm3MxPGtTscgwWvlkgtCxJg8O6IBMsGGzihYkQ31/ksiouyh3ZibWF6ESNrOBxQdkJDFkAwPOR7gWks1UJktycQXroWpVYx/rQbnk0fQphBPKYxJ3ztMnms5BCIuwE51lHZxrDJjBGeiwc6RQJ3jLiTsE/DsDStIYTN5VEXTrnkVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Ax4+f+MwzV4DGnyjMmazCBeZFOZlZjsyNBYtb0jBaA=;
+ b=es0ETo2owEnUzOJYFgM4lHko1lbHJxQYC26ch7Bi8OGEIPNIv31auBZqH+NrgbN3Xx+pQFs9bgOZil6iYn3HNwlY0XDcbwHnxVxp19/ujM0IRcLVMxyjEHHGweiXIexiNahj04hlMriUQSYE6p7wz4/22PLZh6UgCVrHUKkYUfgwzTVO8/2j7NQCpzDbG7/7kkkz/0QTz7f4HvAAcXKCIp/edgw31pPK+BCCWF4RZy7dPqYK8QtChnhI6mCN5USgfZzUGbAsjSg4zuY6QtGhyIBRiv3PILb8mVOdcfSb0RmKDhIqYjpndP2S3gSket7BX8YBocqgXnpmVPaJcOLVww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Ax4+f+MwzV4DGnyjMmazCBeZFOZlZjsyNBYtb0jBaA=;
+ b=GVl05G3qmWGZ+TXD3GM1PPlqIYhOUnqelRPA9YeR15tPh152T9bEfspkPT/kc2HcHkGBVVDHJS43lrHjdW7rwaCRh+k5W1YgDVpJePCzSJARG+y/RwoZJhxDke09tsz0UfugrTC7aq47GYv34JZXpuhsEuiy39a9P+HTg+b4+gk=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH7PR10MB7107.namprd10.prod.outlook.com (2603:10b6:510:27a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.33; Mon, 4 Dec
+ 2023 09:03:00 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7046.033; Mon, 4 Dec 2023
+ 09:02:59 +0000
+Message-ID: <2aced048-4d4b-4a48-9a45-049f73763697@oracle.com>
+Date: Mon, 4 Dec 2023 09:02:56 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/7] iomap: Don't fall back to buffered write if the write
+ is atomic
+To: Dave Chinner <david@fromorbit.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dchinner@redhat.com
+References: <cover.1701339358.git.ojaswin@linux.ibm.com>
+ <09ec4c88b565c85dee91eccf6e894a0c047d9e69.1701339358.git.ojaswin@linux.ibm.com>
+ <ZWj6Tt1zKUL4WPGr@dread.disaster.area>
+ <85d1b27c-f4ef-43dd-8eed-f497817ab86d@oracle.com>
+ <ZWpZJicSjW2XqMmp@dread.disaster.area>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <ZWpZJicSjW2XqMmp@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P265CA0004.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:339::20) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="m334zefgib4niiyw"
-Content-Disposition: inline
-In-Reply-To: <ZWX0L4lV8TWOgcpv@alley>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA2WTa0xTZxzG955z2lNwuENx+ApGl4osY8DELPAuG+IiiScxsi2azfBBh+sR
-	HFAclQ1Z3IrigDIccqcyrkqhRe4UWREYYxQERK4iBQYKIlCZCJUaLl3Lwblk337/y/O8z//D
-	y8P5DaQd77ToLBMq8gsScC0JVcuLLhev5GBmT4HWAS0tX8WR+rGWQIsvtCRaaNZwUc/Dfi5K
-	m44kUOZ0B4nyc5/jKLMrikCTCdU4MqqiSNSkaSDRhZuFGFL1ZQPUnCwzDXJC0EprOReN/JJC
-	oI64YKRu12Noqj4eQ3W32gjU+1smFzWXdhJIeUPCQdfvdWOoOLaIgwYTJgFKmnsEUL7cEfU0
-	5mBImbxKIk18I4aMD/UcVB8zhqG1gXIC9RhmCaQuz+MijXyViyorUnAU02xKWP3nEom0UiOJ
-	lg2md8aUKg4qqPXZ70r/pVsl6OKsYkBflXQTdFXRfYyulY2QdFT9EEnnVITRlYVOdH7dNEZL
-	B3twemjWk65QxHLp4YE6Lj135w5J50pScDohrxF8autr+ZGQCTr9LRP63r4vLQMeKUrJMzes
-	w42GMkwCpjdLgQUPUu/D0pJajpn5VCGAWXFuUmBp4kUAr5WscNhiAcCL90vwl4pKtRxnB3IA
-	G7OmyX+3oh4bAFtUApi28JQ0SwjKAda2PgBm5lLOsEs3vG61hRLAmeyRdSucKrSCxoSC9SQ2
-	1CmYnaFeF1hRHrAl/9IGW8O2jAlCCngmQTjMG/Zi0R7K13jmDQtqNxxMatlIKoB6XTyH5fPw
-	dtUQxvLUJlhz94BZCilvqBrfz7Zt4IymimR5OzTWZmPmZJBKArBh7SnJFkoACyL1G0Yfwqi+
-	iQ3Fx/Da8CTJmm6Gg0+szW3chImqNJxtW8GYn/jstiNUjuqIBLBL9p+7ZK/ukr26S7bu4wxz
-	1M+4/2u/CwtyZ3GWPWFJyd9EDiAVYCsTJg72Z8R7Rcx3rmK/YHGYyN/1q5DgCmD6V+1rmsWb
-	QD4z79oEMB5oAg4m8YMy5V1gR4hCRIxgi1XWUCDDtxL6nYtgQkNOhIYFMeImYM8jBFutdgt3
-	MnzK3+8sE8gwZ5jQl1OMZ2EnwSQ2O3JGrRUi78/jL/ePf6/udb+yPeabwXdupffrEoYdPNP7
-	4nZoAw5lyBeOJOoPpwmPOS51EkWxVJpBSu58ezpVYC+8ODtX6TufeMTtcEdGoNPRMosfRdGa
-	CM96jYrv07+vjjn4+nH76E2yQcmvsb4rv2e6nNROXFZsq3YZz2p11R8aBScbrngvH3jTvzA1
-	reqDT54c9VAeO26Y74Q/6K//XHywXiDXR0qKLj372te9zsc25ISn9J7ijeWWauVYdKrXF8/b
-	pyz8ubV2e7S7+FWfbetknC+cUupuM+Fv1eydqTZWnbc45/tHjHt6d02brUoz5e0h7x1QDPDF
-	2RHPVijha2UCQhzg5+aEh4r9/gGs7rVC0gQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA2VTe0xTVxzeuff2tnXpVh7OOzRqihCDs1Cehw3IXnGXjWwY4Y+NKXZyBwba
-	krbgNCOpDBPowqgRdBRGi4hQCkhbJGB5dIiAAwRB3o9VGCCPSYwg77JCWWay/77zfb/v+305
-	OYeB2ptxJ8Z5oZQSC/lxHHwP1mZpGTselCmgPJJHAuDyeg4Kjc+GMbi4OkyHL5tacNg90YvD
-	GzOXMZg7006HBfmvUJjbmYLBScVdFG5VpdBhY0sDHSZXFyOw6okKwKZMpVVQi+BGqw6HoxlZ
-	GGz/WQCNbUsInK5PR2Bt3UMM9tzLxWHTnQ4MastkNFjY/xiBpWkaGhxQTAJ47fkUgAVFrrDb
-	pEagNnOTDlvSTQjcmliiwfpUMwItfToMdq/MYdCou4nDlqJNHBr0WShMbbI2vPtgmQ6H5Vt0
-	uL5i3WPWVtHg7ZovP+SSf85vYmRpXikgc2SPMbJSM4iQNcpROplSP0Qn1foE0lDsRhbUziCk
-	fKAbJYfmAkl9SRpOjvTV4uTzR4/oZL4sCyUVN00g9J1vuAFiUYKUOhwjkkgDORE86Mnl+UOu
-	p7c/l+fld/p9Tx+Oe1BAFBV3PpESuwed5cbMJ/fT47V2P/ySt0CTgem35IDJINjehMFYhMrB
-	HoY9uxAQg/OvaDbhAKFb7N3FDsRGnxy3Db0ARMV0J7AdDIAwrtWh21MY+whR0zoOtjHOfo/o
-	nB/Z4R3ZHGJWNbqzAmUXs4gK9dWdWAf294Qq27hjYLH9iOaCK7up1xFi7PICZhPsiIfZf+1g
-	lJ1I9Go1VjPDivcTRRbGNs1kuxAD15pRW1UOsTSfvls7iXi5OQUUwEH5WpLytSTlf0k22o0Y
-	sMwg/6OPEbfz51AbDiTKyxcwNaCXAEcqQSKIFkg8uRK+QJIgjOaeEwn0wPq8q5pXK6uBZvYF
-	txEgDNAIjlid4xXaLuCECUVCiuPIyhuKpexZUfyLlyixKFKcEEdJGoGP9Rqvok57z4msf0Uo
-	jeT5evjwvH39PXz8fb04+1jB8al8e3Y0X0rFUlQ8Jf7XhzCYTjLkHi5N05TN/FhS1l349QXp
-	qXKD3Up+p/fnzxRffZut+cjFXa+eilT9NBBSfD+F2Q5PyEz3R5x5q4fMycODJPdogPwO+XHw
-	d8379/kd//3gk8lTISdrNe9KHfIzTjuHn5SGtY05Rzh+4pURUZaunO5v+OKzX5PWXHMOCPCD
-	PHYW0zB7bPypncteAQhgdq09CF8R1kVcMi9Pxwf3qGLbLqZ+amo9m3wrJTZ3Yi7cYglKr4ks
-	XwsLSbx1FFW8nXhmw/GNQ+FS9+scVivhXH0l7Y/WhiTxYVXliVBOqGnU883oLtehmqceHTfO
-	cGv/jvugB/ntgmkjTJu6uN5h9tDrCqJ0geIiDiaJ4fPcULGE/w/p9W0ycwQAAA==
-X-CMS-MailID: 20231204085631eucas1p1df3dd15338e0357dedfcc0b8aa64c2c8
-X-Msg-Generator: CA
-X-RootMTR: 20231128140754eucas1p2cf2c17554954e94d0dc14967e1f5e750
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231128140754eucas1p2cf2c17554954e94d0dc14967e1f5e750
-References: <20231107-jag-sysctl_remove_empty_elem_kernel-v1-0-e4ce1388dfa0@samsung.com>
-	<20231107-jag-sysctl_remove_empty_elem_kernel-v1-7-e4ce1388dfa0@samsung.com>
-	<CGME20231128140754eucas1p2cf2c17554954e94d0dc14967e1f5e750@eucas1p2.samsung.com>
-	<ZWX0L4lV8TWOgcpv@alley>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB7107:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc519ff0-dd37-48a7-b69d-08dbf4a7d06e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	34r7fgvcSxvBEOtjCKGY6ZcWe18g4W+OHUfGvoDv8JhxbVXFffJUvWOWMTMfwA75m6R4VxYBoXEoIXzsPQ23AjGsJaDp72BoS27tZEORL6htCRCG6VixrnEEkzsm5MkozsRRIb5SlEJrnXJn4/+4HnTh/NwS7yPtzTsDct7tky+2cl2Io+8TqJA1kqX1rSL7FOxW7fLnTu1SThZJuj7SoPOyfON37cazREAJQfF9LwP3bFY4bjCKFFepxnvQheSs+74ZXGdFBpwO9kl8c1VW16uh1r3ENcaxqUCKhxgtzkvO9GpIhtfkZbHZbJsIAsPzsw7vPW2mWn3C3B90kyPYqAp8FFglLqsuLKoqLMQKX1aFjJaxLAXOuQ1FSHHzGG667yOFpkW6m1YItCO1VtHLSKUFzMjg6ftMUsKxTqpUNnLarRKMMzdX81w7p0HJnqbj+LJKAcNTHHTPOr7ysii22rJJ/BkhCMtyVsZ7Y/PRWrCM4j+P3tztqealLvz1JiNwCY0kZvXiIXpMYkWIAyg3OcwVi4dRfRgfDuDvbFd7rzYWn8fxdhTrV40jfyIyrG3Olpaf3F06/Bb9pqYP1FBHfbSSAQJj0hoyfjMOtox2Nd3zIZeYAZ/tI34PSHkjyG9kOpfZjzmVddlqatox3p1xvQ==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(346002)(366004)(376002)(396003)(136003)(230922051799003)(64100799003)(1800799012)(186009)(451199024)(31686004)(2616005)(4326008)(8936002)(8676002)(6512007)(6506007)(36916002)(53546011)(83380400001)(26005)(6486002)(478600001)(6666004)(66476007)(54906003)(66946007)(66556008)(316002)(6916009)(2906002)(41300700001)(36756003)(38100700002)(86362001)(31696002)(7416002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?djhHUzlHcEowRXNXNjBlcFdMMDRhOHBrM0tTU0hrUWJJcFFkUlRNR09ZaUtT?=
+ =?utf-8?B?dHhNaXQ0dDVVeGhLa2NSMi9oWWx6YVE0R0FkcjVkb3Y0am9URTR1NjZrdExs?=
+ =?utf-8?B?ZkZMUE9ITmF1QnJPRGNtSEpvbHhtZGlzM0tabmVkV2xBMkhiVW0vaWQ5bDdY?=
+ =?utf-8?B?MWVKdW5YQmwxSEd5RXFEcDdUS0s1QXI4b3N4eis5elhBS1h6SytyNkMwM0RZ?=
+ =?utf-8?B?MjRlOXArTkM3RVpPNHYrczdmN1lMMEVFdUlNTi82Uy82ZjBUT3ovMzhEa2lC?=
+ =?utf-8?B?SVlzY01kWU9PV2J1d1Bka1k5SnNRcktmU29rWTV2U1diYXZGNCtiMjdaanJC?=
+ =?utf-8?B?Y25YQW50VXJ1NmdaMG9Ia21WMis5blVLblhUbVhmVk5rTVhDRGJ5VFErbU9R?=
+ =?utf-8?B?azdFdWtsREdzUlNINXBoUlB1Q2NzSEx1YmlUejNiUEFSdWNIcmFKSjFtZ2xX?=
+ =?utf-8?B?WXYyKzRxSGxZY1o2T0hqcy95KzcxazUzM2JHNStFMGJLL0VhajkvN0tudnNl?=
+ =?utf-8?B?U3NSS1dUeWw3RDUrdEtPaWM0eXlnS0ZKZUM1a04wdy9FbGNaQlRWb1lSTmRV?=
+ =?utf-8?B?N1JXU2NFbUpQOWFIZ1JxMWZUeE5adVU0M1FPVTZJRVVqTCtLeXUySDZURGNQ?=
+ =?utf-8?B?ZzgvV2ozSllnYTdPQ2tJdkRSREVvaDYvMTNRNmlrM0MybW0zMS9IRHJJMWc5?=
+ =?utf-8?B?ekMyNitIQXhZTjRaVWsvNlQ5ZDhaV0JaQUhVTDd5RTVOYTBCUHQzdk5OdTQz?=
+ =?utf-8?B?NWhYMTRjMG1qNTdJR3U5TXlJRDlYbS9rMytqQTJ4a05rOUxnTjJBNkhDWTNE?=
+ =?utf-8?B?U0dnTzhFUkxnai9XKzVOYXN4N0p0UERWWVVuQTJaSWRZclkyTnhuUkMyd0hl?=
+ =?utf-8?B?Nk1iZnhqdy8xdERaRkp3UEpCcVNLQW9EbE9ZWGhVN0pNdUE5MlBWeVY1aDgy?=
+ =?utf-8?B?eG9IN3FJQlgxcVZxNzBDUnFsdXJybjc2S2llSnJZMm1HekVUeVVHS2tUZHBR?=
+ =?utf-8?B?azdsSVV0VlJxZUwyb1NCMXVseVJOTkZRV1VTdWxHallwaVV3anZma052bElP?=
+ =?utf-8?B?Q0RseEgzenFhaFVIdWV6RU1NZi80dHZoOFJZeUdVMTBvY2ZPODFxK2VDSTd0?=
+ =?utf-8?B?V3FRRWtZbDcxSTB3NDVpeTNmQ1VIUmdJWVVSQkQxTkhrTWpva1ZnMElvdmpF?=
+ =?utf-8?B?a2Q4RXpSMnhBeXk5eGtNU2RPcmpFelRRTCtxZEExcTh2MFNuM3RlNUUzZE1u?=
+ =?utf-8?B?S3ZnRlJKaGMzaTF0K280VmI4elllZW9rdXJBc0xNb3EwVS9QNVZYOHJ0SHo2?=
+ =?utf-8?B?YTBleEd2UTVDT3RFcEtvYXkzeFQ3cm5qYlpWVkMvbGNuS2MzaW02Wnp4dDdl?=
+ =?utf-8?B?cWEvV0g1SVc4L2RvZDdpQXExRVJlYjRGUmZxM3NqYVA1b0xYRTh1eHFja25B?=
+ =?utf-8?B?ZEJxWVh4UE9sOU9acjJNNDRZWVNHV2ViVUpNb0VXUVMzUHB0cnRsVUI0aFpN?=
+ =?utf-8?B?OERpeGZFYUF1YS9TeDd2WElrMEVFU1NoMVFka0Y3SEZsVml6UXNRcUJabEQ1?=
+ =?utf-8?B?VFdqNmtEQkIyVnhMNzk2eXpFc3ZHR1oySWdYMDU0ejZKZGNEbURWcWpFK2F6?=
+ =?utf-8?B?bTViLzVMOExWTjhmNVVEajVWU281Y0ZONlg3NEZtL2c0RGtCUEZiOEhrbklp?=
+ =?utf-8?B?S21FNDZLd3pxNHFVZksyT01aMjBVUXFFdTRjc0F1SFkwMlVaYUFaZmNmZVQ5?=
+ =?utf-8?B?cHdjaEZWQVNxYzlwbFJGK2M4SE5WQU53ZUdWV29RTzR4YmsrdlNKRFJ0disx?=
+ =?utf-8?B?VmM4VmJac21ndys2dG4yR2VQUTJGYWp2ZFVmd25DcWV1bi9KY2pPTWVtdDRK?=
+ =?utf-8?B?Z3NSY2swc2N6TlBEcUhBRHE4SzUzeERvdUxJYTV3Uy9IWHhNNGdRYy95NTBV?=
+ =?utf-8?B?MDVaRFhpejZ3ZHpHUFRPYmVsSFZyaFZxcTdhREZmLzRLdEo5TU83WS9oUk84?=
+ =?utf-8?B?QldDcFFZRVE4ck8xSWZyS2VNeFZjQmFnT002d3dGazdHbHc2U0VPSDQyQyty?=
+ =?utf-8?B?UGh1TEJXSG9WTHBKcDRqTFJ5d09CeEhlS2xxM1MxQW8rWVA5UzdhWkJhVXNT?=
+ =?utf-8?Q?AFLxnEj6WCeHqZGgsURXyWxdh?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	=?utf-8?B?aENpZTlKcEV6Y2w2dWcza05Idm01Q3hMdFJoQW1Ra1ZRcDAwN0FnbXFETWl2?=
+ =?utf-8?B?YVUvRisvWStKbVAxVzlaK2c1Szc1Z3NZV3B3VVNNdWwxSEFJSGpTbUVqdHdl?=
+ =?utf-8?B?OCs2UmQxVTkweDJCNTI5RExMc0NFRUJZOVNVdWg3V3JhSWM2ZjdIem5VSlBi?=
+ =?utf-8?B?dGZzanhyZnFmZE4vSmlYTUd3SHhiVkdzai9semdrVFhxTDdzdnVoaXhkZHFy?=
+ =?utf-8?B?VXpDYStlYVdWYWFGeGIwNk1aYjRtR0NCZDludStqTzhVTUtYdXR0aHFscDZr?=
+ =?utf-8?B?QStVTkJFR3dIUnlIMFpvaEM3REI2UW43eHkwVHptdFMzSmxDS09ybHJ5SHFD?=
+ =?utf-8?B?M3pIUllKNlhMYnl6MXpHY2RQM1ZXRi9mb2grNHljKzRpcU1XY1lCRExlblcx?=
+ =?utf-8?B?SDIwWk41aWxkRlRrQ3RicEtlQlduMkg4bmtRM2lORWt2dldJcHg5NXRTbWNT?=
+ =?utf-8?B?dlRPY2drdnNTU0dEOFB3dURyTmFEU1B2V0R5bkJnVHZ4K1V0ajRkb3l1alpt?=
+ =?utf-8?B?YThmWm5VeEQ3R1NUL3oyekRpUDZnWllWZWZGUjlBa2NXZTVnTUtOeENBMnJU?=
+ =?utf-8?B?TW1DZFNzOGlnWE5lSnVBcC9QbktMT2lOU1o2L2RXUEdSWWpTanhxZ0V1QnE4?=
+ =?utf-8?B?SWdZUHd0M0YveU8xbTZDeTRWT2tkbUFqVjRiUTc2cWFkUG5GZXdqMjRsNnh1?=
+ =?utf-8?B?b25VUWYxZkdhWllrNDZvOUd2K3BMNTRDYU9aS1B4Rzl3Mkx6cHNyQjhMWXdZ?=
+ =?utf-8?B?L3huRnRIeDBaSXEzNVdaTmZQTURxc2NUVkl2TWhXenpJazMrOUhZWDRpVTZv?=
+ =?utf-8?B?NUZIM0JRdG1lK0QwZXR6Wmk4YlBMTldET0ZlNVh3NlFOZUhMQSt0NlErelJ1?=
+ =?utf-8?B?VlZyWEFpMno1U09uclZVQm9EU2FBaDVzVHphdjEzSTNkVm5GOU5UcUhjcEpw?=
+ =?utf-8?B?VmtRdlIxZWN1UE1KcHhGT0owR09sNzJiNTlXS09rUW9vc0NPUFNnb0hVU1BG?=
+ =?utf-8?B?TzJmUVVqTjNzVlpWZ3cvcExCNzBqYXA0aGRCY3k1WDBHZGpqZEZaL2IyWkZr?=
+ =?utf-8?B?eEU5Q1ZRTHVRUzh4MGpRRHROaElyWG1OVmlqMkFwRjduMXdLWFdsNjdYMktO?=
+ =?utf-8?B?NTNlS3lYOVNSOHRmdk9kTFNacEh5ek9WbUg3enRDREZjTExiQ2ZDZGpuR1hZ?=
+ =?utf-8?B?NUtzTDM2WEZ1UW53bUR6aHFMUlpMZElCY0RsR3ZUbVJTaWpya2duczViMkdu?=
+ =?utf-8?Q?ewAtyOUlEWQ3JvV?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc519ff0-dd37-48a7-b69d-08dbf4a7d06e
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2023 09:02:59.8968
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FZ5RVT2qvDZV9b0xK+hFtByKHc0PBtPxKZ+T8WYjEaSLG7pz1gH0BRu/nszQzYOf/sygJdD/Tjtz2TAtgK7ABw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7107
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_06,2023-11-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312040067
+X-Proofpoint-GUID: zTPwP9m2Uqz7j2Co8mc3eUPLRVA4Qj8U
+X-Proofpoint-ORIG-GUID: zTPwP9m2Uqz7j2Co8mc3eUPLRVA4Qj8U
 
---m334zefgib4niiyw
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 01/12/2023 22:07, Dave Chinner wrote:
+>> Sure, and I think that we need a better story for supporting buffered IO for
+>> atomic writes.
+>>
+>> Currently we have:
+>> - man pages tell us RWF_ATOMIC is only supported for direct IO
+>> - statx gives atomic write unit min/max, not explicitly telling us it's for
+>> direct IO
+>> - RWF_ATOMIC is ignored for !O_DIRECT
+>>
+>> So I am thinking of expanding statx support to enable querying of atomic
+>> write capabilities for buffered IO and direct IO separately.
+> You're over complicating this way too much by trying to restrict the
+> functionality down to just what you want to implement right now.
+> 
+> RWF_ATOMIC is no different to RWF_NOWAIT. The API doesn't decide
+> what can be supported - the filesystems themselves decide what part
+> of the API they can support and implement those pieces.
 
-Hey Petr
+Sure, but for RWF_ATOMIC we still have the associated statx call to tell 
+us whether atomic writes are supported for a file and the specific range 
+capability.
 
-I missed this message somehow....
+> 
+> TO go back to RWF_NOWAIT, for a long time we (XFS) only supported
+> RWF_NOWAIT on DIO, and buffered reads and writes were given
+> -EOPNOTSUPP by the filesystem. Then other filesystems started
+> supporting DIO with RWF_NOWAIT. Then buffered read support was added
+> to the page cache and XFS, and as other filesystems were converted
+> they removed the RWF_NOWAIT exclusion check from their read IO
+> paths.
+> 
+> We are now in the same place with buffered write support for
+> RWF_NOWAIT. XFS, the page cache and iomap allow buffered writes w/
+> RWF_NOWAIT, but ext4, btrfs and f2fs still all return -EOPNOTSUPP
+> because they don't support non-blocking buffered writes yet.
+> 
+> This is the same model we should be applying with RWF_ATOMIC - we
+> know that over time we'll be able to expand support for atomic
+> writes across both direct and buffered IO, so we should not be
+> restricting the API or infrastructure to only allow RWF_ATOMIC w/
+> DIO.
 
-On Tue, Nov 28, 2023 at 03:07:43PM +0100, Petr Mladek wrote:
-> On Tue 2023-11-07 14:45:07, Joel Granados via B4 Relay wrote:
-> > From: Joel Granados <j.granados@samsung.com>
-> >=20
-> > This commit comes at the tail end of a greater effort to remove the
-> > empty elements at the end of the ctl_table arrays (sentinels) which
-> > will reduce the overall build time size of the kernel and run time
-> > memory bloat by ~64 bytes per sentinel (further information Link :
-> > https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
-> >=20
-> > rm sentinel element from printk_sysctls
-> >=20
-> > Signed-off-by: Joel Granados <j.granados@samsung.com>
->=20
-> I am a bit sceptical if the size and time reduction is worth the
-> effort. I feel that this change makes the access a bit less secure.
-In what way "less secure"? Can you expand on that?
+Agreed.
 
-Notice that if you pass a pointer to the register functions, you will
-get a warning/error on compilation.
+> Just have the filesystems reject RWF_ATOMIC w/ -EOPNOTSUPP if
+> they don't support it,
 
->=20
-> Well, almost all arrays are static so that it should just work.
-> The patch does what it says. Feel free to use:
-Thx for the review. will do.
+Yes, I was going to add this regardless.
 
->=20
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
->=20
-> Best Regards,
-> Petr
+> and for those that do it is conditional on
+> whther the filesystem supports it for the given type of IO being
+> done.
+> 
+> Seriously - an application can easily probe for RWF_ATOMIC support
+> without needing information to be directly exposed in statx() - just
+> open a O_TMPFILE, issue the type of RWF_ATOMIC IO you require to be
+> supported, and if it returns -EOPNOTSUPP then it you can't use
+> RWF_ATOMIC optimisations in the application....
 
---=20
+ok, if that is the done thing.
 
-Joel Granados
+So I can't imagine that atomic write unit range will be different for 
+direct IO and buffered IO (ignoring for a moment Christoph's idea for 
+CoW always for no HW offload) when supported. But it seems that we may 
+have a scenario where statx tells is that atomic writes are supported 
+for a file, and a DIO write succeeds and a buffered IO write may return 
+-EOPNOTSUPP. If that's acceptable then I'll work towards that.
 
---m334zefgib4niiyw
-Content-Type: application/pgp-signature; name="signature.asc"
+If we could just run statx on a file descriptor here then that would be 
+simpler...
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+John
 
-iQGyBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmVtlDwACgkQupfNUreW
-QU/0vwv4mRGhlKpI+9BXVTufcXHymQXIplwD2Pt0XmXATxwELEZSDrAhkOMuZnOE
-w+JGFka7O9MPuE5kHhtxfBDqZd2olH0zzMSxkXsHAd6nNXCdAXLpkPojlYwSfSNC
-xDaXiEtaHhAaW/U0WpLEBHL539sYYukjf5P9qha6XORNvA5y1B1g1pUWMrBUXiyF
-S5+txanFQmwulj1Kre/SFy95147+/UPo4SPAYl+9GIyN9KLKQ0++EKLLIRRRV09v
-I2zJYqkDyyZpbIPq7jj9XIceNk7MDhNdMIUP1pN4djlrt3IKWYnuJXBuiRWFIJ28
-LbpVTzIGfnH5IzaRU0547P/5U7QlIVSuUnh7l1cSdarm+sk3k4uRTogeaDtWKgho
-wBL9rnHITIlj7ZhLtFlm4CMWbed0rTeph4Vq1p/vvE9HFnaNQMtmM5GYBV7C5L5P
-cCpdN9/VZ9i32K8zh9jLFAk7xDBwqTd1yM07kFfUE1CZ/kk2LUrxLLgw8LbipU/z
-lmG1tIc=
-=c3TB
------END PGP SIGNATURE-----
 
---m334zefgib4niiyw--
 
