@@ -1,195 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-4758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410E68030AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 11:40:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69DC8030B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 11:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5901CB208C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C263280D84
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2310224C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="pFrVUxd6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DADF224C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 10:40:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63CC0E6
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 01:27:50 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-a1975fe7befso433845366b.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 01:27:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1701682069; x=1702286869; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eF2qv39s5RRJEkUP7C0zzlAFDM4UHIkuaXpLAfGpxkQ=;
-        b=pFrVUxd6TQB4AktIdnArNacxI00l9WWhMIn/rU6Y9gDFYK1xPlS63iwo46fAh5K3oU
-         N5FS7a99sPTAvmvXy99xYNcm7//nsgYpLs21OmEZD1Gdys6BkHR1ql0tw/c2ZMflIdMA
-         oQYzilMGS/oRmf3BXB8fa8BHURcFUZhFTNue8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701682069; x=1702286869;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eF2qv39s5RRJEkUP7C0zzlAFDM4UHIkuaXpLAfGpxkQ=;
-        b=goTVaBMCVR/8xxf3yhVf32MHyGzch80rpE1ARfADmpWR9J2gwFQnAP3xV+RD7fr7Ub
-         ukRlsOvDpwF5B2naE1PSRMXhFZLUK7MO6XJbkUS3999yeqfxQeTjY64DAnCktz7Y+BjK
-         PabkrWle97C23x5Udg4YM3Y2U9eviA//2JYe1DBOzP0jilFhD7Qch60q4RR2ReunMdte
-         ztgI+/YyeY4ou5ZukJVZJeHOThrMZbPXULjX4dBg/zScH9WiTtnmLVyjkLkB/ExEE7XL
-         8w7WL2uzCVB3MYhrZre7fJOFAmUpT9mwBqwnkquA6OZnU2Xos46Y8Lnrg7OPxsT1V6l2
-         yehA==
-X-Gm-Message-State: AOJu0Yz9JUBj45ggpSYHn1FCAxH6Cz1565v/4OzMA53hR2aHH9+kaN70
-	k8Ev9B1qUjbeATB4HFplLe6FggOsHtTJDf2teAcMoQ==
-X-Google-Smtp-Source: AGHT+IGNQe9tcsU5syMghMBlz0s539VxcjRKbwiBS0PdAVW7DkuYCosk3seitooNKDKVt42NSZ9ZmeFPY/60rqbgMGU=
-X-Received: by 2002:a17:907:9016:b0:a19:a19a:ea96 with SMTP id
- ay22-20020a170907901600b00a19a19aea96mr2584119ejc.79.1701682068787; Mon, 04
- Dec 2023 01:27:48 -0800 (PST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7F3BBD8;
+	Mon,  4 Dec 2023 01:27:52 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 702AA1650;
+	Mon,  4 Dec 2023 01:28:38 -0800 (PST)
+Received: from [10.57.73.130] (unknown [10.57.73.130])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A46113F6C4;
+	Mon,  4 Dec 2023 01:27:47 -0800 (PST)
+Message-ID: <744be4e0-48e0-4c77-825c-711386dd205f@arm.com>
+Date: Mon, 4 Dec 2023 09:27:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230920024001.493477-1-tfanelli@redhat.com> <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
- <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm> <CAOQ4uxgW58Umf_ENqpsGrndUB=+8tuUsjT+uCUp16YRSuvG2wQ@mail.gmail.com>
- <CAOQ4uxh6RpoyZ051fQLKNHnXfypoGsPO9szU0cR6Va+NR_JELw@mail.gmail.com>
- <49fdbcd1-5442-4cd4-8a85-1ddb40291b7d@fastmail.fm> <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 4 Dec 2023 10:27:37 +0100
-Message-ID: <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Tyler Fanelli <tfanelli@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com, 
-	hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+Content-Language: en-GB
+To: Suren Baghdasaryan <surenb@google.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
+ peterx@redhat.com, hughd@google.com, mhocko@suse.com,
+ axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+ Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+ bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+ jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com
+References: <20231121171643.3719880-1-surenb@google.com>
+ <20231121171643.3719880-6-surenb@google.com>
+ <b3c882d2-0135-430c-8179-784f78be0902@arm.com>
+ <a41c759f-78d8-44ed-b708-1bb737a8e6c1@redhat.com>
+ <cb3d3b12-abf3-4eda-8d9a-944684d05505@arm.com>
+ <ccdb1080-7a2e-4f98-a4e8-e864fa2db299@redhat.com>
+ <CAJuCfpHS63bXkRGE1_G4z-2fDe72BeLka8t5ioSg2OXjbUrHXg@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAJuCfpHS63bXkRGE1_G4z-2fDe72BeLka8t5ioSg2OXjbUrHXg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Dec 2023 at 07:50, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Mon, Dec 4, 2023 at 1:00=E2=80=AFAM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
-> >
-> > Hi Amir,
-> >
-> > On 12/3/23 12:20, Amir Goldstein wrote:
-> > > On Sat, Dec 2, 2023 at 5:06=E2=80=AFPM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > >>
-> > >> On Mon, Nov 6, 2023 at 4:08=E2=80=AFPM Bernd Schubert
-> > >> <bernd.schubert@fastmail.fm> wrote:
-> > >>>
-> > >>> Hi Miklos,
-> > >>>
-> > >>> On 9/20/23 10:15, Miklos Szeredi wrote:
-> > >>>> On Wed, 20 Sept 2023 at 04:41, Tyler Fanelli <tfanelli@redhat.com>=
- wrote:
-> > >>>>>
-> > >>>>> At the moment, FUSE_INIT's DIRECT_IO_RELAX flag only serves the p=
-urpose
-> > >>>>> of allowing shared mmap of files opened/created with DIRECT_IO en=
-abled.
-> > >>>>> However, it leaves open the possibility of further relaxing the
-> > >>>>> DIRECT_IO restrictions (and in-effect, the cache coherency guaran=
-tees of
-> > >>>>> DIRECT_IO) in the future.
-> > >>>>>
-> > >>>>> The DIRECT_IO_ALLOW_MMAP flag leaves no ambiguity of its purpose.=
- It
-> > >>>>> only serves to allow shared mmap of DIRECT_IO files, while still
-> > >>>>> bypassing the cache on regular reads and writes. The shared mmap =
-is the
-> > >>>>> only loosening of the cache policy that can take place with the f=
-lag.
-> > >>>>> This removes some ambiguity and introduces a more stable flag to =
-be used
-> > >>>>> in FUSE_INIT. Furthermore, we can document that to allow shared m=
-map'ing
-> > >>>>> of DIRECT_IO files, a user must enable DIRECT_IO_ALLOW_MMAP.
-> > >>>>>
-> > >>>>> Tyler Fanelli (2):
-> > >>>>>     fs/fuse: Rename DIRECT_IO_RELAX to DIRECT_IO_ALLOW_MMAP
-> > >>>>>     docs/fuse-io: Document the usage of DIRECT_IO_ALLOW_MMAP
-> > >>>>
-> > >>>> Looks good.
-> > >>>>
-> > >>>> Applied, thanks.  Will send the PR during this merge window, since=
- the
-> > >>>> rename could break stuff if already released.
-> > >>>
-> > >>> I'm just porting back this feature to our internal fuse module and =
-it
-> > >>> looks these rename patches have been forgotten?
-> > >>>
-> > >>>
-> > >>
-> > >> Hi Miklos, Bernd,
-> > >>
-> > >> I was looking at the DIRECT_IO_ALLOW_MMAP code and specifically at
-> > >> commit b5a2a3a0b776 ("fuse: write back dirty pages before direct wri=
-te in
-> > >> direct_io_relax mode") and I was wondering - isn't dirty pages write=
-back
-> > >> needed *before* invalidate_inode_pages2() in fuse_file_mmap() for
-> > >> direct_io_allow_mmap case?
-> > >>
-> > >> For FUSE_PASSTHROUGH, I am going to need to call fuse_vma_close()
-> > >> for munmap of files also in direct-io mode [1], so I was considering=
- installing
-> > >> fuse_file_vm_ops for the FOPEN_DIRECT_IO case, same as caching case,
-> > >> and regardless of direct_io_allow_mmap.
-> > >>
-> > >> I was asking myself if there was a good reason why fuse_page_mkwrite=
-()/
-> > >> fuse_wait_on_page_writeback()/fuse_vma_close()/write_inode_now()
-> > >> should NOT be called for the FOPEN_DIRECT_IO case regardless of
-> > >> direct_io_allow_mmap?
-> > >>
-> > >
-> > > Before trying to make changes to fuse_file_mmap() I tried to test
-> > > DIRECT_IO_RELAX - I enabled it in libfuse and ran fstest with
-> > > passthrough_hp --direct-io.
-> > >
-> > > The test generic/095 - "Concurrent mixed I/O (buffer I/O, aiodio, mma=
-p, splice)
-> > > on the same files" blew up hitting BUG_ON(fi->writectr < 0) in
-> > > fuse_set_nowrite()
-> > >
-> > > I am wondering how this code was tested?
-> > >
-> > > I could not figure out the problem and how to fix it.
-> > > Please suggest a fix and let me know which adjustments are needed
-> > > if I want to use fuse_file_vm_ops for all mmap modes.
-> >
-> > So fuse_set_nowrite() tests for inode_is_locked(), but that also
-> > succeeds for a shared lock. It gets late here (and I might miss
-> > something), but I think we have an issue with
-> > FOPEN_PARALLEL_DIRECT_WRITES. Assuming there would be plain O_DIRECT an=
-d
-> > mmap, the same issue might triggered? Hmm, well, so far plain O_DIRECT
-> > does not support FOPEN_PARALLEL_DIRECT_WRITES yet - the patches for tha=
-t
-> > are still pending.
-> >
->
-> Your analysis seems to be correct.
->
-> Attached patch fixes the problem and should be backported to 6.6.y.
->
-> Miklos,
->
-> I prepared the patch on top of master and not on top of the rename to
-> FUSE_DIRECT_IO_ALLOW_MMAP in for-next for ease of backport to
-> 6.6.y, although if you are planning send the flag rename to v6.7 as a fix=
-,
-> you may prefer to apply the fix after the rename and request to backport
-> the flag rename along with the fix to 6.6.y.
+On 04/12/2023 04:09, Suren Baghdasaryan wrote:
+> On Sat, Dec 2, 2023 at 2:11 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 02.12.23 09:04, Ryan Roberts wrote:
+>>> On 01/12/2023 20:47, David Hildenbrand wrote:
+>>>> On 01.12.23 10:29, Ryan Roberts wrote:
+>>>>> On 21/11/2023 17:16, Suren Baghdasaryan wrote:
+>>>>>> Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
+>>>>>> into destination buffer while checking the contents of both after
+>>>>>> the move. After the operation the content of the destination buffer
+>>>>>> should match the original source buffer's content while the source
+>>>>>> buffer should be zeroed. Separate tests are designed for PMD aligned and
+>>>>>> unaligned cases because they utilize different code paths in the kernel.
+>>>>>>
+>>>>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>>>>> ---
+>>>>>>    tools/testing/selftests/mm/uffd-common.c     |  24 +++
+>>>>>>    tools/testing/selftests/mm/uffd-common.h     |   1 +
+>>>>>>    tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
+>>>>>>    3 files changed, 214 insertions(+)
+>>>>>>
+>>>>>> diff --git a/tools/testing/selftests/mm/uffd-common.c
+>>>>>> b/tools/testing/selftests/mm/uffd-common.c
+>>>>>> index fb3bbc77fd00..b0ac0ec2356d 100644
+>>>>>> --- a/tools/testing/selftests/mm/uffd-common.c
+>>>>>> +++ b/tools/testing/selftests/mm/uffd-common.c
+>>>>>> @@ -631,6 +631,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
+>>>>>>        return __copy_page(ufd, offset, false, wp);
+>>>>>>    }
+>>>>>>    +int move_page(int ufd, unsigned long offset, unsigned long len)
+>>>>>> +{
+>>>>>> +    struct uffdio_move uffdio_move;
+>>>>>> +
+>>>>>> +    if (offset + len > nr_pages * page_size)
+>>>>>> +        err("unexpected offset %lu and length %lu\n", offset, len);
+>>>>>> +    uffdio_move.dst = (unsigned long) area_dst + offset;
+>>>>>> +    uffdio_move.src = (unsigned long) area_src + offset;
+>>>>>> +    uffdio_move.len = len;
+>>>>>> +    uffdio_move.mode = UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
+>>>>>> +    uffdio_move.move = 0;
+>>>>>> +    if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
+>>>>>> +        /* real retval in uffdio_move.move */
+>>>>>> +        if (uffdio_move.move != -EEXIST)
+>>>>>> +            err("UFFDIO_MOVE error: %"PRId64,
+>>>>>> +                (int64_t)uffdio_move.move);
+>>>>>
+>>>>> Hi Suren,
+>>>>>
+>>>>> FYI this error is triggering in mm-unstable (715b67adf4c8):
+>>>>>
+>>>>> Testing move-pmd on anon... ERROR: UFFDIO_MOVE error: -16 (errno=16,
+>>>>> @uffd-common.c:648)
+>>>>>
+>>>>> I'm running in a VM on Apple M2 (arm64). I haven't debugged any further, but
+>>>>> happy to go deeper if you can direct.
+>>>>
+>>>> Does it trigger reliably? Which pagesize is that kernel using?
+>>>
+>>> Yep, although very occasionally it fails with EAGAIN. 4K kernel; see other email
+>>> for full config.
+>>>
+>>>>
+>>>> I can spot that uffd_move_pmd_test()/uffd_move_pmd_handle_fault() uses
+>>>> default_huge_page_size(), which reads the default hugetlb size.
+>>>
+>>> My kernel command line is explicitly seting the default huge page size to 2M.
+>>>
+>>
+>> Okay, so that likely won't affect it.
+>>
+>> I can only guess that it has to do with the alignment of the virtual
+>> area we are testing with, and that we do seem to get more odd patterns
+>> on arm64.
+>>
+>> uffd_move_test_common() is a bit more elaborate, but if we aligned the
+>> src+start area up, surely "step_count" cannot be left unmodified?
+>>
+>> So assuming we get either an unaligned source or an unaligned dst from
+>> mmap(), I am not convinced that we won't be moving areas that are not
+>> necessarily fully backed by PMDs and maybe don't even fall into the VMA
+>> of interest?
+>>
+>> Not sure if that could trigger the THP splitting issue, though.
+>>
+>> But I just quickly scanned that test setup, could be I am missing
+>> something. It might make sense to just print the mmap'ed range and the
+>> actual ranges we are trying to move. Maybe something "obvious" can be
+>> observed.
+> 
+> I was able to reproduce the issue on an Android device and after
+> implementing David's suggestions to split the large folio and after
+> replacing default_huge_page_size() with read_pmd_pagesize(), the
+> move-pmd test started working for me. Ryan, could you please apply
+> attached patches (over mm-unstable) and try the test again?
 
-I've done that.   Thanks for the fix and testing.
+Yep, all fixed with those patches!
 
-Miklos
+
+> Thanks,
+> Suren.
+> 
+>>
+>> --
+>> Cheers,
+>>
+>> David / dhildenb
+>>
+
 
