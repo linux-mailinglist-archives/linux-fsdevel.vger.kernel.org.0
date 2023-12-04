@@ -1,136 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-4723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4A2802ADF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 05:31:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABD5802AE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 05:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09126280C40
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F286C1C2088C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C186911189
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD2D1CA9C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q3DwEmB4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out0-211.mail.aliyun.com (out0-211.mail.aliyun.com [140.205.0.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA20E5
-	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Dec 2023 18:54:08 -0800 (PST)
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047212;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VboA4I0_1701658445;
-Received: from localhost(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VboA4I0_1701658445)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Dec 2023 10:54:05 +0800
-From: "Zhao Chen" <winters.zc@antgroup.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu
-Subject: [PATCH v3 2/2] fuse: Use the high bit of request ID for indicating resend requests
-Date: Mon, 04 Dec 2023 10:54:03 +0800
-Message-Id: <20231204025403.304877-3-winters.zc@antgroup.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20231204025403.304877-1-winters.zc@antgroup.com>
-References: <20231204025403.304877-1-winters.zc@antgroup.com>
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC6BF0
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Dec 2023 19:01:52 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-6ce2ff70619so302388b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 03 Dec 2023 19:01:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701658912; x=1702263712; darn=vger.kernel.org;
+        h=mime-version:message-id:date:in-reply-to:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=CQYiiiRLontcDI44whmeD/LoEJVxuqfkBiryqv/zBTg=;
+        b=q3DwEmB4PoXI90W8n4dpmreCIn3QymFrI+vnck8BQ4dZsXgYzdXpJMmLdCZsaQ6W/D
+         cCuK7B29+4/j/SkY/E+9CTj9nzcV0g2DJ5jYfDlkyQ+Ovvj1Am9zG3tQH0rtpapkcr1h
+         jAwkf0pAEEkKC8bGb4InCLPTPtxTR1y+i7Uc/7KHnIieKwTm64vsRpjyd3APhjoiBaBO
+         ULZjb7JIafyeidTMh58sJPA/6HZysYsXrcLxEPfmTZpWPDzC7cgpN60Zn/w/U9YJQf3Z
+         ktGaDBSOto0r54hhNHk1gVGqZgPEcQcsRm/RNwTMI6xA6LplPnjn9zVvxD5/pB65rjb3
+         9eXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701658912; x=1702263712;
+        h=mime-version:message-id:date:in-reply-to:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQYiiiRLontcDI44whmeD/LoEJVxuqfkBiryqv/zBTg=;
+        b=RJCp20CgcYFIhcteGNf13TfIh6Hc0KDqNevbQRv67hgOwdmydOn3KRUxJkwhkjUuPW
+         3O1Gp0L5CXi7V3QLEQKAouFBmKQRrUOEOWYg67KSL755Wqjq365vsQ11M+lybTj2DHt+
+         5c5g48hMJtGl0KYxwcmQ/3QNysp099dYOwHaHNSDumX8v46oCURo4BPa76V0Je3WhSUQ
+         /V/P9Snl8kba8okGtz+IWAE0Cn3LMdwQys9k3zRyE0zlCeXRL30xyJ2X14U/UY6j4va+
+         taUJFmq73ZZkzO4aTQY8Cx4+bd4S+yY13udNCoDTT6BBgIJAlKFBNseEbjaDPUQ1RYa1
+         1hLw==
+X-Gm-Message-State: AOJu0YxkGeLbrjLlMetj+hRpZDpSlYqDbHbYfT2XUo6r7zwMGXi5EMGd
+	JsnC1G6f8yL7KViLx8aUGZMHgA==
+X-Google-Smtp-Source: AGHT+IHFLJUBmtnWAvysao8TWHQlyk2Cfpox9jD8bkyNgUP4wKyxIxGZHkfjhvm//XUEUavLfPd53A==
+X-Received: by 2002:a05:6a20:748f:b0:18c:8fef:22cc with SMTP id p15-20020a056a20748f00b0018c8fef22ccmr1035248pzd.24.1701658911982;
+        Sun, 03 Dec 2023 19:01:51 -0800 (PST)
+Received: from localhost ([2804:14d:7e39:8470:979a:226c:de55:73de])
+        by smtp.gmail.com with ESMTPSA id c24-20020aa78818000000b006cd88728572sm6562301pfo.211.2023.12.03.19.01.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Dec 2023 19:01:51 -0800 (PST)
+References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
+ <20231122-arm64-gcs-v7-13-201c483bd775@kernel.org>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, Oleg
+ Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees
+ Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>, "Rick P.
+ Edgecombe" <rick.p.edgecombe@intel.com>, Deepak Gupta
+ <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, Szabolcs Nagy
+ <Szabolcs.Nagy@arm.com>, "H.J. Lu" <hjl.tools@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Florian Weimer <fweimer@redhat.com>, Christian
+ Brauner <brauner@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 13/39] arm64/mm: Map pages for guarded control stack
+In-reply-to: <20231122-arm64-gcs-v7-13-201c483bd775@kernel.org>
+Date: Mon, 04 Dec 2023 00:01:49 -0300
+Message-ID: <87a5qqisbm.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Some FUSE daemons want to know if the received request is a resend
-request. The high bit of the fuse request ID is utilized for indicating
-this, enabling the receiver to perform appropriate handling.
 
-The init flag "FUSE_HAS_RESEND" is added to indicate this feature.
+Hello,
 
-Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
----
- fs/fuse/dev.c             |  5 ++++-
- fs/fuse/inode.c           |  3 ++-
- include/uapi/linux/fuse.h | 11 +++++++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
+Mark Brown <broonie@kernel.org> writes:
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index a5a874b2f2e2..65febd013ce9 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -28,6 +28,7 @@ MODULE_ALIAS("devname:fuse");
- /* Ordinary requests have even IDs, while interrupts IDs are odd */
- #define FUSE_INT_REQ_BIT (1ULL << 0)
- #define FUSE_REQ_ID_STEP (1ULL << 1)
-+#define FUSE_REQ_ID_MASK (~(FUSE_INT_REQ_BIT | FUSE_UNIQUE_RESEND))
- 
- static struct kmem_cache *fuse_req_cachep;
- 
-@@ -194,7 +195,7 @@ EXPORT_SYMBOL_GPL(fuse_len_args);
- 
- u64 fuse_get_unique(struct fuse_iqueue *fiq)
- {
--	fiq->reqctr += FUSE_REQ_ID_STEP;
-+	fiq->reqctr = (fiq->reqctr + FUSE_REQ_ID_STEP) & FUSE_REQ_ID_MASK;
- 	return fiq->reqctr;
- }
- EXPORT_SYMBOL_GPL(fuse_get_unique);
-@@ -1822,6 +1823,8 @@ static void fuse_resend(struct fuse_conn *fc)
- 
- 	list_for_each_entry_safe(req, next, &to_queue, list) {
- 		__set_bit(FR_PENDING, &req->flags);
-+		/* mark the request as resend request */
-+		req->in.h.unique |= FUSE_UNIQUE_RESEND;
- 	}
- 
- 	spin_lock(&fiq->lock);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 2a6d44f91729..a4f1f539d4d9 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1330,7 +1330,8 @@ void fuse_send_init(struct fuse_mount *fm)
- 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
- 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
- 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
--		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP;
-+		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
-+		FUSE_HAS_RESEND;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		flags |= FUSE_MAP_ALIGNMENT;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 277dc25b7863..c0e38acee083 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -410,6 +410,8 @@ struct fuse_file_lock {
-  *			symlink and mknod (single group that matches parent)
-  * FUSE_HAS_EXPIRE_ONLY: kernel supports expiry-only entry invalidation
-  * FUSE_DIRECT_IO_ALLOW_MMAP: allow shared mmap in FOPEN_DIRECT_IO mode.
-+ * FUSE_HAS_RESEND: kernel supports resending pending requests, and the high bit
-+ *		    of the request ID indicates resend requests
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -449,6 +451,7 @@ struct fuse_file_lock {
- #define FUSE_CREATE_SUPP_GROUP	(1ULL << 34)
- #define FUSE_HAS_EXPIRE_ONLY	(1ULL << 35)
- #define FUSE_DIRECT_IO_ALLOW_MMAP (1ULL << 36)
-+#define FUSE_HAS_RESEND		(1ULL << 37)
- 
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
-@@ -961,6 +964,14 @@ struct fuse_fallocate_in {
- 	uint32_t	padding;
- };
- 
-+/**
-+ * FUSE request unique ID flag
-+ *
-+ * Indicates whether this is a resend request. The receiver should handle this
-+ * request accordingly.
-+ */
-+#define FUSE_UNIQUE_RESEND (1ULL << 63)
-+
- struct fuse_in_header {
- 	uint32_t	len;
- 	uint32_t	opcode;
+> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
+> index 645fe60d000f..605d4e6edc1d 100644
+> --- a/arch/arm64/mm/mmap.c
+> +++ b/arch/arm64/mm/mmap.c
+> @@ -79,9 +79,20 @@ arch_initcall(adjust_protection_map);
+>  
+>  pgprot_t vm_get_page_prot(unsigned long vm_flags)
+>  {
+> -	pteval_t prot = pgprot_val(protection_map[vm_flags &
+> +	pteval_t prot;
+> +
+> +	/* If this is a GCS then only interpret VM_WRITE. */
+> +	if (system_supports_gcs() && (vm_flags & VM_SHADOW_STACK)) {
+> +		if (vm_flags & VM_WRITE)
+> +			prot = _PAGE_GCS;
+> +		else
+> +			prot = _PAGE_GCS_RO;
+> +	} else {
+> +		prot = pgprot_val(protection_map[vm_flags &
+>  				   (VM_READ|VM_WRITE|VM_EXEC|VM_SHARED)]);
+> +	}
+>  
+> +	/* VM_ARM64_BTI on a GCS is rejected in arch_valdiate_flags() */
+
+s/valdiate/validate/
+
+>  	if (vm_flags & VM_ARM64_BTI)
+>  		prot |= PTE_GP;
+
+
 -- 
-2.32.0.3.g01195cf9f
-
+Thiago
 
