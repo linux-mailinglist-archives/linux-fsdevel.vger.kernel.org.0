@@ -1,122 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-4763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600C38032E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 13:34:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81CB8032E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 13:34:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CE3B209B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 12:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97741C209E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 12:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BAD241E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 12:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5986624203
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 12:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7zJ1vDr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fiv8d/Zj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BFF4F3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 04:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701692355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YKpnHl1rqARfzhPXeJ+4bbVOHPefal8/mof2N40xC9Q=;
+	b=Fiv8d/Zj/xLoJkxrXT8+A2MHGp5eGuHR18zmsm2/LeXsktjuPbfzuhdbCDH4Cx405RXjhZ
+	s/zFNnxnDFlQjSQ00M3yrsFZ4cVlPw6+RdWH8/9i76WwZv9qBGsOdyv1oEhP/6lsWbXvTq
+	gmk1QBlCfZqxjfRXQtEOKQenW2H7vXM=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-x75rTCgfPLCaKgb9CbtjsQ-1; Mon,
+ 04 Dec 2023 07:19:09 -0500
+X-MC-Unique: x75rTCgfPLCaKgb9CbtjsQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F67224EF;
-	Mon,  4 Dec 2023 11:03:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2FDCC433C7;
-	Mon,  4 Dec 2023 11:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701687808;
-	bh=td2FHNFbaEBhn6/pKvODA/OD7GSweig2jmUFrnTj5ag=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r7zJ1vDrsKNETcUBXXgqaZq6Wk03L1ZzHpvEGkz45riz5nQZDIo72NUTT4HuGntNq
-	 qX2pr4CDP/8s4bgsQoMq4tozF/fmyCc9PcQFTWg8qOQaFuYlSFogTROx3mSkFluwUr
-	 5iF/pvd1gsO1yM25oy1txVw6llgnbmNecrEAVQYV9k5FsGTdZBpwC/cM55E5/WgI6y
-	 ghEBkvTEPbGSddIoNGtHhp9fsLL/gepQTyGFXEaZxrA4+mbXYZhsTTT/cRARv1pFYR
-	 Pre5QK1QcG8Osh9+gpDvHtwA12ZK69rJh15eFjEcEhChLi10Ua+NQ+BKcmoteS7s54
-	 kN08CJrkDgEWQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1rA6jV-001CFD-VG;
-	Mon, 04 Dec 2023 11:03:26 +0000
-Date: Mon, 04 Dec 2023 11:03:24 +0000
-Message-ID: <86jzpub56r.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com,
-	broonie@kernel.org,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	oliver.upton@linux.dev,
-	shuah@kernel.org,
-	will@kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 00/25] Permission Overlay Extension
-In-Reply-To: <20231124163510.1835740-1-joey.gouly@arm.com>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 74D7E299E740;
+	Mon,  4 Dec 2023 12:19:08 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.17])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E27C25028;
+	Mon,  4 Dec 2023 12:18:57 +0000 (UTC)
+Date: Mon, 4 Dec 2023 20:18:53 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-api@vger.kernel.org, ming.lei@redhat.com
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Message-ID: <ZW3DracIEH7uTyEA@fedora>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-11-john.g.garry@oracle.com>
+ <ZW05th/c0sNbM2Zf@fedora>
+ <03a87103-0721-412c-92f5-9fd605dc0c74@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com, broonie@kernel.org, catalin.marinas@arm.com, dave.hansen@linux.intel.com, oliver.upton@linux.dev, shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03a87103-0721-412c-92f5-9fd605dc0c74@oracle.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Hi Joey,
-
-On Fri, 24 Nov 2023 16:34:45 +0000,
-Joey Gouly <joey.gouly@arm.com> wrote:
+On Mon, Dec 04, 2023 at 09:27:00AM +0000, John Garry wrote:
+> On 04/12/2023 02:30, Ming Lei wrote:
 > 
-> Hello everyone,
+> Hi Ming,
 > 
-> This series implements the Permission Overlay Extension introduced in 2022
-> VMSA enhancements [1]. It is based on v6.7-rc2.
+> > > +static bool blkdev_atomic_write_valid(struct block_device *bdev, loff_t pos,
+> > > +			      struct iov_iter *iter)
+> > > +{
+> > > +	unsigned int atomic_write_unit_min_bytes =
+> > > +			queue_atomic_write_unit_min_bytes(bdev_get_queue(bdev));
+> > > +	unsigned int atomic_write_unit_max_bytes =
+> > > +			queue_atomic_write_unit_max_bytes(bdev_get_queue(bdev));
+> > > +
+> > > +	if (!atomic_write_unit_min_bytes)
+> > > +		return false;
+> > The above check should have be moved to limit setting code path.
 > 
-> Changes since v2[2]:
-> 	# Added ptrace support and selftest
-> 	# Add missing POR_EL0 initialisation in fork/clone
-> 	# Rebase onto v6.7-rc2
-> 	# Add r-bs
+> Sorry, I didn't fully understand your point.
 > 
-> The Permission Overlay Extension allows to constrain permissions on memory
-> regions. This can be used from userspace (EL0) without a system call or TLB
-> invalidation.
+> I added this here (as opposed to the caller), as I was not really worried
+> about speeding up the failure path. Are you saying to call even earlier in
+> submission path?
 
-I have given this series a few more thoughts, and came to the
-conclusion that is it still incomplete on the KVM front:
+atomic_write_unit_min is one hardware property, and it should be checked
+in blk_queue_atomic_write_unit_min_sectors() from beginning, then you
+can avoid this check every other where.
 
-* FEAT_S1POE often comes together with FEAT_S2POE. For obvious
-  reasons, we cannot afford to let the guest play with S2POR_EL1, nor
-  do we want to advertise FEAT_S2POE to the guest.
+> 
+> > 
+> > > +	if (pos % atomic_write_unit_min_bytes)
+> > > +		return false;
+> > > +	if (iov_iter_count(iter) % atomic_write_unit_min_bytes)
+> > > +		return false;
+> > > +	if (!is_power_of_2(iov_iter_count(iter)))
+> > > +		return false;
+> > > +	if (iov_iter_count(iter) > atomic_write_unit_max_bytes)
+> > > +		return false;
+> > > +	if (pos % iov_iter_count(iter))
+> > > +		return false;
+> > I am a bit confused about relation between atomic_write_unit_max_bytes and
+> > atomic_write_max_bytes.
+> 
+> I think that naming could be improved. Or even just drop merging (and
+> atomic_write_max_bytes concept) until we show it to improve performance.
+> 
+> So generally atomic_write_unit_max_bytes will be same as
+> atomic_write_max_bytes, however it could be different if:
+> a. request queue nr hw segments or other request queue limits needs to
+> restrict atomic_write_unit_max_bytes
+> b. atomic_write_unit_max_bytes does not need to be a power-of-2 and
+> atomic_write_max_bytes does. So essentially:
+> atomic_write_unit_max_bytes = rounddown_pow_of_2(atomic_write_max_bytes)
+> 
 
-  You will need to add some additional FGT for this, and mask out
-  FEAT_S2POE from the guest's view of the ID registers.
+plug merge often improves sequential IO perf, so if the hardware supports
+this way, I think 'atomic_write_max_bytes' should be supported from the
+beginning, such as:
 
-* letting the guest play with POE comes with some interesting strings
-  attached: a guest that has started on a POE-enabled host cannot be
-  migrated to one that doesn't have POE. which means that the POE
-  registers should only be visible to the host userspace if enabled in
-  the guest's ID registers, and thus only context-switched in these
-  conditions. They should otherwise UNDEF.
+- user space submits sequential N * (4k, 8k, 16k, ...) atomic writes, all can
+be merged to single IO request, which is issued to driver.
+
+Or 
+
+- user space submits sequential 4k, 4k, 8k, 16K, 32k, 64k atomic writes, all can
+be merged to single IO request, which is issued to driver.
+
+The hardware should recognize unit size by start LBA, and check if length is
+valid, so probably the interface might be relaxed to:
+
+1) start lba is unit aligned, and this unit is in the supported unit
+range(power_2 in [unit_min, unit_max])
+
+2) length needs to be:
+
+- N * this_unit_size
+- <= atomic_write_max_bytes
+
+
+> > 
+> > Here the max IO length is limited to be <= atomic_write_unit_max_bytes,
+> > so looks userspace can only submit IO with write-atomic-unit naturally
+> > aligned IO(such as, 4k, 8k, 16k, 32k, ...),
+> 
+> correct
+> 
+> > but these user IOs are
+> > allowed to be merged to big one if naturally alignment is respected and
+> > the merged IO size is <= atomic_write_max_bytes.
+> 
+> correct, but the resultant merged IO does not have have to be naturally
+> aligned.
+> 
+> > 
+> > Is my understanding right?
+> 
+> Yes, but...
+> 
+> > If yes, I'd suggest to document the point,
+> > and the last two checks could be change to:
+> > 
+> > 	/* naturally aligned */
+> > 	if (pos % iov_iter_count(iter))
+> > 		return false;
+> > 
+> > 	if (iov_iter_count(iter) > atomic_write_max_bytes)
+> > 		return false;
+> 
+> .. we would not be merging at this point as this is just IO submission to
+> the block layer, so atomic_write_max_bytes does not come into play yet. If
+> you check patch 7/21, you will see that we limit IO size to
+> atomic_write_max_bytes, which is relevant merging.
+
+I know the motivation of atomic_write_max_bytes, and now I am wondering
+atomic_write_max_bytes may be exported to userspace for the sake of
+atomic write performance.
+
 
 Thanks,
+Ming
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
