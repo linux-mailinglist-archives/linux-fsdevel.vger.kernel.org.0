@@ -1,84 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-4783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268FA803A7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 17:37:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D33B803A7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 17:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57B9D1C20A8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 16:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC021280A06
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 16:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDA42E643
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 16:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12C92E642
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 16:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3WicJ16p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4578FFD;
-	Mon,  4 Dec 2023 07:39:16 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 59D36227A8E; Mon,  4 Dec 2023 16:39:12 +0100 (CET)
-Date: Mon, 4 Dec 2023 16:39:12 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
-	sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
-	djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	chandan.babu@oracle.com, dchinner@redhat.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH 17/21] fs: xfs: iomap atomic write support
-Message-ID: <20231204153912.GA3580@lst.de>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com> <20230929102726.2985188-18-john.g.garry@oracle.com> <20231109152615.GB1521@lst.de> <a50a16ca-d4b9-a4d8-4230-833d82752bd2@oracle.com> <c78bcca7-8f09-41c7-adf0-03b42cde70d6@oracle.com> <20231128135619.GA12202@lst.de> <e4fb6875-e552-45aa-b193-58f15d9a786c@oracle.com> <20231204134509.GA25834@lst.de> <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF59B6
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 07:43:02 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-db084a0a2e9so3435893276.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 07:43:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1701704581; x=1702309381; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfK9TlefHc7mRtPrpHFFYKDLxrgLCZkCjPMobBdjijM=;
+        b=3WicJ16pvToD3e9Z1135Br25xC7rAGtpGGS5Jgeriupv1FJXy+fN3Y7fuzQ7YIHK+S
+         oPV+mCFgwINgsuJ89E4MxHLyKmDiSyG9Y5dw1dnm+p5C8ZhVJyxo7OpKg9S8VzHje5MN
+         ugLZaW1tfkDm3Tjy0AnAASakxGSNAWUUyIAoGtG//cNQ8fVF95aRnPyAKvA814FzEowY
+         mSkXqpCx+UIlaM5u44DnRhuygQzncjyETnWbJs3LZccoitmoSalg3SkPHhRxPjsaQpA5
+         0LhpWgo3gAVRmP0auiHi3m63V1H4Hxgnk4p8wEay+yuOtIt3uuRCU7q1rviM9x2CydmQ
+         o3Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701704581; x=1702309381;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xfK9TlefHc7mRtPrpHFFYKDLxrgLCZkCjPMobBdjijM=;
+        b=DzKq8OdtdSL+SnRJiAHLvPhLPnt5QHesGoxC/oL13n+/xtus9smc5cNfIC7OApWjS6
+         gprlquGTR+3k9T/Qmxp/ngwmNX5R597zAg8AU76YlOxHmmv4JEZy5546knsWjQz9N+sJ
+         oR7ui355qLi53jer5gS8kPhYoxpTjfrm0DFnLAXjsKMFyjcesr/1d3w121LnGs1lriJN
+         2E7kpTqnb0o8oU89yE11NBBU42/FbuDhXdAG5t6VI9dMGRZhFfSk3PSGF8eNuCbM1YJb
+         ioaltmCN2ceV1E8DvT22ZV2v68FIZZXIdGDHuI4N5byM48UOs1w0zDhVdcSKR9DKo9xU
+         E/Nw==
+X-Gm-Message-State: AOJu0YzPUwTKOkEoBOoe+xnAsVhRlN1iIuTaMJWIwUfGFOkV0BRnD2Aq
+	/HOwYugb0IevQVQRKm/W4zH5CUVzen/nCzI=
+X-Google-Smtp-Source: AGHT+IF5vXT7L2NfCCScVUhEdNBMLFarwJWD1avitjpZToP9B/GeVxDMVqxOYsLK8Qpl8id4UHBwIV1CHtz3+60=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a25:3006:0:b0:daf:6333:17c3 with SMTP id
+ w6-20020a253006000000b00daf633317c3mr965267ybw.1.1701704581579; Mon, 04 Dec
+ 2023 07:43:01 -0800 (PST)
+Date: Mon,  4 Dec 2023 15:42:59 +0000
+In-Reply-To: <20231201-zacken-gewachsen-73fe323b067b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Mime-Version: 1.0
+References: <20231201-zacken-gewachsen-73fe323b067b@brauner>
+X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
+Message-ID: <20231204154259.79529-1-aliceryhl@google.com>
+Subject: Re: [PATCH 2/7] rust: cred: add Rust abstraction for `struct cred`
+From: Alice Ryhl <aliceryhl@google.com>
+To: brauner@kernel.org
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com, 
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, 
+	wedsonaf@gmail.com, willy@infradead.org
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Dec 04, 2023 at 03:19:15PM +0000, John Garry wrote:
-> On 04/12/2023 13:45, Christoph Hellwig wrote:
->> On Tue, Nov 28, 2023 at 05:42:10PM +0000, John Garry wrote:
->>> ok, fine, it would not be required for XFS with CoW. Some concerns still:
->>> a. device atomic write boundary, if any
->>> b. other FSes which do not have CoW support. ext4 is already being used for
->>> "atomic writes" in the field - see dubious amazon torn-write prevention.
->>
->> What is the 'dubious amazon torn-write prevention'?
->
-> https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/storage-twp.html
->
-> AFAICS, this is without any kernel changes, so no guarantee of unwanted 
-> splitting or merging of bios.
->
-> Anyway, there will still be !CoW FSes which people want to support.
+Christian Brauner <brauner@kernel.org> writes:
+> On Fri, Dec 01, 2023 at 09:06:35AM +0000, Alice Ryhl wrote:
+> > Benno Lossin <benno.lossin@proton.me> writes:
+> > > On 11/29/23 13:51, Alice Ryhl wrote:
+> > >> +    /// Returns the credentials of the task that originally opened the file.
+> > >> +    pub fn cred(&self) -> &Credential {
+> > >> +        // This `read_volatile` is intended to correspond to a READ_ONCE call.
+> > >> +        //
+> > >> +        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
+> > >> +        //
+> > >> +        // TODO: Replace with `read_once` when available on the Rust side.
+> > >> +        let ptr = unsafe { core::ptr::addr_of!((*self.0.get()).f_cred).read_volatile() };
+> > >> +
+> > >> +        // SAFETY: The signature of this function ensures that the caller will only access the
+> > >> +        // returned credential while the file is still valid, and the credential must stay valid
+> > >> +        // while the file is valid.
+> > > 
+> > > About the last part of this safety comment, is this a guarantee from the
+> > > C side? If yes, then I would phrase it that way:
+> > > 
+> > >     ... while the file is still valid, and the C side ensures that the
+> > >     credentials stay valid while the file is valid.
+> > 
+> > Yes, that's my intention with this code.
+> > 
+> > But I guess this is a good question for Christian Brauner to confirm:
+> > 
+> > If I read the credential from the `f_cred` field, is it guaranteed that
+> > the pointer remains valid for at least as long as the file?
+> > 
+> > Or should I do some dance along the lines of "lock file, increment
+> > refcount on credential, unlock file"?
+> 
+> The lifetime of the f_cred reference is at least as long as the lifetime
+> of the file:
+> 
+> // file not yet visible anywhere
+> some_file = alloc_file*()
+> -> init_file()
+>    {
+>            file->f_cred = get_cred(cred /* usually current_cred() */)
+>    }
+> 
+> 
+> // install into fd_table -> irreversible, thing visible, possibly shared
+> fd_install(1234, some_file)
+> 
+> // last fput
+> fput()
+> // atomic_dec_and_test() dance:
+> -> file_free() // either "delayed" through task work, workqueue, or
+> 	       // sometimes freed right away if file hasn't been opened,
+> 	       // i.e., if fd_install() wasn't called
+>    -> put_cred(file->f_cred)
+> 
+> In order to access anything you must hold a reference to the file or
+> files->file_lock. IOW, no poking around in f->f_cred or any field for
+> that matter just under rcu_read_lock() for example. Because files are
+> SLAB_TYPESAFE_BY_RCU. You might be poking in someone else's creds then.
 
-Ugg, so they badly reimplement NVMe atomic write support and use it
-without software stack enablement.  Calling it dubious is way to
-gentle..
+Okay, we aren't dealing with the rcu case in this patchset, so we know
+that it wont be freed while we're accessing it.
 
->> Relying just on the hardware seems very limited, especially as there is
->> plenty of hardware that won't guarantee anything larger than 4k, and
->> plenty of NVMe hardware without has some other small limit like 32k
->> because it doesn't support multiple atomicy mode.
->
-> So what would you propose as the next step? Would it to be first achieve 
-> atomic write support for XFS with HW support + CoW to ensure contiguous 
-> extents (and without XFS forcealign)?
+I guess this means that the `f_cred` field is immutable, which means
+that I don't need READ_ONCE to read it? I'll use an ordinary load in the
+next version.
 
-I think the very first priority is just block device support without
-any fs enablement.  We just need to make sure the API isn't too limited
-for additional use cases.
-
-> Ignoring FSes, then how is this supposed to work for block devices? We just 
-> always need HW support, right?
-
-Yes.
+Alice
 
