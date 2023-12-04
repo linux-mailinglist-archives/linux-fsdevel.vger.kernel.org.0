@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-4811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6708041C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:41:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC828041C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF71C20433
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D827B20AF1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF213C46A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831413C470
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WRb+46fT"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MHkl++BA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0C7CB
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 14:14:54 -0800 (PST)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-6ce5a0c37cfso945484b3a.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 14:14:54 -0800 (PST)
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D97101
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 14:17:08 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1d06819a9cbso16869645ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 14:17:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701728094; x=1702332894; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1701728228; x=1702333028; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=o7NAHp/MgTm9SnzSWNXfFwt/FdMVpyaPo3ZgisLjz/I=;
-        b=WRb+46fTXqd5sRdJUueaTb020qZkOMghj3gRWtOIcX5OORMR1f759TGn9hNrPjV1fa
-         jOF6uUinAkleHsKcOr7UPmTJsnAat8VVbMua8PRWX9RjEaOIHU3OEvjP2NQBBdR/NKDy
-         Y3tF22aS/ES5WNGUohCppwFUSxUXyz7R2FD2A=
+        bh=hFGpzU5KwhNmr20zuJNlExzeMs3xxo7WpAsEm8UJ2O4=;
+        b=MHkl++BA9bNNxE03haUv5jX4phvwJSFojRNF0vrQiUp9gCuRK0sGZWbzCJS16xRI2Q
+         z9G12BrxasH7B+BArcwnXU9inz8mPoCQYTBhvVSVwkYcabqRNj3Z2laLK5fI10rGju4O
+         qnkvq+Ce+DwQmSlhzuVT6QcEHVMfM8Bh9uWcY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701728094; x=1702332894;
+        d=1e100.net; s=20230601; t=1701728228; x=1702333028;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7NAHp/MgTm9SnzSWNXfFwt/FdMVpyaPo3ZgisLjz/I=;
-        b=lnPcroYgGwcqgWcNGJF5dzc1CsbqKgM6ZIFsxebuGphoileCdhZY3Ax1CKase6pg2T
-         2Dx+zDd/OrMdL2woyzRZo58n+SLTDvE16EEH2OZyM7b7hM2f1jRbIpEfFOZ+VtbKwN/p
-         0Hd5W9oiWfilffZhcHT1rSi6u8PkPl5LoxVfGt1Z/Yfr60w5HUydp13WY+hcLU7vM+Y+
-         iJzxCIsC6yRUDGLJiFuIp+Iw5favn47LFcsHEgFaEAYqAwb2nTwYLzWTmQ3psYnKz/GV
-         oL+bJWzOCt0UsaF2+b2NmMQzmLwyxv2lAK510At+cBHQUzMxjABiBhOcgMgpKTaWkDsN
-         0OCg==
-X-Gm-Message-State: AOJu0YwfhjGIXk/+yS4soa9j6P35rpIV74L+SoMR4w4b5XL2BLaAJY6s
-	06J/7DHRncMCdXPzrwfELDoRIA==
-X-Google-Smtp-Source: AGHT+IEkvdihAqbNhlhSGxMupjG8dnFLuD0j5JoZv99BA2GbgcxonJ/mSfL3Y7TTC0ZNcKA4UdPv0g==
-X-Received: by 2002:a05:6a21:1cb0:b0:18f:97c:9276 with SMTP id sf48-20020a056a211cb000b0018f097c9276mr1608801pzb.91.1701728093815;
-        Mon, 04 Dec 2023 14:14:53 -0800 (PST)
+        bh=hFGpzU5KwhNmr20zuJNlExzeMs3xxo7WpAsEm8UJ2O4=;
+        b=KpF/WNrlfzwAjCy6F3+Fh00UnaQWt0uA6z5PLR46Lc2kW2uZjXy0rXbd/7ZU7JD4qc
+         uAzsxAn1bd3syj24GnyiWKhIYWDRQqgeSXEvbvNq/fySWvPOF0L4e9XjVySue3kmrukx
+         gCOxIM3DuHN9ws3ahuFZIdY5od/enj6NE5hXE1gqBWJetOhATv/engkAK8e+3YHPkWLO
+         OPBiiB1MuAUJDOt11icXTRaRlfvy5cVHBFiB9B+OrdJ2hjzyzcIAXdvLIf0BKkKEbXam
+         fRNfjHIH9EFAMIb2A5M39LmZ7k6dQ+kxSu0l0Y4IzEmSBZk3Jh8Ee6Lw5WZL32dpYzXy
+         TnHw==
+X-Gm-Message-State: AOJu0YwmBGhW6VBXXCyhCPgVkZJLUWipWqj58kdaIPKCosBNvljKbAbO
+	b6XgHu90NZUZjhZCigT6dyo7JUONo0roZAuQi9w=
+X-Google-Smtp-Source: AGHT+IGhVQvjJ/un+BNNpI81xkQ/mxT2N3RFluRNHrDTDZt40pDlkYkg5OMdQ3g5vmIN6SN8Nk525w==
+X-Received: by 2002:a17:902:a585:b0:1d0:6ffd:ae15 with SMTP id az5-20020a170902a58500b001d06ffdae15mr2071582plb.124.1701728228199;
+        Mon, 04 Dec 2023 14:17:08 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d5-20020a17090a8d8500b002867adefbd4sm4108188pjo.48.2023.12.04.14.14.52
+        by smtp.gmail.com with ESMTPSA id f6-20020a170902684600b001cf5d4f8f26sm7124981pln.248.2023.12.04.14.17.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 14:14:52 -0800 (PST)
-Date: Mon, 4 Dec 2023 14:14:51 -0800
+        Mon, 04 Dec 2023 14:17:07 -0800 (PST)
+Date: Mon, 4 Dec 2023 14:17:06 -0800
 From: Kees Cook <keescook@chromium.org>
 To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
 Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
@@ -60,10 +60,11 @@ Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	Joel Granados <j.granados@samsung.com>,
 	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 08/18] stackleak: don't modify ctl_table argument
-Message-ID: <202312041414.441475830B@keescook>
+Subject: Re: [PATCH v2 12/18] sysctl: treewide: constify the ctl_table
+ argument of handlers
+Message-ID: <202312041416.9336746D3@keescook>
 References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <20231204-const-sysctl-v2-8-7a5060b11447@weissschuh.net>
+ <20231204-const-sysctl-v2-12-7a5060b11447@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,19 +74,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231204-const-sysctl-v2-8-7a5060b11447@weissschuh.net>
+In-Reply-To: <20231204-const-sysctl-v2-12-7a5060b11447@weissschuh.net>
 
-On Mon, Dec 04, 2023 at 08:52:21AM +0100, Thomas Weiﬂschuh wrote:
-> In a future commit the proc_handlers will change to
-> "const struct ctl_table".
-> As a preparation for that adapt the logic to work with a temporary
-> variable, similar to how it is done in other parts of the kernel.
+On Mon, Dec 04, 2023 at 08:52:25AM +0100, Thomas Weiﬂschuh wrote:
+> In a future commit the sysctl core will only use
+> "const struct ctl_table". As a preparation for that adapt all the proc
+> handlers.
 > 
 > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-Looks good -- thanks for catching the table-modification cases.
-
-Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Kees Cook <keescook@chromium.org> # security/*
 
 -- 
 Kees Cook
