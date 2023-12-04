@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-4810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266FB8041C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:41:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6708041C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D684B280B95
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF71C20433
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC913C465
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF213C46A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kZlZspSL"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WRb+46fT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38919FF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 14:12:38 -0800 (PST)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1d05212a7c5so18473165ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 14:12:38 -0800 (PST)
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0C7CB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 14:14:54 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-6ce5a0c37cfso945484b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 14:14:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701727958; x=1702332758; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1701728094; x=1702332894; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=z5w+w40k8reyqU3pjVynIeZmpGAhXy9mRn2YDUbDK6o=;
-        b=kZlZspSLgzRFo2AIXtG6F/y5aA8ezGQOCsKYoHAcJ1v2zCpqJbuMDedfbiBy2Tu9C4
-         xBMU8TyxnQa10i2a3GeTUsj8z8gBH5CsQc5+0e0MN03zF+Lw9pyPk9VdbFQ2ukoFbHyD
-         BrYOBrSlcnLeWbKJmccJ3x7v8xeQbXe2+w3IA=
+        bh=o7NAHp/MgTm9SnzSWNXfFwt/FdMVpyaPo3ZgisLjz/I=;
+        b=WRb+46fTXqd5sRdJUueaTb020qZkOMghj3gRWtOIcX5OORMR1f759TGn9hNrPjV1fa
+         jOF6uUinAkleHsKcOr7UPmTJsnAat8VVbMua8PRWX9RjEaOIHU3OEvjP2NQBBdR/NKDy
+         Y3tF22aS/ES5WNGUohCppwFUSxUXyz7R2FD2A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701727958; x=1702332758;
+        d=1e100.net; s=20230601; t=1701728094; x=1702332894;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5w+w40k8reyqU3pjVynIeZmpGAhXy9mRn2YDUbDK6o=;
-        b=DwmNj4Cx08Nuuc8serNy60T0brwrWV00jiJwjmIcenrdFuWs6QPJe1wrhbBcDlhxws
-         0mmkHtnEogQ0pv5APUP8iOirrzGsW/AikDMXv36mQOFIMDCUAylIHX135016rD3Qi3ho
-         SoF7ii/pCGWciumujzy0QiZsXjUV6sJZRtWcrbb7wW/btnFVhjaAQZfYMCaUYZ83wLZu
-         de11Q5te+ftiUt/rf1XfqU7uJzLdwQz+YoihKEgGLNU5uQRr7QqiaAAc7imzgEAybMst
-         BdZrNxi2dSaXLhj4hAaOERH1hBQrAd1bZwTQAwok/Rm5rpZR1/JaKlxGaZfOeU0YE4a5
-         0AZA==
-X-Gm-Message-State: AOJu0Yx1cldGM/+0yjrb05WNd4dbjaOvKpqBQ3LjsJyN8nsK8U8K1JkE
-	Eslrus06koUBRt0ecQDu8yKqDA==
-X-Google-Smtp-Source: AGHT+IHM5ek9ahZA4zDcV16QXDzsz49v7j1xdOQOO23qiKhgCK2UxX5VuXi5Txfj8ada4KvlaWZx7w==
-X-Received: by 2002:a17:902:b210:b0:1d0:6ffd:8346 with SMTP id t16-20020a170902b21000b001d06ffd8346mr1942760plr.81.1701727957671;
-        Mon, 04 Dec 2023 14:12:37 -0800 (PST)
+        bh=o7NAHp/MgTm9SnzSWNXfFwt/FdMVpyaPo3ZgisLjz/I=;
+        b=lnPcroYgGwcqgWcNGJF5dzc1CsbqKgM6ZIFsxebuGphoileCdhZY3Ax1CKase6pg2T
+         2Dx+zDd/OrMdL2woyzRZo58n+SLTDvE16EEH2OZyM7b7hM2f1jRbIpEfFOZ+VtbKwN/p
+         0Hd5W9oiWfilffZhcHT1rSi6u8PkPl5LoxVfGt1Z/Yfr60w5HUydp13WY+hcLU7vM+Y+
+         iJzxCIsC6yRUDGLJiFuIp+Iw5favn47LFcsHEgFaEAYqAwb2nTwYLzWTmQ3psYnKz/GV
+         oL+bJWzOCt0UsaF2+b2NmMQzmLwyxv2lAK510At+cBHQUzMxjABiBhOcgMgpKTaWkDsN
+         0OCg==
+X-Gm-Message-State: AOJu0YwfhjGIXk/+yS4soa9j6P35rpIV74L+SoMR4w4b5XL2BLaAJY6s
+	06J/7DHRncMCdXPzrwfELDoRIA==
+X-Google-Smtp-Source: AGHT+IEkvdihAqbNhlhSGxMupjG8dnFLuD0j5JoZv99BA2GbgcxonJ/mSfL3Y7TTC0ZNcKA4UdPv0g==
+X-Received: by 2002:a05:6a21:1cb0:b0:18f:97c:9276 with SMTP id sf48-20020a056a211cb000b0018f097c9276mr1608801pzb.91.1701728093815;
+        Mon, 04 Dec 2023 14:14:53 -0800 (PST)
 Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id y8-20020a17090322c800b001cfc4d8eddesm8876332plg.180.2023.12.04.14.12.36
+        by smtp.gmail.com with ESMTPSA id d5-20020a17090a8d8500b002867adefbd4sm4108188pjo.48.2023.12.04.14.14.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 14:12:36 -0800 (PST)
-Date: Mon, 4 Dec 2023 14:12:36 -0800
+        Mon, 04 Dec 2023 14:14:52 -0800 (PST)
+Date: Mon, 4 Dec 2023 14:14:51 -0800
 From: Kees Cook <keescook@chromium.org>
 To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
 Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
@@ -60,11 +60,10 @@ Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	Joel Granados <j.granados@samsung.com>,
 	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 05/18] seccomp: constify ctl_table arguments of
- utility functions
-Message-ID: <202312041412.7D0EAC47E@keescook>
+Subject: Re: [PATCH v2 08/18] stackleak: don't modify ctl_table argument
+Message-ID: <202312041414.441475830B@keescook>
 References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <20231204-const-sysctl-v2-5-7a5060b11447@weissschuh.net>
+ <20231204-const-sysctl-v2-8-7a5060b11447@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,14 +73,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231204-const-sysctl-v2-5-7a5060b11447@weissschuh.net>
+In-Reply-To: <20231204-const-sysctl-v2-8-7a5060b11447@weissschuh.net>
 
-On Mon, Dec 04, 2023 at 08:52:18AM +0100, Thomas Weiﬂschuh wrote:
-> In a future commit the proc_handlers themselves will change to
-> "const struct ctl_table". As a preparation for that adapt the internal
-> helpers.
+On Mon, Dec 04, 2023 at 08:52:21AM +0100, Thomas Weiﬂschuh wrote:
+> In a future commit the proc_handlers will change to
+> "const struct ctl_table".
+> As a preparation for that adapt the logic to work with a temporary
+> variable, similar to how it is done in other parts of the kernel.
 > 
 > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+
+Looks good -- thanks for catching the table-modification cases.
 
 Acked-by: Kees Cook <keescook@chromium.org>
 
