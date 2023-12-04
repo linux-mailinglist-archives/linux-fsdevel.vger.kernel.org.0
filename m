@@ -1,177 +1,484 @@
-Return-Path: <linux-fsdevel+bounces-4788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B06803D31
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 19:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E587A803D32
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 19:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23BECB203D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C621F211D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E402FC31
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA14B2FC20
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V6RXIRt0"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Pb4GGLKu";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HGHzN+KJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21DF8B0
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 08:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701708694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=o9ogsP7zlAcAVFyuHDbm4AvBG24zophldpJM8ON7Y+o=;
-	b=V6RXIRt09ii69Dn7IkfZBFzqnJ4fH94dEo+3o08rywp6etk8pKcdfWoMFtx6ZJAH74VuR4
-	TP9Of3xdZ9WqnhehMGeTNNP8Qrq+0vkTO/YDWtTw02yPVvw2EfbwWPMIBVEVqtXeL1y91e
-	uuSYbfKQpWv9x5+baFk8w/kVTeejNQo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-ZUd-t1LTOtai2116_H8cJQ-1; Mon, 04 Dec 2023 11:51:33 -0500
-X-MC-Unique: ZUd-t1LTOtai2116_H8cJQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-40b23aef363so40531415e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 08:51:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701708691; x=1702313491;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :references:cc:to:from:content-language:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=o9ogsP7zlAcAVFyuHDbm4AvBG24zophldpJM8ON7Y+o=;
-        b=UdMM+LEd5XtrTn6uNRb/126QdnuZvnP+EfNfdYYw1hJNGoQfgsr6yM0nd1596Sd1MY
-         XGa9iog/oXGeNzE668DzbAb68zI5VxOgd3ETcS4/lkzQyuIklqFD73w912YpfufHmtjj
-         +uAswx1Akg7q/XD+IxFjVm5Z7ylLeFJ853P0IGijUDKZYnK9YwwH3yHkBLdppovfFPOD
-         MIzQcmTctJNh9EIP9NOOCVuf1KB2aOx0kkRBXBIagNTjaHTQaoVyQNA99yx7gZOexh+D
-         wgSABO5Vsnb7dpaVrHXqiC9Sgbszef+mjSpzhi0+YivEAZAhj39Ga/9BDjUvv6/a2fLe
-         WB0g==
-X-Gm-Message-State: AOJu0YzpoWBzXUKY0LlnjtCN9xoOQ+D5MGxXeC/4dljXPOoYHMv1S/Cn
-	1mb/Rhpr0PyW44zYzoYYGzTICXmo+ESDBXJG4SArTzsc8xxKjr+vSlCVYepSdyodauP606VpIVZ
-	rBv2jQTPmai7yTKTyGP4phqdIcg==
-X-Received: by 2002:a05:600c:c2:b0:40c:884:f57c with SMTP id u2-20020a05600c00c200b0040c0884f57cmr1635943wmm.122.1701708691542;
-        Mon, 04 Dec 2023 08:51:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFgIgPt8Dy8Q9xUvIjGSKixEK781mOZvM09+B05A+JOLlIl6K2h0d3eJu9hDiGed860Y3clBA==
-X-Received: by 2002:a05:600c:c2:b0:40c:884:f57c with SMTP id u2-20020a05600c00c200b0040c0884f57cmr1635932wmm.122.1701708691063;
-        Mon, 04 Dec 2023 08:51:31 -0800 (PST)
-Received: from ?IPV6:2003:cb:c722:3700:6501:8925:6f9:fcdc? (p200300cbc72237006501892506f9fcdc.dip0.t-ipconnect.de. [2003:cb:c722:3700:6501:8925:6f9:fcdc])
-        by smtp.gmail.com with ESMTPSA id fs16-20020a05600c3f9000b0040b48690c49sm15576505wmb.6.2023.12.04.08.51.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Dec 2023 08:51:30 -0800 (PST)
-Message-ID: <1db10afb-9088-4b9a-a46f-646c33bd932a@redhat.com>
-Date: Mon, 4 Dec 2023 17:51:29 +0100
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D748C1;
+	Mon,  4 Dec 2023 09:12:20 -0800 (PST)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4H2hp8027301;
+	Mon, 4 Dec 2023 17:12:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=AoHYJuHv3HFWgkPysOw7JVbpf3A98guKwrVwnBhdwKY=;
+ b=Pb4GGLKuNRP/iAXpG35gX1DfAJIXbMDtoL6XrA8q+yLCaJ40Og5Ft+WaMzVpJ3/fwmao
+ AaPUjDeA6e0l2slIU/BzzaLI4LqZ2Ih/XUTdPjufYOg7JHGhk8UIEQ4brE04zcwp+zdz
+ gncQe5yI+QCMjXteOfrKWIhonRu2JrLQ8EsCdXMFAzsMzbkyBZPEnrQA0Fiy/ATH9DlO
+ V1WJ6BH7dphpjRzgfgng2C2AAq52EyOgpM3sKXuteZlwa3jyu7onRsVaSj6PKjm6NXVv
+ pg+jO72Cn6FVXAfUEDHNJGtxyJXzQlQA94vVwMD8Mo1Acp9x9DTEZQkQCGMsFjZUAaTD Jg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usjt9r0vp-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 17:12:00 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4GrT0j005300;
+	Mon, 4 Dec 2023 16:58:30 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu15uwue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 16:58:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UML5Fg8fqCY4XS89Udb8uS8TbLL6i9H0NcGFEStZeLXJzbMbr9i+IWB0H7bO+kgbBx5ADhjtI02pQeJx7uXoetHO/KvuS+Uc9O+kn9nX5Qn61xUGWyl5eTWSoxzlF88qf0uqXPTO2SI5n1xUlUW77phLhDa0z7r+bYAdmyVhs8oNDeBl1GY6gdSSFnaIPsX5isbWC9LDF260d4s6H4zFB4kPJwmaHDBytD2tbhliAu+P5RCQRnm6eZ7hNZRbtW9V/Cw1yW1OBrQHffm9SG6vGueqLMGQAYjvLf0rVX0IK928TJbvk9gN/FNiu/hSx4R21q0QwEfoxzXPsN96t7UO8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AoHYJuHv3HFWgkPysOw7JVbpf3A98guKwrVwnBhdwKY=;
+ b=eIYMudVWFue4KgWHjtDz2jZ0OrDswhswZTmuVr97Skzho1j15a0VeMBuCggAV8rxeNuge4hQ+O5sOsFCuh1Hyyf2AFhamiunK953y8piW068HIN4me7N6bRpsrp8EKbxSUm4bx00XEpNhyEgnQlhNSeLFCMNTes1ad43HcVaR9xJuEDZ0uLBvxTP76uoPELWIcQUNPFoIq1nJCRn76xcxysd5UBYYLv7MEYzOOqy5MO27ygiGlmakXDZf5FZxNGBzZ1Qtw4g1T80WDoVw5PWOtqGC8/9HTgvVao7Ui/mFPzggT7pw+4HBsVxEzo2qjyUztMpcUQXqcVjcId5axGf/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AoHYJuHv3HFWgkPysOw7JVbpf3A98guKwrVwnBhdwKY=;
+ b=HGHzN+KJ8LDdNRQjJcjpwAOX9me9bbGSzjWxkAcKz1Cci8U8yTW/7vKkCvaxLGXL9/ou83pa3R1ykfkZtJa7IDcUthcoqgQQnLajVolGyHgAcdyj0RJq8jGNzR9L4LYsWKSrBDv/3z2tuhtgbneIuKydccCCAzbqNMvUK2wD0Lg=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by PH7PR10MB6986.namprd10.prod.outlook.com (2603:10b6:510:27e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.33; Mon, 4 Dec
+ 2023 16:58:28 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::360b:b3c0:c5a9:3b3c]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::360b:b3c0:c5a9:3b3c%4]) with mapi id 15.20.7046.034; Mon, 4 Dec 2023
+ 16:58:28 +0000
+Date: Mon, 4 Dec 2023 11:58:25 -0500
+From: Chuck Lever <chuck.lever@oracle.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 2/2] nfsd: Don't leave work of closing files to a work
+ queue.
+Message-ID: <ZW4FMaXIbJpz9q1P@tissot.1015granger.net>
+References: <20231204014042.6754-1-neilb@suse.de>
+ <20231204014042.6754-3-neilb@suse.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231204014042.6754-3-neilb@suse.de>
+X-ClientProxiedBy: CH2PR12CA0010.namprd12.prod.outlook.com
+ (2603:10b6:610:57::20) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Issue with 8K folio size in __filemap_get_folio()
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>,
- Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org,
- Hugh Dickins <hughd@google.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <B467D07C-00D2-47C6-A034-2D88FE88A092@dubeyko.com>
- <ZWzy3bLEmbaMr//d@casper.infradead.org>
- <ZW0LQptvuFT9R4bw@casper.infradead.org>
- <22d5bd19-c1a7-4a6c-9be4-e4cb1213e439@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <22d5bd19-c1a7-4a6c-9be4-e4cb1213e439@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH7PR10MB6986:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44c3f1c0-c6d4-49b5-9ba0-08dbf4ea3c9c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	75CC0/bShipfDrEBdY7qk4bqblQ7berOlpvh7ttSxF5IA7gXbUjdShv2Ro6x7rgmRzmqi8NTXZlMHwB3FIjqkZ7oDCyZkMYZICGufNUg+drk5FxsAkKtdIfvGYXgQJoc6iaJuoDwAEeRXXXv+m/EvymveQQpU1WmsANsWv12hgU6I5iiBsM1gveFBUNF/wCVrbX+PESevXeKJyvX+76Twkhiu3R32pU9lNLMo9ySEzVeHxc1RYMu3byEqtvm10ZeZeR+QtoNwzXXmnSpknLtjPJ0O9wCEEVK8k5RJH8gjJi4KuJiTHx62BhvKYlIx/8m1z+zoevKXR+pZfKa7nCTfj7F87LCj9sjiKyxOl/6xXfgViuoEH7LtvFJRjjRCGgTjUwCTuMWchgpZdmROkWvwUuSJqKTqjzc8zW8PBeB072WP5rSqtIVdpRxpnes3ZZeIaWUgd3eC/9HoI+ZhLYe7Ja/XHm84x8BWyUuRwbcZLRkDZOx60GRWTP4UYif1cFa2l51ibV1mlgAsRjmsqDuk8rOVpeJPxgO/7hhTNo6yRffqEd4rDb3xRFIiB509nQ6
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(39860400002)(346002)(376002)(136003)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(6486002)(66899024)(7416002)(6506007)(30864003)(9686003)(6512007)(26005)(41300700001)(38100700002)(86362001)(83380400001)(6666004)(2906002)(478600001)(44832011)(316002)(66946007)(54906003)(6916009)(66476007)(66556008)(8676002)(4326008)(8936002)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?eeEKo1yHajbTEm8KrwVMuShcFGzzVWhsN+CICldlG0uay0swykTtfSg/ta+E?=
+ =?us-ascii?Q?dAytDB1MX1v5TVYx3ukj/Lyo2NmPi/bdpOrUiBa5LZmCXvN53ohuCx22fBvx?=
+ =?us-ascii?Q?UMgUgxQpBGwdhsogprew//IR5wLC27a64shQHknnIt4Sg02djDWTgLHSqhj+?=
+ =?us-ascii?Q?4wlHu623Euww9qz14HIsjA0Oy+MfpLwjUr7nQQoXHMItyM9g2aUxekx+ggFT?=
+ =?us-ascii?Q?BP0VC0zEA+OaZP9SEWJOnZVH1eDrKR6wZZmZPuO21VC9A0GcOEXAkv0FuCnf?=
+ =?us-ascii?Q?48HSlZxK0kV2Oa93YBTm5QXxZvyru8tWqMhRKY3OvtySioco0rKTWvBDztm5?=
+ =?us-ascii?Q?Cf27wLhntVAow1UfNMAgQJcOAj80juqlWnIGCcTuW1d1iEePSnJxOzJr+ZaK?=
+ =?us-ascii?Q?kX6G79WXxGfgZ9WLg1++H9dAPACkdCLqhNy6QE2mKxh87x07tpZfNRMPwi0q?=
+ =?us-ascii?Q?O6y2EN4KnR+zd+wr3UIaBMQJuHJWepvAPMEdDnyGirYmSoO5PFclmE0L8rpm?=
+ =?us-ascii?Q?uzBzKJO02lubMlhYKK6bJ0hPm2tzLKC3JBgWO6WVFdlVK2yX+ESPRcYSUfxU?=
+ =?us-ascii?Q?OGOzqnNl3NMrXTFufa6EBeRzLnQszyYSV8hBsbIbGPmrOdOW3T5ak8NLIhJL?=
+ =?us-ascii?Q?aXkSC8aKqbidxXeXY/eavasYeQvbPYBa+sZNO7tOPbZ+Fv7n9Z1NCaRslg1t?=
+ =?us-ascii?Q?HkBeoBNUikb80nE9s9Td+T3iIZvpYlrXggD/1RvTTfNY0AIcK2xFQomS70yZ?=
+ =?us-ascii?Q?VNAx6rYvOAto0UbvZnBg+LO062/0pV9X3q/9fkCg2AXyZIArY3eX0eBuL1Nl?=
+ =?us-ascii?Q?XA2JL3mf15PIQ5ll/BTJJl+1sxR2XsTBFww5s6XcoPO9xazyWXrOBLohM98S?=
+ =?us-ascii?Q?dvVL2v8eFjy6l2r4z0kFDK3HvdSo9fkY0NnVFgkZ4TlYgaiowBwBYEdBNwh4?=
+ =?us-ascii?Q?Q3wOiTprRzw+16sVg+qW6N9tbGT5tZ+7xyRSbdeGkJT4q3TJj1sr03h4h8MZ?=
+ =?us-ascii?Q?LUzJOJaHTihAOk67oE8CyuVVTukkeWJFSCscxZbEcGAadyAxcGs/WXpHxbCT?=
+ =?us-ascii?Q?wq+CKKT366i1xHV5H8qV2+CHZuBNxFNMbW43q7eWGPX6Kx7XMo90aiTVV+un?=
+ =?us-ascii?Q?gL4fq7QofDvt4nt92JgT2Cs1/LITzXsYDXwavwDT1UuXLeVMQDRh1VMALYkK?=
+ =?us-ascii?Q?44wc21f+uVd4G3mXuzQZ/Htu4brL5nm4zEQXg3lpiKH4YVY5eKc4YMd3XdjW?=
+ =?us-ascii?Q?ytt8ZgVB0pOuWr4g6P50w2FhFDps28ZqscBY3V2q+49g9A+zlZAQZgbK1yGY?=
+ =?us-ascii?Q?D4ss39D840cZk7Yas+IW6Lk7bk8uyTxIA3n90INVeeT1g9parOM/xuzh4MZj?=
+ =?us-ascii?Q?5lwoGBnn+IJN28r6kAHY1pF3rw0O2v0LUmNbRejAGjjW0E1tOjzZeiyam3N2?=
+ =?us-ascii?Q?+meZHpprY8rSv1zP5fPVbLineWifRIW+Bk/UctBOU0Nqobwm9KOF9fpcpouO?=
+ =?us-ascii?Q?Z+dQAmMZZ8qRYEQDMyiLBVZgOp5018jh7aO808tkq/CC5LocN76cF4IRuGLd?=
+ =?us-ascii?Q?FoK6bfpZ9XBq/Eh2mbg7Vowet3ElhMq5szsa0X4H2sQTi3wsqpFzhXKWiv3V?=
+ =?us-ascii?Q?0w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	=?us-ascii?Q?cIDudV7Cq8CXntvnjYFg7je5CPyrAK0uheYtd42X6NuG/s26I5IdQGCo79Lx?=
+ =?us-ascii?Q?CeIur7zxU2yyQnIYsDtsa8RcH6p5ZSNyzz6K2tzPTtQ6lj79G8z4V+ASJ1AA?=
+ =?us-ascii?Q?GQBckiGbC5fhfxlq++o8OKw7xZuLe/7U1LJ05WT6RDBispmUlGRBhV4fvmp5?=
+ =?us-ascii?Q?nda0b61S2Lu4sCdRsNj8FHwMtbXsBT56XW8ATlcP/RYhSIEHO80eOb3IO2qE?=
+ =?us-ascii?Q?tqmsfFW3T2MLTxi4bLi6Jbh5nWziF68MHh/5pcs4+nz5VRzt+PyH2OBKtDaM?=
+ =?us-ascii?Q?7IT1+RPXwzntnuUp42sKl788ysQFGthmjRqFCp9lq3ST5pGsADrNA9c82Paa?=
+ =?us-ascii?Q?RNgayA5Fy3k9AxvByVMpBth/oAzYSTIvexiwSdjzlWCqa3h3JmzQUzmGaj8N?=
+ =?us-ascii?Q?l4CQQ09gCSRt0z3HMKyITTJLNlRkX46gWmBXyHxFIxa441sGgFp++cVR6BL5?=
+ =?us-ascii?Q?/RMZW8DWLSb0Qi4/xPUe1rRxP3YxqzW4SJTdf0bgarRnpzSV6B7eXwhZszzR?=
+ =?us-ascii?Q?glwZi2+3/nEaMQU0l2o7wKtLO5VcmfRdhJfiWPl4xoCt2zS3sZdD+mhF8Fkh?=
+ =?us-ascii?Q?+AbZOMLiZukwESq8vnsz4GSceL+BlTpq6CfXwqk2RbKg7fvD8txAhjv875Bi?=
+ =?us-ascii?Q?SyLlmAWrzmaOVkckbxiajIOi6FhIVFsH5mRHVuuNX2ReHSiAR3w8P0S4DdM5?=
+ =?us-ascii?Q?eNSRkKoNrY44F9uci1y4V+QeYFXpKrYmN1zVTkJ7/xofFKRHeVvvR97x1bzM?=
+ =?us-ascii?Q?CRsQqfNM0sGjXhZJ3nH5/BxzuAUcdtTUm2t3VZlBiezPXkqUnQ9EgdDH4xlC?=
+ =?us-ascii?Q?DYrlzb9ys0iQDtYTZcI6Z/qik74ZtQKjb4028NpI7yipGAsOP06gy7zD90Wr?=
+ =?us-ascii?Q?wWxe94rW/UQ6OPNBboEXTVdMH1ls8g0yR9ybUHuaAb8LplMI3uZLa/K4PKws?=
+ =?us-ascii?Q?u+4xo0JxEtI7sC6KAs4bYVyx8gH8zmkw8nNaFBRQWBU=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44c3f1c0-c6d4-49b5-9ba0-08dbf4ea3c9c
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2023 16:58:28.1865
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BilEkox/M2rzQrRWQadHxPf6xFJuvGqsTxUUhH71Qczsb56Iy8EpM1qtJp/tZm+BwoFCMU8gQmRsK1Wa6UI5Iw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6986
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_16,2023-12-04_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 phishscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312040130
+X-Proofpoint-GUID: qJrIisbvPQ5NEVynmPtiIEnxW6awplyb
+X-Proofpoint-ORIG-GUID: qJrIisbvPQ5NEVynmPtiIEnxW6awplyb
 
-On 04.12.23 16:09, David Hildenbrand wrote:
-> On 04.12.23 00:12, Matthew Wilcox wrote:
->> On Sun, Dec 03, 2023 at 09:27:57PM +0000, Matthew Wilcox wrote:
->>> I was talking with Darrick on Friday and he convinced me that this is
->>> something we're going to need to fix sooner rather than later for the
->>> benefit of devices with block size 8kB.  So it's definitely on my todo
->>> list, but I haven't investigated in any detail yet.
->>
->> OK, here's my initial analysis of just not putting order-1 folios
->> on the deferred split list.  folio->_deferred_list is only used in
->> mm/huge_memory.c, which makes this a nice simple analysis.
->>
->>    - folio_prep_large_rmappable() initialises the list_head.  No problem,
->>      just don't do that for order-1 folios.
->>    - split_huge_page_to_list() will remove the folio from the split queue.
->>      No problem, just don't do that.
->>    - folio_undo_large_rmappable() removes it from the list if it's
->>      on the list.  Again, no problem, don't do that for order-1 folios.
->>    - deferred_split_scan() walks the list, it won't find any order-1
->>      folios.
->>
->>    - deferred_split_folio() will add the folio to the list.  Returning
->>      here will avoid adding the folio to the list.  But what consequences
->>      will that have?  Ah.  There's only one caller of
->>      deferred_split_folio() and it's in page_remove_rmap() ... and it's
->>      only called for anon folios anyway.
->>
->> So it looks like we can support order-1 folios in the page cache without
->> any change in behaviour since file-backed folios were never added to
->> the deferred split list.
+On Mon, Dec 04, 2023 at 12:36:42PM +1100, NeilBrown wrote:
+> The work of closing a file can have non-trivial cost.  Doing it in a
+> separate work queue thread means that cost isn't imposed on the nfsd
+> threads and an imbalance can be created.
 > 
-> I think for the pagecache it should work. In the context of [1], a total
-> mapcount would likely still be possible. Anything beyond that likely
-> not, if we ever care.
+> I have evidence from a customer site when nfsd is being asked to modify
+> many millions of files which causes sufficient memory pressure that some
+> cache (in XFS I think) gets cleaned earlier than would be ideal.  When
+> __dput (from the workqueue) calls __dentry_kill, xfs_fs_destroy_inode()
+> needs to synchronously read back previously cached info from storage.
+> This slows down the single thread that is making all the final __dput()
+> calls for all the nfsd threads with the net result that files are added
+> to the delayed_fput_list faster than they are removed, and the system
+> eventually runs out of memory.
+> 
+> To avoid this work imbalance that exhausts memory, this patch moves all
+> work for closing files into the nfsd threads.  This means that when the
+> work imposes a cost, that cost appears where it would be expected - in
+> the work of the nfsd thread.
 
-Thinking about it, maybe 64bit could be made working. Anyhow, just 
-something to keep in mind once we want to support folio-1 orders: memmap 
-space can start getting a problem again.
+Thanks for pursuing this next step in the evolution of the NFSD
+file cache.
+
+Your problem statement should mention whether you have observed the
+issue with an NFSv3 or an NFSv4 workload or if you see this issue
+with both, since those two use cases are handled very differently
+within the file cache implementation.
+
+
+> There are two changes to achieve this.
+> 
+> 1/ PF_RUNS_TASK_WORK is set and task_work_run() is called, so that the
+>    final __dput() for any file closed by a given nfsd thread is handled
+>    by that thread.  This ensures that the number of files that are
+>    queued for a final close is limited by the number of threads and
+>    cannot grow without bound.
+> 
+> 2/ Files opened for NFSv3 are never explicitly closed by the client and are
+>   kept open by the server in the "filecache", which responds to memory
+>   pressure, is garbage collected even when there is no pressure, and
+>   sometimes closes files when there is particular need such as for
+>   rename.
+
+There is a good reason for close-on-rename: IIRC we want to avoid
+triggering a silly-rename on NFS re-exports.
+
+Also, I think we do want to close cached garbage-collected files
+quickly, even without memory pressure. Files left open in this way
+can conflict with subsequent NFSv4 OPENs that might hand out a
+delegation as long as no other clients are using them. Files held
+open by the file cache will interfere with that.
+
+
+>   These files currently have filp_close() called in a dedicated
+>   work queue, so their __dput() can have no effect on nfsd threads.
+> 
+>   This patch discards the work queue and instead has each nfsd thread
+>   call flip_close() on as many as 8 files from the filecache each time
+>   it acts on a client request (or finds there are no pending client
+>   requests).  If there are more to be closed, more threads are woken.
+>   This spreads the work of __dput() over multiple threads and imposes
+>   any cost on those threads.
+> 
+>   The number 8 is somewhat arbitrary.  It needs to be greater than 1 to
+>   ensure that files are closed more quickly than they can be added to
+>   the cache.  It needs to be small enough to limit the per-request
+>   delays that will be imposed on clients when all threads are busy
+>   closing files.
+
+IMO we want to explicitly separate the mechanisms of handling
+garbage-collected files and non-garbage-collected files.
+
+In the non-garbage-collected (NFSv4) case, the kthread can wait
+for everything it has opened to be closed. task_work seems
+appropriate for that IIUC.
+
+The problem with handling a limited number of garbage-collected
+items is that once the RPC workload stops, any remaining open
+files will remain open because garbage collection has effectively
+stopped. We really need those files closed out within a couple of
+seconds.
+
+We used to have watermarks in the nfsd_file_put() path to kick
+garbage-collection if there were too many open files. Instead,
+waiting for the GC thread to make progress before recycling the
+kthread might be beneficial.
+
+And, as we discussed in a previous thread, replacing the per-
+namespace worker with a parallel mechanism would help GC proceed
+more quickly to reduce the flush/close backlog for NFSv3.
+
+
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/nfsd/filecache.c | 62 ++++++++++++++++++---------------------------
+>  fs/nfsd/filecache.h |  1 +
+>  fs/nfsd/nfssvc.c    |  6 +++++
+>  3 files changed, 32 insertions(+), 37 deletions(-)
+> 
+> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> index ee9c923192e0..55268b7362d4 100644
+> --- a/fs/nfsd/filecache.c
+> +++ b/fs/nfsd/filecache.c
+> @@ -39,6 +39,7 @@
+>  #include <linux/fsnotify.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/rhashtable.h>
+> +#include <linux/task_work.h>
+>  
+>  #include "vfs.h"
+>  #include "nfsd.h"
+> @@ -61,13 +62,10 @@ static DEFINE_PER_CPU(unsigned long, nfsd_file_total_age);
+>  static DEFINE_PER_CPU(unsigned long, nfsd_file_evictions);
+>  
+>  struct nfsd_fcache_disposal {
+> -	struct work_struct work;
+>  	spinlock_t lock;
+>  	struct list_head freeme;
+>  };
+>  
+> -static struct workqueue_struct *nfsd_filecache_wq __read_mostly;
+> -
+>  static struct kmem_cache		*nfsd_file_slab;
+>  static struct kmem_cache		*nfsd_file_mark_slab;
+>  static struct list_lru			nfsd_file_lru;
+> @@ -421,10 +419,31 @@ nfsd_file_dispose_list_delayed(struct list_head *dispose)
+>  		spin_lock(&l->lock);
+>  		list_move_tail(&nf->nf_lru, &l->freeme);
+>  		spin_unlock(&l->lock);
+> -		queue_work(nfsd_filecache_wq, &l->work);
+> +		svc_wake_up(nn->nfsd_serv);
+>  	}
+>  }
+>  
+> +/**
+> + * nfsd_file_dispose_some
+
+This needs a short description and:
+
+ * @nn: namespace to check
+
+Or something more enlightening than that.
+
+Also, the function name exposes mechanism; I think I'd prefer a name
+that is more abstract, such as nfsd_file_net_release() ?
+
+
+> + *
+> + */
+> +void nfsd_file_dispose_some(struct nfsd_net *nn)
+> +{
+> +	struct nfsd_fcache_disposal *l = nn->fcache_disposal;
+> +	LIST_HEAD(dispose);
+> +	int i;
+> +
+> +	if (list_empty(&l->freeme))
+> +		return;
+> +	spin_lock(&l->lock);
+> +	for (i = 0; i < 8 && !list_empty(&l->freeme); i++)
+> +		list_move(l->freeme.next, &dispose);
+> +	spin_unlock(&l->lock);
+> +	if (!list_empty(&l->freeme))
+> +		svc_wake_up(nn->nfsd_serv);
+> +	nfsd_file_dispose_list(&dispose);
+> +}
+> +
+>  /**
+>   * nfsd_file_lru_cb - Examine an entry on the LRU list
+>   * @item: LRU entry to examine
+> @@ -635,28 +654,8 @@ nfsd_file_close_inode_sync(struct inode *inode)
+>  		list_del_init(&nf->nf_lru);
+>  		nfsd_file_free(nf);
+>  	}
+> -	flush_delayed_fput();
+> -}
+> -
+> -/**
+> - * nfsd_file_delayed_close - close unused nfsd_files
+> - * @work: dummy
+> - *
+> - * Scrape the freeme list for this nfsd_net, and then dispose of them
+> - * all.
+> - */
+> -static void
+> -nfsd_file_delayed_close(struct work_struct *work)
+> -{
+> -	LIST_HEAD(head);
+> -	struct nfsd_fcache_disposal *l = container_of(work,
+> -			struct nfsd_fcache_disposal, work);
+> -
+> -	spin_lock(&l->lock);
+> -	list_splice_init(&l->freeme, &head);
+> -	spin_unlock(&l->lock);
+> -
+> -	nfsd_file_dispose_list(&head);
+> +	/* Flush any delayed fput */
+> +	task_work_run();
+>  }
+>  
+>  static int
+> @@ -721,10 +720,6 @@ nfsd_file_cache_init(void)
+>  		return ret;
+>  
+>  	ret = -ENOMEM;
+> -	nfsd_filecache_wq = alloc_workqueue("nfsd_filecache", 0, 0);
+> -	if (!nfsd_filecache_wq)
+> -		goto out;
+> -
+>  	nfsd_file_slab = kmem_cache_create("nfsd_file",
+>  				sizeof(struct nfsd_file), 0, 0, NULL);
+>  	if (!nfsd_file_slab) {
+> @@ -739,7 +734,6 @@ nfsd_file_cache_init(void)
+>  		goto out_err;
+>  	}
+>  
+> -
+>  	ret = list_lru_init(&nfsd_file_lru);
+>  	if (ret) {
+>  		pr_err("nfsd: failed to init nfsd_file_lru: %d\n", ret);
+> @@ -782,8 +776,6 @@ nfsd_file_cache_init(void)
+>  	nfsd_file_slab = NULL;
+>  	kmem_cache_destroy(nfsd_file_mark_slab);
+>  	nfsd_file_mark_slab = NULL;
+> -	destroy_workqueue(nfsd_filecache_wq);
+> -	nfsd_filecache_wq = NULL;
+>  	rhltable_destroy(&nfsd_file_rhltable);
+>  	goto out;
+>  }
+> @@ -829,7 +821,6 @@ nfsd_alloc_fcache_disposal(void)
+>  	l = kmalloc(sizeof(*l), GFP_KERNEL);
+>  	if (!l)
+>  		return NULL;
+> -	INIT_WORK(&l->work, nfsd_file_delayed_close);
+>  	spin_lock_init(&l->lock);
+>  	INIT_LIST_HEAD(&l->freeme);
+>  	return l;
+> @@ -838,7 +829,6 @@ nfsd_alloc_fcache_disposal(void)
+>  static void
+>  nfsd_free_fcache_disposal(struct nfsd_fcache_disposal *l)
+>  {
+> -	cancel_work_sync(&l->work);
+>  	nfsd_file_dispose_list(&l->freeme);
+>  	kfree(l);
+>  }
+> @@ -907,8 +897,6 @@ nfsd_file_cache_shutdown(void)
+>  	fsnotify_wait_marks_destroyed();
+>  	kmem_cache_destroy(nfsd_file_mark_slab);
+>  	nfsd_file_mark_slab = NULL;
+> -	destroy_workqueue(nfsd_filecache_wq);
+> -	nfsd_filecache_wq = NULL;
+>  	rhltable_destroy(&nfsd_file_rhltable);
+>  
+>  	for_each_possible_cpu(i) {
+> diff --git a/fs/nfsd/filecache.h b/fs/nfsd/filecache.h
+> index e54165a3224f..bc8c3363bbdf 100644
+> --- a/fs/nfsd/filecache.h
+> +++ b/fs/nfsd/filecache.h
+> @@ -56,6 +56,7 @@ void nfsd_file_cache_shutdown_net(struct net *net);
+>  void nfsd_file_put(struct nfsd_file *nf);
+>  struct nfsd_file *nfsd_file_get(struct nfsd_file *nf);
+>  void nfsd_file_close_inode_sync(struct inode *inode);
+> +void nfsd_file_dispose_some(struct nfsd_net *nn);
+>  bool nfsd_file_is_cached(struct inode *inode);
+>  __be32 nfsd_file_acquire_gc(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  		  unsigned int may_flags, struct nfsd_file **nfp);
+> diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
+> index c7af1095f6b5..02ea16636b54 100644
+> --- a/fs/nfsd/nfssvc.c
+> +++ b/fs/nfsd/nfssvc.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/fs_struct.h>
+>  #include <linux/swap.h>
+>  #include <linux/siphash.h>
+> +#include <linux/task_work.h>
+>  
+>  #include <linux/sunrpc/stats.h>
+>  #include <linux/sunrpc/svcsock.h>
+> @@ -949,6 +950,7 @@ nfsd(void *vrqstp)
+>  	}
+>  
+>  	current->fs->umask = 0;
+> +	current->flags |= PF_RUNS_TASK_WORK;
+>  
+>  	atomic_inc(&nfsdstats.th_cnt);
+>  
+> @@ -963,6 +965,10 @@ nfsd(void *vrqstp)
+>  
+>  		svc_recv(rqstp);
+>  		validate_process_creds();
+> +
+> +		nfsd_file_dispose_some(nn);
+> +		if (task_work_pending(current))
+> +			task_work_run();
+
+I'd prefer that these task_work details reside inside
+nfsd_file_dispose_some(), or whatever we want to call to call it ...
+
+
+>  	}
+>  
+>  	atomic_dec(&nfsdstats.th_cnt);
+> -- 
+> 2.43.0
+> 
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Chuck Lever
 
