@@ -1,168 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-4808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EC28041C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:40:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D968041C5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 23:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 031C71F2131E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECD3CB20584
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896BC3C464
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592613C470
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 22:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KqMZiWIu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF62990;
-	Mon,  4 Dec 2023 13:20:40 -0800 (PST)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 496631FE75;
-	Mon,  4 Dec 2023 21:20:39 +0000 (UTC)
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BBC7F1398A;
-	Mon,  4 Dec 2023 21:20:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GGOwGqJCbmUoWAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 04 Dec 2023 21:20:34 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE48EFA
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 14:09:49 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-5c6910e93e3so123341a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 14:09:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701727789; x=1702332589; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N7YVZRS1Yk2p3iV3hbb4MrgXwpXbi4TeT5VGkU/u+Jk=;
+        b=KqMZiWIu6Huk1KRv62/VLR70dCPjpFds0G8v2g0RW8hC/DSworJnr6ZLlYFO2j3c88
+         hYt0tr1acI6wUHCWFiu7iY1jpRvkg1u8+yu9FZd5fuC8Zf+jlvjquBCuceBwUmcx8e6C
+         tQxq1a6mza04HO9xXTeS620tIojtLyJHI29WYy2ChNCSz01NTw+772Nd0CqqV+eXo5/v
+         WPYcaPYgTu3/7VJW0ooRbRSH56JUPEQLJeN/ZqZ2X8+G/ImlxtpTe2tJ/rKD6wGGTPU/
+         MqFenhCRgBmedtBNgv8emQ5Tjr/YO+/jCl1UcYKdG7J4J/STnzMJ0jN25nDqFX/C4VI/
+         Xz1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701727789; x=1702332589;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N7YVZRS1Yk2p3iV3hbb4MrgXwpXbi4TeT5VGkU/u+Jk=;
+        b=Ou76HRqUV0tyo/bmK/8+u+unf5OU62/4dsT4a+bA6D9OIEbhakmlzyH3HR6x7v4nst
+         zo6VxV93CHyHDu2TTdi5NOUVDZbu+4D5MoogE8c4EKmGPRhuPkIgD+/BYWFWanR0yxut
+         0KzqyqiVq6dsVTKaBPiv17mzyB/1gH3/SK63MPfFJl6v3BO+pNACcyL/YqzFXqxXynk4
+         6cTttSMyN6woZn3jbmk8ZolHxyTivTTaOcwgNNDMHAt3VifqCpiN/EZLv8TL5cHcqKLU
+         tpIkl2lsFsHzMq8zO3PURj3U6h8mJrtQjuQLpeW7wWddVUJZrVR5rgawpVQnAPhH8fkM
+         fb7g==
+X-Gm-Message-State: AOJu0YzZ5mtGmMiR7cLaQ3dskrBbKKGmWtcAQUUPE1spMC3PSTuTsMLr
+	HdUNpyOU/1wHs/+rscf7DX0Mfi9Im1OparkyIwJM7Q==
+X-Google-Smtp-Source: AGHT+IHDv1b42RKXKN4tRifZv0mEX5EckA+D3oEFHeJfjju4L9UJaftPOWecVThY8YBY1KMQIFUJ4A==
+X-Received: by 2002:a17:903:234a:b0:1d0:b693:ae30 with SMTP id c10-20020a170903234a00b001d0b693ae30mr2493966plh.6.1701727789078;
+        Mon, 04 Dec 2023 14:09:49 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id t4-20020a170902bc4400b001bf11cf2e21sm5844131plz.210.2023.12.04.14.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Dec 2023 14:09:46 -0800 (PST)
+Message-ID: <a070b6bd-0092-405e-99d2-00002596c0bc@kernel.dk>
+Date: Mon, 4 Dec 2023 15:09:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Oleg Nesterov" <oleg@redhat.com>, "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Peter Zijlstra" <peterz@infradead.org>, "Juri Lelli" <juri.lelli@redhat.com>,
- "Vincent Guittot" <vincent.guittot@linaro.org>, linux-fsdevel@vger.kernel.org,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Allow a kthread to declare that it calls
+ task_work_run()
+Content-Language: en-US
+To: NeilBrown <neilb@suse.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject:
- Re: [PATCH 1/2] Allow a kthread to declare that it calls task_work_run()
-In-reply-to: <20231204024031.GV38156@ZenIV>
-References: <20231204014042.6754-1-neilb@suse.de>,
- <20231204014042.6754-2-neilb@suse.de>, <20231204024031.GV38156@ZenIV>
-Date: Tue, 05 Dec 2023 08:20:31 +1100
-Message-id: <170172483155.7109.15983228851050210918@noble.neil.brown.name>
-X-Spamd-Bar: +++
-Authentication-Results: smtp-out2.suse.de;
-	dkim=none;
-	dmarc=fail reason="No valid SPF, No valid DKIM" header.from=suse.de (policy=none);
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of neilb@suse.de) smtp.mailfrom=neilb@suse.de
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [3.59 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-0.20)[-0.198];
-	 MIME_GOOD(-0.10)[text/plain];
-	 R_SPF_SOFTFAIL(4.60)[~all:c];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[13];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 R_DKIM_NA(2.20)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 DMARC_POLICY_SOFTFAIL(0.10)[suse.de : No valid SPF, No valid DKIM,none]
-X-Spam-Score: 3.59
-X-Rspamd-Queue-Id: 496631FE75
+References: <20231204014042.6754-1-neilb@suse.de>
+ <20231204014042.6754-2-neilb@suse.de>
+ <e9a1cfed-42e9-4174-bbb3-1a3680cf6a5c@kernel.dk>
+ <170172377302.7109.11739406555273171485@noble.neil.brown.name>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <170172377302.7109.11739406555273171485@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 04 Dec 2023, Al Viro wrote:
-> On Mon, Dec 04, 2023 at 12:36:41PM +1100, NeilBrown wrote:
+On 12/4/23 2:02 PM, NeilBrown wrote:
+> It isn't clear to me what _GPL is appropriate, but maybe the rules
+> changed since last I looked..... are there rules?
 > 
-> > This means that any cost for doing the work is not imposed on the kernel
-> > thread, and importantly excessive amounts of work cannot apply
-> > back-pressure to reduce the amount of new work queued.
-> 
-> It also means that a stuck ->release() won't end up with stuck
-> kernel thread...
+> My reasoning was that the call is effectively part of the user-space
+> ABI.  A user-space process can call this trivially by invoking any
+> system call.  The user-space ABI is explicitly a boundary which the GPL
+> does not cross.  So it doesn't seem appropriate to prevent non-GPL
+> kernel code from doing something that non-GPL user-space code can
+> trivially do.
 
-Is a stuck kernel thread any worse than a stuck user-space thread?
+By that reasoning, basically everything in the kernel should be non-GPL
+marked. And while task_work can get used by the application, it happens
+only indirectly or implicitly. So I don't think this reasoning is sound
+at all, it's not an exported ABI or API by itself.
 
-> 
-> > earlier than would be ideal.  When __dput (from the workqueue) calls
-> 
-> WTF is that __dput thing?  __fput, perhaps?
+For me, the more core of an export it is, the stronger the reason it
+should be GPL. FWIW, I don't think exporting task_work functionality is
+a good idea in the first place, but if there's a strong reason to do so,
+it should most certainly not be accessible to non-GPL modules. Basically
+NO new export should be non-GPL.
 
-Either __fput or dput :-)
-->release isn't the problem that I am seeing.
-The call trace that I see causing problems is
-__fput -> dput -> dentry_kill -> destroy_inode -> xfs_fs_destroy_inode
+-- 
+Jens Axboe
 
-so both __fput and dput are there, but most of the code is dput related.
-So both "put"s were swimming in by brain and the wrong combination came
-out.
-I changed it to __fput - thanks.
-
-> 
-> > This patch adds a new process flag PF_RUNS_TASK_WORK which is now used
-> > instead of PF_KTHREAD to determine whether it is sensible to queue
-> > something to task_works.  This flag is always set for non-kernel threads.
-> 
-> *ugh*
-> 
-> What's that flag for?  task_work_add() always can fail; any caller must
-> have a fallback to cope with that possibility; fput() certainly does.
-
-As Oleg pointed out, all threads including kernel threads call
-task_work_run() at exit, and some kernel threads depend on this.  So
-disabling task_work_add() early for all kernel threads would break
-things.
-
-Currently task_work_add() fails only once the process has started
-exiting.  Only code that might run during the exit handling need check.
-
-> 
-> Just have the kernel threads born with ->task_works set to &work_exited
-> and provide a primitive that would flip it from that to NULL.
-> 
-> > @@ -1328,7 +1328,7 @@ static void mntput_no_expire(struct mount *mnt)
-> >  
-> >  	if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
-> >  		struct task_struct *task = current;
-> > -		if (likely(!(task->flags & PF_KTHREAD))) {
-> > +		if (likely((task->flags & PF_RUNS_TASK_WORK))) {
-> >  			init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
-> >  			if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
-> >  				return;
-> 
-> Now, *that* is something I have much stronger objections to.
-> Stuck filesystem shutdown is far more likely than stuck
-> ->release().  You are seriously asking for trouble here.
-> 
-> Why would you want to have nfsd block on that?
-> 
-
-I don't *want* nfsd block on that, but I don't care if it does.  nfsd
-will only call task_work_run() at a safe time.  This is no different to
-user-space processes only calling task_work_run() at a safe time.
-
-The new flag isn't "I_AM_NFSD" or "QUEUE_FPUT_WORK_TO_TASK".  It is
-"RUNS_TASK_WORK".  So any code that would prefer to call task_work_add()
-but has a fall-back for tasks that don't call run_task_work() should
-test the new flag.  Doing otherwise would be inconsistent and
-potentially confusing.
-
-I don't think that nfsd getting stuck would be any worse than systemd
-getting stuck, or automount getting stuck, or udiskd getting stuck.
-
-Thanks,
-NeilBrown
 
