@@ -1,260 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-4795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E06803D3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 19:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B83C803D3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 19:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47D01F21220
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:37:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FF71F2123C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B462FC2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4DC2F861
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 18:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dBVshDLA"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gKUTAwtO";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="gJwB3UAC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F21A5B0
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 10:27:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701714457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MsCR3w3iP/fbWtFIHfml8iFRMkitafuttFnD2iLIZic=;
-	b=dBVshDLA9/kD70QjW2dzwAsUUez8cwbp5f7te6ajHlBUeH33WJ2I9barhnmd17/BW9FdfD
-	v/MHPgYmGjRpPg8rngUroh24AxduCMlvTJTHDjN0SWx87T5xn8d9G5zbebhi35tfenACg8
-	5gYPr/aK0wNTZJtDeuOkqKg0NMBD2Ds=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-QSRjVYBoNAG_6_WBWzQDxA-1; Mon, 04 Dec 2023 13:27:36 -0500
-X-MC-Unique: QSRjVYBoNAG_6_WBWzQDxA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-33335c6d495so2010984f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 10:27:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701714455; x=1702319255;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :references:cc:to:content-language:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MsCR3w3iP/fbWtFIHfml8iFRMkitafuttFnD2iLIZic=;
-        b=sudsnC+8PhO1Xr52ENCu/HgYgVC8pGQG1s+Yg1G3uBRQxR3DNQmraWPy3gEpUeYfe/
-         7AZylwzOeUX9ogQBhyJuG9oAxmW8/mOdqh8PhLVAL4Ah5Fn1/sPA2/gdQBD6UFEIBGIu
-         T+3jrnA4KS143MlzkAbTgLYTTBzdrcsKbp0jQdymb/H0lxDwA5LJIIQZdqvO6jP7lYln
-         FFjZLmoFoYa62n2Ac4UVDY/YKuVyU2Wnb5raZdnbWyrxa8fQD8nG9XAssZudomm+t26r
-         pBhxqE24QIVteq/m5JWrjKYbJ5TcWGqL/u/+k+SNaFIkH1I2eGpAhP28QcJQyGjG384B
-         WWtA==
-X-Gm-Message-State: AOJu0YwwPbDxBrK+6c6LJ2IJBB2XVj304Hr+wCo1KbjrW6QgmnFzEdAM
-	f9OZGf/9CWeYaWep0T6v/RQ04QHDmAbBCIRTSpYaBnpKKIIi4AIRwIgh4QpwadTZcM7tyAt9s1e
-	6CPtp1+AlJI7YcppnbZOXSHqAUw==
-X-Received: by 2002:a5d:4402:0:b0:333:2fd2:6f64 with SMTP id z2-20020a5d4402000000b003332fd26f64mr3528693wrq.110.1701714455278;
-        Mon, 04 Dec 2023 10:27:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGSV8kYq6adpaC56C7Llu3Yl8ioyuD6XQmmCo/8TnVNJ6VX5WXiBhZpY16lx0rh5pfD/VchbQ==
-X-Received: by 2002:a5d:4402:0:b0:333:2fd2:6f64 with SMTP id z2-20020a5d4402000000b003332fd26f64mr3528665wrq.110.1701714454771;
-        Mon, 04 Dec 2023 10:27:34 -0800 (PST)
-Received: from ?IPV6:2003:cb:c722:3700:6501:8925:6f9:fcdc? (p200300cbc72237006501892506f9fcdc.dip0.t-ipconnect.de. [2003:cb:c722:3700:6501:8925:6f9:fcdc])
-        by smtp.gmail.com with ESMTPSA id w3-20020a5d6803000000b003333eadd206sm6363571wru.27.2023.12.04.10.27.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Dec 2023 10:27:34 -0800 (PST)
-Message-ID: <a52284a4-2b8c-4118-965d-04c472fbee05@redhat.com>
-Date: Mon, 4 Dec 2023 19:27:32 +0100
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1684CAF;
+	Mon,  4 Dec 2023 10:32:51 -0800 (PST)
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4IVCPM009339;
+	Mon, 4 Dec 2023 18:32:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2023-11-20;
+ bh=Dq1cwoGrdsF8rX2j/190b9/CpmyAijmH2otOIHadQwI=;
+ b=gKUTAwtO1804stz0bnMRkRIUsFUx/9mozb4g7epOMLZxaUW8P0ax6xGxvXsiSHAa9AMJ
+ wUjjA6TRYVvoHwouanqOEwrZQYJd2gnOBwyowUQdoODCEpraAxV5I2Q4k7+/0gqhgqJZ
+ XOQKJogQpzfF+jzBfA9hJNl6Sh0dETj5EyuZ9XVHfSvu71peMLr6wel7/CY79kIgfm9m
+ 6g+qZK7Y77ztWUhsEpKnt0zGm0+CZMA8XqgKoXUKk2tJLoGUS1cfPXprR1HHtRP4PiLX
+ 2rPHZr8q2QJ2tsVp8fbJb5GQJ/6tXNroD/V0yHQbgDDDnpGklZQgG0VcsTWg7trrFZOl bQ== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3usm488054-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 18:32:42 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4HldBw014421;
+	Mon, 4 Dec 2023 18:32:41 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uqu166gup-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Dec 2023 18:32:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eaoxzNsLQbEW8q4rYQ0hVTi7p5PJBPSyU/bWYZhNg+kQP29IlmH9H0MpgqwaAR3y4D5X+XzVYfC2iHI8ovrhiMCqMbbumFAScFu2bU/e6atQdMh3hE2g0cRrM4CHCis2fxDTx5utEU29OmGN/rljURMrNKzyqtEaTRvh4XC0vmZBtrm9JzjoOOlskh/8oLJFEsksf/SuPENHHLZW0ucBMXpOlVF22L8Lg2etJssmO672vhM6LQ9ckX0S6TfSVjxcFoP4Qz3/Ovk6XQK7A9e0LusqGiFWc3bnM3WsEr+6ihxN2UyeDhoLRVbmG4MEpei6DYUiKqPM9WOdMOUccJsthw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Dq1cwoGrdsF8rX2j/190b9/CpmyAijmH2otOIHadQwI=;
+ b=BBenIr02/WT6uKVt51d/TVdyNfSrvMlxGQU4+JmyG77RUqPyC9XRM/wPfppq9IXkxad0k1iPjsFluf/DMuDQyIgqsRJybsr4Nqc8VDUdQe9tzz4SYjjgIyOBBV68KVVrfOLFb9HW4XAvZbWDQKt9X7sOHkdnybWo000YVo7MfuLih3MWEQwmSlHv7DudMbumgOYX8RNZQhdJ+9IF5LhH/+abHJXdrmaqAnSR7Ndq5Wy5rsKUdlMBrF9YsmztPjOGQSImAPOoHHmdE88pboI53H8cu7ISu0CZhlA6bWTzCB4D3OFIvHgY/j4AscVBYo1z5+05AOWvHDDDBEhUfbteCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Dq1cwoGrdsF8rX2j/190b9/CpmyAijmH2otOIHadQwI=;
+ b=gJwB3UACPAQcWwOLfUUsszbN8tRdXRN1iIlPood3LxmEtlPkOCP2EB/4EygsDaTpxCoZvUAf5YKJHNzYYTzISR6wRBpawgyKpPUozUC8wNqpTAgSBtlrOzwAEWFPDXuYVps1sNDirEq3BYAidesJFajQqKg2xmkEPcqhfdXDhM0=
+Received: from CH0PR10MB5113.namprd10.prod.outlook.com (2603:10b6:610:c9::8)
+ by SA2PR10MB4764.namprd10.prod.outlook.com (2603:10b6:806:115::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.33; Mon, 4 Dec
+ 2023 18:32:39 +0000
+Received: from CH0PR10MB5113.namprd10.prod.outlook.com
+ ([fe80::7361:23aa:7669:bcce]) by CH0PR10MB5113.namprd10.prod.outlook.com
+ ([fe80::7361:23aa:7669:bcce%7]) with mapi id 15.20.7046.034; Mon, 4 Dec 2023
+ 18:32:39 +0000
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+To: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc: akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH] mm/hugetlb: have CONFIG_HUGETLB_PAGE select CONFIG_XARRAY_MULTI
+Date: Mon,  4 Dec 2023 10:32:34 -0800
+Message-ID: <20231204183234.348697-1-sidhartha.kumar@oracle.com>
+X-Mailer: git-send-email 2.42.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0070.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::15) To CH0PR10MB5113.namprd10.prod.outlook.com
+ (2603:10b6:610:c9::8)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
- peterx@redhat.com, hughd@google.com, mhocko@suse.com,
- axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
- Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
- bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
- jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com
-References: <20231121171643.3719880-1-surenb@google.com>
- <20231121171643.3719880-6-surenb@google.com>
- <b3c882d2-0135-430c-8179-784f78be0902@arm.com>
- <a41c759f-78d8-44ed-b708-1bb737a8e6c1@redhat.com>
- <cb3d3b12-abf3-4eda-8d9a-944684d05505@arm.com>
- <ccdb1080-7a2e-4f98-a4e8-e864fa2db299@redhat.com>
- <CAJuCfpHS63bXkRGE1_G4z-2fDe72BeLka8t5ioSg2OXjbUrHXg@mail.gmail.com>
- <744be4e0-48e0-4c77-825c-711386dd205f@arm.com>
- <CAJuCfpHpbz4fWawmYU=B1D5pPE4+x0Wj0V-514Dja9UWcwiL9A@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAJuCfpHpbz4fWawmYU=B1D5pPE4+x0Wj0V-514Dja9UWcwiL9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5113:EE_|SA2PR10MB4764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8739e990-057d-4112-58d2-08dbf4f764d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	64/juXkTiISEzjSaLFWt97dZC611Da1ROs+IG31Q0qyjw42vSOSVTHK2aNgKTkjnby+EWBC/pBCQmqtNU0N8//BOPpIcF/TRXEZ15d4SrXbdAAKPhRSf7oCVKjsi3VC9Z2LvMEBRbOfyQfdEACuFMR/+At9JZOjIarKkTzJ+sPmWvuo7v1m1wx3x0OI9iI1XblDr7X7lWhlB/8xBPGEDAlO/kA/Oig4n8k7b5fFE33EyHB4DBDUvos2uJ7KufnmRspNonpIEZtgi5DhKX2PtUZ8ZWiBqxR3RUWn8A5N2gUJVd7fD6+i9huw7biJjcoJUuB/R4Uleu6lWRQ1/qrNmVVGphwOEBxbg46/h5mRFZUdqUCjY93MzG7q/vIMdt3FobSwGWtXB08fEnMcn58cO5CHQGMj0iC4WZMN+C58el/rwu69ErNHUU3LkIAkAQj7XZZlUmmBeAacOKSMbzWtpirFR39pGkachgImK8qsCMvy8ynUgDC3/xCc1RivJ5v7boJyexiF2L8U5OgJPITgjDFB0NhughhWfJOO7m1HaUFjLVMerXp2f+5eiqJ9sH0zo
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5113.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(366004)(396003)(376002)(346002)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(66946007)(316002)(54906003)(66476007)(66556008)(6666004)(6486002)(478600001)(5660300002)(41300700001)(36756003)(2906002)(4744005)(4326008)(8676002)(8936002)(44832011)(86362001)(2616005)(1076003)(38100700002)(6506007)(6512007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?jS3iwdc0A8RUgpXYA9DB6ifm1t7LqKbyGsk7ramnXKPgQtu98ifkNV/clAsa?=
+ =?us-ascii?Q?Qm81wVAOmblPCFyEkPgAyODo6wVXgVF7N80z2l8wRlO/EaKriRpn9Y/2UGwk?=
+ =?us-ascii?Q?SjuWiAC8VrR+mDt12OU7N4CFoot5em2+YoM5KvDPxWpvpAXi6BMukVuTtnEl?=
+ =?us-ascii?Q?b2Mdo21L1Ab4NnhCexNbSZnO6cOfuqgodW0aRtg6aXfC35Opm8ImGMS1DXEb?=
+ =?us-ascii?Q?7lI3Ud0sROmVdJ7KW66G2XDz43EGDKVqTqWvnp0xcdsi8WFyMeU6h7HSrUDD?=
+ =?us-ascii?Q?e+44kRzcQaBKDptXlcnwwDn7To0M5SUWBRKu4EUz/WlHqHopJLrGUf2li4L5?=
+ =?us-ascii?Q?F03u+iCFhypqnNPMnIg4j/bProuubVnVzPo69BegwXffruJl2CcvlNj+S+L0?=
+ =?us-ascii?Q?aJBXymH3RM0sPb+h3kvGd1Cz8Q8FmwIC77E74unbfkgmD7MaFL5h0Z+aEI9h?=
+ =?us-ascii?Q?pPv5sZ69qsy+STmsH6bvZfcP1quqW8oCzgU/eFQU1XskS76JccEixdbktUAn?=
+ =?us-ascii?Q?2Otq1NJ24WUqzM6TKt5PJw++ztNzrFBSgO+aAEIuPia5ALAhksusmbVFQOLq?=
+ =?us-ascii?Q?3sxBKYeeO0Z957wWDF/4fTkumoE6+EgMjJBvL1tFjHFkT8Y3cWoAZUx6qd5M?=
+ =?us-ascii?Q?GYcLsUjtIuAGYsunmFT3bEmd2CWd7jmc99Pe+n4vmj2kT3FnmZA4xElFPgX4?=
+ =?us-ascii?Q?gGb9DJ0W/1XxglLBe6tCh887XIUGiod+w4Q6JqCkoml49U7Zo3AKD5OIe2qE?=
+ =?us-ascii?Q?PMxP+ZMBelDBy0kVccrDN24asC3y2W0ApBPZfx5Jter5eJf/21LU3DpvMlqz?=
+ =?us-ascii?Q?a3Cn7N0K4djBjGCEe9O/8CK1tFAqFrSCnRsS+qR3mhE5egZ0H/1tJtvCsAHO?=
+ =?us-ascii?Q?9pJaKvamEkAwrK3AUmm6Kpemd3uFGqnjjiWpyZvjve5V0KFlQ/7TrzyJYg9U?=
+ =?us-ascii?Q?uW39qd3eZLMTC+43Nb8768fChno8E1kadSHVuP/2lRZ/U12mLwtXy10ISo9D?=
+ =?us-ascii?Q?H55NzV05q/BmBIzeg8VgcydF0Qz8MxWpBjo5+/bXoVj3Avu57joqMSl76u+c?=
+ =?us-ascii?Q?IfllBc8yAocm3sDCPEt0pC+5L55kspN/NwBup7DRwJcxlqNI57dfPE7ZbQWg?=
+ =?us-ascii?Q?fQEGYV7A7m+PeCSH4jMxBRETReHNWiY4ijyHAzFNrxsAOJR9SAJyt/fO1SU8?=
+ =?us-ascii?Q?B/jM0PhaLd7AAS1Frrga1raI+qSHoqtHxooFbdKRIaS6k2kLnpZCIxXxyykA?=
+ =?us-ascii?Q?nV5dpoBBY+VAZgVXdO4O15O/FIkiTKp24akPyQHrvgeC91gFXIhEj9MwyxLn?=
+ =?us-ascii?Q?gyA7uUT5vKUwFdEhrywQfncHzjPwMF8xdYD1wn/z1OOOFH4nfoOgR4Ay8Ts6?=
+ =?us-ascii?Q?KEmB1WCoWjpgqXVmD53c8k5FxsK5vjpSJqxkZ3+xbp7XS4dVWf0xRh7Z60Oa?=
+ =?us-ascii?Q?UDvIEFKgHGmemNOXtWVPuCgs3KXQn2EvZAipjTa37SqHF6czlj+FhZGzbd0E?=
+ =?us-ascii?Q?5mBSJ8zhKMyQOnjWP+oyKtQHXprmis9jCo+m673SwM4tID1Uub240+d4Tc5Q?=
+ =?us-ascii?Q?V1987bebPoGGVCwgK/UL4vFAX1Bl6pxkssHHIWxkacszFwzeTENn6hObq1lh?=
+ =?us-ascii?Q?64KONnE6w33KzzVeaJVz3zo=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	RJyEy5t7VjXfOj9eJUAmixiBJpsgJvrQQANgUBslgTC3EPvSTuijX458mYIh1UmylqvH4/yDBLqxm98iXjwMC5LmhgnhM5hjtt9pjaeZmnCFlcO0MNUXlUZWEdFKqC/OzCsHKjRys/7ybXg9S2Xsr2suU3QDXu8jceMOi+nJAQJ1fBXDwkG1l+Tythq16HkBhBjpnF6bY9yLd86dWUlcFMxJC1NbxVkQeJ7SNojjophfjTkkmEKWeWVB4JGeeiK3mTXD/y8DVsbuzazyyqq19XinNN1CqlxugFZfqo/ZH52LHUZGY6HPYAJNFnktyxXRz4uOfhn9q+828hFyPHS3Zg3J2JAWkpVWFSWCvBOmDmS36SKRce+0m3xrJN9CvMI5uEEWfAt8fGsKnP+xDCS8kOhfjSZQOupdhwhJQRAelh7rg8DEhsdWo29ChR7YJmnAyI/2sZbU45ScuqF+TaM6KDOEv8Ev9QKGts1Zr8uAy87V9iIN4hKnzGiWcD4Y7f6Hcy6jXLxqAScH4Juf1lNKq/AWsjI+P0VK0aukx16LHaW14X0h5HqSCLtSo+Q8Nz+a/rDxaAmQ7hEjwOekW7RnNlAHuiJpNifbXMtqTROyfKq08lKE3wVccV6+IMNSIeXnmhVdtcLlEDJVKRwFoso1LaeufACeBuYwufe2+e/SUUfLafHOsqIH//xtptLelPbvVa2p1psQjVBVfyeVDbsG+gkuIhT2kTehu9JD/GOCym8EgxoMHFLJo4D13734kjPkIYinmUxPcmPSpqU4/P17AvhxCUtojlTcptnqMxwOKZKYZLE79z6qOx/xAB+VWcKuRCCvnPfpFn5V/E+A0crnpcndOfR5W/IqFUGa6nEWsz+17w9aIOdps/ZFVj9VxQDkLmodrCEDPRzFGZv6TyC+ae27MVBv/gKOHetImxxAhxc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8739e990-057d-4112-58d2-08dbf4f764d1
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5113.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2023 18:32:38.9952
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QJmhG1Swimcpu598QprU0m/oANm+Ok1sHdE4t3bP4XBWyGnxWMuoIB3BNa2bW016jWrAYsOZROJnPZovNziYUhpUjWVxVEkTFwAc+X116q4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4764
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_18,2023-12-04_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2312040143
+X-Proofpoint-ORIG-GUID: 9ME4yC1tXOYa7Ik8CNFF8QUxh74iqCGk
+X-Proofpoint-GUID: 9ME4yC1tXOYa7Ik8CNFF8QUxh74iqCGk
 
-On 04.12.23 17:35, Suren Baghdasaryan wrote:
-> On Mon, Dec 4, 2023 at 1:27 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 04/12/2023 04:09, Suren Baghdasaryan wrote:
->>> On Sat, Dec 2, 2023 at 2:11 AM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 02.12.23 09:04, Ryan Roberts wrote:
->>>>> On 01/12/2023 20:47, David Hildenbrand wrote:
->>>>>> On 01.12.23 10:29, Ryan Roberts wrote:
->>>>>>> On 21/11/2023 17:16, Suren Baghdasaryan wrote:
->>>>>>>> Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
->>>>>>>> into destination buffer while checking the contents of both after
->>>>>>>> the move. After the operation the content of the destination buffer
->>>>>>>> should match the original source buffer's content while the source
->>>>>>>> buffer should be zeroed. Separate tests are designed for PMD aligned and
->>>>>>>> unaligned cases because they utilize different code paths in the kernel.
->>>>>>>>
->>>>>>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->>>>>>>> ---
->>>>>>>>     tools/testing/selftests/mm/uffd-common.c     |  24 +++
->>>>>>>>     tools/testing/selftests/mm/uffd-common.h     |   1 +
->>>>>>>>     tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
->>>>>>>>     3 files changed, 214 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/tools/testing/selftests/mm/uffd-common.c
->>>>>>>> b/tools/testing/selftests/mm/uffd-common.c
->>>>>>>> index fb3bbc77fd00..b0ac0ec2356d 100644
->>>>>>>> --- a/tools/testing/selftests/mm/uffd-common.c
->>>>>>>> +++ b/tools/testing/selftests/mm/uffd-common.c
->>>>>>>> @@ -631,6 +631,30 @@ int copy_page(int ufd, unsigned long offset, bool wp)
->>>>>>>>         return __copy_page(ufd, offset, false, wp);
->>>>>>>>     }
->>>>>>>>     +int move_page(int ufd, unsigned long offset, unsigned long len)
->>>>>>>> +{
->>>>>>>> +    struct uffdio_move uffdio_move;
->>>>>>>> +
->>>>>>>> +    if (offset + len > nr_pages * page_size)
->>>>>>>> +        err("unexpected offset %lu and length %lu\n", offset, len);
->>>>>>>> +    uffdio_move.dst = (unsigned long) area_dst + offset;
->>>>>>>> +    uffdio_move.src = (unsigned long) area_src + offset;
->>>>>>>> +    uffdio_move.len = len;
->>>>>>>> +    uffdio_move.mode = UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
->>>>>>>> +    uffdio_move.move = 0;
->>>>>>>> +    if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
->>>>>>>> +        /* real retval in uffdio_move.move */
->>>>>>>> +        if (uffdio_move.move != -EEXIST)
->>>>>>>> +            err("UFFDIO_MOVE error: %"PRId64,
->>>>>>>> +                (int64_t)uffdio_move.move);
->>>>>>>
->>>>>>> Hi Suren,
->>>>>>>
->>>>>>> FYI this error is triggering in mm-unstable (715b67adf4c8):
->>>>>>>
->>>>>>> Testing move-pmd on anon... ERROR: UFFDIO_MOVE error: -16 (errno=16,
->>>>>>> @uffd-common.c:648)
->>>>>>>
->>>>>>> I'm running in a VM on Apple M2 (arm64). I haven't debugged any further, but
->>>>>>> happy to go deeper if you can direct.
->>>>>>
->>>>>> Does it trigger reliably? Which pagesize is that kernel using?
->>>>>
->>>>> Yep, although very occasionally it fails with EAGAIN. 4K kernel; see other email
->>>>> for full config.
->>>>>
->>>>>>
->>>>>> I can spot that uffd_move_pmd_test()/uffd_move_pmd_handle_fault() uses
->>>>>> default_huge_page_size(), which reads the default hugetlb size.
->>>>>
->>>>> My kernel command line is explicitly seting the default huge page size to 2M.
->>>>>
->>>>
->>>> Okay, so that likely won't affect it.
->>>>
->>>> I can only guess that it has to do with the alignment of the virtual
->>>> area we are testing with, and that we do seem to get more odd patterns
->>>> on arm64.
->>>>
->>>> uffd_move_test_common() is a bit more elaborate, but if we aligned the
->>>> src+start area up, surely "step_count" cannot be left unmodified?
->>>>
->>>> So assuming we get either an unaligned source or an unaligned dst from
->>>> mmap(), I am not convinced that we won't be moving areas that are not
->>>> necessarily fully backed by PMDs and maybe don't even fall into the VMA
->>>> of interest?
->>>>
->>>> Not sure if that could trigger the THP splitting issue, though.
->>>>
->>>> But I just quickly scanned that test setup, could be I am missing
->>>> something. It might make sense to just print the mmap'ed range and the
->>>> actual ranges we are trying to move. Maybe something "obvious" can be
->>>> observed.
->>>
->>> I was able to reproduce the issue on an Android device and after
->>> implementing David's suggestions to split the large folio and after
->>> replacing default_huge_page_size() with read_pmd_pagesize(), the
->>> move-pmd test started working for me. Ryan, could you please apply
->>> attached patches (over mm-unstable) and try the test again?
->>
->> Yep, all fixed with those patches!
-> 
-> Great! Thanks for testing and confirming. I'll post an updated
-> patchset later today and will ask Andrew to replace the current one
-> with it.
-> I'll also look into the reasons we need to split PMD on ARM64 in this
-> test. It's good that this happened and we were able to test the PMD
-> split path but I'm curious about the reason. It's possible my address
-> alignment calculations are  somehow incorrect.
+After commit a08c7193e4f1 "mm/filemap: remove hugetlb special casing in
+filemap.c", hugetlb pages are stored in the page cache in base page sized
+indexes. This leads to mutli index stores in the xarray which is only
+supporting through CONFIG_XARRAY_MULTI. The other page cache user of
+multi index stores ,THP, selects XARRAY_MULTI. Have CONFIG_HUGETLB_PAGE
+follow this behavior as well to avoid the BUG() with a CONFIG_HUGETLB_PAGE
+&& !CONFIG_XARRAY_MULTI config.
 
-I only skimmed the diff briefly, but likely you also want to try 
-splitting in move_pages_pte(), if you encounter an already-pte-mapped THP.
+Fixes:a08c7193e4f1 ("mm/filemap: remove hugetlb special casing in filemap.c")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+---
+ fs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 0b404e61c80b..cf62d86b514f 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -279,6 +279,7 @@ endif # HUGETLBFS
+ 
+ config HUGETLB_PAGE
+ 	def_bool HUGETLBFS
++	select XARRAY_MULTI
+ 
+ config HUGETLB_PAGE_OPTIMIZE_VMEMMAP
+ 	def_bool HUGETLB_PAGE
 -- 
-Cheers,
-
-David / dhildenb
+2.42.0
 
 
