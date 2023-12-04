@@ -1,206 +1,336 @@
-Return-Path: <linux-fsdevel+bounces-4772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3038036F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 15:36:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A518036FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 15:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02DD1F210D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 14:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5921C20BA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 14:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C7228DCA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 14:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8733028DD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 14:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OOB2Xdu8"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CDBdu+nx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FBBE5;
-	Mon,  4 Dec 2023 05:37:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701697079; x=1733233079;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=qPgOqx4cEdKmsMgJJr/j80VXfx2O7ZclWenpKidSHbE=;
-  b=OOB2Xdu8mUIsZGUDtawvichOEP6H05V3ueKY4HY7tr7hIRBUda7NHzeE
-   elQ53wVRdLPgK0wzuEYuGJRUluaPpV7MBCGKOZ2Rpqet8YaPKTvFrp5DR
-   DZ1pRbpHgvxZRrmBIvRy0iXt7xH8rGMOVIHynu201WkxpO8ij6+LVmDKm
-   kiyVw6TWV1KqVOJ7HjtS08z6yTa4AGJ29kQAECMUqf6RJAkLpEPo7jA/u
-   sKn4rxZ4LkFELqpgK3vzqDeHvpGBKKc9zlMLuPL4rxkIQ48Q5ViwbhI5r
-   jIkUu1oPfVQqeJkP3FLRgQff7K2YO18ypwdawLWMPBnEIYTeU11QocWiG
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="7060522"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="7060522"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 05:37:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10913"; a="720325227"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="720325227"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orsmga003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Dec 2023 05:37:58 -0800
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 4 Dec 2023 05:37:57 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 4 Dec 2023 05:37:57 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.34; Mon, 4 Dec 2023 05:37:57 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=II6dkaBWvXWHpvFQUPhjBvlLgqltmmh2GqsVP0j1/nezI4Jx7Sxm6wdtSvz1GIdhEsF/ydFflZKa/XBYsCnwOfPxbEn5gNfXSTAWzETtLyTnL8uNDIC3LiZAYyXrraqoLnNXd1NdZGUIOvdmARL57Sre7P7C6uPSOVgBk3aYZyjkI+nHjWsRan0mP3KRF+0VVlXtKykM32nHVAA4jthqbjqULOwJ0KrL2KIy6y3SgFS3bl23ExljuMuUkIZ8a8Y4Mw57yte6dLMSoNxpyt3ovs6RlMQOAU7gfuodRnhavma9Af0GHSlwH5EjmyL8d/IAxTX0pZrYarsO36kEETSQ1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ahGdjg+pqqKSsbDO8NRoWsEFlhFw99zU8qp6D0YTdd0=;
- b=aY+cOwHnzg0uLn4JTCyedhKOA04h1BcidjgxZ1BxhoNVsZKIA/Qha752Iuf3wtLihcXzwQ0XEkCvGeUaGTsJR0jkcnUIhIc3DhSPRgkhNUInCMTkrkbw8irH8SNYSG3cNKFYQS6uwRrGrzsIuSmy/+sfExx+mAK7BD4s9t+YS0Q+BPAB8M8tIiPR3vjTS/kmEJYnnYlbdkkGx7AY2Q9DBLaZg74rx8pCbi5WobtDSWdf3DQ7tnBgjr0u4/CE10BtJTQD6PMe929c30oyUzAJBtOBRaAV+qxUEXoojv6/yVNO8PyibrUNGTeH2nFAG2CIL6d1qgwIUCZv/cr8DzBP0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by DS0PR11MB7410.namprd11.prod.outlook.com (2603:10b6:8:151::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.33; Mon, 4 Dec
- 2023 13:37:55 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::1236:9a2e:5acd:a7f]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::1236:9a2e:5acd:a7f%3]) with mapi id 15.20.7046.033; Mon, 4 Dec 2023
- 13:37:55 +0000
-Date: Mon, 4 Dec 2023 21:37:45 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
-	<linux-fsdevel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>,
-	<linux-doc@vger.kernel.org>, <ying.huang@intel.com>, <feng.tang@intel.com>,
-	<fengwei.yin@intel.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	<oliver.sang@intel.com>
-Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()]  1b738f196e:
- stress-ng.sysinfo.ops_per_sec -27.2% regression
-Message-ID: <ZW3WKV9ut7aFteKS@xsang-OptiPlex-9020>
-References: <202311300906.1f989fa8-oliver.sang@intel.com>
- <20231130075535.GN38156@ZenIV>
- <ZWlBNSblpWghkJyW@xsang-OptiPlex-9020>
- <20231201040951.GO38156@ZenIV>
- <20231201065602.GP38156@ZenIV>
- <20231201200446.GA1431056@ZenIV>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD45419A5;
+	Mon,  4 Dec 2023 05:39:10 -0800 (PST)
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4ClLZW000906;
+	Mon, 4 Dec 2023 13:39:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pp1; bh=JWXu4qy8zsoHGMYQ4VpZBTPvSXI9OX0ldDgJDtioPbo=;
+ b=CDBdu+nxXnZY4hjJDqhX4u3Kgk2A3nrN6rdVtWxp/o4VqXaGqztVvYyEY0uxl9Q+HY8N
+ oMSvPgBWE2+zFcZt2fmrUNkgWLxbPgZ04hIEzHBtxMGFnYSlqIn7ws8eL17GXnv/5EpH
+ CDjdybrudWHSfeWT9shPLUxJjKxAWfODp7gu8wednIwIV+VpZxB22grcB281coPisriF
+ Zy0uaGVDeUkvF5RsSvZyBKrWxPetZRtu9BQRAPvfEtTFvjMUjQXHbuGUBipGcn5RgDnb
+ EpMn6mRgT28vQGT3EW/G74NHe7qcDhF4pxCVAkh5z7obc0SeZgLWsEMQd63wmkVP4cLc 3Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3usex6hrys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Dec 2023 13:39:04 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3B4CmBAm005380;
+	Mon, 4 Dec 2023 13:39:04 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3usex6hry8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Dec 2023 13:39:04 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B4AnGWn015310;
+	Mon, 4 Dec 2023 13:39:03 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3urewt8hve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Dec 2023 13:39:02 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B4Dd1Wi63504832
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Dec 2023 13:39:01 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3349D20040;
+	Mon,  4 Dec 2023 13:39:01 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E724A20043;
+	Mon,  4 Dec 2023 13:38:53 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.24.253])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  4 Dec 2023 13:38:53 +0000 (GMT)
+Date: Mon, 4 Dec 2023 19:08:47 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dchinner@redhat.com
+Subject: Re: [RFC 0/7] ext4: Allocator changes for atomic write support with
+ DIO
+Message-ID: <ZW3WZ6prrdsPc55Z@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1701339358.git.ojaswin@linux.ibm.com>
+ <8c06c139-f994-442b-925e-e177ef2c5adb@oracle.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231201200446.GA1431056@ZenIV>
-X-ClientProxiedBy: SG2PR01CA0190.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::11) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+In-Reply-To: <8c06c139-f994-442b-925e-e177ef2c5adb@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pqMqYZoB5u1kPGItM7FXb3lU_mohMlQE
+X-Proofpoint-GUID: AmoxTpAGqRo9ZBjsPI0fNlAXgV9Pduud
+X-Proofpoint-UnRewURL: 1 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|DS0PR11MB7410:EE_
-X-MS-Office365-Filtering-Correlation-Id: 362ea0a4-9a59-4824-e162-08dbf4ce3858
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1MxdnA9MsO7HJxEvrC3S2ZcLnQjtayT/eYLzz57OcK5MiX+wqNIoQAL3qKszdplFxv/LzX5gu2H41bG7qJbjuEVH2yYpaGQaoTk+sXznwZvD212yt/+RK3Jkp1rOdzhzbbkvtsNn4+KdvCb7k7UJAZ2iOAkSRhM9LJfWVIVACVj5U7fPUTGZTxfPszoCb4JqyGHNcG+8rU+GytZK4WEx6tdgUEEfW66ocIa3JOEJ8YhSEelqIwU1QFW6KehF9yWWRjYXtwo2YWlM/tXV7iHuaJpIAnny5wf41N1d4gttcAyDXHPjHM9KItrdHz+FnIHgi4USNlwm2ZqxTJ1X6PpwYkTGKcKqmkXmKD7aQceiw3J37thN+ETo/A2KzNa80utmcEMxkrVwtPAA79JXIqN98mM8ghYIxDE2cZ7D/tKEHDMXjEaAWj5M9SYj1OSs0B+h/4ptBV2eL8DVEHY1WPE9nefzU8gpLbhF4VRRigS2IbeobuhSo2jMBvybAUZipcapsSDkGFgbaGgi5FzqMMMX7U9AHeRuxt4i0SbThmBCqR/a4AZg3sYchNoX9MAMElUJ
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(396003)(346002)(376002)(366004)(39860400002)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(83380400001)(107886003)(82960400001)(38100700002)(86362001)(44832011)(8676002)(4326008)(8936002)(6506007)(6512007)(9686003)(26005)(478600001)(41300700001)(6486002)(6666004)(66946007)(66556008)(316002)(66476007)(54906003)(6916009)(2906002)(33716001)(5660300002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xzx0UVbS4/omeuqVv0SPkoYa28KqpqJDZum0BjKbWyaGI48/ELvwXSAGbqU4?=
- =?us-ascii?Q?MPkocL3RyqpFrNVLJtMPaLqhywYX19oq8sOMGaOj3Ez284MBcKdXHoaB4L8r?=
- =?us-ascii?Q?zqsandXtOAgMDaYWvQ+eexPuYngK1oo6zXOEEnAdCHsGPyeWMk67Sp+h79K+?=
- =?us-ascii?Q?4lvn4iGe7Xl6ASM47hHb3YGuJyN+B9YTfT7vjQVMZjz11B8b8JZZBKnHt+mx?=
- =?us-ascii?Q?J8janKkbLdAhanUVP++USuh0+TmSw74nWN6y8J3IA8ktopcojE+kgkNT7O80?=
- =?us-ascii?Q?N81gyKPuH1cgJkeFhZWkRNjQ6la+a4p09Rx2BilVEcCkoAhPEVFkiXV/btR0?=
- =?us-ascii?Q?skGOKoMSiVkNWlGx3iKO9HjgPAJRCKObtwncFlT9yxSUk8I9NfVS1JSYArGe?=
- =?us-ascii?Q?XbAyjdY5tA1YBQUcX+ZuF8jsK++rcqSevjhGWYZaa7u0KfrCIEQ29VMXUiUL?=
- =?us-ascii?Q?v32CWfwXcNmUtKdeHwqvXdofazDcET9gsO8Tn9BMTxu5LVxAXyVwnjPsHl6g?=
- =?us-ascii?Q?oCDmzAZO7Lf69rk8WbX5XgYAt4KzrolSsm2tfSgMx0RlXaMONWZaYXS55AFL?=
- =?us-ascii?Q?5qJpMfcjcufFG7r1+LfwLPsbHDqZHOSEA7B0CKQqNwG2aHwH8PBApKhQIbKF?=
- =?us-ascii?Q?i++MABhEXZR9mMOSrTvFY9VLMj+4lXvG5GM/25thZrxVnXVuGjKFMvxx4fZY?=
- =?us-ascii?Q?93XJJq80n7RxwcKlaoxyq/qx0ee9ir1cwPa5t2qz3mXaM03l7FAMzqfo9z5+?=
- =?us-ascii?Q?g7QNvpLCT5ZRggXOjO11ZMKG19elPJmRDdDQA1hReR/TdtsZjoDJU37l8U9G?=
- =?us-ascii?Q?1mHtF27FnhRC+pDhH+T6fkzdV9gJGqKxXRHf5F1G4YZR3K2JCopsNe8DeTJ4?=
- =?us-ascii?Q?TvjprpUAjsFUGGc0Iygx/q1ioZ6S/mqujyBd4XXtnP2i4iTgHOWkmRaVnBG7?=
- =?us-ascii?Q?QGJ7WiETYXOZGht4WSYHk7lqMyu7FlI4vxPvjG9Gi8rJPm0CHBefMcd3hAhn?=
- =?us-ascii?Q?RiK1FXVTzV4NBIZ0F/DL6DQqLxpLq0csVdCC2S1s1Pv+WBQHyqHYxE1GZzon?=
- =?us-ascii?Q?/vzsjiuvbELUde3uqrRAmrFNONdmsYoxqWmcBwjd+x/85cNUFJYiiJj5z+us?=
- =?us-ascii?Q?YtClky83dwJ7tRUPlxKe11464DaEE05fedifcMfOleTcuWi9LC4EuTI6L4iZ?=
- =?us-ascii?Q?CFZqKrCdJj5U0EsL2b49zcczuj4Ex+qopf3gWJAY1A2DYmm8ZhjvODmN2X0Q?=
- =?us-ascii?Q?g1Ov/KCM2rO6fBuY4f3gbVaxLKgLp4kAdnfziJAX9gx9jOxcAJre8KF0NV4C?=
- =?us-ascii?Q?84xZHxuE9qSK4RShdrRg1CEmivZxXHhL6oxB99VkkxabYUHjgsBDi4Uz/oFr?=
- =?us-ascii?Q?rKHLXIaePBaVVhWf2hODULBzA87C2J94B36CwJBBYYQPcasgrSMGRkcRwTNS?=
- =?us-ascii?Q?lUwgMfNEWdkWT2fRPjNz3iun8X9zRmTzRqTP3w2yXkM+YX/rmfyQcUr7Oz2p?=
- =?us-ascii?Q?Gw7R43yEF20CnhurzmFNOZANNx1xp3arjOE8o0o9sA1tjMwUegUMHJFo8gNi?=
- =?us-ascii?Q?cCOC7WFMkJcfADKVofKzJYfhG6ZDdXE4fi/RkXR5A9Ez3AYM+jvkAWGf7cYA?=
- =?us-ascii?Q?Mg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 362ea0a4-9a59-4824-e162-08dbf4ce3858
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2023 13:37:55.0689
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yOQqRNcpLvkXwghhsHAOZAlatzWAmfzh7WMRimh9Ld9NHO4ut4UqLotgNHjGY+xCrl6iyEnSoGEpiF7BTPUMqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7410
-X-OriginatorOrg: intel.com
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-04_12,2023-12-04_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1015 adultscore=0 lowpriorityscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
+ definitions=main-2312040102
 
-hi, Al Viro,
+Hi John,
 
-On Fri, Dec 01, 2023 at 08:04:46PM +0000, Al Viro wrote:
-> On Fri, Dec 01, 2023 at 06:56:03AM +0000, Al Viro wrote:
-> > On Fri, Dec 01, 2023 at 04:09:51AM +0000, Al Viro wrote:
-> > > On Fri, Dec 01, 2023 at 10:13:09AM +0800, Oliver Sang wrote:
-> > > 
-> > > > > Very interesting...  Out of curiosity, what effect would the following
-> > > > > have on top of 1b738f196e?
-> > > > 
-> > > > I applied the patch upon 1b738f196e (as below fec356fd0c), but seems less
-> > > > useful.
-> > > 
-> > > I would be rather surprised if it fixed anything; it's just that 1b738f196e
-> > > changes two things - locking rules for __dentry_kill() and, in some cases,
-> > > the order of dentry eviction in shrink_dentry_list().  That delta on top of
-> > > it restores the original order in shrink_dentry_list(), leaving pretty much
-> > > the changes in lock_for_kill()/dput()/__dentry_kill().
-> > > 
-> > > Interesting...  Looks like there are serious changes in context switch
-> > > frequencies, but I don't see where could that have come from...
-> > 
-> > In principle it could be an effect of enforcing the ordering between __dentry_kill()
-> > of child and parent, but if that's what is going on... we would've seen
-> > more iterations of loop in shrink_dcache_parent() and/or d_walk() calls in
-> > it having more work to do.  But... had that been what's going on, wouldn't we
-> > see some of those functions in the changed part of profile?  
-> > 
-> > I'll try to split that thing into a series of steps, so we could at least narrow
-> > the effect down, but that'll have to wait until tomorrow ;-/
+Thanks for the review. 
+
+On Mon, Dec 04, 2023 at 10:36:01AM +0000, John Garry wrote:
+> On 30/11/2023 13:53, Ojaswin Mujoo wrote:
 > 
-> OK, a carved-up series (on top of 1b738f196e^) is in #carved-up-__dentry_kill
-> That's 9 commits, leading to something close to 1b738f196e+patch you've tested
-> yesterday; could you profile them on your reproducers?  That might give some
-> useful information about the nature of the regression...
->
+> Thanks for putting this together.
+> 
+> > This patch series builds on top of John Gary's atomic direct write
+> > patch series [1] and enables this support in ext4. This is a 2 step
+> > process:
+> > 
+> > 1. Enable aligned allocation in ext4 mballoc. This allows us to allocate
+> > power-of-2 aligned physical blocks, which is needed for atomic writes.
+> > 
+> > 2. Hook the direct IO path in ext4 to use aligned allocation to obtain
+> > physical blocks at a given alignment, which is needed for atomic IO. If
+> > for any reason we are not able to obtain blocks at given alignment we
+> > fail the atomic write.
+> 
+> So are we supposed to be doing atomic writes on unwritten ranges only in the
+> file to get the aligned allocations?
 
-we rerun the test and confirmed the regression still exists if comparing
-20f7d1936e8a2 (viro-vfs/carved-up-__dentry_kill) step 9: fold decrment of parent's refcount into __dentry_kill()
-with
-b4cc0734d2574 d_prune_aliases(): use a shrink list
+If we do an atomic write on a hole, ext4 will give us an aligned extent
+provided the hole is big enough to accomodate it. 
 
-the data is similar to our previous report.
+However, if we do an atomic write on a existing extent (written or
+unwritten) ext4 would check if it satisfies the alignment and length
+requirement and returns an error if it doesn't. Since we don't have cow
+like functionality afaik the only way we could let this kind of write go
+through is by punching the pre-existing extent which is not something we
+can directly do in the same write operation, hence we return error.
 
-now we feed the results into our auto-bisect tool and hope to get results later
+> 
+> I actually tried that, and I got a WARN triggered:
+> 
+> # mkfs.ext4 /dev/sda
+> mke2fs 1.46.5 (30-Dec-2021)
+> Creating filesystem with 358400 1k blocks and 89760 inodes
+> Filesystem UUID: 7543a44b-2957-4ddc-9d4a-db3a5fd019c9
+> Superblock backups stored on blocks:
+>         8193, 24577, 40961, 57345, 73729, 204801, 221185
+> 
+> Allocating group tables: done
+> Writing inode tables: done
+> Creating journal (8192 blocks): done
+> Writing superblocks and filesystem accounting information: done
+> 
+> [   12.745889] mkfs.ext4 (150) used greatest stack depth: 13304 bytes left
+> # mount /dev/sda mnt
+> [   12.798804] EXT4-fs (sda): mounted filesystem
+> 7543a44b-2957-4ddc-9d4a-db3a5fd019c9 r/w with ordered data mode. Quota
+> mode: none.
+> # touch mnt/file
+> #
+> # /test-statx -a /root/mnt/file
+> statx(/root/mnt/file) = 0
+> dump_statx results=5fff
+>   Size: 0               Blocks: 0          IO Block: 1024    regular file
+> Device: 08:00           Inode: 12          Links: 1
+> Access: (0644/-rw-r--r--)  Uid:     0   Gid:     0
+> Access: 2023-12-04 10:27:40.002848720+0000
+> Modify: 2023-12-04 10:27:40.002848720+0000
+> Change: 2023-12-04 10:27:40.002848720+0000
+>  Birth: 2023-12-04 10:27:40.002848720+0000
+> stx_attributes_mask=0x703874
+>         STATX_ATTR_WRITE_ATOMIC set
+>         unit min: 1024
+>         uunit max: 524288
+> Attributes: 0000000000400000 (........ ........ ........ ........
+> ........ .?--.... ..---... .---.-..)
+> #
+> 
+> 
+> 
+> looks ok so far, then write 4KB at offset 0:
+> 
+> # /test-pwritev2 -a -d -p 0 -l 4096  /root/mnt/file
+> file=/root/mnt/file write_size=4096 offset=0 o_flags=0x4002 wr_flags=0x24
+> [   46.813720] ------------[ cut here ]------------
+> [   46.814934] WARNING: CPU: 1 PID: 158 at fs/ext4/mballoc.c:2991
+> ext4_mb_regular_allocator+0xeca/0xf20
+> [   46.816344] Modules linked in:
+> [   46.816831] CPU: 1 PID: 158 Comm: test-pwritev2 Not tainted
+> 6.7.0-rc1-00038-gae3807f27e7d-dirty #968
+> [   46.818220] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+> BIOS rel-1.16.0-0-gd239552c-rebuilt.opensuse.org 04/01/2014
+> [   46.819886] RIP: 0010:ext4_mb_regular_allocator+0xeca/0xf20
+> [   46.820734] Code: fd ff ff f0 41 ff 81 e4 03 00 00 e9 63 fd ff ff
+> 90 0f 0b 90 e9 fe f3 ff ff 90 48 c7 c7 e2 7a b2 86 44 89 ca e8 f7 f1
+> d2 ff 90 <0f> 0b 90 90 45 8b 44 24 3c e9 d4 f3 ff ff 4d 8b 45 08 4c 89
+> c2 4d
+> [   46.823577] RSP: 0018:ffffb77dc056b7c0 EFLAGS: 00010286
+> [   46.824379] RAX: 0000000000000000 RBX: ffff9b2ad77dea80 RCX:
+> 0000000000000000
+> [   46.825458] RDX: 0000000000000001 RSI: ffff9b2b3491b5c0 RDI:
+> ffff9b2b3491b5c0
+> [   46.826557] RBP: ffff9b2adc7cd000 R08: 0000000000000000 R09:
+> c0000000ffffdfff
+> [   46.827634] R10: ffff9b2adcb9d780 R11: ffffb77dc056b648 R12:
+> ffff9b2ac6778000
+> [   46.828714] R13: ffff9b2adc7cd000 R14: ffff9b2adc7d0000 R15:
+> 000000000000002a
+> [   46.829796] FS:  00007f726dece740(0000) GS:ffff9b2b34900000(0000)
+> knlGS:0000000000000000
+> [   46.830706] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   46.831299] CR2: 0000000001ed72b8 CR3: 000000001c794006 CR4:
+> 0000000000370ef0
+> [   46.832041] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [   46.832813] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+> [   46.833546] Call Trace:
+> [   46.833901]  <TASK>
+> [   46.834163]  ? __warn+0x78/0x130
+> [   46.834504]  ? ext4_mb_regular_allocator+0xeca/0xf20
+> [   46.835037]  ? report_bug+0xf8/0x1e0
+> [   46.835527]  ? console_unlock+0x45/0xd0
+> [   46.835963]  ? handle_bug+0x40/0x70
+> [   46.836419]  ? exc_invalid_op+0x13/0x70
+> [   46.836865]  ? asm_exc_invalid_op+0x16/0x20
+> [   46.837329]  ? ext4_mb_regular_allocator+0xeca/0xf20
+> [   46.837852]  ext4_mb_new_blocks+0x7e8/0xe60
+> [   46.838382]  ? __kmalloc+0x4b/0x130
+> [   46.838824]  ? __kmalloc+0x4b/0x130
+> [   46.839243]  ? ext4_find_extent+0x347/0x360
+> [   46.839743]  ext4_ext_map_blocks+0xc44/0xff0
+> [   46.840395]  ext4_map_blocks+0x162/0x5b0
+> [   46.841010]  ? jbd2__journal_start+0x84/0x1f0
+> [   46.841694]  ext4_map_blocks_aligned+0x20/0xa0
+> [   46.842382]  ext4_iomap_begin+0x1e9/0x320
+> [   46.843006]  iomap_iter+0x16d/0x350
+> [   46.843554]  __iomap_dio_rw+0x3be/0x830
+> [   46.844150]  iomap_dio_rw+0x9/0x30
+> [   46.844680]  ext4_file_write_iter+0x597/0x800
+> [   46.845346]  do_iter_readv_writev+0xe1/0x150
+> [   46.846029]  do_iter_write+0x86/0x1f0
+> [   46.846638]  vfs_writev+0x96/0x190
+> [   46.847176]  ? do_pwritev+0x98/0xd0
+> [   46.847721]  do_pwritev+0x98/0xd0
+> [   46.848230]  ? syscall_trace_enter.isra.19+0x130/0x1b0
+> [   46.849028]  do_syscall_64+0x42/0xf0
+> [   46.849590]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> [   46.850405] RIP: 0033:0x7f726df9666f
+> [   46.850964] Code: d5 41 54 49 89 f4 55 89 fd 53 44 89 c3 48 83 ec
+> 18 80 3d bb fd 0b 00 00 74 2a 45 89 c1 49 89 ca 45 31 c0 b8 48 01 00
+> 00 0f 05 <48> 3d 00 f0 ff ff 76 5c 48 8b 15 7a 77 0b 00 f7 d8 64 89 02
+> 48 83
+> [   46.854020] RSP: 002b:00007fff28b9bff0 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000148
+> [   46.855178] RAX: ffffffffffffffda RBX: 0000000000000024 RCX:
+> 00007f726df9666f
+> [   46.856248] RDX: 0000000000000001 RSI: 00007fff28b9c050 RDI:
+> 0000000000000003
+> [   46.857303] RBP: 0000000000000003 R08: 0000000000000000 R09:
+> 0000000000000024
+> [   46.858365] R10: 0000000000000000 R11: 0000000000000246 R12:
+> 00007fff28b9c050
+> [   46.859407] R13: 0000000000000001 R14: 0000000000000000 R15:
+> 00007f726e08aa60
+> [   46.860448]  </TASK>
+> [   46.860797] ---[ end trace 0000000000000000 ]---
+> [   46.861497] EXT4-fs warning (device sda):
+> ext4_map_blocks_aligned:520: Returned extent couldn't satisfy
+> alignment requirements
+> main wrote -1 bytes at offset 0
+> [   46.863855] test-pwritev2 (158) used greatest stack depth: 11920 bytes
+> left
+> #
+> 
+> Please note that I tested on my own dev branch, which contains changes over
+> [1], but I expect it would not make a difference for this test.
 
-but due to the limitation such like auto-bisect cannot capture multi commits if
-they all contribute to the regression, after we get the results from auto
-bisect, we will check if any further munual efforts needed. Thanks
+Hmm this should not ideally happen, can you please share your test
+script with me if possible?
+
+> 
+> 
+> > 
+> > Currently this RFC does not impose any restrictions for atomic and non-atomic
+> > allocations to any inode,  which also leaves policy decisions to user-space
+> > as much as possible. So, for example, the user space can:
+> > 
+> >   * Do an atomic direct IO at any alignment and size provided it
+> >     satisfies underlying device constraints. The only restriction for now
+> >     is that it should be power of 2 len and atleast of FS block size.
+> > 
+> >   * Do any combination of non atomic and atomic writes on the same file
+> >     in any order. As long as the user space is passing the RWF_ATOMIC flag
+> >     to pwritev2() it is guaranteed to do an atomic IO (or fail if not
+> >     possible).
+> > 
+> > There are some TODOs on the allocator side which are remaining like...
+> > 
+> > 1.  Fallback to original request size when normalized request size (due to
+> >      preallocation) allocation is not possible.
+> > 2.  Testing some edge cases.
+> > 
+> > But since all the basic test scenarios were covered, hence we wanted to get
+> > this RFC out for discussion on atomic write support for DIO in ext4.
+> > 
+> > Further points for discussion -
+> > 
+> > 1. We might need an inode flag to identify that the inode has blocks/extents
+> > atomically allocated. So that other userspace tools do not move the blocks of
+> > the inode for e.g. during resize/fsck etc.
+> >    a. Should inode be marked as atomic similar to how we have IS_DAX(inode)
+> >    implementation? Any thoughts?
+> > 
+> > 2. Should there be support for open flags like O_ATOMIC. So that in case if
+> > user wants to do only atomic writes to an open fd, then all writes can be
+> > considered atomic.
+> > 
+> > 3. Do we need to have any feature compat flags for FS? (IMO) It doesn't look
+> > like since say if there are block allocations done which were done atomically,
+> > it should not matter to FS w.r.t compatibility.
+> > 
+> > 4. Mostly aligned allocations are required when we don't have data=journal
+> > mode. So should we return -EIO with data journalling mode for DIO request?
+> > 
+> > Script to test using pwritev2() can be found here:
+> > https://gist.github.com/OjaswinM/e67accee3cbb7832bd3f1a9543c01da9
+> 
+> Please note that the posix_memalign() call in the program should PAGE align.
+
+Why do you say that? direct IO seems to be working when the userspace
+buffer is 512 byte aligned, am I missing something?
+
+Regards,
+ojaswin
+
+PS: I'm on vacation this week so might be a bit slow to address all the
+review comments.
+
+> 
+> Thanks,
+> John
 
