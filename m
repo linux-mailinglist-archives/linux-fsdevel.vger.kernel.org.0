@@ -1,102 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-4720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C900802ADC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 05:31:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E51F802ADD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 05:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0FF28035F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4911F20F2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7670281E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XueloJ4X"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AEB946F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Dec 2023 04:31:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC06C5;
-	Sun,  3 Dec 2023 18:40:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LVTxDRpbm4m8/L9l+PdmnoSZZXeKUDl437Ufb7hbh2I=; b=XueloJ4XOx6AvGagXXqf5zKEn6
-	Kd5AGBMar6KgXfVvTp/7bdTGl3DdqsgzJxNve8zpIAvjgBZF3V0eQGEADal6zwOjS3aNKL4ftzMLN
-	rjoiFwGFS3yizzESIkiPgOhziQogNXixp2rvMHVbe9hH6vo5z528uimva4HJN9LTEaMy3hA4xJJ6p
-	2J6Go6+2sdlMnM6i2xxXWn5D9YFtLk7fb+WBiY5TRAwsMUSUTJSyv4r4slX7mtCWJzKfssciHJsOZ
-	28eiZSUBaWqnd0eNWVAQ3j0FXQmUQpq9iWRRp65vJ4AaWDeVACyNu+yHrrr2reHauRZY7zS8495/5
-	wOj7nPaA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r9ysp-006nG8-1T;
-	Mon, 04 Dec 2023 02:40:31 +0000
-Date: Mon, 4 Dec 2023 02:40:31 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neilb@suse.de>
-Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] Allow a kthread to declare that it calls
- task_work_run()
-Message-ID: <20231204024031.GV38156@ZenIV>
-References: <20231204014042.6754-1-neilb@suse.de>
- <20231204014042.6754-2-neilb@suse.de>
+Received: from out0-195.mail.aliyun.com (out0-195.mail.aliyun.com [140.205.0.195])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3450DD7
+	for <linux-fsdevel@vger.kernel.org>; Sun,  3 Dec 2023 18:54:06 -0800 (PST)
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047206;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.VboaiM6_1701658443;
+Received: from localhost(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.VboaiM6_1701658443)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Dec 2023 10:54:03 +0800
+From: "Zhao Chen" <winters.zc@antgroup.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: miklos@szeredi.hu
+Subject: [PATCH v3 0/2] fuse: Add support for resend pending requests
+Date: Mon, 04 Dec 2023 10:54:01 +0800
+Message-Id: <20231204025403.304877-1-winters.zc@antgroup.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231204014042.6754-2-neilb@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 04, 2023 at 12:36:41PM +1100, NeilBrown wrote:
+After the FUSE daemon crashes, the fuse mount point becomes inaccessible.
+In some production environments, a watchdog daemon is used to preserve
+the FUSE connection's file descriptor (fd). When the FUSE daemon crashes,
+a new FUSE daemon is started and takes over the fd from the watchdog
+daemon, allowing it to continue providing services.
 
-> This means that any cost for doing the work is not imposed on the kernel
-> thread, and importantly excessive amounts of work cannot apply
-> back-pressure to reduce the amount of new work queued.
+However, if any inflight requests are lost during the crash, the user
+process becomes stuck as it does not receive any replies.
 
-It also means that a stuck ->release() won't end up with stuck
-kernel thread...
+To resolve this issue, this patchset introduces a new notification type
+that enable resending these pending requests to the FUSE daemon again,
+allowing the stuck user process to recover.
 
-> earlier than would be ideal.  When __dput (from the workqueue) calls
+When using the resend API, FUSE daemon needs to ensure avoidance of
+processing duplicate non-idempotent requests to prevent potential
+consistency issues. The high bit of the fuse request id is utilized for
+indicating the resend request.
 
-WTF is that __dput thing?  __fput, perhaps?
+---
+v2->v3:
+ - use notification instead of sysfs API to trigger resend
+ - simplify FUSE_REQ_ID_MASK related code
+ - rename some related macro names
 
-> This patch adds a new process flag PF_RUNS_TASK_WORK which is now used
-> instead of PF_KTHREAD to determine whether it is sensible to queue
-> something to task_works.  This flag is always set for non-kernel threads.
+v1->v2:
+ - remove flush sysfs API in the original mail
+ - add using high bit of request ID for indicating resend requests
+ - add wakeup in fuse_resend_pqueue()
 
-*ugh*
+Zhao Chen (2):
+  fuse: Introduce a new notification type for resend pending requests
+  fuse: Use the high bit of request ID for indicating resend requests
 
-What's that flag for?  task_work_add() always can fail; any caller must
-have a fallback to cope with that possibility; fput() certainly does.
+ fs/fuse/dev.c             | 69 ++++++++++++++++++++++++++++++++++++++-
+ fs/fuse/inode.c           |  3 +-
+ include/uapi/linux/fuse.h | 12 +++++++
+ 3 files changed, 82 insertions(+), 2 deletions(-)
 
-Just have the kernel threads born with ->task_works set to &work_exited
-and provide a primitive that would flip it from that to NULL.
+-- 
+2.32.0.3.g01195cf9f
 
-> @@ -1328,7 +1328,7 @@ static void mntput_no_expire(struct mount *mnt)
->  
->  	if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
->  		struct task_struct *task = current;
-> -		if (likely(!(task->flags & PF_KTHREAD))) {
-> +		if (likely((task->flags & PF_RUNS_TASK_WORK))) {
->  			init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
->  			if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
->  				return;
-
-Now, *that* is something I have much stronger objections to.
-Stuck filesystem shutdown is far more likely than stuck
-->release().  You are seriously asking for trouble here.
-
-Why would you want to have nfsd block on that?
 
