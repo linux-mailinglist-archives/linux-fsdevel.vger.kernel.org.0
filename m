@@ -1,226 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-4903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810BC8061DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 23:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BCD8061DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 23:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0130CB2110F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 22:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCBD0B2101D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 22:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A783FE49
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 22:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5613FE46
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 22:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Bsny76bS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zY4U6y6l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BBA1A5
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 14:22:03 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-db539ab8e02so4807829276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Dec 2023 14:22:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1701814923; x=1702419723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kV+tvXpjVk7xX2GSglbALSCSl6OSs1vaoyTrKyQ3HM=;
-        b=Bsny76bSlA7tMaRB0CuSWeOtCPicfyo4HILwcKw+h4noG+lT3rZshzgTWwlkA5ZBGU
-         6TA3JISy3Wq4QL+5LGX364CrS3bCkXoMSCfS23RxjCf5cgTfX0XQxhSD58GoR57sPfVl
-         NLdZhIck74gMMrxNgnKynfNgysiQ9MCf+td91Naj4ramtjM96o09dW9nftLiG52PCoON
-         mQI7p1bLZUYsxM4COLAvHb8rF/7oiC5HwPiLxq5d1H4POaTqm+V/3tsuX5WuMy1W5w7d
-         6XwlgB3Nzlt6IK0rOI3RF58IbYTqyAi1eBkZd4GIleTRTule3niBINI1L2QbzVa8Ifd6
-         zlsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701814923; x=1702419723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9kV+tvXpjVk7xX2GSglbALSCSl6OSs1vaoyTrKyQ3HM=;
-        b=Z1sPGbUAeQ/2pa7nLfiTVm7mJj/yiNMnNA4QETOEcm5wWjLdzBO1TSoGeCQH2I1rgW
-         jVeNXRcROw918AyRATkMiMXsOfPJGoAxJaE3cRKKp9rD1nhTj/gzRX7cRtm9uYpVjOyD
-         J8yRE7GgsKdIu3VtSR8bnPnazK1fRuGsyQG5Xh9WXgR3fpLlv9XYFSv7FEYpHfat3CyA
-         PbxN6L9Gklq1oG1ciRaRImcsN2Ebx5/6Dz+pvCbneJYxTN546f+yYp9cHuDE3QLvo22R
-         ByuSLr+0kb8IwF80fq9E283vgE03WydyErI0EtiV2+pauUGT4VzLvF4bk48yet96fFFf
-         +QUg==
-X-Gm-Message-State: AOJu0Yx/tTqzH6XMct/acSL0k+Se5rMQIpDwbCT2o6NnmSj8FQxTeRMV
-	LTF9luk0/mSEEmSClgNC04rGjEbBi8q+uXiPnr55
-X-Google-Smtp-Source: AGHT+IGb3c/R29ZeC6hZ83UGu7fypKrA5DKbgx3ctnIYDUC2sabTvsdQmTs920D2XYac45G1OW8SMMMEAgKnLS1qn88=
-X-Received: by 2002:a25:d30d:0:b0:db5:4dc8:60e9 with SMTP id
- e13-20020a25d30d000000b00db54dc860e9mr4669503ybf.0.1701814922816; Tue, 05 Dec
- 2023 14:22:02 -0800 (PST)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F91188;
+	Tue,  5 Dec 2023 14:27:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=E7AglM1sNrEzVXvgP3Pr0r6mYMdRh2+F/SBHIShk58c=; b=zY4U6y6lQoUZxswY4qHKuuGtMg
+	sJixHP0HaCF1NRUNLbKQx1Rts5JMMIgCdPSJbRfX00//4xM6Rse/f/usqrGcuYKcMVvwuLbL61DbH
+	r9U6ocd0dSC2Vwn77w3LWy3ggQ5Dadje/DKxf7gV9zlQQDQU85DTEjlt8pXW0Age0oNooGsLvm0Tl
+	owIo817B6mI00r8rk7Z13PhEpztn1kflJRzQimIIEOrXsFQxN9FBrtW7thGCgsrDmJkrZnIq7FBKa
+	n9UL5MU4XbUSdbAI5KwcRyLsoK/2MT7NP3vE9nJ0EJFBzkiVWUKrHByR86Lo0l2B5wJcnoUGi1poy
+	DJ8rTlUQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAdse-008Vj3-0o;
+	Tue, 05 Dec 2023 22:27:04 +0000
+Date: Tue, 5 Dec 2023 14:27:04 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Joel Granados <j.granados@samsung.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Iurii Zaikin <yzaikin@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
+Message-ID: <ZW+juEWLSTybbujk@bombadil.infradead.org>
+References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+ <ZW66FhWx7W67Y9rP@bombadil.infradead.org>
+ <b4b0b7ea-d8b3-4538-a5b9-87a23bbdac5f@t-8ch.de>
+ <d50978d8-d4e7-4767-8ea7-5849f05d3be1@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5f8b18b0-0744-4cf5-9ec5-b0bb0451dd18@p183> <20231201205940.23095-1-kamatam@amazon.com>
-In-Reply-To: <20231201205940.23095-1-kamatam@amazon.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 5 Dec 2023 17:21:51 -0500
-Message-ID: <CAHC9VhSyaFE7-u470TrnHP7o2hT8600zC+Od=M0KkrP46j7-Qw@mail.gmail.com>
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security attribute
-To: Munehisa Kamata <kamatam@amazon.com>
-Cc: adobriyan@gmail.com, casey@schaufler-ca.com, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d50978d8-d4e7-4767-8ea7-5849f05d3be1@t-8ch.de>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, Dec 1, 2023 at 4:00=E2=80=AFPM Munehisa Kamata <kamatam@amazon.com>=
- wrote:
-> On Fri, 2023-12-01 09:30:00 +0000, Alexey Dobriyan wrote:
-> > On Wed, Nov 29, 2023 at 05:11:22PM -0800, Andrew Morton wrote:
-> > >
-> > > fyi...
-> > >
-> > > (yuk!)
-> > >
-> > > Begin forwarded message:
-> > > Date: Thu, 30 Nov 2023 00:37:04 +0000
-> > > From: Munehisa Kamata <kamatam@amazon.com>
-> > > Subject: [PATCH] proc: Update inode upon changing task security attri=
-bute
-> > >
-> > > I'm not clear whether VFS is a better (or worse) place[1] to fix the
-> > > problem described below and would like to hear opinion.
-> > >
-> > > If the /proc/[pid] directory is bind-mounted on a system with Smack
-> > > enabled, and if the task updates its current security attribute, the =
-task
-> > > may lose access to files in its own /proc/[pid] through the mountpoin=
-t.
-> > >
-> > >  $ sudo capsh --drop=3Dcap_mac_override --
-> > >  # mkdir -p dir
-> > >  # mount --bind /proc/$$ dir
-> > >  # echo AAA > /proc/$$/task/current         # assuming built-in echo
-> > >  # cat /proc/$$/task/current                        # revalidate
-> > >  AAA
-> > >  # echo BBB > dir/attr/current
-> > >  # cat dir/attr/current
-> > >  cat: dir/attr/current: Permission denied
-> > >  # ls dir/
-> > >  ls: cannot access dir/: Permission denied
-> > >  # cat /proc/$$/attr/current                        # revalidate
-> > >  BBB
-> > >  # cat dir/attr/current
-> > >  BBB
-> > >  # echo CCC > /proc/$$/attr/current
-> > >  # cat dir/attr/current
-> > >  cat: dir/attr/current: Permission denied
-> > >
-> > > This happens because path lookup doesn't revalidate the dentry of the
-> > > /proc/[pid] when traversing the filesystem boundary, so the inode sec=
-urity
-> > > blob of the /proc/[pid] doesn't get updated with the new task securit=
-y
-> > > attribute. Then, this may lead security modules to deny an access to =
-the
-> > > directory. Looking at the code[2] and the /proc/pid/attr/current entr=
-y in
-> > > proc man page, seems like the same could happen with SELinux. Though,=
- I
-> > > didn't find relevant reports.
-> > >
-> > > The steps above are quite artificial. I actually encountered such an
-> > > unexpected denial of access with an in-house application sandbox
-> > > framework; each app has its own dedicated filesystem tree where the
-> > > process's /proc/[pid] is bind-mounted to and the app enters into via
-> > > chroot.
-> > >
-> > > With this patch, writing to /proc/[pid]/attr/current (and its per-sec=
-urity
-> > > module variant) updates the inode security blob of /proc/[pid] or
-> > > /proc/[pid]/task/[tid] (when pid !=3D tid) with the new attribute.
-> > >
-> > > [1] https://lkml.kernel.org/linux-fsdevel/4A2D15AF.8090000@sun.com/
-> > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t/tree/security/selinux/hooks.c#n4220
-> > >
-> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > > Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
-> > > ---
-> > >  fs/proc/base.c | 23 ++++++++++++++++++++---
-> > >  1 file changed, 20 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > index dd31e3b6bf77..bdb7bea53475 100644
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -2741,6 +2741,7 @@ static ssize_t proc_pid_attr_write(struct file =
-* file, const char __user * buf,
-> > >  {
-> > >     struct inode * inode =3D file_inode(file);
-> > >     struct task_struct *task;
-> > > +   const char *name =3D file->f_path.dentry->d_name.name;
-> > >     void *page;
-> > >     int rv;
-> > >
-> > > @@ -2784,10 +2785,26 @@ static ssize_t proc_pid_attr_write(struct fil=
-e * file, const char __user * buf,
-> > >     if (rv < 0)
-> > >             goto out_free;
-> > >
-> > > -   rv =3D security_setprocattr(PROC_I(inode)->op.lsm,
-> > > -                             file->f_path.dentry->d_name.name, page,
-> > > -                             count);
-> > > +   rv =3D security_setprocattr(PROC_I(inode)->op.lsm, name, page, co=
-unt);
-> > >     mutex_unlock(&current->signal->cred_guard_mutex);
-> > > +
-> > > +   /*
-> > > +    *  Update the inode security blob in advance if the task's secur=
-ity
-> > > +    *  attribute was updated
-> > > +    */
-> > > +   if (rv > 0 && !strcmp(name, "current")) {
-> > > +           struct pid *pid;
-> > > +           struct proc_inode *cur, *ei;
-> > > +
-> > > +           rcu_read_lock();
-> > > +           pid =3D get_task_pid(current, PIDTYPE_PID);
-> > > +           hlist_for_each_entry(cur, &pid->inodes, sibling_inodes)
-> > > +                   ei =3D cur;
-> >
-> > Should this "break;"? Why is only the last inode in the list updated?
-> > Should it be the first? All of them?
->
-> If it picks up the first node, it may end up updating /proc/[pid]/task/[t=
-id]
-> rather than /proc/[pid] (when pid =3D=3D tid) and the task may be denied =
-access
-> to its own /proc/[pid] afterward.
->
-> I think updating all of them won't hurt. But, as long as /proc/[pid] is
-> accessible, the rest of the inodes should be updated upon path lookup via
-> revalidation as usual.
->
-> When pid !=3D tid, it only updates /proc/[pid]/task/[tid] and the thread =
-may
-> lose an access to /proc/[pid], but I think it's okay as it's a matter of
-> security policy enforced by security modules. Casey, do you have any
-> comments here?
->
-> > > +           put_pid(pid);
-> > > +           pid_update_inode(current, &ei->vfs_inode);
-> > > +           rcu_read_unlock();
-> > > +   }
+On Tue, Dec 05, 2023 at 06:16:53PM +0100, Thomas Weißschuh wrote:
+> Hi Luis, Joel,
+> 
+> On 2023-12-05 09:04:08+0100, Thomas Weißschuh wrote:
+> > On 2023-12-04 21:50:14-0800, Luis Chamberlain wrote:
+> > > On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Weißschuh wrote:
+> > > > Tested by booting and with the sysctl selftests on x86.
+> > > 
+> > > Can I trouble you to rebase on sysctl-next?
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
+> > 
+> > Will do.
+> 
+> The rebased series is now available at
+> https://git.sr.ht/~t-8ch/linux b4/const-sysctl
 
-I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-at the top.  However, before we go too much further on this, can we
-get clarification that Casey was able to reproduce this on a stock
-upstream kernel?  Last I read in the other thread Casey wasn't seeing
-this problem on Linux v6.5.
+I've applied this to sysctl-next as this all looks very sensible to me,
+except one patch which I'll chime in on, but I'm merging it to
+sysctl-next now without a promise to get this in as I really would like
+this to soak in on linux-next for a bit even if it does not get merged
+in the next kernel release. Exposing it on linux-next will surely
+iron out run time issues fast.
 
-However, for the moment I'm going to assume this is a real problem, is
-there some reason why the existing pid_revalidate() code is not being
-called in the bind mount case?  From what I can see in the original
-problem report, the path walk seems to work okay when the file is
-accessed directly from /proc, but fails when done on the bind mount.
-Is there some problem with revalidating dentrys on bind mounts?
+> Nothing much has changed in contrast to v2.
+> The only functional change so far is the initialization of
+> ctl_table_header::type in init_header().
+> 
+> I'll wait for Joels and maybe some more reviews before resending it.
 
---=20
-paul-moore.com
+It all is very trivial stuff, except a few patches, but it all is making
+sense, so my ask is to address feedback this week and post next week
+a new set so we can have changes merged as-is for Linux in case this
+really doesn't break anything.
+
+For some reason I raccall seeing som hacky sysclts that shared and
+modified an entry somewhere but the exact sysctl phases me, and I just
+cannot recall.
+
+> > [..]
+> 
+> For the future I think it would make sense to combine the tree-wide constification
+> of the structs with the removal of the sentinel values.
+> 
+> This would reduce the impacts of the maintainers.
+
+Indeed.
+
+  Luis
 
