@@ -1,85 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-4874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA15E8054F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 13:42:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F158054FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 13:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73ED01F215F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383E41C20E5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F735C8F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9596156476
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqmWoEP1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3r7E0Ft"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2E26979C
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 11:44:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7118DC433C8;
-	Tue,  5 Dec 2023 11:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2357866;
+	Tue,  5 Dec 2023 11:50:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414B1C433C8;
+	Tue,  5 Dec 2023 11:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701776652;
-	bh=XF9AEYRA2oCSGTdGqb3Kv0jV2g0mXLqniiG/+bTllDg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VqmWoEP1PSfsfzj94grjRyvZbndCZTnbGL5Pl6QoNk/ztdMYhUy57GbBzHnUiArhp
-	 +QzlKS7b154T1laRMQ99TjOEobAOjFSxXGNA1SEJQl8k7muQqs8jONnuY7uLxIM5Oc
-	 0zIb8ylHdkYlP3oykyp6RUAm0AnvlIbLq8OrToczDE91qEBQKyipFMwTvQOqDZgVXP
-	 BYIwZkkRXWsj1ZKz2Mn+A+DUdpPaMeDvZ9ef3V56r/D8P7id7e1v9wTU3nw52OkMt1
-	 xytM/rJPcToVFo9KXTVrFwrI+D4dQ3Vt+hrqJNPvdaUniPp2NMEZn9cWQVIcR7IO7d
-	 yqEiVwiAXuR7A==
+	s=k20201202; t=1701777034;
+	bh=1vi7lpWvyIlRPEOS8id0JlbcXrkUDYmCKkyVbkLEO/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3r7E0Ft/sNzRLXx9KPMN7wMK8H8PLP4BMf4GbJ85C0HONRDECADPNUDARiPaxc9J
+	 9xmUAysv2FKUw4XeM/ClU/Y8ooaDZxUFAnzPn8c/w1s/gbXMDZmWWnIeP824av6jyb
+	 AwW5ZLSKUow+R8KxgaBbbmYTJw8Vp9gLcJYg/v6I9XmArk3eooyu7Wn0B7lIKw33GM
+	 shZiD1i8sf8dLaSUExtpjIcrnSrIrrl17uN7+qP40f+Y0Hr+vaJVqKjzWb7hg0FtHW
+	 3mr1JsR2rqGHtfmtEjLIlAh4vKrVsYfBiHy6mCQkU2iKv0h0TPLsax/oq/DdQSjB8I
+	 1mys7ZBCphkmQ==
+Date: Tue, 5 Dec 2023 12:50:28 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: add Jan Kara as reviewer
-Date: Tue,  5 Dec 2023 12:43:37 +0100
-Message-ID: <20231205-aufkam-neukunden-d14970a0a6cc@brauner>
-X-Mailer: git-send-email 2.42.0
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
+Message-ID: <20231205-frettchen-weltoffen-16e63df530a7@brauner>
+References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
+ <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
+ <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
+ <ZWoaGU6xpF3S793+@do-x1extreme>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=948; i=brauner@kernel.org; h=from:subject:message-id; bh=mTpLOdyB5VKfBHflVMEWr13S6D5CwrrYfcJnEFOKaec=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTm87x4/kWf88OMRz4K+f48U/sWiSktivFZt2v/hmLZJ Md1r+dod5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkiiIjw6mCF+e2GP6aWeJt x6Nbedni5e6Yg78P6SxN/blXfat/fg7D/7w+CbHVe+pPxlp+EdXXEnr8w/PpDcbGRyafOQLspwY Z8gIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZWoaGU6xpF3S793+@do-x1extreme>
 
-Jan's been really essential in help deal with reviews in a bunch of
-areas and we should really make him an official reviewer. This is long
-overdue imho.
+On Fri, Dec 01, 2023 at 11:38:33AM -0600, Seth Forshee (DigitalOcean) wrote:
+> On Fri, Dec 01, 2023 at 06:02:55PM +0100, Christian Brauner wrote:
+> > On Wed, Nov 29, 2023 at 03:50:25PM -0600, Seth Forshee (DigitalOcean) wrote:
+> > > Add inode operations for getting, setting and removing filesystem
+> > > capabilities rather than passing around raw xattr data. This provides
+> > > better type safety for ids contained within xattrs.
+> > > 
+> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> > > ---
+> > >  include/linux/fs.h | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index 98b7a7a8c42e..a0a77f67b999 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> > > @@ -2002,6 +2002,11 @@ struct inode_operations {
+> > >  				     int);
+> > >  	int (*set_acl)(struct mnt_idmap *, struct dentry *,
+> > >  		       struct posix_acl *, int);
+> > > +	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
+> > > +			  struct vfs_caps *);
+> > > +	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
+> > > +			  const struct vfs_caps *, int flags);
+> > 
+> > If it's really a flags argument, then unsigned int, please,
+> 
+> This is the flags for setxattr, which is an int everywhere. Or almost
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
-Uhm, I have to confess that I had this in the tree for a while and
-simply forgot to send it out. This was really an accident. I'm sorry
-about this.
-
-I'm quite happy because Jan has really helped out a lot and I don't
-think this should be controversial.
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d0a7b6f357ce..d60c4888e6df 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8157,6 +8157,7 @@ F:	include/trace/events/fs_dax.h
- FILESYSTEMS (VFS and infrastructure)
- M:	Alexander Viro <viro@zeniv.linux.org.uk>
- M:	Christian Brauner <brauner@kernel.org>
-+R:	Jan Kara <jack@suse.cz>
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/*
--- 
-2.42.0
-
+Ah right. Ugh, we should clean that up but not necessarily in this
+series.
 
