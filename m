@@ -1,47 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-4840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4842-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0965D804A34
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:36:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42124804A3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:36:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5751F21495
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D899AB20AA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA3A12E68
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A55D276
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsv/8G0c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="METwknOs"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1E98F6B;
-	Tue,  5 Dec 2023 05:29:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E7BBC433C9;
-	Tue,  5 Dec 2023 05:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8292F6FB8;
+	Tue,  5 Dec 2023 05:41:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9C9C433C8;
+	Tue,  5 Dec 2023 05:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701754156;
-	bh=nNE/2ASASv+wwkYyfwm8NKEcUKsPIRgn1S6412XMFxE=;
+	s=k20201202; t=1701754883;
+	bh=EGD2m+dW91SvCc9znl5dHUo5p9bt+T4CqT05Ww/Dy64=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nsv/8G0cJhGbvJQaLV0SGxbw51u2/0wO+PHAbi2PSVrxcrzlf2JWNO1JEThMPwcky
-	 by1mPkYUo3fhQE2doxIjLcZkQDvRV/eP8yG03wf9ABKzCh+RjOuKDBUOmR/owD2smT
-	 N4hCgKoH7AjAHh4+uhxam75pUZ3653PCGDpJrfGedM+HrdK3CemZb4k9YRPz8xAVrn
-	 kWUJ7Ox1qybl2S3kBvZaRAQE3nicP7sh2f/eTZ/+vbDq2irfGcY8uuiXtqYYkCfCYU
-	 W3KivWovnVg6Xn7zNdOWZetQhEaBd48YhIUjJOid8j9YXeNFdB9gA8qaZ6x06ZTARf
-	 Iwp13daKwaj0w==
-Date: Mon, 4 Dec 2023 21:29:15 -0800
+	b=METwknOsaOFQLA1cKhDWgucbecujxzchFUbQkTvZsRkbNPTqHpw7jmeaZ/xe7NlSY
+	 uDRfXN8KwwHpNutqy/RQSt1kuqtF4V+5g8/OngBE8eZmhC1DCOjEZ16//WdZ0fRopE
+	 MwMhbckEymmUJDUAxort0E+Fy96aIRQTl/cyEHF6T2vQkXYPWrkjkDa5Cgd9CHX94e
+	 j0BY5zCKjwFG7Emu0DfzyDi2Y3Fz67wMYt1M2VU3cs3riwRPy/RuYRYHboZDD9aPdR
+	 daXVUpwI0L9baTNYjjjhZ3/aJXVf/kyC9pO7Ecj/970mb0hBGbt7cSBz9v5PkT3Bgt
+	 EI38/YrJtjZug==
+Date: Mon, 4 Dec 2023 21:41:21 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org,
 	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Subject: Re: [PATCH v4 15/46] btrfs: handle nokey names.
-Message-ID: <20231205052915.GL1168@sol.localdomain>
+Subject: Re: [PATCH v4 19/46] btrfs: turn on inlinecrypt mount option for
+ encrypt
+Message-ID: <20231205054121.GM1168@sol.localdomain>
 References: <cover.1701468305.git.josef@toxicpanda.com>
- <5729e533bb7e014a124cc48d793dec30507455b7.1701468306.git.josef@toxicpanda.com>
+ <a3f216c6e951b8d1b3cb9b96dcd6d44e1c19bd9b.1701468306.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,31 +51,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5729e533bb7e014a124cc48d793dec30507455b7.1701468306.git.josef@toxicpanda.com>
+In-Reply-To: <a3f216c6e951b8d1b3cb9b96dcd6d44e1c19bd9b.1701468306.git.josef@toxicpanda.com>
 
-On Fri, Dec 01, 2023 at 05:11:12PM -0500, Josef Bacik wrote:
-> +/*
-> + * From a given location in a leaf, read a name into a qstr (usually a
-> + * fscrypt_name's disk_name), allocating the required buffer. Used for
-> + * nokey names.
-> + */
-> +int btrfs_fscrypt_get_disk_name(struct extent_buffer *leaf,
-> +				struct btrfs_dir_item *dir_item,
-> +				struct fscrypt_str *name)
-> +{
-> +	unsigned long de_name_len = btrfs_dir_name_len(leaf, dir_item);
-> +	unsigned long de_name = (unsigned long)(dir_item + 1);
-> +	/*
-> +	 * For no-key names, we use this opportunity to find the disk
-> +	 * name, so future searches don't need to deal with nokey names
-> +	 * and we know what the encrypted size is.
-> +	 */
-> +	name->name = kmalloc(de_name_len, GFP_NOFS);
-> +
-> +	if (!name->name)
-> +		return -ENOMEM;
+On Fri, Dec 01, 2023 at 05:11:16PM -0500, Josef Bacik wrote:
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 0e8e2ca48a2e..48d751011d07 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -4585,6 +4585,9 @@ long btrfs_ioctl(struct file *file, unsigned int
+>  		 * state persists.
+>  		 */
+>  		btrfs_set_fs_incompat(fs_info, ENCRYPT);
+> +		if (!(inode->i_sb->s_flags & SB_INLINECRYPT)) {
+> +			inode->i_sb->s_flags |= SB_INLINECRYPT;
+> +		}
+>  		return fscrypt_ioctl_set_policy(file, (const void __user *)arg);
+>  	}
 
-Where is the kfree() that matches the above kmalloc()?
+Multiple tasks can execute ioctls at the same time, so isn't the lockless
+modification of 's_flags' above a data race?
+
+Maybe you should just set SB_INLINECRYPT at mount time only, regardless of the
+ENCRYPT feature, so that it doesn't have to be enabled later.
+
+> +	if (btrfs_fs_incompat(fs_info, ENCRYPT)) {
+> +		if (IS_ENABLED(CONFIG_FS_ENCRYPTION_INLINE_CRYPT)) {
+> +			sb->s_flags |= SB_INLINECRYPT;
+> +		} else {
+> +			btrfs_err(fs_info, "encryption not supported");
+> +			err = -EINVAL;
+> +			goto fail_close;
+> +		}
+> +	}
+
+Why CONFIG_FS_ENCRYPTION_INLINE_CRYPT instead of CONFIG_FS_ENCRYPTION?  I think
+you need to make CONFIG_FS_ENCRYPTION select CONFIG_FS_ENCRYPTION_INLINE_CRYPT
+when btrfs is enabled anyway, right?
+
+Also, should the error message be clearer?  Like "filesystem has encrypt feature
+but kernel doesn't support encryption", or something like that.  Actually,
+should that case even be an error?  ext4, for example, allows a filesystem with
+the encrypt feature to be mounted even when the kernel doesn't support
+encryption.  (It doesn't allow access to encrypted files, of course.)
 
 - Eric
 
