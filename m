@@ -1,73 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-4845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46AC804A41
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:37:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193D804A3C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF081C20E18
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA4E1F21449
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAF3DF6E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C0212E5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qOb9FyCp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta23N3NM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640B910F;
-	Mon,  4 Dec 2023 21:45:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Q4Xwwf+R6mg0IVTeK/i6oqCoh3sFn0GWCi0J13JBtfc=; b=qOb9FyCpYK/4KobvP2uwty+RVC
-	aKcs8RCIM1GaB+jEVQmkuGJdy+OoBGLcX1doQi0if7JBzag9665/MK5OtORAivTDbIIcdyUq2OKzV
-	Xx9UbaJnUzGeeh5RsPVPgY4YqT0DJlxUw1VN1F2mTNvBjhpShrX42o5RXnUV/cXjSQUrRLToGUZSE
-	FmCu84mXqdwf31dZ+O2oxaY3dpe0YxR2cKwZT0rDW7WEmsffmHSRy5nKQqPyOJ72usqptScFFNBh6
-	rYGN3D8F7qyjExbcouVqdX/XtjSmjlnWSxIY2bpgheRYBytg9CEj+V1w3MZOcvh3sPXc3Hqk7855F
-	MMIPMB3g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rAOEM-006KRP-0r;
-	Tue, 05 Dec 2023 05:44:26 +0000
-Date: Mon, 4 Dec 2023 21:44:26 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: j.granados@samsung.com, willy@infradead.org, josh@joshtriplett.org,
-	Kees Cook <keescook@chromium.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>,
-	Anton Altaparmakov <anton@tuxera.com>,
-	Namjae Jeon <linkinjeon@kernel.org>, Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Iurii Zaikin <yzaikin@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-	linux-cachefs@redhat.com, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-	linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-	linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@lists.linux.dev,
-	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
-	codalist@coda.cs.cmu.edu
-Subject: Re: [PATCH v2 0/4] sysctl: Remove sentinel elements from fs dir
-Message-ID: <ZW64um8/nJaxBw5i@bombadil.infradead.org>
-References: <20231121-jag-sysctl_remove_empty_elem_fs-v2-0-39eab723a034@samsung.com>
- <20231122-undifferenziert-weitschuss-a5d8cc56fbd1@brauner>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE58AD26E;
+	Tue,  5 Dec 2023 05:44:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB05C433C8;
+	Tue,  5 Dec 2023 05:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701755098;
+	bh=nnB2GVEF0qg3/xmo5rtiPkE3svlhXBgxG8n8uFlrfUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ta23N3NMrvWc9O+41tVSxC1Y/Oz5+P9w5DNF78MudxDYIoucVkAnfiq1epuhOUbr9
+	 DNhp8IlUk5nGN4vvQINkgy8cZZhY/LFqCmSow7n5KdTOE+xb6xeDafWmGDvEGE6Pj9
+	 ALjkp+udzerHIpncUtSCmiz7C0Qpy4jyHBnS7hGWoYaGiaD0RSkWVFtfLSM1snAFjY
+	 7nQxHo9RtgUaNY972G2VqLkylLVipnRVEpKX2ioVcQrQVnCs+AOqZEhPRudhSoW6xs
+	 7ze6AvlrCJjSPITI/KySf1ML5EssT6xU3raWdiC++YDXvEvA8MipFHQ7sM61yspuRW
+	 Id6k3ulY5jkTA==
+Date: Mon, 4 Dec 2023 21:44:56 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 26/46] btrfs: keep track of fscrypt info and
+ orig_start for dio reads
+Message-ID: <20231205054456.GN1168@sol.localdomain>
+References: <cover.1701468305.git.josef@toxicpanda.com>
+ <5e74c0395e4f58082b9446fb0105c0cb99e8338d.1701468306.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,14 +50,19 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231122-undifferenziert-weitschuss-a5d8cc56fbd1@brauner>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <5e74c0395e4f58082b9446fb0105c0cb99e8338d.1701468306.git.josef@toxicpanda.com>
 
-On Wed, Nov 22, 2023 at 03:00:29PM +0100, Christian Brauner wrote:
-> Looks fine,
-> Acked-by: Christian Brauner <brauner@kernel.org>
+On Fri, Dec 01, 2023 at 05:11:23PM -0500, Josef Bacik wrote:
+> We keep track of this information in the ordered extent for writes, but
+> we need it for reads as well.  Add fscrypt_extent_info and orig_start to
+> the dio_data so we can populate this on reads.  This will be used later
+> when we attach the fscrypt context to the bios.
+> 
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 
-Series applied, thanks!
+Does this mean that btrfs will support direct I/O on encrypted files from the
+beginning?  Are you enforcing FS block alignment, as is required for encrypted
+direct I/O?
 
-  Luis
+- Eric
 
