@@ -1,142 +1,310 @@
-Return-Path: <linux-fsdevel+bounces-4878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01814805768
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 15:36:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFCC80576A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 15:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10332B20D6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7DF1C20F8F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C21D33094
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2714B5AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JN++hwSb"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Ji0UidzD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JBAHU+Wt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0749190
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 05:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701784767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=79PD3d2kumFOy7A9eRn22aWg7Y9KfDQNCF0FEIsFKv8=;
-	b=JN++hwSbeEtvYIDQEnTocqRIwTKPwizQ8MLJCNogk37MfOmNrssTygAM7/UMLO7BWL1Bhg
-	QnmDrKXb6arKiNmKG0UIeiF4iH4dqLYa0m19StL4rQgcVi3tPLAE5C2jCsQ49MbRsc4BcS
-	VtYGxBggNq7haR8TqYzROq4xVuFtiV4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-uCsCU4nHN_ezAkIn8k7hWw-1; Tue, 05 Dec 2023 08:59:24 -0500
-X-MC-Unique: uCsCU4nHN_ezAkIn8k7hWw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E090885A58C;
-	Tue,  5 Dec 2023 13:59:22 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A5A8492BC7;
-	Tue,  5 Dec 2023 13:59:12 +0000 (UTC)
-Date: Tue, 5 Dec 2023 21:59:08 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
-	sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
-	djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	chandan.babu@oracle.com, dchinner@redhat.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH 17/21] fs: xfs: iomap atomic write support
-Message-ID: <ZW8srC5hTWOGF5ts@fedora>
-References: <20230929102726.2985188-1-john.g.garry@oracle.com>
- <20230929102726.2985188-18-john.g.garry@oracle.com>
- <20231109152615.GB1521@lst.de>
- <a50a16ca-d4b9-a4d8-4230-833d82752bd2@oracle.com>
- <c78bcca7-8f09-41c7-adf0-03b42cde70d6@oracle.com>
- <20231128135619.GA12202@lst.de>
- <e4fb6875-e552-45aa-b193-58f15d9a786c@oracle.com>
- <20231204134509.GA25834@lst.de>
- <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4564119B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 06:02:01 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailout.west.internal (Postfix) with ESMTP id 42C433200C06;
+	Tue,  5 Dec 2023 09:01:57 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Tue, 05 Dec 2023 09:01:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to; s=fm1; t=
+	1701784916; x=1701871316; bh=Ue3Ab3ayCjKDY8fqGgpBhiT1YQjqoYDw9gu
+	s3ASpHaA=; b=Ji0UidzDBrzPKD750uthByLyiiRi27pqgTmNFps3c6Mrl+urt5Q
+	DNyEKJWjMvf0Kkddtxr29nj1zzm4FMseBKH6ErE6Ybp+zK0+M1AV/CL8atygHsE5
+	0J2UuV4/8nbVCKpTQsQyuHQIEWs3mBLrZpGRZFZPlcp1KlfdAtML+bAHu6JBA4Qx
+	X7ckpRJsPqC3GejpNyaHDea9AcNWRWKEqQyGiLQxBTvy+6I1cvbCBJMutj43h1q5
+	E/NgAV7IByZ3Reyb3a0mfi5+pm3YOgtjKrt34nkOc3T5qSJJg3WO7Pk9VJlzuHM6
+	QZRpSWtiro5ApTD8HMuazQK7vXaJUJDRkxg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1701784916; x=1701871316; bh=Ue3Ab3ayCjKDY8fqGgpBhiT1YQjqoYDw9gu
+	s3ASpHaA=; b=JBAHU+Wtv6FhsujaeveL7LrXhoKZsMuSmAFDYr+WNIAJYCE8Nfs
+	F4TjyQ1grjAwBUZnXfLbZCITgRA7fkudXRRVPx+VUUoT5DX8+uxSkyVv+xHNQQHY
+	zUEYgBaHWimc2cyIWJvYseWTdb/uRgzhko4RMoCp+kuUvz6aAG1NsU3k6wrO4rwN
+	cUoGBBKkmdvwVpxYI2z3evYWvfZ1yT3j7nI2TfXr1wPbem6Iw6fgFKZH1++/PA0z
+	Mlkg3pmnEY1SSYKyQoBdc9RS6vh4wNLh2iU8FQ3afpx8XjEUnJnMoeBbf5MqHk5k
+	5JzDtYakz1hlocxqfR6aKhDOSYWCDHTnL/A==
+X-ME-Sender: <xms:Ui1vZbezU-3JzJSMx824_bG_fr-vkY-0Gzv10OsE_2UvASTIcx2hAw>
+    <xme:Ui1vZRMLxOb1YhGcoveJ4C2I2BknzNjjw4hoyMzNkjYPKWjjgrhaZC1bDxD72c5fK
+    I9mQp5x3Tft-EqE>
+X-ME-Received: <xmr:Ui1vZUghUAqkIu2T7TxMZt1Aev5d7LFXz5KokF20SslbhHuRlEp44gnJmutwWRlbCoqmptvh5J-6e_PJpezVi3OGmn_IKIv4MkoGVBdt-5miPly30j2H>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudejkedgheelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepuedtkeeileeghedukefghfdtuddvudfgheel
+    jeejgeelueffueekheefheffveelnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:Uy1vZc9HSMVUiMWLJ7lLkTrUda2TlaF6yEoG6kZoXDWp8Vx6eXVqfA>
+    <xmx:Uy1vZXtRYuFzIU7WWLvarl6zaWg1XHVJgHibcTXVkcoasoYtTrDFvw>
+    <xmx:Uy1vZbHPW5QjbQJrLuH4-M8OPrI5EIO3YUh6asmxsei7p9OYeBoqCg>
+    <xmx:VC1vZbh0AaSxYqLn87Htnb7Wgzb4I3mCO4w_R-yRWAgwg-MKe2J8ug>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Dec 2023 09:01:53 -0500 (EST)
+Message-ID: <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm>
+Date: Tue, 5 Dec 2023 15:01:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
+ linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
+ hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
+ <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
+ <CAOQ4uxgW58Umf_ENqpsGrndUB=+8tuUsjT+uCUp16YRSuvG2wQ@mail.gmail.com>
+ <CAOQ4uxh6RpoyZ051fQLKNHnXfypoGsPO9szU0cR6Va+NR_JELw@mail.gmail.com>
+ <49fdbcd1-5442-4cd4-8a85-1ddb40291b7d@fastmail.fm>
+ <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
+ <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
+ <abbdf30f-c459-4eab-9254-7b24afc5771b@fastmail.fm>
+ <40470070-ef6f-4440-a79e-ff9f3bbae515@fastmail.fm>
+ <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 04, 2023 at 03:19:15PM +0000, John Garry wrote:
-> On 04/12/2023 13:45, Christoph Hellwig wrote:
-> > On Tue, Nov 28, 2023 at 05:42:10PM +0000, John Garry wrote:
-> > > ok, fine, it would not be required for XFS with CoW. Some concerns still:
-> > > a. device atomic write boundary, if any
-> > > b. other FSes which do not have CoW support. ext4 is already being used for
-> > > "atomic writes" in the field - see dubious amazon torn-write prevention.
-> > 
-> > What is the 'dubious amazon torn-write prevention'?
-> 
-> https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/storage-twp.html
-> 
-> AFAICS, this is without any kernel changes, so no guarantee of unwanted
-> splitting or merging of bios.
-> 
-> Anyway, there will still be !CoW FSes which people want to support.
-> 
-> > 
-> > > About b., we could add the pow-of-2 and file offset alignment requirement
-> > > for other FSes, but then need to add some method to advertise that
-> > > restriction.
-> > 
-> > We really need a better way to communicate I/O limitations anyway.
-> > Something like XFS_IOC_DIOINFO on steroids.
-> > 
-> > > Sure, but to me it is a concern that we have 2x paths to make robust a.
-> > > offload via hw, which may involve CoW b. no HW support, i.e. CoW always
-> > 
-> > Relying just on the hardware seems very limited, especially as there is
-> > plenty of hardware that won't guarantee anything larger than 4k, and
-> > plenty of NVMe hardware without has some other small limit like 32k
-> > because it doesn't support multiple atomicy mode.
-> 
-> So what would you propose as the next step? Would it to be first achieve
-> atomic write support for XFS with HW support + CoW to ensure contiguous
-> extents (and without XFS forcealign)?
-> 
-> > 
-> > > And for no HW support, if we don't follow the O_ATOMIC model of committing
-> > > nothing until a SYNC is issued, would we allocate, write, and later free a
-> > > new extent for each write, right?
-> > 
-> > Yes. Then again if you do data journalling you do that anyway, and as
-> > one little project I'm doing right now shows that data journling is
-> > often the fastest thing we can do for very small writes.
-> 
-> Ignoring FSes, then how is this supposed to work for block devices? We just
-> always need HW support, right?
 
-Looks the HW support could be minimized, just like what Google and Amazon did,
-16KB physical block size with proper queue limit setting.
 
-Now seems it is easy to make such device with ublk-loop by:
+On 12/5/23 08:00, Amir Goldstein wrote:
+> On Tue, Dec 5, 2023 at 1:42 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>> On 12/4/23 11:04, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 12/4/23 10:27, Miklos Szeredi wrote:
+>>>> On Mon, 4 Dec 2023 at 07:50, Amir Goldstein <amir73il@gmail.com> wrote:
+>>>>>
+>>>>> On Mon, Dec 4, 2023 at 1:00 AM Bernd Schubert
+>>>>> <bernd.schubert@fastmail.fm> wrote:
+>>>>>>
+>>>>>> Hi Amir,
+>>>>>>
+>>>>>> On 12/3/23 12:20, Amir Goldstein wrote:
+>>>>>>> On Sat, Dec 2, 2023 at 5:06 PM Amir Goldstein <amir73il@gmail.com>
+>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>> On Mon, Nov 6, 2023 at 4:08 PM Bernd Schubert
+>>>>>>>> <bernd.schubert@fastmail.fm> wrote:
+>>>>>>>>>
+>>>>>>>>> Hi Miklos,
+>>>>>>>>>
+>>>>>>>>> On 9/20/23 10:15, Miklos Szeredi wrote:
+>>>>>>>>>> On Wed, 20 Sept 2023 at 04:41, Tyler Fanelli
+>>>>>>>>>> <tfanelli@redhat.com> wrote:
+>>>>>>>>>>>
+>>>>>>>>>>> At the moment, FUSE_INIT's DIRECT_IO_RELAX flag only serves the
+>>>>>>>>>>> purpose
+>>>>>>>>>>> of allowing shared mmap of files opened/created with DIRECT_IO
+>>>>>>>>>>> enabled.
+>>>>>>>>>>> However, it leaves open the possibility of further relaxing the
+>>>>>>>>>>> DIRECT_IO restrictions (and in-effect, the cache coherency
+>>>>>>>>>>> guarantees of
+>>>>>>>>>>> DIRECT_IO) in the future.
+>>>>>>>>>>>
+>>>>>>>>>>> The DIRECT_IO_ALLOW_MMAP flag leaves no ambiguity of its
+>>>>>>>>>>> purpose. It
+>>>>>>>>>>> only serves to allow shared mmap of DIRECT_IO files, while still
+>>>>>>>>>>> bypassing the cache on regular reads and writes. The shared
+>>>>>>>>>>> mmap is the
+>>>>>>>>>>> only loosening of the cache policy that can take place with the
+>>>>>>>>>>> flag.
+>>>>>>>>>>> This removes some ambiguity and introduces a more stable flag
+>>>>>>>>>>> to be used
+>>>>>>>>>>> in FUSE_INIT. Furthermore, we can document that to allow shared
+>>>>>>>>>>> mmap'ing
+>>>>>>>>>>> of DIRECT_IO files, a user must enable DIRECT_IO_ALLOW_MMAP.
+>>>>>>>>>>>
+>>>>>>>>>>> Tyler Fanelli (2):
+>>>>>>>>>>>       fs/fuse: Rename DIRECT_IO_RELAX to DIRECT_IO_ALLOW_MMAP
+>>>>>>>>>>>       docs/fuse-io: Document the usage of DIRECT_IO_ALLOW_MMAP
+>>>>>>>>>>
+>>>>>>>>>> Looks good.
+>>>>>>>>>>
+>>>>>>>>>> Applied, thanks.  Will send the PR during this merge window,
+>>>>>>>>>> since the
+>>>>>>>>>> rename could break stuff if already released.
+>>>>>>>>>
+>>>>>>>>> I'm just porting back this feature to our internal fuse module
+>>>>>>>>> and it
+>>>>>>>>> looks these rename patches have been forgotten?
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi Miklos, Bernd,
+>>>>>>>>
+>>>>>>>> I was looking at the DIRECT_IO_ALLOW_MMAP code and specifically at
+>>>>>>>> commit b5a2a3a0b776 ("fuse: write back dirty pages before direct
+>>>>>>>> write in
+>>>>>>>> direct_io_relax mode") and I was wondering - isn't dirty pages
+>>>>>>>> writeback
+>>>>>>>> needed *before* invalidate_inode_pages2() in fuse_file_mmap() for
+>>>>>>>> direct_io_allow_mmap case?
+>>>>>>>>
+>>>>>>>> For FUSE_PASSTHROUGH, I am going to need to call fuse_vma_close()
+>>>>>>>> for munmap of files also in direct-io mode [1], so I was
+>>>>>>>> considering installing
+>>>>>>>> fuse_file_vm_ops for the FOPEN_DIRECT_IO case, same as caching case,
+>>>>>>>> and regardless of direct_io_allow_mmap.
+>>>>>>>>
+>>>>>>>> I was asking myself if there was a good reason why
+>>>>>>>> fuse_page_mkwrite()/
+>>>>>>>> fuse_wait_on_page_writeback()/fuse_vma_close()/write_inode_now()
+>>>>>>>> should NOT be called for the FOPEN_DIRECT_IO case regardless of
+>>>>>>>> direct_io_allow_mmap?
+>>>>>>>>
+>>>>>>>
+>>>>>>> Before trying to make changes to fuse_file_mmap() I tried to test
+>>>>>>> DIRECT_IO_RELAX - I enabled it in libfuse and ran fstest with
+>>>>>>> passthrough_hp --direct-io.
+>>>>>>>
+>>>>>>> The test generic/095 - "Concurrent mixed I/O (buffer I/O, aiodio,
+>>>>>>> mmap, splice)
+>>>>>>> on the same files" blew up hitting BUG_ON(fi->writectr < 0) in
+>>>>>>> fuse_set_nowrite()
+>>>>>>>
+>>>>>>> I am wondering how this code was tested?
+>>>>>>>
+>>>>>>> I could not figure out the problem and how to fix it.
+>>>>>>> Please suggest a fix and let me know which adjustments are needed
+>>>>>>> if I want to use fuse_file_vm_ops for all mmap modes.
+>>>>>>
+>>>>>> So fuse_set_nowrite() tests for inode_is_locked(), but that also
+>>>>>> succeeds for a shared lock. It gets late here (and I might miss
+>>>>>> something), but I think we have an issue with
+>>>>>> FOPEN_PARALLEL_DIRECT_WRITES. Assuming there would be plain O_DIRECT
+>>>>>> and
+>>>>>> mmap, the same issue might triggered? Hmm, well, so far plain O_DIRECT
+>>>>>> does not support FOPEN_PARALLEL_DIRECT_WRITES yet - the patches for
+>>>>>> that
+>>>>>> are still pending.
+>>>>>>
+>>>>>
+>>>>> Your analysis seems to be correct.
+>>>>>
+>>>>> Attached patch fixes the problem and should be backported to 6.6.y.
+>>>>>
+>>>>> Miklos,
+>>>>>
+>>>>> I prepared the patch on top of master and not on top of the rename to
+>>>>> FUSE_DIRECT_IO_ALLOW_MMAP in for-next for ease of backport to
+>>>>> 6.6.y, although if you are planning send the flag rename to v6.7 as a
+>>>>> fix,
+>>>>> you may prefer to apply the fix after the rename and request to backport
+>>>>> the flag rename along with the fix to 6.6.y.
+>>>>
+>>>> I've done that.   Thanks for the fix and testing.
+>>>
+>>> Hi Amir, hi Miklos,
+>>>
+>>> could you please hold on a bit before sending the patch upstream?
+>>> I think we can just test for fuse_range_is_writeback in
+>>> fuse_direct_write_iter. I will have a patch in a few minutes.
+>>
+>> Hmm, that actually doesn't work as we would need to hold the inode lock
+>> in page write functions.
+>> Then tried to do it per inode and only when the inode gets cached writes
+>> or mmap - this triggers a lockdep lock order warning, because
+>> fuse_file_mmap is called with mm->mmap_lock and would take the inode
+>> lock. But through
+>> fuse_direct_io/iov_iter_get_pages2/__iov_iter_get_pages_alloc these
+>> locks are taken the other way around.
+>> So right now I don't see a way out - we need to go with Amirs patch first.
+>>
+>>
+> 
+> Is it actually important for FUSE_DIRECT_IO_ALLOW_MMAP fs
+> (e.g. virtiofsd) to support FOPEN_PARALLEL_DIRECT_WRITES?
+> I guess not otherwise, the combination would have been tested.
 
-- use one backing disk with 16KB/32KB/.. physical block size
-- expose proper physical bs & chunk_sectors & max sectors queue limit
+I'm not sure how many people are aware of these different flags/features.
+I had just finalized the backport of the related patches to RHEL8 on 
+Friday, as we (or our customers) need both for different jobs.
 
-Then any 16KB aligned direct WRITE with N*16KB length(N in [1, 8] with 256
-chunk_sectors) can be atomic-write.
+> 
+> FOPEN_PARALLEL_DIRECT_WRITES is typically important for
+> network fs and FUSE_DIRECT_IO_ALLOW_MMAP is typically not
+> for network fs. Right?
 
+We kind of have these use cases for our network file systems
+
+FOPEN_PARALLEL_DIRECT_WRITES:
+    - Traditional HPC, large files, parallel IO
+    - Large file used on local node as container for many small files
+
+FUSE_DIRECT_IO_ALLOW_MMAP:
+    - compilation through gcc (not so important, just not nice when it 
+does not work)
+    - rather recent: python libraries using mmap _reads_. As it is read 
+only no issue of consistency.
+
+
+These jobs do not intermix - no issue as in generic/095. If such 
+applications really exist, I have no issue with a serialization penalty. 
+Just disabling FOPEN_PARALLEL_DIRECT_WRITES because other 
+nodes/applications need FUSE_DIRECT_IO_ALLOW_MMAP is not so nice.
+
+Final goal is also to have FOPEN_PARALLEL_DIRECT_WRITES to work on plain 
+O_DIRECT and not only for FUSE_DIRECT_IO - I need to update this branch 
+and post the next version
+https://github.com/bsbernd/linux/commits/fuse-dio-v4
+
+
+In the mean time I have another idea how to solve 
+FOPEN_PARALLEL_DIRECT_WRITES + FUSE_DIRECT_IO_ALLOW_MMAP
+
+> 
+> FWIW, with FUSE_PASSTHROUGH, I plan that a shared mmap of an inode
+> in "passthrough mode" (i.e. has an open FOPEN_PASSTHROUGH file) will
+> be allowed (maps the backing file) regardless of fc->direct_io_allow_mmap.
+> FOPEN_PARALLEL_DIRECT_WRITES will also be allowed on an inode in
+> "passthrough mode", because an inode in "passthrough mode" cannot have
+> any pending page cache writes.
+> 
+> This makes me realize that I will also need to handle passthrough of
+> ->direct_IO() on an FOPEN_PASSTHROUGH file.
+
+I really need to take a few hours to look at your patches.
 
 
 Thanks,
-Ming
-
+Bernd
 
