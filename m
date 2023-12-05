@@ -1,68 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-4819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CA7804506
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 03:35:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6319804508
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 03:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8B01F21190
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 02:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E018E1C20909
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 02:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A456AB6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 02:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A15B8BE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 02:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pks3Qzni"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aHTsMDcm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5854C10F
-	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 16:54:27 -0800 (PST)
-Received: by mail-oo1-xc35.google.com with SMTP id 006d021491bc7-58cecfb4412so3483120eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 16:54:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1701737666; x=1702342466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgxh5iAkQdyDmjH/EP5y66lB0goZgK4wS9PHcerNRI0=;
-        b=Pks3QznimLGKgOlVmoOSK1Hg2E87f//xAmPKOlD3N8faGNH/ZgaZQML5/7/6KiEBrf
-         FvQVIemBTDzkWLTCya9boBSPl9ESBlDq7kriwCp8tjPmhvN3MnOHdsfmFJrnoJnboXlm
-         6Zwyo5nkezqMEMa50AymaVyv/aEsnuA5shTpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701737666; x=1702342466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hgxh5iAkQdyDmjH/EP5y66lB0goZgK4wS9PHcerNRI0=;
-        b=WTqfaja9EEMxlo3qcsdwP2BpslsXTboS+vZhHztwXuvWk2ErNtt62Mpp0Eaaox+Pnn
-         c/wpmSSqI/MnKOY1MNiSxctOfGlXx1WMhEjznIXNjYj170c7Gpi3pykeN1E45RB5T+91
-         E9YuPbzSf5/29S+A1RHZ3hOj0P8d/f3OKgbW6gUa5ySs9H3ivmWa6IesiC5UmSIKhg1v
-         ZuML1epDKbdPXuG6NjM+EYEN2q2LCMxM438kVnRi/Kz4kCwS4zAksOJV7OFuaZueEJC3
-         H6pqYV3bcryZKwK7CVZPBQyS6bQqdUDowAtMIH/Oqx/SPRphL3pHK7OLuOTekeONEcU7
-         epkg==
-X-Gm-Message-State: AOJu0YzsVVirK930gzPMqam30x6lX4uelLDLuLskzn0V/7euebovGgV0
-	BZPjFAzkrDSdLOdixOKWUDFrFw==
-X-Google-Smtp-Source: AGHT+IHk7lmDVGKtnQfm4mq3bULDVD35esNQMJLK9nUyooFioS0fzVXAMAhL7+5oYc0V/vLwpRuwzA==
-X-Received: by 2002:a05:6358:7205:b0:16d:f46f:16a9 with SMTP id h5-20020a056358720500b0016df46f16a9mr8361301rwa.17.1701737666267;
-        Mon, 04 Dec 2023 16:54:26 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id b67-20020a633446000000b005c67ca3c2c2sm3188911pga.21.2023.12.04.16.54.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Dec 2023 16:54:25 -0800 (PST)
-Date: Mon, 4 Dec 2023 16:54:25 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Tony Luck <tony.luck@intel.com>, linux-hardening@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/5] pstore: inode: Use cleanup.h for struct
- pstore_private
-Message-ID: <202312041649.C14F139F9@keescook>
-References: <20231202211535.work.571-kees@kernel.org>
- <20231202212217.243710-5-keescook@chromium.org>
- <20231202222706.GT38156@ZenIV>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FDFF0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 17:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701740772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R1C3Q/KwQSqG9yP6ISOd9Cb0ee81aaiJLrsTwyDo8cI=;
+	b=aHTsMDcm4xTFAoMYMlThRWdntol+2tPV5rqoHBqFlGxqThbz8VYhzVkoTTeoHecJ++cLpO
+	TdDtbon7vcTpvxftT0i6w3St4kAFeqg9J581WomjBzAJB3vFENvQ3GmewimMD8eB8vPVq/
+	jNTdZtT/yHdXwe+kKUDE6Yh9oWXTwic=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-wLc8U6qJMbyT2DZnFWgRjQ-1; Mon, 04 Dec 2023 20:46:09 -0500
+X-MC-Unique: wLc8U6qJMbyT2DZnFWgRjQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 242C785A5B5;
+	Tue,  5 Dec 2023 01:46:08 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.8])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BB08C1596F;
+	Tue,  5 Dec 2023 01:45:58 +0000 (UTC)
+Date: Tue, 5 Dec 2023 09:45:53 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH 10/21] block: Add fops atomic write support
+Message-ID: <ZW6A0R04Gk/04EHj@fedora>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-11-john.g.garry@oracle.com>
+ <ZW05th/c0sNbM2Zf@fedora>
+ <03a87103-0721-412c-92f5-9fd605dc0c74@oracle.com>
+ <ZW3DracIEH7uTyEA@fedora>
+ <bd639010-2ad7-4379-ba0a-64b5f6ebec41@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,79 +68,126 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231202222706.GT38156@ZenIV>
+In-Reply-To: <bd639010-2ad7-4379-ba0a-64b5f6ebec41@oracle.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Sat, Dec 02, 2023 at 10:27:06PM +0000, Al Viro wrote:
-> On Sat, Dec 02, 2023 at 01:22:15PM -0800, Kees Cook wrote:
+On Mon, Dec 04, 2023 at 01:13:55PM +0000, John Garry wrote:
 > 
-> >  static void *pstore_ftrace_seq_start(struct seq_file *s, loff_t *pos)
-> >  {
-> > @@ -338,9 +339,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
-> >  {
-> >  	struct dentry		*dentry;
-> >  	struct inode		*inode __free(iput) = NULL;
-> > -	int			rc = 0;
-> >  	char			name[PSTORE_NAMELEN];
-> > -	struct pstore_private	*private, *pos;
-> > +	struct pstore_private	*private __free(pstore_private) = NULL, *pos;
-> >  	size_t			size = record->size + record->ecc_notice_size;
-> >  
-> >  	if (WARN_ON(!inode_is_locked(d_inode(root))))
-> > @@ -356,7 +356,6 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
-> >  			return -EEXIST;
-> >  	}
-> >  
-> > -	rc = -ENOMEM;
-> >  	inode = pstore_get_inode(root->d_sb);
-> >  	if (!inode)
-> >  		return -ENOMEM;
-> > @@ -373,7 +372,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
-> >  
-> >  	dentry = d_alloc_name(root, name);
-> >  	if (!dentry)
-> > -		goto fail_private;
-> > +		return -ENOMEM;
-> >  
-> >  	private->dentry = dentry;
-> >  	private->record = record;
-> > @@ -386,13 +385,9 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
-> >  
-> >  	d_add(dentry, no_free_ptr(inode));
-> >  
-> > -	list_add(&private->list, &records_list);
-> > +	list_add(&(no_free_ptr(private))->list, &records_list);
+> > > 
+> > > I added this here (as opposed to the caller), as I was not really worried
+> > > about speeding up the failure path. Are you saying to call even earlier in
+> > > submission path?
+> > atomic_write_unit_min is one hardware property, and it should be checked
+> > in blk_queue_atomic_write_unit_min_sectors() from beginning, then you
+> > can avoid this check every other where.
 > 
-> That's really brittle.  It critically depends upon having no failure
-> exits past the assignment to ->i_private; once you've done that,
-> you have transferred the ownership of that thing to the inode
-> (look at your ->evict_inode()).
+> ok, but we still need to ensure in the submission path that the block device
+> actually supports atomic writes - this was the initial check.
 
-I guess so, but it was already that way, and it isn't assignment to
-i_private until everything else is "done", apart from adding to the
-dentry and the pstore internal list.
+Then you may add one helper bdev_support_atomic_write().
 
-> But you can't say
->         inode->i_private = no_free_ptr(private);
-> since you are using private past that point.
+> 
+> > 
+> > > > > +	if (pos % atomic_write_unit_min_bytes)
+> > > > > +		return false;
+> > > > > +	if (iov_iter_count(iter) % atomic_write_unit_min_bytes)
+> > > > > +		return false;
+> > > > > +	if (!is_power_of_2(iov_iter_count(iter)))
+> > > > > +		return false;
+> > > > > +	if (iov_iter_count(iter) > atomic_write_unit_max_bytes)
+> > > > > +		return false;
+> > > > > +	if (pos % iov_iter_count(iter))
+> > > > > +		return false;
+> > > > I am a bit confused about relation between atomic_write_unit_max_bytes and
+> > > > atomic_write_max_bytes.
+> > > I think that naming could be improved. Or even just drop merging (and
+> > > atomic_write_max_bytes concept) until we show it to improve performance.
+> > > 
+> > > So generally atomic_write_unit_max_bytes will be same as
+> > > atomic_write_max_bytes, however it could be different if:
+> > > a. request queue nr hw segments or other request queue limits needs to
+> > > restrict atomic_write_unit_max_bytes
+> > > b. atomic_write_unit_max_bytes does not need to be a power-of-2 and
+> > > atomic_write_max_bytes does. So essentially:
+> > > atomic_write_unit_max_bytes = rounddown_pow_of_2(atomic_write_max_bytes)
+> > > 
+> > plug merge often improves sequential IO perf, so if the hardware supports
+> > this way, I think 'atomic_write_max_bytes' should be supported from the
+> > beginning, such as:
+> > 
+> > - user space submits sequential N * (4k, 8k, 16k, ...) atomic writes, all can
+> > be merged to single IO request, which is issued to driver.
+> > 
+> > Or
+> > 
+> > - user space submits sequential 4k, 4k, 8k, 16K, 32k, 64k atomic writes, all can
+> > be merged to single IO request, which is issued to driver.
+> 
+> Right, we do expect userspace to use a fixed block size, but we give scope
+> in the API to use variable size.
 
-True. How about this reordering:
+Maybe it is enough to just take atomic_write_unit_min_bytes
+only, and allow length to be N * atomic_write_unit_min_bytes.
 
-        if (record->time.tv_sec)
-                inode_set_mtime_to_ts(inode,
-                                      inode_set_ctime_to_ts(inode, record->time));
+But it may violate atomic write boundary?
 
-        list_add(&private->list, &records_list);
-        inode->i_private = no_free_ptr(private);
+> 
+> > 
+> > The hardware should recognize unit size by start LBA, and check if length is
+> > valid, so probably the interface might be relaxed to:
+> > 
+> > 1) start lba is unit aligned, and this unit is in the supported unit
+> > range(power_2 in [unit_min, unit_max])
+> > 
+> > 2) length needs to be:
+> > 
+> > - N * this_unit_size
+> > - <= atomic_write_max_bytes
+> 
+> Please note that we also need to consider:
+> - any atomic write boundary (from NVMe)
 
-        d_add(dentry, no_free_ptr(inode));
+Can you provide actual NVMe boundary value?
+
+Firstly natural aligned write won't cross boundary, so boundary should
+be >= write_unit_max, see blow code from patch 10/21:
+
++static bool bio_straddles_atomic_write_boundary(loff_t bi_sector,
++				unsigned int bi_size,
++				unsigned int boundary)
++{
++	loff_t start = bi_sector << SECTOR_SHIFT;
++	loff_t end = start + bi_size;
++	loff_t start_mod = start % boundary;
++	loff_t end_mod = end % boundary;
++
++	if (end - start > boundary)
++		return true;
++	if ((start_mod > end_mod) && (start_mod && end_mod))
++		return true;
++
++	return false;
++}
++
+
+Then if the WRITE size is <= boundary, the above function should return
+false, right? Looks like it is power_of(2) & aligned atomic_write_max_bytes?
+
+> - virt boundary (from NVMe)
+
+virt boundary is applied on bv_offset and bv_len, and NVMe's virt
+bounary is (4k - 1), it shouldn't be one issue in reality.
+
+> 
+> And, as I mentioned elsewhere, I am still not 100% comfortable that we don't
+> pay attention to regular max_sectors_kb...
+
+max_sectors_kb should be bigger than atomic_write_max_bytes actually,
+then what is your concern?
 
 
-But none of this gets into how you'd like to see the iput handled. If
-you'd prefer, I can just define a pstore_iput handler and you don't have
-to look at it at all. :)
 
--Kees
+Thanks,
+Ming
 
--- 
-Kees Cook
 
