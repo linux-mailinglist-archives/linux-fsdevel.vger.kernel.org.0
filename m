@@ -1,47 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-4847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726BB804A45
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:37:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD87F804A48
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:37:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6501F21456
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18B601C20D75
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135C12E5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7794012E47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jbrrt8bm"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="VDe5+ovG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0636CD28B;
-	Tue,  5 Dec 2023 05:54:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5AEC433C7;
-	Tue,  5 Dec 2023 05:54:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701755681;
-	bh=2sgftbqbAfkigqri4VIdWIpZUTDqlQL8Lt67PkAsZFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jbrrt8bm/XGC3K82fxJ9vtlZxFBWBhjmUxz3y7tUeTPQ+rXO+qRFQEu+pf/+yIxtt
-	 AnEXxkXtc8UCc35foFnD2nKGVm+UQUG5BdGtHWjkrP/Mj/KdldWVR+dlJ0aHF/uNTC
-	 XjSkQbnW/5VxbMTacXLnmY0vi54BQiY5VeYIMD5u06In0YjTVT8Je1yRZtitTsoB6f
-	 OMNV/2tZVb7VcBXV2qUVosEjn3y6p1XRmY/Sz8kQWTH8M+BH3Nc56P6N0UAJqBOlGe
-	 ZzyYXW98dhGAXOaKi64nLuVcaOu2sBK+6yHNBSus6MP/oD0Sw98v0tRyR+wC2USa6x
-	 C7cHuzzb7UNng==
-Date: Mon, 4 Dec 2023 21:54:39 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 46/46] btrfs: load the inode context before sending
- writes
-Message-ID: <20231205055439.GO1168@sol.localdomain>
-References: <cover.1701468305.git.josef@toxicpanda.com>
- <99694dd7249ea1edefcf13b9842447e530fc3f6f.1701468306.git.josef@toxicpanda.com>
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29BF0D7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 22:27:32 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1d076ebf79cso12310965ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 22:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701757651; x=1702362451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhXYhRtk/KY/XHQgM/c3wDRTe8PmVUkWLPFRhdkev5c=;
+        b=VDe5+ovG8apuH9dXqs7gsMH9oPS5VeZljXRRqfAjOh2gxR7byrpmJBz8ho6pfbKHwj
+         qOQueLGVaKVco4VFZRtCC3urwX7rrqenY+YpYgYxCLlpClPkSJH0xmSYE3BeRS9oLQuk
+         rL6H1uJbzrwFyzUTAfBYsQvJZxkBcjymMIx5M/QYqN1BOvG9AEOiADt3hAIdSJY+5yHb
+         uxk8ARsAojkzwMwWN+ZbGr9H+HSetccLBaaK5uXCR5bONn87bPUp4cFUc7fjI+EVf4uL
+         of3qfum9sd2ESOS3hGv6ksMK4/wPitekuefp+H7TRUs/GZsktGX+ozYqhed46pnSZjiE
+         zGdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701757651; x=1702362451;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bhXYhRtk/KY/XHQgM/c3wDRTe8PmVUkWLPFRhdkev5c=;
+        b=PqUbUn3c4Ozftv7xuu4fc0hSlrAC3be7JcCDJ3Hi2s9jpPXOQGXvIo506xW+2C1px0
+         BUrp3mbTYHqxRGcKsWoO3Zlmznyqq1CtvZR/BbdTINIuBETIc7JfYcil1B+AyAja1T+2
+         6fA87fBJ/+TOCYlAoQAki9uK3jn5wIVjuW9lA4XOqwHbuePyDVLJXwHu52cT6QFUhPXa
+         V3OOrGLkLxXXdZ4KptvYs1OJ2S8RiT3/i4hClu9VYL9nlREo7ZUPQLfvs6ZqMcYK+BMR
+         wb7Q4iQ6ilRaIYJ+DzIjNLHc3yuiK0INuTL6BVehrbA5tvQdZkIp36GHm9tp0fWzQBxR
+         MUPA==
+X-Gm-Message-State: AOJu0Yy2XgquOxjHJqXoKZiFJBcrsnNTngxDZjRzxRLXPWX6AuMrqj+D
+	rQJFf25ZWYbe5RO2198Ijk0Xbg==
+X-Google-Smtp-Source: AGHT+IEUis2isZKyvLiufA2OSYo4xSVBLvpOU4Mj0HrgxtGTqwJ5IEKmqVKYaMx9UVf4tDFqmIy5mw==
+X-Received: by 2002:a17:902:c40d:b0:1cf:6ac3:81c2 with SMTP id k13-20020a170902c40d00b001cf6ac381c2mr3414170plk.47.1701757651517;
+        Mon, 04 Dec 2023 22:27:31 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id k10-20020a170902c40a00b001d087f68ef8sm543248plk.37.2023.12.04.22.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Dec 2023 22:27:31 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rAOu0-00449x-2P;
+	Tue, 05 Dec 2023 17:27:28 +1100
+Date: Tue, 5 Dec 2023 17:27:28 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 1/2] Allow a kthread to declare that it calls
+ task_work_run()
+Message-ID: <ZW7C0Cq+WZz+fnaS@dread.disaster.area>
+References: <20231204014042.6754-1-neilb@suse.de>
+ <20231204014042.6754-2-neilb@suse.de>
+ <20231204024031.GV38156@ZenIV>
+ <170172483155.7109.15983228851050210918@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,62 +84,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <99694dd7249ea1edefcf13b9842447e530fc3f6f.1701468306.git.josef@toxicpanda.com>
+In-Reply-To: <170172483155.7109.15983228851050210918@noble.neil.brown.name>
 
-On Fri, Dec 01, 2023 at 05:11:43PM -0500, Josef Bacik wrote:
-> For send we will read the pages and copy them into our buffer.  Use the
-> fscrypt_inode_open helper to make sure the key is loaded properly before
-> trying to read from the inode so the contents are properly decrypted.
+On Tue, Dec 05, 2023 at 08:20:31AM +1100, NeilBrown wrote:
+> On Mon, 04 Dec 2023, Al Viro wrote:
+> > On Mon, Dec 04, 2023 at 12:36:41PM +1100, NeilBrown wrote:
+> > 
+> > > This means that any cost for doing the work is not imposed on the kernel
+> > > thread, and importantly excessive amounts of work cannot apply
+> > > back-pressure to reduce the amount of new work queued.
+> > 
+> > It also means that a stuck ->release() won't end up with stuck
+> > kernel thread...
 > 
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/btrfs/send.c | 35 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 34 insertions(+), 1 deletion(-)
+> Is a stuck kernel thread any worse than a stuck user-space thread?
 > 
-> diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> index de77321777f4..3475b4cea09d 100644
-> --- a/fs/btrfs/send.c
-> +++ b/fs/btrfs/send.c
-> @@ -5392,6 +5392,37 @@ static int put_file_data(struct send_ctx *sctx, u64 offset, u32 len)
->  	return ret;
->  }
->  
-> +static int load_fscrypt_context(struct send_ctx *sctx)
-> +{
-> +	struct btrfs_root *root = sctx->send_root;
-> +	struct name_cache_entry *nce;
-> +	struct inode *dir;
-> +	int ret;
-> +
-> +	if (!IS_ENCRYPTED(sctx->cur_inode))
-> +		return 0;
-> +
-> +	/*
-> +	 * We're encrypted, we need to load the parent inode in order to make
-> +	 * sure the encryption context is loaded, we use this after calling
-> +	 * get_cur_path() so our nce for the current inode should be here.  If
-> +	 * not handle it, but ASSERT() for developers.
-> +	 */
-> +	nce = name_cache_search(sctx, sctx->cur_ino, sctx->cur_inode_gen);
-> +	if (!nce) {
-> +		ASSERT(nce);
-> +		return -EINVAL;
-> +	}
-> +
-> +	dir = btrfs_iget(root->fs_info->sb, nce->parent_ino, root);
-> +	if (IS_ERR(dir))
-> +		return PTR_ERR(dir);
-> +
-> +	ret = fscrypt_inode_open(dir, sctx->cur_inode);
-> +	iput(dir);
-> +	return ret;
+> > 
+> > > earlier than would be ideal.  When __dput (from the workqueue) calls
+> > 
+> > WTF is that __dput thing?  __fput, perhaps?
+> 
+> Either __fput or dput :-)
+> ->release isn't the problem that I am seeing.
+> The call trace that I see causing problems is
+> __fput -> dput -> dentry_kill -> destroy_inode -> xfs_fs_destroy_inode
 
-fscrypt_file_open() is called even on unencrypted files, which results in strong
-enforcement that encrypted directories don't contain unencrypted files.
+What problem, exactly, are you having with xfs_fs_destroy_inode()?
 
-The code above doesn't do that with fscrypt_inode_open().  That seems like a
-bug; the rules for "send" internally "opening" a file should be the same as a
-standard open, right?  Or did you do it this way intentionally?
-
-- Eric
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
