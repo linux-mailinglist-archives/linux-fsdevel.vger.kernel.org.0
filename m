@@ -1,93 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-4875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F158054FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 13:42:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DAF805765
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 15:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383E41C20E5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443B8280E88
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9596156476
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3r7E0Ft"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FEE584C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 14:35:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA2357866;
-	Tue,  5 Dec 2023 11:50:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414B1C433C8;
-	Tue,  5 Dec 2023 11:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701777034;
-	bh=1vi7lpWvyIlRPEOS8id0JlbcXrkUDYmCKkyVbkLEO/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m3r7E0Ft/sNzRLXx9KPMN7wMK8H8PLP4BMf4GbJ85C0HONRDECADPNUDARiPaxc9J
-	 9xmUAysv2FKUw4XeM/ClU/Y8ooaDZxUFAnzPn8c/w1s/gbXMDZmWWnIeP824av6jyb
-	 AwW5ZLSKUow+R8KxgaBbbmYTJw8Vp9gLcJYg/v6I9XmArk3eooyu7Wn0B7lIKw33GM
-	 shZiD1i8sf8dLaSUExtpjIcrnSrIrrl17uN7+qP40f+Y0Hr+vaJVqKjzWb7hg0FtHW
-	 3mr1JsR2rqGHtfmtEjLIlAh4vKrVsYfBiHy6mCQkU2iKv0h0TPLsax/oq/DdQSjB8I
-	 1mys7ZBCphkmQ==
-Date: Tue, 5 Dec 2023 12:50:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH 07/16] fs: add inode operations to get/set/remove fscaps
-Message-ID: <20231205-frettchen-weltoffen-16e63df530a7@brauner>
-References: <20231129-idmap-fscap-refactor-v1-0-da5a26058a5b@kernel.org>
- <20231129-idmap-fscap-refactor-v1-7-da5a26058a5b@kernel.org>
- <20231201-drohnen-ausverkauf-61e5c94364ca@brauner>
- <ZWoaGU6xpF3S793+@do-x1extreme>
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D44A0;
+	Tue,  5 Dec 2023 04:49:51 -0800 (PST)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1rAUs0-0006bO-Oa; Tue, 05 Dec 2023 13:49:48 +0100
+Message-ID: <24aa7a8b-40ed-449b-a722-df4abf65f114@leemhuis.info>
+Date: Tue, 5 Dec 2023 13:49:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZWoaGU6xpF3S793+@do-x1extreme>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regressions] ntfs3: empty file on update without forced cache
+ drop
+Content-Language: en-US, de-DE
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Kari Argillander <kari.argillander@stargateuniverse.net>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <138ed123-0f84-4d7a-8a17-67fe2418cf29@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <138ed123-0f84-4d7a-8a17-67fe2418cf29@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1701780592;01e3973a;
+X-HE-SMSGID: 1rAUs0-0006bO-Oa
 
-On Fri, Dec 01, 2023 at 11:38:33AM -0600, Seth Forshee (DigitalOcean) wrote:
-> On Fri, Dec 01, 2023 at 06:02:55PM +0100, Christian Brauner wrote:
-> > On Wed, Nov 29, 2023 at 03:50:25PM -0600, Seth Forshee (DigitalOcean) wrote:
-> > > Add inode operations for getting, setting and removing filesystem
-> > > capabilities rather than passing around raw xattr data. This provides
-> > > better type safety for ids contained within xattrs.
-> > > 
-> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > ---
-> > >  include/linux/fs.h | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > > index 98b7a7a8c42e..a0a77f67b999 100644
-> > > --- a/include/linux/fs.h
-> > > +++ b/include/linux/fs.h
-> > > @@ -2002,6 +2002,11 @@ struct inode_operations {
-> > >  				     int);
-> > >  	int (*set_acl)(struct mnt_idmap *, struct dentry *,
-> > >  		       struct posix_acl *, int);
-> > > +	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
-> > > +			  struct vfs_caps *);
-> > > +	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
-> > > +			  const struct vfs_caps *, int flags);
-> > 
-> > If it's really a flags argument, then unsigned int, please,
+[adding a bunch of people and two lists to the recipients, as Konstantin
+apparently hasn't sent any mail to any lists archived on lore for ~six
+weeks; maybe someone knows what's up or is willing to help out]
+
+On 27.11.23 07:18, Thorsten Leemhuis wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
 > 
-> This is the flags for setxattr, which is an int everywhere. Or almost
+> Konstantin, I noticed a regression report in bugzilla.kernel.org.
+> Apparently it's cause by a change of yours.
+> 
+> As many (most?) kernel developers don't keep an eye on bugzilla, I
+> decided to forward it by mail. Note, you have to use bugzilla to reach
+> the reporter, as I sadly[1] can not CCed them in mails like this.
+> 
+> Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=218180 :
 
-Ah right. Ugh, we should clean that up but not necessarily in this
-series.
+Konstantin, are you still around? Would be great if you could look into
+this regression, as this sounds somewhat worrying.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+#regzbot poke
+
+>> The problem I am facing is the following:
+>> 1. I mount an NTFS partition via NTFS3
+>> 2. I create a file
+>> 3. I write to the file
+>> 4. The file is empty
+>> 5. I remount the partition
+>> 6. The file has the changes I made before the remount
+>>
+>> I can avoid the remount by doing:
+>> sudo sysctl vm.drop_caches=3
+> 
+> See the ticket for more details. It according to the report happens
+> still happens with 6.7-rc2, but not with 6.1.y. The reporter bisected
+> the problem to ad26a9c84510af ("fs/ntfs3: Fixing wrong logic in
+> attr_set_size and ntfs_fallocate") [v6.2-rc1].
+> 
+> Side note: while briefly checking lore for existing problems caused by
+> that change I noticed two syzbot reports about it that apparently nobody
+> looked into:
+> 
+> https://lore.kernel.org/all/000000000000bdf37505f1a7fc09@google.com/
+> https://lore.kernel.org/all/00000000000062174006016bc386@google.com/
+> 
+> [TLDR for the rest of this mail: I'm adding this report to the list of
+> tracked Linux kernel regressions; the text you find below is based on a
+> few templates paragraphs you might have encountered already in similar
+> form.]
+> 
+> BTW, let me use this mail to also add the report to the list of tracked
+> regressions to ensure it's doesn't fall through the cracks:
+> 
+> #regzbot introduced: ad26a9c84510af
+> https://bugzilla.kernel.org/show_bug.cgi?id=218180
+> #regzbot title: ntfs3: empty file on update without forced cache drop
+> #regzbot ignore-activity
+> 
+> This isn't a regression? This issue or a fix for it are already
+> discussed somewhere else? It was fixed already? You want to clarify when
+> the regression started to happen? Or point out I got the title or
+> something else totally wrong? Then just reply and tell me -- ideally
+> while also telling regzbot about it, as explained by the page listed in
+> the footer of this mail.
+> 
+> Developers: When fixing the issue, remember to add 'Link:' tags pointing
+> to the report (e.g. the buzgzilla ticket and maybe this mail as well, if
+> this thread sees some discussion). See page linked in footer for details.
+> 
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+> 
+> [1] because bugzilla.kernel.org tells users upon registration their
+> "email address will never be displayed to logged out users"
+> 
+> 
 
