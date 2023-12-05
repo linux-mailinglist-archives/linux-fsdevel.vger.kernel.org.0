@@ -1,82 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-4872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635738054EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 13:42:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA15E8054F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 13:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68E6B212F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73ED01F215F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485B45C8E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F735C8F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 12:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWF7d+Kk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqmWoEP1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2A697A1;
-	Tue,  5 Dec 2023 11:38:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64A4AC433C8;
-	Tue,  5 Dec 2023 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2E26979C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 11:44:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7118DC433C8;
+	Tue,  5 Dec 2023 11:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701776320;
-	bh=HpQfzKH9PkcgbFsZNKCTx0ikve2nD8WgZ8kDoy0hkBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CWF7d+KkggDuCYM2ZU8EJIKTxe7uCccNTV72qrVHVEt6Q9Uuc/a6adZQAXfD9uQQR
-	 mrajWEOGXEhUvJssq7ok9NsIqToNwgakLRba7uZJ83ee2M1NxubiYugKhck/WOeVUd
-	 i3cD/49HSP56/Iqhx048G0eA3fX1z0WC80CDeqYTU8WrLbajgyLEG9ZVfokcGO90pq
-	 a/05lO9I274mHG7GxzwCX2xReZI4E5QKDm88rskarGW+U2KLvySzitr6m6e5aoPhX0
-	 XAqVcx6W+IP7Usyp9EOdajaLItYeRdvsxLzsHOpMXDpdKz2lDfxNGxytfdmiWqMHSL
-	 J5CS2r67Mm8Aw==
-Date: Tue, 5 Dec 2023 12:38:35 +0100
+	s=k20201202; t=1701776652;
+	bh=XF9AEYRA2oCSGTdGqb3Kv0jV2g0mXLqniiG/+bTllDg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VqmWoEP1PSfsfzj94grjRyvZbndCZTnbGL5Pl6QoNk/ztdMYhUy57GbBzHnUiArhp
+	 +QzlKS7b154T1laRMQ99TjOEobAOjFSxXGNA1SEJQl8k7muQqs8jONnuY7uLxIM5Oc
+	 0zIb8ylHdkYlP3oykyp6RUAm0AnvlIbLq8OrToczDE91qEBQKyipFMwTvQOqDZgVXP
+	 BYIwZkkRXWsj1ZKz2Mn+A+DUdpPaMeDvZ9ef3V56r/D8P7id7e1v9wTU3nw52OkMt1
+	 xytM/rJPcToVFo9KXTVrFwrI+D4dQ3Vt+hrqJNPvdaUniPp2NMEZn9cWQVIcR7IO7d
+	 yqEiVwiAXuR7A==
 From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-fsdevel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 3/5] fs: Add DEFINE_FREE for struct inode
-Message-ID: <20231205-horchen-gemieden-8013e0f30883@brauner>
-References: <20231202211535.work.571-kees@kernel.org>
- <20231202212217.243710-3-keescook@chromium.org>
- <20231202212846.GQ38156@ZenIV>
- <202312021331.D2DFBF153@keescook>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: add Jan Kara as reviewer
+Date: Tue,  5 Dec 2023 12:43:37 +0100
+Message-ID: <20231205-aufkam-neukunden-d14970a0a6cc@brauner>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202312021331.D2DFBF153@keescook>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=948; i=brauner@kernel.org; h=from:subject:message-id; bh=mTpLOdyB5VKfBHflVMEWr13S6D5CwrrYfcJnEFOKaec=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTm87x4/kWf88OMRz4K+f48U/sWiSktivFZt2v/hmLZJ Md1r+dod5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkiiIjw6mCF+e2GP6aWeJt x6Nbedni5e6Yg78P6SxN/blXfat/fg7D/7w+CbHVe+pPxlp+EdXXEnr8w/PpDcbGRyafOQLspwY Z8gIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 02, 2023 at 01:34:32PM -0800, Kees Cook wrote:
-> On Sat, Dec 02, 2023 at 09:28:46PM +0000, Al Viro wrote:
-> > On Sat, Dec 02, 2023 at 01:22:13PM -0800, Kees Cook wrote:
-> > > Allow __free(iput) markings for easier cleanup on inode allocations.
-> > 
-> > NAK.  That's a bloody awful idea for that particular data type, since
-> > 	1) ERR_PTR(...) is not uncommon and passing it to iput() is a bug.
-> 
-> Ah, sounds like instead of "if (_T)", you'd rather see
-> "if (!IS_ERR_OR_NULL(_T))" ?
-> 
-> > 	2) the common pattern is to have reference-consuming primitives,
-> > with failure exits normally *not* having to do iput() at all.
-> 
-> This I'm not following. If I make a call to "new_inode(sb)" that I end
-> up not using, I need to call "iput()" in it...
+Jan's been really essential in help deal with reviews in a bunch of
+areas and we should really make him an official reviewer. This is long
+overdue imho.
 
-If we wanted to do this properly then we would need to emulate consume
-or move semantics like Rust has. So a cleanup function for inodes based
-on scope for example and then another primitive that transfers/moves
-ownership of that refcount to the consumer. Usually this is emulate by
-stuff like TAKE_POINTER() and similar stuff in userspace. But I'm not
-sure how pleasant it would be to do this cleanly.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Uhm, I have to confess that I had this in the tree for a while and
+simply forgot to send it out. This was really an accident. I'm sorry
+about this.
+
+I'm quite happy because Jan has really helped out a lot and I don't
+think this should be controversial.
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d0a7b6f357ce..d60c4888e6df 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8157,6 +8157,7 @@ F:	include/trace/events/fs_dax.h
+ FILESYSTEMS (VFS and infrastructure)
+ M:	Alexander Viro <viro@zeniv.linux.org.uk>
+ M:	Christian Brauner <brauner@kernel.org>
++R:	Jan Kara <jack@suse.cz>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+ F:	fs/*
+-- 
+2.42.0
+
 
