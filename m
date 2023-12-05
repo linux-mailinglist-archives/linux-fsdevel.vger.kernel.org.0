@@ -1,127 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-4817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7DD804374
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 01:33:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EB6804375
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 01:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AE528133C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 00:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469D71C20998
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 00:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDCE4A06
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 00:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CD74A02
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 00:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Z56e8Z9h"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Wj8UeFAm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B428FF;
-	Mon,  4 Dec 2023 16:16:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1701735390; x=1702340190; i=spasswolf@web.de;
-	bh=VL1t/9uVaZa4DlkGAtw5hbWp5s6+BjMwMC+1bLEDVyI=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
-	 References;
-	b=Z56e8Z9h/QilhFNWp+AhSyyttGMVspyD7wsJoyxapum30n9e05SMQ1514MJRDCxn
-	 QDJ0NcfOCFuE7uAQC13mALf45mCd0vmHwX4FAyEsuNjIPAYE02SXWHuPy9rvL987A
-	 xojlZi2SgURHd8cbJ5tLdBZDbtOjy1T/yRESpa8ecDcwLc4zRKYcBJs1+9n7bdZ3i
-	 q1UUQTUR17/lBKu42AnCCrkW/mvXku+OtXHjnr9MZtfOgaGtHEW8wHYXNiXdF1hf+
-	 wMnOMbz5L1/HEtWNE3nlrQ1R/eOhf7afdNLDrU05S3wIX+36Bnp00We5kthmTfJXG
-	 umhYazFJ1c0XyMKjXA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from lisa.home ([84.119.92.193]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3Xjb-1rIrWA3nPf-010dZp; Tue, 05
- Dec 2023 01:16:30 +0100
-From: Bert Karwatzki <spasswolf@web.de>
-To: amir73il@gmail.com,
-	Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>
-Cc: axboe@kernel.dk,
-	dhowells@redhat.com,
-	hch@lst.de,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	linux-fsdevel@vger.kernel.org,
-	miklos@szeredi.hu,
-	viro@zeniv.linux.org.uk,
-	Bert Karwatzki <spasswolf@web.de>,
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A236107
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 16:20:22 -0800 (PST)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1d0aaa979f0so10416175ad.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Dec 2023 16:20:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701735621; x=1702340421; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0S1UEF2YyAX6G3igmkROaOCkVf7zG8Kt7ZNcHaiM/7U=;
+        b=Wj8UeFAmWnHXto01ei01WM0JspO9IHHCz8ce+MzVTCOzE7VIrTthCxv0PSOBrkv1ee
+         T5oP3NByIftdornUyof1njAElMthRK2qGs/92mGvcj+qyp1cqhmG57fSCwlpaO9LPJli
+         ET7pb0aCt1W3fCp040KJvc3DZoKUW8Kg8DG4WAUBXe6sFLHwr75lqiCtAO0/jWu1Fawh
+         ArZvYb5qLBb03fL0zz8xA1TZiAcL4el+eeOVHnCAEw7UosOWd6Midapj6gtHeOhyMufJ
+         Mh/UnSxYwC1CaFtt139Otx9auWbe5EF0RJMrOkLsfd22eIXOONjPycjOYwa9QnMHqmq0
+         PAaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701735621; x=1702340421;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0S1UEF2YyAX6G3igmkROaOCkVf7zG8Kt7ZNcHaiM/7U=;
+        b=GrJAN/Ppi3uDSiTZCyL8WJ7lNuDtaXuosTZYmkv/0DvAjP8hbrva5IWIRRJJg6h48e
+         hOuT4fJDzX0n4r3Bov8ep7DvFW97twe71le4SyYgMAm+T5iHvuP8ttPsoOEvOplC7cKz
+         N3/6m1sBioUPRykGXRTeqmNgRKmp05BdW51wuluVfC2fM4HZLRtNzfIWaMq5D/lh6fKX
+         w+fiEkq+yxsTAraKlZyE8XqSp1Q6UQVCCdJ7cFwxWLKMT6yxeWpmhljr7jULCJZg2uc6
+         Klg8G/1xVAXeip0OYzKINqbozgWqvffS7Ry/IEvNmMkNpjObh7Nv5bmN/xqIgZNqk97H
+         3R4Q==
+X-Gm-Message-State: AOJu0YynnIOf0AMBZtk280p/YnuhVUX41cl5KeI9mCQIUYGeFHk/gPea
+	ybXKtf5bYJ6gsg+c+bg6RJH5wA==
+X-Google-Smtp-Source: AGHT+IG6o4lI52BlB5GUEIT3TVt2J+H+u5Y/PhuRO647sp9sdHbA3yjRuBLu7rfx91DSE0IxdNRvqw==
+X-Received: by 2002:a17:902:988c:b0:1d0:6ffd:ae22 with SMTP id s12-20020a170902988c00b001d06ffdae22mr1930912plp.137.1701735621280;
+        Mon, 04 Dec 2023 16:20:21 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id h5-20020a170902748500b001d0b410271fsm1785149pll.218.2023.12.04.16.20.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Dec 2023 16:20:20 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rAJAf-003x1T-2z;
+	Tue, 05 Dec 2023 11:20:17 +1100
+Date: Tue, 5 Dec 2023 11:20:17 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>,
+	Xiaoli Feng <fengxiaoli0714@gmail.com>,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	Rohith Surabattula <rohiths.msft@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Darrick Wong <darrick.wong@oracle.com>, fstests@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: read_write: make default in vfs_copy_file_range() reachable
-Date: Tue,  5 Dec 2023 01:16:20 +0100
-Message-Id: <20231205001620.4566-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231130141624.3338942-4-amir73il@gmail.com>
-References: <20231130141624.3338942-4-amir73il@gmail.com>
+Subject: Re: [PATCH] cifs: Fix non-availability of dedup breaking generic/304
+Message-ID: <ZW5swS8fUXFIeu1F@dread.disaster.area>
+References: <250053.1701698519@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lsR0wLtu1y9h5TuSODyGzZErCoDe8SKviHEzDfJiOXiPSKuy4vL
- XX2Hzr90rDrg6OgpS4GgS28SfCpYnl8DaAXaLzcrgAyAaKT9KIstf7YHL8BeaLN6EW0oEaM
- 9Ba63dJI3YKXfd+BQZMVa5zAVumzJD0w/WfGufhyFofilDY4vf6v1Cc6la+c/neU9q9PZRJ
- Xn74z2ikituGkmcgnQs/w==
-UI-OutboundReport: notjunk:1;M01:P0:Fw5qyBNwOzY=;JZUdk51esH23BLae3Ghg2vNQMDn
- OmIIp2QCduidy3QLGhkqN2X8gFebO4ACD4FJpCt0PHPQeI/Nnv7iBO5YPdIuWm2Ydy/9hW2vA
- M95nSSiB61Q26fkvBqzCQh6VamWJBRo0s259wEKYr60p2Nb7uir9DGHDyDYFYeVKIZHDB6S/5
- zarkdvMq79pmfMiPveCgidiMgRoTytfAjUE/1OnnrNy341/D3E3P4gVMxi7wlUbX8hOnoxhCd
- Gr1cB6SzQcXSyi3QJmhJv9OB8g0Naz1oCVAjhSEOpgsm1UrP+/68C7B1UAe9WPI4vtUpNO+7I
- oG6ogY0ig+Kl6hWA+OiOES5VQsse6DzvO65xIgn8i7UVkk2SgbcjYFI6ew/c3UBsQRPmC4rjt
- Y0SqL31QwCi2m/z4Pm0AB2kN8K69Ux2SqCe9e+P8/xpQ43r3aMtmUJM3U7wi55GBSlpBzXLNf
- cJdYYezw9Ij9orS0BUi3q3XxeC5V+Y4zCC5zwHgoZR07Nby1TDessgp0e4VqcnoZ1woqF2j+p
- NvtlVpygYCRe+rq9bba13y3udNXyG1C2lA6ecWs+kIcnHwiN1QsBsaLM3FaBpceOatcDtNmo0
- 84xL6eX5i/gWW5pc+a5CryecR5xU1XcAKZiZvfWhfpbTIMhpiSJ6aQ7o7SCu7ivD06KwPJY6I
- IrEqYdxIANs++TVeCG92GDIJ5LkL7Q8agC34FaocyjVJ2RhXrMc5NB3JK4ErNTXr03sdepBTp
- gOg57DO8+j+t1RUKOeGfPdh4nHCiqeu/AJCh9abAHhj+C/to3APy1bqfo9oErn+cHUrukhIV6
- QDj6mon4Da4k0FUb+C4J7Gb8SiwdTzTWaDy4ADt4OcYdIfeaCdHC3p6N5oiDY5s8ISTcy8yjr
- B8+wytZr1p2dY9iTCG+8N5Q/cTQWRhPp80IwqK9ead+rvWidEnOnA6W2JCSQVqlj4KnUaYXl7
- mECKbQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <250053.1701698519@warthog.procyon.org.uk>
 
-If vfs_copy_file_range() is called with (flags & COPY_FILE_SPLICE =3D=3D 0=
-)
-and both file_out->f_op->copy_file_range and file_in->f_op->remap_file_ran=
-ge
-are NULL, too, the default call to do_splice_direct() cannot be reached.
-This patch adds an else clause to make the default reachable in all
-cases.
+On Mon, Dec 04, 2023 at 02:01:59PM +0000, David Howells wrote:
+> Deduplication isn't supported on cifs, but cifs doesn't reject it, instead
+> treating it as extent duplication/cloning.  This can cause generic/304 to go
+> silly and run for hours on end.
 
-Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-=2D--
- fs/read_write.c | 2 ++
- 1 file changed, 2 insertions(+)
+This should also mention that it cloning rather than comparing data
+can cause server-side data corruption in the destination file for
+the benefit of anyone trying to track down weird data corruption
+problems....
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index e0c2c1b5962b..3599c54bd26d 100644
-=2D-- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1554,6 +1554,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, lo=
-ff_t pos_in,
- 		/* fallback to splice */
- 		if (ret <=3D 0)
- 			splice =3D true;
-+	} else {
-+		splice =3D true;
- 	}
+> Fix cifs to indicate EOPNOTSUPP if REMAP_FILE_DEDUP is set in
+> ->remap_file_range().
+> 
+> Note that it's unclear whether or not commit b073a08016a1 is meant to cause
+> cifs to return an error if REMAP_FILE_DEDUP.
+>
+> Fixes: b073a08016a1 ("cifs: fix that return -EINVAL when do dedupe operation")
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Xiaoli Feng <fengxiaoli0714@gmail.com>
+> cc: Shyam Prasad N <nspmangalore@gmail.com>
+> cc: Rohith Surabattula <rohiths.msft@gmail.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Darrick Wong <darrick.wong@oracle.com>
+> cc: fstests@vger.kernel.org
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/3876191.1701555260@warthog.procyon.org.uk/
+> ---
+>  fs/smb/client/cifsfs.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index 4d8927b57776..96a65cf9b5ec 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -1276,7 +1276,9 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+>  	unsigned int xid;
+>  	int rc;
+>  
+> -	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+> +	if (remap_flags & REMAP_FILE_DEDUP)
+> +		return -EOPNOTSUPP;
+> +	if (remap_flags & ~REMAP_FILE_ADVISORY)
+>  		return -EINVAL;
+>  
+>  	cifs_dbg(FYI, "clone range\n");
 
- 	file_end_write(file_out);
-=2D-
-2.39.2
+Apart from updating the commit message, the fix looks fine to me.
 
-Since linux-next-20231204 I noticed that it was impossible to start the
-game Path of Exile (using the steam client). I bisected the error to
-commit 05ee2d85cd4ace5cd37dc24132e3fd7f5142ebef. Reverting this commit
-in linux-next-20231204 made the game start again and after inserting
-printks into vfs_copy_file_range() I found that steam (via python3)
-calls this function with (flags & COPY_FILE_SPLICE =3D=3D 0),
-file_out->f_op->copy_file_range =3D=3D NULL and
-file_in->f_op->remap_file_range =3D=3D NULL so the default is never reache=
-d.
-This patch adds a catch all else clause so the default is reached in
-all cases. This patch fixes the describe issue with steam and Path of
-Exile.
-
-Bert Karwatzki
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+-- 
+Dave Chinner
+david@fromorbit.com
 
