@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-4838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADC5804A32
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:36:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A6A804A33
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87810281178
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017F81C20D49
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4074012E55
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6229712E62
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzY1iKQu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbFmMCU4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E3C6AD7;
-	Tue,  5 Dec 2023 05:11:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D34C433C7;
-	Tue,  5 Dec 2023 05:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E7F8F6B;
+	Tue,  5 Dec 2023 05:22:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91712C433C8;
+	Tue,  5 Dec 2023 05:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701753077;
-	bh=08/xrYNx1KD3FQY8UkmUKpN4wf3Eh09m/6bAZwCuidA=;
+	s=k20201202; t=1701753755;
+	bh=W0MqYHnYXOVVDBXS1yfTCAUfAHD1WDSI3lkYsOly5II=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CzY1iKQu9t1UOTI7yD0PvR7jRXgLwEBzCGiPxSqFJ3QrSePsDMOn0pPY7L/Rtx4vC
-	 ocyduR3PKPlkUWBwHLAriofZmaxb4LMPalSd89NrAv953v9uiYr2u/Wj+R41U268Xs
-	 78bx+z6z4NW2dqGdWeJc/OqcXu6l8v7wClNIEzfqlxCYCFiZsWxx9kdYYrKPXasmfC
-	 sv28JxjvjFSDnzm8n2woOw2QF7UFGXjy/qef9VgBEB6TjQXvWFpb66JHTgiF9QjIsC
-	 dB3attMLVXx94d9F9SzB2pjA7stKBFChbjELUXYxOwd8XGybH8iVhcMdvdubXPnrER
-	 BVBUyR0++EVXw==
-Date: Mon, 4 Dec 2023 21:11:15 -0800
+	b=dbFmMCU4ruYQbdbQKzC/Z5uXVylZCH/S+wMl6d/GbSxMkEk5YqA4+PRslEmuNs1G1
+	 asntUfWQVpBvW5KExT564/b9SD+YEs2nc4PVUg+pPYY39z+FGNAM/s1S+fJTV5xHp3
+	 PO9UXdNVOHAV9mnW4sUBax9Hs7RF/bvuqnofPWBUmvpS7qLZqipmHmYcgWJGcoVHeb
+	 RlPNmNWE0W+9a9OR5P4QFizFTg/2bRq3lXBeKtM9mzF3cMGWKG6kFNqH88oOtuFwYH
+	 TBdewpFJeXzxLXFh9SNR4EJZrhxNhOkTawtBIGC99Cw8cB8kQ6I93La8JgUhetzgFu
+	 fwdlTE5eV6NsA==
+Date: Mon, 4 Dec 2023 21:22:34 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Omar Sandoval <osandov@osandov.com>,
 	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Subject: Re: [PATCH v4 17/46] btrfs: add encryption to CONFIG_BTRFS_DEBUG
-Message-ID: <20231205051115.GJ1168@sol.localdomain>
+Subject: Re: [PATCH v4 12/46] btrfs: add inode encryption contexts
+Message-ID: <20231205052234.GK1168@sol.localdomain>
 References: <cover.1701468305.git.josef@toxicpanda.com>
- <162cd559b6a47e1df6e49b15acb24942577280f5.1701468306.git.josef@toxicpanda.com>
+ <a8ca3ba1888f9d116be9d7fec921b6f4bfa881d6.1701468306.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,43 +50,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <162cd559b6a47e1df6e49b15acb24942577280f5.1701468306.git.josef@toxicpanda.com>
+In-Reply-To: <a8ca3ba1888f9d116be9d7fec921b6f4bfa881d6.1701468306.git.josef@toxicpanda.com>
 
-On Fri, Dec 01, 2023 at 05:11:14PM -0500, Josef Bacik wrote:
-> From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+On Fri, Dec 01, 2023 at 05:11:09PM -0500, Josef Bacik wrote:
+> From: Omar Sandoval <osandov@osandov.com>
 > 
-> Since encryption is currently under BTRFS_DEBUG, this adds its
-> dependencies: inline encryption from fscrypt, and the inline encryption
-> fallback path from the block layer.
+> In order to store encryption information for directories, symlinks,
+> etc., fscrypt stores a context item with each encrypted non-regular
+> inode. fscrypt provides an arbitrary blob for the filesystem to store,
+> and it does not clearly fit into an existing structure, so this goes in
+> a new item type.
 > 
-> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-> ---
->  fs/btrfs/ioctl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 9968a36079c4..0e8e2ca48a2e 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -4573,6 +4573,7 @@ long btrfs_ioctl(struct file *file, unsigned int
->  		return btrfs_ioctl_get_fslabel(fs_info, argp);
->  	case FS_IOC_SETFSLABEL:
->  		return btrfs_ioctl_set_fslabel(file, argp);
-> +#ifdef CONFIG_BTRFS_DEBUG
->  	case FS_IOC_SET_ENCRYPTION_POLICY: {
->  		if (!IS_ENABLED(CONFIG_FS_ENCRYPTION))
->  			return -EOPNOTSUPP;
-> @@ -4601,6 +4602,7 @@ long btrfs_ioctl(struct file *file, unsigned int
->  		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
->  	case FS_IOC_GET_ENCRYPTION_NONCE:
->  		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
-> +#endif /* CONFIG_BTRFS_DEBUG */
 
-This diff doesn't seem to match the commit message.
+It's actually regular files too, right?
 
-BTW, only semi-related, but BTRFS_FS should select FS_ENCRYPTION_ALGS if
-FS_ENCRYPTION.
+> diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
+> index d24e8e121507..08f561da33cd 100644
+> --- a/include/uapi/linux/btrfs_tree.h
+> +++ b/include/uapi/linux/btrfs_tree.h
+> @@ -164,6 +164,8 @@
+>  #define BTRFS_VERITY_DESC_ITEM_KEY	36
+>  #define BTRFS_VERITY_MERKLE_ITEM_KEY	37
+>  
+> +#define BTRFS_FSCRYPT_CTX_ITEM_KEY	41
+
+Maybe call this BTRFS_FSCRYPT_INODE_CTX_ITEM_KEY?
 
 - Eric
 
