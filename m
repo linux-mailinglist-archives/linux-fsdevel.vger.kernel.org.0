@@ -1,176 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-4887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBC6805A16
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 17:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB51E805A17
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 17:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943611F217E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 16:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A79C1F21463
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 16:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FBA60BB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 16:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FA15E0A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 16:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnYxFPsD"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nygmyjgJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA01C120
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 08:03:03 -0800 (PST)
-Received: by mail-pj1-x1041.google.com with SMTP id 98e67ed59e1d1-28659b38bc7so4357517a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Dec 2023 08:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701792183; x=1702396983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKR6jBQYsbLX9HPEoSWQhFmH228TI3vUpTG9biugBZ8=;
-        b=TnYxFPsD2SqAxP4jPcOBSu1aYGBOhb75MaUcVkBlt7ueQPNtXX4SHTQ25YbXGnOYKy
-         7b7Gk1B+ZjolKoKbYbJyKCkNVeWRxEpk7WJZzqLTwyY9MUWjq27gcrHm/yGQQy+P06mW
-         ImeZzZsDEXu3DyKWBruUgKuncImEdcwfWpSrEvMFQtteqmnVk6cfZzfi92VuZdInUUZu
-         XfXukGI7kVbOnCrCmDO1Ui5ODCR1xQtE94y3hUrmxWdW/A9qT+v9uJojIWykG5IV6r6v
-         dcce0o13snpsRkba7jcxR65EfcBLWg/ddqLud80jRYQPin5CirWTYDvZCTBNbGc2UQFr
-         ml9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701792183; x=1702396983;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jKR6jBQYsbLX9HPEoSWQhFmH228TI3vUpTG9biugBZ8=;
-        b=q2IGgW+q3xblpgshVsg4YXz+fW/hTEFCQkQF8N+lhW4yVMzq++GYiIbVcjeM6nDVRi
-         yGFUStoCCdW2PcramarVWKgJljFNkPzZO1tzxUzCMAp2dKIbZ8VirkXx2p3+w5323/vZ
-         jri12REsDj++xQ0S/UvWf1cTV4aEAWLp0rYF7mPNh19gPWWXTQ4aA3/40kGR24OOOTs8
-         96lY76xGUxcPHisJ4teHArZ/LMMVumhdgXCBe6AgEgWzIyiox9x35s43WPx8tHrSUY8s
-         uk/OvKm+fefSgxXXgqOcAsypHG5iJMksmzmHmk0+5y8MZqUVJDmz1pAnhevwYrf92iaM
-         LGNQ==
-X-Gm-Message-State: AOJu0YyUb6cQOz75TBF5fJbgWkIDYN/7JJFFg8QfSNKpQBhKNXGsgnhC
-	n4ncu4elvokJe7I76WXxvewZv0t3I1+/4B3D/jBPPA==
-X-Google-Smtp-Source: AGHT+IET6iOJYhwKm7sWWHKT6oSFuHKO0DBIgOk5Bs5JIYc/WrmdopmiqDlzA42bWmKyAYqw4YbNcg==
-X-Received: by 2002:a17:90a:bf05:b0:286:6cc0:cabd with SMTP id c5-20020a17090abf0500b002866cc0cabdmr1469563pjs.52.1701792182956;
-        Tue, 05 Dec 2023 08:03:02 -0800 (PST)
-Received: from localhost ([2409:8a3c:3647:2160:38b2:24ff:fe76:bb76])
-        by smtp.gmail.com with ESMTPSA id jg11-20020a17090326cb00b001d078445059sm6302468plb.143.2023.12.05.08.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Dec 2023 08:03:02 -0800 (PST)
-From: John Sanpe <sanpeqf@gmail.com>
-To: linkinjeon@kernel.org,
-	sj1557.seo@samsung.com,
-	willy@infradead.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Andy.Wu@sony.com,
-	Wataru.Aoyama@sony.com,
-	cpgs@samsung.com,
-	John Sanpe <sanpeqf@gmail.com>
-Subject: [PATCH v3] exfat/balloc: using hweight instead of internal logic
-Date: Tue,  5 Dec 2023 23:58:37 +0800
-Message-ID: <20231205155837.1675052-1-sanpeqf@gmail.com>
-X-Mailer: git-send-email 2.43.0
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B526C3;
+	Tue,  5 Dec 2023 08:05:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1701792352; x=1733328352;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZyDR6sy6u4w5UFUiRqO9kTsbMr6QFgnbKsI56jM9xb8=;
+  b=nygmyjgJcnqF2Svek4Xb1byV8HsayTcHnEYxdttCY2Zi6NriAoD61jhZ
+   RAElcBNRbS8BNiMINItc4KdZtO1FneuTr7HM7CCs87iO0uI4mNKkNvSRN
+   +4l62nETKlcTW6kBR7DylxVcWfbLZ3Q1cY4UxOX/GF89ENFLZJoPFu3yy
+   3vlk6ZHv5Ag+fedKxfBXyj3MP5Z65TvgxJ7rrQ1tzxHRbV2E+tyuCawKx
+   +RCzLxKVU3yfwOZJqYhLZPFHbnRjxqzseEgihntPNeZ+N7Lv7vypWL23E
+   kD/mLUrkS5mMhoZzPHrl2gLrY2uY1hnZX92nckyqSMAGnn/MrZ9HBrfBq
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="425071429"
+X-IronPort-AV: E=Sophos;i="6.04,252,1695711600"; 
+   d="scan'208";a="425071429"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2023 08:05:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10915"; a="720754060"
+X-IronPort-AV: E=Sophos;i="6.04,252,1695711600"; 
+   d="scan'208";a="720754060"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga003.jf.intel.com with ESMTP; 05 Dec 2023 08:05:47 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rAXvb-0009Iu-2D;
+	Tue, 05 Dec 2023 16:05:43 +0000
+Date: Wed, 6 Dec 2023 00:05:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Iurii Zaikin <yzaikin@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Joel Granados <j.granados@samsung.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH v2 12/18] sysctl: treewide: constify the ctl_table
+ argument of handlers
+Message-ID: <202312052324.nGsOnPtj-lkp@intel.com>
+References: <20231204-const-sysctl-v2-12-7a5060b11447@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231204-const-sysctl-v2-12-7a5060b11447@weissschuh.net>
 
-Replace the internal table lookup algorithm with the hweight
-library, which has instruction set acceleration capabilities.
+Hi Thomas,
 
-Use it to increase the length of a single calculation of
-the exfat_find_free_bitmap function to the long type.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: John Sanpe <sanpeqf@gmail.com>
----
- fs/exfat/balloc.c | 48 +++++++++++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+[auto build test ERROR on netfilter-nf/main]
+[also build test ERROR on akpm-mm/mm-everything linus/master v6.7-rc4]
+[cannot apply to nf-next/master next-20231205]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index e918decb3735..69804a1b92d0 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -5,11 +5,22 @@
- 
- #include <linux/blkdev.h>
- #include <linux/slab.h>
-+#include <linux/bitmap.h>
- #include <linux/buffer_head.h>
- 
- #include "exfat_raw.h"
- #include "exfat_fs.h"
- 
-+#if BITS_PER_LONG == 32
-+# define __le_long __le32
-+# define lel_to_cpu(A) le32_to_cpu(A)
-+#elif BITS_PER_LONG == 64
-+# define __le_long __le64
-+# define lel_to_cpu(A) le64_to_cpu(A)
-+#else
-+# error "BITS_PER_LONG not 32 or 64"
-+#endif
-+
- static const unsigned char free_bit[] = {
- 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 4, 0, 1, 0, 2,/*  0 ~  19*/
- 	0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, 5, 0, 1, 0, 2, 0, 1, 0, 3,/* 20 ~  39*/
-@@ -26,22 +37,6 @@ static const unsigned char free_bit[] = {
- 	0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0                /*240 ~ 254*/
- };
- 
--static const unsigned char used_bit[] = {
--	0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3,/*  0 ~  19*/
--	2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 1, 2, 2, 3, 2, 3, 3, 4,/* 20 ~  39*/
--	2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5,/* 40 ~  59*/
--	4, 5, 5, 6, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,/* 60 ~  79*/
--	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 2, 3, 3, 4,/* 80 ~  99*/
--	3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6,/*100 ~ 119*/
--	4, 5, 5, 6, 5, 6, 6, 7, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4,/*120 ~ 139*/
--	3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,/*140 ~ 159*/
--	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5,/*160 ~ 179*/
--	4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 2, 3, 3, 4, 3, 4, 4, 5,/*180 ~ 199*/
--	3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6,/*200 ~ 219*/
--	5, 6, 6, 7, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,/*220 ~ 239*/
--	4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8             /*240 ~ 255*/
--};
--
- /*
-  *  Allocation Bitmap Management Functions
-  */
-@@ -244,25 +239,24 @@ int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count)
- 	unsigned int count = 0;
- 	unsigned int i, map_i = 0, map_b = 0;
- 	unsigned int total_clus = EXFAT_DATA_CLUSTER_COUNT(sbi);
--	unsigned int last_mask = total_clus & BITS_PER_BYTE_MASK;
--	unsigned char clu_bits;
--	const unsigned char last_bit_mask[] = {0, 0b00000001, 0b00000011,
--		0b00000111, 0b00001111, 0b00011111, 0b00111111, 0b01111111};
-+	unsigned int last_mask = total_clus & (BITS_PER_LONG - 1);
-+	unsigned long *bitmap, clu_bits;
- 
- 	total_clus &= ~last_mask;
--	for (i = 0; i < total_clus; i += BITS_PER_BYTE) {
--		clu_bits = *(sbi->vol_amap[map_i]->b_data + map_b);
--		count += used_bit[clu_bits];
--		if (++map_b >= (unsigned int)sb->s_blocksize) {
-+	for (i = 0; i < total_clus; i += BITS_PER_LONG) {
-+		bitmap = (void *)(sbi->vol_amap[map_i]->b_data + map_b);
-+		count += hweight_long(*bitmap);
-+		map_b += sizeof(long);
-+		if (map_b >= (unsigned int)sb->s_blocksize) {
- 			map_i++;
- 			map_b = 0;
- 		}
- 	}
- 
- 	if (last_mask) {
--		clu_bits = *(sbi->vol_amap[map_i]->b_data + map_b);
--		clu_bits &= last_bit_mask[last_mask];
--		count += used_bit[clu_bits];
-+		bitmap = (void *)(sbi->vol_amap[map_i]->b_data + map_b);
-+		clu_bits = lel_to_cpu(*(__le_long *)bitmap);
-+		count += hweight_long(clu_bits & BITMAP_LAST_WORD_MASK(last_mask));
- 	}
- 
- 	*ret_count = count;
+url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/sysctl-delete-unused-define-SYSCTL_PERM_EMPTY_DIR/20231204-165306
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git main
+patch link:    https://lore.kernel.org/r/20231204-const-sysctl-v2-12-7a5060b11447%40weissschuh.net
+patch subject: [PATCH v2 12/18] sysctl: treewide: constify the ctl_table argument of handlers
+config: arm64-defconfig (https://download.01.org/0day-ci/archive/20231205/202312052324.nGsOnPtj-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231205/202312052324.nGsOnPtj-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312052324.nGsOnPtj-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:144:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_RD'
+     144 |         [C(L1D)][C(OP_READ)][C(RESULT_MISS)]    = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:122:65: warning: initialized field overwritten [-Woverride-init]
+     122 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR                       0x0041
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:145:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR'
+     145 |         [C(L1D)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:122:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[0][1][0]')
+     122 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR                       0x0041
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:145:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR'
+     145 |         [C(L1D)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:124:65: warning: initialized field overwritten [-Woverride-init]
+     124 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR                0x0043
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:146:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR'
+     146 |         [C(L1D)][C(OP_WRITE)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:124:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[0][1][1]')
+     124 | #define ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR                0x0043
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:146:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR'
+     146 |         [C(L1D)][C(OP_WRITE)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_CACHE_REFILL_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:133:65: warning: initialized field overwritten [-Woverride-init]
+     133 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD                         0x004E
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:148:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD'
+     148 |         [C(DTLB)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:133:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][0][0]')
+     133 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD                         0x004E
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:148:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD'
+     148 |         [C(DTLB)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:134:65: warning: initialized field overwritten [-Woverride-init]
+     134 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR                         0x004F
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:149:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR'
+     149 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR,
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:134:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][1][0]')
+     134 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR                         0x004F
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:149:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR'
+     149 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_L1D_TLB_WR,
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:131:65: warning: initialized field overwritten [-Woverride-init]
+     131 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD                  0x004C
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:150:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD'
+     150 |         [C(DTLB)][C(OP_READ)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:131:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][0][1]')
+     131 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD                  0x004C
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:150:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD'
+     150 |         [C(DTLB)][C(OP_READ)][C(RESULT_MISS)]   = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:132:65: warning: initialized field overwritten [-Woverride-init]
+     132 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR                  0x004D
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:151:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR'
+     151 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_MISS)]  = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:132:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[3][1][1]')
+     132 | #define ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR                  0x004D
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:151:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR'
+     151 |         [C(DTLB)][C(OP_WRITE)][C(RESULT_MISS)]  = ARMV8_IMPDEF_PERFCTR_L1D_TLB_REFILL_WR,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:148:65: warning: initialized field overwritten [-Woverride-init]
+     148 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD                      0x0060
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:153:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD'
+     153 |         [C(NODE)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:148:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[6][0][0]')
+     148 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD                      0x0060
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:153:51: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD'
+     153 |         [C(NODE)][C(OP_READ)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_RD,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:149:65: warning: initialized field overwritten [-Woverride-init]
+     149 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR                      0x0061
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:154:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR'
+     154 |         [C(NODE)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR,
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/perf/arm_pmuv3.h:149:65: note: (near initialization for 'armv8_vulcan_perf_cache_map[6][1][0]')
+     149 | #define ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR                      0x0061
+         |                                                                 ^~~~~~
+   drivers/perf/arm_pmuv3.c:154:52: note: in expansion of macro 'ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR'
+     154 |         [C(NODE)][C(OP_WRITE)][C(RESULT_ACCESS)] = ARMV8_IMPDEF_PERFCTR_BUS_ACCESS_WR,
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/perf/arm_pmuv3.c:1174:35: error: initialization of 'int (*)(const struct ctl_table *, int,  void *, size_t *, loff_t *)' {aka 'int (*)(const struct ctl_table *, int,  void *, long unsigned int *, long long int *)'} from incompatible pointer type 'int (*)(struct ctl_table *, int,  void *, size_t *, loff_t *)' {aka 'int (*)(struct ctl_table *, int,  void *, long unsigned int *, long long int *)'} [-Werror=incompatible-pointer-types]
+    1174 |                 .proc_handler   = armv8pmu_proc_user_access_handler,
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/perf/arm_pmuv3.c:1174:35: note: (near initialization for 'armv8_pmu_sysctl_table[0].proc_handler')
+   cc1: some warnings being treated as errors
+
+
+vim +1174 drivers/perf/arm_pmuv3.c
+
+83a7a4d643d33a arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1167  
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1168  static struct ctl_table armv8_pmu_sysctl_table[] = {
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1169  	{
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1170  		.procname       = "perf_user_access",
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1171  		.data		= &sysctl_perf_user_access,
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1172  		.maxlen		= sizeof(unsigned int),
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1173  		.mode           = 0644,
+83a7a4d643d33a arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08 @1174  		.proc_handler	= armv8pmu_proc_user_access_handler,
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1175  		.extra1		= SYSCTL_ZERO,
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1176  		.extra2		= SYSCTL_ONE,
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1177  	},
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1178  };
+e2012600810c9d arch/arm64/kernel/perf_event.c Rob Herring 2021-12-08  1179  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
