@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-4836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D254F804A30
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:35:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E257804A31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B96B20A7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CF361C20C88
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D3912E53
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04A12E5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMwnuQx3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPYgwQc0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BF96AC0;
-	Tue,  5 Dec 2023 05:03:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72309C433C8;
-	Tue,  5 Dec 2023 05:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111C6AC0;
+	Tue,  5 Dec 2023 05:07:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B3A1C433C7;
+	Tue,  5 Dec 2023 05:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701752635;
-	bh=vtT7bl38gEnsHRMN1TYd7JwRxYZi5DGpaZuoozZO+sI=;
+	s=k20201202; t=1701752873;
+	bh=tiXz8P4yMZ71fXXtFvWwJ/oGgcVNWocffVheQb2zjM4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PMwnuQx3DuHJ2n0XbyecJgWaVT+ffZzpdibX17Cizq4eiDErdba2QcbGggt1mVbfL
-	 2UhnNBxMaOUuI4U/yjf0BLjJlfGdWne7aq3+nsbH+dTE/PcLzjBopquCGXd2NKUTXf
-	 VZX1PbpS2rXz2M53QqHs8URv1UP9OTjuh1kc72Auj8M9xjpYe+XA7vss74+mLTRwjH
-	 k0/DvUvWZ0t3hpQQ0IMdvveA9H8WtFU5j7k9jlWyMZjbdzrFzktWDMSQTnDAMUz22V
-	 2w1Buh1n9kE2n5xtsE8i3XUsUFMl0g/NPYdHYxYvlczkWLuXweErS26NSAZuIoweaS
-	 lacWzi/LlP5Rg==
-Date: Mon, 4 Dec 2023 21:03:53 -0800
+	b=NPYgwQc0qjPp8P/mBCDAX19LFz0/yoLu4qQX+/DGEwgx9JAvee5+zt+0gW7usY9xv
+	 1P8poTh8EfMYwdxEIbk3OAylk4J3BzP74zQdF+rdCVteBR66Rv0bH3Kmp45vcBecaK
+	 hx0776Rm5zb1F55dZsSWDzQDaXyN1EZq/BlGaLmJ05Q0cMU31xWi4aLwNq9FMGmhU/
+	 xlhKu0Sj3H7SlE0EFSnHUBGQnQEpF0pD314Nu1djIqgzBkSgkJpFZX4c8h1VolI3cN
+	 GuUNp4yJFH+cfMcIQ2+Asrs5ebRJrwGTYXy48ZNDqKPm+vszBp6kq962V8DMkGq8TU
+	 B0BMV69VPz8RA==
+Date: Mon, 4 Dec 2023 21:07:51 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, Omar Sandoval <osandov@osandov.com>,
+	linux-fsdevel@vger.kernel.org,
 	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-Subject: Re: [PATCH v4 06/46] fscrypt: expose fscrypt_nokey_name
-Message-ID: <20231205050353.GH1168@sol.localdomain>
+Subject: Re: [PATCH v4 10/46] btrfs: disable verity on encrypted inodes
+Message-ID: <20231205050751.GI1168@sol.localdomain>
 References: <cover.1701468305.git.josef@toxicpanda.com>
- <5e180dc6cef80ab6997d5f4827ac1583123a5074.1701468306.git.josef@toxicpanda.com>
+ <9fbfdc5ea7ad2059ff0560ddf079bd1daecd971e.1701468306.git.josef@toxicpanda.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,45 +50,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e180dc6cef80ab6997d5f4827ac1583123a5074.1701468306.git.josef@toxicpanda.com>
+In-Reply-To: <9fbfdc5ea7ad2059ff0560ddf079bd1daecd971e.1701468306.git.josef@toxicpanda.com>
 
-On Fri, Dec 01, 2023 at 05:11:03PM -0500, Josef Bacik wrote:
-> -/*
-> - * Decoded size of max-size no-key name, i.e. a name that was abbreviated using
-> + * Decoded size of max-size nokey name, i.e. a name that was abbreviated using
->   * the strong hash and thus includes the 'sha256' field.  This isn't simply
->   * sizeof(struct fscrypt_nokey_name), as the padding at the end isn't included.
->   */
-
-The above change seems accidental?  Note that while the C identifiers use
-"nokey", in text I've been writing it as "no-key".
-
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index 5f5efb472fc9..f57601b40e18 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -17,6 +17,7 @@
->  #include <linux/mm.h>
->  #include <linux/slab.h>
->  #include <linux/blk-crypto.h>
-> +#include <crypto/sha2.h>
->  #include <uapi/linux/fscrypt.h>
+On Fri, Dec 01, 2023 at 05:11:07PM -0500, Josef Bacik wrote:
+> From: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+> 
+> Right now there isn't a way to encrypt things that aren't either
+> filenames in directories or data on blocks on disk with extent
+> encryption, so for now, disable verity usage with encryption on btrfs.
+> 
+> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ---
+>  fs/btrfs/verity.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
+> index 66e2270b0dae..92536913df04 100644
+> --- a/fs/btrfs/verity.c
+> +++ b/fs/btrfs/verity.c
+> @@ -588,6 +588,9 @@ static int btrfs_begin_enable_verity(struct file *filp)
 >  
->  /*
-> @@ -56,6 +57,42 @@ struct fscrypt_name {
->  #define fname_name(p)		((p)->disk_name.name)
->  #define fname_len(p)		((p)->disk_name.len)
+>  	ASSERT(inode_is_locked(file_inode(filp)));
 >  
-[...]
-> +struct fscrypt_nokey_name {
-> +	u32 dirhash[2];
-> +	u8 bytes[149];
-> +	u8 sha256[SHA256_DIGEST_SIZE];
-> +}; /* 189 bytes => 252 bytes base64url-encoded, which is <= NAME_MAX (255) */
+> +	if (IS_ENCRYPTED(&inode->vfs_inode))
+> +		return -EINVAL;
 
-I'd be tempted to just change SHA256_DIGEST_SIZE to 32, which would avoid
-needing to include crypto/sha2.h.  The size is effectively hardcoded anyway, via
-the 'u8 bytes[149];' field.  And it's not like SHA-256 will stop being 256 bits.
+As per the documentation for FS_IOC_ENABLE_VERITY
+(https://docs.kernel.org/filesystems/fsverity.html#fs-ioc-enable-verity), the
+error code for the case of "the filesystem does not support fs-verity on this
+file" should be EOPNOTSUPP, not EINVAL.  That's what ext4 returns if you try to
+enable verity on a file that doesn't use extents, for example.
 
 - Eric
 
