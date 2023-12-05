@@ -1,46 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-4833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79D8804A2D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:35:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F503804A2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 07:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25F8B20B23
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C889A1F213E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C5DF67
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F92CD2FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Dec 2023 06:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCDZ1SYm"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ULAuEAIm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8347211A;
-	Tue,  5 Dec 2023 04:54:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48276C433C7;
-	Tue,  5 Dec 2023 04:54:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701752044;
-	bh=gfnlbyYTn/MoiggJHqdV/y+nYA+UAKkU/fA7bdBpam8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RCDZ1SYmsNVA8OTNgEzLwWqeHAlYhOPQXBF4wMm/0xd5T/TmB92iorV1/72FjuVPO
-	 YxdCbYRDh5pX1R+pmGRc8/uBNBjfZknRL/NcQEhS9gm47Y4HeOSK7yADpfUnVNRB8i
-	 kuB4cZ4qkcTCI6myzLmkJIFpNQci9+0Zbs+y6ZAnLkam6ZUW4FZJV5Wq6JFty5vJ5Z
-	 CdvaTxDWjPPxcA5nhJ4wfe8YgJg7cIX6iHOITR2f0PcYzhgPso2S8XkVdvq2bN6qkf
-	 TOUpbKAPGK7Dob1dhobl2T1iyiJ7fe8dUS5GajlZeq8M5KTxZ5BE+hmdZ17G3fDPjM
-	 TeU8svdAjp6WA==
-Date: Mon, 4 Dec 2023 20:54:02 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 05/46] blk-crypto: add a process bio callback
-Message-ID: <20231205045402.GG1168@sol.localdomain>
-References: <cover.1701468305.git.josef@toxicpanda.com>
- <eeeea8d462fe739cff8883feeccacd154a10b40b.1701468306.git.josef@toxicpanda.com>
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FD5CE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  4 Dec 2023 20:58:37 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-111-98.bstnma.fios.verizon.net [173.48.111.98])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3B54tdZl016948
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Dec 2023 23:55:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1701752144; bh=xY31OtXpm6KSv94nmxlfIijYjDNR0HuHd+Om4l/DRL4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=ULAuEAImbbRp/EKwZ7vqMIWXT6OjmvjIgkTgGyD2NyabpELmR3xt1M7Wv5tFphTNy
+	 XiZVg+kRB4tu3DD9cFnL521xALsq037uudWRmRUK7vkgoYcEoqgB+Htr4GUEL0xIyy
+	 LNPjeRK8WI4kaZRcQ+8btulffIuW+dUqWHrMOgabNvPzMOdbmgmh9p5eHW3WRVb/ep
+	 Yi7dzwjk72n8SsYenWwqy0BIa468+PEZe3uAIMnixXE8eMy6TAzFNehDAUg68SjnCk
+	 /52qTNwdL2JoY1vDMEizYdaR4Y9c40vZA++hZxVi6HpdiFL1SvlEc/7gPguBe1Lv+1
+	 /K1ac43DNI/4Q==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 626A415C02E0; Mon,  4 Dec 2023 23:55:39 -0500 (EST)
+Date: Mon, 4 Dec 2023 23:55:39 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, kbusch@kernel.org,
+        sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
+        djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chandan.babu@oracle.com, dchinner@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, jbongio@google.com,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH 17/21] fs: xfs: iomap atomic write support
+Message-ID: <20231205045539.GH509422@mit.edu>
+References: <20230929102726.2985188-1-john.g.garry@oracle.com>
+ <20230929102726.2985188-18-john.g.garry@oracle.com>
+ <20231109152615.GB1521@lst.de>
+ <a50a16ca-d4b9-a4d8-4230-833d82752bd2@oracle.com>
+ <c78bcca7-8f09-41c7-adf0-03b42cde70d6@oracle.com>
+ <20231128135619.GA12202@lst.de>
+ <e4fb6875-e552-45aa-b193-58f15d9a786c@oracle.com>
+ <20231204134509.GA25834@lst.de>
+ <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,135 +65,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eeeea8d462fe739cff8883feeccacd154a10b40b.1701468306.git.josef@toxicpanda.com>
+In-Reply-To: <a87d48a7-f2a8-40ae-8d9b-e4534ccc29b1@oracle.com>
 
-On Fri, Dec 01, 2023 at 05:11:02PM -0500, Josef Bacik wrote:
-> +	/* Process the encrypted bio before we submit it. */
-> +	if (bc->bc_key->crypto_cfg.process_bio) {
-> +		blk_st = bc->bc_key->crypto_cfg.process_bio(src_bio, enc_bio);
-> +		if (blk_st != BLK_STS_OK) {
-> +			src_bio->bi_status = blk_st;
-> +			goto out_free_bounce_pages;
-> +		}
-> +	}
-> +
+On Mon, Dec 04, 2023 at 03:19:15PM +0000, John Garry wrote:
+> > 
+> > What is the 'dubious amazon torn-write prevention'?
+> 
+> https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/storage-twp.html
+> 
+> AFAICS, this is without any kernel changes, so no guarantee of unwanted
+> splitting or merging of bios.
 
-How does this interact with the splitting that can happen at the beginning of
-blk_crypto_fallback_encrypt_bio()?  Won't src_bio differ from the original bio
-in that case?
+Well, more than one company has audited the kernel paths, and it turns
+out that for selected Kernel versions, after doing desk-check
+verification of the relevant kernel baths, as well as experimental
+verification via testing to try to find torn writes in the kernel, we
+can make it safe for specific kernel versions which might be used in
+hosted MySQL instances where we control the kernel, the mysql server,
+and the emulated block device (and we know the database is doing
+Direct I/O writes --- this won't work for PostgreSQL).  I gave a talk
+about this at Google I/O Next '18, five years ago[1].
 
-> +	/*
-> +	 * Process the bio first before trying to decrypt.
-> +	 *
-> +	 * NOTE: btrfs expects that this bio is the same that was submitted.  If
-> +	 * at any point this changes we will need to update process_bio to take
-> +	 * f_ctx->crypt_iter in order to make sure we can iterate the pages for
-> +	 * checksumming.  We're currently saving this in our btrfs_bio, so this
-> +	 * works, but if at any point in the future we start allocating a bounce
-> +	 * bio or something we need to update this callback.
-> +	 */
-> +	if (bc->bc_key->crypto_cfg.process_bio) {
-> +		blk_st = bc->bc_key->crypto_cfg.process_bio(bio, bio);
-> +		if (blk_st != BLK_STS_OK) {
-> +			bio->bi_status = blk_st;
-> +			goto out_no_keyslot;
-> +		}
-> +	}
+[1] https://www.youtube.com/watch?v=gIeuiGg-_iw
 
-The NOTE above feels a bit out of place.  It doesn't make sense to use a bounce
-bio for decryption, so the described concern doesn't seem too realistic.
-Specific filesystems also shouldn't really be mentioned here.  Maybe the comment
-should just say that the contract of blk_crypto_process_bio_t requires
-orig_bio == enc_bio for reads?  Maybe it should be a comment on
-blk_crypto_process_bio_t itself.
+Given the performance gains (see the talk (see the comparison of the
+at time 19:31 and at 29:57) --- it's quite compelling. 
 
-> +/**
-> + * blk_crypto_cfg_supports_process_bio - check if this config supports
-> + *					 process_bio
-> + * @profile: the profile we're checking
-> + *
-> + * This is just a quick check to make sure @profile is the fallback profile, as
-> + * no other offload implementations support process_bio.
-> + */
-> +bool blk_crypto_cfg_supports_process_bio(struct blk_crypto_profile *profile)
-> +{
-> +	return profile == blk_crypto_fallback_profile;
-> +}
+Of course, I wouldn't recommend this approach for a naive sysadmin,
+since most database adminsitrators won't know how to audit kernel code
+(see the discussion at time 35:10 of the video), and reverify the
+entire software stack before every kernel upgrade.  The challenge is
+how to do this safely.
 
-How about calling this blk_crypto_profile_is_fallback()?
+The fact remains that both Amazon's EBS and Google's Persistent Disk
+products are implemented in such a way that writes will not be torn
+below the virtual machine, and the guarantees are in fact quite a bit
+stronger than what we will probably end up advertising via NVMe and/or
+SCSI.  It wouldn't surprise me if this is the case (or could be made
+to be the case) For Oracle Cloud as well.
 
-> diff --git a/include/linux/blk-crypto.h b/include/linux/blk-crypto.h
-> index 5e5822c18ee4..194c1d727013 100644
-> --- a/include/linux/blk-crypto.h
-> +++ b/include/linux/blk-crypto.h
-> @@ -6,7 +6,7 @@
->  #ifndef __LINUX_BLK_CRYPTO_H
->  #define __LINUX_BLK_CRYPTO_H
->  
-> -#include <linux/types.h>
-> +#include <linux/blk_types.h>
->  
->  enum blk_crypto_mode_num {
->  	BLK_ENCRYPTION_MODE_INVALID,
-> @@ -17,6 +17,9 @@ enum blk_crypto_mode_num {
->  	BLK_ENCRYPTION_MODE_MAX,
->  };
->  
-> +typedef blk_status_t (blk_crypto_process_bio_t)(struct bio *orig_bio,
-> +						struct bio *enc_bio);
+The question is how to make this guarantee so that the kernel knows
+when various cloud-provided block devicse do provide these greater
+guarantees, and then how to make it be an architected feature, as
+opposed to a happy implementation detail that has to be verified at
+every kernel upgrade.
 
-Usually people include a '*' in function pointer typedefs.
+Cheers,
 
-> +
->  #define BLK_CRYPTO_MAX_KEY_SIZE		64
->  /**
->   * struct blk_crypto_config - an inline encryption key's crypto configuration
-
-This kerneldoc comment is missing documentation for process_bio.
-
-> @@ -31,6 +34,7 @@ struct blk_crypto_config {
->  	enum blk_crypto_mode_num crypto_mode;
->  	unsigned int data_unit_size;
->  	unsigned int dun_bytes;
-> +	blk_crypto_process_bio_t *process_bio;
->  };
-
-*process_bio => process_bio.
-
-> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> index 756f23fc3e83..5f5efb472fc9 100644
-> --- a/include/linux/fscrypt.h
-> +++ b/include/linux/fscrypt.h
-> @@ -16,6 +16,7 @@
->  #include <linux/fs.h>
->  #include <linux/mm.h>
->  #include <linux/slab.h>
-> +#include <linux/blk-crypto.h>
->  #include <uapi/linux/fscrypt.h>
->  
->  /*
-> @@ -199,6 +200,19 @@ struct fscrypt_operations {
->  	 */
->  	struct block_device **(*get_devices)(struct super_block *sb,
->  					     unsigned int *num_devs);
-> +
-> +	/*
-> +	 * A callback if the file system requires the ability to process the
-> +	 * encrypted bio.
-> +	 *
-> +	 * @orig_bio: the original bio submitted.
-> +	 * @enc_bio: the encrypted bio.
-> +	 *
-> +	 * For writes the enc_bio will be different from the orig_bio, for reads
-> +	 * they will be the same.  For reads we get the bio before it is
-> +	 * decrypted, for writes we get the bio before it is submitted.
-> +	 */
-> +	blk_crypto_process_bio_t *process_bio;
-
-Adding fscrypt support for process_bio should be a separate patch.
-
-Also, the documentation for fscrypt_operations::process_bio should make it clear
-that it only applies to inline encryption.
-
-- Eric
+						- Ted
 
