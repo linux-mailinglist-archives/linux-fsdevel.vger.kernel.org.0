@@ -1,91 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-4921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C2F806509
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 03:35:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF21980650A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 03:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12411F216E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 02:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65B561F20F05
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 02:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF276AA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 02:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D812D5CB8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 02:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ftSLFoF7"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XL01WMkK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD0FEC6
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 17:01:42 -0800 (PST)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808FDD43
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 18:34:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3fc5j/2w64P+bZoWi9Zqmy+ohyTwgaq2JDVxeNkai/w=; b=ftSLFoF7fSptNwos8VuR8jugnI
-	OChogKqK2q6Aje1wDRuRwnJeydnjupBzxYCYmtB9Z7vNJJEkefmfFGMhhc6bSiVN0bL6S9gRSo7aF
-	Okg9FqbH0Ldg/dF8T/vA0SDPTjZe+NF39D7U8NlJWO6JPRjgYGzNmJQnseCCrkxzQWxqggIYj5ipQ
-	tDgkSc+6YcMeSorGqETj4bBJo5hSsbpWqtheWtYSAPnUwQfwzg9phZ7iNAEGH3cHgH7oNTJTPyUeY
-	DL0LLtgIlQUtRIdI9Qw04s+N9UlYjFdx+4qoEUSBpR3FulVAO5A2O9YZwBSIlk3UDI4vtV/M9LFaj
-	E8Y0WkcA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rAgIA-007WlE-2q;
-	Wed, 06 Dec 2023 01:01:35 +0000
-Date: Wed, 6 Dec 2023 01:01:34 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [viro-vfs:carved-up-__dentry_kill 22/28] fs/dcache.c:1101:33:
- error: 'dentry' undeclared
-Message-ID: <20231206010134.GK1674809@ZenIV>
-References: <202312060802.HxDqIoDc-lkp@intel.com>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=tcVvLkeARznKJ7I7W64h2n3ZsVMIzw772g6N9dL5GAw=; b=XL01WMkKeJ6dx2DnR9vQJhp3N/
+	ikux01UkNhdvzXtY47ASaZR/OA/nkcRG3GsUYJ04BVVEJFLRqoGz6GK4/rj/2UzFwamifvyjwtS1u
+	m+GrYuN8I1BXkzgAvMC37LlMXfUAh55NUIh3N++K2R2TNn5WachvzEgIdpKcBJfgHEqUegj+gPSWW
+	vzH7g+SfUSXmg8J5CTrECln2w1WsX9vMSOUSFvcectDN71lVX6QWba5tva7WABYl2V5gtK1uHiLeY
+	/QUqEl7OaXkRzAYPrtQBeF2F70hD3kuiZ3le/VaLxcxiOSfyyq8baEd6V53jzZ4Dx4xDG8Yp2FnlT
+	x8rvAyqg==;
+Received: from [50.53.46.231] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAhju-008tRM-16;
+	Wed, 06 Dec 2023 02:34:18 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Luis de Bethencourt <luisbg@kernel.org>,
+	Salah Triki <salah.triki@gmail.com>
+Subject: [PATCH] befs: fix datastream.c kernel-doc warnings
+Date: Tue,  5 Dec 2023 18:34:17 -0800
+Message-ID: <20231206023417.30323-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202312060802.HxDqIoDc-lkp@intel.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 06, 2023 at 08:29:37AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git carved-up-__dentry_kill
-> head:   20f7d1936e8a2859fee51273c8ffadcca4304968
-> commit: c73bce0494d44e0d26ec351106558e4408cf1cd9 [22/28] step 3: have __dentry_kill() return the parent
-> config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20231206/202312060802.HxDqIoDc-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231206/202312060802.HxDqIoDc-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202312060802.HxDqIoDc-lkp@intel.com/
-> 
-> Note: the viro-vfs/carved-up-__dentry_kill HEAD 20f7d1936e8a2859fee51273c8ffadcca4304968 builds fine.
->       It only hurts bisectability.
+Fix kernel-doc warnings found when using "W=1".
 
-Argh...  carve-up fuckups...  delta to fix that one up follows,
-the breakage actually disappears on the next step.  Sorry about that...
-Updated branch force-pushed
+datastream.c:51: warning: No description found for return value of 'befs_read_datastream'
+datastream.c:97: warning: No description found for return value of 'befs_fblock2brun'
+datastream.c:132: warning: expecting prototype for befs_read_lsmylink(). Prototype was for befs_read_lsymlink() instead
+datastream.c:132: warning: No description found for return value of 'befs_read_lsymlink'
+datastream.c:173: warning: No description found for return value of 'befs_count_blocks'
+datastream.c:253: warning: No description found for return value of 'befs_find_brun_direct'
+datastream.c:309: warning: No description found for return value of 'befs_find_brun_indirect'
+datastream.c:418: warning: No description found for return value of 'befs_find_brun_dblindirect'
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index b35d120193e0..fc8347b8ac98 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1098,10 +1098,10 @@ EXPORT_SYMBOL(d_prune_aliases);
- 
- static inline void shrink_kill(struct dentry *victim, struct list_head *list)
- {
--	struct dentry *parent = dentry->d_parent;
--	if (parent != victim && if (!--parent->d_lockref.count)
-+	struct dentry *parent = victim->d_parent;
-+	if (parent != victim && !--parent->d_lockref.count)
- 		to_shrink_list(parent, list);
--	parent = __dentry_kill(dentry);
-+	parent = __dentry_kill(victim);
- 	if (parent)
- 		spin_unlock(&parent->d_lock);
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Luis de Bethencourt <luisbg@kernel.org>
+Cc: Salah Triki <salah.triki@gmail.com>
+---
+ fs/befs/datastream.c |   19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff -- a/fs/befs/datastream.c b/fs/befs/datastream.c
+--- a/fs/befs/datastream.c
++++ b/fs/befs/datastream.c
+@@ -42,7 +42,7 @@ static int befs_find_brun_dblindirect(st
+  * @pos: start of data
+  * @off: offset of data in buffer_head->b_data
+  *
+- * Returns pointer to buffer_head containing data starting with offset @off,
++ * Returns: pointer to buffer_head containing data starting with offset @off,
+  * if you don't need to know offset just set @off = NULL.
+  */
+ struct buffer_head *
+@@ -86,7 +86,7 @@ befs_read_datastream(struct super_block
+  * Takes a file position and gives back a brun who's starting block
+  * is block number fblock of the file.
+  *
+- * Returns BEFS_OK or BEFS_ERR.
++ * Returns: BEFS_OK or BEFS_ERR.
+  *
+  * Calls specialized functions for each of the three possible
+  * datastream regions.
+@@ -118,13 +118,13 @@ befs_fblock2brun(struct super_block *sb,
  }
+ 
+ /**
+- * befs_read_lsmylink - read long symlink from datastream.
++ * befs_read_lsymlink - read long symlink from datastream.
+  * @sb: Filesystem superblock
+  * @ds: Datastream to read from
+  * @buff: Buffer in which to place long symlink data
+  * @len: Length of the long symlink in bytes
+  *
+- * Returns the number of bytes read
++ * Returns: the number of bytes read
+  */
+ size_t
+ befs_read_lsymlink(struct super_block *sb, const befs_data_stream *ds,
+@@ -166,6 +166,8 @@ befs_read_lsymlink(struct super_block *s
+  * inode occupies on the filesystem, counting both regular file
+  * data and filesystem metadata (and eventually attribute data
+  * when we support attributes)
++ *
++ * Returns: count of blocks used by the file
+ */
+ 
+ befs_blocknr_t
+@@ -229,8 +231,7 @@ befs_count_blocks(struct super_block *sb
+  * in the file represented by the datastream data, if that
+  * blockno is in the direct region of the datastream.
+  *
+- * Return value is BEFS_OK if the blockrun is found, BEFS_ERR
+- * otherwise.
++ * Returns: BEFS_OK if the blockrun is found, BEFS_ERR otherwise.
+  *
+  * Algorithm:
+  * Linear search. Checks each element of array[] to see if it
+@@ -290,8 +291,7 @@ befs_find_brun_direct(struct super_block
+  * in the file represented by the datastream data, if that
+  * blockno is in the indirect region of the datastream.
+  *
+- * Return value is BEFS_OK if the blockrun is found, BEFS_ERR
+- * otherwise.
++ * Returns: BEFS_OK if the blockrun is found, BEFS_ERR otherwise.
+  *
+  * Algorithm:
+  * For each block in the indirect run of the datastream, read
+@@ -381,8 +381,7 @@ befs_find_brun_indirect(struct super_blo
+  * in the file represented by the datastream data, if that
+  * blockno is in the double-indirect region of the datastream.
+  *
+- * Return value is BEFS_OK if the blockrun is found, BEFS_ERR
+- * otherwise.
++ * Returns: BEFS_OK if the blockrun is found, BEFS_ERR otherwise.
+  *
+  * Algorithm:
+  * The block runs in the double-indirect region are different.
 
