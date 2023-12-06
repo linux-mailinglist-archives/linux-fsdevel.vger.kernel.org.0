@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-4974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4388806C37
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:38:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02D7806C38
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07A03B208AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797172818F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B192E3F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309D73032A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L6bKngid"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KqByg77n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F8A8D4D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:12:23 -0800 (PST)
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC60CD71
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:12:36 -0800 (PST)
 Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231206101221epoutp04e983ec0c922afbfea8dc7ca0417c69ae~eNmrO3KAP1647316473epoutp04X
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 10:12:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231206101221epoutp04e983ec0c922afbfea8dc7ca0417c69ae~eNmrO3KAP1647316473epoutp04X
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231206101234epoutp01fb8bca70630fe44e1f7746cab5321c09~eNm3fBQDQ0454604546epoutp01b
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 10:12:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231206101234epoutp01fb8bca70630fe44e1f7746cab5321c09~eNm3fBQDQ0454604546epoutp01b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701857541;
-	bh=uOAKePf/EC3LoZnFEX09yOYQgAaLwiBeLuJB0GWSSoA=;
+	s=mail20170921; t=1701857554;
+	bh=vUmnCkDPVKAomoDbL/LzqNJSOMEo+hX7Rt95xB1wr2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L6bKngidO1Tuve/sM0yGzW4aHSvJ4V8zR65igPFyX04th1v/DVpinxheb80zFGx1q
-	 +LLk5iRa+j2rigQFDStB1DggeOGZAxb6LtK64w2XM+zcsHq2GIc3lCmb2B4lyuTDnI
-	 pfm9Y0ynPIF1LRf/a3jXIHYchL9PLVnfzb0l5iwc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	b=KqByg77ns7Ftfh/iSyw1FE0X9KoX53pCfRlXGZizpC8WuakukSG3cCRs71EhTTcv4
+	 SWM5XNQf+5hnr/Lf412nWG1WPFyqucYycg4t2oJARPTql2f8oS1CxsiIBnwC4SMK46
+	 pvmHRQgZkxpurBGtzmew/ThtntxrYhtLy85homjU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
 	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20231206101220epcas5p35bbaf46727278f8d48a5fe4d6be0f5c4~eNmqZcRLT0789207892epcas5p3j;
-	Wed,  6 Dec 2023 10:12:20 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SlY9b22qSz4x9Pw; Wed,  6 Dec
-	2023 10:12:19 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7E.D6.10009.30940756; Wed,  6 Dec 2023 19:12:19 +0900 (KST)
+	20231206101234epcas5p3d2021e6e34c58b154e7090c86f997ba8~eNm20kUqr0791407914epcas5p37;
+	Wed,  6 Dec 2023 10:12:34 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4SlY9r0DV3z4x9Pw; Wed,  6 Dec
+	2023 10:12:32 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	64.22.09672.F0940756; Wed,  6 Dec 2023 19:12:31 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231206101218epcas5p3bd5005a84adf67a80d394c3e05796bd7~eNmomUm130791407914epcas5p3g;
-	Wed,  6 Dec 2023 10:12:18 +0000 (GMT)
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231206101231epcas5p1756d9f527df621f3a0eebb37ca257f06~eNm0Wee4t1084010840epcas5p1B;
+	Wed,  6 Dec 2023 10:12:31 +0000 (GMT)
 Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231206101218epsmtrp217a2e5b0a9cb015fb653b55a7c6ddaed~eNmolF_vN1007210072epsmtrp2O;
-	Wed,  6 Dec 2023 10:12:18 +0000 (GMT)
-X-AuditID: b6c32a4a-ff1ff70000002719-aa-6570490359be
+	20231206101231epsmtrp241901a3d3967ff948874ef6197994654~eNm0UoYOX1007210072epsmtrp2W;
+	Wed,  6 Dec 2023 10:12:31 +0000 (GMT)
+X-AuditID: b6c32a4b-60bfd700000025c8-7c-6570490f4a3d
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
 	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	80.62.08817.20940756; Wed,  6 Dec 2023 19:12:18 +0900 (KST)
+	E2.62.08817.F0940756; Wed,  6 Dec 2023 19:12:31 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.99.41.245]) by
 	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231206101214epsmtip248d44b17f67df20f2c2e9a1abb6e15b2~eNmkNOL7S1181011810epsmtip2L;
-	Wed,  6 Dec 2023 10:12:13 +0000 (GMT)
+	20231206101227epsmtip2deeb866484ba7d4dc0142cdd65304b11~eNmwjZbBJ0221302213epsmtip2H;
+	Wed,  6 Dec 2023 10:12:27 +0000 (GMT)
 From: Kanchan Joshi <joshi.k@samsung.com>
 To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
 	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
@@ -64,15 +64,13 @@ To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
 	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
 Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
 	nitheshshetty@gmail.com, anuj1072538@gmail.com, gost.dev@samsung.com,
-	mcgrof@kernel.org, Nitesh Shetty <nj.shetty@samsung.com>, Hannes Reinecke
-	<hare@suse.de>, Anuj Gupta <anuj20.g@samsung.com>,
+	mcgrof@kernel.org, Nitesh Shetty <nj.shetty@samsung.com>,
 	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v18 08/12] nvmet: add copy command support for bdev and file
- ns
-Date: Wed,  6 Dec 2023 15:32:40 +0530
-Message-Id: <20231206100253.13100-9-joshi.k@samsung.com>
+Subject: [PATCH v18 09/12] dm: Add support for copy offload
+Date: Wed,  6 Dec 2023 15:32:41 +0530
+Message-Id: <20231206100253.13100-10-joshi.k@samsung.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231206100253.13100-1-joshi.k@samsung.com>
 Precedence: bulk
@@ -82,327 +80,153 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TeVBTVxTG57738pLQiU2DHW/jTAmvwzBgWWIhvSh0UcY+u4HTzbbTgUje
-	AJKtWYq2MqKMIBjZUh1Jla1oKahUAkyQTaHsBSyILC1M0aRQEAFRawWkCYmt//3OPd83Z75z
-	53BwQRZbyIlX6hiNUiqnSDeipsXH2w/fqWYCr8+xUEVXG44W7i8R6HD2Co7Kx7JINNNyFyDr
-	lTSACovPEGjkSi2G6otzMfRjeSuGcptvAGQbNGGoYXQTKkotIVB9QyeBBi6fJlHBORsbHRuy
-	kOiH9scYGs62AZRzdBBDFushgGqWCnB0cWaOQB2jG1HfSjvrDSFdaxpj033jlwh6oEdPV5al
-	k7S55CA9Zc4DdN1IMkl/n2lk0cdT7pD0gm2UoOcaB0k6s6oM0Obub+jFyhfpSussFvnsZwmh
-	cYxUxmhEjDJGJYtXxoZR73wQtT0qWBIo9hOHoFcpkVKqYMKo8Hcj/XbEy+0roURfSeV6+1Ok
-	VKulAl4L1aj0OkYUp9LqwihGLZOrg9T+WqlCq1fG+isZ3RZxYODmYLswOiFu6oSJpV55a1/3
-	xWZWMhjZmgG4HMgPgv+cbmNnADeOgF8H4NDtacJZ3AXw0MlO0lk8APDX9A78iWUy/RzubDQA
-	+KjjKHAWiwC2ZUzaLRwOyfeB14x6h2E9/zwOay+JHRqcn49D8812zNFw5++C5ZnGNSb4XnBo
-	Nm1tAo+P4NipXtc0D5jX/zfbwVx+CDROFrs0z8HOPCvhYNyuSan+zqU3c6HFFu3kcNhbXc92
-	sjucbq9ysRAu3mkgnRwD+/N6MSfr4K36qy5+HR7pysIdWXB7lorLAc5R6+DxJSvmeIZ8Hjya
-	KnCqPeF4ro3l5A1w4lSJi2m4kFvi2pUBwIdNtXg28DA9lcD0VALT/9MKAV4GXmDUWkUsow1W
-	b1Yyif99bIxKUQnWLsP3bQuY+GPevxlgHNAMIAen1vPkfSpGwJNJ93/NaFRRGr2c0TaDYPuK
-	c3Dh8zEq+2kpdVHioJDAIIlEEhTyikRMbeDNHDkjE/BjpTomgWHUjOaJD+NwhckY+3NbOHe5
-	2hIqyxhpOtByU8UpldvCuCM+6WRFkpsgvWhf4liKovUjr9/H0wL0ewr0XfNJ7z3w33r4ZGPh
-	2Y2d+lRvQ+Evnn37/bv2nk8ZBDI3fdJP5ZI9J7wOrOK2VTKfKBpdKfRsXfx5Sw2W3ZdIf/Ib
-	DB/YPvzho2DR3r/4UztFEfcUuzzyL4BYWjz+6b0bMyaN+ury/Lbll67tPthIVmWLjvlGZO0W
-	eVPRPfc1mjr3WWvPt13W5QvPrGuiAtyn/+xcNrxf2i8c8lr98vrZiNtk/sOZ9oQJcwFza/7l
-	KKOl0WZo25HzhXEuQrXNQL8ZU5on6daG+RQYHidu+piXOEwR2jip2BfXaKX/AvwJ/J6iBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTYRjHe895d3ZmnTytsjdXSetCTfJG0RtdIcMTREqRRAS58jStTdeW
-	VlZkjm4zTVtRrtRaZWZWOC9Z04jZbZqaiZepC5ItV2Jq0Q2dlY6gbz/+v//zPB8emhQ3Q386
-	PmE/r0mQK6WUD6yokQYsItar+ZBqx2z8oPYFiQe/DUGcluUh8V3HOQr31nwB2Pn0FMDXTLkQ
-	258+InCV6TyB79x9TuDz1laAXS1GAld3BOLrJ29CXFVtg7j58VUK5xe4hDi9rZLCt1+OELg9
-	ywVw9ukWAlc6jwNcMZRP4vu9/RC/6pDgRs9LwRp/7pHRIeQa35VArrk+iTMXnaG40pvHOHdp
-	DuAs9lSKu5FpEHAZus8UN+jqgFz/kxaKyywrAlxp3WHuq3kWZ3b2EVG+23xWxPLK+GReE7wq
-	xifOfdEoUHsiDtbdtwpSgX25HohoxC5GPWcKSD3wocWsBaDu4WHgFdOQrvWn0MuT0Z2RHqG3
-	NAiQ3lgL9YCmKXYhemNIGs2nsJUk+nVPR4wOkGwxicpymVGezEaivlsl5ChDdh5q6zs1xgyL
-	keNyA+k9EIBy3v4YOyZilyFDj2ksF//tPDl+CXr7k5Atxwm9+wOQrvwKmQVY43/K+J+6Bogi
-	MJ1Xa1UKlTZUHZbAHwjSylXapARF0K5ElRmM/V0mqwRVRQNBVkDQwAoQTUqnMMrGRF7MxMoP
-	pfCaxB2aJCWvtQIJDaXTmO+9GbFiViHfz+/leTWv+WcJWuSfSqgF4rpXaPxKOniiIvWL343n
-	TaLVSt2m4hhT4+uS3p65Z9MeZttTVq3rCmeEfsPPGGk9nufosxwoZiw1uzdKLLnEjKjuH7kb
-	DB/7yzPTrOajwU6bUJU3VDgQUZZyjlo5J1LmiW3VJrc3bU0u6LKta+iw7YjrHNpOLI9ksvvj
-	00LCfX3XaNySPV0lnR8UBk+0M15XvoCE/nlnjcMZM/XQLXEfUiqiVm/eNS4mLzoqzDVVtv3W
-	6++7j+wrLgs/8T5wrshlbvpUG1gxNfDDQL3kmH2prLMzfUEYSeJvDTFBS9q5nW9Me+enTJ/Q
-	nY7rA7pCfx9Zq3OtHWm7EPH49pZCKdTGyUNlpEYr/wMbdITmZgMAAA==
-X-CMS-MailID: 20231206101218epcas5p3bd5005a84adf67a80d394c3e05796bd7
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbVBUVRju3Hv37i4TuC0yHMmU7tSoyNfGQmdBigrzpuUw9Kf8sy67dxaG
+	ZXfdj0SdpkXiQxCWDzU+Q4ii2IwPNwKElKUgmACV4dNkCHcHFWQRrFDEaZeL5b/nec/znud5
+	3zOHhwufkH68JLWB0allKor0IFq6d+0M2vSelgm9VhWOGvp7cHT/r1UCWW6aSTTXvQSQ/UoW
+	QOdrKgk0caUNQ99ZfsVQkW0UIMdIGYY6J3ej6sxaAnV09hFouL2CRFXfOLgod6yVRHW9TzA0
+	XuAAqDB7BEOt9jSAWlarcPTDnJNAv02+iIbWejkxkG4ru8mlh6aaCHp4wEg3158i6Yu1n9G3
+	L5YC+tKEiaS/yi/m0HnpCyR93zFJ0M6fR0g631oP6OXmbXSz/R4W53UoeU8iI1MwOn9GLdco
+	ktTKaOrAh9J3pOERoaIgkQS9TvmrZSlMNBX7flzQu0kq1xIo/09kKqOrFCfT66mQN/boNEYD
+	45+o0RuiKUarUGnF2mC9LEVvVCuD1YwhUhQa+lq4S3g4OdE5/xDTLm9JnR+14iaQ75MD+Dwo
+	EMPefjsnB3jwhIJLAHZkP9ggSwAuZjwlfwNosn6N5QDeestcD4+tdwJ4tbqRZMkygNduD+Nu
+	ESnYBa8WG90WmwXf47CtSeTW4IIJDA5cbsHcB96CKNiyWslxY0LwKlw41wTc2FMggYXtWRw2
+	33ZYev0frhvzXfXi2Rqc1bwA+0rthBvjLk36j+W42wAKqvhwotvkSsR1kVi4upW9xhve7bVy
+	WewHlxc6SRbL4fXSQYzFBniro2sDvwkz+s3ro+CuURraQ1gnL5i3at9YgyfMzhSy6pfhVJFj
+	I7Av/LOklsNKaLjwmGCXcxrAP9JzOQVge9kz+cueyV/2v9l5gNeDLYxWn6Jk9OHaMDVz9L9X
+	lWtSmsH6Rwg40ApmpheDbQDjARuAPJza7Kka0jBCT4Xs2HFGp5HqjCpGbwPhrgUX4n4+co3r
+	J6kNUpFYEiqOiIgQS8IiRJSv51xGpUIoUMoMTDLDaBnd0z6Mx/czYXv5SueoPKZqd8XknG8x
+	CDz4S+anrV++1FC3zZFw79uwG6VYtU/0prQjR3Pp46rCBMlBXJNv3hnIv2U9C617VwTc+Le5
+	UadOWsxa7zOKux/sON0DlF5eX4yM5ZdXZK08H9l0OXLpcOOgcX487Mi5qLaf7iTPlsys9c9X
+	WgYyD0nX1FOD6TMJZo059ff2xzMnHkxbStaQx2id7Tme30mhKquwe1/MfOxbxwJvcMWSHWOz
+	H0u7Mpu7puXxn1vM07opm3O8vMB3mVpcyl15tL/kbElevamve98Fvrboo6hiWrz/kVoZ0hgQ
+	5Qx7mHIirYYima1IbrlQYdaeyb3zSkNqPKIIfaJMFIDr9LJ/AeggkU+RBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0xSYRjHe885HA8QdcSar7Wy2LrpsKvtray1anX6UGvVp2pLyjNjAdJB
+	LOuDt2VmQyW2mnZBzSxx1SR1qIGKF7IySlKTZbdJuFGQVpZZluja+vZ7/pc9z/ZQuLiVmEPJ
+	Vcksp5IpJKSAqG2RREpn7lSzKxr1QnTvUTuOhr6NEaiyP59EvpZhgAaazgFUXHqNQH1NdRiq
+	qGzD0EV7D0Ce7iIMWd3RqCS7jEAPrB0EctVfJZGx3BOCLvRaSHTLMY6hlwUegPQ53RiyDGQA
+	VDtmxNFdX4BAD91zkfO3g7cZMnVF/SGM83UVwbg6tYzZdJ5k7pelMYP3CwHT0JdOMjfyDDxG
+	l+UnmSGPm2ACtm6Syas2AeaLeT5jHviE7ZlxQBCXwCrkKSy3fFO84Fjg4yim/hJx6mNPNZ4O
+	8mbnAoqC9Broa6dyAZ8S0w0AZlq3BxnS4TCr50fIFIfBinHvBAsmMkMA9tozecEuSS+Dzwza
+	oD6LtuBw9E4WFhxw2oPBodEREGyH0Rtg7dg1XpAJehH0X6qa1EX0OqivP8eb2hAJC7u+T27j
+	T+gGbyk+dRGCtozLxFQ+FHYUDkwyPpHPqrmCFwC66D+r6D+rGGAmEMGqNcpEpWalepWKPRmj
+	kSk1WlVizNEkpRlMPjoqygIemD7H2AFGATuAFC6ZJVI4k1ixKEGWeprlkg5zWgWrsYO5FCEJ
+	F434dAliOlGWzB5nWTXL/XMxij8nHSOvFh+o0R0nzygGvV2jPrnladPhtCWvUt0bv15ujSMN
+	T1vbe2Olzx5n+xr59q35Dv88x9LmbTs74/OF5TXijH1SscfY6Ne3ddpyjQv7xh/CkmS2NbfZ
+	0SUQvvDvlun5wrvPG+Qny8Qtu+pzAiLZB2bHiiOu6Q3DF35JU9tt7vC1qbgrvsD3HvxIifbe
+	iAzdaDx7ernuyfWfnW+qB4XP0/xf6+sMr0YWXNztPGSOi91L7DsSWP0ue8HtKuuJg6aIxV4n
+	V+Dd8vImXVbxpNcWKpjmkGe4Dv18uyaOU81e/65Ul6OVWlP2f1BZTf2/hzPFeV2xO9TN46uV
+	3M3Emj8jEkJzTLYyCuc0sr8K69AIVwMAAA==
+X-CMS-MailID: 20231206101231epcas5p1756d9f527df621f3a0eebb37ca257f06
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231206101218epcas5p3bd5005a84adf67a80d394c3e05796bd7
+X-CMS-RootMailID: 20231206101231epcas5p1756d9f527df621f3a0eebb37ca257f06
 References: <20231206100253.13100-1-joshi.k@samsung.com>
-	<CGME20231206101218epcas5p3bd5005a84adf67a80d394c3e05796bd7@epcas5p3.samsung.com>
+	<CGME20231206101231epcas5p1756d9f527df621f3a0eebb37ca257f06@epcas5p1.samsung.com>
 
 From: Nitesh Shetty <nj.shetty@samsung.com>
 
-Add support for handling nvme_cmd_copy command on target.
+Before enabling copy for dm target, check if underlying devices and
+dm target support copy. Avoid split happening inside dm target.
+Fail early if the request needs split, currently splitting copy
+request is not supported.
 
-For bdev-ns if backing device supports copy offload we call device copy
-offload (blkdev_copy_offload).
-In case of absence of device copy offload capability, we use copy emulation
-(blkdev_copy_emulation)
-
-For file-ns we call vfs_copy_file_range to service our request.
-
-Currently target always shows copy capability by setting
-NVME_CTRL_ONCS_COPY in controller ONCS.
-
-loop target has copy support, which can be used to test copy offload.
-trace event support for nvme_cmd_copy.
-
-Reviewed-by: Hannes Reinecke <hare@suse.de>
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- drivers/nvme/target/admin-cmd.c   |  9 +++-
- drivers/nvme/target/io-cmd-bdev.c | 71 +++++++++++++++++++++++++++++++
- drivers/nvme/target/io-cmd-file.c | 50 ++++++++++++++++++++++
- drivers/nvme/target/nvmet.h       |  1 +
- drivers/nvme/target/trace.c       | 19 +++++++++
- 5 files changed, 148 insertions(+), 2 deletions(-)
+ drivers/md/dm-table.c         | 37 +++++++++++++++++++++++++++++++++++
+ drivers/md/dm.c               |  7 +++++++
+ include/linux/device-mapper.h |  3 +++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
-index 39cb570f833d..4e1a6ca09937 100644
---- a/drivers/nvme/target/admin-cmd.c
-+++ b/drivers/nvme/target/admin-cmd.c
-@@ -433,8 +433,7 @@ static void nvmet_execute_identify_ctrl(struct nvmet_req *req)
- 	id->nn = cpu_to_le32(NVMET_MAX_NAMESPACES);
- 	id->mnan = cpu_to_le32(NVMET_MAX_NAMESPACES);
- 	id->oncs = cpu_to_le16(NVME_CTRL_ONCS_DSM |
--			NVME_CTRL_ONCS_WRITE_ZEROES);
--
-+			NVME_CTRL_ONCS_WRITE_ZEROES | NVME_CTRL_ONCS_COPY);
- 	/* XXX: don't report vwc if the underlying device is write through */
- 	id->vwc = NVME_CTRL_VWC_PRESENT;
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 198d38b53322..a3e1695d111f 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1899,6 +1899,38 @@ static bool dm_table_supports_nowait(struct dm_table *t)
+ 	return true;
+ }
  
-@@ -536,6 +535,12 @@ static void nvmet_execute_identify_ns(struct nvmet_req *req)
- 
- 	if (req->ns->bdev)
- 		nvmet_bdev_set_limits(req->ns->bdev, id);
-+	else {
-+		id->msrc = (__force u8)to0based(BIO_MAX_VECS - 1);
-+		id->mssrl = cpu_to_le16(BIO_MAX_VECS <<
-+					(PAGE_SHIFT - SECTOR_SHIFT));
-+		id->mcl = cpu_to_le32(le16_to_cpu(id->mssrl));
++static int device_not_copy_capable(struct dm_target *ti, struct dm_dev *dev,
++				   sector_t start, sector_t len, void *data)
++{
++	struct request_queue *q = bdev_get_queue(dev->bdev);
++
++	return !q->limits.max_copy_sectors;
++}
++
++static bool dm_table_supports_copy(struct dm_table *t)
++{
++	struct dm_target *ti;
++	unsigned int i;
++
++	for (i = 0; i < t->num_targets; i++) {
++		ti = dm_table_get_target(t, i);
++
++		if (!ti->copy_offload_supported)
++			return false;
++
++		/*
++		 * target provides copy support (as implied by setting
++		 * 'copy_offload_supported')
++		 * and it relies on _all_ data devices having copy support.
++		 */
++		if (!ti->type->iterate_devices ||
++		    ti->type->iterate_devices(ti, device_not_copy_capable, NULL))
++			return false;
 +	}
++
++	return true;
++}
++
+ static int device_not_discard_capable(struct dm_target *ti, struct dm_dev *dev,
+ 				      sector_t start, sector_t len, void *data)
+ {
+@@ -1981,6 +2013,11 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 		q->limits.discard_misaligned = 0;
+ 	}
  
++	if (!dm_table_supports_copy(t)) {
++		q->limits.max_copy_sectors = 0;
++		q->limits.max_copy_hw_sectors = 0;
++	}
++
+ 	if (!dm_table_supports_secure_erase(t))
+ 		q->limits.max_secure_erase_sectors = 0;
+ 
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 8dcabf84d866..c209348a0064 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1721,6 +1721,13 @@ static blk_status_t __split_and_process_bio(struct clone_info *ci)
+ 	if (unlikely(ci->is_abnormal_io))
+ 		return __process_abnormal_io(ci, ti);
+ 
++	if ((unlikely(op_is_copy(ci->bio->bi_opf)) &&
++	    max_io_len(ti, ci->sector) < ci->sector_count)) {
++		DMERR("Error, IO size(%u) > max target size(%llu)\n",
++		      ci->sector_count, max_io_len(ti, ci->sector));
++		return BLK_STS_IOERR;
++	}
++
  	/*
- 	 * We just provide a single LBA format that matches what the
-diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-index f11400a908f2..f974858ae5a0 100644
---- a/drivers/nvme/target/io-cmd-bdev.c
-+++ b/drivers/nvme/target/io-cmd-bdev.c
-@@ -46,6 +46,18 @@ void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
- 	id->npda = id->npdg;
- 	/* NOWS = Namespace Optimal Write Size */
- 	id->nows = to0based(bdev_io_opt(bdev) / bdev_logical_block_size(bdev));
+ 	 * Only support bio polling for normal IO, and the target io is
+ 	 * exactly inside the dm_io instance (verified in dm_poll_dm_io)
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 772ab4d74d94..d840ed38516c 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -397,6 +397,9 @@ struct dm_target {
+ 	 * bio_set_dev(). NOTE: ideally a target should _not_ need this.
+ 	 */
+ 	bool needs_bio_set_dev:1;
 +
-+	if (bdev_max_copy_sectors(bdev)) {
-+		id->msrc = id->msrc;
-+		id->mssrl = cpu_to_le16((bdev_max_copy_sectors(bdev) <<
-+				SECTOR_SHIFT) /	bdev_logical_block_size(bdev));
-+		id->mcl = cpu_to_le32((__force u32)id->mssrl);
-+	} else {
-+		id->msrc = (__force u8)to0based(BIO_MAX_VECS - 1);
-+		id->mssrl = cpu_to_le16((BIO_MAX_VECS << PAGE_SHIFT) /
-+					bdev_logical_block_size(bdev));
-+		id->mcl = cpu_to_le32((__force u32)id->mssrl);
-+	}
- }
- 
- void nvmet_bdev_ns_disable(struct nvmet_ns *ns)
-@@ -451,6 +463,61 @@ static void nvmet_bdev_execute_write_zeroes(struct nvmet_req *req)
- 	}
- }
- 
-+static void nvmet_bdev_copy_endio(void *private, int status,
-+					    ssize_t copied)
-+{
-+	struct nvmet_req *rq = (struct nvmet_req *)private;
-+	u16 nvme_status;
-+
-+	if (copied == rq->copy_len)
-+		rq->cqe->result.u32 = cpu_to_le32(1);
-+	else
-+		rq->cqe->result.u32 = cpu_to_le32(0);
-+
-+	nvme_status = errno_to_nvme_status(rq, status);
-+	nvmet_req_complete(rq, nvme_status);
-+}
-+
-+/*
-+ * At present we handle only one range entry, since copy offload is aligned with
-+ * copy_file_range, only one entry is passed from block layer.
-+ */
-+static void nvmet_bdev_execute_copy(struct nvmet_req *rq)
-+{
-+	struct nvme_copy_range range;
-+	struct nvme_command *cmd = rq->cmd;
-+	ssize_t ret;
-+	off_t dst, src;
-+
-+	u16 status;
-+
-+	status = nvmet_copy_from_sgl(rq, 0, &range, sizeof(range));
-+	if (status)
-+		goto err_rq_complete;
-+
-+	dst = le64_to_cpu(cmd->copy.sdlba) << rq->ns->blksize_shift;
-+	src = le64_to_cpu(range.slba) << rq->ns->blksize_shift;
-+	rq->copy_len = ((__force size_t)range.nlb + 1) << rq->ns->blksize_shift;
-+
-+	if (bdev_max_copy_sectors(rq->ns->bdev)) {
-+		ret = blkdev_copy_offload(rq->ns->bdev, dst, src, rq->copy_len,
-+					  nvmet_bdev_copy_endio,
-+					  (void *)rq, GFP_KERNEL);
-+	} else {
-+		ret = blkdev_copy_emulation(rq->ns->bdev, dst,
-+					    rq->ns->bdev, src, rq->copy_len,
-+					    nvmet_bdev_copy_endio,
-+					    (void *)rq, GFP_KERNEL);
-+	}
-+	if (ret == -EIOCBQUEUED)
-+		return;
-+
-+	rq->cqe->result.u32 = cpu_to_le32(0);
-+	status = errno_to_nvme_status(rq, ret);
-+err_rq_complete:
-+	nvmet_req_complete(rq, status);
-+}
-+
- u16 nvmet_bdev_parse_io_cmd(struct nvmet_req *req)
- {
- 	switch (req->cmd->common.opcode) {
-@@ -469,6 +536,10 @@ u16 nvmet_bdev_parse_io_cmd(struct nvmet_req *req)
- 	case nvme_cmd_write_zeroes:
- 		req->execute = nvmet_bdev_execute_write_zeroes;
- 		return 0;
-+	case nvme_cmd_copy:
-+		req->execute = nvmet_bdev_execute_copy;
-+		return 0;
-+
- 	default:
- 		return nvmet_report_invalid_opcode(req);
- 	}
-diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
-index 2d068439b129..0a8337596f0c 100644
---- a/drivers/nvme/target/io-cmd-file.c
-+++ b/drivers/nvme/target/io-cmd-file.c
-@@ -322,6 +322,47 @@ static void nvmet_file_dsm_work(struct work_struct *w)
- 	}
- }
- 
-+static void nvmet_file_copy_work(struct work_struct *w)
-+{
-+	struct nvmet_req *req = container_of(w, struct nvmet_req, f.work);
-+	int nr_range = req->cmd->copy.nr_range + 1;
-+	u16 status = 0;
-+	int src, id;
-+	ssize_t len, ret;
-+	loff_t pos;
-+
-+	pos = le64_to_cpu(req->cmd->copy.sdlba) << req->ns->blksize_shift;
-+	if (unlikely(pos + req->transfer_len > req->ns->size)) {
-+		nvmet_req_complete(req, errno_to_nvme_status(req, -ENOSPC));
-+		return;
-+	}
-+
-+	for (id = 0 ; id < nr_range; id++) {
-+		struct nvme_copy_range range;
-+
-+		status = nvmet_copy_from_sgl(req, id * sizeof(range), &range,
-+					     sizeof(range));
-+		if (status)
-+			break;
-+
-+		src = (le64_to_cpu(range.slba) << (req->ns->blksize_shift));
-+		len = (le16_to_cpu(range.nlb) + 1) << (req->ns->blksize_shift);
-+		ret = vfs_copy_file_range(req->ns->file, src, req->ns->file,
-+					  pos, len, COPY_FILE_SPLICE);
-+		pos += ret;
-+		if (ret != len) {
-+			req->cqe->result.u32 = cpu_to_le32(id);
-+			if (ret < 0)
-+				status = errno_to_nvme_status(req, ret);
-+			else
-+				status = errno_to_nvme_status(req, -EIO);
-+			break;
-+		}
-+	}
-+
-+	nvmet_req_complete(req, status);
-+}
-+
- static void nvmet_file_execute_dsm(struct nvmet_req *req)
- {
- 	if (!nvmet_check_data_len_lte(req, nvmet_dsm_len(req)))
-@@ -330,6 +371,12 @@ static void nvmet_file_execute_dsm(struct nvmet_req *req)
- 	queue_work(nvmet_wq, &req->f.work);
- }
- 
-+static void nvmet_file_execute_copy(struct nvmet_req *req)
-+{
-+	INIT_WORK(&req->f.work, nvmet_file_copy_work);
-+	queue_work(nvmet_wq, &req->f.work);
-+}
-+
- static void nvmet_file_write_zeroes_work(struct work_struct *w)
- {
- 	struct nvmet_req *req = container_of(w, struct nvmet_req, f.work);
-@@ -376,6 +423,9 @@ u16 nvmet_file_parse_io_cmd(struct nvmet_req *req)
- 	case nvme_cmd_write_zeroes:
- 		req->execute = nvmet_file_execute_write_zeroes;
- 		return 0;
-+	case nvme_cmd_copy:
-+		req->execute = nvmet_file_execute_copy;
-+		return 0;
- 	default:
- 		return nvmet_report_invalid_opcode(req);
- 	}
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 6c8acebe1a1a..b648baeb52cf 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -405,6 +405,7 @@ struct nvmet_req {
- 	struct device		*p2p_client;
- 	u16			error_loc;
- 	u64			error_slba;
-+	size_t			copy_len;
++	/* copy offload is supported */
++	bool copy_offload_supported:1;
  };
  
- #define NVMET_MAX_MPOOL_BVEC		16
-diff --git a/drivers/nvme/target/trace.c b/drivers/nvme/target/trace.c
-index bff454d46255..551fdf029381 100644
---- a/drivers/nvme/target/trace.c
-+++ b/drivers/nvme/target/trace.c
-@@ -92,6 +92,23 @@ static const char *nvmet_trace_dsm(struct trace_seq *p, u8 *cdw10)
- 	return ret;
- }
- 
-+static const char *nvmet_trace_copy(struct trace_seq *p, u8 *cdw10)
-+{
-+	const char *ret = trace_seq_buffer_ptr(p);
-+	u64 sdlba = get_unaligned_le64(cdw10);
-+	u8 nr_range = get_unaligned_le16(cdw10 + 8);
-+	u16 control = get_unaligned_le16(cdw10 + 10);
-+	u32 dsmgmt = get_unaligned_le32(cdw10 + 12);
-+	u32 reftag = get_unaligned_le32(cdw10 +  16);
-+
-+	trace_seq_printf(p,
-+		"sdlba=%llu, nr_range=%u, ctrl=1x%x, dsmgmt=%u, reftag=%u",
-+		sdlba, nr_range, control, dsmgmt, reftag);
-+	trace_seq_putc(p, 0);
-+
-+	return ret;
-+}
-+
- static const char *nvmet_trace_common(struct trace_seq *p, u8 *cdw10)
- {
- 	const char *ret = trace_seq_buffer_ptr(p);
-@@ -129,6 +146,8 @@ const char *nvmet_trace_parse_nvm_cmd(struct trace_seq *p,
- 		return nvmet_trace_read_write(p, cdw10);
- 	case nvme_cmd_dsm:
- 		return nvmet_trace_dsm(p, cdw10);
-+	case nvme_cmd_copy:
-+		return nvmet_trace_copy(p, cdw10);
- 	default:
- 		return nvmet_trace_common(p, cdw10);
- 	}
+ void *dm_per_bio_data(struct bio *bio, size_t data_size);
 -- 
 2.35.1.500.gb896f729e2
 
