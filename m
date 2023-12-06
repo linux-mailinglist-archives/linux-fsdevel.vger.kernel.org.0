@@ -1,39 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-5055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0957B807B6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 23:37:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3072807B6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 23:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A672C1F21172
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 22:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1141C20B55
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 22:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A924B140
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 22:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693AD5639B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 22:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="f9/W7Jcr";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="V1rD3Zwx"
+	dkim=pass (1024-bit key) header.d=jagalactic.com header.i=@jagalactic.com header.b="tFkQxUJb";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="bSSicDJf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from a11-4.smtp-out.amazonses.com (a11-4.smtp-out.amazonses.com [54.240.11.4])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DED75D5F;
-	Wed,  6 Dec 2023 13:02:59 -0800 (PST)
+Received: from a10-70.smtp-out.amazonses.com (a10-70.smtp-out.amazonses.com [54.240.10.70])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B6CD46;
+	Wed,  6 Dec 2023 13:03:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=rjayupzefgi7e6fmzxcxe4cv4arrjs35; d=jagalactic.com; t=1701896579;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:References:Message-Id;
-	bh=+9I3ssw05QPbGD2vToTePjOyEAM+Xe9Zko7u06tK2yE=;
-	b=f9/W7JcrR3cFrLt6udhD74cwrVj4ciy1WGoPmtyHvEa5heG+eMiD3catYYuZ9oep
-	56tzi12nl8AkDK3KGXnv/t4iAPbJCK+1Qd2/MG4vPPrb0V6q+Mnx+PvsnZ4S/ylyY3n
-	j8Wgnj7QgXDIX8I3s4fYg4WNOk3ebaG5uWLPEQwI=
+	s=rjayupzefgi7e6fmzxcxe4cv4arrjs35; d=jagalactic.com; t=1701896580;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id;
+	bh=2XArwbjiyn8c4sOmfJ9h02yrv193lZYzJiMl45UR4yc=;
+	b=tFkQxUJbXhIgZmPvbp9ANbcHJzJn10zhgBudO61dc8WKKb99lX89VTWM37UWAC2X
+	8+gclvqyP3A4/XmBPSRoU9D6RfDr12AkE7rMc4t9BM4wVIkmdjC0J62G0EvXQiNEfFA
+	iuBVYRxKp0uwMSUZKVYR5VvGYKMNZWDPACPwt87E=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1701896579;
-	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:References:Message-Id:Feedback-ID;
-	bh=+9I3ssw05QPbGD2vToTePjOyEAM+Xe9Zko7u06tK2yE=;
-	b=V1rD3ZwxYZoGSUBn0hC7+MbX838HmsYWTXA2HzTIi4YseeP2yp3c5e5vSeDVtTIY
-	T8dCpeDiymCSMz3kOmNsTPovyx1ENYbOsJ5R14/MQ7Rxmp2+sX69CkdSDGqR8mcAKH6
-	5Rlfk0q3rQnBQU3wtU7bblvMPx0UsYXrR9lsbNI8=
-Subject: [PATCH RFC 0/4] dev_dax_iomap: introduce iomap for /dev/dax
+	s=224i4yxa5dv7c2xz3womw6peuasteono; d=amazonses.com; t=1701896580;
+	h=Subject:From:To:Cc:Date:Mime-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:References:Message-Id:Feedback-ID;
+	bh=2XArwbjiyn8c4sOmfJ9h02yrv193lZYzJiMl45UR4yc=;
+	b=bSSicDJfYgnFNeiWDYLaRf3Ka/mlxzQoclr0D1diRr+7KMhGGkV5UkKaSt94iOKa
+	HqyfhSog2bD0zeBoxOM8FM5p57fGjv71oTYTccYYKg/UxrLOdZCCHE2Wu+BOc6hJlw/
+	wTYbsYuGCwNtnEfagNTmtpnSR3QXT2OkC0jU0nzY=
+Subject: [PATCH RFC 1/4] dev_dax_iomap: Add add_dax_ops() func for fs-dax to
+ provide dax holder_ops
 From: =?UTF-8?Q?John_Groves?= <john@jagalactic.com>
 To: =?UTF-8?Q?Dan_Williams?= <dan.j.williams@intel.com>, 
 	=?UTF-8?Q?John_Groves?= <jgroves@micron.com>, 
@@ -45,7 +46,7 @@ Cc: =?UTF-8?Q?Vishal_Verma?= <vishal.l.verma@intel.com>,
 	=?UTF-8?Q?linux-kernel=40vger=2Ekernel=2Eorg?= <linux-kernel@vger.kernel.org>, 
 	=?UTF-8?Q?linux-fsdevel=40vger=2Ekernel=2Eorg?= <linux-fsdevel@vger.kernel.org>, 
 	=?UTF-8?Q?John_Groves?= <john@groves.net>
-Date: Wed, 6 Dec 2023 21:02:58 +0000
+Date: Wed, 6 Dec 2023 21:03:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,84 +54,45 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <20231206210252.52107-1-john@jagalactic.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231206210252.52107-1-john@jagalactic.com>
+References: <20231206210252.52107-1-john@jagalactic.com> 
+ <20231206210252.52107-2-john@jagalactic.com>
 X-Mailer: Amazon WorkMail
-Thread-Index: AQHaKIeW9Nsmb4x1TnOasHllAnJBRA==
-Thread-Topic: [PATCH RFC 0/4] dev_dax_iomap: introduce iomap for /dev/dax
-X-Wm-Sent-Timestamp: 1701896577
+Thread-Index: AQHaKIeW9Nsmb4x1TnOasHllAnJBRAAAAFz1
+Thread-Topic: [PATCH RFC 1/4] dev_dax_iomap: Add add_dax_ops() func for
+ fs-dax to provide dax holder_ops
+X-Wm-Sent-Timestamp: 1701896579
 X-Original-Mailer: git-send-email 2.39.3 (Apple Git-145)
-Message-ID: <0100018c40f0e6d8-e9683548-4dde-4320-8ff3-3fd4103c7274-000000@email.amazonses.com>
+Message-ID: <0100018c40f0ed86-72d9b4a3-07c3-41c5-b495-190d21cad33c-000000@email.amazonses.com>
 Feedback-ID: 1.us-east-1.LF00NED762KFuBsfzrtoqw+Brn/qlF9OYdxWukAhsl8=:AmazonSES
-X-SES-Outgoing: 2023.12.06-54.240.11.4
+X-SES-Outgoing: 2023.12.06-54.240.10.70
 
-From: John Groves <john@groves.net>
-
-This patch set is not intended to be merged; I'm hoping to get some
-clarification as to the correct approach (especialy from Dan). 
-
-This work is related to famfs, which is a dax file system for shared
-fabric-attached memory (FAM). Famfs is "coming soon" as an RFC, but
-the concept and requirements were presented at LPC 2023. See
-https://lpc.events/event/17/contributions/1455/ and
-https://www.youtube.com/watch?v=aA_DgO95gLo. My expectation is that
-a future (fully working) version of this patch will be folded into the
-famfs
-patches.
-
-Unlike the current set of fs-dax file systems, famfs does not need a block
-(pmem) device, and should really run on a /dev/dax character device since
-that's how sharable fabric-attached cxl memory will surface. But
-/dev/dax character devices are missing some functionality that is provided
-by the block /dev/pmem driver - specifically struct dax_operations pointer
-in struct dax_device.
-
-This patch, when CONFIG_DEV_DAX_IOMAP=y, populates dax_dev->ops for
-character dax devices. The added operations differ (currently) from
-/dev/pmem's dev_dax->ops in that they don't use memremap but instead
-provide a physical address in response to the dev_dax->direct_access()
-method. 
-
-The dax_operations are direct_access() (which resolves a dax dev offset
-to an address), zero_page_range() and recovery_write(). I'm not sure yet
-how to test the latter two, but the direct_access() method works in
-conjunciton with famfs - but only for mmaped files.
-
-But Posix reads fail. Specifically dax_iomap_iter() calls
-dax_copy_to_iter(), which declines to copy the data for some reason in
-one of the lower level copy_to_user variants. I've tried to isolate the
-reason for the failure with a VM under gdb, but no luck there yet. I'm
-wondering if there is some flag or attribute that needs to be applied to
-these addresses/pages somehow to allow this to work.
-
-The failing copy_to_user() differs from the same path with pmem fs-dax,
-in that pmem does a memremap (which I think generates one contiguous
-range, even if the device had more than one range - is this right, and
-does this mean it's consuming some of the vmap/vmalloc range?)
-
-I spent some time attempting a memremap, but I haven't figured out the
-magic for that. However, I like the simplicity of resolving to phys if
-that's not a non-starter for some reason.
-
-I hope this is enough context for a meaningful review and suggestions as to
-what a working dev_dax->dax_operations implementation should look like.
-
-Thanks for any tips!
-
-
-John Groves (4):
-  Add add_dax_ops() func for fs-dax to provide dax holder_ops
-  Temporary hacks due to linkage issues
-  Add dax_operations to /dev/dax struct dax_device
-  Add CONFIG_DEV_DAX_IOMAP kernel build parameter
-
- drivers/dax/Kconfig |   6 ++
- drivers/dax/bus.c   | 155 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/dax/super.c |  16 +++++
- include/linux/dax.h |   5 ++
- 4 files changed, 182 insertions(+)
-
--- 
-2.40.1
-
+From: John Groves <john@groves.net>=0D=0A=0D=0AThis is clearly not the ri=
+ght way to set the holder_ops; where &=0D=0Ahow should this be done=3F=0D=
+=0A---=0D=0A drivers/dax/super.c | 16 ++++++++++++++++=0D=0A include/linu=
+x/dax.h |  5 +++++=0D=0A 2 files changed, 21 insertions(+)=0D=0A=0D=0Adif=
+f --git a/drivers/dax/super.c b/drivers/dax/super.c=0D=0Aindex 0da9232ea1=
+75..3d4e205c1854 100644=0D=0A--- a/drivers/dax/super.c=0D=0A+++ b/drivers=
+/dax/super.c=0D=0A@@ -467,6 +467,22 @@ struct dax_device *alloc_dax(void =
+*private, const struct dax_operations *ops)=0D=0A }=0D=0A EXPORT_SYMBOL_G=
+PL(alloc_dax);=0D=0A=20=0D=0A+#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)=0D=0A+=
+/* famfs calls this to add the holder_ops. There is probably a more elega=
+nt approach */=0D=0A+int add_dax_ops(=0D=0A+=09struct dax_device         =
+  *dax_dev,=0D=0A+=09const struct dax_holder_operations *hops)=0D=0A+{=0D=
+=0A+=09/* dax_dev->ops should have been populated by devm_create_dev_dax(=
+) */=0D=0A+=09WARN_ON(!dax_dev->ops);=0D=0A+=0D=0A+=09/* Use cmpxchg=3F *=
+/=0D=0A+=09dax_dev->holder_ops =3D hops;=0D=0A+=09return 0;=0D=0A+}=0D=0A=
++EXPORT_SYMBOL_GPL(add_dax_ops);=0D=0A+#endif /* DEV_DAX_IOMAP */=0D=0A+=0D=
+=0A void put_dax(struct dax_device *dax_dev)=0D=0A {=0D=0A =09if (!dax_de=
+v)=0D=0Adiff --git a/include/linux/dax.h b/include/linux/dax.h=0D=0Aindex=
+ b463502b16e1..31b68667b3cb 100644=0D=0A--- a/include/linux/dax.h=0D=0A++=
++ b/include/linux/dax.h=0D=0A@@ -57,6 +57,11 @@ struct dax_holder_operati=
+ons {=0D=0A=20=0D=0A #if IS_ENABLED(CONFIG_DAX)=0D=0A struct dax_device *=
+alloc_dax(void *private, const struct dax_operations *ops);=0D=0A+=0D=0A+=
+#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)=0D=0A+int add_dax_ops(struct dax_dev=
+ice *dax_dev,=0D=0A+=09=09const struct dax_holder_operations *hops);=0D=0A=
++#endif=0D=0A void *dax_holder(struct dax_device *dax_dev);=0D=0A void pu=
+t_dax(struct dax_device *dax_dev);=0D=0A void kill_dax(struct dax_device =
+*dax_dev);=0D=0A--=20=0D=0A2.40.1=0D=0A=0D=0A
 
