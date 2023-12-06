@@ -1,85 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-5042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F083F8077DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:45:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1A4807970
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 21:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D93B20E34
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158F11F2167F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3E3364
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A784B13C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RT9oPO1F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNiL0HtD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A05A6D42;
-	Wed,  6 Dec 2023 10:30:37 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3b9cc78d328so87509b6e.3;
-        Wed, 06 Dec 2023 10:30:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701887437; x=1702492237; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJAZ/jJ1lCkqUr4OFytX5WnFEtupCNITkqPY5o5pyG0=;
-        b=RT9oPO1FJCH+twJh/n71KMOARqW9bzIseu2Fo+8MuziE7NQvlh1IFoQS0qJViceCJ/
-         9agcIOPJ53+tKKxECniGp3/buMIu/fbxTI2UE0vHWRywlGcdbPViXkzOMi6nk9WY7J9c
-         rWVrjT64ZmXMpAlfsSyBY76zTmNtiptdlYbZVsMFza4uVziaxWCe+brEd3CKf/r5nxcc
-         Zif02gGAJwLJZbPjyE/tbsyAmcFg5hpfSD4y6ChZ0pwwqr+lrFRD9f2SqHyppypcpKBk
-         CPCjculWr6VZBaS+q0nFwJ7aIXSrW/KRFS+/Rc3Q6sjka799TUn/Vh8HDAxaWPL8ONaE
-         iWQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701887437; x=1702492237;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nJAZ/jJ1lCkqUr4OFytX5WnFEtupCNITkqPY5o5pyG0=;
-        b=GWD6RfG/fKn+QdD75s3SyKDmuw7TzYvazqVfcfUYxz+uWEYfinWhWKyrOzs37FvHZK
-         sOcpjgJQKLKmzH/3e8UKT6nqBD5gWDtOmKIZgvkt0nmwouIx9EsphUwmRZEhMNQVAd4K
-         oYzbjFm5757XN+hEdeIJMgmz3ScZtCKqxRMfmkCq3xrBYkZMuOOCqHTLdb5zlnAuWeO+
-         PErNbBMt4FAEy0Ow10sgqPNrFzGcgcQn/HjLEImybAtO3P+/LEIOAYd91dG00w1Ft9e1
-         grAlI8bVuuXAvk0uyzZN4qlZMSobmdZM9ES8Ht752aVpc/V1H27WElxFz3nuAAaGkBkJ
-         MKHw==
-X-Gm-Message-State: AOJu0Ywn0rfYhSJpHAx+4Fsh71a3MJVhJkjvPBFpBdEeQIgmCcsDaikp
-	ni7ip398UakOtwmR7FDWVhhvL7/awzryJG1MvtXOg7B5FuAzkw==
-X-Google-Smtp-Source: AGHT+IEiTk8lgkH5BrOGSqsNNN3Xksa3/U+y0Fblv8doHn91vsqMwB/Vl2Pn3CTtrOBwyL6MSlrLyzT6K8JFQcv5FeA=
-X-Received: by 2002:a05:6870:1b83:b0:1fb:4a6:31dd with SMTP id
- hm3-20020a0568701b8300b001fb04a631ddmr1541051oab.42.1701887436874; Wed, 06
- Dec 2023 10:30:36 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709EF6EB64;
+	Wed,  6 Dec 2023 18:48:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9C18C433C7;
+	Wed,  6 Dec 2023 18:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701888479;
+	bh=+ti42Uy3LaDObl3C2cNA/it91T+eOi0j2YArak6KYyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VNiL0HtDbCMJEgtw6xQk/Iypp0j8e/QsroWuZHB12LyrOYGCAc9pCPh2PJdmYILhu
+	 Jc7b/ryZmrcof+TPY9lq9kWqOePGpieR3X4xcLY+O24MVM124XkfUychzNL+OHq9NW
+	 uAyGYylocxT802Io2AMScXSvWcxH9V5GdouI4Qj0xY9cvsTRC+/YSQKxadYdBIxyOC
+	 xjZrM98Y7KPh8QL5Tm2XDxdKiwwYtA/wVI0VhWLPV1jNABLQJdu6/6Zo1iMjLASyoW
+	 gp2V90qAOmtvyUWWX0mSeo7p9Pl9Al8NIcYahHmJ7f7EJhstjwlnV31qT38eXvDiWc
+	 hStumjTX/XYHg==
+Date: Wed, 6 Dec 2023 10:47:59 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: fstests@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-cifs@vger.kernel.org, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Filipe Manana <fdmanana@suse.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Issues with FIEMAP, xfstests, Samba, ksmbd and CIFS
+Message-ID: <20231206184759.GA3964019@frogsfrogsfrogs>
+References: <447324.1701860432@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a05:6802:30f:b0:50c:13ee:b03d with HTTP; Wed, 6 Dec 2023
- 10:30:36 -0800 (PST)
-In-Reply-To: <CAGudoHErh41OB6JDWHd2Mxzh5rFOGrV6PKC7Xh8JvTn0ws3L_A@mail.gmail.com>
-References: <20231201065602.GP38156@ZenIV> <20231201200446.GA1431056@ZenIV>
- <ZW3WKV9ut7aFteKS@xsang-OptiPlex-9020> <20231204195321.GA1674809@ZenIV>
- <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020> <20231206054946.GM1674809@ZenIV>
- <ZXCLgJLy2b5LvfvS@xsang-OptiPlex-9020> <20231206161509.GN1674809@ZenIV>
- <20231206163010.445vjwmfwwvv65su@f> <CAGudoHF-eXYYYStBWEGzgP8RGXG2+ER4ogdtndkgLWSaboQQwA@mail.gmail.com>
- <20231206170958.GP1674809@ZenIV> <CAGudoHErh41OB6JDWHd2Mxzh5rFOGrV6PKC7Xh8JvTn0ws3L_A@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 6 Dec 2023 19:30:36 +0100
-Message-ID: <CAGudoHGgqH=2mb52T4ZMx9bWtyMm7hV9wPvh+7JbtBq0x4ymYA@mail.gmail.com>
-Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()] 1b738f196e:
- stress-ng.sysinfo.ops_per_sec -27.2% regression
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-doc@vger.kernel.org, ying.huang@intel.com, feng.tang@intel.com, 
-	fengwei.yin@intel.com, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <447324.1701860432@warthog.procyon.org.uk>
 
-Can I get instructions how to reproduce the unixbench regression?
+On Wed, Dec 06, 2023 at 11:00:32AM +0000, David Howells wrote:
+> Hi,
+> 
+> I've been debugging apparent cifs failures with xfstests, in particular
+> generic/009, and I'm finding that the tests are failing because FIEMAP is not
+> returning exactly the expected extent map.
+> 
+> The problem is that the FSCTL_QUERY_ALLOCATED_RANGES smb RPC op can only
+> return a list of ranges that are allocated and does not return any other
+> information about those allocations or the gaps between them - and thus FIEMAP
+> cannot express this information to the extent that the test expects.
 
-I only found them for stressng.
+<shrug> Perhaps that simply makes FSCTL_QUERY_ALLOCATED_RANGES -> FIEMAP
+translation a poor choice?  FIEMAP doesn't have a way to say "written
+status unknown".
 
--- 
-Mateusz Guzik <mjguzik gmail.com>
+> Further, as Steve also observed, the expectation that the individual subtests
+> should return exactly those ranges is flawed.  The filesystem is at liberty to
+> split extents, round up extents, bridge extents and automatically punch out
+> blocks of zeros.  xfstests/common/punch allows for some of this, but I wonder
+> if it needs to be more fuzzy.
+> 
+> I wonder if the best xfstests can be expected to check is that the data we
+> have written is within the allocated regions.
+
+I think the only expectation that generic/shared tests can have is that
+file ranges they've written must not be reported as SEEK_HOLE.  The
+ranges reported by SEEK_DATA must include the file ranges written by
+application software, but the data ranges can be encompass more range
+than that.
+
+> Which brings me on to FALLOC_FL_ZERO_RANGE - is this guaranteed to result in
+> an allocated region (if successful)?
+
+Yes, that's the distinction between ZERO and PUNCH.
+
+> Samba is translating FSCTL_SET_ZERO_DATA
+> to FALLOC_FL_PUNCH_HOLE, as is ksmbd, and then there is no allocated range to
+
+What does the FSCTL_SET_ZERO_DATA documentation say about the state of
+the file range after a successful operation?
+
+Oh.  Heh.  According to:
+https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_set_zero_data
+
+"If you use the FSCTL_SET_ZERO_DATA control code to write zeros (0) to a
+sparse file and the zero (0) region is large enough, the file system may
+not allocate disk space.
+
+"If you use the FSCTL_SET_ZERO_DATA control code to write zeros (0) to a
+non-sparse file, zeros (0) are written to the file. The system allocates
+disk storage for all of the zero (0) range, which is equivalent to using
+the WriteFile function to write zeros (0) to a file.
+
+> report back (Samba and ksmbd use SEEK_HOLE/SEEK_DATA rather than FIEMAP -
+> would a ZERO_RANGE even show up with that?).
+
+That depends on the local disk's implementation of lseek and ZERO_RANGE.
+
+XFS, for example, implements ZERO_RANGE by unmapping the entire range
+and then reallocating it with an unwritten extent.  There's no reason
+why it couldn't also issue a WRITE_SAME to storage and change the
+mapping state to written.  The user-visible behavior would be the same
+(reads return zeroes, space is allocated).
+
+However.  XFS' SEEK_DATA implementation (aka iomap's) skips over parts
+of unwritten extents if there isn't a folio in the page cache.  If some
+day the implementation were adjusted to do that WRITE_SAME thing I
+mentioned, then SEEK_DATA would return the entire range as data
+regardless of pagecache state.
+
+This difference between SEEK_DATA and FIEMAP has led to data corruption
+problems in the past, because unwritten extents as reported by FIEMAP
+can have dirty page cache sitting around.  SEEK_DATA reports the dirty
+pages as data; FIEMAP is silent.
+
+> Finally, should the Linux cifs filesystem translate gaps in the result of
+> FSCTL_QUERY_ALLOCATED_RANGES into 'unwritten' extents rather than leaving them
+> as gaps in the list (to be reported as holes by xfs_io)?  This smacks a bit of
+> adjusting things for the sake of making the testsuite work when the testsuite
+> isn't quite compatible with the thing being tested.
+
+That doesn't make sense to me.
+
+> So:
+> 
+>  - Should Samba and ksmbd be using FALLOC_FL_ZERO_RANGE rather than
+>    PUNCH_HOLE?
+
+Probably depends on whether or not they present unix files as sparse or
+non-sparse to Windows?
+
+>  - Should Samba and ksmbd be using FIEMAP rather than SEEK_DATA/HOLE?
+
+No.
+
+>  - Should xfstests be less exacting in its FIEMAP analysis - or should this be
+>    skipped for cifs?  I don't want to skip generic/009 as it checks some
+>    corner cases that need testing, but it may not be possible to make the
+>    exact extent matching work.
+
+It's a big lift but I think the generic fstests need to be reworked to
+FIEMAP-check only the file ranges that it actually wrote.  Those can't
+be SEEK_HOLEs.
+
+--D
+
+> 
+> Thanks,
+> David
+> 
+> 
+> 
 
