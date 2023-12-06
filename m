@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-4990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A2B806FF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 13:38:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF87806FF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 13:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7041F2147D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C63F4B20CBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A5B36AE3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE8236AF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ab3ksY1s"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AI+Adgcw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x24a.google.com (mail-lj1-x24a.google.com [IPv6:2a00:1450:4864:20::24a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835B4D44
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 04:00:02 -0800 (PST)
-Received: by mail-lj1-x24a.google.com with SMTP id 38308e7fff4ca-2ca0ab9a5e6so26340391fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 04:00:02 -0800 (PST)
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58244181
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 04:00:04 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5caf61210e3so95723117b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 04:00:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701864000; x=1702468800; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bs2sSu7jP2NPZiCyS3HRAfCV2YiHx8SRHP9dJ3Owk1U=;
-        b=ab3ksY1smRD7UsYS63q4Q5vv6b00yeagsS9vqYyFCEW1xm3RTdOUKlgmEpbrN/1CGt
-         Y+HFHcNv4mxeQ446KuXztq3vloAlLtm1dtA58Djxw9QhCF+gUNJZTJKQ6V+LVLArpJ++
-         XN/SYyok6MV1ZROqIHUlSODPm11p1rrn3lysUJwpUEOkEFwaWFkb6lzWk6JZvkV59YjT
-         GGZskqWX1cg5xl+T+BdU6qZulUko5HQKfDOsMW9vWP6ObreePaeLduy6Wbp58s2UVtFK
-         8zcI30dM/PJLJXn39NBViZMxhhV9RftsudWhjFh+OYixgxUH/I0AvwUn4MzJY/1SHT5s
-         40Ww==
+        d=google.com; s=20230601; t=1701864003; x=1702468803; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLPw/cBgJ0pNgJm8eE7aQ+KAHAiPGK+jutonPeJcGnA=;
+        b=AI+AdgcwxGAT/n2PKzvPSetoX4mXzHwUQZH78WUiLgLh8vxyzFe7LKl+jh+9lsb0Re
+         63XcobEYgMvbzHeLBdVlj/XOeMIx2A+XhKgaaZaUflZ5JtnZfnMTObvFj9bdrSMB3xH1
+         f38IhHPpo+84/7zDxnZjyvsnaSYr2M9UAVDXeyBfqAoGUpJgMBa1Rbj6yHLn4nbk7asN
+         VU99Q1+vATbY8/wR+jYfvUIirdV8zh0BAAd0XYP11iVi21O4gXN3VZQ00XeHCI6DbhcO
+         ukv1lPVQtiJ4lXwlWV5Pql1E3KWfkjd69gk6uYOsBlNedkLTIRDJSlLx6YyEUOlH3G7P
+         dM7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701864000; x=1702468800;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bs2sSu7jP2NPZiCyS3HRAfCV2YiHx8SRHP9dJ3Owk1U=;
-        b=PHtNi5126NMjMwx1Wp6tPhiZVtbdrIvUJLoMu1o7ZhuQfruHphzP3eQWhngOe6qCRF
-         jeFtUGW96ZRq1xaKN7g/I1I4ZKGVgPYAFll8cHjIJH7LbnStN1t5gOhZbC30XHR22cbL
-         sRyL7w8BRVh1ehQliyJjU6W5adUojNFoSBHsffsk1ufda/ps4tAsLkj+NECU3f+J/AXR
-         g8IATqgmo3fBCWaK93lYhk3fq3cQ3oi2zMvN4RyVpaPxSo1neUi4ZO54Ubt06v5lJ2u/
-         ukqwsVjIJtMBKUqzl/yvEbhd7CILUsjj3vdiBuHDyS60ocb+qd93pv9MwBSva6QSIWll
-         brhQ==
-X-Gm-Message-State: AOJu0YybJ7tBWpoxQmiYLRorAvqJIiYLW/Zf6CDhqtoIN/Q6N5cQFe5i
-	JIy1DvTEtWdGBRXyNDlieA4sJ6F8nakHkTA=
-X-Google-Smtp-Source: AGHT+IHj1UUgeo0szNjNaqEOewQT3DWlMj81ympQxAzB2Stq8ZJbyOYne5sAvGvgJv7NdX2tQGaiw8vgeGUA2/4=
+        d=1e100.net; s=20230601; t=1701864003; x=1702468803;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLPw/cBgJ0pNgJm8eE7aQ+KAHAiPGK+jutonPeJcGnA=;
+        b=oUwlEOVpwQhNa/Y9Z7hBA1ZpSGedRV20lp+jrrGGio3R1tdHvE588Gg0JFGwxcE2zi
+         vOhVCekRFDgupiSR0VztPY91VUbKxKlpkIwqcZaA/TtZWeTVJLqW2sDa+pHrFdQqlKk4
+         Lez6fajazNMInq06PWFA+Ix5zHeySUBLdzv/YDz7UNh8c97oQKS1KscplLsd4SHjf3O8
+         e4TVEwpvK/RoQWGtpy42NrGvs14KxK/JXdPigK9BeAWRe9NztTODbdAb/9wGArh+gXqf
+         bIhXVwQAN+K4jgUts8rQM/WMhfVHA3kSHL7FFWLNi++pe6Et1unj7nHaie9PT7zt76JW
+         /gdg==
+X-Gm-Message-State: AOJu0YzxDx9+aI5Q+MqOxXENIxgfhz97OjkGtqWvYpSh+K1ojs7RRtln
+	c7/KP97AO1VWAQ1b1xLJkYmuSLtALbRIUw4=
+X-Google-Smtp-Source: AGHT+IHnjTwn89g/3gZ0rUrhLKVW1ogZkP+ZdktJ5hw4l/C4A0NqN3tW5yq2T0PBUdfPKMUoAYRnTaxAEyj4kdU=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a2e:a4cc:0:b0:2ca:217:3ad6 with SMTP id
- p12-20020a2ea4cc000000b002ca02173ad6mr9921ljm.8.1701864000377; Wed, 06 Dec
- 2023 04:00:00 -0800 (PST)
-Date: Wed, 06 Dec 2023 11:59:45 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a81:b627:0:b0:5d4:1b2d:f43f with SMTP id
+ u39-20020a81b627000000b005d41b2df43fmr8121ywh.6.1701864003433; Wed, 06 Dec
+ 2023 04:00:03 -0800 (PST)
+Date: Wed, 06 Dec 2023 11:59:46 +0000
+In-Reply-To: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIADFicGUC/03MQQrCMBCF4auUWRtpptamrryHdBHjJB2IjSQSl
- JK7GwuCy//B+1ZIFJkSnJoVImVOHJYauGvAzHpxJPhWG7DFTkrshPZsSFj2JHrsr6MipQc8QD0 8Ill+bdhlqj1zeob43uwsv+uPGf+ZLEUrrJLakjIDHuXZheA87U24w1RK+QCfI8FDpQAAAA==
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3570; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=ZtzAhf7x6vcHPQRySpbobpUqBvYjeJWg+KMtSmYWzlM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlcGI4FncNrgyduHzDoDmHvtMDvKXsJQ+z4dAxN
- 3XjiaHaNF+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZXBiOAAKCRAEWL7uWMY5
- RnG6D/9AYE0+4oRYwt77OJ3shdfyOzoTjvMm15rhUlKWpLWmHL71RXAwpBA8JSzXitefrJMhwSa
- M6kVu9QqTY1sCpLDGlt5wsNrMZL6BBvrTWzC7H2Lr2ifSf9LGzGaznEM/aWJgwGl5p05E1svT8T
- R0aqgoIYkIvucq/lOWyBmOBS0uqI/Fq43fuOzTbMzQCaw2IlqxBeBtUNlJ59DH7N+75Ib4NtL9C
- Y/ksXJi8nATaWY0Ea4tOgyO+vEwinVYglQSMuaT0JcWX3ZJaBmTCHVfQOPySsohtzotExn3e8EF
- nSKVjBYCb5leRqmA0IoOCZ7sjk+T5ljrKXknaw6cNnawO1D2tL5XDzRtq+/+YGs/lNXpw203wPL
- gCcax7y5Q3abpK3f75Lmqtqk1tBtApK1dD1IC0c4q3dy4fm9tJEfl6YiAoySvFkttaVym+LVQ2u
- XF/eAdxXq5jjaCC4DuZsn3XNm5JSM65FZMicORQm9q83Z5MLSAhZYUuB8H4+UwZ4O+s+QUONU3W
- v5XeF+cp42jO2rVdo3bc+xzb7vr/0EP1M9DADBLh40ew22lTk3F7a/tXG7zz0hwTRVMpN97Fx6b
- wh5cstlVcei/ccB8+SeFBBrWqfNLx1EFHf+P4t1w+2xvCFFJ0ZiHd1M4McemO69CxsRq3+0WQiT qHNjnhnNYWp3IAQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11330; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=fS+EISoJsOycGxjrMPeviEtEZy2GAzGu9mh6cNsegxY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlcGI5tzCvzZUNwoppJ1OHi0LOvB+Mr/uD1R1Tp
+ YwDNYjKrMqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZXBiOQAKCRAEWL7uWMY5
+ Ri63D/9My5FdhgPod4Xr3p1UAu9q5kpqykQLHYRcH7ncR8PlKewdzPipKOCEfwI0oQGFEw5GRbL
+ 11No1TgjpEkoMBzuX6PvprYnd+8zIguxfrEpQR3+3bOAPphdF8BC+sCUNCu4vQnB3HM1GQrw8EI
+ M2pMpq1jdO7KluxGT62Xb/1bMl8Mn6lVi5KwlSgeTIW3MUcO197RU/FgfDK2nUGnp+je8KFP/YU
+ itmXaTDNuK+QyyvLYtHu9QUBkRHjJ2Z+go8FbX5qKG55qs/uVJwCMcG1PFlP0XqTbLF1lv8jqW4
+ RYk3p1wj9bsQNhNdvst9nJhrMiMF6gldbHbCkqZVtxszBdhr0Lja/rbN9dx176Rtg1ROsywQurk
+ 8eQrAaRnMGZt+KiAfEXOjikx9+n0zq5HT6UavhOKrRYPzSDYO9OeKiDYyTroEpG5UYAXRE5Pwn2
+ 7wnXA/W86h4AunNf6fk0yYNkZV1T+ZKbUG/zfKzhbT8/S0spqV9w7ZfrslpumuTlHabbuJKy7WP
+ GZdgbCa8UJ0Z26u6p4hA0ba81B4RJsdPdlTXQzjCX/DS7682+HA+GUwHyEXLPuwwch+0dfMdGeZ
+ NrMBPKm9qDoPdWtRwqLQggxt7I522nz76jVRRnjyQxhs8PRsyaMp2tLNMr+UAjrVPagdJDLq2nW qPa2ycnWxhxhfpg==
 X-Mailer: b4 0.13-dev-26615
-Message-ID: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
-Subject: [PATCH v2 0/7] File abstractions needed by Rust Binder
+Message-ID: <20231206-alice-file-v2-1-af617c0d9d94@google.com>
+Subject: [PATCH v2 1/7] rust: file: add Rust abstraction for `struct file`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -91,91 +91,309 @@ Cc: Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>,
 	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This patchset contains the file abstractions needed by the Rust
-implementation of the Binder driver.
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
 
-Please see the Rust Binder RFC for usage examples:
-https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
+This abstraction makes it possible to manipulate the open files for a
+process. The new `File` struct wraps the C `struct file`. When accessing
+it using the smart pointer `ARef<File>`, the pointer will own a
+reference count to the file. When accessing it as `&File`, then the
+reference does not own a refcount, but the borrow checker will ensure
+that the reference count does not hit zero while the `&File` is live.
 
-Users of "rust: file: add Rust abstraction for `struct file`":
-	[PATCH RFC 02/20] rust_binder: add binderfs support to Rust binder
-	[PATCH RFC 03/20] rust_binder: add threading support
+Since this is intended to manipulate the open files of a process, we
+introduce a `from_fd` constructor that corresponds to the C `fget`
+method. In future patches, it will become possible to create a new fd in
+a process and bind it to a `File`. Rust Binder will use these to send
+fds from one process to another.
 
-Users of "rust: cred: add Rust abstraction for `struct cred`":
-	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-	[PATCH RFC 06/20] rust_binder: add oneway transactions
-	[PATCH RFC 11/20] rust_binder: send nodes in transaction
-	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
+We also provide a method for accessing the file's flags. Rust Binder
+will use this to access the flags of the Binder fd to check whether the
+non-blocking flag is set, which affects what the Binder ioctl does.
 
-Users of "rust: security: add abstraction for security_secid_to_secctx":
-	[PATCH RFC 06/20] rust_binder: add oneway transactions
+This introduces a struct for the EBADF error type, rather than just
+using the Error type directly. This has two advantages:
+* `File::from_fd` returns a `Result<ARef<File>, BadFdError>`, which the
+  compiler will represent as a single pointer, with null being an error.
+  This is possible because the compiler understands that `BadFdError`
+  has only one possible value, and it also understands that the
+  `ARef<File>` smart pointer is guaranteed non-null.
+* Additionally, we promise to users of the method that the method can
+  only fail with EBADF, which means that they can rely on this promise
+  without having to inspect its implementation.
+That said, there are also two disadvantages:
+* Defining additional error types involves boilerplate.
+* The question mark operator will only utilize the `From` trait once,
+  which prevents you from using the question mark operator on
+  `BadFdError` in methods that return some third error type that the
+  kernel `Error` is convertible into. (However, it works fine in methods
+  that return `Error`.)
 
-Users of "rust: file: add `FileDescriptorReservation`":
-	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-
-Users of "rust: file: add kuid getters":
-	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-	[PATCH RFC 06/20] rust_binder: add oneway transactions
-
-Users of "rust: file: add `DeferredFdCloser`":
-	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-
-Users of "rust: file: add abstraction for `poll_table`":
-	[PATCH RFC 07/20] rust_binder: add epoll support
-
-This patchset has some uses of read_volatile in place of READ_ONCE.
-Please see the following rfc for context on this:
-https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.com/
-
+Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
+Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Changes in v2:
-- Update various docs and safety comments.
-- Rename method names to match the C name.
-- Use ordinary read instead of READ_ONCE in File::cred.
-- Changed null check in secctx.
-- Add type alias for PhantomData in FileDescriptorReservation.
-- Use Kuid::from_raw in Kuid::current_euid.
-- Make DeferredFdCloser fallible if it is unable to schedule a task
-  work. And also schedule the task work *before* closing the file.
-- Moved PollCondVar to rust/kernel/sync.
-- Updated PollCondVar to use wake_up_pollfree.
-- Link to v1: https://lore.kernel.org/all/20231129-alice-file-v1-0-f81afe8c7261@google.com/
+ rust/bindings/bindings_helper.h |   2 +
+ rust/helpers.c                  |   7 ++
+ rust/kernel/file.rs             | 196 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ 4 files changed, 206 insertions(+)
 
-Link to RFC:
-https://lore.kernel.org/all/20230720152820.3566078-1-aliceryhl@google.com/
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 85f013ed4ca4..beed3ef1fbc3 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -8,6 +8,8 @@
+ 
+ #include <kunit/test.h>
+ #include <linux/errname.h>
++#include <linux/file.h>
++#include <linux/fs.h>
+ #include <linux/slab.h>
+ #include <linux/refcount.h>
+ #include <linux/wait.h>
+diff --git a/rust/helpers.c b/rust/helpers.c
+index 70e59efd92bc..03141a3608a4 100644
+--- a/rust/helpers.c
++++ b/rust/helpers.c
+@@ -25,6 +25,7 @@
+ #include <linux/build_bug.h>
+ #include <linux/err.h>
+ #include <linux/errname.h>
++#include <linux/fs.h>
+ #include <linux/mutex.h>
+ #include <linux/refcount.h>
+ #include <linux/sched/signal.h>
+@@ -157,6 +158,12 @@ void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
+ }
+ EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+ 
++struct file *rust_helper_get_file(struct file *f)
++{
++	return get_file(f);
++}
++EXPORT_SYMBOL_GPL(rust_helper_get_file);
++
+ /*
+  * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
+  * use it in contexts where Rust expects a `usize` like slice (array) indices.
+diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+new file mode 100644
+index 000000000000..29e1aacacd06
+--- /dev/null
++++ b/rust/kernel/file.rs
+@@ -0,0 +1,196 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Files and file descriptors.
++//!
++//! C headers: [`include/linux/fs.h`](../../../../include/linux/fs.h) and
++//! [`include/linux/file.h`](../../../../include/linux/file.h)
++
++use crate::{
++    bindings,
++    error::{code::*, Error, Result},
++    types::{ARef, AlwaysRefCounted, Opaque},
++};
++use core::ptr;
++
++/// Flags associated with a [`File`].
++pub mod flags {
++    /// File is opened in append mode.
++    pub const O_APPEND: u32 = bindings::O_APPEND;
++
++    /// Signal-driven I/O is enabled.
++    pub const O_ASYNC: u32 = bindings::FASYNC;
++
++    /// Close-on-exec flag is set.
++    pub const O_CLOEXEC: u32 = bindings::O_CLOEXEC;
++
++    /// File was created if it didn't already exist.
++    pub const O_CREAT: u32 = bindings::O_CREAT;
++
++    /// Direct I/O is enabled for this file.
++    pub const O_DIRECT: u32 = bindings::O_DIRECT;
++
++    /// File must be a directory.
++    pub const O_DIRECTORY: u32 = bindings::O_DIRECTORY;
++
++    /// Like [`O_SYNC`] except metadata is not synced.
++    pub const O_DSYNC: u32 = bindings::O_DSYNC;
++
++    /// Ensure that this file is created with the `open(2)` call.
++    pub const O_EXCL: u32 = bindings::O_EXCL;
++
++    /// Large file size enabled (`off64_t` over `off_t`).
++    pub const O_LARGEFILE: u32 = bindings::O_LARGEFILE;
++
++    /// Do not update the file last access time.
++    pub const O_NOATIME: u32 = bindings::O_NOATIME;
++
++    /// File should not be used as process's controlling terminal.
++    pub const O_NOCTTY: u32 = bindings::O_NOCTTY;
++
++    /// If basename of path is a symbolic link, fail open.
++    pub const O_NOFOLLOW: u32 = bindings::O_NOFOLLOW;
++
++    /// File is using nonblocking I/O.
++    pub const O_NONBLOCK: u32 = bindings::O_NONBLOCK;
++
++    /// Also known as `O_NDELAY`.
++    ///
++    /// This is effectively the same flag as [`O_NONBLOCK`] on all architectures
++    /// except SPARC64.
++    pub const O_NDELAY: u32 = bindings::O_NDELAY;
++
++    /// Used to obtain a path file descriptor.
++    pub const O_PATH: u32 = bindings::O_PATH;
++
++    /// Write operations on this file will flush data and metadata.
++    pub const O_SYNC: u32 = bindings::O_SYNC;
++
++    /// This file is an unnamed temporary regular file.
++    pub const O_TMPFILE: u32 = bindings::O_TMPFILE;
++
++    /// File should be truncated to length 0.
++    pub const O_TRUNC: u32 = bindings::O_TRUNC;
++
++    /// Bitmask for access mode flags.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// use kernel::file;
++    /// # fn do_something() {}
++    /// # let flags = 0;
++    /// if (flags & file::flags::O_ACCMODE) == file::flags::O_RDONLY {
++    ///     do_something();
++    /// }
++    /// ```
++    pub const O_ACCMODE: u32 = bindings::O_ACCMODE;
++
++    /// File is read only.
++    pub const O_RDONLY: u32 = bindings::O_RDONLY;
++
++    /// File is write only.
++    pub const O_WRONLY: u32 = bindings::O_WRONLY;
++
++    /// File can be both read and written.
++    pub const O_RDWR: u32 = bindings::O_RDWR;
++}
++
++/// Wraps the kernel's `struct file`.
++///
++/// # Invariants
++///
++/// Instances of this type are always ref-counted, that is, a call to `get_file` ensures that the
++/// allocation remains valid at least until the matching call to `fput`.
++#[repr(transparent)]
++pub struct File(Opaque<bindings::file>);
++
++// SAFETY: By design, the only way to access a `File` is via an immutable reference or an `ARef`.
++// This means that the only situation in which a `File` can be accessed mutably is when the
++// refcount drops to zero and the destructor runs. It is safe for that to happen on any thread, so
++// it is ok for this type to be `Send`.
++unsafe impl Send for File {}
++
++// SAFETY: All methods defined on `File` that take `&self` are safe to call even if other threads
++// are concurrently accessing the same `struct file`, because those methods either access immutable
++// properties or have proper synchronization to ensure that such accesses are safe.
++unsafe impl Sync for File {}
++
++impl File {
++    /// Constructs a new `struct file` wrapper from a file descriptor.
++    ///
++    /// The file descriptor belongs to the current process.
++    pub fn fget(fd: u32) -> Result<ARef<Self>, BadFdError> {
++        // SAFETY: FFI call, there are no requirements on `fd`.
++        let ptr = ptr::NonNull::new(unsafe { bindings::fget(fd) }).ok_or(BadFdError)?;
++
++        // SAFETY: `fget` either returns null or a valid pointer to a file, and we checked for null
++        // above.
++        //
++        // INVARIANT: `fget` increments the refcount before returning.
++        Ok(unsafe { ARef::from_raw(ptr.cast()) })
++    }
++
++    /// Creates a reference to a [`File`] from a valid pointer.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that `ptr` points at a valid file and that its refcount does not
++    /// reach zero during the lifetime 'a.
++    pub unsafe fn from_ptr<'a>(ptr: *const bindings::file) -> &'a File {
++        // SAFETY: The caller guarantees that the pointer is not dangling and stays valid for the
++        // duration of 'a. The cast is okay because `File` is `repr(transparent)`.
++        //
++        // INVARIANT: The safety requirements guarantee that the refcount does not hit zero during
++        // 'a.
++        unsafe { &*ptr.cast() }
++    }
++
++    /// Returns a raw pointer to the inner C struct.
++    #[inline]
++    pub fn as_ptr(&self) -> *mut bindings::file {
++        self.0.get()
++    }
++
++    /// Returns the flags associated with the file.
++    ///
++    /// The flags are a combination of the constants in [`flags`].
++    pub fn flags(&self) -> u32 {
++        // This `read_volatile` is intended to correspond to a READ_ONCE call.
++        //
++        // SAFETY: The file is valid because the shared reference guarantees a nonzero refcount.
++        //
++        // TODO: Replace with `read_once` when available on the Rust side.
++        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
++    }
++}
++
++// SAFETY: The type invariants guarantee that `File` is always ref-counted.
++unsafe impl AlwaysRefCounted for File {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
++        unsafe { bindings::get_file(self.as_ptr()) };
++    }
++
++    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
++        // SAFETY: The safety requirements guarantee that the refcount is nonzero.
++        unsafe { bindings::fput(obj.cast().as_ptr()) }
++    }
++}
++
++/// Represents the `EBADF` error code.
++///
++/// Used for methods that can only fail with `EBADF`.
++#[derive(Copy, Clone, Eq, PartialEq)]
++pub struct BadFdError;
++
++impl From<BadFdError> for Error {
++    fn from(_: BadFdError) -> Error {
++        EBADF
++    }
++}
++
++impl core::fmt::Debug for BadFdError {
++    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++        f.pad("EBADF")
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index e6aff80b521f..ce9abceab784 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -34,6 +34,7 @@
+ mod allocator;
+ mod build_assert;
+ pub mod error;
++pub mod file;
+ pub mod init;
+ pub mod ioctl;
+ #[cfg(CONFIG_KUNIT)]
 
----
-Alice Ryhl (4):
-      rust: security: add abstraction for secctx
-      rust: file: add `Kuid` wrapper
-      rust: file: add `DeferredFdCloser`
-      rust: file: add abstraction for `poll_table`
-
-Wedson Almeida Filho (3):
-      rust: file: add Rust abstraction for `struct file`
-      rust: cred: add Rust abstraction for `struct cred`
-      rust: file: add `FileDescriptorReservation`
-
- rust/bindings/bindings_helper.h |   9 +
- rust/bindings/lib.rs            |   1 +
- rust/helpers.c                  |  94 +++++++++
- rust/kernel/cred.rs             |  73 +++++++
- rust/kernel/file.rs             | 431 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |   3 +
- rust/kernel/security.rs         |  79 ++++++++
- rust/kernel/sync.rs             |   1 +
- rust/kernel/sync/poll.rs        | 103 ++++++++++
- rust/kernel/task.rs             |  68 ++++++-
- rust/kernel/types.rs            |  10 +
- 11 files changed, 871 insertions(+), 1 deletion(-)
----
-base-commit: 98b1cc82c4affc16f5598d4fa14b1858671b2263
-change-id: 20231123-alice-file-525b98e8a724
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.43.0.rc2.451.g8631bc7472-goog
 
 
