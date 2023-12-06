@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-4916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E196806388
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 01:38:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9680C806389
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 01:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D6591C20366
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 00:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F98BB20A10
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 00:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD52CA68
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 00:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3FAECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 00:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PD3kcPc1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uv1VMsgT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A1141220;
-	Tue,  5 Dec 2023 23:57:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDEE8C433C7;
-	Tue,  5 Dec 2023 23:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECB719B;
+	Wed,  6 Dec 2023 00:01:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD388C433C7;
+	Wed,  6 Dec 2023 00:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701820671;
-	bh=PehSLn5KDP3f4jIRzjmUlaVwYMHHsyFfaZ+dIqzfuaw=;
+	s=k20201202; t=1701820912;
+	bh=F93P83Te9rYWryi3w6RSzPEuPenVp+prbs7wyKmBMPE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PD3kcPc1BGPalXH0uGMRBV5/7KrxVuBbGzJX68EO8M4FplFKcg2Uuzq5x6C3AdZI2
-	 evtibWYH1B2cPLrure/Rl+OuVlkMMnfdz0qWNvl9Lp/W3tX95GB4kSXtrOxPxLqa68
-	 WPgtPNAK5ZGV9Lmy+xuWjh/IEdhKTEih3Py+rEtp5gtu1Vzm6nBJyO7WrDWIBeP2so
-	 IDJ6YKLny1FnLU70aLdXt2foQi5uJk3GWSheJTGL2ODf0EoUCZQuwKsDuqXEvRNSp/
-	 gmYIKqOJVmTeOnuU6a4BTkKu9x7HRmyBb/UTmtoNY/KkPfBjL+0swTAwG12Dvk6Z3w
-	 isAnTAlLqFDrQ==
-Date: Tue, 5 Dec 2023 15:57:49 -0800
+	b=uv1VMsgT6vsUdX6dEAA1ZoKqwoJnKzXLnXUVQmbdpyJoaXZXJ2uk5PEDLLdhoJPCo
+	 jwPfo+qECgNOYfwtgPXVNx9Z0E9uVrnJJwsu5D2t3h5UDPU7jtCvN/dRfk5f91Vf2s
+	 1mR/+DOmUKBUycd2c0ro9J9z6X509YHbAvTrQP16MO1cgLENoZEFXWD40jaJdRQ3AO
+	 xW1tjJloM1aPBGvT0rEmWD/mHjJlUcsmpZ131xOF9EE2V3akRUEwBu64Y27XzAUi26
+	 y7QRHjIu/De2tnEiI3BhyBuaIPOD5keJJohFP7n7GhStlZpTrdTl2pjfaZrRG6M3lL
+	 7hQvSKIeFwE3Q==
+Date: Tue, 5 Dec 2023 16:01:51 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Josef Bacik <josef@toxicpanda.com>
 Cc: linux-btrfs@vger.kernel.org, kernel-team@fb.com,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 02/46] fscrypt: add per-extent encryption support
-Message-ID: <20231205235749.GA1118@sol.localdomain>
+Subject: Re: [PATCH v4 01/46] fs: move fscrypt keyring destruction to after
+ ->put_super
+Message-ID: <20231206000151.GB1118@sol.localdomain>
 References: <cover.1701468305.git.josef@toxicpanda.com>
- <5e91532d4f6ddb10af8aac7f306186d6f1b9e917.1701468306.git.josef@toxicpanda.com>
- <20231205035820.GE1168@sol.localdomain>
- <20231205224809.GA15355@localhost.localdomain>
+ <122a3db06dbf6ac1ece5660895a69039fe45f50d.1701468306.git.josef@toxicpanda.com>
+ <20231205015800.GC1168@sol.localdomain>
+ <20231205224848.GB15355@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,119 +52,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231205224809.GA15355@localhost.localdomain>
+In-Reply-To: <20231205224848.GB15355@localhost.localdomain>
 
-On Tue, Dec 05, 2023 at 05:48:09PM -0500, Josef Bacik wrote:
-> > Also, I think that for now we should keep things simple by doing the following
-> > instead of fscrypt_generate_dun():
-> > 
-> > 	u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE] = { first_lblk };
-> > 
-> > Note that these two changes would eliminate the need for the inode parameter to
-> > the function.
-> > 
-> > Please also make sure to update the function comment.  Note that the first line
-> > gives the function name incorrectly.
-> > 
-> 
-> First off thanks for the review, I'm currently going through it one by one, so
-> I've come to this bit and I've got a question.
-> 
-> The DUN has to be le64, so this strictly isn't ok.  So would you be ok with
-> 
-> __le64 first_lblk_le = le64_to_cpu(first_lblk;
-> u64 dun [BLK_CRYPTO_DUN_ARRAY_SIZE] = { first_lblk_le };
-> 
-> or do you want something different?  Additionally fscrypt_generate_dun() also
-> takes into account the data units per block bits, which as I'm typing this out
-> I'm realizing doesn't really matter for us even if we have different sectorsize
-> per pagesize.  I guess I'll put a big comment about why we're not using that in
-> there to make sure future Josef isn't confused.
-
-The blk-crypto DUN is CPU endian, as indicated by the type (array of u64).  Note
-that fscrypt_generate_dun() converts u64 => __le64 => u64.  (And then
-blk-crypto-fallback converts u64 => __le64.)  Getting rid of that round trip is
-nice, which is why I'm recommending it.  The only reason that
-fscrypt_generate_dun() does the round trip is because it allows it to reuse
-fscrypt_generate_iv(), and I wanted to be 100% sure that all of the IV methods
-were implemented the same as in FS layer encryption.  With the extent-based
-encryption we're just supporting one method, so things are simpler.
-
-Yeah, it should be 'first_lblk << ci_data_units_per_block_bits'.
-That would just be for future-proofing, since btrfs isn't setting
-supports_subblock_data_units anyway.
-
-> > > +/**
-> > > + * fscrypt_extent_context_size() - Return the size of the on-disk extent context
-> > > + * @inode: the inode this extent belongs to.
-> > > + *
-> > > + * Return the size of the extent context for this inode.  Since there is only
-> > > + * one extent context version currently this is just the size of the extent
-> > > + * context if the inode is encrypted.
-> > > + */
-> > > +size_t fscrypt_extent_context_size(struct inode *inode)
-> > > +{
-> > > +	if (!IS_ENCRYPTED(inode))
-> > > +		return 0;
+On Tue, Dec 05, 2023 at 05:48:48PM -0500, Josef Bacik wrote:
+> On Mon, Dec 04, 2023 at 05:58:00PM -0800, Eric Biggers wrote:
+> > On Fri, Dec 01, 2023 at 05:10:58PM -0500, Josef Bacik wrote:
+> > > btrfs has a variety of asynchronous things we do with inodes that can
+> > > potentially last until ->put_super, when we shut everything down and
+> > > clean up all of our async work.  Due to this we need to move
+> > > fscrypt_destroy_keyring() to after ->put_super, otherwise we get
+> > > warnings about still having active references on the master key.
+> > > 
+> > > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> > > ---
+> > >  fs/super.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/fs/super.c b/fs/super.c
+> > > index 076392396e72..faf7d248145d 100644
+> > > --- a/fs/super.c
+> > > +++ b/fs/super.c
+> > > @@ -681,12 +681,6 @@ void generic_shutdown_super(struct super_block *sb)
+> > >  		fsnotify_sb_delete(sb);
+> > >  		security_sb_delete(sb);
+> > >  
+> > > -		/*
+> > > -		 * Now that all potentially-encrypted inodes have been evicted,
+> > > -		 * the fscrypt keyring can be destroyed.
+> > > -		 */
+> > > -		fscrypt_destroy_keyring(sb);
+> > > -
+> > >  		if (sb->s_dio_done_wq) {
+> > >  			destroy_workqueue(sb->s_dio_done_wq);
+> > >  			sb->s_dio_done_wq = NULL;
+> > > @@ -695,6 +689,12 @@ void generic_shutdown_super(struct super_block *sb)
+> > >  		if (sop->put_super)
+> > >  			sop->put_super(sb);
+> > >  
+> > > +		/*
+> > > +		 * Now that all potentially-encrypted inodes have been evicted,
+> > > +		 * the fscrypt keyring can be destroyed.
+> > > +		 */
+> > > +		fscrypt_destroy_keyring(sb);
 > > > +
-> > > +	return sizeof(struct fscrypt_extent_context);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(fscrypt_extent_context_size);
 > > 
-> > Huh, shouldn't the filesystem use the size from fscrypt_set_extent_context() (or
-> > fscrypt_context_for_new_extent() as I recommend calling it)?  Why is the above
-> > function necessary?
+> > This patch will cause a NULL dereference on f2fs, since f2fs_put_super() frees
+> > ->s_fs_info, and then fscrypt_destroy_keyring() can call f2fs_get_devices() (via
+> > fscrypt_operations::get_devices) which dereferences it.  (ext4 also frees
+> > ->s_fs_info in its ->put_super, but ext4 doesn't implement ->get_devices.)
+> > 
+> > I think we need to move the fscrypt keyring destruction into ->put_super for
+> > each filesystem.
 > 
-> This is because we need to know how big the context is ahead of time before
-> searching down the b-tree to insert the file extent item, and we have to add
-> this size to the file extent item ahead of time.  The disconnect between when we
-> need to know how big it'll be and when we actually generate the context to save
-> on disk is the reason for there being two helpers.
+> I can do this, I'll send a separate series for this since this should be
+> straightforward and we can get that part done.  Thanks,
 > 
-> The main reason for this is code separation.  I would have to have the context
-> on stack for the !fscrypt case if I were to only have one helper, because I
-> would need it there to generate the extent context to save on disk to pass it
-> around to all the things that add file extents, and I could use the length from
-> that.  Not a huge deal, but this way is a little cleaner.  You can see how I've
-> used the two helpers in later patches, but the general flow is
-> 
-> total_size = sizeof(our file extent);
-> total_size += fscrypt_extent_context_size(inode);
-> 
-> btrfs_insert_empty_item(path, total_size);
-> 
-> btrfs_fscrypt_save_extent_info(path, inode);
-> 
-> and then in btrfs_fscrypt_save_extent_info() we do
-> 
-> u8 ctx[BTRFS_MAX_EXTENT_CTX_SIZE];
-> 
-> size = fscrypt_set_extent_context(inode, ctx);
-> 
-> Now the above case does seem like we could just uconditionally do something like
-> 
-> u8 ctx[BTRFS_MAX_EXTENT_CTX_SIZE];
-> 
-> total_size = sizeof(our file extent);
-> ctx_size = fscrypt_set_extent_context(inode, ctx);
-> if (ctx_size < 0)
-> 	goto error;
-> total_size += ctx_size;
-> btrfs_insert_empty_item(path, total_size);
-> copy_ctx_into_file_extent(path, ctx);
-> 
-> But there's some other file extent manipulation cases that aren't this clear
-> cut, so I'd have to pass this ctx around to be copied in.  And in the !encrypted
-> part we're paying a higher stack memory cost.
-> 
-> If you still don't like this I can rework it, but I wanted to explain my
-> reasoning before I went changing a bunch of stuff to make the new paradigm fit.
-> 
-> The rest of the comments make sense, I'll fix everything up.  Thanks,
 
-Maybe fscrypt_set_extent_context() (or fscrypt_context_for_new_extent()?) should
-return the size if it's passed a NULL pointer?  It just seems error-prone have
-the size of the thing being generated be returned by a different function.
+I actually started a patch for this earlier today, just haven't had a chance to
+send it out yet.  I'll do so in a minute.  Thanks,
 
 - Eric
 
