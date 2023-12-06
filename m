@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-4931-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3092980674B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 07:32:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24C380674C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 07:32:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E023A280A80
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:32:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57281B210C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866FD14F6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A4910A28
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AaHiFtxw"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FWmgbgJZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEC018F;
-	Tue,  5 Dec 2023 21:44:15 -0800 (PST)
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 258E218F;
+	Tue,  5 Dec 2023 21:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X+sjnLZJ2l3e2jdAF84glp/xQ6OVtmNr71eC56Hfvi0=; b=AaHiFtxwniAaOcJjCOrvNRytvi
-	N0klteAyDmK89PqenX1ZmD/oxc+wJzYNX95a42dOBEeftTmJnVVHgEfPx8nvW/5a3q3Ul1dc52oKz
-	Q+ZaucPg2jyjMppZ/T9PqxC+vTv04K+nKosBNYTIVX/4v/jkcuwAQbnmt+HLl05hocrwTss3AU64r
-	9ryVKSAVXot1wj/C2jxUkhJJQEd38mayys4TkVPFvOEH9S1HXPIXCv3Q0+7waLjQJDIZR1U21sRZa
-	2diq2SQYO+pXfg442jiEYy7HyKwgidTu97iJPS1mj31GmMkUzOLAXGOvErFv2D9/0yxlw55sKdM24
-	NOLBpJcg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rAkhX-0097d5-2Z;
-	Wed, 06 Dec 2023 05:44:03 +0000
-Date: Tue, 5 Dec 2023 21:44:03 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.de>,
-	Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] Allow a kthread to declare that it calls
- task_work_run()
-Message-ID: <ZXAKI76NLlCHGQ7h@infradead.org>
-References: <20231204014042.6754-1-neilb@suse.de>
- <20231204014042.6754-2-neilb@suse.de>
- <e9a1cfed-42e9-4174-bbb3-1a3680cf6a5c@kernel.dk>
- <170172377302.7109.11739406555273171485@noble.neil.brown.name>
- <a070b6bd-0092-405e-99d2-00002596c0bc@kernel.dk>
- <20231205-altbacken-umbesetzen-e5c0c021ab98@brauner>
+	bh=viavlKHXn79anQsa71fh6/Zjw/GhSsUuZjWSRNFZRVQ=; b=FWmgbgJZA7GUPMbXEOfUKiGSVw
+	ovD6MSFQOIBPXdYn84y/Kekx3CfcSzCj6FisfiZGZg8JPDqBWRmEhcpSJLyrZgPR05TvGFWPttz6n
+	pwb8kP6YB45MlCf0bt5CuCJk9CJ2XVqChSyAJDpRTpa4IJP4cYfsEMvr4q1eHzRBrPThSaKay7kCF
+	ukHhCpenorfO31s30YO7jM+fGg7WfN/COTKrRujSR+Gmi1R/LWZq6HfXVjGs/I3B8wSlOugEmmF2X
+	EMoyttS9HBXgOsquiAeCJicVhkklahRYdMvH/8TmI2l9OpNiEWLQ2a6b20/8M4e9VI9b9MkErEs6K
+	3a/XGeBg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAkn4-007c4m-0J;
+	Wed, 06 Dec 2023 05:49:46 +0000
+Date: Wed, 6 Dec 2023 05:49:46 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, linux-doc@vger.kernel.org,
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()]  1b738f196e:
+ stress-ng.sysinfo.ops_per_sec -27.2% regression
+Message-ID: <20231206054946.GM1674809@ZenIV>
+References: <202311300906.1f989fa8-oliver.sang@intel.com>
+ <20231130075535.GN38156@ZenIV>
+ <ZWlBNSblpWghkJyW@xsang-OptiPlex-9020>
+ <20231201040951.GO38156@ZenIV>
+ <20231201065602.GP38156@ZenIV>
+ <20231201200446.GA1431056@ZenIV>
+ <ZW3WKV9ut7aFteKS@xsang-OptiPlex-9020>
+ <20231204195321.GA1674809@ZenIV>
+ <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,21 +58,60 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231205-altbacken-umbesetzen-e5c0c021ab98@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Dec 05, 2023 at 12:14:29PM +0100, Christian Brauner wrote:
-> > For me, the more core of an export it is, the stronger the reason it
-> > should be GPL. FWIW, I don't think exporting task_work functionality is
-> > a good idea in the first place, but if there's a strong reason to do so,
+On Wed, Dec 06, 2023 at 10:40:15AM +0800, Oliver Sang wrote:
+> hi, Al Viro,
+
+> > Oh, well - let's see what profiles show...  I still hope that it's not where
+> > the trouble comes from - it would've lead the extra cycles in shrink_dcache_parent()
+> > or d_walk() called from it and profiles you've posted do not show that, so...
+> > 
 > 
-> Yeah, I'm not too fond of that part as well. I don't think we want to
-> give modules the ability to mess with task work. This is just asking for
-> trouble.
+> our auto-bisect pointed to
+> 3f99656f7bc2f step 5: call __dentry_kill() without holding a lock on parent
 
-It just seems like a really bad idea.  At the same time it fixes a real
-problem.  If we go a step back how could we fix it in a better way?
-Do we even need the task_run based delay for file usage from kernel
-threads?
+Nuts.  All that commit is doing is
+	* don't bother with taking parent's ->d_lock in lock_for_kill()
+	* don't bother with dropping it in __dentry_kill(), since now we don't have it
+	  taken.
 
+And that somehow manages to give a 30% performance drop on that test?
+
+Seriously, not touching parent's ->d_lock aside, there is only one change
+I see in there.  Namely,
+	having failed trylock on inode
+	unlocked dentry
+	locked inode
+	relocked dentry
+	noticed that inode does not match ->d_inode
+	... and it turns out that ->d_inode is NULL now
+In that situation new variant treats goes "OK, unlock the old
+inode and we are done".  The old one unlocked old inode,
+unlocked dentry, relocked it, checked that its ->d_inode has
+not become non-NULL while we had it unlocked and only then
+succeeded.  If ->d_inode has changed, it repeated the whole
+loop (unlocked dentry, etc.)
+
+Let's try to isolate that; step 5 split in two and branch
+force-pushed.  Instead of
+dc3cf789eb259 step 4: make shrink_kill() keep the parent pinned until after __dentry_kill() of victim
+3f99656f7bc2f step 5: call __dentry_kill() without holding a lock on parent
+we have
+dc3cf789eb259 step 4: make shrink_kill() keep the parent pinned until after __dentry_kill() of victim
+854e9f938aafe step 4.5: call __dentry_kill() without holding a lock on parent
+e2797564725a5 step 5: clean lock_for_kill()
+;  git diff e2797564725a5 3f99656f7bc2f
+;
+
+Intermediate step preserves the control flow in lock_for_kill() -
+the only change in that one is "don't bother with parent's ->d_lock".
+
+The step after it does the change in lock_for_kill() described above.
+
+Could you profile 854e9f938aafe and see where does it fall - is it like
+dc3cf789eb259 or like 3f99656f7bc2f?
+
+I really don't get it...
 
