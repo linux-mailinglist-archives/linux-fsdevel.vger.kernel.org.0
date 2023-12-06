@@ -1,144 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-5048-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3845807978
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 21:36:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2532780797A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 21:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55FEDB20B49
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:36:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86871F21024
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22E4B144
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3744B13C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 20:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DSiuBhxP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PVn50Q4R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CB011F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 12:05:11 -0800 (PST)
-Date: Wed, 6 Dec 2023 15:05:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1701893109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DVvoOu1nO86z3rBa8QuPbOMrMP9wXD66qlron+EA3cE=;
-	b=DSiuBhxPyccRtaejPvhXZlfY+WUmmoAG44XwRHcEdfGJBybAFDIVPzSo5beyiAod1NLpqs
-	weR1wnTb3NW0mykvRvaRUtxrAKom72MmdaTaRfkE7TpFUmBBxHibdx33wzqmmVwJ93iCbK
-	K+vNgW4NlzokdYfH2sJudsiA3i2BwfY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/7] File abstractions needed by Rust Binder
-Message-ID: <20231206200505.nsmauqpetkyisyjd@moria.home.lan>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
- <20231129-mitsingen-umweltschutz-c6f8d9569234@brauner>
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B2A8D65
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 12:22:52 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1d06d42a58aso1540585ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 12:22:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701894172; x=1702498972; darn=vger.kernel.org;
+        h=mime-version:message-id:date:in-reply-to:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEKgHh9Vd3x1VnCH3fKyTqAO4yCFQDcZVScsz606mCI=;
+        b=PVn50Q4RLuzMR14j+U6APgpOl2LYdffAuu+oeSRN0D/cWGpiAcHNPva2TRKwQUqIk+
+         v8ORKAOfxQxnGFBxZCn7bPwqMBjCkNtHMGbcS0jEW08ItZonzA9v4FJP2rjEsCeNtWxT
+         4p9WCxws66nAVAlPjIxp6hxAKJuGXia1NgwMFrasXuW3zz7yPF2sN9krvj+ruchKrVjM
+         i95eq/DPs97H1ROevLCgRL99MvLLL+jl1pzVnKadI0Fn2oKggKC9aurPt3iMvwXwUpQD
+         V6RNQFqiwu0bL0OPMslIdDoczVs07ppstSXEpmCSmHwqQIkxWU3ZjpXU6dvJhCvwHJIW
+         W23g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701894172; x=1702498972;
+        h=mime-version:message-id:date:in-reply-to:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wEKgHh9Vd3x1VnCH3fKyTqAO4yCFQDcZVScsz606mCI=;
+        b=FLOzrilN1Dcd0mB/Z4jWDo9keoN8yNs3huBttjOJOZYB+K66uZinldvdr4FnnGnlkk
+         J1LUu7a7EcGD1NCL4OVooUIXy2UZwYfSjQlvRd0fxWVMTpE/ZUWrUp7NVp9fwt2Tp8Hn
+         c/b+h492AVUiBRiTGBMTizY/iEaCB9qe28RIVecBl/40Lq+cyklwRT+bUHZ1ecbcq3fy
+         y8Qq5bGyioC/A1IMeJwycCww2dXyL3DkDi4b+6PjGFcB2ZsZ29dIjE5PTfKoXK3jzEA0
+         gHKJXZ/kyby0oIsRdwy1eMp93yVrujnrwwKB8VmLblRHzPzghzRHPJFBTU7W5mJ4oM9k
+         tR6w==
+X-Gm-Message-State: AOJu0YzcqQKMJXmfCdZ/g/kvWB/N8UGPMwR1cawkVZrRM3z1Cg2YdFaV
+	vWsulj5Q+GR1TOvZeEEVlpcIUg==
+X-Google-Smtp-Source: AGHT+IG+PGi/Ruq72+ftbttXAOwy9ae3wKn38k1eINbZqpLAyVIquTjmRIENSAWXjKXoIaCS0/BIwA==
+X-Received: by 2002:a17:902:d502:b0:1d0:92a0:492b with SMTP id b2-20020a170902d50200b001d092a0492bmr1505448plg.84.1701894171625;
+        Wed, 06 Dec 2023 12:22:51 -0800 (PST)
+Received: from localhost ([2804:14d:7e22:803e:f0e2:3ff1:8acc:a2d5])
+        by smtp.gmail.com with ESMTPSA id z2-20020a170902ee0200b001d071a305ecsm217078plb.245.2023.12.06.12.22.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Dec 2023 12:22:51 -0800 (PST)
+References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
+ <20231122-arm64-gcs-v7-21-201c483bd775@kernel.org>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
+ Poulose <suzuki.poulose@arm.com>, Arnd Bergmann <arnd@arndb.de>, Oleg
+ Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees
+ Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>, "Rick P.
+ Edgecombe" <rick.p.edgecombe@intel.com>, Deepak Gupta
+ <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>, Szabolcs Nagy
+ <Szabolcs.Nagy@arm.com>, "H.J. Lu" <hjl.tools@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Florian Weimer <fweimer@redhat.com>, Christian
+ Brauner <brauner@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 21/39] arm64/gcs: Allocate a new GCS for threads with
+ GCS enabled
+In-reply-to: <20231122-arm64-gcs-v7-21-201c483bd775@kernel.org>
+Date: Wed, 06 Dec 2023 17:22:49 -0300
+Message-ID: <87il5bhyhy.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231129-mitsingen-umweltschutz-c6f8d9569234@brauner>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-On Wed, Nov 29, 2023 at 05:31:44PM +0100, Christian Brauner wrote:
-> On Wed, Nov 29, 2023 at 12:51:06PM +0000, Alice Ryhl wrote:
-> > This patchset contains the file abstractions needed by the Rust
-> > implementation of the Binder driver.
-> > 
-> > Please see the Rust Binder RFC for usage examples:
-> > https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
-> > 
-> > Users of "rust: file: add Rust abstraction for `struct file`":
-> > 	[PATCH RFC 02/20] rust_binder: add binderfs support to Rust binder
-> > 	[PATCH RFC 03/20] rust_binder: add threading support
-> > 
-> > Users of "rust: cred: add Rust abstraction for `struct cred`":
-> > 	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-> > 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> > 	[PATCH RFC 11/20] rust_binder: send nodes in transaction
-> > 	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> > 
-> > Users of "rust: security: add abstraction for security_secid_to_secctx":
-> > 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> > 
-> > Users of "rust: file: add `FileDescriptorReservation`":
-> > 	[PATCH RFC 13/20] rust_binder: add BINDER_TYPE_FD support
-> > 	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-> > 
-> > Users of "rust: file: add kuid getters":
-> > 	[PATCH RFC 05/20] rust_binder: add nodes and context managers
-> > 	[PATCH RFC 06/20] rust_binder: add oneway transactions
-> > 
-> > Users of "rust: file: add `DeferredFdCloser`":
-> > 	[PATCH RFC 14/20] rust_binder: add BINDER_TYPE_FDA support
-> > 
-> > Users of "rust: file: add abstraction for `poll_table`":
-> > 	[PATCH RFC 07/20] rust_binder: add epoll support
-> > 
-> > This patchset has some uses of read_volatile in place of READ_ONCE.
-> > Please see the following rfc for context on this:
-> > https://lore.kernel.org/all/20231025195339.1431894-1-boqun.feng@gmail.com/
-> > 
-> > This was previously sent as an rfc:
-> > https://lore.kernel.org/all/20230720152820.3566078-1-aliceryhl@google.com/
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> > Alice Ryhl (4):
-> >       rust: security: add abstraction for security_secid_to_secctx
-> >       rust: file: add `Kuid` wrapper
-> >       rust: file: add `DeferredFdCloser`
-> >       rust: file: add abstraction for `poll_table`
-> > 
-> > Wedson Almeida Filho (3):
-> >       rust: file: add Rust abstraction for `struct file`
-> >       rust: cred: add Rust abstraction for `struct cred`
-> >       rust: file: add `FileDescriptorReservation`
-> > 
-> >  rust/bindings/bindings_helper.h |   9 ++
-> >  rust/bindings/lib.rs            |   1 +
-> >  rust/helpers.c                  |  94 +++++++++++
-> >  rust/kernel/cred.rs             |  73 +++++++++
-> >  rust/kernel/file.rs             | 345 ++++++++++++++++++++++++++++++++++++++++
-> >  rust/kernel/file/poll_table.rs  |  97 +++++++++++
-> 
-> That's pretty far away from the subsystem these wrappers belong to. I
-> would prefer if wrappers such as this would live directly in fs/rust/
-> and so live within the subsystem they belong to. I think I mentioned
-> that before. Maybe I missed some sort of agreement here?
 
-I spoke to Miguel about this and it was my understanding that everything
-was in place for moving Rust wrappers to the proper directory -
-previously there was build system stuff blocking, but he said that's all
-working now. Perhaps the memo just didn't get passed down?
+Mark Brown <broonie@kernel.org> writes:
 
-(My vote would actually be for fs/ directly, not fs/rust, and a 1:1
-mapping between .c files and the .rs files that wrap them).
+> When a new thread is created by a thread with GCS enabled the GCS needs
+> to be specified along with the regular stack.  clone3() has been
+> extended to support this case, allowing userspace to explicitly request
+> the size for the GCS to be created, but plain clone() is not extensible
+> and existing clone3() users will not specify a size.
+>
+> For compatibility with these cases and also x86 (which did not initially
+> implement clone3() support for shadow stacks) if no GCS is specified we
+> will allocate one thread so when a thread is created which has GCS
+                    ~~~~~~
+
+This "thread" seems extraneous in the sentence. Remove it?
+
+> enabled allocate one for it.  We follow the extensively discussed x86
+> implementation and allocate min(RLIMIT_STACK, 4G).  Since the GCS only
+
+Isn't it min(RLIMIT_STACK/2, 2G)?
+
+> stores the call stack and not any variables this should be more than
+> sufficient for most applications.
+>
+> GCSs allocated via this mechanism then it will be freed when the thread
+> exits.
+
+I'm not sure I parsed this sentence correctly. Is it missing an "If" at
+the beginning?
+
+-- 
+Thiago
 
