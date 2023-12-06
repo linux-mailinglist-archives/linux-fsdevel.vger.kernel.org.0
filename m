@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-4952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35698069BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 09:36:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FE58069BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 09:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912A7281B7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC4B4B20793
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46500199D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E26C1A711
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WzDn1x+X"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uk0GZpJT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E19D6C;
-	Wed,  6 Dec 2023 00:10:19 -0800 (PST)
-Received: by mail-ot1-x336.google.com with SMTP id 46e09a7af769-6d8481094f9so4048259a34.3;
-        Wed, 06 Dec 2023 00:10:19 -0800 (PST)
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F1398;
+	Wed,  6 Dec 2023 00:23:36 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so2963274a12.0;
+        Wed, 06 Dec 2023 00:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701850219; x=1702455019; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701851016; x=1702455816; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=w4zRPqTOkB7jDP1E8GI9v9TGvn/esl06SjlrpyyjjKU=;
-        b=WzDn1x+Xh/nnO2UKaklKKO1FIsgVomynSBitySmd7EnPpvaPS5+CmcHDzo9NHSROHd
-         zr2S+IoHscplX41Vlf3UA5x73YcRuQc1TV9RjQemhIyPF17BAMremmtzfGevvX2AYknQ
-         htBmMITY4rm7/toySf6c6b0vOX1afe2SyCIGNEf651mde5M64xylhxWz5T0LCG2vwWRP
-         50Qvm+FaZ2did2LdTFUrr1xIER+Z2IHUdx0gUCbhFrQpObp0HFZ+gapcUCQKNOc4qVW2
-         pUvTEwC2U1uC/JVP4pFlwdUXlRVNo3mF7jtQmZpL8Ox+bb5zVIaDFMG1XVRePiz43GMS
-         /Z0g==
+        bh=S0LwbusvQAa95t36P39uX2HIsyGAgVBDxOy6DS+pmFA=;
+        b=Uk0GZpJTF4VYNEupxl6WCsr1xnAtYn4z7UqH1My3K4zN0DLgz9VgNXC5nJtZJ8n/+P
+         ZeXJG9Q0R1lU9m8mOvFlzdajwTWfIcnXjOiSJ/7k9BbIZdH1fbTaKacpKnCcTdtC6KFl
+         CFSU1nIMLzgqEMnVmYYEAgSyFDAncXi2Xp1scgIKLHi/vY16308T94QKypVOhraytuox
+         IU+PTYubCgVYsJ190AjVlBMmc1/gQ87haKd/wkAu+ybp5/7lLW/Uk5U1hIAi2A3UTDi4
+         ut8wbFmPsKn8KQasZ8MFGSaz06VQ0UM83i04nVpgRlDYfI3vhzjTsBECWJv/t7iq7v0F
+         wM9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701850219; x=1702455019;
+        d=1e100.net; s=20230601; t=1701851016; x=1702455816;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w4zRPqTOkB7jDP1E8GI9v9TGvn/esl06SjlrpyyjjKU=;
-        b=I7O55mlVvG7QxShsBf0O8z0yp78le9YkVCxwXNz8eg+WpwaNo+vaUww/D0BVKDrWsx
-         ldqRdXqcFty1W2PEltQanGZJe00GcJh6GFj0Qg5nobitSwxG74XSpNqB/BZ07Zdf/E5r
-         K+Z749tX2+vQJLdr8cIwzpDvZLHFbA1K8sWuxV/07dZMw1/cH6xnLIkCao99RvxVgsW1
-         wlCFlHk5BIrgxkJD+h0k9hwvByJ1ReWYDx1pXLxpOGw5ntmdCEK39QrLWWUQUBSlZ7e0
-         C1t5F/hG7Qcq1wQ81c0q6BNouh0Mqc6P5DV1kO9vlLzKU/YUQOFfGyxDdWUjy+2q32m8
-         M6VA==
-X-Gm-Message-State: AOJu0YyGVq8JjkufmVX53LQnbsUqyGPFKREFTIqKyKLcgAR/LvjbI5SE
-	wNHmGOd5soJGpVYdTaiKR/oA0MhuHMx7kDimSJg=
-X-Google-Smtp-Source: AGHT+IHYzRi5P2jhRZ/cpQOAt6iuZH+UBx/TP+7cObEbZYVtiS4uyqmMjQWcpOlXLBmov5H62Xo8uvzbfv54aVTm00o=
-X-Received: by 2002:a05:6358:280e:b0:170:17eb:14c2 with SMTP id
- k14-20020a056358280e00b0017017eb14c2mr661954rwb.50.1701850218695; Wed, 06 Dec
- 2023 00:10:18 -0800 (PST)
+        bh=S0LwbusvQAa95t36P39uX2HIsyGAgVBDxOy6DS+pmFA=;
+        b=DhpqmXbZCdVS3LtArZFM2GGilstLal8O/uGmm/eIbvH+jdMgAsiZAcoLMExOn0k/JO
+         IkHyGfa2rk+zVcT9o90ww2QJQ3F5MEKVq02LfVySM9DJoyFMMsHHf0DN6NpdSzNM8Gix
+         BCygXwMsqDKZ3IWzOYMYTh4mheG3bLCzszmmpLZzvKade+OwzsYD0ehA1cJefztikoct
+         /hDQq5UtRJIw4pGYS6mKrq26u05jBxP+2pAp9NIE1t7SzNucds73336fqfqj2DgyqLv6
+         I5DTqB6k7VKWdJf+/sT9AynDNVqHVXM1lv/A+tPaOL015VVEBWwYlvvhfKN60+nrkblQ
+         0V1Q==
+X-Gm-Message-State: AOJu0Yx2Vq6VZGxjadSuXQVtX5FunHKAm9R0bkHoJGLF0DrOveg88qYZ
+	FcV+gE69itFB/fiU9ArwNgxr0yV2jV+w1OLYTfo=
+X-Google-Smtp-Source: AGHT+IE4z0Aa2OY/6DqAi1bRkpmctNsQdq0WVGZJdvn+5aQuJ96nNPiPbpC9KIh/XV+LCvwJ5NQP72QYvowHgnzPLzA=
+X-Received: by 2002:a05:6a21:6d9c:b0:18f:df4f:893 with SMTP id
+ wl28-20020a056a216d9c00b0018fdf4f0893mr130520pzb.49.1701851015724; Wed, 06
+ Dec 2023 00:23:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,8 +61,8 @@ References: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
  <93c36097-5266-4fc5-84a8-d770ab344361@bytedance.com>
 In-Reply-To: <93c36097-5266-4fc5-84a8-d770ab344361@bytedance.com>
 From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Wed, 6 Dec 2023 16:10:06 +0800
-Message-ID: <CAJhGHyAX4UDvm3euvBZ=ksQuWwq3tL=bmNRJwCht=bKjr021wQ@mail.gmail.com>
+Date: Wed, 6 Dec 2023 16:23:24 +0800
+Message-ID: <CAJhGHyBJiYOQGY3t=Lpe4A-rmJML8Mn8GC35GkrQ6Us082ZTAQ@mail.gmail.com>
 Subject: Re: [PATCH v6 42/45] mm: shrinker: make global slab shrink lockless
 To: Qi Zheng <zhengqi.arch@bytedance.com>
 Cc: akpm@linux-foundation.org, paulmck@kernel.org, david@fromorbit.com, 
@@ -132,13 +132,6 @@ ker's next
 >
 > No, this_shrinker will not be removed from the shrinker_list until the
 > last refcount is released. See below:
-
-Oh, I miss the code here.
-
-Thanks
-Lai
-
-
 >
 > > rcu_read_lock();
 > > shrinker_put(this_shrinker);
@@ -150,6 +143,17 @@ Lai
 >
 >                                 wait_for_completion(&shrinker->done);
 >                                  list_del_rcu(&shrinker->list);
+
+since shrinker will not be removed from the shrinker_list until the
+last refcount is released.
+
+Is it possible that shrinker_free() can be starved by continuous
+scanners getting and putting the refcount?
+
+Thanks
+Lai
+
+
 >
 > > travel to the freed next_shrinker.
 > >
