@@ -1,89 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-4963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C24E806C13
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:36:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD49806C14
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72F11F213D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2D11C20962
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8CB2E650
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F313033A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CF51A4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:05:24 -0800 (PST)
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1faf33aa091so9334599fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 02:05:24 -0800 (PST)
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190F012B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:05:23 -0800 (PST)
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3b9b8196e76so4064067b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 02:05:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701857124; x=1702461924;
+        d=1e100.net; s=20230601; t=1701857122; x=1702461922;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gBFRPreUwMTljyUE1zzowalqFoa0Lex9TFFc13yJQwo=;
-        b=kwiyxKC6Px2Bj45hVPHcni5CeuAahYyRJJ3fNu8gN2nzpWU/p74kCl1IBQSkdgAMrX
-         1otsFwY8s64cOENiE/mEQVSgMqZ9BG9fvIog/ZLlAJ3epGlmTcMjzN4+Jh60h2U8q8Pm
-         r3ojjuTZa+PM67ajUb4nhNHV4qrNoaMy41d9yWB/LqhEdGsRvroWP5vNZ8oQWt8w1uPK
-         u3Vhm6a+knZiB1SsJbm3BNNHs1sB7GHI+amKLgYqs3/HSlTsK4tgN4liwK7lnS1PZ462
-         YP9msKmHbF4kqUcCAJSaekDKi5V4T9LsHvNFiikZjvjqUgIeAIVGZ/GB8r2KQ/LIXRaF
-         WlAQ==
-X-Gm-Message-State: AOJu0YxJf8gsnsmwM8mMl08JqG8A6oTSz1Jm6PYBfEYyfAptDaY98xfg
-	UnmtFDRudS88iYYtWHjpNCmb2lE0H6cDwtsdBPiMdmHy6FDo
-X-Google-Smtp-Source: AGHT+IGSWLFljIvDvOEMbKsUJgYM/g5+b6ijwkBwucrAIBsfqIfwMDBh/3kYSUtW9n1PAeDZFnbLK7qCfSBEQM7Lu0b0A52zv96w
+        bh=Z6rmjaHsgPXWG4Xuxsh1smWntvg+cByfLnqTupKT5EA=;
+        b=LKHbFH1c4lUqJgo52frIPpHKTTANkCoZ7TSLXCQvdYyjT9Tt1pe2KuWHJ8LUf6fajy
+         k2+9gA0igIZteATAFjd9GyjpzJptYjPFllJ5DWAE2ABUMFMFCKMKYYpGVmNxWXC26OAr
+         +3UOmUkFLDyWTZWjBnf8ZdXTlat7qaAv+qlacjtX/STZjMwIA2LReVBPTDxuyOC6wndh
+         3QzaZt4r+/3hWwhDn2TG5yIUebz6Imk6lpuXgazytsnebD+y3U3+GmuNMg+Kt15e0WID
+         KszvMdIyCp0SlaP4TeF+fg6ZIxacwazSqUx/7ENn+jC+iYg5yNq1yo3MSdLUVIdiwcrG
+         CTvQ==
+X-Gm-Message-State: AOJu0YxlMghEvPMtFiXiXAGqTsMREsbqut9rSLJw1hO24fTjK9tepuiv
+	xrupnRXGijgw13aLKWlPUZ2KHgSsrqHy5kwQGq46U+P4hrcQ
+X-Google-Smtp-Source: AGHT+IG73u+JgzydSG6pfc0jgczEhDwWz4aPcdkBudUV6970QHjN7xtw+JEz+IrDLsd54whTlMagdlmgtb8hO9I7N7PTvlbyrO1u
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:158f:b0:1fa:f20e:4c0 with SMTP id
- j15-20020a056870158f00b001faf20e04c0mr778975oab.6.1701857122962; Wed, 06 Dec
+X-Received: by 2002:a05:6808:114e:b0:3ae:2024:838b with SMTP id
+ u14-20020a056808114e00b003ae2024838bmr685858oiu.1.1701857122422; Wed, 06 Dec
  2023 02:05:22 -0800 (PST)
 Date: Wed, 06 Dec 2023 02:05:22 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045d4c4060bd47dc6@google.com>
-Subject: [syzbot] Monthly ntfs report (Dec 2023)
-From: syzbot <syzbot+list46ee6100e7a589a627ec@syzkaller.appspotmail.com>
-To: anton@tuxera.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000003d94fe060bd47d29@google.com>
+Subject: [syzbot] Monthly btrfs report (Dec 2023)
+From: syzbot <syzbot+lista883a5310150c3e9bc11@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+X-Spam-Level: **
 
-Hello ntfs maintainers/developers,
+Hello btrfs maintainers/developers,
 
-This is a 31-day syzbot report for the ntfs subsystem.
+This is a 31-day syzbot report for the btrfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs
+https://syzkaller.appspot.com/upstream/s/btrfs
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 25 issues are still open and 8 have been fixed so far.
+During the period, 3 new issues were detected and 4 were fixed.
+In total, 46 issues are still open and 47 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  4839    Yes   possible deadlock in ntfs_read_folio
-                   https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
-<2>  3503    Yes   kernel BUG at fs/ntfs/aops.c:LINE!
-                   https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
-<3>  1691    Yes   kernel BUG in __ntfs_grab_cache_pages
-                   https://syzkaller.appspot.com/bug?extid=01b3ade7c86f7dd584d7
-<4>  763     Yes   possible deadlock in map_mft_record
-                   https://syzkaller.appspot.com/bug?extid=cb1fdea540b46f0ce394
-<5>  416     Yes   KASAN: slab-out-of-bounds Read in ntfs_readdir
-                   https://syzkaller.appspot.com/bug?extid=d36761079ac1b585a6df
-<6>  312     Yes   kernel BUG at fs/inode.c:LINE! (2)
-                   https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
-<7>  290     No    possible deadlock in __ntfs_clear_inode
-                   https://syzkaller.appspot.com/bug?extid=5ebb8d0e9b8c47867596
-<8>  55      Yes   kernel BUG in ntfs_iget
-                   https://syzkaller.appspot.com/bug?extid=d62e6bd2a2d05103d105
-<9>  39      Yes   kernel BUG in ntfs_lookup_inode_by_name
-                   https://syzkaller.appspot.com/bug?extid=d532380eef771ac0034b
-<10> 19      Yes   KASAN: use-after-free Read in ntfs_attr_find (2)
-                   https://syzkaller.appspot.com/bug?extid=ef50f8eb00b54feb7ba2
+<1>  5725    Yes   kernel BUG in close_ctree
+                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
+<2>  1888    Yes   WARNING in btrfs_space_info_update_bytes_may_use
+                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
+<3>  373     Yes   WARNING in btrfs_block_rsv_release
+                   https://syzkaller.appspot.com/bug?extid=dde7e853812ed57835ea
+<4>  295     Yes   WARNING in lookup_inline_extent_backref
+                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
+<5>  222     Yes   WARNING in btrfs_chunk_alloc
+                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
+<6>  221     Yes   WARNING in btrfs_remove_chunk
+                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
+<7>  209     Yes   INFO: task hung in lock_extent
+                   https://syzkaller.appspot.com/bug?extid=eaa05fbc7563874b7ad2
+<8>  109     Yes   general protection fault in btrfs_orphan_cleanup
+                   https://syzkaller.appspot.com/bug?extid=2e15a1e4284bf8517741
+<9>  100     Yes   kernel BUG in insert_state_fast
+                   https://syzkaller.appspot.com/bug?extid=9ce4a36127ca92b59677
+<10> 86      Yes   kernel BUG in btrfs_free_tree_block
+                   https://syzkaller.appspot.com/bug?extid=a306f914b4d01b3958fe
 
 ---
 This report is generated by a bot. It may contain errors.
