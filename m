@@ -1,131 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-5032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D915B8077C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D39DC8077C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24375280EC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EE28210C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB42F6EB74
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l/hKUsZp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218F6EB76
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAABDFA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 08:49:51 -0800 (PST)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1d06fffdb65so28423345ad.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 08:49:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701881391; x=1702486191; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/emo8eo1n5l2se6f2Okqi3h9qOd104lH+P+GuFVvEM8=;
-        b=l/hKUsZpNo/mDhWyl8XKZe+U9MKlLPRVkAVWMlj1L9f9IJPENmyJ23q0zr1/36pdIs
-         sG3tvQ2dRqbSy5iTKOZiUvnYubcpJtPioBCKISLFVjuktAUAwX/zH11udpX51ERZDlwO
-         heib6ZCUyPMlb+zipnIdWzZWPopdK6uVM0ZS3XU0Ccr8F0CgLeuKElnn9eljIPARIM+7
-         mJqdlByiEXdhuFGeQgXiGqk7bGPHkhgc4Qer1bT+gSOI4sQy+ovAjI6lfYZodI5t9f4E
-         P/5ExIMqBMPr1srAPCX21Ax+Ebv2mImEAsB9s31o4mpE4hwLMgBHoqIhTGVqtbIITmug
-         jbeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701881391; x=1702486191;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/emo8eo1n5l2se6f2Okqi3h9qOd104lH+P+GuFVvEM8=;
-        b=iIsz//CET4TPfva8XhlgFvNCgOXgAMzYox5FtanIOCyTGp40LSpTbxie6WrWukZq4v
-         AtfHWxcgaTn84w3f0jQwIvEj6ccx0VVqW8UZYm8WyMk3uo/zeyZDikP+Oq/HqyEBVMSL
-         rL18kstrupmCHCRzOBfKgw6ZFDCzfdUH/GJKWpPSgS6v7DvZaWsa+RLcfbwqr9OXrJ83
-         pHP3fizoNQQP7uS+D4RlHJUjEgLiPxouwqDDj8WEDIpGf2+TsIDtLUom6D83pVAFT4zM
-         52qSRGx/Fn5GelR7hG2U1sz2b55C0h/wecTv4byjG9c7jFVuLOz1LuCw65/xr3rVLyaJ
-         1/OA==
-X-Gm-Message-State: AOJu0YxAMGBkJtdwUXfJYjpSXKCWPlPXzZOqnh/aTQdajw3jzUxXl/qm
-	pB9094BIhi7GTwCJJTYA9+Y/YQ==
-X-Google-Smtp-Source: AGHT+IEKhKCbpLdxbFsThg9x3s87/P+i+0HTO+cft20G9jiFl+h6++FYzwypLm2mg2KBegxj+3BAXg==
-X-Received: by 2002:a17:902:d4c7:b0:1d0:a084:b009 with SMTP id o7-20020a170902d4c700b001d0a084b009mr926559plg.108.1701881391106;
-        Wed, 06 Dec 2023 08:49:51 -0800 (PST)
-Received: from google.com ([2620:15c:2d3:205:3c52:6dfa:1cbe:d20d])
-        by smtp.gmail.com with ESMTPSA id h4-20020a170902f54400b001cc50146b43sm42269plf.202.2023.12.06.08.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Dec 2023 08:49:50 -0800 (PST)
-Date: Wed, 6 Dec 2023 08:49:44 -0800
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <ZXCmKFjpO_w98iv_@google.com>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-5-af617c0d9d94@google.com>
- <20231206123402.GE30174@noisy.programming.kicks-ass.net>
- <CAH5fLgh+0G85Acf4-zqr_9COB5DUtt6ifVpZP-9V06hjJgd_jQ@mail.gmail.com>
- <20231206134041.GG30174@noisy.programming.kicks-ass.net>
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD61D69;
+	Wed,  6 Dec 2023 08:50:41 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sljj71151zB0LnM;
+	Thu,  7 Dec 2023 00:36:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id AF6CE140801;
+	Thu,  7 Dec 2023 00:50:32 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwD3MnNLpnBlbvgJAg--.48489S2;
+	Wed, 06 Dec 2023 17:50:32 +0100 (CET)
+Message-ID: <795534ce04428d5cf6d64b8d6fc567a6d444ab5a.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+ jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+ tom@talpey.com, jmorris@namei.org, serge@hallyn.com,
+ dmitry.kasatkin@gmail.com,  dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com,  eparis@parisplace.org,
+ casey@schaufler-ca.com, mic@digikod.net,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-nfs@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-integrity@vger.kernel.org,
+ keyrings@vger.kernel.org,  selinux@vger.kernel.org, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Wed, 06 Dec 2023 17:50:16 +0100
+In-Reply-To: <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+	 <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+	 <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+	 <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
+	 <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
+	 <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
+	 <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
+	 <CAHC9VhROnfBoaOy2MurdSpcE_poo_6Qy9d2U3g6m2NRRHaqz4Q@mail.gmail.com>
+	 <5f441267b6468b98e51a08d247a7ae066a60ff0c.camel@huaweicloud.com>
+	 <d608edb80efe03b62698ab33cbee1eea856a0422.camel@huaweicloud.com>
+	 <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231206134041.GG30174@noisy.programming.kicks-ass.net>
+X-CM-TRANSID:LxC2BwD3MnNLpnBlbvgJAg--.48489S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF17AF18XF48Cw4rZr4UXFb_yoW5AFykpF
+	y7KFWDJw4DAryjkrsayF45ZF40yrWSqFZ8Gr1Fkrn5Ar98Xr10qrWSyry5uFy3GrsYgay2
+	vr4YkrnrZF1DZ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5dSJwACsX
 
-On Wed, Dec 06, 2023 at 02:40:41PM +0100, Peter Zijlstra wrote:
-> On Wed, Dec 06, 2023 at 01:57:52PM +0100, Alice Ryhl wrote:
-> > On Wed, Dec 6, 2023 at 1:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > I can reimplement these specific functions as inline Rust functions,
-> 
-> That would be good, but how are you going to do that without duplicating
-> the horror that is struct task_struct ?
-> 
-> > but I don't think I can give you a general solution to the
-> > rust_helper_* problem in this patch series.
-> 
-> Well, I really wish the Rust community would address the C
-> interoperability in a hurry. Basically make it a requirement for
-> in-kernel Rust.
-> 
-> I mean, how hard can it be to have clang parse the C headers and inject
-> them into the Rust IR as if they're external FFI things.
+On Wed, 2023-12-06 at 11:11 -0500, Mimi Zohar wrote:
+> On Wed, 2023-12-06 at 14:10 +0100, Roberto Sassu wrote:
+> > On Mon, 2023-12-04 at 14:26 +0100, Roberto Sassu wrote:
+>=20
+> ...
+> > > If the result of this patch set should be that IMA and EVM become
+> > > proper LSMs without the shared integrity layer, instead of collapsing
+> > > all changes in this patch set, I think we should first verify if IMA
+> > > and EVM can be really independent. Once we guarantee that, we can
+> > > proceed making the proper LSMs.
+> > >=20
+> > > These are the changes I have in mind:
+> > >=20
+> > > 1) Fix evm_verifyxattr(), and make it work without integrity_iint_cac=
+he
+> > > 2) Remove the integrity_iint_cache parameter from evm_verifyxattr(),
+> > >    since the other callers are not going to use it
+> >=20
+> > Ehm, I checked better.
+> >=20
+> > integrity_inode_get() is public too (although it is not exported). So,
+> > a caller (not IMA) could do:
+> >=20
+> > iint =3D integrity_inode_get(inode);
+> > status =3D evm_verifyxattr(..., iint);
+> >=20
+> > However, it should not call integrity_inode_free(), which is also in
+> > include/linux/integrity.h, since this is going to be called by
+> > security_inode_free() (currently).
 
-That's pretty much how Swift and Carbon are doing C (and C++) interop.
+Oh, I needed to add a check for the iint here:
 
-Carbon: https://youtu.be/1ZTJ9omXOQ0?si=yiuLHn6o8RMezEZj
-Swift: https://youtu.be/lgivCGdmFrw?si=-x9Uva-_Y2x-JNBe
 
-The swift talk doesn't allude much to the codegen interop they're doing (still
-an excellent talk), but the carbon folks have adopted a model from Swift of
-doing interop at the IR layer.
+void integrity_inode_free(struct inode *inode)
+{
+	struct integrity_iint_cache *iint;
 
-Those compilers link against clang to provide IR interop.
-Rust's bindgen crate links against clang to generate Rust stubs.
+	if (!IS_IMA(inode))
+		return;
 
-At some point, someone on the Rust side will notice what Swift and Carbon are
-up to, realize they're probably already linking against libclang for C/C++
-interop, and try just linking libclang into rustc itself.
+	iint =3D integrity_iint_find(inode);
+	if (!iint)                          <=3D=3D=3D this
+		return;
+
+	integrity_inode_set_iint(inode, NULL);
+
+	iint_free(iint);
+}
+
+> Calling integrity_inode_free() directly would release the iint early. =
+=20
+> As a result, IMA would then need to re-allocate it on next access.=20
+> Other than impacting IMA's performance, is this a problem?
+
+Uhm, I think the iint could be freed while IMA is using it, for example
+in process_measurement().
+
+Roberto
+
+> > > 3) Create an internal function with the original parameters to be use=
+d
+> > >    by IMA
+> > > 4) Introduce evm_post_path_mknod(), which similarly to
+> > >    ima_post_path_mknod(), sets IMA_NEW_FILE for new files
+> >=20
+> > I just realized that also this is changing the current behavior.
+> >=20
+> > IMA would clear IMA_NEW_FILE in ima_check_last_writer(), while EVM
+> > wouldn't (unless we implement the file_release hook in EVM too).
+>=20
+> True
+>=20
+> Mimi
+>=20
+> > > 5) Add hardcoded call to evm_post_path_mknod() after
+> > >    ima_post_path_mknod() in security.c
+> > >=20
+> > > If we think that this is good enough, we proceed with the move of IMA
+> > > and EVM functions to the LSM infrastructure (patches v7 19-21).
+> > >=20
+> > > The next patches are going to be similar to patches v6 22-23, but
+> > > unlike those, their goal would be simply to split metadata, not to ma=
+ke
+> > > IMA and EVM independent, which at this point has been addressed
+> > > separately in the prerequisite patches.
+> > >=20
+> > > The final patch is to remove the 'integrity' LSM and the integrity
+> > > metadata management code, which now is not used anymore.
+> > >=20
+> > > Would that work?
+> >=20
+> > We are not making much progress, I'm going to follow any recommendation
+> > that would move this forward.
+>=20
+
 
