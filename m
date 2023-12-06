@@ -1,79 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-5024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC5D807546
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 17:38:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F9C807547
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 17:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ADB9B20E3A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 16:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4EDC1C20B4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 16:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E678D48CD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 16:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C9848CC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 16:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="b9ns4krg"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0O5bufUD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BE51707;
-	Wed,  6 Dec 2023 07:14:48 -0800 (PST)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 860301D0B;
-	Wed,  6 Dec 2023 15:08:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1701875302;
-	bh=nuQ7oyEDVSuk9DOyuMG/cLB7BA1E7v6X/Af9iud7LTk=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=b9ns4krgsqsEKFEpkwSUxPt90w7J8llYZPi9MyON8+FjGR7kqRSI3r83ZLpiL8lua
-	 ljtibIPMsXBzU9i7KmTZE+TYjrZbhXEUlTTPX1RmZnUNPjnPkSSmcbBBJ+/dCgQp0e
-	 QeHhsteLuAYXMv33bEAa0QG5/Ze27T+lmW+bHQoM=
-Received: from [172.16.192.129] (192.168.211.144) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 6 Dec 2023 18:14:46 +0300
-Message-ID: <8babdfbc-5be7-428d-9c23-ca8ed66f7ec5@paragon-software.com>
-Date: Wed, 6 Dec 2023 18:14:46 +0300
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182014595E;
+	Wed,  6 Dec 2023 15:59:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B370AC433CC;
+	Wed,  6 Dec 2023 15:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1701878354;
+	bh=vpZXpKKJhkH6bdcDcPHqena5ZG4UsjJfgD/hPx3L2wQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=0O5bufUDnm1ei+vk3IbzWI0+SGmHFkjtd6P/tbLUa0VD2zyoLUc9ML6LLfMDUXl5C
+	 yRdObtb5p8LZmfnfyRicLGcpZ8FCC68mIA1KatDT2DvCTEeb1KBjR+kCNwXLN/furT
+	 8J2CnqhbUUGYxwraCtuy+GBB+DipyZMAyamjRRB0=
+Date: Wed, 6 Dec 2023 07:59:13 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Sourav Panda
+ <souravpanda@google.com>, corbet@lwn.net, rafael@kernel.org,
+ mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org,
+ david@redhat.com, rdunlap@infradead.org, chenlinxuan@uniontech.com,
+ yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, bhelgaas@google.com,
+ ivan@cloudflare.com, yosryahmed@google.com, hannes@cmpxchg.org,
+ shakeelb@google.com, kirill.shutemov@linux.intel.com,
+ wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz,
+ Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org, willy@infradead.org, weixugc@google.com
+Subject: Re: [PATCH v6 0/1] mm: report per-page metadata information
+Message-Id: <20231206075913.fa2633991bf257f5ffe5f3f8@linux-foundation.org>
+In-Reply-To: <2023120645-survey-puppet-4ae0@gregkh>
+References: <20231205223118.3575485-1-souravpanda@google.com>
+	<2023120648-droplet-slit-0e31@gregkh>
+	<CA+CK2bARjZgnMBL9bOD7p1u=02-fGgWwfiGvsFVpsJWL-VR2ng@mail.gmail.com>
+	<2023120645-survey-puppet-4ae0@gregkh>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 16/16] fs/ntfs3: Fix c/mtime typo
-Content-Language: en-US
-From: Konstantin Komarovc <almaz.alexandrovich@paragon-software.com>
-To: <ntfs3@lists.linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <00fd1558-fda5-421b-be43-7de69e32cb4e@paragon-software.com>
-In-Reply-To: <00fd1558-fda5-421b-be43-7de69e32cb4e@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 6 Dec 2023 12:12:10 +0900 Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/frecord.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, Dec 05, 2023 at 09:57:36PM -0500, Pasha Tatashin wrote:
+> > Hi Greg,
+> > 
+> > Sourav removed the new field from sys/device../nodeN/meminfo as you
+> > requested; however, in nodeN/vmstat fields still get appended, as
+> > there is code that displays every item in zone_stat_item,
+> > node_stat_item without option to opt-out. I mentioned it to you at
+> > LPC.
+> 
+> Sorry, I thought that was a proc file, not a sysfs file.  Don't grow
+> that file please, it should not be that way and adding to it will just
+> cause others to also want to add to it and we end up with the whole proc
+> file mess...
+> 
+> > In my IOMMU [1] series, there are also fields that are added to
+> > node_stat_item that as result are appended to nodeN/vmstat.
+> 
+> I missed that, that too shouldn't be done please.
+> 
+> Again, sysfs is "one value per file" for a reason, don't abuse the fact
+> that we missed this abuse of the rules for that file by adding more
+> things to it.
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 8744ba36d422..6ff4f70ba077 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -3291,7 +3291,7 @@ int ni_write_inode(struct inode *inode, int sync, 
-const char *hint)
-              modified = true;
-          }
+I'm afraid that horse has bolted.
 
--        ts = inode_get_mtime(inode);
-+        ts = inode_get_ctime(inode);
-          dup.c_time = kernel2nt(&ts);
-          if (std->c_time != dup.c_time) {
-              std->c_time = dup.c_time;
--- 
-2.34.1
+hp2:/usr/src/25> wc /sys/devices/system/node/node0/vmstat 
+  61  122 1309 /sys/devices/system/node/node0/vmstat
 
+We're never going to unpick this into 61 separate files so adding new
+files at this stage is pointless.
 
