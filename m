@@ -1,65 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-4937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0350806751
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 07:33:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA2E806757
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 07:34:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972822820BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2C011C209AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A6A18AF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E11D18B06
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 06:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="K2jBDl3k"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZX8kJzEy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 053F9D45
-	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 22:06:35 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id 41be03b00d2f7-5ab94fc098cso2604674a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Dec 2023 22:06:35 -0800 (PST)
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A746D5A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  5 Dec 2023 22:06:37 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-6cdd214bce1so6814780b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Dec 2023 22:06:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701842795; x=1702447595; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQ4TkYRaggCJYZK2FV5jJyuJ3CMLuWDtaS8ek+7yiFo=;
-        b=K2jBDl3k7t3xOaKy/HutfVbTEK+JLiL5RsbTpm4VOs/SO342BQ/X4ZDFNfVtA05i+H
-         GxpxMZKbStn+LW3EzoyEzFgHpQiDYxkeIO6HjMEoBgi6wUQaB8mTK7Owsj9E4H2O7gSC
-         IAx19UZE6WgYV9ascTp96lSHZQFc8WV3HW/805eDheFEb2dLVegQCvS8C9Cmr/hzHTB6
-         wt2pl1eOexZqzCA8GRvwcT0OWDgQjNqsxDZa8IFroPjroGCI/bzihR6GGtm+AVTqFE3d
-         dWVnqvejHsAHh3AG9+AD0LfOCAB2fvcU82hvAcuQBBubSLUgkbHXoEAQQ53ZMZVTkQtp
-         WN3A==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701842796; x=1702447596; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LLgME4lRnn5RupWlODhqkby7STuCvfx+W1FcT+Yq4Ko=;
+        b=ZX8kJzEywvwMHMHSBXs8pDHad2w9X2rYKkF9KWT1xg9TfusLKPZWhNsPufRl2PF2bc
+         WG2Kfkvxqhizuyh7YT3Zg9hkAbDsrX4IxPIj7iUb5w0Tww3WxrqU8TuXqLTm8RvGObaO
+         DM0RZDSqIteLYvUnentc4eBGbVGlV+HqUmJcvn+rbbOuCCAgKDr9fR3gtEqzUs2LiSJd
+         9z2t6xEpTbd7zogOa5WEwXxIfHDuja4A3xWqZ34HtqmzpLeZStcC7NeKCh+Q046J1201
+         2Z/KwpljIQwVuA8aMoy12q7lOw7CF8Dnqy16KHS0sGlHFSgEyLcHpT3yqgfYZhoZekda
+         eFYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701842795; x=1702447595;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GQ4TkYRaggCJYZK2FV5jJyuJ3CMLuWDtaS8ek+7yiFo=;
-        b=c68pYHNcN6zzG8vBwCDjaCPpMJKZOThYC4peiZNEI9gWFCBjcKj0FTd3u+FTrOMAK2
-         iJn1Qu8hs5iW92qcIDP3nvKxNN09zSFG2bP4lkTJDB5TLWyfT+HPaCPYTJpSqK3XNlrq
-         eCJjyJeTdc+243BeCG1PxAMKrlrRDOKJ1iNU0rn6p4NaxigjYrAiwaUCtJGUG6LoLUcS
-         LICFPJKQWzI+p2QPlSj2vpYepi1NguRv4Poc04MytNXskjZ8A/vy0rbDBtImpwF6eS8T
-         iUJ/wiecSFSOaW3IO9QINwSeiUMLhci4leMuHCthKYTBczO4kAAfhY5o7pi4oZxd/uSF
-         Z0lw==
-X-Gm-Message-State: AOJu0YwdKFp3LAIo1WuSaBKwdWlt7nl8Gy1bLwvpV5eygostQbF+KpLU
-	mM5ALPfL+PeOo3sjFILwLguIRA==
-X-Google-Smtp-Source: AGHT+IHb/Qtsso0o+wVgpqf1pcApUheNiLjU522o042hStNIoB3lfZqrlikbyIfnnInfyFHBsFTr/w==
-X-Received: by 2002:a05:6a20:8f0e:b0:18f:d694:e899 with SMTP id b14-20020a056a208f0e00b0018fd694e899mr202540pzk.7.1701842795313;
-        Tue, 05 Dec 2023 22:06:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701842796; x=1702447596;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LLgME4lRnn5RupWlODhqkby7STuCvfx+W1FcT+Yq4Ko=;
+        b=qRkHDASAgWGXnghIYDgINj9Q/obDiXkAGkZJ6/xPa9AP+ZGhCgTJE3zERjogUnEwrj
+         Mrv8AwO1SqtToXmj69jG0hHgWSvDBR1K78X7AYNtTvCjE8Dv3XcVNSB78+zR1FIhobc8
+         v5hWZZC4t7VCZvb5ggwzNg8Zv5Rbh41V8VCFVsfusNc22hlhWC9FS0stUqgszvdwsjrB
+         IvDtinOUp/20Zn+fMMVpubDUBrR1fuDkzj+7fwdFG78GOZpnQ77eKV0dL0e93goqYD4e
+         hcjfSwKSuTlfoVLlQH34qzozjtEpnpD91I9qWDs3qSzVMlFT/22CVTYlzANKCyfuSo4g
+         ZTTw==
+X-Gm-Message-State: AOJu0YzDCjaMEjuXDy9lOlRjIJ7YsKEpOaIEDdAus5AOiCeQt7yCyeKT
+	mVeu4xf732z86iN+nmhbVoEl4/hhHAJN9vvMc+8=
+X-Google-Smtp-Source: AGHT+IH+aQFHMSGIozcOdaBliY55eigBuUxiaWQdWCWNVwDrMclqdESCoFsOiInPxf+hF9ZoMguhIw==
+X-Received: by 2002:a05:6a20:4308:b0:18f:97c:8a1d with SMTP id h8-20020a056a20430800b0018f097c8a1dmr467536pzk.72.1701842796169;
+        Tue, 05 Dec 2023 22:06:36 -0800 (PST)
 Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id ju1-20020a170903428100b001cf7c07be50sm8347099plb.58.2023.12.05.22.06.33
+        by smtp.gmail.com with ESMTPSA id w18-20020a63af12000000b005b32d6b4f2fsm6965686pge.81.2023.12.05.22.06.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 05 Dec 2023 22:06:34 -0800 (PST)
 Received: from [192.168.253.23] (helo=devoid.disaster.area)
 	by dread.disaster.area with esmtp (Exim 4.96)
 	(envelope-from <dave@fromorbit.com>)
-	id 1rAl3H-004VOX-2U;
+	id 1rAl3H-004VOa-2d;
 	Wed, 06 Dec 2023 17:06:31 +1100
 Received: from dave by devoid.disaster.area with local (Exim 4.97-RC0)
 	(envelope-from <dave@devoid.disaster.area>)
-	id 1rAl3H-0000000BrUz-1Ada;
+	id 1rAl3H-0000000BrV2-1eky;
 	Wed, 06 Dec 2023 17:06:31 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: linux-fsdevel@vger.kernel.org
@@ -71,10 +72,12 @@ Cc: linux-block@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/11] vfs: inode cache scalability improvements
-Date: Wed,  6 Dec 2023 17:05:29 +1100
-Message-ID: <20231206060629.2827226-1-david@fromorbit.com>
+Subject: [PATCH 01/11] lib/dlock-list: Distributed and lock-protected lists
+Date: Wed,  6 Dec 2023 17:05:30 +1100
+Message-ID: <20231206060629.2827226-2-david@fromorbit.com>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231206060629.2827226-1-david@fromorbit.com>
+References: <20231206060629.2827226-1-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,193 +86,553 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We all know that the global inode_hash_lock and the per-fs global 
-sb->s_inode_list_lock locks are contention points in filesystem workloads
-that stream inodes through memory, so it's about time we addressed these
-limitations.
+From: Waiman Long <longman@redhat.com>
 
-The first part of the patchset address the sb->s_inode_list_lock.
-This was done a long time ago by Waiman Long by converting the
-global linked list to a per-cpu linked list - those infrastructure
-patches are pretty much unchanged from when Waiman first wrote them,
-and as such the still carry the RVB that Jan Kara gave for them. I
-have no idea if the problem that Waiman was trying to solve still
-exists, but that's largely irrelevant because there are other
-problems that I can easily reproduce.
+Linked list is used everywhere in the Linux kernel. However, if many
+threads are trying to add or delete entries into the same linked list,
+it can create a performance bottleneck.
 
-That is, once at ~16 threads trying to instantiate or tear down
-inodes at the same time in a filesystem, the sb->s_inode_list_lock
-becomes a single point of contention. Adding an inode to the inode
-cache requires adding it to the sb->s_inodes list, and removing an
-inode from the cache requires removing it from the sb->s_inodes
-list. That's two exclusive lock operations per inode we cycle
-through the inode cache.
+This patch introduces a new list APIs that provide a set of distributed
+lists (one per CPU), each of which is protected by its own spinlock.
+To the callers, however, the set of lists acts like a single
+consolidated list.  This allows list entries insertion and deletion
+operations to happen in parallel instead of being serialized with a
+global list and lock.
 
-This creates a hard limit on the number of inodes we can cycle
-through memory in a single filesystem. It tops out at around
-600-700,000 inodes per second on XFS, and at that point we see
-catastrophic cacheline contention breakdown and nothing goes any
-faster. We can easily burn hundreds of CPUs on the sb->s_inodes list
-operations, yet we still can only get 600-700k inodes/s through the
-cache.
+List entry insertion is strictly per cpu. List deletion, however, can
+happen in a cpu other than the one that did the insertion. So we still
+need lock to protect the list. Because of that, there may still be
+a small amount of contention when deletion is being done.
 
-Converting the sb->s_inodes list to a dlist gets rid of this single
-contention point and makes the sb->s_inodes list operations
-disappear from the profiles completely. Prior to this change, at 32
-threads XFS could pull 12.8 million inodes into cache in ~20s
-(that's ~600k inodes/s - sound familiar?). With this change, those
-12.8 million inodes are pulled into cache in ~10s. That's double the
-rate at which XFS can pull inodes into memory from the
-filesystem....
+A new header file include/linux/dlock-list.h will be added with the
+associated dlock_list_head and dlock_list_node structures. The following
+functions are provided to manage the per-cpu list:
 
-I'm talking about XFS here, because none of the other filesystem
-actually stress the sb->s_inode_list_lock at all. They all hit
-catastrophic cacheline contention on the inode_hash_lock long before
-they get anywhere near the sb->s_inodes limits. For ext4 and
-bcachefs, the inode_hash_lock becomes a limiting factor at 8
-threads. btrfs hits internal namespace tree contention limits at 2
-threads, so it's not even stressing the inode_hash_lock unless
-highly threaded workloads are manually sharded across subvolumes.
+ 1. int alloc_dlock_list_heads(struct dlock_list_heads *dlist)
+ 2. void free_dlock_list_heads(struct dlock_list_heads *dlist)
+ 3. void dlock_list_add(struct dlock_list_node *node,
+		        struct dlock_list_heads *dlist)
+ 4. void dlock_list_del(struct dlock_list *node)
 
-So to bring the rest of the filesystems up, we need to fix the
-inode_hash_lock contention problems.  This patchset replaces the
-global inode_hash_lock with the same lock-per-chain implementation
-that the dentry cache uses. i.e. hash-bl lists. This is more complex
-than the dentry cache implementation, however, because we nest spin
-locks inside the inode_hash_lock. This conversion means we nest spin
-locks inside bit spin locks in the inode cache.
+Iteration of all the list entries within a dlock list array
+is done by calling either the dlist_for_each_entry() or
+dlist_for_each_entry_safe() macros. They correspond to the
+list_for_each_entry() and list_for_each_entry_safe() macros
+respectively. The iteration states are keep in a dlock_list_iter
+structure that is passed to the iteration macros.
 
-Whilst this doesn't sound particularly problematic, the issue arises
-on CONFIG_PREEMPT_RT kernels, where spinlocks are converted to
-sleeping locks. We can't place sleeping locks inside spinning bit
-locks, and that's exactly what happens if we use hash-bl lists in
-the inode cache and then turn on CONFIG_PREEMPT_RT.
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ include/linux/dlock-list.h | 242 +++++++++++++++++++++++++++++++++++++
+ lib/Makefile               |   2 +-
+ lib/dlock-list.c           | 234 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 477 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/dlock-list.h
+ create mode 100644 lib/dlock-list.c
 
-The other downside to converting to hash-bl is that we lose lockdep
-coverage of the inode hash table - lockdep does not track bit locks
-at all.
-
-Both of these issues can be solved the same way: whenever either of
-these two config options are turned on, we change the hash-bl
-implementation from using a bit spin lock on th elowest bit of the
-chain head pointer to using as dedicated spinlock per chain. This
-trades off performance and memory footprint for configurations where
-correctness is more important than performance, but allows optimal
-implementations of hash-bl lists when performance is the primary
-concern.
-
-In making this conversion, we make all hash-bl implementations safe
-for PREEMPT_RT usage and gain lockdep coverage of all hash-bl lists.
-It also pointed out that several hash-bl list users did not actually
-initialise the hash list heads correctly - they elided the
-initialisation and only got away with it because they allocated
-zeroed memory and the hash list head would still work from empty.
-This needed fixing for lockdep....
-
-The result of this conversion is that inode cache lookup heavy
-workloads such as filesystem traversals and inode creation/removal
-no longer contend on the inode_hash_lock to stream inodes through
-the inode cache. This results in big performance improvements at
-thread counts of >= 8.
-
-I've run this through fstests with lockdep enabled on ext4 and XFS
-without discovering any issues except for dm-snapshot needing
-lockdep nesting annotations for list-bl locks. I've run a bunch of
-"will-it-scale" like tests across XFS, ext4, bcachefs and btrfs, and
-the raw table results for 6.7-rc4 are below.
-
-The tests runs a fixed number of files per thread, so as the thread
-count increases we should see runtimes stay constant if scalability
-is perfect. I'm not caring about operation rates, I'm not caring
-about which filesystems are faster, all I'm looking at is whether
-the scalability of individual filesytsems improves with the changes.
-
-base:  vanilla 6.7-rc4 kernel
-scale: 6.7-rc4 plus this patchset
-
-Filesystem      Files  Threads      Create             Walk             chmod            Unlink
-				base    scale	  base    scale     base    scale    base    scale
-       xfs     400000     1     11.217 10.477     11.621 11.570     14.980 14.797    18.314 18.248
-       xfs     800000     2     12.313 11.470     11.673 11.158     15.271 14.782    19.413 18.533
-       xfs    1600000     4     14.130 13.246      9.665  9.444     14.794 13.710    19.582 17.015
-       xfs    3200000     8     16.654 16.108     10.622  9.275     15.854 14.575    20.679 19.237
-       xfs    6400000    16     17.587 18.151     12.148  9.508     16.655 17.691    26.044 21.865
-       xfs   12800000    32     20.833 21.491     20.518 10.308     23.614 19.334    42.572 27.404
-
-All of the operations that require directory traversal show
-significant improvements at 16 or more threads on XFS. This is
-entirely from the sb->s_inodes modifications.
-
-Filesystem      Files  Threads      Create             Walk             chmod            Unlink
-				base    scale	  base    scale     base    scale    base     scale
-      ext4     400000     1      9.344  9.394      7.691  7.847      9.188  9.212    11.340  12.517
-      ext4     800000     2     10.445 10.375      7.923  7.358     10.158 10.114    14.366  14.093
-      ext4    1600000     4     11.008 10.948      8.152  7.530     11.140 11.150    18.093  17.153
-      ext4    3200000     8     23.348 12.134     13.090  7.871     15.437 12.824    30.806  31.968
-      ext4    6400000    16     17.343 29.112     24.602  9.540     31.034 22.057    60.538  57.636
-      ext4   12800000    32     40.125 44.638     49.536 19.314     63.183 38.905   138.688 138.632
-
-Walk on ext4 shows major improvements at 8 threads and above, as
-does the recursive chmod. This largely comes from the inode hash
-lock removal, but the full scalability improvements are not realised
-until the sb->s_inodes changes are added as well. 
-
-Note that unlink doesn't scale or improve because the mkfs.ext4
-binary in debian unstable does not support the orphan file option
-and so it is completely bottlenecked on orphan list scalability
-issues.
-
-Filesystem      Files  Threads      Create             Walk             chmod            Unlink
-				base    scale	  base    scale     base    scale    base     scale
-  bcachefs     400000     1     16.999 17.193      6.546  6.355    13.973  13.024    28.890  19.014
-  bcachefs     800000     2     20.133 19.597      8.003  7.276    22.042  20.070    28.959  29.141
-  bcachefs    1600000     4     22.836 23.764      9.097  8.506    58.827  56.108    38.955  37.435
-  bcachefs    3200000     8     27.932 27.545     11.752 10.015   192.802 185.834    64.402  77.188
-  bcachefs    6400000    16     32.389 32.021     24.614 13.989   409.873 408.098   243.757 249.220
-  bcachefs   12800000    32     39.809 40.221     49.179 25.982   879.721 821.497   501.357 485.781
-
-bcachefs walk shows major improvements at 16 threads and above, but
-chmod and unlink are drowned by internal contention problems.
-
-Filesystem      Files  Threads      Create             Walk             chmod            Unlink
-				base    scale	  base     scale    base     scale    base      scale
-     btrfs     400000     1     10.307  10.228    12.597  12.104    14.744  14.030    24.171   24.273
-     btrfs     800000     2     15.956  14.018    19.693  17.180    24.859  20.872    59.338   48.725
-     btrfs    1600000     4     22.441  20.951    32.855  29.013    37.975  33.575   140.601  125.305
-     btrfs    3200000     8     34.157  32.693    55.066  56.726    66.676  64.661   343.379  325.816
-     btrfs    6400000    16     60.847  59.123    90.097  89.340   116.994 114.280   683.244  681.953
-     btrfs   12800000    32    122.525 118.510   118.036 125.761   206.122 212.102  1612.940 1629.689
-
-There's little point in doing scalability testing on plain btrfs -
-it is entirely bottlenecked on internal algorithms long before
-anything in the VFS becomes a scalability limitation.
-
-Filesystem      Files  Threads      Create             Walk             chmod            Unlink
-				base    scale	  base    scale     base    scale    base     scale
-btrfs-svol     400000     1     10.417  9.830     12.011 12.154     14.894 14.913    24.157  23.447
-btrfs-svol     800000     2     12.079 11.681     12.596 12.208     16.535 15.310    28.031  26.412
-btrfs-svol    1600000     4     15.219 15.074     12.711 10.735     18.079 16.948    34.330  31.949
-btrfs-svol    3200000     8     23.140 21.307     14.706 10.934     22.580 21.907    53.183  52.129
-btrfs-svol    6400000    16     40.657 40.226     26.062 11.471     34.058 33.333   101.133  99.504
-btrfs-svol   12800000    32     81.516 79.412     50.320 12.406     65.691 58.229   193.847 200.050
-
-Once btrfs is running with a sharded namespace (i.e. subvol per
-thread) we results very similar in nature to bcachefs - walk
-improves dramatically at high thread counts, but nothing else
-changes as all the scalability limitations are internal to the
-filesystem.
-
-I have tested to 64 threads, but there's not a lot extra to add. The
-XFs walk was done in 14.1s, so scalability is falling off but I
-haven't spent any time looking at it in detail because there's just
-so much other internal stuff to fix up before the rest of this
-benchmark scales to 64 threads on XFS....
-
-Git tree containing this series can be pulled from:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs.git vfs-scale
-
--Dave.
-
+diff --git a/include/linux/dlock-list.h b/include/linux/dlock-list.h
+new file mode 100644
+index 000000000000..327cb9edc7e3
+--- /dev/null
++++ b/include/linux/dlock-list.h
+@@ -0,0 +1,242 @@
++/*
++ * Distributed and locked list
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * (C) Copyright 2016 Hewlett-Packard Enterprise Development LP
++ * (C) Copyright 2017-2018 Red Hat, Inc.
++ *
++ * Authors: Waiman Long <longman@redhat.com>
++ */
++#ifndef __LINUX_DLOCK_LIST_H
++#define __LINUX_DLOCK_LIST_H
++
++#include <linux/spinlock.h>
++#include <linux/list.h>
++
++/*
++ * include/linux/dlock-list.h
++ *
++ * The dlock_list_head structure contains the spinlock. It is cacheline
++ * aligned to reduce contention among different CPUs. The other
++ * dlock_list_node structures contains a pointer to the head entry instead.
++ */
++struct dlock_list_head {
++	struct list_head list;
++	spinlock_t lock;
++} ____cacheline_aligned_in_smp;
++
++struct dlock_list_heads {
++	struct dlock_list_head *heads;
++};
++
++/*
++ * dlock list node data structure
++ */
++struct dlock_list_node {
++	struct list_head list;
++	struct dlock_list_head *head;
++};
++
++/*
++ * dlock list iteration state
++ *
++ * This is an opaque data structure that may change. Users of this structure
++ * should not access the structure members directly other than using the
++ * helper functions and macros provided in this header file.
++ */
++struct dlock_list_iter {
++	int index;
++	struct dlock_list_head *head, *entry;
++};
++
++#define DLOCK_LIST_ITER_INIT(dlist)		\
++	{					\
++		.index = -1,			\
++		.head = (dlist)->heads,		\
++	}
++
++#define DEFINE_DLOCK_LIST_ITER(s, heads)	\
++	struct dlock_list_iter s = DLOCK_LIST_ITER_INIT(heads)
++
++static inline void init_dlock_list_iter(struct dlock_list_iter *iter,
++					struct dlock_list_heads *heads)
++{
++	*iter = (struct dlock_list_iter)DLOCK_LIST_ITER_INIT(heads);
++}
++
++#define DLOCK_LIST_NODE_INIT(name)		\
++	{					\
++		.list = LIST_HEAD_INIT(name)	\
++	}
++
++static inline void init_dlock_list_node(struct dlock_list_node *node)
++{
++	*node = (struct dlock_list_node)DLOCK_LIST_NODE_INIT(node->list);
++}
++
++/**
++ * dlock_list_unlock - unlock the spinlock that protects the current list
++ * @iter: Pointer to the dlock list iterator structure
++ */
++static inline void dlock_list_unlock(struct dlock_list_iter *iter)
++{
++	spin_unlock(&iter->entry->lock);
++}
++
++/**
++ * dlock_list_relock - lock the spinlock that protects the current list
++ * @iter: Pointer to the dlock list iterator structure
++ */
++static inline void dlock_list_relock(struct dlock_list_iter *iter)
++{
++	spin_lock(&iter->entry->lock);
++}
++
++/*
++ * Allocation and freeing of dlock list
++ */
++extern int  __alloc_dlock_list_heads(struct dlock_list_heads *dlist,
++				     struct lock_class_key *key);
++extern void free_dlock_list_heads(struct dlock_list_heads *dlist);
++
++/**
++ * alloc_dlock_list_head - Initialize and allocate the list of head entries.
++ * @dlist  : Pointer to the dlock_list_heads structure to be initialized
++ * Return  : 0 if successful, -ENOMEM if memory allocation error
++ */
++#define alloc_dlock_list_heads(dlist)					\
++({									\
++	static struct lock_class_key _key;				\
++	__alloc_dlock_list_heads(dlist, &_key);				\
++})
++
++/*
++ * Check if a dlock list is empty or not.
++ */
++extern bool dlock_lists_empty(struct dlock_list_heads *dlist);
++
++/*
++ * The dlock list addition and deletion functions here are not irq-safe.
++ * Special irq-safe variants will have to be added if we need them.
++ */
++extern void dlock_lists_add(struct dlock_list_node *node,
++			    struct dlock_list_heads *dlist);
++extern void dlock_lists_del(struct dlock_list_node *node);
++
++/*
++ * Find the first entry of the next available list.
++ */
++extern struct dlock_list_node *
++__dlock_list_next_list(struct dlock_list_iter *iter);
++
++/**
++ * __dlock_list_next_entry - Iterate to the next entry of the dlock list
++ * @curr : Pointer to the current dlock_list_node structure
++ * @iter : Pointer to the dlock list iterator structure
++ * Return: Pointer to the next entry or NULL if all the entries are iterated
++ *
++ * The iterator has to be properly initialized before calling this function.
++ */
++static inline struct dlock_list_node *
++__dlock_list_next_entry(struct dlock_list_node *curr,
++			struct dlock_list_iter *iter)
++{
++	/*
++	 * Find next entry
++	 */
++	if (curr)
++		curr = list_next_entry(curr, list);
++
++	if (!curr || (&curr->list == &iter->entry->list)) {
++		/*
++		 * The current list has been exhausted, try the next available
++		 * list.
++		 */
++		curr = __dlock_list_next_list(iter);
++	}
++
++	return curr;	/* Continue the iteration */
++}
++
++/**
++ * _dlock_list_next_list_entry - get first element from next list in iterator
++ * @iter  : The dlock list iterator.
++ * @pos   : A variable of the struct that is embedded in.
++ * @member: The name of the dlock_list_node within the struct.
++ * Return : Pointer to first entry or NULL if all the lists are iterated.
++ */
++#define _dlock_list_next_list_entry(iter, pos, member)			\
++	({								\
++		struct dlock_list_node *_n;				\
++		_n = __dlock_list_next_entry(NULL, iter);		\
++		_n ? list_entry(_n, typeof(*pos), member) : NULL;	\
++	})
++
++/**
++ * _dlock_list_next_entry - iterate to the next entry of the list
++ * @pos   : The type * to cursor
++ * @iter  : The dlock list iterator.
++ * @member: The name of the dlock_list_node within the struct.
++ * Return : Pointer to the next entry or NULL if all the entries are iterated.
++ *
++ * Note that pos can't be NULL.
++ */
++#define _dlock_list_next_entry(pos, iter, member)			\
++	({								\
++		struct dlock_list_node *_n;				\
++		_n = __dlock_list_next_entry(&(pos)->member, iter);	\
++		_n ? list_entry(_n, typeof(*(pos)), member) : NULL;	\
++	})
++
++/**
++ * dlist_for_each_entry - iterate over the dlock list
++ * @pos   : Type * to use as a loop cursor
++ * @iter  : The dlock list iterator
++ * @member: The name of the dlock_list_node within the struct
++ *
++ * This iteration macro isn't safe with respect to list entry removal, but
++ * it can correctly iterate newly added entries right after the current one.
++ * This iteration function is designed to be used in a while loop.
++ */
++#define dlist_for_each_entry(pos, iter, member)				\
++	for (pos = _dlock_list_next_list_entry(iter, pos, member);	\
++	     pos != NULL;						\
++	     pos = _dlock_list_next_entry(pos, iter, member))
++
++/**
++ * dlist_for_each_entry_safe - iterate over the dlock list & safe over removal
++ * @pos   : Type * to use as a loop cursor
++ * @n	  : Another type * to use as temporary storage
++ * @iter  : The dlock list iterator
++ * @member: The name of the dlock_list_node within the struct
++ *
++ * This iteration macro is safe with respect to list entry removal.
++ * However, it cannot correctly iterate newly added entries right after the
++ * current one.
++ *
++ * The call to __dlock_list_next_list() is deferred until the next entry
++ * is being iterated to avoid use-after-unlock problem.
++ */
++#define dlist_for_each_entry_safe(pos, n, iter, member)			\
++	for (pos = NULL;						\
++	    ({								\
++		if (!pos ||						\
++		   (&(pos)->member.list == &(iter)->entry->list))	\
++			pos = _dlock_list_next_list_entry(iter, pos,	\
++							  member);	\
++		if (pos)						\
++			n = list_next_entry(pos, member.list);		\
++		pos;							\
++	    });								\
++	    pos = n)
++
++#endif /* __LINUX_DLOCK_LIST_H */
+diff --git a/lib/Makefile b/lib/Makefile
+index 6b09731d8e61..73d84b569f1e 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -48,7 +48,7 @@ obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
+ 	 bsearch.o find_bit.o llist.o lwq.o memweight.o kfifo.o \
+ 	 percpu-refcount.o rhashtable.o base64.o \
+ 	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
+-	 generic-radix-tree.o bitmap-str.o
++	 generic-radix-tree.o bitmap-str.o dlock-list.o
+ obj-$(CONFIG_STRING_SELFTEST) += test_string.o
+ obj-y += string_helpers.o
+ obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+diff --git a/lib/dlock-list.c b/lib/dlock-list.c
+new file mode 100644
+index 000000000000..f64ea4cc5e79
+--- /dev/null
++++ b/lib/dlock-list.c
+@@ -0,0 +1,234 @@
++/*
++ * Distributed and locked list
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * (C) Copyright 2016 Hewlett-Packard Enterprise Development LP
++ * (C) Copyright 2017-2018 Red Hat, Inc.
++ *
++ * Authors: Waiman Long <longman@redhat.com>
++ */
++#include <linux/dlock-list.h>
++#include <linux/lockdep.h>
++#include <linux/slab.h>
++#include <linux/cpumask.h>
++
++/*
++ * The distributed and locked list is a distributed set of lists each of
++ * which is protected by its own spinlock, but acts like a single
++ * consolidated list to the callers. For scaling purpose, the number of
++ * lists used is equal to the number of possible CPUs in the system to
++ * minimize contention.
++ *
++ * However, it is possible that individual CPU numbers may be equal to
++ * or greater than the number of possible CPUs when there are holes in
++ * the CPU number list. As a result, we need to map the CPU number to a
++ * list index.
++ */
++static DEFINE_PER_CPU_READ_MOSTLY(int, cpu2idx);
++
++/*
++ * Initialize cpu2idx mapping table
++ *
++ * It is possible that a dlock-list can be allocated before the cpu2idx is
++ * initialized. In this case, all the cpus are mapped to the first entry
++ * before initialization.
++ *
++ */
++static int __init cpu2idx_init(void)
++{
++	int idx, cpu;
++
++	idx = 0;
++	for_each_possible_cpu(cpu)
++		per_cpu(cpu2idx, cpu) = idx++;
++	return 0;
++}
++postcore_initcall(cpu2idx_init);
++
++/**
++ * __alloc_dlock_list_heads - Initialize and allocate the list of head entries
++ * @dlist: Pointer to the dlock_list_heads structure to be initialized
++ * @key  : The lock class key to be used for lockdep
++ * Return: 0 if successful, -ENOMEM if memory allocation error
++ *
++ * This function does not allocate the dlock_list_heads structure itself. The
++ * callers will have to do their own memory allocation, if necessary. However,
++ * this allows embedding the dlock_list_heads structure directly into other
++ * structures.
++ *
++ * Dynamically allocated locks need to have their own special lock class
++ * to avoid lockdep warning.
++ */
++int __alloc_dlock_list_heads(struct dlock_list_heads *dlist,
++			     struct lock_class_key *key)
++{
++	int idx;
++
++	dlist->heads = kcalloc(nr_cpu_ids, sizeof(struct dlock_list_head),
++			       GFP_KERNEL);
++
++	if (!dlist->heads)
++		return -ENOMEM;
++
++	for (idx = 0; idx < nr_cpu_ids; idx++) {
++		struct dlock_list_head *head = &dlist->heads[idx];
++
++		INIT_LIST_HEAD(&head->list);
++		head->lock = __SPIN_LOCK_UNLOCKED(&head->lock);
++		lockdep_set_class(&head->lock, key);
++	}
++	return 0;
++}
++EXPORT_SYMBOL(__alloc_dlock_list_heads);
++
++/**
++ * free_dlock_list_heads - Free all the heads entries of the dlock list
++ * @dlist: Pointer of the dlock_list_heads structure to be freed
++ *
++ * This function doesn't free the dlock_list_heads structure itself. So
++ * the caller will have to do it, if necessary.
++ */
++void free_dlock_list_heads(struct dlock_list_heads *dlist)
++{
++	kfree(dlist->heads);
++	dlist->heads = NULL;
++}
++EXPORT_SYMBOL(free_dlock_list_heads);
++
++/**
++ * dlock_lists_empty - Check if all the dlock lists are empty
++ * @dlist: Pointer to the dlock_list_heads structure
++ * Return: true if list is empty, false otherwise.
++ *
++ * This can be a pretty expensive function call. If this function is required
++ * in a performance critical path, we may have to maintain a global count
++ * of the list entries in the global dlock_list_heads structure instead.
++ */
++bool dlock_lists_empty(struct dlock_list_heads *dlist)
++{
++	int idx;
++
++	for (idx = 0; idx < nr_cpu_ids; idx++)
++		if (!list_empty(&dlist->heads[idx].list))
++			return false;
++	return true;
++}
++EXPORT_SYMBOL(dlock_lists_empty);
++
++/**
++ * dlock_lists_add - Adds a node to the given dlock list
++ * @node : The node to be added
++ * @dlist: The dlock list where the node is to be added
++ *
++ * List selection is based on the CPU being used when the dlock_list_add()
++ * function is called. However, deletion may be done by a different CPU.
++ */
++void dlock_lists_add(struct dlock_list_node *node,
++		     struct dlock_list_heads *dlist)
++{
++	struct dlock_list_head *head = &dlist->heads[this_cpu_read(cpu2idx)];
++
++	/*
++	 * There is no need to disable preemption
++	 */
++	spin_lock(&head->lock);
++	WRITE_ONCE(node->head, head);
++	list_add(&node->list, &head->list);
++	spin_unlock(&head->lock);
++}
++EXPORT_SYMBOL(dlock_lists_add);
++
++/**
++ * dlock_lists_del - Delete a node from a dlock list
++ * @node : The node to be deleted
++ *
++ * We need to check the lock pointer again after taking the lock to guard
++ * against concurrent deletion of the same node. If the lock pointer changes
++ * (becomes NULL or to a different one), we assume that the deletion was done
++ * elsewhere. A warning will be printed if this happens as it is likely to be
++ * a bug.
++ */
++void dlock_lists_del(struct dlock_list_node *node)
++{
++	struct dlock_list_head *head;
++	bool retry;
++
++	do {
++		head = READ_ONCE(node->head);
++		if (WARN_ONCE(!head, "%s: node 0x%lx has no associated head\n",
++			      __func__, (unsigned long)node))
++			return;
++
++		spin_lock(&head->lock);
++		if (likely(head == READ_ONCE(node->head))) {
++			list_del_init(&node->list);
++			WRITE_ONCE(node->head, NULL);
++			retry = false;
++		} else {
++			/*
++			 * The lock has somehow changed. Retry again if it is
++			 * not NULL. Otherwise, just ignore the delete
++			 * operation.
++			 */
++			retry = (READ_ONCE(node->head) != NULL);
++		}
++		spin_unlock(&head->lock);
++	} while (retry);
++}
++EXPORT_SYMBOL(dlock_lists_del);
++
++/**
++ * __dlock_list_next_list: Find the first entry of the next available list
++ * @dlist: Pointer to the dlock_list_heads structure
++ * @iter : Pointer to the dlock list iterator structure
++ * Return: true if the entry is found, false if all the lists exhausted
++ *
++ * The information about the next available list will be put into the iterator.
++ */
++struct dlock_list_node *__dlock_list_next_list(struct dlock_list_iter *iter)
++{
++	struct dlock_list_node *next;
++	struct dlock_list_head *head;
++
++restart:
++	if (iter->entry) {
++		spin_unlock(&iter->entry->lock);
++		iter->entry = NULL;
++	}
++
++next_list:
++	/*
++	 * Try next list
++	 */
++	if (++iter->index >= nr_cpu_ids)
++		return NULL;	/* All the entries iterated */
++
++	if (list_empty(&iter->head[iter->index].list))
++		goto next_list;
++
++	head = iter->entry = &iter->head[iter->index];
++	spin_lock(&head->lock);
++	/*
++	 * There is a slight chance that the list may become empty just
++	 * before the lock is acquired. So an additional check is
++	 * needed to make sure that a valid node will be returned.
++	 */
++	if (list_empty(&head->list))
++		goto restart;
++
++	next = list_entry(head->list.next, struct dlock_list_node,
++			  list);
++	WARN_ON_ONCE(next->head != head);
++
++	return next;
++}
++EXPORT_SYMBOL(__dlock_list_next_list);
+-- 
+2.42.0
 
 
