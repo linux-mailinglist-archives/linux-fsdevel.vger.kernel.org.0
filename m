@@ -1,219 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-4953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FE58069BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 09:37:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEA88069BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 09:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC4B4B20793
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 626F8281B7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E26C1A711
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197201A706
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 08:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uk0GZpJT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMdlGLhH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F1398;
-	Wed,  6 Dec 2023 00:23:36 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so2963274a12.0;
-        Wed, 06 Dec 2023 00:23:36 -0800 (PST)
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B633DD3
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 00:25:40 -0800 (PST)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-677fba00a49so5002046d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 00:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701851016; x=1702455816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S0LwbusvQAa95t36P39uX2HIsyGAgVBDxOy6DS+pmFA=;
-        b=Uk0GZpJTF4VYNEupxl6WCsr1xnAtYn4z7UqH1My3K4zN0DLgz9VgNXC5nJtZJ8n/+P
-         ZeXJG9Q0R1lU9m8mOvFlzdajwTWfIcnXjOiSJ/7k9BbIZdH1fbTaKacpKnCcTdtC6KFl
-         CFSU1nIMLzgqEMnVmYYEAgSyFDAncXi2Xp1scgIKLHi/vY16308T94QKypVOhraytuox
-         IU+PTYubCgVYsJ190AjVlBMmc1/gQ87haKd/wkAu+ybp5/7lLW/Uk5U1hIAi2A3UTDi4
-         ut8wbFmPsKn8KQasZ8MFGSaz06VQ0UM83i04nVpgRlDYfI3vhzjTsBECWJv/t7iq7v0F
-         wM9Q==
+        d=gmail.com; s=20230601; t=1701851140; x=1702455940; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/RlJ/0i6dTY1VdrdJ+k1E6ZEiT0QfFVf8Ud6BEXjmk=;
+        b=nMdlGLhHdIqsZ4ZqGgA/B8VmvSSk3FFqjf4luxDxV/7Z1BWW1xEBRzEl9ueDy4iHNb
+         5Ltx9VbcfMG3GLvaypmnwDifOEqlyYDT24oBUPYhN0PwK+Nlw1ba1HJstdtdN0S68J2F
+         6kkcTBh19Cv8HlhmCK3tXHFVkcWBhBbxMonDEj2K31xHz4sV2NtEAvwC9sdW94LfRD1v
+         9W3TRdZ8Lvb2+rD7Cr3/hPwLWRO/hFzcx58VVdw7kvEPJUtURnH2RRPUGQNrM609WrKD
+         sDOp27tBTB/DLvCGAgEoRyfywdzhW4hx9vB34nGyhO3wm1xK92Enq4XBLZesY56lz85W
+         qW4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701851016; x=1702455816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S0LwbusvQAa95t36P39uX2HIsyGAgVBDxOy6DS+pmFA=;
-        b=DhpqmXbZCdVS3LtArZFM2GGilstLal8O/uGmm/eIbvH+jdMgAsiZAcoLMExOn0k/JO
-         IkHyGfa2rk+zVcT9o90ww2QJQ3F5MEKVq02LfVySM9DJoyFMMsHHf0DN6NpdSzNM8Gix
-         BCygXwMsqDKZ3IWzOYMYTh4mheG3bLCzszmmpLZzvKade+OwzsYD0ehA1cJefztikoct
-         /hDQq5UtRJIw4pGYS6mKrq26u05jBxP+2pAp9NIE1t7SzNucds73336fqfqj2DgyqLv6
-         I5DTqB6k7VKWdJf+/sT9AynDNVqHVXM1lv/A+tPaOL015VVEBWwYlvvhfKN60+nrkblQ
-         0V1Q==
-X-Gm-Message-State: AOJu0Yx2Vq6VZGxjadSuXQVtX5FunHKAm9R0bkHoJGLF0DrOveg88qYZ
-	FcV+gE69itFB/fiU9ArwNgxr0yV2jV+w1OLYTfo=
-X-Google-Smtp-Source: AGHT+IE4z0Aa2OY/6DqAi1bRkpmctNsQdq0WVGZJdvn+5aQuJ96nNPiPbpC9KIh/XV+LCvwJ5NQP72QYvowHgnzPLzA=
-X-Received: by 2002:a05:6a21:6d9c:b0:18f:df4f:893 with SMTP id
- wl28-20020a056a216d9c00b0018fdf4f0893mr130520pzb.49.1701851015724; Wed, 06
- Dec 2023 00:23:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701851140; x=1702455940;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/RlJ/0i6dTY1VdrdJ+k1E6ZEiT0QfFVf8Ud6BEXjmk=;
+        b=Og5RTPwx2nHfr1et1XssvwYgXzV1r/shOoQlzwREaw2qiQhcSKNLcXtpWgU9tA2Urs
+         B7mdQMoHjK5mt8Tqm29cVoDI/PZ6JuXvxM6ORXtJ6D3bmdHoOS4bm2vRPLkE8VzCe6nf
+         ovuu8byUc8mxlNuoYpDYvUpTo7TCZjIpI/9YYvY8Y+28tKtPd1eI2M+Zbpi579/M8+d3
+         ekCXn8Sgdyyx15otgp15cWNxXJrGCa41YnppasZXZnksJwinQLR2eeRDUBv21Mh7xX1v
+         0EM/WWbH7vP3Y9kMVHGa0L8Xsf+f7RIY3iTFrD/ebXor4Qv0LhWoeFF1d61Ku1rejJua
+         mLYg==
+X-Gm-Message-State: AOJu0YxnFJsdmC/1mf462a56aM0hRJIFj7Jpvy+Cex0pc2rfEbYTBpLT
+	UZWXFs28A/743ieUJzanAkmvwSr5X13CiRfRuKA=
+X-Google-Smtp-Source: AGHT+IHtu5OvMYPi0Orx2ECXcXiRj2nJXY0q+bVMjemAm0BIklzZK2AzBzbm8cPsZmZ3OHH03T16DPsWYnF6SVGMgUs=
+X-Received: by 2002:a05:6214:27c7:b0:67a:e56:221d with SMTP id
+ ge7-20020a05621427c700b0067a0e56221dmr3477933qvb.29.1701851139744; Wed, 06
+ Dec 2023 00:25:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230911094444.68966-1-zhengqi.arch@bytedance.com>
- <20230911094444.68966-43-zhengqi.arch@bytedance.com> <CAJhGHyBdk++L+DhZoZfHUac3ci14QdTM7qqUSQ_fO2iY1iHKKA@mail.gmail.com>
- <93c36097-5266-4fc5-84a8-d770ab344361@bytedance.com>
-In-Reply-To: <93c36097-5266-4fc5-84a8-d770ab344361@bytedance.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Wed, 6 Dec 2023 16:23:24 +0800
-Message-ID: <CAJhGHyBJiYOQGY3t=Lpe4A-rmJML8Mn8GC35GkrQ6Us082ZTAQ@mail.gmail.com>
-Subject: Re: [PATCH v6 42/45] mm: shrinker: make global slab shrink lockless
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: akpm@linux-foundation.org, paulmck@kernel.org, david@fromorbit.com, 
-	tkhai@ya.ru, vbabka@suse.cz, roman.gushchin@linux.dev, djwong@kernel.org, 
-	brauner@kernel.org, tytso@mit.edu, steven.price@arm.com, cel@kernel.org, 
-	senozhatsky@chromium.org, yujie.liu@intel.com, gregkh@linuxfoundation.org, 
-	muchun.song@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20230920024001.493477-1-tfanelli@redhat.com> <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
+ <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm> <CAOQ4uxgW58Umf_ENqpsGrndUB=+8tuUsjT+uCUp16YRSuvG2wQ@mail.gmail.com>
+ <CAOQ4uxh6RpoyZ051fQLKNHnXfypoGsPO9szU0cR6Va+NR_JELw@mail.gmail.com>
+ <49fdbcd1-5442-4cd4-8a85-1ddb40291b7d@fastmail.fm> <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
+ <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
+ <abbdf30f-c459-4eab-9254-7b24afc5771b@fastmail.fm> <40470070-ef6f-4440-a79e-ff9f3bbae515@fastmail.fm>
+ <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
+ <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm> <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
+In-Reply-To: <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Dec 2023 10:25:28 +0200
+Message-ID: <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>, 
+	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com, 
+	hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>, Dharmendra Singh <dsingh@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 6, 2023 at 3:55=E2=80=AFPM Qi Zheng <zhengqi.arch@bytedance.com=
-> wrote:
->
-> Hi,
->
-> On 2023/12/6 15:47, Lai Jiangshan wrote:
-> > On Tue, Sep 12, 2023 at 9:57=E2=80=AFPM Qi Zheng <zhengqi.arch@bytedanc=
-e.com> wrote:
+> >> Is it actually important for FUSE_DIRECT_IO_ALLOW_MMAP fs
+> >> (e.g. virtiofsd) to support FOPEN_PARALLEL_DIRECT_WRITES?
+> >> I guess not otherwise, the combination would have been tested.
 > >
-> >> -       if (!down_read_trylock(&shrinker_rwsem))
-> >> -               goto out;
-> >> -
-> >> -       list_for_each_entry(shrinker, &shrinker_list, list) {
-> >> +       /*
-> >> +        * lockless algorithm of global shrink.
-> >> +        *
-> >> +        * In the unregistration setp, the shrinker will be freed asyn=
-chronously
-> >> +        * via RCU after its refcount reaches 0. So both rcu_read_lock=
-() and
-> >> +        * shrinker_try_get() can be used to ensure the existence of t=
-he shrinker.
-> >> +        *
-> >> +        * So in the global shrink:
-> >> +        *  step 1: use rcu_read_lock() to guarantee existence of the =
-shrinker
-> >> +        *          and the validity of the shrinker_list walk.
-> >> +        *  step 2: use shrinker_try_get() to try get the refcount, if=
- successful,
-> >> +        *          then the existence of the shrinker can also be gua=
-ranteed,
-> >> +        *          so we can release the RCU lock to do do_shrink_sla=
-b() that
-> >> +        *          may sleep.
-> >> +        *  step 3: *MUST* to reacquire the RCU lock before calling sh=
-rinker_put(),
-> >> +        *          which ensures that neither this shrinker nor the n=
-ext shrinker
-> >> +        *          will be freed in the next traversal operation.
+> > I'm not sure how many people are aware of these different flags/features.
+> > I had just finalized the backport of the related patches to RHEL8 on
+> > Friday, as we (or our customers) need both for different jobs.
 > >
-> > Hello, Qi, Andrew, Paul,
-> >
-> > I wonder know how RCU can ensure the lifespan of the next shrinker.
-> > it seems it is diverged from the common pattern usage of RCU+reference.
-> >
-> > cpu1:
-> > rcu_read_lock();
-> > shrinker_try_get(this_shrinker);
-> > rcu_read_unlock();
-> >      cpu2: shrinker_free(this_shrinker);
-> >      cpu2: shrinker_free(next_shrinker); and free the memory of next_sh=
-rinker
-> >      cpu2: when shrinker_free(next_shrinker), no one updates this_shrin=
-ker's next
-> >      cpu2: since this_shrinker has been removed first.
->
-> No, this_shrinker will not be removed from the shrinker_list until the
-> last refcount is released. See below:
->
-> > rcu_read_lock();
-> > shrinker_put(this_shrinker);
->
->         CPU 1                                      CPU 2
->
->    --> if (refcount_dec_and_test(&shrinker->refcount))
->                 complete(&shrinker->done);
->
->                                 wait_for_completion(&shrinker->done);
->                                  list_del_rcu(&shrinker->list);
-
-since shrinker will not be removed from the shrinker_list until the
-last refcount is released.
-
-Is it possible that shrinker_free() can be starved by continuous
-scanners getting and putting the refcount?
-
-Thanks
-Lai
-
-
->
-> > travel to the freed next_shrinker.
-> >
-> > a quick simple fix:
-> >
-> > // called with other references other than RCU (i.e. refcount)
-> > static inline rcu_list_deleted(struct list_head *entry)
-> > {
-> >     // something like this:
-> >     return entry->prev =3D=3D LIST_POISON2;
-> > }
-> >
-> > // in the loop
-> > if (rcu_list_deleted(&shrinker->list)) {
-> >     shrinker_put(shrinker);
-> >     goto restart;
-> > }
-> > rcu_read_lock();
-> > shrinker_put(shrinker);
-> >
-> > Thanks
-> > Lai
-> >
-> >> +        *  step 4: do shrinker_put() paired with step 2 to put the re=
-fcount,
-> >> +        *          if the refcount reaches 0, then wake up the waiter=
- in
-> >> +        *          shrinker_free() by calling complete().
-> >> +        */
-> >> +       rcu_read_lock();
-> >> +       list_for_each_entry_rcu(shrinker, &shrinker_list, list) {
-> >>                  struct shrink_control sc =3D {
-> >>                          .gfp_mask =3D gfp_mask,
-> >>                          .nid =3D nid,
-> >>                          .memcg =3D memcg,
-> >>                  };
 > >>
-> >> +               if (!shrinker_try_get(shrinker))
-> >> +                       continue;
-> >> +
-> >> +               rcu_read_unlock();
-> >> +
-> >>                  ret =3D do_shrink_slab(&sc, shrinker, priority);
-> >>                  if (ret =3D=3D SHRINK_EMPTY)
-> >>                          ret =3D 0;
-> >>                  freed +=3D ret;
-> >> -               /*
-> >> -                * Bail out if someone want to register a new shrinker=
- to
-> >> -                * prevent the registration from being stalled for lon=
-g periods
-> >> -                * by parallel ongoing shrinking.
-> >> -                */
-> >> -               if (rwsem_is_contended(&shrinker_rwsem)) {
-> >> -                       freed =3D freed ? : 1;
-> >> -                       break;
-> >> -               }
-> >> +
-> >> +               rcu_read_lock();
-> >> +               shrinker_put(shrinker);
-> >>          }
-> >>
+> >> FOPEN_PARALLEL_DIRECT_WRITES is typically important for
+> >> network fs and FUSE_DIRECT_IO_ALLOW_MMAP is typically not
+> >> for network fs. Right?
+> >
+> > We kind of have these use cases for our network file systems
+> >
+> > FOPEN_PARALLEL_DIRECT_WRITES:
+> >     - Traditional HPC, large files, parallel IO
+> >     - Large file used on local node as container for many small files
+> >
+> > FUSE_DIRECT_IO_ALLOW_MMAP:
+> >     - compilation through gcc (not so important, just not nice when it
+> > does not work)
+> >     - rather recent: python libraries using mmap _reads_. As it is read
+> > only no issue of consistency.
+> >
+> >
+> > These jobs do not intermix - no issue as in generic/095. If such
+> > applications really exist, I have no issue with a serialization penalty.
+> > Just disabling FOPEN_PARALLEL_DIRECT_WRITES because other
+> > nodes/applications need FUSE_DIRECT_IO_ALLOW_MMAP is not so nice.
+> >
+> > Final goal is also to have FOPEN_PARALLEL_DIRECT_WRITES to work on plain
+> > O_DIRECT and not only for FUSE_DIRECT_IO - I need to update this branch
+> > and post the next version
+> > https://github.com/bsbernd/linux/commits/fuse-dio-v4
+> >
+> >
+> > In the mean time I have another idea how to solve
+> > FOPEN_PARALLEL_DIRECT_WRITES + FUSE_DIRECT_IO_ALLOW_MMAP
+>
+> Please find attached what I had in my mind. With that generic/095 is not
+> crashing for me anymore. I just finished the initial coding - it still
+> needs a bit cleanup and maybe a few comments.
+>
+
+Nice. I like the FUSE_I_CACHE_WRITES state.
+For FUSE_PASSTHROUGH I will need to track if inode is open/mapped
+in caching mode, so FUSE_I_CACHE_WRITES can be cleared on release
+of the last open file of the inode.
+
+I did not understand some of the complexity here:
+
+>        /* The inode ever got page writes and we do not know for sure
+>         * in the DIO path if these are pending - shared lock not possible */
+>        spin_lock(&fi->lock);
+>        if (!test_bit(FUSE_I_CACHE_WRITES, &fi->state)) {
+>                if (!(*cnt_increased)) {
+
+How can *cnt_increased be true here?
+
+>                        fi->shared_lock_direct_io_ctr++;
+>                        *cnt_increased = true;
+>                }
+>                excl_lock = false;
+
+Seems like in every outcome of this function
+*cnt_increased = !excl_lock
+so there is not need for out arg cnt_increased
+
+>        }
+>        spin_unlock(&fi->lock);
+>
+>out:
+>        if (excl_lock && *cnt_increased) {
+>                bool wake = false;
+>                spin_lock(&fi->lock);
+>                if (--fi->shared_lock_direct_io_ctr == 0)
+>                        wake = true;
+>                spin_unlock(&fi->lock);
+>                if (wake)
+>                        wake_up(&fi->direct_io_waitq);
+>        }
+
+I don't see how this wake_up code is reachable.
+
+TBH, I don't fully understand the expected result.
+Surely, the behavior of dio mixed with mmap is undefined. Right?
+IIUC, your patch does not prevent dirtying page cache while dio is in
+flight. It only prevents writeback while dio is in flight, which is the same
+behavior as with exclusive inode lock. Right?
+
+Maybe this interaction is spelled out somewhere else, but if not
+better spell it out for people like me that are new to this code.
+
+Thanks,
+Amir.
 
