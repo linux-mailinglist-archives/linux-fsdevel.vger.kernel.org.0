@@ -1,103 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-4998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCEC806FFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 13:40:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104098072A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 15:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA955281C42
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:40:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95C9BB20EAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 14:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7224F36AF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 12:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133473DBAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 14:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f7sWydai"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jVISvmAW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F84112;
-	Wed,  6 Dec 2023 04:34:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r8reRFycb0Atah5iaBjoNtNIC5cecXDQ0jXEw5GxuRE=; b=f7sWydaiK+oeu4P4WF61PAzdkX
-	hWE6AEt1dMN2zq6wRzVq+L5Ue00Cw0BTq+V+IUydwNrQhkwyL3DPep2ORkCXVlRvL9T3CPpfn8t4w
-	ZYWCFo6OJioGHuyCT+iXJKm4itcVw8paebhEFv/n+qo1MSJO5diXi7RRd/p9MywKiXbwTbn5JyBlZ
-	cFnmMsFgCRKsx4+JWiYbEuHivDPjGpu+BtCShwuKGzFHxfoj1KaKmTbV8SiFTXCgNOiPC6t4E58a6
-	7x6NHM/NS10Ihe7NAisXnLORbcpMYI6xKyNypVedTqgB4og+3OqwFH7RvI8bxqULR+b40rP1Grs/O
-	HKNkMAHg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rAr6K-005A3G-0P;
-	Wed, 06 Dec 2023 12:34:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CD81E300451; Wed,  6 Dec 2023 13:34:02 +0100 (CET)
-Date: Wed, 6 Dec 2023 13:34:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <20231206123402.GE30174@noisy.programming.kicks-ass.net>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-5-af617c0d9d94@google.com>
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38241BD
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 04:38:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701866316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TZQQ6BqHEI6hRsDFbv1/FW96mENZWMKFWNl0n0AGdhw=;
+	b=jVISvmAWQCxftrAgR0WXMbr1r6rJPZTLPh+0On0WaSzV0TF+5AC94pV5915Rdo2BQzapDM
+	cwKFcu1T5PfsT3CrbxqwW4cSxbPygJm+jUpFozoldVhTfjO06nz5gJlBir/BEgNtOezbB9
+	vdN1SacXazgaHvpQo4j7FFmz7y/D3Gk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-thj-CJ5vMACQz1wZWLOP9w-1; Wed,
+ 06 Dec 2023 07:38:31 -0500
+X-MC-Unique: thj-CJ5vMACQz1wZWLOP9w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F74F29AB3F3;
+	Wed,  6 Dec 2023 12:38:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C252E3C2E;
+	Wed,  6 Dec 2023 12:38:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <447324.1701860432@warthog.procyon.org.uk>
+References: <447324.1701860432@warthog.procyon.org.uk>
+To: fstests@vger.kernel.org, samba-technical@lists.samba.org,
+    linux-cifs@vger.kernel.org
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Dave Chinner <david@fromorbit.com>,
+    Filipe Manana <fdmanana@suse.com>,
+    "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: Issues with FIEMAP, xfstests, Samba, ksmbd and CIFS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231206-alice-file-v2-5-af617c0d9d94@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <449657.1701866309.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 06 Dec 2023 12:38:29 +0000
+Message-ID: <449658.1701866309@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Wed, Dec 06, 2023 at 11:59:50AM +0000, Alice Ryhl wrote:
+David Howells <dhowells@redhat.com> wrote:
 
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> index fd633d9db79a..58e3a9dff349 100644
-> --- a/rust/helpers.c
-> +++ b/rust/helpers.c
-> @@ -142,6 +142,51 @@ void rust_helper_put_task_struct(struct task_struct *t)
->  }
->  EXPORT_SYMBOL_GPL(rust_helper_put_task_struct);
->  
-> +kuid_t rust_helper_task_uid(struct task_struct *task)
-> +{
-> +	return task_uid(task);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_task_uid);
-> +
-> +kuid_t rust_helper_task_euid(struct task_struct *task)
-> +{
-> +	return task_euid(task);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_task_euid);
+> So:
+> =
 
-So I still object to these on the ground that they're obvious and
-trivial speculation gadgets.
+>  - Should Samba and ksmbd be using FALLOC_FL_ZERO_RANGE rather than
+>    PUNCH_HOLE?
+> =
 
-We should not have (exported) functions that are basically a single
-dereference of a pointer argument.
+>  - Should Samba and ksmbd be using FIEMAP rather than SEEK_DATA/HOLE?
 
-And I do not appreciate my feedback on the previous round being ignored.
+ - Should Samba and ksmbd report 'unwritten' extents as being allocated?
+
+>  - Should xfstests be less exacting in its FIEMAP analysis - or should t=
+his be
+>    skipped for cifs?  I don't want to skip generic/009 as it checks some
+>    corner cases that need testing, but it may not be possible to make th=
+e
+>    exact extent matching work.
+
 
