@@ -1,99 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-4964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-4979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748EA806C10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:36:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D055F806C3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 11:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B14B20955
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D64C1C20984
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908AD2DF9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706C92D78C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 10:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MEwm3mbf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DFDB18F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:05:23 -0800 (PST)
-Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-1fb01440c98so8507286fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 02:05:23 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0AC61BD
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 02:17:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1701857856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8W9H8eFcQ50zSqzObuWRnLLXlGzFyDXsARs6CIgSL84=;
+	b=MEwm3mbf1dksVxM5qufBvJhJxZrX+igQi5Krkbc19E6SZba8tc1zhhxstlNfszYFI8btTT
+	Cq/MUEx2+zypHQgKq88z1faK7w8WW3WqJK/n/Kypz3pD3VHdoWOljCZ0FB7VuX3v8Nz596
+	vrmhsgy/Z8AwkWMpqEEzzb+j2mMQlC4=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-ybZEGm5NM7CjnYLlGwttMA-1; Wed, 06 Dec 2023 05:17:33 -0500
+X-MC-Unique: ybZEGm5NM7CjnYLlGwttMA-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1d0704bdd5bso22244675ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 02:17:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701857122; x=1702461922;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ghMzzdDHAkF9x2i09e7XzyXKqmjxV4hj0v4OAT6l1ig=;
-        b=ly3DBpA5kmuLq4nWH1SSf9RMepXBxvHPMXciodZw+sJae6fqm3iqimTJ2+johW92tJ
-         0lPiB6VScQVENltnvc1kAuLt26bw7hp706g1G8Ba7MXeLcKfVQN/m5fMA9oALHPBB8T3
-         9CFnboWBVTDHXe5mtlptg962XWcaZVwym9wdiewAHpgkx/q0xEi+Euvt+Zcsym5bdAY1
-         Qad0XSVDDFVd0yxF66vlG8hDeMzi2uMiQESaNaqICQuU/0inIGH4TnFf0cS04AxsWiGR
-         Ahnfuy3jpYUkAB0gxOPAAhTc47Wi2JQ19VCMJOVO7ofCoKJngSEhgl0fnHoGIstANhiC
-         cMnA==
-X-Gm-Message-State: AOJu0YxEorH3PNgDCIZgSqXQnYRGrJJ5bZCvFejiJG6KgEr7NrGZo99d
-	TgPytWsqBYOMExxt/dgpWx2Pkyd3fN2FybusxWK4qcWFE0IRpiQ=
-X-Google-Smtp-Source: AGHT+IESlOtfFmLQIiT46k6wZVD8jMsZ9161jVsumrSdSLaPZzFgXdNY307sZXnjMAgs2S2TVyK0VqXkTE6IYiQCv3llzlpI5WeS
+        d=1e100.net; s=20230601; t=1701857851; x=1702462651;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8W9H8eFcQ50zSqzObuWRnLLXlGzFyDXsARs6CIgSL84=;
+        b=oITVIKHculDxHPQk/cx0ZJlsqHpacj0s2STANdgKCDYiztbdpc5OpetXmCe+tpwigi
+         dEnj6e4ztNb0gR88CKED6LonLz8kg6YPs98xpEh0JY4FaHXoygLEipYfr/zfaAkkUMv1
+         d85exws1VD0WdHTZI2i9UtGWrRjpIHQ0311DdIHqCBMMSdBTHK7yOqlnIZ87z6SS0kdJ
+         aD5MBFrHK5fqM4wpAF1BnT/rRsQfP1GYhcuFPZrMvooj+LG2Jy2/DdSslNuG3IY/eRLG
+         Vyq9l4S9NTvKzA729rxr0KZkX8xdrQFprenb49zPcvCf/QYjXYNjUPS6Wj4GxrVQlfe5
+         aFag==
+X-Gm-Message-State: AOJu0YxCC+ExdUetWVCaIimA+unogyK/tKLCJbeaYAE7TRxKql6NZDB8
+	jYETYAxs3WJH+yt0aSx++pb71E/BHbWN8oR3k1x9Ygc34oLxO+02gP+qUhh4M3rhPndZAm8Hc+o
+	ArVcv35kcorbbK9T8KACX9EThfH8Y6B7fzU0Yom2OJsfFVwMy3w==
+X-Received: by 2002:a17:902:aa03:b0:1d1:d009:8093 with SMTP id be3-20020a170902aa0300b001d1d0098093mr269292plb.28.1701857850875;
+        Wed, 06 Dec 2023 02:17:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFCqI9x33oYIlyTwWmTyW54JXi0mygGAUa53c7PG525Q5UjnxuJ8dR4nrzFwWvIIg3ahN1V/qUpa9D53OeK6a8=
+X-Received: by 2002:a17:902:aa03:b0:1d1:d009:8093 with SMTP id
+ be3-20020a170902aa0300b001d1d0098093mr269285plb.28.1701857850531; Wed, 06 Dec
+ 2023 02:17:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6871:3427:b0:1e5:bc65:26f2 with SMTP id
- nh39-20020a056871342700b001e5bc6526f2mr731233oac.3.1701857122625; Wed, 06 Dec
- 2023 02:05:22 -0800 (PST)
-Date: Wed, 06 Dec 2023 02:05:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040b1a4060bd47d4b@google.com>
-Subject: [syzbot] Monthly hfs report (Dec 2023)
-From: syzbot <syzbot+listd2328e1fb0c2b317ced7@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20231206023636.30460-1-rdunlap@infradead.org>
+In-Reply-To: <20231206023636.30460-1-rdunlap@infradead.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Wed, 6 Dec 2023 11:17:18 +0100
+Message-ID: <CAHc6FU5joEytPYKZ0KMgtQm4r_qqJh2mO1s_YH8cKRWTjyEiHQ@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: rgrp: fix kernel-doc warnings
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello hfs maintainers/developers,
+Hi Randy,
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+thanks, I've pushed this to for-next.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 38 issues are still open and 11 have been fixed so far.
+On Wed, Dec 6, 2023 at 3:46=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org>=
+ wrote:
+> Fix kernel-doc warnings found when using "W=3D1".
+>
+> rgrp.c:162: warning: missing initial short description on line:
+>  * gfs2_bit_search
+> rgrp.c:1200: warning: Function parameter or member 'gl' not described in =
+'gfs2_rgrp_go_instantiate'
+> rgrp.c:1200: warning: Excess function parameter 'gh' description in 'gfs2=
+_rgrp_go_instantiate'
+> rgrp.c:1970: warning: missing initial short description on line:
+>  * gfs2_rgrp_used_recently
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Andreas Gruenbacher <agruenba@redhat.com>
+> Cc: gfs2@lists.linux.dev
+> ---
+>  fs/gfs2/rgrp.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff -- a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+> --- a/fs/gfs2/rgrp.c
+> +++ b/fs/gfs2/rgrp.c
+> @@ -159,13 +159,13 @@ static inline u8 gfs2_testbit(const stru
+>  }
+>
+>  /**
+> - * gfs2_bit_search
+> + * gfs2_bit_search - search bitmap for a state
+>   * @ptr: Pointer to bitmap data
+>   * @mask: Mask to use (normally 0x55555.... but adjusted for search star=
+t)
+>   * @state: The state we are searching for
+>   *
+> - * We xor the bitmap data with a patter which is the bitwise opposite
+> - * of what we are looking for, this gives rise to a pattern of ones
+> + * We xor the bitmap data with a pattern which is the bitwise opposite
+> + * of what we are looking for. This gives rise to a pattern of ones
+>   * wherever there is a match. Since we have two bits per entry, we
+>   * take this pattern, shift it down by one place and then and it with
+>   * the original. All the even bit positions (0,2,4, etc) then represent
+> @@ -1188,7 +1188,7 @@ static void rgrp_set_bitmap_flags(struct
+>
+>  /**
+>   * gfs2_rgrp_go_instantiate - Read in a RG's header and bitmaps
+> - * @gh: the glock holder representing the rgrpd to read in
+> + * @gl: the glock holder representing the rgrpd to read in
 
-Some of the still happening issues:
+So it's a glock, not a glock holder. I've fixed up the description.
 
-Ref  Crashes Repro Title
-<1>  6889    Yes   possible deadlock in hfsplus_file_truncate
-                   https://syzkaller.appspot.com/bug?extid=6030b3b1b9bf70e538c4
-<2>  6601    Yes   possible deadlock in hfsplus_file_extend
-                   https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-<3>  4692    Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<4>  2510    Yes   KMSAN: uninit-value in hfs_revalidate_dentry
-                   https://syzkaller.appspot.com/bug?extid=3ae6be33a50b5aae4dab
-<5>  1526    Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<6>  849     Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<7>  711     Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<8>  668     Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<9>  550     Yes   general protection fault in hfs_find_init
-                   https://syzkaller.appspot.com/bug?extid=7ca256d0da4af073b2e2
-<10> 540     Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
+>   *
+>   * Read in all of a Resource Group's header and bitmap blocks.
+>   * Caller must eventually call gfs2_rgrp_brelse() to free the bitmaps.
+> @@ -1967,7 +1967,7 @@ static bool gfs2_rgrp_congested(const st
+>  }
+>
+>  /**
+> - * gfs2_rgrp_used_recently
+> + * gfs2_rgrp_used_recently - test if an rgrp has been used recently
+>   * @rs: The block reservation with the rgrp to test
+>   * @msecs: The time limit in milliseconds
+>   *
+>
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
+Andreas
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
