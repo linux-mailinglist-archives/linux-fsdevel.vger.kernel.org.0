@@ -1,115 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-5035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0428C8077CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:44:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29048077D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1D61F202CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:44:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6316BB20EA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95E3FE3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D1146558
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5o5AKQv"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iXqyrWov"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9B1B2;
-	Wed,  6 Dec 2023 08:53:29 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-db632fef2dcso5351019276.1;
-        Wed, 06 Dec 2023 08:53:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701881609; x=1702486409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EIbDoWDGZzPGryjjQbO4uNmk+Z9wCOK+KNEROFMvLaQ=;
-        b=k5o5AKQvuFgLpmD58q0yrITbCvHIuj8DFoZ2nsvgi05kC/4hiKWBQGrCS9356zGmxo
-         f0+rvpjNsLNBE6wG+qS+NM/pm0Gx18UqVH9tn9acyKPwWb4da1U5Ixqp2aYyHP6KpcEF
-         2d1w+aW5g9Xf2pT8iWSa42SczQMfrindrpODAY6hL46Gye00zQJ6ND4fpWx/B8DTzYOn
-         8hdAQap/h6mcFTCcqQCEv1fhFHz5HfaKXQQMxrCduRNtUU2J0jmiRzQ2Yf22l36Z9T56
-         6oZe3SoWUKBw/5lUdfh5hRV6Ze7/0ACsIgMh0KqdINXyHA9qAN8vi7iPZeeKHUmWcs+R
-         6cXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701881609; x=1702486409;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EIbDoWDGZzPGryjjQbO4uNmk+Z9wCOK+KNEROFMvLaQ=;
-        b=jh963ONmvNgAU30PUjyxVfvONV9mrCxkEpTNzAwdErglh/mRg5F1AOBAfWdwOJehSu
-         AnV/utpkngO0j/Vhp+xijFp4UZ2+ribTRXV5E4giEM9knjQdVrqhvCEKv3KC2+cZ3J1e
-         QubYFRn18WF+ql9B2UUC+VHjtIH0Ri6MiLGmNdSstPvAk7tEM125P6jFE6d9QWDrV2Ig
-         95oMhtBPyQ4b7HzYdROnUwnBCpbrfh/ul82GYOVGxHyzSbaDyZWQOQvd0LBndpn4GF3V
-         2+fTlAEMOncOiFGl4NTt/3o7o43JPUvrseY8iXx/UDPT084/WQDwYODyBKNbI5Itwi0W
-         XjkA==
-X-Gm-Message-State: AOJu0YwdhJj1cODfa7Be8fmVOYsNo0yN9PX63Rg2izu7s/1vrs76q/x/
-	BaGLF4E4S7lSNH4q1AURxQU=
-X-Google-Smtp-Source: AGHT+IHVHPSD+r3xJXIqpcARoAiwf4jvi2eJ/slaF1zVRei8FMbIBeOClVa5Rx6hCg4mEYcj/vkPwg==
-X-Received: by 2002:a25:f402:0:b0:da0:cea9:2b3b with SMTP id q2-20020a25f402000000b00da0cea92b3bmr928071ybd.62.1701881608809;
-        Wed, 06 Dec 2023 08:53:28 -0800 (PST)
-Received: from firmament.. (h198-137-20-4.xnet.uga.edu. [198.137.20.4])
-        by smtp.gmail.com with ESMTPSA id k18-20020a258c12000000b00d9a4aad7f40sm3859181ybl.24.2023.12.06.08.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Dec 2023 08:53:28 -0800 (PST)
-From: Matthew House <mattlloydhouse@gmail.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: libc-alpha@sourceware.org,
-	linux-man <linux-man@vger.kernel.org>,
-	Alejandro Colomar <alx@kernel.org>,
-	Linux API <linux-api@vger.kernel.org>,
-	Florian Weimer <fweimer@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	Karel Zak <kzak@redhat.com>,
-	Ian Kent <raven@themaw.net>,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC] proposed libc interface and man page for listmount
-Date: Wed,  6 Dec 2023 11:53:14 -0500
-Message-ID: <20231206165316.744646-1-mattlloydhouse@gmail.com>
-In-Reply-To: <CAJfpegvUWH9uncnxWj50o7p9WGWgV3BL2=EnqKY28S=4J4ywHw@mail.gmail.com>
-References: <CAJfpeguMViqawKfJtM7_M9=m+6WsTcPfa_18t_rM9iuMG096RA@mail.gmail.com> <20231205175117.686780-1-mattlloydhouse@gmail.com> <CAJfpegvUWH9uncnxWj50o7p9WGWgV3BL2=EnqKY28S=4J4ywHw@mail.gmail.com>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA92D5A;
+	Wed,  6 Dec 2023 09:10:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8B0zV/poM1+6RJnq4neUyRen0Ru3/1wbuZ2eoYNBfro=; b=iXqyrWovcaJI4ejYTmnN+QfbAm
+	pEHqcq06ZKFzvmFLBja3d23RsUGzH0WlpOGUBccZexn/yR5DVlx6AsqE6DbV9p9VIcupY/IO9OEVC
+	LCUbY1gCHFZ909YVwK/lrLgFXSWeN/3zrntg59dxHBiWDoY2+Vcl7CGqPWH+hz6oBn4DbGwmGZm+9
+	lL3U70Kffa+lNfpTAzEwq0WduF6i7kXrqPkUvNZP6cF/f/tlNlmT2KyccIv6ZdD+BO3ZzLVRG5FrT
+	hXsPO6mV+6U+Oba77zrERqBFaRiINg9LqCMV1SKikLlCdbQ+5yBZ4Pm8w6vN2BWe3MUo3nCdNsRd4
+	nzxIa9TA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rAvPK-007qni-0e;
+	Wed, 06 Dec 2023 17:09:58 +0000
+Date: Wed, 6 Dec 2023 17:09:58 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, linux-doc@vger.kernel.org,
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()] 1b738f196e:
+ stress-ng.sysinfo.ops_per_sec -27.2% regression
+Message-ID: <20231206170958.GP1674809@ZenIV>
+References: <20231201065602.GP38156@ZenIV>
+ <20231201200446.GA1431056@ZenIV>
+ <ZW3WKV9ut7aFteKS@xsang-OptiPlex-9020>
+ <20231204195321.GA1674809@ZenIV>
+ <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020>
+ <20231206054946.GM1674809@ZenIV>
+ <ZXCLgJLy2b5LvfvS@xsang-OptiPlex-9020>
+ <20231206161509.GN1674809@ZenIV>
+ <20231206163010.445vjwmfwwvv65su@f>
+ <CAGudoHF-eXYYYStBWEGzgP8RGXG2+ER4ogdtndkgLWSaboQQwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHF-eXYYYStBWEGzgP8RGXG2+ER4ogdtndkgLWSaboQQwA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Dec 6, 2023 at 4:38 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Tue, 5 Dec 2023 at 18:51, Matthew House <mattlloydhouse@gmail.com> wro=
-te:
-> > One use case I've been thinking of involves inspecting the mount list
-> > between syscall(__NR_clone3) and _exit(), so it has to be async-signal-
-> > safe. It would be nice if there were a libc wrapper that accepted a use=
-r-
-> > provided buffer and was async-signal-safe, so that I wouldn't have to a=
-dd
-> > yet another syscall wrapper and redefine the kernel types just for this
-> > use case. (I can't trust the libc not to make its own funny versions of=
- the
-> > types' layouts for its own ends.)
->
-> You can just #include <linux/mount.h> directly.
+On Wed, Dec 06, 2023 at 05:42:34PM +0100, Mateusz Guzik wrote:
 
-The problem with including the <linux/*> headers is that they conflict with
-the regular libc headers. So for instance, if I try to include both
-<linux/mount.h> (for the listmount(2) kernel types) and <sys/mount.h> (for
-the mount(2) and umount2(2) wrappers) on glibc, then I'll get a conflicting
-definition for every single MS_* macro.
+> That is to say your patchset is probably an improvement, but this
+> benchmark uses kernfs which is a total crapper, with code like this in
+> kernfs_iop_permission:
+> 
+>         root = kernfs_root(kn);
+> 
+>         down_read(&root->kernfs_iattr_rwsem);
+>         kernfs_refresh_inode(kn, inode);
+>         ret = generic_permission(&nop_mnt_idmap, inode, mask);
+>         up_read(&root->kernfs_iattr_rwsem);
+> 
+> 
+> Maybe there is an easy way to dodge this, off hand I don't see one.
 
-I suppose I could try to put all the listmount(2) stuff in a separate file,
-but that would still require manual redefinitions of the listmount(2)
-flags, unless I trusted libc to have its own identical redefinitions in
-<sys/mount.h> or whatever header the wrapper would end up in, instead of
-shuffling stuff around and translating it. Also, my current style in C is
-to put all related code into a single file as possible, which this would
-interfere with. At that point, I might as well redefine the whole thing.
+At a guess - seqcount on kernfs nodes, bumped on metadata changes
+and a seqretry loop, not that this was the only problem with kernfs
+scalability.
 
-Thank you,
-Matthew House
+That might account for sysinfo side, but not the unixbench - no kernfs
+locks mentioned there.  OTOH, we might be hitting the wall on
+->i_rwsem with what it's doing...
 
