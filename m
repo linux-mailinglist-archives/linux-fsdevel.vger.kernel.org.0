@@ -1,178 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-5033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39DC8077C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:43:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0478077C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 19:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EE28210C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDA81C20B64
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218F6EB76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8DC6F610
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Dec 2023 18:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXULRDIp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD61D69;
-	Wed,  6 Dec 2023 08:50:41 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sljj71151zB0LnM;
-	Thu,  7 Dec 2023 00:36:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id AF6CE140801;
-	Thu,  7 Dec 2023 00:50:32 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3MnNLpnBlbvgJAg--.48489S2;
-	Wed, 06 Dec 2023 17:50:32 +0100 (CET)
-Message-ID: <795534ce04428d5cf6d64b8d6fc567a6d444ab5a.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
- jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
- tom@talpey.com, jmorris@namei.org, serge@hallyn.com,
- dmitry.kasatkin@gmail.com,  dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com,  eparis@parisplace.org,
- casey@schaufler-ca.com, mic@digikod.net,  linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-nfs@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org,  selinux@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Wed, 06 Dec 2023 17:50:16 +0100
-In-Reply-To: <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
-	 <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
-	 <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
-	 <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com>
-	 <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
-	 <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
-	 <90eb8e9d-c63e-42d6-b951-f856f31590db@huaweicloud.com>
-	 <CAHC9VhROnfBoaOy2MurdSpcE_poo_6Qy9d2U3g6m2NRRHaqz4Q@mail.gmail.com>
-	 <5f441267b6468b98e51a08d247a7ae066a60ff0c.camel@huaweicloud.com>
-	 <d608edb80efe03b62698ab33cbee1eea856a0422.camel@huaweicloud.com>
-	 <7aefd87764ba8962de85250ff92b82800550401b.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA94D3;
+	Wed,  6 Dec 2023 08:52:44 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3b845ba9ba9so10155b6e.3;
+        Wed, 06 Dec 2023 08:52:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701881563; x=1702486363; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1au5lbtdhuYhTzxu7K3e1mZkKqka6jLLtZkjNaoKMc=;
+        b=ZXULRDIpSZOkiumlJHfa69UVuyRP0DruUZNJpc+Hh4BvfpWz1YPdOgpqiR4TV1picY
+         uGRQqisr0a5fDaf8OG639RBlSoJ0uRYDYav0OW3V6x8VU1fMO4TJSHqcNSD42LKoFyCt
+         O6flSvpCm1gdyzuzPieDpSkJn0h3tGOjmSUdTPzzBlpwEn//ssCoRZhIl9hiqqPHuJGi
+         SzDNC+kqCEDTqzT/MAcEepey/BkWw96a/YsEnRU7tyNLEwRvUY+9FtGiN6MBEEbWz2J5
+         bM9fJSu9e6LWlwF6m/kYiiffUk311orf2vh9BltaMjEYFI8x5103tY/vBmSFrwNQHeRA
+         phLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701881563; x=1702486363;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i1au5lbtdhuYhTzxu7K3e1mZkKqka6jLLtZkjNaoKMc=;
+        b=FHUvE5bqPa2tTAndkmlIcWfyxN5r6mNjHKMfL8hNaaN59ftjA50M9QQx1G4oSSEhj9
+         TiLh27S4ON0dMBS9uwqOSSErTQ2hO2mf2DQoupRzZTNGuNzbb2muQQdDpcaiIOUB9J/R
+         wmU6jNHDNPSW5r8oWovcBsiMBHSLvsjGbN3Y48QhDfFY9DuGzcjIE/3WdZA8hc/KnyfW
+         4UGSJP3pIX9yCmm1vHmdpnhoRRsubMpvrV7ic92UH5UC4RGZCYXwentVFlGXcE63NgLq
+         sXWclAjWJ5SeinWkVCcOAv6ab/UWMhEOwEZg1ktqUsj8YjZMxIDKU87PvNcR64WwBbXR
+         wnMg==
+X-Gm-Message-State: AOJu0YwL0PeL63ja9Fex5aIaSlm7xPutT0LYb8k1InQqYAsIL31ozXW5
+	GZYTLBUQfSD9EKoyvayKhi2dDI/Hmr+s/Hj8Wmo=
+X-Google-Smtp-Source: AGHT+IGZ/Yr5F7fr0x3yUHZ3H8FzlhrdgaoQi9g9SY9SBjIS2V506x0YzxsM95+SBtT/PUWyn/Ecfay+HG2v633hkYE=
+X-Received: by 2002:a05:6870:1711:b0:1fb:75c:3feb with SMTP id
+ h17-20020a056870171100b001fb075c3febmr1324530oae.75.1701881563431; Wed, 06
+ Dec 2023 08:52:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD3MnNLpnBlbvgJAg--.48489S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF17AF18XF48Cw4rZr4UXFb_yoW5AFykpF
-	y7KFWDJw4DAryjkrsayF45ZF40yrWSqFZ8Gr1Fkrn5Ar98Xr10qrWSyry5uFy3GrsYgay2
-	vr4YkrnrZF1DZ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
-	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5dSJwACsX
+Received: by 2002:a05:6802:30f:b0:50c:13ee:b03d with HTTP; Wed, 6 Dec 2023
+ 08:52:43 -0800 (PST)
+In-Reply-To: <20231206164513.GO1674809@ZenIV>
+References: <20231201040951.GO38156@ZenIV> <20231201065602.GP38156@ZenIV>
+ <20231201200446.GA1431056@ZenIV> <ZW3WKV9ut7aFteKS@xsang-OptiPlex-9020>
+ <20231204195321.GA1674809@ZenIV> <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020>
+ <20231206054946.GM1674809@ZenIV> <ZXCLgJLy2b5LvfvS@xsang-OptiPlex-9020>
+ <20231206161509.GN1674809@ZenIV> <20231206163010.445vjwmfwwvv65su@f> <20231206164513.GO1674809@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 6 Dec 2023 17:52:43 +0100
+Message-ID: <CAGudoHGUDtiRN_AbMHYWPN+ABRkMUG-sZD5J=v0x2Z=HrK+hnw@mail.gmail.com>
+Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()] 1b738f196e:
+ stress-ng.sysinfo.ops_per_sec -27.2% regression
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-doc@vger.kernel.org, ying.huang@intel.com, feng.tang@intel.com, 
+	fengwei.yin@intel.com, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2023-12-06 at 11:11 -0500, Mimi Zohar wrote:
-> On Wed, 2023-12-06 at 14:10 +0100, Roberto Sassu wrote:
-> > On Mon, 2023-12-04 at 14:26 +0100, Roberto Sassu wrote:
->=20
-> ...
-> > > If the result of this patch set should be that IMA and EVM become
-> > > proper LSMs without the shared integrity layer, instead of collapsing
-> > > all changes in this patch set, I think we should first verify if IMA
-> > > and EVM can be really independent. Once we guarantee that, we can
-> > > proceed making the proper LSMs.
-> > >=20
-> > > These are the changes I have in mind:
-> > >=20
-> > > 1) Fix evm_verifyxattr(), and make it work without integrity_iint_cac=
-he
-> > > 2) Remove the integrity_iint_cache parameter from evm_verifyxattr(),
-> > >    since the other callers are not going to use it
-> >=20
-> > Ehm, I checked better.
-> >=20
-> > integrity_inode_get() is public too (although it is not exported). So,
-> > a caller (not IMA) could do:
-> >=20
-> > iint =3D integrity_inode_get(inode);
-> > status =3D evm_verifyxattr(..., iint);
-> >=20
-> > However, it should not call integrity_inode_free(), which is also in
-> > include/linux/integrity.h, since this is going to be called by
-> > security_inode_free() (currently).
+On 12/6/23, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Wed, Dec 06, 2023 at 05:30:10PM +0100, Mateusz Guzik wrote:
+>
+>> > What the hell is going on?  Was ->d_lock on parent serving as a throttle
+>> > and reducing
+>> > the access rate to something badly contended down the road?  I don't see
+>> > anything
+>> > of that sort in the profile changes, though...
+>
+>> Not an outlandish claim would be that after you stopped taking one of
+>> them, spinning went down and more traffic was put on locks which *can*
+>> put their consumers off cpu (and which *do* do it in this test).
+>
+> That's about the only guess I've got (see above), but if that's the case,
+> which lock would
+> that be?
+>
+>> All that said I think it would help if these reports started including
+>> off cpu time (along with bt) at least for spawned threads.
+>
 
-Oh, I needed to add a check for the iint here:
+Given backtracs I posted it's at least root->kernfs_iattr_rwsem (see
+kernfs_iop_permission), but there may be more.
 
+Ultimately I expect would be easy to answer if one was to rebuild with lockstat.
 
-void integrity_inode_free(struct inode *inode)
-{
-	struct integrity_iint_cache *iint;
+I may end up doing it tomorrow if there is a problem testing this on your end.
 
-	if (!IS_IMA(inode))
-		return;
-
-	iint =3D integrity_iint_find(inode);
-	if (!iint)                          <=3D=3D=3D this
-		return;
-
-	integrity_inode_set_iint(inode, NULL);
-
-	iint_free(iint);
-}
-
-> Calling integrity_inode_free() directly would release the iint early. =
-=20
-> As a result, IMA would then need to re-allocate it on next access.=20
-> Other than impacting IMA's performance, is this a problem?
-
-Uhm, I think the iint could be freed while IMA is using it, for example
-in process_measurement().
-
-Roberto
-
-> > > 3) Create an internal function with the original parameters to be use=
-d
-> > >    by IMA
-> > > 4) Introduce evm_post_path_mknod(), which similarly to
-> > >    ima_post_path_mknod(), sets IMA_NEW_FILE for new files
-> >=20
-> > I just realized that also this is changing the current behavior.
-> >=20
-> > IMA would clear IMA_NEW_FILE in ima_check_last_writer(), while EVM
-> > wouldn't (unless we implement the file_release hook in EVM too).
->=20
-> True
->=20
-> Mimi
->=20
-> > > 5) Add hardcoded call to evm_post_path_mknod() after
-> > >    ima_post_path_mknod() in security.c
-> > >=20
-> > > If we think that this is good enough, we proceed with the move of IMA
-> > > and EVM functions to the LSM infrastructure (patches v7 19-21).
-> > >=20
-> > > The next patches are going to be similar to patches v6 22-23, but
-> > > unlike those, their goal would be simply to split metadata, not to ma=
-ke
-> > > IMA and EVM independent, which at this point has been addressed
-> > > separately in the prerequisite patches.
-> > >=20
-> > > The final patch is to remove the 'integrity' LSM and the integrity
-> > > metadata management code, which now is not used anymore.
-> > >=20
-> > > Would that work?
-> >=20
-> > We are not making much progress, I'm going to follow any recommendation
-> > that would move this forward.
->=20
-
+-- 
+Mateusz Guzik <mjguzik gmail.com>
 
