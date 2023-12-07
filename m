@@ -1,42 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-5196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1C780927B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 21:38:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF7480927C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 21:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E064281EA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449141F2122B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB662563AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B092D5639A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="dxjkUD26"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nJRdrpHl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D5DA9;
-	Thu,  7 Dec 2023 11:19:46 -0800 (PST)
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C6810DC;
+	Thu,  7 Dec 2023 11:23:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1701976784;
-	bh=8EhX5dFEoQVo4ra/hauFi9FL5y3h3LfWv35aPkeCC9k=;
+	s=mail; t=1701976997;
+	bh=6SYQxYyGrcDvx6IRN+6dIff5PVo7wQPuPHWX4hH6KZA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dxjkUD26Nj6K/4ciJrCrVr2UOWn52vU+Fs4HJzgCi+NnOQJo/XEm4ZcNXd6KKxMmJ
-	 lxVBEzoyhC58LUoNs38SgEqduBnSJuKhtVuVHYMrkI4kV2WtgEHiS2t85YfBXeiGEQ
-	 sy4GqrNlgZKtQDGu63+OGmMNEkrMqWvdquQsz7xo=
-Date: Thu, 7 Dec 2023 20:19:43 +0100
+	b=nJRdrpHl406V8Pqv+diMBiUkggs7GtUBNOx0+SSTMlNWhL6h7/9+XQ/o7Ul2ru7YQ
+	 0TkWrmXbCwMT0a04wtzuExXuKNewvXrDMSts24ePrOt49uTn3dQ+Ap0nA1sV5cT09A
+	 BvZPUjsgDL//msyJBTFObJS3p7YQtjTXc7BaeONU=
+Date: Thu, 7 Dec 2023 20:23:16 +0100
 From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
 To: Joel Granados <j.granados@samsung.com>
-Cc: Kees Cook <keescook@chromium.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
 	Iurii Zaikin <yzaikin@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
-References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
- <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <20231207104357.kndqvzkhxqkwkkjo@localhost>
+Message-ID: <f327cf10-3680-43ec-a05c-8c038af767c0@t-8ch.de>
+References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+ <ZW66FhWx7W67Y9rP@bombadil.infradead.org>
+ <b4b0b7ea-d8b3-4538-a5b9-87a23bbdac5f@t-8ch.de>
+ <CGME20231205171700eucas1p17edbc33ec1d0be37573b1977b76b9ce6@eucas1p1.samsung.com>
+ <d50978d8-d4e7-4767-8ea7-5849f05d3be1@t-8ch.de>
+ <20231207111957.b24ib4hcxr6xufll@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,91 +49,59 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231207104357.kndqvzkhxqkwkkjo@localhost>
+In-Reply-To: <20231207111957.b24ib4hcxr6xufll@localhost>
 
-On 2023-12-07 11:43:57+0100, Joel Granados wrote:
-> Hey Thomas
-> 
-> You have a couple of test bot issues for your 12/18 patch. Can you
-> please address those for your next version.
-
-I have these fixed locally, I assumed Luis would also pick them up
-directly until I have a proper v2, properly should have communicated
-that.
-
-> On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Weißschuh wrote:
-> > Problem description:
+On 2023-12-07 12:19:57+0100, Joel Granados wrote:
+> On Tue, Dec 05, 2023 at 06:16:53PM +0100, Thomas Weißschuh wrote:
+> > Hi Luis, Joel,
 > > 
-> > The kernel contains a lot of struct ctl_table throught the tree.
-> > These are very often 'static' definitions.
-> > It would be good to make the tables unmodifiable by marking them "const"
-> Here I would remove "It would be good to". Just state it: "Make the
-> tables unmodifiable...."
+> > On 2023-12-05 09:04:08+0100, Thomas Weißschuh wrote:
+> > > On 2023-12-04 21:50:14-0800, Luis Chamberlain wrote:
+> > > > On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Weißschuh wrote:
+> > > > > Tested by booting and with the sysctl selftests on x86.
+> > > > 
+> > > > Can I trouble you to rebase on sysctl-next?
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
+> > > 
+> > > Will do.
+> > 
+> > The rebased series is now available at
+> > https://git.sr.ht/~t-8ch/linux b4/const-sysctl
+> > 
+> > Nothing much has changed in contrast to v2.
+> > The only functional change so far is the initialization of
+> > ctl_table_header::type in init_header().
+> > 
+> > I'll wait for Joels and maybe some more reviews before resending it.
+> > 
+> > > [..]
+> > 
+> > For the future I think it would make sense to combine the tree-wide constification
+> > of the structs with the removal of the sentinel values.
 
-Ack.
+> I don't see how these two would fit. And this is why:
+> 1. The "remove sentinel" stuff is almost done. With the sets going into
+>    6.7 we would only be missing everything under net/*. So you would not
+>    be able to combine them (except for the net stuff)
+> 2. The motivation for the two sets is differnt. This would confuse
+>    rather than simplify the process.
+> 3. In order to introduce the const stuff we would have to go through
+>    another round of "convincing" which can potentially derail the
+>    "remove sentinel" stuff.
 
-> 
-> > to avoid accidental or malicious modifications.
-> > This is in line with a general effort to move as much data as possible
-> > into .rodata. (See for example[0] and [1])
+Good reasons, especially 1).
+ 
+> I would *not* like to combine them. I think the const set can stand on
+> its own.
 
-> If you could find more examples, it would make a better case.
+It was more about a process optimization. If somebody has to touch each
+sysctl table anyway and test the changes, doing so for both series would
+be easier for the sysctl and subsystem maintainers.
 
-I'll look for some. So far my constifications went in without them :-)
+But alas, it seems I have to do it myself and can't heap it onto your
+pile :-)
 
 > > 
-> > Unfortunately the tables can not be made const right now because the
-> > core registration functions expect mutable tables.
-> > 
-> > This is for two main reasons:
-> > 
-> > 1) sysctl_{set,clear}_perm_empty_ctl_header in the sysctl core modify
-> >    the table.
-> > 2) The table is passed to the handler function as a non-const pointer.
-> > 
-> > This series migrates the core and all handlers.
-
-> awesome!
-> 
-> > 
-> > Structure of the series:
-> > 
-> > Patch 1-3:   Cleanup patches
-> > Patch 4-7:   Non-logic preparation patches
-> > Patch 8:     Preparation patch changing a bit of logic
-> > Patch 9-12:  Treewide changes to handler function signature
-> > Patch 13-14: Adaption of the sysctl core implementation
-> > Patch 15:    Adaption of the sysctl core interface
-> > Patch 16:    New entry for checkpatch
-> > Patch 17-18: Constification of existing "struct ctl_table"s
-> > 
-> > Tested by booting and with the sysctl selftests on x86.
-> > 
-> > Note:
-> > 
-> > This is intentionally sent only to a small number of people as I'd like
-> > to get some more sysctl core-maintainer feedback before sending this to
-> > essentially everybody.
-
-> When you do send it to the broader audience, you should chunk up your big
-> patches (12/18 and 11/18) and this is why:
-> 1. To avoid mail rejections from lists:
->    You have to tell a lot of people about the changes in one mail. That
->    will make mail header too big for some lists and it will be rejected.
->    This happened to me with [3]
-> 2. Avoid being rejected for the wrong reasons :)
->    Maintainers are busy ppl and sending them a set with so many files
->    may elicit a rejection on the grounds that it involves too many
->    subsystems at the same time.
-> I suggest you chunk it up with directories in mind. Something similar to
-> what I did for [4] where I divided stuff that when for fs/*, kernel/*,
-> net/*, arch/* and drivers/*. That will complicate your patch a tad
-> because you have to ensure that the tree can be compiled/run for every
-> commit. But it will pay off once you push it to the broader public.
-
-This will break bisections. All function signatures need to be switched
-in one step. I would strongly like to avoid introducing broken commits.
-
-The fact that these big commits have no functional changes at all makes
-me hope it can work.
+> > This would reduce the impacts of the maintainers.
 
