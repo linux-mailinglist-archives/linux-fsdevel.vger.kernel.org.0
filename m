@@ -1,228 +1,476 @@
-Return-Path: <linux-fsdevel+bounces-5071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768C9807D50
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 01:40:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFFF807D51
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 01:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17512822D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2CD1C20953
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A5B7F6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3F1ED5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="JxMPA30G";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yFKJbaip"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahZnDzFr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84338A9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 15:28:18 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailout.west.internal (Postfix) with ESMTP id 4B1053200A85;
-	Wed,  6 Dec 2023 18:28:17 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 06 Dec 2023 18:28:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-	1701905296; x=1701991696; bh=B1rFeRkS3GeZSRxt6EOkZssTjs7TOWBNo53
-	RsxFTFrA=; b=JxMPA30Gi7+OBpdhbiy/qSfikRSADxTO8rsbZ6mapMuB/Eya7oC
-	htYhuMBT+ktlxpXyPPI5vTY3nzGpf0jssQp5iRhcDdqMaDcWurRrRZTorfBzdmPy
-	rwquoGiM26GRMpaYVZp9dIzxYEKg/Hl/aYsx/b387HUc97oXwv6ykgV/0RshJrTe
-	3GVL/XVSkT7OjGppZPq8b9zMV2fcWqejN0r9iQrBqda6dqJy/WvkAD1x8R9xU+UM
-	B5rWpe/APmcnndNHMBt2tTirUgcBDqDeJ6Hr3540/8agOiFEnx84kRb7oXsOoJ1Y
-	ZDaiS5iCZYcbTWW7sAKOHzmsszAtoZikE0A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:sender:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1701905296; x=1701991696; bh=B1rFeRkS3GeZSRxt6EOkZssTjs7TOWBNo53
-	RsxFTFrA=; b=yFKJbaip0VSgSNU3atDuRFwMmM4naGCnhEY8Yj9tBgAbgKKt40M
-	7pHBvLogK3lPGWgRyYkYDJWAMqBuiD9USUUgffbY/G8DMBhu9Ts6RpMElKEgXLKc
-	u173V4V4OvBeXGrUnxBA0AqalCS0fUMN5GErgSVhAeUVTGG6IKPH+lc4+TFVnwDs
-	FQaoFwiEFd6E6S6rOHS+S0HXnTMYhwNJ29cdfWKE+Hd1yz3cvQzQ+PA7HBKWl13W
-	hQ31Mt1OcRDBrFvk9pqfq7t0aeunTpWHC0Zws68MOLR01VmeIIo4QB7Y+vidILF/
-	l19UBKTs31uO50eSYth2ISvYu+Snm0BIKLw==
-X-ME-Sender: <xms:kANxZRQ9c13mH_iETKHOaVW7et7Wb86_r8DJYenU8oCQ4r9gPOZDNw>
-    <xme:kANxZawVV0G9l7DQHIfXUN3t0cgkxtibLoZ4DjxeJLn9KwP6g2ooUne_TaOumHNPb
-    H8PWIgfNdsa6ig5>
-X-ME-Received: <xmr:kANxZW0afSmGF4ydJ86-sNhVv4MVtA1y01QEJRsQGbkcwO-Z7JMo0YU5GUScueD_SgY15Ab95hM6J5M3Dr40SNjxk2zavVWiJV1ehvyqU6JQOJtNPtx_>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekuddgtdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnheptddugefgjeefkedtgefhheegvddtfeejheeh
-    ueeufffhfeelfeeuheetfedutdeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
-    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:kANxZZCaYTdZ7LTpFjdSMEiP5sfim4WMpUbV7hvEi2gKV0r7ztoe2g>
-    <xmx:kANxZajzb954YxD3RsDendzNnV92h8KG820CDMjPdMJGBXEy7oKuRw>
-    <xmx:kANxZdpKWhrKovjKAhqssHo1HY9eb1DDqYPhfUB5-NnfTeObqT931g>
-    <xmx:kANxZehioYnTbPt-E2ZsSsdF0tkQZ-rBO1uh6TWigxDeXWJw9WfYnA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 6 Dec 2023 18:28:14 -0500 (EST)
-Message-ID: <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm>
-Date: Thu, 7 Dec 2023 00:28:13 +0100
+Received: from mail-yw1-x1144.google.com (mail-yw1-x1144.google.com [IPv6:2607:f8b0:4864:20::1144])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE33318D;
+	Wed,  6 Dec 2023 16:28:10 -0800 (PST)
+Received: by mail-yw1-x1144.google.com with SMTP id 00721157ae682-5d3644ca426so1010387b3.1;
+        Wed, 06 Dec 2023 16:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701908890; x=1702513690; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2jrmbLAF90SkKFGh277QUQB5VktoD8qYGVqtPErfcM=;
+        b=ahZnDzFryBtkIyX0PsIjS6rx91sgurvC84agAuLdBcZU2Xq+1C6BSfgAXw+VHz4LOi
+         voGDvIQsEjMc0X/rDZffkebgc5xV8BwytW5++Uje7pD6d3d9Ybtibtx3YC2bwwOyf1Ks
+         XrAgHkkZkG8AZeD4t98Uwmf73bfubX5x08Lq4rDHo6lRy6CWS2Op5BYj2y8ab6ZvBWv6
+         3gB/hLR71RgvNeC/pURhRaGJB6gnR9QQ4CWdfnB7DWiHwW9hHNqHFnDKm3N6qYKibCv8
+         N15/CZ+RbiVXbLMVxiy0oH/NN6p654dA8X8BO0WUghyGZiJq4GuaW7ICYoj1MWQrPnph
+         42HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701908890; x=1702513690;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p2jrmbLAF90SkKFGh277QUQB5VktoD8qYGVqtPErfcM=;
+        b=g+RmMLEmLzIGx4rw2A0hS7CC66BpQzWlRh35vUFxJ56Oqv1d5JGic748uDOh3PWgSD
+         9UG0U0X/AINZbSqVFiqLAmkCEXnPcfFbrqibejoRCXVIF0JjSs9M36e+ox5hBlntSptY
+         bko1Anae6ClUUiZwNEJUFnsOO/4KAq9SA5FXxPyk/DGTS4/M2iu3/25mio/o4QdSpa55
+         9P2LFQ2O9dM/6odz4d9INghLW5WWTJdn0DcWpWxXCHpLWQ3XFdkGufa2PS0MoarRRDDR
+         fG2BHPJfahAZrHrzlPXk3uI61FQK7mJpRjnCaX/k4YSebEVlChMBZzs7IboslqP/YKEZ
+         Vzcw==
+X-Gm-Message-State: AOJu0YzxI603g3WjkExDsJjEZfRRBs403esiR1u04bw7/DwpWLujSRix
+	HKPXpbyOpqvFW3VHbaxwkg==
+X-Google-Smtp-Source: AGHT+IEQJAoREK4xn8fsoXYjhaCunmOrXu+8IFSL9PQ5FsLRppKBmZuAP2/vtiTo6pDT7CHS3wM00A==
+X-Received: by 2002:a81:aa09:0:b0:5d7:1941:355b with SMTP id i9-20020a81aa09000000b005d71941355bmr1862188ywh.66.1701908889569;
+        Wed, 06 Dec 2023 16:28:09 -0800 (PST)
+Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id x145-20020a81a097000000b005d82fc8cc92sm19539ywg.105.2023.12.06.16.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Dec 2023 16:28:09 -0800 (PST)
+From: Gregory Price <gourry.memverge@gmail.com>
+X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
+To: linux-mm@kvack.org,
+	jgroves@micron.com,
+	ravis.opensrc@micron.com,
+	sthanneeru@micron.com,
+	emirakhur@micron.com,
+	Hasan.Maruf@amd.com
+Cc: linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	arnd@arndb.de,
+	tglx@linutronix.de,
+	luto@kernel.org,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	mhocko@kernel.org,
+	tj@kernel.org,
+	ying.huang@intel.com,
+	gregory.price@memverge.com,
+	corbet@lwn.net,
+	rakie.kim@sk.com,
+	hyeongtak.ji@sk.com,
+	honggyu.kim@sk.com,
+	vtavarespetr@micron.com,
+	peterz@infradead.org,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Hasan Al Maruf <hasanalmaruf@fb.com>,
+	Hao Wang <haowang3@fb.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Zhongkun He <hezhongkun.hzk@bytedance.com>,
+	Frank van der Linden <fvdl@google.com>,
+	John Groves <john@jagalactic.com>,
+	Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Subject: [RFC PATCH 00/11] mempolicy2, mbind2, and weighted interleave
+Date: Wed,  6 Dec 2023 19:27:48 -0500
+Message-Id: <20231207002759.51418-1-gregory.price@memverge.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-Content-Language: en-US, de-DE
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
- linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
- hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>,
- Dharmendra Singh <dsingh@ddn.com>
-References: <20230920024001.493477-1-tfanelli@redhat.com>
- <CAJfpegtVbmFnjN_eg9U=C1GBB0U5TAAqag3wY_mi7v8rDSGzgg@mail.gmail.com>
- <32469b14-8c7a-4763-95d6-85fd93d0e1b5@fastmail.fm>
- <CAOQ4uxgW58Umf_ENqpsGrndUB=+8tuUsjT+uCUp16YRSuvG2wQ@mail.gmail.com>
- <CAOQ4uxh6RpoyZ051fQLKNHnXfypoGsPO9szU0cR6Va+NR_JELw@mail.gmail.com>
- <49fdbcd1-5442-4cd4-8a85-1ddb40291b7d@fastmail.fm>
- <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
- <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
- <abbdf30f-c459-4eab-9254-7b24afc5771b@fastmail.fm>
- <40470070-ef6f-4440-a79e-ff9f3bbae515@fastmail.fm>
- <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
- <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm>
- <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
- <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch set extends the mempolicy interface to enable new
+mempolicies which may require extended data to operate.
+
+One such policy is included with this set as an example:
+MPOL_WEIGHTED_INTERLEAVE
+
+There are 3 major "phases" in the patch set:
+1) Implement a "global weight" mechanism via sysfs, which allows
+   set_mempolicy to implement MPOL_WEIGHTED_INTERLEAVE utilizing
+   weights set by the administrator (or system daemon).
+
+2) A refactor of the mempolicy creation mechanism to accept an
+   extensible argument structure `struct mempolicy_args` to promote
+   code re-use between the original mempolicy/mbind interfaces and
+   the new extended mempolicy2/mbind2 interfaces.
+
+3) Implementation of set_mempolicy2, get_mempolicy2, and mbind2,
+   along with the addition of task-local weights so that per-task
+   weights can be registered for MPOL_WEIGHTED_INTERLEAVE.
+
+=====================================================================
+(Patch 1) : sysfs addition - /sys/kernel/mm/mempolicy/
+
+This feature  provides a way to set interleave weight information under
+sysfs at /sys/kernel/mm/mempolicy/weighted_interleave/nodeN/nodeM/weight
+
+    The sysfs structure is designed as follows.
+
+      $ tree /sys/kernel/mm/mempolicy/
+      /sys/kernel/mm/mempolicy/
+      ├── cpu_nodes
+      ├── possible_nodes
+      └── weighted_interleave
+          ├── nodeN
+          │   ├── nodeM
+          │   │     └── weight
+          │   └── nodeM+X
+          │         └── weight
+          └── nodeN+X
+              ├── nodeM
+              │     └── weight
+              └── node+X
+                    └── weight
+
+'cpu_nodes' and 'possible_nodes' is added to 'mm/mempolicy' to help
+describe the expected structures under mempolicy directorys. For
+example 'cpu_nodes' will describe what 'nodeN' directories will
+exist in 'weighted_interleave', while 'possible_nodes' describes
+what nodeM directories wille exist under the 'nodeN' directories.
+
+Internally, weights are represented as a matrix of [src,dst] nodes.
+
+struct interleave_weight_table {
+        unsigned char weights[MAX_NUMNODES];
+};
+static struct interleave_weight_table *iw_table;
+
+"Source Nodes" are nodes which have 1 or more CPUs, while "Destination
+Nodes" include any possible node.  A "Possible" node is one which has
+been reserved by the system, but which may or may not be online.
+
+We present possible nodes, instead of online nodes, to simplify the
+management interface, considering that a) the table of MAX_NUMNODES
+size is allocated anyway to simplfy fetching of weights, and b) it
+simplifies the management of hotplug events, allowing for weights to
+be set prior to a node coming online which may be beneficial for
+immediate use of the memory.
+
+the 'weight' of a node (an unsigned char of value 1-255) is the number
+of pages that are allocated during a "weighted interleave" round.
+(See 'weighted interleave' for more details').
+
+The [src,dst] matrix is implemented to allow for the capturing the
+complexity of bandwidth distribution across a multi-socket, or
+heterogeneous memory environment. For example, consider a 2-socket
+Intel server with 1 CXL Memory expander attached to each socket.
+
+From the perspective of a task on a CPU in Socket 0, the bandwidth
+distribution is as follows:
+
+Socket 0 DRAM:  (# DDR Channels) * (DDR Bandwidth)     ~400GB/s
+Socket 0 CXL :  (# CXL Lanes) * (CXL Lane Bandwidth)    128GB/s
+Socket 1 DRAM + CXL:   (# UPI Lanes) * (UPI Bandwidth) ~64GB/s
+
+If the task is then migrated to Socket 1, the bandwidth distribution
+flips to the following.
+
+Socket 1 DRAM:  (# DDR Channels) * (DDR Bandwidth)     ~400GB/s
+Socket 1 CXL :  (# CXL Lanes) * (CXL Lane Bandwidth)    128GB/s
+Socket 0 DRAM + CXL:   (# UPI Lanes) * (UPI Bandwidth) ~64GB/s
+
+The matrix allows for a 'source node' perspective weighting strategy,
+which allows for migrated tasks to simply "re-weight" new allocations
+immediately, by simply changing the [src] index they access in the
+global interleave weight table.
+
+=====================================================================
+(Patch 2) set_mempolicy: MPOL_WEIGHTED_INTERLEAVE
+
+Weighted interleave is a new memory policy that interleaves memory
+across numa nodes in the provided nodemask based on the weights
+described in patch 1 (sysfs global weights).
+
+When a system has multiple NUMA nodes and it becomes bandwidth hungry,
+the current MPOL_INTERLEAVE could be an wise option.
+
+However, if those NUMA nodes consist of different types of memory such
+as having local DRAM and CXL memory together, the current round-robin
+based interleaving policy doesn't maximize the overall bandwidth
+because of their different bandwidth characteristics.
+
+Instead, the interleaving can be more efficient when the allocation
+policy follows each NUMA nodes' bandwidth weight rather than having 1:1
+round-robin allocation.
+
+This patch introduces a new memory policy, MPOL_WEIGHTED_INTERLEAVE,
+which enables weighted interleaving between NUMA nodes.  Weighted
+interleave allows for a proportional distribution of memory across
+multiple numa nodes, preferablly apportioned to match the bandwidth
+capacity of each node from the perspective of the accessing node.
+
+For example, if a system has 1 CPU node (0), and 2 memory nodes (0,1),
+with a relative bandwidth of (100GB/s, 50GB/s) respectively, the
+appropriate weight distribution is (2:1).
+
+Weights will be acquired from the global weight matrix exposed by the
+sysfs extension: /sys/kernel/mm/mempolicy/weighted_interleave/
+
+The policy will then allocate the number of pages according to the
+set weights.  For example, if the weights are (2,1), then 2 pages
+will be allocated on node0 for every 1 page allocated on node1.
+
+The new flag MPOL_WEIGHTED_INTERLEAVE can be used in set_mempolicy(2)
+and mbind(2).
+
+=====================================================================
+(Patches 3-6) Refactoring mempolicy for code-reuse
+
+To avoid multiple paths of mempolicy creation, we should refactor the
+existing code to enable the designed extensibility, and refactor
+existing users to utilize the new interface (while retaining the
+existing userland interface).
+
+This set of patches introduces a new mempolicy_args structure, which
+is used to more fully describe a requested mempolicy - to include
+existing and future extensions.
+
+/*
+ * Describes settings of a mempolicy during set/get syscalls and
+ * kernel internal calls to do_set_mempolicy()
+ */
+struct mempolicy_args {
+    unsigned short mode;            /* policy mode */
+    unsigned short mode_flags;      /* policy mode flags */
+    nodemask_t *policy_nodes;       /* get/set/mbind */
+    int policy_node;                /* get: policy node information */
+    unsigned long addr;             /* get: vma address */
+    int addr_node;                  /* get: node the address belongs to */
+    int home_node;                  /* mbind: use MPOL_MF_HOME_NODE */
+    unsigned char *il_weights;      /* for mode MPOL_WEIGHTED_INTERLEAVE */
+};
+
+This arg structure will eventually be utilized by the following
+interfaces:
+    mpol_new() - new mempolicy creation
+    do_get_mempolicy() - acquiring information about mempolicy
+    do_set_mempolicy() - setting the task mempolicy
+    do_mbind()         - setting a vma mempolicy
+
+do_get_mempolicy() is completely refactored to break it out into
+separate functionality based on the flags provided by get_mempolicy(2)
+    MPOL_F_MEMS_ALLOWED: acquires task->mems_allowed
+    MPOL_F_ADDR: acquires information on vma policies
+    MPOL_F_NODE: changes the output for the policy arg to node info
+
+We refactor the get_mempolicy syscall flatten the logic based on these
+flags, and aloow for set_mempolicy2() to re-use the underlying logic.
+
+The result of this refactor, and the new mempolicy_args structure, is
+that extensions like 'sys_set_mempolicy_home_node' can now be directly
+integrated into the initial call to 'set_mempolicy2', and that more
+complete information about a mempolicy can be returned with a single
+call to 'get_mempolicy2', rather than multiple calls to 'get_mempolicy'
 
 
+=====================================================================
+(Patches 7-10) set_mempolicy2, get_mempolicy2, mbind2
 
-On 12/6/23 09:25, Amir Goldstein wrote:
->>>> Is it actually important for FUSE_DIRECT_IO_ALLOW_MMAP fs
->>>> (e.g. virtiofsd) to support FOPEN_PARALLEL_DIRECT_WRITES?
->>>> I guess not otherwise, the combination would have been tested.
->>>
->>> I'm not sure how many people are aware of these different flags/features.
->>> I had just finalized the backport of the related patches to RHEL8 on
->>> Friday, as we (or our customers) need both for different jobs.
->>>
->>>>
->>>> FOPEN_PARALLEL_DIRECT_WRITES is typically important for
->>>> network fs and FUSE_DIRECT_IO_ALLOW_MMAP is typically not
->>>> for network fs. Right?
->>>
->>> We kind of have these use cases for our network file systems
->>>
->>> FOPEN_PARALLEL_DIRECT_WRITES:
->>>      - Traditional HPC, large files, parallel IO
->>>      - Large file used on local node as container for many small files
->>>
->>> FUSE_DIRECT_IO_ALLOW_MMAP:
->>>      - compilation through gcc (not so important, just not nice when it
->>> does not work)
->>>      - rather recent: python libraries using mmap _reads_. As it is read
->>> only no issue of consistency.
->>>
->>>
->>> These jobs do not intermix - no issue as in generic/095. If such
->>> applications really exist, I have no issue with a serialization penalty.
->>> Just disabling FOPEN_PARALLEL_DIRECT_WRITES because other
->>> nodes/applications need FUSE_DIRECT_IO_ALLOW_MMAP is not so nice.
->>>
->>> Final goal is also to have FOPEN_PARALLEL_DIRECT_WRITES to work on plain
->>> O_DIRECT and not only for FUSE_DIRECT_IO - I need to update this branch
->>> and post the next version
->>> https://github.com/bsbernd/linux/commits/fuse-dio-v4
->>>
->>>
->>> In the mean time I have another idea how to solve
->>> FOPEN_PARALLEL_DIRECT_WRITES + FUSE_DIRECT_IO_ALLOW_MMAP
->>
->> Please find attached what I had in my mind. With that generic/095 is not
->> crashing for me anymore. I just finished the initial coding - it still
->> needs a bit cleanup and maybe a few comments.
->>
-> 
-> Nice. I like the FUSE_I_CACHE_WRITES state.
-> For FUSE_PASSTHROUGH I will need to track if inode is open/mapped
-> in caching mode, so FUSE_I_CACHE_WRITES can be cleared on release
-> of the last open file of the inode.
-> 
-> I did not understand some of the complexity here:
-> 
->>         /* The inode ever got page writes and we do not know for sure
->>          * in the DIO path if these are pending - shared lock not possible */
->>         spin_lock(&fi->lock);
->>         if (!test_bit(FUSE_I_CACHE_WRITES, &fi->state)) {
->>                 if (!(*cnt_increased)) {
-> 
-> How can *cnt_increased be true here?
+These interfaces are the 'extended' counterpart to their relatives.
+They use the userland 'struct mpol_args' structure to communicate a
+complete mempolicy configuration to the kernel.  This structure
+looks very much like the kernel-internal 'struct mempolicy_args':
 
-I think you missed the 2nd entry into this function, when the shared 
-lock was already taken? I have changed the code now to have all 
-complexity in this function (test, lock, retest with lock, release, 
-wakeup). I hope that will make it easier to see the intention of the 
-code. Will post the new patches in the morning.
+struct mpol_args {
+        /* Basic mempolicy settings */
+        unsigned short mode;
+        unsigned short mode_flags;
+        unsigned long *pol_nodes;
+        unsigned long pol_maxnodes;
+        /* get_mempolicy: policy node information */
+        int policy_node;
+        /* get_mempolicy: memory range policy */
+        unsigned long addr;
+        int addr_node;
+        /* mbind2: policy home node */
+        int home_node;
+        /* mbind2: address ranges to apply the policy */
+        struct iovec *vec;
+        size_t vlen;
+        /* weighted interleave settings */
+        unsigned char *il_weights;      /* of size pol_maxnodes */
+};
 
+The basic mempolicy settings which are shared across all interfaces
+are captured at the top of the structure, while extensions such as
+'policy_node' and 'addr' are collected beneath.
 
-> 
->>                         fi->shared_lock_direct_io_ctr++;
->>                         *cnt_increased = true;
->>                 }
->>                 excl_lock = false;
-> 
-> Seems like in every outcome of this function
-> *cnt_increased = !excl_lock
-> so there is not need for out arg cnt_increased
+The syscalls are uniform and defined as follows:
 
-If excl_lock would be used as input - yeah, would have worked as well. 
-Or a parameter like "retest-under-lock". Code is changed now to avoid 
-going in and out.
+long sys_mbind2(struct mpol_args *args,
+                size_t size,
+                unsigned long flags);
 
-> 
->>         }
->>         spin_unlock(&fi->lock);
->>
->> out:
->>         if (excl_lock && *cnt_increased) {
->>                 bool wake = false;
->>                 spin_lock(&fi->lock);
->>                 if (--fi->shared_lock_direct_io_ctr == 0)
->>                         wake = true;
->>                 spin_unlock(&fi->lock);
->>                 if (wake)
->>                         wake_up(&fi->direct_io_waitq);
->>         }
-> 
-> I don't see how this wake_up code is reachable.
-> 
-> TBH, I don't fully understand the expected result.
-> Surely, the behavior of dio mixed with mmap is undefined. Right?
-> IIUC, your patch does not prevent dirtying page cache while dio is in
-> flight. It only prevents writeback while dio is in flight, which is the same
-> behavior as with exclusive inode lock. Right?
+long sys_get_mempolicy2(struct mpol_args *args,
+                        size_t size,
+                        unsigned long flags);
 
-Yeah, thanks. I will add it in the patch description.
+long sys_set_mempolicy2(struct mpol_args *args,
+                        size_t size,
+                        unsigned long flags);
 
-And there was actually an issue with the patch, as cache flushing needs 
-to be initiated before doing the lock decision, fixed now.
+The 'flags' argument for mbind2 is the same as 'mbind', except with
+the addition of MPOL_MF_HOME_NODE to denote whether the 'home_node'
+field should be utilized.
 
-> 
-> Maybe this interaction is spelled out somewhere else, but if not
-> better spell it out for people like me that are new to this code.
+The 'flags' argument for get_mempolicy2 is the same as get_mempolicy.
 
-Sure, thanks a lot for your helpful comments!
+The 'flags' argument is not used by 'set_mempolicy' at this time, but
+may end up allowing the use of MPOL_MF_HOME_NODE if such functionality
+is desired.
 
+The extensions can be summed up as follows:
 
+get_mempolicy2 extensions:
+    'mode', 'policy_node', and 'addr_node' can now be fetched with
+    a single call, rather than multiple with a combination of flags.
+    - 'mode' will always return the policy mode
+    - 'policy_node' will replace the functionality of MPOL_F_NODE
+    - 'addr_node' will return the node for 'addr' w/ MPOL_F_ADDR
 
-Thanks,
-Bernd
+set_mempolicy2:
+    - task-local interleave weights can be set via 'il_weights'
+      (see next patch)
+
+mbind2:
+    - 'home_node' field sets policy home node w/ MPOL_MF_HOME_NODE
+    - task-local interleave weights can be set via 'il_weights'
+      (see next patch)
+    - 'vec' and 'vlen' can be used to operate on multiple memory
+      ranges, rather than a single memory range per syscall.
+
+=====================================================================
+(Patch 11) set_mempolicy2/mbind2: MPOL_WEIGHTED_INTERLEAVE
+
+This patch shows the explicit extension pattern when adding new
+policies to mempolicy2/mbind2.  This adds the 'il_weights' field
+to mpol_args and adds the logic to fill in task-local weights.
+
+There are now two ways to weight a mempolicy: global and local.
+To denote which mode the task is in, we add the internal flag:
+MPOL_F_GWEIGHT /* Utilize global weights */
+
+When MPOL_F_GWEIGHT is set, the global weights are used, and
+when it is not set, task-local weights are used.
+
+Example logic:
+if (pol->flags & MPOL_F_GWEIGHT)
+       pol_weights = iw_table[numa_node_id()].weights;
+else
+       pol_weights = pol->wil.weights;
+
+set_mempolicy is changed to always set MPOL_F_GWEIGHT, since this
+syscall is incapable of passing weights via its interfaces, while
+set_mempolicy2 sets MPOL_F_GWEIGHT if MPOL_F_WEIGHTED_INTERLEAVE
+is required but (*il_weights) in mpol_args is null.
+
+The operation of task-local weighted is otherwise exactly the
+same - except for what occurs on task migration.
+
+On task migration, the system presently has no way of determining
+what the new weights "should be", or what the user "intended".
+
+For this reason, we default all weights to '1' and do not allow
+weights to be '0'.  This means, should a migration occur where
+one or more nodes appear into the nodemask - the effective weight
+for that node will be '1'.  This avoids a potential allocation
+failure condition if a migration occurs and introduces a node
+which otherwise did not have a weight.
+
+For this reason, users should use task-local weighting when
+migrations are not expected, and global weighting when migrations
+are expected or possible.
+
+Suggested-by: Gregory Price <gregory.price@memverge.com>
+Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+Suggested-by: Hasan Al Maruf <hasanalmaruf@fb.com>
+Suggested-by: Hao Wang <haowang3@fb.com>
+Suggested-by: Ying Huang <ying.huang@intel.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Suggested-by: Michal Hocko <mhocko@suse.com>
+Suggested-by: tj <tj@kernel.org>
+Suggested-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Suggested-by: Frank van der Linden <fvdl@google.com>
+Suggested-by: John Groves <john@jagalactic.com>
+Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+Suggested-by: Srinivasulu Thanneeru <sthanneeru@micron.com>
+Suggested-by: Ravi Jonnalagadda <ravis.opensrc@micron.com>
+Suggested-by: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Signed-off-by: Gregory Price <gregory.price@memverge.com>
+
+Gregory Price (9):
+  mm/mempolicy: refactor sanitize_mpol_flags for reuse
+  mm/mempolicy: create struct mempolicy_args for creating new
+    mempolicies
+  mm/mempolicy: refactor kernel_get_mempolicy for code re-use
+  mm/mempolicy: allow home_node to be set by mpol_new
+  mm/mempolicy: add userland mempolicy arg structure
+  mm/mempolicy: add set_mempolicy2 syscall
+  mm/mempolicy: add get_mempolicy2 syscall
+  mm/mempolicy: add the mbind2 syscall
+  mm/mempolicy: extend set_mempolicy2 and mbind2 to support weighted
+    interleave
+
+Rakie Kim (2):
+  mm/mempolicy: implement the sysfs-based weighted_interleave interface
+  mm/mempolicy: introduce MPOL_WEIGHTED_INTERLEAVE for weighted
+    interleaving
+
+ .../ABI/testing/sysfs-kernel-mm-mempolicy     |  33 +
+ ...fs-kernel-mm-mempolicy-weighted-interleave |  35 +
+ .../admin-guide/mm/numa_memory_policy.rst     |  85 ++
+ arch/alpha/kernel/syscalls/syscall.tbl        |   3 +
+ arch/arm/tools/syscall.tbl                    |   3 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   3 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   3 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   3 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   3 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   3 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   3 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   3 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   3 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   3 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   3 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   3 +
+ include/linux/mempolicy.h                     |  21 +
+ include/linux/syscalls.h                      |   6 +
+ include/uapi/asm-generic/unistd.h             |   8 +-
+ include/uapi/linux/mempolicy.h                |  27 +-
+ mm/mempolicy.c                                | 960 ++++++++++++++++--
+ 22 files changed, 1103 insertions(+), 114 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
+ create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+
+-- 
+2.39.1
+
 
