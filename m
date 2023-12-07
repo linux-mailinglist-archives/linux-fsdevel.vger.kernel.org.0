@@ -1,169 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-5138-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57608085A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 11:35:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929B58085A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 11:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A29B208C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA82B20BF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590C337D1C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAB337D1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211B4170B
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 01:23:46 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rBAbg-0003XX-GY; Thu, 07 Dec 2023 10:23:44 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rBAbg-00E9kr-0i; Thu, 07 Dec 2023 10:23:44 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rBAbf-00Fpqh-Nz; Thu, 07 Dec 2023 10:23:43 +0100
-Date: Thu, 7 Dec 2023 10:23:43 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	kernel@pengutronix.de
-Subject: Re: [PATCH] chardev: Simplify usage of try_module_get()
-Message-ID: <20231207092343.6yu42ou7eeyptbpl@pengutronix.de>
-References: <20231013132441.1406200-2-u.kleine-koenig@pengutronix.de>
- <20231016224311.GI800259@ZenIV>
- <20231017091353.6fhpmrcx66jj2jls@pengutronix.de>
- <20231017095413.GP800259@ZenIV>
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF881721;
+	Thu,  7 Dec 2023 01:32:06 -0800 (PST)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5d400779f16so3520057b3.0;
+        Thu, 07 Dec 2023 01:32:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701941525; x=1702546325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7HITPOZ98TcxoeIJZrNjSo/OvrhbnTbF7gIrbNDfuq4=;
+        b=GNfHWzC2mWUudtXiY+2FAqYeRIi00vGYJcUKtW9CoOqnQojs1UZ4daVnY+xmX2VTif
+         6BbT568w/QtqjkHenDuj5RMEoaGF4W79nxCYQKGRQwLoD1cnLCwk7uUAV2raR4XiOZ3P
+         2W1ezFSyb+EiXsJflpMexpTFUHHV+H7PXW04l1hGc49yCpTdpYm01ouhGLfMzXqrUVpf
+         BoajSM5YZPMfQU4MyAld24uv3bUIon6ntXeEShWr6XzxpbW+b05WpBbi+yg5kJ7SuZmw
+         ezG9y5iCdUka1o7nQlgTvxYRaN0UDhhCM0INdD1oOhmxOgJWO5IM0i7eprhz6RK5VTMh
+         QYFQ==
+X-Gm-Message-State: AOJu0YzS6mfM86mtrHfy360/oPOvFY2K8dPcNXxb8QjDILMRd6YgUoXC
+	6qTRzWMu3C83ck2AY3VPxpbEbztB0o4j3o4K
+X-Google-Smtp-Source: AGHT+IHUxkxGdq8C5WBHMuoj9KomT4pansS+cp/BBfvTVIKBqwDbdPfjsvriHOFPykzXf8ZVWIgmgQ==
+X-Received: by 2002:a81:af43:0:b0:5d7:1940:3ef4 with SMTP id x3-20020a81af43000000b005d719403ef4mr1429648ywj.37.1701941525404;
+        Thu, 07 Dec 2023 01:32:05 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id b62-20020a0dd941000000b005d6c21adea5sm273318ywe.40.2023.12.07.01.32.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Dec 2023 01:32:04 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5d400779f16so3519897b3.0;
+        Thu, 07 Dec 2023 01:32:04 -0800 (PST)
+X-Received: by 2002:a81:84c3:0:b0:5d6:bc5c:9770 with SMTP id
+ u186-20020a8184c3000000b005d6bc5c9770mr3593778ywf.4.1701941524678; Thu, 07
+ Dec 2023 01:32:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6ehmnxzbbwm6pq4d"
-Content-Disposition: inline
-In-Reply-To: <20231017095413.GP800259@ZenIV>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
-
-
---6ehmnxzbbwm6pq4d
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <00fd1558-fda5-421b-be43-7de69e32cb4e@paragon-software.com> <61494224-68a8-431b-ba76-46b4812c241c@paragon-software.com>
+In-Reply-To: <61494224-68a8-431b-ba76-46b4812c241c@paragon-software.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Dec 2023 10:31:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVu1xAHDo1UUsCKEX=pbiZWab0HwkO6hObwE6uB2yD4RQ@mail.gmail.com>
+Message-ID: <CAMuHMdVu1xAHDo1UUsCKEX=pbiZWab0HwkO6hObwE6uB2yD4RQ@mail.gmail.com>
+Subject: Re: [PATCH 08/16] fs/ntfs3: Fix detected field-spanning write (size
+ 8) of single field "le->name"
+To: Konstantin Komarovc <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 17, 2023 at 10:54:13AM +0100, Al Viro wrote:
-> On Tue, Oct 17, 2023 at 11:13:53AM +0200, Uwe Kleine-K=F6nig wrote:
->=20
-> > I don't understand what you intend to say here. What is "that"? Are you
-> > talking about
-> >=20
-> > 	owner && !try_module_get(owner)
-> >=20
-> > vs
-> >=20
-> > 	!try_module_get(owner)
-> >=20
-> > or the following line with kobject_get_unless_zero? Do you doubt the
-> > validity of my patch, or is it about something try_module_get()
-> > could/should do more than it currently does?
->=20
-> I'm saying that it would be a good idea to turn try_module_get() into
-> an inline in all cases, including the CONFIG_MODULE_UNLOAD one.
-> Turning it into something like !module || __try_module_get(module),
-> with the latter being out of line.  With that done, your patch would be
-> entirely unobjectionable...
+Hi Konstantin,
 
-I looked into that suggestion, and I don't like it.
+On Wed, Dec 6, 2023 at 4:12=E2=80=AFPM Konstantin Komarovc
+<almaz.alexandrovich@paragon-software.com> wrote:
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.c=
+om>
 
-There are three definitions for try_module_get() (slightly simplified):
+Thanks for your patch, which is now commit d155617006ebc172 ("fs/ntfs3:
+Fix detected field-spanning write (size 8) of single field "le->name"")
+in next-20231207.
 
- - CONFIG_MODULES=3Dy && CONFIG_MODULE_UNLOAD=3Dy
+> --- a/fs/ntfs3/ntfs.h
+> +++ b/fs/ntfs3/ntfs.h
+> @@ -523,7 +523,7 @@ struct ATTR_LIST_ENTRY {
+>       __le64 vcn;        // 0x08: Starting VCN of this attribute.
+>       struct MFT_REF ref;    // 0x10: MFT record number with attribute.
+>       __le16 id;        // 0x18: struct ATTRIB ID.
+> -    __le16 name[3];        // 0x1A: Just to align. To get real name can
+> use bNameOffset.
+> +    __le16 name[];        // 0x1A: Just to align. To get real name can
+> use name_off.
 
- 	return !module || (module_is_live(module) && atomic_inc_not_zero(&module-=
->refcnt) !=3D 0);
+noreply@ellerman.id.au reports for all m68k configs[1]:
 
- - CONFIG_MODULES=3Dy && CONFIG_MODULE_UNLOAD=3Dn
+include/linux/build_bug.h:78:41: error: static assertion failed:
+"sizeof(struct ATTR_LIST_ENTRY) =3D=3D 0x20"
 
-   	return !module || module_is_live(module);
+>
+>   }; // sizeof(0x20)
 
- - CONFIG_MODULES=3Dn
+Indeed, we now have a hole of 4 bytes at the end of the structure,
+which shrinks the size of the structure on all architectures where
+alignof(u64) < sizeof(u64).
 
- 	return true;
+So either the patch should be reverted, or explicit padding should
+be added.  Your patch description is not very descriptive, so I
+don't know which is the correct solution.
 
-So splitting all three into
+[1] http://kisskb.ellerman.id.au/kisskb/head/8e00ce02066e8f6f1ad5eab49a2ede=
+7bf7a5ef64
 
-	!module || __try_module_get(module)
+Gr{oetje,eeting}s,
 
-adds an unnecessary check for the CONFIG_MODULES=3Dn case. And only
-consolidating the CONFIG_MODULES=3Dy case would allow to go a bit further
-and do:
-
-	#ifdef CONFIG_MODULES
-
-	# ifdef CONFIG_MODULE_UNLOAD=3Dy
-
-	/* maybe make this an non-inline */
-	static inline bool module_incr_refcnt(struct module)
-	{
-		return atomic_inc_not_zero(&module->refcnt) !=3D 0;
-	}
-
-	# else /* ifdef CONFIG_MODULE_UNLOAD=3Dy */
-
-	# define module_incr_refcnt(module) true
-
-	# endif /* ifdef CONFIG_MODULE_UNLOAD=3Dy / else */
-
-	static inline bool try_module_get(struct module *module)
-	{
-		if (!module)
-			return true;
-
-		return module_is_live(module) && module_incr_refcnt(module);
-	}
-
-	#else
-
-	static inline bool try_module_get(struct module *module)
-	{
-		return true;
-	}
-
-	#endif
-
-I'm not convinced this is easier ...
-
-Best regards
-Uwe
+                        Geert
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---6ehmnxzbbwm6pq4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVxjx4ACgkQj4D7WH0S
-/k4u2wf/eJIixHN3DVl4ZtOIqTHPHXoyVfWq+bDhCdiry2Z/ogObIRpE+AfQ4uwE
-LRccrI1/k10v30MbqOI4LwPs/kJdAk8BBhQJ9wz+Si3eqdXHDdGM6Cs7rxk3xQNJ
-+sSz9JYjl5bWjibIYWZfYoVnUs0CB4fMBHVIACGsYfkv9xDQKRKeFTm9YhNy6oMo
-9uHcmCnh4zJaZWqlbPM/cEXKIIz7e7fQG24AhDtxtX7M9T2+/OC02xP5syIvtAf8
-x8TBD3MKDbNgiJPzZo315Ovpwu4ye9S1dk3p096Yd5zfYT1KAPk19fUY6nHF76Tr
-Z1yw3nCtbruLbL5UbGJsYwgK00gdZQ==
-=UaKJ
------END PGP SIGNATURE-----
-
---6ehmnxzbbwm6pq4d--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
