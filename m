@@ -1,45 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-5197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5198-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF7480927C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 21:38:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A2C80927D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 21:38:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449141F2122B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2019A1C2034E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B092D5639A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8085456382
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nJRdrpHl"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="FxKFJRCu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C6810DC;
-	Thu,  7 Dec 2023 11:23:20 -0800 (PST)
+Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196951722;
+	Thu,  7 Dec 2023 11:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1701976997;
-	bh=6SYQxYyGrcDvx6IRN+6dIff5PVo7wQPuPHWX4hH6KZA=;
+	s=mail; t=1701977352;
+	bh=JuJloSRYXjA2oIDQV1X7RGwKVA9U4q49HgjpAUaVGYM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nJRdrpHl406V8Pqv+diMBiUkggs7GtUBNOx0+SSTMlNWhL6h7/9+XQ/o7Ul2ru7YQ
-	 0TkWrmXbCwMT0a04wtzuExXuKNewvXrDMSts24ePrOt49uTn3dQ+Ap0nA1sV5cT09A
-	 BvZPUjsgDL//msyJBTFObJS3p7YQtjTXc7BaeONU=
-Date: Thu, 7 Dec 2023 20:23:16 +0100
+	b=FxKFJRCuqDnU/Ho0VDQzvmW3byzsLgcZVA9sT6w303p3QuCsW0wReO2n2cE4cz3YZ
+	 qXAHXyHHt+UesEQnqTCtRy6MwhAEn/K4sweiWeE0ELtj1dkWZr+EERStt13tx9GZHc
+	 4YzFRcPH3sTcZJJGDsJScltp4smN4dAaPR48B8KY=
+Date: Thu, 7 Dec 2023 20:29:11 +0100
 From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
 To: Joel Granados <j.granados@samsung.com>
 Cc: Luis Chamberlain <mcgrof@kernel.org>, 
 	Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
 	Iurii Zaikin <yzaikin@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <f327cf10-3680-43ec-a05c-8c038af767c0@t-8ch.de>
+Subject: Re: [PATCH v2 13/18] sysctl: move sysctl type to ctl_table_header
+Message-ID: <d5fa824e-9f0a-461f-b56f-bcad5b7792ae@t-8ch.de>
 References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <ZW66FhWx7W67Y9rP@bombadil.infradead.org>
- <b4b0b7ea-d8b3-4538-a5b9-87a23bbdac5f@t-8ch.de>
- <CGME20231205171700eucas1p17edbc33ec1d0be37573b1977b76b9ce6@eucas1p1.samsung.com>
- <d50978d8-d4e7-4767-8ea7-5849f05d3be1@t-8ch.de>
- <20231207111957.b24ib4hcxr6xufll@localhost>
+ <20231204-const-sysctl-v2-13-7a5060b11447@weissschuh.net>
+ <ZW+lQqOSYFfeh8z2@bombadil.infradead.org>
+ <4a93cdb4-031c-4f77-8697-ce7fb42afa4a@t-8ch.de>
+ <CAB=NE6UCP05MgHF85TK+t2yvbOoaW_8Yu6QEyaYMdJcGayVjFQ@mail.gmail.com>
+ <CGME20231206055317eucas1p204b75bda8cb2fc068dea0fc5bcfcf0b2@eucas1p2.samsung.com>
+ <0450d705-3739-4b6d-a1f2-b22d54617de1@t-8ch.de>
+ <20231207121437.mfu3gegorsyqvihf@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -49,59 +51,81 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231207111957.b24ib4hcxr6xufll@localhost>
+In-Reply-To: <20231207121437.mfu3gegorsyqvihf@localhost>
 
-On 2023-12-07 12:19:57+0100, Joel Granados wrote:
-> On Tue, Dec 05, 2023 at 06:16:53PM +0100, Thomas Weißschuh wrote:
-> > Hi Luis, Joel,
-> > 
-> > On 2023-12-05 09:04:08+0100, Thomas Weißschuh wrote:
-> > > On 2023-12-04 21:50:14-0800, Luis Chamberlain wrote:
-> > > > On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Weißschuh wrote:
-> > > > > Tested by booting and with the sysctl selftests on x86.
-> > > > 
-> > > > Can I trouble you to rebase on sysctl-next?
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
+On 2023-12-07 13:14:37+0100, Joel Granados wrote:
+> On Wed, Dec 06, 2023 at 06:53:10AM +0100, Thomas Weißschuh wrote:
+> > On 2023-12-05 14:50:01-0800, Luis Chamberlain wrote:
+> > > On Tue, Dec 5, 2023 at 2:41 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > > >
+> > > > On 2023-12-05 14:33:38-0800, Luis Chamberlain wrote:
+> > > > > On Mon, Dec 04, 2023 at 08:52:26AM +0100, Thomas Weißschuh wrote:
+> > > > > > @@ -231,7 +231,8 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+> > > > > >             return -EROFS;
+> > > > > >
+> > > > > >     /* Am I creating a permanently empty directory? */
+> > > > > > -   if (sysctl_is_perm_empty_ctl_header(header)) {
+> > > > > > +   if (header->ctl_table == sysctl_mount_point ||
+> > > > > > +       sysctl_is_perm_empty_ctl_header(header)) {
+> > > > > >             if (!RB_EMPTY_ROOT(&dir->root))
+> > > > > >                     return -EINVAL;
+> > > > > >             sysctl_set_perm_empty_ctl_header(dir_h);
+> > > > >
+> > > > > While you're at it.
+> > > >
+> > > > This hunk is completely gone in v3/the code that you merged.
 > > > 
-> > > Will do.
+> > > It is worse in that it is not obvious:
+> > > 
+> > > +       if (table == sysctl_mount_point)
+> > > +               sysctl_set_perm_empty_ctl_header(head);
+> > > 
+> > > > Which kind of unsafety do you envision here?
+> > > 
+> > > Making the code obvious during patch review hy this is needed /
+> > > special, and if we special case this, why not remove enum, and make it
+> > > specific to only that one table. The catch is that it is not
+> > > immediately obvious that we actually call
+> > > sysctl_set_perm_empty_ctl_header() in other places, and it begs the
+> > > question if this can be cleaned up somehow.
 > > 
-> > The rebased series is now available at
-> > https://git.sr.ht/~t-8ch/linux b4/const-sysctl
+> > Making it specific won't work because the flag needs to be transferred
+> > from the leaf table to the table representing the directory.
 > > 
-> > Nothing much has changed in contrast to v2.
-> > The only functional change so far is the initialization of
-> > ctl_table_header::type in init_header().
-> > 
-> > I'll wait for Joels and maybe some more reviews before resending it.
-> > 
-> > > [..]
-> > 
-> > For the future I think it would make sense to combine the tree-wide constification
-> > of the structs with the removal of the sentinel values.
+> > What do you think of the aproach taken in the attached patch?
+> > (On top of current sysctl-next, including my series)
 
-> I don't see how these two would fit. And this is why:
-> 1. The "remove sentinel" stuff is almost done. With the sets going into
->    6.7 we would only be missing everything under net/*. So you would not
->    be able to combine them (except for the net stuff)
-> 2. The motivation for the two sets is differnt. This would confuse
->    rather than simplify the process.
-> 3. In order to introduce the const stuff we would have to go through
->    another round of "convincing" which can potentially derail the
->    "remove sentinel" stuff.
+> What would this new patch be fixing again? I could not follow ?
 
-Good reasons, especially 1).
- 
-> I would *not* like to combine them. I think the const set can stand on
-> its own.
+This patch improves upon and replaces the patch you asked to submit on
+its own:  "sysctl: move sysctl type to ctl_table_header".
 
-It was more about a process optimization. If somebody has to touch each
-sysctl table anyway and test the changes, doing so for both series would
-be easier for the sysctl and subsystem maintainers.
+The current code and my original patch have to work around the fact that
+the "empty" flag is first registered on a *leaf* ctl_table and from
+there has to be transferred to the *directory* ctl_table somehow.
+Which is confusing, at least it was for me and evidently also Luis.
 
-But alas, it seems I have to do it myself and can't heap it onto your
-pile :-)
+The new code just directly sets the flag on the directory ctl_table and
+gets rid of some now-dead code.
+I should have written a proper changelog...
+
+> Additionally, this might be another reason to set this patch aside :)
+
+I hope we get this one in, it seems cleaner now.
+If you agree I can send it as a proper standalone preparation patch.
 
 > > 
-> > This would reduce the impacts of the maintainers.
+> > Note: Current sysctl-next ist still based on v6.6.
+> 
+> > From 2fb9887fb2a5024c2620f2d694bc6dcc32afde67 Mon Sep 17 00:00:00 2001
+> > From: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+> > Date: Wed, 6 Dec 2023 06:17:22 +0100
+> > Subject: [PATCH] sysctl: simplify handling of permanently empty directories
+> > 
+> > ---
+> >  fs/proc/proc_sysctl.c  | 76 +++++++++++++++++++-----------------------
+> >  include/linux/sysctl.h | 13 ++------
+> >  2 files changed, 36 insertions(+), 53 deletions(-)
+
+> [..]
 
