@@ -1,170 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-5109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95420808349
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:38:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3E480834E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:39:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7DF51C21C2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4433E1F2241A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D4F328BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28C930CF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUx06QV1"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q8o2Ww2Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D1D137
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 23:23:51 -0800 (PST)
-Received: by mail-qt1-x835.google.com with SMTP id d75a77b69052e-42588e94019so7001511cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 23:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701933830; x=1702538630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gs/KeTJn1LshONCXMIOQjM1noKfy77p9sy3SjuqNkhE=;
-        b=mUx06QV15Ccq8sanViItJQWlYcXNWSglV9ena3VWZzylYRlmwDwgUMoqYvr1kQrJ2r
-         zwfX276bdtYHUFrsYoNSG0Ae2z5NboclOqk8qeSc39SPIe6/cpuWBAWiQm9O6GCqiURY
-         ycHjJOFTlPZYD8YBDw2tJCRWYDtPrmaPdinGqHqE7cOsQPjpVK2u6c55EM0dR37PMOSk
-         Gspd4kkPne250LmdLQ7cfb8UQUtKZteHn+N600JJsQANpn8c2fCHr4IINAtUi7kCDUcy
-         Ht0FlZDVSFNsR3KbpyZNvDJT2ZPCRZQixiRsDmJQLUlJoSGWB17JKvlnV5eJiklfYvy2
-         iR/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701933830; x=1702538630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gs/KeTJn1LshONCXMIOQjM1noKfy77p9sy3SjuqNkhE=;
-        b=ZVZxbHcCoIJw4eUtePm8qG6TOnuEcqpCDNWltMD6iWIbOEQfLS1CxDTNV7qn4jm1qT
-         pHOup+6m5zVqhjdp6mw2HoCvae57DOoxUV0K0Lb15G8k1e1373O0zpyzAwYnFB4g1y0a
-         PsGckkUl31p06zTJRbtZyQo8o+LHwELB9Hd1YfBLpK6IJE3wRntnwVuEAZP6FtxZfpR5
-         XB1x7Iy3CPw4gdKwcWCh9aFRMKR/OSQFO7923qCTpNcEyhtik/Zr1oaU1USm1tzEYSGG
-         4La51ysYtU8XtIC9ctc0KHuctcX6D/Cbx8qRh5wrDp/xGqxdyF2Hp+l2xr8LB+Orxl5z
-         GOvQ==
-X-Gm-Message-State: AOJu0Yx8CPJa9GSeNvc29KHZ1Z1+1WDX3pbyt1HliSAmBaMYnKTq2tWQ
-	nrY9welEF4JQmfI2IZpDmVZ+yC4DVYww1gOiObA=
-X-Google-Smtp-Source: AGHT+IEKKDcZDJM4r79q28Ad6zpjaEp6AYErsf+j44+Gl6/gEVz7otEpexTt3bs/m2o3f3Xk3KtLxmsgcHQw3/EJ1pE=
-X-Received: by 2002:ad4:5c48:0:b0:67a:a72d:fba8 with SMTP id
- a8-20020ad45c48000000b0067aa72dfba8mr6214820qva.38.1701933830453; Wed, 06 Dec
- 2023 23:23:50 -0800 (PST)
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1140D137;
+	Wed,  6 Dec 2023 23:27:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=pcip+qcShfpKiIdrtbE2krVPBRD3cmZ1GZq0o0dnBeM=; b=q8o2Ww2Q2d2/00K/DKOgyxjzNg
+	tz0Y3gxLAOGXDMeu51iRxWdMpnefWUvbebmCHeILVJJ7bUH/RZ6Q2GeqldiqXYJeVtXOcZ8C4Xaf/
+	Owf7IrSBUhSGYfLPKuSs89YdFnroEx+G/aBUJY8muaqlIR1bcuXHBRYLV9AJn0QYzyfXjDaazUjQd
+	j71vTIY4FC6O99RJdt8wCN3T4dkiH6nTK3bbhTXY3gFHEq911pDYhz/IR0F+sUN2XWVt97G56/Ete
+	6TpepAl1PcPbM6iu26THTIY778QOYUzijyvjepzoeEM3XQBwFhBD8aFctJ8HKkESUMOchwAzZ8AhX
+	iUqExRsg==;
+Received: from [2001:4bb8:191:e7ca:4bf6:cea4:9bbf:8b02] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rB8mw-00C4wx-2I;
+	Thu, 07 Dec 2023 07:27:15 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev
+Subject: map multiple blocks per ->map_blocks in iomap writeback
+Date: Thu,  7 Dec 2023 08:26:56 +0100
+Message-Id: <20231207072710.176093-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
- <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
- <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
- <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
- <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
- <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com>
- <CAOQ4uxh6sd0Eeu8z-CpCD1KEiydvQO6AagU93RQv67pAzWXFvQ@mail.gmail.com>
- <CAJfpegsoz12HRBeXzjX+x37fSdzedshOMYbcWS1QtG4add6Nfg@mail.gmail.com>
- <CAOQ4uxjEHEsBr5OgvrKNAsEeH_VUTZ-Cho2bYVPYzj_uBLLp2A@mail.gmail.com>
- <CAJfpegtH1DP19cAuKgYAssZ8nkKhnyX42AYWtAT3h=nmi2j31A@mail.gmail.com>
- <CAOQ4uxgW6xpWW=jLQJuPKOCxN=i_oNeRwNnMEpxOhVD7RVwHHw@mail.gmail.com>
- <CAJfpegtOt6MDFM3vsK+syJhpLMSm7wBazkXuxjRTXtAsn9gCuA@mail.gmail.com>
- <CAOQ4uxhKEGxLQ4nR1RfX+37x6KN-Vy8X_TobYpETtjcWng+=DA@mail.gmail.com> <f224ffac-c59e-47dd-8e11-721d7b1c7104@fastmail.fm>
-In-Reply-To: <f224ffac-c59e-47dd-8e11-721d7b1c7104@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 7 Dec 2023 09:23:38 +0200
-Message-ID: <CAOQ4uxh1UWY_OLV1Zq-phFXcOFVp=EJHtgZdXB021Fr-ZHPWzg@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Dec 7, 2023 at 1:11=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
-> Hi Amir,
->
->
-> On 12/6/23 10:59, Amir Goldstein wrote:
-> > On Wed, Nov 29, 2023 at 6:55=E2=80=AFPM Miklos Szeredi <miklos@szeredi.=
-hu> wrote:
-> >>
-> >> On Wed, 29 Nov 2023 at 16:52, Amir Goldstein <amir73il@gmail.com> wrot=
-e:
-> >>
-> >>> direct I/O read()/write() is never a problem.
-> >>>
-> >>> The question is whether mmap() on a file opened with FOPEN_DIRECT_IO
-> >>> when the inode is in passthrough mode, also uses fuse_passthrough_mma=
-p()?
-> >>
-> >> I think it should.
-> >>
-> >>> or denied, similar to how mmap with ff->open_flags & FOPEN_DIRECT_IO =
-&&
-> >>> vma->vm_flags & VM_MAYSHARE) && !fc->direct_io_relax
-> >>> is denied?
-> >>
-> >> What would be the use case for FOPEN_DIRECT_IO with passthrough mmap?
-> >>
-> >>> A bit more challenging, because we will need to track unmounts, or at
-> >>> least track
-> >>> "was_cached_mmaped" state per file, but doable.
-> >>
-> >> Tracking unmaps via fuse_vma_close() should not be difficult.
-> >>
-> >
-> > I think that it is.
-> >
-> > fuse_vma_close() does not seem to be balanced with fuse_file_mmap()
-> > because IIUC, maps can be cloned via fork() etc.
-> >
-> > It tried to implement an iocachectr refcount to track cache mmaps,
-> > but it keeps underflowing in fuse_vma_close().
-> >
-> > I would like us to consider a slightly different model.
-> >
-> > We agreed that caching and passthrough mode on the same
-> > inode cannot mix and there is no problem with different modes
-> > per inode on the same filesystem.
-> >
-> > I have a use case for mixing direct_io and passthrough on the
-> > same inode (i.e. inode in passthrough mode).
-> >
-> > I have no use case (yet) for the transition from caching to passthrough
-> > mode on the same inode and direct_io cached mmaps complicate
-> > things quite a bit for this scenario.
-> >
-> > My proposal is to taint a direct_io file with FOPEN_CACHE_MMAP
-> > if it was ever mmaped using page cache.
-> > We will not try to clean this flag in fuse_vma_close(), it stays with
-> > the file until release.
-> >
-> > An FOPEN_CACHE_MMAP file forces an inode into caching mode,
-> > same as a regular caching open.
->
-> where do you actually want to set that flag? My initial idea for
-> FUSE_I_CACHE_WRITES was to set that in fuse_file_mmap, but I would have
-> needed the i_rwsem lock and that resulted in a lock ordering issue.
->
+Hi all,
 
-Yes, the idea is to set this flag on the first mmap of a FOPEN_DIRECT_IO fi=
-le.
-Why does that require an i_rwsem lock?
+this series overhaults a large chunk of the iomap writeback code with
+the end result that ->map_blocks can now map multiple blocks at a time,
+at least as long as they are all inside the same folio.
 
-Before setting FUSE_I_CACHE_WRITES inode flag, your patch does:
-    wait_event(fi->direct_io_waitq, fi->shared_lock_direct_io_ctr =3D=3D 0)=
-;
+On a sufficiently large system (32 cores in my case) this significantly
+reduces CPU usage for buffered write workloads on xfs, with a very minor
+improvement in write bandwith that might be within the measurement
+tolerance.
 
-We can do the same in direct_io mmap, before setting the
-FOPEN_CACHE_MMAP file flag and consequently changing inode
-mode to caching. No?
+e.g. on a fio sequential write workload using io_uring I get these values
+(median out of 5 runs):
 
-I will try to prepare a patch today to demonstrate.
+before:
+  cpu          : usr=5.26%, sys=4.81%, ctx=4009750, majf=0, minf=13
+  WRITE: bw=1096MiB/s (1150MB/s), 1096MiB/s-1096MiB/s (1150MB/s-1150MB/s), io=970GiB (1042GB), run=906036-906036msec
 
-Thanks,
-Amir.
+with this series:
+  cpu          : usr=4.95%, sys=2.72%, ctx=4084578, majf=0, minf=12
+  WRITE: bw=1111MiB/s (1165MB/s), 1111MiB/s-1111MiB/s (1165MB/s-1165MB/s), io=980GiB (1052GB), run=903234-903234msec
+
+On systems with a small number of cores the cpu usage reduction is much
+lower and barely visible.
+
+Changes since RFC:
+ - various commit message typo fixes
+ - minor formatting fixes
+ - keep the PF_MEMALLOC check and move it to iomap_writepages
+ - rename the offset argument to iomap_can_add_to_ioend to pos
+ - fix missing error handling in an earlier patch (only required for
+   bisection, no change to the end result)
+ - remove a stray whitespace
+ - refactor ifs_find_dirty_range a bit to make it more readable
+ - add a patch to pass the dirty_len to the file system to make life for
+   ext2 easier
+
+Diffstat:
+ block/fops.c           |    2 
+ fs/gfs2/bmap.c         |    2 
+ fs/iomap/buffered-io.c |  576 +++++++++++++++++++++++--------------------------
+ fs/xfs/xfs_aops.c      |    9 
+ fs/zonefs/file.c       |    3 
+ include/linux/iomap.h  |   19 +
+ 6 files changed, 306 insertions(+), 305 deletions(-)
 
