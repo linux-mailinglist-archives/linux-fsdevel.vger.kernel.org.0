@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-5166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C18808D70
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 17:33:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B14E808D71
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 17:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3BB81C209EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 16:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C425F1F210E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 16:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C79F481B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 16:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A8D481AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 16:33:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4031128;
-	Thu,  7 Dec 2023 07:03:15 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 04D90227A87; Thu,  7 Dec 2023 16:03:12 +0100 (CET)
-Date: Thu, 7 Dec 2023 16:03:11 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	gfs2@lists.linux.dev, Christian Brauner <brauner@kernel.org>,
-	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 13/14] iomap: map multiple blocks at a time
-Message-ID: <20231207150311.GA18830@lst.de>
-References: <20231207072710.176093-1-hch@lst.de> <20231207072710.176093-14-hch@lst.de> <4e4a86a0-5681-210f-0c94-263126967082@huaweicloud.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF110125C5;
+	Thu,  7 Dec 2023 15:11:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AAFCC433C7;
+	Thu,  7 Dec 2023 15:11:01 +0000 (UTC)
+Date: Thu, 7 Dec 2023 15:10:58 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com, broonie@kernel.org,
+	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
+	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 09/25] arm64: define VM_PKEY_BIT* for arm64
+Message-ID: <ZXHggjY32Ypr5euK@arm.com>
+References: <20231124163510.1835740-1-joey.gouly@arm.com>
+ <20231124163510.1835740-10-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,55 +43,113 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e4a86a0-5681-210f-0c94-263126967082@huaweicloud.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20231124163510.1835740-10-joey.gouly@arm.com>
 
-On Thu, Dec 07, 2023 at 09:39:44PM +0800, Zhang Yi wrote:
-> > +	do {
-> > +		unsigned map_len;
-> > +
-> > +		error = wpc->ops->map_blocks(wpc, inode, pos);
-> > +		if (error)
-> > +			break;
-> > +		trace_iomap_writepage_map(inode, &wpc->iomap);
-> > +
-> > +		map_len = min_t(u64, dirty_len,
-> > +			wpc->iomap.offset + wpc->iomap.length - pos);
-> > +		WARN_ON_ONCE(!folio->private && map_len < dirty_len);
-> 
-> While I was debugging this series on ext4, I would suggest try to add map_len
-> or dirty_len into this trace point could be more convenient.
+On Fri, Nov 24, 2023 at 04:34:54PM +0000, Joey Gouly wrote:
+>  arch/arm64/include/asm/mman.h   |  8 +++++++-
+>  arch/arm64/include/asm/page.h   | 10 ++++++++++
+>  arch/arm64/mm/mmap.c            |  9 +++++++++
+>  arch/powerpc/include/asm/page.h | 11 +++++++++++
+>  arch/x86/include/asm/page.h     | 10 ++++++++++
+>  fs/proc/task_mmu.c              |  2 ++
+>  include/linux/mm.h              | 13 -------------
+>  7 files changed, 49 insertions(+), 14 deletions(-)
 
-That does seem useful, but it means we need to have an entirely new
-even class.  Can I offload this to you for inclusion in your ext4
-series? :)
+It might be worth splitting out the powerpc/x86/generic parts into a
+separate patch.
 
-> > +		case IOMAP_HOLE:
-> > +			break;
-> 
-> BTW, I want to ask an unrelated question of this patch series. Do you
-> agree with me to add a IOMAP_DELAYED case and re-dirty folio here? The
-> background is that on ext4, jbd2 thread call ext4_normal_submit_inode_data_buffers()
-> submit data blocks in data=ordered mode, but it can only submit mapped
-> blocks, now we skip unmapped blocks and re-dirty folios in
-> ext4_do_writepages()->mpage_prepare_extent_to_map()->..->ext4_bio_write_folio().
-> So we have to inherit this logic when convert to iomap, I suppose ext4's
-> ->map_blocks() return IOMAP_DELALLOC for this case, and iomap do something
-> like:
-> 
-> +               case IOMAP_DELALLOC:
-> +                       iomap_set_range_dirty(folio, offset_in_folio(folio, pos),
-> +                                             map_len);
-> +                       folio_redirty_for_writepage(wbc, folio);
-> +                       break;
+> diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
+> index 5966ee4a6154..ecb2d18dc4d7 100644
+> --- a/arch/arm64/include/asm/mman.h
+> +++ b/arch/arm64/include/asm/mman.h
+> @@ -7,7 +7,7 @@
+>  #include <uapi/asm/mman.h>
+>  
+>  static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+> -	unsigned long pkey __always_unused)
+> +	unsigned long pkey)
+>  {
+>  	unsigned long ret = 0;
+>  
+> @@ -17,6 +17,12 @@ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+>  	if (system_supports_mte() && (prot & PROT_MTE))
+>  		ret |= VM_MTE;
+>  
+> +#if defined(CONFIG_ARCH_HAS_PKEYS)
+> +	ret |= pkey & 0x1 ? VM_PKEY_BIT0 : 0;
+> +	ret |= pkey & 0x2 ? VM_PKEY_BIT1 : 0;
+> +	ret |= pkey & 0x4 ? VM_PKEY_BIT2 : 0;
+> +#endif
 
-I guess we could add it, but it feels pretty quirky to me, so it would at
-least need a very big comment.
+Is there anywhere that rejects pkey & 8 on arm64? Because with 128-bit
+PTEs, if we ever support them, we can have 4-bit pkeys.
 
-But I think Ted mentioned a while ago that dropping the classic
-data=ordered mode for ext4 might be a good idea eventually no that ext4
-can update the inode size at I/O completion time (Ted, correct me if
-I'm wrong).  If that's the case it might make sense to just drop the
-ordered mode instead of adding these quirks to iomap.
+>  #define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+> diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+> index 2312e6ee595f..aabfda2516d2 100644
+> --- a/arch/arm64/include/asm/page.h
+> +++ b/arch/arm64/include/asm/page.h
+> @@ -49,6 +49,16 @@ int pfn_is_map_memory(unsigned long pfn);
+>  
+>  #define VM_DATA_DEFAULT_FLAGS	(VM_DATA_FLAGS_TSK_EXEC | VM_MTE_ALLOWED)
+>  
+> +#if defined(CONFIG_ARCH_HAS_PKEYS)
+> +/* A protection key is a 3-bit value */
+> +# define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_2
+> +# define VM_PKEY_BIT0	VM_HIGH_ARCH_2
+> +# define VM_PKEY_BIT1	VM_HIGH_ARCH_3
+> +# define VM_PKEY_BIT2	VM_HIGH_ARCH_4
+> +# define VM_PKEY_BIT3	0
+> +# define VM_PKEY_BIT4	0
+> +#endif
 
+I think we should start from VM_HIGH_ARCH_BIT_0 and just move the
+VM_MTE, VM_MTE_ALLOWED to VM_HIGH_ARCH_BIT_{4,5}.
+
+> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+> index e5fcc79b5bfb..a5e75ec333ad 100644
+> --- a/arch/powerpc/include/asm/page.h
+> +++ b/arch/powerpc/include/asm/page.h
+> @@ -330,6 +330,17 @@ static inline unsigned long kaslr_offset(void)
+>  }
+>  
+>  #include <asm-generic/memory_model.h>
+> +
+> +#if defined(CONFIG_ARCH_HAS_PKEYS)
+> +# define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+> +/* A protection key is a 5-bit value */
+> +# define VM_PKEY_BIT0	VM_HIGH_ARCH_0
+> +# define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+> +# define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+> +# define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+> +# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+> +#endif /* CONFIG_ARCH_HAS_PKEYS */
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #endif /* _ASM_POWERPC_PAGE_H */
+> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+> index d18e5c332cb9..b770db1a21e7 100644
+> --- a/arch/x86/include/asm/page.h
+> +++ b/arch/x86/include/asm/page.h
+> @@ -87,5 +87,15 @@ static __always_inline u64 __is_canonical_address(u64 vaddr, u8 vaddr_bits)
+>  
+>  #define HAVE_ARCH_HUGETLB_UNMAPPED_AREA
+>  
+> +#if defined(CONFIG_ARCH_HAS_PKEYS)
+> +# define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+> +/* A protection key is a 4-bit value */
+> +# define VM_PKEY_BIT0	VM_HIGH_ARCH_0
+> +# define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+> +# define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+> +# define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+> +# define VM_PKEY_BIT4	0
+> +#endif /* CONFIG_ARCH_HAS_PKEYS */
+
+Rather than moving these to arch code, we could instead keep the generic
+definitions with some additional CONFIG_ARCH_HAS_PKEYS_{3,4,5}BIT
+selected from the arch code.
+
+-- 
+Catalin
 
