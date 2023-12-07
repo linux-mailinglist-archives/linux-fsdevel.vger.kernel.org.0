@@ -1,118 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-5205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B343580959E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:48:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB2380959F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AC7B20D10
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7201C2099B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74065027F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDE75730A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EmVgL69G"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="QoRiMK/Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDB41713
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:04:19 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id ca18e2360f4ac-7b70c2422a8so1978039f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Dec 2023 13:04:19 -0800 (PST)
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1BB91716
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:04:27 -0800 (PST)
+Received: by mail-io1-xd35.google.com with SMTP id ca18e2360f4ac-7b37a2e6314so12107839f.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Dec 2023 13:04:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701983058; x=1702587858; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QnOdAbbW738dDSEwDw+Hubt/xTKBIoFneuu6uVDJrR4=;
-        b=EmVgL69Gcfk88PCbu0YXOI4s4z+u9IJ8dA/eIqX9krBF7ssogYil3FgLyEVZq6iHOA
-         Zq8YoXgSMKMdNDhA4XFXJxFp+8CcYjD/Us0Igi5qJlluh86+XXj9iAjl8Zyj08vg7Zg5
-         xY5IXD5RLzoYF4POr5vTB2TNz4+LFkvUZk+R0Q+9esNtYIQRkmQUECyYlUzmXObPwhrm
-         oHt07rh8cG6mzMPjRuAzV/2STMl5pfHXFmOyBIUvpsm7ejDig61iMbInoQ6Vt35hVLEN
-         VRbKbg2QEIkwCxBjry4Os8mu23XhETHAK0hnCkWeZPRKKnVy7Pcc25sI7MehdtJCG0CM
-         2R8Q==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1701983067; x=1702587867; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tXvEzGNamUbqRrEd+8gPXXWIOewwxYDCIMTlohmAGFI=;
+        b=QoRiMK/Z9M/7bpN7wxJeH9Ytn/rFh9dfmJgdszH4KaB0TTvLJSTxXTkOisNZgsyGWG
+         dkIadtkDAkS4b9TZfSm45P5Z7AMva6+YYUeqTeb1VvehYUkU6A4/zbB9bwQUqGUWOAVj
+         o8o7THEjtHTFqUeWe29SdFzEvuoPrEGT3wVafZ08RT5KpFO79TSFLQgher4E8KlS40YZ
+         MpqSEFg0qIW80NWGPHasXaJdP9/PNbLKyj2CgQFZGRKXV3bpbqZiOB/8YiamKAsQRXy9
+         Bp/f6M8S6bFuXSz8FhApnN3yaPzIc1Ng6BrVPTJlsfk9/pdvU5Bg8R6aKzPaABakFv0A
+         gmvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701983058; x=1702587858;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QnOdAbbW738dDSEwDw+Hubt/xTKBIoFneuu6uVDJrR4=;
-        b=VrDqelyvXF/WAWLl2/YiAhsro6IQjNu5x9GMBM+cFmMZ5eTEuuy5Vp80mFwkm/83Ig
-         0FpOj0fkdjaLJYNCGJvxjl76qmyJAE6ksxV2j9svjIBdqVkOXbOLMNBbEoHjHT7WmRWf
-         xLdKbsHxYSuWCDFGmYzY2e/z320c2EqWvkwIsDB7L2HqZLFMenhiBvgJLol1gTzF3Bf7
-         /swi9i6LVqZPKiwVbGSwhJnkaeRQkSnvq/VhL/dih1MRbgrxbUgJH3DcE+huQwFDLa99
-         VpYXOEjZ4OaB4M77M4EUW8ZKBc0bAkTyi3VZZ+Z3Piqnlr1XUdAFfCjjHR4AEOSBR3x/
-         kqUQ==
-X-Gm-Message-State: AOJu0Yy0c1QpeU5aX1kl4ZYN2L1tKKw1NejzqmyF7aKfKfmZRj54kMO3
-	NcUWIXgBVr4DVtm+Yu7JtOgxlA==
-X-Google-Smtp-Source: AGHT+IGfk5tzSp7oJ5ohoU13545PtMbkNpTMDj2V/8iQwlmAOMGlnDVaWU3/3N545c7XpSLYZp2/tw==
-X-Received: by 2002:a05:6e02:1d01:b0:35e:6ae2:a4b7 with SMTP id i1-20020a056e021d0100b0035e6ae2a4b7mr332658ila.2.1701983058607;
-        Thu, 07 Dec 2023 13:04:18 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id db1-20020a056e023d0100b0035ab93df306sm122027ilb.13.2023.12.07.13.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Dec 2023 13:04:18 -0800 (PST)
-Message-ID: <8d81a701-63a4-4d24-b5d0-124628234974@kernel.dk>
-Date: Thu, 7 Dec 2023 14:04:17 -0700
+        d=1e100.net; s=20230601; t=1701983067; x=1702587867;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tXvEzGNamUbqRrEd+8gPXXWIOewwxYDCIMTlohmAGFI=;
+        b=Yx0z68UFPNS3Zz3XP7YyL9vwxdC3MSnPoYv7+a/bNvlknTfN4C7L0GAsEn311Gu+hx
+         Zn7GWUNKr3untjTemZLaRCTO1rHA5ipoL9sJfmYOStwRQLbJYEg4xZZ1qr3yldiUpkd+
+         m4i9KYwW6XHwdPxw96OIQ+Ivh/meB9Oo3jIhJQ6/slVeQ0PSFHLPa9mo2VE4WyMxLZwR
+         zpo6/oniggiQbTu++ORBUfEd8moScZ6zorpGkmm1hMGJ/vMGpTAWF1+kXYseE19p4TYW
+         Z3nnjOfK1C5WsXUCVJ0XxQAfw6hOr+C0iTHKGv8WS4Gsulf68B57/zzhcbNocscf04Nt
+         GkAg==
+X-Gm-Message-State: AOJu0YyYvR1g7c09VSm/oWH7BWCQdluncbr+Kjl+mWwX2uT8YMI0MulI
+	ikf/1h/4nNf3WNc4dW7kBJ2aNw==
+X-Google-Smtp-Source: AGHT+IHD6Hl71ge/A3HXgZbYEah2+7DDoF0+51S3+Ha7PvHo1MdC6v1kljCPHJ00TvAeoRdBNPUd1g==
+X-Received: by 2002:a6b:f105:0:b0:7b6:fb5d:fe4d with SMTP id e5-20020a6bf105000000b007b6fb5dfe4dmr2666390iog.2.1701983067233;
+        Thu, 07 Dec 2023 13:04:27 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id f10-20020a056638118a00b0043a1b74a0e3sm115951jas.90.2023.12.07.13.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Dec 2023 13:04:26 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
+ Hugh Dickins <hughd@google.com>, linux-mm@kvack.org, 
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20230814144100.596749-1-willy@infradead.org>
+References: <20230814144100.596749-1-willy@infradead.org>
+Subject: Re: [PATCH] block: Remove special-casing of compound pages
+Message-Id: <170198306635.1954272.10907610290128291539.b4-ty@kernel.dk>
+Date: Thu, 07 Dec 2023 14:04:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] block: Rework bio_for_each_segment_all()
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- Ming Lei <ming.lei@redhat.com>, Phillip Lougher <phillip@squashfs.org.uk>
-References: <20231122232818.178256-1-kent.overstreet@linux.dev>
- <20231206213424.rn7i42zoyo6zxufk@moria.home.lan>
- <72bf57b0-b5fb-4309-8bfb-63a207a52df7@kernel.dk>
- <ZXIx/FVRYb8E5r37@casper.infradead.org>
- <4aef0190-8749-4e04-b061-03b8407b8954@kernel.dk>
-In-Reply-To: <4aef0190-8749-4e04-b061-03b8407b8954@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-7edf1
 
-On 12/7/23 2:01 PM, Jens Axboe wrote:
-> On 12/7/23 1:58 PM, Matthew Wilcox wrote:
->> On Wed, Dec 06, 2023 at 03:40:38PM -0700, Jens Axboe wrote:
->>> On 12/6/23 2:34 PM, Kent Overstreet wrote:
->>>> On Wed, Nov 22, 2023 at 06:28:13PM -0500, Kent Overstreet wrote:
->>>>> This patch reworks bio_for_each_segment_all() to be more inline with how
->>>>> the other bio iterators work:
->>>>>
->>>>>  - bio_iter_all_peek() now returns a synthesized bio_vec; we don't stash
->>>>>    one in the iterator and pass a pointer to it - bad. This way makes it
->>>>>    clearer what's a constructed value vs. a reference to something
->>>>>    pre-existing, and it also will help with cleaning up and
->>>>>    consolidating code with bio_for_each_folio_all().
->>>>>
->>>>>  - We now provide bio_for_each_segment_all_continue(), for squashfs:
->>>>>    this makes their code clearer.
->>>>
->>>> Jens, can we _please_ get this series merged so bcachefs isn't reaching
->>>> into bio/bvec internals?
->>>
->>> Haven't gotten around to review it fully yet, and nobody else has either
->>> fwiw. Would be nice with some reviews.
->>
->> Could you apply this conflicting patch first, so it's easier to
->> backport>
->>
->> https://lore.kernel.org/linux-block/20230814144100.596749-1-willy@infradead.org/
+
+On Mon, 14 Aug 2023 15:41:00 +0100, Matthew Wilcox (Oracle) wrote:
+> The special casing was originally added in pre-git history; reproducing
+> the commit log here:
 > 
-> Yep I guess we should... Doesn't apply directly though anymore. I'll
-> check later today why, or just send a refreshed version and we can get
-> that stashed away.
+> > commit a318a92567d77
+> > Author: Andrew Morton <akpm@osdl.org>
+> > Date:   Sun Sep 21 01:42:22 2003 -0700
+> >
+> >     [PATCH] Speed up direct-io hugetlbpage handling
+> >
+> >     This patch short-circuits all the direct-io page dirtying logic for
+> >     higher-order pages.  Without this, we pointlessly bounce BIOs up to
+> >     keventd all the time.
+> 
+> [...]
 
-Just an added symbol, applied.
+Applied, thanks!
 
+[1/1] block: Remove special-casing of compound pages
+      commit: 1b151e2435fc3a9b10c8946c6aebe9f3e1938c55
+
+Best regards,
 -- 
 Jens Axboe
+
+
 
 
