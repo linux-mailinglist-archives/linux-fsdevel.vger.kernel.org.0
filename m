@@ -1,121 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-5139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929B58085A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 11:35:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70AA8085A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 11:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA82B20BF3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEE8B21105
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAB337D1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E91637D07
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 10:35:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF881721;
-	Thu,  7 Dec 2023 01:32:06 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-5d400779f16so3520057b3.0;
-        Thu, 07 Dec 2023 01:32:06 -0800 (PST)
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8E2132
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 01:56:21 -0800 (PST)
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3b9ced51358so1366812b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Dec 2023 01:56:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701941525; x=1702546325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7HITPOZ98TcxoeIJZrNjSo/OvrhbnTbF7gIrbNDfuq4=;
-        b=GNfHWzC2mWUudtXiY+2FAqYeRIi00vGYJcUKtW9CoOqnQojs1UZ4daVnY+xmX2VTif
-         6BbT568w/QtqjkHenDuj5RMEoaGF4W79nxCYQKGRQwLoD1cnLCwk7uUAV2raR4XiOZ3P
-         2W1ezFSyb+EiXsJflpMexpTFUHHV+H7PXW04l1hGc49yCpTdpYm01ouhGLfMzXqrUVpf
-         BoajSM5YZPMfQU4MyAld24uv3bUIon6ntXeEShWr6XzxpbW+b05WpBbi+yg5kJ7SuZmw
-         ezG9y5iCdUka1o7nQlgTvxYRaN0UDhhCM0INdD1oOhmxOgJWO5IM0i7eprhz6RK5VTMh
-         QYFQ==
-X-Gm-Message-State: AOJu0YzS6mfM86mtrHfy360/oPOvFY2K8dPcNXxb8QjDILMRd6YgUoXC
-	6qTRzWMu3C83ck2AY3VPxpbEbztB0o4j3o4K
-X-Google-Smtp-Source: AGHT+IHUxkxGdq8C5WBHMuoj9KomT4pansS+cp/BBfvTVIKBqwDbdPfjsvriHOFPykzXf8ZVWIgmgQ==
-X-Received: by 2002:a81:af43:0:b0:5d7:1940:3ef4 with SMTP id x3-20020a81af43000000b005d719403ef4mr1429648ywj.37.1701941525404;
-        Thu, 07 Dec 2023 01:32:05 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id b62-20020a0dd941000000b005d6c21adea5sm273318ywe.40.2023.12.07.01.32.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Dec 2023 01:32:04 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-5d400779f16so3519897b3.0;
-        Thu, 07 Dec 2023 01:32:04 -0800 (PST)
-X-Received: by 2002:a81:84c3:0:b0:5d6:bc5c:9770 with SMTP id
- u186-20020a8184c3000000b005d6bc5c9770mr3593778ywf.4.1701941524678; Thu, 07
- Dec 2023 01:32:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701942980; x=1702547780;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ScwbojD04F2at3hLMumIFTXdjPyNKsTIy2RhBT11T1o=;
+        b=hcU81zABASl8JDCEtGcZdfi8sesHd+mZjoigY9WVa9kFOfc+rNLcvIzKZXWErizgMv
+         1dtcKiSj9Ixu+Kf9/xYKUg+XK0AJbdxekyaSw6s6O10QU1Zn08gozE/Cl3U2ZIYsIBku
+         WwiM/EOsMkinJH5NeczwfldAFJkXtqinPJUA6J9GydzFVe9iIAYr8lDmCv9KTzMNbuWD
+         izUukOPzxsNV3WGtV1jzLHfRFWYM6C6XGoYKiypOe2YiKXDRxUeRukEqMU2EV2eEBChj
+         /36pOPxsfEu7YJDMLAeNZqzv8bYk9GzElBMCNEEcQBt0Dd1gFzqErjrgaQVO70hcCi+Q
+         9etg==
+X-Gm-Message-State: AOJu0Yw4SAcleMWL7hTo/959MB5ZQ0IgGOwsgCDNYqvuyIh1/531spsl
+	2rHnziSrzZHA0wPRMrXZxNV/Ic+5MlSUTDwVP3p96V/D7HBX
+X-Google-Smtp-Source: AGHT+IE2CB85UZCMHKfz8FuIzMEfBv2d88hnYymoGoXVFebV0bh8KsWkEDw4SOmC5VaO0teGgmDorKGoPqlnKVgBtLwTm6W0EtlU
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00fd1558-fda5-421b-be43-7de69e32cb4e@paragon-software.com> <61494224-68a8-431b-ba76-46b4812c241c@paragon-software.com>
-In-Reply-To: <61494224-68a8-431b-ba76-46b4812c241c@paragon-software.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Dec 2023 10:31:53 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVu1xAHDo1UUsCKEX=pbiZWab0HwkO6hObwE6uB2yD4RQ@mail.gmail.com>
-Message-ID: <CAMuHMdVu1xAHDo1UUsCKEX=pbiZWab0HwkO6hObwE6uB2yD4RQ@mail.gmail.com>
-Subject: Re: [PATCH 08/16] fs/ntfs3: Fix detected field-spanning write (size
- 8) of single field "le->name"
-To: Konstantin Komarovc <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a05:6808:200c:b0:3b8:5dc1:3177 with SMTP id
+ q12-20020a056808200c00b003b85dc13177mr2212198oiw.1.1701942980419; Thu, 07 Dec
+ 2023 01:56:20 -0800 (PST)
+Date: Thu, 07 Dec 2023 01:56:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c6a5df060be87a45@google.com>
+Subject: [syzbot] Monthly gfs2 report (Dec 2023)
+From: syzbot <syzbot+list7414194430be1506e979@syzkaller.appspotmail.com>
+To: gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Konstantin,
+Hello gfs2 maintainers/developers,
 
-On Wed, Dec 6, 2023 at 4:12=E2=80=AFPM Konstantin Komarovc
-<almaz.alexandrovich@paragon-software.com> wrote:
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.c=
-om>
+This is a 31-day syzbot report for the gfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/gfs2
 
-Thanks for your patch, which is now commit d155617006ebc172 ("fs/ntfs3:
-Fix detected field-spanning write (size 8) of single field "le->name"")
-in next-20231207.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 20 issues are still open and 22 have been fixed so far.
 
-> --- a/fs/ntfs3/ntfs.h
-> +++ b/fs/ntfs3/ntfs.h
-> @@ -523,7 +523,7 @@ struct ATTR_LIST_ENTRY {
->       __le64 vcn;        // 0x08: Starting VCN of this attribute.
->       struct MFT_REF ref;    // 0x10: MFT record number with attribute.
->       __le16 id;        // 0x18: struct ATTRIB ID.
-> -    __le16 name[3];        // 0x1A: Just to align. To get real name can
-> use bNameOffset.
-> +    __le16 name[];        // 0x1A: Just to align. To get real name can
-> use name_off.
+Some of the still happening issues:
 
-noreply@ellerman.id.au reports for all m68k configs[1]:
+Ref  Crashes Repro Title
+<1>  4739    Yes   WARNING in __folio_mark_dirty (2)
+                   https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
+<2>  3678    Yes   WARNING in folio_account_dirtied
+                   https://syzkaller.appspot.com/bug?extid=8d1d62bfb63d6a480be1
+<3>  668     Yes   kernel BUG in gfs2_glock_nq (2)
+                   https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<4>  55      Yes   WARNING in gfs2_check_blk_type
+                   https://syzkaller.appspot.com/bug?extid=092b28923eb79e0f3c41
+<5>  37      Yes   general protection fault in gfs2_dump_glock (2)
+                   https://syzkaller.appspot.com/bug?extid=427fed3295e9a7e887f2
+<6>  9       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rgrp_dump
+                   https://syzkaller.appspot.com/bug?extid=da0fc229cc1ff4bb2e6d
+<7>  9       Yes   INFO: task hung in write_cache_pages (3)
+                   https://syzkaller.appspot.com/bug?extid=4fcffdd85e518af6f129
+<8>  5       Yes   WARNING in gfs2_ri_update
+                   https://syzkaller.appspot.com/bug?extid=f8bc4176e51e87e0928f
+<9>  4       Yes   BUG: unable to handle kernel NULL pointer dereference in gfs2_rindex_update
+                   https://syzkaller.appspot.com/bug?extid=2b32df23ff6b5b307565
+<10> 2       Yes   memory leak in gfs2_trans_begin
+                   https://syzkaller.appspot.com/bug?extid=45a7939b6f493f374ee1
 
-include/linux/build_bug.h:78:41: error: static assertion failed:
-"sizeof(struct ATTR_LIST_ENTRY) =3D=3D 0x20"
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->
->   }; // sizeof(0x20)
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Indeed, we now have a hole of 4 bytes at the end of the structure,
-which shrinks the size of the structure on all architectures where
-alignof(u64) < sizeof(u64).
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-So either the patch should be reverted, or explicit padding should
-be added.  Your patch description is not very descriptive, so I
-don't know which is the correct solution.
-
-[1] http://kisskb.ellerman.id.au/kisskb/head/8e00ce02066e8f6f1ad5eab49a2ede=
-7bf7a5ef64
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+You may send multiple commands in a single email message.
 
