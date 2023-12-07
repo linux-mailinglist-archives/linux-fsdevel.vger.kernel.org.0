@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-5270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABD2809591
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:46:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3CB8095A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B3F1C20A84
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89EE5B20B03
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B86B15AC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E436657313
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UiYCYvpf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDXzxEix"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FD11728;
-	Thu,  7 Dec 2023 13:37:14 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-286d8f3a08bso1439757a91.1;
-        Thu, 07 Dec 2023 13:37:14 -0800 (PST)
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D44E9;
+	Thu,  7 Dec 2023 13:10:21 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id 98e67ed59e1d1-286d701cabeso1403864a91.3;
+        Thu, 07 Dec 2023 13:10:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701985034; x=1702589834; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701983421; x=1702588221; darn=vger.kernel.org;
         h=message-id:date:content-id:mime-version:references:in-reply-to:cc
          :to:subject:from:from:to:cc:subject:date:message-id:reply-to;
         bh=gBBC3+RnZ4D0MUX3ZqGqN8vGIaNXSQk0kKGYcAtYiDo=;
-        b=UiYCYvpfwi+ZDuDgeWWqfiWfuyIBG3Zejdzhpiemxzoau9Sfq7LNJTEvXJ559eoWJh
-         341lGCMfdchI3H4pR9KxwpR569zw/Jw8wMwOWQ0rC1D64CTU2oGSn3yTX3bk621o0ZoE
-         SlhaMaPOkv3/Wgs2oN3LIqdALTEhs0fbzVWYL8LD5MXUQlZbautjNakULGWfORsdCSkL
-         iUMA+lYW6tWlrNPkSqLphx9iHJ/ajeciLnv8GU8vzGMWDW9H3YW6/Xfo9i1XBbwfHVUH
-         FMmW/m4fHC/tf21Yu44IjazXW2vcOeDckkea4ChS/Olclhe7TFy4ka7RoV4h7GqXI0Tv
-         YoHQ==
+        b=UDXzxEixcsZP0AOw1m67vg70wH4Qj0tkkfVDXGIwGCo0fryMlyRAbM7hXdZnPEm0WQ
+         tkZqX7+Deck3MAOnfZjw4zJGW1cfVfZSjt+voQ05wI8h2ZknXNr1FVa44uwDCX49DjBC
+         H0Kkh1yPGpUydA+3P+X2AaIZaoQlaGTjNSE7gijegOcdwx1wQ3GEs1MU+tpBQvUlbRm2
+         cLwFNGd5JtXWGMr79iojT4FJtjP5rCtw5i9VE1pu09An9VibRRjPasaz+SZtO/KBZJvY
+         LEo2Wx/6EoNSTZYQQqGd81zGjs4wX2FwmdsOrVciFeW6GgSZliuRDD0IBOSLBStmzeNa
+         r2XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701985034; x=1702589834;
+        d=1e100.net; s=20230601; t=1701983421; x=1702588221;
         h=message-id:date:content-id:mime-version:references:in-reply-to:cc
          :to:subject:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
         bh=gBBC3+RnZ4D0MUX3ZqGqN8vGIaNXSQk0kKGYcAtYiDo=;
-        b=on1lqLftS+Ag1pwHJ6h8YN9kU5QwUKte39Sdk+/vMf5F4SSUWL0F8lkjeOMOTmc+l3
-         bktE/Gwj3pj8U1inpJgvsHWBwkQ+xakGuwk6NhJrS8v5e0WTwAsfbFzKj4T12usEDYWP
-         K2uKVx3HDLUnb6f0w0qI2WP6ofQC/U0puxaoYX1cjhAvZmZ7hybC3v9AAe7XNMTyEYcx
-         jyHO9+Cg/Vejba+Z0WF9pXZLSDLLi2zjLJR9C3jnVi1CcJrph1P4uQXM8Dwt7tbq3lux
-         XQ1I82EhSlvin7/Mgj3O8qeGOZ3ng7xz3Zg3qWgLFF7prEISXE9C/xEalUv/HEcSmeTC
-         xhDA==
-X-Gm-Message-State: AOJu0YwpPsR1EhL1bbInTEmb8r3ZvT6p5htSF6KK7rQxsNpOLZailbwc
-	p4dDcR4vW4JDZSsLcMcFwVk=
-X-Google-Smtp-Source: AGHT+IElIp+cAHpNT5XZVbCct1KDG8EC2BtuKUTXw+pmvU+3AvJNfTkTV1K9c+dUQKpO/5jVtUv7hA==
-X-Received: by 2002:a17:90b:4b44:b0:286:d242:2629 with SMTP id mi4-20020a17090b4b4400b00286d2422629mr3189271pjb.3.1701985034008;
-        Thu, 07 Dec 2023 13:37:14 -0800 (PST)
+        b=bPodEdpu95GkrV7tuTle4J1n/0zEjbRmMMw9IZuaVIY4mtGFc0hx5IVsEjPjexjeDm
+         LGoe+hCIdJoDjZ0QO8O4RMaYT5E6lEzgo9yWz+/aZ8CuSIqeQT1FxQAGqMVHw5527hnH
+         OOZr1dOXnjnARrYqHkSp4VLrnGwcqcB2NpklITm1zvzG0gqg5aphvbYhoQnOCCjWhsKd
+         Dnnq7vXtjmwFsoD29gLNEGiIumm8VQUeDmTw4FJZHWq3Gy4sSu+WaXSj1UAioW19F4Ub
+         +6fZup5yYqklhUkoUS+4T6oJXmtgx4mSG3RkZCh8WmPInZZKD/9bLf8OtVlWKPq1fd+O
+         LH+A==
+X-Gm-Message-State: AOJu0YyyiOA2fOt7BvQ1AcgYwPP/EXl0kLPY7f1238P/EyIVGbGPiFRo
+	qlPiAacF7MLh1DMG5wWEhVXb+KKYtnM=
+X-Google-Smtp-Source: AGHT+IE05Lk5zs8mPCAK6fac/YqNLl5Pwmurtilp7IlFNhBJCfM42MDMeksTqB/agK4RcOyMTJD7vg==
+X-Received: by 2002:a17:90a:4e0f:b0:286:818c:27a2 with SMTP id n15-20020a17090a4e0f00b00286818c27a2mr3592885pjh.49.1701983420884;
+        Thu, 07 Dec 2023 13:10:20 -0800 (PST)
 Received: from jromail.nowhere (h219-110-241-048.catv02.itscom.jp. [219.110.241.48])
-        by smtp.gmail.com with ESMTPSA id j18-20020a170902c3d200b001cc3a6813f8sm273891plj.154.2023.12.07.13.37.13
+        by smtp.gmail.com with ESMTPSA id j8-20020a17090aeb0800b00286596711f1sm1852382pjz.19.2023.12.07.13.10.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 13:37:13 -0800 (PST)
+        Thu, 07 Dec 2023 13:10:20 -0800 (PST)
 Received: from jro by jrotkm2 id 1rBLdS-0000Rz-2M ;
 	Fri, 08 Dec 2023 06:10:18 +0900
 From: "J. R. Okajima" <hooanon05g@gmail.com>
