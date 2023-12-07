@@ -1,43 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-5201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA29809280
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 21:39:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C5780959B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFE01F211BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE2E282104
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F27757300
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 20:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078405786A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OtQluZGX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X99USWiJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB3FB10EF;
-	Thu,  7 Dec 2023 12:09:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UfGaLfZYJj6lsws6XmqCysFAN6nlJ24xLl/Aq/2K4dM=; b=OtQluZGXuAaSUJzLZzAFOV08NY
-	k1D7dSm+Y5+9FSb3kakZSPvNtfO3iemo1fmrona9PBir1Kw8aZUJ/uvvSP5o5G4+ueIZmTlEXm407
-	hm55fLtch57THR6RAUI/ol50DEM35rTIZ6S9C/YCKosSxko7mFi1uHi0eRwIoNtYW+sjY7AsnVOui
-	avwuiX54c1YLO3pDMiDzNAKMv5eDGF+sQO6TSsJUN4014BcbiLGIS6kPozrt8usZDKdjr3Vxb1Wp8
-	j1eBC76TnnyZ5q8y4zg/orfcE9fd0jAEwSE0yVk2B/MIQP/M3UGjw0UowL2NUOFB73bI9OCkjLhfx
-	EJl+d/5Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rBKg9-004Jbe-6h; Thu, 07 Dec 2023 20:09:01 +0000
-Date: Thu, 7 Dec 2023 20:09:01 +0000
-From: Matthew Wilcox <willy@infradead.org>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254763309C;
+	Thu,  7 Dec 2023 20:45:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C09C433C8;
+	Thu,  7 Dec 2023 20:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701981947;
+	bh=sYQGssTPlpa20lbjLRapkdCgDOIj7sRJzFW5CjUHMbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X99USWiJWBAwJ+VC4spP2yULMtaNtSkqbt1K+gmlozAjNkUj10SDqOuy/hezUjcZv
+	 rqymWPito8296Ff41S+g+f9OY0XJkNNSRxj8v/ujY8qlmViZroXundj5ZgPLKMgi1o
+	 jMGwEGBe38sUY3ThKl/guF72+tE9NzkOoPGl1gHjTSl1Vfp82Ofx0ieCYyEJIhhJcy
+	 vISs1DK/3+FnyymvYyy87x44BF0CsavXDI02bUHpQubCN1JcmIHY/z9jUfGWGyqg78
+	 3MjBEzFGlztw6BNeL/vrDUNj/KbdSWPD7LrjQFNjltfcsXNlFzeHZRoPxpnRSORprc
+	 EHhsCCOFYIeJg==
+Date: Thu, 7 Dec 2023 13:45:45 -0700
+From: Keith Busch <kbusch@kernel.org>
 To: Kent Overstreet <kent.overstreet@linux.dev>
 Cc: axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org
+	linux-block@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
 Subject: Re: [PATCH 2/3] block: Rework bio_for_each_folio_all(), add
  bio_for_each_folio()
-Message-ID: <ZXImXVPxeWTwDlNK@casper.infradead.org>
+Message-ID: <ZXIu-Yj2tBd2895_@kbusch-mbp>
 References: <20231122232818.178256-1-kent.overstreet@linux.dev>
  <20231122232818.178256-2-kent.overstreet@linux.dev>
 Precedence: bulk
@@ -51,11 +53,13 @@ Content-Disposition: inline
 In-Reply-To: <20231122232818.178256-2-kent.overstreet@linux.dev>
 
 On Wed, Nov 22, 2023 at 06:28:14PM -0500, Kent Overstreet wrote:
-> This reimplements bio_for_each_folio_all() on top of the newly-reworked
-> bvec_iter_all, and adds a new common helper biovec_to_foliovec() for
-> both bio_for_each_folio_all() and bio_for_each_folio().
+> +#define __bio_for_each_folio(bvl, bio, iter, start)			\
+> +	for (iter = (start);						\
+> +	     (iter).bi_size &&						\
+> +		((bvl = bio_iter_iovec_folio((bio), (iter))), 1);	\
+> +	     bio_advance_iter_single((bio), &(iter), (bvl).fv_len))
 
-Something that annoys me about this is that for BIOs which contain
-multiple folios, we end up calling compound_head() on each folio instead
-of once per bio_vec.  Not sure if there's a way to avoid that ...
+I know your just moving this macro, but perhaps now would be a good
+opportunity to rename 'bvl' to 'fv' to match the callers and have a
+different naming convention from the bio_vec macros.
 
