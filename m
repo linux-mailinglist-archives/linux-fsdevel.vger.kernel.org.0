@@ -1,94 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-5106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283F6808341
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:38:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94E1808346
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D211E1F222A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55AA283B0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564CF2FE0E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AF02E83D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="AQCvEWvZ"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gnWq7FOm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i+Y4B8Pb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE34010FA
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 22:51:26 -0800 (PST)
-Received: from cwcc.thunk.org (pool-173-48-122-214.bstnma.fios.verizon.net [173.48.122.214])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3B76ok0S000645
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Dec 2023 01:50:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1701931849; bh=UfL2KoGggpRyXRxC/oRG3Gv/LsdkC3Op4OluyeXF4F4=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=AQCvEWvZ1ZNDqePQ7Faykh3MytTg4T3BXLjg8+ksZvjZdje+pz1Z5L037V5TD0reI
-	 rziH1mKOVt8Gh2vp9GOv/C2EdeONUx9PBVIqL5nOX0h9eoDoBawLPZ6ZD5u9hKAVQJ
-	 4Cg+ajzFVtW1wcgO4bBRYoWsZP4Sj3jvBD2qN3noneD+RA2cnkJhyE2uJII0gT1g4s
-	 AJ0MrEskqHXgAZEMI/JYzkyPRVexOUt7Cv0WlC8VEHiOg0hbwwkiSAUYPIle5JlC/1
-	 CysBCcPqOGppMQtHU0FO5Tb9F5IDy4GFp3wNV7p89D3izxsya6h4s0CIBongQGtAOz
-	 XrQ4be/Nwl/fA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id AE0E215C057B; Thu,  7 Dec 2023 01:50:46 -0500 (EST)
-Date: Thu, 7 Dec 2023 01:50:46 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>, hch@lst.de,
-        Christian Brauner <brauner@kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] [RFC] iomap: Use FUA for pure data O_DSYNC DIO writes
-Message-ID: <20231207065046.GA9663@mit.edu>
-References: <20180301014144.28892-1-david@fromorbit.com>
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E91A193;
+	Wed,  6 Dec 2023 23:13:47 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id 5DB9E5C0106;
+	Thu,  7 Dec 2023 02:13:46 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 07 Dec 2023 02:13:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm1; t=1701933226; x=1702019626; bh=Gn
+	fimb5hncqefIVhB4bE5spPvjRgxNsO0UKP3I5CJ24=; b=gnWq7FOm+5cnwGQBNT
+	HmxCJaQ6tNzZTBXwtwv4/U8MjVoAXSBaFsj8tCRvV/BdnA+WMCMl09H4NX7R26EH
+	ztsKPXk18n4GmiTwUGKHgnnbQ19wv6Xky3yCMWxwc8DbP+wychgUnL0C2+jhXGEf
+	O/9WttnO4lcFOnYNjO7cwgYUzaZaLTAb165HkfnfIizoJk/M+Oyo1HGBGGtoWmA6
+	VQZMREfGurPDXfwB9mG1K+m2Xv/3e3pf9//q8A+5o5FPXyiE+QwXZpuvWEK1wcyd
+	UNI8mtli1S/uip2jJ0Mv/uyxLj7LDpx4pz/sgwoM6gSMR3fCzpn5Mr90naURD794
+	8AeQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1701933226; x=1702019626; bh=Gnfimb5hncqef
+	IVhB4bE5spPvjRgxNsO0UKP3I5CJ24=; b=i+Y4B8PbYyANvyOKhO2ZnAkV6NfvF
+	D7FoMvWU4H3mHECLyfTlqlCbPQsRoeqbrnWKcQ4yoQi6Z/JglUWjGa06eOeYcP6A
+	5nFZ7KITak3ZnK+JnvvwRtbq6tpX3JDgUmoLlDT2e/WPl7vJY15tW9pIzD/wWEk/
+	Da401Dm81NtH/LaROxplvxi9AsVJwSAv09extM7e7OwEr0vHFoBuwkBN4ZQmFCxP
+	N23FYqsOY0JH4PuesXQxD17qLS7xynAssFV5EoGKAczh8ngtORvqgZ5Vy3bXzGXc
+	CebPyc8dQk9g5nt4HG4lAYhCVlR3sVbQ6ffKL4EdiZlhUhUFgMT2bR6HA==
+X-ME-Sender: <xms:qHBxZd9sCX8c6trT7KmRinsU51OWkr_7BMZpuhqo0QsiTLjfsrs8Gg>
+    <xme:qHBxZRvRXZYKtkDm_oGQNkVVOhb0lvc-P42yCjwInwOAE65prjpo9JG_CB21F-bI3
+    txS6V1F6PPV89SEeuU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekuddguddthecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:qHBxZbCiFHYuaKoPVy2qV56RM_cEsEzx5FDH3xWw92oZRmnb109z7w>
+    <xmx:qHBxZRfRFrAOpnYshMVHwUX7bEKa3ht3Z4YoOBU-45OmsmQRF_J9Xg>
+    <xmx:qHBxZSN1CWnXaxU3_PyI1GtDy0lmgWwhKUBiS1Ks_M8LGXiNlUJ6Jg>
+    <xmx:qnBxZXZgt3s_BBYuiKpH2X6KqajrkKo09kfgHL-dtMIDOwdv8qCGaA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A144DB60089; Thu,  7 Dec 2023 02:13:44 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1178-geeaf0069a7-fm-20231114.001-geeaf0069
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180301014144.28892-1-david@fromorbit.com>
+Message-Id: <67fab0f1-e326-4ad8-9def-4d2bd5489b33@app.fastmail.com>
+In-Reply-To: <20231207002759.51418-8-gregory.price@memverge.com>
+References: <20231207002759.51418-1-gregory.price@memverge.com>
+ <20231207002759.51418-8-gregory.price@memverge.com>
+Date: Thu, 07 Dec 2023 08:13:22 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Gregory Price" <gourry.memverge@gmail.com>, linux-mm@kvack.org,
+ jgroves@micron.com, ravis.opensrc@micron.com, sthanneeru@micron.com,
+ emirakhur@micron.com, Hasan.Maruf@amd.com
+Cc: linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Andy Lutomirski" <luto@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Michal Hocko" <mhocko@kernel.org>,
+ "Tejun Heo" <tj@kernel.org>, ying.huang@intel.com,
+ "Gregory Price" <gregory.price@memverge.com>,
+ "Jonathan Corbet" <corbet@lwn.net>, rakie.kim@sk.com, hyeongtak.ji@sk.com,
+ honggyu.kim@sk.com, vtavarespetr@micron.com,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Frank van der Linden" <fvdl@google.com>
+Subject: Re: [RFC PATCH 07/11] mm/mempolicy: add userland mempolicy arg structure
+Content-Type: text/plain
 
-On Thu, Mar 01, 2018 at 12:41:44PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> If we are doing direct IO writes with datasync semantics, we often
-> have to flush metadata changes along with the data write. However,
-> if we are overwriting existing data, there are no metadata changes
-> that we need to flush. In this case, optimising the IO by using
-> FUA write makes sense.
-> 
-> We know from teh IOMAP_F_DIRTY flag as to whether a specific inode
-> requires a metadata flush - this is currently used by DAX to ensure
-> extent modi$fication as stable in page fault operations. For direct
-> IO writes, we can use it to determine if we need to flush metadata
-> or not once the data is on disk.
+On Thu, Dec 7, 2023, at 01:27, Gregory Price wrote:
+> This patch adds the new user-api argument structure intended for
+> set_mempolicy2 and mbind2.
+>
+> struct mpol_args {
+>   /* Basic mempolicy settings */
+>   unsigned short mode;
+>   unsigned short mode_flags;
+>   unsigned long *pol_nodes;
+>   unsigned long pol_maxnodes;
+>
+>   /* get_mempolicy2: policy information (e.g. next interleave node) */
+>   int policy_node;
+>
+>   /* get_mempolicy2: memory range policy */
+>   unsigned long addr;
+>   int addr_node;
+>
+>   /* all operations: policy home node */
+>   unsigned long home_node;
+>
+>   /* mbind2: address ranges to apply the policy */
+>   const struct iovec __user *vec;
+>   size_t vlen;
+> };
 
-Hi,
+This is not a great structure layout for a system call ABI,
+mostly because it requires adding a compat syscall handler
+to be usable from 32-bit tasks. It would be nice if this
+could be rewritten in a way that uses only fixed-length
+members (__u16, __u32, __aligned_u64), though that does
+require the use of u64_to_user_ptr() to replace the pointers
+and the reverse in userspace.
 
-I've gotten an inquiry from some engineers at Microsoft who would
-really like it if ext4 could use FUA writes when doing O_DSYNC writes,
-since this is soemthing that SQL Server uses.  In the discussion for
-this patch series back in 2018[1], ext4 hadn't yet converted over to
-iomap for Direct I/O, and so adding this feature for ext4 wasn't
-really practical.
+Aside from this, you should avoid holes in the data structure.
+On 64-bit architectures, the layout above has holes after
+policy_node and after addr_node.
 
-[1] https://lore.kernel.org/all/20180319160650.mavedzwienzgwgqi@quack2.suse.cz/
-
-Today, ext4 does use iomap for DIO, but an experiment seems to
-indicate that something hasn't been wired up to enable FUA for O_DSYNC
-writes.  I've looked at fs/iomap/direct-io.c and it wasn't immediately
-obvious what I need to add to enable this feature.
-
-I was wondering if you could me some quick hints about what and where
-I should be looking?
-
-Many thanks!
-
-						- Ted
+      Arnd
 
