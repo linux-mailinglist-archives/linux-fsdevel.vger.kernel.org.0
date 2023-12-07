@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-5078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5079-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A6F807D57
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 01:41:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690B3807D58
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 01:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEF61F2132C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEFA1F217A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A8A156EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966081DDDA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 00:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AvAGigHs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MP7qpTDd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1141.google.com (mail-yw1-x1141.google.com [IPv6:2607:f8b0:4864:20::1141])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD6910C4;
-	Wed,  6 Dec 2023 16:28:22 -0800 (PST)
-Received: by mail-yw1-x1141.google.com with SMTP id 00721157ae682-5d7b1a8ec90so819167b3.2;
-        Wed, 06 Dec 2023 16:28:22 -0800 (PST)
+Received: from mail-yw1-x1142.google.com (mail-yw1-x1142.google.com [IPv6:2607:f8b0:4864:20::1142])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D9EE13E;
+	Wed,  6 Dec 2023 16:28:25 -0800 (PST)
+Received: by mail-yw1-x1142.google.com with SMTP id 00721157ae682-5d7346442d4so931647b3.2;
+        Wed, 06 Dec 2023 16:28:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701908901; x=1702513701; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701908904; x=1702513704; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LtcIT3+1Vvf1IPQzjETz2qs5AIWZRfMHd/0ujKiNxjc=;
-        b=AvAGigHsIaQj0KF+YJNWdgVdg/RwkGvr+0yuC2i/nZt2+SC80H5h+7H6yaNJd2/dO+
-         dlAWQKSl3PzCem9BgAjIhMdt/eMLI++mI0lV1kzIiruUqqtm/o6Ts5Eq95q4qM2Fr/Dp
-         GK3we/jOv+jyLZhGHcAGUwBR/dd5oFVLAycZYLnylxiTOqdo9ZREUp1NGVdrWoj4nhc6
-         lokgAyeSVe5BOS/qKYQ1lV4eMUh1MEKct7JCikljgKWWZpU2jcXDBJIXJJOc9SfHK10q
-         jzqTLgMVz1Ign/7pDKC5YkZpTY0lUfzlXGwI+pp2YyNf8nKGte43rIFIj24U8/Jr+FwW
-         p8HA==
+        bh=Z0dcKZM4xykmRW4Z1VxrCBsarnvE5RiRnBwkKf2wOH0=;
+        b=MP7qpTDd42i3+X1wWD08FnwJh9hBqmipTZUjnxTTObfL8GcgxDTx0+dEgPySXE9MCW
+         oiDWfwAzxf4ITz3pkRt1wnKxtyffaTsAZgqS/u0ElKMapMYdsSsQK1qldNjQPEMGJ0Qv
+         5vLzNdRhz2yDyO2IeRQy18wW9ZhPkoHTHrbN7atoE90fxY8WxRPQi8urdXKlrWtaDdUz
+         arMc85NQ1fQYg6n41h4WyBucuJt72LtHE6xkk/Ww4us+6XjL++IykVUgsrrco0dLE+Or
+         ZLvj1miRXyImAXGtKjXbNwnnA4C1PbMd+AMYoiLIHw1O0Ts0krG7XSRPrE5D+tyDrvrq
+         5+fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701908901; x=1702513701;
+        d=1e100.net; s=20230601; t=1701908904; x=1702513704;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LtcIT3+1Vvf1IPQzjETz2qs5AIWZRfMHd/0ujKiNxjc=;
-        b=hLNUeYrH/HDB6GbuupeJO0cC7vrR5Qecyd3nszZImMpcAQMFY9R1izmrr5SyePVgU7
-         8LAyFzIpLJi0b3CRsNQCsoyuyYKElmLiYURtMh2ju95SLqw2OoBo8mJX1zrcWp9GYbZm
-         ChlfdyV8BuOq9ohkxh72wDsNSkVpMnUqY2wssNr5VQQ57KBM78GoL++Jc7qyzsRUk6VY
-         lZa4tatjLW67a9GwIkGiQ0o9V/W9j4gLwzxC2IXB3Vu7wCg6Ixi1MdFGutopoehvE6jw
-         FBZumcrNp7Z3TsS3Y9iPi5qU/GJrRK+8poVhZqxeBxsT81drnTvRneL2j02miruJVBVM
-         PNLw==
-X-Gm-Message-State: AOJu0YxA/KPQjvM8pzW+0+WPAarGUB9vtMDUGlv83WeVy/SCHWxrGnO8
-	EbPPomYRpmwK1p/HEMJrsnSo9es5UDc1
-X-Google-Smtp-Source: AGHT+IFoGq3TrZUWxjktHdZLHqPXr2V42GWf5snPEHWFcJWvB6pDjTGUOlR+5ktf6yPv5nEOg/mPRg==
-X-Received: by 2002:a05:690c:a06:b0:5d7:1940:8dd5 with SMTP id cg6-20020a05690c0a0600b005d719408dd5mr1208041ywb.60.1701908901467;
-        Wed, 06 Dec 2023 16:28:21 -0800 (PST)
+        bh=Z0dcKZM4xykmRW4Z1VxrCBsarnvE5RiRnBwkKf2wOH0=;
+        b=o7SBneQDaO2OXB9Lq0Urp0GYwGjqvTaB1Luv2C5LH/XNA4DGDvLoJg8HPq4HutXWm5
+         quhk8mLQhQA+ZD4XzfEK+2b69N7jLCuWYAsCJz0EjgOav+yBVixv/kOL3tjx6W72p6DD
+         5Q6jkTwOgR+Y+jPksRZxAlT0k31ky1NGbrmsyEtgIAEswB77EE7xF3RpyWa1TDbtjwUM
+         Av/XPO8gBQaEO+XHaxXfJrdHr2QFsWDcxJLSWy5JVJXehaG3dsKxGDdG96Af0scQTbqY
+         dwW5TsLSPR3pN69u4JG2PBBdkOlb5Vba5HrR5kEg4s5rfZCY/T18uH9ZRWe4IsV8ZJAE
+         fN/A==
+X-Gm-Message-State: AOJu0YwamUd11uhE+vlS61n3WpakgHfInv8HylJ3bUROJ3gXSJMID+WI
+	3pRj5wpUpwFyAjglqiLOUg==
+X-Google-Smtp-Source: AGHT+IH3qdQO+H6tz7LttRhtaO2S467jx5TIEBNtqBVkQzcZpaHW+4VWRuHrPbNijy64FV0MlLAD7w==
+X-Received: by 2002:a81:498c:0:b0:5d3:9f4d:dae0 with SMTP id w134-20020a81498c000000b005d39f4ddae0mr1770101ywa.24.1701908903550;
+        Wed, 06 Dec 2023 16:28:23 -0800 (PST)
 Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id x145-20020a81a097000000b005d82fc8cc92sm19539ywg.105.2023.12.06.16.28.20
+        by smtp.gmail.com with ESMTPSA id x145-20020a81a097000000b005d82fc8cc92sm19539ywg.105.2023.12.06.16.28.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Dec 2023 16:28:21 -0800 (PST)
+        Wed, 06 Dec 2023 16:28:23 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org,
@@ -84,10 +84,11 @@ Cc: linux-doc@vger.kernel.org,
 	hyeongtak.ji@sk.com,
 	honggyu.kim@sk.com,
 	vtavarespetr@micron.com,
-	peterz@infradead.org
-Subject: [RFC PATCH 06/11] mm/mempolicy: allow home_node to be set by mpol_new
-Date: Wed,  6 Dec 2023 19:27:54 -0500
-Message-Id: <20231207002759.51418-7-gregory.price@memverge.com>
+	peterz@infradead.org,
+	Frank van der Linden <fvdl@google.com>
+Subject: [RFC PATCH 07/11] mm/mempolicy: add userland mempolicy arg structure
+Date: Wed,  6 Dec 2023 19:27:55 -0500
+Message-Id: <20231207002759.51418-8-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20231207002759.51418-1-gregory.price@memverge.com>
 References: <20231207002759.51418-1-gregory.price@memverge.com>
@@ -99,81 +100,156 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds the plumbing into mpol_new() to allow the argument
-structure's home_node field to be set during mempolicy creation.
+This patch adds the new user-api argument structure intended for
+set_mempolicy2 and mbind2.
 
-The syscall sys_set_mempolicy_home_node was added to allow a home
-node to be registered for a vma.
+struct mpol_args {
+  /* Basic mempolicy settings */
+  unsigned short mode;
+  unsigned short mode_flags;
+  unsigned long *pol_nodes;
+  unsigned long pol_maxnodes;
 
-For set_mempolicy2 and mbind2 syscalls, it would be useful to add
-this as an extension to allow the user to submit a fully formed
-mempolicy configuration in a single call, rather than require
-multiple calls to configure a mempolicy.
+  /* get_mempolicy2: policy information (e.g. next interleave node) */
+  int policy_node;
 
-This will become particularly useful if/when pidfd interfaces to
-change process mempolicies from outside the task appear, as each
-call to change the mempolicy does an atomic swap of that policy
-in the task, rather than mutate the policy.
+  /* get_mempolicy2: memory range policy */
+  unsigned long addr;
+  int addr_node;
 
+  /* all operations: policy home node */
+  unsigned long home_node;
+
+  /* mbind2: address ranges to apply the policy */
+  const struct iovec __user *vec;
+  size_t vlen;
+};
+
+This structure is intended to be extensible as new mempolicy extensions
+are added.
+
+For example, set_mempolicy_home_node was added to allow vma mempolicies
+to have a preferred/home node assigned.  This structure allows the
+addition of that setting at the time the mempolicy is set, rather
+than requiring additional calls to modify the policy.
+
+Another suggested extension is to allow mbind2 to operate on multiple
+memory ranges with a single call. mbind presently operates on a single
+(address, length) tuple. It was suggested that mbind2 should operate
+on an iovec, which allows many memory ranges to have the same mempolicy
+applied to it with a single system call.
+
+Full breakdown of arguments as of this patch:
+    mode:         Mempolicy mode (MPOL_DEFAULT, MPOL_INTERLEAVE)
+
+    mode_flags:   Flags previously or'd into mode in set_mempolicy
+                  (e.g.: MPOL_F_STATIC_NODES, MPOL_F_RELATIVE_NODES)
+
+    pol_nodes:    Policy nodemask
+
+    pol_maxnodes: Max number of nodes in the policy nodemask
+
+    policy_node:  for get_mempolicy2.  Returns extended information
+                  about a policy that was previously reported by
+                  passing MPOL_F_NODE to get_mempolicy.  Instead of
+                  overriding the mode value, simply add a field.
+
+    addr:         for get_mempolicy2.  Used with MPOL_F_ADDR to run
+                  get_mempolicy against the vma the address belongs
+                  to instead of the task.
+
+    addr_node:    for get_mempolicy2.  Returns the node the address
+                  belongs to.  Previously get_mempolicy() would
+                  override the output value of (mode) if MPOL_F_ADDR
+                  and MPOL_F_NODE were set.  Instead, we extend
+                  mpol_args to do this by default if MPOL_F_ADDR is
+                  set and do away with MPOL_F_NODE.
+
+    vec/vlen:     Used by mbind2 to apply the mempolicy to all
+                  address ranges described by the iovec.
+
+Suggested-by: Frank van der Linden <fvdl@google.com>
+Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+Suggested-by: Hasan Al Maruf <Hasan.Maruf@amd.com>
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
+Co-developed-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+Signed-off-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
 ---
- mm/mempolicy.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../admin-guide/mm/numa_memory_policy.rst     | 31 +++++++++++++++++++
+ include/uapi/linux/mempolicy.h                | 18 +++++++++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index fecdc781b6a0..4be63547a4b3 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -311,6 +311,7 @@ static struct mempolicy *mpol_new(struct mempolicy_args *args)
- 	policy->flags = flags;
- 	policy->home_node = NUMA_NO_NODE;
- 	policy->wil.cur_weight = 0;
-+	policy->home_node = args->home_node;
+diff --git a/Documentation/admin-guide/mm/numa_memory_policy.rst b/Documentation/admin-guide/mm/numa_memory_policy.rst
+index b7b8d3dd420f..6d645519c2c1 100644
+--- a/Documentation/admin-guide/mm/numa_memory_policy.rst
++++ b/Documentation/admin-guide/mm/numa_memory_policy.rst
+@@ -488,6 +488,37 @@ closest to which page allocation will come from. Specifying the home node overri
+ the default allocation policy to allocate memory close to the local node for an
+ executing CPU.
  
- 	return policy;
- }
-@@ -1624,6 +1625,7 @@ static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
- 	args.mode = lmode;
- 	args.mode_flags = mode_flags;
- 	args.policy_nodes = &nodes;
-+	args.home_node = NUMA_NO_NODE;
- 
- 	return do_set_mempolicy(&args);
- }
-@@ -2967,6 +2969,8 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- 		margs.mode = mpol->mode;
- 		margs.mode_flags = mpol->flags;
- 		margs.policy_nodes = &mpol->w.user_nodemask;
-+		margs.home_node = NUMA_NO_NODE;
++Extended Mempolicy Arguments::
 +
- 		/* contextualize the tmpfs mount point mempolicy to this file */
- 		npol = mpol_new(&margs);
- 		if (IS_ERR(npol))
-@@ -3125,6 +3129,7 @@ void __init numa_policy_init(void)
- 	memset(&args, 0, sizeof(args));
- 	args.mode = MPOL_INTERLEAVE;
- 	args.policy_nodes = &interleave_nodes;
-+	args.home_node = NUMA_NO_NODE;
- 
- 	if (do_set_mempolicy(&args))
- 		pr_err("%s: interleaving failed\n", __func__);
-@@ -3139,6 +3144,7 @@ void numa_default_policy(void)
- 
- 	memset(&args, 0, sizeof(args));
- 	args.mode = MPOL_DEFAULT;
-+	args.home_node = NUMA_NO_NODE;
- 
- 	do_set_mempolicy(&args);
- }
-@@ -3261,6 +3267,8 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
- 	margs.mode = mode;
- 	margs.mode_flags = mode_flags;
- 	margs.policy_nodes = &nodes;
-+	margs.home_node = NUMA_NO_NODE;
++	struct mpol_args {
++		/* Basic mempolicy settings */
++		unsigned short mode;
++		unsigned short mode_flags;
++		unsigned long *pol_nodes;
++		unsigned long pol_maxnodes;
 +
- 	new = mpol_new(&margs);
- 	if (IS_ERR(new))
- 		goto out;
++		/* get_mempolicy2: policy node information */
++		int policy_node;
++
++		/* get_mempolicy2: memory range policy */
++		unsigned long addr;
++		int addr_node;
++
++		/* mbind2: policy home node */
++		unsigned long home_node;
++
++		/* mbind2: address ranges to apply the policy */
++		struct iovec *vec;
++		size_t vlen;
++	};
++
++The extended mempolicy argument structure is defined to allow the mempolicy
++interfaces future extensibility without the need for additional system calls.
++
++The core arguments (mode, mode_flags, pol_nodes, and pol_maxnodes) apply to
++all interfaces relative to their non-extended counterparts. Each additional
++field may only apply to specific extended interfaces.  See the respective
++extended interface man page for more details.
+ 
+ Memory Policy Command Line Interface
+ ====================================
+diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+index 1f9bb10d1a47..e6b50903047c 100644
+--- a/include/uapi/linux/mempolicy.h
++++ b/include/uapi/linux/mempolicy.h
+@@ -27,6 +27,24 @@ enum {
+ 	MPOL_MAX,	/* always last member of enum */
+ };
+ 
++struct mpol_args {
++	/* Basic mempolicy settings */
++	unsigned short mode;
++	unsigned short mode_flags;
++	unsigned long *pol_nodes;
++	unsigned long pol_maxnodes;
++	/* get_mempolicy: policy node information */
++	int policy_node;
++	/* get_mempolicy: memory range policy */
++	unsigned long addr;
++	int addr_node;
++	/* mbind2: policy home node */
++	int home_node;
++	/* mbind2: address ranges to apply the policy */
++	struct iovec *vec;
++	size_t vlen;
++};
++
+ /* Flags for set_mempolicy */
+ #define MPOL_F_STATIC_NODES	(1 << 15)
+ #define MPOL_F_RELATIVE_NODES	(1 << 14)
 -- 
 2.39.1
 
