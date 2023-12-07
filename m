@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-5268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1774809605
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:57:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7675A8095FE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:56:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1026A1C20BEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FCF1C20BBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7160357319
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BE557311
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOxBoayG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MvqEm1zg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C5B385F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:27:01 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AB246B6
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:25:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701984421;
+	s=mimecast20190719; t=1701984344;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m0djqwLuCvlvk0OjBvb82pdPoghqse7MEdZOjK6ISxs=;
-	b=JOxBoayGwhC64mfJk6Lh97V90m2ox72a86brZgCnqpglrykxhQRkEPI+m7s/IP52JO7W/J
-	1QDzvJgI+MlDq7uU7iLT7LpX20CdFmX/YFcomxgjpITDa+3DvXrzXw66zP6p+D7pJReTsM
-	mDgQNJpmEmu7HGVnf8fQZpw3A285qug=
+	bh=jkHq/+i184kWzc4U7JtlXy4NCBKLuAkpDj1s1fANCmA=;
+	b=MvqEm1zgs1/PEmN7c0BQMDhCfCKSuC/vP/5PF8Vk4tjQuTRRR8fHGI3H5lKrq89drcy0ZP
+	3OabwQEt4SOnRbCNOPuLTyU1MfyjfLmzYvbKCKIuKwSCqhKAWJvEYM5ccKeDTblL7QlRQn
+	4bDdPKVydRkbP09MFW85PS3JVfHtcwg=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-abbLozOHN5SOiGBmzt6LMQ-1; Thu,
- 07 Dec 2023 16:25:39 -0500
-X-MC-Unique: abbLozOHN5SOiGBmzt6LMQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-wA5juk28ObKl1MAFK2ZQew-1; Thu,
+ 07 Dec 2023 16:25:42 -0500
+X-MC-Unique: wA5juk28ObKl1MAFK2ZQew-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F096D29AC012;
-	Thu,  7 Dec 2023 21:25:37 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 90D581C0433F;
+	Thu,  7 Dec 2023 21:25:41 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id C9B1CC15880;
-	Thu,  7 Dec 2023 21:25:34 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id BC341112131D;
+	Thu,  7 Dec 2023 21:25:38 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Jeff Layton <jlayton@kernel.org>,
 	Steve French <smfrench@gmail.com>
@@ -64,13 +64,10 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Shyam Prasad N <nspmangalore@gmail.com>,
-	Rohith Surabattula <rohiths.msft@gmail.com>
-Subject: [PATCH v3 58/59] cifs: Remove some code that's no longer used, part 3
-Date: Thu,  7 Dec 2023 21:22:05 +0000
-Message-ID: <20231207212206.1379128-59-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 59/59] netfs: Eliminate PG_fscache by setting folio->private and marking dirty
+Date: Thu,  7 Dec 2023 21:22:06 +0000
+Message-ID: <20231207212206.1379128-60-dhowells@redhat.com>
 In-Reply-To: <20231207212206.1379128-1-dhowells@redhat.com>
 References: <20231207212206.1379128-1-dhowells@redhat.com>
 Precedence: bulk
@@ -80,1052 +77,823 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Remove some code that was #if'd out with the netfslib conversion.  This is
-split into parts for file.c as the diff generator otherwise produces a hard
-to read diff for part of it where a big chunk is cut out.
+When dirty data is being written to the cache, setting/waiting on/clearing
+the fscache flag is always done in tandem with setting/waiting on/clearing
+the writeback flag.  The netfslib buffered write routines wait on and set
+both flags and the write request cleanup clears both flags, so the fscache
+flag is almost superfluous.
+
+The reason it isn't superfluous is because the fscache flag is also used to
+indicate that data just read from the server is being written to the cache.
+The flag is used to prevent a race involving overlapping direct-I/O writes
+to the cache.
+
+Change this to indicate that a page is in need of being copied to the cache
+by placing a magic value in folio->private and marking the folios dirty.
+Then when the writeback code sees a folio marked in this way, it only
+writes it to the cache and not to the server.
+
+If a page is altered that has this magic value set, the value is just
+replaced and the page will then be uplodaded too.
+
+With this, PG_fscache is no longer required.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
 cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
+cc: Matthew Wilcox (Oracle) <willy@infradead.org>
 cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- fs/smb/client/file.c | 1003 ------------------------------------------
- 1 file changed, 1003 deletions(-)
+ fs/ceph/addr.c               |  20 +----
+ fs/netfs/buffered_read.c     |  22 +++---
+ fs/netfs/buffered_write.c    | 102 ++++++++++++-------------
+ fs/netfs/fscache_io.c        |   4 -
+ fs/netfs/internal.h          |  10 ++-
+ fs/netfs/io.c                | 142 -----------------------------------
+ fs/netfs/main.c              |   1 +
+ fs/netfs/misc.c              |  10 +--
+ include/linux/netfs.h        |  16 +++-
+ include/trace/events/netfs.h |   6 +-
+ 10 files changed, 87 insertions(+), 246 deletions(-)
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 7e51c2702cdb..ef97c1708a5b 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -2687,470 +2687,6 @@ int cifs_flush(struct file *file, fl_owner_t id)
- 	return rc;
- }
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 500a87b68a9a..a9f278a4c928 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -496,11 +496,6 @@ const struct netfs_request_ops ceph_netfs_ops = {
+ };
  
--#if 0 // TODO remove 3594
--static void collect_uncached_write_data(struct cifs_aio_ctx *ctx);
--
--static void
--cifs_uncached_writev_complete(struct work_struct *work)
+ #ifdef CONFIG_CEPH_FSCACHE
+-static void ceph_set_page_fscache(struct page *page)
 -{
--	struct cifs_io_subrequest *wdata = container_of(work,
--					struct cifs_io_subrequest, work);
--	struct inode *inode = d_inode(wdata->cfile->dentry);
--	struct cifsInodeInfo *cifsi = CIFS_I(inode);
--
--	spin_lock(&inode->i_lock);
--	cifs_update_eof(cifsi, wdata->subreq.start, wdata->subreq.len);
--	if (cifsi->netfs.remote_i_size > inode->i_size)
--		i_size_write(inode, cifsi->netfs.remote_i_size);
--	spin_unlock(&inode->i_lock);
--
--	complete(&wdata->done);
--	collect_uncached_write_data(wdata->ctx);
--	/* the below call can possibly free the last ref to aio ctx */
--	cifs_put_writedata(wdata);
+-	set_page_fscache(page);
 -}
 -
--static int
--cifs_resend_wdata(struct cifs_io_subrequest *wdata, struct list_head *wdata_list,
--	struct cifs_aio_ctx *ctx)
+ static void ceph_fscache_write_terminated(void *priv, ssize_t error, bool was_async)
+ {
+ 	struct inode *inode = priv;
+@@ -518,10 +513,6 @@ static void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, b
+ 			       ceph_fscache_write_terminated, inode, caching);
+ }
+ #else
+-static inline void ceph_set_page_fscache(struct page *page)
 -{
--	size_t wsize;
--	struct cifs_credits credits;
--	int rc;
--	struct TCP_Server_Info *server = wdata->server;
+-}
 -
--	do {
--		if (wdata->cfile->invalidHandle) {
--			rc = cifs_reopen_file(wdata->cfile, false);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
+ static inline void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, bool caching)
+ {
+ }
+@@ -713,8 +704,6 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 		len = wlen;
+ 
+ 	set_page_writeback(page);
+-	if (caching)
+-		ceph_set_page_fscache(page);
+ 	ceph_fscache_write_to_cache(inode, page_off, len, caching);
+ 
+ 	if (IS_ENCRYPTED(inode)) {
+@@ -796,8 +785,6 @@ static int ceph_writepage(struct page *page, struct writeback_control *wbc)
+ 	    ceph_inode_to_fs_client(inode)->write_congested)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+ 
+-	wait_on_page_fscache(page);
 -
--
--		/*
--		 * Wait for credits to resend this wdata.
--		 * Note: we are attempting to resend the whole wdata not in
--		 * segments
--		 */
--		do {
--			rc = server->ops->wait_mtu_credits(server, wdata->subreq.len,
--						&wsize, &credits);
--			if (rc)
--				goto fail;
--
--			if (wsize < wdata->subreq.len) {
--				add_credits_and_wake_if(server, &credits, 0);
--				msleep(1000);
+ 	err = writepage_nounlock(page, wbc);
+ 	if (err == -ERESTARTSYS) {
+ 		/* direct memory reclaimer was killed by SIGKILL. return 0
+@@ -1071,7 +1058,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 				unlock_page(page);
+ 				break;
+ 			}
+-			if (PageWriteback(page) || PageFsCache(page)) {
++			if (PageWriteback(page)) {
+ 				if (wbc->sync_mode == WB_SYNC_NONE) {
+ 					doutc(cl, "%p under writeback\n", page);
+ 					unlock_page(page);
+@@ -1079,7 +1066,6 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 				}
+ 				doutc(cl, "waiting on writeback %p\n", page);
+ 				wait_on_page_writeback(page);
+-				wait_on_page_fscache(page);
+ 			}
+ 
+ 			if (!clear_page_dirty_for_io(page)) {
+@@ -1264,8 +1250,6 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 			}
+ 
+ 			set_page_writeback(page);
+-			if (caching)
+-				ceph_set_page_fscache(page);
+ 			len += thp_size(page);
+ 		}
+ 		ceph_fscache_write_to_cache(inode, offset, len, caching);
+@@ -1509,7 +1493,7 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 	if (r < 0)
+ 		return r;
+ 
+-	folio_wait_fscache(folio);
++	folio_wait_writeback(folio);
+ 	WARN_ON_ONCE(!folio_test_locked(folio));
+ 	*pagep = &folio->page;
+ 	return 0;
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 8b27ef2e78ca..4da9f3a0589d 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -10,7 +10,7 @@
+ #include "internal.h"
+ 
+ /*
+- * Unlock the folios in a read operation.  We need to set PG_fscache on any
++ * Unlock the folios in a read operation.  We need to set PG_writeback on any
+  * folios we're going to write back before we unlock them.
+  */
+ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+@@ -48,14 +48,13 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 	xas_for_each(&xas, folio, last_page) {
+ 		loff_t pg_end;
+ 		bool pg_failed = false;
+-		bool folio_started;
++		bool copy_to_cache = false;
+ 
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+ 
+ 		pg_end = folio_pos(folio) + folio_size(folio) - 1;
+ 
+-		folio_started = false;
+ 		for (;;) {
+ 			loff_t sreq_end;
+ 
+@@ -63,11 +62,7 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 				pg_failed = true;
+ 				break;
+ 			}
+-			if (!folio_started && test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags)) {
+-				trace_netfs_folio(folio, netfs_folio_trace_copy_to_cache);
+-				folio_start_fscache(folio);
+-				folio_started = true;
 -			}
--		} while (wsize < wdata->subreq.len);
--		wdata->credits = credits;
--
--		rc = adjust_credits(server, &wdata->credits, wdata->subreq.len);
--
--		if (!rc) {
--			if (wdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else {
--#ifdef CONFIG_CIFS_SMB_DIRECT
--				if (wdata->mr) {
--					wdata->mr->need_invalidate = true;
--					smbd_deregister_mr(wdata->mr);
--					wdata->mr = NULL;
--				}
++			copy_to_cache |= test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+ 			pg_failed |= subreq_failed;
+ 			sreq_end = subreq->start + subreq->len - 1;
+ 			if (pg_end < sreq_end)
+@@ -98,6 +93,11 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 				kfree(finfo);
+ 			}
+ 			folio_mark_uptodate(folio);
++			if (copy_to_cache && !WARN_ON_ONCE(folio_get_private(folio) != NULL)) {
++				trace_netfs_folio(folio, netfs_folio_trace_copy_to_cache);
++				folio_attach_private(folio, NETFS_FOLIO_COPY_TO_CACHE);
++				filemap_dirty_folio(folio->mapping, folio);
++			}
+ 		}
+ 
+ 		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
+@@ -460,7 +460,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	if (!netfs_is_cache_enabled(ctx) &&
+ 	    netfs_skip_folio_read(ctx, folio, pos, len, false)) {
+ 		netfs_stat(&netfs_n_rh_write_zskip);
+-		goto have_folio_no_wait;
++		goto have_folio;
+ 	}
+ 
+ 	rreq = netfs_alloc_request(mapping, file,
+@@ -501,10 +501,6 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 
+ have_folio:
+-	ret = folio_wait_fscache_killable(folio);
+-	if (ret < 0)
+-		goto error;
+-have_folio_no_wait:
+ 	*_folio = folio;
+ 	_leave(" = 0");
+ 	return 0;
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 0a6ec52a3aa3..85320e18d32e 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -30,21 +30,13 @@ static void netfs_cleanup_buffered_write(struct netfs_io_request *wreq);
+ 
+ static void netfs_set_group(struct folio *folio, struct netfs_group *netfs_group)
+ {
+-	if (netfs_group && !folio_get_private(folio))
+-		folio_attach_private(folio, netfs_get_group(netfs_group));
+-}
++	void *priv = folio_get_private(folio);
+ 
+-#if IS_ENABLED(CONFIG_FSCACHE)
+-static void netfs_folio_start_fscache(bool caching, struct folio *folio)
+-{
+-	if (caching)
+-		folio_start_fscache(folio);
+-}
+-#else
+-static void netfs_folio_start_fscache(bool caching, struct folio *folio)
+-{
++	if (netfs_group && (!priv || priv == NETFS_FOLIO_COPY_TO_CACHE))
++		folio_attach_private(folio, netfs_get_group(netfs_group));
++	else if (!netfs_group && priv == NETFS_FOLIO_COPY_TO_CACHE)
++		folio_detach_private(folio);
+ }
 -#endif
--				rc = server->ops->async_writev(wdata);
--			}
+ 
+ /*
+  * Decide how we should modify a folio.  We might be attempting to do
+@@ -63,11 +55,12 @@ static enum netfs_how_to_modify netfs_how_to_modify(struct netfs_inode *ctx,
+ 						    bool maybe_trouble)
+ {
+ 	struct netfs_folio *finfo = netfs_folio_info(folio);
++	struct netfs_group *group = netfs_folio_group(folio);
+ 	loff_t pos = folio_file_pos(folio);
+ 
+ 	_enter("");
+ 
+-	if (netfs_folio_group(folio) != netfs_group)
++	if (group != netfs_group && group != NETFS_FOLIO_COPY_TO_CACHE)
+ 		return NETFS_FLUSH_CONTENT;
+ 
+ 	if (folio_test_uptodate(folio))
+@@ -359,9 +352,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
+ 				folio_clear_dirty_for_io(folio);
+ 			/* We make multiple writes to the folio... */
+ 			if (!folio_test_writeback(folio)) {
+-				folio_wait_fscache(folio);
+ 				folio_start_writeback(folio);
+-				folio_start_fscache(folio);
+ 				if (wreq->iter.count == 0)
+ 					trace_netfs_folio(folio, netfs_folio_trace_wthru);
+ 				else
+@@ -489,6 +480,7 @@ EXPORT_SYMBOL(netfs_file_write_iter);
+  */
+ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group)
+ {
++	struct netfs_group *group;
+ 	struct folio *folio = page_folio(vmf->page);
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct inode *inode = file_inode(file);
+@@ -511,7 +503,8 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_gr
+ 		goto out;
+ 	}
+ 
+-	if (netfs_folio_group(folio) != netfs_group) {
++	group = netfs_folio_group(folio);
++	if (group != netfs_group && group != NETFS_FOLIO_COPY_TO_CACHE) {
+ 		folio_unlock(folio);
+ 		err = filemap_fdatawait_range(inode->i_mapping,
+ 					      folio_pos(folio),
+@@ -567,8 +560,6 @@ static void netfs_kill_pages(struct address_space *mapping,
+ 
+ 		trace_netfs_folio(folio, netfs_folio_trace_kill);
+ 		folio_clear_uptodate(folio);
+-		if (folio_test_fscache(folio))
+-			folio_end_fscache(folio);
+ 		folio_end_writeback(folio);
+ 		folio_lock(folio);
+ 		generic_error_remove_folio(mapping, folio);
+@@ -604,8 +595,6 @@ static void netfs_redirty_pages(struct address_space *mapping,
+ 		next = folio_next_index(folio);
+ 		trace_netfs_folio(folio, netfs_folio_trace_redirty);
+ 		filemap_dirty_folio(mapping, folio);
+-		if (folio_test_fscache(folio))
+-			folio_end_fscache(folio);
+ 		folio_end_writeback(folio);
+ 		folio_put(folio);
+ 	} while (index = next, index <= last);
+@@ -661,7 +650,11 @@ static void netfs_pages_written_back(struct netfs_io_request *wreq)
+ 				if (!folio_test_dirty(folio)) {
+ 					folio_detach_private(folio);
+ 					gcount++;
+-					trace_netfs_folio(folio, netfs_folio_trace_clear_g);
++					if (group == NETFS_FOLIO_COPY_TO_CACHE)
++						trace_netfs_folio(folio,
++								  netfs_folio_trace_end_copy);
++					else
++						trace_netfs_folio(folio, netfs_folio_trace_clear_g);
+ 				} else {
+ 					trace_netfs_folio(folio, netfs_folio_trace_redirtied);
+ 				}
+@@ -685,8 +678,6 @@ static void netfs_pages_written_back(struct netfs_io_request *wreq)
+ 			trace_netfs_folio(folio, netfs_folio_trace_clear);
+ 		}
+ 	end_wb:
+-		if (folio_test_fscache(folio))
+-			folio_end_fscache(folio);
+ 		folio_end_writeback(folio);
+ 	}
+ 
+@@ -755,7 +746,6 @@ static void netfs_extend_writeback(struct address_space *mapping,
+ 				   long *_count,
+ 				   loff_t start,
+ 				   loff_t max_len,
+-				   bool caching,
+ 				   size_t *_len,
+ 				   size_t *_top)
+ {
+@@ -790,12 +780,10 @@ static void netfs_extend_writeback(struct address_space *mapping,
+ 
+ 			priv = rcu_dereference(*(__force void __rcu **)&folio->private);
+ 			if ((const struct netfs_group *)priv != group) {
+-				finfo = (void *)((unsigned long)priv & ~NETFS_FOLIO_INFO);
+-				if (finfo->netfs_group != group) {
+-					xas_reset(xas);
+-					break;
+-				}
+-				if (finfo->dirty_offset > 0) {
++				finfo = __netfs_folio_info(priv);
++				if (!finfo ||
++				    finfo->netfs_group != group ||
++				    finfo->dirty_offset > 0) {
+ 					xas_reset(xas);
+ 					break;
+ 				}
+@@ -819,8 +807,7 @@ static void netfs_extend_writeback(struct address_space *mapping,
+ 				break;
+ 			}
+ 			if (!folio_test_dirty(folio) ||
+-			    folio_test_writeback(folio) ||
+-			    folio_test_fscache(folio)) {
++			    folio_test_writeback(folio)) {
+ 				folio_unlock(folio);
+ 				folio_put(folio);
+ 				xas_reset(xas);
+@@ -832,8 +819,9 @@ static void netfs_extend_writeback(struct address_space *mapping,
+ 			priv = folio->private;
+ 			if ((const struct netfs_group *)priv != group) {
+ 				stop = true;
+-				finfo = (void *)((unsigned long)priv & ~NETFS_FOLIO_INFO);
+-				if (finfo->netfs_group != group ||
++				finfo = __netfs_folio_info(priv);
++				if (!finfo ||
++				    finfo->netfs_group != group ||
+ 				    finfo->dirty_offset > 0) {
+ 					folio_unlock(folio);
+ 					folio_put(folio);
+@@ -867,12 +855,14 @@ static void netfs_extend_writeback(struct address_space *mapping,
+ 
+ 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+ 			folio = fbatch.folios[i];
+-			trace_netfs_folio(folio, netfs_folio_trace_store_plus);
++			if (group == NETFS_FOLIO_COPY_TO_CACHE)
++				trace_netfs_folio(folio, netfs_folio_trace_copy_plus);
++			else
++				trace_netfs_folio(folio, netfs_folio_trace_store_plus);
+ 
+ 			if (!folio_clear_dirty_for_io(folio))
+ 				BUG();
+ 			folio_start_writeback(folio);
+-			netfs_folio_start_fscache(caching, folio);
+ 			folio_unlock(folio);
+ 		}
+ 
+@@ -898,14 +888,14 @@ static ssize_t netfs_write_back_from_locked_folio(struct address_space *mapping,
+ 	struct netfs_inode *ctx = netfs_inode(mapping->host);
+ 	unsigned long long i_size = i_size_read(&ctx->inode);
+ 	size_t len, max_len;
+-	bool caching = netfs_is_cache_enabled(ctx);
+ 	long count = wbc->nr_to_write;
+ 	int ret;
+ 
+-	_enter(",%lx,%llx-%llx,%u", folio_index(folio), start, end, caching);
++	_enter(",%lx,%llx-%llx", folio_index(folio), start, end);
+ 
+ 	wreq = netfs_alloc_request(mapping, NULL, start, folio_size(folio),
+-				   NETFS_WRITEBACK);
++				   group == NETFS_FOLIO_COPY_TO_CACHE ?
++				   NETFS_COPY_TO_CACHE : NETFS_WRITEBACK);
+ 	if (IS_ERR(wreq)) {
+ 		folio_unlock(folio);
+ 		return PTR_ERR(wreq);
+@@ -914,7 +904,6 @@ static ssize_t netfs_write_back_from_locked_folio(struct address_space *mapping,
+ 	if (!folio_clear_dirty_for_io(folio))
+ 		BUG();
+ 	folio_start_writeback(folio);
+-	netfs_folio_start_fscache(caching, folio);
+ 
+ 	count -= folio_nr_pages(folio);
+ 
+@@ -923,7 +912,10 @@ static ssize_t netfs_write_back_from_locked_folio(struct address_space *mapping,
+ 	 * immediately lockable, is not dirty or is missing, or we reach the
+ 	 * end of the range.
+ 	 */
+-	trace_netfs_folio(folio, netfs_folio_trace_store);
++	if (group == NETFS_FOLIO_COPY_TO_CACHE)
++		trace_netfs_folio(folio, netfs_folio_trace_copy);
++	else
++		trace_netfs_folio(folio, netfs_folio_trace_store);
+ 
+ 	len = wreq->len;
+ 	finfo = netfs_folio_info(folio);
+@@ -946,7 +938,7 @@ static ssize_t netfs_write_back_from_locked_folio(struct address_space *mapping,
+ 
+ 		if (len < max_len)
+ 			netfs_extend_writeback(mapping, group, xas, &count, start,
+-					       max_len, caching, &len, &wreq->upper_len);
++					       max_len, &len, &wreq->upper_len);
+ 	}
+ 
+ cant_expand:
+@@ -970,15 +962,18 @@ static ssize_t netfs_write_back_from_locked_folio(struct address_space *mapping,
+ 
+ 		iov_iter_xarray(&wreq->iter, ITER_SOURCE, &mapping->i_pages, start,
+ 				wreq->upper_len);
+-		__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+-		ret = netfs_begin_write(wreq, true, netfs_write_trace_writeback);
++		if (group != NETFS_FOLIO_COPY_TO_CACHE) {
++			__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
++			ret = netfs_begin_write(wreq, true, netfs_write_trace_writeback);
++		} else {
++			ret = netfs_begin_write(wreq, true, netfs_write_trace_copy_to_cache);
++		}
+ 		if (ret == 0 || ret == -EIOCBQUEUED)
+ 			wbc->nr_to_write -= len / PAGE_SIZE;
+ 	} else {
+ 		_debug("write discard %zx @%llx [%llx]", len, start, i_size);
+ 
+ 		/* The dirty region was entirely beyond the EOF. */
+-		fscache_clear_page_bits(mapping, start, len, caching);
+ 		netfs_pages_written_back(wreq);
+ 		ret = 0;
+ 	}
+@@ -1020,9 +1015,11 @@ static ssize_t netfs_writepages_begin(struct address_space *mapping,
+ 
+ 		/* Skip any dirty folio that's not in the group of interest. */
+ 		priv = rcu_dereference(*(__force void __rcu **)&folio->private);
+-		if ((const struct netfs_group *)priv != group) {
+-			finfo = (void *)((unsigned long)priv & ~NETFS_FOLIO_INFO);
+-			if (finfo->netfs_group != group)
++		if ((const struct netfs_group *)priv == NETFS_FOLIO_COPY_TO_CACHE) {
++			group = NETFS_FOLIO_COPY_TO_CACHE;
++		} else if ((const struct netfs_group *)priv != group) {
++			finfo = __netfs_folio_info(priv);
++			if (!finfo || finfo->netfs_group != group)
+ 				continue;
+ 		}
+ 
+@@ -1070,8 +1067,7 @@ static ssize_t netfs_writepages_begin(struct address_space *mapping,
+ 		goto search_again;
+ 	}
+ 
+-	if (folio_test_writeback(folio) ||
+-	    folio_test_fscache(folio)) {
++	if (folio_test_writeback(folio)) {
+ 		folio_unlock(folio);
+ 		if (wbc->sync_mode != WB_SYNC_NONE) {
+ 			folio_wait_writeback(folio);
+@@ -1236,7 +1232,8 @@ int netfs_launder_folio(struct folio *folio)
+ 
+ 	bvec_set_folio(&bvec, folio, len, offset);
+ 	iov_iter_bvec(&wreq->iter, ITER_SOURCE, &bvec, 1, len);
+-	__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
++	if (group != NETFS_FOLIO_COPY_TO_CACHE)
++		__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+ 	ret = netfs_begin_write(wreq, true, netfs_write_trace_launder);
+ 
+ out_put:
+@@ -1245,7 +1242,6 @@ int netfs_launder_folio(struct folio *folio)
+ 	kfree(finfo);
+ 	netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
+ out:
+-	folio_wait_fscache(folio);
+ 	_leave(" = %d", ret);
+ 	return ret;
+ }
+diff --git a/fs/netfs/fscache_io.c b/fs/netfs/fscache_io.c
+index ad572f7ee897..ad57e4412c6d 100644
+--- a/fs/netfs/fscache_io.c
++++ b/fs/netfs/fscache_io.c
+@@ -195,9 +195,6 @@ static void fscache_wreq_done(void *priv, ssize_t transferred_or_error,
+ {
+ 	struct fscache_write_request *wreq = priv;
+ 
+-	fscache_clear_page_bits(wreq->mapping, wreq->start, wreq->len,
+-				wreq->set_bits);
+-
+ 	if (wreq->term_func)
+ 		wreq->term_func(wreq->term_func_priv, transferred_or_error,
+ 				was_async);
+@@ -255,7 +252,6 @@ void __fscache_write_to_cache(struct fscache_cookie *cookie,
+ abandon_free:
+ 	kfree(wreq);
+ abandon:
+-	fscache_clear_page_bits(mapping, start, len, cond);
+ 	if (term_func)
+ 		term_func(term_func_priv, ret, false);
+ }
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index dfc2351c69d7..2c4cd3c898c7 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -186,7 +186,7 @@ static inline bool netfs_is_cache_enabled(struct netfs_inode *ctx)
+  */
+ static inline struct netfs_group *netfs_get_group(struct netfs_group *netfs_group)
+ {
+-	if (netfs_group)
++	if (netfs_group && netfs_group != NETFS_FOLIO_COPY_TO_CACHE)
+ 		refcount_inc(&netfs_group->ref);
+ 	return netfs_group;
+ }
+@@ -196,7 +196,9 @@ static inline struct netfs_group *netfs_get_group(struct netfs_group *netfs_grou
+  */
+ static inline void netfs_put_group(struct netfs_group *netfs_group)
+ {
+-	if (netfs_group && refcount_dec_and_test(&netfs_group->ref))
++	if (netfs_group &&
++	    netfs_group != NETFS_FOLIO_COPY_TO_CACHE &&
++	    refcount_dec_and_test(&netfs_group->ref))
+ 		netfs_group->free(netfs_group);
+ }
+ 
+@@ -205,7 +207,9 @@ static inline void netfs_put_group(struct netfs_group *netfs_group)
+  */
+ static inline void netfs_put_group_many(struct netfs_group *netfs_group, int nr)
+ {
+-	if (netfs_group && refcount_sub_and_test(nr, &netfs_group->ref))
++	if (netfs_group &&
++	    netfs_group != NETFS_FOLIO_COPY_TO_CACHE &&
++	    refcount_sub_and_test(nr, &netfs_group->ref))
+ 		netfs_group->free(netfs_group);
+ }
+ 
+diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+index 4702799a153b..4199e2df609f 100644
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -98,145 +98,6 @@ static void netfs_rreq_completed(struct netfs_io_request *rreq, bool was_async)
+ 	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_complete);
+ }
+ 
+-/*
+- * Deal with the completion of writing the data to the cache.  We have to clear
+- * the PG_fscache bits on the folios involved and release the caller's ref.
+- *
+- * May be called in softirq mode and we inherit a ref from the caller.
+- */
+-static void netfs_rreq_unmark_after_write(struct netfs_io_request *rreq,
+-					  bool was_async)
+-{
+-	struct netfs_io_subrequest *subreq;
+-	struct folio *folio;
+-	pgoff_t unlocked = 0;
+-	bool have_unlocked = false;
+-
+-	rcu_read_lock();
+-
+-	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+-		XA_STATE(xas, &rreq->mapping->i_pages, subreq->start / PAGE_SIZE);
+-
+-		xas_for_each(&xas, folio, (subreq->start + subreq->len - 1) / PAGE_SIZE) {
+-			if (xas_retry(&xas, folio))
+-				continue;
+-
+-			/* We might have multiple writes from the same huge
+-			 * folio, but we mustn't unlock a folio more than once.
+-			 */
+-			if (have_unlocked && folio_index(folio) <= unlocked)
+-				continue;
+-			unlocked = folio_index(folio);
+-			trace_netfs_folio(folio, netfs_folio_trace_end_copy);
+-			folio_end_fscache(folio);
+-			have_unlocked = true;
 -		}
+-	}
 -
--		/* If the write was successfully sent, we are done */
--		if (!rc) {
--			list_add_tail(&wdata->list, wdata_list);
--			return 0;
--		}
+-	rcu_read_unlock();
+-	netfs_rreq_completed(rreq, was_async);
+-}
 -
--		/* Roll back credits and retry if needed */
--		add_credits_and_wake_if(server, &wdata->credits, 0);
--	} while (rc == -EAGAIN);
+-static void netfs_rreq_copy_terminated(void *priv, ssize_t transferred_or_error,
+-				       bool was_async)
+-{
+-	struct netfs_io_subrequest *subreq = priv;
+-	struct netfs_io_request *rreq = subreq->rreq;
 -
--fail:
--	cifs_put_writedata(wdata);
--	return rc;
+-	if (IS_ERR_VALUE(transferred_or_error)) {
+-		netfs_stat(&netfs_n_rh_write_failed);
+-		trace_netfs_failure(rreq, subreq, transferred_or_error,
+-				    netfs_fail_copy_to_cache);
+-	} else {
+-		netfs_stat(&netfs_n_rh_write_done);
+-	}
+-
+-	trace_netfs_sreq(subreq, netfs_sreq_trace_write_term);
+-
+-	/* If we decrement nr_copy_ops to 0, the ref belongs to us. */
+-	if (atomic_dec_and_test(&rreq->nr_copy_ops))
+-		netfs_rreq_unmark_after_write(rreq, was_async);
+-
+-	netfs_put_subrequest(subreq, was_async, netfs_sreq_trace_put_terminated);
 -}
 -
 -/*
-- * Select span of a bvec iterator we're going to use.  Limit it by both maximum
-- * size and maximum number of segments.
+- * Perform any outstanding writes to the cache.  We inherit a ref from the
+- * caller.
 - */
--static size_t cifs_limit_bvec_subset(const struct iov_iter *iter, size_t max_size,
--				     size_t max_segs, unsigned int *_nsegs)
+-static void netfs_rreq_do_write_to_cache(struct netfs_io_request *rreq)
 -{
--	const struct bio_vec *bvecs = iter->bvec;
--	unsigned int nbv = iter->nr_segs, ix = 0, nsegs = 0;
--	size_t len, span = 0, n = iter->count;
--	size_t skip = iter->iov_offset;
+-	struct netfs_cache_resources *cres = &rreq->cache_resources;
+-	struct netfs_io_subrequest *subreq, *next, *p;
+-	struct iov_iter iter;
+-	int ret;
 -
--	if (WARN_ON(!iov_iter_is_bvec(iter)) || n == 0)
--		return 0;
+-	trace_netfs_rreq(rreq, netfs_rreq_trace_copy);
 -
--	while (n && ix < nbv && skip) {
--		len = bvecs[ix].bv_len;
--		if (skip < len)
--			break;
--		skip -= len;
--		n -= len;
--		ix++;
--	}
+-	/* We don't want terminating writes trying to wake us up whilst we're
+-	 * still going through the list.
+-	 */
+-	atomic_inc(&rreq->nr_copy_ops);
 -
--	while (n && ix < nbv) {
--		len = min3(n, bvecs[ix].bv_len - skip, max_size);
--		span += len;
--		max_size -= len;
--		nsegs++;
--		ix++;
--		if (max_size == 0 || nsegs >= max_segs)
--			break;
--		skip = 0;
--		n -= len;
--	}
--
--	*_nsegs = nsegs;
--	return span;
--}
--
--static int
--cifs_write_from_iter(loff_t fpos, size_t len, struct iov_iter *from,
--		     struct cifsFileInfo *open_file,
--		     struct cifs_sb_info *cifs_sb, struct list_head *wdata_list,
--		     struct cifs_aio_ctx *ctx)
--{
--	int rc = 0;
--	size_t cur_len, max_len;
--	struct cifs_io_subrequest *wdata;
--	pid_t pid;
--	struct TCP_Server_Info *server;
--	unsigned int xid, max_segs = INT_MAX;
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	server = cifs_pick_channel(tlink_tcon(open_file->tlink)->ses);
--	xid = get_xid();
--
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (server->smbd_conn)
--		max_segs = server->smbd_conn->max_frmr_depth;
--#endif
--
--	do {
--		struct cifs_credits credits_on_stack;
--		struct cifs_credits *credits = &credits_on_stack;
--		unsigned int nsegs = 0;
--		size_t wsize;
--
--		if (signal_pending(current)) {
--			rc = -EINTR;
--			break;
+-	list_for_each_entry_safe(subreq, p, &rreq->subrequests, rreq_link) {
+-		if (!test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags)) {
+-			list_del_init(&subreq->rreq_link);
+-			netfs_put_subrequest(subreq, false,
+-					     netfs_sreq_trace_put_no_copy);
 -		}
+-	}
 -
--		if (open_file->invalidHandle) {
--			rc = cifs_reopen_file(open_file, false);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
+-	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+-		/* Amalgamate adjacent writes */
+-		while (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
+-			next = list_next_entry(subreq, rreq_link);
+-			if (next->start != subreq->start + subreq->len)
 -				break;
+-			subreq->len += next->len;
+-			list_del_init(&next->rreq_link);
+-			netfs_put_subrequest(next, false,
+-					     netfs_sreq_trace_put_merged);
 -		}
 -
--		rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->wsize,
--						   &wsize, credits);
--		if (rc)
--			break;
--
--		max_len = min_t(const size_t, len, wsize);
--		if (!max_len) {
--			rc = -EAGAIN;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
+-		ret = cres->ops->prepare_write(cres, &subreq->start, &subreq->len,
+-					       subreq->len, rreq->i_size, true);
+-		if (ret < 0) {
+-			trace_netfs_failure(rreq, subreq, ret, netfs_fail_prepare_write);
+-			trace_netfs_sreq(subreq, netfs_sreq_trace_write_skip);
+-			continue;
 -		}
 -
--		cur_len = cifs_limit_bvec_subset(from, max_len, max_segs, &nsegs);
--		cifs_dbg(FYI, "write_from_iter len=%zx/%zx nsegs=%u/%lu/%u\n",
--			 cur_len, max_len, nsegs, from->nr_segs, max_segs);
--		if (cur_len == 0) {
--			rc = -EIO;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
+-		iov_iter_xarray(&iter, ITER_SOURCE, &rreq->mapping->i_pages,
+-				subreq->start, subreq->len);
 -
--		wdata = cifs_writedata_alloc(cifs_uncached_writev_complete);
--		if (!wdata) {
--			rc = -ENOMEM;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
+-		atomic_inc(&rreq->nr_copy_ops);
+-		netfs_stat(&netfs_n_rh_write);
+-		netfs_get_subrequest(subreq, netfs_sreq_trace_get_copy_to_cache);
+-		trace_netfs_sreq(subreq, netfs_sreq_trace_write);
+-		cres->ops->write(cres, subreq->start, &iter,
+-				 netfs_rreq_copy_terminated, subreq);
+-	}
 -
--		wdata->uncached	= true;
--		wdata->sync_mode = WB_SYNC_ALL;
--		wdata->subreq.start	= (__u64)fpos;
--		wdata->cfile	= cifsFileInfo_get(open_file);
--		wdata->server	= server;
--		wdata->pid	= pid;
--		wdata->subreq.len	= cur_len;
--		wdata->credits	= credits_on_stack;
--		wdata->subreq.io_iter	= *from;
--		wdata->ctx	= ctx;
--		kref_get(&ctx->refcount);
--
--		iov_iter_truncate(&wdata->subreq.io_iter, cur_len);
--
--		rc = adjust_credits(server, &wdata->credits, wdata->subreq.len);
--
--		if (!rc) {
--			if (wdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else
--				rc = server->ops->async_writev(wdata);
--		}
--
--		if (rc) {
--			add_credits_and_wake_if(server, &wdata->credits, 0);
--			cifs_put_writedata(wdata);
--			if (rc == -EAGAIN)
--				continue;
--			break;
--		}
--
--		list_add_tail(&wdata->list, wdata_list);
--		iov_iter_advance(from, cur_len);
--		fpos += cur_len;
--		len -= cur_len;
--	} while (len > 0);
--
--	free_xid(xid);
--	return rc;
+-	/* If we decrement nr_copy_ops to 0, the usage ref belongs to us. */
+-	if (atomic_dec_and_test(&rreq->nr_copy_ops))
+-		netfs_rreq_unmark_after_write(rreq, false);
 -}
 -
--static void collect_uncached_write_data(struct cifs_aio_ctx *ctx)
+-static void netfs_rreq_write_to_cache_work(struct work_struct *work)
 -{
--	struct cifs_io_subrequest *wdata, *tmp;
--	struct cifs_tcon *tcon;
--	struct cifs_sb_info *cifs_sb;
--	struct dentry *dentry = ctx->cfile->dentry;
--	ssize_t rc;
+-	struct netfs_io_request *rreq =
+-		container_of(work, struct netfs_io_request, work);
 -
--	tcon = tlink_tcon(ctx->cfile->tlink);
--	cifs_sb = CIFS_SB(dentry->d_sb);
--
--	mutex_lock(&ctx->aio_mutex);
--
--	if (list_empty(&ctx->list)) {
--		mutex_unlock(&ctx->aio_mutex);
--		return;
--	}
--
--	rc = ctx->rc;
--	/*
--	 * Wait for and collect replies for any successful sends in order of
--	 * increasing offset. Once an error is hit, then return without waiting
--	 * for any more replies.
--	 */
--restart_loop:
--	list_for_each_entry_safe(wdata, tmp, &ctx->list, list) {
--		if (!rc) {
--			if (!try_wait_for_completion(&wdata->done)) {
--				mutex_unlock(&ctx->aio_mutex);
--				return;
--			}
--
--			if (wdata->result)
--				rc = wdata->result;
--			else
--				ctx->total_len += wdata->subreq.len;
--
--			/* resend call if it's a retryable error */
--			if (rc == -EAGAIN) {
--				struct list_head tmp_list;
--				struct iov_iter tmp_from = ctx->iter;
--
--				INIT_LIST_HEAD(&tmp_list);
--				list_del_init(&wdata->list);
--
--				if (ctx->direct_io)
--					rc = cifs_resend_wdata(
--						wdata, &tmp_list, ctx);
--				else {
--					iov_iter_advance(&tmp_from,
--						 wdata->subreq.start - ctx->pos);
--
--					rc = cifs_write_from_iter(wdata->subreq.start,
--						wdata->subreq.len, &tmp_from,
--						ctx->cfile, cifs_sb, &tmp_list,
--						ctx);
--
--					cifs_put_writedata(wdata);
--				}
--
--				list_splice(&tmp_list, &ctx->list);
--				goto restart_loop;
--			}
--		}
--		list_del_init(&wdata->list);
--		cifs_put_writedata(wdata);
--	}
--
--	cifs_stats_bytes_written(tcon, ctx->total_len);
--	set_bit(CIFS_INO_INVALID_MAPPING, &CIFS_I(dentry->d_inode)->flags);
--
--	ctx->rc = (rc == 0) ? ctx->total_len : rc;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (ctx->iocb && ctx->iocb->ki_complete)
--		ctx->iocb->ki_complete(ctx->iocb, ctx->rc);
--	else
--		complete(&ctx->done);
+-	netfs_rreq_do_write_to_cache(rreq);
 -}
 -
--static ssize_t __cifs_writev(
--	struct kiocb *iocb, struct iov_iter *from, bool direct)
+-static void netfs_rreq_write_to_cache(struct netfs_io_request *rreq)
 -{
--	struct file *file = iocb->ki_filp;
--	ssize_t total_written = 0;
--	struct cifsFileInfo *cfile;
--	struct cifs_tcon *tcon;
--	struct cifs_sb_info *cifs_sb;
--	struct cifs_aio_ctx *ctx;
--	int rc;
--
--	rc = generic_write_checks(iocb, from);
--	if (rc <= 0)
--		return rc;
--
--	cifs_sb = CIFS_FILE_SB(file);
--	cfile = file->private_data;
--	tcon = tlink_tcon(cfile->tlink);
--
--	if (!tcon->ses->server->ops->async_writev)
--		return -ENOSYS;
--
--	ctx = cifs_aio_ctx_alloc();
--	if (!ctx)
--		return -ENOMEM;
--
--	ctx->cfile = cifsFileInfo_get(cfile);
--
--	if (!is_sync_kiocb(iocb))
--		ctx->iocb = iocb;
--
--	ctx->pos = iocb->ki_pos;
--	ctx->direct_io = direct;
--	ctx->nr_pinned_pages = 0;
--
--	if (user_backed_iter(from)) {
--		/*
--		 * Extract IOVEC/UBUF-type iterators to a BVEC-type iterator as
--		 * they contain references to the calling process's virtual
--		 * memory layout which won't be available in an async worker
--		 * thread.  This also takes a pin on every folio involved.
--		 */
--		rc = netfs_extract_user_iter(from, iov_iter_count(from),
--					     &ctx->iter, 0);
--		if (rc < 0) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return rc;
--		}
--
--		ctx->nr_pinned_pages = rc;
--		ctx->bv = (void *)ctx->iter.bvec;
--		ctx->bv_need_unpin = iov_iter_extract_will_pin(from);
--	} else if ((iov_iter_is_bvec(from) || iov_iter_is_kvec(from)) &&
--		   !is_sync_kiocb(iocb)) {
--		/*
--		 * If the op is asynchronous, we need to copy the list attached
--		 * to a BVEC/KVEC-type iterator, but we assume that the storage
--		 * will be pinned by the caller; in any case, we may or may not
--		 * be able to pin the pages, so we don't try.
--		 */
--		ctx->bv = (void *)dup_iter(&ctx->iter, from, GFP_KERNEL);
--		if (!ctx->bv) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -ENOMEM;
--		}
--	} else {
--		/*
--		 * Otherwise, we just pass the iterator down as-is and rely on
--		 * the caller to make sure the pages referred to by the
--		 * iterator don't evaporate.
--		 */
--		ctx->iter = *from;
--	}
--
--	ctx->len = iov_iter_count(&ctx->iter);
--
--	/* grab a lock here due to read response handlers can access ctx */
--	mutex_lock(&ctx->aio_mutex);
--
--	rc = cifs_write_from_iter(iocb->ki_pos, ctx->len, &ctx->iter,
--				  cfile, cifs_sb, &ctx->list, ctx);
--
--	/*
--	 * If at least one write was successfully sent, then discard any rc
--	 * value from the later writes. If the other write succeeds, then
--	 * we'll end up returning whatever was written. If it fails, then
--	 * we'll get a new rc value from that.
--	 */
--	if (!list_empty(&ctx->list))
--		rc = 0;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (rc) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return rc;
--	}
--
--	if (!is_sync_kiocb(iocb)) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return -EIOCBQUEUED;
--	}
--
--	rc = wait_for_completion_killable(&ctx->done);
--	if (rc) {
--		mutex_lock(&ctx->aio_mutex);
--		ctx->rc = rc = -EINTR;
--		total_written = ctx->total_len;
--		mutex_unlock(&ctx->aio_mutex);
--	} else {
--		rc = ctx->rc;
--		total_written = ctx->total_len;
--	}
--
--	kref_put(&ctx->refcount, cifs_aio_ctx_release);
--
--	if (unlikely(!total_written))
--		return rc;
--
--	iocb->ki_pos += total_written;
--	return total_written;
+-	rreq->work.func = netfs_rreq_write_to_cache_work;
+-	if (!queue_work(system_unbound_wq, &rreq->work))
+-		BUG();
 -}
 -
--ssize_t cifs_direct_writev(struct kiocb *iocb, struct iov_iter *from)
--{
--	struct file *file = iocb->ki_filp;
+ /*
+  * Handle a short read.
+  */
+@@ -417,9 +278,6 @@ static void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async)
+ 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+ 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
+ 
+-	if (test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags))
+-		return netfs_rreq_write_to_cache(rreq);
 -
--	cifs_revalidate_mapping(file->f_inode);
--	return __cifs_writev(iocb, from, true);
--}
--
--ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *from)
--{
--	return __cifs_writev(iocb, from, false);
--}
--#endif // TODO remove 3594
--
- static ssize_t
- cifs_writev(struct kiocb *iocb, struct iov_iter *from)
- {
-@@ -3239,450 +2775,6 @@ cifs_strict_writev(struct kiocb *iocb, struct iov_iter *from)
- 	return written;
+ 	netfs_rreq_completed(rreq, was_async);
  }
  
--#if 0 // TODO remove 4143
--static struct cifs_io_subrequest *cifs_readdata_alloc(work_func_t complete)
--{
--	struct cifs_io_subrequest *rdata;
--
--	rdata = kzalloc(sizeof(*rdata), GFP_KERNEL);
--	if (rdata) {
--		refcount_set(&rdata->subreq.ref, 1);
--		INIT_LIST_HEAD(&rdata->list);
--		init_completion(&rdata->done);
--		INIT_WORK(&rdata->work, complete);
--	}
--
--	return rdata;
--}
--
--void
--cifs_readdata_release(struct cifs_io_subrequest *rdata)
--{
--	if (rdata->ctx)
--		kref_put(&rdata->ctx->refcount, cifs_aio_ctx_release);
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (rdata->mr) {
--		smbd_deregister_mr(rdata->mr);
--		rdata->mr = NULL;
--	}
--#endif
--	if (rdata->cfile)
--		cifsFileInfo_put(rdata->cfile);
--
--	kfree(rdata);
--}
--
--static void collect_uncached_read_data(struct cifs_aio_ctx *ctx);
--
--static void
--cifs_uncached_readv_complete(struct work_struct *work)
--{
--	struct cifs_io_subrequest *rdata =
--		container_of(work, struct cifs_io_subrequest, work);
--
--	complete(&rdata->done);
--	collect_uncached_read_data(rdata->ctx);
--	/* the below call can possibly free the last ref to aio ctx */
--	cifs_put_readdata(rdata);
--}
--
--static int cifs_resend_rdata(struct cifs_io_subrequest *rdata,
--			struct list_head *rdata_list,
--			struct cifs_aio_ctx *ctx)
--{
--	size_t rsize;
--	struct cifs_credits credits;
--	int rc;
--	struct TCP_Server_Info *server;
--
--	/* XXX: should we pick a new channel here? */
--	server = rdata->server;
--
--	do {
--		if (rdata->cfile->invalidHandle) {
--			rc = cifs_reopen_file(rdata->cfile, true);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--		/*
--		 * Wait for credits to resend this rdata.
--		 * Note: we are attempting to resend the whole rdata not in
--		 * segments
--		 */
--		do {
--			rc = server->ops->wait_mtu_credits(server, rdata->subreq.len,
--						&rsize, &credits);
--
--			if (rc)
--				goto fail;
--
--			if (rsize < rdata->subreq.len) {
--				add_credits_and_wake_if(server, &credits, 0);
--				msleep(1000);
--			}
--		} while (rsize < rdata->subreq.len);
--		rdata->credits = credits;
--
--		rc = adjust_credits(server, &rdata->credits, rdata->subreq.len);
--		if (!rc) {
--			if (rdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else {
--#ifdef CONFIG_CIFS_SMB_DIRECT
--				if (rdata->mr) {
--					rdata->mr->need_invalidate = true;
--					smbd_deregister_mr(rdata->mr);
--					rdata->mr = NULL;
--				}
--#endif
--				rc = server->ops->async_readv(rdata);
--			}
--		}
--
--		/* If the read was successfully sent, we are done */
--		if (!rc) {
--			/* Add to aio pending list */
--			list_add_tail(&rdata->list, rdata_list);
--			return 0;
--		}
--
--		/* Roll back credits and retry if needed */
--		add_credits_and_wake_if(server, &rdata->credits, 0);
--	} while (rc == -EAGAIN);
--
--fail:
--	cifs_put_readdata(rdata);
--	return rc;
--}
--
--static int
--cifs_send_async_read(loff_t fpos, size_t len, struct cifsFileInfo *open_file,
--		     struct cifs_sb_info *cifs_sb, struct list_head *rdata_list,
--		     struct cifs_aio_ctx *ctx)
--{
--	struct cifs_io_subrequest *rdata;
--	unsigned int nsegs, max_segs = INT_MAX;
--	struct cifs_credits credits_on_stack;
--	struct cifs_credits *credits = &credits_on_stack;
--	size_t cur_len, max_len, rsize;
--	int rc;
--	pid_t pid;
--	struct TCP_Server_Info *server;
--
--	server = cifs_pick_channel(tlink_tcon(open_file->tlink)->ses);
--
--#ifdef CONFIG_CIFS_SMB_DIRECT
--	if (server->smbd_conn)
--		max_segs = server->smbd_conn->max_frmr_depth;
--#endif
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	do {
--		if (open_file->invalidHandle) {
--			rc = cifs_reopen_file(open_file, true);
--			if (rc == -EAGAIN)
--				continue;
--			else if (rc)
--				break;
--		}
--
--		if (cifs_sb->ctx->rsize == 0)
--			cifs_sb->ctx->rsize =
--				server->ops->negotiate_rsize(tlink_tcon(open_file->tlink),
--							     cifs_sb->ctx);
--
--		rc = server->ops->wait_mtu_credits(server, cifs_sb->ctx->rsize,
--						   &rsize, credits);
--		if (rc)
--			break;
--
--		max_len = min_t(size_t, len, rsize);
--
--		cur_len = cifs_limit_bvec_subset(&ctx->iter, max_len,
--						 max_segs, &nsegs);
--		cifs_dbg(FYI, "read-to-iter len=%zx/%zx nsegs=%u/%lu/%u\n",
--			 cur_len, max_len, nsegs, ctx->iter.nr_segs, max_segs);
--		if (cur_len == 0) {
--			rc = -EIO;
--			add_credits_and_wake_if(server, credits, 0);
--			break;
--		}
--
--		rdata = cifs_readdata_alloc(cifs_uncached_readv_complete);
--		if (!rdata) {
--			add_credits_and_wake_if(server, credits, 0);
--			rc = -ENOMEM;
--			break;
--		}
--
--		rdata->server	= server;
--		rdata->cfile	= cifsFileInfo_get(open_file);
--		rdata->subreq.start	= fpos;
--		rdata->subreq.len	= cur_len;
--		rdata->pid	= pid;
--		rdata->credits	= credits_on_stack;
--		rdata->ctx	= ctx;
--		kref_get(&ctx->refcount);
--
--		rdata->subreq.io_iter = ctx->iter;
--		iov_iter_truncate(&rdata->subreq.io_iter, cur_len);
--
--		rc = adjust_credits(server, &rdata->credits, rdata->subreq.len);
--
--		if (!rc) {
--			if (rdata->cfile->invalidHandle)
--				rc = -EAGAIN;
--			else
--				rc = server->ops->async_readv(rdata);
--		}
--
--		if (rc) {
--			add_credits_and_wake_if(server, &rdata->credits, 0);
--			cifs_put_readdata(rdata);
--			if (rc == -EAGAIN)
--				continue;
--			break;
--		}
--
--		list_add_tail(&rdata->list, rdata_list);
--		iov_iter_advance(&ctx->iter, cur_len);
--		fpos += cur_len;
--		len -= cur_len;
--	} while (len > 0);
--
--	return rc;
--}
--
--static void
--collect_uncached_read_data(struct cifs_aio_ctx *ctx)
--{
--	struct cifs_io_subrequest *rdata, *tmp;
--	struct cifs_sb_info *cifs_sb;
--	int rc;
--
--	cifs_sb = CIFS_SB(ctx->cfile->dentry->d_sb);
--
--	mutex_lock(&ctx->aio_mutex);
--
--	if (list_empty(&ctx->list)) {
--		mutex_unlock(&ctx->aio_mutex);
--		return;
--	}
--
--	rc = ctx->rc;
--	/* the loop below should proceed in the order of increasing offsets */
--again:
--	list_for_each_entry_safe(rdata, tmp, &ctx->list, list) {
--		if (!rc) {
--			if (!try_wait_for_completion(&rdata->done)) {
--				mutex_unlock(&ctx->aio_mutex);
--				return;
--			}
--
--			if (rdata->result == -EAGAIN) {
--				/* resend call if it's a retryable error */
--				struct list_head tmp_list;
--				unsigned int got_bytes = rdata->got_bytes;
--
--				list_del_init(&rdata->list);
--				INIT_LIST_HEAD(&tmp_list);
--
--				if (ctx->direct_io) {
--					/*
--					 * Re-use rdata as this is a
--					 * direct I/O
--					 */
--					rc = cifs_resend_rdata(
--						rdata,
--						&tmp_list, ctx);
--				} else {
--					rc = cifs_send_async_read(
--						rdata->subreq.start + got_bytes,
--						rdata->subreq.len - got_bytes,
--						rdata->cfile, cifs_sb,
--						&tmp_list, ctx);
--
--					cifs_put_readdata(rdata);
--				}
--
--				list_splice(&tmp_list, &ctx->list);
--
--				goto again;
--			} else if (rdata->result)
--				rc = rdata->result;
--
--			/* if there was a short read -- discard anything left */
--			if (rdata->got_bytes && rdata->got_bytes < rdata->subreq.len)
--				rc = -ENODATA;
--
--			ctx->total_len += rdata->got_bytes;
--		}
--		list_del_init(&rdata->list);
--		cifs_put_readdata(rdata);
--	}
--
--	/* mask nodata case */
--	if (rc == -ENODATA)
--		rc = 0;
--
--	ctx->rc = (rc == 0) ? (ssize_t)ctx->total_len : rc;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (ctx->iocb && ctx->iocb->ki_complete)
--		ctx->iocb->ki_complete(ctx->iocb, ctx->rc);
--	else
--		complete(&ctx->done);
--}
--
--static ssize_t __cifs_readv(
--	struct kiocb *iocb, struct iov_iter *to, bool direct)
--{
--	size_t len;
--	struct file *file = iocb->ki_filp;
--	struct cifs_sb_info *cifs_sb;
--	struct cifsFileInfo *cfile;
--	struct cifs_tcon *tcon;
--	ssize_t rc, total_read = 0;
--	loff_t offset = iocb->ki_pos;
--	struct cifs_aio_ctx *ctx;
--
--	len = iov_iter_count(to);
--	if (!len)
--		return 0;
--
--	cifs_sb = CIFS_FILE_SB(file);
--	cfile = file->private_data;
--	tcon = tlink_tcon(cfile->tlink);
--
--	if (!tcon->ses->server->ops->async_readv)
--		return -ENOSYS;
--
--	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
--		cifs_dbg(FYI, "attempting read on write only file instance\n");
--
--	ctx = cifs_aio_ctx_alloc();
--	if (!ctx)
--		return -ENOMEM;
--
--	ctx->pos	= offset;
--	ctx->direct_io	= direct;
--	ctx->len	= len;
--	ctx->cfile	= cifsFileInfo_get(cfile);
--	ctx->nr_pinned_pages = 0;
--
--	if (!is_sync_kiocb(iocb))
--		ctx->iocb = iocb;
--
--	if (user_backed_iter(to)) {
--		/*
--		 * Extract IOVEC/UBUF-type iterators to a BVEC-type iterator as
--		 * they contain references to the calling process's virtual
--		 * memory layout which won't be available in an async worker
--		 * thread.  This also takes a pin on every folio involved.
--		 */
--		rc = netfs_extract_user_iter(to, iov_iter_count(to),
--					     &ctx->iter, 0);
--		if (rc < 0) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return rc;
--		}
--
--		ctx->nr_pinned_pages = rc;
--		ctx->bv = (void *)ctx->iter.bvec;
--		ctx->bv_need_unpin = iov_iter_extract_will_pin(to);
--		ctx->should_dirty = true;
--	} else if ((iov_iter_is_bvec(to) || iov_iter_is_kvec(to)) &&
--		   !is_sync_kiocb(iocb)) {
--		/*
--		 * If the op is asynchronous, we need to copy the list attached
--		 * to a BVEC/KVEC-type iterator, but we assume that the storage
--		 * will be retained by the caller; in any case, we may or may
--		 * not be able to pin the pages, so we don't try.
--		 */
--		ctx->bv = (void *)dup_iter(&ctx->iter, to, GFP_KERNEL);
--		if (!ctx->bv) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -ENOMEM;
--		}
--	} else {
--		/*
--		 * Otherwise, we just pass the iterator down as-is and rely on
--		 * the caller to make sure the pages referred to by the
--		 * iterator don't evaporate.
--		 */
--		ctx->iter = *to;
--	}
--
--	if (direct) {
--		rc = filemap_write_and_wait_range(file->f_inode->i_mapping,
--						  offset, offset + len - 1);
--		if (rc) {
--			kref_put(&ctx->refcount, cifs_aio_ctx_release);
--			return -EAGAIN;
--		}
--	}
--
--	/* grab a lock here due to read response handlers can access ctx */
--	mutex_lock(&ctx->aio_mutex);
--
--	rc = cifs_send_async_read(offset, len, cfile, cifs_sb, &ctx->list, ctx);
--
--	/* if at least one read request send succeeded, then reset rc */
--	if (!list_empty(&ctx->list))
--		rc = 0;
--
--	mutex_unlock(&ctx->aio_mutex);
--
--	if (rc) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return rc;
--	}
--
--	if (!is_sync_kiocb(iocb)) {
--		kref_put(&ctx->refcount, cifs_aio_ctx_release);
--		return -EIOCBQUEUED;
--	}
--
--	rc = wait_for_completion_killable(&ctx->done);
--	if (rc) {
--		mutex_lock(&ctx->aio_mutex);
--		ctx->rc = rc = -EINTR;
--		total_read = ctx->total_len;
--		mutex_unlock(&ctx->aio_mutex);
--	} else {
--		rc = ctx->rc;
--		total_read = ctx->total_len;
--	}
--
--	kref_put(&ctx->refcount, cifs_aio_ctx_release);
--
--	if (total_read) {
--		iocb->ki_pos += total_read;
--		return total_read;
--	}
--	return rc;
--}
--
--ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
--{
--	return __cifs_readv(iocb, to, true);
--}
--
--ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
--{
--	return __cifs_readv(iocb, to, false);
--
--}
--#endif // end netfslib removal 4143
--
- ssize_t cifs_loose_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+diff --git a/fs/netfs/main.c b/fs/netfs/main.c
+index 3a45ecdc4eac..cafefe323e9d 100644
+--- a/fs/netfs/main.c
++++ b/fs/netfs/main.c
+@@ -32,6 +32,7 @@ static const char *netfs_origins[nr__netfs_io_origin] = {
+ 	[NETFS_READAHEAD]		= "RA",
+ 	[NETFS_READPAGE]		= "RP",
+ 	[NETFS_READ_FOR_WRITE]		= "RW",
++	[NETFS_COPY_TO_CACHE]		= "CC",
+ 	[NETFS_WRITEBACK]		= "WB",
+ 	[NETFS_WRITETHROUGH]		= "WT",
+ 	[NETFS_LAUNDER_WRITE]		= "LW",
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 31e45dfad5b0..020a0e906919 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -177,13 +177,11 @@ EXPORT_SYMBOL(netfs_clear_inode_writeback);
+  */
+ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
  {
- 	ssize_t rc;
-@@ -3781,101 +2873,6 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
- 	return rc;
+-	struct netfs_folio *finfo = NULL;
++	struct netfs_folio *finfo;
+ 	size_t flen = folio_size(folio);
+ 
+ 	_enter("{%lx},%zx,%zx", folio_index(folio), offset, length);
+ 
+-	folio_wait_fscache(folio);
+-
+ 	if (!folio_test_private(folio))
+ 		return;
+ 
+@@ -248,12 +246,6 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+ 
+ 	if (folio_test_private(folio))
+ 		return false;
+-	if (folio_test_fscache(folio)) {
+-		if (current_is_kswapd() || !(gfp & __GFP_FS))
+-			return false;
+-		folio_wait_fscache(folio);
+-	}
+-
+ 	fscache_note_page_release(netfs_i_cookie(ctx));
+ 	return true;
+ }
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 39ff06dd4c17..2b5f4535aaa9 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -169,16 +169,25 @@ struct netfs_folio {
+ 	unsigned int		dirty_len;	/* Write-streaming dirty data length */
+ };
+ #define NETFS_FOLIO_INFO	0x1UL	/* OR'd with folio->private. */
++#define NETFS_FOLIO_COPY_TO_CACHE ((struct netfs_group *)0x356UL) /* Write to the cache only */
+ 
+-static inline struct netfs_folio *netfs_folio_info(struct folio *folio)
++static inline bool netfs_is_folio_info(const void *priv)
+ {
+-	void *priv = folio_get_private(folio);
++	return (unsigned long)priv & NETFS_FOLIO_INFO;
++}
+ 
+-	if ((unsigned long)priv & NETFS_FOLIO_INFO)
++static inline struct netfs_folio *__netfs_folio_info(const void *priv)
++{
++	if (netfs_is_folio_info(priv))
+ 		return (struct netfs_folio *)((unsigned long)priv & ~NETFS_FOLIO_INFO);
+ 	return NULL;
  }
  
--#if 0 // TODO remove 4633
--static ssize_t
--cifs_read(struct file *file, char *read_data, size_t read_size, loff_t *offset)
--{
--	int rc = -EACCES;
--	unsigned int bytes_read = 0;
--	unsigned int total_read;
--	unsigned int current_read_size;
--	unsigned int rsize;
--	struct cifs_sb_info *cifs_sb;
--	struct cifs_tcon *tcon;
--	struct TCP_Server_Info *server;
--	unsigned int xid;
--	char *cur_offset;
--	struct cifsFileInfo *open_file;
--	struct cifs_io_parms io_parms = {0};
--	int buf_type = CIFS_NO_BUFFER;
--	__u32 pid;
--
--	xid = get_xid();
--	cifs_sb = CIFS_FILE_SB(file);
--
--	/* FIXME: set up handlers for larger reads and/or convert to async */
--	rsize = min_t(unsigned int, cifs_sb->ctx->rsize, CIFSMaxBufSize);
--
--	if (file->private_data == NULL) {
--		rc = -EBADF;
--		free_xid(xid);
--		return rc;
--	}
--	open_file = file->private_data;
--	tcon = tlink_tcon(open_file->tlink);
--	server = cifs_pick_channel(tcon->ses);
--
--	if (!server->ops->sync_read) {
--		free_xid(xid);
--		return -ENOSYS;
--	}
--
--	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
--		pid = open_file->pid;
--	else
--		pid = current->tgid;
--
--	if ((file->f_flags & O_ACCMODE) == O_WRONLY)
--		cifs_dbg(FYI, "attempting read on write only file instance\n");
--
--	for (total_read = 0, cur_offset = read_data; read_size > total_read;
--	     total_read += bytes_read, cur_offset += bytes_read) {
--		do {
--			current_read_size = min_t(uint, read_size - total_read,
--						  rsize);
--			/*
--			 * For windows me and 9x we do not want to request more
--			 * than it negotiated since it will refuse the read
--			 * then.
--			 */
--			if (!(tcon->ses->capabilities &
--				tcon->ses->server->vals->cap_large_files)) {
--				current_read_size = min_t(uint,
--					current_read_size, CIFSMaxBufSize);
--			}
--			if (open_file->invalidHandle) {
--				rc = cifs_reopen_file(open_file, true);
--				if (rc != 0)
--					break;
--			}
--			io_parms.pid = pid;
--			io_parms.tcon = tcon;
--			io_parms.offset = *offset;
--			io_parms.length = current_read_size;
--			io_parms.server = server;
--			rc = server->ops->sync_read(xid, &open_file->fid, &io_parms,
--						    &bytes_read, &cur_offset,
--						    &buf_type);
--		} while (rc == -EAGAIN);
--
--		if (rc || (bytes_read == 0)) {
--			if (total_read) {
--				break;
--			} else {
--				free_xid(xid);
--				return rc;
--			}
--		} else {
--			cifs_stats_bytes_read(tcon, total_read);
--			*offset += bytes_read;
--		}
--	}
--	free_xid(xid);
--	return total_read;
--}
--#endif // end netfslib remove 4633
--
--
- static vm_fault_t cifs_page_mkwrite(struct vm_fault *vmf)
++static inline struct netfs_folio *netfs_folio_info(struct folio *folio)
++{
++	return __netfs_folio_info(folio_get_private(folio));
++}
++
+ static inline struct netfs_group *netfs_folio_group(struct folio *folio)
  {
- 	return netfs_page_mkwrite(vmf, NULL);
+ 	struct netfs_folio *finfo;
+@@ -234,6 +243,7 @@ enum netfs_io_origin {
+ 	NETFS_READAHEAD,		/* This read was triggered by readahead */
+ 	NETFS_READPAGE,			/* This read is a synchronous read */
+ 	NETFS_READ_FOR_WRITE,		/* This read is to prepare a write */
++	NETFS_COPY_TO_CACHE,		/* This write is to copy a read to the cache */
+ 	NETFS_WRITEBACK,		/* This write was triggered by writepages */
+ 	NETFS_WRITETHROUGH,		/* This write was made by netfs_perform_write() */
+ 	NETFS_LAUNDER_WRITE,		/* This is triggered by ->launder_folio() */
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 6d39292559bf..218c486bf9cd 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -24,6 +24,7 @@
+ 	E_(netfs_read_trace_write_begin,	"WRITEBEGN")
+ 
+ #define netfs_write_traces					\
++	EM(netfs_write_trace_copy_to_cache,	"COPY2CACH")	\
+ 	EM(netfs_write_trace_dio_write,		"DIO-WRITE")	\
+ 	EM(netfs_write_trace_launder,		"LAUNDER  ")	\
+ 	EM(netfs_write_trace_unbuffered_write,	"UNB-WRITE")	\
+@@ -34,6 +35,7 @@
+ 	EM(NETFS_READAHEAD,			"RA")		\
+ 	EM(NETFS_READPAGE,			"RP")		\
+ 	EM(NETFS_READ_FOR_WRITE,		"RW")		\
++	EM(NETFS_COPY_TO_CACHE,			"CC")		\
+ 	EM(NETFS_WRITEBACK,			"WB")		\
+ 	EM(NETFS_WRITETHROUGH,			"WT")		\
+ 	EM(NETFS_LAUNDER_WRITE,			"LW")		\
+@@ -133,7 +135,9 @@
+ 	EM(netfs_folio_trace_clear,		"clear")	\
+ 	EM(netfs_folio_trace_clear_s,		"clear-s")	\
+ 	EM(netfs_folio_trace_clear_g,		"clear-g")	\
+-	EM(netfs_folio_trace_copy_to_cache,	"copy")		\
++	EM(netfs_folio_trace_copy,		"copy")		\
++	EM(netfs_folio_trace_copy_plus,		"copy+")	\
++	EM(netfs_folio_trace_copy_to_cache,	"mark-copy")	\
+ 	EM(netfs_folio_trace_end_copy,		"end-copy")	\
+ 	EM(netfs_folio_trace_filled_gaps,	"filled-gaps")	\
+ 	EM(netfs_folio_trace_kill,		"kill")		\
 
 
