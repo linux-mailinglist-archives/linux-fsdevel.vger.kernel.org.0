@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-5229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADCA8095BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:52:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B478095BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438261C20B5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A881F212AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D0357313
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530374F603
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GHfSIc9S"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FzpTikA2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18DE41FE9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:23:33 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 134E2212B
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:23:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701984209;
+	s=mimecast20190719; t=1701984214;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=i1NCs1wijkp9oudHg0v3ZW2pY0xP/Retx1SxWP1fmpE=;
-	b=GHfSIc9SUFqyhKLfo7XtAG+IZKjNbZuLzh24e8BlrSqgYM+LkOTLmr4Q5GpGpaYpbZDssq
-	4i/W+llN8hIYItn9kOqv4OQvAxrH+gYp0rVkHoI3jRO3loNGr5Dg9B9nVND8nh8N1ogHae
-	rTDd0UCiOlmrj7sKd9znT9nei5dIzm0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-_pwwI_YRN4GTpksMjMzvlA-1; Thu, 07 Dec 2023 16:23:25 -0500
-X-MC-Unique: _pwwI_YRN4GTpksMjMzvlA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	bh=9CUqcQhkx342wCXCrXY79eb8GLJZvNRKMGt3t1k0yyQ=;
+	b=FzpTikA2u0zucZSiQmreLOJdtQjggn1L8u/RzhyLGeP2dLjd0OrbJkLuqKDdtX+PJOvG3l
+	Nvo1aSCLY5wFD7xP69z4yGjKFn7I7PbxCzlt2l9F327Bh0fRBrI18hB5g1UZOhe0ot2J1C
+	Dx8N2sMrVtAU8MoF/K7awqJG5BybBhk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-U1IGKwaGNJuvFFeWmI00Lw-1; Thu,
+ 07 Dec 2023 16:23:28 -0500
+X-MC-Unique: U1IGKwaGNJuvFFeWmI00Lw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6D04410B9340;
-	Thu,  7 Dec 2023 21:23:24 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B5B0229AC00A;
+	Thu,  7 Dec 2023 21:23:27 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id C4FB72026D66;
-	Thu,  7 Dec 2023 21:23:21 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 229FF492BCE;
+	Thu,  7 Dec 2023 21:23:25 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Jeff Layton <jlayton@kernel.org>,
 	Steve French <smfrench@gmail.com>
@@ -65,9 +65,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 21/59] netfs: Make netfs_put_request() handle a NULL pointer
-Date: Thu,  7 Dec 2023 21:21:28 +0000
-Message-ID: <20231207212206.1379128-22-dhowells@redhat.com>
+Subject: [PATCH v3 22/59] netfs: Make the refcounting of netfs_begin_read() easier to use
+Date: Thu,  7 Dec 2023 21:21:29 +0000
+Message-ID: <20231207212206.1379128-23-dhowells@redhat.com>
 In-Reply-To: <20231207212206.1379128-1-dhowells@redhat.com>
 References: <20231207212206.1379128-1-dhowells@redhat.com>
 Precedence: bulk
@@ -77,9 +77,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-Make netfs_put_request() just return if given a NULL request pointer.
+Make the refcounting of netfs_begin_read() easier to use by not eating the
+caller's ref on the netfs_io_request it's given.  This makes it easier to
+use when we need to look in the request struct after.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Jeff Layton <jlayton@kernel.org>
@@ -87,45 +89,144 @@ cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- fs/netfs/objects.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ fs/netfs/buffered_read.c     |  6 +++++-
+ fs/netfs/io.c                | 28 +++++++++++++---------------
+ include/trace/events/netfs.h |  9 +++++----
+ 3 files changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index 7ef804e8915c..3ce6313cc5f9 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -109,19 +109,22 @@ static void netfs_free_request(struct work_struct *work)
- void netfs_put_request(struct netfs_io_request *rreq, bool was_async,
- 		       enum netfs_rreq_ref_trace what)
- {
--	unsigned int debug_id = rreq->debug_id;
-+	unsigned int debug_id;
- 	bool dead;
- 	int r;
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 751556faa70b..6b9a44cafbac 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -210,6 +210,7 @@ void netfs_readahead(struct readahead_control *ractl)
+ 		;
  
--	dead = __refcount_dec_and_test(&rreq->ref, &r);
--	trace_netfs_rreq_ref(debug_id, r - 1, what);
--	if (dead) {
--		if (was_async) {
--			rreq->work.func = netfs_free_request;
--			if (!queue_work(system_unbound_wq, &rreq->work))
--				BUG();
--		} else {
--			netfs_free_request(&rreq->work);
-+	if (rreq) {
-+		debug_id = rreq->debug_id;
-+		dead = __refcount_dec_and_test(&rreq->ref, &r);
-+		trace_netfs_rreq_ref(debug_id, r - 1, what);
-+		if (dead) {
-+			if (was_async) {
-+				rreq->work.func = netfs_free_request;
-+				if (!queue_work(system_unbound_wq, &rreq->work))
-+					BUG();
-+			} else {
-+				netfs_free_request(&rreq->work);
-+			}
- 		}
+ 	netfs_begin_read(rreq, false);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 	return;
+ 
+ cleanup_free:
+@@ -260,7 +261,9 @@ int netfs_read_folio(struct file *file, struct folio *folio)
+ 	iov_iter_xarray(&rreq->iter, ITER_DEST, &mapping->i_pages,
+ 			rreq->start, rreq->len);
+ 
+-	return netfs_begin_read(rreq, true);
++	ret = netfs_begin_read(rreq, true);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
++	return ret;
+ 
+ discard:
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_discard);
+@@ -429,6 +432,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	ret = netfs_begin_read(rreq, true);
+ 	if (ret < 0)
+ 		goto error;
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 
+ have_folio:
+ 	ret = folio_wait_fscache_killable(folio);
+diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+index c80b8eed1209..1795f8679be9 100644
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -362,6 +362,7 @@ static void netfs_rreq_assess(struct netfs_io_request *rreq, bool was_async)
+ 
+ 	netfs_rreq_unlock_folios(rreq);
+ 
++	trace_netfs_rreq(rreq, netfs_rreq_trace_wake_ip);
+ 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+ 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
+ 
+@@ -657,7 +658,6 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+ 
+ 	if (rreq->len == 0) {
+ 		pr_err("Zero-sized read [R=%x]\n", rreq->debug_id);
+-		netfs_put_request(rreq, false, netfs_rreq_trace_put_zero_len);
+ 		return -EIO;
  	}
- }
+ 
+@@ -669,12 +669,10 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+ 
+ 	INIT_WORK(&rreq->work, netfs_rreq_work);
+ 
+-	if (sync)
+-		netfs_get_request(rreq, netfs_rreq_trace_get_hold);
+-
+ 	/* Chop the read into slices according to what the cache and the netfs
+ 	 * want and submit each one.
+ 	 */
++	netfs_get_request(rreq, netfs_rreq_trace_get_for_outstanding);
+ 	atomic_set(&rreq->nr_outstanding, 1);
+ 	io_iter = rreq->io_iter;
+ 	do {
+@@ -684,25 +682,25 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+ 	} while (rreq->submitted < rreq->len);
+ 
+ 	if (sync) {
+-		/* Keep nr_outstanding incremented so that the ref always belongs to
+-		 * us, and the service code isn't punted off to a random thread pool to
+-		 * process.
++		/* Keep nr_outstanding incremented so that the ref always
++		 * belongs to us, and the service code isn't punted off to a
++		 * random thread pool to process.  Note that this might start
++		 * further work, such as writing to the cache.
+ 		 */
+-		for (;;) {
+-			wait_var_event(&rreq->nr_outstanding,
+-				       atomic_read(&rreq->nr_outstanding) == 1);
++		wait_var_event(&rreq->nr_outstanding,
++			       atomic_read(&rreq->nr_outstanding) == 1);
++		if (atomic_dec_and_test(&rreq->nr_outstanding))
+ 			netfs_rreq_assess(rreq, false);
+-			if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
+-				break;
+-			cond_resched();
+-		}
++
++		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_ip);
++		wait_on_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS,
++			    TASK_UNINTERRUPTIBLE);
+ 
+ 		ret = rreq->error;
+ 		if (ret == 0 && rreq->submitted < rreq->len) {
+ 			trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
+ 			ret = -EIO;
+ 		}
+-		netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
+ 	} else {
+ 		/* If we decrement nr_outstanding to 0, the ref belongs to us. */
+ 		if (atomic_dec_and_test(&rreq->nr_outstanding))
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 4ea4e34d279f..6daadf2aac8a 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -34,7 +34,9 @@
+ 	EM(netfs_rreq_trace_free,		"FREE   ")	\
+ 	EM(netfs_rreq_trace_resubmit,		"RESUBMT")	\
+ 	EM(netfs_rreq_trace_unlock,		"UNLOCK ")	\
+-	E_(netfs_rreq_trace_unmark,		"UNMARK ")
++	EM(netfs_rreq_trace_unmark,		"UNMARK ")	\
++	EM(netfs_rreq_trace_wait_ip,		"WAIT-IP")	\
++	E_(netfs_rreq_trace_wake_ip,		"WAKE-IP")
+ 
+ #define netfs_sreq_sources					\
+ 	EM(NETFS_FILL_WITH_ZEROES,		"ZERO")		\
+@@ -65,14 +67,13 @@
+ 	E_(netfs_fail_prepare_write,		"prep-write")
+ 
+ #define netfs_rreq_ref_traces					\
+-	EM(netfs_rreq_trace_get_hold,		"GET HOLD   ")	\
++	EM(netfs_rreq_trace_get_for_outstanding,"GET OUTSTND")	\
+ 	EM(netfs_rreq_trace_get_subreq,		"GET SUBREQ ")	\
+ 	EM(netfs_rreq_trace_put_complete,	"PUT COMPLT ")	\
+ 	EM(netfs_rreq_trace_put_discard,	"PUT DISCARD")	\
+ 	EM(netfs_rreq_trace_put_failed,		"PUT FAILED ")	\
+-	EM(netfs_rreq_trace_put_hold,		"PUT HOLD   ")	\
++	EM(netfs_rreq_trace_put_return,		"PUT RETURN ")	\
+ 	EM(netfs_rreq_trace_put_subreq,		"PUT SUBREQ ")	\
+-	EM(netfs_rreq_trace_put_zero_len,	"PUT ZEROLEN")	\
+ 	E_(netfs_rreq_trace_new,		"NEW        ")
+ 
+ #define netfs_sreq_ref_traces					\
 
 
