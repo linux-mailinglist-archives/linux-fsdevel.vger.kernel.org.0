@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-5105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2C8808340
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:38:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283F6808341
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 09:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA5F1C216E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D211E1F222A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C15E30345
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564CF2FE0E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 08:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sz34+fma"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="AQCvEWvZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25BFB10EB;
-	Wed,  6 Dec 2023 22:49:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HiucoW+8Qq+OeGHdkctb71sJtz0w/36Ur4eVZYT+4P8=; b=sz34+fmatIf4sQJKuz9hINZ+wK
-	Ml8GARBI7U2S82llMyj6nKnhgN6JS0a+NHihfwUeHWmuBvEUSpF4Qn+NwaXoZS1vL5A3fFn/NrqVe
-	TJIDO+8XXB+whFkoqiZqL73hpiH2NOg1PvNWaPvAwNBkf8qM3AbYZG9t4bLphAUehRqBoU8W6x/EY
-	ZLaPJFCenV3O7pb51r73svqe+JQjqOb+C5L5skHhISACaK+4PFPweYQSi6B1nOagTGVG6IMB43fF5
-	EmLeBpxT0rcfo0Apwf+NlpqSD7VNssQv6w6qHM53RxZlbZL94bOge/FHZBFvhaqedJwZMwNIGzfgB
-	rGuyIp0Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rB8CE-0087sO-2z;
-	Thu, 07 Dec 2023 06:49:19 +0000
-Date: Thu, 7 Dec 2023 06:49:18 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev,
-	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] lib/dlock-list: Make sibling CPUs share the same
- linked list
-Message-ID: <20231207064918.GZ1674809@ZenIV>
-References: <20231206060629.2827226-1-david@fromorbit.com>
- <20231206060629.2827226-5-david@fromorbit.com>
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE34010FA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 22:51:26 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-122-214.bstnma.fios.verizon.net [173.48.122.214])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3B76ok0S000645
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Dec 2023 01:50:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1701931849; bh=UfL2KoGggpRyXRxC/oRG3Gv/LsdkC3Op4OluyeXF4F4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=AQCvEWvZ1ZNDqePQ7Faykh3MytTg4T3BXLjg8+ksZvjZdje+pz1Z5L037V5TD0reI
+	 rziH1mKOVt8Gh2vp9GOv/C2EdeONUx9PBVIqL5nOX0h9eoDoBawLPZ6ZD5u9hKAVQJ
+	 4Cg+ajzFVtW1wcgO4bBRYoWsZP4Sj3jvBD2qN3noneD+RA2cnkJhyE2uJII0gT1g4s
+	 AJ0MrEskqHXgAZEMI/JYzkyPRVexOUt7Cv0WlC8VEHiOg0hbwwkiSAUYPIle5JlC/1
+	 CysBCcPqOGppMQtHU0FO5Tb9F5IDy4GFp3wNV7p89D3izxsya6h4s0CIBongQGtAOz
+	 XrQ4be/Nwl/fA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id AE0E215C057B; Thu,  7 Dec 2023 01:50:46 -0500 (EST)
+Date: Thu, 7 Dec 2023 01:50:46 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Dave Chinner <david@fromorbit.com>, hch@lst.de,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] [RFC] iomap: Use FUA for pure data O_DSYNC DIO writes
+Message-ID: <20231207065046.GA9663@mit.edu>
+References: <20180301014144.28892-1-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,26 +52,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231206060629.2827226-5-david@fromorbit.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20180301014144.28892-1-david@fromorbit.com>
 
-On Wed, Dec 06, 2023 at 05:05:33PM +1100, Dave Chinner wrote:
-> From: Waiman Long <longman@redhat.com>
+On Thu, Mar 01, 2018 at 12:41:44PM +1100, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> The dlock list needs one list for each of the CPUs available. However,
-> for sibling CPUs, they are sharing the L2 and probably L1 caches
-> too. As a result, there is not much to gain in term of avoiding
-> cacheline contention while increasing the cacheline footprint of the
-> L1/L2 caches as separate lists may need to be in the cache.
+> If we are doing direct IO writes with datasync semantics, we often
+> have to flush metadata changes along with the data write. However,
+> if we are overwriting existing data, there are no metadata changes
+> that we need to flush. In this case, optimising the IO by using
+> FUA write makes sense.
 > 
-> This patch makes all the sibling CPUs share the same list, thus
-> reducing the number of lists that need to be maintained in each
-> dlock list without having any noticeable impact on performance. It
-> also improves dlock list iteration performance as fewer lists need
-> to be iterated.
+> We know from teh IOMAP_F_DIRTY flag as to whether a specific inode
+> requires a metadata flush - this is currently used by DAX to ensure
+> extent modi$fication as stable in page fault operations. For direct
+> IO writes, we can use it to determine if we need to flush metadata
+> or not once the data is on disk.
 
-Probably a dumb question, but... "available" != "possible"; the code
-actually goes for the latter, which avoids nasty questions about
-CPU hotplug interations.  Is the sibling relation on CPUs unchanging
-on CPU hotplug?
+Hi,
+
+I've gotten an inquiry from some engineers at Microsoft who would
+really like it if ext4 could use FUA writes when doing O_DSYNC writes,
+since this is soemthing that SQL Server uses.  In the discussion for
+this patch series back in 2018[1], ext4 hadn't yet converted over to
+iomap for Direct I/O, and so adding this feature for ext4 wasn't
+really practical.
+
+[1] https://lore.kernel.org/all/20180319160650.mavedzwienzgwgqi@quack2.suse.cz/
+
+Today, ext4 does use iomap for DIO, but an experiment seems to
+indicate that something hasn't been wired up to enable FUA for O_DSYNC
+writes.  I've looked at fs/iomap/direct-io.c and it wasn't immediately
+obvious what I need to add to enable this feature.
+
+I was wondering if you could me some quick hints about what and where
+I should be looking?
+
+Many thanks!
+
+						- Ted
 
