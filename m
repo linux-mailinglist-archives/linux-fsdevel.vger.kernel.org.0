@@ -1,113 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-5241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919D78095CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:54:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEBA809590
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BC91F21270
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EA641C20ABA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8FA57311
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF62157311
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdAxYA+E"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HTuLP32Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4F57B3CB;
-	Thu,  7 Dec 2023 21:25:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15240C433CC;
-	Thu,  7 Dec 2023 21:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701984315;
-	bh=YaZTLucbXUWiTUu4ZO//do5mro1EpRuUKJNhwZYZyPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YdAxYA+EeNyu7dUv+IRTk8zJHh9KLM672+XJ7jpuEtThS6zfCTI3ANCa3/dWlAyad
-	 LUFegPgGXaSaGie9FCRbKhkTRG0O8jkxlJ/INEAwB6RH1wXjf1rYbDbjEvfyI46TvY
-	 H2mChOR+2VWzt6u8hVb9eEhU8KM0kVhU0m0iv06jCCul2W5q8IZJi8z4osKMyynxoN
-	 G5I02OijBORh6p1rFOjgnaGjyZWdin5pPaH0ehw2ORdAN4bl2pva8cMV0cA7xS1l89
-	 b4HfU3IB3Rvodibolr3RCSjicIDtQi+roEsAcCcoOK2QRO1cKESYSK+/pj0nkM6KlB
-	 +wrdrhd5q1UbQ==
-Date: Thu, 7 Dec 2023 22:25:09 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Tycho Andersen <tycho@tycho.pizza>, Oleg Nesterov <oleg@redhat.com>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
-Message-ID: <20231207-avancieren-unbezahlbar-9258f45ec3ec@brauner>
-References: <20231130163946.277502-1-tycho@tycho.pizza>
- <20231130173938.GA21808@redhat.com>
- <ZWjM6trZ6uw6yBza@tycho.pizza>
- <ZWoKbHJ0152tiGeD@tycho.pizza>
- <20231207-weither-autopilot-8daee206e6c5@brauner>
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5284C3B;
+	Thu,  7 Dec 2023 13:35:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AWfjo1FCG0zNp8yVCNT7ypjhavVj3uaSeJIY6fXZW/Q=; b=HTuLP32YvRPL+oDE1a2yf5CShL
+	ZnbMwPGwoi+NE6tA3HShRYkj/nFemjITFmj5Ox2jNRUaliUFlLDv9SObg0rJ5oT1WvP7zsjxun+um
+	1n3KXNVINV0TCPAQxQN4czj4sTVT9Of4N8CX4cSkmDyuAKQVEgGkD44HDRPlI7QwkZdWumu+qgxyR
+	4Q0V0xPz3VUXOTkIqALZfgsxEDxeNab4xoQyhQsDoX1YlLarOB5VF88kzf1zLdrTvw3UPcsPbwiq3
+	gQ2O1DcxXwjjfagYLU32Q7kUgRaotlnTsgr99KIFU7JUjVCyTwfXDfsYjgLIdajtZG/qiOgqqpm8d
+	CB99jGig==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rBM1H-004PV4-3e; Thu, 07 Dec 2023 21:34:55 +0000
+Date: Thu, 7 Dec 2023 21:34:55 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 23/59] netfs: Prep to use folio->private for write
+ grouping and streaming write
+Message-ID: <ZXI6fyO1xJbLNXFg@casper.infradead.org>
+References: <20231207212206.1379128-1-dhowells@redhat.com>
+ <20231207212206.1379128-24-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231207-weither-autopilot-8daee206e6c5@brauner>
+In-Reply-To: <20231207212206.1379128-24-dhowells@redhat.com>
 
-> If these concerns are correct
+On Thu, Dec 07, 2023 at 09:21:30PM +0000, David Howells wrote:
+> +#define NETFS_FOLIO_INFO	0x1UL	/* OR'd with folio->private. */
+> +
+> +static inline struct netfs_folio *netfs_folio_info(struct folio *folio)
+> +{
+> +	void *priv = folio_get_private(folio);
+> +
+> +	if ((unsigned long)priv & NETFS_FOLIO_INFO)
+> +		return (struct netfs_folio *)((unsigned long)priv & ~NETFS_FOLIO_INFO);
 
-So, ok. I misremebered this. The scenario I had been thinking of is
-basically the following.
+Often one gets better code by using '-' instead of '& ~', and that's
+because 'subtract one, then load four bytes from offset 12' can be
+optimised into 'load four bytes from offset 11' in a way that 'clear
+the bottom bit, then load four bytes from offset 12' can't be.
 
-We have a thread-group with thread-group leader 1234 and a thread with
-4567 in that thread-group. Assume current thread-group leader is tsk1
-and the non-thread-group leader is tsk2. tsk1 uses struct pid *tg_pid
-and tsk2 uses struct pid *t_pid. The struct pids look like this after
-creation of both thread-group leader tsk1 and thread tsk2:
-
-	TGID 1234				TID 4567 
-	tg_pid[PIDTYPE_PID]  = tsk1		t_pid[PIDTYPE_PID]  = tsk2
-	tg_pid[PIDTYPE_TGID] = tsk1		t_pid[PIDTYPE_TGID] = NULL
-
-IOW, tsk2's struct pid has never been used as a thread-group leader and
-thus PIDTYPE_TGID is NULL. Now assume someone does create pidfds for
-tsk1 and for tsk2:
-	
-	tg_pidfd = pidfd_open(tsk1)		t_pidfd = pidfd_open(tsk2)
-	-> tg_pidfd->private_data = tg_pid	-> t_pidfd->private_data = t_pid
-
-So we stash away struct pid *tg_pid for a pidfd_open() on tsk1 and we
-stash away struct pid *t_pid for a pidfd_open() on tsk2.
-
-If we wait on that task via P_PIDFD we get:
-
-				/* waiting through pidfd */
-	waitid(P_PIDFD, tg_pidfd)		waitid(P_PIDFD, t_pidfd)
-	tg_pid[PIDTYPE_TGID] == tsk1		t_pid[PIDTYPE_TGID] == NULL
-	=> succeeds				=> fails
-
-Because struct pid *tg_pid is used a thread-group leader struct pid we
-can wait on that tsk1. But we can't via the non-thread-group leader
-pidfd because the struct pid *t_pid has never been used as a
-thread-group leader.
-
-Now assume, t_pid exec's and the struct pids are transfered. IIRC, we
-get:
-
-	tg_pid[PIDTYPE_PID]   = tsk2		t_pid[PIDTYPE_PID]   = tsk1
-	tg_pid[PIDTYPE_TGID]  = tsk2		t_pid[PIDTYPE_TGID]  = NULL
-
-If we wait on that task via P_PIDFD we get:
-	
-				/* waiting through pidfd */
-	waitid(P_PIDFD, tg_pidfd)		waitid(P_PIDFD, t_pid)
-	tg_pid[PIDTYPE_TGID] == tsk2		t_pid[PIDTYPE_TGID] == NULL
-	=> succeeds				=> fails
-
-Which is what we want. So effectively this should all work and I
-misremembered the struct pid linkage. So afaict we don't even have a
-problem here which is great.
 
