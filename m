@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-5151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D305808AB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 15:36:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80C4808AB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 15:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9A61C20999
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 14:36:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493831F210FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 14:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4854437C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 14:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A034437A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 14:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeCxmXEo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFN3RQ9A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1EC11F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 04:38:37 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3316d3d11e1so526278f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Dec 2023 04:38:37 -0800 (PST)
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1CA010FC
+	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 04:38:38 -0800 (PST)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3332efd75c9so790265f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Dec 2023 04:38:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701952716; x=1702557516; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1701952717; x=1702557517; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UbZB0CaH91bRuP24YpEqRFbdPVMxUfK74+WxyAJmrLc=;
-        b=AeCxmXEoWfymT+nlcLQdsAS8pyYJwdcga+zse2i8Z1tPVtEJJi0JMk5IBnWqp07mU+
-         Ym7B/u0sD22lC51h3KGbIJUvubI3MR+8bRqoWEJJbGa+4TdQUq8WlbA5DHylvx9eMtMB
-         SDqIyqTgEBvELd+0DHNUcuC1KwIeIQcsUDKXzbpRiG51IzC6CDBDv/Wgq6LHXjwPgSUb
-         kckvOY7WdzLxBZvVCwWC1kSp2tLOcTx/ZowfJmmleU0EMRNkdeW3KeWCB7UH/v33NBgb
-         inlucDGicf1eanv6MgNgqzSmT6jo4azGEw6S0fpGWFs8/HdrfhDhvEaZIlH8poTM3yV1
-         yluA==
+        bh=RkTRJy4JeCFBLG3CMd+4ebO5lvkwqEblB9voYoMpPs8=;
+        b=LFN3RQ9A+fzRN6fbKYZSkoZ5A46QVAnbLQd6daK5tfUWdzMa0zkGj+bSMsjdzb2RAE
+         na8vdEnwPicD3xedxWYGBS5KyMcbeQtTPmhQF+ajoAtPCmNkvhwY2R28ysYTCsRWStJi
+         F3xIU8bx8YU6bse444jS1r2lKvW8KnwtaAvqBOcvEpWpUGeCZcscSfoWTsa9HrPJZcjC
+         vqF2kPmPTUTMdlX1Ac5ZGHvvFBpw/lR3RDBBJHQKpzGcfr2h2lnTzaAEYL+gTa5Mq/5/
+         8xB0RG+V4dpn/yynFCizgFJuUKpnkGw4dTIdri7YnpS2QUhhtnpyepo/bU1rWmM9x1aY
+         SPxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701952716; x=1702557516;
+        d=1e100.net; s=20230601; t=1701952717; x=1702557517;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UbZB0CaH91bRuP24YpEqRFbdPVMxUfK74+WxyAJmrLc=;
-        b=HESU2AtA4AIEDP20gOfQZuyx20JtCQ486VmktT8S6+zUU8R4sXwn062+TnPaIAeirz
-         07wkmFikgWgkEuxQFS54QGr97pmwQwt9O6eYE3hFOhK+elAqfgqY0pX5xxRFmug1mJjs
-         FoL+pfipn+I7rrM5zvxCtXhqNfAiCxa9oN24VEEhshYGFZBv1RbM6wzrPf3NFLmqmFdx
-         2oEGlCPjoqUXANytaHgrsweZs29woWx4CurvmSQwtEsnp1r/CrfTLp0Q3KezgHKGwiQM
-         +lFzEARchaDn8IKl8Tae1lD9MD1m4S6AyxuEyHEK1Y/V/W02+IVLPL22E9RDTuIxbgH0
-         bZBA==
-X-Gm-Message-State: AOJu0Yx6CJI5+pNol9xE/WkjpIhhccSeDFPWr06Uz/4Ke4Dj5eL7/bzo
-	FhYA56oudC68qxQP2e9uTKE=
-X-Google-Smtp-Source: AGHT+IHAIaA0fb1AzIYgK5DT484BcQ6jp4mmRHpMyIXBdkYjt806RenC9+C9Oqaf/pMcwlXJV0pR3Q==
-X-Received: by 2002:adf:e80e:0:b0:333:870:bbc2 with SMTP id o14-20020adfe80e000000b003330870bbc2mr1642327wrm.9.1701952715835;
-        Thu, 07 Dec 2023 04:38:35 -0800 (PST)
+        bh=RkTRJy4JeCFBLG3CMd+4ebO5lvkwqEblB9voYoMpPs8=;
+        b=AZAECnlZFuExOZ5E9GtI+TgXzQi/H4Mno7LRAwovwSAzpS/PqDKHunwfZw44gchSpZ
+         Z1OjLPZGx+2s+PN+lc/3J1LvdPQPmGbUkidbSb4S0TjeFDqESDy0orz7i5ttEMd9Jc6E
+         ojXg2Rv2N7vglpWk6zCNq3VWMafVbfpFurawRMsmg34jUKSIa2E0fJ1lz3XG6wo1U8jF
+         gchA8F7RinoK5u1F8EDknBfs+A5Bx2VNziQmk1HZc1QSJG8CCHgkzz1k1VA1eFNj50fM
+         lVOTUSz7swvJD7q0eIBDLVrnl8rAZ/cRFgRQw/8u+SjEmzCB6S6to/RSetggxaCLaVzI
+         Uweg==
+X-Gm-Message-State: AOJu0YyAAvdqZJDRw0lpSVZaROByDOgKmEzH2oaI0bvHW7xaEHFob/L8
+	khI2KL3ywmUjFY0ejwT7vRwWhcbHvKA=
+X-Google-Smtp-Source: AGHT+IH2WMZPjXOWZc2zx4h+mLzuppi1FBU8vqbDZWky0l0vndRiRbsJgzrlBNUcGI73AxTEXCsI7w==
+X-Received: by 2002:a05:6000:174e:b0:333:3117:c46e with SMTP id m14-20020a056000174e00b003333117c46emr575559wrf.255.1701952717344;
+        Thu, 07 Dec 2023 04:38:37 -0800 (PST)
 Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id z17-20020a5d4c91000000b003333abf3edfsm1332431wrs.47.2023.12.07.04.38.34
+        by smtp.gmail.com with ESMTPSA id z17-20020a5d4c91000000b003333abf3edfsm1332431wrs.47.2023.12.07.04.38.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 04:38:35 -0800 (PST)
+        Thu, 07 Dec 2023 04:38:36 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>
@@ -64,9 +64,9 @@ Cc: Jeff Layton <jlayton@kernel.org>,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/4] fsnotify: split fsnotify_perm() into two hooks
-Date: Thu,  7 Dec 2023 14:38:23 +0200
-Message-Id: <20231207123825.4011620-3-amir73il@gmail.com>
+Subject: [PATCH 3/4] fsnotify: assert that file_start_write() is not held in permission hooks
+Date: Thu,  7 Dec 2023 14:38:24 +0200
+Message-Id: <20231207123825.4011620-4-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231207123825.4011620-1-amir73il@gmail.com>
 References: <20231207123825.4011620-1-amir73il@gmail.com>
@@ -78,95 +78,67 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We would like to make changes to the fsnotify access permission hook -
-add file range arguments and add the pre modify event.
+filesystem may be modified in the context of fanotify permission events
+(e.g. by HSM service), so assert that sb freeze protection is not held.
 
-In preparation for these changes, split the fsnotify_perm() hook into
-fsnotify_open_perm() and fsnotify_file_perm().
+If the assertion fails, then the following deadlock would be possible:
 
-This is needed for fanotify "pre content" events.
+CPU0				CPU1			CPU2
+-------------------------------------------------------------------------
+file_start_write()#0
+...
+  fsnotify_perm()
+    fanotify_get_response() =>	(read event and fill file)
+				...
+				...			freeze_super()
+				...			  sb_wait_write()
+				...
+				vfs_write()
+				  file_start_write()#1
+
+This example demonstrates a use case of an hierarchical storage management
+(HSM) service that uses fanotify permission events to fill the content of
+a file before access, while a 3rd process starts fsfreeze.
+
+This creates a circular dependeny:
+  file_start_write()#0 => fanotify_get_response =>
+    file_start_write()#1 =>
+      sb_wait_write() =>
+        file_end_write()#0
+
+Where file_end_write()#0 can never be called and none of the threads can
+make progress.
+
+The assertion is checked for both MAY_READ and MAY_WRITE permission
+hooks in preparation for a pre-modify permission event.
+
+The assertion is not checked for an open permission event, because
+do_open() takes mnt_want_write() in O_TRUNC case, meaning that it is not
+safe to write to filesystem in the content of an open permission event.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- include/linux/fsnotify.h | 34 +++++++++++++++++++---------------
- security/security.c      |  4 ++--
- 2 files changed, 21 insertions(+), 17 deletions(-)
+ include/linux/fsnotify.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index bcb6609b54b3..926bb4461b9e 100644
+index 926bb4461b9e..0a9d6a8a747a 100644
 --- a/include/linux/fsnotify.h
 +++ b/include/linux/fsnotify.h
-@@ -100,29 +100,33 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
- 	return fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
- }
- 
--/* Simple call site for access decisions */
--static inline int fsnotify_perm(struct file *file, int mask)
-+/*
-+ * fsnotify_file_perm - permission hook before file access
-+ */
-+static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+@@ -107,6 +107,13 @@ static inline int fsnotify_file_perm(struct file *file, int perm_mask)
  {
--	int ret;
--	__u32 fsnotify_mask = 0;
-+	__u32 fsnotify_mask = FS_ACCESS_PERM;
+ 	__u32 fsnotify_mask = FS_ACCESS_PERM;
  
--	if (!(mask & (MAY_READ | MAY_OPEN)))
-+	if (!(perm_mask & MAY_READ))
++	/*
++	 * filesystem may be modified in the context of permission events
++	 * (e.g. by HSM filling a file on access), so sb freeze protection
++	 * must not be held.
++	 */
++	lockdep_assert_once(file_write_not_started(file));
++
+ 	if (!(perm_mask & MAY_READ))
  		return 0;
  
--	if (mask & MAY_OPEN) {
--		fsnotify_mask = FS_OPEN_PERM;
-+	return fsnotify_file(file, fsnotify_mask);
-+}
- 
--		if (file->f_flags & __FMODE_EXEC) {
--			ret = fsnotify_file(file, FS_OPEN_EXEC_PERM);
-+/*
-+ * fsnotify_open_perm - permission hook before file open
-+ */
-+static inline int fsnotify_open_perm(struct file *file)
-+{
-+	int ret;
- 
--			if (ret)
--				return ret;
--		}
--	} else if (mask & MAY_READ) {
--		fsnotify_mask = FS_ACCESS_PERM;
-+	if (file->f_flags & __FMODE_EXEC) {
-+		ret = fsnotify_file(file, FS_OPEN_EXEC_PERM);
-+		if (ret)
-+			return ret;
- 	}
- 
--	return fsnotify_file(file, fsnotify_mask);
-+	return fsnotify_file(file, FS_OPEN_PERM);
- }
- 
- /*
-diff --git a/security/security.c b/security/security.c
-index dcb3e7014f9b..d7f3703c5905 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2586,7 +2586,7 @@ int security_file_permission(struct file *file, int mask)
- 	if (ret)
- 		return ret;
- 
--	return fsnotify_perm(file, mask);
-+	return fsnotify_file_perm(file, mask);
- }
- 
- /**
-@@ -2837,7 +2837,7 @@ int security_file_open(struct file *file)
- 	if (ret)
- 		return ret;
- 
--	return fsnotify_perm(file, MAY_OPEN);
-+	return fsnotify_open_perm(file);
- }
- 
- /**
 -- 
 2.34.1
 
