@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-5141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1822D8087C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 13:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F029E8087C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 13:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F632282859
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 12:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA362829BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 12:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293D42D786
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 12:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664682D786
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 12:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="acsBDU74"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mxGpFbe7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A5DBD4B;
-	Thu,  7 Dec 2023 02:44:04 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231207104400euoutp01727275761e93f8749fd8e1c5ebf15eae~ehrlvWbNy1164011640euoutp01T;
-	Thu,  7 Dec 2023 10:44:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231207104400euoutp01727275761e93f8749fd8e1c5ebf15eae~ehrlvWbNy1164011640euoutp01T
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 692E4D53;
+	Thu,  7 Dec 2023 03:05:25 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231207110524euoutp01613e40d891be59b320c0ade472d29cf4~eh_RfuRbr0152401524euoutp01U;
+	Thu,  7 Dec 2023 11:05:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231207110524euoutp01613e40d891be59b320c0ade472d29cf4~eh_RfuRbr0152401524euoutp01U
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701945840;
-	bh=zNERQmKVM3J0wJDaJhwXBxSpaX0PETpZi4lQDqCU9SY=;
+	s=mail20170921; t=1701947124;
+	bh=daPuwGpwsCikEu05jfrEZmZPhBfvdaDIM/2Wd7kHU2o=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=acsBDU74aBdYeDXY6ngky3hI4T5gVuGXxxcIGmVFMJGJmjm97Y5yMQYlCVW8uifM8
-	 AcDpz5E26Zn/MR+NouYh3FkW1es7WKi7xWKtTWrmMePyJJ9gPnGoembpsyH4aChyjS
-	 DXySnxm3JQRzP/MLTBrpyaFGrDMJkIicityiyQU0=
+	b=mxGpFbe7KXsKyseqrH3jNtn2il9wQdQXl/rOGiAa2M9Xyo1/07WsXczlO6mfXp8tU
+	 Jc8TpYWfSptZ/65M4wzfyKmjApuSydZ+TtfOMq9FGiR2UxDviI1yeKrHTqgXTBfzlh
+	 m/RHd25QI6OIxfkBmTo9PXGnUQjW8K1yR1qoWmzs=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20231207104359eucas1p14f136aa02ca2b1b5bf125cc88be58157~ehrlZNgNr2918229182eucas1p1g;
-	Thu,  7 Dec 2023 10:43:59 +0000 (GMT)
+	20231207110523eucas1p1204a194eba3c8a617cef548da848508f~eh_RFEIs72424224242eucas1p12;
+	Thu,  7 Dec 2023 11:05:23 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id ED.CE.09552.FE1A1756; Thu,  7
-	Dec 2023 10:43:59 +0000 (GMT)
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id A6.43.09552.3F6A1756; Thu,  7
+	Dec 2023 11:05:23 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231207104359eucas1p1f79f29d05b60116469be45492bf11643~ehrk6_xi01594315943eucas1p1B;
-	Thu,  7 Dec 2023 10:43:59 +0000 (GMT)
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231207110523eucas1p21e6a6ba5cbe0c2f17f7b0d08a50d6aad~eh_QksM9x1784117841eucas1p2u;
+	Thu,  7 Dec 2023 11:05:23 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
 	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231207104359eusmtrp190e2f95c9151072cb749876723af6530~ehrk6OK4O3019030190eusmtrp1Y;
-	Thu,  7 Dec 2023 10:43:59 +0000 (GMT)
-X-AuditID: cbfec7f5-83dff70000002550-d3-6571a1efeb9c
+	20231207110523eusmtrp190eca1446906b88559f4ac378aac3f40~eh_QkG1IK1166211662eusmtrp1T;
+	Thu,  7 Dec 2023 11:05:23 +0000 (GMT)
+X-AuditID: cbfec7f5-83dff70000002550-2a-6571a6f3ecee
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 43.FE.09146.FE1A1756; Thu,  7
-	Dec 2023 10:43:59 +0000 (GMT)
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id BB.A2.09146.2F6A1756; Thu,  7
+	Dec 2023 11:05:23 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231207104359eusmtip17e9120b4fcfd007493086e25c8a7eae7~ehrkqgZop1635216352eusmtip1p;
-	Thu,  7 Dec 2023 10:43:59 +0000 (GMT)
+	20231207110522eusmtip1d56bff99c4aba8b5fee2428935de0000~eh_QX5JuT2586225862eusmtip19;
+	Thu,  7 Dec 2023 11:05:22 +0000 (GMT)
 Received: from localhost (106.210.248.38) by CAMSVWEXC02.scsc.local
 	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 7 Dec 2023 10:43:58 +0000
-Date: Thu, 7 Dec 2023 11:43:57 +0100
+	Thu, 7 Dec 2023 11:05:22 +0000
+Date: Thu, 7 Dec 2023 12:05:21 +0100
 From: Joel Granados <j.granados@samsung.com>
 To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-CC: Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva"
-	<gustavoars@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Iurii Zaikin
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Iurii Zaikin
 	<yzaikin@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <20231207104357.kndqvzkhxqkwkkjo@localhost>
+Message-ID: <20231207110521.jeudk6y5ejh6ngf6@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,308 +72,122 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="qyay55f3fbjgslmy"
+	protocol="application/pgp-signature"; boundary="a7f76owrdx7oxple"
 Content-Disposition: inline
-In-Reply-To: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+In-Reply-To: <b4b0b7ea-d8b3-4538-a5b9-87a23bbdac5f@t-8ch.de>
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
 	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7djPc7rvFxamGvx5oGHRvHg9m8Wvi9NY
-	Lc5051rs2XuSxWLe+p+MFpd3zWGz+P3jGZPFjQlPGS2W7fRz4PSY3XCRxWPBplKPTas62Tz2
-	z13D7vF5k5xHf/cx9gC2KC6blNSczLLUIn27BK6MOZ8jC37GVhz//4CpgfGRTRcjJ4eEgInE
-	lad7mLoYuTiEBFYwShzuusIG4XxhlNj77QojhPOZUeL3gRWMMC3nNs9jhkgsZ5S4NnMeG1xV
-	690+VghnM6PEpc/72EFaWARUJK6umMQEYrMJ6Eicf3OHGcQWEbCRWPntMztIA7PALiaJxw/n
-	AhVxcAgLOEhsa5IEqeEVMJe4uGoSC4QtKHFy5hMwm1mgQmJjRyMbSDmzgLTE8n8cIGFOAVeJ
-	t4+72SEuVZI4PPkzM4RdK3Fqyy2wRyUE1nNKvL83EeodF4nX625C2cISr45vgWqWkTg9uYcF
-	omEyo8T+fx/YIZzVjBLLGr8yQVRZS7RceQLV4Sixbu5SVpCLJAT4JG68FYQ4lE9i0rbpzBBh
-	XomONiGIajWJ1ffesExgVJ6F5LVZSF6bhfAaRFhP4sbUKZjC2hLLFr5mhrBtJdate8+ygJF9
-	FaN4amlxbnpqsXFearlecWJucWleul5yfu4mRmCSO/3v+NcdjCtefdQ7xMjEwXiIUQWo+dGG
-	1RcYpVjy8vNSlUR4c87npwrxpiRWVqUW5ccXleakFh9ilOZgURLnVU2RTxUSSE8sSc1OTS1I
-	LYLJMnFwSjUwddlw32mZsDDw8RVJjdoO1aUJCUm5jE2O3x4Eys1RdH4Ydu2gc5FJ/rqi+jKD
-	rFVez4QfT8kV1uzt+fV7hvLESHWzBp6aby/tAwxvLPlkHP/Ya11Y3ewLMb1HA1bqWDUw18VM
-	nBJqUXFDpsnR/u3XWPMHfNJ/bV+/Tj3guG1Bmfay7d1/997+fZo/LZbjdmxUjJzxDpOD80PS
-	i87K/eR8t8/iz5WuzY8j254Ynl/QUF4TvSBSS7J968x64c+sP2+IX0xKUPfZV5qTm/Jjt7ih
-	tb3XsYbONb6213WFXSV6NZTnH9yS5fUt5+6n0s59yl4/Pj453d75fqXp5Ehp1t+vmC88PLZ6
-	9YVjKn5nTc8osRRnJBpqMRcVJwIAapkEX+0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKIsWRmVeSWpSXmKPExsVy+t/xu7rvFxamGqy7x2nRvHg9m8Wvi9NY
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsWy7djPc7qflxWmGnxqV7RoXryezeLXxWms
+	Fme6cy327D3JYjFv/U9Gi8u75rBZ/P7xjMnixoSnjBbLdvo5cHrMbrjI4rFgU6nHplWdbB77
+	565h9/i8Sc6jv/sYewBbFJdNSmpOZllqkb5dAlfGzKZuxoKFIhWLpv1ibGDsF+xi5OSQEDCR
+	OD21m62LkYtDSGAFo8SWy/OZIZwvjBIbvx5mgnA+M0o8uLKPHablwL8XUC3LGSW+Xe1hhKu6
+	sGU2VMtmRomurussIC0sAioS/69OZAOx2QR0JM6/ucMMYosI2Eis/PaZHaSBWWAXk8S1fSAN
+	HBzCAg4S25okQWp4BcwlGtrPskHYghInZz4Bm8ksUCHxZdIWdpByZgFpieX/OEDCnEAj22e9
+	gbpUSeLw5M/MEHatxKktt8BukxBYzSlx5/pdVoiEi8SNNaugioQlXh3fAtUsI3F6cg8LRMNk
+	Ron9/z6wQ3UzSixr/MoEUWUt0XLlCVSHo8TsX7fAHpAQ4JO48VYQ4lA+iUnbpjNDhHklOtqE
+	IKrVJFbfe8MygVF5FpLXZiF5bRbCaxBhPYkbU6ewYQhrSyxb+JoZwraVWLfuPcsCRvZVjOKp
+	pcW56anFxnmp5XrFibnFpXnpesn5uZsYgWnu9L/jX3cwrnj1Ue8QIxMH4yFGFaDmRxtWX2CU
+	YsnLz0tVEuHNOZ+fKsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+VUggPbEkNTs1tSC1CCbL
+	xMEp1cDULieoaSkkU5fmGsJqFTTxmKz2kfXitQ+ZDiyekMstFvF0V0WS9b2Orb5eDVvX504q
+	9tC691bqyK9HxyaKPpTjWZdztyjQr6OmM3PrhdwZL3WjFP3U6/Q9k/S/u7tV3T+36F5B3l5X
+	rWcrL6c9eKa9w8ricOqxbTICLExFMy9GzDtvY8L3ss7ZT6X8UbPhVB3+5+/SNLwe8FZfkhfZ
+	vJznRtarHJNw3okNs9RyY96/W8r6aumLZlvBuXohx3z25/z5O/HH/EUsx764T9tULqB/75Bw
+	ZiCzoPQiQ1Xx/zefztz/htGyp35S3DbVj1+tVf/MML8UyLDu8hV7J3GfeZwbHnVaO6bdfBF8
+	7ZVb6wklluKMREMt5qLiRABd/Gww7gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsVy+t/xu7qflxWmGuzcy2jRvHg9m8Wvi9NY
 	Lc5051rs2XuSxWLe+p+MFpd3zWGz+P3jGZPFjQlPGS2W7fRz4PSY3XCRxWPBplKPTas62Tz2
 	z13D7vF5k5xHf/cx9gC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTub
-	lNSczLLUIn27BL2MFYu9Cr7HVnTumcPewPjApouRk0NCwETi3OZ5zF2MXBxCAksZJV7fvc4K
-	kZCR2PjlKpQtLPHnWhcbiC0k8JFR4teueIiGzYwSizcdYQRJsAioSFxdMYkJxGYT0JE4/+YO
-	M4gtImAjsfLbZ3aQBmaBXUwSjx/OBSri4BAWcJDY1iQJUsMrYC5xcdUkFoihMxglZl69zgiR
-	EJQ4OfMJC4jNLFAmMWfHejaQXmYBaYnl/zhAwpwCrhJvH3ezQxyqJHF48mdmCLtW4vPfZ4wT
-	GIVnIZk0C8mkWQiTIMI6Eju33sEU1pZYtvA1M4RtK7Fu3XuWBYzsqxhFUkuLc9Nziw31ihNz
-	i0vz0vWS83M3MQLjfNuxn5t3MM579VHvECMTB+MhRhWgzkcbVl9glGLJy89LVRLhzTmfnyrE
-	m5JYWZValB9fVJqTWnyI0RQYihOZpUST84EJKK8k3tDMwNTQxMzSwNTSzFhJnNezoCNRSCA9
-	sSQ1OzW1ILUIpo+Jg1Oqganh2rfyPOdOw/WtQQs0tKY9aHD6sGj+gw+CpXnTb85aP8W0IXtJ
-	zS1Dxfm/u55zbTts/+9/ivslfVNlB415CRumlHEGTZ35rkd6ZbD/juiqvyYrPGTjpr7pKzlR
-	nmvobCSWl1Ri8EGkUXY97x4G/cLlZWrTr/mk9peYNHko2l8x/riErd3yu9qtlNMmirc/hmu6
-	1f//d9o1/tzTlq1ccbcSdW5dvjjhlPyTk+8LdszW/Gase+O0tuMXNS+hPpu5j15c5IyoubPl
-	qOBlV5apQerX7vl/lM71dJ5SP1Pf9rG0gemdmbfqv1rWSJfmPLqmPNv0fVNnVcvZ0L+Gr15X
-	Lr55yKN9ru9cL4aLs396rVBiKc5INNRiLipOBABFpJgWiAMAAA==
-X-CMS-MailID: 20231207104359eucas1p1f79f29d05b60116469be45492bf11643
+	lNSczLLUIn27BL2MU1NqCuaLVKy7OIGpgbFXsIuRk0NCwETiwL8XbF2MXBxCAksZJZ4enMkE
+	kZCR2PjlKiuELSzx51oXVNFHRon3TfsZIZzNjBItLd8YQapYBFQk/l+dyAZiswnoSJx/c4cZ
+	xBYRsJFY+e0zO0gDs8AuJolr+66zdDFycAgLOEhsa5IEqeEVMJdoaD8LteEbo0THtGOMEAlB
+	iZMzn7CA2MwCZRL3+q6xgvQyC0hLLP/HARLmBJrfPusNO8SlShKHJ39mhrBrJT7/fcY4gVF4
+	FpJJs5BMmoUwCSKsI7Fz6x02DGFtiWULXzND2LYS69a9Z1nAyL6KUSS1tDg3PbfYUK84Mbe4
+	NC9dLzk/dxMjMNK3Hfu5eQfjvFcf9Q4xMnEwHmJUAep8tGH1BUYplrz8vFQlEd6c8/mpQrwp
+	iZVVqUX58UWlOanFhxhNgaE4kVlKNDkfmILySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNL
+	UrNTUwtSi2D6mDg4pRqY8h+aHHThWOgc/+pcgKJJ6LGYyCNnBM807NxxONo17dKUukr5ux0B
+	+qfMBC8/rZj35ef0KdaOAQEqV2eEmGuwTMsU+S13tMJEbaKCFbv2+o86Z9YJZhzmEbycoy/t
+	1HtztUvapaluhneYKth3za2ddHTTyhO3zt59PeO/v6AT11VhHR9WybUOemKWx43nf8qMuPVf
+	qaqtpqBdpYlBVLzu26SPOh/TvQRtD+1OSXyWm7Ruwo/re2+V1sWxF6XrnN9tEuen49K2kPeY
+	c7T/faHJJ+9Pi9S6UG3Js7X0a1LjTd9EroJZRosOTGh3ehv2RbBSqC5KxsvtzJ9pSY+inv38
+	56ld+WHZtyQTT7cJd1yUWIozEg21mIuKEwHO4gDwiQMAAA==
+X-CMS-MailID: 20231207110523eucas1p21e6a6ba5cbe0c2f17f7b0d08a50d6aad
 X-Msg-Generator: CA
-X-RootMTR: 20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25
+X-RootMTR: 20231205080416eucas1p241d86dda65c0009ca352673e1ca5b26d
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25
-References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
-	<20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+X-CMS-RootMailID: 20231205080416eucas1p241d86dda65c0009ca352673e1ca5b26d
+References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+	<ZW66FhWx7W67Y9rP@bombadil.infradead.org>
+	<CGME20231205080416eucas1p241d86dda65c0009ca352673e1ca5b26d@eucas1p2.samsung.com>
+	<b4b0b7ea-d8b3-4538-a5b9-87a23bbdac5f@t-8ch.de>
 
---qyay55f3fbjgslmy
+--a7f76owrdx7oxple
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hey Thomas
-
-You have a couple of test bot issues for your 12/18 patch. Can you
-please address those for your next version.
-
-On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Wei=DFschuh wrote:
-> Problem description:
+On Tue, Dec 05, 2023 at 09:04:08AM +0100, Thomas Wei=DFschuh wrote:
+> On 2023-12-04 21:50:14-0800, Luis Chamberlain wrote:
+> > On Mon, Dec 04, 2023 at 08:52:13AM +0100, Thomas Wei=DFschuh wrote:
+> > > Tested by booting and with the sysctl selftests on x86.
+> >=20
+> > Can I trouble you to rebase on sysctl-next?
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=
+=3Dsysctl-next
 >=20
-> The kernel contains a lot of struct ctl_table throught the tree.
-> These are very often 'static' definitions.
-> It would be good to make the tables unmodifiable by marking them "const"
-Here I would remove "It would be good to". Just state it: "Make the
-tables unmodifiable...."
-
-> to avoid accidental or malicious modifications.
-> This is in line with a general effort to move as much data as possible
-> into .rodata. (See for example[0] and [1])
-If you could find more examples, it would make a better case.
-
->=20
-> Unfortunately the tables can not be made const right now because the
-> core registration functions expect mutable tables.
->=20
-> This is for two main reasons:
->=20
-> 1) sysctl_{set,clear}_perm_empty_ctl_header in the sysctl core modify
->    the table.
-> 2) The table is passed to the handler function as a non-const pointer.
->=20
-> This series migrates the core and all handlers.
-awesome!
-
->=20
-> Structure of the series:
->=20
-> Patch 1-3:   Cleanup patches
-> Patch 4-7:   Non-logic preparation patches
-> Patch 8:     Preparation patch changing a bit of logic
-> Patch 9-12:  Treewide changes to handler function signature
-> Patch 13-14: Adaption of the sysctl core implementation
-> Patch 15:    Adaption of the sysctl core interface
-> Patch 16:    New entry for checkpatch
-> Patch 17-18: Constification of existing "struct ctl_table"s
->=20
-> Tested by booting and with the sysctl selftests on x86.
+> Will do.
 >=20
 > Note:
 >=20
-> This is intentionally sent only to a small number of people as I'd like
-> to get some more sysctl core-maintainer feedback before sending this to
-> essentially everybody.
-When you do send it to the broader audience, you should chunk up your big
-patches (12/18 and 11/18) and this is why:
-1. To avoid mail rejections from lists:
-   You have to tell a lot of people about the changes in one mail. That
-   will make mail header too big for some lists and it will be rejected.
-   This happened to me with [3]
-2. Avoid being rejected for the wrong reasons :)
-   Maintainers are busy ppl and sending them a set with so many files
-   may elicit a rejection on the grounds that it involves too many
-   subsystems at the same time.
-I suggest you chunk it up with directories in mind. Something similar to
-what I did for [4] where I divided stuff that when for fs/*, kernel/*,
-net/*, arch/* and drivers/*. That will complicate your patch a tad
-because you have to ensure that the tree can be compiled/run for every
-commit. But it will pay off once you push it to the broader public.
+> I noticed that patch "sysctl: move sysctl type to ctl_table_header" from
+> this series seems to be the better alternative to
+> commit fd696ee2395755a ("sysctl: Fix out of bounds access for empty sysct=
+l registers")
+> which is currently on sysctl-next.
+Indeed. By taking this out of the ctl_table, we would not need to make
+sure that we don't touch that (potentially non-existing) first element.
 
-[3] https://lore.kernel.org/all/20230621091000.424843-1-j.granados@samsung.=
-com
-[4] https://lore.kernel.org/all/20230726140635.2059334-1-j.granados@samsung=
-=2Ecom
+This is what I think should be done (@Luis @Kees chime in if you have any
+thoughts):
+1. Leave the current fix for 6.7. AFAIK, it is already queued for that
+   release and it is a bit late in the cycle to put anything new in.
+2. I think this patch has value on its own as a better solution to the
+   "access invalid memory" issue. @thomas: remove this patch from your
+   const set and send it in a different patch series.
+3. const patchset would need to go on top of the new set.
+
+Having it on its own will allow it to go in faster and make it easier to
+review without having to thinkg about the const stuff as well.
+
+Best
 >=20
-> [0] 43a7206b0963 ("driver core: class: make class_register() take a const=
- *")
-> [1] https://lore.kernel.org/lkml/20230930050033.41174-1-wedsonaf@gmail.co=
-m/
+> The patch from the series should only depend on
+> "sysctl: drop sysctl_is_perm_empty_ctl_table" from my series.
 >=20
-> ---
-> Changes in v2:
-> - Migrate all handlers.
-> - Remove intermediate "proc_handler_new" step (Thanks Joel).
-> - Drop RFC status.
-> - Prepare other parts of the tree.
-> - Link to v1: https://lore.kernel.org/r/20231125-const-sysctl-v1-0-5e881b=
-0e0290@weissschuh.net
->=20
-> ---
-> Thomas Wei=DFschuh (18):
->       watchdog/core: remove sysctl handlers from public header
->       sysctl: delete unused define SYSCTL_PERM_EMPTY_DIR
->       sysctl: drop sysctl_is_perm_empty_ctl_table
->       cgroup: bpf: constify ctl_table arguments and fields
->       seccomp: constify ctl_table arguments of utility functions
->       hugetlb: constify ctl_table arguments of utility functions
->       utsname: constify ctl_table arguments of utility function
->       stackleak: don't modify ctl_table argument
->       sysctl: treewide: constify ctl_table_root::set_ownership
->       sysctl: treewide: constify ctl_table_root::permissions
->       sysctl: treewide: constify ctl_table_header::ctl_table_arg
->       sysctl: treewide: constify the ctl_table argument of handlers
->       sysctl: move sysctl type to ctl_table_header
->       sysctl: move internal interfaces to const struct ctl_table
->       sysctl: allow registration of const struct ctl_table
->       const_structs.checkpatch: add ctl_table
->       sysctl: make ctl_table sysctl_mount_point const
->       sysctl: constify standard sysctl tables
->=20
->  arch/arm64/kernel/armv8_deprecated.c      |   2 +-
->  arch/arm64/kernel/fpsimd.c                |   2 +-
->  arch/s390/appldata/appldata_base.c        |   8 +--
->  arch/s390/kernel/debug.c                  |   2 +-
->  arch/s390/kernel/topology.c               |   2 +-
->  arch/s390/mm/cmm.c                        |   6 +-
->  arch/x86/kernel/itmt.c                    |   2 +-
->  drivers/cdrom/cdrom.c                     |   4 +-
->  drivers/char/random.c                     |   4 +-
->  drivers/macintosh/mac_hid.c               |   2 +-
->  drivers/net/vrf.c                         |   4 +-
->  drivers/parport/procfs.c                  |  12 ++--
->  fs/coredump.c                             |   2 +-
->  fs/dcache.c                               |   4 +-
->  fs/drop_caches.c                          |   2 +-
->  fs/exec.c                                 |   4 +-
->  fs/file_table.c                           |   2 +-
->  fs/fs-writeback.c                         |   2 +-
->  fs/inode.c                                |   4 +-
->  fs/pipe.c                                 |   2 +-
->  fs/proc/internal.h                        |   2 +-
->  fs/proc/proc_sysctl.c                     | 102 +++++++++++++++---------=
-------
->  fs/quota/dquot.c                          |   2 +-
->  fs/xfs/xfs_sysctl.c                       |   6 +-
->  include/linux/bpf-cgroup.h                |   2 +-
->  include/linux/filter.h                    |   2 +-
->  include/linux/ftrace.h                    |   4 +-
->  include/linux/mm.h                        |   8 +--
->  include/linux/nmi.h                       |   7 --
->  include/linux/perf_event.h                |   6 +-
->  include/linux/security.h                  |   2 +-
->  include/linux/sysctl.h                    |  78 +++++++++++------------
->  include/linux/vmstat.h                    |   6 +-
->  include/linux/writeback.h                 |   2 +-
->  include/net/ndisc.h                       |   2 +-
->  include/net/neighbour.h                   |   6 +-
->  include/net/netfilter/nf_hooks_lwtunnel.h |   2 +-
->  ipc/ipc_sysctl.c                          |  12 ++--
->  ipc/mq_sysctl.c                           |   2 +-
->  kernel/bpf/cgroup.c                       |   2 +-
->  kernel/bpf/syscall.c                      |   4 +-
->  kernel/delayacct.c                        |   4 +-
->  kernel/events/callchain.c                 |   2 +-
->  kernel/events/core.c                      |   4 +-
->  kernel/fork.c                             |   2 +-
->  kernel/hung_task.c                        |   4 +-
->  kernel/kexec_core.c                       |   2 +-
->  kernel/kprobes.c                          |   2 +-
->  kernel/latencytop.c                       |   4 +-
->  kernel/pid_namespace.c                    |   2 +-
->  kernel/pid_sysctl.h                       |   2 +-
->  kernel/printk/internal.h                  |   2 +-
->  kernel/printk/printk.c                    |   2 +-
->  kernel/printk/sysctl.c                    |   5 +-
->  kernel/sched/core.c                       |   8 +--
->  kernel/sched/rt.c                         |  12 ++--
->  kernel/sched/topology.c                   |   2 +-
->  kernel/seccomp.c                          |   8 +--
->  kernel/stackleak.c                        |   9 +--
->  kernel/sysctl.c                           |  84 ++++++++++++------------
->  kernel/time/timer.c                       |   2 +-
->  kernel/trace/ftrace.c                     |   2 +-
->  kernel/trace/trace.c                      |   2 +-
->  kernel/trace/trace_events_user.c          |   2 +-
->  kernel/trace/trace_stack.c                |   2 +-
->  kernel/ucount.c                           |   4 +-
->  kernel/umh.c                              |   2 +-
->  kernel/utsname_sysctl.c                   |   4 +-
->  kernel/watchdog.c                         |  15 +++--
->  mm/compaction.c                           |   8 +--
->  mm/hugetlb.c                              |  10 +--
->  mm/page-writeback.c                       |  18 +++---
->  mm/page_alloc.c                           |  22 +++----
->  mm/util.c                                 |  12 ++--
->  mm/vmstat.c                               |   4 +-
->  net/ax25/sysctl_net_ax25.c                |   2 +-
->  net/bridge/br_netfilter_hooks.c           |   6 +-
->  net/core/neighbour.c                      |  24 +++----
->  net/core/sysctl_net_core.c                |  22 +++----
->  net/ieee802154/6lowpan/reassembly.c       |   2 +-
->  net/ipv4/devinet.c                        |   8 +--
->  net/ipv4/ip_fragment.c                    |   2 +-
->  net/ipv4/route.c                          |   4 +-
->  net/ipv4/sysctl_net_ipv4.c                |  35 +++++-----
->  net/ipv4/xfrm4_policy.c                   |   2 +-
->  net/ipv6/addrconf.c                       |  29 +++++----
->  net/ipv6/ndisc.c                          |   4 +-
->  net/ipv6/netfilter/nf_conntrack_reasm.c   |   2 +-
->  net/ipv6/reassembly.c                     |   2 +-
->  net/ipv6/route.c                          |   2 +-
->  net/ipv6/sysctl_net_ipv6.c                |  10 +--
->  net/ipv6/xfrm6_policy.c                   |   2 +-
->  net/mpls/af_mpls.c                        |   8 +--
->  net/mptcp/ctrl.c                          |   2 +-
->  net/netfilter/ipvs/ip_vs_ctl.c            |  16 ++---
->  net/netfilter/nf_conntrack_standalone.c   |   4 +-
->  net/netfilter/nf_hooks_lwtunnel.c         |   2 +-
->  net/netfilter/nf_log.c                    |   4 +-
->  net/phonet/sysctl.c                       |   2 +-
->  net/rds/tcp.c                             |   4 +-
->  net/sctp/sysctl.c                         |  30 ++++-----
->  net/smc/smc_sysctl.c                      |   2 +-
->  net/sunrpc/sysctl.c                       |   6 +-
->  net/sunrpc/xprtrdma/svc_rdma.c            |   2 +-
->  net/sysctl_net.c                          |   4 +-
->  net/unix/sysctl_net_unix.c                |   2 +-
->  net/xfrm/xfrm_sysctl.c                    |   2 +-
->  scripts/const_structs.checkpatch          |   1 +
->  security/apparmor/lsm.c                   |   2 +-
->  security/min_addr.c                       |   2 +-
->  security/yama/yama_lsm.c                  |   2 +-
->  111 files changed, 427 insertions(+), 428 deletions(-)
-> ---
-> base-commit: 33cc938e65a98f1d29d0a18403dbbee050dcad9a
-> change-id: 20231116-const-sysctl-e14624f1295c
->=20
-> Best regards,
-> --=20
-> Thomas Wei=DFschuh <linux@weissschuh.net>
->=20
+> Thomas
 
 --=20
 
 Joel Granados
 
---qyay55f3fbjgslmy
+--a7f76owrdx7oxple
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmVxoesACgkQupfNUreW
-QU9jdQv/fuoqjk7HVhxO4PfN7Nx9mFcuXiE0BBcfQvX2sddH6652M+xHymNCZ98o
-e7aWeM/8qRsd2eYbSdskcNK8ojAVULzMDi1QfO3UDoNm1Qn3lsZ2zDxnv4BN1Xft
-c94jv5ZMJsIjf1ANwvWH2+GAVav5/vd3KarnDlp0AFJsxVbMIISfReTwzPWzKPFu
-gy8OZQHI4WW3Xx78dPU1RLnvFu5PVYiuSpJpyKqTzpfm9W96q5SCdIMF1DvnynpK
-U8u636u9L4sVVs7GVzPwQG7kF43rl25vuNuYLDTU2gAbhsgfTw6DBpcQvc2wAeqP
-fztmyPXg/Vyo9pA00FZ+1sbmkp0EvxzF+nrjW/5aitKFVDSnvPUXlTift60I6ysL
-wKCe3skKOyD0JVv4pQSbCmSBp49SVw8S+cJ7FCQrZQRvbgUMsKOLHQ8kDBPaP18t
-tLt9lUyZFBpnYGM2wZ8uNmvqbsiAcanEIe3mKWaiIXqV36WShyV9Jl4gYXYYVBrR
-m02mbYq9
-=5y2l
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmVxpu8ACgkQupfNUreW
+QU/DNAv/TDQMJUs4oKgPcr+aoFQ/sng5W4yFQY5GA7FAsG3lAFqEcPFG6YB8XWO6
+pUmcI9ZvnpNMaQdN4PBYCo25B165jbGnm4qlyOQ/vCTECPzIESXwC42lNOCblQUQ
+mM0LarwaqRHcUzh0/9EyTdh/8M3n0O3foisGm/3JmKBkMoFrt81ucKW01fyasptR
+GIhFpi4WdbMsb/uRjImsMmJza8oPSa7uTU4Vhs9fMmhRIKwp4/fAW38z+LPZkf60
+/nspxC6IRu1xA9fByp25sv+P/uAu5dx+VVrDFGfAyIyxAJLU1IIgeTLAzWmNKp0M
+/BLnEEJ/8FD59zHUWRYE//yUKO/tfMfenQ9U69x13CeT2aeFEMT+jB3z1XcmaAG6
+l5nycPXZZQsx8Nb0ayfWLaWSmeA5/Vh8Jc8QXCZmO7xLGftipyLWpZcGhjcOwaUi
+upyI4hAm+GL2Gm7BbWUpjgeB34pbhTSCQPDNyGJeWT2x9l6qKKmlUG36eKx6q2NO
+AXRuEQwr
+=YKxV
 -----END PGP SIGNATURE-----
 
---qyay55f3fbjgslmy--
+--a7f76owrdx7oxple--
 
