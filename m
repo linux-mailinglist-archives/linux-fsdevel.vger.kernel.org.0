@@ -1,91 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-5273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F08809593
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:46:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69B8809596
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 23:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674861F211C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10D111C20AC1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F015731B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FEC57319
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 22:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WGuy6CwE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neI12TK/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A653171D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  7 Dec 2023 13:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701986279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2gpuqenBf/seLQmhrTte/4HdPOyV33jxxLbSCYkPyeM=;
-	b=WGuy6CwEVwKbPKVS2dpq8Oy1bYdqloQ8j+ooKR9Y9SaEBpoGUWPpKbjMZQk9vyO7PWz+Ax
-	DTBDFsXFxgIi9prOH+/rWdO7kuSJ03J6qYHmVZ84XxkoCXsXb6auwKEsRqPjgJFyC9AJ3r
-	p3gN3LPeswlJzxe3ymMA0OHX8zL6TCE=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-3pxRZfFcM5CBFUREWELNAA-1; Thu,
- 07 Dec 2023 16:57:57 -0500
-X-MC-Unique: 3pxRZfFcM5CBFUREWELNAA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B64C1C0BB50;
-	Thu,  7 Dec 2023 21:57:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E59971C060AF;
-	Thu,  7 Dec 2023 21:57:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZXI7aGHkxZyiytXg@casper.infradead.org>
-References: <ZXI7aGHkxZyiytXg@casper.infradead.org> <20231207212206.1379128-1-dhowells@redhat.com> <20231207212206.1379128-60-dhowells@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 59/59] netfs: Eliminate PG_fscache by setting folio->private and marking dirty
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576EC840C4;
+	Thu,  7 Dec 2023 22:10:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20215C433C8;
+	Thu,  7 Dec 2023 22:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701987016;
+	bh=sBNd3oxL6+a22NEO/VDNFOidep38poCkeBZb+XkzywM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=neI12TK/fHjGgZNDnLArNdLQEFClIYknp5Ch25AvJ3uzwa2mhmCuGfWn6SZmc4Xyh
+	 gQMahdRIXK77n5/TMkaJuK/OTaGAPpUr8VBnnr4q3wtd7Fji08gZbr7yFVPHi4KIgb
+	 kPw8zNI7nHJ/VS+tzDxLN1M0wA5VuigBoMI9/5Yj/pDRS49Sl+6w9ez2hmAT7NjNC7
+	 qQdXIGld6g178tGepH6B2006iUsLwQmpAinMxrh1bo76odHAfwiueeCK5A2UhUESZZ
+	 nVUMpRinVsxy8gbJ5s20Klo6zNQG6cK7+fyob9qhJiofGyOE3G4twLx4NuUzZqYJo8
+	 EHr/yFHXpV51A==
+Date: Thu, 7 Dec 2023 15:10:13 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] block: Remove special-casing of compound pages
+Message-ID: <ZXJCxbAm1_V7lPnF@kbusch-mbp>
+References: <20230814144100.596749-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1451125.1701986273.1@warthog.procyon.org.uk>
-Date: Thu, 07 Dec 2023 21:57:53 +0000
-Message-ID: <1451127.1701986273@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230814144100.596749-1-willy@infradead.org>
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Aug 14, 2023 at 03:41:00PM +0100, Matthew Wilcox (Oracle) wrote:
+>  void __bio_release_pages(struct bio *bio, bool mark_dirty)
+>  {
+> -	struct bvec_iter_all iter_all;
+> -	struct bio_vec *bvec;
+> +	struct folio_iter fi;
+> +
+> +	bio_for_each_folio_all(fi, bio) {
+> +		struct page *page;
+> +		size_t done = 0;
+>  
+> -	bio_for_each_segment_all(bvec, bio, iter_all) {
+> -		if (mark_dirty && !PageCompound(bvec->bv_page))
+> -			set_page_dirty_lock(bvec->bv_page);
+> -		bio_release_page(bio, bvec->bv_page);
+> +		if (mark_dirty) {
+> +			folio_lock(fi.folio);
+> +			folio_mark_dirty(fi.folio);
+> +			folio_unlock(fi.folio);
+> +		}
+> +		page = folio_page(fi.folio, fi.offset / PAGE_SIZE);
+> +		do {
+> +			bio_release_page(bio, page++);
+> +			done += PAGE_SIZE;
+> +		} while (done < fi.length);
+>  	}
+>  }
 
-> On Thu, Dec 07, 2023 at 09:22:06PM +0000, David Howells wrote:
-> > With this, PG_fscache is no longer required.
-> 
-> ... for filesystems that use netfslib, right?  ie we can't delete
-> folio_wait_private_2_killable() and friends because nfs still uses it?
-
-Yeah.  Though I have my eye on NFS too ;-)
-
-David
-
+Is it okay to release same-folio pages while creating the bio instead of
+releasing all the pages at the completion? If so, the completion could
+provide just the final bio_release_page() instead looping. I'm more
+confirming if that's an appropriate way to use folios here.
 
