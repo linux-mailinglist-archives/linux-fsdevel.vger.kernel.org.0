@@ -1,44 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-5097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3818080BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 07:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF58F8080BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 07:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCBBE2815CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A77F2815CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948BE15E94
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EC213FF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dtxRa5HC"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gfOsPHBT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11279D5C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 20:58:49 -0800 (PST)
-Date: Wed, 6 Dec 2023 23:58:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1701925128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ER/rFK8I9p5Nyi4EPWTSpp7ceXu8C84i7TakscXSgrg=;
-	b=dtxRa5HC5BjEY1vwLAImPX6PE01YgnBPYYyJqYC7IFH37NPuxd2HfUGXBpzqwqos1FqlkY
-	0bouvtRlgrvXR+xFdH2T3pfxm1sf7fUdOcZe9i0B5L3CkNFLbgRTOc6XBY8RLYr6mGXWWX
-	182ilBeK2tqvjOkOYtDQU/rBzYLw0uE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5030FD44
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 20:59:14 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id 5614622812f47-3b9d009df75so386015b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Dec 2023 20:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1701925153; x=1702529953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jNjuJ70wYcPCgm9fSzOs2on1O3wdVHSIH2LiIdCkx3k=;
+        b=gfOsPHBTUzavm5VjHye5nHE0Q+7ccAKluciawSJEd6FOeQJbb5+Apf0aPnipbBt824
+         5u4Ce5B53Fx5bvKeYxpbPVrs6ny4UitixanZx7kV6/ENMlT21GxGGZQBUhber8r7FOXR
+         uKkyy/Y2DFwyPMD2gKsEeJ4uPQc/8vbrv/Up9VisxQ9XaMkXnz4/swBbtm4lHeNjuJCo
+         jEG162T1XKmHZhWs0Kj4VdD/TTNq9aHATtgCyOMRroxD542WIZSA+opLL9S1AcucPpFs
+         s5qCVDWJz9hCklfwzHEjjKigLuoUxyZRgR6MuPQV/6oLsVPayQmvS5Sfei3suO4j0hJb
+         EVyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701925153; x=1702529953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jNjuJ70wYcPCgm9fSzOs2on1O3wdVHSIH2LiIdCkx3k=;
+        b=qnbyHARtNebg1nJNTTkk+kfvTzGXXnwnNZ3XP9X9pIZu8hmdnUt1zf2KzwmL7qg7HF
+         EzNSlUwyWLiJwCRRL2FfF6cHqGnBji9MmJpLv7YxcxHIZbmIZ6DZhp3AUffw/UHg1GrU
+         sCFF96HNIAneRnQsH+BeOEk0pWzArFoyx9lMSrcSjQIAqORdZE0VSfP+dBfhZwXIA0vx
+         SXoXHHmf6xDlm8YNgWsApDfeZS0BNvmt5IlCuDRiceog6ZIlRRIE+EUjc4Jx5TqUQ1Pp
+         ipn+hD25Odr5fgoVtDKZEg66ThLdnTh/Qsw46LFPg/A7+OGksv9JhT7U5HxICnDIwhkC
+         02HA==
+X-Gm-Message-State: AOJu0YwSEnM27Plh8/oTQtXNFO9hjelf3kxrFnL+5q3OOG/PFLU6ioqF
+	SsxuMEbP5V2X+O6hry/Z2Gl1mg==
+X-Google-Smtp-Source: AGHT+IEdmwUMzlCe4IXUpFIlutTUzo8JXxqf4Rr5coCve5YDCgo/MD/d8kxJh+Eiwruhtft9enzuUA==
+X-Received: by 2002:a05:6808:4492:b0:3b8:b063:a1d8 with SMTP id eq18-20020a056808449200b003b8b063a1d8mr2287992oib.98.1701925153685;
+        Wed, 06 Dec 2023 20:59:13 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id d21-20020aa78695000000b006cb903ab057sm376426pfo.83.2023.12.06.20.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Dec 2023 20:59:13 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rB6Te-004vzJ-2E;
+	Thu, 07 Dec 2023 15:59:10 +1100
+Date: Thu, 7 Dec 2023 15:59:10 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
 	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev,
 	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org,
 	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] vfs: inode cache conversion to hash-bl
-Message-ID: <20231207045844.u26r5vn26gtmqwe5@moria.home.lan>
+Subject: Re: [PATCH 03/11] vfs: Use dlock list for superblock's inode list
+Message-ID: <ZXFRHo3mcbKfoC8v@dread.disaster.area>
 References: <20231206060629.2827226-1-david@fromorbit.com>
- <20231206060629.2827226-9-david@fromorbit.com>
+ <20231206060629.2827226-4-david@fromorbit.com>
+ <20231207024024.GU1674809@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,65 +76,32 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231206060629.2827226-9-david@fromorbit.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20231207024024.GU1674809@ZenIV>
 
-On Wed, Dec 06, 2023 at 05:05:37PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Thu, Dec 07, 2023 at 02:40:24AM +0000, Al Viro wrote:
+> On Wed, Dec 06, 2023 at 05:05:32PM +1100, Dave Chinner wrote:
 > 
-> Scalability of the global inode_hash_lock really sucks for
-> filesystems that use the vfs inode cache (i.e. everything but XFS).
-
-Ages ago, we talked about (and I attempted, but ended up swearing at
-inode lifetime rules) - conversion to rhashtable instead, which I still
-believe would be preferable since that code is fully lockless (and
-resizeable, of course). But it turned out to be a much bigger project...
-
-But IIRC the bulk of the work was going to be "clean up inode
-refcounting/lifetime rules into something sane/modern" - maybe we could
-leave some breadcrumbs/comments in fs/inode.c for what that would take,
-if/when someone else is sufficiently motivated?
-
-> threads		vanilla	 patched	vanilla	patched
-> 2		 7.923	  7.358		 8.003	 7.276
-> 4		 8.152	  7.530		 9.097	 8.506
-> 8		13.090	  7.871		11.752	10.015
-> 16		24.602	  9.540		24.614	13.989
-> 32		49.536	 19.314		49.179	25.982
-
-nice
-
-> The big wins here are at >= 8 threads, with both filesytsems now
-> being limited by internal filesystem algorithms, not the VFS inode
-> cache scalability.
+> > @@ -303,6 +303,7 @@ static void destroy_unused_super(struct super_block *s)
+> >  	super_unlock_excl(s);
+> >  	list_lru_destroy(&s->s_dentry_lru);
+> >  	list_lru_destroy(&s->s_inode_lru);
+> > +	free_dlock_list_heads(&s->s_inodes);
+> >  	security_sb_free(s);
+> >  	put_user_ns(s->s_user_ns);
+> >  	kfree(s->s_subtype);
 > 
-> Ext4 contention moves to the buffer cache on directory block
-> lookups:
-> 
-> -   66.45%     0.44%  [kernel]              [k] __ext4_read_dirblock
->    - 66.01% __ext4_read_dirblock
->       - 66.01% ext4_bread
->          - ext4_getblk
->             - 64.77% bdev_getblk
->                - 64.69% __find_get_block
->                   - 63.01% _raw_spin_lock
->                      - 62.96% do_raw_spin_lock
->                           59.21% __pv_queued_spin_lock_slowpath
-> 
-> bcachefs contention moves to internal btree traversal locks.
-> 
->  - 95.37% __lookup_slow
->     - 93.95% bch2_lookup
->        - 82.57% bch2_vfs_inode_get
-> 	  - 65.44% bch2_inode_find_by_inum_trans
-> 	     - 65.41% bch2_inode_peek_nowarn
-> 		- 64.60% bch2_btree_iter_peek_slot
-> 		   - 64.55% bch2_btree_path_traverse_one
-> 		      - bch2_btree_path_traverse_cached
-> 			 - 63.02% bch2_btree_path_traverse_cached_slowpath
-> 			    - 56.60% mutex_lock
+> Umm...  Who's going to do that on normal umount?
 
-dlist-lock ought to be perfect for solving this one
+Huh. So neither KASAN nor kmemleak has told me that s->s-inodes was
+being leaked.  I'm guessing a rebase sometime in the past silently
+dropped a critical hunk from deactivate_locked_super() in the bit
+bucket, but as nothing since whenever that happened has failed or
+flagged a memory leak I didn't notice.
 
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+Such great tools we have......
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
