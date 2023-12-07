@@ -1,44 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-5100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C9D8080C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 07:33:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA10F8080C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 07:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77AB2B2079C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D9C1F21192
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F801E48D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CBB14264
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Dec 2023 06:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="26u94biI"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IdnVs7Vi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF36DD5C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 21:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=b/RNsTcTyUOZ0sZCqymX50hoLR11vqsG8PU4jY+H9HY=; b=26u94biInhu/7gjQ2YjCQtcImK
-	4HQ3QDEBz6iayH0JC+eqXtMvIfG57ZNDtLHUnMIYYdOzjfbeKxnGLzRJy4+VxGewLMGasWKdNxX6u
-	+GSLFRNTF9S0N2xUms2b1gdJuVZvwENPND5oN5z6T3g796GQJSeg6IMVR1hE7cLWMmJCCvD/gMUeP
-	VvEtnVmh5QfnbGe+XEho9UNaGVyym0Mmj6PI4Od06EQwLMAmmmLHi9asmilbaGQKfLahqy8Sn2I4z
-	Uy7GzqEofdbYhmPxMfuH0Gf+f/PufzUSZAkuGjQBYIYmZUbf03gPnEYIZdA82u5GxZg2vKG6bvKnB
-	Vt6AInTQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rB6rj-00BtP6-2h;
-	Thu, 07 Dec 2023 05:24:03 +0000
-Date: Wed, 6 Dec 2023 21:24:03 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] freevxfs: Convert vxfs_immed_read_folio to the new folio
- APIs
-Message-ID: <ZXFW8yGT3uuGgObF@infradead.org>
-References: <20231206204629.771797-1-willy@infradead.org>
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDECDE
+	for <linux-fsdevel@vger.kernel.org>; Wed,  6 Dec 2023 21:43:05 -0800 (PST)
+Date: Thu, 7 Dec 2023 00:42:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1701927784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RdkE7cfoCE6RprmuDTJo4aDA/cMCyuQzoGY8unYOC/U=;
+	b=IdnVs7Vi7unvKOyS8HY/3pkuIEPD03zqV1vALHaO/bpzmbBWF5D6mi0ATroyP4lR7G40fU
+	FVxOcbeNRl1GysGG11L+g0K48yHqyOypx/5PqkvLC5O7lxVC8hWpq8kMciPrzUceu2SXMQ
+	0dNkbCsaPpS4FC9MgaaiTA+IjAkT1hk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>, Waiman Long <longman@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-cachefs@redhat.com, dhowells@redhat.com, gfs2@lists.linux.dev,
+	dm-devel@lists.linux.dev, linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 04/11] lib/dlock-list: Make sibling CPUs share the same
+ linked list
+Message-ID: <20231207054259.gpx3cydlb6b7raax@moria.home.lan>
+References: <20231206060629.2827226-1-david@fromorbit.com>
+ <20231206060629.2827226-5-david@fromorbit.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,13 +49,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231206204629.771797-1-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20231206060629.2827226-5-david@fromorbit.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 06, 2023 at 08:46:29PM +0000, Matthew Wilcox (Oracle) wrote:
-> Use folio_fill_tail() and folio_end_read() instead of open-coding them.
-> Add a sanity check in case a folio is allocated above index 0.
+On Wed, Dec 06, 2023 at 05:05:33PM +1100, Dave Chinner wrote:
+> From: Waiman Long <longman@redhat.com>
+> 
+> The dlock list needs one list for each of the CPUs available. However,
+> for sibling CPUs, they are sharing the L2 and probably L1 caches
+> too. As a result, there is not much to gain in term of avoiding
+> cacheline contention while increasing the cacheline footprint of the
+> L1/L2 caches as separate lists may need to be in the cache.
+> 
+> This patch makes all the sibling CPUs share the same list, thus
+> reducing the number of lists that need to be maintained in each
+> dlock list without having any noticeable impact on performance. It
+> also improves dlock list iteration performance as fewer lists need
+> to be iterated.
 
-Where do these helpers come from?  Can't find them in Linus' tree.
+Seems Waiman was missed on the CC
 
+it looks like there's some duplication of this with list_lru
+functionality - similar list-sharded-by-node idea.
+
+list_lru does the sharding by page_to_nid() of the item, which saves a
+pointer and allows just using a list_head in the item. OTOH, it's less
+granular than what dlock-list is doing?
+
+I think some attempt ought to be made to factor out the common ideas
+hear; perhaps reworking list_lru to use this thing, and I hope someone
+has looked at the page_nid idea vs. dlock_list using the current core.
+
+But it's nice and small, and I'd like to use it elsewhere.
+
+Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
 
