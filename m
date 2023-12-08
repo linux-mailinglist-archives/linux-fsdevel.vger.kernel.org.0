@@ -1,94 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-5328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5329-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3838A80A93C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 17:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5C580A93F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 17:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D407D1F20FFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26FB41F21058
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FBC14274
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A121B38DF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wIXkXK7V"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxLMiVZ5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850F4198D
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 06:33:03 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-35d80db5d6dso1395705ab.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Dec 2023 06:33:03 -0800 (PST)
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ACA910CF
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 06:39:41 -0800 (PST)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5d3911218b3so25328897b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Dec 2023 06:39:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1702045983; x=1702650783; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FhKB2NnA3QfPl8JS/+/Dz6ofNDQVrqehkPOlELsJS+E=;
-        b=wIXkXK7VclHcncaay17vBIRE/l0+1pJHu5VoCf8i6xUTgwTwH2Zd/fbWG0xePZGEaY
-         P2Sk7Np3sQD4oAsQ4lrxNMoK9bPRsm4yMn2in+J4P3jgcOZ4Y8ViQFHYhdAefAkUYMlA
-         41FNb4+QkHTnRMI2AvnRBNr03u8249/8vijuicNoFgjoi864Vls+ZvTSWZw8Aw8v3GCQ
-         HyYIlUwfauNOfTlhvlvuo67dif5YmSPOTUa733pVhKVd70yJ8DHrWsnmi/NAgLMuh5c3
-         o6/dd06gj2ldBogaPImHJ5jdfT2O2Hf+w5+ppLli5wWong93Bvf0EnAMesra5Fs6nPmz
-         chbQ==
+        d=google.com; s=20230601; t=1702046380; x=1702651180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eLPrPlRC/jF0nP5OepG9UJkON+cxtp9F2akZQ1W/45M=;
+        b=oxLMiVZ5ESZFvgYjopDVMGbba9ejN+CPeftMCZoRAiJh6WD32kbp44omSArT1Z7wun
+         UrG/SZpzvj7FEfIYvQ/jReIhG0h7oL44299KC+TWOnowEf7QaGaWricLslPu2uAG0yF3
+         cihm67Pc8jjvAGEEy9mXMbJb5g1OM/ryrSjo53bncRlkxlRGDuvo5wszB+dV45spO0Zp
+         dqvjbFAMyuI1AqWfWkBHLBLa1mzygUBCjj40ZjgZ/zTFRzBl7SGhBeMqbMKjVqvVGgGC
+         crBlTOif+6vp49FKXD+nKU9dJR/wuwWUimVmuXcjQSOXfK3yU/iMZzx0Gt2kh/KEsamK
+         5eww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702045983; x=1702650783;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FhKB2NnA3QfPl8JS/+/Dz6ofNDQVrqehkPOlELsJS+E=;
-        b=CBzO4XyTeL4SENAcKq4HhPbvl8HC5dGVyw4ySbmbjcajceo4cGKu46MRKqFrrIDOia
-         nb472eQVC0SK0oS+KtoXtAM21QMPxUSeqssKC1aoSf/Oagaxri9fqPLqYp3J8KH8cQjP
-         SsgLXFZ7O7R1mUhxbdepPBWyNZBUQav2ihMG4x8+Od6Jhb7XOzHEHuPN+8NmocKzx25t
-         1yXD7JY8iXymZmOT3PL7mdCoruuRDQBGRLv+KRlnJYdYCk26WTmYJ3rV+GhXiWWwBr3C
-         ME3f3OCrYEekr4IoLzRrxqx656VrHdoNaF1BGNmmpocMNIx32sVirfzHa9ZxuskEYr5t
-         Prlg==
-X-Gm-Message-State: AOJu0YwU+hIXFwStGoqnMYjRBzf5Oh7RqTyepJZfTa5LdQcD4yezdDqs
-	A4Ve0Eks3KQ30x8Oq/UQHkSEXw==
-X-Google-Smtp-Source: AGHT+IHtnfwS/1QYLNszRS02hyT365XtE7NQd2W0lYKD1LjknRMEQiKkxW7ZSV+rSbha8MlTxHOiHg==
-X-Received: by 2002:a6b:a0d:0:b0:7b6:f0b4:92aa with SMTP id z13-20020a6b0a0d000000b007b6f0b492aamr484458ioi.0.1702045982860;
-        Fri, 08 Dec 2023 06:33:02 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id h5-20020a02c725000000b0043167542398sm466537jao.141.2023.12.08.06.33.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 06:33:01 -0800 (PST)
-Message-ID: <815dd284-14c7-4990-9ef7-41bd7087b724@kernel.dk>
-Date: Fri, 8 Dec 2023 07:33:00 -0700
+        d=1e100.net; s=20230601; t=1702046380; x=1702651180;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eLPrPlRC/jF0nP5OepG9UJkON+cxtp9F2akZQ1W/45M=;
+        b=gKQVfVsEnTWv/QTIPJA3sikTEUDSHYfeCEypN78QsIeZmtXSOdOW73VPfZr28rvyJx
+         kk4pmjch5tL8Vb9FPWrmsFUlBq4gVFRyk0FIHmwwhAuReiIcTg37ogGdhUuMpqFE+6QB
+         /7c/ELAbJ+qNmXO32XI+DwJuEWhYu6rqxNPocTRzX7BK6jgSkCQawgRnXy1VcK+V/xFy
+         8EDeLv/JFdm1U7OrlBD22Ehzf2IB0amJWbX1RZO4MlPz9TyU8edlOEBb1Hdjt5XiN9Kp
+         C2u5jQIIGOklnw3vOTKwmEykLAKCzEVULkxuPCABiPrWr1eD2POwTrEGzcNvmicfKW0M
+         Nc8Q==
+X-Gm-Message-State: AOJu0YwHf8NH+BOCW9sVqxEqm/XI9uGld5zlLsz2JO47Sb6HI7wTGdKP
+	CDu625K2fIzho4IvlfrRVq8t+cDa158=
+X-Google-Smtp-Source: AGHT+IFpvc/9PgTXyF2DsXaPeWoBnrJ6NurxGpd/gOUYl6tVZigpLNaS5Rj80hjDid1VK8IakjitjNFrV/g=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
+ (user=gnoack job=sendgmr) by 2002:a25:b904:0:b0:d9a:e3d9:99bd with SMTP id
+ x4-20020a25b904000000b00d9ae3d999bdmr643ybj.5.1702046380625; Fri, 08 Dec 2023
+ 06:39:40 -0800 (PST)
+Date: Fri, 8 Dec 2023 15:39:30 +0100
+In-Reply-To: <20231130.eipai4uXighe@digikod.net>
+Message-Id: <ZXMqordGs31R7oGR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] nfsd: fully close all files in the nfsd threads
-Content-Language: en-US
-To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org
-References: <20231208033006.5546-1-neilb@suse.de>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20231208033006.5546-1-neilb@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20231103155717.78042-1-gnoack@google.com> <20231116.haW5ca7aiyee@digikod.net>
+ <ZVd8RP01oNc5K92c@google.com> <20231117.aen7feDah5aD@digikod.net>
+ <ZWCe1FnVVlYQmQFG@google.com> <20231130.eipai4uXighe@digikod.net>
+Subject: Re: [PATCH v4 0/7] Landlock: IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: "=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/7/23 8:27 PM, NeilBrown wrote:
-> This is a new version of my patches to address a rare problem with nfsd
-> closing files faster than __fput() can complete the close in a different
-> thread.
-> 
-> This time I'm simply switching to __fput_sync().  I cannot see any
-> reason that this would be a problem, but if any else does and can show
-> me what I'm missing, I'd appreciate it.
+On Thu, Nov 30, 2023 at 10:26:47AM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Fri, Nov 24, 2023 at 02:02:12PM +0100, G=C3=BCnther Noack wrote:
+> > On Fri, Nov 17, 2023 at 09:44:31PM +0100, Micka=C3=ABl Sala=C3=BCn wrot=
+e:
+> > I don't think it is at odds with the backwards-compatibility concerns w=
+hich we
+> > previously discussed.  The synthetic groups still exist, it's just the
+> > "permitting LANDLOCK_ACCESS_FS_IOCTL on a file or directory" which affe=
+cts a
+> > different set of IOCTL commands.
+>=20
+> It would not be a backward-compatibility issue, but it would make
+> LANDLOCK_ACCESS_FS_IOCTL too powerful even if we get safer/better access
+> rights. Furthermore, reducing the scope of LANDLOCK_ACCESS_FS_IOCTL with
+> new handled access rights should better inform end encourage developers
+> to drop LANDLOCK_ACCESS_FS_IOCTL when it is not strictly needed.
+> It would be useful to explain this rationale in the commit message.
+> See https://lore.kernel.org/all/20231020.moefooYeV9ei@digikod.net/
 
-Much better than the previous attempts, imho.
+Done; I added a section to the commit message.
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
--- 
-Jens Axboe
+> > > > > If the scope of LANDLOCK_ACCESS_FS_IOCTL is well documented, that=
+ should
+> > > > > be OK. But maybe we should rename this right to something like
+> > > > > LANDLOCK_ACCESS_FS_IOCTL_DEFAULT to make it more obvious that it =
+handles
+> > > > > IOCTLs that are not handled by other access rights?
+> > > >=20
+> > > > Hmm, I'm not convinced this is a good name.  It makes sense in the =
+context of
+> > > > allowing "all the other ioctls" for a file or file hierarchy, but w=
+hen setting
+> > > > LANDLOCK_ACCESS_FS_IOCTL in handled_access_fs, that flag turns off =
+*all* ioctls,
+> > > > so "default" doesn't seem appropriate to me.
+> > >=20
+> > > It should turn off all IOCTLs that are not handled by another access
+> > > right.  The handled access rights should be expanded the same way as =
+the
+> > > allowed access rights.
+> >=20
+> > If you handle LANDLOCK_ACCESS_FS_IOCTL, and you don't permit anything o=
+n files
+> > or directories, all IOCTL commands will be forbidden, independent of wh=
+at else
+> > is handled.
+> >=20
+> > The opposite is not true:
+> >=20
+> > If you handle LANDLOCK_ACCESS_FS_READ_FILE, and you don't handle
+> > LANDLOCK_ACCESS_FS_IOCTL, all IOCTL commands will happily work.
+> >=20
+> > So if you see it through that lens, you could say that it is only the
+> > LANDLOCK_ACCESS_FS_IOCTL bit in the "handled" mask which forbids any IO=
+CTL
+> > commands at all.
+>=20
+> Handling LANDLOCK_ACCESS_FS_IOCTL does make all IOCTLs denied by
+> default. However, to allow IOCTLs, developers may need to allow
+> LANDLOCK_ACCESS_FS_IOCTL or another access right according to the
+> underlying semantic.
+>=20
+> It would be useful to add an example with your table in the
+> documentation, for instance with LANDLOCK_ACCESS_FS_READ_FILE (handled
+> or not handled, with LANDLOCK_ACCESS_FS_IOCTL or not, allowed on a file
+> or not...).
 
+Added an example to the documentation.
+
+=E2=80=94G=C3=BCnther
 
