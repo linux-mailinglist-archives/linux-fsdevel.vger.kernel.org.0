@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-5317-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3DF80A35C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 13:36:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C4180A35F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 13:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA69281253
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A302817EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72A51C68F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6701C694
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="u2DBbl8K"
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="LQb5RX09"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2156F10DA
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 03:28:01 -0800 (PST)
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B3410F7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 03:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1702034880;
-	bh=4GBoC0gYPldUjUEGpilpruyOmY/wrXDXA2dEFhgCO2c=;
+	s=s201512; t=1702035009;
+	bh=cv3cK8vQYwCgVCck4+KMVVaFBdsPTiUNyCcJ325ZB/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=u2DBbl8KBGS8XktnaVcZl0EBJbffcBCgantODOY1BFY7esm7Y6VCy3B8kbdAtCSiN
-	 Lir6rJuNhx4YSGbEIndpiA1OZFg6aKPTSERIwLa1uH5tl55K9dN6fQ1IDLZ6LDZG1U
-	 N4UfCK4vxbQMMJq9355GH87umV0FfJu5RETZtFsA=
+	b=LQb5RX09HfxZWireVsoQaeBY8Gyb+8+mCyL4WaUFpeGkye+Jx7FkePKPDWQBJn+6s
+	 ONW2A0VWTtnRCD76W05U5zswyZMxtDCN1guDTKMtpFWkHScmPUttonq1bRlIrAMxiG
+	 a60w84nLBwZN1Ns6u5O2Z3kDcin+MwmCWRY1L+LM=
 Received: from localhost.localdomain ([180.164.182.58])
 	by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
 	id 530B9A94; Fri, 08 Dec 2023 19:20:48 +0800
-X-QQ-mid: xmsmtpt1702034503te7cs98g6
-Message-ID: <tencent_B02EBA3CA542FA85A57F88CF08EC6A189C0A@qq.com>
-X-QQ-XMAILINFO: MFWpArBVhhGT0AaG2QyKGAXauDJzuTNtMN/SuQSJEUUOr9cpFAniT0CuljEzTr
-	 XOf9zP8RIAbr07KJrEeyTir0Yf73r4SuauhxJAtQ3qmEIpSxTwLW/h54eFv/jJznlOeq0uqdwrXJ
-	 0FDvhQ9FeDQuIfQFOlWl/LFphQ4YIKfw7h47jKpN++zKNplZUZS/ViRLlkGLTPjkf3YLQlmEjC/c
-	 Q/14qcG+6ezPN178zLTbHQE4RaADnb1TDvjBAFXe4l9b6jZ9yz1Gz5WywDvsVZfnuK0lygmZj1FB
-	 Ni57YPwvu8EjXQdp8sC4DgwResykt3iRIaNV4v4uuyeWTC5QA3NSyalbAgpDIK8ZoDxUWLXd5WM8
-	 DqFSVvluqqmc1jpUrn9p7xUxPy4pZn5ozmJhVlT1AJREkchTn1rS5pifX5oZ97TVDCQEdoZYBNJh
-	 7ZywCvUVYEMQEbijhQi+RtZL9/iQvyHPHizBzRAvBfFtx1bKz7r76jBFKOfL/6H9JO4GY1oeyTlG
-	 FU2KNaVdOjrNcm9zoNEGtiwhsIV+T7MHfbbMWk0znUFUOwdaqYruAkRtiRoUd5HWS6YUuAtovcqx
-	 8Gwqf2iqGOymT95TNbO3yauOlM+POmNgLnDF89PO+jLZGq1V94IfhWuDOuF92bBYWnUxMxzF19nk
-	 QLZVWzNvhNhI0iJa7qrGwBGPDjWmp+MbTfAhngCueedcAV1VhTSQ3CWdqRyfVt2v4u85i2bsnwbL
-	 QLSYuBzkB7ddiBUc0FxntPD0scg9A5Dht6O4R1C2BIYJ3gYV+6q9vUkysG2bmDQRtiSPBBX8NN8j
-	 Sgm65lv8PiWRxFzBo5vLBMKtJrvkw8MqGTfJ+ogylGJcj7v78+zHKKt/MUt4mtSihQ8QAd8VqwVW
-	 +XlidOszP8R20+jRmmrfaAv0vdoOYNQTvpLW554qyc3GDWjhgqm6FJzMPFzyiUatSiKgC8ujDggl
-	 w4T+zp5ajxoGQq/fIJlFCOmCdenboGrcDViefv4s3HqVWJq/zv7ipsrn0TlnGoMa0i0x9/L0s=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-mid: xmsmtpt1702034505t4l6op3qg
+Message-ID: <tencent_C819A7DB899F09F0693C9C36BA8CA422FA0A@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9lBseoUVoM6+eakXSWLsAZ5Hil6AnwLXUjH5cYV7w9Xgsy8K098
+	 TjZF+fon1dOUWNke0ZYhnvuaYtSnvNLDKYR464MW4LjEB57YagXAXUkTkkzIQp49vNOvOmQ5I0bK
+	 VDheK3Lg8V2Kkmq1EXzUizMu+53HVze1G6/ojjSmdMD5COE20PhdBIRutYHXWeyiwsdDnd6fDFbE
+	 CjEe2fFo189POK/8lQ3d/HjKPnQVYiPS7pKL+kClxpxvQtXW2sEOxBiAK0yvMq+Jdy41tqYZojtK
+	 ew9jyG9fB7V4UZMds326+R7TZXqkk85DuXFLZUbyCv8dYqMWc9uSpee/mARs/6bJ/5PgbrsM43r3
+	 H+1DmOHp4aH5MCdeXwTsNp5XZK4gcaeU/Rq0raJStdLnA5nbhR6YAzhEwyxfiHQaG9kBQBMV0QjA
+	 3SpfVa6/xwhR4Jmx6L+wmyvro9K/Xj2eU8Nawp0vTiRXPwDbDZ1B6sk71v9XFBrPy83KPmAaQY4T
+	 gZvDTevFnmpNkKfM1pUYpPy0MedaO8sVOskHuE0+AriVh+/wdoOC4+wCrn/sqbpl4H5HN9pXEOoy
+	 igcx5b+om43vW9eFmRlSanJfOlmrfBCnrC3ExjB+ftJD/t73sNJMqtAL047mYGAoaDkRvAJvNgpj
+	 7df/oiphqHosMuYSVRjN9WJvHQDL8NRBUAkzKDibfjhGOFmDrJCzWKRGKXIGx8gyxbnGS9yy95At
+	 /5W2s76mhullqfhJT4NRHHb1iYcyn6xX8bhOaO+deza9vvaQ0UTedcEjIkly8HE3ny4aMtBJbsNQ
+	 wGaVNWNoXkH3Jg3NViDXlmmuy9cn4M01QZlLwmYDCMPVCWaTLP5HOmcWwOguW+gjzmeKfZ3SHHJG
+	 lp39MJoXUpiqIPhrMzh3j/YlIZnjnUzf8yXupYj//BgOPSAC9ItbtkSuGu9kqitr/1FukIsmEv0m
+	 gcSDjjf/c21Ku/pEpQzhzDgW1zDBPVWguKKElpE4JaJ24hPDAbkQJoTbBWDT8M
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 From: yuezhang.mo@foxmail.com
 To: linkinjeon@kernel.org,
 	sj1557.seo@samsung.com
@@ -52,9 +52,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Andy.Wu@sony.com,
 	wataru.aoyama@sony.com,
 	Yuezhang Mo <Yuezhang.Mo@sony.com>
-Subject: [PATCH v1 09/11] exfat: remove unused functions
-Date: Fri,  8 Dec 2023 19:23:18 +0800
-X-OQ-MSGID: <20231208112318.1135649-10-yuezhang.mo@foxmail.com>
+Subject: [PATCH v1 10/11] exfat: do not sync parent dir if just update timestamp
+Date: Fri,  8 Dec 2023 19:23:19 +0800
+X-OQ-MSGID: <20231208112318.1135649-11-yuezhang.mo@foxmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231208112318.1135649-1-yuezhang.mo@foxmail.com>
 References: <20231208112318.1135649-1-yuezhang.mo@foxmail.com>
@@ -68,148 +68,102 @@ Content-Transfer-Encoding: 8bit
 
 From: Yuezhang Mo <Yuezhang.Mo@sony.com>
 
-exfat_count_ext_entries() is no longer called, remove it.
-exfat_update_dir_chksum() is no longer called, remove it and
-rename exfat_update_dir_chksum_with_entry_set() to it.
+When sync or dir_sync is enabled, there is no need to sync the
+parent directory's inode if only for updating its timestamp.
+
+1. If an unexpected power failure occurs, the timestamp of the
+   parent directory is not updated to the storage, which has no
+   impact on the user.
+
+2. The number of writes will be greatly reduced, which can not
+   only improve performance, but also prolong device life.
 
 Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
 Reviewed-by: Andy Wu <Andy.Wu@sony.com>
 Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
 ---
- fs/exfat/dir.c      | 60 ++-------------------------------------------
- fs/exfat/exfat_fs.h |  6 +----
- fs/exfat/inode.c    |  2 +-
- 3 files changed, 4 insertions(+), 64 deletions(-)
+ fs/exfat/namei.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-index 94cedc145291..c57a727d5285 100644
---- a/fs/exfat/dir.c
-+++ b/fs/exfat/dir.c
-@@ -478,41 +478,6 @@ void exfat_init_dir_entry(struct exfat_entry_set_cache *es,
- 	exfat_init_stream_entry(ep, start_clu, size);
- }
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 79e3fc9d6e19..b33497845a06 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -547,6 +547,7 @@ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct exfat_dir_entry info;
+ 	loff_t i_pos;
+ 	int err;
++	loff_t size = i_size_read(dir);
  
--int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
--		int entry)
--{
--	struct super_block *sb = inode->i_sb;
--	int ret = 0;
--	int i, num_entries;
--	u16 chksum;
--	struct exfat_dentry *ep, *fep;
--	struct buffer_head *fbh, *bh;
--
--	fep = exfat_get_dentry(sb, p_dir, entry, &fbh);
--	if (!fep)
--		return -EIO;
--
--	num_entries = fep->dentry.file.num_ext + 1;
--	chksum = exfat_calc_chksum16(fep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
--
--	for (i = 1; i < num_entries; i++) {
--		ep = exfat_get_dentry(sb, p_dir, entry + i, &bh);
--		if (!ep) {
--			ret = -EIO;
--			goto release_fbh;
--		}
--		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
--				CS_DEFAULT);
--		brelse(bh);
--	}
--
--	fep->dentry.file.checksum = cpu_to_le16(chksum);
--	exfat_update_bh(fbh, IS_DIRSYNC(inode));
--release_fbh:
--	brelse(fbh);
--	return ret;
--}
--
- static void exfat_free_benign_secondary_clusters(struct inode *inode,
- 		struct exfat_dentry *ep)
- {
-@@ -552,7 +517,7 @@ void exfat_init_ext_entry(struct exfat_entry_set_cache *es, int num_entries,
- 		uniname += EXFAT_FILE_NAME_LEN;
+ 	mutex_lock(&EXFAT_SB(sb)->s_lock);
+ 	exfat_set_volume_dirty(sb);
+@@ -557,7 +558,7 @@ static int exfat_create(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	inode_inc_iversion(dir);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+-	if (IS_DIRSYNC(dir))
++	if (IS_DIRSYNC(dir) && size != i_size_read(dir))
+ 		exfat_sync_inode(dir);
+ 	else
+ 		mark_inode_dirty(dir);
+@@ -801,10 +802,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
+ 	inode_inc_iversion(dir);
+ 	simple_inode_init_ts(dir);
+ 	exfat_truncate_inode_atime(dir);
+-	if (IS_DIRSYNC(dir))
+-		exfat_sync_inode(dir);
+-	else
+-		mark_inode_dirty(dir);
++	mark_inode_dirty(dir);
+ 
+ 	clear_nlink(inode);
+ 	simple_inode_init_ts(inode);
+@@ -825,6 +823,7 @@ static int exfat_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct exfat_chain cdir;
+ 	loff_t i_pos;
+ 	int err;
++	loff_t size = i_size_read(dir);
+ 
+ 	mutex_lock(&EXFAT_SB(sb)->s_lock);
+ 	exfat_set_volume_dirty(sb);
+@@ -835,7 +834,7 @@ static int exfat_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 
+ 	inode_inc_iversion(dir);
+ 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+-	if (IS_DIRSYNC(dir))
++	if (IS_DIRSYNC(dir) && size != i_size_read(dir))
+ 		exfat_sync_inode(dir);
+ 	else
+ 		mark_inode_dirty(dir);
+@@ -1239,6 +1238,7 @@ static int exfat_rename(struct mnt_idmap *idmap,
+ 	struct super_block *sb = old_dir->i_sb;
+ 	loff_t i_pos;
+ 	int err;
++	loff_t size = i_size_read(new_dir);
+ 
+ 	/*
+ 	 * The VFS already checks for existence, so for local filesystems
+@@ -1260,7 +1260,7 @@ static int exfat_rename(struct mnt_idmap *idmap,
+ 	simple_rename_timestamp(old_dir, old_dentry, new_dir, new_dentry);
+ 	EXFAT_I(new_dir)->i_crtime = current_time(new_dir);
+ 	exfat_truncate_inode_atime(new_dir);
+-	if (IS_DIRSYNC(new_dir))
++	if (IS_DIRSYNC(new_dir) && size != i_size_read(new_dir))
+ 		exfat_sync_inode(new_dir);
+ 	else
+ 		mark_inode_dirty(new_dir);
+@@ -1281,10 +1281,7 @@ static int exfat_rename(struct mnt_idmap *idmap,
  	}
  
--	exfat_update_dir_chksum_with_entry_set(es);
-+	exfat_update_dir_chksum(es);
- }
+ 	inode_inc_iversion(old_dir);
+-	if (IS_DIRSYNC(old_dir))
+-		exfat_sync_inode(old_dir);
+-	else
+-		mark_inode_dirty(old_dir);
++	mark_inode_dirty(old_dir);
  
- void exfat_remove_entries(struct inode *inode, struct exfat_entry_set_cache *es,
-@@ -574,7 +539,7 @@ void exfat_remove_entries(struct inode *inode, struct exfat_entry_set_cache *es,
- 		es->modified = true;
- }
- 
--void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
-+void exfat_update_dir_chksum(struct exfat_entry_set_cache *es)
- {
- 	int chksum_type = CS_DIR_ENTRY, i;
- 	unsigned short chksum = 0;
-@@ -1237,27 +1202,6 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 	return dentry - num_ext;
- }
- 
--int exfat_count_ext_entries(struct super_block *sb, struct exfat_chain *p_dir,
--		int entry, struct exfat_dentry *ep)
--{
--	int i, count = 0;
--	unsigned int type;
--	struct exfat_dentry *ext_ep;
--	struct buffer_head *bh;
--
--	for (i = 0, entry++; i < ep->dentry.file.num_ext; i++, entry++) {
--		ext_ep = exfat_get_dentry(sb, p_dir, entry, &bh);
--		if (!ext_ep)
--			return -EIO;
--
--		type = exfat_get_entry_type(ext_ep);
--		brelse(bh);
--		if (type & TYPE_CRITICAL_SEC || type & TYPE_BENIGN_SEC)
--			count++;
--	}
--	return count;
--}
--
- int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir)
- {
- 	int i, count = 0;
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 0280a975586c..a2c70b3a27bd 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -431,8 +431,6 @@ int exfat_ent_get(struct super_block *sb, unsigned int loc,
- 		unsigned int *content);
- int exfat_ent_set(struct super_block *sb, unsigned int loc,
- 		unsigned int content);
--int exfat_count_ext_entries(struct super_block *sb, struct exfat_chain *p_dir,
--		int entry, struct exfat_dentry *p_entry);
- int exfat_chain_cont_cluster(struct super_block *sb, unsigned int chain,
- 		unsigned int len);
- int exfat_zeroed_cluster(struct inode *dir, unsigned int clu);
-@@ -487,9 +485,7 @@ void exfat_init_ext_entry(struct exfat_entry_set_cache *es, int num_entries,
- 		struct exfat_uni_name *p_uniname);
- void exfat_remove_entries(struct inode *inode, struct exfat_entry_set_cache *es,
- 		int order);
--int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
--		int entry);
--void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es);
-+void exfat_update_dir_chksum(struct exfat_entry_set_cache *es);
- int exfat_calc_num_entries(struct exfat_uni_name *p_uniname);
- int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
- 		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 522edcbb2ce4..0614bccfbe76 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -94,7 +94,7 @@ int __exfat_write_inode(struct inode *inode, int sync)
- 		ep2->dentry.stream.start_clu = EXFAT_FREE_CLUSTER;
- 	}
- 
--	exfat_update_dir_chksum_with_entry_set(&es);
-+	exfat_update_dir_chksum(&es);
- 	return exfat_put_dentry_set(&es, sync);
- }
- 
+ 	if (new_inode) {
+ 		exfat_unhash_inode(new_inode);
 -- 
 2.25.1
 
