@@ -1,191 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-5357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DD980AC3B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AACFB80AC3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:39:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AAC1F211F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4131F210BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E3D47A63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC47D4CB20
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/9D5yry"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tU5rg+J6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WY/+/qKj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tU5rg+J6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WY/+/qKj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B47123;
-	Fri,  8 Dec 2023 09:44:15 -0800 (PST)
-Received: by mail-oi1-x232.google.com with SMTP id 5614622812f47-3b83fc26e4cso1495220b6e.2;
-        Fri, 08 Dec 2023 09:44:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702057455; x=1702662255; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=STnIY6jHnonlNBGjhvoP/XKEjxCdoqekmjCFEwWOqqs=;
-        b=R/9D5yryzeBwlns2fWxYB9mVg6xgKF9etEDsO7YvVAKJrjzKPlLhqfPy/a+EXnBWG4
-         DraJxuTGQVZkvqutvStNe/cLZb5DQEIk5WpzOc98YT6YfECY/bP/SCEtaXNtEPG4+J+Q
-         xh+yHFisuh9L9so5hIG5XrnlqlWLQfQ2oyFo464RtOwR+sKtsqwxutCfBiBRYPdNRXxo
-         ULJh3KpeQfk/LAGA/enkHiv0tSzvFn98/w3ihK2gWJER/l9bKJ7aQxcOZiLa8AmQfE7d
-         P8vitSAP8SeUxzkxy4neTTpYxrRTcjsEoBDbygvKeEnXZHXLmA3ge0H0pWB+q++g7uww
-         kNZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702057455; x=1702662255;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=STnIY6jHnonlNBGjhvoP/XKEjxCdoqekmjCFEwWOqqs=;
-        b=FBfII8UqbC7lWG9sDPzR0WYPgf1Va3lNbkEINr14U0zDkQoJJkHIL2NX5qPOPNx54B
-         VRLbTPqB4MAs605J1pwhSNhLyvD5lWDbsoHDTAdC4CPDVxcdaTFDHSZTFWtJWnCl4YZK
-         X2osy5Hs98szjJwulmcHksaNgQXhrf3lr6Y9uMcLNOZCuohnIN42zmVNCyGNnNKbQGA9
-         BQSC+xD7c0I9SYa6h/MKExAC7Ben6GN4nzqDVvViNiV/f/UuxEzIXzHM3irbDvdZJPRe
-         rMsvih7EJ83cqTKoNyGpXxJWqzkpw6ZXmCRtBJQSCODSaFLK4f+8tGTs7v0rEqgrHiRp
-         9IJg==
-X-Gm-Message-State: AOJu0YxnDPs2jZZueA2httz5Eec6uZ/zF9a51cKtCs3AaDqJitIU/XXk
-	RhXFFwMtXjwSKf+0Rph12+k=
-X-Google-Smtp-Source: AGHT+IEzT+HZ9WmsP8OSljEsqprb6rwe8jXFEjOkdMdIcoynbuF30OJkUHTP42lwHHlv2AFGEvJFuw==
-X-Received: by 2002:a05:6808:124a:b0:3b8:b063:8261 with SMTP id o10-20020a056808124a00b003b8b0638261mr354407oiv.99.1702057454735;
-        Fri, 08 Dec 2023 09:44:14 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id ud11-20020a05620a6a8b00b0077d90497738sm841756qkn.102.2023.12.08.09.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 09:44:14 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailauth.nyi.internal (Postfix) with ESMTP id A51C027C0054;
-	Fri,  8 Dec 2023 12:44:13 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 08 Dec 2023 12:44:13 -0500
-X-ME-Sender: <xms:7FVzZYW7dgchrPjOkXhW0sb6EU31ic_Y-GmkHi5aMNZaED6mo0f2CQ>
-    <xme:7FVzZclxmVbT3_sDjTjWP1NLmwpNcykkBAnVjEKbLCOC9jL3qFRi_NP_1vmqF2wpK
-    XCTb3UIOKsm0zamHw>
-X-ME-Received: <xmr:7FVzZcZgPObt-xFpDA44jJZ_CB5HXvN9D2_jGBI22_zYY3755PmOX21sK58>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekiedguddtiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepueho
-    qhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledthffgheegkeekiefgudek
-    hffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeeh
-    tdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmse
-    hfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:7FVzZXWEEnbUgdWHrTi0rsh1UBWoGrrYLSY3vXlj-IImUQJ3_Dk17g>
-    <xmx:7FVzZSlIA7eJfcOsPnymAgr8gDAxN-AKO7N_MpiDmjBUy0SmUeiFMw>
-    <xmx:7FVzZccr7XOY28eMqoEef8LbTvmueOQPB9jiSOF34DNQW7hgKIGzMg>
-    <xmx:7VVzZewcjWCPXENIzmDM7mNs-k1EYIZLIK0xtFtbNNO3epM_UHl-yA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Dec 2023 12:44:11 -0500 (EST)
-Date: Fri, 8 Dec 2023 09:43:00 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,	comex <comexk@gmail.com>,
- Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,	Alice Ryhl <aliceryhl@google.com>,
- Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <ZXNVpCn0g_aBCpTE@boqun-archlinux>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
- <20231129-alice-file-v1-5-f81afe8c7261@google.com>
- <20231129-etappen-knapp-08e2e3af539f@brauner>
- <20231129164815.GI23596@noisy.programming.kicks-ass.net>
- <20231130-wohle-einfuhr-1708e9c3e596@brauner>
- <A0BFF59C-311C-4C44-9474-65DB069387BD@gmail.com>
- <CANiq72k4H2_NZuQcpeKANqyi_9W01fLC0WxXon5cx4z=WsgeXQ@mail.gmail.com>
- <CAKwvOdkgDwnC_jaGjXjk9yKYo=zWDR_3x7Drw3i=KX0Wyij6ew@mail.gmail.com>
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F0A173B;
+	Fri,  8 Dec 2023 09:47:46 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BC8971F458;
+	Fri,  8 Dec 2023 17:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702057664; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ty0wkmYBzhMqy5lLUe3gr3yBKvt3QqcxRuI17ne1tpQ=;
+	b=tU5rg+J60uTl33suc+vysMg4/c7ONg3pOCdPI5/B0uag7ybZVCxCk3soIVw0N1aq98Vekl
+	uRFPmvqowmZpxJ1QixeFmNMXO3O6hvZ1lMgggPgKrX1yI0wyJV5LTO1WozbKXuL4km6+uM
+	c4RvaarTbxqOP2EOnMW4O11dpw8rmz0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702057664;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ty0wkmYBzhMqy5lLUe3gr3yBKvt3QqcxRuI17ne1tpQ=;
+	b=WY/+/qKjUM23d2X621auToV3XZASU1Jw4lKcsnGiwBykB58+5xS4iHMFiX4pVT65CkN8o8
+	+VgmcyjXbLyf6RCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702057664; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ty0wkmYBzhMqy5lLUe3gr3yBKvt3QqcxRuI17ne1tpQ=;
+	b=tU5rg+J60uTl33suc+vysMg4/c7ONg3pOCdPI5/B0uag7ybZVCxCk3soIVw0N1aq98Vekl
+	uRFPmvqowmZpxJ1QixeFmNMXO3O6hvZ1lMgggPgKrX1yI0wyJV5LTO1WozbKXuL4km6+uM
+	c4RvaarTbxqOP2EOnMW4O11dpw8rmz0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702057664;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ty0wkmYBzhMqy5lLUe3gr3yBKvt3QqcxRuI17ne1tpQ=;
+	b=WY/+/qKjUM23d2X621auToV3XZASU1Jw4lKcsnGiwBykB58+5xS4iHMFiX4pVT65CkN8o8
+	+VgmcyjXbLyf6RCQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id AA52013A6B;
+	Fri,  8 Dec 2023 17:47:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id Jl4/KcBWc2VCUgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Fri, 08 Dec 2023 17:47:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 43F3EA07DC; Fri,  8 Dec 2023 18:47:44 +0100 (CET)
+Date: Fri, 8 Dec 2023 18:47:44 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Tycho Andersen <tycho@tycho.pizza>, Oleg Nesterov <oleg@redhat.com>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
+Message-ID: <20231208174744.2vsubexeolns7nb5@quack3>
+References: <20231130163946.277502-1-tycho@tycho.pizza>
+ <20231207-netzhaut-wachen-81c34f8ee154@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOdkgDwnC_jaGjXjk9yKYo=zWDR_3x7Drw3i=KX0Wyij6ew@mail.gmail.com>
+In-Reply-To: <20231207-netzhaut-wachen-81c34f8ee154@brauner>
+X-Spam-Level: 
+X-Spam-Score: -3.80
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-On Fri, Dec 08, 2023 at 09:08:47AM -0800, Nick Desaulniers wrote:
-> On Fri, Dec 8, 2023 at 8:19 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > On Fri, Dec 8, 2023 at 6:28 AM comex <comexk@gmail.com> wrote:
-> > >
-> > > Regarding the issue of wrappers not being inlined, it's possible to get LLVM to optimize C and Rust code together into an object file, with the help of a compatible Clang and LLD:
-> > >
-> > > @ rustc -O --emit llvm-bc a.rs
-> > > @ clang --target=x86_64-unknown-linux-gnu -O2 -c -emit-llvm -o b.bc b.c
-> > > @ ld.lld -r -o c.o a.bc b.bc
-> > >
-> > > Basically LTO but within the scope of a single object file.  This would be redundant in cases where kernel-wide LTO is enabled.
-> > >
-> > > Using this approach might slow down compilation a bit due to needing to pass the LLVM bitcode between multiple commands, but probably not very much.
-> > >
-> > > Just chiming in as someone not involved in Rust for Linux but familiar with these tools.  Perhaps this has been considered before and rejected for some reason; I wouldn’t know.
-> >
-> > Thanks comex for chiming in, much appreciated.
-> >
-> > Yeah, this is what we have been calling the "local-LTO hack" and it
-> > was one of the possibilities we were considering for non-LTO kernel
-> > builds for performance reasons originally. I don't recall who
-> > originally suggested it in one of our meetings (Gary or Björn
-> > perhaps).
-> >
-> > If LLVM folks think LLVM-wise nothing will break, then we are happy to
-> 
-> On paper, nothing comes to mind.  No promises though.
-> 
-> From a build system perspective, I'd rather just point users towards
-> LTO if they have this concern.  We support full and thin lto.  This
-> proposal would add a third variant for just rust drivers.  Each
-> variation on LTO has a maintenance cost and each have had their own
-> distinct fun bugs in the past.  Not sure an additional variant is
-> worth the maintenance cost, even if it's technically feasible.
-> 
+On Thu 07-12-23 18:21:18, Christian Brauner wrote:
+> [Cc fsdevel & Jan because we had some discussions about fanotify
+> returning non-thread-group pidfds. That's just for awareness or in case
+> this might need special handling.]
 
-Actually, the "LTO" in "local-LTO" may be misleading ;-) The problem we
-want to resolve here is letting Rust code call small C functions (or
-macros) without exporting the symbols. To me, it's really just "static
-linking" a library (right now it's rust/helpers.o) contains small C
-functions and macros used by Rust into a Rust driver kmodule, the "LTO"
-part can be optional: let the linker make the call.
+Thanks!
 
-Regards,
-Boqun
+> On Thu, Nov 30, 2023 at 09:39:44AM -0700, Tycho Andersen wrote:
+> > From: Tycho Andersen <tandersen@netflix.com>
+> > 
+> > We are using the pidfd family of syscalls with the seccomp userspace
+> > notifier. When some thread triggers a seccomp notification, we want to do
+> > some things to its context (munge fd tables via pidfd_getfd(), maybe write
+> > to its memory, etc.). However, threads created with ~CLONE_FILES or
+> > ~CLONE_VM mean that we can't use the pidfd family of syscalls for this
+> > purpose, since their fd table or mm are distinct from the thread group
+> > leader's. In this patch, we relax this restriction for pidfd_open().
+> > 
+> > In order to avoid dangling poll() users we need to notify pidfd waiters
+> > when individual threads die, but once we do that all the other machinery
+> > seems to work ok viz. the tests. But I suppose there are more cases than
+> > just this one.
+> > 
+> > Another weirdness is the open-coding of this vs. exporting using
+> > do_notify_pidfd(). This particular location is after __exit_signal() is
+> > called, which does __unhash_process() which kills ->thread_pid, so we need
+> > to use the copy we have locally, vs do_notify_pid() which accesses it via
+> > task_pid(). Maybe this suggests that the notification should live somewhere
+> > in __exit_signals()? I just put it here because I saw we were already
+> > testing if this task was the leader.
+> > 
+> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+> > ---
+> 
+> So we've always said that if there's a use-case for this then we're
+> willing to support it. And I think that stance hasn't changed. I know
+> that others have expressed interest in this as well.
+> 
+> So currently the series only enables pidfds for threads to be created
+> and allows notifications for threads. But all places that currently make
+> use of pidfds refuse non-thread-group leaders. We can certainly proceed
+> with a patch series that only enables creation and exit notification but
+> we should also consider unlocking additional functionality:
+ 
+...
 
-> > go ahead with that (since it also solves the performance side), but it
-> > would be nice to know if it will always be OK to build like that, i.e.
-> > I think Andreas actually tried it and it seemed to work and boot, but
-> > the worry is whether there is something subtle that could have bad
-> > codegen in the future.
-> >
-> > (We will also need to worry about GCC.)
-> >
-> > Cheers,
-> > Miguel
+> * pidfd_prepare() is used to create pidfds for:
 > 
-> 
-> 
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+>   (1) CLONE_PIDFD via clone() and clone3()
+>   (2) SCM_PIDFD and SO_PEERPIDFD
+>   (3) fanotify
+
+So for fanotify there's no problem I can think of. All we do is return the
+pidfd we get to userspace with the event to identify the task generating
+the event. So in practice this would mean userspace will get proper pidfd
+instead of error value (FAN_EPIDFD) for events generated by
+non-thread-group leader. IMO a win.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
