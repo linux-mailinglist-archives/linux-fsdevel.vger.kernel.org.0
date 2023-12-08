@@ -1,66 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-5369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ED280AE10
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 21:38:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5F780AE11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 21:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD341F21157
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 20:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6622D280E16
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 20:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB3657884
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 20:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152F540BEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 20:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r8wNqSd/"
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="Z4fson34";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cB4y2/PS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b6])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DADC81734
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 11:58:16 -0800 (PST)
-Date: Fri, 8 Dec 2023 14:58:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702065495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TsaD7mhW8SXQP1nbpaw4AQMft3LLxjzczN7R3X3tAxQ=;
-	b=r8wNqSd/u9g5IyjKN6ZrfGfi8UvmYzVZvDTBKpMA8L/A0HyY8PSd9pb9uqtoc8VJzsAm5h
-	NUJSsXmCtd0WZcMtOCo+G6RmAn7Deo0J4prFrniY3miadYKZ1B7nX9m6iODDWndhIpOXF5
-	MTwcc2S3heTAvuFucv4fGqpPHv3sGkw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <20231208195809.fzpezhcntqsm2ub3@moria.home.lan>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
- <20231129-alice-file-v1-5-f81afe8c7261@google.com>
- <20231129-etappen-knapp-08e2e3af539f@brauner>
- <20231129164815.GI23596@noisy.programming.kicks-ass.net>
- <20231130-wohle-einfuhr-1708e9c3e596@brauner>
- <20231206195911.vcp3c6q57zvkm7bf@moria.home.lan>
- <20231208162616.GH28727@noisy.programming.kicks-ass.net>
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1E711D;
+	Fri,  8 Dec 2023 12:04:18 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 72A563200A64;
+	Fri,  8 Dec 2023 15:04:16 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 08 Dec 2023 15:04:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:sender
+	:subject:subject:to:to; s=fm3; t=1702065855; x=1702152255; bh=GG
+	NlAi0M3/WjzMXprO8Id6miZfyxGyNcpliBuJNnlBU=; b=Z4fson34NdZM6IcEu2
+	iLoZagOg8lFOwUsGY7/MgxiA3LedN4e9kJA3GykFrrqKaqcQkaCw60ioeQdo5tUd
+	HsdIeempYYhyj0pQcCye3E+fdHu3WaEkPkjZSkxP5Y9l7UYdMwHxtF+o0aPUuGzA
+	mVqloC3lOtZUWGKLrmRkVyontchKqZFpNRxkgwT6iofNh3Rk3hYkEzp2JvQWqGG/
+	fixNjBLSn7VZS4dvDpVxcoDSR7lskB75R+oOH9R1ZNW5HHvIp7qR+k2db6sj+IXi
+	tHpMVAAKFuoLZW+IbRQ7h51HhzJB3hDdE18+dWI4IRKeaSdhu752YbLgrYkYaktg
+	LHug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:sender:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1702065855; x=1702152255; bh=GGNlAi0M3/Wjz
+	MXprO8Id6miZfyxGyNcpliBuJNnlBU=; b=cB4y2/PSRxjPLQFaqkfAMWDth0DBB
+	3g62xpt6oL50ixWkQs8C0eBT7KLpMYa+9l86QazfOOhEMi9IM2i7tmV2qgAM4bzP
+	jwCW0aSSR5QpzalgCb0thW3FgBHfZzSn0CvrS2lzLo1jOkv5U0feKE6hzvbEPoRg
+	sOd920U+mOGYBDn+YB/9XQnb2M1w8j+zEuwIg+x002Mp5FbeR+RnBMVk/vrUP1Ut
+	fn3wxy0VvHmuF0hecFJ35dnTfMgH4DLgrR9VCE/KKlG+EWN44kGbRn+tQM2QF2ue
+	KhmgFnOzSpwSSv3GU8MXjiY/HKu9Z4AqWLcHRFf9HXprupx1rbfW8QoAw==
+X-ME-Sender: <xms:v3ZzZcxZlzP9F7gZxGqFF1g-O9FKhv7tsQhhfLgBIsUCLRfVwWm4Zw>
+    <xme:v3ZzZQSgJOqvPT9kXwi9Vhj3srGxLrxZW0Ylj8l_n2zXggWUKstvm0Ak871UFIXfJ
+    _F9lYCmDzin7zxxvj0>
+X-ME-Received: <xmr:v3ZzZeURbIzstxM83ZJB7wN38bM_adx6KXAa5wCUDSD-oWbr3xQ_7Vjp6_4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekiedgudefgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigt
+    hhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtf
+    frrghtthgvrhhnpeelveduteeghfehkeeukefhudfftefhheetfedthfevgfetleevvddu
+    veetueefheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhi
+    iiiirg
+X-ME-Proxy: <xmx:v3ZzZajIFjxXuK0OpO2WXKzSOnk9R9-7QodwrzuEBDBt26kwkGDrgA>
+    <xmx:v3ZzZeAjHvXt8Ks21zhawShfuuHJwmwjrYixTHE-wiqfE1FSct7FsQ>
+    <xmx:v3ZzZbIid0UApEmFYARIYTY-EYrG66b-E0OQhspWscn2cMiinwlerg>
+    <xmx:v3ZzZUAzxrDhTBWo8ThOoC7WjBbnJPx-KCkgtSdl9JjfjfFTcr6Ebg>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Dec 2023 15:04:13 -0500 (EST)
+Date: Fri, 8 Dec 2023 13:04:11 -0700
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
+Message-ID: <ZXN2u2oJl1Z6FTqt@tycho.pizza>
+References: <20231130163946.277502-1-tycho@tycho.pizza>
+ <20231130173938.GA21808@redhat.com>
+ <ZWjM6trZ6uw6yBza@tycho.pizza>
+ <ZWoKbHJ0152tiGeD@tycho.pizza>
+ <20231207-weither-autopilot-8daee206e6c5@brauner>
+ <20231207-avancieren-unbezahlbar-9258f45ec3ec@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,42 +92,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231208162616.GH28727@noisy.programming.kicks-ass.net>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20231207-avancieren-unbezahlbar-9258f45ec3ec@brauner>
 
-On Fri, Dec 08, 2023 at 05:26:16PM +0100, Peter Zijlstra wrote:
-> On Wed, Dec 06, 2023 at 02:59:11PM -0500, Kent Overstreet wrote:
+On Thu, Dec 07, 2023 at 10:25:09PM +0100, Christian Brauner wrote:
+> > If these concerns are correct
 > 
-> > I suspect even if the manpower existed to go that route we'd end up
-> > regretting it, because then the Rust compiler would need to be able to
-> > handle _all_ the craziness a modern C compiler knows how to do -
-> > preprocessor magic/devilry isn't even the worst of it, it gets even
-> > worse when you start to consider things like bitfields and all the crazy
-> > __attributes__(()) people have invented.
+> So, ok. I misremebered this. The scenario I had been thinking of is
+> basically the following.
 > 
-> Dude, clang can already handle all of that. Both rust and clang are
-> build on top of llvm, they generate the same IR, you can simply feed a
-> string into libclang and get IR out of it, which you can splice into
-> your rust generated IR.
+> We have a thread-group with thread-group leader 1234 and a thread with
+> 4567 in that thread-group. Assume current thread-group leader is tsk1
+> and the non-thread-group leader is tsk2. tsk1 uses struct pid *tg_pid
+> and tsk2 uses struct pid *t_pid. The struct pids look like this after
+> creation of both thread-group leader tsk1 and thread tsk2:
+> 
+> 	TGID 1234				TID 4567 
+> 	tg_pid[PIDTYPE_PID]  = tsk1		t_pid[PIDTYPE_PID]  = tsk2
+> 	tg_pid[PIDTYPE_TGID] = tsk1		t_pid[PIDTYPE_TGID] = NULL
+> 
+> IOW, tsk2's struct pid has never been used as a thread-group leader and
+> thus PIDTYPE_TGID is NULL. Now assume someone does create pidfds for
+> tsk1 and for tsk2:
+> 	
+> 	tg_pidfd = pidfd_open(tsk1)		t_pidfd = pidfd_open(tsk2)
+> 	-> tg_pidfd->private_data = tg_pid	-> t_pidfd->private_data = t_pid
+> 
+> So we stash away struct pid *tg_pid for a pidfd_open() on tsk1 and we
+> stash away struct pid *t_pid for a pidfd_open() on tsk2.
+> 
+> If we wait on that task via P_PIDFD we get:
+> 
+> 				/* waiting through pidfd */
+> 	waitid(P_PIDFD, tg_pidfd)		waitid(P_PIDFD, t_pidfd)
+> 	tg_pid[PIDTYPE_TGID] == tsk1		t_pid[PIDTYPE_TGID] == NULL
+> 	=> succeeds				=> fails
+> 
+> Because struct pid *tg_pid is used a thread-group leader struct pid we
+> can wait on that tsk1. But we can't via the non-thread-group leader
+> pidfd because the struct pid *t_pid has never been used as a
+> thread-group leader.
+> 
+> Now assume, t_pid exec's and the struct pids are transfered. IIRC, we
+> get:
+> 
+> 	tg_pid[PIDTYPE_PID]   = tsk2		t_pid[PIDTYPE_PID]   = tsk1
+> 	tg_pid[PIDTYPE_TGID]  = tsk2		t_pid[PIDTYPE_TGID]  = NULL
+> 
+> If we wait on that task via P_PIDFD we get:
+> 	
+> 				/* waiting through pidfd */
+> 	waitid(P_PIDFD, tg_pidfd)		waitid(P_PIDFD, t_pid)
+> 	tg_pid[PIDTYPE_TGID] == tsk2		t_pid[PIDTYPE_TGID] == NULL
+> 	=> succeeds				=> fails
+> 
+> Which is what we want. So effectively this should all work and I
+> misremembered the struct pid linkage. So afaict we don't even have a
+> problem here which is great.
 
-If only it were that simple :)
+It sounds like we need some tests for waitpid() directly though, to
+ensure the semantics stay stable. I can add those and send a v3,
+assuming the location of do_notify_pidfd() looks ok to you in v2:
 
-This is struct definitions we're talking about, not code, so what you
-want isn't even IR, what you're generating is a memory layout for a
-type, linked in with all your other type information.
+https://lore.kernel.org/all/20231207170946.130823-1-tycho@tycho.pizza/
 
-And people critize Linux for being a giant monorepo that makes no
-considerations for making our code reusable in other contexts; clang and
-LLVM are no different. But that's not really the issue because you're
-going to need a huge chunk of clang to even parse this stuff, what you
-really want is a way to invoke clang and dump _type information_ in a
-standardized, easy to consume way. What you want is actually more akin
-to the debug info that's generated today.
-
-So... yeah, sure, lovely if it existed, but not the world we live in :)
-
-(As an aside, I've actually got an outstanding bug filed with rustc
-because it needs to be able to handle types that are marked both packed
-and aligned... if anyone in this thread _does_ know some rust compiler
-folks, we need that for bcachefs on disk format types).
+Tycho
 
