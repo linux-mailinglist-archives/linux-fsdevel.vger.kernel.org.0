@@ -1,93 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-5348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73FF80AC2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:38:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5364F80AC2E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCB51F20620
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 767DF1C20752
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D0941C91
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60223C068
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MC2Qa9ZM"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IlOPMzwG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B2E10C0;
-	Fri,  8 Dec 2023 08:43:24 -0800 (PST)
-Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-77f48aef0a5so68807785a.2;
-        Fri, 08 Dec 2023 08:43:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702053803; x=1702658603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2xmBI6l/MRigs2qcRLIfKFKtDGM2v75E3mtvHqRCsg=;
-        b=MC2Qa9ZM4DXAGDa/+6ppKt4Xpe73i7xU5i33UASeM99ne8DjchNursPOiFaSBICVc4
-         VnZgr+yYeaSwC+wHYzU9Yb36IKMcCaXTtxwZJ1sqVQ83rKwazyC8Zr2zxO2kBaOPjbPg
-         SJ+I6UalWSSmxM4PoQgJxIF+VAONg4eL4x/SEbLyClWJfvkrDPNbrkUTE6o95xzftGxF
-         8BfpfN7WguXgIf4EqRSVJfyiSVJIVvkvBiByorde4qew6LnVtwPwWMN8p5rUcxx1Q4So
-         OB1pdvMzpn0DoLyCoXy7IdC2cljZ2iZFFCqEb8RtyeEiggWmX/IZtbmERFVOw6qotb67
-         /IAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702053803; x=1702658603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2xmBI6l/MRigs2qcRLIfKFKtDGM2v75E3mtvHqRCsg=;
-        b=eLYFWPpYFiZcLqzVD4kQOaRK0eS/mD+gpQ1dtOiqZvI2DfBqbexd1v3n/eLC6fO2lo
-         EsZmtnxHCNi7VMKnNb02D3BVcWRoqjnDrLGbugttC/IrYQuYYEVUmLj8gmS1iv3fMlam
-         Sll/aCOVeCPQVCS0o4POI6eDfKL+UtPWLxNMn2EN2NBznJf2gQANyKliliTjkQZgmzhN
-         cP9rcKX3bZRNs2UO5FwVfbb+cwhFOurcNhOEdnUErzCEKJttWB01qYvHHBkw2Okf6Sc4
-         VVRclx5eNCxSgqWxjxP6bdIT/px9MCtv3BjyKapJly9+SooHBjKIhPT4E0lhs5vIqdUR
-         x8uA==
-X-Gm-Message-State: AOJu0Yxq5IZ8Mk/r2E6F9qAKtXwsiNP0PsjKixzbE3Mg75tBKQmftVXV
-	1yoXKysoNXzS89wJvTC5N0k=
-X-Google-Smtp-Source: AGHT+IEMOz970vAIG8DxK4T2yh2+WraPteOycduxnsty4R7dX7DngxnM5LsoneUyFj/oXZERR6tzDA==
-X-Received: by 2002:a05:620a:480c:b0:77e:fc1c:97d8 with SMTP id eb12-20020a05620a480c00b0077efc1c97d8mr396826qkb.36.1702053803249;
-        Fri, 08 Dec 2023 08:43:23 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id tn24-20020a05620a3c1800b0077d660ac1b6sm819532qkn.21.2023.12.08.08.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Dec 2023 08:43:23 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailauth.nyi.internal (Postfix) with ESMTP id 460D527C0054;
-	Fri,  8 Dec 2023 11:43:22 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 08 Dec 2023 11:43:22 -0500
-X-ME-Sender: <xms:qUdzZbotq4UvVMS3WlWLbJx9Sp0rj6zkQc0-E2mt7kQndGnjM2kYuA>
-    <xme:qUdzZVqwZXAQ2Byj9o9m6Fqlj9ihFQcVqSB0Vp-FjN9oQhTnayC2KCO9fKofLp2lE
-    BIwdeRe-u1avJL4zg>
-X-ME-Received: <xmr:qUdzZYNKFc5fy14mIlO6iL6XLpqviCe5aG6FYFm-IoRGZyhGcySPiXWePg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekiedgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:qUdzZe7XqW-hjLAsX1oyO4cn0scCOoVHOfAtHCgFpu1pSFm0npM3vQ>
-    <xmx:qUdzZa6I_NLuhDJKl-bRRt8EteI8_p2xnQMJmCuWy67zn35Smy2mtA>
-    <xmx:qUdzZWgioR2VErb7GXQ8neQC1KyE-WOLfOVeLbZ5xMSQn0n7Codz5Q>
-    <xmx:qkdzZdzsKWvY1dwOV2PynGYMI5E4mCr_NqaYeQnuu6_fX35THKQSBQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Dec 2023 11:43:20 -0500 (EST)
-Date: Fri, 8 Dec 2023 08:43:19 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DA998;
+	Fri,  8 Dec 2023 08:57:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=+bKWbY0TFFFJG7vCNdsapguiWXk5Tcdbxhr2FyThgV4=; b=IlOPMzwGrh/jGe5Kiyfmvz91r2
+	DMe8pUz8Wq3s7w2GLz1XHY4A9XDGCfk8/cVEQOmWA48/RiYZAMXOFYmmFcYkZDbQ5h502Wb3TteF8
+	J+eVsnXCtfTIqVDaqmNfQaeBL86u5r2eivNqXVdqQpxBYVdwzmBs1BA8ZCzTCsdSRbxTyZ1USB4J9
+	WncYy/GVXmd4+KowpHmPKlrXohHcN4yI5nLjOt0B0uwCa+az5Q3b1GwQobVLUap62blhtXCZj5CqS
+	L1pdQEwmXmBrsIwdIpFqU3ZwVZtB7ZPqAn6DPNNDcZ9YYoiHW7fcc5aBqNppVII1H9it+czae4xK0
+	Ekm1eL/w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rBe9v-0066Wi-1l; Fri, 08 Dec 2023 16:57:03 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2652A3003F0; Fri,  8 Dec 2023 17:57:02 +0100 (CET)
+Date: Fri, 8 Dec 2023 17:57:02 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
 	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -97,52 +52,127 @@ Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
 	Carlos Llamas <cmllamas@google.com>,
 	Suren Baghdasaryan <surenb@google.com>,
 	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
 	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home>
+Message-ID: <20231208165702.GI28727@noisy.programming.kicks-ass.net>
 References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
  <20231206-alice-file-v2-5-af617c0d9d94@google.com>
- <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me>
+ <20231206123402.GE30174@noisy.programming.kicks-ass.net>
+ <CAH5fLgh+0G85Acf4-zqr_9COB5DUtt6ifVpZP-9V06hjJgd_jQ@mail.gmail.com>
+ <20231206134041.GG30174@noisy.programming.kicks-ass.net>
+ <CANiq72kK97fxTddrL+Uu2JSah4nND=q_VbJ76-Rdc-R-Kijszw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kK97fxTddrL+Uu2JSah4nND=q_VbJ76-Rdc-R-Kijszw@mail.gmail.com>
 
-On Fri, Dec 08, 2023 at 04:40:09PM +0000, Benno Lossin wrote:
-> On 12/6/23 12:59, Alice Ryhl wrote:
-> > +    /// Returns the given task's pid in the current pid namespace.
-> > +    pub fn pid_in_current_ns(&self) -> Pid {
-> > +        // SAFETY: Calling `task_active_pid_ns` with the current task is always safe.
-> > +        let namespace = unsafe { bindings::task_active_pid_ns(bindings::get_current()) };
+On Fri, Dec 08, 2023 at 05:31:59PM +0100, Miguel Ojeda wrote:
+> On Wed, Dec 6, 2023 at 2:41 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Anywhoo, the longer a function is, the harder it becomes, since you need
+> > to deal with everything a function does and consider the specuation
+> > window length. So trivial functions like the above that do an immediate
+> > dereference and are (and must be) a valid indirect target (because
+> > EXPORT) are ideal.
 > 
-> Why not create a safe wrapper for `bindings::get_current()`?
-> This patch series has three occurrences of `get_current`, so I think it
-> should be ok to add a wrapper.
-> I would also prefer to move the call to `bindings::get_current()` out of
-> the `unsafe` block.
+> We discussed this in our weekly meeting, and we would like to ask a
+> few questions:
+> 
+>   - Could you please describe an example attack that you are thinking
+> of? (i.e. a "full" attack, rather than just Spectre itself). For
+> instance, would it rely on other vulnerabilities?
 
-FWIW, we have a current!() macro, we should use it here.
+There's a fairly large amount of that on github, google spectre poc and
+stuff like that.
 
-Regards,
-Boqun
+>   - Is this a kernel rule everybody should follow now? i.e. "no (new?)
+> short, exported symbols that just dereference their pointer args". If
+> so, could this please be documented? Or is it already somewhere?
 
+Gadget scanners are ever evolving and I think there's a bunch of groups
+running them against Linux, but most of us don't have spare time beyond
+trying to plug the latest hole.
+
+>   - Are we checking for this in some way already, e.g. via `objtool`?
+> Especially if this is a rule, then it would be nice to have a way to
+> double-check if we are getting rid of (most of) these "dangerous"
+> symbols (or at least not introduce new ones, and not just in Rust but
+> C too).
+
+Objtool does not look for these (gadget scanners are quite complicated
+by now and I don't think I want to go there with objtool). At the moment
+I'm simply fixing whatever gets reported from 3rd parties when and where
+time permits.
+
+The thing at hand was just me eyeballing it.
+
+> > That would be good, but how are you going to do that without duplicating
+> > the horror that is struct task_struct ?
 > 
-> > +        // SAFETY: We know that `self.0.get()` is valid by the type invariant.
+> As Alice pointed out, `bindgen` "solves" that, but it is nevertheless
+> extra maintenance effort.
 > 
-> What about `namespace`?
+> > Well, I really wish the Rust community would address the C
+> > interoperability in a hurry. Basically make it a requirement for
+> > in-kernel Rust.
 > 
-> -- 
-> Cheers,
-> Benno
+> Yeah, some of us have advocated for more integrated C support within
+> Rust (or within `rustc` at least).
+
+\o/
+
+> > I mean, how hard can it be to have clang parse the C headers and inject
+> > them into the Rust IR as if they're external FFI things.
 > 
-> > +        unsafe { bindings::task_tgid_nr_ns(self.0.get(), namespace) }
-> > +    }
+> That is what `bindgen` does (it uses Clang as a library), except it
+> does not create Rust IR, it outputs normal Rust code, i.e. similar to
+> C declarations.
+
+Right, but then you get into the problem that Rust simply cannot express
+a fair amount of the things we already do, like asm-goto, or even simple
+asm with memops apparently.
+
+> But note that using Clang does not solve the issue of `#define`s in
+> the general case. That is why we would still need "helpers" like these
+> so that the compiler knows how to expand the macro in a C context,
+> which then can be inlined as LLVM IR or similar (which is what I
+> suspect you were actually thinking about, rather than "Rust IR"?).
+
+Yeah, LLVM-IR. And urgh yeah, CPP, this is another down-side of Rust not
+being in the C language family, you can't sanely run CPP on it. Someone
+really should do a Rust like language in the C family, then perhaps it
+will stop looking like line noise to me :-)
+
+I suppose converting things to enum and inline functions where possible
+might help a bit with that, but things like tracepoints, which are built
+from a giant pile of CPP are just not going to be happy :/
+
+Anyway, I think it would be a giant step forwards from where we are
+today.
+
+> That "mix the LLVM IRs from Clang and `rustc`" ("local LTO hack")
+> approach is something we have been discussing in the past for
+> performance reasons (i.e. to inline these small C functions that Rust
+> needs, cross-language, even in non-LTO builds). And if it helps to
+> avoid certain attacks around speculation, then even better. So if the
+> LLVM folks do not have any major concerns about it, then I think we
+> should go ahead with that (please see also my reply to comex).
+
+But does LTO make any guarantees about inlining? The thing is, with
+actual LLVM-IR you can express the __always_inline attribute and
+inlining becomes guaranteed, I don't think you can rely on LTO for the
+same level of guarantees.
+
+And you still need to create these C functions by hand in this
+local-LTO scenario, which is less than ideal.
 
