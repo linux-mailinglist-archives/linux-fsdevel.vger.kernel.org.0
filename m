@@ -1,143 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-5360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981B380AC42
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:40:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9706980AC45
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB8A1C20A03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDE01C20A28
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC214CB29
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2868937161
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mE9EkolL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bbkhse/A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72ED01996;
-	Fri,  8 Dec 2023 09:53:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=qfmys4whkrbxhizugrkv3fumau.protonmail; t=1702058001; x=1702317201;
-	bh=hVJsuEvFyRzSwsIFDjR8bBfXvfqQalvBoy1pmXp64qw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=mE9EkolL56rnQaDX118ZC8Qv3X5TZeYrKUwaDSEIQn+WhbP1IxA31PBFYX1w4PEfm
-	 tbDUzGQDgCFongIl664Rpjt0Q6D4+Ta/SBJvda/xqssrHxUAN/jDW+M0rZ26/jZ7bF
-	 hndgRizrrT3D+EtySJ7XnPTGMg1V4oE9UN6NpZai6CunjP+grH/LbKkJTx9or3kn/u
-	 7Y7h499dZSav1SYvkjLVnEWc7pPhiT0gxp7UgDLVBq3paoIX/LqcVWwVN/TqHRmJOF
-	 h6esC13pxSSp19Splgu14PaV0+GojhlmckFGZ9EGMD53F1Wblwgy4oTz1b5PPNmmgL
-	 L+R1EmlgGTGvA==
-Date: Fri, 08 Dec 2023 17:53:08 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
-Message-ID: <k_vpgbqKAKoTFzJIBCjvgxGhX73kgkcv6w9kru78lBmTjHHvXPy05g8KxAKJ-ODARBxlZUp3a5e4F9TemGqQiskkwFCpTOhzxlvy378tjHM=@proton.me>
-In-Reply-To: <20231206-alice-file-v2-7-af617c0d9d94@google.com>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-7-af617c0d9d94@google.com>
-Feedback-ID: 71780778:user:proton
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CB73C68F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 17:56:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA6DC433C9;
+	Fri,  8 Dec 2023 17:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702058211;
+	bh=7Cm03JDUfzMBiJY70ZWcE2ed62mODc4a3RkEOgQjNrE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Bbkhse/ARuPKy5cQhiEDwiq/4GEpmRYA3CjfE7Ebql4ylH/U7jBA7sjtQ6tnDd37f
+	 JEUmk0dslgcFFThvNeUbPIDdkloKUf9X43vKuCNW6xLinA5cQHRIIBlYo0KeuA4ii1
+	 iNs08jezlYtMlYBjRTwCY5j+ZtAQoN3+x6D/Z0ZEVC1XxOOquo7r76NvZ2Q0Vd6fch
+	 wWdoL0wrtskpjjBjFJXmCU4qA0HYvPiqG+K5Zek01rpWc8BsFiQOtK75Kf4/Ktb6Cx
+	 8Z8bNAva3X3072XkBKlsERe81JTQq4sCPNLjCGS/zhlMPkZeUiKaNAfdDNM3+fA+px
+	 3Bh5qp0FIgp5A==
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Christoph Hellwig <hch@lst.de>,
+	David Howells <dhowells@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Prepare for fsnotify pre-content permission events
+Date: Fri,  8 Dec 2023 18:54:56 +0100
+Message-ID: <20231208-jahrbuch-flexibel-de04d9d2e163@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231207123825.4011620-1-amir73il@gmail.com>
+References: <20231207123825.4011620-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1511; i=brauner@kernel.org; h=from:subject:message-id; bh=Zj3asIPK4xEssQLQO+iPCxliaNkvf8cdVGDgQXO+7EA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQWR+R3WgtP77IoefKirWRnk5L3sl0priw+nNbBvQIaZ bV26XIdpSwMYlwMsmKKLA7tJuFyy3kqNhtlasDMYWUCGcLAxSkAE/n9gJFhi/b8p96NW47qyL1s bSi5EpJjz2zzP5MlLE3dYGO99uRbDP9db234z+EhoVb9vLL25c7Fk9pZV7JPPLrq1L2Orv6+vR4 sAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 12/6/23 12:59, Alice Ryhl wrote:
-> diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
-> index 9bcbea04dac3..eeb291cc60db 100644
-> --- a/rust/bindings/lib.rs
-> +++ b/rust/bindings/lib.rs
-> @@ -51,3 +51,4 @@ mod bindings_helper {
->=20
->  pub const GFP_KERNEL: gfp_t =3D BINDINGS_GFP_KERNEL;
->  pub const __GFP_ZERO: gfp_t =3D BINDINGS___GFP_ZERO;
-> +pub const POLLFREE: __poll_t =3D BINDINGS_POLLFREE;
+On Thu, 07 Dec 2023 14:38:21 +0200, Amir Goldstein wrote:
+> I am not planning to post the fanotify pre-content event patches [1]
+> for 6.8.  Not because they are not ready, but because the usersapce
+> example is not ready.
+> 
+> Also, I think it is a good idea to let the large permission hooks
+> cleanup work to mature over the 6.8 cycle, before we introduce the
+> pre-content events.
+> 
+> [...]
 
-You are no longer using this constant, should this still exist?
+Picking this up to get it into -next rather sooner than later. But @Jan,
+I'll wait for your Acks.
 
-[...]
+---
 
-> +    fn get_qproc(&self) -> bindings::poll_queue_proc {
-> +        let ptr =3D self.0.get();
-> +        // SAFETY: The `ptr` is valid because it originates from a refer=
-ence, and the `_qproc`
-> +        // field is not modified concurrently with this call since we ha=
-ve an immutable reference.
+Applied to the vfs.rw branch of the vfs/vfs.git tree.
+Patches in the vfs.rw branch should appear in linux-next soon.
 
-This needs an invariant on `PollTable` (i.e. `self.0` is valid).
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +        unsafe { (*ptr)._qproc }
-> +    }
-> +
-> +    /// Register this [`PollTable`] with the provided [`PollCondVar`], s=
-o that it can be notified
-> +    /// using the condition variable.
-> +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
-> +        if let Some(qproc) =3D self.get_qproc() {
-> +            // SAFETY: The pointers to `self` and `file` are valid becau=
-se they are references.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-What about cv.wait_list...
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-> +            //
-> +            // Before the wait list is destroyed, the destructor of `Pol=
-lCondVar` will clear
-> +            // everything in the wait list, so the wait list is not used=
- after it is freed.
-> +            unsafe { qproc(file.as_ptr() as _, cv.wait_list.get(), self.=
-0.get()) };
-> +        }
-> +    }
-> +}
-> +
-> +/// A wrapper around [`CondVar`] that makes it usable with [`PollTable`]=
-.
-> +///
-> +/// # Invariant
-> +///
-> +/// If `needs_synchronize_rcu` is false, then there is nothing registere=
-d with `register_wait`.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.rw
 
-Not able to find `needs_synchronize_rcu` anywhere else, should this be
-here?
-
-> +///
-> +/// [`CondVar`]: crate::sync::CondVar
-> +#[pin_data(PinnedDrop)]
-> +pub struct PollCondVar {
-> +    #[pin]
-> +    inner: CondVar,
-> +}
-
-[..]
-
-> +#[pinned_drop]
-> +impl PinnedDrop for PollCondVar {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // Clear anything registered using `register_wait`.
-> +        //
-> +        // SAFETY: The pointer points at a valid wait list.
-
-I was a bit confused by "wait list", since the C type is named
-`wait_queue_head`, maybe just use the type name?
-
---=20
-Cheers,
-Benno
-
-> +        unsafe { bindings::__wake_up_pollfree(self.inner.wait_list.get()=
-) };
-> +
-> +        // Wait for epoll items to be properly removed.
-> +        //
-> +        // SAFETY: Just an FFI call.
-> +        unsafe { bindings::synchronize_rcu() };
-> +    }
-> +}
+[1/4] fs: use splice_copy_file_range() inline helper
+      https://git.kernel.org/vfs/vfs/c/4955c918c9e5
+[2/4] fsnotify: split fsnotify_perm() into two hooks
+      https://git.kernel.org/vfs/vfs/c/d2fc40363ab1
+[3/4] fsnotify: assert that file_start_write() is not held in permission hooks
+      https://git.kernel.org/vfs/vfs/c/24065342b941
+[4/4] fsnotify: pass access range in file permission hooks
+      https://git.kernel.org/vfs/vfs/c/e5c56a33657b
 
