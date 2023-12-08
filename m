@@ -1,103 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-5361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9706980AC45
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:40:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493D680AC46
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDE01C20A28
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89D81F211F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2868937161
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F274CB34
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bbkhse/A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yep0MhUe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CB73C68F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 17:56:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA6DC433C9;
-	Fri,  8 Dec 2023 17:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702058211;
-	bh=7Cm03JDUfzMBiJY70ZWcE2ed62mODc4a3RkEOgQjNrE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bbkhse/ARuPKy5cQhiEDwiq/4GEpmRYA3CjfE7Ebql4ylH/U7jBA7sjtQ6tnDd37f
-	 JEUmk0dslgcFFThvNeUbPIDdkloKUf9X43vKuCNW6xLinA5cQHRIIBlYo0KeuA4ii1
-	 iNs08jezlYtMlYBjRTwCY5j+ZtAQoN3+x6D/Z0ZEVC1XxOOquo7r76NvZ2Q0Vd6fch
-	 wWdoL0wrtskpjjBjFJXmCU4qA0HYvPiqG+K5Zek01rpWc8BsFiQOtK75Kf4/Ktb6Cx
-	 8Z8bNAva3X3072XkBKlsERe81JTQq4sCPNLjCGS/zhlMPkZeUiKaNAfdDNM3+fA+px
-	 3Bh5qp0FIgp5A==
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Christoph Hellwig <hch@lst.de>,
-	David Howells <dhowells@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Prepare for fsnotify pre-content permission events
-Date: Fri,  8 Dec 2023 18:54:56 +0100
-Message-ID: <20231208-jahrbuch-flexibel-de04d9d2e163@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231207123825.4011620-1-amir73il@gmail.com>
-References: <20231207123825.4011620-1-amir73il@gmail.com>
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED6E1985;
+	Fri,  8 Dec 2023 10:07:40 -0800 (PST)
+Received: by mail-oo1-xc30.google.com with SMTP id 006d021491bc7-5908a5d4222so528027eaf.2;
+        Fri, 08 Dec 2023 10:07:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702058860; x=1702663660; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C77TpInB1zh8d1IAOUInQ6yFu0SRsNtsyD+hY95J9tA=;
+        b=Yep0MhUeeffOeU8wi45LEmbmRkSUjmwmfEYFDECp7+fx4EEuC/WG2baTWEWjYCKDNp
+         pm3ZYud6HMsO5wSWS7S9XuwwtkMiTeG6fQVfnGKEHXFSiY20x9KpvbnnsHNUM3E+j+ES
+         xvv6GvvUL75IM8ncuAbvgY+PVWG6CEH8ejXayeI1ya2+C7h2G+YUOU/r5KeX6fU7ikj/
+         lvsSIv59x8aN4V8pv4Nh9S1dU2N7uyJq3gUz/qKdUCR6otdZnr3ZIGwcfPjJJrOlUalr
+         goaALsSROs0B38Gp+u+cOum28GNGwikfkFain62AQmDNuKgYY2CPyD8pzN717yZM1AMC
+         q+qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702058860; x=1702663660;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C77TpInB1zh8d1IAOUInQ6yFu0SRsNtsyD+hY95J9tA=;
+        b=DOxoFhzxjQaeh4uhn7f4YzAYRSGZk+NEuvssJ3aN8pJ22oOkQwQcl5vq1hpwKkZEAG
+         Tl5q4ITZSkyCNgQDimey/of8DMJ5KpWEB7+tTWCsi5e+t7ruXts8VVKR7Z5KkdWrsFy3
+         Cw7PGCy2fShtwAaDFwNY1iJsmp9M0mLeCp4gMngii6sua0/3JgD8rf5ONvunlPrxEgkP
+         /pJbZf/aeW+tsyxAuGvuycldG/JGiZZm5WUdlm5mzYj032GO4XOu4u3cbornLypNs1nh
+         ePa+vUnTfisT9fMiMRhQd/4pWWkMxhVE07htS85kiBn/VwmaKonrYin67XrDzad+2UGI
+         eSGw==
+X-Gm-Message-State: AOJu0YzFSaEblJrxm8F2WVXArs+ScepAHtChWnbJgtAvJvtsuFbUX5N1
+	IZJCLPo2z8MqymRtq5Pc+DcIpkb5ImQv/KQIPYU=
+X-Google-Smtp-Source: AGHT+IFG9Wqckhd8+QJop7BFj37zOIOYAYHFNhLpTmBdHyZL9wutRVFbzd8r3gESFpX+rio/9ui4gOfULAIXNS5mAt0=
+X-Received: by 2002:a4a:9882:0:b0:590:a673:8016 with SMTP id
+ a2-20020a4a9882000000b00590a6738016mr184730ooj.18.1702058859753; Fri, 08 Dec
+ 2023 10:07:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1511; i=brauner@kernel.org; h=from:subject:message-id; bh=Zj3asIPK4xEssQLQO+iPCxliaNkvf8cdVGDgQXO+7EA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQWR+R3WgtP77IoefKirWRnk5L3sl0priw+nNbBvQIaZ bV26XIdpSwMYlwMsmKKLA7tJuFyy3kqNhtlasDMYWUCGcLAxSkAE/n9gJFhi/b8p96NW47qyL1s bSi5EpJjz2zzP5MlLE3dYGO99uRbDP9db234z+EhoVb9vLL25c7Fk9pZV7JPPLrq1L2Orv6+vR4 sAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:7f0d:0:b0:506:9554:eef4 with HTTP; Fri, 8 Dec 2023
+ 10:07:39 -0800 (PST)
+In-Reply-To: <ZXEuBnX4FTDdaqn0@xsang-OptiPlex-9020>
+References: <20231204195321.GA1674809@ZenIV> <ZW/fDxjXbU9CU0uz@xsang-OptiPlex-9020>
+ <20231206054946.GM1674809@ZenIV> <ZXCLgJLy2b5LvfvS@xsang-OptiPlex-9020>
+ <20231206161509.GN1674809@ZenIV> <20231206163010.445vjwmfwwvv65su@f>
+ <CAGudoHF-eXYYYStBWEGzgP8RGXG2+ER4ogdtndkgLWSaboQQwA@mail.gmail.com>
+ <20231206170958.GP1674809@ZenIV> <CAGudoHErh41OB6JDWHd2Mxzh5rFOGrV6PKC7Xh8JvTn0ws3L_A@mail.gmail.com>
+ <CAGudoHGgqH=2mb52T4ZMx9bWtyMm7hV9wPvh+7JbtBq0x4ymYA@mail.gmail.com> <ZXEuBnX4FTDdaqn0@xsang-OptiPlex-9020>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 8 Dec 2023 19:07:39 +0100
+Message-ID: <CAGudoHFReHsRviEMBwc2uSMkd72bB1b5RsWfBbEvY6HHSDSSuA@mail.gmail.com>
+Subject: Re: [viro-vfs:work.dcache2] [__dentry_kill()] 1b738f196e:
+ stress-ng.sysinfo.ops_per_sec -27.2% regression
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-doc@vger.kernel.org, ying.huang@intel.com, feng.tang@intel.com, 
+	fengwei.yin@intel.com, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 07 Dec 2023 14:38:21 +0200, Amir Goldstein wrote:
-> I am not planning to post the fanotify pre-content event patches [1]
-> for 6.8.  Not because they are not ready, but because the usersapce
-> example is not ready.
-> 
-> Also, I think it is a good idea to let the large permission hooks
-> cleanup work to mature over the 6.8 cycle, before we introduce the
-> pre-content events.
-> 
-> [...]
+On 12/7/23, Oliver Sang <oliver.sang@intel.com> wrote:
+> hi, Mateusz Guzik,
+>
+> On Wed, Dec 06, 2023 at 07:30:36PM +0100, Mateusz Guzik wrote:
+>> Can I get instructions how to reproduce the unixbench regression?
+>
+> I uploaded the reproducer for unixbench in
+> https://download.01.org/0day-ci/archive/20231207/202312070941.6190a04c-oliver.sang@intel.com
+>
+> as in
+> https://download.01.org/0day-ci/archive/20231207/202312070941.6190a04c-oliver.sang@intel.com/reproduce
+>
+> To reproduce:
+>
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         sudo bin/lkp install job.yaml           # job file is attached in
+> this email
+>         bin/lkp split-job --compatible job.yaml # generate the yaml file for
+> lkp run
+>         sudo bin/lkp run generated-yaml-file
+>
+>         # if come across any failure that blocks the test,
+>         # please remove ~/.lkp and /lkp dir to run from a clean state.
+>
+>
 
-Picking this up to get it into -next rather sooner than later. But @Jan,
-I'll wait for your Acks.
+thanks
 
----
+Looks like this one will require a box with 64 or more cores to run
+on, so my usual test jig is not going to do it. I'll sort it out in
+few days.
 
-Applied to the vfs.rw branch of the vfs/vfs.git tree.
-Patches in the vfs.rw branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.rw
-
-[1/4] fs: use splice_copy_file_range() inline helper
-      https://git.kernel.org/vfs/vfs/c/4955c918c9e5
-[2/4] fsnotify: split fsnotify_perm() into two hooks
-      https://git.kernel.org/vfs/vfs/c/d2fc40363ab1
-[3/4] fsnotify: assert that file_start_write() is not held in permission hooks
-      https://git.kernel.org/vfs/vfs/c/24065342b941
-[4/4] fsnotify: pass access range in file permission hooks
-      https://git.kernel.org/vfs/vfs/c/e5c56a33657b
+-- 
+Mateusz Guzik <mjguzik gmail.com>
 
