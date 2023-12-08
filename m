@@ -1,86 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-5324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5325-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E1E80A589
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:33:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4253180A58D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CA3281B4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EB0281AEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CA31DFF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1501E50B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EAjJ2Zut"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYftDdRO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43AE5171F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 05:16:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702041367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gb0GPMiMlGSDj0aJqLOnlqDRREqBTKMhjqExl2I2m1g=;
-	b=EAjJ2ZuttHegI3BzKraGZ/YBBkBhjk8bOfJ9dGXuCEIENAQI2+Wfb1k4tYhcWL2psScUeU
-	XEfolaQVYL1OFHVD06dukUJ0NLKtEBCvTM/jkclPV0EvhtmcUYfcc2ogNI6i8DhWhv8X6E
-	Y2e3sksqMKJI05G1u06k477pvylNTX0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-114-S3kEsJVQOfybehL8PHBI1g-1; Fri, 08 Dec 2023 08:16:02 -0500
-X-MC-Unique: S3kEsJVQOfybehL8PHBI1g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A7577830F20;
-	Fri,  8 Dec 2023 13:16:01 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.192.131])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D4953C2E;
-	Fri,  8 Dec 2023 13:15:59 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,  Tycho Andersen
- <tycho@tycho.pizza>,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Jan Kara <jack@suse.cz>,
-  linux-fsdevel@vger.kernel.org,  Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
-References: <20231130163946.277502-1-tycho@tycho.pizza>
-	<874jh3t7e9.fsf@oldenburg.str.redhat.com>
-	<ZWjaSAhG9KI2i9NK@tycho.pizza>
-	<a07b7ae6-8e86-4a87-9347-e6e1a0f2ee65@efficios.com>
-	<87ttp3rprd.fsf@oldenburg.str.redhat.com>
-	<20231207-entdecken-selektiert-d5ce6dca6a80@brauner>
-Date: Fri, 08 Dec 2023 14:15:58 +0100
-In-Reply-To: <20231207-entdecken-selektiert-d5ce6dca6a80@brauner> (Christian
-	Brauner's message of "Thu, 7 Dec 2023 23:58:53 +0100")
-Message-ID: <87wmtog7ht.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3D41CA81;
+	Fri,  8 Dec 2023 13:41:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08B5C433C8;
+	Fri,  8 Dec 2023 13:41:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702042886;
+	bh=iw7AZIJ/HJKYatG6312tRTjIKLjBbSHjSe1T5NGECQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rYftDdROJXoaI/Jn/GPYBGoyH3/829Gl5qFur6JUJ6zdo7RBLZMSUj/cMVWFEnj7H
+	 7IbDdS0VB7rHXQbYOgM4QI9jkA8l/6jBuS2HQbMUr2WmnCW8nKRkfoO4stnhJBe9j4
+	 6mlrkQ3ANYZPzqmTqc51l08PUKVxzzmGoVS3Y+NdCkb9t/CZcfcnGy5tZfv5+K0z4O
+	 rvY2YHR94O9KbAJFRPi1IsVV+3G742E29qDf1bzZYy1ZI1DBusScIUddmgmEa0tWsc
+	 oo529eVoDA3yWzE8AyALmhgtisod0H3BCsmZgU1fK0Kzju3giOUt8hn0IToE0ZYXMS
+	 zE9oj2/YDZ9pA==
+Date: Fri, 8 Dec 2023 14:41:21 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v12 bpf-next 03/17] bpf: introduce BPF token object
+Message-ID: <20231208-besessen-vibrieren-4e963e3ca3ba@brauner>
+References: <20231130185229.2688956-1-andrii@kernel.org>
+ <20231130185229.2688956-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231130185229.2688956-4-andrii@kernel.org>
 
-* Christian Brauner:
+On Thu, Nov 30, 2023 at 10:52:15AM -0800, Andrii Nakryiko wrote:
+> Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> allow delegating privileged BPF functionality, like loading a BPF
+> program or creating a BPF map, from privileged process to a *trusted*
+> unprivileged process, all while having a good amount of control over which
+> privileged operations could be performed using provided BPF token.
+> 
+> This is achieved through mounting BPF FS instance with extra delegation
+> mount options, which determine what operations are delegatable, and also
+> constraining it to the owning user namespace (as mentioned in the
+> previous patch).
+> 
+> BPF token itself is just a derivative from BPF FS and can be created
+> through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
+> FS FD, which can be attained through open() API by opening BPF FS mount
+> point. Currently, BPF token "inherits" delegated command, map types,
+> prog type, and attach type bit sets from BPF FS as is. In the future,
+> having an BPF token as a separate object with its own FD, we can allow
+> to further restrict BPF token's allowable set of things either at the
+> creation time or after the fact, allowing the process to guard itself
+> further from unintentionally trying to load undesired kind of BPF
+> programs. But for now we keep things simple and just copy bit sets as is.
+> 
+> When BPF token is created from BPF FS mount, we take reference to the
+> BPF super block's owning user namespace, and then use that namespace for
+> checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> capabilities that are normally only checked against init userns (using
+> capable()), but now we check them using ns_capable() instead (if BPF
+> token is provided). See bpf_token_capable() for details.
+> 
+> Such setup means that BPF token in itself is not sufficient to grant BPF
+> functionality. User namespaced process has to *also* have necessary
+> combination of capabilities inside that user namespace. So while
+> previously CAP_BPF was useless when granted within user namespace, now
+> it gains a meaning and allows container managers and sys admins to have
+> a flexible control over which processes can and need to use BPF
+> functionality within the user namespace (i.e., container in practice).
+> And BPF FS delegation mount options and derived BPF tokens serve as
+> a per-container "flag" to grant overall ability to use bpf() (plus further
+> restrict on which parts of bpf() syscalls are treated as namespaced).
+> 
+> Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
+> within the BPF FS owning user namespace, rounding up the ns_capable()
+> story of BPF token.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
 
-> File descriptors are reachable for all processes/threads that share a
-> file descriptor table. Changing that means breaking core userspace
-> assumptions about how file descriptors work. That's not going to happen
-> as far as I'm concerned.
-
-It already has happened, though?  Threads are free to call
-unshare(CLONE_FILES).  I'm sure that we have applications out there that
-expect this to work.  At this point, the question is about whether we
-want to acknowledge this possibility at the libc level or not.
-
-Thanks,
-Florian
-
+Same concerns as in the other mail. For the bpf_token_create() code,
+Acked-by: Christian Brauner <brauner@kernel.org>
 
