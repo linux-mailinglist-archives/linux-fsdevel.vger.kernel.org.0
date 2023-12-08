@@ -1,44 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-5356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BFA80AC38
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:39:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DD980AC3B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697381C20A13
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AAC1F211F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328C4CB27
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E3D47A63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AunkrxB1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/9D5yry"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1FDC93
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 09:39:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=ixvrilbdlnczzba4dtnifmhobu.protonmail; t=1702057148; x=1702316348;
-	bh=HY9Md4VHLYQT5RpanAdJRLZSL23/aGNw4oFWZPZrWZg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=AunkrxB1GjMKQMft60KVeeD1E0BRxc4RbOJeL56qlByAizAea7/v01nZmsdEnQwWK
-	 1kOzObe2JVU16Whu9xn03azaQAmOh4KzAnPA1O2f6mPVbH1yRupswNHYGEL/VVzgoU
-	 WPhNLURfbPFTKDUTLhPIFZcfK6DIOufo+fXUZB9lmpabKkuAyXqqwTLRzNntoPN5jl
-	 ft5a+v5z+a0qy4KIStgL7RXLCcBwAU2qa0yXy9cUUyK2UURBjtkEbKD2D7/w/hJfSD
-	 DhcckwiAV4aHPbj8UBNAaPSbiwyl3qk1AIJ6fOSGkYElhI+zduseym2AbPJLAU7T34
-	 Ii3g5STYKFycQ==
-Date: Fri, 08 Dec 2023 17:39:01 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] rust: file: add `DeferredFdCloser`
-Message-ID: <MjDmZBGV04fVI1qzhceEjQgcmoBuo3YoVuiQdANKj9F1Ux5JFKud8hQpfeyLXI0O5HG6qicKFaYYzM7JAgR_kVQfMCeVdN6t7PjbPaz0D0U=@proton.me>
-In-Reply-To: <20231206-alice-file-v2-6-af617c0d9d94@google.com>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-6-af617c0d9d94@google.com>
-Feedback-ID: 71780778:user:proton
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B47123;
+	Fri,  8 Dec 2023 09:44:15 -0800 (PST)
+Received: by mail-oi1-x232.google.com with SMTP id 5614622812f47-3b83fc26e4cso1495220b6e.2;
+        Fri, 08 Dec 2023 09:44:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702057455; x=1702662255; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=STnIY6jHnonlNBGjhvoP/XKEjxCdoqekmjCFEwWOqqs=;
+        b=R/9D5yryzeBwlns2fWxYB9mVg6xgKF9etEDsO7YvVAKJrjzKPlLhqfPy/a+EXnBWG4
+         DraJxuTGQVZkvqutvStNe/cLZb5DQEIk5WpzOc98YT6YfECY/bP/SCEtaXNtEPG4+J+Q
+         xh+yHFisuh9L9so5hIG5XrnlqlWLQfQ2oyFo464RtOwR+sKtsqwxutCfBiBRYPdNRXxo
+         ULJh3KpeQfk/LAGA/enkHiv0tSzvFn98/w3ihK2gWJER/l9bKJ7aQxcOZiLa8AmQfE7d
+         P8vitSAP8SeUxzkxy4neTTpYxrRTcjsEoBDbygvKeEnXZHXLmA3ge0H0pWB+q++g7uww
+         kNZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702057455; x=1702662255;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=STnIY6jHnonlNBGjhvoP/XKEjxCdoqekmjCFEwWOqqs=;
+        b=FBfII8UqbC7lWG9sDPzR0WYPgf1Va3lNbkEINr14U0zDkQoJJkHIL2NX5qPOPNx54B
+         VRLbTPqB4MAs605J1pwhSNhLyvD5lWDbsoHDTAdC4CPDVxcdaTFDHSZTFWtJWnCl4YZK
+         X2osy5Hs98szjJwulmcHksaNgQXhrf3lr6Y9uMcLNOZCuohnIN42zmVNCyGNnNKbQGA9
+         BQSC+xD7c0I9SYa6h/MKExAC7Ben6GN4nzqDVvViNiV/f/UuxEzIXzHM3irbDvdZJPRe
+         rMsvih7EJ83cqTKoNyGpXxJWqzkpw6ZXmCRtBJQSCODSaFLK4f+8tGTs7v0rEqgrHiRp
+         9IJg==
+X-Gm-Message-State: AOJu0YxnDPs2jZZueA2httz5Eec6uZ/zF9a51cKtCs3AaDqJitIU/XXk
+	RhXFFwMtXjwSKf+0Rph12+k=
+X-Google-Smtp-Source: AGHT+IEzT+HZ9WmsP8OSljEsqprb6rwe8jXFEjOkdMdIcoynbuF30OJkUHTP42lwHHlv2AFGEvJFuw==
+X-Received: by 2002:a05:6808:124a:b0:3b8:b063:8261 with SMTP id o10-20020a056808124a00b003b8b0638261mr354407oiv.99.1702057454735;
+        Fri, 08 Dec 2023 09:44:14 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id ud11-20020a05620a6a8b00b0077d90497738sm841756qkn.102.2023.12.08.09.44.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Dec 2023 09:44:14 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailauth.nyi.internal (Postfix) with ESMTP id A51C027C0054;
+	Fri,  8 Dec 2023 12:44:13 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 08 Dec 2023 12:44:13 -0500
+X-ME-Sender: <xms:7FVzZYW7dgchrPjOkXhW0sb6EU31ic_Y-GmkHi5aMNZaED6mo0f2CQ>
+    <xme:7FVzZclxmVbT3_sDjTjWP1NLmwpNcykkBAnVjEKbLCOC9jL3qFRi_NP_1vmqF2wpK
+    XCTb3UIOKsm0zamHw>
+X-ME-Received: <xmr:7FVzZcZgPObt-xFpDA44jJZ_CB5HXvN9D2_jGBI22_zYY3755PmOX21sK58>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudekiedguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepueho
+    qhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledthffgheegkeekiefgudek
+    hffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeeh
+    tdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmse
+    hfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:7FVzZXWEEnbUgdWHrTi0rsh1UBWoGrrYLSY3vXlj-IImUQJ3_Dk17g>
+    <xmx:7FVzZSlIA7eJfcOsPnymAgr8gDAxN-AKO7N_MpiDmjBUy0SmUeiFMw>
+    <xmx:7FVzZccr7XOY28eMqoEef8LbTvmueOQPB9jiSOF34DNQW7hgKIGzMg>
+    <xmx:7VVzZewcjWCPXENIzmDM7mNs-k1EYIZLIK0xtFtbNNO3epM_UHl-yA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 8 Dec 2023 12:44:11 -0500 (EST)
+Date: Fri, 8 Dec 2023 09:43:00 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,	comex <comexk@gmail.com>,
+ Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,	Alice Ryhl <aliceryhl@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
+Message-ID: <ZXNVpCn0g_aBCpTE@boqun-archlinux>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-alice-file-v1-5-f81afe8c7261@google.com>
+ <20231129-etappen-knapp-08e2e3af539f@brauner>
+ <20231129164815.GI23596@noisy.programming.kicks-ass.net>
+ <20231130-wohle-einfuhr-1708e9c3e596@brauner>
+ <A0BFF59C-311C-4C44-9474-65DB069387BD@gmail.com>
+ <CANiq72k4H2_NZuQcpeKANqyi_9W01fLC0WxXon5cx4z=WsgeXQ@mail.gmail.com>
+ <CAKwvOdkgDwnC_jaGjXjk9yKYo=zWDR_3x7Drw3i=KX0Wyij6ew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,226 +120,72 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKwvOdkgDwnC_jaGjXjk9yKYo=zWDR_3x7Drw3i=KX0Wyij6ew@mail.gmail.com>
 
-On 12/6/23 12:59, Alice Ryhl wrote:
-> +    /// Schedule a task work that closes the file descriptor when this t=
-ask returns to userspace.
-> +    ///
-> +    /// Fails if this is called from a context where we cannot run work =
-when returning to
-> +    /// userspace. (E.g., from a kthread.)
-> +    pub fn close_fd(self, fd: u32) -> Result<(), DeferredFdCloseError> {
-> +        use bindings::task_work_notify_mode_TWA_RESUME as TWA_RESUME;
-> +
-> +        // In this method, we schedule the task work before closing the =
-file. This is because
-> +        // scheduling a task work is fallible, and we need to know wheth=
-er it will fail before we
-> +        // attempt to close the file.
-> +
-> +        // SAFETY: Getting a pointer to current is always safe.
-> +        let current =3D unsafe { bindings::get_current() };
-> +
-> +        // SAFETY: Accessing the `flags` field of `current` is always sa=
-fe.
-> +        let is_kthread =3D (unsafe { (*current).flags } & bindings::PF_K=
-THREAD) !=3D 0;
+On Fri, Dec 08, 2023 at 09:08:47AM -0800, Nick Desaulniers wrote:
+> On Fri, Dec 8, 2023 at 8:19 AM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > On Fri, Dec 8, 2023 at 6:28 AM comex <comexk@gmail.com> wrote:
+> > >
+> > > Regarding the issue of wrappers not being inlined, it's possible to get LLVM to optimize C and Rust code together into an object file, with the help of a compatible Clang and LLD:
+> > >
+> > > @ rustc -O --emit llvm-bc a.rs
+> > > @ clang --target=x86_64-unknown-linux-gnu -O2 -c -emit-llvm -o b.bc b.c
+> > > @ ld.lld -r -o c.o a.bc b.bc
+> > >
+> > > Basically LTO but within the scope of a single object file.  This would be redundant in cases where kernel-wide LTO is enabled.
+> > >
+> > > Using this approach might slow down compilation a bit due to needing to pass the LLVM bitcode between multiple commands, but probably not very much.
+> > >
+> > > Just chiming in as someone not involved in Rust for Linux but familiar with these tools.  Perhaps this has been considered before and rejected for some reason; I wouldn’t know.
+> >
+> > Thanks comex for chiming in, much appreciated.
+> >
+> > Yeah, this is what we have been calling the "local-LTO hack" and it
+> > was one of the possibilities we were considering for non-LTO kernel
+> > builds for performance reasons originally. I don't recall who
+> > originally suggested it in one of our meetings (Gary or Björn
+> > perhaps).
+> >
+> > If LLVM folks think LLVM-wise nothing will break, then we are happy to
+> 
+> On paper, nothing comes to mind.  No promises though.
+> 
+> From a build system perspective, I'd rather just point users towards
+> LTO if they have this concern.  We support full and thin lto.  This
+> proposal would add a third variant for just rust drivers.  Each
+> variation on LTO has a maintenance cost and each have had their own
+> distinct fun bugs in the past.  Not sure an additional variant is
+> worth the maintenance cost, even if it's technically feasible.
+> 
 
-Since Boqun brought to my attention that we already have a wrapper for
-`get_current()`, how about you use it here as well?
+Actually, the "LTO" in "local-LTO" may be misleading ;-) The problem we
+want to resolve here is letting Rust code call small C functions (or
+macros) without exporting the symbols. To me, it's really just "static
+linking" a library (right now it's rust/helpers.o) contains small C
+functions and macros used by Rust into a Rust driver kmodule, the "LTO"
+part can be optional: let the linker make the call.
 
-> +        if is_kthread {
-> +            return Err(DeferredFdCloseError::TaskWorkUnavailable);
-> +        }
-> +
-> +        // This disables the destructor of the box, so the allocation is=
- not cleaned up
-> +        // automatically below.
-> +        let inner =3D Box::into_raw(self.inner);
+Regards,
+Boqun
 
-Importantly this also lifts the uniqueness requirement (maybe add this
-to the comment?).
-
-> +
-> +        // The `callback_head` field is first in the struct, so this cas=
-t correctly gives us a
-> +        // pointer to the field.
-> +        let callback_head =3D inner.cast::<bindings::callback_head>();
-> +        // SAFETY: This pointer offset operation does not go out-of-boun=
-ds.
-> +        let file_field =3D unsafe { core::ptr::addr_of_mut!((*inner).fil=
-e) };
-> +
-> +        // SAFETY: The `callback_head` pointer is compatible with the `d=
-o_close_fd` method.
-
-Also, `callback_head` is valid, since it is derived from...
-
-> +        unsafe { bindings::init_task_work(callback_head, Some(Self::do_c=
-lose_fd)) };
-> +        // SAFETY: The `callback_head` pointer points at a valid and ful=
-ly initialized task work
-> +        // that is ready to be scheduled.
-> +        //
-> +        // If the task work gets scheduled as-is, then it will be a no-o=
-p. However, we will update
-> +        // the file pointer below to tell it which file to fput.
-> +        let res =3D unsafe { bindings::task_work_add(current, callback_h=
-ead, TWA_RESUME) };
-> +
-> +        if res !=3D 0 {
-> +            // SAFETY: Scheduling the task work failed, so we still have=
- ownership of the box, so
-> +            // we may destroy it.
-> +            unsafe { drop(Box::from_raw(inner)) };
-> +
-> +            return Err(DeferredFdCloseError::TaskWorkUnavailable);
-
-Just curious, what could make the `task_work_add` call fail? I imagine
-an OOM situation, but is that all?
-
-> +        }
-> +
-> +        // SAFETY: Just an FFI call. This is safe no matter what `fd` is=
-.
-
-I took a look at the C code and there I found this comment:
-
-    /*
-     * variant of close_fd that gets a ref on the file for later fput.
-     * The caller must ensure that filp_close() called on the file.
-     */
-
-And while you do call `filp_close` later, this seems like a safety
-requirement to me.
-Also, you do not call it when `file` is null, which I imagine to be
-fine, but I do not know that since the C comment does not cover that
-case.
-
-> +        let file =3D unsafe { bindings::close_fd_get_file(fd) };
-> +        if file.is_null() {
-> +            // We don't clean up the task work since that might be expen=
-sive if the task work queue
-> +            // is long. Just let it execute and let it clean up for itse=
-lf.
-> +            return Err(DeferredFdCloseError::BadFd);
-> +        }
-> +
-> +        // SAFETY: The `file` pointer points at a valid file.
-> +        unsafe { bindings::get_file(file) };
-> +
-> +        // SAFETY: Due to the above `get_file`, even if the current task=
- holds an `fdget` to
-> +        // this file right now, the refcount will not drop to zero until=
- after it is released
-> +        // with `fdput`. This is because when using `fdget`, you must al=
-ways use `fdput` before
-
-Shouldn't this be "the refcount will not drop to zero until after it is
-released with `fput`."?
-
-Why is this the SAFETY comment for `filp_close`? I am not understanding
-the requirement on that function that needs this. This seems more a
-justification for accessing `file` inside `do_close_fd`. In which case I
-think it would be better to make it a type invariant of
-`DeferredFdCloserInner`.
-
-> +        // returning to userspace, and our task work runs after any `fdg=
-et` users have returned
-> +        // to userspace.
-> +        //
-> +        // Note: fl_owner_t is currently a void pointer.
-> +        unsafe { bindings::filp_close(file, (*current).files as bindings=
-::fl_owner_t) };
-> +
-> +        // We update the file pointer that the task work is supposed to =
-fput.
-> +        //
-> +        // SAFETY: Task works are executed on the current thread once we=
- return to userspace, so
-> +        // this write is guaranteed to happen before `do_close_fd` is ca=
-lled, which means that a
-> +        // race is not possible here.
-> +        //
-> +        // It's okay to pass this pointer to the task work, since we jus=
-t acquired a refcount with
-> +        // the previous call to `get_file`. Furthermore, the refcount wi=
-ll not drop to zero during
-> +        // an `fdget` call, since we defer the `fput` until after return=
-ing to userspace.
-> +        unsafe { *file_field =3D file };
-
-A synchronization question: who guarantees that this write is actually
-available to the cpu that executes `do_close_fd`? Is there some
-synchronization run when returning to userspace?
-
-> +
-> +        Ok(())
-> +    }
-> +
-> +    // SAFETY: This function is an implementation detail of `close_fd`, =
-so its safety comments
-> +    // should be read in extension of that method.
-
-Why not use this?:
-- `inner` is a valid pointer to the `callback_head` field of a valid
-  `DeferredFdCloserInner`.
-- `inner` has exclusive access to the pointee and owns the allocation.
-- `inner` originates from a call to `Box::into_raw`.
-
-> +    unsafe extern "C" fn do_close_fd(inner: *mut bindings::callback_head=
-) {
-> +        // SAFETY: In `close_fd` we use this method together with a poin=
-ter that originates from a
-> +        // `Box<DeferredFdCloserInner>`, and we have just been given own=
-ership of that allocation.
-> +        let inner =3D unsafe { Box::from_raw(inner as *mut DeferredFdClo=
-serInner) };
-
-Use `.cast()`.
-
-> +        if !inner.file.is_null() {
-> +            // SAFETY: This drops a refcount we acquired in `close_fd`. =
-Since this callback runs in
-> +            // a task work after we return to userspace, it is guarantee=
-d that the current thread
-> +            // doesn't hold this file with `fdget`, as `fdget` must be r=
-eleased before returning to
-> +            // userspace.
-> +            unsafe { bindings::fput(inner.file) };
-> +        }
-> +        // Free the allocation.
-> +        drop(inner);
-> +    }
-> +}
-> +
-> +/// Represents a failure to close an fd in a deferred manner.
-> +#[derive(Copy, Clone, Eq, PartialEq)]
-> +pub enum DeferredFdCloseError {
-> +    /// Closing the fd failed because we were unable to schedule a task =
-work.
-> +    TaskWorkUnavailable,
-> +    /// Closing the fd failed because the fd does not exist.
-> +    BadFd,
-> +}
-> +
-> +impl From<DeferredFdCloseError> for Error {
-> +    fn from(err: DeferredFdCloseError) -> Error {
-> +        match err {
-> +            DeferredFdCloseError::TaskWorkUnavailable =3D> ESRCH,
-
-This error reads "No such process", I am not sure if that is the best
-way to express the problem in that situation. I took a quick look at the
-other error codes, but could not find a better fit. Do you have any
-better ideas? Or is this the error that C binder uses?
-
---=20
-Cheers,
-Benno
-
-> +            DeferredFdCloseError::BadFd =3D> EBADF,
-> +        }
-> +    }
-> +}
+> > go ahead with that (since it also solves the performance side), but it
+> > would be nice to know if it will always be OK to build like that, i.e.
+> > I think Andreas actually tried it and it seemed to work and boot, but
+> > the worry is whether there is something subtle that could have bad
+> > codegen in the future.
+> >
+> > (We will also need to worry about GCC.)
+> >
+> > Cheers,
+> > Miguel
+> 
+> 
+> 
+> -- 
+> Thanks,
+> ~Nick Desaulniers
 
