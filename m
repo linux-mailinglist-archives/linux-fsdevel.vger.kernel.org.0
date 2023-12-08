@@ -1,178 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-5349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5364F80AC2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:38:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A66080AC2F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 19:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 767DF1C20752
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35301F210BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60223C068
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7474CB20
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 18:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IlOPMzwG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9BTnAv6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DA998;
-	Fri,  8 Dec 2023 08:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=+bKWbY0TFFFJG7vCNdsapguiWXk5Tcdbxhr2FyThgV4=; b=IlOPMzwGrh/jGe5Kiyfmvz91r2
-	DMe8pUz8Wq3s7w2GLz1XHY4A9XDGCfk8/cVEQOmWA48/RiYZAMXOFYmmFcYkZDbQ5h502Wb3TteF8
-	J+eVsnXCtfTIqVDaqmNfQaeBL86u5r2eivNqXVdqQpxBYVdwzmBs1BA8ZCzTCsdSRbxTyZ1USB4J9
-	WncYy/GVXmd4+KowpHmPKlrXohHcN4yI5nLjOt0B0uwCa+az5Q3b1GwQobVLUap62blhtXCZj5CqS
-	L1pdQEwmXmBrsIwdIpFqU3ZwVZtB7ZPqAn6DPNNDcZ9YYoiHW7fcc5aBqNppVII1H9it+czae4xK0
-	Ekm1eL/w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rBe9v-0066Wi-1l; Fri, 08 Dec 2023 16:57:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2652A3003F0; Fri,  8 Dec 2023 17:57:02 +0100 (CET)
-Date: Fri, 8 Dec 2023 17:57:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <20231208165702.GI28727@noisy.programming.kicks-ass.net>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-5-af617c0d9d94@google.com>
- <20231206123402.GE30174@noisy.programming.kicks-ass.net>
- <CAH5fLgh+0G85Acf4-zqr_9COB5DUtt6ifVpZP-9V06hjJgd_jQ@mail.gmail.com>
- <20231206134041.GG30174@noisy.programming.kicks-ass.net>
- <CANiq72kK97fxTddrL+Uu2JSah4nND=q_VbJ76-Rdc-R-Kijszw@mail.gmail.com>
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EA198;
+	Fri,  8 Dec 2023 09:00:03 -0800 (PST)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-5d8e816f77eso22849117b3.0;
+        Fri, 08 Dec 2023 09:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702054803; x=1702659603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jBtWBJQTohnwJ/b4g/t2c8OgOzR4vIJu5QNlR9uw3Ag=;
+        b=S9BTnAv6vbJZmflvnfS6WdzPy1/qUNc45rZHO2y0n0lndurlK3RKpOY495AV2lUBqn
+         Xx1FMbTbCmTCFH8zrfwVUNhZ8kZkEudPiG4kxr8VlQL6SAPN2AQ8FbzcuLyLILFOmmAC
+         wSWaPprUdzsraE/9aF3K7nJsHn79E8Jo3pGFKG9MNbdG/TtlB8OVfwIy5KSW/OE6GLQA
+         Oe6vxrv8c+v2Dr7xr6KIz7Vz4VPga9lMspIZqSYBVojvc0N53Of2v2/NSGDwDl61PFtE
+         4vEmqzJVIgPlEBy9oYFdZPaaqataairMWan8L2oSs3aj9GJbF6Ebiws8Da3HrP7Oq5U7
+         r5yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702054803; x=1702659603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jBtWBJQTohnwJ/b4g/t2c8OgOzR4vIJu5QNlR9uw3Ag=;
+        b=GeIfApPoLmrB6QKg00Z6X4F1BKzUospe43cck4dsRnxQEJry4dO0yn2vLW8EN9h4NX
+         U+lwgg2+yVdWQTn4Hh2YktJSeJSdWRdG6ragB3WD6Z25Lh11L/opaED1Dv+XzQh3+s6A
+         Xjl3aZESdNu7k4yhXgh56nJp7KwT7/gAnvEjnpbCYCNQFBA2tbTwDsHiGWDUwlixgpIp
+         drEXV1CyiOdONqiIs4j+k3A2YKoAB1+Wn4owHpKiAQYdpazKzNqKYypstWMjEnglhw71
+         F5KusIMlo+KLslpX7P6xDU9QWXtcq+nUrIWn91ptmQCIJzH2hSAzBaAClrfFZLlVdiZw
+         fvHQ==
+X-Gm-Message-State: AOJu0YzC4aRuFs0JnhHzYyfM/tU4s7/FfnRhJ689BUWN2UAtVHmt4cwn
+	lU3BqklJQtVqdU26x02X/+52WIgrJK9VZigdMnY=
+X-Google-Smtp-Source: AGHT+IEDEFuGPlOOaOqUwW/5TKcG+a0eq2uylZH8LKW32NcjbTMw/3yBjEt8q8/2YI2E/lZAzSV05OlXUyuh9c79ALE=
+X-Received: by 2002:a05:6902:1828:b0:db5:4653:7214 with SMTP id
+ cf40-20020a056902182800b00db546537214mr253408ybb.42.1702054802494; Fri, 08
+ Dec 2023 09:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kK97fxTddrL+Uu2JSah4nND=q_VbJ76-Rdc-R-Kijszw@mail.gmail.com>
+References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
+ <20231129-mitsingen-umweltschutz-c6f8d9569234@brauner> <20231206200505.nsmauqpetkyisyjd@moria.home.lan>
+In-Reply-To: <20231206200505.nsmauqpetkyisyjd@moria.home.lan>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 8 Dec 2023 17:59:51 +0100
+Message-ID: <CANiq72kWx5td7SfP3KWcce4ZqvWBg1NPjT=dNeed2eG2rEHWjw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] File abstractions needed by Rust Binder
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 08, 2023 at 05:31:59PM +0100, Miguel Ojeda wrote:
-> On Wed, Dec 6, 2023 at 2:41 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Anywhoo, the longer a function is, the harder it becomes, since you need
-> > to deal with everything a function does and consider the specuation
-> > window length. So trivial functions like the above that do an immediate
-> > dereference and are (and must be) a valid indirect target (because
-> > EXPORT) are ideal.
-> 
-> We discussed this in our weekly meeting, and we would like to ask a
-> few questions:
-> 
->   - Could you please describe an example attack that you are thinking
-> of? (i.e. a "full" attack, rather than just Spectre itself). For
-> instance, would it rely on other vulnerabilities?
+On Wed, Dec 6, 2023 at 9:05=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> I spoke to Miguel about this and it was my understanding that everything
+> was in place for moving Rust wrappers to the proper directory -
+> previously there was build system stuff blocking, but he said that's all
+> working now. Perhaps the memo just didn't get passed down?
 
-There's a fairly large amount of that on github, google spectre poc and
-stuff like that.
+No, it is being worked on (please see my sibling reply).
 
->   - Is this a kernel rule everybody should follow now? i.e. "no (new?)
-> short, exported symbols that just dereference their pointer args". If
-> so, could this please be documented? Or is it already somewhere?
+> (My vote would actually be for fs/ directly, not fs/rust, and a 1:1
+> mapping between .c files and the .rs files that wrap them).
 
-Gadget scanners are ever evolving and I think there's a bunch of groups
-running them against Linux, but most of us don't have spare time beyond
-trying to plug the latest hole.
+Thanks Kent for voting :)
 
->   - Are we checking for this in some way already, e.g. via `objtool`?
-> Especially if this is a rule, then it would be nice to have a way to
-> double-check if we are getting rid of (most of) these "dangerous"
-> symbols (or at least not introduce new ones, and not just in Rust but
-> C too).
+Though note that an exact 1:1 mapping is going to be hard, e.g.
+consider nested Rust submodules which would go in folders or
+abstractions that you may arrange differently even if they wrap the
+same concepts.
 
-Objtool does not look for these (gadget scanners are quite complicated
-by now and I don't think I want to go there with objtool). At the moment
-I'm simply fixing whatever gets reported from 3rd parties when and where
-time permits.
+But, yeah, one should try to avoid to diverge without a good reason,
+of course, especially in the beginning.
 
-The thing at hand was just me eyeballing it.
-
-> > That would be good, but how are you going to do that without duplicating
-> > the horror that is struct task_struct ?
-> 
-> As Alice pointed out, `bindgen` "solves" that, but it is nevertheless
-> extra maintenance effort.
-> 
-> > Well, I really wish the Rust community would address the C
-> > interoperability in a hurry. Basically make it a requirement for
-> > in-kernel Rust.
-> 
-> Yeah, some of us have advocated for more integrated C support within
-> Rust (or within `rustc` at least).
-
-\o/
-
-> > I mean, how hard can it be to have clang parse the C headers and inject
-> > them into the Rust IR as if they're external FFI things.
-> 
-> That is what `bindgen` does (it uses Clang as a library), except it
-> does not create Rust IR, it outputs normal Rust code, i.e. similar to
-> C declarations.
-
-Right, but then you get into the problem that Rust simply cannot express
-a fair amount of the things we already do, like asm-goto, or even simple
-asm with memops apparently.
-
-> But note that using Clang does not solve the issue of `#define`s in
-> the general case. That is why we would still need "helpers" like these
-> so that the compiler knows how to expand the macro in a C context,
-> which then can be inlined as LLVM IR or similar (which is what I
-> suspect you were actually thinking about, rather than "Rust IR"?).
-
-Yeah, LLVM-IR. And urgh yeah, CPP, this is another down-side of Rust not
-being in the C language family, you can't sanely run CPP on it. Someone
-really should do a Rust like language in the C family, then perhaps it
-will stop looking like line noise to me :-)
-
-I suppose converting things to enum and inline functions where possible
-might help a bit with that, but things like tracepoints, which are built
-from a giant pile of CPP are just not going to be happy :/
-
-Anyway, I think it would be a giant step forwards from where we are
-today.
-
-> That "mix the LLVM IRs from Clang and `rustc`" ("local LTO hack")
-> approach is something we have been discussing in the past for
-> performance reasons (i.e. to inline these small C functions that Rust
-> needs, cross-language, even in non-LTO builds). And if it helps to
-> avoid certain attacks around speculation, then even better. So if the
-> LLVM folks do not have any major concerns about it, then I think we
-> should go ahead with that (please see also my reply to comex).
-
-But does LTO make any guarantees about inlining? The thing is, with
-actual LLVM-IR you can express the __always_inline attribute and
-inlining becomes guaranteed, I don't think you can rely on LTO for the
-same level of guarantees.
-
-And you still need to create these C functions by hand in this
-local-LTO scenario, which is less than ideal.
+Cheers,
+Miguel
 
