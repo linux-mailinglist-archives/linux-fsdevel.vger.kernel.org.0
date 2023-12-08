@@ -1,85 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-5320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5321-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD06280A360
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 13:36:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B71280A584
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87975281809
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004B92819D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D221C692
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 12:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC91D2030F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNAUcdRc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b199UgcL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F7DD537;
-	Fri,  8 Dec 2023 11:40:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96497C433C7;
-	Fri,  8 Dec 2023 11:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702035652;
-	bh=sZ4JI3UZK4sPfWcegMQKthZYFwyRcELwUbjKcqMVAYM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=lNAUcdRcinqmw4/ipugHauoY/dY9+sxsOzZIyGFqUQkV1SiciRc7h84kQQEmO8NT4
-	 V+7x2HyWnWZjJZRRnBUxm9OtqwzFGgY8sq0UvNl2+8HXcElTZRL5LGigU34SjGebs3
-	 vmnufyl65mzUhZsT2iHJHStM/t8IV/naSgdIKbzB/MmbjoIMvHGaf8BqIMTrE5XeRm
-	 tHpF9v1Y7FilfYLWvdnzolt3nD/gJKuPXgPHveirO+B91tm1BQiQTEE+rsqnoMyKA2
-	 9xPwEGQv2OaOso0qoE97GCNDoRa4G3iO89aDwFtNa6rTqzuGlqGPGjHw0q31R2Zdcm
-	 5QJkETItBLTVg==
-Message-ID: <c850d6606abb4be23090ed8a947722a06997aa42.camel@kernel.org>
-Subject: Re: [PATCH 0/3] nfsd: fully close all files in the nfsd threads
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, Oleg Nesterov
- <oleg@redhat.com>,  Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Date: Fri, 08 Dec 2023 06:40:50 -0500
-In-Reply-To: <20231208033006.5546-1-neilb@suse.de>
-References: <20231208033006.5546-1-neilb@suse.de>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-	kZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2 (3.50.2-1.fc39) 
+Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA714199C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 04:48:01 -0800 (PST)
+Received: by mail-ed1-x549.google.com with SMTP id 4fb4d7f45d1cf-54cd2281cd2so3564331a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Dec 2023 04:48:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702039680; x=1702644480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l+kObd+JIGY2cM/glk/Q9xku9Pg0BTFZYmGYboEHbqo=;
+        b=b199UgcLzy4cOonkTSI7UfElaAj1dTAbXCGT15gahTmP4S7GQ1LFDCFk7QmbtqY5LO
+         O9I0ZekF4tRV3wlPUU4hkxwAIXw1ZoO2cxB+ZnpFo969gz19YvgC9NG6IiJJKn/pQ5hK
+         5b/ohu47gpq0RwcJKl9DgQGO4ms27U2Ttx8AX9vWdeKHKISZEhH/BgwpPS3ryWuQXWTD
+         O5iwRwpRVR2IvQpketEIHPQ3wrjK/avM6AoUn/ZR+423dNML6mNQGytQ81kgWRzQAcZk
+         f/nJJwDyx3VALejAU11rkfqex7+XaD9SD5jTdjaGX8ga2+388kTP/bdJcmASTUnVbv3P
+         JpDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702039680; x=1702644480;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l+kObd+JIGY2cM/glk/Q9xku9Pg0BTFZYmGYboEHbqo=;
+        b=hlq0VkYCoaFSbGr8JM+r+VOS7ltMCWT+vKTCWbplfAXtMTRAfsiXEXmK40PKy7azcj
+         /noiFxJ1ep+f3yhsboXrMtUa6vptqc4LqGPiWltRxYapxGkvGNJQ4pfDY/dfrtqPPfrQ
+         gSx4GLfZ32UEQ7FgtmrKyhvvH45gzJLhdWbdr0qYYWaoZ8PxrKXyI7xP/0CzsFNgK/bg
+         M+0nLWX/CEDAlV5KUiG2AYTtmbMtQdbbe149uN8jWSzE0YV+MPxg4gGQZKdD0tgHFEUQ
+         8gVz+MVqePNMRHp1RhDz6xA3UtRRt5yvlOGkdqQbquodqU0EAyAf89npQqyPXGwDm4+Z
+         6KYg==
+X-Gm-Message-State: AOJu0YzUN8ArgAHQi1N2+rQncef951nLH1Ute5OQg3hygxKJGWQ321dc
+	YeLAeVSBN7MbkQF5ivxvqSQjtappbns=
+X-Google-Smtp-Source: AGHT+IFDOcr7bui5v8HTFE7vcdjUHf6o95K/2qxy45eb27If/ShRl0g/wHckFIuhMOF8E3rjyRhHDJTcSGI=
+X-Received: from sport.zrh.corp.google.com ([2a00:79e0:9d:4:d80e:bfc8:2891:24c1])
+ (user=gnoack job=sendgmr) by 2002:a17:906:690:b0:a1f:70a6:dbb2 with SMTP id
+ u16-20020a170906069000b00a1f70a6dbb2mr4282ejb.4.1702039680062; Fri, 08 Dec
+ 2023 04:48:00 -0800 (PST)
+Date: Fri, 8 Dec 2023 13:47:50 +0100
+In-Reply-To: <CABi2SkULCFBK0eBZen6Z7YSLnm_EcZqbmPN2fQ64bBbmX77uRw@mail.gmail.com>
+Message-Id: <ZXMQdqeGH6i5aJd8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20231201143042.3276833-1-gnoack@google.com> <20231201143042.3276833-10-gnoack@google.com>
+ <CABi2SkULCFBK0eBZen6Z7YSLnm_EcZqbmPN2fQ64bBbmX77uRw@mail.gmail.com>
+Subject: Re: [PATCH v7 9/9] landlock: Document IOCTL support
+From: "=?iso-8859-1?Q?G=FCnther?= Noack" <gnoack@google.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: linux-security-module@vger.kernel.org, 
+	"=?iso-8859-1?Q?Micka=EBl_Sala=FCn?=" <mic@digikod.net>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
+	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2023-12-08 at 14:27 +1100, NeilBrown wrote:
-> This is a new version of my patches to address a rare problem with nfsd
-> closing files faster than __fput() can complete the close in a different
-> thread.
->=20
-> This time I'm simply switching to __fput_sync().  I cannot see any
-> reason that this would be a problem, but if any else does and can show
-> me what I'm missing, I'd appreciate it.
->=20
-> Thanks,
-> NeilBrown
->=20
->=20
->  [PATCH 1/3] nfsd: use __fput_sync() to avoid delayed closing of
->  [PATCH 2/3] nfsd: Don't leave work of closing files to a work queue.
->  [PATCH 3/3] VFS: don't export flush_delayed_fput().
+Hello Jeff!
 
-Looks good to me.
+On Fri, Dec 01, 2023 at 11:55:03AM -0800, Jeff Xu wrote:
+> On Fri, Dec 1, 2023 at 6:41=E2=80=AFAM G=C3=BCnther Noack <gnoack@google.=
+com> wrote:
+> > +Rights associated with file descriptors
+> > +---------------------------------------
+> > +
+> > +When opening a file, the availability of the ``LANDLOCK_ACCESS_FS_TRUN=
+CATE`` and
+> > +``LANDLOCK_ACCESS_FS_IOCTL`` rights is associated with the newly creat=
+ed file
+> > +descriptor and will be used for subsequent truncation and ioctl attemp=
+ts using
+> > +:manpage:`ftruncate(2)` and :manpage:`ioctl(2)`.  The behavior is simi=
+lar to
+> > +opening a file for reading or writing, where permissions are checked d=
+uring
+> > +:manpage:`open(2)`, but not during the subsequent :manpage:`read(2)` a=
+nd
+> >  :manpage:`write(2)` calls.
+> >
+> > -As a consequence, it is possible to have multiple open file descriptor=
+s for the
+> > -same file, where one grants the right to truncate the file and the oth=
+er does
+> > -not.  It is also possible to pass such file descriptors between proces=
+ses,
+> > -keeping their Landlock properties, even when these processes do not ha=
+ve an
+> > -enforced Landlock ruleset.
+> > +As a consequence, it is possible to have multiple open file descriptor=
+s
+> > +referring to the same file, where one grants the truncate or ioctl rig=
+ht and the
+> > +other does not.  It is also possible to pass such file descriptors bet=
+ween
+> > +processes, keeping their Landlock properties, even when these processe=
+s do not
+> > +have an enforced Landlock ruleset.
+> >
+> I understand the "passing fd between process ", but not the " multiple
+> open fds referring to the same file, with different permission", are
+> those fds all opened within the same domain ?
+>=20
+> Can we have a pseudocode to help understanding ?
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+It's a little bit expanding the scope here, as the documentation existed al=
+redy
+prior to the patch set, but it's a fair comment that this paragraph is not =
+clear
+enough.  I tried to rephrase it.  Maybe this is better:
+
+  As a consequence, it is possible that a process has multiple open file
+  descriptors referring to the same file, but Landlock enforces different t=
+hings
+  when operating with these file descriptors.  This can happen when a Landl=
+ock
+  ruleset gets enforced and the process keeps file descriptors which were o=
+pened
+  both before and after the enforcement.  It is also possible to pass such =
+file
+  descriptors between processes, keeping their Landlock properties, even wh=
+en
+  some of the involved processes do not have an enforced Landlock ruleset.
+
+Some example code to clarify:
+
+One way that this can happen is:
+
+  (1) fd1 =3D open("foobar.txt", O_RDWR)
+  (2) enforce_landlock(forbid all ioctls)
+  (3) fd2 =3D open("foobar.txt", O_RDWR)
+
+  =3D=3D> You now have fd1 and fd2 referring to the same file on disk,
+      but you can only do ioctls on it through fd1, but not through fd2.
+
+Or, using SCM_RIGHTS (unix(7)):
+
+  (1) Process 1: Listen on Unix socket
+  (2) Process 2: Enforce Landlock so that ioctls are forbidden
+  (3) Process 2: fd =3D open("foobar.txt", O_RDWR)
+  (4) Process 2: send fd to Process 1
+  (5) Process 1: receive fd
+
+  =3D=3D> Process 1 can not do ioctls on the received fd,
+      as configured by the Landlock policy enforced in Process 2
+
+Or, simply by inheriting file descriptors through execve:
+
+  (1) Parent process/main thread: Spawn thread t
+    (t.1) Enforce Landlock so that ioctls are forbidden
+          (This policy is local to the thread)
+    (t.2) fd =3D open("foobar.txt", O_RDWR)
+  (2) Parent process/main thread: join (exit) thread t
+  (3) Parent process/main thread: execve and inherit fd!
+
+  =3D=3D> The child process can not use ioctls with the inherited fd,
+      as configured by the Landlock policy before
+
+The same is also possible with the truncation right.
+
+=E2=80=94G=C3=BCnther
 
