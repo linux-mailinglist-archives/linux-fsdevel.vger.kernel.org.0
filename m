@@ -1,141 +1,382 @@
-Return-Path: <linux-fsdevel+bounces-5298-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0E7809C78
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 07:34:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D09F7809C7A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 07:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C64282014
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 06:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F48028171A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 06:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195A7DF4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 06:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34063101C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 06:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FStLKhW4"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="goPP2wDU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC8CE1708;
-	Thu,  7 Dec 2023 21:28:21 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id 41be03b00d2f7-5c66e7eafabso1434024a12.0;
-        Thu, 07 Dec 2023 21:28:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702013301; x=1702618101; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dUGmPEbpW20dc17tUbVamxt8gw7gwKEC4FwZ3bTqHfg=;
-        b=FStLKhW4VJO/dzygcS3r4iEzvjZPu+Glw17zY1SWmE5l4ww1ZYBXuPos67/TOjSLZJ
-         ub36WDDJBvMdLCVm1Pst2zY9Swh2LfCt6VmaiqIBqTzj0GdhkSK2YeRTQ3AufuygWNxZ
-         U0BZ5R5ex1ROxdhWh7lu56BV3xwofqbSZeSL6v9gb1SQxELsVhTfPEJFBeqLRrrG9rrQ
-         CPlNoS2/CyxJPr112Wb9jVafzkr8kOksMEgIAfxIIOLAEduEbijSbOhk9VWyWgGbp39q
-         HLscicbWJb0mszy0vPY6OrdsyRVDVQl8EdU8pp5XDNblwHSXAd184AsrylPtAQKs1YSd
-         /HQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702013301; x=1702618101;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dUGmPEbpW20dc17tUbVamxt8gw7gwKEC4FwZ3bTqHfg=;
-        b=LuIavFHaFHYKDNDImX7bauqRFB56DC4YnUSEA3nFEVFx/9OS7Imck3TQ23RmpwbsRx
-         Tjm1eeQESOZkM56eD8UURzeSQTET2lZLwoTUhQiQ3vRTaTVSwFLADnHBUtItfO2/D9Lo
-         sPE5yuTRG5u8ZN/Pe/dQk+bVMRrp2beXsO+OAx3oyQb4lYyLU2Zbbv4SoghTigkL4RDa
-         wqBGoZJ32egD5tD76Vwkg2AP4UE9wFFQgO/sNZZDq5ldis3qH827thhU06s6GeEHTf9q
-         /uzwZJHJq0w/mmKPcxCTbLM33PHJElnSNJI7CeUkqQEf1o8YIhjE85/FiVfjephNgbQY
-         yulA==
-X-Gm-Message-State: AOJu0YyZi6gxkmztdxunMzQSC+vxEytPZWk3bCz2RDmTlxQUadsvPiS8
-	VaBJeRkzr1r1AmticoEr6fI=
-X-Google-Smtp-Source: AGHT+IGj1T0uSHej29ptuixe+XoVelY+Ka5cBypKJ64qn3JuPT/jgsVKS/9TR+relrXm1kDUFvCxGg==
-X-Received: by 2002:a17:90b:3b50:b0:286:6cc0:caca with SMTP id ot16-20020a17090b3b5000b002866cc0cacamr3711007pjb.65.1702013301134;
-        Thu, 07 Dec 2023 21:28:21 -0800 (PST)
-Received: from smtpclient.apple ([2601:647:4b00:6db0:b844:97a8:fed6:b1f7])
-        by smtp.gmail.com with ESMTPSA id sc1-20020a17090b510100b002867adefbd4sm848049pjb.48.2023.12.07.21.28.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Dec 2023 21:28:20 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B1D26AC;
+	Thu,  7 Dec 2023 21:41:21 -0800 (PST)
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231208054119epoutp01c076a167c4e59ebf8153b06075f17436~exMm-9AMa0608406084epoutp01k;
+	Fri,  8 Dec 2023 05:41:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231208054119epoutp01c076a167c4e59ebf8153b06075f17436~exMm-9AMa0608406084epoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1702014080;
+	bh=TShggJDiDmcvjOqlveL4HgbFDSRxgxWpVCqxzQnUxMs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=goPP2wDUv91kZK/qLNaZSHEpbDk1J7Z+ge5rlSwzVgpiFaehYP1SqkF072Ix25Of/
+	 0XbiHNq5CnHbNug7y+OO3hdKm6Sx4hOXRIPa1b2lpUVQ6OF6i/pah3mXqJLGSV27IA
+	 2zLdqpsW0PERec2uwrfYsmB1ezsb2JOPuV+6maRY=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20231208054119epcas2p23c182dc4bb113f596c3884c7aaed3bce~exMmur3ux3074330743epcas2p2Q;
+	Fri,  8 Dec 2023 05:41:19 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Smg3y6k7zz4x9QC; Fri,  8 Dec
+	2023 05:41:18 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	75.2A.18994.E7CA2756; Fri,  8 Dec 2023 14:41:18 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20231208054118epcas2p1bb98fbd9e0fb6a15e91a9b03d8c09ce3~exMlelct03160631606epcas2p1u;
+	Fri,  8 Dec 2023 05:41:18 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231208054118epsmtrp2958e412c6b2a3e5a6a38d437b1243d25~exMldE9ty2518625186epsmtrp2M;
+	Fri,  8 Dec 2023 05:41:18 +0000 (GMT)
+X-AuditID: b6c32a4d-9f7ff70000004a32-f0-6572ac7e950d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E8.87.07368.E7CA2756; Fri,  8 Dec 2023 14:41:18 +0900 (KST)
+Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20231208054117epsmtip10f9d367f5057e635709e0ea235922862~exMlIWgTu3219832198epsmtip1t;
+	Fri,  8 Dec 2023 05:41:17 +0000 (GMT)
+Date: Fri, 8 Dec 2023 14:29:38 +0900
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+	vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
+	pcc@google.com, steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
+	kcc@google.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 16/27] arm64: mte: Manage tag storage on page
+ allocation
+Message-ID: <20231208052938.GC1359878@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.300.42\))
-Subject: Re: [PATCH 5/7] rust: file: add `Kuid` wrapper
-From: comex <comexk@gmail.com>
-In-Reply-To: <20231130-wohle-einfuhr-1708e9c3e596@brauner>
-Date: Thu, 7 Dec 2023 21:28:06 -0800
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Kees Cook <keescook@chromium.org>,
- Matthew Wilcox <willy@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Daniel Xu <dxu@dxuuu.xyz>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A0BFF59C-311C-4C44-9474-65DB069387BD@gmail.com>
-References: <20231129-alice-file-v1-0-f81afe8c7261@google.com>
- <20231129-alice-file-v1-5-f81afe8c7261@google.com>
- <20231129-etappen-knapp-08e2e3af539f@brauner>
- <20231129164815.GI23596@noisy.programming.kicks-ass.net>
- <20231130-wohle-einfuhr-1708e9c3e596@brauner>
-To: Christian Brauner <brauner@kernel.org>
-X-Mailer: Apple Mail (2.3774.300.42)
+MIME-Version: 1.0
+In-Reply-To: <ZWc9sVTCHTBcp2Z2@raptor>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te1ATVxTG5+4um4BFF7D1mnaEiUWEaSBJgVxaaO2IzKq1g9oOTlExQ5ZH
+	gSSTBCut5S1EpoCkYg2ig8NLaSoY3q/IqwLSlioVWh6iKFCxwAwUrPJqYLXjf7/z3fOdc+69
+	c7i47R8cHjdcrmFUcmkkn7QiqlqdPQWxBhUjzK8Vo9xSA4m+v9pDIlNHMFrS3eSgOw/vmqXH
+	CQSaLvoWoLnS5zgaPVOJo+a8KQKNzmQQaNhUjKGhzGwCVY9NYmiiopVA2ro5Ahkf9lqghsZO
+	AvXU5ZLonmHFArWV/kKg2txOC/Td1BhA+cXb0J2mPAxlP/ubRJmDfSRqT2/CkEl7HzPnVmMo
+	oW2aRPqBAYC0bfM4alx+RqDKn55yUPKgB/qzsIyzw5E2XDIAeuG5DtDJpn4OnWeMppPbJi3o
+	8isutLHkNEkbZ3QcerC3gaQ7zi8Q9OX4bJwuL4ij/yrXA3radJeky7u+pmeNW/ypzyO8wxip
+	jFE5MPJghSxcHurD33swaGeQh6dQJBB5IQnfQS6NYnz4vh/7C/zCI82PyXc4Lo2MNkv+UrWa
+	7/aBt0oRrWEcwhRqjQ+fUcoilRKlq1oapY6Wh7rKGc17IqFQ7GFOPBYRdu36P7iy+qMTk01Z
+	ZDwYEacBSy6k3OFV/X1OGrDi2lINAJ4evkGywQyA3frfCTaYB1C3UI+9tIyPnMXYg0YACyZL
+	ABuMAlh3fYpczSKot2Fv/21ilUnKCXZUFIFV3ki5wZHKiTUDTt0i4dCFn9fK2lGfwZK+YXyV
+	rSlXmJa+SLBsAzv1j9bYktoGTQtL+KoZUhlWsOXaWcDO5AsHJ2YtWLaDE+0VHJZ5cHaqkWRZ
+	DavyWzHWHA9guZbtBql3Yc5Y6lohnAqDen2mmblmfSts6ydYeT3Uti5xWNkaalNsWedWeKPo
+	EsHyZjjyY+qLEWi4XFP04lWTMGi40IudAVtyXrlPzivdWH4H5tXPkDnmFjj1Jixe5rLoDEvr
+	3PKARQngMUp1VCgTLFaKBHLmy///OVgRZQRrK+ayrwY8KV1ybQEYF7QAyMX5G60juxWMrbVM
+	GvMVo1IEqaIjGXUL8DD/UBbOez1YYd5RuSZI5O4ldPf0FEnEHkIJf5P1vVMXZbZUqFTDRDCM
+	klG99GFcS148VhCAS98fOngqqdNbVnggIOXWBrfi8YTwXXNOfiHl4ix/q4IDR58uBhrao0y8
+	9H/nHx1rG48dcsxSfQEOnbRbiV1ZrpnYMxD4TcrID83u5wqr92uP7Fo3G2vCjDn2j9+wd7nS
+	ek4g2S15IBNvqvut6XL39NG4/i5tfRZ/YfJD4QPY3HXCv259EHO8cvseSdPhwL1VIem6X8n9
+	LRh6K5WbxktKULwGPzkktvGeTsj0Z3YHLcQs6rjOAWX5m2/bpR5Jz7InHQU2suium7KywZDD
+	AZodlJPXvkS37bqQxNqpJzEpTIVvaKLw/M51Sz19SRmtXXETgbEqFfZpu7jYb8PJiwWVfEId
+	JhW54Cq19D8uG+JY6wQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjH855zenog6zxWlr0gEtcMJU0sNkh4YozDJY6zzA+LbmQxi9i0
+	Z4CWwlphUzcHW0XWCDSdTNoxrPEC6xrRtggWaRh0rg0aHUodl1ECA5WtYLjIgFFHaZb57Zf/
+	7fnyMKTYLEhg8jVHeK1GoZbQsdT1LknSlhN2Lb/12pWXoK7JTsPZH+7T4PEpYdl0Swg9o70r
+	0pMyCqYun0Yw17RIwpixmYSfrJMUjE1XURD0NBDwe3UNBS3jIQImXF0UVLjnKHCMBgRws91P
+	wX13HQ1D9ucC8DbdoeBGnV8A30yOI7jQsAl6OqwE1Cz8RUP14EMafqnsIMBTMUysZFsIKPNO
+	0WAeGEBQ4X1GQnt4gYLmn+eFoB9Mh75LV4WZyZy93o64pUUT4vSefiFndRRzem9IwDkbpZzD
+	9jXNOaZNQm4wcJPmfLVLFHe+tIbknBe/4B47zYib8vTSnLP7ODfjSHqX3R+7Q8Wr80t4berO
+	g7F5C38OEkXzOz+9s1xFlqK2rQYUw2B2G340coYwoFhGzLYhfK6lVhA14rFlxk9EeR0O6r2C
+	aGgU4d6yq6sGxb6OA/2/UhGm2c3Y57qMIhzHpuKR5gkUKZDsbRpX/WhZXV3Hvo9tD4NkhEWs
+	DBsq/6GiqycJ3PHUIIgaa7Hf/MfqKslK8W/hJyvXmBVejxvCTESOYTdhz9IyaUSs5YWG5YWG
+	5f+GFZE2FM8X6QpyC5TyIrmG/0SmUxToijW5MmVhgQOtfo80pRUNnQvLOhHBoE6EGVISJ1Lf
+	LeTFIpXi6DFeW5ijLVbzuk60nqEkr4rktd+pxGyu4gh/mOeLeO1/LsHEJJQS3QmHngUnp639
+	yriUFLsyfUN79hrbg2RSlFk9n60b8F1Y9ska/0bv5F3rmxybKivXuA7ayncE5jJ2qdyS4qOP
+	yKBx91u4fHvihOxe/fOMhO6ziVtyhodTzLOte1/2de3dv+uSO0n7pv5E81jaKxtn+g7dyzLJ
+	j886HPPGDQeY+H0Nb3/gTb3YmAWBw2kHTiflDC/cuuGrrVeHWHwqOXNC+1Xo+mv2mI7K9o1n
+	vo9zLW2vtJg+79ltKplx7Rv/uPR2SJX/pdKf7novW3ysf9tHxGfVibmza6+c/PCNb8mKzQ+m
+	3VmniFljd/pQmkHbtkbqbzsffszcdbaK9iw+3ZOWUTIioXR5CrmU1OoU/wJa/2McrAMAAA==
+X-CMS-MailID: 20231208054118epcas2p1bb98fbd9e0fb6a15e91a9b03d8c09ce3
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_9337f_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231119165906epcas2p4c6691d274bec428329b193b99119a8d1
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+	<CGME20231119165906epcas2p4c6691d274bec428329b193b99119a8d1@epcas2p4.samsung.com>
+	<20231119165721.9849-17-alexandru.elisei@arm.com>
+	<20231129091040.GC2988384@tiffany> <ZWc9sVTCHTBcp2Z2@raptor>
+
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_9337f_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+
+Hi.
+
+On Wed, Nov 29, 2023 at 01:33:37PM +0000, Alexandru Elisei wrote:
+> Hi,
+> 
+> On Wed, Nov 29, 2023 at 06:10:40PM +0900, Hyesoo Yu wrote:
+> > On Sun, Nov 19, 2023 at 04:57:10PM +0000, Alexandru Elisei wrote:
+> > > [..]
+> > > +static int order_to_num_blocks(int order)
+> > > +{
+> > > +	return max((1 << order) / 32, 1);
+> > > +}
+> > > [..]
+> > > +int reserve_tag_storage(struct page *page, int order, gfp_t gfp)
+> > > +{
+> > > +	unsigned long start_block, end_block;
+> > > +	struct tag_region *region;
+> > > +	unsigned long block;
+> > > +	unsigned long flags;
+> > > +	unsigned int tries;
+> > > +	int ret = 0;
+> > > +
+> > > +	VM_WARN_ON_ONCE(!preemptible());
+> > > +
+> > > +	if (page_tag_storage_reserved(page))
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * __alloc_contig_migrate_range() ignores gfp when allocating the
+> > > +	 * destination page for migration. Regardless, massage gfp flags and
+> > > +	 * remove __GFP_TAGGED to avoid recursion in case gfp stops being
+> > > +	 * ignored.
+> > > +	 */
+> > > +	gfp &= ~__GFP_TAGGED;
+> > > +	if (!(gfp & __GFP_NORETRY))
+> > > +		gfp |= __GFP_RETRY_MAYFAIL;
+> > > +
+> > > +	ret = tag_storage_find_block(page, &start_block, &region);
+> > > +	if (WARN_ONCE(ret, "Missing tag storage block for pfn 0x%lx", page_to_pfn(page)))
+> > > +		return 0;
+> > > +	end_block = start_block + order_to_num_blocks(order) * region->block_size;
+> > > +
+> > 
+> > Hello.
+> > 
+> > If the page size is 4K,  block size is 2 (block size bytes 8K), and order is 6,
+> > then we need 2 pages for the tag. However according to the equation, order_to_num_blocks
+> > is 2 and block_size is also 2, so end block will be incremented by 4.
+> > 
+> > However we actually only need 8K of tag, right for 256K ?
+> > Could you explain order_to_num_blocks * region->block_size more detail ?
+> 
+> I think you are correct, thank you for pointing it out. The formula should
+> probably be something like:
+> 
+> static int order_to_num_blocks(int order, u32 block_size)
+> {
+> 	int num_tag_pages = max((1 << order) / 32, 1);
+> 
+> 	return DIV_ROUND_UP(num_tag_pages, block_size);
+> }
+> 
+> and that will make end_block = start_block + 2 in your scenario.
+> 
+> Does that look correct to you?
+> 
+> Thanks,
+> Alex
+> 
+
+That looks great!
+
+Thanks,
+Regards.
+
+> > 
+> > Thanks,
+> > Regards.
+> > 
+> > > +	mutex_lock(&tag_blocks_lock);
+> > > +
+> > > +	/* Check again, this time with the lock held. */
+> > > +	if (page_tag_storage_reserved(page))
+> > > +		goto out_unlock;
+> > > +
+> > > +	/* Make sure existing entries are not freed from out under out feet. */
+> > > +	xa_lock_irqsave(&tag_blocks_reserved, flags);
+> > > +	for (block = start_block; block < end_block; block += region->block_size) {
+> > > +		if (tag_storage_block_is_reserved(block))
+> > > +			block_ref_add(block, region, order);
+> > > +	}
+> > > +	xa_unlock_irqrestore(&tag_blocks_reserved, flags);
+> > > +
+> > > +	for (block = start_block; block < end_block; block += region->block_size) {
+> > > +		/* Refcount incremented above. */
+> > > +		if (tag_storage_block_is_reserved(block))
+> > > +			continue;
+> > > +
+> > > +		tries = 3;
+> > > +		while (tries--) {
+> > > +			ret = alloc_contig_range(block, block + region->block_size, MIGRATE_CMA, gfp);
+> > > +			if (ret == 0 || ret != -EBUSY)
+> > > +				break;
+> > > +		}
+> > > +
+> > > +		if (ret)
+> > > +			goto out_error;
+> > > +
+> > > +		ret = tag_storage_reserve_block(block, region, order);
+> > > +		if (ret) {
+> > > +			free_contig_range(block, region->block_size);
+> > > +			goto out_error;
+> > > +		}
+> > > +
+> > > +		count_vm_events(CMA_ALLOC_SUCCESS, region->block_size);
+> > > +	}
+> > > +
+> > > +	page_set_tag_storage_reserved(page, order);
+> > > +out_unlock:
+> > > +	mutex_unlock(&tag_blocks_lock);
+> > > +
+> > > +	return 0;
+> > > +
+> > > +out_error:
+> > > +	xa_lock_irqsave(&tag_blocks_reserved, flags);
+> > > +	for (block = start_block; block < end_block; block += region->block_size) {
+> > > +		if (tag_storage_block_is_reserved(block) &&
+> > > +		    block_ref_sub_return(block, region, order) == 1) {
+> > > +			__xa_erase(&tag_blocks_reserved, block);
+> > > +			free_contig_range(block, region->block_size);
+> > > +		}
+> > > +	}
+> > > +	xa_unlock_irqrestore(&tag_blocks_reserved, flags);
+> > > +
+> > > +	mutex_unlock(&tag_blocks_lock);
+> > > +
+> > > +	count_vm_events(CMA_ALLOC_FAIL, region->block_size);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +void free_tag_storage(struct page *page, int order)
+> > > +{
+> > > +	unsigned long block, start_block, end_block;
+> > > +	struct tag_region *region;
+> > > +	unsigned long flags;
+> > > +	int ret;
+> > > +
+> > > +	ret = tag_storage_find_block(page, &start_block, &region);
+> > > +	if (WARN_ONCE(ret, "Missing tag storage block for pfn 0x%lx", page_to_pfn(page)))
+> > > +		return;
+> > > +
+> > > +	end_block = start_block + order_to_num_blocks(order) * region->block_size;
+> > > +
+> > > +	xa_lock_irqsave(&tag_blocks_reserved, flags);
+> > > +	for (block = start_block; block < end_block; block += region->block_size) {
+> > > +		if (WARN_ONCE(!tag_storage_block_is_reserved(block),
+> > > +		    "Block 0x%lx is not reserved for pfn 0x%lx", block, page_to_pfn(page)))
+> > > +			continue;
+> > > +
+> > > +		if (block_ref_sub_return(block, region, order) == 1) {
+> > > +			__xa_erase(&tag_blocks_reserved, block);
+> > > +			free_contig_range(block, region->block_size);
+> > > +		}
+> > > +	}
+> > > +	xa_unlock_irqrestore(&tag_blocks_reserved, flags);
+> > > +}
+> > > diff --git a/fs/proc/page.c b/fs/proc/page.c
+> > > index 195b077c0fac..e7eb584a9234 100644
+> > > --- a/fs/proc/page.c
+> > > +++ b/fs/proc/page.c
+> > > @@ -221,6 +221,7 @@ u64 stable_page_flags(struct page *page)
+> > >  #ifdef CONFIG_ARCH_USES_PG_ARCH_X
+> > >  	u |= kpf_copy_bit(k, KPF_ARCH_2,	PG_arch_2);
+> > >  	u |= kpf_copy_bit(k, KPF_ARCH_3,	PG_arch_3);
+> > > +	u |= kpf_copy_bit(k, KPF_ARCH_4,	PG_arch_4);
+> > >  #endif
+> > >  
+> > >  	return u;
+> > > diff --git a/include/linux/kernel-page-flags.h b/include/linux/kernel-page-flags.h
+> > > index 859f4b0c1b2b..4a0d719ffdd4 100644
+> > > --- a/include/linux/kernel-page-flags.h
+> > > +++ b/include/linux/kernel-page-flags.h
+> > > @@ -19,5 +19,6 @@
+> > >  #define KPF_SOFTDIRTY		40
+> > >  #define KPF_ARCH_2		41
+> > >  #define KPF_ARCH_3		42
+> > > +#define KPF_ARCH_4		43
+> > >  
+> > >  #endif /* LINUX_KERNEL_PAGE_FLAGS_H */
+> > > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> > > index a88e64acebfe..7915165a51bd 100644
+> > > --- a/include/linux/page-flags.h
+> > > +++ b/include/linux/page-flags.h
+> > > @@ -135,6 +135,7 @@ enum pageflags {
+> > >  #ifdef CONFIG_ARCH_USES_PG_ARCH_X
+> > >  	PG_arch_2,
+> > >  	PG_arch_3,
+> > > +	PG_arch_4,
+> > >  #endif
+> > >  	__NR_PAGEFLAGS,
+> > >  
+> > > diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+> > > index 6ca0d5ed46c0..ba962fd10a2c 100644
+> > > --- a/include/trace/events/mmflags.h
+> > > +++ b/include/trace/events/mmflags.h
+> > > @@ -125,7 +125,8 @@ IF_HAVE_PG_HWPOISON(hwpoison)						\
+> > >  IF_HAVE_PG_IDLE(idle)							\
+> > >  IF_HAVE_PG_IDLE(young)							\
+> > >  IF_HAVE_PG_ARCH_X(arch_2)						\
+> > > -IF_HAVE_PG_ARCH_X(arch_3)
+> > > +IF_HAVE_PG_ARCH_X(arch_3)						\
+> > > +IF_HAVE_PG_ARCH_X(arch_4)
+> > >  
+> > >  #define show_page_flags(flags)						\
+> > >  	(flags) ? __print_flags(flags, "|",				\
+> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > index f31f02472396..9beead961a65 100644
+> > > --- a/mm/huge_memory.c
+> > > +++ b/mm/huge_memory.c
+> > > @@ -2474,6 +2474,7 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
+> > >  #ifdef CONFIG_ARCH_USES_PG_ARCH_X
+> > >  			 (1L << PG_arch_2) |
+> > >  			 (1L << PG_arch_3) |
+> > > +			 (1L << PG_arch_4) |
+> > >  #endif
+> > >  			 (1L << PG_dirty) |
+> > >  			 LRU_GEN_MASK | LRU_REFS_MASK));
+> > > -- 
+> > > 2.42.1
+> > > 
+> > > 
+> 
+> 
+> 
+
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_9337f_
+Content-Type: text/plain; charset="utf-8"
 
 
-
-> On Nov 30, 2023, at 4:46=E2=80=AFAM, Christian Brauner =
-<brauner@kernel.org> wrote:
->=20
-> I wouldn't even
-> complain if it they were somehow auto-generated but as you say that
-> might be out of scope.
-
-FYI, rust-bindgen got an experimental feature of this nature earlier =
-this year:
-
-https://github.com/rust-lang/rust-bindgen/pull/2335
-
-Though apparently it has significant limitations meriting it the =
-=E2=80=9Cexperimental=E2=80=9D title.
-
-Regarding the issue of wrappers not being inlined, it's possible to get =
-LLVM to optimize C and Rust code together into an object file, with the =
-help of a compatible Clang and LLD:
-
-@ rustc -O --emit llvm-bc a.rs                                        =20=
-
-@ clang --target=3Dx86_64-unknown-linux-gnu -O2 -c -emit-llvm -o b.bc =
-b.c
-@ ld.lld -r -o c.o a.bc b.bc
-
-Basically LTO but within the scope of a single object file.  This would =
-be redundant in cases where kernel-wide LTO is enabled.
-
-Using this approach might slow down compilation a bit due to needing to =
-pass the LLVM bitcode between multiple commands, but probably not very =
-much.
-
-Just chiming in as someone not involved in Rust for Linux but familiar =
-with these tools.  Perhaps this has been considered before and rejected =
-for some reason; I wouldn=E2=80=99t know.=
+------xhiRNYr7C6p2kRFttE2KPojvpONXRQ6l4raSmD__Jn20cHwF=_9337f_--
 
