@@ -1,105 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-5327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7055A80A58F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:33:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3838A80A93C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 17:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13781C20BF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D407D1F20FFB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B371DFF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FBC14274
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 16:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dG4OpHOB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wIXkXK7V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4638910D8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 05:58:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702043894;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVS2GiFnVhk8BbnE3962ZAIxlqpLh4SepAXQYdXCDKE=;
-	b=dG4OpHOBuk6qgAvuqfUjmD+xSeVlehIVxVJ+Be7uTSNpoRiXWJ8PdcBRDKytKXLi4/kHLw
-	nrWJsmknx+FVyeyBlWSAYIr3o2FRXk8Qe8UwxUi7b+61GmBrpaJ5MfzGd8MfZ0SPFXvP29
-	VlN+uQ+ZYilvXRkAMDCsTdrl2suojRk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-whDzf_fgMXWWbeog9d0oZg-1; Fri, 08 Dec 2023 08:58:08 -0500
-X-MC-Unique: whDzf_fgMXWWbeog9d0oZg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 906F3101A551;
-	Fri,  8 Dec 2023 13:58:07 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.39.192.131])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EF4B40C6EB9;
-	Fri,  8 Dec 2023 13:58:05 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,  Tycho Andersen
- <tycho@tycho.pizza>,  linux-kernel@vger.kernel.org,
-  linux-api@vger.kernel.org,  Jan Kara <jack@suse.cz>,
-  linux-fsdevel@vger.kernel.org,  Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
-References: <20231130163946.277502-1-tycho@tycho.pizza>
-	<874jh3t7e9.fsf@oldenburg.str.redhat.com>
-	<ZWjaSAhG9KI2i9NK@tycho.pizza>
-	<a07b7ae6-8e86-4a87-9347-e6e1a0f2ee65@efficios.com>
-	<87ttp3rprd.fsf@oldenburg.str.redhat.com>
-	<20231207-entdecken-selektiert-d5ce6dca6a80@brauner>
-	<87wmtog7ht.fsf@oldenburg.str.redhat.com>
-	<20231208-hitzig-charmant-6bbdc427bf7e@brauner>
-Date: Fri, 08 Dec 2023 14:58:03 +0100
-In-Reply-To: <20231208-hitzig-charmant-6bbdc427bf7e@brauner> (Christian
-	Brauner's message of "Fri, 8 Dec 2023 14:48:30 +0100")
-Message-ID: <87cyvgg5jo.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850F4198D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 06:33:03 -0800 (PST)
+Received: by mail-il1-x12a.google.com with SMTP id e9e14a558f8ab-35d80db5d6dso1395705ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Dec 2023 06:33:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1702045983; x=1702650783; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FhKB2NnA3QfPl8JS/+/Dz6ofNDQVrqehkPOlELsJS+E=;
+        b=wIXkXK7VclHcncaay17vBIRE/l0+1pJHu5VoCf8i6xUTgwTwH2Zd/fbWG0xePZGEaY
+         P2Sk7Np3sQD4oAsQ4lrxNMoK9bPRsm4yMn2in+J4P3jgcOZ4Y8ViQFHYhdAefAkUYMlA
+         41FNb4+QkHTnRMI2AvnRBNr03u8249/8vijuicNoFgjoi864Vls+ZvTSWZw8Aw8v3GCQ
+         HyYIlUwfauNOfTlhvlvuo67dif5YmSPOTUa733pVhKVd70yJ8DHrWsnmi/NAgLMuh5c3
+         o6/dd06gj2ldBogaPImHJ5jdfT2O2Hf+w5+ppLli5wWong93Bvf0EnAMesra5Fs6nPmz
+         chbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702045983; x=1702650783;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FhKB2NnA3QfPl8JS/+/Dz6ofNDQVrqehkPOlELsJS+E=;
+        b=CBzO4XyTeL4SENAcKq4HhPbvl8HC5dGVyw4ySbmbjcajceo4cGKu46MRKqFrrIDOia
+         nb472eQVC0SK0oS+KtoXtAM21QMPxUSeqssKC1aoSf/Oagaxri9fqPLqYp3J8KH8cQjP
+         SsgLXFZ7O7R1mUhxbdepPBWyNZBUQav2ihMG4x8+Od6Jhb7XOzHEHuPN+8NmocKzx25t
+         1yXD7JY8iXymZmOT3PL7mdCoruuRDQBGRLv+KRlnJYdYCk26WTmYJ3rV+GhXiWWwBr3C
+         ME3f3OCrYEekr4IoLzRrxqx656VrHdoNaF1BGNmmpocMNIx32sVirfzHa9ZxuskEYr5t
+         Prlg==
+X-Gm-Message-State: AOJu0YwU+hIXFwStGoqnMYjRBzf5Oh7RqTyepJZfTa5LdQcD4yezdDqs
+	A4Ve0Eks3KQ30x8Oq/UQHkSEXw==
+X-Google-Smtp-Source: AGHT+IHtnfwS/1QYLNszRS02hyT365XtE7NQd2W0lYKD1LjknRMEQiKkxW7ZSV+rSbha8MlTxHOiHg==
+X-Received: by 2002:a6b:a0d:0:b0:7b6:f0b4:92aa with SMTP id z13-20020a6b0a0d000000b007b6f0b492aamr484458ioi.0.1702045982860;
+        Fri, 08 Dec 2023 06:33:02 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id h5-20020a02c725000000b0043167542398sm466537jao.141.2023.12.08.06.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Dec 2023 06:33:01 -0800 (PST)
+Message-ID: <815dd284-14c7-4990-9ef7-41bd7087b724@kernel.dk>
+Date: Fri, 8 Dec 2023 07:33:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] nfsd: fully close all files in the nfsd threads
+Content-Language: en-US
+To: NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+References: <20231208033006.5546-1-neilb@suse.de>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20231208033006.5546-1-neilb@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Christian Brauner:
+On 12/7/23 8:27 PM, NeilBrown wrote:
+> This is a new version of my patches to address a rare problem with nfsd
+> closing files faster than __fput() can complete the close in a different
+> thread.
+> 
+> This time I'm simply switching to __fput_sync().  I cannot see any
+> reason that this would be a problem, but if any else does and can show
+> me what I'm missing, I'd appreciate it.
 
-> On Fri, Dec 08, 2023 at 02:15:58PM +0100, Florian Weimer wrote:
->> * Christian Brauner:
->> 
->> > File descriptors are reachable for all processes/threads that share a
->> > file descriptor table. Changing that means breaking core userspace
->> > assumptions about how file descriptors work. That's not going to happen
->> > as far as I'm concerned.
->> 
->> It already has happened, though?  Threads are free to call
->> unshare(CLONE_FILES).  I'm sure that we have applications out there that
->
-> If you unshare a file descriptor table it will affect all file
-> descriptors of a given task. We don't allow hiding individual or ranges
-> of file descriptors from close/dup. That's akin to a partially shared
-> file descriptor table which is conceptually probably doable but just
-> plain weird and nasty to get right imho.
->
-> This really is either LSM territory to block such operations or use
-> stuff like io_uring gives you.
+Much better than the previous attempts, imho.
 
-Sorry, I misunderstood.  I'm imagining for something that doesn't share
-partial tables and relies on explicit action to make available a
-descriptor from a separate different table in another table, based on
-some unique identifier (that is a bit more random than a file
-descriptor).  So a bit similar to the the existing systemd service, but
-not targeted at service restarts.
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Thanks,
-Florian
+-- 
+Jens Axboe
 
 
