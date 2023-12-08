@@ -1,85 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-5323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E116880A586
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:33:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E1E80A589
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 15:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89083B20C2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12CA3281B4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F021B1E534
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CA31DFF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Dec 2023 14:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2urW31q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EAjJ2Zut"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43AE5171F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 05:16:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702041367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gb0GPMiMlGSDj0aJqLOnlqDRREqBTKMhjqExl2I2m1g=;
+	b=EAjJ2ZuttHegI3BzKraGZ/YBBkBhjk8bOfJ9dGXuCEIENAQI2+Wfb1k4tYhcWL2psScUeU
+	XEfolaQVYL1OFHVD06dukUJ0NLKtEBCvTM/jkclPV0EvhtmcUYfcc2ogNI6i8DhWhv8X6E
+	Y2e3sksqMKJI05G1u06k477pvylNTX0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-S3kEsJVQOfybehL8PHBI1g-1; Fri, 08 Dec 2023 08:16:02 -0500
+X-MC-Unique: S3kEsJVQOfybehL8PHBI1g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B212011711
-	for <linux-fsdevel@vger.kernel.org>; Fri,  8 Dec 2023 13:15:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAB96C433C7;
-	Fri,  8 Dec 2023 13:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702041330;
-	bh=nD3eF0ibw6Q9BmrjuIl94Jt6xBkToFacmbiWArBMqPA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z2urW31qWJwCoqowIYoHijbKCYUPh6RbJfwGiXcigA0o7dDirDH0C1dPfapAI/k4z
-	 UZ70/Zpwh/hDmmfAxCXZ7hHJoFi4NbS15GD5/A7tgSFCVORcKvO4YADgPvpsYiRUVq
-	 qpbuOGrKLZ4GpjESsXJ3oH4d8nrj+JEVkrpMeuy2LsDmNXadiGEMZzPcyNfiGQnlGD
-	 Q14BtHXiN0rAFRT/WJMbZzX7lnjQS87muk1KmelJLZzH8g0ynghDgyGlEigSmh+Ee7
-	 iYuh6hzHg4glGiqBv9sOhCmh34Ia+4ulwKcrbts9yCL+6KQLJSL0VzlMJzLZK/Wt/g
-	 feyseggBpsfTw==
-From: Christian Brauner <brauner@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/hfsplus: wrapper.c: fix kernel-doc warnings
-Date: Fri,  8 Dec 2023 14:15:21 +0100
-Message-ID: <20231208-lassen-vorenthalten-eef9da43f947@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231206024317.31020-1-rdunlap@infradead.org>
-References: <20231206024317.31020-1-rdunlap@infradead.org>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A7577830F20;
+	Fri,  8 Dec 2023 13:16:01 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.39.192.131])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D4953C2E;
+	Fri,  8 Dec 2023 13:15:59 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,  Tycho Andersen
+ <tycho@tycho.pizza>,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  Jan Kara <jack@suse.cz>,
+  linux-fsdevel@vger.kernel.org,  Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC 1/3] pidfd: allow pidfd_open() on non-thread-group leaders
+References: <20231130163946.277502-1-tycho@tycho.pizza>
+	<874jh3t7e9.fsf@oldenburg.str.redhat.com>
+	<ZWjaSAhG9KI2i9NK@tycho.pizza>
+	<a07b7ae6-8e86-4a87-9347-e6e1a0f2ee65@efficios.com>
+	<87ttp3rprd.fsf@oldenburg.str.redhat.com>
+	<20231207-entdecken-selektiert-d5ce6dca6a80@brauner>
+Date: Fri, 08 Dec 2023 14:15:58 +0100
+In-Reply-To: <20231207-entdecken-selektiert-d5ce6dca6a80@brauner> (Christian
+	Brauner's message of "Thu, 7 Dec 2023 23:58:53 +0100")
+Message-ID: <87wmtog7ht.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1262; i=brauner@kernel.org; h=from:subject:message-id; bh=nD3eF0ibw6Q9BmrjuIl94Jt6xBkToFacmbiWArBMqPA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQWi714s/tHuo3p1M6Nu6W+xRzUN2wW7znYM+HHZf+9w XLaS4JWd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyk8Q/D/0CWM/2fFO+fvujp W6K/i/Nn9NKJC9y45CyOuJ4/KdLDzcrwT/nmKse2O3dyDI2ZSmLnmJkas8hEOajHBKzIf9Fvoir PDwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Tue, 05 Dec 2023 18:43:17 -0800, Randy Dunlap wrote:
-> Fix kernel-doc warnings found when using "W=1".
-> 
-> wrapper.c:48: warning: No description found for return value of 'hfsplus_submit_bio'
-> wrapper.c:49: warning: Function parameter or member 'opf' not described in 'hfsplus_submit_bio'
-> wrapper.c:49: warning: Excess function parameter 'op' description in 'hfsplus_submit_bio'
-> wrapper.c:49: warning: Excess function parameter 'op_flags' description in 'hfsplus_submit_bio'
-> 
-> [...]
+* Christian Brauner:
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+> File descriptors are reachable for all processes/threads that share a
+> file descriptor table. Changing that means breaking core userspace
+> assumptions about how file descriptors work. That's not going to happen
+> as far as I'm concerned.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+It already has happened, though?  Threads are free to call
+unshare(CLONE_FILES).  I'm sure that we have applications out there that
+expect this to work.  At this point, the question is about whether we
+want to acknowledge this possibility at the libc level or not.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Thanks,
+Florian
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/hfsplus: wrapper.c: fix kernel-doc warnings
-      https://git.kernel.org/vfs/vfs/c/bff713c4a439
 
