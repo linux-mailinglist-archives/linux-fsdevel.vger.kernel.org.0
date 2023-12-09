@@ -1,292 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-5413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24E280B5E6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Dec 2023 19:25:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27DE80B5EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Dec 2023 19:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8792811C2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Dec 2023 18:25:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42BA5B20C42
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Dec 2023 18:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5756199DA;
-	Sat,  9 Dec 2023 18:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9F19BCF;
+	Sat,  9 Dec 2023 18:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k6Pl2IhO"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZBSLFcxU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE14F2;
-	Sat,  9 Dec 2023 10:25:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702146313; x=1733682313;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0M0nXpWDhcnAg4+20gZZF8o8lfD/T3Wj0UyQZlZSoCU=;
-  b=k6Pl2IhOwKJPLcQ4xKl16TLydrpCqae/2r/y60KYdZKfcNvUnfJR591P
-   HbPkiFWwUgkHnlNhCnyUy+F0yZ3pTR3n6Xgv7YZMnUd2GcOEXZEsnSpA5
-   zAxtkagjmCbPBcRMIqf8QKpAIl/4SiROVQusxW3xEx8jLZ7cQ4evzeLBp
-   76fM+slZ++EqN19nN5ptUHeAEP+lxg6a4k0w1sIx04U2Jv+mOO3Dbl8Wf
-   0uVg8HEU26RHIAQG4Wnk2wJQfxrpYENodUlWt5SyZnRrNxKaiwkxUmJA8
-   7J5+c07SC/JC9fhtdOMsKiXnTisP3S3L3LPV4NOpkLwuM+CIOJmjo1Ajb
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10919"; a="1592450"
-X-IronPort-AV: E=Sophos;i="6.04,264,1695711600"; 
-   d="scan'208";a="1592450"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2023 10:25:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10919"; a="722202683"
-X-IronPort-AV: E=Sophos;i="6.04,264,1695711600"; 
-   d="scan'208";a="722202683"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga003.jf.intel.com with ESMTP; 09 Dec 2023 10:25:04 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rC20c-000Fkz-0C;
-	Sat, 09 Dec 2023 18:25:02 +0000
-Date: Sun, 10 Dec 2023 02:24:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	arnd@arndb.de, tglx@linutronix.de, luto@kernel.org,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, mhocko@kernel.org, tj@kernel.org,
-	ying.huang@intel.com, gregory.price@memverge.com, corbet@lwn.net,
-	rakie.kim@sk.com, hyeongtak.ji@sk.com, honggyu.kim@sk.com,
-	vtavarespetr@micron.com, peterz@infradead.org, jgroves@micron.com,
-	ravis.opensrc@micron.com, sthanneeru@micron.com,
-	emirakhur@micron.com, Hasan.Maruf@amd.com
-Subject: Re: [PATCH v2 08/11] mm/mempolicy: add set_mempolicy2 syscall
-Message-ID: <202312100245.Jgz5mPhJ-lkp@intel.com>
-References: <20231209065931.3458-9-gregory.price@memverge.com>
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2B7E7
+	for <linux-fsdevel@vger.kernel.org>; Sat,  9 Dec 2023 10:35:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702146906; bh=/JiTsY4lxJVwDFPT8/4wmoTIqrFQBrK+LdycBT3X4vQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZBSLFcxU3NQeV3kjm26mtoxp6WuWwEbcs7QUEyyBI0ueI9xpIERiMLX4kZH5OxR6mFy7s86VTpQti5YPV9JOJT40YCMSDUkzQd+YOMTJYtLIjcsDVlFKewVd46MU2VHdL1WVfroYewV3dI/y6izTnCDJyjMK2q0jWUvu6LdcwMRIaYV5XY9Fm16Y7OP5vUOmSyk0Xwmrmwt1WuuK79iepU+iOSfNelpbovZA1n39sYA/ZHjTDBVxr3fQq/fNBBCexgR2GjDhjNSajC7vHm0NWvefgD0EAU+csbBNtwuZxMxjIIF37OxoBoGpYoVIKvZc/oHgOQKZLuL7zVN0o62uqA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702146906; bh=dxWHljfzlzvq2Ur5NjLZ7kjg62mLp755zX+QQ20k6Rd=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tjRIFA1ph2eldnk0FQWf2DwWbE6Jv/Gyw7WMz6rDcO4/3jjUylFKe5uYOBl1NUhREVBPOElw4ufTvSlsM8VFq9FyaNLYqgFCw/3BS7IlealNAixhO+btmgfPV/wDE30HskhBTARNOlqTB5TON1ggMbQk+bSmkgJJI6in/wFj/slSOnf7juoARLxn1t7VUfdRGcxD1h7usfFWM+jY7Dctsq7ZQ/6Xl1+2rFJNZUSUV5vUpBF0NJETdsV8t1YvXkFBux/TSSDm0rnEzXMmxwrNh9LDES/J4AGz051wJzV4onlz+dyVDhemqJ+xfizWLIUHJeeQ6gh/zUyoCIGEix4wEg==
+X-YMail-OSG: D07RrkAVM1mQ1y2q8UIXGqXzkbWxKJ1r7ywDXvLAeAl0Mg.mmMdmupbfBt3hBDa
+ 5NYU3DX6qDxIt2tWB4cdWcHU4i2gWSNJXbv86gpv.9xSELS3pRkjB3cPcRzA00tIHxlZptjqVeLy
+ VS1kc0hTsod1X59rHM82WdQ1auvqlvCzoWb1pyLgcWTPehoCE8vCLgHD.4a55QS3SJZ8I6XhALgz
+ sJ63KmaazivaqtUK8SdDqvdZid0SaPT70mPF.QLAkMDt592S5wSEpXscEDxNhKitUY3Dnv1AuLSD
+ ZTkDvyvk518rjBJT0hGoorUkhnkO64L732x0Qbfqb0Kzgo.Hx4toViSRuHARj1MwjAoOXxRRPZOM
+ e3CDqX4y1Dc3kG0NT5di2RiXf8xcgysR0dTUrIAF3Fv84SUoQBZ9w0dvecBmvSXJggIrJLsdUC8B
+ wyZC9ELTEcMEDH6SfpKct5uuWXEm.DLLH8L4UvuPJlZYycMhzuUquzWQno.1BG2cQzGowVm9f2Md
+ BaDpUXK2ChTP0fwopOroU8XI7x7dCMBV2Fo.WO4LbpwjqsX9OdS3hgnn7S_EL4Baclz_f2ABF8Zk
+ 6UjpywJy0PgO74qwLEONqMTJRpk38c74Knjb5uNvPCRKdFnwOsz78rmD_FDL52lwr3nuNLMMu7B.
+ sgfg1T07VcGPmEmyKjqUTaalAWnMLcsL7315wHIXA1R3tVmWgAMoQ_HO0Pl1S8xTQFGYuY26YcyA
+ 7vcIXsxxtVMtn_KOwZUSoLRHxG_GJXxPX4PpKyGEq2Dc3XxuX.q_Tx6Q7WRnARXWSh8z3C2890J9
+ AXtpPKV05yLmoXFOfQfcpI.GhqxBG3lKZwKnRt8SNAQztO2FkT4Mit8qqhbbV1.AaKklC1TiWwDO
+ BH5m1SKdMn52Mt9xlOk0lpFdaatGBbssPSKaMV2ZymPH80s0YrFOR.Sg84Oxiqpo.DgjIUkb.sMe
+ 9nPh6RrE6eO0MRO4cyyOYQboA0jL0lDa3DAwFS5xwXJzfPsDkp7N7AgeykIic5lBHVF7Hdb4gR73
+ QmvUre4zMKoqJgp2EG07R1Rul7riLLKxVMIPvkQjakee3Hoa2iJ7yimbTpq7GkjRUZFmhN506k2R
+ Oyg4dAt_lopB.mE2FGjgF.9o0paWzxnGu4pRFFo5E6GXA3smX_.qe9.t1Zv9WW7i0A4AaNVx_S2x
+ W.fmWh83jN1ynqm095FVhWwYGP0SXROOnC4E_zuDzWpxr7tMBeCVLS2gjvzwbIBlXSqPHw_LAowA
+ UITObi7aUdx9cWw7ZngUU4EDCEi0Xg3_e.67W5jl.kCUI3gj4EeKx7coqzD.1tAto_vidh_kmegI
+ 350xhuzhDq0HwdqEf6ZxGplZ1qd0C6ncIkFrmtDP17WZ6.T_RGBhar8nbQgUMqVM20zLxDfY0Rxz
+ N.JDtbmpF.QUDBuADievcOs0vK5IH4gb6sU0PCOAhgF2A21HVYDP0ib18F_8lBgtUFHwfdjO3yBp
+ EN90zXFlLEh0F.CnOdApG6FoohicPDY.Fvq5dAhmznjMLpw27H8ZI3FKfwz5x3TZWu59oJIG8rzV
+ iZTXZyTkyyatmDBmxwQeb3pPXqdSkq3Xgt1_9F5NB7J2nB36XwK4MN0pm4NPYTHFOn9LUP3mj.FT
+ vPbXiGZjtiax.zhqnahsl1s4YPK.1oPHcKGERfwMdGqBU3KcuPJXrLzvpb6nLwdOb0FzIjWlLCmE
+ WsJz_rEmjkrsTOP89n68VCIkVahm6urkhEiwsdGDUzEWEV5GL6kxLbOjFwMkTk9JwMRvz2Om7Edr
+ hbANusomMnVaISTtpD5cVF7nU1etLcWWTgq3_dxLRqN4kX6jzXSaKTjY8LQ8Gh_rqMDpCOaQxEDL
+ eENcwcVdF3EnTyNWBJS_ynlCpU5ncNkQ1z36aVqQWuaOAK1f8KuU8l7YQ9CYQvQ2W.ceVT2lYGg_
+ CbVzTQzA2_pbDBYb2qlQR_XH8w6BM7TDJ3g8vlceZjaDTYmPjT2Ulqema4X03tYBPRhM5pQcaL_k
+ 88n_vB0WEY1JB5lAO2GGY.tovmOHf8OkuSitTxIJZe6D3lPM7o3_ZFKwjkT_06v8ScHNRoluW83f
+ 1JAlNXBpU_mueMrGjVpg_3HbionhGGuqXmvEFeLrrDPXtcZomZXCFKHGfsKTDrmm8vOUUxolIJtj
+ a5zLwtQeE5uEJ2VYhjTElh9K5CrqQtPpc8rmh36ijoFwCUkdr2WpOymchgTFQUskLsfsXZyn.ZxS
+ 07nLDRjq7wlqx9oF68f.NguSzjMlUWFd5_0JMUO0eeDiPHYj_nDlzr.dVEApmM4YboAFni8EEJ07
+ 5Krx4
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 283aa0d3-e2b7-46ae-a1e0-eb3c058d5ab9
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Sat, 9 Dec 2023 18:35:06 +0000
+Received: by hermes--production-gq1-64499dfdcc-pz4mv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3f5a83e34bd88e44fcc3cfb06ae007f2;
+          Sat, 09 Dec 2023 18:35:02 +0000 (UTC)
+Message-ID: <5b61d1a4-89a0-4ec3-9832-9cb84552fba7@schaufler-ca.com>
+Date: Sat, 9 Dec 2023 10:35:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231209065931.3458-9-gregory.price@memverge.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
+ attribute
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>
+Cc: Munehisa Kamata <kamatam@amazon.com>, adobriyan@gmail.com,
+ akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <CAHC9VhSyaFE7-u470TrnHP7o2hT8600zC+Od=M0KkrP46j7-Qw@mail.gmail.com>
+ <20231208021433.1662438-1-kamatam@amazon.com>
+ <CAHC9VhRRdaUWYP3S91D6MrD8xBMR+zYB3SpGKV+60YkmLwr7Sg@mail.gmail.com>
+ <0c0e8960-9221-43f0-a5d4-07c8f5342af0@schaufler-ca.com>
+ <CAHC9VhQyziaxvbCCfb4YWQ0-L0qASa-yHG4tuNfbnNLecKDG0A@mail.gmail.com>
+ <7ba17c0d-49c6-4322-b196-3ecb7a371c62@schaufler-ca.com>
+ <CAHC9VhT_m6+a2fOCJcdjhx0dUdWDxtZEu3yXCyy+1cSr6GFBag@mail.gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhT_m6+a2fOCJcdjhx0dUdWDxtZEu3yXCyy+1cSr6GFBag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.21943 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Gregory,
+On 12/9/2023 10:08 AM, Paul Moore wrote:
+> On Fri, Dec 8, 2023 at 7:24 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 12/8/2023 3:32 PM, Paul Moore wrote:
+>>> On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 12/8/2023 2:43 PM, Paul Moore wrote:
+>>>>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
+>>>>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
+>>>>> ..
+>>>>>
+>>>>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
+>>>>>>> at the top.  However, before we go too much further on this, can we
+>>>>>>> get clarification that Casey was able to reproduce this on a stock
+>>>>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
+>>>>>>> this problem on Linux v6.5.
+>>>>>>>
+>>>>>>> However, for the moment I'm going to assume this is a real problem, is
+>>>>>>> there some reason why the existing pid_revalidate() code is not being
+>>>>>>> called in the bind mount case?  From what I can see in the original
+>>>>>>> problem report, the path walk seems to work okay when the file is
+>>>>>>> accessed directly from /proc, but fails when done on the bind mount.
+>>>>>>> Is there some problem with revalidating dentrys on bind mounts?
+>>>>>> Hi Paul,
+>>>>>>
+>>>>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
+>>>>>>
+>>>>>> After reading this thread, I have doubt about solving this in VFS.
+>>>>>> Honestly, however, I'm not sure if it's entirely relevant today.
+>>>>> Have you tried simply mounting proc a second time instead of using a bind mount?
+>>>>>
+>>>>>  % mount -t proc non /new/location/for/proc
+>>>>>
+>>>>> I ask because from your description it appears that proc does the
+>>>>> right thing with respect to revalidation, it only becomes an issue
+>>>>> when accessing proc through a bind mount.  Or did I misunderstand the
+>>>>> problem?
+>>>> It's not hard to make the problem go away by performing some simple
+>>>> action. I was unable to reproduce the problem initially because I
+>>>> checked the Smack label on the bind mounted proc entry before doing
+>>>> the cat of it. The problem shows up if nothing happens to update the
+>>>> inode.
+>>> A good point.
+>>>
+>>> I'm kinda thinking we just leave things as-is, especially since the
+>>> proposed fix isn't something anyone is really excited about.
+>> "We have to compromise the performance of our sandboxing tool because of
+>> a kernel bug that's known and for which a fix is available."
+>>
+>> If this were just a curiosity that wasn't affecting real development I
+>> might agree. But we've got a real world problem, and I don't see ignoring
+>> it as a good approach. I can't see maintainers of other LSMs thinking so
+>> if this were interfering with their users.
+> While the reproducer may be written for Smack, there are plenty of
+> indications that this applies to all LSMs and my comments have taken
+> that into account.
+>
+> If you're really that upset, try channeling that outrage into your
+> editor and draft a patch for this that isn't awful.
 
-kernel test robot noticed the following build warnings:
+We could "just" wait for the lsm_set_self_attr() syscall to land, and
+suggest that it be used instead of the buggy /proc interfaces.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on deller-parisc/for-next powerpc/next powerpc/fixes s390/features jcmvbkbc-xtensa/xtensa-for-next arnd-asm-generic/master linus/master v6.7-rc4]
-[cannot apply to tip/x86/asm geert-m68k/for-next geert-m68k/for-linus next-20231208]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I would love to propose a patch that's less sucky, but have not come
+up with one. My understanding of VFS internals isn't up to the task,
+I fear.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/mm-mempolicy-implement-the-sysfs-based-weighted_interleave-interface/20231209-150314
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20231209065931.3458-9-gregory.price%40memverge.com
-patch subject: [PATCH v2 08/11] mm/mempolicy: add set_mempolicy2 syscall
-config: arm-lpc32xx_defconfig (https://download.01.org/0day-ci/archive/20231210/202312100245.Jgz5mPhJ-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231210/202312100245.Jgz5mPhJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312100245.Jgz5mPhJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from kernel/time/time.c:33:
->> include/linux/syscalls.h:825:43: warning: declaration of 'struct mpol_args' will not be visible outside of this function [-Wvisibility]
-     825 | asmlinkage long sys_set_mempolicy2(struct mpol_args *args, size_t size,
-         |                                           ^
-   1 warning generated.
---
-   In file included from kernel/time/hrtimer.c:30:
->> include/linux/syscalls.h:825:43: warning: declaration of 'struct mpol_args' will not be visible outside of this function [-Wvisibility]
-     825 | asmlinkage long sys_set_mempolicy2(struct mpol_args *args, size_t size,
-         |                                           ^
-   kernel/time/hrtimer.c:1651:7: warning: variable 'expires_in_hardirq' set but not used [-Wunused-but-set-variable]
-    1651 |         bool expires_in_hardirq;
-         |              ^
-   kernel/time/hrtimer.c:277:20: warning: unused function 'is_migration_base' [-Wunused-function]
-     277 | static inline bool is_migration_base(struct hrtimer_clock_base *base)
-         |                    ^
-   kernel/time/hrtimer.c:1876:20: warning: unused function '__hrtimer_peek_ahead_timers' [-Wunused-function]
-    1876 | static inline void __hrtimer_peek_ahead_timers(void)
-         |                    ^
-   4 warnings generated.
-
-
-vim +825 include/linux/syscalls.h
-
-   794	
-   795	/* CONFIG_MMU only */
-   796	asmlinkage long sys_swapon(const char __user *specialfile, int swap_flags);
-   797	asmlinkage long sys_swapoff(const char __user *specialfile);
-   798	asmlinkage long sys_mprotect(unsigned long start, size_t len,
-   799					unsigned long prot);
-   800	asmlinkage long sys_msync(unsigned long start, size_t len, int flags);
-   801	asmlinkage long sys_mlock(unsigned long start, size_t len);
-   802	asmlinkage long sys_munlock(unsigned long start, size_t len);
-   803	asmlinkage long sys_mlockall(int flags);
-   804	asmlinkage long sys_munlockall(void);
-   805	asmlinkage long sys_mincore(unsigned long start, size_t len,
-   806					unsigned char __user * vec);
-   807	asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
-   808	asmlinkage long sys_process_madvise(int pidfd, const struct iovec __user *vec,
-   809				size_t vlen, int behavior, unsigned int flags);
-   810	asmlinkage long sys_process_mrelease(int pidfd, unsigned int flags);
-   811	asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
-   812				unsigned long prot, unsigned long pgoff,
-   813				unsigned long flags);
-   814	asmlinkage long sys_mbind(unsigned long start, unsigned long len,
-   815					unsigned long mode,
-   816					const unsigned long __user *nmask,
-   817					unsigned long maxnode,
-   818					unsigned flags);
-   819	asmlinkage long sys_get_mempolicy(int __user *policy,
-   820					unsigned long __user *nmask,
-   821					unsigned long maxnode,
-   822					unsigned long addr, unsigned long flags);
-   823	asmlinkage long sys_set_mempolicy(int mode, const unsigned long __user *nmask,
-   824					unsigned long maxnode);
- > 825	asmlinkage long sys_set_mempolicy2(struct mpol_args *args, size_t size,
-   826					   unsigned long flags);
-   827	asmlinkage long sys_migrate_pages(pid_t pid, unsigned long maxnode,
-   828					const unsigned long __user *from,
-   829					const unsigned long __user *to);
-   830	asmlinkage long sys_move_pages(pid_t pid, unsigned long nr_pages,
-   831					const void __user * __user *pages,
-   832					const int __user *nodes,
-   833					int __user *status,
-   834					int flags);
-   835	asmlinkage long sys_rt_tgsigqueueinfo(pid_t tgid, pid_t  pid, int sig,
-   836			siginfo_t __user *uinfo);
-   837	asmlinkage long sys_perf_event_open(
-   838			struct perf_event_attr __user *attr_uptr,
-   839			pid_t pid, int cpu, int group_fd, unsigned long flags);
-   840	asmlinkage long sys_accept4(int, struct sockaddr __user *, int __user *, int);
-   841	asmlinkage long sys_recvmmsg(int fd, struct mmsghdr __user *msg,
-   842				     unsigned int vlen, unsigned flags,
-   843				     struct __kernel_timespec __user *timeout);
-   844	asmlinkage long sys_recvmmsg_time32(int fd, struct mmsghdr __user *msg,
-   845				     unsigned int vlen, unsigned flags,
-   846				     struct old_timespec32 __user *timeout);
-   847	asmlinkage long sys_wait4(pid_t pid, int __user *stat_addr,
-   848					int options, struct rusage __user *ru);
-   849	asmlinkage long sys_prlimit64(pid_t pid, unsigned int resource,
-   850					const struct rlimit64 __user *new_rlim,
-   851					struct rlimit64 __user *old_rlim);
-   852	asmlinkage long sys_fanotify_init(unsigned int flags, unsigned int event_f_flags);
-   853	asmlinkage long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
-   854					  u64 mask, int fd,
-   855					  const char  __user *pathname);
-   856	asmlinkage long sys_name_to_handle_at(int dfd, const char __user *name,
-   857					      struct file_handle __user *handle,
-   858					      int __user *mnt_id, int flag);
-   859	asmlinkage long sys_open_by_handle_at(int mountdirfd,
-   860					      struct file_handle __user *handle,
-   861					      int flags);
-   862	asmlinkage long sys_clock_adjtime(clockid_t which_clock,
-   863					struct __kernel_timex __user *tx);
-   864	asmlinkage long sys_clock_adjtime32(clockid_t which_clock,
-   865					struct old_timex32 __user *tx);
-   866	asmlinkage long sys_syncfs(int fd);
-   867	asmlinkage long sys_setns(int fd, int nstype);
-   868	asmlinkage long sys_pidfd_open(pid_t pid, unsigned int flags);
-   869	asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
-   870				     unsigned int vlen, unsigned flags);
-   871	asmlinkage long sys_process_vm_readv(pid_t pid,
-   872					     const struct iovec __user *lvec,
-   873					     unsigned long liovcnt,
-   874					     const struct iovec __user *rvec,
-   875					     unsigned long riovcnt,
-   876					     unsigned long flags);
-   877	asmlinkage long sys_process_vm_writev(pid_t pid,
-   878					      const struct iovec __user *lvec,
-   879					      unsigned long liovcnt,
-   880					      const struct iovec __user *rvec,
-   881					      unsigned long riovcnt,
-   882					      unsigned long flags);
-   883	asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
-   884				 unsigned long idx1, unsigned long idx2);
-   885	asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
-   886	asmlinkage long sys_sched_setattr(pid_t pid,
-   887						struct sched_attr __user *attr,
-   888						unsigned int flags);
-   889	asmlinkage long sys_sched_getattr(pid_t pid,
-   890						struct sched_attr __user *attr,
-   891						unsigned int size,
-   892						unsigned int flags);
-   893	asmlinkage long sys_renameat2(int olddfd, const char __user *oldname,
-   894				      int newdfd, const char __user *newname,
-   895				      unsigned int flags);
-   896	asmlinkage long sys_seccomp(unsigned int op, unsigned int flags,
-   897				    void __user *uargs);
-   898	asmlinkage long sys_getrandom(char __user *buf, size_t count,
-   899				      unsigned int flags);
-   900	asmlinkage long sys_memfd_create(const char __user *uname_ptr, unsigned int flags);
-   901	asmlinkage long sys_bpf(int cmd, union bpf_attr *attr, unsigned int size);
-   902	asmlinkage long sys_execveat(int dfd, const char __user *filename,
-   903				const char __user *const __user *argv,
-   904				const char __user *const __user *envp, int flags);
-   905	asmlinkage long sys_userfaultfd(int flags);
-   906	asmlinkage long sys_membarrier(int cmd, unsigned int flags, int cpu_id);
-   907	asmlinkage long sys_mlock2(unsigned long start, size_t len, int flags);
-   908	asmlinkage long sys_copy_file_range(int fd_in, loff_t __user *off_in,
-   909					    int fd_out, loff_t __user *off_out,
-   910					    size_t len, unsigned int flags);
-   911	asmlinkage long sys_preadv2(unsigned long fd, const struct iovec __user *vec,
-   912				    unsigned long vlen, unsigned long pos_l, unsigned long pos_h,
-   913				    rwf_t flags);
-   914	asmlinkage long sys_pwritev2(unsigned long fd, const struct iovec __user *vec,
-   915				    unsigned long vlen, unsigned long pos_l, unsigned long pos_h,
-   916				    rwf_t flags);
-   917	asmlinkage long sys_pkey_mprotect(unsigned long start, size_t len,
-   918					  unsigned long prot, int pkey);
-   919	asmlinkage long sys_pkey_alloc(unsigned long flags, unsigned long init_val);
-   920	asmlinkage long sys_pkey_free(int pkey);
-   921	asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
-   922				  unsigned mask, struct statx __user *buffer);
-   923	asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
-   924				 int flags, uint32_t sig);
-   925	asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
-   926	asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
-   927				       int to_dfd, const char __user *to_path,
-   928				       unsigned int ms_flags);
-   929	asmlinkage long sys_mount_setattr(int dfd, const char __user *path,
-   930					  unsigned int flags,
-   931					  struct mount_attr __user *uattr, size_t usize);
-   932	asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
-   933	asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
-   934				     const void __user *value, int aux);
-   935	asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
-   936	asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags);
-   937	asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
-   938					       siginfo_t __user *info,
-   939					       unsigned int flags);
-   940	asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
-   941	asmlinkage long sys_landlock_create_ruleset(const struct landlock_ruleset_attr __user *attr,
-   942			size_t size, __u32 flags);
-   943	asmlinkage long sys_landlock_add_rule(int ruleset_fd, enum landlock_rule_type rule_type,
-   944			const void __user *rule_attr, __u32 flags);
-   945	asmlinkage long sys_landlock_restrict_self(int ruleset_fd, __u32 flags);
-   946	asmlinkage long sys_memfd_secret(unsigned int flags);
-   947	asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
-   948						    unsigned long home_node,
-   949						    unsigned long flags);
-   950	asmlinkage long sys_cachestat(unsigned int fd,
-   951			struct cachestat_range __user *cstat_range,
-   952			struct cachestat __user *cstat, unsigned int flags);
-   953	asmlinkage long sys_map_shadow_stack(unsigned long addr, unsigned long size, unsigned int flags);
-   954	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
