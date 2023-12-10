@@ -1,96 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-5427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B735180BA19
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 11:07:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A0F80BAE4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 14:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6256C1F20FC1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 10:07:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57DD1C2091F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 13:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CD749D;
-	Sun, 10 Dec 2023 10:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F2BC2C4;
+	Sun, 10 Dec 2023 13:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtO12dK9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YMbxR9d+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86ABB107
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:07:23 -0800 (PST)
-Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-59067ccb090so2072962eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:07:23 -0800 (PST)
+Received: from mail-oo1-xc2f.google.com (mail-oo1-xc2f.google.com [IPv6:2607:f8b0:4864:20::c2f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F2B10B
+	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 05:24:12 -0800 (PST)
+Received: by mail-oo1-xc2f.google.com with SMTP id 006d021491bc7-59064bca27dso2091511eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 05:24:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702202843; x=1702807643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ze/j9rFp4TC/GjFPUj8dYB8wBXgoNgahTYZIMcA6+W8=;
-        b=jtO12dK9zTarxKsIOxIGEFVPnAZU+OW8rI31y6xyrqL+Ad1JO1y1scksS4jhnZfI7H
-         KwxoZGNuvUcZtHQgL6h6NA+qheinrOV+ROuVu8Nec27Bd/yYVtsScPccJn3mpFn7GCn6
-         CNV5vq/7qhDblOv/n38LipGp0cGjftylCWBF7nkcHhuURH3bQmJF5IY/ll5Z7kKOF27W
-         TNPUEmBGmLREWm+7Q6ag/YFFF7C/GC7lNws+snpnA+NOmkVag118UtM64XIiDe/YjeVY
-         MOmwJBAfTMZTCI4YIgmCSlsxfbmdvF9xOQYkG995mzuVR5e1eKqsn93FTA2OCDZDYfr9
-         DOeg==
+        d=gmail.com; s=20230601; t=1702214651; x=1702819451; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X++IaS3u8l0Oe7uSZY8tik/EztLEZ/j0FuQZXVJm6uk=;
+        b=YMbxR9d+MHI6KFMqxdteetRv03IXi8s448lo/PV/7VASg3SRaCuO0blw02ewSjhP5P
+         i+YeapisKLA8Xv3VSXkBpiD13yaaSXLs8NOR2H5qXz6XIiFeattjWKkJSTSHPNpWZQd8
+         bB3pA2bCCnLmf5r+bru+0XKOSKJV5al/4aVIxxuPUVJ8aswD+6G1MseIi6qH/UVjLbYO
+         j7hSxlT7VbOJJ9kW1d4ml0H+GLZQvEGTPmuFClIkDg0GiJr4BmODdlXTTTAfCwt9/LJ8
+         VDbZEZ3oT+RHTJ/wQZvwKknJduLy/wP8KFRor9Fvyy6UlwARKSl3Ryn+yWq+EHyMS5id
+         ARSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702202843; x=1702807643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ze/j9rFp4TC/GjFPUj8dYB8wBXgoNgahTYZIMcA6+W8=;
-        b=qJq58PJ6yNUqhDiyiO/PynORh474BLmdIhsEF2l+z6IkM7sD1la/ifFKmsFieAe0kQ
-         sprt2TRLrtqKD6QCpqExS6RY8trN+kWnBtDReV+4uHv82vcUQHUZG8QZaKawxaFlNQGv
-         YU9YwxI0Dvmj+NYGe2dVYPSbnviW1Qq7WNdIu0+1Vs7JRrG6cNjCNSGcHMqB5gGqksj5
-         aCYSOM+C0oIiwY7f7tabGlxaTSRkJ5I4ESuZIhVRBNXClxy9uCMzIRPhxpxpEK7ki0nV
-         GydBT2F8B25QehWrOmSCLz10L1lruXfthq/SOIynMR9ChLCoxeoyMvhjO2Wiy7zRKvn1
-         Q60g==
-X-Gm-Message-State: AOJu0YwtroH4bCBpx2JnJGRL8OKU4jBdMRiZWoj9DcJJRCJHrNxaUOTB
-	lbmQncNtoLmQu4EjQzWiKKjQ0pEerArtmI9oess=
-X-Google-Smtp-Source: AGHT+IEl5ySX8uoQTqd17ErndWvpRTtqtFi9lUcwWWH8hvOdkgXPd2NlejCIjX0X8+2BAu2K+6Nsy601ssJLLOgaLa0=
-X-Received: by 2002:a05:6358:c8b:b0:170:17eb:b3b with SMTP id
- o11-20020a0563580c8b00b0017017eb0b3bmr2959508rwj.37.1702202842671; Sun, 10
- Dec 2023 02:07:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702214651; x=1702819451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X++IaS3u8l0Oe7uSZY8tik/EztLEZ/j0FuQZXVJm6uk=;
+        b=ZgqoOjdst2lSNFWoITyQvTpVYB4Kt/GcvTNjjtbISMejK+EX08TukKKXSbAr21HIb3
+         BkZQGC7s+Izymi89LM3gqoTOX/DBE6yFWPWekbJfLIh49hrEoghcaNUbqO8FsALJUnN7
+         hcrp6iC0+V3QBs2u+GTaWTBQ8ftZIWgX32v0g21smoq2S/xVzj4FE0hXi45cWqA8Za6D
+         PRqWJd5z5Qnu0Vj5I/3CwqJDo21mVZO7WJgpxtg4rybQVudPX46yjfSb/EvaGBLaUoR/
+         ko9tagnNbSdfJwLvmC9JWrz0aPjIXHXTCoY49x5nFl5VCNrAIcYv2KSlFUIU0fdOxPVl
+         hOOg==
+X-Gm-Message-State: AOJu0YwDVN7WUKYdjPz9a87bkPahpL/cebHLg/K8KyUYHuCnPWgzshcG
+	/9Oho9fGWPGIK7JA8LHgrbY98dmcR/BTlFD703MsyYYGB88=
+X-Google-Smtp-Source: AGHT+IHgy+Fnkk3m7IDJi424KLpdHiSxrYVrhBH8z7LBNsg2/k1VY9vKRQr/hMS2Lp83s3Ob/Y7FGVZoLeZr4YvVnpI=
+X-Received: by 2002:a05:6358:4291:b0:16e:783a:eb66 with SMTP id
+ s17-20020a056358429100b0016e783aeb66mr2477034rwc.0.1702214651396; Sun, 10 Dec
+ 2023 05:24:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207123825.4011620-1-amir73il@gmail.com> <20231207123825.4011620-2-amir73il@gmail.com>
- <20231208-horchen-helium-d3ec1535ede5@brauner>
-In-Reply-To: <20231208-horchen-helium-d3ec1535ede5@brauner>
+References: <20231207123825.4011620-1-amir73il@gmail.com> <20231207123825.4011620-5-amir73il@gmail.com>
+ <20231208185302.wkzvwthf5vuuuk3s@quack3> <CAOQ4uxi+6VMAdyREODOpMLiZ26Q_1R981H-eOwOA8gJsrsSqrA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi+6VMAdyREODOpMLiZ26Q_1R981H-eOwOA8gJsrsSqrA@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 10 Dec 2023 12:07:11 +0200
-Message-ID: <CAOQ4uxgPyapyW-ahpcPiAXxkU=FN2H8FKwroejMOqogsjCNYyA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] fs: use splice_copy_file_range() inline helper
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
+Date: Sun, 10 Dec 2023 15:24:00 +0200
+Message-ID: <CAOQ4uxiLtwp1QLQN1VBa10kLf4z+dx=UiDtB_WSqNXcoLYbvfw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] fsnotify: pass access range in file permission hooks
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>, 
+	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
 	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 8, 2023 at 7:33=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
+> > > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> > > index 0a9d6a8a747a..45e6ecbca057 100644
+> > > --- a/include/linux/fsnotify.h
+> > > +++ b/include/linux/fsnotify.h
+> > > @@ -103,7 +103,8 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
+> > >  /*
+> > >   * fsnotify_file_perm - permission hook before file access
+> > >   */
+> > > -static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+> > > +static inline int fsnotify_file_perm(struct file *file, int perm_mask,
+> > > +                                  const loff_t *ppos, size_t count)
+> > >  {
+> > >       __u32 fsnotify_mask = FS_ACCESS_PERM;
+> >
+> > Also why do you actually pass in loff_t * instead of plain loff_t? You
+> > don't plan to change it, do you?
 >
-> > +static inline long splice_copy_file_range(struct file *in, loff_t pos_=
-in,
-> > +                                       struct file *out, loff_t pos_ou=
-t,
-> > +                                       size_t len)
-> > +{
-> > +     return splice_file_range(in, &pos_in, out, &pos_out,
-> > +                                   min_t(size_t, len, MAX_RW_COUNT));
-> > +}
->
-> We should really cleanup the return values of the all the splice
-> helpers. Most callers of splice_file_range() use ssize_t already. So
-> does splice_direct_to_actor() and splice_to_socket(). IMO, all of the
-> splice helpers should just be changed to return ssize_t instead of long.
-> Doesn't have to be in this series though.
+> No I don't.
 
-I agree. This is very annoying. I will add this cleanup patch to v2.
+Please note that the pointer is to const loff_t.
+
+>
+> I used NULL to communicate "no range info" to fanotify.
+> It is currently only used from iterate_dir(), but filesystems may need to
+> use that to report other cases of pre-content access with no clear range info.
+
+Correction. iterate_dir() is not the only case.
+The callers that use file_ppos(), namely ksys_{read,write}, do_{readv,writev}()
+will pass a NULL ppos for an FMODE_STREAM file.
+The only sane behavior I could come up with for those cases
+is to not report range_info with the FAN_PRE_ACCESS event.
+
+>
+> I could leave fsnotify_file_perm(file, mask) for reporting events without
+> range info and add fsnotify_file_area(file, mask, pos, count) for reporting
+> access permission with range info.
+>
+
+I renamed the hook in v2 to fsnotify_file_area_perm() and added a wrapper:
+
+static inline int fsnotify_file_perm(struct file *file, int perm_mask)
+{
+        return fsnotify_file_area_perm(file, perm_mask, NULL, 0);
+}
 
 Thanks,
 Amir.
