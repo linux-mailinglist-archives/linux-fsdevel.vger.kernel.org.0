@@ -1,150 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-5436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D0C80BBB4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 15:26:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C591E80BBD9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 15:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3428EB20ACC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 14:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6EF1C208CA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 14:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570CA14F88;
-	Sun, 10 Dec 2023 14:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vq7auFPJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4711615ACD;
+	Sun, 10 Dec 2023 14:45:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0E2125B2;
-	Sun, 10 Dec 2023 14:26:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3C6C433C7;
-	Sun, 10 Dec 2023 14:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702218371;
-	bh=AltcgXfkx0PNaD9wf1JDyoUG7rn4S77782W4sTsGUNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vq7auFPJszjdbN+XSlFWTTSN8msZgwSHdmUs+/mxgnq/dPouFj+2DIVC+c4h6iVld
-	 SGbt3aLb/7nystgPRKEf7NSSDX0ZqFqtKQr8PwXxuac5QCTzo6t869phO8kPgiNRFe
-	 54YG+RXdLgh9DzMgc9ORuatGgcji9XMx8WlV6jp7ynFZlP+bW3C1n/kQN+LGdIUKdv
-	 SZ5EadX1jb+gdpO9EAkrVwJAIKD9u6uLwSKC+3aOwG1CVtbnFxTxqbRvsCaGJlfeIE
-	 vwGtv5UVMOKBXl6UyHsSQFzlfsZn55aePZLOb+WRCurO11dmN5ZDDuosmWf8s/ijB2
-	 wlq2W1a0vjr2Q==
-Date: Sun, 10 Dec 2023 14:23:48 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
-	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com,
-	hughd@google.com, mhocko@suse.com, axelrasmussen@google.com,
-	rppt@kernel.org, willy@infradead.org, Liam.Howlett@oracle.com,
-	jannh@google.com, zhangpeng362@huawei.com, bgeffon@google.com,
-	kaleshsingh@google.com, ngeoffray@google.com, jdduke@google.com,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Message-ID: <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
-References: <20231206103702.3873743-1-surenb@google.com>
- <20231206103702.3873743-6-surenb@google.com>
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3712FBD;
+	Sun, 10 Dec 2023 06:45:33 -0800 (PST)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 91538979; Sun, 10 Dec 2023 08:45:30 -0600 (CST)
+Date: Sun, 10 Dec 2023 08:45:30 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Munehisa Kamata <kamatam@amazon.com>
+Cc: casey@schaufler-ca.com, paul@paul-moore.com, adobriyan@gmail.com,
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
+ attribute
+Message-ID: <20231210144530.GB295678@mail.hallyn.com>
+References: <7ba17c0d-49c6-4322-b196-3ecb7a371c62@schaufler-ca.com>
+ <20231209011042.29059-1-kamatam@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a6H2z5ZEGXpRtGmb"
-Content-Disposition: inline
-In-Reply-To: <20231206103702.3873743-6-surenb@google.com>
-X-Cookie: Monotheism is a gift from the gods.
-
-
---a6H2z5ZEGXpRtGmb
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231209011042.29059-1-kamatam@amazon.com>
 
-On Wed, Dec 06, 2023 at 02:36:59AM -0800, Suren Baghdasaryan wrote:
-> Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
-> into destination buffer while checking the contents of both after
-> the move. After the operation the content of the destination buffer
-> should match the original source buffer's content while the source
-> buffer should be zeroed. Separate tests are designed for PMD aligned and
-> unaligned cases because they utilize different code paths in the kernel.
->=20
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  tools/testing/selftests/mm/uffd-common.c     |  24 +++
->  tools/testing/selftests/mm/uffd-common.h     |   1 +
->  tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
->  3 files changed, 214 insertions(+)
+On Sat, Dec 09, 2023 at 01:10:42AM +0000, Munehisa Kamata wrote:
+> On Sat, 2023-12-09 00:24:42 +0000, Casey Schaufler wrote:
+> >
+> > On 12/8/2023 3:32 PM, Paul Moore wrote:
+> > > On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >> On 12/8/2023 2:43 PM, Paul Moore wrote:
+> > >>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
+> > >>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
+> > >>> ..
+> > >>>
+> > >>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
+> > >>>>> at the top.  However, before we go too much further on this, can we
+> > >>>>> get clarification that Casey was able to reproduce this on a stock
+> > >>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
+> > >>>>> this problem on Linux v6.5.
+> > >>>>>
+> > >>>>> However, for the moment I'm going to assume this is a real problem, is
+> > >>>>> there some reason why the existing pid_revalidate() code is not being
+> > >>>>> called in the bind mount case?  From what I can see in the original
+> > >>>>> problem report, the path walk seems to work okay when the file is
+> > >>>>> accessed directly from /proc, but fails when done on the bind mount.
+> > >>>>> Is there some problem with revalidating dentrys on bind mounts?
+> > >>>> Hi Paul,
+> > >>>>
+> > >>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
+> > >>>>
+> > >>>> After reading this thread, I have doubt about solving this in VFS.
+> > >>>> Honestly, however, I'm not sure if it's entirely relevant today.
+> > >>> Have you tried simply mounting proc a second time instead of using a bind mount?
+> > >>>
+> > >>>  % mount -t proc non /new/location/for/proc
+> > >>>
+> > >>> I ask because from your description it appears that proc does the
+> > >>> right thing with respect to revalidation, it only becomes an issue
+> > >>> when accessing proc through a bind mount.  Or did I misunderstand the
+> > >>> problem?
+> > >> It's not hard to make the problem go away by performing some simple
+> > >> action. I was unable to reproduce the problem initially because I
+> > >> checked the Smack label on the bind mounted proc entry before doing
+> > >> the cat of it. The problem shows up if nothing happens to update the
+> > >> inode.
+> > > A good point.
+> > >
+> > > I'm kinda thinking we just leave things as-is, especially since the
+> > > proposed fix isn't something anyone is really excited about.
+> > 
+> > "We have to compromise the performance of our sandboxing tool because of
+> > a kernel bug that's known and for which a fix is available."
+> > 
+> > If this were just a curiosity that wasn't affecting real development I
+> > might agree. But we've got a real world problem, and I don't see ignoring
+> > it as a good approach. I can't see maintainers of other LSMs thinking so
+> > if this were interfering with their users.
+>  
+> We do bind mount to make information exposed to the sandboxed task as little
+> as possible. We also create a separate PID namespace for each sandbox, but
 
-This breaks the build in at least some configurations with separate
-output directories like those used by KernelCI:
+If not exposing information is the main motivation, then could you simply do:
 
-make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgcc CR=
-OSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnueabihf=
-- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/kci/l=
-inux -j10 kselftest-gen_tar
+mount -t proc proc dir
+mount --bind dir/$$ dir
 
-(full logs for both arm64 and x86_64 at):
+?
 
-   https://storage.kernelci.org/next/master/next-20231208/arm64/defconfig/g=
-cc-10/logs/kselftest.log
-   https://storage.kernelci.org/next/master/next-20231208/x86_64/x86_64_def=
-config/clang-17/logs/kselftest.log
-
-or tuxmake:
-
-make --silent --keep-going --jobs=3D16 O=3D/home/broonie/.cache/tuxmake/bui=
-lds/25/build INSTALL_PATH=3D/home/broonie/.cache/tuxmake/builds/25/build/ks=
-elftest_install ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPI=
-LE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
-
-The specific failure:
-
-aarch64-linux-gnu-gcc -Wall -I /tmp/kci/linux/tools/testing/selftests/../..=
-/..  -isystem /tmp/kci/linux/build/usr/include     uffd-stress.c vm_util.c =
-uffd-common.c -lrt -lpthread -lm -o /tmp/kci/linux/build/kselftest/mm/uffd-=
-stress
-uffd-common.c: In function =E2=80=98move_page=E2=80=99:
-uffd-common.c:636:21: error: storage size of =E2=80=98uffdio_move=E2=80=99 =
-isn=E2=80=99t known
-  636 |  struct uffdio_move uffdio_move;
-      |                     ^~~~~~~~~~~
-uffd-common.c:643:21: error: =E2=80=98UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES=E2=
-=80=99 undeclared (first use in this function)
-  643 |  uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
-      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-uffd-common.c:643:21: note: each undeclared identifier is reported only onc=
-e for each function it appears in
-uffd-common.c:645:17: error: =E2=80=98UFFDIO_MOVE=E2=80=99 undeclared (firs=
-t use in this function); did you mean =E2=80=98UFFDIO_COPY=E2=80=99?
-  645 |  if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
-      |                 ^~~~~~~~~~~
-      |                 UFFDIO_COPY
-uffd-common.c:636:21: warning: unused variable =E2=80=98uffdio_move=E2=80=
-=99 [-Wunused-variable]
-  636 |  struct uffdio_move uffdio_move;
-      |                     ^~~~~~~~~~~
-
---a6H2z5ZEGXpRtGmb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV1yfMACgkQJNaLcl1U
-h9BZ+gf/UkFwJK/bQHdsM2z3PX8a8hGKETQ2aXDe+QSyV8SLbiBkgQAZt5ZV2EpQ
-upT7zDDXsAwZY3f1ovuYd7UNK8KqMjakLxGTaQtNcoEnnGv4d8FjCZYvVODQYTGM
-CtvpWTI9IqsgU67qiPHecWVs+HDF6K0y+nLpXkvMwRFeOeMO0uE1IBIhIPrPRK/K
-nwhuPLti4PfE/92SMVfCdXIqypM5ZfGkE+7gwege+/lqtGCKiJW8ylFpczBPNSCN
-WCasm6E6IOvsnWFhSvGNx/tRZ5YYKpO4ndn9d0onO60JmvBg7PJ1bBmBo7G1gPGv
-iUEnb2qdbO4CPRHkGKm03zAW5LfJ3g==
-=e4gY
------END PGP SIGNATURE-----
-
---a6H2z5ZEGXpRtGmb--
+> still want to bind mount even with it to hide system-wide and pid 1
+> information from the task. 
+> 
+> So, yeah, I see this as a real problem for our use case and want to seek an
+> opinion about a possibly better fix.
+> 
+> 
+> Thanks,
+> Munehisa 
 
