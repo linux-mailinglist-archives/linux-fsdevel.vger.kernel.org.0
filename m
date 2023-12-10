@@ -1,77 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-5426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2691280BA15
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 11:05:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BED80BA14
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 11:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 133B6B20AE1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 10:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2FD21F2102C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 10:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451E88495;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2315E848A;
 	Sun, 10 Dec 2023 10:05:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E8210E
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:05:23 -0800 (PST)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3b9e506f794so4231354b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:05:23 -0800 (PST)
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDABB10C
+	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:05:22 -0800 (PST)
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-1fb001218c7so5019246fac.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 02:05:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1702202722; x=1702807522;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=46E0STe9moK/jSQ+6rFHirn3QAtzK1kk2/EQbY4/2I8=;
-        b=Mkw/FrIjcVr17AEIFhDpXBNvr3yr3p41gYB4qCbBwatwe1A4zxgCnz0yw/GI00ov7K
-         osYmObzkmoFuomzjRh8si82teTU6h2QE2pYLgA0XQmpPgst3+gS5wzA3lQx85U+Jdnz6
-         60TvEMYlnmN1sFoC0l5zADN45uTWpUajvl8itKzacPq8lUYIE9GLT0jyLPjAGIf+DBor
-         96N/ZT67/4rc70iEwLkMY8OtFj2rlm7WqXDtCV65m1ZiTTT0KvaxkfaIty2kHqyy+QTJ
-         0zpBgNIV89SOLlajxoVaYwh+QP06hi/t/vdMAsZTYKkie3J0gPPXuWH0b8NT01CSeuGh
-         i+Uw==
-X-Gm-Message-State: AOJu0Yz6o0bmKs790fZ+UqGZTKu6tm39liiJiQvvvdFlE/lgGaACmwF6
-	biUhyhKzrc2r1mVkc4CZy0ejYHh6ku34O2A8IGIA4cwvtwnG
-X-Google-Smtp-Source: AGHT+IHRCiXG4voAtbc8pZDp4OharZNbdUQICAmtvJKfNeihR1wl4QR56CxHkFgK+34BwPXK6ywd1Hh2o9n8RAdOpGQlCvApnV0p
+        bh=YKXFc2v7t4kCPe8Iesh8qQND7OzFTIcop0B/KSdXasE=;
+        b=SQNxsDU4li0e/sqSLeTGBMgCSlSdLJQwqU2p6c7VBeZUS+z691H+Y3iFGKGJNhxtje
+         9d3cGB2Xgj0AgQjzzmeAxMi63pdK3jCgwZWMZYezN9qotxa68pq8Xyju/26JaFirY8uQ
+         zRUqYtxtTPeme6y8WzszqyAzI5hYZD4o9/57lxGyVYYXYOqoPyAzCOTEWuZhlAAYgUfi
+         KMzLdwBBM1BM03GATVX1xBbMHLyRWmLbpPf7EE5qwDMImNFFuQyokiv1AXv4mVTxhgYw
+         xRl0682oP/bOCGfSXOs4AU0Mnkcw6+7xs7N1SYhcnnlfCSkeZTpL8qt/A70fABuKGfiH
+         nofw==
+X-Gm-Message-State: AOJu0YydhcqsXMQN9urtnSPN3Zu4EMtdfLXW+rHS4Ko8/7kuUD8HhV/S
+	Ux1lR8tVlazgQ11DnElbYV08NGMOA3Kr5i4I95TVLgZRxNlr
+X-Google-Smtp-Source: AGHT+IF3qDImtqdycyGXN44w/tJpzNdjGEYlzQeJZKDWqiMw1vFKoS5HQnUnTIZ/28zH/2VGVNvWbF/e0jMYVfkJJJfj3oBV+Py7
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:1444:b0:3b9:d3a5:2e4f with SMTP id
- x4-20020a056808144400b003b9d3a52e4fmr2822201oiv.5.1702202722511; Sun, 10 Dec
+X-Received: by 2002:a05:6870:96a1:b0:1e1:2ebc:b636 with SMTP id
+ o33-20020a05687096a100b001e12ebcb636mr3312255oaq.4.1702202722216; Sun, 10 Dec
  2023 02:05:22 -0800 (PST)
 Date: Sun, 10 Dec 2023 02:05:22 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c70c4060c24f4f0@google.com>
-Subject: [syzbot] Monthly xfs report (Dec 2023)
-From: syzbot <syzbot+list680675b20989b29b26c8@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000097ef5d060c24f422@google.com>
+Subject: [syzbot] Monthly ext4 report (Dec 2023)
+From: syzbot <syzbot+list52026f6b95687b491ce2@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
 
-Hello xfs maintainers/developers,
+Hello ext4 maintainers/developers,
 
-This is a 31-day syzbot report for the xfs subsystem.
+This is a 31-day syzbot report for the ext4 subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/xfs
+https://syzkaller.appspot.com/upstream/s/ext4
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 10 issues are still open and 18 have been fixed so far.
+During the period, 8 new issues were detected and 0 were fixed.
+In total, 61 issues are still open and 115 have been fixed so far.
+There are also 2 low-priority issues.
 
 Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 346     Yes   KASAN: stack-out-of-bounds Read in xfs_buf_lock
-                  https://syzkaller.appspot.com/bug?extid=0bc698a422b5e4ac988c
-<2> 174     Yes   WARNING in print_bfs_bug (2)
-                  https://syzkaller.appspot.com/bug?extid=630f83b42d801d922b8b
-<3> 147     Yes   INFO: task hung in xfs_buf_item_unpin
-                  https://syzkaller.appspot.com/bug?extid=3f083e9e08b726fcfba2
-<4> 4       Yes   WARNING: Reset corrupted AGFL on AG NUM. NUM blocks leaked. Please unmount and run xfs_repair.
-                  https://syzkaller.appspot.com/bug?extid=9d0b0d54a8bd799f6ae4
+Ref  Crashes Repro Title
+<1>  51616   Yes   possible deadlock in console_flush_all (2)
+                   https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
+<2>  6748    Yes   WARNING: locking bug in ext4_move_extents
+                   https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
+<3>  546     Yes   WARNING: locking bug in __ext4_ioctl
+                   https://syzkaller.appspot.com/bug?extid=a537ff48a9cb940d314c
+<4>  247     Yes   WARNING: locking bug in ext4_ioctl
+                   https://syzkaller.appspot.com/bug?extid=a3c8e9ac9f9d77240afd
+<5>  152     No    possible deadlock in evict (3)
+                   https://syzkaller.appspot.com/bug?extid=dd426ae4af71f1e74729
+<6>  115     Yes   INFO: task hung in sync_inodes_sb (5)
+                   https://syzkaller.appspot.com/bug?extid=30476ec1b6dc84471133
+<7>  47      No    KASAN: slab-use-after-free Read in check_igot_inode
+                   https://syzkaller.appspot.com/bug?extid=741810aea4ac24243b2f
+<8>  32      Yes   kernel BUG in ext4_write_inline_data_end
+                   https://syzkaller.appspot.com/bug?extid=198e7455f3a4f38b838a
+<9>  16      Yes   possible deadlock in ext4_xattr_inode_iget (2)
+                   https://syzkaller.appspot.com/bug?extid=352d78bd60c8e9d6ecdc
+<10> 13      Yes   kernel BUG in ext4_enable_quotas
+                   https://syzkaller.appspot.com/bug?extid=693985588d7a5e439483
 
 ---
 This report is generated by a bot. It may contain errors.
