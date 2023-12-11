@@ -1,54 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-5593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EB980DF64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:21:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55D280DF8B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34611C2169D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66281B215AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E565674E;
-	Mon, 11 Dec 2023 23:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A1B5676C;
+	Mon, 11 Dec 2023 23:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="k/nDpvbW"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n+7ae+m9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCD6BCB;
-	Mon, 11 Dec 2023 15:21:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mERUYNAEtYKlaEK1K617SrRF291lNcNfmDSKNE8j018=; b=k/nDpvbWr9HpLm/1Ve+oUVXWMY
-	jz9h+D7jC8uEN/X+zIs+scm6ZJNlB+z0mjG9XzGbWLBWCtGFlBBaDtBqT7YOQosaJ+PVHRL/u51He
-	tVa3Lgw3Rdtu2fs9EP9PJkPOVuVHTN2tPF17ahTpWnFBPu7SQ7XitooPSrH5aoP8HCwUOKtTLnnYu
-	4ks7JfsXNMI3TYSGi6obww7fpOJ6Thcwjo5qnmMB1xGGFRmeLvffsBU1Jiv3hRgYQrX3lNXyd2h1q
-	f7i+o/zfhoWiMhB6vHETgaYWhQ6G8f46u+tpuWMRQ6JLqHPRc839L/Thdnlqeg3qvYyly04UaE5z0
-	w9Cjt2+w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rCpah-00B2zy-2G;
-	Mon, 11 Dec 2023 23:21:35 +0000
-Date: Mon, 11 Dec 2023 23:21:35 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [IPv6:2001:41d0:203:375::b0])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C0ECB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 15:32:36 -0800 (PST)
+Date: Mon, 11 Dec 2023 18:32:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1702337554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wxovv5SVt/JRYz/4ndFTxe3W8eaNQpCfYkKewjXWTHY=;
+	b=n+7ae+m9mvLKsYh+IktU5paZ1ry5vyX8VbtkzCp1dgA3ATkKnu96wdB7VbFNupxzH5gXif
+	In5mUWHVHYnD/jAjXKUe8WyNYOG1K5mpCu6q4yik0XJZmvy8WMeFA1rv2so9mL407kXQPx
+	T12zad43G0t/JvJUVMJjuAkiU6Vn34k=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
 To: NeilBrown <neilb@suse.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/3] nfsd: use __fput_sync() to avoid delayed closing of
- files.
-Message-ID: <20231211232135.GF1674809@ZenIV>
-References: <20231208033006.5546-1-neilb@suse.de>
- <20231208033006.5546-2-neilb@suse.de>
- <ZXMv4psmTWw4mlCd@tissot.1015granger.net>
- <170224845504.12910.16483736613606611138@noble.neil.brown.name>
- <20231211191117.GD1674809@ZenIV>
- <170233343177.12910.2316815312951521227@noble.neil.brown.name>
- <20231211231330.GE1674809@ZenIV>
+Cc: Donald Buczek <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
+	Stefan Krueger <stefan.krueger@aei.mpg.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+Message-ID: <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+References: <12f711f9-70a2-408e-8588-2839e599b668@molgen.mpg.de>
+ <170181366042.7109.5045075782421670339@noble.neil.brown.name>
+ <97375d00-4bf7-4c4f-96ec-47f4078abb3d@molgen.mpg.de>
+ <170199821328.12910.289120389882559143@noble.neil.brown.name>
+ <20231208013739.frhvlisxut6hexnd@moria.home.lan>
+ <170200162890.12910.9667703050904306180@noble.neil.brown.name>
+ <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,27 +55,79 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231211231330.GE1674809@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <170233460764.12910.276163802059260666@noble.neil.brown.name>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Dec 11, 2023 at 11:13:30PM +0000, Al Viro wrote:
-
-> dentry_kill() means ->d_release(), ->d_iput() and anything final iput()
-> could do.  Including e.g. anything that might be done by afs_silly_iput(),
-> with its "send REMOVE to server, wait for completion".  No, that's not
-> a deadlock per se, but it can stall you a bit more than you would
-> probably consider tolerable...  Sure, you could argue that AFS ought to
-> make that thing asynchronous, but...
+On Tue, Dec 12, 2023 at 09:43:27AM +1100, NeilBrown wrote:
+> On Sat, 09 Dec 2023, Kent Overstreet wrote:
+> > On Fri, Dec 08, 2023 at 12:34:28PM +0100, Donald Buczek wrote:
+> > > On 12/8/23 03:49, Kent Overstreet wrote:
+> > > 
+> > > > We really only need 6 or 7 bits out of the inode number for sharding;
+> > > > then 20-32 bits (nobody's going to have a billion snapshots; a million
+> > > > is a more reasonable upper bound) for the subvolume ID leaves 30 to 40
+> > > > bits for actually allocating inodes out of.
+> > > > 
+> > > > That'll be enough for the vast, vast majority of users, but exceeding
+> > > > that limit is already something we're technically capable of: we're
+> > > > currently seeing filesystems well over 100 TB, petabyte range expected
+> > > > as fsck gets more optimized and online fsck comes.
+> > > 
+> > > 30 bits would not be enough even today:
+> > > 
+> > > buczek@done:~$ df -i /amd/done/C/C8024
+> > > Filesystem         Inodes     IUsed      IFree IUse% Mounted on
+> > > /dev/md0       2187890304 618857441 1569032863   29% /amd/done/C/C8024
+> > > 
+> > > So that's 32 bit on a random production system ( 618857441 == 0x24e303e1 ).
 > 
-> Anyway, it won't be "safe to use in most contexts".  ->mmap_lock alone
-> is enough for that, and that's just the one I remember to have given
-> us a lot of headache.  And that's without bringing the "nfsd won't
-> touch those files" cases - make it generally accessible and you get
-> to audit all locks that might be taken when we close a socket, etc.
+> only 30 bits though.  So it is a long way before you use all 32 bits.
+> How many volumes do you have?
+> 
+> > > 
+> > > And if the idea to produce unique inode numbers by hashing the filehandle into 64 is followed, collisions definitely need to be addressed. With 618857441 objects, the probability of a hash collision with 64 bit is already over 1% [1].
+> > 
+> > Oof, thanks for the data point. Yeah, 64 bits is clearly not enough for
+> > a unique identifier; time to start looking at how to extend statx.
+> > 
+> 
+> 64 should be plenty...
+> 
+> If you have 32 bits for free allocation, and 7 bits for sharding across
+> 128 CPUs, then you can allocate many more than 4 billion inodes.  Maybe
+> not the full 500 billion for 39 bits, but if you actually spread the
+> load over all the shards, then certainly tens of billions.
+> 
+> If you use 22 bits for volume number and 42 bits for inodes in a volume,
+> then you can spend 7 on sharding and still have room for 55 of Donald's
+> filesystems to be allocated by each CPU.
+> 
+> And if Donald only needs thousands of volumes, not millions, then he
+> could configure for a whole lot more headroom.
+> 
+> In fact, if you use the 64 bits of vfs_inode number by filling in bits from
+> the fs-inode number from one end, and bits from the volume number from
+> the other end, then you don't need to pre-configure how the 64 bits are
+> shared.
+> You record inum-bits and volnum bits in the filesystem metadata, and
+> increase either as needed.  Once the sum hits 64, you start returning
+> ENOSPC for new files or new volumes.
+> 
+> There will come a day when 64 bits is not enough for inodes in a single
+> filesystem.  Today is not that day.
 
-PS: put it that way - I can buy "nfsd is doing that only to regular
-files and not on an arbitrary filesystem, at that; having the thread
-wait on that sucker is not going to cause too much trouble"; I do *not*
-buy turning it into a thing usable outside of a very narrow set of
-circumstances.
+Except filesystems are growing all the time: that leaves almost no room
+for growth and then we're back in the world where users had to guess how
+many inodes they were going to need in their filesystem; and if we put
+this off now we're just kicking the can down the road until when it
+becomes really pressing and urgent to solve.
+
+No, we need to come up with something better.
+
+I was chatting a bit with David Howells on IRC about this, and floated
+adding the file handle to statx. It looks like there's enough space
+reserved to make this feasible - probably going with a fixed maximum
+size of 128-256 bits.
+
+Thoughts?
 
