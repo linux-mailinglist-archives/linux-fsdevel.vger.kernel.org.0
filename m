@@ -1,207 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-5459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DCB80C68F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 11:30:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284B480C6F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 11:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A591F21268
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 10:30:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92810B21079
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 10:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C83210E9;
-	Mon, 11 Dec 2023 10:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D794F2577D;
+	Mon, 11 Dec 2023 10:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rDCtnqs3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xKBH0Fbz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rDCtnqs3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xKBH0Fbz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLcRQhqp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A3791
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 02:30:39 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 32D6C22386;
-	Mon, 11 Dec 2023 10:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702290638; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q8F8Cnn5e8trlXxi50A4a1CipVIOH8lqh/58SLqxhh4=;
-	b=rDCtnqs3QSmsS8mq6JBEF5J2rEwClJyOf9IRydGGXneNzQlGVSOLpy3ddzYvDO9LU3oFAs
-	wUr/Bl3GUn8JGDngRZP9B9G6bwb7ftnvYv6Nhy8PEqI+YvyKm7zwRc6C5i8QKIvp5EVN2e
-	ztWlm4jHSi3RZ7jh0SAHS74/nLauor0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702290638;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q8F8Cnn5e8trlXxi50A4a1CipVIOH8lqh/58SLqxhh4=;
-	b=xKBH0FbztRHTU1pRPuNcO66KW3o9EDtKAX58siq4sdrC1fIQu3bDPjKA3ubOCHjlG0AsNE
-	CTIWHfKiHEYHwNBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702290638; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q8F8Cnn5e8trlXxi50A4a1CipVIOH8lqh/58SLqxhh4=;
-	b=rDCtnqs3QSmsS8mq6JBEF5J2rEwClJyOf9IRydGGXneNzQlGVSOLpy3ddzYvDO9LU3oFAs
-	wUr/Bl3GUn8JGDngRZP9B9G6bwb7ftnvYv6Nhy8PEqI+YvyKm7zwRc6C5i8QKIvp5EVN2e
-	ztWlm4jHSi3RZ7jh0SAHS74/nLauor0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702290638;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q8F8Cnn5e8trlXxi50A4a1CipVIOH8lqh/58SLqxhh4=;
-	b=xKBH0FbztRHTU1pRPuNcO66KW3o9EDtKAX58siq4sdrC1fIQu3bDPjKA3ubOCHjlG0AsNE
-	CTIWHfKiHEYHwNBQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CC5F138FF;
-	Mon, 11 Dec 2023 10:30:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id tFdrBs7kdmVPJQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 10:30:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 92B55A07E3; Mon, 11 Dec 2023 11:30:33 +0100 (CET)
-Date: Mon, 11 Dec 2023 11:30:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
-	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/4] fsnotify: assert that file_start_write() is not held
- in permission hooks
-Message-ID: <20231211103033.v52qhc5h7o36fym3@quack3>
-References: <20231207123825.4011620-1-amir73il@gmail.com>
- <20231207123825.4011620-4-amir73il@gmail.com>
- <20231208184608.n5fcrkj3peancy3u@quack3>
- <CAOQ4uxgHNBSBenADnMkqZWmb3t2qzfhG-E722-0KJ=Cwzf2UYw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB215AD8;
+	Mon, 11 Dec 2023 10:45:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A87DC433C8;
+	Mon, 11 Dec 2023 10:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702291551;
+	bh=C9SWpDe50LejcoRBfB5+9Vj9FrSJV2LSQGio56TrmEM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aLcRQhqpmVpI6Pe9RDF2UNzcNAgB0MvorxxDR0SVutDFClSz3hRe4moFXkhDKa0Th
+	 wLYlvqwCxenK0kcC9N/+kL7d+R+UoDsebx+0ng2n+OD+JF15KlS0WX6OsAAKK0y3Xu
+	 sW1rEdOgTe51bvkpHLKkOqVcjzJZUbfA+X0wWq3tlpzE/JjgphWlXaf4iW1vNOtJx1
+	 IbQ0A9Xkj3Abr+Gw+uNxyjPpCF00bR+qy38ZI4UEV1HjwdgD3jPkH+T+Pa2/JsuMud
+	 cNIUo59OgmF3KjRMgw/2RccwyW5N3xMQxp7udZCZ0ujv+XwrqaU7FumdH6YQP7HJds
+	 DBcKwhaOFEQjQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	gfs2@lists.linux.dev
+Subject: Re: map multiple blocks per ->map_blocks in iomap writeback
+Date: Mon, 11 Dec 2023 11:45:38 +0100
+Message-ID: <20231211-listen-ehrbaren-105219c9ab09@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231207072710.176093-1-hch@lst.de>
+References: <20231207072710.176093-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3026; i=brauner@kernel.org; h=from:subject:message-id; bh=C9SWpDe50LejcoRBfB5+9Vj9FrSJV2LSQGio56TrmEM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSWvQgsjp5xwY3H+uAOockT/dOVbKMfTT0qOeXhz7REq dl6XPOXd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykaSUjw8V3zx7tmbrUxHdj 5XKv0tJ3B8QDVmaVqjzv3iFoa/szfjUjwwqT1B9ijBavMnMu3L6172Ad77R3S/TPdHB+eei3Ziv fUU4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgHNBSBenADnMkqZWmb3t2qzfhG-E722-0KJ=Cwzf2UYw@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Score: -3.79
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
 
-On Fri 08-12-23 23:02:35, Amir Goldstein wrote:
-> On Fri, Dec 8, 2023 at 8:46 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 07-12-23 14:38:24, Amir Goldstein wrote:
-> > > filesystem may be modified in the context of fanotify permission events
-> > > (e.g. by HSM service), so assert that sb freeze protection is not held.
-> > >
-> > > If the assertion fails, then the following deadlock would be possible:
-> > >
-> > > CPU0                          CPU1                    CPU2
-> > > -------------------------------------------------------------------------
-> > > file_start_write()#0
-> > > ...
-> > >   fsnotify_perm()
-> > >     fanotify_get_response() =>        (read event and fill file)
-> > >                               ...
-> > >                               ...                     freeze_super()
-> > >                               ...                       sb_wait_write()
-> > >                               ...
-> > >                               vfs_write()
-> > >                                 file_start_write()#1
-> > >
-> > > This example demonstrates a use case of an hierarchical storage management
-> > > (HSM) service that uses fanotify permission events to fill the content of
-> > > a file before access, while a 3rd process starts fsfreeze.
-> > >
-> > > This creates a circular dependeny:
-> > >   file_start_write()#0 => fanotify_get_response =>
-> > >     file_start_write()#1 =>
-> > >       sb_wait_write() =>
-> > >         file_end_write()#0
-> > >
-> > > Where file_end_write()#0 can never be called and none of the threads can
-> > > make progress.
-> > >
-> > > The assertion is checked for both MAY_READ and MAY_WRITE permission
-> > > hooks in preparation for a pre-modify permission event.
-> > >
-> > > The assertion is not checked for an open permission event, because
-> > > do_open() takes mnt_want_write() in O_TRUNC case, meaning that it is not
-> > > safe to write to filesystem in the content of an open permission event.
-> >                                      ^^^^^ context
-> >
-> > BTW, isn't this a bit inconvenient? I mean filling file contents on open
-> > looks quite natural... Do you plan to fill files only on individual read /
-> > write events? I was under the impression simple HSM handlers would be doing
-> > it on open.
-> >
+On Thu, 07 Dec 2023 08:26:56 +0100, Christoph Hellwig wrote:
+> this series overhaults a large chunk of the iomap writeback code with
+> the end result that ->map_blocks can now map multiple blocks at a time,
+> at least as long as they are all inside the same folio.
 > 
-> Naive HSMs perhaps... The problem with filling on open is that the pattern
-> open();fstat();close() is quite common with applications and we found open()
-> to be a sub-optimal predicate for near future read().
+> On a sufficiently large system (32 cores in my case) this significantly
+> reduces CPU usage for buffered write workloads on xfs, with a very minor
+> improvement in write bandwith that might be within the measurement
+> tolerance.
 > 
-> Filling the file on first read() access or directory on first
-> readdir() access does
-> a better job in "swapping in" the correct files.
-> A simple HSM would just fill the entire file/dir on the first PRE_ACCESS event.
-> that's not any more or less simple than filling it on an OPEN_PERM event.
-> 
-> Another point that could get lost when reading to above deadlock is that
-> filling the file content before open(O_TRUNC) would be really dumb,
-> because swap in is costly and you are going to throw away the data.
-> If we really wanted to provide HSM with a safe way to fill files on open,
-> we would probably need to report the open flags with the open event.
-> I actually think that reporting the open flags would be nice even with
-> an async open event.
+> [...]
 
-OK, thanks for explanation!
+Darrick, Christoph, I gave us a separate branch for this. I thought about
+putting this on top of vfs.misc but I feel that this would be a bit ugly.
+Different layout is possible though.
 
-								Honza
+---
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Applied to the vfs.iomap branch of the vfs/vfs.git tree.
+Patches in the vfs.iomap branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.iomap
+
+[01/14] iomap: clear the per-folio dirty bits on all writeback failures
+        https://git.kernel.org/vfs/vfs/c/7c821e1f5a5a
+[02/14] iomap: treat inline data in iomap_writepage_map as an I/O error
+        https://git.kernel.org/vfs/vfs/c/6571f184afe3
+[03/14] iomap: move the io_folios field out of struct iomap_ioend
+        https://git.kernel.org/vfs/vfs/c/e5f9e159cf10
+[04/14] iomap: move the PF_MEMALLOC check to iomap_writepages
+        https://git.kernel.org/vfs/vfs/c/fc51566e62ef
+[05/14] iomap: factor out a iomap_writepage_handle_eof helper
+        https://git.kernel.org/vfs/vfs/c/89d887160535
+[06/14] iomap: move all remaining per-folio logic into iomap_writepage_map
+        https://git.kernel.org/vfs/vfs/c/6d3bac5014bf
+[07/14] iomap: clean up the iomap_alloc_ioend calling convention
+        https://git.kernel.org/vfs/vfs/c/d7acac8ed175
+[08/14] iomap: move the iomap_sector sector calculation out of iomap_add_to_ioend
+        https://git.kernel.org/vfs/vfs/c/a04db4e40bdb
+[09/14] iomap: don't chain bios
+        https://git.kernel.org/vfs/vfs/c/7a579e360d15
+[10/14] iomap: only call mapping_set_error once for each failed bio
+        https://git.kernel.org/vfs/vfs/c/a64f2b75da6b
+[11/14] iomap: factor out a iomap_writepage_map_block helper
+        https://git.kernel.org/vfs/vfs/c/3853862b0b77
+[12/14] iomap: submit ioends immediately
+        https://git.kernel.org/vfs/vfs/c/ae00bec07dee
+[13/14] iomap: map multiple blocks at a time
+        https://git.kernel.org/vfs/vfs/c/2487070c95f4
+[14/14] iomap: pass the length of the dirty region to ->map_blocks
+        https://git.kernel.org/vfs/vfs/c/a828782eaff6
 
