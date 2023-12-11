@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-5493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2673E80CDEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF16980CDF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12EC281F92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:15:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893D0281AD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC851033;
-	Mon, 11 Dec 2023 14:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAF24C3B0;
+	Mon, 11 Dec 2023 14:10:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3BAAD02;
-	Mon, 11 Dec 2023 06:09:37 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SpkC06w4lz4f3k6m;
-	Mon, 11 Dec 2023 22:09:32 +0800 (CST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44EA3269;
+	Mon, 11 Dec 2023 06:10:01 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SpkCT6TGMz4f3kJr;
+	Mon, 11 Dec 2023 22:09:57 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 216D31A04B0;
-	Mon, 11 Dec 2023 22:09:34 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 0E0251A0893;
+	Mon, 11 Dec 2023 22:09:59 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHShAbGHdlQKdxDQ--.12405S4;
-	Mon, 11 Dec 2023 22:09:33 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgBXWhA0GHdlbq5xDQ--.18493S4;
+	Mon, 11 Dec 2023 22:09:58 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -76,9 +76,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v2 for-6.8/block 16/18] ext4: use new helper to read sb block
-Date: Mon, 11 Dec 2023 22:08:08 +0800
-Message-Id: <20231211140808.975527-1-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v2 for-6.8/block 17/18] ext4: remove block_device_ejected()
+Date: Mon, 11 Dec 2023 22:08:33 +0800
+Message-Id: <20231211140833.975935-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231211140552.973290-1-yukuai1@huaweicloud.com>
 References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
@@ -89,10 +89,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHShAbGHdlQKdxDQ--.12405S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr4kKw17tFW8tr4DKr1xZrb_yoW7AFy7pa
-	sIka9Fkryvqrn09a1xKr13tw1ay3Z2ga1UGayfC34furyqqrn3Xa48tF1I9FWrArZxXry5
-	XF1UKryrCr18CFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBXWhA0GHdlbq5xDQ--.18493S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4UGw1xJF1fWr48KFy3urg_yoW8uFyfp3
+	y3Cw1fArW8ur1I9ayxJr48W340qayvkay0gFyxur1Fqr1fJ34IgFWktF1Iya40vrZ3uw1F
+	qF1UCrWxCr18GrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
@@ -110,171 +110,61 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Remove __ext4_sb_bread_gfp() and ext4_buffer_uptodate() that is defined
-by ext4, and convert to use common helper __bread_gfp2() and
-buffer_uptodate_or_error().
+block_device_ejected() is added by commit bdfe0cbd746a ("Revert
+"ext4: remove block_device_ejected"") in 2015. At that time 'bdi->wb'
+is destroyed synchronized from del_gendisk(), hence if ext4 is still
+mounted, and then mark_buffer_dirty() will reference destroyed 'wb'.
+However, such problem doesn't exist anymore:
+
+- commit d03f6cdc1fc4 ("block: Dynamically allocate and refcount
+backing_dev_info") switch bdi to use refcounting;
+- commit 13eec2363ef0 ("fs: Get proper reference for s_bdi"), will grab
+additional reference of bdi while mounting, so that 'bdi->wb' will not
+be destroyed until generic_shutdown_super().
+
+Hence remove this dead function block_device_ejected().
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/ext4/ext4.h    | 13 -------------
- fs/ext4/inode.c   |  8 ++++----
- fs/ext4/super.c   | 45 ++++++++++-----------------------------------
- fs/ext4/symlink.c |  2 +-
- 4 files changed, 15 insertions(+), 53 deletions(-)
+ fs/ext4/super.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index a5d784872303..8377f6c5264f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -3824,19 +3824,6 @@ extern const struct iomap_ops ext4_iomap_ops;
- extern const struct iomap_ops ext4_iomap_overwrite_ops;
- extern const struct iomap_ops ext4_iomap_report_ops;
- 
--static inline int ext4_buffer_uptodate(struct buffer_head *bh)
--{
--	/*
--	 * If the buffer has the write error flag, we have failed
--	 * to write out data in the block.  In this  case, we don't
--	 * have to read the block because we may read the old data
--	 * successfully.
--	 */
--	if (buffer_write_io_error(bh))
--		set_buffer_uptodate(bh);
--	return buffer_uptodate(bh);
--}
--
- #endif	/* __KERNEL__ */
- 
- #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 61277f7f8722..efb0af6f02f7 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -887,7 +887,7 @@ struct buffer_head *ext4_bread(handle_t *handle, struct inode *inode,
- 	bh = ext4_getblk(handle, inode, block, map_flags);
- 	if (IS_ERR(bh))
- 		return bh;
--	if (!bh || ext4_buffer_uptodate(bh))
-+	if (!bh || buffer_uptodate_or_error(bh))
- 		return bh;
- 
- 	ret = ext4_read_bh_lock(bh, REQ_META | REQ_PRIO, true);
-@@ -915,7 +915,7 @@ int ext4_bread_batch(struct inode *inode, ext4_lblk_t block, int bh_count,
- 
- 	for (i = 0; i < bh_count; i++)
- 		/* Note that NULL bhs[i] is valid because of holes. */
--		if (bhs[i] && !ext4_buffer_uptodate(bhs[i]))
-+		if (bhs[i] && !buffer_uptodate_or_error(bhs[i]))
- 			ext4_read_bh_lock(bhs[i], REQ_META | REQ_PRIO, false);
- 
- 	if (!wait)
-@@ -4392,11 +4392,11 @@ static int __ext4_get_inode_loc(struct super_block *sb, unsigned long ino,
- 	bh = sb_getblk(sb, block);
- 	if (unlikely(!bh))
- 		return -ENOMEM;
--	if (ext4_buffer_uptodate(bh))
-+	if (buffer_uptodate_or_error(bh))
- 		goto has_buffer;
- 
- 	lock_buffer(bh);
--	if (ext4_buffer_uptodate(bh)) {
-+	if (buffer_uptodate_or_error(bh)) {
- 		/* Someone brought it uptodate while we waited */
- 		unlock_buffer(bh);
- 		goto has_buffer;
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c5fcf377ab1f..ae41204f52d4 100644
+index ae41204f52d4..3b5e2b557488 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -180,7 +180,7 @@ void ext4_read_bh_nowait(struct buffer_head *bh, blk_opf_t op_flags,
- {
- 	BUG_ON(!buffer_locked(bh));
- 
--	if (ext4_buffer_uptodate(bh)) {
-+	if (buffer_uptodate_or_error(bh)) {
- 		unlock_buffer(bh);
- 		return;
- 	}
-@@ -191,7 +191,7 @@ int ext4_read_bh(struct buffer_head *bh, blk_opf_t op_flags, bh_end_io_t *end_io
- {
- 	BUG_ON(!buffer_locked(bh));
- 
--	if (ext4_buffer_uptodate(bh)) {
-+	if (buffer_uptodate_or_error(bh)) {
- 		unlock_buffer(bh);
- 		return 0;
- 	}
-@@ -214,49 +214,24 @@ int ext4_read_bh_lock(struct buffer_head *bh, blk_opf_t op_flags, bool wait)
- 	return ext4_read_bh(bh, op_flags, NULL);
+@@ -467,22 +467,6 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+ 		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
  }
  
 -/*
-- * This works like __bread_gfp() except it uses ERR_PTR for error
-- * returns.  Currently with sb_bread it's impossible to distinguish
-- * between ENOMEM and EIO situations (since both result in a NULL
-- * return.
+- * The del_gendisk() function uninitializes the disk-specific data
+- * structures, including the bdi structure, without telling anyone
+- * else.  Once this happens, any attempt to call mark_buffer_dirty()
+- * (for example, by ext4_commit_super), will cause a kernel OOPS.
+- * This is a kludge to prevent these oops until we can put in a proper
+- * hook in del_gendisk() to inform the VFS and file system layers.
 - */
--static struct buffer_head *__ext4_sb_bread_gfp(struct super_block *sb,
--					       sector_t block,
--					       blk_opf_t op_flags, gfp_t gfp)
+-static int block_device_ejected(struct super_block *sb)
 -{
--	struct buffer_head *bh;
--	int ret;
+-	struct inode *bd_inode = sb->s_bdev->bd_inode;
+-	struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
 -
--	bh = sb_getblk_gfp(sb, block, gfp);
--	if (bh == NULL)
--		return ERR_PTR(-ENOMEM);
--	if (ext4_buffer_uptodate(bh))
--		return bh;
--
--	ret = ext4_read_bh_lock(bh, REQ_META | op_flags, true);
--	if (ret) {
--		put_bh(bh);
--		return ERR_PTR(ret);
--	}
--	return bh;
+-	return bdi->dev == NULL;
 -}
 -
- struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
- 				   blk_opf_t op_flags)
+ static void ext4_journal_commit_callback(journal_t *journal, transaction_t *txn)
  {
--	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
--			~__GFP_FS) | __GFP_MOVABLE;
-+	struct buffer_head *bh = __bread_gfp2(sb->s_bdev, block,
-+					      sb->s_blocksize,
-+					      REQ_META | op_flags,
-+					      __GFP_MOVABLE);
+ 	struct super_block		*sb = journal->j_private;
+@@ -6162,8 +6146,6 @@ static int ext4_commit_super(struct super_block *sb)
  
--	return __ext4_sb_bread_gfp(sb, block, op_flags, gfp);
-+	return bh ? bh : ERR_PTR(-EIO);
- }
+ 	if (!sbh)
+ 		return -EINVAL;
+-	if (block_device_ejected(sb))
+-		return -ENODEV;
  
- struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
- 					    sector_t block)
- {
--	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
--			~__GFP_FS);
-+	struct buffer_head *bh = __bread_gfp2(sb->s_bdev, block,
-+					      sb->s_blocksize, 0, 0);
+ 	ext4_update_super(sb);
  
--	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
-+	return bh ? bh : ERR_PTR(-EIO);
- }
- 
- void ext4_sb_breadahead_unmovable(struct super_block *sb, sector_t block)
-diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
-index 75bf1f88843c..49e918221aac 100644
---- a/fs/ext4/symlink.c
-+++ b/fs/ext4/symlink.c
-@@ -94,7 +94,7 @@ static const char *ext4_get_link(struct dentry *dentry, struct inode *inode,
- 		bh = ext4_getblk(NULL, inode, 0, EXT4_GET_BLOCKS_CACHED_NOWAIT);
- 		if (IS_ERR(bh))
- 			return ERR_CAST(bh);
--		if (!bh || !ext4_buffer_uptodate(bh))
-+		if (!bh || !buffer_uptodate_or_error(bh))
- 			return ERR_PTR(-ECHILD);
- 	} else {
- 		bh = ext4_bread(NULL, inode, 0, 0);
 -- 
 2.39.2
 
