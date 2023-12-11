@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-5556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC4B80D858
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:44:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FD980DA32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 20:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7645C1F21B55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E401C21778
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E14E5102F;
-	Mon, 11 Dec 2023 18:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2AE52F9B;
+	Mon, 11 Dec 2023 18:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ymwyXaNT"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZAq/Esfi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A47FC06;
-	Mon, 11 Dec 2023 18:44:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3D16C433C7;
-	Mon, 11 Dec 2023 18:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8BD321B8;
+	Mon, 11 Dec 2023 18:59:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79385C433C8;
+	Mon, 11 Dec 2023 18:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1702320291;
-	bh=8NECBHC/NruzAN2opWrThISKMIQQIgP9v7YVxDd1O4A=;
+	s=korg; t=1702321176;
+	bh=30XXDdWmj0e19sZG+Zen0i8d9uyhtB2aNJrO599Ta7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ymwyXaNT1qHiPcN97uLc/6Fwlh+/U9WoJAJy/GP7qYitPys8yERkTRPp+G4M3z59l
-	 b7lgzIwztXLM7mPMqn4qmf0pLkIKqMhaVBmUizJzp7mgLVAqXg5oX0/Y8H6D6qCpWA
-	 UULgKl7d2c+tLXpWCIylscIYLfHp2P81axzEZY/U=
+	b=ZAq/EsfifH4qskHexjR5X/LPhT3n6T0zVgW96xoHIbuSB9V0P/L6Ihqxowdh9nsVA
+	 lbrR1FveGgliRFsKUUm/Z/asMXr/THd9ivRrV6f6GmBUeeIXN54wJTSOimn2+i5dLI
+	 SHVEK/v4bVM8Qicx34OfqNUwTn7OvjYkMmdHs+EU=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,12 +45,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	David Howells <dhowells@redhat.com>,
 	Steve French <stfrench@microsoft.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 64/67] cifs: Fix non-availability of dedup breaking generic/304
-Date: Mon, 11 Dec 2023 19:22:48 +0100
-Message-ID: <20231211182017.746054096@linuxfoundation.org>
+Subject: [PATCH 5.15 138/141] cifs: Fix non-availability of dedup breaking generic/304
+Date: Mon, 11 Dec 2023 19:23:17 +0100
+Message-ID: <20231211182032.604454432@linuxfoundation.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231211182015.049134368@linuxfoundation.org>
-References: <20231211182015.049134368@linuxfoundation.org>
+In-Reply-To: <20231211182026.503492284@linuxfoundation.org>
+References: <20231211182026.503492284@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.4-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -100,10 +100,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 917441e3018ad..12f632287d161 100644
+index af688e39f31ac..9bbead15a0287 100644
 --- a/fs/cifs/cifsfs.c
 +++ b/fs/cifs/cifsfs.c
-@@ -1079,7 +1079,9 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
+@@ -1144,7 +1144,9 @@ static loff_t cifs_remap_file_range(struct file *src_file, loff_t off,
  	unsigned int xid;
  	int rc;
  
