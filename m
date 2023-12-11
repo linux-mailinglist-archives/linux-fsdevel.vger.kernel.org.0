@@ -1,26 +1,26 @@
-Return-Path: <linux-fsdevel+bounces-5558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5A980D8F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:50:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C577A80D965
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:53:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549BF1F21BEC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:50:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3220BB216FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368BA524B0;
-	Mon, 11 Dec 2023 18:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C230524AB;
+	Mon, 11 Dec 2023 18:53:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C465102A;
-	Mon, 11 Dec 2023 18:49:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9584DC433C8;
-	Mon, 11 Dec 2023 18:49:39 +0000 (UTC)
-Date: Mon, 11 Dec 2023 18:49:37 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4F951C37;
+	Mon, 11 Dec 2023 18:53:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E447C433C9;
+	Mon, 11 Dec 2023 18:53:15 +0000 (UTC)
+Date: Mon, 11 Dec 2023 18:53:13 +0000
 From: Catalin Marinas <catalin.marinas@arm.com>
 To: Joey Gouly <joey.gouly@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
@@ -30,11 +30,12 @@ Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
 	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 14/25] arm64: implement PKEYS support
-Message-ID: <ZXdZwRcc0BaEq-Uv@arm.com>
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Szabolcs Nagy <szabolcs.nagy@arm.com>
+Subject: Re: [PATCH v3 15/25] arm64: add POE signal support
+Message-ID: <ZXdamak1wDyUdwSG@arm.com>
 References: <20231124163510.1835740-1-joey.gouly@arm.com>
- <20231124163510.1835740-15-joey.gouly@arm.com>
+ <20231124163510.1835740-16-joey.gouly@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,106 +44,161 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231124163510.1835740-15-joey.gouly@arm.com>
+In-Reply-To: <20231124163510.1835740-16-joey.gouly@arm.com>
 
-On Fri, Nov 24, 2023 at 04:34:59PM +0000, Joey Gouly wrote:
-> @@ -211,11 +212,24 @@ init_new_context(struct task_struct *tsk, struct mm_struct *mm)
->  {
->  	atomic64_set(&mm->context.id, 0);
->  	refcount_set(&mm->context.pinned, 0);
++ Szabolcs for libc ack (and keeping the full patch quoted below)
+
+You should cc Szabolcs when reposting, we need his ack on the UAPI
+changes.
+
+On Fri, Nov 24, 2023 at 04:35:00PM +0000, Joey Gouly wrote:
+> Add PKEY support to signals, by saving and restoring POR_EL0 from the stackframe.
+> 
+> Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/include/uapi/asm/sigcontext.h |  7 ++++
+>  arch/arm64/kernel/signal.c               | 51 ++++++++++++++++++++++++
+>  2 files changed, 58 insertions(+)
+> 
+> diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
+> index f23c1dc3f002..cef85eeaf541 100644
+> --- a/arch/arm64/include/uapi/asm/sigcontext.h
+> +++ b/arch/arm64/include/uapi/asm/sigcontext.h
+> @@ -98,6 +98,13 @@ struct esr_context {
+>  	__u64 esr;
+>  };
+>  
+> +#define POE_MAGIC	0x504f4530
 > +
-> +	// pkey 0 is the default, so always reserve it.
-> +	mm->context.pkey_allocation_map = 0x1;
-
-Nit: use /* */ style comments.
-
-> @@ -151,7 +170,9 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
->   * PTE_VALID bit set.
->   */
->  #define pte_access_permitted(pte, write) \
-> -	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && (!(write) || pte_write(pte)))
-> +	(((pte_val(pte) & (PTE_VALID | PTE_USER)) == (PTE_VALID | PTE_USER)) && \
-> +	 (!(write) || pte_write(pte)) && \
-> +	 por_el0_allows_pkey(FIELD_GET(PTE_PO_IDX_MASK, pte_val(pte)), write, false))
-
-Do not change pte_access_permitted(), just let it handle the base
-permissions. This check is about the mm tables, not some current POR_EL0
-setting of the thread.
-
-As an example, with this change Linux may decide not to clear the MTE
-tags just because the current POR_EL0 says no-access. The thread
-subsequently changes POR_EL0 and it can read the stale tags.
-
-I haven't checked what x86 and powerpc do here. There may be some
-implications on GUP but I'd rather ignore POE for this case.
-
->  #define pmd_access_permitted(pmd, write) \
->  	(pte_access_permitted(pmd_pte(pmd), (write)))
->  #define pud_access_permitted(pud, write) \
-> diff --git a/arch/arm64/include/asm/pkeys.h b/arch/arm64/include/asm/pkeys.h
-> index 5761fb48fd53..a80c654da93d 100644
-> --- a/arch/arm64/include/asm/pkeys.h
-> +++ b/arch/arm64/include/asm/pkeys.h
-[...]
->  static inline int execute_only_pkey(struct mm_struct *mm)
->  {
-> +	// Execute-only mappings are handled by EPAN/FEAT_PAN3.
-> +	WARN_ON_ONCE(!cpus_have_final_cap(ARM64_HAS_EPAN));
+> +struct poe_context {
+> +	struct _aarch64_ctx head;
+> +	__u64 por_el0;
+> +};
 > +
->  	return -1;
+>  /*
+>   * extra_context: describes extra space in the signal frame for
+>   * additional structures that don't fit in sigcontext.__reserved[].
+> diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> index 0e8beb3349ea..379f364005bf 100644
+> --- a/arch/arm64/kernel/signal.c
+> +++ b/arch/arm64/kernel/signal.c
+> @@ -62,6 +62,7 @@ struct rt_sigframe_user_layout {
+>  	unsigned long zt_offset;
+>  	unsigned long extra_offset;
+>  	unsigned long end_offset;
+> +	unsigned long poe_offset;
+>  };
+>  
+>  #define BASE_SIGFRAME_SIZE round_up(sizeof(struct rt_sigframe), 16)
+> @@ -182,6 +183,8 @@ struct user_ctxs {
+>  	u32 za_size;
+>  	struct zt_context __user *zt;
+>  	u32 zt_size;
+> +	struct poe_context __user *poe;
+> +	u32 poe_size;
+>  };
+>  
+>  static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+> @@ -227,6 +230,20 @@ static int restore_fpsimd_context(struct user_ctxs *user)
+>  	return err ? -EFAULT : 0;
 >  }
-
-Why the WARN_ON_ONCE() here? It will trigger if the user asks for
-PROT_EXEC and I can't see any subsequent patch that changes the core
-code not to call it. I think we need some arch_has_execute_only_pkey()
-to avoid going on this path. Our arch would support exec-only with any
-pkey.
-
-> @@ -1490,6 +1491,38 @@ void ptep_modify_prot_commit(struct vm_area_struct *vma, unsigned long addr, pte
->  #ifdef CONFIG_ARCH_HAS_PKEYS
->  int arch_set_user_pkey_access(struct task_struct *tsk, int pkey, unsigned long init_val)
->  {
-> -	return -ENOSPC;
-> +	u64 new_por = POE_RXW;
-> +	u64 old_por;
-> +	u64 pkey_shift;
+>  
+> +static int restore_poe_context(struct user_ctxs *user)
+> +{
+> +	u64 por_el0;
+> +	int err = 0;
 > +
-> +	if (!arch_pkeys_enabled())
-> +		return -ENOSPC;
-> +
-> +	/*
-> +	 * This code should only be called with valid 'pkey'
-> +	 * values originating from in-kernel users.  Complain
-> +	 * if a bad value is observed.
-> +	 */
-> +	if (WARN_ON_ONCE(pkey >= arch_max_pkey()))
+> +	if (user->poe_size != sizeof(*user->poe))
 > +		return -EINVAL;
 > +
-> +	/* Set the bits we need in POR:  */
-> +	if (init_val & PKEY_DISABLE_ACCESS)
-> +		new_por = POE_X;
-
-Does PKEY_DISABLE_ACCESS mean allow execute? Or does x86 not have a way
-to disable execution?
-
-> +	else if (init_val & PKEY_DISABLE_WRITE)
-> +		new_por = POE_RX;
+> +	__get_user_error(por_el0, &(user->poe->por_el0), err);
+> +	if (!err)
+> +		write_sysreg_s(por_el0, SYS_POR_EL0);
 > +
-> +	/* Shift the bits in to the correct place in POR for pkey: */
-> +	pkey_shift = pkey * POR_BITS_PER_PKEY;
-> +	new_por <<= pkey_shift;
+> +	return err;
+> +}
+>  
+>  #ifdef CONFIG_ARM64_SVE
+>  
+> @@ -590,6 +607,7 @@ static int parse_user_sigframe(struct user_ctxs *user,
+>  	user->tpidr2 = NULL;
+>  	user->za = NULL;
+>  	user->zt = NULL;
+> +	user->poe = NULL;
+>  
+>  	if (!IS_ALIGNED((unsigned long)base, 16))
+>  		goto invalid;
+> @@ -640,6 +658,17 @@ static int parse_user_sigframe(struct user_ctxs *user,
+>  			/* ignore */
+>  			break;
+>  
+> +		case POE_MAGIC:
+> +			if (!system_supports_poe())
+> +				goto invalid;
 > +
-> +	/* Get old POR and mask off any old bits in place: */
-> +	old_por = read_sysreg_s(SYS_POR_EL0);
-> +	old_por &= ~(POE_MASK << pkey_shift);
+> +			if (user->poe)
+> +				goto invalid;
 > +
-> +	/* Write old part along with new part: */
-> +	write_sysreg_s(old_por | new_por, SYS_POR_EL0);
+> +			user->poe = (struct poe_context __user *)head;
+> +			user->poe_size = size;
+> +			break;
 > +
-> +	return 0;
+>  		case SVE_MAGIC:
+>  			if (!system_supports_sve() && !system_supports_sme())
+>  				goto invalid;
+> @@ -812,6 +841,9 @@ static int restore_sigframe(struct pt_regs *regs,
+>  	if (err == 0 && system_supports_sme2() && user.zt)
+>  		err = restore_zt_context(&user);
+>  
+> +	if (err == 0 && system_supports_poe() && user.poe)
+> +		err = restore_poe_context(&user);
+> +
+>  	return err;
 >  }
->  #endif
-
--- 
-Catalin
+>  
+> @@ -928,6 +960,13 @@ static int setup_sigframe_layout(struct rt_sigframe_user_layout *user,
+>  		}
+>  	}
+>  
+> +	if (system_supports_poe()) {
+> +		err = sigframe_alloc(user, &user->poe_offset,
+> +				     sizeof(struct poe_context));
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	return sigframe_alloc_end(user);
+>  }
+>  
+> @@ -968,6 +1007,15 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
+>  		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
+>  	}
+>  
+> +	if (system_supports_poe() && err == 0 && user->poe_offset) {
+> +		struct poe_context __user *poe_ctx =
+> +			apply_user_offset(user, user->poe_offset);
+> +
+> +		__put_user_error(POE_MAGIC, &poe_ctx->head.magic, err);
+> +		__put_user_error(sizeof(*poe_ctx), &poe_ctx->head.size, err);
+> +		__put_user_error(read_sysreg_s(SYS_POR_EL0), &poe_ctx->por_el0, err);
+> +	}
+> +
+>  	/* Scalable Vector Extension state (including streaming), if present */
+>  	if ((system_supports_sve() || system_supports_sme()) &&
+>  	    err == 0 && user->sve_offset) {
+> @@ -1119,6 +1167,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+>  		sme_smstop();
+>  	}
+>  
+> +	if (system_supports_poe())
+> +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+> +
+>  	if (ka->sa.sa_flags & SA_RESTORER)
+>  		sigtramp = ka->sa.sa_restorer;
+>  	else
+> -- 
+> 2.25.1
 
