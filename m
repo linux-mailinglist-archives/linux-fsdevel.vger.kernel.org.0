@@ -1,182 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-5495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2922A80CE04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:16:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5839580CE3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48721F217BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891DA1C21263
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FC351C34;
-	Mon, 11 Dec 2023 14:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20198487BC;
+	Mon, 11 Dec 2023 14:21:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BCDA44AA;
-	Mon, 11 Dec 2023 06:10:09 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4SpkCZ5hzfz4f3kGD;
-	Mon, 11 Dec 2023 22:10:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 2F9511A08B0;
-	Mon, 11 Dec 2023 22:10:05 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDnNw46GHdlJ7BxDQ--.34937S4;
-	Mon, 11 Dec 2023 22:10:04 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	roger.pau@citrix.com,
-	colyli@suse.de,
-	kent.overstreet@gmail.com,
-	joern@lazybastard.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	sth@linux.ibm.com,
-	hoeppner@linux.ibm.com,
-	hca@linux.ibm.com,
-	gor@linux.ibm.com,
-	agordeev@linux.ibm.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	nico@fluxnic.net,
-	xiang@kernel.org,
-	chao@kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	agruenba@redhat.com,
-	jack@suse.com,
-	konishi.ryusuke@gmail.com,
-	willy@infradead.org,
-	akpm@linux-foundation.org,
-	p.raghav@samsung.com,
-	hare@suse.de
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	linux-nilfs@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC v2 for-6.8/block 18/18] ext4: use bdev apis
-Date: Mon, 11 Dec 2023 22:08:39 +0800
-Message-Id: <20231211140839.976021-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231211140552.973290-1-yukuai1@huaweicloud.com>
-References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 366931BF6;
+	Mon, 11 Dec 2023 06:21:45 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C2ECFEC;
+	Mon, 11 Dec 2023 06:22:31 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 613B73F738;
+	Mon, 11 Dec 2023 06:21:39 -0800 (PST)
+Date: Mon, 11 Dec 2023 14:21:36 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Hyesoo Yu <hyesoo.yu@samsung.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
+	kcc@google.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 15/27] arm64: mte: Check that tag storage blocks
+ are in the same zone
+Message-ID: <ZXca8B6a3HPRrdNP@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <CGME20231119165900epcas2p3efd0f3ac19b7bcf7883e8d3945e63326@epcas2p3.samsung.com>
+ <20231119165721.9849-16-alexandru.elisei@arm.com>
+ <20231129085744.GB2988384@tiffany>
+ <ZWh5S9BoO5bG5nQM@raptor>
+ <20231208052739.GB1359878@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnNw46GHdlJ7BxDQ--.34937S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF47JryfCw48Xw1Duw48JFb_yoW5XF4fpa
-	43GFyDGr4Dury09wsrGFsrZa40kw18GFy3GryfZa42qrWaqrySkFykKF1xZF1UX3y8X348
-	XFyjkryxAr45CrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
-	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Cr1j6rxdMIIF0xvE42xK8VAvwI8IcIk0rVWUCVW8JwCI42IY6I8E87Iv67AKxVW8
-	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjfUe_
-	MaUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231208052739.GB1359878@tiffany>
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi,
 
-Avoid to access bd_inode directly, prepare to remove bd_inode from
-block_devcie.
+On Fri, Dec 08, 2023 at 02:27:39PM +0900, Hyesoo Yu wrote:
+> Hi~
+> 
+> On Thu, Nov 30, 2023 at 12:00:11PM +0000, Alexandru Elisei wrote:
+> > Hi,
+> > 
+> > On Wed, Nov 29, 2023 at 05:57:44PM +0900, Hyesoo Yu wrote:
+> > > On Sun, Nov 19, 2023 at 04:57:09PM +0000, Alexandru Elisei wrote:
+> > > > alloc_contig_range() requires that the requested pages are in the same
+> > > > zone. Check that this is indeed the case before initializing the tag
+> > > > storage blocks.
+> > > > 
+> > > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > > > ---
+> > > >  arch/arm64/kernel/mte_tag_storage.c | 33 +++++++++++++++++++++++++++++
+> > > >  1 file changed, 33 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
+> > > > index 8b9bedf7575d..fd63430d4dc0 100644
+> > > > --- a/arch/arm64/kernel/mte_tag_storage.c
+> > > > +++ b/arch/arm64/kernel/mte_tag_storage.c
+> > > > @@ -265,6 +265,35 @@ void __init mte_tag_storage_init(void)
+> > > >  	}
+> > > >  }
+> > > >  
+> > > > +/* alloc_contig_range() requires all pages to be in the same zone. */
+> > > > +static int __init mte_tag_storage_check_zone(void)
+> > > > +{
+> > > > +	struct range *tag_range;
+> > > > +	struct zone *zone;
+> > > > +	unsigned long pfn;
+> > > > +	u32 block_size;
+> > > > +	int i, j;
+> > > > +
+> > > > +	for (i = 0; i < num_tag_regions; i++) {
+> > > > +		block_size = tag_regions[i].block_size;
+> > > > +		if (block_size == 1)
+> > > > +			continue;
+> > > > +
+> > > > +		tag_range = &tag_regions[i].tag_range;
+> > > > +		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += block_size) {
+> > > > +			zone = page_zone(pfn_to_page(pfn));
+> > > 
+> > > Hello.
+> > > 
+> > > Since the blocks within the tag_range must all be in the same zone, can we move the "page_zone"
+> > > out of the loop ?
+> > `
+> > Hmm.. why do you say that the pages in a tag_range must be in the same
+> > zone? I am not very familiar with how the memory management code puts pages
+> > into zones, but I would imagine that pages in a tag range straddling the
+> > 4GB limit (so, let's say, from 3GB to 5GB) will end up in both ZONE_DMA and
+> > ZONE_NORMAL.
+> > 
+> > Thanks,
+> > Alex
+> > 
+> 
+> Oh, I see that reserve_tag_storage only calls alloc_contig_rnage in units of block_size,
+> I thought it could be called for the entire range the page needed at once.
+> (Maybe it could be a bit faster ? It doesn't seem like unnecessary drain and
+> other operation are repeated.)
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- fs/ext4/dir.c       | 6 ++----
- fs/ext4/ext4_jbd2.c | 6 +++---
- fs/ext4/super.c     | 3 +--
- 3 files changed, 6 insertions(+), 9 deletions(-)
+Yes, that might be useful to do. Worth keeping in mind is that:
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 3985f8c33f95..64e35eb6a324 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -191,10 +191,8 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
- 			pgoff_t index = map.m_pblk >>
- 					(PAGE_SHIFT - inode->i_blkbits);
- 			if (!ra_has_index(&file->f_ra, index))
--				page_cache_sync_readahead(
--					sb->s_bdev->bd_inode->i_mapping,
--					&file->f_ra, file,
--					index, 1);
-+				bdev_sync_readahead(sb->s_bdev, &file->f_ra,
-+						    file, index, 1);
- 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
- 			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
- 			if (IS_ERR(bh)) {
-diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-index d1a2e6624401..c1bf3a00fad9 100644
---- a/fs/ext4/ext4_jbd2.c
-+++ b/fs/ext4/ext4_jbd2.c
-@@ -206,7 +206,6 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
- 
- static void ext4_check_bdev_write_error(struct super_block *sb)
- {
--	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	int err;
- 
-@@ -216,9 +215,10 @@ static void ext4_check_bdev_write_error(struct super_block *sb)
- 	 * we could read old data from disk and write it out again, which
- 	 * may lead to on-disk filesystem inconsistency.
- 	 */
--	if (errseq_check(&mapping->wb_err, READ_ONCE(sbi->s_bdev_wb_err))) {
-+	if (bdev_wb_err_check(sb->s_bdev, READ_ONCE(sbi->s_bdev_wb_err))) {
- 		spin_lock(&sbi->s_bdev_wb_lock);
--		err = errseq_check_and_advance(&mapping->wb_err, &sbi->s_bdev_wb_err);
-+		err = bdev_wb_err_check_and_advance(sb->s_bdev,
-+						    &sbi->s_bdev_wb_err);
- 		spin_unlock(&sbi->s_bdev_wb_lock);
- 		if (err)
- 			ext4_error_err(sb, -err,
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 3b5e2b557488..96724cae622a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5544,8 +5544,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 	 * used to detect the metadata async write error.
- 	 */
- 	spin_lock_init(&sbi->s_bdev_wb_lock);
--	errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
--				 &sbi->s_bdev_wb_err);
-+	bdev_wb_err_check_and_advance(sb->s_bdev, &sbi->s_bdev_wb_err);
- 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
- 	ext4_orphan_cleanup(sb, es);
- 	EXT4_SB(sb)->s_mount_state &= ~EXT4_ORPHAN_FS;
--- 
-2.39.2
+- a number of block size pages at the start and end of the range might
+  already be reserved for other tagged pages, so the actual range that is
+  being reserved might end up being smaller that what we are expecting.
+
+- the most common allocation order is smaller or equal to
+  PAGE_ALLOC_COSTLY_ORDER, which is 3, which means that the most common
+  case is that reserve_tag_storage reserves only one tag storage block.
+
+I will definitely keep this optimization in mind, but I would prefer to get
+the series into a more stable shape before looking at performance
+optimizations.
+
+> 
+> If we use the cma code when activating the tag storage, it will be error if the
+> entire area of tag region is not in the same zone, so there should be a constraint
+> that it must be in the same zone when defining the tag region on device tree.
+
+I don't think that's the best approach, because the device tree describes
+the hardware, which does not change, and this is a software limitation
+(i.e, CMA doesn't work if a CMA region spans different zones), which might
+get fixed in a future version of Linux.
+
+In my opinion, the simplest solution would be to check that all tag storage
+regions have been activated successfully by CMA before enabling tag
+storage. Another alternative would be to split the tag storage region into
+several CMA regions at a zone boundary, and add it as distinct CMA regions.
+
+Thanks,
+Alex
+
+> 
+> Thanks,
+> Regards.
+> 
+> > > 
+> > > Thanks,
+> > > Regards.
+> > > 
+> > > > +			for (j = 1; j < block_size; j++) {
+> > > > +				if (page_zone(pfn_to_page(pfn + j)) != zone) {
+> > > > +					pr_err("Tag storage block pages in different zones");
+> > > > +					return -EINVAL;
+> > > > +				}
+> > > > +			}
+> > > > +		}
+> > > > +	}
+> > > > +
+> > > > +	 return 0;
+> > > > +}
+> > > > +
+> > > >  static int __init mte_tag_storage_activate_regions(void)
+> > > >  {
+> > > >  	phys_addr_t dram_start, dram_end;
+> > > > @@ -321,6 +350,10 @@ static int __init mte_tag_storage_activate_regions(void)
+> > > >  		goto out_disabled;
+> > > >  	}
+> > > >  
+> > > > +	ret = mte_tag_storage_check_zone();
+> > > > +	if (ret)
+> > > > +		goto out_disabled;
+> > > > +
+> > > >  	for (i = 0; i < num_tag_regions; i++) {
+> > > >  		tag_range = &tag_regions[i].tag_range;
+> > > >  		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += pageblock_nr_pages)
+> > > > -- 
+> > > > 2.42.1
+> > > > 
+> > > > 
+> > 
+> > 
+> > 
+
 
 
