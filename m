@@ -1,153 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-5446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECED80BEA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 02:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A818080BEB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 02:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B653280C1D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 01:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07257280C3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 01:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505C7497;
-	Mon, 11 Dec 2023 01:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3A8813;
+	Mon, 11 Dec 2023 01:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CGszbrQZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdBqw7yy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBA1D0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 17:01:30 -0800 (PST)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5d6b9143782so33383057b3.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 17:01:30 -0800 (PST)
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15AFED;
+	Sun, 10 Dec 2023 17:20:50 -0800 (PST)
+Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-77f552d4179so146145585a.1;
+        Sun, 10 Dec 2023 17:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702256490; x=1702861290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1702257650; x=1702862450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+WQ5Kl/17KRmeDrnv++dZDxabOnVYumyCPRm9UvxCXU=;
-        b=CGszbrQZZo2UCe6PlQD4gAXjJ6qCOyzZzZiOMfcKbnwIVtAtl7+lMEVe1mLEgrxjDQ
-         TjuNKqbl/wAOsYI23Km0x16ku0uUFNt4H7UWwUyN3FLNNegggc8cT1rD4kFAvohqDpDL
-         e6Os2k9wwDBEUStdcYfvby4H7Bn1WnBuYANZSOM+Wm925d524zoJU/bHc1SqP6yh55mo
-         9nollJXpVf4GS0wxNcNZ64AyLmsTB4dhTMJ6g+ECQzHd77yRLmH/EH4qCzCE2ZB/WOoC
-         3afxWDajYOi7DbpngLTG+NSV30ABNajhUBT3+HsM0CgRXwbjxKUCbYWhwxHJ9gXDRz4r
-         46VA==
+        bh=Uuz0jwb3PNQkrLULfff6ouksNMtSPtItSVdeK1cdQGc=;
+        b=TdBqw7yyWm8e4PSZC8RkkJuQKv+WvgbrlMhMIGBhK2c5d/zji503YA6MMETsSmFQ18
+         KpzUu5SanjjU/Bpg20H9f+F/ghJjJPbLmrvyyVlPU40fFh3GYeXz0W5xVWiD485Sxgef
+         gaM4vqyNNJ0qqHM1RaKvGeyZQcQkk7F9SPpl1xsS04p2xW9AFabRwXcUO4W4GiibBVpq
+         3j4OwYqClQZKljckgRczi6aTCk31WQi7txKcUuwlf1UJZscDcEPZ14QGqz3YzHGRdyLo
+         MNQcIC+fiVRuWiQ4rAqNqDEljCkXinq9/Q0FzxgYeef44ObQPIVsRpOOZHe9iNbUDVr/
+         Y2CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702256490; x=1702861290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1702257650; x=1702862450;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+WQ5Kl/17KRmeDrnv++dZDxabOnVYumyCPRm9UvxCXU=;
-        b=DPSjDIdrTFCYF2Wx5JP0ZkhpFANAmy+Yaora12+rCE2CXDA3+23KCDT3eoWFkR/9e8
-         4uETrhkrfnzkVcQcIUDCNNmFKFz6KMO36L+RN8M9tMfOqjZQzQozjKQgGoBiRc5z/2kX
-         uP1ILOCvqnGz3nB5iJMgZ5EtTy/LxioCTNnAdwUiG4UqB+SBOodi+WkOBMFuwRHa+nEI
-         aDdJujhPmoL4/b4aQHGmJqp6l1k8Pr9r2vT0OjT01S+xGJVhE1EAphtLYWAgMtT1qsqs
-         M4E3lcZ7WdkXA1n6iXuGFyPQ3+LXzsTnWH/aGZqTVXsq7fGFnXYSGJKonXNobcdLkcwO
-         fw3Q==
-X-Gm-Message-State: AOJu0YwmD2l7nfkk41RYr++baF+eTc1WFEVjwSqHrOfWo4ZtVokhl1S/
-	h79luWRaT2uTS0jtDwVrW8YWqWm35o8IUjTRAf2geg==
-X-Google-Smtp-Source: AGHT+IEM06+RRlE/zePs7rbDQZUekYGXrzSDuMym2bE5wBVkl63IhZGe5nggAE5d9SV6vVL4ZhYg6AITCoRBwCXDwDI=
-X-Received: by 2002:a0d:f9c6:0:b0:5d7:1940:7d92 with SMTP id
- j189-20020a0df9c6000000b005d719407d92mr2245546ywf.105.1702256489515; Sun, 10
- Dec 2023 17:01:29 -0800 (PST)
+        bh=Uuz0jwb3PNQkrLULfff6ouksNMtSPtItSVdeK1cdQGc=;
+        b=oX2XwKUar9zrVKlWm9UAEfRbdaY5SW89TZedSZKBUEwgBmhdsGhGkwMq/KbaMfukI2
+         szdodmxCj9qFwg9AtxuL2aBHKb2DKUaAhEVfeg4ONtI3TzikWDXLOBrYNRIIPzfpDvlR
+         p3TdACaexNQvNLBR10IUza/uF2n10f7/jeyE/854hWEItoo/zn2jq8jfoQZMeyqLvmqa
+         jAK5tOH6SAVi2mI+nk6DgB3dxs2pBH2OenOn83dRiGC5/UFIibOJRjpnaSJSPeKqHo3K
+         as6UsNsvdTydr3CFJbXLKiYtpOaqF2ric9RRa0Ab7c2r+S+9nHXoRS5rcUXsd07dAazX
+         vWAg==
+X-Gm-Message-State: AOJu0YyW2Go8HM6XYYb/yf3UdrdoWLy88PA0i3sjVv3rlCUQ1ZGWuVVy
+	zhCDyr/gaKcQCqIyuIVrrxc=
+X-Google-Smtp-Source: AGHT+IG2YneOH1fjVBLNsKVjeTO1Qmpnmz9N5QGIlgYQK4gwUQlL72tTSLGo67HZ3XBLoMoCCzXdPQ==
+X-Received: by 2002:a05:620a:a58:b0:77f:69ed:7f40 with SMTP id j24-20020a05620a0a5800b0077f69ed7f40mr2501765qka.7.1702257649715;
+        Sun, 10 Dec 2023 17:20:49 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id ov11-20020a05620a628b00b0077d7e9a134bsm2505634qkn.129.2023.12.10.17.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Dec 2023 17:20:49 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailauth.nyi.internal (Postfix) with ESMTP id BDCE127C0054;
+	Sun, 10 Dec 2023 20:20:48 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Sun, 10 Dec 2023 20:20:48 -0500
+X-ME-Sender: <xms:72N2ZWH4OqLhoJjPIu-xBvNG1v1zh5JUCVUiIYRevqTwampQ8LPuDA>
+    <xme:72N2ZXUDpW0JpLk2NqST1PDbvVCRwbmvSfa1hIp4lnB0qSEc9z5TDM0WXqz0G2Zzc
+    g-S2vOjbDC70WmVGQ>
+X-ME-Received: <xmr:72N2ZQLvmY1VITeM4l9iKaEl6wLLzVzYcPZ2P5n5NiFb7uf5YFci8VfX7gs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeluddgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:72N2ZQH8Ae7bUawVz7AvMbaSHc_NeDP9SDt4qb4ksz8_kx3CErPCMg>
+    <xmx:72N2ZcX2cIrtHyoVYeBKE05njYXgchs20UDdwdau7PiJwb_WC9w2DQ>
+    <xmx:72N2ZTOsUETvW2YTjIs0-9juNf4RpCwIZGSqLr80gstqnrWDaiUyXA>
+    <xmx:8GN2ZW-W_Fvq1hey4YOUfIuyPEL3g1x2PM7lmJ5o2fUQC6IyleGmXA>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 10 Dec 2023 20:20:46 -0500 (EST)
+Date: Sun, 10 Dec 2023 17:19:28 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] rust: cred: add Rust abstraction for `struct cred`
+Message-ID: <ZXZjoOrO5q7no4or@boqun-archlinux>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
+ <20231206-alice-file-v2-2-af617c0d9d94@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-6-surenb@google.com>
- <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
-In-Reply-To: <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sun, 10 Dec 2023 17:01:18 -0800
-Message-ID: <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-To: Mark Brown <broonie@kernel.org>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
-	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
-	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
-	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
-	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231206-alice-file-v2-2-af617c0d9d94@google.com>
 
-On Sun, Dec 10, 2023 at 6:26=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Wed, Dec 06, 2023 at 02:36:59AM -0800, Suren Baghdasaryan wrote:
-> > Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
-> > into destination buffer while checking the contents of both after
-> > the move. After the operation the content of the destination buffer
-> > should match the original source buffer's content while the source
-> > buffer should be zeroed. Separate tests are designed for PMD aligned an=
-d
-> > unaligned cases because they utilize different code paths in the kernel=
-.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  tools/testing/selftests/mm/uffd-common.c     |  24 +++
-> >  tools/testing/selftests/mm/uffd-common.h     |   1 +
-> >  tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
-> >  3 files changed, 214 insertions(+)
->
-> This breaks the build in at least some configurations with separate
-> output directories like those used by KernelCI:
->
-> make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgcc =
-CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnueabi=
-hf- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/kci=
-/linux -j10 kselftest-gen_tar
->
-> (full logs for both arm64 and x86_64 at):
->
->    https://storage.kernelci.org/next/master/next-20231208/arm64/defconfig=
-/gcc-10/logs/kselftest.log
->    https://storage.kernelci.org/next/master/next-20231208/x86_64/x86_64_d=
-efconfig/clang-17/logs/kselftest.log
->
-> or tuxmake:
->
-> make --silent --keep-going --jobs=3D16 O=3D/home/broonie/.cache/tuxmake/b=
-uilds/25/build INSTALL_PATH=3D/home/broonie/.cache/tuxmake/builds/25/build/=
-kselftest_install ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COM=
-PILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
->
-> The specific failure:
->
-> aarch64-linux-gnu-gcc -Wall -I /tmp/kci/linux/tools/testing/selftests/../=
-../..  -isystem /tmp/kci/linux/build/usr/include     uffd-stress.c vm_util.=
-c uffd-common.c -lrt -lpthread -lm -o /tmp/kci/linux/build/kselftest/mm/uff=
-d-stress
-> uffd-common.c: In function =E2=80=98move_page=E2=80=99:
-> uffd-common.c:636:21: error: storage size of =E2=80=98uffdio_move=E2=80=
-=99 isn=E2=80=99t known
->   636 |  struct uffdio_move uffdio_move;
->       |                     ^~~~~~~~~~~
-> uffd-common.c:643:21: error: =E2=80=98UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES=E2=
-=80=99 undeclared (first use in this function)
->   643 |  uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
->       |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> uffd-common.c:643:21: note: each undeclared identifier is reported only o=
-nce for each function it appears in
-> uffd-common.c:645:17: error: =E2=80=98UFFDIO_MOVE=E2=80=99 undeclared (fi=
-rst use in this function); did you mean =E2=80=98UFFDIO_COPY=E2=80=99?
->   645 |  if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
->       |                 ^~~~~~~~~~~
->       |                 UFFDIO_COPY
-> uffd-common.c:636:21: warning: unused variable =E2=80=98uffdio_move=E2=80=
-=99 [-Wunused-variable]
->   636 |  struct uffdio_move uffdio_move;
->       |                     ^~~~~~~~~~~
+On Wed, Dec 06, 2023 at 11:59:47AM +0000, Alice Ryhl wrote:
+[...]
+> @@ -151,6 +152,21 @@ pub fn as_ptr(&self) -> *mut bindings::file {
+>          self.0.get()
+>      }
+>  
+> +    /// Returns the credentials of the task that originally opened the file.
+> +    pub fn cred(&self) -> &Credential {
 
-Thanks for reporting! I'll try that later today.
-Just to clarify, are you using mm-unstable and if so, has it been
-rebased since Friday? There was an update to this patchset in
-mm-unstable which Andrew merged on Friday and the failure does look
-like something that would happen with the previous version.
+I wonder whether it would be helpful if we use explicit lifetime here:
+
+    pub fn cred<'file>(&'file self) -> &'file Credential
+
+It might be easier for people to get. For example, the lifetime of the
+returned Credential reference is constrainted by 'file, the lifetime of
+the file reference.
+
+But yes, maybe need to hear others' feedback first.
+
+Regards,
+Boqun
+
+> +        // SAFETY: Since the caller holds a reference to the file, it is guaranteed that its
+> +        // refcount does not hit zero during this function call.
+> +        //
+> +        // It's okay to read the `f_cred` field without synchronization as `f_cred` is never
+> +        // changed after initialization of the file.
+> +        let ptr = unsafe { (*self.as_ptr()).f_cred };
+> +
+> +        // SAFETY: The signature of this function ensures that the caller will only access the
+> +        // returned credential while the file is still valid, and the C side ensures that the
+> +        // credential stays valid at least as long as the file.
+> +        unsafe { Credential::from_ptr(ptr) }
+> +    }
+> +
+>      /// Returns the flags associated with the file.
+>      ///
+>      /// The flags are a combination of the constants in [`flags`].
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index ce9abceab784..097fe9bb93ed 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -33,6 +33,7 @@
+>  #[cfg(not(testlib))]
+>  mod allocator;
+>  mod build_assert;
+> +pub mod cred;
+>  pub mod error;
+>  pub mod file;
+>  pub mod init;
+> 
+> -- 
+> 2.43.0.rc2.451.g8631bc7472-goog
+> 
+> 
 
