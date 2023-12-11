@@ -1,127 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-5550-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A6280D53C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:21:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EE680D737
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5D91F21A89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:21:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353611C2093B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D115103A;
-	Mon, 11 Dec 2023 18:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633A54668;
+	Mon, 11 Dec 2023 18:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHyipAmk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="moVwCp+k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FA8D0;
-	Mon, 11 Dec 2023 10:21:44 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-54c79968ffbso6439119a12.3;
-        Mon, 11 Dec 2023 10:21:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702318902; x=1702923702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8bLjO7K4G9LwVc+suoyv5eMJDKm4Mkz7jpCSdJ5wh8=;
-        b=jHyipAmkY/kn5trO+saAyARj0i+BEJWziUqjmA9B+/mlxQ36evs8qe/DG+ecT7D9Pz
-         5kqGQi1zzMbkY94YzYALeDfQAyrzXQDo0agm+0lFivrwxVRjh1e4CFVi4deBJyWy2DSJ
-         GhZCN/NIwJWegsN85obQQwcbeidSAXEw/BulBTm21qtMlkafKPzAS32jNc0K7EJ4tb9X
-         clPj3jD4hWFThwKzkidR/ylsADMd0a9xt8OPcDYt4HsJcekbW7fnutfU5BWbIpx2p094
-         Ig113TOlR+xYUQNd52jtsc/Bt5iw7sLO1b2iMVrGJbihCi2ugfFLtG9crK3f30iQDdQt
-         c9ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702318902; x=1702923702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S8bLjO7K4G9LwVc+suoyv5eMJDKm4Mkz7jpCSdJ5wh8=;
-        b=lA8MXM3drlh2iMnwXAe2k4lqYx607eRnAaDJ88Phs0BHokbhs/Ph/17F0hGqoW+XeQ
-         sUZDRSKbz0ffkShzyfW+h2VPcdfKVjDeN/NVKaAIDPls5p44F3AoHHPGNzcsi5xs8+vU
-         os77hsQNQxEboB75NBh7Ovo+SF7FrKwR42whCLiDYd+p7qkZoaJxqRd6QrG5a/bVJCgV
-         ABZ3LE/YaSAwoZiGfdI9s2pmgBZ/RTjl2BaTwJhmFSKDECeiuWjQ2Iojp5aXghiuFkV+
-         bTijYUQfWoz6cyRtElyqTZu9AOxU3RNoq3LZB2lZarU1xDyVUdGlWEZfGW8Yy6F1Y3xe
-         YgBw==
-X-Gm-Message-State: AOJu0YyGgm2p9tdgkJckRXFyBbygBlWHSZtgLhhrzToIWJtRyyBDHYZM
-	dQBqd9oEngBkD5QzmQfHkKWVPbLoB9GXkWCTdRo=
-X-Google-Smtp-Source: AGHT+IFFFWuVbwGAUmFUT+L86RPREMleBSyswysjsUAVTpMMIf6RbbNcDNlCO5wk1T7fwdwOJB8vkx4MCNW1c8ICSzE=
-X-Received: by 2002:a17:906:5307:b0:a1f:9320:9fce with SMTP id
- h7-20020a170906530700b00a1f93209fcemr1347510ejo.83.1702318902502; Mon, 11 Dec
- 2023 10:21:42 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F2B51C58;
+	Mon, 11 Dec 2023 18:35:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EF2C433C9;
+	Mon, 11 Dec 2023 18:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1702319733;
+	bh=/s7gEbdJwaHW0VD1uv7csXpND0bUYxljaP+fhJAoeWA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=moVwCp+kTMLRyAK/s97NqVHKFGNLsPdMo6Zx629W8EzuZQ8fQrMYYBvbCfnkRjciy
+	 XuSruE+wSwhajrKvOFpH9fVQlT5adBVk3C5mBLYGHFKzhazijd/2943RJtSY6KSgts
+	 aU/lxkRwmHYjds1wXU8h5NQNCXxeTZ+8nanYz180=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Dave Chinner <david@fromorbit.com>,
+	Xiaoli Feng <fengxiaoli0714@gmail.com>,
+	Shyam Prasad N <nspmangalore@gmail.com>,
+	Rohith Surabattula <rohiths.msft@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Darrick Wong <darrick.wong@oracle.com>,
+	fstests@vger.kernel.org,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Steve French <stfrench@microsoft.com>
+Subject: [PATCH 6.6 215/244] cifs: Fix non-availability of dedup breaking generic/304
+Date: Mon, 11 Dec 2023 19:21:48 +0100
+Message-ID: <20231211182055.610436726@linuxfoundation.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20231211182045.784881756@linuxfoundation.org>
+References: <20231211182045.784881756@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207185443.2297160-1-andrii@kernel.org> <ce4bd46009b9b0b8fb2dbec83eaa3e4c476bb050.camel@gmail.com>
-In-Reply-To: <ce4bd46009b9b0b8fb2dbec83eaa3e4c476bb050.camel@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 11 Dec 2023 10:21:30 -0800
-Message-ID: <CAEf4BzbKJDkFbKo0UVGctZ8in9eD+abgncTXHFh2oZg1Gn21QA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/8] BPF token support in libbpf's BPF object
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, keescook@chromium.org, 
-	kernel-team@meta.com, sargun@sargun.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 10, 2023 at 7:30=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Thu, 2023-12-07 at 10:54 -0800, Andrii Nakryiko wrote:
-> > Add fuller support for BPF token in high-level BPF object APIs. This is=
- the
-> > most frequently used way to work with BPF using libbpf, so supporting B=
-PF
-> > token there is critical.
-> >
-> > Patch #1 is improving kernel-side BPF_TOKEN_CREATE behavior by rejectin=
-g to
-> > create "empty" BPF token with no delegation. This seems like saner beha=
-vior
-> > which also makes libbpf's caching better overall. If we ever want to cr=
-eate
-> > BPF token with no delegate_xxx options set on BPF FS, we can use a new =
-flag to
-> > enable that.
-> >
-> > Patches #2-#5 refactor libbpf internals, mostly feature detection code,=
- to
-> > prepare it from BPF token FD.
-> >
-> > Patch #6 adds options to pass BPF token into BPF object open options. I=
-t also
-> > adds implicit BPF token creation logic to BPF object load step, even wi=
-thout
-> > any explicit involvement of the user. If the environment is setup prope=
-rly,
-> > BPF token will be created transparently and used implicitly. This allow=
-s for
-> > all existing application to gain BPF token support by just linking with
-> > latest version of libbpf library. No source code modifications are requ=
-ired.
-> > All that under assumption that privileged container management agent pr=
-operly
-> > set up default BPF FS instance at /sys/bpf/fs to allow BPF token creati=
-on.
-> >
-> > Patches #7-#8 adds more selftests, validating BPF object APIs work as e=
-xpected
-> > under unprivileged user namespaced conditions in the presence of BPF to=
-ken.
->
-> fwiw, I've read through this patch-set and have not noticed any issues,
-> all seems good to me. Not sure if that worth much as I'm not terribly
-> familiar with code base yet.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-Every extra pair of eyes is worth it :) Not finding anything obviously
-broken is still a good result, thanks!
+------------------
 
->
-> [...]
+From: David Howells <dhowells@redhat.com>
+
+commit 691a41d8da4b34fe72f09393505f55f28a8f34ec upstream.
+
+Deduplication isn't supported on cifs, but cifs doesn't reject it, instead
+treating it as extent duplication/cloning.  This can cause generic/304 to go
+silly and run for hours on end.
+
+Fix cifs to indicate EOPNOTSUPP if REMAP_FILE_DEDUP is set in
+->remap_file_range().
+
+Note that it's unclear whether or not commit b073a08016a1 is meant to cause
+cifs to return an error if REMAP_FILE_DEDUP.
+
+Fixes: b073a08016a1 ("cifs: fix that return -EINVAL when do dedupe operation")
+Cc: stable@vger.kernel.org
+Suggested-by: Dave Chinner <david@fromorbit.com>
+cc: Xiaoli Feng <fengxiaoli0714@gmail.com>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Darrick Wong <darrick.wong@oracle.com>
+cc: fstests@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/3876191.1701555260@warthog.procyon.org.uk/
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/smb/client/cifsfs.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -1208,7 +1208,9 @@ static loff_t cifs_remap_file_range(stru
+ 	unsigned int xid;
+ 	int rc;
+ 
+-	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
++	if (remap_flags & REMAP_FILE_DEDUP)
++		return -EOPNOTSUPP;
++	if (remap_flags & ~REMAP_FILE_ADVISORY)
+ 		return -EINVAL;
+ 
+ 	cifs_dbg(FYI, "clone range\n");
+
+
 
