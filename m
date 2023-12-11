@@ -1,117 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-5513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A0880CFD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:42:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0D80D04D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:59:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F842821AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24381F21932
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317FC4BAA3;
-	Mon, 11 Dec 2023 15:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E7B4C3B8;
+	Mon, 11 Dec 2023 15:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oZlTzftu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E772CDC;
-	Mon, 11 Dec 2023 07:42:07 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Splxf4jp1zB03Fq;
-	Mon, 11 Dec 2023 23:28:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id B5020140489;
-	Mon, 11 Dec 2023 23:41:59 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDnInO+LXdlFG9ZAg--.22283S2;
-	Mon, 11 Dec 2023 16:41:59 +0100 (CET)
-Message-ID: <6e05677355d6d134dddd11da56709b424b631079.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
- security.evm_overlayfs
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Seth Forshee <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Amir Goldstein
- <amir73il@gmail.com>,  miklos@szeredi.hu, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  zohar@linux.ibm.com, paul@paul-moore.com,
- stefanb@linux.ibm.com,  jlayton@kernel.org,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 11 Dec 2023 16:41:46 +0100
-In-Reply-To: <ZXcsdf6BzszwZc9h@do-x1extreme>
-References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
-	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
-	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
-	 <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-	 <ZXcsdf6BzszwZc9h@do-x1extreme>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573FC268B;
+	Mon, 11 Dec 2023 07:59:16 -0800 (PST)
+Date: Mon, 11 Dec 2023 10:58:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1702310354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iTqyHUAM8Y8CTQWaVxNypmVJd4cL32JtHj8W07cIG1s=;
+	b=oZlTzftu1xM4Uy81K6BPPht40D6wXyU4rig7xmFxREm4jat2OGKs5vZf7ecwRdgGMbe+oH
+	2eAWXtolC9pbNA7LfWV6t2s6db/Ow437NkbOSNWN0d+IDCiuPRtJBmBU3uQp6mJ/iSkfPn
+	nBqIe+mIXVbyFDYiKbV0mZMkknokXF4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
+Message-ID: <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
+ <20231206-alice-file-v2-5-af617c0d9d94@google.com>
+ <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me>
+ <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDnInO+LXdlFG9ZAg--.22283S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWfXryxCw1xWw4ktw1fWFg_yoW8Cr4rpr
-	WSva4IqFs8JryxZw4SyrsrX3yF93WxWa15Jr45Krn7A3WDGr1jgFWDJ3W3ZFyIqFyDWa1j
-	qayUKas7ur98Za7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj5d2AAAAsd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2023-12-11 at 09:36 -0600, Seth Forshee wrote:
-> On Mon, Dec 11, 2023 at 03:56:06PM +0100, Roberto Sassu wrote:
-> > Ok, I will try.
-> >=20
-> > I explain first how EVM works in general, and then why EVM does not
-> > work with overlayfs.
-> >=20
-> > EVM gets called before there is a set/removexattr operation, and after,
-> > if that operation is successful. Before the set/removexattr operation
-> > EVM calculates the HMAC on current inode metadata (i_ino, i_generation,
-> > i_uid, i_gid, i_mode, POSIX ACLs, protected xattrs). Finally, it
-> > compares the calculated HMAC with the one in security.evm.
-> >=20
-> > If the verification and the set/removexattr operation are successful,
-> > EVM calculates again the HMAC (in the post hooks) based on the updated
-> > inode metadata, and sets security.evm with the new HMAC.
-> >=20
-> > The problem is the combination of: overlayfs inodes have different
-> > metadata than the lower/upper inodes; overlayfs calls the VFS to
-> > set/remove xattrs.
->=20
-> I don't know all of the inner workings of overlayfs in detail, but is it
-> not true that whatever metadata an overlayfs mount presents for a given
-> inode is stored in the lower and/or upper filesystem inodes? If the
-> metadata for those inodes is verified with EVM, why is it also necessary
-> to verify the metadata at the overlayfs level? If some overlayfs
-> metadata is currently omitted from the checks on the lower/upper inodes,
-> is there any reason EVM couldn't start including that its checksums?
+On Fri, Dec 08, 2023 at 08:43:19AM -0800, Boqun Feng wrote:
+> On Fri, Dec 08, 2023 at 04:40:09PM +0000, Benno Lossin wrote:
+> > On 12/6/23 12:59, Alice Ryhl wrote:
+> > > +    /// Returns the given task's pid in the current pid namespace.
+> > > +    pub fn pid_in_current_ns(&self) -> Pid {
+> > > +        // SAFETY: Calling `task_active_pid_ns` with the current task is always safe.
+> > > +        let namespace = unsafe { bindings::task_active_pid_ns(bindings::get_current()) };
+> > 
+> > Why not create a safe wrapper for `bindings::get_current()`?
+> > This patch series has three occurrences of `get_current`, so I think it
+> > should be ok to add a wrapper.
+> > I would also prefer to move the call to `bindings::get_current()` out of
+> > the `unsafe` block.
+> 
+> FWIW, we have a current!() macro, we should use it here.
 
-Currently, the metadata where there is a misalignment are:
-i_generation, s_uuid, (i_ino?). Maybe there is more?
-
-If metadata are aligned, there is no need to store two separate HMACs.
-
-Thanks
-
-Roberto
-
-> Granted that there could be some backwards compatibility issues, but
-> maybe inclusion of the overlayfs metadata could be opt-in.
->=20
-> Thanks,
-> Seth
-
+Why does it need to be a macro?
 
