@@ -1,142 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-5544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F0380D415
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:37:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5C6480D444
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BBC2820DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 698E7B2158E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDD74E61D;
-	Mon, 11 Dec 2023 17:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D62E4E63F;
+	Mon, 11 Dec 2023 17:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ka34QiyS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BC6123;
-	Mon, 11 Dec 2023 09:37:38 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50dfac6c0beso1824971e87.2;
-        Mon, 11 Dec 2023 09:37:38 -0800 (PST)
+Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8301B10A;
+	Mon, 11 Dec 2023 09:41:34 -0800 (PST)
+Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-4259295ca72so31504911cf.1;
+        Mon, 11 Dec 2023 09:41:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702316493; x=1702921293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JQER4L9He5ziUc0coS3FYyiMI2AIHk6MmaOBH68Fuig=;
+        b=Ka34QiySv4maaCQ01T9M9o8ymGnZSYl6EU9TEHVtS+ivKH0QOxd/oN0qnal528aXs7
+         ySKEUk+0gZJ204YEAubl0a4Tv2Lg2xmwYu2VAW2SNdZdItmMEWP1nDEThylxTES2qEhc
+         7kTd5Qr3U0yzsoO2WoveK7nloiMuT9UZOIVx6yG8X6XkoXmNgzOUtqskkC1gnKg47L6W
+         qLqaaVm3g24YLnydlaLV/wAv3o479Pmah/a1t9teYD+KCU6D+8sz3T/97vVC2F3utOYA
+         4fAewQI6lEo3ZVtfyhAxpUQnmqDebDnkRBHPUAzpb7XE/rIZkUD+H2UyA3HIg6H3i2y/
+         SgYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702316257; x=1702921057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1702316493; x=1702921293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Vq+VT1yoNILYRnVYlXhIlgVV3TQoNuR0AWtL0JI09is=;
-        b=QiI/UkQv7mV95XzCPICO7aO2jhtYILNOdk2PcvVPAnTsCahBAuQeFl9GZr7GYbAKfQ
-         8zGTEmqmbo3+znWKbuxr+PDKPp0XVO4Ts94o0PzqQhWcuMG9/uj2Ga5EkaZQ4dU2rlko
-         WYz2TArp9dgf5yiOr5lFJUDFELmqj+my6IAJYV/0CheGb1zyxRCq4aYVxLFsZxn/yF9Y
-         95tQ7RZz/ixzlpky6YBhwNL6GuXIb2bMaDIU7Mekua97Ji3O23ZQSXwDLDVxjB/9FLzy
-         KalpmprGs861mpIHtngE9Vgjcj5d1Ei1QlsoI+TOwtuBjSKQlhUVsRbW/gr0OCPsHm+N
-         wjEQ==
-X-Gm-Message-State: AOJu0YxRNved6N6Wu0N/13MRWHFZqVQTxuXaYJfswpOSlEuu64ceSfsz
-	CylDshP/Q+ZgpcmSKqFzohZXJYLS47Txs3sxqhw=
-X-Google-Smtp-Source: AGHT+IEpL3HwYdodNmXK64xmycgt8LjdEl6qA7Mj1X3e8066G/U6GTY9ZLc39vLD67XcJ17bcvHzAg==
-X-Received: by 2002:a05:6512:6c7:b0:50c:d72:2010 with SMTP id u7-20020a05651206c700b0050c0d722010mr2686236lff.121.1702316256502;
-        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id c1-20020a056512104100b0050ab696bfaasm1142468lfb.3.2023.12.11.09.37.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50bfa7f7093so6063439e87.0;
-        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
-X-Received: by 2002:ac2:4892:0:b0:50c:20f3:2a3 with SMTP id
- x18-20020ac24892000000b0050c20f302a3mr2287048lfc.6.1702316256037; Mon, 11 Dec
- 2023 09:37:36 -0800 (PST)
+        bh=JQER4L9He5ziUc0coS3FYyiMI2AIHk6MmaOBH68Fuig=;
+        b=AXj8D3LuyhoHOVED2TOfQmlBy7/DNvbV4QYnVZW3GxXmTQ79QVeEd2CK2KPA8g8lVt
+         B+nYktg0PFz9X2sl/E/ofxeRVSUJDoFA2F20QgIlG3fZdaon7q/bIWQ4fHn0bqT+1See
+         fN9T6Ve/i6LzquYNg/S0Qj4fuBygdB0jTKlVwOg+0kTjbNt3SABbR56P67bbz2189BCm
+         iLCvAJEGy9DyNjvqbWQZ7udBUfAnPfVk/urXvhEbeMx+FHdFlKOqdGIMs+Nt0zhSp/XF
+         dTK/2C/ody6kRoyi8vKifKD3Qq3QELc8bf1W8V2fXSlcjqlVXqe99Ql4Ee4iaWzI4xqD
+         rfww==
+X-Gm-Message-State: AOJu0YxmQ+wOWXywFn/srNiKHmV47y0x/+/0BhtHZYm1hesZeP+2eYkV
+	mzj+FGcy2qZWdWanA5d1sFI=
+X-Google-Smtp-Source: AGHT+IFqS4bjOwrFqSq+XpMpRZSaBn+yGT0Z71Cv366hf0cp2FQosWG8TkzJiQy3d0Ze7l9/2RITqw==
+X-Received: by 2002:a05:622a:16:b0:425:a021:2dd4 with SMTP id x22-20020a05622a001600b00425a0212dd4mr6349643qtw.132.1702316493315;
+        Mon, 11 Dec 2023 09:41:33 -0800 (PST)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id l2-20020ac848c2000000b00424030566b5sm3353981qtr.17.2023.12.11.09.41.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 09:41:33 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailauth.nyi.internal (Postfix) with ESMTP id 66AA427C005B;
+	Mon, 11 Dec 2023 12:41:32 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 11 Dec 2023 12:41:32 -0500
+X-ME-Sender: <xms:y0l3ZVF8YLkO-sv-g6b87SwFn8MS1rXmbTNsS4EDgaTJFlSiK-G7mw>
+    <xme:y0l3ZaXQZ77peHG8QJluWa_s8Y6Ux8ePqg8bp6mgUCtWJJHtcCfK4cYH4qSK6QObx
+    jVN7oiVbXGGnbbysg>
+X-ME-Received: <xmr:y0l3ZXJsJL3qxEPsBgqOkwCD0jOb-KqbhK3zj0aXQHKOG2znzxJlp3ED7fg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelvddguddtiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:y0l3ZbEE7Fsme3WQh2fEyK7IUSKFYg84FWZsMVROYdb-OeNrTYvIPQ>
+    <xmx:y0l3ZbXJJD35rQwrnc5_vyodQSvxwnU25EOow14ikSQLjSu6s5hIDw>
+    <xmx:y0l3ZWMcpX86HUAlmIpRjanGpQrRHRGKQu4LBv67vmpPwxA_HtY2Ug>
+    <xmx:zEl3ZR-3iPJr_SGcBmuwyTQbQGxBF2UDVaqHDQeZHanpYUQTBNu0iQ>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Dec 2023 12:41:30 -0500 (EST)
+Date: Mon, 11 Dec 2023 09:41:28 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: benno.lossin@proton.me, a.hindborg@samsung.com, alex.gaynor@gmail.com,
+	arve@android.com, bjorn3_gh@protonmail.com, brauner@kernel.org,
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz,
+	gary@garyguo.net, gregkh@linuxfoundation.org,
+	joel@joelfernandes.org, keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
+	rust-for-linux@vger.kernel.org, surenb@google.com,
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk,
+	wedsonaf@gmail.com, willy@infradead.org
+Subject: Re: [PATCH v2 6/7] rust: file: add `DeferredFdCloser`
+Message-ID: <ZXdJyGFeQEbZU3Eh@boqun-archlinux>
+References: <MjDmZBGV04fVI1qzhceEjQgcmoBuo3YoVuiQdANKj9F1Ux5JFKud8hQpfeyLXI0O5HG6qicKFaYYzM7JAgR_kVQfMCeVdN6t7PjbPaz0D0U=@proton.me>
+ <20231211153440.4162899-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231211163412.2766147-1-dhowells@redhat.com> <20231211163412.2766147-3-dhowells@redhat.com>
-In-Reply-To: <20231211163412.2766147-3-dhowells@redhat.com>
-From: Marc Dionne <marc.dionne@auristor.com>
-Date: Mon, 11 Dec 2023 13:37:24 -0400
-X-Gmail-Original-Message-ID: <CAB9dFdsCnAeitHcNJRY+f8eG=exrgpBZpczfMhHHXLvCR32MaA@mail.gmail.com>
-Message-ID: <CAB9dFdsCnAeitHcNJRY+f8eG=exrgpBZpczfMhHHXLvCR32MaA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] afs: Fix dynamic root lookup DNS check
-To: David Howells <dhowells@redhat.com>
-Cc: Markus Suvanto <markus.suvanto@gmail.com>, linux-afs@lists.infradead.org, 
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231211153440.4162899-1-aliceryhl@google.com>
 
-On Mon, Dec 11, 2023 at 12:34=E2=80=AFPM David Howells <dhowells@redhat.com=
-> wrote:
->
-> In the afs dynamic root directory, the ->lookup() function does a DNS che=
-ck
-> on the cell being asked for and if the DNS upcall reports an error it wil=
-l
-> report an error back to userspace (typically ENOENT).
->
-> However, if a failed DNS upcall returns a new-style result, it will retur=
-n
-> a valid result, with the status field set appropriately to indicate the
-> type of failure - and in that case, dns_query() doesn't return an error a=
-nd
-> we let stat() complete with no error - which can cause confusion in
-> userspace as subsequent calls that trigger d_automount then fail with
-> ENOENT.
->
-> Fix this by checking the status result from a valid dns_query() and
-> returning an error if it indicates a failure.
->
-> Fixes: bbb4c4323a4d ("dns: Allow the dns resolver to retrieve a server se=
-t")
-> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216637
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->  fs/afs/dynroot.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-> index 34474a061654..4089d77a7a4d 100644
-> --- a/fs/afs/dynroot.c
-> +++ b/fs/afs/dynroot.c
-> @@ -114,6 +114,7 @@ static int afs_probe_cell_name(struct dentry *dentry)
->         struct afs_net *net =3D afs_d2net(dentry);
->         const char *name =3D dentry->d_name.name;
->         size_t len =3D dentry->d_name.len;
-> +       char *result =3D NULL;
->         int ret;
->
->         /* Names prefixed with a dot are R/W mounts. */
-> @@ -131,9 +132,22 @@ static int afs_probe_cell_name(struct dentry *dentry=
-)
->         }
->
->         ret =3D dns_query(net->net, "afsdb", name, len, "srv=3D1",
-> -                       NULL, NULL, false);
-> -       if (ret =3D=3D -ENODATA || ret =3D=3D -ENOKEY)
-> +                       &result, NULL, false);
-> +       if (ret =3D=3D -ENODATA || ret =3D=3D -ENOKEY || ret =3D=3D 0)
->                 ret =3D -ENOENT;
-> +       if (ret >=3D sizeof(struct dns_server_list_v1_header)) {
+On Mon, Dec 11, 2023 at 03:34:40PM +0000, Alice Ryhl wrote:
+> Benno Lossin <benno.lossin@proton.me> writes:
+> > On 12/6/23 12:59, Alice Ryhl wrote:
+> > > +    /// Schedule a task work that closes the file descriptor when this task returns to userspace.
+> > > +    ///
+> > > +    /// Fails if this is called from a context where we cannot run work when returning to
+> > > +    /// userspace. (E.g., from a kthread.)
+> > > +    pub fn close_fd(self, fd: u32) -> Result<(), DeferredFdCloseError> {
+> > > +        use bindings::task_work_notify_mode_TWA_RESUME as TWA_RESUME;
+> > > +
+> > > +        // In this method, we schedule the task work before closing the file. This is because
+> > > +        // scheduling a task work is fallible, and we need to know whether it will fail before we
+> > > +        // attempt to close the file.
+> > > +
+> > > +        // SAFETY: Getting a pointer to current is always safe.
+> > > +        let current = unsafe { bindings::get_current() };
+> > > +
+> > > +        // SAFETY: Accessing the `flags` field of `current` is always safe.
+> > > +        let is_kthread = (unsafe { (*current).flags } & bindings::PF_KTHREAD) != 0;
+> > 
+> > Since Boqun brought to my attention that we already have a wrapper for
+> > `get_current()`, how about you use it here as well?
+> 
+> I can use the wrapper, but it seems simpler to not go through a
+> reference when we just need a raw pointer.
+> 
+> Perhaps we should have a safe `Task::current_raw` function that just
+> returns a raw pointer? It can still be safe.
+> 
 
-This needs an additional ret > 0 check, as the comparison may return
-true with a negative ret if it gets promoted to an unsigned.
+I think we can have a `as_ptr` function for `Task`?
 
-> +               struct dns_server_list_v1_header *v1 =3D (void *)result;
-> +
-> +               if (v1->hdr.zero =3D=3D 0 &&
-> +                   v1->hdr.content =3D=3D DNS_PAYLOAD_IS_SERVER_LIST &&
-> +                   v1->hdr.version =3D=3D 1 &&
-> +                   (v1->status !=3D DNS_LOOKUP_GOOD &&
-> +                    v1->status !=3D DNS_LOOKUP_GOOD_WITH_BAD))
-> +                       return -ENOENT;
-> +
-> +       }
-> +
-> +       kfree(result);
->         return ret;
->  }
+	impl Task {
+	    pub fn as_ptr(&self) -> *mut bindings::task_struct {
+	        self.0.get()
+	    }
+	}
 
-Marc
+Regards,
+Boqun
+
+[...]
 
