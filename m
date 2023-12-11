@@ -1,132 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-5548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030CA80D51F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:18:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A314980D533
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B292819C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3CFF1C212DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415C451013;
-	Mon, 11 Dec 2023 18:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E371251032;
+	Mon, 11 Dec 2023 18:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViKZ+o1I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1845168CF;
-	Mon, 11 Dec 2023 18:18:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7733EC433C7;
-	Mon, 11 Dec 2023 18:18:19 +0000 (UTC)
-Date: Mon, 11 Dec 2023 18:18:17 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com, broonie@kernel.org,
-	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
-	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 12/25] arm64: handle PKEY/POE faults
-Message-ID: <ZXdSaRIJGWrtXin-@arm.com>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
- <20231124163510.1835740-13-joey.gouly@arm.com>
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A6EB8;
+	Mon, 11 Dec 2023 10:21:20 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-50bf2d9b3fdso6276053e87.3;
+        Mon, 11 Dec 2023 10:21:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702318879; x=1702923679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FpsaqKnd+pPts/gd5y5S69XF9tufJC8/px+eEOaxdHE=;
+        b=ViKZ+o1I2Cp1bEYtpw6mCUY1pf2HfBeCO6k+ABygrnfagsPmo5aVsiwKfh43VQXeH8
+         GxLEW1V1Udtnoa2YMHbNyva+sfKbNv8r9ioAdZ47Vx8FE4d0s3GyFMhBAMAWcpRKXY6o
+         raSJ7hqcSURM7IgUMAEZP093lKAvIhLc7775AP+VMfw+SPIDq4OaHNVj+QEShRYW31mi
+         fnIZnDYHVo2Fki4AQbtO5s8pqruTJHbnhdz9SpYjFE5LCkgdlv0vBrVI4/pSF/+LOCUW
+         Dy9+aWzVJVaYlPe4jv+5AotnhGY7kjqLn1k8T2e8SxNTt+46BeKImMdxLrZssAwP7xjT
+         xgDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702318879; x=1702923679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FpsaqKnd+pPts/gd5y5S69XF9tufJC8/px+eEOaxdHE=;
+        b=NJx8RlJXy3WXqx6tMN3ysU0wNGpC5Fh0wDQpcOk4f7czG3RvPCLU2HacE9Pdx9Ux8H
+         MQIAyv0drJUJ+pvDbewiM0G50RIe+P1IEdVENknm36FBDoXBW6JBMnUYi1ojaVoq3N1v
+         MRUxuZfvFzdQRmKSXG3pILW6t2WX7a7rPY3L5JZ00FuIJyc58lMSkRG/X7zzAVZHXKzD
+         KglGG90mIvO6BLw2mDFxV4jALnDF2YeOfHDojJh4++Ww7B1UibeJRyiyuA8usl9jXoz7
+         dGtcgyfsraLomN3FkSj4Lewfuv2Q7zx8SmSSwQqlA3blNC/Esio7WFBw51ZGbGqInXKo
+         C66A==
+X-Gm-Message-State: AOJu0Yx2gnQXh7rBq/WgsnPRF7PFGTr105m6WV9bvEEg6Mmju03hX6/p
+	wKRqgTaIpyWFd4lbwVjeVVZrlJYjbkmaPnJi90UEb9a+
+X-Google-Smtp-Source: AGHT+IEcMP6tBKofMsp4cOByDFMjivgzVIFHNHHRtBouyZZnhRJI0XYlxG5iXLYRPAvI8EvWxSHRhv77qfRVUCM7uzk=
+X-Received: by 2002:a19:8c45:0:b0:50c:f12:6dc0 with SMTP id
+ i5-20020a198c45000000b0050c0f126dc0mr2485624lfj.21.1702318858166; Mon, 11 Dec
+ 2023 10:20:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231124163510.1835740-13-joey.gouly@arm.com>
+References: <20231207185443.2297160-1-andrii@kernel.org> <20231207185443.2297160-4-andrii@kernel.org>
+ <bbf5098d5ff81bf9d65315522e9999a818ae25a3.camel@gmail.com>
+In-Reply-To: <bbf5098d5ff81bf9d65315522e9999a818ae25a3.camel@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 11 Dec 2023 10:20:45 -0800
+Message-ID: <CAEf4BzYJHaQH+zL-GabJ1jMwof7W9PNn_yVVAJE6G3SPFc_Zew@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 3/8] libbpf: further decouple feature checking
+ logic from bpf_object
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, keescook@chromium.org, 
+	kernel-team@meta.com, sargun@sargun.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 24, 2023 at 04:34:57PM +0000, Joey Gouly wrote:
-> @@ -497,6 +498,23 @@ static void do_bad_area(unsigned long far, unsigned long esr,
->  #define VM_FAULT_BADMAP		((__force vm_fault_t)0x010000)
->  #define VM_FAULT_BADACCESS	((__force vm_fault_t)0x020000)
->  
-> +static bool fault_from_pkey(unsigned long esr, struct vm_area_struct *vma,
-> +			unsigned int mm_flags)
-> +{
-> +	unsigned long iss2 = ESR_ELx_ISS2(esr);
-> +
-> +	if (!arch_pkeys_enabled())
-> +		return false;
-> +
-> +	if (iss2 & ESR_ELx_Overlay)
-> +		return true;
-> +
-> +	return !arch_vma_access_permitted(vma,
-> +			mm_flags & FAULT_FLAG_WRITE,
-> +			mm_flags & FAULT_FLAG_INSTRUCTION,
-> +			mm_flags & FAULT_FLAG_REMOTE);
-> +}
+On Sun, Dec 10, 2023 at 7:31=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
+>
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index a6b8d6f70918..af5e777efcbd 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -637,6 +637,7 @@ struct elf_state {
+> >  };
+> >
+> >  struct usdt_manager;
+> > +struct kern_feature_cache;
+>
+> Nit: this forward declaration is not necessary.
+>
+>
 
-Do we actually need this additional arch_vma_access_permitted() check?
-The ESR should tell us if it was a POE fault. Permission overlay faults
-have priority over the base permission faults, so we'd not need to fall
-back to this additional checks. Well, see below, we could do something
-slightly smarter here.
-
-I can see x86 and powerpc have similar checks (though at a different
-point under the mmap lock) but I'm not familiar with their exception
-model, exception priorities.
-
-> +
->  static vm_fault_t __do_page_fault(struct mm_struct *mm,
->  				  struct vm_area_struct *vma, unsigned long addr,
->  				  unsigned int mm_flags, unsigned long vm_flags,
-> @@ -688,9 +706,29 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  		 * Something tried to access memory that isn't in our memory
->  		 * map.
->  		 */
-> -		arm64_force_sig_fault(SIGSEGV,
-> -				      fault == VM_FAULT_BADACCESS ? SEGV_ACCERR : SEGV_MAPERR,
-> -				      far, inf->name);
-> +		int fault_kind;
-> +		/*
-> +		 * The pkey value that we return to userspace can be different
-> +		 * from the pkey that caused the fault.
-> +		 *
-> +		 * 1. T1   : mprotect_key(foo, PAGE_SIZE, pkey=4);
-> +		 * 2. T1   : set AMR to deny access to pkey=4, touches, page
-> +		 * 3. T1   : faults...
-> +		 * 4.    T2: mprotect_key(foo, PAGE_SIZE, pkey=5);
-> +		 * 5. T1   : enters fault handler, takes mmap_lock, etc...
-> +		 * 6. T1   : reaches here, sees vma_pkey(vma)=5, when we really
-> +		 *	     faulted on a pte with its pkey=4.
-> +		 */
-> +		int pkey = vma_pkey(vma);
-
-Other than the vma_pkey() race, I'm more worried about the vma
-completely disappearing, e.g. munmap() in another thread. We end up
-dereferencing a free pointer here. We need to do this under the mmap
-lock.
-
-Since we need to do this check under the mmap lock, we could add an
-additional check to see if the pkey fault we got was a racy and just
-restart the instruction if it no longer faults according to
-por_el0_allows_pkey(). However, the code below is too late in the fault
-handling to be able to do much other than SIGSEGV.
-
-> +
-> +		if (fault_from_pkey(esr, vma, mm_flags))
-> +			fault_kind = SEGV_PKUERR;
-> +		else
-> +			fault_kind = fault == VM_FAULT_BADACCESS ? SEGV_ACCERR : SEGV_MAPERR;
-> +
-> +		arm64_force_sig_fault_pkey(SIGSEGV,
-> +				      fault_kind,
-> +				      far, inf->name, pkey);
->  	}
->  
->  	return 0;
-
--- 
-Catalin
+true, we have it in libbpf_internal.h now, will drop
 
