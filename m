@@ -1,185 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-5573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBF980DBA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:30:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928BF80DCB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 22:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30AA81C2154D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 20:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DFAB282558
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3552F63;
-	Mon, 11 Dec 2023 20:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FD453E34;
+	Mon, 11 Dec 2023 21:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VqezLvEN"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dLpjYLre"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C6EEA;
-	Mon, 11 Dec 2023 12:30:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ww21aBPzmKOYELsQSd5+0RMbO+9F1dIC5KSx4rKPp7sO+sXO1lIkSyE7YDaCclEGwmseUIdu4NoNGfAY82Q3sR2ysqyY4vx21b7GVDJgdFjCCdHQoNk4Q1COedNMuvkiergFurNuuuHRovTNYjZ6MV3/XY7OXWKGXjiAhpz+rbSytbOfzSNDhUo22W1AyRCH9EN5cB5GHEZOdVUdhMN6GpLiF1cHPuG8EEzYSvt2f4wDjqEggBVH525T01ZKffwUdqhfQhYS+WMLgFRQgpRvlo9gdYWzdva3BziUWwFSAjIF18zmKyQpu7384sKAVIrjpscXgQbJMybcJv28KvjTxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E4KC4EQm9y3QoU2E+lOjq/O6p7PsmYfIlaxC0AV2oUE=;
- b=CWandQGhou4bN50+u1ST7gOm4qXsf5F/PoJ03qfHqtl9Lt8F2+SNUn0+DtLusbf2+kQ+4RAT4+yGEzRgZOQFUY73Or+qhngaw/ppC6zOBaa87by7aFy4NcItnkERBT33uFy0nVJzdoKNEixYgoIkUy+fvaU/S0S6w8i7kueeinm11Q8ZoDv0tFQOh1GKgaK1LB//uwv3n+z2z+3FYPEivnAJIEdArmMo8zUM3TSwswL1af/iJlR98BgBMM/3tPQ0nEQXSgJ6q8z/20l87JGPbR9NwRPNZDD+xLqIWLnR2onEtl8/hrlsFzTwTk70PpPyo8KiCN3HkRSARbbR0CFo4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4KC4EQm9y3QoU2E+lOjq/O6p7PsmYfIlaxC0AV2oUE=;
- b=VqezLvENKGd5mydA8wLfD8Zen9Yc2jvnS6EL4ONH6BaVMwcSQ41XJcWZv0Zwx1631+ld00cHVzAxTRs9F9M4pcrBo+QED5tfFU68KB4S64+CzUWaP7RgLKW0dA9oZobZmWZjgFWC2gOEvYxPqMT59uRXR3o+xtFkC/VjgaMmYbtnDGz4rQ9O3ENpNCKnZHouNuRXYPpkXWK1QSJXZKStIKT+qDxUZwDexF3Vi0sV7Hjcq3U78pe+/fa75YP6b6XMdaMN2m6XydXsOvtb9f2hl21Q/Aj5rea7PID1nzV8Kair03HKr9MIp/azL7sIawmAq8MB/MAQyDLXCorCz+rmaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by SN7PR12MB7227.namprd12.prod.outlook.com (2603:10b6:806:2aa::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.32; Mon, 11 Dec
- 2023 20:30:25 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::6b9f:df87:1ee2:88ca]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::6b9f:df87:1ee2:88ca%6]) with mapi id 15.20.7068.033; Mon, 11 Dec 2023
- 20:30:25 +0000
-Message-ID: <e3048458-726e-4b98-b2bf-908ea9066959@nvidia.com>
-Date: Mon, 11 Dec 2023 12:29:58 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>,
- Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
- aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
- ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
- axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
- Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
- bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
- jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, Peter Zijlstra <peterz@infradead.org>
-References: <20231206103702.3873743-6-surenb@google.com>
- <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
- <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
- <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
- <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk>
- <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
- <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
- <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
- <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
- <3eadd79c-c02a-495f-92c0-0315046ef59f@nvidia.com>
- <3d22f342-280f-4a44-87f4-8cca291cfce7@sirena.org.uk>
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <3d22f342-280f-4a44-87f4-8cca291cfce7@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR11CA0104.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::45) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [IPv6:2001:41d0:203:375::bd])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F87CF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 13:13:29 -0800 (PST)
+Date: Mon, 11 Dec 2023 16:13:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1702329207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ApXHTTHAG4MxZp4EC8hGfCJDFrAWlnz+x/MRiiLFanU=;
+	b=dLpjYLre+kgLX1M2v/SpnGgs5E9NX60qPa7b4zl+atqP/Yzz+Cfko6NCYpbDRpPEqqJiJS
+	3lh3aAkgfwfQLaUviEcmqgVJaL0CTOTxVyQkD9XRUpUU9pvau4iuImQfg+AfKW0o96BM8W
+	RHL3n+zZ3XFfUP8H5ZoGBkjheJnjuLs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
+Message-ID: <20231211211322.bw2liijz63d3txya@moria.home.lan>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
+ <20231206-alice-file-v2-5-af617c0d9d94@google.com>
+ <20231206123402.GE30174@noisy.programming.kicks-ass.net>
+ <CAH5fLgh+0G85Acf4-zqr_9COB5DUtt6ifVpZP-9V06hjJgd_jQ@mail.gmail.com>
+ <20231206134041.GG30174@noisy.programming.kicks-ass.net>
+ <CANiq72kK97fxTddrL+Uu2JSah4nND=q_VbJ76-Rdc-R-Kijszw@mail.gmail.com>
+ <20231208165702.GI28727@noisy.programming.kicks-ass.net>
+ <202312080947.674CD2DC7@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|SN7PR12MB7227:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1efc8827-5c6e-4964-2ca0-08dbfa880198
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	bs6mrnPvOlXpO0sOQpZMTjByTyptsGDqSWOvkynxHkIzbMSoxJkd6tAx9f+VnUuqzohbckZ61Vdt/LpdcEuk4ruSn7JO0SsFn1kZZQjVnRw0G2dqoryGRHPzP6A+0uGgCB3hoUCTm8QVALXaizSFECJ7baTD8drvRaSP3Ad+s1DpATLLERoXklzgUPND2e80Ze2jJ0huq8sGT9swvz7rymjATmVKexnILhYi5Wj3dtxvNnt1tqxuUJJAYgsOe2mX7LNj/ssD78NlWnSOJ3xZS3G2sofcLLrAzysDKKxzkebcth0Q6fOm5bCoxVEY+zpS25vXNmfCRktA5q+ymPfjzxwGLPojK9h7isNtk/Pr8OkOMrjkpMfD/bJcVXaGLV4UHGG61JjYNi8QjsVD67vK9Zb7CIlvdD/NLluqRrzUQFzmImqGR9106bHcqBYohzO+VJPkmx8UTZZgNSRXmejToGoIfiLmFTi273k6TWAHMYn+4qWbXNvjkZ9hHnZhUEc2q9E9iipz8CDw/LhleFOJi5Clmj/aZtqH4oh/qBmDUsj1mrPFeCfKXqJ4FKeUzAEJ1NREYXv1Eq0vwtHlnh1DYaSg040kxU6PL2VLMtlwWW5ThAwk5usfRuhGKLk73b//ia98pCBUFBHumCwC4LZ1DHWZ/CpZgsRgwzBjsRZdZLUC4CT3ig5xG/ruZA06UjRe
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(136003)(39860400002)(376002)(396003)(230273577357003)(230173577357003)(230922051799003)(64100799003)(451199024)(186009)(1800799012)(31686004)(53546011)(6486002)(6666004)(2616005)(6506007)(478600001)(6512007)(38100700002)(86362001)(31696002)(36756003)(54906003)(2906002)(5660300002)(66946007)(66556008)(66476007)(6916009)(41300700001)(83380400001)(7416002)(316002)(4326008)(8936002)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VlQrbEw3aTVudk5PNjRtUUwvNjU3ckJVV3ZPcHBZaTRrbXBDNDFxZUhMZ2NX?=
- =?utf-8?B?b0RicmNBdjFNS01wc3R2NldlRUlUZVJCc0lzcWI1dzVlcWQ3NmJ4N0pybHFy?=
- =?utf-8?B?V0dCT1Z0Q1FXNXJTZGdzMEVyS2JLYUlvWTg2QU9IRW42Zkp1Vkl1Ny9jNVBn?=
- =?utf-8?B?ekZQMURudFBReGlGU3ZENjRjVHVESC94VEFMSCtzMzlsMHNDMTVjcytIS3Fp?=
- =?utf-8?B?N3FlUVlCL21GMlV5TUU3UmI4YUhqL0Mvd09hWE5xdm52M2swTEk3MUVLVVBM?=
- =?utf-8?B?M1VKV0ZNYi9pZmlQcmVHRDBIMVZqL2dWWjRkWnhZd21mcEtXeXpNR0Q4Z0Q1?=
- =?utf-8?B?b1V2YWE1emU4RENydi9jWEpONUZma0U1SzBYL1UvREJYRWtMMFFLcitlbE1Y?=
- =?utf-8?B?S3FubE1kMTNyRHp1bU1PYVErTmhiU0ZOaTYxSXR3bGRWUTdpa2RkRmxNNmN2?=
- =?utf-8?B?d3ZrRDdOZ0FudTFwdFQvV0JBdGpXTTY3WEo1b21UMWVyYk9hY2FKSG1oL3JW?=
- =?utf-8?B?c21sS3JQU3RZaUFLVzd4bENGcnBySWRSRW9JcXFSSG5BRFZQZDBxQTJ0ejM1?=
- =?utf-8?B?L24ydVhubHhMdGI1YlVTOWhOL2V6cEcvbFRhMlhNRVRFbDNMcEUwa2pjaXo1?=
- =?utf-8?B?UjNWRDY1WHVsSjdNUHhVTkN0S2YzVUFzeEVXSXlUcStTM29uSTJXK1h2bmdp?=
- =?utf-8?B?YkdPUTZhZWJhYjNUcys3Wjl4ZWRNZ0pMZTRJNU5jQUY1UkRQN2JnU3RBbHl5?=
- =?utf-8?B?K2EveEpaamN5bFF3a1htbGZPWkd5NWkxd2tlWWJab1UzMWlyblZpU0QzOHp2?=
- =?utf-8?B?NGNIZmd4NXJURW8yREFOeTk0MTFTOFlrUTZLMTUxMVZuS3hpUS9UT2VXMnJ0?=
- =?utf-8?B?cU1SS0xsd3lEMVZIdFRMazhXby9mcEpwYUhUZThSZjBBTVk3ZFlGTURxR3BM?=
- =?utf-8?B?MUN6K3ZMOEhEejh4ZEJuSjdpYVJ0SUgvQlFjbWJ1b0NtSkk3RndCQWxNajZN?=
- =?utf-8?B?UHZMY1NZeWRua0lEeFNTdytGZ3lQVlNpeUxWUWkrLzRhbGE1dzVHYUhabnhM?=
- =?utf-8?B?aFRyTlhNOEt6dEZrb2NReGdFelVHbVhITU5MTkJJajBhUU5WNGhwekVvSmQr?=
- =?utf-8?B?b21BY3BhSFh0YURnMGkxMXdpcmhZLzRvcDJUeWJWU1RYdUR2eDlWZUVBbFhD?=
- =?utf-8?B?K0U2SHVjNmtXOUNhZ3RwNG9RS2cwc0JwMENHZDhBSXZ3bkhVQUFNTXdvUXhz?=
- =?utf-8?B?Si9tUVVSNitrVThmR2FXeUE1Mi9zTFRLUGZDM3RDWWFTd3JGaXdEUFN1emo1?=
- =?utf-8?B?NFg2d3FnUTlDOHNrak9yOEJuL3FvbjZYRmtzZXN1Y0VBdFJ4NmczSTk3VkJM?=
- =?utf-8?B?Y0oxVnZDRmptOWRrMjFrbDZpQnJXemlLc283d0tBN3M3ZEl6Ykh4VmdYRmZw?=
- =?utf-8?B?Z0V3ai9yWUQ4VGNyNStDVEVVOFF2aVZvMWlYb0dsZFBoQmlGbGdkanB2Q1Jz?=
- =?utf-8?B?T2VaU1VEREtXNlhEemovOURTUlRwUlFIT0p1ZzJEdEowVmduYUUrUi91NThv?=
- =?utf-8?B?dW9DMFFFZ0lQNkRKOU54aElzL2szSEVTZ0RQRFRXMFI5NHpVYVdDMXQzb3N0?=
- =?utf-8?B?Q1lGem9UUnpPamdhRnpvRngzMkhTNERNa1dLd0U2VTBQckpHWTlRNXcrWGVj?=
- =?utf-8?B?ZEZtdEhGZEFTVGVXWi9ObmpGZ2dIemF5N0JDWVVSdWFSOGVSWVBEL3d3dWtT?=
- =?utf-8?B?K3MwNWFqRm9NZnQwM0lkQVQ0UGFIMzhpZFpqeU0vZ1N3S01YZ2txRnBEUUxa?=
- =?utf-8?B?VkxncW5pTTRmZW43NzdPZTR6NVF3UTRXbmpUcnl2cU9abFNyQmd5VDlZN3ZC?=
- =?utf-8?B?ZWsyY1U5YWYzelBjWE5UaVBBMURZb2JIbEFKSllEVHFUYVE2bGtSYmNISlZJ?=
- =?utf-8?B?UEZDdWNRWXhhYVgwMStjMGQzK1V5bzQvRWZ2VVNMQ1k5ZTVmZmhGRGdBY0la?=
- =?utf-8?B?TTJxNEVJNHNBYms5emhjaExsV0g3ZEZpdGd4K3VWNUlxS2xibXU4MzByZXZT?=
- =?utf-8?B?K2lrdTNid0ZzK1ROc3BxNUowUnVaeE11MzVvVTZXUi9kRFdUcDNPbTFVWXBK?=
- =?utf-8?B?UkVRbFduNzlLRHV1RHcybFRQdkRobU8ya0hHK2pZQnREa2xEeTR0aHdNQXpk?=
- =?utf-8?B?ekE9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1efc8827-5c6e-4964-2ca0-08dbfa880198
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2023 20:30:25.3433
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u+RZiC5esrU0nUb/uZwWQkzv4sPzh5ejjhyGIpE8jB8XPHHV74SQtieOZfa/krLhBLl5bcqz+l5hvVbTf0G+bw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7227
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202312080947.674CD2DC7@keescook>
+X-Migadu-Flow: FLOW_OUT
 
-On 12/11/23 12:21, Mark Brown wrote:
-> On Mon, Dec 11, 2023 at 10:46:23AM -0800, John Hubbard wrote:
+On Fri, Dec 08, 2023 at 10:18:47AM -0800, Kees Cook wrote:
+> On Fri, Dec 08, 2023 at 05:57:02PM +0100, Peter Zijlstra wrote:
+> > On Fri, Dec 08, 2023 at 05:31:59PM +0100, Miguel Ojeda wrote:
+> > > On Wed, Dec 6, 2023 at 2:41 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > Anywhoo, the longer a function is, the harder it becomes, since you need
+> > > > to deal with everything a function does and consider the specuation
+> > > > window length. So trivial functions like the above that do an immediate
+> > > > dereference and are (and must be) a valid indirect target (because
+> > > > EXPORT) are ideal.
+> > > 
+> > > We discussed this in our weekly meeting, and we would like to ask a
+> > > few questions:
+> > > 
+> > >   - Could you please describe an example attack that you are thinking
+> > > of? (i.e. a "full" attack, rather than just Spectre itself). For
+> > > instance, would it rely on other vulnerabilities?
+> > 
+> > There's a fairly large amount of that on github, google spectre poc and
+> > stuff like that.
 > 
->> Or (4) Hack in little ifdef snippets, into the selftests, like we used
->> to do. Peter Zijlstra seems to be asking for this, if I understand his
->> (much) earlier comments about this.
+> tl;dr: I don't think the introduction of speculation gadgets is a
+> sufficient reason to block Rust interfaces like this.
 > 
-> I can't help but think that if we're having to manually copy bits of
-> the uapi headers (which are already separated out in the source) into
-> another part of the same source tree in order to use them then there's
-> room for improvement somewhere.  TBH it also doesn't seem great to add
+> Long version:
+> 
+> I think the question here is "what is the threat model?" If I break down
+> the objection, I understand it as:
+> 
+> 1) The trivial wrappers-of-inlines are speculation gadgets.
+> 2) They're exported, so callable by anything.
+> 
+> If the threat model is "something can call these to trigger
+> speculation", I think this is pretty strongly mitigated already;
+> 
+> 1) These aren't syscall definitions, so their "reachability" is pretty
+> limited. In fact, they're already going to be used in places, logically,
+> where the inline would be used, so the speculation window is going to be
+> same (or longer, given the addition of the direct call and return).
+> 
+> 2) If an attacker is in a position to directly call these helpers,
+> they're not going to use them: if an attacker already has arbitrary
+> execution, they're not going to bother with speculation.
+> 
+> Fundamentally I don't see added risk here. From the security hardening
+> perspective we have two goals: kill bug classes and block exploitation
+> techniques, and the former is a much more powerful defensive strategy
+> since without the bugs, there's no chance to perform an exploit.
+> 
+> In general, I think we should prioritize bug class elimination over
+> exploit technique foiling. In this case, we're adding a potential weakness
+> to the image of the kernel of fairly limited scope in support of stronger
+> bug elimination goals.
+> 
+> Even if we look at the prerequisites for mounting an attack here, we've
+> already got things in place to help mitigate arbitrary code execution
+> (KCFI, BTI, etc). Nothing is perfect, but speculation gadgets are
+> pretty far down on the list of concerns, IMO. We have no real x86 ROP
+> defense right now in the kernel, so that's a much lower hanging fruit
+> for attackers.
+> 
+> As another comparison, on x86 there are so many direct execution gadgets
+> present in middle-of-instruction code patterns that worrying about a
+> speculation gadget seems silly to me.
+> 
+> > [...]
+> > The thing at hand was just me eyeballing it.
+> 
+> I can understand the point you and Greg have both expressed here: "this
+> is known to be an anti-pattern, we need to do something else". I generally
+> agree with this, but in this case, I don't think it's the right call. This
+> is an area we'll naturally see improvement from on the Rust side since
+> these calls are a _performance_ concern too, so it's not like this will be
+> "forgotten" about. But blocking it until there is a complete and perfect
+> solution feels like we're letting perfect be the enemy of good.
+> 
+> All of our development is evolutionary, so I think we'd be in a much
+> better position to take these (currently ugly) work-arounds (visible
+> only in Rust builds) so that we gain the ability to evolve towards more
+> memory safe code.
 
-Yes, it feels that way to me, too.
+Well said.
 
-> additional variables that depend on the user's build environment, we
-> already have enough build issues.  It ought to be mostly tedious rather
-> than hard but it's still a pain, especially given the issues we have
-> getting kselftest fixes merged promptly.
+More than that, I think this is a situation where we really need to
+consider what our priorities are.
 
-What about David's option (3):
+Where are most of our real world vulnerabilities coming from? Are they
+spectre issues, or are they memory safety issues, and the kinds of
+logic/resource issues we know Rust's type system is going to help with?
+I think we all know the answer to that question.
 
-(3) Regularly archive the required headers in the selftest directory
-     like external projects like QEMU do.
+More than that, as kernel programmers, we need to be focusing primarily
+on the issues that are our responsibility and under our control. At the
+point when the inability of the CPU manufacturers to get their shit
+together is causing us to have concerns over _generated code for little
+helper functions_, the world has gone crazy.
 
-, combined with something in the build system to connect it up for
-building the selftests?
+I remember when the spectre stuff first hit, and everyone was saying
+"this is just a temporary workaround; CPU manufacturers are going to
+sort this out in a couple releases".
 
-Or maybe there is an innovative way to do all of this, that we have
-yet to think of.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
+They haven't. That's batshit. And I doubt they ever will if we keep
+pretending we can just work around everything in software.
 
