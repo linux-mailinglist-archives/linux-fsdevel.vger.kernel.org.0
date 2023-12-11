@@ -1,191 +1,468 @@
-Return-Path: <linux-fsdevel+bounces-5540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428A080D3BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:27:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0041580D3CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBEE51F219FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0E1F219E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A630D4E611;
-	Mon, 11 Dec 2023 17:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F121B4C3DD;
+	Mon, 11 Dec 2023 17:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KJ4efM9E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TO6pszgb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wzXbksvR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k3338zTO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhoGWDjz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62B5C3;
-	Mon, 11 Dec 2023 09:27:11 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B84E5223DB;
-	Mon, 11 Dec 2023 17:27:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702315630; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uuXeYcPGrieZET/Hl977sPLVwbUrIJA1zejD9mT3ogI=;
-	b=KJ4efM9E+sa33aFAd8jwg5VXmnjMxleP6CmyD1Z0i97ow/IMJQBSqYXPh1ej+xavVwSRP4
-	Yg1lz/fUikUZbf1u2+vXr2RJE2evTJgLdRHZp8PKCuknSrpV2KnjDsWgIdBkLdxCyxxQjh
-	RNp4pJOJa1FNsc52gTMd8s7goQjnjEc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702315630;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uuXeYcPGrieZET/Hl977sPLVwbUrIJA1zejD9mT3ogI=;
-	b=TO6pszgbMWjR3gBZnaW4MEVQ+gbRax/0poyUFFXjotFHInDoOr+qN7/2TD3A7ZbLly3/IT
-	YRHLNJGFEpFf+TBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702315629; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uuXeYcPGrieZET/Hl977sPLVwbUrIJA1zejD9mT3ogI=;
-	b=wzXbksvRNiCb4BbXMMBxbEnY6iRN/20VAk4MCpHS3Rljj8T26a7bGIb5ufMVkyXIF6ZR91
-	EvfGBjSwf9A5O7MLBegJl4BM0+huE5fNoBm4jZzLIFLmDT7FuH6vs9QkRAvxTJx13mPPRM
-	NuBUsypYbVCpDejdowVksfEijuMTCJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702315629;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uuXeYcPGrieZET/Hl977sPLVwbUrIJA1zejD9mT3ogI=;
-	b=k3338zTO3EpETkE8li6Dp/0dY97GEZjygMS4ZhvDNl1b1VwUfwBL4jBi4Swo7FgrfAdnP+
-	7OISWgzg4D5XlXAQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A588134B0;
-	Mon, 11 Dec 2023 17:27:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id DhppJW1Gd2WxHQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 17:27:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0511CA07E3; Mon, 11 Dec 2023 18:27:08 +0100 (CET)
-Date: Mon, 11 Dec 2023 18:27:08 +0100
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
-	kent.overstreet@gmail.com, joern@lazybastard.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
-	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
-	konishi.ryusuke@gmail.com, willy@infradead.org,
-	akpm@linux-foundation.org, p.raghav@samsung.com, hare@suse.de,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH RFC v2 for-6.8/block 15/18] buffer: add a new helper to
- read sb block
-Message-ID: <20231211172708.qpuk4rkwq4u2zbmj@quack3>
-References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
- <20231211140753.975297-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298A44E1B9;
+	Mon, 11 Dec 2023 17:29:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D725DC433B6;
+	Mon, 11 Dec 2023 17:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702315796;
+	bh=VP6rxIE0YrbcOG/9wnq9cB6kaypzUe7LOgu57Kw03yM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OhoGWDjz+ZlKfXChXtVyZo+ZKQpmeBytRpThc2k+jzaIgdO4y8wTrqu1pp5xdKoq+
+	 YSP2Ea0Zzujdu09Cyw0tPxiSEoQU0ZFc4bcIi1Eu9UR8wNzynUYCLiy7Fj5GQR4ZqL
+	 xXmVXpT/EHk1JohfYBIBn9gj+gM+TVCyJzm8uUht85HorFunHJudGcJZc4NSBW6Zmk
+	 nX3duK2/kh+NRt5u9wwIKpu9lgA3mMEjlBSmoozvL9wxjp/FnGenPy5xMjQklfhmLB
+	 8VKyRaXtdbpsH7Yon4EZRZ0usr3clw50x4oHXjTGL1vaLU3OEIjym5FEsh01x8AUoI
+	 rPWxCB3xOMpyQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-50be3611794so5564679e87.0;
+        Mon, 11 Dec 2023 09:29:55 -0800 (PST)
+X-Gm-Message-State: AOJu0YyiqScgjDVOovHibZ4EXqle6LMA0ff/iAx62ZAoZRZwWf34E7Wa
+	NvbzB5G3yRD+GJRsvzCHwGfWBT3n5qOsYk4D4w==
+X-Google-Smtp-Source: AGHT+IGf9GxCgHbSaCR9ChlHwIzcYeJN/o9beG+fFS/Wj2+MXjJAqODSxU5em7xHCQ26rKUjit1wlHMa263dNGOiUjs=
+X-Received: by 2002:ac2:42c3:0:b0:50b:efd4:1475 with SMTP id
+ n3-20020ac242c3000000b0050befd41475mr1861829lfl.9.1702315793752; Mon, 11 Dec
+ 2023 09:29:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231211140753.975297-1-yukuai1@huaweicloud.com>
-X-Spam-Score: 16.16
-X-Spamd-Bar: +++++++++
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wzXbksvR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=k3338zTO;
-	dmarc=none;
-	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [9.46 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 R_RATELIMIT(0.00)[to_ip_from(RLa8hd5fybgmzcyr9mhbq8ey7y)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[50];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 NEURAL_SPAM_SHORT(2.97)[0.991];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,huawei.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[kernel.dk,citrix.com,suse.de,gmail.com,lazybastard.org,bootlin.com,nod.at,ti.com,linux.ibm.com,oracle.com,fb.com,toxicpanda.com,suse.com,zeniv.linux.org.uk,kernel.org,fluxnic.net,mit.edu,dilger.ca,redhat.com,infradead.org,linux-foundation.org,samsung.com,vger.kernel.org,lists.xenproject.org,lists.infradead.org,lists.ozlabs.org,lists.linux.dev,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: 9.46
-X-Rspamd-Queue-Id: B84E5223DB
-X-Spam-Flag: NO
+References: <20231119165721.9849-1-alexandru.elisei@arm.com> <20231119165721.9849-12-alexandru.elisei@arm.com>
+In-Reply-To: <20231119165721.9849-12-alexandru.elisei@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 11 Dec 2023 11:29:40 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, pcc@google.com, 
+	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
+	david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 11-12-23 22:07:53, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Unlike __bread_gfp(), ext4 has special handing while reading sb block:
-> 
-> 1) __GFP_NOFAIL is not set, and memory allocation can fail;
-> 2) If buffer write failed before, set buffer uptodate and don't read
->    block from disk;
-> 3) REQ_META is set for all IO, and REQ_PRIO is set for reading xattr;
-> 4) If failed, return error ptr instead of NULL;
-> 
-> This patch add a new helper __bread_gfp2() that will match above 2 and 3(
-> 1 will be used, and 4 will still be encapsulated by ext4), and prepare to
-> prevent calling mapping_gfp_constraint() directly on bd_inode->i_mapping
-> in ext4.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-...
+On Sun, Nov 19, 2023 at 10:59=E2=80=AFAM Alexandru Elisei
+<alexandru.elisei@arm.com> wrote:
+>
+> Allow the kernel to get the size and location of the MTE tag storage
+> regions from the DTB. This memory is marked as reserved for now.
+>
+> The DTB node for the tag storage region is defined as:
+>
+>         tags0: tag-storage@8f8000000 {
+>                 compatible =3D "arm,mte-tag-storage";
+>                 reg =3D <0x08 0xf8000000 0x00 0x4000000>;
+>                 block-size =3D <0x1000>;
+>                 memory =3D <&memory0>;    // Associated tagged memory nod=
+e
+>         };
+
+I skimmed thru the discussion some. If this memory range is within
+main RAM, then it definitely belongs in /reserved-memory.
+
+You need a binding for this too.
+
+> The tag storage region represents the largest contiguous memory region th=
+at
+> holds all the tags for the associated contiguous memory region which can =
+be
+> tagged. For example, for a 32GB contiguous tagged memory the correspondin=
+g
+> tag storage region is 1GB of contiguous memory, not two adjacent 512M of
+> tag storage memory.
+>
+> "block-size" represents the minimum multiple of 4K of tag storage where a=
+ll
+> the tags stored in the block correspond to a contiguous memory region. Th=
+is
+> is needed for platforms where the memory controller interleaves tag write=
+s
+> to memory. For example, if the memory controller interleaves tag writes f=
+or
+> 256KB of contiguous memory across 8K of tag storage (2-way interleave),
+> then the correct value for "block-size" is 0x2000. This value is a hardwa=
+re
+> property, independent of the selected kernel page size.
+>
+> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> ---
+>  arch/arm64/Kconfig                       |  12 ++
+>  arch/arm64/include/asm/mte_tag_storage.h |  15 ++
+>  arch/arm64/kernel/Makefile               |   1 +
+>  arch/arm64/kernel/mte_tag_storage.c      | 256 +++++++++++++++++++++++
+>  arch/arm64/kernel/setup.c                |   7 +
+>  5 files changed, 291 insertions(+)
+>  create mode 100644 arch/arm64/include/asm/mte_tag_storage.h
+>  create mode 100644 arch/arm64/kernel/mte_tag_storage.c
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 7b071a00425d..fe8276fdc7a8 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2062,6 +2062,18 @@ config ARM64_MTE
+>
+>           Documentation/arch/arm64/memory-tagging-extension.rst.
+>
+> +if ARM64_MTE
+> +config ARM64_MTE_TAG_STORAGE
+> +       bool "Dynamic MTE tag storage management"
+> +       help
+> +         Adds support for dynamic management of the memory used by the h=
+ardware
+> +         for storing MTE tags. This memory, unlike normal memory, cannot=
+ be
+> +         tagged. When it is used to store tags for another memory locati=
+on it
+> +         cannot be used for any type of allocation.
+> +
+> +         If unsure, say N
+> +endif # ARM64_MTE
+> +
+>  endmenu # "ARMv8.5 architectural features"
+>
+>  menu "ARMv8.7 architectural features"
+> diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/includ=
+e/asm/mte_tag_storage.h
+> new file mode 100644
+> index 000000000000..8f86c4f9a7c3
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/mte_tag_storage.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 > +/*
-> + * This works like __bread_gfp() except:
-> + * 1) If buffer write failed before, set buffer uptodate and don't read
-> + * block from disk;
-> + * 2) Caller can pass in additional op_flags like REQ_META;
+> + * Copyright (C) 2023 ARM Ltd.
 > + */
-> +struct buffer_head *
-> +__bread_gfp2(struct block_device *bdev, sector_t block, unsigned int size,
-> +	     blk_opf_t op_flags, gfp_t gfp)
+> +#ifndef __ASM_MTE_TAG_STORAGE_H
+> +#define __ASM_MTE_TAG_STORAGE_H
+> +
+> +#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
+> +void mte_tag_storage_init(void);
+> +#else
+> +static inline void mte_tag_storage_init(void)
 > +{
-> +	return bread_gfp(bdev, block, size, op_flags, gfp, true);
 > +}
-> +EXPORT_SYMBOL(__bread_gfp2);
+> +#endif /* CONFIG_ARM64_MTE_TAG_STORAGE */
+> +#endif /* __ASM_MTE_TAG_STORAGE_H  */
+> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> index d95b3d6b471a..5f031bf9f8f1 100644
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -70,6 +70,7 @@ obj-$(CONFIG_CRASH_CORE)              +=3D crash_core.o
+>  obj-$(CONFIG_ARM_SDE_INTERFACE)                +=3D sdei.o
+>  obj-$(CONFIG_ARM64_PTR_AUTH)           +=3D pointer_auth.o
+>  obj-$(CONFIG_ARM64_MTE)                        +=3D mte.o
+> +obj-$(CONFIG_ARM64_MTE_TAG_STORAGE)    +=3D mte_tag_storage.o
+>  obj-y                                  +=3D vdso-wrap.o
+>  obj-$(CONFIG_COMPAT_VDSO)              +=3D vdso32-wrap.o
+>  obj-$(CONFIG_UNWIND_PATCH_PAC_INTO_SCS)        +=3D patch-scs.o
+> diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_=
+tag_storage.c
+> new file mode 100644
+> index 000000000000..fa6267ef8392
+> --- /dev/null
+> +++ b/arch/arm64/kernel/mte_tag_storage.c
+> @@ -0,0 +1,256 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Support for dynamic tag storage.
+> + *
+> + * Copyright (C) 2023 ARM Ltd.
+> + */
+> +
+> +#include <linux/memblock.h>
+> +#include <linux/mm.h>
+> +#include <linux/of_device.h>
 
-__bread_gfp2() is not a great name, why not just using bread_gfp()
-directly? I'm not a huge fan of boolean arguments but three different flags
-arguments would be too much for my taste ;) so I guess I can live with
-that.
+You probably don't need this header. If you depend on what it
+implicitly includes, then that will now break in linux-next.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +#include <linux/of_fdt.h>
+> +#include <linux/range.h>
+> +#include <linux/string.h>
+> +#include <linux/xarray.h>
+> +
+> +#include <asm/mte_tag_storage.h>
+> +
+> +struct tag_region {
+> +       struct range mem_range; /* Memory associated with the tag storage=
+, in PFNs. */
+> +       struct range tag_range; /* Tag storage memory, in PFNs. */
+> +       u32 block_size;         /* Tag block size, in pages. */
+> +};
+> +
+> +#define MAX_TAG_REGIONS        32
+> +
+> +static struct tag_region tag_regions[MAX_TAG_REGIONS];
+> +static int num_tag_regions;
+> +
+> +static int __init tag_storage_of_flat_get_range(unsigned long node, cons=
+t __be32 *reg,
+> +                                               int reg_len, struct range=
+ *range)
+> +{
+> +       int addr_cells =3D dt_root_addr_cells;
+> +       int size_cells =3D dt_root_size_cells;
+> +       u64 size;
+> +
+> +       if (reg_len / 4 > addr_cells + size_cells)
+> +               return -EINVAL;
+> +
+> +       range->start =3D PHYS_PFN(of_read_number(reg, addr_cells));
+> +       size =3D PHYS_PFN(of_read_number(reg + addr_cells, size_cells));
+> +       if (size =3D=3D 0) {
+> +               pr_err("Invalid node");
+> +               return -EINVAL;
+> +       }
+> +       range->end =3D range->start + size - 1;
+
+We have a function to read (and translate which you forgot) addresses.
+Add what's missing rather than open code your own.
+
+> +
+> +       return 0;
+> +}
+> +
+> +static int __init tag_storage_of_flat_get_tag_range(unsigned long node,
+> +                                                   struct range *tag_ran=
+ge)
+> +{
+> +       const __be32 *reg;
+> +       int reg_len;
+> +
+> +       reg =3D of_get_flat_dt_prop(node, "reg", &reg_len);
+> +       if (reg =3D=3D NULL) {
+> +               pr_err("Invalid metadata node");
+> +               return -EINVAL;
+> +       }
+> +
+> +       return tag_storage_of_flat_get_range(node, reg, reg_len, tag_rang=
+e);
+> +}
+> +
+> +static int __init tag_storage_of_flat_get_memory_range(unsigned long nod=
+e, struct range *mem)
+> +{
+> +       const __be32 *reg;
+> +       int reg_len;
+> +
+> +       reg =3D of_get_flat_dt_prop(node, "linux,usable-memory", &reg_len=
+);
+> +       if (reg =3D=3D NULL)
+> +               reg =3D of_get_flat_dt_prop(node, "reg", &reg_len);
+> +
+> +       if (reg =3D=3D NULL) {
+> +               pr_err("Invalid memory node");
+> +               return -EINVAL;
+> +       }
+> +
+> +       return tag_storage_of_flat_get_range(node, reg, reg_len, mem);
+> +}
+> +
+> +struct find_memory_node_arg {
+> +       unsigned long node;
+> +       u32 phandle;
+> +};
+> +
+> +static int __init fdt_find_memory_node(unsigned long node, const char *u=
+name,
+> +                                      int depth, void *data)
+> +{
+> +       const char *type =3D of_get_flat_dt_prop(node, "device_type", NUL=
+L);
+> +       struct find_memory_node_arg *arg =3D data;
+> +
+> +       if (depth !=3D 1 || !type || strcmp(type, "memory") !=3D 0)
+> +               return 0;
+> +
+> +       if (of_get_flat_dt_phandle(node) =3D=3D arg->phandle) {
+> +               arg->node =3D node;
+> +               return 1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int __init tag_storage_get_memory_node(unsigned long tag_node, un=
+signed long *mem_node)
+> +{
+> +       struct find_memory_node_arg arg =3D { 0 };
+> +       const __be32 *memory_prop;
+> +       u32 mem_phandle;
+> +       int ret, reg_len;
+> +
+> +       memory_prop =3D of_get_flat_dt_prop(tag_node, "memory", &reg_len)=
+;
+> +       if (!memory_prop) {
+> +               pr_err("Missing 'memory' property in the tag storage node=
+");
+> +               return -EINVAL;
+> +       }
+> +
+> +       mem_phandle =3D be32_to_cpup(memory_prop);
+> +       arg.phandle =3D mem_phandle;
+> +
+> +       ret =3D of_scan_flat_dt(fdt_find_memory_node, &arg);
+
+Do not use of_scan_flat_dt. It is a relic predating libfdt which can
+get a node by phandle directly.
+
+> +       if (ret !=3D 1) {
+> +               pr_err("Associated memory node not found");
+> +               return -EINVAL;
+> +       }
+> +
+> +       *mem_node =3D arg.node;
+> +
+> +       return 0;
+> +}
+> +
+> +static int __init tag_storage_of_flat_read_u32(unsigned long node, const=
+ char *propname,
+> +                                              u32 *retval)
+
+If you are going to make a generic function, make it for everyone.
+
+> +{
+> +       const __be32 *reg;
+> +
+> +       reg =3D of_get_flat_dt_prop(node, propname, NULL);
+> +       if (!reg)
+> +               return -EINVAL;
+> +
+> +       *retval =3D be32_to_cpup(reg);
+> +       return 0;
+> +}
+> +
+> +static u32 __init get_block_size_pages(u32 block_size_bytes)
+> +{
+> +       u32 a =3D PAGE_SIZE;
+> +       u32 b =3D block_size_bytes;
+> +       u32 r;
+> +
+> +       /* Find greatest common divisor using the Euclidian algorithm. */
+> +       do {
+> +               r =3D a % b;
+> +               a =3D b;
+> +               b =3D r;
+> +       } while (b !=3D 0);
+> +
+> +       return PHYS_PFN(PAGE_SIZE * block_size_bytes / a);
+> +}
+> +
+> +static int __init fdt_init_tag_storage(unsigned long node, const char *u=
+name,
+> +                                      int depth, void *data)
+> +{
+> +       struct tag_region *region;
+> +       unsigned long mem_node;
+> +       struct range *mem_range;
+> +       struct range *tag_range;
+> +       u32 block_size_bytes;
+> +       u32 nid =3D 0;
+> +       int ret;
+> +
+> +       if (depth !=3D 1 || !strstr(uname, "tag-storage"))
+> +               return 0;
+> +
+> +       if (!of_flat_dt_is_compatible(node, "arm,mte-tag-storage"))
+> +               return 0;
+> +
+> +       if (num_tag_regions =3D=3D MAX_TAG_REGIONS) {
+> +               pr_err("Maximum number of tag storage regions exceeded");
+> +               return -EINVAL;
+> +       }
+> +
+> +       region =3D &tag_regions[num_tag_regions];
+> +       mem_range =3D &region->mem_range;
+> +       tag_range =3D &region->tag_range;
+> +
+> +       ret =3D tag_storage_of_flat_get_tag_range(node, tag_range);
+> +       if (ret) {
+> +               pr_err("Invalid tag storage node");
+> +               return ret;
+> +       }
+> +
+> +       ret =3D tag_storage_get_memory_node(node, &mem_node);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D tag_storage_of_flat_get_memory_range(mem_node, mem_range)=
+;
+> +       if (ret) {
+> +               pr_err("Invalid address for associated data memory node")=
+;
+> +               return ret;
+> +       }
+> +
+> +       /* The tag region must exactly match the corresponding memory. */
+> +       if (range_len(tag_range) * 32 !=3D range_len(mem_range)) {
+> +               pr_err("Tag storage region 0x%llx-0x%llx does not cover t=
+he memory region 0x%llx-0x%llx",
+> +                      PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->en=
+d),
+> +                      PFN_PHYS(mem_range->start), PFN_PHYS(mem_range->en=
+d));
+> +               return -EINVAL;
+> +       }
+> +
+> +       ret =3D tag_storage_of_flat_read_u32(node, "block-size", &block_s=
+ize_bytes);
+> +       if (ret || block_size_bytes =3D=3D 0) {
+> +               pr_err("Invalid or missing 'block-size' property");
+> +               return -EINVAL;
+> +       }
+> +       region->block_size =3D get_block_size_pages(block_size_bytes);
+> +       if (range_len(tag_range) % region->block_size !=3D 0) {
+> +               pr_err("Tag storage region size 0x%llx is not a multiple =
+of block size %u",
+> +                      PFN_PHYS(range_len(tag_range)), region->block_size=
+);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ret =3D tag_storage_of_flat_read_u32(mem_node, "numa-node-id", &n=
+id);
+
+I was going to say we already have a way to associate memory nodes
+other nodes using "numa-node-id", so the "memory" phandle property is
+somewhat redundant. Maybe the tag node should have a numa-node-id.
+With that, it looks like you don't even need to access the /memory
+node. Avoiding that would be good for 2 reasons. It avoids parsing
+memory nodes twice and it's not the kernel's job to validate the DT.
+Really, if you want memory info, you should use memblock to get it
+because all the special cases of memory layout are handled. For
+example you can have memory nodes with multiple 'reg' entries or
+multiple memory nodes or both, and then some of those could be
+contiguous.
+
+Rob
 
