@@ -1,115 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-5536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0875A80D33E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F21980D373
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D09B20F12
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD49DB20EC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ABB4D111;
-	Mon, 11 Dec 2023 17:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E2E4D589;
+	Mon, 11 Dec 2023 17:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kFBL2cI8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FILBYqHU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBE7B4;
-	Mon, 11 Dec 2023 09:05:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1702314298; x=1702573498;
-	bh=hICd6xX0pWZMvUHgptvk6MN17tBFZ5wEr7xIBYhapgI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kFBL2cI8A2VVbApnMZefxfQoAV7krDo06fwBB/INYVg5h9I3xWVIaJ5Y/CXW2iTOW
-	 zkmccE2guKKCcWtfH4NxOQBFph3bZqlEgoJFMJZ/NY/VfT8AKUNiQYG6R4/tqCh6L9
-	 jTzEde1/2L9p2f2TezIofPRLny+FZ6QvrMFEQpnwcMSqQZZcqWYDadPKNPlw4cpAlj
-	 DoeBj9SQ8YCFD0aF9ESEMCIIEKdXPHzRe/1gu26JX0+0rW7casmRDN6NyVxyIpPdxB
-	 xhMdkcSS6sPqOF/6IMIsZRzGVhpn8hylty3nWCt/GS7BGGoxlf8nAqxC6FHoqxj2GA
-	 6RYYKOgp1jh1A==
-Date: Mon, 11 Dec 2023 17:04:52 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <rPOj4p2TGoIYUzMbmRCjmzHuCktN1rc0EVJ-skynzRblrqQLRU2GQaAPOb9RHhUBn_XhGfqcUii4EJBr_AWjoWHnTE8v_wQCMVmkgl2shg0=@proton.me>
-In-Reply-To: <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-5-af617c0d9d94@google.com> <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me> <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home> <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
-Feedback-ID: 71780778:user:proton
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DB84D124;
+	Mon, 11 Dec 2023 17:15:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C42AC433C8;
+	Mon, 11 Dec 2023 17:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702314943;
+	bh=cOadndWNrJ59Ef3Nb9Yx1iYcwUhRgTCTQRPzgwoU4Rc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FILBYqHUPcbUyd5MWCTu3mNk5EOs8PJ4rWZFg9GLN0kT6ocPIWsAtBIc8ph7HLp+e
+	 4WqN/oiKzN2vUkqnG6fGp2h1pxUuYbEkyrOYSJH1+Nsbp+r3mm3k7aYpivk7JPKKeS
+	 wbHJRIWhLntVfkEoGT3bjtNKCoLHZ8E+c/gyN15Wkrj7dad+eFA1iZaSPDPu+hPVMQ
+	 b1nUWtfn7X8Z99blOTIAOyrPjtDz20Jp3CNfsKlIvvoQnF8X+QGwsLWMyx1gGzTBxM
+	 7sJjeq6UnqyjLaI4yt57m1HzB8oSNs2j0KFKpPJxRUB8x7h+/H/KG8CVvh6dwK8o4k
+	 Q5NljSbajP44Q==
+Date: Mon, 11 Dec 2023 11:15:42 -0600
+From: Seth Forshee <sforshee@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>, miklos@szeredi.hu,
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com, paul@paul-moore.com, stefanb@linux.ibm.com,
+	jlayton@kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
+ security.evm_overlayfs
+Message-ID: <ZXdDvgbjSNo78zM2@do-x1extreme>
+References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
+ <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
+ <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
+ <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
+ <ZXcsdf6BzszwZc9h@do-x1extreme>
+ <6e05677355d6d134dddd11da56709b424b631079.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e05677355d6d134dddd11da56709b424b631079.camel@huaweicloud.com>
 
-On 12/11/23 16:58, Kent Overstreet wrote:
-> On Fri, Dec 08, 2023 at 08:43:19AM -0800, Boqun Feng wrote:
->> On Fri, Dec 08, 2023 at 04:40:09PM +0000, Benno Lossin wrote:
->>> On 12/6/23 12:59, Alice Ryhl wrote:
->>>> +    /// Returns the given task's pid in the current pid namespace.
->>>> +    pub fn pid_in_current_ns(&self) -> Pid {
->>>> +        // SAFETY: Calling `task_active_pid_ns` with the current task=
- is always safe.
->>>> +        let namespace =3D unsafe { bindings::task_active_pid_ns(bindi=
-ngs::get_current()) };
->>>
->>> Why not create a safe wrapper for `bindings::get_current()`?
->>> This patch series has three occurrences of `get_current`, so I think it
->>> should be ok to add a wrapper.
->>> I would also prefer to move the call to `bindings::get_current()` out o=
-f
->>> the `unsafe` block.
->>
->> FWIW, we have a current!() macro, we should use it here.
->=20
-> Why does it need to be a macro?
+On Mon, Dec 11, 2023 at 04:41:46PM +0100, Roberto Sassu wrote:
+> On Mon, 2023-12-11 at 09:36 -0600, Seth Forshee wrote:
+> > On Mon, Dec 11, 2023 at 03:56:06PM +0100, Roberto Sassu wrote:
+> > > Ok, I will try.
+> > > 
+> > > I explain first how EVM works in general, and then why EVM does not
+> > > work with overlayfs.
+> > > 
+> > > EVM gets called before there is a set/removexattr operation, and after,
+> > > if that operation is successful. Before the set/removexattr operation
+> > > EVM calculates the HMAC on current inode metadata (i_ino, i_generation,
+> > > i_uid, i_gid, i_mode, POSIX ACLs, protected xattrs). Finally, it
+> > > compares the calculated HMAC with the one in security.evm.
+> > > 
+> > > If the verification and the set/removexattr operation are successful,
+> > > EVM calculates again the HMAC (in the post hooks) based on the updated
+> > > inode metadata, and sets security.evm with the new HMAC.
+> > > 
+> > > The problem is the combination of: overlayfs inodes have different
+> > > metadata than the lower/upper inodes; overlayfs calls the VFS to
+> > > set/remove xattrs.
+> > 
+> > I don't know all of the inner workings of overlayfs in detail, but is it
+> > not true that whatever metadata an overlayfs mount presents for a given
+> > inode is stored in the lower and/or upper filesystem inodes? If the
+> > metadata for those inodes is verified with EVM, why is it also necessary
+> > to verify the metadata at the overlayfs level? If some overlayfs
+> > metadata is currently omitted from the checks on the lower/upper inodes,
+> > is there any reason EVM couldn't start including that its checksums?
+> 
+> Currently, the metadata where there is a misalignment are:
+> i_generation, s_uuid, (i_ino?). Maybe there is more?
+> 
+> If metadata are aligned, there is no need to store two separate HMACs.
 
-This is a very interesting question. A `Task` is `AlwaysRefCounted`, so
-if you have a `&'a Task`, someone above you owns a refcount on that
-task. But the `current` task will never go away as long as you stay in
-the same task. So you actually do not need to own a refcount as long as
-there are no context switches.
+I can only think of three possible sources for the metadata overlayfs
+presents:
 
-We use this to our advantage and the `current!()` macro returns
-something that acts like `&'a Task` but additionally is `!Send` (so it
-cannot be sent over to a different task). This means that we do not need
-to take a refcount on the current task to get a reference to it.
+ 1. It comes directly from the underlying filesystems
+ 2. overlayfs synthesizes if from the underlying filesystem data
+ 3. It's purely generated at runtime
 
-But just having a function that returns a `&'a Task` like thing that is
-`!Send` is not enough, since there are no constraints on 'a. This is
-because the function `Task::current` would take no arguments and there
-is nothing the lifetime could even bind to.
-Since there are no constraints, you could just choose 'a =3D 'static which
-is obviously wrong, since there are tasks that end. For this reason the
-`Task::current` function is `unsafe` and the macro `current!` ensures
-that the lifetime 'a ends early enough. It is implemented like this:
+Are there others?
 
-    macro_rules! current {
-        () =3D> {
-            // SAFETY: Deref + addr-of below create a temporary `TaskRef` t=
-hat cannot outlive the
-            // caller.
-            unsafe { &*$crate::task::Task::current() }
-        };
-    }
-
-Note the `&*`. This ensures that the thing returned by `Task::current`
-is temporary and cannot outlive the current function thus preventing the
-creation of static references to it.
-
-If you want to read more, see here for Gary's original discovery of the
-issue:
-https://lore.kernel.org/rust-for-linux/20230331034701.0657d5f2.gary@garyguo=
-.net/
-
---=20
-Cheers,
-Benno
+1 and 2 should be covered by EVM on the underlying filesystems. If 3 is
+happening then it seems like hashing that data is just confirming that
+overlayfs consistently generates the same values for that data, and
+verifying code behavior doesn't seem in-scope for EVM.
 
