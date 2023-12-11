@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-5492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33A780CDE4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2673E80CDEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0049B216DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12EC281F92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E63C5101E;
-	Mon, 11 Dec 2023 14:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC851033;
+	Mon, 11 Dec 2023 14:09:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EF66199;
-	Mon, 11 Dec 2023 06:09:21 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SpkBj5lWTz4f3kKB;
-	Mon, 11 Dec 2023 22:09:17 +0800 (CST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC3BAAD02;
+	Mon, 11 Dec 2023 06:09:37 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SpkC06w4lz4f3k6m;
+	Mon, 11 Dec 2023 22:09:32 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E98C61A07E4;
-	Mon, 11 Dec 2023 22:09:18 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 216D31A04B0;
+	Mon, 11 Dec 2023 22:09:34 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHyhAMGHdl2qJxDQ--.24877S4;
-	Mon, 11 Dec 2023 22:09:18 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgBHShAbGHdlQKdxDQ--.12405S4;
+	Mon, 11 Dec 2023 22:09:33 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -76,9 +76,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v2 for-6.8/block 15/18] buffer: add a new helper to read sb block
-Date: Mon, 11 Dec 2023 22:07:53 +0800
-Message-Id: <20231211140753.975297-1-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v2 for-6.8/block 16/18] ext4: use new helper to read sb block
+Date: Mon, 11 Dec 2023 22:08:08 +0800
+Message-Id: <20231211140808.975527-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231211140552.973290-1-yukuai1@huaweicloud.com>
 References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
@@ -89,186 +89,192 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHyhAMGHdl2qJxDQ--.24877S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3AFyUCF4kKryrJrW3trWrXwb_yoW7Ww13pr
-	98Kay3trWDKFyaqF1xtwn8Jr13t3Z2v3W8CayfJ3s3ArWUGrn3XF9rGr129FWFyr9rXry5
-	XFW5CrWfCr1UWFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBHShAbGHdlQKdxDQ--.12405S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxtr4kKw17tFW8tr4DKr1xZrb_yoW7AFy7pa
+	sIka9Fkryvqrn09a1xKr13tw1ay3Z2ga1UGayfC34furyqqrn3Xa48tF1I9FWrArZxXry5
+	XF1UKryrCr18CFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
 	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
 	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
 	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
 	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
 	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
 	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_JFI_Gr1lIxAIcVC2z280aVAFwI0_
+	0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1lIxAIcVC2z280aVAFwI0_
 	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7VUb
-	ZNVDUUUUU==
+	YLvtUUUUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Unlike __bread_gfp(), ext4 has special handing while reading sb block:
-
-1) __GFP_NOFAIL is not set, and memory allocation can fail;
-2) If buffer write failed before, set buffer uptodate and don't read
-   block from disk;
-3) REQ_META is set for all IO, and REQ_PRIO is set for reading xattr;
-4) If failed, return error ptr instead of NULL;
-
-This patch add a new helper __bread_gfp2() that will match above 2 and 3(
-1 will be used, and 4 will still be encapsulated by ext4), and prepare to
-prevent calling mapping_gfp_constraint() directly on bd_inode->i_mapping
-in ext4.
+Remove __ext4_sb_bread_gfp() and ext4_buffer_uptodate() that is defined
+by ext4, and convert to use common helper __bread_gfp2() and
+buffer_uptodate_or_error().
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/buffer.c                 | 68 ++++++++++++++++++++++++++-----------
- include/linux/buffer_head.h | 18 +++++++++-
- 2 files changed, 65 insertions(+), 21 deletions(-)
+ fs/ext4/ext4.h    | 13 -------------
+ fs/ext4/inode.c   |  8 ++++----
+ fs/ext4/super.c   | 45 ++++++++++-----------------------------------
+ fs/ext4/symlink.c |  2 +-
+ 4 files changed, 15 insertions(+), 53 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 967f34b70aa8..188bd36c9fea 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1255,16 +1255,19 @@ void __bforget(struct buffer_head *bh)
- }
- EXPORT_SYMBOL(__bforget);
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index a5d784872303..8377f6c5264f 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3824,19 +3824,6 @@ extern const struct iomap_ops ext4_iomap_ops;
+ extern const struct iomap_ops ext4_iomap_overwrite_ops;
+ extern const struct iomap_ops ext4_iomap_report_ops;
  
--static struct buffer_head *__bread_slow(struct buffer_head *bh)
-+static struct buffer_head *__bread_slow(struct buffer_head *bh,
-+					blk_opf_t op_flags,
-+					bool check_write_error)
- {
- 	lock_buffer(bh);
--	if (buffer_uptodate(bh)) {
-+	if (buffer_uptodate(bh) ||
-+	    (check_write_error && buffer_uptodate_or_error(bh))) {
- 		unlock_buffer(bh);
- 		return bh;
- 	} else {
- 		get_bh(bh);
- 		bh->b_end_io = end_buffer_read_sync;
--		submit_bh(REQ_OP_READ, bh);
-+		submit_bh(REQ_OP_READ | op_flags, bh);
- 		wait_on_buffer(bh);
- 		if (buffer_uptodate(bh))
- 			return bh;
-@@ -1445,6 +1448,31 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
- }
- EXPORT_SYMBOL(__breadahead);
- 
-+static struct buffer_head *
-+bread_gfp(struct block_device *bdev, sector_t block, unsigned int size,
-+	  blk_opf_t op_flags, gfp_t gfp, bool check_write_error)
-+{
-+	struct buffer_head *bh;
-+
-+	gfp |= mapping_gfp_constraint(bdev->bd_inode->i_mapping, ~__GFP_FS);
-+
-+	/*
-+	 * Prefer looping in the allocator rather than here, at least that
-+	 * code knows what it's doing.
-+	 */
-+	gfp |= __GFP_NOFAIL;
-+
-+	bh = bdev_getblk(bdev, block, size, gfp);
-+	if (unlikely(!bh))
-+		return NULL;
-+
-+	if (buffer_uptodate(bh) ||
-+	    (check_write_error && buffer_uptodate_or_error(bh)))
-+		return bh;
-+
-+	return __bread_slow(bh, op_flags, check_write_error);
-+}
-+
- /**
-  *  __bread_gfp() - reads a specified block and returns the bh
-  *  @bdev: the block_device to read from
-@@ -1458,27 +1486,27 @@ EXPORT_SYMBOL(__breadahead);
-  *  It returns NULL if the block was unreadable.
-  */
- struct buffer_head *
--__bread_gfp(struct block_device *bdev, sector_t block,
--		   unsigned size, gfp_t gfp)
-+__bread_gfp(struct block_device *bdev, sector_t block, unsigned int size,
-+	    gfp_t gfp)
- {
--	struct buffer_head *bh;
--
--	gfp |= mapping_gfp_constraint(bdev->bd_inode->i_mapping, ~__GFP_FS);
--
+-static inline int ext4_buffer_uptodate(struct buffer_head *bh)
+-{
 -	/*
--	 * Prefer looping in the allocator rather than here, at least that
--	 * code knows what it's doing.
+-	 * If the buffer has the write error flag, we have failed
+-	 * to write out data in the block.  In this  case, we don't
+-	 * have to read the block because we may read the old data
+-	 * successfully.
 -	 */
--	gfp |= __GFP_NOFAIL;
+-	if (buffer_write_io_error(bh))
+-		set_buffer_uptodate(bh);
+-	return buffer_uptodate(bh);
+-}
 -
--	bh = bdev_getblk(bdev, block, size, gfp);
+ #endif	/* __KERNEL__ */
+ 
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 61277f7f8722..efb0af6f02f7 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -887,7 +887,7 @@ struct buffer_head *ext4_bread(handle_t *handle, struct inode *inode,
+ 	bh = ext4_getblk(handle, inode, block, map_flags);
+ 	if (IS_ERR(bh))
+ 		return bh;
+-	if (!bh || ext4_buffer_uptodate(bh))
++	if (!bh || buffer_uptodate_or_error(bh))
+ 		return bh;
+ 
+ 	ret = ext4_read_bh_lock(bh, REQ_META | REQ_PRIO, true);
+@@ -915,7 +915,7 @@ int ext4_bread_batch(struct inode *inode, ext4_lblk_t block, int bh_count,
+ 
+ 	for (i = 0; i < bh_count; i++)
+ 		/* Note that NULL bhs[i] is valid because of holes. */
+-		if (bhs[i] && !ext4_buffer_uptodate(bhs[i]))
++		if (bhs[i] && !buffer_uptodate_or_error(bhs[i]))
+ 			ext4_read_bh_lock(bhs[i], REQ_META | REQ_PRIO, false);
+ 
+ 	if (!wait)
+@@ -4392,11 +4392,11 @@ static int __ext4_get_inode_loc(struct super_block *sb, unsigned long ino,
+ 	bh = sb_getblk(sb, block);
+ 	if (unlikely(!bh))
+ 		return -ENOMEM;
+-	if (ext4_buffer_uptodate(bh))
++	if (buffer_uptodate_or_error(bh))
+ 		goto has_buffer;
+ 
+ 	lock_buffer(bh);
+-	if (ext4_buffer_uptodate(bh)) {
++	if (buffer_uptodate_or_error(bh)) {
+ 		/* Someone brought it uptodate while we waited */
+ 		unlock_buffer(bh);
+ 		goto has_buffer;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c5fcf377ab1f..ae41204f52d4 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -180,7 +180,7 @@ void ext4_read_bh_nowait(struct buffer_head *bh, blk_opf_t op_flags,
+ {
+ 	BUG_ON(!buffer_locked(bh));
+ 
+-	if (ext4_buffer_uptodate(bh)) {
++	if (buffer_uptodate_or_error(bh)) {
+ 		unlock_buffer(bh);
+ 		return;
+ 	}
+@@ -191,7 +191,7 @@ int ext4_read_bh(struct buffer_head *bh, blk_opf_t op_flags, bh_end_io_t *end_io
+ {
+ 	BUG_ON(!buffer_locked(bh));
+ 
+-	if (ext4_buffer_uptodate(bh)) {
++	if (buffer_uptodate_or_error(bh)) {
+ 		unlock_buffer(bh);
+ 		return 0;
+ 	}
+@@ -214,49 +214,24 @@ int ext4_read_bh_lock(struct buffer_head *bh, blk_opf_t op_flags, bool wait)
+ 	return ext4_read_bh(bh, op_flags, NULL);
+ }
+ 
+-/*
+- * This works like __bread_gfp() except it uses ERR_PTR for error
+- * returns.  Currently with sb_bread it's impossible to distinguish
+- * between ENOMEM and EIO situations (since both result in a NULL
+- * return.
+- */
+-static struct buffer_head *__ext4_sb_bread_gfp(struct super_block *sb,
+-					       sector_t block,
+-					       blk_opf_t op_flags, gfp_t gfp)
+-{
+-	struct buffer_head *bh;
+-	int ret;
 -
--	if (likely(bh) && !buffer_uptodate(bh))
--		bh = __bread_slow(bh);
+-	bh = sb_getblk_gfp(sb, block, gfp);
+-	if (bh == NULL)
+-		return ERR_PTR(-ENOMEM);
+-	if (ext4_buffer_uptodate(bh))
+-		return bh;
+-
+-	ret = ext4_read_bh_lock(bh, REQ_META | op_flags, true);
+-	if (ret) {
+-		put_bh(bh);
+-		return ERR_PTR(ret);
+-	}
 -	return bh;
-+	return bread_gfp(bdev, block, size, 0, gfp, false);
- }
- EXPORT_SYMBOL(__bread_gfp);
- 
-+/*
-+ * This works like __bread_gfp() except:
-+ * 1) If buffer write failed before, set buffer uptodate and don't read
-+ * block from disk;
-+ * 2) Caller can pass in additional op_flags like REQ_META;
-+ */
-+struct buffer_head *
-+__bread_gfp2(struct block_device *bdev, sector_t block, unsigned int size,
-+	     blk_opf_t op_flags, gfp_t gfp)
-+{
-+	return bread_gfp(bdev, block, size, op_flags, gfp, true);
-+}
-+EXPORT_SYMBOL(__bread_gfp2);
-+
- static void __invalidate_bh_lrus(struct bh_lru *b)
+-}
+-
+ struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
+ 				   blk_opf_t op_flags)
  {
- 	int i;
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 5f23ee599889..751b2744b4ae 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -171,6 +171,18 @@ static __always_inline int buffer_uptodate(const struct buffer_head *bh)
- 	return test_bit_acquire(BH_Uptodate, &bh->b_state);
+-	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
+-			~__GFP_FS) | __GFP_MOVABLE;
++	struct buffer_head *bh = __bread_gfp2(sb->s_bdev, block,
++					      sb->s_blocksize,
++					      REQ_META | op_flags,
++					      __GFP_MOVABLE);
+ 
+-	return __ext4_sb_bread_gfp(sb, block, op_flags, gfp);
++	return bh ? bh : ERR_PTR(-EIO);
  }
  
-+static __always_inline int buffer_uptodate_or_error(struct buffer_head *bh)
-+{
-+	/*
-+	 * If the buffer has the write error flag, data was failed to write
-+	 * out in the block. In this case, set buffer uptodate to prevent
-+	 * reading old data.
-+	 */
-+	if (buffer_write_io_error(bh))
-+		set_buffer_uptodate(bh);
-+	return buffer_uptodate(bh);
-+}
-+
- static inline unsigned long bh_offset(const struct buffer_head *bh)
+ struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
+ 					    sector_t block)
  {
- 	return (unsigned long)(bh)->b_data & (page_size(bh->b_page) - 1);
-@@ -231,7 +243,11 @@ void __brelse(struct buffer_head *);
- void __bforget(struct buffer_head *);
- void __breadahead(struct block_device *, sector_t block, unsigned int size);
- struct buffer_head *__bread_gfp(struct block_device *,
--				sector_t block, unsigned size, gfp_t gfp);
-+				sector_t block, unsigned int size, gfp_t gfp);
-+struct buffer_head *__bread_gfp2(struct block_device *bdev, sector_t block,
-+				 unsigned int size, blk_opf_t op_flags,
-+				 gfp_t gfp);
-+
- struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
- void free_buffer_head(struct buffer_head * bh);
- void unlock_buffer(struct buffer_head *bh);
+-	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
+-			~__GFP_FS);
++	struct buffer_head *bh = __bread_gfp2(sb->s_bdev, block,
++					      sb->s_blocksize, 0, 0);
+ 
+-	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
++	return bh ? bh : ERR_PTR(-EIO);
+ }
+ 
+ void ext4_sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+index 75bf1f88843c..49e918221aac 100644
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@ -94,7 +94,7 @@ static const char *ext4_get_link(struct dentry *dentry, struct inode *inode,
+ 		bh = ext4_getblk(NULL, inode, 0, EXT4_GET_BLOCKS_CACHED_NOWAIT);
+ 		if (IS_ERR(bh))
+ 			return ERR_CAST(bh);
+-		if (!bh || !ext4_buffer_uptodate(bh))
++		if (!bh || !buffer_uptodate_or_error(bh))
+ 			return ERR_PTR(-ECHILD);
+ 	} else {
+ 		bh = ext4_bread(NULL, inode, 0, 0);
 -- 
 2.39.2
 
