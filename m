@@ -1,133 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-5445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBA480BE63
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 00:57:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECED80BEA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 02:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 579DDB2081B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Dec 2023 23:57:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B653280C1D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 01:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CE81E523;
-	Sun, 10 Dec 2023 23:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5505C7497;
+	Mon, 11 Dec 2023 01:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FnMM5Wl6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CGszbrQZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1854083
-	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 15:57:23 -0800 (PST)
-Date: Sun, 10 Dec 2023 18:57:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702252642;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=h7rXAs69dsNWlMVqeR5qiVX7rKSJND/l1/P8dU0zdyc=;
-	b=FnMM5Wl6jJmu+cvz/WLDNDRf73iC6TVQnHxZKY9fcF/nOcEK9vTCRWtlupzVaqLIE6N1Yf
-	iReyVOTHfyAuXIwBO1JPp1XUPHTaapJDDnOrpXDIBm+5TZH7XHIJlv4k/u5DXdv1pswjwB
-	aszr72OK9E+7VaIDhBVQcKKMI/XnwUI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] More bcachefs fixes for 6.7
-Message-ID: <20231210235718.svy4bjxqqrtgkgoc@moria.home.lan>
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBA1D0
+	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 17:01:30 -0800 (PST)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5d6b9143782so33383057b3.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 17:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702256490; x=1702861290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+WQ5Kl/17KRmeDrnv++dZDxabOnVYumyCPRm9UvxCXU=;
+        b=CGszbrQZZo2UCe6PlQD4gAXjJ6qCOyzZzZiOMfcKbnwIVtAtl7+lMEVe1mLEgrxjDQ
+         TjuNKqbl/wAOsYI23Km0x16ku0uUFNt4H7UWwUyN3FLNNegggc8cT1rD4kFAvohqDpDL
+         e6Os2k9wwDBEUStdcYfvby4H7Bn1WnBuYANZSOM+Wm925d524zoJU/bHc1SqP6yh55mo
+         9nollJXpVf4GS0wxNcNZ64AyLmsTB4dhTMJ6g+ECQzHd77yRLmH/EH4qCzCE2ZB/WOoC
+         3afxWDajYOi7DbpngLTG+NSV30ABNajhUBT3+HsM0CgRXwbjxKUCbYWhwxHJ9gXDRz4r
+         46VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702256490; x=1702861290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+WQ5Kl/17KRmeDrnv++dZDxabOnVYumyCPRm9UvxCXU=;
+        b=DPSjDIdrTFCYF2Wx5JP0ZkhpFANAmy+Yaora12+rCE2CXDA3+23KCDT3eoWFkR/9e8
+         4uETrhkrfnzkVcQcIUDCNNmFKFz6KMO36L+RN8M9tMfOqjZQzQozjKQgGoBiRc5z/2kX
+         uP1ILOCvqnGz3nB5iJMgZ5EtTy/LxioCTNnAdwUiG4UqB+SBOodi+WkOBMFuwRHa+nEI
+         aDdJujhPmoL4/b4aQHGmJqp6l1k8Pr9r2vT0OjT01S+xGJVhE1EAphtLYWAgMtT1qsqs
+         M4E3lcZ7WdkXA1n6iXuGFyPQ3+LXzsTnWH/aGZqTVXsq7fGFnXYSGJKonXNobcdLkcwO
+         fw3Q==
+X-Gm-Message-State: AOJu0YwmD2l7nfkk41RYr++baF+eTc1WFEVjwSqHrOfWo4ZtVokhl1S/
+	h79luWRaT2uTS0jtDwVrW8YWqWm35o8IUjTRAf2geg==
+X-Google-Smtp-Source: AGHT+IEM06+RRlE/zePs7rbDQZUekYGXrzSDuMym2bE5wBVkl63IhZGe5nggAE5d9SV6vVL4ZhYg6AITCoRBwCXDwDI=
+X-Received: by 2002:a0d:f9c6:0:b0:5d7:1940:7d92 with SMTP id
+ j189-20020a0df9c6000000b005d719407d92mr2245546ywf.105.1702256489515; Sun, 10
+ Dec 2023 17:01:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-6-surenb@google.com>
+ <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
+In-Reply-To: <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Sun, 10 Dec 2023 17:01:18 -0800
+Message-ID: <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+To: Mark Brown <broonie@kernel.org>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
+	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
+	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus, more bcachefs fixes for 6.7. Nothing terribly exciting, the
-bug squashing continues...
+On Sun, Dec 10, 2023 at 6:26=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Wed, Dec 06, 2023 at 02:36:59AM -0800, Suren Baghdasaryan wrote:
+> > Add tests for new UFFDIO_MOVE ioctl which uses uffd to move source
+> > into destination buffer while checking the contents of both after
+> > the move. After the operation the content of the destination buffer
+> > should match the original source buffer's content while the source
+> > buffer should be zeroed. Separate tests are designed for PMD aligned an=
+d
+> > unaligned cases because they utilize different code paths in the kernel=
+.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >  tools/testing/selftests/mm/uffd-common.c     |  24 +++
+> >  tools/testing/selftests/mm/uffd-common.h     |   1 +
+> >  tools/testing/selftests/mm/uffd-unit-tests.c | 189 +++++++++++++++++++
+> >  3 files changed, 214 insertions(+)
+>
+> This breaks the build in at least some configurations with separate
+> output directories like those used by KernelCI:
+>
+> make KBUILD_BUILD_USER=3DKernelCI FORMAT=3D.xz ARCH=3Darm64 HOSTCC=3Dgcc =
+CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COMPILE_COMPAT=3Darm-linux-gnueabi=
+hf- CC=3D"ccache aarch64-linux-gnu-gcc" O=3D/tmp/kci/linux/build -C/tmp/kci=
+/linux -j10 kselftest-gen_tar
+>
+> (full logs for both arm64 and x86_64 at):
+>
+>    https://storage.kernelci.org/next/master/next-20231208/arm64/defconfig=
+/gcc-10/logs/kselftest.log
+>    https://storage.kernelci.org/next/master/next-20231208/x86_64/x86_64_d=
+efconfig/clang-17/logs/kselftest.log
+>
+> or tuxmake:
+>
+> make --silent --keep-going --jobs=3D16 O=3D/home/broonie/.cache/tuxmake/b=
+uilds/25/build INSTALL_PATH=3D/home/broonie/.cache/tuxmake/builds/25/build/=
+kselftest_install ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- CROSS_COM=
+PILE_COMPAT=3Darm-linux-gnueabihf- kselftest-install
+>
+> The specific failure:
+>
+> aarch64-linux-gnu-gcc -Wall -I /tmp/kci/linux/tools/testing/selftests/../=
+../..  -isystem /tmp/kci/linux/build/usr/include     uffd-stress.c vm_util.=
+c uffd-common.c -lrt -lpthread -lm -o /tmp/kci/linux/build/kselftest/mm/uff=
+d-stress
+> uffd-common.c: In function =E2=80=98move_page=E2=80=99:
+> uffd-common.c:636:21: error: storage size of =E2=80=98uffdio_move=E2=80=
+=99 isn=E2=80=99t known
+>   636 |  struct uffdio_move uffdio_move;
+>       |                     ^~~~~~~~~~~
+> uffd-common.c:643:21: error: =E2=80=98UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES=E2=
+=80=99 undeclared (first use in this function)
+>   643 |  uffdio_move.mode =3D UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES;
+>       |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> uffd-common.c:643:21: note: each undeclared identifier is reported only o=
+nce for each function it appears in
+> uffd-common.c:645:17: error: =E2=80=98UFFDIO_MOVE=E2=80=99 undeclared (fi=
+rst use in this function); did you mean =E2=80=98UFFDIO_COPY=E2=80=99?
+>   645 |  if (ioctl(ufd, UFFDIO_MOVE, &uffdio_move)) {
+>       |                 ^~~~~~~~~~~
+>       |                 UFFDIO_COPY
+> uffd-common.c:636:21: warning: unused variable =E2=80=98uffdio_move=E2=80=
+=99 [-Wunused-variable]
+>   636 |  struct uffdio_move uffdio_move;
+>       |                     ^~~~~~~~~~~
 
-Cheers,
-Kent
-
-----------------------------------------------------------------
-
-The following changes since commit 33cc938e65a98f1d29d0a18403dbbee050dcad9a:
-
-  Linux 6.7-rc4 (2023-12-03 18:52:56 +0900)
-
-are available in the Git repository at:
-
-  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2023-12-10
-
-for you to fetch changes up to a66ff26b0f31189e413a87065c25949c359e4bef:
-
-  bcachefs: Close journal entry if necessary when flushing all pins (2023-12-10 16:53:46 -0500)
-
-----------------------------------------------------------------
-More bcachefs bugfixes for 6.7:
-
- - Fix a rare emergency shutdown path bug: dropping journal pins after
-   the filesystem has mostly been torn down is not what we want.
- - Fix some concurrency issues with the btree write buffer and journal
-   replay by not using the btree write buffer until journal replay is
-   finished
- - A fixup from the prior patch to kill journal pre-reservations: at the
-   start of the btree update path, where previously we took a
-   pre-reservation, we do at least want to check the journal watermark.
- - Fix a race between dropping device metadata and btree node writes,
-   which would re-add a pointer to a device that had just been dropped
- - Fix one of the SCRU lock warnings, in
-   bch2_compression_stats_to_text().
- - Partial fix for a rare transaction paths overflow, when indirect
-   extents had been split by background tasks, by not running certain
-   triggers when they're not needed.
- - Fix for creating a snapshot with implicit source in a subdirectory of
-   the containing subvolume
- - Don't unfreeze when we're emergency read-only
- - Fix for rebalance spinning trying to compress unwritten extentns
- - Another deleted_inodes fix, for directories
- - Fix a rare deadlock (usually just an unecessary wait) when flushing
-   the journal with an open journal entry.
-
-----------------------------------------------------------------
-Brian Foster (1):
-      bcachefs: don't attempt rw on unfreeze when shutdown
-
-Daniel Hill (1):
-      bcachefs: rebalance shouldn't attempt to compress unwritten extents
-
-Kent Overstreet (10):
-      bcachefs: Don't drop journal pins in exit path
-      bcachefs; Don't use btree write buffer until journal replay is finished
-      bcachefs: Fix a journal deadlock in replay
-      bcachefs: Fix bch2_extent_drop_ptrs() call
-      bcachefs: Convert compression_stats to for_each_btree_key2
-      bcachefs: Don't run indirect extent trigger unless inserting/deleting
-      bcachefs: Fix creating snapshot with implict source
-      bcachefs: Fix deleted inode check for dirs
-      bcachefs: Fix uninitialized var in bch2_journal_replay()
-      bcachefs: Close journal entry if necessary when flushing all pins
-
- fs/bcachefs/btree_cache.c           |  8 +++-----
- fs/bcachefs/btree_io.c              |  4 ++--
- fs/bcachefs/btree_io.h              |  3 ---
- fs/bcachefs/btree_key_cache.c       |  2 --
- fs/bcachefs/btree_update.c          | 16 ++++++++++++++++
- fs/bcachefs/btree_update_interior.c | 11 +++++++++++
- fs/bcachefs/data_update.c           |  4 ++--
- fs/bcachefs/dirent.c                | 19 +++++++++++--------
- fs/bcachefs/dirent.h                |  1 +
- fs/bcachefs/extents.c               |  3 ++-
- fs/bcachefs/fs-ioctl.c              |  2 +-
- fs/bcachefs/fs.c                    |  3 +++
- fs/bcachefs/inode.c                 | 15 ++++++++++-----
- fs/bcachefs/journal.c               |  8 ++++----
- fs/bcachefs/journal.h               |  1 +
- fs/bcachefs/journal_io.c            |  1 +
- fs/bcachefs/journal_reclaim.c       |  3 +++
- fs/bcachefs/recovery.c              |  2 +-
- fs/bcachefs/reflink.c               |  8 ++++++++
- fs/bcachefs/sysfs.c                 |  8 ++++----
- 20 files changed, 84 insertions(+), 38 deletions(-)
+Thanks for reporting! I'll try that later today.
+Just to clarify, are you using mm-unstable and if so, has it been
+rebased since Friday? There was an update to this patchset in
+mm-unstable which Andrew merged on Friday and the failure does look
+like something that would happen with the previous version.
 
