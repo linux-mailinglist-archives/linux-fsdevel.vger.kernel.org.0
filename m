@@ -1,90 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-5514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0D80D04D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:59:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF2680D0DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24381F21932
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:59:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298C11C21544
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E7B4C3B8;
-	Mon, 11 Dec 2023 15:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CF44C61E;
+	Mon, 11 Dec 2023 16:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oZlTzftu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WL1ZZUAi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573FC268B;
-	Mon, 11 Dec 2023 07:59:16 -0800 (PST)
-Date: Mon, 11 Dec 2023 10:58:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702310354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iTqyHUAM8Y8CTQWaVxNypmVJd4cL32JtHj8W07cIG1s=;
-	b=oZlTzftu1xM4Uy81K6BPPht40D6wXyU4rig7xmFxREm4jat2OGKs5vZf7ecwRdgGMbe+oH
-	2eAWXtolC9pbNA7LfWV6t2s6db/Ow437NkbOSNWN0d+IDCiuPRtJBmBU3uQp6mJ/iSkfPn
-	nBqIe+mIXVbyFDYiKbV0mZMkknokXF4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
-Message-ID: <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-5-af617c0d9d94@google.com>
- <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me>
- <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home>
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47AE4FE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 08:15:26 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5d34f8f211fso45268157b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 08:15:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702311325; x=1702916125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fnRSD+sBsefYYvzn3oBRGskx6xnKDW8P+HTWAzvULNU=;
+        b=WL1ZZUAiHI3jgra1bD3B0ZPJ4M8B2vD6DgLOkWeDTst2+Vp15GKXhSfBYuhwURIoJe
+         hSnt9KjWm5kY4+iJZml9qKbwHnM1vVJZhKTi8zzlYcifMGm5NSm/nU/Ba3JjbQoRIfel
+         dpYl5avD1kTMoB5uQXrJ01mclOCcDTRmCkW02YA5WI7POdKbO3oigZhr8tarQEyBT+/e
+         On7qNyOj0csaOO5VnIF+Loe57thEXJuzC0lvWd9vvO0SH3906PQiLICfrOrOh36jUW4a
+         kwJMiyoHgQassjGvZ4SXcpY/kssjMkKC4xn1VumguyK+eqvZo3gQ38OwfTOXeJP8tJPK
+         rNSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702311325; x=1702916125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fnRSD+sBsefYYvzn3oBRGskx6xnKDW8P+HTWAzvULNU=;
+        b=sAD4VDfS47T4f1ehWEzddrczHokAKze23C1rkkgeErm/n5/EGD8Qpq4XpoJlu36UZ7
+         RHBTCUWAeaHAL9p6lo+vOLW3FExXvBYMyoZOTHP4C8xMnL2bnawuWCcmxjBTdRvEkk/R
+         KfdeqOJSHbN14X2138IJTdyq99tiMBlNCFGuNdJG/zdkbcWtUB3NZA8vWmPLUeQf5VWD
+         KaNpKpHacjiXOB9MY+yWcJ+doGXH7Chf4a2nf3uDJ1/0J+W/HxxwnHA5boEZwrLNLrP4
+         rTaJsTP+xmXJUZjFg81gEL9pZGEnShM+L7Lo1DWOpbkyImukZptv6yKgaEvehvAYn4mZ
+         COwQ==
+X-Gm-Message-State: AOJu0YwrPoIohE9fE5D1lBLIa8ilOd2oYA7rxmAeuDZHFy4nLyT4bmsd
+	C4patSgNMUT69LRe+7qBg1bIa1lNt1pqbU/eRhKZLg==
+X-Google-Smtp-Source: AGHT+IFtvdYDtV18pDROt//QGcMAArJtde9LSDLbsQOqNXlre7oPEzwTXObS2vRBaJiNoebZprMpaahUpj+4Qgxz+Yw=
+X-Received: by 2002:a05:690c:3749:b0:5e1:8875:7cc2 with SMTP id
+ fw9-20020a05690c374900b005e188757cc2mr464939ywb.15.1702311325143; Mon, 11 Dec
+ 2023 08:15:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home>
-X-Migadu-Flow: FLOW_OUT
+References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-6-surenb@google.com>
+ <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk> <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
+ <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
+ <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk> <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
+ <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
+In-Reply-To: <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 11 Dec 2023 08:15:11 -0800
+Message-ID: <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+To: Mark Brown <broonie@kernel.org>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com, 
+	lokeshgidra@google.com, peterx@redhat.com, ryan.roberts@arm.com, 
+	hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 08, 2023 at 08:43:19AM -0800, Boqun Feng wrote:
-> On Fri, Dec 08, 2023 at 04:40:09PM +0000, Benno Lossin wrote:
-> > On 12/6/23 12:59, Alice Ryhl wrote:
-> > > +    /// Returns the given task's pid in the current pid namespace.
-> > > +    pub fn pid_in_current_ns(&self) -> Pid {
-> > > +        // SAFETY: Calling `task_active_pid_ns` with the current task is always safe.
-> > > +        let namespace = unsafe { bindings::task_active_pid_ns(bindings::get_current()) };
-> > 
-> > Why not create a safe wrapper for `bindings::get_current()`?
-> > This patch series has three occurrences of `get_current`, so I think it
-> > should be ok to add a wrapper.
-> > I would also prefer to move the call to `bindings::get_current()` out of
-> > the `unsafe` block.
-> 
-> FWIW, we have a current!() macro, we should use it here.
+On Mon, Dec 11, 2023 at 4:24=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Mon, Dec 11, 2023 at 01:03:27PM +0100, David Hildenbrand wrote:
+> > On 11.12.23 12:15, Mark Brown wrote:
+>
+> > > This is linux-next.  I pasted the commands used to build and sent lin=
+ks
+> > > to a full build log in the original report.
+>
+> > Probably also related to "make headers-install":
+>
+> > https://lkml.kernel.org/r/20231209020144.244759-1-jhubbard@nvidia.com
+>
+> > The general problem is that some mm selftests are currently not written=
+ in
+> > way that allows them to compile with old linux headers. That's why the =
+build
+> > fails if "make headers-install" was not executed, but it does not fail =
+if
+> > "make headers-install" was once upon a time executed, but the headers a=
+re
+> > outdated.
+>
+> Oh, it's obviously the new headers not being installed.  The builds
+> where I'm seeing the problem (my own and KernelCI's) are all fresh
+> containers so there shouldn't be any stale headers lying around.
 
-Why does it need to be a macro?
+Ok, I was updating my headers and that's why I could not reproduce it.
+David, should the test be modified to handle old linux headers
+(disable the new tests #ifndef _UFFDIO_MOVE or some other way)?
 
