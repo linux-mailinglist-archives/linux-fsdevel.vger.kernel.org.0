@@ -1,53 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-5496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5839580CE3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:21:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC17E80CE87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891DA1C21263
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A057D1F2167B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20198487BC;
-	Mon, 11 Dec 2023 14:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7138F495C1;
+	Mon, 11 Dec 2023 14:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cLokO5OB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Thd4ID/s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cLokO5OB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Thd4ID/s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 366931BF6;
-	Mon, 11 Dec 2023 06:21:45 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C2ECFEC;
-	Mon, 11 Dec 2023 06:22:31 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 613B73F738;
-	Mon, 11 Dec 2023 06:21:39 -0800 (PST)
-Date: Mon, 11 Dec 2023 14:21:36 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Hyesoo Yu <hyesoo.yu@samsung.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, anshuman.khandual@arm.com,
-	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
-	kcc@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 15/27] arm64: mte: Check that tag storage blocks
- are in the same zone
-Message-ID: <ZXca8B6a3HPRrdNP@raptor>
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <CGME20231119165900epcas2p3efd0f3ac19b7bcf7883e8d3945e63326@epcas2p3.samsung.com>
- <20231119165721.9849-16-alexandru.elisei@arm.com>
- <20231129085744.GB2988384@tiffany>
- <ZWh5S9BoO5bG5nQM@raptor>
- <20231208052739.GB1359878@tiffany>
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33D7B4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 06:39:29 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 216572236B;
+	Mon, 11 Dec 2023 14:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702305568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SK1bDTp6xG+vsLp/vxUhQPqSVgdvyoW7l9PasATyzzM=;
+	b=cLokO5OBedR4wDTfU13jFOFy1S6SWvsf5WyLgEh81BV7IyrAsw70dvqJDF1FdMCiYaK2Mp
+	uv9i95eZEHNALam+rOcyl4BCKWteJk5fniZnKwkAXKSmfh9H7fnrodvb25q+FUbaUYvTOD
+	fF9LAGscqEUyMERJ0nKxpb87b7y++qM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702305568;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SK1bDTp6xG+vsLp/vxUhQPqSVgdvyoW7l9PasATyzzM=;
+	b=Thd4ID/stwOYG/CoMAGD23uwxp3G81VsOOQ7fnK/pU82huyK49xA47Jgcil8TZcMZXLLct
+	g1YkzjADuGNuCmDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702305568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SK1bDTp6xG+vsLp/vxUhQPqSVgdvyoW7l9PasATyzzM=;
+	b=cLokO5OBedR4wDTfU13jFOFy1S6SWvsf5WyLgEh81BV7IyrAsw70dvqJDF1FdMCiYaK2Mp
+	uv9i95eZEHNALam+rOcyl4BCKWteJk5fniZnKwkAXKSmfh9H7fnrodvb25q+FUbaUYvTOD
+	fF9LAGscqEUyMERJ0nKxpb87b7y++qM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702305568;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SK1bDTp6xG+vsLp/vxUhQPqSVgdvyoW7l9PasATyzzM=;
+	b=Thd4ID/stwOYG/CoMAGD23uwxp3G81VsOOQ7fnK/pU82huyK49xA47Jgcil8TZcMZXLLct
+	g1YkzjADuGNuCmDQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 081F1138FF;
+	Mon, 11 Dec 2023 14:39:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id 0fWzASAfd2V3awAAn2gu4w
+	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 14:39:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 39EF1A07E3; Mon, 11 Dec 2023 15:39:23 +0100 (CET)
+Date: Mon, 11 Dec 2023 15:39:23 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
+	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] splice: return type ssize_t from all helpers
+Message-ID: <20231211143923.fviipywixaqm2es4@quack3>
+References: <20231210141901.47092-1-amir73il@gmail.com>
+ <20231210141901.47092-2-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,146 +92,88 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231208052739.GB1359878@tiffany>
+In-Reply-To: <20231210141901.47092-2-amir73il@gmail.com>
+X-Spam-Level: 
+X-Spam-Score: -0.81
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -0.83
+X-Spamd-Result: default: False [-0.83 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[11];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.03)[55.12%]
+X-Spam-Flag: NO
 
-Hi,
-
-On Fri, Dec 08, 2023 at 02:27:39PM +0900, Hyesoo Yu wrote:
-> Hi~
+On Sun 10-12-23 16:18:57, Amir Goldstein wrote:
+> Not sure why some splice helpers return long, maybe historic reasons.
+> Change them all to return ssize_t to conform to the splice methods and
+> to the rest of the helpers.
 > 
-> On Thu, Nov 30, 2023 at 12:00:11PM +0000, Alexandru Elisei wrote:
-> > Hi,
-> > 
-> > On Wed, Nov 29, 2023 at 05:57:44PM +0900, Hyesoo Yu wrote:
-> > > On Sun, Nov 19, 2023 at 04:57:09PM +0000, Alexandru Elisei wrote:
-> > > > alloc_contig_range() requires that the requested pages are in the same
-> > > > zone. Check that this is indeed the case before initializing the tag
-> > > > storage blocks.
-> > > > 
-> > > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > > > ---
-> > > >  arch/arm64/kernel/mte_tag_storage.c | 33 +++++++++++++++++++++++++++++
-> > > >  1 file changed, 33 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-> > > > index 8b9bedf7575d..fd63430d4dc0 100644
-> > > > --- a/arch/arm64/kernel/mte_tag_storage.c
-> > > > +++ b/arch/arm64/kernel/mte_tag_storage.c
-> > > > @@ -265,6 +265,35 @@ void __init mte_tag_storage_init(void)
-> > > >  	}
-> > > >  }
-> > > >  
-> > > > +/* alloc_contig_range() requires all pages to be in the same zone. */
-> > > > +static int __init mte_tag_storage_check_zone(void)
-> > > > +{
-> > > > +	struct range *tag_range;
-> > > > +	struct zone *zone;
-> > > > +	unsigned long pfn;
-> > > > +	u32 block_size;
-> > > > +	int i, j;
-> > > > +
-> > > > +	for (i = 0; i < num_tag_regions; i++) {
-> > > > +		block_size = tag_regions[i].block_size;
-> > > > +		if (block_size == 1)
-> > > > +			continue;
-> > > > +
-> > > > +		tag_range = &tag_regions[i].tag_range;
-> > > > +		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += block_size) {
-> > > > +			zone = page_zone(pfn_to_page(pfn));
-> > > 
-> > > Hello.
-> > > 
-> > > Since the blocks within the tag_range must all be in the same zone, can we move the "page_zone"
-> > > out of the loop ?
-> > `
-> > Hmm.. why do you say that the pages in a tag_range must be in the same
-> > zone? I am not very familiar with how the memory management code puts pages
-> > into zones, but I would imagine that pages in a tag range straddling the
-> > 4GB limit (so, let's say, from 3GB to 5GB) will end up in both ZONE_DMA and
-> > ZONE_NORMAL.
-> > 
-> > Thanks,
-> > Alex
-> > 
-> 
-> Oh, I see that reserve_tag_storage only calls alloc_contig_rnage in units of block_size,
-> I thought it could be called for the entire range the page needed at once.
-> (Maybe it could be a bit faster ? It doesn't seem like unnecessary drain and
-> other operation are repeated.)
+> Suggested-by: Christian Brauner <brauner@kernel.org>
+> Link: https://lore.kernel.org/r/20231208-horchen-helium-d3ec1535ede5@brauner/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Yes, that might be useful to do. Worth keeping in mind is that:
+> @@ -955,9 +955,9 @@ static void do_splice_eof(struct splice_desc *sd)
+>   * Callers already called rw_verify_area() on the entire range.
+>   * No need to call it for sub ranges.
+>   */
+> -static long do_splice_read(struct file *in, loff_t *ppos,
+> -			   struct pipe_inode_info *pipe, size_t len,
+> -			   unsigned int flags)
+> +static size_t do_splice_read(struct file *in, loff_t *ppos,
+          ^^^ ssize_t here?
 
-- a number of block size pages at the start and end of the range might
-  already be reserved for other tagged pages, so the actual range that is
-  being reserved might end up being smaller that what we are expecting.
+> +			     struct pipe_inode_info *pipe, size_t len,
+> +			     unsigned int flags)
+>  {
+>  	unsigned int p_space;
+>  
+> @@ -1030,7 +1030,7 @@ ssize_t splice_direct_to_actor(struct file *in, struct splice_desc *sd,
+>  			       splice_direct_actor *actor)
+>  {
+>  	struct pipe_inode_info *pipe;
+> -	long ret, bytes;
+> +	size_t ret, bytes;
+        ^^^^ ssize_t here?
 
-- the most common allocation order is smaller or equal to
-  PAGE_ALLOC_COSTLY_ORDER, which is 3, which means that the most common
-  case is that reserve_tag_storage reserves only one tag storage block.
+>  	size_t len;
+>  	int i, flags, more;
+>  
+...
+> @@ -1962,7 +1962,7 @@ static int link_pipe(struct pipe_inode_info *ipipe,
+>   * The 'flags' used are the SPLICE_F_* variants, currently the only
+>   * applicable one is SPLICE_F_NONBLOCK.
+>   */
 
-I will definitely keep this optimization in mind, but I would prefer to get
-the series into a more stable shape before looking at performance
-optimizations.
+Actually link_pipe() should also return ssize_t instead of int, shouldn't
+it?
 
-> 
-> If we use the cma code when activating the tag storage, it will be error if the
-> entire area of tag region is not in the same zone, so there should be a constraint
-> that it must be in the same zone when defining the tag region on device tree.
+> -long do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
+> +ssize_t do_tee(struct file *in, struct file *out, size_t len, unsigned int flags)
+>  {
+>  	struct pipe_inode_info *ipipe = get_pipe_info(in, true);
+>  	struct pipe_inode_info *opipe = get_pipe_info(out, true);
 
-I don't think that's the best approach, because the device tree describes
-the hardware, which does not change, and this is a software limitation
-(i.e, CMA doesn't work if a CMA region spans different zones), which might
-get fixed in a future version of Linux.
-
-In my opinion, the simplest solution would be to check that all tag storage
-regions have been activated successfully by CMA before enabling tag
-storage. Another alternative would be to split the tag storage region into
-several CMA regions at a zone boundary, and add it as distinct CMA regions.
-
-Thanks,
-Alex
-
-> 
-> Thanks,
-> Regards.
-> 
-> > > 
-> > > Thanks,
-> > > Regards.
-> > > 
-> > > > +			for (j = 1; j < block_size; j++) {
-> > > > +				if (page_zone(pfn_to_page(pfn + j)) != zone) {
-> > > > +					pr_err("Tag storage block pages in different zones");
-> > > > +					return -EINVAL;
-> > > > +				}
-> > > > +			}
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	 return 0;
-> > > > +}
-> > > > +
-> > > >  static int __init mte_tag_storage_activate_regions(void)
-> > > >  {
-> > > >  	phys_addr_t dram_start, dram_end;
-> > > > @@ -321,6 +350,10 @@ static int __init mte_tag_storage_activate_regions(void)
-> > > >  		goto out_disabled;
-> > > >  	}
-> > > >  
-> > > > +	ret = mte_tag_storage_check_zone();
-> > > > +	if (ret)
-> > > > +		goto out_disabled;
-> > > > +
-> > > >  	for (i = 0; i < num_tag_regions; i++) {
-> > > >  		tag_range = &tag_regions[i].tag_range;
-> > > >  		for (pfn = tag_range->start; pfn <= tag_range->end; pfn += pageblock_nr_pages)
-> > > > -- 
-> > > > 2.42.1
-> > > > 
-> > > > 
-> > 
-> > 
-> > 
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
