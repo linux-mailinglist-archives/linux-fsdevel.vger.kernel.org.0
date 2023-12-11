@@ -1,216 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-5584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3933180DD6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 22:44:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DE280DD6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 22:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9049B2136A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917B1281D31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBFC54FA0;
-	Mon, 11 Dec 2023 21:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C0954FB4;
+	Mon, 11 Dec 2023 21:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1XyUNbf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiZO2+tg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8771591
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 13:43:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702331035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4YTcprLRyl3uAtV5Q182ep8qEB4LObBk1K9I6+4+zd4=;
-	b=f1XyUNbf7qiCRNg5pyT/raJGxzjH0uQWecZPVO7coTrsWTwCC3mxwAyV16H0xayH5tPiNz
-	rwn815isSm7TV+AT473tBBussbSpJfeegXlX5MU9VXefbJ7MzvVs/g5FK7iNyRL+lJynBm
-	n1OffydpY3HoxV/o4x/IqQDX6ajrlFg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-399-teP_nNqYOkO10_fCOO2Hkg-1; Mon, 11 Dec 2023 16:43:54 -0500
-X-MC-Unique: teP_nNqYOkO10_fCOO2Hkg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E3BE2845DC2;
-	Mon, 11 Dec 2023 21:43:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id B94F32026D66;
-	Mon, 11 Dec 2023 21:43:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: torvalds@linux-foundation.org
-cc: Bill MacAllister <bill@ca-zephyr.org>,
-    David Howells <dhowells@redhat.com>,
-    Jeffrey E Altman <jaltman@auristor.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix refcount underflow from error handling race
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C05DB;
+	Mon, 11 Dec 2023 13:44:12 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-6ce9e897aeaso4261615b3a.2;
+        Mon, 11 Dec 2023 13:44:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702331052; x=1702935852; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N7imiHd03OeHfJqIYuOPkDI+twRgYtwGYnCJrI3xJS8=;
+        b=EiZO2+tgoXFuj04IBU4brCZTyaGhsHBb3IkKe4ItBRxunGYynvMp2iq6pq35D/FuJB
+         o93CLmDsCmBpi1kAenvoVtR/VBauS3L4VynD49HldaxtwU+x28D7CsQw0B6CV9tYT/Ez
+         85ucDr5UM9+xJnI5tvV+elVu/JGBWX0DgfT7V3Pvy1im8ykbP9auv9/gzAaR71S0JOr7
+         S2Utf7lZdrrWRSvoou2utoNqDJyFJ0pUu9qiYYonHyF0EHyJDFCkPb7xPJsBGosS/XsK
+         qQhd4/pClvsfxQK5DY5knjMtnWA6Fp+Fg/xhi29aKuY+kGDXhmuskLeX+bX7l+iRwMtC
+         gnpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702331052; x=1702935852;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=N7imiHd03OeHfJqIYuOPkDI+twRgYtwGYnCJrI3xJS8=;
+        b=O6evDE4wnuNYwDP6/vZ8YO9Xv8a9Mgkkq6aymD5e7141DTlQX7/mnwZgWI8+kRyMUv
+         poU12iljOYkCSE2DZNbGjQ1gMpcD67K3G61E2BP0GhYLhIwf4Kq6RZcVc2qbaI/0HJWZ
+         iHTUehw4k4PV4hCqWmy4cRGb6lDQQQ321XF4MjQN5I8pqjDOrUXn/DaIv5Sfrikta5XG
+         NxSdVjG0zUT+wT+E4i1/oa2w3DmqPpKu8mh7MXnAcnYn+QAT7f4Hqt1WeCpZTbYWQrd3
+         1BupUpbH3g8+ceqEur10oGnL0B1zx7q6AY/6DvXJDLK+gxNAtOnjts6qhsNXfbEEIvCT
+         2Hmw==
+X-Gm-Message-State: AOJu0Ywn4SuigVJihsaugvoIax9eIg2+mITIt6tbJ6YFRXjr4sUclK1w
+	vgr8kXMeqUV31PaVAaPBcMc=
+X-Google-Smtp-Source: AGHT+IFbVv36A2VqNl+2IvsIVy/Yz+3YEOynOdb/vNyi2F2LF05fq0tsf0OjqKG98n3VcV01c4DgpA==
+X-Received: by 2002:a05:6a20:3942:b0:18f:d416:55fd with SMTP id r2-20020a056a20394200b0018fd41655fdmr6605835pzg.100.1702331052027;
+        Mon, 11 Dec 2023 13:44:12 -0800 (PST)
+Received: from localhost ([98.97.32.4])
+        by smtp.gmail.com with ESMTPSA id v188-20020a632fc5000000b005c66a7d70fdsm6664319pgv.61.2023.12.11.13.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 13:44:11 -0800 (PST)
+Date: Mon, 11 Dec 2023 13:44:10 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>, 
+ bpf@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ paul@paul-moore.com, 
+ brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ keescook@chromium.org, 
+ kernel-team@meta.com, 
+ sargun@sargun.me
+Message-ID: <657782aa61b9e_edaa2082b@john.notmuch>
+In-Reply-To: <20231207185443.2297160-6-andrii@kernel.org>
+References: <20231207185443.2297160-1-andrii@kernel.org>
+ <20231207185443.2297160-6-andrii@kernel.org>
+Subject: RE: [PATCH bpf-next 5/8] libbpf: wire up token_fd into feature
+ probing logic
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2793878.1702331032.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 11 Dec 2023 21:43:52 +0000
-Message-ID: <2793879.1702331032@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Andrii Nakryiko wrote:
+> Adjust feature probing callbacks to take into account optional token_fd.
+> In unprivileged contexts, some feature detectors would fail to detect
+> kernel support just because BPF program, BPF map, or BTF object can't be
+> loaded due to privileged nature of those operations. So when BPF object
+> is loaded with BPF token, this token should be used for feature probing.
+> 
+> This patch is setting support for this scenario, but we don't yet pass
+> non-zero token FD. This will be added in the next patch.
+> 
+> We also switched BPF cookie detector from using kprobe program to
+> tracepoint one, as tracepoint is somewhat less dangerous BPF program
+> type and has higher likelihood of being allowed through BPF token in the
+> future. This change has no effect on detection behavior.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
 
-Could you apply this fix, please?
-
-David
----
-afs: Fix refcount underflow from error handling race
-
-If an AFS cell that has an unreachable (eg. ENETUNREACH) server listed (VL
-server or fileserver), an asynchronous probe to one of its addresses may
-fail immediately because sendmsg() returns an error.  When this happens, a
-refcount underflow can happen if certain events hit a very small window.
-
-The way this occurs is:
-
- (1) There are two levels of "call" object, the afs_call and the
-     rxrpc_call.  Each of them can be transitioned to a "completed" state
-     in the event of success or failure.
-
- (2) Asynchronous afs_calls are self-referential whilst they are active to
-     prevent them from evaporating when they're not being processed.  This
-     reference is disposed of when the afs_call is completed.
-
-     Note that an afs_call may only be completed once; once completed
-     completing it again will do nothing.
-
- (3) When a call transmission is made, the app-side rxrpc code queues a Tx
-     buffer for the rxrpc I/O thread to transmit.  The I/O thread invokes
-     sendmsg() to transmit it - and in the case of failure, it transitions
-     the rxrpc_call to the completed state.
-
- (4) When an rxrpc_call is completed, the app layer is notified.  In this
-     case, the app is kafs and it schedules a work item to process events
-     pertaining to an afs_call.
-
- (5) When the afs_call event processor is run, it goes down through the
-     RPC-specific handler to afs_extract_data() to retrieve data from rxrp=
-c
-     - and, in this case, it picks up the error from the rxrpc_call and
-     returns it.
-
-     The error is then propagated to the afs_call and that is completed
-     too.  At this point the self-reference is released.
-
- (6) If the rxrpc I/O thread manages to complete the rxrpc_call within the
-     window between rxrpc_send_data() queuing the request packet and
-     checking for call completion on the way out, then
-     rxrpc_kernel_send_data() will return the error from sendmsg() to the
-     app.
-
- (7) Then afs_make_call() will see an error and will jump to the error
-     handling path which will attempt to clean up the afs_call.
-
- (8) The problem comes when the error handling path in afs_make_call()
-     tries to unconditionally drop an async afs_call's self-reference.
-     This self-reference, however, may already have been dropped by
-     afs_extract_data() completing the afs_call
-
- (9) The refcount underflows when we return to afs_do_probe_vlserver() and
-     that tries to drop its reference on the afs_call.
-
-Fix this by making afs_make_call() attempt to complete the afs_call rather
-than unconditionally putting it.  That way, if afs_extract_data() manages
-to complete the call first, afs_make_call() won't do anything.
-
-The bug can be forced by making do_udp_sendmsg() return -ENETUNREACH and
-sticking an msleep() in rxrpc_send_data() after the 'success:' label to
-widen the race window.
-
-The error message looks something like:
-
-    refcount_t: underflow; use-after-free.
-    WARNING: CPU: 3 PID: 720 at lib/refcount.c:28 refcount_warn_saturate+0=
-xba/0x110
-    ...
-    RIP: 0010:refcount_warn_saturate+0xba/0x110
-    ...
-    afs_put_call+0x1dc/0x1f0 [kafs]
-    afs_fs_get_capabilities+0x8b/0xe0 [kafs]
-    afs_fs_probe_fileserver+0x188/0x1e0 [kafs]
-    afs_lookup_server+0x3bf/0x3f0 [kafs]
-    afs_alloc_server_list+0x130/0x2e0 [kafs]
-    afs_create_volume+0x162/0x400 [kafs]
-    afs_get_tree+0x266/0x410 [kafs]
-    vfs_get_tree+0x25/0xc0
-    fc_mount+0xe/0x40
-    afs_d_automount+0x1b3/0x390 [kafs]
-    __traverse_mounts+0x8f/0x210
-    step_into+0x340/0x760
-    path_openat+0x13a/0x1260
-    do_filp_open+0xaf/0x160
-    do_sys_openat2+0xaf/0x170
-
-or something like:
-
-    refcount_t: underflow; use-after-free.
-    ...
-    RIP: 0010:refcount_warn_saturate+0x99/0xda
-    ...
-    afs_put_call+0x4a/0x175
-    afs_send_vl_probes+0x108/0x172
-    afs_select_vlserver+0xd6/0x311
-    afs_do_cell_detect_alias+0x5e/0x1e9
-    afs_cell_detect_alias+0x44/0x92
-    afs_validate_fc+0x9d/0x134
-    afs_get_tree+0x20/0x2e6
-    vfs_get_tree+0x1d/0xc9
-    fc_mount+0xe/0x33
-    afs_d_automount+0x48/0x9d
-    __traverse_mounts+0xe0/0x166
-    step_into+0x140/0x274
-    open_last_lookups+0x1c1/0x1df
-    path_openat+0x138/0x1c3
-    do_filp_open+0x55/0xb4
-    do_sys_openat2+0x6c/0xb6
-
-Fixes: 34fa47612bfe ("afs: Fix race in async call refcounting")
-Reported-by: Bill MacAllister <bill@ca-zephyr.org>
-Closes: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1052304
-Suggested-by: Jeffrey E Altman <jaltman@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-Link: https://lore.kernel.org/r/2633992.1702073229@warthog.procyon.org.uk/=
- # v1
----
- fs/afs/rxrpc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index ed1644e7683f..d642d06a453b 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -424,7 +424,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct =
-afs_call *call, gfp_t gfp)
- 	if (call->async) {
- 		if (cancel_work_sync(&call->async_work))
- 			afs_put_call(call);
--		afs_put_call(call);
-+		afs_set_call_complete(call, ret, 0);
- 	}
- =
-
- 	ac->error =3D ret;
-
+Acked-by: John Fastabend <john.fastabend@gmail.com>
 
