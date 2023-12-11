@@ -1,181 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-5535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6615B80D338
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:04:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0875A80D33E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B6A1C21454
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D09B20F12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE474D591;
-	Mon, 11 Dec 2023 17:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ABB4D111;
+	Mon, 11 Dec 2023 17:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QHrRQzZF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L0Pt7Vp/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QHrRQzZF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L0Pt7Vp/"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kFBL2cI8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9874A8E;
-	Mon, 11 Dec 2023 09:04:05 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0256221F7;
-	Mon, 11 Dec 2023 17:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702314244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CD7iaV6cc3gb69jV7WBGvgMN69Ui+vx3V8xrfnjKK80=;
-	b=QHrRQzZFHyCixSljPWLi9c+a8RDuVkjSNmKyh5JEg4Ol5KuJFqz2DG3MONDYikzoAuxHT+
-	Nixxgu1ZhvM1mgEIxET6Zv8fO51VjH6Ng7bEadOtaVlTxUlICpc64StQ+cv2lvDUg0ZNn9
-	cxdy6tF4LjQOzYcYE4zUVsKnyld80o8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702314244;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CD7iaV6cc3gb69jV7WBGvgMN69Ui+vx3V8xrfnjKK80=;
-	b=L0Pt7Vp/szVN+ANcrxugX88Vb1aU+aWLGiA4jCuuIVtTB8I0bAGu3MfcVIy3ILQLdMK15b
-	9O6hLlKY6jyHGuCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702314244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CD7iaV6cc3gb69jV7WBGvgMN69Ui+vx3V8xrfnjKK80=;
-	b=QHrRQzZFHyCixSljPWLi9c+a8RDuVkjSNmKyh5JEg4Ol5KuJFqz2DG3MONDYikzoAuxHT+
-	Nixxgu1ZhvM1mgEIxET6Zv8fO51VjH6Ng7bEadOtaVlTxUlICpc64StQ+cv2lvDUg0ZNn9
-	cxdy6tF4LjQOzYcYE4zUVsKnyld80o8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702314244;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CD7iaV6cc3gb69jV7WBGvgMN69Ui+vx3V8xrfnjKK80=;
-	b=L0Pt7Vp/szVN+ANcrxugX88Vb1aU+aWLGiA4jCuuIVtTB8I0bAGu3MfcVIy3ILQLdMK15b
-	9O6hLlKY6jyHGuCA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id DDDE7134B0;
-	Mon, 11 Dec 2023 17:04:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id oQUlNgNBd2USGAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 17:04:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8755AA07E3; Mon, 11 Dec 2023 18:04:03 +0100 (CET)
-Date: Mon, 11 Dec 2023 18:04:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
-	kent.overstreet@gmail.com, joern@lazybastard.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
-	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
-	konishi.ryusuke@gmail.com, willy@infradead.org,
-	akpm@linux-foundation.org, p.raghav@samsung.com, hare@suse.de,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	gfs2@lists.linux.dev, linux-nilfs@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH RFC v2 for-6.8/block 17/18] ext4: remove
- block_device_ejected()
-Message-ID: <20231211170403.biwgd7l7pud7s7ip@quack3>
-References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
- <20231211140833.975935-1-yukuai1@huaweicloud.com>
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDBE7B4;
+	Mon, 11 Dec 2023 09:05:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1702314298; x=1702573498;
+	bh=hICd6xX0pWZMvUHgptvk6MN17tBFZ5wEr7xIBYhapgI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=kFBL2cI8A2VVbApnMZefxfQoAV7krDo06fwBB/INYVg5h9I3xWVIaJ5Y/CXW2iTOW
+	 zkmccE2guKKCcWtfH4NxOQBFph3bZqlEgoJFMJZ/NY/VfT8AKUNiQYG6R4/tqCh6L9
+	 jTzEde1/2L9p2f2TezIofPRLny+FZ6QvrMFEQpnwcMSqQZZcqWYDadPKNPlw4cpAlj
+	 DoeBj9SQ8YCFD0aF9ESEMCIIEKdXPHzRe/1gu26JX0+0rW7casmRDN6NyVxyIpPdxB
+	 xhMdkcSS6sPqOF/6IMIsZRzGVhpn8hylty3nWCt/GS7BGGoxlf8nAqxC6FHoqxj2GA
+	 6RYYKOgp1jh1A==
+Date: Mon, 11 Dec 2023 17:04:52 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] rust: file: add `Kuid` wrapper
+Message-ID: <rPOj4p2TGoIYUzMbmRCjmzHuCktN1rc0EVJ-skynzRblrqQLRU2GQaAPOb9RHhUBn_XhGfqcUii4EJBr_AWjoWHnTE8v_wQCMVmkgl2shg0=@proton.me>
+In-Reply-To: <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-5-af617c0d9d94@google.com> <jtCKrRw-FNajNJOXOuI1sweeDxI8T_uYnJ7DxMuqnJc9sgWjS0zouT_XIS-KmPferL7lU51BwD6nu73jZtzzB0T17pDeQP0-sFGRQxdjnaA=@proton.me> <ZXNHp5BoR2LJuv7D@Boquns-Mac-mini.home> <20231211155836.4qb4pfcfaguhuzo7@moria.home.lan>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231211140833.975935-1-yukuai1@huaweicloud.com>
-X-Spam-Score: 15.90
-X-Spamd-Result: default: False [18.87 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 R_RATELIMIT(0.00)[to_ip_from(RLa8hd5fybgmzcyr9mhbq8ey7y)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[50];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[35.38%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAM_FLAG(5.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 NEURAL_SPAM_SHORT(2.88)[0.961];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,suse.cz:dkim,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[kernel.dk,citrix.com,suse.de,gmail.com,lazybastard.org,bootlin.com,nod.at,ti.com,linux.ibm.com,oracle.com,fb.com,toxicpanda.com,suse.com,zeniv.linux.org.uk,kernel.org,fluxnic.net,mit.edu,dilger.ca,redhat.com,infradead.org,linux-foundation.org,samsung.com,vger.kernel.org,lists.xenproject.org,lists.infradead.org,lists.ozlabs.org,lists.linux.dev,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from]
-X-Spamd-Bar: ++++++++++++++++++
-X-Rspamd-Server: rspamd1
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: F0256221F7
-X-Spam-Score: 18.87
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QHrRQzZF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="L0Pt7Vp/";
-	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz;
-	dmarc=none
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 11-12-23 22:08:33, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> block_device_ejected() is added by commit bdfe0cbd746a ("Revert
-> "ext4: remove block_device_ejected"") in 2015. At that time 'bdi->wb'
-> is destroyed synchronized from del_gendisk(), hence if ext4 is still
-> mounted, and then mark_buffer_dirty() will reference destroyed 'wb'.
-> However, such problem doesn't exist anymore:
-> 
-> - commit d03f6cdc1fc4 ("block: Dynamically allocate and refcount
-> backing_dev_info") switch bdi to use refcounting;
-> - commit 13eec2363ef0 ("fs: Get proper reference for s_bdi"), will grab
-> additional reference of bdi while mounting, so that 'bdi->wb' will not
-> be destroyed until generic_shutdown_super().
-> 
-> Hence remove this dead function block_device_ejected().
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+On 12/11/23 16:58, Kent Overstreet wrote:
+> On Fri, Dec 08, 2023 at 08:43:19AM -0800, Boqun Feng wrote:
+>> On Fri, Dec 08, 2023 at 04:40:09PM +0000, Benno Lossin wrote:
+>>> On 12/6/23 12:59, Alice Ryhl wrote:
+>>>> +    /// Returns the given task's pid in the current pid namespace.
+>>>> +    pub fn pid_in_current_ns(&self) -> Pid {
+>>>> +        // SAFETY: Calling `task_active_pid_ns` with the current task=
+ is always safe.
+>>>> +        let namespace =3D unsafe { bindings::task_active_pid_ns(bindi=
+ngs::get_current()) };
+>>>
+>>> Why not create a safe wrapper for `bindings::get_current()`?
+>>> This patch series has three occurrences of `get_current`, so I think it
+>>> should be ok to add a wrapper.
+>>> I would also prefer to move the call to `bindings::get_current()` out o=
+f
+>>> the `unsafe` block.
+>>
+>> FWIW, we have a current!() macro, we should use it here.
+>=20
+> Why does it need to be a macro?
 
-Agreed, this should not be needed anymore. We'll see whether this is true
-also in practice :). Feel free to add:
+This is a very interesting question. A `Task` is `AlwaysRefCounted`, so
+if you have a `&'a Task`, someone above you owns a refcount on that
+task. But the `current` task will never go away as long as you stay in
+the same task. So you actually do not need to own a refcount as long as
+there are no context switches.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+We use this to our advantage and the `current!()` macro returns
+something that acts like `&'a Task` but additionally is `!Send` (so it
+cannot be sent over to a different task). This means that we do not need
+to take a refcount on the current task to get a reference to it.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+But just having a function that returns a `&'a Task` like thing that is
+`!Send` is not enough, since there are no constraints on 'a. This is
+because the function `Task::current` would take no arguments and there
+is nothing the lifetime could even bind to.
+Since there are no constraints, you could just choose 'a =3D 'static which
+is obviously wrong, since there are tasks that end. For this reason the
+`Task::current` function is `unsafe` and the macro `current!` ensures
+that the lifetime 'a ends early enough. It is implemented like this:
+
+    macro_rules! current {
+        () =3D> {
+            // SAFETY: Deref + addr-of below create a temporary `TaskRef` t=
+hat cannot outlive the
+            // caller.
+            unsafe { &*$crate::task::Task::current() }
+        };
+    }
+
+Note the `&*`. This ensures that the thing returned by `Task::current`
+is temporary and cannot outlive the current function thus preventing the
+creation of static references to it.
+
+If you want to read more, see here for Gary's original discovery of the
+issue:
+https://lore.kernel.org/rust-for-linux/20230331034701.0657d5f2.gary@garyguo=
+.net/
+
+--=20
+Cheers,
+Benno
 
