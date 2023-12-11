@@ -1,93 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-5591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCD180DF15
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2185A80DF49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B6A1C215A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521141C21561
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5623E5647A;
-	Mon, 11 Dec 2023 23:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF06156745;
+	Mon, 11 Dec 2023 23:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecrhLtxS"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Wg0i0Y2t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 679C5CB;
-	Mon, 11 Dec 2023 15:00:41 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-286e05d9408so3803417a91.1;
-        Mon, 11 Dec 2023 15:00:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702335641; x=1702940441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qnPJ53wNJnF9n29am3WoIRSr/plouqkpdL9chGqwmx0=;
-        b=ecrhLtxS58xexgjZnkoJOxlq/QTD/PCzSk0yUYCPbH618uqjUee5TX9b4aDKy4lRnZ
-         Mt63Fw8brO9NfkPVI6LoF4x/7AsKNGCrEUZAVRMrNBQlyyNI2npop0UPep6JmI6L5c6p
-         v2V44ps/kar+/Sql/uy0n34nm7S/8DZPV3i38A13bLTBXUqd8jrQ57H7/5E44uVAWJzb
-         RoiINs3h/sUD8RR53g6dS72zVhRW0xwvmkkh6mQ99ja0jndfnMMLW0u0E5RhJ5sj11Gt
-         7nrU6/CvE6F+qobBJXpqaQ4uOBjVfhWaGsMsnKJnUDokn8FrehkKXASchIjy4+MoVfhf
-         C/0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702335641; x=1702940441;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qnPJ53wNJnF9n29am3WoIRSr/plouqkpdL9chGqwmx0=;
-        b=VUk51OWODS7914svVkEvBsmgOgVDrwE7KlhED50SSr76tDDdmeEXitirm2BaPY83Lo
-         CJ67D0EwFczO8UxGF3wH7s7dHc5q2SQxRkCen595VQ6tthlrM28yuJztyO6o058GPYKA
-         NYvpX9uHhsqeWjLqF2pW4oZR+tZch9tpaXFBOZzlQErtyfOdl0jJ8dI610hxzfNAeDwU
-         97SUb8O6NhbSVat7d1/T/csXT2ullzZuilnskQxo+2iuVHd9pB0bDvrDTQuAtqDz3iuC
-         F/boAmz0sFS8YVnaPFFD4FFzIc600Z7xrHu40yG0sfFzYeT9pZiryfmQ/iDOVJH5V/kd
-         D9bw==
-X-Gm-Message-State: AOJu0YzT3xcQy8mwwYHhdAGUBLw4luDP31SIS6LCmspGaepv8Nh9gDe2
-	xRSQQljqdKkbMrJmvyulaM8=
-X-Google-Smtp-Source: AGHT+IEfIFvzB0EVGxve0iC+G9GU4cks+IPELe5rzRSvfmXkfh4cBXD2SCovB3eVHaAVQ8S8lBQiaQ==
-X-Received: by 2002:a17:90a:708f:b0:286:8c4d:d237 with SMTP id g15-20020a17090a708f00b002868c4dd237mr5661165pjk.10.1702335640814;
-        Mon, 11 Dec 2023 15:00:40 -0800 (PST)
-Received: from localhost ([98.97.32.4])
-        by smtp.gmail.com with ESMTPSA id c16-20020a170903235000b001d337b8c0b2sm7410plh.7.2023.12.11.15.00.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 15:00:40 -0800 (PST)
-Date: Mon, 11 Dec 2023 15:00:39 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
- bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- paul@paul-moore.com, 
- brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- keescook@chromium.org, 
- kernel-team@meta.com, 
- sargun@sargun.me
-Message-ID: <657794972e412_edaa20893@john.notmuch>
-In-Reply-To: <20231207185443.2297160-9-andrii@kernel.org>
-References: <20231207185443.2297160-1-andrii@kernel.org>
- <20231207185443.2297160-9-andrii@kernel.org>
-Subject: RE: [PATCH bpf-next 8/8] selftests/bpf: add tests for BPF object load
- with implicit token
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA32E5;
+	Mon, 11 Dec 2023 15:13:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4zzGhdcyxnMFmx+b16T6hcC16jA6EgRk42HHeuGbE7U=; b=Wg0i0Y2tv3w3mqeC5IfSmSkK+H
+	5IlJ/oG++TmEYu/YYUWQRrJggoMAYapUa6I4m1BVxueC3ya0/vfIPZQif64putXQXoTaX11+v4+FX
+	sHjm6uByj6tNOme0d8gyXeTvgRt/cudvRU3RnA/7Q+dsKlcOVF9CqFMjDjHF7PQ4VDDyL237mHmkQ
+	NQ70H6CHKGyJQOtHOoquJHo6ac4O4Om0nPEBLtsOLl0KzeOR2YgKJe+kkXPHMMOjbjlgDmoo5yk4O
+	lcXtHOzGh+leFF/vgt9ADktX84Tei8a9J6/68AFfXowNFuKg9qzQHLnWLtgl9YwEc9lOLuTqAbmUp
+	quO0g56Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rCpSs-00B2uk-2i;
+	Mon, 11 Dec 2023 23:13:31 +0000
+Date: Mon, 11 Dec 2023 23:13:30 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] nfsd: use __fput_sync() to avoid delayed closing of
+ files.
+Message-ID: <20231211231330.GE1674809@ZenIV>
+References: <20231208033006.5546-1-neilb@suse.de>
+ <20231208033006.5546-2-neilb@suse.de>
+ <ZXMv4psmTWw4mlCd@tissot.1015granger.net>
+ <170224845504.12910.16483736613606611138@noble.neil.brown.name>
+ <20231211191117.GD1674809@ZenIV>
+ <170233343177.12910.2316815312951521227@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <170233343177.12910.2316815312951521227@noble.neil.brown.name>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Andrii Nakryiko wrote:
-> Add a test to validate libbpf's implicit BPF token creation from default
-> BPF FS location (/sys/fs/bpf). Also validate that disabling this
-> implicit BPF token creation works.
+On Tue, Dec 12, 2023 at 09:23:51AM +1100, NeilBrown wrote:
+
+> Previously you've suggested problems with ->release blocking.
+> Now you refer to lazy-umount, which is what the comment above
+> __fput_sync() mentions.
+
+Yes?  What I'm saying is that the set of locks involved is
+too large for any sane analysis.  And lest you discard ->release(),
+that brings ->i_rwsem, and thus anything that might be grabbed
+under that.  Someone's ->mmap_lock, for example.
+
+> "pretty much an locks" seems like hyperbole.  I don't see it taking
+> nfsd_mutex or nlmsvc_mutex.
+
+I don't know - and I can't tell without serious search.  What I can
+tell is that before making fput() delayed we used to find deadlocks
+on regular basis; that was a massive source of headache.
+
+> Maybe you mean any filesystem lock?
+
+Don't forget VM.  And drivers.  And there was quite a bit of fun
+happening in net/unix, etc.  Sure, in case of nfsd the last two
+_probably_ won't occur - not directly, anyway.
+
+But making it a general nuisan^Wfacility is asking for trouble.
+
+> My understanding is that the advent of vmalloc allocated stacks means
+> that kernel stack space is not an important consideration.
 > 
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
+> It would really help if we could have clear documented explanation of
+> what problems can occur.  Maybe an example of contexts where it isn't
+> safe to call __fput_sync().
+> 
+> I can easily see that lazy-unmount is an interesting case which could
+> easily catch people unawares.  Punting the tail end of mntput_no_expire
+> (i.e.  if count reaches zero) to a workqueue/task_work makes sense and
+> would be much less impact than punting every __fput to a workqueue.
+> 
+> Would that make an fput_now() call safe to use in most contexts, or is
+> there something about ->release or dentry_kill() that can still cause
+> problems?
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+dentry_kill() means ->d_release(), ->d_iput() and anything final iput()
+could do.  Including e.g. anything that might be done by afs_silly_iput(),
+with its "send REMOVE to server, wait for completion".  No, that's not
+a deadlock per se, but it can stall you a bit more than you would
+probably consider tolerable...  Sure, you could argue that AFS ought to
+make that thing asynchronous, but...
+
+Anyway, it won't be "safe to use in most contexts".  ->mmap_lock alone
+is enough for that, and that's just the one I remember to have given
+us a lot of headache.  And that's without bringing the "nfsd won't
+touch those files" cases - make it generally accessible and you get
+to audit all locks that might be taken when we close a socket, etc.
 
