@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-5478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C31E80CD2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:08:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C4980CD3F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EE2281BBD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0205281C65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F0B495CE;
-	Mon, 11 Dec 2023 14:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2855D4A9B9;
+	Mon, 11 Dec 2023 14:07:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05C1A4ED0;
-	Mon, 11 Dec 2023 06:07:24 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 805C64EEC;
+	Mon, 11 Dec 2023 06:07:26 -0800 (PST)
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Spk8R39f0z4f3knq;
-	Mon, 11 Dec 2023 22:07:19 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Spk8T0Bdkz4f3kFx;
+	Mon, 11 Dec 2023 22:07:21 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id CFCDE1A09CA;
-	Mon, 11 Dec 2023 22:07:21 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 69B281A09DB;
+	Mon, 11 Dec 2023 22:07:23 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDn6xGTF3dlDYFxDQ--.28013S6;
-	Mon, 11 Dec 2023 22:07:21 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDn6xGTF3dlDYFxDQ--.28013S7;
+	Mon, 11 Dec 2023 22:07:22 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -76,9 +76,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v2 for-6.8/block 02/18] xen/blkback: use bdev api in xen_update_blkif_status()
-Date: Mon, 11 Dec 2023 22:05:36 +0800
-Message-Id: <20231211140552.973290-3-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v2 for-6.8/block 03/18] bcache: use bdev api in read_super()
+Date: Mon, 11 Dec 2023 22:05:37 +0800
+Message-Id: <20231211140552.973290-4-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231211140552.973290-1-yukuai1@huaweicloud.com>
 References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
@@ -89,50 +89,68 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDn6xGTF3dlDYFxDQ--.28013S6
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFW7tFW3Wr4xCFyrtrWfAFb_yoWfWFb_ZF
-	18urWxXrn7Crs0kayUuFs3Z3yv93WrurWF9ay2qFySqw1UXFWSq39FvFn5Gr47ZayUGws0
-	yF17uFW7tr4xXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbDAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
-	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHbyAU
-	UUUU=
+X-CM-TRANSID:cCh0CgDn6xGTF3dlDYFxDQ--.28013S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww17Zw4kZr48Xr13XF18Xwb_yoW8Jw4xpF
+	Z7uF9xZr48Gw17u3y8Zr4DZFyrK3srKFWUKa4xCw43ua43Jw1Y9rW5J34UG34rZr18WFs2
+	vF4rJr4xu3WUGFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUojjg
+	UUUUU
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Avoid to access bd_inode directly, prepare to remove bd_inode from
-block_devcie.
+On the one hand covert to use folio while reading bdev inode, on the
+other hand prevent to access bd_inode directly.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/block/xen-blkback/xenbus.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/md/bcache/super.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index e34219ea2b05..e645afa4af57 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -104,8 +104,7 @@ static void xen_update_blkif_status(struct xen_blkif *blkif)
- 		xenbus_dev_error(blkif->be->dev, err, "block flush");
- 		return;
- 	}
--	invalidate_inode_pages2(
--			blkif->vbd.bdev_handle->bdev->bd_inode->i_mapping);
-+	invalidate_bdev(blkif->vbd.bdev_handle->bdev);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index bfe1685dbae5..23892b32c582 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -168,14 +168,13 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ {
+ 	const char *err;
+ 	struct cache_sb_disk *s;
+-	struct page *page;
++	struct folio *folio;
+ 	unsigned int i;
  
- 	for (i = 0; i < blkif->nr_rings; i++) {
- 		ring = &blkif->rings[i];
+-	page = read_cache_page_gfp(bdev->bd_inode->i_mapping,
+-				   SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
+-	if (IS_ERR(page))
++	folio = bdev_read_folio(bdev, SB_OFFSET);
++	if (IS_ERR(folio))
+ 		return "IO error";
+-	s = page_address(page) + offset_in_page(SB_OFFSET);
++	s = folio_address(folio) + offset_in_folio(folio, SB_OFFSET);
+ 
+ 	sb->offset		= le64_to_cpu(s->offset);
+ 	sb->version		= le64_to_cpu(s->version);
+@@ -272,7 +271,7 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 	*res = s;
+ 	return NULL;
+ err:
+-	put_page(page);
++	folio_put(folio);
+ 	return err;
+ }
+ 
 -- 
 2.39.2
 
