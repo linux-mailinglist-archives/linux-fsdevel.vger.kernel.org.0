@@ -1,99 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-5528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93E980D289
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:43:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99EC380D29A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26BE11C212A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:43:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAEF61C21454
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 16:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3933B794;
-	Mon, 11 Dec 2023 16:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hk4xrQvH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451794CDE1;
+	Mon, 11 Dec 2023 16:44:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FC8A9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 08:43:17 -0800 (PST)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-db3a09e96daso4860147276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 08:43:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702312997; x=1702917797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9N+ZFziXjdSw2YHfmDnkRoyHHr1qlwBSocqQcY1TWQM=;
-        b=Hk4xrQvHZbaQQa2Q9/6ImbEhqs5RE4Ju+k7KdVg4jueISZpjBws/Vuh0zUQsGU/aKR
-         nOuq+eBuCnnYEW5R8hHzdYO6Vm1NhnByXq6wCF5DclLPRxjTPwDdhnEP0luvow3Lo+8K
-         CTXw4nfNFTXUQLiAqZ5BJnCUpSfXdavk1XKe2s5ORzv1Cc4vwxCBlJ7s2GZeeaXJqcsT
-         qNWN0gKI7j74/sfXbqT9GRmvs9Sy2zGS+nGah/UvGx2XoNaDSScyOpYSavyFScuRaXmd
-         gH4xh0KWSVV4uxk4KQldLBILL/22N2K5f4JPrX3rfLfe6n/ftm+iEd7syqK7XVKs/Y4F
-         XJfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702312997; x=1702917797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9N+ZFziXjdSw2YHfmDnkRoyHHr1qlwBSocqQcY1TWQM=;
-        b=ATLJyNgCn9vPPk39A6aUbQyaNSRrxIG+GCTPI8HCIHz4rAR5tOP4DmG8TM+O9guw5e
-         C2NiPucrkt3UhKCgjTv6UpqAamGsLM2lJjz7BM/dWEJkAn4+AqpfEtBW3EDqJoKvDeci
-         0CuG4P68ENODWACo42F57ZsPfn4El8kgyk0oHJL8/H1X+Xrnumauk3GdGWPnaio82ofX
-         IZY+fmGQKV/BVk+T/D9MCHB6e2BA4oVOHW5reUPU6KYAMa0Mn6jODBi2urEYlHCXzwfN
-         GOgi0zLLReK/VNhQuDDwja+Y/ktEA2HiGNQAIUbYcIFRlqsKsY9A2zRW16paCjdmxt8O
-         vc5w==
-X-Gm-Message-State: AOJu0Yy83lb0xoy/ahgeTgDd7PZgRPpN2DmcFai+QPNJw3Ss5ZjlGgKz
-	mUBqKj4SMq96/CqPBw/uVNwn3f8QBLVMPjfBhNahhQ==
-X-Google-Smtp-Source: AGHT+IH64hTzUfqokLkrmNt8XUgUbnYPQ5guBW2a+l70MLnxJeOCxxtEc/KpviRLotGVrRItTmgjhx1XKWmww9qpojI=
-X-Received: by 2002:a25:7690:0:b0:dbc:ae1e:a987 with SMTP id
- r138-20020a257690000000b00dbcae1ea987mr583642ybc.129.1702312996550; Mon, 11
- Dec 2023 08:43:16 -0800 (PST)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDADD2;
+	Mon, 11 Dec 2023 08:44:47 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D47DA68B05; Mon, 11 Dec 2023 17:44:43 +0100 (CET)
+Date: Mon, 11 Dec 2023 17:44:43 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	Daejun Park <daejun7.park@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v5 03/17] fs/f2fs: Restore the whint_mode mount option
+Message-ID: <20231211164443.GA25306@lst.de>
+References: <20231130013322.175290-1-bvanassche@acm.org> <20231130013322.175290-4-bvanassche@acm.org> <20231207174529.GC31184@lst.de> <fd6d207d-fe03-4fdf-bd74-3463860135ef@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231206103702.3873743-6-surenb@google.com> <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
- <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
- <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
- <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk> <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
- <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk> <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
- <9d06d7c1-24ae-4495-803d-5aec28058e68@sirena.org.uk> <CAJuCfpGEbGQh=VZbXtuOnvB6yyVJFjJ9bhwc7BaoL4wr1XLAfQ@mail.gmail.com>
- <915d2f82-0bcd-4992-9261-81687ca16e9f@sirena.org.uk>
-In-Reply-To: <915d2f82-0bcd-4992-9261-81687ca16e9f@sirena.org.uk>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 11 Dec 2023 08:43:05 -0800
-Message-ID: <CAJuCfpENZF3mMNuwVaff00hRnazTFbE4A5kaYuUiZCpuHr06Cw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-To: Mark Brown <broonie@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, shuah@kernel.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, peterx@redhat.com, ryan.roberts@arm.com, 
-	hughd@google.com, mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
-	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
-	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd6d207d-fe03-4fdf-bd74-3463860135ef@acm.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Dec 11, 2023 at 8:34=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
+On Thu, Dec 07, 2023 at 09:39:06AM -1000, Bart Van Assche wrote:
+> On 12/7/23 07:45, Christoph Hellwig wrote:
+>> On Wed, Nov 29, 2023 at 05:33:08PM -0800, Bart Van Assche wrote:
+>>> Restore support for the whint_mode mount option by reverting commit
+>>> 930e2607638d ("f2fs: remove obsolete whint_mode").
+>>
+>> I know that commit sets a precedence by having a horribly short and
+>> uninformative commit message, but please write a proper one for this
+>> commit and explain why you are restoring the option.  Also if anything
+>> changed since last year.
 >
-> On Mon, Dec 11, 2023 at 08:29:06AM -0800, Suren Baghdasaryan wrote:
+> Hi Christoph,
 >
-> > Just to rule out this possibility, linux-next was broken on Friday
-> > (see https://lore.kernel.org/all/CAJuCfpFiEqRO4qkFZbUCmGZy-n_ucqgR5Neyv=
-nwXqYh+RU4C6w@mail.gmail.com/).
-> > I just checked and it's fixed now. Could you confirm that with the
-> > latest linux-next you still see the issue?
->
-> Yes, it looks like it's fixed today - thanks!  (The fix was getting
-> masked by the ongoing KVM breakage.)
+> A possible approach is that I drop this patch from this patch series and
+> that I let the F2FS maintainers restore write hint support in F2FS.
 
-Very good. Thanks for confirming!
+I'm not saying you should drop it.  Just that it should have a useful
+commit message.
 
