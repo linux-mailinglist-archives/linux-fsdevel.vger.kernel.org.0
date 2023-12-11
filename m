@@ -1,141 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-5569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C3180DB1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 20:49:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473E280DB34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD727B214A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 19:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BE11C214F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 20:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB7E537F9;
-	Mon, 11 Dec 2023 19:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E7B53801;
+	Mon, 11 Dec 2023 20:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5evn4Dx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFD5CF;
-	Mon, 11 Dec 2023 11:49:39 -0800 (PST)
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 6497A31B; Mon, 11 Dec 2023 13:49:37 -0600 (CST)
-Date: Mon, 11 Dec 2023 13:49:37 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Munehisa Kamata <kamatam@amazon.com>
-Cc: serge@hallyn.com, adobriyan@gmail.com, akpm@linux-foundation.org,
-	casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, paul@paul-moore.com
-Subject: Re: Fw: [PATCH] proc: Update inode upon changing task security
- attribute
-Message-ID: <20231211194937.GA323128@mail.hallyn.com>
-References: <20231210144530.GB295678@mail.hallyn.com>
- <20231211192723.28230-1-kamatam@amazon.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C4452F9C;
+	Mon, 11 Dec 2023 20:02:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA26C433C7;
+	Mon, 11 Dec 2023 20:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702324927;
+	bh=0muo1Uoi32hut1hx3yMwoWK9bfatBaZv4kIG4F1glqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U5evn4DxU2NcpgJ9s72YHzYM8pWzYiZDS4VpHFRrQVGissAfR7uMl4oZFRg0BIAX7
+	 CN0OS0Kbnft0dHbdlNHlWimW62G0Tsu8P8djSjW15jd4oqZuhepaiT+ixOexOjGttt
+	 cPnuhd5MsxToFTb5zKx0syWfzGQDkNMKfkfSjNEjTG2RaCDiPe/JljeWqSOpmZfkRu
+	 wvlHrsRmoI8VUCkicMgLEmhbgcjQ9xUEe4aWcIw3m/GU6VIXwfV5jlXYUR/XWPv38a
+	 A/UiHNDjqqR7mkW44WT1jP6GGqfzmdm8EgK1+eQZ2erD5oczAltOvjJ5se7zQYESl3
+	 34OdoPsk1CUdg==
+Date: Mon, 11 Dec 2023 20:01:59 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
+	ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+	jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+Message-ID: <400c0342-bb28-4dd2-b132-9927c7babec4@sirena.org.uk>
+References: <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
+ <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk>
+ <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
+ <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
+ <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
+ <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
+ <1368c558-c58c-4574-907e-36b07dee31bb@sirena.org.uk>
+ <6ee5d68a-fa54-4ed6-bc41-2bff0d9eb12f@redhat.com>
+ <052dc756-cc05-4aa8-9724-14d42853089c@sirena.org.uk>
+ <8a2ce635-58f4-44e1-a646-6527936c5836@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="v6cD9Anxo0FHLDGJ"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231211192723.28230-1-kamatam@amazon.com>
+In-Reply-To: <8a2ce635-58f4-44e1-a646-6527936c5836@redhat.com>
+X-Cookie: Better dead than mellow.
 
-On Mon, Dec 11, 2023 at 07:27:23PM +0000, Munehisa Kamata wrote:
-> On Sun, 2023-12-10 06:45:30 -0800, "Serge E. Hallyn" wrote:
-> >
-> > On Sat, Dec 09, 2023 at 01:10:42AM +0000, Munehisa Kamata wrote:
-> > > On Sat, 2023-12-09 00:24:42 +0000, Casey Schaufler wrote:
-> > > >
-> > > > On 12/8/2023 3:32 PM, Paul Moore wrote:
-> > > > > On Fri, Dec 8, 2023 at 6:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > >> On 12/8/2023 2:43 PM, Paul Moore wrote:
-> > > > >>> On Thu, Dec 7, 2023 at 9:14 PM Munehisa Kamata <kamatam@amazon.com> wrote:
-> > > > >>>> On Tue, 2023-12-05 14:21:51 -0800, Paul Moore wrote:
-> > > > >>> ..
-> > > > >>>
-> > > > >>>>> I think my thoughts are neatly summarized by Andrew's "yuk!" comment
-> > > > >>>>> at the top.  However, before we go too much further on this, can we
-> > > > >>>>> get clarification that Casey was able to reproduce this on a stock
-> > > > >>>>> upstream kernel?  Last I read in the other thread Casey wasn't seeing
-> > > > >>>>> this problem on Linux v6.5.
-> > > > >>>>>
-> > > > >>>>> However, for the moment I'm going to assume this is a real problem, is
-> > > > >>>>> there some reason why the existing pid_revalidate() code is not being
-> > > > >>>>> called in the bind mount case?  From what I can see in the original
-> > > > >>>>> problem report, the path walk seems to work okay when the file is
-> > > > >>>>> accessed directly from /proc, but fails when done on the bind mount.
-> > > > >>>>> Is there some problem with revalidating dentrys on bind mounts?
-> > > > >>>> Hi Paul,
-> > > > >>>>
-> > > > >>>> https://lkml.kernel.org/linux-fsdevel/20090608201745.GO8633@ZenIV.linux.org.uk/
-> > > > >>>>
-> > > > >>>> After reading this thread, I have doubt about solving this in VFS.
-> > > > >>>> Honestly, however, I'm not sure if it's entirely relevant today.
-> > > > >>> Have you tried simply mounting proc a second time instead of using a bind mount?
-> > > > >>>
-> > > > >>>  % mount -t proc non /new/location/for/proc
-> > > > >>>
-> > > > >>> I ask because from your description it appears that proc does the
-> > > > >>> right thing with respect to revalidation, it only becomes an issue
-> > > > >>> when accessing proc through a bind mount.  Or did I misunderstand the
-> > > > >>> problem?
-> > > > >> It's not hard to make the problem go away by performing some simple
-> > > > >> action. I was unable to reproduce the problem initially because I
-> > > > >> checked the Smack label on the bind mounted proc entry before doing
-> > > > >> the cat of it. The problem shows up if nothing happens to update the
-> > > > >> inode.
-> > > > > A good point.
-> > > > >
-> > > > > I'm kinda thinking we just leave things as-is, especially since the
-> > > > > proposed fix isn't something anyone is really excited about.
-> > > > 
-> > > > "We have to compromise the performance of our sandboxing tool because of
-> > > > a kernel bug that's known and for which a fix is available."
-> > > > 
-> > > > If this were just a curiosity that wasn't affecting real development I
-> > > > might agree. But we've got a real world problem, and I don't see ignoring
-> > > > it as a good approach. I can't see maintainers of other LSMs thinking so
-> > > > if this were interfering with their users.
-> > >  
-> > > We do bind mount to make information exposed to the sandboxed task as little
-> > > as possible. We also create a separate PID namespace for each sandbox, but
-> > 
-> > If not exposing information is the main motivation, then could you simply do:
-> > 
-> > mount -t proc proc dir
-> > mount --bind dir/$$ dir
-> > 
-> > ?
-> 
-> Hi Serge,
-> 
-> It doesn't work.
-> 
->  [root@ip-10-0-32-198 ec2-user]# mount -t proc proc dir
->  [root@ip-10-0-32-198 ec2-user]# echo AAA > dir/$$/attr/current
->  [root@ip-10-0-32-198 ec2-user]# chsmack dir/$$
->  dir/11222 access="AAA"
->  [root@ip-10-0-32-198 ec2-user]# mount --bind dir/$$ dir
->  [root@ip-10-0-32-198 ec2-user]# echo BBB > dir/attr/current
->  [root@ip-10-0-32-198 ec2-user]# echo CCC > dir/attr/current
->  bash: dir/attr/current: Permission denied
->  [root@ip-10-0-32-198 ec2-user]# ls dir
->  ls: cannot access dir: Permission denied
->  [root@ip-10-0-32-198 ec2-user]# 
->  
-> It would not revalidate dir/$$ anyway, so this result wasn't surprising to
-> me. Maybe I'm missing something?
 
-I see.  Yeah, that's an ugly wart.
+--v6cD9Anxo0FHLDGJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > > still want to bind mount even with it to hide system-wide and pid 1
-> > > information from the task. 
-> > > 
-> > > So, yeah, I see this as a real problem for our use case and want to seek an
-> > > opinion about a possibly better fix.
-> > > 
-> > > 
-> > > Thanks,
-> > > Munehisa 
-> > 
+On Mon, Dec 11, 2023 at 07:00:32PM +0100, David Hildenbrand wrote:
+> On 11.12.23 18:32, Mark Brown wrote:
+> > On Mon, Dec 11, 2023 at 05:53:59PM +0100, David Hildenbrand wrote:
+
+> > > https://lkml.kernel.org/r/20231209020144.244759-1-jhubbard@nvidia.com
+
+> > I mean, I guess people who don't want to install the headers are just
+> > not going to be able to build a bunch of tests?  There definitely are a
+> > bunch of tests where it's not needed so I can see why people would not
+> > like being forced to do the headers step if they're only interested in
+> > those tests.
+
+> Yes. And before that, people mostly had no clue that headers had to be
+> installed in order to compile successfully.
+
+> So maybe a warning to give at least some hint might be reasonable.
+
+That sounds sensible, especially if we could arrange to flag when the
+specific tests being built need it.
+
+--v6cD9Anxo0FHLDGJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV3arYACgkQJNaLcl1U
+h9B1kwf9FSJkPhxe7Bh+LVMm9M/JwDNNcn4+8J9LLt5yC5m4APhXIPtgAzsQf7HZ
+pA1lZh6HCE3f7G0WAFms4UkYnL4Sg+/5/1KIJmZZ8PiSelGBMEqQxhqJzWcI6za0
+gZODJQZdI4yuMG7RLnVum7TzOenAd+7RpT8TOmcn/UM6BF8BWLg26DmB+Yf/Hf/f
+gL0W3epHdBysAKO+esLc+6ifEBeokyHtETY9wNLHcKnA09K0YY0Jp55tfwbKvPgi
+D8MyS+1kNPy2to2TMPGxhVilrB0zS0ifR8ELa+Dlnf3A0PfsBa2fdIeW2ARZ7+7C
+UjMVDE+wbqAH29BU8bvGTEEha1jV1w==
+=JgyN
+-----END PGP SIGNATURE-----
+
+--v6cD9Anxo0FHLDGJ--
 
