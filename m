@@ -1,115 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-5542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB41880D3DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:32:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E0980D3F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5282F1F21A3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018091C21601
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D354E1DF;
-	Mon, 11 Dec 2023 17:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F64E625;
+	Mon, 11 Dec 2023 17:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLD55wAh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CP3Jq4I1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54874E1D1;
-	Mon, 11 Dec 2023 17:32:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE08C433C7;
-	Mon, 11 Dec 2023 17:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702315949;
-	bh=WCZbx2NHItGvVYJdNm3seZiECC9kBcXrBMakH/5y2GM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QLD55wAhi415G5i1FOx5XSlKU0PD4PfNfCROijwQrJ6ISBIgW0yYA+UQgGXuyrBxM
-	 PV5qRRb+bo58o/Io89rRoNyx+5JWppYxFQko24Y9U5IZPxbpcTz15c5RH5Luz7A7qA
-	 d6vbV1nMzZ/DXJiPRp0u/5zZIAFECeUsvgezaPjUfpCPWuhj36oo4NJwUK303xXRsC
-	 FCLD+4SN2kjOP/MUx8b5uPvRjiuVwoOBJXMGANXfGG+IS3I8sASO1XWr749u2cKJ2X
-	 lKAaz9Sm59kQ4iMlxCcO9iRB/0dVlEwdpmvsJm7EA8ZQPgjInsr62/cslhs+9Je9PE
-	 uogNKYKDLWVQA==
-Date: Mon, 11 Dec 2023 17:32:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-	ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-	jdduke@google.com, linux-mm@kvack.org,
+Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D8FEA;
+	Mon, 11 Dec 2023 09:35:45 -0800 (PST)
+Received: by mail-oi1-x22c.google.com with SMTP id 5614622812f47-3b9e2a014e8so3139960b6e.2;
+        Mon, 11 Dec 2023 09:35:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702316145; x=1702920945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M/fg+fv8iUKsYhs2M+RJ0ajm1ojAT51bfa8djh97RvU=;
+        b=CP3Jq4I1Y02qHoqb0qWcgX0JAcPeAVZkT/zrigeAZ63XjOtvmaFoaRPOCh8oGdle/E
+         659t0Cqq9vwxfVzUnZEYkujXvjenFSymFnF2wn5KMkozGqr5VAEkRG4WlLyW6qSrkJpR
+         ZiMwSfge/HSBrgaQeXoCKiaH0gA5DMWKBzfS8IuoYqortNoBw4stEkLTMwT60HdryXyQ
+         GeGxxvBtOSCoCwhz/OOw+onOAKkeI1M152kgV3xzm6VeyJpIKtRKIDZBNxKA1PEyGwcf
+         sdb6SxfnnbCojImLFcgufskb9jZL4zv0rFZRqHyDh4LTWKrxDisbCacPZ+g8PJQdSCo6
+         lc7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702316145; x=1702920945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M/fg+fv8iUKsYhs2M+RJ0ajm1ojAT51bfa8djh97RvU=;
+        b=YUhCcYXwQUqIJx4Lkbd/hlMATx7JbBIvW3oOzMq6bHBZUODq5nU5sH05YJK4hzCTbY
+         8w3Cas9sOuWDPN/YSVTxDTGJf5xfo0ZwBU80+/yQ5eSQNGhPBQKEp1UxW2kS+5+/ffoZ
+         4+5+CN2So8iix7pQTU3+yO9QbnH3ftpEFCtQTEdfXt0gvAICQH10koS8J07vBmsqrkzK
+         aFOmgv2gD1/VeOcdBtBBD34vUp+VOOOJz9hSBFw1IVXyKwG36TgXxqzm0fv7jpdLItt4
+         133aBOeDtSF3xxD2UELtO+JIKFaFVe8u0nsu7ca8wgClnR7fihy01yA0qg6kvhxj2YIN
+         UicA==
+X-Gm-Message-State: AOJu0YxnsiFvHrrYl7oFnNwzzIs9/IUe+Gjs5b4wISiEyTr0Qu6CMb8V
+	6x9128CNQhUVJhIpn8x0GIQ=
+X-Google-Smtp-Source: AGHT+IGbDAuC5iH0V8rKYwviDyoY8ZqTEAItte85iztX5xcFqTiwSYA17QemR1kL/yaaXqa4VTm8ew==
+X-Received: by 2002:a05:6359:2d02:b0:16e:29eb:98c8 with SMTP id rl2-20020a0563592d0200b0016e29eb98c8mr2011101rwb.30.1702316144995;
+        Mon, 11 Dec 2023 09:35:44 -0800 (PST)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id i19-20020a056214031300b0067aa164861dsm3467797qvu.35.2023.12.11.09.35.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 09:35:44 -0800 (PST)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailauth.nyi.internal (Postfix) with ESMTP id E6B6A27C005B;
+	Mon, 11 Dec 2023 12:35:43 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 11 Dec 2023 12:35:43 -0500
+X-ME-Sender: <xms:b0h3ZWIE9Yx7UGpn71fZAxZX0HGg4FpbWLeNvatVYsHtlI9MfS2HXw>
+    <xme:b0h3ZeIFkXRRQAI4ffLDQBsIVxj7aRkAq9sHq82eX8drH5G_JdRQmPSmxzB4wzmJ0
+    EcYzaDSd47NCxaYIQ>
+X-ME-Received: <xmr:b0h3ZWvlwExWXMUANLm9vi_qtr7Mr0mpo4kFxAUSQkGozewojwigSVK9NJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelvddguddthecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:b0h3ZbY8x4kxdTb793RGNUqtreNFBYEDz_Q58q1IHpHp1QJi2cp2wg>
+    <xmx:b0h3ZdYhbLLNLQpl40sVkGsURrGwBKMPC0gPqvy8-47u-uUJv-BzNw>
+    <xmx:b0h3ZXBIn2Sg4kV8292WFXKiqxnQxTij-1LTv3biM_I2vcAXeTqfLw>
+    <xmx:b0h3ZaRVAf13DBbJgyJmPBC7MynptnzRLYnuMgV3gMCc_4nakVOLLg>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Dec 2023 12:35:42 -0500 (EST)
+Date: Mon, 11 Dec 2023 09:35:40 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com,
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
+	brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com,
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
+	joel@joelfernandes.org, keescook@chromium.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@android.com,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Message-ID: <052dc756-cc05-4aa8-9724-14d42853089c@sirena.org.uk>
-References: <ZXXJ9NdH61YZfC4c@finisterre.sirena.org.uk>
- <CAJuCfpFbWeycjvjAFryuugXuiv5ggm=cXG+Y1jfaCD9kJ6KWqQ@mail.gmail.com>
- <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
- <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk>
- <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
- <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
- <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
- <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
- <1368c558-c58c-4574-907e-36b07dee31bb@sirena.org.uk>
- <6ee5d68a-fa54-4ed6-bc41-2bff0d9eb12f@redhat.com>
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
+	rust-for-linux@vger.kernel.org, surenb@google.com,
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk,
+	wedsonaf@gmail.com, willy@infradead.org
+Subject: Re: [PATCH v2 2/7] rust: cred: add Rust abstraction for `struct cred`
+Message-ID: <ZXdIbEqSCTO62BHE@boqun-archlinux>
+References: <ZXZjoOrO5q7no4or@boqun-archlinux>
+ <20231211153429.4161511-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wtM8tjuv5dS/G0Kr"
-Content-Disposition: inline
-In-Reply-To: <6ee5d68a-fa54-4ed6-bc41-2bff0d9eb12f@redhat.com>
-X-Cookie: Better dead than mellow.
-
-
---wtM8tjuv5dS/G0Kr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20231211153429.4161511-1-aliceryhl@google.com>
 
-On Mon, Dec 11, 2023 at 05:53:59PM +0100, David Hildenbrand wrote:
+On Mon, Dec 11, 2023 at 03:34:29PM +0000, Alice Ryhl wrote:
+> Boqun Feng <boqun.feng@gmail.com> writes:
+> > On Wed, Dec 06, 2023 at 11:59:47AM +0000, Alice Ryhl wrote:
+> > [...]
+> > > @@ -151,6 +152,21 @@ pub fn as_ptr(&self) -> *mut bindings::file {
+> > >          self.0.get()
+> > >      }
+> > >  
+> > > +    /// Returns the credentials of the task that originally opened the file.
+> > > +    pub fn cred(&self) -> &Credential {
+> > 
+> > I wonder whether it would be helpful if we use explicit lifetime here:
+> > 
+> >     pub fn cred<'file>(&'file self) -> &'file Credential
+> > 
+> > It might be easier for people to get. For example, the lifetime of the
+> > returned Credential reference is constrainted by 'file, the lifetime of
+> > the file reference.
+> > 
+> > But yes, maybe need to hear others' feedback first.
+> > 
+> > Regards,
+> > Boqun
+> 
+> That would trigger a compiler warning because the lifetime is
+> unnecessary.
+> 
 
-> > > (3) avoids dirtying the tree as a "make headers_install" would, but it also
-> > > means that each test that makes use of new uapi has to update the relevant
-> > > headers (what people working on QEMU are used to).
+We can disable that warning if people need the information. Code is
+mostly for reading, less often for compilation and changes.
 
-> > Note that you can do an out of tree build to avoid dirtying things.
+> The safety comment explains what the signature means. I think that
+> should be enough.
+> 
 
-> Yes, but apparently the simple "make headers_install" will dirty the kernel.
+For someone who has a good understanding of Rust lifetime (and the
+elision), yes. But I'm wondering whether all the people feel the same
+way.
 
-> See (and ideally comment on)
+Regards,
+Boqun
 
-> https://lkml.kernel.org/r/20231209020144.244759-1-jhubbard@nvidia.com
-
-I mean, I guess people who don't want to install the headers are just
-not going to be able to build a bunch of tests?  There definitely are a
-bunch of tests where it's not needed so I can see why people would not
-like being forced to do the headers step if they're only interested in
-those tests.
-
---wtM8tjuv5dS/G0Kr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV3R6MACgkQJNaLcl1U
-h9D+Igf/ZMvHWGlrE+b/Z+ooB6z2lP/fcPq9HkLDAGQE9oEBoV9NPQXZS9zKxN6x
-mVXihH5FBismZ/3eXmS4pzsMQpdnWSS97iGY5KgrS4qATy3EmFHnYTiNyW3vocyW
-7OV8t61FaEctCaQ7gMkb3pKokm3XdGqhUAEMUml1+PfiTHa0iAhcFEI0VBukmKdG
-ugBUMNVSRoF4OppkOiolHALCnffAFLu6X6ISsCVAwORGy73NnwqTUEQ3VpKlP6II
-qwmwnifh5MCg4Dsj9x3gfGJBkqTYVtNUA4cnOz7KTmv4z8MTlWpZc00FNXGFMqlX
-71mkGz7FGIrGTGB5MQGJwP4eLTX2gA==
-=pC6/
------END PGP SIGNATURE-----
-
---wtM8tjuv5dS/G0Kr--
+> Alice
 
