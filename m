@@ -1,100 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-5583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2481980DD62
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 22:42:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3933180DD6B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 22:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C262A1F21C08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9049B2136A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 21:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3D54FAC;
-	Mon, 11 Dec 2023 21:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBFC54FA0;
+	Mon, 11 Dec 2023 21:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWIOKCpj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1XyUNbf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFBA091;
-	Mon, 11 Dec 2023 13:41:50 -0800 (PST)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1d06819a9cbso29516075ad.1;
-        Mon, 11 Dec 2023 13:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702330910; x=1702935710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JwLQENTdPffBkpFzdzONQopDme87OdDEkg8KOD7qZcw=;
-        b=BWIOKCpj9TSD72QBM+kpKDtbTMQLChK7WRMKNSwrwXbmsaXUkMFukL9TiJr0t5790V
-         JHRGzHnt+uyWhK5rvHRsixcH7LtCbhVnQY4ujYrYXBt/uLgrTqbh0Sy17mHEUKtRmIGL
-         UKTN9Vk9/m1nxpPPnQvbrKe2uogTH5E7Zw5xQBIhY4fV7iNIt7TvzCh9BnleFqeZeBBe
-         8Fbgn3POUn7n9g7iCfmIdv+liAKh28TQe7ChdLionyEgN4iHavIjwnPu97/3gwYy6XzP
-         BnE16aNdcr9L6c7uvkTiOjUFELezVIBeSUrmFQz0z18QHJq59JMpf/SZFFTVk7BxLX/v
-         kdIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702330910; x=1702935710;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JwLQENTdPffBkpFzdzONQopDme87OdDEkg8KOD7qZcw=;
-        b=FF0V4oAE5Bguxzun2Po2A3tjP3Iz+o367GrJmjxzn6Q/HkyKwmLof8tlJSdbhgMsmI
-         EkahYIPUC77n6U9xd/rsqSCqKhC8zfXbgkwriDMkbu9O9n5+faDvLxISFuewWAhUkqZK
-         n4MorGMfXHbw9q2+p/7HrUzzcvnb+zTUTb8YylC+Zi6Rjzf6Q44Htqqh2kzDKI8sMX0F
-         SfpiIt10APvW3zs+itYzYPhWuA+wonOxFctiYMYxkeSU9xBVsCP32aJAOFX5Lnfim6+N
-         cjmbx/ldCED1DYRqYWCTCXs5oKgROUIJEQhDZboSPfvIoTZDBWgR1sO5SvTP90xC6LA7
-         wBwg==
-X-Gm-Message-State: AOJu0Ywy3TcUomnes/aLLAu6rmGe7FaQiatNEYUxgspjKu5551jXasUq
-	OPPYD/pWamM3Z2DNk7fWsZ0=
-X-Google-Smtp-Source: AGHT+IEeVr/GDnsmgh2icFesJUABi9RlgouwJNRHVFKdCi31zyBc8B30a0lY4gCWixwMMJy68PcyjA==
-X-Received: by 2002:a17:903:190:b0:1d0:6ffd:ae0d with SMTP id z16-20020a170903019000b001d06ffdae0dmr2454556plg.116.1702330910099;
-        Mon, 11 Dec 2023 13:41:50 -0800 (PST)
-Received: from localhost ([98.97.32.4])
-        by smtp.gmail.com with ESMTPSA id q15-20020a170902dacf00b001cfcd2fb7b0sm7144800plx.285.2023.12.11.13.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 13:41:49 -0800 (PST)
-Date: Mon, 11 Dec 2023 13:41:48 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
- bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- paul@paul-moore.com, 
- brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- keescook@chromium.org, 
- kernel-team@meta.com, 
- sargun@sargun.me
-Message-ID: <6577821c86fab_edaa208bb@john.notmuch>
-In-Reply-To: <20231207185443.2297160-5-andrii@kernel.org>
-References: <20231207185443.2297160-1-andrii@kernel.org>
- <20231207185443.2297160-5-andrii@kernel.org>
-Subject: RE: [PATCH bpf-next 4/8] libbpf: move feature detection code into its
- own file
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8771591
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 13:43:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702331035;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4YTcprLRyl3uAtV5Q182ep8qEB4LObBk1K9I6+4+zd4=;
+	b=f1XyUNbf7qiCRNg5pyT/raJGxzjH0uQWecZPVO7coTrsWTwCC3mxwAyV16H0xayH5tPiNz
+	rwn815isSm7TV+AT473tBBussbSpJfeegXlX5MU9VXefbJ7MzvVs/g5FK7iNyRL+lJynBm
+	n1OffydpY3HoxV/o4x/IqQDX6ajrlFg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-399-teP_nNqYOkO10_fCOO2Hkg-1; Mon, 11 Dec 2023 16:43:54 -0500
+X-MC-Unique: teP_nNqYOkO10_fCOO2Hkg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E3BE2845DC2;
+	Mon, 11 Dec 2023 21:43:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id B94F32026D66;
+	Mon, 11 Dec 2023 21:43:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: torvalds@linux-foundation.org
+cc: Bill MacAllister <bill@ca-zephyr.org>,
+    David Howells <dhowells@redhat.com>,
+    Jeffrey E Altman <jaltman@auristor.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix refcount underflow from error handling race
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2793878.1702331032.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 11 Dec 2023 21:43:52 +0000
+Message-ID: <2793879.1702331032@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-Andrii Nakryiko wrote:
-> It's quite a lot of well isolated code, so it seems like a good
-> candidate to move it out of libbpf.c to reduce its size.
-> 
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> ---
->  tools/lib/bpf/Build             |   2 +-
->  tools/lib/bpf/elf.c             |   2 -
->  tools/lib/bpf/features.c        | 473 ++++++++++++++++++++++++++++++++
->  tools/lib/bpf/libbpf.c          | 463 +------------------------------
->  tools/lib/bpf/libbpf_internal.h |   2 +
->  tools/lib/bpf/str_error.h       |   3 +
->  6 files changed, 480 insertions(+), 465 deletions(-)
->  create mode 100644 tools/lib/bpf/features.c
+Hi Linus,
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Could you apply this fix, please?
+
+David
+---
+afs: Fix refcount underflow from error handling race
+
+If an AFS cell that has an unreachable (eg. ENETUNREACH) server listed (VL
+server or fileserver), an asynchronous probe to one of its addresses may
+fail immediately because sendmsg() returns an error.  When this happens, a
+refcount underflow can happen if certain events hit a very small window.
+
+The way this occurs is:
+
+ (1) There are two levels of "call" object, the afs_call and the
+     rxrpc_call.  Each of them can be transitioned to a "completed" state
+     in the event of success or failure.
+
+ (2) Asynchronous afs_calls are self-referential whilst they are active to
+     prevent them from evaporating when they're not being processed.  This
+     reference is disposed of when the afs_call is completed.
+
+     Note that an afs_call may only be completed once; once completed
+     completing it again will do nothing.
+
+ (3) When a call transmission is made, the app-side rxrpc code queues a Tx
+     buffer for the rxrpc I/O thread to transmit.  The I/O thread invokes
+     sendmsg() to transmit it - and in the case of failure, it transitions
+     the rxrpc_call to the completed state.
+
+ (4) When an rxrpc_call is completed, the app layer is notified.  In this
+     case, the app is kafs and it schedules a work item to process events
+     pertaining to an afs_call.
+
+ (5) When the afs_call event processor is run, it goes down through the
+     RPC-specific handler to afs_extract_data() to retrieve data from rxrp=
+c
+     - and, in this case, it picks up the error from the rxrpc_call and
+     returns it.
+
+     The error is then propagated to the afs_call and that is completed
+     too.  At this point the self-reference is released.
+
+ (6) If the rxrpc I/O thread manages to complete the rxrpc_call within the
+     window between rxrpc_send_data() queuing the request packet and
+     checking for call completion on the way out, then
+     rxrpc_kernel_send_data() will return the error from sendmsg() to the
+     app.
+
+ (7) Then afs_make_call() will see an error and will jump to the error
+     handling path which will attempt to clean up the afs_call.
+
+ (8) The problem comes when the error handling path in afs_make_call()
+     tries to unconditionally drop an async afs_call's self-reference.
+     This self-reference, however, may already have been dropped by
+     afs_extract_data() completing the afs_call
+
+ (9) The refcount underflows when we return to afs_do_probe_vlserver() and
+     that tries to drop its reference on the afs_call.
+
+Fix this by making afs_make_call() attempt to complete the afs_call rather
+than unconditionally putting it.  That way, if afs_extract_data() manages
+to complete the call first, afs_make_call() won't do anything.
+
+The bug can be forced by making do_udp_sendmsg() return -ENETUNREACH and
+sticking an msleep() in rxrpc_send_data() after the 'success:' label to
+widen the race window.
+
+The error message looks something like:
+
+    refcount_t: underflow; use-after-free.
+    WARNING: CPU: 3 PID: 720 at lib/refcount.c:28 refcount_warn_saturate+0=
+xba/0x110
+    ...
+    RIP: 0010:refcount_warn_saturate+0xba/0x110
+    ...
+    afs_put_call+0x1dc/0x1f0 [kafs]
+    afs_fs_get_capabilities+0x8b/0xe0 [kafs]
+    afs_fs_probe_fileserver+0x188/0x1e0 [kafs]
+    afs_lookup_server+0x3bf/0x3f0 [kafs]
+    afs_alloc_server_list+0x130/0x2e0 [kafs]
+    afs_create_volume+0x162/0x400 [kafs]
+    afs_get_tree+0x266/0x410 [kafs]
+    vfs_get_tree+0x25/0xc0
+    fc_mount+0xe/0x40
+    afs_d_automount+0x1b3/0x390 [kafs]
+    __traverse_mounts+0x8f/0x210
+    step_into+0x340/0x760
+    path_openat+0x13a/0x1260
+    do_filp_open+0xaf/0x160
+    do_sys_openat2+0xaf/0x170
+
+or something like:
+
+    refcount_t: underflow; use-after-free.
+    ...
+    RIP: 0010:refcount_warn_saturate+0x99/0xda
+    ...
+    afs_put_call+0x4a/0x175
+    afs_send_vl_probes+0x108/0x172
+    afs_select_vlserver+0xd6/0x311
+    afs_do_cell_detect_alias+0x5e/0x1e9
+    afs_cell_detect_alias+0x44/0x92
+    afs_validate_fc+0x9d/0x134
+    afs_get_tree+0x20/0x2e6
+    vfs_get_tree+0x1d/0xc9
+    fc_mount+0xe/0x33
+    afs_d_automount+0x48/0x9d
+    __traverse_mounts+0xe0/0x166
+    step_into+0x140/0x274
+    open_last_lookups+0x1c1/0x1df
+    path_openat+0x138/0x1c3
+    do_filp_open+0x55/0xb4
+    do_sys_openat2+0x6c/0xb6
+
+Fixes: 34fa47612bfe ("afs: Fix race in async call refcounting")
+Reported-by: Bill MacAllister <bill@ca-zephyr.org>
+Closes: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1052304
+Suggested-by: Jeffrey E Altman <jaltman@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/2633992.1702073229@warthog.procyon.org.uk/=
+ # v1
+---
+ fs/afs/rxrpc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
+index ed1644e7683f..d642d06a453b 100644
+--- a/fs/afs/rxrpc.c
++++ b/fs/afs/rxrpc.c
+@@ -424,7 +424,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct =
+afs_call *call, gfp_t gfp)
+ 	if (call->async) {
+ 		if (cancel_work_sync(&call->async_work))
+ 			afs_put_call(call);
+-		afs_put_call(call);
++		afs_set_call_complete(call, ret, 0);
+ 	}
+ =
+
+ 	ac->error =3D ret;
+
 
