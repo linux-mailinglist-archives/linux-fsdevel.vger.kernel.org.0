@@ -1,30 +1,30 @@
-Return-Path: <linux-fsdevel+bounces-5477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFCE80CD15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:07:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC4F80CD33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB94E281AD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:07:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A03F3B2168E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5402487BF;
-	Mon, 11 Dec 2023 14:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6204A98A;
+	Mon, 11 Dec 2023 14:07:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D714C3F;
-	Mon, 11 Dec 2023 06:07:22 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Spk8N3TFDz4f3kG7;
-	Mon, 11 Dec 2023 22:07:16 +0800 (CST)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142BC1BC;
+	Mon, 11 Dec 2023 06:07:23 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Spk8M2xyzz4f3lVW;
+	Mon, 11 Dec 2023 22:07:15 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id D84331A060E;
-	Mon, 11 Dec 2023 22:07:18 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 466A21A0961;
+	Mon, 11 Dec 2023 22:07:20 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDn6xGTF3dlDYFxDQ--.28013S4;
-	Mon, 11 Dec 2023 22:07:17 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDn6xGTF3dlDYFxDQ--.28013S5;
+	Mon, 11 Dec 2023 22:07:19 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -76,10 +76,12 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v2 for-6.8/block 00/18] block: don't access bd_inode directly from other modules
-Date: Mon, 11 Dec 2023 22:05:34 +0800
-Message-Id: <20231211140552.973290-1-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v2 for-6.8/block 01/18] block: add some bdev apis
+Date: Mon, 11 Dec 2023 22:05:35 +0800
+Message-Id: <20231211140552.973290-2-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20231211140552.973290-1-yukuai1@huaweicloud.com>
+References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,99 +89,178 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDn6xGTF3dlDYFxDQ--.28013S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr48Ww4Utw47JFWDWFW7Arb_yoW5XFWfpr
-	13KF4fGr1UWryxZaya9a17tw1rG3WkGayUWFnIy34rZFW5AryfZrWktF1rJa4kXryxXr4k
-	Xw17JryrKr1jgaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	fUojjgUUUUU
+X-CM-TRANSID:cCh0CgDn6xGTF3dlDYFxDQ--.28013S5
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw4kWFWUAr1DGF1UWF17Wrg_yoW7CryUpF
+	yUGa45JrW5Gw1Igrs2ya13Zryag3W0kF1xZa4xJ34Yk3yktr9agFZ5CwnrArWftrWkAFZr
+	XFya9rWxCr1jkFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbpuWJUU
+	UUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Changes in v2:
- - remove some bdev apis that is not necessary;
- - pass in offset for bdev_read_folio() and __bdev_get_folio();
- - remove bdev_gfp_constraint() and add a new helper in fs/buffer.c to
- prevent access bd_indoe() directly from mapping_gfp_constraint() in
- ext4.(patch 15, 16);
- - remove block_device_ejected() from ext4.
+Those apis will be used for other modules, so that bd_inode won't be
+accessed directly from other modules.
 
-Noted that following is not changed yet since v1:
-- Chirstoph suggested to remove invalidate_inode_pages2() from
-xen_update_blkif_status(), however, this sync_bdev() + invalidate_bdev()
-is used from many modules, and I'll leave this for later if we want to
-kill all of them.
-- Matthew suggested that pass in valid file_ra_state for cramfs,
-however, I don't see an easy way to do this for cramfs_lookup() and
-cramfs_read_super().
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ block/bdev.c           | 70 ++++++++++++++++++++++++++++++++++++++++++
+ block/blk.h            |  2 --
+ include/linux/blkdev.h | 17 ++++++++++
+ 3 files changed, 87 insertions(+), 2 deletions(-)
 
-Patch 1 add some bdev apis, then follow up patches will use these apis
-to avoid access bd_inode directly, and hopefully the field bd_inode can
-be removed eventually(after figure out a way for fs/buffer.c).
-
-Yu Kuai (18):
-  block: add some bdev apis
-  xen/blkback: use bdev api in xen_update_blkif_status()
-  bcache: use bdev api in read_super()
-  mtd: block2mtd: use bdev apis
-  s390/dasd: use bdev api in dasd_format()
-  scsicam: use bdev api in scsi_bios_ptable()
-  bcachefs: remove dead function bdev_sectors()
-  bio: export bio_add_folio_nofail()
-  btrfs: use bdev apis
-  cramfs: use bdev apis in cramfs_blkdev_read()
-  erofs: use bdev api
-  gfs2: use bdev api
-  nilfs2: use bdev api in nilfs_attach_log_writer()
-  jbd2: use bdev apis
-  buffer: add a new helper to read sb block
-  ext4: use new helper to read sb block
-  ext4: remove block_device_ejected()
-  ext4: use bdev apis
-
- block/bdev.c                       | 70 ++++++++++++++++++++++++++
- block/bio.c                        |  1 +
- block/blk.h                        |  2 -
- drivers/block/xen-blkback/xenbus.c |  3 +-
- drivers/md/bcache/super.c          | 11 ++--
- drivers/mtd/devices/block2mtd.c    | 81 +++++++++++++-----------------
- drivers/s390/block/dasd_ioctl.c    |  5 +-
- drivers/scsi/scsicam.c             |  4 +-
- fs/bcachefs/util.h                 |  5 --
- fs/btrfs/disk-io.c                 | 71 ++++++++++++--------------
- fs/btrfs/volumes.c                 | 17 +++----
- fs/btrfs/zoned.c                   | 15 +++---
- fs/buffer.c                        | 68 +++++++++++++++++--------
- fs/cramfs/inode.c                  | 36 +++++--------
- fs/erofs/data.c                    | 18 ++++---
- fs/erofs/internal.h                |  2 +
- fs/ext4/dir.c                      |  6 +--
- fs/ext4/ext4.h                     | 13 -----
- fs/ext4/ext4_jbd2.c                |  6 +--
- fs/ext4/inode.c                    |  8 +--
- fs/ext4/super.c                    | 66 ++++--------------------
- fs/ext4/symlink.c                  |  2 +-
- fs/gfs2/glock.c                    |  2 +-
- fs/gfs2/ops_fstype.c               |  2 +-
- fs/jbd2/journal.c                  |  3 +-
- fs/jbd2/recovery.c                 |  6 +--
- fs/nilfs2/segment.c                |  2 +-
- include/linux/blkdev.h             | 17 +++++++
- include/linux/buffer_head.h        | 18 ++++++-
- 29 files changed, 301 insertions(+), 259 deletions(-)
-
+diff --git a/block/bdev.c b/block/bdev.c
+index 750aec178b6a..9a469753eb4b 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -89,6 +89,13 @@ void invalidate_bdev(struct block_device *bdev)
+ }
+ EXPORT_SYMBOL(invalidate_bdev);
+ 
++void invalidate_bdev_range(struct block_device *bdev, pgoff_t start,
++			   pgoff_t end)
++{
++	invalidate_mapping_pages(bdev->bd_inode->i_mapping, start, end);
++}
++EXPORT_SYMBOL_GPL(invalidate_bdev_range);
++
+ /*
+  * Drop all buffers & page cache for given bdev range. This function bails
+  * with error if bdev has other exclusive owner (such as filesystem).
+@@ -121,6 +128,7 @@ int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
+ 					     lstart >> PAGE_SHIFT,
+ 					     lend >> PAGE_SHIFT);
+ }
++EXPORT_SYMBOL_GPL(truncate_bdev_range);
+ 
+ static void set_init_blocksize(struct block_device *bdev)
+ {
+@@ -1102,3 +1110,65 @@ void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
+ 
+ 	blkdev_put_no_open(bdev);
+ }
++
++struct folio *bdev_read_folio(struct block_device *bdev, loff_t pos)
++{
++	return mapping_read_folio_gfp(bdev->bd_inode->i_mapping,
++				      pos >> PAGE_SHIFT, GFP_KERNEL);
++}
++EXPORT_SYMBOL_GPL(bdev_read_folio);
++
++struct folio *__bdev_get_folio(struct block_device *bdev, loff_t pos,
++			       fgf_t fgp_flags, gfp_t gfp)
++{
++	return __filemap_get_folio(bdev->bd_inode->i_mapping, pos >> PAGE_SHIFT,
++				   fgp_flags, gfp);
++}
++EXPORT_SYMBOL_GPL(__bdev_get_folio);
++
++int bdev_wb_err_check(struct block_device *bdev, errseq_t since)
++{
++	return errseq_check(&bdev->bd_inode->i_mapping->wb_err, since);
++}
++EXPORT_SYMBOL_GPL(bdev_wb_err_check);
++
++int bdev_wb_err_check_and_advance(struct block_device *bdev, errseq_t *since)
++{
++	return errseq_check_and_advance(&bdev->bd_inode->i_mapping->wb_err,
++					since);
++}
++EXPORT_SYMBOL_GPL(bdev_wb_err_check_and_advance);
++
++void bdev_balance_dirty_pages_ratelimited(struct block_device *bdev)
++{
++	return balance_dirty_pages_ratelimited(bdev->bd_inode->i_mapping);
++}
++EXPORT_SYMBOL_GPL(bdev_balance_dirty_pages_ratelimited);
++
++void bdev_sync_readahead(struct block_device *bdev, struct file_ra_state *ra,
++			 struct file *file, pgoff_t index,
++			 unsigned long req_count)
++{
++	struct file_ra_state tmp_ra = {};
++
++	if (!ra) {
++		ra = &tmp_ra;
++		file_ra_state_init(ra, bdev->bd_inode->i_mapping);
++	}
++	page_cache_sync_readahead(bdev->bd_inode->i_mapping, ra, file, index,
++				  req_count);
++}
++EXPORT_SYMBOL_GPL(bdev_sync_readahead);
++
++void bdev_attach_wb(struct block_device *bdev)
++{
++	inode_attach_wb(bdev->bd_inode, NULL);
++}
++EXPORT_SYMBOL_GPL(bdev_attach_wb);
++
++void bdev_associated_mapping(struct block_device *bdev,
++			     struct address_space *mapping)
++{
++	mapping->host = bdev->bd_inode;
++}
++EXPORT_SYMBOL_GPL(bdev_associated_mapping);
+diff --git a/block/blk.h b/block/blk.h
+index 08a358bc0919..da4becd4f7e9 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -467,8 +467,6 @@ extern struct device_attribute dev_attr_events_poll_msecs;
+ extern struct attribute_group blk_trace_attr_group;
+ 
+ blk_mode_t file_to_blk_mode(struct file *file);
+-int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
+-		loff_t lstart, loff_t lend);
+ long blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+ long compat_blkdev_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 17c0a7d0d319..d2453424a9eb 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -24,6 +24,7 @@
+ #include <linux/sbitmap.h>
+ #include <linux/uuid.h>
+ #include <linux/xarray.h>
++#include <linux/pagemap.h>
+ 
+ struct module;
+ struct request_queue;
+@@ -1502,6 +1503,22 @@ struct block_device *blkdev_get_no_open(dev_t dev);
+ void blkdev_put_no_open(struct block_device *bdev);
+ 
+ struct block_device *I_BDEV(struct inode *inode);
++void invalidate_bdev_range(struct block_device *bdev, pgoff_t start,
++			   pgoff_t end);
++int truncate_bdev_range(struct block_device *bdev, blk_mode_t mode,
++		loff_t lstart, loff_t lend);
++struct folio *bdev_read_folio(struct block_device *bdev, loff_t pos);
++struct folio *__bdev_get_folio(struct block_device *bdev, loff_t pos,
++			       fgf_t fgp_flags, gfp_t gfp);
++int bdev_wb_err_check(struct block_device *bdev, errseq_t since);
++int bdev_wb_err_check_and_advance(struct block_device *bdev, errseq_t *since);
++void bdev_balance_dirty_pages_ratelimited(struct block_device *bdev);
++void bdev_sync_readahead(struct block_device *bdev, struct file_ra_state *ra,
++			 struct file *file, pgoff_t index,
++			 unsigned long req_count);
++void bdev_attach_wb(struct block_device *bdev);
++void bdev_associated_mapping(struct block_device *bdev,
++			     struct address_space *mapping);
+ 
+ #ifdef CONFIG_BLOCK
+ void invalidate_bdev(struct block_device *bdev);
 -- 
 2.39.2
 
