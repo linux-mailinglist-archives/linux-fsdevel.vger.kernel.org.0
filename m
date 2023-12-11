@@ -1,152 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-5543-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E0980D3F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F0380D415
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 18:37:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018091C21601
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BBC2820DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 17:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F64E625;
-	Mon, 11 Dec 2023 17:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CP3Jq4I1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDD74E61D;
+	Mon, 11 Dec 2023 17:37:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D8FEA;
-	Mon, 11 Dec 2023 09:35:45 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id 5614622812f47-3b9e2a014e8so3139960b6e.2;
-        Mon, 11 Dec 2023 09:35:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702316145; x=1702920945; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M/fg+fv8iUKsYhs2M+RJ0ajm1ojAT51bfa8djh97RvU=;
-        b=CP3Jq4I1Y02qHoqb0qWcgX0JAcPeAVZkT/zrigeAZ63XjOtvmaFoaRPOCh8oGdle/E
-         659t0Cqq9vwxfVzUnZEYkujXvjenFSymFnF2wn5KMkozGqr5VAEkRG4WlLyW6qSrkJpR
-         ZiMwSfge/HSBrgaQeXoCKiaH0gA5DMWKBzfS8IuoYqortNoBw4stEkLTMwT60HdryXyQ
-         GeGxxvBtOSCoCwhz/OOw+onOAKkeI1M152kgV3xzm6VeyJpIKtRKIDZBNxKA1PEyGwcf
-         sdb6SxfnnbCojImLFcgufskb9jZL4zv0rFZRqHyDh4LTWKrxDisbCacPZ+g8PJQdSCo6
-         lc7Q==
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BC6123;
+	Mon, 11 Dec 2023 09:37:38 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50dfac6c0beso1824971e87.2;
+        Mon, 11 Dec 2023 09:37:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702316145; x=1702920945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1702316257; x=1702921057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M/fg+fv8iUKsYhs2M+RJ0ajm1ojAT51bfa8djh97RvU=;
-        b=YUhCcYXwQUqIJx4Lkbd/hlMATx7JbBIvW3oOzMq6bHBZUODq5nU5sH05YJK4hzCTbY
-         8w3Cas9sOuWDPN/YSVTxDTGJf5xfo0ZwBU80+/yQ5eSQNGhPBQKEp1UxW2kS+5+/ffoZ
-         4+5+CN2So8iix7pQTU3+yO9QbnH3ftpEFCtQTEdfXt0gvAICQH10koS8J07vBmsqrkzK
-         aFOmgv2gD1/VeOcdBtBBD34vUp+VOOOJz9hSBFw1IVXyKwG36TgXxqzm0fv7jpdLItt4
-         133aBOeDtSF3xxD2UELtO+JIKFaFVe8u0nsu7ca8wgClnR7fihy01yA0qg6kvhxj2YIN
-         UicA==
-X-Gm-Message-State: AOJu0YxnsiFvHrrYl7oFnNwzzIs9/IUe+Gjs5b4wISiEyTr0Qu6CMb8V
-	6x9128CNQhUVJhIpn8x0GIQ=
-X-Google-Smtp-Source: AGHT+IGbDAuC5iH0V8rKYwviDyoY8ZqTEAItte85iztX5xcFqTiwSYA17QemR1kL/yaaXqa4VTm8ew==
-X-Received: by 2002:a05:6359:2d02:b0:16e:29eb:98c8 with SMTP id rl2-20020a0563592d0200b0016e29eb98c8mr2011101rwb.30.1702316144995;
-        Mon, 11 Dec 2023 09:35:44 -0800 (PST)
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
-        by smtp.gmail.com with ESMTPSA id i19-20020a056214031300b0067aa164861dsm3467797qvu.35.2023.12.11.09.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 09:35:44 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailauth.nyi.internal (Postfix) with ESMTP id E6B6A27C005B;
-	Mon, 11 Dec 2023 12:35:43 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 11 Dec 2023 12:35:43 -0500
-X-ME-Sender: <xms:b0h3ZWIE9Yx7UGpn71fZAxZX0HGg4FpbWLeNvatVYsHtlI9MfS2HXw>
-    <xme:b0h3ZeIFkXRRQAI4ffLDQBsIVxj7aRkAq9sHq82eX8drH5G_JdRQmPSmxzB4wzmJ0
-    EcYzaDSd47NCxaYIQ>
-X-ME-Received: <xmr:b0h3ZWvlwExWXMUANLm9vi_qtr7Mr0mpo4kFxAUSQkGozewojwigSVK9NJQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelvddguddthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
-    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
-    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
-    higihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:b0h3ZbY8x4kxdTb793RGNUqtreNFBYEDz_Q58q1IHpHp1QJi2cp2wg>
-    <xmx:b0h3ZdYhbLLNLQpl40sVkGsURrGwBKMPC0gPqvy8-47u-uUJv-BzNw>
-    <xmx:b0h3ZXBIn2Sg4kV8292WFXKiqxnQxTij-1LTv3biM_I2vcAXeTqfLw>
-    <xmx:b0h3ZaRVAf13DBbJgyJmPBC7MynptnzRLYnuMgV3gMCc_4nakVOLLg>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Dec 2023 12:35:42 -0500 (EST)
-Date: Mon, 11 Dec 2023 09:35:40 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com,
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com,
-	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
-	joel@joelfernandes.org, keescook@chromium.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
-	rust-for-linux@vger.kernel.org, surenb@google.com,
-	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk,
-	wedsonaf@gmail.com, willy@infradead.org
-Subject: Re: [PATCH v2 2/7] rust: cred: add Rust abstraction for `struct cred`
-Message-ID: <ZXdIbEqSCTO62BHE@boqun-archlinux>
-References: <ZXZjoOrO5q7no4or@boqun-archlinux>
- <20231211153429.4161511-1-aliceryhl@google.com>
+        bh=Vq+VT1yoNILYRnVYlXhIlgVV3TQoNuR0AWtL0JI09is=;
+        b=QiI/UkQv7mV95XzCPICO7aO2jhtYILNOdk2PcvVPAnTsCahBAuQeFl9GZr7GYbAKfQ
+         8zGTEmqmbo3+znWKbuxr+PDKPp0XVO4Ts94o0PzqQhWcuMG9/uj2Ga5EkaZQ4dU2rlko
+         WYz2TArp9dgf5yiOr5lFJUDFELmqj+my6IAJYV/0CheGb1zyxRCq4aYVxLFsZxn/yF9Y
+         95tQ7RZz/ixzlpky6YBhwNL6GuXIb2bMaDIU7Mekua97Ji3O23ZQSXwDLDVxjB/9FLzy
+         KalpmprGs861mpIHtngE9Vgjcj5d1Ei1QlsoI+TOwtuBjSKQlhUVsRbW/gr0OCPsHm+N
+         wjEQ==
+X-Gm-Message-State: AOJu0YxRNved6N6Wu0N/13MRWHFZqVQTxuXaYJfswpOSlEuu64ceSfsz
+	CylDshP/Q+ZgpcmSKqFzohZXJYLS47Txs3sxqhw=
+X-Google-Smtp-Source: AGHT+IEpL3HwYdodNmXK64xmycgt8LjdEl6qA7Mj1X3e8066G/U6GTY9ZLc39vLD67XcJ17bcvHzAg==
+X-Received: by 2002:a05:6512:6c7:b0:50c:d72:2010 with SMTP id u7-20020a05651206c700b0050c0d722010mr2686236lff.121.1702316256502;
+        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id c1-20020a056512104100b0050ab696bfaasm1142468lfb.3.2023.12.11.09.37.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50bfa7f7093so6063439e87.0;
+        Mon, 11 Dec 2023 09:37:36 -0800 (PST)
+X-Received: by 2002:ac2:4892:0:b0:50c:20f3:2a3 with SMTP id
+ x18-20020ac24892000000b0050c20f302a3mr2287048lfc.6.1702316256037; Mon, 11 Dec
+ 2023 09:37:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231211153429.4161511-1-aliceryhl@google.com>
+References: <20231211163412.2766147-1-dhowells@redhat.com> <20231211163412.2766147-3-dhowells@redhat.com>
+In-Reply-To: <20231211163412.2766147-3-dhowells@redhat.com>
+From: Marc Dionne <marc.dionne@auristor.com>
+Date: Mon, 11 Dec 2023 13:37:24 -0400
+X-Gmail-Original-Message-ID: <CAB9dFdsCnAeitHcNJRY+f8eG=exrgpBZpczfMhHHXLvCR32MaA@mail.gmail.com>
+Message-ID: <CAB9dFdsCnAeitHcNJRY+f8eG=exrgpBZpczfMhHHXLvCR32MaA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] afs: Fix dynamic root lookup DNS check
+To: David Howells <dhowells@redhat.com>
+Cc: Markus Suvanto <markus.suvanto@gmail.com>, linux-afs@lists.infradead.org, 
+	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 11, 2023 at 03:34:29PM +0000, Alice Ryhl wrote:
-> Boqun Feng <boqun.feng@gmail.com> writes:
-> > On Wed, Dec 06, 2023 at 11:59:47AM +0000, Alice Ryhl wrote:
-> > [...]
-> > > @@ -151,6 +152,21 @@ pub fn as_ptr(&self) -> *mut bindings::file {
-> > >          self.0.get()
-> > >      }
-> > >  
-> > > +    /// Returns the credentials of the task that originally opened the file.
-> > > +    pub fn cred(&self) -> &Credential {
-> > 
-> > I wonder whether it would be helpful if we use explicit lifetime here:
-> > 
-> >     pub fn cred<'file>(&'file self) -> &'file Credential
-> > 
-> > It might be easier for people to get. For example, the lifetime of the
-> > returned Credential reference is constrainted by 'file, the lifetime of
-> > the file reference.
-> > 
-> > But yes, maybe need to hear others' feedback first.
-> > 
-> > Regards,
-> > Boqun
-> 
-> That would trigger a compiler warning because the lifetime is
-> unnecessary.
-> 
+On Mon, Dec 11, 2023 at 12:34=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> In the afs dynamic root directory, the ->lookup() function does a DNS che=
+ck
+> on the cell being asked for and if the DNS upcall reports an error it wil=
+l
+> report an error back to userspace (typically ENOENT).
+>
+> However, if a failed DNS upcall returns a new-style result, it will retur=
+n
+> a valid result, with the status field set appropriately to indicate the
+> type of failure - and in that case, dns_query() doesn't return an error a=
+nd
+> we let stat() complete with no error - which can cause confusion in
+> userspace as subsequent calls that trigger d_automount then fail with
+> ENOENT.
+>
+> Fix this by checking the status result from a valid dns_query() and
+> returning an error if it indicates a failure.
+>
+> Fixes: bbb4c4323a4d ("dns: Allow the dns resolver to retrieve a server se=
+t")
+> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216637
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
+> ---
+>  fs/afs/dynroot.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+> index 34474a061654..4089d77a7a4d 100644
+> --- a/fs/afs/dynroot.c
+> +++ b/fs/afs/dynroot.c
+> @@ -114,6 +114,7 @@ static int afs_probe_cell_name(struct dentry *dentry)
+>         struct afs_net *net =3D afs_d2net(dentry);
+>         const char *name =3D dentry->d_name.name;
+>         size_t len =3D dentry->d_name.len;
+> +       char *result =3D NULL;
+>         int ret;
+>
+>         /* Names prefixed with a dot are R/W mounts. */
+> @@ -131,9 +132,22 @@ static int afs_probe_cell_name(struct dentry *dentry=
+)
+>         }
+>
+>         ret =3D dns_query(net->net, "afsdb", name, len, "srv=3D1",
+> -                       NULL, NULL, false);
+> -       if (ret =3D=3D -ENODATA || ret =3D=3D -ENOKEY)
+> +                       &result, NULL, false);
+> +       if (ret =3D=3D -ENODATA || ret =3D=3D -ENOKEY || ret =3D=3D 0)
+>                 ret =3D -ENOENT;
+> +       if (ret >=3D sizeof(struct dns_server_list_v1_header)) {
 
-We can disable that warning if people need the information. Code is
-mostly for reading, less often for compilation and changes.
+This needs an additional ret > 0 check, as the comparison may return
+true with a negative ret if it gets promoted to an unsigned.
 
-> The safety comment explains what the signature means. I think that
-> should be enough.
-> 
+> +               struct dns_server_list_v1_header *v1 =3D (void *)result;
+> +
+> +               if (v1->hdr.zero =3D=3D 0 &&
+> +                   v1->hdr.content =3D=3D DNS_PAYLOAD_IS_SERVER_LIST &&
+> +                   v1->hdr.version =3D=3D 1 &&
+> +                   (v1->status !=3D DNS_LOOKUP_GOOD &&
+> +                    v1->status !=3D DNS_LOOKUP_GOOD_WITH_BAD))
+> +                       return -ENOENT;
+> +
+> +       }
+> +
+> +       kfree(result);
+>         return ret;
+>  }
 
-For someone who has a good understanding of Rust lifetime (and the
-elision), yes. But I'm wondering whether all the people feel the same
-way.
-
-Regards,
-Boqun
-
-> Alice
+Marc
 
