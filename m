@@ -1,133 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-5594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55D280DF8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:32:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7105780DF99
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66281B215AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC1D2826A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 23:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A1B5676C;
-	Mon, 11 Dec 2023 23:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9025676E;
+	Mon, 11 Dec 2023 23:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n+7ae+m9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="En3FVU8H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [IPv6:2001:41d0:203:375::b0])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C0ECB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 15:32:36 -0800 (PST)
-Date: Mon, 11 Dec 2023 18:32:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702337554;
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E8FCF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 15:40:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702338023;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Wxovv5SVt/JRYz/4ndFTxe3W8eaNQpCfYkKewjXWTHY=;
-	b=n+7ae+m9mvLKsYh+IktU5paZ1ry5vyX8VbtkzCp1dgA3ATkKnu96wdB7VbFNupxzH5gXif
-	In5mUWHVHYnD/jAjXKUe8WyNYOG1K5mpCu6q4yik0XJZmvy8WMeFA1rv2so9mL407kXQPx
-	T12zad43G0t/JvJUVMJjuAkiU6Vn34k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: NeilBrown <neilb@suse.de>
-Cc: Donald Buczek <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
-	Stefan Krueger <stefan.krueger@aei.mpg.de>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-Message-ID: <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
-References: <12f711f9-70a2-408e-8588-2839e599b668@molgen.mpg.de>
- <170181366042.7109.5045075782421670339@noble.neil.brown.name>
- <97375d00-4bf7-4c4f-96ec-47f4078abb3d@molgen.mpg.de>
- <170199821328.12910.289120389882559143@noble.neil.brown.name>
- <20231208013739.frhvlisxut6hexnd@moria.home.lan>
- <170200162890.12910.9667703050904306180@noble.neil.brown.name>
- <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
- <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
- <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
- <170233460764.12910.276163802059260666@noble.neil.brown.name>
+	bh=obt9erShmifbxfTVwB/4/79H5BqitQ1XmDr9oZuepQo=;
+	b=En3FVU8HeKQZo1k+DTJ5OYFe8C+bWH1tt3c1pkR2XHIEvU0xi4o5PpUfq27WhrwYQ8Gk68
+	6NjsrkV8sSyuhDhcXKNzs7+ZqCSC+9BRXRSI7uTWGnkcLeYNYMA3r0c8TawoLZMIhTTNTz
+	y3FIylKC0fd8ZOTmrfT9XW1m4sFZ+Eo=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-391-QWupS-0EPHKHCPioHCt1xw-1; Mon,
+ 11 Dec 2023 18:40:18 -0500
+X-MC-Unique: QWupS-0EPHKHCPioHCt1xw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6BFFA3C36AE6;
+	Mon, 11 Dec 2023 23:40:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 2A50F2166B32;
+	Mon, 11 Dec 2023 23:40:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+References: <20231211233231.oiazgkqs7yahruuw@moria.home.lan> <12f711f9-70a2-408e-8588-2839e599b668@molgen.mpg.de> <170181366042.7109.5045075782421670339@noble.neil.brown.name> <97375d00-4bf7-4c4f-96ec-47f4078abb3d@molgen.mpg.de> <170199821328.12910.289120389882559143@noble.neil.brown.name> <20231208013739.frhvlisxut6hexnd@moria.home.lan> <170200162890.12910.9667703050904306180@noble.neil.brown.name> <20231208024919.yjmyasgc76gxjnda@moria.home.lan> <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de> <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan> <170233460764.12910.276163802059260666@noble.neil.brown.name>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: dhowells@redhat.com, NeilBrown <neilb@suse.de>,
+    Donald Buczek <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
+    Stefan Krueger <stefan.krueger@aei.mpg.de>,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and snapshots on muti-user systems?)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170233460764.12910.276163802059260666@noble.neil.brown.name>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2799306.1702338016.1@warthog.procyon.org.uk>
+Date: Mon, 11 Dec 2023 23:40:16 +0000
+Message-ID: <2799307.1702338016@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Tue, Dec 12, 2023 at 09:43:27AM +1100, NeilBrown wrote:
-> On Sat, 09 Dec 2023, Kent Overstreet wrote:
-> > On Fri, Dec 08, 2023 at 12:34:28PM +0100, Donald Buczek wrote:
-> > > On 12/8/23 03:49, Kent Overstreet wrote:
-> > > 
-> > > > We really only need 6 or 7 bits out of the inode number for sharding;
-> > > > then 20-32 bits (nobody's going to have a billion snapshots; a million
-> > > > is a more reasonable upper bound) for the subvolume ID leaves 30 to 40
-> > > > bits for actually allocating inodes out of.
-> > > > 
-> > > > That'll be enough for the vast, vast majority of users, but exceeding
-> > > > that limit is already something we're technically capable of: we're
-> > > > currently seeing filesystems well over 100 TB, petabyte range expected
-> > > > as fsck gets more optimized and online fsck comes.
-> > > 
-> > > 30 bits would not be enough even today:
-> > > 
-> > > buczek@done:~$ df -i /amd/done/C/C8024
-> > > Filesystem         Inodes     IUsed      IFree IUse% Mounted on
-> > > /dev/md0       2187890304 618857441 1569032863   29% /amd/done/C/C8024
-> > > 
-> > > So that's 32 bit on a random production system ( 618857441 == 0x24e303e1 ).
-> 
-> only 30 bits though.  So it is a long way before you use all 32 bits.
-> How many volumes do you have?
-> 
-> > > 
-> > > And if the idea to produce unique inode numbers by hashing the filehandle into 64 is followed, collisions definitely need to be addressed. With 618857441 objects, the probability of a hash collision with 64 bit is already over 1% [1].
-> > 
-> > Oof, thanks for the data point. Yeah, 64 bits is clearly not enough for
-> > a unique identifier; time to start looking at how to extend statx.
-> > 
-> 
-> 64 should be plenty...
-> 
-> If you have 32 bits for free allocation, and 7 bits for sharding across
-> 128 CPUs, then you can allocate many more than 4 billion inodes.  Maybe
-> not the full 500 billion for 39 bits, but if you actually spread the
-> load over all the shards, then certainly tens of billions.
-> 
-> If you use 22 bits for volume number and 42 bits for inodes in a volume,
-> then you can spend 7 on sharding and still have room for 55 of Donald's
-> filesystems to be allocated by each CPU.
-> 
-> And if Donald only needs thousands of volumes, not millions, then he
-> could configure for a whole lot more headroom.
-> 
-> In fact, if you use the 64 bits of vfs_inode number by filling in bits from
-> the fs-inode number from one end, and bits from the volume number from
-> the other end, then you don't need to pre-configure how the 64 bits are
-> shared.
-> You record inum-bits and volnum bits in the filesystem metadata, and
-> increase either as needed.  Once the sum hits 64, you start returning
-> ENOSPC for new files or new volumes.
-> 
-> There will come a day when 64 bits is not enough for inodes in a single
-> filesystem.  Today is not that day.
+Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-Except filesystems are growing all the time: that leaves almost no room
-for growth and then we're back in the world where users had to guess how
-many inodes they were going to need in their filesystem; and if we put
-this off now we're just kicking the can down the road until when it
-becomes really pressing and urgent to solve.
+> I was chatting a bit with David Howells on IRC about this, and floated
+> adding the file handle to statx. It looks like there's enough space
+> reserved to make this feasible - probably going with a fixed maximum
+> size of 128-256 bits.
 
-No, we need to come up with something better.
+We can always save the last bit to indicate extension space/extension record,
+so we're not that strapped for space.
 
-I was chatting a bit with David Howells on IRC about this, and floated
-adding the file handle to statx. It looks like there's enough space
-reserved to make this feasible - probably going with a fixed maximum
-size of 128-256 bits.
+David
 
-Thoughts?
 
