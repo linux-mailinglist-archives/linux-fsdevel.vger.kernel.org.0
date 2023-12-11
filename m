@@ -1,169 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-5475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8726080C9C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 13:30:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFCE80CD15
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 15:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153A11F216DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 12:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB94E281AD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 14:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D5E3B7AD;
-	Mon, 11 Dec 2023 12:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uSQ9GuT9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WlYGjskX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OOJzuaHa";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6WZ11VbI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5402487BF;
+	Mon, 11 Dec 2023 14:07:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F540101;
-	Mon, 11 Dec 2023 04:30:20 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E42451FB8A;
-	Mon, 11 Dec 2023 12:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702297818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
-	b=uSQ9GuT9OV1qMWqEr5Jk27bRTbNJDxoDrmDMomPeMkSB1ToLPUvYnyC6oPxYKT54MrY2dR
-	hPbblSXwWVc0TueJtj8S5dGOqAaEO2m71ZEEdyMscQfKxTSWBwj4AMBLNWEKnNoI8Vi1X6
-	CHBJdr/ZXUsVEzPghOVVFCBYMgWUcrU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702297818;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
-	b=WlYGjskXnZHv3rmOSP3P0ZFcW4lu/7dwcr5k3rbnObRvPZIU5Lb4XIana9QVf3fzWGwk6/
-	85YuEvPNPngoazDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702297816; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
-	b=OOJzuaHayNm/cjYIFgcNZ80dtLxJDbDCGQQDrBesaDeeSTf22pOlILv4AgScPwQRP4i0yl
-	vgu0k9Y8VdVmybHYQjhksmmamBKkGvu1c0qc4haS/jVBmFgWHf15FafzJdpX3Df+REzAQ4
-	BAiZzQOKK6cdGzsdaf9j+a5WliDyu7c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702297816;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pV78XzILgikwq9fxdiYEdF0PF3nysXH8O8vZMrG/+P0=;
-	b=6WZ11VbIXreZyDmns+xURE6vpolRTcYuydR0ADViB4/g+Lp76JGdz0+yVfvfJXR/S6AVWU
-	DveKn1TQD9/20LAQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id D102A138FF;
-	Mon, 11 Dec 2023 12:30:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id n9WxMtgAd2XlRQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 11 Dec 2023 12:30:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 765A2A07E3; Mon, 11 Dec 2023 13:30:12 +0100 (CET)
-Date: Mon, 11 Dec 2023 13:30:12 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] eventfd: Remove usage of the deprecated ida_simple_xx()
- API
-Message-ID: <20231211123012.mrxfakg2wxdlsthb@quack3>
-References: <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D714C3F;
+	Mon, 11 Dec 2023 06:07:22 -0800 (PST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Spk8N3TFDz4f3kG7;
+	Mon, 11 Dec 2023 22:07:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id D84331A060E;
+	Mon, 11 Dec 2023 22:07:18 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDn6xGTF3dlDYFxDQ--.28013S4;
+	Mon, 11 Dec 2023 22:07:17 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	roger.pau@citrix.com,
+	colyli@suse.de,
+	kent.overstreet@gmail.com,
+	joern@lazybastard.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	sth@linux.ibm.com,
+	hoeppner@linux.ibm.com,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	nico@fluxnic.net,
+	xiang@kernel.org,
+	chao@kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	agruenba@redhat.com,
+	jack@suse.com,
+	konishi.ryusuke@gmail.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	p.raghav@samsung.com,
+	hare@suse.de
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-nilfs@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC v2 for-6.8/block 00/18] block: don't access bd_inode directly from other modules
+Date: Mon, 11 Dec 2023 22:05:34 +0800
+Message-Id: <20231211140552.973290-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <575dcecd51097dd30c5515f9f0ed92076b4ef403.1702229520.git.christophe.jaillet@wanadoo.fr>
-X-Spam-Level: 
-X-Spam-Score: -0.93
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -0.93
-X-Spamd-Result: default: False [-0.93 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[wanadoo.fr];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FREEMAIL_TO(0.00)[wanadoo.fr];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.13)[67.30%]
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDn6xGTF3dlDYFxDQ--.28013S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr48Ww4Utw47JFWDWFW7Arb_yoW5XFWfpr
+	13KF4fGr1UWryxZaya9a17tw1rG3WkGayUWFnIy34rZFW5AryfZrWktF1rJa4kXryxXr4k
+	Xw17JryrKr1jgaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	fUojjgUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun 10-12-23 18:32:18, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Yu Kuai <yukuai3@huawei.com>
 
-Looks good. Feel free to add:
+Changes in v2:
+ - remove some bdev apis that is not necessary;
+ - pass in offset for bdev_read_folio() and __bdev_get_folio();
+ - remove bdev_gfp_constraint() and add a new helper in fs/buffer.c to
+ prevent access bd_indoe() directly from mapping_gfp_constraint() in
+ ext4.(patch 15, 16);
+ - remove block_device_ejected() from ext4.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Noted that following is not changed yet since v1:
+- Chirstoph suggested to remove invalidate_inode_pages2() from
+xen_update_blkif_status(), however, this sync_bdev() + invalidate_bdev()
+is used from many modules, and I'll leave this for later if we want to
+kill all of them.
+- Matthew suggested that pass in valid file_ra_state for cramfs,
+however, I don't see an easy way to do this for cramfs_lookup() and
+cramfs_read_super().
 
-								Honza
+Patch 1 add some bdev apis, then follow up patches will use these apis
+to avoid access bd_inode directly, and hopefully the field bd_inode can
+be removed eventually(after figure out a way for fs/buffer.c).
 
-> ---
->  fs/eventfd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index 16bea05a7c78..ad8186d47ba7 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -82,7 +82,7 @@ EXPORT_SYMBOL_GPL(eventfd_signal_mask);
->  static void eventfd_free_ctx(struct eventfd_ctx *ctx)
->  {
->  	if (ctx->id >= 0)
-> -		ida_simple_remove(&eventfd_ida, ctx->id);
-> +		ida_free(&eventfd_ida, ctx->id);
->  	kfree(ctx);
->  }
->  
-> @@ -395,7 +395,7 @@ static int do_eventfd(unsigned int count, int flags)
->  	init_waitqueue_head(&ctx->wqh);
->  	ctx->count = count;
->  	ctx->flags = flags;
-> -	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-> +	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
->  
->  	flags &= EFD_SHARED_FCNTL_FLAGS;
->  	flags |= O_RDWR;
-> -- 
-> 2.34.1
-> 
+Yu Kuai (18):
+  block: add some bdev apis
+  xen/blkback: use bdev api in xen_update_blkif_status()
+  bcache: use bdev api in read_super()
+  mtd: block2mtd: use bdev apis
+  s390/dasd: use bdev api in dasd_format()
+  scsicam: use bdev api in scsi_bios_ptable()
+  bcachefs: remove dead function bdev_sectors()
+  bio: export bio_add_folio_nofail()
+  btrfs: use bdev apis
+  cramfs: use bdev apis in cramfs_blkdev_read()
+  erofs: use bdev api
+  gfs2: use bdev api
+  nilfs2: use bdev api in nilfs_attach_log_writer()
+  jbd2: use bdev apis
+  buffer: add a new helper to read sb block
+  ext4: use new helper to read sb block
+  ext4: remove block_device_ejected()
+  ext4: use bdev apis
+
+ block/bdev.c                       | 70 ++++++++++++++++++++++++++
+ block/bio.c                        |  1 +
+ block/blk.h                        |  2 -
+ drivers/block/xen-blkback/xenbus.c |  3 +-
+ drivers/md/bcache/super.c          | 11 ++--
+ drivers/mtd/devices/block2mtd.c    | 81 +++++++++++++-----------------
+ drivers/s390/block/dasd_ioctl.c    |  5 +-
+ drivers/scsi/scsicam.c             |  4 +-
+ fs/bcachefs/util.h                 |  5 --
+ fs/btrfs/disk-io.c                 | 71 ++++++++++++--------------
+ fs/btrfs/volumes.c                 | 17 +++----
+ fs/btrfs/zoned.c                   | 15 +++---
+ fs/buffer.c                        | 68 +++++++++++++++++--------
+ fs/cramfs/inode.c                  | 36 +++++--------
+ fs/erofs/data.c                    | 18 ++++---
+ fs/erofs/internal.h                |  2 +
+ fs/ext4/dir.c                      |  6 +--
+ fs/ext4/ext4.h                     | 13 -----
+ fs/ext4/ext4_jbd2.c                |  6 +--
+ fs/ext4/inode.c                    |  8 +--
+ fs/ext4/super.c                    | 66 ++++--------------------
+ fs/ext4/symlink.c                  |  2 +-
+ fs/gfs2/glock.c                    |  2 +-
+ fs/gfs2/ops_fstype.c               |  2 +-
+ fs/jbd2/journal.c                  |  3 +-
+ fs/jbd2/recovery.c                 |  6 +--
+ fs/nilfs2/segment.c                |  2 +-
+ include/linux/blkdev.h             | 17 +++++++
+ include/linux/buffer_head.h        | 18 ++++++-
+ 29 files changed, 301 insertions(+), 259 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.2
+
 
