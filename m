@@ -1,173 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-5447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A818080BEB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 02:21:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AED680BEEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 03:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07257280C3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 01:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4981F20F3C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 02:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E3A8813;
-	Mon, 11 Dec 2023 01:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8396E11C8C;
+	Mon, 11 Dec 2023 02:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdBqw7yy"
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="bNGNFcwK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15AFED;
-	Sun, 10 Dec 2023 17:20:50 -0800 (PST)
-Received: by mail-qk1-x732.google.com with SMTP id af79cd13be357-77f552d4179so146145585a.1;
-        Sun, 10 Dec 2023 17:20:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702257650; x=1702862450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uuz0jwb3PNQkrLULfff6ouksNMtSPtItSVdeK1cdQGc=;
-        b=TdBqw7yyWm8e4PSZC8RkkJuQKv+WvgbrlMhMIGBhK2c5d/zji503YA6MMETsSmFQ18
-         KpzUu5SanjjU/Bpg20H9f+F/ghJjJPbLmrvyyVlPU40fFh3GYeXz0W5xVWiD485Sxgef
-         gaM4vqyNNJ0qqHM1RaKvGeyZQcQkk7F9SPpl1xsS04p2xW9AFabRwXcUO4W4GiibBVpq
-         3j4OwYqClQZKljckgRczi6aTCk31WQi7txKcUuwlf1UJZscDcEPZ14QGqz3YzHGRdyLo
-         MNQcIC+fiVRuWiQ4rAqNqDEljCkXinq9/Q0FzxgYeef44ObQPIVsRpOOZHe9iNbUDVr/
-         Y2CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702257650; x=1702862450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uuz0jwb3PNQkrLULfff6ouksNMtSPtItSVdeK1cdQGc=;
-        b=oX2XwKUar9zrVKlWm9UAEfRbdaY5SW89TZedSZKBUEwgBmhdsGhGkwMq/KbaMfukI2
-         szdodmxCj9qFwg9AtxuL2aBHKb2DKUaAhEVfeg4ONtI3TzikWDXLOBrYNRIIPzfpDvlR
-         p3TdACaexNQvNLBR10IUza/uF2n10f7/jeyE/854hWEItoo/zn2jq8jfoQZMeyqLvmqa
-         jAK5tOH6SAVi2mI+nk6DgB3dxs2pBH2OenOn83dRiGC5/UFIibOJRjpnaSJSPeKqHo3K
-         as6UsNsvdTydr3CFJbXLKiYtpOaqF2ric9RRa0Ab7c2r+S+9nHXoRS5rcUXsd07dAazX
-         vWAg==
-X-Gm-Message-State: AOJu0YyW2Go8HM6XYYb/yf3UdrdoWLy88PA0i3sjVv3rlCUQ1ZGWuVVy
-	zhCDyr/gaKcQCqIyuIVrrxc=
-X-Google-Smtp-Source: AGHT+IG2YneOH1fjVBLNsKVjeTO1Qmpnmz9N5QGIlgYQK4gwUQlL72tTSLGo67HZ3XBLoMoCCzXdPQ==
-X-Received: by 2002:a05:620a:a58:b0:77f:69ed:7f40 with SMTP id j24-20020a05620a0a5800b0077f69ed7f40mr2501765qka.7.1702257649715;
-        Sun, 10 Dec 2023 17:20:49 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id ov11-20020a05620a628b00b0077d7e9a134bsm2505634qkn.129.2023.12.10.17.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 17:20:49 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailauth.nyi.internal (Postfix) with ESMTP id BDCE127C0054;
-	Sun, 10 Dec 2023 20:20:48 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sun, 10 Dec 2023 20:20:48 -0500
-X-ME-Sender: <xms:72N2ZWH4OqLhoJjPIu-xBvNG1v1zh5JUCVUiIYRevqTwampQ8LPuDA>
-    <xme:72N2ZXUDpW0JpLk2NqST1PDbvVCRwbmvSfa1hIp4lnB0qSEc9z5TDM0WXqz0G2Zzc
-    g-S2vOjbDC70WmVGQ>
-X-ME-Received: <xmr:72N2ZQLvmY1VITeM4l9iKaEl6wLLzVzYcPZ2P5n5NiFb7uf5YFci8VfX7gs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeluddgfeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:72N2ZQH8Ae7bUawVz7AvMbaSHc_NeDP9SDt4qb4ksz8_kx3CErPCMg>
-    <xmx:72N2ZcX2cIrtHyoVYeBKE05njYXgchs20UDdwdau7PiJwb_WC9w2DQ>
-    <xmx:72N2ZTOsUETvW2YTjIs0-9juNf4RpCwIZGSqLr80gstqnrWDaiUyXA>
-    <xmx:8GN2ZW-W_Fvq1hey4YOUfIuyPEL3g1x2PM7lmJ5o2fUQC6IyleGmXA>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 10 Dec 2023 20:20:46 -0500 (EST)
-Date: Sun, 10 Dec 2023 17:19:28 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] rust: cred: add Rust abstraction for `struct cred`
-Message-ID: <ZXZjoOrO5q7no4or@boqun-archlinux>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-2-af617c0d9d94@google.com>
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7D0BD
+	for <linux-fsdevel@vger.kernel.org>; Sun, 10 Dec 2023 18:12:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1702260753;
+	bh=6TWFxPY1kUlhrSWgrINRe1DqApRnIQlS+gpND9Ta4MI=;
+	h=From:To:Cc:Subject:Date;
+	b=bNGNFcwK+cCvY5Bu6pI/ki6FkCB75KUqpRCr6UeQi+kyhtwX5dDlYON9aS+lDPGJH
+	 0ZB67Xg+pEvci9Xqfrx+sy72ZFl0s7qHxCAVZ367eNCh+p/8SLNbIghTJ9DC+wcFOg
+	 SFZ1lDAl36Xu4LCRdoKEY4clt9E3lr3GR7pB1L3U=
+Received: from localhost.localdomain ([220.196.194.33])
+	by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+	id 2A51BCD8; Mon, 11 Dec 2023 10:10:37 +0800
+X-QQ-mid: xmsmtpt1702260637t60bu86yh
+Message-ID: <tencent_9AC493050A340C4EE35C545385FDC0D29B09@qq.com>
+X-QQ-XMAILINFO: NUygYfydBsqcb3RjFTZfd+hMyAWVMrMbUpnpZtEylnHCuGFyeu4Cr8WJpqXXlA
+	 Ot/eb9fV7Xu9qL3AYFvliWsPdrdbSvUZeq3YDd1J3+AZQ7Lfh2jgLcA5yex/gLG0XNIXcoM65qZm
+	 hxwb8A16MXDLUj3YOvrMtZ15cbc0Ta5V0MPWMjM22jxY32LQ+xja4am36LGGhV0UKv+NLemyyxeO
+	 q7LyDiz/PP0wT3fFNQu+EnktsTHP31S1P6f1p3MePV4a3ZrmCPtUq1k/Kg2D7XcoFTVR9pF3PYUC
+	 lVJDZuyP7sggqzc4laleVc/sPLAZp1AmVp7QRcBD831zOfNs2cWOZQOnyOkLlwa6s3UXtmqQ6Gi6
+	 ksE9PRIqcGjHnCUQVHDnVEJaX148yXRw8iReY8iygcWOcArO6YpzDAWhw0W2A0zxbWPN2Uv/a2C1
+	 IqTbr/IGKFEz1lf+H4IY+0BxUAA3rgzyNnVOvseCUCqgOkhAXBR5/NjvoQblxJabwqSqq2NKnOGw
+	 Ncly2D5KZ0gdVIg+S7ml8OB/4rQ8VGUwp5CljZUEKbWkzOtd+R05QAxHpoL0b3OhYUjFX3GkKFCa
+	 It5kX8T1jjeyzPYEUztKSUwlA/L0xSUNulbxDqXjULc+m5novD8gRKelmQenq7EmDcfQq2lQjpSZ
+	 qOfnps2W5LyCeGZ3Svoc5BU6pWgQh5vh5p+tfIWMi0yu1ldQWwr9xlKs8ntg/yriTcZkh5jhQJrz
+	 uq5l9SX01/UZWP61cfloeJ3IOYghRjIW2en+HPEk5Q5QE5PTmXjMYpXX3se64VK6UA9lwUSXVdiz
+	 +Djhiw99I6R8c2KhQCD+TCuGkBJfdtuq23jrAdb3RX6W6EeKc9jNgLgF69jbz5zyAI1VUFRITkvK
+	 ZwGDXy4j6pZO18dGc4bN9te+d6DL1fyj3PWxc0YSpN06ut6vgQD/0suEypN/sMSfdFd9P2WX0x4K
+	 FZIOsOAt9xKLY9H6gcgy/+a7kOooIK
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: yuezhang.mo@foxmail.com
+To: linkinjeon@kernel.org,
+	sj1557.seo@samsung.com
+Cc: linux-fsdevel@vger.kernel.org,
+	Andy.Wu@sony.com,
+	wataru.aoyama@sony.com,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>
+Subject: [PATCH v1 11/11] exfat: remove duplicate update parent dir
+Date: Mon, 11 Dec 2023 10:13:09 +0800
+X-OQ-MSGID: <20231211021308.1376617-1-yuezhang.mo@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231206-alice-file-v2-2-af617c0d9d94@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 06, 2023 at 11:59:47AM +0000, Alice Ryhl wrote:
-[...]
-> @@ -151,6 +152,21 @@ pub fn as_ptr(&self) -> *mut bindings::file {
->          self.0.get()
->      }
->  
-> +    /// Returns the credentials of the task that originally opened the file.
-> +    pub fn cred(&self) -> &Credential {
+From: Yuezhang Mo <Yuezhang.Mo@sony.com>
 
-I wonder whether it would be helpful if we use explicit lifetime here:
+For renaming, the directory only needs to be updated once if it
+is in the same directory.
 
-    pub fn cred<'file>(&'file self) -> &'file Credential
+Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+---
+ fs/exfat/namei.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It might be easier for people to get. For example, the lifetime of the
-returned Credential reference is constrainted by 'file, the lifetime of
-the file reference.
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index b33497845a06..631ad9e8e32a 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -1281,7 +1281,8 @@ static int exfat_rename(struct mnt_idmap *idmap,
+ 	}
+ 
+ 	inode_inc_iversion(old_dir);
+-	mark_inode_dirty(old_dir);
++	if (new_dir != old_dir)
++		mark_inode_dirty(old_dir);
+ 
+ 	if (new_inode) {
+ 		exfat_unhash_inode(new_inode);
+-- 
+2.25.1
 
-But yes, maybe need to hear others' feedback first.
-
-Regards,
-Boqun
-
-> +        // SAFETY: Since the caller holds a reference to the file, it is guaranteed that its
-> +        // refcount does not hit zero during this function call.
-> +        //
-> +        // It's okay to read the `f_cred` field without synchronization as `f_cred` is never
-> +        // changed after initialization of the file.
-> +        let ptr = unsafe { (*self.as_ptr()).f_cred };
-> +
-> +        // SAFETY: The signature of this function ensures that the caller will only access the
-> +        // returned credential while the file is still valid, and the C side ensures that the
-> +        // credential stays valid at least as long as the file.
-> +        unsafe { Credential::from_ptr(ptr) }
-> +    }
-> +
->      /// Returns the flags associated with the file.
->      ///
->      /// The flags are a combination of the constants in [`flags`].
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index ce9abceab784..097fe9bb93ed 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -33,6 +33,7 @@
->  #[cfg(not(testlib))]
->  mod allocator;
->  mod build_assert;
-> +pub mod cred;
->  pub mod error;
->  pub mod file;
->  pub mod init;
-> 
-> -- 
-> 2.43.0.rc2.451.g8631bc7472-goog
-> 
-> 
 
