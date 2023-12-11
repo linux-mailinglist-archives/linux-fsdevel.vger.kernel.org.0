@@ -1,99 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-5456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72E780C4E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 10:40:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2507780C584
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 11:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826551F21353
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 09:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5665281819
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Dec 2023 10:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE24E219FF;
-	Mon, 11 Dec 2023 09:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCD622095;
+	Mon, 11 Dec 2023 10:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXHIOlGf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 287B2123
-	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 01:40:30 -0800 (PST)
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-58d5604c050so4263969eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 01:40:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702287629; x=1702892429;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uky11+aNDc+QYZAWQ7fwQ7PnybsCU/zwUrto1XuRqCc=;
-        b=FWLDxSTIv9YPNgzGlNYDSokqT70WIs696IUxaEpm0izM4IPelMUj7q6yE3gbgVFCRK
-         wDG/0QsvuJb3lBdAcTtD9WaqP85scLT1xuT6Uq2lyPuaz9jLSUMXXCgIBx33whn/wmQo
-         RyL1s8zWsEn7Ml7XDGFFMt+kh0tBSbBXKHltcmoccIcQczqTDifm1h5jBgoPahBXzv10
-         CQ27aZFRnfsq5AyAPPmBe3TzGdtElM6oYs+/KFHzYOo8IyFKKG4TG1dTj9FExC5eC/oH
-         qTghtbx4HdUNb3soQliopIQIBh7VPi7lAj866853FY6aOfydcEwOHT4l1hjjMrsUWGfi
-         n/RQ==
-X-Gm-Message-State: AOJu0Yyno/Xx2ctVa5sf9jykoy1EBcMaGk8Fd8MBUbkVlHy2D6tdDNVE
-	up5+ORV6XRPsHAP8mJ/eYzhUJ0/5LDVLcn6e0/r0kn6CaHFP
-X-Google-Smtp-Source: AGHT+IGsLNvcxptaNUTo2ZDDJm+o5H641fl+aEobGi2k+J9gs+6ClTuFcyoQnK+hvmCm6JbNrn8I5XVrcf6zXs9K2nLLTIch28mB
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE96A1D6AE;
+	Mon, 11 Dec 2023 10:04:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A977DC433CA;
+	Mon, 11 Dec 2023 10:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702289041;
+	bh=r68d1duxP7xVgr46w0Z1vpdCRfKjkuAvt5GXFsR/z7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MXHIOlGf4lSZ5mNEGbLKruvFEoWXfev6kp70IJ8A50CBg2/uFwlVM54P2u24CC/4t
+	 zsS1WNETrapEIZi6N9I+3eFv9yMl7QJxo5YH0l09GHpIfYRyrTVnhgZh8WvJPcMj7u
+	 f8Mfw5jYavhVKx3zCf6gRr60WQvRXH3eEWQV8UeFbelkKP/GMfc04atjd7uSdQ1j/Y
+	 r69o1IHF82uCwzNY7qV2FrFWov1LYnQPLX5HpJTJlDNELxBxv8+Ei8QGGa5eMyrbGF
+	 RzgoNJAfoX2FAhlbINZ2BVDYwuUhE456a7wSH0FUpwB/3ZQ2wW6d3chMn3ycfnCrzq
+	 5RY7x/2a89xpw==
+Date: Mon, 11 Dec 2023 11:03:55 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, paul@paul-moore.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keescook@chromium.org,
+	kernel-team@meta.com, sargun@sargun.me
+Subject: Re: [PATCH v12 bpf-next 03/17] bpf: introduce BPF token object
+Message-ID: <20231211-wahnwitzig-entzogen-2b720296349c@brauner>
+References: <20231130185229.2688956-1-andrii@kernel.org>
+ <20231130185229.2688956-4-andrii@kernel.org>
+ <20231208-besessen-vibrieren-4e963e3ca3ba@brauner>
+ <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:b004:b0:1fb:fed:9b65 with SMTP id
- y4-20020a056870b00400b001fb0fed9b65mr4955051oae.5.1702287629488; Mon, 11 Dec
- 2023 01:40:29 -0800 (PST)
-Date: Mon, 11 Dec 2023 01:40:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000076184d060c38b9a1@google.com>
-Subject: [syzbot] Monthly udf report (Dec 2023)
-From: syzbot <syzbot+list168cda8ecef61d5bf93b@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbRKxBCzKbOWg0sWMzWurF5RvF5OwizXi7tSC2vM4Zi_w@mail.gmail.com>
 
-Hello udf maintainers/developers,
+On Fri, Dec 08, 2023 at 02:39:56PM -0800, Andrii Nakryiko wrote:
+> On Fri, Dec 8, 2023 at 5:41 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, Nov 30, 2023 at 10:52:15AM -0800, Andrii Nakryiko wrote:
+> > > Add new kind of BPF kernel object, BPF token. BPF token is meant to
+> > > allow delegating privileged BPF functionality, like loading a BPF
+> > > program or creating a BPF map, from privileged process to a *trusted*
+> > > unprivileged process, all while having a good amount of control over which
+> > > privileged operations could be performed using provided BPF token.
+> > >
+> > > This is achieved through mounting BPF FS instance with extra delegation
+> > > mount options, which determine what operations are delegatable, and also
+> > > constraining it to the owning user namespace (as mentioned in the
+> > > previous patch).
+> > >
+> > > BPF token itself is just a derivative from BPF FS and can be created
+> > > through a new bpf() syscall command, BPF_TOKEN_CREATE, which accepts BPF
+> > > FS FD, which can be attained through open() API by opening BPF FS mount
+> > > point. Currently, BPF token "inherits" delegated command, map types,
+> > > prog type, and attach type bit sets from BPF FS as is. In the future,
+> > > having an BPF token as a separate object with its own FD, we can allow
+> > > to further restrict BPF token's allowable set of things either at the
+> > > creation time or after the fact, allowing the process to guard itself
+> > > further from unintentionally trying to load undesired kind of BPF
+> > > programs. But for now we keep things simple and just copy bit sets as is.
+> > >
+> > > When BPF token is created from BPF FS mount, we take reference to the
+> > > BPF super block's owning user namespace, and then use that namespace for
+> > > checking all the {CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN, CAP_SYS_ADMIN}
+> > > capabilities that are normally only checked against init userns (using
+> > > capable()), but now we check them using ns_capable() instead (if BPF
+> > > token is provided). See bpf_token_capable() for details.
+> > >
+> > > Such setup means that BPF token in itself is not sufficient to grant BPF
+> > > functionality. User namespaced process has to *also* have necessary
+> > > combination of capabilities inside that user namespace. So while
+> > > previously CAP_BPF was useless when granted within user namespace, now
+> > > it gains a meaning and allows container managers and sys admins to have
+> > > a flexible control over which processes can and need to use BPF
+> > > functionality within the user namespace (i.e., container in practice).
+> > > And BPF FS delegation mount options and derived BPF tokens serve as
+> > > a per-container "flag" to grant overall ability to use bpf() (plus further
+> > > restrict on which parts of bpf() syscalls are treated as namespaced).
+> > >
+> > > Note also, BPF_TOKEN_CREATE command itself requires ns_capable(CAP_BPF)
+> > > within the BPF FS owning user namespace, rounding up the ns_capable()
+> > > story of BPF token.
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> >
+> > Same concerns as in the other mail. For the bpf_token_create() code,
+> > Acked-by: Christian Brauner <brauner@kernel.org>
+> 
+> This patch set has landed in bpf-next and there are a bunch of other
+> patches after it, so I presume it will be a bit problematic to add ack
+> after the fact. But thanks for taking another look and acking!
 
-This is a 31-day syzbot report for the udf subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/udf
-
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 14 issues are still open and 18 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  1923    Yes   WARNING in udf_truncate_extents
-                   https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
-<2>  117     Yes   KASAN: use-after-free Write in udf_close_lvid
-                   https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
-<3>  32      Yes   KASAN: use-after-free Read in udf_sync_fs
-                   https://syzkaller.appspot.com/bug?extid=82df44ede2faca24c729
-<4>  29      Yes   KASAN: use-after-free Read in udf_finalize_lvid
-                   https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
-<5>  29      Yes   WARNING in udf_new_block
-                   https://syzkaller.appspot.com/bug?extid=cc717c6c5fee9ed6e41d
-<6>  17      Yes   WARNING in udf_setsize (2)
-                   https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
-<7>  6       Yes   UBSAN: array-index-out-of-bounds in udf_process_sequence
-                   https://syzkaller.appspot.com/bug?extid=abb7222a58e4ebc930ad
-<8>  5       Yes   KASAN: slab-out-of-bounds Write in udf_adinicb_writepage
-                   https://syzkaller.appspot.com/bug?extid=a3db10baf0c0ee459854
-<9>  2       Yes   KASAN: slab-use-after-free Read in udf_free_blocks
-                   https://syzkaller.appspot.com/bug?extid=0b7937459742a0a4cffd
-<10> 2       No    WARNING in udf_prealloc_blocks (2)
-                   https://syzkaller.appspot.com/bug?extid=cc2b732891efbf755b78
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Yeah, I don't mind. :)
 
