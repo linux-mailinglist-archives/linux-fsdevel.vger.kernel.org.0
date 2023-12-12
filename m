@@ -1,103 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-5639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D1E80E7F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 10:42:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FDE80E7F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 10:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81F028097E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 09:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E56282027
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 09:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F79758ABF;
-	Tue, 12 Dec 2023 09:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA1358ADA;
+	Tue, 12 Dec 2023 09:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhoSrJiG"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F3t+10av"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72395DC;
-	Tue, 12 Dec 2023 01:41:51 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2cc2683fdaaso14240131fa.0;
-        Tue, 12 Dec 2023 01:41:51 -0800 (PST)
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1455CDB
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 01:43:12 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-a00f67f120aso709861166b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 01:43:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702374109; x=1702978909; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aVLRsdYbktegNzx/Zud+ZtI8big1fblrhu7NGAxTQAw=;
-        b=UhoSrJiGJ532dSxRZ2GtlJrhxqA0dRydAXdnIBka2HNV1twuSCEKnei3fPhee36NY6
-         2joh0ZQMyfPIfYOCLG7HcWkyhqEc7YirrMNToT2UV0lLBOHk8mPsPfm6Gy2KLwre/2DT
-         zAWtfD2iMNDgksIbPyExEb+5q4HvFOiNfKq1Ve+8IpId0TYHAOUaFb9DTi8y4hQM31QN
-         2C6sxplfUCs2ab0QwOlUFLd1kI7oLy1J+7Vwj8QCN/EqS8xkjBU8SdFhlNtThpSRvFer
-         aPITmU42fi+Q6SesVvTAYnWyF6DUR3qcC+26BJeSFecqL9UsPTOjVd6qivnk6nNiEyEt
-         a0TQ==
+        d=szeredi.hu; s=google; t=1702374190; x=1702978990; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fw3mF8CXIKfaOqClGYNM3nfYh10fHUgVLKvwjntKCTE=;
+        b=F3t+10avL20u2nQiaqZwuLtcID/fvkvtCw5MIHM8Zbq8J/Z0LmjqQISD7yH3HFTmdT
+         oLoEVCTmkyEfu7IOqx4Oxq5rFuIrV5xdzl0wmsy99gi/Cpm0lr+hVYMYC67lkqmDTyCa
+         hJSmt+OBIidzPir5FJCsISRLry8KrXEty+lpc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702374109; x=1702978909;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aVLRsdYbktegNzx/Zud+ZtI8big1fblrhu7NGAxTQAw=;
-        b=tN6IQ8kSIxek428Gb/0NOXylznFtDN3oAJ8iwlKHdVXrrw5eR/sEWo0Dpiy1WdgJ9h
-         Aw/nrL8q8Q1lmTQSg+XCHrV/m50NxAXtzOazOie3zFgcDQtNVaAXASof/nW/urBpll/J
-         +LpA7dfDW6wDQTXPOsk6iIIsN4qcgZsBaXguQDjJu9fh4RwnH/vN9RhT9A9EM3p7kFUC
-         ElOwS00JPWus5rwg4F60IWXAzLgJoijapFhQJAaTNCzLlSrxO535yKlvrkM0DaeGZBWf
-         CHdTjztCwyFlP8vx/lLXjt4XPpumx4tQ149o3p9wWqUy2guShtd6IAlv76vSMjtHBD0P
-         hYUw==
-X-Gm-Message-State: AOJu0Yw6nnXDUnMjn0DdSbksbYQD15O106D01+48OMKrKFCjUE4g8fa9
-	1wNHZuVxSNVHocWjwpBUwdPJyYP8Qo5P7A==
-X-Google-Smtp-Source: AGHT+IGjFCbfOwwOutwRYz9AG4gY6Bjb3gwTl7okXn4Z2UZjyVCgGejFArR0xoCO2FepI8R+GuIWdg==
-X-Received: by 2002:a2e:be83:0:b0:2ca:135:2204 with SMTP id a3-20020a2ebe83000000b002ca01352204mr4525370ljr.16.1702374109370;
-        Tue, 12 Dec 2023 01:41:49 -0800 (PST)
-Received: from dy7lrfj8vfr2jm7whrhxy-4.rev.dnainternet.fi (dy7lrfj8vfr2jm7whrhxy-4.rev.dnainternet.fi. [2001:14bb:6d2:e21f:9123:ac75:6e46:71a6])
-        by smtp.gmail.com with ESMTPSA id l25-20020a2e8699000000b002c9f16d5da9sm1477738lji.95.2023.12.12.01.41.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 01:41:49 -0800 (PST)
-Message-ID: <d523ca40916a8c17ea8ab6d980265e2985e094b3.camel@gmail.com>
-Subject: Re: [PATCH 0/3] afs: Fix dynamic root interaction with failing DNS
- lookups
-From: markus.suvanto@gmail.com
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org, 
-	keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 12 Dec 2023 11:41:42 +0200
-In-Reply-To: <2810523.1702371786@warthog.procyon.org.uk>
-References: <59be73c8346ca0c0d6feddcdb56b043cfa0aea4d.camel@gmail.com>
-	 <20231211163412.2766147-1-dhowells@redhat.com>
-	 <2810523.1702371786@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.1 
+        d=1e100.net; s=20230601; t=1702374190; x=1702978990;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fw3mF8CXIKfaOqClGYNM3nfYh10fHUgVLKvwjntKCTE=;
+        b=C1cvqnRP/NsjVY94GGSaDQo/lsI2EtiqdqirZZNO4f96ytj4tiwQodGMaz1U4Wj8B4
+         wit+NsjYNNQoR9XXHb0x5pd5Jk+2er8QPCAKiKX7jjaVhkBh3bnmMDUIvAv0CILed0YR
+         sQzFPvg9M1TsmNLcsY/pZhGbkJL2cWPemrga9KA4nJnZu0tyavrtfnsqp6O8ExErNA6/
+         B1mkO0Rxv+Ppp2np1nmlZPC+0mZlvXWMg/pnWjjjOB3PdR15if3tMOsrWhacAlwCZIX8
+         9JXaurl+m4F31kCru4y2GmH305ymC/4FbQj3LwmY/MIU313QiIbCvIuOWNS+X6mBrzcP
+         b30g==
+X-Gm-Message-State: AOJu0YyEZn3JZABY5AIkBMRo0vea3e7U6wMc3NXZYd9+fTF4qd2QC0jx
+	HzMkNubnBl5SX+B9pxO98vCFwjTEZQYjtu0cxey5vh5Vf1rIJobj
+X-Google-Smtp-Source: AGHT+IGH0GSEygoVGnBny7aHl7FVH2AJCGKnIgEc+w7dGkSH9JS34NMEpGURcwZ3KDg0ij1t7fAfhKlpIR5qWBBlKYY=
+X-Received: by 2002:a17:906:102:b0:a1e:f7d5:6959 with SMTP id
+ 2-20020a170906010200b00a1ef7d56959mr2571042eje.16.1702374190434; Tue, 12 Dec
+ 2023 01:43:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan> <170233878712.12910.112528191448334241@noble.neil.brown.name>
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan> <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area> <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>
+ <2810685.1702372247@warthog.procyon.org.uk> <20231212-ablauf-achtbar-ae6e5b15b057@brauner>
+ <CAJfpegvL9kV+06v2W+5LbUk0eZr1ydfT1v0P-Pp_KexLNz=Lfg@mail.gmail.com> <20231212-sechzehn-hausgemacht-6eb61150554e@brauner>
+In-Reply-To: <20231212-sechzehn-hausgemacht-6eb61150554e@brauner>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 12 Dec 2023 10:42:58 +0100
+Message-ID: <CAJfpegshsEWtm-dcdUy2w9_ic0Ag7GXpA2yRWGR+LD2T37odGQ@mail.gmail.com>
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+To: Christian Brauner <brauner@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Amir Goldstein <amir73il@gmail.com>, 
+	Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Donald Buczek <buczek@molgen.mpg.de>, 
+	linux-bcachefs@vger.kernel.org, Stefan Krueger <stefan.krueger@aei.mpg.de>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-ti, 2023-12-12 kello 09:03 +0000, David Howells kirjoitti:
-> markus.suvanto@gmail.com wrote:
->=20
-> > Reproduce:
-> > 1) kinit ....
-> > 2) aklog....
-> > 3) keyctl show=20
-> > Session Keyring
-> >  347100937 --alswrv   1001 65534  keyring: _uid_ses.1001
-> > 1062692655 --alswrv   1001 65534   \_ keyring: _uid.1001
-> >  698363997 --als-rv   1001   100   \_ rxrpc: afs@station.com
-> >=20
-> > klist=20
-> > Ticket cache: KEYRING:persistent:1001:1001
-> > Default principal: .....
->=20
-> Can you "grep rxrpc /proc/keys" at this point?
->=20
-different cell though...
+On Tue, 12 Dec 2023 at 10:35, Christian Brauner <brauner@kernel.org> wrote:
 
-masu@t470 ~ % grep rxrpc /proc/keys
-23e16cda I--Q---     1   3d 3b010000  1001   100 rxrpc     afs@movesole.com=
-: ka
+> So taking a step back here, please. The original motivation for this
+> discussion was restricted to handle btrfs - and now bcachefs as well.
+> Both have a concept of a subvolume so it made sense to go that route.
+> IOW, it wasn't originally a generic problem or pitched as such.
+>
+> Would overlayfs be able to utilize an extended inode field as well?
 
+Well, yes, but I don't think that's the right solution.
+
+I think the right solution is to move to using file handles instead of
+st_ino, the problem with that is that there's no way kernel can force
+upgrading userspace.
+
+It might help to have the fh in statx, since that's easier on the
+userspace programmer than having to deal with two interfaces (i_ino
+won't go away for some time, because of backward compatibility).
+OTOH I also don't like the way it would need to be shoehorned into
+statx.
+
+Thanks,
+Miklos
 
