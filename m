@@ -1,105 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-5691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B938180EE70
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:11:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501C380EE87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD0F1C20C83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 14:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EB3281635
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 14:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A3C7318A;
-	Tue, 12 Dec 2023 14:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943D37317D;
+	Tue, 12 Dec 2023 14:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B++bEOcu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYDemGbn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B++bEOcu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYDemGbn"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2pJuW65";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7hAEYWCD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wILLT6vG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQ8NVrHW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E55B6D2;
-	Tue, 12 Dec 2023 06:11:13 -0800 (PST)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4A3AC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 06:19:41 -0800 (PST)
 Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AF1351FB4F;
-	Tue, 12 Dec 2023 14:11:11 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 34D1F1FB45;
+	Tue, 12 Dec 2023 14:19:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1702390779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=B++bEOcuECOPLUS6gRl1BadE5Ojhg72LI17/Jf8so38UM+0K3tK3EM18zqdte42Rmdahip
-	pT2NLWONXbbx1wHqSpSUPrJ6SV/khTkKgkoHLhS3Je5qcEna7m+A0ImkydNS5Hp2KL7ol5
-	NGT5IsMbucBv49ZwMiTMIN/MTc8WjGg=
+	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
+	b=Y2pJuW65mgBBfS9gILKDpevU6cSkoMLfGgkDhFSy6CnC1SNXNz/AgxIDiXf6OZ7Vk0Ft/Q
+	tYRrz22sZ2/uTc1WDDHBTMWlE0OkzRd+3M2V+roMb7tUm28ZcOJVdl9ov6rJaSrTS+ixoM
+	o4fQr4GcbxsH1alkVnNa3qVnHstCn74=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390271;
+	s=susede2_ed25519; t=1702390779;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=RYDemGbnXZfKi9uzTsokLLJFp3Q2IBX/Y+6xZm0LlYsd4XpI31h6ZqYPNIYrqGTAdxjsbq
-	9DRT+9hTWhL8LpBQ==
+	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
+	b=7hAEYWCD3CfhsGoSWTV+dhEkdVritOEIT5Hd75mNiuYxhF7is+MI4AQQzoM1+I2CWEXQjt
+	trMt+WD57CedB+AA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1702390778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=B++bEOcuECOPLUS6gRl1BadE5Ojhg72LI17/Jf8so38UM+0K3tK3EM18zqdte42Rmdahip
-	pT2NLWONXbbx1wHqSpSUPrJ6SV/khTkKgkoHLhS3Je5qcEna7m+A0ImkydNS5Hp2KL7ol5
-	NGT5IsMbucBv49ZwMiTMIN/MTc8WjGg=
+	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
+	b=wILLT6vGghABd7DGkO9ZCZZHFCU+C8vDSh3dOSJFntiUKryBt5FeeudvRxn+vtIcdKwTxf
+	zsS52LB3hG4EhbNBLj9mRiUllL5EVN+GKAX+KoDZhwj/0938+67ZIinYaIxhhzP+UZnzxP
+	ZsQHWdfbkhE5ZgelCzB9WWBGXm5mpyM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390271;
+	s=susede2_ed25519; t=1702390778;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=f/nbhyN5crR1w3m66kOkHUMah0FU4U4vRvr/vSaOUKo=;
-	b=RYDemGbnXZfKi9uzTsokLLJFp3Q2IBX/Y+6xZm0LlYsd4XpI31h6ZqYPNIYrqGTAdxjsbq
-	9DRT+9hTWhL8LpBQ==
+	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
+	b=qQ8NVrHWJxjOO8ggC/yUzuThKBIwTABOQbFpAABRllb6X/qpt1hhjKJggMtk3zVzZF0AWc
+	kWHOdOUzEdCHKJBg==
 Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B6A8139E9;
-	Tue, 12 Dec 2023 14:11:11 +0000 (UTC)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CB56139E9;
+	Tue, 12 Dec 2023 14:19:38 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id lJX+If9peGUGTgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 12 Dec 2023 14:11:11 +0000
+	id nOe2BvpreGW1UAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Tue, 12 Dec 2023 14:19:38 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E4786A06E5; Tue, 12 Dec 2023 15:11:10 +0100 (CET)
-Date: Tue, 12 Dec 2023 15:11:10 +0100
+	id 95158A06E5; Tue, 12 Dec 2023 15:19:37 +0100 (CET)
+Date: Tue, 12 Dec 2023 15:19:37 +0100
 From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
-	roger.pau@citrix.com, colyli@suse.de, kent.overstreet@gmail.com,
-	joern@lazybastard.org, miquel.raynal@bootlin.com, richard@nod.at,
-	vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
-	josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org,
-	chao@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	agruenba@redhat.com, jack@suse.com, konishi.ryusuke@gmail.com,
-	willy@infradead.org, akpm@linux-foundation.org,
-	p.raghav@samsung.com, hare@suse.de, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-nilfs@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH RFC v2 for-6.8/block 15/18] buffer: add a new helper to
- read sb block
-Message-ID: <20231212141110.4pcetu5ozp3m33qc@quack3>
-References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
- <20231211140753.975297-1-yukuai1@huaweicloud.com>
- <ZXhfRdocHfrViOos@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
+	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] splice: return type ssize_t from all helpers
+Message-ID: <20231212141937.f4ihbex46ndhu3nt@quack3>
+References: <20231212094440.250945-1-amir73il@gmail.com>
+ <20231212094440.250945-2-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -108,78 +92,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZXhfRdocHfrViOos@infradead.org>
-X-Spam-Score: 1.39
-X-Spamd-Bar: ++++
+In-Reply-To: <20231212094440.250945-2-amir73il@gmail.com>
+X-Spam-Score: -2.16
+X-Spamd-Bar: ++
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=B++bEOcu;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RYDemGbn;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wILLT6vG;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qQ8NVrHW;
 	dmarc=none;
 	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
 X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [4.79 / 50.00];
+X-Spamd-Result: default: False [2.33 / 50.00];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
 	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all];
-	 R_RATELIMIT(0.00)[to_ip_from(RLa8hd5fybgmzcyr9mhbq8ey7y)];
+	 R_SPF_SOFTFAIL(4.60)[~all:c];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_TRACE(0.00)[suse.cz:+];
 	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[51];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[11];
+	 NEURAL_HAM_SHORT(-0.20)[-0.982];
+	 FREEMAIL_TO(0.00)[gmail.com];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[22.45%];
+	 BAYES_HAM(-2.49)[97.71%];
 	 ARC_NA(0.00)[];
 	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
 	 FROM_HAS_DN(0.00)[];
 	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TAGGED_RCPT(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
 	 MIME_GOOD(-0.10)[text/plain];
 	 DMARC_NA(1.20)[suse.cz];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 NEURAL_HAM_LONG(-0.97)[-0.968];
 	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
 	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[huaweicloud.com,kernel.dk,citrix.com,suse.de,gmail.com,lazybastard.org,bootlin.com,nod.at,ti.com,linux.ibm.com,oracle.com,fb.com,toxicpanda.com,suse.com,zeniv.linux.org.uk,kernel.org,fluxnic.net,mit.edu,dilger.ca,redhat.com,infradead.org,linux-foundation.org,samsung.com,vger.kernel.org,lists.xenproject.org,lists.infradead.org,lists.ozlabs.org,lists.linux.dev,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from]
-X-Spam-Score: 4.79
-X-Rspamd-Queue-Id: AF1351FB4F
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: 2.33
+X-Rspamd-Queue-Id: 34D1F1FB45
 X-Spam-Flag: NO
 
-On Tue 12-12-23 05:25:25, Christoph Hellwig wrote:
-> On Mon, Dec 11, 2023 at 10:07:53PM +0800, Yu Kuai wrote:
-> > +static __always_inline int buffer_uptodate_or_error(struct buffer_head *bh)
-> > +{
-> > +	/*
-> > +	 * If the buffer has the write error flag, data was failed to write
-> > +	 * out in the block. In this case, set buffer uptodate to prevent
-> > +	 * reading old data.
-> > +	 */
-> > +	if (buffer_write_io_error(bh))
-> > +		set_buffer_uptodate(bh);
-> > +	return buffer_uptodate(bh);
-> > +}
+On Tue 12-12-23 11:44:36, Amir Goldstein wrote:
+> Not sure why some splice helpers return long, maybe historic reasons.
+> Change them all to return ssize_t to conform to the splice methods and
+> to the rest of the helpers.
 > 
-> So - risking this blows up into a lot of nasty work: Why do we even
-> clear the uptodate flag on write errors?  Doing so makes not sense to
-> me as the data isn't any less uptodate just because we failed to write
-> it..
+> Suggested-by: Christian Brauner <brauner@kernel.org>
+> Link: https://lore.kernel.org/r/20231208-horchen-helium-d3ec1535ede5@brauner/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Historic reasons I'd say (buffer_write_io_error isn't *that* old - from
-2003 it seems). And yes, it would make a lot of sense to keep uptodate flag
-set and just rely on buffer_write_io_error() but it also means going
-through all buffer_uptodate() checks in filesystems and determining which
-need changing to buffer_write_io_error() which is something nobody is keen
-on doing ;)
+Looks good to me. Just one nit below. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 7cda013e5a1e..13030ce192d9 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -201,7 +201,7 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
+>  	unsigned int tail = pipe->tail;
+>  	unsigned int head = pipe->head;
+>  	unsigned int mask = pipe->ring_size - 1;
+> -	int ret = 0, page_nr = 0;
+> +	ssize_t ret = 0, page_nr = 0;
+
+A nit but page_nr should stay to be 'int'.
 
 								Honza
-
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
