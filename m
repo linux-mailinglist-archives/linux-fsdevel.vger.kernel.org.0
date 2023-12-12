@@ -1,95 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-5721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5572580F294
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:31:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C6680F2C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA968B20D13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71EC1C20EDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF25618AEF;
-	Tue, 12 Dec 2023 16:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="G3QoH3Nb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED5B78E81;
+	Tue, 12 Dec 2023 16:32:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AD4A8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 08:30:36 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54f4f7d082cso6302789a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 08:30:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1702398635; x=1703003435; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=myMRBPovP/7/r8peG8VTqC6y7u4an2akYPL/sNmZaYA=;
-        b=G3QoH3NbI8T+HBVFThHszhnVRfb2EdVEVFGEUkAFmY7/IGZNwZgq/yzGqa2w8dV5x5
-         BO3uZHt+8DejQrny2xSMhgIXBNOiUPHsi3BDJchcV6zlPsHZ1FApNXxzHoIQH8IA6uid
-         yn0jZjtiVFNe7Gn6s6IoB7/CCRSYJmIvoyXx0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702398635; x=1703003435;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=myMRBPovP/7/r8peG8VTqC6y7u4an2akYPL/sNmZaYA=;
-        b=M7CX06teWBzFigZcOhwUCsTUMh7vEHMefGbN1qcXIGDmKnzMNXMi7yBJ7v3sn60qaA
-         gv50sJ1LMXHyTVwpmcZLNisp+3JnKXUoA+RWN+PzlT1/TougDQem5zKX/5iNvU/TYrnH
-         qJBd4M6hKqKifDf193pK+viq7bTxHYez5TENdOt9gHIiyqT7q3ucGG5bbjtRC6vE0IJb
-         CsavF2vGkKK8G9jEtZczR14WwcfugzjQRkPe8iO9hTyPAJ+fFq9YLv/o2de8P0Ta4N6K
-         s6dMlWX/xe+FmqC0HBX1zx+y2HDjYCZDHQ4SYxGpHOGms/8uZXuTaANAiKSC+ow0Ia7h
-         99ew==
-X-Gm-Message-State: AOJu0YwdzDTHO2wBC+rMKzr3e4l3TkbJpg6oPt2ctGs/nWkRomjYH9mH
-	/69IbYEpwSxzYUKHyeYYy6i9XYR8Ma0uSkUW8Exhog==
-X-Google-Smtp-Source: AGHT+IHKcYuqeFb/mTcEp+89My9A5o5DC0pPHMZ/0Mo4P/b66szo7CfzlcRIbubca3sB3z+pXUMRaKo1lev9HEbsqsQ=
-X-Received: by 2002:a17:906:d8b7:b0:a18:e2b8:ff1b with SMTP id
- qc23-20020a170906d8b700b00a18e2b8ff1bmr3369726ejb.1.1702398634711; Tue, 12
- Dec 2023 08:30:34 -0800 (PST)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 723FBA8;
+	Tue, 12 Dec 2023 08:32:54 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id C6ACA68C4E; Tue, 12 Dec 2023 17:32:46 +0100 (CET)
+Date: Tue, 12 Dec 2023 17:32:46 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+	ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
+Subject: Re: [PATCH v2 00/16] block atomic writes
+Message-ID: <20231212163246.GA24594@lst.de>
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area> <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>
- <20231212-impfung-linden-6f973f2ade19@brauner> <20231212151631.wi7rgawmp3uig6cl@moria.home.lan>
- <20231212-neudefinition-hingucken-785061b73237@brauner> <20231212153542.kl2fbzrabhr6kai5@moria.home.lan>
- <CAJfpegsKsbdtUHUPnu3huCiPXwX46eKYSUbLXiWqH23GinXo7w@mail.gmail.com>
- <20231212154302.uudmkumgjaz5jouw@moria.home.lan> <CAJfpegvOEZwZgcbAeivDA+X0qmfGGjOxdvq-xpGQjYuzAJxzkw@mail.gmail.com>
- <20231212160829.vybfdajncvugweiy@moria.home.lan>
-In-Reply-To: <20231212160829.vybfdajncvugweiy@moria.home.lan>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 12 Dec 2023 17:30:23 +0100
-Message-ID: <CAJfpegvNVXoxn3gW9-38YfY5u0FLjXTCDxcv5OtS-p0=0ocQvg@mail.gmail.com>
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>, 
-	Donald Buczek <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org, 
-	Stefan Krueger <stefan.krueger@aei.mpg.de>, David Howells <dhowells@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231212110844.19698-1-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, 12 Dec 2023 at 17:08, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Tue, Dec 12, 2023 at 11:08:28AM +0000, John Garry wrote:
+> Two new fields are added to struct statx - atomic_write_unit_min and
+> atomic_write_unit_max. For each atomic individual write, the total length
+> of a write must be a between atomic_write_unit_min and
+> atomic_write_unit_max, inclusive, and a power-of-2. The write must also be
+> at a natural offset in the file wrt the write length.
+> 
+> SCSI sd.c and scsi_debug and NVMe kernel support is added.
+> 
+> Some open questions:
+> - How to make API extensible for when we have no HW support? In that case,
+>   we would prob not have to follow rule of power-of-2 length et al.
+>   As a possible solution, maybe we can say that atomic writes are
+>   supported for the file via statx, but not set unit_min and max values,
+>   and this means that writes need to be just FS block aligned there.
 
-> In short, STATX_ATTR_INUM_NOT_UNIQUE is required to tell userspace when
-> they _must_ do the new thing if they care about correctness; it provides
-> a way to tell userspace what guarantees we're able to provide.
+I don't think the power of two length is much of a problem to be
+honest, and if we every want to lift it we can still do that easily
+by adding a new flag or limit.
 
-That flag would not help with improving userspace software.
+What I'm a lot more worried about is how to tell the file system that
+allocations are done right for these requirement.  There is no way
+a user can know that allocations in an existing file are properly
+aligned, so atomic writes will just fail on existing files.
 
-What would help, if said software started using a unique identifier.
-We already seem to have a unique ID in the form of file handles,
-though some exotic filesystems might allow more than one fh to refer
-to the same inode, so this still needs some looking into.
+I suspect we need an on-disk flag that forces allocations to be
+aligned to the atomic write limit, in some ways similar how the
+XFS rt flag works.  You'd need to set it on an empty file, and all
+allocations after that are guaranteed to be properly aligned.
 
-The big problem is that we can't do a lot about existing software, and
-must keep trying to keep st_ino unique for the foreseeable future.
+> - For block layer, should atomic_write_unit_max be limited by
+>   max_sectors_kb? Currently it is not.
 
-Thanks,
-Miklos
+Well.  It must be limited to max_hw_sectors to actually work.
+max_sectors is a software limit below that, which with modern hardware
+is actually pretty silly and a real performance issue with todays
+workloads when people don't tweak it..
+
+> - How to improve requirement that iovecs are PAGE-aligned.
+>   There are 2x issues:
+>   a. We impose this rule to not split BIOs due to virt boundary for
+>      NVMe, but there virt boundary is 4K (and not PAGE size, so broken for
+>      16K/64K pages). Easy solution is to impose requirement that iovecs
+>      are 4K-aligned.
+>   b. We don't enforce this rule for virt boundary == 0, i.e. SCSI
+
+.. we require any device that wants to support atomic writes to not
+have that silly limit.  For NVMe that would require SGL support
+(and some driver changes I've been wanting to make for long where
+we always use SGLs for transfers larger than a single PRP if supported)
+
+
+> - Since debugging torn-writes due to unwanted kernel BIO splitting/merging
+>   would be horrible, should we add some kernel storage stack software
+>   integrity checks?
+
+Yes, I think we'll need asserts in the drivers.  At least for NVMe I
+will insist on them.  For SCSI I think the device actually checks
+because the atomic writes are a different command anyway, or am I
+misunderstanding how SCSI works here?
+
 
