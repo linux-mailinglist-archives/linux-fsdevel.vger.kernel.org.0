@@ -1,114 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-5726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9C680F3E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 18:01:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862C680F456
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 18:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BDDE1C20C67
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A53282260
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA787B3C1;
-	Tue, 12 Dec 2023 17:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5157D893;
+	Tue, 12 Dec 2023 17:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EtZK1xOy"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="P0+UqP9Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC88FD0;
-	Tue, 12 Dec 2023 09:01:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1702400497; x=1702659697;
-	bh=pW12o+ZtGJVXWSlbOsdjNFmo7Oz7+eWgJSUXDe0lDR4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=EtZK1xOybz/DnTE1jmDyCKyrg45e7E5ujPmJ/I6Gq8/sgkfF+YPGE2vRrFs8ZtoJ2
-	 vZIdmwNmDM6gGwaMLd6LRq6UkGPaq3Oqc0hX28EH19ciI8Udz7Hy4Gf+Y+TAjl8EbB
-	 VNb4IFHRmeG4MEqUiV8tLE0dMK44YGQdFpCBomz4K/PpU7wDXsk2eyv2teS/PQvzzq
-	 fMXViXI+vORmX+KlggGQWLgDa/jBQjGFulSMDx/cjiCPyzS10LSA3FJJGA6cJgTEZU
-	 XK5ZHtzLGLGXarhIdlcEJ0A6QvaUFwKlZ3nxRc5gK8S5LWbYjPZ2WVDaxg7X5mIAiA
-	 FIQNROXGUG1ew==
-Date: Tue, 12 Dec 2023 17:01:28 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
-Message-ID: <E-jdYd0FVvs15f_pEC0Fo6k2DByCDEQoh_Ux9P9ldmC-otCvUfQghkJOUkiAi8gDI8J47wAaDe56XYC5NiJhuohyhIklGAWMvv9v1qi6yYM=@proton.me>
-In-Reply-To: <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-7-af617c0d9d94@google.com> <k_vpgbqKAKoTFzJIBCjvgxGhX73kgkcv6w9kru78lBmTjHHvXPy05g8KxAKJ-ODARBxlZUp3a5e4F9TemGqQiskkwFCpTOhzxlvy378tjHM=@proton.me> <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
+X-Greylist: delayed 335 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Dec 2023 09:21:15 PST
+Received: from mta-102a.earthlink-vadesecure.net (mta-102a.earthlink-vadesecure.net [51.81.61.66])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F57A0;
+	Tue, 12 Dec 2023 09:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; bh=QLgKdeI1YofNbiS/FOWwaRkB1buWzAVPYqmRcM
+ eNmgk=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-subscribe:list-post:
+ list-owner:list-archive; q=dns/txt; s=dk12062016; t=1702401331;
+ x=1703006131; b=P0+UqP9Q7efKX8QFIRYo4b1UjSvBp8kD/qsqoNx4RPIB3dsFvpSY7nV
+ lzFqEyCkw5eNdspzxtXs9tfAKllEEx5sStOx5YdAk5z88/N3ycDG8AbQx1PRSCCI2EBJ3Dc
+ WPr7JU0O4uBqYfDcWbIpdK9seqAdRlAYTpM9uv0wkwQ+cPdlBqGA+I+Op6LDQ8+z7EYfbh5
+ nk5oP/gnGIjQPbtVJZcuXmnLvHHOAOHq+e7wGGl6FmHBsiSpCH29EuXl69MDkJqkPSyT2e1
+ jW9M/ikV++GKX8k/97teNIBlIr7/f5WV+R/uZnu+qV+/637f3XIlOSLeWVXFpvjy36DGCOs
+ aPg==
+Received: from FRANKSTHINKPAD ([174.174.49.201])
+ by vsel1nmtao02p.internal.vadesecure.com with ngmta
+ id 48a1b7b4-17a024fd67e3209c; Tue, 12 Dec 2023 17:15:30 +0000
+From: "Frank Filz" <ffilzlnx@mindspring.com>
+To: "'Theodore Ts'o'" <tytso@mit.edu>,
+	"'Donald Buczek'" <buczek@molgen.mpg.de>
+Cc: "'Dave Chinner'" <david@fromorbit.com>,
+	"'NeilBrown'" <neilb@suse.de>,
+	"'Kent Overstreet'" <kent.overstreet@linux.dev>,
+	<linux-bcachefs@vger.kernel.org>,
+	"'Stefan Krueger'" <stefan.krueger@aei.mpg.de>,
+	"'David Howells'" <dhowells@redhat.com>,
+	<linux-fsdevel@vger.kernel.org>
+References: <20231208024919.yjmyasgc76gxjnda@moria.home.lan> <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de> <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan> <170233460764.12910.276163802059260666@noble.neil.brown.name> <20231211233231.oiazgkqs7yahruuw@moria.home.lan> <170233878712.12910.112528191448334241@noble.neil.brown.name> <20231212000515.4fesfyobdlzjlwra@moria.home.lan> <170234279139.12910.809452786055101337@noble.neil.brown.name> <ZXf1WCrw4TPc5y7d@dread.disaster.area> <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de> <20231212152016.GB142380@mit.edu>
+In-Reply-To: <20231212152016.GB142380@mit.edu>
+Subject: RE: file handle in statx
+Date: Tue, 12 Dec 2023 09:15:29 -0800
+Message-ID: <0b4c01da2d1e$cf65b930$6e312b90$@mindspring.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: en-us
+Thread-Index: AQI2jiBebf/oJPBNRzSpvij1RIkwjAJNcH/PAj0PmP4Bx04wjwGrb0drAjE7wAEBipc+KAKTzaQNAUh2UVECn5o3SAFneCXlr1A9N2A=
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=ffilzlnx@mindspring.com smtp.mailfrom=ffilzlnx@mindspring.com;
+X-Spam-Level: *
 
-On 12/12/23 10:59, Alice Ryhl wrote:
-> On Fri, Dec 8, 2023 at 6:53=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->> On 12/6/23 12:59, Alice Ryhl wrote:
->>> +    fn get_qproc(&self) -> bindings::poll_queue_proc {
->>> +        let ptr =3D self.0.get();
->>> +        // SAFETY: The `ptr` is valid because it originates from a ref=
-erence, and the `_qproc`
->>> +        // field is not modified concurrently with this call since we =
-have an immutable reference.
->>
->> This needs an invariant on `PollTable` (i.e. `self.0` is valid).
->=20
-> How would you phrase it?
+> On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
+> > On 12/12/23 06:53, Dave Chinner wrote:
+> >
+> > > So can someone please explain to me why we need to try to re-invent
+> > > a generic filehandle concept in statx when we already have a have
+> > > working and widely supported user API that provides exactly this
+> > > functionality?
+> >
+> > name_to_handle_at() is fine, but userspace could profit from being
+> > able to retrieve the filehandle together with the other metadata in a
+> > single system call.
+> 
+> Can you say more?  What, specifically is the application that would want
+to do
+> that, and is it really in such a hot path that it would be a user-visible
+> improveable, let aloine something that can be actually be measured?
 
-- `self.0` contains a valid `bindings::poll_table`.
-- `self.0` is only modified via references to `Self`.
+A user space NFS server like Ganesha could benefit from getting attributes
+and file handle in a single system call.
 
->>> +        unsafe { (*ptr)._qproc }
->>> +    }
->>> +
->>> +    /// Register this [`PollTable`] with the provided [`PollCondVar`],=
- so that it can be notified
->>> +    /// using the condition variable.
->>> +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
->>> +        if let Some(qproc) =3D self.get_qproc() {
->>> +            // SAFETY: The pointers to `self` and `file` are valid bec=
-ause they are references.
->>
->> What about cv.wait_list...
->=20
-> I can add it to the list of things that are valid due to references.
+Potentially it could also avoid some of the challenges of using
+name_to_handle_at that is a privileged operation.
 
-Yes this is getting a bit tedious.
+Frank
 
-What if we create a newtype wrapping `Opaque<T>` with the invariant
-that it contains a valid value? Then we could have a specially named
-getter for which we would always assume that the returned pointer is
-valid. And thus permit you to not mention it in the SAFETY comment?
 
-[...]
-
->>> +#[pinned_drop]
->>> +impl PinnedDrop for PollCondVar {
->>> +    fn drop(self: Pin<&mut Self>) {
->>> +        // Clear anything registered using `register_wait`.
->>> +        //
->>> +        // SAFETY: The pointer points at a valid wait list.
->>
->> I was a bit confused by "wait list", since the C type is named
->> `wait_queue_head`, maybe just use the type name?
->=20
-> I will update all instances of "wait list" to "wait_queue_head". It's
-> because I incorrectly remembered the C type name to be "wait_list".
-
-Maybe we should also change the name of the field on `CondVar`?
-
-If you guys agree, I can open a good-first-issue, since it is a very
-simple change.
-
---=20
-Cheers,
-Benno
 
