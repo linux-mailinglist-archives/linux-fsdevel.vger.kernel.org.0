@@ -1,135 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-5607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBC180E0E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 02:32:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA8880E11D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 02:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7721C216C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 01:32:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D01A5B216F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 01:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCEE20EA;
-	Tue, 12 Dec 2023 01:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D1D20EA;
+	Tue, 12 Dec 2023 01:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="u2n1nEwu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706BACE;
-	Mon, 11 Dec 2023 17:32:21 -0800 (PST)
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Sq1Lj3Z6Rz4f3lDc;
-	Tue, 12 Dec 2023 09:32:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 5C7FC1A0D83;
-	Tue, 12 Dec 2023 09:32:18 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgCn9gwauHdlugyeDQ--.45656S3;
-	Tue, 12 Dec 2023 09:32:13 +0800 (CST)
-Subject: Re: [PATCH RFC v2 for-6.8/block 15/18] buffer: add a new helper to
- read sb block
-To: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
- kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
- josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
- brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, agruenba@redhat.com, jack@suse.com,
- konishi.ryusuke@gmail.com, willy@infradead.org, akpm@linux-foundation.org,
- p.raghav@samsung.com, hare@suse.de, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, gfs2@lists.linux.dev,
- linux-nilfs@vger.kernel.org, yi.zhang@huawei.com,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20231211140552.973290-1-yukuai1@huaweicloud.com>
- <20231211140753.975297-1-yukuai1@huaweicloud.com>
- <20231211172708.qpuk4rkwq4u2zbmj@quack3>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <be459c50-5179-2748-2636-7965b9e1cb7a@huaweicloud.com>
-Date: Tue, 12 Dec 2023 09:32:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 005C4A2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 11 Dec 2023 17:53:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1702346025; bh=FD7duTuFK+lQgjiTKG+9TgQ2tzx4vfTI1j+uY0lwi8Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=u2n1nEwuVRcf2UOq5fr0a2gaAEjJc9z9OAeQatgcUGkJ2/RDIR3gX79S37qkSxGxT
+	 6i3XFDsS7ez5yvUIJfc2INMji9zRUb/VXk/oc69yBKUzPg8AUETony/+2myCijvKge
+	 FPL16RX/9DjE4048zTGNVY5QHbuaOy18NiBBr5gA=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 915A4E59; Tue, 12 Dec 2023 09:36:21 +0800
+X-QQ-mid: xmsmtpt1702344981t7qa9e586
+Message-ID: <tencent_B86ECD2ECECC92A7ED86EF92D0064A499206@qq.com>
+X-QQ-XMAILINFO: NyTsQ4JOu2J2zOZ5ZNYHLqT4KfOHLzba1FvVOT7bRfSrE8dwbJH2SiwehFmpQn
+	 76d7hNEbFs9hUl7z7ICNcOFl1JD7IImxGHSv8oMYzQDgkbSSKRR0r6xzbsb4Bh0jiFADOgsJEE3x
+	 TWdXfWm4Eo7SU6xF4yNgyGRjz5Um7gxZiYNdb7IByhy+owTzPpIxllnLPrKfaD8vL7ZbRDYtAKxe
+	 SAx7plUbfsn32bOA+v/6lnvenN4YeGYawJQvGSYOjlHsBgVjXriPdkAAFKo8VcrQRdCy/XfK1vUF
+	 naI5zjRXVAAZRU5IqrQqc4mTzmDMN7Epfk5Iz2TRT795vyofaTxGlWikWCTumVx+9cO1KWghHrpf
+	 XQ2Xay0oQJNszywQAt0jb6PHGdqGTbdYJMIW4JMBcxWN482XUYZ7/Eik1mr6XcUdikFn7rH8uhvJ
+	 TGdLpfbqeknDxxB3YeIvt6gYL0LcTPd6verJq60Mk19x3tBIth2Th+nji7hwA9pGzcfbcpx15arJ
+	 9foVcX8rfCotnGBYCP/7rDLssOhO6CqX/YOML0TyIzuzhuQZpX2ixFuiLiUPP0B6gW9FUhtJckuv
+	 LbgCFyVn2PO+0rW3l8yBHWEo2RrECCNBueXMY+A19c8hwxcEQlRR/LfNfyRV/A5cDeEeDufYP841
+	 9Q6OmOIlqFDN3vBB2zv5/sn6ExFZjWfd8rP0+VFcFUywqwhDYJ4RzvxJ3lwmXaBazYRyeUvmZJO1
+	 Bs/bzob2W+06LxlhOVxs+WnQ+S6Ppu+Etm4DcrVSqZiIOPCe/h3PRj8XL85l7v/0vj7xvQr3G25a
+	 0j0jfeP+e5ky0AT3iUiIVdweE+kQxLvhia8TLgL59I8LCca6hu/ZsAcOJnkKXr66Ufe34Jj002O4
+	 /sGKqqpWqNv+x6VSVNmzmVN5breqdB37U2BJXD2I6t4iP5J8j8+VlTf8kHD0O2Ip4KHxiCig0I
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+553d90297e6d2f50dbc7@syzkaller.appspotmail.com
+Cc: jfs-discussion@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] jfs: fix array-index-out-of-bounds in diNewExt
+Date: Tue, 12 Dec 2023 09:36:22 +0800
+X-OQ-MSGID: <20231212013621.2119245-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <00000000000062a4cc060c2217de@google.com>
+References: <00000000000062a4cc060c2217de@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20231211172708.qpuk4rkwq4u2zbmj@quack3>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCn9gwauHdlugyeDQ--.45656S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7trWDZF4Dur4DWFWktF1xGrg_yoW8WF48pr
-	ySkayakrZrAr1a9F12qw1rXFyrKa13G3WrCFyfJa4UAryagr13XrWxGF4UGFW3ZrnrAws8
-	Xa1FkayrZw15KFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6rWU
-	JVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F
-	4UJbIYCTnIWIevJa73UjIFyTuYvjfUFfHUDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+[Syz report]
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_imap.c:2360:2
+index -878706688 is out of range for type 'struct iagctl[128]'
+CPU: 1 PID: 5065 Comm: syz-executor282 Not tainted 6.7.0-rc4-syzkaller-00009-gbee0e7762ad2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ ubsan_epilogue lib/ubsan.c:217 [inline]
+ __ubsan_handle_out_of_bounds+0x11c/0x150 lib/ubsan.c:348
+ diNewExt+0x3cf3/0x4000 fs/jfs/jfs_imap.c:2360
+ diAllocExt fs/jfs/jfs_imap.c:1949 [inline]
+ diAllocAG+0xbe8/0x1e50 fs/jfs/jfs_imap.c:1666
+ diAlloc+0x1d3/0x1760 fs/jfs/jfs_imap.c:1587
+ ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
+ jfs_mkdir+0x1c5/0xb90 fs/jfs/namei.c:225
+ vfs_mkdir+0x2f1/0x4b0 fs/namei.c:4106
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4129
+ __do_sys_mkdir fs/namei.c:4149 [inline]
+ __se_sys_mkdir fs/namei.c:4147 [inline]
+ __x64_sys_mkdir+0x6e/0x80 fs/namei.c:4147
+ do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:82
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fcb7e6a0b57
+Code: ff ff 77 07 31 c0 c3 0f 1f 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd83023038 EFLAGS: 00000286 ORIG_RAX: 0000000000000053
+RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fcb7e6a0b57
+RDX: 00000000000a1020 RSI: 00000000000001ff RDI: 0000000020000140
+RBP: 0000000020000140 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000286 R12: 00007ffd830230d0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 
-ÔÚ 2023/12/12 1:27, Jan Kara Ð´µÀ:
-> On Mon 11-12-23 22:07:53, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Unlike __bread_gfp(), ext4 has special handing while reading sb block:
->>
->> 1) __GFP_NOFAIL is not set, and memory allocation can fail;
->> 2) If buffer write failed before, set buffer uptodate and don't read
->>     block from disk;
->> 3) REQ_META is set for all IO, and REQ_PRIO is set for reading xattr;
->> 4) If failed, return error ptr instead of NULL;
->>
->> This patch add a new helper __bread_gfp2() that will match above 2 and 3(
->> 1 will be used, and 4 will still be encapsulated by ext4), and prepare to
->> prevent calling mapping_gfp_constraint() directly on bd_inode->i_mapping
->> in ext4.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ...
->> +/*
->> + * This works like __bread_gfp() except:
->> + * 1) If buffer write failed before, set buffer uptodate and don't read
->> + * block from disk;
->> + * 2) Caller can pass in additional op_flags like REQ_META;
->> + */
->> +struct buffer_head *
->> +__bread_gfp2(struct block_device *bdev, sector_t block, unsigned int size,
->> +	     blk_opf_t op_flags, gfp_t gfp)
->> +{
->> +	return bread_gfp(bdev, block, size, op_flags, gfp, true);
->> +}
->> +EXPORT_SYMBOL(__bread_gfp2);
-> 
-> __bread_gfp2() is not a great name, why not just using bread_gfp()
-> directly? I'm not a huge fan of boolean arguments but three different flags
-> arguments would be too much for my taste ;) so I guess I can live with
-> that.
+[Analysis]
+When the agstart is too large, it can cause agno overflow.
 
-I agree that __bread_gfp2 is not a greate name, if possible, I'll try to
-figure out a better name for v3.
+[Fix]
+After obtaining agno, if the value is invalid, exit the subsequent process.
 
-Thanks for reviewing this patchset!
-Kuai
-> 
-> 								Honza
-> 
+Reported-and-tested-by: syzbot+553d90297e6d2f50dbc7@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/jfs/jfs_imap.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index a037ee59e398..cc5819b3ec9a 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -2179,6 +2179,9 @@ static int diNewExt(struct inomap * imap, struct iag * iagp, int extno)
+ 	/* get the ag and iag numbers for this iag.
+ 	 */
+ 	agno = BLKTOAG(le64_to_cpu(iagp->agstart), sbi);
++	if (agno > MAXAG || agno < 0)
++		return -EIO;
++
+ 	iagno = le32_to_cpu(iagp->iagnum);
+ 
+ 	/* check if this is the last free extent within the
+-- 
+2.43.0
 
 
