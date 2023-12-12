@@ -1,58 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-5700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EC280EFF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:19:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7476A80EFFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 551B3B20E8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296891F21015
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F8F75432;
-	Tue, 12 Dec 2023 15:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493ED75425;
+	Tue, 12 Dec 2023 15:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eVfUKNx7"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzwyPqVo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F8BF3;
-	Tue, 12 Dec 2023 07:19:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hJFVEyxAqaTyWKn0xSoqtwuxX6IerRG8qVGzGaggA8w=; b=eVfUKNx7/zwo0Jk2745c8DeHo7
-	jfdzDxn3mUmUlDnLLxBVOcyh2AwO1sarWBBQ3lZ0oVuNEwQkVEFl5cl0ug7S5ZnP2S8Gjy8/vMHO5
-	yiwOgVoZglwFhIkNpijSLvb6/eZS6Ra2SZdHovI6kYsvtHLuBh/4nRswsA04x3YNKZ8GklgBiUxNP
-	XPfJx7dYDDO7OekU/2bEJjDJhNXxmnrwrgnAXftScECU4kXCjj18edbJCSo13/rerkQ7+CodIy33Z
-	iloe7U278Oi8ZvdZg9v4rxyYR/S8ouHhc2lCnYMe+nF8dsJ+jAkhwvFNPG/kzRrReBWxJ1YAqCil7
-	PhskmXsQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rD4XG-00C1V5-06;
-	Tue, 12 Dec 2023 15:19:02 +0000
-Date: Tue, 12 Dec 2023 07:19:02 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	dchinner@redhat.com
-Subject: Re: [RFC 0/7] ext4: Allocator changes for atomic write support with
- DIO
-Message-ID: <ZXh55vLzrs9VTGHc@infradead.org>
-References: <cover.1701339358.git.ojaswin@linux.ibm.com>
- <8c06c139-f994-442b-925e-e177ef2c5adb@oracle.com>
- <ZW3WZ6prrdsPc55Z@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <de90e79b-83f2-428f-bac6-0754708aa4a8@oracle.com>
- <ZXbqVs0TdoDcJ352@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <c4cf3924-f67d-4f04-8460-054dbad70b93@oracle.com>
- <ZXhb0tKFvAge/GWf@infradead.org>
- <20231212151613.GA142380@mit.edu>
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 466A583
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 07:20:55 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-124-235.bstnma.fios.verizon.net [173.48.124.235])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3BCFKGb9002440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Dec 2023 10:20:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1702394419; bh=Rf4NyHU1FOsEao5ocA/GzTHYRoWx+CcxR8bLTSQhNCI=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=LzwyPqVoUn+Fn2+gO9Ci6S3jZyCMaoE4vCzLIRfuYho35bG2RlaZ1IypvFeQ3BAo/
+	 JSdMGhuYhRPSlW1KCc07K7HPbRtNc1eTdm1b5n7I2bl8Pxd45Gz/rFYPfkLN4MIpXJ
+	 XPPZTwqf+4pmZOffG7x9LykWkF8qZJcx1ryzTiY67SsgVyKkmmlcUMuLYxVB4mW4qi
+	 WzzOp0lvvl4yaQP1dtNiX89TOrjc5g6yAtheEsOUAWUFEcUcYmu8Vk9KFqeYCGi11T
+	 C2Jmld4XjsoLxSn9rLjQz9IaQ1/f7rcpr9JkXW6FHLr/t0n3Klkfq9ZAo5S13vZZQs
+	 Z/OraBZLq2XJg==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 9F47715C3B37; Tue, 12 Dec 2023 10:20:16 -0500 (EST)
+Date: Tue, 12 Dec 2023 10:20:16 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Donald Buczek <buczek@molgen.mpg.de>
+Cc: Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-bcachefs@vger.kernel.org,
+        Stefan Krueger <stefan.krueger@aei.mpg.de>,
+        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx
+Message-ID: <20231212152016.GB142380@mit.edu>
+References: <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area>
+ <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,26 +63,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231212151613.GA142380@mit.edu>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
 
-On Tue, Dec 12, 2023 at 10:16:13AM -0500, Theodore Ts'o wrote:
-> On Tue, Dec 12, 2023 at 05:10:42AM -0800, Christoph Hellwig wrote:
-> > On Tue, Dec 12, 2023 at 07:46:51AM +0000, John Garry wrote:
-> > > It is assumed that the user will fallocate/dd the complete file before
-> > > issuing atomic writes, and we will have extent alignment and length as
-> > > required.
-> > 
-> > I don't think that's a long time maintainable usage model.
+On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
+> On 12/12/23 06:53, Dave Chinner wrote:
 > 
-> For databases that are trying to use this to significantly improve
-> their performance by eliminating double writes, the allocation and
-> writes are being done by a single process.  So for *that* use case, it
-> is quite maintainable.
+> > So can someone please explain to me why we need to try to re-invent
+> > a generic filehandle concept in statx when we already have a
+> > have working and widely supported user API that provides exactly
+> > this functionality?
+> 
+> name_to_handle_at() is fine, but userspace could profit from being
+> able to retrieve the filehandle together with the other metadata in
+> a single system call.
 
-That's not the freaking point.  We need to have proper kernel interfaces
-that don't rely on intimate knowledge and control of details.  We need
-to build proper genral purpose interfaces and not layer hacks on top of
-hacks.
+Can you say more?  What, specifically is the application that would
+want to do that, and is it really in such a hot path that it would be
+a user-visible improveable, let aloine something that can be actually
+be measured?
 
+						- Ted
 
