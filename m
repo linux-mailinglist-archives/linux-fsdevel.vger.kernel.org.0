@@ -1,129 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-5742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB69D80F7E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 21:26:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEEF80F868
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 21:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D693B20ED0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BE4D1C20D6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A3463C19;
-	Tue, 12 Dec 2023 20:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E121465A6B;
+	Tue, 12 Dec 2023 20:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QK3xwh7/"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sLqInWGe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCB863C0A;
-	Tue, 12 Dec 2023 20:26:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C190EC433C7;
-	Tue, 12 Dec 2023 20:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702412785;
-	bh=ITS9iepxKmDBteakc9JcBmcwe4qkWaGAUfkgjLJxKz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QK3xwh7/RovgLawsgEE27tFvsEmWXv9zo7z8pvLyL07K+1LB60nrenIjCvuljOe6O
-	 41c/d6u9DpvjRjFbkGD3P7jmXStQB53cqmZKdEcnFfWLpGUOCj6vXd8lnyrF285YBk
-	 lVETctoAeX57YmnxNLRbavEXKvRsDBaDhwBiBYye6h5MN+tCnF67DNpZdysaYny5kM
-	 t6INZGptEmFHhK3ZOTufikrTYp0MGbYMADqUFNtympWn8LwrjrDYUNKzFAW2JmdTUH
-	 jSwlGihfJo7Y1K458B8sp76wN0x2qFUaS7cUbWtzteUthuknj5NGIFYj3sBiBRZ0Ms
-	 PcHfkNUJGI2Qg==
-Date: Tue, 12 Dec 2023 20:26:15 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"keescook@chromium.org" <keescook@chromium.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v7 02/39] prctl: arch-agnostic prctl for shadow stack
-Message-ID: <28c584ff-ef25-464f-852c-c5ddf66e5906@sirena.org.uk>
-References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
- <20231122-arm64-gcs-v7-2-201c483bd775@kernel.org>
- <e1362732ba86990b7707d3f5b785358b77c5f896.camel@intel.com>
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45ABC1BD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 12:48:21 -0800 (PST)
+Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6d9dbe224bbso4533637a34.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 12:48:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702414100; x=1703018900; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVqjzYmMQlC8GFrsUFTCmPpPXyWkgv32hXJBYv5zBPg=;
+        b=sLqInWGeZOV0m3TId42q/7hH88dLpFBnxfCD2InaaA/asS5N6d2nYPAvSA+FqS5oo4
+         RI8swNCW3L5PNDSXGAcQoSoIvQcfBjPpGomZXWF3KbZ+E3u3S9qjkwTzhW2ItSPnIow4
+         n8OsXCmMSVMwYCyhOCDxcc9G+OxjKa/l/0S8shIDd7cR1rgUujy4JX74ZR7QyFX4Hg+O
+         nFicUGUiE658Lb+coAKQYXDEc3scWybaX9jTin4bQUhfnwqiTE5WSyMrOtzi3FUA+kWe
+         ol4EPNAMWcQHm+tAm4SazPlt94b7rQLbKQyMrqxf7fP1wcFRDN1ZGalD/b7N/ugePgS7
+         +xIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702414100; x=1703018900;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eVqjzYmMQlC8GFrsUFTCmPpPXyWkgv32hXJBYv5zBPg=;
+        b=ETWVPgS+eznX0TJyHnsyuBTgFW1suJDFSP96jpOBrLTrJ9hdrDxBAfgCY8PsFMt/C9
+         2C95tCcdUWpCvGnYLDQPpF6LO0CmLrYgq5/fS5mbYV+jKAGbpY1oLRCBWqgSUQfBfl74
+         ABTY4esXC0dnmLZ45No9cNASUpzj5zPtI1bD+BpV7lYRYRveuP2De2FtAh/jnU0Wc83S
+         AnGjM3RsegZ20AXTPl1v2lIRD/3NrSuPYycshWJpYdAN2ww8w2X3K7WTRu2ztE3Pn0pW
+         QSTMVY3v1xTlHRKEGhoMGPnI8f5zwTuw5kLUT34mOOC/DcMHdTNlTUqIsddRefYq3+DC
+         11HA==
+X-Gm-Message-State: AOJu0YwADRjyV44mhpb0kX0NkblbI33qE1j07F9depw2Kxx4lWUUdnsr
+	LOAutq5gnhn/TO0/XiPPhJg/Tw==
+X-Google-Smtp-Source: AGHT+IEko0WrYzcClnAKt6LFrWR88tsKOkk7WGPmvQ8700VnhlisdsftOAR9JshHQTBff8F/+hr7jw==
+X-Received: by 2002:a05:6359:1a86:b0:170:21ef:3e71 with SMTP id rv6-20020a0563591a8600b0017021ef3e71mr4232756rwb.42.1702414100115;
+        Tue, 12 Dec 2023 12:48:20 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id ks5-20020a056a004b8500b006cef51f51b7sm6449110pfb.155.2023.12.12.12.48.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Dec 2023 12:48:19 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rD9fs-007S6y-0s;
+	Wed, 13 Dec 2023 07:48:16 +1100
+Date: Wed, 13 Dec 2023 07:48:16 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: NeilBrown <neilb@suse.de>, Donald Buczek <buczek@molgen.mpg.de>,
+	linux-bcachefs@vger.kernel.org,
+	Stefan Krueger <stefan.krueger@aei.mpg.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+Message-ID: <ZXjHEPn3DfgQNoms@dread.disaster.area>
+References: <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area>
+ <20231212152153.tasaxsrljq2zzbxe@moria.home.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LPMEijolhyLOy67U"
-Content-Disposition: inline
-In-Reply-To: <e1362732ba86990b7707d3f5b785358b77c5f896.camel@intel.com>
-X-Cookie: If rash develops, discontinue use.
-
-
---LPMEijolhyLOy67U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20231212152153.tasaxsrljq2zzbxe@moria.home.lan>
 
-On Tue, Dec 12, 2023 at 08:17:09PM +0000, Edgecombe, Rick P wrote:
-> On Wed, 2023-11-22 at 09:42 +0000, Mark Brown wrote:
+On Tue, Dec 12, 2023 at 10:21:53AM -0500, Kent Overstreet wrote:
+> On Tue, Dec 12, 2023 at 04:53:28PM +1100, Dave Chinner wrote:
+> > Doesn't anyone else see or hear the elephant trumpeting loudly in
+> > the middle of the room?
+> > 
+> > I mean, we already have name_to_handle_at() for userspace to get a
+> > unique, opaque, filesystem defined file handle for any given file.
+> > It's the same filehandle that filesystems hand to the nfsd so nfs
+> > clients can uniquely identify the file they are asking the nfsd to
+> > operate on.
+> > 
+> > The contents of these filehandles is entirely defined by the file
+> > system and completely opaque to the user. The only thing that
+> > parses the internal contents of the handle is the filesystem itself.
+> > Therefore, as long as the fs encodes the information it needs into the
+> > handle to determine what subvol/snapshot the inode belongs to when
+> > the handle is passed back to it (e.g. from open_by_handle_at()) then
+> > nothing else needs to care how it is encoded.
+> > 
+> > So can someone please explain to me why we need to try to re-invent
+> > a generic filehandle concept in statx when we already have a
+> > have working and widely supported user API that provides exactly
+> > this functionality?
+> 
+> Definitely should be part of the discussion :)
+> 
+> But I think it _does_ need to be in statx; because:
+>  - we've determined that 64 bit ino_t just isn't a future proof
+>    interface, we're having real problems with it today
+>  - statx is _the_ standard, future proofed interface for getting inode
+>    attributes
 
-> > These features are expected to be inherited by new threads and
-> > cleared
-> > on exec(), unknown features should be rejected for enable but
-> > accepted
-> > for locking (in order to allow for future proofing).
+No, it most definitely isn't, and statx was never intended as a
+dumping ground for anything and everything inode related. e.g. Any
+inode attribute that can be modified needs to use a different
+interface - one that has a corresponding "set" operation.
 
-> The reason why I stuck with arch_prctl when this came up is that CRIU
-> (and probably other ptracers) needs a way to unlock via ptrace. ptrace
-> arch_prctl() can do this. Did you have a plan for unlocking via ptrace?
+>  - therefore, if we want userspace programmers to be using filehandles,
+>    instead of inode numbers, so there code isn't broken, we need to be
+>    providing interfaces that guide them in that direction.
 
-The set of locked features is read/write via ptrace in my arm64 series,
-that's architecture specific unfortunately but that seems to be the way
-with ptrace.
+We already have a filehandle interface they can use for this
+purpose. It is already used by some userspace applications for this
+purpose.
 
-In general if things have a need to get at prctl()s via ptrace we should
-just fix that, at least for arm64 there's things like the vector lengths
-that are currently controlled via prctl(), but it shouldn't be a blocker
-for the locking specifically.
+Anything new API function do with statx() will require application
+changes, and the vast majority of applications aren't using statx()
+directly - they are using stat() which glibc wraps to statx()
+internally. So they are going to need a change of API, anyway.
 
---LPMEijolhyLOy67U
-Content-Type: application/pgp-signature; name="signature.asc"
+So, fundamentally, there is a change of API for most applications
+that need to do thorough inode uniqueness checks regardless of
+anything else. They can do this right now - just continue using
+stat() as they do right now, and then use name_to_filehandle_at()
+for uniqueness checks.
 
------BEGIN PGP SIGNATURE-----
+> Even assuming we can update all the documentation to say "filehandles
+> are the correct way to test inode uniqueness", you know at least half of
+> programmers will stick to stx_ino instead of the filehandle if the
+> filehandle is an extra syscall.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV4weYACgkQJNaLcl1U
-h9BRvwf/S9so8PzoqYCQJHpoRcvkwkq4+soyG3JSVYBAX+IsKPFGhH92O4Zp5DZJ
-aASTrqwmW/PsW8TX8LOC1w1a2OadrpSIa4r8kxsWZWdzkg6OHWcZ/XlhGe4a1yMF
-kUw36Z5PIqQRf02YHLYdelHq6/xswjma9YcOb5iVB0TZAL5mQw/2CHXr4ahGlAFr
-Pj4wVYIkXRohUP6gR04RuD61bfD4WIFneYjIjzPYYYo9yxWSiiOrpO/MD1Jb7bQe
-BaUHpGEsUZysAGRWxVvg+6v85VbHn/PYX8xT5xk9AmfYP8KM8HaClCKtzVBg//10
-a9fZcXajnHu4O2S5h6Jsn5IYnbwpcg==
-=ln+K
------END PGP SIGNATURE-----
+Your argument is "programmers suck so we must design for the
+lowest common denominator". That's an -awful- way to design APIs.
 
---LPMEijolhyLOy67U--
+Further, this "programmers suck" design comes at a cost to every
+statx() call that does not need filehandles. That's the vast
+majority of statx() calls that are made on a system. Why should we
+slow down statx() for all users when so few applications actually
+need uniqueness and they can take the cost of robust uniqueness
+tests with an extra syscall entirely themselves?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
