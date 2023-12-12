@@ -1,177 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-5734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4096B80F664
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:17:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C565980F66C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711991C20BB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:17:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1796B20EED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918B081E4A;
-	Tue, 12 Dec 2023 19:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CAA81E3A;
+	Tue, 12 Dec 2023 19:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nKavvAYi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="rMg4ncyU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 625309F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:17:23 -0800 (PST)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-5d3758fdd2eso59450487b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:17:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1702408642; x=1703013442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BXh6bur6LRnADXulivu2P72dN6ifPaK1xY/cKiFFTNI=;
-        b=nKavvAYidvQ9w393bc3O1a4mlDsiGhjQJ/4lYL/qcziFXkDI45Yejvmo1XOc1GA/aq
-         DmL6kVj+2k2MsnBVsfBXQ2fCbHHJn/UbwVYJk6a2+Vd1Zghoq287v3/sT6wVS0aRUznN
-         rkEc5Vw8Ru+y58FfFbfO6ZNoJ6Uom8oeVUe+hqlQgugJjT2ERC+JJ5pXeGo7jaGJtg1K
-         bT2xufqFBgQed3Z5szo7rZzQT81g1p1UpVvbocJXyTE7JgI/AOAFO/lG1nPQAU8HRmP+
-         hxHpFwQuMvFUZvyD2kxPIHDopIZjXN+rBWqw0B6oypvOfoyLo/yXFo/6DnKBHL49SBVE
-         P/zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702408642; x=1703013442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BXh6bur6LRnADXulivu2P72dN6ifPaK1xY/cKiFFTNI=;
-        b=AYE6ASZnLOr55aQ2BeilfFV3/yTTL+I3yjGtMeVc9BHYYSWjRzWZgC1X9ima3L0QaQ
-         44zlFApPBeEbIz2Qb5qXSaXxMle8HwSu6a882PNGoal55cfc6G8CKtPd+9pG+3BGnG0J
-         nNnu/7jZ6KpQzgUGfFYoIvmLAGYa7W+bUGFs5RgiceAS+liUNLYBl2hWjhyYFjk8+dyX
-         H/qlbmF7fMZ8e/CWoaGktkmqJxq+VG5Gswl9XGfhten/WP4YgNb8xZOVgtkuMuOdZTKX
-         ZJYb7vJz5QWp8Vh/IMu60UAWtPLYyg8Y871CCpZiOfe6ohKRuz4UrIVUEZ6ZFikfoadH
-         HL0A==
-X-Gm-Message-State: AOJu0YzIhK60qcT4v0rN6v+VqMTGEeg07riYcjmTyiGW/RkAxGyTGlRx
-	beJPMmAAt+9Ei/mKjyklLp+KeFhGdvqJybFNDhPbSA==
-X-Google-Smtp-Source: AGHT+IEg7PrE51WetYNV2TXBUh16oGjCgjaHBUbmLH/Y9ejNibFsuQg1ft+g8k/hUJRIzvj4zJlXYzVe6GRAoz3cE6E=
-X-Received: by 2002:a25:244b:0:b0:dbc:c4f2:612f with SMTP id
- k72-20020a25244b000000b00dbcc4f2612fmr698912ybk.34.1702408642045; Tue, 12 Dec
- 2023 11:17:22 -0800 (PST)
+Received: from mta-101a.earthlink-vadesecure.net (mta-101a.earthlink-vadesecure.net [51.81.61.60])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 387D1AD;
+	Tue, 12 Dec 2023 11:18:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; bh=iNhXZaA1uzGEWSnxpxhdt0noXL5bjA9mN7YcaH
+ C9Il8=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-subscribe:list-post:
+ list-owner:list-archive; q=dns/txt; s=dk12062016; t=1702408684;
+ x=1703013484; b=rMg4ncyUWE8j4hdw52dMjlM4O2QSzI2aQaZyfa18oIbaXYdAZs5B/n/
+ +OfDMejvRgdAyZQqce4B27Z/gab85vDlI18AjfzyAKbXIhoPupbpK32Ykf3BvvFqkqFaLJp
+ WbLtGIltspRy02zgm7XPPdTXMLXDyUnN3cav7VDhqn50zMcdmRmMOwuNCVBtHQ0OimRZSWy
+ PpGYInXwl86M6RyzCgFIfZaJpLLUvJulkSLHEBFzBYJ49I4GVxhWr68R/im7CwJlkmbe+Aj
+ jMsKWhO9XcHbZp0OwF+0zkyhFLSSWMiwQ41fLj8CsZ+XI69PtwxJm830KZu+osjcn0D6eca
+ tig==
+Received: from FRANKSTHINKPAD ([174.174.49.201])
+ by vsel1nmtao01p.internal.vadesecure.com with ngmta
+ id ef714e20-17a02bad7b096f68; Tue, 12 Dec 2023 19:18:04 +0000
+From: "Frank Filz" <ffilzlnx@mindspring.com>
+To: "'Amir Goldstein'" <amir73il@gmail.com>,
+	"'Kent Overstreet'" <kent.overstreet@linux.dev>
+Cc: "'Theodore Ts'o'" <tytso@mit.edu>,
+	"'Donald Buczek'" <buczek@molgen.mpg.de>,
+	"'Dave Chinner'" <david@fromorbit.com>,
+	"'NeilBrown'" <neilb@suse.de>,
+	<linux-bcachefs@vger.kernel.org>,
+	"'Stefan Krueger'" <stefan.krueger@aei.mpg.de>,
+	"'David Howells'" <dhowells@redhat.com>,
+	<linux-fsdevel@vger.kernel.org>
+References: <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan> <170233460764.12910.276163802059260666@noble.neil.brown.name> <20231211233231.oiazgkqs7yahruuw@moria.home.lan> <170233878712.12910.112528191448334241@noble.neil.brown.name> <20231212000515.4fesfyobdlzjlwra@moria.home.lan> <170234279139.12910.809452786055101337@noble.neil.brown.name> <ZXf1WCrw4TPc5y7d@dread.disaster.area> <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de> <20231212152016.GB142380@mit.edu> <0b4c01da2d1e$cf65b930$6e312b90$@mindspring.com> <20231212174432.toj6c65mlqrlt256@moria.home.lan> <CAOQ4uxgcUQE9Ldg8rodMXJvbU9BDCC9wGED0jANGrC-OLY1HJQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgcUQE9Ldg8rodMXJvbU9BDCC9wGED0jANGrC-OLY1HJQ@mail.gmail.com>
+Subject: RE: file handle in statx
+Date: Tue, 12 Dec 2023 11:18:02 -0800
+Message-ID: <0b5d01da2d2f$ee5df9e0$cb19eda0$@mindspring.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org> <20231122-arm64-gcs-v7-2-201c483bd775@kernel.org>
-In-Reply-To: <20231122-arm64-gcs-v7-2-201c483bd775@kernel.org>
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Tue, 12 Dec 2023 11:17:11 -0800
-Message-ID: <CAKC1njSC5cC_fXnyNAPt=WU6cD-OjLKFxo90oVPmsLJbuWf4nw@mail.gmail.com>
-Subject: Re: [PATCH v7 02/39] prctl: arch-agnostic prctl for shadow stack
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>, 
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, "H.J. Lu" <hjl.tools@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Florian Weimer <fweimer@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, Thiago Jung Bauermann <thiago.bauermann@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: en-us
+Thread-Index: AQI9D5j+iWWTWnyU8CMdbk6E8xo4PwHHTjCPAatvR2sCMTvAAQGKlz4oApPNpA0BSHZRUQKfmjdIAWd4JeUCEu11rwHu2mPMAhIwDuivNxBsIA==
+Authentication-Results: earthlink-vadesecure.net;
+ auth=pass smtp.auth=ffilzlnx@mindspring.com smtp.mailfrom=ffilzlnx@mindspring.com;
 
-On Wed, Nov 22, 2023 at 1:43=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> Three architectures (x86, aarch64, riscv) have announced support for
-> shadow stacks with fairly similar functionality.  While x86 is using
-> arch_prctl() to control the functionality neither arm64 nor riscv uses
-> that interface so this patch adds arch-agnostic prctl() support to
-> get and set status of shadow stacks and lock the current configuation to
-> prevent further changes, with support for turning on and off individual
-> subfeatures so applications can limit their exposure to features that
-> they do not need.  The features are:
->
->   - PR_SHADOW_STACK_ENABLE: Tracking and enforcement of shadow stacks,
->     including allocation of a shadow stack if one is not already
->     allocated.
->   - PR_SHADOW_STACK_WRITE: Writes to specific addresses in the shadow
->     stack.
->   - PR_SHADOW_STACK_PUSH: Push additional values onto the shadow stack.
->
-> These features are expected to be inherited by new threads and cleared
-> on exec(), unknown features should be rejected for enable but accepted
-> for locking (in order to allow for future proofing).
->
-> This is based on a patch originally written by Deepak Gupta but modified
-> fairly heavily, support for indirect landing pads is removed, additional
-> modes added and the locking interface reworked.  The set status prctl()
-> is also reworked to just set flags, if setting/reading the shadow stack
-> pointer is required this could be a separate prctl.
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  include/linux/mm.h         |  4 ++++
->  include/uapi/linux/prctl.h | 22 ++++++++++++++++++++++
->  kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
->  3 files changed, 56 insertions(+)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 10462f354614..8b28483b4afa 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4143,4 +4143,8 @@ static inline bool pfn_is_unaccepted_memory(unsigne=
-d long pfn)
->         return range_contains_unaccepted_memory(paddr, paddr + PAGE_SIZE)=
-;
->  }
->
-> +int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __=
-user *status);
-> +int arch_set_shadow_stack_status(struct task_struct *t, unsigned long st=
-atus);
-> +int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long s=
-tatus);
-> +
->  #endif /* _LINUX_MM_H */
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 370ed14b1ae0..3c66ed8f46d8 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -306,4 +306,26 @@ struct prctl_mm_map {
->  # define PR_RISCV_V_VSTATE_CTRL_NEXT_MASK      0xc
->  # define PR_RISCV_V_VSTATE_CTRL_MASK           0x1f
->
-> +/*
-> + * Get the current shadow stack configuration for the current thread,
-> + * this will be the value configured via PR_SET_SHADOW_STACK_STATUS.
-> + */
-> +#define PR_GET_SHADOW_STACK_STATUS      71
-> +
-> +/*
-> + * Set the current shadow stack configuration.  Enabling the shadow
-> + * stack will cause a shadow stack to be allocated for the thread.
-> + */
-> +#define PR_SET_SHADOW_STACK_STATUS      72
-> +# define PR_SHADOW_STACK_ENABLE         (1UL << 0)
+> On Tue, Dec 12, 2023 at 7:44=E2=80=AFPM Kent Overstreet =
+<kent.overstreet@linux.dev>
+> wrote:
+> >
+> > On Tue, Dec 12, 2023 at 09:15:29AM -0800, Frank Filz wrote:
+> > > > On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
+> > > > > On 12/12/23 06:53, Dave Chinner wrote:
+> > > > >
+> > > > > > So can someone please explain to me why we need to try to
+> > > > > > re-invent a generic filehandle concept in statx when we
+> > > > > > already have a have working and widely supported user API =
+that
+> > > > > > provides exactly this functionality?
+> > > > >
+> > > > > name_to_handle_at() is fine, but userspace could profit from
+> > > > > being able to retrieve the filehandle together with the other
+> > > > > metadata in a single system call.
+> > > >
+> > > > Can you say more?  What, specifically is the application that
+> > > > would want
+> > > to do
+> > > > that, and is it really in such a hot path that it would be a
+> > > > user-visible improveable, let aloine something that can be =
+actually be
+> measured?
+> > >
+> > > A user space NFS server like Ganesha could benefit from getting
+> > > attributes and file handle in a single system call.
+> > >
+> > > Potentially it could also avoid some of the challenges of using
+> > > name_to_handle_at that is a privileged operation.
+> >
+> > which begs the question - why is name_to_handle_at() privileged?
+> >
+>=20
+> AFAICT, it is not privileged.
+> Only open_by_handle_at() is privileged.
 
-Other architecture may require disabling shadow stack if glibc
-tunables is set to permissive mode.
-In permissive mode, if glibc encounters `dlopen` on an object which
-doesn't support shadow stack,
-glibc should be able to issue PR_SHADOW_STACK_DISABLE.
+Ah, that makes sense. I'm a consumer of these interfaces, not so much in =
+the kernel these days.
 
-Architectures can choose to implement or not but I think arch agnostic
-code should enumerate this.
+Ganesha depends on open_by_handle_at as well, so requires privilege to =
+do handle stuff with kernel file systems.
 
-> +# define PR_SHADOW_STACK_WRITE         (1UL << 1)
-> +# define PR_SHADOW_STACK_PUSH          (1UL << 2)
-> +
-> +/*
-> + * Prevent further changes to the specified shadow stack
-> + * configuration.  All bits may be locked via this call, including
-> + * undefined bits.
-> + */
+In any case, Ganesha could easily benefit from a savings of system =
+calls.
+
+What would also be handy is a read directory with attributes that gave =
+the statx results for each entry.
+
+Frank
+
 
