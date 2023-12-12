@@ -1,233 +1,326 @@
-Return-Path: <linux-fsdevel+bounces-5670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8934A80E9E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 12:12:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12FA80EB34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 13:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88AF51C20BAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 11:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FB228206F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 12:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAFF5D4A0;
-	Tue, 12 Dec 2023 11:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046985DF3F;
+	Tue, 12 Dec 2023 12:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l0+HftME";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jszRWtSA"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="6ytu8UIZ";
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="6ytu8UIZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651AC198C;
-	Tue, 12 Dec 2023 03:10:12 -0800 (PST)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BC7hhll004079;
-	Tue, 12 Dec 2023 11:09:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references :
- content-transfer-encoding : content-type : mime-version;
- s=corp-2023-11-20; bh=OAVy/9R0/bbRD70fkTvpQqSioGRhdig6Z34ouGNPKM0=;
- b=l0+HftMEWO+ZPaKnUsQ24HF8jz3yvRbkQQSk3lJXWDlIs6cU8QU1G1p0ww8VFGIJgSaM
- 9CJggRSsYiwWM499DS9OKvKbkU9fdX1RdeABrvIPNVbhX9jx5UnbmOWbbcRyNUae+R8+
- x5Zmw3lBkjmyK3MvLIsER5ZFiL1PyURNcO6tYEDfXZ7MP3oc+gxP4R6M3rPNG0rHSuid
- CVO8Pq6LaIX3KPCCmtho/OmtAjnklTntpzvEUfWf/kBxDltxr/WhL9VsG0yAEyn0Ku9F
- eKA22EwJgg4iUfaU1FaVQAcw34Yl3FaNWQmk3yHUYa7m5SQr8dqskx0st9S4LLMHn2Oh bQ== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3uvfuu5bjb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 11:09:51 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCAwj7J008234;
-	Tue, 12 Dec 2023 11:09:50 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3uvep6cwvf-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 11:09:49 +0000
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2070.outbound.protection.outlook.com [40.107.6.70])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6121C9F;
+	Tue, 12 Dec 2023 04:04:05 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=pass;
+ b=dbRaV/Us/kohTjRafWS0jCA8hxf263NoyuMqNx3oQWEUXJszUIqILPA5C6epyQc2PdYed1mlJjNnxojSQ5NZJhfm5Sln+MoCoweobMGn8NSRGxsxnzPrxOib95LGzO6QA7qkP5jevYkgDkNle17yZ+oHPUmVkTa6MQtN/I98YPPn5pieiavOmWRIWCzby3BfyovWLluj8eNV0F1smu4zISaKWH7C7CQ23E8s6GlOsnPvKEXJLZTT24e2EMYSOXiIjJM6vOOoZ1FNjDlwwN1nF0Tj2ovvaV21Ig5tKQ34x61xw1uJsvnb3/A4YHm03jRYRWVXPQKnN+wC1gE+483iuA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QKWzbD6Bn2L3zm5IeJhBhUTnYgDoW5cq3xP62ESTFz0=;
+ b=ACwnvqNDgScFBZ0Obyg1wQIfTbpbHLcwWRh5D1JVoaZD+0wzjfe8RV2IT+sdb82uexyyV+Jgs7Htd+B1skErTSZVuSjx3qjeqZihhK7sck5hoLwnuUshyyjImmn2QcbIerer0r+DuHf+nLpYRDhZZyui4zj6h4WeN2SNks2jTumVvx3IptjxrT6iVdywmwIxC+/pIcok9NOXWtLndyL7oUdcUF8t0HT2B4qC+JjdTPjS2mx+cUNydIcnBYpEibGqWtZe0kf4TfopebFEgq7Z/Y9D7+DNuwwpj4pdYbZwkanxH+AkRwaswuS047AlkUQLeu0RN4CbrTmewYhnWu/eSQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=armh.onmicrosoft.com; arc=pass (0
+ oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QKWzbD6Bn2L3zm5IeJhBhUTnYgDoW5cq3xP62ESTFz0=;
+ b=6ytu8UIZHTv0MQ7dGSBBG72lVuYKOkmFhWI3iCCotLJ+T/fVLkWl8tOODLsnS9V9mAIP4rXSx+aMomdkuzvwipFSSbliV5wr0TkEm1xoDCghmm7iZrLZjdDdT5t/jTEL+G6ENF3MfHVZsfyIwaAETbZ7d0G82SAzWvB+G11Grog=
+Received: from DUZPR01CA0349.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::14) by AM8PR08MB6498.eurprd08.prod.outlook.com
+ (2603:10a6:20b:364::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Tue, 12 Dec
+ 2023 12:04:02 +0000
+Received: from DB5PEPF00014B9D.eurprd02.prod.outlook.com
+ (2603:10a6:10:4b8:cafe::16) by DUZPR01CA0349.outlook.office365.com
+ (2603:10a6:10:4b8::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33 via Frontend
+ Transport; Tue, 12 Dec 2023 12:04:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5PEPF00014B9D.mail.protection.outlook.com (10.167.8.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7091.26 via Frontend Transport; Tue, 12 Dec 2023 12:04:02 +0000
+Received: ("Tessian outbound 385ad2f98d71:v228"); Tue, 12 Dec 2023 12:04:02 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 1c65ca2e2b61e7e8
+X-CR-MTA-TID: 64aa7808
+Received: from 2c6765903e7f.1
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 876A3F85-4F1A-4AC8-885A-EBA7D6EA1980.1;
+	Tue, 12 Dec 2023 12:03:50 +0000
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 2c6765903e7f.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Tue, 12 Dec 2023 12:03:50 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IlFAxsUvCiMo7ejoblEMn6wjUYRfBpZm6a7ljZWIlUvUJ9VhV8X1bmn21RGuYJF8QT+/2r9qP0rViMKeAVguCmeZLHvFoDTNJ+kqc6zqMAmQ9DR8xbaLfo2eBw3EwVgIwcuEqoBh/jib3tFc4tlIiivl2x7nnT6gC3QUio+Zs9MZ0HvEsgizOo1PimfliK29VULt6Wk/xgIORog/iayQzsV6RXEarSkOhx+KgXjxkXIcFy5VBLc2/ATeBHogadRRtH1X4LM9yFFAK71Ls+1nDnaJAogmoK2B/vbzIGYdyygh8hb6xwmb27RgC43poG9b1Q3KTPxrPOmFGABlXvcnyA==
+ b=UxLip3L+cTCLR2hSUzpAllj25sYFrkMEYEkmYf3ygy4qMhdT15fq1Bwc80XtPrC+l7Ady9B8nwhxuGCZ2om8O8caxgJOSW/BiI49KkiLGjlxVwukxAyqKyo6P3mkw3d0y9k2yvftfHr5BuVBjVxz/DtLqEqtmbK31YYKchYTpC7WNz4lc10evgalI/plCsN9JIyfx+uLLBVhWslroFapi/eQXpBrcPTbsAEMDIUD05/qxGR2YxfTxYZnDixDPQ9Je9CKXWawpbwtfDiCet8Jjn5Dv1eS/465lkOHNfYoex8X2klduWJzmzu954OsiqH1tb2tTfYh2/J35qJsP3QZtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OAVy/9R0/bbRD70fkTvpQqSioGRhdig6Z34ouGNPKM0=;
- b=gCR9ofKvMjmYTA7CePEjQ3SojpdnnNRI5rnDqJOZoedsknhzAn1wmcMc9PD4dEuqMaB9WTnzbXctMnvZY8Iv8kBBnqe6ikJYyaAm11YFuKpswqNa/sUNc+fiyJ3qeVP3MwdPqdM+EWR+QJ62DgPbkgyy2bYehNy6/hB/g7HVXnoGpwvY1tNwkQ0nyYNCnpyweXXWE0Jsp4dQTnoW49R4UfjoTVJYEon9+q6LD06EAr8o/Xhnk10yOaf3+8RtRCTNhBZTs6gteIVH33QFHZdp8+MTPzBRSYuvixwFj9syvooJLxlF/BhVzxiEhmR65HUNqkzFLZ2ayVGq90FMnBBsog==
+ bh=QKWzbD6Bn2L3zm5IeJhBhUTnYgDoW5cq3xP62ESTFz0=;
+ b=J0rksiLZF5yLD5+9YZHz7/QEmQIg8bzauvWn7/GwUmJtil6kfj9SgwKqItkN578RyxgFTE1sMkVgDzByy8rmrtJ1Qjb76k/L9P0vosDcDYRnhpaaHeNS2Wbjkl65igxW1iBJ0S2lWOal9Et+YVwEvHTOKbTZkekdAvh8wnlhv8NW3q+/gI0xKWJecBeQdrNnDD8TRiv2zKbOG78Rr5YzjMSgn3aSoFJWX7Jjk66jUOLgv6mJHb8w7q4XE6Nb081tgMNZ1dYHVgWkCeAAkMj/VWdDzCyDBhQ041eYBD7J6uZPIOW6LJatza80SQDgVdUz5ZFoXIa2/XVUZudqbS9J8A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OAVy/9R0/bbRD70fkTvpQqSioGRhdig6Z34ouGNPKM0=;
- b=jszRWtSA2CHsxcAaHX4uKepgpjyOMkblwlwbKL6ZcrCbVfFEAM8o5GliIY+SgtMOdVBj+c+9aDK7M0IJNET+LVj1MIr3awNh/BfZ3cFG6hlMA0FgKSTfj9cIchbE5qF5NWpbBfYX30c+ZByHNVZBTOZKgXJxDiBKv3PcQB3E5VE=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SA1PR10MB6663.namprd10.prod.outlook.com (2603:10b6:806:2ba::6) with
+ bh=QKWzbD6Bn2L3zm5IeJhBhUTnYgDoW5cq3xP62ESTFz0=;
+ b=6ytu8UIZHTv0MQ7dGSBBG72lVuYKOkmFhWI3iCCotLJ+T/fVLkWl8tOODLsnS9V9mAIP4rXSx+aMomdkuzvwipFSSbliV5wr0TkEm1xoDCghmm7iZrLZjdDdT5t/jTEL+G6ENF3MfHVZsfyIwaAETbZ7d0G82SAzWvB+G11Grog=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com (2603:10a6:10:2cc::19)
+ by DU0PR08MB9417.eurprd08.prod.outlook.com (2603:10a6:10:420::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Tue, 12 Dec
- 2023 11:09:47 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
- 11:09:47 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, ming.lei@redhat.com, jaswin@linux.ibm.com,
-        bvanassche@acm.org, Alan Adamson <alan.adamson@oracle.com>,
-        John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v2 16/16] nvme: Ensure atomic writes will be executed atomically
-Date: Tue, 12 Dec 2023 11:08:44 +0000
-Message-Id: <20231212110844.19698-17-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20231212110844.19698-1-john.g.garry@oracle.com>
-References: <20231212110844.19698-1-john.g.garry@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0241.namprd13.prod.outlook.com
- (2603:10b6:208:2ba::6) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Tue, 12 Dec
+ 2023 12:03:47 +0000
+Received: from DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::292d:9c0e:e9f7:deba]) by DB9PR08MB7179.eurprd08.prod.outlook.com
+ ([fe80::292d:9c0e:e9f7:deba%6]) with mapi id 15.20.7068.033; Tue, 12 Dec 2023
+ 12:03:47 +0000
+Date: Tue, 12 Dec 2023 12:03:32 +0000
+From: Szabolcs Nagy <szabolcs.nagy@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+	aneesh.kumar@linux.ibm.com, broonie@kernel.org,
+	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
+	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v3 15/25] arm64: add POE signal support
+Message-ID: <ZXhMFBK3khQHo2lX@arm.com>
+References: <20231124163510.1835740-1-joey.gouly@arm.com>
+ <20231124163510.1835740-16-joey.gouly@arm.com>
+ <ZXdamak1wDyUdwSG@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZXdamak1wDyUdwSG@arm.com>
+X-ClientProxiedBy: LO4P123CA0237.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a7::8) To DB9PR08MB7179.eurprd08.prod.outlook.com
+ (2603:10a6:10:2cc::19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SA1PR10MB6663:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74db341f-d7ec-476b-b5ad-08dbfb02d9f8
+X-MS-TrafficTypeDiagnostic:
+	DB9PR08MB7179:EE_|DU0PR08MB9417:EE_|DB5PEPF00014B9D:EE_|AM8PR08MB6498:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48176aca-5040-41ae-9dcf-08dbfb0a6e75
+x-checkrecipientrouted: true
+NoDisclaimer: true
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original:
+ vqTC7MCwQjvg+749Nb+1kyFvUqKcIMQp4ENNJDwgEwAZSTZEByOpjuTLc0Fr4OoNhLR6ICTjLqOgL9AvcGtlUtx7YwIlnf2q7A7kZ4y2QyuBfQ/PAo3HG2i+7pjOjhXs8PE/ssIdScY/N0vYYkjlzWEyGVP2zh+/0gmpdQc8xCluXvUlr6VJ7dUR2CBWV26NZMxkjyUnbXhEPUhEonPNTTAuAeBzmwsyWW1T+oSlGhhS5cUPYUanUOC+1IjsunjE8yTAyluGfbEBuL/7dN9JBZpSTNdBvOcWIuwxB3dfqYpBzOwihXjpgAmZb2vhGmzl8As/dPSKokm679GE4S92TzDT7GBrx5qMUwFilNDCTIfvBVB8vpBBatiBfRCic5T0mCamwwOTxbDquwTfdCcfPZVMOGsJtYaQwuqtN+OJFzsGtLJEM5MbVoeV9NWfrmCODIoThmNbV+gTB2nwyceTqE/YC3Cwz1V79uzhysQsdgYzNMZ9ccToaRdzpzX2vNEPw/k+wqjTOnJxyjcNtKSBJ098IbM5AzodwJht4Prwf5WEkB8PQQ03Z1YxNthAKWCA
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB7179.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(136003)(376002)(366004)(396003)(39860400002)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(83380400001)(6512007)(2616005)(6506007)(38100700002)(66946007)(44832011)(4326008)(5660300002)(8936002)(41300700001)(7416002)(8676002)(2906002)(6486002)(6666004)(110136005)(478600001)(316002)(66556008)(6636002)(54906003)(66476007)(36756003)(86362001)(26005);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9417
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B9D.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	011000a8-fc5d-49b5-4949-08dbfb0a659b
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	sjb0YosYf88Xey4WL0pMTkcjvbGuDxICSmHxJAbKuSgKBdAraHIkP2iXL4sSrak0F/LDphoe8wqboMhnD978m18lec2iirQQF7QbmEAf8FWo/+BYJygdjTApvuoVOmuC//NZZlOrVi46YEpKZqrK9Cca/VVvnrY8p3cmiqlJ3duOTKbSWHdDANuP1E2A20TA0AfF0Dg/Xr3mtEKV6+G6QZPv0EDnIVMMSsTJhyaGds+9e6B36w5ZaXak5Q1n2rkuOa9cZYpLBwwxDgtfka3g7msjTN04w858jbNEp8PxKhCmVhIhcceeg5REMywxCsuSW5beGBOm64OOqlYtwYTtIJRM0HmhESHZiU6Y5ttSAxI/E3SgUH/2IL++BU+YiOJ/Qza862augLl3S4RKgvRtFwtP3+zDnklPw8XHAuWAUK/a1oVI24d3+3TRABTL2N3M5/5g3y+1gWt/TuceQL/iodn5RO2dGMGtIpFrVmNjN6d1DJ90d/2shZ8TtiDD3Ox3EgTw8Wsz79PPszSAUf/q5MUSt3vrOG85ES9cPgGpf+whYXWKA7a31OJDooRYTJDk2uqBy3ufOHCK41mdZI4rJFCuq+AYuNjQcVaSugBefI8=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(376002)(39860400002)(136003)(366004)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(26005)(83380400001)(6506007)(6512007)(2616005)(107886003)(1076003)(478600001)(5660300002)(4326008)(8936002)(8676002)(41300700001)(7416002)(2906002)(6486002)(6666004)(38100700002)(316002)(66476007)(66556008)(54906003)(66946007)(103116003)(86362001)(36756003)(921008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?DwQqT4bWfRNkCG1qsWiNFQ9jFajVPPxrEgQSOKuTEMNQ9rJQtRzgByiSWgYJ?=
- =?us-ascii?Q?whVl4/1Up+RnICuXGH/gPrf6PCmTOhmmsr11RzZFzBfvR0BbNNdGk/9YJ7Ab?=
- =?us-ascii?Q?rjDiqOEF4pkwjm0SJy19YULN6fDLhZvIwpYmQTMk5gJcAfZ88lfcDg7Kd0BG?=
- =?us-ascii?Q?pDS2mdl60uFrwUS9Rmtg025KcznQ0UhQwKRfi4d1RUNdjAo1XEJ1BSBB+HGW?=
- =?us-ascii?Q?5jvvkIHdnmgP/0F86V36Dki2CV1lidERQWPJApPb71X8XOntomsiAiSqkM+v?=
- =?us-ascii?Q?P/EUIgVSiD3Dl3wuZKP+1H+jbSMWWVESU19xrKDDvxO2L/phkMPRc0Ew8/pD?=
- =?us-ascii?Q?WJeiBfozq42q3LJ1LK7PBr+llIQfyDO4hNZnqSYbQzXJhkQxBeaRCNZeLr0W?=
- =?us-ascii?Q?4q82zh6OQtyl/8Euf0Q1rRweORDgELvS1Edz6Oc2iqysO8XLBXe7jSkWnsvk?=
- =?us-ascii?Q?inGVLRTDEEjd2zgRd0jCwKUFSbhLeUE+DzOcBzUL0ie+ztdlOQm3PSH+Gk9v?=
- =?us-ascii?Q?0NCgEQrsqNSJzoiPqsjMPYMqbu0/fWhBpPnVTjDkg/4g/pSPIHQlXh7EthCk?=
- =?us-ascii?Q?iGJd+QFCxQ8b2jvGr+3xeII+R9cSPq1ae+/IltF9XmOHviPvd6NolE1neolM?=
- =?us-ascii?Q?7ykP02iw0WLksr8IOS7/tZYGGnaWP0fUpEWexF3Z1b0PVt6gpaIbzaDNu8GN?=
- =?us-ascii?Q?UgKhjMI1t645ZieAlu0EegUnDULw9hP46uJFczQ3OjVU2rzPCI1usMA54Kjl?=
- =?us-ascii?Q?DkSkTp8g5sLYsIHGAbE2rXKbReYFsB6Mwf9C+fNHq+c0uJmdHNFBzAR/J/F4?=
- =?us-ascii?Q?kNRiSK770GftSn7rS6QHklO04K8FYjT/5kVUodXWNUR3yDX34/x7vR1+eW3C?=
- =?us-ascii?Q?4pm/hfMoseuF79j4usPlt6MxxamKP4NiN3lt4PTFXxRCqJtL/HE3pabqHLAm?=
- =?us-ascii?Q?WwVNRAdON65x4Vbn0h3++tiZ8qLorlwM1vttgu9/FJdDxHFgKRXdhjq8NoBR?=
- =?us-ascii?Q?aHaWz02VX+oDAfI7J28bGJMNSPvHDKBTIbAADadRc4iDqlylh2WswW+3RuFf?=
- =?us-ascii?Q?cVSDaFEx18FSq9xFVUZev5y1ClLQifpePCEvFOlS8qK5vweI+R2zIgKOkGmc?=
- =?us-ascii?Q?LN2VSSyHZ0YryvYf9Nc4rwr5aZy2iLJk3TyUX1uXEmX1h0APRZSIt1y4R2qH?=
- =?us-ascii?Q?FF0ot9RRk6twFItsimm5C8Dj/qudthNp5PAAnMc4vTkkoMz1cOlPAzrgyq7a?=
- =?us-ascii?Q?R70XxHNHHicWiqvXVxtcnjdJ8xhyys0rieYzLYEKpUmmB/rkPfHXuUdFXJD+?=
- =?us-ascii?Q?HdaFnW7JWH3s2wa3YLbWdJhb6+zTaFHFizzk+k0sJDSndNGcQAXsQft70z6j?=
- =?us-ascii?Q?DQIGAMop9A3Rwe1vRMMAS49tdLi2IbvC3WHVOcrWUr/JuIF9M0wpfbwSMwqf?=
- =?us-ascii?Q?WK/F60FgQiBaZjaF+/D7DYiKe2e9KwP5dapTs71/w3iEVkt71il0u9zG/Em0?=
- =?us-ascii?Q?DyNRH9/T8sZJJbbvYWT4Zg7105RS2Oj1KjnqcPeJDpxu4w841KkC2l6rVCwr?=
- =?us-ascii?Q?5/eGoVX5IJtfncTG6n3Y+iud7oHw8BENqXyP2HQMOcdOSRW64X8hOYvInOAr?=
- =?us-ascii?Q?RQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	Wq1wzedCty21HmZ/6hIg9smcKML6AShiv6Abi0dk+ZXygG/mGSQUKsCVFC0plWJcAXeLwJI8AvgV4ZBCL0x20lUj1nBLWT5Xy/h+mCVkI91nBlnVQov2lpp0J0xeEhuMWx9d8Voxu/T//RjaouZHawOhiVyNMWB/C/V0UXScbWXMRc7SBtFiDj/sDpf+EvOcxZrcRh6XBFsHxgZBTJh9MCEd8RIG3dvdj5ODboLv/RAFLYR1hQYF8kxW5LLspCvNPD33m6fvj0a8TWtOiejSz8peC+Xn6QqMVPQiJx342ezV/alb17/rVnDPMXF0v8TC9Qoa0oRyM3iqxPJiL9rfGkRokw3c8yRqqUZ8yMiupu1Nr9f9DH8OQYIdGqg707muXwjEknlkKjgnmkUJpPyWhszncf9pT6ulPw2xMYpbAKTEQijNBJrRI0JznRLJkXo9B1GsvhK5bMY62lzF7YsU4gLuTzNWewX314nw2CKMotXk7cwTR68ub1wQNVzCg59xpjhZY3UunfWHqYl/CGjBGhnYmvS1p9iZWU4lNpMkeiS9Wc8Ladtf/LKhI7j5/sjA26obCGR0AIo3vkGw/DxPiWnmumQ1MOvr4UbdZMDplw0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74db341f-d7ec-476b-b5ad-08dbfb02d9f8
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 11:09:46.9945
+X-Microsoft-Antispam-Message-Info:
+	hR87tiAzYKw9oOsRdTfVCTLW4YlHB5nAkRDd9nd1vjC3Iz0Q0LyNT2jILk6ZO6izAfcf5UeN3jWlYM/7SdDWYRC3w8613vcuAkbZnx8Ch8y2JzjNRrjTe0C1ke/flUBh5A8DwC076sc68nu6QkwRfWEjkTIPBbln+FNC0DllciL7tRAKWmWjQSCqnP4nF9wRpFLiNwfG6xw1o7lpryUKFL6ljka6qPX3vS0p/AvUogV1KKmFJfx48daM1ev0JOAnHR5sA0vdkZEuT+phKacCPRA3OzZ03sm+7dFNp7Ia1rl9Qb7wYYyH3BsnX6JmCvnjow5m/JB6I8blwvEwzQH+8+zbhYI/cUHLa4Hj15VAdDluenieORLtNc+IUb/wp05dcZZXSsem0IjvHwgh8pU1ZKrNtEmjhSuSZhE1QN9az1cbb5TV7/tdKX5WRzs1ui73Esn1mSeT7ll+aQoZwAZc4Jgm9M15vVHvUCc8biHJlPpyFrToKkKQF6VNYRDBjLLV3ls/Nyv4RUzg6OgzCxAqpOfsZAmMi1UaK5Aj/xhMmjDq7MaT4KA0WlETceuWBqQCIBB8Gu+0c9tjoWfCmsTiRLnb11wRgNfYgHqMmlbwLuHFXlg3BiybGq6KR/I6cdftQTX3T03iHEyzYOttk6OtoywptgnJvy0kVhWnvhIgoeRrN417+WVn39kELxlrqT26OzpzoKOY7EKISc2PDc0T4Ahc5Ms+EX8JblKcvxlepnbGUj/PbDp/vp4BZQ0qNpg8
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(376002)(136003)(396003)(346002)(230922051799003)(451199024)(186009)(64100799003)(1800799012)(82310400011)(36840700001)(46966006)(40470700004)(40460700003)(336012)(107886003)(83380400001)(6506007)(6512007)(2616005)(47076005)(26005)(36860700001)(4326008)(5660300002)(8676002)(44832011)(41300700001)(6486002)(2906002)(6666004)(8936002)(316002)(478600001)(110136005)(70206006)(70586007)(36756003)(86362001)(6636002)(54906003)(450100002)(356005)(81166007)(82740400003)(40480700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 12:04:02.4191
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iebAWjyjEq2gAM1FaJs8cSFDdVi0C9FRgXTZ36ZBXwTefzpzUsu2TKddqptmpEvYtOMHFJm8rvVQCHiS+taKZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6663
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-12_04,2023-12-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2312120089
-X-Proofpoint-GUID: DKW9AuX8fVUZuUVTnOkx6uiXE9aF-f7a
-X-Proofpoint-ORIG-GUID: DKW9AuX8fVUZuUVTnOkx6uiXE9aF-f7a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48176aca-5040-41ae-9dcf-08dbfb0a6e75
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B9D.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB6498
 
-From: Alan Adamson <alan.adamson@oracle.com>
+The 12/11/2023 18:53, Catalin Marinas wrote:
+> + Szabolcs for libc ack (and keeping the full patch quoted below)
+> 
+> You should cc Szabolcs when reposting, we need his ack on the UAPI
+> changes.
+> 
+> On Fri, Nov 24, 2023 at 04:35:00PM +0000, Joey Gouly wrote:
+> > Add PKEY support to signals, by saving and restoring POR_EL0 from the stackframe.
 
-There is no dedicated NVMe atomic write command (which may error for a
-command which exceeds the controller atomic write limits).
+this looks good.
 
-As an insurance policy against the block layer sending requests which
-cannot be executed atomically, add a check in the queue path.
+Acked-by: Szabolcs Nagy <szabolcs.nagy@arm.com>
 
-Signed-off-by: Alan Adamson <alan.adamson@oracle.com>
-Signed-off-by: John Garry <john.g.garry@oracle.com>
----
- drivers/nvme/host/core.c | 23 +++++++++++++++++++++++
- drivers/nvme/host/nvme.h |  2 ++
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index fd4f09f9dbe8..6b89ee7e9921 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -905,6 +905,26 @@ static inline blk_status_t nvme_setup_rw(struct nvme_ns *ns,
- 	if (req->cmd_flags & REQ_RAHEAD)
- 		dsmgmt |= NVME_RW_DSM_FREQ_PREFETCH;
- 
-+	/*
-+	 * Ensure that nothing has been sent which cannot be executed
-+	 * atomically.
-+	 */
-+	if (req->cmd_flags & REQ_ATOMIC) {
-+		if (blk_rq_bytes(req) > ns->atomic_max)
-+			return BLK_STS_IOERR;
-+
-+		if (ns->atomic_boundary) {
-+			u32 boundary = ns->atomic_boundary >> ns->lba_shift;
-+			u32 imask = ~(boundary - 1);
-+			u32 lba = nvme_sect_to_lba(ns, blk_rq_pos(req));
-+			u32 end = lba + (blk_rq_bytes(req) >> ns->lba_shift)
-+					- 1;
-+
-+			if ((lba & imask) != (end & imask))
-+				return BLK_STS_IOERR;
-+		}
-+	}
-+
- 	cmnd->rw.opcode = op;
- 	cmnd->rw.flags = 0;
- 	cmnd->rw.nsid = cpu_to_le32(ns->head->ns_id);
-@@ -1937,6 +1957,9 @@ static void nvme_update_atomic_write_disk_info(struct gendisk *disk,
- 				id->nabo);
- 	}
- 
-+	ns->atomic_max = atomic_bs;
-+	ns->atomic_boundary = boundary;
-+
- 	blk_queue_atomic_write_max_bytes(disk->queue, atomic_bs);
- 	blk_queue_atomic_write_unit_min_sectors(disk->queue, bs >> SECTOR_SHIFT);
- 	blk_queue_atomic_write_unit_max_sectors(disk->queue,
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index e7411dac00f7..5a3d76bc816f 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -520,6 +520,8 @@ struct nvme_ns {
- 
- 	struct nvme_fault_inject fault_inject;
- 
-+	u32 atomic_max;
-+	u32 atomic_boundary;
- };
- 
- /* NVMe ns supports metadata actions by the controller (generate/strip) */
--- 
-2.35.3
-
+> > 
+> > Signed-off-by: Joey Gouly <joey.gouly@arm.com>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+> > ---
+> >  arch/arm64/include/uapi/asm/sigcontext.h |  7 ++++
+> >  arch/arm64/kernel/signal.c               | 51 ++++++++++++++++++++++++
+> >  2 files changed, 58 insertions(+)
+> > 
+> > diff --git a/arch/arm64/include/uapi/asm/sigcontext.h b/arch/arm64/include/uapi/asm/sigcontext.h
+> > index f23c1dc3f002..cef85eeaf541 100644
+> > --- a/arch/arm64/include/uapi/asm/sigcontext.h
+> > +++ b/arch/arm64/include/uapi/asm/sigcontext.h
+> > @@ -98,6 +98,13 @@ struct esr_context {
+> >  	__u64 esr;
+> >  };
+> >  
+> > +#define POE_MAGIC	0x504f4530
+> > +
+> > +struct poe_context {
+> > +	struct _aarch64_ctx head;
+> > +	__u64 por_el0;
+> > +};
+> > +
+> >  /*
+> >   * extra_context: describes extra space in the signal frame for
+> >   * additional structures that don't fit in sigcontext.__reserved[].
+> > diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> > index 0e8beb3349ea..379f364005bf 100644
+> > --- a/arch/arm64/kernel/signal.c
+> > +++ b/arch/arm64/kernel/signal.c
+> > @@ -62,6 +62,7 @@ struct rt_sigframe_user_layout {
+> >  	unsigned long zt_offset;
+> >  	unsigned long extra_offset;
+> >  	unsigned long end_offset;
+> > +	unsigned long poe_offset;
+> >  };
+> >  
+> >  #define BASE_SIGFRAME_SIZE round_up(sizeof(struct rt_sigframe), 16)
+> > @@ -182,6 +183,8 @@ struct user_ctxs {
+> >  	u32 za_size;
+> >  	struct zt_context __user *zt;
+> >  	u32 zt_size;
+> > +	struct poe_context __user *poe;
+> > +	u32 poe_size;
+> >  };
+> >  
+> >  static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+> > @@ -227,6 +230,20 @@ static int restore_fpsimd_context(struct user_ctxs *user)
+> >  	return err ? -EFAULT : 0;
+> >  }
+> >  
+> > +static int restore_poe_context(struct user_ctxs *user)
+> > +{
+> > +	u64 por_el0;
+> > +	int err = 0;
+> > +
+> > +	if (user->poe_size != sizeof(*user->poe))
+> > +		return -EINVAL;
+> > +
+> > +	__get_user_error(por_el0, &(user->poe->por_el0), err);
+> > +	if (!err)
+> > +		write_sysreg_s(por_el0, SYS_POR_EL0);
+> > +
+> > +	return err;
+> > +}
+> >  
+> >  #ifdef CONFIG_ARM64_SVE
+> >  
+> > @@ -590,6 +607,7 @@ static int parse_user_sigframe(struct user_ctxs *user,
+> >  	user->tpidr2 = NULL;
+> >  	user->za = NULL;
+> >  	user->zt = NULL;
+> > +	user->poe = NULL;
+> >  
+> >  	if (!IS_ALIGNED((unsigned long)base, 16))
+> >  		goto invalid;
+> > @@ -640,6 +658,17 @@ static int parse_user_sigframe(struct user_ctxs *user,
+> >  			/* ignore */
+> >  			break;
+> >  
+> > +		case POE_MAGIC:
+> > +			if (!system_supports_poe())
+> > +				goto invalid;
+> > +
+> > +			if (user->poe)
+> > +				goto invalid;
+> > +
+> > +			user->poe = (struct poe_context __user *)head;
+> > +			user->poe_size = size;
+> > +			break;
+> > +
+> >  		case SVE_MAGIC:
+> >  			if (!system_supports_sve() && !system_supports_sme())
+> >  				goto invalid;
+> > @@ -812,6 +841,9 @@ static int restore_sigframe(struct pt_regs *regs,
+> >  	if (err == 0 && system_supports_sme2() && user.zt)
+> >  		err = restore_zt_context(&user);
+> >  
+> > +	if (err == 0 && system_supports_poe() && user.poe)
+> > +		err = restore_poe_context(&user);
+> > +
+> >  	return err;
+> >  }
+> >  
+> > @@ -928,6 +960,13 @@ static int setup_sigframe_layout(struct rt_sigframe_user_layout *user,
+> >  		}
+> >  	}
+> >  
+> > +	if (system_supports_poe()) {
+> > +		err = sigframe_alloc(user, &user->poe_offset,
+> > +				     sizeof(struct poe_context));
+> > +		if (err)
+> > +			return err;
+> > +	}
+> > +
+> >  	return sigframe_alloc_end(user);
+> >  }
+> >  
+> > @@ -968,6 +1007,15 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
+> >  		__put_user_error(current->thread.fault_code, &esr_ctx->esr, err);
+> >  	}
+> >  
+> > +	if (system_supports_poe() && err == 0 && user->poe_offset) {
+> > +		struct poe_context __user *poe_ctx =
+> > +			apply_user_offset(user, user->poe_offset);
+> > +
+> > +		__put_user_error(POE_MAGIC, &poe_ctx->head.magic, err);
+> > +		__put_user_error(sizeof(*poe_ctx), &poe_ctx->head.size, err);
+> > +		__put_user_error(read_sysreg_s(SYS_POR_EL0), &poe_ctx->por_el0, err);
+> > +	}
+> > +
+> >  	/* Scalable Vector Extension state (including streaming), if present */
+> >  	if ((system_supports_sve() || system_supports_sme()) &&
+> >  	    err == 0 && user->sve_offset) {
+> > @@ -1119,6 +1167,9 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+> >  		sme_smstop();
+> >  	}
+> >  
+> > +	if (system_supports_poe())
+> > +		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+> > +
+> >  	if (ka->sa.sa_flags & SA_RESTORER)
+> >  		sigtramp = ka->sa.sa_restorer;
+> >  	else
+> > -- 
+> > 2.25.1
 
