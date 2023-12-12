@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-5725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBA180F38D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:51:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9C680F3E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 18:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25871F210A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BDDE1C20C67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 17:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E9C7A23E;
-	Tue, 12 Dec 2023 16:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA787B3C1;
+	Tue, 12 Dec 2023 17:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Jp8ET7bH"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EtZK1xOy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C8E0A6;
-	Tue, 12 Dec 2023 08:51:02 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC88FD0;
+	Tue, 12 Dec 2023 09:01:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1702399860; x=1702659060;
-	bh=w38LyRHLZtbV6MXFwYHgJYUkLwMl4DKzg/6P9akEIm8=;
+	s=protonmail; t=1702400497; x=1702659697;
+	bh=pW12o+ZtGJVXWSlbOsdjNFmo7Oz7+eWgJSUXDe0lDR4=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=Jp8ET7bH3aUWWYk2XtraWwxkt6VOsNoTE6yTzBkO/5qlf8Uz7N1EHWsm6NaW0dL34
-	 6oSR5bu1enkU96x+sMJJNGD1qmYW/04YQIGibnzU67r8PcDR8IHWGvfejHQ0o9w4ub
-	 jKwJFBS7GtZscegHd4KGpVr2YDCPFUpV0R6e2Xj2UKh+qX2iRlsaP/nxolfneYK5hR
-	 KrRnoGDXDS/3jpnhYWaqpKCS82I1UNUG5plAcmWZW3n2q/5aRUHYcoUd+9UYINGzM2
-	 3miwsR87An1DUJgbf8yedooNSmwy2Lcn+KxifYodaS21XxJbGCWOboZmPwDfD/iuGg
-	 l/Eg9bptUz9Zg==
-Date: Tue, 12 Dec 2023 16:50:53 +0000
+	b=EtZK1xOybz/DnTE1jmDyCKyrg45e7E5ujPmJ/I6Gq8/sgkfF+YPGE2vRrFs8ZtoJ2
+	 vZIdmwNmDM6gGwaMLd6LRq6UkGPaq3Oqc0hX28EH19ciI8Udz7Hy4Gf+Y+TAjl8EbB
+	 VNb4IFHRmeG4MEqUiV8tLE0dMK44YGQdFpCBomz4K/PpU7wDXsk2eyv2teS/PQvzzq
+	 fMXViXI+vORmX+KlggGQWLgDa/jBQjGFulSMDx/cjiCPyzS10LSA3FJJGA6cJgTEZU
+	 XK5ZHtzLGLGXarhIdlcEJ0A6QvaUFwKlZ3nxRc5gK8S5LWbYjPZ2WVDaxg7X5mIAiA
+	 FIQNROXGUG1ew==
+Date: Tue, 12 Dec 2023 17:01:28 +0000
 To: Alice Ryhl <aliceryhl@google.com>
 From: Benno Lossin <benno.lossin@proton.me>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, arve@android.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org
-Subject: Re: [PATCH v2 6/7] rust: file: add `DeferredFdCloser`
-Message-ID: <8idgiXA3NzJ1zv5FQ4UVhObREsn81yb7T_M6Z44-Mc0-Rta_Q_jmOAkmDCwLKgE221TtMmFiebz0Q8WJPhy4WpngTiTc5dxwg6qIffueYmY=@proton.me>
-In-Reply-To: <CAH5fLggB_33jR1eyXSFhN=DN34wD7E6-ckSU8ABmQ50H-L3P-w@mail.gmail.com>
-References: <MjDmZBGV04fVI1qzhceEjQgcmoBuo3YoVuiQdANKj9F1Ux5JFKud8hQpfeyLXI0O5HG6qicKFaYYzM7JAgR_kVQfMCeVdN6t7PjbPaz0D0U=@proton.me> <20231211153440.4162899-1-aliceryhl@google.com> <DNn_nN0MKmn9OoY7Gjn4fCUcwKD6ijDZyDXVHvouEa2w0o2yiXeRox3EUfAcbfoWqx0I24-8HqqzONjuTQIVxu2cfAoNQpUFJygPtQNXPM4=@proton.me> <CAH5fLggB_33jR1eyXSFhN=DN34wD7E6-ckSU8ABmQ50H-L3P-w@mail.gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
+Message-ID: <E-jdYd0FVvs15f_pEC0Fo6k2DByCDEQoh_Ux9P9ldmC-otCvUfQghkJOUkiAi8gDI8J47wAaDe56XYC5NiJhuohyhIklGAWMvv9v1qi6yYM=@proton.me>
+In-Reply-To: <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-7-af617c0d9d94@google.com> <k_vpgbqKAKoTFzJIBCjvgxGhX73kgkcv6w9kru78lBmTjHHvXPy05g8KxAKJ-ODARBxlZUp3a5e4F9TemGqQiskkwFCpTOhzxlvy378tjHM=@proton.me> <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com>
 Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -48,94 +48,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 12/12/23 10:35, Alice Ryhl wrote:
-> On Mon, Dec 11, 2023 at 6:23=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
+On 12/12/23 10:59, Alice Ryhl wrote:
+> On Fri, Dec 8, 2023 at 6:53=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>> On 12/6/23 12:59, Alice Ryhl wrote:
+>>> +    fn get_qproc(&self) -> bindings::poll_queue_proc {
+>>> +        let ptr =3D self.0.get();
+>>> +        // SAFETY: The `ptr` is valid because it originates from a ref=
+erence, and the `_qproc`
+>>> +        // field is not modified concurrently with this call since we =
+have an immutable reference.
 >>
->>>>> +        // We update the file pointer that the task work is supposed=
- to fput.
->>>>> +        //
->>>>> +        // SAFETY: Task works are executed on the current thread onc=
-e we return to userspace, so
->>>>> +        // this write is guaranteed to happen before `do_close_fd` i=
-s called, which means that a
->>>>> +        // race is not possible here.
->>>>> +        //
->>>>> +        // It's okay to pass this pointer to the task work, since we=
- just acquired a refcount with
->>>>> +        // the previous call to `get_file`. Furthermore, the refcoun=
-t will not drop to zero during
->>>>> +        // an `fdget` call, since we defer the `fput` until after re=
-turning to userspace.
->>>>> +        unsafe { *file_field =3D file };
->>>>
->>>> A synchronization question: who guarantees that this write is actually
->>>> available to the cpu that executes `do_close_fd`? Is there some
->>>> synchronization run when returning to userspace?
->>>
->>> It's on the same thread, so it's just a sequenced-before relation.
->>>
->>> It's not like an interrupt. It runs after the syscall invocation has
->>> exited, but before it does the actual return-to-userspace stuff.
->>
->> Reasonable, can you also put this in a comment?
+>> This needs an invariant on `PollTable` (i.e. `self.0` is valid).
 >=20
-> What do you want me to add? I already say that it will be executed on
-> the same thread.
+> How would you phrase it?
 
-Seems I missed that, then no need to add anything.
+- `self.0` contains a valid `bindings::poll_table`.
+- `self.0` is only modified via references to `Self`.
 
->>>>> +/// Represents a failure to close an fd in a deferred manner.
->>>>> +#[derive(Copy, Clone, Eq, PartialEq)]
->>>>> +pub enum DeferredFdCloseError {
->>>>> +    /// Closing the fd failed because we were unable to schedule a t=
-ask work.
->>>>> +    TaskWorkUnavailable,
->>>>> +    /// Closing the fd failed because the fd does not exist.
->>>>> +    BadFd,
->>>>> +}
->>>>> +
->>>>> +impl From<DeferredFdCloseError> for Error {
->>>>> +    fn from(err: DeferredFdCloseError) -> Error {
->>>>> +        match err {
->>>>> +            DeferredFdCloseError::TaskWorkUnavailable =3D> ESRCH,
->>>>
->>>> This error reads "No such process", I am not sure if that is the best
->>>> way to express the problem in that situation. I took a quick look at t=
-he
->>>> other error codes, but could not find a better fit. Do you have any
->>>> better ideas? Or is this the error that C binder uses?
->>>
->>> This is the error code that task_work_add returns. (It can't happen in
->>> Binder.)
->>>
->>> And I do think that it is a reasonable choice, because the error only
->>> happens if you're calling the method from a context that has no
->>> userspace process associated with it.
+>>> +        unsafe { (*ptr)._qproc }
+>>> +    }
+>>> +
+>>> +    /// Register this [`PollTable`] with the provided [`PollCondVar`],=
+ so that it can be notified
+>>> +    /// using the condition variable.
+>>> +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
+>>> +        if let Some(qproc) =3D self.get_qproc() {
+>>> +            // SAFETY: The pointers to `self` and `file` are valid bec=
+ause they are references.
 >>
->> I see.
->>
->> What do you think of making the Rust error more descriptive? So instead
->> of implementing `Debug` like you currently do, you print
->>
->>     $error ($variant)
->>
->> where $error =3D Error::from(*self) and $variant is the name of the
->> variant?
->>
->> This is more of a general suggestion, I don't think that this error type
->> in particular warrants this. But in general with Rust we do have the
->> option to have good error messages for every error while maintaining
->> efficient error values.
+>> What about cv.wait_list...
 >=20
-> I can #[derive(Debug)] instead, I guess?
+> I can add it to the list of things that are valid due to references.
 
-Hmm I thought that might not be ideal, since then you would not have the
-error code, only `TaskWorkUnavailable` or `BadFd`.
-But if that is also acceptable, then I would go with the derived debug.
+Yes this is getting a bit tedious.
+
+What if we create a newtype wrapping `Opaque<T>` with the invariant
+that it contains a valid value? Then we could have a specially named
+getter for which we would always assume that the returned pointer is
+valid. And thus permit you to not mention it in the SAFETY comment?
+
+[...]
+
+>>> +#[pinned_drop]
+>>> +impl PinnedDrop for PollCondVar {
+>>> +    fn drop(self: Pin<&mut Self>) {
+>>> +        // Clear anything registered using `register_wait`.
+>>> +        //
+>>> +        // SAFETY: The pointer points at a valid wait list.
+>>
+>> I was a bit confused by "wait list", since the C type is named
+>> `wait_queue_head`, maybe just use the type name?
+>=20
+> I will update all instances of "wait list" to "wait_queue_head". It's
+> because I incorrectly remembered the C type name to be "wait_list".
+
+Maybe we should also change the name of the field on `CondVar`?
+
+If you guys agree, I can open a good-first-issue, since it is a very
+simple change.
 
 --=20
 Cheers,
 Benno
-
 
