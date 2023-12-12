@@ -1,86 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-5702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7476A80EFFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:21:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8FB80EFF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296891F21015
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFDF21C20ACE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493ED75425;
-	Tue, 12 Dec 2023 15:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE0975423;
+	Tue, 12 Dec 2023 15:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzwyPqVo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNFhhEsr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 466A583
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 07:20:55 -0800 (PST)
-Received: from cwcc.thunk.org (pool-173-48-124-235.bstnma.fios.verizon.net [173.48.124.235])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 3BCFKGb9002440
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 10:20:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1702394419; bh=Rf4NyHU1FOsEao5ocA/GzTHYRoWx+CcxR8bLTSQhNCI=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=LzwyPqVoUn+Fn2+gO9Ci6S3jZyCMaoE4vCzLIRfuYho35bG2RlaZ1IypvFeQ3BAo/
-	 JSdMGhuYhRPSlW1KCc07K7HPbRtNc1eTdm1b5n7I2bl8Pxd45Gz/rFYPfkLN4MIpXJ
-	 XPPZTwqf+4pmZOffG7x9LykWkF8qZJcx1ryzTiY67SsgVyKkmmlcUMuLYxVB4mW4qi
-	 WzzOp0lvvl4yaQP1dtNiX89TOrjc5g6yAtheEsOUAWUFEcUcYmu8Vk9KFqeYCGi11T
-	 C2Jmld4XjsoLxSn9rLjQz9IaQ1/f7rcpr9JkXW6FHLr/t0n3Klkfq9ZAo5S13vZZQs
-	 Z/OraBZLq2XJg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 9F47715C3B37; Tue, 12 Dec 2023 10:20:16 -0500 (EST)
-Date: Tue, 12 Dec 2023 10:20:16 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Donald Buczek <buczek@molgen.mpg.de>
-Cc: Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-bcachefs@vger.kernel.org,
-        Stefan Krueger <stefan.krueger@aei.mpg.de>,
-        David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: file handle in statx
-Message-ID: <20231212152016.GB142380@mit.edu>
-References: <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
- <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
- <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
- <170233460764.12910.276163802059260666@noble.neil.brown.name>
- <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
- <170233878712.12910.112528191448334241@noble.neil.brown.name>
- <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
- <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area>
- <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF4575403
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 15:20:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D2F8C433C7;
+	Tue, 12 Dec 2023 15:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702394435;
+	bh=crSGxOfPWwIvuCpNnDeOqff5stZDLNzne/XaAS2bWfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pNFhhEsrfYN8XpTIaBwlqf+1S8YlDuNeuuTeP4OswvmV4x6qf2Hlp68nyQRUjIpoV
+	 ulz4yFxsvPiet8/GdUD69IihIu3OowC/a1FSMMU3M+UQv+gGkPnY6FqMXVEtQoyvbk
+	 9fJpIOCAIfabX8g43+md4xyeJBG5krHnzmq+Jp9cslBAoX1PgTHvgjLr1MGuO3cK7P
+	 hLFdV7OIi9HOZf1JfL63/HwD5At7PTK4RpXbTMWafV6kxCAAppV4jA0LQ/s4prONS7
+	 rQAhDyI8L2dVQm8cs38XyigCynUeIbtFuHZzvMuUX3fQpHLO8FquT40SzsMpNEZqkp
+	 BKWcosL+2Iq+g==
+Date: Tue, 12 Dec 2023 16:20:31 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
+	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] splice: return type ssize_t from all helpers
+Message-ID: <20231212-autohandel-gebastelt-2e8b9049f70b@brauner>
+References: <20231212094440.250945-1-amir73il@gmail.com>
+ <20231212094440.250945-2-amir73il@gmail.com>
+ <20231212141937.f4ihbex46ndhu3nt@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
+In-Reply-To: <20231212141937.f4ihbex46ndhu3nt@quack3>
 
-On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
-> On 12/12/23 06:53, Dave Chinner wrote:
+On Tue, Dec 12, 2023 at 03:19:37PM +0100, Jan Kara wrote:
+> On Tue 12-12-23 11:44:36, Amir Goldstein wrote:
+> > Not sure why some splice helpers return long, maybe historic reasons.
+> > Change them all to return ssize_t to conform to the splice methods and
+> > to the rest of the helpers.
+> > 
+> > Suggested-by: Christian Brauner <brauner@kernel.org>
+> > Link: https://lore.kernel.org/r/20231208-horchen-helium-d3ec1535ede5@brauner/
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > 
-> > So can someone please explain to me why we need to try to re-invent
-> > a generic filehandle concept in statx when we already have a
-> > have working and widely supported user API that provides exactly
-> > this functionality?
+> Looks good to me. Just one nit below. Feel free to add:
 > 
-> name_to_handle_at() is fine, but userspace could profit from being
-> able to retrieve the filehandle together with the other metadata in
-> a single system call.
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> > diff --git a/fs/splice.c b/fs/splice.c
+> > index 7cda013e5a1e..13030ce192d9 100644
+> > --- a/fs/splice.c
+> > +++ b/fs/splice.c
+> > @@ -201,7 +201,7 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
+> >  	unsigned int tail = pipe->tail;
+> >  	unsigned int head = pipe->head;
+> >  	unsigned int mask = pipe->ring_size - 1;
+> > -	int ret = 0, page_nr = 0;
+> > +	ssize_t ret = 0, page_nr = 0;
+> 
+> A nit but page_nr should stay to be 'int'.
 
-Can you say more?  What, specifically is the application that would
-want to do that, and is it really in such a hot path that it would be
-a user-visible improveable, let aloine something that can be actually
-be measured?
-
-						- Ted
+Fixed in-tree.
 
