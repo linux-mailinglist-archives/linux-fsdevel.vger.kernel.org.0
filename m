@@ -1,61 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-5633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCD680E77A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 10:23:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1612D80E78F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 10:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17E81C2170B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 09:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5548282B2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 09:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B33584ED;
-	Tue, 12 Dec 2023 09:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39971584E3;
+	Tue, 12 Dec 2023 09:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeEzQm+L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdjOFL+x"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E15258137;
-	Tue, 12 Dec 2023 09:23:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1E4C433C7;
-	Tue, 12 Dec 2023 09:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D18D219F2;
+	Tue, 12 Dec 2023 09:27:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE993C433C7;
+	Tue, 12 Dec 2023 09:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702372994;
-	bh=aAXAxAcTtlLab9cSppqL8EVujGnM4915M6pkaIFGQlc=;
+	s=k20201202; t=1702373272;
+	bh=5RJMKCoYxnXkUiYpXUAFHsON2DTSXvEYzJ4lN4kFgpY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IeEzQm+LyLHDO2sysJlUxfDpriq52GJpgd+KhiyTbuIZXNq98kYNzDfz7tbbKkN9L
-	 KBn5JxhMgZ4lctjXUW8Ase/iAID3azVOqTjlJqiVj6lKpSs9/RLBiMMhUOnsJ2SbVy
-	 PpbVxrVsIzDLDzMIxUDtK//3dOx8CQvHgMHytm+jG82JVJvjHJ86IEQ1lQU07soIZs
-	 utlHeRQDim88+DiLua/Ttgqod9bJFRJeTEEBYwAhk0xpAe01IY0AO1ycJ0HQ3Kb7cD
-	 IFtpxq/X6cOutb+FA2lqYu6gsaq5R1J5Lc7Z7Md68wWHYI9C3WblvnxPZiZu28qoTH
-	 1krb1E8EgQjXg==
-Date: Tue, 12 Dec 2023 10:23:09 +0100
+	b=mdjOFL+xi9mY1oQO4/sZfC+28BYlkluFsERL3SXPZ6u1xo72k6ikvJWT/ZO9Au8Pf
+	 jKZ2CC5GIv0b8//Q7MYezJmbUeqmjEuaFXc6eDEuohpSJlAxqMNSRedCfRq+rn8bdS
+	 3TrYQqMMSiAkSvlTHooXRl1LFOLWFCF/jtP4pjV5YD0juXKcJanf0HiAYzx9VXgpMN
+	 22O59I6dIkNdr/Gy185/HEJqESdYGGmreJLugrki3uieIXNm4WUvCmc+pnVb1KizcG
+	 JlwzCI9AJysIBGuv/o0/EHjzmmwfFtwVVGh8HWpz69Ss/+FULH9Lo1kU/7so9ZAvSV
+	 nVnS6VjoyQjfw==
+Date: Tue, 12 Dec 2023 10:27:47 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Dave Chinner <david@fromorbit.com>,
-	NeilBrown <neilb@suse.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Donald Buczek <buczek@molgen.mpg.de>,
-	linux-bcachefs@vger.kernel.org,
-	Stefan Krueger <stefan.krueger@aei.mpg.de>,
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	linux-btrfs@vger.kernel.org
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-Message-ID: <20231212-ablauf-achtbar-ae6e5b15b057@brauner>
-References: <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
- <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
- <170233460764.12910.276163802059260666@noble.neil.brown.name>
- <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
- <170233878712.12910.112528191448334241@noble.neil.brown.name>
- <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
- <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area>
- <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>
- <2810685.1702372247@warthog.procyon.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Andrei Vagin <avagin@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: [PATCH 1/2] fs/proc: show correct device and inode numbers in
+ /proc/pid/maps
+Message-ID: <20231212-brokkoli-trinken-1581d1e99d6a@brauner>
+References: <20231211193048.580691-1-avagin@google.com>
+ <CAOQ4uxik0=0F-6CLRsuaOheFjwWF-B-Q5iEQ6qJbRszL52HeQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,31 +55,162 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2810685.1702372247@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxik0=0F-6CLRsuaOheFjwWF-B-Q5iEQ6qJbRszL52HeQQ@mail.gmail.com>
 
-On Tue, Dec 12, 2023 at 09:10:47AM +0000, David Howells wrote:
-> Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Dec 12, 2023 at 07:51:31AM +0200, Amir Goldstein wrote:
+> +fsdevel, +overlayfs, +brauner, +miklos
 > 
-> > > > > I suggest:
-> > > > >
-> > > > >  STATX_ATTR_INUM_NOT_UNIQUE - it is possible that two files have the
-> > > > >                               same inode number
-> > 
-> > This is just ugly with questionable value. A constant reminder of how
-> > broken this is. Exposing the subvolume id also makes this somewhat redundant.
+> On Mon, Dec 11, 2023 at 9:30 PM Andrei Vagin <avagin@google.com> wrote:
+> >
+> > Device and inode numbers in /proc/pid/maps have to match numbers returned by
+> > statx for the same files.
 > 
-> There is a upcoming potential problem where even the 64-bit field I placed in
-> statx() may be insufficient.  The Auristor AFS server, for example, has a
-> 96-bit vnode ID, but I can't properly represent this in stx_ino.  Currently, I
-
-Is that vnode ID akin to a volume? Because if so you could just
-piggy-back on a subvolume id field in statx() and expose it there.
-
-> just truncate the value to fit and hope that the discarded part will be all
-> zero, but that's not really a good thing to do - especially when stx_ino is
-> used programmatically to check for hardlinks.
+> That statement may be true for regular files.
+> It is not true for block/char as far as I know.
 > 
-> Would it be better to add an 'stx_ino_2' field and corresponding flag?
+> I think that your fix will break that by displaying the ino/dev
+> of the block/char reference inode and not their backing rdev inode.
+> 
+> >
+> > /proc/pid/maps shows device and inode numbers of vma->vm_file-s. Here is
+> > an issue. If a mapped file is on a stackable file system (e.g.,
+> > overlayfs), vma->vm_file is a backing file whose f_inode is on the
+> > underlying filesystem. To show correct numbers, we need to get a user
+> > file and shows its numbers. The same trick is used to show file paths in
+> > /proc/pid/maps.
+> 
+> For the *same* trick, see my patch below.
+> 
+> >
+> > But it isn't the end of this story. A file system can manipulate inode numbers
+> > within the getattr callback (e.g., ovl_getattr), so vfs_getattr must be used to
+> > get correct numbers.
+> 
+> This explanation is inaccurate, because it mixes two different overlayfs
+> traits which are unrelated.
+> It is true that a filesystem *can* manipulate st_dev in a way that will not
+> match i_ino and it is true that overlayfs may do that in some non-default
+> configurations (see [1]), but this is not the reason that you are seeing
+> mismatches ino/dev in /proc/<pid>/maps.
+> 
+> [1] https://docs.kernel.org/filesystems/overlayfs.html#inode-properties
+> 
+> The reason is that the vma->vm_file is a special internal backing file
+> which is not otherwise exposed to userspace.
+> Please see my suggested fix below.
+> 
+> >
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+> > Signed-off-by: Andrei Vagin <avagin@google.com>
+> > ---
+> >  fs/proc/task_mmu.c | 20 +++++++++++++++++---
+> >  1 file changed, 17 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 435b61054b5b..abbf96c091ad 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -273,9 +273,23 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+> >         const char *name = NULL;
+> >
+> >         if (file) {
+> > -               struct inode *inode = file_inode(vma->vm_file);
+> > -               dev = inode->i_sb->s_dev;
+> > -               ino = inode->i_ino;
+> > +               const struct path *path;
+> > +               struct kstat stat;
+> > +
+> > +               path = file_user_path(file);
+> > +               /*
+> > +                * A file system can manipulate inode numbers within the
+> > +                * getattr callback (e.g. ovl_getattr).
+> > +                */
+> > +               if (!vfs_getattr_nosec(path, &stat, STATX_INO, AT_STATX_DONT_SYNC)) {
+> 
+> Should you prefer to keep this solution it should be constrained to
+> regular files.
 
-Would this be meaningfully different from using a file handle?
+It's also very dicy calling into the filesystem from procfs. You might
+hang the system if you end up talking to a hung NFS server or something.
+What locks does show_map_vma() hold? And is it safe to call helpers that
+might generate io?
+
+> 
+> > +                       dev = stat.dev;
+> > +                       ino = stat.ino;
+> > +               } else {
+> > +                       struct inode *inode = d_backing_inode(path->dentry);
+> 
+> d_inode() please.
+> d_backing_inode()/d_backing_dentry() are relics of an era that never existed
+> (i.e. union mounts).
+> 
+> > +
+> > +                       dev = inode->i_sb->s_dev;
+> > +                       ino = inode->i_ino;
+> > +               }
+> >                 pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
+> >         }
+> >
+> 
+> Would you mind trying this alternative (untested) patch?
+> I think it is preferred, because it is simpler.
+> 
+> Thanks,
+> Amir.
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index ef2eb12906da..5328266be6b5 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -273,7 +273,8 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+>         const char *name = NULL;
+> 
+>         if (file) {
+> -               struct inode *inode = file_inode(vma->vm_file);
+> +               struct inode *inode = file_user_inode(vma->vm_file);
+> +
+>                 dev = inode->i_sb->s_dev;
+>                 ino = inode->i_ino;
+>                 pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 900d0cd55b50..d78412c6fd47 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2581,20 +2581,28 @@ struct file *backing_file_open(const struct
+> path *user_path, int flags,
+>  struct path *backing_file_user_path(struct file *f);
+> 
+>  /*
+> - * file_user_path - get the path to display for memory mapped file
+> - *
+>   * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
+>   * stored in ->vm_file is a backing file whose f_inode is on the underlying
+> - * filesystem.  When the mapped file path is displayed to user (e.g. via
+> - * /proc/<pid>/maps), this helper should be used to get the path to display
+> - * to the user, which is the path of the fd that user has requested to map.
+> + * filesystem.  When the mapped file path and inode number are displayed to
+> + * user (e.g. via /proc/<pid>/maps), these helper should be used to get the
+> + * path and inode number to display to the user, which is the path of the fd
+> + * that user has requested to map and the inode number that would be returned
+> + * by fstat() on that same fd.
+>   */
+> +/* Get the path to display in /proc/<pid>/maps */
+>  static inline const struct path *file_user_path(struct file *f)
+>  {
+>         if (unlikely(f->f_mode & FMODE_BACKING))
+>                 return backing_file_user_path(f);
+>         return &f->f_path;
+>  }
+> +/* Get the inode whose inode number to display in /proc/<pid>/maps */
+> +static inline const struct path *file_user_inode(struct file *f)
+> +{
+> +       if (unlikely(f->f_mode & FMODE_BACKING))
+> +               return d_inode(backing_file_user_path(f)->dentry);
+> +       return file_inode(f);
+> +}
+
+Way better imho.
 
