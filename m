@@ -1,480 +1,472 @@
-Return-Path: <linux-fsdevel+bounces-5730-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5731-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B2280F589
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 859E080F59A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B1AB20E5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 18:31:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F91B20F2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 18:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEFD26ACC;
-	Tue, 12 Dec 2023 18:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BAD7F547;
+	Tue, 12 Dec 2023 18:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcjCYE4b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="me/Oic6E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF94CD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 10:31:00 -0800 (PST)
-Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-67ef0801766so3005496d6.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 10:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702405859; x=1703010659; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ufr0nSrGVqgzMhbQlyJX3A4Vwz5XIlx+MGmuClVGobk=;
-        b=GcjCYE4b2ynMQ09LWs5nijNxphmyOtpzRJe1SbiRZEvKTIB+hX15tRdqv2mwHq/C+8
-         jO92G4NJJGJ80c2siUKvdjTzjVH2dSXdnWEDbNCeVnSoBBYWXwUu0rI6eL5K2v2/6icb
-         ocom9hhsn8l8HiaQIlai6qPBbLfgHwowidDC8NImF2yFtuSuMZw7apOvki7hYHzTNvHB
-         wha0P+TvYtIF8ajdn8EoHCgVt6oExVnLke5SUWQ5OjkNrGiG7ifFuimPB/nkY26TEka7
-         uqJsq7bw6llPjfRxoXP6OyZBvI86XqgCIybbgg4UouGbC7SXUEByEv3fON9PMLmJI8Pl
-         IyOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702405859; x=1703010659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ufr0nSrGVqgzMhbQlyJX3A4Vwz5XIlx+MGmuClVGobk=;
-        b=tWi+CXLhGfkPNYJoINpSOhQkkD05XYxOMCmHyMlRRr4dRqAa3hBJncP+vGmS9RlvNm
-         er13pxb3Bw8xrnjI6SoexkChVo83D9uoHRv/BEMVUdBd/ppYrS3qiVqjs8vb2bZUnlqp
-         h+QT93WgixKnbMoTRy/ulXYlCOYpkZG12wVHNlDOzuQPd0PxRYccdsUwHDx6XD9JkY1a
-         cbXdCIKEOLnGIsQsrc0FlMP3vS2lzSeKJGLqEteRabmhr0Mj8HI5ENUn3Z1v8QKpHMSx
-         kJANm30mDlpWsW305Y2PPNiao6GXS3U1DfsLNcHZamWP5zNJ9qGdqBcgwPFfKxLJ92v/
-         cyrg==
-X-Gm-Message-State: AOJu0Ywih6jEqqVyv6I5DAjl3jwx7g5tBimyTYnGvToLFO5pBcaZOC5x
-	gjLhhIKIicWNTcqkjukJZpxPdIjWvpTZN0+B/4U=
-X-Google-Smtp-Source: AGHT+IF/RzeaWI0GhledHgDtLA3wNesS+fBRqm3ioU5L+SytD64+d3GIGjbp2TezYEegSq3/6IKWbfCxQZreOb7lZXw=
-X-Received: by 2002:a05:6214:1046:b0:67a:b7b8:b139 with SMTP id
- l6-20020a056214104600b0067ab7b8b139mr6991971qvr.111.1702405859247; Tue, 12
- Dec 2023 10:30:59 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E910F5EE80;
+	Tue, 12 Dec 2023 18:44:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50333C433CC;
+	Tue, 12 Dec 2023 18:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702406660;
+	bh=Ndlxqd4u6aMS443058k3vlVCLDjDnnTD4QJ/AJDqfqQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=me/Oic6E5S36+0+KPeuDh5hN7xQGlGEuOwP67iTj2zaMaiJh24sXX72dh6tTZMctf
+	 BBzodUtVdxXCA17RqJzfWyR9OScR80gDAThwZOl3hVz8hxWkZMxdyHSKAAUtShXG5s
+	 DGjXjbQ8mwp4hAkEGqw2Z/ReoWN0Vq0Up5Mxyzi3xjdD38l3We5YLerF0FloWtsynJ
+	 gyCvu41jJPYobdfjTxQquDZwHFF3sL4YiTLjbEONZzIdF7gaDq31Uyyi7YLXse9n5A
+	 aNT18t81E6OwTL9gCU/ShbR2w+L8naDn2g3ws5lj20ZI+cajIBPhAqDXXVhw1KcgSJ
+	 4I8I0cczxeieg==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-50bf4f97752so7766844e87.1;
+        Tue, 12 Dec 2023 10:44:20 -0800 (PST)
+X-Gm-Message-State: AOJu0YzIfn5GythyCQTikNf2n+h0v7W2HJTf1NVclBQUvhnEGLEcAj+Y
+	WfhNzrys/xU/afl10o3JdlFJGShYV18NDBdGiw==
+X-Google-Smtp-Source: AGHT+IEPoRgBjiZrbpoAHo1Ne4VjjPt6sdxouTWRS3lY1hTs5kRvH0vkBFz5RqHyYOYM8izzmPvxPRFcqNOG0jrXezs=
+X-Received: by 2002:a05:6512:3581:b0:50d:1733:cebc with SMTP id
+ m1-20020a056512358100b0050d1733cebcmr2791750lfr.54.1702406658381; Tue, 12 Dec
+ 2023 10:44:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230920024001.493477-1-tfanelli@redhat.com> <49fdbcd1-5442-4cd4-8a85-1ddb40291b7d@fastmail.fm>
- <CAOQ4uxjfU0X9Q4bUoQd_U56y4yUUKGaqyFS1EJ3FGAPrmBMSkg@mail.gmail.com>
- <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
- <abbdf30f-c459-4eab-9254-7b24afc5771b@fastmail.fm> <40470070-ef6f-4440-a79e-ff9f3bbae515@fastmail.fm>
- <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
- <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm> <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
- <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
- <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm> <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
- <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm> <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
- <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm> <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
- <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
-In-Reply-To: <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 12 Dec 2023 20:30:47 +0200
-Message-ID: <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com, 
-	hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>, Dharmendra Singh <dsingh@ddn.com>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-12-alexandru.elisei@arm.com> <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+ <ZXiMiLz9ZyUdxUP8@raptor>
+In-Reply-To: <ZXiMiLz9ZyUdxUP8@raptor>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 12 Dec 2023 12:44:06 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, pcc@google.com, 
+	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
+	david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 9, 2023 at 12:38=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
+On Tue, Dec 12, 2023 at 10:38=E2=80=AFAM Alexandru Elisei
+<alexandru.elisei@arm.com> wrote:
 >
+> Hi Rob,
 >
+> Thank you so much for the feedback, I'm not very familiar with device tre=
+e,
+> and any comments are very useful.
 >
-> On 12/8/23 21:46, Amir Goldstein wrote:
-> > On Fri, Dec 8, 2023 at 9:50=E2=80=AFPM Bernd Schubert
-> > <bernd.schubert@fastmail.fm> wrote:
-> >>
-> >>
-> >>
-> >> On 12/8/23 09:39, Amir Goldstein wrote:
-> >>> On Thu, Dec 7, 2023 at 8:38=E2=80=AFPM Bernd Schubert
-> >>> <bernd.schubert@fastmail.fm> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 12/7/23 08:39, Amir Goldstein wrote:
-> >>>>> On Thu, Dec 7, 2023 at 1:28=E2=80=AFAM Bernd Schubert
-> >>>>> <bernd.schubert@fastmail.fm> wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> On 12/6/23 09:25, Amir Goldstein wrote:
-> >>>>>>>>>> Is it actually important for FUSE_DIRECT_IO_ALLOW_MMAP fs
-> >>>>>>>>>> (e.g. virtiofsd) to support FOPEN_PARALLEL_DIRECT_WRITES?
-> >>>>>>>>>> I guess not otherwise, the combination would have been tested.
-> >>>>>>>>>
-> >>>>>>>>> I'm not sure how many people are aware of these different flags=
-/features.
-> >>>>>>>>> I had just finalized the backport of the related patches to RHE=
-L8 on
-> >>>>>>>>> Friday, as we (or our customers) need both for different jobs.
-> >>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES is typically important for
-> >>>>>>>>>> network fs and FUSE_DIRECT_IO_ALLOW_MMAP is typically not
-> >>>>>>>>>> for network fs. Right?
-> >>>>>>>>>
-> >>>>>>>>> We kind of have these use cases for our network file systems
-> >>>>>>>>>
-> >>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES:
-> >>>>>>>>>         - Traditional HPC, large files, parallel IO
-> >>>>>>>>>         - Large file used on local node as container for many s=
-mall files
-> >>>>>>>>>
-> >>>>>>>>> FUSE_DIRECT_IO_ALLOW_MMAP:
-> >>>>>>>>>         - compilation through gcc (not so important, just not n=
-ice when it
-> >>>>>>>>> does not work)
-> >>>>>>>>>         - rather recent: python libraries using mmap _reads_. A=
-s it is read
-> >>>>>>>>> only no issue of consistency.
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> These jobs do not intermix - no issue as in generic/095. If suc=
-h
-> >>>>>>>>> applications really exist, I have no issue with a serialization=
- penalty.
-> >>>>>>>>> Just disabling FOPEN_PARALLEL_DIRECT_WRITES because other
-> >>>>>>>>> nodes/applications need FUSE_DIRECT_IO_ALLOW_MMAP is not so nic=
-e.
-> >>>>>>>>>
-> >>>>>>>>> Final goal is also to have FOPEN_PARALLEL_DIRECT_WRITES to work=
- on plain
-> >>>>>>>>> O_DIRECT and not only for FUSE_DIRECT_IO - I need to update thi=
-s branch
-> >>>>>>>>> and post the next version
-> >>>>>>>>> https://github.com/bsbernd/linux/commits/fuse-dio-v4
-> >>>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> In the mean time I have another idea how to solve
-> >>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES + FUSE_DIRECT_IO_ALLOW_MMAP
-> >>>>>>>>
-> >>>>>>>> Please find attached what I had in my mind. With that generic/09=
-5 is not
-> >>>>>>>> crashing for me anymore. I just finished the initial coding - it=
- still
-> >>>>>>>> needs a bit cleanup and maybe a few comments.
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Nice. I like the FUSE_I_CACHE_WRITES state.
-> >>>>>>> For FUSE_PASSTHROUGH I will need to track if inode is open/mapped
-> >>>>>>> in caching mode, so FUSE_I_CACHE_WRITES can be cleared on release
-> >>>>>>> of the last open file of the inode.
-> >>>>>>>
-> >>>>>>> I did not understand some of the complexity here:
-> >>>>>>>
-> >>>>>>>>            /* The inode ever got page writes and we do not know =
-for sure
-> >>>>>>>>             * in the DIO path if these are pending - shared lock=
- not possible */
-> >>>>>>>>            spin_lock(&fi->lock);
-> >>>>>>>>            if (!test_bit(FUSE_I_CACHE_WRITES, &fi->state)) {
-> >>>>>>>>                    if (!(*cnt_increased)) {
-> >>>>>>>
-> >>>>>>> How can *cnt_increased be true here?
-> >>>>>>
-> >>>>>> I think you missed the 2nd entry into this function, when the shar=
-ed
-> >>>>>> lock was already taken?
-> >>>>>
-> >>>>> Yeh, I did.
-> >>>>>
-> >>>>>> I have changed the code now to have all
-> >>>>>> complexity in this function (test, lock, retest with lock, release=
-,
-> >>>>>> wakeup). I hope that will make it easier to see the intention of t=
-he
-> >>>>>> code. Will post the new patches in the morning.
-> >>>>>>
-> >>>>>
-> >>>>> Sounds good. Current version was a bit hard to follow.
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>                            fi->shared_lock_direct_io_ctr++;
-> >>>>>>>>                            *cnt_increased =3D true;
-> >>>>>>>>                    }
-> >>>>>>>>                    excl_lock =3D false;
-> >>>>>>>
-> >>>>>>> Seems like in every outcome of this function
-> >>>>>>> *cnt_increased =3D !excl_lock
-> >>>>>>> so there is not need for out arg cnt_increased
-> >>>>>>
-> >>>>>> If excl_lock would be used as input - yeah, would have worked as w=
-ell.
-> >>>>>> Or a parameter like "retest-under-lock". Code is changed now to av=
-oid
-> >>>>>> going in and out.
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>            }
-> >>>>>>>>            spin_unlock(&fi->lock);
-> >>>>>>>>
-> >>>>>>>> out:
-> >>>>>>>>            if (excl_lock && *cnt_increased) {
-> >>>>>>>>                    bool wake =3D false;
-> >>>>>>>>                    spin_lock(&fi->lock);
-> >>>>>>>>                    if (--fi->shared_lock_direct_io_ctr =3D=3D 0)
-> >>>>>>>>                            wake =3D true;
-> >>>>>>>>                    spin_unlock(&fi->lock);
-> >>>>>>>>                    if (wake)
-> >>>>>>>>                            wake_up(&fi->direct_io_waitq);
-> >>>>>>>>            }
-> >>>>>>>
-> >>>>>>> I don't see how this wake_up code is reachable.
-> >>>>>>>
-> >>>>>>> TBH, I don't fully understand the expected result.
-> >>>>>>> Surely, the behavior of dio mixed with mmap is undefined. Right?
-> >>>>>>> IIUC, your patch does not prevent dirtying page cache while dio i=
-s in
-> >>>>>>> flight. It only prevents writeback while dio is in flight, which =
-is the same
-> >>>>>>> behavior as with exclusive inode lock. Right?
-> >>>>>>
-> >>>>>> Yeah, thanks. I will add it in the patch description.
-> >>>>>>
-> >>>>>> And there was actually an issue with the patch, as cache flushing =
-needs
-> >>>>>> to be initiated before doing the lock decision, fixed now.
-> >>>>>>
-> >>>>>
-> >>>>> I thought there was, because of the wait in fuse_send_writepage()
-> >>>>> but wasn't sure if I was following the flow correctly.
-> >>>>>
-> >>>>>>>
-> >>>>>>> Maybe this interaction is spelled out somewhere else, but if not
-> >>>>>>> better spell it out for people like me that are new to this code.
-> >>>>>>
-> >>>>>> Sure, thanks a lot for your helpful comments!
-> >>>>>>
-> >>>>>
-> >>>>> Just to be clear, this patch looks like a good improvement and
-> >>>>> is mostly independent of the "inode caching mode" and
-> >>>>> FOPEN_CACHE_MMAP idea that I suggested.
-> >>>>>
-> >>>>> The only thing that my idea changes is replacing the
-> >>>>> FUSE_I_CACHE_WRITES state with a FUSE_I_CACHE_IO_MODE
-> >>>>> state, which is set earlier than FUSE_I_CACHE_WRITES
-> >>>>> on caching file open or first direct_io mmap and unlike
-> >>>>> FUSE_I_CACHE_WRITES, it is cleared on the last file close.
-> >>>>>
-> >>>>> FUSE_I_CACHE_WRITES means that caching writes happened.
-> >>>>> FUSE_I_CACHE_IO_MODE means the caching writes and reads
-> >>>>> may happen.
-> >>>>>
-> >>>>> FOPEN_PARALLEL_DIRECT_WRITES obviously shouldn't care
-> >>>>> about "caching reads may happen", but IMO that is a small trade off
-> >>>>> to make for maintaining the same state for
-> >>>>> "do not allow parallel dio" and "do not allow passthrough open".
-> >>>>
-> >>>> I think the attached patches should do, it now also unsets
-> >>>
-> >>> IMO, your patch is still more complicated than it should be.
-> >>> There is no need for the complicated retest state machine.
-> >>> If you split the helpers to:
-> >>>
-> >>> bool exclusive_lock fuse_dio_wr_needs_exclusive_lock();
-> >>> ...
-> >>> fuse_dio_lock_inode(iocb, &exclusive);
-> >>> ...
-> >>> fuse_dio_unlock_inode(iocb, &exclusive);
-> >>>
-> >>> Then you only need to test FUSE_I_CACHE_IO_MODE in
-> >>> fuse_dio_wr_needs_exclusive_lock()
-> >>> and you only need to increment shared_lock_direct_io_ctr
-> >>> after taking shared lock and re-testing FUSE_I_CACHE_IO_MODE.
-> >>
-> >> Hmm, I'm not sure.
-> >>
-> >> I changed fuse_file_mmap() to call this function
-> >>
-> >> /*
-> >>    * direct-io with shared locks cannot handle page cache io - set an =
-inode
-> >>    * flag to disable shared locks and wait until remaining threads are=
- done
-> >>    */
-> >> static void fuse_file_mmap_handle_dio_writers(struct inode *inode)
-> >> {
-> >>          struct fuse_inode *fi =3D get_fuse_inode(inode);
-> >>
-> >>          spin_lock(&fi->lock);
-> >>          set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-> >>          while (fi->shared_lock_direct_io_ctr > 0) {
-> >>                  spin_unlock(&fi->lock);
-> >>                  wait_event_interruptible(fi->direct_io_waitq,
-> >>                                           fi->shared_lock_direct_io_ct=
-r =3D=3D 0);
-> >>                  spin_lock(&fi->lock);
-> >>          }
-> >>          spin_unlock(&fi->lock);
-> >> }
-> >>
-> >>
-> >> Before we had indeed a race. Idea for fuse_file_mmap_handle_dio_writer=
-s()
-> >> and fuse_dio_lock_inode() is to either have FUSE_I_CACHE_IO_MODE set,
-> >> or fi->shared_lock_direct_io_ctr is greater 0, but that requires that
-> >> FUSE_I_CACHE_IO_MODE is checked for when fi->lock is taken.
-> >>
-> >>
-> >> I'm going to think about over the weekend if your suggestion
-> >> to increase fi->shared_lock_direct_io_ctr only after taking the shared
-> >> lock is possible. Right now I don't see how to do that.
-> >>
-> >>
-> >>>
-> >>>> FUSE_I_CACHE_IO_MODE. Setting the flag actually has to be done from
-> >>>> fuse_file_mmap (and not from fuse_send_writepage) to avoid a dead st=
-all,
-> >>>> but that aligns with passthrough anyway?
-> >>>
-> >>> Yes.
-> >>>
-> >>> I see that shared_lock_direct_io_ctr is checked without lock or barri=
-ers
-> >>> in and the wait_event() should be interruptible.
-> >>
-> >> Thanks, fixed with the function above.
-> >>
-> >>> I am also not sure if it breaks any locking order for mmap because
-> >>> the task that is going to wake it up is holding the shared inode lock=
-...
-> >>
-> >> The waitq has its own lock. We have
-> >>
-> >> fuse_file_mmap - called under some mmap lock, waitq lock
-> >>
-> >> fuse_dio_lock_inode: no lock taken before calling wakeup
-> >>
-> >> fuse_direct_write_iter: wakeup after release of all locks
-> >>
-> >> So I don't think we have a locker issue (lockdep also doesn't annotate
-> >> anything).
+> On Mon, Dec 11, 2023 at 11:29:40AM -0600, Rob Herring wrote:
+> > On Sun, Nov 19, 2023 at 10:59=E2=80=AFAM Alexandru Elisei
+> > <alexandru.elisei@arm.com> wrote:
+> > >
+> > > Allow the kernel to get the size and location of the MTE tag storage
+> > > regions from the DTB. This memory is marked as reserved for now.
+> > >
+> > > The DTB node for the tag storage region is defined as:
+> > >
+> > >         tags0: tag-storage@8f8000000 {
+> > >                 compatible =3D "arm,mte-tag-storage";
+> > >                 reg =3D <0x08 0xf8000000 0x00 0x4000000>;
+> > >                 block-size =3D <0x1000>;
+> > >                 memory =3D <&memory0>;    // Associated tagged memory=
+ node
+> > >         };
 > >
-> > I don't think that lockdep can understand this dependency.
-> >
-> >> What we definitely cannot do it to take the inode i_rwsem lock in fuse=
-_file_mmap
-> >>
-> >
-> > It's complicated. I need to look at the whole thing again.
-> >
-> >>>
-> >>> While looking at this code, the invalidate_inode_pages2() looks suspi=
-cious.
-> >>> If inode is already in FUSE_I_CACHE_IO_MODE when performing
-> >>> another mmap, doesn't that have potential for data loss?
-> >>> (even before your patch I mean)
-> >>>
-> >>>> Amir, right now it only sets
-> >>>> FUSE_I_CACHE_IO_MODE for VM_MAYWRITE. Maybe you could add a conditio=
-n
-> >>>> for passthrough there?
-> >>>>
-> >>>
-> >>> We could add a condition, but I don't think that we should.
-> >>> I think we should refrain from different behavior when it is not just=
-ified.
-> >>> I think it is not justified to allow parallel dio if any file is open=
- in
-> >>> caching mode on the inode and any mmap (private or shared)
-> >>> exists on the inode.
-> >>>
-> >>> That means that FUSE_I_CACHE_IO_MODE should be set on
-> >>> any mmap, and already on open for non direct_io files.
-> >>
-> >> Ok, I can change and add that. Doing it in open is definitely needed
-> >> for O_DIRECT (in my other dio branch).
-> >>
-> >
-> > Good, the more common code the better.
-> >
-> >>>
-> >>> Mixing caching and direct io on the same inode is hard as it is
-> >>> already and there is no need to add complexity by allowing
-> >>> parallel dio in that case. IMO it wins us nothing.
-> >>
-> >> So the slight issue I see are people like me, who check the content
-> >> of a file during a long running computation. Like an HPC application
-> >> is doing some long term runs. Then in the middle of
-> >> the run the user wants to see the current content of the file and
-> >> reads it - if that is done through mmap (and from a node that runs
-> >> the application), parallel DIO is disabled with the current patch
-> >> until the file is closed - I see the use case to check for writes.
-> >>
-> >
-> > That's what I thought.
-> >
-> >>
-> >>>
-> >>> The FUSE_I_CACHE_IO_MODE could be cleared on last file
-> >>> close (as your patch did) but it could be cleared earlier if
-> >>> instead of tracking refcount of open file, we track refcount of
-> >>> files open in caching mode or mmaped, which is what the
-> >>> FOPEN_MMAP_CACHE flag I suggested is for.
-> >>
-> >> But how does open() know that a file/fd is used for mmap?
-> >>
-> >
-> > Because what I tried to suggest is a trick/hack:
-> > first mmap on direct_io file sets FOPEN_MMAP_CACHE on the file
-> > and bumps the cached_opens on the inode as if file was
-> > opened in caching mode or in FOPEN_MMAP_CACHE mode.
-> > When the file that was used for mmap is closed and all the rest
-> > of the open files have only ever been used for direct_io, then
-> > inode exists the caching io mode.
-> >
-> > Using an FOPEN flag for that is kind of a hack.
-> > We could add an internal file state bits for that as well,
-> > but my thinking was that FOPEN_MMAP_CACHE could really
-> > be set by the server to mean per-file ALLOW_MMAP instead of
-> > the per-filesystem ALLOW_MMAP. Not sure if that will be useful.
+> > I skimmed thru the discussion some. If this memory range is within
+> > main RAM, then it definitely belongs in /reserved-memory.
 >
-> Ok, I will try to add that in a different patch to have better
-> visibility. Will also put these patch here in front of my dio branch and
-> rebase these patches. There comes in a bit additional complexity to
-> handle O_DIRECT, but it also consolidates direct-IO writes code paths.
-> At least I hope this is still possible with the new changes.
+> Ok, will do that.
+>
+> If you don't mind, why do you say that it definitely belongs in
+> reserved-memory? I'm not trying to argue otherwise, I'm curious about the
+> motivation.
+
+Simply so that /memory nodes describe all possible memory and
+/reserved-memory is just adding restrictions. It's also because
+/reserved-memory is what gets handled early, and we don't need
+multiple things to handle early.
+
+> Tag storage is not DMA and can live anywhere in memory.
+
+Then why put it in DT at all? The only reason CMA is there is to set
+the size. It's not even clear to me we need CMA in DT either. The
+reasoning long ago was the kernel didn't do a good job of moving and
+reclaiming contiguous space, but that's supposed to be better now (and
+most h/w figured out they need IOMMUs).
+
+But for tag storage you know the size as it is a function of the
+memory size, right? After all, you are validating the size is correct.
+I guess there is still the aspect of whether you want enable MTE or
+not which could be done in a variety of ways.
+
+> In
+> arm64_memblock_init(), the kernel first removes the memory that it cannot
+> address from memblock. For example, because it has been compiled with
+> CONFIG_ARM64_VA_BITS_39=3Dy. And then calls
+> early_init_fdt_scan_reserved_mem().
+>
+> What happens if reserved memory is above what the kernel can address?
+
+I would hope the kernel handles it. That's the kernel's problem unless
+there's some h/w limitation to access some region. The DT can't have
+things dependent on the kernel config.
+
+> From my testing, when the kernel is compiled with 39 bit VA, if I use
+> reserved memory to discover tag storage the lives above the virtua addres=
+s
+> limit and then I try to use CMA to manage the tag storage memory, I get a
+> kernel panic:
+
+Looks like we should handle that better...
+
+>> [    0.000000] Reserved memory: created CMA memory pool at 0x00000100000=
+00000, size 64 MiB
+> [    0.000000] OF: reserved mem: initialized node linux,cma, compatible i=
+d shared-dma-pool
+> [    0.000000] OF: reserved mem: 0x0000010000000000..0x0000010003ffffff (=
+65536 KiB) map reusable linux,cma
+> [..]
+> [    0.806945] Unable to handle kernel paging request at virtual address =
+00000001fe000000
+> [    0.807277] Mem abort info:
+> [    0.807277]   ESR =3D 0x0000000096000005
+> [    0.807693]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+> [    0.808110]   SET =3D 0, FnV =3D 0
+> [    0.808443]   EA =3D 0, S1PTW =3D 0
+> [    0.808526]   FSC =3D 0x05: level 1 translation fault
+> [    0.808943] Data abort info:
+> [    0.808943]   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
+> [    0.809360]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+> [    0.809776]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> [    0.810221] [00000001fe000000] user address but active_mm is swapper
+> [..]
+> [    0.820887] Call trace:
+> [    0.821027]  cma_init_reserved_areas+0xc4/0x378
 >
 > >
-> > Sorry for the hand waving. I was trying to send out a demo
-> > patch that explains it better, but got caught up with other things.
+> > You need a binding for this too.
 >
-> No problem at all, I think I know what you mean and I can try add this
-> myself.
+> By binding you mean having an yaml file in dt-schem [1] describing the ta=
+g
+> storage node, right?
 
-Here is what I was thinking about:
+Yes, but in the kernel tree is fine.
 
-https://github.com/amir73il/linux/commits/fuse_io_mode
+[...]
 
-The concept that I wanted to introduce was the
-fuse_inode_deny_io_cache()/fuse_inode_allow_io_cache()
-helpers (akin to deny_write_access()/allow_write_access()).
+> > > +static int __init tag_storage_of_flat_get_range(unsigned long node, =
+const __be32 *reg,
+> > > +                                               int reg_len, struct r=
+ange *range)
+> > > +{
+> > > +       int addr_cells =3D dt_root_addr_cells;
+> > > +       int size_cells =3D dt_root_size_cells;
+> > > +       u64 size;
+> > > +
+> > > +       if (reg_len / 4 > addr_cells + size_cells)
+> > > +               return -EINVAL;
+> > > +
+> > > +       range->start =3D PHYS_PFN(of_read_number(reg, addr_cells));
+> > > +       size =3D PHYS_PFN(of_read_number(reg + addr_cells, size_cells=
+));
+> > > +       if (size =3D=3D 0) {
+> > > +               pr_err("Invalid node");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +       range->end =3D range->start + size - 1;
+> >
+> > We have a function to read (and translate which you forgot) addresses.
+> > Add what's missing rather than open code your own.
+>
+> I must have missed that there's already a function to read addresses. Wou=
+ld
+> you mind pointing me in the right direction?
 
-In this patch, parallel dio in progress deny open in caching mode
-and mmap, and I don't know if that is acceptable.
-Technically, instead of deny open/mmap you can use additional
-techniques to wait for in progress dio and allow caching open/mmap.
+drivers/of/fdt_address.c
 
-Anyway, I plan to use the iocachectr and fuse_inode_deny_io_cache()
-pattern when file is open in FOPEN_PASSTHROUGH mode, but
-in this case, as agreed with Miklos, a server trying to mix open
-in caching mode on the same inode is going to fail the open.
+Though it doesn't provide getting the size, so that will have to be added.
 
-mmap is less of a problem for inode in passthrough mode, because
-mmap in of direct_io file and inode in passthrough mode is passthrough
-mmap to backing file.
 
-Anyway, if you can use this patch or parts of it, be my guest and if you
-want to use a different approach that is fine by me as well - in that case
-I will just remove the fuse_file_shared_dio_{start,end}() part from my patc=
-h.
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int __init tag_storage_of_flat_get_tag_range(unsigned long no=
+de,
+> > > +                                                   struct range *tag=
+_range)
+> > > +{
+> > > +       const __be32 *reg;
+> > > +       int reg_len;
+> > > +
+> > > +       reg =3D of_get_flat_dt_prop(node, "reg", &reg_len);
+> > > +       if (reg =3D=3D NULL) {
+> > > +               pr_err("Invalid metadata node");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       return tag_storage_of_flat_get_range(node, reg, reg_len, tag_=
+range);
+> > > +}
+> > > +
+> > > +static int __init tag_storage_of_flat_get_memory_range(unsigned long=
+ node, struct range *mem)
+> > > +{
+> > > +       const __be32 *reg;
+> > > +       int reg_len;
+> > > +
+> > > +       reg =3D of_get_flat_dt_prop(node, "linux,usable-memory", &reg=
+_len);
+> > > +       if (reg =3D=3D NULL)
+> > > +               reg =3D of_get_flat_dt_prop(node, "reg", &reg_len);
+> > > +
+> > > +       if (reg =3D=3D NULL) {
+> > > +               pr_err("Invalid memory node");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       return tag_storage_of_flat_get_range(node, reg, reg_len, mem)=
+;
+> > > +}
+> > > +
+> > > +struct find_memory_node_arg {
+> > > +       unsigned long node;
+> > > +       u32 phandle;
+> > > +};
+> > > +
+> > > +static int __init fdt_find_memory_node(unsigned long node, const cha=
+r *uname,
+> > > +                                      int depth, void *data)
+> > > +{
+> > > +       const char *type =3D of_get_flat_dt_prop(node, "device_type",=
+ NULL);
+> > > +       struct find_memory_node_arg *arg =3D data;
+> > > +
+> > > +       if (depth !=3D 1 || !type || strcmp(type, "memory") !=3D 0)
+> > > +               return 0;
+> > > +
+> > > +       if (of_get_flat_dt_phandle(node) =3D=3D arg->phandle) {
+> > > +               arg->node =3D node;
+> > > +               return 1;
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int __init tag_storage_get_memory_node(unsigned long tag_node=
+, unsigned long *mem_node)
+> > > +{
+> > > +       struct find_memory_node_arg arg =3D { 0 };
+> > > +       const __be32 *memory_prop;
+> > > +       u32 mem_phandle;
+> > > +       int ret, reg_len;
+> > > +
+> > > +       memory_prop =3D of_get_flat_dt_prop(tag_node, "memory", &reg_=
+len);
+> > > +       if (!memory_prop) {
+> > > +               pr_err("Missing 'memory' property in the tag storage =
+node");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       mem_phandle =3D be32_to_cpup(memory_prop);
+> > > +       arg.phandle =3D mem_phandle;
+> > > +
+> > > +       ret =3D of_scan_flat_dt(fdt_find_memory_node, &arg);
+> >
+> > Do not use of_scan_flat_dt. It is a relic predating libfdt which can
+> > get a node by phandle directly.
+>
+> I used that because that's what drivers/of/fdt.c uses. With reserved memo=
+ry
+> I shouldn't need it, because struct reserved_mem already includes a
+> phandle.
 
-Thanks,
-Amir.
+Check again. Only some arch/ code (mostly powerpc) uses it. I've
+killed off most of it.
+
+
+> > > +       if (ret !=3D 1) {
+> > > +               pr_err("Associated memory node not found");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       *mem_node =3D arg.node;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int __init tag_storage_of_flat_read_u32(unsigned long node, c=
+onst char *propname,
+> > > +                                              u32 *retval)
+> >
+> > If you are going to make a generic function, make it for everyone.
+>
+> Sure. If I still need it, should I put the function in
+> include/linux/of_fdt.h?
+
+Yes.
+
+> > > +{
+> > > +       const __be32 *reg;
+> > > +
+> > > +       reg =3D of_get_flat_dt_prop(node, propname, NULL);
+> > > +       if (!reg)
+> > > +               return -EINVAL;
+> > > +
+> > > +       *retval =3D be32_to_cpup(reg);
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static u32 __init get_block_size_pages(u32 block_size_bytes)
+> > > +{
+> > > +       u32 a =3D PAGE_SIZE;
+> > > +       u32 b =3D block_size_bytes;
+> > > +       u32 r;
+> > > +
+> > > +       /* Find greatest common divisor using the Euclidian algorithm=
+. */
+> > > +       do {
+> > > +               r =3D a % b;
+> > > +               a =3D b;
+> > > +               b =3D r;
+> > > +       } while (b !=3D 0);
+> > > +
+> > > +       return PHYS_PFN(PAGE_SIZE * block_size_bytes / a);
+> > > +}
+> > > +
+> > > +static int __init fdt_init_tag_storage(unsigned long node, const cha=
+r *uname,
+> > > +                                      int depth, void *data)
+> > > +{
+> > > +       struct tag_region *region;
+> > > +       unsigned long mem_node;
+> > > +       struct range *mem_range;
+> > > +       struct range *tag_range;
+> > > +       u32 block_size_bytes;
+> > > +       u32 nid =3D 0;
+> > > +       int ret;
+> > > +
+> > > +       if (depth !=3D 1 || !strstr(uname, "tag-storage"))
+> > > +               return 0;
+> > > +
+> > > +       if (!of_flat_dt_is_compatible(node, "arm,mte-tag-storage"))
+> > > +               return 0;
+> > > +
+> > > +       if (num_tag_regions =3D=3D MAX_TAG_REGIONS) {
+> > > +               pr_err("Maximum number of tag storage regions exceede=
+d");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       region =3D &tag_regions[num_tag_regions];
+> > > +       mem_range =3D &region->mem_range;
+> > > +       tag_range =3D &region->tag_range;
+> > > +
+> > > +       ret =3D tag_storage_of_flat_get_tag_range(node, tag_range);
+> > > +       if (ret) {
+> > > +               pr_err("Invalid tag storage node");
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       ret =3D tag_storage_get_memory_node(node, &mem_node);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       ret =3D tag_storage_of_flat_get_memory_range(mem_node, mem_ra=
+nge);
+> > > +       if (ret) {
+> > > +               pr_err("Invalid address for associated data memory no=
+de");
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       /* The tag region must exactly match the corresponding memory=
+. */
+> > > +       if (range_len(tag_range) * 32 !=3D range_len(mem_range)) {
+> > > +               pr_err("Tag storage region 0x%llx-0x%llx does not cov=
+er the memory region 0x%llx-0x%llx",
+> > > +                      PFN_PHYS(tag_range->start), PFN_PHYS(tag_range=
+->end),
+> > > +                      PFN_PHYS(mem_range->start), PFN_PHYS(mem_range=
+->end));
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       ret =3D tag_storage_of_flat_read_u32(node, "block-size", &blo=
+ck_size_bytes);
+> > > +       if (ret || block_size_bytes =3D=3D 0) {
+> > > +               pr_err("Invalid or missing 'block-size' property");
+> > > +               return -EINVAL;
+> > > +       }
+> > > +       region->block_size =3D get_block_size_pages(block_size_bytes)=
+;
+> > > +       if (range_len(tag_range) % region->block_size !=3D 0) {
+> > > +               pr_err("Tag storage region size 0x%llx is not a multi=
+ple of block size %u",
+> > > +                      PFN_PHYS(range_len(tag_range)), region->block_=
+size);
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       ret =3D tag_storage_of_flat_read_u32(mem_node, "numa-node-id"=
+, &nid);
+> >
+> > I was going to say we already have a way to associate memory nodes
+> > other nodes using "numa-node-id", so the "memory" phandle property is
+> > somewhat redundant. Maybe the tag node should have a numa-node-id.
+> > With that, it looks like you don't even need to access the /memory
+> > node. Avoiding that would be good for 2 reasons. It avoids parsing
+> > memory nodes twice and it's not the kernel's job to validate the DT.
+> > Really, if you want memory info, you should use memblock to get it
+> > because all the special cases of memory layout are handled. For
+> > example you can have memory nodes with multiple 'reg' entries or
+> > multiple memory nodes or both, and then some of those could be
+> > contiguous.
+>
+> I need to have a memory node associated with the tag storage node because
+> there is a static relationship between a page from "normal" memory and it=
+s
+> associated tag storage. If the code doesn't know that the memory region
+> A..B has the corresponding tag storage in the region X..Y, then it doesn'=
+t
+> know which tag storage to reserve when a page is allocated as tagged.
+>
+> In the example above, assuming that page P is allocated as tagged, the
+> corresponding tag storage page that needs to be reserved is:
+>
+> tag_storage_pfn =3D (page_to_pfn(P) - PHYS_PFN(A)) / 32* + PHYS_PFN(X)
+>
+> numa-node-id is not enough for this, because as far I know you can have
+> multiple memory regions withing the same numa node.
+
+Okay.
+
+Rob
 
