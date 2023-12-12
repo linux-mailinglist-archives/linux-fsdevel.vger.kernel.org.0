@@ -1,275 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-5601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D4B80E041
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 01:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A3D80E098
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 02:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE60428278C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 00:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34371F21C34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 01:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27F8647;
-	Tue, 12 Dec 2023 00:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C8A81A;
+	Tue, 12 Dec 2023 01:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpWetFEP"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P0oHaWL4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0iaJRxdF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P0oHaWL4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0iaJRxdF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD348A2;
-	Mon, 11 Dec 2023 16:26:56 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-6ce94f62806so2865700b3a.1;
-        Mon, 11 Dec 2023 16:26:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702340816; x=1702945616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSQyFr2oOPN4eJKATcaaKNeRdXLlB+uMHIeYmedc82w=;
-        b=RpWetFEPDqRP6m14yFSAA1TnG6sajGueoR/JZWYzKGLv0CeT7h6GDuRin35dKUphu4
-         Ci4SblY7YDf8Mx4g01au8rIv2Hg8rtx2PpplxYDPnEqkaUCkB0SzoZv/Cvly5RUJ3hsc
-         1NUom1grgtc0GJT3eVP4ooKpJjjLTFRAjTsy75ZxWiP6CDQ1VvORIofMByXUK/5F3YDV
-         5qZ9FjyH/MyAsmMoxKOj7wQKqU9icuDoMESrJukqz+hDw5YP7mnY34StHesGOJXm34Fc
-         22N7rvbXtbmHLdUojczz1c6o5Py1bAL0vRfzIwi87oKFdZF+Pt/+L7SNMCkeaIfolrU9
-         aSCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702340816; x=1702945616;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jSQyFr2oOPN4eJKATcaaKNeRdXLlB+uMHIeYmedc82w=;
-        b=FXtlLKISfxN+3BJsknA02cYi+hr1+zpQDfiilml8PX4wHxXfSR88daQaH16bLpZr+v
-         nUdmuuKT8eU5AHWkx6Ss0dcaQWx4Ed76+T9aR4G7DDURCEI/aFLTxZzkY45uzUIgmBqw
-         R+rbnNaVwd5HkDTkavrk0GJqqfsCgscg30c/XLOvzMe8ggjM8JT3Rv1gWM56Y7oSW63P
-         oJY05/LMzzc33wmPWxzp2fDSlp6C+2DAaMxDFmE0fwKM3vQgRjb/WpOwNemvZPrhT92B
-         lW09fJ3NvaStY51pJfR8yM3HYb6Esz3z9KpCMiILBQq1lQCkwfn/c/+ZW6/yMhugkCJW
-         DeYw==
-X-Gm-Message-State: AOJu0YxUAytdHNzI6O2Xz8Kdh/yTyr2zjo+dhGe7TPIhRqzZ/NEBDGKl
-	JMbYWoAMFRwBQjKYdJtjlGw=
-X-Google-Smtp-Source: AGHT+IE9bubbYpMbmSeuNhsCa9D4nLlifwvJI5f8ivdhlvLDMDlxjL6HtD236PupYxryjevy5xZzVA==
-X-Received: by 2002:a05:6a20:918d:b0:190:46c8:a3dc with SMTP id v13-20020a056a20918d00b0019046c8a3dcmr2647560pzd.5.1702340816197;
-        Mon, 11 Dec 2023 16:26:56 -0800 (PST)
-Received: from localhost ([98.97.32.4])
-        by smtp.gmail.com with ESMTPSA id q19-20020a170902bd9300b001cc2ebd2c2csm7285851pls.256.2023.12.11.16.26.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 16:26:55 -0800 (PST)
-Date: Mon, 11 Dec 2023 16:26:54 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
- John Fastabend <john.fastabend@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, 
- bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- paul@paul-moore.com, 
- brauner@kernel.org, 
- linux-fsdevel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- keescook@chromium.org, 
- kernel-team@meta.com, 
- sargun@sargun.me
-Message-ID: <6577a8ce777d9_1449c20858@john.notmuch>
-In-Reply-To: <CAEf4BzYZ0Xkme8pwWoXE5wvQhp+DzUixn3ueJMFmDqUk9Dox7A@mail.gmail.com>
-References: <20231207185443.2297160-1-andrii@kernel.org>
- <20231207185443.2297160-7-andrii@kernel.org>
- <657793942699a_edaa208bc@john.notmuch>
- <CAEf4BzYZ0Xkme8pwWoXE5wvQhp+DzUixn3ueJMFmDqUk9Dox7A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 6/8] libbpf: wire up BPF token support at BPF
- object level
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BFC1B5;
+	Mon, 11 Dec 2023 16:59:58 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CB42D22455;
+	Tue, 12 Dec 2023 00:59:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1702342796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8TSegy37Mywewjf7EyyG9I+arxEp5UKVg3K0h+/d2HU=;
+	b=P0oHaWL4F9lmAPGHW7TKjrpyYQ7PeU0TuVk78ZO1pTDSL5xHcjMhpJEBMxoihmEUss7PEh
+	zssilx9dTW/aWzja+DYmqlMBCoHOy2TWhthakEq+gkx1Af+0aP4WY4uALJirde7zUYqnWw
+	jG5SUhDk43i2FU6TjmUBlG3s1oJPUkw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1702342796;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8TSegy37Mywewjf7EyyG9I+arxEp5UKVg3K0h+/d2HU=;
+	b=0iaJRxdF/sy/x0fPM3PjuNWDtms6yNBsiWBRkZKKfH1vucHZnRAV0PGi/lu0aZ23av0uyl
+	LRrzzzOj8Zw8o+Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1702342796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8TSegy37Mywewjf7EyyG9I+arxEp5UKVg3K0h+/d2HU=;
+	b=P0oHaWL4F9lmAPGHW7TKjrpyYQ7PeU0TuVk78ZO1pTDSL5xHcjMhpJEBMxoihmEUss7PEh
+	zssilx9dTW/aWzja+DYmqlMBCoHOy2TWhthakEq+gkx1Af+0aP4WY4uALJirde7zUYqnWw
+	jG5SUhDk43i2FU6TjmUBlG3s1oJPUkw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1702342796;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8TSegy37Mywewjf7EyyG9I+arxEp5UKVg3K0h+/d2HU=;
+	b=0iaJRxdF/sy/x0fPM3PjuNWDtms6yNBsiWBRkZKKfH1vucHZnRAV0PGi/lu0aZ23av0uyl
+	LRrzzzOj8Zw8o+Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EF7C133DE;
+	Tue, 12 Dec 2023 00:59:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8V4DEIqwd2VzfAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 12 Dec 2023 00:59:54 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From: "NeilBrown" <neilb@suse.de>
+To: "Kent Overstreet" <kent.overstreet@linux.dev>
+Cc: "Donald Buczek" <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
+ "Stefan Krueger" <stefan.krueger@aei.mpg.de>,
+ "David Howells" <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+In-reply-to: <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+References: <97375d00-4bf7-4c4f-96ec-47f4078abb3d@molgen.mpg.de>,
+ <170199821328.12910.289120389882559143@noble.neil.brown.name>,
+ <20231208013739.frhvlisxut6hexnd@moria.home.lan>,
+ <170200162890.12910.9667703050904306180@noble.neil.brown.name>,
+ <20231208024919.yjmyasgc76gxjnda@moria.home.lan>,
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>,
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>,
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>,
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan>,
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>,
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+Date: Tue, 12 Dec 2023 11:59:51 +1100
+Message-id: <170234279139.12910.809452786055101337@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spam-Score: -4.30
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
 
-Andrii Nakryiko wrote:
-> On Mon, Dec 11, 2023 at 2:56=E2=80=AFPM John Fastabend <john.fastabend@=
-gmail.com> wrote:
-> >
-> > Andrii Nakryiko wrote:
-> > > Add BPF token support to BPF object-level functionality.
-> > >
-> > > BPF token is supported by BPF object logic either as an explicitly
-> > > provided BPF token from outside (through BPF FS path or explicit BP=
-F
-> > > token FD), or implicitly (unless prevented through
-> > > bpf_object_open_opts).
-> > >
-> > > Implicit mode is assumed to be the most common one for user namespa=
-ced
-> > > unprivileged workloads. The assumption is that privileged container=
+On Tue, 12 Dec 2023, Kent Overstreet wrote:
+> On Tue, Dec 12, 2023 at 10:53:07AM +1100, NeilBrown wrote:
+> > On Tue, 12 Dec 2023, Kent Overstreet wrote:
+> > > On Tue, Dec 12, 2023 at 09:43:27AM +1100, NeilBrown wrote:
+> > > > On Sat, 09 Dec 2023, Kent Overstreet wrote:
+> > > > > On Fri, Dec 08, 2023 at 12:34:28PM +0100, Donald Buczek wrote:
+> > > > > > On 12/8/23 03:49, Kent Overstreet wrote:
+> > > > > >=20
+> > > > > > > We really only need 6 or 7 bits out of the inode number for sha=
+rding;
+> > > > > > > then 20-32 bits (nobody's going to have a billion snapshots; a =
+million
+> > > > > > > is a more reasonable upper bound) for the subvolume ID leaves 3=
+0 to 40
+> > > > > > > bits for actually allocating inodes out of.
+> > > > > > >=20
+> > > > > > > That'll be enough for the vast, vast majority of users, but exc=
+eeding
+> > > > > > > that limit is already something we're technically capable of: w=
+e're
+> > > > > > > currently seeing filesystems well over 100 TB, petabyte range e=
+xpected
+> > > > > > > as fsck gets more optimized and online fsck comes.
+> > > > > >=20
+> > > > > > 30 bits would not be enough even today:
+> > > > > >=20
+> > > > > > buczek@done:~$ df -i /amd/done/C/C8024
+> > > > > > Filesystem         Inodes     IUsed      IFree IUse% Mounted on
+> > > > > > /dev/md0       2187890304 618857441 1569032863   29% /amd/done/C/=
+C8024
+> > > > > >=20
+> > > > > > So that's 32 bit on a random production system ( 618857441 =3D=3D=
+ 0x24e303e1 ).
+> > > >=20
+> > > > only 30 bits though.  So it is a long way before you use all 32 bits.
+> > > > How many volumes do you have?
+> > > >=20
+> > > > > >=20
+> > > > > > And if the idea to produce unique inode numbers by hashing the fi=
+lehandle into 64 is followed, collisions definitely need to be addressed. Wit=
+h 618857441 objects, the probability of a hash collision with 64 bit is alrea=
+dy over 1% [1].
+> > > > >=20
+> > > > > Oof, thanks for the data point. Yeah, 64 bits is clearly not enough=
+ for
+> > > > > a unique identifier; time to start looking at how to extend statx.
+> > > > >=20
+> > > >=20
+> > > > 64 should be plenty...
+> > > >=20
+> > > > If you have 32 bits for free allocation, and 7 bits for sharding acro=
+ss
+> > > > 128 CPUs, then you can allocate many more than 4 billion inodes.  May=
+be
+> > > > not the full 500 billion for 39 bits, but if you actually spread the
+> > > > load over all the shards, then certainly tens of billions.
+> > > >=20
+> > > > If you use 22 bits for volume number and 42 bits for inodes in a volu=
+me,
+> > > > then you can spend 7 on sharding and still have room for 55 of Donald=
+'s
+> > > > filesystems to be allocated by each CPU.
+> > > >=20
+> > > > And if Donald only needs thousands of volumes, not millions, then he
+> > > > could configure for a whole lot more headroom.
+> > > >=20
+> > > > In fact, if you use the 64 bits of vfs_inode number by filling in bit=
+s from
+> > > > the fs-inode number from one end, and bits from the volume number from
+> > > > the other end, then you don't need to pre-configure how the 64 bits a=
+re
+> > > > shared.
+> > > > You record inum-bits and volnum bits in the filesystem metadata, and
+> > > > increase either as needed.  Once the sum hits 64, you start returning
+> > > > ENOSPC for new files or new volumes.
+> > > >=20
+> > > > There will come a day when 64 bits is not enough for inodes in a sing=
+le
+> > > > filesystem.  Today is not that day.
+> > >=20
+> > > Except filesystems are growing all the time: that leaves almost no room
+> > > for growth and then we're back in the world where users had to guess how
+> > > many inodes they were going to need in their filesystem; and if we put
+> > > this off now we're just kicking the can down the road until when it
+> > > becomes really pressing and urgent to solve.
+> > >=20
+> > > No, we need to come up with something better.
+> > >=20
+> > > I was chatting a bit with David Howells on IRC about this, and floated
+> > > adding the file handle to statx. It looks like there's enough space
+> > > reserved to make this feasible - probably going with a fixed maximum
+> > > size of 128-256 bits.
+> >=20
+> > Unless there is room for 128 bytes (1024bits), it cannot be used for
+> > NFSv4.  That would be ... sad.
+>=20
+> NFSv4 specs that for the maximum size? That is pretty hefty...
 
-> > > manager sets up default BPF FS mount point at /sys/fs/bpf with BPF =
-token
-> > > delegation options (delegate_{cmds,maps,progs,attachs} mount option=
-s).
-> > > BPF object during loading will attempt to create BPF token from
-> > > /sys/fs/bpf location, and pass it for all relevant operations
-> > > (currently, map creation, BTF load, and program load).
-> > >
-> > > In this implicit mode, if BPF token creation fails due to whatever
-> > > reason (BPF FS is not mounted, or kernel doesn't support BPF token,=
+It is - but it needs room to identify the filesystem and it needs to be
+stable across time.  That need is more than a local filesystem needs.
 
-> > > etc), this is not considered an error. BPF object loading sequence =
-will
-> > > proceed with no BPF token.
-> > >
-> > > In explicit BPF token mode, user provides explicitly either custom =
-BPF
-> > > FS mount point path or creates BPF token on their own and just pass=
-es
-> > > token FD directly. In such case, BPF object will either dup() token=
- FD
-> > > (to not require caller to hold onto it for entire duration of BPF o=
-bject
-> > > lifetime) or will attempt to create BPF token from provided BPF FS
-> > > location. If BPF token creation fails, that is considered a critica=
-l
-> > > error and BPF object load fails with an error.
-> > >
-> > > Libbpf provides a way to disable implicit BPF token creation, if it=
+NFSv2 allowed 32 bytes which is enough for a 16 byte filesys uuid, 8
+byte inum and 8byte generation num.  But only just.
 
-> > > causes any troubles (BPF token is designed to be completely optiona=
-l and
-> > > shouldn't cause any problems even if provided, but in the world of =
-BPF
-> > > LSM, custom security logic can be installed that might change outco=
-me
-> > > dependin on the presence of BPF token). To disable libbpf's default=
- BPF
-> > > token creation behavior user should provide either invalid BPF toke=
-n FD
-> > > (negative), or empty bpf_token_path option.
-> > >
-> > > BPF token presence can influence libbpf's feature probing, so if BP=
-F
-> > > object has associated BPF token, feature probing is instructed to u=
-se
-> > > BPF object-specific feature detection cache and token FD.
-> > >
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > ---
-> > >  tools/lib/bpf/btf.c             |   7 +-
-> > >  tools/lib/bpf/libbpf.c          | 120 ++++++++++++++++++++++++++++=
-++--
-> > >  tools/lib/bpf/libbpf.h          |  28 +++++++-
-> > >  tools/lib/bpf/libbpf_internal.h |  17 ++++-
-> > >  4 files changed, 160 insertions(+), 12 deletions(-)
-> > >
-> >
-> > ...
-> >
-> > >
-> > > +static int bpf_object_prepare_token(struct bpf_object *obj)
-> > > +{
-> > > +     const char *bpffs_path;
-> > > +     int bpffs_fd =3D -1, token_fd, err;
-> > > +     bool mandatory;
-> > > +     enum libbpf_print_level level =3D LIBBPF_DEBUG;
-> >
-> > redundant set on level?
-> >
-> =
+NFSv3 allowed 64 bytes which was likely plenty for (nearly?) every
+situation.
 
-> yep, removed initialization
-> =
+NFSv4 doubled it again because .... who knows.  "why not" I guess.
+Linux nfsd typically uses 20 or 28 bytes plus whatever the filesystem
+wants. (28 when the export point is not the root of the filesystem).
+I suspect this always fits within an NFSv3 handle except when
+re-exporting an NFS filesystem.  NFS re-export is an interesting case...
 
-> > > +
-> > > +     /* token is already set up */
-> > > +     if (obj->token_fd > 0)
-> > > +             return 0;
-> > > +     /* token is explicitly prevented */
-> > > +     if (obj->token_fd < 0) {
-> > > +             pr_debug("object '%s': token is prevented, skipping..=
-.\n", obj->name);
-> > > +             /* reset to zero to avoid extra checks during map_cre=
-ate and prog_load steps */
-> > > +             obj->token_fd =3D 0;
-> > > +             return 0;
-> > > +     }
-> > > +
-> > > +     mandatory =3D obj->token_path !=3D NULL;
-> > > +     level =3D mandatory ? LIBBPF_WARN : LIBBPF_DEBUG;
-> > > +
-> > > +     bpffs_path =3D obj->token_path ?: BPF_FS_DEFAULT_PATH;
-> > > +     bpffs_fd =3D open(bpffs_path, O_DIRECTORY, O_RDWR);
-> > > +     if (bpffs_fd < 0) {
-> > > +             err =3D -errno;
-> > > +             __pr(level, "object '%s': failed (%d) to open BPF FS =
-mount at '%s'%s\n",
-> > > +                  obj->name, err, bpffs_path,
-> > > +                  mandatory ? "" : ", skipping optional step...");=
 
-> > > +             return mandatory ? err : 0;
-> > > +     }
-> > > +
-> > > +     token_fd =3D bpf_token_create(bpffs_fd, 0);
-> >
-> > Did this get tested on older kernels? In that case TOKEN_CREATE will
-> > fail with -EINVAL.
-> =
+>=20
+> > > Thoughts?
+> > >=20
+> >=20
+> > I'm completely in favour of exporting the (full) filehandle through
+> > statx. (If the application asked for the filehandle, it will expect a
+> > larger structure to be returned.  We don't need to use the currently
+> > reserved space).
+> >=20
+> > I'm completely in favour of updating user-space tools to use the
+> > filehandle to check if two handles are for the same file.
+> >=20
+> > I'm not in favour of any filesystem depending on this for correct
+> > functionality today.  As long as the filesystem isn't so large that
+> > inum+volnum simply cannot fit in 64 bits, we should make a reasonable
+> > effort to present them both in 64 bits.  Depending on the filehandle is a
+> > good plan for long term growth, not for basic functionality today.
+>=20
+> My standing policy in these situations is that I'll do the stopgap/hacky
+> measure... but not before doing actual, real work on the longterm
+> solution :)
 
-> yep, I did actually test, it will generate expected *debug*-level
-> "failed to create BPF token" message
+Eminently sensible.
 
-Great.
+>=20
+> So if we're all in favor of statx as the real long term solution, how
+> about we see how far we get with that?
+>=20
 
-> =
+I suggest:
 
-> >
-> > > +     close(bpffs_fd);
-> > > +     if (token_fd < 0) {
-> > > +             if (!mandatory && token_fd =3D=3D -ENOENT) {
-> > > +                     pr_debug("object '%s': BPF FS at '%s' doesn't=
- have BPF token delegation set up, skipping...\n",
-> > > +                              obj->name, bpffs_path);
-> > > +                     return 0;
-> > > +             }
-> >
-> > Isn't there a case here we should give a warning about?  If BPF_TOKEN=
-_CREATE
-> > exists and !mandatory, but default BPFFS failed for enomem, or eperm =
-reasons?
-> > If the user reall/y doesn't want tokens here they should maybe overri=
-de with
-> > -1 token? My thought is if you have delegations set up then something=
- on the
-> > system is trying to configure this and an error might be ok? I'm aski=
-ng just
-> > because I paused on it for a bit not sure either way at the moment. I=
- might
-> > imagine a lazy program not specifying the default bpffs, but also rea=
-lly
-> > thinking its going to get a valid token.
-> =
+ STATX_ATTR_INUM_NOT_UNIQUE - it is possible that two files have the
+                              same inode number
 
-> Interesting perspective! I actually came from the direction that BPF
-> token is not really all that common and expected thing, and so in
-> majority of cases (at least for some time) we won't be expecting to
-> have BPF FS with delegation options. So emitting a warning that
-> "something something BPF token failed" would be disconcerting to most
-> users.
-> =
+=20
+ __u64 stx_vol     Volume identifier.  Two files with same stx_vol and=20
+                   stx_ino MUST be the same.  Exact meaning of volumes
+                   is filesys-specific
+=20
+ STATX_VOL         Want stx_vol
 
-> What's the worst that would happen if BPF token was expected but we
-> failed to instantiate it? You'll get a BPF object load failure with
-> -EPERM, so it will be a pretty clear signal that whatever delegation
-> was supposed to happen didn't happen.
-> =
+  __u8 stx_handle_len  Length of stx_handle if present
+  __u8 stx_handle[128] Unique stable identifier for this file.  Will
+                       NEVER be reused for a different file.
+                       This appears AFTER __statx_pad2, beyond
+                       the current 'struct statx'.
+ STATX_HANDLE      Want stx_handle_len and stx_handle. Buffer for
+                   receiving statx info has at least
+                   sizeof(struct statx)+128 bytes.
 
-> Also, if a user wants a BPF token for sure, they can explicitly set
-> bpf_token_path =3D "/sys/fs/bpf" and then it becomes mandatory.
-> =
+I think both the handle and the vol can be useful.
+NFS can provide stx_handle but not stx_vol.  It is the thing
+to use for equality testing, but it is only needed if
+STATX_ATTR_INUM_NOT_UNIQUE is set.
+stx_vol is useful for "du -x" or maybe "du --one-volume" or similar.
 
-> So tl;dr, my perspective is that most users won't know or care about
-> BPF tokens. If sysadmin set up BPF FS correctly, it should just work
-> without the BPF application being aware. But for those rare cases
-> where a BPF token is expected and necessary, explicit bpf_token_path
-> or bpf_token_fd is the way to fail early, if something is not set up
-> the way it is expected.
 
-Works for me. I don't have a strong opinion either way.=
+Note that we *could* add stx_vol to NFSv4.2.  It is designed for
+incremental extension.  I suspect we wouldn't want to rush into this,
+but to wait to see if different volume-capable filesystems have other
+details of volumes that are common and can usefully be exported by statx
+- or NFS.
+
+NeilBrown
 
