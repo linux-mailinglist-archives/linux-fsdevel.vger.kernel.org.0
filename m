@@ -1,187 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-5761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEB180FA9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 23:57:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A8980FB04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 00:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9281281CE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 22:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587191C20DE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 23:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A525277D;
-	Tue, 12 Dec 2023 22:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1790E6470C;
+	Tue, 12 Dec 2023 23:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZWGGW63/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+gMiQbFA";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZWGGW63/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+gMiQbFA"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wQQTX9+r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 831F1AD;
-	Tue, 12 Dec 2023 14:57:30 -0800 (PST)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BB6801FCA1;
-	Tue, 12 Dec 2023 22:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702421848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BfXxmLpS5xeCuT7+jXU33MIwLj+cLIZbjTVjmhhdCd8=;
-	b=ZWGGW63/k1+PafWXy3XMg65b5dAGsUoglP6BgHeuMt68RwibEG+LDlpdrigSITzgxIlOCP
-	JhZxoNFYspzGm5WtWNpsRgyoh/2pBZeI6sOEzskBTlM1MprN5J6MUT0JckDaA7hQ4/ekKe
-	Q/gmyPIrWZ9pge/ccCFJTnaCD038Z2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702421848;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BfXxmLpS5xeCuT7+jXU33MIwLj+cLIZbjTVjmhhdCd8=;
-	b=+gMiQbFA3cqcvWXwXNOWC1LrGwpBbwA8ArEBJCRk2hfUjfjZUy8u4BUcLG+xJjnoi4DehN
-	KUL+OBy6Jwf2nfAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702421848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BfXxmLpS5xeCuT7+jXU33MIwLj+cLIZbjTVjmhhdCd8=;
-	b=ZWGGW63/k1+PafWXy3XMg65b5dAGsUoglP6BgHeuMt68RwibEG+LDlpdrigSITzgxIlOCP
-	JhZxoNFYspzGm5WtWNpsRgyoh/2pBZeI6sOEzskBTlM1MprN5J6MUT0JckDaA7hQ4/ekKe
-	Q/gmyPIrWZ9pge/ccCFJTnaCD038Z2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702421848;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BfXxmLpS5xeCuT7+jXU33MIwLj+cLIZbjTVjmhhdCd8=;
-	b=+gMiQbFA3cqcvWXwXNOWC1LrGwpBbwA8ArEBJCRk2hfUjfjZUy8u4BUcLG+xJjnoi4DehN
-	KUL+OBy6Jwf2nfAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5983413725;
-	Tue, 12 Dec 2023 22:57:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GIVEAVbleGX7IAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 12 Dec 2023 22:57:26 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67B2912E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 15:06:41 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-35d67870032so39594295ab.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 15:06:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702422401; x=1703027201; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gPu9OJuRoySeT6EQUZCVlx9vnkyIloc86JjG7P6vc+4=;
+        b=wQQTX9+r4Q1R9JGnhCDMmJJXnUcQEK/y7DFgVVYOilBCvdiamLRmvitj61SVWGephz
+         ZnUXQDs+Lla84KJOE+duDT2oUBDFRpC+sD2MZ6PyyzRl5EDDTAVv5PMj7j191VYV1+6P
+         jyhagKX+yQYwy5QKhCw6bTZcFnA/S2YjR/eEl/6zhWXxm/p9GVI3JauAA9CkRD1tXInl
+         G9fc/wmh6yFi4vCH0vgP/cPJ/B8RQRDPA16b9uTSc9H1BkMsAHWaalz6QDOUer/JlttF
+         ly2nTx731PDgSQqRY87T6DQyopLjsJYwAZ26VUe4iIQV+Lt/yy1+nBP3CQeJUQv3a7sE
+         4CDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702422401; x=1703027201;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gPu9OJuRoySeT6EQUZCVlx9vnkyIloc86JjG7P6vc+4=;
+        b=qwvdRXjUQSzJs5+B4QFnbvz4sQaDJ0wKIU+PyHrM7LMqQ7EumvmVya0qVAW69AHFJJ
+         5vyoKvCgZ2esZqFjF6e+d4SJX0zRQMH+gcQiRWxrf9lV3jdZ4rARrKbiRvhPfvGJ3Np7
+         qufk/OGHGkAqYXexthsxBdhgHdqcyRLowAMzqAYcarUGz1GvDTuyEirUH7uGxZbbyjE0
+         hSu52zjKvPWFwQiwHrrAzrTUGlGOf2dAeKdxQP+x7ubRCw8JgvTN9J0NmPanjJ+jf1F/
+         Kmtg/sB7ieyJIr1vPgrSHt9TQoWY9nlV4zC2RwcaGpjyYDhnUNy6LRtuXKjQIoc7nwiW
+         waqw==
+X-Gm-Message-State: AOJu0YzSMR+zsWJKjLoyrVAeyvM0qNtc7rySJyhmH3VACEgwuzNmuHCh
+	dVpVR2zWUYuErDwDvgQDugWLtQ==
+X-Google-Smtp-Source: AGHT+IGDEkxi5C9eKXRu2Df4eSKaVBRfjiKd3GCoS0nCA4pc7+cRAGniuFwyEqLHQ+B4KC+5ZfKcNg==
+X-Received: by 2002:a05:6e02:1d09:b0:35f:70e3:220c with SMTP id i9-20020a056e021d0900b0035f70e3220cmr370829ila.54.1702422400751;
+        Tue, 12 Dec 2023 15:06:40 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
+        by smtp.gmail.com with ESMTPSA id x12-20020a17090aa38c00b002858ac5e401sm10762985pjp.45.2023.12.12.15.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Dec 2023 15:06:40 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rDBpl-007UqY-1k;
+	Wed, 13 Dec 2023 10:06:37 +1100
+Date: Wed, 13 Dec 2023 10:06:37 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: NeilBrown <neilb@suse.de>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Donald Buczek <buczek@molgen.mpg.de>,
+	linux-bcachefs@vger.kernel.org,
+	Stefan Krueger <stefan.krueger@aei.mpg.de>,
+	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+Message-ID: <ZXjnffHOo+JY/M4b@dread.disaster.area>
+References: <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area>
+ <20231212152153.tasaxsrljq2zzbxe@moria.home.lan>
+ <ZXjHEPn3DfgQNoms@dread.disaster.area>
+ <20231212212306.tpaw7nfubbuogglw@moria.home.lan>
+ <ZXjaWIFKvBRH7Q4c@dread.disaster.area>
+ <170242027365.12910.2226609822336684620@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: "David Howells" <dhowells@redhat.com>,
- "Donald Buczek" <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
- "Stefan Krueger" <stefan.krueger@aei.mpg.de>, linux-fsdevel@vger.kernel.org
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-In-reply-to: <20231212205929.op6tq3pqobwmix5a@moria.home.lan>
-References: <170181366042.7109.5045075782421670339@noble.neil.brown.name>,
- <97375d00-4bf7-4c4f-96ec-47f4078abb3d@molgen.mpg.de>,
- <170199821328.12910.289120389882559143@noble.neil.brown.name>,
- <20231208013739.frhvlisxut6hexnd@moria.home.lan>,
- <170200162890.12910.9667703050904306180@noble.neil.brown.name>,
- <20231208024919.yjmyasgc76gxjnda@moria.home.lan>,
- <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>,
- <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>,
- <170233460764.12910.276163802059260666@noble.neil.brown.name>,
- <2799307.1702338016@warthog.procyon.org.uk>,
- <20231212205929.op6tq3pqobwmix5a@moria.home.lan>
-Date: Wed, 13 Dec 2023 09:57:22 +1100
-Message-id: <170242184299.12910.16703366490924138473@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spam-Score: -4.30
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <170242027365.12910.2226609822336684620@noble.neil.brown.name>
 
-On Wed, 13 Dec 2023, Kent Overstreet wrote:
-> On Mon, Dec 11, 2023 at 11:40:16PM +0000, David Howells wrote:
-> > Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >=20
-> > > I was chatting a bit with David Howells on IRC about this, and floated
-> > > adding the file handle to statx. It looks like there's enough space
-> > > reserved to make this feasible - probably going with a fixed maximum
-> > > size of 128-256 bits.
-> >=20
-> > We can always save the last bit to indicate extension space/extension rec=
-ord,
-> > so we're not that strapped for space.
->=20
-> So we'll need that if we want to round trip NFSv4 filehandles, they
-> won't fit in existing struct statx (nfsv4 specs 128 bytes, statx has 96
-> bytes reserved).
->=20
-> Obvious question (Neal): do/will real world implementations ever come
-> close to making use of this, or was this a "future proofing gone wild"
-> thing?
+On Wed, Dec 13, 2023 at 09:31:13AM +1100, NeilBrown wrote:
+> On Wed, 13 Dec 2023, Dave Chinner wrote:
+> > 
+> > What you are suggesting is that we now duplicate filehandle encoding
+> > into every filesystem's statx() implementation.  That's a bad
+> > trade-off from a maintenance, testing and consistency POV because
+> > now we end up with lots of individual, filehandle encoding
+> > implementations in addition to the generic filehandle
+> > infrastructure that we all have to test and validate.
+> 
+> Not correct.  We are suggesting an interface, not an implementation.
+> Here you are proposing a suboptimal implementation, pointing out its
+> weakness, and suggesting the has consequences for the interface
+> proposal.  Is that the strawman fallacy?
 
-I have no useful data.  I have seen lots of filehandles but I don't pay
-much attention to their length.  Certainly some are longer than 32 bytes.
+No, you simply haven't followed deep enough into the rabbit hole to
+understand Kent was suggesting potential implementation details to
+address hot path performance concerns with filehandle encoding.
 
->=20
-> Say we do decide we want to spec it that large: _can_ we extend struct
-> statx? I'm wondering if the userspace side was thought through, I'm
-> sure glibc people will have something to say.
+> vfs_getattr_nosec could, after calling i_op->getattr, check if
+> STATX_HANDLE is set in request_mask but not in ->result_mask.
+> If so it could call exportfs_encode_fh() and handle the result.
+>
+> No filesystem need to be changed.
 
-The man page says:
+Well, yes, it's pretty damn obvious that is exactly what I've been
+advocating for here - if we are going to put filehandles in statx(),
+then it must use the same infrastructure as name_to_handle_at().
+i.e. calling exportfs_encode_fh(EXPORT_FH_FID) to generate the
+filehandle.
 
-     Therefore, do not simply set mask to UINT_MAX (all bits set), as
-     one or more bits may, in the future, be used to specify an
-     extension to the buffer.
+The important discussion detail you've missed about
+exportfs_encode_fh() is that it *requires* adding a new indirect
+call (via export_ops->encode_fh) in the statx path to encode the
+filehandle, and that's exactly what Kent was suggesting we can code
+the implementation to avoid.
 
-I suspect the glibc people read that.
+Avoiding an indirect function call is an implementation detail, not
+an interface design requirement.
 
-NeilBrown
+And the only way to avoid adding new indirect calls to encoding
+filesystem specific filehandles is to implement the encoding in the
+existing individual filesystem i_op->getattr methods. i.e. duplicate
+the filehandle encoding in the statx path rather than use
+exportfs_encode_fh().....
 
-
-
-
->=20
-> Kernel side we can definitely extend struct statx, and we know how many
-> bytes to copy to userspace because we know what fields userspace
-> requested. The part I'm concerned about is that if we extend userspace's
-> struct statx, that introduces obvious ABI compabitibility issues.
->=20
-> So this would probably force glibc to introduce a new version of struct
-> statx, if I'm not mistaken.
->=20
-> Or: another option would be to reserve something small and sane in
-> struct statx (32 bytes max, I'd say), and then set a flag to tell
-> userspace they need to use name_to_handle_at() if it didn't fit.
->=20
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
