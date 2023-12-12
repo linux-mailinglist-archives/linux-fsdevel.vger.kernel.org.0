@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-5751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B8680F9C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 22:54:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5904F80F9D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 22:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95AAA1C20DB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 21:54:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F71B20FA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 21:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA6164CD0;
-	Tue, 12 Dec 2023 21:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B7364CD5;
+	Tue, 12 Dec 2023 21:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xOgz47cw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OpdQZT2I";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xLS4rqkG";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AqDIONAl"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O2lAc36+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6hSQN+Hk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZJKdM7mA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Jx2qyhA4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2a07:de40:b251:101:10:150:64:1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BBFAB;
-	Tue, 12 Dec 2023 13:54:06 -0800 (PST)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3EBDB7;
+	Tue, 12 Dec 2023 13:57:51 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CEFED224F2;
-	Tue, 12 Dec 2023 21:54:04 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D42FB1FC11;
+	Tue, 12 Dec 2023 21:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702418045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1702418270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6C2uf4af0UQgbCoB9eQ2Jfg7popc+OfjUqFFa9tECQ=;
-	b=xOgz47cwyma+RZnMQycA1dbCwl9oE+87ewqg/gqXtdJLiliV71pd60fYisJnuGUGibfq7J
-	MR2kM0vpKo5InzxXrDTFuQcZaBTQPKo+SOaar1+AB0StCuSxfQ5hpcVsyxRgMV6STRtb82
-	PozZexR/iI6SxfKESDl/YnuaW7sGXXg=
+	bh=877oa51gNmgtgp7jxCBaWiixcLQ0cD25bw75ZAXvvJ0=;
+	b=O2lAc36+3cZorKrPREGY0l240h1/e9a2e2CxAN5accH6AYJQit6Pqexa5XO480xiHO9azs
+	m3Sj5FTRwsHpnA8tGJBvuXFFpfvRl2jOVV1QgWIfN/S0/wwfvpeIGwiY3wdd4velZX042k
+	4+6RqbiiDtubhnDXEp1WruA2uy37fW0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702418045;
+	s=susede2_ed25519; t=1702418270;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6C2uf4af0UQgbCoB9eQ2Jfg7popc+OfjUqFFa9tECQ=;
-	b=OpdQZT2ILsyVd2NXC5ynpStCY4zIHbqv8UbqaXNtAByTKCGy+r7u3va4PzZcq+/W5/tQp4
-	f5iNn4cZjWslPJDw==
+	bh=877oa51gNmgtgp7jxCBaWiixcLQ0cD25bw75ZAXvvJ0=;
+	b=6hSQN+HkUnwD4GJRkh8mi7s4aRMR/3E/Yg9JuVSEnnCTKg4Pm6gq0NszPUBMN6+A+JUWfx
+	Spo77q9rVCnjveBQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702418044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1702418269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6C2uf4af0UQgbCoB9eQ2Jfg7popc+OfjUqFFa9tECQ=;
-	b=xLS4rqkGVzVa/3SjruZFT0gDTOnB1ULXwvjdDrwtRmi6ZTme0bmBKkwDSlGhQkUZF687jE
-	y8C9PVtydiaVdEoWmp6YWvcJqXBvoxoFuSw7Dr3NiElN99gge0eyNSGxmwrPqRmz2eLEQP
-	eWwZ+D1NzLjaEGGaiFOyNtox2q1UiEg=
+	bh=877oa51gNmgtgp7jxCBaWiixcLQ0cD25bw75ZAXvvJ0=;
+	b=ZJKdM7mAUpzZiDAOFwNzMcg+XVFTEg6FZ9dIGAdZdATY/Pnyyb3f890eGEj3Y3S8zM3+45
+	IJW2HHEePtTEnndjxiMqJDO1604GBbUJ3+zGlTIgyFOXJT2UYZU9+zUpas4p6dHzx1V3qX
+	q6Ffr77rFdrnj9JkcVjPtxWgVdAflj0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702418044;
+	s=susede2_ed25519; t=1702418269;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6C2uf4af0UQgbCoB9eQ2Jfg7popc+OfjUqFFa9tECQ=;
-	b=AqDIONAlq3nGy3zeCwk2R7zSelgj2CwNmSYgbtepGz4KtNYV7GtXNkff2HnfPfJFI5aMIG
-	meSjkUfBJyo9m2DA==
+	bh=877oa51gNmgtgp7jxCBaWiixcLQ0cD25bw75ZAXvvJ0=;
+	b=Jx2qyhA4XmO82yEzfF+UAxlEQoKUG7Na1Gi6BDPU4DQDID21XpgDwuIfpum4I/8dD7AYcm
+	/hAA3V+VT1o2EHCA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52303136C7;
-	Tue, 12 Dec 2023 21:53:59 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8421C136C7;
+	Tue, 12 Dec 2023 21:57:46 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qXlwOnfWeGVWDwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 12 Dec 2023 21:53:59 +0000
+	id nhnEC1rXeGWDEAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 12 Dec 2023 21:57:46 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -82,110 +82,109 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "NeilBrown" <neilb@suse.de>
-To: "Miklos Szeredi" <miklos@szeredi.hu>
-Cc: "Kent Overstreet" <kent.overstreet@linux.dev>,
- "Christian Brauner" <brauner@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Dave Chinner" <david@fromorbit.com>,
- "Donald Buczek" <buczek@molgen.mpg.de>, linux-bcachefs@vger.kernel.org,
- "Stefan Krueger" <stefan.krueger@aei.mpg.de>,
- "David Howells" <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
- "Josef Bacik" <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-In-reply-to:
- <CAJfpegvNVXoxn3gW9-38YfY5u0FLjXTCDxcv5OtS-p0=0ocQvg@mail.gmail.com>
-References: <170234279139.12910.809452786055101337@noble.neil.brown.name>,
+To: "Dave Chinner" <david@fromorbit.com>
+Cc: "Frank Filz" <ffilzlnx@mindspring.com>, "'Theodore Ts'o'" <tytso@mit.edu>,
+ "'Donald Buczek'" <buczek@molgen.mpg.de>,
+ "'Kent Overstreet'" <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ "'Stefan Krueger'" <stefan.krueger@aei.mpg.de>,
+ "'David Howells'" <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: file handle in statx
+In-reply-to: <ZXjJyoJQFgma+lXF@dread.disaster.area>
+References: <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>,
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>,
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan>,
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>,
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>,
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>,
  <ZXf1WCrw4TPc5y7d@dread.disaster.area>,
- <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>,
- <20231212-impfung-linden-6f973f2ade19@brauner>,
- <20231212151631.wi7rgawmp3uig6cl@moria.home.lan>,
- <20231212-neudefinition-hingucken-785061b73237@brauner>,
- <20231212153542.kl2fbzrabhr6kai5@moria.home.lan>,
- <CAJfpegsKsbdtUHUPnu3huCiPXwX46eKYSUbLXiWqH23GinXo7w@mail.gmail.com>,
- <20231212154302.uudmkumgjaz5jouw@moria.home.lan>,
- <CAJfpegvOEZwZgcbAeivDA+X0qmfGGjOxdvq-xpGQjYuzAJxzkw@mail.gmail.com>,
- <20231212160829.vybfdajncvugweiy@moria.home.lan>,
- <CAJfpegvNVXoxn3gW9-38YfY5u0FLjXTCDxcv5OtS-p0=0ocQvg@mail.gmail.com>
-Date: Wed, 13 Dec 2023 08:53:56 +1100
-Message-id: <170241803693.12910.13577623411851816833@noble.neil.brown.name>
-X-Spam-Level: *****
-X-Spam-Score: 5.60
+ <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>,
+ <20231212152016.GB142380@mit.edu>,
+ <0b4c01da2d1e$cf65b930$6e312b90$@mindspring.com>,
+ <ZXjJyoJQFgma+lXF@dread.disaster.area>
+Date: Wed, 13 Dec 2023 08:57:43 +1100
+Message-id: <170241826315.12910.12856411443761882385@noble.neil.brown.name>
 X-Spam-Level: 
-X-Rspamd-Server: rspamd1
-X-Rspamd-Queue-Id: CEFED224F2
+X-Spam-Score: -4.10
+X-Spam-Level: 
 X-Spam-Flag: NO
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xLS4rqkG;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AqDIONAl;
-	dmarc=pass (policy=none) header.from=suse.de;
-	spf=softfail (smtp-out1.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of neilb@suse.de) smtp.mailfrom=neilb@suse.de
-X-Spamd-Result: default: False [-8.82 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(0.00)[~all:c];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 DMARC_POLICY_ALLOW(0.00)[suse.de,none];
-	 MX_GOOD(-0.01)[];
-	 DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.01)[46.64%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [-4.10 / 50.00];
 	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[mindspring.com];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
 	 MIME_GOOD(-0.10)[text/plain];
 	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 WHITELIST_DMARC(-7.00)[suse.de:D:+];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email];
+	 RCPT_COUNT_SEVEN(0.00)[9];
 	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FREEMAIL_CC(0.00)[linux.dev,kernel.org,gmail.com,fromorbit.com,molgen.mpg.de,vger.kernel.org,aei.mpg.de,redhat.com,toxicpanda.com];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -8.82
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[mindspring.com,mit.edu,molgen.mpg.de,linux.dev,vger.kernel.org,aei.mpg.de,redhat.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -4.10
 
-On Wed, 13 Dec 2023, Miklos Szeredi wrote:
-> On Tue, 12 Dec 2023 at 17:08, Kent Overstreet <kent.overstreet@linux.dev> w=
-rote:
+On Wed, 13 Dec 2023, Dave Chinner wrote:
+> On Tue, Dec 12, 2023 at 09:15:29AM -0800, Frank Filz wrote:
+> > > On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
+> > > > On 12/12/23 06:53, Dave Chinner wrote:
+> > > >
+> > > > > So can someone please explain to me why we need to try to re-invent
+> > > > > a generic filehandle concept in statx when we already have a have
+> > > > > working and widely supported user API that provides exactly this
+> > > > > functionality?
+> > > >
+> > > > name_to_handle_at() is fine, but userspace could profit from being
+> > > > able to retrieve the filehandle together with the other metadata in a
+> > > > single system call.
+> > >=20
+> > > Can you say more?  What, specifically is the application that would want
+> > to do
+> > > that, and is it really in such a hot path that it would be a user-visib=
+le
+> > > improveable, let aloine something that can be actually be measured?
+> >=20
+> > A user space NFS server like Ganesha could benefit from getting attributes
+> > and file handle in a single system call.
 >=20
-> > In short, STATX_ATTR_INUM_NOT_UNIQUE is required to tell userspace when
-> > they _must_ do the new thing if they care about correctness; it provides
-> > a way to tell userspace what guarantees we're able to provide.
->=20
-> That flag would not help with improving userspace software.
+> At the cost of every other application that doesn't need those
+> attributes.
 
-Are you sure?
+Why do you think there would be a cost?
 
-Suppose I wanted to export an filesystem using some protocol (maybe one
-called "NFSv4"), and suppose this protocol supported the communication
-of an attribute called "fileid" which was optional but requires to be
-fully unique if provided at all.
-
-If I had access to STATX_ATTR_INUM_NOT_UNIQUE, then I could not export
-the fileid when it didn't met the protocol requirements, but could when
-it did.
-
-This may not be a strong case for the inclusion of the flag it is, I
-think, a clear indication that "would not help" is what our fact
-checkers would call "over-reach".
+statx only returns the attributes that it was asked for.  If an
+application doesn't ask for STATX_HANDLE, it doesn't get STATS_HANDLE
+and (providing filesystems honour the flag) doesn't pay the price for
+generating it (which is often trivial, but may not always be).
 
 NeilBrown
 
+
+>               That's not a good trade-off - the cost of a syscall is
+> tiny compared to the rest of the work that has to be done to create
+> a stable filehandle for an inode, even if we have a variant of
+> name_to_handle_at() that takes an open fd rather than a path.
 >=20
-> What would help, if said software started using a unique identifier.
-> We already seem to have a unique ID in the form of file handles,
-> though some exotic filesystems might allow more than one fh to refer
-> to the same inode, so this still needs some looking into.
+> > Potentially it could also avoid some of the challenges of using
+> > name_to_handle_at that is a privileged operation.
 >=20
-> The big problem is that we can't do a lot about existing software, and
-> must keep trying to keep st_ino unique for the foreseeable future.
+> It isn't. open_by_handle_at() is privileged because it bypasses all
+> the path based access checking that a normal open() does. Anyone can
+> get a filehandle for a path from the kernel, but few can actually
+> use it for anything other than file uniqueness checks....
 >=20
-> Thanks,
-> Miklos
+> Cheers,
+>=20
+> Dave.
+> --=20
+> Dave Chinner
+> david@fromorbit.com
 >=20
 
 
