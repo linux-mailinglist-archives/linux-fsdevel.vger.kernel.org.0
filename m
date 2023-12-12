@@ -1,153 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-5738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E4A80F6C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:38:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2E480F704
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3191C20D7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7A51C20DE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB2081E5C;
-	Tue, 12 Dec 2023 19:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC556356F;
+	Tue, 12 Dec 2023 19:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TErN9J6w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCtjlTaU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD236E4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:38:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702409887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7IuPeLZWXHE618u58SYZuwlY/nbyijM369pAi7qe4tc=;
-	b=TErN9J6wBBWeXWGVnSvnlWF8MwY6G5r9LWtymLiiwq+YlfWC4IyvdkXRacl0soTLCJbguW
-	e1u6DcAqeNGDe0T/n9+60dNcf1xNplzNLtdwU2KC+ftHQjTjHDU4BCS5kaNWnBJQxG5fk/
-	tS6juAT+d1GsvKPH6Bpt6F51h9R2qv0=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-303-E1jZzw8gOGKbnnz9Vo2RtA-1; Tue, 12 Dec 2023 14:38:06 -0500
-X-MC-Unique: E1jZzw8gOGKbnnz9Vo2RtA-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5c641d55e27so3788261a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:38:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702409885; x=1703014685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7IuPeLZWXHE618u58SYZuwlY/nbyijM369pAi7qe4tc=;
-        b=cJKJu+Zf+s13vVb9Rt4h9O65yqsqaLL/r1muKgec8gtd9xj47wXFyCZTWBdDbRazW7
-         ZY15pi3KxzwvXH5ZMEpw6AhgFeVJrElyz/cJ9SivdSmvSDrpRO09X4hrXu1M1/QIwMjB
-         W6/9pVO6U2Tatcwv60S3l3dfbSei+eSOu4WIMfoCrZmbm6GQkjt0XQ250lAfYJ69Kz8J
-         cIsp5MEAvzr3fnX1V2/EKijhwe4RXOaj/dZcX5+ZZZsW4S36mfmpKmVo8KOPyNE1TDf4
-         hPTsGq2RrmaKIXn23IjZozcNzgx8zjVIW7ITYAQABs6jAwAqMoB1s7Lsn6hJJAiz/kiB
-         +OZw==
-X-Gm-Message-State: AOJu0YxXtMyAbNAjnDIrwRqAVdV8Qb0NTRmEFuvh8gyv1+LITnN8m2Ak
-	bkdoKIkHv45M7f5cRrRHhuFNPh61x3WQ/ExlnEBluGSdKI8uscvsSEwR2f4i+KGEzQ9I7mSJomV
-	uwGM8M7jUDk5CChQVc5BASbj2Rqyw0h91WdpRGX9V1A==
-X-Received: by 2002:a05:6a20:8e14:b0:190:23b2:cf1a with SMTP id y20-20020a056a208e1400b0019023b2cf1amr8374157pzj.22.1702409885421;
-        Tue, 12 Dec 2023 11:38:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH+xGISr5WA3vtBh1oLpeAPWxlRJLMhZYbs8WjSt+jRJh3aqZk+WkaQSNeow/CJnj8A0Z8u1z+KDKAxLqOe2Ig=
-X-Received: by 2002:a05:6a20:8e14:b0:190:23b2:cf1a with SMTP id
- y20-20020a056a208e1400b0019023b2cf1amr8374144pzj.22.1702409885088; Tue, 12
- Dec 2023 11:38:05 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235E463567;
+	Tue, 12 Dec 2023 19:40:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFA9EC433C8;
+	Tue, 12 Dec 2023 19:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702410000;
+	bh=XYzJ5VYogiTqPObmWUe/wKCpLEETTZjB1aB4bDGVTq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nCtjlTaU2O00+gdYtzr9CBKSleBRK77fote3pL5kFzSHPolg3IdVpxTLVjMTah6qq
+	 wED0/6SyyNWMbqn4i15mNafnp9HhPlc5epRU1miXYYovarce9F5a/T+gTA1xJKVPN1
+	 LyWitF+BJbfQWWwTwprX5fC+8flmEHIzX1LK7gXV7SMQpl/fb9iisQWnHnPW+UYrZ5
+	 5FMZyEhAAs+a1sm+dW8pG/BFw7UOriHfMuclS93xYNF1v76J9+5NstthV0GJfO1UPo
+	 wGQD7zxM8XpdF6YhiNpN3jR/cdeP6jDyVgE5/dfYvMNT81GxIdjJJdpSkQbMGgV95U
+	 GaDHTDq1tDOTw==
+Date: Tue, 12 Dec 2023 19:39:51 +0000
+From: Mark Brown <broonie@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
+	ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+	jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+Message-ID: <5e99796a-c489-4405-9d20-89d5ad117391@sirena.org.uk>
+References: <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
+ <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
+ <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
+ <1368c558-c58c-4574-907e-36b07dee31bb@sirena.org.uk>
+ <6ee5d68a-fa54-4ed6-bc41-2bff0d9eb12f@redhat.com>
+ <052dc756-cc05-4aa8-9724-14d42853089c@sirena.org.uk>
+ <8a2ce635-58f4-44e1-a646-6527936c5836@redhat.com>
+ <400c0342-bb28-4dd2-b132-9927c7babec4@sirena.org.uk>
+ <f3081d52-8bbc-4bc7-96d4-b086ca91975a@nvidia.com>
+ <daf9f834-c79d-4f8c-9248-b0b232017732@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109190844.2044940-1-agruenba@redhat.com> <20231109220018.GI1957730@ZenIV>
- <CAHpGcMJfNNRDAvGhH-1Fs79uTks10XhLXBLeCqABoxufZeLGzw@mail.gmail.com> <20231109222254.GK1957730@ZenIV>
-In-Reply-To: <20231109222254.GK1957730@ZenIV>
-From: Abhi Das <adas@redhat.com>
-Date: Tue, 12 Dec 2023 13:37:54 -0600
-Message-ID: <CACrDRjhqrcDivT=gtYA_qMAzXEvBWg0LEnDSwSxYVvkuaT2fVw@mail.gmail.com>
-Subject: Re: [PATCH] fs: RESOLVE_CACHED final path component fix
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Al,
-
-Did you get a chance to look into the RCU pathwalk stuff a bit more?
-Any ideas on how to allow may_open() to indicate to inode_permission()
-that it's part of a RESOLVE_CACHED lookup?
-
-Cheers!
---Abhi
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bmbARan2FdQC/igT"
+Content-Disposition: inline
+In-Reply-To: <daf9f834-c79d-4f8c-9248-b0b232017732@redhat.com>
+X-Cookie: If rash develops, discontinue use.
 
 
-On Thu, Nov 9, 2023 at 4:23=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Thu, Nov 09, 2023 at 11:12:32PM +0100, Andreas Gr=C3=BCnbacher wrote:
-> > Am Do., 9. Nov. 2023 um 23:00 Uhr schrieb Al Viro <viro@zeniv.linux.org=
-.uk>:
-> > > On Thu, Nov 09, 2023 at 08:08:44PM +0100, Andreas Gruenbacher wrote:
-> > > > Jens,
-> > > >
-> > > > since your commit 99668f618062, applications can request cached loo=
-kups
-> > > > with the RESOLVE_CACHED openat2() flag.  When adding support for th=
-at in
-> > > > gfs2, we found that this causes the ->permission inode operation to=
- be
-> > > > called with the MAY_NOT_BLOCK flag set for directories along the pa=
-th,
-> > > > which is good, but the ->permission check on the final path compone=
-nt is
-> > > > missing that flag.  The filesystem will then sleep when it needs to=
- read
-> > > > in the ACL, for example.
-> > > >
-> > > > This doesn't look like the intended RESOLVE_CACHED behavior.
-> > > >
-> > > > The file permission checks in path_openat() happen as follows:
-> > > >
-> > > > (1) link_path_walk() -> may_lookup() -> inode_permission() is calle=
-d for
-> > > > each but the final path component. If the LOOKUP_RCU nameidata flag=
- is
-> > > > set, may_lookup() passes the MAY_NOT_BLOCK flag on to
-> > > > inode_permission(), which passes it on to the permission inode
-> > > > operation.
-> > > >
-> > > > (2) do_open() -> may_open() -> inode_permission() is called for the
-> > > > final path component. The MAY_* flags passed to inode_permission() =
-are
-> > > > computed by build_open_flags(), outside of do_open(), and passed do=
-wn
-> > > > from there. The MAY_NOT_BLOCK flag doesn't get set.
-> > > >
-> > > > I think we can fix this in build_open_flags(), by setting the
-> > > > MAY_NOT_BLOCK flag when a RESOLVE_CACHED lookup is requested, right
-> > > > where RESOLVE_CACHED is mapped to LOOKUP_CACHED as well.
-> > >
-> > > No.  This will expose ->permission() instances to previously impossib=
-le
-> > > cases of MAY_NOT_BLOCK lookups, and we already have enough trouble
-> > > in that area.
-> >
-> > True, lockdep wouldn't be happy.
-> >
-> > >  See RCU pathwalk patches I posted last cycle;
-> >
-> > Do you have a pointer? Thanks.
->
-> Thread starting with Message-ID: <20231002022815.GQ800259@ZenIV>
-> I don't remember if I posted the audit notes into it; I'll get around
-> to resurrecting that stuff this weekend, when the mainline settles down
-> enough to bother with that.
->
+--bmbARan2FdQC/igT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Dec 12, 2023 at 04:27:12PM +0100, David Hildenbrand wrote:
+
+> I usually build my stuff in-tree, so I don't really have a lot of experience
+> with out-of-tree selftest builds and the whole kernel header inclusion (and
+> how we could avoid the "make headers" and place the headers somewhere else).
+
+It's generally something along the lines of (from tuxmake):
+
+   make --silent --keep-going --jobs=15 O=/build/stage/build-work INSTALL_PATH=/build/stage/build-work/kselftest_install ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_COMPAT=arm-linux-gnueabihf- kselftest-install
+
+possibly with a -C in there to find the kernel source (from KernelCI):
+
+   make KBUILD_BUILD_USER=KernelCI FORMAT=.xz ARCH=arm64 HOSTCC=gcc CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_COMPAT=arm-linux-gnueabihf- CC="ccache aarch64-linux-gnu-gcc" O=/tmp/kci/linux/build -C/tmp/kci/linux -j10 kselftest-gen_tar
+
+--bmbARan2FdQC/igT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV4twYACgkQJNaLcl1U
+h9Di+ggAhFcVWNuwSylsTaqHlie7XylBqMvgn8gEUhFEuCgc61gt6bfC8ibnBnov
+pfKHGUM1aNIXWwda2PGSLzFYRSugiDOnDQNjrxRR7FKBsjvrUF+2Z5HOdqmH6t9O
+3XPDBbLr2gCXRxwEzebbqjPPRH0OyLUCX9zC70CPsXJniNGemo5bf22YIDwVhYV+
+WDoXwthEBK7GJtMLXZwHooueKztpVWshDrGabeeiseLmKoQ/P1tpnPywfOd4P5rc
+O346V5TFghUnjG0b/CXCkZqTlmHbLz5ckpMJsZHv0LLj7+/V+rw0th//EdbXjUXh
+67R937mSIXO2RLCkdhFI+b6/qRU+5Q==
+=dcFi
+-----END PGP SIGNATURE-----
+
+--bmbARan2FdQC/igT--
 
