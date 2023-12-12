@@ -1,118 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-5735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C565980F66C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:18:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD3F80F679
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 20:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1796B20EED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3AE1F21846
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 19:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CAA81E3A;
-	Tue, 12 Dec 2023 19:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466FA81E3D;
+	Tue, 12 Dec 2023 19:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earthlink.net header.i=@earthlink.net header.b="rMg4ncyU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULRIiX7N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta-101a.earthlink-vadesecure.net (mta-101a.earthlink-vadesecure.net [51.81.61.60])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 387D1AD;
-	Tue, 12 Dec 2023 11:18:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; bh=iNhXZaA1uzGEWSnxpxhdt0noXL5bjA9mN7YcaH
- C9Il8=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
- date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
- references:list-id:list-help:list-unsubscribe:list-subscribe:list-post:
- list-owner:list-archive; q=dns/txt; s=dk12062016; t=1702408684;
- x=1703013484; b=rMg4ncyUWE8j4hdw52dMjlM4O2QSzI2aQaZyfa18oIbaXYdAZs5B/n/
- +OfDMejvRgdAyZQqce4B27Z/gab85vDlI18AjfzyAKbXIhoPupbpK32Ykf3BvvFqkqFaLJp
- WbLtGIltspRy02zgm7XPPdTXMLXDyUnN3cav7VDhqn50zMcdmRmMOwuNCVBtHQ0OimRZSWy
- PpGYInXwl86M6RyzCgFIfZaJpLLUvJulkSLHEBFzBYJ49I4GVxhWr68R/im7CwJlkmbe+Aj
- jMsKWhO9XcHbZp0OwF+0zkyhFLSSWMiwQ41fLj8CsZ+XI69PtwxJm830KZu+osjcn0D6eca
- tig==
-Received: from FRANKSTHINKPAD ([174.174.49.201])
- by vsel1nmtao01p.internal.vadesecure.com with ngmta
- id ef714e20-17a02bad7b096f68; Tue, 12 Dec 2023 19:18:04 +0000
-From: "Frank Filz" <ffilzlnx@mindspring.com>
-To: "'Amir Goldstein'" <amir73il@gmail.com>,
-	"'Kent Overstreet'" <kent.overstreet@linux.dev>
-Cc: "'Theodore Ts'o'" <tytso@mit.edu>,
-	"'Donald Buczek'" <buczek@molgen.mpg.de>,
-	"'Dave Chinner'" <david@fromorbit.com>,
-	"'NeilBrown'" <neilb@suse.de>,
-	<linux-bcachefs@vger.kernel.org>,
-	"'Stefan Krueger'" <stefan.krueger@aei.mpg.de>,
-	"'David Howells'" <dhowells@redhat.com>,
-	<linux-fsdevel@vger.kernel.org>
-References: <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan> <170233460764.12910.276163802059260666@noble.neil.brown.name> <20231211233231.oiazgkqs7yahruuw@moria.home.lan> <170233878712.12910.112528191448334241@noble.neil.brown.name> <20231212000515.4fesfyobdlzjlwra@moria.home.lan> <170234279139.12910.809452786055101337@noble.neil.brown.name> <ZXf1WCrw4TPc5y7d@dread.disaster.area> <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de> <20231212152016.GB142380@mit.edu> <0b4c01da2d1e$cf65b930$6e312b90$@mindspring.com> <20231212174432.toj6c65mlqrlt256@moria.home.lan> <CAOQ4uxgcUQE9Ldg8rodMXJvbU9BDCC9wGED0jANGrC-OLY1HJQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgcUQE9Ldg8rodMXJvbU9BDCC9wGED0jANGrC-OLY1HJQ@mail.gmail.com>
-Subject: RE: file handle in statx
-Date: Tue, 12 Dec 2023 11:18:02 -0800
-Message-ID: <0b5d01da2d2f$ee5df9e0$cb19eda0$@mindspring.com>
+Received: from mail-oo1-xc2d.google.com (mail-oo1-xc2d.google.com [IPv6:2607:f8b0:4864:20::c2d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562A9AD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:20:00 -0800 (PST)
+Received: by mail-oo1-xc2d.google.com with SMTP id 006d021491bc7-59082c4aadaso2944743eaf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 11:20:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702408799; x=1703013599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fDZO9rUEaSCIKGPTNLQORxAuPrrJryJu9QjeOQcq1A4=;
+        b=ULRIiX7NQXM5WPHI3stffAwtHpawpC++J7zI5HHwtWwZGetYluDUHaPZwz0/hg0gn8
+         2K2MK2IvA+P7jZGRS5uhbJ/tFXLg2Nkw9XOFNmgqIbmJe4CMBBFaowB9AOQ60dFCcB8q
+         +CmEeFEtIcctb8A3ltc+uNotzk5BKlv9l8WACyONkuvQbZRIbfAb3ZZYlHKYXeXeBjZM
+         NN1EtyRt434GQNQtkDlw6wGzVhKd1jjbVuT/Wi8gGWEuAhOVHrEpROmgGt9vDaOpciEL
+         5ZHMygSMGAE3wGLqNgsIQwT/OeJ7dd8An0XYfRPFTP3WN50b58RVTmWUMbVb6f8a8Cmt
+         bKcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702408799; x=1703013599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fDZO9rUEaSCIKGPTNLQORxAuPrrJryJu9QjeOQcq1A4=;
+        b=BqLmBHWt3ppub/N64Umm5dwY8o2M9E4yXegthB/ddzg3SMTfYfX8650Pf9BiRt9lyi
+         qCLlZXPp7qOFLw9DBdITxljI2B/BH+ZB68XehpMOEoYvGWVV/vhxo7OQ4NRxVRnElbgB
+         OUW5gWLtlhljLQVcS/kyGFCRg2f/2G3/YKwssvGpMBTyYipb9Ho6eO7hEKFmws7YFg/o
+         ah7pN5W7fDAe4Vcsn+PujD1FI7jpDcAWOc5IaqRVhKh8kuSrB+Nk/RpmNfvhkeMjrhZ9
+         eR9QUfXeQBYXF4GuAeCue5V/tnaNUhKDWScp4Ze7fKfKEoNJuaWPMwFNtduVOFq7EVa7
+         YcKA==
+X-Gm-Message-State: AOJu0Yx9XaVLXsxWUEwo2exvYNoHa2/OYpJIqlLfZfDjGC7Ow88n5SQw
+	vMELgSLWJe8Ce2hxizinr8mx7WPb72HxZwrPiZNcbw==
+X-Google-Smtp-Source: AGHT+IHhHldkkKWSw5/c1UASxLGabkICfwtszvf2fhz0+qfzxSM9eqL1W0JVD3z3i8kQ+OE2shxpMKk0DM9YNWaT9QU=
+X-Received: by 2002:a4a:1d86:0:b0:58e:1c47:879b with SMTP id
+ 128-20020a4a1d86000000b0058e1c47879bmr4535569oog.16.1702408799400; Tue, 12
+ Dec 2023 11:19:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
+References: <20231211193048.580691-1-avagin@google.com> <CAOQ4uxik0=0F-6CLRsuaOheFjwWF-B-Q5iEQ6qJbRszL52HeQQ@mail.gmail.com>
+ <20231212-brokkoli-trinken-1581d1e99d6a@brauner>
+In-Reply-To: <20231212-brokkoli-trinken-1581d1e99d6a@brauner>
+From: Andrei Vagin <avagin@google.com>
+Date: Tue, 12 Dec 2023 11:19:48 -0800
+Message-ID: <CAEWA0a6AzM0xLGW+_iFV11h8acqSZ3MfQuivf_inSjR+veh1Ng@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/proc: show correct device and inode numbers in /proc/pid/maps
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+	overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 15.0
-Content-Language: en-us
-Thread-Index: AQI9D5j+iWWTWnyU8CMdbk6E8xo4PwHHTjCPAatvR2sCMTvAAQGKlz4oApPNpA0BSHZRUQKfmjdIAWd4JeUCEu11rwHu2mPMAhIwDuivNxBsIA==
-Authentication-Results: earthlink-vadesecure.net;
- auth=pass smtp.auth=ffilzlnx@mindspring.com smtp.mailfrom=ffilzlnx@mindspring.com;
 
-> On Tue, Dec 12, 2023 at 7:44=E2=80=AFPM Kent Overstreet =
-<kent.overstreet@linux.dev>
+On Tue, Dec 12, 2023 at 1:27=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Dec 12, 2023 at 07:51:31AM +0200, Amir Goldstein wrote:
+> > +fsdevel, +overlayfs, +brauner, +miklos
+> >
+> > On Mon, Dec 11, 2023 at 9:30=E2=80=AFPM Andrei Vagin <avagin@google.com=
 > wrote:
-> >
-> > On Tue, Dec 12, 2023 at 09:15:29AM -0800, Frank Filz wrote:
-> > > > On Tue, Dec 12, 2023 at 10:10:23AM +0100, Donald Buczek wrote:
-> > > > > On 12/12/23 06:53, Dave Chinner wrote:
-> > > > >
-> > > > > > So can someone please explain to me why we need to try to
-> > > > > > re-invent a generic filehandle concept in statx when we
-> > > > > > already have a have working and widely supported user API =
-that
-> > > > > > provides exactly this functionality?
-> > > > >
-> > > > > name_to_handle_at() is fine, but userspace could profit from
-> > > > > being able to retrieve the filehandle together with the other
-> > > > > metadata in a single system call.
-> > > >
-> > > > Can you say more?  What, specifically is the application that
-> > > > would want
-> > > to do
-> > > > that, and is it really in such a hot path that it would be a
-> > > > user-visible improveable, let aloine something that can be =
-actually be
-> measured?
 > > >
-> > > A user space NFS server like Ganesha could benefit from getting
-> > > attributes and file handle in a single system call.
+> > > Device and inode numbers in /proc/pid/maps have to match numbers retu=
+rned by
+> > > statx for the same files.
+> >
+> > That statement may be true for regular files.
+> > It is not true for block/char as far as I know.
+> >
+> > I think that your fix will break that by displaying the ino/dev
+> > of the block/char reference inode and not their backing rdev inode.
+> >
 > > >
-> > > Potentially it could also avoid some of the challenges of using
-> > > name_to_handle_at that is a privileged operation.
+> > > /proc/pid/maps shows device and inode numbers of vma->vm_file-s. Here=
+ is
+> > > an issue. If a mapped file is on a stackable file system (e.g.,
+> > > overlayfs), vma->vm_file is a backing file whose f_inode is on the
+> > > underlying filesystem. To show correct numbers, we need to get a user
+> > > file and shows its numbers. The same trick is used to show file paths=
+ in
+> > > /proc/pid/maps.
 > >
-> > which begs the question - why is name_to_handle_at() privileged?
+> > For the *same* trick, see my patch below.
 > >
->=20
-> AFAICT, it is not privileged.
-> Only open_by_handle_at() is privileged.
+> > >
+> > > But it isn't the end of this story. A file system can manipulate inod=
+e numbers
+> > > within the getattr callback (e.g., ovl_getattr), so vfs_getattr must =
+be used to
+> > > get correct numbers.
+> >
+> > This explanation is inaccurate, because it mixes two different overlayf=
+s
+> > traits which are unrelated.
+> > It is true that a filesystem *can* manipulate st_dev in a way that will=
+ not
+> > match i_ino and it is true that overlayfs may do that in some non-defau=
+lt
+> > configurations (see [1]), but this is not the reason that you are seein=
+g
+> > mismatches ino/dev in /proc/<pid>/maps.
+> >
+> > [1] https://docs.kernel.org/filesystems/overlayfs.html#inode-properties
+> >
+> > The reason is that the vma->vm_file is a special internal backing file
+> > which is not otherwise exposed to userspace.
+> > Please see my suggested fix below.
+> >
+> > >
+> > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+> > > Signed-off-by: Andrei Vagin <avagin@google.com>
+> > > ---
+> > >  fs/proc/task_mmu.c | 20 +++++++++++++++++---
+> > >  1 file changed, 17 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > index 435b61054b5b..abbf96c091ad 100644
+> > > --- a/fs/proc/task_mmu.c
+> > > +++ b/fs/proc/task_mmu.c
+> > > @@ -273,9 +273,23 @@ show_map_vma(struct seq_file *m, struct vm_area_=
+struct *vma)
+> > >         const char *name =3D NULL;
+> > >
+> > >         if (file) {
+> > > -               struct inode *inode =3D file_inode(vma->vm_file);
+> > > -               dev =3D inode->i_sb->s_dev;
+> > > -               ino =3D inode->i_ino;
+> > > +               const struct path *path;
+> > > +               struct kstat stat;
+> > > +
+> > > +               path =3D file_user_path(file);
+> > > +               /*
+> > > +                * A file system can manipulate inode numbers within =
+the
+> > > +                * getattr callback (e.g. ovl_getattr).
+> > > +                */
+> > > +               if (!vfs_getattr_nosec(path, &stat, STATX_INO, AT_STA=
+TX_DONT_SYNC)) {
+> >
+> > Should you prefer to keep this solution it should be constrained to
+> > regular files.
+>
+> It's also very dicy calling into the filesystem from procfs. You might
+> hang the system if you end up talking to a hung NFS server or something.
+> What locks does show_map_vma() hold? And is it safe to call helpers that
+> might generate io?
 
-Ah, that makes sense. I'm a consumer of these interfaces, not so much in =
-the kernel these days.
+I had the same thoughts when I was thinking about whether it is safe
+to use it here
+or not. Then I found AT_STATX_DONT_SYNC (don't sync attributes with
+the server) and
+decided that it should be safe. Anyway, Amir explains that
+vfs_getattr_nosec isn't
+needed for overlay files.
 
-Ganesha depends on open_by_handle_at as well, so requires privilege to =
-do handle stuff with kernel file systems.
-
-In any case, Ganesha could easily benefit from a savings of system =
-calls.
-
-What would also be handy is a read directory with attributes that gave =
-the statx results for each entry.
-
-Frank
-
+Thanks,
+Andrei
 
