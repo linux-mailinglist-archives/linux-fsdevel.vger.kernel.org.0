@@ -1,207 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-5708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451B680F0F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:30:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAD080F0C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 16:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EDF2B216D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16BFE280F67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B297F7A20F;
-	Tue, 12 Dec 2023 15:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FBE7B3AC;
+	Tue, 12 Dec 2023 15:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OV56CZjg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+S5z1qL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6671706;
-	Tue, 12 Dec 2023 07:28:01 -0800 (PST)
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCEPYIZ011633;
-	Tue, 12 Dec 2023 15:27:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=6P7xoDilkGWxN+TMBgFKeNe23iVMd0E0n5jMfKeLyZ8=;
- b=OV56CZjglftKG6V7ahCTVFWHhElDr6KcbAmFGf7w59eNeb4ceFY2JCoKLFvQF0bBqput
- wKnE9OBn9kOaoROu+0umf5gw2yg77PO+15Pq9nxuTguVpYv9lwy2ixw8pvJRJqx6HYWR
- 4wHJZq1YQ95Lm6LAxtRsAmCTv4QT8mD3CSScuLUoOkHq7Fmd7Al6/1rp84fKKSEXOQ4l
- /J+JZqWohbY3/a/ljaGyL3X4mC/oYsxFnr8kIrlKM6Gnft+W2uaiF6WwYIA2apHbEExc
- KB7w7V4z1EmLN0pcVs0oSwl4HMh6YJWyDKe7vtxJ/OtpM6Tp54W48XjOQnOku75Zk+ZQ Og== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxnjysg3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 15:27:09 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BCEtncS031530;
-	Tue, 12 Dec 2023 15:27:09 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxnjysg30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 15:27:09 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCETZqH012585;
-	Tue, 12 Dec 2023 15:27:08 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uw3jnsw2s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 15:27:08 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BCFR7DA20382378
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 15:27:07 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A3AAA58054;
-	Tue, 12 Dec 2023 15:27:07 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 19F845805C;
-	Tue, 12 Dec 2023 15:27:06 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.159.221])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Dec 2023 15:27:05 +0000 (GMT)
-Message-ID: <a9297cc1bf23e34aba3c7597681e9e71a03b37f9.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH] overlayfs: Redirect xattr ops on security.evm to
- security.evm_overlayfs
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Amir Goldstein
-	 <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-        Seth Forshee
- <sforshee@kernel.org>, miklos@szeredi.hu,
-        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul@paul-moore.com, stefanb@linux.ibm.com, jlayton@kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>
-Date: Tue, 12 Dec 2023 10:27:05 -0500
-In-Reply-To: <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
-References: <20231208172308.2876481-1-roberto.sassu@huaweicloud.com>
-	 <CAOQ4uxivpZ+u0A5kE962XST37-ey2Tv9EtddnZQhk3ohRkcQTw@mail.gmail.com>
-	 <20231208-tauziehen-zerfetzt-026e7ee800a0@brauner>
-	 <c95b24f27021052209ec6911d2b7e7b20e410f43.camel@huaweicloud.com>
-	 <20231211-fortziehen-basen-b8c0639044b8@brauner>
-	 <019f134a-6ab4-48ca-991c-5a5c94e042ea@huaweicloud.com>
-	 <CAOQ4uxgpNt7qKEF_NEJPsKU7-XhM7N_3eP68FrOpMpcRcHt4rQ@mail.gmail.com>
-	 <59bf3530-2a6e-4caa-ac42-4d0dab9a71d1@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uRXCe-o40XxvGBalIy-o0TY5V_4UqA_Z
-X-Proofpoint-ORIG-GUID: 7CpOlOBGa5y5k0JZ0iJRCU9QbIPHGwGo
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF10109
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 07:27:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702394837;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T3dMiL5LvMWqoHBj+yfJcaK2PIbsFzEoAWHSJdbBQUk=;
+	b=a+S5z1qLvkfJCWgLxm3h8RUOoHWKfnSf33QxFeIFlEb7DVpmFcENzxyaO4vOWCDtSJy7iS
+	Qmvrot11DYoYAlXWy8LyO5vGGg+uGkSxpr1dRq+1RgoIro+oyBUDbz8/J+g4CWqdgGLGYg
+	ek7KQ8dtxiFVfzdE1dXucIeD9JawMps=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-go9uDgk4MN6b-OpoevKvlg-1; Tue, 12 Dec 2023 10:27:15 -0500
+X-MC-Unique: go9uDgk4MN6b-OpoevKvlg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-40c2c568108so38386385e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 07:27:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702394834; x=1702999634;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T3dMiL5LvMWqoHBj+yfJcaK2PIbsFzEoAWHSJdbBQUk=;
+        b=K1sSPmyw3jit3iYwlY+mcXRrGHQTfDo6tCuMpOTB1SLhtkJYC//x06GHYR8JU7eDAv
+         kEeC7XJyHigmTRNA+symQRZjYZzDwqenptu+PFq9ihgV3LcHW9fKXj/7xKlO8TZXbgo2
+         cPVGAEfV/QD30Gg9uZQBeilR/FIqkf3jJ1cX1IxWK0OOy1UyFIa+BhZ5UhBdjgt3Rw6d
+         K0EPF1xorpJum1na556BmAEcMqi+WAcKaY3YB1/GVrh2KBotRJvmmHHmj6t4HgWhp4oU
+         zPcyagGsf3kXpM+8tmFXq0evVJ1294VYyfT2y7LfyA4+n8nKwCumbPiMG27UxcCojw1w
+         CBOw==
+X-Gm-Message-State: AOJu0YwCtfXE7556PluZsWNyXRlWlpz1uNX/J9QseAiem3ZKQk32DuNW
+	fVUuVjUqe9FdPwbzRtWVVQgFl6MCAC7mn/vrNViLZIPI2ADB80cDyMcMTpHdOqq6QH4ywSOCQDn
+	WWecHzf1JH2AnGps3A37hfcmicg==
+X-Received: by 2002:a05:600c:458c:b0:40b:5e21:d355 with SMTP id r12-20020a05600c458c00b0040b5e21d355mr3324522wmo.94.1702394834597;
+        Tue, 12 Dec 2023 07:27:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEbPjNioLxUv8Co39SV9O7EvpPUZyV2Fan3jrsLUi0Vn7c3DhtxI5KCJMgrb1vtYVQ3vpafkA==
+X-Received: by 2002:a05:600c:458c:b0:40b:5e21:d355 with SMTP id r12-20020a05600c458c00b0040b5e21d355mr3324508wmo.94.1702394834131;
+        Tue, 12 Dec 2023 07:27:14 -0800 (PST)
+Received: from ?IPV6:2003:cb:c74b:ca00:4ca2:ff2c:9092:f070? (p200300cbc74bca004ca2ff2c9092f070.dip0.t-ipconnect.de. [2003:cb:c74b:ca00:4ca2:ff2c:9092:f070])
+        by smtp.gmail.com with ESMTPSA id h2-20020a05600c350200b0040c44b4a282sm9088185wmq.43.2023.12.12.07.27.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Dec 2023 07:27:13 -0800 (PST)
+Message-ID: <daf9f834-c79d-4f8c-9248-b0b232017732@redhat.com>
+Date: Tue, 12 Dec 2023 16:27:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-12_08,2023-12-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- malwarescore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0 phishscore=0
- mlxscore=0 adultscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2312120117
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
+To: John Hubbard <jhubbard@nvidia.com>, Mark Brown <broonie@kernel.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
+ aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
+ ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
+ axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
+ Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
+ bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+ jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, Peter Zijlstra <peterz@infradead.org>
+References: <CAJuCfpHRYi4S9c+KKQqtE6Faw1e0E0ENMMRE17zXsqv_CftTGw@mail.gmail.com>
+ <b93b29e9-c176-4111-ae0e-d4922511f223@sirena.org.uk>
+ <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
+ <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
+ <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
+ <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
+ <1368c558-c58c-4574-907e-36b07dee31bb@sirena.org.uk>
+ <6ee5d68a-fa54-4ed6-bc41-2bff0d9eb12f@redhat.com>
+ <052dc756-cc05-4aa8-9724-14d42853089c@sirena.org.uk>
+ <8a2ce635-58f4-44e1-a646-6527936c5836@redhat.com>
+ <400c0342-bb28-4dd2-b132-9927c7babec4@sirena.org.uk>
+ <f3081d52-8bbc-4bc7-96d4-b086ca91975a@nvidia.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <f3081d52-8bbc-4bc7-96d4-b086ca91975a@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2023-12-12 at 14:13 +0100, Roberto Sassu wrote:
-> On 12.12.23 11:44, Amir Goldstein wrote:
-> > On Tue, Dec 12, 2023 at 12:25 PM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> >>
-> >> On 11.12.23 19:01, Christian Brauner wrote:
-> >>>> The second problem is that one security.evm is not enough. We need two,
-> >>>> to store the two different HMACs. And we need both at the same time,
-> >>>> since when overlayfs is mounted the lower/upper directories can be
-> >>>> still accessible.
-> >>>
-> >>> "Changes to the underlying filesystems while part of a mounted overlay
-> >>> filesystem are not allowed. If the underlying filesystem is changed, the
-> >>> behavior of the overlay is undefined, though it will not result in a
-> >>> crash or deadlock."
-> >>>
-> >>> https://docs.kernel.org/filesystems/overlayfs.html#changes-to-underlying-filesystems
-> >>>
-> >>> So I don't know why this would be a problem.
-> >>
-> >> + Eric Snowberg
-> >>
-> >> Ok, that would reduce the surface of attack. However, when looking at:
-> >>
-> >>        ovl: Always reevaluate the file signature for IMA
-> >>
-> >>        Commit db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the
-> >> i_version")
-> >>        partially closed an IMA integrity issue when directly modifying a file
-> >>        on the lower filesystem.  If the overlay file is first opened by a
-> >> user
-> >>        and later the lower backing file is modified by root, but the extended
-> >>        attribute is NOT updated, the signature validation succeeds with
-> >> the old
-> >>        original signature.
-> >>
-> >> Ok, so if the behavior of overlayfs is undefined if the lower backing
-> >> file is modified by root, do we need to reevaluate? Or instead would be
-> >> better to forbid the write from IMA (legitimate, I think, since the
-> >> behavior is documented)? I just saw that we have d_real_inode(), we can
-> >> use it to determine if the write should be denied.
-> >>
-> > 
-> > There may be several possible legitimate actions in this case, but the
-> > overall concept IMO should be the same as I said about EVM -
-> > overlayfs does not need an IMA signature of its own, because it
-> > can use the IMA signature of the underlying file.
-> > 
-> > Whether overlayfs reads a file from lower fs or upper fs, it does not
-> > matter, the only thing that matters is that the underlying file content
-> > is attested when needed.
-> > 
-> > The only incident that requires special attention is copy-up.
-> > This is what the security hooks security_inode_copy_up() and
-> > security_inode_copy_up_xattr() are for.
-> > 
-> > When a file starts in state "lower" and has security.ima,evm xattrs
-> > then before a user changes the file, it is copied up to upper fs
-> > and suppose that security.ima,evm xattrs are copied as is?
-
-For IMA copying up security.ima is fine.  Other than EVM portable
-signatures, security.evm contains filesystem specific metadata. 
-Copying security.evm up only works if the metadata is the same on both
-filesystems.  Currently the i_generation and i_sb->s_uuid are
-different.
-
-> > When later the overlayfs file content is read from the upper copy
-> > the security.ima signature should be enough to attest that file content
-> > was not tampered with between going from "lower" to "upper".
-> > 
-> > security.evm may need to be fixed on copy up, but that should be
-> > easy to do with the security_inode_copy_up_xattr() hook. No?
-
-Writing security.evm requires the existing security.evm to be valid. 
-After each security xattr in the protected list is modified,
-security.evm HMAC needs to be updated.  Perhaps calculating and writing
-security.evm could be triggered by security_inode_copy_up_xattr(). 
-Just copying a non-portable EVM signature wouldn't work, or for that
-matter copying an EVM HMAC with different filesystem metadata.
-
-> It is not yet clear to me. EVM will be seeing the creation of a new 
-> file, and for new files setting xattrs is already allowed.
+On 11.12.23 21:11, John Hubbard wrote:
+> On 12/11/23 12:01, Mark Brown wrote:
+>> On Mon, Dec 11, 2023 at 07:00:32PM +0100, David Hildenbrand wrote:
+>>> On 11.12.23 18:32, Mark Brown wrote:
+>>>> On Mon, Dec 11, 2023 at 05:53:59PM +0100, David Hildenbrand wrote:
+>>
+>>>>> https://lkml.kernel.org/r/20231209020144.244759-1-jhubbard@nvidia.com
+>>
+>>>> I mean, I guess people who don't want to install the headers are just
+>>>> not going to be able to build a bunch of tests?  There definitely are a
+>>>> bunch of tests where it's not needed so I can see why people would not
+>>>> like being forced to do the headers step if they're only interested in
+>>>> those tests.
+>>
+>>> Yes. And before that, people mostly had no clue that headers had to be
+>>> installed in order to compile successfully.
+>>
+>>> So maybe a warning to give at least some hint might be reasonable.
+>>
+>> That sounds sensible, especially if we could arrange to flag when the
+>> specific tests being built need it.
 > 
-> Maybe the security_inode_copy_up*() would be useful for IMA/EVM to 
-> authorize writes by overlayfs, which would be otherwise denied to the 
-> others (according to my solution).
 > 
-> Still, would like to hear Mimi's opinion.
+> But the end result is messy: not everything builds in some cases. If
+> instead we went back to the little ifdef snippets, such as this (from
+> v5.1):
+> 
+> hugepage-shm.c:
+> 
+>       #ifndef SHM_HUGETLB
+>       #define SHM_HUGETLB 04000
+>       #endif
+> 
+> ...then with a bit of one-time, manual effort, we could get everything
+> to work at all times. And that seems better, doesn't it?
 
-Thanks Roberto for all your work and analysis.  I'm still looking at
-security_inode_copy_up_xattr().
+I'm not a fan of fixing up host headers on a case-per-case basis using 
+ifdefs. It makes the tests harder to read, write and maintain.
 
-Mimi
+We do have the proper headers in the tree, just not in an consumable way 
+for the tests.
+
+Ideally, we'd either carry our own "consumable" version in the tree, or 
+are able to convert the headers under the hood and place them in a 
+directory where we won't have to dirty the tree -- and only tests that 
+need these headers (e.g., mm selftests) will perform that conversion and 
+include them.
+
+I usually build my stuff in-tree, so I don't really have a lot of 
+experience with out-of-tree selftest builds and the whole kernel header 
+inclusion (and how we could avoid the "make headers" and place the 
+headers somewhere else).
+
+-- 
+Cheers,
+
+David / dhildenb
 
 
