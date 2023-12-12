@@ -1,165 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-5692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501C380EE87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0C080EF2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 15:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EB3281635
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 14:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D7D281A9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 14:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943D37317D;
-	Tue, 12 Dec 2023 14:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB25745D1;
+	Tue, 12 Dec 2023 14:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2pJuW65";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7hAEYWCD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wILLT6vG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qQ8NVrHW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EOl4J64p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4A3AC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 06:19:41 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68AC11BD3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 06:46:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702392381;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vnBVe+6sGloGDTtpIxUfaKV66ghu8kuAU13oHydks6o=;
+	b=EOl4J64pzS5XJZ1V5iEX/kUTAdLe7my7xCEyJRVabwHbz7KawwD1H/USHPzNaWmL2jdJUH
+	RaC8shDAWat+ZhmQ4Z3HvT/rccrSUAWMoV56hs76lXMrMmeN6W70DPORQgcgZQ8b7EAcO6
+	5n9jCPK3WQV0mVM6mNr6dPsMcjUfePU=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-8e6S4l5xO3q8Uw0DvI4C0g-1; Tue,
+ 12 Dec 2023 09:46:16 -0500
+X-MC-Unique: 8e6S4l5xO3q8Uw0DvI4C0g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 34D1F1FB45;
-	Tue, 12 Dec 2023 14:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
-	b=Y2pJuW65mgBBfS9gILKDpevU6cSkoMLfGgkDhFSy6CnC1SNXNz/AgxIDiXf6OZ7Vk0Ft/Q
-	tYRrz22sZ2/uTc1WDDHBTMWlE0OkzRd+3M2V+roMb7tUm28ZcOJVdl9ov6rJaSrTS+ixoM
-	o4fQr4GcbxsH1alkVnNa3qVnHstCn74=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390779;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
-	b=7hAEYWCD3CfhsGoSWTV+dhEkdVritOEIT5Hd75mNiuYxhF7is+MI4AQQzoM1+I2CWEXQjt
-	trMt+WD57CedB+AA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702390778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
-	b=wILLT6vGghABd7DGkO9ZCZZHFCU+C8vDSh3dOSJFntiUKryBt5FeeudvRxn+vtIcdKwTxf
-	zsS52LB3hG4EhbNBLj9mRiUllL5EVN+GKAX+KoDZhwj/0938+67ZIinYaIxhhzP+UZnzxP
-	ZsQHWdfbkhE5ZgelCzB9WWBGXm5mpyM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702390778;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sk2i51cRP8zX9dgR4WiL6mJsq1dozI9SBYrgO+GEeAE=;
-	b=qQ8NVrHWJxjOO8ggC/yUzuThKBIwTABOQbFpAABRllb6X/qpt1hhjKJggMtk3zVzZF0AWc
-	kWHOdOUzEdCHKJBg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CB56139E9;
-	Tue, 12 Dec 2023 14:19:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id nOe2BvpreGW1UAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 12 Dec 2023 14:19:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 95158A06E5; Tue, 12 Dec 2023 15:19:37 +0100 (CET)
-Date: Tue, 12 Dec 2023 15:19:37 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>,
-	David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] splice: return type ssize_t from all helpers
-Message-ID: <20231212141937.f4ihbex46ndhu3nt@quack3>
-References: <20231212094440.250945-1-amir73il@gmail.com>
- <20231212094440.250945-2-amir73il@gmail.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 771CA3C32078;
+	Tue, 12 Dec 2023 14:46:15 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 670062166B31;
+	Tue, 12 Dec 2023 14:46:14 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Markus Suvanto <markus.suvanto@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>
+Cc: David Howells <dhowells@redhat.com>,
+	linux-afs@lists.infradead.org,
+	keyrings@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] afs: Fix dynamic root interaction with failing DNS lookups
+Date: Tue, 12 Dec 2023 14:46:08 +0000
+Message-ID: <20231212144611.3100234-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231212094440.250945-2-amir73il@gmail.com>
-X-Spam-Score: -2.16
-X-Spamd-Bar: ++
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=wILLT6vG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qQ8NVrHW;
-	dmarc=none;
-	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:98 is neither permitted nor denied by domain of jack@suse.cz) smtp.mailfrom=jack@suse.cz
-X-Rspamd-Server: rspamd2
-X-Spamd-Result: default: False [2.33 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 TO_DN_SOME(0.00)[];
-	 R_SPF_SOFTFAIL(4.60)[~all:c];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 NEURAL_HAM_SHORT(-0.20)[-0.982];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-2.49)[97.71%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DMARC_NA(1.20)[suse.cz];
-	 NEURAL_HAM_LONG(-0.97)[-0.968];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: 2.33
-X-Rspamd-Queue-Id: 34D1F1FB45
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Tue 12-12-23 11:44:36, Amir Goldstein wrote:
-> Not sure why some splice helpers return long, maybe historic reasons.
-> Change them all to return ssize_t to conform to the splice methods and
-> to the rest of the helpers.
-> 
-> Suggested-by: Christian Brauner <brauner@kernel.org>
-> Link: https://lore.kernel.org/r/20231208-horchen-helium-d3ec1535ede5@brauner/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Hi Markus, Marc,
 
-Looks good to me. Just one nit below. Feel free to add:
+Here's a set of fixes to improve the interaction of arbitrary lookups in
+the AFS dynamic root that hit DNS lookup failures[1]:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ (1) Always delete unused (particularly negative) dentries as soon as
+     possible so that they don't prevent future lookups from retrying.
 
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 7cda013e5a1e..13030ce192d9 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -201,7 +201,7 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
->  	unsigned int tail = pipe->tail;
->  	unsigned int head = pipe->head;
->  	unsigned int mask = pipe->ring_size - 1;
-> -	int ret = 0, page_nr = 0;
-> +	ssize_t ret = 0, page_nr = 0;
+ (2) Fix the handling of new-style negative DNS lookups in ->lookup() to
+     make them return ENOENT so that userspace doesn't get confused when
+     stat succeeds but the following open on the looked up file then fails.
 
-A nit but page_nr should stay to be 'int'.
+ (3) Fix key handling so that DNS lookup results are reclaimed as soon as
+     they expire rather than sitting round either forever or for an
+     additional 5 mins beyond a set expiry time returning EKEYEXPIRED.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The patches can be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
+
+Thanks,
+David
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=216637 [1]
+Link: https://lore.kernel.org/r/20231211163412.2766147-1-dhowells@redhat.com # v1
+Link: https://lore.kernel.org/r/20231211213233.2793525-1-dhowells@redhat.com # v2
+
+Changes
+=======
+ver #3)
+ - Rebased to v6.7-rc5 which has an additional afs patch.
+ - Don't add to TIME64_MAX (ie. permanent) when checking expiry time.
+
+ver #2)
+ - Fix signed-unsigned comparison when checking return val.
+
+David Howells (3):
+  afs: Fix the dynamic root's d_delete to always delete unused dentries
+  afs: Fix dynamic root lookup DNS check
+  keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on
+    expiry
+
+ fs/afs/dynroot.c           | 31 +++++++++++++++++--------------
+ include/linux/key-type.h   |  1 +
+ net/dns_resolver/dns_key.c | 10 +++++++++-
+ security/keys/gc.c         | 31 +++++++++++++++++++++----------
+ security/keys/internal.h   | 11 ++++++++++-
+ security/keys/key.c        | 15 +++++----------
+ security/keys/proc.c       |  2 +-
+ 7 files changed, 64 insertions(+), 37 deletions(-)
+
 
