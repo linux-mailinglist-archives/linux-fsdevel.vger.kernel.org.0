@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-5763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7BE80FB80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 00:42:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA5880FB83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 00:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D04C5B20EEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 23:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2259F1F21A4D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Dec 2023 23:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F3C65A9B;
-	Tue, 12 Dec 2023 23:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A4965A9B;
+	Tue, 12 Dec 2023 23:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xjp9WFxy"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k962CPsv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A974A6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 15:42:07 -0800 (PST)
-Date: Tue, 12 Dec 2023 18:42:00 -0500
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [IPv6:2001:41d0:1004:224b::b8])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DE4BC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 15:43:53 -0800 (PST)
+Date: Tue, 12 Dec 2023 18:43:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702424525;
+	t=1702424631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MhEwlpoq/H4rMCIwjVPTECovw8Txs/Kao190wZWoFGg=;
-	b=xjp9WFxyXZmGW8mj63ufbqCiN/VmSsIceNIO2iFyO43KHikYuEYZlsJuwsrKxPq6tv0tD2
-	ct9q7OCpd3fQhBiN1hNEOrkq2qhiH9Jbw+/goYcuxuU+3DBgKMGadTUnSQPz5a09qwoBJt
-	g4IVN0OpH8/HGtB9JjVOnvcUzI3XXQo=
+	bh=P8XLmDSjkNBocaDifohgMqLe7q++Y8iycB7xfMOVk3E=;
+	b=k962CPsvajfcKhxvXgM0mBD83ymr2vUaW/mwgOLCvnd8jZTMIuAqJMubTdP48jmZpbCmP6
+	HDptgvZTc+rkHwtRZrEWRFWHu9ZegAbO3eeiL+PzuGibcUZAzL7Ye1Nr0qY5qM+Hkc4GPV
+	h1bHGikRh3yLg8XIqmSrjU1l3qqUR8g=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: NeilBrown <neilb@suse.de>, Donald Buczek <buczek@molgen.mpg.de>,
+To: NeilBrown <neilb@suse.de>
+Cc: David Howells <dhowells@redhat.com>,
+	Donald Buczek <buczek@molgen.mpg.de>,
 	linux-bcachefs@vger.kernel.org,
 	Stefan Krueger <stefan.krueger@aei.mpg.de>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+	linux-fsdevel@vger.kernel.org
 Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
  snapshots on muti-user systems?)
-Message-ID: <20231212234200.6fbcjjfrozuxnoj4@moria.home.lan>
-References: <170233878712.12910.112528191448334241@noble.neil.brown.name>
- <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
- <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area>
- <20231212152153.tasaxsrljq2zzbxe@moria.home.lan>
- <ZXjHEPn3DfgQNoms@dread.disaster.area>
- <20231212212306.tpaw7nfubbuogglw@moria.home.lan>
- <ZXjaWIFKvBRH7Q4c@dread.disaster.area>
- <170242027365.12910.2226609822336684620@noble.neil.brown.name>
- <ZXjnffHOo+JY/M4b@dread.disaster.area>
+Message-ID: <20231212234348.ojllavmflwipxo2j@moria.home.lan>
+References: <170199821328.12910.289120389882559143@noble.neil.brown.name>
+ <20231208013739.frhvlisxut6hexnd@moria.home.lan>
+ <170200162890.12910.9667703050904306180@noble.neil.brown.name>
+ <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <2799307.1702338016@warthog.procyon.org.uk>
+ <20231212205929.op6tq3pqobwmix5a@moria.home.lan>
+ <170242184299.12910.16703366490924138473@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,64 +57,47 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZXjnffHOo+JY/M4b@dread.disaster.area>
+In-Reply-To: <170242184299.12910.16703366490924138473@noble.neil.brown.name>
 X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 13, 2023 at 10:06:37AM +1100, Dave Chinner wrote:
-> On Wed, Dec 13, 2023 at 09:31:13AM +1100, NeilBrown wrote:
-> > On Wed, 13 Dec 2023, Dave Chinner wrote:
+On Wed, Dec 13, 2023 at 09:57:22AM +1100, NeilBrown wrote:
+> On Wed, 13 Dec 2023, Kent Overstreet wrote:
+> > On Mon, Dec 11, 2023 at 11:40:16PM +0000, David Howells wrote:
+> > > Kent Overstreet <kent.overstreet@linux.dev> wrote:
 > > > 
-> > > What you are suggesting is that we now duplicate filehandle encoding
-> > > into every filesystem's statx() implementation.  That's a bad
-> > > trade-off from a maintenance, testing and consistency POV because
-> > > now we end up with lots of individual, filehandle encoding
-> > > implementations in addition to the generic filehandle
-> > > infrastructure that we all have to test and validate.
+> > > > I was chatting a bit with David Howells on IRC about this, and floated
+> > > > adding the file handle to statx. It looks like there's enough space
+> > > > reserved to make this feasible - probably going with a fixed maximum
+> > > > size of 128-256 bits.
+> > > 
+> > > We can always save the last bit to indicate extension space/extension record,
+> > > so we're not that strapped for space.
 > > 
-> > Not correct.  We are suggesting an interface, not an implementation.
-> > Here you are proposing a suboptimal implementation, pointing out its
-> > weakness, and suggesting the has consequences for the interface
-> > proposal.  Is that the strawman fallacy?
+> > So we'll need that if we want to round trip NFSv4 filehandles, they
+> > won't fit in existing struct statx (nfsv4 specs 128 bytes, statx has 96
+> > bytes reserved).
+> > 
+> > Obvious question (Neal): do/will real world implementations ever come
+> > close to making use of this, or was this a "future proofing gone wild"
+> > thing?
 > 
-> No, you simply haven't followed deep enough into the rabbit hole to
-> understand Kent was suggesting potential implementation details to
-> address hot path performance concerns with filehandle encoding.
+> I have no useful data.  I have seen lots of filehandles but I don't pay
+> much attention to their length.  Certainly some are longer than 32 bytes.
 > 
-> > vfs_getattr_nosec could, after calling i_op->getattr, check if
-> > STATX_HANDLE is set in request_mask but not in ->result_mask.
-> > If so it could call exportfs_encode_fh() and handle the result.
-> >
-> > No filesystem need to be changed.
+> > 
+> > Say we do decide we want to spec it that large: _can_ we extend struct
+> > statx? I'm wondering if the userspace side was thought through, I'm
+> > sure glibc people will have something to say.
 > 
-> Well, yes, it's pretty damn obvious that is exactly what I've been
-> advocating for here - if we are going to put filehandles in statx(),
-> then it must use the same infrastructure as name_to_handle_at().
-> i.e. calling exportfs_encode_fh(EXPORT_FH_FID) to generate the
-> filehandle.
+> The man page says:
 > 
-> The important discussion detail you've missed about
-> exportfs_encode_fh() is that it *requires* adding a new indirect
-> call (via export_ops->encode_fh) in the statx path to encode the
-> filehandle, and that's exactly what Kent was suggesting we can code
-> the implementation to avoid.
+>      Therefore, do not simply set mask to UINT_MAX (all bits set), as
+>      one or more bits may, in the future, be used to specify an
+>      extension to the buffer.
 > 
-> Avoiding an indirect function call is an implementation detail, not
-> an interface design requirement.
-> 
-> And the only way to avoid adding new indirect calls to encoding
-> filesystem specific filehandles is to implement the encoding in the
-> existing individual filesystem i_op->getattr methods. i.e. duplicate
-> the filehandle encoding in the statx path rather than use
-> exportfs_encode_fh().....
+> I suspect the glibc people read that.
 
-I was thinking along the lines of coming up with a common fh type for
-local filesystems (why exactly do we need 15?) and adding a volume ID to
-the VFS inode so this could live entirely in VS code for most
-filesystems, but that's an option too.
-
-Might be the best one, since btrfs and bcachefs actually do want a
-different fh type (btrfs: 64 bit subvol, 64 bit ino, bcachefs: 64 bit
-ino, 32 bit subvol, 32 bit generation), and we don't want to generate a
-bigger fh than necessary for when it's being consumed by a stacking
-filesystem that has to generate a new fh by concatanating something.
+The trouble is that C has no notion of which types are safe to pass
+across a dynamic library boundary, so if we increase the size of struct
+statx and someone's doing that things will break in nasty ways.
 
