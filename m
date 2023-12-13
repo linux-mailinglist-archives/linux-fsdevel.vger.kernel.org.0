@@ -1,568 +1,268 @@
-Return-Path: <linux-fsdevel+bounces-6017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE268121D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 23:42:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487C2812200
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 23:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DDD1C212BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 22:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F322328285B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 22:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1C883AE7;
-	Wed, 13 Dec 2023 22:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A95B81856;
+	Wed, 13 Dec 2023 22:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxBUWXFN"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="1exgBniK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-x1141.google.com (mail-yw1-x1141.google.com [IPv6:2607:f8b0:4864:20::1141])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB3FD4F;
-	Wed, 13 Dec 2023 14:41:45 -0800 (PST)
-Received: by mail-yw1-x1141.google.com with SMTP id 00721157ae682-5e2b8f480b3so333707b3.0;
-        Wed, 13 Dec 2023 14:41:44 -0800 (PST)
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5006810A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 14:44:59 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-6d099d316a8so3644002b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 14:44:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702507303; x=1703112103; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dcLZQlPIPx6ZuAQyXEt76xksXRJVFm+Duc3RLeJjB9Q=;
-        b=hxBUWXFNfy3skJ8PdCUNMJ3KLMFVFPMqYjGau3ms2G9Ic6YYv0pkfNgApjfc/8mPoN
-         IOB48CZW/mvAseL4yUq/fxdpYjeBZ7scWcTvVK84SJjkRw5znYmELbOCwbciUjbaGBQK
-         G7cxAzI0SZ1jf41RtFv6hA8z+PokwsuzviHGirJoNFV8fTYUxz/Zi+tVrvEvJ6Z6gpC0
-         KcaJjajpA6k1mNgd/dqe9kz7l1eLveNGHRKBMdh15fPzM6Ed0HstQHmyCW4f0DsCFQex
-         rPYOWfKpbSfSDGCHQuCKvD8wPX3zTz9kMvHNI3imW5bLSFPioxTxkmuWGVQS0qe4P7Ee
-         Nk/A==
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1702507498; x=1703112298; darn=vger.kernel.org;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGZCiOP60aS3LFYHsa7o61H18ddX3mq+UCl5wwvEYdo=;
+        b=1exgBniKuTC3GyNd7YlecCFTNxbqiGbfaURpDZhsJM0sHzPXfSitlGdzWOtAkNaQam
+         rdpn0+LC5NOErW+2iMKEl8tHK4TFjQzBFcVL430URVUvx1M87yuC5tR1hxFQW3jopSbf
+         JVHUTqwaqdmmUGrm8KffO3FjRcDciwstwBJSGavX1YFKU2Brd/0hPVlhMftReIeqs8hX
+         e5d97B7u+/l6KEJab76197ZV7fT15C8Z6xasR4D2bRZr63TcskcLvlmiE2hQSXstP3U6
+         qCLo59AZIXlxTikDDJkZ5nleDFg6oqUeVeu6inymNHmCdnyGCuo7L2anLCEJoT3vLGEV
+         5wLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702507303; x=1703112103;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dcLZQlPIPx6ZuAQyXEt76xksXRJVFm+Duc3RLeJjB9Q=;
-        b=Lm6Ortp2tQF4R7N2oBsjVyM6rIH7E0/fAIqwBf/FB9NN7S93wsLy6AcfZ1orfpOYem
-         9z5hk6y67aTvNzgyw/A28vM77H1JU0BxiXNJKXyMvPodpU48J/kbAYrYRFiCFq6jrU+y
-         XxmVbVt0ZO8I0Pe1x5cKLLV4noqd6+L9wZ90kvk25JrMZyWom9BWcxJLT6oq8bFt+oF2
-         dLqrFHv0DcE71NtZs3tl2sy8RZdwEu+FY8VKuZuIwhCrAZO9Z8TyBK6Kdeb94jzUp/3f
-         5SGCCXZ1yauyFJ2Oenc64zUDi1QITsqvtMRHHpaujgBUUaIkBZK/f3N6YPn1byl9aDee
-         XXxw==
-X-Gm-Message-State: AOJu0YxAl+6B5Iw6iajjihEwXo+XQmtqykwfjWTF/myOsT5w8lOirNsi
-	zXUyQ4j0yyydL82ygtUAoA==
-X-Google-Smtp-Source: AGHT+IE0YJgXEg+UWPKESrg+QohqAIPQo5bH6znCqFxfa0y0nkt+0/Ay/tyeMlQaWWHJtbOPp9QKbw==
-X-Received: by 2002:a05:690c:3382:b0:5e0:66ef:bca5 with SMTP id fl2-20020a05690c338200b005e066efbca5mr4871579ywb.40.1702507302762;
-        Wed, 13 Dec 2023 14:41:42 -0800 (PST)
-Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id v4-20020a818504000000b005d9729068f5sm5050583ywf.42.2023.12.13.14.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 14:41:42 -0800 (PST)
-From: Gregory Price <gourry.memverge@gmail.com>
-X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
-To: linux-mm@kvack.org
-Cc: linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	akpm@linux-foundation.org,
-	arnd@arndb.de,
-	tglx@linutronix.de,
-	luto@kernel.org,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	mhocko@kernel.org,
-	tj@kernel.org,
-	ying.huang@intel.com,
-	gregory.price@memverge.com,
-	corbet@lwn.net,
-	rakie.kim@sk.com,
-	hyeongtak.ji@sk.com,
-	honggyu.kim@sk.com,
-	vtavarespetr@micron.com,
-	peterz@infradead.org,
-	jgroves@micron.com,
-	ravis.opensrc@micron.com,
-	sthanneeru@micron.com,
-	emirakhur@micron.com,
-	Hasan.Maruf@amd.com,
-	seungjun.ha@samsung.com
-Subject: [PATCH v3 11/11] mm/mempolicy: extend set_mempolicy2 and mbind2 to support weighted interleave
-Date: Wed, 13 Dec 2023 17:41:18 -0500
-Message-Id: <20231213224118.1949-12-gregory.price@memverge.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20231213224118.1949-1-gregory.price@memverge.com>
-References: <20231213224118.1949-1-gregory.price@memverge.com>
+        d=1e100.net; s=20230601; t=1702507498; x=1703112298;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGZCiOP60aS3LFYHsa7o61H18ddX3mq+UCl5wwvEYdo=;
+        b=QjMfeJz3aXL98Jwj7imugmjKNhgNqQ/yoqv2qGFSSZrVWXUIZIV38uoYBrxERZWDdu
+         RFMXnFLOjVQ3JNS/c49lk4ZCjsnZwwLlKzJiaDD/i+lM7vr4Bjt2T6J33ZtEsLyCYJ1B
+         WBjST3LRt3Y0lZhPnKQnAQu+oua80Cmew4f3t3SEGBgC4aCgkf1R3y7MqjxDm2h16CIx
+         PTDlSqVFIfxCNrmnVN/afiXGwQ6jNpeKMmqVh9vtlPJbjxSzTu50+usALWVWLgWUbYom
+         nW8wiEirnhrQvJRm8nst8QiyEWA617MzYJ9kfrfnUNyL/anTzWkr6P7cMocKTS++sKCL
+         Eibw==
+X-Gm-Message-State: AOJu0Yyyzjgq4jrlLQIcEobU9wtVCQjLm07rixyh03x7TLphmNiQ/fPY
+	beA4O8ZaKVWVkMFyvnQYWd1L8g==
+X-Google-Smtp-Source: AGHT+IFf/Zh0NlXXtN9wAY10vXACB6rCtubJlDY4asxnoJeKpZffZstGrb15pMO4Vwio4pfsAX3O1A==
+X-Received: by 2002:a05:6a21:3398:b0:18f:97c:614b with SMTP id yy24-20020a056a21339800b0018f097c614bmr11523777pzb.72.1702507498558;
+        Wed, 13 Dec 2023 14:44:58 -0800 (PST)
+Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
+        by smtp.gmail.com with ESMTPSA id y65-20020a636444000000b005b18c53d73csm10226393pgb.16.2023.12.13.14.44.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Dec 2023 14:44:58 -0800 (PST)
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <ECCDEA37-5F5F-4854-93FB-1C50213DCA6D@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_3B6D71F9-E993-4E4B-B2C8-31A613CAEFA0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
+ snapshots on muti-user systems?)
+Date: Wed, 13 Dec 2023 15:45:41 -0700
+In-Reply-To: <170242574922.12910.6678164161619832398@noble.neil.brown.name>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ David Howells <dhowells@redhat.com>,
+ Donald Buczek <buczek@molgen.mpg.de>,
+ linux-bcachefs@vger.kernel.org,
+ Stefan Krueger <stefan.krueger@aei.mpg.de>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Dave Chinner <david@fromorbit.com>
+To: NeilBrown <neilb@suse.de>
+References: <170199821328.12910.289120389882559143@noble.neil.brown.name>
+ <20231208013739.frhvlisxut6hexnd@moria.home.lan>
+ <170200162890.12910.9667703050904306180@noble.neil.brown.name>
+ <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
+ <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
+ <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <2799307.1702338016@warthog.procyon.org.uk>
+ <20231212205929.op6tq3pqobwmix5a@moria.home.lan>
+ <170242184299.12910.16703366490924138473@noble.neil.brown.name>
+ <20231212234348.ojllavmflwipxo2j@moria.home.lan>
+ <170242574922.12910.6678164161619832398@noble.neil.brown.name>
+X-Mailer: Apple Mail (2.3273)
 
-Extend set_mempolicy2 and mbind2 to support weighted interleave, and
-demonstrate the extensibility of the mpol_args structure.
 
-To support weighted interleave we add interleave weight fields to the
-following structures:
+--Apple-Mail=_3B6D71F9-E993-4E4B-B2C8-31A613CAEFA0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Kernel Internal:  (include/linux/mempolicy.h)
-struct mempolicy {
-	/* task-local weights to apply to weighted interleave */
-	unsigned char weights[MAX_NUMNODES];
-}
-struct mempolicy_args {
-	/* Optional: interleave weights for MPOL_WEIGHTED_INTERLEAVE */
-	unsigned char *il_weights;	/* of size MAX_NUMNODES */
-}
+On Dec 12, 2023, at 5:02 PM, NeilBrown <neilb@suse.de> wrote:
+>=20
+> On Wed, 13 Dec 2023, Kent Overstreet wrote:
+>> On Wed, Dec 13, 2023 at 09:57:22AM +1100, NeilBrown wrote:
+>>> On Wed, 13 Dec 2023, Kent Overstreet wrote:
+>>>> On Mon, Dec 11, 2023 at 11:40:16PM +0000, David Howells wrote:
+>>>>> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>>>>>=20
+>>>>>> I was chatting a bit with David Howells on IRC about this, and =
+floated
+>>>>>> adding the file handle to statx. It looks like there's enough =
+space
+>>>>>> reserved to make this feasible - probably going with a fixed =
+maximum
+>>>>>> size of 128-256 bits.
+>>>>>=20
+>>>>> We can always save the last bit to indicate extension =
+space/extension record,
+>>>>> so we're not that strapped for space.
+>>>>=20
+>>>> So we'll need that if we want to round trip NFSv4 filehandles, they
+>>>> won't fit in existing struct statx (nfsv4 specs 128 bytes, statx =
+has 96
+>>>> bytes reserved).
+>>>>=20
+>>>> Obvious question (Neal): do/will real world implementations ever =
+come
+>>>> close to making use of this, or was this a "future proofing gone =
+wild"
+>>>> thing?
+>>>=20
+>>> I have no useful data.  I have seen lots of filehandles but I don't =
+pay
+>>> much attention to their length.  Certainly some are longer than 32 =
+bytes.
+>>>=20
+>>>>=20
+>>>> Say we do decide we want to spec it that large: _can_ we extend =
+struct
+>>>> statx? I'm wondering if the userspace side was thought through, I'm
+>>>> sure glibc people will have something to say.
+>>>=20
+>>> The man page says:
+>>>=20
+>>>     Therefore, do not simply set mask to UINT_MAX (all bits set), as
+>>>     one or more bits may, in the future, be used to specify an
+>>>     extension to the buffer.
+>>>=20
+>>> I suspect the glibc people read that.
+>>=20
+>> The trouble is that C has no notion of which types are safe to pass
+>> across a dynamic library boundary, so if we increase the size of =
+struct
+>> statx and someone's doing that things will break in nasty ways.
+>>=20
+>=20
+> Maybe we don't increase the size of struct statx.
+> Maybe we declare
+>=20
+>   struct statx2 {
+>     struct statx base;
+>     __u8 stx_handle[128];
+>   }
+>=20
+> and pass then when we request STX_HANDLE.
 
-UAPI: (/include/uapi/linux/mempolicy.h)
-struct mpol_args {
-	/* Optional: interleave weights for MPOL_WEIGHTED_INTERLEAVE */
-	unsigned char *il_weights;	/* of size pol_max_nodes */
-}
+This would be extremely fragile, in the sense that "struct statx2" =
+breaks
+if "struct statx" adds any fields.
 
-The task-local weights are a single, one-dimensional array of weights
-that apply to all possible nodes on the system.  If a node is set in
-the mempolicy nodemask, the weight in `il_weights` must be >= 1,
-otherwise set_mempolicy2() will return -EINVAL.  If a node is not
-set in pol_nodemask, the weight will default to `1` in the task policy.
 
-The default value of `1` is required to handle the situation where a
-task migrates to a set of nodes for which weights were not set (up to
-and including the local numa node).  For example, a migrated task whose
-nodemask changes entirely will have all its weights defaulted back
-to `1`, or if the nodemask changes to include a mix of nodes that
-were not previously accounted for - the weighted interleave may be
-suboptimal.
+Not getting into the question of whether the FH _should_ be added to =
+statx
+or not, but I wanted to chime in on the discussion about statx being =
+able
+to add new fields.
 
-If migrations are expected, a task should prefer not to use task-local
-interleave weights, and instead utilize the global settings for natural
-re-weighting on migration.
+The answer is definitely yes.  Callers are expected to set STATX_* flags
+for any fields that they are interested in, so if the caller were to set
+STATX_FILE_HANDLE in the request, then it is expected they understand =
+this
+flag and have allocated a large enough struct statx to hold =
+stx_file_handle
+in the reply.
 
-To support global vs local weighting,  we add the kernel-internal flag:
-MPOL_F_GWEIGHT (1 << 5) /* Utilize global weights */
+Apps that don't need/want stx_file_handle should not set =
+STATX_FILE_HANDLE
+and then the kernel won't spend time to fill this in, the same as other
+fields that may have overhead, like stx_size.  That should avoid =
+concerns
+from Dave that this adds overhead to the hot path.  Most apps won't need =
+or
+want this field, but apps that *do* want it would be better served =
+getting
+it in a single syscall instead of two (and avoid potential TOCTOU =
+races).
 
-This flag is set when il_weights is omitted by set_mempolicy2(), or
-when MPOL_WEIGHTED_INTERLEAVE is set by set_mempolicy(). This internal
-mode_flag dictates whether global weights or task-local weights are
-utilized by the the various weighted interleave functions:
 
-* weighted_interleave_nodes
-* weighted_interleave_nid
-* alloc_pages_bulk_array_weighted_interleave
+It should be possible for userspace and the kernel to increase the size =
+of
+struct statx independently, and not have any issues.  If userspace =
+requests
+a field via STATX_* flags that the kernel doesn't understand, then it =
+will
+be masked out by the kernel, and any extended fields in the struct will =
+not
+be referenced.  Likewise, if the kernel understands more fields than =
+what
+userspace requests, it shouldn't spend time to fill in those fields, =
+since
+userspace will ignores them anyway, so it is just wasted cycles.
 
-if (pol->flags & MPOL_F_GWEIGHT)
-	pol_weights = iw_table;
-else
-	pol_weights = pol->wil.weights;
 
-To simplify creations and duplication of mempolicies, the weights are
-added as a structure directly within mempolicy. This allows the
-existing logic in __mpol_dup to copy the weights without additional
-allocations:
 
-if (old == current->mempolicy) {
-	task_lock(current);
-	*new = *old;
-	task_unlock(current);
-} else
-	*new = *old
+Not going into whether statx _should_ handle variable-sized fields, but
+it _could_ do so, though it would make struct handling a bit more =
+complex.
 
-Suggested-by: Rakie Kim <rakie.kim@sk.com>
-Suggested-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
-Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
-Signed-off-by: Gregory Price <gregory.price@memverge.com>
-Co-developed-by: Rakie Kim <rakie.kim@sk.com>
-Signed-off-by: Rakie Kim <rakie.kim@sk.com>
-Co-developed-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Co-developed-by: Honggyu Kim <honggyu.kim@sk.com>
-Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-Co-developed-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
-Signed-off-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
----
- .../admin-guide/mm/numa_memory_policy.rst     |  10 ++
- include/linux/mempolicy.h                     |   2 +
- include/uapi/linux/mempolicy.h                |   2 +
- mm/mempolicy.c                                | 129 +++++++++++++++++-
- 4 files changed, 139 insertions(+), 4 deletions(-)
+Adding "__u32 stx_file_handle_size" and "__u32 stx_file_handle_offset"
+(relative to the start of the struct) to encode where the variable sized
+handle data would be packed at the end after fixed-size fields (aligned
+on a __u64 boundary to avoid issues if there are multiple such fields).
+Userspace would indicate the maximum size of file handle it expects via
+(stx_file_handle_offset + stx_file_handle_size).  The kernel would be at
+liberty to pack "struct file_handle" at that offset, or after the end of
+whatever fields are actually used, and userspace would use this to =
+access
+the handle.
 
-diff --git a/Documentation/admin-guide/mm/numa_memory_policy.rst b/Documentation/admin-guide/mm/numa_memory_policy.rst
-index 99e1f732cade..0e91efe9e769 100644
---- a/Documentation/admin-guide/mm/numa_memory_policy.rst
-+++ b/Documentation/admin-guide/mm/numa_memory_policy.rst
-@@ -254,6 +254,8 @@ MPOL_WEIGHTED_INTERLEAVE
- 	This mode operates the same as MPOL_INTERLEAVE, except that
- 	interleaving behavior is executed based on weights set in
- 	/sys/kernel/mm/mempolicy/weighted_interleave/
-+	when configured to utilize global weights, or based on task-local
-+	weights configured with set_mempolicy2(2) or mbind2(2).
- 
- 	Weighted interleave allocations pages on nodes according to
- 	their weight.  For example if nodes [0,1] are weighted [5,2]
-@@ -261,6 +263,13 @@ MPOL_WEIGHTED_INTERLEAVE
- 	2 pages allocated on node1.  This can better distribute data
- 	according to bandwidth on heterogeneous memory systems.
- 
-+	When utilizing task-local weights, weights are not rebalanced
-+	in the event of a task migration.  If a weight has not been
-+	explicitly set for a node set in the new nodemask, the
-+	value of that weight defaults to "1".  For this reason, if
-+	migrations are expected or possible, users should consider
-+	utilizing global interleave weights.
-+
- NUMA memory policy supports the following optional mode flags:
- 
- MPOL_F_STATIC_NODES
-@@ -514,6 +523,7 @@ Extended Mempolicy Arguments::
- 		__u16 mode_flags;
- 		__s32 home_node; /* mbind2: policy home node */
- 		__aligned_u64 pol_nodes; /* nodemask pointer */
-+		__aligned_u64 il_weights;  /* u8 buf of size pol_maxnodes */
- 		__u64 pol_maxnodes;
- 		__s32 policy_node; /* get_mempolicy2: policy node information */
- 	};
-diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
-index aeac19dfc2b6..387c5c418a66 100644
---- a/include/linux/mempolicy.h
-+++ b/include/linux/mempolicy.h
-@@ -58,6 +58,7 @@ struct mempolicy {
- 	/* Weighted interleave settings */
- 	struct {
- 		unsigned char cur_weight;
-+		unsigned char weights[MAX_NUMNODES];
- 	} wil;
- };
- 
-@@ -70,6 +71,7 @@ struct mempolicy_args {
- 	unsigned short mode_flags;	/* policy mode flags */
- 	int home_node;			/* mbind: use MPOL_MF_HOME_NODE */
- 	nodemask_t *policy_nodes;	/* get/set/mbind */
-+	unsigned char *il_weights;	/* for mode MPOL_WEIGHTED_INTERLEAVE */
- 	int policy_node;		/* get: policy node information */
- };
- 
-diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
-index ec1402dae35b..16fedf966166 100644
---- a/include/uapi/linux/mempolicy.h
-+++ b/include/uapi/linux/mempolicy.h
-@@ -33,6 +33,7 @@ struct mpol_args {
- 	__u16 mode_flags;
- 	__s32 home_node;	/* mbind2: policy home node */
- 	__aligned_u64 pol_nodes;
-+	__aligned_u64 il_weights; /* size: pol_maxnodes * sizeof(char) */
- 	__u64 pol_maxnodes;
- 	__s32 policy_node;	/* get_mempolicy: policy node info */
- };
-@@ -75,6 +76,7 @@ struct mpol_args {
- #define MPOL_F_SHARED  (1 << 0)	/* identify shared policies */
- #define MPOL_F_MOF	(1 << 3) /* this policy wants migrate on fault */
- #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
-+#define MPOL_F_GWEIGHT	(1 << 5) /* Utilize global weights */
- 
- /*
-  * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 68ea8e177217..15d047098429 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -271,6 +271,7 @@ static struct mempolicy *mpol_new(struct mempolicy_args *args)
- 	unsigned short mode = args->mode;
- 	unsigned short flags = args->mode_flags;
- 	nodemask_t *nodes = args->policy_nodes;
-+	int node;
- 
- 	if (mode == MPOL_DEFAULT) {
- 		if (nodes && !nodes_empty(*nodes))
-@@ -297,6 +298,19 @@ static struct mempolicy *mpol_new(struct mempolicy_args *args)
- 		    (flags & MPOL_F_STATIC_NODES) ||
- 		    (flags & MPOL_F_RELATIVE_NODES))
- 			return ERR_PTR(-EINVAL);
-+	} else if (mode == MPOL_WEIGHTED_INTERLEAVE) {
-+		/* weighted interleave requires a nodemask and weights > 0 */
-+		if (nodes_empty(*nodes))
-+			return ERR_PTR(-EINVAL);
-+		if (args->il_weights) {
-+			node = first_node(*nodes);
-+			while (node != MAX_NUMNODES) {
-+				if (!args->il_weights[node])
-+					return ERR_PTR(-EINVAL);
-+				node = next_node(node, *nodes);
-+			}
-+		} else if (!(args->mode_flags & MPOL_F_GWEIGHT))
-+			return ERR_PTR(-EINVAL);
- 	} else if (nodes_empty(*nodes))
- 		return ERR_PTR(-EINVAL);
- 
-@@ -309,6 +323,17 @@ static struct mempolicy *mpol_new(struct mempolicy_args *args)
- 	policy->home_node = args->home_node;
- 	policy->wil.cur_weight = 0;
- 
-+	if (policy->mode == MPOL_WEIGHTED_INTERLEAVE && args->il_weights) {
-+		policy->wil.cur_weight = 0;
-+		/* Minimum weight value is always 1 */
-+		memset(policy->wil.weights, 1, MAX_NUMNODES);
-+		node = first_node(*nodes);
-+		while (node != MAX_NUMNODES) {
-+			policy->wil.weights[node] = args->il_weights[node];
-+			node = next_node(node, *nodes);
-+		}
-+	}
-+
- 	return policy;
- }
- 
-@@ -937,6 +962,17 @@ static void do_get_mempolicy_nodemask(struct mempolicy *pol, nodemask_t *nmask)
- 	}
- }
- 
-+static void do_get_mempolicy_il_weights(struct mempolicy *pol,
-+					unsigned char weights[MAX_NUMNODES])
-+{
-+	if (pol->mode != MPOL_WEIGHTED_INTERLEAVE)
-+		memset(weights, 0, MAX_NUMNODES);
-+	else if (pol->flags & MPOL_F_GWEIGHT)
-+		memcpy(weights, iw_table, MAX_NUMNODES);
-+	else
-+		memcpy(weights, pol->wil.weights, MAX_NUMNODES);
-+}
-+
- /* Retrieve NUMA policy for a VMA assocated with a given address  */
- static long do_get_vma_mempolicy(unsigned long addr, int *addr_node,
- 				 struct mempolicy_args *args)
-@@ -973,6 +1009,9 @@ static long do_get_vma_mempolicy(unsigned long addr, int *addr_node,
- 	if (args->policy_nodes)
- 		do_get_mempolicy_nodemask(pol, args->policy_nodes);
- 
-+	if (args->il_weights)
-+		do_get_mempolicy_il_weights(pol, args->il_weights);
-+
- 	if (pol != &default_policy) {
- 		mpol_put(pol);
- 		mpol_cond_put(pol);
-@@ -999,6 +1038,9 @@ static long do_get_task_mempolicy(struct mempolicy_args *args)
- 	if (args->policy_nodes)
- 		do_get_mempolicy_nodemask(pol, args->policy_nodes);
- 
-+	if (args->il_weights)
-+		do_get_mempolicy_il_weights(pol, args->il_weights);
-+
- 	return 0;
- }
- 
-@@ -1521,6 +1563,9 @@ static long kernel_mbind(unsigned long start, unsigned long len,
- 	if (err)
- 		return err;
- 
-+	if (mode & MPOL_WEIGHTED_INTERLEAVE)
-+		mode_flags |= MPOL_F_GWEIGHT;
-+
- 	memset(&margs, 0, sizeof(margs));
- 	margs.mode = lmode;
- 	margs.mode_flags = mode_flags;
-@@ -1611,6 +1656,8 @@ SYSCALL_DEFINE5(mbind2, unsigned long, start, unsigned long, len,
- 	struct mempolicy_args margs;
- 	nodemask_t policy_nodes;
- 	unsigned long __user *nodes_ptr;
-+	unsigned char weights[MAX_NUMNODES];
-+	unsigned char __user *weights_ptr;
- 	int err;
- 
- 	if (!start || !len)
-@@ -1643,6 +1690,23 @@ SYSCALL_DEFINE5(mbind2, unsigned long, start, unsigned long, len,
- 		return err;
- 	margs.policy_nodes = &policy_nodes;
- 
-+	if (kargs.mode == MPOL_WEIGHTED_INTERLEAVE) {
-+		weights_ptr = u64_to_user_ptr(kargs.il_weights);
-+		if (weights_ptr) {
-+			err = copy_struct_from_user(weights,
-+						    sizeof(weights),
-+						    weights_ptr,
-+						    kargs.pol_maxnodes);
-+			if (err)
-+				return err;
-+			margs.il_weights = weights;
-+		} else {
-+			margs.il_weights = NULL;
-+			margs.mode_flags |= MPOL_F_GWEIGHT;
-+		}
-+	} else
-+		margs.il_weights = NULL;
-+
- 	return do_mbind(untagged_addr(start), len, &margs, flags);
- }
- 
-@@ -1664,6 +1728,9 @@ static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
- 	if (err)
- 		return err;
- 
-+	if (mode & MPOL_WEIGHTED_INTERLEAVE)
-+		mode_flags |= MPOL_F_GWEIGHT;
-+
- 	memset(&args, 0, sizeof(args));
- 	args.mode = lmode;
- 	args.mode_flags = mode_flags;
-@@ -1687,6 +1754,8 @@ SYSCALL_DEFINE3(set_mempolicy2, struct mpol_args __user *, uargs, size_t, usize,
- 	int err;
- 	nodemask_t policy_nodemask;
- 	unsigned long __user *nodes_ptr;
-+	unsigned char weights[MAX_NUMNODES];
-+	unsigned char __user *weights_ptr;
- 
- 	if (flags)
- 		return -EINVAL;
-@@ -1712,6 +1781,20 @@ SYSCALL_DEFINE3(set_mempolicy2, struct mpol_args __user *, uargs, size_t, usize,
- 	} else
- 		margs.policy_nodes = NULL;
- 
-+	if (kargs.mode == MPOL_WEIGHTED_INTERLEAVE && kargs.il_weights) {
-+		weights_ptr = u64_to_user_ptr(kargs.il_weights);
-+		err = copy_struct_from_user(weights,
-+					    sizeof(weights),
-+					    weights_ptr,
-+					    kargs.pol_maxnodes);
-+		if (err)
-+			return err;
-+		margs.il_weights = weights;
-+	} else {
-+		margs.il_weights = NULL;
-+		margs.mode_flags |= MPOL_F_GWEIGHT;
-+	}
-+
- 	return do_set_mempolicy(&margs);
- }
- 
-@@ -1914,17 +1997,25 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_args __user *, uargs, size_t, usize,
- 	int err;
- 	nodemask_t policy_nodemask;
- 	unsigned long __user *nodes_ptr;
-+	unsigned char __user *weights_ptr;
-+	unsigned char weights[MAX_NUMNODES];
- 
- 	if (flags & ~(MPOL_F_ADDR))
- 		return -EINVAL;
- 
- 	/* initialize any memory liable to be copied to userland */
- 	memset(&margs, 0, sizeof(margs));
-+	memset(weights, 0, sizeof(weights));
- 
- 	err = copy_struct_from_user(&kargs, sizeof(kargs), uargs, usize);
- 	if (err)
- 		return -EINVAL;
- 
-+	if (kargs.il_weights)
-+		margs.il_weights = weights;
-+	else
-+		margs.il_weights = NULL;
-+
- 	margs.policy_nodes = kargs.pol_nodes ? &policy_nodemask : NULL;
- 	if (flags & MPOL_F_ADDR)
- 		err = do_get_vma_mempolicy(untagged_addr(addr), NULL, &margs);
-@@ -1946,6 +2037,13 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_args __user *, uargs, size_t, usize,
- 			return err;
- 	}
- 
-+	if (kargs.mode == MPOL_WEIGHTED_INTERLEAVE && kargs.il_weights) {
-+		weights_ptr = u64_to_user_ptr(kargs.il_weights);
-+		err = copy_to_user(weights_ptr, weights, kargs.pol_maxnodes);
-+		if (err)
-+			return err;
-+	}
-+
- 	return copy_to_user(uargs, &kargs, usize) ? -EFAULT : 0;
- }
- 
-@@ -2062,13 +2160,18 @@ static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
- {
- 	unsigned int next;
- 	struct task_struct *me = current;
-+	unsigned char next_weight;
- 
- 	next = next_node_in(me->il_prev, policy->nodes);
- 	if (next == MAX_NUMNODES)
- 		return next;
- 
--	if (!policy->wil.cur_weight)
--		policy->wil.cur_weight = iw_table[next];
-+	if (!policy->wil.cur_weight) {
-+		next_weight = (policy->flags & MPOL_F_GWEIGHT) ?
-+				iw_table[next] :
-+				policy->wil.weights[next];
-+		policy->wil.cur_weight = next_weight ? next_weight : 1;
-+	}
- 
- 	policy->wil.cur_weight--;
- 	if (!policy->wil.cur_weight)
-@@ -2142,6 +2245,7 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
- 	nodemask_t nodemask = pol->nodes;
- 	unsigned int target, weight_total = 0;
- 	int nid;
-+	unsigned char *pol_weights;
- 	unsigned char weights[MAX_NUMNODES];
- 	unsigned char weight;
- 
-@@ -2153,8 +2257,13 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
- 		return nid;
- 
- 	/* Then collect weights on stack and calculate totals */
-+	if (pol->flags & MPOL_F_GWEIGHT)
-+		pol_weights = iw_table;
-+	else
-+		pol_weights = pol->wil.weights;
-+
- 	for_each_node_mask(nid, nodemask) {
--		weight = iw_table[nid];
-+		weight = pol_weights[nid];
- 		weight_total += weight;
- 		weights[nid] = weight;
- 	}
-@@ -2552,6 +2661,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 	unsigned long nr_allocated;
- 	unsigned long rounds;
- 	unsigned long node_pages, delta;
-+	unsigned char *pol_weights;
- 	unsigned char weight;
- 	unsigned char weights[MAX_NUMNODES];
- 	unsigned int weight_total = 0;
-@@ -2565,9 +2675,14 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 
- 	nnodes = nodes_weight(nodes);
- 
-+	if (pol->flags & MPOL_F_GWEIGHT)
-+		pol_weights = iw_table;
-+	else
-+		pol_weights = pol->wil.weights;
-+
- 	/* Collect weights and save them on stack so they don't change */
- 	for_each_node_mask(node, nodes) {
--		weight = iw_table[node];
-+		weight = pol_weights[node];
- 		weight_total += weight;
- 		weights[node] = weight;
- 	}
-@@ -3092,6 +3207,7 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- {
- 	int ret;
- 	struct mempolicy_args margs;
-+	unsigned char weights[MAX_NUMNODES];
- 
- 	sp->root = RB_ROOT;		/* empty tree == default mempolicy */
- 	rwlock_init(&sp->lock);
-@@ -3109,6 +3225,11 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
- 		margs.mode_flags = mpol->flags;
- 		margs.policy_nodes = &mpol->w.user_nodemask;
- 		margs.home_node = NUMA_NO_NODE;
-+		if (margs.mode == MPOL_WEIGHTED_INTERLEAVE &&
-+		    !(margs.mode_flags & MPOL_F_GWEIGHT)) {
-+			memcpy(weights, mpol->wil.weights, sizeof(weights));
-+			margs.il_weights = weights;
-+		}
- 
- 		/* contextualize the tmpfs mount point mempolicy to this file */
- 		npol = mpol_new(&margs);
--- 
-2.39.1
+Not pretty, but probably better than reserving a huge fixed size field
+that is not needed for most case (is NFS intending a server on every
+sub-atomic particle in the universe?).  This would allow apps to access
+fields after stx_file_handle_size/offset normally, and only compute a
+simple offset to access the variable sized blob as needed.  The presence
+of STATX_FILE_HANDLE would indicate if the size/offset fields were valid
+upon return (since an old kernel would not zero the fields).
 
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_3B6D71F9-E993-4E4B-B2C8-31A613CAEFA0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmV6NBYACgkQcqXauRfM
+H+C8Dw//XGfgCZJzoJX5Hi+UNFfjpLMJ5T3KfKH8xakhKMNDhM11Kgp9ShOAXy2b
+MktsoWX8b9c+aNOH+bVAx16Clj/DKMxEjPeGGTztVse5GrhZ8r+g1aGCnTf+kgtq
+eIu+prD9uOflIa4BpLImI9/aD3jIn6OJVLuxVhIcNSlT6kXXB3sk6hNYn7LUorgc
+IIdPYGzQnNvljasDVcv/Mveo6VCgluMr+o/mMeHr/OKJCODFfZv15S21pqnPv7EW
+68zLt5yqWLZzhLWiPgtYLsLS6ZtsvUoV9w8JVLwQWSz1bP17g7TdqWo5B9DTSLgI
+v9y/ovmWbttOi6m+21hVW+tVYcAaHLE86DmPdGjXTFHNWQurqsoGGU0txItk5UHH
+bSMyEE/HLBiQ+d/OOZCDfiFt6o20d8M799x8XXlg53cob5uSIgyGdkZ6A8DFbcSn
+QWvpTMQuFMJBA4jjrTSel0xaZVscKKm6XX/4nq+sR3lbG1koT3CyQ6xht7LGv1EC
+CIlysQ8BPGd2l3irv1chIUJT9DZWC7f/iifQyof5cBHkEfYVt7b1pKMWdUjt/xwT
+MoJsJlGY8tT2OE+PtH68aT6+I99seX7P2+0EBncb4V26K+CEbiGqXzN/ufhoxIgt
+fqE/9gIupMiuVjNwocIvJQw0rWNWGHfkHoeHt+vWK0aBdLqD35E=
+=Y0hw
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_3B6D71F9-E993-4E4B-B2C8-31A613CAEFA0--
 
