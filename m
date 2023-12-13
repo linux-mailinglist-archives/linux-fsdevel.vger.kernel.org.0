@@ -1,109 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-5819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF09B810CDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:00:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EEA810D16
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0BD1C2081F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 09:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42DE2814AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 09:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8291EB47;
-	Wed, 13 Dec 2023 09:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2221EB5C;
+	Wed, 13 Dec 2023 09:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRMKY1Cj"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="TNE8211i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD21EB3C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 09:00:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71122C433C9;
-	Wed, 13 Dec 2023 09:00:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702458021;
-	bh=KYg70uTTMCVbbybOUe4N/VTYl2TBfccDvrHX9QOYSpI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QRMKY1CjqdvbZ0fbr2tBAwGIzwJ4uuPaNCuYkelu9eHILPcC0WvZTScIzOI0dNK6V
-	 p1zR4KyknBgnnd5nC0szCG01DrkV10nVXhXEHNpRgKjg6a7oiP96Z57Ac5xlStWol6
-	 NVYSF2Rjf0QHrI7WipJ/iT1qYwm5S7kVASmGKI9t0uZifTt31XCU1DFiWWkMMO6pBo
-	 un3hUZCgfnLgjKqP9Bhj6on6scYXyuwRyLSPZKGkH7na7rgPBgSx7s4aeZUv65A7kH
-	 eJgltZHbSlNr5p2rGIBgU9stsuQBnnQXq21MW1fKdlqy4KK3mgRuurRBFCKEoqMB66
-	 f/f8r09VGOqxQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Jan Kara <jack@suse.cz>,
-	Ian Kent <raven@themaw.net>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	"Seth Forshee (DigitalOcean)" <sforshee@kernel.org>,
-	Dave Chinner <dchinner@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] statmount: reduce runtime stack usage
-Date: Wed, 13 Dec 2023 10:00:03 +0100
-Message-Id: <20231213090015.518044-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0104BAD;
+	Wed, 13 Dec 2023 01:12:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1702458773; x=1702717973;
+	bh=MEAwN2FYlBpSwYoH9a2PEuQpzLdTwET0cZNUdnLD5cQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=TNE8211i36nwjpY1JK6pg5ubksVz22Xteuzh7eG3Dx6D16cLt/98MFjBnFFh0TYDI
+	 u88OAAePGhRGa1h2qs7ZKQT72O/Psf9cAk/QNwVGPO1Kx/6qw4FYvta40OW/JXdijc
+	 IPFVOXjaJO1vn9+28PLVCW4oMrgQAh4kiNIjKNgIBkL9kQUPb0b7IMukn1nRU3zxE9
+	 NjMx1ToEuUf5AoW56NP9I8bh8QZ1CM2Ti7r4cKaFC1dYWPzF+/OTaQtGMAhDh8FPWZ
+	 0pkNK965rJf6+yPB2kv7avltEGgYoMJQzna+9Fc/i8GGszfqGnjoe969P9ZBNyPKJ9
+	 XatbtEdnyTAig==
+Date: Wed, 13 Dec 2023 09:12:45 +0000
+To: Boqun Feng <boqun.feng@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
+Message-ID: <pxtBsqlawLf52Escu7kGkCv1iEorWkE4-g8Ke_IshhejEYz5zZGGX5q98hYtU_YGubwk770ufUezNXFB_GJFMnZno5G7OGuF2oPAOoVAGgc=@proton.me>
+In-Reply-To: <ZXkKTSTCuQMt2ge6@boqun-archlinux>
+References: <20231206-alice-file-v2-0-af617c0d9d94@google.com> <20231206-alice-file-v2-7-af617c0d9d94@google.com> <k_vpgbqKAKoTFzJIBCjvgxGhX73kgkcv6w9kru78lBmTjHHvXPy05g8KxAKJ-ODARBxlZUp3a5e4F9TemGqQiskkwFCpTOhzxlvy378tjHM=@proton.me> <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com> <E-jdYd0FVvs15f_pEC0Fo6k2DByCDEQoh_Ux9P9ldmC-otCvUfQghkJOUkiAi8gDI8J47wAaDe56XYC5NiJhuohyhIklGAWMvv9v1qi6yYM=@proton.me> <ZXkKTSTCuQMt2ge6@boqun-archlinux>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 12/13/23 02:35, Boqun Feng wrote:
+> On Tue, Dec 12, 2023 at 05:01:28PM +0000, Benno Lossin wrote:
+>> On 12/12/23 10:59, Alice Ryhl wrote:
+>>> On Fri, Dec 8, 2023 at 6:53=E2=80=AFPM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>>>> On 12/6/23 12:59, Alice Ryhl wrote:
+>>>>> +    fn get_qproc(&self) -> bindings::poll_queue_proc {
+>>>>> +        let ptr =3D self.0.get();
+>>>>> +        // SAFETY: The `ptr` is valid because it originates from a r=
+eference, and the `_qproc`
+>>>>> +        // field is not modified concurrently with this call since w=
+e have an immutable reference.
+>>>>
+>>>> This needs an invariant on `PollTable` (i.e. `self.0` is valid).
+>>>
+>>> How would you phrase it?
+>>
+>> - `self.0` contains a valid `bindings::poll_table`.
+>> - `self.0` is only modified via references to `Self`.
+>>
+>>>>> +        unsafe { (*ptr)._qproc }
+>>>>> +    }
+>>>>> +
+>>>>> +    /// Register this [`PollTable`] with the provided [`PollCondVar`=
+], so that it can be notified
+>>>>> +    /// using the condition variable.
+>>>>> +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
+>>>>> +        if let Some(qproc) =3D self.get_qproc() {
+>>>>> +            // SAFETY: The pointers to `self` and `file` are valid b=
+ecause they are references.
+>>>>
+>>>> What about cv.wait_list...
+>>>
+>>> I can add it to the list of things that are valid due to references.
+>>
+>=20
+> Actually, there is an implied safety requirement here, it's about how
+> qproc is implemented. As we can see, PollCondVar::drop() will wait for a
+> RCU grace period, that means the waiter (a file or something) has to use
+> RCU to access the cv.wait_list, otherwise, the synchronize_rcu() in
+> PollCondVar::drop() won't help.
 
-prepare_kstatmount() constructs a copy of 'struct kstatmount' on the stack
-and copies it into the local variable on the stack of its caller. Because
-of the size of this structure, this ends up overflowing the limit for
-a single function's stack frame when prepare_kstatmount() gets inlined
-and both copies are on the same frame without the compiler being able
-to collapse them into one:
+Good catch, this is rather important. I did not find the implementation
+of `qproc`, since it is a function pointer. Since this pattern is
+common, what is the way to find the implementation of those in general?
 
-fs/namespace.c:4995:1: error: stack frame size (1536) exceeds limit (1024) in '__se_sys_statmount' [-Werror,-Wframe-larger-than]
- 4995 | SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+I imagine that the pattern is used to enable dynamic selection of the
+concrete implementation, but there must be some general specification of
+what the function does, is this documented somewhere?
 
-Replace the assignment with an in-place memset() plus assignment that
-should always be more efficient for both stack usage and runtime cost.
+> To phrase it, it's more like:
+>=20
+> (in the safety requirement of `PollTable::from_ptr` and the type
+> invariant of `PollTable`):
+>=20
+> ", further, if the qproc function in poll_table publishs the pointer of
+> the wait_queue_head, it must publish it in a way that reads on the
+> published pointer have to be in an RCU read-side critical section."
 
-Fixes: 49889374ab92 ("statmount: simplify string option retrieval")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/namespace.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+What do you mean by `publish`?
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d036196f949c..159f1df379fc 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4957,15 +4957,12 @@ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
- 	if (!access_ok(buf, bufsize))
- 		return -EFAULT;
- 
--	*ks = (struct kstatmount){
--		.mask		= kreq->param,
--		.buf		= buf,
--		.bufsize	= bufsize,
--		.seq = {
--			.size	= seq_size,
--			.buf	= kvmalloc(seq_size, GFP_KERNEL_ACCOUNT),
--		},
--	};
-+	memset(ks, 0, sizeof(*ks));
-+	ks->mask = kreq->param;
-+	ks->buf = buf;
-+	ks->bufsize = bufsize;
-+	ks->seq.size = seq_size;
-+	ks->seq.buf = kvmalloc(seq_size, GFP_KERNEL_ACCOUNT);
- 	if (!ks->seq.buf)
- 		return -ENOMEM;
- 	return 0;
--- 
-2.39.2
+> and here we can said,
+>=20
+> "per type invariant, `qproc` cannot publish `cv.wait_list` without
+> proper RCU protection, so it's safe to use `cv.wait_list` here, and with
+> the synchronize_rcu() in PollCondVar::drop(), free of the wait_list will
+> be delayed until all usages are done."
 
+I think I am missing how the call to `__wake_up_pollfree` ensures that
+nobody uses the `PollCondVar` any longer. How is it removed from the
+table?
+
+--=20
+Cheers,
+Benno
+
+> I know, this is quite verbose, but just imagine some one removes the
+> rcu_read_lock() and rcu_read_unlock() in ep_remove_wait_queue(), the
+> poll table from epoll (using ep_ptable_queue_proc()) is still valid one
+> according to the current safety requirement, but now there is a
+> use-after-free in the following case:
+>=20
+> =09CPU 0                        CPU1
+> =09                             ep_remove_wait_queue():
+> =09=09=09=09       struct wait_queue_head *whead;
+> =09                               whead =3D smp_load_acquire(...);
+> =09                               if (whead) { // not null
+> =09PollCondVar::drop():
+> =09  __wake_pollfree();
+> =09  synchronize_rcu(); // no current RCU readers, yay.
+> =09  <free the wait_queue_head>
+> =09                                 remove_wait_queue(whead, ...); // BOO=
+M, use-after-free
 
