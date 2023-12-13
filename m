@@ -1,167 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-5991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E62811BF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:09:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ACF811C29
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257FDB21100
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED571C21233
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216AF5A100;
-	Wed, 13 Dec 2023 18:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q2GcCXjA"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5799859551;
+	Wed, 13 Dec 2023 18:18:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32076107
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 10:08:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=Nwz1uIbomBE991r6kFnI9Xx0i9y6GbKeBjvJtumt8iE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q2GcCXjATEzjSTSYXHKbXeurOv5yespsSz0ml7JCsSLZqxVHAfvFb/s9tzIt1evnQhz4XLu9bqJKAIA0uPqHtwBjEm4XnLk+vTgaltgUQOZV9b1W/MFTK19WwGySEVVSWxIinyGwjgcfn6rt6N1Prk04cDhYw59eTJ+j6WHqWYBW89gv9guNPRowISjp1KdTZK0yQQSOaN/ST6QuKOTUrS+dNe9wV9evHwRGEg8E3f/cnG21gzKQW1iFofjp2sNHQcon30MXNzf0cSDA0rRHmMleNNc8aVqghAMr5Wu1H7beuwg8EOVCRgGJTca1PQes/0qpj5l4+dRgEZVJr8Dd4w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=+/TJOZ6srOEMVvhuufXWRh0/msMyFtSymbS2RoNkwdQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jb4TkrgIre+9ji4ewfMOvSl6OLiXVlIvDGCY4riHNE4MLKe9WNidkohEECUqi1Rj+Qb7ja4JfB+hQ40ROlFPoA8fvGkDMunhCHbDlqECIZqe8GSDuIRk7aiiUJr2lt24Ildhu6cfPmlG0xQaFKoBMU3d1eMhl4YbkeyYMarx51p/X154GQeYIUS0UYFGJ+itQukr9ZuIj9wSZwquwUhkkX57Z9zxapwJlT+CIq8zumYoL2AVtUI3C1OzYhHb+LO0BJUpi3iWPmjDvOtpwb+3RD3MejxooCgKRi5LKD51T+cIJGSdIazwoWLEXkSYTvyEk50NXe1ZWWeUO/rQULHZCg==
-X-YMail-OSG: ZY4uPfkVM1nL9XI0hibln_9cRAXR4K6ZlsvOdVR.ZIvGnWPklpsBsrntt6L3vuB
- 8VdYwHE9wV80Ll.nAtMpE0Dt8RTxtsJz3u1gWV4nsZUCwDRbJ8VkqeK9UWIeymWBXAu21aTTGAJG
- HT9hrQzNG4o0l0UTVb.HTb0EwxJ4ZoiWPfp.f9sXgrqtH_HPR.gPo8EQhfUG.moEDU299IyzYYt7
- H2VJ4gba07t4nhBg0hwMpeCMVVdYbSiF.b5JQtZ341VBE3Z_RClBvv03hzVGL5RPVg28ocD1tWZW
- qV8QkvM_DGUEgGH_7Ru7FhHBx6iH3dMwRvMjgsT12JGT5Liqqn2OkcxAOYm9eZ3ICnq4iC2WNqBE
- hjX1EwtFmRbH4wjQ7dtex2xphhuRPR8DrwR2167If94s7MNdj7LDf0.H3FXWsVdWHkKf.Gv0vYWu
- xhBt1kDDUTKBzbW0AAU4BylURMOtonvV1VLwhckz7CgtpkZ.7vdoMoCweN2aGa5lXotaRyseo8lC
- EdfNFXhOSOuckRGSrm6L9QixTrvg.48xgMjI1T_csZMPenPYNwuMI_TOZNvDCFzPjQ4vEl76fYuB
- CAgxOAvU80M8uHZQnLrXsGiLBUaANszyXIhM5zAlHQPVG8IBAJkKmqSR5Riy41WNhLHrMx1AxhaX
- c3WAjD.XYT_2sOD6re0MlrPH_3bI01ZyQFUtulQHTy2u7.odLifj3hGDEbJU.5Z._j7_qV9Nz6eF
- ijaFLsqsGe7Kwr0gXj1X20O1o5bkWa7rvy7rd9LFu2L_mrWOzJ.Mf6YQMdN5Tex7wFvZplvRQGTZ
- d7hRb9arVcB.ijSL4IIGKv5UBUmqej2Iz.LmKZFGPDMMcqRRK_Z8a01tIDb0ZHeDR4jTjtin.xqH
- zh_3sjv4rQ.rLL65jKk5YpQyZDSVRedQ8wrpFPuuQuFddHIunKuZoIHNTYHmDDnffbHzMgfzE6p2
- 0csSu.Y_21KcZjcvn9ECmQgvLobMz3Vud_qM_6s0yeOaw4nhTx9oy6UvZyRB.IG8aMuypMWYgVcs
- N13p6zGyc1pQK8XkxkXktpfNMU2.T6pu7bjZAIdFSXRAb3UFmmonKUr2PNf1I76HPdEKP.oRMCwC
- 7_kaH1kaQwi2d.P1uP0hoAAERtrJ_O6XN.85qafgWLRls_CRTlzNKNlzBRIE.GvDvFRe_njUnjAJ
- pof3DD3hOddOtKXQ721C59YmpyIetqf7dtAKPVAXhx6_dMur6n.PdX0AQzxFDlALEpKFdMIuIXsB
- 70lDIeAeUc.FDPFUL3F8tTR6EeYSEkVzhU3O0uBm1JFolTLTa16FiY87G70txBJjXU0HZidBxBht
- fzSugNDamX5gnlKPmb6zJeNBJWStv.j0GMv64EluNPOCWeVcH3cVTHAT1dFrDB7oXblC3Rum8j4v
- s7uHPuWZVY5OIehsAUS1Mrwj1xjXM.uTX8klNWSSxeJn.4pJgNHCrdw2xp5fhN2jrWMTNTxGCVVB
- YSyNVzm4wtWxaPLpUIclAPQ_Hur5.u3GQFVi9p4pKKM.8F12uF_sn166dxANn5LSuyF7LaCBEgPZ
- nuFUb5a0XV5QzqAt29KHaKpzJaHr54l5N2_V_7ZPiXVOnr5BzGOGGi.EwGm4.V.UKEFkC.an4kpS
- EwODjE3lu19jis0IwGrSZpQ_XP_H2oBdKNc1.XyNjfkKPduWiJOSGiixgDWenRKYnamM8kShG6YS
- qJvWikUacPnSTDzcwrUZaapwLMSlSBAXcQ6zXPwO1zrl7fjGsJga3hQMCh9HTvGNRmTuEr6LNeY_
- IO_eMH4VxsDi42uBI1W.33c6A4Kj1ZlwEfTC0V3yQeEKpYI4PNtMI3bI66EgCiawKiIffAXwauNe
- gV8B1JA9dIA6O9aSaWqCP9U9bnNn4JN1bKtAqdxn95NMCSPOeXSOofRUOsISQkz9ad_g3.tBd0V.
- 0JMpxvAN1olw2ZGSJWD4dVLRA2whVdwpIIxRisbaRSPB5bLiD2YtFx68SxJKwh8m8mf8ujQh5Y19
- HW0..VY6s2cZSXBnXqIRLzXcdZHD1vT_gGAG5h9ZadaHnCUMcRhVNjerK_UP7kIDDeruOMTHFNKO
- 17_iZeBREEot_D7mQh9g4RlApRvP6J0._dhqqVyBD4IjGrRsF0RqQe63FOe4dl1cOaME5zwmdNvd
- LF6_A9TI9WOEHe7Tp_96mVtICBAGWoIOCVf3QqJ1qhrL50oadzN.9BMhtjt0WfskACGhiyemIPKc
- 9qYreb0Lox2deMagqPuimHpY.9QOIyLBhw6nh1VyM_8MLPcf2OszolI2.YWdN
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0351f85c-4cc1-41cd-b475-55877dfed226
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:08:50 +0000
-Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 83a3aff6f9fe93ecbddc221ed9cc56f5;
-          Wed, 13 Dec 2023 18:08:48 +0000 (UTC)
-Message-ID: <9dc633d8-65a7-4b97-ab98-a21ada1d4ea5@schaufler-ca.com>
-Date: Wed, 13 Dec 2023 10:08:48 -0800
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C435AF;
+	Wed, 13 Dec 2023 10:18:12 -0800 (PST)
+Received: from in01.mta.xmission.com ([166.70.13.51]:55092)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rDToA-000YZK-3k; Wed, 13 Dec 2023 11:18:10 -0700
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:53124 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rDTo9-007oxM-1R; Wed, 13 Dec 2023 11:18:09 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,  Joel Granados
+ <j.granados@samsung.com>,  Kees Cook <keescook@chromium.org>,  "Gustavo A.
+ R. Silva" <gustavoars@kernel.org>,  Iurii Zaikin <yzaikin@google.com>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  linux-hardening@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org
+References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
+	<20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+	<20231207104357.kndqvzkhxqkwkkjo@localhost>
+	<fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
+	<20231208095926.aavsjrtqbb5rygmb@localhost>
+	<8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de>
+	<ZXlhkJm2KjCymcqu@bombadil.infradead.org>
+Date: Wed, 13 Dec 2023 12:18:00 -0600
+In-Reply-To: <ZXlhkJm2KjCymcqu@bombadil.infradead.org> (Luis Chamberlain's
+	message of "Tue, 12 Dec 2023 23:47:28 -0800")
+Message-ID: <87v8927yqv.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
- blob for integrity_iint_cache
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
- Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
- dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
- <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
- <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-XM-SPF: eid=1rDTo9-007oxM-1R;;;mid=<87v8927yqv.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX19i6qfGdObJtlqwV73cM5HlVuthNRxr54M=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Luis Chamberlain <mcgrof@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 472 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (2.4%), b_tie_ro: 10 (2.1%), parse: 1.41
+	(0.3%), extract_message_metadata: 26 (5.5%), get_uri_detail_list: 2.4
+	(0.5%), tests_pri_-2000: 39 (8.3%), tests_pri_-1000: 4.2 (0.9%),
+	tests_pri_-950: 1.79 (0.4%), tests_pri_-900: 1.50 (0.3%),
+	tests_pri_-90: 133 (28.2%), check_bayes: 132 (27.9%), b_tokenize: 12
+	(2.6%), b_tok_get_all: 9 (2.0%), b_comp_prob: 4.2 (0.9%),
+	b_tok_touch_all: 102 (21.6%), b_finish: 0.96 (0.2%), tests_pri_0: 238
+	(50.4%), check_dkim_signature: 0.50 (0.1%), check_dkim_adsp: 2.8
+	(0.6%), poll_dns_idle: 1.21 (0.3%), tests_pri_10: 2.3 (0.5%),
+	tests_pri_500: 9 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On 12/13/2023 2:45 AM, Roberto Sassu wrote:
-> On 17.11.23 21:57, Paul Moore wrote:
->> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
->>>
->>> ...
->>>
->>> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
->>> index 882fde2a2607..a5edd3c70784 100644
->>> --- a/security/integrity/iint.c
->>> +++ b/security/integrity/iint.c
->>> @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
->>>       return 0;
->>>   }
->>>   +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
->>> +    .lbs_inode = sizeof(struct integrity_iint_cache *),
->>> +};
->>
->> I'll admit that I'm likely missing an important detail, but is there
->> a reason why you couldn't stash the integrity_iint_cache struct
->> directly in the inode's security blob instead of the pointer?  For
->> example:
->>
->>    struct lsm_blob_sizes ... = {
->>      .lbs_inode = sizeof(struct integrity_iint_cache),
->>    };
->>
->>    struct integrity_iint_cache *integrity_inode_get(inode)
->>    {
->>      if (unlikely(!inode->isecurity))
->>        return NULL;
->
-> Ok, this caught my attention...
->
-> I see that selinux_inode() has it, but smack_inode() doesn't.
->
-> Some Smack code assumes that the inode security blob is always non-NULL:
->
-> static void init_inode_smack(struct inode *inode, struct smack_known
-> *skp)
-> {
->     struct inode_smack *isp = smack_inode(inode);
->
->     isp->smk_inode = skp;
->     isp->smk_flags = 0;
-> }
->
->
-> Is that intended? Should I add the check?
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
-Unless there's a case where inodes are created without calling
-security_inode_alloc() there should never be an inode without a
-security blob by the time you get to the Smack hook. That said,
-people seem inclined to take all sorts of shortcuts and create
-various "inodes" that aren't really inodes. I also see that SELinux
-doesn't check the blob for cred or file structures. And that I
-wrote the code in both cases.
+> On Mon, Dec 11, 2023 at 12:25:10PM +0100, Thomas Wei=C3=9Fschuh wrote:
+>> Before sending it I'd like to get feedback on the internal rework of the
+>> is_empty detection from you and/or Luis.
+>>=20
+>> https://git.sr.ht/~t-8ch/linux/commit/ea27507070f3c47be6febebe451bbb88f6=
+ea707e
+>> or the attached patch.
+>
+> Please send as a new patch as RFC and please ensure on the To field is
+> first "Eric W. Biederman" <ebiederm@xmission.com> with a bit more
+> elaborate commit log as suggested from my review below. If there are
+> any hidden things me and Joel could probably miss I'm sure Eric will
+> be easily able to spot it.
+>
+>> From ea27507070f3c47be6febebe451bbb88f6ea707e Mon Sep 17 00:00:00 2001
+>> From: =3D?UTF-8?q?Thomas=3D20Wei=3DC3=3D9Fschuh?=3D <linux@weissschuh.ne=
+t>
+>> Date: Sun, 3 Dec 2023 21:56:46 +0100
+>> Subject: [PATCH] sysctl: move permanently empty flag to ctl_dir
+>> MIME-Version: 1.0
+>> Content-Type: text/plain; charset=3DUTF-8
+>> Content-Transfer-Encoding: 8bit
+>>=20
+>> Simplify the logic by always keeping the permanently_empty flag on the
+>> ctl_dir.
+>> The previous logic kept the flag in the leaf ctl_table and from there
+>> transferred it to the ctl_table from the directory.
+>>=20
+>> This also removes the need to have a mutable ctl_table and will allow
+>> the constification of those structs.
 
-Based on lack of bug reports for Smack on inodes and SELinux on
-creds or files, It appears that the check is unnecessary. On the
-other hand, it sure looks like good error detection hygiene. I
-would be inclined to include the check in new code, but not get
-in a panic about existing code.
+> Please elaborate a bit more on this here in your next RFC.
 
->
-> Thanks
->
-> Roberto
->
->>      return inode->i_security + integrity_blob_sizes.lbs_inode;
->>    }
->>
->> -- 
->> paul-moore.com
->
->
+> It's a pretty aggressive cleanup, specially with the new hipster guard()
+> call but I'd love Eric's eyeballs on a proper v2.
+
+I will look at a v2 time permitting.
+
+My sense is that changing the locking probably make sense as a separate
+patch.
+
+Eric
 
