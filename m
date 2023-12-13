@@ -1,48 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-5803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9A98108F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 05:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78D88108F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 05:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA80B1C208E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 04:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11A4281CD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 04:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31810CA75;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A001CA65;
 	Wed, 13 Dec 2023 04:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0KKoY2j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0xUrrho"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C99DBE6D;
-	Wed, 13 Dec 2023 04:01:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D37EC433C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D831BE5F;
+	Wed, 13 Dec 2023 04:01:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB210C433CA;
 	Wed, 13 Dec 2023 04:01:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702440074;
-	bh=x1ouiu2WnKIQtV47erUmnthL70kDRsFLvcEjWZFRFeg=;
+	s=k20201202; t=1702440075;
+	bh=MXkG62tBxNzKaC2hGyVPIcOh4y8FqN22hk/A2QkDrYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f0KKoY2jT1ZANMkBJSLNQH5u8pVIMTsBy73HXBRpwKDV7Y9DEaZ3MOTaU6elnCdH5
-	 FEifJwGLDyd6ZCqq1Uxg65Uwdai7TBwjjtQs8EfW6obfdASjJ/0m23vQ8KPHo6TMju
-	 hQQ9jWtHdGElAkeKMaVUcltO3blbnswYq/yrMfCuij5ThcE+PRpE/suLTrQNhM5Lxy
-	 qcQ0xAqr3VM87rfeMHQ34tQ6Zj+NkaAl6JVTKgFojpSuA4mXi6VGxMsVnWl+Hi55zF
-	 UbfeVpEKmp9Oq4lTMdTCFosg906UJ++dakgjzl56DBXB2Nos2yVxhUpVEdNM0pcDiT
-	 gsKVYq/cC6eAA==
+	b=N0xUrrhoiFunIf+5zqQPPouKtbxCTpPg4bawzEMB8tUSfJSn2kq/eOa67HjGtSrJ0
+	 mB5Fb0H8YhUa6d6/4zbx1dM9tTktsZkfqfAcgT+HPXZjqrsRNoLorvOgSdeapMhd/g
+	 WOXEnXI6sK/GP09CfVUBpkcOW13moSS+9Ui3mLTFBJIf63mQJ3sSAqwIAGoVnyL8V0
+	 0GMgkr+dfXSHy8FGSZMwDTZSLwTJLQ00NmN2evgwWALBUpXGzkzCkOsAja9vEz2rnE
+	 pBRklcQXiUyo6e5Jf1eHb6cgyCpACwwqXF84YocufKt733Y9wOxdZkfRIeMiu9F/Mq
+	 ELzyK6geMFU4A==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-fscrypt@vger.kernel.org,
 	linux-btrfs@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	Josef Bacik <josef@toxicpanda.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 1/3] btrfs: call btrfs_close_devices from ->kill_sb
-Date: Tue, 12 Dec 2023 20:00:16 -0800
-Message-ID: <20231213040018.73803-2-ebiggers@kernel.org>
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 2/3] f2fs: move release of block devices to after kill_block_super()
+Date: Tue, 12 Dec 2023 20:00:17 -0800
+Message-ID: <20231213040018.73803-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231213040018.73803-1-ebiggers@kernel.org>
 References: <20231213040018.73803-1-ebiggers@kernel.org>
@@ -54,157 +53,119 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Christoph Hellwig <hch@lst.de>
+From: Eric Biggers <ebiggers@google.com>
 
-blkdev_put must not be called under sb->s_umount to avoid a lock order
-reversal with disk->open_mutex once call backs from block devices to
-the file system using the holder ops are supported.  Move the call
-to btrfs_close_devices into btrfs_free_fs_info so that it is closed
-from ->kill_sb (which is also called from the mount failure handling
-path unlike ->put_super) as well as when an fs_info is freed because
-an existing superblock already exists.
+Call destroy_device_list() and free the f2fs_sb_info from
+kill_f2fs_super(), after the call to kill_block_super().  This is
+necessary to order it after the call to fscrypt_destroy_keyring() once
+generic_shutdown_super() starts calling fscrypt_destroy_keyring() just
+after calling ->put_super.  This is because fscrypt_destroy_keyring()
+may call into f2fs_get_devices() via the fscrypt_operations.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/btrfs/disk-io.c | 4 ++--
- fs/btrfs/super.c   | 7 ++-----
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ fs/f2fs/super.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index bbcc3df776461..fe98e6b1d9c61 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1237,20 +1237,22 @@ static void free_global_roots(struct btrfs_fs_info *fs_info)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 033af907c3b1d..ba95a341a9a36 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1710,42 +1710,39 @@ static void f2fs_put_super(struct super_block *sb)
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
  
- 	while ((node = rb_first_postorder(&fs_info->global_root_tree)) != NULL) {
- 		root = rb_entry(node, struct btrfs_root, rb_node);
- 		rb_erase(&root->rb_node, &fs_info->global_root_tree);
- 		btrfs_put_root(root);
- 	}
+ 	/* flush s_error_work before sbi destroy */
+ 	flush_work(&sbi->s_error_work);
+ 
+ 	f2fs_destroy_post_read_wq(sbi);
+ 
+ 	kvfree(sbi->ckpt);
+ 
+-	sb->s_fs_info = NULL;
+ 	if (sbi->s_chksum_driver)
+ 		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi->raw_super);
+ 
+-	destroy_device_list(sbi);
+ 	f2fs_destroy_page_array_cache(sbi);
+ 	f2fs_destroy_xattr_caches(sbi);
+ 	mempool_destroy(sbi->write_io_dummy);
+ #ifdef CONFIG_QUOTA
+ 	for (i = 0; i < MAXQUOTAS; i++)
+ 		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
+ #endif
+ 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
+ 	destroy_percpu_info(sbi);
+ 	f2fs_destroy_iostat(sbi);
+ 	for (i = 0; i < NR_PAGE_TYPE; i++)
+ 		kvfree(sbi->write_io[i]);
+ #if IS_ENABLED(CONFIG_UNICODE)
+ 	utf8_unload(sb->s_encoding);
+ #endif
+-	kfree(sbi);
  }
  
- void btrfs_free_fs_info(struct btrfs_fs_info *fs_info)
+ int f2fs_sync_fs(struct super_block *sb, int sync)
  {
-+	if (fs_info->fs_devices)
-+		btrfs_close_devices(fs_info->fs_devices);
- 	percpu_counter_destroy(&fs_info->dirty_metadata_bytes);
- 	percpu_counter_destroy(&fs_info->delalloc_bytes);
- 	percpu_counter_destroy(&fs_info->ordered_bytes);
- 	percpu_counter_destroy(&fs_info->dev_replace.bio_counter);
- 	btrfs_free_csum_hash(fs_info);
- 	btrfs_free_stripe_hash_table(fs_info);
- 	btrfs_free_ref_cache(fs_info);
- 	kfree(fs_info->balance_ctl);
- 	kfree(fs_info->delayed_root);
- 	free_global_roots(fs_info);
-@@ -3605,21 +3607,20 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	invalidate_inode_pages2(fs_info->btree_inode->i_mapping);
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	int err = 0;
  
- fail_sb_buffer:
- 	btrfs_stop_all_workers(fs_info);
- 	btrfs_free_block_groups(fs_info);
- fail_alloc:
- 	btrfs_mapping_tree_free(&fs_info->mapping_tree);
- 
- 	iput(fs_info->btree_inode);
- fail:
--	btrfs_close_devices(fs_info->fs_devices);
- 	ASSERT(ret < 0);
- 	return ret;
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		return 0;
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+@@ -4895,23 +4892,23 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
  }
- ALLOW_ERROR_INJECTION(open_ctree, ERRNO);
  
- static void btrfs_end_super_write(struct bio *bio)
+ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ 			const char *dev_name, void *data)
  {
- 	struct btrfs_device *device = bio->bi_private;
- 	struct bio_vec *bvec;
- 	struct bvec_iter_all iter_all;
-@@ -4385,21 +4386,20 @@ void __cold close_ctree(struct btrfs_fs_info *fs_info)
- 	 * have had an IO error and have left over tree log blocks that aren't
- 	 * cleaned up until the fs roots are freed.  This makes the block group
- 	 * accounting appear to be wrong because there's pending reserved bytes,
- 	 * so make sure we do the block group cleanup afterwards.
- 	 */
- 	btrfs_free_block_groups(fs_info);
- 
- 	iput(fs_info->btree_inode);
- 
- 	btrfs_mapping_tree_free(&fs_info->mapping_tree);
--	btrfs_close_devices(fs_info->fs_devices);
+ 	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
  }
  
- void btrfs_mark_buffer_dirty(struct btrfs_trans_handle *trans,
- 			     struct extent_buffer *buf)
+ static void kill_f2fs_super(struct super_block *sb)
  {
- 	struct btrfs_fs_info *fs_info = buf->fs_info;
- 	u64 transid = btrfs_header_generation(buf);
+-	if (sb->s_root) {
+-		struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
  
- #ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
- 	/*
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index ef256b944c72a..9616ce63c5630 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1450,55 +1450,52 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
- 	fs_devices = device->fs_devices;
- 	fs_info->fs_devices = fs_devices;
++	if (sb->s_root) {
+ 		set_sbi_flag(sbi, SBI_IS_CLOSE);
+ 		f2fs_stop_gc_thread(sbi);
+ 		f2fs_stop_discard_thread(sbi);
  
- 	error = btrfs_open_devices(fs_devices, mode, fs_type);
- 	mutex_unlock(&uuid_mutex);
- 	if (error)
- 		goto error_fs_info;
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 		/*
+ 		 * latter evict_inode() can bypass checking and invalidating
+ 		 * compress inode cache.
+ 		 */
+ 		if (test_opt(sbi, COMPRESS_CACHE))
+@@ -4924,20 +4921,25 @@ static void kill_f2fs_super(struct super_block *sb)
+ 				.reason = CP_UMOUNT,
+ 			};
+ 			stat_inc_cp_call_count(sbi, TOTAL_CALL);
+ 			f2fs_write_checkpoint(sbi, &cpc);
+ 		}
  
- 	if (!(flags & SB_RDONLY) && fs_devices->rw_devices == 0) {
- 		error = -EACCES;
--		goto error_close_devices;
-+		goto error_fs_info;
+ 		if (is_sbi_flag_set(sbi, SBI_IS_RECOVERED) && f2fs_readonly(sb))
+ 			sb->s_flags &= ~SB_RDONLY;
  	}
- 
- 	bdev = fs_devices->latest_dev->bdev;
- 	s = sget(fs_type, btrfs_test_super, btrfs_set_super, flags | SB_NOSEC,
- 		 fs_info);
- 	if (IS_ERR(s)) {
- 		error = PTR_ERR(s);
--		goto error_close_devices;
-+		goto error_fs_info;
- 	}
- 
- 	if (s->s_root) {
--		btrfs_close_devices(fs_devices);
- 		btrfs_free_fs_info(fs_info);
- 		if ((flags ^ s->s_flags) & SB_RDONLY)
- 			error = -EBUSY;
- 	} else {
- 		snprintf(s->s_id, sizeof(s->s_id), "%pg", bdev);
- 		shrinker_debugfs_rename(s->s_shrink, "sb-%s:%s", fs_type->name,
- 					s->s_id);
- 		btrfs_sb(s)->bdev_holder = fs_type;
- 		error = btrfs_fill_super(s, fs_devices, data);
- 	}
- 	if (!error)
- 		error = security_sb_set_mnt_opts(s, new_sec_opts, 0, NULL);
- 	security_free_mnt_opts(&new_sec_opts);
- 	if (error) {
- 		deactivate_locked_super(s);
- 		return ERR_PTR(error);
- 	}
- 
- 	return dget(s->s_root);
- 
--error_close_devices:
--	btrfs_close_devices(fs_devices);
- error_fs_info:
- 	btrfs_free_fs_info(fs_info);
- error_sec_opts:
- 	security_free_mnt_opts(&new_sec_opts);
- 	return ERR_PTR(error);
+ 	kill_block_super(sb);
++	if (sbi) {
++		destroy_device_list(sbi);
++		kfree(sbi);
++		sb->s_fs_info = NULL;
++	}
  }
  
- /*
-  * Mount function which is called by VFS layer.
-  *
+ static struct file_system_type f2fs_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "f2fs",
+ 	.mount		= f2fs_mount,
+ 	.kill_sb	= kill_f2fs_super,
+ 	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+ };
+ MODULE_ALIAS_FS("f2fs");
 -- 
 2.43.0
 
