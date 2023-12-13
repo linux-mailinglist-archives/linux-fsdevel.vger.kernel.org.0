@@ -1,243 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-5994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A81811CAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:35:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ED9811DE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 20:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0A31F21A22
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643091C20BE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6926924B54;
-	Wed, 13 Dec 2023 18:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79D67B6B;
+	Wed, 13 Dec 2023 19:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZWwZgfYX"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BrRY10Rn";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nWXNh3JC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10998B2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 10:35:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702492538; bh=F3ILWaOaE11kj+zcXUvpO5EwRjGJ4Usw8j8ahHmYLUY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ZWwZgfYXkQXbT09bjrTknAWAv/k3iM5fPucWDr/qy9GA9x072SlO9AgLHSABDrBYEJ3XZApfg1aUxQ4lJfz5mNh/gNhlIKjLSztXjVZ34Ze5Qbv1duijPs96ps3fpcBMfBdF73GN5HgApFSrPGelpCUvYTDCm+eroD41srtF5ggH19q1ydidWWfn9J/kWcQpqYuXxRxkX+bvSnIwzM4ZpOxHRo16z3dO40phkcU5pSvr3TtEpJ0x7vRyMs813ADfkGRZZSvAWn/l+hwTnDSi5Bva9dpF+FL+A6F//G1sIglp5DN3YC3uJIWJ+1gnVHNoAg90Pep5WkPWr6q5+TOv0g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702492538; bh=xg0ZjtPFZLPYvyzFgM5qVRSflwUEjxT6NS85SeeSLeL=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NjtkJiddK7tyPBbrQ90uhs0BcDcUIgo1UygXJubUub1KXWiz78cCFUh8IlW7AM8Axjc2cj9b5Fr2UagulgGnUM5TqGfYFcw/ALioL//6kmT2gnxfpqjpSO0eiZMf1VKrCfqB64OZo7tea5Se37rnODLSUJP+zcmL5L3YtXFqEIgqJAVRQfQrQ9AosK/XXsEGJ2DjifFUHIa8mkDq/X7C8jPZjZYaBB7PV4louDrKk7okZnI570WbsceZS0VypFgQLwM11plxU8rCjfiedifUz8bcQbuQiodOBDWzw2CIaQL6esYRLxoc+RwUgoIXGurxHfmncpLa/Lqe3zue53Rang==
-X-YMail-OSG: 0r7oZOMVM1mSnzVHyXN8KIPqZIWnhysu5pcAtwcdDMquDNlK3GDwerbatD01YMU
- FQz_7VQQkw7Fdfg6XzIGuwcR5rj0Gj4AG5aJj0WSQ8xPmOnX12Xn_yLD3RiR.Sxkd3_UFDptgccb
- IhtbmFr0sygB2UW9BClSqTLZVgmMml_G2pmAIQmwQZeepexLcwiksTE6yJQ2DnwOiKYsG758Xtlc
- kLsPQr8RI5jUu1n32RQQXYB1M3BdUWKk.KwaDz.I_TTGXCMYjvu9C585hCNwX4M5vL778OpCuufB
- KNawAgCSSB7skbil1dO.94mV9cGZPaqLH3PctDBFolW4FRkmfSvgNpvYXQHHb3JYlcyPnr7YGn1i
- c1isqZ8ZqgEvEChlyWrv.O51ZqGL5Ur9Ot9r_oKwrGPuG7I4voZNtAg_zCEPl0rhPFK7WgZR0Yfc
- 44XaiTKM8181UydLuIWhOCtKw3xk71GuIaW._1ts0VrvPymX4VIuAtuUK83rK2FkEKF_w7Szf_VK
- gBVSks.icaMy5uqUk2jWuoqGxkvX_MHZtTJRjujPz6oGHxgQiMpWZLoWDdiDKT0cwpKL2.WrKeDx
- e5at0giascb6dnCC91vK5dYF7aLN9110PclMzy2ybBiu7x19ST8Zu88f_JhqvfR_iRXr_s740Q9k
- LUse0gB7FlF8r3riHUt0s0aXINsl3nKMLAYKzDeHOXApZ2ZkuZwwB.pTJoiSKmMMEH1QPMX3kzeH
- JPjDtbehhSu._9YSWlcPKgTlwbGA3I.4shL5ZoN2IAbh261TRFl6gs0e4rfT4203i5YU8JMsiv1I
- tqcaOiS._Qe9r70EB04Eqa.EC61zFNOgz_OyhjQnBDrVgHGJF5KVgx43g90jYmKTlOuMNJJPLCzm
- Z9jNzK5fOhf6N8xY5DZg3WLPqVP.qmv_H6DIkf0TLTnVFd2F3gpchJkJQ9wfOBAzr_Y4.U35P84b
- w3KVDN5KFnCS_hLxUzekc1Fdg8IWfwCtdcMHBw_wTepcJ1RM0.ddc9QUFFP3Bhn0qQ7anS9XQZfE
- T564JdTbfg8iZPmpv81k9ofQt29tbrIOJ3LqLzcH7HbYQc9Q1ABswM_y_uFozI8DsKRPjkJNIRkw
- KZgCwy13KwAmwJt1xbJTCNsUieIZxdeEmkGrmPhKqjvU7WVfKatpW21AK0PfcF_asdGCYLzXXPAG
- vO9i20qVsE584voPV1NLnCuaeeE4RSGJ9IPQvlnwCcjXAb8jRlnFfhDZ8Hi5WVYqGlCt9EvsFq.j
- tEXY4GOEaumeLGVPVtJ9jIMYUQLyk1vNDZTPN4CyJJR6mxJW7c72o2x71qSWeDWc5nQveELTsjwL
- 6dg9gk1iWCwh1ZGwQs4ugI.Egnj_Hnqd7qbojHOaQlhrCh7eWxQLit49cGN999ayKD9GWnOiySIN
- .jA99IeegktY5zvne4D0W1qLfhdKvZ1ftwYL9_rs_2f9pVr4aEq3KNPSv.IoHT.4BBHk1p9tDM5k
- 09l9vQLSoTY7cF611YPUmS5fvKYVoxSkdiRDw.887_eVO.rUu5RKEZeTcgh5FH8XRxv_pZjSuKav
- 0ZkDh3fPQYu7IHf_ObRRBJ3POuGwIXJeIgSfG_0nl_lixqz.rmqKWNhbGXldkk9xPBI1av9q53ct
- Do5FUD9N2PSYklV3dVM94PKS7n7FgeckvoAgTGBF4vc08fEVqkezv0roAmdCNWgah2oIr0IRgtAb
- AKmW3FECgrP9fnlaTn9bG3HwOFxlqCtYpePCz1i.63RG_cvDgAhP32DTMXBtG4NHeKgXAznw7oOq
- AjsIgaDJpGd22yDf742PsiOQIQQaQdfiYSb.YJKiUMLrmowiZxmyQSbBAPX.u1p15MI9TaSLBXCs
- JBSQ6Ku8JQgM5zEA4wQAwB2A_8VyDtw2X4ewFAPFESi2_sHt.rXIfDG8_lx3oPsVuOrvphq7JmCj
- UQubrD89QTXxyXv79t0HnnS7P7Bl_JeYKzgcT1iSdz43kqJmzNioULUOXjnJZMLB88_ZMxP1A975
- m0Kx649e.dq5al7AzI1whA9AD6z_8FTl2bNiJMLN_tZeOj_toAWlKtHIFFgX9lkFDAgdVrPL1rK1
- eN4FA4pU48r7ohh2_J6g3VbFbH1A451jMcivQ_IZM9En8bdupipXGImX2MbdSrYZT815iwlXILdv
- v6SA64kRIFbzja_WRRh3V7Lgtgrw2FqjQqPURretjaAx0BDE.TDDV_Y5by5JtWYJa35l9a4rgrIs
- YyJfH7jjB2wuMN8KYs4WGjUv.GI0CmtWI_MwzeMjot.VhfCtqikivJRCzSfsJYU5SOw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5bf1e823-cd45-4553-87a4-d657d3be01a9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:35:38 +0000
-Received: by hermes--production-gq1-6949d6d8f9-hnk4w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 566ac33d3e608f8110bfa5f0010a199d;
-          Wed, 13 Dec 2023 18:35:32 +0000 (UTC)
-Message-ID: <6df822d8-8413-413e-8ecd-cac1cfae4a3b@schaufler-ca.com>
-Date: Wed, 13 Dec 2023 10:35:31 -0800
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD290C9;
+	Wed, 13 Dec 2023 11:02:21 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BDEQx5N020988;
+	Wed, 13 Dec 2023 19:01:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=FLriMew6PSfP/imqwlsDrPOFKr9LQdFHU6VT+lK38HE=;
+ b=BrRY10RnviCTJucNRTAtU59AXsWavwGWV8aHYUvjhuUQAyQe6gmRLtyIWdW5TqH/JPX8
+ B6aIhDH47lFYe9PmE07VobGaprNCH2lV7gDQfL7xtSeLKEaFDc8Lxf3d/vZ4bevW4T35
+ 0dFYVY4Nnbsa654tSefIa4CiEmK2qaZziXgw35wNUF2UPF+JkPAng3awn8F4BUOzfP0U
+ +nfePk6jm9yGQ+Zf+tRTDESqaXUl70A1Dq0mklHYhPP2kQ0tUqHC+KqDkA0QyyD/JQN3
+ bjK+vjxdzaN4eUYNXoqdf5PuOsPq//bIP61+1eINRFhRTJg/CQEmOhED5h5bFhInrqnW ew== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3uvfuu915p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Dec 2023 19:01:30 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BDI5xTj009848;
+	Wed, 13 Dec 2023 19:01:29 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uvep8t38h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Dec 2023 19:01:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WoNaf1SoELwV7YaoNxhQnsqr12rOjUANN9GZJ9xQ6Css7WZSqP4QXKDrDgYXaetiQcb/jIA5UZKWF10AXmcumtIjfp/FjLx0bGZ5gD2swBFZd+IokODXHdisLhTgpKR6/Y0K4VRVgKZkB6xjmHY5x/rSyinURIuKmcaaiMb432xxoS7UQ/mnK0OkJ/yV20joiAhYnD14VBIwq3Fyjv/hF+hz2bNrJcg2/2VCZyndIItWGPzQ2RqAQwmC2PT2K+TKD+DM+j4wYKd6dhpBoxddZO7UE/E7+i1o0mGVqpkdHTDgkBNPyoVUs+ADnVGkIBN/bRoDY1iQ+bDcF4eUNg4N+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FLriMew6PSfP/imqwlsDrPOFKr9LQdFHU6VT+lK38HE=;
+ b=fvSb9IjJT8XQ9sSjRDEfuP98lGKDnw+J8LJOlIYqFU7DrQ0XItZWGWTWuxfS4FT0JbD5XKg/UYelJfPClRRh33tXMW94i/MHQEn9egxH4kiyWt4kIWkjFt9XLUy8oaYkCMoU+YXEoiCoQ87vPc1ygprP5A0gZQ5j1JwNsU0A5Hfkvkni7VtQC09QvK1MfafPXVB+vvCb/icEQv2dOi58ya499RaJr5tIDRrhBGXOOl2XfE/ilvRSBZ4KFw34Xrha3VvI72u589/7vQUcBnf3CHeNe3zjIBOsiICcvtqIexE5l8Pxp5cKyvTQuKJJbRy5+d4Eo4B6oKsiYsI/nKhpIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FLriMew6PSfP/imqwlsDrPOFKr9LQdFHU6VT+lK38HE=;
+ b=nWXNh3JCigo78LnITC1pySny0GD3EHV+KZyk0DmJBZsmsHO2YUNlOHHCNhOdeOYRHXBkzYp+7w9wLGB/lHhW9FXP4iXnuTucBuArkeQ2A0g2q135UYpZh78puhvdCvekd78YDPua/Laila0Rt93G5RZW/gBcyYuIoWUIpOAKy7k=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH7PR10MB6250.namprd10.prod.outlook.com (2603:10b6:510:212::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Wed, 13 Dec
+ 2023 19:01:26 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7091.022; Wed, 13 Dec 2023
+ 19:01:26 +0000
+Message-ID: <15255c5a-82ec-4ce1-8caa-da250fcb7187@oracle.com>
+Date: Wed, 13 Dec 2023 19:01:22 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/16] block: Add atomic write operations to
+ request_queue limits
+To: Ming Lei <ming.lei@redhat.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jack@suse.cz, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+        jaswin@linux.ibm.com, bvanassche@acm.org,
+        Himanshu Madhani <himanshu.madhani@oracle.com>
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
+ <20231212110844.19698-2-john.g.garry@oracle.com> <ZXkIEnQld577uHqu@fedora>
+ <36ee54b4-b8d5-4b3c-81a0-cc824b6ef68e@oracle.com> <ZXmjdnIqGHILTfQN@fedora>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <ZXmjdnIqGHILTfQN@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P195CA0025.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d6::20) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
- non-initial userns
-Content-Language: en-US
-To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
- Christian Brauner <brauner@kernel.org>,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Quentin Monnet <quentin@isovalent.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6250:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7f8eaf05-35e4-46e4-1616-08dbfc0de81d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	nJo/S4DuXkTeNOEzKT0ZmGUGFgUPxfv484iM2gzaz5c/3wvE659fbwI05XnGsDNB9ouVin9YLmbW1ijkE6q+rZNG4cIqgFAzRQ+0E3A5Ki4a5TOLW8Ge2yYDzBmj+0uUheXe8sgt/FNLSunnx43cSQipjaH54RDlG5v87PBdVOFBOyrLA/oD/2isDuyXi3uoHKr/G1ylkaRgWvyvIy4WPQo1vPZpD3Ih9WuK/jQ0ea7ev3X5x22WQW7SD3iOtndQhcnsXbS8CbIK4D8oinTijCI4KNpcjH/MomAF1zjXlldXDD6rBBC4UJZ1LJ2hqcKNOgR8blOxSmtiOkJy9aXA3XSJwTqFndexYS7tpnV6fWwLVTdAh8ic1Bh6hV/7XZt9stMwDe6O9LY1MF/wKYDni+rHZaEtU4PNjeSvuBHtGs12cMZv4FQAIbVd3n9v2FucYbhKPPPJBVVPTVKmCSMLGkd3hZIUwk7RnxUd6JAULTvm4ojPpsA8BxwcwuQoxD8xMOMyWXJjGRhfhBlnNohIqd6MpSQ8r2qJ1M64bkzg2Ye59A/3nnq3MiUtOa4GdcA/92YqNFK0dF2O2aTCDV/uKroUalfMw7G5fZuJlEJ+5PHUmr8PvbQyWegyhPkPs/Q5MZQZFOgyEEmGsA9zXwGRFw==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(136003)(376002)(39860400002)(396003)(366004)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(31686004)(478600001)(107886003)(6486002)(6666004)(2616005)(6512007)(26005)(36916002)(53546011)(6506007)(41300700001)(38100700002)(31696002)(86362001)(36756003)(5660300002)(6916009)(66476007)(66556008)(2906002)(83380400001)(7416002)(66946007)(8936002)(316002)(4326008)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?cHBiV29jdnVSWkxFQW1QYWwwQWxqcjhoZ1N5bXRkMW5YZ3BtQjF2YldEbll0?=
+ =?utf-8?B?elA5eitjMXhvWDFDblZ4WGhkQWZkSW85dHg4SjExeVNHemdpMGRYUjNDbzNs?=
+ =?utf-8?B?RFhreTRaWWh4UFJsWGw2c2RndU9sWmZRTEFxdEVDRitFSTNnZG1UTUh4eTNL?=
+ =?utf-8?B?TjduQmEzZmVNemExWlhIU05MUmd5SXBjZVNDWThSVzBDRWlBc0oyWHNyT2xM?=
+ =?utf-8?B?VC8rMGFpOVQ2T2h3VG9Pcml0azB0Ui96bTJjS1pEcEFTT3ZWdXI3b0U1eEhX?=
+ =?utf-8?B?QTlIcjZvQ2FwQjhIcU5Ga0JYNHNmYnZkd0w2RkxRaVJkbjBxUFNaaWUxSENa?=
+ =?utf-8?B?TVpSNWRiV1M2T3d0NWNxSUErWXdhcnl3RTJqcEF3UE5CSG5YRGRYUUJ3RDFl?=
+ =?utf-8?B?emo3WXBDN3N3QkZpNkp3OVVsSUdVRmN2V0lnc3p6RWFLWTlyOFlJNEdMVkFO?=
+ =?utf-8?B?K01OaFVXdTEwdStick9zYjdGMmVWeVFEanFBaGErQjAwSXNHSmhpT3NMcGo5?=
+ =?utf-8?B?bWFWNkYyMHFmRHZUNTB4Tkp1OGxyQ2FORU5hMk4wZUVuK2ZSOUVxWGlsc3VK?=
+ =?utf-8?B?amNaWW5mRFhNamtnbXAvVDVubndnYVFiLytjU0FCVkp1YjU5UnpoU2V4OEhj?=
+ =?utf-8?B?dnFwSno5azk1ZjVRZ3pEMm1BREg1Vm4xMkhwa2dvQlFuY3ZkcHcxa1g1ZVVS?=
+ =?utf-8?B?N0w4OUcxWFFOVzg2Q0VFd1lZWnJMYnhTMHdzRFgrTlVwRHJGQ1J3cjZXQk5C?=
+ =?utf-8?B?dkNDVFZUM25xWVlFb3dxRDQvSU0rRkdXK3pncWZKRVRIclpRQ0pKS1JMUGFV?=
+ =?utf-8?B?K2VUUXJCYUNRYzFXYldPNDJLQ0RXYTNLY0ZZTDBYdVg1cjBkMHVoUlNrK0pX?=
+ =?utf-8?B?TlArZG8wQWIwb2gxaVVHR2U2SGNmTjMySU44TlJLZDdqRjl5Y3QzUXJFZVpr?=
+ =?utf-8?B?YUtEUUQ4QUNvRFpMOXJMRWxYekgxSytkNzBsSWFUREMrZ2E5Zk9MMXgzZUNu?=
+ =?utf-8?B?RHQva1VVOXBldytCYXpwNXVHMzVqWUhuYjdDb1FwbFBNdkVlUnVHTjVrYS85?=
+ =?utf-8?B?SU1LM3RxTlVHMGgxaFprNXJLeGlzTUx3YVRwSFlqWGRFeU5vamhrQWdMNm1k?=
+ =?utf-8?B?d0NVbVZtODRob3ZHOEwxaE9tczFBMXh0UmFuUGk4eEppUG9JZXdnS1VHN3Z3?=
+ =?utf-8?B?RGc5S3ZJQ2NMRjV0bXF3SnhxUHdjazh5LytReUgzRmk3ZjBha1YyQ2c0clVX?=
+ =?utf-8?B?S0RJTWk1T2NDeVlFeDFWTjNMK1RGdGNsUlJqbjcrNGVTNzByejNlOHpyWThs?=
+ =?utf-8?B?OXBVVm9wZ2NxV2RDUkJYUGF5M3JEUnJaNlBBSHdIZDFkRFo0Zk9yVjlzZnJ6?=
+ =?utf-8?B?TlBzcVV3cDBYM2R1a1VVQjNjVENhZnlXbWZvL2ZlRGYxcEpvNHo1bzJkb2NH?=
+ =?utf-8?B?WU5CcTdnK2pwbG1sYzVVL1BnZDQ1TnNNdE5tN1F1RXV2dHBYVTVXSW9PMFV2?=
+ =?utf-8?B?aTFqY3R1bHdzeHNJQUZWVkhNbmJiUHpYQzdIWWdZNzlrZm5HUmkyVHU3TlhF?=
+ =?utf-8?B?cTBKUGZET1lTTVZQUTZPQ1A5MWExdUZIMGdvSzBQa1dCYm1iYi85dWdCTGZm?=
+ =?utf-8?B?OUg3VWVhdlgwTTJqVVllcHo0bjdQTGx2b0RqaDhmQ1NQcnM4UVVrVnBLNXZq?=
+ =?utf-8?B?UTlUb2dXd1lwMGhIc1JDL093T1dLS0NzWEN0T2hNcjRXM3o3Uk5QZEFQUWVQ?=
+ =?utf-8?B?MXVuN3pNOFZkeE9UWllqNSt4RkxMS1lkMWx0dFczOS8xODVJcy9iRURYdGFI?=
+ =?utf-8?B?Q0poNDYzT0liWVZ1bHdKczVGcklsbmxCeEs0dEVRZlY3WGZGUGFUc0JEVmx0?=
+ =?utf-8?B?aUxCK3p4ZFQvb2Ezdlh0WEJZR2JUSzcvWUZSZzA5SWZNZW9FT1ZxdjU1MUJT?=
+ =?utf-8?B?UUhTSmgzd0tseEdGTXhqeXBOYnJ4QWZOOEwzamdpSS85UGFKbnYxNjd2NWF5?=
+ =?utf-8?B?eHMwTmlucDRxM09vRFF5MVllTUZOR1VEaCtuejM2SWluZzF2SFg3bGtsRkJt?=
+ =?utf-8?B?RFlTeGJ1S3c5L2lpdHliWjBxMk1oSHJsdUhRZmN0aVYrWHByM0EvSDcwZmxr?=
+ =?utf-8?Q?Kx3ofANZnBL71cgG3CkTIow+Z?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	=?utf-8?B?Rm5YMFBYb1o2SGxEMGlJV1hYUC8ydGt0QThBejZmaHhPUEp0SlJZYU4zZ0o4?=
+ =?utf-8?B?YjFURXIwZGhRTG43WndqNFJnd2ovQ3hVcjZJOHhWajhManFZUXFuYUhjY3Ey?=
+ =?utf-8?B?aHc4SXR6TzZ6anZFaEtPdkx1N3hueHhzWThVYWhkMmxpT2JEVnp2SzhscWp1?=
+ =?utf-8?B?eWtNVVZULzREUXJKVEFOdTBuWHoyNTFZblMrYWRlbEMxQXQ3eGN2bTZVT0ZM?=
+ =?utf-8?B?WjhtTkVhSFNuaDJNOHF5M29EU09ZNnlBUThtcmYzU1RKSklnQnMxNGllQkNI?=
+ =?utf-8?B?Wm5KMU5LdG9RNFNiWWg3WnRSWS9KRnVzYnJNRTRnN3JTZkNkZVYwZ0FVQ1dV?=
+ =?utf-8?B?OWduYjVtOVkybE82Qks4eVBDT1dOMngzQlVmUUh0WWdwc2FBRWh4QU41MXVO?=
+ =?utf-8?B?M1lxRmYza1luR2dhVlhtLy9lZjA1MTJLUTZJazIzOW1qUjF5SlA1U2Z3WGhx?=
+ =?utf-8?B?WjJLVWtoQVNUZ25NWWl6SlBGdjBMaFRMUXFXM1ozREtZVTF1ME1UOGg2U0FY?=
+ =?utf-8?B?eVhsWkdDcU9xUzRTdFNGdStydzR0V2l6QjFOZVJpREx4enJVUjBzZVFrcmRZ?=
+ =?utf-8?B?UjB5MUtXSGNxU1ZHZ2F2M2hrY05FbXJ0OEt5QWtIdnlVbUlIUU1jSDBxSEo2?=
+ =?utf-8?B?bzcrM2dxYW80a2lRajRaRjJoa1hSZzhFMk5DQ3JoOWd3WVBwMnAwSDR6Z1NY?=
+ =?utf-8?B?RkIwK0YrdjV0T1ZXam11dTRkQ2IvVXZtUm43VHNXdVgyc0p3eGpmQzErNDk3?=
+ =?utf-8?B?a21iVkhVVUNCRmdxT1EvZFplOVh4R1pVQ0RlaUNkNGFqWHRYL3hORW50anVi?=
+ =?utf-8?B?QVZqckNES2NLNlptSnB4RTgyTUpIenVlS1JHdithTk1lWTJDbFVqUTgzelBI?=
+ =?utf-8?B?NmtQeDBJT3FiMEpVZ0swN2ZoMzlNMkRYMHlqMzQzZWdSbm1ZWlZXZHVrV2s5?=
+ =?utf-8?B?M2cxVEVYcGN6TkcyMnlHOXBvQTNwdjBTa2NnZVN6NlhTczFwcXE1bGxobkdP?=
+ =?utf-8?B?U08zUGpiaTBIeDkweStzdUZCa3dEYWYxNVBTN1EwdkwvRC8rU0I4Tm5xWWZ1?=
+ =?utf-8?B?bDdEVFZSUTdNaVhZelRhdDJmRDgwYzJlcnlsTWQzanU5UFBaVU1zWVI1WnJu?=
+ =?utf-8?B?b01EVkZ1Y00xZVJrVHQ1MzhEVVQ0VFBNTHY5ZlRkak9ZSi9lUWg2UTRldGpu?=
+ =?utf-8?B?NGVnNGFyTTZWOTZGMVFpc0tudk1zdWhyLzRWb0l1QTRnVHMxc3htTjFZYjRj?=
+ =?utf-8?B?MldqVkU5aXlkZzF3aExvZ2VuUUw2aGhMYTVkamt2MHlySHk4VE1Obm1yNHZV?=
+ =?utf-8?B?UWRjWnUrbkk3N3M0R3JKQjBPdnNoclJqWjQ2bnFQYkszR0FXc0JOVEVzWDVh?=
+ =?utf-8?B?QmZ2MlltbjZUdTRzWHoxQTNoa0pPejY5OGhQdGd0RFpZbzFmRktYY01vNFg3?=
+ =?utf-8?B?UDN6UTBZVC9KY25CK1paeWlZVDBmQkRBQzJYTjMvZFZITXQ2b1dDZmI4ODlF?=
+ =?utf-8?Q?yXoOfL9l88eg4eVdGWMUpZfE1WP?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f8eaf05-35e4-46e4-1616-08dbfc0de81d
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 19:01:26.4463
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +R6nkktdHEi+ZXUYHGcmykUMBCzYowgBFZzTxRRp+OHcQBUSV9uC6QSFgUQgX/WvMdtIG8GPJniztbh3BpK2dA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6250
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-13_12,2023-12-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ phishscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2312130136
+X-Proofpoint-GUID: ZUuNZwbOs2fDkzcsXqOzPntt-P3QAoqD
+X-Proofpoint-ORIG-GUID: ZUuNZwbOs2fDkzcsXqOzPntt-P3QAoqD
 
-On 12/13/2023 6:38 AM, Michael Weiß wrote:
-> devguard is a simple LSM to allow CAP_MKNOD in non-initial user
-> namespace in cooperation of an attached cgroup device program. We
-> just need to implement the security_inode_mknod() hook for this.
-> In the hook, we check if the current task is guarded by a device
-> cgroup using the lately introduced cgroup_bpf_current_enabled()
-> helper. If so, we strip out SB_I_NODEV from the super block.
->
-> Access decisions to those device nodes are then guarded by existing
-> device cgroups mechanism.
->
-> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
-> ---
->  security/Kconfig             | 11 +++++----
->  security/Makefile            |  1 +
->  security/devguard/Kconfig    | 12 ++++++++++
->  security/devguard/Makefile   |  2 ++
->  security/devguard/devguard.c | 44 ++++++++++++++++++++++++++++++++++++
->  5 files changed, 65 insertions(+), 5 deletions(-)
->  create mode 100644 security/devguard/Kconfig
->  create mode 100644 security/devguard/Makefile
->  create mode 100644 security/devguard/devguard.c
->
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 52c9af08ad35..7ec4017745d4 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -194,6 +194,7 @@ source "security/yama/Kconfig"
->  source "security/safesetid/Kconfig"
->  source "security/lockdown/Kconfig"
->  source "security/landlock/Kconfig"
-> +source "security/devguard/Kconfig"
->  
->  source "security/integrity/Kconfig"
->  
-> @@ -233,11 +234,11 @@ endchoice
->  
->  config LSM
->  	string "Ordered list of enabled LSMs"
-> -	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> -	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> -	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> -	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
-> -	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
-> +	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf,devguard" if DEFAULT_SECURITY_SMACK
-> +	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf,devguard" if DEFAULT_SECURITY_APPARMOR
-> +	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf,devguard" if DEFAULT_SECURITY_TOMOYO
-> +	default "landlock,lockdown,yama,loadpin,safesetid,bpf,devguard" if DEFAULT_SECURITY_DAC
-> +	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf,devguard"
->  	help
->  	  A comma-separated list of LSMs, in initialization order.
->  	  Any LSMs left off this list, except for those with order
-> diff --git a/security/Makefile b/security/Makefile
-> index 18121f8f85cd..82a0d8cab3c3 100644
-> --- a/security/Makefile
-> +++ b/security/Makefile
-> @@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
->  obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
->  obj-$(CONFIG_BPF_LSM)			+= bpf/
->  obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
-> +obj-$(CONFIG_SECURITY_DEVGUARD)		+= devguard/
->  
->  # Object integrity file lists
->  obj-$(CONFIG_INTEGRITY)			+= integrity/
-> diff --git a/security/devguard/Kconfig b/security/devguard/Kconfig
-> new file mode 100644
-> index 000000000000..592684615a8f
-> --- /dev/null
-> +++ b/security/devguard/Kconfig
-> @@ -0,0 +1,12 @@
-> +config SECURITY_DEVGUARD
-> +	bool "Devguard for device node creation"
-> +	depends on SECURITY
-> +	depends on CGROUP_BPF
-> +	default n
-> +	help
-> +	  This enables devguard, an LSM that allows to guard device node
-> +	  creation in non-initial user namespace. It may allow mknod
-> +	  in cooperation of an attached cgroup device program.
-> +	  This security module stacks with other LSMs.
-> +
-> +	  If you are unsure how to answer this question, answer N.
-> diff --git a/security/devguard/Makefile b/security/devguard/Makefile
-> new file mode 100644
-> index 000000000000..fdaff8dc2fea
-> --- /dev/null
-> +++ b/security/devguard/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_SECURITY_DEVGUARD) += devguard.o
-> diff --git a/security/devguard/devguard.c b/security/devguard/devguard.c
-> new file mode 100644
-> index 000000000000..3a0c9c27a691
-> --- /dev/null
-> +++ b/security/devguard/devguard.c
-> @@ -0,0 +1,44 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device guard security module
-> + *
-> + * Simple in-kernel LSM to allow cap_mknod in non-initial
-> + * user namespace if current task is guarded by device cgroup.
-> + *
-> + * Copyright (C) 2023 Fraunhofer AISEC. All rights reserved.
-> + *
-> + * Authors: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
-> + */
-> +
-> +#include <linux/bpf-cgroup.h>
-> +#include <linux/lsm_hooks.h>
-> +
-> +static int devguard_inode_mknod(struct inode *dir, struct dentry *dentry,
-> +				umode_t mode, dev_t dev)
-> +{
-> +	if (dentry->d_sb->s_iflags & ~SB_I_NODEV)
-> +		return 0;
-> +
-> +	// strip SB_I_NODEV on super block if device cgroup is active
+On 13/12/2023 12:28, Ming Lei wrote:
+>> For NVMe, we use the logical block size. For physical block size, that can
+>> be greater than the logical block size for npwg set, and I don't think it's
+>> suitable use that as minimum atomic write unit.
+> I highly suspect it is wrong to use logical block size as minimum
+> support atomic write unit, given physical block size is supposed to
+> be the minimum atomic write unit.
 
-Please use block style comments. We don't use // comments here.
+I would tend to agree, but I am still a bit curious on how npwg is used 
+to calculate atomic_bs/phys_bs as it seems to be a recommended 
+performance-related value. It would hint to me that it is the phys_bs, 
+but is that same as atomic min granularity?
 
-	/*
-	 * Strip SB_I_NODEV on super block if device cgroup is active
-	 */
+> 
+>> Anyway, I am not too keen on sanitizing this value in this way.
+>>
+>>>> +
+>>>> +/*
+>>>> + * blk_queue_atomic_write_unit_max_sectors - largest unit that can be written
+>>>> + * atomically to the device.
+>>>> + * @q: the request queue for the device
+>>>> + * @sectors: must be a power-of-two.
+>>>> + */
+>>>> +void blk_queue_atomic_write_unit_max_sectors(struct request_queue *q,
+>>>> +					     unsigned int sectors)
+>>>> +{
+>>>> +	struct queue_limits *limits = &q->limits;
+>>>> +
+>>>> +	limits->atomic_write_unit_max_sectors = sectors;
+>>>> +}
+>>>> +EXPORT_SYMBOL(blk_queue_atomic_write_unit_max_sectors);
+>>> atomic_write_unit_max_sectors should be >= atomic_write_unit_min_sectors.
+>>>
+>> Again, we rely on the driver to provide sound values. However, as mentioned,
+>> we can sanitize.
+> Relying on driver to provide sound value is absolutely bad design from API
+> viewpoint.
 
-> +	if (cgroup_bpf_current_enabled(CGROUP_DEVICE))
-> +		dentry->d_sb->s_iflags &= ~SB_I_NODEV;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct security_hook_list devguard_hooks[] __ro_after_init = {
-> +	LSM_HOOK_INIT(inode_mknod, devguard_inode_mknod),
-> +};
-> +
-> +static int __init devguard_init(void)
-> +{
-> +	security_add_hooks(devguard_hooks, ARRAY_SIZE(devguard_hooks),
-> +			   "devguard");
-> +	pr_info("devguard: initialized\n");
-> +	return 0;
-> +}
-> +
-> +DEFINE_LSM(devguard) = {
-> +	.name = "devguard",
-> +	.init = devguard_init,
-> +};
+OK, fine, I'll look to revise the API to make it more robust.
+
+Thanks,
+John
 
