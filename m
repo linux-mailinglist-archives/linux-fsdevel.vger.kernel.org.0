@@ -1,169 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-5988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9243A811AF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:28:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2504D811B82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BD51F219CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7F31C2115A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A8556B90;
-	Wed, 13 Dec 2023 17:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNZbo1C5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RiP4Uqcz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNZbo1C5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RiP4Uqcz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D697A57869;
+	Wed, 13 Dec 2023 17:44:57 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50019F2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 09:28:46 -0800 (PST)
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C43391F451;
-	Wed, 13 Dec 2023 17:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702488524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
-	b=gNZbo1C5kiRitGXnXsXUyCG18ZEK4CNDGqRQpch58otZkDKa/LO0EzWR8PKsZCwvQLq2xz
-	hTEF+4nrRdDRKBFL/alXLx1RPaVglEFrDtffDbaObYM4Tiif7W7Jw79C73d8sl2es6JwKv
-	Jng1TiJvgR2Q+N+EHo3kITM684ztb/U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702488524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
-	b=RiP4Uqcz9t8uaZO7JxQpoyts1AA6YPqpBokQ+bmqG1C1xkM/ZOUPXEU8ZoRuCTMqJs4jXe
-	uYD/cERr2sk4N1DA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702488524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
-	b=gNZbo1C5kiRitGXnXsXUyCG18ZEK4CNDGqRQpch58otZkDKa/LO0EzWR8PKsZCwvQLq2xz
-	hTEF+4nrRdDRKBFL/alXLx1RPaVglEFrDtffDbaObYM4Tiif7W7Jw79C73d8sl2es6JwKv
-	Jng1TiJvgR2Q+N+EHo3kITM684ztb/U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702488524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
-	b=RiP4Uqcz9t8uaZO7JxQpoyts1AA6YPqpBokQ+bmqG1C1xkM/ZOUPXEU8ZoRuCTMqJs4jXe
-	uYD/cERr2sk4N1DA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id B2A8313240;
-	Wed, 13 Dec 2023 17:28:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 7IeYK8zpeWV1dgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Wed, 13 Dec 2023 17:28:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1B9DDA07E0; Wed, 13 Dec 2023 18:28:44 +0100 (CET)
-Date: Wed, 13 Dec 2023 18:28:44 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission
- response
-Message-ID: <20231213172844.ygjbkyl6i4gj52lt@quack3>
-References: <20231208080135.4089880-1-amir73il@gmail.com>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id CF63193;
+	Wed, 13 Dec 2023 09:44:53 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4703EC15;
+	Wed, 13 Dec 2023 09:45:39 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37DBF3F762;
+	Wed, 13 Dec 2023 09:44:48 -0800 (PST)
+Date: Wed, 13 Dec 2023 17:44:37 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, anshuman.khandual@arm.com,
+	vincenzo.frascino@arm.com, david@redhat.com, eugenis@google.com,
+	kcc@google.com, hyesoo.yu@samsung.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
+Message-ID: <ZXnthcg0BkEd-RgK@raptor>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-12-alexandru.elisei@arm.com>
+ <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+ <ZXiMiLz9ZyUdxUP8@raptor>
+ <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
+ <ZXmr-Kl9L2SO13--@raptor>
+ <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
+ <ZXnE3724jYYSg4o6@raptor>
+ <CAL_JsqJgTnuQjo13cKo1Ebm5j9tCRT8GhNavdqu5vwp+fdnTLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231208080135.4089880-1-amir73il@gmail.com>
-X-Spam-Level: 
-X-Spam-Score: -2.60
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.79
-X-Spamd-Result: default: False [-3.79 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.19)[-0.963];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJgTnuQjo13cKo1Ebm5j9tCRT8GhNavdqu5vwp+fdnTLw@mail.gmail.com>
 
-On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
-> With FAN_DENY response, user trying to perform the filesystem operation
-> gets an error with errno set to EPERM.
+On Wed, Dec 13, 2023 at 11:22:17AM -0600, Rob Herring wrote:
+> On Wed, Dec 13, 2023 at 8:51 AM Alexandru Elisei
+> <alexandru.elisei@arm.com> wrote:
+> >
+> > Hi,
+> >
+> > On Wed, Dec 13, 2023 at 08:06:44AM -0600, Rob Herring wrote:
+> > > On Wed, Dec 13, 2023 at 7:05 AM Alexandru Elisei
+> > > <alexandru.elisei@arm.com> wrote:
+> > > >
+> > > > Hi Rob,
+> > > >
+> > > > On Tue, Dec 12, 2023 at 12:44:06PM -0600, Rob Herring wrote:
+> > > > > On Tue, Dec 12, 2023 at 10:38 AM Alexandru Elisei
+> > > > > <alexandru.elisei@arm.com> wrote:
+> > > > > >
+> > > > > > Hi Rob,
+> > > > > >
+> > > > > > Thank you so much for the feedback, I'm not very familiar with device tree,
+> > > > > > and any comments are very useful.
+> > > > > >
+> > > > > > On Mon, Dec 11, 2023 at 11:29:40AM -0600, Rob Herring wrote:
+> > > > > > > On Sun, Nov 19, 2023 at 10:59 AM Alexandru Elisei
+> > > > > > > <alexandru.elisei@arm.com> wrote:
+> > > > > > > >
+> > > > > > > > Allow the kernel to get the size and location of the MTE tag storage
+> > > > > > > > regions from the DTB. This memory is marked as reserved for now.
+> > > > > > > >
+> > > > > > > > The DTB node for the tag storage region is defined as:
+> > > > > > > >
+> > > > > > > >         tags0: tag-storage@8f8000000 {
+> > > > > > > >                 compatible = "arm,mte-tag-storage";
+> > > > > > > >                 reg = <0x08 0xf8000000 0x00 0x4000000>;
+> > > > > > > >                 block-size = <0x1000>;
+> > > > > > > >                 memory = <&memory0>;    // Associated tagged memory node
+> > > > > > > >         };
+> > > > > > >
+> > > > > > > I skimmed thru the discussion some. If this memory range is within
+> > > > > > > main RAM, then it definitely belongs in /reserved-memory.
+> > > > > >
+> > > > > > Ok, will do that.
+> > > > > >
+> > > > > > If you don't mind, why do you say that it definitely belongs in
+> > > > > > reserved-memory? I'm not trying to argue otherwise, I'm curious about the
+> > > > > > motivation.
+> > > > >
+> > > > > Simply so that /memory nodes describe all possible memory and
+> > > > > /reserved-memory is just adding restrictions. It's also because
+> > > > > /reserved-memory is what gets handled early, and we don't need
+> > > > > multiple things to handle early.
+> > > > >
+> > > > > > Tag storage is not DMA and can live anywhere in memory.
+> > > > >
+> > > > > Then why put it in DT at all? The only reason CMA is there is to set
+> > > > > the size. It's not even clear to me we need CMA in DT either. The
+> > > > > reasoning long ago was the kernel didn't do a good job of moving and
+> > > > > reclaiming contiguous space, but that's supposed to be better now (and
+> > > > > most h/w figured out they need IOMMUs).
+> > > > >
+> > > > > But for tag storage you know the size as it is a function of the
+> > > > > memory size, right? After all, you are validating the size is correct.
+> > > > > I guess there is still the aspect of whether you want enable MTE or
+> > > > > not which could be done in a variety of ways.
+> > > >
+> > > > Oh, sorry, my bad, I should have been clearer about this. I don't want to
+> > > > put it in the DT as a "linux,cma" node. But I want it to be managed by CMA.
+> > >
+> > > Yes, I understand, but my point remains. Why do you need this in DT?
+> > > If the location doesn't matter and you can calculate the size from the
+> > > memory size, what else is there to add to the DT?
+> >
+> > I am afraid there has been a misunderstanding. What do you mean by
+> > "location doesn't matter"?
 > 
-> It is useful for hierarchical storage management (HSM) service to be able
-> to deny access for reasons more diverse than EPERM, for example EAGAIN,
-> if HSM could retry the operation later.
+> You said:
+> > Tag storage is not DMA and can live anywhere in memory.
 > 
-> Allow userspace to response to permission events with the response value
-> FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom error.
+> Which I took as the kernel can figure out where to put it. But maybe
+> you meant the h/w platform can hard code it to be anywhere in memory?
+> If so, then yes, DT is needed.
+
+Ah, I see, sorry for not being clear enough, you are correct: tag storage
+is a hardware property, and software needs a mechanism (in this case, the
+dt) to discover its properties.
+
 > 
-> The change in fanotify_response is backward compatible, because errno is
-> written in the high 8 bits of the 32bit response field and old kernels
-> reject respose value with high bits set.
+> > At the very least, Linux needs to know the address and size of a memory
+> > region to use it. The series is about using the tag storage memory for
+> > data. Tag storage cannot be described as a regular memory node because it
+> > cannot be tagged (and normal memory can).
 > 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> If the tag storage lives in the middle of memory, then it would be
+> described in the memory node, but removed by being in reserved-memory
+> node.
 
-So a couple of comments that spring to my mind when I'm looking into this
-now (partly maybe due to my weak memory ;):
+I don't follow. Would you mind going into more details?
 
-1) Do we still need the EAGAIN return? I think we have mostly dealt with
-freezing deadlocks in another way, didn't we?
+> 
+> > Then there's the matter of the tag storage block size (explained in this
+> > commit message), and also knowing the memory range for which a tag storage
+> > region stores the tags. This is explained in the cover letter.
+> 
+> Honestly, I just forgot about that part.
 
-2) If answer to 1) is yes, then there is a second question - do we expect
-the errors to propagate back to the unsuspecting application doing say
-read(2) syscall? Because I don't think that will fly well with a big
-majority of applications which basically treat *any* error from read(2) as
-fatal. This is also related to your question about standard permission
-events. Consumers of these error numbers are going to be random
-applications and I see a potential for rather big confusion arising there
-(like read(1) returning EINVAL or EBADF and now you wonder why the hell
-until you go debug the kernel and find out the error is coming out of
-fanotify handler). And the usecase is not quite clear to me for ordinary
-fanotify permission events (while I have no doubts about creativity of
-implementors of fanotify handlers ;)).
+I totally understand, there are a lot of things to consider at the same
+time.
 
-3) Given the potential for confusion, maybe we should stay conservative and
-only allow additional EAGAIN error instead of arbitrary errno if we need it?
-
-I'm leaving the API question aside for a moment until I have a clearer
-picture of what we actually want to implement :).
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Alex
 
