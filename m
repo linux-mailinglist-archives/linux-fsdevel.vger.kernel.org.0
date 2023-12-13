@@ -1,235 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-5846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BD981111C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:29:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5E6811259
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5231C21065
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 12:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F021F213D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC11228E2C;
-	Wed, 13 Dec 2023 12:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755572C85A;
+	Wed, 13 Dec 2023 13:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NQYF8eE7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMGDveku"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4025ACD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 04:28:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702470536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pQFnI7fDR+1BAkKjvQWdPrG/WDERRoUrQCJ/FGh+Rlo=;
-	b=NQYF8eE7UuCsgWtgT/e4ZhfVA4dDFAneMwp8YrCV9MOyzRHXXHB7Y0o0SmcMincW4wxKGo
-	UxMHPytIlV5W9kUz1JLUUwA+Q0ACiY6mHGQWr7ibNlKsWcbtE8Z5QDnga7/tZDqsu1z+7i
-	Bckf7xL8k94bmDrtEYtO/x2ia9/MKbE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-445-5O6-tQb-PP2YT148se2a5g-1; Wed, 13 Dec 2023 07:28:53 -0500
-X-MC-Unique: 5O6-tQb-PP2YT148se2a5g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1A11585A58A;
-	Wed, 13 Dec 2023 12:28:52 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.126])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 80AAA1121312;
-	Wed, 13 Dec 2023 12:28:42 +0000 (UTC)
-Date: Wed, 13 Dec 2023 20:28:38 +0800
-From: Ming Lei <ming.lei@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B261A26AFD;
+	Wed, 13 Dec 2023 13:02:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CCFC433C8;
+	Wed, 13 Dec 2023 13:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702472559;
+	bh=oucTferbO8z09uzRC+QN/9ilQDasa9VaUoOZvOLBlL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qMGDvekulMiLgPyCQAmQWR/eYvFAOux9M1LrBgXpjuHKi5GdnupdLCcjMmHeANAZw
+	 NDWN1eQkHCW2Sw+pfLuqq2pfj/JcgsDdVtA22OmSnHNJxYpw+yR1FExTe1nE8Z/wZs
+	 akM7+FPs9zpIm5sPjIcHPvfZPn+4KlneeGqG3rOB6Je1SWsz2emIBCRZySFkAzIPeA
+	 xA8qRf8Vl62kxL6qdWQBsLnN2r/BrbU0YpgQxCdD/1rH6ftoAJoKvEHvCU6oG3Umxf
+	 wyUryDjEKQZG4E1FVlzWMllV3UPLfXuBS3NdhfbgQtbEkbPuCgd+tR20WHysGMMqwt
+	 MUW7KhdPyiXlw==
+Date: Wed, 13 Dec 2023 14:02:31 +0100
+From: Christian Brauner <brauner@kernel.org>
 To: John Garry <john.g.garry@oracle.com>
 Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
 	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-	jaswin@linux.ibm.com, bvanassche@acm.org,
-	Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v2 01/16] block: Add atomic write operations to
- request_queue limits
-Message-ID: <ZXmjdnIqGHILTfQN@fedora>
+	viro@zeniv.linux.org.uk, dchinner@redhat.com, jack@suse.cz,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ming.lei@redhat.com,
+	jaswin@linux.ibm.com, bvanassche@acm.org
+Subject: Re: [PATCH v2 04/16] fs: Increase fmode_t size
+Message-ID: <20231213-gurte-beeren-e71ff21c3c03@brauner>
 References: <20231212110844.19698-1-john.g.garry@oracle.com>
- <20231212110844.19698-2-john.g.garry@oracle.com>
- <ZXkIEnQld577uHqu@fedora>
- <36ee54b4-b8d5-4b3c-81a0-cc824b6ef68e@oracle.com>
+ <20231212110844.19698-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <36ee54b4-b8d5-4b3c-81a0-cc824b6ef68e@oracle.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+In-Reply-To: <20231212110844.19698-5-john.g.garry@oracle.com>
 
-On Wed, Dec 13, 2023 at 09:13:48AM +0000, John Garry wrote:
-> > > +
-> > >   What:		/sys/block/<disk>/diskseq
-> > >   Date:		February 2021
-> > > diff --git a/block/blk-settings.c b/block/blk-settings.c
-> > > index 0046b447268f..d151be394c98 100644
-> > > --- a/block/blk-settings.c
-> > > +++ b/block/blk-settings.c
-> > > @@ -59,6 +59,10 @@ void blk_set_default_limits(struct queue_limits *lim)
-> > >   	lim->zoned = BLK_ZONED_NONE;
-> > >   	lim->zone_write_granularity = 0;
-> > >   	lim->dma_alignment = 511;
-> > > +	lim->atomic_write_unit_min_sectors = 0;
-> > > +	lim->atomic_write_unit_max_sectors = 0;
-> > > +	lim->atomic_write_max_sectors = 0;
-> > > +	lim->atomic_write_boundary_sectors = 0;
-> > 
-> > Can we move the four into single structure
+On Tue, Dec 12, 2023 at 11:08:32AM +0000, John Garry wrote:
+> Currently all bits are being used in fmode_t.
 > 
-> There is no precedent for a similar structure in struct queue_limits. So
-> would only passing a structure to the blk-settings.c API be ok?
+> To allow for further expansion, increase from unsigned int to unsigned
+> long.
+> 
+> Since the dma-buf driver prints the file->f_mode member, change the print
+> as necessary to deal with the larger size.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  drivers/dma-buf/dma-buf.c | 2 +-
+>  include/linux/types.h     | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index 21916bba77d5..a5227ae3d637 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -1628,7 +1628,7 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
+>  
+>  
+>  		spin_lock(&buf_obj->name_lock);
+> -		seq_printf(s, "%08zu\t%08x\t%08x\t%08ld\t%s\t%08lu\t%s\n",
+> +		seq_printf(s, "%08zu\t%08x\t%08lx\t%08ld\t%s\t%08lu\t%s\n",
+>  				buf_obj->size,
+>  				buf_obj->file->f_flags, buf_obj->file->f_mode,
+>  				file_count(buf_obj->file),
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 253168bb3fe1..49c754fde1d6 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -153,7 +153,7 @@ typedef u32 dma_addr_t;
+>  
+>  typedef unsigned int __bitwise gfp_t;
+>  typedef unsigned int __bitwise slab_flags_t;
+> -typedef unsigned int __bitwise fmode_t;
+> +typedef unsigned long __bitwise fmode_t;
 
-Yes, this structure is part of the new API.
-
-> 
-> > and setup them in single
-> > API? Then cross-validation can be done in this API.
-> 
-> I suppose so, if you think that it is better.
-> 
-> We rely on the driver to provide sound values. I suppose that we can
-> sanitize them also (in a single API).
-
-Please make the interface correct from beginning, and one good API is
-helpful for both sides, such as isolating problems, easy to locate
-bug, abstracting common logic, ...
-
-And relying on API users is absolutely not good design.
-
-> 
-> > 
-> > >   }
-> > >   /**
-> > > @@ -183,6 +187,62 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
-> > >   }
-> > >   EXPORT_SYMBOL(blk_queue_max_discard_sectors);
-> > > +/**
-> > > + * blk_queue_atomic_write_max_bytes - set max bytes supported by
-> > > + * the device for atomic write operations.
-> > > + * @q:  the request queue for the device
-> > > + * @size: maximum bytes supported
-> > > + */
-> > > +void blk_queue_atomic_write_max_bytes(struct request_queue *q,
-> > > +				      unsigned int bytes)
-> > > +{
-> > > +	q->limits.atomic_write_max_sectors = bytes >> SECTOR_SHIFT;
-> > > +}
-> > > +EXPORT_SYMBOL(blk_queue_atomic_write_max_bytes);
-> > 
-> > What if driver doesn't call it but driver supports atomic write?
-> 
-> We rely on the driver to do this. Any basic level of testing will show an
-> issue if they don't.
-
-Software quality depends on good requirement analysis, design and
-implementation, instead of test.
-
-Simply you can not cover all possibilities in test.
-
-> 
-> > 
-> > I guess the default max sectors should be atomic_write_unit_max_sectors
-> > if the feature is enabled.
-> 
-> Sure. If we have a single API to set all values, then we don't need to worry
-> about this (assuming the values are filled in properly).
-> 
-> > 
-> > > +
-> > > +/**
-> > > + * blk_queue_atomic_write_boundary_bytes - Device's logical block address space
-> > > + * which an atomic write should not cross.
-> > > + * @q:  the request queue for the device
-> > > + * @bytes: must be a power-of-two.
-> > > + */
-> > > +void blk_queue_atomic_write_boundary_bytes(struct request_queue *q,
-> > > +					   unsigned int bytes)
-> > > +{
-> > > +	q->limits.atomic_write_boundary_sectors = bytes >> SECTOR_SHIFT;
-> > > +}
-> > > +EXPORT_SYMBOL(blk_queue_atomic_write_boundary_bytes);
-> > 
-> > Default atomic_write_boundary_sectors should be
-> > atomic_write_unit_max_sectors in case of atomic write?
-> 
-> Having atomic_write_boundary_sectors default to
-> atomic_write_unit_max_sectors is effectively same as a default of 0.
-> 
-> > 
-> > > +
-> > > +/**
-> > > + * blk_queue_atomic_write_unit_min_sectors - smallest unit that can be written
-> > > + * atomically to the device.
-> > > + * @q:  the request queue for the device
-> > > + * @sectors: must be a power-of-two.
-> > > + */
-> > > +void blk_queue_atomic_write_unit_min_sectors(struct request_queue *q,
-> > > +					     unsigned int sectors)
-> > > +{
-> > > +	struct queue_limits *limits = &q->limits;
-> > > +
-> > > +	limits->atomic_write_unit_min_sectors = sectors;
-> > > +}
-> > > +EXPORT_SYMBOL(blk_queue_atomic_write_unit_min_sectors);
-> > 
-> > atomic_write_unit_min_sectors should be >= (physical block size >> 9)
-> > given the minimized atomic write unit is physical sector for all disk.
-> 
-> For SCSI, we have a granularity VPD value, and when set we pay attention to
-> that. If not, we use the phys block size.
-> 
-> For NVMe, we use the logical block size. For physical block size, that can
-> be greater than the logical block size for npwg set, and I don't think it's
-> suitable use that as minimum atomic write unit.
-
-I highly suspect it is wrong to use logical block size as minimum
-support atomic write unit, given physical block size is supposed to
-be the minimum atomic write unit.
-
-> 
-> Anyway, I am not too keen on sanitizing this value in this way.
-> 
-> > 
-> > > +
-> > > +/*
-> > > + * blk_queue_atomic_write_unit_max_sectors - largest unit that can be written
-> > > + * atomically to the device.
-> > > + * @q: the request queue for the device
-> > > + * @sectors: must be a power-of-two.
-> > > + */
-> > > +void blk_queue_atomic_write_unit_max_sectors(struct request_queue *q,
-> > > +					     unsigned int sectors)
-> > > +{
-> > > +	struct queue_limits *limits = &q->limits;
-> > > +
-> > > +	limits->atomic_write_unit_max_sectors = sectors;
-> > > +}
-> > > +EXPORT_SYMBOL(blk_queue_atomic_write_unit_max_sectors);
-> > 
-> > atomic_write_unit_max_sectors should be >= atomic_write_unit_min_sectors.
-> > 
-> 
-> Again, we rely on the driver to provide sound values. However, as mentioned,
-> we can sanitize.
-
-Relying on driver to provide sound value is absolutely bad design from API
-viewpoint.
-
-Thanks,
-Ming
-
+As Jan said, that's likely a bad idea. There's a bunch of places that
+assume fmode_t is 32bit. So not really a change we want to make if we
+can avoid it.
 
