@@ -1,143 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-5854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EA9811312
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:37:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E2811356
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125511F218D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:37:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07E41C20F38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F462D60F;
-	Wed, 13 Dec 2023 13:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dU6A6nqf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8152DF87;
+	Wed, 13 Dec 2023 13:48:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15F6DD;
+	Wed, 13 Dec 2023 05:48:32 -0800 (PST)
+Received: from [141.14.31.7] (theinternet.molgen.mpg.de [141.14.31.7])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3582D042;
-	Wed, 13 Dec 2023 13:37:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCFAC433C8;
-	Wed, 13 Dec 2023 13:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702474661;
-	bh=8D28zVA3/D34uSBC1WEJ8ykZpQrL4Gv4bA1SewGPSEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dU6A6nqfPwdapBIE6N5MQX1pPgpiei2rY3w1Dun0KrZbDxbcB1dhzPyz1J2EGaTQj
-	 UPKZzVa039jVPJ33WfaTofzmcvZFSA/sLBnrGvxr16zaGokjdOl0SKR/ib2Xhd4pc3
-	 SeyCrYIvK1T7imXgRQXe3wDjMIqDoeMuXfobvB10h24nt3i0W5VNcMCs1A+EjSLVk5
-	 f5bcJfQFA0CN8h3S3SdylU7dYmBC9Cd6O+XAZDg7IVkEU8ruiejVfPviMrjE77eEXR
-	 A5aDJUCFKs/hXAy8O8flLE5igxpFsClxETJo/OA439A7sHSLT3d8ZylWdGK4KyBm0k
-	 t9qtTI5q/WF8g==
-Date: Wed, 13 Dec 2023 13:37:32 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v7 02/39] prctl: arch-agnostic prctl for shadow stack
-Message-ID: <0d0d8802-09e3-4ea5-a0b4-b3a08c8a282e@sirena.org.uk>
-References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
- <20231122-arm64-gcs-v7-2-201c483bd775@kernel.org>
- <CAKC1njSC5cC_fXnyNAPt=WU6cD-OjLKFxo90oVPmsLJbuWf4nw@mail.gmail.com>
- <d708b493-267a-4418-be91-9bde6b2cf50c@sirena.org.uk>
- <CAKC1njSQPO8ja7AkTzQ724hhSsGjchH9dLbbH9LXP0ZiKj-zPQ@mail.gmail.com>
+	(Authenticated sender: buczek)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 1E48761E5FE0A;
+	Wed, 13 Dec 2023 14:48:14 +0100 (CET)
+Message-ID: <7ed8baa0-b895-43a2-bb13-93a92e18a823@molgen.mpg.de>
+Date: Wed, 13 Dec 2023 14:48:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jOCIbEw8Unb2aajd"
-Content-Disposition: inline
-In-Reply-To: <CAKC1njSQPO8ja7AkTzQ724hhSsGjchH9dLbbH9LXP0ZiKj-zPQ@mail.gmail.com>
-X-Cookie: One size fits all.
+User-Agent: Mozilla Thunderbird
+Subject: Re: file handle in statx
+Content-Language: en-US
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Theodore Ts'o <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
+ NeilBrown <neilb@suse.de>, linux-bcachefs@vger.kernel.org,
+ Stefan Krueger <stefan.krueger@aei.mpg.de>,
+ David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
+References: <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
+ <170233460764.12910.276163802059260666@noble.neil.brown.name>
+ <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
+ <170233878712.12910.112528191448334241@noble.neil.brown.name>
+ <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area>
+ <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
+ <20231212152016.GB142380@mit.edu>
+ <a0f820a7-3cf5-4826-a15b-e536abb5b1de@molgen.mpg.de>
+ <20231213122820.umqmp3yvbbvizfym@moria.home.lan>
+From: Donald Buczek <buczek@molgen.mpg.de>
+In-Reply-To: <20231213122820.umqmp3yvbbvizfym@moria.home.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 12/13/23 13:28, Kent Overstreet wrote:
+> On Wed, Dec 13, 2023 at 08:37:57AM +0100, Donald Buczek wrote:
+>> Probably not for the specific applications I mentioned (backup, mirror,
+>> accounting). These are intended to run continuously, slowly and unnoticed
+>> in the background, so they are memory and i/o throttled via cgroups anyway
+>> and one is even using sleep after so-and-so many stat calls to reduce
+>> its impact.
+>>
+>> If they could tell a directory from a snapshot, I would probably stop them
+>> from walking into snapshots. And if not, the snapshot id is all that is
+>> needed to tell a clone in a snapshot from a hardlink. So these don't really
+>> need the filehandle.
+> 
+> Perhaps we should allocate a bit for differentiating a snapshot from a
+> non snapshot subvolume?
+Are there non-snapshots subvolumes?
+
+From  debugfs bcachefs/../btrees, I've got the impression, that every
+volume starts with a (single) snapshot.
+
+new fileystem:
+
+subvolumes
+==========
+u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
+
+snapshots
+=========
+u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+
+`bcachefs subvolume create /mnt/v`
+
+subvolumes
+==========
+u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
+u64s 10 type subvolume 0:2:0 len 0 ver 0: root 1207959552 snapshot id 4294967294 parent 0
+
+snapshots
+=========
+u64s 10 type snapshot 0:4294967294:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 2 tree 2 depth 0 skiplist 0 0 0
+u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+
+`bcachefs subvolume snapshot /mnt/v /mnt/s`
+
+subvolumes
+==========
+u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
+u64s 10 type subvolume 0:2:0 len 0 ver 0: root 1207959552 snapshot id 4294967292 parent 0
+u64s 10 type subvolume 0:3:0 len 0 ver 0: root 1207959552 snapshot id 4294967293 parent 2
+
+snapshot
+========
+u64s 10 type snapshot 0:4294967292:0 len 0 ver 0: is_subvol 1 deleted 0 parent 4294967294 children          0          0 subvol 2 tree 2 depth 1 skiplist 4294967294 4294967294 4294967294
+u64s 10 type snapshot 0:4294967293:0 len 0 ver 0: is_subvol 1 deleted 0 parent 4294967294 children          0          0 subvol 3 tree 2 depth 1 skiplist 4294967294 4294967294 4294967294
+u64s 10 type snapshot 0:4294967294:0 len 0 ver 0: is_subvol 0 deleted 0 parent          0 children 4294967293 4294967292 subvol 0 tree 2 depth 0 skiplist 0 0 0
+u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+
+Now reading and interpreting the filehandles:
+
+/mnt/.     type  177 : 00 10 00 00 00 00 00 00 01 00 00 00 00 00 00 00 : inode 0000000000001000 subvolume 00000001 generation 00000000
+/mnt/v     type  177 : 00 00 00 48 00 00 00 00 02 00 00 00 00 00 00 00 : inode 0000000048000000 subvolume 00000002 generation 00000000
+/mnt/s     type  177 : 00 00 00 48 00 00 00 00 03 00 00 00 00 00 00 00 : inode 0000000048000000 subvolume 00000003 generation 00000000
 
 
---jOCIbEw8Unb2aajd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So is there really a type difference between the objects created by
+`bcachefs subvolume create` and `bcachefs subvolume snapshot` ? It appears
+that they both point to a volume which points to a snapshot in the snapshot
+tree.
 
-On Tue, Dec 12, 2023 at 04:50:38PM -0800, Deepak Gupta wrote:
+Best
 
-> A theoretical scenario (no current workloads should've this case
-> because no shadow stack)
+  Donald
 
-> - User mode did _ENABLE on the main thread. Shadow stack was allocated
-> for the current
->   thread.
-> - User mode created a bunch worker threads to run untrusted contained
-> code. They shadow
->   stack too.
-> - main thread had to do dlopen and now need to disable shadow stack on
-> itself due to
->   incompatibility of incoming object in address space.
-> - main thread controls worker threads and knows they're contained and
-> should still be running
->   with a shadow stack. Although once in a while the main thread needs
-> to perform writes to a shadow
->   stack of worker threads for some fixup (in the same addr space).
-> main thread doesn't want to delegate
->   this responsibility of ss writes to worker threads because they're untrusted.
 
-> How will it do that (currently _ENABLE is married to _WRITE and _PUSH) ?
+>> In the thread it was assumed, that there are other (unspecified)
+>> applications which need the filehandle and currently use name_to_handle_at().
+>>
+>> I though it was self-evident that a single syscall to retrieve all
+>> information atomically is better than a set of syscalls. Each additional
+>> syscall has overhead and you need to be concerned with the data changing
+>> between the calls.
+> 
+> All other things being equal, yeah it would be. But things are never
+> equal :)
+> 
+> Expanding struct statx is not going to be as easy as hoped, so we need
+> to be a bit careful how we use the remaining space, and since as Dave
+> pointed out the filehandle isn't needed for checking uniqueness unless
+> nlink > 1 it's not really a hotpath in any application I can think of.
+> 
+> (If anyone does know of an application where it might matter, now's the
+> time to bring it up!)
+> 
+>> Userspace nfs server as an example of an application, where visible
+>> performance is more relevant, was already mentioned by someone else.
+> 
+> I'd love to hear confirmation from someone more intimately familiar with
+> NFS, but AFAIK it shouldn't matter there; the filehandle exists to
+> support resuming IO or other operations to a file (because the server
+> can go away and come back). If all the client did was a stat, there's no
+> need for a filehandle - that's not needed until a file is opened.
 
-That's feeling moderately firmly into "don't do that" territory to be
-honest, the problems of trying to modify the stack of another running
-thread while it's active just don't seem worth it - if you're
-coordinating enough to do the modifications it's probably possible to
-just ask the thread who's stack is being modified to do the modification
-itself and having an unprotected thread writing into shadow stack memory
-doesn't feel great.
+-- 
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 1433
 
-That said in terms of the API there would be nothing stopping us saying
-that _WRITE by itself is a valid combination of flags, in which case the
-thread would have permission to write to any shadow stack memory it
-could get to.  For arm64 I think we can implement that, I'm not sure
-about x86.  _PUSH without _ENABLE is a lot less clear, you would at the
-very least at some point have had a stack enabled to have a stack
-pointer.
-
---jOCIbEw8Unb2aajd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV5s5sACgkQJNaLcl1U
-h9Av7gf+KhSSwAMSrKGbuD6mcS24/uKiaBK6VJvANYNhzxAxCIsGTekSDBnn5rx5
-JlxvhNT7TTqtigEvZs5VwVjBivsip6vCjdwW3bWOP1hBY1vThXm5vDpp6+hC/Xyq
-1dBwZcHedqhHVCH5AfwYiFDtW37k7rKggU19mKapXAMMLHcqniPH9vA8JNfwjvRk
-IZAXnqu2sqKKqhm79iZyFDFo2+8bZYgiZ2FaFCUSA853dm4ujBY2+W9uL4me61jV
-gAwO2vLgmoypMv3xyz83VV6rVoAP3icyuBVYgjuko58Xs74dY4FtD+Xyth9g93qO
-A5biKwps6ME8omCBijyTFUn4Ug8G4A==
-=M047
------END PGP SIGNATURE-----
-
---jOCIbEw8Unb2aajd--
 
