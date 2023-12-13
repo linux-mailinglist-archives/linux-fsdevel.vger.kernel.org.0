@@ -1,42 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-5825-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749DA810D87
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:41:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AA8810DA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305B2281828
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 09:41:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96B32819BC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 09:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1D520B23;
-	Wed, 13 Dec 2023 09:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141BC219E1;
+	Wed, 13 Dec 2023 09:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BztBqQf2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2f5royT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2201EB37;
-	Wed, 13 Dec 2023 09:41:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8F8C433C7;
-	Wed, 13 Dec 2023 09:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E5420B09;
+	Wed, 13 Dec 2023 09:48:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F15B3C433C8;
+	Wed, 13 Dec 2023 09:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702460467;
-	bh=1O6MSfrSt69X44+QtFffJJy5vAeC5w5FjpWi7Is60aQ=;
+	s=k20201202; t=1702460880;
+	bh=/2XnRbM+FMJzFmLkus7NkavvrG8oovlJcjYFtNIjlcU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BztBqQf2LzyPjacA2eN1b+Ik37XUPfKdAWUsKSs/TgMJGF205qgCXeprR6SRwXmce
-	 lCFAnMyjI82KsmaH/4LEU2OBkkvCgj3qrsddCNGhR3tSzgGr0xF/HzshlZln1MOrig
-	 pygdnezAxjuMnSIVyrlf2HJ/BrpWzqR0XEocg3/xHjB8jsHOxBIvznMdMp3k6V/aIY
-	 0hr2NR2twyo6k/XT3t7puQeCN4XwgZ+BVDmVDJ1PwrJjzLb+wvkET/et9GocU9poZO
-	 bqRJuZn0aKbTeq7N6RFr+tY4SJDpq/KXVoPUmICIaiEdehjbWLlee2try45W12hpw3
-	 TB219d/NuQzKg==
-Date: Wed, 13 Dec 2023 10:41:01 +0100
+	b=s2f5royTKRAhL34GpK4IwQTXQE6t1/0VUkrm+Cmw/scjfAqPOjMps3ph4BS/yOFnq
+	 IfTnd082pZ5f5efgTeGkXf152lU/uzJXpwbhNV5WzZmtgDDbj9Jj0T/zKaLhYJAHwM
+	 iTph0425D9jf+xbZzP/Xy6godNA+cRmhqHY6MOS++s1SNB9of2EgHCpnTVFp+4sb2N
+	 8fCCw+mDMlVxyhlD+srihz+uee5Df6ikb9K78dBGxHxlykMRlxEIiHuDiDcrDfJvqF
+	 NOwSYc5iWGH26FYpNIm2Hd/Cpmh1gU3Rws0ZWy88qbPPrs91s4tpt71jruknkavyVs
+	 KMwW7N3X8llew==
+Date: Wed, 13 Dec 2023 10:47:55 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
-	Dave Chinner <david@fromorbit.com>, NeilBrown <neilb@suse.de>,
+To: NeilBrown <neilb@suse.de>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Dave Chinner <david@fromorbit.com>,
 	Donald Buczek <buczek@molgen.mpg.de>,
 	linux-bcachefs@vger.kernel.org,
 	Stefan Krueger <stefan.krueger@aei.mpg.de>,
@@ -44,17 +46,17 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
 	Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org
 Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
  snapshots on muti-user systems?)
-Message-ID: <20231213-unansehnlich-immun-a57123171e9d@brauner>
-References: <ZXf1WCrw4TPc5y7d@dread.disaster.area>
+Message-ID: <20231213-umgearbeitet-erdboden-c2fd5409034d@brauner>
+References: <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
+ <170234279139.12910.809452786055101337@noble.neil.brown.name>
+ <ZXf1WCrw4TPc5y7d@dread.disaster.area>
  <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>
  <20231212-impfung-linden-6f973f2ade19@brauner>
  <20231212151631.wi7rgawmp3uig6cl@moria.home.lan>
  <20231212-neudefinition-hingucken-785061b73237@brauner>
  <20231212153542.kl2fbzrabhr6kai5@moria.home.lan>
  <CAJfpegsKsbdtUHUPnu3huCiPXwX46eKYSUbLXiWqH23GinXo7w@mail.gmail.com>
- <20231212154302.uudmkumgjaz5jouw@moria.home.lan>
- <CAJfpegvOEZwZgcbAeivDA+X0qmfGGjOxdvq-xpGQjYuzAJxzkw@mail.gmail.com>
- <20231212160829.vybfdajncvugweiy@moria.home.lan>
+ <170241761429.12910.13323799451396212981@noble.neil.brown.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,23 +65,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20231212160829.vybfdajncvugweiy@moria.home.lan>
+In-Reply-To: <170241761429.12910.13323799451396212981@noble.neil.brown.name>
 
-> But when you show up to a discussion that's been going on for a page,
+On Wed, Dec 13, 2023 at 08:46:54AM +1100, NeilBrown wrote:
+> On Wed, 13 Dec 2023, Miklos Szeredi wrote:
+> > On Tue, 12 Dec 2023 at 16:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > 
+> > > Other poeple have been finding ways to contribute to the technical
+> > > discussion; just calling things "ugly and broken" does not.
+> > 
+> > Kent, calm down please.  We call things "ugly and broken" all the
+> > time.  That's just an opinion, you are free to argue it, and no need
+> > to take it personally.
+> 
+> But maybe we shouldn't.  Maybe we should focus on saying what, exactly,
+> is unpleasant to look at and way.  Or what exactly causes poor
+> funcationality.
 
-On the bcachefs mailing list without fsdevel or anyone else Cced.
+I said it's "ugly" and I doubted it's value. I didn't call it "broken".
+And I've been supportive of the other parts. Yet everyone seems fine
+with having this spiral out of control to the point where I'm being
+called a dick.
 
-> where everything's been constructively gathering input, and you start
-> namecalling - and crucially, _without giving any technical justification
+You hade a privat discussion on the bcachefs mailing list and it seems
+you expected to show up here with a complete interface that we just all
+pick up and merge even though this is a multi-year longstanding
+argument.
 
-I didn't namecall at all. I just didn't like the flag and called it
-"ugly" and explicitly said that I didn't see the value it brings. And
-I'm not the only one.
+I've been supportive of both the subvol addition to statx and the
+STATX_* flag to indicate a subvolume root. Yet somehow you're all
+extremely focussed on me disliking this flag.
 
-I've been pretty supportive of the other parts of this. So I truly don't
-understand why your turning this into a personal thing.
+> "ugly" and "broken" are not particularly useful words in a technical
+> discussion.  I understand people want to use them, but they really need
+> to be backed up with details.  It is details that matter.
 
-> for your opinions_ - that's just you being a dick.
-
-Calling me a dick even if just implied is clearly crossing a line.
+I did say that I don't see the value. And it's perfectly ok for you to
+reiterate why it provides value. Your whole discussion has been private
+on some other mailing list without the relevant maintainers Cced.
 
