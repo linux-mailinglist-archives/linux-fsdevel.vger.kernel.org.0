@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-5874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28F8811382
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:51:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED3481137F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06F54B21142
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A6A282791
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDE72E827;
-	Wed, 13 Dec 2023 13:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A412E65A;
+	Wed, 13 Dec 2023 13:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pxx2fktk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJW3X8xi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BB831B3
-	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 05:50:37 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE2BC137
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 05:50:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702475436;
+	s=mimecast20190719; t=1702475438;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rt4G7Zdcwt/ScaeTO4LIplOYZNojSp7bG7fdUXxFL/Y=;
-	b=Pxx2fktk9zxT/72Yxrp0/FHfM6lx+65LC4AaW1MatZZnhUJsqRDJzPN6Cypkbr+2KC2QqW
-	rF+7ZjaL4LfrH68kCJTFmKY2SRqDnHmmiJpBNcP5N8ogoBF9RZZbWrinYe7ffx9Wrf0bYX
-	x4qP9JsTwzehnZNdGj9Wt6SKk2orP0c=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-8ZAkYcsyP2yV0EB1WBezRA-1; Wed, 13 Dec 2023 08:50:33 -0500
-X-MC-Unique: 8ZAkYcsyP2yV0EB1WBezRA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	bh=ilVhciIr/zJntY+SWgt0NsMblkInASK+jgWxf84YTc8=;
+	b=PJW3X8xiTYiEP9mP7IUi31vjjhXp/307NDA2qf/ryfN3Txgp/d3IsZ+WXf85KT808sKWba
+	hEsbwY0xZfskookbSmDcOgiZQPVLcDPg2RbKG5s4vEhXOfWuVYm917vNAI77nJptwc4unM
+	ek7J46zy/6bD0gAeQwPoyN3ocE9lz6E=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-70-IKiB_2ndPR2GE8dDXUYRoA-1; Wed,
+ 13 Dec 2023 08:50:34 -0500
+X-MC-Unique: IKiB_2ndPR2GE8dDXUYRoA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9FB8C837182;
-	Wed, 13 Dec 2023 13:50:32 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 36E2829AC037;
+	Wed, 13 Dec 2023 13:50:34 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8FA7FC159B0;
-	Wed, 13 Dec 2023 13:50:31 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 47DED40C6EB9;
+	Wed, 13 Dec 2023 13:50:33 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Marc Dionne <marc.dionne@auristor.com>
 Cc: David Howells <dhowells@redhat.com>,
 	linux-afs@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 16/40] afs: Simplify error handling
-Date: Wed, 13 Dec 2023 13:49:38 +0000
-Message-ID: <20231213135003.367397-17-dhowells@redhat.com>
+Subject: [PATCH v2 17/40] afs: Add a tracepoint for struct afs_addr_list
+Date: Wed, 13 Dec 2023 13:49:39 +0000
+Message-ID: <20231213135003.367397-18-dhowells@redhat.com>
 In-Reply-To: <20231213135003.367397-1-dhowells@redhat.com>
 References: <20231213135003.367397-1-dhowells@redhat.com>
 Precedence: bulk
@@ -60,1021 +60,417 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Simplify error handling a bit by moving it from the afs_addr_cursor struct
-to the afs_operation and afs_vl_cursor structs and using the error
-prioritisation function for accumulating errors from multiple sources (AFS
-tries to rotate between multiple fileservers, some of which may be
-inaccessible or in some state of offlinedness).
+Add a tracepoint to track the lifetime of the afs_addr_list struct.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
 cc: linux-afs@lists.infradead.org
 ---
- fs/afs/addr_list.c    |  8 ++--
- fs/afs/dir.c          | 14 ++++---
- fs/afs/dir_silly.c    |  2 +-
- fs/afs/file.c         |  3 --
- fs/afs/fs_operation.c | 24 +++++------
- fs/afs/fsclient.c     |  1 +
- fs/afs/internal.h     | 44 +++++++++++++++------
- fs/afs/misc.c         | 10 ++++-
- fs/afs/rotate.c       | 58 ++++++++++++++-------------
- fs/afs/rxrpc.c        | 17 ++++----
- fs/afs/server.c       |  1 -
- fs/afs/vl_alias.c     |  2 +-
- fs/afs/vl_probe.c     |  7 ++--
- fs/afs/vl_rotate.c    | 92 +++++++++++++++++++++----------------------
- fs/afs/vlclient.c     | 34 ++++++++++------
- 15 files changed, 174 insertions(+), 143 deletions(-)
+ fs/afs/addr_list.c         | 33 ++++++++++++++++++++++----
+ fs/afs/fs_probe.c          |  4 ++--
+ fs/afs/internal.h          | 10 +++-----
+ fs/afs/rotate.c            |  4 ++--
+ fs/afs/rxrpc.c             |  4 ++--
+ fs/afs/server.c            |  9 ++++----
+ fs/afs/vl_list.c           | 11 +++++----
+ fs/afs/vl_rotate.c         |  9 ++------
+ fs/afs/vlclient.c          |  4 ++--
+ include/trace/events/afs.h | 47 ++++++++++++++++++++++++++++++++++++++
+ 10 files changed, 100 insertions(+), 35 deletions(-)
 
 diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
-index b76abf500713..a1f3c995e328 100644
+index a1f3c995e328..41ef0c879239 100644
 --- a/fs/afs/addr_list.c
 +++ b/fs/afs/addr_list.c
-@@ -386,26 +386,24 @@ bool afs_iterate_addresses(struct afs_addr_cursor *ac)
- selected:
- 	ac->index = index;
- 	set_bit(index, &ac->tried);
--	ac->responded = false;
-+	ac->call_responded = false;
- 	return true;
+@@ -20,17 +20,39 @@ static void afs_free_addrlist(struct rcu_head *rcu)
+ 
+ 	for (i = 0; i < alist->nr_addrs; i++)
+ 		rxrpc_kernel_put_peer(alist->addrs[i].peer);
++	trace_afs_alist(alist->debug_id, refcount_read(&alist->usage), afs_alist_trace_free);
++	kfree(alist);
  }
  
  /*
-  * Release an address list cursor.
+  * Release an address list.
   */
--int afs_end_cursor(struct afs_addr_cursor *ac)
-+void afs_end_cursor(struct afs_addr_cursor *ac)
+-void afs_put_addrlist(struct afs_addr_list *alist)
++void afs_put_addrlist(struct afs_addr_list *alist, enum afs_alist_trace reason)
+ {
+-	if (alist && refcount_dec_and_test(&alist->usage))
++	unsigned int debug_id;
++	bool dead;
++	int r;
++
++	if (!alist)
++		return;
++	debug_id = alist->debug_id;
++	dead = __refcount_dec_and_test(&alist->usage, &r);
++	trace_afs_alist(debug_id, r - 1, reason);
++	if (dead)
+ 		call_rcu(&alist->rcu, afs_free_addrlist);
+ }
+ 
++struct afs_addr_list *afs_get_addrlist(struct afs_addr_list *alist, enum afs_alist_trace reason)
++{
++	int r;
++
++	if (alist) {
++		__refcount_inc(&alist->usage, &r);
++		trace_afs_alist(alist->debug_id, r + 1, reason);
++	}
++	return alist;
++}
++
+ /*
+  * Allocate an address list.
+  */
+@@ -38,6 +60,7 @@ struct afs_addr_list *afs_alloc_addrlist(unsigned int nr, u16 service_id)
  {
  	struct afs_addr_list *alist;
+ 	unsigned int i;
++	static atomic_t debug_id;
  
- 	alist = ac->alist;
- 	if (alist) {
--		if (ac->responded &&
-+		if (ac->call_responded &&
+ 	_enter("%u,%u", nr, service_id);
+ 
+@@ -50,9 +73,11 @@ struct afs_addr_list *afs_alloc_addrlist(unsigned int nr, u16 service_id)
+ 
+ 	refcount_set(&alist->usage, 1);
+ 	alist->max_addrs = nr;
++	alist->debug_id = atomic_inc_return(&debug_id);
+ 
+ 	for (i = 0; i < nr; i++)
+ 		alist->addrs[i].service_id = service_id;
++	trace_afs_alist(alist->debug_id, 1, afs_alist_trace_alloc);
+ 	return alist;
+ }
+ 
+@@ -217,7 +242,7 @@ struct afs_vlserver_list *afs_parse_text_addrs(struct afs_net *net,
+ 	       problem, p - text, (int)len, (int)len, text);
+ 	ret = -EINVAL;
+ error:
+-	afs_put_addrlist(alist);
++	afs_put_addrlist(alist, afs_alist_trace_put_parse_error);
+ error_vl:
+ 	afs_put_vlserverlist(net, vllist);
+ 	return ERR_PTR(ret);
+@@ -403,7 +428,7 @@ void afs_end_cursor(struct afs_addr_cursor *ac)
  		    ac->index != alist->preferred &&
  		    test_bit(ac->alist->preferred, &ac->tried))
  			WRITE_ONCE(alist->preferred, ac->index);
- 		afs_put_addrlist(alist);
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_end_cursor);
  		ac->alist = NULL;
  	}
--
--	return ac->error;
  }
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index b40f7ae850a8..ecb889a269fb 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -693,8 +693,9 @@ static void afs_do_lookup_success(struct afs_operation *op)
- 			vp = &op->file[0];
- 			abort_code = vp->scb.status.abort_code;
- 			if (abort_code != 0) {
--				op->ac.abort_code = abort_code;
--				op->error = afs_abort_to_error(abort_code);
-+				op->call_abort_code = abort_code;
-+				afs_op_set_error(op, afs_abort_to_error(abort_code));
-+				op->cumul_error.abort_code = abort_code;
- 			}
- 			break;
+diff --git a/fs/afs/fs_probe.c b/fs/afs/fs_probe.c
+index fbb91ad775b9..18891492c0b4 100644
+--- a/fs/afs/fs_probe.c
++++ b/fs/afs/fs_probe.c
+@@ -205,7 +205,7 @@ void afs_fs_probe_fileserver(struct afs_net *net, struct afs_server *server,
+ 	read_lock(&server->fs_lock);
+ 	ac.alist = rcu_dereference_protected(server->addresses,
+ 					     lockdep_is_held(&server->fs_lock));
+-	afs_get_addrlist(ac.alist);
++	afs_get_addrlist(ac.alist, afs_alist_trace_get_probe);
+ 	read_unlock(&server->fs_lock);
  
-@@ -846,13 +847,14 @@ static struct inode *afs_do_lookup(struct inode *dir, struct dentry *dentry,
- 	_debug("nr_files %u", op->nr_files);
- 
- 	/* Need space for examining all the selected files */
--	op->error = -ENOMEM;
- 	if (op->nr_files > 2) {
- 		op->more_files = kvcalloc(op->nr_files - 2,
- 					  sizeof(struct afs_vnode_param),
- 					  GFP_KERNEL);
--		if (!op->more_files)
-+		if (!op->more_files) {
-+			afs_op_nomem(op);
- 			goto out_op;
-+		}
- 
- 		for (i = 2; i < op->nr_files; i++) {
- 			vp = &op->more_files[i - 2];
-@@ -1255,7 +1257,7 @@ void afs_check_for_remote_deletion(struct afs_operation *op)
- {
- 	struct afs_vnode *vnode = op->file[0].vnode;
- 
--	switch (op->ac.abort_code) {
-+	switch (afs_op_abort_code(op)) {
- 	case VNOVNODE:
- 		set_bit(AFS_VNODE_DELETED, &vnode->flags);
- 		afs_break_callback(vnode, afs_cb_break_for_deleted);
-@@ -1280,7 +1282,7 @@ static void afs_vnode_new_inode(struct afs_operation *op)
- 		/* ENOMEM or EINTR at a really inconvenient time - just abandon
- 		 * the new directory on the server.
- 		 */
--		op->error = PTR_ERR(inode);
-+		afs_op_accumulate_error(op, PTR_ERR(inode), 0);
- 		return;
+ 	server->probed_at = jiffies;
+@@ -226,7 +226,7 @@ void afs_fs_probe_fileserver(struct afs_net *net, struct afs_server *server,
+ 			afs_fs_probe_not_done(net, server, &ac);
  	}
  
-diff --git a/fs/afs/dir_silly.c b/fs/afs/dir_silly.c
-index bb5807e87fa4..a1e581946b93 100644
---- a/fs/afs/dir_silly.c
-+++ b/fs/afs/dir_silly.c
-@@ -218,7 +218,7 @@ static int afs_do_silly_unlink(struct afs_vnode *dvnode, struct afs_vnode *vnode
- 	/* If there was a conflict with a third party, check the status of the
- 	 * unlinked vnode.
- 	 */
--	if (op->error == 0 && (op->flags & AFS_OPERATION_DIR_CONFLICT)) {
-+	if (op->cumul_error.error == 0 && (op->flags & AFS_OPERATION_DIR_CONFLICT)) {
- 		op->file[1].update_ctime = false;
- 		op->fetch_status.which = 1;
- 		op->ops = &afs_fetch_status_operation;
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 0c81c39c32f5..8f9b42427569 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -245,10 +245,7 @@ static void afs_fetch_data_notify(struct afs_operation *op)
- 	struct netfs_io_subrequest *subreq = req->subreq;
- 	int error = afs_op_error(op);
- 
--	if (error == -ECONNABORTED)
--		error = afs_abort_to_error(op->ac.abort_code);
- 	req->error = error;
--
- 	if (subreq) {
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 		netfs_subreq_terminated(subreq, error ?: req->actual_len, false);
-diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
-index 1c22d6e77846..cebe4fad8192 100644
---- a/fs/afs/fs_operation.c
-+++ b/fs/afs/fs_operation.c
-@@ -169,9 +169,6 @@ static void afs_end_vnode_operation(struct afs_operation *op)
- 	}
- 
- 	afs_drop_io_locks(op);
--
--	if (op->error == -ECONNABORTED)
--		op->error = afs_abort_to_error(op->ac.abort_code);
+-	afs_put_addrlist(ac.alist);
++	afs_put_addrlist(ac.alist, afs_alist_trace_put_probe);
  }
  
  /*
-@@ -182,6 +179,8 @@ void afs_wait_for_operation(struct afs_operation *op)
- 	_enter("");
- 
- 	while (afs_select_fileserver(op)) {
-+		op->call_error = 0;
-+		op->call_abort_code = 0;
- 		op->cb_s_break = op->server->cb_s_break;
- 		if (test_bit(AFS_SERVER_FL_IS_YFS, &op->server->flags) &&
- 		    op->ops->issue_yfs_rpc)
-@@ -189,28 +188,29 @@ void afs_wait_for_operation(struct afs_operation *op)
- 		else if (op->ops->issue_afs_rpc)
- 			op->ops->issue_afs_rpc(op);
- 		else
--			op->ac.error = -ENOTSUPP;
-+			op->call_error = -ENOTSUPP;
- 
- 		if (op->call) {
- 			afs_wait_for_call_to_complete(op->call, &op->ac);
--			op->error = op->ac.error;
-+			op->call_abort_code = op->call->abort_code;
-+			op->call_error = op->call->error;
-+			op->call_responded = op->call->responded;
-+			op->ac.call_responded = true;
-+			WRITE_ONCE(op->ac.alist->addrs[op->ac.index].last_error,
-+				   op->call_error);
- 			afs_put_call(op->call);
- 		}
- 	}
- 
--	switch (op->error) {
--	case 0:
-+	if (!afs_op_error(op)) {
- 		_debug("success");
- 		op->ops->success(op);
--		break;
--	case -ECONNABORTED:
-+	} else if (op->cumul_error.aborted) {
- 		if (op->ops->aborted)
- 			op->ops->aborted(op);
--		fallthrough;
--	default:
-+	} else {
- 		if (op->ops->failed)
- 			op->ops->failed(op);
--		break;
- 	}
- 
- 	afs_end_vnode_operation(op);
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index 020073387111..2a56dea22519 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -1629,6 +1629,7 @@ int afs_fs_give_up_all_callbacks(struct afs_net *net,
- 	call->server = afs_use_server(server, afs_server_trace_give_up_cb);
- 	afs_make_call(ac, call, GFP_NOFS);
- 	afs_wait_for_call_to_complete(call, ac);
-+	ret = call->error;
- 	afs_put_call(call);
- 	return ret;
- }
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 1bc69a115223..d67c75d4d2bd 100644
+index d67c75d4d2bd..d00fda99f401 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -75,6 +75,7 @@ enum afs_call_state {
- struct afs_address {
- 	struct rxrpc_peer	*peer;
- 	u16			service_id;
-+	short			last_error;	/* Last error from this address */
- };
- 
+@@ -85,6 +85,7 @@ struct afs_addr_list {
+ 	struct rcu_head		rcu;
+ 	refcount_t		usage;
+ 	u32			version;	/* Version */
++	unsigned int		debug_id;
+ 	unsigned char		max_addrs;
+ 	unsigned char		nr_addrs;
+ 	unsigned char		preferred;	/* Preferred address */
+@@ -969,14 +970,9 @@ static inline bool afs_is_folio_dirty_mmapped(unsigned long priv)
  /*
-@@ -121,7 +122,6 @@ struct afs_call {
- 	};
- 	void			*buffer;	/* reply receive buffer */
- 	union {
--		long			ret0;	/* Value to reply with instead of 0 */
- 		struct afs_addr_list	*ret_alist;
- 		struct afs_vldb_entry	*ret_vldb;
- 		char			*ret_str;
-@@ -145,6 +145,7 @@ struct afs_call {
- 	bool			upgrade;	/* T to request service upgrade */
- 	bool			intr;		/* T if interruptible */
- 	bool			unmarshalling_error; /* T if an unmarshalling error occurred */
-+	bool			responded;	/* Got a response from the call (may be abort) */
- 	u16			service_id;	/* Actual service ID (after upgrade) */
- 	unsigned int		debug_id;	/* Trace ID */
- 	u32			operation_ID;	/* operation ID for an incoming call */
-@@ -719,8 +720,10 @@ struct afs_permits {
-  * Error prioritisation and accumulation.
+  * addr_list.c
   */
- struct afs_error {
--	short	error;			/* Accumulated error */
-+	s32	abort_code;		/* Cumulative abort code */
-+	short	error;			/* Cumulative error */
- 	bool	responded;		/* T if server responded */
-+	bool	aborted;		/* T if ->error is from an abort */
- };
- 
- /*
-@@ -730,10 +733,8 @@ struct afs_addr_cursor {
- 	struct afs_addr_list	*alist;		/* Current address list (pins ref) */
- 	unsigned long		tried;		/* Tried addresses */
- 	signed char		index;		/* Current address */
--	bool			responded;	/* T if the current address responded */
- 	unsigned short		nr_iterations;	/* Number of address iterations */
--	short			error;
--	u32			abort_code;
-+	bool			call_responded;
- };
- 
- /*
-@@ -746,13 +747,16 @@ struct afs_vl_cursor {
- 	struct afs_vlserver	*server;	/* Server on which this resides */
- 	struct key		*key;		/* Key for the server */
- 	unsigned long		untried;	/* Bitmask of untried servers */
-+	struct afs_error	cumul_error;	/* Cumulative error */
-+	s32			call_abort_code;
- 	short			index;		/* Current server */
--	short			error;
-+	short			call_error;	/* Error from single call */
- 	unsigned short		flags;
- #define AFS_VL_CURSOR_STOP	0x0001		/* Set to cease iteration */
- #define AFS_VL_CURSOR_RETRY	0x0002		/* Set to do a retry */
- #define AFS_VL_CURSOR_RETRIED	0x0004		/* Set if started a retry */
--	unsigned short		nr_iterations;	/* Number of server iterations */
-+	short			nr_iterations;	/* Number of server iterations */
-+	bool			call_responded;	/* T if the current address responded */
- };
- 
- /*
-@@ -803,8 +807,10 @@ struct afs_operation {
- 	struct dentry		*dentry_2;	/* Second dentry to be altered */
- 	struct timespec64	mtime;		/* Modification time to record */
- 	struct timespec64	ctime;		/* Change time to set */
-+	struct afs_error	cumul_error;	/* Cumulative error */
- 	short			nr_files;	/* Number of entries in file[], more_files */
--	short			error;
-+	short			call_error;	/* Error from single call */
-+	s32			call_abort_code; /* Abort code from single call */
- 	unsigned int		debug_id;
- 
- 	unsigned int		cb_v_break;	/* Volume break counter before op */
-@@ -860,6 +866,8 @@ struct afs_operation {
- 	unsigned long		untried;	/* Bitmask of untried servers */
- 	short			index;		/* Current server */
- 	short			nr_iterations;	/* Number of server iterations */
-+	bool			call_responded;	/* T if the current address responded */
-+
- 
- 	unsigned int		flags;
- #define AFS_OPERATION_STOP		0x0001	/* Set to cease iteration */
-@@ -976,7 +984,7 @@ bool afs_addr_list_same(const struct afs_addr_list *a,
- 			const struct afs_addr_list *b);
- extern struct afs_vlserver_list *afs_dns_query(struct afs_cell *, time64_t *);
- extern bool afs_iterate_addresses(struct afs_addr_cursor *);
--extern int afs_end_cursor(struct afs_addr_cursor *);
-+extern void afs_end_cursor(struct afs_addr_cursor *ac);
- 
- extern int afs_merge_fs_addr4(struct afs_net *net, struct afs_addr_list *addr,
- 			      __be32 xdr, u16 port);
-@@ -1235,17 +1243,27 @@ extern void afs_prioritise_error(struct afs_error *, int, u32);
- 
- static inline void afs_op_nomem(struct afs_operation *op)
- {
--	op->error = -ENOMEM;
-+	op->cumul_error.error = -ENOMEM;
- }
- 
- static inline int afs_op_error(const struct afs_operation *op)
- {
--	return op->error;
-+	return op->cumul_error.error;
-+}
-+
-+static inline s32 afs_op_abort_code(const struct afs_operation *op)
-+{
-+	return op->cumul_error.abort_code;
- }
- 
- static inline int afs_op_set_error(struct afs_operation *op, int error)
- {
--	return op->error = error;
-+	return op->cumul_error.error = error;
-+}
-+
-+static inline void afs_op_accumulate_error(struct afs_operation *op, int error, s32 abort_code)
-+{
-+	afs_prioritise_error(&op->cumul_error, error, abort_code);
- }
- 
- /*
-@@ -1619,7 +1637,7 @@ static inline void afs_update_dentry_version(struct afs_operation *op,
- 					     struct afs_vnode_param *dir_vp,
- 					     struct dentry *dentry)
- {
--	if (!op->error)
-+	if (!op->cumul_error.error)
- 		dentry->d_fsdata =
- 			(void *)(unsigned long)dir_vp->scb.status.data_version;
- }
-diff --git a/fs/afs/misc.c b/fs/afs/misc.c
-index 805328ca5428..b8180bf2281f 100644
---- a/fs/afs/misc.c
-+++ b/fs/afs/misc.c
-@@ -116,6 +116,8 @@ void afs_prioritise_error(struct afs_error *e, int error, u32 abort_code)
- {
- 	switch (error) {
- 	case 0:
-+		e->aborted = false;
-+		e->error = 0;
- 		return;
- 	default:
- 		if (e->error == -ETIMEDOUT ||
-@@ -161,12 +163,16 @@ void afs_prioritise_error(struct afs_error *e, int error, u32 abort_code)
- 		if (e->responded)
- 			return;
- 		e->error = error;
-+		e->aborted = false;
- 		return;
- 
- 	case -ECONNABORTED:
--		error = afs_abort_to_error(abort_code);
--		fallthrough;
-+		e->error = afs_abort_to_error(abort_code);
-+		e->aborted = true;
-+		e->responded = true;
-+		return;
- 	case -ENETRESET: /* Responded, but we seem to have changed address */
-+		e->aborted = false;
- 		e->responded = true;
- 		e->error = error;
- 		return;
+-static inline struct afs_addr_list *afs_get_addrlist(struct afs_addr_list *alist)
+-{
+-	if (alist)
+-		refcount_inc(&alist->usage);
+-	return alist;
+-}
++struct afs_addr_list *afs_get_addrlist(struct afs_addr_list *alist, enum afs_alist_trace reason);
+ extern struct afs_addr_list *afs_alloc_addrlist(unsigned int nr, u16 service_id);
+-extern void afs_put_addrlist(struct afs_addr_list *);
++extern void afs_put_addrlist(struct afs_addr_list *alist, enum afs_alist_trace reason);
+ extern struct afs_vlserver_list *afs_parse_text_addrs(struct afs_net *,
+ 						      const char *, size_t, char,
+ 						      unsigned short, unsigned short);
 diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
-index 965ee8f0804a..a778d53681fe 100644
+index a778d53681fe..fa2ba45a5941 100644
 --- a/fs/afs/rotate.c
 +++ b/fs/afs/rotate.c
-@@ -112,9 +112,9 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	struct afs_addr_list *alist;
- 	struct afs_server *server;
- 	struct afs_vnode *vnode = op->file[0].vnode;
--	struct afs_error e;
- 	unsigned int rtt;
--	int error = op->ac.error, i;
-+	s32 abort_code = op->call_abort_code;
-+	int error = op->call_error, i;
+@@ -484,7 +484,7 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 	read_lock(&server->fs_lock);
+ 	alist = rcu_dereference_protected(server->addresses,
+ 					  lockdep_is_held(&server->fs_lock));
+-	afs_get_addrlist(alist);
++	afs_get_addrlist(alist, afs_alist_trace_get_fsrotate_set);
+ 	read_unlock(&server->fs_lock);
  
- 	op->nr_iterations++;
+ retry_server:
+@@ -493,7 +493,7 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 	if (!op->ac.alist)
+ 		op->ac.alist = alist;
+ 	else
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_retry_server);
  
-@@ -122,7 +122,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	       op->debug_id, op->nr_iterations, op->volume->vid,
- 	       op->untried, op->index,
- 	       op->ac.tried, op->ac.index,
--	       error, op->ac.abort_code);
-+	       error, abort_code);
+ 	op->ac.index = -1;
  
- 	if (op->flags & AFS_OPERATION_STOP) {
- 		_leave(" = f [stopped]");
-@@ -133,8 +133,10 @@ bool afs_select_fileserver(struct afs_operation *op)
- 		goto start;
- 
- 	/* Evaluate the result of the previous operation, if there was one. */
--	switch (error) {
-+	switch (op->call_error) {
- 	case 0:
-+		op->cumul_error.responded = true;
-+		fallthrough;
- 	default:
- 		/* Success or local failure.  Stop. */
- 		afs_op_set_error(op, error);
-@@ -151,7 +153,8 @@ bool afs_select_fileserver(struct afs_operation *op)
- 		 * errors instead.  IBM AFS and OpenAFS fileservers, however, do leak
- 		 * these abort codes.
- 		 */
--		switch (op->ac.abort_code) {
-+		op->cumul_error.responded = true;
-+		switch (abort_code) {
- 		case VNOVOL:
- 			/* This fileserver doesn't know about the volume.
- 			 * - May indicate that the VL is wrong - retry once and compare
-@@ -164,7 +167,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			 *   (administrative action).
- 			 */
- 			if (op->flags & AFS_OPERATION_VNOVOL) {
--				op->error = -EREMOTEIO;
-+				afs_op_accumulate_error(op, -EREMOTEIO, abort_code);
- 				goto next_server;
- 			}
- 
-@@ -188,7 +191,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			 * it's the fileserver having trouble.
- 			 */
- 			if (rcu_access_pointer(op->volume->servers) == op->server_list) {
--				op->error = -EREMOTEIO;
-+				afs_op_accumulate_error(op, -EREMOTEIO, abort_code);
- 				goto next_server;
- 			}
- 
-@@ -201,8 +204,8 @@ bool afs_select_fileserver(struct afs_operation *op)
- 		case VONLINE:
- 			/* These should not be returned from the fileserver. */
- 			pr_warn("Fileserver returned unexpected abort %d\n",
--				op->ac.abort_code);
--			op->error = -EREMOTEIO;
-+				abort_code);
-+			afs_op_accumulate_error(op, -EREMOTEIO, abort_code);
- 			goto next_server;
- 
- 		case VNOSERVICE:
-@@ -233,7 +236,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			 * VNOSERVICE should be treated as an alias for RX_CALL_TIMEOUT.
- 			 */
- 		case RX_CALL_TIMEOUT:
--			op->error = -ETIMEDOUT;
-+			afs_op_accumulate_error(op, -ETIMEDOUT, abort_code);
- 			goto next_server;
- 
- 		case VSALVAGING: /* This error should not be leaked to cache managers
-@@ -248,7 +251,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			 * days).
- 			 */
- 			if (!test_and_set_bit(AFS_VOLUME_OFFLINE, &op->volume->flags)) {
--				afs_busy(op->volume, op->ac.abort_code);
-+				afs_busy(op->volume, abort_code);
- 				clear_bit(AFS_VOLUME_BUSY, &op->volume->flags);
- 			}
- 			if (op->flags & AFS_OPERATION_NO_VSLEEP) {
-@@ -281,7 +284,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 				goto failed;
- 			}
- 			if (!test_and_set_bit(AFS_VOLUME_BUSY, &op->volume->flags)) {
--				afs_busy(op->volume, op->ac.abort_code);
-+				afs_busy(op->volume, abort_code);
- 				clear_bit(AFS_VOLUME_OFFLINE, &op->volume->flags);
- 			}
- 		busy:
-@@ -329,7 +332,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			 * TODO: Retry a few times with sleeps.
- 			 */
- 			if (rcu_access_pointer(op->volume->servers) == op->server_list) {
--				op->error = -ENOMEDIUM;
-+				afs_op_accumulate_error(op, -ENOMEDIUM, abort_code);
- 				goto failed;
- 			}
- 
-@@ -337,7 +340,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 
- 		case UAEIO:
- 		case VIO:
--			op->error = -EREMOTEIO;
-+			afs_op_accumulate_error(op, -EREMOTEIO, abort_code);
- 			if (op->volume->type != AFSVL_RWVOL)
- 				goto next_server;
- 			goto failed;
-@@ -361,7 +364,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 			goto failed_but_online;
- 
- 		default:
--			op->error = afs_abort_to_error(op->ac.abort_code);
-+			afs_op_accumulate_error(op, error, abort_code);
- 		failed_but_online:
- 			clear_bit(AFS_VOLUME_OFFLINE, &op->volume->flags);
- 			clear_bit(AFS_VOLUME_BUSY, &op->volume->flags);
-@@ -380,7 +383,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	case -EHOSTDOWN:
- 	case -ECONNREFUSED:
- 		_debug("no conn");
--		op->error = error;
-+		afs_op_accumulate_error(op, error, 0);
- 		goto iterate_address;
- 
- 	case -ENETRESET:
-@@ -506,6 +509,7 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	       op->index, op->ac.index, op->ac.alist->nr_addrs,
- 	       rxrpc_kernel_remote_addr(op->ac.alist->addrs[op->ac.index].peer));
- 
-+	op->call_responded = false;
- 	_leave(" = t");
- 	return true;
- 
-@@ -543,17 +547,14 @@ bool afs_select_fileserver(struct afs_operation *op)
- 	if (op->flags & AFS_OPERATION_VBUSY)
- 		goto restart_from_beginning;
- 
--	e.error = -EDESTADDRREQ;
--	e.responded = false;
- 	for (i = 0; i < op->server_list->nr_servers; i++) {
- 		struct afs_server *s = op->server_list->servers[i].server;
- 
--		afs_prioritise_error(&e, READ_ONCE(s->probe.error),
--				     s->probe.abort_code);
-+		error = READ_ONCE(s->probe.error);
-+		if (error < 0)
-+			afs_op_accumulate_error(op, error, s->probe.abort_code);
- 	}
- 
--	error = e.error;
--	op->error = error;
- failed:
- 	op->flags |= AFS_OPERATION_STOP;
- 	afs_end_cursor(&op->ac);
-@@ -576,11 +577,13 @@ void afs_dump_edestaddrreq(const struct afs_operation *op)
- 	rcu_read_lock();
- 
- 	pr_notice("EDESTADDR occurred\n");
--	pr_notice("FC: cbb=%x cbb2=%x fl=%x err=%hd\n",
-+	pr_notice("OP: cbb=%x cbb2=%x fl=%x err=%hd\n",
- 		  op->file[0].cb_break_before,
--		  op->file[1].cb_break_before, op->flags, op->error);
--	pr_notice("FC: ut=%lx ix=%d ni=%u\n",
-+		  op->file[1].cb_break_before, op->flags, op->cumul_error.error);
-+	pr_notice("OP: ut=%lx ix=%d ni=%u\n",
- 		  op->untried, op->index, op->nr_iterations);
-+	pr_notice("OP: call  er=%d ac=%d r=%u\n",
-+		  op->call_error, op->call_abort_code, op->call_responded);
- 
- 	if (op->server_list) {
- 		const struct afs_server_list *sl = op->server_list;
-@@ -605,8 +608,7 @@ void afs_dump_edestaddrreq(const struct afs_operation *op)
- 		}
- 	}
- 
--	pr_notice("AC: t=%lx ax=%u ac=%d er=%d r=%u ni=%u\n",
--		  op->ac.tried, op->ac.index, op->ac.abort_code, op->ac.error,
--		  op->ac.responded, op->ac.nr_iterations);
-+	pr_notice("AC: t=%lx ax=%u ni=%u\n",
-+		  op->ac.tried, op->ac.index, op->ac.nr_iterations);
- 	rcu_read_unlock();
- }
 diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index dad8efadbc44..0b3e2f20b0e0 100644
+index 0b3e2f20b0e0..5bbf5a23af85 100644
 --- a/fs/afs/rxrpc.c
 +++ b/fs/afs/rxrpc.c
-@@ -408,8 +408,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
- 		rxrpc_kernel_recv_data(call->net->socket, rxcall,
- 				       &msg.msg_iter, &len, false,
- 				       &call->abort_code, &call->service_id);
--		ac->abort_code = call->abort_code;
--		ac->responded = true;
-+		call->responded = true;
- 	}
- 	call->error = ret;
- 	trace_afs_call_done(call);
-@@ -429,7 +428,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
- 		afs_set_call_complete(call, ret, 0);
- 	}
+@@ -187,7 +187,7 @@ void afs_put_call(struct afs_call *call)
+ 			call->type->destructor(call);
  
--	ac->error = ret;
-+	call->error = ret;
- 	call->state = AFS_CALL_COMPLETE;
- 	_leave(" = %d", ret);
- }
-@@ -510,6 +509,7 @@ static void afs_deliver_to_call(struct afs_call *call)
- 			ret = -EBADMSG;
- 		switch (ret) {
- 		case 0:
-+			call->responded = true;
- 			afs_queue_call_work(call);
- 			if (state == AFS_CALL_CL_PROC_REPLY) {
- 				if (call->op)
-@@ -524,9 +524,11 @@ static void afs_deliver_to_call(struct afs_call *call)
- 			goto out;
- 		case -ECONNABORTED:
- 			ASSERTCMP(state, ==, AFS_CALL_COMPLETE);
-+			call->responded = true;
- 			afs_log_error(call, call->abort_code);
- 			goto done;
- 		case -ENOTSUPP:
-+			call->responded = true;
- 			abort_code = RXGEN_OPCODE;
- 			rxrpc_kernel_abort_call(call->net->socket, call->rxcall,
- 						abort_code, ret,
-@@ -573,7 +575,7 @@ static void afs_deliver_to_call(struct afs_call *call)
- }
+ 		afs_unuse_server_notime(call->net, call->server, afs_server_trace_put_call);
+-		afs_put_addrlist(call->alist);
++		afs_put_addrlist(call->alist, afs_alist_trace_put_call);
+ 		kfree(call->request);
  
- /*
-- * Wait synchronously for a call to complete and clean up the call struct.
-+ * Wait synchronously for a call to complete.
-  */
- void afs_wait_for_call_to_complete(struct afs_call *call, struct afs_addr_cursor *ac)
- {
-@@ -626,13 +628,8 @@ void afs_wait_for_call_to_complete(struct afs_call *call, struct afs_addr_cursor
- 		}
- 	}
+ 		trace_afs_call(call->debug_id, afs_call_trace_free, 0, o,
+@@ -315,7 +315,7 @@ void afs_make_call(struct afs_addr_cursor *ac, struct afs_call *call, gfp_t gfp)
+ 	       atomic_read(&call->net->nr_outstanding_calls));
  
--	spin_lock_bh(&call->state_lock);
--	ac->abort_code = call->abort_code;
--	ac->error = call->error;
--	spin_unlock_bh(&call->state_lock);
--
- 	if (call->error == 0 || call->error == -ECONNABORTED)
--		ac->responded = true;
-+		call->responded = true;
- }
+ 	call->addr_ix = ac->index;
+-	call->alist = afs_get_addrlist(ac->alist);
++	call->alist = afs_get_addrlist(ac->alist, afs_alist_trace_get_make_call);
  
- /*
+ 	/* Work out the length we're going to transmit.  This is awkward for
+ 	 * calls such as FS.StoreData where there's an extra injection of data
 diff --git a/fs/afs/server.c b/fs/afs/server.c
-index 2826e6eced71..f7791ef13618 100644
+index f7791ef13618..6c13f00b10d8 100644
 --- a/fs/afs/server.c
 +++ b/fs/afs/server.c
-@@ -437,7 +437,6 @@ static void afs_give_up_callbacks(struct afs_net *net, struct afs_server *server
- 	struct afs_addr_cursor ac = {
- 		.alist	= alist,
- 		.index	= alist->preferred,
--		.error	= 0,
- 	};
+@@ -275,13 +275,13 @@ struct afs_server *afs_lookup_server(struct afs_cell *cell, struct key *key,
  
- 	afs_fs_give_up_all_callbacks(net, server, &ac, NULL);
-diff --git a/fs/afs/vl_alias.c b/fs/afs/vl_alias.c
-index 6fdf9f1bedc0..89cadd9a69e1 100644
---- a/fs/afs/vl_alias.c
-+++ b/fs/afs/vl_alias.c
-@@ -236,7 +236,7 @@ static char *afs_vl_get_cell_name(struct afs_cell *cell, struct key *key)
+ 	candidate = afs_alloc_server(cell, uuid, alist);
+ 	if (!candidate) {
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_server_oom);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
  
- 	while (afs_select_vlserver(&vc)) {
- 		if (!test_bit(AFS_VLSERVER_FL_IS_YFS, &vc.server->flags)) {
--			vc.ac.error = -EOPNOTSUPP;
-+			vc.call_error = -EOPNOTSUPP;
- 			skipped = true;
+ 	server = afs_install_server(cell, candidate);
+ 	if (server != candidate) {
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_server_dup);
+ 		kfree(candidate);
+ 	} else {
+ 		/* Immediately dispatch an asynchronous probe to each interface
+@@ -421,7 +421,8 @@ static void afs_server_rcu(struct rcu_head *rcu)
+ 
+ 	trace_afs_server(server->debug_id, refcount_read(&server->ref),
+ 			 atomic_read(&server->active), afs_server_trace_free);
+-	afs_put_addrlist(rcu_access_pointer(server->addresses));
++	afs_put_addrlist(rcu_access_pointer(server->addresses),
++			 afs_alist_trace_put_server);
+ 	kfree(server);
+ }
+ 
+@@ -643,7 +644,7 @@ static noinline bool afs_update_server_record(struct afs_operation *op,
+ 		write_unlock(&server->fs_lock);
+ 	}
+ 
+-	afs_put_addrlist(discard);
++	afs_put_addrlist(discard, afs_alist_trace_put_server_update);
+ 	_leave(" = t");
+ 	return true;
+ }
+diff --git a/fs/afs/vl_list.c b/fs/afs/vl_list.c
+index ba89140eee9e..3a2875933261 100644
+--- a/fs/afs/vl_list.c
++++ b/fs/afs/vl_list.c
+@@ -33,7 +33,8 @@ static void afs_vlserver_rcu(struct rcu_head *rcu)
+ {
+ 	struct afs_vlserver *vlserver = container_of(rcu, struct afs_vlserver, rcu);
+ 
+-	afs_put_addrlist(rcu_access_pointer(vlserver->addresses));
++	afs_put_addrlist(rcu_access_pointer(vlserver->addresses),
++			 afs_alist_trace_put_vlserver);
+ 	kfree_rcu(vlserver, rcu);
+ }
+ 
+@@ -145,7 +146,7 @@ static struct afs_addr_list *afs_extract_vl_addrs(struct afs_net *net,
+ 
+ error:
+ 	*_b = b;
+-	afs_put_addrlist(alist);
++	afs_put_addrlist(alist, afs_alist_trace_put_parse_error);
+ 	return ERR_PTR(ret);
+ }
+ 
+@@ -260,7 +261,7 @@ struct afs_vlserver_list *afs_extract_vlserver_list(struct afs_cell *cell,
+ 
+ 		if (vllist->nr_servers >= nr_servers) {
+ 			_debug("skip %u >= %u", vllist->nr_servers, nr_servers);
+-			afs_put_addrlist(addrs);
++			afs_put_addrlist(addrs, afs_alist_trace_put_parse_empty);
+ 			afs_put_vlserver(cell->net, server);
  			continue;
  		}
-diff --git a/fs/afs/vl_probe.c b/fs/afs/vl_probe.c
-index 44bff3a2a5ac..138f5715619d 100644
---- a/fs/afs/vl_probe.c
-+++ b/fs/afs/vl_probe.c
-@@ -169,10 +169,11 @@ static bool afs_do_probe_vlserver(struct afs_net *net,
- 		call = afs_vl_get_capabilities(net, &ac, key, server,
- 					       server_index);
- 		if (!IS_ERR(call)) {
-+			afs_prioritise_error(_e, call->error, call->abort_code);
- 			afs_put_call(call);
- 			in_progress = true;
- 		} else {
--			afs_prioritise_error(_e, PTR_ERR(call), ac.abort_code);
-+			afs_prioritise_error(_e, PTR_ERR(call), 0);
- 			afs_done_one_vl_probe(server, false);
- 		}
- 	}
-@@ -187,12 +188,10 @@ int afs_send_vl_probes(struct afs_net *net, struct key *key,
- 		       struct afs_vlserver_list *vllist)
- {
- 	struct afs_vlserver *server;
--	struct afs_error e;
-+	struct afs_error e = {};
- 	bool in_progress = false;
- 	int i;
+@@ -269,7 +270,7 @@ struct afs_vlserver_list *afs_extract_vlserver_list(struct afs_cell *cell,
+ 		addrs->status = bs.status;
  
--	e.error = 0;
--	e.responded = false;
- 	for (i = 0; i < vllist->nr_servers; i++) {
- 		server = vllist->servers[i].server;
- 		if (test_bit(AFS_VLSERVER_FL_PROBED, &server->flags))
+ 		if (addrs->nr_addrs == 0) {
+-			afs_put_addrlist(addrs);
++			afs_put_addrlist(addrs, afs_alist_trace_put_parse_empty);
+ 			if (!rcu_access_pointer(server->addresses)) {
+ 				afs_put_vlserver(cell->net, server);
+ 				continue;
+@@ -281,7 +282,7 @@ struct afs_vlserver_list *afs_extract_vlserver_list(struct afs_cell *cell,
+ 			old = rcu_replace_pointer(server->addresses, old,
+ 						  lockdep_is_held(&server->lock));
+ 			write_unlock(&server->lock);
+-			afs_put_addrlist(old);
++			afs_put_addrlist(old, afs_alist_trace_put_vlserver_old);
+ 		}
+ 
+ 
 diff --git a/fs/afs/vl_rotate.c b/fs/afs/vl_rotate.c
-index 01c890b3d18d..7ae73418697d 100644
+index 7ae73418697d..e8fbbeb551bb 100644
 --- a/fs/afs/vl_rotate.c
 +++ b/fs/afs/vl_rotate.c
-@@ -20,11 +20,11 @@ bool afs_begin_vlserver_operation(struct afs_vl_cursor *vc, struct afs_cell *cel
- 	memset(vc, 0, sizeof(*vc));
- 	vc->cell = cell;
- 	vc->key = key;
--	vc->error = -EDESTADDRREQ;
--	vc->ac.error = SHRT_MAX;
-+	vc->cumul_error.error = -EDESTADDRREQ;
-+	vc->nr_iterations = -1;
+@@ -231,16 +231,11 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
+ 	read_lock(&vlserver->lock);
+ 	alist = rcu_dereference_protected(vlserver->addresses,
+ 					  lockdep_is_held(&vlserver->lock));
+-	afs_get_addrlist(alist);
++	afs_get_addrlist(alist, afs_alist_trace_get_vlrotate_set);
+ 	read_unlock(&vlserver->lock);
  
- 	if (signal_pending(current)) {
--		vc->error = -EINTR;
-+		vc->cumul_error.error = -EINTR;
- 		vc->flags |= AFS_VL_CURSOR_STOP;
- 		return false;
- 	}
-@@ -52,7 +52,7 @@ static bool afs_start_vl_iteration(struct afs_vl_cursor *vc)
- 				    &cell->dns_lookup_count,
- 				    smp_load_acquire(&cell->dns_lookup_count)
- 				    != dns_lookup_count) < 0) {
--				vc->error = -ERESTARTSYS;
-+				vc->cumul_error.error = -ERESTARTSYS;
- 				return false;
- 			}
- 		}
-@@ -60,12 +60,12 @@ static bool afs_start_vl_iteration(struct afs_vl_cursor *vc)
- 		/* Status load is ordered after lookup counter load */
- 		if (cell->dns_status == DNS_LOOKUP_GOT_NOT_FOUND) {
- 			pr_warn("No record of cell %s\n", cell->name);
--			vc->error = -ENOENT;
-+			vc->cumul_error.error = -ENOENT;
- 			return false;
- 		}
- 
- 		if (cell->dns_source == DNS_RECORD_UNAVAILABLE) {
--			vc->error = -EDESTADDRREQ;
-+			vc->cumul_error.error = -EDESTADDRREQ;
- 			return false;
- 		}
- 	}
-@@ -91,52 +91,52 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
- {
- 	struct afs_addr_list *alist;
- 	struct afs_vlserver *vlserver;
--	struct afs_error e;
- 	unsigned int rtt;
--	int error = vc->ac.error, i;
-+	s32 abort_code = vc->call_abort_code;
-+	int error = vc->call_error, i;
-+
-+	vc->nr_iterations++;
- 
- 	_enter("%lx[%d],%lx[%d],%d,%d",
- 	       vc->untried, vc->index,
- 	       vc->ac.tried, vc->ac.index,
--	       error, vc->ac.abort_code);
-+	       error, abort_code);
- 
- 	if (vc->flags & AFS_VL_CURSOR_STOP) {
- 		_leave(" = f [stopped]");
- 		return false;
- 	}
- 
--	vc->nr_iterations++;
-+	if (vc->nr_iterations == 0)
-+		goto start;
- 
- 	/* Evaluate the result of the previous operation, if there was one. */
- 	switch (error) {
--	case SHRT_MAX:
--		goto start;
+ 	memset(&vc->ac, 0, sizeof(vc->ac));
 -
- 	default:
- 	case 0:
- 		/* Success or local failure.  Stop. */
--		vc->error = error;
-+		vc->cumul_error.error = error;
- 		vc->flags |= AFS_VL_CURSOR_STOP;
--		_leave(" = f [okay/local %d]", vc->ac.error);
-+		_leave(" = f [okay/local %d]", vc->cumul_error.error);
- 		return false;
- 
- 	case -ECONNABORTED:
- 		/* The far side rejected the operation on some grounds.  This
- 		 * might involve the server being busy or the volume having been moved.
- 		 */
--		switch (vc->ac.abort_code) {
-+		switch (abort_code) {
- 		case AFSVL_IO:
- 		case AFSVL_BADVOLOPER:
- 		case AFSVL_NOMEM:
- 			/* The server went weird. */
--			vc->error = -EREMOTEIO;
-+			afs_prioritise_error(&vc->cumul_error, -EREMOTEIO, abort_code);
- 			//write_lock(&vc->cell->vl_servers_lock);
- 			//vc->server_list->weird_mask |= 1 << vc->index;
- 			//write_unlock(&vc->cell->vl_servers_lock);
- 			goto next_server;
- 
- 		default:
--			vc->error = afs_abort_to_error(vc->ac.abort_code);
-+			afs_prioritise_error(&vc->cumul_error, error, abort_code);
- 			goto failed;
- 		}
- 
-@@ -149,12 +149,12 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
- 	case -ETIMEDOUT:
- 	case -ETIME:
- 		_debug("no conn %d", error);
--		vc->error = error;
-+		afs_prioritise_error(&vc->cumul_error, error, 0);
- 		goto iterate_address;
- 
- 	case -ECONNRESET:
- 		_debug("call reset");
--		vc->error = error;
-+		afs_prioritise_error(&vc->cumul_error, error, 0);
- 		vc->flags |= AFS_VL_CURSOR_RETRY;
- 		goto next_server;
- 
-@@ -178,15 +178,19 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
- 		goto failed;
- 
- 	error = afs_send_vl_probes(vc->cell->net, vc->key, vc->server_list);
--	if (error < 0)
--		goto failed_set_error;
-+	if (error < 0) {
-+		afs_prioritise_error(&vc->cumul_error, error, 0);
-+		goto failed;
-+	}
- 
- pick_server:
- 	_debug("pick [%lx]", vc->untried);
- 
- 	error = afs_wait_for_vl_probes(vc->server_list, vc->untried);
--	if (error < 0)
--		goto failed_set_error;
-+	if (error < 0) {
-+		afs_prioritise_error(&vc->cumul_error, error, 0);
-+		goto failed;
-+	}
- 
- 	/* Pick the untried server with the lowest RTT. */
- 	vc->index = vc->server_list->preferred;
-@@ -249,6 +253,7 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
- 
- 	_debug("VL address %d/%d", vc->ac.index, vc->ac.alist->nr_addrs);
- 
-+	vc->call_responded = false;
- 	_leave(" = t %pISpc", rxrpc_kernel_remote_addr(vc->ac.alist->addrs[vc->ac.index].peer));
- 	return true;
- 
-@@ -264,25 +269,19 @@ bool afs_select_vlserver(struct afs_vl_cursor *vc)
- 	if (vc->flags & AFS_VL_CURSOR_RETRY)
- 		goto restart_from_beginning;
- 
--	e.error = -EDESTADDRREQ;
--	e.responded = false;
- 	for (i = 0; i < vc->server_list->nr_servers; i++) {
- 		struct afs_vlserver *s = vc->server_list->servers[i].server;
- 
- 		if (test_bit(AFS_VLSERVER_FL_RESPONDING, &s->flags))
--			e.responded = true;
--		afs_prioritise_error(&e, READ_ONCE(s->probe.error),
-+			vc->cumul_error.responded = true;
-+		afs_prioritise_error(&vc->cumul_error, READ_ONCE(s->probe.error),
- 				     s->probe.abort_code);
- 	}
- 
--	error = e.error;
+-	if (!vc->ac.alist)
+-		vc->ac.alist = alist;
+-	else
+-		afs_put_addrlist(alist);
 -
--failed_set_error:
--	vc->error = error;
- failed:
- 	vc->flags |= AFS_VL_CURSOR_STOP;
- 	afs_end_cursor(&vc->ac);
--	_leave(" = f [failed %d]", vc->error);
-+	_leave(" = f [failed %d]", vc->cumul_error.error);
- 	return false;
- }
++	vc->ac.alist = alist;
+ 	vc->ac.index = -1;
  
-@@ -305,7 +304,10 @@ static void afs_vl_dump_edestaddrreq(const struct afs_vl_cursor *vc)
- 	pr_notice("DNS: src=%u st=%u lc=%x\n",
- 		  cell->dns_source, cell->dns_status, cell->dns_lookup_count);
- 	pr_notice("VC: ut=%lx ix=%u ni=%hu fl=%hx err=%hd\n",
--		  vc->untried, vc->index, vc->nr_iterations, vc->flags, vc->error);
-+		  vc->untried, vc->index, vc->nr_iterations, vc->flags,
-+		  vc->cumul_error.error);
-+	pr_notice("VC: call  er=%d ac=%d r=%u\n",
-+		  vc->call_error, vc->call_abort_code, vc->call_responded);
- 
- 	if (vc->server_list) {
- 		const struct afs_vlserver_list *sl = vc->server_list;
-@@ -329,9 +331,8 @@ static void afs_vl_dump_edestaddrreq(const struct afs_vl_cursor *vc)
- 		}
- 	}
- 
--	pr_notice("AC: t=%lx ax=%u ac=%d er=%d r=%u ni=%u\n",
--		  vc->ac.tried, vc->ac.index, vc->ac.abort_code, vc->ac.error,
--		  vc->ac.responded, vc->ac.nr_iterations);
-+	pr_notice("AC: t=%lx ax=%u ni=%u\n",
-+		  vc->ac.tried, vc->ac.index, vc->ac.nr_iterations);
- 	rcu_read_unlock();
- }
- 
-@@ -342,17 +343,16 @@ int afs_end_vlserver_operation(struct afs_vl_cursor *vc)
- {
- 	struct afs_net *net = vc->cell->net;
- 
--	if (vc->error == -EDESTADDRREQ ||
--	    vc->error == -EADDRNOTAVAIL ||
--	    vc->error == -ENETUNREACH ||
--	    vc->error == -EHOSTUNREACH)
-+	switch (vc->cumul_error.error) {
-+	case -EDESTADDRREQ:
-+	case -EADDRNOTAVAIL:
-+	case -ENETUNREACH:
-+	case -EHOSTUNREACH:
- 		afs_vl_dump_edestaddrreq(vc);
-+		break;
-+	}
- 
- 	afs_end_cursor(&vc->ac);
- 	afs_put_vlserverlist(net, vc->server_list);
--
--	if (vc->error == -ECONNABORTED)
--		vc->error = afs_abort_to_error(vc->ac.abort_code);
--
--	return vc->error;
-+	return vc->cumul_error.error;
- }
+ iterate_address:
 diff --git a/fs/afs/vlclient.c b/fs/afs/vlclient.c
-index 650534892a20..db7e94584e87 100644
+index db7e94584e87..8dea7b56b75a 100644
 --- a/fs/afs/vlclient.c
 +++ b/fs/afs/vlclient.c
-@@ -161,10 +161,13 @@ struct afs_vldb_entry *afs_vl_get_entry_by_name_u(struct afs_vl_cursor *vc,
- 	trace_afs_make_vl_call(call);
- 	afs_make_call(&vc->ac, call, GFP_KERNEL);
- 	afs_wait_for_call_to_complete(call, &vc->ac);
-+	vc->call_abort_code	= call->abort_code;
-+	vc->call_error		= call->error;
-+	vc->call_responded	= call->responded;
+@@ -314,7 +314,7 @@ struct afs_addr_list *afs_vl_get_addrs_u(struct afs_vl_cursor *vc,
+ 	alist			= call->ret_alist;
  	afs_put_call(call);
--	if (vc->ac.error) {
-+	if (vc->call_error) {
- 		kfree(entry);
--		return ERR_PTR(vc->ac.error);
-+		return ERR_PTR(vc->call_error);
- 	}
- 	return entry;
- }
-@@ -305,11 +308,14 @@ struct afs_addr_list *afs_vl_get_addrs_u(struct afs_vl_cursor *vc,
- 	trace_afs_make_vl_call(call);
- 	afs_make_call(&vc->ac, call, GFP_KERNEL);
- 	afs_wait_for_call_to_complete(call, &vc->ac);
--	alist = call->ret_alist;
-+	vc->call_abort_code	= call->abort_code;
-+	vc->call_error		= call->error;
-+	vc->call_responded	= call->responded;
-+	alist			= call->ret_alist;
- 	afs_put_call(call);
--	if (vc->ac.error) {
-+	if (vc->call_error) {
- 		afs_put_addrlist(alist);
--		return ERR_PTR(vc->ac.error);
-+		return ERR_PTR(vc->call_error);
+ 	if (vc->call_error) {
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_getaddru);
+ 		return ERR_PTR(vc->call_error);
  	}
  	return alist;
- }
-@@ -656,11 +662,14 @@ struct afs_addr_list *afs_yfsvl_get_endpoints(struct afs_vl_cursor *vc,
- 	trace_afs_make_vl_call(call);
- 	afs_make_call(&vc->ac, call, GFP_KERNEL);
- 	afs_wait_for_call_to_complete(call, &vc->ac);
--	alist = call->ret_alist;
-+	vc->call_abort_code	= call->abort_code;
-+	vc->call_error		= call->error;
-+	vc->call_responded	= call->responded;
-+	alist			= call->ret_alist;
+@@ -668,7 +668,7 @@ struct afs_addr_list *afs_yfsvl_get_endpoints(struct afs_vl_cursor *vc,
+ 	alist			= call->ret_alist;
  	afs_put_call(call);
--	if (vc->ac.error) {
-+	if (vc->call_error) {
- 		afs_put_addrlist(alist);
--		return ERR_PTR(vc->ac.error);
-+		return ERR_PTR(vc->call_error);
+ 	if (vc->call_error) {
+-		afs_put_addrlist(alist);
++		afs_put_addrlist(alist, afs_alist_trace_put_getaddru);
+ 		return ERR_PTR(vc->call_error);
  	}
  	return alist;
- }
-@@ -769,11 +778,14 @@ char *afs_yfsvl_get_cell_name(struct afs_vl_cursor *vc)
- 	trace_afs_make_vl_call(call);
- 	afs_make_call(&vc->ac, call, GFP_KERNEL);
- 	afs_wait_for_call_to_complete(call, &vc->ac);
--	cellname = call->ret_str;
-+	vc->call_abort_code	= call->abort_code;
-+	vc->call_error		= call->error;
-+	vc->call_responded	= call->responded;
-+	cellname		= call->ret_str;
- 	afs_put_call(call);
--	if (vc->ac.error) {
-+	if (vc->call_error) {
- 		kfree(cellname);
--		return ERR_PTR(vc->ac.error);
-+		return ERR_PTR(vc->call_error);
- 	}
- 	return cellname;
- }
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 597677acc6b1..ed91666ca4cc 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -202,6 +202,27 @@ enum yfs_cm_operation {
+ 	EM(afs_cell_trace_use_sbi,		"USE sbi   ") \
+ 	E_(afs_cell_trace_wait,			"WAIT      ")
+ 
++#define afs_alist_traces \
++	EM(afs_alist_trace_alloc,		"ALLOC     ") \
++	EM(afs_alist_trace_get_fsrotate_set,	"GET fs-rot") \
++	EM(afs_alist_trace_get_make_call,	"GET mkcall") \
++	EM(afs_alist_trace_get_probe,		"GET probe ") \
++	EM(afs_alist_trace_get_vlrotate_set,	"GET vl-rot") \
++	EM(afs_alist_trace_put_call,		"PUT call  ") \
++	EM(afs_alist_trace_put_end_cursor,	"PUT endcur") \
++	EM(afs_alist_trace_put_getaddru,	"PUT GtAdrU") \
++	EM(afs_alist_trace_put_parse_empty,	"PUT p-empt") \
++	EM(afs_alist_trace_put_parse_error,	"PUT p-err ") \
++	EM(afs_alist_trace_put_probe,		"PUT probe ") \
++	EM(afs_alist_trace_put_retry_server,	"PUT retry ") \
++	EM(afs_alist_trace_put_server,		"PUT server") \
++	EM(afs_alist_trace_put_server_dup,	"PUT sv-dup") \
++	EM(afs_alist_trace_put_server_oom,	"PUT sv-oom") \
++	EM(afs_alist_trace_put_server_update,	"PUT sv-upd") \
++	EM(afs_alist_trace_put_vlserver,	"PUT vlsrvr") \
++	EM(afs_alist_trace_put_vlserver_old,	"PUT vs-old") \
++	E_(afs_alist_trace_free,		"FREE      ")
++
+ #define afs_fs_operations \
+ 	EM(afs_FS_FetchData,			"FS.FetchData") \
+ 	EM(afs_FS_FetchStatus,			"FS.FetchStatus") \
+@@ -420,6 +441,7 @@ enum yfs_cm_operation {
+ #define EM(a, b) a,
+ #define E_(a, b) a
+ 
++enum afs_alist_trace		{ afs_alist_traces } __mode(byte);
+ enum afs_call_trace		{ afs_call_traces } __mode(byte);
+ enum afs_cb_break_reason	{ afs_cb_break_reasons } __mode(byte);
+ enum afs_cell_trace		{ afs_cell_traces } __mode(byte);
+@@ -443,6 +465,7 @@ enum afs_volume_trace		{ afs_volume_traces } __mode(byte);
+ #define EM(a, b) TRACE_DEFINE_ENUM(a);
+ #define E_(a, b) TRACE_DEFINE_ENUM(a);
+ 
++afs_alist_traces;
+ afs_call_traces;
+ afs_server_traces;
+ afs_cell_traces;
+@@ -1330,6 +1353,30 @@ TRACE_EVENT(afs_cell,
+ 		      __entry->active)
+ 	    );
+ 
++TRACE_EVENT(afs_alist,
++	    TP_PROTO(unsigned int alist_debug_id, int ref, enum afs_alist_trace reason),
++
++	    TP_ARGS(alist_debug_id, ref, reason),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,		alist)
++		    __field(int,			ref)
++		    __field(int,			active)
++		    __field(int,			reason)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->alist = alist_debug_id;
++		    __entry->ref = ref;
++		    __entry->reason = reason;
++			   ),
++
++	    TP_printk("AL=%08x %s r=%d",
++		      __entry->alist,
++		      __print_symbolic(__entry->reason, afs_alist_traces),
++		      __entry->ref)
++	    );
++
+ #endif /* _TRACE_AFS_H */
+ 
+ /* This part must be outside protection */
 
 
