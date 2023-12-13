@@ -1,165 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-5855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E2811356
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:48:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D79881135F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07E41C20F38
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234A51F2177C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8152DF87;
-	Wed, 13 Dec 2023 13:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A475E2DF95;
+	Wed, 13 Dec 2023 13:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iWHgec6X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A15F6DD;
-	Wed, 13 Dec 2023 05:48:32 -0800 (PST)
-Received: from [141.14.31.7] (theinternet.molgen.mpg.de [141.14.31.7])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5984EDD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 05:50:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702475410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6fbfXkkFVGTCRrg97l9L+HJSV/Mp1xytzAMKvjGB/6w=;
+	b=iWHgec6Xgmo78yunVM6UMJ/WpsXA6iVk12j2d6CTWaFzCInLZowbp3Y6YcGRKBmw/O0oPC
+	xeQBt7Jq4Kp+4+PdT/3+Umi9gfLlauBeGl5OaA+fJtJfxufiGKxrTIVhU84LEATTl4wiNB
+	CZWzVVbwkjq+Wt77exphmsyJEhrM3g4=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-244-FQDaSJ26NzmPtK-4ZLZhlA-1; Wed,
+ 13 Dec 2023 08:50:07 -0500
+X-MC-Unique: FQDaSJ26NzmPtK-4ZLZhlA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: buczek)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 1E48761E5FE0A;
-	Wed, 13 Dec 2023 14:48:14 +0100 (CET)
-Message-ID: <7ed8baa0-b895-43a2-bb13-93a92e18a823@molgen.mpg.de>
-Date: Wed, 13 Dec 2023 14:48:13 +0100
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D57DA1C05AF8;
+	Wed, 13 Dec 2023 13:50:06 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 16478492BE6;
+	Wed, 13 Dec 2023 13:50:05 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Marc Dionne <marc.dionne@auristor.com>
+Cc: David Howells <dhowells@redhat.com>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/40] afs: Fix probe handling, server rotation and RO volume callback handling
+Date: Wed, 13 Dec 2023 13:49:22 +0000
+Message-ID: <20231213135003.367397-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: file handle in statx
-Content-Language: en-US
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
- NeilBrown <neilb@suse.de>, linux-bcachefs@vger.kernel.org,
- Stefan Krueger <stefan.krueger@aei.mpg.de>,
- David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org
-References: <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
- <170233460764.12910.276163802059260666@noble.neil.brown.name>
- <20231211233231.oiazgkqs7yahruuw@moria.home.lan>
- <170233878712.12910.112528191448334241@noble.neil.brown.name>
- <20231212000515.4fesfyobdlzjlwra@moria.home.lan>
- <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area>
- <e07d2063-1a0b-4527-afca-f6e6e2ecb821@molgen.mpg.de>
- <20231212152016.GB142380@mit.edu>
- <a0f820a7-3cf5-4826-a15b-e536abb5b1de@molgen.mpg.de>
- <20231213122820.umqmp3yvbbvizfym@moria.home.lan>
-From: Donald Buczek <buczek@molgen.mpg.de>
-In-Reply-To: <20231213122820.umqmp3yvbbvizfym@moria.home.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On 12/13/23 13:28, Kent Overstreet wrote:
-> On Wed, Dec 13, 2023 at 08:37:57AM +0100, Donald Buczek wrote:
->> Probably not for the specific applications I mentioned (backup, mirror,
->> accounting). These are intended to run continuously, slowly and unnoticed
->> in the background, so they are memory and i/o throttled via cgroups anyway
->> and one is even using sleep after so-and-so many stat calls to reduce
->> its impact.
->>
->> If they could tell a directory from a snapshot, I would probably stop them
->> from walking into snapshots. And if not, the snapshot id is all that is
->> needed to tell a clone in a snapshot from a hardlink. So these don't really
->> need the filehandle.
-> 
-> Perhaps we should allocate a bit for differentiating a snapshot from a
-> non snapshot subvolume?
-Are there non-snapshots subvolumes?
+Hi Marc,
 
-From  debugfs bcachefs/../btrees, I've got the impression, that every
-volume starts with a (single) snapshot.
+Here are a set of patches to make some substantial fixes to the afs
+filesystem including:
 
-new fileystem:
+ (1) Fix fileserver probe handling so that the next round of probes doesn't
+     break ongoing server/address rotation by clearing all the probe result
+     tracking.  This could occasionally cause the rotation algorithm to
+     drop straight through, give a 'successful' result without actually
+     emitting any RPC calls, leaving the reply buffer in an undefined
+     state.
 
-subvolumes
-==========
-u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
+     Instead, detach the probe results into a separate struct
+     and allocate a new one each time we start probing and update the
+     pointer to it.  Probes are also sent in order of address preference to
+     try and improve the chance that the preferred one will complete first.
 
-snapshots
-=========
-u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+ (2) Fix server rotation so that it uses configurable address preferences
+     across on the probes that have completed so far than ranking them by
+     RTT as the latter doesn't necessarily give the best route.  The
+     preference list can be altered by echoing commands into
+     /proc/net/afs/addr_prefs.
 
-`bcachefs subvolume create /mnt/v`
+ (3) Fix the handling of Read-Only (and Backup) volume callbacks as there
+     is one per volume, not one per file, so if someone performs a command
+     that, say, offlines the volume but doesn't change it, when it comes
+     back online we don't spam the server with a status fetch for every
+     vnode we're using.  Instead, check the Creation timestamp in the
+     VolSync record when prompted by a callback break.
 
-subvolumes
-==========
-u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
-u64s 10 type subvolume 0:2:0 len 0 ver 0: root 1207959552 snapshot id 4294967294 parent 0
+ (4) Handle volume regression (ie. a RW volume being restored from a
+     backup) by scrubbing all cache data for that volume.  This is detected
+     from the VolSync creation timestamp.
 
-snapshots
-=========
-u64s 10 type snapshot 0:4294967294:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 2 tree 2 depth 0 skiplist 0 0 0
-u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+ (5) Adjust abort handling and abort -> error mapping to match better with
+     what other AFS clients do.
 
-`bcachefs subvolume snapshot /mnt/v /mnt/s`
+ (6) Fix offline and busy volume state handling as they only apply to
+     individual server instances and not entire volumes and the rotation
+     algorithm should go and look at other servers if available.  Also make
+     it sleep briefly before each retry if all the volume instances are
+     unavailable.
 
-subvolumes
-==========
-u64s 10 type subvolume 0:1:0 len 0 ver 0: root 4096 snapshot id 4294967295 parent 0
-u64s 10 type subvolume 0:2:0 len 0 ver 0: root 1207959552 snapshot id 4294967292 parent 0
-u64s 10 type subvolume 0:3:0 len 0 ver 0: root 1207959552 snapshot id 4294967293 parent 2
+In addition there are a number of small fixes in rxrpc and afs included
+here so that those problems don't affect testing.
 
-snapshot
-========
-u64s 10 type snapshot 0:4294967292:0 len 0 ver 0: is_subvol 1 deleted 0 parent 4294967294 children          0          0 subvol 2 tree 2 depth 1 skiplist 4294967294 4294967294 4294967294
-u64s 10 type snapshot 0:4294967293:0 len 0 ver 0: is_subvol 1 deleted 0 parent 4294967294 children          0          0 subvol 3 tree 2 depth 1 skiplist 4294967294 4294967294 4294967294
-u64s 10 type snapshot 0:4294967294:0 len 0 ver 0: is_subvol 0 deleted 0 parent          0 children 4294967293 4294967292 subvol 0 tree 2 depth 0 skiplist 0 0 0
-u64s 10 type snapshot 0:4294967295:0 len 0 ver 0: is_subvol 1 deleted 0 parent          0 children          0          0 subvol 1 tree 1 depth 0 skiplist 0 0 0
+The patches can be found here:
 
-Now reading and interpreting the filehandles:
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
 
-/mnt/.     type  177 : 00 10 00 00 00 00 00 00 01 00 00 00 00 00 00 00 : inode 0000000000001000 subvolume 00000001 generation 00000000
-/mnt/v     type  177 : 00 00 00 48 00 00 00 00 02 00 00 00 00 00 00 00 : inode 0000000048000000 subvolume 00000002 generation 00000000
-/mnt/s     type  177 : 00 00 00 48 00 00 00 00 03 00 00 00 00 00 00 00 : inode 0000000048000000 subvolume 00000003 generation 00000000
+Thanks,
+David
 
+Changes
+=======
+ver #2)
+ - Drop the first two rxrpc fix patches - one has gone through the net tree
+   and the other needs a bit more work, but neither is necessary for this
+   series.
+ - Add a couple of missing symbol exports.
+ - Treat UAEIO as VIO too.
+ - Switch to using atomic64_t for creation & update times because 64-bit
+   cmpxchg isn't available on some 32-bit arches.
+ - Some patches went upstream separately as fixes (commit
+   5b7ad877e4d81f8904ce83982b1ba5c6e83deccb).
+ - Use atomic64_t for vnode->cb_expires_at() as 64-bit xchg() is not
+   univerally available.
+ - Use rcu_access_pointer() rather than passing an __rcu pointer directly to
+   kfree_rcu().
 
-So is there really a type difference between the objects created by
-`bcachefs subvolume create` and `bcachefs subvolume snapshot` ? It appears
-that they both point to a volume which points to a snapshot in the snapshot
-tree.
+Link: https://lore.kernel.org/r/20231109154004.3317227-1-dhowells@redhat.com/ # v1
+---
+%(shortlog)s
+%(diffstat)s
 
-Best
+David Howells (36):
+  afs: Remove whitespace before most ')' from the trace header
+  afs: Automatically generate trace tag enums
+  afs: Add comments on abort handling
+  afs: Turn the afs_addr_list address array into an array of structs
+  rxrpc, afs: Allow afs to pin rxrpc_peer objects
+  afs: Don't skip server addresses for which we didn't get an RTT
+    reading
+  afs: Rename addr_list::failed to probe_failed
+  afs: Handle the VIO and UAEIO aborts explicitly
+  afs: Use op->nr_iterations=-1 to indicate to begin fileserver
+    iteration
+  afs: Wrap most op->error accesses with inline funcs
+  afs: Don't put afs_call in afs_wait_for_call_to_complete()
+  afs: Simplify error handling
+  afs: Add a tracepoint for struct afs_addr_list
+  afs: Rename some fields
+  afs: Use peer + service_id as call address
+  afs: Fold the afs_addr_cursor struct in
+  rxrpc: Create a procfile to display outstanding client conn bundles
+  afs: Add some more info to /proc/net/afs/servers
+  afs: Remove the unimplemented afs_cmp_addr_list()
+  afs: Provide a way to configure address priorities
+  afs: Mark address lists with configured priorities
+  afs: Dispatch fileserver probes in priority order
+  afs: Dispatch vlserver probes in priority order
+  afs: Keep a record of the current fileserver endpoint state
+  afs: Combine the endpoint state bools into a bitmask
+  afs: Make it possible to find the volumes that are using a server
+  afs: Defer volume record destruction to a workqueue
+  afs: Move the vnode/volume validity checking code into its own file
+  afs: Apply server breaks to mmap'd files in the call processor
+  afs: Fix comment in afs_do_lookup()
+  afs: Don't leave DONTUSE/NEWREPSITE servers out of server list
+  afs: Parse the VolSync record in the reply of a number of RPC ops
+  afs: Overhaul invalidation handling to better support RO volumes
+  afs: Fix fileserver rotation
+  afs: Fix offline and busy message emission
+  afs: trace: Log afs_make_call(), including server address
 
-  Donald
+Oleg Nesterov (4):
+  afs: fix the usage of read_seqbegin_or_lock() in
+    afs_lookup_volume_rcu()
+  afs: fix the usage of read_seqbegin_or_lock() in afs_find_server*()
+  afs: use read_seqbegin() in afs_check_validity() and afs_getattr()
+  rxrpc_find_service_conn_rcu: fix the usage of read_seqbegin_or_lock()
 
-
->> In the thread it was assumed, that there are other (unspecified)
->> applications which need the filehandle and currently use name_to_handle_at().
->>
->> I though it was self-evident that a single syscall to retrieve all
->> information atomically is better than a set of syscalls. Each additional
->> syscall has overhead and you need to be concerned with the data changing
->> between the calls.
-> 
-> All other things being equal, yeah it would be. But things are never
-> equal :)
-> 
-> Expanding struct statx is not going to be as easy as hoped, so we need
-> to be a bit careful how we use the remaining space, and since as Dave
-> pointed out the filehandle isn't needed for checking uniqueness unless
-> nlink > 1 it's not really a hotpath in any application I can think of.
-> 
-> (If anyone does know of an application where it might matter, now's the
-> time to bring it up!)
-> 
->> Userspace nfs server as an example of an application, where visible
->> performance is more relevant, was already mentioned by someone else.
-> 
-> I'd love to hear confirmation from someone more intimately familiar with
-> NFS, but AFAIK it shouldn't matter there; the filehandle exists to
-> support resuming IO or other operations to a file (because the server
-> can go away and come back). If all the client did was a stat, there's no
-> need for a filehandle - that's not needed until a file is opened.
-
--- 
-Donald Buczek
-buczek@molgen.mpg.de
-Tel: +49 30 8413 1433
+ fs/afs/Makefile              |   2 +
+ fs/afs/addr_list.c           | 224 +++++-----
+ fs/afs/addr_prefs.c          | 531 ++++++++++++++++++++++++
+ fs/afs/afs.h                 |   3 +-
+ fs/afs/callback.c            | 141 ++++---
+ fs/afs/cell.c                |   5 +-
+ fs/afs/cmservice.c           |   5 +-
+ fs/afs/dir.c                 |  59 +--
+ fs/afs/dir_silly.c           |   2 +-
+ fs/afs/file.c                |  20 +-
+ fs/afs/fs_operation.c        |  85 ++--
+ fs/afs/fs_probe.c            | 323 +++++++++------
+ fs/afs/fsclient.c            |  74 +++-
+ fs/afs/inode.c               | 204 +--------
+ fs/afs/internal.h            | 370 +++++++++++------
+ fs/afs/main.c                |   1 +
+ fs/afs/misc.c                |  10 +-
+ fs/afs/proc.c                | 102 ++++-
+ fs/afs/rotate.c              | 520 ++++++++++++++++-------
+ fs/afs/rxrpc.c               | 107 ++---
+ fs/afs/server.c              | 135 +++---
+ fs/afs/server_list.c         | 174 ++++++--
+ fs/afs/super.c               |   7 +-
+ fs/afs/validation.c          | 467 +++++++++++++++++++++
+ fs/afs/vl_alias.c            |  69 +---
+ fs/afs/vl_list.c             |  29 +-
+ fs/afs/vl_probe.c            |  60 ++-
+ fs/afs/vl_rotate.c           | 215 ++++++----
+ fs/afs/vlclient.c            | 143 ++++---
+ fs/afs/volume.c              |  61 ++-
+ fs/afs/write.c               |   6 +-
+ fs/afs/yfsclient.c           |  25 +-
+ include/net/af_rxrpc.h       |  15 +-
+ include/trace/events/afs.h   | 779 ++++++++++++++++++++---------------
+ include/trace/events/rxrpc.h |   3 +
+ net/rxrpc/af_rxrpc.c         |  62 ++-
+ net/rxrpc/ar-internal.h      |   6 +-
+ net/rxrpc/call_object.c      |  17 +-
+ net/rxrpc/conn_client.c      |  10 +
+ net/rxrpc/conn_service.c     |   3 +-
+ net/rxrpc/net_ns.c           |   4 +
+ net/rxrpc/peer_object.c      |  58 ++-
+ net/rxrpc/proc.c             |  76 ++++
+ net/rxrpc/sendmsg.c          |  11 +-
+ 44 files changed, 3532 insertions(+), 1691 deletions(-)
+ create mode 100644 fs/afs/addr_prefs.c
+ create mode 100644 fs/afs/validation.c
 
 
