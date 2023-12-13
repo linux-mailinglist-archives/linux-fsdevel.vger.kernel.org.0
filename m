@@ -1,172 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-5983-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778A9811A62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:05:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB26811A66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB8F282711
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:05:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F246B2091F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DF83A8EA;
-	Wed, 13 Dec 2023 17:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD653A8DD;
+	Wed, 13 Dec 2023 17:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAN56HnY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuDxgmyO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25477D0;
-	Wed, 13 Dec 2023 09:05:36 -0800 (PST)
-Received: by mail-qt1-x833.google.com with SMTP id d75a77b69052e-425952708afso50251451cf.0;
-        Wed, 13 Dec 2023 09:05:36 -0800 (PST)
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B94EF3;
+	Wed, 13 Dec 2023 09:06:04 -0800 (PST)
+Received: by mail-qk1-x72a.google.com with SMTP id af79cd13be357-77f8308616eso163758385a.2;
+        Wed, 13 Dec 2023 09:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702487135; x=1703091935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1702487163; x=1703091963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zaZOg6uPTywifNeWY/lhqitjb+T4PmJ5HvOYe4JLoEc=;
-        b=fAN56HnYVTBYv89mKu8lHU6DwDhRB0utUi4cTovqijKV0NCXjiJoCaJSbAeV0iwCyy
-         dN7ccgDcXzOYJwpEmCii0HuHUqCc/ugge5ZihV9JVGnmy1w6SPYUuoPh5lzrrIhRCKaS
-         NOo+AthpA0VcfEz91ViHiTyP3G0jwBfVF6LNa/lhDDBDm+cD0ufX4PjX6C4ZNYU4QKYc
-         4wOSUwOwi+j2vb9MzbnQPV756KNoI2JqdvBfvkWBIJdPjXVjhr08ltVm6QBa/6VveiJ6
-         I2JLjdIhRQDVWURTtggZTXY7WQCCkEyR3bSk95Su4DbohnyLA2chyEKIrbHF6fPQMQZO
-         xcgA==
+        bh=izQi1471NL/cydZbe8/X42uR08bubeTVrkQFcuYiqzs=;
+        b=PuDxgmyOLgfAht7UAhnupo6Q3t9Io7QAMqyzTbw6JkfT0hf/KwgODcgwV+uVRSwYgd
+         W2pRnfIFFjcqBTIWut0PO4V6wERa8ZAgdxChZvlL9huHp/aE1I5QuzJ9EtIv80igJaQA
+         4HfapgSGtUpq69IeOuLtKzPfdxVsIz1DTrgke0SR/Q6JlCl9nHgqHhwqXUY/nkGYgjMI
+         BJ/YNhX2hOhWb3FM1PGNnRDmpA4FTeUznxhRHytYF1kst6samGLpx07P/njI9Zudsu30
+         24kc1c6ILRUoYj/VGGbhPUpLTNtkm6y/p5jb0IlteFDEYQBJC8vllTj/CrH5BQd/BrvQ
+         oL4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702487135; x=1703091935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1702487163; x=1703091963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zaZOg6uPTywifNeWY/lhqitjb+T4PmJ5HvOYe4JLoEc=;
-        b=Ae+0TbIoyZMYjWVW3I8Or6P41RsrTs+vlkpzk9VK00RLaFach9GOE9rx8rq/eHfwga
-         v5/e9JFcbYWHeU5AR2BoA6uJgo8Fj81R3qhTJwUz8+lbhTUTAYhBWbCeC3Y9xOz6uozU
-         uv7KtcS+p2jTth/nM0E50nfYnBWx04dP1G+zmoXgggXlmI3Cw17L2bAUxx9SHks1DrfB
-         zafLRrjDRQUFSV1BT4CR/jWos0R4i5HBgSIxNOK/nQT1HFfNHQ4aUYhk6OxrN7lYnEUX
-         CAeXPbSfeF1mscoKM1ak+npYXhQ6wf6x86dt3A2ckSNNOLZcNSFOg9UBgSOBYc6xE8uc
-         pllQ==
-X-Gm-Message-State: AOJu0Ywzgou4diBG0rSnkfGpPerO9uabmlAf+g56ZCT7wyDPTeLEo8zo
-	XKGm7AiIuRiGSNuyTZ/AHmQ=
-X-Google-Smtp-Source: AGHT+IHtYdP9DEk855hTYxYHeMk1EY6txXkJrmfCGNPHjRbM0uyaFyTnbRsZP54z27JNtYS7Wxnkig==
-X-Received: by 2002:a05:622a:252:b0:425:88fc:8abb with SMTP id c18-20020a05622a025200b0042588fc8abbmr12875357qtx.12.1702487135165;
-        Wed, 13 Dec 2023 09:05:35 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id e18-20020ac85992000000b004254b465059sm4890154qte.47.2023.12.13.09.05.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 09:05:34 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailauth.nyi.internal (Postfix) with ESMTP id 1088027C0054;
-	Wed, 13 Dec 2023 12:05:34 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 13 Dec 2023 12:05:34 -0500
-X-ME-Sender: <xms:XOR5ZfCZIyAZECwkunnTvOl9-G3WYlajIle5fpkVvUlRn29n7pBttQ>
-    <xme:XOR5ZVhHrPzD53EwKugaa0Ukv8Xv-8yhizxlLvJPifeVyBat9XheQFVGc2eNJHH32
-    sN5ISTH7e_El1JZbg>
-X-ME-Received: <xmr:XOR5ZanI82lXWVbKsflG3_ToDljlbkrzGgQftEau0GrSadQ5t-PFulWuPw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeljedgfeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtrodttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeeitdefvefhteeklefgtefhgeelkeefffelvdevhfehueektdevhfettddv
-    teevvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:XOR5ZRyyw_H9ToCV6YMD2B6K8OVb-iMWFs9IzdGUhO37yFOG80EwzA>
-    <xmx:XOR5ZUTCa3jqzin7Nxho19RNwz4iyw7CbYNGzXUcPkX7qRFyFri8aQ>
-    <xmx:XOR5ZUZrAaZOmz0hCE2HgWTsmlh_5b-6ctOta8DTP8DPnCoDkzeWQQ>
-    <xmx:XuR5ZQp20kcE-tiT3ep6Q3jTPjX3Qd6tZbpZqz9JElX3dLcmynVGSQ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Dec 2023 12:05:31 -0500 (EST)
-Date: Wed, 13 Dec 2023 09:05:30 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
-Message-ID: <ZXnkWsSvxbFDoDGU@Boquns-Mac-mini.home>
-References: <20231206-alice-file-v2-0-af617c0d9d94@google.com>
- <20231206-alice-file-v2-7-af617c0d9d94@google.com>
- <k_vpgbqKAKoTFzJIBCjvgxGhX73kgkcv6w9kru78lBmTjHHvXPy05g8KxAKJ-ODARBxlZUp3a5e4F9TemGqQiskkwFCpTOhzxlvy378tjHM=@proton.me>
- <CAH5fLgiQ-7gbwP2RLoVDfDqoA+nXPboBW6eTKiv45Yam_Vjv_A@mail.gmail.com>
- <E-jdYd0FVvs15f_pEC0Fo6k2DByCDEQoh_Ux9P9ldmC-otCvUfQghkJOUkiAi8gDI8J47wAaDe56XYC5NiJhuohyhIklGAWMvv9v1qi6yYM=@proton.me>
- <ZXkKTSTCuQMt2ge6@boqun-archlinux>
- <pxtBsqlawLf52Escu7kGkCv1iEorWkE4-g8Ke_IshhejEYz5zZGGX5q98hYtU_YGubwk770ufUezNXFB_GJFMnZno5G7OGuF2oPAOoVAGgc=@proton.me>
+        bh=izQi1471NL/cydZbe8/X42uR08bubeTVrkQFcuYiqzs=;
+        b=cKLD1homxC7bCG86YPBy3GmQcGYn/pbR+WmN7y7CGyT1OY2COEZ0JxPKqA/iVGtjVF
+         LIRxJFOqRtyWnAYdNNe5EugAwjGYYMlGwTXWuQT/4wC+lRYMGdhhbJKNKCF8fHt4yQKk
+         LwXrjJEj6WCODilZ/Eqpu99gUa+zl5h1UUk79P8VLK+GE1eS2ZrSfEEsTZyaHvyIGgPb
+         sX0Hrcl6euyq87fNss7BUzCYZLQFT3UrOjZ/NORDGj1oMh1GrfKeW9y7YrKyRDX3A69m
+         iKjBzQxSUYT1INeu/SPb+/sCKqNGLFvhRCPWccsrHb6smfZsAe8kDaWnC8wjBI/H7Ubd
+         Wdwg==
+X-Gm-Message-State: AOJu0Ywb9g6jotKgd2HtNJ6Vg/OhZOheGgfJTayU10ee4xgCA2D39Bl3
+	weaTPZqdVCcIl9arl9enp6ZwsccDEcLF/DB74aQID2oY
+X-Google-Smtp-Source: AGHT+IHFwxt7NaMGwYfCIRV8QcEGmTbFxg9W/HWVNejdiK0MfCoZndI2DuEVIwyJpoIroqNUH2BvNIAFik3pPJY5tas=
+X-Received: by 2002:a0c:ee24:0:b0:67a:99cb:e2f with SMTP id
+ l4-20020a0cee24000000b0067a99cb0e2fmr6705131qvs.42.1702487163185; Wed, 13 Dec
+ 2023 09:06:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pxtBsqlawLf52Escu7kGkCv1iEorWkE4-g8Ke_IshhejEYz5zZGGX5q98hYtU_YGubwk770ufUezNXFB_GJFMnZno5G7OGuF2oPAOoVAGgc=@proton.me>
+References: <20231211193048.580691-1-avagin@google.com> <CAOQ4uxik0=0F-6CLRsuaOheFjwWF-B-Q5iEQ6qJbRszL52HeQQ@mail.gmail.com>
+ <CAEWA0a6Ow+BvrPm5O-4-tGRLQYr3+eahj45voF1gdmN3OfadGg@mail.gmail.com>
+In-Reply-To: <CAEWA0a6Ow+BvrPm5O-4-tGRLQYr3+eahj45voF1gdmN3OfadGg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 13 Dec 2023 19:05:52 +0200
+Message-ID: <CAOQ4uxgzeAgkE73uJB=-Guq7fDtfKU1_1pMTOzBm6ApZuW=hLg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/proc: show correct device and inode numbers in /proc/pid/maps
+To: Andrei Vagin <avagin@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
+	overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 13, 2023 at 09:12:45AM +0000, Benno Lossin wrote:
-[...]
-> > 
-> > Actually, there is an implied safety requirement here, it's about how
-> > qproc is implemented. As we can see, PollCondVar::drop() will wait for a
-> > RCU grace period, that means the waiter (a file or something) has to use
-> > RCU to access the cv.wait_list, otherwise, the synchronize_rcu() in
-> > PollCondVar::drop() won't help.
-> 
-> Good catch, this is rather important. I did not find the implementation
-> of `qproc`, since it is a function pointer. Since this pattern is
-> common, what is the way to find the implementation of those in general?
-> 
+On Tue, Dec 12, 2023 at 9:08=E2=80=AFPM Andrei Vagin <avagin@google.com> wr=
+ote:
+>
+> Hi Amir,
+>
+> On Mon, Dec 11, 2023 at 9:51=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > +fsdevel, +overlayfs, +brauner, +miklos
+> >
+> > On Mon, Dec 11, 2023 at 9:30=E2=80=AFPM Andrei Vagin <avagin@google.com=
+> wrote:
+> > >
+> > > Device and inode numbers in /proc/pid/maps have to match numbers retu=
+rned by
+> > > statx for the same files.
+> >
+> > That statement may be true for regular files.
+> > It is not true for block/char as far as I know.
+> >
+> > I think that your fix will break that by displaying the ino/dev
+> > of the block/char reference inode and not their backing rdev inode.
+>
+> I think it doesn't break anything here. /proc/pid/maps shows dev of a
+> filesystem where the device file resides.
+>
+> 7f336b6c3000-7f336b6c4000 rw-p 00000000 00:05 7
+>   /dev/zero
+> $ stat /dev/zero
+> Device: 0,5 Inode: 7           Links: 1     Device type: 1,5
+>
+> I checked that it works with and without my patch. It doesn't matter, loo=
+k at
+> the following comments.
+>
+> >
+> > >
+> > > /proc/pid/maps shows device and inode numbers of vma->vm_file-s. Here=
+ is
+> > > an issue. If a mapped file is on a stackable file system (e.g.,
+> > > overlayfs), vma->vm_file is a backing file whose f_inode is on the
+> > > underlying filesystem. To show correct numbers, we need to get a user
+> > > file and shows its numbers. The same trick is used to show file paths=
+ in
+> > > /proc/pid/maps.
+> >
+> > For the *same* trick, see my patch below.
+>
+> The patch looks good to me. Thanks! Will you send it?
+>
 
-Actually I don't find any. Ping vfs ;-)
+I can send it, if you want.
+I wouldn't mind if you send it with my Suggested-by though,
+as you are already testing it and posting the selftest.
 
-Personally, it took me a while to get a rough understanding of the API:
-it's similar to `Future::poll` (or at least the registering waker part),
-it basically should registers a waiter, so that when an event happens
-later, the waiter gets notified. Also the waiter registration can have a
-(optional?) cancel mechanism (like an async drop of Future ;-)), and
-that's what gives us headache here: cancellation needs to remove the
-waiter from the wait_queue_head, which means wait_queue_head must be
-valid during the removal, and that means the kfree of wait_queue_head
-must be delayed to a state where no one can access it in waiter removal.
-
-> I imagine that the pattern is used to enable dynamic selection of the
-> concrete implementation, but there must be some general specification of
-> what the function does, is this documented somewhere?
-> 
-> > To phrase it, it's more like:
-> > 
-> > (in the safety requirement of `PollTable::from_ptr` and the type
-> > invariant of `PollTable`):
-> > 
-> > ", further, if the qproc function in poll_table publishs the pointer of
-> > the wait_queue_head, it must publish it in a way that reads on the
-> > published pointer have to be in an RCU read-side critical section."
-> 
-> What do you mean by `publish`?
-> 
-
-Publishing a pointer is like `Send`ing a `&T` (or put pointer in a
-global variable), so that other threads can access it. Note that since
-the cancel mechanism is optional (best to my knowledge), so a qproc call
-may not pushlish the pointer.
-
-Regards,
-Boqun
+Thanks,
+Amir.
 
