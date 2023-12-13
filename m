@@ -1,127 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-5898-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908C58113F2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:00:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F98F811431
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DEB1F22BEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:00:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3740B20DB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519A02E630;
-	Wed, 13 Dec 2023 14:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CC42E835;
+	Wed, 13 Dec 2023 14:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaBOz/47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9zQEcvQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E2E2DF62;
-	Wed, 13 Dec 2023 14:00:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1A6C433C7;
-	Wed, 13 Dec 2023 14:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719432E626;
+	Wed, 13 Dec 2023 14:06:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC2AC433CA;
+	Wed, 13 Dec 2023 14:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702476041;
-	bh=uBRmDLreG8WgwNQkvzLPBqQqss2T/ZofeYOVFa+eznA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MaBOz/47yY6VrRxrv3KKFtukVEZ+DALugU+umNCVqzDhVU9TRoPPiFIp6ki7L9H85
-	 +SSElnIH3cjgLrJjtr+W8i5TGHkloO1SPoxHDMtPwN7rgnMdsPs8Je95lVTgYqohyR
-	 JqrZYSFXbJEp38k/t+mh2g0yhf4bcVTVKhzt8BhWXEmA+Dp95HZqRoBeVDRrQFdJer
-	 vaqixHfU41igB/RuHZQCeqqD00PejJoOR9FbU1fUo6TJxgJ11TH6I5zO5bFGZAsJNH
-	 DIhMhseUcZXSIwpFgmoLPWal2mkolYNmSACLQw+G+Y6KkL40k6cbvAwEE3B3ToU/m3
-	 +VG3sMai75JfA==
-Date: Wed, 13 Dec 2023 14:00:32 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	David Hildenbrand <david@redhat.com>,
-	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, shuah@kernel.org,
-	aarcange@redhat.com, lokeshgidra@google.com, peterx@redhat.com,
-	ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com,
-	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org,
-	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com,
-	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-	jdduke@google.com, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@android.com,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v6 5/5] selftests/mm: add UFFDIO_MOVE ioctl test
-Message-ID: <c0aa00a2-38a5-42da-9951-64131d936f7e@sirena.org.uk>
-References: <50385948-5eb4-47ea-87f8-add4265933d6@redhat.com>
- <6a34b0c9-e084-4928-b239-7af01c8d4479@sirena.org.uk>
- <CAJuCfpEcbcO0d5WPDHMqiEJws9k_5c30pE-J+E_VxO_fpTf_mw@mail.gmail.com>
- <3240f4b5-081b-4075-851a-7d1cd86f4333@redhat.com>
- <3eadd79c-c02a-495f-92c0-0315046ef59f@nvidia.com>
- <3d22f342-280f-4a44-87f4-8cca291cfce7@sirena.org.uk>
- <e3048458-726e-4b98-b2bf-908ea9066959@nvidia.com>
- <0f97db9c-5b86-4f56-8463-2520fe79f709@sirena.org.uk>
- <f1b0b80a-1cc6-48c4-8a53-0222b3e59c7f@nvidia.com>
- <2e4a719b-f2b3-48db-99db-d96040d78b12@collabora.com>
+	s=k20201202; t=1702476419;
+	bh=tm2PI5P6o9KPIR9RVFv5cihdxeSVXN3uEt/yiTzKpe0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c9zQEcvQ/I/2TrO3daFju8Q2xvsVxymZ1J7YViFzMZ22+GvhKczCBu8rrJUDo+TO1
+	 Anc8NUN4dA8ow4LVobcs6qb1jWphf9bw+jELBUPJqudNn/xWmkIMxcrIKvu8XEBcOa
+	 WGHuZ4mBaB1rMvlvIqSSVkfP8pw0u8oJznFFXHh/0RHC1S6PyvN8OnGfzj5MLKjOEg
+	 HySg5HD2tSeAL5m4LdWat8MD42qViAcfpBu0xgVl4Hr5NLzfEv0Y0pYxVLkLYlhamB
+	 Yq4b1VHB5b6j9M45TKb0UiSQxQhkgwHVuLjWoh+MIYvXWbVA5RP95pk6+8WdFm9kYM
+	 Og9EiU/75zGdQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50c0f13ea11so7992931e87.3;
+        Wed, 13 Dec 2023 06:06:58 -0800 (PST)
+X-Gm-Message-State: AOJu0YxucbavZ/Qjy1Vb5DUJJ0bNooCEMlRyYWncESP3UVIaMT1itJwG
+	eoFJ3D54/QAFW0wqvhMXjfTn4/wgZTTOcI9qkw==
+X-Google-Smtp-Source: AGHT+IEHGprK2wtm9q9hd2ZZLdtHsMouVaTGmtumsX7/XD4d3zOhREC7oFbL/aoRWTZ5IHg9+YH7vjYm3B+d1JvtS+g=
+X-Received: by 2002:a19:8c5b:0:b0:50d:1733:ceba with SMTP id
+ i27-20020a198c5b000000b0050d1733cebamr3208254lfj.58.1702476417164; Wed, 13
+ Dec 2023 06:06:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/XZEbL4J1kAPYGOF"
-Content-Disposition: inline
-In-Reply-To: <2e4a719b-f2b3-48db-99db-d96040d78b12@collabora.com>
-X-Cookie: One size fits all.
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-12-alexandru.elisei@arm.com> <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+ <ZXiMiLz9ZyUdxUP8@raptor> <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
+ <ZXmr-Kl9L2SO13--@raptor>
+In-Reply-To: <ZXmr-Kl9L2SO13--@raptor>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 13 Dec 2023 08:06:44 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
+Message-ID: <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, pcc@google.com, 
+	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
+	david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 13, 2023 at 7:05=E2=80=AFAM Alexandru Elisei
+<alexandru.elisei@arm.com> wrote:
+>
+> Hi Rob,
+>
+> On Tue, Dec 12, 2023 at 12:44:06PM -0600, Rob Herring wrote:
+> > On Tue, Dec 12, 2023 at 10:38=E2=80=AFAM Alexandru Elisei
+> > <alexandru.elisei@arm.com> wrote:
+> > >
+> > > Hi Rob,
+> > >
+> > > Thank you so much for the feedback, I'm not very familiar with device=
+ tree,
+> > > and any comments are very useful.
+> > >
+> > > On Mon, Dec 11, 2023 at 11:29:40AM -0600, Rob Herring wrote:
+> > > > On Sun, Nov 19, 2023 at 10:59=E2=80=AFAM Alexandru Elisei
+> > > > <alexandru.elisei@arm.com> wrote:
+> > > > >
+> > > > > Allow the kernel to get the size and location of the MTE tag stor=
+age
+> > > > > regions from the DTB. This memory is marked as reserved for now.
+> > > > >
+> > > > > The DTB node for the tag storage region is defined as:
+> > > > >
+> > > > >         tags0: tag-storage@8f8000000 {
+> > > > >                 compatible =3D "arm,mte-tag-storage";
+> > > > >                 reg =3D <0x08 0xf8000000 0x00 0x4000000>;
+> > > > >                 block-size =3D <0x1000>;
+> > > > >                 memory =3D <&memory0>;    // Associated tagged me=
+mory node
+> > > > >         };
+> > > >
+> > > > I skimmed thru the discussion some. If this memory range is within
+> > > > main RAM, then it definitely belongs in /reserved-memory.
+> > >
+> > > Ok, will do that.
+> > >
+> > > If you don't mind, why do you say that it definitely belongs in
+> > > reserved-memory? I'm not trying to argue otherwise, I'm curious about=
+ the
+> > > motivation.
+> >
+> > Simply so that /memory nodes describe all possible memory and
+> > /reserved-memory is just adding restrictions. It's also because
+> > /reserved-memory is what gets handled early, and we don't need
+> > multiple things to handle early.
+> >
+> > > Tag storage is not DMA and can live anywhere in memory.
+> >
+> > Then why put it in DT at all? The only reason CMA is there is to set
+> > the size. It's not even clear to me we need CMA in DT either. The
+> > reasoning long ago was the kernel didn't do a good job of moving and
+> > reclaiming contiguous space, but that's supposed to be better now (and
+> > most h/w figured out they need IOMMUs).
+> >
+> > But for tag storage you know the size as it is a function of the
+> > memory size, right? After all, you are validating the size is correct.
+> > I guess there is still the aspect of whether you want enable MTE or
+> > not which could be done in a variety of ways.
+>
+> Oh, sorry, my bad, I should have been clearer about this. I don't want to
+> put it in the DT as a "linux,cma" node. But I want it to be managed by CM=
+A.
 
---/XZEbL4J1kAPYGOF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, I understand, but my point remains. Why do you need this in DT?
+If the location doesn't matter and you can calculate the size from the
+memory size, what else is there to add to the DT?
 
-On Wed, Dec 13, 2023 at 08:58:06AM +0500, Muhammad Usama Anjum wrote:
-> On 12/13/23 7:14 AM, John Hubbard wrote:
-
-> > Oh, this sounds like it would work nicely. No more "make headers"
-> > required (hooray!). Instead, the new approach would be "selftests are
-> > allowed to include from tools/include", and then we can just start
-> > copying the files that we need to that location, and gradually fix up
-> > all the selftests.
-
-> No, this wouldn't work.
-
-Note that we have a bunch of selftests (at least arm64, hid, kvm, rseq
-and sgx from a quick grep) which already use and rely on the headers in
-tools/include.
-
-> * The selftests are applications which include default header files. The
-> application don't care from where the header files are picked up at compile
-> time. We should be able to build the application on normal system with
-> latest headers installed without any changes.
-
-I think there is much less interest in building out of the kernel than
-there is in avoiding having to handle random userspace headers...
-
-> * The header files cannot be included directly as they need to be processed
-> first which is done by `make headers`. Here is a diff between kernel fs.h
-> and processed header file to be used by applications:
-
-I guess that's another reason why the sync is done manually.  There are
-also a bunch of files in tools/include that are just completely
-different implementations of things (not just uapi).
-
---/XZEbL4J1kAPYGOF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV5uP8ACgkQJNaLcl1U
-h9B4Agf+MNb0FxSD5g83dGXjn3wfAIHYImULMzBSAyVwk+xbUBcF5RwuyI/Up6pe
-jF7sirB8JObQgIDvOntBvbLGxjnrbKVZmrnnrz3IZLy9coVcvydGocN2dgTK/U63
-0n4vbXdOYqavpATUodi9QyrB+1peaITg+DvOBR95uoORBc94VM7bXVxGgD61oZ0N
-ZElj6Uuiegt+pu4yzSnCsNrXvvIUk1y1jl59tH1NV+WAnoHsDkNJReua3pUtYU3c
-MUyU+EkGOUI256iUVCafNaBqkbWvy070pa/QToV9OI+js6AF5//Yj0LR1LtZprjq
-q371z9Rj+1s+jACuAtuq8ELOJrN3QQ==
-=PCP4
------END PGP SIGNATURE-----
-
---/XZEbL4J1kAPYGOF--
+Rob
 
