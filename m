@@ -1,123 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-5774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2F781065B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 01:15:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7343A810677
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 01:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6CC01C20E18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 00:15:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD2282379
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 00:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EC17F9;
-	Wed, 13 Dec 2023 00:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B6A31;
+	Wed, 13 Dec 2023 00:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GRx2bjRQ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbO4uE9g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wrw+HDkO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="sbO4uE9g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wrw+HDkO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94AC9212D
-	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 16:14:41 -0800 (PST)
-Date: Tue, 12 Dec 2023 19:14:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702426479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC58AD;
+	Tue, 12 Dec 2023 16:28:12 -0800 (PST)
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 567BA1FD04;
+	Wed, 13 Dec 2023 00:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1702427291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FoQdXnPlw7+K8gDMKe/XiSIAl15r1VRcBtvYXz8Qz5U=;
-	b=GRx2bjRQeAG4Jtq7yGbtg0HNKw/Et/qZ+gTKtqh10eKgV3HWXBRHP9YfZrPM6kTZEf4Bq4
-	S8dHPDlmrR/BLmosojSmkiv0uMjfUMDS9RNWYRNp5JH9RxgEfstw9BbAS7YTvfJ6GhDwQy
-	JJli2x1TZ0+Z/bW0SmJRqFU59RcHrfI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: NeilBrown <neilb@suse.de>
-Cc: David Howells <dhowells@redhat.com>,
-	Donald Buczek <buczek@molgen.mpg.de>,
-	linux-bcachefs@vger.kernel.org,
-	Stefan Krueger <stefan.krueger@aei.mpg.de>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-Message-ID: <20231213001437.xfqr6hgko35y4uvg@moria.home.lan>
-References: <170200162890.12910.9667703050904306180@noble.neil.brown.name>
- <20231208024919.yjmyasgc76gxjnda@moria.home.lan>
- <630fcb48-1e1e-43df-8b27-a396a06c9f37@molgen.mpg.de>
- <20231208200247.we3zrwmnkwy5ibbz@moria.home.lan>
- <170233460764.12910.276163802059260666@noble.neil.brown.name>
- <2799307.1702338016@warthog.procyon.org.uk>
- <20231212205929.op6tq3pqobwmix5a@moria.home.lan>
- <170242184299.12910.16703366490924138473@noble.neil.brown.name>
- <20231212234348.ojllavmflwipxo2j@moria.home.lan>
- <170242574922.12910.6678164161619832398@noble.neil.brown.name>
+	bh=nk1IyI/Qw8q4KfaqeA0p6yZTB4fXE68g6N6s8m6YJss=;
+	b=sbO4uE9gS9knOM9eF/X/gHFAtd5CarW7KjoagfnTy66elmcq1gl8I4xLP+RiVfMnApK9B0
+	vBgjAsHAg/GJSL2cgTJXxB3vR5ZBbBvnYz/AOcRhWFcZwR7qAYpFnMg9s4Ph3y6fSpcxjk
+	vQWmMNuOPgPl7jqpcWeYASpxB8eqSQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1702427291;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nk1IyI/Qw8q4KfaqeA0p6yZTB4fXE68g6N6s8m6YJss=;
+	b=wrw+HDkOAM35jSetsfybXlJ0VUlo+g3B8JEf53EawQqIf8Jkq8jFf+OJRpWTQhRCIawUa6
+	S3ZGW6grbkruPlDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1702427291; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nk1IyI/Qw8q4KfaqeA0p6yZTB4fXE68g6N6s8m6YJss=;
+	b=sbO4uE9gS9knOM9eF/X/gHFAtd5CarW7KjoagfnTy66elmcq1gl8I4xLP+RiVfMnApK9B0
+	vBgjAsHAg/GJSL2cgTJXxB3vR5ZBbBvnYz/AOcRhWFcZwR7qAYpFnMg9s4Ph3y6fSpcxjk
+	vQWmMNuOPgPl7jqpcWeYASpxB8eqSQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1702427291;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nk1IyI/Qw8q4KfaqeA0p6yZTB4fXE68g6N6s8m6YJss=;
+	b=wrw+HDkOAM35jSetsfybXlJ0VUlo+g3B8JEf53EawQqIf8Jkq8jFf+OJRpWTQhRCIawUa6
+	S3ZGW6grbkruPlDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 19DDF137E8;
+	Wed, 13 Dec 2023 00:28:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2nf1LZf6eGXuPAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 13 Dec 2023 00:28:07 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170242574922.12910.6678164161619832398@noble.neil.brown.name>
-X-Migadu-Flow: FLOW_OUT
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>,
+ "Christian Brauner" <brauner@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
+ "Oleg Nesterov" <oleg@redhat.com>, "Jeff Layton" <jlayton@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+Subject:
+ Re: [PATCH 1/3] nfsd: use __fput_sync() to avoid delayed closing of files.
+In-reply-to: <20231211232135.GF1674809@ZenIV>
+References: <20231208033006.5546-1-neilb@suse.de>,
+ <20231208033006.5546-2-neilb@suse.de>,
+ <ZXMv4psmTWw4mlCd@tissot.1015granger.net>,
+ <170224845504.12910.16483736613606611138@noble.neil.brown.name>,
+ <20231211191117.GD1674809@ZenIV>,
+ <170233343177.12910.2316815312951521227@noble.neil.brown.name>,
+ <20231211231330.GE1674809@ZenIV>, <20231211232135.GF1674809@ZenIV>
+Date: Wed, 13 Dec 2023 11:28:04 +1100
+Message-id: <170242728484.12910.12134295135043081177@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1
+X-Rspamd-Queue-Id: 567BA1FD04
+X-Spam-Flag: NO
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=sbO4uE9g;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wrw+HDkO;
+	dmarc=pass (policy=none) header.from=suse.de;
+	spf=softfail (smtp-out2.suse.de: 2a07:de40:b281:104:10:150:64:97 is neither permitted nor denied by domain of neilb@suse.de) smtp.mailfrom=neilb@suse.de
+X-Spamd-Result: default: False [-11.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 R_SPF_SOFTFAIL(0.00)[~all:c];
+	 DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 DMARC_POLICY_ALLOW(0.00)[suse.de,none];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 WHITELIST_DMARC(-7.00)[suse.de:D:+];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 DMARC_POLICY_ALLOW_WITH_FAILURES(-0.50)[];
+	 MX_GOOD(-0.01)[];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -11.81
 
-On Wed, Dec 13, 2023 at 11:02:29AM +1100, NeilBrown wrote:
-> On Wed, 13 Dec 2023, Kent Overstreet wrote:
-> > On Wed, Dec 13, 2023 at 09:57:22AM +1100, NeilBrown wrote:
-> > > On Wed, 13 Dec 2023, Kent Overstreet wrote:
-> > > > On Mon, Dec 11, 2023 at 11:40:16PM +0000, David Howells wrote:
-> > > > > Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > > > > 
-> > > > > > I was chatting a bit with David Howells on IRC about this, and floated
-> > > > > > adding the file handle to statx. It looks like there's enough space
-> > > > > > reserved to make this feasible - probably going with a fixed maximum
-> > > > > > size of 128-256 bits.
-> > > > > 
-> > > > > We can always save the last bit to indicate extension space/extension record,
-> > > > > so we're not that strapped for space.
-> > > > 
-> > > > So we'll need that if we want to round trip NFSv4 filehandles, they
-> > > > won't fit in existing struct statx (nfsv4 specs 128 bytes, statx has 96
-> > > > bytes reserved).
-> > > > 
-> > > > Obvious question (Neal): do/will real world implementations ever come
-> > > > close to making use of this, or was this a "future proofing gone wild"
-> > > > thing?
-> > > 
-> > > I have no useful data.  I have seen lots of filehandles but I don't pay
-> > > much attention to their length.  Certainly some are longer than 32 bytes.
-> > > 
-> > > > 
-> > > > Say we do decide we want to spec it that large: _can_ we extend struct
-> > > > statx? I'm wondering if the userspace side was thought through, I'm
-> > > > sure glibc people will have something to say.
-> > > 
-> > > The man page says:
-> > > 
-> > >      Therefore, do not simply set mask to UINT_MAX (all bits set), as
-> > >      one or more bits may, in the future, be used to specify an
-> > >      extension to the buffer.
-> > > 
-> > > I suspect the glibc people read that.
+On Tue, 12 Dec 2023, Al Viro wrote:
+> On Mon, Dec 11, 2023 at 11:13:30PM +0000, Al Viro wrote:
+> 
+> > dentry_kill() means ->d_release(), ->d_iput() and anything final iput()
+> > could do.  Including e.g. anything that might be done by afs_silly_iput(),
+> > with its "send REMOVE to server, wait for completion".  No, that's not
+> > a deadlock per se, but it can stall you a bit more than you would
+> > probably consider tolerable...  Sure, you could argue that AFS ought to
+> > make that thing asynchronous, but...
 > > 
-> > The trouble is that C has no notion of which types are safe to pass
-> > across a dynamic library boundary, so if we increase the size of struct
-> > statx and someone's doing that things will break in nasty ways.
-> > 
+> > Anyway, it won't be "safe to use in most contexts".  ->mmap_lock alone
+> > is enough for that, and that's just the one I remember to have given
+> > us a lot of headache.  And that's without bringing the "nfsd won't
+> > touch those files" cases - make it generally accessible and you get
+> > to audit all locks that might be taken when we close a socket, etc.
 > 
-> Maybe we don't increase the size of struct statx.
-> Maybe we declare
+> PS: put it that way - I can buy "nfsd is doing that only to regular
+> files and not on an arbitrary filesystem, at that; having the thread
+> wait on that sucker is not going to cause too much trouble"; I do *not*
+> buy turning it into a thing usable outside of a very narrow set of
+> circumstances.
 > 
->    struct statx2 {
->      struct statx base;
->      __u8 stx_handle[128];
->    }
-> 
-> and pass then when we request STX_HANDLE.
 
-yeah, I think that's what would be required.
+Can you say more about "not on an arbitrary filesystem" ?
+I guess you means that procfs and/or sysfs might be problematic as may
+similar virtual filesystems (nfsd maybe).
 
-David was originally proposing having userspace just pass in a size_t
-for the buffer size, and I really think that would've been better - if
-this thing can ever change size, we need to make that explicit in the
-API.
+Could we encode some of this in the comment for __fput_sync ??
+
+/**
+ * __fput_sync : drop reference to a file synchronously
+ * @f: file to drop
+ *
+ * Drop a reference on a file and do most cleanup work before returning.
+ *
+ * Due the the wide use of files in the design of Linux, dropping the
+ * final reference to a file can result in dropping the final reference
+ * to any of a large variety of other objects.  Dropping those final
+ * references can result in nearly arbitrary work.  It should be assumed
+ * that, unless prior checks or actions confirm otherwise, calling
+ * __fput_sync() might:
+ * - allocate memory
+ * - perform synchronous IO
+ * - wait for a remote service (for networked filesystems)
+ * - take ->i_rwsem and other related VFS and filesystem locks
+ * - take ->s_umount (if file is on a MNT_INTERNAL filesystem)
+ * - take locks in a device driver if the file is CHR, BLK or SOCK
+ *
+ * If the caller cannot be confident that none of these will cause a
+ * problem, it should use fput() instead.
+ *
+ * Note that the final unmount of a lazy-unmounted non-MNT_INTERNAL
+ * filesystem will always be handled asynchronously.  Individual drivers
+ * might also leave some clean up to asynchronous threads.
+ */
+
+Thanks,
+NeilBrown
 
