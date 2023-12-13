@@ -1,93 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-5828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD830810DD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 11:04:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9380C810DEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 11:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B521F21197
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495C51F21216
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 10:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FC72233C;
-	Wed, 13 Dec 2023 10:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A93224CE;
+	Wed, 13 Dec 2023 10:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNOUKLgF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rUEdBuJW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36FB21A11;
-	Wed, 13 Dec 2023 10:04:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74B64C433C8;
-	Wed, 13 Dec 2023 10:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702461882;
-	bh=QePzytgeWK2qtS6DLN65UyMUVQEzwecQEMcPzyfNYKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nNOUKLgFqtvPk21lH7EZBiY7Sn4duKc8ZPMXNWPruXX2pO1TuZruRir3qTL15aw+/
-	 y+dd4pl5+AstqxQLdlQGQbvEyJmL+WfJDz4xzSJ6sDoET/AinXvZIB3FVYYSIXH2tb
-	 eDI00INHKVonEN35A2g2JW0Xu10Qu2kGMMLBL9bhH1k4ob07NwstvGQRWq+S7BUfJo
-	 ok8fVKKCCnkkf4wTXmMlkTV8m4UsKG2GcnIdpDcI0QT3WzBHF1plErG6EAhKAQb84K
-	 6XKJN6aFeOUCkcQ0lb/hO8ffmZ7ulkfNRFabXGprGfqNzHbummIRS5StNwGfnJCA3e
-	 3CfzkVIbSB0HA==
-Date: Wed, 13 Dec 2023 11:04:36 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Donald Buczek <buczek@molgen.mpg.de>,
-	linux-bcachefs@vger.kernel.org,
-	Stefan Krueger <stefan.krueger@aei.mpg.de>,
-	David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>, linux-btrfs@vger.kernel.org
-Subject: Re: file handle in statx (was: Re: How to cope with subvolumes and
- snapshots on muti-user systems?)
-Message-ID: <20231213-rammen-vorgreifen-1515308def06@brauner>
-References: <170234279139.12910.809452786055101337@noble.neil.brown.name>
- <ZXf1WCrw4TPc5y7d@dread.disaster.area>
- <CAOQ4uxiQcOk1Kw1JX4602vjuWNfL=b_A3uB1FJFaHQbEX6OOMA@mail.gmail.com>
- <20231212-impfung-linden-6f973f2ade19@brauner>
- <20231212151631.wi7rgawmp3uig6cl@moria.home.lan>
- <20231212-neudefinition-hingucken-785061b73237@brauner>
- <20231212153542.kl2fbzrabhr6kai5@moria.home.lan>
- <CAJfpegsKsbdtUHUPnu3huCiPXwX46eKYSUbLXiWqH23GinXo7w@mail.gmail.com>
- <170241761429.12910.13323799451396212981@noble.neil.brown.name>
- <20231213-umgearbeitet-erdboden-c2fd5409034d@brauner>
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DCE0A7
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 02:09:22 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id 3f1490d57ef6-dbcca990ee9so863550276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 02:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1702462162; x=1703066962; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LMjiZ1Mla0TJIvfZN07yuuMqisYwNLMlxhRR40WgnKE=;
+        b=rUEdBuJWwCar4cLrt6t73JyuSbctkJAChccfZ4x8p8fIffEyv+tcx1ffnERubMQCAL
+         w01J4bT8p7cldJfJH2WUF5CvL7O3AW7TZ1kVZqGuUf0aMzytoLgawo2IVWb6wPY/2fam
+         Ae0m0vM7tEVKSvU28bh1OKe5KIrVNXCitCJQKvseQAI00MuqWPEhgRC26sL+kBTxMO7o
+         V/PxVIxFiqWyFtLHdZP0Qjanl6e/rFuwsQTBoYpNHzCG2+Ne/6DAK+GpW9BQELv+5lND
+         1wjRKQ91IPdY++DDTXiocHiKDyKs7LXTtJv65EgzmDuGt4LUNEl7n9FEma7HJVJJ55Zy
+         uDUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702462162; x=1703066962;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LMjiZ1Mla0TJIvfZN07yuuMqisYwNLMlxhRR40WgnKE=;
+        b=ZfV061PlaFp40+nJ5bDlVGD+lGowmwzhzIfBBCXsdcMeffXp/Hbjpgie71i4i8guEr
+         lq/OOH57pIcztCJoaVfB/0tvHrcvCUAhAauXlWroRJzi4zEL8EG92UTiqlkccxJnFAa+
+         6XU8m8fDicE/9xq3D9faQUJ7MH+oLG0J7HcyFtW5e0M2upijcIypYWYb5lpSNhh4ywLr
+         a022ArmDzFtj6o7ukaGHtilBAKpK0rInKIY6PYLbFHfbIgkeufUMy29MSZltWAxlcSoH
+         1bKyjWlPshVJ1QgVZKrJji5XoURZt0Iz6VByYEquPv/oldnTfpJilkpibRWR3wjE9hwO
+         RMHQ==
+X-Gm-Message-State: AOJu0YzEpMob+ld3mZgVsXlZZza7pA/cwsLWdmFg06J7YV6KINKWLLxs
+	lSr76FqEYOTiKMxk6gWmqM5G6RUDaJTV7CI=
+X-Google-Smtp-Source: AGHT+IH1VF9gQH/zvDo8sZsOOMLcD8dWkfvwJA1iOSJh8Gow9jwJUdpnt5y5GZa/kNlrATJlzEmAqJR3Np4SOuA=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a25:c78d:0:b0:dbc:c98f:8075 with SMTP id
+ w135-20020a25c78d000000b00dbcc98f8075mr10120ybe.12.1702462161656; Wed, 13 Dec
+ 2023 02:09:21 -0800 (PST)
+Date: Wed, 13 Dec 2023 10:09:18 +0000
+In-Reply-To: <pxtBsqlawLf52Escu7kGkCv1iEorWkE4-g8Ke_IshhejEYz5zZGGX5q98hYtU_YGubwk770ufUezNXFB_GJFMnZno5G7OGuF2oPAOoVAGgc=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231213-umgearbeitet-erdboden-c2fd5409034d@brauner>
+Mime-Version: 1.0
+References: <pxtBsqlawLf52Escu7kGkCv1iEorWkE4-g8Ke_IshhejEYz5zZGGX5q98hYtU_YGubwk770ufUezNXFB_GJFMnZno5G7OGuF2oPAOoVAGgc=@proton.me>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
+Message-ID: <20231213100918.435104-1-aliceryhl@google.com>
+Subject: Re: [PATCH v2 7/7] rust: file: add abstraction for `poll_table`
+From: Alice Ryhl <aliceryhl@google.com>
+To: benno.lossin@proton.me
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	brauner@kernel.org, cmllamas@google.com, dan.j.williams@intel.com, 
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org, 
+	joel@joelfernandes.org, keescook@chromium.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maco@android.com, ojeda@kernel.org, 
+	peterz@infradead.org, rust-for-linux@vger.kernel.org, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, viro@zeniv.linux.org.uk, 
+	wedsonaf@gmail.com, willy@infradead.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Dec 13, 2023 at 10:48:01AM +0100, Christian Brauner wrote:
-> On Wed, Dec 13, 2023 at 08:46:54AM +1100, NeilBrown wrote:
-> > On Wed, 13 Dec 2023, Miklos Szeredi wrote:
-> > > On Tue, 12 Dec 2023 at 16:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > > 
-> > > > Other poeple have been finding ways to contribute to the technical
-> > > > discussion; just calling things "ugly and broken" does not.
-> > > 
-> > > Kent, calm down please.  We call things "ugly and broken" all the
-> > > time.  That's just an opinion, you are free to argue it, and no need
-> > > to take it personally.
-> > 
-> > But maybe we shouldn't.  Maybe we should focus on saying what, exactly,
-> > is unpleasant to look at and way.  Or what exactly causes poor
-> > funcationality.
+Benno Lossin <benno.lossin@proton.me> writes:
+>> and here we can said,
+>> 
+>> "per type invariant, `qproc` cannot publish `cv.wait_list` without
+>> proper RCU protection, so it's safe to use `cv.wait_list` here, and with
+>> the synchronize_rcu() in PollCondVar::drop(), free of the wait_list will
+>> be delayed until all usages are done."
 > 
-> I said it's "ugly" and I doubted it's value. I didn't call it "broken".
+> I think I am missing how the call to `__wake_up_pollfree` ensures that
+> nobody uses the `PollCondVar` any longer. How is it removed from the
+> table?
 
-I see where you took that from. To be clear, what I meant by broken is
-the device number switching that btrfs has been doing which has caused
-so much pain already and is at least partially responsible for this
-endless long discussion. I didn't mean "broken" as in the flag is
-broken. I acknowledge that I failed to make that clearer.
+The __wake_up_pollfree function clears the queue. Here is its
+documentation:
+
+/**
+ * wake_up_pollfree - signal that a polled waitqueue is going away
+ * @wq_head: the wait queue head
+ *
+ * In the very rare cases where a ->poll() implementation uses a waitqueue whose
+ * lifetime is tied to a task rather than to the 'struct file' being polled,
+ * this function must be called before the waitqueue is freed so that
+ * non-blocking polls (e.g. epoll) are notified that the queue is going away.
+ *
+ * The caller must also RCU-delay the freeing of the wait_queue_head, e.g. via
+ * an explicit synchronize_rcu() or call_rcu(), or via SLAB_TYPESAFE_BY_RCU.
+ */
+
+The only way for another thread to touch the queue after it has been
+cleared is if they are concurrently removing themselves from the queue
+under RCU. Because of that, we have to wait for an RCU grace period
+after the call to __wake_up_pollfree to ensure that any such concurrent
+users have gone away.
+
+Alice
 
