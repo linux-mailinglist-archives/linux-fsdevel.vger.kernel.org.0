@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-5796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597E28108A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 04:19:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074E98108A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 04:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8F71C20E14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 03:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B086B282333
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 03:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF268D301;
-	Wed, 13 Dec 2023 03:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF86BE72;
+	Wed, 13 Dec 2023 03:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="NmEGHwTF"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZjCv3OKj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4D4BD
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E207CA
 	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 19:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=VjPK/De1gE8RmPpJweMC8W9BLYkPksaDrCLgp/sOxQA=; b=NmEGHwTFaUvziagbRrHCWdBKZw
-	SHKHduCo4sIk7mHZY4D1qw6yYFck3A2IKx7kJhHyUgmBSkt29ZpweYifR4Z9U5cSF3I3dTTkJ8yIu
-	UxrEzELwX6WzwX07z+j6Zetu6zfNvP6vKIRxSEiTwbpo8K/5A2ZKPoHNBV5F907TgDOFCs07Z2aaf
-	3qDcAuzhmuFsE6BvtX1ywBkSNNzLKHLDjkDnvoPVnfoTDYjmP7Dd+emVqY24CtgEvhkPdFMybG1nX
-	PJUrkmKR27403+m77nzopXgcpzi9Jb285xPkmRH1ZLFmWRqXhyYXLcQKNMvKyjjK28gz/Kl5aeSRG
-	DtOAUPjg==;
+	bh=s8HNLzILHg37bTX0xFxBYp9QuUN74TbeU3F3jc3e1ms=; b=ZjCv3OKjDnmqAMDVKcEUtFKoQx
+	HwyIn5p1t4JCtzNPVm22lAWRmuGMbuM0LK0IsZlPRCSHiSqtf2ElyQec+9wilghGwAZ3Ssb3nyOoy
+	tIPOMyDxXZcFVTA8hKn/zzGqHp3FOnZGqLgoGxqArS0LtdqeLTX3JLVNhDwcapRE/hnG25EdkybZM
+	QhYwsl4pWxeB1pbhoSU59E7VL97XLoNIMQsJz0fMzqCK1RRjDsgfBNXvluQaN9Q9klSfBtKxsM8SN
+	qwqdXt8aAeybVFnoN+xdMyV1LeOqb63Ibk6FSa+GuRzgEsN2k4R1hlD9O1AhN97Xh8nomjM/7SKkg
+	wfaJjaaA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rDFlU-00Bbxx-1z;
+	id 1rDFlU-00Bby1-2W;
 	Wed, 13 Dec 2023 03:18:28 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Evgeniy Dushistov <dushistov@mail.ru>,
 	"Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: [PATCH 05/12] ufs: fix handling of delete_entry and set_link failures
-Date: Wed, 13 Dec 2023 03:18:20 +0000
-Message-Id: <20231213031827.2767531-5-viro@zeniv.linux.org.uk>
+Subject: [PATCH 06/12] ufs: untangle ubh_...block...() macros, part 1
+Date: Wed, 13 Dec 2023 03:18:21 +0000
+Message-Id: <20231213031827.2767531-6-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20231213031827.2767531-1-viro@zeniv.linux.org.uk>
 References: <20231213031639.GJ1674809@ZenIV>
@@ -51,203 +51,97 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-similar to minixfs series - make ufs_set_link() report failures,
-lift dir_put_page() into the callers of ufs_set_link() and
-ufs_delete_entry(), make ufs_rename() handle failures in both.
+passing implicit argument to a macro by having it in a variable
+with special name is Not Nice(tm); just pass it explicitly.
+
+kill an unused macro, while we are at it...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/ufs/dir.c   | 27 ++++++++++++---------------
- fs/ufs/namei.c | 40 +++++++++++++++++-----------------------
- fs/ufs/ufs.h   |  2 +-
- 3 files changed, 30 insertions(+), 39 deletions(-)
+ fs/ufs/balloc.c | 10 +++++-----
+ fs/ufs/util.h   | 11 +++--------
+ 2 files changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index fcf13e3ca869..5edacece384b 100644
---- a/fs/ufs/dir.c
-+++ b/fs/ufs/dir.c
-@@ -81,8 +81,7 @@ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
- }
- 
- 
--/* Releases the page */
--void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
-+int ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 		  struct page *page, struct inode *inode,
- 		  bool update_times)
- {
-@@ -92,17 +91,19 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 
- 	lock_page(page);
- 	err = ufs_prepare_chunk(page, pos, len);
--	BUG_ON(err);
-+	if (unlikely(err)) {
-+		unlock_page(page);
-+		return err;
-+	}
- 
- 	de->d_ino = cpu_to_fs32(dir->i_sb, inode->i_ino);
- 	ufs_set_de_type(dir->i_sb, de, inode->i_mode);
- 
- 	ufs_commit_chunk(page, pos, len);
--	unmap_and_put_page(page, de);
- 	if (update_times)
- 		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
- 	mark_inode_dirty(dir);
--	ufs_handle_dirsync(dir);
-+	return ufs_handle_dirsync(dir);
- }
- 
- 
-@@ -522,8 +523,6 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
- 	struct ufs_dir_entry *de = (struct ufs_dir_entry *) (kaddr + from);
- 	int err;
- 
--	UFSD("ENTER\n");
--
- 	UFSD("ino %u, reclen %u, namlen %u, name %s\n",
- 	      fs32_to_cpu(sb, de->d_ino),
- 	      fs16_to_cpu(sb, de->d_reclen),
-@@ -533,8 +532,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
- 		if (de->d_reclen == 0) {
- 			ufs_error(inode->i_sb, __func__,
- 				  "zero-length directory entry");
--			err = -EIO;
--			goto out;
-+			return -EIO;
- 		}
- 		pde = de;
- 		de = ufs_next_entry(sb, de);
-@@ -545,18 +543,17 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
- 	pos = page_offset(page) + from;
- 	lock_page(page);
- 	err = ufs_prepare_chunk(page, pos, to - from);
--	BUG_ON(err);
-+	if (unlikely(err)) {
-+		unlock_page(page);
-+		return err;
-+	}
- 	if (pde)
- 		pde->d_reclen = cpu_to_fs16(sb, to - from);
- 	dir->d_ino = 0;
- 	ufs_commit_chunk(page, pos, to - from);
- 	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
- 	mark_inode_dirty(inode);
--	err = ufs_handle_dirsync(inode);
--out:
--	unmap_and_put_page(page, kaddr);
--	UFSD("EXIT\n");
--	return err;
-+	return ufs_handle_dirsync(inode);
- }
- 
- int ufs_make_empty(struct inode * inode, struct inode *dir)
-diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
-index 25fa97340f73..b8082fb53a08 100644
---- a/fs/ufs/namei.c
-+++ b/fs/ufs/namei.c
-@@ -210,20 +210,18 @@ static int ufs_unlink(struct inode *dir, struct dentry *dentry)
- 	struct inode * inode = d_inode(dentry);
- 	struct ufs_dir_entry *de;
- 	struct page *page;
--	int err = -ENOENT;
-+	int err;
- 
- 	de = ufs_find_entry(dir, &dentry->d_name, &page);
- 	if (!de)
--		goto out;
-+		return -ENOENT;
- 
- 	err = ufs_delete_entry(dir, de, page);
--	if (err)
--		goto out;
--
--	inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
--	inode_dec_link_count(inode);
--	err = 0;
--out:
-+	if (!err) {
-+		inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
-+		inode_dec_link_count(inode);
-+	}
-+	unmap_and_put_page(page, de);
- 	return err;
- }
- 
-@@ -253,14 +251,14 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	struct ufs_dir_entry *dir_de = NULL;
- 	struct page *old_page;
- 	struct ufs_dir_entry *old_de;
--	int err = -ENOENT;
-+	int err;
- 
- 	if (flags & ~RENAME_NOREPLACE)
- 		return -EINVAL;
- 
- 	old_de = ufs_find_entry(old_dir, &old_dentry->d_name, &old_page);
- 	if (!old_de)
--		goto out;
-+		return -ENOENT;
- 
- 	if (S_ISDIR(old_inode->i_mode)) {
- 		err = -EIO;
-@@ -281,7 +279,10 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		new_de = ufs_find_entry(new_dir, &new_dentry->d_name, &new_page);
- 		if (!new_de)
- 			goto out_dir;
--		ufs_set_link(new_dir, new_de, new_page, old_inode, 1);
-+		err = ufs_set_link(new_dir, new_de, new_page, old_inode, 1);
-+		unmap_and_put_page(new_page, new_de);
-+		if (err)
-+			goto out_dir;
- 		inode_set_ctime_current(new_inode);
- 		if (dir_de)
- 			drop_nlink(new_inode);
-@@ -299,27 +300,20 @@ static int ufs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
-  	 * rename.
+diff --git a/fs/ufs/balloc.c b/fs/ufs/balloc.c
+index 53c11be2b2c1..e412ddcfda03 100644
+--- a/fs/ufs/balloc.c
++++ b/fs/ufs/balloc.c
+@@ -95,7 +95,7 @@ void ufs_free_fragments(struct inode *inode, u64 fragment, unsigned count)
+ 	 * Trying to reassemble free fragments into block
  	 */
- 	inode_set_ctime_current(old_inode);
--
--	ufs_delete_entry(old_dir, old_de, old_page);
- 	mark_inode_dirty(old_inode);
+ 	blkno = ufs_fragstoblks (bbase);
+-	if (ubh_isblockset(UCPI_UBH(ucpi), ucpi->c_freeoff, blkno)) {
++	if (ubh_isblockset(uspi, UCPI_UBH(ucpi), ucpi->c_freeoff, blkno)) {
+ 		fs32_sub(sb, &ucg->cg_cs.cs_nffree, uspi->s_fpb);
+ 		uspi->cs_total.cs_nffree -= uspi->s_fpb;
+ 		fs32_sub(sb, &UFS_SB(sb)->fs_cs(cgno).cs_nffree, uspi->s_fpb);
+@@ -182,10 +182,10 @@ void ufs_free_blocks(struct inode *inode, u64 fragment, unsigned count)
  
--	if (dir_de) {
-+	err = ufs_delete_entry(old_dir, old_de, old_page);
-+	if (!err && dir_de) {
- 		if (old_dir != new_dir)
--			ufs_set_link(old_inode, dir_de, dir_page, new_dir, 0);
--		else {
--			unmap_and_put_page(dir_page, dir_de);
--		}
-+			err = ufs_set_link(old_inode, dir_de, dir_page,
-+					   new_dir, 0);
- 		inode_dec_link_count(old_dir);
+ 	for (i = bit; i < end_bit; i += uspi->s_fpb) {
+ 		blkno = ufs_fragstoblks(i);
+-		if (ubh_isblockset(UCPI_UBH(ucpi), ucpi->c_freeoff, blkno)) {
++		if (ubh_isblockset(uspi, UCPI_UBH(ucpi), ucpi->c_freeoff, blkno)) {
+ 			ufs_error(sb, "ufs_free_blocks", "freeing free fragment");
+ 		}
+-		ubh_setblock(UCPI_UBH(ucpi), ucpi->c_freeoff, blkno);
++		ubh_setblock(uspi, UCPI_UBH(ucpi), ucpi->c_freeoff, blkno);
+ 		inode_sub_bytes(inode, uspi->s_fpb << uspi->s_fshift);
+ 		if ((UFS_SB(sb)->s_flags & UFS_CG_MASK) == UFS_CG_44BSD)
+ 			ufs_clusteracct (sb, ucpi, blkno, 1);
+@@ -716,7 +716,7 @@ static u64 ufs_alloccg_block(struct inode *inode,
+ 	/*
+ 	 * If the requested block is available, use it.
+ 	 */
+-	if (ubh_isblockset(UCPI_UBH(ucpi), ucpi->c_freeoff, ufs_fragstoblks(goal))) {
++	if (ubh_isblockset(uspi, UCPI_UBH(ucpi), ucpi->c_freeoff, ufs_fragstoblks(goal))) {
+ 		result = goal;
+ 		goto gotit;
  	}
--	return 0;
+@@ -730,7 +730,7 @@ static u64 ufs_alloccg_block(struct inode *inode,
+ 	if (!try_add_frags(inode, uspi->s_fpb))
+ 		return 0;
+ 	blkno = ufs_fragstoblks(result);
+-	ubh_clrblock (UCPI_UBH(ucpi), ucpi->c_freeoff, blkno);
++	ubh_clrblock(uspi, UCPI_UBH(ucpi), ucpi->c_freeoff, blkno);
+ 	if ((UFS_SB(sb)->s_flags & UFS_CG_MASK) == UFS_CG_44BSD)
+ 		ufs_clusteracct (sb, ucpi, blkno, -1);
+ 
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 0ecd2ed792f5..dc3240f0ddea 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -455,10 +455,7 @@ static inline unsigned _ubh_find_last_zero_bit_(
+ 	return (base << uspi->s_bpfshift) + pos - begin;
+ } 	
+ 
+-#define ubh_isblockclear(ubh,begin,block) (!_ubh_isblockset_(uspi,ubh,begin,block))
 -
--
- out_dir:
- 	if (dir_de)
- 		unmap_and_put_page(dir_page, dir_de);
- out_old:
- 	unmap_and_put_page(old_page, old_de);
--out:
- 	return err;
+-#define ubh_isblockset(ubh,begin,block) _ubh_isblockset_(uspi,ubh,begin,block)
+-static inline int _ubh_isblockset_(struct ufs_sb_private_info * uspi,
++static inline int ubh_isblockset(struct ufs_sb_private_info * uspi,
+ 	struct ufs_buffer_head * ubh, unsigned begin, unsigned block)
+ {
+ 	u8 mask;
+@@ -478,8 +475,7 @@ static inline int _ubh_isblockset_(struct ufs_sb_private_info * uspi,
+ 	return 0;	
  }
  
-diff --git a/fs/ufs/ufs.h b/fs/ufs/ufs.h
-index 6b499180643b..b521ab01471a 100644
---- a/fs/ufs/ufs.h
-+++ b/fs/ufs/ufs.h
-@@ -106,7 +106,7 @@ extern struct ufs_dir_entry *ufs_find_entry(struct inode *, const struct qstr *,
- extern int ufs_delete_entry(struct inode *, struct ufs_dir_entry *, struct page *);
- extern int ufs_empty_dir (struct inode *);
- extern struct ufs_dir_entry *ufs_dotdot(struct inode *, struct page **);
--extern void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
-+extern int ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 			 struct page *page, struct inode *inode, bool update_times);
+-#define ubh_clrblock(ubh,begin,block) _ubh_clrblock_(uspi,ubh,begin,block)
+-static inline void _ubh_clrblock_(struct ufs_sb_private_info * uspi,
++static inline void ubh_clrblock(struct ufs_sb_private_info * uspi,
+ 	struct ufs_buffer_head * ubh, unsigned begin, unsigned block)
+ {
+ 	switch (uspi->s_fpb) {
+@@ -498,8 +494,7 @@ static inline void _ubh_clrblock_(struct ufs_sb_private_info * uspi,
+ 	}
+ }
  
- /* file.c */
+-#define ubh_setblock(ubh,begin,block) _ubh_setblock_(uspi,ubh,begin,block)
+-static inline void _ubh_setblock_(struct ufs_sb_private_info * uspi,
++static inline void ubh_setblock(struct ufs_sb_private_info * uspi,
+ 	struct ufs_buffer_head * ubh, unsigned begin, unsigned block)
+ {
+ 	switch (uspi->s_fpb) {
 -- 
 2.39.2
 
