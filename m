@@ -1,43 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-5907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A73781159A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 16:03:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855CD8115B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 16:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE087B20E36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F95F1C2111E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55A930D16;
-	Wed, 13 Dec 2023 15:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AC32FC5B;
+	Wed, 13 Dec 2023 15:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JTXP13yT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6579CE8;
-	Wed, 13 Dec 2023 07:03:07 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 211E2C15;
-	Wed, 13 Dec 2023 07:03:53 -0800 (PST)
-Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06D6E3F738;
-	Wed, 13 Dec 2023 07:03:04 -0800 (PST)
-Date: Wed, 13 Dec 2023 15:02:59 +0000
-From: Joey Gouly <joey.gouly@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-	aneesh.kumar@linux.ibm.com, broonie@kernel.org,
-	dave.hansen@linux.intel.com, maz@kernel.org, oliver.upton@linux.dev,
-	shuah@kernel.org, will@kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v3 12/25] arm64: handle PKEY/POE faults
-Message-ID: <20231213150259.GA1129554@e124191.cambridge.arm.com>
-References: <20231124163510.1835740-1-joey.gouly@arm.com>
- <20231124163510.1835740-13-joey.gouly@arm.com>
- <ZXdSaRIJGWrtXin-@arm.com>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEABE10DA;
+	Wed, 13 Dec 2023 07:05:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0syRyLMAduRkBnFmUBvq2qT/Oe9rAZr7h6oDqIb7iMk=; b=JTXP13yTJE1qIR8YJpDu+CM6kV
+	P5N8tFNlWOqyiNeB70fu5+TxcbgrYR34ogDKUT2coknSN7ryMVbmHUPiQdcmwpmZVLQ11kKsBX61c
+	/ny6uuPKQ+7mU6lQhehSSz0gcI/19hgmMEPqYItWKR0tEbcfYa3wZtHBuuT0cS9JlePBfbnSrAWHX
+	/KwNpgI11HYIZ1/qON0DIyjzgn4Lhza1MPUaV0Zmpb+iaohxBX3iYT8i6kw9PAkdrkReCKPg6p+Hc
+	1bdmFLvsOMp0dcCXBEnMLK49IBKz8fsrjIp7fs4gYbBLwPFeJPQ5cdTFQGXnUVJGkcyuujFm8sjPp
+	X0Z+Gj/g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rDQnU-00BoEy-02;
+	Wed, 13 Dec 2023 15:05:16 +0000
+Date: Wed, 13 Dec 2023 15:05:15 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2] dcache: remove unnecessary NULL check in dget_dlock()
+Message-ID: <20231213150515.GM1674809@ZenIV>
+References: <20231106134417.98833-1-vegard.nossum@oracle.com>
+ <fb2cf7c5-cced-4ea3-bf5a-a442a0e64bda@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,90 +50,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZXdSaRIJGWrtXin-@arm.com>
+In-Reply-To: <fb2cf7c5-cced-4ea3-bf5a-a442a0e64bda@oracle.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi,
-
-On Mon, Dec 11, 2023 at 06:18:17PM +0000, Catalin Marinas wrote:
-> On Fri, Nov 24, 2023 at 04:34:57PM +0000, Joey Gouly wrote:
-> > @@ -497,6 +498,23 @@ static void do_bad_area(unsigned long far, unsigned long esr,
-> >  #define VM_FAULT_BADMAP		((__force vm_fault_t)0x010000)
-> >  #define VM_FAULT_BADACCESS	((__force vm_fault_t)0x020000)
-> >  
-> > +static bool fault_from_pkey(unsigned long esr, struct vm_area_struct *vma,
-> > +			unsigned int mm_flags)
-> > +{
-> > +	unsigned long iss2 = ESR_ELx_ISS2(esr);
-> > +
-> > +	if (!arch_pkeys_enabled())
-> > +		return false;
-> > +
-> > +	if (iss2 & ESR_ELx_Overlay)
-> > +		return true;
-> > +
-> > +	return !arch_vma_access_permitted(vma,
-> > +			mm_flags & FAULT_FLAG_WRITE,
-> > +			mm_flags & FAULT_FLAG_INSTRUCTION,
-> > +			mm_flags & FAULT_FLAG_REMOTE);
-> > +}
+On Wed, Dec 13, 2023 at 03:40:33PM +0100, Vegard Nossum wrote:
+> [Fixed up a couple of bad addresses in Cc]
 > 
-> Do we actually need this additional arch_vma_access_permitted() check?
-> The ESR should tell us if it was a POE fault. Permission overlay faults
-> have priority over the base permission faults, so we'd not need to fall
-> back to this additional checks. Well, see below, we could do something
-> slightly smarter here.
-
-We want this here as it follows other arch's which will fail with a pkey fault
-even if the page isn't actually mapped. If the paged isn't mapped we'd get a
-translation fault, but since we know the type of access and have the pkey in
-the VMA we check it here.
-
+> Hi,
 > 
-> I can see x86 and powerpc have similar checks (though at a different
-> point under the mmap lock) but I'm not familiar with their exception
-> model, exception priorities.
+> I didn't get a response to this v2 of the patch below and I don't see it
+> in vfs.git.
 > 
-> > +
-> >  static vm_fault_t __do_page_fault(struct mm_struct *mm,
-> >  				  struct vm_area_struct *vma, unsigned long addr,
-> >  				  unsigned int mm_flags, unsigned long vm_flags,
-> > @@ -688,9 +706,29 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
-> >  		 * Something tried to access memory that isn't in our memory
-> >  		 * map.
-> >  		 */
-> > -		arm64_force_sig_fault(SIGSEGV,
-> > -				      fault == VM_FAULT_BADACCESS ? SEGV_ACCERR : SEGV_MAPERR,
-> > -				      far, inf->name);
-> > +		int fault_kind;
-> > +		/*
-> > +		 * The pkey value that we return to userspace can be different
-> > +		 * from the pkey that caused the fault.
-> > +		 *
-> > +		 * 1. T1   : mprotect_key(foo, PAGE_SIZE, pkey=4);
-> > +		 * 2. T1   : set AMR to deny access to pkey=4, touches, page
-> > +		 * 3. T1   : faults...
-> > +		 * 4.    T2: mprotect_key(foo, PAGE_SIZE, pkey=5);
-> > +		 * 5. T1   : enters fault handler, takes mmap_lock, etc...
-> > +		 * 6. T1   : reaches here, sees vma_pkey(vma)=5, when we really
-> > +		 *	     faulted on a pte with its pkey=4.
-> > +		 */
-> > +		int pkey = vma_pkey(vma);
-> 
-> Other than the vma_pkey() race, I'm more worried about the vma
-> completely disappearing, e.g. munmap() in another thread. We end up
-> dereferencing a free pointer here. We need to do this under the mmap
-> lock.
-> 
-> Since we need to do this check under the mmap lock, we could add an
-> additional check to see if the pkey fault we got was a racy and just
-> restart the instruction if it no longer faults according to
-> por_el0_allows_pkey(). However, the code below is too late in the fault
-> handling to be able to do much other than SIGSEGV.
+> Was there something wrong or is it just awaiting review? Is there
+> anything I can do or help with? I would be happy to try to review other
+> patches if there is anything outstanding.
 
-After discussing in person, I agree with the assesment that this is the wrong
-place to do the check, and after looking at the x86 arch code, I see how
-they're doing it earlier.
+commit 1b6ae9f6e6c3e3c35aad0f11b116a81780b8aa03 (work.dcache)
+Author: Vegard Nossum <vegard.nossum@oracle.com>
+Date:   Mon Nov 6 14:44:17 2023 +0100
 
-Thanks,
-Joey
+    dcache: remove unnecessary NULL check in dget_dlock()
 
