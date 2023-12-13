@@ -1,234 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-5849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D6F81126D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF24811268
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69330281277
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3E1F281D5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 13:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7E72C862;
-	Wed, 13 Dec 2023 13:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC39D2C848;
+	Wed, 13 Dec 2023 13:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="je/P1Z1V";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="v+LcmImB"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="e3aKWwmm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kEAx0tPl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801CCD0;
-	Wed, 13 Dec 2023 05:04:15 -0800 (PST)
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BDCsgbd009436;
-	Wed, 13 Dec 2023 13:03:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=A5tpDHTxqizoicFmRBn5uZ5fN1ELgAlITteSCXHZyCA=;
- b=je/P1Z1Vtc0L2EmX9e87PMlX8qCVttmYOuMFPvMs95mJ1KAPQSlVaqx2STiXahw7Zm85
- QUm60MOfpy2CGq1DQcD3aYHaeS+RmaOc4C7N0U44zW9cxD7tTERkXCLHkizi5EGnTHJK
- FLPCQUrj03Cw5UWJzGLcahX4WEKQ84R5+5gY3bIT86Dgm3fO6kxcmVS0h9e43MGyNYaI
- 8mZSDC0UTq1JkimffyJQ+0gEDcdeuMReV5z6Oo3CE7QjWsgJaScOxN0r/3MIobrRRJ+I
- ADgBIHyUc0ebnqnZFwgnWn11a1oHJtIhhH3xraAK9iOoKkIXbH17zwk13hiFwpjvm9xf dg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3uvf5c85xj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Dec 2023 13:03:39 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BDBUC8O010151;
-	Wed, 13 Dec 2023 13:03:38 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3uvep87fyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Dec 2023 13:03:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a3zLZNlwg2/7D4bkTxxK21aBaSK889r7N3JeXLxSE2gIQCOhMERxLenzXnAxSJWjOESp/7NwXXjw8AlD7RoZKzkwL3aLMzdEAMwpU9adG0vpnwSBCXEM1xEJ0sEmjxqhn+2/Oews8+Iic6SrcgyBeBbD+SBVrXHSc3gSxB0nzCOdZ2uMcvax7twk4a3AOfov1t4EWinUgQWmVdin2BOdHr047MrKWzY8WH9C1vw9ltUU1HQ5Fz4s3WUC+BWdKROc2SY7mKJUvuGl3Cp67v1PQgcO9dBj6qJjNa9jE8h3RyMiDE5n2qOz9AD5uv5kkZMhwZlUcltanI00m/6rkNQBNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A5tpDHTxqizoicFmRBn5uZ5fN1ELgAlITteSCXHZyCA=;
- b=ku5+XK480QyC3DuSURuWixBaG2r0pVaNqAdSh8iGjBJAr3z6nGA+/zPjcyolCj/x50fyJRBjuoq2M6mRbmaL0Ld1fadooFsGEabAqBFXt+wjAT6dcc975uNri/3qYr20MenQ6kzzGAkVEBc4TTdnPloABDwOzL2SmNHf0NbWTbgDrQ6ylU0jhDO2L8QJAJaS0BF2BkxQppI1KhJzi7lzTmBlSOdRrNeypEX4vfvFe1bP0wAt/1s4rPpU5onLK5hXc7OD53urnbSvHPJco3XficxppcBzJWBEjQOmxDpJbm5pCE5P0UFrSviSp0xW71HEyfDjQXUzUAFEjJh+nm7S1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A5tpDHTxqizoicFmRBn5uZ5fN1ELgAlITteSCXHZyCA=;
- b=v+LcmImBWElH9O2c+z+PIl5aLXJa779MWJYlYE6+Dq3XpBfozgpQqi268+iMcp1rr3PuBGpDxxXruqmJOMLEwsK2llcy8rOs6NzsbLLyFOtozXkFyZWS48meBLn2hu8bwpEHleoFH+3PfHhQ04vVkT33ED1JpE3e3Ou+tQkOoxk=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS0PR10MB6799.namprd10.prod.outlook.com (2603:10b6:8:13f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Wed, 13 Dec
- 2023 13:03:36 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7091.022; Wed, 13 Dec 2023
- 13:03:36 +0000
-Message-ID: <58037a2f-cbae-4bc1-bea4-604f6951b709@oracle.com>
-Date: Wed, 13 Dec 2023 13:03:30 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/16] fs: Increase fmode_t size
-To: Jan Kara <jack@suse.cz>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, ming.lei@redhat.com, jaswin@linux.ibm.com,
-        bvanassche@acm.org
-References: <20231212110844.19698-1-john.g.garry@oracle.com>
- <20231212110844.19698-5-john.g.garry@oracle.com>
- <20231213112026.kkfcwtg64kiadhn5@quack3>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20231213112026.kkfcwtg64kiadhn5@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0124.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:192::21) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6283018E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 05:04:01 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailout.west.internal (Postfix) with ESMTP id 5A2CE3200AA2;
+	Wed, 13 Dec 2023 08:03:58 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 13 Dec 2023 08:03:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1702472637;
+	 x=1702559037; bh=VuNIntaTLIfIFK5OfYyYIOzFWMyJlr3R6bccoNrZHyw=; b=
+	e3aKWwmmKtOaTYWKunQLFsmrfWmPFUOzkSFcuUnYVA3XFRKNU5biEWlCMS7vzaZ/
+	0qFf9+MkaIDWeUNvYQYE3rQmg/xOADk6HMJ+bGSWaUOaZtfZGJKqsiIZYEAroY/0
+	j3rBKtjz2H6QAuHUnIgyPaPpRk5iO7VO+GfhQak+eRy1WGsnoSxTFeK/mE6USLCf
+	sR7N8OSmwe9Emf9h2UiYQM3BLNPw0RPBzKuN+/esJYcU5SdTY6y05/eRcwDMzAkB
+	Zja075JiN9ntJLrlSg0az5CX+5/NwJ0J6daSwOpnWSJ/ExMwSqJOz2vt/ZtFNAVt
+	VHBPGJ/RP3/6BBB8rQb3/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1702472637; x=
+	1702559037; bh=VuNIntaTLIfIFK5OfYyYIOzFWMyJlr3R6bccoNrZHyw=; b=k
+	EAx0tPlQ6EJdaiLkOOmdVoEBwuz/liIE7qFOU4DhAYmHLwrPr0UTExauxEa9SzVY
+	F/gjSQ8ug+K3neAQ7kZF2Uzsn3E4Yp9T9qh0lvFfdxdVlR41YMIoTdhSdwSgyiAU
+	ldW42iP9nTOcFmWJyfhAtJ7rlaROBRXeWfyTHYKpzlvNJXCV9838MxphmIIs6ql3
+	NAJH70aKiErAFbzEGOH7hMiWMmGfGJMU2YwIfhaZYL20gkqMpc1HN5NE0/oZdL+Y
+	JJlekJ8NWmH373d3OJ57hLMxXTd021rW/HxXuexJ18UKFVRzlVAoxkwr1TwWmlqF
+	plB2kQMx0ie4Q+Y4L7PJA==
+X-ME-Sender: <xms:vKt5ZRb2YXveCGaNgmRBXQ1-DMI_OJYvQi48KdpDx4LTAfU61QacJA>
+    <xme:vKt5ZYanC8QpwOv6oDhi0dH9orYjmuBL8YDGrJ-InG9weWc-pEJlyEfAMQzwlWp-w
+    8wryQYHWgP_GI3X>
+X-ME-Received: <xmr:vKt5ZT8QYYzI4RGlMS18QIlntcRQhQnwQGbnPg2rM3bzBGhCnrAZwRZLk5Lwo-vVFbKIQAkbLGij-tBhVqo4_coAdfycDa4xQKqESkZGaFQaD9zcv2xB>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeliedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnheptddugefgjeefkedtgefhheegvddtfeejheeh
+    ueeufffhfeelfeeuheetfedutdeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:vat5Zfrw49qnEwc3ylGNfATF8G9Ognn9kQOnWWjnIVbyKtxzIYho-Q>
+    <xmx:vat5Zcr6SSyf52TQ8dz8jNGiRCje-Uyj6DcK_i4ayWiTS598wVO6pA>
+    <xmx:vat5ZVTg7zFcsmesOB8E49VK4Qd5LycOyt5EHg-GataBK5AGScgLFg>
+    <xmx:vat5ZUIfZvnwW0h1x2E-ixiBD9OPRRodLCcwLbs9_5UVaAtGtBSgfA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Dec 2023 08:03:55 -0500 (EST)
+Message-ID: <524bceb8-0d27-4223-a715-576efdc7f74c@fastmail.fm>
+Date: Wed, 13 Dec 2023 14:03:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB6799:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34eef5dd-fa49-4716-0076-08dbfbdbead0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	9f0hpxbdTDp0Gm3vp/zMz7JKhvwmKIEbChcQ5TnKzybKh1cch1iPibD/LkJeeHdO/kVYWBXe7lPUm5GgHu5ehshL/DbQ2jxI1Bl8jknIMdBBR6oPFWddfw1P0VqxkLraN4liOUMfJZuE+zGSBT2z8RgRgmvNOy8e+sdMvkgft25ONesvKc5gfQIYT5gyk89R8hpNEO00iuR8MRVvfaoMQpAfR9fUAqrBRVConsF9IvClNHvjhtl9y5+vytO8KKlRkn9sBZhKpkYOhjgBqo8z9hNTT0a7dAKkWBrMGb8gnzU9e5nwRDibKmMT9agxQHpnSc3qgqMJJD829Bi1GJJVZTeHTufMbhEPNGhV89nDpABvlhOluBsAAW4hxP7YfQhYj3NFD1RqTIQtgqbV11f6IHmaVaLs5dXZ3hXEZ/P3DW+mf1LVmu7lrhlaWBn+svctIm5M5UMmXb6s+aVt4QaqkVnb8hYb6cOl8wKV3FF9w8qHNtMG7F3YDl8nE10inrbObPNrzCfvSyzIcAXg4OMZkuKz0cfI7HOsQyPbkiq5wICI4ZqlpgdB1JCJ5nzUWij/NfnqLswHM5SYBUpCEcoqY3OWqoT5LKGjGQfUlAFsRQxenvKeGxNKtF8PrcrhgbnoPO/z5ssteMhAzjeuWl9AnduSaea3vVZiDMprMQNDLLpXqgnS2hafogjZRkEbT2eyUN59/qRkloumQg1FEYbqag==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(396003)(376002)(346002)(39860400002)(230273577357003)(230922051799003)(230173577357003)(186009)(64100799003)(451199024)(1800799012)(31686004)(66899024)(66946007)(66476007)(66556008)(36756003)(31696002)(86362001)(38100700002)(83380400001)(6512007)(2616005)(53546011)(36916002)(6506007)(8676002)(6486002)(6666004)(7416002)(2906002)(6916009)(316002)(478600001)(8936002)(5660300002)(4326008)(26005)(41300700001)(21314003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TGMwaHlUMkI3eHdVNEhCWUVWR1FxZVQxN1NGS05GZnFoOWJSaXFMR3VzVkdp?=
- =?utf-8?B?cEhSdWQvYStrbE9wbTQ5dmd5eU1wUXJ3WXkxVVc0NmNTOHlDV28vblhhK3RX?=
- =?utf-8?B?SThBb3NRcVE2TUxlaUNnS1djNVFvc0dKazduRnBORlRURmRUdERJOVN1UGZU?=
- =?utf-8?B?OC9udVBlOTZuTTVudTBiOVJaaTR0OFNIektJcllJc0V6bFhsTTVvTGZZa256?=
- =?utf-8?B?elhIQ2VkNVM2bEdacnd6UHFDUEV6bnpxdTliUHBQRXJYNVlFcWpId3cvODhQ?=
- =?utf-8?B?TEhINnRrZXB0OEVtaTYxUUZsaDcyYytJOE1HN1ZEUkdGYWVYWGtCbkRXbnVp?=
- =?utf-8?B?SHkwblpVNEdUQmVadm5HVFJLRGlielgvOFBZUEpkQStVa2lYQXVKQXFVSnBG?=
- =?utf-8?B?Qy9OUlBCcVBTREJvU3EvZ0tIYm9lMllkYUsxZDdOdkJESnFxWWdIRWFaNEFv?=
- =?utf-8?B?VFEwZmdzaE1HNnU0L3pJWEthZTFDdS9GTVVmY2doalkxVmkwbFZ4VnJEUFhS?=
- =?utf-8?B?TFJIVkorRkY1RXFLUkZVZ0RSMVZ1ZW9Dakl5NVhNdnhjb0Y3aktGdzdkeFAz?=
- =?utf-8?B?WnB1M1crUGxrdjlLeHZpaWptRFRiQlRoZ1QrM2J2Q3B6UVRFMlFEMEo4RVZj?=
- =?utf-8?B?TE5HYmErM3IrTk5KL2ZCK1pGdERCZWVaQVdmQjRyZlN4b1Z4RGVDWENuZkpp?=
- =?utf-8?B?d1ZSTXlONkhveVdKdWFIQklIUFJhS2FUMURYTzZkQmYrQTAzRnNjWWZaR210?=
- =?utf-8?B?MkNZYjdDc3ZZT3FSREZlNE9aR20zd2JhSE1EdWxyTVBkWWtxNFZhTTZRS0xO?=
- =?utf-8?B?Q0VPYVJ2cWZkUlp2eThPdVE3cit6RERvczhtUzZ5RU5Bc2hISno4S3poK2pQ?=
- =?utf-8?B?bGFkUlhuV2l6Y3B0VUNBSjkycmVzVzFGTituVnhHcVg1T0hoMWFXeXd1cE5M?=
- =?utf-8?B?cjB5VkduV2RUSHlYdkIraHl4elRycWMxcU9oRXN4ejJheGhpaHVxYzNwenVE?=
- =?utf-8?B?dHVsaWlrSEY2eE1nSDJ3WTR6bmowMG01dS81U3c3clFFZzQ0bXc2ZDg2MElU?=
- =?utf-8?B?bUd1SFRGeFRVY1BSM0s2VXQ3V0p0U2VLZWxNSktIdHFoakFRZFZndHpHNnd4?=
- =?utf-8?B?UmJXKzI0SUFneEloakNxVnNGM3BucjBGbGRCV1F6MWFiVUpSYXhUQ0JESmRv?=
- =?utf-8?B?djltbndsUG9YTFRrZWI5cFNMR21HVDBoMXUrWXI2c3pWOG1RMUM4ZzZXa3RS?=
- =?utf-8?B?QmpHL0p5Ry9DdTBjQzhJSFEzenhKZE5iZUMxRERRNG44RVkvYkI4SGVpQmhu?=
- =?utf-8?B?YWE1V0cyMUtRbU1yNjlXc0EySUhhVzdDNXNFYndwVzhPZ3BENmVkSGpoWTRT?=
- =?utf-8?B?NG1Qa2thZGJZYW91R1l6MjhWbUFiLzVhWEVFaSsyY2pRSDlIa2dMdFFFb2lT?=
- =?utf-8?B?b3lObzE5Qlllc1pHdWY1SkFrblRqcHo5ZEowRFBwWUJnNTMrcVVGbHNEOFRm?=
- =?utf-8?B?WWJXNElNd1RJRVAxQkVTdFNXNC9RV1gza3JiUnlRTWdFSUtJUUppR3h6QWpz?=
- =?utf-8?B?NEpOck41emltNjFuZCt4WXhSaVJESWlNWFdKQWdYNVVsNE9wd1g5b3Jac214?=
- =?utf-8?B?RFdzdDA1NTA0eGJwdDlZcUpidS9yQXhZVS94Y3g2cmZFMXVMZjNRSVhvRHNH?=
- =?utf-8?B?REN6eS9Ba3hUQXc2blBaaVk5YlhiOUw2VVYwZ0tkcmR6dE1nZUdmYVJLWGQ1?=
- =?utf-8?B?S1lWQUI2NHpvUndtVlNVL0tWNjdQVEVIbjJ4M016dEJueEhNNWdWb0dHL05D?=
- =?utf-8?B?akhwLzlCMk9NV2o0TWFJK2N5RmpNSVdoN2xwaU5NUVJ6R0grRnNpMzdBRkhn?=
- =?utf-8?B?ekttd3hPRHNaTy95SVpPM2kxdTFHbktrdDcyYVF2aHNnN2JrVkFJcFhnWEw2?=
- =?utf-8?B?RHlKZUxNTXloTjdkaVJBL3NFcUZXSWRKZXBiNFZGeUVPeEVwTXdQbUVGRUdS?=
- =?utf-8?B?eHRHcXgrL01NUmpEWXVBbnV5MTJsSVBpSEhKWFRoVnJRQmJHWmJhenRZUjY5?=
- =?utf-8?B?WnVzQmRrRzhDa3FNVjJtL3VSNldLaE83UHdBSmVpS2xPaHhvbXNyLzJIcVll?=
- =?utf-8?Q?4TNFRFKy0lChy0vQ3k+66rw8O?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	R/bBEITkTNorZltqYQB3A3B/EkL7XOK7x0HkzoywdaGSAVzk4hK0gaWEx0P8ROzCFolSGEsXseCbb27eh4Xx20N5HuanbX5U9AOkD7pBVEOd87Sf9avIXNcyN0UoGBex2WRdhsznU9fmMuS1sCZCYIUVQXuroxDszb4OA7DcSWwdf3pAm8A4kaJTZoeurhrPBx1RfNTsIsLlGeqceFL5g5oXolFFnzsssiOxU5Tu6irjTm1lADSRwttqRmMP5q+UUtYXCkTYJH3ZpS/OaAnioU8YKJTL/mWqOhZH4JQ51o+0AyXr6iUI4zLcwHrecDnnp/4atLZH7825SLvG/kg4VfegAQzMov3C5MzIG46+9UNATPaVBOJeTaEPv1FtGkM9d3wp4SDvL9nwSLWCdiCvv6RqiRG2A1MFyLRqxY/JaTxJYh+iTAUOTHdhuCYLs3c2o5BOBGF2MjJ3Hp1SuswSE9ltoNVsvQVB8uxXTZdf+02L+CLpVmFlRou+2VCxWFEfqXi4OjsZmgt7VjoQEsuQy9SKx+hKrmIBbf0bUw4wZLVX/a9n8AN9fAHql27dFCBDkSZQE+iIunUqJyZwWexLtClnAHhqi23uFAbODIngR1s=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34eef5dd-fa49-4716-0076-08dbfbdbead0
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 13:03:36.1293
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MPYxn79DxKk5iF4PIvNdtgDKvF2vxR6EbN16rBtgloKZZCLoAg3Z/xYoY1HnmJXjOSqSo0T/CjFT37Yq/Pi45A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6799
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-13_05,2023-12-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2312130095
-X-Proofpoint-ORIG-GUID: cE4HmDVkSSsEQnhapUKqYNZdoeYMRSYh
-X-Proofpoint-GUID: cE4HmDVkSSsEQnhapUKqYNZdoeYMRSYh
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Miklos Szeredi <mszeredi@redhat.com>, gmaglione@redhat.com,
+ Max Reitz <hreitz@redhat.com>, Hao Xu <howeyxu@tencent.com>,
+ Dharmendra Singh <dsingh@ddn.com>
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm>
+ <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
+ <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
+ <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm>
+ <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
+ <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm>
+ <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
+ <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
+ <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
+ <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
+ <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
+ <2e2f0cd1-99fe-4336-9cc8-47416be02451@fastmail.fm>
+ <CAOQ4uxh=aBFEiBVBErEA_d+mWcTOysLgbgWVztSzL+D2BvMLdA@mail.gmail.com>
+ <b48f7aae-cd84-4f7d-a898-f3552f1195ae@fastmail.fm>
+ <CAOQ4uxjnSkZwgQNQTLiLK+juWKNo+ecVPcxm7ZPzPPZCxh0A0w@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAOQ4uxjnSkZwgQNQTLiLK+juWKNo+ecVPcxm7ZPzPPZCxh0A0w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 13/12/2023 11:20, Jan Kara wrote:
->> To allow for further expansion, increase from unsigned int to unsigned
->> long.
+
+
+On 12/13/23 12:23, Amir Goldstein wrote:
+>>>
+>>>      Thanks Amir, I'm going to look at it in detail in the morning.
+>>>      Btw, there is another bad direct_io_allow_mmap issue (part of it is
+>>>      invalidate_inode_pages2, which you already noticed, but not alone).
+>>>      Going to send out the patch once xfstests have passed
+>>>      https://github.com/bsbernd/linux/commit/3dae6b05854c4fe84302889a5625c7e5428cdd6c <https://github.com/bsbernd/linux/commit/3dae6b05854c4fe84302889a5625c7e5428cdd6c>
+>>>
+>>>
+>>> Nice!
+>>> But I think that invalidate pages issue is not restricted to shared mmap?
 >>
->> Since the dma-buf driver prints the file->f_mode member, change the print
->> as necessary to deal with the larger size.
+>> So history for that is
 >>
->> Signed-off-by: John Garry<john.g.garry@oracle.com>
-> Uh, Al has more experience with fmode_t changes so I'd defer final decision
-> to him but to me this seems dangerous.
+>> commit 3121bfe7631126d1b13064855ac2cfa164381bb0
+>> Author: Miklos Szeredi <mszeredi@suse.cz>
+>> Date:   Thu Apr 9 17:37:53 2009 +0200
+>>
+>>       fuse: fix "direct_io" private mmap
+>>
+>>       MAP_PRIVATE mmap could return stale data from the cache for
+>>       "direct_io" files.  Fix this by flushing the cache on mmap.
+>>
+>>       Found with a slightly modified fsx-linux.
+>>
+>>       Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 0946861b10b7..06f30e965676 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -1298,6 +1298,8 @@ static int fuse_direct_mmap(struct file *file, struct vm_area_struct *vma)
+>>           if (vma->vm_flags & VM_MAYSHARE)
+>>                   return -ENODEV;
+>>
+>> +       invalidate_inode_pages2(file->f_mapping);
+>> +
+>>           return generic_file_mmap(file, vma);
+>>    }
+>>
+>>
+>> I don't have a strong opinion here - so idea of this patch is to avoid
+>> exposing stale data from a previous mmap. I guess (and probably hard to achieve
+>> semantics) would be to invalidate pages when the last mapping of that _area_
+>> is done?
+>> So now with a shared map, data are supposed to be stored in files and
+>> close-to-open consistency with FOPEN_KEEP_CACHE should handle the invalidation?
+>>
+> 
+> Nevermind, it was just my bad understanding of invalidate_inode_pages2().
+> I think it calls fuse_launder_folio() for dirty pages, so data loss is
+> not a concern.
+> 
+>>>
+>>> I think that the mix of direct io file with private mmap is common and
+>>> doesn't have issues, but the mix of direct io files and caching files on
+>>> the same inode is probably not very common has the same issues as the
+>>> direct_io_allow_mmap regression that you are fixing.
+>>
+>> Yeah. I also find it interesting that generic_file_mmap is not doing such
+>> things for files opened with O_DIRECT - FOPEN_DIRECT_IO tries to do
+>> strong coherency?
+>>
+>>
+>> I'm going to send out the patch for now as it is, as that might become a longer
+>> discussion - maybe Miklos could comment on it.
+>>
+> 
+> I think your patch should not be avoiding invalidate_inode_pages2()
+> in the shared mmap case.
+> 
+> You have done that part because of my comment which was wrong,
+> not because it reproduced a bug.
 
-Ack
+I debating with myself since yesterday, where invalidate_inode_pages2() 
+belongs to.
 
-> Firstly, this breaks packing of
-> struct file on 64-bit architectures and struct file is highly optimized for
-> cache efficiency (see the comment before the struct definition).
+We have
 
- From pahole, I think that we still fit on the same 64B cacheline 
-(x86_64), but some padding has been added.
+FOPEN_KEEP_CACHE - if not set invalidate_inode_pages2 is done by 
+fuse_open_common().  If set, server side signals that it wants to keep 
+the cache. Also interesting, I don't see anything that prevents that 
+FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE are set together.
+Also to consider, fc->_no_open sets FOPEN_KEEP_CACHE by default.
 
-Before:
-struct file {
-union {
-	struct llist_node  f_llist; 	/*     0     8 */
-                 struct callback_head f_rcuhead 
-__attribute__((__aligned__(8))); /*     0    16 */
-	unsigned int       f_iocb_flags;         /*     0     4 */
-         } __attribute__((__aligned__(8)));	/*     0    16 */
-	spinlock_t                 f_lock;	/*    16     4 */
-	fmode_t                    f_mode;	/*    20     4 */
-	atomic_long_t              f_count;	/*    24     8 */
-	struct mutex               f_pos_lock;	/*    32    32 */
-         /* --- cacheline 1 boundary (64 bytes) --- */
+MAP_PRIVATE - here I'm sure that invalidate_inode_pages2 is right, even 
+with FOPEN_KEEP_CACHE. There is also zero risk to lose data, as 
+MAP_PRIVATE does not write out data.
 
-After:
+MAP_SHARED - was not allowed with FOPEN_DIRECT_IO before. Unless 
+FOPEN_KEEP_CACHE is set, close-to-open semantics come in. My argument to 
+to avoid invalidate_inode_pages2 in the current patch is that MAP_SHARED 
+wants to share data between processes. And also maybe important, there 
+is no flush in that function - dirty pages would be thrown away - data 
+corruption!?
 
-struct file {
-union {
-	struct llist_node  f_llist	/*     0     8 */
-                 struct callback_head f_rcuhead 
-__attribute__((__aligned__(8))); /*     0    16 */
-	unsigned int       f_iocb_flags;	/*     0     4 */
-         } __attribute__((__aligned__(8)));	/*     0    16 */
-	spinlock_t                 f_lock;	 /*    16     4 */
-
-         /* XXX 4 bytes hole, try to pack */
-
-         fmode_t                    f_mode;	/*    24     8 */
-         atomic_long_t              f_count;	/*    32     8 */
-         struct mutex               f_pos_lock;	/*    40    32 */
-         /* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
-
-> Secondly
-> this will probably generate warnings on 32-bit architectures as there
-> sizeof(unsigned long) == sizeof(unsigned int) and so your new flags won't
-> fit anyway?
-
-Right, it would then need to be unsigned long long. Or add another 32b 
-member for extended modes. There were no i386 build warnings.
 
 Thanks,
-John
+Bernd
+
 
