@@ -1,170 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-5779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B23810775
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 02:13:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A189381079E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 02:26:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BC61F219D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 01:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A5A1F219CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 01:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C71ECA;
-	Wed, 13 Dec 2023 01:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7D31109;
+	Wed, 13 Dec 2023 01:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Ze0PwEh2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2Pu5VDvJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYhfZ+Vs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43ED391;
-	Tue, 12 Dec 2023 17:13:39 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id CE0295C01D7;
-	Tue, 12 Dec 2023 20:13:36 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 12 Dec 2023 20:13:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1702430016;
-	 x=1702516416; bh=q1SPQYQRBWl7bFrY5/lVAS8dc6PpLJdw7+EOXaZGVW4=; b=
-	Ze0PwEh2S3szHV/ysnl1BX0zv1/CfSBmMStu4vXojWR8sKZ/+ev5W6PpgP4i1la5
-	INWsbQWMZOhPOPz0Ss3v6hx3aLl+r3+O7DNtSkjQ4k8b0BSpKudqERUpkdFcwWrC
-	u5Hb9hQrPiUyBnGaK0Mx2qM5oHX/QOJyk1ltkecAlXM1w18/xSMNTkSNkMkIcha3
-	aBigpGgHNFrD9s/99NM2EPyaZSFJofrufVllgbTDQD3x8agFx+uWv937VPj4yQov
-	LDZ61yro2+0ViZyt44dv6aTAIDLwVaw48rU/G/CIczeS5MKuaFTaaici99+Hb0r9
-	xLoEXdf5gQQQHJmIiOrHvw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1702430016; x=
-	1702516416; bh=q1SPQYQRBWl7bFrY5/lVAS8dc6PpLJdw7+EOXaZGVW4=; b=2
-	Pu5VDvJxB+hNgOzbQS8onyFPjDTA5005w70yUaUEx6sY6LH9thUWrT74U/eM3n7i
-	8sPvzZT5BraMUnai4Oiurvmrz7CyvxK/uFWVESLJ0aNxBcLpSUF3XDmk7aP2wSFe
-	LNZXNSS1TYD3y8iPrKxqQjisH5lHYJCXCy6x+x0N/zMRlDWw8x9C5TcFU4DM+/tH
-	PndYo4EQezv+W1RekQUeHg0M/6/qxChKcZJEOev1fsqcH93x1yG6i8O6KdSKFZMA
-	nLbYJEO7M/CxVv+30+imA2niTK7g/I3Aly/SsLJKWaZb/pE3rxn0XKizH3RhgSob
-	DxC3cAqIgfb7dAt4xiphw==
-X-ME-Sender: <xms:QAV5ZRIw5On9QW0y7o6Ul7WYC95gZvbm6hihF-O9wUrp-PGyDMD6HA>
-    <xme:QAV5ZdK_5s2opw-6uCV1kCIQx46sRcMBypw3gLpcD7HE35nLl3hULiu6sXYOaXpN_
-    ZyllZX2zFDk>
-X-ME-Received: <xmr:QAV5ZZuwjuTmuMj4OMA7_e0i4S95DUpHf4Ysaq_UTSJUn60SCTOW4D8yoO_EnYoCzsxQHjMPS_DXmTxXGep8YXKVwmmF3BBqm0q6r0Hnl8aNQMoXVlNP9wVp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelhedgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfvfevfhfhufgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
-    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
-    epjeegkedvhfekueejgeefieejtdevledvtdelieevveekffejfedtvdehkeefjeeknecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:QAV5ZSbgMwE2_u77Z8MoHnF27nYycdpWY0RRWzUOfmrk6ss9z_Eamg>
-    <xmx:QAV5ZYZYxPE3hna1elh9v4ee5S2enWN29NIEYEMtLslwwM9dTX1xpQ>
-    <xmx:QAV5ZWCxkKiPwJLK-uCMpon65xjSsrGJjmnR0QNkJuVingcClDau5A>
-    <xmx:QAV5ZeP1hoNmo0aMVPbxZam7Mv1J6KDTSoqYOX4TUpMd2PbUytH4sQ>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Dec 2023 20:13:32 -0500 (EST)
-Message-ID: <eab9dee1-a542-b079-7c49-7f3cb2974e47@themaw.net>
-Date: Wed, 13 Dec 2023 09:13:27 +0800
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40B5CA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 12 Dec 2023 17:25:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702430757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7+Fi662eTBH61l7dziQI31ojIowi0xTylG+eKXF8CnY=;
+	b=UYhfZ+VspMN6MzMZeixGy+OAJ9OlNKfVsbfSSWNZY/rDPF2NbEIQFhCtHvsGTkTH7zAvfK
+	qFH7UUL6izIT8Z6mpWXoqjRBpCLxVO5pnRywPKe7JpjvLni49Y1yT4ROxJDvHACpSZMBZD
+	6C6hjTk4kqLg/EYvF+jS48uY65wOhgE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-C7-uyY69MkKS7aFFTyZZzQ-1; Tue, 12 Dec 2023 20:25:52 -0500
+X-MC-Unique: C7-uyY69MkKS7aFFTyZZzQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D1ED9833B41;
+	Wed, 13 Dec 2023 01:25:51 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.39])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B04C3C25;
+	Wed, 13 Dec 2023 01:25:42 +0000 (UTC)
+Date: Wed, 13 Dec 2023 09:25:38 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+	jaswin@linux.ibm.com, bvanassche@acm.org,
+	Himanshu Madhani <himanshu.madhani@oracle.com>
+Subject: Re: [PATCH v2 01/16] block: Add atomic write operations to
+ request_queue limits
+Message-ID: <ZXkIEnQld577uHqu@fedora>
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
+ <20231212110844.19698-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-To: Arnd Bergmann <arnd@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>,
- Miklos Szeredi <mszeredi@redhat.com>,
- "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>,
- Dave Chinner <dchinner@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231212214819.247611-1-arnd@kernel.org>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Subject: Re: [PATCH] statmount: reduce runtime stack usage
-In-Reply-To: <20231212214819.247611-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231212110844.19698-2-john.g.garry@oracle.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On 13/12/23 05:48, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> prepare_kstatmount() constructs a copy of 'struct kstatmount' on the stack
-> and copies it into the local variable on the stack of its caller. Because
-> of the size of this structure, this ends up overflowing the limit for
-> a single function's stack frame when prepare_kstatmount() gets inlined
-> and both copies are on the same frame without the compiler being able
-> to collapse them into one:
->
-> fs/namespace.c:4995:1: error: stack frame size (1536) exceeds limit (1024) in '__se_sys_statmount' [-Werror,-Wframe-larger-than]
->   4995 | SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
->
-> Mark the inner function as noinline_for_stack so the second copy is
-> freed before calling do_statmount() enters filesystem specific code.
-> The extra copy of the structure is a bit inefficient, but this
-> system call should not be performance critical.
-
-Are you sure this is not performance sensitive, or is the performance
-
-critical comment not related to the system call being called many times?
-
-
-It's going to be a while (if ever) before callers change there ways.
-
-
-Consider what happens when a bunch of mounts are being mounted.
-
-
-First there are a lot of events and making the getting of mount info.
-
-more efficient means more of those events get processed (itself an issue
-
-that's going to need notification sub-system improvement) resulting in
-
-the system call being called even more.
-
-
-There are 3 or 4 common programs that monitor the mounts, systemd is
-
-one of those, it usually has 3 processes concurrently listening for
-
-mount table events and every one of these processes grabs the entire
-
-table. Thing is systemd is actually quite good at handling events and
-
-can process a lot of them if they are being occuring.
-
-
-So this system call will be called a lot.
-
-
-Ian
-
->
-> Fixes: 49889374ab92 ("statmount: simplify string option retrieval")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Tue, Dec 12, 2023 at 11:08:29AM +0000, John Garry wrote:
+> From: Himanshu Madhani <himanshu.madhani@oracle.com>
+> 
+> Add the following limits:
+> - atomic_write_boundary_bytes
+> - atomic_write_max_bytes
+> - atomic_write_unit_max_bytes
+> - atomic_write_unit_min_bytes
+> 
+> All atomic writes limits are initialised to 0 to indicate no atomic write
+> support. Stacked devices are just not supported either for now.
+> 
+> Signed-off-by: Himanshu Madhani <himanshu.madhani@oracle.com>
+> #jpg: Heavy rewrite
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->   fs/namespace.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d036196f949c..e22fb5c4a9bb 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4950,7 +4950,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
->   	return true;
->   }
->   
-> -static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
-> +static int noinline_for_stack
-> +prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
->   			      struct statmount __user *buf, size_t bufsize,
->   			      size_t seq_size)
->   {
+>  Documentation/ABI/stable/sysfs-block | 47 ++++++++++++++++++++++
+>  block/blk-settings.c                 | 60 ++++++++++++++++++++++++++++
+>  block/blk-sysfs.c                    | 33 +++++++++++++++
+>  include/linux/blkdev.h               | 37 +++++++++++++++++
+>  4 files changed, 177 insertions(+)
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
+> index 1fe9a553c37b..ba81a081522f 100644
+> --- a/Documentation/ABI/stable/sysfs-block
+> +++ b/Documentation/ABI/stable/sysfs-block
+> @@ -21,6 +21,53 @@ Description:
+>  		device is offset from the internal allocation unit's
+>  		natural alignment.
+>  
+> +What:		/sys/block/<disk>/atomic_write_max_bytes
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter specifies the maximum atomic write
+> +		size reported by the device. This parameter is relevant
+> +		for merging of writes, where a merged atomic write
+> +		operation must not exceed this number of bytes.
+> +		The atomic_write_max_bytes may exceed the value in
+> +		atomic_write_unit_max_bytes if atomic_write_max_bytes
+> +		is not a power-of-two or atomic_write_unit_max_bytes is
+> +		limited by some queue limits, such as max_segments.
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_unit_min_bytes
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter specifies the smallest block which can
+> +		be written atomically with an atomic write operation. All
+> +		atomic write operations must begin at a
+> +		atomic_write_unit_min boundary and must be multiples of
+> +		atomic_write_unit_min. This value must be a power-of-two.
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_unit_max_bytes
+> +Date:		January 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] This parameter defines the largest block which can be
+> +		written atomically with an atomic write operation. This
+> +		value must be a multiple of atomic_write_unit_min and must
+> +		be a power-of-two.
+> +
+> +
+> +What:		/sys/block/<disk>/atomic_write_boundary_bytes
+> +Date:		May 2023
+> +Contact:	Himanshu Madhani <himanshu.madhani@oracle.com>
+> +Description:
+> +		[RO] A device may need to internally split I/Os which
+> +		straddle a given logical block address boundary. In that
+> +		case a single atomic write operation will be processed as
+> +		one of more sub-operations which each complete atomically.
+> +		This parameter specifies the size in bytes of the atomic
+> +		boundary if one is reported by the device. This value must
+> +		be a power-of-two.
+> +
+>  
+>  What:		/sys/block/<disk>/diskseq
+>  Date:		February 2021
+> diff --git a/block/blk-settings.c b/block/blk-settings.c
+> index 0046b447268f..d151be394c98 100644
+> --- a/block/blk-settings.c
+> +++ b/block/blk-settings.c
+> @@ -59,6 +59,10 @@ void blk_set_default_limits(struct queue_limits *lim)
+>  	lim->zoned = BLK_ZONED_NONE;
+>  	lim->zone_write_granularity = 0;
+>  	lim->dma_alignment = 511;
+> +	lim->atomic_write_unit_min_sectors = 0;
+> +	lim->atomic_write_unit_max_sectors = 0;
+> +	lim->atomic_write_max_sectors = 0;
+> +	lim->atomic_write_boundary_sectors = 0;
+
+Can we move the four into single structure and setup them in single
+API? Then cross-validation can be done in this API.
+
+>  }
+>  
+>  /**
+> @@ -183,6 +187,62 @@ void blk_queue_max_discard_sectors(struct request_queue *q,
+>  }
+>  EXPORT_SYMBOL(blk_queue_max_discard_sectors);
+>  
+> +/**
+> + * blk_queue_atomic_write_max_bytes - set max bytes supported by
+> + * the device for atomic write operations.
+> + * @q:  the request queue for the device
+> + * @size: maximum bytes supported
+> + */
+> +void blk_queue_atomic_write_max_bytes(struct request_queue *q,
+> +				      unsigned int bytes)
+> +{
+> +	q->limits.atomic_write_max_sectors = bytes >> SECTOR_SHIFT;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_max_bytes);
+
+What if driver doesn't call it but driver supports atomic write?
+
+I guess the default max sectors should be atomic_write_unit_max_sectors
+if the feature is enabled.
+
+> +
+> +/**
+> + * blk_queue_atomic_write_boundary_bytes - Device's logical block address space
+> + * which an atomic write should not cross.
+> + * @q:  the request queue for the device
+> + * @bytes: must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_boundary_bytes(struct request_queue *q,
+> +					   unsigned int bytes)
+> +{
+> +	q->limits.atomic_write_boundary_sectors = bytes >> SECTOR_SHIFT;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_boundary_bytes);
+
+Default atomic_write_boundary_sectors should be
+atomic_write_unit_max_sectors in case of atomic write?
+
+> +
+> +/**
+> + * blk_queue_atomic_write_unit_min_sectors - smallest unit that can be written
+> + * atomically to the device.
+> + * @q:  the request queue for the device
+> + * @sectors: must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_unit_min_sectors(struct request_queue *q,
+> +					     unsigned int sectors)
+> +{
+> +	struct queue_limits *limits = &q->limits;
+> +
+> +	limits->atomic_write_unit_min_sectors = sectors;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_unit_min_sectors);
+
+atomic_write_unit_min_sectors should be >= (physical block size >> 9)
+given the minimized atomic write unit is physical sector for all disk.
+
+> +
+> +/*
+> + * blk_queue_atomic_write_unit_max_sectors - largest unit that can be written
+> + * atomically to the device.
+> + * @q: the request queue for the device
+> + * @sectors: must be a power-of-two.
+> + */
+> +void blk_queue_atomic_write_unit_max_sectors(struct request_queue *q,
+> +					     unsigned int sectors)
+> +{
+> +	struct queue_limits *limits = &q->limits;
+> +
+> +	limits->atomic_write_unit_max_sectors = sectors;
+> +}
+> +EXPORT_SYMBOL(blk_queue_atomic_write_unit_max_sectors);
+
+atomic_write_unit_max_sectors should be >= atomic_write_unit_min_sectors.
+
+
+Thanks, 
+Ming
+
 
