@@ -1,107 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-5987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E943811AEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:26:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9243A811AF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E2F2829C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BD51F219CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F6656B9D;
-	Wed, 13 Dec 2023 17:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A8556B90;
+	Wed, 13 Dec 2023 17:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJS5ypMO"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNZbo1C5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RiP4Uqcz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNZbo1C5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RiP4Uqcz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB68EA;
-	Wed, 13 Dec 2023 09:26:43 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-5522bfba795so949933a12.2;
-        Wed, 13 Dec 2023 09:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702488401; x=1703093201; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
-        b=AJS5ypMOACfR4rCU2mIwsYA9weMkiRJNDHDZ2agym4gKmtL7qjOOAAceCWYnSgrjWq
-         dJpl69dR5ueH4Ts/PXfAyJe1eWf1oKs3SI2zIFwPKlAvNaHoJAB07EkOOtm4kXxd15DZ
-         s7vLz3Gr3qfm9s9U+H9UOIyVUCTLzDNHFTQ/9j5NVuRR8+La5VG+BKLoAwdO3ZG0eV8B
-         BnRZHPmkWdcVcqyi2FkxgDW83XE4Znt2STctg/p7Ic+heCRECjVL7td+HOWi4keQHDIb
-         B8l+fUL2rz3suoDXEJaUsg43AOSOVmPuhfLuLnAn5ztxW/zv4ZbhBFXPF1RwoOJvKm/3
-         9DFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702488401; x=1703093201;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ld0B1jUksqKbXhxjO1khXY1xboG0f1gEIjrhs47Odww=;
-        b=MCEqX0VJXsrn0cCZeEzBMcfvmKOI+QJ8r8H8m1D8xcO/yPIGH7fFSBpf+sWlbfoj/T
-         JxUZH3ucT54MnRqEanyU2CfVeBh+BqiLZWKZWk6VPRQIhdSn2rzorMpAL5BXgTF9xDm3
-         +2Jp0JK9SH0yi1ccoCkw/F+/XghYn1zKBPybZnke8a9biXDyjcysAgtWURt+T5gb1065
-         O9RVRFXOhh1hFdeMgxbPffFZj9kv5uPcrwHL7VM9GxoHExKciv/fviKb1RvQFCIkQy82
-         1FI2w13FnQ6PBRK8c041O1h+s36RQbENDxQI7sqhf+T7kBi4NI+v6libOozCQ/exXlez
-         Eykg==
-X-Gm-Message-State: AOJu0YwgoUPP2yqBDWrJPiFnAe4zW+ydVQYxLbQfU83s+yATSlZNkVxO
-	IK6VTzZvUDOPv0WPbBT3Wuy7I2UAWMpyG4JshbA=
-X-Google-Smtp-Source: AGHT+IGq3M67HTy5rdu/IY9FndPLLuQSSg3Da+u605aRWD46UDNw8xTFi6K5KvxhiaDW/EPwyxFOBFO3ccwL+SRBrZo=
-X-Received: by 2002:a17:906:9d12:b0:9e5:2c72:9409 with SMTP id
- fn18-20020a1709069d1200b009e52c729409mr3534316ejc.43.1702488401076; Wed, 13
- Dec 2023 09:26:41 -0800 (PST)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50019F2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 09:28:46 -0800 (PST)
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C43391F451;
+	Wed, 13 Dec 2023 17:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702488524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
+	b=gNZbo1C5kiRitGXnXsXUyCG18ZEK4CNDGqRQpch58otZkDKa/LO0EzWR8PKsZCwvQLq2xz
+	hTEF+4nrRdDRKBFL/alXLx1RPaVglEFrDtffDbaObYM4Tiif7W7Jw79C73d8sl2es6JwKv
+	Jng1TiJvgR2Q+N+EHo3kITM684ztb/U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702488524;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
+	b=RiP4Uqcz9t8uaZO7JxQpoyts1AA6YPqpBokQ+bmqG1C1xkM/ZOUPXEU8ZoRuCTMqJs4jXe
+	uYD/cERr2sk4N1DA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702488524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
+	b=gNZbo1C5kiRitGXnXsXUyCG18ZEK4CNDGqRQpch58otZkDKa/LO0EzWR8PKsZCwvQLq2xz
+	hTEF+4nrRdDRKBFL/alXLx1RPaVglEFrDtffDbaObYM4Tiif7W7Jw79C73d8sl2es6JwKv
+	Jng1TiJvgR2Q+N+EHo3kITM684ztb/U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702488524;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWK89+37BoTDJP6EBX/6a0z6wiR81v7zHd5JPh+8fn4=;
+	b=RiP4Uqcz9t8uaZO7JxQpoyts1AA6YPqpBokQ+bmqG1C1xkM/ZOUPXEU8ZoRuCTMqJs4jXe
+	uYD/cERr2sk4N1DA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id B2A8313240;
+	Wed, 13 Dec 2023 17:28:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id 7IeYK8zpeWV1dgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 13 Dec 2023 17:28:44 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1B9DDA07E0; Wed, 13 Dec 2023 18:28:44 +0100 (CET)
+Date: Wed, 13 Dec 2023 18:28:44 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission
+ response
+Message-ID: <20231213172844.ygjbkyl6i4gj52lt@quack3>
+References: <20231208080135.4089880-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207222755.3920286-1-andrii@kernel.org> <20231207222755.3920286-2-andrii@kernel.org>
- <CAADnVQK6WWcgKtPNQrGe9dM7x1iMOyL943PVrJjT6ueBDFRyQw@mail.gmail.com>
- <CAEf4BzYHHdQsaGBFXnY8omP4hv_tUjqxHWTNoEugi3acrE5q=A@mail.gmail.com>
- <CAADnVQLoZpugU6gexuD4ru6VCZ8iQMoLWLByjHA6hush5hUwug@mail.gmail.com> <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
-In-Reply-To: <b683d150-5fa0-4bec-af07-c709ee4781d6@linux.dev>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 13 Dec 2023 09:26:28 -0800
-Message-ID: <CAEf4BzZyOCmo1CFMGQG5TRWetMqWNbwsgB0CNNpeB_6aB9jxzA@mail.gmail.com>
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: add mapper macro for bpf_cmd enum
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	Christian Brauner <brauner@kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Kernel Team <kernel-team@meta.com>, Sargun Dhillon <sargun@sargun.me>, 
-	Martin KaFai Lau <martin.lau@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231208080135.4089880-1-amir73il@gmail.com>
+X-Spam-Level: 
+X-Spam-Score: -2.60
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.79
+X-Spamd-Result: default: False [-3.79 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.19)[-0.963];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-On Tue, Dec 12, 2023 at 5:37=E2=80=AFPM Martin KaFai Lau <martin.lau@linux.=
-dev> wrote:
->
-> On 12/11/23 8:06 PM, Alexei Starovoitov wrote:
-> > On Mon, Dec 11, 2023 at 8:01=E2=80=AFPM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> >>
-> >>
-> >>> While I can preemptively answer that in the case vmlinux BTF
-> >>> is not available it's fine not to parse names and rely on hex.
-> >>
-> >> It's fine, I can do optional BTF-based parsing, if that's what you pre=
-fer.
-> >
-> > I prefer to keep uapi/bpf.h as-is and use BTF.
-> > But I'd like to hear what Daniel's and Martin's preferences are.
->
-> I think user will find it useful to have a more readable uapi header file=
-. It
+On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
+> With FAN_DENY response, user trying to perform the filesystem operation
+> gets an error with errno set to EPERM.
+> 
+> It is useful for hierarchical storage management (HSM) service to be able
+> to deny access for reasons more diverse than EPERM, for example EAGAIN,
+> if HSM could retry the operation later.
+> 
+> Allow userspace to response to permission events with the response value
+> FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom error.
+> 
+> The change in fanotify_response is backward compatible, because errno is
+> written in the high 8 bits of the 32bit response field and old kernels
+> reject respose value with high bits set.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-I'd say having numeric values make it more readable, but that's a
-separate discussion. I purposefully kept full BPF_-prefixed names
-intact for readability, as opposed to what we do for enum bpf_func_id.
+So a couple of comments that spring to my mind when I'm looking into this
+now (partly maybe due to my weak memory ;):
 
-> would be nice to keep the current uapi/bpf.h form if there is another sol=
-ution.
+1) Do we still need the EAGAIN return? I think we have mostly dealt with
+freezing deadlocks in another way, didn't we?
 
-Ok, I'll use BTF, no problem.
+2) If answer to 1) is yes, then there is a second question - do we expect
+the errors to propagate back to the unsuspecting application doing say
+read(2) syscall? Because I don't think that will fly well with a big
+majority of applications which basically treat *any* error from read(2) as
+fatal. This is also related to your question about standard permission
+events. Consumers of these error numbers are going to be random
+applications and I see a potential for rather big confusion arising there
+(like read(1) returning EINVAL or EBADF and now you wonder why the hell
+until you go debug the kernel and find out the error is coming out of
+fanotify handler). And the usecase is not quite clear to me for ordinary
+fanotify permission events (while I have no doubts about creativity of
+implementors of fanotify handlers ;)).
+
+3) Given the potential for confusion, maybe we should stay conservative and
+only allow additional EAGAIN error instead of arbitrary errno if we need it?
+
+I'm leaving the API question aside for a moment until I have a clearer
+picture of what we actually want to implement :).
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
