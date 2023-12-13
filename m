@@ -1,131 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-5984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB26811A66
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:06:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4755811AD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:22:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F246B2091F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:06:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5841BB21204
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 17:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD653A8DD;
-	Wed, 13 Dec 2023 17:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A945579B;
+	Wed, 13 Dec 2023 17:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuDxgmyO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCjqTyEE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B94EF3;
-	Wed, 13 Dec 2023 09:06:04 -0800 (PST)
-Received: by mail-qk1-x72a.google.com with SMTP id af79cd13be357-77f8308616eso163758385a.2;
-        Wed, 13 Dec 2023 09:06:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702487163; x=1703091963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=izQi1471NL/cydZbe8/X42uR08bubeTVrkQFcuYiqzs=;
-        b=PuDxgmyOLgfAht7UAhnupo6Q3t9Io7QAMqyzTbw6JkfT0hf/KwgODcgwV+uVRSwYgd
-         W2pRnfIFFjcqBTIWut0PO4V6wERa8ZAgdxChZvlL9huHp/aE1I5QuzJ9EtIv80igJaQA
-         4HfapgSGtUpq69IeOuLtKzPfdxVsIz1DTrgke0SR/Q6JlCl9nHgqHhwqXUY/nkGYgjMI
-         BJ/YNhX2hOhWb3FM1PGNnRDmpA4FTeUznxhRHytYF1kst6samGLpx07P/njI9Zudsu30
-         24kc1c6ILRUoYj/VGGbhPUpLTNtkm6y/p5jb0IlteFDEYQBJC8vllTj/CrH5BQd/BrvQ
-         oL4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702487163; x=1703091963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=izQi1471NL/cydZbe8/X42uR08bubeTVrkQFcuYiqzs=;
-        b=cKLD1homxC7bCG86YPBy3GmQcGYn/pbR+WmN7y7CGyT1OY2COEZ0JxPKqA/iVGtjVF
-         LIRxJFOqRtyWnAYdNNe5EugAwjGYYMlGwTXWuQT/4wC+lRYMGdhhbJKNKCF8fHt4yQKk
-         LwXrjJEj6WCODilZ/Eqpu99gUa+zl5h1UUk79P8VLK+GE1eS2ZrSfEEsTZyaHvyIGgPb
-         sX0Hrcl6euyq87fNss7BUzCYZLQFT3UrOjZ/NORDGj1oMh1GrfKeW9y7YrKyRDX3A69m
-         iKjBzQxSUYT1INeu/SPb+/sCKqNGLFvhRCPWccsrHb6smfZsAe8kDaWnC8wjBI/H7Ubd
-         Wdwg==
-X-Gm-Message-State: AOJu0Ywb9g6jotKgd2HtNJ6Vg/OhZOheGgfJTayU10ee4xgCA2D39Bl3
-	weaTPZqdVCcIl9arl9enp6ZwsccDEcLF/DB74aQID2oY
-X-Google-Smtp-Source: AGHT+IHFwxt7NaMGwYfCIRV8QcEGmTbFxg9W/HWVNejdiK0MfCoZndI2DuEVIwyJpoIroqNUH2BvNIAFik3pPJY5tas=
-X-Received: by 2002:a0c:ee24:0:b0:67a:99cb:e2f with SMTP id
- l4-20020a0cee24000000b0067a99cb0e2fmr6705131qvs.42.1702487163185; Wed, 13 Dec
- 2023 09:06:03 -0800 (PST)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C8051C31;
+	Wed, 13 Dec 2023 17:22:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC89C433CA;
+	Wed, 13 Dec 2023 17:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702488152;
+	bh=MdFfxmRqnU2pgiKIHVjpuT5qM/n8AmSOleAkAeYhZzY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nCjqTyEEwYAqdW8/rlU/X2qNfvBr2d9kOIKAiAWZ9qncIg+m+22IilZcJEY8VRoTX
+	 7PgbJV6HZ5JLE3sDdfsX2UHiaQmp3mY3zRbfmkxhAQWJ83UeIlzK3XIiaKF4vV3C3f
+	 l9pxj+2hx8VjnlJ2uwTuDTSGTfuTbmQMk1sflXBlXe0SOkan+3n93ddJV7VKUEfu0Z
+	 MZFFlYrGAojnFk9Ri12mVxePt5n8d5wu+mgtpl3OjT9ECbV+/ED8mE03YSGnU9dACx
+	 ItkqIXFCrBxK8l26h8/TEEuSPhBnj4lDFVScIjFLiDXKOzURPiqtz1dSaT/lmYKVu+
+	 rig24IG2XtNVw==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50bf37fd2bbso9710812e87.0;
+        Wed, 13 Dec 2023 09:22:32 -0800 (PST)
+X-Gm-Message-State: AOJu0Yy2uYAhtI/7k+yf9Nu6M0xCqF7BTg6Pqn9wGukmtqAQXHv1sMP6
+	XEI8kv4E9uG7B072YJbHPSp10FfY7W7/1rN9ew==
+X-Google-Smtp-Source: AGHT+IFqzlN5cXgUWTtVKqvQkSS2vQPSTV20xZkO0pzlfuqEtQX8svaifgRBAAqLPVw/kWvXPFUvtTzHkFE1kxDLXyI=
+X-Received: by 2002:ac2:5504:0:b0:50c:a39:ee37 with SMTP id
+ j4-20020ac25504000000b0050c0a39ee37mr4154700lfk.109.1702488150631; Wed, 13
+ Dec 2023 09:22:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231211193048.580691-1-avagin@google.com> <CAOQ4uxik0=0F-6CLRsuaOheFjwWF-B-Q5iEQ6qJbRszL52HeQQ@mail.gmail.com>
- <CAEWA0a6Ow+BvrPm5O-4-tGRLQYr3+eahj45voF1gdmN3OfadGg@mail.gmail.com>
-In-Reply-To: <CAEWA0a6Ow+BvrPm5O-4-tGRLQYr3+eahj45voF1gdmN3OfadGg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Dec 2023 19:05:52 +0200
-Message-ID: <CAOQ4uxgzeAgkE73uJB=-Guq7fDtfKU1_1pMTOzBm6ApZuW=hLg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/proc: show correct device and inode numbers in /proc/pid/maps
-To: Andrei Vagin <avagin@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	overlayfs <linux-unionfs@vger.kernel.org>
+References: <20231119165721.9849-1-alexandru.elisei@arm.com>
+ <20231119165721.9849-12-alexandru.elisei@arm.com> <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
+ <ZXiMiLz9ZyUdxUP8@raptor> <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
+ <ZXmr-Kl9L2SO13--@raptor> <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
+ <ZXnE3724jYYSg4o6@raptor>
+In-Reply-To: <ZXnE3724jYYSg4o6@raptor>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 13 Dec 2023 11:22:17 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJgTnuQjo13cKo1Ebm5j9tCRT8GhNavdqu5vwp+fdnTLw@mail.gmail.com>
+Message-ID: <CAL_JsqJgTnuQjo13cKo1Ebm5j9tCRT8GhNavdqu5vwp+fdnTLw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, pcc@google.com, 
+	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
+	david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 12, 2023 at 9:08=E2=80=AFPM Andrei Vagin <avagin@google.com> wr=
-ote:
+On Wed, Dec 13, 2023 at 8:51=E2=80=AFAM Alexandru Elisei
+<alexandru.elisei@arm.com> wrote:
 >
-> Hi Amir,
+> Hi,
 >
-> On Mon, Dec 11, 2023 at 9:51=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > +fsdevel, +overlayfs, +brauner, +miklos
-> >
-> > On Mon, Dec 11, 2023 at 9:30=E2=80=AFPM Andrei Vagin <avagin@google.com=
-> wrote:
+> On Wed, Dec 13, 2023 at 08:06:44AM -0600, Rob Herring wrote:
+> > On Wed, Dec 13, 2023 at 7:05=E2=80=AFAM Alexandru Elisei
+> > <alexandru.elisei@arm.com> wrote:
 > > >
-> > > Device and inode numbers in /proc/pid/maps have to match numbers retu=
-rned by
-> > > statx for the same files.
-> >
-> > That statement may be true for regular files.
-> > It is not true for block/char as far as I know.
-> >
-> > I think that your fix will break that by displaying the ino/dev
-> > of the block/char reference inode and not their backing rdev inode.
->
-> I think it doesn't break anything here. /proc/pid/maps shows dev of a
-> filesystem where the device file resides.
->
-> 7f336b6c3000-7f336b6c4000 rw-p 00000000 00:05 7
->   /dev/zero
-> $ stat /dev/zero
-> Device: 0,5 Inode: 7           Links: 1     Device type: 1,5
->
-> I checked that it works with and without my patch. It doesn't matter, loo=
-k at
-> the following comments.
->
-> >
+> > > Hi Rob,
 > > >
-> > > /proc/pid/maps shows device and inode numbers of vma->vm_file-s. Here=
- is
-> > > an issue. If a mapped file is on a stackable file system (e.g.,
-> > > overlayfs), vma->vm_file is a backing file whose f_inode is on the
-> > > underlying filesystem. To show correct numbers, we need to get a user
-> > > file and shows its numbers. The same trick is used to show file paths=
- in
-> > > /proc/pid/maps.
+> > > On Tue, Dec 12, 2023 at 12:44:06PM -0600, Rob Herring wrote:
+> > > > On Tue, Dec 12, 2023 at 10:38=E2=80=AFAM Alexandru Elisei
+> > > > <alexandru.elisei@arm.com> wrote:
+> > > > >
+> > > > > Hi Rob,
+> > > > >
+> > > > > Thank you so much for the feedback, I'm not very familiar with de=
+vice tree,
+> > > > > and any comments are very useful.
+> > > > >
+> > > > > On Mon, Dec 11, 2023 at 11:29:40AM -0600, Rob Herring wrote:
+> > > > > > On Sun, Nov 19, 2023 at 10:59=E2=80=AFAM Alexandru Elisei
+> > > > > > <alexandru.elisei@arm.com> wrote:
+> > > > > > >
+> > > > > > > Allow the kernel to get the size and location of the MTE tag =
+storage
+> > > > > > > regions from the DTB. This memory is marked as reserved for n=
+ow.
+> > > > > > >
+> > > > > > > The DTB node for the tag storage region is defined as:
+> > > > > > >
+> > > > > > >         tags0: tag-storage@8f8000000 {
+> > > > > > >                 compatible =3D "arm,mte-tag-storage";
+> > > > > > >                 reg =3D <0x08 0xf8000000 0x00 0x4000000>;
+> > > > > > >                 block-size =3D <0x1000>;
+> > > > > > >                 memory =3D <&memory0>;    // Associated tagge=
+d memory node
+> > > > > > >         };
+> > > > > >
+> > > > > > I skimmed thru the discussion some. If this memory range is wit=
+hin
+> > > > > > main RAM, then it definitely belongs in /reserved-memory.
+> > > > >
+> > > > > Ok, will do that.
+> > > > >
+> > > > > If you don't mind, why do you say that it definitely belongs in
+> > > > > reserved-memory? I'm not trying to argue otherwise, I'm curious a=
+bout the
+> > > > > motivation.
+> > > >
+> > > > Simply so that /memory nodes describe all possible memory and
+> > > > /reserved-memory is just adding restrictions. It's also because
+> > > > /reserved-memory is what gets handled early, and we don't need
+> > > > multiple things to handle early.
+> > > >
+> > > > > Tag storage is not DMA and can live anywhere in memory.
+> > > >
+> > > > Then why put it in DT at all? The only reason CMA is there is to se=
+t
+> > > > the size. It's not even clear to me we need CMA in DT either. The
+> > > > reasoning long ago was the kernel didn't do a good job of moving an=
+d
+> > > > reclaiming contiguous space, but that's supposed to be better now (=
+and
+> > > > most h/w figured out they need IOMMUs).
+> > > >
+> > > > But for tag storage you know the size as it is a function of the
+> > > > memory size, right? After all, you are validating the size is corre=
+ct.
+> > > > I guess there is still the aspect of whether you want enable MTE or
+> > > > not which could be done in a variety of ways.
+> > >
+> > > Oh, sorry, my bad, I should have been clearer about this. I don't wan=
+t to
+> > > put it in the DT as a "linux,cma" node. But I want it to be managed b=
+y CMA.
 > >
-> > For the *same* trick, see my patch below.
+> > Yes, I understand, but my point remains. Why do you need this in DT?
+> > If the location doesn't matter and you can calculate the size from the
+> > memory size, what else is there to add to the DT?
 >
-> The patch looks good to me. Thanks! Will you send it?
->
+> I am afraid there has been a misunderstanding. What do you mean by
+> "location doesn't matter"?
 
-I can send it, if you want.
-I wouldn't mind if you send it with my Suggested-by though,
-as you are already testing it and posting the selftest.
+You said:
+> Tag storage is not DMA and can live anywhere in memory.
 
-Thanks,
-Amir.
+Which I took as the kernel can figure out where to put it. But maybe
+you meant the h/w platform can hard code it to be anywhere in memory?
+If so, then yes, DT is needed.
+
+> At the very least, Linux needs to know the address and size of a memory
+> region to use it. The series is about using the tag storage memory for
+> data. Tag storage cannot be described as a regular memory node because it
+> cannot be tagged (and normal memory can).
+
+If the tag storage lives in the middle of memory, then it would be
+described in the memory node, but removed by being in reserved-memory
+node.
+
+> Then there's the matter of the tag storage block size (explained in this
+> commit message), and also knowing the memory range for which a tag storag=
+e
+> region stores the tags. This is explained in the cover letter.
+
+Honestly, I just forgot about that part.
+
+Rob
 
