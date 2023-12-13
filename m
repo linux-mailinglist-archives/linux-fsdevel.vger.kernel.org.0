@@ -1,146 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-5899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F98F811431
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:07:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE48811449
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3740B20DB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EBB3B211D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CC42E835;
-	Wed, 13 Dec 2023 14:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF7F2E82F;
+	Wed, 13 Dec 2023 14:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9zQEcvQ"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="FVXoFp2F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2nqhhDcJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719432E626;
-	Wed, 13 Dec 2023 14:06:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC2AC433CA;
-	Wed, 13 Dec 2023 14:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702476419;
-	bh=tm2PI5P6o9KPIR9RVFv5cihdxeSVXN3uEt/yiTzKpe0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=c9zQEcvQ/I/2TrO3daFju8Q2xvsVxymZ1J7YViFzMZ22+GvhKczCBu8rrJUDo+TO1
-	 Anc8NUN4dA8ow4LVobcs6qb1jWphf9bw+jELBUPJqudNn/xWmkIMxcrIKvu8XEBcOa
-	 WGHuZ4mBaB1rMvlvIqSSVkfP8pw0u8oJznFFXHh/0RHC1S6PyvN8OnGfzj5MLKjOEg
-	 HySg5HD2tSeAL5m4LdWat8MD42qViAcfpBu0xgVl4Hr5NLzfEv0Y0pYxVLkLYlhamB
-	 Yq4b1VHB5b6j9M45TKb0UiSQxQhkgwHVuLjWoh+MIYvXWbVA5RP95pk6+8WdFm9kYM
-	 Og9EiU/75zGdQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50c0f13ea11so7992931e87.3;
-        Wed, 13 Dec 2023 06:06:58 -0800 (PST)
-X-Gm-Message-State: AOJu0YxucbavZ/Qjy1Vb5DUJJ0bNooCEMlRyYWncESP3UVIaMT1itJwG
-	eoFJ3D54/QAFW0wqvhMXjfTn4/wgZTTOcI9qkw==
-X-Google-Smtp-Source: AGHT+IEHGprK2wtm9q9hd2ZZLdtHsMouVaTGmtumsX7/XD4d3zOhREC7oFbL/aoRWTZ5IHg9+YH7vjYm3B+d1JvtS+g=
-X-Received: by 2002:a19:8c5b:0:b0:50d:1733:ceba with SMTP id
- i27-20020a198c5b000000b0050d1733cebamr3208254lfj.58.1702476417164; Wed, 13
- Dec 2023 06:06:57 -0800 (PST)
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A61810C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 06:09:14 -0800 (PST)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailout.nyi.internal (Postfix) with ESMTP id C2D965C053E;
+	Wed, 13 Dec 2023 09:09:11 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 13 Dec 2023 09:09:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1702476551;
+	 x=1702562951; bh=oRIpq2PR/OV+2jBeTstR8zLGl0nQF6vG4CgeXTGaLug=; b=
+	FVXoFp2FBa6aDtsdppgdqpPfGxKKEYzy4A49W1GpRiakgoe37KK2vaoHd1G22dzQ
+	rs9c24O+b7NcRFla54PODyMjWaNZo084an6tcI/CCf0443CJUiqn2BfZQ9AgXsdV
+	pMm1HIp5zidiXMZrx9TomEuuZj2+GZTGKYvHPEWTkjWMjAdVfrIt7SS4XNgl59Is
+	M21Ia+KSVsrGz94YB1jJuBpYohYCsHcRfxNHK5S3Po8r3BbKNtbLsOqXcPzLW9Jt
+	gF1V/z8Z/rZ+QzzIVEK8VUsq3+kwicWlMBIxpjvSsK2hcVf1MO3ptNM4zM6toUHG
+	1R0im2MdSnjEBHvMF9DXPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1702476551; x=
+	1702562951; bh=oRIpq2PR/OV+2jBeTstR8zLGl0nQF6vG4CgeXTGaLug=; b=2
+	nqhhDcJiHgP2ZdUvtsoegpTnSf6KQYKQGydvEMHriGlSs/m0xhEyexVz+S3+eXQz
+	Zt2EcARnfN4WFza+26YqNCH5NuaSv1TE1C21UZZWyNsma+i9rid6z1Nt/aYlfUqB
+	K1MnYw2XZhGPdZPyzRYKOn6OUqmo7id3m7ZmAWOf44T/ZYOVsz2j+lBIXqa4yiF4
+	qZctkqlJXyrAOlKFRjah3b6YKGmOkPlGbcnuhDggTxUxQgr2I3zctw206BcqFBbx
+	VRD3WQZAHqoYM1hgNoFL0nV8x0QjVSkn700hcteg0ioxzsGpbfesAeBZf9AP5dub
+	nc1RqZYhCRe+TpvkysWwQ==
+X-ME-Sender: <xms:Bbt5ZY07ThHpiBLmvXy6nTYw2oPLkXCtgEzXHkoiV7QuibDm-dv97Q>
+    <xme:Bbt5ZTElwhuEKDjPMlnASxr39x2iq4IH3XnQ9xstabhFSX59Z7-A8Sc7pI8YPUsV5
+    70dUXNSuO2FA9wc>
+X-ME-Received: <xmr:Bbt5ZQ40oP366-wtpTzYvhXxrAuJlDaWxHt69dQ8eV6TeMgMsANNK8kZO55hS54DsjyukdEFoukgP899k34-nYHwl2zo7cuM6JfaRYGsRHMvObaNaJYV>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudeljecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuhffvvehfjggtgfesthekredttddvjeenucfhrhhomhepuegvrhhnugcu
+    ufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfh
+    hmqeenucggtffrrghtthgvrhhnpedvhfefteefjeefhfdthefftedtvefguedtueefgeeh
+    ffekuedvjeeihedvjeefgfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgt
+    hhhusggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:Bbt5ZR0qxlElAt5iHLqzJV0Kqssd6uuxz4yQnLqb-1S5Pq2ruufpyQ>
+    <xmx:Bbt5ZbHANRAigw3DsG1SQUbGzx6xFS4JlUfgRVunj-31px8yxH2Qxw>
+    <xmx:Bbt5Za-tFNR5eSQnRy8INxpDauMLc6aZeyJH2MKeN4khfGthCQGHqw>
+    <xmx:B7t5Za1dM73cxeB70y3etsbx2pTmes7luih-ylrg466fFdRrUPKKuA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Dec 2023 09:09:08 -0500 (EST)
+Message-ID: <bdfc743b-324c-4f31-b7df-dc3fd598b597@fastmail.fm>
+Date: Wed, 13 Dec 2023 15:09:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231119165721.9849-1-alexandru.elisei@arm.com>
- <20231119165721.9849-12-alexandru.elisei@arm.com> <CAL_Jsq+k5BeM9+u12AQvWQ0b4Uv5Cy0vPOpK_uLcYtRnunq4iQ@mail.gmail.com>
- <ZXiMiLz9ZyUdxUP8@raptor> <CAL_Jsq+U_GR=mOK3-phnd4jeJKf79aOmhPwDOSj+f=s-7fZZWQ@mail.gmail.com>
- <ZXmr-Kl9L2SO13--@raptor>
-In-Reply-To: <ZXmr-Kl9L2SO13--@raptor>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 13 Dec 2023 08:06:44 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
-Message-ID: <CAL_JsqL=P1Y6w38LD_xw+vK4CNqt22FW_FE9oi_XTLHVQEne7Q@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 11/27] arm64: mte: Reserve tag storage memory
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
-	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, pcc@google.com, 
-	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
-	david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Miklos Szeredi <mszeredi@redhat.com>, gmaglione@redhat.com,
+ Max Reitz <hreitz@redhat.com>, Hao Xu <howeyxu@tencent.com>,
+ Dharmendra Singh <dsingh@ddn.com>
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
+ <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
+ <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm>
+ <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
+ <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm>
+ <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
+ <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
+ <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
+ <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
+ <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
+ <2e2f0cd1-99fe-4336-9cc8-47416be02451@fastmail.fm>
+ <CAOQ4uxh=aBFEiBVBErEA_d+mWcTOysLgbgWVztSzL+D2BvMLdA@mail.gmail.com>
+ <b48f7aae-cd84-4f7d-a898-f3552f1195ae@fastmail.fm>
+ <CAOQ4uxjnSkZwgQNQTLiLK+juWKNo+ecVPcxm7ZPzPPZCxh0A0w@mail.gmail.com>
+ <524bceb8-0d27-4223-a715-576efdc7f74c@fastmail.fm>
+Content-Language: en-US, de-DE
+In-Reply-To: <524bceb8-0d27-4223-a715-576efdc7f74c@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 13, 2023 at 7:05=E2=80=AFAM Alexandru Elisei
-<alexandru.elisei@arm.com> wrote:
->
-> Hi Rob,
->
-> On Tue, Dec 12, 2023 at 12:44:06PM -0600, Rob Herring wrote:
-> > On Tue, Dec 12, 2023 at 10:38=E2=80=AFAM Alexandru Elisei
-> > <alexandru.elisei@arm.com> wrote:
-> > >
-> > > Hi Rob,
-> > >
-> > > Thank you so much for the feedback, I'm not very familiar with device=
- tree,
-> > > and any comments are very useful.
-> > >
-> > > On Mon, Dec 11, 2023 at 11:29:40AM -0600, Rob Herring wrote:
-> > > > On Sun, Nov 19, 2023 at 10:59=E2=80=AFAM Alexandru Elisei
-> > > > <alexandru.elisei@arm.com> wrote:
-> > > > >
-> > > > > Allow the kernel to get the size and location of the MTE tag stor=
-age
-> > > > > regions from the DTB. This memory is marked as reserved for now.
-> > > > >
-> > > > > The DTB node for the tag storage region is defined as:
-> > > > >
-> > > > >         tags0: tag-storage@8f8000000 {
-> > > > >                 compatible =3D "arm,mte-tag-storage";
-> > > > >                 reg =3D <0x08 0xf8000000 0x00 0x4000000>;
-> > > > >                 block-size =3D <0x1000>;
-> > > > >                 memory =3D <&memory0>;    // Associated tagged me=
-mory node
-> > > > >         };
-> > > >
-> > > > I skimmed thru the discussion some. If this memory range is within
-> > > > main RAM, then it definitely belongs in /reserved-memory.
-> > >
-> > > Ok, will do that.
-> > >
-> > > If you don't mind, why do you say that it definitely belongs in
-> > > reserved-memory? I'm not trying to argue otherwise, I'm curious about=
- the
-> > > motivation.
-> >
-> > Simply so that /memory nodes describe all possible memory and
-> > /reserved-memory is just adding restrictions. It's also because
-> > /reserved-memory is what gets handled early, and we don't need
-> > multiple things to handle early.
-> >
-> > > Tag storage is not DMA and can live anywhere in memory.
-> >
-> > Then why put it in DT at all? The only reason CMA is there is to set
-> > the size. It's not even clear to me we need CMA in DT either. The
-> > reasoning long ago was the kernel didn't do a good job of moving and
-> > reclaiming contiguous space, but that's supposed to be better now (and
-> > most h/w figured out they need IOMMUs).
-> >
-> > But for tag storage you know the size as it is a function of the
-> > memory size, right? After all, you are validating the size is correct.
-> > I guess there is still the aspect of whether you want enable MTE or
-> > not which could be done in a variety of ways.
->
-> Oh, sorry, my bad, I should have been clearer about this. I don't want to
-> put it in the DT as a "linux,cma" node. But I want it to be managed by CM=
-A.
 
-Yes, I understand, but my point remains. Why do you need this in DT?
-If the location doesn't matter and you can calculate the size from the
-memory size, what else is there to add to the DT?
 
-Rob
+On 12/13/23 14:03, Bernd Schubert wrote:
+> 
+> 
+> On 12/13/23 12:23, Amir Goldstein wrote:
+>>>>
+>>>>      Thanks Amir, I'm going to look at it in detail in the morning.
+>>>>      Btw, there is another bad direct_io_allow_mmap issue (part of 
+>>>> it is
+>>>>      invalidate_inode_pages2, which you already noticed, but not 
+>>>> alone).
+>>>>      Going to send out the patch once xfstests have passed
+>>>>      
+>>>> https://github.com/bsbernd/linux/commit/3dae6b05854c4fe84302889a5625c7e5428cdd6c <https://github.com/bsbernd/linux/commit/3dae6b05854c4fe84302889a5625c7e5428cdd6c>
+>>>>
+>>>>
+>>>> Nice!
+>>>> But I think that invalidate pages issue is not restricted to shared 
+>>>> mmap?
+>>>
+>>> So history for that is
+>>>
+>>> commit 3121bfe7631126d1b13064855ac2cfa164381bb0
+>>> Author: Miklos Szeredi <mszeredi@suse.cz>
+>>> Date:   Thu Apr 9 17:37:53 2009 +0200
+>>>
+>>>       fuse: fix "direct_io" private mmap
+>>>
+>>>       MAP_PRIVATE mmap could return stale data from the cache for
+>>>       "direct_io" files.  Fix this by flushing the cache on mmap.
+>>>
+>>>       Found with a slightly modified fsx-linux.
+>>>
+>>>       Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
+>>>
+>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>> index 0946861b10b7..06f30e965676 100644
+>>> --- a/fs/fuse/file.c
+>>> +++ b/fs/fuse/file.c
+>>> @@ -1298,6 +1298,8 @@ static int fuse_direct_mmap(struct file *file, 
+>>> struct vm_area_struct *vma)
+>>>           if (vma->vm_flags & VM_MAYSHARE)
+>>>                   return -ENODEV;
+>>>
+>>> +       invalidate_inode_pages2(file->f_mapping);
+>>> +
+>>>           return generic_file_mmap(file, vma);
+>>>    }
+>>>
+>>>
+>>> I don't have a strong opinion here - so idea of this patch is to avoid
+>>> exposing stale data from a previous mmap. I guess (and probably hard 
+>>> to achieve
+>>> semantics) would be to invalidate pages when the last mapping of that 
+>>> _area_
+>>> is done?
+>>> So now with a shared map, data are supposed to be stored in files and
+>>> close-to-open consistency with FOPEN_KEEP_CACHE should handle the 
+>>> invalidation?
+>>>
+>>
+>> Nevermind, it was just my bad understanding of invalidate_inode_pages2().
+>> I think it calls fuse_launder_folio() for dirty pages, so data loss is
+>> not a concern.
+>>
+>>>>
+>>>> I think that the mix of direct io file with private mmap is common and
+>>>> doesn't have issues, but the mix of direct io files and caching 
+>>>> files on
+>>>> the same inode is probably not very common has the same issues as the
+>>>> direct_io_allow_mmap regression that you are fixing.
+>>>
+>>> Yeah. I also find it interesting that generic_file_mmap is not doing 
+>>> such
+>>> things for files opened with O_DIRECT - FOPEN_DIRECT_IO tries to do
+>>> strong coherency?
+>>>
+>>>
+>>> I'm going to send out the patch for now as it is, as that might 
+>>> become a longer
+>>> discussion - maybe Miklos could comment on it.
+>>>
+>>
+>> I think your patch should not be avoiding invalidate_inode_pages2()
+>> in the shared mmap case.
+>>
+>> You have done that part because of my comment which was wrong,
+>> not because it reproduced a bug.
+> 
+> I debating with myself since yesterday, where invalidate_inode_pages2() 
+> belongs to.
+> 
+> We have
+> 
+> FOPEN_KEEP_CACHE - if not set invalidate_inode_pages2 is done by 
+> fuse_open_common().  If set, server side signals that it wants to keep 
+> the cache. Also interesting, I don't see anything that prevents that 
+> FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE are set together.
+> Also to consider, fc->_no_open sets FOPEN_KEEP_CACHE by default.
+> 
+> MAP_PRIVATE - here I'm sure that invalidate_inode_pages2 is right, even 
+> with FOPEN_KEEP_CACHE. There is also zero risk to lose data, as 
+> MAP_PRIVATE does not write out data.
+> 
+> MAP_SHARED - was not allowed with FOPEN_DIRECT_IO before. Unless 
+> FOPEN_KEEP_CACHE is set, close-to-open semantics come in. My argument to 
+> to avoid invalidate_inode_pages2 in the current patch is that MAP_SHARED 
+> wants to share data between processes. And also maybe important, there 
+> is no flush in that function - dirty pages would be thrown away - data 
+> corruption!?
+
+
+Ah sorry, I had actually missed folio_launder() -> fuse_launder_folio(), 
+ok fine then, we can keep it for both cases.
 
