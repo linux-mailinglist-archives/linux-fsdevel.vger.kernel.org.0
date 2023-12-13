@@ -1,166 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-5903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1C08114D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:39:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC138114D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 15:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E0E1F2188B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:39:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B20D2818CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487F62F507;
-	Wed, 13 Dec 2023 14:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C7A2F859;
+	Wed, 13 Dec 2023 14:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b="GkojnU8N";
-	dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b="MRBxg+Gq"
+	dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b="WkYYSKaI";
+	dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b="ADbUTnch"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-edgeka24.fraunhofer.de (mail-edgeka24.fraunhofer.de [IPv6:2a03:db80:4420:b000::25:24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5EE1D0;
-	Wed, 13 Dec 2023 06:38:42 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054B4DD;
+	Wed, 13 Dec 2023 06:38:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=aisec.fraunhofer.de; i=@aisec.fraunhofer.de;
-  q=dns/txt; s=emailbd1; t=1702478323; x=1734014323;
+  q=dns/txt; s=emailbd1; t=1702478327; x=1734014327;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:content-transfer-encoding:mime-version;
-  bh=ZK1sB6YyT1eBqXeIWt8Dt08WbuOcDu6WuCBOadhSrdA=;
-  b=GkojnU8NE1lNqBBf+P8BM0OG6LlpHzNxgpuHFgI8eQ/DbxtFDnz3lQdT
-   40XFFv+k6jCh4E8xVAStxXVywAyaxdGaXwpyYmvXAnZCwZrlg8yEYwOwv
-   4f84EPq7xeV+PXw+ct9qBTDHS2isjn8a2FACE1PG0OFnxlKjRthi0qyHe
-   3QhYttM6buWWSL6SxswVDzPWj0y5HdOlHw5J1Db4grWnOXEOAhHm4c2px
-   Rq6r4eDOr03R8IL+A6cMShFfEBdFbCKshSx6nZRvAzI8E5QLqv4jimPhd
-   436R9D3pQyRnYK7Hzca1S2Oo6UMmMs92VSlqLSqPkOJc3AgB9pQ2E83jr
-   w==;
-X-CSE-ConnectionGUID: 6BstVSBHRYKyQyCbe2cAMQ==
-X-CSE-MsgGUID: 4AlxyK8lTZydOBlz7NthLg==
+  bh=fBGOTfZY/o/A6MXWqtrZ2pIBlMj1OKBCD9LPgcpMKac=;
+  b=WkYYSKaIalncNUsUqxvdGdY9sHpG/iu5VKeMXyDnj0gu8s2UYvh80/u1
+   3H5vnRItHewtnnh2wmqdKn+imquO2dGFitmAvo5xJ17xHKXZsTgUIkdK8
+   kYHLtycXy2CG8tDPyj42MUZZmHm1jMA23QxCxmYEpCk9DpMX6NGBP2xm0
+   CP0EWMIENCIwYpya/zo1z7tdRLuMy5q+bf3gPA3vZUGj/9EHfmYSrtN+f
+   DzvSCepEQ/BzpOJQPu4ubVZaFAbDjuWzeOWZ8Nw3sunjxKkM9aDngzQ0P
+   +EPuHWwhSsiRqmZvuIeZyrXonwQMXt93aifBFTzQhBa/57IEXHwmJFQ0S
+   A==;
+X-CSE-ConnectionGUID: P/ZU4PSvRL6FaWWckXZprw==
+X-CSE-MsgGUID: EV5zJoBOQkWQecf95iGCYw==
 Authentication-Results: mail-edgeka24.fraunhofer.de; dkim=pass (signature verified) header.i=@fraunhofer.onmicrosoft.com
-X-IPAS-Result: =?us-ascii?q?A2F5BADxwHll/xoBYJlaHgEBCxIMQIFEC4I5glmEU5Fjn?=
- =?us-ascii?q?CsqglEDVg8BAQEBAQEBAQEHAQFEBAEBAwSEfwKHMCc3Bg4BAgEDAQEBAQMCA?=
- =?us-ascii?q?wEBAQEBAQEBBgEBBgEBAQEBAQYGAoEZhS85DYN5gR4BAQEBAQEBAQEBAQEdA?=
- =?us-ascii?q?jVUAgEDIwQLAQ0BATcBDyUCJgICMiUGAQ0FgwCCKwMxrxB/M4EBggkBAQawI?=
- =?us-ascii?q?xiBIYEfCQkBgRAug2KENAGERVdKhDqCT4FKgQaCLYQKToNGgmiDZoU2BzKBS?=
- =?us-ascii?q?FmDUZE2fUZaFhsDBwNWKQ8rBwQwIgYJFC0jBlAEFxEhCRMSQIFfgVIKfj8PD?=
- =?us-ascii?q?hGCPiICPTYZSIJaFQw0BEZ1ECoEFBeBEm4bEh43ERIXDQMIdB0CMjwDBQMEM?=
- =?us-ascii?q?woSDQshBVYDQgZJCwMCGgUDAwSBMwUNHgIQLCcDAxJJAhAUAzsDAwYDCjEDM?=
- =?us-ascii?q?FVEDFADaR8aGAk8DwwbAhseDScjAixCAxEFEAIWAyQWBDYRCQsoAy8GOAITD?=
- =?us-ascii?q?AYGCV4mFgkEJwMIBANUAyN7EQMEDAMgAwkDBwUsHUADCxgNSBEsNQYOG0QBc?=
- =?us-ascii?q?welDCABPD4TCQKBMmwvHJYXAa8HB4IzgV+hDxozlzGSVi6YFSCiRgeFQwIEA?=
- =?us-ascii?q?gQFAg4IgXmCADM+gzZSGQ+OIDiDQI96dQI5AgcBCgEBAwmCOYY1gXQBAQ?=
-IronPort-PHdr: A9a23:6l7bxxSPRhnPG3tPY62Yywm1ltpsou2eAWYlg6HP9ppQJ/3wt523J
- lfWoO5thQWUA9aT4Kdehu7fo63sHnYN5Z+RvXxRFf4EW0oLk8wLmQwnDsOfT0r9Kf/hdSshG
- 8peElRi+iLzKh1OFcLzbEHVuCf34yQbBxP/MgR4PKHyHIvThN6wzOe859jYZAAb4Vj1YeZcN
- hKz/ynYqsREupZoKKs61knsr2BTcutbgEJEd3mUmQrx4Nv1wI97/nZ1mtcMsvBNS777eKJqf
- fl9N3ELI2s17cvkuFz4QA2D62E1fk4WnxFLUG2npBv6C47QtAb7qshC0iCEGPf8Hb0YGjK7z
- JUyVjzM1H0JFyc4+zvmjpFCjv9anzP09Hkdi4SBRbu/JPU9UbrCRPpLR2QRD/gAbWt8JJKXX
- tcgP+hcG8xms7Oni3xUlDeALwSXLdnw4CZulF3Kw/co6vZwE1/J0wFnRO1JqXX+vNPqDaExA
- P3u6PiPiiTnVqpE2gb9taTDIk1in8mMcrEqfvvbllYTDSObhA669YbBPT2W2OQV6kGmzcQ9c
- N6g22keuRty8z+UnsE9gNTz268l22ze6AFL66FvB+SYdWt8UNSrRcgYp2SbLYxwWsQ4XyRyt
- T0nzqFToZegZ3tiIPUPwhfeb7mKf4eF4Ru5CKCfOz5lgnJidr+lwRq/ogCsyez5A9G9y00C7
- jFEnd/Fqm0X2lTN59KGRPpw8gbp2TuG2w3JrOARCU4unLfdK5kvz6R2kZwWsE/ZGTTxllmwh
- 6iTHng=
-X-Talos-CUID: 9a23:gMIXE2AVZ73pKvP6E3dN71IqIeoFSEz+3U7BCEW1U21AbYTAHA==
-X-Talos-MUID: 9a23:nMT3dwkMca45bK+xD1d1dno+HcN48of+DHw/gJkhkc2WagpsOxOS2WE=
+X-IPAS-Result: =?us-ascii?q?A2ElAADxwHll/x0BYJlaHAEBAQEBAQcBARIBAQQEAQFAg?=
+ =?us-ascii?q?TsHAQELAYI4glmEU4gdiUacKyqBLBSBEQNWDwEBAQEBAQEBAQcBAUQEAQEDB?=
+ =?us-ascii?q?IR/AocwJzQJDgECAQMBAQEBAwIDAQEBAQEBAQEGAQEGAQEBAQEBBgYCgRmFL?=
+ =?us-ascii?q?zkNg3mBHgEBAQEBAQEBAQEBAR0CNVQCAQMjBAsBDQEBNwEPJQImAgIyJQYBD?=
+ =?us-ascii?q?QWDAIIrAzGvEH8zgQGCCQEBBrAjGIEhgR8JCQGBEC4Bg2GENAGERYEhhDqCT?=
+ =?us-ascii?q?4EVNYEGgi2EBlKDRoJogVOCE4R6PAcygiGCdF2DOD4ljRt9RloWGwMHA1YpD?=
+ =?us-ascii?q?ysHBDAiBgkULSMGUAQXESEJExJAgV+BUgp+Pw8OEYI+IgI9NhlIgloVDDQER?=
+ =?us-ascii?q?nUQKgQUF4ESbhsSHjcREhcNAwh0HQIyPAMFAwQzChINCyEFVgNCBkkLAwIaB?=
+ =?us-ascii?q?QMDBIEzBQ0eAhAsJwMDEkkCEBQDOwMDBgMKMQMwVUQMUANpHxoYCTwLBAwbA?=
+ =?us-ascii?q?hseDScjAixCAxEFEAIWAyQWBDYRCQsoAy8GOAITDAYGCV4mFgkEJwMIBANUA?=
+ =?us-ascii?q?yN7EQMEDAMgAwkDBwUsHUADCxgNSBEsNQYOG0QBcwekZyUgATxRAYF8DU4cl?=
+ =?us-ascii?q?hcBjByiaweCM4FfoQ8aM5cxklaHb5BUIKJGhUoCBAIEBQIOCIFjghYzPk+CZ?=
+ =?us-ascii?q?1IZD44gDBaDVo96dQI5AgcBCgEBAwmCOYgpAQE?=
+IronPort-PHdr: A9a23:QG474R+2rfNSL/9uWXO9ngc9DxPPxp3qa1dGopNykalHN7+j9s6/Y
+ h+X7qB3gVvATYjXrOhJj+PGvqyzPA5I7cOPqnkfdpxLWRIfz8IQmg0rGsmeDkPnavXtan9yB
+ 5FZWVto9G28KxIQFtz3elvSpXO/93sVHBD+PhByPeP7BsvZiMHksoL6+8j9eQJN1ha0fb4gF
+ wi8rwjaqpszjJB5I6k8jzrl8FBPffhbw38tGUOLkkTZx+KduaBu6T9RvPRzx4tlauDXb684R
+ LpXAXEdPmY56dfCmTLDQACMtR5+Gm8Wxx0LLDTf8kzqZLzJrnegl/c6gRbdN8fMUoEvch6I7
+ JhPQUPTrB4iHmQ/4lyC2akSxKgOiT6rmiB5yI70OLvIbuJ4UYjlf/ozak9uD+VrSyVMK6jjf
+ ZoIPsQ6LLlAvY2itWsWjDK3XDKjWeDvlDtJrWX3jKln8r4ASwfa+BN5QvshvHv0qNPOC44vc
+ sHsi4nywijtTc1N0zbxtJDSawIwi6qvDeopfurW8UskRi/ihWeMuaq1IDKU8P03olig17s5U
+ u2ft1R7ghxhsBrz/d1rl4TXiYM+4wnf/hRa0IdpcI7wWAt6e9miCJxKq2SAOpBrRt93W2hzo
+ 3VSItwuvJe6eG0HxJsqxBeFN7qJaYGV5BLkWuuLZzt11zppe7O60g676lPoivb9Wc+9zEtQo
+ 2Jbn8PNuHEA212b6sWORvZnuEb08TiV3h3V6uZKLFpykqzeKpU7xaU3mIZVukPGdhI=
+X-Talos-CUID: =?us-ascii?q?9a23=3AaIYws2o7Y/kVfHlCd0foPl/mUfhiQECB9EzOGWv?=
+ =?us-ascii?q?mJ29Wd7aWeW2I4rwxxg=3D=3D?=
+X-Talos-MUID: 9a23:I466hQkFeJUGhUh1xFaGdnpPCpp6waOEL3kOrqwLsMfVaC1fEAaC2WE=
 X-IronPort-Anti-Spam-Filtered: true
 X-IronPort-AV: E=Sophos;i="6.04,272,1695679200"; 
-   d="scan'208";a="5192944"
-Received: from mail-mtaka26.fraunhofer.de ([153.96.1.26])
-  by mail-edgeka24.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 15:38:40 +0100
-X-CSE-ConnectionGUID: l1KIAwhgT1KSmFdOXIdFZQ==
-X-CSE-MsgGUID: 6FlmAzNGTwmOOwqkGkANTw==
-IronPort-SDR: 6579c1ef_9fQJLxIh06Qw4+Sl5gyIhw+lAqbMU1V9935hCf4t7hLuZpc
- ImU1tlmF1XKCCcvGDuqEkOwmSwXDuyag5InZkpQ==
-X-IPAS-Result: =?us-ascii?q?A0DOBwBtwHll/3+zYZlaHgEBCxIMQAkcgR8LgWdSBz6BD?=
- =?us-ascii?q?4EFhFKDTQEBhS2GRoIhOwGcGYJRA1YPAQMBAQEBAQcBAUQEAQGFBgKHLQInN?=
- =?us-ascii?q?wYOAQIBAQIBAQEBAwIDAQEBAQEBAQEGAQEFAQEBAgEBBgSBChOFaA2GRgIBA?=
- =?us-ascii?q?xIRBAsBDQEBFCMBDyUCJgICMgceBgENBSKCXoIrAzECAQGiIQGBQAKLIn8zg?=
- =?us-ascii?q?QGCCQEBBgQEsBsYgSGBHwkJAYEQLoNihDQBhEVXSoQ6gk+BSoEGgi2ECoQUg?=
- =?us-ascii?q?miDZoU2BzKBSFmDUZE2fUZaFhsDBwNWKQ8rBwQwIgYJFC0jBlAEFxEhCRMSQ?=
- =?us-ascii?q?IFfgVIKfj8PDhGCPiICPTYZSIJaFQw0BEZ1ECoEFBeBEm4bEh43ERIXDQMId?=
- =?us-ascii?q?B0CMjwDBQMEMwoSDQshBVYDQgZJCwMCGgUDAwSBMwUNHgIQLCcDAxJJAhAUA?=
- =?us-ascii?q?zsDAwYDCjEDMFVEDFADaR8WBBgJPA8MGwIbHg0nIwIsQgMRBRACFgMkFgQ2E?=
- =?us-ascii?q?QkLKAMvBjgCEwwGBgleJhYJBCcDCAQDVAMjexEDBAwDIAMJAwcFLB1AAwsYD?=
- =?us-ascii?q?UgRLDUGDhtEAXMHpQwgATw+EwkCgTJsLxyWFwGvBweCM4FfoQ8aM5cxklYum?=
- =?us-ascii?q?BUgokYHhUMCBAIEBQIOAQEGgXkmgVkzPoM2TwMZD44gOINAj3pCMwI5AgcBC?=
- =?us-ascii?q?gEBAwmCOYY1gXMBAQ?=
-IronPort-PHdr: A9a23:RBL2yBXF6JF/qooYCHuLyNscVSLV8KyzVDF92vMcY89mbPH6rNzra
+   d="scan'208";a="5192953"
+Received: from mail-mtaka29.fraunhofer.de ([153.96.1.29])
+  by mail-edgeka24.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 15:38:44 +0100
+X-CSE-ConnectionGUID: 1sZalnPLS3C4g3DKMY97iQ==
+X-CSE-MsgGUID: nW3SOYqaSbugn0zBDGauWQ==
+IronPort-SDR: 6579c1f3_PjPxJ/FApAP9GnbEAKH6XO7j3/p003LpLTU3Ez2JPGpRrOd
+ 4LeLY8Ux3WiQirCOpr1j7iArnSU/zQwXgdL45VQ==
+X-IPAS-Result: =?us-ascii?q?A0BCAABtwHll/3+zYZlaHAEBAQEBAQcBARIBAQQEAQFAC?=
+ =?us-ascii?q?RyBFgcBAQsBgWZSBz6BD4EFhFKDTQEBhE5fhkaCITsBnBmBLBSBEQNWDwEDA?=
+ =?us-ascii?q?QEBAQEHAQFEBAEBhQYChy0CJzQJDgECAQECAQEBAQMCAwEBAQEBAQEBBgEBB?=
+ =?us-ascii?q?QEBAQIBAQYEgQoThWgNhkYCAQMSEQQLAQ0BARQjAQ8lAiYCAjIHHgYBDQUig?=
+ =?us-ascii?q?l6CKwMxAgEBoiEBgUACiyJ/M4EBggkBAQYEBLAbGIEhgR8JCQGBEC4Bg2GEN?=
+ =?us-ascii?q?AGERYEhhDqCT4EVNYEGgi2EBoQYgmiBU4IThHo8BzKCIYJ0XYM4PiWNG31GW?=
+ =?us-ascii?q?hYbAwcDVikPKwcEMCIGCRQtIwZQBBcRIQkTEkCBX4FSCn4/Dw4Rgj4iAj02G?=
+ =?us-ascii?q?UiCWhUMNARGdRAqBBQXgRJuGxIeNxESFw0DCHQdAjI8AwUDBDMKEg0LIQVWA?=
+ =?us-ascii?q?0IGSQsDAhoFAwMEgTMFDR4CECwnAwMSSQIQFAM7AwMGAwoxAzBVRAxQA2kfF?=
+ =?us-ascii?q?gQYCTwLBAwbAhseDScjAixCAxEFEAIWAyQWBDYRCQsoAy8GOAITDAYGCV4mF?=
+ =?us-ascii?q?gkEJwMIBANUAyN7EQMEDAMgAwkDBwUsHUADCxgNSBEsNQYOG0QBcwekZyUgA?=
+ =?us-ascii?q?TxRAYF8DU4clhcBjByiaweCM4FfoQ8aM5cxklaHb5BUIKJGhUoCBAIEBQIOA?=
+ =?us-ascii?q?QEGgWM8gVkzPk+CZ08DGQ+OIAwWg1aPekIzAjkCBwEKAQEDCYI5iCgBAQ?=
+IronPort-PHdr: A9a23:hbo4YhUkdSStn6SMds7S6TRM0LTV8KyzVDF92vMcY89mbPH6rNzra
  VbE7LB2jFaTANuIo/kRkefSurDtVSsa7JKIoH0OI/kuHxNQh98fggogB8CIEwv8KvvrZDY9B
  8NMSBlu+HToeVMAA8v6albOpWfoqDAIEwj5NQ17K/6wHYjXjs+t0Pu19YGWaAJN11/fKbMnA
  g+xqFf9v9Ub07B/IKQ8wQebh3ZTYO1ZyCZJCQC4mBDg68GsuaJy6ykCntME2ot+XL/hfqM+H
- 4wdKQ9jHnA+5MTtuhSGdgaJ6nYGe0k9khdDAFugjlnwXsLoky3Xt/Zf5yOTI+jMR+A5dXek9
- oRZEQHLrHtdOR4g8WqNu8gtvqAGoS2A8k8aocbeNaSvHupxPYzEYuozFGhPDpdvBhYGP6WtR
- LpTINoDYMBykZXH/Xcp9yKSOyOhP8rV1RVRoG3U4bNgwd0zQAOY0wMtWIkx923VhsXzK54Uc
- rGol42ZinLSS8oPyzTM6NXkeUB84s+0XZ1zK8XgwxYwKxnl0F/Lg9DvGzGb1eoNqzGy0shOC
- MeThD4gkhNroWmo/Z8qm4OUvN84+kH47zhd8q0Sf/+BaHNeZu+uH84D/zHfNpFxRNslWX0to
- ish17ka7IayZzNZoHxG7xvWavjCdpSBwTu5CqCfOz5lgnJidr+lwRq/ogCsyez5A9G9y00C7
+ 4wdKQ9jHnA+5MTtuhSGdgaJ6nYGe0k9khdDAFugjlnwXsL28QTGrPQgyBOxBdGqF5EpHm2dq
+ K1hcgDZkwwtHT0G1GiLsehJqYsBpgCc8k8aocbeNai5PsdCeKjdXYsgGDBZWOl6by5oK6yZQ
+ NosNfYIMM9z8JvsoGoglgrhHRuoW/Hf0h5hjybN0vA507olECrc3V0kQvNUkS7SsPHqbfo7f
+ uy67K3O9grqUtB3gHDd0ofVXDIfuvuNUe5oa9PD2GN0NFOd11qwrrTnNGK58e8/r3i9v/VhV
+ MS2sX8XkDkg+z+g9vsW1qDUlpA3lmvesjh03ok0DvThU0VKQs6lTM4D/zHfNpFxRNslWX0to
+ ish17ka7IayZzNZoHxG7xvWavjCdpSBwTu5BaCfOz5lgnJidr+lwRq/ogCsyez5A9G9y00C7
  jFEnd/Fqm0X2lTN59KGRPpw8gbp2TuG2w3JrOARCU4unLfdK5kvz6R2kZwWsE/ZGTTxllmwh
  6iTHng=
-IronPort-Data: A9a23:V5EqYKL9u6waIivlFE+Rf5ElxSXFcZb7ZxGr2PjKsXjdYENS3mFVz
- WVOXG6Ab/7fYWOkKYggPtu19BgHuZfQzd5rG1Md+CA2RRqmiyZq6fd1jqvUF3nPRiEWZBs/t
- 63yUvGZcYZsCCea/0/xWlTYhSEU/bmSQbbhA/LzNCl0RAt1IA8skhsLd9QR2+aEuvDnRVvR0
- T/Oi5eHYgT8gWcvajt8B5+r8XuDgtyi4Fv0gXRjPZinjHeG/1EJAZQWI72GLneQauG4ycbjG
- o4vZJnglo/o109F5uGNy94XQWVWKlLmBjViv1INM0SUbriukQRpukozHKJ0hU66EFxllfgpo
- DlGncTYpQvEosQglcxFOyS0HR2SMoVCoZzmCGe/vvDK7HbDXXfL89RiInMPaNhwFuZfWQmi9
- NQDLSwVKB2TjOLwzqiyV+9sgcouNo/nMevzuFk5kGqfXKlgGM+SBfyQure03x9o7ixKNfPfb
- MoQZD4pcxnBeAZnM1YMBZl4kv2hm3//dDNVshSZqMLb5kCMl10sjua2bbI5fPTUa8FQt1S+i
- V7Z+kPeHQgZG9+27waapyfEaujn2HmTtJgpPLei/+NsjUe7xWEJDhASE1yhrpGRg0qzS9tZJ
- 0EO0i8vraE29Ue6SJ/2WBjQiHefojYfVsBWHul87xuCooLM6hudLnANUzoEbdshrsJwTjsvv
- neFltXoCDhHsbqaRHuH/LCE6zW/JUA9JGkOfy4FZQgI+d/upMc0lB2nZtNqCrK0iJvxECzYx
- zGMsTh4i7gN5eYQ0KO01VPKmTShot7OVAFdzhTXRUqr5EVyY4vNT46v6V6d4/9bMI+TQ1+Nl
- HcBksmaqusJCPmllzSWQeMCHJmq6uyDPTmahkRgd7E6+zqF9HmkcoRdpjp5IS9BMs8DfSLuS
- EDUvgxV6dlYO37CRa1wZ5m4I8cn167tEZLiTP+8RsNTb55tdQmv/Tppe0eU0mbx1kMrlMkXJ
- 5aBdu6+AHAbF+JjzTyrV6Eay7Bt2yNW7WbSRpT81Dy8w7eEaXKUD7cYWHOHa+Ejs/iFpC3a9
- t9eM42BzBA3ePbzeCba2Y4aKVQbKz4wApWeg8ZPeMadLQd8XmIsEfncxfUmYYMNt6BUkPrYu
- 3KwQElVzHLhinDdbwaHcHZubPXoR5kXhXY6OzE8eFiz13U9bIKH8qgSbd00cKMh+eglyuR7J
- 9EBesOdErFURz/a4TUBfNz4q4B/cBmDmw2DJWymbSI5cpomQBbGkuIIZSO2qXJLX3Xy7JRv5
- uT6iUXFRNwIAQp4BdvQaPWhwkn3sXV1dP9OYnYk6+J7IS3E2IZwIjH3jvg5LttKLhPGxzCA0
- B2RDwteru7Iy7LZOvGS7Uxdh9b4T7lNDQBBEnPF7L27EyDf8yDxicVDSeuEN3SVHm/95KzoN
- 60fwuDeIc83ug9Ak7N9NLJ3koM4xd/k/IFBwipeQX7kUlWMC5FbGEeg4/VhjKN3++JmiVOEY
- X7Xoth+EpeVCfzhC28UdVYEbPzc9PQ6mQvyzPUSIWf67R9R+IuWDEBZOjfVgildMolwDpIBx
- N0lmc8J6j6QjgghHcaGgxt1qUWNDC0keIc2uq4KBLTEjlIQ9WhDRpjHGwnK4J2rQPddAHkAe
- zO7qvLLuOVB+xDkbXE2K0no4cNcopY/4DZx014IIgWyqOrv3/MY8kVYzmUqc15z0B5C7uNUP
- 1prPW1TIYGl3W9hpOpHblCWNzBxPj+r0W2v9AJRj0zcdVeiaULVJm5kOeqtwlEQw1gBQhdlp
- oOn2ETXehe0Wvru3xkCe19v8N3iat1Tyjfsuu6aG+a9Ip1rRga934GPYzITpgrFEPEBohTNh
- dNX8dZabYz5Mi8toJMHNbSK6IRISD64CTxDZdpD4JI2GXrtfWDu+DqWdGG0VMB/B93L1k6aG
- cZeHN1rUiri5XyBswIdJ64AHOJzlqQb4NEDJ7DZHk8dkr6ltjEymonhxiv/o24KQttVjsc2L
- L3KRQ+CCmC9gXh1mXfHict5ZlqDftgPYTPj0NCP8OkmE4wJtMduexoQ1oSYkmq0Mgw92T6pp
- yLGOrHrytJ9xbRWn4fDFrtJAyO2I4jRUMWK6AWCjMRcX+jQMMvhtxInlXe/Bl54ZYAuYtVQk
- aiBlPXV30mf5bY/bD3/qqm7TqJM4Z2/YfpTPsfJN0JlpCqlWvL3wh496mu9eI1oktRc25Gdf
- DGGSvCMLPwbZ9QM40duSXl6Mw0cAKHJfKvftXuDj/CTOCM8jy3DDv2arEHMU08KVxUmGZPED
- i3Mh82P/fFd9YRFOw8FDappArh+O17SZpElfNzQ6xidIHGj2G2Anr7QhCsQ1yzCJSiBIvbb/
- KDqexnaXzaxsZHu09t2ndFTvBoWLXAlmsg2XBsX1OBXggCALlwtDLoiI7RfLb8MiQ309pXzR
- A+VXVsYES+nAAh1K0Tt0ursTiK0J7IoOO6gAhcL4knNSSO9JL3YMYtb7i06vktHIGry/tqGd
- +Mb1Gb7ZCWq45dTQu0W2Py3rMFnyt7exVMK4UrNqNPzMTlPHYQ10GFdIyQVWRzlC83tkGD5F
- VoxT01AQ2C5ThfVOuRkcHh3BhoYnW3OyxMFUCSx++vc6r6rlLB49P7COu/Ni+xJKIxAIbMVX
- nr4Slec+23ciDRZpaItvMlvmqNuT+6CGs+hNqL4WAkOhOeK5386O98Z1z86JC34FNWzz3uG/
- tV030UDOQ==
-IronPort-HdrOrdr: A9a23:2UfVDqM/OqxBd8BcTj+jsMiBIKoaSvp037BL7SBMoX48SKalfq
- WV8cjzuiWE7Ar5NEtNpTnjAse9qBrnnPYf3WB7B9aftWfd11eAHcVL9ovoy3nMBzb3/etQ+a
- Npc607Ncb5B1p3lub2iTPIduoI8Z2u66CijaP51HdiTQZjdqFm4UNQEx+fEkd/WQlBAvMCZf
- ihz/sCjyGhcnxSSN+6CHkDV/XCoNOOr57vZBpuPW9F1DWz
-X-Talos-CUID: =?us-ascii?q?9a23=3AGAhmHGrQOhPNTOwu6JHdyIPmUcR8UVz003ffHxa?=
- =?us-ascii?q?bMmNHRJqlaFO+ypoxxg=3D=3D?=
-X-Talos-MUID: 9a23:5mpvQggIvjIgcStTmuYfssMpauls5o28Lm8xjpAhnNadNgNzEhGhk2Hi
+IronPort-Data: A9a23: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
+ uWEuBDS3Hi4FX0=
+IronPort-HdrOrdr: A9a23:eS5elKngTr+RlPiUraBYzXbC2KHpDfLS3DAbv31ZSRFFG/Fw9v
+ rPoBx4vSWftN91YhwdcL+7Sc29qB/nmaKdg7N+AV7KZmCP01dAR7sC0WKN+VLdMhy73vVc3q
+ 8lXrRkANb0AXR/hcb+pDSiG9wjzMKm/cmT9ILj5kYoZRprYKklyRx4BAadGlB3QwcDLYMhEZ
+ qX7tdGoT3IQwV0Uu2LQlEfX+PK4/vRlJznZhYaBxkorDKDhTatgYSKcCSl4g==
+X-Talos-CUID: 9a23:qGw4O2F5w1yuGbkYqmI+73wdHsYdVkaG5yvfeGObLFc4F7ysHAo=
+X-Talos-MUID: =?us-ascii?q?9a23=3ARlecQAxO1rKLfzirZ1q8Sq+A4emaqKKRU3sqoIw?=
+ =?us-ascii?q?PgMOZOiooKR2xoz2qfbZyfw=3D=3D?=
 X-IronPort-Anti-Spam-Filtered: true
 X-IronPort-AV: E=Sophos;i="6.04,272,1695679200"; 
-   d="scan'208";a="73956635"
+   d="scan'208";a="804750"
 Received: from 153-97-179-127.vm.c.fraunhofer.de (HELO smtp.exch.fraunhofer.de) ([153.97.179.127])
-  by mail-mtaKA26.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 15:38:39 +0100
+  by mail-mtaKA29.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 15:38:42 +0100
 Received: from XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) by
  XCH-HYBRID-03.ads.fraunhofer.de (10.225.9.57) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 13 Dec 2023 15:38:38 +0100
-Received: from DEU01-BE0-obe.outbound.protection.outlook.com (104.47.7.169) by
+ 15.2.1258.28; Wed, 13 Dec 2023 15:38:42 +0100
+Received: from DEU01-BE0-obe.outbound.protection.outlook.com (104.47.7.168) by
  XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28 via Frontend Transport; Wed, 13 Dec 2023 15:38:38 +0100
+ 15.2.1258.28 via Frontend Transport; Wed, 13 Dec 2023 15:38:42 +0100
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DvwT4mE6ADU6Vny9aWCUkiGrKHvTEkuHlrHEDQcPsuvExz1qKtadM5jq0/TVswh3njiwJG7dU0Y8tx9GnvbaKk6hxTbxIHqr36lPpiDkwolkH2mExX8NobXGfdegUU/BGbRre0nyoEcZZ/ndcXUhxQih6Zrye0zkxRZw5SgDv4DdJTe0z9KxrrE6a0AU+mZehEry/xQgMsW9pjaYGk/vv0GlW5Gp/uTkBm87VktIpUi51mWamfhJiSY/8Azmq0CgJ1hYp815iA2QQclMPzamroT2ou5FraGj8pg3HoMObYNFCrhLTiUuAynl60lqks9A/IWZHUKHVj7utVJgmQ/ZQA==
+ b=QBwayfhh0YN0OKbdUUhT/e77vBk2MCWwZX1XCaE2BmjMU5liR+LQV+zQNMfgRd6oO2BA9DaK6bU4mpL27BdXdwMkQ4HcCKYWVn6rCLYh5JOY2yDBD+1H0iSmylDSQW+OspWwaS9/BcPJUG466hpgZHrJJLxZbeTnXJ4q8ZuGlY84xJOSpQ1IixA5gfqExXKNX/7Fdnb+b8ygqgNpWMMaP894DeW7dk9BFgfopFB4oBey9qkl2mqORWRmX+cr5UWvae5FP1ubOtX0mpHUu5tcVMrzJ+aU+4CLe3eRg4h5DaOQyTAF0581HUJXMAi5T0leiUYi9A/0WlZRKGiGrvBeuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qInEitJWbavMRb8eD+nqKZ1vKL42fHqic2Yl5Zj5iWI=;
- b=gUaglQ9ocs72jKpHAvGAfDH92UX7sP7fxFUQInaU/uICRzmMLV55MGmQ+q/LOILHhLLoek3JqiH/b1nIcGt50Q94P2KI3x0l+d6DDXwo1wzF5AIPAeQ7DbIGxdDkmb/ZVY4S/Y2x5+VqtL2W5TkxMHEiQ70b2HgiHfda03RwnOom68KC+sCK4GPXv0zfZOkhjkYmqNIdBGKPe5vQ7webCjv0WoOlEDVV61caBHzZZbWOm30LidUsM96bioz2c4s35/9dd5qpn7rzp5D9JG7CiB7U661mtC0ZhNsf1ybuun5kVdCisr8dQsKY7ZFq2udnjGd7HEf7Itk5/VDngTtehg==
+ bh=o+GTrv5xRCPt42Iu/1W/bbRwYsCBBkWLa4SLQMA2nzU=;
+ b=c1axGrYg3nNwqGnkHdRLUH9kw2ZaZvfwjv1Q3Apq3Hoir0kAh31yPjnIbpUwUdsRfkzdtAykA1iJMdDb17JFXsYpuipeccxLrx3w7yxPdawaI0wPtWQk1ZVzIciAFs0H7bcMI8toSgneSp055IsnUgXmx3ZJvMrkWker1AlQqxVBuzgYZY/7kCEN8hsnDaTnaoNTqwKYt9S9anTtbdCPDOadljNAEaRDeTByBFe0RVhPV0QW/XnlTI8d3lIthCJPApAio1AVmzpNWmEGtsiieN71zgegke/gKhMR8Dg/E4IYVOvHHK3eWAKDHW2tNVMGXC/dgmHRfzXkvgFLo3dI/w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=aisec.fraunhofer.de; dmarc=pass action=none
  header.from=aisec.fraunhofer.de; dkim=pass header.d=aisec.fraunhofer.de;
@@ -168,17 +169,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=fraunhofer.onmicrosoft.com; s=selector2-fraunhofer-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qInEitJWbavMRb8eD+nqKZ1vKL42fHqic2Yl5Zj5iWI=;
- b=MRBxg+GqwQA9jf89V9R/UNyCY4GXj5NBVtR2DO2QDVBeSARwBqNzJTv2zQz9j6gge/3W/qiBxnwQnK9u3L9//yLQ1zkYh5Dc85+VPhGk2gYb7wTrH6b3B4bLjfkfhp1AUJF5MTg8oQzrk9oS0nyb5R5EXyTruLZCO2JQHUMoYbg=
+ bh=o+GTrv5xRCPt42Iu/1W/bbRwYsCBBkWLa4SLQMA2nzU=;
+ b=ADbUTnchH0R52pnGCPjAAGMG9KRtaeAC7zyoYFSy7pzl7zXpIAa1Sg5kh6liCri9l5I2I2ntLw15AGdgHlnSWAUKI1/HRguFJVsbid4prqzyB3K801gHoPjc9DOcZtxN8wiiNqRyXSP91ogXTR4AuxzJ4Sr/uevgiCA1scYKxi4=
 Received: from BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:50::14)
  by FR2P281MB0026.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:c::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Wed, 13 Dec
- 2023 14:38:37 +0000
+ 2023 14:38:41 +0000
 Received: from BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
  ([fe80::d273:9b9b:dadf:e573]) by BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
  ([fe80::d273:9b9b:dadf:e573%3]) with mapi id 15.20.7091.022; Wed, 13 Dec 2023
- 14:38:37 +0000
+ 14:38:41 +0000
 From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
 To: Christian Brauner <brauner@kernel.org>, Alexander Mikhalitsyn
 	<alexander@mihalicyn.com>, Alexei Starovoitov <ast@kernel.org>, Paul Moore
@@ -195,9 +196,9 @@ CC: Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
 	<linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
 	<gyroidos@aisec.fraunhofer.de>, =?UTF-8?q?Michael=20Wei=C3=9F?=
 	<michael.weiss@aisec.fraunhofer.de>
-Subject: [RFC PATCH v3 2/3] fs: Make vfs_mknod() to check CAP_MKNOD in user namespace of sb
-Date: Wed, 13 Dec 2023 15:38:12 +0100
-Message-Id: <20231213143813.6818-3-michael.weiss@aisec.fraunhofer.de>
+Subject: [RFC PATCH v3 3/3] devguard: added device guard for mknod in non-initial userns
+Date: Wed, 13 Dec 2023 15:38:13 +0100
+Message-Id: <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
 References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
@@ -214,168 +215,203 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BEZP281MB2791:EE_|FR2P281MB0026:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d387641-8229-4b0d-6be4-08dbfbe93152
+X-MS-Office365-Filtering-Correlation-Id: e944c049-f14d-46e7-3a43-08dbfbe9335a
 X-LD-Processed: f930300c-c97d-4019-be03-add650a171c4,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Efena57SBdHhQOhS3PL7/J3MV5xj2ZTnE7K5rFX+Ilb3P/l7q2SbyrpdWK1Op1NRDB/84tPFK1MQvXJKl7W44qyIkUl5Dl0KNiFtXl9fsyUPsxGFp15E+8NbptoALdFJ2IUkQe0dywmoHA9Wtu88j1kLnnVCuU8rAZpZszbf/kBIoWLQwX8rcpCqlpQzHo6PsdfEdc2/8LaDyf0oLQBwdrbuX5rFiLLilnmMtHEiVWavsWGChuAgtCNfKrnLUec+s5NOB7EtOlxuMYlqkPCn8/xEwqcqrsgaFK9nKABA5S1LefHu4klb4arWAh7SS8OSUv/hPzXLrvVjLFeDDn7yqHjoSdSAzlTf6n6RuiKIhFmoAk0HLAKrem6e5Y6BRJ6RdQXmPnH1Dotr+JIea99is5m3ihsVsMA2VH+aq/1JytgCgE1SIRaK3l/1CLXtd8KFYbGkZyrpYVBg2og9QlFLHtBbGwRPpZGT/Ecf51pk1Rlmodj+xJr5SSD3/+PbpaZcin2ELLOqdlDbvfPcMJUvFGmOx7S4QD/OQFJvVUMivDLPFnf9fR8Tl8n1mGZYzS1/9ZV70PD16mCJ9NSl0zMSkXDu2oi3A4xfRSCFEVr3H2o=
+X-Microsoft-Antispam-Message-Info: jqscTcZr0vvPN8GzE21vhgJ3/Rk9QZNLl42t4xQNkXWSh2s8hK+i3nxJ7i81T+5VF7fi5GTDLtRcK4rXR+nIaywztHyEUBPeUYV9VJkj1w6y4PUrF8Xnz3rdPyksDk1Y/+pVjtspgiLI9aE6SU1e47Q6J1h5xcyW9sZ1VTkDe4Zn34loOCLg2uaGL3MVYGH70SNx0LhfufJw0iaMZfekwBO9SZAdhdjUwnjga1qSKFbJsfw5p+5r1KTMomG5YRg/LAJf2jOdyqpa2givu5ftpzmOAdGNVBtPH9J2pQeCv9i4/rPZXWBCrTXSwEwxSCILNU6/oqbMjsk4O0p+sGa1R9GZZYThp2Bn3haMdl6weFXUKNLYp2shT7Rcm3p6P/gfeNuiRYuLOHtePITYOWllNlxfDUh+FmFYXAtbG9o+IvTaiS7ZQAKezFiMWgyIBZCCDERLgY3kl23iHKGkoYAZInbANPFGFmEXDwXKRU7rkq69jGi+1xmrNji3HdcXNATyWVjYk+32p0U0xvLLqaHrwjM5iYC8v8G1Bd3tOdXLInYBHeADNgVTAjRBwvua22GjeSd3q51sKYw8R1Qf+MAw1t//jEVMXLfCnMAyQgqbvHo=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(396003)(366004)(39860400002)(346002)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(83380400001)(107886003)(38100700002)(8936002)(316002)(54906003)(8676002)(2906002)(7416002)(4326008)(5660300002)(66476007)(478600001)(52116002)(41300700001)(66946007)(6512007)(6666004)(6506007)(110136005)(6486002)(66556008)(2616005)(1076003)(82960400001)(86362001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bExnM3lnc2ZMb090ZEw4NXBQS2JMeDZLcmMrUHdwQktKYm9PSVlTTTJKbTRN?=
- =?utf-8?B?WWZMRnYvSm9OeXFQZDlyV3JoaUIrMEd6TVlHWElKMG9hNjFmMG9aUmF5R1NR?=
- =?utf-8?B?QlRGN2hma2NSVWVWaGJjcVJ5Wnp0Y2hCQi84VnJkRUNLZjNJSTEyY2VweDZC?=
- =?utf-8?B?ajA4cjRtbjVZR2pOR2UwaHJsV1k5K0FrWW14SHlVcVdxcEhEVkkyd2hNU2xX?=
- =?utf-8?B?bVppMEwxVVpPY3RBOUNXNDR1MHlDUk05am8waThuQjFkKzJsam9jaktpVUxa?=
- =?utf-8?B?U3NGRG5CVkpXbWNtcUVKU05mVndpNVl6QXNEV2ZDVGRrNCtRenFucWNuUm5u?=
- =?utf-8?B?T2hCcHl2VW4xZTBya1ZKQ2RnQjRsU0Z2ZDZDRDBZblkvVUJ3NkdVWHpFR3ZB?=
- =?utf-8?B?bnpEUi8rbHRBVkExcWRHdVNQY2RQSTdRZmYyUEhoN0hBaC82NTJHSnRWMEJQ?=
- =?utf-8?B?eEcwOWU5WnZLYVdRTkFaSU9EcjM2cVEzR2FQR1N5V0ZkR0RUNmZGbk5aOFBo?=
- =?utf-8?B?VllLN0ZKcXVLV2gyUUNNVUtEMXllejRkcndNSFBGdXpQUVlZNTVEemhVSWNz?=
- =?utf-8?B?SFVBMlNwSDJCWFo2WDJaVjhtUCtPOUZIMSt1QUUvNjZNc01abDJ6azcwWWdu?=
- =?utf-8?B?N3BiYXJuWkJnNHVIeklIN3p3SFRTUUhESDJPQTA5aFNhTEpYNkt1SXM0enIv?=
- =?utf-8?B?OXYxV3FWUXBQNVhEQUdLRFpQc2pIUDhIZW9HVTRRcWo4Sis1M3kzRXRtdXhN?=
- =?utf-8?B?MzZWSkswS2dGWHBUaFF6Y0l4YWVCOU1CNk0wZGhDSG5nWEZLMndOdVVYRkJS?=
- =?utf-8?B?NjVjbkxPYXlweG1ZUXNkaGJ6MTM0d0h4UXgzSElqT01FejNyVzl3amY3bis4?=
- =?utf-8?B?emdBVGFOeVFxQm9ncU5pTDFkdVBmUjVjdzFNbEMrdHphWTYyS3QzSHk3eWQ3?=
- =?utf-8?B?L1dRN0h1R2VBT2pEWHp5elZENC9LMXZ6eTFFazRRTHFhV1FMMTBJK3cyN1h1?=
- =?utf-8?B?YUZ5UFpHRkp1ZXQ3OVAvTkg5c2VIck5MYktkcmsxRWlJY0dTejU4bGJ1SzdJ?=
- =?utf-8?B?VGRBOUs0UUg3MkNsL1N3N21xd283YzZMSHErT3A5TkQ0ZmY4MEJjMnNCbmtx?=
- =?utf-8?B?d1pvNjNZaXJNWFN2L2k4MzJRVlJ6MTRYYkdtRHYzeTVXUzBoS1JGRVNMMVdC?=
- =?utf-8?B?WXdveS9QbnNQbnpMdll4Mk04Q2NVOEUrQ24zZjNpaGw2YmhadDB3cGJvMU03?=
- =?utf-8?B?L1JScVFVY1NjYzI0TWVmVnZhR3pSTVBubEs2M0ExZ0w4enRMZlpxZVhtdEN3?=
- =?utf-8?B?Sk5sMjRkQ0p4bE5TQlVjbXVGQy96cmtQWVZlRWFUSnVSbzNVZm5IbjZrN1BG?=
- =?utf-8?B?c3pwMWJRdUJIWjNDclNhdUdCeHhMMnN2STdXNS9VSlg1ekp1UlhKT1VEZXB4?=
- =?utf-8?B?MW4zVUtWNFI0T290T2JMajhPT0xSeXVJK2FmdW9vdER6Zm1rTTFQc3RZcjRR?=
- =?utf-8?B?dlNIendaYjR2c05kUFQxL29obzZtaXdjNkxmS2ZwdnMxT0theVpLTlNNTlIw?=
- =?utf-8?B?dWZLOFE0UDM2b2x2Q05ieXlGS0toVHJFQzBWcDMveEMyNng2emQ5WjM5RkNK?=
- =?utf-8?B?V0xwS3FMc3B3eFFSUGtCWUJ5SjFGeUU5ekxvYnM5MS8zb2lubE4zV2N1Nmx4?=
- =?utf-8?B?d3NsUVZYaXRvRmRrcGJoaWVHbXlLalFJV1pOaHZDTXFGeC91YzZ4Um9UV3N0?=
- =?utf-8?B?bkM1SUpYVUxvNFdFZk1UZGg5eFg1Zy9DdGo0cXQ3aFBRcGNBUnRqakZNTE4w?=
- =?utf-8?B?NzVVZWpSdEh1ejF6bTcvZkNzNzBRd0Jka2FUTElTQlB0eitzK3dEMWpIeFFI?=
- =?utf-8?B?YW1tV1c1ZzdwYkxKRlM1emRlZmtpSC9KK1F5SzZZc2JLTXczdE9xZm83R2dL?=
- =?utf-8?B?WnhvL3hDdXJ1M2p3WEYrOTJDU2g3QUpUNWFTQVdUZjVoSTByZWdnbnJUU2dn?=
- =?utf-8?B?aWZQYkR6TmFtOVBoNEhYdlF3M0N6ZEpUbzVBY2toaWxDMlo2QXVCUjZFRGpI?=
- =?utf-8?B?aTZkcU50RTJPamo1ZWFsSHA1Z2Y3alNUTXpjcnE0T0JFRkF6ZXVndUFVNzRS?=
- =?utf-8?B?cStmVVBGaGdmbzZMZDI4NithQ3l2Ym5CbmJHV3dMMTRhdjl0VU9BTS9TMGM1?=
- =?utf-8?B?dCt0b2YySWdBQW1GdE1ob0VXTmEzR3JGU2dWdHRxek83eDFxUjUyMTZDajFj?=
- =?utf-8?Q?XU3v2sKwsrAU9WddKXS+T3yeQhFzqlSG/W8zARW6cU=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d387641-8229-4b0d-6be4-08dbfbe93152
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UG5FNURreFdkMjBZQ0hVU1R2NVowVHV2K0RtK3NhcG4ybSs3YjRyNDQ2eHlX?=
+ =?utf-8?B?Y0ZDQWR3RmdJQWw0N29ka0tWVkRWZGcvdkZMWEEyK0RPN0NzWE54bHV0VW1m?=
+ =?utf-8?B?Z3ZOZkoydWlXWmIreExycVIzZzg1c3Z6SDJvTVJNQncyTC8rUUpoeitUODBN?=
+ =?utf-8?B?UloyZTlYOWR6dDFZaWNWQlNpOWhyNXBydDlaYlJEQTBjV0VkT3JPUmpndGt1?=
+ =?utf-8?B?ejFvVnNpTkRpNGk2dnNVYit4MFRERjhTTFFqeklUSXprRUN3cEZwdmhOcUhD?=
+ =?utf-8?B?N2k5cXBGVXlPOCtrcjVtbzhheHlobnlKd1dvNVZWem1aZXkwbklONHQzV05w?=
+ =?utf-8?B?a21xUFpqL2JWd3p2SUV1YUtIR3ozVGg3bFdqa1RuT1lRVzA0TFpxd3FzUlk5?=
+ =?utf-8?B?Y2thWFNNS1phb2R2WTZuQStDUVVQVmtJOXZWamtvUitDcmREYVVRQTY3QlFu?=
+ =?utf-8?B?TVJpRTZrN1J1Y0dpTzhzUXQzMHZXOXF0QmV4eG9BaXB4MHJudGNkZnRnUHJN?=
+ =?utf-8?B?S01URDNWNHNSa1RHWncwZHhGRDJFaTRuNFhNcCtMamRldlpwdEdPZGdwbTdx?=
+ =?utf-8?B?aFQ3cGZlOUJVSUlYYnFOQzY5cXRDMGtZOTdTeEtQKzk4UnlKcXBSMlhqdEUv?=
+ =?utf-8?B?WkpxSi9nVnM2ZzhSL05IWjVJK2JzcGtRbURLMUFPdXFoUFVjZmp6THhUa0cx?=
+ =?utf-8?B?cFdOZysvdS9OZnlOMi81aURHM2doRi9Sbm9XTnVuazVIemhmU1h3cHQxZDNG?=
+ =?utf-8?B?T2ZSNHQyRlhLSlArUzZiTkpydlpVRm9xTzFWQU5YT1d2TVpmN2hIMVlVdzZI?=
+ =?utf-8?B?c1J5TDVDQmhGVXBIWDFaVmlmS0VDWXNNQXY0LzhCZk44dk1RZEhJN3NTNUIy?=
+ =?utf-8?B?UG1jUVVCaXNPVE1kWFpHWFpObmxVS1h4S1M1dVRzOEZ2azZOZUF4d1VlT0Nk?=
+ =?utf-8?B?S0U2ZlEwNWJsbzRjb0xyVWJ4bkFDaGZndG15Um9TK3hVOTdrc0tLWU5HeHVX?=
+ =?utf-8?B?akRLRzVJSXk2MFEyZlpiV2FXQUNrR21KajhMMGc5VllOaTEvb25CV0M1eEZB?=
+ =?utf-8?B?ejZzUzM4MjE0VUc0aWZIdkdXa1FZb1ZhcGd6RFlTcC9vRmRVQU9KR2xXMUx1?=
+ =?utf-8?B?S09Gekxxc3k0M2k5bTBMbStwQ2dWV0QrYkNYOC9YYm9kWmVJVkYxcmdDdE5i?=
+ =?utf-8?B?MzBYeXZyZVZ3YWU3WSs2bkRlbkFYSzh0SXRTMlJic2RmL2pUeW9yWjJkRkJN?=
+ =?utf-8?B?SzVvVmJXYzVjWUJlK2dTRGs2MUV0R3hZUjdORmhsQ0M4NjhaQjVBc2xrTlda?=
+ =?utf-8?B?MDRKd1FhemFFd3F1aTdmS3dFRXJWSDZ0VHhjWjhWOTM5RlZhbUtuMjhTMzY3?=
+ =?utf-8?B?Vmh3UkRwR0ZYTjJqMlovZEdSbVNmeDU1aWZtRjlEeHJXSENQaUU5ait4Mlkr?=
+ =?utf-8?B?dGgxS0JuZWpqK0JPakxaMGM1UElQT2Y2dFY3bHpzeE5iVlgyK0Z1QW5rbG56?=
+ =?utf-8?B?Mm10cmEyYjBFc3JpWTlxbTVYQitudHBBaTNDaUNBK3hjRWEvaWFtZDBjcS81?=
+ =?utf-8?B?MzV3bE5haGNubWwzMjFYTkhwcjJ3ZnF4Q3lyMU5qeXhwRzNoOHRQWnZmdHdB?=
+ =?utf-8?B?QlZ5TW5ORXZhb2dUcU9oaW0vUmFZWStXMHdGNzErd3JtSTU0R0ZHTXJnc3Zk?=
+ =?utf-8?B?aVlVVS9nT2lKYVg0aUg2U0hrNW9OY0doZTZPZTlERFJwQmRFaDhlRTFiUU5H?=
+ =?utf-8?B?TCtmcmgvZG9mMHlPMlMwSFh6eDFLOC9pZjV1NlVpZks0N0VKWUhmRFVWUDBY?=
+ =?utf-8?B?ZkxlZHE0U0grdDhvOEx3ZGhIM1M2Ulhyc0FjQnFmRk9IKzZWTEk5d2VwL3ZP?=
+ =?utf-8?B?ZjU5ZEJLeU9nckpjc3NsYm0rY0FESFlPNXR0Mml4ZExXVFZvMHVFS0hIR3ND?=
+ =?utf-8?B?ZTY2WWhNYTNoNk5lajBLZkcwd3NiR1U3MmNRejJzSVdCQkphT2tweFhORGFB?=
+ =?utf-8?B?bVUwTzlCQ2VGdDRQRXBISzl6dVh2bnVjT2pLY3k2MUU1Q0g4RzFlR0IxVnFX?=
+ =?utf-8?B?WjlYTWppRHFrbkZWZ2liUEJQQThCbVpwZXRzZkR1eit3cTZ2VVpacUNYaW1I?=
+ =?utf-8?B?VHpDYzk4L3JueVE1Umx5L2xiN21yN1A2ajZaQjhOMzlCZjdyODFrTmowcE4v?=
+ =?utf-8?B?MHJHbW0vSDBNM1N6TG90aXZnWEZoblJyVk5pNlZna2ZZdTN2R0ZwK1JqeUZl?=
+ =?utf-8?Q?EYUlW3cOClGfDCUqJI3LMOVcENR+KoFfsMhUL/a4L0=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e944c049-f14d-46e7-3a43-08dbfbe9335a
 X-MS-Exchange-CrossTenant-AuthSource: BEZP281MB2791.DEUP281.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 14:38:37.8133
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 14:38:41.2415
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f930300c-c97d-4019-be03-add650a171c4
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: inWNPP5rXJPv8+40/lfU8h0e0fVzINWORuOy67+OHCfHVAdD495BTkRB4LsnY3H1RbLYorZVejGWmB96CXK5N6Ab3tdCD6e20TClnq//nixv0NNNs1588LkUpBv9SQ9D
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ez1huEXXHG6DmmwhKA0c1uIVf/lfkGVJKTVDHk7hn3N9xTSaxyQKTVuiBvtgw+z0JgrU6WUlxL8DwunpZd0hHuzLsIlOQWTK3usQ32a5zu/IJh34w76VvlJ0fgv4Veog
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR2P281MB0026
 X-OriginatorOrg: aisec.fraunhofer.de
 
-Check CAP_MKNOD for user namespace of sb with ns_cabable() in
-fs/namei.c. This will allow lsm-based guarding of device node
-creation in non-initial user namespace by stripping out SB_I_NODEV
-for mounts in its own namespace.
+devguard is a simple LSM to allow CAP_MKNOD in non-initial user
+namespace in cooperation of an attached cgroup device program. We
+just need to implement the security_inode_mknod() hook for this.
+In the hook, we check if the current task is guarded by a device
+cgroup using the lately introduced cgroup_bpf_current_enabled()
+helper. If so, we strip out SB_I_NODEV from the super block.
 
-Currently, device access is blocked unconditionally in
-may_open_dev() and mounts inside unprivileged user namespaces get
-SB_I_NODEV set in sb->s_iflags causing open() to fail with -EACCES.
-
-Device access by cgroups is mediated in the following places
-1) fs/namei.c:
-	inode_permission() -> devcgroup_inode_permission
-	vfs_mknod() and -> devcgroup_inode_mknod
-
-2) block/bdev.c:
-	blkdev_get_by_dev() -> devcgroup_check_permission
-
-3) drivers/gpu/drm/amd/amdkfd/kfd_priv.h:
-	kfd_devcgroup_check_permission -> devcgroup_check_permission
-
-We leave this all in place. However, a lsm now can implement the
-security hook security_inode_mknod() which is called directly after
-the devcgroup_inode_mknod() in vfs_mknod() and remove the SB_I_NODEV.
-This will let the call to may_open_dev() during open() succeed.
-
-Turning the check form capable(CAP_MKNOD) to ns_capable(sb->s_userns,
-CAP_MKNOD) is inherently save due to SB_I_NODEV. However, this may
-allow to create device nodes which then could not be opened.
-
-To give user space some time to adopt, we introduce a sysctl knob
-which must be explicitly set to "1" to activate the use of
-ns_capable(). Otherwise, we just check the global capability for the
-current task as before.
-
-I tested this approach in a GyroidOS container using the small
-devguard LSM of the followup commit.
+Access decisions to those device nodes are then guarded by existing
+device cgroups mechanism.
 
 Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
 ---
- fs/namei.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ security/Kconfig             | 11 +++++----
+ security/Makefile            |  1 +
+ security/devguard/Kconfig    | 12 ++++++++++
+ security/devguard/Makefile   |  2 ++
+ security/devguard/devguard.c | 44 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 65 insertions(+), 5 deletions(-)
+ create mode 100644 security/devguard/Kconfig
+ create mode 100644 security/devguard/Makefile
+ create mode 100644 security/devguard/devguard.c
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 71c13b2990b4..cc61545e02ce 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1032,6 +1032,7 @@ static int sysctl_protected_symlinks __read_mostly;
- static int sysctl_protected_hardlinks __read_mostly;
- static int sysctl_protected_fifos __read_mostly;
- static int sysctl_protected_regular __read_mostly;
-+static int sysctl_nscap_mknod __read_mostly;
+diff --git a/security/Kconfig b/security/Kconfig
+index 52c9af08ad35..7ec4017745d4 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
+ source "security/landlock/Kconfig"
++source "security/devguard/Kconfig"
  
- #ifdef CONFIG_SYSCTL
- static struct ctl_table namei_sysctls[] = {
-@@ -1071,6 +1072,15 @@ static struct ctl_table namei_sysctls[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO,
- 	},
-+	{
-+		.procname	= "nscap_mknod",
-+		.data		= &sysctl_nscap_mknod,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
- 	{ }
- };
+ source "security/integrity/Kconfig"
  
-@@ -3940,6 +3950,24 @@ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
- }
- EXPORT_SYMBOL(user_path_create);
+@@ -233,11 +234,11 @@ endchoice
  
-+/**
-+ * sb_mknod_capable - check userns of sb for CAP_MKNOD
-+ * @sb:	super block to which userns CAP_MKNOD should be checked
-+ *
-+ * Check userns of sb for CAP_MKNOD
-+ *
-+ * Check CAP_MKNOD for owning user namespace of sb if corresponding sysctl is set.
-+ * Otherwise just check global capability for current task. This allows
-+ * lsm-based guarding of device node creation in non-initial user namespace.
-+ */
-+static bool sb_mknod_capable(struct super_block *sb)
-+{
-+	struct user_namespace *user_ns;
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+-	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+-	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+-	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
+-	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
++	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf,devguard" if DEFAULT_SECURITY_SMACK
++	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf,devguard" if DEFAULT_SECURITY_APPARMOR
++	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf,devguard" if DEFAULT_SECURITY_TOMOYO
++	default "landlock,lockdown,yama,loadpin,safesetid,bpf,devguard" if DEFAULT_SECURITY_DAC
++	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf,devguard"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list, except for those with order
+diff --git a/security/Makefile b/security/Makefile
+index 18121f8f85cd..82a0d8cab3c3 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
++obj-$(CONFIG_SECURITY_DEVGUARD)		+= devguard/
+ 
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
+diff --git a/security/devguard/Kconfig b/security/devguard/Kconfig
+new file mode 100644
+index 000000000000..592684615a8f
+--- /dev/null
++++ b/security/devguard/Kconfig
+@@ -0,0 +1,12 @@
++config SECURITY_DEVGUARD
++	bool "Devguard for device node creation"
++	depends on SECURITY
++	depends on CGROUP_BPF
++	default n
++	help
++	  This enables devguard, an LSM that allows to guard device node
++	  creation in non-initial user namespace. It may allow mknod
++	  in cooperation of an attached cgroup device program.
++	  This security module stacks with other LSMs.
 +
-+	user_ns = sysctl_nscap_mknod ? sb->s_user_ns : &init_user_ns;
-+	return ns_capable(user_ns, CAP_MKNOD);
++	  If you are unsure how to answer this question, answer N.
+diff --git a/security/devguard/Makefile b/security/devguard/Makefile
+new file mode 100644
+index 000000000000..fdaff8dc2fea
+--- /dev/null
++++ b/security/devguard/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_SECURITY_DEVGUARD) += devguard.o
+diff --git a/security/devguard/devguard.c b/security/devguard/devguard.c
+new file mode 100644
+index 000000000000..3a0c9c27a691
+--- /dev/null
++++ b/security/devguard/devguard.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device guard security module
++ *
++ * Simple in-kernel LSM to allow cap_mknod in non-initial
++ * user namespace if current task is guarded by device cgroup.
++ *
++ * Copyright (C) 2023 Fraunhofer AISEC. All rights reserved.
++ *
++ * Authors: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
++ */
++
++#include <linux/bpf-cgroup.h>
++#include <linux/lsm_hooks.h>
++
++static int devguard_inode_mknod(struct inode *dir, struct dentry *dentry,
++				umode_t mode, dev_t dev)
++{
++	if (dentry->d_sb->s_iflags & ~SB_I_NODEV)
++		return 0;
++
++	// strip SB_I_NODEV on super block if device cgroup is active
++	if (cgroup_bpf_current_enabled(CGROUP_DEVICE))
++		dentry->d_sb->s_iflags &= ~SB_I_NODEV;
++
++	return 0;
 +}
 +
- /**
-  * vfs_mknod - create device node or file
-  * @idmap:	idmap of the mount the inode was found from
-@@ -3966,7 +3994,7 @@ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 		return error;
- 
- 	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !is_whiteout &&
--	    !capable(CAP_MKNOD))
-+	    !sb_mknod_capable(dentry->d_sb))
- 		return -EPERM;
- 
- 	if (!dir->i_op->mknod)
++static struct security_hook_list devguard_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(inode_mknod, devguard_inode_mknod),
++};
++
++static int __init devguard_init(void)
++{
++	security_add_hooks(devguard_hooks, ARRAY_SIZE(devguard_hooks),
++			   "devguard");
++	pr_info("devguard: initialized\n");
++	return 0;
++}
++
++DEFINE_LSM(devguard) = {
++	.name = "devguard",
++	.init = devguard_init,
++};
 -- 
 2.30.2
 
