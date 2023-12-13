@@ -1,120 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-5990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-5991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E401811BD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:03:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E62811BF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 19:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28A31C20F09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:03:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257FDB21100
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 18:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216E5B5A6;
-	Wed, 13 Dec 2023 18:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216AF5A100;
+	Wed, 13 Dec 2023 18:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1K1+ULZ"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q2GcCXjA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9824422063;
-	Wed, 13 Dec 2023 18:01:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B0ACC433CB;
-	Wed, 13 Dec 2023 18:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702490467;
-	bh=ZVYZCG8BA2QR+OMUrCSCrik5BQqg4e5AhnEyCL140cc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=C1K1+ULZLDQKja69xnRl2apDJTyhK88iwZpXkAUq+Si7zvpwEJNCFcMU/TuTx6/aW
-	 KxURNL0aueW34TxdWGW62Ks74IXM2eB3DB3OrSt25oCAbaFDuKpzR7Ij6Z203xYVOP
-	 9MnIGT9fHpO0yrwLmiqbJqVQ4pjRfpdV5u9E7SPJuxw2D/boPIZWCBXPqYs6ygqoMY
-	 TxyNwPtxeyBLISw+Xf6EXaLLXeBhcmEgceMeIJPgR1c3Dr7Z3qbtiDy7rTowMiM4qu
-	 HH8Zu+NyFhRX/pWM85G1lvLNHmlUUp4TsnXNdo+gHwJz1zDPIjKBQS9LyrDhsbUCrB
-	 8P82F3lPeMwBQ==
-Message-ID: <6f8c3f22f77e9e0154f4131260559c39d6740678.camel@kernel.org>
-Subject: Re: [PATCH v4 18/39] netfs: Export netfs_put_subrequest() and some
- tracepoints
-From: Jeff Layton <jlayton@kernel.org>
-To: David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Marc Dionne
- <marc.dionne@auristor.com>,  Paulo Alcantara <pc@manguebit.com>, Shyam
- Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Dominique
- Martinet <asmadeus@codewreck.org>, Eric Van Hensbergen <ericvh@kernel.org>,
- Ilya Dryomov <idryomov@gmail.com>, Christian Brauner
- <christian@brauner.io>, linux-cachefs@redhat.com,
- linux-afs@lists.infradead.org,  linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org,  ceph-devel@vger.kernel.org,
- v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 13 Dec 2023 13:01:04 -0500
-In-Reply-To: <20231213152350.431591-19-dhowells@redhat.com>
-References: <20231213152350.431591-1-dhowells@redhat.com>
-	 <20231213152350.431591-19-dhowells@redhat.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-	kZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2 (3.50.2-1.fc39) 
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32076107
+	for <linux-fsdevel@vger.kernel.org>; Wed, 13 Dec 2023 10:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=Nwz1uIbomBE991r6kFnI9Xx0i9y6GbKeBjvJtumt8iE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Q2GcCXjATEzjSTSYXHKbXeurOv5yespsSz0ml7JCsSLZqxVHAfvFb/s9tzIt1evnQhz4XLu9bqJKAIA0uPqHtwBjEm4XnLk+vTgaltgUQOZV9b1W/MFTK19WwGySEVVSWxIinyGwjgcfn6rt6N1Prk04cDhYw59eTJ+j6WHqWYBW89gv9guNPRowISjp1KdTZK0yQQSOaN/ST6QuKOTUrS+dNe9wV9evHwRGEg8E3f/cnG21gzKQW1iFofjp2sNHQcon30MXNzf0cSDA0rRHmMleNNc8aVqghAMr5Wu1H7beuwg8EOVCRgGJTca1PQes/0qpj5l4+dRgEZVJr8Dd4w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702490930; bh=+/TJOZ6srOEMVvhuufXWRh0/msMyFtSymbS2RoNkwdQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jb4TkrgIre+9ji4ewfMOvSl6OLiXVlIvDGCY4riHNE4MLKe9WNidkohEECUqi1Rj+Qb7ja4JfB+hQ40ROlFPoA8fvGkDMunhCHbDlqECIZqe8GSDuIRk7aiiUJr2lt24Ildhu6cfPmlG0xQaFKoBMU3d1eMhl4YbkeyYMarx51p/X154GQeYIUS0UYFGJ+itQukr9ZuIj9wSZwquwUhkkX57Z9zxapwJlT+CIq8zumYoL2AVtUI3C1OzYhHb+LO0BJUpi3iWPmjDvOtpwb+3RD3MejxooCgKRi5LKD51T+cIJGSdIazwoWLEXkSYTvyEk50NXe1ZWWeUO/rQULHZCg==
+X-YMail-OSG: ZY4uPfkVM1nL9XI0hibln_9cRAXR4K6ZlsvOdVR.ZIvGnWPklpsBsrntt6L3vuB
+ 8VdYwHE9wV80Ll.nAtMpE0Dt8RTxtsJz3u1gWV4nsZUCwDRbJ8VkqeK9UWIeymWBXAu21aTTGAJG
+ HT9hrQzNG4o0l0UTVb.HTb0EwxJ4ZoiWPfp.f9sXgrqtH_HPR.gPo8EQhfUG.moEDU299IyzYYt7
+ H2VJ4gba07t4nhBg0hwMpeCMVVdYbSiF.b5JQtZ341VBE3Z_RClBvv03hzVGL5RPVg28ocD1tWZW
+ qV8QkvM_DGUEgGH_7Ru7FhHBx6iH3dMwRvMjgsT12JGT5Liqqn2OkcxAOYm9eZ3ICnq4iC2WNqBE
+ hjX1EwtFmRbH4wjQ7dtex2xphhuRPR8DrwR2167If94s7MNdj7LDf0.H3FXWsVdWHkKf.Gv0vYWu
+ xhBt1kDDUTKBzbW0AAU4BylURMOtonvV1VLwhckz7CgtpkZ.7vdoMoCweN2aGa5lXotaRyseo8lC
+ EdfNFXhOSOuckRGSrm6L9QixTrvg.48xgMjI1T_csZMPenPYNwuMI_TOZNvDCFzPjQ4vEl76fYuB
+ CAgxOAvU80M8uHZQnLrXsGiLBUaANszyXIhM5zAlHQPVG8IBAJkKmqSR5Riy41WNhLHrMx1AxhaX
+ c3WAjD.XYT_2sOD6re0MlrPH_3bI01ZyQFUtulQHTy2u7.odLifj3hGDEbJU.5Z._j7_qV9Nz6eF
+ ijaFLsqsGe7Kwr0gXj1X20O1o5bkWa7rvy7rd9LFu2L_mrWOzJ.Mf6YQMdN5Tex7wFvZplvRQGTZ
+ d7hRb9arVcB.ijSL4IIGKv5UBUmqej2Iz.LmKZFGPDMMcqRRK_Z8a01tIDb0ZHeDR4jTjtin.xqH
+ zh_3sjv4rQ.rLL65jKk5YpQyZDSVRedQ8wrpFPuuQuFddHIunKuZoIHNTYHmDDnffbHzMgfzE6p2
+ 0csSu.Y_21KcZjcvn9ECmQgvLobMz3Vud_qM_6s0yeOaw4nhTx9oy6UvZyRB.IG8aMuypMWYgVcs
+ N13p6zGyc1pQK8XkxkXktpfNMU2.T6pu7bjZAIdFSXRAb3UFmmonKUr2PNf1I76HPdEKP.oRMCwC
+ 7_kaH1kaQwi2d.P1uP0hoAAERtrJ_O6XN.85qafgWLRls_CRTlzNKNlzBRIE.GvDvFRe_njUnjAJ
+ pof3DD3hOddOtKXQ721C59YmpyIetqf7dtAKPVAXhx6_dMur6n.PdX0AQzxFDlALEpKFdMIuIXsB
+ 70lDIeAeUc.FDPFUL3F8tTR6EeYSEkVzhU3O0uBm1JFolTLTa16FiY87G70txBJjXU0HZidBxBht
+ fzSugNDamX5gnlKPmb6zJeNBJWStv.j0GMv64EluNPOCWeVcH3cVTHAT1dFrDB7oXblC3Rum8j4v
+ s7uHPuWZVY5OIehsAUS1Mrwj1xjXM.uTX8klNWSSxeJn.4pJgNHCrdw2xp5fhN2jrWMTNTxGCVVB
+ YSyNVzm4wtWxaPLpUIclAPQ_Hur5.u3GQFVi9p4pKKM.8F12uF_sn166dxANn5LSuyF7LaCBEgPZ
+ nuFUb5a0XV5QzqAt29KHaKpzJaHr54l5N2_V_7ZPiXVOnr5BzGOGGi.EwGm4.V.UKEFkC.an4kpS
+ EwODjE3lu19jis0IwGrSZpQ_XP_H2oBdKNc1.XyNjfkKPduWiJOSGiixgDWenRKYnamM8kShG6YS
+ qJvWikUacPnSTDzcwrUZaapwLMSlSBAXcQ6zXPwO1zrl7fjGsJga3hQMCh9HTvGNRmTuEr6LNeY_
+ IO_eMH4VxsDi42uBI1W.33c6A4Kj1ZlwEfTC0V3yQeEKpYI4PNtMI3bI66EgCiawKiIffAXwauNe
+ gV8B1JA9dIA6O9aSaWqCP9U9bnNn4JN1bKtAqdxn95NMCSPOeXSOofRUOsISQkz9ad_g3.tBd0V.
+ 0JMpxvAN1olw2ZGSJWD4dVLRA2whVdwpIIxRisbaRSPB5bLiD2YtFx68SxJKwh8m8mf8ujQh5Y19
+ HW0..VY6s2cZSXBnXqIRLzXcdZHD1vT_gGAG5h9ZadaHnCUMcRhVNjerK_UP7kIDDeruOMTHFNKO
+ 17_iZeBREEot_D7mQh9g4RlApRvP6J0._dhqqVyBD4IjGrRsF0RqQe63FOe4dl1cOaME5zwmdNvd
+ LF6_A9TI9WOEHe7Tp_96mVtICBAGWoIOCVf3QqJ1qhrL50oadzN.9BMhtjt0WfskACGhiyemIPKc
+ 9qYreb0Lox2deMagqPuimHpY.9QOIyLBhw6nh1VyM_8MLPcf2OszolI2.YWdN
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 0351f85c-4cc1-41cd-b475-55877dfed226
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Dec 2023 18:08:50 +0000
+Received: by hermes--production-gq1-6949d6d8f9-k52jv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 83a3aff6f9fe93ecbddc221ed9cc56f5;
+          Wed, 13 Dec 2023 18:08:48 +0000 (UTC)
+Message-ID: <9dc633d8-65a7-4b97-ab98-a21ada1d4ea5@schaufler-ca.com>
+Date: Wed, 13 Dec 2023 10:08:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Paul Moore <paul@paul-moore.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+ stephen.smalley.work@gmail.com, eparis@parisplace.org, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+ <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com>
+ <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <7c226242-2eda-41cd-9be8-c2c010f3fc49@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, 2023-12-13 at 15:23 +0000, David Howells wrote:
-> Export netfs_put_subrequest() and the netfs_rreq and netfs_sreq
-> tracepoints.
->=20
+On 12/13/2023 2:45 AM, Roberto Sassu wrote:
+> On 17.11.23 21:57, Paul Moore wrote:
+>> On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
+>>>
+>>> ...
+>>>
+>>> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+>>> index 882fde2a2607..a5edd3c70784 100644
+>>> --- a/security/integrity/iint.c
+>>> +++ b/security/integrity/iint.c
+>>> @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+>>>       return 0;
+>>>   }
+>>>   +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init = {
+>>> +    .lbs_inode = sizeof(struct integrity_iint_cache *),
+>>> +};
+>>
+>> I'll admit that I'm likely missing an important detail, but is there
+>> a reason why you couldn't stash the integrity_iint_cache struct
+>> directly in the inode's security blob instead of the pointer?  For
+>> example:
+>>
+>>    struct lsm_blob_sizes ... = {
+>>      .lbs_inode = sizeof(struct integrity_iint_cache),
+>>    };
+>>
+>>    struct integrity_iint_cache *integrity_inode_get(inode)
+>>    {
+>>      if (unlikely(!inode->isecurity))
+>>        return NULL;
+>
+> Ok, this caught my attention...
+>
+> I see that selinux_inode() has it, but smack_inode() doesn't.
+>
+> Some Smack code assumes that the inode security blob is always non-NULL:
+>
+> static void init_inode_smack(struct inode *inode, struct smack_known
+> *skp)
+> {
+>     struct inode_smack *isp = smack_inode(inode);
+>
+>     isp->smk_inode = skp;
+>     isp->smk_flags = 0;
+> }
+>
+>
+> Is that intended? Should I add the check?
 
+Unless there's a case where inodes are created without calling
+security_inode_alloc() there should never be an inode without a
+security blob by the time you get to the Smack hook. That said,
+people seem inclined to take all sorts of shortcuts and create
+various "inodes" that aren't really inodes. I also see that SELinux
+doesn't check the blob for cred or file structures. And that I
+wrote the code in both cases.
 
-Erm...why? Are these called directly from module code in a later patch?
-Some rationale for this would be a nice thing.
+Based on lack of bug reports for Smack on inodes and SELinux on
+creds or files, It appears that the check is unnecessary. On the
+other hand, it sure looks like good error detection hygiene. I
+would be inclined to include the check in new code, but not get
+in a panic about existing code.
 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->  fs/netfs/main.c    | 3 +++
->  fs/netfs/objects.c | 1 +
->  2 files changed, 4 insertions(+)
->=20
-> diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-> index 97ce1436615b..404e68e339bf 100644
-> --- a/fs/netfs/main.c
-> +++ b/fs/netfs/main.c
-> @@ -17,6 +17,9 @@ MODULE_DESCRIPTION("Network fs support");
->  MODULE_AUTHOR("Red Hat, Inc.");
->  MODULE_LICENSE("GPL");
-> =20
-> +EXPORT_TRACEPOINT_SYMBOL(netfs_rreq);
-> +EXPORT_TRACEPOINT_SYMBOL(netfs_sreq);
-> +
->  unsigned netfs_debug;
->  module_param_named(debug, netfs_debug, uint, S_IWUSR | S_IRUGO);
->  MODULE_PARM_DESC(netfs_debug, "Netfs support debugging mask");
-> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> index 9f3f33c93317..a7947e82374a 100644
-> --- a/fs/netfs/objects.c
-> +++ b/fs/netfs/objects.c
-> @@ -178,3 +178,4 @@ void netfs_put_subrequest(struct netfs_io_subrequest =
-*subreq, bool was_async,
->  	if (dead)
->  		netfs_free_subrequest(subreq, was_async);
->  }
-> +EXPORT_SYMBOL(netfs_put_subrequest);
->=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+>
+> Thanks
+>
+> Roberto
+>
+>>      return inode->i_security + integrity_blob_sizes.lbs_inode;
+>>    }
+>>
+>> -- 
+>> paul-moore.com
+>
+>
 
