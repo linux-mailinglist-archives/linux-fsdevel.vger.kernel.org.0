@@ -1,223 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-6028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37052812369
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 00:42:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BBD8123BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 01:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198631C213D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Dec 2023 23:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063211C213E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 00:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED2179E28;
-	Wed, 13 Dec 2023 23:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EBD389;
+	Thu, 14 Dec 2023 00:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="byuu6jSj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U29m5jOi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2a07:de40:b251:101:10:150:64:2])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583C9324D;
-	Wed, 13 Dec 2023 15:41:02 -0800 (PST)
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9C2B21FD80;
-	Wed, 13 Dec 2023 23:41:00 +0000 (UTC)
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62F5D1377F;
-	Wed, 13 Dec 2023 23:41:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tZokEgxBemV9PgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 13 Dec 2023 23:41:00 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: viro@zeniv.linux.org.uk,
-	ebiggers@kernel.org,
-	jaegeuk@kernel.org,
-	tytso@mit.edu
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH 8/8] fscrypt: Move d_revalidate configuration back into fscrypt
-Date: Wed, 13 Dec 2023 18:40:31 -0500
-Message-ID: <20231213234031.1081-9-krisman@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231213234031.1081-1-krisman@suse.de>
-References: <20231213234031.1081-1-krisman@suse.de>
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C31FDD;
+	Wed, 13 Dec 2023 16:11:45 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailout.west.internal (Postfix) with ESMTP id 5633E3200B69;
+	Wed, 13 Dec 2023 19:11:41 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 13 Dec 2023 19:11:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1702512700;
+	 x=1702599100; bh=VAqYPxgc+/bKFX3mKOr2AnsJnWJikiX4oD9KxuWgxIo=; b=
+	byuu6jSjOxjC+6XDHeFG1ZaEupTQmCuFgV0DOt7qy+j07zlLKyF0jnc528VrLrpt
+	TCZtN6GFGeGgszzhnKckZ3JDLHvLEIrjjjr+1EdrFP4l04IszvRMAh1a6MLTSw4o
+	znV8LMdLRX0PeFiW7NLKS0KU470oVDid33bJ+uhnM17IV5Mv1KoBZ/7HqmI/Dtrz
+	lfvHgdabRyv5NRNYB+GklM15/p+w2qJVrbl2qyO6aAVypQFaH8t4pR56NwJM8RC6
+	M5CAQ/gKgVNu9ifnNHZVdLAlHktykFF+y0RW54m7E/IIwzk3fnCznVPEB5+u79A8
+	GlF91Vqv0q+dsqtqxkvKpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1702512700; x=
+	1702599100; bh=VAqYPxgc+/bKFX3mKOr2AnsJnWJikiX4oD9KxuWgxIo=; b=U
+	29m5jOibtqGsH6gPzE+6te4lbuhC1mza/WeIFvjyWNKrd8Up3yvCx1uhSXRmCnQA
+	fjoWrTxIhETsvsi0foyo6gtWUqL/2uS2yrrLLdr4jdWfpu66IhmQalr3BcQR1X9J
+	ZeNcWKKTa2dwe6hWR63Z5dcP1CdoWYIajnRHLPwCCWi7NdagUXoF3Iv9M403s+Ki
+	9ACHT8VA++iGJZ0E9rJLOz1vyDzdFCiYfBO4wr1flFw8OuTnXfRW3i+3CGW2FYCu
+	b2H2gK5r5xv2BMUGdIPdAbapRA1PCOLrcfF8V2QTdEA89LNh1T3SLLtYt1FXWNtV
+	AMPPg437q9XnVB+8Q22DA==
+X-ME-Sender: <xms:PEh6Zdymy-Krp3814Gq9xeI5GaDzdJYyjMHvDzOk8glGj7XFjyX4vw>
+    <xme:PEh6ZdTPZWvJYiQmxZ4xhsqbvKf1Pgqg427T_1TA1bG-0V3Bn67_eccIZzotgg-0A
+    GT7TauKpBtK>
+X-ME-Received: <xmr:PEh6ZXVN4pkxW8_cS_wS2EOa7HvCzazLAzk1edLEQeOCCFz8NvkhnQNkgGciuw1-cDgihG-bQGobWBpsC6Ab2pUABfJdq-eOF78odOTKshREXCpD8NSnNCzo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelkedgudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghn
+    ucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnh
+    epuefhueeiieejueevkefgiedtteehgfdutdelfffhleeflefhudeuvdefhfeghfehnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
+    esthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:PEh6ZfiEsfkJYjADCg01VSaPm2RGOXer0rZx0pOMVCPsS5MoQUZkEg>
+    <xmx:PEh6ZfAx8K4RqeMO9shaZWPB19c-4vHbdLICQ_S7VKtaYcfvoOpUnA>
+    <xmx:PEh6ZYJ_SfOmw-OLivmtAYsWXr-4JWzZF_sNxDk2kxrIZKWkGvufLw>
+    <xmx:PEh6ZT19wwea3jB5gmKMmSdB1_n8bqs9y2HKDXqaAh0cNVGlVpIV-g>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Dec 2023 19:11:36 -0500 (EST)
+Message-ID: <6608665d-a255-7b1d-653f-1d13d2b3fa2e@themaw.net>
+Date: Thu, 14 Dec 2023 08:11:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Score: -4.00
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	 REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 9C2B21FD80
-X-Spam-Flag: NO
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] [v2] statmount: reduce runtime stack usage
+To: Arnd Bergmann <arnd@kernel.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>,
+ Miklos Szeredi <mszeredi@redhat.com>,
+ "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>,
+ Dave Chinner <dchinner@redhat.com>, Amir Goldstein <amir73il@gmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20231213090015.518044-1-arnd@kernel.org>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+In-Reply-To: <20231213090015.518044-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This partially reverts commit bb9cd9106b22 ("fscrypt: Have filesystems
-handle their d_ops"), which moved this handler out of fscrypt and into
-the filesystems, in preparation to support casefold and fscrypt
-combinations.  Now that we set casefolding operations through
-->s_d_op, move this back into fscrypt, where it belongs, but take care
-to handle filesystems that set their own sb->s_d_op.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/crypto/hooks.c       |  8 ++++++++
- fs/ext4/namei.c         |  5 -----
- fs/f2fs/namei.c         |  5 -----
- fs/libfs.c              | 19 -------------------
- fs/ubifs/dir.c          |  1 -
- include/linux/fs.h      |  1 -
- include/linux/fscrypt.h | 10 +++++-----
- 7 files changed, 13 insertions(+), 36 deletions(-)
+On 13/12/23 17:00, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> prepare_kstatmount() constructs a copy of 'struct kstatmount' on the stack
+> and copies it into the local variable on the stack of its caller. Because
+> of the size of this structure, this ends up overflowing the limit for
+> a single function's stack frame when prepare_kstatmount() gets inlined
+> and both copies are on the same frame without the compiler being able
+> to collapse them into one:
+>
+> fs/namespace.c:4995:1: error: stack frame size (1536) exceeds limit (1024) in '__se_sys_statmount' [-Werror,-Wframe-larger-than]
+>   4995 | SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>
+> Replace the assignment with an in-place memset() plus assignment that
+> should always be more efficient for both stack usage and runtime cost.
 
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index 52504dd478d3..166837d5af29 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -94,6 +94,10 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- }
- EXPORT_SYMBOL_GPL(__fscrypt_prepare_rename);
- 
-+static const struct dentry_operations fscrypt_dentry_ops = {
-+	.d_revalidate = fscrypt_d_revalidate,
-+};
-+
- int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 			     struct fscrypt_name *fname)
- {
-@@ -106,6 +110,10 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 		spin_lock(&dentry->d_lock);
- 		dentry->d_flags |= DCACHE_NOKEY_NAME;
- 		spin_unlock(&dentry->d_lock);
-+
-+		/* Give preference to the filesystem hooks, if any. */
-+		if (!dentry->d_op)
-+			d_set_d_op(dentry, &fscrypt_dentry_ops);
- 	}
- 	return err;
- }
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 3c1208d5d85b..3f0b853a371e 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1762,11 +1762,6 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
- 	struct buffer_head *bh;
- 
- 	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
--
--	/* Case-insensitive volumes set dentry ops through sb->s_d_op. */
--	if (!dir->i_sb->s_encoding)
--		generic_set_encrypted_ci_d_ops(dentry);
--
- 	if (err == -ENOENT)
- 		return NULL;
- 	if (err)
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 4053846e2cd3..b40c6c393bd6 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -532,11 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
- 
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
--
--	/* Case-insensitive volumes set dentry ops through sb->s_d_op. */
--	if (!dir->i_sb->s_encoding)
--		generic_set_encrypted_ci_d_ops(dentry);
--
- 	if (err == -ENOENT)
- 		goto out_splice;
- 	if (err)
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 41c02c003265..4fed170dfe49 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1780,25 +1780,6 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
- };
- #endif
- 
--/**
-- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-- * @dentry:	dentry to set ops on
-- *
-- * Encryption works differently in that the only dentry operation it needs is
-- * d_revalidate, which it only needs on dentries that have the no-key name flag.
-- * The no-key flag can't be set "later", so we don't have to worry about that.
-- */
--void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
--{
--#ifdef CONFIG_FS_ENCRYPTION
--	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
--		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
--		return;
--	}
--#endif
--}
--EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
--
- /**
-  * inode_maybe_inc_iversion - increments i_version
-  * @inode: inode with the i_version that should be updated
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 3b13c648d490..51b9a10a9851 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -205,7 +205,6 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
- 	dbg_gen("'%pd' in dir ino %lu", dentry, dir->i_ino);
- 
- 	err = fscrypt_prepare_lookup(dir, dentry, &nm);
--	generic_set_encrypted_ci_d_ops(dentry);
- 	if (err == -ENOENT)
- 		return d_splice_alias(NULL, dentry);
- 	if (err)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 887a27d07f96..e5ae21f9f637 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3201,7 +3201,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
--extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- extern const struct dentry_operations generic_ci_dentry_ops;
- 
- int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 12f9e455d569..97a11280c2bd 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -961,11 +961,11 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
-  * key is available, then the lookup is assumed to be by plaintext name;
-  * otherwise, it is assumed to be by no-key name.
-  *
-- * This will set DCACHE_NOKEY_NAME on the dentry if the lookup is by no-key
-- * name.  In this case the filesystem must assign the dentry a dentry_operations
-- * which contains fscrypt_d_revalidate (or contains a d_revalidate method that
-- * calls fscrypt_d_revalidate), so that the dentry will be invalidated if the
-- * directory's encryption key is later added.
-+ * This also optionally installs a custom ->d_revalidate() method which will
-+ * invalidate the dentry if it was created without the key and the key is later
-+ * added.  If the filesystem provides its own ->d_op hooks, they will be used
-+ * instead, but then the filesystem must make sure to call fscrypt_d_revalidate
-+ * in its d_revalidate hook, to check if fscrypt considers the dentry stale.
-  *
-  * Return: 0 on success; -ENOENT if the directory's key is unavailable but the
-  * filename isn't a valid no-key name, so a negative dentry should be created;
--- 
-2.43.0
+Cunning plan, to use the work efficient instead of inefficient, ;(
+
+But, TBH, the libc integration seems complex but I also feel there's
+
+no choice and this looks fine too.
+
+
+>
+> Fixes: 49889374ab92 ("statmount: simplify string option retrieval")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   fs/namespace.c | 15 ++++++---------
+>   1 file changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d036196f949c..159f1df379fc 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -4957,15 +4957,12 @@ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+>   	if (!access_ok(buf, bufsize))
+>   		return -EFAULT;
+>   
+> -	*ks = (struct kstatmount){
+> -		.mask		= kreq->param,
+> -		.buf		= buf,
+> -		.bufsize	= bufsize,
+> -		.seq = {
+> -			.size	= seq_size,
+> -			.buf	= kvmalloc(seq_size, GFP_KERNEL_ACCOUNT),
+> -		},
+> -	};
+> +	memset(ks, 0, sizeof(*ks));
+> +	ks->mask = kreq->param;
+> +	ks->buf = buf;
+> +	ks->bufsize = bufsize;
+> +	ks->seq.size = seq_size;
+> +	ks->seq.buf = kvmalloc(seq_size, GFP_KERNEL_ACCOUNT);
+>   	if (!ks->seq.buf)
+>   		return -ENOMEM;
+>   	return 0;
+
+This looks much better than what it replaces IMHO.
+
+
+Reviewed-by: Ian Kent <raven@themaw.net>
+
+
+Ian
 
 
