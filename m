@@ -1,58 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-6054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47C8812F8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 12:58:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B774812FA1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 13:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605BE283142
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 11:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD7C1C2198F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 12:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0168F4121E;
-	Thu, 14 Dec 2023 11:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA33F41227;
+	Thu, 14 Dec 2023 12:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DvqSNF9Z"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d7l7NPQe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F863126;
-	Thu, 14 Dec 2023 03:58:29 -0800 (PST)
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F7A0B9;
+	Thu, 14 Dec 2023 04:02:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702555109; x=1734091109;
+  t=1702555379; x=1734091379;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=cV5kj31cFE9+FQFlEfWw+Csb+q1VhY9EQYtyWEoQyM8=;
-  b=DvqSNF9ZV+DA3WB8sFcwY2O2wlZsdMYYnrUrMEMTIxyvZhG59Jgx14y8
-   kVcdsYdCmOpy3W49qLH9WAJBAhSiS9QyKgM/L8wZQEow3Bhp9DPTGvQcz
-   6x1V0H6V9nFSiZBORhhmUNERxqNzaNM2AxVlGHyAgAiX/3eTWe5aI2nmc
-   v6abeO0JAIRd6LLVDQnigvrcU/tvOvkhH15/69qbLAOcE6Fq2qqXnRkW7
-   2QkLmKn5PCkWUxd2YLdyDOW7k1iWAnsfHdz9dpbNdSMadTcmKY5YXsfB3
-   hf80uFjasUPA6MQS/LDCCoGNAAflOuyUhoNvEDOkWP5lTTf4HPhXYVj6o
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="461573436"
+  bh=563D9nECUGI/og8VRk92+ujEBSTYRs1beJ3uhY8y7zs=;
+  b=d7l7NPQe3CJulGImA8XbKtmYRe2a6xvH+/WlIKvc08uYBQWnzI1uPCXO
+   eOEuTtH9oWv7jBU/xYw2r17Rnxn6NWjFhDBi6eYCSrZrJ5oU0aLzDPLnP
+   Pd3NaH2ccd3uYySJbzrWxtsjQLblEx7GEu1DEtB0o15sNjiTERT8bNk+3
+   WHDk2EWF5484p0PxOUt1VRX5BhqHnLfv8WPbHh1/2DTbtYByiEfm1yh72
+   KcGJR1F4/ye44WY1HvSExG2A/S1EA69vnO5Rt7TF8h+kd7yc/oWNjlGIg
+   z7ziyc9G7RF0Ew1VTMJF0s30Ax/ZBTKW+zVqOCcP6QvFIMRU89gXYveqB
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="397892475"
 X-IronPort-AV: E=Sophos;i="6.04,275,1695711600"; 
-   d="scan'208";a="461573436"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 03:58:28 -0800
+   d="scan'208";a="397892475"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 04:02:58 -0800
 X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="808560608"
 X-IronPort-AV: E=Sophos;i="6.04,275,1695711600"; 
-   d="scan'208";a="17715249"
+   d="scan'208";a="808560608"
 Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.213.7.207])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 03:58:27 -0800
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 04:02:57 -0800
 From: "Fabio M. De Francesco" <fabio.maria.de.francesco@linux.intel.com>
 To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] minixfs: change the signature of dir_get_page()
-Date: Thu, 14 Dec 2023 12:58:24 +0100
-Message-ID: <4222956.ElGaqSPkdT@fdefranc-mobl3>
+Subject:
+ Re: [PATCH 3/4] minixfs: Use dir_put_page() in minix_unlink() and
+ minix_rename()
+Date: Thu, 14 Dec 2023 13:02:54 +0100
+Message-ID: <4082441.irdbgypaU6@fdefranc-mobl3>
 Organization: intel
-In-Reply-To: <20231213000849.2748576-2-viro@zeniv.linux.org.uk>
+In-Reply-To: <20231213000849.2748576-3-viro@zeniv.linux.org.uk>
 References:
  <20231213000656.GI1674809@ZenIV>
  <20231213000849.2748576-1-viro@zeniv.linux.org.uk>
- <20231213000849.2748576-2-viro@zeniv.linux.org.uk>
+ <20231213000849.2748576-3-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,134 +65,86 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-On Wednesday, 13 December 2023 01:08:47 CET Al Viro wrote:
-> Change the signature of dir_get_page() in order to prepare this function
-> to the conversion to the use of kmap_local_page(). Change also those call
-> sites which are required to adjust to the new signature.
-> 
-> Essentially a copy of the corresponding fs/sysv commit by
-> Fabio M. De Francesco <fmdefrancesco@gmail.com>
-> 
+On Wednesday, 13 December 2023 01:08:48 CET Al Viro wrote:
+> ... rather than open-coding it there.  Counterpart of the
+> corresponding fs/sysv commit from Fabio's series...
+
+Yes, I can still remember this code ;)
+
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  fs/minix/dir.c | 46 ++++++++++++++++++++--------------------------
->  1 file changed, 20 insertions(+), 26 deletions(-)
+>  fs/minix/dir.c   |  6 ------
+>  fs/minix/minix.h |  5 +++++
+>  fs/minix/namei.c | 12 ++++--------
+>  3 files changed, 9 insertions(+), 14 deletions(-)
 
 Reviewed-by: Fabio M. De Francesco <fabio.maria.de.francesco@linux.intel.com>
 
 > diff --git a/fs/minix/dir.c b/fs/minix/dir.c
-> index 34a5d17f0796..4e5483adea40 100644
+> index 4e5483adea40..ccb6c47fd7fe 100644
 > --- a/fs/minix/dir.c
 > +++ b/fs/minix/dir.c
-> @@ -70,13 +70,15 @@ static int minix_handle_dirsync(struct inode *dir)
->  	return err;
->  }
+> @@ -26,12 +26,6 @@ const struct file_operations minix_dir_operations = {
+>  	.fsync		= generic_file_fsync,
+>  };
 > 
-> -static struct page * dir_get_page(struct inode *dir, unsigned long n)
-> +static void *dir_get_page(struct inode *dir, unsigned long n, struct page
-> **p) {
->  	struct address_space *mapping = dir->i_mapping;
->  	struct page *page = read_mapping_page(mapping, n, NULL);
-> -	if (!IS_ERR(page))
-> -		kmap(page);
-> -	return page;
-> +	if (IS_ERR(page))
-> +		return ERR_CAST(page);
-> +	kmap(page);
-> +	*p = page;
-> +	return page_address(page);
->  }
+> -static inline void dir_put_page(struct page *page)
+> -{
+> -	kunmap(page);
+> -	put_page(page);
+> -}
+> -
+>  /*
+>   * Return the offset into page `page_nr' of the last valid
+>   * byte in that page, plus one.
+> diff --git a/fs/minix/minix.h b/fs/minix/minix.h
+> index d493507c064f..cb42b6cf7909 100644
+> --- a/fs/minix/minix.h
+> +++ b/fs/minix/minix.h
+> @@ -64,6 +64,11 @@ extern int V2_minix_get_block(struct inode *, long,
+> struct buffer_head *, int); extern unsigned V1_minix_blocks(loff_t, struct
+> super_block *);
+>  extern unsigned V2_minix_blocks(loff_t, struct super_block *);
 > 
->  static inline void *minix_next_entry(void *de, struct minix_sb_info *sbi)
-> @@ -104,11 +106,11 @@ static int minix_readdir(struct file *file, struct
-> dir_context *ctx)
+> +static inline void dir_put_page(struct page *page)
+> +{
+> +	kunmap(page);
+> +	put_page(page);
+> +}
+>  extern struct minix_dir_entry *minix_find_entry(struct dentry*, struct
+> page**); extern int minix_add_link(struct dentry*, struct inode*);
+>  extern int minix_delete_entry(struct minix_dir_entry*, struct page*);
+> diff --git a/fs/minix/namei.c b/fs/minix/namei.c
+> index 114084d5636a..20923a15e30a 100644
+> --- a/fs/minix/namei.c
+> +++ b/fs/minix/namei.c
+> @@ -149,8 +149,7 @@ static int minix_unlink(struct inode * dir, struct
+> dentry *dentry) if (!de)
+>  		return -ENOENT;
+>  	err = minix_delete_entry(de, page);
+> -	kunmap(page);
+> -	put_page(page);
+> +	dir_put_page(page);
 > 
->  	for ( ; n < npages; n++, offset = 0) {
->  		char *p, *kaddr, *limit;
-> -		struct page *page = dir_get_page(inode, n);
-> +		struct page *page;
-> 
-> -		if (IS_ERR(page))
-> +		kaddr = dir_get_page(inode, n, &page);
-> +		if (IS_ERR(kaddr))
->  			continue;
-> -		kaddr = (char *)page_address(page);
->  		p = kaddr+offset;
->  		limit = kaddr + minix_last_byte(inode, n) - chunk_size;
->  		for ( ; p <= limit; p = minix_next_entry(p, sbi)) {
-> @@ -173,11 +175,10 @@ minix_dirent *minix_find_entry(struct dentry *dentry,
-> struct page **res_page) for (n = 0; n < npages; n++) {
->  		char *kaddr, *limit;
-> 
-> -		page = dir_get_page(dir, n);
-> -		if (IS_ERR(page))
-> +		kaddr = dir_get_page(dir, n, &page);
-> +		if (IS_ERR(kaddr))
->  			continue;
-> 
-> -		kaddr = (char*)page_address(page);
->  		limit = kaddr + minix_last_byte(dir, n) - sbi->s_dirsize;
->  		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
->  			if (sbi->s_version == MINIX_V3) {
-> @@ -229,12 +230,10 @@ int minix_add_link(struct dentry *dentry, struct inode
-> *inode) for (n = 0; n <= npages; n++) {
->  		char *limit, *dir_end;
-> 
-> -		page = dir_get_page(dir, n);
-> -		err = PTR_ERR(page);
-> -		if (IS_ERR(page))
-> -			goto out;
-> +		kaddr = dir_get_page(dir, n, &page);
-> +		if (IS_ERR(kaddr))
-> +			return PTR_ERR(kaddr);
->  		lock_page(page);
-> -		kaddr = (char*)page_address(page);
->  		dir_end = kaddr + minix_last_byte(dir, n);
->  		limit = kaddr + PAGE_SIZE - sbi->s_dirsize;
->  		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
-> @@ -286,7 +285,6 @@ int minix_add_link(struct dentry *dentry, struct inode
-> *inode) err = minix_handle_dirsync(dir);
->  out_put:
->  	dir_put_page(page);
-> -out:
->  	return err;
->  out_unlock:
->  	unlock_page(page);
-> @@ -375,11 +373,10 @@ int minix_empty_dir(struct inode * inode)
->  	for (i = 0; i < npages; i++) {
->  		char *p, *kaddr, *limit;
-> 
-> -		page = dir_get_page(inode, i);
-> -		if (IS_ERR(page))
-> +		kaddr = dir_get_page(inode, i, &page);
-> +		if (IS_ERR(kaddr))
->  			continue;
-> 
-> -		kaddr = (char *)page_address(page);
->  		limit = kaddr + minix_last_byte(inode, i) - sbi->s_dirsize;
->  		for (p = kaddr; p <= limit; p = minix_next_entry(p, sbi)) {
->  			if (sbi->s_version == MINIX_V3) {
-> @@ -441,15 +438,12 @@ int minix_set_link(struct minix_dir_entry *de, struct
-> page *page,
-> 
->  struct minix_dir_entry * minix_dotdot (struct inode *dir, struct page **p)
->  {
-> -	struct page *page = dir_get_page(dir, 0);
->  	struct minix_sb_info *sbi = minix_sb(dir->i_sb);
-> -	struct minix_dir_entry *de = NULL;
-> +	struct minix_dir_entry *de = dir_get_page(dir, 0, p);
-> 
-> -	if (!IS_ERR(page)) {
-> -		de = minix_next_entry(page_address(page), sbi);
-> -		*p = page;
+>  	if (err)
+>  		return err;
+> @@ -242,13 +241,10 @@ static int minix_rename(struct mnt_idmap *idmap,
+>  			inode_dec_link_count(old_dir);
+>  	}
+>  out_dir:
+> -	if (dir_de) {
+> -		kunmap(dir_page);
+> -		put_page(dir_page);
 > -	}
-> -	return de;
-> +	if (!IS_ERR(de))
-> +		return minix_next_entry(de, sbi);
-> +	return NULL;
+> +	if (dir_de)
+> +		dir_put_page(dir_page);
+>  out_old:
+> -	kunmap(old_page);
+> -	put_page(old_page);
+> +	dir_put_page(old_page);
+>  out:
+>  	return err;
 >  }
-> 
->  ino_t minix_inode_by_name(struct dentry *dentry)
 
 
 
