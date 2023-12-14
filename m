@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-6143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BD0813BB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 21:42:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3EF813BBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 21:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7C01F225EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 20:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FB8283703
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 20:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB5D6ABA3;
-	Thu, 14 Dec 2023 20:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E399B6DCEF;
+	Thu, 14 Dec 2023 20:42:17 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727AC6D1DF;
-	Thu, 14 Dec 2023 20:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5FF17755;
+	Thu, 14 Dec 2023 20:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d05199f34dso50257905ad.3;
-        Thu, 14 Dec 2023 12:42:13 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d075392ff6so8840425ad.1;
+        Thu, 14 Dec 2023 12:42:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702586533; x=1703191333;
+        d=1e100.net; s=20230601; t=1702586534; x=1703191334;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B+EPIOgtWnZZFMdEPXVpPJg6okBBXxZhbiR/xWxI+Eo=;
-        b=YgUKvTquvnWgBOqnl0y8jgNovtPLkbVYTurxerw6tWa2cHNCcPFJhHpQ3vLZjQmHvo
-         9imRREgKo8D0c+UY7oDJRS2Q6MjCzDxsdwgWLVRqdb5CPXPky698uDz3iwrpj9YBnYbz
-         KI9UBaEB0kdWZOGJLELsCP6FkF1m3J4+rHgaQK6OSigN3fTzR1q87uW7QyBu+HHo4bWH
-         wtbo2ZBjv2TWQxgtsaQube3/iDiycGnLxTg0mtr3DbT36HhDwR6anElV9SUCd6Bl+ipZ
-         Wxm3rrW6ovbP0+Z8kmog5Jm4We8GnvvUhnNKHZm9BUwP+4eM1BX7HlnaVvs7y5SNTwYA
-         HizQ==
-X-Gm-Message-State: AOJu0YxHddOCm2zQM/TTmeFo656TYH39fVznb5Nq231gRxz3+qAv6USs
-	5PltQwu+HRNscSnmz3bktyo=
-X-Google-Smtp-Source: AGHT+IGOveIsRlR2TbvADtzxeUCkk4blQ6POBkkA5ItgKWNEk6Xjj0zMRVvQEO6ezNGJPJ2/BsHRhA==
-X-Received: by 2002:a17:902:704c:b0:1d0:6ffd:6e90 with SMTP id h12-20020a170902704c00b001d06ffd6e90mr5526830plt.136.1702586532536;
-        Thu, 14 Dec 2023 12:42:12 -0800 (PST)
+        bh=pk2ihovKNRK6u+s+5HL4/doR8ARRBdZiN97q9xkBx2w=;
+        b=aml3HwrHsVai0ZKXqAZBB1J0Ywp+t5a/nrC83yt/L0fFcHazpx8dA34Wt/xqQE4lzg
+         ta2qjRs10atI7y6ZtTs7bL4b9F04txp5nPMIqfmOcxR0Mmde+ysVVaZnDZxhSovlkV/N
+         cvRWtxvpfoLmRKRRgis8fB8AMTVbABZtkTTddIpKUbtVDQImn20lyKnIOrGIyfH6beIu
+         jQXaPnhMhZOxCbthfn9xUkOfZIFGJJ1FoCt9OsBUfRSQXKzr9NuFWJBoju1erkVXWUkf
+         1hNJQQUW1LJBQYuoj91xL0FkRczYVKD1mjtJ0SYutkOJO3xlH1RXVVTwR3s6hgYjFST1
+         nu/w==
+X-Gm-Message-State: AOJu0YxhHt+TAr1q5BSRnOTqkZ4IUFXuOAcNOQcQUnAvkjy1S2GrGuRX
+	HmC7Gd7Og+NbSwq1S/XDJMM=
+X-Google-Smtp-Source: AGHT+IHUKISqW/ooeu+52hVSdEzOkIeEunISRmuNe9xMkTy+67JP30xd5O4TH3Yv1+scZ0m6Fr+8Rw==
+X-Received: by 2002:a17:902:cec3:b0:1d0:4802:3b6c with SMTP id d3-20020a170902cec300b001d048023b6cmr13163916plg.4.1702586534349;
+        Thu, 14 Dec 2023 12:42:14 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:bae8:452d:2e24:5984])
-        by smtp.gmail.com with ESMTPSA id z21-20020a170902ee1500b001d340c71ccasm5091640plb.275.2023.12.14.12.42.11
+        by smtp.gmail.com with ESMTPSA id z21-20020a170902ee1500b001d340c71ccasm5091640plb.275.2023.12.14.12.42.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 12:42:12 -0800 (PST)
+        Thu, 14 Dec 2023 12:42:13 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -53,16 +53,15 @@ Cc: linux-scsi@vger.kernel.org,
 	Daejun Park <daejun7.park@samsung.com>,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
 	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH v6 04/20] fs: Move enum rw_hint into a new header file
-Date: Thu, 14 Dec 2023 12:40:37 -0800
-Message-ID: <20231214204119.3670625-5-bvanassche@acm.org>
+	Chuck Lever <chuck.lever@oracle.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v6 05/20] fs: Restore F_[GS]ET_FILE_RW_HINT support
+Date: Thu, 14 Dec 2023 12:40:38 -0800
+Message-ID: <20231214204119.3670625-6-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231214204119.3670625-1-bvanassche@acm.org>
 References: <20231214204119.3670625-1-bvanassche@acm.org>
@@ -74,127 +73,115 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move enum rw_hint into a new header file to prepare for using this data
-type in the block layer. Add the attribute __packed to reduce the space
-occupied by instances of this data type from four bytes to one byte.
-Change the data type of i_write_hint from u8 into enum rw_hint.
+Since there are applications (e.g. Ceph) that use F_[GS]ET_FILE_RW_HINT,
+restore support for these fcntls. This patch restores functionality that
+was removed by commit 7b12e49669c9 ("fs: remove fs.f_write_hint").
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>
 Cc: Christoph Hellwig <hch@lst.de>
+Cc: Dave Chinner <dchinner@redhat.com>
+Cc: Chaitanya Kulkarni <kch@nvidia.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/f2fs/f2fs.h          |  1 +
- fs/fcntl.c              |  1 +
- fs/inode.c              |  1 +
- include/linux/fs.h      | 16 ++--------------
- include/linux/rw_hint.h | 21 +++++++++++++++++++++
- 5 files changed, 26 insertions(+), 14 deletions(-)
- create mode 100644 include/linux/rw_hint.h
+ fs/fcntl.c         | 37 +++++++++++++++++++++++++++++++++++++
+ fs/open.c          |  1 +
+ include/linux/fs.h |  9 +++++++++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9043cedfa12b..8e0c66a6b097 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -24,6 +24,7 @@
- #include <linux/blkdev.h>
- #include <linux/quotaops.h>
- #include <linux/part_stat.h>
-+#include <linux/rw_hint.h>
- #include <crypto/hash.h>
- 
- #include <linux/fscrypt.h>
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 5fa2d95114bf..fc73c5fae43c 100644
+index fc73c5fae43c..8018c4da478c 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
-@@ -27,6 +27,7 @@
- #include <linux/memfd.h>
- #include <linux/compat.h>
- #include <linux/mount.h>
-+#include <linux/rw_hint.h>
+@@ -322,6 +322,37 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
+ 	return 0;
+ }
  
- #include <linux/poll.h>
- #include <asm/siginfo.h>
-diff --git a/fs/inode.c b/fs/inode.c
-index edcd8a61975f..a1384807ab58 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -20,6 +20,7 @@
- #include <linux/ratelimit.h>
- #include <linux/list_lru.h>
- #include <linux/iversion.h>
-+#include <linux/rw_hint.h>
- #include <trace/events/writeback.h>
- #include "internal.h"
++static long fcntl_get_file_rw_hint(struct file *file, unsigned int cmd,
++				   unsigned long arg)
++{
++	struct inode *inode = file_inode(file);
++	u64 __user *argp = (u64 __user *)arg;
++	u64 hint = inode->i_write_hint;
++
++	hint = file_write_hint(file);
++	if (copy_to_user(argp, &hint, sizeof(*argp)))
++		return -EFAULT;
++	return 0;
++}
++
++static long fcntl_set_file_rw_hint(struct file *file, unsigned int cmd,
++				   unsigned long arg)
++{
++	u64 __user *argp = (u64 __user *)arg;
++	u64 hint;
++
++	if (copy_from_user(&hint, argp, sizeof(hint)))
++		return -EFAULT;
++	if (!rw_hint_valid(hint))
++		return -EINVAL;
++
++	spin_lock(&file->f_lock);
++	file->f_write_hint = hint;
++	spin_unlock(&file->f_lock);
++
++	return 0;
++}
++
+ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 		struct file *filp)
+ {
+@@ -430,6 +461,12 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 	case F_SET_RW_HINT:
+ 		err = fcntl_set_rw_hint(filp, cmd, arg);
+ 		break;
++	case F_GET_FILE_RW_HINT:
++		err = fcntl_get_file_rw_hint(filp, cmd, arg);
++		break;
++	case F_SET_FILE_RW_HINT:
++		err = fcntl_set_file_rw_hint(filp, cmd, arg);
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/fs/open.c b/fs/open.c
+index 02dc608d40d8..4c5c29541ac5 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -961,6 +961,7 @@ static int do_dentry_open(struct file *f,
+ 	if (f->f_mapping->a_ops && f->f_mapping->a_ops->direct_IO)
+ 		f->f_mode |= FMODE_CAN_ODIRECT;
+ 
++	f->f_write_hint = WRITE_LIFE_NOT_SET;
+ 	f->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
+ 	f->f_iocb_flags = iocb_flags(f);
  
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98b7a7a8c42e..a08014b68d6e 100644
+index a08014b68d6e..a6e0c4b5a72b 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -43,6 +43,7 @@
- #include <linux/cred.h>
- #include <linux/mnt_idmapping.h>
- #include <linux/slab.h>
-+#include <linux/rw_hint.h>
+@@ -989,6 +989,7 @@ struct file {
+ 	 * Must not be taken from IRQ context.
+ 	 */
+ 	spinlock_t		f_lock;
++	enum rw_hint		f_write_hint;
+ 	fmode_t			f_mode;
+ 	atomic_long_t		f_count;
+ 	struct mutex		f_pos_lock;
+@@ -2162,6 +2163,14 @@ static inline bool HAS_UNMAPPED_ID(struct mnt_idmap *idmap,
+ 	       !vfsgid_valid(i_gid_into_vfsgid(idmap, inode));
+ }
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -309,19 +310,6 @@ struct address_space;
- struct writeback_control;
- struct readahead_control;
- 
--/*
-- * Write life time hint values.
-- * Stored in struct inode as u8.
-- */
--enum rw_hint {
--	WRITE_LIFE_NOT_SET	= 0,
--	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
--	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
--	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
--	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
--	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
--};
--
- /* Match RWF_* bits to IOCB bits */
- #define IOCB_HIPRI		(__force int) RWF_HIPRI
- #define IOCB_DSYNC		(__force int) RWF_DSYNC
-@@ -677,7 +665,7 @@ struct inode {
- 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
- 	unsigned short          i_bytes;
- 	u8			i_blkbits;
--	u8			i_write_hint;
-+	enum rw_hint		i_write_hint;
- 	blkcnt_t		i_blocks;
- 
- #ifdef __NEED_I_SIZE_ORDERED
-diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
-new file mode 100644
-index 000000000000..6334ec6e6663
---- /dev/null
-+++ b/include/linux/rw_hint.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_RW_HINT_H
-+#define _LINUX_RW_HINT_H
++static inline enum rw_hint file_write_hint(struct file *file)
++{
++	if (file->f_write_hint != WRITE_LIFE_NOT_SET)
++		return file->f_write_hint;
 +
-+#include <linux/build_bug.h>
-+#include <linux/compiler_attributes.h>
-+#include <uapi/linux/fcntl.h>
++	return file_inode(file)->i_write_hint;
++}
 +
-+/* Block storage write lifetime hint values. */
-+enum rw_hint {
-+	WRITE_LIFE_NOT_SET	= RWH_WRITE_LIFE_NOT_SET,
-+	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
-+	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
-+	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
-+	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
-+	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
-+} __packed;
-+
-+static_assert(sizeof(enum rw_hint) == 1);
-+
-+#endif /* _LINUX_RW_HINT_H */
+ static inline void init_sync_kiocb(struct kiocb *kiocb, struct file *filp)
+ {
+ 	*kiocb = (struct kiocb) {
 
