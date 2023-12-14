@@ -1,39 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-6074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AFE81321D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 14:49:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB035813281
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 15:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434311F222F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 13:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF611F22076
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 14:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE1E57898;
-	Thu, 14 Dec 2023 13:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25B359E25;
+	Thu, 14 Dec 2023 14:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WbYUwZpz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuU+Ti7I"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61AE56B7D;
-	Thu, 14 Dec 2023 13:49:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99E7C433C8;
-	Thu, 14 Dec 2023 13:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BB83E462;
+	Thu, 14 Dec 2023 14:07:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFCDC433C7;
+	Thu, 14 Dec 2023 14:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702561770;
-	bh=zmJFQFRT3Ce/ZycciWKkUVry0rBAoAVSLjXBGo/8jM0=;
+	s=k20201202; t=1702562851;
+	bh=9BLM+8qwcvl/5vM2uEaRxfm58T5UnEeUHi1BK0de4ak=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WbYUwZpzJDoG/48JP0w0SLSFeRfi1MDmMYAVm3jTsMeE2PnJT3CRJx8BeBJcoX8JP
-	 pm8sfgJ6+dEdvAezZXj/HKG7N7iUQK0yJ5IKxcR6fvIYub35L3DBJRwIMgq4FG6zbF
-	 rWSND/Wd0aEXnTt7WuwyEdQ/EoUeRJhrg0u/b5ClI2o43CW6nzwccsb8qrPx2fBX/U
-	 v+5HXigcuoAlBziUBQ2Uq1PFRPEDsxPNrWB8rbCg05iwZFO0y15URLNHI8lF/dUkLC
-	 5BG7jpoMOAdyPKtIm+fnC+pc2USRKVcKSpaK1HTBjafh4s9Vjm2tlNEEkPYy/ggQst
-	 0VH83S8m9iarQ==
-Message-ID: <d1d4f3996f55cb98ab6297844a51bc905e2ce631.camel@kernel.org>
-Subject: Re: [PATCH v4 36/39] netfs: Implement a write-through caching option
+	b=IuU+Ti7Ig9BEHGWxIBw1DJbtactT68k/HlsJToI2vUeWq9EJ1U2mT0k1T5D2xujoM
+	 B1rYB5j5idW2FL5RHh8SVSgwbWkEua6byHbIh5zCcVmxRmMP51w2PBl2derU/6yO0z
+	 ssQwz8+KBEPWwMTGOW4dPXut1/X1lToKBU5F8OXTR9SELjzy/VkeavIZv8OnJNh4o8
+	 0rK+lP6rYfi+n5z+t0sJRKcdQ43Ia0R/QlaHc3UTt1U6oOH4rkiZpMFkoxHO7yHVXo
+	 /rR4D5gZfcBIl3UiwfXtNkJX80NncEVj3Np/wvQqP70YyjSMV2p9IQgN/h4TangZEz
+	 Shx7/M6nv64Qg==
+Message-ID: <8b9413cc37a231a97059c7d028d404ab35363764.camel@kernel.org>
+Subject: Re: [PATCH v4 37/39] netfs: Optimise away reads above the point at
+ which there can be no data
 From: Jeff Layton <jlayton@kernel.org>
 To: David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>
 Cc: Matthew Wilcox <willy@infradead.org>, Marc Dionne
@@ -46,10 +47,10 @@ Cc: Matthew Wilcox <willy@infradead.org>, Marc Dionne
  linux-nfs@vger.kernel.org,  ceph-devel@vger.kernel.org,
  v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
  netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 14 Dec 2023 08:49:27 -0500
-In-Reply-To: <20231213152350.431591-37-dhowells@redhat.com>
+Date: Thu, 14 Dec 2023 09:07:28 -0500
+In-Reply-To: <20231213152350.431591-38-dhowells@redhat.com>
 References: <20231213152350.431591-1-dhowells@redhat.com>
-	 <20231213152350.431591-37-dhowells@redhat.com>
+	 <20231213152350.431591-38-dhowells@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -70,394 +71,311 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Wed, 2023-12-13 at 15:23 +0000, David Howells wrote:
-> Provide a flag whereby a filesystem may request that cifs_perform_write()
-> perform write-through caching.  This involves putting pages directly into
-> writeback rather than dirty and attaching them to a write operation as we
-> go.
+> Track the file position above which the server is not expected to have an=
+y
+> data (the "zero point") and preemptively assume that we can satisfy
+> requests by filling them with zeroes locally rather than attempting to
+> download them if they're over that line - even if we've written data back
+> to the server.  Assume that any data that was written back above that
+> position is held in the local cache.  Note that we have to split requests
+> that straddle the line.
 >=20
-> Further, the writes being made are limited to the byte range being writte=
-n
-> rather than whole folios being written.  This can be used by cifs, for
-> example, to deal with strict byte-range locking.
+> Make use of this to optimise away some reads from the server.  We need to
+> set the zero point in the following circumstances:
 >=20
-
-This is pretty cool. I wonder if that will help cifs pass more locking
-tests?
-
-> This can't be used with content encryption as that may require expansion =
-of
-> the write RPC beyond the write being made.
+>  (1) When we see an extant remote inode and have no cache for it, we set
+>      the zero_point to i_size.
 >=20
-> This doesn't affect writes via mmap - those are written back in the norma=
-l
-> way; similarly failed writethrough writes are marked dirty and left to
-> writeback to retry.  Another option would be to simply invalidate them, b=
-ut
-> the contents can be simultaneously accessed by read() and through mmap.
+>  (2) On local inode creation, we set zero_point to 0.
+>=20
+>  (3) On local truncation down, we reduce zero_point to the new i_size if
+>      the new i_size is lower.
+>=20
+>  (4) On local truncation up, we don't change zero_point.
 >=20
 
-I do wish Linux were less of a mess in this regard. Different
-filesystems behave differently when writeback fails.
+The above seems odd, but I guess the assumption is that if there are any
+writes by a 3rd party above the old zero point, that that would cause an
+invalidation?
 
-That said, the modern consensus with local filesystems is to just leave
-the pages clean when buffered writeback fails, but set a writeback error
-on the inode. That at least keeps dirty pages from stacking up in the
-cache. In the case of something like a netfs, we usually invalidate the
-inode and the pages -- netfs's usually have to spontaneously deal with
-that anyway, so we might as well.
-
-Marking the pages dirty here should mean that they'll effectively get a
-second try at writeback, which is a change in behavior from most
-filesystems. I'm not sure it's a bad one, but writeback can take a long
-time if you have a laggy network.
-
-When a write has already failed once, why do you think it'll succeed on
-a second attempt (and probably with page-aligned I/O, I guess)?
-
-Another question: when the writeback is (re)attempted, will it end up
-just doing page-aligned I/O, or is the byte range still going to be
-limited to the written range?
-
-The more I consider it, I think it might be a lot simpler to just "fail
-fast" here rather than remarking the write dirty.
-
+>  (5) On local modification, we don't change zero_point.
+>=20
+>  (6) On remote invalidation, we set zero_point to the new i_size.
+>=20
+>  (7) If stored data is discarded from the pagecache or culled from fscach=
+e,
+>      we must set zero_point above that if the data also got written to th=
+e
+>      server.
+>=20
+>  (8) If dirty data is written back to the server, but not fscache, we mus=
+t
+>      set zero_point above that.
+>=20
+>  (9) If a direct I/O write is made, set zero_point above that.
+>=20
+> Assuming the above, any read from the server at or above the zero_point
+> position will return all zeroes.
+>=20
+> The zero_point value can be stored in the cache, provided the above rules
+> are applied to it by any code that culls part of the local cache.
+>=20
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > cc: Jeff Layton <jlayton@kernel.org>
 > cc: linux-cachefs@redhat.com
 > cc: linux-fsdevel@vger.kernel.org
 > cc: linux-mm@kvack.org
 > ---
->  fs/netfs/buffered_write.c    | 69 +++++++++++++++++++++++----
->  fs/netfs/internal.h          |  3 ++
->  fs/netfs/main.c              |  1 +
->  fs/netfs/objects.c           |  1 +
->  fs/netfs/output.c            | 90 ++++++++++++++++++++++++++++++++++++
->  include/linux/netfs.h        |  2 +
->  include/trace/events/netfs.h |  8 +++-
->  7 files changed, 162 insertions(+), 12 deletions(-)
+>  fs/afs/inode.c            | 22 +++++++++++++---------
+>  fs/netfs/buffered_write.c |  2 +-
+>  fs/netfs/direct_write.c   |  4 ++++
+>  fs/netfs/io.c             | 10 ++++++++++
+>  fs/netfs/misc.c           |  5 +++++
+>  fs/smb/client/cifsfs.c    |  4 ++--
+>  include/linux/netfs.h     | 14 ++++++++++++--
+>  7 files changed, 47 insertions(+), 14 deletions(-)
 >=20
+> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+> index c43112dcbbbb..dfd940a64e0f 100644
+> --- a/fs/afs/inode.c
+> +++ b/fs/afs/inode.c
+> @@ -166,6 +166,7 @@ static void afs_apply_status(struct afs_operation *op=
+,
+>  	struct inode *inode =3D &vnode->netfs.inode;
+>  	struct timespec64 t;
+>  	umode_t mode;
+> +	bool unexpected_jump =3D false;
+>  	bool data_changed =3D false;
+>  	bool change_size =3D vp->set_size;
+> =20
+> @@ -230,6 +231,7 @@ static void afs_apply_status(struct afs_operation *op=
+,
+>  		}
+>  		change_size =3D true;
+>  		data_changed =3D true;
+> +		unexpected_jump =3D true;
+>  	} else if (vnode->status.type =3D=3D AFS_FTYPE_DIR) {
+>  		/* Expected directory change is handled elsewhere so
+>  		 * that we can locally edit the directory and save on a
+> @@ -251,6 +253,8 @@ static void afs_apply_status(struct afs_operation *op=
+,
+>  		vnode->netfs.remote_i_size =3D status->size;
+>  		if (change_size || status->size > i_size_read(inode)) {
+>  			afs_set_i_size(vnode, status->size);
+> +			if (unexpected_jump)
+> +				vnode->netfs.zero_point =3D status->size;
+>  			inode_set_ctime_to_ts(inode, t);
+>  			inode_set_atime_to_ts(inode, t);
+>  		}
+> @@ -689,17 +693,17 @@ static void afs_setattr_success(struct afs_operatio=
+n *op)
+>  static void afs_setattr_edit_file(struct afs_operation *op)
+>  {
+>  	struct afs_vnode_param *vp =3D &op->file[0];
+> -	struct inode *inode =3D &vp->vnode->netfs.inode;
+> +	struct afs_vnode *vnode =3D vp->vnode;
+> =20
+>  	if (op->setattr.attr->ia_valid & ATTR_SIZE) {
+>  		loff_t size =3D op->setattr.attr->ia_size;
+>  		loff_t i_size =3D op->setattr.old_i_size;
+> =20
+> -		if (size < i_size)
+> -			truncate_pagecache(inode, size);
+> -		if (size !=3D i_size)
+> -			fscache_resize_cookie(afs_vnode_cache(vp->vnode),
+> -					      vp->scb.status.size);
+> +		if (size !=3D i_size) {
+> +			truncate_setsize(&vnode->netfs.inode, size);
+> +			netfs_resize_file(&vnode->netfs, size, true);
+> +			fscache_resize_cookie(afs_vnode_cache(vnode), size);
+> +		}
+>  	}
+>  }
+> =20
+> @@ -767,11 +771,11 @@ int afs_setattr(struct mnt_idmap *idmap, struct den=
+try *dentry,
+>  		 */
+>  		if (!(attr->ia_valid & (supported & ~ATTR_SIZE & ~ATTR_MTIME)) &&
+>  		    attr->ia_size < i_size &&
+> -		    attr->ia_size > vnode->status.size) {
+> -			truncate_pagecache(inode, attr->ia_size);
+> +		    attr->ia_size > vnode->netfs.remote_i_size) {
+> +			truncate_setsize(inode, attr->ia_size);
+> +			netfs_resize_file(&vnode->netfs, size, false);
+>  			fscache_resize_cookie(afs_vnode_cache(vnode),
+>  					      attr->ia_size);
+> -			i_size_write(inode, attr->ia_size);
+>  			ret =3D 0;
+>  			goto out_unlock;
+>  		}
 > diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-> index 8e0ebb7175a4..dce6995fb644 100644
+> index dce6995fb644..d7ce424b9188 100644
 > --- a/fs/netfs/buffered_write.c
 > +++ b/fs/netfs/buffered_write.c
-> @@ -26,6 +26,8 @@ enum netfs_how_to_modify {
->  	NETFS_FLUSH_CONTENT,		/* Flush incompatible content. */
->  };
+> @@ -73,7 +73,7 @@ static enum netfs_how_to_modify netfs_how_to_modify(str=
+uct netfs_inode *ctx,
+>  	if (folio_test_uptodate(folio))
+>  		return NETFS_FOLIO_IS_UPTODATE;
 > =20
-> +static void netfs_cleanup_buffered_write(struct netfs_io_request *wreq);
-> +
->  static void netfs_set_group(struct folio *folio, struct netfs_group *net=
-fs_group)
+> -	if (pos >=3D ctx->remote_i_size)
+> +	if (pos >=3D ctx->zero_point)
+>  		return NETFS_MODIFY_AND_CLEAR;
+> =20
+>  	if (!maybe_trouble && offset =3D=3D 0 && len >=3D flen)
+> diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+> index bb0c2718f57b..aad05f2349a4 100644
+> --- a/fs/netfs/direct_write.c
+> +++ b/fs/netfs/direct_write.c
+> @@ -134,6 +134,7 @@ ssize_t netfs_unbuffered_write_iter(struct kiocb *ioc=
+b, struct iov_iter *from)
+>  	struct file *file =3D iocb->ki_filp;
+>  	struct inode *inode =3D file->f_mapping->host;
+>  	struct netfs_inode *ictx =3D netfs_inode(inode);
+> +	unsigned long long end;
+>  	ssize_t ret;
+> =20
+>  	_enter("%llx,%zx,%llx", iocb->ki_pos, iov_iter_count(from), i_size_read=
+(inode));
+> @@ -155,6 +156,9 @@ ssize_t netfs_unbuffered_write_iter(struct kiocb *ioc=
+b, struct iov_iter *from)
+>  	ret =3D kiocb_invalidate_pages(iocb, iov_iter_count(from));
+>  	if (ret < 0)
+>  		goto out;
+> +	end =3D iocb->ki_pos + iov_iter_count(from);
+> +	if (end > ictx->zero_point)
+> +		ictx->zero_point =3D end;
+> =20
+>  	fscache_invalidate(netfs_i_cookie(ictx), NULL, i_size_read(inode),
+>  			   FSCACHE_INVAL_DIO_WRITE);
+> diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+> index 5d9098db815a..41a6113aa7fa 100644
+> --- a/fs/netfs/io.c
+> +++ b/fs/netfs/io.c
+> @@ -569,6 +569,7 @@ netfs_rreq_prepare_read(struct netfs_io_request *rreq=
+,
+>  			struct iov_iter *io_iter)
 >  {
->  	if (netfs_group && !folio_get_private(folio))
-> @@ -133,6 +135,14 @@ ssize_t netfs_perform_write(struct kiocb *iocb, stru=
-ct iov_iter *iter,
->  	struct inode *inode =3D file_inode(file);
->  	struct address_space *mapping =3D inode->i_mapping;
->  	struct netfs_inode *ctx =3D netfs_inode(inode);
-> +	struct writeback_control wbc =3D {
-> +		.sync_mode	=3D WB_SYNC_NONE,
-> +		.for_sync	=3D true,
-> +		.nr_to_write	=3D LONG_MAX,
-> +		.range_start	=3D iocb->ki_pos,
-> +		.range_end	=3D iocb->ki_pos + iter->count,
-> +	};
-> +	struct netfs_io_request *wreq =3D NULL;
->  	struct netfs_folio *finfo;
->  	struct folio *folio;
->  	enum netfs_how_to_modify howto;
-> @@ -143,6 +153,30 @@ ssize_t netfs_perform_write(struct kiocb *iocb, stru=
-ct iov_iter *iter,
->  	size_t max_chunk =3D PAGE_SIZE << MAX_PAGECACHE_ORDER;
->  	bool maybe_trouble =3D false;
+>  	enum netfs_io_source source =3D NETFS_DOWNLOAD_FROM_SERVER;
+> +	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
+>  	size_t lsize;
 > =20
-> +	if (unlikely(test_bit(NETFS_ICTX_WRITETHROUGH, &ctx->flags) ||
-> +		     iocb->ki_flags & (IOCB_DSYNC | IOCB_SYNC))
-> +	    ) {
-> +		if (pos < i_size_read(inode)) {
-> +			ret =3D filemap_write_and_wait_range(mapping, pos, pos + iter->count)=
-;
-> +			if (ret < 0) {
-> +				goto out;
+>  	_enter("%llx-%llx,%llx", subreq->start, subreq->start + subreq->len, rr=
+eq->i_size);
+> @@ -586,6 +587,14 @@ netfs_rreq_prepare_read(struct netfs_io_request *rre=
+q,
+>  		 * to make serial calls, it can indicate a short read and then
+>  		 * we will call it again.
+>  		 */
+> +		if (rreq->origin !=3D NETFS_DIO_READ) {
+> +			if (subreq->start >=3D ictx->zero_point) {
+> +				source =3D NETFS_FILL_WITH_ZEROES;
+> +				goto set;
 > +			}
+> +			if (subreq->len > ictx->zero_point - subreq->start)
+> +				subreq->len =3D ictx->zero_point - subreq->start;
 > +		}
-> +
-> +		wbc_attach_fdatawrite_inode(&wbc, mapping->host);
-> +
-> +		wreq =3D netfs_begin_writethrough(iocb, iter->count);
-> +		if (IS_ERR(wreq)) {
-> +			wbc_detach_inode(&wbc);
-> +			ret =3D PTR_ERR(wreq);
-> +			wreq =3D NULL;
-> +			goto out;
-> +		}
-> +		if (!is_sync_kiocb(iocb))
-> +			wreq->iocb =3D iocb;
-> +		wreq->cleanup =3D netfs_cleanup_buffered_write;
-> +	}
-> +
->  	do {
->  		size_t flen;
->  		size_t offset;	/* Offset into pagecache folio */
-> @@ -315,7 +349,25 @@ ssize_t netfs_perform_write(struct kiocb *iocb, stru=
-ct iov_iter *iter,
+>  		if (subreq->len > rreq->i_size - subreq->start)
+>  			subreq->len =3D rreq->i_size - subreq->start;
+>  		if (rreq->rsize && subreq->len > rreq->rsize)
+> @@ -607,6 +616,7 @@ netfs_rreq_prepare_read(struct netfs_io_request *rreq=
+,
 >  		}
->  		written +=3D copied;
-> =20
-> -		folio_mark_dirty(folio);
-> +		if (likely(!wreq)) {
-> +			folio_mark_dirty(folio);
-> +		} else {
-> +			if (folio_test_dirty(folio))
-> +				/* Sigh.  mmap. */
-> +				folio_clear_dirty_for_io(folio);
-> +			/* We make multiple writes to the folio... */
-> +			if (!folio_test_writeback(folio)) {
-> +				folio_wait_fscache(folio);
-> +				folio_start_writeback(folio);
-> +				folio_start_fscache(folio);
-> +				if (wreq->iter.count =3D=3D 0)
-> +					trace_netfs_folio(folio, netfs_folio_trace_wthru);
-> +				else
-> +					trace_netfs_folio(folio, netfs_folio_trace_wthru_plus);
-> +			}
-> +			netfs_advance_writethrough(wreq, copied,
-> +						   offset + copied =3D=3D flen);
-> +		}
->  	retry:
->  		folio_unlock(folio);
->  		folio_put(folio);
-> @@ -325,17 +377,14 @@ ssize_t netfs_perform_write(struct kiocb *iocb, str=
-uct iov_iter *iter,
->  	} while (iov_iter_count(iter));
-> =20
->  out:
-> -	if (likely(written)) {
-> -		/* Flush and wait for a write that requires immediate synchronisation.=
- */
-> -		if (iocb->ki_flags & (IOCB_DSYNC | IOCB_SYNC)) {
-> -			_debug("dsync");
-> -			ret =3D filemap_fdatawait_range(mapping, iocb->ki_pos,
-> -						      iocb->ki_pos + written);
-> -		}
-> -
-> -		iocb->ki_pos +=3D written;
-> +	if (unlikely(wreq)) {
-> +		ret =3D netfs_end_writethrough(wreq, iocb);
-> +		wbc_detach_inode(&wbc);
-> +		if (ret =3D=3D -EIOCBQUEUED)
-> +			return ret;
 >  	}
 > =20
-> +	iocb->ki_pos +=3D written;
->  	_leave(" =3D %zd [%zd]", written, ret);
->  	return written ? written : ret;
+> +set:
+>  	if (subreq->len > rreq->len)
+>  		pr_warn("R=3D%08x[%u] SREQ>RREQ %zx > %zx\n",
+>  			rreq->debug_id, subreq->debug_index,
+> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+> index 40421ced4cd3..31e45dfad5b0 100644
+> --- a/fs/netfs/misc.c
+> +++ b/fs/netfs/misc.c
+> @@ -240,6 +240,11 @@ EXPORT_SYMBOL(netfs_invalidate_folio);
+>  bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+>  {
+>  	struct netfs_inode *ctx =3D netfs_inode(folio_inode(folio));
+> +	unsigned long long end;
+> +
+> +	end =3D folio_pos(folio) + folio_size(folio);
+> +	if (end > ctx->zero_point)
+> +		ctx->zero_point =3D end;
 > =20
-> diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-> index fe72280b0f30..b3749d6ec1ff 100644
-> --- a/fs/netfs/internal.h
-> +++ b/fs/netfs/internal.h
-> @@ -101,6 +101,9 @@ static inline void netfs_see_request(struct netfs_io_=
-request *rreq,
->   */
->  int netfs_begin_write(struct netfs_io_request *wreq, bool may_wait,
->  		      enum netfs_write_trace what);
-> +struct netfs_io_request *netfs_begin_writethrough(struct kiocb *iocb, si=
-ze_t len);
-> +int netfs_advance_writethrough(struct netfs_io_request *wreq, size_t cop=
-ied, bool to_page_end);
-> +int netfs_end_writethrough(struct netfs_io_request *wreq, struct kiocb *=
-iocb);
+>  	if (folio_test_private(folio))
+>  		return false;
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index 96a65cf9b5ec..07cd88897c33 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -1220,7 +1220,7 @@ static int cifs_precopy_set_eof(struct inode *src_i=
+node, struct cifsInodeInfo *s
+>  	if (rc < 0)
+>  		goto set_failed;
 > =20
->  /*
->   * stats.c
-> diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-> index 8d5ee0f56f28..7139397931b7 100644
-> --- a/fs/netfs/main.c
-> +++ b/fs/netfs/main.c
-> @@ -33,6 +33,7 @@ static const char *netfs_origins[nr__netfs_io_origin] =
-=3D {
->  	[NETFS_READPAGE]		=3D "RP",
->  	[NETFS_READ_FOR_WRITE]		=3D "RW",
->  	[NETFS_WRITEBACK]		=3D "WB",
-> +	[NETFS_WRITETHROUGH]		=3D "WT",
->  	[NETFS_LAUNDER_WRITE]		=3D "LW",
->  	[NETFS_UNBUFFERED_WRITE]	=3D "UW",
->  	[NETFS_DIO_READ]		=3D "DR",
-> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> index 16252cc4576e..37626328577e 100644
-> --- a/fs/netfs/objects.c
-> +++ b/fs/netfs/objects.c
-> @@ -42,6 +42,7 @@ struct netfs_io_request *netfs_alloc_request(struct add=
-ress_space *mapping,
->  	rreq->debug_id	=3D atomic_inc_return(&debug_ids);
->  	xa_init(&rreq->bounce);
->  	INIT_LIST_HEAD(&rreq->subrequests);
-> +	INIT_WORK(&rreq->work, NULL);
->  	refcount_set(&rreq->ref, 1);
+> -	netfs_resize_file(&src_cifsi->netfs, src_end);
+> +	netfs_resize_file(&src_cifsi->netfs, src_end, true);
+>  	fscache_resize_cookie(cifs_inode_cookie(src_inode), src_end);
+>  	return 0;
 > =20
->  	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-> diff --git a/fs/netfs/output.c b/fs/netfs/output.c
-> index cc9065733b42..625eb68f3e5a 100644
-> --- a/fs/netfs/output.c
-> +++ b/fs/netfs/output.c
-> @@ -386,3 +386,93 @@ int netfs_begin_write(struct netfs_io_request *wreq,=
- bool may_wait,
->  		    TASK_UNINTERRUPTIBLE);
->  	return wreq->error;
->  }
-> +
-> +/*
-> + * Begin a write operation for writing through the pagecache.
-> + */
-> +struct netfs_io_request *netfs_begin_writethrough(struct kiocb *iocb, si=
-ze_t len)
-> +{
-> +	struct netfs_io_request *wreq;
-> +	struct file *file =3D iocb->ki_filp;
-> +
-> +	wreq =3D netfs_alloc_request(file->f_mapping, file, iocb->ki_pos, len,
-> +				   NETFS_WRITETHROUGH);
-> +	if (IS_ERR(wreq))
-> +		return wreq;
-> +
-> +	trace_netfs_write(wreq, netfs_write_trace_writethrough);
-> +
-> +	__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
-> +	iov_iter_xarray(&wreq->iter, ITER_SOURCE, &wreq->mapping->i_pages, wreq=
-->start, 0);
-> +	wreq->io_iter =3D wreq->iter;
-> +
-> +	/* ->outstanding > 0 carries a ref */
-> +	netfs_get_request(wreq, netfs_rreq_trace_get_for_outstanding);
-> +	atomic_set(&wreq->nr_outstanding, 1);
-> +	return wreq;
-> +}
-> +
-> +static void netfs_submit_writethrough(struct netfs_io_request *wreq, boo=
-l final)
-> +{
-> +	struct netfs_inode *ictx =3D netfs_inode(wreq->inode);
-> +	unsigned long long start;
-> +	size_t len;
-> +
-> +	if (!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))
-> +		return;
-> +
-> +	start =3D wreq->start + wreq->submitted;
-> +	len =3D wreq->iter.count - wreq->submitted;
-> +	if (!final) {
-> +		len /=3D wreq->wsize; /* Round to number of maximum packets */
-> +		len *=3D wreq->wsize;
-> +	}
-> +
-> +	ictx->ops->create_write_requests(wreq, start, len);
-> +	wreq->submitted +=3D len;
-> +}
-> +
-> +/*
-> + * Advance the state of the write operation used when writing through th=
-e
-> + * pagecache.  Data has been copied into the pagecache that we need to a=
-ppend
-> + * to the request.  If we've added more than wsize then we need to creat=
-e a new
-> + * subrequest.
-> + */
-> +int netfs_advance_writethrough(struct netfs_io_request *wreq, size_t cop=
-ied, bool to_page_end)
-> +{
-> +	_enter("ic=3D%zu sb=3D%zu ws=3D%u cp=3D%zu tp=3D%u",
-> +	       wreq->iter.count, wreq->submitted, wreq->wsize, copied, to_page_=
-end);
-> +
-> +	wreq->iter.count +=3D copied;
-> +	wreq->io_iter.count +=3D copied;
-> +	if (to_page_end && wreq->io_iter.count - wreq->submitted >=3D wreq->wsi=
-ze)
-> +		netfs_submit_writethrough(wreq, false);
-> +
-> +	return wreq->error;
-> +}
-> +
-> +/*
-> + * End a write operation used when writing through the pagecache.
-> + */
-> +int netfs_end_writethrough(struct netfs_io_request *wreq, struct kiocb *=
-iocb)
-> +{
-> +	int ret =3D -EIOCBQUEUED;
-> +
-> +	_enter("ic=3D%zu sb=3D%zu ws=3D%u",
-> +	       wreq->iter.count, wreq->submitted, wreq->wsize);
-> +
-> +	if (wreq->submitted < wreq->io_iter.count)
-> +		netfs_submit_writethrough(wreq, true);
-> +
-> +	if (atomic_dec_and_test(&wreq->nr_outstanding))
-> +		netfs_write_terminated(wreq, false);
-> +
-> +	if (is_sync_kiocb(iocb)) {
-> +		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
-> +			    TASK_UNINTERRUPTIBLE);
-> +		ret =3D wreq->error;
-> +	}
-> +
-> +	netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
-> +	return ret;
-> +}
+> @@ -1351,7 +1351,7 @@ static loff_t cifs_remap_file_range(struct file *sr=
+c_file, loff_t off,
+>  			smb_file_src, smb_file_target, off, len, destoff);
+>  		if (rc =3D=3D 0 && new_size > i_size_read(target_inode)) {
+>  			truncate_setsize(target_inode, new_size);
+> -			netfs_resize_file(&target_cifsi->netfs, new_size);
+> +			netfs_resize_file(&target_cifsi->netfs, new_size, true);
+>  			fscache_resize_cookie(cifs_inode_cookie(target_inode),
+>  					      new_size);
+>  		}
 > diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index a7c2cb856e81..fc77f7be220a 100644
+> index fc77f7be220a..2005ad3b0e25 100644
 > --- a/include/linux/netfs.h
 > +++ b/include/linux/netfs.h
-> @@ -139,6 +139,7 @@ struct netfs_inode {
+> @@ -136,6 +136,8 @@ struct netfs_inode {
+>  	struct fscache_cookie	*cache;
+>  #endif
+>  	loff_t			remote_i_size;	/* Size of the remote file */
+> +	loff_t			zero_point;	/* Size after which we assume there's no data
+> +						 * on the server */
 >  	unsigned long		flags;
 >  #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
 >  #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-> +#define NETFS_ICTX_WRITETHROUGH	2		/* Write-through caching */
->  };
+> @@ -465,22 +467,30 @@ static inline void netfs_inode_init(struct netfs_in=
+ode *ctx,
+>  {
+>  	ctx->ops =3D ops;
+>  	ctx->remote_i_size =3D i_size_read(&ctx->inode);
+> +	ctx->zero_point =3D ctx->remote_i_size;
+>  	ctx->flags =3D 0;
+>  #if IS_ENABLED(CONFIG_FSCACHE)
+>  	ctx->cache =3D NULL;
+>  #endif
+> +	/* ->releasepage() drives zero_point */
+> +	mapping_set_release_always(ctx->inode.i_mapping);
+>  }
 > =20
->  /*
-> @@ -227,6 +228,7 @@ enum netfs_io_origin {
->  	NETFS_READPAGE,			/* This read is a synchronous read */
->  	NETFS_READ_FOR_WRITE,		/* This read is to prepare a write */
->  	NETFS_WRITEBACK,		/* This write was triggered by writepages */
-> +	NETFS_WRITETHROUGH,		/* This write was made by netfs_perform_write() */
->  	NETFS_LAUNDER_WRITE,		/* This is triggered by ->launder_folio() */
->  	NETFS_UNBUFFERED_WRITE,		/* This is an unbuffered write */
->  	NETFS_DIO_READ,			/* This is a direct I/O read */
-> diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-> index cc998798e20a..447a8c21cf57 100644
-> --- a/include/trace/events/netfs.h
-> +++ b/include/trace/events/netfs.h
-> @@ -27,13 +27,15 @@
->  	EM(netfs_write_trace_dio_write,		"DIO-WRITE")	\
->  	EM(netfs_write_trace_launder,		"LAUNDER  ")	\
->  	EM(netfs_write_trace_unbuffered_write,	"UNB-WRITE")	\
-> -	E_(netfs_write_trace_writeback,		"WRITEBACK")
-> +	EM(netfs_write_trace_writeback,		"WRITEBACK")	\
-> +	E_(netfs_write_trace_writethrough,	"WRITETHRU")
+>  /**
+>   * netfs_resize_file - Note that a file got resized
+>   * @ctx: The netfs inode being resized
+>   * @new_i_size: The new file size
+> + * @changed_on_server: The change was applied to the server
+>   *
+>   * Inform the netfs lib that a file got resized so that it can adjust it=
+s state.
+>   */
+> -static inline void netfs_resize_file(struct netfs_inode *ctx, loff_t new=
+_i_size)
+> +static inline void netfs_resize_file(struct netfs_inode *ctx, loff_t new=
+_i_size,
+> +				     bool changed_on_server)
+>  {
+> -	ctx->remote_i_size =3D new_i_size;
+> +	if (changed_on_server)
+> +		ctx->remote_i_size =3D new_i_size;
+> +	if (new_i_size < ctx->zero_point)
+> +		ctx->zero_point =3D new_i_size;
+>  }
 > =20
->  #define netfs_rreq_origins					\
->  	EM(NETFS_READAHEAD,			"RA")		\
->  	EM(NETFS_READPAGE,			"RP")		\
->  	EM(NETFS_READ_FOR_WRITE,		"RW")		\
->  	EM(NETFS_WRITEBACK,			"WB")		\
-> +	EM(NETFS_WRITETHROUGH,			"WT")		\
->  	EM(NETFS_LAUNDER_WRITE,			"LW")		\
->  	EM(NETFS_UNBUFFERED_WRITE,		"UW")		\
->  	EM(NETFS_DIO_READ,			"DR")		\
-> @@ -136,7 +138,9 @@
->  	EM(netfs_folio_trace_redirty,		"redirty")	\
->  	EM(netfs_folio_trace_redirtied,		"redirtied")	\
->  	EM(netfs_folio_trace_store,		"store")	\
-> -	E_(netfs_folio_trace_store_plus,	"store+")
-> +	EM(netfs_folio_trace_store_plus,	"store+")	\
-> +	EM(netfs_folio_trace_wthru,		"wthru")	\
-> +	E_(netfs_folio_trace_wthru_plus,	"wthru+")
-> =20
->  #ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
->  #define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
+>  /**
 >=20
 
 --=20
