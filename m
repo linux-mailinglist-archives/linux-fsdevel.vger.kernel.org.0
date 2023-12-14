@@ -1,318 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-6046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59DF812B97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 10:27:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00ACA812C49
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 10:56:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718682823DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 09:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32AB81C2152F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 09:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E37C2E850;
-	Thu, 14 Dec 2023 09:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431D139FC2;
+	Thu, 14 Dec 2023 09:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="K6pPBeLE"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YFR7f0gg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-X-Greylist: delayed 79294 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Dec 2023 01:26:51 PST
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A1DB7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Dec 2023 01:26:51 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4SrRnP5yKJzMq5jw;
-	Thu, 14 Dec 2023 09:26:49 +0000 (UTC)
-Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4SrRnN6f63zMps3d;
-	Thu, 14 Dec 2023 10:26:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-	s=20191114; t=1702546009;
-	bh=gg0fR1wQpc0GwjtuCYJPKqcpTjqcllLDexxniFjluog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K6pPBeLE0Lwh8//mRrDCqCVyzON3J78h9xkZiEqSAbV7kWrFYqJNnPJv42IjRoKne
-	 CA3pEKo+iJAyXCGI/+0RJXIX9z5eS+p4aLb3yYw+E73QfqS4LBeDAFx8OOBGNilUp5
-	 lLx/EuLEGUGbkoJPruXn/M30E6BVFuyJbe6lYHpI=
-Date: Thu, 14 Dec 2023 10:26:48 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Allen Webb <allenwebb@google.com>, 
-	Dmitry Torokhov <dtor@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 4/9] landlock: Add IOCTL access right
-Message-ID: <20231214.feeZ6Hahwaem@digikod.net>
-References: <20231208155121.1943775-1-gnoack@google.com>
- <20231208155121.1943775-5-gnoack@google.com>
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B01106;
+	Thu, 14 Dec 2023 01:56:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702547801; x=1734083801;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RqiCkuGCEaun1cH6jxYGjDo0sb5DoR/NddNRX5ci++o=;
+  b=YFR7f0ggx7pvKRdxPqfAJWk6muVAmlWTeUeeTcfwXEpqy/LYTgnaE5AG
+   t2qgsAzDrYrvaXFmVI3r9PEIOHZFM2uFK4CxU0WSBAJywcCoAH+d9bTw9
+   E1gxsTDL8zVXy/qJVmUaMk+dewM/Xe7i+0U8n2Hrfd+7VHURfrnWfohUn
+   5BPi/yazk8JyE7oG1m9/IXcPlXUhjSkHJfMhqXoVEJVLzX4+M7wAoey5N
+   7Xi4DOB/x9SKlmUUUkvkazo+1IRE6ZNaSJLPcobbv5BgCfL0INuDFBiUv
+   f049gnR1Ao/rtOVDIkJxmkdqWSc27uNoKTG98sr3+9ZquS488O6c2eAn6
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="459419580"
+X-IronPort-AV: E=Sophos;i="6.04,275,1695711600"; 
+   d="scan'208";a="459419580"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 01:56:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="1021452328"
+X-IronPort-AV: E=Sophos;i="6.04,275,1695711600"; 
+   d="scan'208";a="1021452328"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Dec 2023 01:56:33 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rDiSE-000LsP-36;
+	Thu, 14 Dec 2023 09:56:30 +0000
+Date: Thu, 14 Dec 2023 17:56:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	akpm@linux-foundation.org, arnd@arndb.de, tglx@linutronix.de,
+	luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org,
+	tj@kernel.org, ying.huang@intel.com, gregory.price@memverge.com,
+	corbet@lwn.net, rakie.kim@sk.com, hyeongtak.ji@sk.com,
+	honggyu.kim@sk.com, vtavarespetr@micron.com, peterz@infradead.org,
+	jgroves@micron.com, ravis.opensrc@micron.com, sthanneeru@micron.com,
+	emirakhur@micron.com, Hasan.Maruf@amd.com, seungjun.ha@samsung.com
+Subject: Re: [PATCH v3 01/11] mm/mempolicy: implement the sysfs-based
+ weighted_interleave interface
+Message-ID: <202312141733.PALHOosm-lkp@intel.com>
+References: <20231213224118.1949-2-gregory.price@memverge.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231208155121.1943775-5-gnoack@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20231213224118.1949-2-gregory.price@memverge.com>
 
-On Fri, Dec 08, 2023 at 04:51:16PM +0100, Günther Noack wrote:
-> Introduces the LANDLOCK_ACCESS_FS_IOCTL access right
-> and increments the Landlock ABI version to 5.
-> 
-> Like the truncate right, these rights are associated with a file
-> descriptor at the time of open(2), and get respected even when the
-> file descriptor is used outside of the thread which it was originally
-> opened in.
-> 
-> A newly enabled Landlock policy therefore does not apply to file
-> descriptors which are already open.
-> 
-> If the LANDLOCK_ACCESS_FS_IOCTL right is handled, only a small number
-> of safe IOCTL commands will be permitted on newly opened files.  The
-> permitted IOCTLs can be configured through the ruleset in limited ways
-> now.  (See documentation for details.)
-> 
-> Specifically, when LANDLOCK_ACCESS_FS_IOCTL is handled, granting this
-> right on a file or directory will *not* permit to do all IOCTL
-> commands, but only influence the IOCTL commands which are not already
-> handled through other access rights.  The intent is to keep the groups
-> of IOCTL commands more fine-grained.
-> 
-> Noteworthy scenarios which require special attention:
-> 
-> TTY devices support IOCTLs like TIOCSTI and TIOCLINUX, which can be
-> used to control shell processes on the same terminal which run at
-> different privilege levels, which may make it possible to escape a
-> sandbox.  Because stdin, stdout and stderr are normally inherited
-> rather than newly opened, IOCTLs are usually permitted on them even
-> after the Landlock policy is enforced.
-> 
-> Some legitimate file system features, like setting up fscrypt, are
-> exposed as IOCTL commands on regular files and directories -- users of
-> Landlock are advised to double check that the sandboxed process does
-> not need to invoke these IOCTLs.
-> 
-> Known limitations:
-> 
-> The LANDLOCK_ACCESS_FS_IOCTL access right is a coarse-grained control
-> over IOCTL commands.  Future work will enable a more fine-grained
-> access control for IOCTLs.
-> 
-> In the meantime, Landlock users may use path-based restrictions in
-> combination with their knowledge about the file system layout to
-> control what IOCTLs can be done.  Mounting file systems with the nodev
-> option can help to distinguish regular files and devices, and give
-> guarantees about the affected files, which Landlock alone can not give
-> yet.
-> 
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  include/uapi/linux/landlock.h                |  58 +++++-
->  security/landlock/fs.c                       | 176 ++++++++++++++++++-
->  security/landlock/fs.h                       |   2 +
->  security/landlock/limits.h                   |  11 +-
->  security/landlock/ruleset.h                  |   2 +-
->  security/landlock/syscalls.c                 |  19 +-
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  tools/testing/selftests/landlock/fs_test.c   |   5 +-
->  8 files changed, 253 insertions(+), 22 deletions(-)
-> 
+Hi Gregory,
 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 9ba989ef46a5..81ce41e9e6db 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -7,12 +7,14 @@
->   * Copyright © 2021-2022 Microsoft Corporation
->   */
->  
-> +#include <asm/ioctls.h>
->  #include <linux/atomic.h>
->  #include <linux/bitops.h>
->  #include <linux/bits.h>
->  #include <linux/compiler_types.h>
->  #include <linux/dcache.h>
->  #include <linux/err.h>
-> +#include <linux/falloc.h>
->  #include <linux/fs.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> @@ -28,6 +30,7 @@
->  #include <linux/types.h>
->  #include <linux/wait_bit.h>
->  #include <linux/workqueue.h>
-> +#include <uapi/linux/fiemap.h>
->  #include <uapi/linux/landlock.h>
->  
->  #include "common.h"
-> @@ -83,6 +86,145 @@ static const struct landlock_object_underops landlock_fs_underops = {
->  	.release = release_inode
->  };
->  
-> +/* IOCTL helpers */
-> +
-> +/*
-> + * These are synthetic access rights, which are only used within the kernel, but
-> + * not exposed to callers in userspace.  The mapping between these access rights
-> + * and IOCTL commands is defined in the required_ioctl_access() helper function.
-> + */
-> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP1 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 1)
-> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP2 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 2)
-> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP3 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 3)
-> +#define LANDLOCK_ACCESS_FS_IOCTL_GROUP4 (LANDLOCK_LAST_PUBLIC_ACCESS_FS << 4)
-> +
-> +/* ioctl_groups - all synthetic access rights for IOCTL command groups */
-> +/* clang-format off */
-> +#define IOCTL_GROUPS (			  \
-> +	LANDLOCK_ACCESS_FS_IOCTL_GROUP1 | \
-> +	LANDLOCK_ACCESS_FS_IOCTL_GROUP2 | \
-> +	LANDLOCK_ACCESS_FS_IOCTL_GROUP3 | \
-> +	LANDLOCK_ACCESS_FS_IOCTL_GROUP4)
-> +/* clang-format on */
-> +
-> +static_assert((IOCTL_GROUPS & LANDLOCK_MASK_ACCESS_FS) == IOCTL_GROUPS);
-> +
-> +/**
-> + * required_ioctl_access(): Determine required IOCTL access rights.
-> + *
-> + * @cmd: The IOCTL command that is supposed to be run.
-> + *
-> + * Returns: The access rights that must be granted on an opened file in order to
-> + * use the given @cmd.
-> + */
-> +static access_mask_t required_ioctl_access(unsigned int cmd)
+kernel test robot noticed the following build errors:
 
-You can add __attribute_const__ after "static", and also constify cmd.
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on geert-m68k/for-next geert-m68k/for-linus deller-parisc/for-next powerpc/next powerpc/fixes s390/features jcmvbkbc-xtensa/xtensa-for-next arnd-asm-generic/master linus/master tip/x86/asm v6.7-rc5 next-20231214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +{
-> +	switch (cmd) {
-> +	case FIOCLEX:
-> +	case FIONCLEX:
-> +	case FIONBIO:
-> +	case FIOASYNC:
-> +		/*
-> +		 * FIOCLEX, FIONCLEX, FIONBIO and FIOASYNC manipulate the FD's
-> +		 * close-on-exec and the file's buffered-IO and async flags.
-> +		 * These operations are also available through fcntl(2),
-> +		 * and are unconditionally permitted in Landlock.
-> +		 */
-> +		return 0;
-> +	case FIOQSIZE:
-> +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP1;
-> +	case FS_IOC_FIEMAP:
-> +	case FIBMAP:
-> +	case FIGETBSZ:
-> +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP2;
-> +	case FIONREAD:
-> +	case FIDEDUPERANGE:
-> +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP3;
-> +	case FICLONE:
-> +	case FICLONERANGE:
-> +	case FS_IOC_RESVSP:
-> +	case FS_IOC_RESVSP64:
-> +	case FS_IOC_UNRESVSP:
-> +	case FS_IOC_UNRESVSP64:
-> +	case FS_IOC_ZERO_RANGE:
-> +		return LANDLOCK_ACCESS_FS_IOCTL_GROUP4;
-> +	default:
-> +		/*
-> +		 * Other commands are guarded by the catch-all access right.
-> +		 */
-> +		return LANDLOCK_ACCESS_FS_IOCTL;
-> +	}
-> +}
-> +
-> +/**
-> + * expand_ioctl() - Return the dst flags from either the src flag or the
-> + * %LANDLOCK_ACCESS_FS_IOCTL flag, depending on whether the
-> + * %LANDLOCK_ACCESS_FS_IOCTL and src access rights are handled or not.
-> + *
-> + * @handled: Handled access rights.
-> + * @access: The access mask to copy values from.
-> + * @src: A single access right to copy from in @access.
-> + * @dst: One or more access rights to copy to.
-> + *
-> + * Returns: @dst, or 0.
-> + */
-> +static access_mask_t expand_ioctl(const access_mask_t handled,
+url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/mm-mempolicy-implement-the-sysfs-based-weighted_interleave-interface/20231214-064236
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20231213224118.1949-2-gregory.price%40memverge.com
+patch subject: [PATCH v3 01/11] mm/mempolicy: implement the sysfs-based weighted_interleave interface
+config: x86_64-randconfig-161-20231214 (https://download.01.org/0day-ci/archive/20231214/202312141733.PALHOosm-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231214/202312141733.PALHOosm-lkp@intel.com/reproduce)
 
-static __attribute_const__
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312141733.PALHOosm-lkp@intel.com/
 
-> +				  const access_mask_t access,
-> +				  const access_mask_t src,
-> +				  const access_mask_t dst)
-> +{
-> +	access_mask_t copy_from;
-> +
-> +	if (!(handled & LANDLOCK_ACCESS_FS_IOCTL))
-> +		return 0;
-> +
-> +	copy_from = (handled & src) ? src : LANDLOCK_ACCESS_FS_IOCTL;
-> +	if (access & copy_from)
-> +		return dst;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * landlock_expand_access_fs() - Returns @access with the synthetic IOCTL group
-> + * flags enabled if necessary.
-> + *
-> + * @handled: Handled FS access rights.
-> + * @access: FS access rights to expand.
-> + *
-> + * Returns: @access expanded by the necessary flags for the synthetic IOCTL
-> + * access rights.
-> + */
-> +static access_mask_t landlock_expand_access_fs(const access_mask_t handled,
+All errors (new ones prefixed by >>):
 
-static __attribute_const__
+   In file included from include/linux/kobject.h:20,
+                    from include/linux/energy_model.h:7,
+                    from include/linux/device.h:16,
+                    from include/linux/node.h:18,
+                    from include/linux/cpu.h:17,
+                    from include/linux/static_call.h:135,
+                    from include/linux/tracepoint.h:22,
+                    from include/trace/events/tlb.h:9,
+                    from arch/x86/include/asm/mmu_context.h:10,
+                    from include/linux/mmu_context.h:5,
+                    from include/linux/cpuset.h:18,
+                    from mm/mempolicy.c:83:
+   mm/mempolicy.c: In function 'add_weight_node':
+>> mm/mempolicy.c:3145:28: error: 'struct iw_node_attr' has no member named 'attr'
+    3145 |  sysfs_attr_init(&node_attr->attr);
+         |                            ^~
+   include/linux/sysfs.h:55:3: note: in definition of macro 'sysfs_attr_init'
+      55 |  (attr)->key = &__key;    \
+         |   ^~~~
 
-> +					       const access_mask_t access)
-> +{
-> +	return access |
-> +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_WRITE_FILE,
-> +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP4) |
-> +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_FILE,
-> +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1 |
-> +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP2 |
-> +				    LANDLOCK_ACCESS_FS_IOCTL_GROUP3) |
-> +	       expand_ioctl(handled, access, LANDLOCK_ACCESS_FS_READ_DIR,
-> +			    LANDLOCK_ACCESS_FS_IOCTL_GROUP1);
-> +}
-> +
-> +/**
-> + * landlock_expand_handled_access_fs() - add synthetic IOCTL access rights to an
-> + * access mask of handled accesses.
-> + *
-> + * @handled: The handled accesses of a ruleset that is being created.
-> + *
-> + * Returns: @handled, with the bits for the synthetic IOCTL access rights set,
-> + * if %LANDLOCK_ACCESS_FS_IOCTL is handled.
-> + */
-> +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled)
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for DRM_I915_DEBUG_GEM
+   Depends on [n]: HAS_IOMEM [=y] && DRM_I915 [=m] && EXPERT [=y] && DRM_I915_WERROR [=n]
+   Selected by [m]:
+   - DRM_I915_DEBUG [=y] && HAS_IOMEM [=y] && DRM_I915 [=m] && EXPERT [=y] && !COMPILE_TEST [=n]
 
-__attribute_const__ access_mask_t
 
-> +{
-> +	return landlock_expand_access_fs(handled, handled);
-> +}
-> +
+vim +3145 mm/mempolicy.c
 
-> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
-> index 488e4813680a..c88fe7bda37b 100644
-> --- a/security/landlock/fs.h
-> +++ b/security/landlock/fs.h
-> @@ -92,4 +92,6 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
->  			    const struct path *const path,
->  			    access_mask_t access_hierarchy);
->  
-> +access_mask_t landlock_expand_handled_access_fs(const access_mask_t handled);
+  3129	
+  3130	static int add_weight_node(int nid, struct kobject *wi_kobj)
+  3131	{
+  3132		struct iw_node_attr *node_attr;
+  3133		char *name;
+  3134	
+  3135		node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
+  3136		if (!node_attr)
+  3137			return -ENOMEM;
+  3138	
+  3139		name = kasprintf(GFP_KERNEL, "node%d", nid);
+  3140		if (!name) {
+  3141			kfree(node_attr);
+  3142			return -ENOMEM;
+  3143		}
+  3144	
+> 3145		sysfs_attr_init(&node_attr->attr);
+  3146		node_attr->kobj_attr.attr.name = name;
+  3147		node_attr->kobj_attr.attr.mode = 0644;
+  3148		node_attr->kobj_attr.show = node_show;
+  3149		node_attr->kobj_attr.store = node_store;
+  3150		node_attr->nid = nid;
+  3151	
+  3152		if (sysfs_create_file(wi_kobj, &node_attr->kobj_attr.attr)) {
+  3153			kfree(node_attr->kobj_attr.attr.name);
+  3154			kfree(node_attr);
+  3155			pr_err("failed to add attribute to weighted_interleave\n");
+  3156			return -ENOMEM;
+  3157		}
+  3158	
+  3159		node_attrs[nid] = node_attr;
+  3160		return 0;
+  3161	}
+  3162	
 
-__attribute_const__ access_mask_t
-
-> +
->  #endif /* _SECURITY_LANDLOCK_FS_H */
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
