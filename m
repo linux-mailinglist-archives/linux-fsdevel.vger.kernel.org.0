@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-6133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48469813A92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 20:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6054813A9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 20:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 799221C20CCA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 19:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150171C20EB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 19:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C98069783;
-	Thu, 14 Dec 2023 19:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8195F692BB;
+	Thu, 14 Dec 2023 19:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ZprlJCGr"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="M0gW0TDM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A88E69787
-	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Dec 2023 19:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89299697AD
+	for <linux-fsdevel@vger.kernel.org>; Thu, 14 Dec 2023 19:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-425e63955f6so22129341cf.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Dec 2023 11:17:22 -0800 (PST)
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-20335dcec64so1120016fac.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Dec 2023 11:19:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1702581441; x=1703186241; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1702581566; x=1703186366; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O2wAVapsX3d4Wu5zcLkO1Y9GXGGh0W89rcgF3jgTa1I=;
-        b=ZprlJCGrVSIpyUiDmp2/IzTG6YFUGMyWp9w+Ix9/Vj2z3UtQz6rlen2BjAWSlirmBy
-         nv79chpSvzOUg+bsKPB0SLk1O5HCCC0KKuwg0wSlyI5ky2A0b3pFl+naX28MxmWx8kYM
-         kcXSOpRLqDe56ncRyS/kqAGl4M/A4ZwjCZfTy/QV8piACkozLHePd0iEY3COnM3+PxOp
-         7v6mcLVGFjGFYNGQW2BK1ZTxwqhciMzzrIvjxAGDoj3sdF6p8zfGjXbfnMdYSv3EpiFy
-         rBF4w2t32Z0cTgi3L1IvRNPcr+ycvFAaMq9vON6sbKX6R6Fh1SX2MO4EU1JHMxtqav4x
-         vvDQ==
+        bh=ZGqN9VyFA6bGzLMvanbVJ9xu/V9dzBL2qAxRA0SNydY=;
+        b=M0gW0TDMZ1cOi1yrWcw1W4bE11jULEKanC+u1rXJzMgCz8em1s6uFo/o25lvEJ4Hst
+         p2EnRHGV1Bac5AmfplX1dEpCP/DT287CovyVkoH/NT7Y+TV9384LgZb6/mf6n+WGgV2K
+         EtV4k10/hr+ygQ2S844dJMMJK5h0ePSkXTcvwyFygPRu8S8m4nMCSVZnaLm2ubM5e51X
+         ETH0IiTQiDh+z/7z2kJTLVYATE5/P8sLBJqEO9OZK2x3pO9hJRo5pnNPcFIF4mx8pZ4T
+         v6Nf1i4s3v/dTT0QI8wCXtHpVJwrkMb3UOokIW6x4SDQI/6jleRCOaYJX8x0tgPLwGi9
+         nPbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702581441; x=1703186241;
+        d=1e100.net; s=20230601; t=1702581566; x=1703186366;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O2wAVapsX3d4Wu5zcLkO1Y9GXGGh0W89rcgF3jgTa1I=;
-        b=Pp3BN/pq0mTlRBLNwKIxePpN34dEn1bo4XkUDWk5mecbA3WI5ps5mCaeAfqPOdZUxK
-         zXT6HENnpKonBK9MlYpZpx/Hi5Jf6zJSKVtUuJBKwJh+69N0wHaGM5P01SSkKzBvWUjS
-         ADC78LAASLf9omd0M4CLHfYomPR+uIPnC8vkvYJzidEAsOlE0mQEJ9yaHxZwDNSDjpk9
-         GIT23+kh5ZGDelPV7tTCcFNpX2d/hPyXWjjpJQtLOxCEuCjAQxcCWxnleWW/ShRPzY0i
-         iosprwnn2NCtFalbNzrtHAyUW3CNm88KCR1jFCulSXqQpjLffx7TeMkUE4KXHupkjeTI
-         90Zg==
-X-Gm-Message-State: AOJu0YzdY23jtmsq6fPEHrUunw9d5MLxrIzlrDviCreAbTkxHOAIImKE
-	8voKBJsTe07pJ/Vp2EYwZc2W2sNWd/SjW2uRCU+Heg==
-X-Google-Smtp-Source: AGHT+IFzRCB9Md6JcXtZ2Es25f4UOuYMeLP9Itx6hDPrn436g7L6e3bJmetcIjga0ApETmdpPvmDW7XHrih7qp2afIE=
-X-Received: by 2002:a05:622a:452:b0:423:a4f6:9aa2 with SMTP id
- o18-20020a05622a045200b00423a4f69aa2mr12441941qtx.6.1702581441062; Thu, 14
- Dec 2023 11:17:21 -0800 (PST)
+        bh=ZGqN9VyFA6bGzLMvanbVJ9xu/V9dzBL2qAxRA0SNydY=;
+        b=aqDn2A58LfW2NmR2tqyg4OMNJCx7+wl8oRwX2WpYjlQCtEFSkZgcfH1yTB7dvcUsLh
+         7UgMrNXHHA3eVHYHO+ukEgk0E/3dC9Cc2UiRjj+KSyTK+/ye5Ef+JqENX26+tihPzHpe
+         7yoSPUu/oiRZfhtzhY/hjKqMD9VuqqbISSQZ0ZGYYZTK8xJ245jyYiWNfOHHLP0lqiN1
+         7eBTbY2Ks+DqQP+lhZbRW+nloDbrRv1a0YyyAtTolU0Pz4Pv06I7lZN2RlzfzD8MVU8s
+         jgHJD8s/+S1nskYP09zdHBYO16hgVXCPyrkXLf+n45+vISMskTR0iSYQf8RFz9LTphZG
+         0z1Q==
+X-Gm-Message-State: AOJu0YwwBNJoLxdrkz9XiEHMjp9/vwka1TuUNv8sx1ZJ/BL5KK5A+hf+
+	HVtUmrAQkDX1tYJ2NvsSvnWdt8Gk7enuf+ixGLh7XQ==
+X-Google-Smtp-Source: AGHT+IHAnrtenlddaWtCyLx9aBi69QrVuHVWG2rdYXiv2yuQ5vKdApOHPoLr5i+XPih06QNJDodZZT5+m5u6D1Em/48=
+X-Received: by 2002:a05:6871:4099:b0:1ff:805:b3e6 with SMTP id
+ kz25-20020a056871409900b001ff0805b3e6mr13641663oab.6.1702581566484; Thu, 14
+ Dec 2023 11:19:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,17 +61,17 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
- <20231130201504.2322355-2-pasha.tatashin@soleen.com> <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
-In-Reply-To: <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
+ <20231130201504.2322355-10-pasha.tatashin@soleen.com> <88519685-abfb-e2f8-38b4-d94340b40d1d@google.com>
+In-Reply-To: <88519685-abfb-e2f8-38b4-d94340b40d1d@google.com>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 14 Dec 2023 14:16:44 -0500
-Message-ID: <CA+CK2bA8iJ_w8CSx2Ed=d2cVSujrC0-TpO7U9j+Ow-gfk1nyfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] iommu/vt-d: add wrapper functions for page allocations
+Date: Thu, 14 Dec 2023 14:18:49 -0500
+Message-ID: <CA+CK2bD-phEK4aWQv-xK74_uR_agRN+cmt5Wq-a8YVB1Gm_gVA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] iommu: observability of the IOMMU allocations
 To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com, 
-	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, 
-	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
 	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
 	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,170 +86,30 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 14, 2023 at 12:58=E2=80=AFPM David Rientjes <rientjes@google.co=
+On Thu, Dec 14, 2023 at 12:59=E2=80=AFPM David Rientjes <rientjes@google.co=
 m> wrote:
 >
 > On Thu, 30 Nov 2023, Pasha Tatashin wrote:
 >
-> > diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-> > new file mode 100644
-> > index 000000000000..2332f807d514
-> > --- /dev/null
-> > +++ b/drivers/iommu/iommu-pages.h
-> > @@ -0,0 +1,199 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (c) 2023, Google LLC.
-> > + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> > + */
-> > +
-> > +#ifndef __IOMMU_PAGES_H
-> > +#define __IOMMU_PAGES_H
-> > +
-> > +#include <linux/vmstat.h>
-> > +#include <linux/gfp.h>
-> > +#include <linux/mm.h>
-> > +
-> > +/*
-> > + * All page allocation that are performed in the IOMMU subsystem must =
-use one of
-> > + * the functions below.  This is necessary for the proper accounting a=
-s IOMMU
-> > + * state can be rather large, i.e. multiple gigabytes in size.
-> > + */
-> > +
-> > +/**
-> > + * __iommu_alloc_pages_node - allocate a zeroed page of a given order =
-from
-> > + * specific NUMA node.
-> > + * @nid: memory NUMA node id
+> > Add NR_IOMMU_PAGES into node_stat_item that counts number of pages
+> > that are allocated by the IOMMU subsystem.
+> >
+> > The allocations can be view per-node via:
+> > /sys/devices/system/node/nodeN/vmstat.
+> >
+> > For example:
+> >
+> > $ grep iommu /sys/devices/system/node/node*/vmstat
+> > /sys/devices/system/node/node0/vmstat:nr_iommu_pages 106025
+> > /sys/devices/system/node/node1/vmstat:nr_iommu_pages 3464
+> >
+> > The value is in page-count, therefore, in the above example
+> > the iommu allocations amount to ~428M.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 >
-> NUMA_NO_NODE if no locality requirements?
+> Acked-by: David Rientjes <rientjes@google.com>
 
-If no locality is required, there is a better interface:
-__iommu_alloc_pages(). That one will also take a look at the calling
-process policies to determine the proper NUMA node when nothing is
-specified. However, when policies should be ignored, and no locality
-required, NUMA_NO_NODE can be passed.
-
->
-> > + * @gfp: buddy allocator flags
-> > + * @order: page order
-> > + *
-> > + * returns the head struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp=
-,
-> > +                                                 int order)
-> > +{
-> > +     struct page *pages;
->
-> s/pages/page/ here and later in this file.
-
-In this file, where there a page with an "order", I reference it with
-"pages", when no order (i.e. order =3D 0), I reference it with "page"
-
-I.e.: __iommu_alloc_page vs. __iommu_alloc_pages
-
->
-> > +
-> > +     pages =3D alloc_pages_node(nid, gfp | __GFP_ZERO, order);
-> > +     if (!pages)
->
-> unlikely()?
-
-Will add it.
-
->
-> > +             return NULL;
-> > +
-> > +     return pages;
-> > +}
-> > +
-> > +/**
-> > + * __iommu_alloc_pages - allocate a zeroed page of a given order.
-> > + * @gfp: buddy allocator flags
-> > + * @order: page order
-> > + *
-> > + * returns the head struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
-> > +{
-> > +     struct page *pages;
-> > +
-> > +     pages =3D alloc_pages(gfp | __GFP_ZERO, order);
-> > +     if (!pages)
-> > +             return NULL;
-> > +
-> > +     return pages;
-> > +}
-> > +
-> > +/**
-> > + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA n=
-ode.
-> > + * @nid: memory NUMA node id
-> > + * @gfp: buddy allocator flags
-> > + *
-> > + * returns the struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
-> > +{
-> > +     return __iommu_alloc_pages_node(nid, gfp, 0);
-> > +}
-> > +
-> > +/**
-> > + * __iommu_alloc_page - allocate a zeroed page
-> > + * @gfp: buddy allocator flags
-> > + *
-> > + * returns the struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_page(gfp_t gfp)
-> > +{
-> > +     return __iommu_alloc_pages(gfp, 0);
-> > +}
-> > +
-> > +/**
-> > + * __iommu_free_pages - free page of a given order
-> > + * @pages: head struct page of the page
->
-> I think "pages" implies more than one page, this is just a (potentially
-> compound) page?
-
-Yes, more than one page, basically, when order may be > 0.
-
-> > +/**
-> > + * iommu_free_page - free page
-> > + * @virt: virtual address of the page to be freed.
-> > + */
-> > +static inline void iommu_free_page(void *virt)
-> > +{
-> > +     iommu_free_pages(virt, 0);
-> > +}
-> > +
-> > +/**
-> > + * iommu_free_pages_list - free a list of pages.
-> > + * @pages: the head of the lru list to be freed.
->
-> Document the locking requirements for this?
-
-Thank you for the review. I will add info about locking requirements,
-in fact they are very relaxed.
-
-These pages are added to the list by unmaps or remaps operation in
-Intel IOMMU implementation. These calls assume that whoever is doing
-those operations has exclusive access to the VA range in the page
-table of that operation. The pages in this freelist only belong to the
-former page-tables from the IOVA range for those operations.
-
-> > + */
-> > +static inline void iommu_free_pages_list(struct list_head *pages)
-> > +{
-> > +     while (!list_empty(pages)) {
-> > +             struct page *p =3D list_entry(pages->prev, struct page, l=
-ru);
-> > +
-> > +             list_del(&p->lru);
-> > +             put_page(p);
-> > +     }
-> > +}
+Thank you,
+Pasha
 
