@@ -1,73 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-6030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEA28123E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 01:29:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1169812455
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 02:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEC1B21171
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 00:29:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5161C214F2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 01:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692F339C;
-	Thu, 14 Dec 2023 00:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EE581E;
+	Thu, 14 Dec 2023 01:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOrmA2DE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSq1uGLr"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E63218F;
-	Thu, 14 Dec 2023 00:28:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92049C433C8;
-	Thu, 14 Dec 2023 00:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FB9642;
+	Thu, 14 Dec 2023 01:11:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F6B2C433C8;
+	Thu, 14 Dec 2023 01:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702513736;
-	bh=tQFwrDCOk2a2q/qZ8qSubMnw90hcJ8c+fZRXDcJTQnQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BOrmA2DETPhEo6BqgDyhgelgOXer2LOk5wlznPX5fq2pKPtg/rOzY95+ywP/lofbD
-	 XA/fl4wEoI/vI18t9RiZ7FRG/OtxjrN1ao+WEEeTWUt7gA9R7FUxk//dHeQrs9vqWX
-	 0TmIgQQq1fYZU0vW17gfI9r42EKYlRMWhTe1QLxzAJcaR4bzGCJRhx5glQlEPA+sc9
-	 bbXrxMSWfOa6Fjq103NsnxU8AfxU01wHfjyDWoILJPYd63Z0BpYkSeddJhVBpk0FXq
-	 iVLtzKf2GQwP1p2dNLFwTP/uMhym2lgb4zFlucctpjIHHPhRxXf8AqK1fUB3zaI8q5
-	 8JrCl/zH62+og==
-Date: Wed, 13 Dec 2023 16:28:54 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Tony Lu <tonylu@linux.alibaba.com>, Christian Brauner
- <brauner@kernel.org>
-Cc: Ahelenia Ziemia'nska <nabijaczleweli@nabijaczleweli.xyz>, Karsten Graul
- <kgraul@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher
- <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>, Wen Gu
- <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Alexander Viro
- <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH RESEND 06/11] net/smc: smc_splice_read: always request
- MSG_DONTWAIT
-Message-ID: <20231213162854.4acfbd9f@kernel.org>
-In-Reply-To: <ZXkNf9vvtzR7oqoE@TONYMAC-ALIBABA.local>
-References: <cover.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
-	<145da5ab094bcc7d3331385e8813074922c2a13c6.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
-	<ZXkNf9vvtzR7oqoE@TONYMAC-ALIBABA.local>
+	s=k20201202; t=1702516284;
+	bh=XwoFjsJDwQ9a2+DWM4rjeegVkzh/lxFGbWD3rYfyGcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lSq1uGLrFIRUTnVT3AS20PIwVXDWLgO8ozWsfsDZWaPJjk8n3u8l/eWwAv50O0EMd
+	 u8lxxL9Y4sSkGifdgqH3/YI4+EmFlAIdAVSI/mgcQl9karZZTwtudxVBlp5VpjaMxu
+	 SjagbjSDOcAhlUiBn/nkeM13SGJb/wwTwxfblLge9zGFRonPJ2SBordG8cRqdYFNpI
+	 3vAf2yXumJqwsUhu2Qb2L2P3bTvd2tZKU5prXoqDMiIFx8b91cZLKRNAPDnqn2anJK
+	 4lsRsLROKyVu60uG6cdSuihgOfEcCuT+ZirEHhGzdijeXu7TpvPoxov1wnMfqIDbmI
+	 CMP4+mM/C2Qxg==
+Date: Wed, 13 Dec 2023 17:11:21 -0800
+From: Keith Busch <kbusch@kernel.org>
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
+	anuj1072538@gmail.com, gost.dev@samsung.com, mcgrof@kernel.org,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v18 02/12] Add infrastructure for copy offload in block
+ and request layer.
+Message-ID: <ZXpWOaxCRoF7dFis@kbusch-mbp>
+References: <20231206100253.13100-1-joshi.k@samsung.com>
+ <CGME20231206101050epcas5p2c8233030bbf74cef0166c7dfc0f41be7@epcas5p2.samsung.com>
+ <20231206100253.13100-3-joshi.k@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231206100253.13100-3-joshi.k@samsung.com>
 
-On Wed, 13 Dec 2023 09:48:47 +0800 Tony Lu wrote:
-> Please add correct tag, for this patch, IIUC, it should be a fix, and
-> you need add [PATCH net].
+On Wed, Dec 06, 2023 at 03:32:34PM +0530, Kanchan Joshi wrote:
+>  static inline bool bio_has_data(struct bio *bio)
+>  {
+> -	if (bio &&
+> -	    bio->bi_iter.bi_size &&
+> -	    bio_op(bio) != REQ_OP_DISCARD &&
+> -	    bio_op(bio) != REQ_OP_SECURE_ERASE &&
+> -	    bio_op(bio) != REQ_OP_WRITE_ZEROES)
+> +	if (bio && (bio_op(bio) == REQ_OP_READ || bio_op(bio) == REQ_OP_WRITE))
+>  		return true;
 
-I was wondering who's expected to take this. We (netdev/net maintainers)
-didn't even get CCed on all the patches in the series.
-My sense is that this is more of a VFS change, so Al / Christian may be
-better suited to take this?
+There are other ops besides READ and WRITE that have data, but this is
+might be fine by the fact that other ops with data currently don't call
+this function.
 
-Let's figure that out before we get another repost.
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 7c2316c91cbd..bd821eaa7a02 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -393,6 +393,10 @@ enum req_op {
+>  	/* reset all the zone present on the device */
+>  	REQ_OP_ZONE_RESET_ALL	= (__force blk_opf_t)17,
+>  
+> +	/* copy offload dst and src operation */
+> +	REQ_OP_COPY_SRC		= (__force blk_opf_t)19,
+
+Should this be an even numbered OP? The odd ones are for data
+WRITEs.
+
+> +	REQ_OP_COPY_DST		= (__force blk_opf_t)21,
 
