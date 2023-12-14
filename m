@@ -1,72 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-6049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A4E812D62
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 11:51:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF4E812DD4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 11:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA6028297B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 10:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7481C21506
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Dec 2023 10:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389093D3B1;
-	Thu, 14 Dec 2023 10:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C683D98E;
+	Thu, 14 Dec 2023 10:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjW7wdE0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMFfqC4f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778643C494;
-	Thu, 14 Dec 2023 10:50:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C00C433C8;
-	Thu, 14 Dec 2023 10:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4373D3BC;
+	Thu, 14 Dec 2023 10:55:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACB0FC433C8;
+	Thu, 14 Dec 2023 10:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702551052;
-	bh=B3Uzhdrf3xm+8hmipnGveC7xOj8Hsd8r5ig/mSxdums=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cjW7wdE0wJKpOB85/uTrRUZDMYAzvL5sJeBifjJFoP9i7NGE5Oi7a+4FO7v2ai+l4
-	 nVbRAw9ZKZd5dfjc2HHHRBrOLhKc+W2RUxZ4nkoftoeW/uaTBN4SDGKYEV1zvjHXBL
-	 vdM9RbsYQqhNyz+LHodwpS4E7AsD7curbtBCxaF6IrSytdaPiViHD+B+tuyNslANj6
-	 TMEXUovKVZxIZF0dnS+NXydDH/xos7XtdhqYb+NOMcJcVui3XOw9SHU7I0wbxG1AQx
-	 Nom7GRyNXKt/X6L98kcxe2/PAfWM98PoFAJW4gkP3+9ecSqwycW81aSFJb0dYjmvS5
-	 3/1ugywDFRH4Q==
-Date: Thu, 14 Dec 2023 11:50:45 +0100
+	s=k20201202; t=1702551328;
+	bh=dOHfKJ1H5Yv4IAoRy4gpJnm+3MqfFLCm0K0QAMRIqk8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XMFfqC4fH1moFbk3rbUruEybthFx4pghbNQ3GrwVQ101Jz8GdgjwxNQbifFnkvmy8
+	 2keVRO8t2F8SxAiafKclJilYeTpyLvpt+yzkWg0R69zw1IjcWQJMsRISxGlsbRXmzZ
+	 qA+a25hALeHaDgNztnvx6+W6CsCKMgsrdh1phd+Ws0N/AVQNBNLcYcbePobluRIFd5
+	 2P4810geWzWzy/baIcXAFzlzfcQy7DE95e5eP4FG9fbeHrg79nzSNyNme52tkB7Tqd
+	 4VF9F6XJ4WaWod7fxaILA0a5agkzAijmmTjUhldOStFtS+KKIGKVvvHLLXHOURZ/gA
+	 CQ8UUqsYztKGA==
 From: Christian Brauner <brauner@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Tony Lu <tonylu@linux.alibaba.com>,
-	Ahelenia Ziemia'nska <nabijaczleweli@nabijaczleweli.xyz>,
-	Karsten Graul <kgraul@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Jan Karcher <jaka@linux.ibm.com>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To: Andrei Vagin <avagin@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH RESEND 06/11] net/smc: smc_splice_read: always request
- MSG_DONTWAIT
-Message-ID: <20231214-glimmen-abspielen-12b68e7cb3a7@brauner>
-References: <cover.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
- <145da5ab094bcc7d3331385e8813074922c2a13c6.1697486714.git.nabijaczleweli@nabijaczleweli.xyz>
- <ZXkNf9vvtzR7oqoE@TONYMAC-ALIBABA.local>
- <20231213162854.4acfbd9f@kernel.org>
+	linux-fsdevel@vger.kernel.org,
+	overlayfs <linux-unionfs@vger.kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 1/2 v2] fs/proc: show correct device and inode numbers in /proc/pid/maps
+Date: Thu, 14 Dec 2023 11:55:04 +0100
+Message-ID: <20231214-datieren-maler-10004f2ff2c3@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231214064439.1023011-1-avagin@google.com>
+References: <20231214064439.1023011-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231213162854.4acfbd9f@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1358; i=brauner@kernel.org; h=from:subject:message-id; bh=dOHfKJ1H5Yv4IAoRy4gpJnm+3MqfFLCm0K0QAMRIqk8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRW3Wff3frux6qykENz9S+anNN6efD5zrY9LgvvKpidi ZX2z9Ap7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIGxcjwyfliWs2v7m/V77w zJPtfA9k9lgnrrzj13NSL0D8qEjEzo0M/8tuF77hXLvkmErfgW3l2ftvHXK9/HcO/7LPTYkxiTL 9SVwA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-> Let's figure that out before we get another repost.
+On Wed, 13 Dec 2023 22:44:38 -0800, Andrei Vagin wrote:
+> /proc/pid/maps shows device and inode numbers of vma->vm_file-s. Here is
+> an issue. If a mapped file is on a stackable file system (e.g.,
+> overlayfs), vma->vm_file is a backing file whose f_inode is on the
+> underlying filesystem. To show correct numbers, we need to get a user
+> file and shows its numbers. The same trick is used to show file paths in
+> /proc/pid/maps.
+> 
+> [...]
 
-I'm just waiting for Jens to review it as he had comments on this
-before.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/2] fs/proc: show correct device and inode numbers in /proc/pid/maps
+      https://git.kernel.org/vfs/vfs/c/26b50595e169
+[2/2] selftests/overlayfs: verify device and inode numbers in /proc/pid/maps
+      https://git.kernel.org/vfs/vfs/c/22d9cfff4639
 
