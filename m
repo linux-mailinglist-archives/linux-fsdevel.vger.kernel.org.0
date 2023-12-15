@@ -1,160 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-6194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B7E814B11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 16:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1A7814BDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 16:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0891F24A87
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 695001F24EAF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80231358BB;
-	Fri, 15 Dec 2023 15:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174003A8E7;
+	Fri, 15 Dec 2023 15:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThF3UUWw"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="nrh95jV+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B6235884;
-	Fri, 15 Dec 2023 15:00:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8CD3C433C8;
-	Fri, 15 Dec 2023 14:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702652405;
-	bh=422PM3fDIpd8XBwXAF/Vr2Tijy2/V6yIm6WwhsorExQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ThF3UUWwGr5c0gG18awOx5DrQRxAPwOOshZh7SWrhMEjGtlJQKezv414UMUQWtogg
-	 HnsI2tu59s1B5g7ry0ZQTMiQwmrK95OYjW9JiQ6MubAahf8tnoIGHG4ZF1g5MM51Ho
-	 Fuyd5f95QOR67Xo2K1+5IQcrm/42yldE3jy4DNl4ppdU048EmnGGuL8meF1yRhb1Vb
-	 LrNl4xg5kA7VxTmTD6d5xMpK4G8SinhZgdQ+byz8MwpizJS6XNp+ezD/RlY5hnqPb5
-	 M/qJhGhNwfiuAs4wEKcr3OTh/1Lt7WuUVP/7vAsp3W1EZLiIXddMPg4h2ayPqcPZD9
-	 deK0um1LZe7kA==
-Date: Fri, 15 Dec 2023 14:59:51 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v7 34/39] kselftest/arm64: Add a GCS test program built
- with the system libc
-Message-ID: <485b6454-135c-4dd4-b38e-8fb8a02779cd@sirena.org.uk>
-References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
- <20231122-arm64-gcs-v7-34-201c483bd775@kernel.org>
- <875y1089i4.fsf@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C343A8D5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 15:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dae7cc31151so521762276.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 07:31:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1702654269; x=1703259069; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Occ1vfgL8dgUQez4tkH7OqyVGPUXn2bu7pkST0J17mE=;
+        b=nrh95jV+NFpOyJocpvaatY+pglbIB4xT4G3g/7ZWbFP3OHRvbxdthmW7/5ar9XczIG
+         ZrxPw1vC+HpJM6s6kMAjQ1LULJ90icdKgD4mqaj6XGE/LHbVxYoKEvgy3Oife/xUe4Vy
+         JMxCyRW1OremL43Ps9ozfMsAAI607A++os/kLyRQ3kQa9cHLa5+z3pSiDhg4F0+M192P
+         /h+HpW26MSOr55cL7VP5TgFdee9+YlKunCt/CJzNdOcXjXZD9zrClu8DJLNuAVSyqM6y
+         /CXmufOseIx1WcnwYIYjYjPuB4nIDting7RR0MrQxKIvdkiMk6U4HBkyW0xNpGLBPDri
+         8Y0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702654269; x=1703259069;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Occ1vfgL8dgUQez4tkH7OqyVGPUXn2bu7pkST0J17mE=;
+        b=VgCIq8hxvmdqE7xiPwk+XZ9ytqrUhYJxKsslB2O5AdcLv1/3e0M3mcDt4VzTFLqq86
+         Av9roqI4FXOGDoDz8qykQ+Ll+E6fZyqhF7lRumMD0+s8x/cGwrGrXFvy2QOXCc7YSj1G
+         hOpuMPV/sF/8GYyfZ61hRGSBrXV6nPVAP13aTcGV7rFBcRGeTVoLUId99I9/IbFImWP1
+         WbR3mKp+yXaJwEIOGYjM3nMvVzqepAR3G91X/b/dyQbSh4oM/vt+m1IiqZ5wMRlD1XPF
+         MhbI0mhUhyUhcGVCXWBQ4g9ub9ciuOW79u0nsI6Yr+rdDqDxi421V73aWBve0w69o/Im
+         VKrQ==
+X-Gm-Message-State: AOJu0YwgC8iO23wjb9FyHfg+SNtraVWKlNdqLXoz+2cs/d6RhkupUQm3
+	WtvjCEuONfYiBhVkXJxmuu7igQ==
+X-Google-Smtp-Source: AGHT+IHbfEJdXjtO8hrpQfvPmAvGsxZIXIbpOuwmAM7Lg2o2W+hft09gTW1/Eqd2uqMO9r7azV5gsA==
+X-Received: by 2002:a25:f826:0:b0:dbc:e39e:bdb9 with SMTP id u38-20020a25f826000000b00dbce39ebdb9mr1813765ybd.88.1702654269541;
+        Fri, 15 Dec 2023 07:31:09 -0800 (PST)
+Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id q3-20020a258e83000000b00d815cb9accbsm5454492ybl.32.2023.12.15.07.31.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 07:31:09 -0800 (PST)
+Date: Fri, 15 Dec 2023 10:31:08 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission
+ response
+Message-ID: <20231215153108.GC683314@perftesting>
+References: <20231208080135.4089880-1-amir73il@gmail.com>
+ <20231213172844.ygjbkyl6i4gj52lt@quack3>
+ <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="M02qk/d68kwsaj1P"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <875y1089i4.fsf@linaro.org>
-X-Cookie: PARDON me, am I speaking ENGLISH?
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
 
+On Wed, Dec 13, 2023 at 09:09:30PM +0200, Amir Goldstein wrote:
+> On Wed, Dec 13, 2023 at 7:28 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
+> > > With FAN_DENY response, user trying to perform the filesystem operation
+> > > gets an error with errno set to EPERM.
+> > >
+> > > It is useful for hierarchical storage management (HSM) service to be able
+> > > to deny access for reasons more diverse than EPERM, for example EAGAIN,
+> > > if HSM could retry the operation later.
+> > >
+> > > Allow userspace to response to permission events with the response value
+> > > FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom error.
+> > >
+> > > The change in fanotify_response is backward compatible, because errno is
+> > > written in the high 8 bits of the 32bit response field and old kernels
+> > > reject respose value with high bits set.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > So a couple of comments that spring to my mind when I'm looking into this
+> > now (partly maybe due to my weak memory ;):
+> >
+> > 1) Do we still need the EAGAIN return? I think we have mostly dealt with
+> > freezing deadlocks in another way, didn't we?
+> 
+> I was thinking about EAGAIN on account of the HSM not being able to
+> download the file ATM.
+> 
+> There are a bunch of error codes that are typical for network filesystems, e.g.
+> ETIMEDOUT, ENOTCONN, ECONNRESET which could be relevant to
+> HSM failures.
+> 
+> >
+> > 2) If answer to 1) is yes, then there is a second question - do we expect
+> > the errors to propagate back to the unsuspecting application doing say
+> > read(2) syscall? Because I don't think that will fly well with a big
+> > majority of applications which basically treat *any* error from read(2) as
+> > fatal. This is also related to your question about standard permission
+> > events. Consumers of these error numbers are going to be random
+> > applications and I see a potential for rather big confusion arising there
+> > (like read(1) returning EINVAL or EBADF and now you wonder why the hell
+> > until you go debug the kernel and find out the error is coming out of
+> > fanotify handler). And the usecase is not quite clear to me for ordinary
+> > fanotify permission events (while I have no doubts about creativity of
+> > implementors of fanotify handlers ;)).
+> >
+> 
+> That's a good question.
+> I prefer to delegate your question to the prospect users of the feature.
+> 
+> Josef, which errors did your use case need this feature for?
+> 
+> > 3) Given the potential for confusion, maybe we should stay conservative and
+> > only allow additional EAGAIN error instead of arbitrary errno if we need it?
+> >
+> 
+> I know I was planning to use this for EDQUOT error (from FAN_PRE_MODIFY),
+> but I certainly wouldn't mind restricting the set of custom errors.
+> I think it makes sense. The hard part is to agree on this set of errors.
+> 
 
---M02qk/d68kwsaj1P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm all for flexibility here.
 
-On Thu, Dec 14, 2023 at 11:50:11PM -0300, Thiago Jung Bauermann wrote:
-> Mark Brown <broonie@kernel.org> writes:
+We're going to have 2 classes of applications interacting with HSM backed
+storage, normal applications and applications that know they're backed by HSM.
+The normal applications are just going to crash if they get an error on read(2),
+it doesn't matter what errno it is.  The second class would have different
+things they'd want to do in the face of different errors, and that's what this
+patchset is targeting.  We can limit it to a few errno's if that makes you feel
+better, but having more than just one would be helpful.  Thanks,
 
-> > +	ret =3D process_vm_writev(child, &local_iov, 1, &remote_iov, 1, 0);
-> > +	if (ret =3D=3D -1)
-> > +		ksft_print_msg("process_vm_readv() failed: %s (%d)\n",
-> > +			       strerror(errno), errno);
-
-> The comment and the error message say "process_vm_readv()", but the
-> function actually called is process_vm_writev(). Is this intended?
-
-No, that's a rebasing issue.
-
-> If I swap process_vm_readv() and process_vm_writev(), then the read
-> succeeds but the write fails:
->=20
-> #  RUN           global.ptrace_read_write ...
-> # Child: 1996
-> # Child GCSPR 0xffffa7fcffd8, flags 1, locked 0
-> # process_vm_writev() failed: Bad address (14)
-> # libc-gcs.c:291:ptrace_read_write:Expected ret (-1) =3D=3D sizeof(rval) =
-(8)
-> # libc-gcs.c:293:ptrace_read_write:Expected val (281473500358268) =3D=3D =
-ptrace(PTRACE_PEEKDATA, child, (void *)gcspr, NULL) (0)
-> # ptrace_read_write: Test failed at step #1
-> #          FAIL  global.ptrace_read_write
-> not ok 4 global.ptrace_read_write
-
-Yeah, I did notice something had happened with the writes but didn't
-investigate yet.
-
-> Also, it's strange that the tests defined after map_gcs.stack_overflow
-> don't run when I execute this test program. I'm doing:
-
-> $ ./run_kselftest.sh -t arm64:libc-gcs
-
-> I.e., these tests aren't being run in my FVP:
-
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, too_small)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_1)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_2)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_3)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_4)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_5)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_6)
-> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_7)
-> > +TEST_F(map_invalid_gcs, do_map)
-> > +FIXTURE_VARIANT_ADD(invalid_mprotect, exec)
-> > +FIXTURE_VARIANT_ADD(invalid_mprotect, bti)
-> > +FIXTURE_VARIANT_ADD(invalid_mprotect, exec_bti)
-> > +TEST_F(invalid_mprotect, do_map)
-> > +TEST_F(invalid_mprotect, do_map_read)
-
-I'm seeing all of those appearing.  I'm not sure what to say there -
-that's all kselftest framework stuff, I'd expect the framework to say
-something about what it's doing if it decides to skip and I can't think
-why it would decide to skip.
-
---M02qk/d68kwsaj1P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV8aecACgkQJNaLcl1U
-h9Cx7Qf+NstvmUJDmhKZCiSXybEblR3UfKc2ERXjiJRyMZJYWGE59Aqau43rUxYz
-4oELXv45Jxb9fBX19Ap6W19TxDrGHMHoCW6fuIiqeTu9L1798R0lJi1TuUxnoX2t
-t/s1MqP87pbwKNs60ne9ezvagfQhFFBAYyUepAxrvfPkeUakOwLgsHRwx2bEVsXv
-6SsJJ9hRz7N2FvlP487cWfC5VQkyYjefXQHi/1OrZw1hSkS9a5Hb/Y1vBzacFUbS
-YDYZszJexTXkcRjAngFzHsCBCakK3xpFB1uRPMhrAOj51UDJHHwE4+nX7DUWZaxT
-delEJTYjMd7cGaEpGyDdMnkhQVyM4g==
-=fKsW
------END PGP SIGNATURE-----
-
---M02qk/d68kwsaj1P--
+Josef
 
