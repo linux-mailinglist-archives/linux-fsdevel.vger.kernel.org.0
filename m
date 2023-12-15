@@ -1,144 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-6201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05C1814DB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 18:00:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C59814DD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 18:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8B81C23D84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 17:00:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390C71C24105
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 17:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA133EA7C;
-	Fri, 15 Dec 2023 17:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249923EA7C;
+	Fri, 15 Dec 2023 17:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JufxJbS0"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="LOQXWakv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802603EA60
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 17:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-426114e5b3eso4315311cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 09:00:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C993FB30;
+	Fri, 15 Dec 2023 17:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702659620; x=1703264420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mTde31bwF/Pd3FbsCVIO/Zp76ESUoaWjvdkuSmxzZD0=;
-        b=JufxJbS0HR/g4h1cObcfecXW/bpuq9bSAXkc4QBSlPkj1K/f371khQRJmBvx0LUkJ2
-         mwY4lAR8HA3LzRQbvYvZA65DZDBIxdIABwBa31Zn7XUzQWrGTXDbBKCFbpR25mq0JOsJ
-         NswrXEiYr3Ja1WN2v6q4Sln2fP+ER+y1JI2HNNWZGT29U2Edk1Bj5TZHRLuLcQ+bEpwW
-         7jzkBVOzYW3qx0zsvjSMsUplSgK7h5tXG3uqcFxRcnTAUTT7+jRHDh2ZHnX0ZIpWCDD2
-         DFjBEOyMfRwwRhCANN5DqpG1sYveAi7B6ukQv76JbpjKD5V9e2JOrY0e494FcDh9s0an
-         +ydw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702659620; x=1703264420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mTde31bwF/Pd3FbsCVIO/Zp76ESUoaWjvdkuSmxzZD0=;
-        b=e7KRIAfAhT5GbUCWrCEhiErcRUAHVJVXoesE00QgBjX2q/PMbksZvUvFuhMKVOM0WB
-         8xzHhgIOz3t0fhFFyKV4TBZUw3BlQf0K3gYn5lYURHKYn8s6n666CqRa71MaxdJk1aBG
-         MBssvjgSgm3qncxrWpF0MhRT/GYYllrF/RvSmr3TosjJzihUUvLSkq5rCHOCmtRRClBq
-         ycHRM2a5Dma59KJAtadhYSpmW92q5AInpv3SHyqENbCGV9s8zogfVX2qZT237Nz+/cgw
-         V3Fw6XS5noKyGhltStwq8SWCJoUv4PCSsl+9ojEpTl6BghU7/h4uAits866p4gEu1ONE
-         Ehdg==
-X-Gm-Message-State: AOJu0YyhbiMBpvP89UepDloQGeZLErUkuDHcD11nK+8xoNeFU4UdTIcu
-	2xmxxtPJbbSJXA/qLOTa3MPmRBGHzPO9413cNCw=
-X-Google-Smtp-Source: AGHT+IGKfL+9MPAs0XRfKUcNB9wj+818ba1KH3AzcLuw28if/2tP8cEvmOj1l2scojWn57+PEbNYHl/LcLhccuWJhBs=
-X-Received: by 2002:a05:622a:507:b0:425:aa8b:3aca with SMTP id
- l7-20020a05622a050700b00425aa8b3acamr14665033qtx.55.1702659619838; Fri, 15
- Dec 2023 09:00:19 -0800 (PST)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=b1r61txkB9I8VrHQEVInIZpLPckdP0rJJDvEIPWqnEc=;
+  b=LOQXWakvBy71xew3ASNMm74HJhXhtZmGAWww6FCy4WhqGrbYOkvEXM4a
+   jhWMjanSBJoz+2nppCXYM5oKMZWx0CGF5sk8M8F3MSacN05AhGcRBx45+
+   Y2rLF835GG08AE8+Sep1xKrSZSpyMR0LZlDFp4clPo2WHVVS3kpcLkE0h
+   c=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.04,279,1695679200"; 
+   d="scan'208";a="74574559"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 18:05:04 +0100
+Date: Fri, 15 Dec 2023 18:05:02 +0100 (CET)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>
+cc: Luis Chamberlain <mcgrof@kernel.org>, 
+    Joel Granados <j.granados@samsung.com>, 
+    Dan Carpenter <dan.carpenter@linaro.org>, 
+    Julia Lawall <julia.lawall@inria.fr>, Kees Cook <keescook@chromium.org>, 
+    "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+    Iurii Zaikin <yzaikin@google.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
+In-Reply-To: <46d68741-0ac8-47cc-a28f-bf43575e68a1@t-8ch.de>
+Message-ID: <10ea8782-5eea-879-e31e-278bb2fe73a5@inria.fr>
+References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com> <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net> <20231207104357.kndqvzkhxqkwkkjo@localhost> <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
+ <20231208095926.aavsjrtqbb5rygmb@localhost> <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de> <20231212090930.y4omk62wenxgo5by@localhost> <ZXligolK0ekZ+Zuf@bombadil.infradead.org> <46d68741-0ac8-47cc-a28f-bf43575e68a1@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231207123825.4011620-1-amir73il@gmail.com> <20231207215105.GA94859@localhost.localdomain>
- <CAOQ4uxiBGNmHcYCg2r_=pWFJVwx0WPmdmqQyrzDQdgWsiUTNYA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiBGNmHcYCg2r_=pWFJVwx0WPmdmqQyrzDQdgWsiUTNYA@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Dec 2023 19:00:08 +0200
-Message-ID: <CAOQ4uxj5GuOk7FdrZYdDVMmvp+CSBJty0SzsHN2T50NUBRFV4Q@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Prepare for fsnotify pre-content permission events
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323329-1238573808-1702659903=:10294"
 
-On Fri, Dec 8, 2023 at 9:34=E2=80=AFAM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Thu, Dec 7, 2023 at 11:51=E2=80=AFPM Josef Bacik <josef@toxicpanda.com=
-> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1238573808-1702659903=:10294
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Fri, 15 Dec 2023, Thomas Weißschuh wrote:
+
+> On 2023-12-12 23:51:30-0800, Luis Chamberlain wrote:
+> > On Tue, Dec 12, 2023 at 10:09:30AM +0100, Joel Granados wrote:
+> > > My idea was to do something similar to your originl RFC, where you have
+> > > an temporary proc_handler something like proc_hdlr_const (we would need
+> > > to work on the name) and move each subsystem to the new handler while
+> > > the others stay with the non-const one. At the end, the old proc_handler
+> > > function name would disapear and would be completely replaced by the new
+> > > proc_hdlr_const.
+> > >
+> > > This is of course extra work and might not be worth it if you don't get
+> > > negative feedback related to tree-wide changes. Therefore I stick to my
+> > > previous suggestion. Send the big tree-wide patches and only explore
+> > > this option if someone screams.
 > >
-> > On Thu, Dec 07, 2023 at 02:38:21PM +0200, Amir Goldstein wrote:
-> > > Hi Jan & Christian,
-> > >
-> > > I am not planning to post the fanotify pre-content event patches [1]
-> > > for 6.8.  Not because they are not ready, but because the usersapce
-> > > example is not ready.
-> > >
-> > > Also, I think it is a good idea to let the large permission hooks
-> > > cleanup work to mature over the 6.8 cycle, before we introduce the
-> > > pre-content events.
-> > >
-> > > However, I would like to include the following vfs prep patches along
-> > > with the vfs.rw PR for 6.8, which could be titled as the subject of
-> > > this cover letter.
-> > >
-> > > Patch 1 is a variant of a cleanup suggested by Christoph to get rid
-> > > of the generic_copy_file_range() exported symbol.
-> > >
-> > > Patches 2,3 add the file_write_not_started() assertion to fsnotify
-> > > file permission hooks.  IMO, it is important to merge it along with
-> > > vfs.rw because:
-> > >
-> > > 1. This assert is how I tested vfs.rw does what it aimed to achieve
-> > > 2. This will protect us from new callers that break the new order
-> > > 3. The commit message of patch 3 provides the context for the entire
-> > >    series and can be included in the PR message
-> > >
-> > > Patch 4 is the final change of fsnotify permission hook locations/arg=
-s
-> > > and is the last of the vfs prerequsites for pre-content events.
-> > >
-> > > If we merge patch 4 for 6.8, it will be much easier for the developme=
-nt
-> > > of fanotify pre-content events in 6.9 dev cycle, which be contained
-> > > within the fsnotify subsystem.
-> >
-> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> >
-> > Can you get an fstest added that exercises the freeze deadlock?
+> > I think we can do better, can't we just increase confidence in that we
+> > don't *need* muttable ctl_cables with something like smatch or
+> > coccinelle so that we can just make them const?
 >
-> I suppose that you mean a test that exercises the lockdep assertion?
-> This is much easier to do, so I don't see the point in actually testing
-> the deadlock. The only thing is that the assertion will not be backported
-> so this test would protect us from future regression, but will not nudge
-> stable kernel users to backport the deadlock fix, which I don't think the=
-y
-> should be doing anyway.
+> The fact that the code compiles should be enough, no?
+> Any funky casting that would trick the compiler to accept it would
+> probably also confuse any other tool.
+
+I don't know the context, but the fact that a particular file compiles
+doesn't mean that all of the lines in the file have been subjected to the
+compiler, due to ifdefs.
+
+julia
+
 >
-> It is actually already exercised by tests overlay/068,069, but I can add
-> a generic test to get wider testing coverage.
-
-Here is a WIP test:
-https://github.com/amir73il/xfstests/commits/start-write-safe
-
-I tested it by reverting "fs: move file_start_write() into
-direct_splice_actor()"
-and seeing that it triggers the assert.
-
-Thanks,
-Amir.
+> > Seems like a noble endeavor for us to generalize.
+> >
+> > Then we just breeze through by first fixing those that *are* using
+> > mutable tables by having it just de-register and then re-register
+> > new tables if they need to be changed, and then a new series is sent
+> > once we fix all those muttable tables.
+>
+> Ack. But I think the actual constification should really only be started
+> after the first series for the infrastructure is in.
+>
+> Thomas
+>
+--8323329-1238573808-1702659903=:10294--
 
