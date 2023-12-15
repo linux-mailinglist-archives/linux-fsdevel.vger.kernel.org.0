@@ -1,294 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-6237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E4A8151D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 22:17:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1C9815201
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 22:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B342286F65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 21:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49C651C20BDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 21:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A24B15F;
-	Fri, 15 Dec 2023 21:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB85495C9;
+	Fri, 15 Dec 2023 21:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YYl9BpAw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+pnCH31v";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YYl9BpAw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+pnCH31v"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="soRwR4Tb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BB24AF8C;
-	Fri, 15 Dec 2023 21:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D07CF22031;
-	Fri, 15 Dec 2023 21:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702674993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKukKkTTBPbOQf8nO7GMzkTpBiJ/Q2Wc38Wb/akI5Dc=;
-	b=YYl9BpAwPQ7tXCEEsnUiYDP7sa+TMbl+2NQBLH28B5cWRXwa0QUGtWTwlXnlRZ/3cFJMu/
-	vxK5JI6n/1qUbMDEjkJ0vv534IMCVeJCkQ4A3175nj6t58SGkJ7K29dh6FBwucV29OR4Dm
-	F8lw/ApWzFZk/Pc7wAzgdtCiaHBlmrg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702674993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKukKkTTBPbOQf8nO7GMzkTpBiJ/Q2Wc38Wb/akI5Dc=;
-	b=+pnCH31vV7628YdaMFTbm/bI3p61wNSVfFG0udp0AudaZA6wCFh96hm8FqelTBv0ahH/rB
-	s2dGb/682mGyIMBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1702674993; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKukKkTTBPbOQf8nO7GMzkTpBiJ/Q2Wc38Wb/akI5Dc=;
-	b=YYl9BpAwPQ7tXCEEsnUiYDP7sa+TMbl+2NQBLH28B5cWRXwa0QUGtWTwlXnlRZ/3cFJMu/
-	vxK5JI6n/1qUbMDEjkJ0vv534IMCVeJCkQ4A3175nj6t58SGkJ7K29dh6FBwucV29OR4Dm
-	F8lw/ApWzFZk/Pc7wAzgdtCiaHBlmrg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1702674993;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKukKkTTBPbOQf8nO7GMzkTpBiJ/Q2Wc38Wb/akI5Dc=;
-	b=+pnCH31vV7628YdaMFTbm/bI3p61wNSVfFG0udp0AudaZA6wCFh96hm8FqelTBv0ahH/rB
-	s2dGb/682mGyIMBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D9EA137D4;
-	Fri, 15 Dec 2023 21:16:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gINRGzHCfGWkOQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 15 Dec 2023 21:16:33 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: viro@zeniv.linux.org.uk,
-	ebiggers@kernel.org,
-	jaegeuk@kernel.org,
-	tytso@mit.edu
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v2 8/8] fscrypt: Move d_revalidate configuration back into fscrypt
-Date: Fri, 15 Dec 2023 16:16:08 -0500
-Message-ID: <20231215211608.6449-9-krisman@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231215211608.6449-1-krisman@suse.de>
-References: <20231215211608.6449-1-krisman@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595AA47F66
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 21:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702676482; bh=1/ESIGcwLpGZVC5X2wR8bKtmXxMiwhmiGVSgfbFIMjc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=soRwR4TbKW8qq83crBGFNFJZk6JSk1p1EdsjVI1AeVIJYjA3gcWB9/S7oG/To78oxR0y+zL7gI0ZWDZQERShJXik4REovFJwIrczmGi7rPxKLNINdQzVWJazFJjxhgh7SlJiiNk8mWFVvtOMC0yjhX++cA8PEYNlNfG1B6BQK7l/rG5Gz53sVZDCCvgTy969pejXNOqsJYt80GMLZsN1ZaO2CTA/vrGyZVwU0+zDoL4TmOzsWT+zAi/GIGX8k7Ln44kGOSvIVxxwYkbuL2j4ZVuLii/6GACWpouikQiZbcj7fB+t4Vwqpl0NOtTEgREadZw6UlRvQqLHi8wrtWvNpA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1702676482; bh=/n9PtqtMnVFYCeiPLx4nqLz+xzIBClbzNXAThbF5kn/=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=gXXYbMKSwsGUHS16vuvaQ/f83CwJk/ih/IQdNhWIqBphiIIhwOathhJ4spJ8N0OrqhBVvpCQKL73pOFyYD57M+T12BSiJOHAxTgXeNgRWiS0DS4xqvKlS7sLUXbaDNTN+SDzHZWoKLY6Mrd2fhVkTZezyk2X8MQpxHJjGR25YOtwsebj0/fxRieGdBc5KoTMXvobwHgLc3UVqSqhFyuS27fcI8wcVnaBre9EmrulitCA2iv89VeeokASSsyuNJ0m6jBVHMp3yQi7NYDjedsJIyzVlQiYvlJZ3E6yp/onsn0u079WE9Wer0CT4yc5L/tTgL9deZ1nXPT+gf8wmC209g==
+X-YMail-OSG: D7Z.78wVM1kMAAl.AP4Ohbxq7pxxE2vCTH.TTDoOTWhJXFzHiIW8fzXM6EpjUZo
+ H.Qr5dkmyEbmJL_lUjot9ivQl.FrTVUsdw3OPT4fvkUX7fqyKRD2rOgG7CmvSRoTJRwc5sQ78iWR
+ nEVNGNzLp0hIv.O8VJXdhKPdSCdXF507Minl0Bx5jKXQrghr8vQNWlSWchWJ20jPVDkW6DKJyhBp
+ 4j9PiD_LJg9pqiY6TJLfLuwze6yxr2aH5X4JFLEfBShu_zyt4he6cb10DkENactrDlohkRCqnbIa
+ ubJB6B6DacYgyqHMx._dO8hlMLKNz27t4QIGwx4v8.YK1gVZfXBaCDKxHvK.e36Zv9dfY4lrUxdG
+ dHi8A1Th8oG6e4FKsfb7Qplnz13twPw7SsCP1jeiITHq60pJ.6Q5wePB.aYd5xxVYAhK6hRH0xXX
+ 17CySSdkeKqZZnocIVXaOY7UTMniRVuJKKCnzk7wKbB9_ryacVu1GzjpOX3DITelqOilnrU3XwZK
+ uS3vsJpT1Mw2TE.RL2TdDV8EMSGUYWTBU1w3D3pVkrcfE88ecykkNLeom3F0SMCLO9uxny3kltb9
+ w40zzhzclF.E9GolNWLGsN.XYtMbSa3G8xo0JDrDXP9Nyk1ZkjpPlvydOsdiBRZwk275Gh9xf_MX
+ mzHzKy3YN5.0THByKKGqbZwfcbM03iDlxNUb26bbpZrcBJLLrjhJVDLOPcGOWMwS0oeFkmN9islb
+ RyctHdCv1Pw.MG_f6yXZvt.C_uKODSLGS5V7EyhkeZGlgQCTdhZasGu.RInvnifDqPKRBBelxFw0
+ Ne1IBjLG_D5FOPYAg3HT6CVICTiOHsxbM0c5RsLr2T4i76AQZeP01D3tKk1KXqVhlxs04ptdHOmI
+ cZo4LOREk3zGmja5OEoeUVjpsqEnqrkZzamj0sWVE8wOsCL.4BJCRIahtgMu.xSUOlgcmBmWuMc4
+ lGvPSqJ.xAqux73Ua0JqzI5_.oe_DdkpLfC0CSNOf.0of4trOLGJqj7zUgZSZMVN9hAh28THgn.7
+ b3o4Yjim_lmXkIrLsOgHFFqKnq16HdmOhAW4N9t7ZesYCIOjk6Qc0VFg77i7IQtw2UsbjBDIcuTj
+ NVwAf84qHQPKzsG1Uifz7ZAXNMR1RqUo92JUnEznBcHKnCd1t1gayQtVLJsOUoQDT3P0I4.AMhQU
+ WYvSQY3018_Q3FBtUVq3zGeItDQ2eRrmbETeK3inIedg8pMSoPLuzWawakO0wUII0D1yeMaDp2Gm
+ 9RHgjBx6eBfe9ZwLs4jDwASiaHDlEAeUws6ZvmNIrlZGZpKDnBJCPclS_SI4_QZDCJmhFny.DdHr
+ Y17AjBXTENldZbUp2vnqMh3w.6RusPC.rSwYxHDAk4eyA51JBpmAdefxd1lE5gBbSDAXaxXd2zNY
+ WdEmOP.0c5m7YFxevi9SZksgaPUyo3.v1cd6lnhTyoQnrQWwyqA7iEwEtxSXHe3b_2XNxCqzcc5h
+ WBJW0lR884XO8T8_e9Nhz4DIDkXxfaddG1rRUJh1XW7JpF9tJCYSbnpfBzn_B1wqUuDHigZYaVjx
+ DfJia2SqAJuiY95XNznRbsPm0Kawct6H8xznHLR8Qa64SQTQlE_glAv9dmdEwP1ZPOksg6_xGALE
+ izmuf.TNE41D7tUlZbHTlB2W2lLrzbN92tKXuH0HYAq44GlEq02JodJlsKl1GrwgM3aKJKKN3BHp
+ Jz4pWRBpel6uyawoxJOwziScfcm2xIh_fSgM4iLxfz0OL_CS5QGeuQfYT0dMFHkwlkBhJXJ5iC9r
+ kAa_9Y_nVJcqbkTfVNEwVfmNbEW5FDU157e2qaLLFFDF3hbO9TJAylO2Ecg.MXnHmcS4cS57l1Wy
+ fxd9Vn0eIEfIXtae8YxVfcpq7u7V7blM2DdTREYTNd86Wuddqy7Xe7jOl9hp6PbQRM3EUyBRuDQD
+ PCe1ivtejt5hja4IXWtI06NtOIH0vAG4_6ycAHILQHYOFZKC8pueA_som9PWxssj0eQKojWkphL1
+ 1vOLQuVl7G3AybsTXIjzXgc6sTitnb9_uExmEDN4QeAJkcAPZGWT3PNNDffArE.H76MX_kjHWILg
+ 5VI.aWlXFOa.B4Oh.OfpkxzQYWoWE2D35lyNLxlwiuTpUzhWdjoeJGlQp5ClkVltl3nF2oULUXsO
+ FH4gLZXciyREFnl30wnSS94u6w0ZBVKaGNETz9Utpenp0JGVwdklafQokOmRf0gr4s8y9Ocv9vEh
+ qOiNRPtHRWRmRsjtR6yFWmeyMfEChE3Ho5Q2PMWHC
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: e79f5337-3e62-4527-b030-e0a3b0d998cd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Dec 2023 21:41:22 +0000
+Received: by hermes--production-gq1-6949d6d8f9-bvfr7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID fe5a77b47a76a7cd1cc4bf39259b4cdf;
+          Fri, 15 Dec 2023 21:41:19 +0000 (UTC)
+Message-ID: <a9a4f233-4867-41a1-8c1d-11d20226c491@schaufler-ca.com>
+Date: Fri, 15 Dec 2023 13:41:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: *
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: 0.70
-X-Spamd-Result: default: False [0.70 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 13/24] security: Introduce file_release hook
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com,
+ jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org,
+ shuah@kernel.org, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20231214170834.3324559-1-roberto.sassu@huaweicloud.com>
+ <20231214170834.3324559-14-roberto.sassu@huaweicloud.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20231214170834.3324559-14-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21952 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-This partially reverts commit bb9cd9106b22 ("fscrypt: Have filesystems
-handle their d_ops"), which moved this handler out of fscrypt and into
-the filesystems, in preparation to support casefold and fscrypt
-combinations.  Now that we set casefolding operations through
-->s_d_op, move this back into fscrypt, where it belongs, but take care
-to handle filesystems that set their own sb->s_d_op.
+On 12/14/2023 9:08 AM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the file_release hook.
+>
+> IMA calculates at file close the new digest of the file content and writes
+> it to security.ima, so that appraisal at next file access succeeds.
+>
+> LSMs could also take some action before the last reference of a file is
+> released.
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+You could make this more convincing with an example. Perhaps:
 
----
-changes since v1:
-  - Fix unused definition warning (lkp)
----
- fs/crypto/hooks.c       |  8 ++++++++
- fs/ext4/namei.c         |  5 -----
- fs/f2fs/namei.c         |  5 -----
- fs/libfs.c              | 25 -------------------------
- fs/ubifs/dir.c          |  1 -
- include/linux/fs.h      |  1 -
- include/linux/fscrypt.h | 10 +++++-----
- 7 files changed, 13 insertions(+), 42 deletions(-)
+An LSM could implement an exclusive access scheme for files,
+only allowing access to files that have no references.
 
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index 52504dd478d3..166837d5af29 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -94,6 +94,10 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- }
- EXPORT_SYMBOL_GPL(__fscrypt_prepare_rename);
- 
-+static const struct dentry_operations fscrypt_dentry_ops = {
-+	.d_revalidate = fscrypt_d_revalidate,
-+};
-+
- int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 			     struct fscrypt_name *fname)
- {
-@@ -106,6 +110,10 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 		spin_lock(&dentry->d_lock);
- 		dentry->d_flags |= DCACHE_NOKEY_NAME;
- 		spin_unlock(&dentry->d_lock);
-+
-+		/* Give preference to the filesystem hooks, if any. */
-+		if (!dentry->d_op)
-+			d_set_d_op(dentry, &fscrypt_dentry_ops);
- 	}
- 	return err;
- }
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 463e73fb5bf0..3f0b853a371e 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1762,11 +1762,6 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
- 	struct buffer_head *bh;
- 
- 	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
--
--	/* Case-insensitive volumes set dentry ops through sb->s_d_op. */
--	if (!dir->i_sb->s_d_op)
--		generic_set_encrypted_ci_d_ops(dentry);
--
- 	if (err == -ENOENT)
- 		return NULL;
- 	if (err)
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 6aec21f0b5d6..b40c6c393bd6 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -532,11 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
- 
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
--
--	/* Case-insensitive volumes set dentry ops through sb->s_d_op. */
--	if (!dir->i_sb->s_d_op)
--		generic_set_encrypted_ci_d_ops(dentry);
--
- 	if (err == -ENOENT)
- 		goto out_splice;
- 	if (err)
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 41c02c003265..a04d6c1ad77a 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1774,31 +1774,6 @@ const struct dentry_operations generic_ci_dentry_ops = {
- };
- #endif
- 
--#ifdef CONFIG_FS_ENCRYPTION
--static const struct dentry_operations generic_encrypted_dentry_ops = {
--	.d_revalidate = fscrypt_d_revalidate,
--};
--#endif
--
--/**
-- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-- * @dentry:	dentry to set ops on
-- *
-- * Encryption works differently in that the only dentry operation it needs is
-- * d_revalidate, which it only needs on dentries that have the no-key name flag.
-- * The no-key flag can't be set "later", so we don't have to worry about that.
-- */
--void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
--{
--#ifdef CONFIG_FS_ENCRYPTION
--	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
--		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
--		return;
--	}
--#endif
--}
--EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
--
- /**
-  * inode_maybe_inc_iversion - increments i_version
-  * @inode: inode with the i_version that should be updated
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 3b13c648d490..51b9a10a9851 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -205,7 +205,6 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
- 	dbg_gen("'%pd' in dir ino %lu", dentry, dir->i_ino);
- 
- 	err = fscrypt_prepare_lookup(dir, dentry, &nm);
--	generic_set_encrypted_ci_d_ops(dentry);
- 	if (err == -ENOENT)
- 		return d_splice_alias(NULL, dentry);
- 	if (err)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 887a27d07f96..e5ae21f9f637 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3201,7 +3201,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
--extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- extern const struct dentry_operations generic_ci_dentry_ops;
- 
- int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 12f9e455d569..97a11280c2bd 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -961,11 +961,11 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
-  * key is available, then the lookup is assumed to be by plaintext name;
-  * otherwise, it is assumed to be by no-key name.
-  *
-- * This will set DCACHE_NOKEY_NAME on the dentry if the lookup is by no-key
-- * name.  In this case the filesystem must assign the dentry a dentry_operations
-- * which contains fscrypt_d_revalidate (or contains a d_revalidate method that
-- * calls fscrypt_d_revalidate), so that the dentry will be invalidated if the
-- * directory's encryption key is later added.
-+ * This also optionally installs a custom ->d_revalidate() method which will
-+ * invalidate the dentry if it was created without the key and the key is later
-+ * added.  If the filesystem provides its own ->d_op hooks, they will be used
-+ * instead, but then the filesystem must make sure to call fscrypt_d_revalidate
-+ * in its d_revalidate hook, to check if fscrypt considers the dentry stale.
-  *
-  * Return: 0 on success; -ENOENT if the directory's key is unavailable but the
-  * filename isn't a valid no-key name, so a negative dentry should be created;
--- 
-2.43.0
 
+>
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/file_table.c               |  1 +
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  4 ++++
+>  security/security.c           | 11 +++++++++++
+>  4 files changed, 17 insertions(+)
+>
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index de4a2915bfd4..c72dc75f2bd3 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+>  	eventpoll_release(file);
+>  	locks_remove_file(file);
+>  
+> +	security_file_release(file);
+>  	ima_file_free(file);
+>  	if (unlikely(file->f_flags & FASYNC)) {
+>  		if (file->f_op->fasync)
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index e2b45fee94e2..175ca00a6b1d 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -173,6 +173,7 @@ LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
+>  	 struct kernfs_node *kn)
+>  LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
+>  LSM_HOOK(int, 0, file_alloc_security, struct file *file)
+> +LSM_HOOK(void, LSM_RET_VOID, file_release, struct file *file)
+>  LSM_HOOK(void, LSM_RET_VOID, file_free_security, struct file *file)
+>  LSM_HOOK(int, 0, file_ioctl, struct file *file, unsigned int cmd,
+>  	 unsigned long arg)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index c360458920b1..4c3585e3dcb4 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -395,6 +395,7 @@ int security_kernfs_init_security(struct kernfs_node *kn_dir,
+>  				  struct kernfs_node *kn);
+>  int security_file_permission(struct file *file, int mask);
+>  int security_file_alloc(struct file *file);
+> +void security_file_release(struct file *file);
+>  void security_file_free(struct file *file);
+>  int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+>  int security_mmap_file(struct file *file, unsigned long prot,
+> @@ -1006,6 +1007,9 @@ static inline int security_file_alloc(struct file *file)
+>  	return 0;
+>  }
+>  
+> +static inline void security_file_release(struct file *file)
+> +{ }
+> +
+>  static inline void security_file_free(struct file *file)
+>  { }
+>  
+> diff --git a/security/security.c b/security/security.c
+> index fe6a160afc35..9aa072ca5a19 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2724,6 +2724,17 @@ int security_file_alloc(struct file *file)
+>  	return rc;
+>  }
+>  
+> +/**
+> + * security_file_release() - Perform actions before releasing the file ref
+> + * @file: the file
+> + *
+> + * Perform actions before releasing the last reference to a file.
+> + */
+> +void security_file_release(struct file *file)
+> +{
+> +	call_void_hook(file_release, file);
+> +}
+> +
+>  /**
+>   * security_file_free() - Free a file's LSM blob
+>   * @file: the file
 
