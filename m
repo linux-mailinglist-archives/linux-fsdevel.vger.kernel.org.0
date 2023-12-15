@@ -1,148 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-6193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9A2814A8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:31:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B7E814B11
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 16:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F641C228CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E0891F24A87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B60364B9;
-	Fri, 15 Dec 2023 14:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80231358BB;
+	Fri, 15 Dec 2023 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Kq4UbYwL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThF3UUWw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4E61856
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 14:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b4865347-110f-4648-a16e-2d453d849323@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702650676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qe4Vv2WCEvd4ouMbR/Hft2N+D0eJgtFU87sk0W4t3gI=;
-	b=Kq4UbYwLOU0kjnanSGnEYL9yQST4aXjg2RXUgAgjJd73Pkm5str2CvQlKZPVjFJp2aFNrS
-	xBRgtIGGSoCQK4Og5hngQcM4GQhvJqgqCaH13M3d/T9GENasLYbcCezlZLIhdpRF/wAuEq
-	E6OHe8GWPuieH0LVb29wuPwsIcmbVdk=
-Date: Fri, 15 Dec 2023 06:31:08 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B6235884;
+	Fri, 15 Dec 2023 15:00:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8CD3C433C8;
+	Fri, 15 Dec 2023 14:59:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702652405;
+	bh=422PM3fDIpd8XBwXAF/Vr2Tijy2/V6yIm6WwhsorExQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ThF3UUWwGr5c0gG18awOx5DrQRxAPwOOshZh7SWrhMEjGtlJQKezv414UMUQWtogg
+	 HnsI2tu59s1B5g7ry0ZQTMiQwmrK95OYjW9JiQ6MubAahf8tnoIGHG4ZF1g5MM51Ho
+	 Fuyd5f95QOR67Xo2K1+5IQcrm/42yldE3jy4DNl4ppdU048EmnGGuL8meF1yRhb1Vb
+	 LrNl4xg5kA7VxTmTD6d5xMpK4G8SinhZgdQ+byz8MwpizJS6XNp+ezD/RlY5hnqPb5
+	 M/qJhGhNwfiuAs4wEKcr3OTh/1Lt7WuUVP/7vAsp3W1EZLiIXddMPg4h2ayPqcPZD9
+	 deK0um1LZe7kA==
+Date: Fri, 15 Dec 2023 14:59:51 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 34/39] kselftest/arm64: Add a GCS test program built
+ with the system libc
+Message-ID: <485b6454-135c-4dd4-b38e-8fb8a02779cd@sirena.org.uk>
+References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
+ <20231122-arm64-gcs-v7-34-201c483bd775@kernel.org>
+ <875y1089i4.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH v3 1/3] bpf: cgroup: Introduce helper
- cgroup_bpf_current_enabled()
-Content-Language: en-GB
-To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
- Christian Brauner <brauner@kernel.org>,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- Alexei Starovoitov <ast@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Quentin Monnet <quentin@isovalent.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi
- <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de,
- Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-2-michael.weiss@aisec.fraunhofer.de>
- <6960ef41-fe22-4297-adc7-c85264288b6d@linux.dev>
- <3e085cef-e74d-417b-ab9b-b8795fa5e5c3@aisec.fraunhofer.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <3e085cef-e74d-417b-ab9b-b8795fa5e5c3@aisec.fraunhofer.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="M02qk/d68kwsaj1P"
+Content-Disposition: inline
+In-Reply-To: <875y1089i4.fsf@linaro.org>
+X-Cookie: PARDON me, am I speaking ENGLISH?
 
 
-On 12/14/23 12:17 AM, Michael Weiß wrote:
-> On 13.12.23 17:59, Yonghong Song wrote:
->> On 12/13/23 6:38 AM, Michael Weiß wrote:
->>> This helper can be used to check if a cgroup-bpf specific program is
->>> active for the current task.
->>>
->>> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
->>> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->>> ---
->>>    include/linux/bpf-cgroup.h |  2 ++
->>>    kernel/bpf/cgroup.c        | 14 ++++++++++++++
->>>    2 files changed, 16 insertions(+)
->>>
->>> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
->>> index a789266feac3..7cb49bde09ff 100644
->>> --- a/include/linux/bpf-cgroup.h
->>> +++ b/include/linux/bpf-cgroup.h
->>> @@ -191,6 +191,8 @@ static inline bool cgroup_bpf_sock_enabled(struct sock *sk,
->>>    	return array != &bpf_empty_prog_array.hdr;
->>>    }
->>>    
->>> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type);
->>> +
->>>    /* Wrappers for __cgroup_bpf_run_filter_skb() guarded by cgroup_bpf_enabled. */
->>>    #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk, skb)			      \
->>>    ({									      \
->>> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
->>> index 491d20038cbe..9007165abe8c 100644
->>> --- a/kernel/bpf/cgroup.c
->>> +++ b/kernel/bpf/cgroup.c
->>> @@ -24,6 +24,20 @@
->>>    DEFINE_STATIC_KEY_ARRAY_FALSE(cgroup_bpf_enabled_key, MAX_CGROUP_BPF_ATTACH_TYPE);
->>>    EXPORT_SYMBOL(cgroup_bpf_enabled_key);
->>>    
->>> +bool cgroup_bpf_current_enabled(enum cgroup_bpf_attach_type type)
->>> +{
->>> +	struct cgroup *cgrp;
->>> +	struct bpf_prog_array *array;
->>> +
->>> +	rcu_read_lock();
->>> +	cgrp = task_dfl_cgroup(current);
->>> +	rcu_read_unlock();
->>> +
->>> +	array = rcu_access_pointer(cgrp->bpf.effective[type]);
->> This seems wrong here. The cgrp could become invalid once leaving
->> rcu critical section.
-> You are right, maybe we where to opportunistic here. We just wanted
-> to hold the lock as short as possible.
->
->>> +	return array != &bpf_empty_prog_array.hdr;
->> I guess you need include 'array' usage as well in the rcu cs.
->> So overall should look like:
->>
->> 	rcu_read_lock();
->> 	cgrp = task_dfl_cgroup(current);
->> 	array = rcu_access_pointer(cgrp->bpf.effective[type]);
-> Looks reasonable, but that we are in the cs now I would change this to
-> rcu_dereference() then.
+--M02qk/d68kwsaj1P
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-copy-paste error. Right, should use rcu_deference() indeed.
+On Thu, Dec 14, 2023 at 11:50:11PM -0300, Thiago Jung Bauermann wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
->
->> 	bpf_prog_exists = array != &bpf_empty_prog_array.hdr;
->> 	rcu_read_unlock();
->>
->> 	return bpf_prog_exists;
->>
->>> +}
->>> +EXPORT_SYMBOL(cgroup_bpf_current_enabled);
->>> +
->>>    /* __always_inline is necessary to prevent indirect call through run_prog
->>>     * function pointer.
->>>     */
+> > +	ret =3D process_vm_writev(child, &local_iov, 1, &remote_iov, 1, 0);
+> > +	if (ret =3D=3D -1)
+> > +		ksft_print_msg("process_vm_readv() failed: %s (%d)\n",
+> > +			       strerror(errno), errno);
+
+> The comment and the error message say "process_vm_readv()", but the
+> function actually called is process_vm_writev(). Is this intended?
+
+No, that's a rebasing issue.
+
+> If I swap process_vm_readv() and process_vm_writev(), then the read
+> succeeds but the write fails:
+>=20
+> #  RUN           global.ptrace_read_write ...
+> # Child: 1996
+> # Child GCSPR 0xffffa7fcffd8, flags 1, locked 0
+> # process_vm_writev() failed: Bad address (14)
+> # libc-gcs.c:291:ptrace_read_write:Expected ret (-1) =3D=3D sizeof(rval) =
+(8)
+> # libc-gcs.c:293:ptrace_read_write:Expected val (281473500358268) =3D=3D =
+ptrace(PTRACE_PEEKDATA, child, (void *)gcspr, NULL) (0)
+> # ptrace_read_write: Test failed at step #1
+> #          FAIL  global.ptrace_read_write
+> not ok 4 global.ptrace_read_write
+
+Yeah, I did notice something had happened with the writes but didn't
+investigate yet.
+
+> Also, it's strange that the tests defined after map_gcs.stack_overflow
+> don't run when I execute this test program. I'm doing:
+
+> $ ./run_kselftest.sh -t arm64:libc-gcs
+
+> I.e., these tests aren't being run in my FVP:
+
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, too_small)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_1)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_2)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_3)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_4)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_5)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_6)
+> > +FIXTURE_VARIANT_ADD(map_invalid_gcs, unligned_7)
+> > +TEST_F(map_invalid_gcs, do_map)
+> > +FIXTURE_VARIANT_ADD(invalid_mprotect, exec)
+> > +FIXTURE_VARIANT_ADD(invalid_mprotect, bti)
+> > +FIXTURE_VARIANT_ADD(invalid_mprotect, exec_bti)
+> > +TEST_F(invalid_mprotect, do_map)
+> > +TEST_F(invalid_mprotect, do_map_read)
+
+I'm seeing all of those appearing.  I'm not sure what to say there -
+that's all kselftest framework stuff, I'd expect the framework to say
+something about what it's doing if it decides to skip and I can't think
+why it would decide to skip.
+
+--M02qk/d68kwsaj1P
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmV8aecACgkQJNaLcl1U
+h9Cx7Qf+NstvmUJDmhKZCiSXybEblR3UfKc2ERXjiJRyMZJYWGE59Aqau43rUxYz
+4oELXv45Jxb9fBX19Ap6W19TxDrGHMHoCW6fuIiqeTu9L1798R0lJi1TuUxnoX2t
+t/s1MqP87pbwKNs60ne9ezvagfQhFFBAYyUepAxrvfPkeUakOwLgsHRwx2bEVsXv
+6SsJJ9hRz7N2FvlP487cWfC5VQkyYjefXQHi/1OrZw1hSkS9a5Hb/Y1vBzacFUbS
+YDYZszJexTXkcRjAngFzHsCBCakK3xpFB1uRPMhrAOj51UDJHHwE4+nX7DUWZaxT
+delEJTYjMd7cGaEpGyDdMnkhQVyM4g==
+=fKsW
+-----END PGP SIGNATURE-----
+
+--M02qk/d68kwsaj1P--
 
