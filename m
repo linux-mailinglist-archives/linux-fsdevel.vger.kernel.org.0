@@ -1,273 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-6178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BEB8148E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:17:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06BE581492B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E9F1F210F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CE62841E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14A72DB7B;
-	Fri, 15 Dec 2023 13:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B78A2DB8B;
+	Fri, 15 Dec 2023 13:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Sr2e804d"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNJvKAAF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YHTHxRrf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gNJvKAAF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YHTHxRrf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588302DB86
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 13:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF4A18C2F;
+	Fri, 15 Dec 2023 13:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4D4963F184
-	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 13:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1702645777;
-	bh=EhYwhx9WPqSQzkFYfTP87dU7WQuopKgMJSLCI/H3I+A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=Sr2e804dZPw6S7dXfO10Co4uJp1g0vZX7DIFMqek/kQms1FY+lDujYIlHPv3acGkM
-	 pWKBhgAFEaWs3X8sX4EZt/Np7niFVxfvXayuk+50oE4w14UwFeeTkaaqsH4yuLdcsk
-	 zcDgvO9r2JTDxEQa1jvc4ig5xMLg3na6WaE6b3hUOhDjomcvGO9E0MsHHWDkK9w4sd
-	 6tELh3nhbJEGabkrc9VZ/SbHhOFEqwOtX2Ss6Xb++ney5LQQstqFqimrRWs1kfkDyC
-	 yMhMESfaGRpBxaHQGrVBfNnQLbZGmMjikYIpRb7mavC/TthsgNRSpkSOpkbXcocCoK
-	 02Z5jwmZxHd+w==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a1bd7a5931eso39155666b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 05:09:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702645777; x=1703250577;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EhYwhx9WPqSQzkFYfTP87dU7WQuopKgMJSLCI/H3I+A=;
-        b=fOkV98vrRQTZkEVVknR6eL9j9iWWLVb+6NOvdV+z6LNL4mY5x6Oyz/2EEEowbgX3MP
-         Z0CXqiWs0BMDm22/BJGtWMfnFVfB9gJnXtruNTzC/V6P+xmVLObHyZfmPsq1O3MiykG9
-         iiRW5ZEn/8pTIkIaxq7qEenc+Y/KQ1tRL5q1uk7hP+j3km1t7S4FABPFwZa2wMReGoYe
-         Hllm4jA1FGdMNFvIYCb6Im4cf54vkc2eLWuwgVpFasgPnfhP1XH7diJ3Ivv5Mh3h8PnD
-         IffzgF3jC6Yg+IeUeGxbnJYaB7zu3PyEhWpL1CBGwt4OmPJWphEBRVj/uiMhtVE+wpUJ
-         ehJg==
-X-Gm-Message-State: AOJu0Yx7+QLy2sbYpi8nyFeIetQ9F6nVqRF8/zFpwODCoFgOr9WGtPzs
-	RVQunG87sTaxOMVK2iAL5r4tOVcy8BcWzNr3BU8sL65ATXHLAtoTQeFqKS90BFKUfO81ykGVgBN
-	hHMJR9GzHzdbwMLi+XWNsPy9BIeri+lPGQ2n+tz9qouA=
-X-Received: by 2002:a17:906:5448:b0:a19:287a:396a with SMTP id d8-20020a170906544800b00a19287a396amr5572108ejp.55.1702645777034;
-        Fri, 15 Dec 2023 05:09:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPv7rt3lJwV7Mt6kQIKwyKBZKPkm1Iq7M0k8xQlTK2EHZn7S0RxToviR+OTIHcGsJtSiXCuA==
-X-Received: by 2002:a17:906:5448:b0:a19:287a:396a with SMTP id d8-20020a170906544800b00a19287a396amr5572099ejp.55.1702645776636;
-        Fri, 15 Dec 2023 05:09:36 -0800 (PST)
-Received: from amikhalitsyn.. ([2a02:8109:8624:a300:ee04:15a2:3442:11ee])
-        by smtp.gmail.com with ESMTPSA id tk7-20020a170907c28700b00a1d1ebc2206sm10738449ejc.72.2023.12.15.05.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Dec 2023 05:09:36 -0800 (PST)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: brauner@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: fix doc comment typo fs tree wide
-Date: Fri, 15 Dec 2023 14:09:27 +0100
-Message-Id: <20231215130927.136917-1-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B259721FA3;
+	Fri, 15 Dec 2023 13:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702646799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tq9zADGaqdljmDLOT8it4clHsoh/dCFqwv8EI9ZL3eA=;
+	b=gNJvKAAF4tgbYx7L32FAFZXR3Y92PmR7f4QPEFf+rb3IGmc1QGAAsP6HNZa8FKvmoF6GoA
+	nl55891gIiVDrStzsvrASU7QOr7h3cAgcMaskLoCAnV8f34CZ3m0hAC+fHrtPrlFLKcjMy
+	Bduld3LDJna/5UU7GrRvaSilNVFRyFQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702646799;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tq9zADGaqdljmDLOT8it4clHsoh/dCFqwv8EI9ZL3eA=;
+	b=YHTHxRrfky1iaCK5Tr5cnHsW7rhiZCjuluxBPt4rtHknnYMBBL9zMC3Rh8J7llRLh9tpUZ
+	qbUr+mYfDiDE9lDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1702646799; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tq9zADGaqdljmDLOT8it4clHsoh/dCFqwv8EI9ZL3eA=;
+	b=gNJvKAAF4tgbYx7L32FAFZXR3Y92PmR7f4QPEFf+rb3IGmc1QGAAsP6HNZa8FKvmoF6GoA
+	nl55891gIiVDrStzsvrASU7QOr7h3cAgcMaskLoCAnV8f34CZ3m0hAC+fHrtPrlFLKcjMy
+	Bduld3LDJna/5UU7GrRvaSilNVFRyFQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1702646799;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tq9zADGaqdljmDLOT8it4clHsoh/dCFqwv8EI9ZL3eA=;
+	b=YHTHxRrfky1iaCK5Tr5cnHsW7rhiZCjuluxBPt4rtHknnYMBBL9zMC3Rh8J7llRLh9tpUZ
+	qbUr+mYfDiDE9lDA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id A162813912;
+	Fri, 15 Dec 2023 13:26:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id DXxgJw9UfGVkWAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Fri, 15 Dec 2023 13:26:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2FE5DA07E0; Fri, 15 Dec 2023 14:26:39 +0100 (CET)
+Date: Fri, 15 Dec 2023 14:26:39 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 01/11] writeback: Factor out writeback_finish()
+Message-ID: <20231215132639.ftis3fhmcqkhrpzo@quack3>
+References: <20231214132544.376574-1-hch@lst.de>
+ <20231214132544.376574-2-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231214132544.376574-2-hch@lst.de>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,infradead.org:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from]
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gNJvKAAF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=YHTHxRrf
+X-Spam-Score: -2.81
+X-Rspamd-Queue-Id: B259721FA3
 
-Do the replacement:
-s/simply passs @nop_mnt_idmap/simply passs @nop_mnt_idmap/
-in the fs/ tree.
+On Thu 14-12-23 14:25:34, Christoph Hellwig wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> Instead of having a 'done' variable that controls the nested loops,
+> have a writeback_finish() that can be returned directly.  This involves
+> keeping more things in writeback_control, but it's just moving stuff
+> allocated on the stack to being allocated slightly earlier on the stack.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> [hch: reorder and comment struct writeback_control]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  include/linux/writeback.h |  8 +++++
+>  mm/page-writeback.c       | 72 +++++++++++++++++++++------------------
+>  2 files changed, 46 insertions(+), 34 deletions(-)
+> 
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index 083387c00f0c8b..05e8add4b5ae3c 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/flex_proportions.h>
+>  #include <linux/backing-dev-defs.h>
+>  #include <linux/blk_types.h>
+> +#include <linux/pagevec.h>
+>  
+>  struct bio;
+>  
+> @@ -40,6 +41,7 @@ enum writeback_sync_modes {
+>   * in a manner such that unspecified fields are set to zero.
+>   */
+>  struct writeback_control {
+> +	/* public fields that can be set and/or consumed by the caller: */
+>  	long nr_to_write;		/* Write this many pages, and decrement
+>  					   this for each page written */
+>  	long pages_skipped;		/* Pages which were not written */
+> @@ -77,6 +79,12 @@ struct writeback_control {
+>  	 */
+>  	struct swap_iocb **swap_plug;
+>  
+> +	/* internal fields used by the ->writepages implementation: */
+> +	struct folio_batch fbatch;
+> +	pgoff_t done_index;
+> +	int err;
+> +	unsigned range_whole:1;		/* entire file */
 
-Found by chance while working on support for idmapped mounts in fuse.
+Do we really need the range_whole member here? It is trivially derived from
+range_start && range_end and used only in one place in writeback_finish().
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/attr.c      |  2 +-
- fs/inode.c     |  2 +-
- fs/namei.c     | 22 +++++++++++-----------
- fs/posix_acl.c |  4 ++--
- fs/stat.c      |  2 +-
- 5 files changed, 16 insertions(+), 16 deletions(-)
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index ee2fd6a6af4072..45309f3b8193f8 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2360,6 +2360,24 @@ void tag_pages_for_writeback(struct address_space *mapping,
+>  }
+>  EXPORT_SYMBOL(tag_pages_for_writeback);
+>  
+> +static int writeback_finish(struct address_space *mapping,
+> +		struct writeback_control *wbc, bool done)
+> +{
+> +	folio_batch_release(&wbc->fbatch);
+> +
+> +	/*
+> +	 * If we hit the last page and there is more work to be done:
+> +	 * wrap the index back to the start of the file for the next
+> +	 * time we are called.
+> +	 */
+> +	if (wbc->range_cyclic && !done)
+> +		wbc->done_index = 0;
+> +	if (wbc->range_cyclic || (wbc->range_whole && wbc->nr_to_write > 0))
+> +		mapping->writeback_index = wbc->done_index;
+> +
+> +	return wbc->err;
+> +}
 
-diff --git a/fs/attr.c b/fs/attr.c
-index bdf5deb06ea9..5a13f0c8495f 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -157,7 +157,7 @@ static bool chgrp_ok(struct mnt_idmap *idmap,
-  * the vfsmount must be passed through @idmap. This function will then
-  * take care to map the inode according to @idmap before checking
-  * permissions. On non-idmapped mounts or if permission checking is to be
-- * performed on the raw inode simply passs @nop_mnt_idmap.
-+ * performed on the raw inode simply pass @nop_mnt_idmap.
-  *
-  * Should be called as the first thing in ->setattr implementations,
-  * possibly after taking additional locks.
-diff --git a/fs/inode.c b/fs/inode.c
-index edcd8a61975f..60d0667cbd27 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2402,7 +2402,7 @@ EXPORT_SYMBOL(inode_init_owner);
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- bool inode_owner_or_capable(struct mnt_idmap *idmap,
- 			    const struct inode *inode)
-diff --git a/fs/namei.c b/fs/namei.c
-index 71c13b2990b4..200eb919cdc0 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -289,7 +289,7 @@ EXPORT_SYMBOL(putname);
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- static int check_acl(struct mnt_idmap *idmap,
- 		     struct inode *inode, int mask)
-@@ -334,7 +334,7 @@ static int check_acl(struct mnt_idmap *idmap,
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- static int acl_permission_check(struct mnt_idmap *idmap,
- 				struct inode *inode, int mask)
-@@ -395,7 +395,7 @@ static int acl_permission_check(struct mnt_idmap *idmap,
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int generic_permission(struct mnt_idmap *idmap, struct inode *inode,
- 		       int mask)
-@@ -3158,7 +3158,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
- 	       struct dentry *dentry, umode_t mode, bool want_excl)
-@@ -3646,7 +3646,7 @@ static int do_open(struct nameidata *nd,
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- static int vfs_tmpfile(struct mnt_idmap *idmap,
- 		       const struct path *parentpath,
-@@ -3954,7 +3954,7 @@ EXPORT_SYMBOL(user_path_create);
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	      struct dentry *dentry, umode_t mode, dev_t dev)
-@@ -4080,7 +4080,7 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	      struct dentry *dentry, umode_t mode)
-@@ -4161,7 +4161,7 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
- 		     struct dentry *dentry)
-@@ -4290,7 +4290,7 @@ SYSCALL_DEFINE1(rmdir, const char __user *, pathname)
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
- 	       struct dentry *dentry, struct inode **delegated_inode)
-@@ -4443,7 +4443,7 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 		struct dentry *dentry, const char *oldname)
-@@ -4535,7 +4535,7 @@ SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newn
-  * the vfsmount must be passed through @idmap. This function will then take
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-- * raw inode simply passs @nop_mnt_idmap.
-+ * raw inode simply pass @nop_mnt_idmap.
-  */
- int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
- 	     struct inode *dir, struct dentry *new_dentry,
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index a05fe94970ce..e1af20893ebe 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -600,7 +600,7 @@ EXPORT_SYMBOL(__posix_acl_chmod);
-  * the vfsmount must be passed through @idmap. This function will then
-  * take care to map the inode according to @idmap before checking
-  * permissions. On non-idmapped mounts or if permission checking is to be
-- * performed on the raw inode simply passs @nop_mnt_idmap.
-+ * performed on the raw inode simply pass @nop_mnt_idmap.
-  */
- int
-  posix_acl_chmod(struct mnt_idmap *idmap, struct dentry *dentry,
-@@ -700,7 +700,7 @@ EXPORT_SYMBOL_GPL(posix_acl_create);
-  * the vfsmount must be passed through @idmap. This function will then
-  * take care to map the inode according to @idmap before checking
-  * permissions. On non-idmapped mounts or if permission checking is to be
-- * performed on the raw inode simply passs @nop_mnt_idmap.
-+ * performed on the raw inode simply pass @nop_mnt_idmap.
-  *
-  * Called from set_acl inode operations.
-  */
-diff --git a/fs/stat.c b/fs/stat.c
-index 24bb0209e459..0ab525f80a49 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -41,7 +41,7 @@
-  * the vfsmount must be passed through @idmap. This function will then
-  * take care to map the inode according to @idmap before filling in the
-  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
-- * performed on the raw inode simply passs @nop_mnt_idmap.
-+ * performed on the raw inode simply pass @nop_mnt_idmap.
-  */
- void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
- 		      struct inode *inode, struct kstat *stat)
+Also I suspect we can get rid of the 'done' argument here. After all it
+just controls whether we cycle back to index 0 which we could just
+determine as:
+
+	if (wbc->range_cyclic && !wbc->err && wbc->nr_to_write > 0) {
+		WARN_ON_ONCE(wbc->sync_mode != WB_SYNC_NONE);
+		wbc->done_index = 0;
+	}
+
+								Honza
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
