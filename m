@@ -1,267 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-6177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836AF81487A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:53:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BEB8148E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A031C233DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 12:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E9F1F210F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9765B2DB6A;
-	Fri, 15 Dec 2023 12:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14A72DB7B;
+	Fri, 15 Dec 2023 13:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Sr2e804d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D82D059;
-	Fri, 15 Dec 2023 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 695F2C15;
-	Fri, 15 Dec 2023 04:53:07 -0800 (PST)
-Received: from [10.57.3.36] (unknown [10.57.3.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A4DA3F738;
-	Fri, 15 Dec 2023 04:52:20 -0800 (PST)
-Message-ID: <11cdac1e-e96c-405f-63e8-35b0e2926337@arm.com>
-Date: Fri, 15 Dec 2023 12:52:19 +0000
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588302DB86
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 13:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4D4963F184
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 13:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1702645777;
+	bh=EhYwhx9WPqSQzkFYfTP87dU7WQuopKgMJSLCI/H3I+A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=Sr2e804dZPw6S7dXfO10Co4uJp1g0vZX7DIFMqek/kQms1FY+lDujYIlHPv3acGkM
+	 pWKBhgAFEaWs3X8sX4EZt/Np7niFVxfvXayuk+50oE4w14UwFeeTkaaqsH4yuLdcsk
+	 zcDgvO9r2JTDxEQa1jvc4ig5xMLg3na6WaE6b3hUOhDjomcvGO9E0MsHHWDkK9w4sd
+	 6tELh3nhbJEGabkrc9VZ/SbHhOFEqwOtX2Ss6Xb++ney5LQQstqFqimrRWs1kfkDyC
+	 yMhMESfaGRpBxaHQGrVBfNnQLbZGmMjikYIpRb7mavC/TthsgNRSpkSOpkbXcocCoK
+	 02Z5jwmZxHd+w==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a1bd7a5931eso39155666b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 05:09:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702645777; x=1703250577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EhYwhx9WPqSQzkFYfTP87dU7WQuopKgMJSLCI/H3I+A=;
+        b=fOkV98vrRQTZkEVVknR6eL9j9iWWLVb+6NOvdV+z6LNL4mY5x6Oyz/2EEEowbgX3MP
+         Z0CXqiWs0BMDm22/BJGtWMfnFVfB9gJnXtruNTzC/V6P+xmVLObHyZfmPsq1O3MiykG9
+         iiRW5ZEn/8pTIkIaxq7qEenc+Y/KQ1tRL5q1uk7hP+j3km1t7S4FABPFwZa2wMReGoYe
+         Hllm4jA1FGdMNFvIYCb6Im4cf54vkc2eLWuwgVpFasgPnfhP1XH7diJ3Ivv5Mh3h8PnD
+         IffzgF3jC6Yg+IeUeGxbnJYaB7zu3PyEhWpL1CBGwt4OmPJWphEBRVj/uiMhtVE+wpUJ
+         ehJg==
+X-Gm-Message-State: AOJu0Yx7+QLy2sbYpi8nyFeIetQ9F6nVqRF8/zFpwODCoFgOr9WGtPzs
+	RVQunG87sTaxOMVK2iAL5r4tOVcy8BcWzNr3BU8sL65ATXHLAtoTQeFqKS90BFKUfO81ykGVgBN
+	hHMJR9GzHzdbwMLi+XWNsPy9BIeri+lPGQ2n+tz9qouA=
+X-Received: by 2002:a17:906:5448:b0:a19:287a:396a with SMTP id d8-20020a170906544800b00a19287a396amr5572108ejp.55.1702645777034;
+        Fri, 15 Dec 2023 05:09:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGPv7rt3lJwV7Mt6kQIKwyKBZKPkm1Iq7M0k8xQlTK2EHZn7S0RxToviR+OTIHcGsJtSiXCuA==
+X-Received: by 2002:a17:906:5448:b0:a19:287a:396a with SMTP id d8-20020a170906544800b00a19287a396amr5572099ejp.55.1702645776636;
+        Fri, 15 Dec 2023 05:09:36 -0800 (PST)
+Received: from amikhalitsyn.. ([2a02:8109:8624:a300:ee04:15a2:3442:11ee])
+        by smtp.gmail.com with ESMTPSA id tk7-20020a170907c28700b00a1d1ebc2206sm10738449ejc.72.2023.12.15.05.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 05:09:36 -0800 (PST)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: brauner@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: fix doc comment typo fs tree wide
+Date: Fri, 15 Dec 2023 14:09:27 +0100
+Message-Id: <20231215130927.136917-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v8 5/9] selftests/landlock: Test IOCTL support
-To: =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org, =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=
- <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>,
- Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>,
- Paul Moore <paul@paul-moore.com>,
- Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
- Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- Mark Brown <broonie@kernel.org>
-References: <20231208155121.1943775-1-gnoack@google.com>
- <20231208155121.1943775-6-gnoack@google.com>
-Content-Language: en-US
-From: Aishwarya TCV <aishwarya.tcv@arm.com>
-In-Reply-To: <20231208155121.1943775-6-gnoack@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Do the replacement:
+s/simply passs @nop_mnt_idmap/simply passs @nop_mnt_idmap/
+in the fs/ tree.
 
+Found by chance while working on support for idmapped mounts in fuse.
 
-On 08/12/2023 15:51, Günther Noack wrote:
-> Exercises Landlock's IOCTL feature in different combinations of
-> handling and permitting the rights LANDLOCK_ACCESS_FS_IOCTL,
-> LANDLOCK_ACCESS_FS_READ_FILE, LANDLOCK_ACCESS_FS_WRITE_FILE and
-> LANDLOCK_ACCESS_FS_READ_DIR, and in different combinations of using
-> files and directories.
-> 
-> Signed-off-by: Günther Noack <gnoack@google.com>
-> ---
->  tools/testing/selftests/landlock/fs_test.c | 431 ++++++++++++++++++++-
+Cc: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ fs/attr.c      |  2 +-
+ fs/inode.c     |  2 +-
+ fs/namei.c     | 22 +++++++++++-----------
+ fs/posix_acl.c |  4 ++--
+ fs/stat.c      |  2 +-
+ 5 files changed, 16 insertions(+), 16 deletions(-)
 
-Hi Günther,
+diff --git a/fs/attr.c b/fs/attr.c
+index bdf5deb06ea9..5a13f0c8495f 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -157,7 +157,7 @@ static bool chgrp_ok(struct mnt_idmap *idmap,
+  * the vfsmount must be passed through @idmap. This function will then
+  * take care to map the inode according to @idmap before checking
+  * permissions. On non-idmapped mounts or if permission checking is to be
+- * performed on the raw inode simply passs @nop_mnt_idmap.
++ * performed on the raw inode simply pass @nop_mnt_idmap.
+  *
+  * Should be called as the first thing in ->setattr implementations,
+  * possibly after taking additional locks.
+diff --git a/fs/inode.c b/fs/inode.c
+index edcd8a61975f..60d0667cbd27 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2402,7 +2402,7 @@ EXPORT_SYMBOL(inode_init_owner);
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ bool inode_owner_or_capable(struct mnt_idmap *idmap,
+ 			    const struct inode *inode)
+diff --git a/fs/namei.c b/fs/namei.c
+index 71c13b2990b4..200eb919cdc0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -289,7 +289,7 @@ EXPORT_SYMBOL(putname);
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ static int check_acl(struct mnt_idmap *idmap,
+ 		     struct inode *inode, int mask)
+@@ -334,7 +334,7 @@ static int check_acl(struct mnt_idmap *idmap,
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ static int acl_permission_check(struct mnt_idmap *idmap,
+ 				struct inode *inode, int mask)
+@@ -395,7 +395,7 @@ static int acl_permission_check(struct mnt_idmap *idmap,
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int generic_permission(struct mnt_idmap *idmap, struct inode *inode,
+ 		       int mask)
+@@ -3158,7 +3158,7 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+ 	       struct dentry *dentry, umode_t mode, bool want_excl)
+@@ -3646,7 +3646,7 @@ static int do_open(struct nameidata *nd,
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ static int vfs_tmpfile(struct mnt_idmap *idmap,
+ 		       const struct path *parentpath,
+@@ -3954,7 +3954,7 @@ EXPORT_SYMBOL(user_path_create);
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	      struct dentry *dentry, umode_t mode, dev_t dev)
+@@ -4080,7 +4080,7 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ 	      struct dentry *dentry, umode_t mode)
+@@ -4161,7 +4161,7 @@ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_rmdir(struct mnt_idmap *idmap, struct inode *dir,
+ 		     struct dentry *dentry)
+@@ -4290,7 +4290,7 @@ SYSCALL_DEFINE1(rmdir, const char __user *, pathname)
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_unlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	       struct dentry *dentry, struct inode **delegated_inode)
+@@ -4443,7 +4443,7 @@ SYSCALL_DEFINE1(unlink, const char __user *, pathname)
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 		struct dentry *dentry, const char *oldname)
+@@ -4535,7 +4535,7 @@ SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newn
+  * the vfsmount must be passed through @idmap. This function will then take
+  * care to map the inode according to @idmap before checking permissions.
+  * On non-idmapped mounts or if permission checking is to be performed on the
+- * raw inode simply passs @nop_mnt_idmap.
++ * raw inode simply pass @nop_mnt_idmap.
+  */
+ int vfs_link(struct dentry *old_dentry, struct mnt_idmap *idmap,
+ 	     struct inode *dir, struct dentry *new_dentry,
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index a05fe94970ce..e1af20893ebe 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -600,7 +600,7 @@ EXPORT_SYMBOL(__posix_acl_chmod);
+  * the vfsmount must be passed through @idmap. This function will then
+  * take care to map the inode according to @idmap before checking
+  * permissions. On non-idmapped mounts or if permission checking is to be
+- * performed on the raw inode simply passs @nop_mnt_idmap.
++ * performed on the raw inode simply pass @nop_mnt_idmap.
+  */
+ int
+  posix_acl_chmod(struct mnt_idmap *idmap, struct dentry *dentry,
+@@ -700,7 +700,7 @@ EXPORT_SYMBOL_GPL(posix_acl_create);
+  * the vfsmount must be passed through @idmap. This function will then
+  * take care to map the inode according to @idmap before checking
+  * permissions. On non-idmapped mounts or if permission checking is to be
+- * performed on the raw inode simply passs @nop_mnt_idmap.
++ * performed on the raw inode simply pass @nop_mnt_idmap.
+  *
+  * Called from set_acl inode operations.
+  */
+diff --git a/fs/stat.c b/fs/stat.c
+index 24bb0209e459..0ab525f80a49 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -41,7 +41,7 @@
+  * the vfsmount must be passed through @idmap. This function will then
+  * take care to map the inode according to @idmap before filling in the
+  * uid and gid filds. On non-idmapped mounts or if permission checking is to be
+- * performed on the raw inode simply passs @nop_mnt_idmap.
++ * performed on the raw inode simply pass @nop_mnt_idmap.
+  */
+ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+ 		      struct inode *inode, struct kstat *stat)
+-- 
+2.34.1
 
-When building kselftest against next-master the below build error is
-observed. A bisect (full log
-below) identified this patch as introducing the failure.
-
-Full log from a failure:
-https://storage.kernelci.org/next/master/next-20231215/arm64/defconfig+kselftest/gcc-10/logs/kselftest.log
-
------
-make[4]: Entering directory
-'/tmp/kci/linux/tools/testing/selftests/landlock'
-aarch64-linux-gnu-gcc -Wall -O2 -isystem
-/tmp/kci/linux/build/usr/include     base_test.c -lcap -o
-/tmp/kci/linux/build/kselftest/landlock/base_test
-aarch64-linux-gnu-gcc -Wall -O2 -isystem
-/tmp/kci/linux/build/usr/include     fs_test.c -lcap -o
-/tmp/kci/linux/build/kselftest/landlock/fs_test
-In file included from /tmp/kci/linux/build/usr/include/linux/fs.h:19,
-                 from fs_test.c:12:
-/usr/include/aarch64-linux-gnu/sys/mount.h:35:3: error: expected
-identifier before numeric constant
-   35 |   MS_RDONLY = 1,  /* Mount read-only.  */
-      |   ^~~~~~~~~
-In file included from common.h:19,
-                 from fs_test.c:27:
-fs_test.c: In function ‘prepare_layout_opt’:
-fs_test.c:281:42: error: ‘MS_PRIVATE’ undeclared (first use in this
-function)
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                          ^~~~~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:281:2: note: in expansion of macro ‘ASSERT_EQ’
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c:281:42: note: each undeclared identifier is reported only once
-for each function it appears in
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                          ^~~~~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:281:2: note: in expansion of macro ‘ASSERT_EQ’
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c:281:55: error: ‘MS_REC’ undeclared (first use in this function)
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                                       ^~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:281:2: note: in expansion of macro ‘ASSERT_EQ’
-  281 |  ASSERT_EQ(0, mount(NULL, TMP_DIR, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c: In function ‘layout1_mount_and_pivot_child’:
-fs_test.c:1653:44: error: ‘MS_RDONLY’ undeclared (first use in this
-function)
- 1653 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_RDONLY, NULL));
-      |                                            ^~~~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:1653:2: note: in expansion of macro ‘ASSERT_EQ’
- 1653 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_RDONLY, NULL));
-      |  ^~~~~~~~~
-fs_test.c: In function ‘layout1_topology_changes_with_net_only_child’:
-fs_test.c:1712:43: error: ‘MS_PRIVATE’ undeclared (first use in this
-function)
- 1712 |  ASSERT_EQ(0, mount(NULL, dir_s1d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                           ^~~~~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:1712:2: note: in expansion of macro ‘ASSERT_EQ’
- 1712 |  ASSERT_EQ(0, mount(NULL, dir_s1d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c:1712:56: error: ‘MS_REC’ undeclared (first use in this function)
- 1712 |  ASSERT_EQ(0, mount(NULL, dir_s1d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                                        ^~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:1712:2: note: in expansion of macro ‘ASSERT_EQ’
- 1712 |  ASSERT_EQ(0, mount(NULL, dir_s1d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c: In function ‘layout1_topology_changes_with_net_and_fs_child’:
-fs_test.c:1741:44: error: ‘MS_PRIVATE’ undeclared (first use in this
-function)
- 1741 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                            ^~~~~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:1741:2: note: in expansion of macro ‘ASSERT_EQ’
- 1741 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c:1741:57: error: ‘MS_REC’ undeclared (first use in this function)
- 1741 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |                                                         ^~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:1741:2: note: in expansion of macro ‘ASSERT_EQ’
- 1741 |  ASSERT_EQ(-1, mount(NULL, dir_s3d2, NULL, MS_PRIVATE | MS_REC,
-NULL));
-      |  ^~~~~~~~~
-fs_test.c: In function ‘layout1_bind_setup’:
-fs_test.c:4340:47: error: ‘MS_BIND’ undeclared (first use in this function)
- 4340 |  ASSERT_EQ(0, mount(dir_s1d2, dir_s2d2, NULL, MS_BIND, NULL));
-      |                                               ^~~~~~~
-../kselftest_harness.h:707:13: note: in definition of macro ‘__EXPECT’
-  707 |  __typeof__(_seen) __seen = (_seen); \
-      |             ^~~~~
-fs_test.c:4340:2: note: in expansion of macro ‘ASSERT_EQ’
- 4340 |  ASSERT_EQ(0, mount(dir_s1d2, dir_s2d2, NULL, MS_BIND, NULL));
-      |  ^~~~~~~~~
-In file included from fs_test.c:19:
-fs_test.c: At top level:
-fs_test.c:5155:12: error: ‘MS_BIND’ undeclared here (not in a function)
- 5155 |   .flags = MS_BIND,
-      |            ^~~~~~~
-make[4]: *** [../lib.mk:147:
-/tmp/kci/linux/build/kselftest/landlock/fs_test] Error 1
-make[4]: Leaving directory '/tmp/kci/linux/tools/testing/selftests/landlock'
------
-
-
-Bisect log:
-
------
-git bisect start
-# good: [a39b6ac3781d46ba18193c9dbb2110f31e9bffe9] Linux 6.7-rc5
-git bisect good a39b6ac3781d46ba18193c9dbb2110f31e9bffe9
-# bad: [11651f8cb2e88372d4ed523d909514dc9a613ea3] Add linux-next
-specific files for 20231214
-git bisect bad 11651f8cb2e88372d4ed523d909514dc9a613ea3
-# good: [436cc0377e881784e5d12a863db037ad7d56b700] Merge branch 'main'
-of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-git bisect good 436cc0377e881784e5d12a863db037ad7d56b700
-# good: [4acaf686fcfee1d2ce0770a1d7505cd0e66400f0] Merge branch 'next'
-of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git
-git bisect good 4acaf686fcfee1d2ce0770a1d7505cd0e66400f0
-# good: [81d6c0949c93b9fb46ddd53819bc1dd69b161fb5] Merge branch
-'tty-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
-git bisect good 81d6c0949c93b9fb46ddd53819bc1dd69b161fb5
-# good: [21298ae90dfc30823d4b3e8c28b536b94816a625] Merge branch
-'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git
-git bisect good 21298ae90dfc30823d4b3e8c28b536b94816a625
-# good: [f2cd1cb9acacb72cab0f90d2d648659fda209f75] Merge branch 'kunit'
-of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
-git bisect good f2cd1cb9acacb72cab0f90d2d648659fda209f75
-# good: [a3cd576f9a3d15f7697764a9439b91fd1acb603c] Merge branch
-'slab/for-next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git
-git bisect good a3cd576f9a3d15f7697764a9439b91fd1acb603c
-# bad: [79b6e5e0cf1a746e40d87053db55dce76d1fd718] Merge branch
-'for-next/kspp' of
-git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
-git bisect bad 79b6e5e0cf1a746e40d87053db55dce76d1fd718
-# bad: [7098a5baeb1014c676b9e86025afd274807900a7] Merge branch
-'sysctl-next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git
-git bisect bad 7098a5baeb1014c676b9e86025afd274807900a7
-# bad: [9b4e8cb962dfcc7d5919b0ca383ff3df7f88f7cb] Merge branch 'next' of
-git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
-git bisect bad 9b4e8cb962dfcc7d5919b0ca383ff3df7f88f7cb
-# good: [2d2016fefb8edd11a87053caab3a9044dbd7093e] landlock: Add IOCTL
-access right
-git bisect good 2d2016fefb8edd11a87053caab3a9044dbd7093e
-# bad: [86d25e41081ec6359c75e2e873b085de03f3cd34] selftests/landlock:
-Test ioctl(2) and ftruncate(2) with open(O_PATH)
-git bisect bad 86d25e41081ec6359c75e2e873b085de03f3cd34
-# bad: [a725134eca88b930bc2c5947297ccf72238a8149] selftests/landlock:
-Test IOCTL with memfds
-git bisect bad a725134eca88b930bc2c5947297ccf72238a8149
-# bad: [e0bf2e60f9c35ab3fa13ff33fb3e0088fe2248c2] selftests/landlock:
-Test IOCTL support
-git bisect bad e0bf2e60f9c35ab3fa13ff33fb3e0088fe2248c2
-# first bad commit: [e0bf2e60f9c35ab3fa13ff33fb3e0088fe2248c2]
-selftests/landlock: Test IOCTL support
------
-
-Thanks,
-Aishwarya
 
