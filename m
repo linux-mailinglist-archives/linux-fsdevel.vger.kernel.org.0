@@ -1,191 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-6175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C033E814795
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:03:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB1C81481D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 13:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF141F21CDC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 12:03:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BEBA1F23A02
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 12:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC432C68B;
-	Fri, 15 Dec 2023 12:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A2A2C6A1;
+	Fri, 15 Dec 2023 12:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEdkeyJ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLWeqMrI"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2086725572;
-	Fri, 15 Dec 2023 12:03:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97454C433C8;
-	Fri, 15 Dec 2023 12:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21832D033;
+	Fri, 15 Dec 2023 12:31:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDD1C433C7;
+	Fri, 15 Dec 2023 12:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702641806;
-	bh=HBrttvezNQe0QQVMwijBpOeV4YQmzTr0YV92KoJQ8ZE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=eEdkeyJ+YkOxXK7th6GRD7Su1DsGpLwnVcFzG3pqhXXV6sI6Tn6btiHFay3VqWF+h
-	 T+lrgu/3HmiLtAI0QKKQ62wvS1K4bOc0BGKCu+rJ3MHBjANlPTc1cgwbhuu7Qs0qxa
-	 LVYHmvsKnnzSWcXuVttKC63psYuNX0maV8G8MjvrciytdpGH7Yvdza/mcYRZ1Ni4Kf
-	 sy+F5V7FcG6mbiknZbtPYM54eM9rsKahjq0oe2NL7D6gXgGlUJDU/D9a80iEYIRvaS
-	 5x2NrNfBun9TS+2Hac++AYbPUvA/6Rtpn4/d+HKcTvbMkziwMRKyPObJkJCT4XoKGN
-	 305s520nTspaQ==
+	s=k20201202; t=1702643502;
+	bh=F2ajDU7FVMvzLFF89TySlMLk6Wm17ybM4bb/3tTycL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fLWeqMrINDuf4fclsBa9vwJ3LVwgD8gZwJUzNMZAmMQw0OOq62kwBKytqminKjUPv
+	 KHUBcwnCONHfYXZBuIVONjo30VQ7p9m5QUGAdAdzxUlcV7bdkrk55xGQDf65yfJw6Z
+	 jcKABEYcIBxT+Ljw10Uu7TYsgEGhak+uvJ2Npicett7hvPGCgmVPn3TG/l5BIs8/mS
+	 3qGXDoJQ/AdnwPaa5YYTa3giFDmQIutX5qUAXNlddr6ZvrelenQCJhScNBCfIhB5Go
+	 5zJ1pFj3aGRJEejS61H6JkxF+vRaXFpUBwpdBXEge9czkeLn/alaLXqLxcbNuxtVHv
+	 W07Vz7GBxR7AQ==
+Date: Fri, 15 Dec 2023 13:31:32 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/39] netfs, afs, 9p: Delegate high-level I/O to netfslib
-Date: Fri, 15 Dec 2023 13:03:14 +0100
-Message-ID: <20231215-einziehen-landen-94a63dd17637@brauner>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231213152350.431591-1-dhowells@redhat.com>
-References: <20231213152350.431591-1-dhowells@redhat.com>
+To: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>
+Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
+Message-ID: <20231215-golfanlage-beirren-f304f9dafaca@brauner>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6217; i=brauner@kernel.org; h=from:subject:message-id; bh=HBrttvezNQe0QQVMwijBpOeV4YQmzTr0YV92KoJQ8ZE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTWODS2Tfm66uSZXeJqJUsnCukueuim0bUrM61+qxbj4 TCO/EdGHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxkGD4Z8bHlZptWDLtokYW 6+zLF4+csT+Y/8qobP1VpUfHVsZ6FzH8U2Pb/zzyZqDya7H3sT/98l8W3bEPlJEzjP+6P/tTSOk NFgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
 
-On Wed, 13 Dec 2023 15:23:10 +0000, David Howells wrote:
-> I have been working on my netfslib helpers to the point that I can run
-> xfstests on AFS to completion (both with write-back buffering and, with a
-> small patch, write-through buffering in the pagecache).  I have a patch for
-> 9P, but am currently unable to test it.
+On Wed, Dec 13, 2023 at 03:38:13PM +0100, Michael Weiß wrote:
+> devguard is a simple LSM to allow CAP_MKNOD in non-initial user
+> namespace in cooperation of an attached cgroup device program. We
+> just need to implement the security_inode_mknod() hook for this.
+> In the hook, we check if the current task is guarded by a device
+> cgroup using the lately introduced cgroup_bpf_current_enabled()
+> helper. If so, we strip out SB_I_NODEV from the super block.
 > 
-> The patches remove a little over 800 lines from AFS, 300 from 9P, albeit with
-> around 3000 lines added to netfs.  Hopefully, I will be able to remove a bunch
-> of lines from Ceph too.
+> Access decisions to those device nodes are then guarded by existing
+> device cgroups mechanism.
 > 
-> [...]
+> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> ---
 
-Ok, that's on vfs.netfs for now. It's based on vfs.rw as that has splice
-changes that would cause needless conflicts. It helps to not have such
-series based on -next.
+I think you misunderstood me... My point was that I believe you don't
+need an additional LSM at all and no additional LSM hook. But I might be
+wrong. Only a POC would show.
 
-Fwiw, I'd rather have this based on a mainline tag in the future. Linus
-has stated loads of times that he doesn't mind handling merge conflicts
-and for me it's a lot easier if I have a stable mainline tag. linux-next
-is too volatile. Thanks!
+Just write a bpf lsm program that strips SB_I_NODEV in the existing
+security_sb_set_mnt_opts() call which is guranteed to be called when a
+new superblock is created.
 
----
+Store your device access rules in a bpf map or in the sb->s_security
+blob (This is where I'm fuzzy and could use a bpf LSM expert's input.).
 
-Applied to the vfs.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs.netfs branch should appear in linux-next soon.
+Then make that bpf lsm program kick in everytime a
+security_inode_mknod() and security_file_open() is called and do device
+access management in there. Actually, you might need to add one hook
+when the actual device that's about to be opened is know. 
+This should be where today the device access hooks are called.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+And then you should already be done with this. The only thing that you
+need is the capable check patch.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+You don't need that cgroup_bpf_current_enabled() per se. Device
+management could now be done per superblock, and not per task. IOW, you
+allowlist a bunch of devices that can be created and opened. Any task
+that passes basic permission checks and that passes the bpf lsm program
+may create device nodes.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+That's a way more natural device management model than making this a per
+cgroup thing. Though that could be implemented as well with this.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.netfs
+I would try to write a bpf lsm program that does device access
+management with your capable() sysctl patch applied and see how far I
+get.
 
-[01/39] netfs, fscache: Move fs/fscache/* into fs/netfs/
-        https://git.kernel.org/vfs/vfs/c/94029f4c6459
-[02/39] netfs, fscache: Combine fscache with netfs
-        https://git.kernel.org/vfs/vfs/c/77eb7aa4805e
-[03/39] netfs, fscache: Remove ->begin_cache_operation
-        https://git.kernel.org/vfs/vfs/c/a7f70e4b4ebf
-[04/39] netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink
-        https://git.kernel.org/vfs/vfs/c/131e9eb7bd1f
-[05/39] netfs: Move pinning-for-writeback from fscache to netfs
-        https://git.kernel.org/vfs/vfs/c/1792e1940f54
-[06/39] netfs: Add a procfile to list in-progress requests
-        https://git.kernel.org/vfs/vfs/c/1491057f69dc
-[07/39] netfs: Allow the netfs to make the io (sub)request alloc larger
-        https://git.kernel.org/vfs/vfs/c/6c3efd20150f
-[08/39] netfs: Add a ->free_subrequest() op
-        https://git.kernel.org/vfs/vfs/c/e0b44a08ac20
-[09/39] afs: Don't use folio->private to record partial modification
-        https://git.kernel.org/vfs/vfs/c/9d2a996de9a2
-[10/39] netfs: Provide invalidate_folio and release_folio calls
-        https://git.kernel.org/vfs/vfs/c/6136f4723a2e
-[11/39] netfs: Implement unbuffered/DIO vs buffered I/O locking
-        https://git.kernel.org/vfs/vfs/c/1243d122feca
-[12/39] netfs: Add iov_iters to (sub)requests to describe various buffers
-        https://git.kernel.org/vfs/vfs/c/a164fd03f073
-[13/39] netfs: Add support for DIO buffering
-        https://git.kernel.org/vfs/vfs/c/669e8c33691d
-[14/39] netfs: Provide tools to create a buffer in an xarray
-        https://git.kernel.org/vfs/vfs/c/c554dc89292d
-[15/39] netfs: Add bounce buffering support
-        https://git.kernel.org/vfs/vfs/c/476c24c3e80b
-[16/39] netfs: Add func to calculate pagecount/size-limited span of an iterator
-        https://git.kernel.org/vfs/vfs/c/25d0f84de71d
-[17/39] netfs: Limit subrequest by size or number of segments
-        https://git.kernel.org/vfs/vfs/c/53ee4e38619a
-[18/39] netfs: Export netfs_put_subrequest() and some tracepoints
-        https://git.kernel.org/vfs/vfs/c/ac3fc1846a06
-[19/39] netfs: Extend the netfs_io_*request structs to handle writes
-        https://git.kernel.org/vfs/vfs/c/90999722fa0b
-[20/39] netfs: Add a hook to allow tell the netfs to update its i_size
-        https://git.kernel.org/vfs/vfs/c/27dfd078db66
-[21/39] netfs: Make netfs_put_request() handle a NULL pointer
-        https://git.kernel.org/vfs/vfs/c/0ffd2319fb64
-[22/39] netfs: Make the refcounting of netfs_begin_read() easier to use
-        https://git.kernel.org/vfs/vfs/c/f7125395caba
-[23/39] netfs: Prep to use folio->private for write grouping and streaming write
-        https://git.kernel.org/vfs/vfs/c/acadf22234e3
-[24/39] netfs: Dispatch write requests to process a writeback slice
-        https://git.kernel.org/vfs/vfs/c/17c2b775e3f4
-[25/39] netfs: Provide func to copy data to pagecache for buffered write
-        https://git.kernel.org/vfs/vfs/c/dd6ed9717a0b
-[26/39] netfs: Make netfs_read_folio() handle streaming-write pages
-        https://git.kernel.org/vfs/vfs/c/c958b464f07f
-[27/39] netfs: Allocate multipage folios in the writepath
-        https://git.kernel.org/vfs/vfs/c/6076cc863769
-[28/39] netfs: Implement support for unbuffered/DIO read
-        https://git.kernel.org/vfs/vfs/c/9409fe70ca46
-[29/39] netfs: Implement unbuffered/DIO write support
-        https://git.kernel.org/vfs/vfs/c/7acd7b902241
-[30/39] netfs: Implement buffered write API
-        https://git.kernel.org/vfs/vfs/c/7b1321366337
-[31/39] netfs: Allow buffered shared-writeable mmap through netfs_page_mkwrite()
-        https://git.kernel.org/vfs/vfs/c/d156da6e235c
-[32/39] netfs: Provide netfs_file_read_iter()
-        https://git.kernel.org/vfs/vfs/c/899ae1e25a64
-[33/39] netfs, cachefiles: Pass upper bound length to allow expansion
-        https://git.kernel.org/vfs/vfs/c/52882c158a30
-[34/39] netfs: Provide a writepages implementation
-        https://git.kernel.org/vfs/vfs/c/02bf7b4afdba
-[35/39] netfs: Provide a launder_folio implementation
-        https://git.kernel.org/vfs/vfs/c/cf4e16d98659
-[36/39] netfs: Implement a write-through caching option
-        https://git.kernel.org/vfs/vfs/c/7bf6f13f4a63
-[37/39] netfs: Optimise away reads above the point at which there can be no data
-        https://git.kernel.org/vfs/vfs/c/fad15293bd0d
-[38/39] afs: Use the netfs write helpers
-        https://git.kernel.org/vfs/vfs/c/0095df30ad7b
-[39/39] 9p: Use netfslib read/write_iter
-        https://git.kernel.org/vfs/vfs/c/361e79613421
+I don't have the time otherwise I'd do it.
 
