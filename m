@@ -1,72 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-6162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE898813F37
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 02:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2474E813FBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 03:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC531C21F33
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 01:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B124D1C221BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 02:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B94110F;
-	Fri, 15 Dec 2023 01:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C48110C;
+	Fri, 15 Dec 2023 02:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XuJluONs"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/sN+wwe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8536ED2;
-	Fri, 15 Dec 2023 01:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702603859; x=1734139859;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bo4CQbjDhFgPpZxFoaEvDAhRSz9PVVm5QEWsB3l+Hvk=;
-  b=XuJluONsDon84bZ/4wBMxn5QUNTntsBWx4gm1jbxm+wZHrbyY0LB6YkT
-   W73nuNOAj5hzJtHhBuQlriKvImG7sUXGW1UaV5zYtVHSwtc8d78D58g4s
-   MaErkP1PpDGJuhh+pFBRB1bj9DqIQHZInyVclEvLuctD2DSaOkWYYI+kk
-   V+dN5G+i00N64SGZCJB4IUzEJSDipmoYXIZtp2CF8Yte/NJ5jlMLRHikf
-   LGBKy+z0rZ8jG7GZzMBYAF5r4mePqD8Rcc8/2VautMPmCdw+CNKGt1yB3
-   u7ZhNyI4pbuIuiHhLTRFfwrfHcotwlrJwyXOhjSO3P3bGPsCJJdkajq/q
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="399050762"
-X-IronPort-AV: E=Sophos;i="6.04,277,1695711600"; 
-   d="scan'208";a="399050762"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 17:30:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="897960014"
-X-IronPort-AV: E=Sophos;i="6.04,277,1695711600"; 
-   d="scan'208";a="897960014"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 14 Dec 2023 17:30:50 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rDx2N-000Mwz-31;
-	Fri, 15 Dec 2023 01:30:47 +0000
-Date: Fri, 15 Dec 2023 09:30:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, akpm@linux-foundation.org, arnd@arndb.de,
-	tglx@linutronix.de, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org,
-	tj@kernel.org, ying.huang@intel.com, gregory.price@memverge.com,
-	corbet@lwn.net, rakie.kim@sk.com, hyeongtak.ji@sk.com,
-	honggyu.kim@sk.com, vtavarespetr@micron.com, peterz@infradead.org,
-	jgroves@micron.com, ravis.opensrc@micron.com, sthanneeru@micron.com,
-	emirakhur@micron.com, Hasan.Maruf@amd.com, seungjun.ha@samsung.com
-Subject: Re: [PATCH v3 09/11] mm/mempolicy: add get_mempolicy2 syscall
-Message-ID: <202312150958.WYyFWIdr-lkp@intel.com>
-References: <20231213224118.1949-10-gregory.price@memverge.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DAE809
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 02:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702607299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IgS/vwRdBBmypWL18nvZwV/FWJEphVJ/VHhyXn/HPOs=;
+	b=V/sN+wweSiScI6kqCVUd97N5EqvFjFgJOyg4yora1r2gDmQtEXIlzpQcPLwfjXmctxUizR
+	qLOCym46f9NnZU+Kg5gpNH7bHFU4oNEWj9zGbQ7hfLtSj0CC67UHnL1KPS4YQR7ZNOMLxg
+	7R+J1Bh1s5gdyNrYAQnBptoK8tmPxG8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-82-mSb3xmusMoa9ZEZVR7neRw-1; Thu, 14 Dec 2023 21:28:16 -0500
+X-MC-Unique: mSb3xmusMoa9ZEZVR7neRw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 00C1880BEC3;
+	Fri, 15 Dec 2023 02:28:15 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.126])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E7A71492BC6;
+	Fri, 15 Dec 2023 02:28:04 +0000 (UTC)
+Date: Fri, 15 Dec 2023 10:27:59 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+	jaswin@linux.ibm.com, bvanassche@acm.org, ming.lei@redhat.com
+Subject: Re: [PATCH v2 08/16] block: Limit atomic write IO size according to
+ atomic_write_max_sectors
+Message-ID: <ZXu5rykouOcNOSa1@fedora>
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
+ <20231212110844.19698-9-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,41 +69,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231213224118.1949-10-gregory.price@memverge.com>
+In-Reply-To: <20231212110844.19698-9-john.g.garry@oracle.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-Hi Gregory,
+On Tue, Dec 12, 2023 at 11:08:36AM +0000, John Garry wrote:
+> Currently an IO size is limited to the request_queue limits max_sectors.
+> Limit the size for an atomic write to queue limit atomic_write_max_sectors
+> value.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  block/blk-merge.c | 12 +++++++++++-
+>  block/blk.h       |  3 +++
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 0ccc251e22ff..8d4de9253fe9 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -171,7 +171,17 @@ static inline unsigned get_max_io_size(struct bio *bio,
+>  {
+>  	unsigned pbs = lim->physical_block_size >> SECTOR_SHIFT;
+>  	unsigned lbs = lim->logical_block_size >> SECTOR_SHIFT;
+> -	unsigned max_sectors = lim->max_sectors, start, end;
+> +	unsigned max_sectors, start, end;
+> +
+> +	/*
+> +	 * We ignore lim->max_sectors for atomic writes simply because
+> +	 * it may less than bio->write_atomic_unit, which we cannot
+> +	 * tolerate.
+> +	 */
+> +	if (bio->bi_opf & REQ_ATOMIC)
+> +		max_sectors = lim->atomic_write_max_sectors;
+> +	else
+> +		max_sectors = lim->max_sectors;
 
-kernel test robot noticed the following build errors:
+I can understand the trouble for write atomic from bio split, which
+may simply split in the max_sectors boundary, however this change is
+still too fragile:
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on deller-parisc/for-next powerpc/next powerpc/fixes s390/features jcmvbkbc-xtensa/xtensa-for-next arnd-asm-generic/master linus/master v6.7-rc5]
-[cannot apply to geert-m68k/for-next geert-m68k/for-linus tip/x86/asm next-20231214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+1) ->max_sectors may be set from userspace
+- so this change simply override userspace setting
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/mm-mempolicy-implement-the-sysfs-based-weighted_interleave-interface/20231214-064236
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20231213224118.1949-10-gregory.price%40memverge.com
-patch subject: [PATCH v3 09/11] mm/mempolicy: add get_mempolicy2 syscall
-config: x86_64-randconfig-002-20231214 (https://download.01.org/0day-ci/archive/20231215/202312150958.WYyFWIdr-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231215/202312150958.WYyFWIdr-lkp@intel.com/reproduce)
+2) otherwise ->max_sectors is same with ->max_hw_sectors:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312150958.WYyFWIdr-lkp@intel.com/
+- then something must be wrong in device side or driver side because
+->write_atomic_unit conflicts with ->max_hw_sectors, which is supposed
+to be figured out before device is setup
 
-All errors (new ones prefixed by >>):
+3) too big max_sectors may break driver or device, such as nvme-pci
+aligns max_hw_sectors with DMA optimized mapping size
 
->> ld.lld: error: undefined symbol: __x64_sys_get_mempolicy2
-   >>> referenced by syscall_64.c
-   >>>               arch/x86/entry/syscall_64.o:(sys_call_table) in archive vmlinux.a
-   >>> did you mean: __x64_sys_get_mempolicy
-   >>> defined in: vmlinux.a(kernel/sys_ni.o)
+And there might be more(better) choices:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+1) make sure atomic write limit is respected when userspace updates
+->max_sectors
+
+2) when driver finds that atomic write limits conflict with other
+existed hardware limits, fail or solve(such as reduce write atomic unit) the
+conflict before queue is started; With single write atomic limits update API,
+the conflict can be figured out earlier by block layer too.
+
+
+
+thanks, 
+Ming
+
 
