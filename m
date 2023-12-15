@@ -1,117 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-6202-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C59814DD5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 18:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E88814EA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 18:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390C71C24105
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 17:05:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482651C2434F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 17:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249923EA7C;
-	Fri, 15 Dec 2023 17:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C277A4174D;
+	Fri, 15 Dec 2023 17:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="LOQXWakv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Vs1vPU/Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C993FB30;
-	Fri, 15 Dec 2023 17:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=b1r61txkB9I8VrHQEVInIZpLPckdP0rJJDvEIPWqnEc=;
-  b=LOQXWakvBy71xew3ASNMm74HJhXhtZmGAWww6FCy4WhqGrbYOkvEXM4a
-   jhWMjanSBJoz+2nppCXYM5oKMZWx0CGF5sk8M8F3MSacN05AhGcRBx45+
-   Y2rLF835GG08AE8+Sep1xKrSZSpyMR0LZlDFp4clPo2WHVVS3kpcLkE0h
-   c=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.04,279,1695679200"; 
-   d="scan'208";a="74574559"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2023 18:05:04 +0100
-Date: Fri, 15 Dec 2023 18:05:02 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>
-cc: Luis Chamberlain <mcgrof@kernel.org>, 
-    Joel Granados <j.granados@samsung.com>, 
-    Dan Carpenter <dan.carpenter@linaro.org>, 
-    Julia Lawall <julia.lawall@inria.fr>, Kees Cook <keescook@chromium.org>, 
-    "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-    Iurii Zaikin <yzaikin@google.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-In-Reply-To: <46d68741-0ac8-47cc-a28f-bf43575e68a1@t-8ch.de>
-Message-ID: <10ea8782-5eea-879-e31e-278bb2fe73a5@inria.fr>
-References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com> <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net> <20231207104357.kndqvzkhxqkwkkjo@localhost> <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
- <20231208095926.aavsjrtqbb5rygmb@localhost> <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de> <20231212090930.y4omk62wenxgo5by@localhost> <ZXligolK0ekZ+Zuf@bombadil.infradead.org> <46d68741-0ac8-47cc-a28f-bf43575e68a1@t-8ch.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509184174B
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 17:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4YCQvMG0eUDtwuTkaL0LOw4GWtORmbNlyvdqILRjo7o=; b=Vs1vPU/ZcIfze+EpeY7pxDcBMi
+	6z0wR8lP9q+vAtp+byH/8J22u08TfRZJsB1T5B04Yq67xW1ylH5Mhl0WILVhOEwIxEnpXUrBOBdmU
+	jVbLox/LBLqDOdgVmR56ziuWiee9E/A44i7PyGxsdzgCRt+KtZ7n8h/q8l8lEyzy9Fh/Sw34iOWVc
+	86yWpuX24nQZ5ZCo6p5Y2obLnf50hZiIv4cpl6rz1TgQP6j4P4FQ0huvJhaB+kZrIpVlCcKRvoCup
+	yrNIuQvHbRstSf9ySGh5tNvtEch/zKeeAhHso+PjiARywU6rjRDQL1HvRyxc890NuwZK5/Cx9JJCY
+	2QijaK8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rEBs8-001sxi-Dt; Fri, 15 Dec 2023 17:21:12 +0000
+Date: Fri, 15 Dec 2023 17:21:12 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: Why does mpage_writepage() not handle locked buffers?
+Message-ID: <ZXyLCJL1o+DFbHh4@casper.infradead.org>
+References: <ZXvnmfXG4xN8BQxI@casper.infradead.org>
+ <ZXwvU2CXEeqxSDgA@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1238573808-1702659903=:10294"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZXwvU2CXEeqxSDgA@infradead.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, Dec 15, 2023 at 02:49:55AM -0800, Christoph Hellwig wrote:
+> On Fri, Dec 15, 2023 at 05:43:53AM +0000, Matthew Wilcox wrote:
+> > block_write_full_page() handles this fine, so why isn't this
+> > 
+> > 	if (buffer_locked(bh))
+> > 		goto confused;
+> > 
+> > Is the thought that we hold the folio locked, therefore no buffers
+> > should be locked at this time?  I don't know the rules.
+> 
+> That would be my guess.  For writeback on the fs mapping no one
+> else should ever have locked the buffer.  For the bdev mapping
+> buffer locking isn't completely controlled by the bdevfs, but also
+> by any mounted fs using the buffer cache.  So from my POV your
+> above change should be ok, but it'll need a big fat comment so
+> that the next person seeing it in 20 years isn't as confused as
+> you are now :)
 
---8323329-1238573808-1702659903=:10294
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Thanks!  Now I'm thinking that it's not OK to call mpage_writepages().
+__block_write_full_folio() takes the buffer lock and holds it across the
+I/O (it seems that we never split the buffer lock into buffer writeback
+like we did the page lock?)  So filesystems may have an expectation that
+locking the buffer synchronises with writeback.  Perhaps it's safest to
+just call block_write_full_page() in a loop for blockdev?
 
+I wrote up this before realising that I'd misread the code; adding it
+here for posterity.
 
-
-On Fri, 15 Dec 2023, Thomas Weißschuh wrote:
-
-> On 2023-12-12 23:51:30-0800, Luis Chamberlain wrote:
-> > On Tue, Dec 12, 2023 at 10:09:30AM +0100, Joel Granados wrote:
-> > > My idea was to do something similar to your originl RFC, where you have
-> > > an temporary proc_handler something like proc_hdlr_const (we would need
-> > > to work on the name) and move each subsystem to the new handler while
-> > > the others stay with the non-const one. At the end, the old proc_handler
-> > > function name would disapear and would be completely replaced by the new
-> > > proc_hdlr_const.
-> > >
-> > > This is of course extra work and might not be worth it if you don't get
-> > > negative feedback related to tree-wide changes. Therefore I stick to my
-> > > previous suggestion. Send the big tree-wide patches and only explore
-> > > this option if someone screams.
-> >
-> > I think we can do better, can't we just increase confidence in that we
-> > don't *need* muttable ctl_cables with something like smatch or
-> > coccinelle so that we can just make them const?
->
-> The fact that the code compiles should be enough, no?
-> Any funky casting that would trick the compiler to accept it would
-> probably also confuse any other tool.
-
-I don't know the context, but the fact that a particular file compiles
-doesn't mean that all of the lines in the file have been subjected to the
-compiler, due to ifdefs.
-
-julia
-
->
-> > Seems like a noble endeavor for us to generalize.
-> >
-> > Then we just breeze through by first fixing those that *are* using
-> > mutable tables by having it just de-register and then re-register
-> > new tables if they need to be changed, and then a new series is sent
-> > once we fix all those muttable tables.
->
-> Ack. But I think the actual constification should really only be started
-> after the first series for the infrastructure is in.
->
-> Thomas
->
---8323329-1238573808-1702659903=:10294--
+For filesystems, we know that the filesystem will not lock the buffer
+since the writeback path holds the folio locked at this point.  For block
+devices, the filesystem mounted on it may lock the buffer without locking
+the folio first (observed with both ext2 and ext4).  If we find the
+buffer locked, just fall back to block_write_full_page() which handles
+potentially locked buffers correctly.  It's fine if we win the race and
+the filesystem locks the buffer after this point; block_write_full_page()
+doesn't hold the buffer locked across the I/O, so the filesystem has no
+expectations that locking the buffer will wait for data writeback.
 
