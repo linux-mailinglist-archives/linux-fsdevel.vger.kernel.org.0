@@ -1,91 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-6191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9960814A6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:26:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAAF814A72
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 15:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 352A5B22A7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:26:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3751B2853F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Dec 2023 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E0631741;
-	Fri, 15 Dec 2023 14:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC5431A89;
+	Fri, 15 Dec 2023 14:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fV3YPsKf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cQxuTYfK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="M5nZCg9o";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PzffO8tk"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="fsH9Fsk+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D662931725;
-	Fri, 15 Dec 2023 14:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B25E821B39;
-	Fri, 15 Dec 2023 14:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702650348; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+1Vzn6gSgVRj2PeTCSSeHhZYkHtT8mht0lDEDG5nPo=;
-	b=fV3YPsKfDjKk0wDiNz5lHnGWIiJvWJn3v5VRSZuiXcWcbcQsSTebimcXCwNzY6DwLoI4el
-	NmkJEaGodEOhM2aK41i5PzERVhj62TqTcF7daDMICfL9lPmZEQs9F54TnsLcrObmCnIUiy
-	DpS629c45/MhykftG8M/OZV6hrY1dMY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702650348;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+1Vzn6gSgVRj2PeTCSSeHhZYkHtT8mht0lDEDG5nPo=;
-	b=cQxuTYfKDmFDq0YwbAMo96JMXs7XZYpTd0yp/UY6DnsDk2q75hWZgZw44jyVmMkdzDl1y1
-	LuAETYpHzNqfG4BA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702650347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+1Vzn6gSgVRj2PeTCSSeHhZYkHtT8mht0lDEDG5nPo=;
-	b=M5nZCg9oo12FS/a8eOsTeKRws1NkrZnAooEh/8YzOCZ4gEyXU3Nsd766n3YXrZzSTZYlFt
-	sx/2zsjMbQcVFtRpzS8eJiYvE/zi1Q5AEQ0A9d/LuUuZfuF8LGWv/Pj46YNYEbo2T1UXXf
-	IiIasiVRYe4DE4goUvHCEc4sXbXl90E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702650347;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+1Vzn6gSgVRj2PeTCSSeHhZYkHtT8mht0lDEDG5nPo=;
-	b=PzffO8tkAWptGRWe97c2p1cCLFw+S+acfO2t/aHorPPxZFPrWHt3ywkJvbSt11/5yEVg7k
-	S55j3eGI9/7we0CQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id A18E113A08;
-	Fri, 15 Dec 2023 14:25:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id HC0rJ+thfGWeawAAn2gu4w
-	(envelope-from <jack@suse.cz>); Fri, 15 Dec 2023 14:25:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 286B7A07E0; Fri, 15 Dec 2023 15:25:47 +0100 (CET)
-Date: Fri, 15 Dec 2023 15:25:47 +0100
-From: Jan Kara <jack@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B231A63
+	for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 14:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5cd81e76164so6241307b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 06:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1702650392; x=1703255192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=;
+        b=fsH9Fsk+hk7UK5xelpzTDhf5qmKjvpAZPUx1iXrFy36UHS/i+FyVliO8ZiK7Bnuv3p
+         bgvDGF0P6UVVryG1F/tcbB29gUoDjTWl6/AvPUMDxV18bfXrdEjhY+iX6e+qN2NH33Je
+         VVjopa6B+3wW3eegOGIhbAyVvIyM35KyY7JBrV6jykv6ZTV8cohDxee+uq6tG+3Ryndv
+         z6O3MbJa4faLHIxdSG0Jp7e60zqbnMP1CJ1RSNxp1TB0Y7KD3RMThNId69csBgew3jM0
+         /UtFD22qUqm1jozA77C2TEN1uM4HSuhewNEBcGNfCsgjWeK7QVwaITyQzX+2/Fxwd/I/
+         X07A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702650392; x=1703255192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+4V/xtuU5RtW7auv55nECI5YJaBifIHvReIdoO950Ik=;
+        b=VmM0CiAQOvy64u2vk9yUFQZgH8I6sF0Y/zr5REhXNr/bsbWYNelhfxjycYymeIexay
+         cbnj7+zXHUVbe5WUNQoZQo2d0FmRv80w8WYVhcE0C92F6ZnNc4ErLRyWoQcQbhS7YQHN
+         31l+abx6eipnLUjpKSzgfwDO6pvIsaR/hcKLHt3hBIDExL749pAe9raav4lQObFHBErR
+         Bv2ZTWR94JjVX+Pw1A+czpb/0jfQ5p+22BMlwIPRQ29OLKGI9hk2c6+0s3Y+SMDXH0Lg
+         PHaRzCMQ8Xqex8XvX7GohUkEQEjkEnX/epS5+SPPxzgUBlc87SHpm2PVzh0WTqiz4SIT
+         y6+g==
+X-Gm-Message-State: AOJu0YxGGAyjtzAqzjhHqLoryG6DzfwgGpEHFTN+yzaC9090vYElXaPi
+	o64PSf1Wnlm5sZOwAaFf1ycgUg==
+X-Google-Smtp-Source: AGHT+IGpj2fZ4DlpWbI9o2AbVXyl3n081P7woEHQN+l8wabNi4vE8R5e3ZFfwi7WbmH7RL0B6LtbAw==
+X-Received: by 2002:a0d:d812:0:b0:5e3:347b:e864 with SMTP id a18-20020a0dd812000000b005e3347be864mr3181497ywe.26.1702650392430;
+        Fri, 15 Dec 2023 06:26:32 -0800 (PST)
+Received: from localhost (076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id x8-20020a814a08000000b005d3b4fce438sm6269510ywa.65.2023.12.15.06.26.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 06:26:31 -0800 (PST)
+Date: Fri, 15 Dec 2023 09:26:30 -0500
+From: Josef Bacik <josef@toxicpanda.com>
 To: Christoph Hellwig <hch@lst.de>
-Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 04/11] writeback: Simplify the loops in
- write_cache_pages()
-Message-ID: <20231215142547.46g2lqs2d2u3ljwl@quack3>
-References: <20231214132544.376574-1-hch@lst.de>
- <20231214132544.376574-5-hch@lst.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH 1/3] btrfs: call btrfs_close_devices from ->kill_sb
+Message-ID: <20231215142630.GB683314@perftesting>
+References: <20231213040018.73803-1-ebiggers@kernel.org>
+ <20231213040018.73803-2-ebiggers@kernel.org>
+ <20231213084123.GA6184@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,187 +76,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231214132544.376574-5-hch@lst.de>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,lst.de:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+In-Reply-To: <20231213084123.GA6184@lst.de>
 
-On Thu 14-12-23 14:25:37, Christoph Hellwig wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Wed, Dec 13, 2023 at 09:41:23AM +0100, Christoph Hellwig wrote:
+> On Tue, Dec 12, 2023 at 08:00:16PM -0800, Eric Biggers wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > blkdev_put must not be called under sb->s_umount to avoid a lock order
+> > reversal with disk->open_mutex once call backs from block devices to
+> > the file system using the holder ops are supported.  Move the call
+> > to btrfs_close_devices into btrfs_free_fs_info so that it is closed
+> > from ->kill_sb (which is also called from the mount failure handling
+> > path unlike ->put_super) as well as when an fs_info is freed because
+> > an existing superblock already exists.
 > 
-> Collapse the two nested loops into one.  This is needed as a step
-> towards turning this into an iterator.
+> Thanks, this looks roughly the same to what I have locally.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> I did in fact forward port everything missing from the get_super
+> series yesterday, but on my test setup btrfs/142 hangs even in the
+> baseline setup.  I went back to Linux before giving up for now.
+> 
+> Josef, any chane you could throw this branch:
+> 
+>     git://git.infradead.org/users/hch/misc.git btrfs-holder
+> 
+> into your CI setup and see if it sticks?  Except for the trivial last
+> three patches this is basically what you reviewed already, although
+> there was some heavy rebasing due to the mount API converison.
+> 
 
-It would be good to mention in the changelog that we drop the condition
-index <= end and just rely on filemap_get_folios_tag() to return 0 entries
-when index > end. This actually has a subtle implication when end == -1
-because then the returned index will be -1 as well and thus if there is
-page present on index -1, we could be looping indefinitely. But I think
-that's mostly a theoretical concern so I'd be fine with just mentioning
-this subtlety in the changelog and possibly in a comment in the code.
+Yup, sorry Christoph I missed this email when you sent it, I'll throw it in
+there now.  Thanks,
 
-								Honza
-
-> ---
->  mm/page-writeback.c | 98 ++++++++++++++++++++++-----------------------
->  1 file changed, 49 insertions(+), 49 deletions(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 5a3df8665ff4f9..2087d16115710e 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2460,6 +2460,7 @@ int write_cache_pages(struct address_space *mapping,
->  		      void *data)
->  {
->  	int error;
-> +	int i = 0;
->  
->  	if (wbc->range_cyclic) {
->  		wbc->index = mapping->writeback_index; /* prev offset */
-> @@ -2477,67 +2478,66 @@ int write_cache_pages(struct address_space *mapping,
->  	folio_batch_init(&wbc->fbatch);
->  	wbc->err = 0;
->  
-> -	while (wbc->index <= wbc->end) {
-> -		int i;
-> -
-> -		writeback_get_batch(mapping, wbc);
-> +	for (;;) {
-> +		struct folio *folio;
-> +		unsigned long nr;
->  
-> +		if (i == wbc->fbatch.nr) {
-> +			writeback_get_batch(mapping, wbc);
-> +			i = 0;
-> +		}
->  		if (wbc->fbatch.nr == 0)
->  			break;
->  
-> -		for (i = 0; i < wbc->fbatch.nr; i++) {
-> -			struct folio *folio = wbc->fbatch.folios[i];
-> -			unsigned long nr;
-> +		folio = wbc->fbatch.folios[i++];
->  
-> -			wbc->done_index = folio->index;
-> +		wbc->done_index = folio->index;
->  
-> -			folio_lock(folio);
-> -			if (!should_writeback_folio(mapping, wbc, folio)) {
-> -				folio_unlock(folio);
-> -				continue;
-> -			}
-> +		folio_lock(folio);
-> +		if (!should_writeback_folio(mapping, wbc, folio)) {
-> +			folio_unlock(folio);
-> +			continue;
-> +		}
->  
-> -			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
-> -
-> -			error = writepage(folio, wbc, data);
-> -			nr = folio_nr_pages(folio);
-> -			if (unlikely(error)) {
-> -				/*
-> -				 * Handle errors according to the type of
-> -				 * writeback. There's no need to continue for
-> -				 * background writeback. Just push done_index
-> -				 * past this page so media errors won't choke
-> -				 * writeout for the entire file. For integrity
-> -				 * writeback, we must process the entire dirty
-> -				 * set regardless of errors because the fs may
-> -				 * still have state to clear for each page. In
-> -				 * that case we continue processing and return
-> -				 * the first error.
-> -				 */
-> -				if (error == AOP_WRITEPAGE_ACTIVATE) {
-> -					folio_unlock(folio);
-> -					error = 0;
-> -				} else if (wbc->sync_mode != WB_SYNC_ALL) {
-> -					wbc->err = error;
-> -					wbc->done_index = folio->index + nr;
-> -					return writeback_finish(mapping,
-> -							wbc, true);
-> -				}
-> -				if (!wbc->err)
-> -					wbc->err = error;
-> -			}
-> +		trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
->  
-> +		error = writepage(folio, wbc, data);
-> +		nr = folio_nr_pages(folio);
-> +		if (unlikely(error)) {
->  			/*
-> -			 * We stop writing back only if we are not doing
-> -			 * integrity sync. In case of integrity sync we have to
-> -			 * keep going until we have written all the pages
-> -			 * we tagged for writeback prior to entering this loop.
-> +			 * Handle errors according to the type of
-> +			 * writeback. There's no need to continue for
-> +			 * background writeback. Just push done_index
-> +			 * past this page so media errors won't choke
-> +			 * writeout for the entire file. For integrity
-> +			 * writeback, we must process the entire dirty
-> +			 * set regardless of errors because the fs may
-> +			 * still have state to clear for each page. In
-> +			 * that case we continue processing and return
-> +			 * the first error.
->  			 */
-> -			wbc->nr_to_write -= nr;
-> -			if (wbc->nr_to_write <= 0 &&
-> -			    wbc->sync_mode == WB_SYNC_NONE)
-> +			if (error == AOP_WRITEPAGE_ACTIVATE) {
-> +				folio_unlock(folio);
-> +				error = 0;
-> +			} else if (wbc->sync_mode != WB_SYNC_ALL) {
-> +				wbc->err = error;
-> +				wbc->done_index = folio->index + nr;
->  				return writeback_finish(mapping, wbc, true);
-> +			}
-> +			if (!wbc->err)
-> +				wbc->err = error;
->  		}
-> +
-> +		/*
-> +		 * We stop writing back only if we are not doing
-> +		 * integrity sync. In case of integrity sync we have to
-> +		 * keep going until we have written all the pages
-> +		 * we tagged for writeback prior to entering this loop.
-> +		 */
-> +		wbc->nr_to_write -= nr;
-> +		if (wbc->nr_to_write <= 0 &&
-> +		    wbc->sync_mode == WB_SYNC_NONE)
-> +			return writeback_finish(mapping, wbc, true);
->  	}
->  
->  	return writeback_finish(mapping, wbc, false);
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Josef
 
