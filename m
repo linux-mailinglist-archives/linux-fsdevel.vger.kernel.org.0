@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-6260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6DE8156C7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 04:28:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485B38156C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 04:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD732855EF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8A71C24888
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF61182C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C939F18EB6;
 	Sat, 16 Dec 2023 03:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lj55Mo0L"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j6ZPXCGP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7A714018
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 03:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2115EA6
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 03:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702697231;
+	t=1702697233;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2XkiID2+CLzOQYD7Bz1wsynJpFZEAYT3tSVjrTRZ4z8=;
-	b=Lj55Mo0LMcD929wkauv0VAl43vVATsnzWM+J3oGUI/ar0ExbibBATJI9Ex1s17yuwcQsEq
-	z1vlDGtmUVc6CIIBXy7jDvdn59nvo3wlVAKYmzivDHXAQEtV4qXJrU/UMbfyh12jJZMo78
-	pWac8uDIn1XU0PF37u7zF7u+nQIdi+U=
+	bh=bVQvq92zNWowFmQB2GI0mP9AbBZYVi5uCFShyHJBgic=;
+	b=j6ZPXCGPupzUUJnhIsAwv8oHEvVc0w9O/utpKK+o4imk+jWaN9F7GYOuw7A+c6hdx8YpfO
+	ybPZO30FOXihZJAgJBazpezKLNlpNFEY/AQPKJoKuAZQqhJlLB5adz6B/XlpDGSd/OBPOF
+	bxtKvHGv6L54wlPtCN/TCdYe9/ZAJNE=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -51,9 +51,9 @@ Cc: Kent Overstreet <kent.overstreet@linux.dev>,
 	longman@redhat.com,
 	boqun.feng@gmail.com,
 	brauner@kernel.org
-Subject: [PATCH 16/50] sched.h: Move (spin|rwlock)_needbreak() to spinlock.h
-Date: Fri, 15 Dec 2023 22:26:15 -0500
-Message-ID: <20231216032651.3553101-6-kent.overstreet@linux.dev>
+Subject: [PATCH 17/50] ktime.h: move ktime_t to types.h
+Date: Fri, 15 Dec 2023 22:26:16 -0500
+Message-ID: <20231216032651.3553101-7-kent.overstreet@linux.dev>
 In-Reply-To: <20231216032651.3553101-1-kent.overstreet@linux.dev>
 References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
  <20231216032651.3553101-1-kent.overstreet@linux.dev>
@@ -66,98 +66,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This lets us kill the dependency on spinlock.h.
+ktime.h pulls in quite a few headers recursively (including printk.h) -
+this is going to help with trimming sched.h dependencies.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/sched.h    | 31 -------------------------------
- include/linux/spinlock.h | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 31 deletions(-)
+ include/linux/ktime.h | 8 +++-----
+ include/linux/types.h | 3 +++
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 5a5b7b122682..7501a3451a20 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2227,37 +2227,6 @@ static inline bool preempt_model_preemptible(void)
- 	return preempt_model_full() || preempt_model_rt();
- }
+diff --git a/include/linux/ktime.h b/include/linux/ktime.h
+index 73f20deb497d..3a4e723eae0f 100644
+--- a/include/linux/ktime.h
++++ b/include/linux/ktime.h
+@@ -21,12 +21,10 @@
+ #ifndef _LINUX_KTIME_H
+ #define _LINUX_KTIME_H
  
--/*
-- * Does a critical section need to be broken due to another
-- * task waiting?: (technically does not depend on CONFIG_PREEMPTION,
-- * but a general need for low latency)
-- */
--static inline int spin_needbreak(spinlock_t *lock)
--{
--#ifdef CONFIG_PREEMPTION
--	return spin_is_contended(lock);
--#else
--	return 0;
--#endif
--}
+-#include <linux/time.h>
+-#include <linux/jiffies.h>
+ #include <asm/bug.h>
 -
--/*
-- * Check if a rwlock is contended.
-- * Returns non-zero if there is another task waiting on the rwlock.
-- * Returns zero if the lock is not contended or the system / underlying
-- * rwlock implementation does not support contention detection.
-- * Technically does not depend on CONFIG_PREEMPTION, but a general need
-- * for low latency.
-- */
--static inline int rwlock_needbreak(rwlock_t *lock)
--{
--#ifdef CONFIG_PREEMPTION
--	return rwlock_is_contended(lock);
--#else
--	return 0;
--#endif
--}
--
- static __always_inline bool need_resched(void)
- {
- 	return unlikely(tif_need_resched());
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 31d3d747a9db..0c71f06454d9 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -449,6 +449,37 @@ static __always_inline int spin_is_contended(spinlock_t *lock)
- 	return raw_spin_is_contended(&lock->rlock);
- }
+-/* Nanosecond scalar representation for kernel time values */
+-typedef s64	ktime_t;
++#include <linux/jiffies.h>
++#include <linux/time.h>
++#include <linux/types.h>
  
-+/*
-+ * Does a critical section need to be broken due to another
-+ * task waiting?: (technically does not depend on CONFIG_PREEMPTION,
-+ * but a general need for low latency)
-+ */
-+static inline int spin_needbreak(spinlock_t *lock)
-+{
-+#ifdef CONFIG_PREEMPTION
-+	return spin_is_contended(lock);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+/*
-+ * Check if a rwlock is contended.
-+ * Returns non-zero if there is another task waiting on the rwlock.
-+ * Returns zero if the lock is not contended or the system / underlying
-+ * rwlock implementation does not support contention detection.
-+ * Technically does not depend on CONFIG_PREEMPTION, but a general need
-+ * for low latency.
-+ */
-+static inline int rwlock_needbreak(rwlock_t *lock)
-+{
-+#ifdef CONFIG_PREEMPTION
-+	return rwlock_is_contended(lock);
-+#else
-+	return 0;
-+#endif
-+}
-+
- #define assert_spin_locked(lock)	assert_raw_spin_locked(&(lock)->rlock)
+ /**
+  * ktime_set - Set a ktime_t variable from a seconds/nanoseconds value
+diff --git a/include/linux/types.h b/include/linux/types.h
+index 253168bb3fe1..2bc8766ba20c 100644
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -120,6 +120,9 @@ typedef s64			int64_t;
+ #define aligned_be64		__aligned_be64
+ #define aligned_le64		__aligned_le64
  
- #else  /* !CONFIG_PREEMPT_RT */
++/* Nanosecond scalar representation for kernel time values */
++typedef s64	ktime_t;
++
+ /**
+  * The type used for indexing onto a disc or disc partition.
+  *
 -- 
 2.43.0
 
