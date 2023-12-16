@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-6250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA44815681
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:50:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63488815683
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC903281E2A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 02:50:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95F7F1C23F12
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 02:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED41F134D9;
-	Sat, 16 Dec 2023 02:48:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04B514AA5;
+	Sat, 16 Dec 2023 02:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C/t1fpiB"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E5TOS+zz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23AA11C97
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 02:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033E413ACA
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 02:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702694934;
+	t=1702694936;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dirJbIBYBbwICI4HG2MDe2+uXbYG1jRUJZWkMhaKse4=;
-	b=C/t1fpiBdM4bKT/cXDHIACveKwqIAMw7X1VW35xI28bBG0JOo60HYOoaWgMkz+Q0hKlDIc
-	Vi4CuIr9fuiX0y5hio/M75U2WWQzOCioAyle3CdTe/xTt+GJxcykSwlv7rtzSZI3kDC4zW
-	z3drT2Q2XabyOKUS78U6CCb+PfxmA8s=
+	bh=JFJDIdtuotmIE37QAtPpvf0GFZ4wui0KRlxF/kj4A8Y=;
+	b=E5TOS+zzwHxDMZr0qGILzsmsu2z5sXZ+KynrihtXY9WWFP97rdVx1Wa6+XQm9X/VJ7z5+R
+	ztYZL3TcmTXvxqoFwA/JQcbXzPAGaEaXj6H0mketIq+hqbvN4x13KO+J55w7f74vvP79eu
+	GNSTXpff1Z0o9Uw3fIy+k9LxiNzCnAc=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -51,9 +51,9 @@ Cc: Kent Overstreet <kent.overstreet@linux.dev>,
 	longman@redhat.com,
 	boqun.feng@gmail.com,
 	brauner@kernel.org
-Subject: [PATCH 06/50] task_stack.h: add missing include
-Date: Fri, 15 Dec 2023 21:47:47 -0500
-Message-ID: <20231216024834.3510073-7-kent.overstreet@linux.dev>
+Subject: [PATCH 07/50] nsproxy.h: add missing include
+Date: Fri, 15 Dec 2023 21:47:48 -0500
+Message-ID: <20231216024834.3510073-8-kent.overstreet@linux.dev>
 In-Reply-To: <20231216024834.3510073-1-kent.overstreet@linux.dev>
 References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
 Precedence: bulk
@@ -67,20 +67,20 @@ X-Migadu-Flow: FLOW_OUT
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/sched/task_stack.h | 1 +
+ include/linux/nsproxy.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
-index f158b025c175..ccd72b978e1f 100644
---- a/include/linux/sched/task_stack.h
-+++ b/include/linux/sched/task_stack.h
-@@ -8,6 +8,7 @@
+diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+index 771cb0285872..5601d14e2886 100644
+--- a/include/linux/nsproxy.h
++++ b/include/linux/nsproxy.h
+@@ -2,6 +2,7 @@
+ #ifndef _LINUX_NSPROXY_H
+ #define _LINUX_NSPROXY_H
  
- #include <linux/sched.h>
- #include <linux/magic.h>
 +#include <linux/refcount.h>
- 
- #ifdef CONFIG_THREAD_INFO_IN_TASK
+ #include <linux/spinlock.h>
+ #include <linux/sched.h>
  
 -- 
 2.43.0
