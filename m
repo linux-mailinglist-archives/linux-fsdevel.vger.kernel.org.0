@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-6283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F8D8156FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 04:36:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22D98156FC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 04:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7782C1F25DD0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0734287C0A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C8C3FB1D;
-	Sat, 16 Dec 2023 03:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B2940BF3;
+	Sat, 16 Dec 2023 03:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u7h8j6yR"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M1Je6O36"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9573D0BD
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 03:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628513FB08
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 03:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1702697610;
+	t=1702697612;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hdKy4c2nBK8OI3SHb8BxNCiiiUgr6tnoyAXaAjNUd7o=;
-	b=u7h8j6yRy4W3KIP0uUc0t9IivyFOUHLizykuz/OutUHsq99rFa/O5tgPuwzqjJ0+TOXqYm
-	dQl0x6e3yNEReAm6QbwM8WlNoe7FRV9uF4cu1Y3Pm4w1i7cWnQklA1javWWAGXQ2qehTNx
-	EoDMjTpIhLYMCnn98EkX9mPxW7DV4Cs=
+	bh=H50Z0kSGEyOHKjuvYlMoEObUuyeC38rfMHKwdLte1so=;
+	b=M1Je6O36HQ5QIRvQAOQK7U/+LJOUwJxBcAvzS6QVZPFcMei3FP6V+VPGxf8RwjVwCutDXX
+	LVnGA70HtCaiYKQUqI/J0w8za7YRSUh+eDptL1nlrCSTYkqJsJtd06zS/La04hgbvk79VN
+	xmFlGBLX1P/18IRHlt+tjLYoG7a6y7M=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -51,9 +51,9 @@ Cc: Kent Overstreet <kent.overstreet@linux.dev>,
 	longman@redhat.com,
 	boqun.feng@gmail.com,
 	brauner@kernel.org
-Subject: [PATCH 39/50] refcount: Split out refcount_types.h
-Date: Fri, 15 Dec 2023 22:32:45 -0500
-Message-ID: <20231216033300.3553457-7-kent.overstreet@linux.dev>
+Subject: [PATCH 40/50] seccomp: Split out seccomp_types.h
+Date: Fri, 15 Dec 2023 22:32:46 -0500
+Message-ID: <20231216033300.3553457-8-kent.overstreet@linux.dev>
 In-Reply-To: <20231216033300.3553457-1-kent.overstreet@linux.dev>
 References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
  <20231216033300.3553457-1-kent.overstreet@linux.dev>
@@ -66,82 +66,94 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-More trimming of sched.h dependencies.
+More pruning of sched.h dependencies.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- include/linux/refcount.h       | 13 +------------
- include/linux/refcount_types.h | 19 +++++++++++++++++++
- include/linux/sched.h          |  2 +-
- 3 files changed, 21 insertions(+), 13 deletions(-)
- create mode 100644 include/linux/refcount_types.h
+ include/linux/sched.h         |  2 +-
+ include/linux/seccomp.h       | 20 +-------------------
+ include/linux/seccomp_types.h | 26 ++++++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 20 deletions(-)
+ create mode 100644 include/linux/seccomp_types.h
 
-diff --git a/include/linux/refcount.h b/include/linux/refcount.h
-index a62fcca97486..85c6df0d1bef 100644
---- a/include/linux/refcount.h
-+++ b/include/linux/refcount.h
-@@ -96,22 +96,11 @@
- #include <linux/bug.h>
- #include <linux/compiler.h>
- #include <linux/limits.h>
-+#include <linux/refcount_types.h>
- #include <linux/spinlock_types.h>
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f52977af1511..9bfa61ab2750 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -19,7 +19,7 @@
+ #include <linux/mutex_types.h>
+ #include <linux/plist_types.h>
+ #include <linux/hrtimer_types.h>
+-#include <linux/seccomp.h>
++#include <linux/seccomp_types.h>
+ #include <linux/nodemask_types.h>
+ #include <linux/rcupdate.h>
+ #include <linux/refcount_types.h>
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index 1ec0d8dc4b69..26a53cea5761 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -19,27 +19,9 @@
  
- struct mutex;
+ #include <linux/thread_info.h>
+ #include <linux/atomic.h>
++#include <linux/seccomp_types.h>
+ #include <asm/seccomp.h>
  
+-struct seccomp_filter;
 -/**
-- * typedef refcount_t - variant of atomic_t specialized for reference counts
-- * @refs: atomic_t counter field
+- * struct seccomp - the state of a seccomp'ed process
 - *
-- * The counter saturates at REFCOUNT_SATURATED and will not move once
-- * there. This avoids wrapping the counter and causing 'spurious'
-- * use-after-free bugs.
+- * @mode:  indicates one of the valid values above for controlled
+- *         system calls available to a process.
+- * @filter_count: number of seccomp filters
+- * @filter: must always point to a valid seccomp-filter or NULL as it is
+- *          accessed without locking during system call entry.
+- *
+- *          @filter must only be accessed from the context of current as there
+- *          is no read locking.
 - */
--typedef struct refcount_struct {
--	atomic_t refs;
--} refcount_t;
+-struct seccomp {
+-	int mode;
+-	atomic_t filter_count;
+-	struct seccomp_filter *filter;
+-};
 -
- #define REFCOUNT_INIT(n)	{ .refs = ATOMIC_INIT(n), }
- #define REFCOUNT_MAX		INT_MAX
- #define REFCOUNT_SATURATED	(INT_MIN / 2)
-diff --git a/include/linux/refcount_types.h b/include/linux/refcount_types.h
+ #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+ extern int __secure_computing(const struct seccomp_data *sd);
+ static inline int secure_computing(void)
+diff --git a/include/linux/seccomp_types.h b/include/linux/seccomp_types.h
 new file mode 100644
-index 000000000000..162004f06edf
+index 000000000000..c6184582a0a0
 --- /dev/null
-+++ b/include/linux/refcount_types.h
-@@ -0,0 +1,19 @@
++++ b/include/linux/seccomp_types.h
+@@ -0,0 +1,26 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_REFCOUNT_TYPES_H
-+#define _LINUX_REFCOUNT_TYPES_H
++#ifndef _LINUX_SECCOMP_TYPES_H
++#define _LINUX_SECCOMP_TYPES_H
 +
 +#include <linux/types.h>
 +
++struct seccomp_filter;
 +/**
-+ * typedef refcount_t - variant of atomic_t specialized for reference counts
-+ * @refs: atomic_t counter field
++ * struct seccomp - the state of a seccomp'ed process
 + *
-+ * The counter saturates at REFCOUNT_SATURATED and will not move once
-+ * there. This avoids wrapping the counter and causing 'spurious'
-+ * use-after-free bugs.
++ * @mode:  indicates one of the valid values above for controlled
++ *         system calls available to a process.
++ * @filter_count: number of seccomp filters
++ * @filter: must always point to a valid seccomp-filter or NULL as it is
++ *          accessed without locking during system call entry.
++ *
++ *          @filter must only be accessed from the context of current as there
++ *          is no read locking.
 + */
-+typedef struct refcount_struct {
-+	atomic_t refs;
-+} refcount_t;
++struct seccomp {
++	int mode;
++	atomic_t filter_count;
++	struct seccomp_filter *filter;
++};
 +
-+#endif /* _LINUX_REFCOUNT_TYPES_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index fea6d913e004..f52977af1511 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -22,7 +22,7 @@
- #include <linux/seccomp.h>
- #include <linux/nodemask_types.h>
- #include <linux/rcupdate.h>
--#include <linux/refcount.h>
-+#include <linux/refcount_types.h>
- #include <linux/resource.h>
- #include <linux/latencytop.h>
- #include <linux/sched/prio.h>
++#endif /* _LINUX_SECCOMP_TYPES_H */
 -- 
 2.43.0
 
