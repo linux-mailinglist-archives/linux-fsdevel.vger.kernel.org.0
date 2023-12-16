@@ -1,204 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-6243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D74E815619
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 02:52:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F400D815675
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 03:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9831C211B8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 01:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4953E1F2549B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 02:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B13F17EB;
-	Sat, 16 Dec 2023 01:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252BA1C32;
+	Sat, 16 Dec 2023 02:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AUVdl8PS"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AG54kKMy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA3F136B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 01:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-28b400f08a4so575921a91.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Dec 2023 17:52:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702691555; x=1703296355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6t6LWkh9QArABZ9vx6356WU8okUDG/uwd9Bp0jKdzNw=;
-        b=AUVdl8PSB2HZEHaNQST9imrGniAONpcj1Ghrn0shkaTH6WKyLK55L4mbOrW3v+LTb/
-         HNrRNafni9qNxDo2PDgOE/WyzcBO5pJ8ieHmwo09n06jahmIDZkzG1tfGpRGu9VMw+bp
-         7aZRUAwjzlAucuyXX1QS/BIzeosdIDAur6gC+Yu0BPkVrAzi5uHe8ksBu5hdmPqsoGI4
-         ydl8H975jJjNGSaoNaWVlW6NVag8nbIwP7sFvtM7ecM9gFSHnNiGFcx3MSKHIDwJIivI
-         i0RTSQBLZrgM7r9AVPOn8toH22FiqXDAK/DJMz2G0JLRtJJ+1lLOMDQQii+a0H8M+Iuf
-         V1Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702691555; x=1703296355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6t6LWkh9QArABZ9vx6356WU8okUDG/uwd9Bp0jKdzNw=;
-        b=AtYdIPtSiZqdcA3TCqQldY0XZerlHKwwn0dYURqkj2i8Y9d78sthFlzuVqduThe3Gi
-         i+uL+SbVMhtT0Bi8Cq3Q6PrZ81yMl7mIUayPqqinFk28iscoy6HcZIBqNZiTfQFprJ5+
-         2MTIxtgd5w4Q5B13/gLB2WB/OCzGh6pMmjxv91FqqJFqNBPNQntvBLXwK4CSuaSUjKrG
-         aT6BLQ+xAHEiOZ2Ujp1CsmNVlxm6l+GFjkzR7x5iGXqEFYb+bosu+YbL72our0NZi++Q
-         swafTA2GW72lrcCys92IFTkLMH/KREYKi5R+eurkeLnlOyvaLE0rSIU+v8M/7f34EnTW
-         jMuA==
-X-Gm-Message-State: AOJu0YzoKEv6V4AWcgR8CFz9QwyOT1/2vUvcvgNeETHgWC/4ADDE0fbV
-	IwXNpxgsmsK9579RckB8I0RuXA==
-X-Google-Smtp-Source: AGHT+IEGg8iW+nBj1jfCwiKkFKSNzmYSyRSqqadiTHllG+D7hkgQStbOPQ1ogLxTa0ryRzZKLlSW8g==
-X-Received: by 2002:a17:903:41c9:b0:1d0:6ffd:9dfe with SMTP id u9-20020a17090341c900b001d06ffd9dfemr14421986ple.80.1702691555000;
-        Fri, 15 Dec 2023 17:52:35 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id y12-20020a170902700c00b001bbb8d5166bsm14735663plk.123.2023.12.15.17.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Dec 2023 17:51:46 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rEJor-008tIe-1k;
-	Sat, 16 Dec 2023 12:50:21 +1100
-Date: Sat, 16 Dec 2023 12:50:21 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: NeilBrown <neilb@suse.de>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, Oleg Nesterov <oleg@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/3] nfsd: use __fput_sync() to avoid delayed closing of
- files.
-Message-ID: <ZX0CXWrHzgaKs0p7@dread.disaster.area>
-References: <20231208033006.5546-1-neilb@suse.de>
- <20231208033006.5546-2-neilb@suse.de>
- <ZXMv4psmTWw4mlCd@tissot.1015granger.net>
- <170224845504.12910.16483736613606611138@noble.neil.brown.name>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAD91841;
+	Sat, 16 Dec 2023 02:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1702694922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pQCAhoEImgBg9eAn9p/zgb0DuNZMF2oFAp8brsnsG30=;
+	b=AG54kKMye/qE90KrJ5rpolVHuXkgTtjqCucD5+A52XcR/kspSjNJ8LY+bHs4VH5y6aPOv1
+	xst6Kr5GNYzmhKRNWkOrjPv4izdjI0aBSSjqVQfxeaMlcWTAWTUrAABY43dpyUX5uEwUmn
+	bYYfMNwSU8TCkUtaSpOuwzof/USiMZs=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	tglx@linutronix.de,
+	x86@kernel.org,
+	tj@kernel.org,
+	peterz@infradead.org,
+	mathieu.desnoyers@efficios.com,
+	paulmck@kernel.org,
+	keescook@chromium.org,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	will@kernel.org,
+	longman@redhat.com,
+	boqun.feng@gmail.com,
+	brauner@kernel.org
+Subject: [PATCH 00/50] big header dependency cleanup targeting sched.h
+Date: Fri, 15 Dec 2023 21:47:41 -0500
+Message-ID: <20231216024834.3510073-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170224845504.12910.16483736613606611138@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Dec 11, 2023 at 09:47:35AM +1100, NeilBrown wrote:
-> On Sat, 09 Dec 2023, Chuck Lever wrote:
-> > On Fri, Dec 08, 2023 at 02:27:26PM +1100, NeilBrown wrote:
-> > > Calling fput() directly or though filp_close() from a kernel thread like
-> > > nfsd causes the final __fput() (if necessary) to be called from a
-> > > workqueue.  This means that nfsd is not forced to wait for any work to
-> > > complete.  If the ->release of ->destroy_inode function is slow for any
-> > > reason, this can result in nfsd closing files more quickly than the
-> > > workqueue can complete the close and the queue of pending closes can
-> > > grow without bounces (30 million has been seen at one customer site,
-> > > though this was in part due to a slowness in xfs which has since been
-> > > fixed).
-> > > 
-> > > nfsd does not need this.
-> > 
-> > That is technically true, but IIUC, there is only one case where a
-> > synchronous close matters for the backlog problem, and that's when
-> > nfsd_file_free() is called from nfsd_file_put(). AFAICT all other
-> > call sites (except rename) are error paths, so there aren't negative
-> > consequences for the lack of synchronous wait there...
-> 
-> What you say is technically true but it isn't the way I see it.
-> 
-> Firstly I should clarify that __fput_sync() is *not* a flushing close as
-> you describe it below.
-> All it does, apart for some trivial book-keeping, is to call ->release
-> and possibly ->destroy_inode immediately rather than shunting them off
-> to another thread.
-> Apparently ->release sometimes does something that can deadlock with
-> some kernel threads or if some awkward locks are held, so the whole
-> final __fput is delay by default.  But this does not apply to nfsd.
-> Standard fput() is really the wrong interface for nfsd to use.  
-> It should use __fput_sync() (which shouldn't have such a scary name).
-> 
-> The comment above flush_delayed_fput() seems to suggest that unmounting
-> is a core issue.  Maybe the fact that __fput() can call
-> dissolve_on_fput() is a reason why it is sometimes safer to leave the
-> work to later.  But I don't see that applying to nfsd.
-> 
-> Of course a ->release function *could* do synchronous writes just like
-> the XFS ->destroy_inode function used to do synchronous reads.
+the issue being targeted here is that sched.h is entirely too much of an
+everything header, and a nexus of recursive header dependencies.
 
-What do you mean "could"? The correct word is "does".
+the main strategy is to try to only pull type definitions into sched.h,
+by splitting out *_types.h versions of sched.h dependencies, and
+secondarily moving code out of sched.h into more appropriate locations.
 
-> I don't think we should ever try to hide that by putting it in
-> a workqueue.  It's probably a bug and it is best if bugs are visible.
+this patchset does not go quite as far as I would have liked;
+arch/x86/include/asm/processor.h also pulls in way too much, and I would
+like to also split out a _types.h version for that, but that would
+entail changing every arch's version of that header and I'm not going to
+tackle that yet.
 
-Most definitely *not* a bug.
+if we do get that done, the number of headers pulled in by sched.h will
+be cut approximately in half (from well over 300 to 170-180) on an
+allyesconfig.
 
-XFS, ext4 and btrfs all call filemap_flush() from their respective
-->release methods. This is required to protect user data against
-loss caused by poorly written applications that overwrite user data
-in an unsafe manner (i.e. the open-truncate-write-close overwrite
-anti-pattern).
+build tested on x86, still needs build testing on other archs
 
-The btrfs flush trigger is very similar to XFS:
+https://evilpiepirate.org/git/bcachefs.git/log/?h=header_cleanup
 
-	/*
-         * Set by setattr when we are about to truncate a file from a non-zero
-         * size to a zero size.  This tries to flush down new bytes that may
-         * have been written if the application were using truncate to replace
-         * a file in place.
-         */
-        if (test_and_clear_bit(BTRFS_INODE_FLUSH_ON_CLOSE,
-                               &BTRFS_I(inode)->runtime_flags))
-                        filemap_flush(inode->i_mapping);
+Kent Overstreet (49):
+  drivers/gpu/drm/i915/i915_memcpy.c: fix missing includes
+  x86/kernel/fpu/bugs.c: fix missing include
+  x86/lib/cache-smp.c: fix missing include
+  x86/include/asm/debugreg.h: fix missing include
+  x86/include/asm/paravirt_types.h: fix missing include
+  task_stack.h: add missing include
+  nsproxy.h: add missing include
+  kernel/fork.c: add missing include
+  kmsan: add missing types.h dependency
+  time_namespace.h: fix missing include
+  nodemask: Split out include/linux/nodemask_types.h
+  prandom: Remove unused include
+  timekeeping: Kill percpu.h dependency
+  arm64: Fix circular header dependency
+  kernel/numa.c: Move logging out of numa.h
+  sched.h: Move (spin|rwlock)_needbreak() to spinlock.h
+  ktime.h: move ktime_t to types.h
+  hrtimers: Split out hrtimer_types.h
+  locking/mutex: split out mutex_types.h
+  posix-cpu-timers: Split out posix-timers_types.h
+  locking/seqlock: Split out seqlock_types.h
+  pid: Split out pid_types.h
+  sched.h: move pid helpers to pid.h
+  plist: Split out plist_types.h
+  rslib: kill bogus dependency on list.h
+  timerqueue: Split out timerqueue_types.h
+  signal: Kill bogus dependency on list.h
+  timers: Split out timer_types.h
+  workqueue: Split out workqueue_types.h
+  shm: Slim down dependencies
+  ipc: Kill bogus dependency on spinlock.h
+  Split out irqflags_types.h
+  mm_types_task.h: Trim dependencies
+  cpumask: Split out cpumask_types.h
+  syscall_user_dispatch.h: split out *_types.h
+  x86/signal: kill dependency on time.h
+  uapi/linux/resource.h: fix include
+  refcount: Split out refcount_types.h
+  seccomp: Split out seccomp_types.h
+  uidgid: Split out uidgid_types.h
+  sem: Split out sem_types.h
+  lockdep: move held_lock to lockdep_types.h
+  restart_block: Trim includes
+  rseq: Split out rseq.h from sched.h
+  preempt.h: Kill dependency on list.h
+  thread_info, uaccess.h: Move HARDENED_USERCOPY to better location
+  Kill unnecessary kernel.h include
+  kill unnecessary thread_info.h include
+  Kill sched.h dependency on rcupdate.h
 
-XFS started doing this in 2006, ext4 in 2008, and git will tell you
-when btrfs picked this up, too. IOWs, we've been doing writeback
-from ->release for a *very long time*.
+Matthew Wilcox (Oracle) (1):
+  wait: Remove uapi header file from main header file
 
-> Note that the XFS ->release function does call filemap_flush() in some
-> cases, but that is an async flush, so __fput_sync doesn't wait for the
-> flush to complete.
+ arch/arm64/include/asm/spectre.h            |   4 +-
+ arch/x86/include/asm/current.h              |   1 +
+ arch/x86/include/asm/debugreg.h             |   1 +
+ arch/x86/include/asm/fpu/types.h            |   2 +
+ arch/x86/include/asm/paravirt_types.h       |   2 +
+ arch/x86/include/asm/percpu.h               |   2 +-
+ arch/x86/include/asm/preempt.h              |   1 -
+ arch/x86/include/asm/tlbbatch.h             |   2 +-
+ arch/x86/include/uapi/asm/signal.h          |   1 -
+ arch/x86/kernel/fpu/bugs.c                  |   1 +
+ arch/x86/kernel/signal.c                    |   1 +
+ arch/x86/lib/cache-smp.c                    |   1 +
+ drivers/gpu/drm/i915/i915_memcpy.c          |   2 +
+ drivers/target/target_core_xcopy.c          |   1 +
+ fs/exec.c                                   |   1 +
+ include/linux/audit.h                       |   1 +
+ include/linux/cpumask.h                     |   4 +-
+ include/linux/cpumask_types.h               |  12 +
+ include/linux/dma-fence.h                   |   1 +
+ include/linux/hrtimer.h                     |  46 +--
+ include/linux/hrtimer_types.h               |  50 +++
+ include/linux/ipc.h                         |   2 +-
+ include/linux/irqflags.h                    |  14 +-
+ include/linux/irqflags_types.h              |  22 ++
+ include/linux/kmsan_types.h                 |   2 +
+ include/linux/ktime.h                       |   8 +-
+ include/linux/lockdep.h                     |  57 ----
+ include/linux/lockdep_types.h               |  57 ++++
+ include/linux/mm_types_task.h               |   7 +-
+ include/linux/mutex.h                       |  52 +---
+ include/linux/mutex_types.h                 |  71 +++++
+ include/linux/nodemask.h                    |   2 +-
+ include/linux/nodemask_types.h              |  10 +
+ include/linux/nsproxy.h                     |   1 +
+ include/linux/numa.h                        |  18 +-
+ include/linux/pid.h                         | 140 ++++++++-
+ include/linux/pid_types.h                   |  16 +
+ include/linux/plist.h                       |  12 +-
+ include/linux/plist_types.h                 |  17 ++
+ include/linux/posix-timers.h                |  68 +----
+ include/linux/posix-timers_types.h          |  72 +++++
+ include/linux/prandom.h                     |   1 -
+ include/linux/preempt.h                     |   6 +-
+ include/linux/rcupdate.h                    |  11 +
+ include/linux/refcount.h                    |  13 +-
+ include/linux/refcount_types.h              |  19 ++
+ include/linux/restart_block.h               |   2 +-
+ include/linux/resume_user_mode.h            |   1 +
+ include/linux/rhashtable-types.h            |   2 +-
+ include/linux/rseq.h                        | 131 ++++++++
+ include/linux/rslib.h                       |   1 -
+ include/linux/sched.h                       | 320 ++------------------
+ include/linux/sched/signal.h                |   1 +
+ include/linux/sched/task_stack.h            |   1 +
+ include/linux/seccomp.h                     |  22 +-
+ include/linux/seccomp_types.h               |  26 ++
+ include/linux/sem.h                         |  10 +-
+ include/linux/sem_types.h                   |  13 +
+ include/linux/seqlock.h                     |  79 +----
+ include/linux/seqlock_types.h               |  93 ++++++
+ include/linux/shm.h                         |   4 +-
+ include/linux/signal.h                      |   1 +
+ include/linux/signal_types.h                |   2 +-
+ include/linux/spinlock.h                    |  31 ++
+ include/linux/syscall_user_dispatch.h       |   9 +-
+ include/linux/syscall_user_dispatch_types.h |  22 ++
+ include/linux/thread_info.h                 |  49 ---
+ include/linux/time_namespace.h              |   3 +
+ include/linux/timekeeping.h                 |   1 +
+ include/linux/timer.h                       |  16 +-
+ include/linux/timer_types.h                 |  23 ++
+ include/linux/timerqueue.h                  |  13 +-
+ include/linux/timerqueue_types.h            |  17 ++
+ include/linux/types.h                       |   3 +
+ include/linux/uaccess.h                     |  49 +++
+ include/linux/uidgid.h                      |  11 +-
+ include/linux/uidgid_types.h                |  15 +
+ include/linux/uio.h                         |   2 +-
+ include/linux/wait.h                        |   1 -
+ include/linux/workqueue.h                   |  16 +-
+ include/linux/workqueue_types.h             |  25 ++
+ include/uapi/linux/resource.h               |   2 +-
+ init/init_task.c                            |   1 +
+ ipc/shm.c                                   |   1 +
+ kernel/Makefile                             |   1 +
+ kernel/exit.c                               |   4 +-
+ kernel/fork.c                               |   2 +
+ kernel/futex/core.c                         |   1 +
+ kernel/futex/requeue.c                      |   1 +
+ kernel/futex/waitwake.c                     |   1 +
+ kernel/numa.c                               |  24 ++
+ kernel/pid_namespace.c                      |   1 +
+ kernel/sched/core.c                         |   1 +
+ mm/swapfile.c                               |   1 +
+ security/selinux/hooks.c                    |   1 +
+ security/smack/smack_lsm.c                  |   1 +
+ 96 files changed, 1068 insertions(+), 825 deletions(-)
+ create mode 100644 include/linux/cpumask_types.h
+ create mode 100644 include/linux/hrtimer_types.h
+ create mode 100644 include/linux/irqflags_types.h
+ create mode 100644 include/linux/mutex_types.h
+ create mode 100644 include/linux/nodemask_types.h
+ create mode 100644 include/linux/pid_types.h
+ create mode 100644 include/linux/plist_types.h
+ create mode 100644 include/linux/posix-timers_types.h
+ create mode 100644 include/linux/refcount_types.h
+ create mode 100644 include/linux/rseq.h
+ create mode 100644 include/linux/seccomp_types.h
+ create mode 100644 include/linux/sem_types.h
+ create mode 100644 include/linux/seqlock_types.h
+ create mode 100644 include/linux/syscall_user_dispatch_types.h
+ create mode 100644 include/linux/timer_types.h
+ create mode 100644 include/linux/timerqueue_types.h
+ create mode 100644 include/linux/uidgid_types.h
+ create mode 100644 include/linux/workqueue_types.h
+ create mode 100644 kernel/numa.c
 
-"async flush" does not mean it will not block for long periods of
-time, it just means it won't wait for *all* the IO to complete.
-i.e. if the async flush saturates the device, bio submission will
-wait for previous IO that the flush submitted own IO to complete
-before it can continue flushing the data.
-
-But wait, it gets better!
-
-XFS, btrfs and ext4 all implement delayed allocation, which means
-writeback often needs to run extent allocation transactions. In
-these cases, transaction reservation can block on metadata writeback
-to free up journal space. In the case of XFS, this could be tens of
-thousands of metadata IOs needing to be submitted and completed!.
-
-Then consider that extent allocation needs to search for free space
-which may need to read in metadata. i.e. extent allocation will end
-up submitting and waiting on synchronous read IO. Also, reading that
-metadata requires memory allocation for the buffers that will store
-it - memory allocation can also block on IO and other subsystems to
-free up memory.
-
-Even less obvious is the stack usage issues calling ->release from
-arbitrary code entails. The filesystem writeback stack is -deep-.
-
-Remember all the problems we used to have with ->writepage() being
-called from direct memory reclaim and so putting the writeback path
-at arbitrary depths in the stack and then running out of stack
-space?  We really don't want to go back to the bad old days where
-filesystem write paths can be entered from code that has already
-consumed most of the stack space....
-
-Hence, IMO, __fput_sync() is something that needs to be very
-carefully controlled and should have big scary warnings on it. We
-really don't want it to be called from just anywhere...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.43.0
+
 
