@@ -1,131 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-6315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6316-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726DF815B00
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 19:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431B5815B09
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 19:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A7D1C219EB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 18:17:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3CB1F23BC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Dec 2023 18:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A465731A72;
-	Sat, 16 Dec 2023 18:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A3D31A6E;
+	Sat, 16 Dec 2023 18:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9jmdFDq"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PTtg+rGb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094E3172E;
-	Sat, 16 Dec 2023 18:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-db99bad7745so1435840276.0;
-        Sat, 16 Dec 2023 10:17:07 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBAB31A64
+	for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 18:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2cc61d4e5aeso4396921fa.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 10:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702750627; x=1703355427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VvRVmZz0fw4sy81ISwg0UmUCzFZE4mCNoPdzHScTDrI=;
-        b=i9jmdFDq3mTzHWblmX+MWiK35gxF0zci04EM4L8xa0yrvNP4n36bb7oC9vQ6EVYtD/
-         m32x9SvC/IbYgPChVnogpk8NURIwV7pP5pY64VpfC50sii0w5ol5Q4rKoBHmHVJ+uBmS
-         VJa8rg3di5KMchkhfrsJ1+O65TJgt899jT7bgn92j5QSEST3CYRDlG3uhBqiOT9esv8F
-         IoQRFvtMYKf+HQQOu/08H1sHjzfB+lMIVrEvj+THEvMwlIWkx37yFhhrcsOcX+OxZt3z
-         OkmddB26/t5PvN8hIDmlMtozDIftEyn8ch09SioLduoPrhfDJhIX4j7f3emBc3Mb1oAr
-         73OA==
+        d=linux-foundation.org; s=google; t=1702751185; x=1703355985; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Imi0HlHoaDO7uNQ9xiA54WrsCxlCdM8Cvn4XhN3R5LI=;
+        b=PTtg+rGbe8SxDY/GIlnR9Iv0ByWIFK5fIwNaiVxA8Qpgl6Nw/QadYjwj89uSQpP1EU
+         ++Ebchp0Cu4mGPvuR2dCdUAnBlOqoohhvPQmw5qPPp+UCUr0ra9cUkMX0MVxy0U4anM3
+         NAQhuSG0T5DPdaIzAvIZraCVXtNR9Cj8KjM/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702750627; x=1703355427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VvRVmZz0fw4sy81ISwg0UmUCzFZE4mCNoPdzHScTDrI=;
-        b=tQ8m3/KXSgyZ96WxmFlTOHPKuJipYNkZ4VbmQlvQXlKMjRmshH8K70pRgThkm4ChkJ
-         w/d2QsSdqMqz/DnXhXvCzC8aAkrkn478vDuAzvYlqz1QxGd8aIpI8hfebU+rMnWEF2q7
-         d/ICGw+1/4/IqGo9fbjJphEP9U2CCfWt5epA3tit3/+ubb+cb+K8mYFWlRtUGEOaq1st
-         HRzKA5MqM7U6tTpkw4aog16xgTSl4jthhdyuQOkOk6EJ01eODEMCwH7fvKArVJU72V/2
-         sLdCAKb2G0moakYObLHMFmRiepF+JMEiIXnfWwSNAEocMGhMGTQy/pY/693rMOOKONqE
-         Sugw==
-X-Gm-Message-State: AOJu0YwIS81zT16VfbSm8rJvs2v4c2jw3IjJHRZH29HI6S5cTP7YVlYw
-	px147zSP69NAWf2RyFpdGRTQTmfFvBYCRH14+qw=
-X-Google-Smtp-Source: AGHT+IFn9alYrc6pyynJlC3AzJi9+jW7Hyc4Xh9rzrTv9HUyVpLWeYI0lwWtoeqlkhu4lV+c1wb6aazE7dSYi/iN6fw=
-X-Received: by 2002:a25:5f03:0:b0:dbc:1b67:e358 with SMTP id
- t3-20020a255f03000000b00dbc1b67e358mr8995770ybb.95.1702750626697; Sat, 16 Dec
- 2023 10:17:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702751185; x=1703355985;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Imi0HlHoaDO7uNQ9xiA54WrsCxlCdM8Cvn4XhN3R5LI=;
+        b=dwBYL92J0V3oeHcCInn0EHfggYZQ00KGtp0wunvBGWqOGjH2ykxOFW+COHEuyBsrz4
+         3/MRdZLtl1MoSa/qOaapujL3CNFVgFR3E/VeoJ/rjOyKcbNckFHn8v7zfCY3jOI50Qmt
+         MzsBraAvZ1YhW0ahMfzD6BzbroK3W8gEavlwvrUAOO2CKcp0qE0gUQIkJWaEDL8twzrG
+         tDiLAPeFDeLxF1B0kZnHHxpCQWIo5EP8d81FvVRJPYCMifkKzr6iuHfTqzyQFkh6skIx
+         JaRCyY5Ji87UuVbfR1IkX/BEUbMTU/yXdlzujszMVwVJGmmzDlhgqcZO7q3ue0zXmpoN
+         yxiQ==
+X-Gm-Message-State: AOJu0YyE1tgYl1MHqLONCKfmIwhsY6+3R6Qlg6/nBdK90pybhqe3bETt
+	dGbeYwz97SPrghgV0UK2wKjcvzGTR1OcvQjKpUJsTMFv
+X-Google-Smtp-Source: AGHT+IFGsd5wtJgbGRUazc3MI+yIKK2mUjUkzPHn/saB7xormXEr8BQe84tRWBxBBKzXM8bczv+olQ==
+X-Received: by 2002:a05:6512:6cb:b0:50d:12ea:cba0 with SMTP id u11-20020a05651206cb00b0050d12eacba0mr8778255lff.95.1702751184965;
+        Sat, 16 Dec 2023 10:26:24 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id i21-20020a0565123e1500b0050e266925f9sm244385lfv.109.2023.12.16.10.26.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Dec 2023 10:26:23 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-50e2d00f99cso396300e87.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Dec 2023 10:26:23 -0800 (PST)
+X-Received: by 2002:ac2:414c:0:b0:50e:3183:51a3 with SMTP id
+ c12-20020ac2414c000000b0050e318351a3mr113023lfi.129.1702751182566; Sat, 16
+ Dec 2023 10:26:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231206100253.13100-1-joshi.k@samsung.com> <CGME20231206101050epcas5p2c8233030bbf74cef0166c7dfc0f41be7@epcas5p2.samsung.com>
- <20231206100253.13100-3-joshi.k@samsung.com> <ZXpWOaxCRoF7dFis@kbusch-mbp>
-In-Reply-To: <ZXpWOaxCRoF7dFis@kbusch-mbp>
-From: Nitesh Shetty <nitheshshetty@gmail.com>
-Date: Sat, 16 Dec 2023 23:46:55 +0530
-Message-ID: <CAOSviJ2U_yTgvx5SBPvkOg0nZ8wNxRCJyLWZ_zBnN74HcDFA1A@mail.gmail.com>
-Subject: Re: [PATCH v18 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Keith Busch <kbusch@kernel.org>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, Jens Axboe <axboe@kernel.dk>, 
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, martin.petersen@oracle.com, 
-	linux-scsi@vger.kernel.org, anuj1072538@gmail.com, gost.dev@samsung.com, 
-	mcgrof@kernel.org, Nitesh Shetty <nj.shetty@samsung.com>, 
-	Anuj Gupta <anuj20.g@samsung.com>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <CAOQ4uxg-WvdcuCrQg7zp03ocNZoT-G2bpi=Y6nVxMTodyFAUbg@mail.gmail.com>
+ <20231214220222.348101-1-vinicius.gomes@intel.com> <CAOQ4uxhJmjeSSM5iQyDadbj5UNjPqvh1QPLpSOVEYFbNbsjDQQ@mail.gmail.com>
+ <87v88zp76v.fsf@intel.com> <CAOQ4uxiCVv7zbfn2BPrR9kh=DvGxQtXUmRvy2pDJ=G7rxjBrgg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiCVv7zbfn2BPrR9kh=DvGxQtXUmRvy2pDJ=G7rxjBrgg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 16 Dec 2023 10:26:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whzaCCucr9odvFWcWr72nraRgejD90Nwb2tP8SBE2LTQw@mail.gmail.com>
+Message-ID: <CAHk-=whzaCCucr9odvFWcWr72nraRgejD90Nwb2tP8SBE2LTQw@mail.gmail.com>
+Subject: Re: [RFC] HACK: overlayfs: Optimize overlay/restore creds
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>, hu1.chen@intel.com, miklos@szeredi.hu, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
->>On Thu, Dec 14, 2023 at 6:41=E2=80=AFAM Keith Busch <kbusch@kernel.org> w=
-rote:
->>>
->>> On Wed, Dec 06, 2023 at 03:32:34PM +0530, Kanchan Joshi wrote:
->>> >  static inline bool bio_has_data(struct bio *bio)
->>> >  {
->>> > -     if (bio &&
->>> > -         bio->bi_iter.bi_size &&
->>> > -         bio_op(bio) !=3D REQ_OP_DISCARD &&
->>> > -         bio_op(bio) !=3D REQ_OP_SECURE_ERASE &&
->>> > -         bio_op(bio) !=3D REQ_OP_WRITE_ZEROES)
->>> > +     if (bio && (bio_op(bio) =3D=3D REQ_OP_READ || bio_op(bio) =3D=
-=3D REQ_OP_WRITE))
->>> >               return true;
->>>
->>> There are other ops besides READ and WRITE that have data, but this is
->>> might be fine by the fact that other ops with data currently don't call
->>> this function.
->>>
->>> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
->>> > index 7c2316c91cbd..bd821eaa7a02 100644
->>> > --- a/include/linux/blk_types.h
->>> > +++ b/include/linux/blk_types.h
->>> > @@ -393,6 +393,10 @@ enum req_op {
->>> >       /* reset all the zone present on the device */
->>> >       REQ_OP_ZONE_RESET_ALL   =3D (__force blk_opf_t)17,
->>> >
->>> > +     /* copy offload dst and src operation */
->>> > +     REQ_OP_COPY_SRC         =3D (__force blk_opf_t)19,
->>>
->>> Should this be an even numbered OP? The odd ones are for data
->>> WRITEs.
+On Sat, 16 Dec 2023 at 02:16, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> As a matter of fact, maybe it makes sense to embed a non-refcounted
+> copy in the struct used for the guard:
 
-Our request opcode needs to be write based(even) so that while forming nvme=
--tcp
-packets we send this as part of the nvme capsule.
+No, please don't. A couple of reasons:
 
-But now I think this design can be simplified as you suggested, if we align
-COPY_SRC to even and COPY_DST to odd. This requires us to change the design=
- by
-sending dst bio first hence forming a write based request, followed by
-src bio's.
-Will send a follow up series next week fixing this.
+ - that 'struct cred' is not an insignificant size, so stack usage is noticeable
 
-Thank you,
-Nitesh Shetty
+ - we really should strive to avoid passing pointers to random stack
+elements around
+
+Don't get me wrong - we pass structures around on the stack all the
+time, but it _has_ been a problem with stack usage. Those things tend
+to grow..
+
+So in general, the primary use of "pointers to stack objects" is for
+when it's either trivially tiny, or when it's a struct that is
+explicitly designed for that purpose as a kind of an "extended set of
+arguments" (think things like the "tlb_state" for the TLB flushing, or
+the various iterator structures we use etc).
+
+When we have a real mainline kernel struct like 'struct cred' that
+commonly gets passed around as a pointer argument that *isn't* on the
+stack, I get nervous when people then pass it around on the stack too.
+It's just too easy to mistakenly pass it off with the wrong lifetime,
+and stack corruption is *so* nasty to debug that it's just horrendous.
+
+Yes, lifetime problems are nasty to debug even when it's not some
+mis-use of a stack object, but at least for slab allocations etc we
+have various generic debug tools that help find them.
+
+For the "you accessed things under the stack, possibly from the wrong
+thread", I don't think any of our normal debug coverage will help at
+all.
+
+So yes, stack allocations are efficient and fast, and we do use them,
+but please don't use them for something like 'struct cred' that has a
+proper allocator function normally.
+
+I just removed the CONFIG_DEBUG_CREDENTIALS code, because the fix for
+a potential overflow made it have bad padding, and rather than fix the
+padding I thought it was better to just remove the long-unused debug
+code that just made that thing even more unwieldly than it is.
+
+But I thought that largely because our 'struct cred' use has been
+quite stable for a long time (and the original impetus for all that
+debug code was the long-ago switch to using the copy-on-write
+behavior).
+
+Let's not break that stability with suddenly having a "sometimes it's
+allocated on the stack" model.
+
+             Linus
 
