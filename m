@@ -1,102 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-6337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65EC0815D44
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Dec 2023 04:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F30B9815E23
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Dec 2023 09:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C1D32847E3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Dec 2023 03:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE62A283BBC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Dec 2023 08:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829215CE;
-	Sun, 17 Dec 2023 03:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1776723A2;
+	Sun, 17 Dec 2023 08:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f1s1Pqq2"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XzPqRjg8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3EE1878
-	for <linux-fsdevel@vger.kernel.org>; Sun, 17 Dec 2023 03:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702782559; x=1734318559;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=g5CURWEQkF62VIh3RmQCQJr90Pr0jMlBh2UMAiR5UDM=;
-  b=f1s1Pqq297NSibEks9NFkqdhlDwKPOK6fCTabgljP/Aai3hDxZNbU25n
-   5Yef8zlUhL+0MMZeBc9GIDRlgE4isAO6cKZzIGSayz3cflOZm4C7oJD5Q
-   2AS0gORWVLk8cd5wEyIriLtgfeyLQbJ1Pfshkn0Vtm0aD/GnRfqzUIXgw
-   Xe85XcBDVl39hA0XbQBbTpzq+ezegQNkQFXf3h7IHXZquxGDJ0WI82rEK
-   qaO1h5BC8i6U5UJDMWfiZNLqfmVbjucPakNKs7HrDHqqoFxLMk0L6i4XO
-   /Xxcl6wlRO3L7yO511btPdhElT4tcNyCe7r5SizoV/g+FzjGXfP3XF+ub
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10926"; a="2250059"
-X-IronPort-AV: E=Sophos;i="6.04,282,1695711600"; 
-   d="scan'208";a="2250059"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2023 19:09:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10926"; a="751367419"
-X-IronPort-AV: E=Sophos;i="6.04,282,1695711600"; 
-   d="scan'208";a="751367419"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 16 Dec 2023 19:09:15 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rEhWj-0002YX-1Q;
-	Sun, 17 Dec 2023 03:09:13 +0000
-Date: Sun, 17 Dec 2023 11:08:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org
-Subject: [viro-vfs:headers.unaligned 2/2] tools/arch/x86/lib/insn.c:16:10:
- fatal error: '../include/linux/unaligned.h' file not found
-Message-ID: <202312171105.MC5EGJ0W-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6BA20EE;
+	Sun, 17 Dec 2023 08:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1702801485; bh=0lB3OyYqJUjufHeb9cN7xRSKf7npEOsy2UKslyIKn88=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=XzPqRjg8vwn+CztCNwEscD4q6LFO2MqaOYgGyKoaGrxYfKaPP7FhH9V4+eVsEI5jt
+	 PC0eJxjh41gpLTSW/n5KK7SjoZ5CNGM6SZovz7B3XBYVPufVKxrXoX47fbfO007uoI
+	 gmA7c1PiJ5c4ramEj2l95lSOXZtH4Q10JYeRW34U=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
+	by newxmesmtplogicsvrszb6-0.qq.com (NewEsmtp) with SMTP
+	id 2DA082F6; Sun, 17 Dec 2023 16:11:26 +0800
+X-QQ-mid: xmsmtpt1702800686t9z4b36nq
+Message-ID: <tencent_4E2FCFC90D97A5910DFA926DDD945D9B1907@qq.com>
+X-QQ-XMAILINFO: NFcI4DQTV9fmkt9lUNi7+Jvn0ZFoqP30SGNnowiDA+zmTz+Hl5PeBJctWLwk4q
+	 tcupdaW6dKq65J5Ks6Gglo2JKNCYzQZwrRWB+GtECzk64+G/ZJ4Ch2dz4mpLbeKH+OgSrI1sAQEY
+	 Cf1SiWelvQTp6dzLrYv82lz/kfx5R2+LjdAASeRXVZuZcLzHOKh3jTHe6MzS/06eL/wik+Lz1CnX
+	 C6WBYLA37g5yo6+K4yrPDYGlGpVna7tmy4yAzKYjJS3OCr3mCbF//Dy8htBFRtJce11C1oJp4tBD
+	 0NUZDNCqUIcuOHthKKbkX4kf7k4jsq9QeRICVCPqq7m2FR+6MgSJ8jIJEUWclgNLrMTG8K+jQ6d/
+	 R0j5AuJX3zGwTYBj7VMigzjWIU4XqidkYYUDViPVpVyDnPBCHdaU0SknQij33jrjos8Hs3hVL0KX
+	 0mzsk6XdTJDKJN9e/ogA6lx7Wt9b9AMAjObNGZN07ajUnP+JYod3QLp+h9QuVqUo4KWbw3B0SkrB
+	 r0OClW4YTS5mfYAvUYfkoEWbhimuLOsPwEe49SSDed89yORqEcGiDKhIuVLOh2lLaECxAH7uFzqk
+	 x36G5+clgulmST+sGWuHoHIn2ZoPZLC+CVtRYcVkUdkzo7ml4UmBnFvM7daiTDGqcT8Ay1PYV1am
+	 BVNX3VqnmQoJoJF4NIPwWOkq1zpl24t7l3yz+uqEtIb8bPP3uL2xSeqBd3P2tlQojigcQZiCpQS8
+	 PP55aKry719AoI3VECLwe1cxx4mk/2pkncOxJypkw8PWMdPSLnu1cBAp8NXu8hYQJMSOpTwWhT4D
+	 auLGerAf7mTf1IpWNeyTE7Xqw1kGDMahycg3kSFsFGlVsFKi69wPcf6EOKYSMoJOMcbMVPi1DZKY
+	 MPnCh0UFZ4UfcC7U581K//XYicuUrH2pK09azcl80H2N5c0nX0L11jtHB5Nq/hPft0VY7tLglw
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com
+Cc: amir73il@gmail.com,
+	chao@kernel.org,
+	jaegeuk@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	phillip@squashfs.org.uk,
+	reiserfs-devel@vger.kernel.org,
+	squashfs-devel@lists.sourceforge.net,
+	syzkaller-bugs@googlegroups.com,
+	terrelln@fb.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH] ovl: fix BUG: Dentry still in use in unmount
+Date: Sun, 17 Dec 2023 16:11:26 +0800
+X-OQ-MSGID: <20231217081125.4138340-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <0000000000003362ba060ca8beac@google.com>
+References: <0000000000003362ba060ca8beac@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Al,
+workdir and destdir could be the same when copying up to indexdir.
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+Fixes: c63e56a4a652 ("ovl: do not open/llseek lower file with upper sb_writers held")
+Reported-and-tested-by: syzbot+8608bb4553edb8c78f41@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/overlayfs/copy_up.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git headers.unaligned
-head:   3169da8e80dfca2bcbfb6e998e2f36bcdcd5895a
-commit: 3169da8e80dfca2bcbfb6e998e2f36bcdcd5895a [2/2] move asm/unaligned.h to linux/unaligned.h
-config: i386-randconfig-002-20231217 (https://download.01.org/0day-ci/archive/20231217/202312171105.MC5EGJ0W-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231217/202312171105.MC5EGJ0W-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312171105.MC5EGJ0W-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/x86/tools/insn_sanity.c:19:
->> tools/arch/x86/lib/insn.c:16:10: fatal error: '../include/linux/unaligned.h' file not found
-   #include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +16 tools/arch/x86/lib/insn.c
-
-  > 16	#include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
-    17	
-
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 4382881b0709..ae5eb442025d 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -731,10 +731,14 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 		.rdev = c->stat.rdev,
+ 		.link = c->link
+ 	};
++	err = -EIO;
++	/* workdir and destdir could be the same when copying up to indexdir */
++	if (lock_rename(c->workdir, c->destdir) != NULL)
++		goto unlock;
+ 
+ 	err = ovl_prep_cu_creds(c->dentry, &cc);
+ 	if (err)
+-		return err;
++		goto unlock;
+ 
+ 	ovl_start_write(c->dentry);
+ 	inode_lock(wdir);
+@@ -743,8 +747,9 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	ovl_end_write(c->dentry);
+ 	ovl_revert_cu_creds(&cc);
+ 
++	err = PTR_ERR(temp);
+ 	if (IS_ERR(temp))
+-		return PTR_ERR(temp);
++		goto unlock;
+ 
+ 	/*
+ 	 * Copy up data first and then xattrs. Writing data after
+@@ -760,10 +765,9 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	 * If temp was moved, abort without the cleanup.
+ 	 */
+ 	ovl_start_write(c->dentry);
+-	if (lock_rename(c->workdir, c->destdir) != NULL ||
+-	    temp->d_parent != c->workdir) {
++	if (temp->d_parent != c->workdir) {
+ 		err = -EIO;
+-		goto unlock;
++		goto unlockcd;
+ 	} else if (err) {
+ 		goto cleanup;
+ 	}
+@@ -801,16 +805,18 @@ static int ovl_copy_up_workdir(struct ovl_copy_up_ctx *c)
+ 	ovl_inode_update(inode, temp);
+ 	if (S_ISDIR(inode->i_mode))
+ 		ovl_set_flag(OVL_WHITEOUTS, inode);
++
++unlockcd:
++	ovl_end_write(c->dentry);
+ unlock:
+ 	unlock_rename(c->workdir, c->destdir);
+-	ovl_end_write(c->dentry);
+ 
+ 	return err;
+ 
+ cleanup:
+ 	ovl_cleanup(ofs, wdir, temp);
+ 	dput(temp);
+-	goto unlock;
++	goto unlockcd;
+ }
+ 
+ /* Copyup using O_TMPFILE which does not require cross dir locking */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
