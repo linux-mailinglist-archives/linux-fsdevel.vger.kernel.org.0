@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-6402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476A4817A46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:58:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D696817A49
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D12A2858D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 18:58:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97D9F1C21E7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 18:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD6B73472;
-	Mon, 18 Dec 2023 18:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0144373485;
+	Mon, 18 Dec 2023 18:57:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4BC1EB3F;
-	Mon, 18 Dec 2023 18:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7F91EB3F;
+	Mon, 18 Dec 2023 18:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6ce6b62746dso1744344b3a.2;
-        Mon, 18 Dec 2023 10:57:40 -0800 (PST)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5c6839373f8so2283898a12.0;
+        Mon, 18 Dec 2023 10:57:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702925860; x=1703530660;
+        d=1e100.net; s=20230601; t=1702925862; x=1703530662;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WXA7k6a8U08Bb8Ki+Hye/mJLhOdW4scyh8EQNqbrNXo=;
-        b=m13+RzEwopsPD2fTqxmyXOkgmp50/u4s1Mca0aj5WzvL1JiGK+A6Xw2iM4xxAXh18c
-         3qby2ipb1/fFFaAL8O5PyfeueMgsN+/8ti4wK+Rjs6SSP7z8CP2zas87HUXM06+MhfL4
-         F9pBW0MwkkIkqXEEKOU4SHBC/qKVLovLiVSF2TerwODpJZOQfBTlAukvwCYjMN94PgVK
-         j/R8UsF1qJqZQ9lJvyT4fabJMwH71TBj1gAP5C/drbFc2IB4Dt0X12v7/O8s86m71sfY
-         ue0qxbeR2QQ/dYb0Gzs+R/z9NDVHBz958Zz5fvhMhEO//jiStlxfJ5Kg5MFoX4hAwahA
-         XJXA==
-X-Gm-Message-State: AOJu0YxFiLd8Ebm1zr3hb1gw5mrvQW2hd3P4WRCfF8HFJ+uQUyMtT4lP
-	hbHdpx5qO6XUlYv+WqgZGY4AuUTRzLg=
-X-Google-Smtp-Source: AGHT+IHvJcMyLPaXUjXJ8PF48U6h5bodI2ekKJfFzhrhGTuDn5Z6l6uxKRqiCmAhj8L+3NpfLrh0pg==
-X-Received: by 2002:a05:6a00:8007:b0:6d4:5efe:75be with SMTP id eg7-20020a056a00800700b006d45efe75bemr1713408pfb.33.1702925860239;
-        Mon, 18 Dec 2023 10:57:40 -0800 (PST)
+        bh=/YL4JpXg+7aZ8VFMlENsPTAhR/w0OMGmrTl+lQ70Zyg=;
+        b=lJLAk55b3eaMw1KV3ogroBcpjWFkkj9l+h+lMJJu0j5oeT1rBV4qrZWzSJ+qLGhGOb
+         4GnUQVXvYLsWEaGSQ02JdaCPxcFh5tBggS+H3zKvQnAS85LhEqQCgoxupn4xYblUa/YI
+         dEHz35YIRAbQQT7zFHEStsET+71TQJ/asf8xp501zux8YeC6kYgK+DVDU4y5qhP3iNTw
+         2xfz8OdFCsJglzLez/kRFQxRcOmrAr5y4Yfnm2xd5wicWL5KSxeqY/27E/WUH8S9Ke3x
+         icPgwwssBl/hfJny1kghcus5pBODibqFjEb1wMxkfEGHymjwjDjkNTbkwPEcnuf+1HRT
+         7Nrw==
+X-Gm-Message-State: AOJu0Yy8JY0CxtpJZHSgMWbfa595kqqu3bU7jvu4a5smKuW5XUsHc7cu
+	6vgLRPNgeX8VKuRcme2fh/Q=
+X-Google-Smtp-Source: AGHT+IF3FR7kZ36CebIJXuLTPpCVPu5G+Awv5KhfxxrQMt2iUzIEluE5x1E/3HvDWJcUZdYGkHEMuQ==
+X-Received: by 2002:a05:6a21:7889:b0:194:7c07:5f55 with SMTP id bf9-20020a056a21788900b001947c075f55mr1300506pzc.54.1702925862508;
+        Mon, 18 Dec 2023 10:57:42 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:e67:7ba6:36a9:8cd5])
-        by smtp.gmail.com with ESMTPSA id n20-20020a056a0007d400b006d45707d8edsm3918397pfu.7.2023.12.18.10.57.37
+        by smtp.gmail.com with ESMTPSA id n20-20020a056a0007d400b006d45707d8edsm3918397pfu.7.2023.12.18.10.57.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 10:57:39 -0800 (PST)
+        Mon, 18 Dec 2023 10:57:41 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -53,13 +53,11 @@ Cc: linux-scsi@vger.kernel.org,
 	Daejun Park <daejun7.park@samsung.com>,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 08/19] fs/f2fs: Restore support for tracing data lifetimes
-Date: Mon, 18 Dec 2023 10:56:31 -0800
-Message-ID: <20231218185705.2002516-9-bvanassche@acm.org>
+	Avri Altman <avri.altman@wdc.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: [PATCH v7 09/19] scsi: core: Query the Block Limits Extension VPD page
+Date: Mon, 18 Dec 2023 10:56:32 -0800
+Message-ID: <20231218185705.2002516-10-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231218185705.2002516-1-bvanassche@acm.org>
 References: <20231218185705.2002516-1-bvanassche@acm.org>
@@ -71,48 +69,144 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch restores code that was removed by commit 41d36a9f3e53 ("fs:
-remove kiocb.ki_hint").
+Parse the Reduced Stream Control Supported (RSCS) bit from the block
+limits extension VPD page. The RSCS bit is defined in SBC-5 r05
+(https://www.t10.org/cgi-bin/ac.pl?t=f&f=sbc5r05.pdf).
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Reviewed-by: Daejun Park <daejun7.park@samsung.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- include/trace/events/f2fs.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi.c        |  2 ++
+ drivers/scsi/scsi_sysfs.c  | 10 ++++++++++
+ drivers/scsi/sd.c          | 13 +++++++++++++
+ drivers/scsi/sd.h          |  1 +
+ include/scsi/scsi_device.h |  1 +
+ 5 files changed, 27 insertions(+)
 
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 793f82cc1515..d5a771a869b2 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -946,6 +946,7 @@ TRACE_EVENT(f2fs_direct_IO_enter,
- 		__field(ino_t,	ino)
- 		__field(loff_t,	ki_pos)
- 		__field(int,	ki_flags)
-+		__field(u16,	ki_hint)
- 		__field(u16,	ki_ioprio)
- 		__field(unsigned long,	len)
- 		__field(int,	rw)
-@@ -956,16 +957,19 @@ TRACE_EVENT(f2fs_direct_IO_enter,
- 		__entry->ino		= inode->i_ino;
- 		__entry->ki_pos		= iocb->ki_pos;
- 		__entry->ki_flags	= iocb->ki_flags;
-+		__entry->ki_hint	=
-+			file_inode(iocb->ki_filp)->i_write_hint;
- 		__entry->ki_ioprio	= iocb->ki_ioprio;
- 		__entry->len		= len;
- 		__entry->rw		= rw;
- 	),
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index 76d369343c7a..74cc3369dd8d 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -499,6 +499,8 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+ 			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+ 		if (vpd_buf->data[i] == 0xb2)
+ 			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
++		if (vpd_buf->data[i] == 0xb7)
++			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
+ 	}
+ 	kfree(vpd_buf);
+ }
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 24f6eefb6803..93652a786a46 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -449,6 +449,7 @@ static void scsi_device_dev_release(struct device *dev)
+ 	struct scsi_vpd *vpd_pg80 = NULL, *vpd_pg83 = NULL;
+ 	struct scsi_vpd *vpd_pg0 = NULL, *vpd_pg89 = NULL;
+ 	struct scsi_vpd *vpd_pgb0 = NULL, *vpd_pgb1 = NULL, *vpd_pgb2 = NULL;
++	struct scsi_vpd *vpd_pgb7 = NULL;
+ 	unsigned long flags;
  
--	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu ki_flags = %x ki_ioprio = %x rw = %d",
-+	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu ki_flags = %x ki_hint = %x ki_ioprio = %x rw = %d",
- 		show_dev_ino(__entry),
- 		__entry->ki_pos,
- 		__entry->len,
- 		__entry->ki_flags,
-+		__entry->ki_hint,
- 		__entry->ki_ioprio,
- 		__entry->rw)
- );
+ 	might_sleep();
+@@ -494,6 +495,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	vpd_pgb2 = rcu_replace_pointer(sdev->vpd_pgb2, vpd_pgb2,
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_pgb7 = rcu_replace_pointer(sdev->vpd_pgb7, vpd_pgb7,
++				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	mutex_unlock(&sdev->inquiry_mutex);
+ 
+ 	if (vpd_pg0)
+@@ -510,6 +513,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 		kfree_rcu(vpd_pgb1, rcu);
+ 	if (vpd_pgb2)
+ 		kfree_rcu(vpd_pgb2, rcu);
++	if (vpd_pgb7)
++		kfree_rcu(vpd_pgb7, rcu);
+ 	kfree(sdev->inquiry);
+ 	kfree(sdev);
+ 
+@@ -921,6 +926,7 @@ sdev_vpd_pg_attr(pg89);
+ sdev_vpd_pg_attr(pgb0);
+ sdev_vpd_pg_attr(pgb1);
+ sdev_vpd_pg_attr(pgb2);
++sdev_vpd_pg_attr(pgb7);
+ sdev_vpd_pg_attr(pg0);
+ 
+ static ssize_t show_inquiry(struct file *filep, struct kobject *kobj,
+@@ -1295,6 +1301,9 @@ static umode_t scsi_sdev_bin_attr_is_visible(struct kobject *kobj,
+ 	if (attr == &dev_attr_vpd_pgb2 && !sdev->vpd_pgb2)
+ 		return 0;
+ 
++	if (attr == &dev_attr_vpd_pgb7 && !sdev->vpd_pgb7)
++		return 0;
++
+ 	return S_IRUGO;
+ }
+ 
+@@ -1347,6 +1356,7 @@ static struct bin_attribute *scsi_sdev_bin_attrs[] = {
+ 	&dev_attr_vpd_pgb0,
+ 	&dev_attr_vpd_pgb1,
+ 	&dev_attr_vpd_pgb2,
++	&dev_attr_vpd_pgb7,
+ 	&dev_attr_inquiry,
+ 	NULL
+ };
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 530918cbfce2..56c4310a741b 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3103,6 +3103,18 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
+ 	rcu_read_unlock();
+ }
+ 
++/* Parse the Block Limits Extension VPD page (0xb7) */
++static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
++{
++	struct scsi_vpd *vpd;
++
++	rcu_read_lock();
++	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
++	if (vpd && vpd->len >= 2)
++		sdkp->rscs = vpd->data[5] & 1;
++	rcu_read_unlock();
++}
++
+ /**
+  * sd_read_block_characteristics - Query block dev. characteristics
+  * @sdkp: disk to query
+@@ -3457,6 +3469,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		if (scsi_device_supports_vpd(sdp)) {
+ 			sd_read_block_provisioning(sdkp);
+ 			sd_read_block_limits(sdkp);
++			sd_read_block_limits_ext(sdkp);
+ 			sd_read_block_characteristics(sdkp);
+ 			sd_zbc_read_zones(sdkp, buffer);
+ 			sd_read_cpr(sdkp);
+diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+index 409dda5350d1..e4539122f2a2 100644
+--- a/drivers/scsi/sd.h
++++ b/drivers/scsi/sd.h
+@@ -151,6 +151,7 @@ struct scsi_disk {
+ 	unsigned	urswrz : 1;
+ 	unsigned	security : 1;
+ 	unsigned	ignore_medium_access_errors : 1;
++	bool		rscs : 1; /* reduced stream control support */
+ };
+ #define to_scsi_disk(obj) container_of(obj, struct scsi_disk, disk_dev)
+ 
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 10480eb582b2..a1588f3965f9 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -153,6 +153,7 @@ struct scsi_device {
+ 	struct scsi_vpd __rcu *vpd_pgb0;
+ 	struct scsi_vpd __rcu *vpd_pgb1;
+ 	struct scsi_vpd __rcu *vpd_pgb2;
++	struct scsi_vpd __rcu *vpd_pgb7;
+ 
+ 	struct scsi_target      *sdev_target;
+ 
 
