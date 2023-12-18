@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-6419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6420-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319E2817B3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 20:48:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AC2817B41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 20:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF118284CB6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8A21F25191
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F300F74E3C;
-	Mon, 18 Dec 2023 19:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE5B7207F;
+	Mon, 18 Dec 2023 19:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpttFZQD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUGZwS5B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9476E74E2F;
-	Mon, 18 Dec 2023 19:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4217608E;
+	Mon, 18 Dec 2023 19:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1d3b4b803f4so7589415ad.1;
-        Mon, 18 Dec 2023 11:47:03 -0800 (PST)
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1d39e2f1089so18979955ad.1;
+        Mon, 18 Dec 2023 11:47:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702928823; x=1703533623; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702928828; x=1703533628; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LHTqs7dpBmEn4KdO/6oNdwNsZG5gzWbikrQ+JB0FZfM=;
-        b=cpttFZQDEdMkB73ib0tsvz43Tgzqjz75F7wOu6cgrV+vMbl02jZ/dD/hJEHZ1QIg8v
-         BEWERgDwcmJfqMRDgAkcW0w0KWrvW0xYdWTUooBRXhQt9Wq585+dZBZlElMkBwFAfKV2
-         6/ryNGPDyP5EMVx7nNgdGjFQCRWMWstFAoviE7FFs96gJ+6H2Dht4jNwPt6+1BJ+X5wu
-         dqpF+JRDYjC/FRcd2qGJYd5/UCnDlng0R9UjxvH69AXfnJsKyRRaGo2eLi2AFdA+O316
-         BiPPJvfJidMrhY4umo6wEQ3qeDURmN9v6f741iYOYsgGqaQsBdTRQGgz53gIYQLU6+dZ
-         6iWw==
+        bh=1HdbfjrUNXuDoTm+qDnoLliIoy9y0PH4Q8y6qoN4vRo=;
+        b=BUGZwS5BuLtnGKLJ20jD9Se++Wq2gx3jGUipTPW6GC62ZBdy3UdkpLXCSV+lXT/aho
+         y0Dt/j/FjDf++kz3FiPFFcCLRpxBA7bm6uW1hzLXP84tcnCOL9b1q+A+PxlsxixTXGy3
+         2nYueyJAvS8JL0TnbFwE+CAxAYlxju7JATnXnRsPFC4LiT83EzQZKfsnX9kc3xaOjE/B
+         ce+nUZ8QmZIen3qh0ZWWVnRa1yiCkJCtqibF/nPuTYTYCUn43d0uxui/7x38XFr/LLzJ
+         NzPFD3OVQQ+Lqtj1Ff8ldtojQrq3Ilbdt8rMSy0iTKQ/ZvhnUvaJuhU+IYNb4riS2+VQ
+         //+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702928823; x=1703533623;
+        d=1e100.net; s=20230601; t=1702928828; x=1703533628;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LHTqs7dpBmEn4KdO/6oNdwNsZG5gzWbikrQ+JB0FZfM=;
-        b=Tu/sY0yOPIgKoR5VyVnDirsgLsX2HpJgnKLQeoPebCSdKSVXKS2tbfdislrpWnw/T5
-         Hf//rz/niuUjPEiYcW0jsYkcTIdyRXojDf0Kwphu4DF1O1fuMHEd/O34sq8989LzTaJn
-         nflahOjChH7pi/+CaACkw02evO3YHbzqi/gT7riduPntuYsNGUxQZg9pGo+rcbBKILDB
-         xYnEdZtLOaL4122g2O6Ono+FPXe7U5ZNSfu26iGpY1yNgRqUhKKz6ZkrD4zlrJy9eCVZ
-         VIoIad+l7y2Fl/TIKRJi3kxuaKJnHcLZYeR6YGs/qhSRWDKs8T48L24Upg0n3D2OhI9e
-         jXEg==
-X-Gm-Message-State: AOJu0YwyXxkB3Sl2O+j4yyarZ1dQOWVyQjGr+Pjl+DFaHMHg4EEdeI7t
-	8DbzG/TUubVmeZjYw3wMDw==
-X-Google-Smtp-Source: AGHT+IEuiCIzHZoSaKljz8Xu8gZjlhUFEwbhr2C8Xz88VdeRlmyWhChyIM2RKyajYncVtVwvuI1x7g==
-X-Received: by 2002:a17:902:db0d:b0:1d3:d9c2:224a with SMTP id m13-20020a170902db0d00b001d3d9c2224amr276918plx.47.1702928822837;
-        Mon, 18 Dec 2023 11:47:02 -0800 (PST)
+        bh=1HdbfjrUNXuDoTm+qDnoLliIoy9y0PH4Q8y6qoN4vRo=;
+        b=oXqwr8jelZJZ0C4HqMT7SAHztX1qeeL/h9QP4Kz/hji5GMxQeiJl5Xw8Hze32gjn2E
+         9/E6MjwWI8oVHOclD0QwBmRCtx3q0O7moUf568Rjqu/YogFFBGxi+5I31x+njsngHs3M
+         yl7D88p0j5EOtg/8HM0cjnwYfAdXPxqiD4UNyq/3YnKoSQsg2cNsE194n7PMwqj/nZl3
+         yA2Mt3QhVKA52NAQ5QLmgef61uTStAlz5s6Lb52eW7AzRZ8Dd+kbaJejfilWTOjcgh7z
+         4/MKTibIY7HlmCxdKOZLYBhMpKLLE76cATmk8DUASm4fK93ZmFO/MGfJlRvAIlg5tgpr
+         nxbw==
+X-Gm-Message-State: AOJu0YwKJj9MeO1TG0+0KDqH6blRkiB3eBF/Bs67HQD7iZiMxwsGmUJ8
+	IdPH71sTSIjoU1uAwr4wPQ==
+X-Google-Smtp-Source: AGHT+IFFELTMN7anDySBQ6xg3aJOuW+1fBiU4AjT1h7wEnplFVcEhIUtJlqRaBhHprORVyr+ExKmAA==
+X-Received: by 2002:a17:902:6844:b0:1cf:7683:93e with SMTP id f4-20020a170902684400b001cf7683093emr16850857pln.24.1702928827983;
+        Mon, 18 Dec 2023 11:47:07 -0800 (PST)
 Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 11-20020a170902c20b00b001ce664c05b0sm19456335pll.33.2023.12.18.11.46.59
+        by smtp.gmail.com with ESMTPSA id 11-20020a170902c20b00b001ce664c05b0sm19456335pll.33.2023.12.18.11.47.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 11:47:02 -0800 (PST)
+        Mon, 18 Dec 2023 11:47:07 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org
@@ -89,9 +89,9 @@ Cc: linux-doc@vger.kernel.org,
 	emirakhur@micron.com,
 	Hasan.Maruf@amd.com,
 	seungjun.ha@samsung.com
-Subject: [PATCH v4 05/11] mm/mempolicy: refactor kernel_get_mempolicy for code re-use
-Date: Mon, 18 Dec 2023 14:46:25 -0500
-Message-Id: <20231218194631.21667-6-gregory.price@memverge.com>
+Subject: [PATCH v4 06/11] mm/mempolicy: allow home_node to be set by mpol_new
+Date: Mon, 18 Dec 2023 14:46:26 -0500
+Message-Id: <20231218194631.21667-7-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20231218194631.21667-1-gregory.price@memverge.com>
 References: <20231218194631.21667-1-gregory.price@memverge.com>
@@ -103,322 +103,82 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Pull operation flag checking from inside do_get_mempolicy out
-to kernel_get_mempolicy.  This allows us to flatten the
-internal code, and break it into separate functions for future
-syscalls (get_mempolicy2, process_get_mempolicy) to re-use the
-code, even after additional extensions are made.
+This patch adds the plumbing into mpol_new() to allow the argument
+structure's home_node field to be set during mempolicy creation.
 
-The primary change is that the flag is treated as the multiplexer
-that it actually is.  For get_mempolicy, the flags represents 3
-different primary operations:
+The syscall sys_set_mempolicy_home_node was added to allow a home
+node to be registered for a vma.
 
-if (flags & MPOL_F_MEMS_ALLOWED)
-	return task->mems_allowed
-else if (flags & MPOL_F_ADDR)
-	return vma mempolicy information
-else
-	return task mempolicy information
+For set_mempolicy2 and mbind2 syscalls, it would be useful to add
+this as an extension to allow the user to submit a fully formed
+mempolicy configuration in a single call, rather than require
+multiple calls to configure a mempolicy.
 
-Plus the behavior modifying flag:
-
-if (flags & MPOL_F_NODE)
-	change the return value of (int __user *policy)
-	based on whether MPOL_F_ADDR was set.
-
-The original behavior of get_mempolicy is retained, but we utilize
-the new mempolicy_args structure to pass the operations down the
-stack.  This will allow us to extend the internal functions without
-affecting the legacy behavior of get_mempolicy.
+This will become particularly useful if/when pidfd interfaces to
+change process mempolicies from outside the task appear, as each
+call to change the mempolicy does an atomic swap of that policy
+in the task, rather than mutate the policy.
 
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
 ---
- mm/mempolicy.c | 245 +++++++++++++++++++++++++++++++------------------
- 1 file changed, 155 insertions(+), 90 deletions(-)
+ mm/mempolicy.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 42037b7ff6d6..4426365a353d 100644
+index 4426365a353d..fe340480e296 100644
 --- a/mm/mempolicy.c
 +++ b/mm/mempolicy.c
-@@ -895,106 +895,111 @@ static int lookup_node(struct mm_struct *mm, unsigned long addr)
- 	return ret;
+@@ -306,7 +306,7 @@ static struct mempolicy *mpol_new(struct mempolicy_args *args)
+ 	atomic_set(&policy->refcnt, 1);
+ 	policy->mode = mode;
+ 	policy->flags = flags;
+-	policy->home_node = NUMA_NO_NODE;
++	policy->home_node = args->home_node;
+ 	policy->wil.cur_weight = 0;
+ 
+ 	return policy;
+@@ -1625,6 +1625,7 @@ static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
+ 	args.mode = lmode;
+ 	args.mode_flags = mode_flags;
+ 	args.policy_nodes = &nodes;
++	args.home_node = NUMA_NO_NODE;
+ 
+ 	return do_set_mempolicy(&args);
  }
+@@ -2985,6 +2986,8 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ 		margs.mode = mpol->mode;
+ 		margs.mode_flags = mpol->flags;
+ 		margs.policy_nodes = &mpol->w.user_nodemask;
++		margs.home_node = NUMA_NO_NODE;
++
+ 		/* contextualize the tmpfs mount point mempolicy to this file */
+ 		npol = mpol_new(&margs);
+ 		if (IS_ERR(npol))
+@@ -3143,6 +3146,7 @@ void __init numa_policy_init(void)
+ 	memset(&args, 0, sizeof(args));
+ 	args.mode = MPOL_INTERLEAVE;
+ 	args.policy_nodes = &interleave_nodes;
++	args.home_node = NUMA_NO_NODE;
  
--/* Retrieve NUMA policy */
--static long do_get_mempolicy(int *policy, nodemask_t *nmask,
--			     unsigned long addr, unsigned long flags)
-+/* Retrieve the mems_allowed for current task */
-+static inline long do_get_mems_allowed(nodemask_t *nmask)
- {
--	int err;
--	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma = NULL;
--	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
-+	task_lock(current);
-+	*nmask  = cpuset_current_mems_allowed;
-+	task_unlock(current);
-+	return 0;
-+}
+ 	if (do_set_mempolicy(&args))
+ 		pr_err("%s: interleaving failed\n", __func__);
+@@ -3157,6 +3161,7 @@ void numa_default_policy(void)
  
--	if (flags &
--		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
--		return -EINVAL;
-+/* If the policy has additional node information to retrieve, return it */
-+static long do_get_policy_node(struct mempolicy *pol)
-+{
-+	/*
-+	 * For MPOL_INTERLEAVE, the extended node information is the next
-+	 * node that will be selected for interleave. For weighted interleave
-+	 * we return the next node based on the current weight.
-+	 */
-+	if (pol == current->mempolicy && pol->mode == MPOL_INTERLEAVE)
-+		return next_node_in(current->il_prev, pol->nodes);
+ 	memset(&args, 0, sizeof(args));
+ 	args.mode = MPOL_DEFAULT;
++	args.home_node = NUMA_NO_NODE;
  
--	if (flags & MPOL_F_MEMS_ALLOWED) {
--		if (flags & (MPOL_F_NODE|MPOL_F_ADDR))
--			return -EINVAL;
--		*policy = 0;	/* just so it's initialized */
-+	if (pol == current->mempolicy &&
-+	    pol->mode == MPOL_WEIGHTED_INTERLEAVE) {
-+		if (pol->wil.cur_weight)
-+			return current->il_prev;
-+		else
-+			return next_node_in(current->il_prev, pol->nodes);
-+	}
-+	return -EINVAL;
-+}
-+
-+/* Handle user_nodemask condition when fetching nodemask for userspace */
-+static void do_get_mempolicy_nodemask(struct mempolicy *pol, nodemask_t *nmask)
-+{
-+	if (mpol_store_user_nodemask(pol)) {
-+		*nmask = pol->w.user_nodemask;
-+	} else {
- 		task_lock(current);
--		*nmask  = cpuset_current_mems_allowed;
-+		get_policy_nodemask(pol, nmask);
- 		task_unlock(current);
--		return 0;
- 	}
-+}
- 
--	if (flags & MPOL_F_ADDR) {
--		pgoff_t ilx;		/* ignored here */
--		/*
--		 * Do NOT fall back to task policy if the
--		 * vma/shared policy at addr is NULL.  We
--		 * want to return MPOL_DEFAULT in this case.
--		 */
--		mmap_read_lock(mm);
--		vma = vma_lookup(mm, addr);
--		if (!vma) {
--			mmap_read_unlock(mm);
--			return -EFAULT;
--		}
--		pol = __get_vma_policy(vma, addr, &ilx);
--	} else if (addr)
--		return -EINVAL;
-+/* Retrieve NUMA policy for a VMA assocated with a given address  */
-+static long do_get_vma_mempolicy(unsigned long addr, int *addr_node,
-+				 struct mempolicy_args *args)
-+{
-+	pgoff_t ilx;
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma = NULL;
-+	struct mempolicy *pol = NULL;
- 
-+	mmap_read_lock(mm);
-+	vma = vma_lookup(mm, addr);
-+	if (!vma) {
-+		mmap_read_unlock(mm);
-+		return -EFAULT;
-+	}
-+	pol = __get_vma_policy(vma, addr, &ilx);
- 	if (!pol)
--		pol = &default_policy;	/* indicates default behavior */
-+		pol = &default_policy;
-+	else
-+		mpol_get(pol);
-+	mmap_read_unlock(mm);
- 
--	if (flags & MPOL_F_NODE) {
--		if (flags & MPOL_F_ADDR) {
--			/*
--			 * Take a refcount on the mpol, because we are about to
--			 * drop the mmap_lock, after which only "pol" remains
--			 * valid, "vma" is stale.
--			 */
--			pol_refcount = pol;
--			vma = NULL;
--			mpol_get(pol);
--			mmap_read_unlock(mm);
--			err = lookup_node(mm, addr);
--			if (err < 0)
--				goto out;
--			*policy = err;
--		} else if (pol == current->mempolicy &&
--				pol->mode == MPOL_INTERLEAVE) {
--			*policy = next_node_in(current->il_prev, pol->nodes);
--		} else if (pol == current->mempolicy &&
--				(pol->mode == MPOL_WEIGHTED_INTERLEAVE)) {
--			if (pol->wil.cur_weight)
--				*policy = current->il_prev;
--			else
--				*policy = next_node_in(current->il_prev,
--						       pol->nodes);
--		} else {
--			err = -EINVAL;
--			goto out;
--		}
--	} else {
--		*policy = pol == &default_policy ? MPOL_DEFAULT :
--						pol->mode;
--		/*
--		 * Internal mempolicy flags must be masked off before exposing
--		 * the policy to userspace.
--		 */
--		*policy |= (pol->flags & MPOL_MODE_FLAGS);
--	}
-+	/* Fetch the node for the given address */
-+	if (addr_node)
-+		*addr_node = lookup_node(mm, addr);
- 
--	err = 0;
--	if (nmask) {
--		if (mpol_store_user_nodemask(pol)) {
--			*nmask = pol->w.user_nodemask;
--		} else {
--			task_lock(current);
--			get_policy_nodemask(pol, nmask);
--			task_unlock(current);
--		}
-+	args->mode = pol == &default_policy ? MPOL_DEFAULT : pol->mode;
-+	args->mode_flags = (pol->flags & MPOL_MODE_FLAGS);
-+	args->home_node = pol->home_node;
-+
-+	/* If this policy has extra node info, fetch that */
-+	args->policy_node = do_get_policy_node(pol);
-+
-+	if (args->policy_nodes)
-+		do_get_mempolicy_nodemask(pol, args->policy_nodes);
-+
-+	if (pol != &default_policy) {
-+		mpol_put(pol);
-+		mpol_cond_put(pol);
- 	}
- 
-- out:
--	mpol_cond_put(pol);
--	if (vma)
--		mmap_read_unlock(mm);
--	if (pol_refcount)
--		mpol_put(pol_refcount);
--	return err;
-+	return 0;
-+}
-+
-+/* Retrieve NUMA policy for the current task */
-+static long do_get_task_mempolicy(struct mempolicy_args *args)
-+{
-+	struct mempolicy *pol = current->mempolicy;
-+
-+	if (!pol)
-+		pol = &default_policy;	/* indicates default behavior */
-+
-+	args->mode = pol == &default_policy ? MPOL_DEFAULT : pol->mode;
-+	/* Internal flags must be masked off before exposing to userspace */
-+	args->mode_flags = (pol->flags & MPOL_MODE_FLAGS);
-+	args->home_node = NUMA_NO_NODE;
-+
-+	args->policy_node = do_get_policy_node(pol);
-+
-+	if (args->policy_nodes)
-+		do_get_mempolicy_nodemask(pol, args->policy_nodes);
-+
-+	return 0;
+ 	do_set_mempolicy(&args);
  }
- 
- #ifdef CONFIG_MIGRATION
-@@ -1731,16 +1736,76 @@ static int kernel_get_mempolicy(int __user *policy,
- 				unsigned long addr,
- 				unsigned long flags)
- {
-+	struct mempolicy_args args;
- 	int err;
--	int pval;
-+	int address_node = NUMA_NO_NODE;
-+	int pval = 0;
- 	nodemask_t nodes;
- 
- 	if (nmask != NULL && maxnode < nr_node_ids)
- 		return -EINVAL;
- 
--	addr = untagged_addr(addr);
-+	if (flags &
-+		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
-+		return -EINVAL;
- 
--	err = do_get_mempolicy(&pval, &nodes, addr, flags);
-+	/* Ensure any data that may be copied to userland is initialized */
-+	memset(&args, 0, sizeof(args));
-+	args.policy_nodes = &nodes;
+@@ -3279,6 +3284,8 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
+ 	margs.mode = mode;
+ 	margs.mode_flags = mode_flags;
+ 	margs.policy_nodes = &nodes;
++	margs.home_node = NUMA_NO_NODE;
 +
-+	/*
-+	 * set_mempolicy was originally multiplexed based on 3 flags:
-+	 *   MPOL_F_MEMS_ALLOWED:  fetch task->mems_allowed
-+	 *   MPOL_F_ADDR        :  operate on vma->mempolicy
-+	 *   MPOL_F_NODE        :  change return value of *policy
-+	 *
-+	 * Split this behavior out here, rather than internal functions,
-+	 * so that the internal functions can be re-used by future
-+	 * get_mempolicy2 interfaces and the arg structure made extensible
-+	 */
-+	if (flags & MPOL_F_MEMS_ALLOWED) {
-+		if (flags & (MPOL_F_NODE|MPOL_F_ADDR))
-+			return -EINVAL;
-+		pval = 0;	/* just so it's initialized */
-+		err = do_get_mems_allowed(&nodes);
-+	} else if (flags & MPOL_F_ADDR) {
-+		/* If F_ADDR, we operation on a vma policy (or default) */
-+		err = do_get_vma_mempolicy(untagged_addr(addr),
-+					   &address_node, &args);
-+		if (err)
-+			return err;
-+		 /* if (F_ADDR | F_NODE), *pval is the address' node */
-+		if (flags & MPOL_F_NODE) {
-+			/* if we failed to fetch, that's likely an EFAULT */
-+			if (address_node < 0)
-+				return address_node;
-+			pval = address_node;
-+		} else
-+			pval = args.mode | args.mode_flags;
-+	} else {
-+		 /* if not F_ADDR and addr != null, EINVAL */
-+		if (addr)
-+			return -EINVAL;
-+
-+		err = do_get_task_mempolicy(&args);
-+		if (err)
-+			return err;
-+		/*
-+		 * if F_NODE was set and mode was MPOL_INTERLEAVE
-+		 * *pval is equal to next interleave node.
-+		 *
-+		 * if args.policy_node < 0, this means the mode did
-+		 * not have a policy.  This presently emulates the
-+		 * original behavior of (F_NODE) & (!MPOL_INTERLEAVE)
-+		 * producing -EINVAL
-+		 */
-+		if (flags & MPOL_F_NODE) {
-+			if (args.policy_node < 0)
-+				return args.policy_node;
-+			pval = args.policy_node;
-+		} else
-+			pval = args.mode | args.mode_flags;
-+	}
- 
- 	if (err)
- 		return err;
+ 	new = mpol_new(&margs);
+ 	if (IS_ERR(new))
+ 		goto out;
 -- 
 2.39.1
 
