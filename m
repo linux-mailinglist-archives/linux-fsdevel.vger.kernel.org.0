@@ -1,186 +1,335 @@
-Return-Path: <linux-fsdevel+bounces-6385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C414D817602
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 16:45:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B196817661
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 16:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F111F24892
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 15:45:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0301F272CD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 15:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89A17207C;
-	Mon, 18 Dec 2023 15:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D49237872;
+	Mon, 18 Dec 2023 15:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="GGC85dmZ";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="TeZNmZWA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1oMIENr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E217642379;
-	Mon, 18 Dec 2023 15:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1702914053; x=1734450053;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=PzAqN7m+rzrPpxK8aWINAjzWjTvMuPhXKalKKlHMzTs=;
-  b=GGC85dmZEPtNDnnNb9y0MbiGjsh2jap1w/mwamQDcKIIk7ZctSJwukoD
-   tXuepuyKgfERebCnX0agEDRqtb/bMrRaoLdyvaDFzxd81O59L6i2uNuzn
-   fsLw7l/GCmmNbuePsSkL63s80Ei5LTdAEziqzCm3khAXsvmvGpcSNZHiy
-   0pjjkWCVQBwVIvwhKQc1Inru4K8eCOgR08nUlTdqRyb5DoT1itXl088Ju
-   fGnjXwcir6YwtKBuvGptX18E6m4wI034L/JADr08Qcc7exmGqZ4QQLXIe
-   si77X+KDPIlrBQBgDxaIcZNpETYibjsLVYBHUIdtOwQGfkAJXDcfw8Ir5
-   g==;
-X-CSE-ConnectionGUID: pvzzJ9LHTtaS95T6DCxiZg==
-X-CSE-MsgGUID: ZjukNLDMQNSKSurtGuK+kA==
-X-IronPort-AV: E=Sophos;i="6.04,286,1695657600"; 
-   d="scan'208";a="5124976"
-Received: from mail-dm6nam12lp2168.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.168])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Dec 2023 23:40:46 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TQSirs3YSjw4/CYoydxuMVbiEzNZKX0VqZNuC4eHMFBKpNuP1uhHkpFvHmUE1jR2Jof0aXSnjPJRyyw2mFHAjE33kj+yWCIPoZlI6Jx6DhvH8IEAfdbs+5rtAVQt2sQyCu7wQYnbn+PR0MhBjQp2Tea44tYEcAJ68ZV1k6G8MqtsE3jEmZ/+pL5bBwwjdc3OjRkl5YSqcQJ8Xor9XvvwsSem3kO+rH1Ytblbl58KUSDesnTiZX3NRbBoMvDO1Tkj4VJV36vbAZLArgIekA2HIx7yeiVbl1VrDI0bYF89A/D5my0aLDoKSuYN7P/xBYmo22s/f8V/l/QSc5icjfpXZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PzAqN7m+rzrPpxK8aWINAjzWjTvMuPhXKalKKlHMzTs=;
- b=PZZoJ7ram1xnJ+4f020sT4dH9z9ltiUn1Jr4sdcGNPaH67dUq8zfyD8bGBPfEf9hQ07OqMU3kd0t0SUUh9FXVYu83vvD2EKc6j029MOLkCTfADNy4xye8jGWJo8Wwuhk3koD+aDihg9PndswKxsTh3daY6lDuvR5GZfKahykhw5NH/6N6G7kFGBUgb6Lg34VGtU7yg25g11AJa9EGVdxxUQqZW4ChOT3TsCYZ3LgOWqiy8i1yJqqdK1Re3FREwCx7qX1r2GURX7qOPZYTod2xcMxsxB4EqP7KaZzypzZZF3IHfPS7m4CvJPCA59RdHvBSZA40ONAVA5/hPQcjRvFWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA063A1B6
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 15:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-67f2fc389e6so11505626d6.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 07:54:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PzAqN7m+rzrPpxK8aWINAjzWjTvMuPhXKalKKlHMzTs=;
- b=TeZNmZWAUYgBqJ+1EZRkFsfwoqp9rZF2damwFhz/V11oYqHt0FYNlJZ4Km1FpSLpMODBTBiIQYZAD284Jv6X9wOWmTjsnfE2L/Her3sEPsTkSyR64sAvKwzUtimC7yKO9XFw9ZPxZ76rLIpDCKXHpwt9xK6OguKsxwbpt/KB0m4=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by SA2PR04MB7548.namprd04.prod.outlook.com (2603:10b6:806:148::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.37; Mon, 18 Dec
- 2023 15:40:42 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::8ea3:9333:a633:c161]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::8ea3:9333:a633:c161%7]) with mapi id 15.20.7091.034; Mon, 18 Dec 2023
- 15:40:42 +0000
-From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To: Christoph Hellwig <hch@lst.de>
-CC: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>
-Subject: Re: [PATCH 08/14] hfsplus: Really remove hfsplus_writepage
-Thread-Topic: [PATCH 08/14] hfsplus: Really remove hfsplus_writepage
-Thread-Index: AQHaL5Hpr4Da0he2ZEWmJqZkmdfVTrCrUuMAgAOLeQCAAElegIAACj8A
-Date: Mon, 18 Dec 2023 15:40:42 +0000
-Message-ID: <cdf6a3d8-4f5c-4fce-a93e-9b0304effcb9@wdc.com>
-References: <20231215200245.748418-1-willy@infradead.org>
- <20231215200245.748418-9-willy@infradead.org> <20231216043328.GF9284@lst.de>
- <50696fa1-a7b9-4f5f-b4ef-73ca99a69cd2@wdc.com>
- <20231218150401.GA19279@lst.de>
-In-Reply-To: <20231218150401.GA19279@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|SA2PR04MB7548:EE_
-x-ms-office365-filtering-correlation-id: 4c2ca3ef-67c9-4438-f910-08dbffdfb1b5
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- S8q0GlENa63HA874iyd7n4kFnniWmrcDJzP3twE2ld+qZlvNbLEn1eL8iKE9SSkrqi7oPXO6VTr8FcQe61G1o2doKtSg1J1GEqLib4PuuNf2w3VuUu6b3fxwLP7AxjMoO0pxR2kfMm2ZMdEntQHdpu+s63IOH4NU1cVAHOrtLV5jLtxZAs/VKDi2bARCrLHCy1Myb/3Q194l6eeLel+JuNFr03GDQxGpMA79h9KcZLkibkvMWCwz9YwZ0tX97H9pOLP4FnIsNetZZ8VKsSXcxBgd0DM9KKYsyiJU4Vs1Y+wweBQhIBQ6xC+PgLudRaEFF+nPL07ROyfZzmnQDiljoyGBGgKlKy/C7RaFi6A8ILQp+anW91XYApgTGShTGrEEf38SxeqJUYRxR1L3H8gsbTfflpug9vbC8JTHQccCtI94OUT0T2jxR7mcZuvbgqsZjGDJhP7tvQQgH22bixWN9lbWHvXtfsc5Gh5LtJ4lATmjq9H85HOLN3nCnsi7NPWcNWbYxNQ84QYeqvPa7OR7xyNlLZharIOC3IO7XHw0Lmti/UzMkad6//D2Ji7d60VzqbAsE18KzodjsZkezqDrKuTlURW7MDnWehhANP+TLp3vWFz4Wr1GeZO1RELVXk17Q8CfgWI7/KdrQnFWDD/zwvuBvZ9aGPYRrHVcDTPGavr0Gk5IL2Ge08un113gNjH5
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(136003)(39860400002)(396003)(366004)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(6512007)(478600001)(6486002)(2616005)(83380400001)(6916009)(316002)(66946007)(76116006)(66556008)(66476007)(66446008)(64756008)(54906003)(91956017)(53546011)(5660300002)(8936002)(8676002)(4326008)(71200400001)(31686004)(6506007)(82960400001)(38100700002)(122000001)(4744005)(2906002)(86362001)(31696002)(41300700001)(38070700009)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Z21lZDJYUFg0MjhXVldJSkZoeWh1Q2xmaGYvbG16RWJpeVkwMVBvZkpVdkpJ?=
- =?utf-8?B?MzRSWVM0cUpxb0hkNmd5YzJVaHNDbEE0VDZlUmF5aDdlVG5XZ3llTVVkWnN2?=
- =?utf-8?B?OUh3RnlpMVBRNEUrbFZFK1V4TnduUHhaQnFwbjZKdzhnMFZZZGNORERCV1F5?=
- =?utf-8?B?VGFPeGFHMjByT3pyODVLQ09tNlJOZlc2QUtEOFNsYXlzVHE3bDd3eXpvd3RE?=
- =?utf-8?B?SEdweVFJRWNvanQvRkZ4azg0TS9EZmJlV0NGWVkwSHVicWNpSGNFZ1hOV1M3?=
- =?utf-8?B?RTloTDh0R1J0TVJEMzRSbHJieGJyblJkeGRCNk1VSXFiSDhhNzNORVBxbUQx?=
- =?utf-8?B?dGYxYW5WQ0FTUi93ZXJNdjkrQzRVd2Z2ZXZuZEZuTno0V2FobU5TcTlqWkdF?=
- =?utf-8?B?R052dnJEcEUrbkt3R2pycThzL1orM2o1djlJSVp3Tnl0Y1RaTDVYNis1cS9H?=
- =?utf-8?B?U2JCZ0tMVkpYT0cwY3gzQ0NPY2pMWk5pbjVlS2VEenNQTW8wSzl2UVFFQ290?=
- =?utf-8?B?MmdqNG1PdkhWbWhjcGNlaVhxeHdYNjB1LzFUbTQvVmN2d01oSGttSisyM25D?=
- =?utf-8?B?SkJXM2EyNVJWK2RhZlVrellyeEx5REp5MlZkM21EOGNMaGdpaG83UzkrVGVy?=
- =?utf-8?B?d216dlpRZitKeFQ5WXFFTmNnU24zc3dZaTB2V0dHK0kyWk42S1FxTXZUd0NG?=
- =?utf-8?B?cGwwNndDaUtqR0dScm4xZXFITEZQWTJtQXVKcTNXTDFGeDMvZXhKK0cralFq?=
- =?utf-8?B?Q2o3OERPU2VrK241YzRPbEdwSWxndjhvMGt6SWU2NTNIaUlUZnBlV1N2UmNi?=
- =?utf-8?B?VjQzaUo4K09BRkgyTHNwZ1AxLzY0SWg1WmxkQzFtbXRWcElQM1BvNy9wSkEr?=
- =?utf-8?B?ZmhlUkFhZUJiSE9vR2J3ZCt3eW03QUtrRU5QUGYyYXpaVVpOQllYejM1U3Fk?=
- =?utf-8?B?SWIvVmU1Rzd4RG9tUFh5YVVTRUZJNW1mVkN6d0FnUjh1Ky93aWFBSjI4NGtm?=
- =?utf-8?B?a3BkVTZnaERTVzI3MHM1SmtqV2Y3V0ZpRjAzSjZoRGJJNVZNUyt4TW84Q3Rr?=
- =?utf-8?B?T2FJQmJabVRoSGhpZjV6M2FJenVTTkJuN3o3ZEFoTkdLelUxQnlremNRS3lU?=
- =?utf-8?B?Z0xYQjVqYldhOEtnbDhFV1diamRLUWdJVG8rVW8rckJ6WnZIQnNDbFVwM3pn?=
- =?utf-8?B?eklic0M0SlZUVW5YcnF0WjdlT253ZlhQVkY4MGdrTXRvQW1RQzUyT2dCdllr?=
- =?utf-8?B?LzJ1K0g5eWkzRUZ4ZGRuektDUnNxbTh2MEhlalUvSWZWUGFLMmtxZEJDZGp0?=
- =?utf-8?B?b3hZUHB2S1RHRG1NN0lqaWdVYTcySUJrbGVuTElRODE0YnFYWW5lc2gyWXdL?=
- =?utf-8?B?K1lmWXJKUFFLQUtsZnJlazgvanM1bHFzMWl2SHAybC9RbzE3bmhodDZSOWwr?=
- =?utf-8?B?V0ZwdEJ2SnhobElvcnVRc2owenQ0YkhqdmJEOTlYZmRXYkx2M2xXa3VhbEZU?=
- =?utf-8?B?OVFnM0xFMHNtUE5LRktpMEtuWjZIR2ZCdGN3S2kyLzlqMEVZUDNqd3JQSSsw?=
- =?utf-8?B?UGtUZGliZTJxMUt6eU9zTjQ5S1pDK2lqZ09aREtPMVpVNy9BMXlZOUVqcnUw?=
- =?utf-8?B?amZucU9Obmw4V0kzQlZNcHlHUVNXQzU0alRld2xMRnc4OEU2R1BrU0lqdG03?=
- =?utf-8?B?bzFXblE2RkhZTmV3RmRaRUpsKyt4UTcxUXphdE9QNDlvTkVMZ2VsYU1PMndB?=
- =?utf-8?B?cTdVQmk1clRDL2pBK2EybG4xSXlqd20wZi9lNVhJU2FFWS8yQ0VIR3l1WXNq?=
- =?utf-8?B?VklPeEJXWXhtUy96SGZ2VWJ5S0lSWHUyWHppdkh3NHFJdUZhUHkrcElscmpO?=
- =?utf-8?B?UEFLUnhma0J2N29KWVFhUlFkQ1poQzBZczg0UXJIV0hBSWFvYTRTbVhxbTRT?=
- =?utf-8?B?bytVVnkyeGkvNzIyS0pWS29xMUV5RGZQOFZ2MnpNM3dIUFNXdFlRVzd4L2Rm?=
- =?utf-8?B?SFpnYnk4Q1M3Ukp0STI2TTNjbksyRHlwNVlVc3BlTVpJVUl5a1RFZFNON2ZN?=
- =?utf-8?B?ZFo2L3pLVVBoeERLMUZEajZmRDlybmZITUZKUTU0Nks4M3N4RWFqaWhDTFRy?=
- =?utf-8?B?MHdscG0rTSs1djlTU2p3SHpGWCtWcW8wbDMycmMxdjE0bmJ3bkRZQldNZGFh?=
- =?utf-8?B?U3pDclNRcEJsWGp1cEcxNFF1L0FLMHR1djdnTjBHMjZzdkZqS3JidTlZSjcz?=
- =?utf-8?B?M1VQdUppQjU2TG5LVU9BTTBnQXlRPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BE76016B93D0F14EB3ADCB7B4E5889CC@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1702914844; x=1703519644; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/aBr9jKVEQIUupWAnMbinGlSrwHJkGh6Spd7D8mc4xM=;
+        b=X1oMIENrbsMi0bdHKqOLp2N32bfNK74frtvUmB1tpm/OdFwpO96ILt+wubqihZIQEp
+         +uF58DrhrAtteDMej+xnYg1hEIOg70tGqVw5KBoFrb/4MOnpZW7Pm8V5YcLA8YsbP7mM
+         9HLsZ+QpSHkiDec1A9KohXMeOtQf8Lx9Z3pjfgqHe71+kVXxxnzymfi4UptyjE37FCWJ
+         t3zoKw8dtqQIydqAr2FykLLevwHDL9v8/OclnCBv9PE1ai2digvaHaUbVm1805wBC9TC
+         dhVdB9j2mfWy0eE8K2P7pkm2xIq2V0DznEjWj0XD8CFHjm77Y/wql+E/X8tmT/j5gXUS
+         XJ9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702914844; x=1703519644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/aBr9jKVEQIUupWAnMbinGlSrwHJkGh6Spd7D8mc4xM=;
+        b=K6gfENO4PwJNy+/FW1VixLYMHhJfDC7o69HawlC5ZqAEGzets9ytGoTlYLcOcWJB/W
+         ICUkfFZVG5UMBMy/8TycguGUayv4Myrzh/7Gdo1idfgdcM+iMv+h6ha9I7t0eBUm/2MC
+         Bj47aNEBb1+Op5Ggcm2aSfgWctAxUXpc/pE3d19rmUzLFFrxCAbZyicgc4MJWWNh6Bp9
+         +A6rFeBYA41FMmSPm+EcjWKjwtMy3qlo24nWWBE+F4zTtoAHQ4Btd7xs0/iEiKYb4pHV
+         QAsDw3I3x5XBDuUPGNekSB8QacR2qZ+rO7ISLTi//+O6cAyqS8rkwoxaBd4nCTE5PYX3
+         XMTQ==
+X-Gm-Message-State: AOJu0YynQYYWZlDId1f1BadhkDFTP9R5741CcENvJ/VmH4QyuEQ2hH/v
+	dN1Zf1TjwP2g8GWe8jXONG9psUDg47CtstFP/UI=
+X-Google-Smtp-Source: AGHT+IGwjJJb6smgn9B0VBu14dwxlw4pBwWKmhj8/wDdTM9X5ZUdBLb9Jjfyr+8FqA6VZMCiBdqs50dU2+lIW+5kuBA=
+X-Received: by 2002:a05:6214:d82:b0:67f:345f:79cc with SMTP id
+ e2-20020a0562140d8200b0067f345f79ccmr3331701qve.81.1702914843969; Mon, 18 Dec
+ 2023 07:54:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	b/o7Ak8zTVr+HlCOPA3fUWeAerBKsFSU1Qf7iuEEuWN8Xy+FVlMneja7hMAHAOGi3AL22BbPkUUTfwVwNzZS1RxfZc+t9MMpPIu12bH2KY//GszZsDw6BQTe1vaUvYVAWWZ3YCe0BTMmbOCnXLvuIuaO59QkAyCSodSmYCYbJQ72aU7BibUV7g26J3p4OJP9RJYOySiDTKqBrywuD0eHmnxIq+A+o6wVr5PA3BjObyZoyFHGeZrMUckKevAnIRrpFQ3D1lCyY1AZG+nzt1iSaYQo9/87JslFpt93yL3hg7AVn5voawLc5/64F6ePs+I/A8WPYGZ1FFSc9yHj9DrwTxRYPGEpOqUFGhGn2EwyS4RUCfyvMYpl1ajfJ4yigZlrKEVI7oOebLfqrLgDm9Q76KE8IFs8U4UwhCtqimVaOUKyYY6Y0QDSCloH7sWc1CqBEXmHtMuRD9zl0OfWaHN5rmeTIYh0w09aQ6vq+EC3upLvijCs2GY7U6b3gbzn/JnxH5ya1roSSoXnLd6lSYWCr5gNdVPYXZlkaC1ckW/Rvf6ARnpARHdSqyZkcKj52fQmosphQAVvFM1lwpfe/Bab5LndoMxu3JupNGW58U6nEfC5WBlvLLjGwqO2oBmsN7Ja
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c2ca3ef-67c9-4438-f910-08dbffdfb1b5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2023 15:40:42.7138
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4AtKu5x8DWJMAyDkrDoJziTzFtIzJP97OKNrKQgO7aCY3q7Sl6mUdNF9faZzj0hUTbleUtKjkkpIWFCHOxMGy6SgL4xbVkHkD/rxGQfiERg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR04MB7548
+References: <20231208080135.4089880-1-amir73il@gmail.com> <20231213172844.ygjbkyl6i4gj52lt@quack3>
+ <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
+ <20231215153108.GC683314@perftesting> <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
+ <20231218143504.abj3h6vxtwlwsozx@quack3>
+In-Reply-To: <20231218143504.abj3h6vxtwlwsozx@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 18 Dec 2023 17:53:52 +0200
+Message-ID: <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission response
+To: Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gMTguMTIuMjMgMTY6MDQsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBPbiBNb24sIERl
-YyAxOCwgMjAyMyBhdCAxMDo0MToyN0FNICswMDAwLCBKb2hhbm5lcyBUaHVtc2hpcm4gd3JvdGU6
-DQo+Pj4gYWx0aG91Z2ggSSBoYWQgc29tZSByZWFzb24gdG8gYmUgY2FyZWZ1bCBiYWNrIHRoZW4u
-ICBoZnNwbHVzIHNob3VsZA0KPj4+IGJlIHRlc3RhYmxlIGFnYWluIHRoYXQgdGhlIGhmc3BsdXMg
-TGludXggcG9ydCBpcyBiYWNrIGFsaXZlLiAgSXMgdGhlcmUNCj4+PiBhbnkgdm9sdW50ZWVyIHRv
-IHRlc3QgaGZzcGx1cyBvbiB0aGUgZnNkZXZlbCBsaXN0Pw0KPj4NCj4+IFdoYXQgZG8geW91IGhh
-dmUgaW4gbWluZCBvbiB0aGF0IHNpZGU/ICJKdXN0IiBydW5uaW5nIGl0IHRocm91Z2ggZnN0ZXN0
-cw0KPj4gYW5kIHNlZSB0aGF0IHdlIGRvbid0IHJlZ3Jlc3MgaGVyZSBvciBtb3JlIHRoYW4gdGhh
-dD8NCj4gDQo+IFllYWguICBCYWNrIGluIHRoZSBkYXkgSSByYW4gaGZzcGx1cyB0aHJvdWdoIHhm
-c3Rlc3RzLCBJSVJDIHRoYXQgbWlnaHQNCj4gZXZlbiBoYXZlIGJlZW4gdGhlIGluaXRpYWwgbW90
-aXZhdGlvbiBmb3Igc3VwcG9ydGluZyBmaWxlIHN5c3RlbXMNCj4gdGhhdCBkb24ndCBzdXBwb3J0
-IHNwYXJzZSBmaWxlcy4gIEkgYmV0IGEgbG90IGhhcyByZWdyZXNzZWQgb3IgaXNuJ3QNCj4gc3Vw
-cG9ydCBzaW5jZSwgdGhvdWdoLg0KPiANCg0KTGV0IG1lIHNlZSB3aGF0IEkgY2FuIGRvIG9uIHRo
-YXQgZnJvbnQgb3ZlciBteSB3aW50ZXIgdmFjYXRpb24uIEFzIGxvbmcgDQphcyB0aGVyZSdzIG5v
-IEFQRlMgc3VwcG9ydCBpbiBMaW51eCBpdHMgdGhlIG9ubHkgd2F5IHRvIGV4Y2hhbmdlIGRhdGEg
-DQpiZXR3ZWVuIG1hY09TIGFuZCBMaW51eCBhbnl3YXlzLCBzbyB3ZSBzaG91bGRuJ3QgYnJlYWsg
-aXQuDQo=
+On Mon, Dec 18, 2023 at 4:35=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 15-12-23 18:50:39, Amir Goldstein wrote:
+> > On Fri, Dec 15, 2023 at 5:31=E2=80=AFPM Josef Bacik <josef@toxicpanda.c=
+om> wrote:
+> > >
+> > > On Wed, Dec 13, 2023 at 09:09:30PM +0200, Amir Goldstein wrote:
+> > > > On Wed, Dec 13, 2023 at 7:28=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > >
+> > > > > On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
+> > > > > > With FAN_DENY response, user trying to perform the filesystem o=
+peration
+> > > > > > gets an error with errno set to EPERM.
+> > > > > >
+> > > > > > It is useful for hierarchical storage management (HSM) service =
+to be able
+> > > > > > to deny access for reasons more diverse than EPERM, for example=
+ EAGAIN,
+> > > > > > if HSM could retry the operation later.
+> > > > > >
+> > > > > > Allow userspace to response to permission events with the respo=
+nse value
+> > > > > > FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom e=
+rror.
+> > > > > >
+> > > > > > The change in fanotify_response is backward compatible, because=
+ errno is
+> > > > > > written in the high 8 bits of the 32bit response field and old =
+kernels
+> > > > > > reject respose value with high bits set.
+> > > > > >
+> > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > >
+> > > > > So a couple of comments that spring to my mind when I'm looking i=
+nto this
+> > > > > now (partly maybe due to my weak memory ;):
+> > > > >
+> > > > > 1) Do we still need the EAGAIN return? I think we have mostly dea=
+lt with
+> > > > > freezing deadlocks in another way, didn't we?
+> > > >
+> > > > I was thinking about EAGAIN on account of the HSM not being able to
+> > > > download the file ATM.
+> > > >
+> > > > There are a bunch of error codes that are typical for network files=
+ystems, e.g.
+> > > > ETIMEDOUT, ENOTCONN, ECONNRESET which could be relevant to
+> > > > HSM failures.
+> > > >
+> > > > >
+> > > > > 2) If answer to 1) is yes, then there is a second question - do w=
+e expect
+> > > > > the errors to propagate back to the unsuspecting application doin=
+g say
+> > > > > read(2) syscall? Because I don't think that will fly well with a =
+big
+> > > > > majority of applications which basically treat *any* error from r=
+ead(2) as
+> > > > > fatal. This is also related to your question about standard permi=
+ssion
+> > > > > events. Consumers of these error numbers are going to be random
+> > > > > applications and I see a potential for rather big confusion arisi=
+ng there
+> > > > > (like read(1) returning EINVAL or EBADF and now you wonder why th=
+e hell
+> > > > > until you go debug the kernel and find out the error is coming ou=
+t of
+> > > > > fanotify handler). And the usecase is not quite clear to me for o=
+rdinary
+> > > > > fanotify permission events (while I have no doubts about creativi=
+ty of
+> > > > > implementors of fanotify handlers ;)).
+> > > > >
+> > > >
+> > > > That's a good question.
+> > > > I prefer to delegate your question to the prospect users of the fea=
+ture.
+> > > >
+> > > > Josef, which errors did your use case need this feature for?
+> > > >
+> > > > > 3) Given the potential for confusion, maybe we should stay conser=
+vative and
+> > > > > only allow additional EAGAIN error instead of arbitrary errno if =
+we need it?
+> > > > >
+> > > >
+> > > > I know I was planning to use this for EDQUOT error (from FAN_PRE_MO=
+DIFY),
+> > > > but I certainly wouldn't mind restricting the set of custom errors.
+> > > > I think it makes sense. The hard part is to agree on this set of er=
+rors.
+> > > >
+> > >
+> > > I'm all for flexibility here.
+> > >
+> > > We're going to have 2 classes of applications interacting with HSM ba=
+cked
+> > > storage, normal applications and applications that know they're backe=
+d by HSM.
+> > > The normal applications are just going to crash if they get an error =
+on read(2),
+> > > it doesn't matter what errno it is.  The second class would have diff=
+erent
+> > > things they'd want to do in the face of different errors, and that's =
+what this
+> > > patchset is targeting.  We can limit it to a few errno's if that make=
+s you feel
+> > > better, but having more than just one would be helpful.
+> >
+> > Ok. In another email I got from your colleagues, they listed:
+> > EIO, EAGAIN, ENOSPC as possible errors to return.
+> > I added EDQUOT for our in house use case.
+>
+> OK, so do I get it right that you also have applications that are aware
+> that they are operation on top of HSM managed filesystem and thus they ca=
+n
+> do meaningful things with the reported errors?
+>
+
+Some applications are HSM aware.
+Some just report the errors that they get which are meaningful to users.
+EIO is the standard response for HSM failure to fill content.
+
+EDQUOT/ENOSPC is a good example of special functionality.
+HSM "swaps out" file content to a slow remote tier, but the slow remote
+tier may have a space/quota limit that is known to HSM.
+
+By tracking the total of st_size under some HSM managed folder, including
+the st_size of files whose content is punched out, HSM can enforce this lim=
+it
+not in the conventional meaning of local disk blocks usage.
+
+This is when returning EDQUOT/ENOSPC for FAN_PRE_MODIFY makes
+sense to most users/applications, except for ones that try to create
+large sparse
+files...
+
+
+> > Those are all valid errors for write(2) and some are valid for read(2).
+> > ENOSPC/EDQUOT make a lot of sense for HSM for read(2), but could
+> > be surprising to applications not aware of HSM.
+> > I think it wouldn't be that bad if we let HSM decide which of those err=
+ors
+> > to return for FAN_PRE_ACCESS as opposed to FAN_PRE_MODIFY.
+>
+> Yeah, I don't think we need to be super-restrictive here, I'd just prefer
+> to avoid the "whatever number you decide to return" kind of interface
+> because I can see potential for confusion and abuse there. I think all fo=
+ur
+> errors above are perfectly fine for both FAN_PRE_ACCESS and FAN_PRE_MODIF=
+Y
+> if there are consumers that are able to use them.
+>
+> > But given that we do want to limit the chance of abusing this feature,
+> > perhaps it would be best to limit the error codes to known error codes
+> > for write(2) IO failures (i.e. not EBADF, not EFAULT) and allow returni=
+ng
+> > FAN_DENY_ERRNO only for the new FAN_PRE_{ACCESS,MODIFY}
+> > HSM events.
+> >
+> > IOW, FAN_{OPEN,ACCESS}_PERM - no FAN_DENY_ERRNO for you!
+> >
+> > Does that sound good to you?
+>
+> It sounds OK to me. I'm open to allowing FAN_DENY_ERRNO for FAN_OPEN_PERM
+> if there's a usecase because at least conceptually it makes a good sense
+> and chances for confusion are low there. People are used to dealing with
+> errors on open(2).
+>
+
+I wrote about one case I have below.
+
+> > Furthermore, we can start with allowing a very limited set of errors
+> > and extend it in the future, on case by case basis.
+> >
+> > The way that this could be manageable is if we provide userspace
+> > a way to test for supported return codes.
+> >
+> > There is already a simple method that we used for testing FAN_INFO
+> > records type support -
+> > After fan_fd =3D fanotify_init(), userspace can write a "test" fanotify=
+_response
+> > to fan_fd with fanotify_response.fd=3DFAN_NOFD.
+> >
+> > When setting fanotify_response.fd=3DFAN_DENY, this would return ENOENT,
+> > but with fanotify_response.fd=3DFAN_DENY_ERRNO(EIO), upstream would
+> > return EINVAL.
+> >
+> > This opens the possibility of allowing, say, EIO, EAGAIN in the first r=
+elease
+> > and ENOSPC, EDQUOT in the following release.
+>
+> If we forsee that ENOSPC and EDQUOT will be needed, then we can just enab=
+le
+> it from start and not complicate our lives more than necessary.
+>
+
+Sure, I was just giving an example how the list could be extended case by c=
+ase
+in the future.
+
+> > The advantage in this method is that it is very simple and already work=
+ing
+> > correctly for old kernels.
+> >
+> > The downside is that this simple method does not allow checking for
+> > allowed errors per specific event type, so if we decide that we do want
+> > to allow returning FAN_DENY_ERRNO for FAN_OPEN_PERM later on, this meth=
+od
+> > could not be used by userspace to test for this finer grained support.
+>
+> True, in that case the HSM manager would have to try responding with
+> FAN_DENY_ERRNO() and if it fails, it will have to fallback to responding
+> with FAN_DENY. Not too bad I'd say.
+>
+
+Yeah that works too.
+
+> > In another thread, I mention the fact that FAN_OPEN_PERM still has a
+> > potential freeze deadlock when called from open(O_TRUNC|O_CREATE),
+> > so we can consider the fact that FAN_DENY_ERRNO is not allowed with
+> > FAN_OPEN_PERM as a negative incentive for people to consider using
+> > FAN_OPEN_PERM as a trigger for HSM.
+>
+> AFAIU from the past discussions, there's no good use of FAN_OPEN_PERM
+> event for HSM. If that's the case, I'm for not allowing FAN_DENY_ERRNO fo=
+r
+> FAN_OPEN_PERM.
+
+In the HttpDirFS HSM demo, I used FAN_OPEN_PERM on a mount mark
+to deny open of file during the short time that it's content is being
+punched out [1].
+It is quite complicated to explain, but I only used it for denying access,
+not to fill content and not to write anything to filesystem.
+It's worth noting that returning EBUSY in that case would be more meaningfu=
+l
+to users.
+
+That's one case in favor of allowing FAN_DENY_ERRNO for FAN_OPEN_PERM,
+but mainly I do not have a proof that people will not need it.
+
+OTOH, I am a bit concerned that this will encourage developer to use
+FAN_OPEN_PERM as a trigger to filling file content and then we are back to
+deadlock risk zone.
+
+Not sure which way to go.
+
+Anyway, I think we agree that there is no reason to merge FAN_DENY_ERRNO
+before FAN_PRE_* events, so we can continue this discussion later when
+I post FAN_PRE_* patches - not for this cycle.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Ma=
+nagement-API#invalidating-local-cache
 
