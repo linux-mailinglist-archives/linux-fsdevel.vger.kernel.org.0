@@ -1,298 +1,255 @@
-Return-Path: <linux-fsdevel+bounces-6363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4DF8173AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 15:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 301908173F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 15:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0583B1C231F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 14:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FDB1C249EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 14:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E41E52B;
-	Mon, 18 Dec 2023 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sGjEXgje";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tugaPgq8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sGjEXgje";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tugaPgq8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28FB1E52B;
+	Mon, 18 Dec 2023 14:43:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED29372
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 14:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B16E21ED0;
-	Mon, 18 Dec 2023 14:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702910105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bMuh5jcpFoinSzkEI75kWe1GPCwnkEadbozfpX3LTE=;
-	b=sGjEXgjeoL1BOT9A624a2Q58uiTuPgf3t9Ybeax21QnzFGsq3yepihNwI5Jd7F1mkUHPPi
-	xtat0qumD21025Xkcr3cNHFaGZTNUd3CtVbssOb2z8Q/JGUqFFocvsBSatMsBnwYtw5b4/
-	30Scps+rZO6HKBaQJCZ1TSl19bXwTJA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702910105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bMuh5jcpFoinSzkEI75kWe1GPCwnkEadbozfpX3LTE=;
-	b=tugaPgq8uKUEMjvDOP2Afhl8HD0xrBg7cfyUbYLr+raYfWWQZibGIvnzG2k2Yacfg0sbJU
-	BK/rhp5V2pq+esDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1702910105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bMuh5jcpFoinSzkEI75kWe1GPCwnkEadbozfpX3LTE=;
-	b=sGjEXgjeoL1BOT9A624a2Q58uiTuPgf3t9Ybeax21QnzFGsq3yepihNwI5Jd7F1mkUHPPi
-	xtat0qumD21025Xkcr3cNHFaGZTNUd3CtVbssOb2z8Q/JGUqFFocvsBSatMsBnwYtw5b4/
-	30Scps+rZO6HKBaQJCZ1TSl19bXwTJA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1702910105;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6bMuh5jcpFoinSzkEI75kWe1GPCwnkEadbozfpX3LTE=;
-	b=tugaPgq8uKUEMjvDOP2Afhl8HD0xrBg7cfyUbYLr+raYfWWQZibGIvnzG2k2Yacfg0sbJU
-	BK/rhp5V2pq+esDw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E02613927;
-	Mon, 18 Dec 2023 14:35:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id TxEwC5lYgGUSbwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 18 Dec 2023 14:35:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B5359A07E0; Mon, 18 Dec 2023 15:35:04 +0100 (CET)
-Date: Mon, 18 Dec 2023 15:35:04 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission
- response
-Message-ID: <20231218143504.abj3h6vxtwlwsozx@quack3>
-References: <20231208080135.4089880-1-amir73il@gmail.com>
- <20231213172844.ygjbkyl6i4gj52lt@quack3>
- <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
- <20231215153108.GC683314@perftesting>
- <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4E53789B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7b71da9f8b9so573828239f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 06:43:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702910607; x=1703515407;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EM88xTFig+JbgiSlhAOOt+tZ4fN5H09dR4j9K9Kl5MY=;
+        b=dEbFny6mudbLePFq+yoC+nT+U1C7ybdGKEjgQTJVIWXQzbWL3IGjdCOxUXLKAteYmm
+         uyljCciGjW13tI4RH/vPP6JTOhKqdYc1sFOn3OUke7km5OGZNSR6j/JUkOcMPK2rq4BH
+         8YR52fMPA0HNvcPEhdJHXNLF279a1Xdq3ak+v/3MnoRa78EG1X74UGffY9n+iwIXh+an
+         G+xaZ5rlN9gOznUYp47XbzBPNVF4e/Rha+sO+XvN7kCQuyGC0hw8UYiveh1+F4lRizLP
+         oSdU/BiPrk8WRW3k1+FVfSKekZmleafeND2IGbd/rqlZPhdDMltVYuV8bwh9j0e7xgDF
+         wdwg==
+X-Gm-Message-State: AOJu0Yx2YCY6BqLfT6Zr4K18v5YJAc/wRHym0H5Ls68UMkYMZBXFGj6y
+	16GOoP3Vri0Gmke/pfu31rPwwJG1QPZqY7GPl9T6pGQQBBvF
+X-Google-Smtp-Source: AGHT+IF3iS+Y8LvysDbPGm5d2MaCQR8Xx6BmUWHdvv/F8tE23+9O4yvUFYTzx8h0LC0fE2+bdukt3Twp6DbzlDhxggmupmnZqOle
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sGjEXgje;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tugaPgq8
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[toxicpanda.com:email,suse.com:email,suse.cz:dkim,suse.cz:email];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 3B16E21ED0
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6638:62a1:b0:466:5e39:7098 with SMTP id
+ fh33-20020a05663862a100b004665e397098mr1118350jab.5.1702910607070; Mon, 18
+ Dec 2023 06:43:27 -0800 (PST)
+Date: Mon, 18 Dec 2023 06:43:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d1a1d1060cc9c5e7@google.com>
+Subject: [syzbot] [btrfs?] KASAN: slab-out-of-bounds Read in getname_kernel (2)
+From: syzbot <syzbot+33f23b49ac24f986c9e8@syzkaller.appspotmail.com>
+To: clm@fb.com, daniel@iogearbox.net, dsterba@suse.com, 
+	john.fastabend@gmail.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	liujian56@huawei.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri 15-12-23 18:50:39, Amir Goldstein wrote:
-> On Fri, Dec 15, 2023 at 5:31 PM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Wed, Dec 13, 2023 at 09:09:30PM +0200, Amir Goldstein wrote:
-> > > On Wed, Dec 13, 2023 at 7:28 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
-> > > > > With FAN_DENY response, user trying to perform the filesystem operation
-> > > > > gets an error with errno set to EPERM.
-> > > > >
-> > > > > It is useful for hierarchical storage management (HSM) service to be able
-> > > > > to deny access for reasons more diverse than EPERM, for example EAGAIN,
-> > > > > if HSM could retry the operation later.
-> > > > >
-> > > > > Allow userspace to response to permission events with the response value
-> > > > > FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom error.
-> > > > >
-> > > > > The change in fanotify_response is backward compatible, because errno is
-> > > > > written in the high 8 bits of the 32bit response field and old kernels
-> > > > > reject respose value with high bits set.
-> > > > >
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > >
-> > > > So a couple of comments that spring to my mind when I'm looking into this
-> > > > now (partly maybe due to my weak memory ;):
-> > > >
-> > > > 1) Do we still need the EAGAIN return? I think we have mostly dealt with
-> > > > freezing deadlocks in another way, didn't we?
-> > >
-> > > I was thinking about EAGAIN on account of the HSM not being able to
-> > > download the file ATM.
-> > >
-> > > There are a bunch of error codes that are typical for network filesystems, e.g.
-> > > ETIMEDOUT, ENOTCONN, ECONNRESET which could be relevant to
-> > > HSM failures.
-> > >
-> > > >
-> > > > 2) If answer to 1) is yes, then there is a second question - do we expect
-> > > > the errors to propagate back to the unsuspecting application doing say
-> > > > read(2) syscall? Because I don't think that will fly well with a big
-> > > > majority of applications which basically treat *any* error from read(2) as
-> > > > fatal. This is also related to your question about standard permission
-> > > > events. Consumers of these error numbers are going to be random
-> > > > applications and I see a potential for rather big confusion arising there
-> > > > (like read(1) returning EINVAL or EBADF and now you wonder why the hell
-> > > > until you go debug the kernel and find out the error is coming out of
-> > > > fanotify handler). And the usecase is not quite clear to me for ordinary
-> > > > fanotify permission events (while I have no doubts about creativity of
-> > > > implementors of fanotify handlers ;)).
-> > > >
-> > >
-> > > That's a good question.
-> > > I prefer to delegate your question to the prospect users of the feature.
-> > >
-> > > Josef, which errors did your use case need this feature for?
-> > >
-> > > > 3) Given the potential for confusion, maybe we should stay conservative and
-> > > > only allow additional EAGAIN error instead of arbitrary errno if we need it?
-> > > >
-> > >
-> > > I know I was planning to use this for EDQUOT error (from FAN_PRE_MODIFY),
-> > > but I certainly wouldn't mind restricting the set of custom errors.
-> > > I think it makes sense. The hard part is to agree on this set of errors.
-> > >
-> >
-> > I'm all for flexibility here.
-> >
-> > We're going to have 2 classes of applications interacting with HSM backed
-> > storage, normal applications and applications that know they're backed by HSM.
-> > The normal applications are just going to crash if they get an error on read(2),
-> > it doesn't matter what errno it is.  The second class would have different
-> > things they'd want to do in the face of different errors, and that's what this
-> > patchset is targeting.  We can limit it to a few errno's if that makes you feel
-> > better, but having more than just one would be helpful.
-> 
-> Ok. In another email I got from your colleagues, they listed:
-> EIO, EAGAIN, ENOSPC as possible errors to return.
-> I added EDQUOT for our in house use case.
+Hello,
 
-OK, so do I get it right that you also have applications that are aware
-that they are operation on top of HSM managed filesystem and thus they can
-do meaningful things with the reported errors?
+syzbot found the following issue on:
 
-> Those are all valid errors for write(2) and some are valid for read(2).
-> ENOSPC/EDQUOT make a lot of sense for HSM for read(2), but could
-> be surprising to applications not aware of HSM.
-> I think it wouldn't be that bad if we let HSM decide which of those errors
-> to return for FAN_PRE_ACCESS as opposed to FAN_PRE_MODIFY.
+HEAD commit:    3bd7d7488169 Merge tag 'io_uring-6.7-2023-12-15' of git://..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13732cc6e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53ec3da1d259132f
+dashboard link: https://syzkaller.appspot.com/bug?extid=33f23b49ac24f986c9e8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d8ba06e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136fd5b2e80000
 
-Yeah, I don't think we need to be super-restrictive here, I'd just prefer
-to avoid the "whatever number you decide to return" kind of interface
-because I can see potential for confusion and abuse there. I think all four
-errors above are perfectly fine for both FAN_PRE_ACCESS and FAN_PRE_MODIFY
-if there are consumers that are able to use them.
- 
-> But given that we do want to limit the chance of abusing this feature,
-> perhaps it would be best to limit the error codes to known error codes
-> for write(2) IO failures (i.e. not EBADF, not EFAULT) and allow returning
-> FAN_DENY_ERRNO only for the new FAN_PRE_{ACCESS,MODIFY}
-> HSM events.
-> 
-> IOW, FAN_{OPEN,ACCESS}_PERM - no FAN_DENY_ERRNO for you!
-> 
-> Does that sound good to you?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/99b3f103aa0b/disk-3bd7d748.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/32f8e3e696ce/vmlinux-3bd7d748.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cb20a5445c11/bzImage-3bd7d748.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4f5365674997/mount_0.gz
 
-It sounds OK to me. I'm open to allowing FAN_DENY_ERRNO for FAN_OPEN_PERM
-if there's a usecase because at least conceptually it makes a good sense
-and chances for confusion are low there. People are used to dealing with
-errors on open(2).
+The issue was bisected to:
 
-> Furthermore, we can start with allowing a very limited set of errors
-> and extend it in the future, on case by case basis.
-> 
-> The way that this could be manageable is if we provide userspace
-> a way to test for supported return codes.
-> 
-> There is already a simple method that we used for testing FAN_INFO
-> records type support -
-> After fan_fd = fanotify_init(), userspace can write a "test" fanotify_response
-> to fan_fd with fanotify_response.fd=FAN_NOFD.
-> 
-> When setting fanotify_response.fd=FAN_DENY, this would return ENOENT,
-> but with fanotify_response.fd=FAN_DENY_ERRNO(EIO), upstream would
-> return EINVAL.
-> 
-> This opens the possibility of allowing, say, EIO, EAGAIN in the first release
-> and ENOSPC, EDQUOT in the following release.
+commit 9974d37ea75f01b47d16072b5dad305bd8d23fcc
+Author: Liu Jian <liujian56@huawei.com>
+Date:   Tue Jun 28 12:36:16 2022 +0000
 
-If we forsee that ENOSPC and EDQUOT will be needed, then we can just enable
-it from start and not complicate our lives more than necessary.
+    skmsg: Fix invalid last sg check in sk_msg_recvmsg()
 
-> The advantage in this method is that it is very simple and already working
-> correctly for old kernels.
-> 
-> The downside is that this simple method does not allow checking for
-> allowed errors per specific event type, so if we decide that we do want
-> to allow returning FAN_DENY_ERRNO for FAN_OPEN_PERM later on, this method
-> could not be used by userspace to test for this finer grained support.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172b998ae80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14ab998ae80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ab998ae80000
 
-True, in that case the HSM manager would have to try responding with
-FAN_DENY_ERRNO() and if it fails, it will have to fallback to responding
-with FAN_DENY. Not too bad I'd say.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+33f23b49ac24f986c9e8@syzkaller.appspotmail.com
+Fixes: 9974d37ea75f ("skmsg: Fix invalid last sg check in sk_msg_recvmsg()")
 
-> In another thread, I mention the fact that FAN_OPEN_PERM still has a
-> potential freeze deadlock when called from open(O_TRUNC|O_CREATE),
-> so we can consider the fact that FAN_DENY_ERRNO is not allowed with
-> FAN_OPEN_PERM as a negative incentive for people to consider using
-> FAN_OPEN_PERM as a trigger for HSM.
+BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
+==================================================================
+BUG: KASAN: slab-out-of-bounds in strlen+0x58/0x70 lib/string.c:418
+Read of size 1 at addr ffff88801d7f2a28 by task syz-executor424/5057
 
-AFAIU from the past discussions, there's no good use of FAN_OPEN_PERM
-event for HSM. If that's the case, I'm for not allowing FAN_DENY_ERRNO for
-FAN_OPEN_PERM.
+CPU: 1 PID: 5057 Comm: syz-executor424 Not tainted 6.7.0-rc5-syzkaller-00200-g3bd7d7488169 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:364 [inline]
+ print_report+0x163/0x540 mm/kasan/report.c:475
+ kasan_report+0x142/0x170 mm/kasan/report.c:588
+ strlen+0x58/0x70 lib/string.c:418
+ getname_kernel+0x1d/0x2e0 fs/namei.c:226
+ kern_path+0x1d/0x50 fs/namei.c:2609
+ lookup_bdev block/bdev.c:979 [inline]
+ bdev_open_by_path+0xd1/0x540 block/bdev.c:901
+ btrfs_init_dev_replace_tgtdev fs/btrfs/dev-replace.c:260 [inline]
+ btrfs_dev_replace_start fs/btrfs/dev-replace.c:638 [inline]
+ btrfs_dev_replace_by_ioctl+0x41b/0x2010 fs/btrfs/dev-replace.c:747
+ btrfs_ioctl_dev_replace+0x2c9/0x390 fs/btrfs/ioctl.c:3299
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7f8e8ffdc079
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe15cbe138 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffe15cbe308 RCX: 00007f8e8ffdc079
+RDX: 0000000020000540 RSI: 00000000ca289435 RDI: 0000000000000005
+RBP: 00007f8e90054610 R08: 00007ffe15cbe308 R09: 00007ffe15cbe308
+R10: 00007ffe15cbe308 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffe15cbe2f8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Allocated by task 5057:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x4f/0x70 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:383
+ kasan_kmalloc include/linux/kasan.h:198 [inline]
+ __do_kmalloc_node mm/slab_common.c:1007 [inline]
+ __kmalloc_node_track_caller+0xb1/0x190 mm/slab_common.c:1027
+ memdup_user+0x2b/0xc0 mm/util.c:197
+ btrfs_ioctl_dev_replace+0xb8/0x390 fs/btrfs/ioctl.c:3286
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+The buggy address belongs to the object at ffff88801d7f2000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 0 bytes to the right of
+ allocated 2600-byte region [ffff88801d7f2000, ffff88801d7f2a28)
+
+The buggy address belongs to the physical page:
+page:ffffea000075fc00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1d7f0
+head:ffffea000075fc00 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000840(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000000840 ffff888012c42140 ffffea00007b5600 0000000000000002
+raw: 0000000000000000 0000000080040004 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4716, tgid 4716 (ifup), ts 29920494589, free_ts 29905444571
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1544 [inline]
+ get_page_from_freelist+0x33ea/0x3570 mm/page_alloc.c:3312
+ __alloc_pages+0x255/0x680 mm/page_alloc.c:4568
+ alloc_pages_mpol+0x3de/0x640 mm/mempolicy.c:2133
+ alloc_slab_page+0x6a/0x170 mm/slub.c:1870
+ allocate_slab mm/slub.c:2017 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2070
+ ___slab_alloc+0xc8a/0x1330 mm/slub.c:3223
+ __slab_alloc mm/slub.c:3322 [inline]
+ __slab_alloc_node mm/slub.c:3375 [inline]
+ slab_alloc_node mm/slub.c:3468 [inline]
+ __kmem_cache_alloc_node+0x21d/0x300 mm/slub.c:3517
+ __do_kmalloc_node mm/slab_common.c:1006 [inline]
+ __kmalloc+0xa2/0x1a0 mm/slab_common.c:1020
+ kmalloc include/linux/slab.h:604 [inline]
+ tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x255/0x500 security/tomoyo/file.c:771
+ security_file_open+0x63/0xa0 security/security.c:2836
+ do_dentry_open+0x327/0x1590 fs/open.c:935
+ do_open fs/namei.c:3622 [inline]
+ path_openat+0x2849/0x3290 fs/namei.c:3779
+ do_filp_open+0x234/0x490 fs/namei.c:3809
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1440
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1137 [inline]
+ free_unref_page_prepare+0x931/0xa60 mm/page_alloc.c:2347
+ free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
+ discard_slab mm/slub.c:2116 [inline]
+ __unfreeze_partials+0x1e0/0x220 mm/slub.c:2655
+ put_cpu_partial+0x17b/0x250 mm/slub.c:2731
+ __slab_free+0x2b6/0x390 mm/slub.c:3679
+ qlink_free mm/kasan/quarantine.c:168 [inline]
+ qlist_free_all+0x75/0xe0 mm/kasan/quarantine.c:187
+ kasan_quarantine_reduce+0x14b/0x160 mm/kasan/quarantine.c:294
+ __kasan_slab_alloc+0x23/0x70 mm/kasan/common.c:305
+ kasan_slab_alloc include/linux/kasan.h:188 [inline]
+ slab_post_alloc_hook+0x6c/0x3c0 mm/slab.h:763
+ slab_alloc_node mm/slub.c:3478 [inline]
+ __kmem_cache_alloc_node+0x1d0/0x300 mm/slub.c:3517
+ __do_kmalloc_node mm/slab_common.c:1006 [inline]
+ __kmalloc+0xa2/0x1a0 mm/slab_common.c:1020
+ kmalloc include/linux/slab.h:604 [inline]
+ tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x2b7/0x730 security/tomoyo/file.c:822
+ security_inode_getattr+0xd3/0x120 security/security.c:2153
+ vfs_getattr+0x46/0x430 fs/stat.c:173
+ vfs_fstat fs/stat.c:198 [inline]
+ vfs_fstatat+0xd6/0x190 fs/stat.c:295
+
+Memory state around the buggy address:
+ ffff88801d7f2900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88801d7f2980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88801d7f2a00: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+                                  ^
+ ffff88801d7f2a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88801d7f2b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
