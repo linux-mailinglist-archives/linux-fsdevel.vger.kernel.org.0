@@ -1,81 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-6426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEAD817C47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:50:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40EC817C58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A7641F2462E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 20:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1230E2841CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD907348F;
-	Mon, 18 Dec 2023 20:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AC073492;
+	Mon, 18 Dec 2023 21:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="nY+BpKP5"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YIfzEHM+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205673034F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 20:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB19A2D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 21:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-28b012f93eeso1504013a91.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 12:50:20 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-28b09aeca73so2525001a91.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 13:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702932620; x=1703537420; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702933256; x=1703538056; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3VYuhGNACrh4RxyK7vwhYZLcFzB1f10C6T9YQ9W4h0I=;
-        b=nY+BpKP5a7NV8lBnYEvh6u9ZeBnp/zbTuylqEjJNVDUQB0d1I4HvQmFJBIoeqXik18
-         H/bYy1bZGe85sLtmQ4JYggNYHT9ZzHGf+AfAFA2Qr+9nF4Q6pbMSeu9xekx9sbQ/gKag
-         hCco2a5m62y6x8EGd4Zs25pcpKIxBiwlUQwMiuGzcwXOOLuSBx8as+OEtQ2f2BP6H1GW
-         uKjoaD5KZTmuqJEYzKelEdy9WoWmgJdA/qCU5I6SVxCijtYbZ391gZrKfSoEdaiiI3ZU
-         BS5CZG/rHB6PTaxldUyy0OJiWZrU0IX9I5uQ33l3lkYUqxS7hOtf/8/0atu7ITVKVcAY
-         6ayQ==
+        bh=yCl70P2eXwsD32MiqrmB1dJU3mIh1ffQIY/OsyTsmc0=;
+        b=YIfzEHM+joXJA0KroR1tlepEpaEEtwx3YNIoTwcAOssJtY2DBaMpSVe/99rJvzP1GW
+         4vhYsfIt5IUNmJkwZ254MtnQSKibPrA3lSAEpd8/capeZiA2R5SzsAAOlc93WtFzR+cF
+         Sw6eCJ5xI487j2fqG8bJr+HDQwfdAJExTTqPOYhQZJYGSZbooJ3Ds0yAPIE1IbhaLgaT
+         hQx4d08oswccFwYC/AF2LPUftZ45WyKsDH6xfO915PYOx9jED9tB5Fdm7/YjWxnZmMJF
+         /3KxAhtJpbRlu8Y1NN2I3FYHD14lk7oEewD+HZGsPqXWK/iOB6U2fjAz6pvoZtpHBoQF
+         ASjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702932620; x=1703537420;
+        d=1e100.net; s=20230601; t=1702933256; x=1703538056;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3VYuhGNACrh4RxyK7vwhYZLcFzB1f10C6T9YQ9W4h0I=;
-        b=PhwQeGCJkevNPomT1CrLqPAVHdG3xFEdQniT9YmeqSoujPejBtDJxNq76DIMfN/tLe
-         co+0iiB7coHft9dYlFwJOj/w2hJzU3EucI+/1NGC/gPmwZ+AokYmQNviALXEvqel8slt
-         WPSfrS0WXuDROtElMdzV1+9KnZ4Kv2SgblZkqZSrkNlzrOTg5fayZEs1cLlJJHlZ7Zcq
-         6z0/Di4gVEbWRDA29JHkJGVwfHqEvr6g9A0Xn4gcD5Zqu4n4EIXxnlPlbUosfHKb0hu8
-         QnEbS7Wo0AnrWWanZEG72iK5doak01SZv5nipFWmlHPtZfAsallsRZf8T/Z3SyuE6HI1
-         5/qg==
-X-Gm-Message-State: AOJu0Yxn5DRNwVmoSRVhMuxPcA6qzHjy4zwb6gOc1qYOFXIzhorKcMnY
-	AdeWyVAC/czAWFHGlyNP8nus4sY7+oSFJDCZHLg=
-X-Google-Smtp-Source: AGHT+IEcehJB+ZsazS59hM/1fa/WGZjE8Vnyh7uwh2p3+WD/I5U+59Kjmr50pBpBUNXzLwVtu1jPKg==
-X-Received: by 2002:a17:90b:3b87:b0:28b:7643:e65c with SMTP id pc7-20020a17090b3b8700b0028b7643e65cmr1027749pjb.56.1702932620479;
-        Mon, 18 Dec 2023 12:50:20 -0800 (PST)
+        bh=yCl70P2eXwsD32MiqrmB1dJU3mIh1ffQIY/OsyTsmc0=;
+        b=DgKypyM97LdCGA1LVPgk/NDcZXhJBNzgoBc21CSrdeRDc1Z2oE1oF+LZyL6WopXOa+
+         sqaAIqiBlpqjMivf+UV5JsUc3pZ2s2fQFLRu7yQFbNWAN6HJKQnZkqpYq2Zt2IHs3c8D
+         GoBa6aNOQW/ul4UVPHo3cNd1SzyvUzElb3Vv6OE6ybd3Ry/HMhNMeXRYy0XqsUurX8BU
+         6RnXDv6vckqDh7szRNH5nLxudd4Y6atfLcTvoHB0FSQ30iPMcQcrk2m0XjDlsSH7bVZz
+         HHbM31psTllnDENW6Q6yslOXbMmjnQpQ4d71gFGXXvhu3k1xKLSijC+IVwFnYow0gZmy
+         Ma2g==
+X-Gm-Message-State: AOJu0YwxCod+OBkdWdsUG2jHxWeM9LO6bsk9VAFaikggtMmstGVeDp3W
+	ieHMk/TxLchSYfdYFOZjthFz5w==
+X-Google-Smtp-Source: AGHT+IFRkQHZVHpggsuenU8/ddppEpd5S2UPqIefRShVpVOZW68bvcOoHhDR4JetnCX3kBkUOmYAtA==
+X-Received: by 2002:a17:90a:4b4f:b0:28b:5fc3:36c9 with SMTP id o15-20020a17090a4b4f00b0028b5fc336c9mr2440pjl.29.1702933256147;
+        Mon, 18 Dec 2023 13:00:56 -0800 (PST)
 Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id jv14-20020a17090b31ce00b0028aecd6b29fsm10415331pjb.3.2023.12.18.12.50.19
+        by smtp.gmail.com with ESMTPSA id sh18-20020a17090b525200b00286e0c91d73sm20565584pjb.55.2023.12.18.13.00.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 12:50:19 -0800 (PST)
+        Mon, 18 Dec 2023 13:00:55 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rFKZ5-00A8Va-2x;
-	Tue, 19 Dec 2023 07:50:15 +1100
-Date: Tue, 19 Dec 2023 07:50:15 +1100
+	id 1rFKjM-00A8r7-12;
+	Tue, 19 Dec 2023 08:00:52 +1100
+Date: Tue, 19 Dec 2023 08:00:52 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Daejun Park <daejun7.park@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v7 05/19] block, fs: Restore the per-bio/request data
- lifetime fields
-Message-ID: <ZYCwh7RJ4EpXD+7X@dread.disaster.area>
-References: <20231218185705.2002516-1-bvanassche@acm.org>
- <20231218185705.2002516-6-bvanassche@acm.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
+	Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Convert write_cache_pages() to an iterator v3
+Message-ID: <ZYCzBCqetc+tLmq+@dread.disaster.area>
+References: <20231218153553.807799-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,37 +78,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231218185705.2002516-6-bvanassche@acm.org>
+In-Reply-To: <20231218153553.807799-1-hch@lst.de>
 
-On Mon, Dec 18, 2023 at 10:56:28AM -0800, Bart Van Assche wrote:
-> Restore support for passing data lifetime information from filesystems to
-> block drivers. This patch reverts commit b179c98f7697 ("block: Remove
-> request.write_hint") and commit c75e707fe1aa ("block: remove the
-> per-bio/request write hint").
+On Mon, Dec 18, 2023 at 04:35:36PM +0100, Christoph Hellwig wrote:
+> Hi all,
 > 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> this is basically a evolution of the series Matthew Wilcox originally
+> set in June.  Based on comments from Jan a Brian this now actually
+> untangles some of the more confusing conditional in the writeback code
+> before refactoring it into the iterator.  Because of that all the
+> later patches need a fair amount of rebasing and I've not carried any
+> reviewed-by over.
+> 
+> The original cover letter is below:
+> 
+> Dave Howells doesn't like the indirect function call imposed by
+> write_cache_pages(), so refactor it into an iterator.  I took the
+> opportunity to add the ability to iterate a folio_batch without having
+> an external variable.
+> 
+> This is against next-20230623.  If you try to apply it on top of a tree
+> which doesn't include the pagevec removal series, IT WILL CRASH because
+> it won't reinitialise folio_batch->i and the iteration will index out
+> of bounds.
+> 
+> I have a feeling the 'done' parameter could have a better name, but I
+> can't think what it might be.
+> 
+> Diffstat:
+>  include/linux/pagevec.h   |   18 ++
+>  include/linux/writeback.h |   19 ++
+>  mm/page-writeback.c       |  333 +++++++++++++++++++++++++---------------------
+>  3 files changed, 220 insertions(+), 150 deletions(-)
 
-...
+I've just done a quick scan of the code - nothing stands out to me
+as problematic, and I like how much cleaner the result is.
 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index bcd3f8cf5ea4..97e20911b45f 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -380,6 +380,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
->  					  GFP_KERNEL);
->  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
-> +		bio->bi_write_hint =
-> +			file_inode(dio->iocb->ki_filp)->i_write_hint;
+Acked-by: Dave Chinner <dchinner@redhat.com>
 
-We already have an inode pointer in this function (from
-iter->inode), so:
-
-		bio->bi_write_hint = inode->i_write_hint;
-
--Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
