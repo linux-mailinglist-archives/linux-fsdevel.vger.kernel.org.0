@@ -1,122 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-6427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40EC817C58
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:01:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684F0817C94
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:22:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1230E2841CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:01:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16879284029
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AC073492;
-	Mon, 18 Dec 2023 21:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ED2740A8;
+	Mon, 18 Dec 2023 21:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YIfzEHM+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RwnBpBPE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB19A2D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 21:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-28b09aeca73so2525001a91.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 13:00:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1702933256; x=1703538056; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCl70P2eXwsD32MiqrmB1dJU3mIh1ffQIY/OsyTsmc0=;
-        b=YIfzEHM+joXJA0KroR1tlepEpaEEtwx3YNIoTwcAOssJtY2DBaMpSVe/99rJvzP1GW
-         4vhYsfIt5IUNmJkwZ254MtnQSKibPrA3lSAEpd8/capeZiA2R5SzsAAOlc93WtFzR+cF
-         Sw6eCJ5xI487j2fqG8bJr+HDQwfdAJExTTqPOYhQZJYGSZbooJ3Ds0yAPIE1IbhaLgaT
-         hQx4d08oswccFwYC/AF2LPUftZ45WyKsDH6xfO915PYOx9jED9tB5Fdm7/YjWxnZmMJF
-         /3KxAhtJpbRlu8Y1NN2I3FYHD14lk7oEewD+HZGsPqXWK/iOB6U2fjAz6pvoZtpHBoQF
-         ASjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702933256; x=1703538056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCl70P2eXwsD32MiqrmB1dJU3mIh1ffQIY/OsyTsmc0=;
-        b=DgKypyM97LdCGA1LVPgk/NDcZXhJBNzgoBc21CSrdeRDc1Z2oE1oF+LZyL6WopXOa+
-         sqaAIqiBlpqjMivf+UV5JsUc3pZ2s2fQFLRu7yQFbNWAN6HJKQnZkqpYq2Zt2IHs3c8D
-         GoBa6aNOQW/ul4UVPHo3cNd1SzyvUzElb3Vv6OE6ybd3Ry/HMhNMeXRYy0XqsUurX8BU
-         6RnXDv6vckqDh7szRNH5nLxudd4Y6atfLcTvoHB0FSQ30iPMcQcrk2m0XjDlsSH7bVZz
-         HHbM31psTllnDENW6Q6yslOXbMmjnQpQ4d71gFGXXvhu3k1xKLSijC+IVwFnYow0gZmy
-         Ma2g==
-X-Gm-Message-State: AOJu0YwxCod+OBkdWdsUG2jHxWeM9LO6bsk9VAFaikggtMmstGVeDp3W
-	ieHMk/TxLchSYfdYFOZjthFz5w==
-X-Google-Smtp-Source: AGHT+IFRkQHZVHpggsuenU8/ddppEpd5S2UPqIefRShVpVOZW68bvcOoHhDR4JetnCX3kBkUOmYAtA==
-X-Received: by 2002:a17:90a:4b4f:b0:28b:5fc3:36c9 with SMTP id o15-20020a17090a4b4f00b0028b5fc336c9mr2440pjl.29.1702933256147;
-        Mon, 18 Dec 2023 13:00:56 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-125-5.pa.nsw.optusnet.com.au. [49.180.125.5])
-        by smtp.gmail.com with ESMTPSA id sh18-20020a17090b525200b00286e0c91d73sm20565584pjb.55.2023.12.18.13.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 13:00:55 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rFKjM-00A8r7-12;
-	Tue, 19 Dec 2023 08:00:52 +1100
-Date: Tue, 19 Dec 2023 08:00:52 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
-	Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Convert write_cache_pages() to an iterator v3
-Message-ID: <ZYCzBCqetc+tLmq+@dread.disaster.area>
-References: <20231218153553.807799-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE527349B;
+	Mon, 18 Dec 2023 21:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=VC+L7rFKG6X8C4ZiU4wNQCGzHwKND4zyyzshhUNrvTo=; b=RwnBpBPEKSObuehHd52kglOds7
+	qRfWT1wCChbj2oeUHWIWeqzisKj1mREJxbjq2QEsBC2yr5XUaU4f8Vdj6ZiLTCAm1cxrHwtpTKI9l
+	zaJgt0I7Ma2n+WA+1BRtSgVuHkO109xFu242d+OS0gajDklSLZWo6CEyyDcsT9broqoorbK/8loIP
+	6O9K7Q2nlyIu5BsDDGvxfLkPH0mCpY2fou3I2RTC3GBehV90FzFJAIUyOXbWQt0TrQ9KTeD232vYa
+	/188RCbwPKHr2eBMwNhaHRTjRiaio+4sKm6JcPlXAMxvP2HE/Q+L/aoTNsW89BEKsTX+Vh7cwGO7t
+	VU/1yU7A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rFL3d-00C7Bt-0W;
+	Mon, 18 Dec 2023 21:21:49 +0000
+Date: Mon, 18 Dec 2023 13:21:49 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Joel Granados <j.granados@samsung.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Iurii Zaikin <yzaikin@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
+Message-ID: <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
+References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
+ <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+ <20231207104357.kndqvzkhxqkwkkjo@localhost>
+ <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
+ <20231208095926.aavsjrtqbb5rygmb@localhost>
+ <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de>
+ <20231212090930.y4omk62wenxgo5by@localhost>
+ <ZXligolK0ekZ+Zuf@bombadil.infradead.org>
+ <20231217120201.z4gr3ksjd4ai2nlk@localhost>
+ <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20231218153553.807799-1-hch@lst.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Mon, Dec 18, 2023 at 04:35:36PM +0100, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this is basically a evolution of the series Matthew Wilcox originally
-> set in June.  Based on comments from Jan a Brian this now actually
-> untangles some of the more confusing conditional in the writeback code
-> before refactoring it into the iterator.  Because of that all the
-> later patches need a fair amount of rebasing and I've not carried any
-> reviewed-by over.
-> 
-> The original cover letter is below:
-> 
-> Dave Howells doesn't like the indirect function call imposed by
-> write_cache_pages(), so refactor it into an iterator.  I took the
-> opportunity to add the ability to iterate a folio_batch without having
-> an external variable.
-> 
-> This is against next-20230623.  If you try to apply it on top of a tree
-> which doesn't include the pagevec removal series, IT WILL CRASH because
-> it won't reinitialise folio_batch->i and the iteration will index out
-> of bounds.
-> 
-> I have a feeling the 'done' parameter could have a better name, but I
-> can't think what it might be.
-> 
-> Diffstat:
->  include/linux/pagevec.h   |   18 ++
->  include/linux/writeback.h |   19 ++
->  mm/page-writeback.c       |  333 +++++++++++++++++++++++++---------------------
->  3 files changed, 220 insertions(+), 150 deletions(-)
+So we can split this up concentually in two:
 
-I've just done a quick scan of the code - nothing stands out to me
-as problematic, and I like how much cleaner the result is.
+ * constificaiton of the table handlers
+ * constification of the table struct itself
 
-Acked-by: Dave Chinner <dchinner@redhat.com>
+On Sun, Dec 17, 2023 at 11:10:15PM +0100, Thomas Weißschuh wrote:
+> The handlers can already be made const as shown in this series,
 
--- 
-Dave Chinner
-david@fromorbit.com
+The series did already produce issues with some builds, and so
+Julia's point is confirmed that the series only proves hanlders
+which you did build and for which 0-day has coverage for.
+
+The challenge here was to see if we could draw up a test case
+that would prove this without build tests, and what occurred to
+me was coccinelle or smatch.
+
+> > If that is indeed what you are proposing, you might not even need the
+> > un-register step as all the mutability that I have seen occurs before
+> > the register. So maybe instead of re-registering it, you can so a copy
+> > (of the changed ctl_table) to a const pointer and then pass that along
+> > to the register function.
+> 
+> Tables that are modified, but *not* through the handler, would crop
+> during the constification of the table structs.
+> Which should be a second step.
+
+Instead of "croping up" at build time again, I wonder if we can do
+better with coccinelle / smatch.
+
+Joel, and yes, what you described is what I was suggesting, that is to
+avoid having to add a non-const handler a first step, instead we modify
+those callers which do require to modify the table by first a
+deregistration and later a registration. In fact to make this even
+easier a new call would be nice so to aslo be able to git grep when
+this is done in the kernel.
+
+But if what you suggest is true that there are no registrations which
+later modify the table, we don't need that. It is the uncertainty that
+we might have that this is a true statment that I wanted to challenge
+to see if we could do better. Can we avoid this being a stupid
+regression later by doing code analysis with coccinelle / smatch?
+
+The template of the above endeavor seems useful not only to this use
+case but to any place in the kernel where this previously has been done
+before, and hence my suggestion that this seems like a sensible thing
+to think over to see if we could generalize.
+
+  Luis
 
