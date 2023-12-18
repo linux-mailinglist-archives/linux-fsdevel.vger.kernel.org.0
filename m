@@ -1,122 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-6428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684F0817C94
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:22:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC01817D0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16879284029
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:22:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED4CEB2375C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 21:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ED2740A8;
-	Mon, 18 Dec 2023 21:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FB4740B7;
+	Mon, 18 Dec 2023 21:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RwnBpBPE"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDsMDIIM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE527349B;
-	Mon, 18 Dec 2023 21:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=VC+L7rFKG6X8C4ZiU4wNQCGzHwKND4zyyzshhUNrvTo=; b=RwnBpBPEKSObuehHd52kglOds7
-	qRfWT1wCChbj2oeUHWIWeqzisKj1mREJxbjq2QEsBC2yr5XUaU4f8Vdj6ZiLTCAm1cxrHwtpTKI9l
-	zaJgt0I7Ma2n+WA+1BRtSgVuHkO109xFu242d+OS0gajDklSLZWo6CEyyDcsT9broqoorbK/8loIP
-	6O9K7Q2nlyIu5BsDDGvxfLkPH0mCpY2fou3I2RTC3GBehV90FzFJAIUyOXbWQt0TrQ9KTeD232vYa
-	/188RCbwPKHr2eBMwNhaHRTjRiaio+4sKm6JcPlXAMxvP2HE/Q+L/aoTNsW89BEKsTX+Vh7cwGO7t
-	VU/1yU7A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rFL3d-00C7Bt-0W;
-	Mon, 18 Dec 2023 21:21:49 +0000
-Date: Mon, 18 Dec 2023 13:21:49 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Joel Granados <j.granados@samsung.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Iurii Zaikin <yzaikin@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
-References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
- <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <20231207104357.kndqvzkhxqkwkkjo@localhost>
- <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
- <20231208095926.aavsjrtqbb5rygmb@localhost>
- <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de>
- <20231212090930.y4omk62wenxgo5by@localhost>
- <ZXligolK0ekZ+Zuf@bombadil.infradead.org>
- <20231217120201.z4gr3ksjd4ai2nlk@localhost>
- <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486891DA3A;
+	Mon, 18 Dec 2023 21:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702936659; x=1734472659;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=UTSFwDQbGfcrEl1amDoPvVacSO4lCY7esjcaPwWu+8s=;
+  b=hDsMDIIMxNDXWso+rRNEhmYd9g1qOqgorTRtIL2GMACS4adIBW0CEA+2
+   HSlNuKF7kETrZAV96G4Z02dGgVOv40lcbdvDDOIojiuiGCZPadno0Pk3L
+   nYCeC+qzt8r8Sz/pZ7rYi6rLHX5Dfg9DDYQJnW6BaZTbK8PtHb7aE81sB
+   S6d1iTwxT/OjwmMleXyJajNh1OESHGQDF5ze+pLd6yG4hAhyei+7pnF/Y
+   54Z/v0ZO7E2KKtiEBB9MDYD66ZTw9FHXU57Vh+jyNgRQzUBVYGwBEDBrA
+   1TELq5RU3wap5D/yDs8ByhalrZaXjfizqn8P1KUdSsdomAzH/JSEXT0gi
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10928"; a="9019283"
+X-IronPort-AV: E=Sophos;i="6.04,286,1695711600"; 
+   d="scan'208";a="9019283"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2023 13:57:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10928"; a="919408264"
+X-IronPort-AV: E=Sophos;i="6.04,286,1695711600"; 
+   d="scan'208";a="919408264"
+Received: from jamesgou-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.213.162.171])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2023 13:57:34 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+Cc: hu1.chen@intel.com, miklos@szeredi.hu, malini.bhandaru@intel.com,
+ tim.c.chen@intel.com, mikko.ylinen@intel.com, lizhen.you@intel.com,
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, Seth
+ Forshee <sforshee@kernel.org>
+Subject: Re: [RFC] HACK: overlayfs: Optimize overlay/restore creds
+In-Reply-To: <20231218-intim-lehrstellen-dbe053d6c3a8@brauner>
+References: <CAOQ4uxg-WvdcuCrQg7zp03ocNZoT-G2bpi=Y6nVxMTodyFAUbg@mail.gmail.com>
+ <20231214220222.348101-1-vinicius.gomes@intel.com>
+ <CAOQ4uxhJmjeSSM5iQyDadbj5UNjPqvh1QPLpSOVEYFbNbsjDQQ@mail.gmail.com>
+ <87v88zp76v.fsf@intel.com>
+ <CAOQ4uxiCVv7zbfn2BPrR9kh=DvGxQtXUmRvy2pDJ=G7rxjBrgg@mail.gmail.com>
+ <CAOQ4uxhxvFt3_Wb3BGcjj4pGp=OFTBHNPJ4r4eH8245t-+CW+g@mail.gmail.com>
+ <20231218-intim-lehrstellen-dbe053d6c3a8@brauner>
+Date: Mon, 18 Dec 2023 13:57:31 -0800
+Message-ID: <875y0vp41g.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain
 
-So we can split this up concentually in two:
+Christian Brauner <brauner@kernel.org> writes:
 
- * constificaiton of the table handlers
- * constification of the table struct itself
+>> > Yes, the important thing is that an object cannot change
+>> > its non_refcount property during its lifetime -
+>> 
+>> ... which means that put_creds_ref() should assert that
+>> there is only a single refcount - the one handed out by
+>> prepare_creds_ref() before removing non_refcount or
+>> directly freeing the cred object.
+>> 
+>> I must say that the semantics of making a non-refcounted copy
+>> to an object whose lifetime is managed by the caller sounds a lot
+>> less confusing to me.
+>
+> So can't we do an override_creds() variant that is effectively just:
+>
+> /* caller guarantees lifetime of @new */
+> const struct cred *foo_override_cred(const struct cred *new)
+> {
+> 	const struct cred *old = current->cred;
+> 	rcu_assign_pointer(current->cred, new);
+> 	return old;
+> }
+>
+> /* caller guarantees lifetime of @old */
+> void foo_revert_creds(const struct cred *old)
+> {
+> 	const struct cred *override = current->cred;
+> 	rcu_assign_pointer(current->cred, old);
+> }
+>
+> Maybe I really fail to understand this problem or the proposed solution:
+> the single reference that overlayfs keeps in ovl->creator_cred is tied
+> to the lifetime of the overlayfs superblock, no? And anyone who needs a
+> long term cred reference e.g, file->f_cred will take it's own reference
+> anyway. So it should be safe to just keep that reference alive until
+> overlayfs is unmounted, no? I'm sure it's something quite obvious why
+> that doesn't work but I'm just not seeing it currently.
 
-On Sun, Dec 17, 2023 at 11:10:15PM +0100, Thomas Weißschuh wrote:
-> The handlers can already be made const as shown in this series,
+My read of the code says that what you are proposing should work. (what
+I am seeing is that in the "optimized" cases, the only practical effect
+of override/revert is the rcu_assign_pointer() dance)
 
-The series did already produce issues with some builds, and so
-Julia's point is confirmed that the series only proves hanlders
-which you did build and for which 0-day has coverage for.
+I guess that the question becomes: Do we want this property (that the
+'cred' associated with a subperblock/similar is long lived and the
+"inner" refcount can be omitted) to be encoded in the constructor? Or do
+we want it to be "encoded" in a call by call basis?
 
-The challenge here was to see if we could draw up a test case
-that would prove this without build tests, and what occurred to
-me was coccinelle or smatch.
+I can see both working.
 
-> > If that is indeed what you are proposing, you might not even need the
-> > un-register step as all the mutability that I have seen occurs before
-> > the register. So maybe instead of re-registering it, you can so a copy
-> > (of the changed ctl_table) to a const pointer and then pass that along
-> > to the register function.
-> 
-> Tables that are modified, but *not* through the handler, would crop
-> during the constification of the table structs.
-> Which should be a second step.
 
-Instead of "croping up" at build time again, I wonder if we can do
-better with coccinelle / smatch.
-
-Joel, and yes, what you described is what I was suggesting, that is to
-avoid having to add a non-const handler a first step, instead we modify
-those callers which do require to modify the table by first a
-deregistration and later a registration. In fact to make this even
-easier a new call would be nice so to aslo be able to git grep when
-this is done in the kernel.
-
-But if what you suggest is true that there are no registrations which
-later modify the table, we don't need that. It is the uncertainty that
-we might have that this is a true statment that I wanted to challenge
-to see if we could do better. Can we avoid this being a stupid
-regression later by doing code analysis with coccinelle / smatch?
-
-The template of the above endeavor seems useful not only to this use
-case but to any place in the kernel where this previously has been done
-before, and hence my suggestion that this seems like a sensible thing
-to think over to see if we could generalize.
-
-  Luis
+Cheers,
+-- 
+Vinicius
 
