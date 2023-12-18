@@ -1,195 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-6432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744DE817D6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 23:50:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95F6817DE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 00:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3FEB23F47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 22:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3F61F24862
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 23:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46588760AA;
-	Mon, 18 Dec 2023 22:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMFtsEZL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BD9760B4;
+	Mon, 18 Dec 2023 23:09:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mp-relay-02.fibernetics.ca (mp-relay-02.fibernetics.ca [208.85.217.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994B476080;
-	Mon, 18 Dec 2023 22:50:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F368FC433C7;
-	Mon, 18 Dec 2023 22:50:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702939820;
-	bh=XQ3Y2xlODgItuHUfk9LQWvZkE68Or3E774k7hEqz9uo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JMFtsEZLP9TInD4z1KBYZJn+HhHyQPZeKZ/uxCjFDfRQ4R41d0jWZCypmnLeNuUjl
-	 rpQWOCq+O7G6xURivgtJYluZ77NwNHUwxaqR7HEzI+vR2LeMn2fRcU0UViecTGXyfb
-	 90MQZqkN8OwSOOqlHvNg8anjBpO9H3nRknTsFTJe3xywUlve3pijecR5LQLKNdHQn4
-	 iWg0atuu68HLn+lXqA6M3kkpkGdT9YvDwGKExYdJqaUqoBS2WD0ajIzMcRih+uLXOB
-	 pnsYDAzMfJFStLjI5N0rkI2O9fd+rt1no7PzyMUtiO5tnG8C9cwoy9RJqin+9rAjvv
-	 nYGbbLi7tZJ3w==
-Date: Mon, 18 Dec 2023 15:50:16 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-	ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
-Subject: Re: [PATCH v2 00/16] block atomic writes
-Message-ID: <ZYDMqCYedHUb3e6O@kbusch-mbp.dhcp.thefacebook.com>
-References: <20231212110844.19698-1-john.g.garry@oracle.com>
- <20231212163246.GA24594@lst.de>
- <b8b0a9d7-88d2-45a9-877a-ecc5e0f1e645@oracle.com>
- <20231213154409.GA7724@lst.de>
- <c729b03c-b1d1-4458-9983-113f8cd752cd@oracle.com>
- <20231214143708.GA5331@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDA476096;
+	Mon, 18 Dec 2023 23:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=interlog.com
+Received: from mailpool-fe-01.fibernetics.ca (mailpool-fe-01.fibernetics.ca [208.85.217.144])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mp-relay-02.fibernetics.ca (Postfix) with ESMTPS id 5EBFD77124;
+	Mon, 18 Dec 2023 23:09:05 +0000 (UTC)
+Received: from localhost (mailpool-mx-01.fibernetics.ca [208.85.217.140])
+	by mailpool-fe-01.fibernetics.ca (Postfix) with ESMTP id 52B4F244AC;
+	Mon, 18 Dec 2023 23:09:05 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at 
+X-Spam-Flag: NO
+X-Spam-Score: -0.2
+X-Spam-Level:
+Received: from mailpool-fe-01.fibernetics.ca ([208.85.217.144])
+	by localhost (mail-mx-01.fibernetics.ca [208.85.217.140]) (amavisd-new, port 10024)
+	with ESMTP id a7M5-P5R72sS; Mon, 18 Dec 2023 23:09:05 +0000 (UTC)
+Received: from [192.168.48.17] (host-104-157-209-188.dyn.295.ca [104.157.209.188])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dgilbert@interlog.com)
+	by mail.ca.inter.net (Postfix) with ESMTPSA id 4C1CA244A9;
+	Mon, 18 Dec 2023 23:09:04 +0000 (UTC)
+Message-ID: <dbfe9ac0-d432-4911-8a47-23d3d6f3811a@interlog.com>
+Date: Mon, 18 Dec 2023 18:08:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231214143708.GA5331@lst.de>
+User-Agent: Mozilla Thunderbird
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v7 00/19] Pass data lifetime information to SCSI disk
+ devices
+To: Bart Van Assche <bvanassche@acm.org>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
+ Kanchan Joshi <joshi.k@samsung.com>
+References: <20231218185705.2002516-1-bvanassche@acm.org>
+Content-Language: en-CA
+From: Douglas Gilbert <dgilbert@interlog.com>
+In-Reply-To: <20231218185705.2002516-1-bvanassche@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 14, 2023 at 03:37:09PM +0100, Christoph Hellwig wrote:
-> On Wed, Dec 13, 2023 at 04:27:35PM +0000, John Garry wrote:
-> >>> Are there any patches yet for the change to always use SGLs for transfers
-> >>> larger than a single PRP?
-> >> No.
+On 12/18/23 13:56, Bart Van Assche wrote:
+> Hi Martin,
 > 
-> Here is the WIP version.  With that you'd need to make atomic writes
-> conditional on !ctrl->need_virt_boundary.
+> UFS vendors need the data lifetime information to achieve good performance.
+> Providing data lifetime information to UFS devices can result in up to 40%
+> lower write amplification. Hence this patch series that adds support in F2FS
+> and also in the block layer for data lifetime information. The SCSI disk (sd)
+> driver is modified such that it passes write hint information to SCSI devices
+> via the GROUP NUMBER field.
+> 
+> Please consider this patch series for the next merge window.
+> 
+> Thank you,
+> 
+> Bart.
+> 
+> Changes compared to v6:
+>   - Dropped patch "fs: Restore F_[GS]ET_FILE_RW_HINT support".
 
-This looks pretty good as-is!
- 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 8ebdfd623e0f78..e04faffd6551fe 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -1889,7 +1889,8 @@ static void nvme_set_queue_limits(struct nvme_ctrl *ctrl,
->  		blk_queue_max_hw_sectors(q, ctrl->max_hw_sectors);
->  		blk_queue_max_segments(q, min_t(u32, max_segments, USHRT_MAX));
->  	}
-> -	blk_queue_virt_boundary(q, NVME_CTRL_PAGE_SIZE - 1);
-> +	if (q == ctrl->admin_q || ctrl->need_virt_boundary)
-> +		blk_queue_virt_boundary(q, NVME_CTRL_PAGE_SIZE - 1);
->  	blk_queue_dma_alignment(q, 3);
->  	blk_queue_write_cache(q, vwc, vwc);
->  }
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index e7411dac00f725..aa98794a3ec53d 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -262,6 +262,7 @@ enum nvme_ctrl_flags {
->  struct nvme_ctrl {
->  	bool comp_seen;
->  	bool identified;
-> +	bool need_virt_boundary;
->  	enum nvme_ctrl_state state;
->  	spinlock_t lock;
->  	struct mutex scan_lock;
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 61af7ff1a9d6ba..a8d273b475cb40 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -60,8 +60,7 @@ MODULE_PARM_DESC(max_host_mem_size_mb,
->  static unsigned int sgl_threshold = SZ_32K;
->  module_param(sgl_threshold, uint, 0644);
->  MODULE_PARM_DESC(sgl_threshold,
-> -		"Use SGLs when average request segment size is larger or equal to "
-> -		"this size. Use 0 to disable SGLs.");
-> +		"Use SGLs when > 0. Use 0 to disable SGLs.");
->  
->  #define NVME_PCI_MIN_QUEUE_SIZE 2
->  #define NVME_PCI_MAX_QUEUE_SIZE 4095
-> @@ -504,23 +503,6 @@ static void nvme_commit_rqs(struct blk_mq_hw_ctx *hctx)
->  	spin_unlock(&nvmeq->sq_lock);
->  }
->  
-> -static inline bool nvme_pci_use_sgls(struct nvme_dev *dev, struct request *req,
-> -				     int nseg)
-> -{
-> -	struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
-> -	unsigned int avg_seg_size;
-> -
-> -	avg_seg_size = DIV_ROUND_UP(blk_rq_payload_bytes(req), nseg);
-> -
-> -	if (!nvme_ctrl_sgl_supported(&dev->ctrl))
-> -		return false;
-> -	if (!nvmeq->qid)
-> -		return false;
-> -	if (!sgl_threshold || avg_seg_size < sgl_threshold)
-> -		return false;
-> -	return true;
-> -}
-> -
->  static void nvme_free_prps(struct nvme_dev *dev, struct request *req)
->  {
->  	const int last_prp = NVME_CTRL_PAGE_SIZE / sizeof(__le64) - 1;
-> @@ -769,12 +751,14 @@ static blk_status_t nvme_setup_sgl_simple(struct nvme_dev *dev,
->  static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
->  		struct nvme_command *cmnd)
->  {
-> +	struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
->  	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
-> +	bool sgl_supported = nvme_ctrl_sgl_supported(&dev->ctrl) &&
-> +			nvmeq->qid && sgl_threshold;
->  	blk_status_t ret = BLK_STS_RESOURCE;
->  	int rc;
->  
->  	if (blk_rq_nr_phys_segments(req) == 1) {
-> -		struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
->  		struct bio_vec bv = req_bvec(req);
->  
->  		if (!is_pci_p2pdma_page(bv.bv_page)) {
-> @@ -782,8 +766,7 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
->  				return nvme_setup_prp_simple(dev, req,
->  							     &cmnd->rw, &bv);
->  
-> -			if (nvmeq->qid && sgl_threshold &&
-> -			    nvme_ctrl_sgl_supported(&dev->ctrl))
-> +			if (sgl_supported)
->  				return nvme_setup_sgl_simple(dev, req,
->  							     &cmnd->rw, &bv);
->  		}
-> @@ -806,7 +789,7 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
->  		goto out_free_sg;
->  	}
->  
-> -	if (nvme_pci_use_sgls(dev, req, iod->sgt.nents))
-> +	if (sgl_supported)
->  		ret = nvme_pci_setup_sgls(dev, req, &cmnd->rw);
->  	else
->  		ret = nvme_pci_setup_prps(dev, req, &cmnd->rw);
-> @@ -3036,6 +3019,8 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	result = nvme_init_ctrl_finish(&dev->ctrl, false);
->  	if (result)
->  		goto out_disable;
-> +	if (!nvme_ctrl_sgl_supported(&dev->ctrl))
-> +		dev->ctrl.need_virt_boundary = true;
->  
->  	nvme_dbbuf_dma_alloc(dev);
->  
-> diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-> index 81e2621169e5d3..416a9fbcccfc74 100644
-> --- a/drivers/nvme/host/rdma.c
-> +++ b/drivers/nvme/host/rdma.c
-> @@ -838,6 +838,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
->  	error = nvme_init_ctrl_finish(&ctrl->ctrl, false);
->  	if (error)
->  		goto out_quiesce_queue;
-> +	ctrl->ctrl.need_virt_boundary = true;
->  
->  	return 0;
->  
+That leaves us with F_SET_RW_HINT and F_GET_RW_HINT ioctls. Could you please
+explain, perhaps with an example, what functionality is lost and what we still
+have?
+
+
+I built the v6 patchset atop Martin's 6.8/scsi-queue branch and it built clean.
+My experience with "rc1" branches on my working laptop has been a bit less than
+ideal. So also built the v6 patchset atop linux_stable around last Monday and
+have been running that without issues on my laptop for a week. Haven't updated
+my  linux-stable to lk 6.7.0-rc6 yet but don't expect issues with the v7
+patchset.
+
+Doug Gilbert
+
+
+<snip>
 
