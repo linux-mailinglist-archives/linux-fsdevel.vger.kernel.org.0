@@ -1,179 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-6360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1E5816BF8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 12:09:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34E1816DF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 13:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADDE1F237EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 11:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6262B28432E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 12:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CBF1A5BC;
-	Mon, 18 Dec 2023 11:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BD04E61F;
+	Mon, 18 Dec 2023 12:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHmIgOJh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USyQ0cig"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEE6199DC;
-	Mon, 18 Dec 2023 11:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702897734; x=1734433734;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=la11LbUGxdVHMFzjWOtsiO2nT/ShMz0Yr/tNFa2iG/4=;
-  b=WHmIgOJhWbrkPVMfpe+saRaE2Iy78FVsTPWltiEK31aZsev33ALzgPWd
-   SsNWozVZvOq1vS4f4VeqNvB3/pFU4vMsH9uCl3cD9FXsfUTFtrKdWk0kf
-   28zPWfWgHDD9LtlHFcUUXSSQW+9Cj5tYSMUU7PRimIwU08//ueYiupQUd
-   K/fQeZrOy/E5XUAb6oRYx97/RJd0i/fT13kfM4AqZUJl+JmdclA002p2x
-   hJWgesQ/XxIpj3VGEaZQ/eV3CXbxZKQuDijRfDPlB7LNZbcUc35pzK+Sg
-   FSVZj8a4kpC4YZHMbUQFwUe7GipHrmlVh5dNJLGpuyOk7B/zy+H6QoUGX
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10927"; a="394364540"
-X-IronPort-AV: E=Sophos;i="6.04,285,1695711600"; 
-   d="scan'208";a="394364540"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Dec 2023 03:08:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10927"; a="898929094"
-X-IronPort-AV: E=Sophos;i="6.04,285,1695711600"; 
-   d="scan'208";a="898929094"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orsmga004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Dec 2023 03:08:51 -0800
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 18 Dec 2023 03:08:50 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 18 Dec 2023 03:08:50 -0800
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 18 Dec 2023 03:08:50 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SvWMtzlD38WAW2C/W1qiqb9nkGxcPZ/ctY6jgC+qp4Gi0z6XwIEGXKTE+R+mcJDs+PsoALMKu37MIlIkYYocxZwDNUgYUj2dtLb8/fMrupWBZKhe3RKqrF5LG2NfDHmbtiyxNmWQyu7NJUrkQLP48pwfNUnFHcR5Wlb/AQcFwy25RI7fF2HELVdmTJRP9qPX3bgRV1DBgnlr5gs8X/DIe6dSh0FxE/CGQVOAiws4CllrcN2o0GBH5jlEKq6EaIyq9ri3mHhX/6Ejt20c2yXMPmao9jnT5FdJhQIYbu7W9vfJQ+7tFNcMhjatg0SNh6Hydq/fSI0Qkqk/UIC3a7p4Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CFXRlchvWN9ZnFAcBdzwpIG2bCXu88qykg46R/AcL6g=;
- b=hZymGuLKsQWiYQyW+1E0tm+FmpnFJnIof1HzL/nRyJcpMDrf7Id/saFTD8h8eFJMM/KfLDhXLhHkAGamT67LYSi1R0XnD0+cZw8rPjge1O7brK1Rpa62CHIEktoNO56M989yy4gJ2mJYZ2pEJ9bUBUBbask0ElhrP0NFrWvNoYQlxhCAf/w5jKt4UdqSkvyhVSBo9rnuZ0uQX9XUUbFRYQOY+CsxM2JFf0azUtGcyj7uv6dbjEsJZhdbVYcr7fSr1V5noZ5E/wdTH7gLBybTfaIEH82P4oLkOI0daRu8kS6q9Ir156QxBWtMIveFBnWsroR+aVTutblQrU7or+ncqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by CYYPR11MB8331.namprd11.prod.outlook.com (2603:10b6:930:bd::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.38; Mon, 18 Dec
- 2023 11:08:43 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::6609:2787:32d7:8d07]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::6609:2787:32d7:8d07%6]) with mapi id 15.20.7091.034; Mon, 18 Dec 2023
- 11:08:43 +0000
-Message-ID: <5ae9ba1f-07b9-423e-bf74-175e57dda031@intel.com>
-Date: Mon, 18 Dec 2023 16:38:33 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/50] x86/kernel/fpu/bugs.c: fix missing include
-Content-Language: en-US
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, X86-kernel <x86@kernel.org>
-CC: <tglx@linutronix.de>, <tj@kernel.org>, <peterz@infradead.org>,
-	<mathieu.desnoyers@efficios.com>, <paulmck@kernel.org>,
-	<keescook@chromium.org>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
-	<will@kernel.org>, <longman@redhat.com>, <boqun.feng@gmail.com>,
-	<brauner@kernel.org>
-References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
- <20231216024834.3510073-3-kent.overstreet@linux.dev>
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20231216024834.3510073-3-kent.overstreet@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0187.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:be::10) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9CB4B5DE;
+	Mon, 18 Dec 2023 12:30:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933AFC433C7;
+	Mon, 18 Dec 2023 12:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702902643;
+	bh=AA/8yh8b80ZQsaF4+TUE7HQt/5ZSOagkn1HY7nMlrt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USyQ0cigRyoU+7qQTCkP8/cqIxRRjB8ZXVPg70kxRRZImeGrhq0VS6W/7VJeP18bV
+	 +9y+z0XXYn0BLZ3MwXql72rE4PylbwEoo+U397TxkRZbkQDdh5hjGrVdrxJvY1u6SC
+	 ufaBvvHtHI537nNdedn2VcGMlKQ9ApfN5cV+wieiJRSCxq7kP9QEKOHeX+FLLpl1Ez
+	 5hF2saq1XZC9DwArwRF8BxTk/WaAfo3p8cLaqiv+1juAnojmMVVL2AEic8YFjRsEXM
+	 xxNdvPNPRTPSA0N45n8M0prwDIG0CYHAueVlNPDDrIhZxmKoutDKuluniYSLCcqN2y
+	 WfWbSmNv2E/1Q==
+Date: Mon, 18 Dec 2023 13:30:34 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Quentin Monnet <quentin@isovalent.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+	LSM List <linux-security-module@vger.kernel.org>,
+	gyroidos@aisec.fraunhofer.de
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
+Message-ID: <20231218-chipsatz-abfangen-d62626dfb9e2@brauner>
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
+ <20231215-golfanlage-beirren-f304f9dafaca@brauner>
+ <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
+ <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner>
+ <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
+ <20231216-vorrecht-anrief-b096fa50b3f7@brauner>
+ <CAADnVQK7MDUZTUxcqCH=unrrGExCjaagfJFqFPhVSLUisJVk_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|CYYPR11MB8331:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7858fcb6-6fed-4015-7584-08dbffb9b248
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: A05+zVMclDg3arLg3LyEnSwTlQezQ7KvVWhYIDS+fFRIh4bRF8BTEd5IuJhDbUlVrQ9VX+5aTFAvjc4va2jlD8VyBYYjgAeJICMlfPJt3lcJnZmv6UO5pfGswFj8nfeXtdgufLfokIZ3A0Z1IkYiZm2k3rVvfrlrOH+lDbuh1xLuKnUvsglQsJGtQlTJoIoCUOzolUiwJtLaJ1fjnTfyVwmwELJUkC+3EsJV/wduvN9SZf4Lhdm8xFc7nicQti+6keyk7FPmp8SNCk+MOvsC7LQ4jPf+mcCkVHoWKTFb90KzwMyi4YojlTNkpX9C3MgV/XxjAIStOW0icUVVUUDCdqeWJ919xQ0tJWZOYNLz4aumrJn53O6Jr/eHf8nckJ2INenVjaZDZCbGwPjs+GbIYCE6s6qA4QASrjCxWsPuNCZ04PGl9wRv7JkNV6XVscwC5UNXebPjqBfgTzZr1Vme8wxmF/cqB+hwkPeETdRnVw5w7yQN5OobKHizpOVbyOI+9D9GI8vu48SoyofRxb3zynQ8sD9r+BSHStNwL/tCOkXcpLzVvB8kPwcP9mKSA8Gunv05RY/tCZ/8bmlNemurlzyF4/P2RssIb0z9RCTpbRKE9ukIcrKYNBwn0qIT/heLGChSCaMJob2q+N0gy267ig==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(136003)(366004)(396003)(346002)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(8936002)(8676002)(4326008)(5660300002)(44832011)(38100700002)(2906002)(7416002)(53546011)(6666004)(6512007)(6506007)(316002)(66556008)(66476007)(110136005)(66946007)(4744005)(41300700001)(82960400001)(31686004)(6486002)(478600001)(26005)(31696002)(2616005)(86362001)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a2loSkI0QlU1WkpFZnhVSDloOEJEUFVsdnpuMHdtc3U3YkQzVmt4V1o5Sk1w?=
- =?utf-8?B?WXc5ckhzc3J5bFhubTdDZnArYXlCWWJoeDZrY2RIY1lyYkQ1RFpWYmwzSktS?=
- =?utf-8?B?Q0VyNGIxNzgvb3hvb25vcURQTnV4RzlNaHJ2R2F0SVZETGdrRDk4UVN3OXN2?=
- =?utf-8?B?bE91ZWpJWGJyTFptbjJGb0FmcWtsT1c2bEdhL29vV0RUZzVFeERKN25ydk4r?=
- =?utf-8?B?K05CR1ZPeDQ2V3diVkoxaHJNSFJMdWtDL09ZQyt6NTd4R2JVYXFQNGRqaUpl?=
- =?utf-8?B?T003cURGQXNveGtKWXlFV0c0MExFQ0d6Z01MYmVPOU91L3JVWXlKQ1doT1dV?=
- =?utf-8?B?Z2R5YzMzZGN5MHhHbTFlbW1KanZQZXdrYUF5NUVYZ1J3UTdJVjJsT3VEa2NK?=
- =?utf-8?B?ZmVYVlJubXFDUkpnSHRBTWR2elJnSUhSZjNZQlk2eCtscVRuQnRuQnpGbHFh?=
- =?utf-8?B?M0NhTndrTldOMG1mMjBjSTJxMWRXT3RFTGxsTHRKd2FNR3RucStiY3pnbExF?=
- =?utf-8?B?bjMwaEFNN1pva3BzVWZ2TmxaUnNNRWFWajRGUCtmcWFmN3dsU0xqand2emNG?=
- =?utf-8?B?dnlKdGdxMUgwRFNKNFVnUUMvTnpKeFJvUWJzNHk3Q3U2VDZ0dkg3eVZKL00w?=
- =?utf-8?B?dlRRWk11cXoxd25wcjlPd1p3TE12bmF4WXFGVFB3V00xR3h1YlI5Zk05V3hB?=
- =?utf-8?B?c1dKL0FNaWNRSTRZWVdtZG85dnNVT0JqWENhNE1nNDJNVk1iaERxYkR0NkVm?=
- =?utf-8?B?Ynk2cFB1NkN2ZXNHd2NoNVFGUWFGUWZ3VFd2cmp4ZXgrSjZ0WWNVSjI5clJV?=
- =?utf-8?B?Uy9xOGl0TVVBZU9XRnB0VG5hdDUxT1NLazhOcm9ET3U4TDhwOVE4bzloZi9G?=
- =?utf-8?B?eWk5YklZbngralZJVUErOHZidzUvQWF4dGVEVkExVzFuTDJGOFo2bGl1bkVQ?=
- =?utf-8?B?VUcvWm1KSS9TZ3V4RW9kWnB5V0RuM2c3QjVzTGRmZXRsUG9HSnpHdEN1a1J5?=
- =?utf-8?B?bG5rTmk4RURocldwMC9JOU9QYTZrYTR6MmdUR2psTTNGam8zVjVmUm1URmJ2?=
- =?utf-8?B?WDQxOVVDRnNoMGI0L0MrQUNaVTByL2ZRVGg4Y1JKallORnQ4aVRoYi9DS0hF?=
- =?utf-8?B?RFNKbXJpZkpIWkhnTDVrRTV6c1MzcytnVHlEWmZYSUhOMCtvcm9XakYvQnZ0?=
- =?utf-8?B?MUMrdURGYUFVbkhZYmkvS2h3eHBVUGc4OHhWbjMzdGlPR29aM09Xa2RzUVZ6?=
- =?utf-8?B?d1lnMWhEVFVDdDk4dm01azhvZUtWV1VGVkdDMTlta1pubXlUS1kzQWowWldC?=
- =?utf-8?B?eVpWSVVlVXE5YzBscWh3Qzd5QVlDSDlSZE5aMU81YmtHSlpBa1dDaDBVZDhB?=
- =?utf-8?B?NFdFTkRSNklsUDM0c1F1ZDhObm1wckpURFcwaFlaQ2Vpa01jRHA3RXIzS2xq?=
- =?utf-8?B?cFRJTWw4UStQL2dVZ2dzZ2k0OCsxOStpbklNUVR4SjgrVUhEOFBDU0FwRzdv?=
- =?utf-8?B?d1Z2WUZ1ZWRNTDh3N05rMEFRQ1JnSVlXaldWbjBUdXdOZ1FDQzR4M3I3eWhV?=
- =?utf-8?B?M0lmOGZIRWRGZnhzMUpMMjY3S3FVbzQwbnN5Vnp2d3AwaE1XNFpKdWNpa1Fv?=
- =?utf-8?B?RDlMUkQ2RUtFdFJvRFJJb3E5K2ZmQXpmdkYwOXltY2hrOFhaamd2M1RWYlBI?=
- =?utf-8?B?U3hzalBwMWFLNXRYQW83ckUzd2lFdFFLbDhBMzlyZHpSTEd6UWw2aEllYm5i?=
- =?utf-8?B?NnBSS0NZM2tWLzhsbThaWVA2YUg5ZEt5MitDRUZqWkJYeFRrNktiaks4a0Qv?=
- =?utf-8?B?NWplQ2VDaGZ5TTFxTHJ2SWFzeHZzV3BXUG9OaFR5R3BNaHh3cFNsZ0xWZzE5?=
- =?utf-8?B?OHN0WGJYZ1ZHbVpWSFBqMS9JSlBKZmJBK0VCNjFjemNLbG5aNktaK0VxQVp6?=
- =?utf-8?B?eitCM1ZQMWRVWGl3Wk1kSytydWlDTVF3STFheWhLNUZSZlJnUnl3bFpzUkRL?=
- =?utf-8?B?aTdQRVl1VTNOd05YbUw5NVk5dWR5RTFYeHVVSGczY0pwblJIY3VmYnlZM0dh?=
- =?utf-8?B?bjlYZFJoNW5JU3pWOGhKeUpjMzVnamI5UTIrbVd1UXd0aHF2UW9yQ2pLNndx?=
- =?utf-8?Q?6L7DzheIau/biwtT8j7xagxoP?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7858fcb6-6fed-4015-7584-08dbffb9b248
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2023 11:08:43.1696
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Uxn86A6YEw6V4gxcAKopvwxZr8ju7Iiyldgyt5yCzPcGizqiPmtVP5Bwl1XYUSleqMOrdzyfOBR9HBi9J2GPCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8331
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQK7MDUZTUxcqCH=unrrGExCjaagfJFqFPhVSLUisJVk_Q@mail.gmail.com>
 
-For the x86 patches [2-5/50], should the patch subject be a bit more
-generic rather than having the full file name listed.
-
-For example, this patch could be "x86/fpu: Fix missing include".
-
-On 12/16/2023 8:17 AM, Kent Overstreet wrote:
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> ---
->  arch/x86/kernel/fpu/bugs.c | 1 +
->  1 file changed, 1 insertion(+)
+On Sat, Dec 16, 2023 at 09:41:10AM -0800, Alexei Starovoitov wrote:
+> On Sat, Dec 16, 2023 at 2:38 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Dec 15, 2023 at 10:08:08AM -0800, Alexei Starovoitov wrote:
+> > > On Fri, Dec 15, 2023 at 6:15 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Fri, Dec 15, 2023 at 02:26:53PM +0100, Michael Weiß wrote:
+> > > > > On 15.12.23 13:31, Christian Brauner wrote:
+> > > > > > On Wed, Dec 13, 2023 at 03:38:13PM +0100, Michael Weiß wrote:
+> > > > > >> devguard is a simple LSM to allow CAP_MKNOD in non-initial user
+> > > > > >> namespace in cooperation of an attached cgroup device program. We
+> > > > > >> just need to implement the security_inode_mknod() hook for this.
+> > > > > >> In the hook, we check if the current task is guarded by a device
+> > > > > >> cgroup using the lately introduced cgroup_bpf_current_enabled()
+> > > > > >> helper. If so, we strip out SB_I_NODEV from the super block.
+> > > > > >>
+> > > > > >> Access decisions to those device nodes are then guarded by existing
+> > > > > >> device cgroups mechanism.
+> > > > > >>
+> > > > > >> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> > > > > >> ---
+> > > > > >
+> > > > > > I think you misunderstood me... My point was that I believe you don't
+> > > > > > need an additional LSM at all and no additional LSM hook. But I might be
+> > > > > > wrong. Only a POC would show.
+> > > > >
+> > > > > Yeah sorry, I got your point now.
+> > > >
+> > > > I think I might have had a misconception about how this works.
+> > > > A bpf LSM program can't easily alter a kernel object such as struct
+> > > > super_block I've been told.
+> > >
+> > > Right. bpf cannot change arbitrary kernel objects,
+> > > but we can add a kfunc that will change a specific bit in a specific
+> > > data structure.
+> > > Adding a new lsm hook that does:
+> > >     rc = call_int_hook(sb_device_access, 0, sb);
+> > >     switch (rc) {
+> > >     case 0: do X
+> > >     case 1: do Y
+> > >
+> > > is the same thing, but uglier, since return code will be used
+> > > to do this action.
+> > > The 'do X' can be one kfunc
+> > > and 'do Y' can be another.
+> > > If later we find out that 'do X' is not a good idea we can remove
+> > > that kfunc.
+> >
+> > The reason I moved the SB_I_MANAGED_DEVICES here is that I want a single
+> > central place where that is done for any possible LSM that wants to
+> > implement device management. So we don't have to go chasing where that
+> > bit is set for each LSM. I also don't want to have LSMs raise bits in
+> > sb->s_iflags directly as that's VFS property.
 > 
+> a kfunc that sets a bit in sb->s_iflags will be the same central place.
 
+For the BPF LSM. I'm talking the same place for al LSMs.
+
+> It will be somewhere in the fs/ directory and vfs maintainers can do what they
+> wish with it, including removal.
+> For traditional LSM one would need to do an accurate code review to make
+> sure that they don't mess with sb->s_iflags while for bpf_lsm it
+> will be done automatically. That kfunc will be that only one central place.
+
+I'm not generally opposed to kfuncs ofc but here it just seems a bit
+pointless. What we want is to keep SB_I_{NODEV,MANAGED_DEVICES} confined
+to alloc_super(). The only central place it's raised where we control
+all locking and logic. So it doesn't even have to appear in any
+security_*() hooks.
+
+diff --git a/security/security.c b/security/security.c
+index 088a79c35c26..bf440d15615d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1221,6 +1221,33 @@ int security_sb_alloc(struct super_block *sb)
+ 	return rc;
+ }
+ 
++/*
++ * security_sb_device_access() - Let LSMs handle device access
++ * @sb: filesystem superblock
++ *
++ * Let an LSM take over device access management for this superblock.
++ *
++ * Return: Returns 1 if LSMs handle device access, 0 if none does and -ERRNO on
++ *         failure.
++ */
++int security_sb_device_access(struct super_block *sb)
++{
++	int thisrc;
++	int rc = LSM_RET_DEFAULT(sb_device_access);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.sb_device_access, list) {
++		thisrc = hp->hook.sb_device_access(sb);
++		if (thisrc < 0)
++			return thisrc;
++		/* At least one LSM claimed device access management. */
++		if (thisrc == 1)
++			rc = 1;
++	}
++
++	return rc;
++}
++
+ /**
+  * security_sb_delete() - Release super_block LSM associated objects
+  * @sb: filesystem superblock
+
+diff --git a/fs/super.c b/fs/super.c
+index 076392396e72..2295c0f76e56 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -325,7 +325,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ {
+ 	struct super_block *s = kzalloc(sizeof(struct super_block),  GFP_USER);
+ 	static const struct super_operations default_op;
+-	int i;
++	int err, i;
+ 
+ 	if (!s)
+ 		return NULL;
+@@ -362,8 +362,16 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 	}
+ 	s->s_bdi = &noop_backing_dev_info;
+ 	s->s_flags = flags;
+-	if (s->s_user_ns != &init_user_ns)
++
++	err = security_sb_device_access(s);
++	if (err < 0)
++		goto fail;
++
++	if (err)
++		s->s_iflags |= SB_I_MANAGED_DEVICES;
++	else if (s->s_user_ns != &init_user_ns)
+ 		s->s_iflags |= SB_I_NODEV;
++
+ 	INIT_HLIST_NODE(&s->s_instances);
+ 	INIT_HLIST_BL_HEAD(&s->s_roots);
+ 	mutex_init(&s->s_sync_lock);
 
