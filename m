@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-6410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC3D817A5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:59:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1C5817A63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 19:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE02B1F24E04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 18:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7440E1F24F97
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Dec 2023 18:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5656274E17;
-	Mon, 18 Dec 2023 18:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFE474E28;
+	Mon, 18 Dec 2023 18:58:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E2D74E0D;
-	Mon, 18 Dec 2023 18:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A848E537F4;
+	Mon, 18 Dec 2023 18:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso2785846a12.3;
-        Mon, 18 Dec 2023 10:58:00 -0800 (PST)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5c6ce4dffb5so1141730a12.0;
+        Mon, 18 Dec 2023 10:58:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702925880; x=1703530680;
+        d=1e100.net; s=20230601; t=1702925882; x=1703530682;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HDbYkMJjEquxAUzkIs58T1VgEWf/IZY0doxHFjDYrzk=;
-        b=vcbZlKHMaXnMXvngI4TxibGecujTULXJOKod86BYMDtUrk4x7W9waDnMSXQI5O2Uhv
-         QZY2tK0+cLBIyKSRejbiXQpf0XRipiKkvJj0WJt+uazE5T3Ff2brYJOefdcD/744ND/a
-         AyrVi18LB3CPZYf0FFU3WmxazDx01qb0d9MPzZmlK0SkZXOsY9urh8/p/JtL2qf8bCtK
-         jh8Mu233/IgqLYkZ3Se5ZbzufgMJ/Udj2GnNBInBIW5wgQKNyZWp0b783jn3jjnEW5nT
-         orsxiBKGeoKwn18O1XvsWCHJIVV3IPmocVe37+TbxXYOAtD+EaFpIhBnMyyvW6o1f821
-         RGiQ==
-X-Gm-Message-State: AOJu0YwwuAnk2wEWE24SFO2akiJva7HNHO4x74p9RDEr/8O06ecuO6zP
-	NDcXnzgMqw7E/iSVJH/23KNL+rANj6Q=
-X-Google-Smtp-Source: AGHT+IH6r9O7nPloy93RnpgL8YVuVQrozw3cp2Ua4KuDtKvvMj89qK90JB1CbAGir6u/Yecix7rmQA==
-X-Received: by 2002:a05:6a20:96db:b0:18f:b870:e563 with SMTP id hq27-20020a056a2096db00b0018fb870e563mr17974102pzc.38.1702925880011;
-        Mon, 18 Dec 2023 10:58:00 -0800 (PST)
+        bh=NF3r6kBvweQQzNsLxPq1BZprgUkPpuRDDhas88uNzHQ=;
+        b=gX+DVkM35a7Ay9vOXD5EkvPV6aHvvLMU3e6zXoGVquUhE3DpPYoYMQDogBGIQ0h+fY
+         x7D9/Oo59vVo1q+9UrSBp0LuVFX4zF0gm3cS7IfkjO6Fua9sW3Q30LoZKvP3tkJokkcu
+         7aGjSubDFvVZF3Ubir6tWZswtq6jC/O+JqckyWivNvWUNT081BqFGF7jIPw0SyQJTm2l
+         gKfn5iVd7FpMuFTBx4tmZwjRmHkRFRtutF/vjR278vCm08sI28+cV96Hl/pt0VY/DxcI
+         MH7vmwgcxo3QWJr3uHClM+YXmLNBDpMMESIzAs7RnFKoO1HToL+RGms8xdXPPoG2Rs8x
+         hjBQ==
+X-Gm-Message-State: AOJu0YwMQ1bWc87SHFzI25Coldp7ANwc9Ii7OSmqjudfZ2ljTfOQZRF1
+	JYOXHYzUzpSGg52Zhi4b+M4=
+X-Google-Smtp-Source: AGHT+IGhJcBb5PAPjz77mpES8/AlwDDjVRxUxlJgGVPkfGF7TeJoP7P2LkmFtapqn619KvavG+DPFA==
+X-Received: by 2002:a05:6a21:35c9:b0:193:fda5:794e with SMTP id ba9-20020a056a2135c900b00193fda5794emr2033176pzc.54.1702925881903;
+        Mon, 18 Dec 2023 10:58:01 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:e67:7ba6:36a9:8cd5])
-        by smtp.gmail.com with ESMTPSA id n20-20020a056a0007d400b006d45707d8edsm3918397pfu.7.2023.12.18.10.57.58
+        by smtp.gmail.com with ESMTPSA id n20-20020a056a0007d400b006d45707d8edsm3918397pfu.7.2023.12.18.10.58.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 10:57:59 -0800 (PST)
+        Mon, 18 Dec 2023 10:58:01 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -55,9 +55,9 @@ Cc: linux-scsi@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
 	Douglas Gilbert <dgilbert@interlog.com>,
 	"James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: [PATCH v7 16/19] scsi: scsi_debug: Allocate the MODE SENSE response from the heap
-Date: Mon, 18 Dec 2023 10:56:39 -0800
-Message-ID: <20231218185705.2002516-17-bvanassche@acm.org>
+Subject: [PATCH v7 17/19] scsi: scsi_debug: Implement the IO Advice Hints Grouping mode page
+Date: Mon, 18 Dec 2023 10:56:40 -0800
+Message-ID: <20231218185705.2002516-18-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231218185705.2002516-1-bvanassche@acm.org>
 References: <20231218185705.2002516-1-bvanassche@acm.org>
@@ -69,53 +69,120 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make the MODE SENSE response buffer larger and allocate it from the heap.
-This patch prepares for adding support for the IO Advice Hints Grouping
-mode page.
+Implement an IO Advice Hints Grouping mode page with three permanent
+streams. A permanent stream is a stream for which the device server does
+not allow closing or otherwise modifying the configuration of that
+stream. The stream identifier enable (ST_ENBLE) bit specifies whether
+the stream identifier may be used in the GROUP NUMBER field of SCSI
+WRITE commands.
 
-Suggested-by: Douglas Gilbert <dgilbert@interlog.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Cc: Douglas Gilbert <dgilbert@interlog.com>
 Tested-by: Douglas Gilbert <dgilbert@interlog.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/scsi/scsi_debug.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/scsi/scsi_debug.c | 61 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 58 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index cadd130d6b53..4181d0d81224 100644
+index 4181d0d81224..4e18265a05da 100644
 --- a/drivers/scsi/scsi_debug.c
 +++ b/drivers/scsi/scsi_debug.c
-@@ -43,6 +43,7 @@
- #include <linux/prefetch.h>
- #include <linux/debugfs.h>
- #include <linux/async.h>
-+#include <linux/cleanup.h>
- 
- #include <net/checksum.h>
- 
-@@ -2637,7 +2638,8 @@ static int resp_sas_sha_m_spg(unsigned char *p, int pcontrol)
- 	return sizeof(sas_sha_m_pg);
+@@ -1975,7 +1975,11 @@ static int resp_inquiry(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
+ 				arr[4] = 0x5;   /* SPT: GRD_CHK:1, REF_CHK:1 */
+ 			else
+ 				arr[4] = 0x0;   /* no protection stuff */
+-			arr[5] = 0x7;   /* head of q, ordered + simple q's */
++			/*
++			 * GROUP_SUP=1; HEADSUP=1 (HEAD OF QUEUE); ORDSUP=1
++			 * (ORDERED queuing); SIMPSUP=1 (SIMPLE queuing).
++			 */
++			arr[5] = 0x17;
+ 		} else if (0x87 == cmd[2]) { /* mode page policy */
+ 			arr[3] = 0x8;	/* number of following entries */
+ 			arr[4] = 0x2;	/* disconnect-reconnect mp */
+@@ -2565,6 +2569,40 @@ static int resp_ctrl_m_pg(unsigned char *p, int pcontrol, int target)
+ 	return sizeof(ctrl_m_pg);
  }
  
--#define SDEBUG_MAX_MSENSE_SZ 256
-+/* PAGE_SIZE is more than necessary but provides room for future expansion. */
-+#define SDEBUG_MAX_MSENSE_SZ PAGE_SIZE
++/* IO Advice Hints Grouping mode page */
++static int resp_grouping_m_pg(unsigned char *p, int pcontrol, int target)
++{
++	/* IO Advice Hints Grouping mode page */
++	struct grouping_m_pg {
++		u8 page_code;	/* OR 0x40 when subpage_code > 0 */
++		u8 subpage_code;
++		__be16 page_length;
++		u8 reserved[12];
++		struct scsi_io_group_descriptor descr[MAXIMUM_NUMBER_OF_STREAMS];
++	};
++	static const struct grouping_m_pg gr_m_pg = {
++		.page_code = 0xa | 0x40,
++		.subpage_code = 5,
++		.page_length = cpu_to_be16(sizeof(gr_m_pg) - 4),
++		.descr = {
++			{ .st_enble = 1 },
++			{ .st_enble = 1 },
++			{ .st_enble = 1 },
++			{ .st_enble = 1 },
++			{ .st_enble = 1 },
++			{ .st_enble = 0 },
++		}
++	};
++
++	BUILD_BUG_ON(sizeof(struct grouping_m_pg) !=
++		     16 + MAXIMUM_NUMBER_OF_STREAMS * 16);
++	memcpy(p, &gr_m_pg, sizeof(gr_m_pg));
++	if (1 == pcontrol) {
++		/* There are no changeable values so clear from byte 4 on. */
++		memset(p + 4, 0, sizeof(gr_m_pg) - 4);
++	}
++	return sizeof(gr_m_pg);
++}
  
- static int resp_mode_sense(struct scsi_cmnd *scp,
- 			   struct sdebug_dev_info *devip)
-@@ -2648,10 +2650,13 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	int target_dev_id;
- 	int target = scp->device->id;
- 	unsigned char *ap;
--	unsigned char arr[SDEBUG_MAX_MSENSE_SZ];
-+	unsigned char *arr __free(kfree);
- 	unsigned char *cmd = scp->cmnd;
- 	bool dbd, llbaa, msense_6, is_disk, is_zbc;
+ static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
+ {	/* Informational Exceptions control mode page for mode_sense */
+@@ -2714,6 +2752,10 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		ap = arr + offset;
+ 	}
  
-+	arr = kzalloc(SDEBUG_MAX_MSENSE_SZ, GFP_ATOMIC);
-+	if (!arr)
-+		return -ENOMEM;
- 	dbd = !!(cmd[1] & 0x8);		/* disable block descriptors */
- 	pcontrol = (cmd[2] & 0xc0) >> 6;
- 	pcode = cmd[2] & 0x3f;
++	/*
++	 * N.B. If len>0 before resp_*_pg() call, then form of that call should be:
++	 *        len += resp_*_pg(ap + len, pcontrol, target);
++	 */
+ 	switch (pcode) {
+ 	case 0x1:	/* Read-Write error recovery page, direct access */
+ 		if (subpcode > 0x0 && subpcode < 0xff)
+@@ -2748,9 +2790,20 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		}
+ 		break;
+ 	case 0xa:	/* Control Mode page, all devices */
+-		if (subpcode > 0x0 && subpcode < 0xff)
++		switch (subpcode) {
++		case 0:
++			len = resp_ctrl_m_pg(ap, pcontrol, target);
++			break;
++		case 0x05:
++			len = resp_grouping_m_pg(ap, pcontrol, target);
++			break;
++		case 0xff:
++			len = resp_ctrl_m_pg(ap, pcontrol, target);
++			len += resp_grouping_m_pg(ap + len, pcontrol, target);
++			break;
++		default:
+ 			goto bad_subpcode;
+-		len = resp_ctrl_m_pg(ap, pcontrol, target);
++		}
+ 		offset += len;
+ 		break;
+ 	case 0x19:	/* if spc==1 then sas phy, control+discover */
+@@ -2784,6 +2837,8 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 			len += resp_caching_pg(ap + len, pcontrol, target);
+ 		}
+ 		len += resp_ctrl_m_pg(ap + len, pcontrol, target);
++		if (0xff == subpcode)
++			len += resp_grouping_m_pg(ap + len, pcontrol, target);
+ 		len += resp_sas_sf_m_pg(ap + len, pcontrol, target);
+ 		if (0xff == subpcode) {
+ 			len += resp_sas_pcd_m_spg(ap + len, pcontrol, target,
 
