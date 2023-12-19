@@ -1,53 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-6527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CBB8193DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:52:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E0B8193EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:55:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD43F1F269BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 22:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E4F1F2720D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 22:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E39C40BF4;
-	Tue, 19 Dec 2023 22:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA053D0B6;
+	Tue, 19 Dec 2023 22:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YGxadkup"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6zZn2z3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC96940BEC;
-	Tue, 19 Dec 2023 22:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MAwg2J+eab2tticeU56XVYHeeqgeTkCX8ApI/spLR+o=; b=YGxadkupXV7DDfETbrj9rF0W8B
-	xk9uC8o7meOixhvXtiPgfToiDkMsrxYnvumZaKOaMMlTdHkmpxY5wy+3T8p7RyiaMdSeOd7mb/XrG
-	kvzgjcXk+mq/O/37+rMOaA0w5+33KWR8zKxocebBVam6BGiTNaSq7mdMybPuPisZjx/8of9U+n4ZL
-	VvE30UdYIyg+it8RYSrs2S5RW3TcJ35R0UvJsLnFnJ5KlSos2ZEcb5CcdzrAsla0X/l1B8KUQyrfz
-	PtWohRH4+LskpvatCBt3SGEoBtPy0PT706QrtrOsK61pydy5vOP8nZN0puaoe6sej/cKQYIjxVLxH
-	w2fechRA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rFiwz-003PwK-M6; Tue, 19 Dec 2023 22:52:33 +0000
-Date: Tue, 19 Dec 2023 22:52:33 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
-	tj@kernel.org, peterz@infradead.org, mathieu.desnoyers@efficios.com,
-	paulmck@kernel.org, keescook@chromium.org,
-	dave.hansen@linux.intel.com, mingo@redhat.com, will@kernel.org,
-	longman@redhat.com, boqun.feng@gmail.com, brauner@kernel.org
-Subject: Re: [PATCH 15/50] kernel/numa.c: Move logging out of numa.h
-Message-ID: <ZYIesYOHfpEi4QCr@casper.infradead.org>
-References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
- <20231216032651.3553101-1-kent.overstreet@linux.dev>
- <20231216032651.3553101-5-kent.overstreet@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222240BE2;
+	Tue, 19 Dec 2023 22:55:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1D1C433C8;
+	Tue, 19 Dec 2023 22:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703026512;
+	bh=MW5t6/exIbCttjI/uoABa/B9xpu348NYEe4YO75s+Hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t6zZn2z3m7PdGkeWMUltfF2jJFqBL6orYuCfJw1xhZ7RA25lwXFH/1pVdS4up5/e8
+	 4B1wnBM+QeQRGx3LWxmyq+L99bwdG5m4n/SOH7ysDpRzQWaSIS0RAPVM69MiAAgoOE
+	 hlBhWcWmFDk4EwA61LrkLCzGCtnPBZ5/Am0i3qUA/0yFWhahY/K36uAvaydE/RRb46
+	 kJxVzRlvDiWn/d78ZH3Gt/D6briDMOg4ITNVxWD6xuI0KfY261MHKf7Fexi0UUJLw9
+	 5RcgKa05SvuogZjIhQX7mpGSbzHy+9xVQpOQ0kvKLwUjogXRJCIf+goh1SUfud+x2J
+	 H3UzDIDFRZh7Q==
+Date: Tue, 19 Dec 2023 15:55:09 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
+	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/8] libfs: Merge encrypted_ci_dentry_ops and
+ ci_dentry_ops
+Message-ID: <20231219225509.GE38652@quark.localdomain>
+References: <20231215211608.6449-1-krisman@suse.de>
+ <20231215211608.6449-4-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,15 +51,14 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231216032651.3553101-5-kent.overstreet@linux.dev>
+In-Reply-To: <20231215211608.6449-4-krisman@suse.de>
 
-On Fri, Dec 15, 2023 at 10:26:14PM -0500, Kent Overstreet wrote:
-> diff --git a/kernel/numa.c b/kernel/numa.c
-> new file mode 100644
-> index 000000000000..c24c72f45989
-> --- /dev/null
-> +++ b/kernel/numa.c
+On Fri, Dec 15, 2023 at 04:16:03PM -0500, Gabriel Krisman Bertazi wrote:
+> +#if defined(CONFIG_FS_ENCRYPTION)
+> +	.d_revalidate = fscrypt_d_revalidate,
+> +#endif
 
-Should this be a new file or would these functions fit better in, eg,
-mempolicy.c which is already built only if CONFIG_NUMA?
+#ifdef CONFIG_FS_ENCRYPTION, since it's a bool.
+
+- Eric
 
