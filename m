@@ -1,122 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-6532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61BA81944D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 00:05:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E0D819463
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 00:12:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A6841F249AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5161F25CED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1BF3D0C7;
-	Tue, 19 Dec 2023 23:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2808B3D0C6;
+	Tue, 19 Dec 2023 23:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="GFjBVzq3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgASHxRM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D323FB21;
-	Tue, 19 Dec 2023 23:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=deXv4lVWUMilBoHHp3w75/hwr/YXbvS5EAOYrGm50ic=;
-  b=GFjBVzq3UEyJCplsoXruB0h1ovFTW98nX14OvI9oetApWxfKE7sGGgFO
-   1NjM2xaL3m+1otjrLN1wusNIqhIF21wg08GVaucCR/4Hwz+ByuKjtpl3K
-   q/exQW1D1Yw8KTlpQfMblBOQTlQHrgLuDVoTzL1huBprh/HC5+9RS//sr
-   0=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.04,289,1695679200"; 
-   d="scan'208";a="74900283"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2023 00:04:48 +0100
-Date: Wed, 20 Dec 2023 00:04:47 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Luis Chamberlain <mcgrof@kernel.org>
-cc: =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>, 
-    Joel Granados <j.granados@samsung.com>, 
-    Dan Carpenter <dan.carpenter@linaro.org>, 
-    Kees Cook <keescook@chromium.org>, 
-    "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-    Iurii Zaikin <yzaikin@google.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-In-Reply-To: <ZYIGi9Gf7oVI7ksf@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.22.394.2312192358500.3196@hadrien>
-References: <20231207104357.kndqvzkhxqkwkkjo@localhost> <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de> <20231208095926.aavsjrtqbb5rygmb@localhost> <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de> <20231212090930.y4omk62wenxgo5by@localhost>
- <ZXligolK0ekZ+Zuf@bombadil.infradead.org> <20231217120201.z4gr3ksjd4ai2nlk@localhost> <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de> <ZYC37Vco1p4vD8ji@bombadil.infradead.org> <a0d96e7b-544f-42d5-b8da-85bc4ca087a9@t-8ch.de>
- <ZYIGi9Gf7oVI7ksf@bombadil.infradead.org>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB2F3FB11;
+	Tue, 19 Dec 2023 23:12:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 448B3C433C8;
+	Tue, 19 Dec 2023 23:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703027550;
+	bh=Wg2vV1WjPN26p90HjDONXgzV+zjLmWbmNTPH4yZdHu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BgASHxRMht1yVdThzcVChIXyhaA0hmjnv6wBuco/tp02f4A+1KJQ7m9qv4WW6S8qz
+	 MS1OawxaMbqCJm1+0nEWo7J3eoYYRdVF0Cdh5rD1LzMvmB15dKWMEKq/zzBPSbdH63
+	 vsJnEa9ugDB3eNEqw1+sJjRtHCP5UNDcG7rP0TLCyzXlrjwC6X6fMcEHARf5H9RXGb
+	 x1iGrGdRYpd2VRJx1t1pyHCD+uvvi5nwt9PfKdwKITPs2jwq+OFlYhue7mjynz3X6I
+	 /icTDMy/kSXz3RVIAukQEYJMBiRj5Q59aF78KDwHhlaBlg6KbHTQDWjp/V4Z3TMFbT
+	 wfsDDmO/jBCcw==
+Date: Tue, 19 Dec 2023 16:12:22 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
+	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] Revert setting casefolding dentry operations
+ through s_d_op
+Message-ID: <20231219231222.GI38652@quark.localdomain>
+References: <20231215211608.6449-1-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231215211608.6449-1-krisman@suse.de>
 
-I came up with the following:
+On Fri, Dec 15, 2023 at 04:16:00PM -0500, Gabriel Krisman Bertazi wrote:
+> [Apologies for the quick spin of a v2.  The only difference are a couple
+> fixes to the build when CONFIG_UNICODE=n caught by LKP and detailed in
+> each patch changelog.]
+> 
+> When case-insensitive and fscrypt were adapted to work together, we moved the
+> code that sets the dentry operations for case-insensitive dentries(d_hash and
+> d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
+> wants to set d_revalidate only on some dentries, so it does it only for them in
+> d_revalidate.
+> 
+> But, case-insensitive hooks are actually set on all dentries in the filesystem,
+> so the natural place to do it is through s_d_op and let d_alloc handle it [1].
+> In addition, doing it inside the ->lookup is a problem for case-insensitive
+> dentries that are not created through ->lookup, like those coming
+> open-by-fhandle[2], which will not see the required d_ops.
+> 
+> This patchset therefore reverts to using sb->s_d_op to set the dentry operations
+> for case-insensitive filesystems.  In order to set case-insensitive hooks early
+> and not require every dentry to have d_revalidate in case-insensitive
+> filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
+> on some dentries on the fly.
+> 
+> It survives fstests encrypt and quick groups without regressions.  Based on
+> v6.7-rc1.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
+> [2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
+> 
+> Gabriel Krisman Bertazi (8):
+>   dcache: Add helper to disable d_revalidate for a specific dentry
+>   fscrypt: Drop d_revalidate if key is available
+>   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+>   libfs: Expose generic_ci_dentry_ops outside of libfs
+>   ext4: Set the case-insensitive dentry operations through ->s_d_op
+>   f2fs: Set the case-insensitive dentry operations through ->s_d_op
+>   libfs: Don't support setting casefold operations during lookup
+>   fscrypt: Move d_revalidate configuration back into fscrypt
 
-@@
-type t;
-const t *x;
-identifier y,z;
-expression a;
-assignment operator aop;
-@@
+Thanks Gabriel, this series looks good.  Sorry that we missed this when adding
+the support for encrypt+casefold.
 
-(
-  (<+...(<+...x->y...+>)[...]...+>) aop a
-|
-  (<+...(<+...x->y...+>)->z...+>) aop a
-|
-* (<+...x->y...+>) aop a
-)
+It's slightly awkward that some lines of code added by patches 5-6 are removed
+in patch 8.  These changes look very hard to split up, though, so you've
+probably done about the best that can be done.
 
-@fn disable optional_qualifier@
-identifier f,x;
-type t;
-parameter list[n] ps;
-@@
+One question/request: besides performance, the other reason we're so careful
+about minimizing when ->d_revalidate is set for fscrypt is so that overlayfs
+works on encrypted directories.  This is because overlayfs is not compatible
+with ->d_revalidate.  I think your solution still works for that, since
+DCACHE_OP_REVALIDATE will be cleared after the first call to
+fscrypt_d_revalidate(), and when checking for usupported dentries overlayfs does
+indeed check for DCACHE_OP_REVALIDATE instead of ->d_revalidate directly.
+However, that does rely on that very first call to ->d_revalidate actually
+happening before the check is done.  It would be nice to verify that
+overlayfs+fscrypt indeed continues to work, and explicitly mention this
+somewhere (I don't see any mention of overlayfs+fscrypt in the series).
 
-f(ps,t *x,...) { ... }
-
-@@
-identifier fn.f;
-expression list[fn.n] es;
-type t;
-const t *e;
-@@
-
-*f(es,e,...)
-
----------------
-
-The first rule takes care of assignments, while the remaining rules check
-function calls.
-
-This is not extensively tested and has false positives.  One case is when
-you have a->b[x->y] = 12; and it is x not a that is const.  Maybe I can
-improve it to avoid this problem.
-
-I would suggest to replace the occurrences of t by your specific type of
-interest (and then drop the occurrences type t;), to reduce the amount of
-work to be done and the chance of false positives.
-
-This is also limited in that it only works on a single file.  Thus in
-particular the last rule on function calls will only be triggered when the
-called function is defined in the same file.
-
-Despite the current limitations, maybe it will find something useful.
-
-julia
+- Eric
 
