@@ -1,151 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-6483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E0F8184AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 10:39:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951CE818549
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 11:25:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C09528337E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 09:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5071F2242E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 10:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EF81401E;
-	Tue, 19 Dec 2023 09:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96A014F9F;
+	Tue, 19 Dec 2023 10:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KuR2rHsp"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="AlEoq3cC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA53D1427F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 09:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702978765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gcH9WS2tVG3ovLiBypnFZ2jVXWEukuXIC7hmC0v5Ihs=;
-	b=KuR2rHspOaclWiHN7L4nqOfEWffJ/993sXGDOCBw8OsF9QFtfFGJPWKsKQpSkt2kQeygzC
-	FuS5m3TDaWlpAQJZZoA2cU6325tTBQrWFCDFULnvef+QD2ByQb7Tjb6DWvlPPmWcK4Ldy9
-	aToJT87g1wt5ypOKYIJg4P/QzXu4MuQ=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-j_DATWglPsSiC2heyMDmKA-1; Tue, 19 Dec 2023 04:39:24 -0500
-X-MC-Unique: j_DATWglPsSiC2heyMDmKA-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-552d60e20a1so1679949a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 01:39:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702978762; x=1703583562;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gcH9WS2tVG3ovLiBypnFZ2jVXWEukuXIC7hmC0v5Ihs=;
-        b=bxsnh3kpia+jUFLQ9vSjjlh+FmSC+PV33uDimXRqMxbPVA/TRq/pyDjrGSENvvLzyJ
-         ifwtbZQABK4M0Y2uaARDgsosNuDGbkYhaNVtt2HVGuT+qNeppHMvt1QrLGNsc5vx3ELO
-         WmN5LXNFcjACsgFoQD3YEw4DC1ZCFYMJwin3LhsaSi+d8Ac5qpG1OEk3QdKvvwlVdsUe
-         uZgO2U7qi23EBObUKl7GE4b0JefPsSquMsgSgVW9YkRM9aZhIUEN8MoUTdOLM7W3Bm/x
-         lufULpmVy8Meu66/wYJCIeLSy3Ne4BszaPywM2Af5PffIUejA4zuiRAaWWCgJc9OUjlx
-         DOOw==
-X-Gm-Message-State: AOJu0YxzDLDc9cTCg6z6xA72pCW/7JEZqt4gx34kYyKZK4K1aVN4vESh
-	/SNnFTT0SMd4fu3NR9gCoAZA5OyC0dJ6l0WlKe6NZ0nVvm+27ItBDwQnsD7ofP9MEdvDOgEqXqo
-	siw8Rjjb8Hk+E5rTddvvzTgD0vAdIdO/m9Q==
-X-Received: by 2002:a50:85cc:0:b0:551:9675:53c2 with SMTP id q12-20020a5085cc000000b00551967553c2mr5808129edh.49.1702978762222;
-        Tue, 19 Dec 2023 01:39:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEKfnNFd7LXTG5/FqkrDtnXygjq8cbwnZ4/FHh5lYrk4L380+jZTKSy80sPESk36D0Ocow0sg==
-X-Received: by 2002:a50:85cc:0:b0:551:9675:53c2 with SMTP id q12-20020a5085cc000000b00551967553c2mr5808125edh.49.1702978761947;
-        Tue, 19 Dec 2023 01:39:21 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id d32-20020a056402402000b0055380bc3b4bsm847680eda.90.2023.12.19.01.39.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Dec 2023 01:39:20 -0800 (PST)
-Message-ID: <b4c96284-1ae8-498b-84ae-34a9f65e9da8@redhat.com>
-Date: Tue, 19 Dec 2023 10:39:19 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8C114F77;
+	Tue, 19 Dec 2023 10:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1702981518; bh=atxKJG/+oOQOf1n8hjqc88GOaBMrWZfLPQjGsiRwgSg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=AlEoq3cCCXt+aNM2aKsmVzCLXrnDWDvS2w5VykAoffC/pxKn9K7Fk8n6FAoslwafe
+	 5U6TcP7VOxdwAAw8a9l+ZXs4oxnymGK5YAULKTfJvldsEHggsjNAgZ4o7bzKafCGlP
+	 kZIa6MFTzkyGDLdxtWjFyuZqYlRnZ1XX39TnbvcU=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
+	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
+	id 4C98AAE1; Tue, 19 Dec 2023 18:19:09 +0800
+X-QQ-mid: xmsmtpt1702981149t023sln67
+Message-ID: <tencent_44CA0665C9836EF9EEC80CB9E7E206DF5206@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujEmdmqzMjwNHgjylki1TMvdz8WrMzVegcBdlk2NNeYBWMItDqSi
+	 pp9rTBFNHYT6tR2W0IPBna9Z8CWlTDm2+VRenPQ7rOxHgrHXtS+ZLpoc2/Ep380ZQ2G6Kbtxm3VA
+	 TggA7n/2eJmTsl+TtpqqCTDmKmMkthyo0pFL+dj8Pt28b+LU+qhfB8t0SJnt6TIfskKMZnn7jX+E
+	 GCOXEarhSulPZKeyvH906JSoS33bTR9Cvem9wnSmvfJcMAW/kWjKdcUDnkVJKv0Zq+ruKil5qfT3
+	 qirf6QVUXnxKjyaDiigd9dIJ8bUFCigVWb92IVRypkUwQ+7IyBytDA098Pyukq2WhDoTMByMdksO
+	 nOJa4ZwMaMn9CLu+GmTIhhTXgVSmojO3JqX3otQ+lEUjB8KXG7CU5A6zOCmTa8W1h3It04mpk3kg
+	 uHWKeUueuVNqzDyqiv8FNjFE78xN8Dij4w3Weva/5TvvIWiMq1kqq8ZJm0rUtu5N+EPR4EIV35gY
+	 7vorusd1idyYrntPqZtHYZVbMdF/DdEqv4oP0LSwCaLBvw61mKOigvB20gIbIN/m2I8iBqXnFPfd
+	 RhoR7tj7p0pvDZrH1FsOVzkQhRxzxYtM72aT58IqhllRUCk+TgRukgsPNXYqUntwC7NFv+xjKBoh
+	 gO+hWARINeGkrzG1Dflr2ueVyUxN9RAJnnSZVBKSAu9jgnv43Z05dTjmdRYlheNEsvfcZaCDVsof
+	 1p4I3OSvcNPfTFeQHvVYfRjfX1yJ0zXrC5UKJYQip3sa2ZTCEG3MoSbp1lncHuajzQ+oCFToghLO
+	 jai+zsOUQtgX2SRo8r+Rv6/JKpUV6FqUjhQBzZeAdX3m3sHsat6OEhRB3p+hXQ7TTtT/gES7W64n
+	 4G5+U8IdqeEAALVyMoRHjPeK3HzX3QEhOb8MeIJyCjyjJQr9AK10YKRCmdO2IE+ujIrvAZg4Rp3c
+	 A//KQWZGbxovH5miC0pA==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+33f23b49ac24f986c9e8@syzkaller.appspotmail.com
+Cc: clm@fb.com,
+	daniel@iogearbox.net,
+	dsterba@suse.com,
+	john.fastabend@gmail.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujian56@huawei.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] btrfs: fix oob Read in getname_kernel
+Date: Tue, 19 Dec 2023 18:19:10 +0800
+X-OQ-MSGID: <20231219101909.2058476-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <000000000000d1a1d1060cc9c5e7@google.com>
+References: <000000000000d1a1d1060cc9c5e7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vboxsf: Remove usage of the deprecated ida_simple_xx()
- API
-Content-Language: en-US, nl
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+If ioctl does not pass in the correct tgtdev_name string, oob will occur because
+"\0" cannot be found.
 
-On 12/19/23 06:17, Christophe JAILLET wrote:
-> ida_alloc() and ida_free() should be preferred to the deprecated
-> ida_simple_get() and ida_simple_remove().
-> 
-> This is less verbose.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reported-and-tested-by: syzbot+33f23b49ac24f986c9e8@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/btrfs/dev-replace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-vboxsf is not really undergoing any active development,
-if there is a tree which is collecting other ida related
-patches feel free to route this through that tree.
-
-Regards,
-
-Hans
-
-
-
-
-
-
-
-> ---
->  fs/vboxsf/super.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 1fb8f4df60cb..cd8486bc91bd 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -155,7 +155,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		}
->  	}
->  
-> -	sbi->bdi_id = ida_simple_get(&vboxsf_bdi_ida, 0, 0, GFP_KERNEL);
-> +	sbi->bdi_id = ida_alloc(&vboxsf_bdi_ida, GFP_KERNEL);
->  	if (sbi->bdi_id < 0) {
->  		err = sbi->bdi_id;
->  		goto fail_free;
-> @@ -221,7 +221,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  	vboxsf_unmap_folder(sbi->root);
->  fail_free:
->  	if (sbi->bdi_id >= 0)
-> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
-> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
->  	idr_destroy(&sbi->ino_idr);
-> @@ -268,7 +268,7 @@ static void vboxsf_put_super(struct super_block *sb)
->  
->  	vboxsf_unmap_folder(sbi->root);
->  	if (sbi->bdi_id >= 0)
-> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
-> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
->  
+diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+index f9544fda38e9..e7e96e57f682 100644
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -730,7 +730,7 @@ static int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
+ int btrfs_dev_replace_by_ioctl(struct btrfs_fs_info *fs_info,
+ 			    struct btrfs_ioctl_dev_replace_args *args)
+ {
+-	int ret;
++	int ret, len;
+ 
+ 	switch (args->start.cont_reading_from_srcdev_mode) {
+ 	case BTRFS_IOCTL_DEV_REPLACE_CONT_READING_FROM_SRCDEV_MODE_ALWAYS:
+@@ -740,8 +740,10 @@ int btrfs_dev_replace_by_ioctl(struct btrfs_fs_info *fs_info,
+ 		return -EINVAL;
+ 	}
+ 
++	len = strnlen(args->start.tgtdev_name, BTRFS_DEVICE_PATH_NAME_MAX + 1);
+ 	if ((args->start.srcdevid == 0 && args->start.srcdev_name[0] == '\0') ||
+-	    args->start.tgtdev_name[0] == '\0')
++	    args->start.tgtdev_name[0] == '\0' ||
++	    len == BTRFS_DEVICE_PATH_NAME_MAX + 1)
+ 		return -EINVAL;
+ 
+ 	ret = btrfs_dev_replace_start(fs_info, args->start.tgtdev_name,
+-- 
+2.43.0
 
 
