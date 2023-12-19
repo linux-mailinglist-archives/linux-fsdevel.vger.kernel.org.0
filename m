@@ -1,177 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-6505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F82818C64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 17:37:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 814F8818C60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 17:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5168828700D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 16:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6DF28768C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 16:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14DB20308;
-	Tue, 19 Dec 2023 16:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1191DA51;
+	Tue, 19 Dec 2023 16:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="LF3T0ljI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJt4o73u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF4820B0E;
-	Tue, 19 Dec 2023 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=LPla4BPCxFuMZp7s1ug6GdCl5VcC7lT2V96cyQeZGsE=; b=LF3T0ljI6xKgd1+CdbT3Z0Oz89
-	GhRtrtYsWw6W7ArHJCApfzpMhnyIKFHjyjc1eNChPSTePLUBFdjnnLoSv4QVb44u4S/TegPyJE4Vz
-	tkHUkAWE58vvCaXAR1PKXNvZJIpFGfKL7uh4lfhLH4oEUtn+BL/RplI39O8aEeJDsAnns37z3MPzX
-	kkgJjCWZAqFFjnmofAwlyJAxgXTYIXt/59U/evzbKVBfq2jKXs++l/pzdFjorpGekDmxS7wJZERrH
-	epNwNiblQ34e6QX/pK8xafgtPoYtUzIZRzkVcPSC2YF/C47VvHU5yUl4/u9Tz8+CPkda0XmmVyRYo
-	ozeCuj4A==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1rFd5E-0008Lv-6e; Tue, 19 Dec 2023 17:36:40 +0100
-Received: from [85.1.206.226] (helo=linux.home)
-	by sslproxy03.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1rFd5D-000QmO-GN; Tue, 19 Dec 2023 17:36:39 +0100
-Subject: Re: pull-request: bpf-next 2023-12-18
-To: Christian Brauner <brauner@kernel.org>,
- Linus Torvalds <torvalds@linuxfoundation.org>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>, andrii@kernel.org
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, peterz@infradead.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, kernel-team@fb.com, linux-fsdevel@vger.kernel.org
-References: <20231219000520.34178-1-alexei.starovoitov@gmail.com>
- <CAHk-=wg7JuFYwGy=GOMbRCtOL+jwSQsdUaBsRWkDVYbxipbM5A@mail.gmail.com>
- <20231219-kinofilm-legen-305bd52c15db@brauner>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <8533dc25-1cfe-bc0c-98e2-3db1b1c5c72d@iogearbox.net>
-Date: Tue, 19 Dec 2023 17:36:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C1E1D54D;
+	Tue, 19 Dec 2023 16:36:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1049C433C9;
+	Tue, 19 Dec 2023 16:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703003806;
+	bh=6ZE1ZWL+Q3XfV/BNZf6ItPtOJDRd9vjSskX9Wb4d1fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BJt4o73uXCVxhYQStzPU9GZ1T2dfQ3ZN7KI957oAJIJPYoUaDpj3yIVuBPHCTXnIK
+	 /Xc0owDprCquptYak5XeHWW5j9cpk/0QRoflm4AZoma9e/TvdY4Mhawi32F2agDak1
+	 SATdmuFIaoFQxTgdHuWoJn7bjvx5FQ9DkHQUu3a/1Ts2gipvDwU5/Hz0HItXRA6VSI
+	 X7hfa1jGH03H5jt7d9Vb/1i9+FWl1iiDZELXcWM5f8UsFwIP5M3EXc51MofTvlu8e1
+	 Dkt8tYS5avfmmKFJ3H1BMDE90ip0gGZ7M+9Cs5U34IIsUcTrBEoDPylFilgDsADnW7
+	 GT0VdOq+XCj/Q==
+Date: Tue, 19 Dec 2023 09:36:44 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org,
+	tj@kernel.org, peterz@infradead.org, mathieu.desnoyers@efficios.com,
+	paulmck@kernel.org, keescook@chromium.org,
+	dave.hansen@linux.intel.com, mingo@redhat.com, will@kernel.org,
+	longman@redhat.com, boqun.feng@gmail.com, brauner@kernel.org
+Subject: Re: [PATCH 15/50] kernel/numa.c: Move logging out of numa.h
+Message-ID: <20231219163644.GA345795@dev-arch.thelio-3990X>
+References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
+ <20231216032651.3553101-1-kent.overstreet@linux.dev>
+ <20231216032651.3553101-5-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20231219-kinofilm-legen-305bd52c15db@brauner>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27128/Tue Dec 19 10:36:48 2023)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231216032651.3553101-5-kent.overstreet@linux.dev>
 
-On 12/19/23 11:23 AM, Christian Brauner wrote:
-> On Mon, Dec 18, 2023 at 05:11:23PM -0800, Linus Torvalds wrote:
->> On Mon, 18 Dec 2023 at 16:05, Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->>>
->>> 2) Introduce BPF token object, from Andrii Nakryiko.
->>
->> I assume this is why I and some other unusual recipients are cc'd,
->> because the networking people feel like they can't judge this and
->> shouldn't merge non-networking code like this.
->>
->> Honestly, I was told - and expected - that this part would come in a
->> branch of its own, so that it would be sanely reviewable.
->>
->> Now it's mixed in with everything else.
->>
->> This is *literally* why we have branches in git, so that people can
->> make more independent changes and judgements, and so that we don't
->> have to be in a situation where "look, here's ten different things,
->> pull it all or nothing".
->>
->> Many of the changes *look* like they are in branches, but they've been
->> the "fake branches" that are just done as "patch series in a branch,
->> with the cover letter as the merge message".
->>
->> Which is great for maintaining that cover letter information and a
->> certain amount of historical clarity, but not helpful AT ALL for the
->> "independent changes" thing when it is all mixed up in history, where
->> independent things are mostly serialized and not actually independent
->> in history at all.
->>
->> So now it appears to be one big mess, and exactly that "all or
->> nothing" thing that isn't great, since the whole point was that the
->> networking people weren't comfortable with the reviewing filesystem
->> side.
->>
->> And honestly, the bpf side *still* seems to be absolutely conbfused
->> and complkete crap when it comes to file descriptors.
->>
->> I took a quick look, and I *still* see new code being introduced there
->> that thinks that file descriptor zero is special, and we tols you a
->> *year* ago that that wasn't true, and that you need to fix this.
->>
->> I literally see complete garbage like tghis:
->>
->>          ..
->>          __u32 btf_token_fd;
->>          ...
->>          if (attr->btf_token_fd) {
->>                  token = bpf_token_get_from_fd(attr->btf_token_fd);
->>
->> and this is all *new* code that makes that same bogus sh*t-for-brains
->> mistake that was wrong the first time.
->>
->> So now I'm saying NAK. Enough is enough.  No more of this crazy "I
->> don't understand even the _basics_ of file descriptors, and yet I'm
->> introducing new random interfaces".
->>
->> I know you thought fd zero was something invalid. You were told
->> otherwise. Apparently you just ignored being wrong, and have decided
->> to double down on being wrong.
->>
->> We don't take this kind of flat-Earther crap.
->>
->> File descriptors don't start at 1. Deal with reality. Stop making the
->> same mistake over and over. If you ant to have a "no file descriptor"
->> flag, you use a signed type, and a signed value for that, because file
->> descriptor zero is perfectly valid, and I don't want to hear any more
->> uninformed denialism.
->>
->> Stop polluting the kernel with incorrect assumptions.
->>
->> So yes, I will keep NAK'ing this until this kind of fundamental
->> mistake is fixed. This is not rocket science, and this is not
->> something that wasn't discussed before. Your ignorance has now turned
->> from "I didn't know" to "I didn 't care", and at that point I really
->> don't want to see new code any more.
+On Fri, Dec 15, 2023 at 10:26:14PM -0500, Kent Overstreet wrote:
+> Moving these stub functions to a .c file means we can kill a sched.h
+> dependency on printk.h.
 > 
-> Alexei, Andrii, this is a massive breach of trust and flatout
-> disrespectful. I barely reword mails and believe me I've reworded this
-> mail many times. I'm furious.
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  include/linux/numa.h | 18 +++++-------------
+>  kernel/Makefile      |  1 +
+>  kernel/numa.c        | 24 ++++++++++++++++++++++++
+>  3 files changed, 30 insertions(+), 13 deletions(-)
+>  create mode 100644 kernel/numa.c
 > 
-> Over the last couple of months since LSFMM in May 2023 until almost last
-> week I've given you extensive design and review for this whole approach
-> to get this into even remotely sane shape from a VFS perspective.
+> diff --git a/include/linux/numa.h b/include/linux/numa.h
+> index a904861de800..aeab3d9f57ae 100644
+> --- a/include/linux/numa.h
+> +++ b/include/linux/numa.h
+> @@ -22,34 +22,26 @@
+>  #endif
+>  
+>  #ifdef CONFIG_NUMA
+> -#include <linux/printk.h>
+>  #include <asm/sparsemem.h>
+>  
+>  /* Generic implementation available */
+>  int numa_nearest_node(int node, unsigned int state);
+>  
+>  #ifndef memory_add_physaddr_to_nid
+> -static inline int memory_add_physaddr_to_nid(u64 start)
+> -{
+> -	pr_info_once("Unknown online node for memory at 0x%llx, assuming node 0\n",
+> -			start);
+> -	return 0;
+> -}
+> +int memory_add_physaddr_to_nid(u64 start);
+>  #endif
+> +
+>  #ifndef phys_to_target_node
+> -static inline int phys_to_target_node(u64 start)
+> -{
+> -	pr_info_once("Unknown target node for memory at 0x%llx, assuming node 0\n",
+> -			start);
+> -	return 0;
+> -}
+> +int phys_to_target_node(u64 start);
+>  #endif
+> +
+>  #ifndef numa_fill_memblks
+>  static inline int __init numa_fill_memblks(u64 start, u64 end)
+>  {
+>  	return NUMA_NO_MEMBLK;
+>  }
+>  #endif
+> +
+>  #else /* !CONFIG_NUMA */
+>  static inline int numa_nearest_node(int node, unsigned int state)
+>  {
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 3947122d618b..ce105a5558fc 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -114,6 +114,7 @@ obj-$(CONFIG_SHADOW_CALL_STACK) += scs.o
+>  obj-$(CONFIG_HAVE_STATIC_CALL) += static_call.o
+>  obj-$(CONFIG_HAVE_STATIC_CALL_INLINE) += static_call_inline.o
+>  obj-$(CONFIG_CFI_CLANG) += cfi.o
+> +obj-$(CONFIG_NUMA) += numa.o
+>  
+>  obj-$(CONFIG_PERF_EVENTS) += events/
+>  
+> diff --git a/kernel/numa.c b/kernel/numa.c
+> new file mode 100644
+> index 000000000000..c24c72f45989
+> --- /dev/null
+> +++ b/kernel/numa.c
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +#include <linux/printk.h>
+> +#include <linux/numa.h>
+> +
+> +/* Stub functions: */
+> +
+> +#ifndef memory_add_physaddr_to_nid
+> +int memory_add_physaddr_to_nid(u64 start)
+> +{
+> +	pr_info_once("Unknown online node for memory at 0x%llx, assuming node 0\n",
+> +			start);
+> +	return 0;
+> +}
+> +#endif
+> +
+> +#ifndef phys_to_target_node
+> +int phys_to_target_node(u64 start)
+> +{
+> +	pr_info_once("Unknown target node for memory at 0x%llx, assuming node 0\n",
+> +			start);
+> +	return 0;
+> +}
+> +#endif
+> -- 
+> 2.43.0
 > 
-> The VFS maintainers including Linus have explicitly NAKed this "zero is
-> not a valid fd nonsense" and told you to stop doing that. We told you
-> that such fundamental VFS semantics are not yours to decide.
-> 
-> And yet you put a patch into a series that did exactly that and then had
-> the unbelievable audacity to repeatedly ask me to put my ACK under this
-> - both in person and on list.
-> 
-> I'm glad I only gave my ACK to the two patches that I extensivly
-> reviewed and never to the whole series.
 
-Sincere apologies for this whole mess. All token series related patches
-have been reverted in bpf-next now, and I'm prepping a PR for net-next
-so that this is also fully removed from there.
+These need EXPORT_SYMBOL_GPL() now like the architecture specific
+implementations because they are no longer inlined. My arm64 builds fail
+with:
 
-Thanks,
-Daniel
+  ERROR: modpost: "memory_add_physaddr_to_nid" [drivers/acpi/nfit/nfit.ko] undefined!
+  ERROR: modpost: "phys_to_target_node" [drivers/acpi/nfit/nfit.ko] undefined!
+  ERROR: modpost: "memory_add_physaddr_to_nid" [drivers/virtio/virtio_mem.ko] undefined!
+  ERROR: modpost: "phys_to_target_node" [drivers/dax/dax_cxl.ko] undefined!
+  ERROR: modpost: "memory_add_physaddr_to_nid" [drivers/dax/dax_cxl.ko] undefined!
+  ERROR: modpost: "phys_to_target_node" [drivers/cxl/cxl_acpi.ko] undefined!
+  ERROR: modpost: "memory_add_physaddr_to_nid" [drivers/cxl/cxl_pmem.ko] undefined!
+  ERROR: modpost: "phys_to_target_node" [drivers/cxl/cxl_pmem.ko] undefined!
+  ERROR: modpost: "memory_add_physaddr_to_nid" [drivers/hv/hv_balloon.ko] undefined!
+
+Cheers,
+Nathan
 
