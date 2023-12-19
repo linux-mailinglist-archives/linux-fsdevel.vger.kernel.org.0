@@ -1,150 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-6496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80371818A1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 15:36:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DC3818A27
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 15:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1472928A584
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 14:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 482CC1C21516
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 14:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D6D208BC;
-	Tue, 19 Dec 2023 14:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B001CA88;
+	Tue, 19 Dec 2023 14:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZACObj+l"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zodlag+0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F3B2E3E3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 14:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702996322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fcH5mhNCfy4Npx8m9bnDGoyerhb2vmsJtBvMFIY3PE4=;
-	b=ZACObj+l4w7skWKmFjJ3e5SzDrq0EGk0kfsjaxEXQEJXxM390+ahrlC3d8T+QfJSVo7vT2
-	B2g20LvVIZ2ZEvzghRi/Tco6g36jPgFFucfzddBSKqQMpjyU1h6syyQKsiLhiRPuegovvh
-	p7y0SIY3+RccdI+AXtTge7PQcPvnlqo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-E3lE2-3DM7eN9FhE4GCjsQ-1; Tue, 19 Dec 2023 09:31:58 -0500
-X-MC-Unique: E3lE2-3DM7eN9FhE4GCjsQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A58A6101AA4D;
-	Tue, 19 Dec 2023 14:31:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.195.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id A72882166B31;
-	Tue, 19 Dec 2023 14:31:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <367107fa03540f7ddd2e8de51c751348bd7eb42c.camel@kernel.org>
-References: <367107fa03540f7ddd2e8de51c751348bd7eb42c.camel@kernel.org> <20231213152350.431591-1-dhowells@redhat.com> <20231213152350.431591-13-dhowells@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: dhowells@redhat.com, Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/39] netfs: Add iov_iters to (sub)requests to describe various buffers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3A91B29E;
+	Tue, 19 Dec 2023 14:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702996460; x=1734532460;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=/XNQlqMP1ii8IkFRiQLOMuoNmOBV0HJGKqUTMOklGRM=;
+  b=Zodlag+016PU53gcJAq8RUUervQDR5ocJ5KBqCswLznpz/qBuDPyeXv5
+   hxMZGBa66HiX0kOrQheDaqYtUaVSI69tCarcrvDn3whPYDvtp3CHC5ECz
+   5AV8RNXnT68DrLvxeodO54F5rKK8hJKENqkY3LZiGqTKjG/WYZwkf9eKn
+   Fc4/TfSZMSekQZRqTPNrR6HihPh9OuUwlCiKoUnp3QgZ2Hz2IIVdtcaON
+   8VWHFx0dyriPtjNtTPmWDWAALS9wPYd7Nmfpkp/kn0mYfYwWHvQQA7Htv
+   YJbGdsKR5g72H9acPK3cXfADimekcPagKEv/sGBWxSPAGEOg3F3zPpyCd
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10929"; a="395395592"
+X-IronPort-AV: E=Sophos;i="6.04,288,1695711600"; 
+   d="scan'208";a="395395592"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2023 06:34:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10929"; a="1107367757"
+X-IronPort-AV: E=Sophos;i="6.04,288,1695711600"; 
+   d="scan'208";a="1107367757"
+Received: from vvpatel-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.209.174.186])
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2023 06:34:01 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, hu1.chen@intel.com,
+ miklos@szeredi.hu, malini.bhandaru@intel.com, tim.c.chen@intel.com,
+ mikko.ylinen@intel.com, lizhen.you@intel.com,
+ linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, David Howells <dhowells@redhat.com>, Seth
+ Forshee <sforshee@kernel.org>
+Subject: Re: [RFC] HACK: overlayfs: Optimize overlay/restore creds
+In-Reply-To: <CAOQ4uxibYMQw0iszKhE5uxBnyayHWjqp4ZnOOiugO3GxMRS1eA@mail.gmail.com>
+References: <CAOQ4uxg-WvdcuCrQg7zp03ocNZoT-G2bpi=Y6nVxMTodyFAUbg@mail.gmail.com>
+ <20231214220222.348101-1-vinicius.gomes@intel.com>
+ <CAOQ4uxhJmjeSSM5iQyDadbj5UNjPqvh1QPLpSOVEYFbNbsjDQQ@mail.gmail.com>
+ <87v88zp76v.fsf@intel.com>
+ <CAOQ4uxiCVv7zbfn2BPrR9kh=DvGxQtXUmRvy2pDJ=G7rxjBrgg@mail.gmail.com>
+ <CAOQ4uxhxvFt3_Wb3BGcjj4pGp=OFTBHNPJ4r4eH8245t-+CW+g@mail.gmail.com>
+ <20231218-intim-lehrstellen-dbe053d6c3a8@brauner>
+ <875y0vp41g.fsf@intel.com>
+ <CAOQ4uxibYMQw0iszKhE5uxBnyayHWjqp4ZnOOiugO3GxMRS1eA@mail.gmail.com>
+Date: Tue, 19 Dec 2023 06:33:59 -0800
+Message-ID: <87le9qntwo.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <488522.1702996313.1@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 19 Dec 2023 14:31:53 +0000
-Message-ID: <488523.1702996313@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Jeff Layton <jlayton@kernel.org> wrote:
+Amir Goldstein <amir73il@gmail.com> writes:
 
-> > @@ -408,6 +417,10 @@ int netfs_write_begin(struct netfs_inode *ctx,
-> >  	ractl._nr_pages =3D folio_nr_pages(folio);
-> >  	netfs_rreq_expand(rreq, &ractl);
-> >  =
+> On Mon, Dec 18, 2023 at 11:57=E2=80=AFPM Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+>>
+>> Christian Brauner <brauner@kernel.org> writes:
+>>
+>> >> > Yes, the important thing is that an object cannot change
+>> >> > its non_refcount property during its lifetime -
+>> >>
+>> >> ... which means that put_creds_ref() should assert that
+>> >> there is only a single refcount - the one handed out by
+>> >> prepare_creds_ref() before removing non_refcount or
+>> >> directly freeing the cred object.
+>> >>
+>> >> I must say that the semantics of making a non-refcounted copy
+>> >> to an object whose lifetime is managed by the caller sounds a lot
+>> >> less confusing to me.
+>> >
+>> > So can't we do an override_creds() variant that is effectively just:
+>
+> Yes, I think that we can....
+>
+>> >
+>> > /* caller guarantees lifetime of @new */
+>> > const struct cred *foo_override_cred(const struct cred *new)
+>> > {
+>> >       const struct cred *old =3D current->cred;
+>> >       rcu_assign_pointer(current->cred, new);
+>> >       return old;
+>> > }
+>> >
+>> > /* caller guarantees lifetime of @old */
+>> > void foo_revert_creds(const struct cred *old)
+>> > {
+>> >       const struct cred *override =3D current->cred;
+>> >       rcu_assign_pointer(current->cred, old);
+>> > }
+>> >
+>
+> Even better(?), we can do this in the actual guard helpers to
+> discourage use without a guard:
+>
+> struct override_cred {
+>         struct cred *cred;
+> };
+>
+> DEFINE_GUARD(override_cred, struct override_cred *,
+>             override_cred_save(_T),
+>             override_cred_restore(_T));
+>
+> ...
+>
+> void override_cred_save(struct override_cred *new)
+> {
+>         new->cred =3D rcu_replace_pointer(current->cred, new->cred, true);
+> }
+>
+> void override_cred_restore(struct override_cred *old)
+> {
+>         rcu_assign_pointer(current->cred, old->cred);
+> }
+>
+>> > Maybe I really fail to understand this problem or the proposed solutio=
+n:
+>> > the single reference that overlayfs keeps in ovl->creator_cred is tied
+>> > to the lifetime of the overlayfs superblock, no? And anyone who needs a
+>> > long term cred reference e.g, file->f_cred will take it's own reference
+>> > anyway. So it should be safe to just keep that reference alive until
+>> > overlayfs is unmounted, no? I'm sure it's something quite obvious why
+>> > that doesn't work but I'm just not seeing it currently.
+>>
+>> My read of the code says that what you are proposing should work. (what
+>> I am seeing is that in the "optimized" cases, the only practical effect
+>> of override/revert is the rcu_assign_pointer() dance)
+>>
+>> I guess that the question becomes: Do we want this property (that the
+>> 'cred' associated with a subperblock/similar is long lived and the
+>> "inner" refcount can be omitted) to be encoded in the constructor? Or do
+>> we want it to be "encoded" in a call by call basis?
+>>
+>
+> Neither.
+>
+> Christian's proposal does not involve marking the cred object as
+> long lived, which looks a much better idea to me.
+>
 
-> > +	/* Set up the output buffer */
-> > +	iov_iter_xarray(&rreq->iter, ITER_DEST, &mapping->i_pages,
-> > +			rreq->start, rreq->len);
-> =
+In my mind, I am reading his suggestion as the flag "long lived
+cred/lives long enough" is "in our brains" vs. what I proposed that the
+flag was "in the object". The effect of the "flag" is the same: when to
+use a lighter version (no refcount) of override/revert.
 
-> Should the above be ITER_SOURCE ?
+What I was thinking was more more under the covers, implicit. And I can
+see the advantages of having them more explicit.
 
-No - we're in ->write_begin() and are prefetching.  If you look in the cod=
-e,
-there's a netfs_begin_read() call a few lines below.  The output buffer fo=
-r
-the read is the page we're going to write into.
+> The performance issues you observed are (probably) due to get/put
+> of cred refcount in the helpers {override,revert}_creds().
+>
 
-Note that netfs_write_begin() should be considered deprecated as the whole
-perform_write thing will get replaced.
+Yes, they are. Sorry that it was lost in the context. The original
+report is here:
 
-> > @@ -88,6 +78,11 @@ static void netfs_read_from_server(struct netfs_io_=
-request *rreq,
-> >  				   struct netfs_io_subrequest *subreq)
-> >  {
-> >  	netfs_stat(&netfs_n_rh_download);
-> > +	if (iov_iter_count(&subreq->io_iter) !=3D subreq->len - subreq->tran=
-sferred)
-> > +		pr_warn("R=3D%08x[%u] ITER PRE-MISMATCH %zx !=3D %zx-%zx %lx\n",
-> > +			rreq->debug_id, subreq->debug_index,
-> > +			iov_iter_count(&subreq->io_iter), subreq->len,
-> > +			subreq->transferred, subreq->flags);
-> =
+https://lore.kernel.org/all/20231018074553.41333-1-hu1.chen@intel.com/
 
-> pr_warn is a bit alarmist, esp given the cryptic message.  Maybe demote
-> this to INFO or DEBUG?
-> =
+> Christian suggested lightweight variants of {override,revert}_creds()
+> that do not change refcount. Combining those with a guard and
+> I don't see what can go wrong (TM).
+>
+> If you try this out and post a patch, please be sure to include the
+> motivation for the patch along with performance numbers in the
+> commit message, even if only posting an RFC patch.
+>
 
-> Does this indicate a bug in the client or that the server is sending us
-> malformed frames?
+Of course.
 
-Good question.  The network filesystem updated subreq->transferred to indi=
-cate
-it had transferred X amount of data, but the iterator had been updated to
-indicate Y amount of data was transferred.  They really ought to match as =
-it
-may otherwise indicate an underrun (and potential leakage of old data).
-Overruns are less of a problem since the iterator would have to 'go negati=
-ve'
-as it were.
+And to be sure, I will go with Christian's suggestion, it looks neat,
+and having a lighter version of references is a more common idiom.
 
-However, it might be better just to leave io_iter unchecked since we end u=
-p
-resetting it anyway each time we reinvoke the ->issue_read() op.  It's alw=
-ays
-possible that it will get copied and a different iterator get passed to th=
-e
-network layer or cache fs - and so the change to the iterator then has to =
-be
-manually propagated just to avoid the warning.
+Thank you all.
 
-David
 
+Cheers,
+--=20
+Vinicius
 
