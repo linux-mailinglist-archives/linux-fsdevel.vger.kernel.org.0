@@ -1,95 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-6491-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6492-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05CE8188CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 14:44:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D0281897F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 15:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74673B22292
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 13:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583EB1F25010
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 14:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1814F19BD9;
-	Tue, 19 Dec 2023 13:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6D0Qy0h"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC31D556;
+	Tue, 19 Dec 2023 14:12:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7217F199AD;
-	Tue, 19 Dec 2023 13:44:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D88C433C8;
-	Tue, 19 Dec 2023 13:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702993442;
-	bh=85MC7cgpkPCUWh0/C8WDuOGLM+4AcByal2VMdxrQAf4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g6D0Qy0hJsH5qNmaB5hjpTpOng9pk2ajAjDXQIE1fZrJ61OPW3n3K6uK4Ie9Zst+P
-	 BaIDxQtmvsIaDm7M90FXjJaXBDBw3MXjONSNwJTMB1qwT2Ccc/6VqWNS19KaDI7fjm
-	 Kzpsb+yO2mvUrJtvf0Wwce68JIliTG5gNGF+UyBY0Uloi+pJhOXDxOQwNXu5PaU8aL
-	 KpnA5Gh0VS4WoakXZxKYH+HBv5aIxU4kIU9lLXkp9saf9D+e2agt2Att0iwqd92bMS
-	 NXDVXq2mO9S8g8NSi6tLYNuPfIfmFKPMQtA9UbdqecqsPHvg9GAFNiOLd05Oh+sreB
-	 92hv7+lSTSQOQ==
-Date: Tue, 19 Dec 2023 14:43:53 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: Michael =?utf-8?B?V2Vpw58=?= <michael.weiss@aisec.fraunhofer.de>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Quentin Monnet <quentin@isovalent.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, gyroidos@aisec.fraunhofer.de
-Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
- non-initial userns
-Message-ID: <20231219-gebaggert-felgen-279a8e8716a8@brauner>
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de>
- <20231215-golfanlage-beirren-f304f9dafaca@brauner>
- <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
- <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner>
- <20231215-eiern-drucken-69cf4780d942@brauner>
- <20231218170916.cd319dbcf83f2dd7da24e48f@canonical.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4101D528;
+	Tue, 19 Dec 2023 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Vyr8ugS_1702994833;
+Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Vyr8ugS_1702994833)
+          by smtp.aliyun-inc.com;
+          Tue, 19 Dec 2023 22:07:14 +0800
+Message-ID: <c194c632-5bf9-40ec-ab3b-6ebbd9f199fa@linux.alibaba.com>
+Date: Tue, 19 Dec 2023 22:07:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231218170916.cd319dbcf83f2dd7da24e48f@canonical.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: fix arithmetic for max_prop_frac when setting
+ max_ratio
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+Cc: shr@devkernel.io, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20231219024246.65654-1-jefflexu@linux.alibaba.com>
+ <20231219024246.65654-3-jefflexu@linux.alibaba.com>
+ <ZYEWyn5g/jG/ixMk@casper.infradead.org>
+ <5460aaf1-44f6-475f-b980-cb9058cc1df4@linux.alibaba.com>
+ <ZYGUOslxxwe1sNzR@casper.infradead.org>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <ZYGUOslxxwe1sNzR@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> The only thing that is not clear to me about the sb_device_access hook is, what we can check inside it practically?
-> Yes, we have an access to struct super_block, but at this point this structure is not filled with anything useful. We only
-> can determine a filesystem type and that's all. It means that we can use this hook as a flag that says "ok, we do care about device permissions,
-> kernel, please do not set SB_I_NODEV for us". Am I correct?
 
-What the the LSM needs to definitely know is what filesystem type and
-what user namespace are relevant. Because this whole thing is mostly
-interesting for the != init_user_ns case here.
 
-And both things are already present at that point in time (Technically,
-kernfs stuff can be a bit different but kernfs stuff does have
-SB_I_NODEV unconditionally so it really doesn't matter.).The thing is
-though that you want device access settled as soon as possible when the
-superblock isn't yet exposed anywhere. And for that alloc_super() is
-pretty convenient. Then you don't have to put much thought into it.
+On 12/19/23 9:01 PM, Matthew Wilcox wrote:
+> On Tue, Dec 19, 2023 at 01:58:21PM +0800, Jingbo Xu wrote:
+>> On 12/19/23 12:06 PM, Matthew Wilcox wrote:
+>>> On Tue, Dec 19, 2023 at 10:42:46AM +0800, Jingbo Xu wrote:
+>>>>  	} else {
+>>>>  		bdi->max_ratio = max_ratio;
+>>>> -		bdi->max_prop_frac = (FPROP_FRAC_BASE * max_ratio) / 100;
+>>>> +		bdi->max_prop_frac = div64_u64(FPROP_FRAC_BASE * max_ratio,
+>>>> +					       100 * BDI_RATIO_SCALE);
+>>>>  	}
+>>>
+>>> Why use div64_u64 here?
+>>>
+>>> FPROP_FRAC_BASE is an unsigned long.  max_ratio is an unsigned int, so
+>>> the numerator is an unsigned long.  BDI_RATIO_SCALE is 10,000, so the
+>>> numerator is an unsigned int.  There's no 64-bit arithmetic needed here.
+>>
+>> Yes, div64_u64() is actually not needed here. So it seems
+>>
+>> bdi->max_prop_frac = FPROP_FRAC_BASE * max_ratio / 100 / BDI_RATIO_SCALE;
+>>
+>> is adequate?
+> 
+> I'd rather spell that as:
+> 
+> 		bdi->max_prop_frac = (FPROP_FRAC_BASE * max_ratio) /
+> 					(100 * BDI_RATIO_SCALE);
+> 
+> It's closer to how you'd write it out mathematically and so it reads
+> more easily.  At least for me.
 
-But we can always move the hook to another place. It's also feasible to
-do this in vfs_get_tree() for example and provide the fs_context but
-again. I don't see why we need to do this now.
+Thanks, I would send v3 soon.
+
+-- 
+Thanks,
+Jingbo
 
