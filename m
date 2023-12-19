@@ -1,505 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-6436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6390A817E5D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 01:04:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758B3817E68
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 01:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99371F2380A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 00:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459781C22EFD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 00:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57601290C;
-	Tue, 19 Dec 2023 00:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="SsANYjcm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="01wsgYC0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD9710E5;
+	Tue, 19 Dec 2023 00:08:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EDD468F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 00:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id BAD965C03AF;
-	Mon, 18 Dec 2023 19:03:54 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 18 Dec 2023 19:03:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1702944234;
-	 x=1703030634; bh=b3vT3hfBf8LJG4qtnSO2vS3S/pp1ewrwC7qvowKOKAI=; b=
-	SsANYjcm7DUBNYzJ0BkuRAQzp2LxDshkkzEv1bBAvg0GqhVflCiNlHbR1MIjqwV1
-	s2I476PHl8Hq3WpaoBTh5l9k9NGK7YJ9AzHKfwaFIi7FtYhlvmhbkmHBDL7bxbjH
-	iRmX6qlcxGi2H4lQcon5uRC4fb2go/z4g/py42zDDsqGanaFdrPbW68HNRgX8S4a
-	+PRfBfWlXq+yksp6V2dxqjY4JVbjg2zPGig8wmFWPbaNb/4gSWu+344OdLA5fjL0
-	dLBtve2dbhOeoEAcOM4/3KKyzM7a5YALXE9oATEbdjuWc2Ji/lPNnG9zYzP5S+/p
-	Uz4VJA56mehy70efEc2Cjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1702944234; x=
-	1703030634; bh=b3vT3hfBf8LJG4qtnSO2vS3S/pp1ewrwC7qvowKOKAI=; b=0
-	1wsgYC0OFmRKIZM/ke3mlq35ryyBzNH09lFOds29/DZgzs8lzlK7Zu3v5+MQUA4e
-	rtvI/symSa4OPo91b2lO8XC/Qzlw8XLpfhk6fg55a/MOT6cY+o6i3NU/Huxz0WQN
-	6unvluPG7R9kBvRfuMikIG8D2oBhym2DH/7DtsGXgk+GD1V755i3xnlq4EougFvU
-	MMJn803YET5HQc/M5O1nXKJpLR+0D+TrlKsev2nZlFiBPiie4EP1umqAHzmAPhFL
-	2Vd1cbZDkrMsz4C7ICy7R4emXMCvlp7YSf+R67JS1Q8X5JQcKALQ7Lojesi4vjmS
-	C9uVIlsR+YxKAjWfWN9sA==
-X-ME-Sender: <xms:6t2AZd_g-kTa7H-zXqGOytPaWI94RlYiWHggYZLDep2wzAiazTFV9Q>
-    <xme:6t2AZRs1ZLy2qJEruioVdYVTd4dRJH_goD35A313QmfMgSzbD5bILEIpxFN-HHjYl
-    YxpM8IZ4kwlOWnM>
-X-ME-Received: <xmr:6t2AZbA2pZSrVTRl2TTzaDFyhjvaxGLjn503eNHLGTzpA_NN9eXpmeDoieMo9BiBhT1f9Js7eriyU0H9d0g2L13Zmqtgsr5agtIF6bBdsIIxoxkuE5Vo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvddtledgudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepuedtkeeileeghedukefghfdtuddvudfgheel
-    jeejgeelueffueekheefheffveelnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
-    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:6t2AZRfVnQhjtXt8Ibr0mq66Yx1cawTbXsLQIp7HP5i8jIgIRTxGPw>
-    <xmx:6t2AZSMpHhghn0RiPBsR3ICpl6D0WRT4UFgDLVqEIqf-HrzEsVexJg>
-    <xmx:6t2AZTmS9ySHlCyzwT3KFyOxSMjPrJgs_md_-uLdJWNvQVPvJgbQww>
-    <xmx:6t2AZRc8gcBj0vZX3ll4doBoDypj3imfCvWZ3u6q9-X78MmkW72o0w>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Dec 2023 19:03:52 -0500 (EST)
-Message-ID: <7c588ab3-246f-4d9d-9b84-225dedab690a@fastmail.fm>
-Date: Tue, 19 Dec 2023 01:03:51 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE697F;
+	Tue, 19 Dec 2023 00:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6cea0fd9b53so1938227b3a.1;
+        Mon, 18 Dec 2023 16:08:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702944500; x=1703549300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DleLb/GRWWWOUxltcEkKo/2njLT6s7G7nFWdrSHsRNU=;
+        b=cSJlsQA0HgJ1KZ8QZjm5vvE0HWokJMKjEfnYcLcFLyDZCMk/McsxlWmQpQXR4IcbG1
+         brVNOD/jNIaL08QDDIUZYpaiC7uiDp5dpt5MDLw0KTHJsBhetqW1Tm5tU5aaulyI28sk
+         JCI8RT11E3eMkfib+Ipo+Ae7DhWDwEmUtxna18WX9ztpZM/NQzdhI54yTethgVJJeKO+
+         2W5ZHwbUoDkWqLZJpb3Ph4rgIhZZ+qR1sqv4Orzg1vkQdIpdAB6Y0VBiJzOeG97jPsra
+         kkWa6VNUAQzr+5+SvMRQ7/D0MWEvh171CEBuk5VQh8b73JlQRKQmw5fbCQzFvQJZfdmI
+         dOlw==
+X-Gm-Message-State: AOJu0YycXcB8HcHDHyM9z5sDgM7M7Q4sLc1FCHlms4b8fVirXDcMRsVv
+	L/sGUBDdH7r98ZglB0TMNtQ=
+X-Google-Smtp-Source: AGHT+IGXXrqCw0mder8OAzVsO+YAR5Rrbf/ckYX1QBTX8yeZcWqslQs+f+yu8qzbuyEdvn7gPPb1Pg==
+X-Received: by 2002:a05:6a20:3d93:b0:18b:480:a0f3 with SMTP id s19-20020a056a203d9300b0018b0480a0f3mr9237678pzi.4.1702944500016;
+        Mon, 18 Dec 2023 16:08:20 -0800 (PST)
+Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:e67:7ba6:36a9:8cd5])
+        by smtp.gmail.com with ESMTPSA id x17-20020a17090a531100b0028b050e8297sm118630pjh.18.2023.12.18.16.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Dec 2023 16:08:19 -0800 (PST)
+From: Bart Van Assche <bvanassche@acm.org>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Daejun Park <daejun7.park@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v8 00/19] Pass data lifetime information to SCSI disk devices
+Date: Mon, 18 Dec 2023 16:07:33 -0800
+Message-ID: <20231219000815.2739120-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
- linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
- hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>,
- Dharmendra Singh <dsingh@ddn.com>
-References: <20230920024001.493477-1-tfanelli@redhat.com>
- <CAJfpeguuB21HNeiK-2o_5cbGUWBh4uu0AmexREuhEH8JgqDAaQ@mail.gmail.com>
- <abbdf30f-c459-4eab-9254-7b24afc5771b@fastmail.fm>
- <40470070-ef6f-4440-a79e-ff9f3bbae515@fastmail.fm>
- <CAOQ4uxiHkNeV3FUh6qEbqu3U6Ns5v3zD+98x26K9AbXf5m8NGw@mail.gmail.com>
- <e151ff27-bc6e-4b74-a653-c82511b20cee@fastmail.fm>
- <47310f64-5868-4990-af74-1ce0ee01e7e9@fastmail.fm>
- <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
- <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm>
- <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
- <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm>
- <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
- <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
- <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
- <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
- <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi Martin,
 
+UFS vendors need the data lifetime information to achieve good performance.
+Providing data lifetime information to UFS devices can result in up to 40%
+lower write amplification. Hence this patch series that adds support in F2FS
+and also in the block layer for data lifetime information. The SCSI disk (sd)
+driver is modified such that it passes write hint information to SCSI devices
+via the GROUP NUMBER field.
 
-On 12/12/23 19:30, Amir Goldstein wrote:
-> On Sat, Dec 9, 2023 at 12:38 AM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
->>
->>
->>
->> On 12/8/23 21:46, Amir Goldstein wrote:
->>> On Fri, Dec 8, 2023 at 9:50 PM Bernd Schubert
->>> <bernd.schubert@fastmail.fm> wrote:
->>>>
->>>>
->>>>
->>>> On 12/8/23 09:39, Amir Goldstein wrote:
->>>>> On Thu, Dec 7, 2023 at 8:38 PM Bernd Schubert
->>>>> <bernd.schubert@fastmail.fm> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 12/7/23 08:39, Amir Goldstein wrote:
->>>>>>> On Thu, Dec 7, 2023 at 1:28 AM Bernd Schubert
->>>>>>> <bernd.schubert@fastmail.fm> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 12/6/23 09:25, Amir Goldstein wrote:
->>>>>>>>>>>> Is it actually important for FUSE_DIRECT_IO_ALLOW_MMAP fs
->>>>>>>>>>>> (e.g. virtiofsd) to support FOPEN_PARALLEL_DIRECT_WRITES?
->>>>>>>>>>>> I guess not otherwise, the combination would have been tested.
->>>>>>>>>>>
->>>>>>>>>>> I'm not sure how many people are aware of these different flags/features.
->>>>>>>>>>> I had just finalized the backport of the related patches to RHEL8 on
->>>>>>>>>>> Friday, as we (or our customers) need both for different jobs.
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES is typically important for
->>>>>>>>>>>> network fs and FUSE_DIRECT_IO_ALLOW_MMAP is typically not
->>>>>>>>>>>> for network fs. Right?
->>>>>>>>>>>
->>>>>>>>>>> We kind of have these use cases for our network file systems
->>>>>>>>>>>
->>>>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES:
->>>>>>>>>>>          - Traditional HPC, large files, parallel IO
->>>>>>>>>>>          - Large file used on local node as container for many small files
->>>>>>>>>>>
->>>>>>>>>>> FUSE_DIRECT_IO_ALLOW_MMAP:
->>>>>>>>>>>          - compilation through gcc (not so important, just not nice when it
->>>>>>>>>>> does not work)
->>>>>>>>>>>          - rather recent: python libraries using mmap _reads_. As it is read
->>>>>>>>>>> only no issue of consistency.
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> These jobs do not intermix - no issue as in generic/095. If such
->>>>>>>>>>> applications really exist, I have no issue with a serialization penalty.
->>>>>>>>>>> Just disabling FOPEN_PARALLEL_DIRECT_WRITES because other
->>>>>>>>>>> nodes/applications need FUSE_DIRECT_IO_ALLOW_MMAP is not so nice.
->>>>>>>>>>>
->>>>>>>>>>> Final goal is also to have FOPEN_PARALLEL_DIRECT_WRITES to work on plain
->>>>>>>>>>> O_DIRECT and not only for FUSE_DIRECT_IO - I need to update this branch
->>>>>>>>>>> and post the next version
->>>>>>>>>>> https://github.com/bsbernd/linux/commits/fuse-dio-v4
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> In the mean time I have another idea how to solve
->>>>>>>>>>> FOPEN_PARALLEL_DIRECT_WRITES + FUSE_DIRECT_IO_ALLOW_MMAP
->>>>>>>>>>
->>>>>>>>>> Please find attached what I had in my mind. With that generic/095 is not
->>>>>>>>>> crashing for me anymore. I just finished the initial coding - it still
->>>>>>>>>> needs a bit cleanup and maybe a few comments.
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> Nice. I like the FUSE_I_CACHE_WRITES state.
->>>>>>>>> For FUSE_PASSTHROUGH I will need to track if inode is open/mapped
->>>>>>>>> in caching mode, so FUSE_I_CACHE_WRITES can be cleared on release
->>>>>>>>> of the last open file of the inode.
->>>>>>>>>
->>>>>>>>> I did not understand some of the complexity here:
->>>>>>>>>
->>>>>>>>>>             /* The inode ever got page writes and we do not know for sure
->>>>>>>>>>              * in the DIO path if these are pending - shared lock not possible */
->>>>>>>>>>             spin_lock(&fi->lock);
->>>>>>>>>>             if (!test_bit(FUSE_I_CACHE_WRITES, &fi->state)) {
->>>>>>>>>>                     if (!(*cnt_increased)) {
->>>>>>>>>
->>>>>>>>> How can *cnt_increased be true here?
->>>>>>>>
->>>>>>>> I think you missed the 2nd entry into this function, when the shared
->>>>>>>> lock was already taken?
->>>>>>>
->>>>>>> Yeh, I did.
->>>>>>>
->>>>>>>> I have changed the code now to have all
->>>>>>>> complexity in this function (test, lock, retest with lock, release,
->>>>>>>> wakeup). I hope that will make it easier to see the intention of the
->>>>>>>> code. Will post the new patches in the morning.
->>>>>>>>
->>>>>>>
->>>>>>> Sounds good. Current version was a bit hard to follow.
->>>>>>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>>>                             fi->shared_lock_direct_io_ctr++;
->>>>>>>>>>                             *cnt_increased = true;
->>>>>>>>>>                     }
->>>>>>>>>>                     excl_lock = false;
->>>>>>>>>
->>>>>>>>> Seems like in every outcome of this function
->>>>>>>>> *cnt_increased = !excl_lock
->>>>>>>>> so there is not need for out arg cnt_increased
->>>>>>>>
->>>>>>>> If excl_lock would be used as input - yeah, would have worked as well.
->>>>>>>> Or a parameter like "retest-under-lock". Code is changed now to avoid
->>>>>>>> going in and out.
->>>>>>>>
->>>>>>>>>
->>>>>>>>>>             }
->>>>>>>>>>             spin_unlock(&fi->lock);
->>>>>>>>>>
->>>>>>>>>> out:
->>>>>>>>>>             if (excl_lock && *cnt_increased) {
->>>>>>>>>>                     bool wake = false;
->>>>>>>>>>                     spin_lock(&fi->lock);
->>>>>>>>>>                     if (--fi->shared_lock_direct_io_ctr == 0)
->>>>>>>>>>                             wake = true;
->>>>>>>>>>                     spin_unlock(&fi->lock);
->>>>>>>>>>                     if (wake)
->>>>>>>>>>                             wake_up(&fi->direct_io_waitq);
->>>>>>>>>>             }
->>>>>>>>>
->>>>>>>>> I don't see how this wake_up code is reachable.
->>>>>>>>>
->>>>>>>>> TBH, I don't fully understand the expected result.
->>>>>>>>> Surely, the behavior of dio mixed with mmap is undefined. Right?
->>>>>>>>> IIUC, your patch does not prevent dirtying page cache while dio is in
->>>>>>>>> flight. It only prevents writeback while dio is in flight, which is the same
->>>>>>>>> behavior as with exclusive inode lock. Right?
->>>>>>>>
->>>>>>>> Yeah, thanks. I will add it in the patch description.
->>>>>>>>
->>>>>>>> And there was actually an issue with the patch, as cache flushing needs
->>>>>>>> to be initiated before doing the lock decision, fixed now.
->>>>>>>>
->>>>>>>
->>>>>>> I thought there was, because of the wait in fuse_send_writepage()
->>>>>>> but wasn't sure if I was following the flow correctly.
->>>>>>>
->>>>>>>>>
->>>>>>>>> Maybe this interaction is spelled out somewhere else, but if not
->>>>>>>>> better spell it out for people like me that are new to this code.
->>>>>>>>
->>>>>>>> Sure, thanks a lot for your helpful comments!
->>>>>>>>
->>>>>>>
->>>>>>> Just to be clear, this patch looks like a good improvement and
->>>>>>> is mostly independent of the "inode caching mode" and
->>>>>>> FOPEN_CACHE_MMAP idea that I suggested.
->>>>>>>
->>>>>>> The only thing that my idea changes is replacing the
->>>>>>> FUSE_I_CACHE_WRITES state with a FUSE_I_CACHE_IO_MODE
->>>>>>> state, which is set earlier than FUSE_I_CACHE_WRITES
->>>>>>> on caching file open or first direct_io mmap and unlike
->>>>>>> FUSE_I_CACHE_WRITES, it is cleared on the last file close.
->>>>>>>
->>>>>>> FUSE_I_CACHE_WRITES means that caching writes happened.
->>>>>>> FUSE_I_CACHE_IO_MODE means the caching writes and reads
->>>>>>> may happen.
->>>>>>>
->>>>>>> FOPEN_PARALLEL_DIRECT_WRITES obviously shouldn't care
->>>>>>> about "caching reads may happen", but IMO that is a small trade off
->>>>>>> to make for maintaining the same state for
->>>>>>> "do not allow parallel dio" and "do not allow passthrough open".
->>>>>>
->>>>>> I think the attached patches should do, it now also unsets
->>>>>
->>>>> IMO, your patch is still more complicated than it should be.
->>>>> There is no need for the complicated retest state machine.
->>>>> If you split the helpers to:
->>>>>
->>>>> bool exclusive_lock fuse_dio_wr_needs_exclusive_lock();
->>>>> ...
->>>>> fuse_dio_lock_inode(iocb, &exclusive);
->>>>> ...
->>>>> fuse_dio_unlock_inode(iocb, &exclusive);
->>>>>
->>>>> Then you only need to test FUSE_I_CACHE_IO_MODE in
->>>>> fuse_dio_wr_needs_exclusive_lock()
->>>>> and you only need to increment shared_lock_direct_io_ctr
->>>>> after taking shared lock and re-testing FUSE_I_CACHE_IO_MODE.
->>>>
->>>> Hmm, I'm not sure.
->>>>
->>>> I changed fuse_file_mmap() to call this function
->>>>
->>>> /*
->>>>     * direct-io with shared locks cannot handle page cache io - set an inode
->>>>     * flag to disable shared locks and wait until remaining threads are done
->>>>     */
->>>> static void fuse_file_mmap_handle_dio_writers(struct inode *inode)
->>>> {
->>>>           struct fuse_inode *fi = get_fuse_inode(inode);
->>>>
->>>>           spin_lock(&fi->lock);
->>>>           set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
->>>>           while (fi->shared_lock_direct_io_ctr > 0) {
->>>>                   spin_unlock(&fi->lock);
->>>>                   wait_event_interruptible(fi->direct_io_waitq,
->>>>                                            fi->shared_lock_direct_io_ctr == 0);
->>>>                   spin_lock(&fi->lock);
->>>>           }
->>>>           spin_unlock(&fi->lock);
->>>> }
->>>>
->>>>
->>>> Before we had indeed a race. Idea for fuse_file_mmap_handle_dio_writers()
->>>> and fuse_dio_lock_inode() is to either have FUSE_I_CACHE_IO_MODE set,
->>>> or fi->shared_lock_direct_io_ctr is greater 0, but that requires that
->>>> FUSE_I_CACHE_IO_MODE is checked for when fi->lock is taken.
->>>>
->>>>
->>>> I'm going to think about over the weekend if your suggestion
->>>> to increase fi->shared_lock_direct_io_ctr only after taking the shared
->>>> lock is possible. Right now I don't see how to do that.
->>>>
->>>>
->>>>>
->>>>>> FUSE_I_CACHE_IO_MODE. Setting the flag actually has to be done from
->>>>>> fuse_file_mmap (and not from fuse_send_writepage) to avoid a dead stall,
->>>>>> but that aligns with passthrough anyway?
->>>>>
->>>>> Yes.
->>>>>
->>>>> I see that shared_lock_direct_io_ctr is checked without lock or barriers
->>>>> in and the wait_event() should be interruptible.
->>>>
->>>> Thanks, fixed with the function above.
->>>>
->>>>> I am also not sure if it breaks any locking order for mmap because
->>>>> the task that is going to wake it up is holding the shared inode lock...
->>>>
->>>> The waitq has its own lock. We have
->>>>
->>>> fuse_file_mmap - called under some mmap lock, waitq lock
->>>>
->>>> fuse_dio_lock_inode: no lock taken before calling wakeup
->>>>
->>>> fuse_direct_write_iter: wakeup after release of all locks
->>>>
->>>> So I don't think we have a locker issue (lockdep also doesn't annotate
->>>> anything).
->>>
->>> I don't think that lockdep can understand this dependency.
->>>
->>>> What we definitely cannot do it to take the inode i_rwsem lock in fuse_file_mmap
->>>>
->>>
->>> It's complicated. I need to look at the whole thing again.
->>>
->>>>>
->>>>> While looking at this code, the invalidate_inode_pages2() looks suspicious.
->>>>> If inode is already in FUSE_I_CACHE_IO_MODE when performing
->>>>> another mmap, doesn't that have potential for data loss?
->>>>> (even before your patch I mean)
->>>>>
->>>>>> Amir, right now it only sets
->>>>>> FUSE_I_CACHE_IO_MODE for VM_MAYWRITE. Maybe you could add a condition
->>>>>> for passthrough there?
->>>>>>
->>>>>
->>>>> We could add a condition, but I don't think that we should.
->>>>> I think we should refrain from different behavior when it is not justified.
->>>>> I think it is not justified to allow parallel dio if any file is open in
->>>>> caching mode on the inode and any mmap (private or shared)
->>>>> exists on the inode.
->>>>>
->>>>> That means that FUSE_I_CACHE_IO_MODE should be set on
->>>>> any mmap, and already on open for non direct_io files.
->>>>
->>>> Ok, I can change and add that. Doing it in open is definitely needed
->>>> for O_DIRECT (in my other dio branch).
->>>>
->>>
->>> Good, the more common code the better.
->>>
->>>>>
->>>>> Mixing caching and direct io on the same inode is hard as it is
->>>>> already and there is no need to add complexity by allowing
->>>>> parallel dio in that case. IMO it wins us nothing.
->>>>
->>>> So the slight issue I see are people like me, who check the content
->>>> of a file during a long running computation. Like an HPC application
->>>> is doing some long term runs. Then in the middle of
->>>> the run the user wants to see the current content of the file and
->>>> reads it - if that is done through mmap (and from a node that runs
->>>> the application), parallel DIO is disabled with the current patch
->>>> until the file is closed - I see the use case to check for writes.
->>>>
->>>
->>> That's what I thought.
->>>
->>>>
->>>>>
->>>>> The FUSE_I_CACHE_IO_MODE could be cleared on last file
->>>>> close (as your patch did) but it could be cleared earlier if
->>>>> instead of tracking refcount of open file, we track refcount of
->>>>> files open in caching mode or mmaped, which is what the
->>>>> FOPEN_MMAP_CACHE flag I suggested is for.
->>>>
->>>> But how does open() know that a file/fd is used for mmap?
->>>>
->>>
->>> Because what I tried to suggest is a trick/hack:
->>> first mmap on direct_io file sets FOPEN_MMAP_CACHE on the file
->>> and bumps the cached_opens on the inode as if file was
->>> opened in caching mode or in FOPEN_MMAP_CACHE mode.
->>> When the file that was used for mmap is closed and all the rest
->>> of the open files have only ever been used for direct_io, then
->>> inode exists the caching io mode.
->>>
->>> Using an FOPEN flag for that is kind of a hack.
->>> We could add an internal file state bits for that as well,
->>> but my thinking was that FOPEN_MMAP_CACHE could really
->>> be set by the server to mean per-file ALLOW_MMAP instead of
->>> the per-filesystem ALLOW_MMAP. Not sure if that will be useful.
->>
->> Ok, I will try to add that in a different patch to have better
->> visibility. Will also put these patch here in front of my dio branch and
->> rebase these patches. There comes in a bit additional complexity to
->> handle O_DIRECT, but it also consolidates direct-IO writes code paths.
->> At least I hope this is still possible with the new changes.
->>
->>>
->>> Sorry for the hand waving. I was trying to send out a demo
->>> patch that explains it better, but got caught up with other things.
->>
->> No problem at all, I think I know what you mean and I can try add this
->> myself.
-> 
-> Here is what I was thinking about:
-> 
-> https://github.com/amir73il/linux/commits/fuse_io_mode
-> 
-> The concept that I wanted to introduce was the
-> fuse_inode_deny_io_cache()/fuse_inode_allow_io_cache()
-> helpers (akin to deny_write_access()/allow_write_access()).
-> 
-> In this patch, parallel dio in progress deny open in caching mode
-> and mmap, and I don't know if that is acceptable.
-> Technically, instead of deny open/mmap you can use additional
-> techniques to wait for in progress dio and allow caching open/mmap.
-> 
-> Anyway, I plan to use the iocachectr and fuse_inode_deny_io_cache()
-> pattern when file is open in FOPEN_PASSTHROUGH mode, but
-> in this case, as agreed with Miklos, a server trying to mix open
-> in caching mode on the same inode is going to fail the open.
-> 
-> mmap is less of a problem for inode in passthrough mode, because
-> mmap in of direct_io file and inode in passthrough mode is passthrough
-> mmap to backing file.
-> 
-> Anyway, if you can use this patch or parts of it, be my guest and if you
-> want to use a different approach that is fine by me as well - in that case
-> I will just remove the fuse_file_shared_dio_{start,end}() part from my patch.
+Please consider this patch series for the next merge window.
 
-Hi Amir,
+Thank you,
 
-here is my fuse-dio-v5 branch:
-https://github.com/bsbernd/linux/commits/fuse-dio-v5/
+Bart.
 
-(v5 is just compilation tested, tests are running now over night)
+Changes compared to v7:
+ - As requested by Dave Chinner, changed one occurrence of
+   file_inode(dio->iocb->ki_filp)->i_write_hint into inode->i_write_hint.
+ - Modified the description of patch 03/19 since the patch that restores
+   F_[GS]ET_FILE_RW_HINT has been removed.
+ - Added Reviewed-by tags from v6 of this patch series and that were missing
+   when v7 was posted.
 
-This branch is basically about consolidating fuse write direct IO code 
-paths and to allow a shared lock for O_DIRECT. I actually could have 
-noticed the page cache issue with shared locks before with previous 
-versions of these patches, just my VM kernel is optimized for 
-compilation time and some SHM options had been missing - with that fio 
-refused to run.
+Changes compared to v6:
+ - Dropped patch "fs: Restore F_[GS]ET_FILE_RW_HINT support".
 
-The branch includes a modified version of your patch:
-https://github.com/bsbernd/linux/commit/6b05e52f7e253d9347d97de675b21b1707d6456e
+Changes compared to v5:
+ - Added compile-time tests that compare the WRITE_LIFE_* and RWH_* constants.
+ - Split the F_[GS]ET_RW_HINT handlers.
+ - Removed the structure member kiocb.ki_hint again. Instead, copy the data
+   lifetime information directly from struct file into a bio.
+ - Together with Doug Gilbert, fixed multiple bugs in the scsi_debug patches.
+   Added Doug's Tested-by.
+ - Changed the type of "rscs:1" from bool into unsigned.
+ - Added unit tests for the new SCSI protocol data structures.
+ - Improved multiple patch descriptions.
+ 
+Changes compared to v4:
+ - Dropped the patch that renames the WRITE_LIFE_* constants.
+ - Added a fix for an argument check in fcntl_rw_hint().
+ - Reordered the patches that restore data lifetime support.
+ - Included a fix for data lifetime support for buffered I/O to raw block
+   devices.
 
-Main changes are
-- fuse_file_io_open() does not set the FOPEN_CACHE_IO flag for 
-file->f_flags & O_DIRECT
-- fuse_file_io_mmap() waits on a dio waitq
-- fuse_file_shared_dio_start / fuse_file_shared_dio_end are moved up in 
-the file, as I would like to entirely remove the fuse_direct_write iter 
-function (all goes through cache_write_iter)
+Changes compared to v3:
+ - Renamed the data lifetime constants (WRITE_LIFE_*).
+ - Fixed a checkpatch complaint by changing "unsigned" into "unsigned int".
+ - Rebased this patch series on top of kernel v6.7-rc1.
+ 
+Changes compared to v2:
+ - Instead of storing data lifetime information in bi_ioprio, introduce the
+   new struct bio member bi_lifetime and also the struct request member
+   'lifetime'.
+ - Removed the bio_set_data_lifetime() and bio_get_data_lifetime() functions
+   and replaced these with direct assignments.
+ - Dropped all changes related to I/O priority.
+ - Improved patch descriptions.
 
+Changes compared to v1:
+ - Use six bits from the ioprio field for data lifetime information. The
+   bio->bi_write_hint / req->write_hint / iocb->ki_hint members that were
+   introduced in v1 have been removed again.
+ - The F_GET_FILE_RW_HINT and F_SET_FILE_RW_HINT fcntls have been removed.
+ - In the SCSI disk (sd) driver, query the stream status and check the PERM bit.
+ - The GET STREAM STATUS command has been implemented in the scsi_debug driver.
 
-Thanks,
-Bernd
+Bart Van Assche (19):
+  fs: Fix rw_hint validation
+  fs: Verify write lifetime constants at compile time
+  fs: Split fcntl_rw_hint()
+  fs: Move enum rw_hint into a new header file
+  block, fs: Restore the per-bio/request data lifetime fields
+  block, fs: Propagate write hints to the block device inode
+  fs/f2fs: Restore the whint_mode mount option
+  fs/f2fs: Restore support for tracing data lifetimes
+  scsi: core: Query the Block Limits Extension VPD page
+  scsi: scsi_proto: Add structures and constants related to I/O groups
+    and streams
+  scsi: sd: Translate data lifetime information
+  scsi: scsi_debug: Reduce code duplication
+  scsi: scsi_debug: Support the block limits extension VPD page
+  scsi: scsi_debug: Rework page code error handling
+  scsi: scsi_debug: Rework subpage code error handling
+  scsi: scsi_debug: Allocate the MODE SENSE response from the heap
+  scsi: scsi_debug: Implement the IO Advice Hints Grouping mode page
+  scsi: scsi_debug: Implement GET STREAM STATUS
+  scsi: scsi_debug: Maintain write statistics per group number
+
+ Documentation/filesystems/f2fs.rst |  70 +++++++
+ block/bio.c                        |   2 +
+ block/blk-crypto-fallback.c        |   1 +
+ block/blk-merge.c                  |   8 +
+ block/blk-mq.c                     |   2 +
+ block/bounce.c                     |   1 +
+ block/fops.c                       |  14 ++
+ drivers/scsi/Kconfig               |   5 +
+ drivers/scsi/Makefile              |   2 +
+ drivers/scsi/scsi.c                |   2 +
+ drivers/scsi/scsi_debug.c          | 293 ++++++++++++++++++++++-------
+ drivers/scsi/scsi_proto_test.c     |  56 ++++++
+ drivers/scsi/scsi_sysfs.c          |  10 +
+ drivers/scsi/sd.c                  | 111 ++++++++++-
+ drivers/scsi/sd.h                  |   3 +
+ fs/buffer.c                        |  12 +-
+ fs/direct-io.c                     |   2 +
+ fs/f2fs/data.c                     |   2 +
+ fs/f2fs/f2fs.h                     |  10 +
+ fs/f2fs/segment.c                  |  95 ++++++++++
+ fs/f2fs/super.c                    |  32 +++-
+ fs/fcntl.c                         |  63 ++++---
+ fs/inode.c                         |   1 +
+ fs/iomap/buffered-io.c             |   2 +
+ fs/iomap/direct-io.c               |   1 +
+ fs/mpage.c                         |   1 +
+ include/linux/blk-mq.h             |   2 +
+ include/linux/blk_types.h          |   2 +
+ include/linux/fs.h                 |  17 +-
+ include/linux/rw_hint.h            |  21 +++
+ include/scsi/scsi_device.h         |   1 +
+ include/scsi/scsi_proto.h          |  78 ++++++++
+ include/trace/events/f2fs.h        |   6 +-
+ 33 files changed, 813 insertions(+), 115 deletions(-)
+ create mode 100644 drivers/scsi/scsi_proto_test.c
+ create mode 100644 include/linux/rw_hint.h
 
 
