@@ -1,48 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-6529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0368193EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:56:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACDEE81943F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 00:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E84E1F27346
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 22:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9FE1C23DB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB73D0BD;
-	Tue, 19 Dec 2023 22:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959433D0C4;
+	Tue, 19 Dec 2023 23:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaB2a4GW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1paRRI5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030903B195;
-	Tue, 19 Dec 2023 22:56:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4BFC433C7;
-	Tue, 19 Dec 2023 22:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC7D273FD;
+	Tue, 19 Dec 2023 23:00:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22131C433C8;
+	Tue, 19 Dec 2023 23:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703026571;
-	bh=1KsVpI26Wy0emSPFohmEhY9TLu8feCCZJtIibblPW04=;
+	s=k20201202; t=1703026841;
+	bh=hHJulODtDt71xBDQ4Kigub7raLKaCHtkE0PAl5iwWM4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RaB2a4GW2tUetf4bOxFILnQyWYM33jV3DBMa354fhOl6Z3uVP5FGxm2oMt0P669Rx
-	 KhlHLCVk2012BYjCdKhL12/gdt/fFQDdNb4dUtKAlU1zTFYkfoeMen9/J7mLn/e4uy
-	 FSBd03r1T+IEST4c6dmc+ptQFP+bqhjRl3I3zHOnFzJIoKuXZoR2rNL2p4niND4jn9
-	 8A/wpofnnPdEx6z50q8pG+HQGPxmf2jevYxgkGMB15dcPQ27JUExUqiZPOfH3+jTm1
-	 mwPD3Yq80OQiodZMbXzAHQwfwuAq7wD6rUfIvt+l5wVw3HjrHiABX4zqUYRTRRUl20
-	 Nd6BtGxeO7Wtw==
-Date: Tue, 19 Dec 2023 15:56:09 -0700
+	b=N1paRRI5Tq0qTgXygPdUnER2lIsTcDSHZucDxNTTgprXGzrFxtuZXwheJoqsQE/ck
+	 JlmlAsbU6ShcUl0ot2RHvMyU7yNp8ESSUj+HWGTbnHmWeY/BB/SIjBY5voUXjdpGJZ
+	 Ya0JA5TWQfsVxYVuTGts0QiTbQMxEyjMvvDV5hVslNiGUuS1awPU0Edr9n+FT8wiTY
+	 GQamGF11orinqxEa72HXGmSHFecdznNX2svTHt+1umgfV57K+mj3SmECLUz3p4Lk2+
+	 ExIfEvAWEOFNT3wdivWuiQ4eh9SvmEhMt5arWLAYhbUIC+TmZv5Hd1dIZVy+lhJP3q
+	 oNOj4RoX3BeNg==
+Date: Tue, 19 Dec 2023 16:00:29 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
 Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
 	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] libfs: Expose generic_ci_dentry_ops outside of
- libfs
-Message-ID: <20231219225609.GF38652@quark.localdomain>
+Subject: Re: [PATCH v2 2/8] fscrypt: Drop d_revalidate if key is available
+Message-ID: <20231219230029.GG38652@quark.localdomain>
 References: <20231215211608.6449-1-krisman@suse.de>
- <20231215211608.6449-5-krisman@suse.de>
+ <20231215211608.6449-3-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,33 +50,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231215211608.6449-5-krisman@suse.de>
+In-Reply-To: <20231215211608.6449-3-krisman@suse.de>
 
-On Fri, Dec 15, 2023 at 04:16:04PM -0500, Gabriel Krisman Bertazi wrote:
-> In preparation to allow filesystems to set this through sb->s_d_op,
-> expose the symbol directly to the filesystems.
+On Fri, Dec 15, 2023 at 04:16:02PM -0500, Gabriel Krisman Bertazi wrote:
+> fscrypt dentries are always valid once the key is available.  Since the
+> key cannot be removed without evicting the dentry, we don't need to keep
+> retrying to revalidate it.
 > 
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
-> ---
->  fs/libfs.c         | 2 +-
->  include/linux/fs.h | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 52c944173e57..b8ecada3a5b2 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1765,7 +1765,7 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
->  	return 0;
->  }
->  
-> -static const struct dentry_operations generic_ci_dentry_ops = {
-> +const struct dentry_operations generic_ci_dentry_ops = {
->  	.d_hash = generic_ci_d_hash,
->  	.d_compare = generic_ci_d_compare,
 
-This needs an EXPORT_SYMBOL_GPL(), since the filesystems that will use this can
-be loadable modules.
+IIUC, this patch minimizes the overhead of fscrypt_d_revalidate() both for
+encrypted and unencrypted dentries.  That's what's needed (seeing as this series
+makes fscrypt_d_revalidate be installed on unencrypted dentries), but the commit
+message only mentions the encrypted case.  It would be helpful to mention both.
+
+> ---
+>  fs/crypto/fname.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 7b3fc189593a..0457ba2d7d76 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -591,8 +591,15 @@ int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  	 * reverting to no-key names without evicting the directory's inode
+>  	 * -- which implies eviction of the dentries in the directory.
+>  	 */
+> -	if (!(dentry->d_flags & DCACHE_NOKEY_NAME))
+> +	if (!(dentry->d_flags & DCACHE_NOKEY_NAME)) {
+> +		/*
+> +		 * If fscrypt is the only feature requiring
+> +		 * revalidation for this dentry, we can just disable it.
+> +		 */
+> +		if (dentry->d_op->d_revalidate == &fscrypt_d_revalidate)
+
+No need for the & in &fscrypt_d_revalidate.
 
 - Eric
 
