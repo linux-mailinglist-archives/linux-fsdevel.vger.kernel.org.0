@@ -1,225 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-6475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9D6818105
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 06:32:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8BC81814D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 07:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69AB6285D5D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 05:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3F4B23C1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 06:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177456D3F;
-	Tue, 19 Dec 2023 05:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B2C158;
+	Tue, 19 Dec 2023 06:03:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578A01170E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 05:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BIMLFtE012485
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 21:32:00 -0800
-Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3v2xt1t61x-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Mon, 18 Dec 2023 21:32:00 -0800
-Received: from twshared21997.42.prn1.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Mon, 18 Dec 2023 21:31:58 -0800
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 469243D698443; Mon, 18 Dec 2023 21:31:50 -0800 (PST)
-From: Andrii Nakryiko <andrii@kernel.org>
-To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <brauner@kernel.org>,
-        <torvalds@linuxfoundation.org>, <ast@kernel.org>,
-        <daniel@iogearbox.net>
-CC: <linux-fsdevel@vger.kernel.org>, <kernel-team@meta.com>
-Subject: [PATCH bpf-next] bpf: add BPF_F_TOKEN_FD flag to pass with BPF token FD
-Date: Mon, 18 Dec 2023 21:31:50 -0800
-Message-ID: <20231219053150.336991-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC16C123;
+	Tue, 19 Dec 2023 06:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Vypj0Vc_1702965501;
+Received: from 30.221.145.29(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Vypj0Vc_1702965501)
+          by smtp.aliyun-inc.com;
+          Tue, 19 Dec 2023 13:58:22 +0800
+Message-ID: <5460aaf1-44f6-475f-b980-cb9058cc1df4@linux.alibaba.com>
+Date: Tue, 19 Dec 2023 13:58:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: XTjMPYdWbmDQBpa0wrKlkh_48bLEmfW9
-X-Proofpoint-ORIG-GUID: XTjMPYdWbmDQBpa0wrKlkh_48bLEmfW9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-19_02,2023-12-14_01,2023-05-22_02
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: fix arithmetic for max_prop_frac when setting
+ max_ratio
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+Cc: shr@devkernel.io, akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20231219024246.65654-1-jefflexu@linux.alibaba.com>
+ <20231219024246.65654-3-jefflexu@linux.alibaba.com>
+ <ZYEWyn5g/jG/ixMk@casper.infradead.org>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <ZYEWyn5g/jG/ixMk@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add BPF_F_TOKEN_FD flag to be used across bpf() syscall commands
-that accept BPF token FD: BPF_PROG_LOAD, BPF_MAP_CREATE, and
-BPF_BTF_LOAD. This flag has to be set whenever token FD is provided.
 
-BPF_BTF_LOAD command didn't have a flags field, so add it as well.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- include/uapi/linux/bpf.h       | 10 +++++++---
- kernel/bpf/syscall.c           | 19 +++++++++++++++----
- tools/include/uapi/linux/bpf.h | 10 +++++++---
- 3 files changed, 29 insertions(+), 10 deletions(-)
+On 12/19/23 12:06 PM, Matthew Wilcox wrote:
+> On Tue, Dec 19, 2023 at 10:42:46AM +0800, Jingbo Xu wrote:
+>>  	} else {
+>>  		bdi->max_ratio = max_ratio;
+>> -		bdi->max_prop_frac = (FPROP_FRAC_BASE * max_ratio) / 100;
+>> +		bdi->max_prop_frac = div64_u64(FPROP_FRAC_BASE * max_ratio,
+>> +					       100 * BDI_RATIO_SCALE);
+>>  	}
+> 
+> Why use div64_u64 here?
+> 
+> FPROP_FRAC_BASE is an unsigned long.  max_ratio is an unsigned int, so
+> the numerator is an unsigned long.  BDI_RATIO_SCALE is 10,000, so the
+> numerator is an unsigned int.  There's no 64-bit arithmetic needed here.
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index e0545201b55f..539dc19d8d11 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -1364,6 +1364,9 @@ enum {
-=20
- /* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
- 	BPF_F_PATH_FD		=3D (1U << 14),
-+
-+/* BPF token FD is passed in a corresponding command's token_fd field */
-+	BPF_F_TOKEN_FD		=3D (1U << 15),
- };
-=20
- /* Flags for BPF_PROG_QUERY. */
-@@ -1437,7 +1440,7 @@ union bpf_attr {
- 		 * to using 5 hash functions).
- 		 */
- 		__u64	map_extra;
--		__u32	map_token_fd;
-+		__s32	map_token_fd;
- 	};
-=20
- 	struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
-@@ -1507,7 +1510,7 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		log_true_size;
--		__u32		prog_token_fd;
-+		__s32		prog_token_fd;
- 	};
-=20
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-@@ -1620,7 +1623,8 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		btf_log_true_size;
--		__u32		btf_token_fd;
-+		__u32		btf_flags;
-+		__s32		btf_token_fd;
- 	};
-=20
- 	struct {
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 8faa1a20edf8..d6337842006d 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1137,6 +1137,7 @@ static int map_create(union bpf_attr *attr)
- 	int numa_node =3D bpf_map_attr_numa_node(attr);
- 	u32 map_type =3D attr->map_type;
- 	struct bpf_map *map;
-+	bool token_flag;
- 	int f_flags;
- 	int err;
-=20
-@@ -1144,6 +1145,12 @@ static int map_create(union bpf_attr *attr)
- 	if (err)
- 		return -EINVAL;
-=20
-+	/* check BPF_F_TOKEN_FD flag, remember if it's set, and then clear it
-+	 * to avoid per-map type checks tripping on unknown flag
-+	 */
-+	token_flag =3D attr->map_flags & BPF_F_TOKEN_FD;
-+	attr->map_flags &=3D ~BPF_F_TOKEN_FD;
-+
- 	if (attr->btf_vmlinux_value_type_id) {
- 		if (attr->map_type !=3D BPF_MAP_TYPE_STRUCT_OPS ||
- 		    attr->btf_key_type_id || attr->btf_value_type_id)
-@@ -1184,7 +1191,7 @@ static int map_create(union bpf_attr *attr)
- 	if (!ops->map_mem_usage)
- 		return -EINVAL;
-=20
--	if (attr->map_token_fd) {
-+	if (token_flag) {
- 		token =3D bpf_token_get_from_fd(attr->map_token_fd);
- 		if (IS_ERR(token))
- 			return PTR_ERR(token);
-@@ -2641,12 +2648,13 @@ static int bpf_prog_load(union bpf_attr *attr, bp=
-fptr_t uattr, u32 uattr_size)
- 				 BPF_F_TEST_RND_HI32 |
- 				 BPF_F_XDP_HAS_FRAGS |
- 				 BPF_F_XDP_DEV_BOUND_ONLY |
--				 BPF_F_TEST_REG_INVARIANTS))
-+				 BPF_F_TEST_REG_INVARIANTS |
-+				 BPF_F_TOKEN_FD))
- 		return -EINVAL;
-=20
- 	bpf_prog_load_fixup_attach_type(attr);
-=20
--	if (attr->prog_token_fd) {
-+	if (attr->prog_flags & BPF_F_TOKEN_FD) {
- 		token =3D bpf_token_get_from_fd(attr->prog_token_fd);
- 		if (IS_ERR(token))
- 			return PTR_ERR(token);
-@@ -4837,7 +4845,10 @@ static int bpf_btf_load(const union bpf_attr *attr=
-, bpfptr_t uattr, __u32 uattr_
- 	if (CHECK_ATTR(BPF_BTF_LOAD))
- 		return -EINVAL;
-=20
--	if (attr->btf_token_fd) {
-+	if (attr->btf_flags & ~BPF_F_TOKEN_FD)
-+		return -EINVAL;
-+
-+	if (attr->btf_flags & BPF_F_TOKEN_FD) {
- 		token =3D bpf_token_get_from_fd(attr->btf_token_fd);
- 		if (IS_ERR(token))
- 			return PTR_ERR(token);
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bp=
-f.h
-index e0545201b55f..539dc19d8d11 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -1364,6 +1364,9 @@ enum {
-=20
- /* Get path from provided FD in BPF_OBJ_PIN/BPF_OBJ_GET commands */
- 	BPF_F_PATH_FD		=3D (1U << 14),
-+
-+/* BPF token FD is passed in a corresponding command's token_fd field */
-+	BPF_F_TOKEN_FD		=3D (1U << 15),
- };
-=20
- /* Flags for BPF_PROG_QUERY. */
-@@ -1437,7 +1440,7 @@ union bpf_attr {
- 		 * to using 5 hash functions).
- 		 */
- 		__u64	map_extra;
--		__u32	map_token_fd;
-+		__s32	map_token_fd;
- 	};
-=20
- 	struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
-@@ -1507,7 +1510,7 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		log_true_size;
--		__u32		prog_token_fd;
-+		__s32		prog_token_fd;
- 	};
-=20
- 	struct { /* anonymous struct used by BPF_OBJ_* commands */
-@@ -1620,7 +1623,8 @@ union bpf_attr {
- 		 * truncated), or smaller (if log buffer wasn't filled completely).
- 		 */
- 		__u32		btf_log_true_size;
--		__u32		btf_token_fd;
-+		__u32		btf_flags;
-+		__s32		btf_token_fd;
- 	};
-=20
- 	struct {
---=20
-2.34.1
+Yes, div64_u64() is actually not needed here. So it seems
 
+bdi->max_prop_frac = FPROP_FRAC_BASE * max_ratio / 100 / BDI_RATIO_SCALE;
+
+is adequate?
+
+-- 
+Thanks,
+Jingbo
 
