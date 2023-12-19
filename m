@@ -1,173 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-6520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E618190BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 20:30:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0592819100
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 20:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267D41C24797
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 19:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B04FB234E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 19:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE839854;
-	Tue, 19 Dec 2023 19:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hASqtFp8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1593D0B2;
+	Tue, 19 Dec 2023 19:43:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEE639AC0;
-	Tue, 19 Dec 2023 19:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1703014190;
-	bh=GMFosoqH618A0escG3KIeky1Bglzu9iNu3oJdI75r2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hASqtFp8t11cv7FEJdQUJ9GxREwItyc99qkE4NvBl5NoggRb0wDTMY60eN8hn4LNd
-	 Hny29ryLOertfQrxFYW+0RZTky3PESA471v0LguQi8ddRcFuZ8BLut0FkPqxGTRU/4
-	 QNqIiynuflzz2mjSZu2gyKOFTH79xuPyRZR/t7DQ=
-Date: Tue, 19 Dec 2023 20:29:50 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Luis Chamberlain <mcgrof@kernel.org>, 
-	Julia Lawall <julia.lawall@inria.fr>
-Cc: Joel Granados <j.granados@samsung.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Kees Cook <keescook@chromium.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Iurii Zaikin <yzaikin@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <a0d96e7b-544f-42d5-b8da-85bc4ca087a9@t-8ch.de>
-References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
- <20231207104357.kndqvzkhxqkwkkjo@localhost>
- <fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
- <20231208095926.aavsjrtqbb5rygmb@localhost>
- <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de>
- <20231212090930.y4omk62wenxgo5by@localhost>
- <ZXligolK0ekZ+Zuf@bombadil.infradead.org>
- <20231217120201.z4gr3ksjd4ai2nlk@localhost>
- <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
- <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0524E3D0A7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 19:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-35f49926297so73324955ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Dec 2023 11:43:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703015007; x=1703619807;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vu+jS6cLyAU338baY7JrkJ4z1XHBKULooBAqdNqSsNQ=;
+        b=qSJU9aRbikx87nP2Br6DKARawQx0dhLV+vYumhSI6Zaj2RYhLYNBcAkQukMc0//k6y
+         pwZnP7tAcJ74vWm0mL3pfcD+vW2bpakmOOugOw906N9zy+gSXyAzlDrP1yVpRXbppbMt
+         mI769MsW/eoiVBlsBYR4esTyGXi4L+Pa9DZQaieTMGmNBuh/AH87NKHhRp2wo7ViQZ4y
+         NUzY63Fyjob/LOo9/o3lXRNxIiYMMuUjKszVuHh0tw3hY3OWr/qD3KhGto+vlC+aFRR0
+         9xZwnWeOWczHI0DKlOhwwBf6P9vbENIrHb5NTwQo3p7ovpzRkHRKVWrQgIgRsFSbZLcC
+         xC9A==
+X-Gm-Message-State: AOJu0Yxc+LrFlZTv4ROqOb6N2jN6fBXo8dZOBTBuTGaFGK4ClwyXGNYu
+	rZytsxUyIDcwyWndzFD1S3ckObOgvKhr4hvtowieyMJiANAu
+X-Google-Smtp-Source: AGHT+IFJLIJo5Za5v/DsLptxAuiJeDiwHKrO3f5NhLHoosTrhjd7LHSW9RjisSo2/cbNSB7daTX6AbQdlwLxvBOHeC3yJHvnpIfi
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
+X-Received: by 2002:a05:6e02:338d:b0:35f:b2f8:6ca3 with SMTP id
+ bn13-20020a056e02338d00b0035fb2f86ca3mr497273ilb.2.1703015007319; Tue, 19 Dec
+ 2023 11:43:27 -0800 (PST)
+Date: Tue, 19 Dec 2023 11:43:27 -0800
+In-Reply-To: <000000000000e171200600d6d8bd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008efd70060ce21487@google.com>
+Subject: Re: [syzbot] [overlayfs?] possible deadlock in seq_read_iter (2)
+From: syzbot <syzbot+da4f9f61f96525c62cc7@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Luis and Julia,
+syzbot has found a reproducer for the following issue on:
 
-(Julia, there is a question and context for you inline, marked with your name)
+HEAD commit:    2cf4f94d8e86 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12181571e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e5751b3a2226135d
+dashboard link: https://syzkaller.appspot.com/bug?extid=da4f9f61f96525c62cc7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176a4f49e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154aa8d6e80000
 
-On 2023-12-18 13:21:49-0800, Luis Chamberlain wrote:
-> So we can split this up concentually in two:
-> 
->  * constificaiton of the table handlers
->  * constification of the table struct itself
-> 
-> On Sun, Dec 17, 2023 at 11:10:15PM +0100, Thomas Weißschuh wrote:
-> > The handlers can already be made const as shown in this series,
-> 
-> The series did already produce issues with some builds, and so
-> Julia's point is confirmed that the series only proves hanlders
-> which you did build and for which 0-day has coverage for.
-> 
-> The challenge here was to see if we could draw up a test case
-> that would prove this without build tests, and what occurred to
-> me was coccinelle or smatch.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cc8943b61205/disk-2cf4f94d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8b515b02658d/vmlinux-2cf4f94d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1f8ccc925248/bzImage-2cf4f94d.xz
 
-I used the following coccinelle script to find more handlers that I
-missed before:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+da4f9f61f96525c62cc7@syzkaller.appspotmail.com
 
-virtual patch
-virtual context
-virtual report
+======================================================
+WARNING: possible circular locking dependency detected
+6.7.0-rc6-syzkaller-00010-g2cf4f94d8e86 #0 Not tainted
+------------------------------------------------------
+syz-executor424/7758 is trying to acquire lock:
+ffff88801f1ef9e0 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb2/0xd10 fs/seq_file.c:182
 
-@@
-identifier func;
-identifier ctl;
-identifier write;
-identifier buffer;
-identifier lenp;
-identifier ppos;
-type loff_t;
-@@
+but task is already holding lock:
+ffff88814cd7a418 (sb_writers#4){.+.+}-{0:0}, at: do_sendfile+0x607/0x1000 fs/read_write.c:1253
 
-int func(
-- struct ctl_table *ctl,
-+ const struct ctl_table *ctl,
-  int write, void *buffer, size_t *lenp, loff_t *ppos) { ... }
-
-It did not find any additional occurrences while it was able to match
-the existing changes.
-
-After that I manually reviewed all handlers that they are not modifying
-their table argument, which they don't.
-
-Should we do more?
+which lock already depends on the new lock.
 
 
-For Julia:
+the existing dependency chain (in reverse order) is:
 
-Maybe you could advise on how to use coccinelle to find where a const
-function argument or one of its members are modified directly or passed
-to some other function as non-const arguments.
-See the coccinelle patch above.
+-> #3
+ (sb_writers#4){.+.+}-{0:0}:
+       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1635 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1710
+       mnt_want_write+0x3f/0x90 fs/namespace.c:404
+       ovl_create_object+0x13b/0x360 fs/overlayfs/dir.c:629
+       lookup_open fs/namei.c:3477 [inline]
+       open_last_lookups fs/namei.c:3546 [inline]
+       path_openat+0x13fa/0x3290 fs/namei.c:3776
+       do_filp_open+0x234/0x490 fs/namei.c:3809
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_open fs/open.c:1460 [inline]
+       __se_sys_open fs/open.c:1456 [inline]
+       __x64_sys_open+0x225/0x270 fs/open.c:1456
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Is this possible?
+-> #2 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
+       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       inode_lock_shared include/linux/fs.h:812 [inline]
+       lookup_slow+0x45/0x70 fs/namei.c:1710
+       walk_component+0x2d0/0x400 fs/namei.c:2002
+       lookup_last fs/namei.c:2459 [inline]
+       path_lookupat+0x16f/0x450 fs/namei.c:2483
+       filename_lookup+0x255/0x610 fs/namei.c:2512
+       kern_path+0x35/0x50 fs/namei.c:2610
+       lookup_bdev+0xc5/0x290 block/bdev.c:979
+       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1177
+       kernfs_fop_write_iter+0x3b3/0x510 fs/kernfs/file.c:334
+       do_iter_readv_writev+0x330/0x4a0
+       do_iter_write+0x1f6/0x8d0 fs/read_write.c:860
+       iter_file_splice_write+0x86d/0x1010 fs/splice.c:736
+       do_splice_from fs/splice.c:933 [inline]
+       direct_splice_actor+0xea/0x1c0 fs/splice.c:1142
+       splice_direct_to_actor+0x376/0x9e0 fs/splice.c:1088
+       do_splice_direct+0x2ac/0x3f0 fs/splice.c:1194
+       do_sendfile+0x62c/0x1000 fs/read_write.c:1254
+       __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+       __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-> > > If that is indeed what you are proposing, you might not even need the
-> > > un-register step as all the mutability that I have seen occurs before
-> > > the register. So maybe instead of re-registering it, you can so a copy
-> > > (of the changed ctl_table) to a const pointer and then pass that along
-> > > to the register function.
-> > 
-> > Tables that are modified, but *not* through the handler, would crop
-> > during the constification of the table structs.
-> > Which should be a second step.
-> 
-> Instead of "croping up" at build time again, I wonder if we can do
-> better with coccinelle / smatch.
+-> #1 (&of->mutex){+.+.}-{3:3}:
+       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+       __mutex_lock+0x136/0xd60 kernel/locking/mutex.c:747
+       kernfs_seq_start+0x53/0x3a0 fs/kernfs/file.c:154
+       seq_read_iter+0x3d4/0xd10 fs/seq_file.c:225
+       call_read_iter include/linux/fs.h:2014 [inline]
+       new_sync_read fs/read_write.c:389 [inline]
+       vfs_read+0x78b/0xb00 fs/read_write.c:470
+       ksys_read+0x1a0/0x2c0 fs/read_write.c:613
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-As for smatch:
+-> #0 (&p->lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x1909/0x5ab0 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1345/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+       __mutex_lock+0x136/0xd60 kernel/locking/mutex.c:747
+       seq_read_iter+0xb2/0xd10 fs/seq_file.c:182
+       call_read_iter include/linux/fs.h:2014 [inline]
+       copy_splice_read+0x4c9/0x9c0 fs/splice.c:364
+       splice_direct_to_actor+0x2c4/0x9e0 fs/splice.c:1069
+       do_splice_direct+0x2ac/0x3f0 fs/splice.c:1194
+       do_sendfile+0x62c/0x1000 fs/read_write.c:1254
+       __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+       __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Doesn't smatch itself run as part of a normal build [0]?
-So it would have the same visibility issues as the compiler itself.
+other info that might help us debug this:
 
-> Joel, and yes, what you described is what I was suggesting, that is to
-> avoid having to add a non-const handler a first step, instead we modify
-> those callers which do require to modify the table by first a
-> deregistration and later a registration. In fact to make this even
-> easier a new call would be nice so to aslo be able to git grep when
-> this is done in the kernel.
-> 
-> But if what you suggest is true that there are no registrations which
-> later modify the table, we don't need that. It is the uncertainty that
-> we might have that this is a true statment that I wanted to challenge
-> to see if we could do better. Can we avoid this being a stupid
-> regression later by doing code analysis with coccinelle / smatch?
-> 
-> The template of the above endeavor seems useful not only to this use
-> case but to any place in the kernel where this previously has been done
-> before, and hence my suggestion that this seems like a sensible thing
-> to think over to see if we could generalize.
+Chain exists of:
+  &p->lock --> &ovl_i_mutex_dir_key[depth] --> sb_writers#4
 
-I'd like to split the series and submit the part up until and including
-the constification of arguments first and on its own.
-It keeps the subsystem maintainers out of the discussion of the core
-sysctl changes.
+ Possible unsafe locking scenario:
 
-I'll submit the core sysctl changes after I figure out proper responses
-to all review comments and we can do this in parallel to the tree-wide
-preparation.
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_writers#4);
+                               lock(&ovl_i_mutex_dir_key[depth]);
+                               lock(sb_writers#4);
+  lock(&p->lock);
 
-What do you think Luis and Joel?
+ *** DEADLOCK ***
 
-[0] https://repo.or.cz/smatch.git/blob/HEAD:/smatch_scripts/test_kernel.sh
+1 lock held by syz-executor424/7758:
+ #0: ffff88814cd7a418 (sb_writers#4){.+.+}-{0:0}, at: do_sendfile+0x607/0x1000 fs/read_write.c:1253
+
+stack backtrace:
+CPU: 0 PID: 7758 Comm: syz-executor424 Not tainted 6.7.0-rc6-syzkaller-00010-g2cf4f94d8e86 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
+ check_noncircular+0x366/0x490 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x1909/0x5ab0 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1345/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:603 [inline]
+ __mutex_lock+0x136/0xd60 kernel/locking/mutex.c:747
+ seq_read_iter+0xb2/0xd10 fs/seq_file.c:182
+ call_read_iter include/linux/fs.h:2014 [inline]
+ copy_splice_read+0x4c9/0x9c0 fs/splice.c:364
+ splice_direct_to_actor+0x2c4/0x9e0 fs/splice.c:1069
+ do_splice_direct+0x2ac/0x3f0 fs/splice.c:1194
+ do_sendfile+0x62c/0x1000 fs/read_write.c:1254
+ __do_sys_sendfile64 fs/read_write.c:1322 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1308
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fef41211d49
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fef411d2218 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007fef4129c3e8 RCX: 00007fef41211d49
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000003
+RBP: 00007fef4129c3e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0001000000201007 R11: 0000000000000246 R12: 00007fef41269060
+R13: 0030656c69662f2e R14: 6e6f3d6f6e69782c R15: 0079616c7265766f
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
