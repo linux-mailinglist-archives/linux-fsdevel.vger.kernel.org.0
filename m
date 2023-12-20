@@ -1,71 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-6604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AA281A788
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 21:13:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FB381A808
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 22:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC7E22889E8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 20:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E04C1F24013
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 21:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4971D48CFF;
-	Wed, 20 Dec 2023 20:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077E48CEB;
+	Wed, 20 Dec 2023 21:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6MuwGzW"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="oj0k0QMO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1F487B4;
-	Wed, 20 Dec 2023 20:13:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 27C7FC433C8;
-	Wed, 20 Dec 2023 20:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703103192;
-	bh=b7SIMzMYWuwDwBZZBkV1rUx56WnnkCBWjHcD4OAzNeQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=b6MuwGzWxPw9Nn4kcmw0DbjI6lbRR3dnwxknFu2Qx0C9omIKpRCP7N7M4+a/dAcDr
-	 nvEntM3H8RL8bIYfm2osST2fWy4SAk3MWxORxjAG1qAXcymipUaSwPWjjStU1+Q5UB
-	 Zo9vIjgCujmJ29D8MB1FPIW/FwEMW/3s8VbWjKshW8IU2lmmaKrgnPSCyuqytI4746
-	 xmkK83PZTY3prgdOSyUhpEeYnc5QWOdx7E92xvyiLmvgDWy4nIA4PYtWJH1ZJOKw2g
-	 jlrBoWby+KDeEM0V1aUdkD5j0GlT5gOPKfVWl4t+njMXbdWRavlS2uqOxjJm5WGX83
-	 6xVRppMmrX3DA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 10C87C561EE;
-	Wed, 20 Dec 2023 20:13:12 +0000 (UTC)
-Subject: Re: [GIT PULL] overlayfs fixes for 6.7-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20231220033505.735262-1-amir73il@gmail.com>
-References: <20231220033505.735262-1-amir73il@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20231220033505.735262-1-amir73il@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.7-rc7
-X-PR-Tracked-Commit-Id: 413ba91089c74207313b315e04cf381ffb5b20e4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1a44b0073b9235521280e19d963b6dfef7888f18
-Message-Id: <170310319206.16038.17631825269258809724.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Dec 2023 20:13:12 +0000
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FAC1EB5F;
+	Wed, 20 Dec 2023 21:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1703107415;
+	bh=eGxGqbgZVGIrrxZL930kVfU1Amr5jFALwZNRXLWU63g=;
+	h=From:Date:Subject:To:Cc:From;
+	b=oj0k0QMOV9GFZVIpf9VqELx6KED+CigzpIisTwuzySWkPIU9qTkchVSWnMFy7xi6I
+	 SRC6XScGpix2e7dK3K2ApuEJE5vwBduyQNL6mw7zp3QE4DMUwEFOjZzs/VnIXzW2RN
+	 +RZIeNMOOB+MHOy3NfULEIs2FtxibfXNXh3gFhEc=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 20 Dec 2023 22:23:35 +0100
+Subject: [PATCH] sysctl: remove struct ctl_path
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20231220-sysctl-paths-v1-1-e123e3e704db@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAFZbg2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI2NDIyMD3eLK4uSSHN2CxJKMYl0TcxMzS3MLU7NE4zQloJaCotS0zAqwcdG
+ xtbUAw0yA014AAAA=
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ Iurii Zaikin <yzaikin@google.com>, Joel Granados <j.granados@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703107414; l=1160;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=eGxGqbgZVGIrrxZL930kVfU1Amr5jFALwZNRXLWU63g=;
+ b=hydLABjfaS/oS5Pmgp2zJLXbW3W8u1NPMgqS/2oT15ZCRbIv8QPw+Crgq6dn+CB/TeylU7GvM
+ ABjLgtGys6QDSrYuNRnQKkWGOWGNduUVpTbm+4MxLfiqXDNxk5JZ16E
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The pull request you sent on Wed, 20 Dec 2023 05:35:05 +0200:
+All usages of this struct have been removed from the kernel tree.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes-6.7-rc7
+The struct is still referenced by scripts/check-sysctl-docs but that
+script is broken anyways as it only supports the register_sysctl_paths()
+API and not the currently used register_sysctl() one.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1a44b0073b9235521280e19d963b6dfef7888f18
+Fixes: 0199849acd07 ("sysctl: remove register_sysctl_paths()")
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ include/linux/sysctl.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Thank you!
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 61b40ea81f4d..8084e9132833 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -210,11 +210,6 @@ struct ctl_table_root {
+ 	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
+ };
+ 
+-/* struct ctl_path describes where in the hierarchy a table is added */
+-struct ctl_path {
+-	const char *procname;
+-};
+-
+ #define register_sysctl(path, table)	\
+ 	register_sysctl_sz(path, table, ARRAY_SIZE(table))
+ 
 
+---
+base-commit: 1a44b0073b9235521280e19d963b6dfef7888f18
+change-id: 20231220-sysctl-paths-474697856a3f
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thomas Weißschuh <linux@weissschuh.net>
+
 
