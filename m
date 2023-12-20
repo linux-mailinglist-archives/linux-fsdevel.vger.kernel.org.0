@@ -1,47 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-6533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E0D819463
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 00:12:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D65B8194F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 01:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5161F25CED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Dec 2023 23:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3B1287B0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 00:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2808B3D0C6;
-	Tue, 19 Dec 2023 23:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57003D82;
+	Wed, 20 Dec 2023 00:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgASHxRM"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WFFjoKNd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB2F3FB11;
-	Tue, 19 Dec 2023 23:12:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 448B3C433C8;
-	Tue, 19 Dec 2023 23:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703027550;
-	bh=Wg2vV1WjPN26p90HjDONXgzV+zjLmWbmNTPH4yZdHu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgASHxRMht1yVdThzcVChIXyhaA0hmjnv6wBuco/tp02f4A+1KJQ7m9qv4WW6S8qz
-	 MS1OawxaMbqCJm1+0nEWo7J3eoYYRdVF0Cdh5rD1LzMvmB15dKWMEKq/zzBPSbdH63
-	 vsJnEa9ugDB3eNEqw1+sJjRtHCP5UNDcG7rP0TLCyzXlrjwC6X6fMcEHARf5H9RXGb
-	 x1iGrGdRYpd2VRJx1t1pyHCD+uvvi5nwt9PfKdwKITPs2jwq+OFlYhue7mjynz3X6I
-	 /icTDMy/kSXz3RVIAukQEYJMBiRj5Q59aF78KDwHhlaBlg6KbHTQDWjp/V4Z3TMFbT
-	 wfsDDmO/jBCcw==
-Date: Tue, 19 Dec 2023 16:12:22 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226DE28EA;
+	Wed, 20 Dec 2023 00:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SOfn9nF2j9WVhkT4iazg2mOWZYi27n9v0LAXi5A+lGI=; b=WFFjoKNdluVrShYbfz6lNh4XvZ
+	+sNCv0vXzmnqkuXmVLhCUV8i5eZGHhOaQKPUFOJiOu7ch4s9YSURPGie2d3Mi3OvGnNGP2xNfA/MV
+	ui20waemijB/Kjk2U7dXWnTb1i3MmIJlcOeEk6yKN+/7HzDRQaZE40yYvFBEHr+G0VdCyrthY0oYk
+	CPjltBrYyhIgq+d1jp57Bbk2md+Yzl4nhkfV5dH3bk9G7zltvynZfoMFopz8DI11NCAwXPeRsUNQz
+	MLAOmvNnCGYsUNuMWH1ENx5cQRBr7f3d2iQkCUIi9iR/4RFU56lDMFuA5Iwd7QsvibV4wgCjzK5Mk
+	23xmTl7A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rFk96-00Fk2R-2s;
+	Wed, 20 Dec 2023 00:09:08 +0000
+Date: Tue, 19 Dec 2023 16:09:08 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Joel Granados <j.granados@samsung.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Iurii Zaikin <yzaikin@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] Revert setting casefolding dentry operations
- through s_d_op
-Message-ID: <20231219231222.GI38652@quark.localdomain>
-References: <20231215211608.6449-1-krisman@suse.de>
+Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
+Message-ID: <ZYIwpHXkqBkMB8zl@bombadil.infradead.org>
+References: <20231208095926.aavsjrtqbb5rygmb@localhost>
+ <8509a36b-ac23-4fcd-b797-f8915662d5e1@t-8ch.de>
+ <20231212090930.y4omk62wenxgo5by@localhost>
+ <ZXligolK0ekZ+Zuf@bombadil.infradead.org>
+ <20231217120201.z4gr3ksjd4ai2nlk@localhost>
+ <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
+ <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
+ <a0d96e7b-544f-42d5-b8da-85bc4ca087a9@t-8ch.de>
+ <ZYIGi9Gf7oVI7ksf@bombadil.infradead.org>
+ <alpine.DEB.2.22.394.2312192218050.3196@hadrien>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,65 +67,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231215211608.6449-1-krisman@suse.de>
+In-Reply-To: <alpine.DEB.2.22.394.2312192218050.3196@hadrien>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, Dec 15, 2023 at 04:16:00PM -0500, Gabriel Krisman Bertazi wrote:
-> [Apologies for the quick spin of a v2.  The only difference are a couple
-> fixes to the build when CONFIG_UNICODE=n caught by LKP and detailed in
-> each patch changelog.]
+On Tue, Dec 19, 2023 at 10:21:25PM +0100, Julia Lawall wrote:
+> > As I noted, I think this is a generically neat endeavor and so I think
+> > it would be nice to shorthand *any* member of the struct. ctl->any.
+> > Julia, is that possible?
 > 
-> When case-insensitive and fscrypt were adapted to work together, we moved the
-> code that sets the dentry operations for case-insensitive dentries(d_hash and
-> d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
-> wants to set d_revalidate only on some dentries, so it does it only for them in
-> d_revalidate.
-> 
-> But, case-insensitive hooks are actually set on all dentries in the filesystem,
-> so the natural place to do it is through s_d_op and let d_alloc handle it [1].
-> In addition, doing it inside the ->lookup is a problem for case-insensitive
-> dentries that are not created through ->lookup, like those coming
-> open-by-fhandle[2], which will not see the required d_ops.
-> 
-> This patchset therefore reverts to using sb->s_d_op to set the dentry operations
-> for case-insensitive filesystems.  In order to set case-insensitive hooks early
-> and not require every dentry to have d_revalidate in case-insensitive
-> filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
-> on some dentries on the fly.
-> 
-> It survives fstests encrypt and quick groups without regressions.  Based on
-> v6.7-rc1.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
-> [2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
-> 
-> Gabriel Krisman Bertazi (8):
->   dcache: Add helper to disable d_revalidate for a specific dentry
->   fscrypt: Drop d_revalidate if key is available
->   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
->   libfs: Expose generic_ci_dentry_ops outside of libfs
->   ext4: Set the case-insensitive dentry operations through ->s_d_op
->   f2fs: Set the case-insensitive dentry operations through ->s_d_op
->   libfs: Don't support setting casefold operations during lookup
->   fscrypt: Move d_revalidate configuration back into fscrypt
+> What do you mean by *any* member?
 
-Thanks Gabriel, this series looks good.  Sorry that we missed this when adding
-the support for encrypt+casefold.
+I meant when any code tries to assign a new variable to any of the
+members of the struct ctl_table *foo, so any foo->*any*
 
-It's slightly awkward that some lines of code added by patches 5-6 are removed
-in patch 8.  These changes look very hard to split up, though, so you've
-probably done about the best that can be done.
+> If any is an identifier typed
+> metavariable then that would get any immediate member.  But maybe you want
+> something like
+> 
+> <+...ctl->any...+>
+> 
+> that will match anything that has ctl->any as a subexpression?
 
-One question/request: besides performance, the other reason we're so careful
-about minimizing when ->d_revalidate is set for fscrypt is so that overlayfs
-works on encrypted directories.  This is because overlayfs is not compatible
-with ->d_revalidate.  I think your solution still works for that, since
-DCACHE_OP_REVALIDATE will be cleared after the first call to
-fscrypt_d_revalidate(), and when checking for usupported dentries overlayfs does
-indeed check for DCACHE_OP_REVALIDATE instead of ->d_revalidate directly.
-However, that does rely on that very first call to ->d_revalidate actually
-happening before the check is done.  It would be nice to verify that
-overlayfs+fscrypt indeed continues to work, and explicitly mention this
-somewhere (I don't see any mention of overlayfs+fscrypt in the series).
+If as just an expression, then no, we really want this to be tied to
+the data struture in question we want to modify.
 
-- Eric
+  Luis
 
