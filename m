@@ -1,148 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-6578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57C0819C2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 11:09:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EDD819D9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 12:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02FB41C259CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 10:09:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AA91F21D82
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 11:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E574238DD8;
-	Wed, 20 Dec 2023 10:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76DF210F6;
+	Wed, 20 Dec 2023 11:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yv+RQcju"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdnh2nqi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70A121103
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Dec 2023 10:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703066674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fIGeUN2dP3Kfk2DN6cUDjpJQQIxLf4/llr+ahmqgJ9o=;
-	b=Yv+RQcjuLb2BJamig3paboquwHlChBpfeW31UR7j/WCEqrwgHMAGwOhCTN1glOPiDNqtzL
-	w7OLuAWOR/Hkiub+S7MBKxApBBdbPI46WVzX0Yv+Ev+1PnDf6cfHSi4ox9eze9PcvnUt2z
-	umtpBWB5njpDo7phX01ewvr427F1dOY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-371-MZjr-7LVPD-4eoRcMCQdwA-1; Wed, 20 Dec 2023 05:04:31 -0500
-X-MC-Unique: MZjr-7LVPD-4eoRcMCQdwA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 86329101A52A;
-	Wed, 20 Dec 2023 10:04:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.195.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8BFAB51D5;
-	Wed, 20 Dec 2023 10:04:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZXxUx_nh4HNTaDJx@codewreck.org>
-References: <ZXxUx_nh4HNTaDJx@codewreck.org> <20231213152350.431591-1-dhowells@redhat.com> <20231215-einziehen-landen-94a63dd17637@brauner>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: dhowells@redhat.com, Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/39] netfs, afs, 9p: Delegate high-level I/O to netfslib
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930E20DDD
+	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Dec 2023 11:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4b6de25993cso627557e0c.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Dec 2023 03:04:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703070250; x=1703675050; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VcbHzJt15L0qb+G8TjK9OtpQ158sGn0qEnv30Rom+o8=;
+        b=jdnh2nqiL0eJVRH6LSo0X4AJqkLKjsENOx0U3e2LlDTqicWIZZ5BLyPM3Hwr8gG9yu
+         lnSL1wbp2rCl1RXUD9fv4NV5ZQy+5+fJqXE+mzspr/5aQnJxbxLOXlynMylOxkdvACMz
+         8ydmbigkcN26FSRoOzbwCjcQrQTxF2h+MWyTSobXXyxUNcwjP6jvjwVnl/RAWNTAT2+t
+         +z0PReB2pFGBRX3qCB3kqBLMwv6Tneg6KZswAiX9r8qD6TZQUVp0bmB6EcE0OWgvN1lQ
+         nJpwlPTplmMSwTwF/lPqDbjMFuFtBueWba4uICwRzOFNUFvhh3i6RPynng9PfmuuM/wr
+         3MSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703070250; x=1703675050;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VcbHzJt15L0qb+G8TjK9OtpQ158sGn0qEnv30Rom+o8=;
+        b=qZ6hAvX77wyImMBNj7pCRw8kriYboSF1SsXRsK1+X0V2cCRM6QN17/Oax5zx3x/mWs
+         S+H+qZOVx0tGzOv9vCTbfqKf86yi/gtBIY9LrpjY665ozVlFDeliYOfOCwulqMiQoLAX
+         O4/WLNIWa+MlHT+J67OyaBC+ElTK7o/FePP9RbznmXry+LNoGXD4nLZeYH2/OyjI1wmn
+         wKUfkJvZUPZDDNuN+i7Jo4ZwY54iLjM2XNmPavWS7EcW3HH3NQG6L94Q8pp339Pes6Yg
+         63HlP/8szm7zPSQjUSoJjh0e6xLgWqVsSb74Nbwny+rPcPOAwoV+NDwXTFRXugoXXELr
+         Yffg==
+X-Gm-Message-State: AOJu0Yy8HQ5thkrWwAaeFrYrdnGy8sSgr/WjTb7eZqIcihy1BFeqGmfv
+	Vp9uCmHvPjdP7UNL3znNWtjfhj/HFpazLHBcV8+X/Vxh
+X-Google-Smtp-Source: AGHT+IG3u3+dQKNP2Gyh1mK01wPOa5LqOuOICmzNGopxTwkHTImaHFNoUH50C5XG3Tr0pmIkjq+orTpnILcc46+d2bE=
+X-Received: by 2002:a05:6122:1281:b0:4b6:e73d:7203 with SMTP id
+ i1-20020a056122128100b004b6e73d7203mr1174379vkp.14.1703070250501; Wed, 20 Dec
+ 2023 03:04:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1384978.1703066666.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 20 Dec 2023 10:04:26 +0000
-Message-ID: <1384979.1703066666@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <20231220051348.GY1674809@ZenIV> <20231220052536.GL1674809@ZenIV>
+In-Reply-To: <20231220052536.GL1674809@ZenIV>
+From: Tigran Aivazian <aivazian.tigran@gmail.com>
+Date: Wed, 20 Dec 2023 11:03:59 +0000
+Message-ID: <CAK+_RL=cGSmxb8hwb3ayyjwf4OENq6_sYYqgepoZJFYPDfVNvA@mail.gmail.com>
+Subject: Re: [PATCH 13/22] bfs_add_entry(): get rid of pointless ->d_name.len checks
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Dominique Martinet <asmadeus@codewreck.org> wrote:
+Hi Al and All,
 
-> I'll go back to dhowell's tree to finally test 9p a bit,
-> sorry for lack of involvement just low on time all around.
+On Wed, 20 Dec 2023 at 05:25, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> First of all, any dentry getting here would have passed bfs_lookup(),
+> so it it passed ENAMETOOLONG check there, there's no need to
+> repeat it.  And we are not going to get dentries with zero name length -
+> that check ultimately comes from ext2 and it's as pointless here as it
+> used to be there.
 
-I've rebased my tree on -rc6 rather than linux-next for Christian to pull.
+Yes, you are absolutely right, of course -- I must have looked at ext3
+(I think it was ext3, not ext2) code at the time I wrote this and
+assumed that it was necessary.
 
-Ganesha keeps falling over:
+Kind regards,
+Tigran
 
-[root@carina build]# valgrind ./ganesha.nfsd -L /var/log/ganesha/ganesha.l=
-og -f /etc/ganesha/ganesha.conf -N NIV_EVENT -F
-=3D=3D38960=3D=3D Memcheck, a memory error detector
-=3D=3D38960=3D=3D Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward=
- et al.
-=3D=3D38960=3D=3D Using Valgrind-3.22.0 and LibVEX; rerun with -h for copy=
-right info
-=3D=3D38960=3D=3D Command: ./ganesha.nfsd -L /var/log/ganesha/ganesha.log =
--f /etc/ganesha/ganesha.conf -N NIV_EVENT -F
-=3D=3D38960=3D=3D =
+Acknowledged-by: Tigran Aivazian <aivazian.tigran@gmail.com>
 
-=3D=3D38960=3D=3D Thread 138:
-=3D=3D38960=3D=3D Invalid read of size 4
-=3D=3D38960=3D=3D    at 0x4DC32D6: pthread_cond_signal@@GLIBC_2.3.2 (pthre=
-ad_cond_signal.c:41)
-=3D=3D38960=3D=3D    by 0x489700C: sync_cb (fsal_helper.c:1837)
-=3D=3D38960=3D=3D    by 0x49D79DF: mdc_read_super_cb (mdcache_file.c:559)
-=3D=3D38960=3D=3D    by 0x49D7AC5: mdc_read_cb (mdcache_file.c:582)
-=3D=3D38960=3D=3D    by 0x7B4B81F: vfs_read2 (file.c:1317)
-=3D=3D38960=3D=3D    by 0x49D7BCF: mdcache_read2 (mdcache_file.c:617)
-=3D=3D38960=3D=3D    by 0x4897173: fsal_read (fsal_helper.c:1849)
-=3D=3D38960=3D=3D    by 0x4A10FD4: _9p_read (9p_read.c:134)
-=3D=3D38960=3D=3D    by 0x4A0A024: _9p_process_buffer (9p_interpreter.c:18=
-1)
-=3D=3D38960=3D=3D    by 0x4A09DCB: _9p_tcp_process_request (9p_interpreter=
-.c:133)
-=3D=3D38960=3D=3D    by 0x48CE182: _9p_execute (9p_dispatcher.c:315)
-=3D=3D38960=3D=3D    by 0x48CE508: _9p_worker_run (9p_dispatcher.c:412)
-=3D=3D38960=3D=3D  Address 0x24 is not stack'd, malloc'd or (recently) fre=
-e'd
-=3D=3D38960=3D=3D =
-
-=3D=3D38960=3D=3D =
-
-=3D=3D38960=3D=3D Process terminating with default action of signal 11 (SI=
-GSEGV): dumping core
-=3D=3D38960=3D=3D  Access not within mapped region at address 0x24
-=3D=3D38960=3D=3D    at 0x4DC32D6: pthread_cond_signal@@GLIBC_2.3.2 (pthre=
-ad_cond_signal.c:41)
-=3D=3D38960=3D=3D    by 0x489700C: sync_cb (fsal_helper.c:1837)
-=3D=3D38960=3D=3D    by 0x49D79DF: mdc_read_super_cb (mdcache_file.c:559)
-=3D=3D38960=3D=3D    by 0x49D7AC5: mdc_read_cb (mdcache_file.c:582)
-=3D=3D38960=3D=3D    by 0x7B4B81F: vfs_read2 (file.c:1317)
-=3D=3D38960=3D=3D    by 0x49D7BCF: mdcache_read2 (mdcache_file.c:617)
-=3D=3D38960=3D=3D    by 0x4897173: fsal_read (fsal_helper.c:1849)
-=3D=3D38960=3D=3D    by 0x4A10FD4: _9p_read (9p_read.c:134)
-=3D=3D38960=3D=3D    by 0x4A0A024: _9p_process_buffer (9p_interpreter.c:18=
-1)
-=3D=3D38960=3D=3D    by 0x4A09DCB: _9p_tcp_process_request (9p_interpreter=
-.c:133)
-=3D=3D38960=3D=3D    by 0x48CE182: _9p_execute (9p_dispatcher.c:315)
-=3D=3D38960=3D=3D    by 0x48CE508: _9p_worker_run (9p_dispatcher.c:412)
-
-David
-
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/bfs/dir.c | 5 -----
+>  1 file changed, 5 deletions(-)
+>
+> diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
+> index fbc4ae80a4b2..c375e22c4c0c 100644
+> --- a/fs/bfs/dir.c
+> +++ b/fs/bfs/dir.c
+> @@ -275,11 +275,6 @@ static int bfs_add_entry(struct inode *dir, const struct qstr *child, int ino)
+>
+>         dprintf("name=%s, namelen=%d\n", name, namelen);
+>
+> -       if (!namelen)
+> -               return -ENOENT;
+> -       if (namelen > BFS_NAMELEN)
+> -               return -ENAMETOOLONG;
+> -
+>         sblock = BFS_I(dir)->i_sblock;
+>         eblock = BFS_I(dir)->i_eblock;
+>         for (block = sblock; block <= eblock; block++) {
+> --
+> 2.39.2
+>
 
