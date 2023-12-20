@@ -1,116 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-6579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EDD819D9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 12:04:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1880C819DD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 12:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AA91F21D82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 11:04:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B37B22AC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 11:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76DF210F6;
-	Wed, 20 Dec 2023 11:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC2A21340;
+	Wed, 20 Dec 2023 11:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdnh2nqi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Muzb5feU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C930E20DDD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 20 Dec 2023 11:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4b6de25993cso627557e0c.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Dec 2023 03:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703070250; x=1703675050; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VcbHzJt15L0qb+G8TjK9OtpQ158sGn0qEnv30Rom+o8=;
-        b=jdnh2nqiL0eJVRH6LSo0X4AJqkLKjsENOx0U3e2LlDTqicWIZZ5BLyPM3Hwr8gG9yu
-         lnSL1wbp2rCl1RXUD9fv4NV5ZQy+5+fJqXE+mzspr/5aQnJxbxLOXlynMylOxkdvACMz
-         8ydmbigkcN26FSRoOzbwCjcQrQTxF2h+MWyTSobXXyxUNcwjP6jvjwVnl/RAWNTAT2+t
-         +z0PReB2pFGBRX3qCB3kqBLMwv6Tneg6KZswAiX9r8qD6TZQUVp0bmB6EcE0OWgvN1lQ
-         nJpwlPTplmMSwTwF/lPqDbjMFuFtBueWba4uICwRzOFNUFvhh3i6RPynng9PfmuuM/wr
-         3MSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703070250; x=1703675050;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VcbHzJt15L0qb+G8TjK9OtpQ158sGn0qEnv30Rom+o8=;
-        b=qZ6hAvX77wyImMBNj7pCRw8kriYboSF1SsXRsK1+X0V2cCRM6QN17/Oax5zx3x/mWs
-         S+H+qZOVx0tGzOv9vCTbfqKf86yi/gtBIY9LrpjY665ozVlFDeliYOfOCwulqMiQoLAX
-         O4/WLNIWa+MlHT+J67OyaBC+ElTK7o/FePP9RbznmXry+LNoGXD4nLZeYH2/OyjI1wmn
-         wKUfkJvZUPZDDNuN+i7Jo4ZwY54iLjM2XNmPavWS7EcW3HH3NQG6L94Q8pp339Pes6Yg
-         63HlP/8szm7zPSQjUSoJjh0e6xLgWqVsSb74Nbwny+rPcPOAwoV+NDwXTFRXugoXXELr
-         Yffg==
-X-Gm-Message-State: AOJu0Yy8HQ5thkrWwAaeFrYrdnGy8sSgr/WjTb7eZqIcihy1BFeqGmfv
-	Vp9uCmHvPjdP7UNL3znNWtjfhj/HFpazLHBcV8+X/Vxh
-X-Google-Smtp-Source: AGHT+IG3u3+dQKNP2Gyh1mK01wPOa5LqOuOICmzNGopxTwkHTImaHFNoUH50C5XG3Tr0pmIkjq+orTpnILcc46+d2bE=
-X-Received: by 2002:a05:6122:1281:b0:4b6:e73d:7203 with SMTP id
- i1-20020a056122128100b004b6e73d7203mr1174379vkp.14.1703070250501; Wed, 20 Dec
- 2023 03:04:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88B121345;
+	Wed, 20 Dec 2023 11:18:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D10CC433C8;
+	Wed, 20 Dec 2023 11:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703071089;
+	bh=hEF8/ziAY1v3IYwu0TAV76QObnrnN3uPJHzJ4KIa2q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Muzb5feUImmz+T+Vwyl1k/6PGi9FStRMA9PaF7o7SamS3yfUGFaoNCgTKtkL/8bS3
+	 bGa0It53elx0DYnFHsXwnma7DPykB0BrGRz5rnQCwBDCUw9hCggPf/tN1CWMWGVfrL
+	 kzFj1WrLkllAHgJ++KeGsKv4WQfvoPUyIi+x7n3TaTxL7l7eeAX+NamUpd7FqRZLcy
+	 7YX9tihokPZ6XDKjXN8kza6xH0eqUo9WOz8gsf8co0ShgJ78IpJ9vROyWXcmjFpCZu
+	 00WlGu5yBVeeAElleFMNoB1S43nryZklQwPBwoVTcLnyXMV5jaqE38fSiIUo7NOB7C
+	 7EnZiGOZ8zboA==
+Date: Wed, 20 Dec 2023 12:18:03 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Network Development <netdev@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, Kernel Team <kernel-team@fb.com>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: pull-request: bpf-next 2023-12-18
+Message-ID: <20231220-einfiel-narkose-72cf400ae7e6@brauner>
+References: <20231219000520.34178-1-alexei.starovoitov@gmail.com>
+ <CAHk-=wg7JuFYwGy=GOMbRCtOL+jwSQsdUaBsRWkDVYbxipbM5A@mail.gmail.com>
+ <20231219-kinofilm-legen-305bd52c15db@brauner>
+ <CAADnVQK6CkFTGukQyCif6AK045L_6bwaaRj3kfjQjL4xKd9AhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220051348.GY1674809@ZenIV> <20231220052536.GL1674809@ZenIV>
-In-Reply-To: <20231220052536.GL1674809@ZenIV>
-From: Tigran Aivazian <aivazian.tigran@gmail.com>
-Date: Wed, 20 Dec 2023 11:03:59 +0000
-Message-ID: <CAK+_RL=cGSmxb8hwb3ayyjwf4OENq6_sYYqgepoZJFYPDfVNvA@mail.gmail.com>
-Subject: Re: [PATCH 13/22] bfs_add_entry(): get rid of pointless ->d_name.len checks
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAADnVQK6CkFTGukQyCif6AK045L_6bwaaRj3kfjQjL4xKd9AhQ@mail.gmail.com>
 
-Hi Al and All,
+> The patch 4 that does:
+> if (attr->map_token_fd)
+> wasn't sneaked in in any way.
+> You were cc-ed on it just like linux-fsdevel@vger
+> during all 12 revisions of the token series over many months.
+> 
+> So this accusation of breach of trust is baseless.
 
-On Wed, 20 Dec 2023 at 05:25, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> First of all, any dentry getting here would have passed bfs_lookup(),
-> so it it passed ENAMETOOLONG check there, there's no need to
-> repeat it.  And we are not going to get dentries with zero name length -
-> that check ultimately comes from ext2 and it's as pointless here as it
-> used to be there.
+I was expecting this reply and I'm still disappointed.
 
-Yes, you are absolutely right, of course -- I must have looked at ext3
-(I think it was ext3, not ext2) code at the time I wrote this and
-assumed that it was necessary.
+Both of you were explicitly told in very clear words that special-casing
+fd 0 is not ok.
 
-Kind regards,
-Tigran
+Fast forward a few weeks, you chose to not just add patches that forbid
+fd 0 again, no, the heinous part is that you chose to not lose a single
+word about this: not in the cover letter, not in the relevant commit,
+not in all the discussions we had around this.
 
-Acknowledged-by: Tigran Aivazian <aivazian.tigran@gmail.com>
+You were absolutely aware how opposed we are to this. It cannot get any
+more sneaky than this. And it's frankly insulting that you choose to
+defend this by feigning ignorance. No one is buying this.
 
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/bfs/dir.c | 5 -----
->  1 file changed, 5 deletions(-)
->
-> diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
-> index fbc4ae80a4b2..c375e22c4c0c 100644
-> --- a/fs/bfs/dir.c
-> +++ b/fs/bfs/dir.c
-> @@ -275,11 +275,6 @@ static int bfs_add_entry(struct inode *dir, const struct qstr *child, int ino)
->
->         dprintf("name=%s, namelen=%d\n", name, namelen);
->
-> -       if (!namelen)
-> -               return -ENOENT;
-> -       if (namelen > BFS_NAMELEN)
-> -               return -ENAMETOOLONG;
-> -
->         sblock = BFS_I(dir)->i_sblock;
->         eblock = BFS_I(dir)->i_eblock;
->         for (block = sblock; block <= eblock; block++) {
-> --
-> 2.39.2
->
+But let's assume for a second that both you and Andrii somehow managed
+to forget the very clear and heated discussion on-list last time, the
+resulting LWN article written about it and the in-person discussion
+around this we had in November at LPC.
+
+You still would have put a major deviation from file descriptor
+semantics in the bpf specific parts of the patches yet failed to lose a
+single word on this anywhere. Yet we explicitly requested in the last
+thread that if bpf does deviate from core fs semantics you clearly
+communicate this.
+
+But shame on me as well. I should've caught this during review. I
+trusted you both enough that I only focussed on the parts that matter
+for the VFS which were the two patches I ACKed. I didn't think it
+necessary to wade through the completely uninteresting BPF bits that I
+couldn't care less about. That won't happen again.
+
+What I want for the future is for bpf to clearly, openly, and explicitly
+communicate any decisions that affect core fs semantics. It's the exact
+same request I put forward last time. This is a path forward.
 
