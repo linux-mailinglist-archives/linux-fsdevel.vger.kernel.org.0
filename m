@@ -1,191 +1,288 @@
-Return-Path: <linux-fsdevel+bounces-6539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31E168196D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 03:29:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F81819725
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 04:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1710B24993
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 02:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0E191F264DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Dec 2023 03:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34858BF9;
-	Wed, 20 Dec 2023 02:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hO2svIY8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83886156F0;
+	Wed, 20 Dec 2023 03:26:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE278827;
-	Wed, 20 Dec 2023 02:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1703039356; x=1734575356;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=5P8valVma7379oKA2C4O5u8JYMU/WxLyLWS4JRVSF50=;
-  b=hO2svIY8Cqn1Ir3XfrM5pb+m9HJ7Oi4DBmlMNGch9BXTmB9qVXykW4fR
-   cIPShyDvi7OwoXInVlLEoRuzGjr6NMe6RDP6+J/VtkECVmuvULc+Z+ZGL
-   kHwGUT/Fy4MOgUSGtmVU0fGh/wa3QOsGhVLBFRuaYbbO8ZftSOt0eWp6M
-   YkOUXvE7LqnztJAUAs1xzkP1STrb3a0L1vp+S1bIUtSMob9OmDfqyGJGn
-   b0tzqKd1FBOEXKl8oaHTIX8i75vN7KfKZPNuJl4RpeHpslqjR9JsfzsYS
-   dJ34AxdBq9oN3uz/ku0DILZxu6JKv+o0G4BvPs/tH3FGme9/oZ/MP6KDg
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10929"; a="481940572"
-X-IronPort-AV: E=Sophos;i="6.04,290,1695711600"; 
-   d="scan'208";a="481940572"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2023 18:29:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10929"; a="949378315"
-X-IronPort-AV: E=Sophos;i="6.04,290,1695711600"; 
-   d="scan'208";a="949378315"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2023 18:29:06 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gregory.price@memverge.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
-  <linux-doc@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
-  <x86@kernel.org>,  <akpm@linux-foundation.org>,  <arnd@arndb.de>,
-  <tglx@linutronix.de>,  <luto@kernel.org>,  <mingo@redhat.com>,
-  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <hpa@zytor.com>,
-  <mhocko@kernel.org>,  <tj@kernel.org>,  <corbet@lwn.net>,
-  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <honggyu.kim@sk.com>,
-  <vtavarespetr@micron.com>,  <peterz@infradead.org>,
-  <jgroves@micron.com>,  <ravis.opensrc@micron.com>,
-  <sthanneeru@micron.com>,  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
-  <seungjun.ha@samsung.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Hasan
- Al Maruf <hasanalmaruf@fb.com>,  Hao Wang <haowang3@fb.com>,  Dan Williams
- <dan.j.williams@intel.com>,  "Michal Hocko" <mhocko@suse.com>,  Zhongkun
- He <hezhongkun.hzk@bytedance.com>,  "Frank van der Linden"
- <fvdl@google.com>,  John Groves <john@jagalactic.com>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 00/11] mempolicy2, mbind2, and weighted interleave
-In-Reply-To: <ZYHcPiU2IzHr/tbQ@memverge.com> (Gregory Price's message of "Tue,
-	19 Dec 2023 13:09:02 -0500")
-References: <20231218194631.21667-1-gregory.price@memverge.com>
-	<87wmtanba2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZYHcPiU2IzHr/tbQ@memverge.com>
-Date: Wed, 20 Dec 2023 10:27:06 +0800
-Message-ID: <87zfy5libp.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD8F14F7F;
+	Wed, 20 Dec 2023 03:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SvzW05Kpjz4f3lD0;
+	Wed, 20 Dec 2023 11:26:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id E99411A0A10;
+	Wed, 20 Dec 2023 11:26:41 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP1 (Coremail) with SMTP id cCh0CgDn6hDuXoJl2ZOBEA--.53812S3;
+	Wed, 20 Dec 2023 11:26:40 +0800 (CST)
+Message-ID: <64fdffaa-9a8f-df34-42e7-ccca81e95c3c@huaweicloud.com>
+Date: Wed, 20 Dec 2023 11:26:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [PATCH 3/7] block: Add config option to not allow writing to
+ mounted devices
+To: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@infradead.org>,
+ Kees Cook <keescook@google.com>, syzkaller <syzkaller@googlegroups.com>,
+ Alexander Popov <alex.popov@linux.com>, linux-xfs@vger.kernel.org,
+ Dmitry Vyukov <dvyukov@google.com>, yangerkun <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>
+References: <20231101173542.23597-1-jack@suse.cz>
+ <20231101174325.10596-3-jack@suse.cz>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <20231101174325.10596-3-jack@suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDn6hDuXoJl2ZOBEA--.53812S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKr4xtFy8CFy3WFW3Xw43KFg_yoW3AryfpF
+	WUGFy3Cry8KFnrWFs3Z3Wxur1agw1Iy343GasIgw10krZ0yFn2gF4vgryUtFy0yrZ3JF4U
+	ZF48uryjkFy2krJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-Gregory Price <gregory.price@memverge.com> writes:
 
-> On Tue, Dec 19, 2023 at 11:04:05AM +0800, Huang, Ying wrote:
->> Gregory Price <gourry.memverge@gmail.com> writes:
->> 
->> > This patch set extends the mempolicy interface to enable new
->> > mempolicies which may require extended data to operate.
->> >
->> > MPOL_WEIGHTED_INTERLEAVE is included as an example extension.
->> 
->> Per my understanding, it's better to describe why we need this patchset
->> at the beginning.  Per my understanding, weighted interleave is used to
->> expand DRAM bandwidth for workloads with real high memory bandwidth
->> requirements.  Without it, DRAM bandwidth will be saturated, which leads
->> to poor performance.
->> 
+在 2023/11/2 1:43, Jan Kara 写道:
+> Writing to mounted devices is dangerous and can lead to filesystem
+> corruption as well as crashes. Furthermore syzbot comes with more and
+> more involved examples how to corrupt block device under a mounted
+> filesystem leading to kernel crashes and reports we can do nothing
+> about. Add tracking of writers to each block device and a kernel cmdline
+> argument which controls whether other writeable opens to block devices
+> open with BLK_OPEN_RESTRICT_WRITES flag are allowed. We will make
+> filesystems use this flag for used devices.
 >
-> Will add more details, thanks.
+> Note that this effectively only prevents modification of the particular
+> block device's page cache by other writers. The actual device content
+> can still be modified by other means - e.g. by issuing direct scsi
+> commands, by doing writes through devices lower in the storage stack
+> (e.g. in case loop devices, DM, or MD are involved) etc. But blocking
+> direct modifications of the block device page cache is enough to give
+> filesystems a chance to perform data validation when loading data from
+> the underlying storage and thus prevent kernel crashes.
 >
->> > struct mempolicy_args {
->> >     unsigned short mode;            /* policy mode */
->> >     unsigned short mode_flags;      /* policy mode flags */
->> >     int home_node;                  /* mbind: use MPOL_MF_HOME_NODE */
->> >     nodemask_t *policy_nodes;       /* get/set/mbind */
->> >     unsigned char *il_weights;      /* for mode MPOL_WEIGHTED_INTERLEAVE */
->> >     int policy_node;                /* get: policy node information */
->> > };
->> 
->> Because we use more and more parameters to describe the mempolicy, I
->> think it's a good idea to replace some parameters with struct.  But I
->> don't think it's a good idea to put unrelated stuff into the struct.
->> For example,
->> 
->> struct mempolicy_param {
->>     unsigned short mode;            /* policy mode */
->>     unsigned short mode_flags;      /* policy mode flags */
->>     int home_node;                  /* mbind: use MPOL_MF_HOME_NODE */
->>     nodemask_t *policy_nodes;
->>     unsigned char *il_weights;      /* for mode MPOL_WEIGHTED_INTERLEAVE */
->> };
->> 
->> describe the parameters to create the mempolicy.  It can be used by
->> set/get_mempolicy() and mbind().  So, I think that it's a good
->> abstraction.  But "policy_node" has nothing to do with set_mempolicy()
->> and mbind().  So I think that we shouldn't add it into the struct.  It's
->> totally OK to use different parameters for different functions.  For
->> example,
->> 
->> long do_set_mempolicy(struct mempolicy_param *mparam);
->> long do_mbind(unsigned long start, unsigned long len,
->>                 struct mempolicy_param *mparam, unsigned long flags);
->> long do_get_task_mempolicy(struct mempolicy_param *mparam, int
->>                 *policy_node);
->> 
->> This isn't the full list.  My point is to use separate parameter for
->> something specific for some function.
->>
+> Syzbot can use this cmdline argument option to avoid uninteresting
+> crashes. Also users whose userspace setup does not need writing to
+> mounted block devices can set this option for hardening.
 >
-> this is the internal structure, but i get the point, we can drop it from
-> the structure and extend the arg list internally.
+> Link: https://lore.kernel.org/all/60788e5d-5c7c-1142-e554-c21d709acfd9@linaro.org
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>   block/Kconfig             | 20 +++++++++++++
+>   block/bdev.c              | 62 ++++++++++++++++++++++++++++++++++++++-
+>   include/linux/blk_types.h |  1 +
+>   include/linux/blkdev.h    |  2 ++
+>   4 files changed, 84 insertions(+), 1 deletion(-)
 >
-> I'd originally thought to just remove the policy_node stuff all
-> together from get_mempolicy2().  Do you prefer to have a separate struct
-> for set/get interfaces so that the get interface struct can be extended?
->
-> All the MPOL_F_NODE "alternate data fetch" mechanisms from
-> get_mempolicy() feel like more of a wart than a feature.  And presently
-> the only data returned in policy_node is the next allocation node for
-> interleave.  That's not even particularly useful, so I'm of a mind to
-> remove it.
->
-> Assuming we remove policy_node altogether... do we still break up the
-> set/get interface into separate structures to avoid this in the future?
+> diff --git a/block/Kconfig b/block/Kconfig
+> index f1364d1c0d93..ca04b657e058 100644
+> --- a/block/Kconfig
+> +++ b/block/Kconfig
+> @@ -78,6 +78,26 @@ config BLK_DEV_INTEGRITY_T10
+>   	select CRC_T10DIF
+>   	select CRC64_ROCKSOFT
+>   
+> +config BLK_DEV_WRITE_MOUNTED
+> +	bool "Allow writing to mounted block devices"
+> +	default y
+> +	help
+> +	When a block device is mounted, writing to its buffer cache is very
+> +	likely going to cause filesystem corruption. It is also rather easy to
+> +	crash the kernel in this way since the filesystem has no practical way
+> +	of detecting these writes to buffer cache and verifying its metadata
+> +	integrity. However there are some setups that need this capability
+> +	like running fsck on read-only mounted root device, modifying some
+> +	features on mounted ext4 filesystem, and similar. If you say N, the
+> +	kernel will prevent processes from writing to block devices that are
+> +	mounted by filesystems which provides some more protection from runaway
+> +	privileged processes and generally makes it much harder to crash
+> +	filesystem drivers. Note however that this does not prevent
+> +	underlying device(s) from being modified by other means, e.g. by
+> +	directly submitting SCSI commands or through access to lower layers of
+> +	storage stack. If in doubt, say Y. The configuration can be overridden
+> +	with the bdev_allow_write_mounted boot option.
+> +
+>   config BLK_DEV_ZONED
+>   	bool "Zoned block device support"
+>   	select MQ_IOSCHED_DEADLINE
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 3f27939e02c6..d75dd7dd2b31 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -30,6 +30,9 @@
+>   #include "../fs/internal.h"
+>   #include "blk.h"
+>   
+> +/* Should we allow writing to mounted block devices? */
+> +static bool bdev_allow_write_mounted = IS_ENABLED(CONFIG_BLK_DEV_WRITE_MOUNTED);
+> +
+>   struct bdev_inode {
+>   	struct block_device bdev;
+>   	struct inode vfs_inode;
+> @@ -730,7 +733,34 @@ void blkdev_put_no_open(struct block_device *bdev)
+>   {
+>   	put_device(&bdev->bd_device);
+>   }
+> -	
+> +
+> +static bool bdev_writes_blocked(struct block_device *bdev)
+> +{
+> +	return bdev->bd_writers == -1;
+> +}
+> +
+> +static void bdev_block_writes(struct block_device *bdev)
+> +{
+> +	bdev->bd_writers = -1;
+> +}
+> +
+> +static void bdev_unblock_writes(struct block_device *bdev)
+> +{
+> +	bdev->bd_writers = 0;
+> +}
+> +
+> +static bool blkdev_open_compatible(struct block_device *bdev, blk_mode_t mode)
+> +{
+> +	if (!bdev_allow_write_mounted) {
+> +		/* Writes blocked? */
+> +		if (mode & BLK_OPEN_WRITE && bdev_writes_blocked(bdev))
+> +			return false;
+> +		if (mode & BLK_OPEN_RESTRICT_WRITES && bdev->bd_writers > 0)
+> +			return false;
+> +	}
+> +	return true;
+> +}
+> +
+>   /**
+>    * bdev_open_by_dev - open a block device by device number
+>    * @dev: device number of block device to open
+> @@ -773,6 +803,10 @@ struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+>   	if (ret)
+>   		goto free_handle;
+>   
+> +	/* Blocking writes requires exclusive opener */
+> +	if (mode & BLK_OPEN_RESTRICT_WRITES && !holder)
+> +		return ERR_PTR(-EINVAL);
+> +
+>   	bdev = blkdev_get_no_open(dev);
+>   	if (!bdev) {
+>   		ret = -ENXIO;
+> @@ -800,12 +834,21 @@ struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
+>   		goto abort_claiming;
+>   	if (!try_module_get(disk->fops->owner))
+>   		goto abort_claiming;
+> +	ret = -EBUSY;
+> +	if (!blkdev_open_compatible(bdev, mode))
+> +		goto abort_claiming;
+>   	if (bdev_is_partition(bdev))
+>   		ret = blkdev_get_part(bdev, mode);
+>   	else
+>   		ret = blkdev_get_whole(bdev, mode);
+>   	if (ret)
+>   		goto put_module;
+> +	if (!bdev_allow_write_mounted) {
+> +		if (mode & BLK_OPEN_RESTRICT_WRITES)
+> +			bdev_block_writes(bdev);
 
-I have no much experience at ABI definition.  So, I want to get guidance
-from more experienced people on this.
+Hi, Jan
 
-Is it good to implement all functionality of get_mempolicy() with
-get_mempolicy2(), so we can deprecate get_mempolicy() and remove it
-finally?  So, users don't need to use 2 similar syscalls?
+When a partition device is mounted, I think maybe it's better to block 
+writes on the whole device at same time.
 
-And, IIUC, we will not get policy_node, addr_node, and policy config at
-the same time, is it better to use a union instead of struct in
-get_mempolicy2()?
+Allowing the whole device to be opened for writing when mounting a 
+partition device, did you have any special considerations before?
 
->> > struct mpol_args {
->> >         /* Basic mempolicy settings */
->> >         __u16 mode;
->> >         __u16 mode_flags;
->> >         __s32 home_node;
->> >         __aligned_u64 pol_nodes;
->> >         __aligned_u64 *il_weights;      /* of size pol_maxnodes */
->> >         __u64 pol_maxnodes;
->> >         __s32 policy_node;
->> > };
->> 
->> Same as my idea above.  I think we shouldn't add policy_node for
->> set_mempolicy2()/mbind2().  That will make users confusing.  We can use
->> a different struct for get_mempolicy2().
->> 
->
-> See above.
+Thanks.
 
---
-Best Regards,
-Huang, Ying
+> +		else if (mode & BLK_OPEN_WRITE)
+> +			bdev->bd_writers++;
+> +	}
+>   	if (holder) {
+>   		bd_finish_claiming(bdev, holder, hops);
+>   
+> @@ -901,6 +944,14 @@ void bdev_release(struct bdev_handle *handle)
+>   		sync_blockdev(bdev);
+>   
+>   	mutex_lock(&disk->open_mutex);
+> +	if (!bdev_allow_write_mounted) {
+> +		/* The exclusive opener was blocking writes? Unblock them. */
+> +		if (handle->mode & BLK_OPEN_RESTRICT_WRITES)
+> +			bdev_unblock_writes(bdev);
+> +		else if (handle->mode & BLK_OPEN_WRITE)
+> +			bdev->bd_writers--;
+> +	}
+> +
+>   	if (handle->holder)
+>   		bd_end_claim(bdev, handle->holder);
+>   
+> @@ -1069,3 +1120,12 @@ void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
+>   
+>   	blkdev_put_no_open(bdev);
+>   }
+> +
+> +static int __init setup_bdev_allow_write_mounted(char *str)
+> +{
+> +	if (kstrtobool(str, &bdev_allow_write_mounted))
+> +		pr_warn("Invalid option string for bdev_allow_write_mounted:"
+> +			" '%s'\n", str);
+> +	return 1;
+> +}
+> +__setup("bdev_allow_write_mounted=", setup_bdev_allow_write_mounted);
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 749203277fee..52e264d5a830 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -66,6 +66,7 @@ struct block_device {
+>   #ifdef CONFIG_FAIL_MAKE_REQUEST
+>   	bool			bd_make_it_fail;
+>   #endif
+> +	int			bd_writers;
+>   	/*
+>   	 * keep this out-of-line as it's both big and not needed in the fast
+>   	 * path
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 7afc10315dd5..0e0c0186aa32 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -124,6 +124,8 @@ typedef unsigned int __bitwise blk_mode_t;
+>   #define BLK_OPEN_NDELAY		((__force blk_mode_t)(1 << 3))
+>   /* open for "writes" only for ioctls (specialy hack for floppy.c) */
+>   #define BLK_OPEN_WRITE_IOCTL	((__force blk_mode_t)(1 << 4))
+> +/* open is exclusive wrt all other BLK_OPEN_WRITE opens to the device */
+> +#define BLK_OPEN_RESTRICT_WRITES	((__force blk_mode_t)(1 << 5))
+>   
+>   struct gendisk {
+>   	/*
+
 
