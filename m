@@ -1,51 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-6704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F69281B7A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:28:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D7C81B7AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3CD1F23A7A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF2E1F25795
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916EE7A20C;
-	Thu, 21 Dec 2023 13:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6D2760BB;
+	Thu, 21 Dec 2023 13:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rn8TfdHx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSEn5GpC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893E579951
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 13:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA51D7AE8C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 13:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703165080;
+	s=mimecast20190719; t=1703165086;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/8o/jzOtIP8Ko02Zj7+GBh+0/dDxeH6NEFPQ0ZzQc+4=;
-	b=Rn8TfdHxvf811rcIYqy+6CBZ+AYzh+soXlcxhUUH0uyxEG9Th9N+4JxagC0kLHbV3jmWqi
-	rrFvl+USccMy1QmjqnqUblmfn4Z9xq6U+0U5Xo6Zq9Hg6EG9uEIsBKQxKjm7AWa13Zv4QH
-	bbVf1vHwfclC4nOZebS1DCDE/15/lIs=
+	bh=OUiNmCjPvqOiTp/4UL00+cVpBnekg0L/g2EBDkgOp3k=;
+	b=TSEn5GpCDTCoRNXraT/6I+X3HfNNkxBh+aWkeEYDZLGJzrVJkf/Pmw3hZNev/94M9Cezl1
+	82JP8Y+H/ijZhYv3E/JsO44W6NMD3SQtj8U5gi1osJixvW3V1R6851I6TW8nFJtHeMrq3k
+	eFxqjR055kPzf9zFtheQIh4ebwVwGn4=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-whnSRbVTPqyRQu2WUIvUpg-1; Thu, 21 Dec 2023 08:24:37 -0500
-X-MC-Unique: whnSRbVTPqyRQu2WUIvUpg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-673-SL0um2dhP2aWOnnR2kR2cw-1; Thu, 21 Dec 2023 08:24:41 -0500
+X-MC-Unique: SL0um2dhP2aWOnnR2kR2cw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 65AA688CDCD;
-	Thu, 21 Dec 2023 13:24:36 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5E6B2185A78A;
+	Thu, 21 Dec 2023 13:24:40 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.39.195.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 80DDD492BFA;
-	Thu, 21 Dec 2023 13:24:33 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 1FD1B40C6EB9;
+	Thu, 21 Dec 2023 13:24:37 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Jeff Layton <jlayton@kernel.org>,
 	Steve French <smfrench@gmail.com>
@@ -69,9 +69,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 08/40] netfs: Add a procfile to list in-progress requests
-Date: Thu, 21 Dec 2023 13:23:03 +0000
-Message-ID: <20231221132400.1601991-9-dhowells@redhat.com>
+Subject: [PATCH v5 09/40] netfs: Allow the netfs to make the io (sub)request alloc larger
+Date: Thu, 21 Dec 2023 13:23:04 +0000
+Message-ID: <20231221132400.1601991-10-dhowells@redhat.com>
 In-Reply-To: <20231221132400.1601991-1-dhowells@redhat.com>
 References: <20231221132400.1601991-1-dhowells@redhat.com>
 Precedence: bulk
@@ -81,188 +81,59 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Add a procfile, /proc/fs/netfs/requests, to list in-progress netfslib I/O
-requests.
+Allow the network filesystem to specify extra space to be allocated on the
+end of the io (sub)request.  This allows cifs, for example, to use this
+space rather than allocating its own cifs_readdata struct.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
 cc: linux-mm@kvack.org
 ---
- fs/netfs/internal.h   | 22 ++++++++++++++
- fs/netfs/main.c       | 69 ++++++++++++++++++++++++++++++++++++++++++-
- fs/netfs/objects.c    |  4 ++-
- include/linux/netfs.h |  6 +++-
- 4 files changed, 98 insertions(+), 3 deletions(-)
+ fs/netfs/objects.c    | 7 +++++--
+ include/linux/netfs.h | 2 ++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index 3f6e22229433..4708fb15446b 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -33,6 +33,28 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync);
-  * main.c
-  */
- extern unsigned int netfs_debug;
-+extern struct list_head netfs_io_requests;
-+extern spinlock_t netfs_proc_lock;
-+
-+#ifdef CONFIG_PROC_FS
-+static inline void netfs_proc_add_rreq(struct netfs_io_request *rreq)
-+{
-+	spin_lock(&netfs_proc_lock);
-+	list_add_tail_rcu(&rreq->proc_link, &netfs_io_requests);
-+	spin_unlock(&netfs_proc_lock);
-+}
-+static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq)
-+{
-+	if (!list_empty(&rreq->proc_link)) {
-+		spin_lock(&netfs_proc_lock);
-+		list_del_rcu(&rreq->proc_link);
-+		spin_unlock(&netfs_proc_lock);
-+	}
-+}
-+#else
-+static inline void netfs_proc_add_rreq(struct netfs_io_request *rreq) {}
-+static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq) {}
-+#endif
- 
- /*
-  * objects.c
-diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index c9af6e0896d3..97ce1436615b 100644
---- a/fs/netfs/main.c
-+++ b/fs/netfs/main.c
-@@ -21,13 +21,80 @@ unsigned netfs_debug;
- module_param_named(debug, netfs_debug, uint, S_IWUSR | S_IRUGO);
- MODULE_PARM_DESC(netfs_debug, "Netfs support debugging mask");
- 
-+#ifdef CONFIG_PROC_FS
-+LIST_HEAD(netfs_io_requests);
-+DEFINE_SPINLOCK(netfs_proc_lock);
-+
-+static const char *netfs_origins[] = {
-+	[NETFS_READAHEAD]	= "RA",
-+	[NETFS_READPAGE]	= "RP",
-+	[NETFS_READ_FOR_WRITE]	= "RW",
-+};
-+
-+/*
-+ * Generate a list of I/O requests in /proc/fs/netfs/requests
-+ */
-+static int netfs_requests_seq_show(struct seq_file *m, void *v)
-+{
-+	struct netfs_io_request *rreq;
-+
-+	if (v == &netfs_io_requests) {
-+		seq_puts(m,
-+			 "REQUEST  OR REF FL ERR  OPS COVERAGE\n"
-+			 "======== == === == ==== === =========\n"
-+			 );
-+		return 0;
-+	}
-+
-+	rreq = list_entry(v, struct netfs_io_request, proc_link);
-+	seq_printf(m,
-+		   "%08x %s %3d %2lx %4d %3d @%04llx %zx/%zx",
-+		   rreq->debug_id,
-+		   netfs_origins[rreq->origin],
-+		   refcount_read(&rreq->ref),
-+		   rreq->flags,
-+		   rreq->error,
-+		   atomic_read(&rreq->nr_outstanding),
-+		   rreq->start, rreq->submitted, rreq->len);
-+	seq_putc(m, '\n');
-+	return 0;
-+}
-+
-+static void *netfs_requests_seq_start(struct seq_file *m, loff_t *_pos)
-+	__acquires(rcu)
-+{
-+	rcu_read_lock();
-+	return seq_list_start_head(&netfs_io_requests, *_pos);
-+}
-+
-+static void *netfs_requests_seq_next(struct seq_file *m, void *v, loff_t *_pos)
-+{
-+	return seq_list_next(v, &netfs_io_requests, _pos);
-+}
-+
-+static void netfs_requests_seq_stop(struct seq_file *m, void *v)
-+	__releases(rcu)
-+{
-+	rcu_read_unlock();
-+}
-+
-+static const struct seq_operations netfs_requests_seq_ops = {
-+	.start  = netfs_requests_seq_start,
-+	.next   = netfs_requests_seq_next,
-+	.stop   = netfs_requests_seq_stop,
-+	.show   = netfs_requests_seq_show,
-+};
-+#endif /* CONFIG_PROC_FS */
-+
- static int __init netfs_init(void)
- {
- 	int ret = -ENOMEM;
- 
- 	if (!proc_mkdir("fs/netfs", NULL))
- 		goto error;
--
-+	if (!proc_create_seq("fs/netfs/requests", S_IFREG | 0444, NULL,
-+			     &netfs_requests_seq_ops))
-+		goto error_proc;
- #ifdef CONFIG_FSCACHE_STATS
- 	if (!proc_create_single("fs/netfs/stats", S_IFREG | 0444, NULL,
- 				netfs_stats_show))
 diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index e17cdf53f6a7..85f428fc52e6 100644
+index 85f428fc52e6..c4229c5f3f54 100644
 --- a/fs/netfs/objects.c
 +++ b/fs/netfs/objects.c
-@@ -45,6 +45,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 		}
- 	}
+@@ -22,7 +22,8 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+ 	struct netfs_io_request *rreq;
+ 	int ret;
  
-+	netfs_proc_add_rreq(rreq);
- 	netfs_stat(&netfs_n_rh_rreq);
- 	return rreq;
- }
-@@ -76,12 +77,13 @@ static void netfs_free_request(struct work_struct *work)
- 		container_of(work, struct netfs_io_request, work);
+-	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
++	rreq = kzalloc(ctx->ops->io_request_size ?: sizeof(struct netfs_io_request),
++		       GFP_KERNEL);
+ 	if (!rreq)
+ 		return ERR_PTR(-ENOMEM);
  
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-+	netfs_proc_del_rreq(rreq);
- 	netfs_clear_subrequests(rreq, false);
- 	if (rreq->netfs_ops->free_request)
- 		rreq->netfs_ops->free_request(rreq);
- 	if (rreq->cache_resources.ops)
- 		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
--	kfree(rreq);
-+	kfree_rcu(rreq, rcu);
- 	netfs_stat_d(&netfs_n_rh_rreq);
- }
+@@ -114,7 +115,9 @@ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq
+ {
+ 	struct netfs_io_subrequest *subreq;
  
+-	subreq = kzalloc(sizeof(struct netfs_io_subrequest), GFP_KERNEL);
++	subreq = kzalloc(rreq->netfs_ops->io_subrequest_size ?:
++			 sizeof(struct netfs_io_subrequest),
++			 GFP_KERNEL);
+ 	if (subreq) {
+ 		INIT_LIST_HEAD(&subreq->rreq_link);
+ 		refcount_set(&subreq->ref, 2);
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 32faf6c89702..7244ddebd974 100644
+index 7244ddebd974..d6f27000eeb0 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -175,10 +175,14 @@ enum netfs_io_origin {
-  * operations to a variety of data stores and then stitch the result together.
+@@ -210,6 +210,8 @@ struct netfs_io_request {
+  * Operations the network filesystem can/must provide to the helpers.
   */
- struct netfs_io_request {
--	struct work_struct	work;
-+	union {
-+		struct work_struct work;
-+		struct rcu_head rcu;
-+	};
- 	struct inode		*inode;		/* The file being accessed */
- 	struct address_space	*mapping;	/* The mapping being accessed */
- 	struct netfs_cache_resources cache_resources;
-+	struct list_head	proc_link;	/* Link in netfs_iorequests */
- 	struct list_head	subrequests;	/* Contributory I/O operations */
- 	void			*netfs_priv;	/* Private data for the netfs */
- 	unsigned int		debug_id;
+ struct netfs_request_ops {
++	unsigned int	io_request_size;	/* Alloc size for netfs_io_request struct */
++	unsigned int	io_subrequest_size;	/* Alloc size for netfs_io_subrequest struct */
+ 	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
+ 	void (*free_request)(struct netfs_io_request *rreq);
+ 
 
 
