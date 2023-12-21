@@ -1,75 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-6823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFA081D3F2
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5154181D3F0
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 13:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D3EB230B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 12:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1BE11F22199
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 12:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2B4DDB3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E23ADDBE;
 	Sat, 23 Dec 2023 12:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HjFKjpVx"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bYzsdHL/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1100D313;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F10D50C;
 	Sat, 23 Dec 2023 12:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231223120904euoutp021bd63559d92e4ca3b76589f56ae6fa42~jdKboj2LK2847428474euoutp02q;
-	Sat, 23 Dec 2023 12:09:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231223120904euoutp021bd63559d92e4ca3b76589f56ae6fa42~jdKboj2LK2847428474euoutp02q
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231223120909euoutp02e781f7d563a28945cc1ff750cc8257ce~jdKgt2m0K2296122961euoutp02N;
+	Sat, 23 Dec 2023 12:09:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231223120909euoutp02e781f7d563a28945cc1ff750cc8257ce~jdKgt2m0K2296122961euoutp02N
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1703333344;
-	bh=Rjs08YUO6R5Fo6m/E8HPd170IMaYrZG1q3E30ZVxhYo=;
+	s=mail20170921; t=1703333349;
+	bh=BSmVJXzK146D6e0cSRYQv6lHfyjSf2ksmoUZb9q3Mik=;
 	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=HjFKjpVxkQxerAyWXijiGkF8JGspr67e6eNlsWFf2JKzMDSex3b+11f20hHrF6wp9
-	 AFSKPnIumRkZNGz4KVQ/wQ74nyHoOT5FzDEXIUVbAhKHqq6IvIwVHk6nxKGlOeCqNd
-	 DR+kX/9DtDDLuwBEqwIyvXirafdWhqrYzqE8eK+E=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	b=bYzsdHL/x9bYs41wKBEkx/WyiOnst6iGklk/LE7JSjAXLL68cQ9UfZFat2Ban1cC8
+	 TBICcR4xzS/DkVBEwIXCmGvzn0frhfeVhAE4IAHK/U4MOw369gkMCOcrzzTAKjkXFy
+	 PQrxu2PJAZ/3YFOW5cyq3ZGraA/nmIpIFYHTUQTk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
 	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231223120903eucas1p210d87e21ded82ea460a1f83c938be14a~jdKay16PP0090300903eucas1p2f;
-	Sat, 23 Dec 2023 12:09:03 +0000 (GMT)
+	20231223120908eucas1p2f36fd9d33d025fd0a8284c6e2d62ec2d~jdKfXcaWy2664726647eucas1p22;
+	Sat, 23 Dec 2023 12:09:08 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 59.C7.09539.FDDC6856; Sat, 23
-	Dec 2023 12:09:03 +0000 (GMT)
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 0C.29.09814.4EDC6856; Sat, 23
+	Dec 2023 12:09:08 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231223120902eucas1p1352ab08a66a5cbf982039b55c810573c~jdKZh8TVT1118711187eucas1p1C;
-	Sat, 23 Dec 2023 12:09:02 +0000 (GMT)
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231223120907eucas1p20afac63076e1e9d5aee6adaa101c0630~jdKeRjoRP0116901169eucas1p2d;
+	Sat, 23 Dec 2023 12:09:07 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
 	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231223120902eusmtrp22caac69eb58fcb878c2880e5259a27fe~jdKZg8KqS1757817578eusmtrp2l;
-	Sat, 23 Dec 2023 12:09:02 +0000 (GMT)
-X-AuditID: cbfec7f2-52bff70000002543-8e-6586cddf2ff9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 96.DC.09146.DDDC6856; Sat, 23
-	Dec 2023 12:09:01 +0000 (GMT)
+	20231223120907eusmtrp23c65487912263030f1e4c786f5bb002e~jdKeQ-Urr1757817578eusmtrp2m;
+	Sat, 23 Dec 2023 12:09:07 +0000 (GMT)
+X-AuditID: cbfec7f4-711ff70000002656-a0-6586cde4fe93
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 97.DC.09146.2EDC6856; Sat, 23
+	Dec 2023 12:09:06 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231223120901eusmtip11a74ba805023d18843ac5d35d8b74a97~jdKZWgTIi0225402254eusmtip1a;
-	Sat, 23 Dec 2023 12:09:01 +0000 (GMT)
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20231223120906eusmtip2663a12c2cd2cdb40860a0a616d503b1c~jdKeD4U6-3146931469eusmtip2f;
+	Sat, 23 Dec 2023 12:09:06 +0000 (GMT)
 Received: from localhost (106.210.248.246) by CAMSVWEXC02.scsc.local
 	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Sat, 23 Dec 2023 12:09:00 +0000
-Date: Thu, 21 Dec 2023 13:12:30 +0100
+	Sat, 23 Dec 2023 12:09:05 +0000
+Date: Thu, 21 Dec 2023 13:36:44 +0100
 From: Joel Granados <j.granados@samsung.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Dan Carpenter
+To: Luis Chamberlain <mcgrof@kernel.org>
+CC: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Dan Carpenter
 	<dan.carpenter@linaro.org>, Julia Lawall <julia.lawall@inria.fr>, Kees Cook
 	<keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	Iurii Zaikin <yzaikin@google.com>, Greg Kroah-Hartman
 	<gregkh@linuxfoundation.org>, <linux-hardening@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH v2 00/18] sysctl: constify sysctl ctl_tables
-Message-ID: <20231221121230.xlcjmtpvvztguxom@localhost>
+Message-ID: <20231221123644.k57uvfmpcrfo4vfk@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,52 +77,51 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="tk4p6fhpr7ylfiyf"
+	protocol="application/pgp-signature"; boundary="brxurlnbrxj2ydht"
 Content-Disposition: inline
-In-Reply-To: <908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
+In-Reply-To: <ZYC37Vco1p4vD8ji@bombadil.infradead.org>
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
 	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7djPc7r3z7alGmw5yGfxYV4ru0Xz4vVs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsWy7djPc7pPzralGtzcz2vxYV4ru0Xz4vVs
 	Fr8uTmO1aFrVz2xxpjvXYs/ekywW89b/ZLS4vGsOm8XvH8+YLG5MeMposWynnwO3x+yGiywe
-	CzaVekx6cYjFY9OqTjaPO9f2sHnsn7uG3ePzJjmP/u5j7AEcUVw2Kak5mWWpRfp2CVwZzcf3
-	sRRMVKxY9uY1cwPjJ6kuRg4OCQETidMnvLsYuTiEBFYwSjRcfcYK4XxhlDh2qx/K+cwocWLT
-	YpYuRk6wjiMXG5lAbCGB5YwSe5ot4IqO/bjCAuFsZZTYde0AO0gVi4CqxL6efawgNpuAjsT5
-	N3eYQWwRARuJld8+s4M0MAv0MEvM3TyVHeQoYQEHiW1NkiA1vALmEu+v7WCBsAUlTs58AmYz
-	C1RIPNp3nRmknFlAWmL5Pw6QMCfQyK2b17BBHKoscfPXO2YIu1bi1JZbTCCrJAQOc0r8OdbH
-	CvG/i8TNa+wQNcISr45vgbJlJP7vnA9VP5lRYv+/D+wQzmpGiWWNX5kgqqwlWq48gepwlFg3
-	dynUUD6JG28FIe7kk5i0bTozRJhXoqNNCKJaTWL1vTcsExiVZyH5bBaSz2YhfAYR1pO4MXUK
-	G4awtsSyha+ZIWxbiXXr3rMsYGRfxSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJEZgIT/87
-	/mkH49xXH/UOMTJxMB5iVAFqfrRh9QVGKZa8/LxUJRHefJ2WVCHelMTKqtSi/Pii0pzU4kOM
-	0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZJg5OqQamtrNnjqunrvx/0cM5cf3XNX/2J/EwuQdt
-	mn/qzP4lDBUyIvHqK5eu55VR3mp+1F6cT23pagHPhX9Vp/SFX199/YT9Y8kWmZ0VN9+sTWmN
-	lPTkmfNoZVH/HcdjNvyrsuRMs6/enRa4RH/64X/nHi/9rz4lavNbhe/T0sqFy91eWh2eWJcy
-	d+/u694xO09PE4x4VRVq0HGC2ybs04JlqzvSwsLOOcrN6qnfnuPMaJi4dF7mj+1RKndMEgxi
-	1/MZnpLL1Jr1qH6NFw+Xwc/lysI1WV4zyuMsNzhseWq+4rXYJAsuFtHm7xdbG5071/FGBF28
-	Ze1R5mzLsOPPnh+XnkX5Ov88WXvjst+f+HXWE9Z0KbEUZyQaajEXFScCAGfkrD7/AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42I5/e/4Xd27Z9tSDR51W1l8mNfKbtG8eD2b
-	xa+L01gtmlb1M1uc6c612LP3JIvFvPU/GS0u75rDZvH7xzMmixsTnjJaLNvp58DtMbvhIovH
-	gk2lHpNeHGLx2LSqk83jzrU9bB77565h9/i8Sc6jv/sYewBHlJ5NUX5pSapCRn5xia1StKGF
-	kZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GnHeFBf2KFTOBBjUwfpDqYuTkkBAw
-	kThysZGpi5GLQ0hgKaPEhlnbmSESMhIbv1xlhbCFJf5c62KDKPrIKHFs2XF2CGcro8SnCcdZ
-	QKpYBFQl9vXsA+tgE9CROP/mDtgkEQEbiZXfPoM1MAv0MEs0LtsF1MDBISzgILGtSRKkhlfA
-	XOL9tR0sEEMnsUhsefSYGSIhKHFy5hOwBcwCZRLXPjQygvQyC0hLLP/HARLmBJq/dfMaNohL
-	lSVu/noH9UGtxOe/zxgnMArPQjJpFpJJsxAmQYR1JHZuvcOGIawtsWzha2YI21Zi3br3LAsY
-	2VcxiqSWFuem5xYb6hUn5haX5qXrJefnbmIEJoRtx35u3sE479VHvUOMTByMhxhVgDofbVh9
-	gVGKJS8/L1VJhDdfpyVViDclsbIqtSg/vqg0J7X4EKMpMBQnMkuJJucDU1VeSbyhmYGpoYmZ
-	pYGppZmxkjivZ0FHopBAemJJanZqakFqEUwfEwenVAOTbMbHv/yVti36YTmvPvgEiodzCO1x
-	3ONz4uDctJsR86UzprvtKKlRdco7VptqusC+QTOeg3OdnZ5KGz8/xzQdrks/nG/sKpt98m7E
-	lSNT067Y6W447ft8T+aFgp1r1+78Ok3uYdqjxE8pT/Y+L9fvMdoeknXTL3b19IuW9zIkAvTT
-	lu7M65+v1LFfos9QV/NQICufi7VBo7t2EO/N6xP4Zi/K8rm7ZX9cePC8FB6bz6YGghtyf9wM
-	uWjUlnZsdvT2gA3r+BQfK3fNL2tatv7Py3N6y780B3yewFoYcF0749C9gwm6X+fcemi/4oaR
-	1rTnVtZh265NPvmOzZnnw74Il8MdTl03l1xw5DJT+RCsxFKckWioxVxUnAgA3XhgaZ0DAAA=
-X-CMS-MailID: 20231223120902eucas1p1352ab08a66a5cbf982039b55c810573c
+	CzaVekx6cYjFY9OqTjaPO9f2sHnsn7uG3ePzJjmP/u5j7AEcUVw2Kak5mWWpRfp2CVwZX59t
+	ZyqYJldxYvdntgbG1xJdjJwcEgImEm33+xm7GLk4hARWMEq86T/FDOF8YZSYOrMdKvOZUeLv
+	rNPsMC3HFzazQiSWM0rcnfORHa7q+5kZUC1bGSX+tU4Da2ERUJWYsG8BM4jNJqAjcf7NHTBb
+	REBDYt+EXiaQBmaBBcwSVx7tY+li5OAQFnCQ2NYkCVLDK2Au8WbLA1YIW1Di5MwnLCA2s0CF
+	xNaWfewg5cwC0hLL/3GAhDkFzCQevtvGCHGpssTNX++YIexaiVNbboGtkhA4zCnRtPIXC0TC
+	RaLtYxsbhC0s8er4Fqg3ZST+75wP1TCZUWL/vw/sEM5qRolljV+ZIKqsJVquPIHqcJSYsuMm
+	M8hFEgJ8EjfeCkIcyicxadt0qDCvREebEES1msTqe29YJjAqz0Ly2iwkr81CeA0irCdxY+oU
+	NgxhbYllC18zQ9i2EuvWvWdZwMi+ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzAdnv53
+	/MsOxuWvPuodYmTiYDzEqALU/GjD6guMUix5+XmpSiK8+TotqUK8KYmVValF+fFFpTmpxYcY
+	pTlYlMR5VVPkU4UE0hNLUrNTUwtSi2CyTBycUg1MtqqXbtUHq/85PCF0g5nxjy8pq6ddMxTR
+	d+haViaTem/BIlcj1TUnD36O/mS4T005Xkp+ujH/lWS5KZsOG6Q0zXw0Y8059fZz3EuDFgu8
+	X78rO9yfyyNzs/BGxrkRjs+XC1i3hzUfWGsss/rSSiNFlZDlNW4Jm9oeZ+5Qil67SVSvdGU9
+	r49WyvaQrMsh72YavrQtsxXySWrkPF1z/miiXtVxwxcmRUf9nAv7VPcxbQj8Hbshnz1b2Etz
+	Zp2eOPc/ty8X4mruLq7tnFh9Qtcmb+/tdQskDhucX7su8lFWALfjies2bU9DIk98Onv9cUNr
+	2fctOzleCf94fsjULulk+6nHiyN0OH24D2mwne5SYinOSDTUYi4qTgQA0mdpSAIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjleLIzCtJLcpLzFFi42I5/e/4Pd1HZ9tSDf6xWHyY18pu0bx4PZvF
+	r4vTWC2aVvUzW5zpzrXYs/cki8W89T8ZLS7vmsNm8fvHMyaLGxOeMlos2+nnwO0xu+Eii8eC
+	TaUek14cYvHYtKqTzePOtT1sHvvnrmH3+LxJzqO/+xh7AEeUnk1RfmlJqkJGfnGJrVK0oYWR
+	nqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbkE8fZC6bIVVzu0WxgfCnRxcjJISFg
+	InF8YTNrFyMXh5DAUkaJx3O+sEMkZCQ2frnKCmELS/y51sUGUfSRUeLujeXMEM5WRokT37ay
+	gVSxCKhKTNi3gBnEZhPQkTj/5g6YLSKgIbFvQi8TiM0ssIBZYsbC8C5GDg5hAQeJbU2SIGFe
+	AXOJN1seQF3xilni/ZZZjBAJQYmTM5+wgNQzC5RJzP0jA2FKSyz/xwFSwSlgJvHw3TZGiDuV
+	JW7+escMYddKfP77jHECo/AsJINmIQyahTBoFthpOhI7t95hwxDWlli28DUzhG0rsW7de5YF
+	jOyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAhPBtmM/N+9gnPfqo94hRiYOxkOMKkCdjzas
+	vsAoxZKXn5eqJMKbr9OSKsSbklhZlVqUH19UmpNafIjRFBiEE5mlRJPzgSkqryTe0MzA1NDE
+	zNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qB6ci36sp7blNLuO4ssWOb6XpyU45i
+	+KsM1oITh62cP5VObpvzTfnq0WN/StmmW0o8tD578+QNzwwDkexFBaVn/vGxXZx9yvbP3kma
+	Ykt2XzuduGHm17OZUme6trvf2XiDl1m8MbHcSdKp7Pyn/yIyNxneu4YsUrK6dMwlTXo9U0W6
+	7o2rKcyOfrm1+zQt1olbVDX/antzmf9vZ7BAUWHWiUOJKW+S5zSmHcyZMEsmruN9v12xy7eJ
+	W+8vMdG51HOlK3eh5q62yZoCCq3cqg4fjObfe+gTuO5DBevl3kvLbZW3GFk0PJBTnF53VuST
+	vtGbc6XJxq9azmjOjXr0ojivhSmC79K9R1IB1mFHa1M9lFiKMxINtZiLihMBOJdHYpkDAAA=
+X-CMS-MailID: 20231223120907eucas1p20afac63076e1e9d5aee6adaa101c0630
 X-Msg-Generator: CA
-X-RootMTR: 20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25
+X-RootMTR: 20231223120907eucas1p20afac63076e1e9d5aee6adaa101c0630
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25
-References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2.samsung.com>
-	<20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
+X-CMS-RootMailID: 20231223120907eucas1p20afac63076e1e9d5aee6adaa101c0630
+References: <20231204-const-sysctl-v2-0-7a5060b11447@weissschuh.net>
 	<20231207104357.kndqvzkhxqkwkkjo@localhost>
 	<fa911908-a14d-4746-a58e-caa7e1d4b8d4@t-8ch.de>
 	<20231208095926.aavsjrtqbb5rygmb@localhost>
@@ -131,113 +130,97 @@ References: <CGME20231204075237eucas1p27966f7e7da014b5992d3eef89a8fde25@eucas1p2
 	<ZXligolK0ekZ+Zuf@bombadil.infradead.org>
 	<20231217120201.z4gr3ksjd4ai2nlk@localhost>
 	<908dc370-7cf6-4b2b-b7c9-066779bc48eb@t-8ch.de>
+	<ZYC37Vco1p4vD8ji@bombadil.infradead.org>
+	<CGME20231223120907eucas1p20afac63076e1e9d5aee6adaa101c0630@eucas1p2.samsung.com>
 
---tk4p6fhpr7ylfiyf
+--brxurlnbrxj2ydht
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 17, 2023 at 11:10:15PM +0100, Thomas Wei=DFschuh wrote:
-> On 2023-12-17 13:02:01+0100, Joel Granados wrote:
-> > Catching up with mail....
-> >=20
-> > On Tue, Dec 12, 2023 at 11:51:30PM -0800, Luis Chamberlain wrote:
-> > > On Tue, Dec 12, 2023 at 10:09:30AM +0100, Joel Granados wrote:
-> > > > My idea was to do something similar to your originl RFC, where you =
-have
-> > > > an temporary proc_handler something like proc_hdlr_const (we would =
-need
-> > > > to work on the name) and move each subsystem to the new handler whi=
-le
-> > > > the others stay with the non-const one. At the end, the old proc_ha=
-ndler
-> > > > function name would disapear and would be completely replaced by th=
-e new
-> > > > proc_hdlr_const.
-> > > >
-> > > > This is of course extra work and might not be worth it if you don't=
- get
-> > > > negative feedback related to tree-wide changes. Therefore I stick t=
-o my
-> > > > previous suggestion. Send the big tree-wide patches and only explore
-> > > > this option if someone screams.
-> > >
-> > > I think we can do better, can't we just increase confidence in that we
-> > > don't *need* muttable ctl_cables with something like smatch or
-> > > coccinelle so that we can just make them const?
-> > >
-> > > Seems like a noble endeavor for us to generalize.
-> > >
-> > > Then we just breeze through by first fixing those that *are* using
-> > > mutable tables by having it just de-register and then re-register
-> > So let me see if I understand your {de,re}-register idea:
-> > When we have a situation (like in the networking code) where a ctl_table
-> > is being used in an unmuttable way, we do your {de,re}-register trick.
+On Mon, Dec 18, 2023 at 01:21:49PM -0800, Luis Chamberlain wrote:
+> So we can split this up concentually in two:
 >=20
-> unmuttable?
-meant muttable here.
+>  * constificaiton of the table handlers
+>  * constification of the table struct itself
+>=20
+> On Sun, Dec 17, 2023 at 11:10:15PM +0100, Thomas Wei=DFschuh wrote:
+> > The handlers can already be made const as shown in this series,
+>=20
+> The series did already produce issues with some builds, and so
+> Julia's point is confirmed that the series only proves hanlders
+> which you did build and for which 0-day has coverage for.
+>=20
+> The challenge here was to see if we could draw up a test case
+> that would prove this without build tests, and what occurred to
+> me was coccinelle or smatch.
+>=20
+> > > If that is indeed what you are proposing, you might not even need the
+> > > un-register step as all the mutability that I have seen occurs before
+> > > the register. So maybe instead of re-registering it, you can so a copy
+> > > (of the changed ctl_table) to a const pointer and then pass that along
+> > > to the register function.
+> >=20
+> > Tables that are modified, but *not* through the handler, would crop
+> > during the constification of the table structs.
+> > Which should be a second step.
+>=20
+> Instead of "croping up" at build time again, I wonder if we can do
+> better with coccinelle / smatch.
+>=20
+> Joel, and yes, what you described is what I was suggesting, that is to
+> avoid having to add a non-const handler a first step, instead we modify
+> those callers which do require to modify the table by first a
+> deregistration and later a registration. In fact to make this even
+> easier a new call would be nice so to aslo be able to git grep when
+> this is done in the kernel.
+>=20
+> But if what you suggest is true that there are no registrations which
+> later modify the table, we don't need that. It is the uncertainty that
+> we might have that this is a true statment that I wanted to challenge
+> to see if we could do better. Can we avoid this being a stupid
+> regression later by doing code analysis with coccinelle / smatch?
+That would be amazing! Having an analysis (coccinelle or smatch) that
+prevents the regression would be the cherry on top.
+
+So to further clarify: what you propose is an additional patch in the
+series that adds this regression prevention.
+Or do you want a general analysis that prevents changing a variable
+variable that was defined as const.
 
 >=20
-> > The trick consists in unregistering an old ctl_table and reregistering
-> > with a whole new const changed table. In this way, whatever we register
-> > is always const.
-> >=20
-> > Once we address all the places where this happens, then we just change
-> > the handler to const and we are done.
-> >=20
-> > Is that correct?
+> The template of the above endeavor seems useful not only to this use
+> case but to any place in the kernel where this previously has been done
+> before, and hence my suggestion that this seems like a sensible thing
+> to think over to see if we could generalize.
+A generalized analysis for inadvertent de-constification would be great.
+It would point to places where we need remove the const qualifier or add
+it.
+
 >=20
-> I'm confused.
->=20
-> The handlers can already be made const as shown in this series, which
-> does convert the whole kernel tree.
-> There is only one handler (the stackleak one) which modifies the table
-> and this one is fixed as part of the series.
->=20
-> (Plus the changes needed to the sysctl core to avoid mutation there)
->=20
-> > If that is indeed what you are proposing, you might not even need the
-> > un-register step as all the mutability that I have seen occurs before
-> > the register. So maybe instead of re-registering it, you can so a copy
-> > (of the changed ctl_table) to a const pointer and then pass that along
-> > to the register function.
->=20
-> Tables that are modified, but *not* through the handler, would crop
-> during the constification of the table structs.
-> Which should be a second step.
->=20
-> But Luis' message was not completely clear to me.
-> I guess I'm missing something.
->=20
-> > Can't think of anything else off the top of my head. Would have to
-> > actually see the code to evaluate further I think.
-> >=20
-> > > new tables if they need to be changed, and then a new series is sent
-> > > once we fix all those muttable tables.
->=20
-> Thomas
+>   Luis
 
 --=20
 
 Joel Granados
 
---tk4p6fhpr7ylfiyf
+--brxurlnbrxj2ydht
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmWEK64ACgkQupfNUreW
-QU9fQwwAhJseIaIy1SORh8aGmpJivq9kgOI86oUxtrqGcIBpz9NSYcNlSrl6qfeV
-d1P2Y6DnBrNzfTDGvo0MMHV4hc181jrHB+wB00RtwNISrnjFd1rQuaUQNFDHNQw+
-swOlzFczncIOufZa2nc2GuGF3CfhEjTIsHZADcRIIrumAkIfLUhf4ctVqdrmCUGW
-qkn7zXoyq2LBY8A3Nkp5FP/pX5EVkPZcejoH8BJlVnVHR47AmbKO5YQ6Me5qngm0
-xrm7W1EqEk3KkIJ9D9ortKfDhaWLju9RZivSkMcI0r6nu/ucfHG7BNCA0igE5Wbl
-C/YAmWqZsBYHHR/0kPurtwhvw/kbwVchI4oTJYhUE+sPrPUeqJPRgk60SsDGEUuz
-pmWBeWHv7A610Pelao9tBiRfO8Y3Z2JgGEgyRB7qyzZi0RQGobK3ZAlMTbrezSsr
-EC6xMBMaLNxJK3gNjSZnvfGpq1itOK9348ohKziaiiE3g4KVu/xNYlPc2knSifhp
-s5kuZU5K
-=d5zj
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmWEMU4ACgkQupfNUreW
+QU+gqQv/cDd/9us9hD8vyW098KoGCIcBbMRHiVL+SKCPxwm/2uurRVr0kwyaAAXz
+WczZRYjOMTCBV35W7pqe4TvsE22QmSua+NcttmkNEU1gH+Yxy/fWSp5so7FQ2EO9
+Z6NMYBYwntja/Mz/sOfPBbLBn3SILLfudVKBA5AA5OjqN6hqvnKQyIvFLqXpOcPK
+weKWk7iq7n7Zht/1mBqVNWG/lMONqurUPj3crYd0wbLY/FvPBCDKXX+bT12Xa2+A
+FdBw40R26p8BrfK/zfMRcOCwMx9QLVGr+gN0gs7kryWuyiI+dhXvOvq7cSFskxfg
+vRIuEWeMbO8JD1EWE399BlQrjzPmEtEzlBzDzTw25g3k8w89jw5YNLrU9cteGUO2
+DVg2qQn4slGjTl9D3mxyFFJy1/F/pnsXK379F0qm8C5WQB0R/tmPlgxJB24mYsmL
+A4ygA2gMG/gYGGkYdWx4E0r7eIod/n5JxMRuFl4n43U80fiDIhpedhSWYGWFPE9d
+6zd+JFPc
+=KObS
 -----END PGP SIGNATURE-----
 
---tk4p6fhpr7ylfiyf--
+--brxurlnbrxj2ydht--
 
