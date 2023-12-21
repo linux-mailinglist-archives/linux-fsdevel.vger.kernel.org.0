@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-6640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AC481B134
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:02:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8C881B13D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7101728668A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99526282536
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39C64CB4C;
-	Thu, 21 Dec 2023 08:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29144D124;
+	Thu, 21 Dec 2023 08:59:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9382E4C3B8;
-	Thu, 21 Dec 2023 08:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46A4C634;
+	Thu, 21 Dec 2023 08:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SwkrM63PVz4f3lfF;
-	Thu, 21 Dec 2023 16:59:15 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SwkrP36Gqz4f3lfc;
+	Thu, 21 Dec 2023 16:59:17 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0ECF11A0B0C;
-	Thu, 21 Dec 2023 16:59:21 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 9D0641A0B1D;
+	Thu, 21 Dec 2023 16:59:22 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDnNw5d_oNlEQPvEA--.24929S9;
-	Thu, 21 Dec 2023 16:59:20 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgDnNw5d_oNlEQPvEA--.24929S10;
+	Thu, 21 Dec 2023 16:59:21 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -78,9 +78,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v3 for-6.8/block 05/17] s390/dasd: use bdev api in dasd_format()
-Date: Thu, 21 Dec 2023 16:57:00 +0800
-Message-Id: <20231221085712.1766333-6-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v3 for-6.8/block 06/17] scsicam: use bdev api in scsi_bios_ptable()
+Date: Thu, 21 Dec 2023 16:57:01 +0800
+Message-Id: <20231221085712.1766333-7-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
 References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
@@ -91,10 +91,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnNw5d_oNlEQPvEA--.24929S9
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFWrKF1rWw4UAw4kXFWkWFg_yoWfWrg_Zr
-	1fGryxtr1xCr9Ikr1YvF15Zr9Y9F1kWr4Svry3KryfXFnrXFsaq3ykuFW3JrZ7JayUG3s3
-	GF9rXw10yr15WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:cCh0CgDnNw5d_oNlEQPvEA--.24929S10
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFWrKrykKr43Jr15KryrCrg_yoW3urb_CF
+	WS9ryxWr18KFs7Kwn8tF47Zryvvan8XF1I9FWSqa4Svr1UXrn5Kw4vvr17Zr47Gr4kJ3Z3
+	CF17XrWakrsrujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUbqkFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
 	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
 	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
@@ -118,25 +118,26 @@ block_devcie.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/s390/block/dasd_ioctl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/scsicam.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
-index 61b9675e2a67..bbfb958237e6 100644
---- a/drivers/s390/block/dasd_ioctl.c
-+++ b/drivers/s390/block/dasd_ioctl.c
-@@ -221,8 +221,9 @@ dasd_format(struct dasd_block *block, struct format_data_t *fdata)
- 	 * enabling the device later.
- 	 */
- 	if (fdata->start_unit == 0) {
--		block->gdp->part0->bd_inode->i_blkbits =
--			blksize_bits(fdata->blksize);
-+		rc = set_blocksize(block->gdp->part0, fdata->blksize);
-+		if (rc)
-+			return rc;
- 	}
+diff --git a/drivers/scsi/scsicam.c b/drivers/scsi/scsicam.c
+index e2c7d8ef205f..9617d70c0ed1 100644
+--- a/drivers/scsi/scsicam.c
++++ b/drivers/scsi/scsicam.c
+@@ -32,11 +32,9 @@
+  */
+ unsigned char *scsi_bios_ptable(struct block_device *dev)
+ {
+-	struct address_space *mapping = bdev_whole(dev)->bd_inode->i_mapping;
+ 	unsigned char *res = NULL;
+-	struct folio *folio;
++	struct folio *folio = bdev_read_folio(bdev_whole(dev), 0);
  
- 	rc = base->discipline->format_device(base, fdata, 1);
+-	folio = read_mapping_folio(mapping, 0, NULL);
+ 	if (IS_ERR(folio))
+ 		return NULL;
+ 
 -- 
 2.39.2
 
