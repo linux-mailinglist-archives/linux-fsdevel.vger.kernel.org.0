@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-6668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07B181B4DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:26:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0A181B4E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D99B1F252E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 11:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D72C0288CDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 11:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C216BB59;
-	Thu, 21 Dec 2023 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948C36BB57;
+	Thu, 21 Dec 2023 11:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o5lLzhrY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VeHvaUqg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o5lLzhrY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VeHvaUqg"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aw+Z00eg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yhuRwjmw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Aw+Z00eg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yhuRwjmw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDDB6AB8F;
-	Thu, 21 Dec 2023 11:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A4B6AB8F;
+	Thu, 21 Dec 2023 11:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C4FB821DBA;
-	Thu, 21 Dec 2023 11:26:44 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 94F9B21DBA;
+	Thu, 21 Dec 2023 11:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703158004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1703158096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E/mUSHSfPZ+Yf1KncGnQnYY22sxHKtN68QzA+lLUhQY=;
-	b=o5lLzhrYii6N3XBAgFNGNvhIXrHIy+LED3XqlesuqOKrq78YFXepc+WmeA7FHD4RuEIcgD
-	012odl2yj28G3yt/AeLEIE9nT+TyoU4feyI9lOJTP9GiSpPX/B9lpINRVsRexs0T1Vq9Ba
-	ShFRkETV0td7baTLVFi1rpOXr2wv3LM=
+	bh=mNV4sKWjBzrSblGFdnAtW7MuJWksBQI9Sijhka+UDuM=;
+	b=Aw+Z00eg2ud5SAR3cPWmKoamQhO6/HyNIIlQsO/WP6yP1Q+ODJ45joERxjMXVLMqXgR6RD
+	5AahVpNnmWP/yJivpglPO5LRwG+O8bxyiwaEfr/0XfDrlR1FfR70h0E8ZQVJaV8nRyKX5X
+	0sMbseKgN2ylVrK56/guYI7D945s+iE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703158004;
+	s=susede2_ed25519; t=1703158096;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E/mUSHSfPZ+Yf1KncGnQnYY22sxHKtN68QzA+lLUhQY=;
-	b=VeHvaUqgMwgDvtJgqZqQ6+tExelDFer+HiKSJmXtH/rCR6jchWLO8pZHK2j70Hh85PKTmc
-	hFtAGU0zEKY1a+CQ==
+	bh=mNV4sKWjBzrSblGFdnAtW7MuJWksBQI9Sijhka+UDuM=;
+	b=yhuRwjmwAb8CoCCtD0gdfRAEstxW+G9ztS6GS37ZL9k2CxGxEIZl8r5rzPjrNsczTuRPKw
+	Xg/PokBZyUiT/iAQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703158004; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1703158096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E/mUSHSfPZ+Yf1KncGnQnYY22sxHKtN68QzA+lLUhQY=;
-	b=o5lLzhrYii6N3XBAgFNGNvhIXrHIy+LED3XqlesuqOKrq78YFXepc+WmeA7FHD4RuEIcgD
-	012odl2yj28G3yt/AeLEIE9nT+TyoU4feyI9lOJTP9GiSpPX/B9lpINRVsRexs0T1Vq9Ba
-	ShFRkETV0td7baTLVFi1rpOXr2wv3LM=
+	bh=mNV4sKWjBzrSblGFdnAtW7MuJWksBQI9Sijhka+UDuM=;
+	b=Aw+Z00eg2ud5SAR3cPWmKoamQhO6/HyNIIlQsO/WP6yP1Q+ODJ45joERxjMXVLMqXgR6RD
+	5AahVpNnmWP/yJivpglPO5LRwG+O8bxyiwaEfr/0XfDrlR1FfR70h0E8ZQVJaV8nRyKX5X
+	0sMbseKgN2ylVrK56/guYI7D945s+iE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703158004;
+	s=susede2_ed25519; t=1703158096;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E/mUSHSfPZ+Yf1KncGnQnYY22sxHKtN68QzA+lLUhQY=;
-	b=VeHvaUqgMwgDvtJgqZqQ6+tExelDFer+HiKSJmXtH/rCR6jchWLO8pZHK2j70Hh85PKTmc
-	hFtAGU0zEKY1a+CQ==
+	bh=mNV4sKWjBzrSblGFdnAtW7MuJWksBQI9Sijhka+UDuM=;
+	b=yhuRwjmwAb8CoCCtD0gdfRAEstxW+G9ztS6GS37ZL9k2CxGxEIZl8r5rzPjrNsczTuRPKw
+	Xg/PokBZyUiT/iAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B695E13725;
-	Thu, 21 Dec 2023 11:26:44 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8922213725;
+	Thu, 21 Dec 2023 11:28:16 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id D3FCLPQghGXHWgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Dec 2023 11:26:44 +0000
+	id UGN4IVAhhGVMWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Dec 2023 11:28:16 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 69F04A07E3; Thu, 21 Dec 2023 12:26:44 +0100 (CET)
-Date: Thu, 21 Dec 2023 12:26:44 +0100
+	id 31D20A07E3; Thu, 21 Dec 2023 12:28:12 +0100 (CET)
+Date: Thu, 21 Dec 2023 12:28:12 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christoph Hellwig <hch@lst.de>
 Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
 	Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/17] pagevec: Add ability to iterate a queue
-Message-ID: <20231221112644.2ijv6c5zooclcqtm@quack3>
+Subject: Re: [PATCH 11/17] writeback: Use the folio_batch queue iterator
+Message-ID: <20231221112812.fkjumae6xexnw2lk@quack3>
 References: <20231218153553.807799-1-hch@lst.de>
- <20231218153553.807799-11-hch@lst.de>
+ <20231218153553.807799-12-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -94,102 +94,112 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231218153553.807799-11-hch@lst.de>
+In-Reply-To: <20231218153553.807799-12-hch@lst.de>
+X-Spam-Level: *
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -0.82
-X-Spamd-Result: default: False [-0.82 / 50.00];
+X-Spamd-Bar: /
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-0.17 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	 MIME_GOOD(-0.10)[text/plain];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.998];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
 	 RCPT_COUNT_SEVEN(0.00)[8];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,lst.de:email,infradead.org:email,suse.com:email];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,lst.de:email,suse.cz:dkim,suse.cz:email,infradead.org:email];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.02)[52.12%]
-X-Spam-Flag: NO
+	 BAYES_HAM(-0.36)[76.64%];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Aw+Z00eg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=yhuRwjmw
+X-Spam-Score: -0.17
+X-Rspamd-Queue-Id: 94F9B21DBA
 
-On Mon 18-12-23 16:35:46, Christoph Hellwig wrote:
+On Mon 18-12-23 16:35:47, Christoph Hellwig wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Add a loop counter inside the folio_batch to let us iterate from 0-nr
-> instead of decrementing nr and treating the batch as a stack.  It would
-> generate some very weird and suboptimal I/O patterns for page writeback
-> to iterate over the batch as a stack.
+> Instead of keeping our own local iterator variable, use the one just
+> added to folio_batch.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Looks good. Feel free to add:
+Nice. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  include/linux/pagevec.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  mm/page-writeback.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 > 
-> diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-> index 87cc678adc850b..fcc06c300a72c3 100644
-> --- a/include/linux/pagevec.h
-> +++ b/include/linux/pagevec.h
-> @@ -27,6 +27,7 @@ struct folio;
->   */
->  struct folio_batch {
->  	unsigned char nr;
-> +	unsigned char i;
->  	bool percpu_pvec_drained;
->  	struct folio *folios[PAGEVEC_SIZE];
->  };
-> @@ -40,12 +41,14 @@ struct folio_batch {
->  static inline void folio_batch_init(struct folio_batch *fbatch)
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index c7983ea3040be4..70f42fd9a95b5d 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2397,13 +2397,19 @@ static pgoff_t wbc_end(struct writeback_control *wbc)
+>  	return wbc->range_end >> PAGE_SHIFT;
+>  }
+>  
+> -static void writeback_get_batch(struct address_space *mapping,
+> +static struct folio *writeback_get_next(struct address_space *mapping,
+>  		struct writeback_control *wbc)
 >  {
->  	fbatch->nr = 0;
-> +	fbatch->i = 0;
->  	fbatch->percpu_pvec_drained = false;
->  }
->  
->  static inline void folio_batch_reinit(struct folio_batch *fbatch)
->  {
->  	fbatch->nr = 0;
-> +	fbatch->i = 0;
->  }
->  
->  static inline unsigned int folio_batch_count(struct folio_batch *fbatch)
-> @@ -75,6 +78,21 @@ static inline unsigned folio_batch_add(struct folio_batch *fbatch,
->  	return folio_batch_space(fbatch);
->  }
->  
-> +/**
-> + * folio_batch_next - Return the next folio to process.
-> + * @fbatch: The folio batch being processed.
-> + *
-> + * Use this function to implement a queue of folios.
-> + *
-> + * Return: The next folio in the queue, or NULL if the queue is empty.
-> + */
-> +static inline struct folio *folio_batch_next(struct folio_batch *fbatch)
-> +{
-> +	if (fbatch->i == fbatch->nr)
-> +		return NULL;
-> +	return fbatch->folios[fbatch->i++];
-> +}
+> +	struct folio *folio = folio_batch_next(&wbc->fbatch);
 > +
->  void __folio_batch_release(struct folio_batch *pvec);
+> +	if (folio)
+> +		return folio;
+> +
+>  	folio_batch_release(&wbc->fbatch);
+>  	cond_resched();
+>  	filemap_get_folios_tag(mapping, &wbc->index, wbc_end(wbc),
+>  			wbc_to_tag(wbc), &wbc->fbatch);
+> +	return folio_batch_next(&wbc->fbatch);
+>  }
 >  
->  static inline void folio_batch_release(struct folio_batch *fbatch)
+>  static bool should_writeback_folio(struct address_space *mapping,
+> @@ -2473,7 +2479,6 @@ int write_cache_pages(struct address_space *mapping,
+>  {
+>  	int error;
+>  	pgoff_t end;		/* Inclusive */
+> -	int i = 0;
+>  
+>  	if (wbc->range_cyclic) {
+>  		wbc->index = mapping->writeback_index; /* prev offset */
+> @@ -2489,18 +2494,12 @@ int write_cache_pages(struct address_space *mapping,
+>  	wbc->err = 0;
+>  
+>  	for (;;) {
+> -		struct folio *folio;
+> +		struct folio *folio = writeback_get_next(mapping, wbc);
+>  		unsigned long nr;
+>  
+> -		if (i == wbc->fbatch.nr) {
+> -			writeback_get_batch(mapping, wbc);
+> -			i = 0;
+> -		}
+> -		if (wbc->fbatch.nr == 0)
+> +		if (!folio)
+>  			break;
+>  
+> -		folio = wbc->fbatch.folios[i++];
+> -
+>  		folio_lock(folio);
+>  		if (!should_writeback_folio(mapping, wbc, folio)) {
+>  			folio_unlock(folio);
 > -- 
 > 2.39.2
 > 
