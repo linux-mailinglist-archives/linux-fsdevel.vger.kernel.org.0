@@ -1,108 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-6631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2465A81AFAB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 08:42:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779B381B003
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55DA21C23467
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 07:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5491F226A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 08:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB3E1773E;
-	Thu, 21 Dec 2023 07:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CDA15AF5;
+	Thu, 21 Dec 2023 08:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CyGUP3iE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugsnmhCq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1EC17745;
-	Thu, 21 Dec 2023 07:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LWqF/Y37SmpDLulc6cjBB+/HUzaRe+A8SRPSmTNrLps=; b=CyGUP3iEahTK1hH0NTvCsSV65A
-	hR5EBSWyJFMDw5Em/W73Lk0ToDAhpzo+r2qf0I0FbbaVJjb4n34g8JivJiLuafLEVZsA7BfnEq1Tt
-	EhZwoLITM8IE3pgeguDCii/5IzVeW8gKUrQT5nS1Qyo9TJp88KzQfBQfhUB3uevoye4+BMKSyKOdh
-	jcnZU1rCS9/d25zXM6mwp7akEeTeLX1antM5/IybK65z+GgT2X0B0OCdx19x5KGqDecYUx2/bboq+
-	2qs9K2Iyx5nko5XWQ2xja1HiLXAsh5CSc9u0+2z+3RQk8rF+1sdzAhy/jXEeSAb3jr1qUO2wjRrww
-	7HOtJ0UQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rGDee-001Ji1-1S;
-	Thu, 21 Dec 2023 07:39:40 +0000
-Date: Thu, 21 Dec 2023 07:39:40 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: ebiggers@kernel.org, jaegeuk@kernel.org, tytso@mit.edu,
-	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 8/8] fscrypt: Move d_revalidate configuration back
- into fscrypt
-Message-ID: <20231221073940.GC1674809@ZenIV>
-References: <20231215211608.6449-1-krisman@suse.de>
- <20231215211608.6449-9-krisman@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9680415AD5;
+	Thu, 21 Dec 2023 08:10:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DD26C43391;
+	Thu, 21 Dec 2023 08:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703146217;
+	bh=HIG3brb6PiOIu+YyofIQ2XdvYJ09hzoZ6uochrNHzgo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ugsnmhCq8aXPM5X62dcPH459fRpGsJZAvGGsxy13L4C0wTVsA35ohmbRUlJfJMQpe
+	 G8urtwMTFutzUmFs7ohsL+m2TmmiByCj04hGuNQ4dxWLPoseFD++SK0iJDDFKPvV1x
+	 +Esk90N9PlrIh1pPu52Vm+xT7B0zxQv2WxLa6FTPBCViP+axTj4eUi4B2OQXvxTdFv
+	 rX458ZlgQwyYoqSh0gFjbOy7Cr50I5bFrUxAjKNXXF9EfGl5utvXEB9nw6o3Rs6bBk
+	 Wy/J9LmvqJuU9kgE2T5tNB0IDlKpOiIVGHZ6FVcrsfi64JZRsdH55KtM70WIZtUjPb
+	 h/936eIba5x9A==
+Date: Thu, 21 Dec 2023 17:10:13 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Dongliang Cui <cuidongliang390@gmail.com>, Hongyu Jin
+ <hongyu.jin@unisoc.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] eventfs: Have event files and directories default to
+ parent uid and gid
+Message-Id: <20231221171013.05f0d861547caf20982d100a@kernel.org>
+In-Reply-To: <20231220105017.1489d790@gandalf.local.home>
+References: <20231220105017.1489d790@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231215211608.6449-9-krisman@suse.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 15, 2023 at 04:16:08PM -0500, Gabriel Krisman Bertazi wrote:
+On Wed, 20 Dec 2023 10:50:17 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> +static const struct dentry_operations fscrypt_dentry_ops = {
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +
->  int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
->  			     struct fscrypt_name *fname)
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> Dongliang reported:
+> 
+>   I found that in the latest version, the nodes of tracefs have been
+>   changed to dynamically created.
+> 
+>   This has caused me to encounter a problem where the gid I specified in
+>   the mounting parameters cannot apply to all files, as in the following
+>   situation:
+> 
+>   /data/tmp/events # mount | grep tracefs
+>   tracefs on /data/tmp type tracefs (rw,seclabel,relatime,gid=3012)
+> 
+>   gid 3012 = readtracefs
+> 
+>   /data/tmp # ls -lh
+>   total 0
+>   -r--r-----   1 root readtracefs 0 1970-01-01 08:00 README
+>   -r--r-----   1 root readtracefs 0 1970-01-01 08:00 available_events
+> 
+>   ums9621_1h10:/data/tmp/events # ls -lh
+>   total 0
+>   drwxr-xr-x 2 root root 0 2023-12-19 00:56 alarmtimer
+>   drwxr-xr-x 2 root root 0 2023-12-19 00:56 asoc
+> 
+>   It will prevent certain applications from accessing tracefs properly, I
+>   try to avoid this issue by making the following modifications.
+> 
+> To fix this, have the files created default to taking the ownership of
+> the parent dentry unless the ownership was previously set by the user.
+> 
+> Link: https://lore.kernel.org/linux-trace-kernel/1703063706-30539-1-git-send-email-dongliang.cui@unisoc.com/
+> 
+
+This looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you!
+
+> Reported-by: Dongliang Cui <cuidongliang390@gmail.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  fs/tracefs/event_inode.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+> index 43e237864a42..2ccc849a5bda 100644
+> --- a/fs/tracefs/event_inode.c
+> +++ b/fs/tracefs/event_inode.c
+> @@ -148,7 +148,8 @@ static const struct file_operations eventfs_file_operations = {
+>  	.release	= eventfs_release,
+>  };
+>  
+> -static void update_inode_attr(struct inode *inode, struct eventfs_attr *attr, umode_t mode)
+> +static void update_inode_attr(struct dentry *dentry, struct inode *inode,
+> +			      struct eventfs_attr *attr, umode_t mode)
 >  {
-> @@ -106,6 +110,10 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
->  		spin_lock(&dentry->d_lock);
->  		dentry->d_flags |= DCACHE_NOKEY_NAME;
->  		spin_unlock(&dentry->d_lock);
-> +
-> +		/* Give preference to the filesystem hooks, if any. */
-> +		if (!dentry->d_op)
-> +			d_set_d_op(dentry, &fscrypt_dentry_ops);
->  	}
->  	return err;
+>  	if (!attr) {
+>  		inode->i_mode = mode;
+> @@ -162,9 +163,13 @@ static void update_inode_attr(struct inode *inode, struct eventfs_attr *attr, um
+>  
+>  	if (attr->mode & EVENTFS_SAVE_UID)
+>  		inode->i_uid = attr->uid;
+> +	else
+> +		inode->i_uid = d_inode(dentry->d_parent)->i_uid;
+>  
+>  	if (attr->mode & EVENTFS_SAVE_GID)
+>  		inode->i_gid = attr->gid;
+> +	else
+> +		inode->i_gid = d_inode(dentry->d_parent)->i_gid;
+>  }
+>  
+>  /**
+> @@ -206,7 +211,7 @@ static struct dentry *create_file(const char *name, umode_t mode,
+>  		return eventfs_failed_creating(dentry);
+>  
+>  	/* If the user updated the directory's attributes, use them */
+> -	update_inode_attr(inode, attr, mode);
+> +	update_inode_attr(dentry, inode, attr, mode);
+>  
+>  	inode->i_op = &eventfs_file_inode_operations;
+>  	inode->i_fop = fop;
+> @@ -242,7 +247,8 @@ static struct dentry *create_dir(struct eventfs_inode *ei, struct dentry *parent
+>  		return eventfs_failed_creating(dentry);
+>  
+>  	/* If the user updated the directory's attributes, use them */
+> -	update_inode_attr(inode, &ei->attr, S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO);
+> +	update_inode_attr(dentry, inode, &ei->attr,
+> +			  S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO);
+>  
+>  	inode->i_op = &eventfs_root_dir_inode_operations;
+>  	inode->i_fop = &eventfs_file_operations;
+> -- 
+> 2.42.0
+> 
 
-Hmm...  Could we simply set ->s_d_op to &fscrypt_dentry_ops in non-ci case
-*AND* have __fscrypt_prepare_lookup() clear DCACHE_OP_REVALIDATE in case
-when it's not setting DCACHE_NOKEY_NAME and ->d_op->d_revalidate is
-equal to fscrypt_d_revalidate?  I mean,
 
-	spin_lock(&dentry->d_lock);
-        if (fname->is_nokey_name)
-                dentry->d_flags |= DCACHE_NOKEY_NAME;
-        else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
-		 dentry->d_op->d_revalidate == fscrypt_d_revalidate)
-		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
-	spin_unlock(&dentry->d_lock);
-
-here + always set ->s_d_op for ext4 and friends (conditional upon
-the CONFIG_UNICODE).
-
-No encryption - fine, you get ->is_nokey_name false from the very
-beginning, DCACHE_OP_REVALIDATE is cleared and VFS won't ever call
-->d_revalidate(); not even the first time.  
-
-Yes, you pay minimal price in dentry_unlink_inode() when we hit
-        if (dentry->d_op && dentry->d_op->d_iput)
-and bugger off after the second fetch instead of the first one.
-I would be quite surprised if it turns out to be measurable,
-but if it is, we can always add DCACHE_OP_IPUT to flags.
-Similar for ->d_op->d_release (called in the end of
-__dentry_kill()).  Again, that only makes sense if we get
-a measurable overhead from that.
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
