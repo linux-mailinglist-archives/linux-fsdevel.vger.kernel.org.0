@@ -1,206 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-6745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6746-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9A981B92A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:04:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE7481B930
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB8E1C25E6C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:04:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C683DB287F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510C753A10;
-	Thu, 21 Dec 2023 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903A258218;
+	Thu, 21 Dec 2023 13:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ERD1L6RG";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PSOLCM4Q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RHA9hnW+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E7A539F9;
-	Thu, 21 Dec 2023 13:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BLDODNc009053;
-	Thu, 21 Dec 2023 13:56:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=86frelLMZj2pRkvUF1zbDVcqF2Q5/4rY4W+KNW2yxlA=;
- b=ERD1L6RGe8GZQgJpW/ft0MsAMlt7I8Pl1dyXWvx/cWjPhe9DW8lANA0ZpzLgwxbQ0fRw
- Glf2cTkVLc+CQ+89Xd/0s2PkdDwn8dBI8+VF3zWa4huetDCstP00ITty6KTVgGUKeKo5
- qc46tl9iPdQnB0eYbIXcEf7UHl6O8/WXvFmsnQyAnBiptAQyleA2fq9m1AVuQZ8/879g
- QpEopXLsB8oGOwR7AA/36eVgg+scr9ztBzQnYtaXS5X2mfJsvqqxzIvybvCrDVRA0D9f
- 3I6y9AZCxiAnP4FAovzc280CeVJxDoMwth+KsnVZYzRfb5HG2qqP90csBCamRN4EGYta kQ== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3v13xdk1pt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Dec 2023 13:56:33 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BLDO7la039756;
-	Thu, 21 Dec 2023 13:56:32 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3v12bb6t7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Dec 2023 13:56:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RHkgcAiYio/m63uIxSXMwUTLv0yTzJca96h4TUy+zcU0NHpuT/2iG3E/ai4XWjc9djwBZE1YFY7Ibvfapht7QySy9R56abnSIvS0GIGsGlHjI4FRbgHTPAbu+tPK1k3yX7DgnZ+RGr3O9ibTe2u80++AWUswsMOKXcRAehHjaScuAcGDiCyqs8nuPErH4E6OqLn+3aJw0GIjuHZagX2OPwXicdy0AyL4aQwyMMrnIjrHglJE1fHydZyjfCR5lmslsJ6oPA43dcfKF626ozZ/sh7Y2JhMYOW8zLzOisfNv3U+Af5gHapgWZCEoVf+waK2pWXkSKcT6Jc7wCWORBrLVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=86frelLMZj2pRkvUF1zbDVcqF2Q5/4rY4W+KNW2yxlA=;
- b=f2LtAtyO+VK9+Crp5j/wvTAe4Q5iOmmFzNPBcM+U60Ro9vS6dvukfbqiwdrr72KRSZpIE1wJ1pOK4/+reNxSRC2nzOzFnaJw+QquZHN7EwWRrzY0Z8oVuM5EzGhbA0pfOja/ebNtIgMjMzduF9ErYa4pGcHguS2UyoHKkXwsZ8SMd4RWpa+owSfiAQxZPaUaanVvr3JrKd3Wl00xZiDCHEVjl1z/EZwql17qoDsrrwY1LR4qHfxSixyIC23n8gMBNs/gTEgMZ7R9NoPCIELnR7E1Kzhn0JjY1xIeG+cEKVXRIr8M5A6VE3f928njoIPGYMM8VKNnutFTqBZzMWhisA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=86frelLMZj2pRkvUF1zbDVcqF2Q5/4rY4W+KNW2yxlA=;
- b=PSOLCM4QUOwMwyWZ2r2asLqO+w46IUD/ZkOTSdZq+nICSQr90b1TIPmdQJwALLE4M8ZHa2pOl1tFAQfFCD5jfzlrP5GCuWyRdCteoCicvROb0D6XZqEUvJWGqBZSEnsxu3PICHqXgfazMMFDg6JC7YtpyvTOyrmPHk0ywdVFKLg=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB7035.namprd10.prod.outlook.com (2603:10b6:510:275::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.21; Thu, 21 Dec
- 2023 13:56:29 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7113.019; Thu, 21 Dec 2023
- 13:56:29 +0000
-Message-ID: <17355f27-f631-4bf5-896b-f846f6b05ad8@oracle.com>
-Date: Thu, 21 Dec 2023 13:56:04 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/16] block atomic writes
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, axboe@kernel.dk, kbusch@kernel.org,
-        sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-        ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
-References: <20231219052121.GA338@lst.de>
- <76c85021-dd9e-49e3-80e3-25a17c7ca455@oracle.com>
- <20231219151759.GA4468@lst.de>
- <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com>
- <20231221065031.GA25778@lst.de>
- <b60e39ce-04bf-4ff9-8879-d9e0cf5d84bd@oracle.com>
- <20231221121925.GB17956@lst.de>
- <df2b6c6e-6415-489d-be19-7e2217f79098@oracle.com>
- <20231221125713.GA24013@lst.de>
- <9bee0c1c-e657-4201-beb2-f8163bc945c6@oracle.com>
- <20231221132236.GB26817@lst.de>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20231221132236.GB26817@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0138.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c4::9) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D91F55E7F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 13:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1703167058;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wzXIqq06sVA7ycfPhNS7D2yXU6a0uOf4G1W1CQ/WYbo=;
+	b=RHA9hnW++lmdIhwv1l+n4ZXQgzIIq/MA26klZ6TnbW5ZGy/psxeZQ1TOSxkNcjQAi2l+B5
+	BtRZI1RljQ1fckOawEsydAT2RASjh4N1od11yJs8wWT2X/AWIWQngHSR9AuZXPp6bMiCVk
+	gkuhpeq+v+CM4e2WScgABnnwr2WM/r4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-622-Qe1ZmrDjPVW47Kkq7q9Fsw-1; Thu, 21 Dec 2023 08:57:33 -0500
+X-MC-Unique: Qe1ZmrDjPVW47Kkq7q9Fsw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1402B101A555;
+	Thu, 21 Dec 2023 13:57:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.195.169])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id EC54E51E3;
+	Thu, 21 Dec 2023 13:57:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: torvalds@linux-foundation.org
+cc: dhowells@redhat.com, Jeffrey Altman <jaltman@auristor.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix use-after-free due to get/remove race in volume tree
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB7035:EE_
-X-MS-Office365-Filtering-Correlation-Id: 024fcf38-391e-4f9f-653b-08dc022c961f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	TzVJU+UyBUy0BDaN4cJmKIBjoFKEN4OZmVXM5Rm0qZ4TFsoX8TvF/kPD1WJ1lYXldyBs4/9FqdtMMrtgv0VqE9AH0IRKqzGnjZ70okzvnrw2gJ3i359AE4XvMdc/vKiCNpsmtFruLTnWsB3Rq1z9gnEky7NMqFbIBamAHsyjvLxeA/xBY305Ivbr3L1Ioyc+LVQesCdN5QMq/bGbYIMMBbaXwcNHOZmFpMws7S372QWmU6HQ1cRop+KOqThjvlGvS4IAI3ZbhoeFKZFW5nOPfjt33fzSUTPqgaa32uUA9VBdkWuliJU58ShW0+U6KqA5e6hdd4KlDMfQ9zE1GGR0s2Iby+7yAY5J0JKnW6JyHgZ4DwwwS7I187DYf+RwThgeA0lrUIxd21SBNnzKEDHQ7/oyVyvwV5zN3pG6HeQqnMCO/+4p3qnlxl4NJJksXwphVDODw+p/f5wKjX3PXIIEvCU1N3WnkVSffFcNOaOd9IgrlZ+i/K7BiHTClKBpNxvCcBsUVqBCtJ2GCT0KE+MfyEQpXVUfVAAsZIXGhjiFLaG9T/NlvHx03EsqXFeY1dArNOq0/Efh6hYtiDSPX6/2cVLd09njSjXtBOn9sgtIaIIK5h1qAUeLiCKkXDsUkr2l+y8EtmbS6p2PmF6PIiDH/w==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(366004)(136003)(39860400002)(346002)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(6512007)(2616005)(53546011)(36916002)(6506007)(83380400001)(26005)(86362001)(4326008)(8936002)(36756003)(2906002)(31696002)(8676002)(4744005)(5660300002)(41300700001)(7416002)(6916009)(66476007)(66556008)(316002)(66946007)(6666004)(478600001)(6486002)(38100700002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Z3M2akZ4cktnYmV6dkU3MjJrdFJHV2ltMERFRDF1RkVPMmpuZTJjTERLdEJ5?=
- =?utf-8?B?ajVXbFBLSDFMZzRDY29oUWx3b2U0bTd4MzB1dFlLK0JabVhkdFRsNHRTQU1y?=
- =?utf-8?B?OVlXZGc5M0lIZTA2cjU3RGQ4WFlSSFRPN3FVZWNjTy8xNWxhc3ZyV1ZESlJQ?=
- =?utf-8?B?OTV6bDUyYlRyVW1UQVBIK1kxZDhTdkpocVp2bzRGQ21ta0EzRXZ6Nmd0MWh1?=
- =?utf-8?B?WjV2SWtQMkczT3RBMzk3cVhUN2swMXRqZS95bEQxZDd4eGl2dVVoa3U4bGxV?=
- =?utf-8?B?b3pLbEZJcnRyTkp0SlNPa2pQUW0zcUtCdnM1ZVRjOUwzRGwxSXNycWx1Zkhm?=
- =?utf-8?B?QTRYVm9WeSsxN2ZGQzRtNFFVa3J6TDhzTzJJb2IvWUFKUHNjMi9rUVJhV1Fl?=
- =?utf-8?B?SHFhWEtISjdZeFFzbHpvelFPSkdDK09NTjd4bFhOeHBVeDl5ck9ZZE55RzVD?=
- =?utf-8?B?dlZXa0FmaEkzNXRwVUpUbFdDWWpIcHNjMFlTK1VyUmpsVUdxVEJMU0FNS0M1?=
- =?utf-8?B?Uk1nMUZLendVaklodVl0bUlmejFwdHEzZkZqWko3YkNsSCtjYXV0aTlyQTd2?=
- =?utf-8?B?eTA3RDRYTXNDRTlqczJZdmRESUhsaTMvbjNFK1lUWjJtOXNiaW5EUTl0YXJm?=
- =?utf-8?B?YUNzQXhBbm42TUJRcEtVWnNwRnVNSXpxNFE4aXFtR2xBbVczMUZlQjhBZjg2?=
- =?utf-8?B?VW9COEYvQjRQR2VOQ2t6VVBnelB0ZDlNUlpiOWF1MzY0aXl1MUdZMW00djRu?=
- =?utf-8?B?bTdPSWZFc3RnMktEVEg3UTJPYUtCMnRMODEzdmFGcUxxZmFwM1Zlc0NIdm5M?=
- =?utf-8?B?VnZNUE1VU3ZzWkl1cE0zWWtjS05EZWN0MS9JNk12ZGFjWUplVVVJUklFd1NI?=
- =?utf-8?B?Z1hqUEx5TDhxdlBqWEJiZTRzZ093QkRFLzNoQ3htTnMwWU9MOFRrbDBGRnZV?=
- =?utf-8?B?RENzVkRqa1V5b1JETktXOVZXTjJSeE1YMm5rSzdTWkowVk51ZHQ4M21RNHhi?=
- =?utf-8?B?bURsaUFNYnN1TCtrUzFPaFNIYkZOSG9MYUJMckNRNTU2b3M5cVZKOEh1ZE5N?=
- =?utf-8?B?UVZGSFFMb1E3U3psT2I3UlpSWmJQRzZwREZmWVQ4bUh3WGVCbzBUUk9oTjAw?=
- =?utf-8?B?NUZCVTJmZVZtdm55VkExVW9TMXo0Y2FvVjJ0R2JqdWlQNlJsT0REVzZaTk9S?=
- =?utf-8?B?K3lBR1JHVWNtN0pseEk0WlNqNnhiNmhEcldQcFREREtDV2xsYzZSRGZVMWEx?=
- =?utf-8?B?cUp6UEtEVDFqVTBzaWdHdnpBQ2NnSkl2NENKU0xHOVZqLzdXVWVRcytUdEdm?=
- =?utf-8?B?VHBxbWN2cGIzZDVjTkZCN1QrVjJPU1NUMmJHSzhpai95Mi9PVHgrZEN3TW1R?=
- =?utf-8?B?RVV6Y3R2V09lM3BjZVpXdUNweGdCdkVWYkUvMzBOTGtnYjhVR1FGdlVKWld2?=
- =?utf-8?B?QUdBeVdNcWxIeU9UbXE3dHJOdk9WazdrbVNTS3F1M3pRaFRPTmt0OFU5MGI5?=
- =?utf-8?B?QnppRXVmSS9HNHdVTFF4ekN6b0FQdHFrUDYrWlBuNGZ0YXdyODJtSk9uOFFW?=
- =?utf-8?B?SjFWOXBiUlNxaDdrRytrcXhDMHQvRmM1WkVYR05YdFk0TXhqZW8wTUZlcEFs?=
- =?utf-8?B?T0I1SHo0bnlOZjBmbGRuRDFDRk5JalJQVmxaUXdTa3VQYkZpVmY4VFVJL2dH?=
- =?utf-8?B?dVJkUzY2RnFhZFRHSmQxK1IyWFp4cFhyeFE3NGNjcEkzOHZsN0xaelhESzBt?=
- =?utf-8?B?K1RpbE5JaEVoSm5vaXViU0t6VFc4Z2Y5RnJ1THAyLzZ0UnZ1dHozdGlPWVNP?=
- =?utf-8?B?Zm5XNFdQQWluWXZ0NDJkMU5BL1JaaEN2Nzc5VUJrL213QkdmeitDOFBtMmRB?=
- =?utf-8?B?UEtpSU83eEI5WmZNa0tMRTZEdExvcWppRlczV3lXWkVBaGg3Zjdta3hrYytK?=
- =?utf-8?B?cEtGWFJIbjY2RnVPd1RCOWpndlc2TkNLT0U2ZGRYRDgvVXlhZTdTc04zdUxm?=
- =?utf-8?B?YTlzTndoWFJKOFgrS09jaHM1RzRjenhnQTF1VEErck5yUWJhT1RZK2JPNW9G?=
- =?utf-8?B?WGozaWI3Z0p1dGlhZ1N3d1h6M0NoRWNlOVdldFFraThrTHNxSGp2eWRWYVFR?=
- =?utf-8?B?Q0RiNWVmeUY1UUFkQ0FDa2pHYVdqdlpWYUJCcWxjaFR5b1JrRzdLSVJVVkFF?=
- =?utf-8?B?Snc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	1Cd20yWfA4HnuNs8ZrPEBWvLy7C+0V4rJ6pL0Co2cFCCPxwbOa2/hKh3zb5UMxD2Ebbpn5axBiIgrxk0cBzb2ds2uivXCGbpy51gBvgML5WC0yqnl+JBnsAqzkM0RT/nKjwxXPxsd8JhyVMZQ2gn0UA4L52atehOMQEApUWEzy9ksjJ+lX9QYiqIwMrtW6c87Ik1wjnZAgvKDknkaaVXa/lqDxTQ8DCQ1O40ATKQSJgoClr1N6LDTI1hgftatqQSfHSaMQGc56pSyfvmPRofmPkfarOnEVsAd9Uewkepjm4NgqpwNNhU4T+cYlNfe2jVkyUe93DD/IUoL7HWzCSeT6EQQ1lDio0IdNblx3UJGGw6Mz8soiFUlZMtFLNZt9tTMxBEg0F04t+xSol0AYPUi0DqInZIVwb9AYBwayPTEomJwpQgl6xgFdLtalfGW7hfaR5qbM17m+pyfGhoVUnRs8x0ZtZ13L9VwW+KKTyYMMg5nvha8gAI/RhV8E/B8bj8lxJRj+TVSpys69ZVy46u2GDSq/C/oMZuFaabhWmgLtuc50e63Ocxv4uT3vZKmE2/ze++q6ZEzCjChOilOjFP3bu6eWho1TLVxSI0wW1Eh8E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 024fcf38-391e-4f9f-653b-08dc022c961f
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Dec 2023 13:56:10.2440
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s3NYzR4mcnGB6eYaRoVDrg6qNGm2TQ/KUOEd0CGE1ILRJsmj9upTxvzjjy7nEVakdo0z+zvo8mD7csuwM6TifQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7035
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-21_07,2023-12-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=999 bulkscore=0 adultscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2312210105
-X-Proofpoint-GUID: sYssheEln8wRvAqO0ccjoKdgqaN4zgfJ
-X-Proofpoint-ORIG-GUID: sYssheEln8wRvAqO0ccjoKdgqaN4zgfJ
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1659973.1703167051.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 21 Dec 2023 13:57:31 +0000
+Message-ID: <1659974.1703167051@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On 21/12/2023 13:22, Christoph Hellwig wrote:
-> On Thu, Dec 21, 2023 at 01:18:33PM +0000, John Garry wrote:
->>> For SGL-capable devices that would be
->>> BIO_MAX_VECS, otherwise 1.
->>
->> ok, but we would need to advertise that or whatever segment limit. A statx
->> field just for that seems a bit inefficient in terms of space.
-> 
-> I'd rather not hard code BIO_MAX_VECS in the ABI,
+Hi Linus,
 
-For sure
+Could you apply this fix please?
 
-> which suggest we
-> want to export is as a field. 
+David
+---
+When an afs_volume struct is put, its refcount is reduced to 0 before the
+cell->volume_lock is taken and the volume removed from the cell->volumes
+tree.  Unfortunately, this means that the lookup code can race and see a
+volume with a zero ref in the tree, resulting in a use-after-free:
 
-ok
+        refcount_t: addition on 0; use-after-free.
+        WARNING: CPU: 3 PID: 130782 at lib/refcount.c:25 refcount_warn_sat=
+urate+0x7a/0xda
+        ...
+        RIP: 0010:refcount_warn_saturate+0x7a/0xda
+        ...
+        Call Trace:
+         <TASK>
+         ? __warn+0x8b/0xf5
+         ? report_bug+0xbf/0x11b
+         ? refcount_warn_saturate+0x7a/0xda
+         ? handle_bug+0x3c/0x5b
+         ? exc_invalid_op+0x13/0x59
+         ? asm_exc_invalid_op+0x16/0x20
+         ? refcount_warn_saturate+0x7a/0xda
+         ? refcount_warn_saturate+0x7a/0xda
+         afs_get_volume+0x3d/0x55
+         afs_create_volume+0x126/0x1de
+         afs_validate_fc+0xfe/0x130
+         afs_get_tree+0x20/0x2e5
+         vfs_get_tree+0x1d/0xc9
+         do_new_mount+0x13b/0x22e
+         do_mount+0x5d/0x8a
+         __do_sys_mount+0x100/0x12a
+         do_syscall_64+0x3a/0x94
+         entry_SYSCALL_64_after_hwframe+0x62/0x6a
 
-> Network file systems also might have
-> their own limits for one reason or another.
+Fix this by:
 
-Understood
+ (1) When putting, use a flag to indicate if the volume has been removed
+     from the tree and skip the rb_erase if it has.
+
+ (2) When looking up, use a conditional ref increment and if it fails
+     because the refcount is 0, replace the node in the tree and set the
+     removal flag.
+
+Fixes: 20325960f875 ("afs: Reorganise volume and server trees to be rooted=
+ on the cell")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/internal.h |    2 ++
+ fs/afs/volume.c   |   26 +++++++++++++++++++++++---
+ 2 files changed, 25 insertions(+), 3 deletions(-)
+
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index a812952be1c9..7385d62c8cf5 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -586,6 +586,7 @@ struct afs_volume {
+ #define AFS_VOLUME_OFFLINE	4	/* - T if volume offline notice given */
+ #define AFS_VOLUME_BUSY		5	/* - T if volume busy notice given */
+ #define AFS_VOLUME_MAYBE_NO_IBULK 6	/* - T if some servers don't have Inl=
+ineBulkStatus */
++#define AFS_VOLUME_RM_TREE	7	/* - Set if volume removed from cell->volume=
+s */
+ #ifdef CONFIG_AFS_FSCACHE
+ 	struct fscache_volume	*cache;		/* Caching cookie */
+ #endif
+@@ -1513,6 +1514,7 @@ extern struct afs_vlserver_list *afs_extract_vlserve=
+r_list(struct afs_cell *,
+ extern struct afs_volume *afs_create_volume(struct afs_fs_context *);
+ extern int afs_activate_volume(struct afs_volume *);
+ extern void afs_deactivate_volume(struct afs_volume *);
++bool afs_try_get_volume(struct afs_volume *volume, enum afs_volume_trace =
+reason);
+ extern struct afs_volume *afs_get_volume(struct afs_volume *, enum afs_vo=
+lume_trace);
+ extern void afs_put_volume(struct afs_net *, struct afs_volume *, enum af=
+s_volume_trace);
+ extern int afs_check_volume_status(struct afs_volume *, struct afs_operat=
+ion *);
+diff --git a/fs/afs/volume.c b/fs/afs/volume.c
+index 29d483c80281..115c081a8e2c 100644
+--- a/fs/afs/volume.c
++++ b/fs/afs/volume.c
+@@ -32,8 +32,13 @@ static struct afs_volume *afs_insert_volume_into_cell(s=
+truct afs_cell *cell,
+ 		} else if (p->vid > volume->vid) {
+ 			pp =3D &(*pp)->rb_right;
+ 		} else {
+-			volume =3D afs_get_volume(p, afs_volume_trace_get_cell_insert);
+-			goto found;
++			if (afs_try_get_volume(p, afs_volume_trace_get_cell_insert)) {
++				volume =3D p;
++				goto found;
++			}
++
++			set_bit(AFS_VOLUME_RM_TREE, &volume->flags);
++			rb_replace_node_rcu(&p->cell_node, &volume->cell_node, &cell->volumes)=
+;
+ 		}
+ 	}
+ =
+
+@@ -56,7 +61,8 @@ static void afs_remove_volume_from_cell(struct afs_volum=
+e *volume)
+ 				 afs_volume_trace_remove);
+ 		write_seqlock(&cell->volume_lock);
+ 		hlist_del_rcu(&volume->proc_link);
+-		rb_erase(&volume->cell_node, &cell->volumes);
++		if (!test_and_set_bit(AFS_VOLUME_RM_TREE, &volume->flags))
++			rb_erase(&volume->cell_node, &cell->volumes);
+ 		write_sequnlock(&cell->volume_lock);
+ 	}
+ }
+@@ -231,6 +237,20 @@ static void afs_destroy_volume(struct afs_net *net, s=
+truct afs_volume *volume)
+ 	_leave(" [destroyed]");
+ }
+ =
+
++/*
++ * Try to get a reference on a volume record.
++ */
++bool afs_try_get_volume(struct afs_volume *volume, enum afs_volume_trace =
+reason)
++{
++	int r;
++
++	if (__refcount_inc_not_zero(&volume->ref, &r)) {
++		trace_afs_volume(volume->vid, r + 1, reason);
++		return true;
++	}
++	return false;
++}
++
+ /*
+  * Get a reference on a volume record.
+  */
+
 
