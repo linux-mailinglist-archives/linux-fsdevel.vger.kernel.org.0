@@ -1,144 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-6687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843CB81B605
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:33:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B78281B60E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B86F1F23F21
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC7D828280C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516C9768EF;
-	Thu, 21 Dec 2023 12:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2C6EB4F;
+	Thu, 21 Dec 2023 12:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0wcQhuzB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lj/PL811";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0wcQhuzB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lj/PL811"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y/4hUsMV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5702C760B1;
-	Thu, 21 Dec 2023 12:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A7E301FB79;
-	Thu, 21 Dec 2023 12:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703161913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63D64595A
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 12:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1703162299;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QwHR5tUvfneScMWsP8MbP9fmEkGw5uhOCQkhJHPk1OA=;
-	b=0wcQhuzBCULrMhsrPbMUDvPq1vkJknK8Dh3qDnxgyYVejGEMPmLLd4xI0RZd24Vgr63qOG
-	giAjay67i0UDSNidEpiGhBizY/QP5B2eDztrzA0VJ/ttyeM+cbHiyn8qlN4Ax1VukiCTjx
-	QMrlqkDpKYso3MeMAHKZxR83HQRRjr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703161913;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QwHR5tUvfneScMWsP8MbP9fmEkGw5uhOCQkhJHPk1OA=;
-	b=lj/PL811DVuzQ3shfd0630+UlaPG7rPzDMRTxc8wfu9DeHUCPWHcFJquegPUnPWviMhkKQ
-	RCKbcyG15WM17eAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703161913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QwHR5tUvfneScMWsP8MbP9fmEkGw5uhOCQkhJHPk1OA=;
-	b=0wcQhuzBCULrMhsrPbMUDvPq1vkJknK8Dh3qDnxgyYVejGEMPmLLd4xI0RZd24Vgr63qOG
-	giAjay67i0UDSNidEpiGhBizY/QP5B2eDztrzA0VJ/ttyeM+cbHiyn8qlN4Ax1VukiCTjx
-	QMrlqkDpKYso3MeMAHKZxR83HQRRjr8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703161913;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QwHR5tUvfneScMWsP8MbP9fmEkGw5uhOCQkhJHPk1OA=;
-	b=lj/PL811DVuzQ3shfd0630+UlaPG7rPzDMRTxc8wfu9DeHUCPWHcFJquegPUnPWviMhkKQ
-	RCKbcyG15WM17eAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90F3413AB5;
-	Thu, 21 Dec 2023 12:31:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MYhiIzkwhGXfcAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Dec 2023 12:31:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 47484A07E3; Thu, 21 Dec 2023 13:31:49 +0100 (CET)
-Date: Thu, 21 Dec 2023 13:31:49 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
-	Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/17] writeback: Factor writeback_get_folio() out of
- write_cache_pages()
-Message-ID: <20231221123149.liaii5ziwyvb3rmx@quack3>
-References: <20231218153553.807799-1-hch@lst.de>
- <20231218153553.807799-14-hch@lst.de>
- <20231221114153.2ktiwixqedsk5adw@quack3>
- <20231221122535.GE17956@lst.de>
+	bh=cfOAS/Cfvy73NfYNUGoNrYx/8Pw3cjNZcgnpRXHhVXg=;
+	b=Y/4hUsMVm09qwOBnvvT9v9i3SSjuIcPKm+CdF7fTrkVZpj324/9id1xef4Yg2VfLVp3QLv
+	bO1Pww1ChsvyhQX/vBURd4/W/CcNVXcmAlaako5XII1788JKBK3ncQtC8LO9Hob6fNPD+4
+	9C6Xw2re7VbazB/Vq/3ZFuts5L0D/WY=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-155-UeRKl7mpN2abuOFJDsrxlQ-1; Thu, 21 Dec 2023 07:38:17 -0500
+X-MC-Unique: UeRKl7mpN2abuOFJDsrxlQ-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1d3e5d18308so7636225ad.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 04:38:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703162296; x=1703767096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cfOAS/Cfvy73NfYNUGoNrYx/8Pw3cjNZcgnpRXHhVXg=;
+        b=XHDgBP7nEYMcNka5pe50vHBLSaDxSZ9h1fjmM+/pQ5T7/5zN54xeATafIftzvvuMqf
+         79k/ldStnUulOA5+ktdwLgDkbPOAOLMMV9Arx89lLBGRiC9edG/FWH3hCA+I6sjwzBhE
+         i2qUhCqDJoeZ5m23j4tjI5cqr4bonbTGzQd59W4LVVzkPfh8a7dj0W4WoWgYhEoiRyjk
+         XJH4XlHvC0IfSNKs2/OYLyFJm27U6JwtZQApEs9kSs1S3R55ljfjF843Xi1YFP/cSz8v
+         Ukrc88rvZt3CS4sBPpH1meTNVoTg2DuQuGraUMoScbMHuHDw0y2ye7wbakrc3WgLHQn1
+         dZng==
+X-Gm-Message-State: AOJu0YwgXp3FlTubrp6dzmcaBSnpTAEQ4dbL7PQYjG9Iq2FpLy7zaaRz
+	Ky7YTpz4R/5PqkvYHI1xMMbHAJvEG6769Hiezb+xX3OegjViQjZ9LgpYXPr8Dgtuz8Gs1u6L8jW
+	yjctAehBSTAAY5OP9bXozAmX8ISwgVWMZ5eGeNz6BKQ==
+X-Received: by 2002:a17:902:e54e:b0:1d0:b42f:e41b with SMTP id n14-20020a170902e54e00b001d0b42fe41bmr24446210plf.64.1703162296759;
+        Thu, 21 Dec 2023 04:38:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEcxmSGTi9Cen2vOZLOtaY1q0MkvT4Sc2+5Jcq+fjVEuZ63u18UmONPJhGdPt3NhdWBJzlbTeYFpqiaqcEO7EY=
+X-Received: by 2002:a17:902:e54e:b0:1d0:b42f:e41b with SMTP id
+ n14-20020a170902e54e00b001d0b42fe41bmr24446200plf.64.1703162296493; Thu, 21
+ Dec 2023 04:38:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231221122535.GE17956@lst.de>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -2.90
-X-Spamd-Result: default: False [-2.90 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-2.10)[95.66%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
+References: <20231206195807.764344-1-willy@infradead.org> <ZYMQx2070yb9Vkgs@casper.infradead.org>
+In-Reply-To: <ZYMQx2070yb9Vkgs@casper.infradead.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 21 Dec 2023 13:38:05 +0100
+Message-ID: <CAHc6FU5Wn8NYn96SXyeWq5ifHnO9GChqcbDX5x2ebQaKKfvJYg@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: Remove use of error flag in journal reads
+To: Matthew Wilcox <willy@infradead.org>
+Cc: gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 21-12-23 13:25:35, Christoph Hellwig wrote:
-> On Thu, Dec 21, 2023 at 12:41:53PM +0100, Jan Kara wrote:
-> > But I'd note that the call stack depth of similarly called helper functions
-> > (with more to come later in the series) is getting a bit confusing. Maybe
-> > we should inline writeback_get_next() into its single caller
-> > writeback_get_folio() to reduce confusion a bit...
-> 
-> I just hacked that up based on the fully applied series and that looks
-> good to me.
+On Wed, Dec 20, 2023 at 5:05=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+> On Wed, Dec 06, 2023 at 07:58:06PM +0000, Matthew Wilcox (Oracle) wrote:
+> > Conventionally we use the uptodate bit to signal whether a read
+> > encountered an error or not.  Use folio_end_read() to set the uptodate
+> > bit on success.  Also use filemap_set_wb_err() to communicate the errno
+> > instead of the more heavy-weight mapping_set_error().
+>
+> Ping?
 
-Yeah, cleanup on top works for me so that you don't have to rebase.
+Pushed to for-next now. Thanks for the patch and reminder.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Andreas
+
 
