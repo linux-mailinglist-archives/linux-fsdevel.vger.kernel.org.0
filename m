@@ -1,79 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-6750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A3281B9A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:37:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3FB81B9D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0435282229
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:37:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C76B22B50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF60360A4;
-	Thu, 21 Dec 2023 14:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744236095;
+	Thu, 21 Dec 2023 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="klgQ2LGr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YYFdyRSW"
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="beVHpx/s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D01643D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 14:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.west.internal (Postfix) with ESMTP id 61EDF3200AD6;
-	Thu, 21 Dec 2023 09:36:42 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 21 Dec 2023 09:36:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1703169401;
-	 x=1703255801; bh=1DlmtSpClXUVMTiI/J4pF9c16AgmDN04rij9Y9KWBr0=; b=
-	klgQ2LGrms50evEtXBCPZo1adLNbMW8AuZ3Q2+k5xF6g4o4RaShrVJl+dOQGBw76
-	Y8RhlyllPYoN8tFXDKgUukAvBDDUAT1aPVmylby6d3+AdOSwyy6HKGwA6N8/F3Ur
-	qkz7DnitJW8OUR/LJBRr0AyAMnp8pTaAoabM6iF3HdyyhwIX/q4vEovzNtob+ZiD
-	rwCBJBpyJ8OYVFKnrHJ4Eeuqz5/lk+0qYAQEYf8NyWyp+FfsTzj1dCIdHI6zWgPM
-	DG6UNRc4YjO+LM8a3ChzsN5xAkSvTW/3Xj8LbaD5frJulLifFzalniQJsv1JAVt5
-	Rlcx8cgMzd2JE6cucF3BjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1703169401; x=
-	1703255801; bh=1DlmtSpClXUVMTiI/J4pF9c16AgmDN04rij9Y9KWBr0=; b=Y
-	YFdyRSW0pNzMIHHPPlrjsXRESYdwwQqtWukuHQCCgeUFfs5NtDJFTO0TjdB3qhMO
-	R/uoqEAdl1matbFxV7Bh9zyf2ZY3qGZtKuI7MzdJ6Kra2xnlyMBeINC0A28r6KEk
-	I3RnQW+dAsLN1AVkseQDqEOif6xOSGzkOPIMUwOTO1EehAF3GtaBu88winRqGMLZ
-	LKRtCwffQlmVsR30ojF+KSX2T98RPhV4nM5ga+UAzPylme7GVaqz8CGk5gmlleRK
-	8TjtEt30PhFAUAroUAK5qyxDUNn8VXvM64vukRUhA8X+k/uX3CjOzCeLAuDxYRsu
-	8UrU+F2gU+lq3084Tls1w==
-X-ME-Sender: <xms:eU2EZbrelL2zUctIQ6oozdw-HryRkWoQdtOpBALHUZdTjW0uc94Bzg>
-    <xme:eU2EZVoN7F_KvUM6h8LKx5Sybb3c49cDAS2hSzpO4W0IMyKphpN896Z3gZfcoKJSt
-    k6Vx7l6lQa1ZRCU>
-X-ME-Received: <xmr:eU2EZYPj2D1xXvUDq1_FSUvHtNqq7o_yjlQDQJEbdTN7Uk1-v-SHqG-3wHzRTIcv6VVxjkBGNZDOdzp5984l4ZKwhFjL6ffq3QjN_zMQjjk_-1qqTEZD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdduhedggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:eU2EZe78Z80sqZlC6deNIf34ymUp1d00p8nFoRawP08Lb_TLlUhAcQ>
-    <xmx:eU2EZa5JMK7o7qoScYl-TdctMY25916OXgS3zF9T2BsZzwY7hfLx-A>
-    <xmx:eU2EZWhPEN6mGRNyka1mpXE6agyi9moulYRuGlCZxGlUQW-mQUShXg>
-    <xmx:eU2EZRaiO_Lh0tam6VYV80hdVehaS27jaqZ4ymOkbMwu7pDlKRi8_Q>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Dec 2023 09:36:39 -0500 (EST)
-Message-ID: <75ea0748-9455-4ac5-b68a-fdf6fab4217d@fastmail.fm>
-Date: Thu, 21 Dec 2023 15:36:38 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD531DFF1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+	d=auristor.com; s=MDaemon; r=y; t=1703170231; x=1703775031;
+	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+	MIME-Version:User-Agent:From:Subject:To:Cc:References:
+	Content-Language:Organization:In-Reply-To:Content-Type; bh=+QZFk
+	ATaCZb0wjlgziHlWtgcmAHmEqh0tFDJL1CPnFM=; b=beVHpx/suRnz4cD0itqH/
+	NTYP7cbtJ4IbNKEbeiq2/NgJG+hGdlpVWm6X+dngCrdEypydULQ3TkaehXYxwkbk
+	ZXghqFIwPd5wxdLe92PBddc90hb0JxgNFDK7KNmScsQdLWkoG9ryM1p7bIBcgOR5
+	H8c2D19tKg5sb5Deqyxve4=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:50:31 -0500
+Received: from [IPV6:2603:7000:73c:c800:969b:c070:cc58:a112] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1) 
+	with ESMTPSA id md5001003765436.msg; Thu, 21 Dec 2023 09:50:30 -0500
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:50:30 -0500
+	(not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2603:7000:73c:c800:969b:c070:cc58:a112
+X-MDHelo: [IPV6:2603:7000:73c:c800:969b:c070:cc58:a112]
+X-MDArrival-Date: Thu, 21 Dec 2023 09:50:30 -0500
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=17191febf5=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
+Message-ID: <58b37d3e-3363-4e2e-bcc6-bccfc6cf9c83@auristor.com>
+Date: Thu, 21 Dec 2023 09:50:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,117 +54,154 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
- linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
- hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>,
- Dharmendra Singh <dsingh@ddn.com>
-References: <20230920024001.493477-1-tfanelli@redhat.com>
- <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
- <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
- <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
- <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
- <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
- <7c588ab3-246f-4d9d-9b84-225dedab690a@fastmail.fm>
- <CAOQ4uxgb2J8zppKg63UV88+SNbZ+2=XegVBSXOFf=3xAVc1U3Q@mail.gmail.com>
- <9d3c1c2b-53c0-4f1d-b4c0-567b23d19719@fastmail.fm>
- <CAOQ4uxhd9GsWgpw4F56ACRmHhxd6_HVB368wAGCsw167+NHpvw@mail.gmail.com>
- <2d58c415-4162-441e-8887-de6678b2be28@fastmail.fm>
- <98795992-589d-44cb-a6d0-ccf8575a4cc4@fastmail.fm>
- <c4c87b07-bcae-4c6e-aaec-86168db7804a@fastmail.fm>
- <CAOQ4uxgy5mV4aP4YHJtoYeeLMzNfj0qYh7zTL32gO1TfJDvYYg@mail.gmail.com>
- <bde78295-e455-4315-b8c6-57b0d3b60c6c@fastmail.fm>
- <CAOQ4uxjmg0ixS58aacwuYKXhVMyh+O-PmOtgxQR1wd+Ab25r1w@mail.gmail.com>
-Content-Language: en-US, de-DE
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAOQ4uxjmg0ixS58aacwuYKXhVMyh+O-PmOtgxQR1wd+Ab25r1w@mail.gmail.com>
+From: Jeffrey E Altman <jaltman@auristor.com>
+Subject: Re: [PATCH] afs: Fix overwriting of result of DNS query
+To: David Howells <dhowells@redhat.com>,
+ Anastasia Belova <abelova@astralinux.ru>,
+ Marc Dionne <marc.dionne@auristor.com>
+Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <1700862.1703168632@warthog.procyon.org.uk>
+Content-Language: en-US
+Organization: AuriStor, Inc.
+In-Reply-To: <1700862.1703168632@warthog.procyon.org.uk>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030005090605040909010502"
+X-MDCFSigsAdded: auristor.com
+
+This is a cryptographically signed message in MIME format.
+
+--------------ms030005090605040909010502
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
->>> But why would you need to call fuse_file_io_mmap() for O_DIRECT?
->>> If a file was opened without FOPEN_DIRECT_IO, we already set inode to
->>> caching mode on open.
->>> Does your O_DIRECT patch to mmap solve an actual reproducible bug?
->>
->> Yeah it does, in my fuse-dio-v5 branch, which adds in shared locks for
->> O_DIRECT writes without FOPEN_DIRECT_IO.
->>
-> 
-> Ah. right, because open(O_DIRECT) does not enter io cache mode
-> in your branch. I missed that.
-> 
-> But still, I think that a better fix for fuse_io_mode would be to treat
-> mmap of O_DIRECT exactly the same as mmap of FOPEN_DIRECT_IO,
-> including invalidate page cache and require FUSE_DIRECT_IO_ALLOW_MMAP.
-> I know this could be a change of behavior of applications doing mmap()
-> on an fd that was opened with O_DIRECT, but I doubt that such applications
-> exist, even if this really works with upstream code.
-> 
-> Something like this (pushed to my fuse_io_mode branch)?
-> 
-> +static bool fuse_file_is_direct_io(struct file *file)
-> +{
-> +       struct fuse_file *ff = file->private_data;
-> +
-> +       return ff->open_flags & FOPEN_DIRECT_IO || file->f_flags & O_DIRECT;
-> +}
-> +
->   /* Request access to submit new io to inode via open file */
->   static bool fuse_file_io_open(struct file *file, struct inode *inode)
->   {
-> @@ -116,7 +121,7 @@ static bool fuse_file_io_open(struct file *file,
-> struct inode *inode)
->                  return true;
-> 
->          /* Set explicit FOPEN_CACHE_IO flag for file open in caching mode */
-> -       if (!(ff->open_flags & FOPEN_DIRECT_IO) && !(file->f_flags & O_DIRECT))
-> +       if (!fuse_file_is_direct_io(file))
->                  ff->open_flags |= FOPEN_CACHE_IO;
-> 
->          spin_lock(&fi->lock);
-> @@ -2622,8 +2627,9 @@ static int fuse_file_mmap(struct file *file,
-> struct vm_area_struct *vma)
->          if (FUSE_IS_DAX(file_inode(file)))
->                  return fuse_dax_mmap(file, vma);
-> 
-> -       if (ff->open_flags & FOPEN_DIRECT_IO) {
-> -               /* Can't provide the coherency needed for MAP_SHARED
-> +       if (fuse_file_is_direct_io(file)) {
-> +               /*
-> +                * Can't provide the coherency needed for MAP_SHARED
->                   * if FUSE_DIRECT_IO_ALLOW_MMAP isn't set.
->                   */
-> 
-
-I cut off the rest of the discussion as this is from my point of view a 
-rather major change.
-
-I'm not sure about this. If an application opens with O_DIRECT and then 
-does mmap - sure, weird options, but then none of the other network file 
-systems requires a special setting for that? And none of the other file 
-systems has pages invalidations? Why is it needed for fuse' O_DIRECT? 
-The initial invalidation was for MAP_PRIVATE and FOPEN_DIRECT_IO, but 
-now gets extended - I get really worried about this special fuse 
-handling that none of the other file system has.
-
-Also, NFS and smb/cifs do not have the same coherency guarantees, but 
-still allow mmap on O_DIRECT?
-
-And assuming an application does this on an existing fuse file system, 
-the application would now need to ask the fuse file system developer to 
-set this flag with a new kernel?
-
-At a minimum I wouldn't like to have this without its own change log 
-entry and with the risk that everything needs to be reverted, in case a 
-regression is reported.
+On 12/21/2023 9:23 AM, David Howells wrote:
+> In afs_update_cell(), ret is the result of the DNS lookup and the errors
+> are to be handled by a switch - however, the value gets clobbered in
+> between by setting it to -ENOMEM in case afs_alloc_vlserver_list() fails.
+>
+> Fix this by moving the setting of -ENOMEM into the error handling for OOM
+> failure.  Further, only do it if we don't have an alternative error to
+> return.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.  Based on
+> a patch from Anastasia Belova[1].
+>
+> Fixes: d5c32c89b208 ("afs: Fix cell DNS lookup")
+> Signed-off-by: David Howells<dhowells@redhat.com>
+> cc: Anastasia Belova<abelova@astralinux.ru>
+> cc: Marc Dionne<marc.dionne@auristor.com>
+> cc:linux-afs@lists.infradead.org
+> cc:lvc-project@linuxtesting.org
+> Link:https://lore.kernel.org/r/20231221085849.1463-1-abelova@astralinux.ru/  [1]
+>
+> ---
+>   fs/afs/cell.c |    6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> index 988c2ac7cece..926cb1188eba 100644
+> --- a/fs/afs/cell.c
+> +++ b/fs/afs/cell.c
+> @@ -409,10 +409,12 @@ static int afs_update_cell(struct afs_cell *cell)
+>   		if (ret == -ENOMEM)
+>   			goto out_wake;
+>   
+> -		ret = -ENOMEM;
+>   		vllist = afs_alloc_vlserver_list(0);
+> -		if (!vllist)
+> +		if (!vllist) {
+> +			if (ret >= 0)
+> +				ret = -ENOMEM;
+>   			goto out_wake;
+> +		}
+>   
+>   		switch (ret) {
+>   		case -ENODATA:
+>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
 
 
-Thanks,
-Bernd
+--------------ms030005090605040909010502
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-
-
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
+MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
+xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
+fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
+EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
+9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
+IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
+gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
+eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
+WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
+utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
+Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
+a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
+AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
+Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
+EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
+wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
+15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
+o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
+3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
+VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
+CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
+dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
+L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
+5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
+dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
+eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
+YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
+dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
+Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
+dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
+bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
+CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
+bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
+0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
+6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
+QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
+Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
+db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
+rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
+UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
+p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
+MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
+A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
+ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTIyMTE0
+NTAxOVowLwYJKoZIhvcNAQkEMSIEILU36oFPSnT0y+26TusHUZIKYOMNcgXVmL8sCUGkVx2/
+MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
+MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
+AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
+dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
+AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAH/Tz
+4oc4hHbjITcEdZMw4uydf0NAXnaC/1OUO5noXYQ9H4FVGWdwTyaPKOaaX+KGzTCs0VQvZic/
+gZLR2vlo02WGFBnEkTGdvAAwHlm7MYWPGXi+Dz/se2tJg7wvJfGyjbwMYq3nwD2eNqu0554g
+oJgWsDLgX0ZFuetb9XKMWcS7KhgoOWaNAqThPSq4nmf3qWQS7+9gyHfKes3sIhiFE463wI9f
+o+qb6+1hEXYCtE6o/4oV/n9VxQTs0rcn61hfUPkyJB/hmreeF5zbiqkpEYOoOVNwBJisgzh4
+e+4jEMumbqyemdqRPisZLMGfWdhw8cbmESxHGvB0y1vqZsIHrAAAAAAAAA==
+--------------ms030005090605040909010502--
 
 
