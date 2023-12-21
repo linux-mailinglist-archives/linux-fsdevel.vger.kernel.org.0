@@ -1,192 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-6659-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2777E81B2F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:54:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F4581B360
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 11:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6091C20E90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 934EBB20EE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078BB4E1A3;
-	Thu, 21 Dec 2023 09:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5FA4F60D;
+	Thu, 21 Dec 2023 10:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5DJ2CVz"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="a9xUt5Zc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mrV0atNV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4084CE14;
-	Thu, 21 Dec 2023 09:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-336897b6bd6so342225f8f.2;
-        Thu, 21 Dec 2023 01:54:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703152459; x=1703757259; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DzaZHZbIpywo6AcRCsHP1wRx00TK4+WoZWo2iso5VM=;
-        b=k5DJ2CVzUYREbiTwFA1l/l2x3+zbYI8lBcOA7h35ptwd8M520FWa0SBcnfSvZLDIl/
-         N1VZCf5CB7JpJduS4Wfc1Xly2i7HE8C19E4QUkTKsjZnr+ShV14Xi+PCjtxy2FSDCUoW
-         jVjZXtulFVI8VdXTyraniq47U5DGjg60NSSPXszajgFGgtb6pn7tMsEUT5zqqm7tAl57
-         Wqdx1d3/hp6WgbKHgsyK6jhcpwvvtF/TCZeb+9fqXwUwAqlkTMPBpsSrJH1EtX9svvR1
-         E7zk8PaOoetbq6Erl5rGQ2P9EIDmDOum9TPThh9c8kIGlAhtO2USiJ4GqaaoVsceRHyq
-         cuJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703152459; x=1703757259;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7DzaZHZbIpywo6AcRCsHP1wRx00TK4+WoZWo2iso5VM=;
-        b=bU/XleAiXbSWGBkzPKUVfKLGPfqYlxqvoyQG8cfo9vqEuur9GeAlNVpysgJeKTxrSt
-         kJBXF03qxTJLb8mNkPSayPkQG16E+m06e4jroXKItrJvX4NKNTRclk53+ojCdOfuCGie
-         UIQb8yTdspjAZE4oEtV73jKeYf6uv51CqLENRP2puYLRIzlbjvQU274dVuZZgj41ukd4
-         IcHACcYYk7dgWksDahXnYgN6WvUsZw3XS2p4AvTndGI9vJ7FnsZE/Mx6Gjf8ZMBL4AVD
-         C3knUYYfSYHgjDMzmxpp0ml1twTAZ5bPEK72IJPMH5cprQ6vCX330w8rH5heiSwzhpyz
-         zRVQ==
-X-Gm-Message-State: AOJu0YzdcA80lDC9dnnqb1g67KZKKiB9cthk0Yg2prNa1Np5jiANaNdP
-	MA2zTGVcShtCpYPa/qKGID5PBSsMT0A=
-X-Google-Smtp-Source: AGHT+IEFOo6yh5innVrPRk3V/DK/hR2sQgYBmMYCa5EXtiNz4bDAouq8MgBzf4wB3ZrvgoucQG/ydA==
-X-Received: by 2002:a05:600c:a05:b0:40d:3785:10b0 with SMTP id z5-20020a05600c0a0500b0040d378510b0mr543755wmp.95.1703152459067;
-        Thu, 21 Dec 2023 01:54:19 -0800 (PST)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id f5-20020adff8c5000000b003367dad4a58sm1628082wrq.70.2023.12.21.01.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Dec 2023 01:54:18 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [RFC][PATCH 4/4] fs: factor out backing_file_mmap() helper
-Date: Thu, 21 Dec 2023 11:54:10 +0200
-Message-Id: <20231221095410.801061-5-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231221095410.801061-1-amir73il@gmail.com>
-References: <20231221095410.801061-1-amir73il@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0073E4F1E9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 10:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailout.nyi.internal (Postfix) with ESMTP id EBEC95C005B;
+	Thu, 21 Dec 2023 05:17:32 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 21 Dec 2023 05:17:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1703153852;
+	 x=1703240252; bh=AzuzgjBVV+ksukaGiqQLkBuDIXbAh0/AyaP/ga5QZvs=; b=
+	a9xUt5Zc4iIo7Ng7SwfaLT5FOrJIL1wpYXTcLBfbSAO8smpgCc06vnpi0NJiix2S
+	Egg1vPnDtCII6G5STVZWLGbkpl0VkSo2Htw1gGMTyr6qYblrXyCXNCRBg2uOPNku
+	j9nMCDSXXamWKpKCg+opC52Yd6mYsqm8QTBf6If89En1IkZKS5thjA+h4y0wS0Qj
+	uPEAmDR5PyDXfVODS6lH2t4ZmqHlA5y44looQmIEpIZ9ZJQCG48wgJsrkHzOVmVC
+	eFmBif2vmlVDDs+xHLhSCjjOAoUBVzYY/BLahtVmLyn0DyjTLNNZywgwB1e5AizF
+	sMXZ/dq5rn2dLC3YERpZ9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1703153852; x=
+	1703240252; bh=AzuzgjBVV+ksukaGiqQLkBuDIXbAh0/AyaP/ga5QZvs=; b=m
+	rV0atNVNgp7IOlvSUsNtgzc5JdAxYMD61po+5L1d5biQVay1lBPTeM/E9aBuUWoV
+	Dgh6QqynjJ7ifE8XxUGNal6AIqVHFMS/rg5JT1QXEZ1CKlNbe4pqW8uAym5XLsi/
+	gi5kp/d1fHplN16l1oYf174+iQ2UcDp245o49X30mDHTpCgoESPYE7NhL+UdJxnE
+	q6X2q49FyvE8NZJ8vKIuSluVIpHv0rIqgrRfDGrdL4w2iiu2iZgwemsNc8FZU9HS
+	ZMXLy/oaNDhd3oSzOrzh6ONm6ST8uVNoDrXEyR3X4luB7GFhQzto7Plwor4ergsX
+	eaxpAk0t0JuEpfkajliPw==
+X-ME-Sender: <xms:vBCEZXiGBeA91RARgC_Fd1mQaiXXuL4MgLOcjUhu2ZZspD0zXVxrHg>
+    <xme:vBCEZUAtwKfu7VJM41GnX1dB0wNOgDVsjd6eEFuBBLi-44R9hW0V7YrVrOJ5L4vXg
+    oGcxB5TRBf8NeEe>
+X-ME-Received: <xmr:vBCEZXEc20MM0xdySqdeHmgKMJOU61LOr8GW7Xn_FFLDDpGS9TmFf76385HsO6wXUoW5wW6iV2K4xJA0xsEjKkL5727ZHRbjPjF70K8UzzqBq8Akk71T>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvddugedgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepuedtkeeileeghedukefghfdtuddvudfgheel
+    jeejgeelueffueekheefheffveelnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:vBCEZUQO6Dolng-lDFOEiS546iuh7aRG7vRTx-wSnAbbtfxBvPUb3Q>
+    <xmx:vBCEZUzvkuzDWEI_DSNCHzWtsOcBJiL79jEj-4zBeVquOOE_UjgK7g>
+    <xmx:vBCEZa7HhMDJRoX8qE8Mmtx0HN7n6sdkel0qdqPC61t3hHAQKy3vWA>
+    <xmx:vBCEZXyHj4uxPPAXFcEHt22iGOJIf08mwXwFQ6wR_hwXX5SjppQkFA>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Dec 2023 05:17:31 -0500 (EST)
+Message-ID: <bde78295-e455-4315-b8c6-57b0d3b60c6c@fastmail.fm>
+Date: Thu, 21 Dec 2023 11:17:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
+ linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
+ hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>,
+ Dharmendra Singh <dsingh@ddn.com>
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
+ <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm>
+ <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
+ <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
+ <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
+ <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
+ <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
+ <7c588ab3-246f-4d9d-9b84-225dedab690a@fastmail.fm>
+ <CAOQ4uxgb2J8zppKg63UV88+SNbZ+2=XegVBSXOFf=3xAVc1U3Q@mail.gmail.com>
+ <9d3c1c2b-53c0-4f1d-b4c0-567b23d19719@fastmail.fm>
+ <CAOQ4uxhd9GsWgpw4F56ACRmHhxd6_HVB368wAGCsw167+NHpvw@mail.gmail.com>
+ <2d58c415-4162-441e-8887-de6678b2be28@fastmail.fm>
+ <98795992-589d-44cb-a6d0-ccf8575a4cc4@fastmail.fm>
+ <c4c87b07-bcae-4c6e-aaec-86168db7804a@fastmail.fm>
+ <CAOQ4uxgy5mV4aP4YHJtoYeeLMzNfj0qYh7zTL32gO1TfJDvYYg@mail.gmail.com>
+Content-Language: en-US, de-DE
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAOQ4uxgy5mV4aP4YHJtoYeeLMzNfj0qYh7zTL32gO1TfJDvYYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Assert that the file object is allocated in a backing_file container
-so that file_user_path() could be used to display the user path and
-not the backing file's path in /proc/<pid>/maps.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/backing-file.c            | 27 +++++++++++++++++++++++++++
- fs/overlayfs/file.c          | 23 ++++++-----------------
- include/linux/backing-file.h |  2 ++
- 3 files changed, 35 insertions(+), 17 deletions(-)
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 46488de821a2..1ad8c252ec8d 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/backing-file.h>
- #include <linux/splice.h>
-+#include <linux/mm.h>
- 
- #include "internal.h"
- 
-@@ -284,6 +285,32 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
- }
- EXPORT_SYMBOL_GPL(backing_file_splice_write);
- 
-+int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
-+		      struct backing_file_ctx *ctx)
-+{
-+	const struct cred *old_cred;
-+	int ret;
-+
-+	if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)) ||
-+	    WARN_ON_ONCE(ctx->user_file != vma->vm_file))
-+		return -EIO;
-+
-+	if (!file->f_op->mmap)
-+		return -ENODEV;
-+
-+	vma_set_file(vma, file);
-+
-+	old_cred = override_creds(ctx->cred);
-+	ret = call_mmap(vma->vm_file, vma);
-+	revert_creds(old_cred);
-+
-+	if (ctx->accessed)
-+		ctx->accessed(ctx->user_file);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(backing_file_mmap);
-+
- static int __init backing_aio_init(void)
- {
- 	backing_aio_cachep = kmem_cache_create("backing_aio",
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 69b52d2f9c74..05536964d37f 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -10,7 +10,6 @@
- #include <linux/uio.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/mm.h>
- #include <linux/fs.h>
- #include <linux/backing-file.h>
- #include "overlayfs.h"
-@@ -415,23 +414,13 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct file *realfile = file->private_data;
--	const struct cred *old_cred;
--	int ret;
--
--	if (!realfile->f_op->mmap)
--		return -ENODEV;
--
--	if (WARN_ON(file != vma->vm_file))
--		return -EIO;
--
--	vma_set_file(vma, realfile);
--
--	old_cred = ovl_override_creds(file_inode(file)->i_sb);
--	ret = call_mmap(vma->vm_file, vma);
--	revert_creds(old_cred);
--	ovl_file_accessed(file);
-+	struct backing_file_ctx ctx = {
-+		.cred = ovl_creds(file_inode(file)->i_sb),
-+		.user_file = file,
-+		.accessed = ovl_file_accessed,
-+	};
- 
--	return ret;
-+	return backing_file_mmap(realfile, vma, &ctx);
- }
- 
- static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
-index 0546d5b1c9f5..3f1fe1774f1b 100644
---- a/include/linux/backing-file.h
-+++ b/include/linux/backing-file.h
-@@ -36,5 +36,7 @@ ssize_t backing_file_splice_write(struct pipe_inode_info *pipe,
- 				  struct file *out, loff_t *ppos, size_t len,
- 				  unsigned int flags,
- 				  struct backing_file_ctx *ctx);
-+int backing_file_mmap(struct file *file, struct vm_area_struct *vma,
-+		      struct backing_file_ctx *ctx);
- 
- #endif /* _LINUX_BACKING_FILE_H */
--- 
-2.34.1
+On 12/21/23 10:18, Amir Goldstein wrote:
+> On Thu, Dec 21, 2023 at 12:13 AM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+>>
+>>
+>>
+>>
+>> [...]
+>>
+>>>>>>> I think that we are going to need to use some inode state flag
+>>>>>>> (e.g. FUSE_I_DIO_WR_EXCL) to protect against this starvation,
+>>>>>>> unless we do not care about this possibility?
+>>>>>>> We'd only need to set this in fuse_file_io_mmap() until we get
+>>>>>>> the iocachectr refcount.
+>>
+>>
+>> I added back FUSE_I_CACHE_IO_MODE I had used previously.
+>>
+> 
+> ACK.
+> Name is a bit confusing for the "want io mode" case, but IMO
+> a comment would be enough to make it clear.
+> Push a version with a comment to my branch.
+> 
+> 
+>>
+>>>>>>>
+>>>>>>> I *think* that fuse_inode_deny_io_cache() should be called with
+>>>>>>> shared inode lock held, because of the existing lock chain
+>>>>>>> i_rwsem -> page lock -> mmap_lock for page faults, but I am
+>>>>>>> not sure. My brain is too cooked now to figure this out.
+>>>>>>> OTOH, I don't see any problem with calling
+>>>>>>> fuse_inode_deny_io_cache() with shared lock held?
+>>>>>>>
+>>>>>>> I pushed this version to my fuse_io_mode branch [1].
+>>>>>>> Only tested generic/095 with FOPEN_DIRECT_IO and
+>>>>>>> DIRECT_IO_ALLOW_MMAP.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Amir.
+>>>>>>>
+>>>>>>> [1] https://github.com/amir73il/linux/commits/fuse_io_mode
+>>>>>>
+>>>>>> Thanks, will look into your changes next. I was looking into the
+>>>>>> initial
+>>>>>> issue with generic/095 with my branch. Fixed by the attached patch. I
+>>>>>> think it is generic and also applies to FOPEN_DIRECT_IO + mmap.
+>>>>>> Interesting is that filemap_range_has_writeback() is exported, but
+>>>>>> there
+>>>>>> was no user. Hopefully nobody submits an unexport patch in the mean
+>>>>>> time.
+>>>>>>
+>>>>>
+>>>>> Ok. Now I am pretty sure that filemap_range_has_writeback() should be
+>>>>> check after taking the shared lock in fuse_dio_lock() as in my branch
+>>>>> and
+>>>>> not in fuse_dio_wr_exclusive_lock() outside the lock.
+>>>>
+>>>>
+>>>>
+>>>>>
+>>>>> But at the same time, it is a little concerning that you are able to
+>>>>> observe
+>>>>> dirty pages on a fuse inode after success of fuse_inode_deny_io_cache().
+>>>>> The whole point of fuse_inode_deny_io_cache() is that it should be
+>>>>> granted after all users of the inode page cache are gone.
+>>>>>
+>>>>> Is it expected that fuse inode pages remain dirty after no more open
+>>>>> files
+>>>>> and no more mmaps?
+>>>>
+>>>>
+>>>> I'm actually not sure anymore if filemap_range_has_writeback() is
+>>>> actually needed. In fuse_flush() it calls write_inode_now(inode, 1),
+>>>> but I don't think that will flush queued fi->writectr
+>>>> (fi->writepages). Will report back in the afternoon.
+>>>
+>>> Sorry, my fault, please ignore the previous patch. Actually no dirty
+>>> pages to be expected, I had missed the that fuse_flush calls
+>>> fuse_sync_writes(). The main bug in my branch was due to the different
+>>> handling of FOPEN_DIRECT_IO and O_DIRECT - for O_DIRECT I hadn't called
+>>> fuse_file_io_mmap().
+> 
+> But why would you need to call fuse_file_io_mmap() for O_DIRECT?
+> If a file was opened without FOPEN_DIRECT_IO, we already set inode to
+> caching mode on open.
+> Does your O_DIRECT patch to mmap solve an actual reproducible bug?
 
+Yeah it does, in my fuse-dio-v5 branch, which adds in shared locks for 
+O_DIRECT writes without FOPEN_DIRECT_IO.
+
+> 
+>>
+>>
+>> I pushed a few fixes/updates into my fuse-dio-v5 branch and also to
+>> simplify it for you to my fuse_io_mode branch. Changes are onto of the
+>> previous patches io-mode patch to simplify it for you to see the changes
+>> and to possibly squash it into the main io patch.
+>>
+>> https://github.com/bsbernd/linux/commits/fuse_io_mode/
+>>
+> 
+> Cool. I squashed all your fixes to my branch, with minor comments
+> that I also left on github, except for the O_DIRECT patch, because
+> I do not understand why it is needed.
+
+No issue with that, I can keep that patch on the branch that actually 
+needs it.
+
+Oh, I just see your comments - I didn't get github notification and so 
+missed your comments before. Sorry about that. Checking where I need to 
+enable it. I do get notifications for other projects, so didn't suspect 
+that anything would be missing...
+
+
+> 
+> The 6.8 merge window is very close and the holidays are upon us,
+> so not sure if you and Miklos could be bothered, but do you think there
+> is  a chance that we can get fuse_io_mode patches ready for queuing
+> in time for the 6.8 merge window?
+> 
+> They do have merit on their own for re-allowing parallel dio along with
+> FOPEN_PARALLEL_DIRECT_WRITES, but also, it would make it easier
+> for the both of us to develop fuse-dio and fuse-passthrough based on
+> the io cache mode during the 6.9 dev cycle.
+
+I definitely would also like to get these patches in. Holidays have the 
+merit that I don't need to get up at 7am to wake up kids and am then 
+tired all the day. And no meetings ;)
+
+ From my point my dio-v5 branch is also ready, it relies on these 
+patches. Not sure how to post it with the dependency.
+I also have no issue to wait for 6.9, for now I'm going to take these 
+patches to our fuse module for ubuntu and rhel9 kernels (quite heavily 
+patched, as it needs to live aside the kernel included module - symbol 
+renames, etc).
+
+
+> 
+>>
+>> PS: I start to feel a bit guilty about this long thread on
+>> linux-fsdevel. Would be better to have that on fuse-devel, just the
+>> sourceforge list is badly spammed.
+>>
+> 
+> According to MAINTAINERS, linux-fsdevel is the list for linux FUSE
+> kernel development. The sourceforge fuse-devel is for libfuse.
+> 
+> We could open a linux-fuse list, but it has been this way forever
+> and I do not know of any complaints from fsdevel members.
+> the downside of not having linux-fuse list IMO is that we do not
+> have a "fuse only" searchable archive, but we won't have it for all the
+> historic messages on fsdevel anyway.
+
+Sure, fine with me. I'm just a bit worried that others might get 
+disturbed by all the fuse only messages.
+
+
+Thanks,
+Bernd
 
