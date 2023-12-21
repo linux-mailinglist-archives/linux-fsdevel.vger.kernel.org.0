@@ -1,68 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-6691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749A881B6CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:01:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2AC381B6F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF935B2580A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:01:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82497B22A9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 13:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28E8745DE;
-	Thu, 21 Dec 2023 12:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316D87318B;
+	Thu, 21 Dec 2023 13:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X97151HP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C33697A0;
-	Thu, 21 Dec 2023 12:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AEB9768B05; Thu, 21 Dec 2023 13:57:13 +0100 (CET)
-Date: Thu, 21 Dec 2023 13:57:13 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
-	axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
-	jejb@linux.ibm.com, martin.petersen@oracle.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
-	ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
-Subject: Re: [PATCH v2 00/16] block atomic writes
-Message-ID: <20231221125713.GA24013@lst.de>
-References: <c729b03c-b1d1-4458-9983-113f8cd752cd@oracle.com> <20231219051456.GB3964019@frogsfrogsfrogs> <20231219052121.GA338@lst.de> <76c85021-dd9e-49e3-80e3-25a17c7ca455@oracle.com> <20231219151759.GA4468@lst.de> <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com> <20231221065031.GA25778@lst.de> <b60e39ce-04bf-4ff9-8879-d9e0cf5d84bd@oracle.com> <20231221121925.GB17956@lst.de> <df2b6c6e-6415-489d-be19-7e2217f79098@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897CA745CA;
+	Thu, 21 Dec 2023 13:06:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DB7C433C8;
+	Thu, 21 Dec 2023 13:05:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703163963;
+	bh=oBgqdArhy+BkKeGKSCOcUORFE4ISxI24tE8gu8Yz288=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X97151HPjjqpQwxtLFnVWnwQVR/G9woeqH0xc3UskQOOM4lWjHZq/81qmP7RviyD0
+	 DR36dNzpsu4fUAacobuC18XmQyOocOSiJS08hAYd9fnjOVxJGj93uavsucwcf/meeX
+	 n17z8uz/+gjjWOuW6c3gOdG2S+dLYAr0C1IQ4kZsC4p7ieUwpOmFwNjP3syVEjUZsq
+	 kH6DKULHXKJSeFzZEAoT1+FW55qncA8MAayBp44ViMz3LrDHiVxd0n9qPLjtCzmnUX
+	 CetNGqlO1cc/BAZTe2ILEf37ETT/0izd7vqNbkuujEeh19gmYdybJhDlBIbaosvbYo
+	 fW0qS18QQVJ2w==
+Date: Thu, 21 Dec 2023 14:05:57 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Network Development <netdev@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, Kernel Team <kernel-team@fb.com>,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: pull-request: bpf-next 2023-12-18
+Message-ID: <20231221-wolldecke-burggraben-40f9b60cee83@brauner>
+References: <20231219000520.34178-1-alexei.starovoitov@gmail.com>
+ <CAHk-=wg7JuFYwGy=GOMbRCtOL+jwSQsdUaBsRWkDVYbxipbM5A@mail.gmail.com>
+ <20231219-kinofilm-legen-305bd52c15db@brauner>
+ <CAADnVQK6CkFTGukQyCif6AK045L_6bwaaRj3kfjQjL4xKd9AhQ@mail.gmail.com>
+ <20231220-einfiel-narkose-72cf400ae7e6@brauner>
+ <CAEf4BzYMJ1DCnRCXv4q=M-QG29Bgm+jrnkEuXNivmGmHShjnPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <df2b6c6e-6415-489d-be19-7e2217f79098@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAEf4BzYMJ1DCnRCXv4q=M-QG29Bgm+jrnkEuXNivmGmHShjnPg@mail.gmail.com>
 
-On Thu, Dec 21, 2023 at 12:48:24PM +0000, John Garry wrote:
->>> - ubuf / iovecs need to be PAGE-aligned
->>> - each iovec needs to be length of multiple of atomic_write_unit_min. If
->>> total length > PAGE_SIZE, each iovec also needs to be a multiple of
->>> PAGE_SIZE.
->>>
->>> I'd rather something simpler. Maybe it's ok.
->> If we decided to not support atomic writes on anything setting a virt
->> boundary we don't have to care about the alignment of each vector,
->
-> ok, I think that alignment is not so important, but we still need to 
-> consider a minimum length per iovec, such that we will always be able to 
-> fit a write of length atomic_write_unit_max in a bio.
+> Of course, and you'll be CC'ed on all the BPF token patches I will
+> resend after the holidays.
+> 
+> And just to be clear for the future, by "core fs semantics" you also
+> mean any BPF UAPI FD field, right?
 
-I don't think you man a minim length per iovec for that, but a maximum
-number of iovecs instead.  For SGL-capable devices that would be
-BIO_MAX_VECS, otherwise 1.
+Yes, because ultimately you end up with calling:
+
+fdget()/fdget_raw()/fget()
+
+to turn a userspace handle in the form of an fd and turn it into a
+struct file. And that is uniform across the kernel. And therein lies the
+beauty of it all imo.
+
+IMHO, a file descriptor is one of the most widely used generic
+abstraction we have across all of the kernel. It is almost literally
+used everywhere. And everyone has the same contract: a non-negative
+integer is a valid fd, a negative one is invalid. It's simple, there
+aren't corner cases, there aren't custom semantics.
+
+And it's also arguably one of the most successful ones as we keep
+implementing new apis on top of this abstraction (pidfd, seccomp,
+process_*(), memfd_*(), endless kvm ioctls etc etc).
 
