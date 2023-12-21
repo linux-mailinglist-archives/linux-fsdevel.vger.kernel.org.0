@@ -1,103 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-6757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57DB81BDDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 19:05:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E685C81BE0B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 19:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D4A28BBD8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 18:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7621AB2466B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 18:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCB86351E;
-	Thu, 21 Dec 2023 18:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94A563517;
+	Thu, 21 Dec 2023 18:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="URUiS+XL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0EPCZ+Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A770564A84
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 18:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a268836254aso131382266b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 10:01:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1703181711; x=1703786511; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UFhYgBQMy/5618m05/BdiCx0uBB+GH471mXeLigE3V4=;
-        b=URUiS+XLaaHkLQ82PhqotDxkOK9NjXsNUJPZEbQyZ83OOe2l/MvYHOnulgSDgeDizQ
-         rmlAGMRfEGyJ03D689WkndHPG37/2XgtMPq47kc6NmAIcjter8dsRupUKBGGk2/COqTd
-         bQKVNr5L9NAYmWrTFglJ57H3olMGJzSPhBWec=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703181711; x=1703786511;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UFhYgBQMy/5618m05/BdiCx0uBB+GH471mXeLigE3V4=;
-        b=XpyrZ1NWSTF6dqHD9qwMFJ582pVdGlBvBQRapgVnzzmGfVS41T/L1OGxrZPd5H/0OO
-         qT8LE3k7jDl37demPQv2Sgg3whmzjahWV9D7QFEAVh+uOXjSYDgn5SEJgUr68zrULYED
-         C2nBeeF0uKH7yzwnPbUa4KMXPw6iYdrnCzrD+Dr4OuiC58NMa+5je13gjoy/0weStgw5
-         M4uGmNvAPrKW7J27yb08LFFj9r5ZduoOiTFu69cq8AxIVit+HSBF22gYz+sQiphjAvqw
-         37h/zxIn23McHPm8hXERK18rb3jcvRtMTRstnMBeB4Se+ZuPclWyVSs6lPoB9PeEoIg3
-         oikg==
-X-Gm-Message-State: AOJu0YzsUzIMNIHOaBBlFZgS3lqBMBWP+f0rd8I1TRYreIuDC6rPUl3g
-	Nke55j86Keij9QAvdRgb0hdlxEJVAP66LnIh/ZiwNa3dfd4NXa9Z
-X-Google-Smtp-Source: AGHT+IGEck7xOjOx9jEkAR4HEM6sSol9cwkhFWp0HeA2jBXD5Zw3OTHDlCC1BPzI9540bkK8dM4miw==
-X-Received: by 2002:a17:906:51c8:b0:a23:660:ec5c with SMTP id v8-20020a17090651c800b00a230660ec5cmr102932ejk.40.1703181711731;
-        Thu, 21 Dec 2023 10:01:51 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id u17-20020a1709064ad100b00a268b2ed7a9sm1182761ejt.184.2023.12.21.10.01.50
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Dec 2023 10:01:51 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5542ac8b982so847916a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 10:01:50 -0800 (PST)
-X-Received: by 2002:a17:906:748b:b0:a23:52d2:44c8 with SMTP id
- e11-20020a170906748b00b00a2352d244c8mr97647ejl.37.1703181710093; Thu, 21 Dec
- 2023 10:01:50 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D41B63509;
+	Thu, 21 Dec 2023 18:19:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 164E3C433C7;
+	Thu, 21 Dec 2023 18:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703182798;
+	bh=ZXD+d5cyg3Dm4YFQ4qt/xzy3Gm2+xDoUPKBNs44q2tU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=s0EPCZ+ZR+aiKlf0+CrDZyyEfupqE+mJjjEBWi8EcGAmC6mXqdElvaYAUYY84Xu+9
+	 qIT5sOvcplROUlN/a0ocgU7v4CQJ9sSN8FCaqxdhcmYM2eTyNH7APg51lFyFCmPJa9
+	 4jmh0RtN8BA3gdQibqGR0HSjKV6nD0QaNpCC5+S2JP3dH6BGiUOjuPIPjyvo+nnbiF
+	 U/1W09XayVk1MEP2l7z3jTH6lu2Y2gx44WgGBSHPR44mLYUrMl6neso9/rOaCgm8WM
+	 QkKx/FfrB1y6u8Go4hfVsAROmg6Lw8UPLjFS4A+da8GYDKIN4WFxvCpLG1YJUgGoog
+	 br4MdtIoWaSgw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 01C8FD8C98B;
+	Thu, 21 Dec 2023 18:19:58 +0000 (UTC)
+Subject: Re: [GIT PULL] afs, dns: Fix dynamic root interaction with negative DNS
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <1843374.1703172614@warthog.procyon.org.uk>
+References: <1843374.1703172614@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1843374.1703172614@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20231221
+X-PR-Tracked-Commit-Id: 39299bdd2546688d92ed9db4948f6219ca1b9542
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 937fd403380023d065fd0509caa7eff639b144a0
+Message-Id: <170318279799.26746.9843487040778102112.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Dec 2023 18:19:57 +0000
+To: David Howells <dhowells@redhat.com>
+Cc: torvalds@linux-foundation.org, dhowells@redhat.com, Markus Suvanto <markus.suvanto@gmail.com>, Marc Dionne <marc.dionne@auristor.com>, Wang Lei <wang840925@gmail.com>, Jeff Layton <jlayton@redhat.com>, Steve French <smfrench@gmail.com>, Jarkko Sakkinen <jarkko@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org, keyrings@vger.kernel.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <1842328.1703171371@warthog.procyon.org.uk>
-In-Reply-To: <1842328.1703171371@warthog.procyon.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 21 Dec 2023 10:01:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjJtcyi=oRf7Rtf2RueWq_336KEsSf9b-BKPxRcHHQx+Q@mail.gmail.com>
-Message-ID: <CAHk-=wjJtcyi=oRf7Rtf2RueWq_336KEsSf9b-BKPxRcHHQx+Q@mail.gmail.com>
-Subject: Re: [PATCH] afs: Fix overwriting of result of DNS query
-To: David Howells <dhowells@redhat.com>
-Cc: Anastasia Belova <abelova@astralinux.ru>, Marc Dionne <marc.dionne@auristor.com>, 
-	linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 21 Dec 2023 at 07:09, David Howells <dhowells@redhat.com> wrote:
->
-> Could you apply this fix, please?
+The pull request you sent on Thu, 21 Dec 2023 15:30:14 +0000:
 
-Ok, so this is just *annoying*.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20231221
 
-Why did you send me this as a patch, and then *twenty minutes* later
-you send me an AFS pull request that does *not* include this patch?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/937fd403380023d065fd0509caa7eff639b144a0
 
-WTF?
+Thank you!
 
-I've applied this, but I'm really annoyed, because it really feels
-like you went out of your way to just generate unnecessary noise and
-pointless workflow churn.
-
-It's not even like the pull request contained anything different. The
-patch _and_ the pull request were both not just about AFS, but about
-DNS issues in AFS.
-
-Get your act together.
-
-                    Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
