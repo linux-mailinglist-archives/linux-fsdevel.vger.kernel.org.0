@@ -1,92 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-6675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C88B81B54F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:54:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B86981B556
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 12:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE41B24D7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 11:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DBF281EE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 11:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350D66E2BF;
-	Thu, 21 Dec 2023 11:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484026E2C2;
+	Thu, 21 Dec 2023 11:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oLST258I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yT7a2fho";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oLST258I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yT7a2fho"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FaC/jpxL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDOhWt+0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FaC/jpxL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDOhWt+0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309346F602;
-	Thu, 21 Dec 2023 11:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE956A02A;
+	Thu, 21 Dec 2023 11:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 67FD121E44;
-	Thu, 21 Dec 2023 11:53:45 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 75BDC1FB73;
+	Thu, 21 Dec 2023 11:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703159625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1703159677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L31YACKSQsFcxxfW7VaGnizvEvAwj2sWxxztR/WkIj8=;
-	b=oLST258IANtlkxNQE9+eUj/nMzwZaADtIVJFFeGRl7JvU++VyCiEKxyyl/kbPS8Qyz2KkE
-	N0xXsBjrFHwTmG4VyIqWO30F+dSFRuVmPWkXt+7TQSY/6i3dMYNmfG0QleHKge+Xd7f4TK
-	qQ2J+8+5di4lO3Rg/wKKvpm403CaCqo=
+	bh=2M7C0GoB7X8XAnxaAgw9zOcBEuLiI+H/k44O2aeGnkY=;
+	b=FaC/jpxLTx/SFyAVWKmjOvXA97rWeI26wRgraGOiIvumbUYeYgm8HnDW+GaZfRAD+3K13G
+	70RzarMo/xBV8tlymkKoirCLoG+QX1to/RLOkqLeZEdLh/uU5X0cwCDxTtTF+orwDRgl2P
+	5wClfvEV0WUHZILqkwO5CWHtDsXYsbs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703159625;
+	s=susede2_ed25519; t=1703159677;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L31YACKSQsFcxxfW7VaGnizvEvAwj2sWxxztR/WkIj8=;
-	b=yT7a2fhoGycH/mU51y5QnFa1RIGX8wiVt4CKtTT910qi9O1PvEtRjgUX0lcnM7Hke2+qO9
-	FOpVzS8omBa8gpBA==
+	bh=2M7C0GoB7X8XAnxaAgw9zOcBEuLiI+H/k44O2aeGnkY=;
+	b=tDOhWt+0l/bQ27UXfO4HoW7dToZgy13cJ2qKXi8v0qGC9cg3XscO1pobNP7+VUNSk2vDV0
+	i/2sgKfIazW7QzCg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1703159625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1703159677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L31YACKSQsFcxxfW7VaGnizvEvAwj2sWxxztR/WkIj8=;
-	b=oLST258IANtlkxNQE9+eUj/nMzwZaADtIVJFFeGRl7JvU++VyCiEKxyyl/kbPS8Qyz2KkE
-	N0xXsBjrFHwTmG4VyIqWO30F+dSFRuVmPWkXt+7TQSY/6i3dMYNmfG0QleHKge+Xd7f4TK
-	qQ2J+8+5di4lO3Rg/wKKvpm403CaCqo=
+	bh=2M7C0GoB7X8XAnxaAgw9zOcBEuLiI+H/k44O2aeGnkY=;
+	b=FaC/jpxLTx/SFyAVWKmjOvXA97rWeI26wRgraGOiIvumbUYeYgm8HnDW+GaZfRAD+3K13G
+	70RzarMo/xBV8tlymkKoirCLoG+QX1to/RLOkqLeZEdLh/uU5X0cwCDxTtTF+orwDRgl2P
+	5wClfvEV0WUHZILqkwO5CWHtDsXYsbs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1703159625;
+	s=susede2_ed25519; t=1703159677;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L31YACKSQsFcxxfW7VaGnizvEvAwj2sWxxztR/WkIj8=;
-	b=yT7a2fhoGycH/mU51y5QnFa1RIGX8wiVt4CKtTT910qi9O1PvEtRjgUX0lcnM7Hke2+qO9
-	FOpVzS8omBa8gpBA==
+	bh=2M7C0GoB7X8XAnxaAgw9zOcBEuLiI+H/k44O2aeGnkY=;
+	b=tDOhWt+0l/bQ27UXfO4HoW7dToZgy13cJ2qKXi8v0qGC9cg3XscO1pobNP7+VUNSk2vDV0
+	i/2sgKfIazW7QzCg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D78313AB5;
-	Thu, 21 Dec 2023 11:53:45 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A1A113AB5;
+	Thu, 21 Dec 2023 11:54:37 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WfrcFkknhGXyYwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Dec 2023 11:53:45 +0000
+	id F3/iGX0nhGVEZAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Dec 2023 11:54:37 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 17115A07E3; Thu, 21 Dec 2023 12:53:45 +0100 (CET)
-Date: Thu, 21 Dec 2023 12:53:45 +0100
+	id 2D5BBA07E3; Thu, 21 Dec 2023 12:54:37 +0100 (CET)
+Date: Thu, 21 Dec 2023 12:54:37 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christoph Hellwig <hch@lst.de>
 Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
 	Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 16/17] writeback: Remove a use of write_cache_pages()
- from do_writepages()
-Message-ID: <20231221115345.jaqzljtj2s675vjr@quack3>
+Subject: Re: [PATCH 17/17] writeback: update the kerneldoc comment for
+ tag_pages_for_writeback
+Message-ID: <20231221115437.nyxxipfyezn6jrzt@quack3>
 References: <20231218153553.807799-1-hch@lst.de>
- <20231218153553.807799-17-hch@lst.de>
+ <20231218153553.807799-18-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,10 +95,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231218153553.807799-17-hch@lst.de>
+In-Reply-To: <20231218153553.807799-18-hch@lst.de>
 X-Spam-Level: 
 X-Spam-Level: 
-X-Spamd-Result: default: False [-0.52 / 50.00];
+X-Spamd-Result: default: False [-2.60 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 FROM_HAS_DN(0.00)[];
@@ -113,19 +113,16 @@ X-Spamd-Result: default: False [-0.52 / 50.00];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.92)[86.25%]
-Authentication-Results: smtp-out1.suse.de;
+	 BAYES_HAM(-3.00)[100.00%]
+Authentication-Results: smtp-out2.suse.de;
 	none
-X-Spam-Score: -0.52
+X-Spam-Score: -2.60
 X-Spam-Flag: NO
 
-On Mon 18-12-23 16:35:52, Christoph Hellwig wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon 18-12-23 16:35:53, Christoph Hellwig wrote:
+> Don't refer to write_cache_pages, which now is just a wrapper for the
+> writeback iterator.
 > 
-> Use the new for_each_writeback_folio() directly instead of indirecting
-> through a callback.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
 Looks good. Feel free to add:
@@ -135,55 +132,39 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  mm/page-writeback.c | 27 +++++++++++++++------------
->  1 file changed, 15 insertions(+), 12 deletions(-)
+>  mm/page-writeback.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
 > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index fbffd30a9cc93f..d3c2c78e0c67ce 100644
+> index d3c2c78e0c67ce..bc69044fd063e8 100644
 > --- a/mm/page-writeback.c
 > +++ b/mm/page-writeback.c
-> @@ -2564,13 +2564,21 @@ int write_cache_pages(struct address_space *mapping,
->  }
->  EXPORT_SYMBOL(write_cache_pages);
->  
-> -static int writepage_cb(struct folio *folio, struct writeback_control *wbc,
-> -		void *data)
-> +static int writeback_use_writepage(struct address_space *mapping,
-> +		struct writeback_control *wbc)
->  {
-> -	struct address_space *mapping = data;
-> -	int ret = mapping->a_ops->writepage(&folio->page, wbc);
-> -	mapping_set_error(mapping, ret);
-> -	return ret;
-> +	struct blk_plug plug;
-> +	struct folio *folio;
-> +	int err;
-> +
-> +	blk_start_plug(&plug);
-> +	for_each_writeback_folio(mapping, wbc, folio, err) {
-> +		err = mapping->a_ops->writepage(&folio->page, wbc);
-> +		mapping_set_error(mapping, err);
-> +	}
-> +	blk_finish_plug(&plug);
-> +
-> +	return err;
+> @@ -2325,18 +2325,18 @@ void __init page_writeback_init(void)
 >  }
 >  
->  int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
-> @@ -2586,12 +2594,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
->  		if (mapping->a_ops->writepages) {
->  			ret = mapping->a_ops->writepages(mapping, wbc);
->  		} else if (mapping->a_ops->writepage) {
-> -			struct blk_plug plug;
-> -
-> -			blk_start_plug(&plug);
-> -			ret = write_cache_pages(mapping, wbc, writepage_cb,
-> -						mapping);
-> -			blk_finish_plug(&plug);
-> +			ret = writeback_use_writepage(mapping, wbc);
->  		} else {
->  			/* deal with chardevs and other special files */
->  			ret = 0;
+>  /**
+> - * tag_pages_for_writeback - tag pages to be written by write_cache_pages
+> + * tag_pages_for_writeback - tag pages to be written by writeback
+>   * @mapping: address space structure to write
+>   * @start: starting page index
+>   * @end: ending page index (inclusive)
+>   *
+>   * This function scans the page range from @start to @end (inclusive) and tags
+> - * all pages that have DIRTY tag set with a special TOWRITE tag. The idea is
+> - * that write_cache_pages (or whoever calls this function) will then use
+> - * TOWRITE tag to identify pages eligible for writeback.  This mechanism is
+> - * used to avoid livelocking of writeback by a process steadily creating new
+> - * dirty pages in the file (thus it is important for this function to be quick
+> - * so that it can tag pages faster than a dirtying process can create them).
+> + * all pages that have DIRTY tag set with a special TOWRITE tag.  The caller
+> + * can then use the TOWRITE tag to identify pages eligible for writeback.
+> + * This mechanism is used to avoid livelocking of writeback by a process
+> + * steadily creating new dirty pages in the file (thus it is important for this
+> + * function to be quick so that it can tag pages faster than a dirtying process
+> + * can create them).
+>   */
+>  void tag_pages_for_writeback(struct address_space *mapping,
+>  			     pgoff_t start, pgoff_t end)
 > -- 
 > 2.39.2
 > 
