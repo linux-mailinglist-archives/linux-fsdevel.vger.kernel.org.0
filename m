@@ -1,124 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-6752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD9681B9E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:55:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258381BA33
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 16:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6C3288AC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:55:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113D81C235C6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2C64B13D;
-	Thu, 21 Dec 2023 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE46A405CA;
+	Thu, 21 Dec 2023 15:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fr/DFr0B"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="iA+jzuxH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ys3htVnt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA36D6D7;
-	Thu, 21 Dec 2023 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4669068a20bso188487137.1;
-        Thu, 21 Dec 2023 06:54:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703170487; x=1703775287; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pURYtu0NLCnQlpjaLQBb3A9CXAcN65Ivjf7L8viYZIQ=;
-        b=fr/DFr0B2e2D5pVAdRa8efpUmsqmuL2g3QPZBhjlG3AKquL6JIi+P/pwiOurUM+Krp
-         E8jOaHtXIoPU+ASnXxD/WU+K/VNMfFPqrfUx6VQ0rRmT8Mr0p+L2bMgQ33KT1YBpanT5
-         7LW+1EkG89UMJ78nqCi0fjvxIugayr3H6l25dY2AWUI32pOCJnGtRXNP8lRmto9u4Cqs
-         aciB5LcgZsEoAN9oMA78JVOUCDvrhJIDbtKIQMEHh50OdbB0R7f2UVJMOOy5PqhCQzsS
-         xE2krxIQmkhbo+7kOqMqYuqO3ztnTdxpCUnTfodfTsslG18eVAluCR+r1lIebDLR/j+b
-         B7PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703170487; x=1703775287;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pURYtu0NLCnQlpjaLQBb3A9CXAcN65Ivjf7L8viYZIQ=;
-        b=lMJq6webPomHaUSuC44KN+Y6mKw9tcqg9I7AXceK4Vfz31mvR/pofNbotUqLArlpJe
-         WSu45gjs9Apoy+Wrnz6g7k5yX93fLOjeAn8ZltZzmHsUG74N+l/q1z7IFVETso8YouHt
-         6Pg45PvHga0trHcwR6fb40c/uPoS/z5VNKUofjaUG8doHHYxriNCqtX+w6eISyhEk4qC
-         6HGl/PYDWD5jvLKUs9nLHf9hJVwTLv1OpJ05StG5XIzt0biLqlDGAtaRFQOmebLWnXS3
-         IpvGlxPQaHgZFNWK0SoJyCuGEFX50Lr44sSIqOph7QLFFytxw910U/L5DjX/Yoq47NuF
-         1Pog==
-X-Gm-Message-State: AOJu0YycRWFzlvy6n8Q6oniyXgpBkR93BXMRVhZsEh/zJqYpttIKdbKn
-	J6XmrZk/cIVA96ISUxyt1zxfHzcAuwXdM2XyVDc=
-X-Google-Smtp-Source: AGHT+IFN1NuYgs8WiPh35+AiECRKwSlqz0ZEDe3FqBLZ5rzeC9cKopqWDVql1xxie4BTiSGNKZ2Qkn8RU8vM8AW8lKI=
-X-Received: by 2002:a05:6102:2c19:b0:466:a0dd:4b2 with SMTP id
- ie25-20020a0561022c1900b00466a0dd04b2mr1276429vsb.51.1703170487175; Thu, 21
- Dec 2023 06:54:47 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C0F360A4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 15:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 4E0C33200A64;
+	Thu, 21 Dec 2023 10:08:14 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 21 Dec 2023 10:08:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1703171293;
+	 x=1703257693; bh=8sXDWigkhHUBZDT2EcINFGURkJUJrHyze3hK/ZDsA80=; b=
+	iA+jzuxHjWkyJSs3IJVwtqgv52xYV6kVw2v8GUEtZscI09EIQEia1vqs90zqCk4u
+	g54LYP4zW2phFE4fmWiS6mmNEEY0Zpyb4sTYEPkuODXOgycdKLqK7qr32xaxyVzx
+	m12Zs5wdhIkQOS4LlPej4iUElokQCKa/JMDZw939iTKK195/Jce/4tnITCADm39i
+	SETkV3cqWor0fRDanGq90YmA76Vv+qwqvpPKrypK1FbgAvw3VWEgxQv+ScHMcWU4
+	fEVizkcbx8HRqXLJpBeduOLLiTmsvw7ywgK5YaMO0g3peEB8t29K1nm/eMaSoul+
+	LDJLZgdjp4kTpXKmo7CtUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1703171293; x=
+	1703257693; bh=8sXDWigkhHUBZDT2EcINFGURkJUJrHyze3hK/ZDsA80=; b=Y
+	s3htVntxkJdByXxVUfolPO36rfzAYthsOw80D0kag6rBAckrwwvMtnPgIMWiDN77
+	89W7DwubMLB46+C0x423+2unzkXBBsnFXEUKxY2ty5rnjRKga+0kHRLcPQcgdaAO
+	Wnrp/CMQyVF33gNl1MaKIqXqxhpHDBOBzYV9/YEONpSlLP5P38gkX6GQ/Eq1ZXyq
+	qUkxLplyFpD/Miuj+j+R7p1CwDVLN791uuY/SnGyxzdoOwW85tbrEAFpHfu7DSnD
+	5c05GeJmHecSaRD89vml1fVIzUa2mOu8kSlvFAYWlyhUIryf4U3CBzHciU9yV9Yw
+	JsPzsA+PlR8ISpMLosZUQ==
+X-ME-Sender: <xms:21SEZZIiGuEmrJuiJmiYobrWuj5TynKT-bPbrY6XAq0Qdfhrq1hrCw>
+    <xme:21SEZVIAvhUYCaz-ql8BeUQDSPHf1HdevUC_3x3nnaQQshJtxhNmM398XxZbD82Uy
+    KZoEgWRANWPoFV->
+X-ME-Received: <xmr:21SEZRsnKFVBAZ8uV9ZJrG0Qv0nR5Sq9dPBd_2rpPBDiD8uhpl49Focc2N40z-AutCscr_PQy83Hbn6RmE3mpOy6l5Q2BWs3E_FXoxAA_pi6McCfmStx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdduhedggeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
+    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:21SEZaZUAhHkCwWDb-u04Aw6OUoG4_NI2aU7t1St2BJXqA74CuI6Qw>
+    <xmx:21SEZQbzVo9x0GrS3DmztM0Yeb7viQ9keN-CleoKoKjgf8se8Fs0aQ>
+    <xmx:21SEZeB5y-QykXctLN_6gfUZd3LVAUoBjcaEBV84zJa6DEB3f0_SKg>
+    <xmx:3VSEZQ5D0NgDQbTEzaunToMDbzels_Wynns7KrDhpSXGndz0MDdvtw>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Dec 2023 10:08:10 -0500 (EST)
+Message-ID: <cdddbd7c-7d11-49bd-b1de-bd2808535d19@fastmail.fm>
+Date: Thu, 21 Dec 2023 16:08:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231221085712.1766333-1-yukuai1@huaweicloud.com> <20231221085839.1768763-1-yukuai1@huaweicloud.com>
-In-Reply-To: <20231221085839.1768763-1-yukuai1@huaweicloud.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Thu, 21 Dec 2023 23:54:30 +0900
-Message-ID: <CAKFNMo=TuhzyEs_NEOdYgJz+UVizU6Ojx4ZKXowDaux3kKddUQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 for-6.8/block 12/17] nilfs2: use bdev api in nilfs_attach_log_writer()
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de, 
-	kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com, 
-	richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com, 
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
-	jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com, 
-	josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, 
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com, willy@infradead.org, 
-	akpm@linux-foundation.org, hare@suse.de, p.raghav@samsung.com, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
-	yangerkun@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
+Content-Language: en-US, de-DE, fr
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>,
+ linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com,
+ hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>,
+ Dharmendra Singh <dsingh@ddn.com>
+References: <20230920024001.493477-1-tfanelli@redhat.com>
+ <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
+ <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm>
+ <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
+ <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm>
+ <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
+ <7c588ab3-246f-4d9d-9b84-225dedab690a@fastmail.fm>
+ <CAOQ4uxgb2J8zppKg63UV88+SNbZ+2=XegVBSXOFf=3xAVc1U3Q@mail.gmail.com>
+ <9d3c1c2b-53c0-4f1d-b4c0-567b23d19719@fastmail.fm>
+ <CAOQ4uxhd9GsWgpw4F56ACRmHhxd6_HVB368wAGCsw167+NHpvw@mail.gmail.com>
+ <2d58c415-4162-441e-8887-de6678b2be28@fastmail.fm>
+ <98795992-589d-44cb-a6d0-ccf8575a4cc4@fastmail.fm>
+ <c4c87b07-bcae-4c6e-aaec-86168db7804a@fastmail.fm>
+ <CAOQ4uxgy5mV4aP4YHJtoYeeLMzNfj0qYh7zTL32gO1TfJDvYYg@mail.gmail.com>
+ <bde78295-e455-4315-b8c6-57b0d3b60c6c@fastmail.fm>
+ <CAOQ4uxjmg0ixS58aacwuYKXhVMyh+O-PmOtgxQR1wd+Ab25r1w@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAOQ4uxjmg0ixS58aacwuYKXhVMyh+O-PmOtgxQR1wd+Ab25r1w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 21, 2023 at 6:00=E2=80=AFPM Yu Kuai wrote:
->
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Avoid to access bd_inode directly, prepare to remove bd_inode from
-> block_device.
->
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  fs/nilfs2/segment.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-> index 55e31cc903d1..a1130e384937 100644
-> --- a/fs/nilfs2/segment.c
-> +++ b/fs/nilfs2/segment.c
-> @@ -2823,7 +2823,7 @@ int nilfs_attach_log_writer(struct super_block *sb,=
- struct nilfs_root *root)
->         if (!nilfs->ns_writer)
->                 return -ENOMEM;
->
-> -       inode_attach_wb(nilfs->ns_bdev->bd_inode, NULL);
-> +       bdev_attach_wb(nilfs->ns_bdev);
->
->         err =3D nilfs_segctor_start_thread(nilfs->ns_writer);
->         if (unlikely(err))
-> --
-> 2.39.2
->
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+
+On 12/21/23 12:14, Amir Goldstein wrote:
+> I think that between you and I, fuse_io_mode is getting very close to
+> converging, so queuing it for 6.8 really depends on Miklos' availability
+> during the following week.
+> 
+> I suggest that you incorporate my review comments from github
+> and/or use the patches that I pushed to my fuse_io_mode branch
+> and post the io mode patches for review on the list as soon as
+> possible. I could do that, but I trust that you are testing dio much
+> better than I am.
+
+Sure, will do that, but I will back out 
+FOPEN_DIRECT_IO/O_DIRECT-are-the-same in fuse_file_mmap. I don't think 
+it is needed without parallel mmap and I think it deserves its own 
+discussion first.
+
+> 
+>>   From my point my dio-v5 branch is also ready, it relies on these
+>> patches. Not sure how to post it with the dependency.
+> 
+> Basically, you just post the io mode patch set and then you
+> post the dio patches with a reference to the io mode patches
+> that they depend on.
+> 
+>> I also have no issue to wait for 6.9, for now I'm going to take these
+>> patches to our fuse module for ubuntu and rhel9 kernels (quite heavily
+>> patched, as it needs to live aside the kernel included module - symbol
+>> renames, etc).
+>>
+> 
+> Feels to me like the dio patches are a bit heavier to review than just the
+> io mode patches, so not likely to be ready for 6.8, but it's not up to me.
+> I can only say that my review of io mode patches is done and that I have
+> tested them, while my own ability to review fuse-dio patches for the 6.8
+> timeframe is limited.
+
+I'm first going to post the fuse_io_mode branch, no need to add in more 
+distraction. Once Miklos has reviewed (and merged that), I can 
+immediately post the dio branch.
+
 
 Thanks,
-Ryusuke Konishi
+Bernd
 
