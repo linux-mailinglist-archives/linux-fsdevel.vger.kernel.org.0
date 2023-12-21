@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-6651-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3073F81B1A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:09:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C72481B1B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54681F23A42
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF9891C20A90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F5A5277A;
-	Thu, 21 Dec 2023 09:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C9C537E7;
+	Thu, 21 Dec 2023 09:01:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02975275A;
-	Thu, 21 Dec 2023 09:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA652F8F;
+	Thu, 21 Dec 2023 09:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4SwktP5MHgz4f3lVs;
-	Thu, 21 Dec 2023 17:01:01 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4SwktZ3FrTz4f3kG7;
+	Thu, 21 Dec 2023 17:01:10 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E8DA51A0916;
-	Thu, 21 Dec 2023 17:01:06 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 34EB21A0920;
+	Thu, 21 Dec 2023 17:01:13 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgC3BQzQ_oNlHiLvEA--.34070S4;
-	Thu, 21 Dec 2023 17:01:06 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgCXmhDW_oNlyCPvEA--.34448S4;
+	Thu, 21 Dec 2023 17:01:12 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	roger.pau@citrix.com,
@@ -78,9 +78,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RFC v3 for-6.8/block 16/17] ext4: remove block_device_ejected()
-Date: Thu, 21 Dec 2023 16:59:07 +0800
-Message-Id: <20231221085907.1772856-1-yukuai1@huaweicloud.com>
+Subject: [PATCH RFC v3 for-6.8/block 17/17] ext4: use bdev apis
+Date: Thu, 21 Dec 2023 16:59:14 +0800
+Message-Id: <20231221085914.1772988-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
 References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
@@ -91,84 +91,94 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgC3BQzQ_oNlHiLvEA--.34070S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4UGw1xJF1fWr48KFy3urg_yoW8tF1Up3
-	yfuw1fJrW8Zr1I9ayxJr4xW3y0qa92ya40gFyI9r1Fgr1xJ340qF4ktr1Iya4YvrZ3uw1F
-	qF1UCrWxCr18CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgCXmhDW_oNlyCPvEA--.34448S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF47JryfCw48Xw1Duw48JFb_yoW5Xw4Upa
+	43GFyDGr4DZry09anrGFsrZa40kw18Ga43GryfZ3W2qrWaq34SkF95KF1xZF4UXay8Xw18
+	XFyjkryxAr45CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUv014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
 	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
 	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
 	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
 	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
 	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
 	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
 	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I
 	0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_JFI_Gr1lIxAIcVC2z280aVAFwI0_
 	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7VUb
-	ZNVDUUUUU==
+	YLvtUUUUU==
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-block_device_ejected() is added by commit bdfe0cbd746a ("Revert
-"ext4: remove block_device_ejected"") in 2015. At that time 'bdi->wb'
-is destroyed synchronized from del_gendisk(), hence if ext4 is still
-mounted, and then mark_buffer_dirty() will reference destroyed 'wb'.
-However, such problem doesn't exist anymore:
-
-- commit d03f6cdc1fc4 ("block: Dynamically allocate and refcount
-backing_dev_info") switch bdi to use refcounting;
-- commit 13eec2363ef0 ("fs: Get proper reference for s_bdi"), will grab
-additional reference of bdi while mounting, so that 'bdi->wb' will not
-be destroyed until generic_shutdown_super().
-
-Hence remove this dead function block_device_ejected().
+Avoid to access bd_inode directly, prepare to remove bd_inode from
+block_device.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/super.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+ fs/ext4/dir.c       | 6 ++----
+ fs/ext4/ext4_jbd2.c | 6 +++---
+ fs/ext4/super.c     | 3 +--
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 3985f8c33f95..64e35eb6a324 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -191,10 +191,8 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 			pgoff_t index = map.m_pblk >>
+ 					(PAGE_SHIFT - inode->i_blkbits);
+ 			if (!ra_has_index(&file->f_ra, index))
+-				page_cache_sync_readahead(
+-					sb->s_bdev->bd_inode->i_mapping,
+-					&file->f_ra, file,
+-					index, 1);
++				bdev_sync_readahead(sb->s_bdev, &file->f_ra,
++						    file, index, 1);
+ 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
+ 			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
+ 			if (IS_ERR(bh)) {
+diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
+index d1a2e6624401..c1bf3a00fad9 100644
+--- a/fs/ext4/ext4_jbd2.c
++++ b/fs/ext4/ext4_jbd2.c
+@@ -206,7 +206,6 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
+ 
+ static void ext4_check_bdev_write_error(struct super_block *sb)
+ {
+-	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	int err;
+ 
+@@ -216,9 +215,10 @@ static void ext4_check_bdev_write_error(struct super_block *sb)
+ 	 * we could read old data from disk and write it out again, which
+ 	 * may lead to on-disk filesystem inconsistency.
+ 	 */
+-	if (errseq_check(&mapping->wb_err, READ_ONCE(sbi->s_bdev_wb_err))) {
++	if (bdev_wb_err_check(sb->s_bdev, READ_ONCE(sbi->s_bdev_wb_err))) {
+ 		spin_lock(&sbi->s_bdev_wb_lock);
+-		err = errseq_check_and_advance(&mapping->wb_err, &sbi->s_bdev_wb_err);
++		err = bdev_wb_err_check_and_advance(sb->s_bdev,
++						    &sbi->s_bdev_wb_err);
+ 		spin_unlock(&sbi->s_bdev_wb_lock);
+ 		if (err)
+ 			ext4_error_err(sb, -err,
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 3f07eaa33332..a7935edbd7b1 100644
+index a7935edbd7b1..25c3d2ac8559 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -467,22 +467,6 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
- 		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
- }
- 
--/*
-- * The del_gendisk() function uninitializes the disk-specific data
-- * structures, including the bdi structure, without telling anyone
-- * else.  Once this happens, any attempt to call mark_buffer_dirty()
-- * (for example, by ext4_commit_super), will cause a kernel OOPS.
-- * This is a kludge to prevent these oops until we can put in a proper
-- * hook in del_gendisk() to inform the VFS and file system layers.
-- */
--static int block_device_ejected(struct super_block *sb)
--{
--	struct inode *bd_inode = sb->s_bdev->bd_inode;
--	struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
--
--	return bdi->dev == NULL;
--}
--
- static void ext4_journal_commit_callback(journal_t *journal, transaction_t *txn)
- {
- 	struct super_block		*sb = journal->j_private;
-@@ -6162,8 +6146,6 @@ static int ext4_commit_super(struct super_block *sb)
- 
- 	if (!sbh)
- 		return -EINVAL;
--	if (block_device_ejected(sb))
--		return -ENODEV;
- 
- 	ext4_update_super(sb);
- 
+@@ -5544,8 +5544,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 	 * used to detect the metadata async write error.
+ 	 */
+ 	spin_lock_init(&sbi->s_bdev_wb_lock);
+-	errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
+-				 &sbi->s_bdev_wb_err);
++	bdev_wb_err_check_and_advance(sb->s_bdev, &sbi->s_bdev_wb_err);
+ 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
+ 	ext4_orphan_cleanup(sb, es);
+ 	EXT4_SB(sb)->s_mount_state &= ~EXT4_ORPHAN_FS;
 -- 
 2.39.2
 
