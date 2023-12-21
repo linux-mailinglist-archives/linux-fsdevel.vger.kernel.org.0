@@ -1,214 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-6653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEB281B23E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:27:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDAF81B2DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 10:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F04F8B269F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813191C2338C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 09:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E295027A;
-	Thu, 21 Dec 2023 09:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BA64177F;
+	Thu, 21 Dec 2023 09:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqYOjXTg"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WiF6F5XM";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="qSBxOZkH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CC650253
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 09:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-67f0cfd3650so3132856d6.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 01:18:14 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20ECF3B790;
+	Thu, 21 Dec 2023 09:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BL9UmFg017275;
+	Thu, 21 Dec 2023 09:49:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=10ufrK7mxF5xXsYnwagHvPtChCOfBSl6vNKNSRbXKoI=;
+ b=WiF6F5XMOwU/ocKZdaJMkZ0wSccAw33nDXiN8GQPm4Ss+bveSkb+3i4O64EPw3wfO1Yq
+ StRUzZ5lfbqIWrtlhOjr9zYoRNQj4S2fZ6vewtMqxj6B72bcSulGpyh8wsDOmtvPqAI7
+ npn78e3frM88F6Zo2aPjWz8DwP7/Vqrl1gbLag5RgbYDGE3TnEPx4G7R1RYHOKqbVxuw
+ jA51L3nls/EHDBKTCwzSrrrACbmjAftvFoOUKr0te6T1NDG23hTBDzRqjjOlFVT/IIal
+ pz1H9gee9lOgqL+OKJrzribSP3Wlw/2Kun8bWDlbiZt5rpOO329B/S0ITqTVcJQhZIi8 fw== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3v4b488qdq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Dec 2023 09:49:44 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BL9gkgn001665;
+	Thu, 21 Dec 2023 09:49:43 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3v12baea08-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Dec 2023 09:49:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EPXelk8OjKzmacXb1RcBEIVAnJ20edX4J0xmEvRdSMil1TOoeATCjBRU1kzJoICF6N2/xq+R6/h3bRf5lQVXp6Xuo1Q3RDfW6RVY92RyhPHghJUa/KeorsKeOwtRaBAhYKpur2Zx6nnt1A2YFOZPYUvvkv+dvRNKdXbz7/bCRFOCKIPoLckm4AfB9XVn5tmQJZqrdj5MtfIEV+lKOo1O9Yun77NABFNQcheTRYdJGuRn8woRePQQ8zNNM24E+nS2DbPZrJHxMdHx4xsinWPcBX1XR7wfqorcnqcOdhMcArr2hHFq0+ftSIShkq4NNtLO2LAyKJMJyWa7xFoi29Moug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=10ufrK7mxF5xXsYnwagHvPtChCOfBSl6vNKNSRbXKoI=;
+ b=URFXV8OG92OWRFhG82FSbAqWfZF+BcWrb6hO2c3cK18H2McTAYkavoYviye7NaApCg2q1cfMTuCe8irGXKqtx9VNoFwQh0HW8iYJ1RXXUPSE8msfpLRsoWjMpwt0ZYSFiXidiy6FXSiCxq1gZTiKvbEOxq6jzBYyKP6VOVKXXZ2xJ15jf6qO88zfsdk8nnbTq4m5IU95BDyAkPRCK9Ice+EekYzw6fSs0TWGABRl93PoKevhO3wmMETINdZJrZOd6p11FENeTYivpgVzFRSxpD9KEEYwjNh3nM2fBjrazu8YU3C8mLgDYUjjGT9RAC2DVJ5kCamfT8WipymC7zgYIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703150293; x=1703755093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0kjxIw5WiFrb7M5F2ByGP1whlxDid5gx3aic6Bt/I4=;
-        b=QqYOjXTgt4+VA398M3uh2+Zx61CJdmN1giEJXBb2aNN4jK17xeTOdAkHI3nOURwsq0
-         jNdBS5ZQyUzqP9oEVLThOrnDqKKJf/HrgXqRVXnbL3vfZBLHuR3MtJ1x+cBkSOtDexu0
-         fe36NM9uN8zG6lo8VKyKrnaWMV19M6QldiR72tiw4el3e+QgjOw8JH9WTH5cPj5I32ev
-         LejwSqRUofWtelJVf/bC2EqzgE0q+BKphmgJZCZuVYibHa12xAyyvKvUzwKjveaZniCw
-         wuASlJZdtFr9/yEp7p9siFBykbLGzZMvRoN/XzE091Pm5TqGkTgmwLzgFSpGbhWRSMiB
-         tBLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703150293; x=1703755093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F0kjxIw5WiFrb7M5F2ByGP1whlxDid5gx3aic6Bt/I4=;
-        b=SjZswy/RBPlvlgbgWF7G7W+kkI5yp+ya89QljyUIimdNWgpCTn2moN7ArcsBkuAxnr
-         9oU4FL1qe7gp5HepPzQUq67aLmBhLGt7I10XbM4psqVcFqg3cZ1VPHdyqR67RWCYyB2P
-         wk7bzSaOuuHU9SqvdIKYgM/GYG+/SmsYBU0sAh1ahjrotemIws787bAZI9ibWRHQVwHQ
-         f9ATbkf7mybjfgnoxn7ASxlA/taxMH3hqqXtVZ+sBE4ZYIRoUfEWlZm0QBiIiDhsdg90
-         HVG+VO6NC/yetvxDkq5QfMVxTK1ArS0zqj1S8pAcAbZqIxcjSuBCDpDLKNYnt7m0i8p3
-         xyVw==
-X-Gm-Message-State: AOJu0YyXiYxNjSFPGtkRdfuyAukHsEutd2cV014KXpruglgqkPsYI5Lx
-	YV3pD9GPfynNpPmrNFMW4hRZWlynvgHTiq8RCzY=
-X-Google-Smtp-Source: AGHT+IFhQefP1ElvsFvVMitRpudBRYzthFA/Kd7LpO1RhGO1sWzu2pl+FX+yAnJfzp3K+pWCTUvuZGieCk0yDvknw0A=
-X-Received: by 2002:ad4:4708:0:b0:67a:ba4c:6f69 with SMTP id
- qb8-20020ad44708000000b0067aba4c6f69mr22451929qvb.22.1703150293437; Thu, 21
- Dec 2023 01:18:13 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=10ufrK7mxF5xXsYnwagHvPtChCOfBSl6vNKNSRbXKoI=;
+ b=qSBxOZkHF4qm96UdAwzRUJ0lw2GVTkcdTURM6AfiWH9ovvEHLxW7CrTXBBwRGnsT10Ob9bQylRMTiZA1+i8djEzxQZJIaR27FbjJMiS6VfN3ytyaQApjvZNENOkXTmqu6AwFi7rtoDPKT6/sOQNJYIW8bO/VSaQy1tPSchIhq7s=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by MN2PR10MB4173.namprd10.prod.outlook.com (2603:10b6:208:1d1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.21; Thu, 21 Dec
+ 2023 09:49:41 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::102a:f31:30c6:3187%4]) with mapi id 15.20.7113.019; Thu, 21 Dec 2023
+ 09:49:40 +0000
+Message-ID: <b60e39ce-04bf-4ff9-8879-d9e0cf5d84bd@oracle.com>
+Date: Thu, 21 Dec 2023 09:49:35 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/16] block atomic writes
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, axboe@kernel.dk, kbusch@kernel.org,
+        sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jack@suse.cz, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+        ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
+ <20231212163246.GA24594@lst.de>
+ <b8b0a9d7-88d2-45a9-877a-ecc5e0f1e645@oracle.com>
+ <20231213154409.GA7724@lst.de>
+ <c729b03c-b1d1-4458-9983-113f8cd752cd@oracle.com>
+ <20231219051456.GB3964019@frogsfrogsfrogs> <20231219052121.GA338@lst.de>
+ <76c85021-dd9e-49e3-80e3-25a17c7ca455@oracle.com>
+ <20231219151759.GA4468@lst.de>
+ <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com>
+ <20231221065031.GA25778@lst.de>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20231221065031.GA25778@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0169.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a::13) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230920024001.493477-1-tfanelli@redhat.com> <CAOQ4uxhqkJsK-0VRC9iVF5jHuEQaVJK+XXYE0kL81WmVdTUDZg@mail.gmail.com>
- <0008194c-8446-491a-8e4c-1a9a087378e1@fastmail.fm> <CAOQ4uxhucqtjycyTd=oJF7VM2VQoe6a-vJWtWHRD5ewA+kRytw@mail.gmail.com>
- <8e76fa9c-59d0-4238-82cf-bfdf73b5c442@fastmail.fm> <CAOQ4uxjKbQkqTHb9_3kqRW7BPPzwNj--4=kqsyq=7+ztLrwXfw@mail.gmail.com>
- <6e9e8ff6-1314-4c60-bf69-6d147958cf95@fastmail.fm> <CAOQ4uxiJfcZLvkKZxp11aAT8xa7Nxf_kG4CG1Ft2iKcippOQXg@mail.gmail.com>
- <06eedc60-e66b-45d1-a936-2a0bb0ac91c7@fastmail.fm> <CAOQ4uxhRbKz7WvYKbjGNo7P7m+00KLW25eBpqVTyUq2sSY6Vmw@mail.gmail.com>
- <7c588ab3-246f-4d9d-9b84-225dedab690a@fastmail.fm> <CAOQ4uxgb2J8zppKg63UV88+SNbZ+2=XegVBSXOFf=3xAVc1U3Q@mail.gmail.com>
- <9d3c1c2b-53c0-4f1d-b4c0-567b23d19719@fastmail.fm> <CAOQ4uxhd9GsWgpw4F56ACRmHhxd6_HVB368wAGCsw167+NHpvw@mail.gmail.com>
- <2d58c415-4162-441e-8887-de6678b2be28@fastmail.fm> <98795992-589d-44cb-a6d0-ccf8575a4cc4@fastmail.fm>
- <c4c87b07-bcae-4c6e-aaec-86168db7804a@fastmail.fm>
-In-Reply-To: <c4c87b07-bcae-4c6e-aaec-86168db7804a@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 21 Dec 2023 11:18:01 +0200
-Message-ID: <CAOQ4uxgy5mV4aP4YHJtoYeeLMzNfj0qYh7zTL32gO1TfJDvYYg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: Rename DIRECT_IO_{RELAX -> ALLOW_MMAP}
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Tyler Fanelli <tfanelli@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, mszeredi@redhat.com, gmaglione@redhat.com, 
-	hreitz@redhat.com, Hao Xu <howeyxu@tencent.com>, Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|MN2PR10MB4173:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ac26714-acbf-4434-3381-08dc020a26ae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	uTFVyo4IG3byqH/UHQybWvULvlarbxbxJppZFtxoz8PWgF09tHUM16pyTPpqPJ98oahwC/41Pzn8iE4KhdaTXgz4GcbS56I9mXeVsBeweSKNulGdYhceV4DHNZ0TUnwiLBmICXmG0jAlweogHzM9WNSHWgHPrC7K+g6zW8JCsZhRQnpo6gPyJRHjQNfBkZPgERa2gWee4DzJJaOMbdFNEb3jqla/Yd9NVZ+0bKxAjJ8qEqB60V+JFeVOWLf7hQ8GKuJclhVzwE6wQ2j7u0wOWcLYncjytY/vBOL+jaoIf1WSbndDs/AQeEC8dTVBTxELDoQdympWuHYYPP2/oKNTU76S4bCsNWLsIYwg22vWmq/0NaeLbxJBfnGrS0dp96AYdrWLnRcIjOpaay00tqZwQ49C5QvS1YqgVkic9kB9az+E0F/XfB+nYybtzCSn/WGA5yL/ywHPunXFpwz+N6W9ZUW0TSCsayxkyHGSeEgGVIajoonDK6vPvLdIWluAvpq4DWDoS9k/8fSxFh4OFmu1H0FiNyxD58wIoI2vgUdcRHOAq/7WDJMT2irSCU1nilwN2twCOJpvz8EQVTbU4y05iOQcqOWjZT6mUf0uQvzJqT4vLY8LChEHo9QADxR6Ll5piZmSpYd40/0cQ55nXnNs/Q==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(396003)(346002)(136003)(376002)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(2906002)(6666004)(6506007)(31696002)(86362001)(36756003)(6512007)(36916002)(53546011)(478600001)(7416002)(83380400001)(26005)(38100700002)(2616005)(41300700001)(5660300002)(6486002)(66556008)(66476007)(66946007)(31686004)(6916009)(316002)(8676002)(8936002)(4326008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?VlVGS1FQa0t1VUZUSUNoV09UREZDNGlHOThUbzEzZG50YmJiVUNXSXB6eDZX?=
+ =?utf-8?B?dms1SjlWN2FwWm9vKzJaRmhSWFlaSGVPNkhjdzVGYWtYRlFMNlI2Wm1NU0h2?=
+ =?utf-8?B?U2FXbElEZlNQb1QwQWNxZzRHcXdkalYrL3FsU2FNektOWXNEN0h6anc2R1d4?=
+ =?utf-8?B?aDVQb0xPQXZnc2o2K1JZSXdrUXk0MUJWSGlBOTViYTRDTUZvVzlvNHJnUGRE?=
+ =?utf-8?B?M0JyVEJLb1czRUNIeGJGblRpNzBYVE5HZC93T281ZDFjL1dZOEtWTU41ZFBQ?=
+ =?utf-8?B?WGp5c2wvOEFFd3dxL2RlQ0tGWVpiaFhPY1BaUS9QSUswd1VVUHdnSU1VcnRM?=
+ =?utf-8?B?b0hDUThCWHc3TkdCaU9paER5cWRZVU8vTldkQmdBcUFKaWhVclVjMytoREFF?=
+ =?utf-8?B?dytBekR2NXFwVHQxT01YQzV5Rmk4dVZCMzFsRzVUREhiWmlxNWpWQWgrR0hI?=
+ =?utf-8?B?QXcxSjY2Yk1Nand2RkVFNzdVY0ZRSXRxOGtXRSsvSFdNN1lYTVE1TDA5WkJu?=
+ =?utf-8?B?SFFhRlFjY0R4aUtrNlVHalNMQmZreVpweHpJbXJOcG1UV2cxL1ZQc2tUaWFq?=
+ =?utf-8?B?eWVRcWlmdDBHcFlMVlk0V0xFT3lJSmFmbGs3NjlkOWNFR2lzeG9XSWx1QlVh?=
+ =?utf-8?B?RUF0WE5HT05ZM25NZGNVaEJTcnNYTTBIbFVnRXRVc0tEaUliMlRwVFF3Y0N0?=
+ =?utf-8?B?UE1lSTlxWmRZNzVSWE1IenpPanF0QnBpR3RkRlVHVVhTZFhsdnU2VG1nSTFQ?=
+ =?utf-8?B?U3VBZ2lWNWIxWnFmRlVhUnNXZlBEbWFDSjRsS0tDdFR6M3k2UHYxOFVjVTJB?=
+ =?utf-8?B?SWhIWW9VTUVXNkRrNnU3eUgwOVQrVjhreW9SQ2w3L1ZYV3VLZ3F4N2ViRU9a?=
+ =?utf-8?B?UVRqeG40enZtUHhOUVRSdGdrNW9aN1N5WER5S0FkMi9vbmtpTm1iTm51RVJP?=
+ =?utf-8?B?cHZWbzc5dnRieDh4RjJZSU85bmFoM1JvNkdma2pIRVN3UWJVdms1SFczdDVM?=
+ =?utf-8?B?MncwU3U3RjJKSVBUNmZLZjB3NEIyMHZLRWJEQUMxWDhvZFRzbEFzRnlTTTc0?=
+ =?utf-8?B?SUdTaUxsZGVlMTJMWWJ6VlJUMUlmMVVVcGRqaDJUMGw0dWVsemgzUGllQ3BK?=
+ =?utf-8?B?WWpsNWZSbHBZRks3QWx3UE13eHpmRU83VTdrY1QvSTRzL1VZemI5ZmY2dEZ3?=
+ =?utf-8?B?YU1adXhpaXJ1cnhySVpwNXkxTU1DcGJNVXh6THBrbG92eURJRllkbkpJUjlh?=
+ =?utf-8?B?L3pkc1ZIRHhSUjlYa2x1Y2dRekxNV2ZrRlQ1Q0poU0Q5VW5FWisycEVtWmFN?=
+ =?utf-8?B?WUdZV0Z5a093SmxmTVBQb0lhcXRNMXJIci82MUJyWnZ2Uys1STBkaUR2VFZt?=
+ =?utf-8?B?QjQ5UERKQWlPT2xXaG1tOTVHek5ZRk9iQjdwMEgvQTJBK2xsY3JMKzExUjQw?=
+ =?utf-8?B?NzFoeWhaWEw3VmlOYkJ5OUI1dTNxU0tvZzBBbkdwVlBQQnZXc0NnRC93ejVl?=
+ =?utf-8?B?eE16SlFCYUx2OFdSWnQ0cGtPWVYrb3RQMnB6Nm5iVzIzMzZvQmp6N1hiNHh3?=
+ =?utf-8?B?R1Ura2Vsdk8xeFV3czJBZDQzUjhXZmVySzBBcWZYMUhnM1htdlBDQ1EyR2hJ?=
+ =?utf-8?B?ajB3b3FETFo4MG9vTGFJTjJPaHJtRUEvWnZIelBoMlhkUU9KenlFZ3hPNUgv?=
+ =?utf-8?B?MFYzM2JnUlJxV05hODdyRnRsVnVlcTFHNFBtS3V3VUN0Q3pzc0xzaTl4cTg0?=
+ =?utf-8?B?bUwvSG9LU1lMVFFsK3Z3OUUxazBtY1NVOEZ4MlJPQWJJN05DQWN5azlGR2hl?=
+ =?utf-8?B?OWFhL2FmVjB6RUVqNjBWRy9TSTh2Rm10Q2dyVWhJYUNFSTRJU2MzNEFmcnc3?=
+ =?utf-8?B?YnZCT1hoVGFHMXh6SStwdWJjOHFncnNTNFNodmxZbVVGYjRSeEVHU0lkZkFi?=
+ =?utf-8?B?S2svN2FRdGNUZWdSZ044ZU1RaGYzM25tWmVUMVVLZkxaT0JYLzloTzhHUXFC?=
+ =?utf-8?B?YlBnTFlCVllaaGN6TXRCaEVxTTErbGlFWFBNSFFSYndPb0Mza2dpMi9ra1gx?=
+ =?utf-8?B?SHhDVkNsbU8wcmMrdlRqeGU0bXV5bytrdVhBQTM4TFhrdnQwR3NBZHBlS0tl?=
+ =?utf-8?B?TnJLQkRQeUxOd1hCRDBsbGRGNG1ieVgyejNnVmp6cE81dm5GaFk5QVBHNUgw?=
+ =?utf-8?B?aFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	ow3Kmq0itvG7h0J5BfhilxSy1dpQenIMnBEGPsv5yKcPVKTWpn/uDiCNPPScC6bknXpTrkNkelcKRpTyDcW155iNf9906/DDxYWlo0TmWSy21BQVs4cSsIuxFQ/CCPKMK3v9dR+WOsU7pUPikboJ14hxuUgzyr5llRBPxcMQFovTqy9NCRsjmfuUAfvzFmCBWSYWwb5+E7+xBJIFDR8J4Xw/a9cIO/U87ame/pb01kzRsRJ3pW68fqUi3KDTfEs9wjCjUWO3n0lhrO+8nOZgS+xO35idejufNmnf+/EyU/7W4bDAyhssm92aYZU7h1tOssnuq9oGG4EMbZiSiarvqg+WfdvEbjcqVrkeDf87UNuvGBLSaVIYvCP+KrVLLDmo/f0txOz3tmLiK1hC4QB6iX+sSOMTqHiGfmGDheop9NYzHoJv1Vqf32yu8mgfFpAlUTpvyVpQ9w2WU7micyaBmpc6aSv3/9fUmm/yAP/BAIlChPsHdrzZ8uRvLM3MvHUI3ojKETLDRwVrjArbSOgNaAAbqeqHhvv/iHTb8nVxlkj57qSzfrz47sccGvMz+8xAtrdUpn+CAUwZcs9Y+ofu70kwqQfa1581N7vmMRzLy6Q=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ac26714-acbf-4434-3381-08dc020a26ae
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Dec 2023 09:49:40.3927
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ahgBWTO2+HNeWRaO3Pl6TDUFnURzBiPgwhCF0jLpIchxjy/AfWPAf3X9rX6uTYSZf5vCUBiiCInX4nT3Tifg7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4173
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-21_04,2023-12-20_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 phishscore=0 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2312210072
+X-Proofpoint-GUID: QVICMD2iccCAiUtrI2VB04jtiWqEpfZy
+X-Proofpoint-ORIG-GUID: QVICMD2iccCAiUtrI2VB04jtiWqEpfZy
 
-On Thu, Dec 21, 2023 at 12:13=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
->
-> [...]
->
-> >>>>> I think that we are going to need to use some inode state flag
-> >>>>> (e.g. FUSE_I_DIO_WR_EXCL) to protect against this starvation,
-> >>>>> unless we do not care about this possibility?
-> >>>>> We'd only need to set this in fuse_file_io_mmap() until we get
-> >>>>> the iocachectr refcount.
->
->
-> I added back FUSE_I_CACHE_IO_MODE I had used previously.
->
+On 21/12/2023 06:50, Christoph Hellwig wrote:
+> On Tue, Dec 19, 2023 at 04:53:27PM +0000, John Garry wrote:
+>> On 19/12/2023 15:17, Christoph Hellwig wrote:
+>>> On Tue, Dec 19, 2023 at 12:41:37PM +0000, John Garry wrote:
+>>>> How about something based on fcntl, like below? We will prob also require
+>>>> some per-FS flag for enabling atomic writes without HW support. That flag
+>>>> might be also useful for XFS for differentiating forcealign for atomic
+>>>> writes with just forcealign.
+>>> I would have just exposed it through a user visible flag instead of
+>>> adding yet another ioctl/fcntl opcode and yet another method.
+>>>
+>>
+>> Any specific type of flag?
+>>
+>> I would suggest a file attribute which we can set via chattr, but that is
+>> still using an ioctl and would require a new inode flag; but at least there
+>> is standard userspace support.
+> 
+> I'd be fine with that, but we're kinda running out of flag there.
 
-ACK.
-Name is a bit confusing for the "want io mode" case, but IMO
-a comment would be enough to make it clear.
-Push a version with a comment to my branch.
+Yeah, in looking at e2fsprogs they are all used.
 
+> That's why I suggested the FS_XFLAG_ instead, which basically works
+> the same.
+> 
 
->
-> >>>>>
-> >>>>> I *think* that fuse_inode_deny_io_cache() should be called with
-> >>>>> shared inode lock held, because of the existing lock chain
-> >>>>> i_rwsem -> page lock -> mmap_lock for page faults, but I am
-> >>>>> not sure. My brain is too cooked now to figure this out.
-> >>>>> OTOH, I don't see any problem with calling
-> >>>>> fuse_inode_deny_io_cache() with shared lock held?
-> >>>>>
-> >>>>> I pushed this version to my fuse_io_mode branch [1].
-> >>>>> Only tested generic/095 with FOPEN_DIRECT_IO and
-> >>>>> DIRECT_IO_ALLOW_MMAP.
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Amir.
-> >>>>>
-> >>>>> [1] https://github.com/amir73il/linux/commits/fuse_io_mode
-> >>>>
-> >>>> Thanks, will look into your changes next. I was looking into the
-> >>>> initial
-> >>>> issue with generic/095 with my branch. Fixed by the attached patch. =
-I
-> >>>> think it is generic and also applies to FOPEN_DIRECT_IO + mmap.
-> >>>> Interesting is that filemap_range_has_writeback() is exported, but
-> >>>> there
-> >>>> was no user. Hopefully nobody submits an unexport patch in the mean
-> >>>> time.
-> >>>>
-> >>>
-> >>> Ok. Now I am pretty sure that filemap_range_has_writeback() should be
-> >>> check after taking the shared lock in fuse_dio_lock() as in my branch
-> >>> and
-> >>> not in fuse_dio_wr_exclusive_lock() outside the lock.
-> >>
-> >>
-> >>
-> >>>
-> >>> But at the same time, it is a little concerning that you are able to
-> >>> observe
-> >>> dirty pages on a fuse inode after success of fuse_inode_deny_io_cache=
-().
-> >>> The whole point of fuse_inode_deny_io_cache() is that it should be
-> >>> granted after all users of the inode page cache are gone.
-> >>>
-> >>> Is it expected that fuse inode pages remain dirty after no more open
-> >>> files
-> >>> and no more mmaps?
-> >>
-> >>
-> >> I'm actually not sure anymore if filemap_range_has_writeback() is
-> >> actually needed. In fuse_flush() it calls write_inode_now(inode, 1),
-> >> but I don't think that will flush queued fi->writectr
-> >> (fi->writepages). Will report back in the afternoon.
-> >
-> > Sorry, my fault, please ignore the previous patch. Actually no dirty
-> > pages to be expected, I had missed the that fuse_flush calls
-> > fuse_sync_writes(). The main bug in my branch was due to the different
-> > handling of FOPEN_DIRECT_IO and O_DIRECT - for O_DIRECT I hadn't called
-> > fuse_file_io_mmap().
+ok, fine, we can try that out.
 
-But why would you need to call fuse_file_io_mmap() for O_DIRECT?
-If a file was opened without FOPEN_DIRECT_IO, we already set inode to
-caching mode on open.
-Does your O_DIRECT patch to mmap solve an actual reproducible bug?
+On another topic, maybe you can advise..
 
->
->
-> I pushed a few fixes/updates into my fuse-dio-v5 branch and also to
-> simplify it for you to my fuse_io_mode branch. Changes are onto of the
-> previous patches io-mode patch to simplify it for you to see the changes
-> and to possibly squash it into the main io patch.
->
-> https://github.com/bsbernd/linux/commits/fuse_io_mode/
->
+I noticed the NVMe patch to stop always setting virt boundary (thanks), 
+but I am struggling for the wording for iovecs rules. I'd like to reuse 
+iov_iter_is_aligned() to enforce any such rule.
 
-Cool. I squashed all your fixes to my branch, with minor comments
-that I also left on github, except for the O_DIRECT patch, because
-I do not understand why it is needed.
+I am thinking:
+- ubuf / iovecs need to be PAGE-aligned
+- each iovec needs to be length of multiple of PAGE_SIZE
 
-The 6.8 merge window is very close and the holidays are upon us,
-so not sure if you and Miklos could be bothered, but do you think there
-is  a chance that we can get fuse_io_mode patches ready for queuing
-in time for the 6.8 merge window?
+But that does not work for total length < PAGE_SIZE.
 
-They do have merit on their own for re-allowing parallel dio along with
-FOPEN_PARALLEL_DIRECT_WRITES, but also, it would make it easier
-for the both of us to develop fuse-dio and fuse-passthrough based on
-the io cache mode during the 6.9 dev cycle.
+So then we could have:
+- ubuf / iovecs need to be PAGE-aligned
+- each iovec needs to be length of multiple of atomic_write_unit_min. If 
+total length > PAGE_SIZE, each iovec also needs to be a multiple of 
+PAGE_SIZE.
 
->
-> PS: I start to feel a bit guilty about this long thread on
-> linux-fsdevel. Would be better to have that on fuse-devel, just the
-> sourceforge list is badly spammed.
->
-
-According to MAINTAINERS, linux-fsdevel is the list for linux FUSE
-kernel development. The sourceforge fuse-devel is for libfuse.
-
-We could open a linux-fuse list, but it has been this way forever
-and I do not know of any complaints from fsdevel members.
-the downside of not having linux-fuse list IMO is that we do not
-have a "fuse only" searchable archive, but we won't have it for all the
-historic messages on fsdevel anyway.
+I'd rather something simpler. Maybe it's ok.
 
 Thanks,
-Amir.
+John
+
 
