@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-6748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E20D81B984
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:26:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD3A81B993
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 15:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D829428335A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 476222866D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 14:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F23C36099;
-	Thu, 21 Dec 2023 14:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6DA360B9;
+	Thu, 21 Dec 2023 14:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="C3WNTlPS"
+	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="EvdVxCaw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85531539E5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 14:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1A880C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 14:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1703168790; x=1703773590;
+	d=auristor.com; s=MDaemon; r=y; t=1703169061; x=1703773861;
 	i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
 	MIME-Version:User-Agent:Subject:Content-Language:To:Cc:
-	References:From:Organization:In-Reply-To:Content-Type; bh=nvDyKU
-	FC0GqXa4uV0mmUtQ3QwY/3ImUOmACY/eQymUE=; b=C3WNTlPSJup877sjZdBxeC
-	I0PylAt+5pDUh0VEa+j564Wje+GvSfln4KTfWReeUc57g4twuJ9kqybWm6A8imum
-	GBJpA08/YEK1d3NchwQoFg5r+lnpTsXaO/IDvCSBaDls1t0cMiRv27f6pTjYP262
-	WU050Mu5uUdawb7ZMx5Xw=
+	References:From:Organization:In-Reply-To:Content-Type; bh=+3d0Ry
+	2xDdh0t0fujTvzMGj6NMBsKhvYQgGqDB7Ezy4=; b=EvdVxCaww5Y7PsRwuZrZzz
+	AUmDPUH/kA7FMhz4/HOqiFDzOq7d8eo2OyZ+Kmh3+ooQHQA2edPP6vlIXsVbw3x4
+	vBlUz1SUXbx2cBgs5we8CeHff3WGQYjeAcN8QzLpB0eiDUktPg64HoLK/50PeXPK
+	rSKju4dyln1fAYnt/i/gM=
 X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:26:30 -0500
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:31:01 -0500
 Received: from [IPV6:2603:7000:73c:c800:969b:c070:cc58:a112] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v23.5.1) 
-	with ESMTPSA id md5001003765418.msg; Thu, 21 Dec 2023 09:26:29 -0500
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:26:29 -0500
+	with ESMTPSA id md5001003765425.msg; Thu, 21 Dec 2023 09:31:00 -0500
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 21 Dec 2023 09:31:00 -0500
 	(not processed: message from trusted or authenticated source)
 X-MDRemoteIP: 2603:7000:73c:c800:969b:c070:cc58:a112
 X-MDHelo: [IPV6:2603:7000:73c:c800:969b:c070:cc58:a112]
-X-MDArrival-Date: Thu, 21 Dec 2023 09:26:29 -0500
+X-MDArrival-Date: Thu, 21 Dec 2023 09:31:00 -0500
 X-MDOrigin-Country: US, NA
 X-Authenticated-Sender: jaltman@auristor.com
 X-Return-Path: prvs=17191febf5=jaltman@auristor.com
 X-Envelope-From: jaltman@auristor.com
 X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
-Message-ID: <2362714a-4f73-4f5c-b26e-7b88bb408bc8@auristor.com>
-Date: Thu, 21 Dec 2023 09:26:20 -0500
+Message-ID: <7557e6c5-bc69-4e89-bb0e-b1d754afb3cf@auristor.com>
+Date: Thu, 21 Dec 2023 09:30:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,92 +54,145 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] afs: Fix dynamic root interaction with failing DNS
- lookups
+Subject: Re: [PATCH] afs: Fix overwriting of result of DNS query
 Content-Language: en-US
 To: David Howells <dhowells@redhat.com>,
- Markus Suvanto <markus.suvanto@gmail.com>,
+ Anastasia Belova <abelova@astralinux.ru>,
  Marc Dionne <marc.dionne@auristor.com>
-Cc: linux-afs@lists.infradead.org, keyrings@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231221134558.1659214-1-dhowells@redhat.com>
+Cc: linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <1700862.1703168632@warthog.procyon.org.uk>
 From: Jeffrey E Altman <jaltman@auristor.com>
 Organization: AuriStor, Inc.
-In-Reply-To: <20231221134558.1659214-1-dhowells@redhat.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020205010406090109050502"
+In-Reply-To: <1700862.1703168632@warthog.procyon.org.uk>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms010009090505040106020008"
 X-MDCFSigsAdded: auristor.com
 
 This is a cryptographically signed message in MIME format.
 
---------------ms020205010406090109050502
+--------------ms010009090505040106020008
+Content-Type: multipart/alternative;
+ boundary="------------xy77y20BS4hMZGduEHK0piGj"
+
+--------------xy77y20BS4hMZGduEHK0piGj
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/21/2023 8:45 AM, David Howells wrote:
-> Hi Markus, Marc,
+On 12/21/2023 9:23 AM, David Howells wrote:
+> In afs_update_cell(), ret is the result of the DNS lookup and the errors
+> are to be handled by a switch - however, the value gets clobbered in
+> between by setting it to -ENOMEM in case afs_alloc_vlserver_list() fails.
 >
-> Here's a set of fixes to improve the interaction of arbitrary lookups in
-> the AFS dynamic root that hit DNS lookup failures[1]:
+> Fix this by moving the setting of -ENOMEM into the error handling for OOM
+> failure.  Further, only do it if we don't have an alternative error to
+> return.
 >
->   (1) Always delete unused (particularly negative) dentries as soon as
->       possible so that they don't prevent future lookups from retrying.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.  Based on
+> a patch from Anastasia Belova[1].
 >
->   (2) Fix the handling of new-style negative DNS lookups in ->lookup() to
->       make them return ENOENT so that userspace doesn't get confused when
->       stat succeeds but the following open on the looked up file then fails.
+> Fixes: d5c32c89b208 ("afs: Fix cell DNS lookup")
+> Signed-off-by: David Howells<dhowells@redhat.com>
+> cc: Anastasia Belova<abelova@astralinux.ru>
+> cc: Marc Dionne<marc.dionne@auristor.com>
+> cc:linux-afs@lists.infradead.org
+> cc:lvc-project@linuxtesting.org
+> Link:https://lore.kernel.org/r/20231221085849.1463-1-abelova@astralinux.ru/  [1]
 >
->   (3) Fix key handling so that DNS lookup results are reclaimed as soon as
->       they expire rather than sitting round either forever or for an
->       additional 5 mins beyond a set expiry time returning EKEYEXPIRED.
+> ---
+>   fs/afs/cell.c |    6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> The patches can be found here:
+> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> index 988c2ac7cece..926cb1188eba 100644
+> --- a/fs/afs/cell.c
+> +++ b/fs/afs/cell.c
+> @@ -409,10 +409,12 @@ static int afs_update_cell(struct afs_cell *cell)
+>   		if (ret == -ENOMEM)
+>   			goto out_wake;
+>   
+> -		ret = -ENOMEM;
+>   		vllist = afs_alloc_vlserver_list(0);
+> -		if (!vllist)
+> +		if (!vllist) {
+> +			if (ret >= 0)
+> +				ret = -ENOMEM;
+>   			goto out_wake;
+> +		}
+>   
+>   		switch (ret) {
+>   		case -ENODATA:
 >
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
->
-> Thanks,
-> David
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=216637 [1]
-> Link: https://lore.kernel.org/r/20231211163412.2766147-1-dhowells@redhat.com/ # v1
-> Link: https://lore.kernel.org/r/20231211213233.2793525-1-dhowells@redhat.com/ # v2
-> Link: https://lore.kernel.org/r/20231212144611.3100234-1-dhowells@redhat.com/ # v3
->
-> Changes
-> =======
-> ver #4)
->   - Reduce the negative timeout from 10s to 1s.
->
-> ver #3)
->   - Rebased to v6.7-rc5 which has an additional afs patch.
->   - Don't add to TIME64_MAX (ie. permanent) when checking expiry time.
->
-> ver #2)
->   - Fix signed-unsigned comparison when checking return val.
->
-> David Howells (3):
->    afs: Fix the dynamic root's d_delete to always delete unused dentries
->    afs: Fix dynamic root lookup DNS check
->    keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on
->      expiry
->
->   fs/afs/dynroot.c           | 31 +++++++++++++++++--------------
->   include/linux/key-type.h   |  1 +
->   net/dns_resolver/dns_key.c | 10 +++++++++-
->   security/keys/gc.c         | 31 +++++++++++++++++++++----------
->   security/keys/internal.h   | 11 ++++++++++-
->   security/keys/key.c        | 15 +++++----------
->   security/keys/proc.c       |  2 +-
->   7 files changed, 64 insertions(+), 37 deletions(-)
->
->
-> _______________________________________________
-> linux-afs mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-afs
-
 Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
 
+--------------xy77y20BS4hMZGduEHK0piGj
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---------------ms020205010406090109050502
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div class="moz-cite-prefix">On 12/21/2023 9:23 AM, David Howells
+      wrote:<br>
+    </div>
+    <blockquote type="cite"
+      cite="mid:1700862.1703168632@warthog.procyon.org.uk">
+      <pre class="moz-quote-pre" wrap="">In afs_update_cell(), ret is the result of the DNS lookup and the errors
+are to be handled by a switch - however, the value gets clobbered in
+between by setting it to -ENOMEM in case afs_alloc_vlserver_list() fails.
+
+Fix this by moving the setting of -ENOMEM into the error handling for OOM
+failure.  Further, only do it if we don't have an alternative error to
+return.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.  Based on
+a patch from Anastasia Belova[1].
+
+Fixes: d5c32c89b208 ("afs: Fix cell DNS lookup")
+Signed-off-by: David Howells <a class="moz-txt-link-rfc2396E" href="mailto:dhowells@redhat.com">&lt;dhowells@redhat.com&gt;</a>
+cc: Anastasia Belova <a class="moz-txt-link-rfc2396E" href="mailto:abelova@astralinux.ru">&lt;abelova@astralinux.ru&gt;</a>
+cc: Marc Dionne <a class="moz-txt-link-rfc2396E" href="mailto:marc.dionne@auristor.com">&lt;marc.dionne@auristor.com&gt;</a>
+cc: <a class="moz-txt-link-abbreviated" href="mailto:linux-afs@lists.infradead.org">linux-afs@lists.infradead.org</a>
+cc: <a class="moz-txt-link-abbreviated" href="mailto:lvc-project@linuxtesting.org">lvc-project@linuxtesting.org</a>
+Link: <a class="moz-txt-link-freetext" href="https://lore.kernel.org/r/20231221085849.1463-1-abelova@astralinux.ru/">https://lore.kernel.org/r/20231221085849.1463-1-abelova@astralinux.ru/</a> [1]
+
+---
+ fs/afs/cell.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index 988c2ac7cece..926cb1188eba 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -409,10 +409,12 @@ static int afs_update_cell(struct afs_cell *cell)
+ 		if (ret == -ENOMEM)
+ 			goto out_wake;
+ 
+-		ret = -ENOMEM;
+ 		vllist = afs_alloc_vlserver_list(0);
+-		if (!vllist)
++		if (!vllist) {
++			if (ret &gt;= 0)
++				ret = -ENOMEM;
+ 			goto out_wake;
++		}
+ 
+ 		switch (ret) {
+ 		case -ENODATA:
+
+</pre>
+    </blockquote>
+    <p>Reviewed-by: Jeffrey Altman <a class="moz-txt-link-rfc2396E" href="mailto:jaltman@auristor.com">&lt;jaltman@auristor.com&gt;</a></p>
+    <p><span style="white-space: pre-wrap">
+</span></p>
+  </body>
+</html>
+
+--------------xy77y20BS4hMZGduEHK0piGj--
+
+--------------ms010009090505040106020008
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -208,18 +261,18 @@ p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
 MDGCAxQwggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
 A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
 ggGXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMTIyMTE0
-MjYyMFowLwYJKoZIhvcNAQkEMSIEIOOMUj5Gb4YPiHHtFVfZWrncSotZoNpk8Yw3W8bpqKMS
+MzA1M1owLwYJKoZIhvcNAQkEMSIEIJyQYDdi599/aEAr+ZKtMcRb298h3j8VclLqS/CNXUj7
 MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
 MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
 AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
 dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZI
 AWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAFZ7k
-zc8Fmhs+k8jbW6IjF4E2bT4QkwJXwLNn0ex6U05su+JmRu4jlE5eGlZ8GDhadoIzt5rrOwqH
-W+9AbLaysFl3awXfQluU3MQ8fl7Ow+Ymfb+11qY5bWibj9zwfHZa+fanPRsv/aIwmwCdV0G2
-x9q751NamXe8/pDBo+LqBE35+76ts2T1ocyynh7UCMF/W3ucUOODsknCza34WiZPiorEbC01
-xk8c5QCGkLNNQTh5BytCZbO/OvvztGCQ0JYbx2JhYdIX3VJrbG47X+215pcFxsmmdB+CVtC5
-9uJc9q8fhd7+ofNyZ6rRAdShK9nBA1G9PofmcNCbG+FydrAxtgAAAAAAAA==
---------------ms020205010406090109050502--
+hvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAMlmM
+sMb1pD520W0shnwOZzEX9Rr/AhxhWlhK2UlbmWRej8hdH52q3x75x487OZ+IS1TSiZ9+qozx
+PgGvyCSZCQUclFOf3rTg2ZPFcliIkq4CR1kXnr9XBk3lC8ius3aSGolrVGdFbbiYAy6T1VJG
+CFAGM72my2UNo8Bfv9eERALGRVw1CUvEVFu73+z6UTTYc9DE5fBfyJxE8KfV3ncDxgKozFPQ
+hcCS6VP9pc0R+wlKhCP/SIgAa0KDoVrFj5Vzn9/ipzJlw+ucLeBlpG6CK1mgjDyUETPJsYt6
+iwdmBGmR6OEnxLwB/nYPCuaaoAAke5LoIZ0mT1S328Z2ubJMfQAAAAAAAA==
+--------------ms010009090505040106020008--
 
 
