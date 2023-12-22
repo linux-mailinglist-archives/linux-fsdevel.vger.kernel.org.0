@@ -1,224 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-6759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E042D81C193
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 00:02:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0870881C283
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 01:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9685F2868FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Dec 2023 23:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093201C2477B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 00:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2023379492;
-	Thu, 21 Dec 2023 23:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWneAvCJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D133DD;
+	Fri, 22 Dec 2023 00:59:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846379466;
-	Thu, 21 Dec 2023 23:01:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8340C433C7;
-	Thu, 21 Dec 2023 23:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703199716;
-	bh=Gi5//iEP+wF2L1cPim8HDnKfYBJ/YrKYxwasffiQaNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rWneAvCJRSBNAyWgSITLyHiTAhjP/opK7g7PxZJ7CPATJr1YyX58tYGKBidMV6sC2
-	 CWbTAMvwUBG0fgz50QWg2Dmy8xlABJyCrpSvFOEREtVmnWcicaR4BaqQaQJR1mIAex
-	 VIuoZsGed03Wy/nRNeqLA5A/Hcjlsu58G9u2TXDT59l84Nja9iEGuqU9wmFsbcLB1l
-	 9hKvpIoGKMhaXZ8WUpRMnhfiVMKWBX3Jm69V6flvlr3GhqY3kP+OQcyXbnWqpdb1FF
-	 f9XlgcW2SNOXNm2XdJZWKh1ukq1QJJClCg+oJZ1lkgh6sNkFy/kTKbcQUFrsK06V0G
-	 Znz7Crj+wuMjA==
-Date: Thu, 21 Dec 2023 16:01:53 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 37/40] netfs: Optimise away reads above the point at
- which there can be no data
-Message-ID: <20231221230153.GA1607352@dev-arch.thelio-3990X>
-References: <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-38-dhowells@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B9723AD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Dec 2023 00:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-35fc6d9af8bso13498915ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Dec 2023 16:59:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703206762; x=1703811562;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8bVVahx3BMbe/+Cn6wS8S3q4MRh8dlbUkemq4XFsim4=;
+        b=vHb79xrwLhW/jPzK4JNIoxMKIn4a3kxrKBnt80JsqVMVQU3b5Uv+Ojqlzto8eN/f3n
+         5wuVw8YkcVMLNViCLk7HwFStaY8l/GkO2arbEvQMS0E55iEDm+ZgkymsJmdpn6YOXx+w
+         uZNQ9ZdcvhN0sSkWqfY6vEWGR1BRGF5UjE9HEwGaZ+r8Kni8P/YU+XdR5JGjPfb/8c5n
+         6NMMeFP1NBMHBW6nk0iX7cZ8mv8H7lJO4Uhsg6q/Qr/SSo53Ncf0T1CasOl6AmhMdvw7
+         b+ndQ9GB6wD1Yof2Qqk7SfzndQRtuMIyeCcIxhTYM9JMtOpmSLnP4KG+++y6ehRy4oZH
+         wGDg==
+X-Gm-Message-State: AOJu0YyEWv7Oo03cxZVYSicLmnNKOoOHnn18uhb8vZ1hKR3LWQ8OBIwQ
+	wmjQ4Lg4roAQBthjzA3LtbllGUHmGToeeKsuHV739oUyqc3L
+X-Google-Smtp-Source: AGHT+IFZ82OCEBJtKQA3ZLJfA/92RKp4nRaY8BQx9Tx5kq6EIuMQmyeuWA8Jo4zhoTWTcyvb4dir9h0CMjPoLHuYN7V8dzmBvzEl
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231221132400.1601991-38-dhowells@redhat.com>
+X-Received: by 2002:a05:6e02:1b89:b0:35f:d4dc:1b26 with SMTP id
+ h9-20020a056e021b8900b0035fd4dc1b26mr39021ili.4.1703206762382; Thu, 21 Dec
+ 2023 16:59:22 -0800 (PST)
+Date: Thu, 21 Dec 2023 16:59:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000d0c82060d0eba14@google.com>
+Subject: [syzbot] [udf?] WARNING in udf_free_blocks (2)
+From: syzbot <syzbot+f98c5f7049564fe07d91@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+Hello,
 
-On Thu, Dec 21, 2023 at 01:23:32PM +0000, David Howells wrote:
-> Track the file position above which the server is not expected to have any
-> data (the "zero point") and preemptively assume that we can satisfy
-> requests by filling them with zeroes locally rather than attempting to
-> download them if they're over that line - even if we've written data back
-> to the server.  Assume that any data that was written back above that
-> position is held in the local cache.  Note that we have to split requests
-> that straddle the line.
-> 
-> Make use of this to optimise away some reads from the server.  We need to
-> set the zero point in the following circumstances:
-> 
->  (1) When we see an extant remote inode and have no cache for it, we set
->      the zero_point to i_size.
-> 
->  (2) On local inode creation, we set zero_point to 0.
-> 
->  (3) On local truncation down, we reduce zero_point to the new i_size if
->      the new i_size is lower.
-> 
->  (4) On local truncation up, we don't change zero_point.
-> 
->  (5) On local modification, we don't change zero_point.
-> 
->  (6) On remote invalidation, we set zero_point to the new i_size.
-> 
->  (7) If stored data is discarded from the pagecache or culled from fscache,
->      we must set zero_point above that if the data also got written to the
->      server.
-> 
->  (8) If dirty data is written back to the server, but not fscache, we must
->      set zero_point above that.
-> 
->  (9) If a direct I/O write is made, set zero_point above that.
-> 
-> Assuming the above, any read from the server at or above the zero_point
-> position will return all zeroes.
-> 
-> The zero_point value can be stored in the cache, provided the above rules
-> are applied to it by any code that culls part of the local cache.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
+syzbot found the following issue on:
 
-<snip>
+HEAD commit:    55cb5f43689d Merge tag 'trace-v6.7-rc6' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15291f69e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e5751b3a2226135d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f98c5f7049564fe07d91
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 8cde618cf6d9..a5374218efe4 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -136,6 +136,8 @@ struct netfs_inode {
->  	struct fscache_cookie	*cache;
->  #endif
->  	loff_t			remote_i_size;	/* Size of the remote file */
-> +	loff_t			zero_point;	/* Size after which we assume there's no data
-> +						 * on the server */
->  	unsigned long		flags;
->  #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
->  #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-> @@ -463,22 +465,30 @@ static inline void netfs_inode_init(struct netfs_inode *ctx,
->  {
->  	ctx->ops = ops;
->  	ctx->remote_i_size = i_size_read(&ctx->inode);
-> +	ctx->zero_point = ctx->remote_i_size;
->  	ctx->flags = 0;
->  #if IS_ENABLED(CONFIG_FSCACHE)
->  	ctx->cache = NULL;
->  #endif
-> +	/* ->releasepage() drives zero_point */
-> +	mapping_set_release_always(ctx->inode.i_mapping);
->  }
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I bisected a crash that I see when trying to mount an NFS volume to this
-change as commit 6e3c8451f624 ("netfs: Optimise away reads above the
-point at which there can be no data") in next-20231221:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ae263e8abe20/disk-55cb5f43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69616b96179e/vmlinux-55cb5f43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7f052dde6379/bzImage-55cb5f43.xz
 
-  [   45.964963] BUG: kernel NULL pointer dereference, address: 0000000000000078
-  [   45.964975] #PF: supervisor write access in kernel mode
-  [   45.964982] #PF: error_code(0x0002) - not-present page
-  [   45.964987] PGD 0 P4D 0
-  [   45.964996] Oops: 0002 [#1] PREEMPT SMP NOPTI
-  [   45.965004] CPU: 2 PID: 2419 Comm: mount.nfs Not tainted 6.7.0-rc6-next-20231221-debug-09925-g857647efa9be #1 adbbe7bc5037c662bc8f9b8e78ccf16be15b5e58
-  [   45.965014] Hardware name: HP HP Desktop M01-F1xxx/87D6, BIOS F.12 12/17/2020
-  [   45.965019] RIP: 0010:nfs_alloc_inode+0xa2/0xc0 [nfs]
-  [   45.965092] Code: 80 b0 01 00 00 00 00 00 00 48 c7 80 38 04 00 00 00 f7 1e c2 48 c7 80 58 04 00 00 00 00 00 00 48 c7 80 40 04 00 00 00 00 00 00 <f0> 80 0a 80 48 05 b8 01 00 00 e9 5f 2b 20 f5 66 66 2e 0f 1f 84 00
-  [   45.965099] RSP: 0018:ffffc900058f7bc0 EFLAGS: 00010286
-  [   45.965107] RAX: ffff8881958c7290 RBX: ffff888168f0f800 RCX: 0000000000000000
-  [   45.965112] RDX: 0000000000000078 RSI: ffffffffc2140a71 RDI: ffff88817a12b880
-  [   45.965118] RBP: ffff888168f0f800 R08: ffffc900058f7b70 R09: 88728c958188ffff
-  [   45.965123] R10: 000000000003a5c0 R11: 0000000000000005 R12: ffffffffc22f1a80
-  [   45.965128] R13: ffffc900058f7c30 R14: 0000000000000000 R15: 0000000000000002
-  [   45.965134] FS:  00007ff78c318740(0000) GS:ffff8887ff280000(0000) knlGS:0000000000000000
-  [   45.965140] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [   45.965146] CR2: 0000000000000078 CR3: 000000018a514000 CR4: 0000000000350ef0
-  [   45.965152] Call Trace:
-  [   45.965160]  <TASK>
-  [   45.965167]  ? __die+0x23/0x70
-  [   45.965183]  ? page_fault_oops+0x173/0x4e0
-  [   45.965197]  ? nfs_alloc_inode+0x21/0xc0 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965279]  ? exc_page_fault+0x7e/0x180
-  [   45.965291]  ? asm_exc_page_fault+0x26/0x30
-  [   45.965308]  ? nfs_alloc_inode+0x21/0xc0 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965374]  ? nfs_alloc_inode+0xa2/0xc0 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965441]  alloc_inode+0x1e/0xc0
-  [   45.965452]  ? __pfx_nfs_find_actor+0x10/0x10 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965517]  iget5_locked+0x97/0xf0
-  [   45.965525]  ? __pfx_nfs_init_locked+0x10/0x10 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965593]  nfs_fhget+0xe4/0x700 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965666]  nfs_get_root+0xc6/0x4a0 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965732]  ? kernfs_rename_ns+0x85/0x210
-  [   45.965754]  nfs_get_tree_common+0xc7/0x520 [nfs aac4a012b174ef6e5996d0df3638a0616e82eb47]
-  [   45.965826]  vfs_get_tree+0x29/0xf0
-  [   45.965836]  fc_mount+0x12/0x40
-  [   45.965846]  do_nfs4_mount+0x12e/0x370 [nfsv4 9bac1f2bd94d7294fbbaf875b7b5cec5adc527f5]
-  [   45.965946]  nfs4_try_get_tree+0x48/0xd0 [nfsv4 9bac1f2bd94d7294fbbaf875b7b5cec5adc527f5]
-  [   45.966034]  vfs_get_tree+0x29/0xf0
-  [   45.966041]  ? srso_return_thunk+0x5/0x5f
-  [   45.966051]  path_mount+0x4ca/0xb10
-  [   45.966063]  __x64_sys_mount+0x11a/0x150
-  [   45.966074]  do_syscall_64+0x64/0xe0
-  [   45.966083]  ? do_syscall_64+0x70/0xe0
-  [   45.966090]  ? syscall_exit_to_user_mode+0x2b/0x40
-  [   45.966098]  ? srso_return_thunk+0x5/0x5f
-  [   45.966106]  ? do_syscall_64+0x70/0xe0
-  [   45.966113]  ? srso_return_thunk+0x5/0x5f
-  [   45.966121]  ? exc_page_fault+0x7e/0x180
-  [   45.966130]  entry_SYSCALL_64_after_hwframe+0x6c/0x74
-  [   45.966138] RIP: 0033:0x7ff78c5f2a1e
-  ...
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f98c5f7049564fe07d91@syzkaller.appspotmail.com
 
-It appears that ctx->inode.i_mapping is NULL in netfs_inode_init(). This
-patch appears to cure the problem for me but I am not sure if it is
-proper or not.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 31925 at fs/udf/udfdecl.h:123 udf_updated_lvid fs/udf/udfdecl.h:121 [inline]
+WARNING: CPU: 0 PID: 31925 at fs/udf/udfdecl.h:123 udf_add_free_space fs/udf/balloc.c:121 [inline]
+WARNING: CPU: 0 PID: 31925 at fs/udf/udfdecl.h:123 udf_table_free_blocks fs/udf/balloc.c:403 [inline]
+WARNING: CPU: 0 PID: 31925 at fs/udf/udfdecl.h:123 udf_free_blocks+0x1d59/0x23c0 fs/udf/balloc.c:681
+Modules linked in:
+CPU: 0 PID: 31925 Comm: syz-executor.3 Not tainted 6.7.0-rc6-syzkaller-00022-g55cb5f43689d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+RIP: 0010:udf_updated_lvid fs/udf/udfdecl.h:121 [inline]
+RIP: 0010:udf_add_free_space fs/udf/balloc.c:121 [inline]
+RIP: 0010:udf_table_free_blocks fs/udf/balloc.c:403 [inline]
+RIP: 0010:udf_free_blocks+0x1d59/0x23c0 fs/udf/balloc.c:681
+Code: 00 e8 4b b6 e1 fe 48 8b 9c 24 70 01 00 00 48 85 db 74 07 e8 29 b1 85 fe eb b7 e8 22 b1 85 fe e9 48 e7 ff ff e8 18 b1 85 fe 90 <0f> 0b 90 e9 45 ef ff ff 89 d9 80 e1 07 fe c1 38 c1 0f 8c 70 e3 ff
+RSP: 0018:ffffc900032575e0 EFLAGS: 00010287
+RAX: ffffffff8308b648 RBX: 0000000000000d36 RCX: 0000000000040000
+RDX: ffffc90010d7a000 RSI: 0000000000001426 RDI: 0000000000001427
+RBP: ffffc900032577f0 R08: ffffffff8308a589 R09: 1ffffffff1e017ad
+R10: dffffc0000000000 R11: fffffbfff1e017ae R12: ffff888029e898c0
+R13: dffffc0000000000 R14: ffff88803f1f701c R15: ffff88807b818000
+FS:  00007fb4fbde66c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb4fbde6d58 CR3: 0000000038a3b000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ extent_trunc+0x390/0x4a0 fs/udf/truncate.c:52
+ udf_truncate_extents+0x627/0x12d0 fs/udf/truncate.c:251
+ udf_setsize+0x1015/0x1470 fs/udf/inode.c:1293
+ udf_setattr+0x370/0x540 fs/udf/file.c:235
+ notify_change+0xb99/0xe60 fs/attr.c:499
+ do_truncate+0x220/0x300 fs/open.c:66
+ do_sys_ftruncate+0x2f3/0x390 fs/open.c:194
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fb4fb07cbe9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb4fbde60c8 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 00007fb4fb19c050 RCX: 00007fb4fb07cbe9
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000005
+RBP: 00007fb4fb0c847a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007fb4fb19c050 R15: 00007ffc4effc388
+ </TASK>
 
-Cheers,
-Nathan
 
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index a5374218efe4..8daaba665421 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -471,7 +471,8 @@ static inline void netfs_inode_init(struct netfs_inode *ctx,
- 	ctx->cache = NULL;
- #endif
- 	/* ->releasepage() drives zero_point */
--	mapping_set_release_always(ctx->inode.i_mapping);
-+	if (ctx->inode.i_mapping)
-+		mapping_set_release_always(ctx->inode.i_mapping);
- }
- 
- /**
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
