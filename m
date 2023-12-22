@@ -1,107 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-6788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D29481CA76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 14:03:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3315181CBBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 16:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F7B71C21848
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 13:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28621F283AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Dec 2023 15:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF811C6A5;
-	Fri, 22 Dec 2023 13:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702F92376B;
+	Fri, 22 Dec 2023 15:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E6C8iK+F"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aS5F82fI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BEA18C20
-	for <linux-fsdevel@vger.kernel.org>; Fri, 22 Dec 2023 13:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703250137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2kygMq0mAMv991cW3YZ7Hd3ppnOgYBjhmi7vw/LesYI=;
-	b=E6C8iK+FZQD2y6A/TCvV9qF8wUFAKXk4DdPN0c1gZ4Dp5h62S6ciqJ2/YaXvNF1w9z229r
-	U5+7iPpBhDvMVpFErAx8sV8kTnpqrHK77cflxIb5+wZnDLT1enQueD7uGFKC5qtDUpcLsK
-	gCOO5VchGxs+juFiPBjSfGv5xQmuHKo=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-15--QeBZETQMO6dAe6PTzC6cQ-1; Fri,
- 22 Dec 2023 08:02:12 -0500
-X-MC-Unique: -QeBZETQMO6dAe6PTzC6cQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5329D386914F;
-	Fri, 22 Dec 2023 13:02:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.39.195.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 82A9251E3;
-	Fri, 22 Dec 2023 13:02:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20231221132400.1601991-5-dhowells@redhat.com>
-References: <20231221132400.1601991-5-dhowells@redhat.com> <20231221132400.1601991-1-dhowells@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: dhowells@redhat.com, Gao Xiang <xiang@kernel.org>,
-    Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-    Jeffle Xu <jefflexu@linux.alibaba.com>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: [PATCH] Fix EROFS Kconfig
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934C423740;
+	Fri, 22 Dec 2023 15:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=O59wXtdUMZ0EU5oPQN+2CB6SQXGKJGnzgF8I6DSjZIU=; b=aS5F82fIeLyqjbDbpruxU1HGcc
+	WQXg7y8/yE0x0IPr7i1D2yBjlFlejXENGDtSDqVKB52aCks5/PMU8iOPnlkrObxPoB03JpzfusjT4
+	TlTZhcDFBhtJ0CW/P5ng9a1WGaUIiwaynr6LU0Sz4grNjFWydHbArp1lEPeF5h/1de0qq4qcVmC8y
+	BgFQf1BZMLSNpy9QWD0q74jXcJGLglsyebHBjGH39R8mSQzA2z+0v3+XEmEX7Ci44wyADYpMF1yc4
+	SUtmFOOJlJ1rBkJXKmmem5yHQD/NxZ+EXC5HkgmGRsvDDRCM8EUVu8ZCtpEjLUkqeh2hVnSXzgxZg
+	+g1RIjNQ==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rGh8V-006BKh-0a;
+	Fri, 22 Dec 2023 15:08:27 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: linux-mm@kvack.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Jan Kara <jack@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Brian Foster <bfoster@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Convert write_cache_pages() to an iterator v4
+Date: Fri, 22 Dec 2023 16:08:10 +0100
+Message-Id: <20231222150827.1329938-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2265064.1703250126.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 22 Dec 2023 13:02:06 +0000
-Message-ID: <2265065.1703250126@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This needs an additional change (see attached).
+Hi all,
 
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 1d318f85232d..1949763e66aa 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -114,7 +114,8 @@ config EROFS_FS_ZIP_DEFLATE
- =
+this is basically a evolution of the series Matthew Wilcox originally
+set in June.  Based on comments from Jan a Brian this now actually
+untangles some of the more confusing conditional in the writeback code
+before refactoring it into the iterator.  Because of that all the
+later patches need a fair amount of rebasing and I've not carried any
+reviewed-by over.
 
- config EROFS_FS_ONDEMAND
- 	bool "EROFS fscache-based on-demand read support"
--	depends on CACHEFILES_ONDEMAND && (EROFS_FS=3Dm && FSCACHE || EROFS_FS=3D=
-y && FSCACHE=3Dy)
-+	depends on CACHEFILES_ONDEMAND && FSCACHE && \
-+		(EROFS_FS=3Dm && NETFS_SUPPORT || EROFS_FS=3Dy && NETFS_SUPPORT=3Dy)
- 	default n
- 	help
- 	  This permits EROFS to use fscache-backed data blobs with on-demand
+The original cover letter is below:
 
+Dave Howells doesn't like the indirect function call imposed by
+write_cache_pages(), so refactor it into an iterator.  I took the
+opportunity to add the ability to iterate a folio_batch without having
+an external variable.
+
+This is against next-20230623.  If you try to apply it on top of a tree
+which doesn't include the pagevec removal series, IT WILL CRASH because
+it won't reinitialise folio_batch->i and the iteration will index out
+of bounds.
+
+I have a feeling the 'done' parameter could have a better name, but I
+can't think what it might be.
+
+Changes since v3:
+ - various commit log spelling fixes
+ - remove a statement from a commit log that isn't true any more with the
+   changes in v3
+ - rename a function
+ - merge two helpers
+
+Diffstat:
+ include/linux/pagevec.h   |   18 ++
+ include/linux/writeback.h |   19 ++
+ mm/page-writeback.c       |  328 +++++++++++++++++++++++++---------------------
+ 3 files changed, 215 insertions(+), 150 deletions(-)
 
