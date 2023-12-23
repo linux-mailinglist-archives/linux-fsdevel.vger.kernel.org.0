@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-6845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D276F81D59A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 19:12:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19F881D59D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 19:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9DDB21D12
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 18:12:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0146E1C2118F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 18:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3B1A28F;
-	Sat, 23 Dec 2023 18:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22483208C0;
+	Sat, 23 Dec 2023 18:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoKeneyg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSPX7jPR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f68.google.com (mail-ot1-f68.google.com [209.85.210.68])
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A221D681;
-	Sat, 23 Dec 2023 18:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EC120B00;
+	Sat, 23 Dec 2023 18:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f68.google.com with SMTP id 46e09a7af769-6dba02a162aso2107178a34.0;
-        Sat, 23 Dec 2023 10:11:28 -0800 (PST)
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1d3ef33e68dso19303445ad.1;
+        Sat, 23 Dec 2023 10:11:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703355088; x=1703959888; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1703355092; x=1703959892; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F7pmxfeZqglD0vnlUxD8yjybFz/b8pMpATnV83Z/Zpk=;
-        b=eoKeneygMMdYA26gwZyhLLyx9qPIzcg5wn8l6Us/ew9g2x89mH0jVftCKCtn36OUJd
-         DDrYnEGA5fHMNR09PDj1m3Msxs9laViRX0Zji2NRf3dh5f+JQTx/OqBM3jF88gjWvUjW
-         MmDE/BJLyjSm9tA154c4AxMiZkLuPziB3FNVjSLvaAvXiTP0e1MddF9ekLg/ewjuD3wQ
-         ftC6Rw5CYfav6+H1YYrIHM6FecW5pELcVMFLc+dOX7ut8nzOUaxAYKKizJYLZPgRLOdG
-         a3J2y7IJBteCZffAW8osGQd7NRwSQXQWP0nytV4FA21pHpcOE1Ck+y3g48Hbn3gBdaM/
-         txCA==
+        bh=AcdBAO4D7oasihncdh2x04kUxpX7OQbCvj+pKHii5sc=;
+        b=PSPX7jPRlqVFGHv5G4ofRDNt466fi8ho3YN3ys2KavTgcUc0SKDmQ90h1QOm5E/rZI
+         29Y1B52XiZ4hRcCSUMyV3Xo6hfu8Jn6VKI+yCpqw8LjarNrNzSZmlYbsUq3Raw6/fG5L
+         DZiZa9ue02LortzrEJ/nvej+YyWSjN6khNAf4TJaPou8II9y8dc7pYohp7Yy0m/NV5fS
+         ll894E5z4ufYYPqErCk/ubzRA6CujAwTPMmVEEoIkXjZypX/lU/61OZ16fY3ObCCDKBf
+         zzbo3Ml+GJVKeQh2g7gI9vH0brXc++VOrdrYNftOfG5vjg0j3GUjX76d1RxB8hIggTNv
+         kRpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703355088; x=1703959888;
+        d=1e100.net; s=20230601; t=1703355092; x=1703959892;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F7pmxfeZqglD0vnlUxD8yjybFz/b8pMpATnV83Z/Zpk=;
-        b=Bi3vAHfkEL3o9XKYRo2aR3NsvI88Az+CJBn6cR1Hw1DaaaKqQJfAWuVr+U0Pcb1ojD
-         WNZ3roq9M889FrEBL5EC6454FupBFf6athOAuYHyVJaSue+lfiOGPySvak+BRuTGpO2r
-         BxlAaQNAFlhCYqciYaanzppbrKXGdtNw4EY8Nh+mkCbCSdbjzsi4ySqyow8vOUjZ5vUe
-         gWaFoRyqJf2PA2Td3g80Oev11QE0tjcyrOEsW0VQOkhWC1RdnUy8Yz0Dgf9B2ity6fJY
-         23eZH8wZ0yOkhN+aK9pvJ+w0ts0w684202bxTugwNjTGySS634n4nV9GfTQ+S/K7+6Zr
-         No1w==
-X-Gm-Message-State: AOJu0Yxmcn5XEC8yuducEd9SnvFFORVY4JeTFy6jzbZmfNCIGLNzKiqU
-	Wk4N5wV9NgZGDVXi/bl7xA==
-X-Google-Smtp-Source: AGHT+IGduDJamDKHmR+aQaOtBDinjtfu7pRzN+JQ8ZvU2VnXEa8xH+EQdgRFEdxiiUKgsn5BH0VfBQ==
-X-Received: by 2002:a05:6808:3703:b0:3b9:e5d5:a69e with SMTP id cq3-20020a056808370300b003b9e5d5a69emr3283728oib.119.1703355087849;
-        Sat, 23 Dec 2023 10:11:27 -0800 (PST)
+        bh=AcdBAO4D7oasihncdh2x04kUxpX7OQbCvj+pKHii5sc=;
+        b=ZgOVyMCUvEei9pAe4qU4tf9kU4v7MzBoAEbPoSLc/iP2B3jksp8rxuuCVEyeplUDxj
+         Lv96lbvXw8SiCD9b3GsajQdASx+vRX8WZ/2XUZRygaW+y0LS47hVMI7ZIIgTf5PCvfr9
+         6c6deWKRTei9RVpK9y6atXPO5v2itrUVotgcakYEMoZm5DVCW//+ipezl7b+tEmDN4GO
+         FpdyaFBVr7mSpEH/SLOy6Nnr+D8XXLWIpgdVB2eVRIGaKuv0ekOOc2MqdQVm8WEAAxND
+         GU58UqfXRSpPtYZoCIIy9dG14+aU/ws1dkQuYOCY8ogjSBW1K/nTkMKpWqLTnHjGd/YZ
+         DZfw==
+X-Gm-Message-State: AOJu0YyygMcWbGdmpzFTqzPqqMLzDxQ5F3rPy1BksKY2SaOaqFSzG9i6
+	9Anir0jwpTJjNlqez/abNA==
+X-Google-Smtp-Source: AGHT+IGnHeKaYmZNEROhR/URDf6HE4vLb2IfXEioLlNcOJwxkuJbFj4kZa/WgJIefHkPpeXNmWeqDw==
+X-Received: by 2002:a17:903:1cf:b0:1d3:fa6a:fc8e with SMTP id e15-20020a17090301cf00b001d3fa6afc8emr3444247plh.41.1703355092358;
+        Sat, 23 Dec 2023 10:11:32 -0800 (PST)
 Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id t6-20020a170902a5c600b001d3bfd30886sm4316396plq.37.2023.12.23.10.11.24
+        by smtp.gmail.com with ESMTPSA id t6-20020a170902a5c600b001d3bfd30886sm4316396plq.37.2023.12.23.10.11.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Dec 2023 10:11:27 -0800 (PST)
+        Sat, 23 Dec 2023 10:11:32 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org
@@ -89,9 +89,9 @@ Cc: linux-doc@vger.kernel.org,
 	emirakhur@micron.com,
 	Hasan.Maruf@amd.com,
 	seungjun.ha@samsung.com
-Subject: [PATCH v5 03/11] mm/mempolicy: refactor sanitize_mpol_flags for reuse
-Date: Sat, 23 Dec 2023 13:10:53 -0500
-Message-Id: <20231223181101.1954-4-gregory.price@memverge.com>
+Subject: [PATCH v5 04/11] mm/mempolicy: create struct mempolicy_args for creating new mempolicies
+Date: Sat, 23 Dec 2023 13:10:54 -0500
+Message-Id: <20231223181101.1954-5-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20231223181101.1954-1-gregory.price@memverge.com>
 References: <20231223181101.1954-1-gregory.price@memverge.com>
@@ -103,72 +103,263 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-split sanitize_mpol_flags into sanitize and validate.
+This patch adds a new kernel structure `struct mempolicy_args`,
+intended to be used for an extensible get/set_mempolicy interface.
 
-Sanitize is used by set_mempolicy to split (int mode) into mode
-and mode_flags, and then validates them.
+This implements the fields required to support the existing syscall
+interfaces interfaces, but does not expose any user-facing arg
+structure.
 
-Validate validates already split flags.
+mpol_new is refactored to take the argument structure so that future
+mempolicy extensions can all be managed in the mempolicy constructor.
 
-Validate will be reused for new syscalls that accept already
-split mode and mode_flags.
+The get_mempolicy and mbind syscalls are refactored to utilize the
+new argument structure, as are all the callers of mpol_new() and
+do_set_mempolicy.
 
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
 ---
- mm/mempolicy.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ include/linux/mempolicy.h | 11 +++++++
+ mm/mempolicy.c            | 69 +++++++++++++++++++++++++++++----------
+ 2 files changed, 62 insertions(+), 18 deletions(-)
 
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index ba09167e80f7..0f1c85527626 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -61,6 +61,17 @@ struct mempolicy {
+ 	} wil;
+ };
+ 
++/*
++ * Describes settings of a mempolicy during set/get syscalls and
++ * kernel internal calls to do_set_mempolicy()
++ */
++struct mempolicy_args {
++	unsigned short mode;		/* policy mode */
++	unsigned short mode_flags;	/* policy mode flags */
++	int home_node;			/* mbind: use MPOL_MF_HOME_NODE */
++	nodemask_t *policy_nodes;	/* get/set/mbind */
++};
++
+ /*
+  * Support for managing mempolicy data objects (clone, copy, destroy)
+  * The default fast path of a NULL MPOL_DEFAULT policy is always inlined.
 diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 0a180c670f0c..59ac0da24f56 100644
+index 59ac0da24f56..42037b7ff6d6 100644
 --- a/mm/mempolicy.c
 +++ b/mm/mempolicy.c
-@@ -1463,24 +1463,39 @@ static int copy_nodes_to_user(unsigned long __user *mask, unsigned long maxnode,
- 	return copy_to_user(mask, nodes_addr(*nodes), copy) ? -EFAULT : 0;
- }
- 
--/* Basic parameter sanity check used by both mbind() and set_mempolicy() */
--static inline int sanitize_mpol_flags(int *mode, unsigned short *flags)
-+/*
-+ * Basic parameter sanity check used by mbind/set_mempolicy
-+ * May modify flags to include internal flags (e.g. MPOL_F_MOF/F_MORON)
-+ */
-+static inline int validate_mpol_flags(unsigned short mode, unsigned short *flags)
+@@ -265,10 +265,12 @@ static int mpol_set_nodemask(struct mempolicy *pol,
+  * This function just creates a new policy, does some check and simple
+  * initialization. You must invoke mpol_set_nodemask() to set nodes.
+  */
+-static struct mempolicy *mpol_new(unsigned short mode, unsigned short flags,
+-				  nodemask_t *nodes)
++static struct mempolicy *mpol_new(struct mempolicy_args *args)
  {
--	*flags = *mode & MPOL_MODE_FLAGS;
--	*mode &= ~MPOL_MODE_FLAGS;
--
--	if ((unsigned int)(*mode) >=  MPOL_MAX)
-+	if ((unsigned int)(mode) >= MPOL_MAX)
- 		return -EINVAL;
- 	if ((*flags & MPOL_F_STATIC_NODES) && (*flags & MPOL_F_RELATIVE_NODES))
- 		return -EINVAL;
- 	if (*flags & MPOL_F_NUMA_BALANCING) {
--		if (*mode != MPOL_BIND)
-+		if (mode != MPOL_BIND)
- 			return -EINVAL;
- 		*flags |= (MPOL_F_MOF | MPOL_F_MORON);
- 	}
- 	return 0;
+ 	struct mempolicy *policy;
++	unsigned short mode = args->mode;
++	unsigned short flags = args->mode_flags;
++	nodemask_t *nodes = args->policy_nodes;
+ 
+ 	if (mode == MPOL_DEFAULT) {
+ 		if (nodes && !nodes_empty(*nodes))
+@@ -817,8 +819,7 @@ static int mbind_range(struct vma_iterator *vmi, struct vm_area_struct *vma,
  }
  
-+/*
-+ * Used by mbind/set_memplicy to split and validate mode/flags
-+ * set_mempolicy combines (mode | flags), split them out into separate
-+ * fields and return just the mode in mode_arg and flags in flags.
-+ */
-+static inline int sanitize_mpol_flags(int *mode_arg, unsigned short *flags)
-+{
-+	unsigned short mode = (*mode_arg & ~MPOL_MODE_FLAGS);
-+
-+	*flags = *mode_arg & MPOL_MODE_FLAGS;
-+	*mode_arg = mode;
-+
-+	return validate_mpol_flags(mode, flags);
-+}
-+
- static long kernel_mbind(unsigned long start, unsigned long len,
+ /* Set the process memory policy */
+-static long do_set_mempolicy(unsigned short mode, unsigned short flags,
+-			     nodemask_t *nodes)
++static long do_set_mempolicy(struct mempolicy_args *args)
+ {
+ 	struct mempolicy *new, *old;
+ 	NODEMASK_SCRATCH(scratch);
+@@ -827,14 +828,14 @@ static long do_set_mempolicy(unsigned short mode, unsigned short flags,
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
+-	new = mpol_new(mode, flags, nodes);
++	new = mpol_new(args);
+ 	if (IS_ERR(new)) {
+ 		ret = PTR_ERR(new);
+ 		goto out;
+ 	}
+ 
+ 	task_lock(current);
+-	ret = mpol_set_nodemask(new, nodes, scratch);
++	ret = mpol_set_nodemask(new, args->policy_nodes, scratch);
+ 	if (ret) {
+ 		task_unlock(current);
+ 		mpol_put(new);
+@@ -1232,8 +1233,7 @@ static struct folio *alloc_migration_target_by_mpol(struct folio *src,
+ #endif
+ 
+ static long do_mbind(unsigned long start, unsigned long len,
+-		     unsigned short mode, unsigned short mode_flags,
+-		     nodemask_t *nmask, unsigned long flags)
++		     struct mempolicy_args *margs, unsigned long flags)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma, *prev;
+@@ -1253,7 +1253,7 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	if (start & ~PAGE_MASK)
+ 		return -EINVAL;
+ 
+-	if (mode == MPOL_DEFAULT)
++	if (margs->mode == MPOL_DEFAULT)
+ 		flags &= ~MPOL_MF_STRICT;
+ 
+ 	len = PAGE_ALIGN(len);
+@@ -1264,7 +1264,7 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	if (end == start)
+ 		return 0;
+ 
+-	new = mpol_new(mode, mode_flags, nmask);
++	new = mpol_new(margs);
+ 	if (IS_ERR(new))
+ 		return PTR_ERR(new);
+ 
+@@ -1281,7 +1281,8 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 		NODEMASK_SCRATCH(scratch);
+ 		if (scratch) {
+ 			mmap_write_lock(mm);
+-			err = mpol_set_nodemask(new, nmask, scratch);
++			err = mpol_set_nodemask(new, margs->policy_nodes,
++						scratch);
+ 			if (err)
+ 				mmap_write_unlock(mm);
+ 		} else
+@@ -1295,7 +1296,7 @@ static long do_mbind(unsigned long start, unsigned long len,
+ 	 * Lock the VMAs before scanning for pages to migrate,
+ 	 * to ensure we don't miss a concurrently inserted page.
+ 	 */
+-	nr_failed = queue_pages_range(mm, start, end, nmask,
++	nr_failed = queue_pages_range(mm, start, end, margs->policy_nodes,
+ 			flags | MPOL_MF_INVERT | MPOL_MF_WRLOCK, &pagelist);
+ 
+ 	if (nr_failed < 0) {
+@@ -1500,6 +1501,7 @@ static long kernel_mbind(unsigned long start, unsigned long len,
  			 unsigned long mode, const unsigned long __user *nmask,
  			 unsigned long maxnode, unsigned int flags)
+ {
++	struct mempolicy_args margs;
+ 	unsigned short mode_flags;
+ 	nodemask_t nodes;
+ 	int lmode = mode;
+@@ -1514,7 +1516,12 @@ static long kernel_mbind(unsigned long start, unsigned long len,
+ 	if (err)
+ 		return err;
+ 
+-	return do_mbind(start, len, lmode, mode_flags, &nodes, flags);
++	memset(&margs, 0, sizeof(margs));
++	margs.mode = lmode;
++	margs.mode_flags = mode_flags;
++	margs.policy_nodes = &nodes;
++
++	return do_mbind(start, len, &margs, flags);
+ }
+ 
+ SYSCALL_DEFINE4(set_mempolicy_home_node, unsigned long, start, unsigned long, len,
+@@ -1595,6 +1602,7 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
+ static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
+ 				 unsigned long maxnode)
+ {
++	struct mempolicy_args args;
+ 	unsigned short mode_flags;
+ 	nodemask_t nodes;
+ 	int lmode = mode;
+@@ -1608,7 +1616,12 @@ static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
+ 	if (err)
+ 		return err;
+ 
+-	return do_set_mempolicy(lmode, mode_flags, &nodes);
++	memset(&args, 0, sizeof(args));
++	args.mode = lmode;
++	args.mode_flags = mode_flags;
++	args.policy_nodes = &nodes;
++
++	return do_set_mempolicy(&args);
+ }
+ 
+ SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
+@@ -2890,6 +2903,7 @@ static int shared_policy_replace(struct shared_policy *sp, pgoff_t start,
+ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ {
+ 	int ret;
++	struct mempolicy_args margs;
+ 
+ 	sp->root = RB_ROOT;		/* empty tree == default mempolicy */
+ 	rwlock_init(&sp->lock);
+@@ -2902,8 +2916,12 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ 		if (!scratch)
+ 			goto put_mpol;
+ 
++		memset(&margs, 0, sizeof(margs));
++		margs.mode = mpol->mode;
++		margs.mode_flags = mpol->flags;
++		margs.policy_nodes = &mpol->w.user_nodemask;
+ 		/* contextualize the tmpfs mount point mempolicy to this file */
+-		npol = mpol_new(mpol->mode, mpol->flags, &mpol->w.user_nodemask);
++		npol = mpol_new(&margs);
+ 		if (IS_ERR(npol))
+ 			goto free_scratch; /* no valid nodemask intersection */
+ 
+@@ -3011,6 +3029,7 @@ static inline void __init check_numabalancing_enable(void)
+ 
+ void __init numa_policy_init(void)
+ {
++	struct mempolicy_args args;
+ 	nodemask_t interleave_nodes;
+ 	unsigned long largest = 0;
+ 	int nid, prefer = 0;
+@@ -3056,7 +3075,11 @@ void __init numa_policy_init(void)
+ 	if (unlikely(nodes_empty(interleave_nodes)))
+ 		node_set(prefer, interleave_nodes);
+ 
+-	if (do_set_mempolicy(MPOL_INTERLEAVE, 0, &interleave_nodes))
++	memset(&args, 0, sizeof(args));
++	args.mode = MPOL_INTERLEAVE;
++	args.policy_nodes = &interleave_nodes;
++
++	if (do_set_mempolicy(&args))
+ 		pr_err("%s: interleaving failed\n", __func__);
+ 
+ 	check_numabalancing_enable();
+@@ -3065,7 +3088,12 @@ void __init numa_policy_init(void)
+ /* Reset policy of current process to default */
+ void numa_default_policy(void)
+ {
+-	do_set_mempolicy(MPOL_DEFAULT, 0, NULL);
++	struct mempolicy_args args;
++
++	memset(&args, 0, sizeof(args));
++	args.mode = MPOL_DEFAULT;
++
++	do_set_mempolicy(&args);
+ }
+ 
+ /*
+@@ -3095,6 +3123,7 @@ static const char * const policy_modes[] =
+  */
+ int mpol_parse_str(char *str, struct mempolicy **mpol)
+ {
++	struct mempolicy_args margs;
+ 	struct mempolicy *new = NULL;
+ 	unsigned short mode_flags;
+ 	nodemask_t nodes;
+@@ -3181,7 +3210,11 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
+ 			goto out;
+ 	}
+ 
+-	new = mpol_new(mode, mode_flags, &nodes);
++	memset(&margs, 0, sizeof(margs));
++	margs.mode = mode;
++	margs.mode_flags = mode_flags;
++	margs.policy_nodes = &nodes;
++	new = mpol_new(&margs);
+ 	if (IS_ERR(new))
+ 		goto out;
+ 
 -- 
 2.39.1
 
