@@ -1,90 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-6834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E8F81D4B1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 15:42:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771C981D4E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 16:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08C1FB20DCE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 14:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2EE1F221FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Dec 2023 15:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4DDDF63;
-	Sat, 23 Dec 2023 14:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0080FC1D;
+	Sat, 23 Dec 2023 15:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bii8R9Mq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4775912E53;
-	Sat, 23 Dec 2023 14:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav311.sakura.ne.jp (fsav311.sakura.ne.jp [153.120.85.142])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 3BNEfJRU010825;
-	Sat, 23 Dec 2023 23:41:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav311.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp);
- Sat, 23 Dec 2023 23:41:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav311.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 3BNEfIsK010821
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 23 Dec 2023 23:41:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <57ee28a2-e626-4319-b3a3-cdca01499b13@I-love.SAKURA.ne.jp>
-Date: Sat, 23 Dec 2023 23:41:17 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED943DF5C;
+	Sat, 23 Dec 2023 15:34:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0702C433C7;
+	Sat, 23 Dec 2023 15:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1703345656;
+	bh=TQAtHtfyY5SOEXTBMr548AVub4xXZ+3Y7MAwfzf7KaE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bii8R9Mqv6ZnIpA6eiJFaC0xPtd99hbGkytddNbV60T7RBBlvOeHX9kKTsi5AKpPJ
+	 mg/u74N4XpGn90BnzoxK2jWeqfBHbkfvLeNgCvWqrQmJ0Gi54eyqkFu2lvafA1kL3o
+	 CuwFZPZNJyFBSoszXuMfOIsvzVpgl71qlxHxMn5C6FRhqnv4vavhtlx+/w5EpOHPjT
+	 y05popLssBes0f9XsnsWHw7xEJaSm9s+IVnhkeLGbx2ujlxBFr05gGP22YvXuPv5WF
+	 OaRfIb/y9wGRWgSDhVhwiyZCeWaNdMhIYiYPQ9kdif8l8hhUYfe+K2sFz0srKhn1Lq
+	 KRyukHBxV9PuA==
+Date: Sat, 23 Dec 2023 09:34:11 -0600
+From: Eric Biggers <ebiggers@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alfred Piccioni <alpic@google.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Eric Paris <eparis@parisplace.org>,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [PATCH] security: new security_file_ioctl_compat() hook
+Message-ID: <20231223153411.GB901@quark.localdomain>
+References: <20230906102557.3432236-1-alpic@google.com>
+ <20231219090909.2827497-1-alpic@google.com>
+ <CAHC9VhTpc7SD0t-5AJ49+b-FMTx1svDBQcR7j6c1rmREUNW7gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security: new security_file_ioctl_compat() hook
-Content-Language: en-US
-To: Alfred Piccioni <alpic@google.com>, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>, bpf <bpf@vger.kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230906102557.3432236-1-alpic@google.com>
- <20231219090909.2827497-1-alpic@google.com>
- <CALcwBGC9LzzdJeq3SWy9F3g5A32s5uSvJZae4j+rwNQqqLHCKg@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CALcwBGC9LzzdJeq3SWy9F3g5A32s5uSvJZae4j+rwNQqqLHCKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTpc7SD0t-5AJ49+b-FMTx1svDBQcR7j6c1rmREUNW7gg@mail.gmail.com>
 
-Adding BPF.
-
-On 2023/12/19 18:10, Alfred Piccioni wrote:
->> I didn't do an audit but does anything need to be updated for the BPF
->> LSM or does it auto-magically pick up new hooks?
+On Fri, Dec 22, 2023 at 08:23:26PM -0500, Paul Moore wrote:
 > 
-> I'm unsure. I looked through the BPF LSM and I can't see any way it's
-> picking up the file_ioctl hook to begin with. It appears to me
-> skimming through the code that it automagically picks it up, but I'm
-> not willing to bet the kernel on it.
+> Is it considered valid for a native 64-bit task to use 32-bit
+> FS_IO32_XXX flags?
 
-If BPF LSM silently picks up security_file_ioctl_compat() hook, I worry
-that some existing BPF programs which check ioctl() using BPF LSM fail to
-understand that such BPF programs need to be updated.
+No, that's not valid.
 
-We basically don't care about out-of-tree kernel code. But does that rule
-apply to BPF programs? Since BPF programs are out-of-tree, are BPF programs
-which depend on BPF LSM considered as "we don't care about" rule?
-Or is breakage of existing BPF programs considered as a regression?
-(Note that this patch is CC:ed for stable kernels.)
+> If not, do we want to remove the FS_IO32_XXX flag
+> checks in selinux_file_ioctl()?
 
-Maybe BPF LSM should at least emit warning if the loaded BPF program defined
-security_file_ioctl() hook and did not define security_file_ioctl_compat() hook?
+I don't see any such flag checks in selinux_file_ioctl().
 
-We could use a struct where undefined hooks needs to be manually filled with
-a dummy pointer, so that we can catch erroneously undefined hooks (detected by
-being automatically filled with a NULL pointer) at load time?
+Is there something else you have in mind?
 
+- Eric
 
