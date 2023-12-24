@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-6876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E7F81DC42
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Dec 2023 20:58:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3584681DC48
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Dec 2023 21:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4402281DBC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Dec 2023 19:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC081F21842
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Dec 2023 20:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7773EE545;
-	Sun, 24 Dec 2023 19:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524DEE554;
+	Sun, 24 Dec 2023 20:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SRl0W3cY"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WxbE8QYw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E09DDC1
-	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Dec 2023 19:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A715DDC1
+	for <linux-fsdevel@vger.kernel.org>; Sun, 24 Dec 2023 20:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-5e75005bd0cso30951907b3.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Dec 2023 11:58:37 -0800 (PST)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-78102c516a7so306550585a.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Dec 2023 12:00:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1703447916; x=1704052716; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1703448058; x=1704052858; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tmcVQPwGjjUY9XTbKfzg3lbGQPvGiD0vLAjWo8rnhBQ=;
-        b=SRl0W3cYZDpisUjwm9Cdsa5lL22PatpdQ1lwN4L8rsdgijB8cm/dJRZMmfCaBe+N9P
-         oJIkvul5DqxNyOHh9ak3C12NnVpe7xqUrtAWeWN1G4GVCcW8uraoy9vcSpfH8HcLycGO
-         gLqltSTLnvE3R/U8J4VpmmOXa3x15YDr/Y9XQn4q2ykOv7K/tZjbkM0dqLe2MzPYquq2
-         bBhrArobc+R0uTCOry+7ysLAccGJy0lwsjX4/TxqepAwvBGNbViV2a3kamrLsIcJR1B2
-         IoiMRK3DY3reIO+GfvglV0armuw8uFdrfvOL4H4sM9kS5PQ7kvp9Q6FBjlQPubHhF/Aa
-         vTUQ==
+        bh=PRhZWIGZneY7CCk3NyYKzqQhTCRd0INElGt/+FX8Ozs=;
+        b=WxbE8QYwMhotoSjgzbrHUz11XXIpJvliUzjUMcnsEGkvVEkHH56HzkAG7NtlHmJZFU
+         axclxQqDLY8ltd/9D5HVw6EHJLKnmPt8nosT/fvxkqqiNeyLIrS5606iwxB48GfqButo
+         9rOz8ADlf+0ehUsWKQltu9IEXzNSaCEDrDh9+p+1pwSHbR4GjPoVJMC6+BR1wLTJ6SU7
+         TA+upgE11si9E1gLSAM4sHsrZi1usl/3hUgIkgZVK8I4D3cWfjnbO1HaPw+mcIfTJHeV
+         CL6lmeD5cq+mjEVriLXzMqkHgoompO9xpdEB3iB9qOdlXxoANi9tCNhxmBxwuqWhGm+o
+         9ZmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703447916; x=1704052716;
+        d=1e100.net; s=20230601; t=1703448058; x=1704052858;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tmcVQPwGjjUY9XTbKfzg3lbGQPvGiD0vLAjWo8rnhBQ=;
-        b=G9h7w2i+YRy4QWTzRZYV0iQ2BjGI4O0iF6yP25q7f/W0ix1pwn8afivne3aKEntHbi
-         2w+hvRDbY+nEEycH32VMvvB7Z+olUEqQzysHAQO2lI/G9bMxGTHbgYm0hz5kW37h5FXq
-         qxDoLyEr9upkXGX6iwaQW/prnxQ1e5RrT7AXtNK6sLCGMfiUf2o2gfBaOhsNeVYiBysO
-         9mG9OKpL/f7+7hmHiK9FWk0SpD3pgJK64Xpc9Zpu290tSp14G1js4CT58U/9nL3Ur+N6
-         FpltMAhSil1lN3m8a++AdhcGqAc3fXqalyewqJfqsFfBMVb6k9/eWPLjIm55hEHrPloD
-         lOXw==
-X-Gm-Message-State: AOJu0YzGI2TxyXi/G7HfhhkMCbMylWTcc8fM4bwC07OvatCV/QeowXKE
-	BSEQPLYWBHQTeOaYy+lipYtpTE7yJD4CUJ+BowORBQucxkZf
-X-Google-Smtp-Source: AGHT+IGy44q+tnMyqe0jXQ+RNpAK+IeAmGOXK3azlBtSANBmgv2b8x5gogyq35v8wuusXib7Qm+Qw0By+70l3jFZxQ8=
-X-Received: by 2002:a0d:df91:0:b0:5e5:7254:2c2d with SMTP id
- i139-20020a0ddf91000000b005e572542c2dmr3160011ywe.53.1703447916657; Sun, 24
- Dec 2023 11:58:36 -0800 (PST)
+        bh=PRhZWIGZneY7CCk3NyYKzqQhTCRd0INElGt/+FX8Ozs=;
+        b=qvEED+5VNp10L2guxQIo3wpkst1MWq75Fq8WEyQPryTeSYhbjwxem7L8KjOGzLqUys
+         mDQnA/X6YsYj7tIzgXuB5DDZm0ZbsPdAjclZeWCCD3Hf7iKTkX7LzqJ3oRBPqOfMUamI
+         gJOPSrPh92GzlOn+t+sf8KYWXRNB2JhF8EKo/ifDTJO7lildA1rbiRi0rXEV64kn0tDJ
+         ihCKTMxGg93IVD4l55XzQ12YcbBEmqbTDsL+as4hfzCxFrL6lzBada4LDm13iyPe+w7q
+         6Gl5PhVEO/NRVGHIiVMjd+BEq3BTLWUwf+v23GAhGH9CByRoWJzlbMsJjCGiJLqZdqJw
+         u7CA==
+X-Gm-Message-State: AOJu0YzDzH0kSzv9H+OrSJkuXjt0s0RiOqODrsa05v3DCJH7pWUGP//R
+	ow5mWi2VEIS7uY6wYKYJONJlYTLHpkyol6I4jZ8gOyY7EbsO
+X-Google-Smtp-Source: AGHT+IGGEVFeFhkTB7jVchuDtKXOnHqNKcGmknAIqqagn0+tlp3+In1BgHtNLZSu5UGOR93R9NGNy8KuFxDKeYwgPB0=
+X-Received: by 2002:a05:620a:5311:b0:77d:cd41:1254 with SMTP id
+ oo17-20020a05620a531100b0077dcd411254mr5910352qkn.12.1703448058542; Sun, 24
+ Dec 2023 12:00:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,59 +61,43 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20230906102557.3432236-1-alpic@google.com> <20231219090909.2827497-1-alpic@google.com>
- <CAHC9VhTpc7SD0t-5AJ49+b-FMTx1svDBQcR7j6c1rmREUNW7gg@mail.gmail.com> <57ce7089-37c7-44c5-a9da-5a6f02794c42@I-love.SAKURA.ne.jp>
-In-Reply-To: <57ce7089-37c7-44c5-a9da-5a6f02794c42@I-love.SAKURA.ne.jp>
+ <CAHC9VhTpc7SD0t-5AJ49+b-FMTx1svDBQcR7j6c1rmREUNW7gg@mail.gmail.com> <20231223153411.GB901@quark.localdomain>
+In-Reply-To: <20231223153411.GB901@quark.localdomain>
 From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 24 Dec 2023 14:58:25 -0500
-Message-ID: <CAHC9VhQoEVvGXzH6HjnTsQVa1=ZJ0cOpk6pEgPeYdLKJpmsUbA@mail.gmail.com>
+Date: Sun, 24 Dec 2023 15:00:46 -0500
+Message-ID: <CAHC9VhRV9WN_pQgQUvkz7wb_oHO86JRV5r7twG6ropoJaR3Ujw@mail.gmail.com>
 Subject: Re: [PATCH] security: new security_file_ioctl_compat() hook
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To: Eric Biggers <ebiggers@kernel.org>
 Cc: Alfred Piccioni <alpic@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
 	Eric Paris <eparis@parisplace.org>, linux-security-module@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
 	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Casey Schaufler <casey@schaufler-ca.com>
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 23, 2023 at 5:49=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2023/12/23 10:23, Paul Moore wrote:
-> >> -       /* RED-PEN how should LSM module know it's handling 32bit? */
-> >> -       error =3D security_file_ioctl(f.file, cmd, arg);
-> >> +       error =3D security_file_ioctl_compat(f.file, cmd, arg);
-> >>         if (error)
-> >>                 goto out;
-> >
-> > This is interesting ... if you look at the normal ioctl() syscall
-> > definition in the kernel you see 'ioctl(unsigned int fd, unsigned int
-> > cmd, unsigned long arg)' and if you look at the compat definition you
-> > see 'ioctl(unsigned int fd, unsigned int cmd, compat_ulong_t arg)'.  I
-> > was expecting the second parameter, @cmd, to be a long type in the
-> > normal definition, but it is an int type in both cases.  It looks like
-> > it has been that way long enough that it is correct, but I'm a little
-> > lost ...
+On Sat, Dec 23, 2023 at 10:34=E2=80=AFAM Eric Biggers <ebiggers@kernel.org>=
+ wrote:
+> On Fri, Dec 22, 2023 at 08:23:26PM -0500, Paul Moore wrote:
+> > Is it considered valid for a native 64-bit task to use 32-bit
+> > FS_IO32_XXX flags?
 >
-> Since @arg might be a pointer to some struct, @arg needs to use a long ty=
-pe.
-> But @cmd can remain 32bits for both 32bits/64bits kernels because @cmd is=
- not
-> a pointer, can't it?
+> No, that's not valid.
 
-I'm not worried about @arg, I'm worried about @cmd, the second
-parameter to the syscall.  I was looking at the manpage and it is
-specified as an unsigned long, which would be a size mismatch on a
-64-bit system, although now that I'm reading further into the manpage
-I see that the command is specified as a 32-bit value so an int
-shouldn't be a problem.  I'm guessing the unsigned long type persists
-from the days before 64-bit systems.
+Excellent, thank you.
 
-> > I agree that it looks like Smack and TOMOYO should be fine, but I
-> > would like to hear from Casey and Tetsuo to confirm.
+> > If not, do we want to remove the FS_IO32_XXX flag
+> > checks in selinux_file_ioctl()?
 >
-> Fine for TOMOYO part, for TOMOYO treats @cmd as an integer.
+> I don't see any such flag checks in selinux_file_ioctl().
 
-Great, thank you.
+Neither do I ... I'm not sure what I was looking at when I made that
+comment, I'm going to chalk that up to a bit of holiday fog.  Sorry
+for the noise.
+
+> Is there something else you have in mind?
+
+Nope.
 
 --=20
 paul-moore.com
