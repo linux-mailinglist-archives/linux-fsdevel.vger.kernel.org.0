@@ -1,178 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-6899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBF881DE1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 05:44:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D11C81DEE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 08:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B6D1F21458
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 04:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302EF1C21701
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 07:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B70E110B;
-	Mon, 25 Dec 2023 04:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D648E1C2E;
+	Mon, 25 Dec 2023 07:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oGOsMrpd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732A1EC5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Dec 2023 04:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-35fcbe27a7fso40673515ab.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Dec 2023 20:44:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703479457; x=1704084257;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zHAHAys+JUJZvJw3AwM1+L/Jwh91xc407CsAuZW1dK4=;
-        b=n6vKqGYNogrbSU92KA8HAgS/ftZn46P5P80ozSYy4SKjSGZ9+yMhTU4D3muyixeLz3
-         e2vWvl7YfE10akEierS7Uhgi3eljTJt/Rp2rFadv3GzRyEgjdmf2JMN8xE7lY6LqwQly
-         ILhnA0SDsn3T5ASLQBoPENxQwz1Kdbr76nzSbD/uE/fQKW8nnp6DiXZ1TivJtobD5Vho
-         0TNG5SBWV+NI9DCE+y+0C6cgGy3/u+laJA0HGuYMkqmDFa1AnDKmq1IjhXpaNtVu3/uY
-         q09OPAt2TrUdzxVbRA4d5Rzv7aiyC1ZDFkaYqIJpxR7FrIWGULrZj9gmFh80crqk2QHC
-         shhA==
-X-Gm-Message-State: AOJu0YytSq57lVNGn0EbqvSHFieimqmo3JhKDZtK2Iqc3+05TAODTG39
-	yl+snn+lt2nH1xXY8VjOFrVrE6vTfYqP3dBng/vshCzZmkN2DhM=
-X-Google-Smtp-Source: AGHT+IGSKiHB+b5xavYA26vEqNBlSY9KQgLm84ifjVN+qAx5+aRCggqtsVminwlLB1La0DeG5bb6Bcg2sx9nyJLFXdwVY09Znv9a
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF10F15B9;
+	Mon, 25 Dec 2023 07:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1703490987; x=1735026987;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ztD1+owzc5TzCOzkgrTNjFp4iDlX9X9XCZbpsHCrBxA=;
+  b=oGOsMrpdvoiCOGeezHwu+ZjOWcfOKzulEHHizFQQb7+zLbrhNLM6iEiV
+   Zk2Ba2dinNXHoLo16VbBqD85f4vv/Xml03pgcs9DhK+rf3nwKQW+uNMBr
+   r1jH1DQGWWj1CqI04ey8yEFbsoG6/TqgI+XZ5NteKHtguyRIFa1EgKEXn
+   v8M0s8CUkW+Dj+7XdbrD49dubZNjwKXW5kVEWAx1Z0YepSO9VT193RSZ9
+   bkik4Gta7Ig0qsgihe9+TAEnJGMk4fZF0zhimh+FrITOTaVJfnJNs2CAQ
+   U+WU1wpXNCdvtwE/WSx6D/BZFvnSgCaAGqAI6JWmXALuhyExWa7pA+h4H
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10934"; a="427439992"
+X-IronPort-AV: E=Sophos;i="6.04,302,1695711600"; 
+   d="scan'208";a="427439992"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Dec 2023 23:56:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.04,302,1695711600"; 
+   d="scan'208";a="19725986"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Dec 2023 23:56:17 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gourry.memverge@gmail.com>
+Cc: linux-mm@kvack.org,  linux-doc@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-api@vger.kernel.org,  x86@kernel.org,  akpm@linux-foundation.org,
+  arnd@arndb.de,  tglx@linutronix.de,  luto@kernel.org,  mingo@redhat.com,
+  bp@alien8.de,  dave.hansen@linux.intel.com,  hpa@zytor.com,
+  mhocko@kernel.org,  tj@kernel.org,  gregory.price@memverge.com,
+  corbet@lwn.net,  rakie.kim@sk.com,  hyeongtak.ji@sk.com,
+  honggyu.kim@sk.com,  vtavarespetr@micron.com,  peterz@infradead.org,
+  jgroves@micron.com,  ravis.opensrc@micron.com,  sthanneeru@micron.com,
+  emirakhur@micron.com,  Hasan.Maruf@amd.com,  seungjun.ha@samsung.com,
+  Johannes Weiner <hannes@cmpxchg.org>,  Hasan Al Maruf
+ <hasanalmaruf@fb.com>,  Hao Wang <haowang3@fb.com>,  Dan Williams
+ <dan.j.williams@intel.com>,  Michal Hocko <mhocko@suse.com>,  Zhongkun He
+ <hezhongkun.hzk@bytedance.com>,  Frank van der Linden <fvdl@google.com>,
+  John Groves <john@jagalactic.com>,  Jonathan Cameron
+ <Jonathan.Cameron@Huawei.com>
+Subject: Re: [PATCH v5 00/11] mempolicy2, mbind2, and weighted interleave
+In-Reply-To: <20231223181101.1954-1-gregory.price@memverge.com> (Gregory
+	Price's message of "Sat, 23 Dec 2023 13:10:50 -0500")
+References: <20231223181101.1954-1-gregory.price@memverge.com>
+Date: Mon, 25 Dec 2023 15:54:18 +0800
+Message-ID: <87frzqg1jp.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c243:0:b0:35f:e976:3283 with SMTP id
- k3-20020a92c243000000b0035fe9763283mr501174ilo.2.1703479457679; Sun, 24 Dec
- 2023 20:44:17 -0800 (PST)
-Date: Sun, 24 Dec 2023 20:44:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f52642060d4e3750@google.com>
-Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
- in do_pagemap_scan
-From: syzbot <syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-Hello,
+Gregory Price <gourry.memverge@gmail.com> writes:
 
-syzbot found the following issue on:
+> Weighted interleave is a new interleave policy intended to make
+> use of a the new distributed-memory environment made available
+> by CXL.  The existing interleave mechanism does an even round-robin
+> distribution of memory across all nodes in a nodemask, while
+> weighted interleave can distribute memory across nodes according
+> the available bandwidth that that node provides.
+>
+> As tests below show, "default interleave" can cause major performance
+> degredation due to distribution not matching bandwidth available,
+> while "weighted interleave" can provide a performance increase.
+>
+> For example, the stream benchmark demonstrates that default interleave
+> is actively harmful, where weighted interleave is beneficial.
+>
+> Hardware: 1-socket 8 channel DDR5 + 1 CXL expander in PCIe x16
+> Default interleave : -78% (slower than DRAM)
+> Global weighting   : -6% to +4% (workload dependant)
+> Targeted weights   : +2.5% to +4% (consistently better than DRAM)
+>
+> If nothing else, this shows how awful round-robin interleave is.
 
-HEAD commit:    861deac3b092 Linux 6.7-rc7
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12bf6e26e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=298e57794135adf0
-dashboard link: https://syzkaller.appspot.com/bug?extid=f9238a0a31f9b5603fef
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f4fc81e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15997e81e80000
+I guess the performance of the default policy, local (fast memory)
+first, may be even better in some situation?  For example, before the
+bandwidth of DRAM is saturated?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b1f4e427f08b/disk-861deac3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/81317757e796/vmlinux-861deac3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f9d2dcfac209/bzImage-861deac3.xz
+I understand that you may want to limit the memory usage of the fast
+memory too.  But IMHO, that is another requirements.  That should be
+enforced by something like per-node memory limit.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f9238a0a31f9b5603fef@syzkaller.appspotmail.com
+> Rather than implement yet another specific syscall to set one
+> particular field of a mempolicy, we chose to implement an extensible
+> mempolicy interface so that future extensions can be captured.
+>
+> To implement weighted interleave, we need an interface to set the
+> node weights along with a MPOL_WEIGHTED_INTERLEAVE. We implement a
+> a sysfs extension for "system global" weights which can be set by
+> a daemon or administrator, and new extensible syscalls (mempolicy2,
+> mbind2) which allow task-local weights to be set via user-software.
+>
+> The benefit of the sysfs extension is that MPOL_WEIGHTED_INTERLEAVE
+> can be used by the existing set_mempolicy and mbind via numactl.
+>
+> There are 3 "phases" in the patch set that could be considered
+> for separate merge candidates, but are presented here as a single
+> line as the goal is a fully functional MPOL_WEIGHTED_INTERLEAVE.
+>
+> 1) Implement MPOL_WEIGHTED_INTERLEAVE with a sysfs extension for
+>    setting system-global weights via sysfs.
+>    (Patches 1 & 2)
+>
+> 2) Refactor mempolicy creation mechanism to use an extensible arg
+>    struct `struct mempolicy_args` to promote code re-use between
+>    the original mempolicy/mbind interfaces and the new interfaces.
+>    (Patches 3-6)
+>
+> 3) Implementation of set_mempolicy2, get_mempolicy2, and mbind2,
+>    along with the addition of task-local weights so that per-task
+>    weights can be registered for MPOL_WEIGHTED_INTERLEAVE.
+>    (Patches 7-11)
+>
+> Included at the bottom of this cover letter is linux test project
+> tests for backward and forward compatibility, some sample software
+> which can be used for quick tests, as well as a numactl branch
+> which implements `numactl -w --interleave` for testing.
+>
+> = Performance summary =
+> (tests may have different configurations, see extended info below)
+> 1) MLC (W2) : +38% over DRAM. +264% over default interleave.
+>    MLC (W5) : +40% over DRAM. +226% over default interleave.
+> 2) Stream   : -6% to +4% over DRAM, +430% over default interleave.
+> 3) XSBench  : +19% over DRAM. +47% over default interleave.
+>
+> = LTP Testing Summary =
+> existing mempolicy & mbind tests: pass
+> mempolicy & mbind + weighted interleave (global weights): pass
+> mempolicy2 & mbind2 + weighted interleave (global weights): pass
+> mempolicy2 & mbind2 + weighted interleave (local weights): pass
+>
 
-general protection fault, probably for non-canonical address 0xdffffc00000000fe: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000007f0-0x00000000000007f7]
-CPU: 0 PID: 5068 Comm: syz-executor316 Not tainted 6.7.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-RIP: 0010:mm_has_notifiers include/linux/mmu_notifier.h:282 [inline]
-RIP: 0010:mmu_notifier_invalidate_range_start include/linux/mmu_notifier.h:455 [inline]
-RIP: 0010:do_pagemap_scan+0xa89/0xcd0 fs/proc/task_mmu.c:2438
-Code: 8d 41 b8 01 00 00 00 e8 c5 0b 57 ff 48 8b 5c 24 78 58 48 b8 00 00 00 00 00 fc ff df 48 8d bb f0 07 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 f8 01 00 00 48 83 bb f0 07 00 00 00 0f 85 1d 01
-RSP: 0018:ffffc9000425fcf0 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8167148e
-RDX: 00000000000000fe RSI: ffffffff8accb1a0 RDI: 00000000000007f0
-RBP: 0000000020ffc000 R08: 0000000000000000 R09: fffffbfff23e37d2
-R10: ffffffff91f1be97 R11: 0000000000000000 R12: 000000000000230e
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  00005555564df380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000005fdeb8 CR3: 00000000740db000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- do_pagemap_cmd+0x5e/0x80 fs/proc/task_mmu.c:2494
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:871 [inline]
- __se_sys_ioctl fs/ioctl.c:857 [inline]
- __x64_sys_ioctl+0x18f/0x210 fs/ioctl.c:857
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x40/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7f0993b4dbf9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe8cc5b718 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0993b4dbf9
-RDX: 0000000020000180 RSI: 00000000c0606610 RDI: 0000000000000004
-RBP: 00007f0993bc05f0 R08: 00007ffe8cc5b3c4 R09: 0000000000000006
-R10: 0000000000000014 R11: 0000000000000246 R12: 0000000000000001
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:mm_has_notifiers include/linux/mmu_notifier.h:282 [inline]
-RIP: 0010:mmu_notifier_invalidate_range_start include/linux/mmu_notifier.h:455 [inline]
-RIP: 0010:do_pagemap_scan+0xa89/0xcd0 fs/proc/task_mmu.c:2438
-Code: 8d 41 b8 01 00 00 00 e8 c5 0b 57 ff 48 8b 5c 24 78 58 48 b8 00 00 00 00 00 fc ff df 48 8d bb f0 07 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 f8 01 00 00 48 83 bb f0 07 00 00 00 0f 85 1d 01
-RSP: 0018:ffffc9000425fcf0 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8167148e
-RDX: 00000000000000fe RSI: ffffffff8accb1a0 RDI: 00000000000007f0
-RBP: 0000000020ffc000 R08: 0000000000000000 R09: fffffbfff23e37d2
-R10: ffffffff91f1be97 R11: 0000000000000000 R12: 000000000000230e
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  00005555564df380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0993b80b00 CR3: 00000000740db000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess):
-   0:	8d 41 b8             	lea    -0x48(%rcx),%eax
-   3:	01 00                	add    %eax,(%rax)
-   5:	00 00                	add    %al,(%rax)
-   7:	e8 c5 0b 57 ff       	call   0xff570bd1
-   c:	48 8b 5c 24 78       	mov    0x78(%rsp),%rbx
-  11:	58                   	pop    %rax
-  12:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  19:	fc ff df
-  1c:	48 8d bb f0 07 00 00 	lea    0x7f0(%rbx),%rdi
-  23:	48 89 fa             	mov    %rdi,%rdx
-  26:	48 c1 ea 03          	shr    $0x3,%rdx
-* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2e:	0f 85 f8 01 00 00    	jne    0x22c
-  34:	48 83 bb f0 07 00 00 	cmpq   $0x0,0x7f0(%rbx)
-  3b:	00
-  3c:	0f                   	.byte 0xf
-  3d:	85                   	.byte 0x85
-  3e:	1d                   	.byte 0x1d
-  3f:	01                   	.byte 0x1
+[snip]
 
+> =====================================================================
+> (Patches 3-6) Refactoring mempolicy for code-reuse
+>
+> To avoid multiple paths of mempolicy creation, we should refactor the
+> existing code to enable the designed extensibility, and refactor
+> existing users to utilize the new interface (while retaining the
+> existing userland interface).
+>
+> This set of patches introduces a new mempolicy_args structure, which
+> is used to more fully describe a requested mempolicy - to include
+> existing and future extensions.
+>
+> /*
+>  * Describes settings of a mempolicy during set/get syscalls and
+>  * kernel internal calls to do_set_mempolicy()
+>  */
+> struct mempolicy_args {
+>     unsigned short mode;            /* policy mode */
+>     unsigned short mode_flags;      /* policy mode flags */
+>     int home_node;                  /* mbind: use MPOL_MF_HOME_NODE */
+>     nodemask_t *policy_nodes;       /* get/set/mbind */
+>     unsigned char *il_weights;      /* for mode MPOL_WEIGHTED_INTERLEAVE */
+> };
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+According to
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+https://www.geeksforgeeks.org/difference-between-argument-and-parameter-in-c-c-with-examples/
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+it appears that "parameter" are better than "argument" for struct name
+here.  It appears that current kernel source supports this too.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+$ grep 'struct[\t ]\+[a-zA-Z0-9]\+_param' -r include/linux | wc -l
+411
+$ grep 'struct[\t ]\+[a-zA-Z0-9]\+_arg' -r include/linux | wc -l
+25
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> This arg structure will eventually be utilized by the following
+> interfaces:
+>     mpol_new() - new mempolicy creation
+>     do_get_mempolicy() - acquiring information about mempolicy
+>     do_set_mempolicy() - setting the task mempolicy
+>     do_mbind()         - setting a vma mempolicy
+>
+> do_get_mempolicy() is completely refactored to break it out into
+> separate functionality based on the flags provided by get_mempolicy(2)
+>     MPOL_F_MEMS_ALLOWED: acquires task->mems_allowed
+>     MPOL_F_ADDR: acquires information on vma policies
+>     MPOL_F_NODE: changes the output for the policy arg to node info
+>
+> We refactor the get_mempolicy syscall flatten the logic based on these
+> flags, and aloow for set_mempolicy2() to re-use the underlying logic.
+>
+> The result of this refactor, and the new mempolicy_args structure, is
+> that extensions like 'sys_set_mempolicy_home_node' can now be directly
+> integrated into the initial call to 'set_mempolicy2', and that more
+> complete information about a mempolicy can be returned with a single
+> call to 'get_mempolicy2', rather than multiple calls to 'get_mempolicy'
+>
+>
+> =====================================================================
+> (Patches 7-10) set_mempolicy2, get_mempolicy2, mbind2
+>
+> These interfaces are the 'extended' counterpart to their relatives.
+> They use the userland 'struct mpol_args' structure to communicate a
+> complete mempolicy configuration to the kernel.  This structure
+> looks very much like the kernel-internal 'struct mempolicy_args':
+>
+> struct mpol_args {
+>         /* Basic mempolicy settings */
+>         __u16 mode;
+>         __u16 mode_flags;
+>         __s32 home_node;
+>         __u64 pol_maxnodes;
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+I understand that we want to avoid hole in struct.  But I still feel
+uncomfortable to use __u64 for a small.  But I don't have solution too.
+Anyone else has some idea?
 
-If you want to undo deduplication, reply with:
-#syz undup
+>         __aligned_u64 pol_nodes;
+>         __aligned_u64 *il_weights;      /* of size pol_maxnodes */
+
+Typo?  Should be,
+
+         __aligned_u64 il_weights;      /* of size pol_maxnodes */
+
+?
+
+Found this in some patch descriptions too.
+
+> };
+>
+> The basic mempolicy settings which are shared across all interfaces
+> are captured at the top of the structure, while extensions such as
+> 'policy_node' and 'addr' are collected beneath.
+>
+> The syscalls are uniform and defined as follows:
+>
+> long sys_mbind2(unsigned long addr, unsigned long len,
+>                 struct mpol_args *args, size_t usize,
+>                 unsigned long flags);
+>
+> long sys_get_mempolicy2(struct mpol_args *args, size_t size,
+>                         unsigned long addr, unsigned long flags);
+>
+> long sys_set_mempolicy2(struct mpol_args *args, size_t size,
+>                         unsigned long flags);
+>
+> The 'flags' argument for mbind2 is the same as 'mbind', except with
+> the addition of MPOL_MF_HOME_NODE to denote whether the 'home_node'
+> field should be utilized.
+>
+> The 'flags' argument for get_mempolicy2 allows for MPOL_F_ADDR to
+> allow operating on VMA policies, but MPOL_F_NODE and MPOL_F_MEMS_ALLOWED
+> behavior has been omitted, since get_mempolicy() provides this already.
+
+I still think that it's a good idea to make it possible to deprecate
+get_mempolicy().  How about use a union as follows?
+
+struct mpol_mems_allowed {
+         __u64 maxnodes;
+         __aligned_u64 nodemask;
+};
+
+union mpol_info {
+        struct mpol_args args;
+        struct mpol_mems_allowed mems_allowed;
+        __s32 node;
+};
+
+> The 'flags' argument is not used by 'set_mempolicy' at this time, but
+> may end up allowing the use of MPOL_MF_HOME_NODE if such functionality
+> is desired.
+>
+> The extensions can be summed up as follows:
+>
+> get_mempolicy2 extensions:
+>     - mode and mode flags are split into separate fields
+>     - MPOL_F_MEMS_ALLOWED and MPOL_F_NODE are not supported
+>
+> set_mempolicy2:
+>     - task-local interleave weights can be set via 'il_weights'
+>
+> mbind2:
+>     - home_node field sets policy home node w/ MPOL_MF_HOME_NODE
+>     - task-local interleave weights can be set via 'il_weights'
+>
+
+--
+Best Regards,
+Huang, Ying
+
+[snip]
 
