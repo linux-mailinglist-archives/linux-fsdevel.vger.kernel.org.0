@@ -1,134 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-6903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D914281E18B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 17:10:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F7381E1B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 18:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F4E1C20F08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 16:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EEE28218E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Dec 2023 17:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E3652F6E;
-	Mon, 25 Dec 2023 16:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9mqPlfT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA7652F7D;
+	Mon, 25 Dec 2023 17:30:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB64A52F73
-	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Dec 2023 16:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703520585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
-	b=D9mqPlfTwYuNJi4B6KW9virIn25oAF6KJO1DPRjL3QgxGoYi/aZvQhQ6SxaAucfl1mfkTI
-	2BhAsqnTfOgOxR+qFBkoEO02/lLWZdSG4DtRAMJ7mE1KRUKAFVGeLstdjJ6VVrBdaG+4BT
-	HC6YfH4aB8ZfJIQTKQ076gm3A3IuBSk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-NPdf5-PpPGm2bHDOQGLpOA-1; Mon, 25 Dec 2023 11:09:44 -0500
-X-MC-Unique: NPdf5-PpPGm2bHDOQGLpOA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-40d47b001f7so22264945e9.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Dec 2023 08:09:43 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8FA51C36
+	for <linux-fsdevel@vger.kernel.org>; Mon, 25 Dec 2023 17:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7baa66ebd17so222921739f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Dec 2023 09:30:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703520583; x=1704125383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
-        b=oKrlkrkvsf9vfaYnEX2ZNXZA7MsYsS34QQd5c6oualJCIxG+D9VFu+XLPZbQ83xwwy
-         1mvfPee51Kl0MZyPALQVV5t7wY5ZnY3jKMvLKoqfmbFoDBnkRfStrYS/09ycXeBnHhQb
-         i3SeO7RDOABtZX7TuqhIi97EAXRMez/iieslhHYYMmtvftXm2h7kKEDlqHe9r45bYRaS
-         EXgbh2HHSFi7FP2PiD08qfo/hhdnqGFjydXTe4bWyUVZtBUnf0xWCfz0anpwZ9qrLaar
-         YBMaSypelk2fenk7cdWTIoyl9QuaCdhQppcJqEkC13dxhPhf9LAjfjAuAbgb/nsvofON
-         7DSw==
-X-Gm-Message-State: AOJu0YznPsOpw4da5ybj45DP7vR09czvzFpJ9aG2kJfN0E7x/bOBpoCo
-	1q1mnZ/r0LY07u/Eceve89UmhKhI3u3oP9F7yH0Pp9sOek+laTwmzcKVnZRVb+anIU2z/Nte06+
-	wsIBnNU+IuwC6sEdfwtAOBCxTdjcCNEL3bg==
-X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060364wmo.78.1703520582978;
-        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHfGGCax+SlWX/roShT1Wqm6zJg2zHkXbA4PNy8JwUTudzLUljk5TaAwhoH/7jZ8kvUv2pY7Q==
-X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060329wmo.78.1703520582646;
-        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
-Received: from redhat.com ([2a06:c701:73ef:4100:2cf6:9475:f85:181e])
-        by smtp.gmail.com with ESMTPSA id f12-20020a05600c4e8c00b0040d3db8186fsm16769282wmq.5.2023.12.25.08.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Dec 2023 08:09:41 -0800 (PST)
-Date: Mon, 25 Dec 2023 11:09:37 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
-	alim.akhtar@samsung.com, alyssa@rosenzweig.io,
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com,
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net,
-	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
-	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
-	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com,
-	joro@8bytes.org, kevin.tian@intel.com,
-	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
-	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
-	robin.murphy@arm.com, samuel@sholland.org,
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
-	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
-	will@kernel.org, yu-cheng.yu@intel.com
-Subject: Re: [PATCH 15/16] vhost-vdpa: account iommu allocations
-Message-ID: <20231225110930-mutt-send-email-mst@kernel.org>
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-16-pasha.tatashin@soleen.com>
+        d=1e100.net; s=20230601; t=1703525427; x=1704130227;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eDEbyFX/uNJ6pNOP9ps3wA3oswpBwZ/XfGpRR61rov4=;
+        b=rOHLTas0NIp8aiPm6lKTqQx5plrD7n4lZW7LsKa+EelwuWIfNLSedIip3oQAy/g7m6
+         GthupeWcT+PpZ7aDaciT6oX4d7fYslm2RyRwI09swRg5aWFqE09n/m1Y0SfBLL73WUmv
+         B+yAZ5IdsmetCA8ODj/lhj1I8CmQO310sdlg2dRzcfwT6SM1C3qWel1bD8Bwxm5wU9uo
+         SQcAC4trO1WHZGYyosqL0ndNMutHeTjIL2ZALgXuNCp1gzDH8+1G3nmfQkyFaTF0qFP3
+         Qh5LxvO5rvA/vvG49tkaxmkHttHsCBxYA2/wWHY7lcWYR4deFs+si/dslnSEQD+qp1By
+         gfNA==
+X-Gm-Message-State: AOJu0YwWonXmaans63rL9FBKrwThh2IYPOleJIwRO2AaAMEKuQMt6AfW
+	o/OkcSdKCegw8eqLKM2V4nqajfuyMPsc3UfvMNkw94+S8ruO
+X-Google-Smtp-Source: AGHT+IFwTo/+8gy+Oz0fJprtvcSjjIo2Py45r/qiX0KlgP+HNDvyBWaS9NoonUnchP7BP014ovlSq3Vg7QzKzISe6Xfxb7OIZHbM
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231128204938.1453583-16-pasha.tatashin@soleen.com>
+X-Received: by 2002:a05:6638:2dd0:b0:46d:5a:a467 with SMTP id
+ gt16-20020a0566382dd000b0046d005aa467mr173464jab.4.1703525425507; Mon, 25 Dec
+ 2023 09:30:25 -0800 (PST)
+Date: Mon, 25 Dec 2023 09:30:25 -0800
+In-Reply-To: <00000000000027f81605ee31ab88@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000da757a060d58ebbe@google.com>
+Subject: Re: [syzbot] [reiserfs?] KMSAN: uninit-value in reiserfs_new_inode (2)
+From: syzbot <syzbot+6450929faa7a97cd42d1@syzkaller.appspotmail.com>
+To: brauner@kernel.org, damien.lemoal@opensource.wdc.com, 
+	edward.shishkin@gmail.com, glider@google.com, jack@suse.cz, 
+	jlayton@kernel.org, linuszeng@tencent.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 28, 2023 at 08:49:37PM +0000, Pasha Tatashin wrote:
-> iommu allocations should be accounted in order to allow admins to
-> monitor and limit the amount of iommu memory.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    861deac3b092 Linux 6.7-rc7
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=12057ecee80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0c7078a6b901aa3
+dashboard link: https://syzkaller.appspot.com/bug?extid=6450929faa7a97cd42d1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14836ca1e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159e1e16e80000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0ea60ee8ed32/disk-861deac3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6d69fdc33021/vmlinux-861deac3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f0158750d452/bzImage-861deac3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/dcd887118b46/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6450929faa7a97cd42d1@syzkaller.appspotmail.com
+
+REISERFS warning (device loop0): vs-13060 reiserfs_update_sd_size: stat data of object [1 2 0x0 SD] (nlink == 1) not found (pos 2)
+REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storage.
+=====================================================
+BUG: KMSAN: uninit-value in reiserfs_new_inode+0x16cd/0x20f0 fs/reiserfs/inode.c:2044
+ reiserfs_new_inode+0x16cd/0x20f0 fs/reiserfs/inode.c:2044
+ reiserfs_create+0x674/0xcb0 fs/reiserfs/namei.c:666
+ xattr_create fs/reiserfs/xattr.c:70 [inline]
+ xattr_lookup+0x3ee/0x5e0 fs/reiserfs/xattr.c:413
+ reiserfs_xattr_set_handle+0xe7/0x21b0 fs/reiserfs/xattr.c:535
+ reiserfs_xattr_set+0x670/0x7f0 fs/reiserfs/xattr.c:635
+ trusted_set+0x112/0x190 fs/reiserfs/xattr_trusted.c:31
+ __vfs_setxattr+0x7aa/0x8b0 fs/xattr.c:201
+ __vfs_setxattr_noperm+0x24f/0xa30 fs/xattr.c:235
+ __vfs_setxattr_locked+0x441/0x480 fs/xattr.c:296
+ vfs_setxattr+0x294/0x650 fs/xattr.c:322
+ do_setxattr fs/xattr.c:630 [inline]
+ setxattr+0x45f/0x540 fs/xattr.c:653
+ path_setxattr+0x1f5/0x3c0 fs/xattr.c:672
+ __do_sys_setxattr fs/xattr.c:688 [inline]
+ __se_sys_setxattr fs/xattr.c:684 [inline]
+ __x64_sys_setxattr+0xf7/0x180 fs/xattr.c:684
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was created at:
+ __alloc_pages+0x9a4/0xe00 mm/page_alloc.c:4591
+ alloc_pages_mpol+0x62b/0x9d0 mm/mempolicy.c:2133
+ alloc_pages+0x1be/0x1e0 mm/mempolicy.c:2204
+ alloc_slab_page mm/slub.c:1870 [inline]
+ allocate_slab mm/slub.c:2017 [inline]
+ new_slab+0x421/0x1570 mm/slub.c:2070
+ ___slab_alloc+0x13db/0x33d0 mm/slub.c:3223
+ __slab_alloc mm/slub.c:3322 [inline]
+ __slab_alloc_node mm/slub.c:3375 [inline]
+ slab_alloc_node mm/slub.c:3468 [inline]
+ slab_alloc mm/slub.c:3486 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3493 [inline]
+ kmem_cache_alloc_lru+0x552/0x970 mm/slub.c:3509
+ alloc_inode_sb include/linux/fs.h:2937 [inline]
+ reiserfs_alloc_inode+0x62/0x150 fs/reiserfs/super.c:642
+ alloc_inode+0x83/0x440 fs/inode.c:261
+ iget5_locked+0xa9/0x210 fs/inode.c:1271
+ reiserfs_fill_super+0x2109/0x39d0 fs/reiserfs/super.c:2053
+ mount_bdev+0x3d7/0x560 fs/super.c:1650
+ get_super_block+0x4d/0x60 fs/reiserfs/super.c:2601
+ legacy_get_tree+0x110/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xa5/0x520 fs/super.c:1771
+ do_new_mount+0x68d/0x1550 fs/namespace.c:3337
+ path_mount+0x73d/0x1f20 fs/namespace.c:3664
+ do_mount fs/namespace.c:3677 [inline]
+ __do_sys_mount fs/namespace.c:3886 [inline]
+ __se_sys_mount+0x725/0x810 fs/namespace.c:3863
+ __x64_sys_mount+0xe4/0x140 fs/namespace.c:3863
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+CPU: 1 PID: 5006 Comm: syz-executor185 Not tainted 6.7.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+=====================================================
 
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
-
-> ---
->  drivers/vhost/vdpa.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index da7ec77cdaff..a51c69c078d9 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -968,7 +968,8 @@ static int vhost_vdpa_map(struct vhost_vdpa *v, struct vhost_iotlb *iotlb,
->  			r = ops->set_map(vdpa, asid, iotlb);
->  	} else {
->  		r = iommu_map(v->domain, iova, pa, size,
-> -			      perm_to_iommu_flags(perm), GFP_KERNEL);
-> +			      perm_to_iommu_flags(perm),
-> +			      GFP_KERNEL_ACCOUNT);
->  	}
->  	if (r) {
->  		vhost_iotlb_del_range(iotlb, iova, iova + size - 1);
-> -- 
-> 2.43.0.rc2.451.g8631bc7472-goog
-
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
