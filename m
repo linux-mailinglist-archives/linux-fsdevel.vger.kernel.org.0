@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-6911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF47A81E3F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 01:44:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE7581E409
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 01:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783FC1C21ACA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 00:44:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252F71F20D49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 00:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB65CD3A;
-	Tue, 26 Dec 2023 00:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041575E0C5;
+	Tue, 26 Dec 2023 00:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeAiRcsr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWCMugGP"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDEF5CD28;
-	Tue, 26 Dec 2023 00:25:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004DAC433C8;
-	Tue, 26 Dec 2023 00:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AAE5E0B6;
+	Tue, 26 Dec 2023 00:26:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4C0C433C9;
+	Tue, 26 Dec 2023 00:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703550351;
-	bh=INCFmxnzVcno2G0uByDm+uObuNwYrETLxoR9bzDGLNo=;
+	s=k20201202; t=1703550390;
+	bh=O2zB5mXHUQrilmjwcBjg48bl0jano+O51g0Ra88ljRY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PeAiRcsr7+OFUB3bI0RYOrXVW12Fggv0W8yQWEIh1ZLhvHKYIQ5vOd//CfIZozrFk
-	 bGbfPIEUNChJs6HTzuLWKRObC9gr/NPnF1HEO9EOKkparI101tcOaxUxHj8b4kWqz/
-	 rctgC5BErU5QKBxHRq5JjgDkI+6XOTk9WbQRMvI9YetJSeAGUdG0++XSK+10SORszn
-	 uPhMLGWl7imMf2eWOAyBwpg2OlCqLzkwdlRlaNC52Y0ZbzXKcjPcWqiuu+Rn48mcPd
-	 FxTmOIJ5zmGB7xJuwfnhg3GELyLlZq5jvk8/rnP9WB9okCSHWrOuwycIoTJAj4sCAM
-	 MOBTYRbcQJEXQ==
+	b=YWCMugGPNcLgQNlWXRpYpuHkXBcFY6gKyPLDM5tKyXRs2zfDItT4K7avoW25JIygG
+	 bRV5z4FpMxvK+cZfQZsh3FnvzPz/aaVva+tEn9IMs+1LmZXdUowBNjf7NIRtdT/8ae
+	 13+dZDon/MJBOSML0Qh6sMWfAMVUDLfwMePlUaU2fUl6rj+umynYKlnBBhT9xWPe93
+	 p7Un1LXSURArAJ38FNci+YZL9Cgama9/6sJL/fHd8gVhhaKIwDdeV3oHiIfMnpoMjf
+	 oPpQebmMSMzmbA6QYL4PbcJx+SbDYdUrEKKbdfOX6FCjZhGZGNN1hPmkc76nv+Tykg
+	 BIHULn1ddM/tQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -40,12 +40,12 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 9/9] ida: Fix crash in ida_free when the bitmap is empty
-Date: Mon, 25 Dec 2023 19:24:53 -0500
-Message-ID: <20231226002526.6605-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 8/8] ida: Fix crash in ida_free when the bitmap is empty
+Date: Mon, 25 Dec 2023 19:25:51 -0500
+Message-ID: <20231226002608.7089-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20231226002526.6605-1-sashal@kernel.org>
-References: <20231226002526.6605-1-sashal@kernel.org>
+In-Reply-To: <20231226002608.7089-1-sashal@kernel.org>
+References: <20231226002608.7089-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.205
+X-stable-base: Linux 5.4.265
 Content-Transfer-Encoding: 8bit
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 41 insertions(+), 1 deletion(-)
 
 diff --git a/lib/idr.c b/lib/idr.c
-index 13f2758c23773..da36054c3ca02 100644
+index a91ca1dfe1431..a90bd348ba03a 100644
 --- a/lib/idr.c
 +++ b/lib/idr.c
-@@ -508,7 +508,7 @@ void ida_free(struct ida *ida, unsigned int id)
+@@ -506,7 +506,7 @@ void ida_free(struct ida *ida, unsigned int id)
  			goto delete;
  		xas_store(&xas, xa_mk_value(v));
  	} else {
