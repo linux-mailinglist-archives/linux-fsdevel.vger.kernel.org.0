@@ -1,37 +1,37 @@
-Return-Path: <linux-fsdevel+bounces-6915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B103A81E73B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 13:09:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9500781E768
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 13:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC2561C21DE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 12:09:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78AC1C21E9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Dec 2023 12:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF39E4E618;
-	Tue, 26 Dec 2023 12:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA5E4EB2F;
+	Tue, 26 Dec 2023 12:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="CFIunnvB"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Ko4Kj/nE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6E44E603;
-	Tue, 26 Dec 2023 12:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850FC20307;
+	Tue, 26 Dec 2023 12:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1703592572;
-	bh=MBNVPTuPe5RQdDMZSU+PMsj2GQT1HD2VDl2L9fGdf+I=;
+	s=mail; t=1703593963;
+	bh=L9GAaUe+lSBriHrdLSPoY+6yNGsO1d1cvnSIhXdaP6Q=;
 	h=From:Date:Subject:To:Cc:From;
-	b=CFIunnvBOMZRp7rDzNobSGjsI69fb6XgLdzeWRdW0p2bo7CYt12l1nN+6Ov/ZaW3c
-	 BSY5wS2sMOTgBs4vV6NfjGiBU4usMfB0Q3MKCppJl51ibV/O3dAktjSGad3q+ZetGK
-	 pBhYzGNoTGanORzXKfJ3yIDR8rAxNcVRAfBmyAQY=
+	b=Ko4Kj/nE+JBGo7sEr9wqHwsncYVqpKmfZII3vlxhPWHDLyBMk1wdQkqpI5Ur+kwXT
+	 BwE8pv3US0u1g0qDd5eDjTBpdVlbCOBWTJAQfQdSVj9hFW8jb2qcYXW2rS5etgZgLZ
+	 bm9p1XdgAsMs1EsnAfxjAsZCDQwE8AOvfrG0Ghxw=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 26 Dec 2023 13:08:48 +0100
-Subject: [PATCH] sysctl: treewide: constify ctl_table_root::permissions
+Date: Tue, 26 Dec 2023 13:32:42 +0100
+Subject: [PATCH] sysctl: treewide: constify ctl_table_root::set_ownership
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -40,10 +40,10 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20231226-sysctl-const-permissions-v1-1-5cd3c91f6299@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAE/CimUC/x3MMQqAMAxA0atIZgM1ggWvIg7SRg1oK42IIt7d6
- viH929QTsIKbXFD4kNUYshRlQW4eQgTo/jcQIbqiqhBvdTtC7oYdMeN0yr6GUVv3egNDbapLWS
- +JR7l/Ndd/zwvn2WHgGoAAAA=
+Message-Id: <20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAOnHimUC/x3MSwqEMBBF0a1IjS3QqBF6K40DTb9ogSSSkv4Q3
+ HsHh2dwbyZFEig9qkwJb1GJoaCtK3LbHFawvIrJNKZrjbGsP3Xnzi4GPTl+ApJucrD34wA7Lj0
+ wU4mPBC/fe/ycrusPFF5sEGgAAAA=
 To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
  Joel Granados <j.granados@samsung.com>, 
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -52,15 +52,15 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  netdev@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1703592571; l=3312;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1703593962; l=2286;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=MBNVPTuPe5RQdDMZSU+PMsj2GQT1HD2VDl2L9fGdf+I=;
- b=4ugtZbdhdABoeRlJxXJ6gBFOcTeWMMONsnR+0vV3WvahrjEEIoaPiOO7QRl3tKj4kUJpIv47i
- lBDbq/STFKeCqzbvSRF6t7ex7YQacpwxu7Vvm1nVkW/6/MpOWfcAm8E
+ bh=L9GAaUe+lSBriHrdLSPoY+6yNGsO1d1cvnSIhXdaP6Q=;
+ b=kOSizBjzR6oCvTWhrMMELhvhfemQm6x93hbVaC0+D+zdFlkTwAznHfKld2xSD4iolj5a7VJJz
+ mgBsZAt3zk8CZqw5459P6az7GxW8aKyd92Wq9UIWT69/Ximetj2sSQg
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The permissions callback is not supposed to modify the ctl_table.
+The set_ownership callback is not supposed to modify the ctl_table.
 Enforce this expectation via the typesystem.
 
 The patch was created with the following coccinelle script:
@@ -70,16 +70,15 @@ The patch was created with the following coccinelle script:
   virtual report
 
   @@
-  identifier func, head, ctl;
+  identifier func, head, table, uid, gid;
   @@
 
-  int func(
+  void func(
     struct ctl_table_header *head,
-  - struct ctl_table *ctl)
-  + const struct ctl_table *ctl)
+  - struct ctl_table *table,
+  + const struct ctl_table *table,
+    kuid_t *uid, kgid_t *gid)
   { ... }
-
-(insert_entry() from fs/proc/proc_sysctl.c is a false-positive)
 
 This change also is a step to put "struct ctl_table" into .rodata
 throughout the kernel.
@@ -95,67 +94,39 @@ maintainers to a minimumble, submit this patch on its own.
 [0] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
 ---
  include/linux/sysctl.h | 2 +-
- ipc/ipc_sysctl.c       | 2 +-
- kernel/ucount.c        | 2 +-
  net/sysctl_net.c       | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 26a38161c28f..8ec2d742c3b4 100644
+index 26a38161c28f..800154e1ff88 100644
 --- a/include/linux/sysctl.h
 +++ b/include/linux/sysctl.h
-@@ -207,7 +207,7 @@ struct ctl_table_root {
+@@ -205,7 +205,7 @@ struct ctl_table_root {
+ 	struct ctl_table_set default_set;
+ 	struct ctl_table_set *(*lookup)(struct ctl_table_root *root);
  	void (*set_ownership)(struct ctl_table_header *head,
- 			      struct ctl_table *table,
+-			      struct ctl_table *table,
++			      const struct ctl_table *table,
  			      kuid_t *uid, kgid_t *gid);
--	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
-+	int (*permissions)(struct ctl_table_header *head, const struct ctl_table *table);
+ 	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
  };
- 
- /* struct ctl_path describes where in the hierarchy a table is added */
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index 8c62e443f78b..b087787f608f 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -190,7 +190,7 @@ static int set_is_seen(struct ctl_table_set *set)
- 	return &current->nsproxy->ipc_ns->ipc_set == set;
- }
- 
--static int ipc_permissions(struct ctl_table_header *head, struct ctl_table *table)
-+static int ipc_permissions(struct ctl_table_header *head, const struct ctl_table *table)
- {
- 	int mode = table->mode;
- 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 4aa6166cb856..90300840256b 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -38,7 +38,7 @@ static int set_is_seen(struct ctl_table_set *set)
- }
- 
- static int set_permissions(struct ctl_table_header *head,
--				  struct ctl_table *table)
-+			   const struct ctl_table *table)
- {
- 	struct user_namespace *user_ns =
- 		container_of(head->set, struct user_namespace, set);
 diff --git a/net/sysctl_net.c b/net/sysctl_net.c
-index 051ed5f6fc93..ba9a49de9600 100644
+index 051ed5f6fc93..1310ef8f0958 100644
 --- a/net/sysctl_net.c
 +++ b/net/sysctl_net.c
-@@ -40,7 +40,7 @@ static int is_seen(struct ctl_table_set *set)
+@@ -54,7 +54,7 @@ static int net_ctl_permissions(struct ctl_table_header *head,
+ }
  
- /* Return standard mode bits for table entry. */
- static int net_ctl_permissions(struct ctl_table_header *head,
--			       struct ctl_table *table)
-+			       const struct ctl_table *table)
+ static void net_ctl_set_ownership(struct ctl_table_header *head,
+-				  struct ctl_table *table,
++				  const struct ctl_table *table,
+ 				  kuid_t *uid, kgid_t *gid)
  {
  	struct net *net = container_of(head->set, struct net, sysctls);
- 
 
 ---
 base-commit: de2ee5e9405e12600c81e39837362800cee433a2
-change-id: 20231226-sysctl-const-permissions-d7cfd02a7637
+change-id: 20231226-sysctl-const-ownership-ff75e67b4eea
 
 Best regards,
 -- 
