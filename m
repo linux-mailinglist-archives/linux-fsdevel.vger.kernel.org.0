@@ -1,156 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-6972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA86081F1C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 21:07:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826BC81F19A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 20:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7351C22404
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 20:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D46EAB217BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 19:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAFC47F5A;
-	Wed, 27 Dec 2023 20:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A7347F46;
+	Wed, 27 Dec 2023 19:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="eLM/2AZB"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bVtsB3an"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2073.outbound.protection.outlook.com [40.107.94.73])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F0447A4E;
-	Wed, 27 Dec 2023 20:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aZ0LdbOhknycNV2Kn4h9fcK6KLkNqT0G+WnTkMM/9F+bgGP4f9/CYPQ2/UZSdqqiEpmn3YYzB44n/1t3rJZQFQI4asu8h+HAeXc9WqoFtt9b+pZ8YA0UGPphep+Ko3OeGm27PpMAHnYGmo1jrjzfsuWqeV/B19rrhoooloRco3vhRR0cmqqQuvl5b5WTA0LuoikHp54Y5FI2osim2gwCTD4Vts6YoY8m46YkjeJy7/QmLPZuauMXBbF7U/0zAKpObEIWjA89jFY3q0r246t7VrUqzOgNKyoRoAM0N4rf8+JXnjvBLIIBYWhGYKMok3hpJqxOnG8b/Q4nBxHWzILiKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4mqZ9GUrVivXwKJL1Ar1SgstFRRf9UsTvA7mW+n08PQ=;
- b=YEF6YChxcyyhsVIBN5QCzziywM/zq2vv3E895D637KO8+/AiJdyfqFZvxSTxzMEv2Bd0jdr+8SIt3gELRVIP2k7ZwaK6zEaptnII7hIHasXSEdKCnOmQwHAIjF51+OmsrH9s2w9+lsad4pTmLSxPZYiZWNxbNFA4MYljMh1RhxBT+xG2e6BGsQBFZvEIaWcIwUkT1IRBBlHLh67T3bQDLaXhENd2ZcRBBsLRPHAWa6ZgBTuOCF9hlKKPrEK24e8oWCtqoEutbJPMrmeDzx5DPd/rS1o4USFvtDU2kjzVoDjfr0R0bor+DxKTKwH7qs5gHpfB8s3otVFyzmboiGs4NA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4mqZ9GUrVivXwKJL1Ar1SgstFRRf9UsTvA7mW+n08PQ=;
- b=eLM/2AZBmDuhcGUW3aSRRZwI62YWWjm5Kl5UK5tyok53uepq3/fOWy0p0TUlNRkLN1zRB0gH1tY6z3hNT6KCsl8oWeyTKxIpehCG8v+ebnWHgqZDejGdD5Skz3GdR4GEi8UYnXrbgXCXpLe8mab5m7DaPJJG57mwSYmXpdnXNDo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
- by SJ0PR17MB5557.namprd17.prod.outlook.com (2603:10b6:a03:393::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.26; Wed, 27 Dec
- 2023 20:06:44 +0000
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::381c:7f11:1028:15f4]) by SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::381c:7f11:1028:15f4%5]) with mapi id 15.20.7113.027; Wed, 27 Dec 2023
- 20:06:44 +0000
-Date: Tue, 26 Dec 2023 06:48:34 -0500
-From: Gregory Price <gregory.price@memverge.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, akpm@linux-foundation.org, arnd@arndb.de,
-	tglx@linutronix.de, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org,
-	tj@kernel.org, corbet@lwn.net, rakie.kim@sk.com,
-	hyeongtak.ji@sk.com, honggyu.kim@sk.com, vtavarespetr@micron.com,
-	peterz@infradead.org, jgroves@micron.com, ravis.opensrc@micron.com,
-	sthanneeru@micron.com, emirakhur@micron.com, Hasan.Maruf@amd.com,
-	seungjun.ha@samsung.com
-Subject: Re: [PATCH v5 03/11] mm/mempolicy: refactor sanitize_mpol_flags for
- reuse
-Message-ID: <ZYq9klTts4yg8RhG@memverge.com>
-References: <20231223181101.1954-1-gregory.price@memverge.com>
- <20231223181101.1954-4-gregory.price@memverge.com>
- <87y1dgdoou.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZYp7P1fH8nvkr4o0@memverge.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZYp7P1fH8nvkr4o0@memverge.com>
-X-ClientProxiedBy: SJ0PR03CA0271.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::6) To SJ0PR17MB5512.namprd17.prod.outlook.com
- (2603:10b6:a03:394::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A1E46B85;
+	Wed, 27 Dec 2023 19:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BRFrDWu015987;
+	Wed, 27 Dec 2023 19:21:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=18f/gr/PZcXdeMM5kpAIhPR02z3c/KDZi/eOcuzIIpQ=;
+ b=bVtsB3annBIu4X6srNn88R2Vl4YR8tkm/MkIDQOt+CJnjUudlHDyvvtuYUnkqLxa6Y4K
+ VrtdgWWkDpNwGFkQ/DdUqkL/EbmNwifBK+8TkMaPTUvSGhAG2bkMa7iUk74lWbLfeNo1
+ Rbu9Rf1wPuB8Ves/aRY+oPoa2u54fwch5e5cOpn1MFlXn1mZg90QPfsvH2pzC6MR/IIv
+ 9Ob8WYFq2s8cORaUzVWSo9Np2P8zq2IVmRPXmt2HfvLVXfFg5CF/G0O9V00Y5FAF7omV
+ +rV4EUw/YFbCa7pFwWLpD1aR0GueZPwEIAyb30YHEX0qAXiYSaOhW0dxN+tSsQL+1Q8U tQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v8pxvkj0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Dec 2023 19:21:24 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BRJDXvQ032429;
+	Wed, 27 Dec 2023 19:21:23 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3v8pxvkj07-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Dec 2023 19:21:23 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BRGAZE4008402;
+	Wed, 27 Dec 2023 19:21:22 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3v69vsv4r7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 Dec 2023 19:21:22 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BRJLLSj61866258
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 Dec 2023 19:21:21 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1AC475805D;
+	Wed, 27 Dec 2023 19:21:21 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A90C758052;
+	Wed, 27 Dec 2023 19:21:19 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.140.144])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 27 Dec 2023 19:21:19 +0000 (GMT)
+Message-ID: <96f82924cd2fda95f0c89341215e128419bf77fd.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 23/24] ima: Make it independent from 'integrity' LSM
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>
+Date: Wed, 27 Dec 2023 14:21:18 -0500
+In-Reply-To: <ff8e6341-1ff0-4163-b5c7-236a0e8bdc7c@huaweicloud.com>
+References: <20231214170834.3324559-1-roberto.sassu@huaweicloud.com>
+	 <20231214170834.3324559-24-roberto.sassu@huaweicloud.com>
+	 <5aa5986266c3a3f834114a835378455cbbff7b64.camel@linux.ibm.com>
+	 <ff8e6341-1ff0-4163-b5c7-236a0e8bdc7c@huaweicloud.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|SJ0PR17MB5557:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9240133c-ad2a-48b1-0e87-08dc07175907
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	nOwoOGkQ9rpy9Hbz3FQj9I9gcl9+/ENmPvacqq/Hpl5nbeAX2mMbwKXGhAazU/t/OdkqEcHr/eBhmXtR3p2pettmm9sQ/rbUXi8WEtkQjF3zywD2sFhgf2sO6r41FsR3oLEuv2FBXumlMIwvSBRb0hh5ZS/jXls4BI0nZDYMB6F9LWw9WNey6vTH2j/hvgl9pxZQEgGmXljBjmkHSQQWVeSgpKtdrTbcesSiDcwTVZcKgu/al0Gsc9t3bvrU2ldS7IBF8I/5Gp9MgOZDBcCNbH/3h3w79ZWokkFpvrYa1TgkMOSrMNLJt6cM6CaPAT1zGkKOExSz5WjGKUK1diyRgNlE0Zt2VMtF6R/9T4JFJXf682/RRfFnW57uJbLaUYOyW23JxhezNBaYKHPU3YsdzUfrPaDYaq6yPZwLaW8iQQKh8HCCNpDUbMiYbpB8cDtXzpSYRKEStAJnB8UmLcM50p9WpccJfxKpgxZoEZqxnODC9hH2tX+srz5Q0gHaOOBsdF7vtHQteOdNX2k9hrOXKA/iIsvPzKOdrJ65/FXLEGlB7HeJKDfeOuwjmo3DgOV6bSFm+DIKVdNsag78n1WO2rSG6nw7Lv08PZJJLAYvZ+FNjfUpEVbQQlEGyO8NvVTX
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(396003)(366004)(346002)(39850400004)(376002)(230922051799003)(230173577357003)(230273577357003)(1800799012)(186009)(451199024)(64100799003)(6486002)(8936002)(4326008)(478600001)(6666004)(38100700002)(44832011)(26005)(2616005)(6916009)(66946007)(86362001)(8676002)(316002)(83380400001)(66476007)(6512007)(6506007)(66556008)(7406005)(2906002)(7416002)(5660300002)(4744005)(36756003)(41300700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K/3AInaXmXZ7xvZbMWxN7K6GudR3mdt56bOrVs0xJTPL2CWgVGjCrZHeVQpV?=
- =?us-ascii?Q?7+PEhMoCtNkv3Wnes5AWH92Cm8Ae64Obk2t4UAQbvCnzPbyLxaQKYmDE2xsG?=
- =?us-ascii?Q?I2eWf+tsLbt8xNswnz+TKYgz9U16Ke49inAWHGs6kwmXIL6TjpTAXfQW8jCX?=
- =?us-ascii?Q?vSXLPbuHNgU4Eho1JN6PkptCvgz0c+5oYnfCotxfJd0LDraxzNFkthWQbS1G?=
- =?us-ascii?Q?Fb8LFfN15h/Shgmvuc9bX7P6Kw9u0q8jIAtL/qYyEO+X6v+Qond9Hnjzqoih?=
- =?us-ascii?Q?tPqhH9A1mFOV8009ijHDktMHFBD+Kurhxdn6q2ENuWIkCnf9qompro7FXWqz?=
- =?us-ascii?Q?g7r+IXuU3N38/VIH2MvZwDXP4ZIWu94TxkUut4unLqEIHQmTBjxXBZbb93OH?=
- =?us-ascii?Q?JMNHobEquVX9c1LAT05qs9OvjWBOnBVmvavUZRvMOnGwZWWoKp2/tG7ikPhC?=
- =?us-ascii?Q?V/V9UoZx24bP5dpUHdpp6OpVG8bcrhu3fPSnaOmwz52bRzAs9eA/WDldVs/R?=
- =?us-ascii?Q?IntcvJ9awkH0iUSwucO9qULgLzHo+p4zOrP/5tGwzSPSmBXzJCu1wgcce2ze?=
- =?us-ascii?Q?cLlG+58buNmm+bhStgaqOOcnmQit7vHJMgRFp+CVER9bGaEW9Cv1FWLUdAHd?=
- =?us-ascii?Q?wTZi6qSGYuMy+FZ5vCKVv7pBznLZcxiUCTMZB4Y/m1I7/5qgE8kazCTJLpmR?=
- =?us-ascii?Q?upzYGSKHrq4+tSOqncRfVoge6ati3K56p/T6jBKfVcp8qhD4Ya/u/avErlrD?=
- =?us-ascii?Q?PB2u9C2dR8WRs9vQOnY2ZP2C75byu030OH9caBdobAiGxJ7t9NU9jVHv/LNM?=
- =?us-ascii?Q?h1OjPsW15ea6xHD+WmYWjKmbVkohMsTv0DGgh7ATx8ewIPxQXtD12FwxOe5N?=
- =?us-ascii?Q?pxd8pVPhg3Th0WnLUGakNZ+l17H7AsX8EY417jTnDhvUhlL6HdfbUDFQVJ3d?=
- =?us-ascii?Q?eBOAx6QYY34ESijvbFm32LX7gm3lyBd77Lp3hevhNLazOt6TNpLFoGMkNLIz?=
- =?us-ascii?Q?1mlw2t77MFB2wzrtJJhAYb1ziFJ1jh+EPYz2sqaw7U779dQIrpwz/31uqUu5?=
- =?us-ascii?Q?P3IM5HjZ9vLSzktWLAKhxo9YNoX+ZAOvGyT+nEOvacp84VQ+DCxM9+NabVHu?=
- =?us-ascii?Q?fw73hYn/vA7vhfmcHRjDl7O1JFXlwYI8nBSVG6o3oOnDRTN3OK4D/W4Wowvx?=
- =?us-ascii?Q?dqoEqBIF+B04z1r0fkdHdcyBe+jXAXmv+8TAjph7HkXNJa4rTcq+RFEvniC4?=
- =?us-ascii?Q?Tu35LExoaI1R2tDFZpCGxbe4Gja0hjY+BM5+OCD/8AYYsBGqTtQGJAJ0F5ur?=
- =?us-ascii?Q?MP5U3ToF4vwjUb7f5dc/m8nP08UvJkMTS1vXtX/B6fZ/Xj9ZOlHSTPovql6Z?=
- =?us-ascii?Q?VXLFiq+RkR/FUWtmFrVi5bFP00//N6Abys/JyIVbzs6cegeTIbKt2HjAWI4F?=
- =?us-ascii?Q?Gk8tWuugvBNvYcRMVDY/RE7LCsfRf1XuxBOYSxGFvdy1/b9PuiEJWF7yJBhW?=
- =?us-ascii?Q?Xo8snziHLpVb2zQ6YohgPWl4KtCcdA3sKZO7ALSXufykzMH0Wu7AEWiOIwRx?=
- =?us-ascii?Q?Y+6klJn7SrhOrwLbb84yYdg4YkkORT8MCKKi+4Qy4XPe+tUIgUdZ8vPQ+BCA?=
- =?us-ascii?Q?9Q=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9240133c-ad2a-48b1-0e87-08dc07175907
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Dec 2023 20:06:44.0624
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: beeW25LLMbz3SOuU5qIB4ohX36Mxlu29wurzwW6THd4AmAsZ90awEMAXW74BK3DoIPHWEd7kDQYRse++sXnRS9rFqz1WrHHnwItjw6Akmqk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR17MB5557
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZuI2XL95XsmBzpGslmSc2WJbPjAOR3zJ
+X-Proofpoint-ORIG-GUID: 96PxLxuOz0BBu8l6Y97vO_NKje96XAZy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-27_12,2023-12-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ impostorscore=0 mlxlogscore=932 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2312270142
 
-On Tue, Dec 26, 2023 at 02:05:35AM -0500, Gregory Price wrote:
-> On Wed, Dec 27, 2023 at 04:39:29PM +0800, Huang, Ying wrote:
-> > Gregory Price <gourry.memverge@gmail.com> writes:
+On Wed, 2023-12-27 at 17:39 +0100, Roberto Sassu wrote:
+> On 12/27/2023 2:22 PM, Mimi Zohar wrote:
+> > On Thu, 2023-12-14 at 18:08 +0100, Roberto Sassu wrote:
+> >> From: Roberto Sassu <roberto.sassu@huawei.com>
+> >>
+> >> Make the 'ima' LSM independent from the 'integrity' LSM by introducing IMA
+> >> own integrity metadata (ima_iint_cache structure, with IMA-specific fields
+> >> from the integrity_iint_cache structure), and by managing it directly from
+> >> the 'ima' LSM.
+> >>
+> >> Move the remaining IMA-specific flags to security/integrity/ima/ima.h,
+> >> since they are now unnecessary in the common integrity layer.
+> >>
+> >> Replace integrity_iint_cache with ima_iint_cache in various places
+> >> of the IMA code.
+> >>
+> >> Then, reserve space in the security blob for the entire ima_iint_cache
+> >> structure, so that it is available for all inodes having the security blob
+> >> allocated (those for which security_inode_alloc() was called).  Adjust the
+> >> IMA code accordingly, call ima_iint_inode() to retrieve the ima_iint_cache
+> >> structure. Keep the non-NULL checks since there can be inodes without
+> >> security blob.
 > > 
-> > > +	unsigned short mode = (*mode_arg & ~MPOL_MODE_FLAGS);
-> > > +
-> > > +	*flags = *mode_arg & MPOL_MODE_FLAGS;
-> > > +	*mode_arg = mode;
+> > Previously the 'iint' memory was only allocated for regular files in
+> > policy and were tagged S_IMA.  This patch totally changes when and how
+> > memory is being allocated.  Does it make sense to allocate memory at
+> > security_inode_alloc()?  Is this change really necessary for making IMA
+> > a full fledged LSM?
+> 
+> Good question. I think it wouldn't be necessary, we can reuse the same 
+> approach as in the patch 'integrity: Switch from rbtree to LSM-managed 
+> blob for integrity_iint_cache'.
+
+Going forward with the v8 proposed solution would require some real
+memory usage analysis for different types of policies.
+
+To me the "integrity: Switch from rbtree to LSM-managed blob for
+integrity_iint_cache" makes a lot more sense.   Looking back at the
+original thread, your reasons back then for not directly allocating the
+integrity_iint_cache are still valid for the ima_iint_cache structure.
+
+Mimi
+
 > > 
-> > It appears that it's unnecessary to introduce a local variable to split
-> > mode/flags.  Just reuse the original code?
-> > 
+> >>
+> >> Don't include the inode pointer as field in the ima_iint_cache structure,
+> >> since the association with the inode is clear. Since the inode field is
+> >> missing in ima_iint_cache, pass the extra inode parameter to
+> >> ima_get_verity_digest().
+> >>
+> >> Finally, register ima_inode_alloc_security/ima_inode_free_security() to
+> >> initialize/deinitialize the new ima_iint_cache structure (before this task
+> >> was done by iint_init_always() and iint_free()). Also, duplicate
+> >> iint_lockdep_annotate() for the ima_iint_cache structure, and name it
+> >> ima_iint_lockdep_annotate().
+> >>
+> >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> 
 
-Revisiting during fixes: Note the change from int to short.
 
-I chose to make this explicit because validate_mpol_flags takes a short.
-
-I'm fairly sure changing it back throws a truncation warning.
-
-~Gregroy
 
