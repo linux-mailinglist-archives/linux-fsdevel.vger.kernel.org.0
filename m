@@ -1,158 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-6951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DEF581EE8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 12:28:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A5081EEBC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 13:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 673F4B22041
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 11:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8551A1F21253
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Dec 2023 12:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034D4446B2;
-	Wed, 27 Dec 2023 11:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA9A446C7;
+	Wed, 27 Dec 2023 12:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="c9Rz5xJU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FE844392
-	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Dec 2023 11:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7b7aacf63b9so335522939f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Dec 2023 03:28:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36836446C1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 27 Dec 2023 12:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-427e8bb6778so3973231cf.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Dec 2023 04:05:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1703678715; x=1704283515; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G1i4yebbpcapAqhI8IoWwGDeG4KA5THFUdOwfsgrXTo=;
+        b=c9Rz5xJUVZcYS7Y3pZMg893ILiLIKRGz3cO9WO/j6ztyJktKZl0Wn+B9RuAuM903Dq
+         JuW2FNKVZboHsQTmGi/u/HVGkv8raVirf5zupeE8GMjs720udplh6b1tRVlPuJwqSNY3
+         vrGkLAiXZKQaGCmIvJpNA/M/67MGdL6HeX5cEuXZkzVVhpAVLzcVDoxcQVhxppB/Ea5y
+         hHIoealfLLYZnWfPUMtSN/GWSs/WEtmZpcLv6VgNcIYonIU8ir8v1VJl1LvZSmbUUwbQ
+         rtKzn9jf0A/6qU+tmZOjnrHPqLZfJqrKE22AN7uhUPkAyh/7XQez8U4keQ/b6wVhiT9a
+         g+pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703676499; x=1704281299;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hCzKtjrMmSOLXgvpcbdEvWgrhNwABub7UoNADAs1TuA=;
-        b=fMx82NZMa4yP+ataw3gb3/lTkgcFI2rj9EvAvpUgHLnj6CCcYmnYemlUn+Fql57BS9
-         GHH59jcNjY4isanz/0512E96C5RErO/nd64NG1wIoqDElc5KaEOLizHd+ByxoaSn72dv
-         BQIckgfvBCGgxuEA3krvvLsfQZ8XV9CGorJuvmJDX+fQq1+1asKQIZJP6SW/CaxTq+9z
-         ZIKRyNN66HzPDzq4SH3rdZmG6SPD2lLw8IWdBioYWX9NRTCFMtB0CTmCaOHVS93uveS6
-         1hlBhXYiD3MsEyrus1GhttjWtyNjOnV4KE8mI58uiaN8/RlAOEYVR3E3oxRXUhcPT574
-         Ir2Q==
-X-Gm-Message-State: AOJu0Yw9xPAaOTwIHXITWT3/kajH2G1SV3Huc1xFrAJXKLC5y/DG4BN+
-	/EeeEzrrOkA9gQet+3pihh10CIxKdT59z8aCQX9KJMu0oLDxvoM=
-X-Google-Smtp-Source: AGHT+IG8bpFNRqIOlJTpKJDJmtYBMA06NAg8eOs9JIi4IvaO3qWJGZwxljhFSX+B/ZG/7ZJrGvJgEIuvp+H8/3/ssfjHJmuLhZnE
+        d=1e100.net; s=20230601; t=1703678715; x=1704283515;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G1i4yebbpcapAqhI8IoWwGDeG4KA5THFUdOwfsgrXTo=;
+        b=k+braAIeeUNQ/OUSfcVfH9QxVB6HYEbld/L4rG04MW6gWxxi6sVnr+NKaDpEIYLyD6
+         uo1WVVGju0VNwc9Q60sUx9VEh82A9wOwl8iDCPAHTgzTUELJKE45SrD776IHrfW+UpxY
+         wPQMCGVasBiPGricW0g/4xIJSg/JuBh/RbrO5xAOBFaTS+bB5Ec01X+7tbQBo9HWfCJp
+         8Io6q0YwpqDpZw9hMtu61cWWCr5/8ydhKl6Yu93L/DtpnEbkG04mKPcYnv7PC/HMIPHx
+         KLTKicn0YXPjdLMRUAKiHmHlHgWZFi1i8LGrDtWm0WGCKXCBS7yR/ftPWYHaTFuMWkbx
+         evlQ==
+X-Gm-Message-State: AOJu0Yz1zLGe0Bk2VtBF5eM7qBRNt51k97Dguzxz1JHA8j1Ujz/k8JmU
+	f4+v+M6yHZNyfDqmm8c9637TcXMf+jf4LxyNY3VnxROOYEOj9MnOkH04yjHlIQ==
+X-Google-Smtp-Source: AGHT+IFPVrUDUxOsiOYW7ye63Z+uFE+Krp6CkzOuPMLJLNadIjPCx5HEA7eEWyAzc3518nmkzYXSDSioE1e/9t0zFjY=
+X-Received: by 2002:ac8:7f91:0:b0:427:f246:593d with SMTP id
+ z17-20020ac87f91000000b00427f246593dmr164331qtj.112.1703678715057; Wed, 27
+ Dec 2023 04:05:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4c:b0:360:290:902d with SMTP id
- f12-20020a056e020b4c00b003600290902dmr755473ilu.3.1703676499564; Wed, 27 Dec
- 2023 03:28:19 -0800 (PST)
-Date: Wed, 27 Dec 2023 03:28:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091a123060d7c18fb@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_cat_case_cmp_key
-From: syzbot <syzbot+50d8672fea106e5387bb@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20231220051348.GY1674809@ZenIV> <20231220053238.GT1674809@ZenIV>
+In-Reply-To: <20231220053238.GT1674809@ZenIV>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Wed, 27 Dec 2023 07:05:04 -0500
+Message-ID: <CAOg9mSR0KtsdkZ+32n4EtMegw-YOO6o11CNPpotPGDw4F+4Kvw@mail.gmail.com>
+Subject: Re: [PATCH 21/22] orangefs: saner arguments passing in readdir guts
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Mike Marshall <hubcap@omnibond.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Howdy Al... I applied your orangefs patch to 6.7.0-rc6 and found one
+xfstests failure that was not there when I ran against
+xfstests-6.7.0-rc5. (generic/438)
 
-syzbot found the following issue on:
+I'm about to hit the road for a several day motorcycle ride in an hour
+or so, I just wanted to give feedback before Ieft. I'll look into it
+further when I get back.
 
-HEAD commit:    fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17192f76e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0c7078a6b901aa3
-dashboard link: https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b0a595e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140e23c9e80000
+-Mike
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1520f7b6daa4/disk-fbafc3e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8b490af009d5/vmlinux-fbafc3e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/202ca200f4a4/bzImage-fbafc3e6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/0fd11f6357c0/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+50d8672fea106e5387bb@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 1024
-=====================================================
-BUG: KMSAN: uninit-value in hfsplus_cat_case_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:23
- hfsplus_cat_case_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:23
- hfs_find_rec_by_key+0xb0/0x240 fs/hfsplus/bfind.c:100
- __hfsplus_brec_find+0x26b/0x7b0 fs/hfsplus/bfind.c:135
- hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:195
- hfsplus_brec_read+0x46/0x1a0 fs/hfsplus/bfind.c:222
- hfsplus_find_cat+0xdb/0x460 fs/hfsplus/catalog.c:202
- hfsplus_iget+0x740/0xaf0 fs/hfsplus/super.c:82
- hfsplus_fill_super+0x151b/0x26f0 fs/hfsplus/super.c:503
- mount_bdev+0x3d7/0x560 fs/super.c:1650
- hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:641
- legacy_get_tree+0x110/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa5/0x520 fs/super.c:1771
- do_new_mount+0x68d/0x1550 fs/namespace.c:3337
- path_mount+0x73d/0x1f20 fs/namespace.c:3664
- do_mount fs/namespace.c:3677 [inline]
- __do_sys_mount fs/namespace.c:3886 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3863
- __x64_sys_mount+0xe4/0x140 fs/namespace.c:3863
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-Uninit was created at:
- slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
- slab_alloc_node mm/slub.c:3478 [inline]
- __kmem_cache_alloc_node+0x5c9/0x970 mm/slub.c:3517
- __do_kmalloc_node mm/slab_common.c:1006 [inline]
- __kmalloc+0x121/0x3c0 mm/slab_common.c:1020
- kmalloc include/linux/slab.h:604 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_iget+0x3e1/0xaf0 fs/hfsplus/super.c:80
- hfsplus_fill_super+0x151b/0x26f0 fs/hfsplus/super.c:503
- mount_bdev+0x3d7/0x560 fs/super.c:1650
- hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:641
- legacy_get_tree+0x110/0x290 fs/fs_context.c:662
- vfs_get_tree+0xa5/0x520 fs/super.c:1771
- do_new_mount+0x68d/0x1550 fs/namespace.c:3337
- path_mount+0x73d/0x1f20 fs/namespace.c:3664
- do_mount fs/namespace.c:3677 [inline]
- __do_sys_mount fs/namespace.c:3886 [inline]
- __se_sys_mount+0x725/0x810 fs/namespace.c:3863
- __x64_sys_mount+0xe4/0x140 fs/namespace.c:3863
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-CPU: 1 PID: 4989 Comm: syz-executor165 Not tainted 6.7.0-rc7-syzkaller-00003-gfbafc3e621c3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+On Wed, Dec 20, 2023 at 12:33=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> orangefs_dir_fill() doesn't use oi and dentry arguments at all
+> do_readdir() gets dentry, uses only dentry->d_inode; it also
+> gets oi, which is ORANGEFS_I(dentry->d_inode) (i.e. ->d_inode -
+> constant offset).
+> orangefs_dir_mode() gets dentry and oi, uses only to pass those
+> to do_readdir().
+> orangefs_dir_iterate() uses dentry and oi only to pass those to
+> orangefs_dir_fill() and orangefs_dir_more().
+>
+> The only thing it really needs is ->d_inode; moreover, that's
+> better expressed as file_inode(file) - no need to go through
+> ->f_path.dentry->d_inode.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/orangefs/dir.c | 32 ++++++++++++--------------------
+>  1 file changed, 12 insertions(+), 20 deletions(-)
+>
+> diff --git a/fs/orangefs/dir.c b/fs/orangefs/dir.c
+> index 9cacce5d55c1..6d1fbeca9d81 100644
+> --- a/fs/orangefs/dir.c
+> +++ b/fs/orangefs/dir.c
+> @@ -58,10 +58,10 @@ struct orangefs_dir {
+>   * first part of the part list.
+>   */
+>
+> -static int do_readdir(struct orangefs_inode_s *oi,
+> -    struct orangefs_dir *od, struct dentry *dentry,
+> +static int do_readdir(struct orangefs_dir *od, struct inode *inode,
+>      struct orangefs_kernel_op_s *op)
+>  {
+> +       struct orangefs_inode_s *oi =3D ORANGEFS_I(inode);
+>         struct orangefs_readdir_response_s *resp;
+>         int bufi, r;
+>
+> @@ -87,7 +87,7 @@ static int do_readdir(struct orangefs_inode_s *oi,
+>         op->upcall.req.readdir.buf_index =3D bufi;
+>
+>         r =3D service_operation(op, "orangefs_readdir",
+> -           get_interruptible_flag(dentry->d_inode));
+> +           get_interruptible_flag(inode));
+>
+>         orangefs_readdir_index_put(bufi);
+>
+> @@ -158,8 +158,7 @@ static int parse_readdir(struct orangefs_dir *od,
+>         return 0;
+>  }
+>
+> -static int orangefs_dir_more(struct orangefs_inode_s *oi,
+> -    struct orangefs_dir *od, struct dentry *dentry)
+> +static int orangefs_dir_more(struct orangefs_dir *od, struct inode *inod=
+e)
+>  {
+>         struct orangefs_kernel_op_s *op;
+>         int r;
+> @@ -169,7 +168,7 @@ static int orangefs_dir_more(struct orangefs_inode_s =
+*oi,
+>                 od->error =3D -ENOMEM;
+>                 return -ENOMEM;
+>         }
+> -       r =3D do_readdir(oi, od, dentry, op);
+> +       r =3D do_readdir(od, inode, op);
+>         if (r) {
+>                 od->error =3D r;
+>                 goto out;
+> @@ -238,9 +237,7 @@ static int fill_from_part(struct orangefs_dir_part *p=
+art,
+>         return 1;
+>  }
+>
+> -static int orangefs_dir_fill(struct orangefs_inode_s *oi,
+> -    struct orangefs_dir *od, struct dentry *dentry,
+> -    struct dir_context *ctx)
+> +static int orangefs_dir_fill(struct orangefs_dir *od, struct dir_context=
+ *ctx)
+>  {
+>         struct orangefs_dir_part *part;
+>         size_t count;
+> @@ -304,15 +301,10 @@ static loff_t orangefs_dir_llseek(struct file *file=
+, loff_t offset,
+>  static int orangefs_dir_iterate(struct file *file,
+>      struct dir_context *ctx)
+>  {
+> -       struct orangefs_inode_s *oi;
+> -       struct orangefs_dir *od;
+> -       struct dentry *dentry;
+> +       struct orangefs_dir *od =3D file->private_data;
+> +       struct inode *inode =3D file_inode(file);
+>         int r;
+>
+> -       dentry =3D file->f_path.dentry;
+> -       oi =3D ORANGEFS_I(dentry->d_inode);
+> -       od =3D file->private_data;
+> -
+>         if (od->error)
+>                 return od->error;
+>
+> @@ -342,7 +334,7 @@ static int orangefs_dir_iterate(struct file *file,
+>          */
+>         while (od->token !=3D ORANGEFS_ITERATE_END &&
+>             ctx->pos > od->end) {
+> -               r =3D orangefs_dir_more(oi, od, dentry);
+> +               r =3D orangefs_dir_more(od, inode);
+>                 if (r)
+>                         return r;
+>         }
+> @@ -351,17 +343,17 @@ static int orangefs_dir_iterate(struct file *file,
+>
+>         /* Then try to fill if there's any left in the buffer. */
+>         if (ctx->pos < od->end) {
+> -               r =3D orangefs_dir_fill(oi, od, dentry, ctx);
+> +               r =3D orangefs_dir_fill(od, ctx);
+>                 if (r)
+>                         return r;
+>         }
+>
+>         /* Finally get some more and try to fill. */
+>         if (od->token !=3D ORANGEFS_ITERATE_END) {
+> -               r =3D orangefs_dir_more(oi, od, dentry);
+> +               r =3D orangefs_dir_more(od, inode);
+>                 if (r)
+>                         return r;
+> -               r =3D orangefs_dir_fill(oi, od, dentry, ctx);
+> +               r =3D orangefs_dir_fill(od, ctx);
+>         }
+>
+>         return r;
+> --
+> 2.39.2
+>
+>
 
