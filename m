@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-6993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6785381F6DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 11:23:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272C681F6E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 11:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 114BBB22E6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 10:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A5C1C23271
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 10:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA2C6ABD;
-	Thu, 28 Dec 2023 10:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4726FA4;
+	Thu, 28 Dec 2023 10:34:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3191363CD
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 10:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06ADC63DC
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7b7018c9476so498753239f.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 02:23:23 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7ba7b2c0c1cso861728939f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 02:34:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703759003; x=1704363803;
+        d=1e100.net; s=20230601; t=1703759668; x=1704364468;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hd+YFMq5UU4QGqfb69wCvN3j30ey5zlrqHKEHPW8tDE=;
-        b=BeZFb5NlnKSOAiUOVEngvkz6FB9TVCzhJH8L8x9KYNW0v4rgVSMwY7lw4BEEDNeih0
-         Vjfov8kewWM0Vrl/EvG/ctrmIq7C5KJdmtGU6c1pRVV3iZcu/0Iy64ftw2xroYTkmhbH
-         Sb8QL7gT8rc83O6ugWMZl9itfg2y/++qIOlbuntNbiHr1w9JR873+mZICMDKfocJ2Cxn
-         2zCqLqKlfLEDQZVYf8dKW+LREp65/XCk8h5F1n1XqfCCqeOTSALXKPkKBwE3JP6Q8urA
-         VNTJZ4hcSt4ngRj/R385coq7Fb20UrvXDlD2p7Z8W1/+Dd56yHKUkQ2VoJjwSNnEHVHO
-         O62A==
-X-Gm-Message-State: AOJu0YzOOSmIEa6Zd3gjoJnmO5/Ke+VDft/l1d+Mico2ehL6k1pKzc5T
-	SQXSM83NBp5yO0t0AJYDMdeunUnDy1nEZlSOlJqLXR2UUL0K7ts=
-X-Google-Smtp-Source: AGHT+IFZL3WXQVtpSwFyljomHaI30dycfxKs37yqitf9206NQdx2yMJXJXes72Euj1DoshoVlghsnRXuRrJZ825zDOu7pEGBxPYT
+        bh=N0oCSfRy8XwUA44T0zAUXbingz0fhM4PCwluuYF0MN0=;
+        b=hGaPTELKuG0mhVaIc4dJMfLMIX03TzNh92nQll93ma8cD41OuudPRgTj0wgNxWQSdG
+         2HA1EP0P6F3LIeaNH7TL8W51tjkAEpjuabVGgWLpicsp5TOCQn/hTF0YdBat+ZQXHUQJ
+         PBDJ0kIWwPEAkHA6ith6Q/+HsnZhmef093eV0HG0v/1xtek8gHEFsrSZsObYnRvO0qvQ
+         hDWan1dYuSSwsesuMQFl9ZaRnNCz0qL1ygjC2wBgJ/nHqeQghoI7CMdWukwOeQL4RA6f
+         c/AEtBkc8u8qkgVopCVEYeOaWzOZyBjOL749cQG8eWyxY5YjXhmTGoMeo9apBwz/aShH
+         XROQ==
+X-Gm-Message-State: AOJu0Yx2GdENIVK/jN/lJbEJmRiuVG05vLmQQ3pvrjzrphG0dxhosKKO
+	PhGwhB/169OE2IjmwdoSMz96IWC6GsZUFVIU6RFDGH/SkqQZ
+X-Google-Smtp-Source: AGHT+IGzkU8ICsFNgeWO4iMwAVO3MODGVzGlDeU6J/rYE3fRLIvnn0zpP26ixYu9X8V+8iYL6Mtid9xy6XQjpMWsk8M04Gd9o1Ii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:410b:b0:46b:4319:59cc with SMTP id
- ay11-20020a056638410b00b0046b431959ccmr668539jab.1.1703759003316; Thu, 28 Dec
- 2023 02:23:23 -0800 (PST)
-Date: Thu, 28 Dec 2023 02:23:23 -0800
+X-Received: by 2002:a5d:814e:0:b0:7ba:d9c8:b97d with SMTP id
+ f14-20020a5d814e000000b007bad9c8b97dmr77030ioo.4.1703759668260; Thu, 28 Dec
+ 2023 02:34:28 -0800 (PST)
+Date: Thu, 28 Dec 2023 02:34:28 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002cf943060d8f4e3c@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in __hfsplus_ext_cache_extent
-From: syzbot <syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-ID: <000000000000cf405f060d8f75a9@google.com>
+Subject: [syzbot] [udf?] KMSAN: uninit-value in udf_update_tag
+From: syzbot <syzbot+d31185aa54170f7fc1f5@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -59,82 +59,47 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
+HEAD commit:    861deac3b092 Linux 6.7-rc7
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1770ee26e80000
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16e0171ae80000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=e0c7078a6b901aa3
-dashboard link: https://syzkaller.appspot.com/bug?extid=55ad87f38795d6787521
+dashboard link: https://syzkaller.appspot.com/bug?extid=d31185aa54170f7fc1f5
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ea9be9e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149e8179e80000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17561579e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1277e7a5e80000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1520f7b6daa4/disk-fbafc3e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8b490af009d5/vmlinux-fbafc3e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/202ca200f4a4/bzImage-fbafc3e6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/78ed00b58340/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/0ea60ee8ed32/disk-861deac3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6d69fdc33021/vmlinux-861deac3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f0158750d452/bzImage-861deac3.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/f35551f8a991/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com
+Reported-by: syzbot+d31185aa54170f7fc1f5@syzkaller.appspotmail.com
 
+=======================================================
+UDF-fs: INFO Mounting volume 'LinuxUDF', timestamp 2022/11/22 14:59 (1000)
 =====================================================
-BUG: KMSAN: uninit-value in __hfsplus_ext_read_extent fs/hfsplus/extents.c:167 [inline]
-BUG: KMSAN: uninit-value in __hfsplus_ext_cache_extent+0x82a/0x960 fs/hfsplus/extents.c:191
- __hfsplus_ext_read_extent fs/hfsplus/extents.c:167 [inline]
- __hfsplus_ext_cache_extent+0x82a/0x960 fs/hfsplus/extents.c:191
- hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
- hfsplus_file_extend+0x775/0x1b90 fs/hfsplus/extents.c:461
- hfsplus_get_block+0xe99/0x1690 fs/hfsplus/extents.c:245
- __block_write_begin_int+0x946/0x2c70 fs/buffer.c:2119
- __block_write_begin fs/buffer.c:2168 [inline]
- block_write_begin+0x143/0x450 fs/buffer.c:2227
- cont_write_begin+0xd5c/0x12f0 fs/buffer.c:2582
- hfsplus_write_begin+0x9a/0x130 fs/hfsplus/inode.c:52
- generic_perform_write+0x3f5/0xc40 mm/filemap.c:3918
- __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4013
- generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4039
- call_write_iter include/linux/fs.h:2020 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x8ef/0x1490 fs/read_write.c:584
- ksys_write+0x20f/0x4c0 fs/read_write.c:637
- __do_sys_write fs/read_write.c:649 [inline]
- __se_sys_write fs/read_write.c:646 [inline]
- __x64_sys_write+0x93/0xd0 fs/read_write.c:646
+BUG: KMSAN: uninit-value in crc_itu_t_byte include/linux/crc-itu-t.h:22 [inline]
+BUG: KMSAN: uninit-value in crc_itu_t+0x287/0x2e0 lib/crc-itu-t.c:60
+ crc_itu_t_byte include/linux/crc-itu-t.h:22 [inline]
+ crc_itu_t+0x287/0x2e0 lib/crc-itu-t.c:60
+ udf_update_tag+0x5c/0x2a0 fs/udf/misc.c:261
+ udf_rename+0x13dd/0x16a0 fs/udf/namei.c:877
+ vfs_rename+0x1a79/0x1fa0 fs/namei.c:4844
+ do_renameat2+0x1571/0x1ca0 fs/namei.c:4996
+ __do_sys_rename fs/namei.c:5042 [inline]
+ __se_sys_rename fs/namei.c:5040 [inline]
+ __x64_sys_rename+0xec/0x140 fs/namei.c:5040
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x63/0x6b
 
-Uninit was created at:
- slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
- slab_alloc_node mm/slub.c:3478 [inline]
- __kmem_cache_alloc_node+0x5c9/0x970 mm/slub.c:3517
- __do_kmalloc_node mm/slab_common.c:1006 [inline]
- __kmalloc+0x121/0x3c0 mm/slab_common.c:1020
- kmalloc include/linux/slab.h:604 [inline]
- hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
- hfsplus_ext_read_extent fs/hfsplus/extents.c:216 [inline]
- hfsplus_file_extend+0x6d8/0x1b90 fs/hfsplus/extents.c:461
- hfsplus_get_block+0xe99/0x1690 fs/hfsplus/extents.c:245
- __block_write_begin_int+0x946/0x2c70 fs/buffer.c:2119
- __block_write_begin fs/buffer.c:2168 [inline]
- block_write_begin+0x143/0x450 fs/buffer.c:2227
- cont_write_begin+0xd5c/0x12f0 fs/buffer.c:2582
- hfsplus_write_begin+0x9a/0x130 fs/hfsplus/inode.c:52
- generic_perform_write+0x3f5/0xc40 mm/filemap.c:3918
- __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4013
- generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4039
- call_write_iter include/linux/fs.h:2020 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x8ef/0x1490 fs/read_write.c:584
- ksys_write+0x20f/0x4c0 fs/read_write.c:637
- __do_sys_write fs/read_write.c:649 [inline]
- __se_sys_write fs/read_write.c:646 [inline]
- __x64_sys_write+0x93/0xd0 fs/read_write.c:646
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+Local variable diriter created at:
+ udf_rename+0xbb/0x16a0 fs/udf/namei.c:768
+ vfs_rename+0x1a79/0x1fa0 fs/namei.c:4844
 
-CPU: 0 PID: 5003 Comm: syz-executor371 Not tainted 6.7.0-rc7-syzkaller-00003-gfbafc3e621c3 #0
+CPU: 0 PID: 5011 Comm: syz-executor409 Not tainted 6.7.0-rc7-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
 =====================================================
 
