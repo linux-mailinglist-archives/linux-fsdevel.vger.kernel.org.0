@@ -1,123 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-6992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-6993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC2581F6B5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 11:07:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6785381F6DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 11:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690EF285621
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 10:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 114BBB22E6B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 10:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAA46AAD;
-	Thu, 28 Dec 2023 10:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EapI1PpO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA2C6ABD;
+	Thu, 28 Dec 2023 10:23:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADB963D1;
-	Thu, 28 Dec 2023 10:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BS9OU96018640;
-	Thu, 28 Dec 2023 10:06:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=cWe/25it10EMHhkWu1PLMQPFydg3tc9FhUjbVhZUt7E=;
- b=EapI1PpOnuAhqZbC4v5TbwTeUkiuSQE8TQSQC0MUzUIjiN3JaRUabyammQFFiyf6KJbX
- owg4+bs+QB1ZTM+ydrSq/54jDfzC7gKNcOk9+Br9eSe0CiwfLn2NrqwIEq0XWz67an6Y
- Z5ly3zosB30YK9L/S7KtKYuClhkLzlyzmQtdseKNWIZsztvdAK7es1tAIK27xs8up8IK
- 6OSa4xYiOmD3pZi+vg8iTzIzSDlMCPzNpVdhNJ8QFBZRbJx7aXmlrQego2IVjutAuht/
- 7yvUP70QcJrgh/+SWs7r6f9OqXP/UMwOozF5pKWks8gJObvhpM1JW9qyad/PVMDgRdU6 Hw== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3v5pfce3ad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Dec 2023 10:06:32 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 3BS91V7R028761;
-	Thu, 28 Dec 2023 10:06:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3v5p0d4afn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 28 Dec 2023 10:06:31 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BSA6VwO035795;
-	Thu, 28 Dec 2023 10:06:31 GMT
-Received: from localhost.localdomain (dhcp-10-175-56-248.vpn.oracle.com [10.175.56.248])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3v5p0d4aaq-1;
-	Thu, 28 Dec 2023 10:06:30 +0000
-From: Vegard Nossum <vegard.nossum@oracle.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH -next] fs: fix __sb_write_started() kerneldoc formatting
-Date: Thu, 28 Dec 2023 11:06:08 +0100
-Message-Id: <20231228100608.3123987-1-vegard.nossum@oracle.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3191363CD
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 10:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7b7018c9476so498753239f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 02:23:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703759003; x=1704363803;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hd+YFMq5UU4QGqfb69wCvN3j30ey5zlrqHKEHPW8tDE=;
+        b=BeZFb5NlnKSOAiUOVEngvkz6FB9TVCzhJH8L8x9KYNW0v4rgVSMwY7lw4BEEDNeih0
+         Vjfov8kewWM0Vrl/EvG/ctrmIq7C5KJdmtGU6c1pRVV3iZcu/0Iy64ftw2xroYTkmhbH
+         Sb8QL7gT8rc83O6ugWMZl9itfg2y/++qIOlbuntNbiHr1w9JR873+mZICMDKfocJ2Cxn
+         2zCqLqKlfLEDQZVYf8dKW+LREp65/XCk8h5F1n1XqfCCqeOTSALXKPkKBwE3JP6Q8urA
+         VNTJZ4hcSt4ngRj/R385coq7Fb20UrvXDlD2p7Z8W1/+Dd56yHKUkQ2VoJjwSNnEHVHO
+         O62A==
+X-Gm-Message-State: AOJu0YzOOSmIEa6Zd3gjoJnmO5/Ke+VDft/l1d+Mico2ehL6k1pKzc5T
+	SQXSM83NBp5yO0t0AJYDMdeunUnDy1nEZlSOlJqLXR2UUL0K7ts=
+X-Google-Smtp-Source: AGHT+IFZL3WXQVtpSwFyljomHaI30dycfxKs37yqitf9206NQdx2yMJXJXes72Euj1DoshoVlghsnRXuRrJZ825zDOu7pEGBxPYT
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-28_02,2023-12-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 spamscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2312280080
-X-Proofpoint-GUID: fpLWot9syO7IQo91pEzJGc8cMzWivCia
-X-Proofpoint-ORIG-GUID: fpLWot9syO7IQo91pEzJGc8cMzWivCia
+X-Received: by 2002:a05:6638:410b:b0:46b:4319:59cc with SMTP id
+ ay11-20020a056638410b00b0046b431959ccmr668539jab.1.1703759003316; Thu, 28 Dec
+ 2023 02:23:23 -0800 (PST)
+Date: Thu, 28 Dec 2023 02:23:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002cf943060d8f4e3c@google.com>
+Subject: [syzbot] [hfs?] KMSAN: uninit-value in __hfsplus_ext_cache_extent
+From: syzbot <syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-When running 'make htmldocs', I see the following warning:
+Hello,
 
-  Documentation/filesystems/api-summary:14: ./include/linux/fs.h:1659: WARNING: Definition list ends without a blank line; unexpected unindent.
+syzbot found the following issue on:
 
-The official guidance [1] seems to be to use lists, which will prevent
-both the "unexpected unindent" warning as well as ensure that each line
-is formatted on a separate line in the HTML output instead of being
-all considered a single paragraph.
+HEAD commit:    fbafc3e621c3 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1770ee26e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e0c7078a6b901aa3
+dashboard link: https://syzkaller.appspot.com/bug?extid=55ad87f38795d6787521
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ea9be9e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149e8179e80000
 
-[1]: https://docs.kernel.org/doc-guide/kernel-doc.html#return-values
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1520f7b6daa4/disk-fbafc3e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8b490af009d5/vmlinux-fbafc3e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/202ca200f4a4/bzImage-fbafc3e6.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/78ed00b58340/mount_0.gz
 
-Fixes: 8802e580ee64 ("fs: create __sb_write_started() helper")
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+55ad87f38795d6787521@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in __hfsplus_ext_read_extent fs/hfsplus/extents.c:167 [inline]
+BUG: KMSAN: uninit-value in __hfsplus_ext_cache_extent+0x82a/0x960 fs/hfsplus/extents.c:191
+ __hfsplus_ext_read_extent fs/hfsplus/extents.c:167 [inline]
+ __hfsplus_ext_cache_extent+0x82a/0x960 fs/hfsplus/extents.c:191
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
+ hfsplus_file_extend+0x775/0x1b90 fs/hfsplus/extents.c:461
+ hfsplus_get_block+0xe99/0x1690 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x946/0x2c70 fs/buffer.c:2119
+ __block_write_begin fs/buffer.c:2168 [inline]
+ block_write_begin+0x143/0x450 fs/buffer.c:2227
+ cont_write_begin+0xd5c/0x12f0 fs/buffer.c:2582
+ hfsplus_write_begin+0x9a/0x130 fs/hfsplus/inode.c:52
+ generic_perform_write+0x3f5/0xc40 mm/filemap.c:3918
+ __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4013
+ generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4039
+ call_write_iter include/linux/fs.h:2020 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x8ef/0x1490 fs/read_write.c:584
+ ksys_write+0x20f/0x4c0 fs/read_write.c:637
+ __do_sys_write fs/read_write.c:649 [inline]
+ __se_sys_write fs/read_write.c:646 [inline]
+ __x64_sys_write+0x93/0xd0 fs/read_write.c:646
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was created at:
+ slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
+ slab_alloc_node mm/slub.c:3478 [inline]
+ __kmem_cache_alloc_node+0x5c9/0x970 mm/slub.c:3517
+ __do_kmalloc_node mm/slab_common.c:1006 [inline]
+ __kmalloc+0x121/0x3c0 mm/slab_common.c:1020
+ kmalloc include/linux/slab.h:604 [inline]
+ hfsplus_find_init+0x91/0x250 fs/hfsplus/bfind.c:21
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:216 [inline]
+ hfsplus_file_extend+0x6d8/0x1b90 fs/hfsplus/extents.c:461
+ hfsplus_get_block+0xe99/0x1690 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x946/0x2c70 fs/buffer.c:2119
+ __block_write_begin fs/buffer.c:2168 [inline]
+ block_write_begin+0x143/0x450 fs/buffer.c:2227
+ cont_write_begin+0xd5c/0x12f0 fs/buffer.c:2582
+ hfsplus_write_begin+0x9a/0x130 fs/hfsplus/inode.c:52
+ generic_perform_write+0x3f5/0xc40 mm/filemap.c:3918
+ __generic_file_write_iter+0x20a/0x460 mm/filemap.c:4013
+ generic_file_write_iter+0x103/0x5b0 mm/filemap.c:4039
+ call_write_iter include/linux/fs.h:2020 [inline]
+ new_sync_write fs/read_write.c:491 [inline]
+ vfs_write+0x8ef/0x1490 fs/read_write.c:584
+ ksys_write+0x20f/0x4c0 fs/read_write.c:637
+ __do_sys_write fs/read_write.c:649 [inline]
+ __se_sys_write fs/read_write.c:646 [inline]
+ __x64_sys_write+0x93/0xd0 fs/read_write.c:646
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+CPU: 0 PID: 5003 Comm: syz-executor371 Not tainted 6.7.0-rc7-syzkaller-00003-gfbafc3e621c3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+=====================================================
+
+
 ---
-Applies to git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.rw
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- include/linux/fs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index db5d07e6e02e..473063f385e5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1650,9 +1650,9 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
-  * @sb: the super we write to
-  * @level: the freeze level
-  *
-- * > 0 sb freeze level is held
-- *   0 sb freeze level is not held
-- * < 0 !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
-+ * * > 0 - sb freeze level is held
-+ * *   0 - sb freeze level is not held
-+ * * < 0 - !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
-  */
- static inline int __sb_write_started(const struct super_block *sb, int level)
- {
--- 
-2.34.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
