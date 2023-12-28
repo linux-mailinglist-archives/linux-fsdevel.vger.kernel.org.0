@@ -1,1781 +1,532 @@
-Return-Path: <linux-fsdevel+bounces-6999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7000-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA00E81F7EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 12:46:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861E381F837
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 13:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A061F23328
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 11:46:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9BB1C21370
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 12:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E7D6FDA;
-	Thu, 28 Dec 2023 11:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C60A748D;
+	Thu, 28 Dec 2023 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMcCdNaj"
+	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="pppqqKGd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2069.outbound.protection.outlook.com [40.107.255.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E66FCB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 11:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a26f3e98619so290977166b.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 03:46:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703763973; x=1704368773; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zr55fPoyPsywZ+YmZQbBw3erx8d0AoGV3VvNdCfQZuY=;
-        b=bMcCdNajv6YVMTlIOscPzAmD5jF738+gnreBjWf+9ZjWbtjxbIog1UTU8ss2ghFcto
-         9pd/ba+270glvuZYrqNEHY94OTKrCkgzDahbMZYfUBdv8E6PRR1yxxI5zgqNgmp5A/c6
-         7Vt6pBerh8ZXADLzzaeXTGzaeRfHkJGfYPXPJDcTMAxiplOUaN8p9qBzwbgisS4iJVvO
-         HWGYfyxpDXFonVlTeo24fEvfvBlmdhjq4MgkOT/lI0RLSYxgRN1Z9+3QBcLjE4jmHqtO
-         udDKop3g1yn2CQGd+p0o8dElLFw1D44++DHBYUwLLTZQT56skKDH0lxq7494TrYf4r9n
-         Zplg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703763973; x=1704368773;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zr55fPoyPsywZ+YmZQbBw3erx8d0AoGV3VvNdCfQZuY=;
-        b=VNBxNQmG9qDsZxKokTgy3lp4lGVF0R2ouCHzB/R4rmcQ8ytcVePTx1Ftn/tR/6zueB
-         nfrFqwZiDHpebAUggHiHLCW6W0vxMngGNmSZuX33LmjGGhvB0Se/fDkCdHzmGta00KLS
-         GExMmu2E5T9jq9LoRx2T+CSMsxldCVfRF0Qdc6yc9WCLpk5qIF9tqBt1NCNI6TufAAPV
-         LbefckYns5CHzQnH2YqE/KKxwW5PhxRB9nia51B5HBAdH1AfxbVwpZAwcRZG47cTNQnW
-         2RVkfPwa3hGjtbjBiR3xqsv15Nb3JmqRbjRuDpJR2evf2KdFb9sx2m5/+7g9S1w7/oPZ
-         VudQ==
-X-Gm-Message-State: AOJu0YzLuxEae5kfUYMtK/vpk3pGAZpAlcYOvTdB0e2NJRFR+LA/Kwzm
-	W539lzv7S3EiSrn4kYsix+tvdIVTxA==
-X-Google-Smtp-Source: AGHT+IHrKMc3TS8sjuecWb0rXcfr2UlMHM0K/EGSRx14evNYnqYFDUTfypwsDqz/hkaVnlbiZeQFSA==
-X-Received: by 2002:a17:906:4745:b0:a27:5a41:7e8 with SMTP id j5-20020a170906474500b00a275a4107e8mr934837ejs.149.1703763972535;
-        Thu, 28 Dec 2023 03:46:12 -0800 (PST)
-Received: from p183 ([46.53.248.146])
-        by smtp.gmail.com with ESMTPSA id n16-20020a170906b31000b00a235e5139d2sm7425720ejz.150.2023.12.28.03.46.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Dec 2023 03:46:12 -0800 (PST)
-Date: Thu, 28 Dec 2023 14:46:10 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: extract include/linux/fs_type.h
-Message-ID: <1c70c171-a0e4-457e-af34-229d5a56951e@p183>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE576748F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 12:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Oggw17zeExrhE6tJv/RSCgUv5D7RjyIT6d2nF6ZfR+m4X8+AXjDA8lvvp3wPoNt+YU3f0cJx116WzzR2s10pms2Kh8Yu+2a9Fnts0kSfbNorkBu3m2WhUVGNSryNvYmo2NQ/aL0pyfCoKKMW8XFYZzyY2OFoRrWZvHL3KMvSmWpvVs2k357XGaHFa+PBZfa0JUT/L8ap60FDgCAFxlSPOxkfBJR+xcUz92GOeRADyardYQUAL48tjJOO0S8e86UBqV0ktdUKzVJ0V0Ov+SPrJrtd3xLAGdYC3pmSKXcqW16ItoavKpAKuQ9q3Q4dgcd7OgeGsgLRP/E7f2HcmROahA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WJb8MD8veX1cr8ETpfntdLVaT6yQzX9/nfYjeSlN3IA=;
+ b=QyVIcfGXCXGwyorvH5VV/Tn3YiZksSy5xVlj/FbSTnEQ2o2Wp/mq0f4Mowe8yeYLhQrAQTXnypVYwhmsFKDuR0jMdfhhlvdbMu+knnq5tk/iL0MRKa3p1lAHweBmycgLvnQYuTDtO3ti/AH9nOllqgZsFsHEvJuo2tCjMLHES5hqfVhmlFbZtCgunRTGf+1j52Plzf79ZMZ4e3EYcEP2YMO+w8xznRqljT3+ft2bwj1VgNWNaN3m2Xg7HNoYWWkvWftrI/zPfIin8lccPR0vAAHk43AxbuSV3tmD2XKH2JT4WNzFzn7HbQuQ/oYsyT+fEtqzw5vMtz3MKasDYtPfhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WJb8MD8veX1cr8ETpfntdLVaT6yQzX9/nfYjeSlN3IA=;
+ b=pppqqKGdq12pF/WiUnxW8nP1d/mvDeE0jN3+zHhzT8nEZmIRFn1tX9cusEqfmVjOdppbVvx6mdr+BYLUUrhYkU52PLUvJeJmm7WTlmIr0iL+fE9Cs91FaKyk9doALAT372HjSQKZOhU2zQ4Cpc44u/fOuw2WBpdjughjpm1O8pkJU8DfZ9yGpjYLAtaraU5NSMibDkXwMDmE/r9Bp2+VrjmyLm2eSvLyvOWQJ1PAs1M9tW7T7ihvcNYQvGQTKsylN8td3FjSa1g+un2qc2fD+oQWiNvD4txqwbMzvU2Z4e5AP+Z9+tWXAXzSHRxKRB9eHAKYqZobkjld3BbkW2ZFNw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from SI2PR06MB5385.apcprd06.prod.outlook.com (2603:1096:4:1ec::12)
+ by SEYPR06MB6822.apcprd06.prod.outlook.com (2603:1096:101:1b0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7113.27; Thu, 28 Dec
+ 2023 12:36:21 +0000
+Received: from SI2PR06MB5385.apcprd06.prod.outlook.com
+ ([fe80::ed1b:8435:e0a1:e119]) by SI2PR06MB5385.apcprd06.prod.outlook.com
+ ([fe80::ed1b:8435:e0a1:e119%4]) with mapi id 15.20.7113.027; Thu, 28 Dec 2023
+ 12:36:21 +0000
+From: Xiaoguang Wang <lege.wang@jaguarmicro.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: vgoyal@redhat.com,
+	stefanha@redhat.com,
+	miklos@szeredi.hu,
+	shawn.shao@jaguarmicro.com,
+	Xiaoguang Wang <lege.wang@jaguarmicro.com>
+Subject: [RFC] fuse: use page cache pages for writeback io when virtio_fs is in use
+Date: Thu, 28 Dec 2023 20:35:28 +0800
+Message-ID: <20231228123528.705-1-lege.wang@jaguarmicro.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0128.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::32) To SI2PR06MB5385.apcprd06.prod.outlook.com
+ (2603:1096:4:1ec::12)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5385:EE_|SEYPR06MB6822:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24e1c320-9b95-4e35-469b-08dc07a19878
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	biEVL9Sjl/H5l0pop8p5JDrdWFeIzzRI6ao0VoLjtFHeMWFCID7rywWc+NPPWuRL3b5mQHzRaBBieFuDfAbxyX+M3vLeLtaBrEGtuPGfBfFLAjlSdkVihd7sn/V8Cbvxl0qW9POjIjJW3dqxt5wLev+hQKUgGyh3jOsCMJlcnK4k9/HlCR8o/2NHhwMoMGGuy2VigfN01SjMVG887s7SxpLAv2C4O8ZUr3/CEoQLtkfjtPN6QrGNoUAbWZJyvP+8jlIZaajW3RK5k8MXCoD2aWin9xTpnbCip/dEgKi5dMa6cG2PAGwBX8JeO53IP2HcCtjkkbCVHjGSHGVa2AafAcVnSjMt37+QhVKxUynk868z0QyRvuXSI4n6fvsgvVI/KIe/OVdo3NXW6d7YsAzAuOmgswb//z8Q5CvRuE+xUIySDZn6W81sLQrtvdCImkjQZ29znBv+ZsnuKjqAjznUXQKCHxZHMHupKF4XDuZpzK6WyZ+tRLaUBDxUrQ7bfFzxQHjXblMbfrghLoccZoXVJHZeRsmSATgJl9hMjBMsURKYfWSZE4GhXEaUwPIaZBalIeXXMTCLFTrlqpMp5DPymOP5mS2oyYGCsKcK6QQcygI=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5385.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(376002)(39830400003)(366004)(346002)(230922051799003)(451199024)(64100799003)(186009)(1800799012)(2616005)(83380400001)(41300700001)(1076003)(107886003)(316002)(38100700002)(26005)(5660300002)(8676002)(8936002)(4326008)(2906002)(30864003)(478600001)(6486002)(6506007)(6512007)(66556008)(66946007)(6916009)(966005)(52116002)(66476007)(86362001)(38350700005)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?apAf6S8r59XoA6cDfhtBbf1p9ypfscFHN/R95602Hkusss0+LqY7muXS7H3X?=
+ =?us-ascii?Q?fSGrL5M29deCrtYeBvIxE0XtX0jRPIlduSkT8jmQAT+S+3RGWYZNXIJl3L3z?=
+ =?us-ascii?Q?b2HpvYZvLB5V0m4rf7UxWnWJ1GRESx2GxLcUMRI9fANz1JGcSZ2skLWW0egc?=
+ =?us-ascii?Q?1DFC7uQesvABRusMpdCrW2+i0HGkpk4l3a6CnzI4oeyyDwLLQOT/H8a2CEro?=
+ =?us-ascii?Q?RwcnOp3H0wz7VJDyotGSKgNrrlvyv2akwq30DW0QbynpBS3pJIdLb+kGeSgQ?=
+ =?us-ascii?Q?8g9P7hu6tdk1YU5zgVUheguizn3geD2/SOmRUjDFiIClgeZqkerVpyE6FfQP?=
+ =?us-ascii?Q?/RDgPnMSJkirtG21kb2flmYN+BLmbi8U7XeHhQnRbWIY3I9sI1S3g5jPKQX2?=
+ =?us-ascii?Q?QdsKZAFJM7kRi66j2z2vJz9OG7aOjAaPTDZhqmyIc9bnXOiSi4DaSklWGY5J?=
+ =?us-ascii?Q?lqC/pZC6uI7DR0zy3WU8nhg3HhBW9O+bdd9z8zyvalvfkh3mLlnbHrVXdT5U?=
+ =?us-ascii?Q?fnek1rMn4jYmJhuvyCYVlQAgco1w7yC2zUcys9O2fCfdSYe/AhJhpRm7fLiR?=
+ =?us-ascii?Q?jYPUWyGan8Ha9kANPclRDGZ7GPllKbFw1V/8fcxWtz0HZ99rQsJ4p2kh7335?=
+ =?us-ascii?Q?6rRDlSge4eODnDE+B9SwmfGP4h+anYRKKNtonEkFNCZkmhP+VnlNclYpatd9?=
+ =?us-ascii?Q?yt066wAYBOYOXzssRogB+9MR8dxfK/PwRuzT/A5nV5Jq0q8JpTQwNcQm0mKr?=
+ =?us-ascii?Q?eNGlB34rLO3wYKBJBlZbGFQpPg+H4wg3yjaGricMczRk9QD68nqwIcM6LFNv?=
+ =?us-ascii?Q?KgjM1w8+AtMuIaLV73hx36n1rwXxShe1R9z+g3+EcVAhg0dMD/SSYGUjgNd7?=
+ =?us-ascii?Q?T5BiJ6Cpm4hwF082dBZbXxI+pTGlOU0zOO7K+91xdzznC0+H+fAShHsw9RoW?=
+ =?us-ascii?Q?DfvtC/zNmV1yzyt1/AhWyjQ8gd5xyQmK4/9JY+TohF5MocihrVfFYjOxTAPb?=
+ =?us-ascii?Q?gPJZVyvq7eVjyTjKOeH7oBoC+RV6J7W6hKu0yjfbms7LbH+q8TGGRgphoOrZ?=
+ =?us-ascii?Q?13C3zaH1japAdGDU+VR/hx6thYx+WkskO7Gvob0LhTie1bVFKS7yxsHVPBRT?=
+ =?us-ascii?Q?6I/faJ6QtQ8OGCXnM7/PwqXaAwoVdxWkglN3S+KBOla5Vi4bhY7BWNSF6FOi?=
+ =?us-ascii?Q?SlaDUX0j8QiymVhPIkGsIjG03h8xXJ2tdJzEDB56UznAVfUAWsu/lZU+XwCA?=
+ =?us-ascii?Q?PgHFwPdHBTXtv+g3gOcsuMwaA8Bi9D8pmT8/IN/112n3s2QF0hICJiHXlz+P?=
+ =?us-ascii?Q?2a/mTK9Xlt0ZzTAaj0B0vfQIgKFZVJXg5Ux8k3LwIfXqye/sJ/rFkN6k6Nel?=
+ =?us-ascii?Q?y7uaF5KQHQ02AC7rWKvO42Fp/oXAUqxTEbXy/V4J/3WsNLrIDHtZ4/UavtfC?=
+ =?us-ascii?Q?KmVELdFUmriVyh/5lSj2eER5lR5p3A7TJwqpCCMQBnWOf8P38fTpRYOCTbZd?=
+ =?us-ascii?Q?SzSlqG0KNzkkMyVbZwULKw35y2ouUUW9rMJP2To25n4nqqelz9YvsvmzoZ5r?=
+ =?us-ascii?Q?2AQus7fww9C980SME1L3njf+FL4mWXZ4HzeUghWslDgNHLqZknnyUZPcPGg8?=
+ =?us-ascii?Q?sw=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24e1c320-9b95-4e35-469b-08dc07a19878
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5385.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Dec 2023 12:36:21.0716
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i8MXriwM0AvxVIXxRXkg02ZsMjnGPw5tn+fjuLIMlonaHZNduSEyAmf7GpUzkCVTiNt2oq9D6rC3tRjUhKjAv+XDZzcfV2y/q0a4JVIy908=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6822
 
-struct file_system_type is one of the things which could be extracted
-out of include/linux/fs.h easily.
+Currently if writeback cache policy is enabled, fuse will allocate
+temporary pages with GFP_NOFS|__GFP_HIGHMEM for writeback io, commit
+3be5a52b30aa ("fuse: support writable mmap") introduces this behavior
+primarily for the following two reasons:
+  1. filesystem based on fuse may also need additional memory resources
+     to complete a WRITE request, then there's a great danger of a
+     deadlock if that allocation may wait for the writepage to finish.
+  2. buggy or even malicious userspace filesystem may fail to complete
+     WRITE requests, then unrelated parts of the system may hang, for
+     example, sync operations may hang.
 
-Drop some useless forward declarations and externs too.
+As commit 3be5a52b30aa said, this approach is wasteful in both memory
+and CPU bandwidth, but it's necessary for traditional fuse userspace
+filesystems. With the emergence of the virtio-fs file system, the
+virtio-fs userspace backend are typically provided by cloud providers,
+which may have bugs, but should not be seem as malicious, also vm and
+virtio-fs userspace backend normally run on different os, so the
+deadlock should not happen, though vm hypervisor is running on the os
+same to virtio-fs userspace backend.
 
-I remember sched.h was bloated but
+Nowadays, modern DPUs(Data Processing Unit) start to support virtio
+filesystem device, below is virtio-fs spec:
+  https://docs.oasis-open.org/virtio/virtio/v1.3/csd01/virtio-v1.3-csd01.html#x1-49600011
+Cloud providers or hardware manufacturers provide DPUs, they should
+be seem as trusted hardwares, just like nvme ssd nic, etc. The
+DPU also has a running os interenally, the basic architecture would look
+like below:
+      --------------------------
+     | host machine             |
+     |                          |
+     |--------------------------|
+     |       os/virtio-fs       |
+     ---------------------------|
+     |       hardware           |
+      --------------------------
+                |
+                |(pci)
+                v
+      -------------------------------
+     | DPU                           |
+     |                               |
+     |  virtio-fs userspace backend  |
+     |-------------------------------|
+     |          os                   |
+     | ------------------------------|
+     |         hardware              |
+      -------------------------------
 
-	#include <linux/fs.h>
+Obviously, for virtio-fs case, temporary pages are unnecessary, so this
+patch changes the write-back cache policy a bit, if fuse req is passed on
+virtio_fs channel, there's no needs to allocate temporary pages, use
+page cache pages for write-back io directly.
 
-on x86_64 allmodconfig somehow includes x86 segment descriptor stuff,
-MSR, something about irq numbers, all low level page stuff, memory
-zones, cpufreq, and task_struct definition with all sched.h the pieces.
+Use fio to evaluate performance improvement:
+[global]
+ioengine=psync
+fsync=1
+direct=0
+bs=1048576
+rw=randwrite
+randrepeat=0
+iodepth=1
+size=512M
+runtime=30
+time_based
+filename=/home/lege/mntpoint/testfile2
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+[job1]
+cpus_allowed=1
+
+Before patch:
+WRITE: bw=655MiB/s (686MB/s), 655MiB/s-655MiB/s (686MB/s-686MB/s), io=19.2GiB (20.6GB), run=30001-30001msec
+
+After patch:
+WRITE: bw=754MiB/s (790MB/s), 754MiB/s-754MiB/s (790MB/s-790MB/s), io=22.1GiB (23.7GB), run=30001-30001msec
+
+About 15% throughput improvement.
+
+Signed-off-by: Xiaoguang Wang <lege.wang@jaguarmicro.com>
 ---
+ fs/fuse/file.c      | 109 +++++++++++++++++++++++++++++++-------------
+ fs/fuse/fuse_i.h    |   6 +++
+ fs/fuse/inode.c     |   5 +-
+ fs/fuse/virtio_fs.c |   1 +
+ 4 files changed, 89 insertions(+), 32 deletions(-)
 
- Documentation/filesystems/vfs.rst         |    6 +--
- arch/powerpc/platforms/cell/spufs/inode.c |    1 
- arch/s390/hypfs/inode.c                   |    2 -
- arch/um/drivers/mconsole_kern.c           |    1 
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    |    1 
- block/bdev.c                              |    1 
- drivers/android/binderfs.c                |    1 
- drivers/base/devtmpfs.c                   |    1 
- drivers/dax/super.c                       |    1 
- drivers/dma-buf/dma-buf.c                 |    1 
- drivers/gpu/drm/drm_drv.c                 |    1 
- drivers/gpu/drm/i915/gem/i915_gemfs.c     |    1 
- drivers/infiniband/hw/qib/qib_fs.c        |    1 
- drivers/misc/cxl/api.c                    |    1 
- drivers/misc/ibmasm/ibmasmfs.c            |    1 
- drivers/scsi/cxlflash/ocxl_hw.c           |    1 
- drivers/usb/gadget/function/f_fs.c        |    1 
- drivers/usb/gadget/legacy/inode.c         |    1 
- drivers/xen/xenfs/super.c                 |    1 
- fs/9p/v9fs.c                              |    1 
- fs/9p/vfs_super.c                         |    1 
- fs/adfs/super.c                           |    1 
- fs/affs/super.c                           |    1 
- fs/afs/internal.h                         |    1 
- fs/afs/super.c                            |    1 
- fs/aio.c                                  |    1 
- fs/anon_inodes.c                          |    1 
- fs/autofs/autofs_i.h                      |    1 
- fs/bcachefs/fs.c                          |    1 
- fs/befs/linuxvfs.c                        |    1 
- fs/bfs/inode.c                            |    1 
- fs/binfmt_misc.c                          |    3 -
- fs/btrfs/super.c                          |    1 
- fs/btrfs/tests/btrfs-tests.c              |    1 
- fs/ceph/super.c                           |    1 
- fs/coda/inode.c                           |    1 
- fs/configfs/mount.c                       |    1 
- fs/cramfs/inode.c                         |    1 
- fs/dcache.c                               |    1 
- fs/debugfs/inode.c                        |    1 
- fs/devpts/inode.c                         |    1 
- fs/ecryptfs/main.c                        |    1 
- fs/efivarfs/super.c                       |    1 
- fs/efs/super.c                            |    1 
- fs/erofs/internal.h                       |    1 
- fs/erofs/super.c                          |    1 
- fs/exfat/super.c                          |    1 
- fs/ext2/super.c                           |    1 
- fs/ext4/super.c                           |    1 
- fs/f2fs/super.c                           |    1 
- fs/fat/namei_msdos.c                      |    1 
- fs/fat/namei_vfat.c                       |    1 
- fs/filesystems.c                          |    1 
- fs/freevxfs/vxfs_super.c                  |    1 
- fs/fs_context.c                           |    1 
- fs/fsopen.c                               |    1 
- fs/fuse/control.c                         |    1 
- fs/fuse/inode.c                           |    1 
- fs/fuse/virtio_fs.c                       |    1 
- fs/gfs2/ops_fstype.c                      |    1 
- fs/gfs2/super.h                           |    1 
- fs/hfs/super.c                            |    1 
- fs/hfsplus/super.c                        |    1 
- fs/hostfs/hostfs_kern.c                   |    1 
- fs/hpfs/super.c                           |    1 
- fs/hugetlbfs/inode.c                      |    1 
- fs/inode.c                                |    1 
- fs/internal.h                             |    1 
- fs/isofs/inode.c                          |    1 
- fs/jffs2/super.c                          |    1 
- fs/jfs/super.c                            |    2 -
- fs/libfs.c                                |    1 
- fs/minix/inode.c                          |    1 
- fs/namespace.c                            |    1 
- fs/nfs/fs_context.c                       |    1 
- fs/nfs/internal.h                         |    1 
- fs/nfs/nfs.h                              |    1 
- fs/nfsd/nfs4proc.c                        |    1 
- fs/nfsd/nfsctl.c                          |    1 
- fs/nilfs2/super.c                         |    1 
- fs/nsfs.c                                 |    1 
- fs/ntfs/super.c                           |    1 
- fs/ntfs3/super.c                          |    1 
- fs/ocfs2/dlmfs/dlmfs.c                    |    1 
- fs/ocfs2/super.c                          |    1 
- fs/omfs/inode.c                           |    1 
- fs/openpromfs/inode.c                     |    1 
- fs/orangefs/orangefs-kernel.h             |    1 
- fs/overlayfs/super.c                      |    1 
- fs/pipe.c                                 |    1 
- fs/proc/proc_sysctl.c                     |    1 
- fs/proc/root.c                            |    1 
- fs/proc_namespace.c                       |    1 
- fs/pstore/inode.c                         |    1 
- fs/qnx4/inode.c                           |    1 
- fs/qnx6/inode.c                           |    1 
- fs/ramfs/inode.c                          |    1 
- fs/reiserfs/reiserfs.h                    |    1 
- fs/reiserfs/super.c                       |    1 
- fs/romfs/super.c                          |    1 
- fs/smb/client/cifsfs.c                    |    1 
- fs/smb/client/misc.c                      |    1 
- fs/squashfs/super.c                       |    1 
- fs/super.c                                |    1 
- fs/sysfs/mount.c                          |    1 
- fs/sysv/super.c                           |    1 
- fs/tracefs/inode.c                        |    1 
- fs/ubifs/super.c                          |    1 
- fs/udf/super.c                            |    1 
- fs/ufs/super.c                            |    1 
- fs/vboxsf/super.c                         |    1 
- fs/xfs/xfs_super.c                        |    1 
- fs/zonefs/super.c                         |    1 
- include/linux/cgroup.h                    |    1 
- include/linux/fs.h                        |   50 +-----------------------------
- include/linux/fs_type.h                   |   50 ++++++++++++++++++++++++++++++
- include/linux/init.h                      |    2 -
- include/linux/kernfs.h                    |    1 
- include/linux/sb_freeze.h                 |   17 ++++++++++
- init/do_mounts.c                          |    1 
- ipc/mqueue.c                              |    1 
- kernel/bpf/inode.c                        |    1 
- kernel/cgroup/cgroup.c                    |    1 
- kernel/resource.c                         |    1 
- kernel/trace/trace.c                      |    1 
- kernel/usermode_driver.c                  |    1 
- lib/test_kmod.c                           |    1 
- mm/secretmem.c                            |    1 
- mm/shmem.c                                |    2 -
- net/socket.c                              |    1 
- net/sunrpc/rpc_pipe.c                     |    1 
- security/apparmor/apparmorfs.c            |    1 
- security/apparmor/mount.c                 |    1 
- security/inode.c                          |    1 
- security/integrity/ima/ima_policy.c       |    1 
- security/selinux/selinuxfs.c              |    1 
- security/smack/smackfs.c                  |    1 
- security/tomoyo/mount.c                   |    1 
- 138 files changed, 202 insertions(+), 61 deletions(-)
-
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -87,10 +87,10 @@ functions:
- 
- .. code-block:: c
- 
--	#include <linux/fs.h>
-+	#include <linux/fs_type.h>
- 
--	extern int register_filesystem(struct file_system_type *);
--	extern int unregister_filesystem(struct file_system_type *);
-+	int register_filesystem(struct file_system_type *);
-+	int unregister_filesystem(struct file_system_type *);
- 
- The passed struct file_system_type describes your filesystem.  When a
- request is made to mount a filesystem onto a directory in your
---- a/arch/powerpc/platforms/cell/spufs/inode.c
-+++ b/arch/powerpc/platforms/cell/spufs/inode.c
-@@ -12,6 +12,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/fsnotify.h>
- #include <linux/backing-dev.h>
- #include <linux/init.h>
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/namei.h>
- #include <linux/vfs.h>
- #include <linux/slab.h>
-@@ -41,7 +42,6 @@ struct hypfs_sb_info {
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 1cdb6327511e..3d14a291cd3e 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -400,6 +400,7 @@ struct fuse_writepage_args {
+ 	struct fuse_writepage_args *next;
+ 	struct inode *inode;
+ 	struct fuse_sync_bucket *bucket;
++	bool has_temporary_page;
  };
  
- static const struct file_operations hypfs_file_ops;
--static struct file_system_type hypfs_type;
- static const struct super_operations hypfs_s_ops;
+ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+@@ -1660,8 +1661,10 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
+ 	if (wpa->bucket)
+ 		fuse_sync_bucket_dec(wpa->bucket);
  
- /* start of list of all dentries, which have to be deleted on update */
---- a/arch/um/drivers/mconsole_kern.c
-+++ b/arch/um/drivers/mconsole_kern.c
-@@ -24,6 +24,7 @@
- #include <linux/workqueue.h>
- #include <linux/mutex.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/file.h>
- #include <linux/uaccess.h>
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -17,6 +17,7 @@
- #include <linux/debugfs.h>
- #include <linux/fs.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/sysfs.h>
- #include <linux/kernfs.h>
- #include <linux/seq_buf.h>
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -5,6 +5,7 @@
-  *  Copyright (C) 2016 - 2020 Christoph Hellwig
-  */
+-	for (i = 0; i < ap->num_pages; i++)
+-		__free_page(ap->pages[i]);
++	if (wpa->has_temporary_page) {
++		for (i = 0; i < ap->num_pages; i++)
++			__free_page(ap->pages[i]);
++	}
  
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/mm.h>
- #include <linux/slab.h>
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -19,6 +19,7 @@
- #include <linux/mutex.h>
- #include <linux/mount.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -22,6 +22,7 @@
- #include <linux/blkdev.h>
- #include <linux/namei.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/shmem_fs.h>
- #include <linux/ramfs.h>
- #include <linux/sched.h>
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -13,6 +13,7 @@
- #include <linux/uio.h>
- #include <linux/dax.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include "dax-private.h"
+ 	if (wpa->ia.ff)
+ 		fuse_file_put(wpa->ia.ff, false, false);
+@@ -1681,10 +1684,14 @@ static void fuse_writepage_finish(struct fuse_mount *fm,
  
- /**
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -12,6 +12,7 @@
-  */
+ 	for (i = 0; i < ap->num_pages; i++) {
+ 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+-		dec_node_page_state(ap->pages[i], NR_WRITEBACK_TEMP);
++		if (wpa->has_temporary_page)
++			dec_node_page_state(ap->pages[i], NR_WRITEBACK_TEMP);
++		else
++			end_page_writeback(ap->pages[i]);
+ 		wb_writeout_inc(&bdi->wb);
+ 	}
+-	wake_up(&fi->page_waitq);
++	if (wpa->has_temporary_page)
++		wake_up(&fi->page_waitq);
+ }
  
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/dma-buf.h>
- #include <linux/dma-fence.h>
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -28,6 +28,7 @@
+ /* Called under fi->lock, may release and reacquire it */
+@@ -1823,6 +1830,9 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+ 	if (!fc->writeback_cache)
+ 		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODIFY);
+ 	spin_lock(&fi->lock);
++	if (!wpa->has_temporary_page)
++		goto skip;
++
+ 	rb_erase(&wpa->writepages_entry, &fi->writepages);
+ 	while (wpa->next) {
+ 		struct fuse_mount *fm = get_fuse_mount(inode);
+@@ -1859,6 +1869,7 @@ static void fuse_writepage_end(struct fuse_mount *fm, struct fuse_args *args,
+ 		 */
+ 		fuse_send_writepage(fm, next, inarg->offset + inarg->size);
+ 	}
++skip:
+ 	fi->writectr--;
+ 	fuse_writepage_finish(fm, wpa);
+ 	spin_unlock(&fi->lock);
+@@ -1952,8 +1963,9 @@ static int fuse_writepage_locked(struct page *page)
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_writepage_args *wpa;
+ 	struct fuse_args_pages *ap;
+-	struct page *tmp_page;
++	struct page *tmp_page = NULL;
+ 	int error = -ENOMEM;
++	int needs_temporary_page = !fc->no_temporary_page;
  
- #include <linux/debugfs.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/mount.h>
---- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
-@@ -5,6 +5,7 @@
-  */
+ 	set_page_writeback(page);
  
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
+@@ -1962,9 +1974,11 @@ static int fuse_writepage_locked(struct page *page)
+ 		goto err;
+ 	ap = &wpa->ia.ap;
  
- #include "i915_drv.h"
---- a/drivers/infiniband/hw/qib/qib_fs.c
-+++ b/drivers/infiniband/hw/qib/qib_fs.c
-@@ -34,6 +34,7 @@
+-	tmp_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
+-	if (!tmp_page)
+-		goto err_free;
++	if (needs_temporary_page) {
++		tmp_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
++		if (!tmp_page)
++			goto err_free;
++	}
  
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
- #include <linux/init.h>
---- a/drivers/misc/cxl/api.c
-+++ b/drivers/misc/cxl/api.c
-@@ -3,6 +3,7 @@
-  * Copyright 2014 IBM Corp.
-  */
+ 	error = -EIO;
+ 	wpa->ia.ff = fuse_write_file_get(fi);
+@@ -1974,19 +1988,24 @@ static int fuse_writepage_locked(struct page *page)
+ 	fuse_writepage_add_to_bucket(fc, wpa);
+ 	fuse_write_args_fill(&wpa->ia, wpa->ia.ff, page_offset(page), 0);
  
-+#include <linux/fs_type.h>
- #include <linux/pci.h>
- #include <linux/slab.h>
- #include <linux/file.h>
---- a/drivers/misc/ibmasm/ibmasmfs.c
-+++ b/drivers/misc/ibmasm/ibmasmfs.c
-@@ -61,6 +61,7 @@
+-	copy_highpage(tmp_page, page);
++	if (needs_temporary_page) {
++		copy_highpage(tmp_page, page);
++		ap->pages[0] = tmp_page;
++		inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
++	} else {
++		ap->pages[0] = page;
++	}
+ 	wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+ 	wpa->next = NULL;
+ 	ap->args.in_pages = true;
+ 	ap->num_pages = 1;
+-	ap->pages[0] = tmp_page;
+ 	ap->descs[0].offset = 0;
+ 	ap->descs[0].length = PAGE_SIZE;
+ 	ap->args.end = fuse_writepage_end;
+ 	wpa->inode = inode;
++	wpa->has_temporary_page = needs_temporary_page;
  
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
---- a/drivers/scsi/cxlflash/ocxl_hw.c
-+++ b/drivers/scsi/cxlflash/ocxl_hw.c
-@@ -9,6 +9,7 @@
-  */
+ 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+-	inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
  
- #include <linux/file.h>
-+#include <linux/fs_type.h>
- #include <linux/idr.h>
- #include <linux/module.h>
- #include <linux/mount.h>
---- a/drivers/usb/gadget/function/f_fs.c
-+++ b/drivers/usb/gadget/function/f_fs.c
-@@ -18,6 +18,7 @@
- #include <linux/pagemap.h>
- #include <linux/export.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/hid.h>
- #include <linux/mm.h>
- #include <linux/module.h>
---- a/drivers/usb/gadget/legacy/inode.c
-+++ b/drivers/usb/gadget/legacy/inode.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/uts.h>
- #include <linux/wait.h>
---- a/drivers/xen/xenfs/super.c
-+++ b/drivers/xen/xenfs/super.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/magic.h>
+ 	spin_lock(&fi->lock);
+ 	tree_insert(&fi->writepages, wpa);
+@@ -1994,12 +2013,14 @@ static int fuse_writepage_locked(struct page *page)
+ 	fuse_flush_writepages(inode);
+ 	spin_unlock(&fi->lock);
  
- #include <xen/xen.h>
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/sched.h>
- #include <linux/cred.h>
- #include <linux/parser.h>
---- a/fs/9p/vfs_super.c
-+++ b/fs/9p/vfs_super.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/file.h>
- #include <linux/stat.h>
- #include <linux/string.h>
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -4,6 +4,7 @@
-  *
-  *  Copyright (C) 1997-1999 Russell King
-  */
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/parser.h>
---- a/fs/affs/super.c
-+++ b/fs/affs/super.c
-@@ -11,6 +11,7 @@
-  *  (C) 1991  Linus Torvalds - minix filesystem
-  */
+-	end_page_writeback(page);
++	if (needs_temporary_page)
++		end_page_writeback(page);
  
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/statfs.h>
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -9,6 +9,7 @@
- #include <linux/kernel.h>
- #include <linux/ktime.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/filelock.h>
- #include <linux/pagemap.h>
- #include <linux/rxrpc.h>
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -22,6 +22,7 @@
- #include <linux/fs.h>
- #include <linux/pagemap.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/statfs.h>
- #include <linux/sched.h>
- #include <linux/nsproxy.h>
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -24,6 +24,7 @@
+ 	return 0;
  
- #include <linux/sched/signal.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/file.h>
- #include <linux/mm.h>
- #include <linux/mman.h>
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -15,6 +15,7 @@
- #include <linux/sched.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
---- a/fs/autofs/autofs_i.h
-+++ b/fs/autofs/autofs_i.h
-@@ -27,6 +27,7 @@
- #include <linux/magic.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
+ err_nofile:
+-	__free_page(tmp_page);
++	if (needs_temporary_page)
++		__free_page(tmp_page);
+ err_free:
+ 	kfree(wpa);
+ err:
+@@ -2013,7 +2034,7 @@ static int fuse_writepage(struct page *page, struct writeback_control *wbc)
+ 	struct fuse_conn *fc = get_fuse_conn(page->mapping->host);
+ 	int err;
  
- /* This is the range of ioctl() numbers we claim as ours */
- #define AUTOFS_IOC_FIRST     AUTOFS_IOC_READY
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -31,6 +31,7 @@
- #include <linux/backing-dev.h>
- #include <linux/exportfs.h>
- #include <linux/fiemap.h>
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
- #include <linux/posix_acl.h>
---- a/fs/befs/linuxvfs.c
-+++ b/fs/befs/linuxvfs.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/errno.h>
- #include <linux/stat.h>
- #include <linux/nls.h>
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -12,6 +12,7 @@
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/buffer_head.h>
- #include <linux/vfs.h>
- #include <linux/writeback.h>
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -24,6 +24,7 @@
- #include <linux/namei.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/syscalls.h>
- #include <linux/fs.h>
- #include <linux/uaccess.h>
-@@ -60,8 +61,6 @@ typedef struct {
- 	refcount_t users;		/* sync removal with load_misc_binary() */
- } Node;
+-	if (fuse_page_is_writeback(page->mapping->host, page->index)) {
++	if ((!fc->no_temporary_page) && fuse_page_is_writeback(page->mapping->host, page->index)) {
+ 		/*
+ 		 * ->writepages() should be called for sync() and friends.  We
+ 		 * should only get here on direct reclaim and then we are
+@@ -2084,8 +2105,11 @@ static void fuse_writepages_send(struct fuse_fill_wb_data *data)
+ 	fuse_flush_writepages(inode);
+ 	spin_unlock(&fi->lock);
  
--static struct file_system_type bm_fs_type;
--
- /*
-  * Max length of the register string.  Determined by:
-  *  - 7 delimiters
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -6,6 +6,7 @@
- #include <linux/blkdev.h>
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/highmem.h>
- #include <linux/time.h>
---- a/fs/btrfs/tests/btrfs-tests.c
-+++ b/fs/btrfs/tests/btrfs-tests.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/pseudo_fs.h>
- #include <linux/magic.h>
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -5,6 +5,7 @@
- #include <linux/backing-dev.h>
- #include <linux/ctype.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/inet.h>
- #include <linux/in6.h>
- #include <linux/module.h>
---- a/fs/coda/inode.c
-+++ b/fs/coda/inode.c
-@@ -24,6 +24,7 @@
- #include <linux/pid_namespace.h>
- #include <linux/uaccess.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/vmalloc.h>
- 
- #include <linux/coda.h>
---- a/fs/configfs/mount.c
-+++ b/fs/configfs/mount.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -25,6 +25,7 @@
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/super.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/vfs.h>
- #include <linux/mutex.h>
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -19,6 +19,7 @@
- #include <linux/string.h>
- #include <linux/mm.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/fscrypt.h>
- #include <linux/fsnotify.h>
- #include <linux/slab.h>
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -14,6 +14,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
- #include <linux/init.h>
---- a/fs/devpts/inode.c
-+++ b/fs/devpts/inode.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/sched.h>
- #include <linux/namei.h>
- #include <linux/slab.h>
---- a/fs/ecryptfs/main.c
-+++ b/fs/ecryptfs/main.c
-@@ -20,6 +20,7 @@
- #include <linux/key.h>
- #include <linux/parser.h>
- #include <linux/fs_stack.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/magic.h>
- #include "ecryptfs_kernel.h"
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
- #include <linux/ucs2_string.h>
---- a/fs/efs/super.c
-+++ b/fs/efs/super.c
-@@ -7,6 +7,7 @@
-  * Portions derived from work (c) 1995,1996 Christian Vogelgsang.
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/exportfs.h>
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -8,6 +8,7 @@
- #define __EROFS_INTERNAL_H
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/dax.h>
- #include <linux/dcache.h>
- #include <linux/mm.h>
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/crc32c.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/exportfs.h>
- #include "xattr.h"
- 
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -14,6 +14,7 @@
- #include <linux/seq_file.h>
- #include <linux/blkdev.h>
- #include <linux/fs_struct.h>
-+#include <linux/fs_type.h>
- #include <linux/iversion.h>
- #include <linux/nls.h>
- #include <linux/buffer_head.h>
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/init.h>
- #include <linux/blkdev.h>
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -20,6 +20,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/time.h>
- #include <linux/vmalloc.h>
- #include <linux/slab.h>
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -9,6 +9,7 @@
- #include <linux/init.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/sched/mm.h>
- #include <linux/statfs.h>
- #include <linux/buffer_head.h>
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -7,6 +7,7 @@
-  *  Rewritten for constant inumbers 1999 by Al Viro
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/iversion.h>
- #include "fat.h"
---- a/fs/fat/namei_vfat.c
-+++ b/fs/fat/namei_vfat.c
-@@ -16,6 +16,7 @@
-  *				OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/ctype.h>
- #include <linux/slab.h>
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
+-	for (i = 0; i < num_pages; i++)
+-		end_page_writeback(data->orig_pages[i]);
++
++	if (wpa->has_temporary_page) {
++		for (i = 0; i < num_pages; i++)
++			end_page_writeback(data->orig_pages[i]);
++	}
+ }
  
  /*
-  * Handling of filesystem drivers list.
---- a/fs/freevxfs/vxfs_super.c
-+++ b/fs/freevxfs/vxfs_super.c
-@@ -12,6 +12,7 @@
+@@ -2156,7 +2180,8 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct page *page,
+ 	 * the pages are faulted with get_user_pages(), and then after the read
+ 	 * completed.
+ 	 */
+-	if (fuse_page_is_writeback(data->inode, page->index))
++	if (data->wpa->has_temporary_page &&
++	    fuse_page_is_writeback(data->inode, page->index))
+ 		return true;
  
- #include <linux/blkdev.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/buffer_head.h>
- #include <linux/kernel.h>
- #include <linux/slab.h>
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/fs.h>
- #include <linux/mount.h>
- #include <linux/nsproxy.h>
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -7,6 +7,7 @@
+ 	/* Reached max pages */
+@@ -2187,8 +2212,9 @@ static int fuse_writepages_fill(struct folio *folio,
+ 	struct inode *inode = data->inode;
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	struct page *tmp_page;
++	struct page *tmp_page = NULL;
+ 	int err;
++	int needs_temporary_page = !fc->no_temporary_page;
  
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/syscalls.h>
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -11,6 +11,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
+ 	if (!data->ff) {
+ 		err = -EIO;
+@@ -2202,10 +2228,12 @@ static int fuse_writepages_fill(struct folio *folio,
+ 		data->wpa = NULL;
+ 	}
  
- #define FUSE_CTL_SUPER_MAGIC 0x65735543
+-	err = -ENOMEM;
+-	tmp_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
+-	if (!tmp_page)
+-		goto out_unlock;
++	if (needs_temporary_page) {
++		err = -ENOMEM;
++		tmp_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
++		if (!tmp_page)
++			goto out_unlock;
++	}
  
+ 	/*
+ 	 * The page must not be redirtied until the writeout is completed
+@@ -2223,7 +2251,7 @@ static int fuse_writepages_fill(struct folio *folio,
+ 	if (data->wpa == NULL) {
+ 		err = -ENOMEM;
+ 		wpa = fuse_writepage_args_alloc();
+-		if (!wpa) {
++		if (!wpa && tmp_page) {
+ 			__free_page(tmp_page);
+ 			goto out_unlock;
+ 		}
+@@ -2242,14 +2270,20 @@ static int fuse_writepages_fill(struct folio *folio,
+ 	}
+ 	folio_start_writeback(folio);
+ 
+-	copy_highpage(tmp_page, &folio->page);
+-	ap->pages[ap->num_pages] = tmp_page;
++	if (needs_temporary_page) {
++		copy_highpage(tmp_page, &folio->page);
++		ap->pages[ap->num_pages] = tmp_page;
++		data->orig_pages[ap->num_pages] = &folio->page;
++		inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
++	} else {
++		ap->pages[ap->num_pages] = &folio->page;
++		data->orig_pages[ap->num_pages] = &folio->page;
++	}
+ 	ap->descs[ap->num_pages].offset = 0;
+ 	ap->descs[ap->num_pages].length = PAGE_SIZE;
+-	data->orig_pages[ap->num_pages] = &folio->page;
++	wpa->has_temporary_page = needs_temporary_page;
+ 
+ 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+-	inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
+ 
+ 	err = 0;
+ 	if (data->wpa) {
+@@ -2260,10 +2294,16 @@ static int fuse_writepages_fill(struct folio *folio,
+ 		spin_lock(&fi->lock);
+ 		ap->num_pages++;
+ 		spin_unlock(&fi->lock);
+-	} else if (fuse_writepage_add(wpa, &folio->page)) {
+-		data->wpa = wpa;
++	} else if (needs_temporary_page) {
++		if (fuse_writepage_add(wpa, &folio->page))
++			data->wpa = wpa;
++		else
++			folio_end_writeback(folio);
+ 	} else {
+-		folio_end_writeback(folio);
++		spin_lock(&fi->lock);
++		data->wpa = wpa;
++		ap->num_pages++;
++		spin_unlock(&fi->lock);
+ 	}
+ out_unlock:
+ 	folio_unlock(folio);
+@@ -2436,6 +2476,9 @@ static vm_fault_t fuse_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
++	struct fuse_conn *fc = get_fuse_conn(inode);
++	struct folio *folio = page_folio(vmf->page);
++	int has_temporary_page = !fc->no_temporary_page;
+ 
+ 	file_update_time(vmf->vma->vm_file);
+ 	lock_page(page);
+@@ -2444,7 +2487,11 @@ static vm_fault_t fuse_page_mkwrite(struct vm_fault *vmf)
+ 		return VM_FAULT_NOPAGE;
+ 	}
+ 
+-	fuse_wait_on_page_writeback(inode, page->index);
++	if (has_temporary_page)
++		fuse_wait_on_page_writeback(inode, page->index);
++	else
++		folio_wait_stable(folio);
++
+ 	return VM_FAULT_LOCKED;
+ }
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 6e6e721f421b..9958f672ba47 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -646,9 +646,15 @@ struct fuse_conn {
+ 	/** Filesystem supports NFS exporting.  Only set in INIT */
+ 	unsigned export_support:1;
+ 
++	/** Indicate fuse req is passed on virtio_fs channel **/
++	unsigned virtio_fs_ch:1;
++
+ 	/** write-back cache policy (default is write-through) */
+ 	unsigned writeback_cache:1;
+ 
++	/** Indicate whether write-back cache policy should use temporary pages **/
++	unsigned no_temporary_page:1;
++
+ 	/** allow parallel lookups and readdir (default is serialized) */
+ 	unsigned parallel_dirops:1;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 74d4f09d5827..69da39728ae0 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -17,6 +17,7 @@
- #include <linux/moduleparam.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/statfs.h>
- #include <linux/random.h>
- #include <linux/sched.h>
+@@ -1191,8 +1191,11 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 			}
+ 			if (flags & FUSE_ASYNC_DIO)
+ 				fc->async_dio = 1;
+-			if (flags & FUSE_WRITEBACK_CACHE)
++			if (flags & FUSE_WRITEBACK_CACHE) {
+ 				fc->writeback_cache = 1;
++				if (fc->virtio_fs_ch)
++					fc->no_temporary_page = 1;
++			}
+ 			if (flags & FUSE_PARALLEL_DIROPS)
+ 				fc->parallel_dirops = 1;
+ 			if (flags & FUSE_HANDLE_KILLPRIV)
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 5f1be1da92ce..dfa3806f979f 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -15,6 +15,7 @@
- #include <linux/delay.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/highmem.h>
- #include <linux/uio.h>
- #include "fuse_i.h"
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -22,6 +22,7 @@
- #include <linux/module.h>
- #include <linux/backing-dev.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
+@@ -1346,6 +1346,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
  
- #include "gfs2.h"
- #include "incore.h"
---- a/fs/gfs2/super.h
-+++ b/fs/gfs2/super.h
-@@ -8,6 +8,7 @@
- #define __SUPER_DOT_H__
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/dcache.h>
- #include "incore.h"
- 
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -12,6 +12,7 @@
-  * Based on the minix file system code, (C) 1991, 1992 by Linus Torvalds
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/blkdev.h>
- #include <linux/backing-dev.h>
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -14,6 +14,7 @@
- #include <linux/blkdev.h>
- #include <linux/backing-dev.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/vfs.h>
- #include <linux/nls.h>
---- a/fs/hostfs/hostfs_kern.c
-+++ b/fs/hostfs/hostfs_kern.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/magic.h>
- #include <linux/module.h>
- #include <linux/mm.h>
---- a/fs/hpfs/super.c
-+++ b/fs/hpfs/super.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include "hpfs_fn.h"
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/parser.h>
- #include <linux/init.h>
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -27,6 +27,7 @@
- #include <linux/hugetlb.h>
- #include <linux/pagevec.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/mman.h>
- #include <linux/slab.h>
- #include <linux/dnotify.h>
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/export.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/filelock.h>
- #include <linux/mm.h>
- #include <linux/backing-dev.h>
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -6,7 +6,6 @@
-  */
- 
- struct super_block;
--struct file_system_type;
- struct iomap;
- struct iomap_ops;
- struct linux_binprm;
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -15,6 +15,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- 
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/cred.h>
- #include <linux/nls.h>
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -17,6 +17,7 @@
- #include <linux/init.h>
- #include <linux/list.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/err.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/parser.h>
- #include <linux/completion.h>
-@@ -42,7 +43,6 @@ static struct kmem_cache *jfs_inode_cachep;
- 
- static const struct super_operations jfs_super_operations;
- static const struct export_operations jfs_export_operations;
--static struct file_system_type jfs_fs_type;
- 
- #define MAX_COMMIT_THREADS 64
- static int commit_threads;
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/blkdev.h>
- #include <linux/export.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/slab.h>
- #include <linux/cred.h>
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -15,6 +15,7 @@
- #include "minix.h"
- #include <linux/buffer_head.h>
- #include <linux/slab.h>
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/highuid.h>
- #include <linux/vfs.h>
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -19,6 +19,7 @@
- #include <linux/idr.h>
- #include <linux/init.h>		/* init_rootfs */
- #include <linux/fs_struct.h>	/* get_fs_root et.al. */
-+#include <linux/fs_type.h>
- #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
- #include <linux/file.h>
- #include <linux/uaccess.h>
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -15,6 +15,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/nfs_fs.h>
- #include <linux/nfs_mount.h>
- #include <linux/nfs4_mount.h>
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -5,6 +5,7 @@
- 
- #include "nfs4_fs.h"
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/security.h>
- #include <linux/crc32.h>
- #include <linux/sunrpc/addr.h>
---- a/fs/nfs/nfs.h
-+++ b/fs/nfs/nfs.h
-@@ -8,7 +8,6 @@
- #ifndef __LINUX_INTERNAL_NFS_H
- #define __LINUX_INTERNAL_NFS_H
- 
--#include <linux/fs.h>
- #include <linux/sunrpc/sched.h>
- #include <linux/nfs_xdr.h>
- 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -33,6 +33,7 @@
-  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- #include <linux/fs_struct.h>
-+#include <linux/fs_type.h>
- #include <linux/file.h>
- #include <linux/falloc.h>
- #include <linux/slab.h>
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -9,6 +9,7 @@
- #include <linux/namei.h>
- #include <linux/ctype.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- 
- #include <linux/sunrpc/svcsock.h>
- #include <linux/lockd/lockd.h>
---- a/fs/nilfs2/super.c
-+++ b/fs/nilfs2/super.c
-@@ -27,6 +27,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/slab.h>
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/blkdev.h>
- #include <linux/parser.h>
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -3,6 +3,7 @@
- #include <linux/pseudo_fs.h>
- #include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/proc_fs.h>
- #include <linux/proc_ns.h>
- #include <linux/magic.h>
---- a/fs/ntfs/super.c
-+++ b/fs/ntfs/super.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/stddef.h>
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <linux/string.h>
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -53,6 +53,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/log2.h>
- #include <linux/minmax.h>
- #include <linux/module.h>
---- a/fs/ocfs2/dlmfs/dlmfs.c
-+++ b/fs/ocfs2/dlmfs/dlmfs.c
-@@ -20,6 +20,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/types.h>
- #include <linux/slab.h>
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/types.h>
- #include <linux/slab.h>
- #include <linux/highmem.h>
---- a/fs/omfs/inode.c
-+++ b/fs/omfs/inode.c
-@@ -7,6 +7,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/vfs.h>
- #include <linux/cred.h>
- #include <linux/parser.h>
---- a/fs/openpromfs/inode.c
-+++ b/fs/openpromfs/inode.c
-@@ -10,6 +10,7 @@
- #include <linux/string.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <linux/seq_file.h>
---- a/fs/orangefs/orangefs-kernel.h
-+++ b/fs/orangefs/orangefs-kernel.h
-@@ -32,6 +32,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/vmalloc.h>
- 
- #include <linux/aio.h>
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -18,6 +18,7 @@
- #include <linux/file.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include "overlayfs.h"
- #include "params.h"
- 
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/log2.h>
- #include <linux/mount.h>
- #include <linux/pseudo_fs.h>
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -2,6 +2,7 @@
- /*
-  * /proc/sys support
-  */
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/sysctl.h>
- #include <linux/poll.h>
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -20,6 +20,7 @@
- #include <linux/mount.h>
- #include <linux/pid_namespace.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/cred.h>
- #include <linux/magic.h>
- #include <linux/slab.h>
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -11,6 +11,7 @@
- #include <linux/nsproxy.h>
- #include <linux/security.h>
- #include <linux/fs_struct.h>
-+#include <linux/fs_type.h>
- #include <linux/sched/task.h>
- 
- #include "proc/internal.h" /* only for get_proc_task() in ->open() */
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/fsnotify.h>
- #include <linux/pagemap.h>
- #include <linux/highmem.h>
---- a/fs/qnx4/inode.c
-+++ b/fs/qnx4/inode.c
-@@ -13,6 +13,7 @@
-  * 30-06-1998 by Frank Denis : first step to write inodes.
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/slab.h>
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -11,6 +11,7 @@
-  *
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/slab.h>
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -24,6 +24,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/pagemap.h>
- #include <linux/highmem.h>
- #include <linux/time.h>
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -6,6 +6,7 @@
- 
- #include <linux/reiserfs_fs.h>
- 
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/sched.h>
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -11,6 +11,7 @@
-  * NO WARRANTY
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
---- a/fs/romfs/super.c
-+++ b/fs/romfs/super.c
-@@ -61,6 +61,7 @@
- #include <linux/module.h>
- #include <linux/string.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/time.h>
- #include <linux/slab.h>
- #include <linux/init.h>
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/filelock.h>
- #include <linux/mount.h>
- #include <linux/slab.h>
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -6,6 +6,7 @@
-  *
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/ctype.h>
- #include <linux/mempool.h>
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -20,6 +20,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/vfs.h>
- #include <linux/slab.h>
- #include <linux/mutex.h>
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -22,6 +22,7 @@
-  */
- 
- #include <linux/export.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/blkdev.h>
- #include <linux/mount.h>
---- a/fs/sysfs/mount.c
-+++ b/fs/sysfs/mount.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/magic.h>
- #include <linux/mount.h>
- #include <linux/init.h>
---- a/fs/sysv/super.c
-+++ b/fs/sysv/super.c
-@@ -21,6 +21,7 @@
-  *  This file contains code for read/parsing the superblock.
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/slab.h>
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/module.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/kobject.h>
- #include <linux/namei.h>
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -14,6 +14,7 @@
-  * corresponding subsystems, but most of it is here.
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <linux/module.h>
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -37,6 +37,7 @@
- #include "udfdecl.h"
- 
- #include <linux/blkdev.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -76,6 +76,7 @@
- 
- #include <linux/errno.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/time.h>
- #include <linux/stat.h>
---- a/fs/vboxsf/super.c
-+++ b/fs/vboxsf/super.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/idr.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/magic.h>
- #include <linux/module.h>
- #include <linux/nls.h>
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -48,6 +48,7 @@
- #include <linux/magic.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- 
- static const struct super_operations xfs_super_operations;
- 
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright (C) 2019 Western Digital Corporation or its affiliates.
-  */
-+#include <linux/fs_type.h>
- #include <linux/module.h>
- #include <linux/pagemap.h>
- #include <linux/magic.h>
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -15,6 +15,7 @@
- #include <linux/rculist.h>
- #include <linux/cgroupstats.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/seq_file.h>
- #include <linux/kernfs.h>
- #include <linux/jump_label.h>
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -53,6 +53,7 @@ struct bio;
- struct io_comp_batch;
- struct export_operations;
- struct fiemap_extent_info;
-+struct file_system_type;
- struct hd_geometry;
- struct iovec;
- struct kiocb;
-@@ -1168,17 +1169,7 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_I_RETIRED	0x00000800	/* superblock shouldn't be reused */
- #define SB_I_NOUMASK	0x00001000	/* VFS does not apply umask */
- 
--/* Possible states of 'frozen' field */
--enum {
--	SB_UNFROZEN = 0,		/* FS is unfrozen */
--	SB_FREEZE_WRITE	= 1,		/* Writes, dir ops, ioctls frozen */
--	SB_FREEZE_PAGEFAULT = 2,	/* Page faults stopped as well */
--	SB_FREEZE_FS = 3,		/* For internal FS use (e.g. to stop
--					 * internal threads if needed) */
--	SB_FREEZE_COMPLETE = 4,		/* ->freeze_fs finished successfully */
--};
--
--#define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE - 1)
-+#include <linux/sb_freeze.h>
- 
- struct sb_writers {
- 	unsigned short			frozen;		/* Is sb frozen? */
-@@ -2362,38 +2353,6 @@ int kiocb_modified(struct kiocb *iocb);
- 
- int sync_inode_metadata(struct inode *inode, int wait);
- 
--struct file_system_type {
--	const char *name;
--	int fs_flags;
--#define FS_REQUIRES_DEV		1 
--#define FS_BINARY_MOUNTDATA	2
--#define FS_HAS_SUBTYPE		4
--#define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
--#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
--#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
--#define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
--	int (*init_fs_context)(struct fs_context *);
--	const struct fs_parameter_spec *parameters;
--	struct dentry *(*mount) (struct file_system_type *, int,
--		       const char *, void *);
--	void (*kill_sb) (struct super_block *);
--	struct module *owner;
--	struct file_system_type * next;
--	struct hlist_head fs_supers;
--
--	struct lock_class_key s_lock_key;
--	struct lock_class_key s_umount_key;
--	struct lock_class_key s_vfs_rename_key;
--	struct lock_class_key s_writers_key[SB_FREEZE_LEVELS];
--
--	struct lock_class_key i_lock_key;
--	struct lock_class_key i_mutex_key;
--	struct lock_class_key invalidate_lock_key;
--	struct lock_class_key i_mutex_dir_key;
--};
--
--#define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
--
- extern struct dentry *mount_bdev(struct file_system_type *fs_type,
- 	int flags, const char *dev_name, void *data,
- 	int (*fill_super)(struct super_block *, void *, int));
-@@ -2441,8 +2400,6 @@ struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
- 		BUG_ON(!(__file->f_op = (fops))); \
- 	} while(0)
- 
--extern int register_filesystem(struct file_system_type *);
--extern int unregister_filesystem(struct file_system_type *);
- extern int vfs_statfs(const struct path *, struct kstatfs *);
- extern int user_statfs(const char __user *, struct kstatfs *);
- extern int fd_statfs(int, struct kstatfs *);
-@@ -3115,9 +3072,6 @@ static inline int vfs_lstat(const char __user *name, struct kstat *stat)
- extern const char *vfs_get_link(struct dentry *, struct delayed_call *);
- extern int vfs_readlink(struct dentry *, char __user *, int);
- 
--extern struct file_system_type *get_filesystem(struct file_system_type *fs);
--extern void put_filesystem(struct file_system_type *fs);
--extern struct file_system_type *get_fs_type(const char *name);
- extern struct super_block *get_active_super(struct block_device *bdev);
- extern void drop_super(struct super_block *sb);
- extern void drop_super_exclusive(struct super_block *sb);
-new file mode 100644
---- /dev/null
-+++ b/include/linux/fs_type.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_FS_TYPE_H
-+#define _LINUX_FS_TYPE_H
-+#include <linux/types.h>
-+#include <linux/lockdep_types.h>
-+#include <linux/sb_freeze.h>
-+
-+struct dentry;
-+struct fs_context;
-+struct fs_parameter_spec;
-+struct module;
-+struct super_block;
-+
-+struct file_system_type {
-+	const char *name;
-+	int fs_flags;
-+#define FS_REQUIRES_DEV		1
-+#define FS_BINARY_MOUNTDATA	2
-+#define FS_HAS_SUBTYPE		4
-+#define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
-+#define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
-+#define FS_ALLOW_IDMAP		32	/* FS has been updated to handle vfs idmappings. */
-+#define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
-+	int (*init_fs_context)(struct fs_context *);
-+	const struct fs_parameter_spec *parameters;
-+	struct dentry *(*mount) (struct file_system_type *, int, const char *, void *);
-+	void (*kill_sb) (struct super_block *);
-+	struct module *owner;
-+	struct file_system_type *next;
-+	struct hlist_head fs_supers;
-+
-+	struct lock_class_key s_lock_key;
-+	struct lock_class_key s_umount_key;
-+	struct lock_class_key s_vfs_rename_key;
-+	struct lock_class_key s_writers_key[SB_FREEZE_LEVELS];
-+
-+	struct lock_class_key i_lock_key;
-+	struct lock_class_key i_mutex_key;
-+	struct lock_class_key invalidate_lock_key;
-+	struct lock_class_key i_mutex_dir_key;
-+};
-+
-+#define MODULE_ALIAS_FS(NAME) MODULE_ALIAS("fs-" NAME)
-+
-+int register_filesystem(struct file_system_type *);
-+int unregister_filesystem(struct file_system_type *);
-+struct file_system_type *get_filesystem(struct file_system_type *);
-+void put_filesystem(struct file_system_type *);
-+struct file_system_type *get_fs_type(const char *);
-+#endif
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -136,8 +136,6 @@ extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
- /* Used for constructor calls. */
- typedef void (*ctor_fn_t)(void);
- 
--struct file_system_type;
--
- /* Defined in init/main.c */
- extern int do_one_initcall(initcall_t fn);
- extern char __initdata boot_command_line[];
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -27,7 +27,6 @@ struct seq_file;
- struct vm_area_struct;
- struct vm_operations_struct;
- struct super_block;
--struct file_system_type;
- struct poll_table_struct;
- struct fs_context;
- 
-new file mode 100644
---- /dev/null
-+++ b/include/linux/sb_freeze.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_SB_FREEZE_H
-+#define _LINUX_SB_FREEZE_H
-+
-+/* Possible states of 'frozen' field */
-+enum {
-+	SB_UNFROZEN = 0,		/* FS is unfrozen */
-+	SB_FREEZE_WRITE	= 1,		/* Writes, dir ops, ioctls frozen */
-+	SB_FREEZE_PAGEFAULT = 2,	/* Page faults stopped as well */
-+	SB_FREEZE_FS = 3,		/* For internal FS use (e.g. to stop
-+					 * internal threads if needed) */
-+	SB_FREEZE_COMPLETE = 4,		/* ->freeze_fs finished successfully */
-+};
-+
-+#define SB_FREEZE_LEVELS (SB_FREEZE_COMPLETE - 1)
-+
-+#endif
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -15,6 +15,7 @@
- #include <linux/initrd.h>
- #include <linux/async.h>
- #include <linux/fs_struct.h>
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <linux/ramfs.h>
- #include <linux/shmem_fs.h>
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -19,6 +19,7 @@
- #include <linux/file.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/namei.h>
- #include <linux/sysctl.h>
- #include <linux/poll.h>
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -16,6 +16,7 @@
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/kdev_t.h>
- #include <linux/filter.h>
- #include <linux/bpf.h>
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -56,6 +56,7 @@
- #include <linux/nsproxy.h>
- #include <linux/file.h>
- #include <linux/fs_parser.h>
-+#include <linux/fs_type.h>
- #include <linux/sched/cputime.h>
- #include <linux/sched/deadline.h>
- #include <linux/psi.h>
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/proc_fs.h>
- #include <linux/pseudo_fs.h>
- #include <linux/sched.h>
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -42,6 +42,7 @@
- #include <linux/poll.h>
- #include <linux/nmi.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/trace.h>
- #include <linux/sched/clock.h>
- #include <linux/sched/rt.h>
---- a/kernel/usermode_driver.c
-+++ b/kernel/usermode_driver.c
-@@ -6,6 +6,7 @@
- #include <linux/pipe_fs_i.h>
- #include <linux/mount.h>
- #include <linux/fs_struct.h>
-+#include <linux/fs_type.h>
- #include <linux/task_work.h>
- #include <linux/usermode_driver.h>
- 
---- a/lib/test_kmod.c
-+++ b/lib/test_kmod.c
-@@ -21,6 +21,7 @@
- #include <linux/kthread.h>
- #include <linux/sched.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/miscdevice.h>
- #include <linux/vmalloc.h>
- #include <linux/slab.h>
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/mm.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/swap.h>
- #include <linux/mount.h>
- #include <linux/memfd.h>
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -22,6 +22,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/init.h>
- #include <linux/vfs.h>
- #include <linux/mount.h>
-@@ -260,7 +261,6 @@ static const struct inode_operations shmem_dir_inode_operations;
- static const struct inode_operations shmem_special_inode_operations;
- static const struct vm_operations_struct shmem_vm_ops;
- static const struct vm_operations_struct shmem_anon_vm_ops;
--static struct file_system_type shmem_fs_type;
- 
- bool vma_is_anon_shmem(struct vm_area_struct *vma)
- {
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -57,6 +57,7 @@
- #include <linux/mm.h>
- #include <linux/socket.h>
- #include <linux/file.h>
-+#include <linux/fs_type.h>
- #include <linux/splice.h>
- #include <linux/net.h>
- #include <linux/interrupt.h>
---- a/net/sunrpc/rpc_pipe.c
-+++ b/net/sunrpc/rpc_pipe.c
-@@ -15,6 +15,7 @@
- #include <linux/pagemap.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/namei.h>
- #include <linux/fsnotify.h>
- #include <linux/kernel.h>
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -20,6 +20,7 @@
- #include <linux/rcupdate.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/poll.h>
- #include <linux/zstd.h>
- #include <uapi/linux/major.h>
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/namei.h>
- #include <uapi/linux/mount.h>
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -14,6 +14,7 @@
- #include <linux/kobject.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
- #include <linux/init.h>
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -11,6 +11,7 @@
- #include <linux/list.h>
- #include <linux/kernel_read_file.h>
- #include <linux/fs.h>
-+#include <linux/fs_type.h>
- #include <linux/security.h>
- #include <linux/magic.h>
- #include <linux/parser.h>
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -18,6 +18,7 @@
- #include <linux/vmalloc.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include <linux/mount.h>
- #include <linux/mutex.h>
- #include <linux/namei.h>
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -25,6 +25,7 @@
- #include <linux/magic.h>
- #include <linux/mount.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_type.h>
- #include "smack.h"
- 
- #define BEBITS	(sizeof(__be32) * 8)
---- a/security/tomoyo/mount.c
-+++ b/security/tomoyo/mount.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2005-2011  NTT DATA CORPORATION
-  */
- 
-+#include <linux/fs_type.h>
- #include <linux/slab.h>
- #include <uapi/linux/mount.h>
- #include "common.h"
+ 	/* Previous unmount will stop all queues. Start these again */
+ 	virtio_fs_start_all_queues(fs);
++	fc->virtio_fs_ch = 1;
+ 	fuse_send_init(fm);
+ 	mutex_unlock(&virtio_fs_mutex);
+ 	return 0;
+-- 
+2.40.0
+
 
