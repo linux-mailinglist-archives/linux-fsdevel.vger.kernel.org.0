@@ -1,163 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-7026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7027-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF597820138
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 20:44:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0C782022C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 23:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F32283898
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 19:44:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDC701F22EBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 22:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D25134AC;
-	Fri, 29 Dec 2023 19:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A2A14283;
+	Fri, 29 Dec 2023 22:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aP1vJwDI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90FD134A4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Dec 2023 19:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36000996c84so55536665ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Dec 2023 11:44:20 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93FB14AA1
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Dec 2023 22:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3bbbc6b4ed1so2709763b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Dec 2023 14:31:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1703889080; x=1704493880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cKuwmPo0DfBIWzAt1z512mSnZOucjghMMfliRHXEH1s=;
+        b=aP1vJwDInt8gYlakcnK3OUNMmlxanL3bkhPp6jxwrknpA+SzJhpVBN16YEnkIXBHzf
+         hXG7BxmOtAHopuef1ni8nAUK1jiJ1LnjDdPIjblVpVfke+zbKsA873ZbiOBpLkS3CEYT
+         B4fRjJ8/nKwl5nP6HDh75QwiUY5ax09NGBiazXHLZisO+hDDxPvRybbWXxsuE7oNVx58
+         2FJM/9D8VCvpG52TUKFfhWt3fNOtMrC1ZMxSPrm2Dq/xIO7v6uj9qftLfLlsi1IdvGca
+         cnfI1f0pMrLLbbyUenmd8nIuJb8WH3JoXeLCWHSLSoEIGxrCW3kYLS78cPR94IXXYhop
+         ml0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703879060; x=1704483860;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xm2JljNeDXjf0r5Jy6i0DIKctQIgzp9TSAs84vX4V2M=;
-        b=sxx0Amu63L/MheqJki0vSwxDEnR+zo+XRtW3pppGAdrRUrfg/sna5JDXRcnMsY6ZVI
-         LHJJtrbCiPOiinziqXTnoyE4QOtlPxvR3J2pvsPuT5Gdm/vkt3o3hCDC89BEK2YNBFxj
-         Cvd5teNwG3MeoySkCwgnmf/J9f6P905Z8BVFFDilnta6iywFfCU/LAqdkhAalWeNve+4
-         imLHDTPup5t+zOaH0L/GOiTXC9AosIT6MwifqsSEPjaxlRS7EfMeb0XwVfBxeImnX0Ya
-         r/4J9d5D6JPV4J8WJxAl+7vp7/pwJSKdSxV9O/5NKauDWTAijW81WiVyYxF52AQz90Ji
-         U23g==
-X-Gm-Message-State: AOJu0YxYQKT3H75mSiUgvdSkUtwqMo7vB5b3/Fg1Xdk5yKNPyPok3CWz
-	PikHjAsaHbonIpsWp7Gt7Hbfal3oTXS3NOac4V0IhC1DVyCberk=
-X-Google-Smtp-Source: AGHT+IF0HebSqY8WUZk+zcQ2hnfh4gQOS06u6BvnDyKIsMITdYf8ZOAcnaFIo5+J0lExPyT7zNwwPmrKSYpXASEYPd1boWbpC1Rz
+        d=1e100.net; s=20230601; t=1703889080; x=1704493880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cKuwmPo0DfBIWzAt1z512mSnZOucjghMMfliRHXEH1s=;
+        b=qkN7YliAHxh39fkBoS8ZetuIxrssxmry1aFn+Lsisl54gRhOZv5A7X3cfx51Hr5Ruf
+         gL0gDKeO62lqtZR+qF4qEH0JLpBrVJMZ3bCMzFKJ9O3t9tQ+6G8ZOtTr6to9RSeGKxPy
+         xaXQocMEfXOGsEi3ezWOfC6yHx1gPQB//IwO8/4KS8gyFv51DbP7XY6B3feO8KnHrvbf
+         Zd/KTv5Hv/0P2lJoMSXm0egzMUoQYUZVzUfr/MOL335935AE1VGk5BF+poe5MaalRtJ9
+         kSa8dmJRUj7YlvB9YVbog/18uy9NtW0hgoHX33VSBD8G645fyIP2F0GcR1b3379hdEj6
+         jvIw==
+X-Gm-Message-State: AOJu0Yxg+KMtKOTy5pKjBn5OesapfPznGTOQhzr0DFbIu6htXIBhT1Bv
+	T6OpBDybmzA1XNqm9PBviRGr6hmyOr3RPySMNe08L3lTcQod
+X-Google-Smtp-Source: AGHT+IH12p3W0EY0p2NLPuPUYmviE7rijb7+Yqlz23Ciy+fi2PqGwDl7fAvtLAZVWy+vn0LPl9k2jB9xmjX76ZOvJYg=
+X-Received: by 2002:a05:6808:1206:b0:3bb:e0d4:9f29 with SMTP id
+ a6-20020a056808120600b003bbe0d49f29mr1864931oil.44.1703889079797; Fri, 29 Dec
+ 2023 14:31:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2199:b0:35f:edd9:2440 with SMTP id
- j25-20020a056e02219900b0035fedd92440mr1686236ila.4.1703879059990; Fri, 29 Dec
- 2023 11:44:19 -0800 (PST)
-Date: Fri, 29 Dec 2023 11:44:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001c6fbf060dab4271@google.com>
-Subject: [syzbot] [fs?] BUG: unable to handle kernel paging request in mmu_notifier_invalidate_range_start
-From: syzbot <syzbot+0e7b9b7452ded0356f2d@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
+ <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de> <20231215-golfanlage-beirren-f304f9dafaca@brauner>
+ <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
+ <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner> <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
+ <20231216-vorrecht-anrief-b096fa50b3f7@brauner> <CAADnVQK7MDUZTUxcqCH=unrrGExCjaagfJFqFPhVSLUisJVk_Q@mail.gmail.com>
+ <20231218-chipsatz-abfangen-d62626dfb9e2@brauner> <CAHC9VhSZDMWJ_kh+RaB6dsPLQjkrjDY4bVkqsFDG3JtjinT_bQ@mail.gmail.com>
+ <f38ceaaf-916a-4e44-9312-344ed1b4c9c4@aisec.fraunhofer.de>
+In-Reply-To: <f38ceaaf-916a-4e44-9312-344ed1b4c9c4@aisec.fraunhofer.de>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 29 Dec 2023 17:31:08 -0500
+Message-ID: <CAHC9VhT3dbFc4DWc8WFRavWY1M+_+DzPbHuQ=PumROsx0rY2vA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
+ non-initial userns
+To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
+Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Quentin Monnet <quentin@isovalent.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, gyroidos@aisec.fraunhofer.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Dec 27, 2023 at 9:31=E2=80=AFAM Michael Wei=C3=9F
+<michael.weiss@aisec.fraunhofer.de> wrote:
+> Hi Paul, what would you think about if we do it as shown in the
+> patch below (untested)?
+>
+> I have adapted Christians patch slightly in a way that we do let
+> all LSMs agree on if device access management should be done or not.
+> Similar to the security_task_prctl() hook.
 
-syzbot found the following issue on:
+I think it's worth taking a minute to talk about this proposed change
+and the existing security_task_prctl() hook, as there is an important
+difference between the two which is the source of my concern.
 
-HEAD commit:    aafe7ad77b91 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13836436e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=23ce86eb3d78ef4d
-dashboard link: https://syzkaller.appspot.com/bug?extid=0e7b9b7452ded0356f2d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169f2595e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ef73d6e80000
+If you look at the prctl() syscall implementation, right at the top of
+the function you see the LSM hook:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/23845238c49b/disk-aafe7ad7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1144b0f74104/vmlinux-aafe7ad7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6db20df213a2/Image-aafe7ad7.gz.xz
+  SYSCALL_DEFINE(prctl, ...)
+  {
+    ...
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0e7b9b7452ded0356f2d@syzkaller.appspotmail.com
+    error =3D security_task_prctl(...);
+    if (error !=3D -ENOSYS)
+      return error;
 
-Unable to handle kernel paging request at virtual address dfff8000000000d1
-KASAN: null-ptr-deref in range [0x0000000000000688-0x000000000000068f]
-Mem abort info:
-  ESR = 0x0000000096000005
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x05: level 1 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[dfff8000000000d1] address between user and kernel address ranges
-Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 6095 Comm: syz-executor387 Not tainted 6.7.0-rc6-syzkaller-gaafe7ad77b91 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : mm_has_notifiers include/linux/mmu_notifier.h:282 [inline]
-pc : mmu_notifier_invalidate_range_start+0x80/0x10c include/linux/mmu_notifier.h:455
-lr : mmu_notifier_invalidate_range_start+0x60/0x10c include/linux/mmu_notifier.h:454
-sp : ffff800096d97a10
-x29: ffff800096d97a10 x28: ffff800096d97be0 x27: ffff800096d97bb8
-x26: 0000000020ffc000 x25: ffff700012db2f68 x24: 1ffff00012db2f78
-x23: dfff800000000000 x22: ffff0000da811e00 x21: dfff800000000000
-x20: 0000000000000688 x19: ffff800096d97b60 x18: 0000000000000000
-x17: 00000000c0606610 x16: ffff80008a82b25c x15: 0000000020000180
-x14: ffff80008e4f0448 x13: dfff800000000000 x12: 00000000050405e5
-x11: 00000000d5d3f9bd x10: 0000000000ff0100 x9 : 343472906370af00
-x8 : 00000000000000d1 x7 : ffff800080cc5610 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000008 x1 : 0000000000000080 x0 : 0000000000000001
-Call trace:
- mm_has_notifiers include/linux/mmu_notifier.h:282 [inline]
- mmu_notifier_invalidate_range_start+0x80/0x10c include/linux/mmu_notifier.h:455
- do_pagemap_scan fs/proc/task_mmu.c:2438 [inline]
- do_pagemap_cmd+0x880/0x11ec fs/proc/task_mmu.c:2494
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:871 [inline]
- __se_sys_ioctl fs/ioctl.c:857 [inline]
- __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:857
- __invoke_syscall arch/arm64/kernel/syscall.c:37 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:51
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:136
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:155
- el0_svc+0x54/0x158 arch/arm64/kernel/entry-common.c:678
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:696
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:595
-Code: 97f46443 f9400268 911a2114 d343fe88 (38756908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97f46443 	bl	0xffffffffffd1910c
-   4:	f9400268 	ldr	x8, [x19]
-   8:	911a2114 	add	x20, x8, #0x688
-   c:	d343fe88 	lsr	x8, x20, #3
-* 10:	38756908 	ldrb	w8, [x8, x21] <-- trapping instruction
+    error =3D 0;
 
+    ....
+  }
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+While it is true that the LSM hook returns a "special" value, -ENOSYS,
+from a practical perspective this is not significantly different from
+the much more common zero value used to indicate no restriction from
+the LSM layer.  However, the more important thing to note is that the
+return value from security_task_prctl() does not influence any other
+access controls in the caller outside of those implemented inside the
+LSM; in fact the error code is reset to zero immediately after the LSM
+hook.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+More on this below ...
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> diff --git a/fs/super.c b/fs/super.c
+> index 076392396e72..6510168d51ce 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -325,7 +325,7 @@ static struct super_block *alloc_super(struct file_sy=
+stem_type *type, int flags,
+>  {
+>         struct super_block *s =3D kzalloc(sizeof(struct super_block),  GF=
+P_USER);
+>         static const struct super_operations default_op;
+> -       int i;
+> +       int i, err;
+>
+>         if (!s)
+>                 return NULL;
+> @@ -362,8 +362,16 @@ static struct super_block *alloc_super(struct file_s=
+ystem_type *type, int flags,
+>         }
+>         s->s_bdi =3D &noop_backing_dev_info;
+>         s->s_flags =3D flags;
+> -       if (s->s_user_ns !=3D &init_user_ns)
+> +
+> +       err =3D security_sb_device_access(s);
+> +       if (err < 0 && err !=3D -EOPNOTSUPP)
+> +               goto fail;
+> +
+> +       if (err && s->s_user_ns !=3D &init_user_ns)
+>                 s->s_iflags |=3D SB_I_NODEV;
+> +       else
+> +               s->s_iflags |=3D SB_I_MANAGED_DEVICES;
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+This is my concern, depending on what the LSM hook returns, the
+superblock's flags are set differently, affecting much more than just
+a LSM-based security mechanism.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+LSMs should not be able to undermine, shortcut, or otherwise bypass
+access controls built into other parts of the kernel.  In other words,
+a LSM should only ever be able to deny an operation, it should not be
+able to permit an operation that otherwise would have been denied.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+>         INIT_HLIST_NODE(&s->s_instances);
+>         INIT_HLIST_BL_HEAD(&s->s_roots);
+>         mutex_init(&s->s_sync_lock);
 
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+paul-moore.com
 
