@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-7015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDD081FE30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 09:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE79481FE34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 09:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95ABC282406
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 08:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443092825CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 08:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237FC79CD;
-	Fri, 29 Dec 2023 08:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC3879CD;
+	Fri, 29 Dec 2023 08:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Z/oPI3az"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GTEGRq7E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3189A7487;
-	Fri, 29 Dec 2023 08:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26517487;
+	Fri, 29 Dec 2023 08:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1703838996; x=1704443796; i=markus.elfring@web.de;
-	bh=EoV9yLqj2IKlvd3kf0dcQWQx2nrQ9IxzgPGR8PzE6gk=;
+	t=1703839128; x=1704443928; i=markus.elfring@web.de;
+	bh=W6yrPNc43adz34gAMxMy30lvqPV/Eba8/b5dIfUxezo=;
 	h=X-UI-Sender-Class:Date:Subject:From:To:Cc:References:
 	 In-Reply-To;
-	b=Z/oPI3azC3HJv1dDkXwpJ6y+y1ZXORefODhZkdQmPC/o8G6JvkwCIbdL8N/idiZd
-	 vPifSJqtlGPbdMVa99vx4Qp3z9mizut3WV5LHa/j5VY2MmGLuo51ZlyC4ILmSMAF7
-	 3kfLzPW6U9MnoTArmFknLUNqcw0qO4OXKjwWNwR9vatw1zezfEM4ygORwEjMwrRsZ
-	 391ksx4EQ8oON3K6lGn67mk2ToZWnYAOOCEGx7FxDiJnuD3cLhtK9G35IP7G1v/ji
-	 rBo9Eh/bv2CYurwtgPuvLEXLtzirOEG6pzc1k0XKUDCufEAYek352ehdRdNM8RUSb
-	 S29s1xeQotkrSXXU1w==
+	b=GTEGRq7E43WbnsOExZ3FmdrD+SQrDWgukQPygQzUBqPN0GgsmOK2QX/n/trtOu9J
+	 Tg1rESZnVGczPK8Y3R6s1iAWKE1Q7irHKp87HxjlOeyKNuemn0BWqiduqdiaw1Vum
+	 3AKU3gFM9ruGWLNqPKNemD583a1YVvGjGF1gvRFyuCQlqa8IX6FTJ7kxYaUhEs5Mb
+	 WsQlloqImi8SckEc4QtVI6E+s19XbbpliOjlt4/dHDNsyHvUrjU1oWTpn8IeqeNQj
+	 2vG7JFbPWMz89emLGcOtoOFymeohYdkdArN8685qj78fgCQkIXKVLOXOlfJG5QCwe
+	 to1v45rjUEzmKBSSzA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MQxs3-1rdqAF30lD-00Ntio; Fri, 29
- Dec 2023 09:36:36 +0100
-Message-ID: <02fe18da-55f5-47c5-a297-58411edbb78b@web.de>
-Date: Fri, 29 Dec 2023 09:36:36 +0100
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKdLM-1rXVTg0Ew8-00LPOS; Fri, 29
+ Dec 2023 09:38:48 +0100
+Message-ID: <5745d81c-3c06-4871-9785-12a469870934@web.de>
+Date: Fri, 29 Dec 2023 09:38:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -46,7 +46,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/2] virtiofs: Improve three size determinations
+Subject: [PATCH 2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
 To: virtualization@lists.linux.dev, linux-fsdevel@vger.kernel.org,
@@ -57,71 +57,94 @@ References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
 In-Reply-To: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wr5P/Bg9PxNgJIoMgfNzDUkyUJzJDLFq8qyCn+DoP/ZmDJNaPgr
- LGvRriMUINRI8yNKGzgo2Se4snoKcqsP7uNsGz4lj4lMTbaFYczcfgR6Gmik32RTFSMDMUO
- 8AHm242rwxLVhEOFcDbxak31RD5rVwoLqTEl/3Y15Xv8uA6c2gc4dJwfa+aCgUiYZ7hNbwE
- x7po+0SYR+dNYEW1aCClQ==
+X-Provags-ID: V03:K1:dIIBJp/wUeMxRDCbjzb05hZ0LyYzeW7/8EGr8swHME9Epop0uR0
+ XZKg5ysWpkbun+8jJjsN7ht/i7ypbe0HQ9ZbUd7jOZ+RUUT2kztJ9fsQoaYrs3dCBIj3YbO
+ /5HbvkTEjiqjrOvLCRhz42fQgN8hkKr9jaHgkwh4lFtDk08OpaOUKx3+89gRGu3Wehu1nuT
+ OlY9TOZhtJhF+e8yiCqhg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PTLJh/rv7EE=;XPTFsDCeIhprv+w64gnTHhnRgWk
- Vorh+H7NvdWvL4QBjJVp2rHmHHdJiuPWrXarQvs8VPavUI9t/7tYlKtmadBTi4dAx4psLExdX
- b8u1qaS5ElAQEhcopVwP6xcZenBurB9v4ah8MTlcgszJdYrhXHJmow9sRIqj/s1NBt3xXNF/m
- YzU4b4+c6OY9zOWQ0G4QFoFNGvpkunP7Zrk9OVhiFkiytECWtQBCuNAKsdu0lkp+l+QOAppQv
- g3CM+dgPiOJnyV+eXU2Aj3f7aTLs53zQDRvJYZNt7zMFCkb+jDDYG3NVs7GGGSgtMEMnkS6qe
- WXrKY/HhNWo3l1KZY3io/GWZenYqPEcVbuhn55SYWO4vKN/7FiFii35tboFLjNuXOUxGoHtsi
- uKiGXmnTh3bvtGYzt/K8fCyKgdTpcLaW7SHUtp93zYaZU0Z68CT47qvzzC8LtFPUaOv+Z4zqK
- 8H9nvYxgOy5E1M1lDoStYnGp62lsaqa5S47kI7ji/4u5GZXrI7hQso3Ep3eE/+gA2HKOgmTm9
- CvmdLcljIWacnsop5wlsikgM96DRT8iJpZZDXrVPOX/UYf+cwbICOhvluUdzcSVPgmRx4Dp/D
- 40RZXj/YB5mvM/dBfGFJbCPpM7e1bpjSyy80gjXInThK/xfNfy5IiznSKK0i/JPQOHLRSR3zl
- I8oSRaIAFOgLkHAEOSSNc+uRfoaNCwVDGUrmHXU486nEn3lqtd9jx738ohfZXHIcau+PHvaHd
- xFTFy09jRfM4DCGrz+BpfORArkG2oulfkMQW/1Mgca1K2Hyeo3VHCkCQTbUmIHxU58q3V85Ib
- JtI0urFD/R5/cPkpAnDAAWuNsq6aGAm0f32k6HkdzbPkuo8QlXrsfpkTjwGgTp1feAvDIKafF
- 4wOVbVf+Q6ASPb64KTP9Cd/FmjFoaL4LZceZFN5/8Z3oTZxBQ1PkxchUQDhF7nZaHgF51KKAN
- PBQxwXmesP7aa59JyaMCTLZbAzE=
+UI-OutboundReport: notjunk:1;M01:P0:rMTlxTdEg3Y=;mT6F3lBfUJnD7ni8owTQkOy+hlo
+ 8kC2lDaDeta2038RkVjnn0wJr3oJRh1Kg4d/RGJ8dRkmEkM4xRWBOvd4DM7flB8RdCJbh7wLB
+ vqk9DfK5d29E4k6c1RPShkYkRZxNsC01sH6j+ncv4U3A7OKe6zz4k3JCY270XCpJFYu7MTUgA
+ YYnUhlIr/ZYQ1Zq4xYVkb3thHOmPGWJM0t8iL+ePMOXOPH05z1UKitcRxTn3TqhIQWkdOl3IR
+ iZBvfVIKj1WjGvlO+42BkKLvF7rQtT8kW0wRJPiKk8HMmS9pQ1Rv+5Ljrc0layX0UwPiWzG4t
+ TMFXxoA/YOBYHawpxsv0GlsHBQns1G+8GxiJtDqB52D0IXi1X+Ch2ul+64wCF7HTDWBVs4W69
+ BqeU7Q4icFO6bjJ8MoNa73DS/wv67GfD0GTwAQksme6kks0bGA/Sk8yczi7jBtKcZFhqdb8qW
+ GVadJ3FXlkx9pDZ8wtbD5/FNtTbnBSdtjSTsgdkafNRbPA6F9FU993L0YpdKqi72DIpqAFNwk
+ WPJCZXZqP1q1X1cSceIaVYTY8wGR5oa+XycGCfsf5R/mUXrtWvMkX6zkWqYIHhXHl2664Xfug
+ 5y8CZ16DbfkMZorabZCc6Skxv6xLKdE2/tsdNV7o+G1y0QO7a8ZKchzSX/pV/BzhdAkF7zcqV
+ mP/oISwJnQCDpCNLgVrgGe999E+JrDs+J2gEejxb047zNIGgEx9g+zz4OpyyT2+bTNAx0lJwn
+ R1bWuS78HlpjZ8IndQoiylOxxrKMhVJwe+t9B24Vxks88BKLFfuT0iMza0v1ZimFOQWeP2Bj4
+ PjAr1kFT+XJl2dVXxWYwEbI7KfY5GU2e7n4aZiM4zuT/uBmIPnaos8xoV+E+moOnrXkCpj9gv
+ QgrqabNuqIVYpO1Cnj9fSKPN50eHryQRhjhN5qk3xACU1t8hfJXWpf57GqiBMYZ0CUQOtYjr/
+ KQq6kQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 29 Dec 2023 08:42:04 +0100
+Date: Fri, 29 Dec 2023 09:15:07 +0100
 
-Replace the specification of data structures by pointer dereferences
-as the parameter for the operator =E2=80=9Csizeof=E2=80=9D to make the cor=
-responding size
-determination a bit safer according to the Linux coding style convention.
-
+The kfree() function was called in two cases by
+the virtio_fs_get_tree() function during error handling
+even if the passed variable contained a null pointer.
 This issue was detected by using the Coccinelle software.
+
+* Thus use another label.
+
+* Move an error code assignment into an if branch.
+
+* Delete an initialisation (for the variable =E2=80=9Cfc=E2=80=9D)
+  which became unnecessary with this refactoring.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- fs/fuse/virtio_fs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/fuse/virtio_fs.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 5f1be1da92ce..2f8ba9254c1e 100644
+index 2f8ba9254c1e..0746f54ec743 100644
 =2D-- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -1435,11 +1435,11 @@ static int virtio_fs_get_tree(struct fs_context *f=
+@@ -1415,10 +1415,10 @@ static int virtio_fs_get_tree(struct fs_context *f=
 sc)
- 		goto out_err;
+ {
+ 	struct virtio_fs *fs;
+ 	struct super_block *sb;
+-	struct fuse_conn *fc =3D NULL;
++	struct fuse_conn *fc;
+ 	struct fuse_mount *fm;
+ 	unsigned int virtqueue_size;
+-	int err =3D -EIO;
++	int err;
+
+ 	/* This gets a reference on virtio_fs object. This ptr gets installed
+ 	 * in fc->iq->priv. Once fuse_conn is going away, it calls ->put()
+@@ -1431,13 +1431,15 @@ static int virtio_fs_get_tree(struct fs_context *f=
+sc)
+ 	}
+
+ 	virtqueue_size =3D virtqueue_get_vring_size(fs->vqs[VQ_REQUEST].vq);
+-	if (WARN_ON(virtqueue_size <=3D FUSE_HEADER_OVERHEAD))
+-		goto out_err;
++	if (WARN_ON(virtqueue_size <=3D FUSE_HEADER_OVERHEAD)) {
++		err =3D -EIO;
++		goto lock_mutex;
++	}
 
  	err =3D -ENOMEM;
--	fc =3D kzalloc(sizeof(struct fuse_conn), GFP_KERNEL);
-+	fc =3D kzalloc(sizeof(*fc), GFP_KERNEL);
+ 	fc =3D kzalloc(sizeof(*fc), GFP_KERNEL);
  	if (!fc)
- 		goto out_err;
+-		goto out_err;
++		goto lock_mutex;
 
--	fm =3D kzalloc(sizeof(struct fuse_mount), GFP_KERNEL);
-+	fm =3D kzalloc(sizeof(*fm), GFP_KERNEL);
+ 	fm =3D kzalloc(sizeof(*fm), GFP_KERNEL);
  	if (!fm)
- 		goto out_err;
+@@ -1476,6 +1478,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc=
+)
 
-@@ -1495,7 +1495,7 @@ static int virtio_fs_init_fs_context(struct fs_conte=
-xt *fsc)
- 	if (fsc->purpose =3D=3D FS_CONTEXT_FOR_SUBMOUNT)
- 		return fuse_init_fs_context_submount(fsc);
-
--	ctx =3D kzalloc(sizeof(struct fuse_fs_context), GFP_KERNEL);
-+	ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 	fsc->fs_private =3D ctx;
+ out_err:
+ 	kfree(fc);
++lock_mutex:
+ 	mutex_lock(&virtio_fs_mutex);
+ 	virtio_fs_put(fs);
+ 	mutex_unlock(&virtio_fs_mutex);
 =2D-
 2.43.0
 
