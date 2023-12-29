@@ -1,120 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-7011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7012-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513BA81FB9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 23:42:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D9881FCDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 04:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D61D2856F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Dec 2023 22:42:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 718E4B234C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Dec 2023 03:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5883110A1C;
-	Thu, 28 Dec 2023 22:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8045523A4;
+	Fri, 29 Dec 2023 03:40:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF9D10974;
-	Thu, 28 Dec 2023 22:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5cd68a0de49so4671063a12.2;
-        Thu, 28 Dec 2023 14:42:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E748617FA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 29 Dec 2023 03:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7b9648cb909so915715139f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Dec 2023 19:40:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703803322; x=1704408122;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1703821214; x=1704426014;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DTy5fC2IJhp+ci9FkJAD+jYq4iQn7KSbHoZ8YlA2wvQ=;
-        b=kMj7KgH8FEjcTaT3OezB+WoHMYviKSLWg6Ijs6Xh16aWAwpW6uqRmDR+U4AzvVZxSY
-         l3s1tuYn8WnagZxbsbGdUYw4B2T0GUP7tscrK33DDsNgq07/k94JUAO9XCf9J+vfNw+R
-         XjC8SMaNTHW9NkniPW2vHtLClZxmJhbzCgD2bpQoyclDuOrSlY7m04Pak/MZcwTpjghU
-         3lrMzCMKUVNSBYvI9yxe3tQpTXbbnCJ71U4+Yk5B6VlzQixIxpusDaDULIpw2dUhvdlf
-         LfQyRbOMlRLDUXXPAk5pNi7ygMcK/y2hdYlQ8euxez3zUAFN2OIrwV5MmibdTdUHC0K3
-         b1LA==
-X-Gm-Message-State: AOJu0YwmDd9P+JeM6KY6wNsm3vJZQAsSeCdafG56ST0lbkDvhzE8VsV+
-	ob4u/mFCtWwPGSOevjAt8Vc=
-X-Google-Smtp-Source: AGHT+IGfNnlAW2Ujv1FURsshAv4bfKuLSP9tIJr+PW8/iihOLm7kQ5HX5H8gMCYPmNM9u0qyCs+CVg==
-X-Received: by 2002:a05:6a20:2445:b0:196:3265:e806 with SMTP id t5-20020a056a20244500b001963265e806mr2631958pzc.86.1703803321864;
-        Thu, 28 Dec 2023 14:42:01 -0800 (PST)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id sr5-20020a17090b4e8500b0028afd8b1e0bsm14482044pjb.57.2023.12.28.14.42.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Dec 2023 14:42:01 -0800 (PST)
-Message-ID: <00cf8ffa-8ad5-45e4-bf7c-28b07ab4de21@acm.org>
-Date: Thu, 28 Dec 2023 14:41:59 -0800
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=tvuRaHQPBWJb/r34HQFNT0BBRQlbDKtVp9o1j9bBUz4mNtYrYzYzUfb+8To9dQVOX+
+         Rkk7RAX77PdSgKPpCR64sFIbAZpPqFspMhhYanfe8IXvK5tW7xXEIdy9YOXCoJXzepbg
+         0A59xPxTV2HH3mbB2ocaKRNPiF84CuMKyFjJ60764Vt5d7OHPt475RNqgCNlEBUGDdta
+         B8NH7i657/bNcX+ocq/jRy7t8i/Cc9d68zsgwv1qAOoxjDDAr/SYF1G6XbnJ97Ci6OoQ
+         4KQ5FVx6YxzjXng3+Kw9RYi7qxyug714gwwWC7UwTbkGvMua4vwsVnb3yRgmbSb8iQNL
+         Xl7A==
+X-Gm-Message-State: AOJu0YyZXjeSiV9/uVOchrrGwy+v49tmm8gjvXUjlyCJckYPv4xqniYp
+	c91hK71YNjlS+kRMllXcGCU8/kIyNl6X+kiAUyiyG/i/nI4c
+X-Google-Smtp-Source: AGHT+IEkAGjwi+IkyhqrzNDOTpnjqIEIdvqSb/HQ56k/Ws0Mj7r3H0FCFiYVeWjl4P/gSUkbHvnRxME/4WghGDJY9dzzc5Q4cfEE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 06/19] block, fs: Propagate write hints to the block
- device inode
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Daejun Park <daejun7.park@samsung.com>, Kanchan Joshi <joshi.k@samsung.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Chuck Lever <chuck.lever@oracle.com>
-References: <20231219000815.2739120-1-bvanassche@acm.org>
- <20231219000815.2739120-7-bvanassche@acm.org> <20231228071206.GA13770@lst.de>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20231228071206.GA13770@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:2708:b0:46b:719a:62d0 with SMTP id
+ m8-20020a056638270800b0046b719a62d0mr434473jav.5.1703821214020; Thu, 28 Dec
+ 2023 19:40:14 -0800 (PST)
+Date: Thu, 28 Dec 2023 19:40:14 -0800
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000038f8c3060d9dca3d@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/27/23 23:12, Christoph Hellwig wrote:
-> On Mon, Dec 18, 2023 at 04:07:39PM -0800, Bart Van Assche wrote:
->> Write hints applied with F_SET_RW_HINT on a block device affect the
->> shmem inode only. Propagate these hints to the block device inode
->> because that is the inode used when writing back dirty pages.
-> 
-> What shmem inode?
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-The inode associated with the /dev file, e.g. /dev/sda. That is another
-inode than the inode associated with the struct block_device instance.
-Without this patch, when opening /dev/sda and calling fcntl(), the shmem
-inode is modified but the struct block_device inode not. I think that
-the code path for allocation of the shmem inode is as follows:
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-shmem_mknod()
-   shmem_get_inode()
-     __shmem_get_inode()
-         new_inode(sb)
-           alloc_inode(sb)
-             ops->alloc_inode(sb) = shmem_alloc_inode(sb)
-             inode_init_always(sb, inode)
-               inode->i_mapping = &inode->i_data;
+#syz fix: exact-commit-title
 
->> @@ -317,6 +318,9 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
->>   
->>   	inode_lock(inode);
->>   	inode->i_write_hint = hint;
->> +	apply_whint = inode->i_fop->apply_whint;
->> +	if (apply_whint)
->> +		apply_whint(file, hint);
-> 
-> Setting the hint in file->f_mapping->inode is the right thing here,
-> not adding a method.
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-Is my understanding correct that the only way to reach the struct
-block_device instance from the shmem code is by dereferencing
-file->private_data? Shouldn't all dereferences of that pointer happen
-in source file block/fops.c since the file->private_data pointer is
-assigned in that file?
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
 
-Please note that suggestions to improve this patch are definitely
-welcome. As you probably know I'm not that familiar with the filesystem
-code.
+---
+[1] I expect the commit to be present in:
 
-Thanks,
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
 
-Bart.
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
