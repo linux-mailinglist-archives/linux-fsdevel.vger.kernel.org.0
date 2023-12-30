@@ -1,98 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-7034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DCE820417
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 10:00:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B1B82041F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 10:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2185EB21441
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 09:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E341F21C09
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 09:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5E82584;
-	Sat, 30 Dec 2023 09:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE022584;
+	Sat, 30 Dec 2023 09:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="s0aYt+I0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BpGcDNXE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7024E23A5;
-	Sat, 30 Dec 2023 09:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1703926805; bh=JhwbLXrg9xb5P3kWXzS/FhXW8uVTkvP/c+tNkfreaxg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=s0aYt+I01HVG4w0djuk1tDqHKHtrcyh4mERzbmQZkyYFxJ6ntiFYmSxkNMxhlM6xx
-	 DOMyQ0BSWfjco7CLbEKjz58v559wg2XTdDct2g5WasZDMooZYuLPBsSqMzi6opeSbt
-	 3TiXnBlisrOWHZZEYjyc/fP+gyQLYxFeT01aqjA8=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 31FA94; Sat, 30 Dec 2023 17:00:03 +0800
-X-QQ-mid: xmsmtpt1703926803tjsu7s8b9
-Message-ID: <tencent_C51BB525D6BA72BB25338C9EB41B094B3608@qq.com>
-X-QQ-XMAILINFO: Mdc3TkmnJyI/uQ6d1i0rpisJz8zTDHyh0uBVnwzQKJOiejgXThC3kq8HRO08Q/
-	 Qmt22IQ+MQgsr1fl8h8KsdgsZfUS492UvqiuEpDsVXTPWD1XymN+pl66Rn7TK50GVZmKn0oA1lP0
-	 0LLMb3XnPd/36Ofh2z2NbNaMPfJH/mlUHzz2ar2Wpy4U8M6ugu/mrZJKZ4Sie7p+6a/BVnfBo7u2
-	 23TD05HmGeA7HCfU5BLNCjaAZW79W+BS7DJiZHS/42237LH2dJwRdJ4iDXxM9V8rbOaUlnzbx3qF
-	 ZhJc9ZZfRLseunviQSQ7lQelnB7IQNN/GIWYOdezgaLu9KQ2V4R4gE3lojNpd067m2taRS6MyYLX
-	 R8yfH2FbJENWPKoHJ2PV+XEvlZQbF6cJdACFkpH3y7Ibd//6JVWioM56t1wkUrCagtByDI8B6R8G
-	 /S1ifnrnD+2ANWHEqv+3Wmg3ffdGepdQwj14HMJJu+Iv/1lysO9ws3JnixtsIsnz9P4dMAme3qZi
-	 37AM24bZxoy3MnKVzYgM5BYIIt6WeKhpvV4POWq9YJ6t7dmcrGmhULBmwF4RAhAdW5r5Ci/VlMJx
-	 DxZAOvniAqeMBS2qm/t4HdCYmzROu0DJKRCVnTVnrUdDjaTk8EjDVzBN18wniUuwbFaVGoZbB1Xl
-	 F7whgSmz7khzl0KuST1I5r0vNK9f0f60PswpbQK9D3yj/KEirSC8ttJC5fdL01sa5VZ+4z6sB7V0
-	 LaFyN7gL4Jl56tPLIU5ixbeiFFEW1WRXFPmSemiLyDhoo8AnSuNX8mRgEVLAUnHMRcSqM/6nfcCV
-	 L64MgraHhVlCWLkyLpWEtkr2bNXHphyNH5V41dRTEVC2DbmTqnHlyswltvPnvzD4Xm+ghyfI+sHy
-	 qAelAX8wIrdzngnY7I1rrlwFsm59H9f8Ue1a5ECKC2fhM9W+gHejyc++L7NadbiY0oiPcQMTv0m3
-	 aoFtOs9eM=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+65e940cfb8f99a97aca7@syzkaller.appspotmail.com
-Cc: almaz.alexandrovich@paragon-software.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH arm64] ntfs3: fix oob in ntfs_listxattr
-Date: Sat, 30 Dec 2023 17:00:03 +0800
-X-OQ-MSGID: <20231230090002.2305989-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000038cf2f060d7170a9@google.com>
-References: <00000000000038cf2f060d7170a9@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4487223A0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Dec 2023 09:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NAb3SoTBQSd7Cosu51e+bjXX2vE8sccK+WfSxnKFbwY=; b=BpGcDNXEM+P6p8yzGytGxn5XCv
+	QItEdPb8cHnnhbKJs7hjI1gc+erOFJooZLXAT3Cooey8RrvWnoklC3LVI7aCecOKh1xYA4gwdMUoX
+	T3bhy+h5jkWGYQOEzhAKTlbjayXhtiIFaGfef09eYmDp3khqtT9dVDP5j5BC63WSSq0GplvN+fXhQ
+	rw8WJc3XOaaG+zvyXLYhdn8k58R3dEeMhLlNuPOjxNPe25GuC7IikUidcetnSIOGadGhpk8+YGDgz
+	1TzPP8t1xs/lr25EAnzXwkanjE1oBC7tm5iMyj9QS6uhjtZsHyYuCe7fKYbCT4HMK0a0TkSK+LaWM
+	LXkFpzRw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rJVYb-006vOk-9h; Sat, 30 Dec 2023 09:23:01 +0000
+Date: Sat, 30 Dec 2023 09:23:01 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] buffer: Return bool from grow_dev_folio()
+Message-ID: <ZY/hdUqeKMi0IVp6@casper.infradead.org>
+References: <20231109210608.2252323-1-willy@infradead.org>
+ <20231109210608.2252323-2-willy@infradead.org>
+ <CAKFNMo=1yLxL9RR4XBY6=SkWej7tstTEiFQjUFWjxMs+5=YPFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKFNMo=1yLxL9RR4XBY6=SkWej7tstTEiFQjUFWjxMs+5=YPFw@mail.gmail.com>
 
-The length of name cannot exceed the space occupied by ea.
+On Fri, Nov 10, 2023 at 12:43:43PM +0900, Ryusuke Konishi wrote:
+> On Fri, Nov 10, 2023 at 6:07 AM Matthew Wilcox (Oracle) wrote:
+> > +               /* Caller should retry if this call fails */
+> > +               end_block = ~0ULL;
+> >                 if (!try_to_free_buffers(folio))
+> > -                       goto failed;
+> > +                       goto unlock;
+> >         }
+> >
+> 
+> > -       ret = -ENOMEM;
+> >         bh = folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
+> >         if (!bh)
+> > -               goto failed;
+> > +               goto unlock;
+> 
+> Regarding this folio_alloc_buffers() error path,
+> If folio_buffers() was NULL, here end_block is 0, so this function
+> returns false (which means "have a permanent failure").
+> 
+> But, if folio_buffers() existed and they were freed with
+> try_to_free_buffers() because of bh->b_size != size, here end_block
+> has been set to ~0ULL, so it seems to return true ("succeeded").
+> 
+> Does this semantic change match your intent?
+> 
+> Otherwise, I think end_block should be set to 0 just before calling
+> folio_alloc_buffers().
 
-Reported-and-tested-by: syzbot+65e940cfb8f99a97aca7@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/ntfs3/xattr.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks for the review, and sorry for taking so long to get back to you.
+The change was unintentional (but memory allocation failure wth GFP_KERNEL
+happens so rarely that our testing was never going to catch it)
 
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 4274b6f31cfa..3b97508a7bf2 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -219,6 +219,9 @@ static ssize_t ntfs_list_ea(struct ntfs_inode *ni, char *buffer,
- 		if (!ea->name_len)
- 			break;
+I think I should just move the assignment to end_block inside the 'if'.
+It's just more obvious what's going on.  Andrew prodded me to be more
+explicit about why memory allocation is a "permanent" failure, but
+failing to free buffers is not.
+
+I'll turn this into a proper patch submission later.
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index d5ce6b29c893..d3bcf601d3e5 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1028,8 +1028,8 @@ static sector_t folio_init_buffers(struct folio *folio,
+  *
+  * This is used purely for blockdev mappings.
+  *
+- * Returns false if we have a 'permanent' failure.  Returns true if
+- * we succeeded, or the caller should retry.
++ * Returns false if we have a failure which cannot be cured by retrying
++ * without sleeping.  Returns true if we succeeded, or the caller should retry.
+  */
+ static bool grow_dev_folio(struct block_device *bdev, sector_t block,
+ 		pgoff_t index, unsigned size, gfp_t gfp)
+@@ -1051,10 +1051,17 @@ static bool grow_dev_folio(struct block_device *bdev, sector_t block,
+ 			goto unlock;
+ 		}
  
-+		if (ea->name_len > ea_size)
-+			break;
-+
- 		if (buffer) {
- 			/* Check if we can use field ea->name */
- 			if (off + ea_size > size)
--- 
-2.43.0
-
-
+-		/* Caller should retry if this call fails */
+-		end_block = ~0ULL;
+-		if (!try_to_free_buffers(folio))
++		/*
++		 * Retrying may succeed; for example the folio may finish
++		 * writeback, or buffers may be cleaned.  This should not
++		 * happen very often; maybe we have old buffers attached to
++		 * this blockdev's page cache and we're trying to change
++		 * the block size?
++		 */
++		if (!try_to_free_buffers(folio)) {
++			end_block = ~0ULL;
+ 			goto unlock;
++		}
+ 	}
+ 
+ 	bh = folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
 
