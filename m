@@ -1,166 +1,293 @@
-Return-Path: <linux-fsdevel+bounces-7036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F13D8205DC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 13:22:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4C18206E2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 16:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB4D281FFD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 12:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27531C2126C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Dec 2023 15:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8169463;
-	Sat, 30 Dec 2023 12:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6F2BA45;
+	Sat, 30 Dec 2023 15:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gw4u4Y4T"
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="1cSqkXZ9";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="GejyRS1s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0888F69
-	for <linux-fsdevel@vger.kernel.org>; Sat, 30 Dec 2023 12:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-78102c516a7so694494985a.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 30 Dec 2023 04:22:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703938952; x=1704543752; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zG7XZ2cFmX6RWvWyWeA4DZWu6jBWUYLWuLC506HUhO4=;
-        b=Gw4u4Y4TorotzJku4SLmaGM+0VUiF1V1t0is6+CuCKLGHhgkUJsEKCndbiTEAnFQMt
-         Sxm9+ublfx88WyhMOZZE/OZMWAty1/hNHrdrb7Bbv0bPhfzq+EcUPI3Q2mkQaUQcucV7
-         J7i3Be5fZZyRDJ8CT53r9zeabrxWKskUfokurnX4d4RB3zY+lWFJUz2mKDlQ83qMIVm6
-         KITTQ6vz2A2nV5HlwH+6oBEKLBTBdQEmn+nKxejkp17sZ5Si5MZK4MZpCdfz5U9+G15G
-         LXqxr1fuGdJp19pS94yRPcZ8iJyhH7LG2tFOOVIItaU4erqF2Tx/lu8QafqdpadW4CCw
-         +B4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703938952; x=1704543752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zG7XZ2cFmX6RWvWyWeA4DZWu6jBWUYLWuLC506HUhO4=;
-        b=Fv1T36IN23cyu7WeEILveYHRT5ebJxF345Zswh0st764+rVNI0oBl+c7yzG48uacC0
-         N2obLf4A6KFZDOFT99L1Xj2JjBeONK+E7EjmFYzfQ4SUtDI1jRm/q798SRs0374VpCF5
-         R0XxPcXFL0dpFwJ5sPc8B7CNu2pY9rRgoyaG4nxx8Yrrg6CLzwWEvJzwL11wA5OhykS5
-         zvhFofmn/PXwJx3FTOySkutQWIQu6nw5U/F1WFcu/yNBFtrU43kxsgzOH38TRw4QeV7e
-         IeQ/tYPUyLWwXtSTSv/Mrci7EMQgmVF3UMs1ZdsJzMHp+y6hDOZoTW3Kn7vza49ofuKw
-         T3Xw==
-X-Gm-Message-State: AOJu0Yx40OkRnGC/6gb7H/yxPEXB4jWqgRkclUOeNwKwIaz0AQfk8axp
-	5GRLkJuOL5wqEeZWdM7HUOzFLPxVz0HGbBled5A=
-X-Google-Smtp-Source: AGHT+IH64HS6XQUpr0LG7+Dv7K1rltPRjgqp44UviNVRPSRJ99HJLt4g/Ex6Btl5x3IKXgH8gQY5WWvQpFcO6Im3p4E=
-X-Received: by 2002:a05:620a:558a:b0:781:5e6a:355d with SMTP id
- vq10-20020a05620a558a00b007815e6a355dmr7465316qkn.141.1703938951963; Sat, 30
- Dec 2023 04:22:31 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83002BA27;
+	Sat, 30 Dec 2023 15:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.prv.sapience.com (srv8.prv.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 522D8480A25;
+	Sat, 30 Dec 2023 10:23:26 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1703949806;
+ h=message-id : subject : from : to : cc : date : content-type :
+ mime-version : from; bh=nFcp0elFnmNcja7RlqRVcaS+kKIovNFoNB4flIIuqkQ=;
+ b=1cSqkXZ90NkOD14CGVjigfD7glJXufTNEepy5/a+tP/dLpnJGeJiilMgm9o0VVXkoWnS/
+ f9+BvGycjtef92GDw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1703949806;
+	cv=none; b=O1qV66X6WQJuC/eeVg/Is6wffFopTJT3PAxZx/Pb7yWKy0/YELkfnXR0UoX7nQ1cko8sosSxsjGn3HR6F1sL4zMJ2yAVyoREbTE+8WNS+vEaTLC8BJj/hKHnUqITIlawTJZzv1o+aUyzEpeZGgEnF/t9AHmU4vpqvazEMq0n2rkogZYV67K2tvsgILdzZnsFCUn7HYcPr5obuuHEMBecePy+JqRm5k2mlqdahlqLwR5LujA8/jjFqWgj62H6z1UiK5M6ISxZHPDjH6wKkFBhWJ9F0KN/qcIW1cY+0KTw7xXLZgzptB8OTT005ZxatLaGjEGbC/7j9h7S1yfWgIs+Pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1703949806; c=relaxed/simple;
+	bh=4bkIVgY1UhZvffRGURKKVrVMR4oYgp9a19P2a8bDumg=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 Autocrypt:Content-Type:User-Agent:MIME-Version; b=t+EsuvRtPc8rZ8Kh9a+PIG8Xu5OgdZAkEGznpT0LyPvZBfB0+u8CUA8Qk/hsCKlXVVtt7JGcKx7UpEOvOxTa8g0Bw0D3OuE3o/Xn79pi7eVGew/gHsZKZBAh1kKvizm1zwxrwwsMjBTwXKMxWuHyTBy3BGG7O39bvjIwcYDouO/I50MHBM7lXGh/j6R7+6iluTCD5W+yI7GATbPYzAmpGbwDq9dMzIxdkok/6Vk3fShzYw7ta6bSDk2JjMFipm801VT7Ph5oZSC4EZzNKPrH8DKSEIKgqL3ffGfwMYBs+HRA2XNzlXWAcfCy6r5awlknayVBGSKXdPId81MUqWI1sA==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1703949806;
+ h=message-id : subject : from : to : cc : date : content-type :
+ mime-version : from; bh=nFcp0elFnmNcja7RlqRVcaS+kKIovNFoNB4flIIuqkQ=;
+ b=GejyRS1sFCkVTXc0pSWAMvzPeseovqb2e+OTcBRHfAfpjRPlmKopl0oz4DJa0PHGb5D75
+ JHbEZRvduRPu7PRK8SRsDbwhdB7j7v2z/8B24K8mxSzZH9HrdPCPC+mlkCKfBxb9qq8jpTB
+ UykewULVbfwH/N5rhlR8y/01rWwhdmao1Y45KJ/kNd77sN5jyXoBFUv5OkQLznCSgg+sdhZ
+ FgSqI6idEtUAWVDagA8HltQhS7uAHEs/IT1QdVDASVHu+vOyvlsnYBV8U524cq4AWsjo/VZ
+ FGNtsB5Hwd8vh8XVTl2F9sHZEyT21LQGXcOT2ZT5EVHM9g6PniVqloZt/Ljw==
+Message-ID: <8bb29431064fc1f70a42edef75a8788dd4a0eecc.camel@sapience.com>
+Subject: 6.6.8 stable: crash in folio_mark_dirty
+From: Genes Lists <lists@sapience.com>
+To: linux-kernel@vger.kernel.org
+Cc: "MatthewWilcox(Oracle)" <willy@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Date: Sat, 30 Dec 2023 10:23:26 -0500
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mQENBFx5lqsBCACnoqPWNljBVS+eM+AiVpFn25csowDVqjLKEmCxJ0CWD/jj4h0opv2278TgyPrAny9Zw0Vrtb38ho6i0LqKE4mptFDxp/aRP9v+ywE8Ax/XCaOYeQ2u8eKKI4iLyjFdlzETpMfF4Xs5HKklugmhPxqcQs1S+4pzrQoch5z0aBi8A3MiGc9QVZEjfiK5NmRgibg3cHXMGcuODeijoYWDjcU/Y+yTyQ9MG4p95pUMPYBEVufR+Gaksk4xULurOlciphQC8oO9uV9X9f8CvEOBilM1eo98NL0egnOWg4hJgcBgHJ6vjalW7v+3gjoyLxbqzRDTjp63nMAF08C5RAY+ylCdABEBAAG0IEdlbmVzIExpc3RzIDxsaXN0c0BzYXBpZW5jZS5jb20+iQFUBBMBCAA+FiEEc/TBPYz5PhmLF5p8HgSPILb7+v0FAlx5lqwCGwMFCQHhM4AFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQHgSPILb7+v38fgf/T0t7OSNSi6AfSdZrt1Uy04mY7A9MqLhRn00gJMXQMiZRdlkFROUXLkLYLiZUVJRLCsXXDGHMl44EsWddwwTqx0cVGBjErT2AkKnN+o72Uc+fyI5XCMjgQafFIHXVcOBmbM9QjruL6zgbmPO8EtndHGsQ7pVhN3ysZxQfcN+wxdaufXXi8ZQzNvCMyE9dVnVWBpKRSxgN1L33SyjPnuJIdGCYz1ZIgfyUyB3AF/dK8ZQ05NW8TxFcsOF1lsku4WINNBMkd+WaSaxQ+lsCPhRiw+aL87HWccUI4wnNOdvo76f1Hork6Abd6S0UKlBDrknaNsFERvErSguAmqFMmIxhd5gzBF0mPRkWCSsGAQQB2kcPAQEHQMMxX5qfptJXZdr4Jm7Twv1ze/5Ob7HKQA6twZkcuUe8tC1NYWlsIExpc3RzIChMMCAyMDE5MDcxMCkgPGxpc3RzQHNhcGllb
+	mNlLmNvbT6IlgQTFggAPgIbAQULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBOWDKFMXGxIEDrzjCnPnZQr+j8UABQJjyX6KBQkZb0RxAAoJEHPnZQr+j8UAHP8BAPw25oPdQzhl5ZdDltRimmUBkA5e3x4mzDikRgul/3pqAPsEEeRSMwZ1fz6122qPC0v4dLUpHl4D7GMa8732SJyAArgzBF0mPVgWCSsGAQQB2kcPAQEHQB+8yWRF3SUA9RiXZR3wH7WZJ3IH09ZiCLamrdomXGXmiPUEGBYIACYCGwIWIQTlgyhTFxsSBA684wpz52UK/o/FAAUCY8l+sQUJF44Q2QCBdiAEGRYIAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCXSY9WAAKCRA5BdB0L6Ze2+tHAQDDg1To6YZVGo2AorjOaX4H54E08Avh+qttW+8Ly8YwGAD/eEZvKAxdDj9SvNGqtJh+76Q/fso19FpN+CRYWc+9wgMJEHPnZQr+j8UAwo4A/184tkQWY8y8K1kumSuhiSl6tbXSHNNKA3g/dsxns0UgAQC1MAJo2MJzCrIV5pyVnmHfiNDFPctA2G1RiLo/9TPnB7g4BF0mPYwSCisGAQQBl1UBBQEBB0BAXvdh6o1D7dZqc5tLM3t5KMVbxdtbTY07YFCtLbCNCgMBCAeIfgQYFggAJgIbDBYhBOWDKFMXGxIEDrzjCnPnZQr+j8UABQJjyX6xBQkXjhClAAoJEHPnZQr+j8UAgpIA/0trNf9NrQszYGZ1cq27doPaDeWDbp5HwQFdCcxTuIIRAP9x4Ia8td4dbauGMK343i+xViosCxWwh49r1gqZULEtDg==
+Content-Type: multipart/mixed; boundary="=-tq64fylqLrgyJbZBhP6n"
+User-Agent: Evolution 3.50.2 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109210608.2252323-1-willy@infradead.org> <20231109210608.2252323-2-willy@infradead.org>
- <CAKFNMo=1yLxL9RR4XBY6=SkWej7tstTEiFQjUFWjxMs+5=YPFw@mail.gmail.com> <ZY/hdUqeKMi0IVp6@casper.infradead.org>
-In-Reply-To: <ZY/hdUqeKMi0IVp6@casper.infradead.org>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sat, 30 Dec 2023 21:22:15 +0900
-Message-ID: <CAKFNMomPry8Xqf5GkK3U09GLcwsaV1j_Q1U0xST-6S8Y4QKgPw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] buffer: Return bool from grow_dev_folio()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hannes Reinecke <hare@suse.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, linux-fsdevel@vger.kernel.org
+
+--=-tq64fylqLrgyJbZBhP6n
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 30, 2023 at 6:23=E2=80=AFPM Matthew Wilcox wrote:
->
-> On Fri, Nov 10, 2023 at 12:43:43PM +0900, Ryusuke Konishi wrote:
-> > On Fri, Nov 10, 2023 at 6:07=E2=80=AFAM Matthew Wilcox (Oracle) wrote:
-> > > +               /* Caller should retry if this call fails */
-> > > +               end_block =3D ~0ULL;
-> > >                 if (!try_to_free_buffers(folio))
-> > > -                       goto failed;
-> > > +                       goto unlock;
-> > >         }
-> > >
-> >
-> > > -       ret =3D -ENOMEM;
-> > >         bh =3D folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
-> > >         if (!bh)
-> > > -               goto failed;
-> > > +               goto unlock;
-> >
-> > Regarding this folio_alloc_buffers() error path,
-> > If folio_buffers() was NULL, here end_block is 0, so this function
-> > returns false (which means "have a permanent failure").
-> >
-> > But, if folio_buffers() existed and they were freed with
-> > try_to_free_buffers() because of bh->b_size !=3D size, here end_block
-> > has been set to ~0ULL, so it seems to return true ("succeeded").
-> >
-> > Does this semantic change match your intent?
-> >
-> > Otherwise, I think end_block should be set to 0 just before calling
-> > folio_alloc_buffers().
->
-> Thanks for the review, and sorry for taking so long to get back to you.
-> The change was unintentional (but memory allocation failure wth GFP_KERNE=
-L
-> happens so rarely that our testing was never going to catch it)
->
-> I think I should just move the assignment to end_block inside the 'if'.
-> It's just more obvious what's going on.
 
-Agree.  I also think this fix is better.
+Apologies in advance, but I cannot git bisect this since machine was
+running for 10 days on 6.6.8 before this happened.
 
-Regards,
-Ryusuke Konishi
+Reporting in case it's useful (and not a hardware fail).
 
->  Andrew prodded me to be more
-> explicit about why memory allocation is a "permanent" failure, but
-> failing to free buffers is not.
->
-> I'll turn this into a proper patch submission later.
->
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index d5ce6b29c893..d3bcf601d3e5 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1028,8 +1028,8 @@ static sector_t folio_init_buffers(struct folio *fo=
-lio,
->   *
->   * This is used purely for blockdev mappings.
->   *
-> - * Returns false if we have a 'permanent' failure.  Returns true if
-> - * we succeeded, or the caller should retry.
-> + * Returns false if we have a failure which cannot be cured by retrying
-> + * without sleeping.  Returns true if we succeeded, or the caller should=
- retry.
->   */
->  static bool grow_dev_folio(struct block_device *bdev, sector_t block,
->                 pgoff_t index, unsigned size, gfp_t gfp)
-> @@ -1051,10 +1051,17 @@ static bool grow_dev_folio(struct block_device *b=
-dev, sector_t block,
->                         goto unlock;
->                 }
->
-> -               /* Caller should retry if this call fails */
-> -               end_block =3D ~0ULL;
-> -               if (!try_to_free_buffers(folio))
-> +               /*
-> +                * Retrying may succeed; for example the folio may finish
-> +                * writeback, or buffers may be cleaned.  This should not
-> +                * happen very often; maybe we have old buffers attached =
-to
-> +                * this blockdev's page cache and we're trying to change
-> +                * the block size?
-> +                */
-> +               if (!try_to_free_buffers(folio)) {
-> +                       end_block =3D ~0ULL;
->                         goto unlock;
-> +               }
->         }
->
->         bh =3D folio_alloc_buffers(folio, size, gfp | __GFP_ACCOUNT);
+There is nothing interesting in journal ahead of the crash - previous
+entry, 2 minutes prior from user space dhcp server.
+
+ - Root, efi is on nvme
+ - Spare root,efi is on sdg
+ - md raid6 on sda-sd with lvmcache from one partition on nvme drive.
+ - all filesystems are ext4 (other than efi).
+ - 32 GB mem.
+
+
+regards
+
+gene
+
+details attached which show:
+
+Dec 30 07:00:36 s6 kernel:  <TASK>
+Dec 30 07:00:36 s6 kernel:  ? __folio_mark_dirty+0x21c/0x2a0
+Dec 30 07:00:36 s6 kernel:  ? __warn+0x81/0x130
+Dec 30 07:00:36 s6 kernel:  ? __folio_mark_dirty+0x21c/0x2a0
+Dec 30 07:00:36 s6 kernel:  ? report_bug+0x171/0x1a0
+Dec 30 07:00:36 s6 kernel:  ? handle_bug+0x3c/0x80
+Dec 30 07:00:36 s6 kernel:  ? exc_invalid_op+0x17/0x70
+Dec 30 07:00:36 s6 kernel:  ? asm_exc_invalid_op+0x1a/0x20
+Dec 30 07:00:36 s6 kernel:  ? __folio_mark_dirty+0x21c/0x2a0
+Dec 30 07:00:36 s6 kernel:  block_dirty_folio+0x8a/0xb0
+Dec 30 07:00:36 s6 kernel:  unmap_page_range+0xd17/0x1120
+Dec 30 07:00:36 s6 kernel:  unmap_vmas+0xb5/0x190
+Dec 30 07:00:36 s6 kernel:  exit_mmap+0xec/0x340
+Dec 30 07:00:36 s6 kernel:  __mmput+0x3e/0x130
+Dec 30 07:00:36 s6 kernel:  do_exit+0x31c/0xb20
+Dec 30 07:00:36 s6 kernel:  do_group_exit+0x31/0x80
+Dec 30 07:00:36 s6 kernel:  __x64_sys_exit_group+0x18/0x20
+Dec 30 07:00:36 s6 kernel:  do_syscall_64+0x5d/0x90
+Dec 30 07:00:36 s6 kernel:  ? count_memcg_events.constprop.0+0x1a/0x30
+Dec 30 07:00:36 s6 kernel:  ? handle_mm_fault+0xa2/0x360
+Dec 30 07:00:36 s6 kernel:  ? do_user_addr_fault+0x30f/0x660
+Dec 30 07:00:36 s6 kernel:  ? exc_page_fault+0x7f/0x180
+Dec 30 07:00:36 s6 kernel:  entry_SYSCALL_64_after_hwframe+0x6e/0xd8
+Dec 30 07:00:36 s6 kernel: RIP: 0033:0x7fb3c581ee2d
+Dec 30 07:00:36 s6 kernel: Code: Unable to access opcode bytes at
+0x7fb3c581ee03.
+Dec 30 07:00:36 s6 kernel: RSP: 002b:00007fff620541e8 EFLAGS: 00000206
+ORIG_RAX: 00000000000000e7
+Dec 30 07:00:36 s6 kernel: RAX: ffffffffffffffda RBX: 00007fb3c591efa8
+RCX: 00007fb3c581ee2d
+Dec 30 07:00:36 s6 kernel: RDX: 00000000000000e7 RSI: ffffffffffffff88
+RDI: 0000000000000000
+Dec 30 07:00:36 s6 kernel: RBP: 0000000000000002 R08: 0000000000000000
+R09: 00007fb3c5924920
+Dec 30 07:00:36 s6 kernel: R10: 00005650f2e615f0 R11: 0000000000000206
+R12: 0000000000000000
+Dec 30 07:00:36 s6 kernel: R13: 0000000000000000 R14: 00007fb3c591d680
+R15: 00007fb3c591efc0
+Dec 30 07:00:36 s6 kernel:  </TASK>
+
+
+--=-tq64fylqLrgyJbZBhP6n
+Content-Disposition: attachment; filename="s6-crash"
+Content-Type: text/plain; name="s6-crash"; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0t
+LS0tLS0tCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6IFdBUk5JTkc6IENQVTogMCBQSUQ6IDUy
+MTUyNCBhdCBtbS9wYWdlLXdyaXRlYmFjay5jOjI2NjggX19mb2xpb19tYXJrX2RpcnR5ICg/Pzo/
+KSAKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogTW9kdWxlcyBsaW5rZWQgaW46IGFsZ2lmX2hh
+c2ggYWZfYWxnIHJwY3NlY19nc3Nfa3JiNSBuZnN2NCBkbnNfcmVzb2x2ZXIgbmZzIGZzY2FjaGUg
+bmV0ZnMgbmZ0X25hdCBuZnRfY2hhaW5fbmF0IG5mX25hdCBuZnRfY3QgbmZfY29ubnRyYWNrIG5m
+X2RlZnJhZ19pcHY2IG5mX2RlZnJhZ19pcHY0IG5mX3RhYmxlcyBycGNyZG1hIHJkbWE+CkRlYyAz
+MCAwNzowMDozNiBzNiBrZXJuZWw6ICBhc3luY194b3IgcmFwbCBqb3lkZXYgYXN5bmNfdHggaW50
+ZWxfY3N0YXRlIG1laV9tZSBubHNfaXNvODg1OV8xIHZmYXQgaTJjX2k4MDEgeG9yIGNlYyBzbmQg
+cmFpZDZfcHEgbGliY3JjMzJjIGludGVsX3VuY29yZSBteG1fd21pIHBjc3BrciBlMTAwMGUgaTJj
+X3NtYnVzIGludGVsX3dtaV90aHVuZGVyYm9sdCBzb3VuZGNvcmUgbWVpPgpEZWMgMzAgMDc6MDA6
+MzYgczYga2VybmVsOiBDUFU6IDAgUElEOiA1MjE1MjQgQ29tbTogcnN5bmMgTm90IHRhaW50ZWQg
+Ni42Ljgtc3RhYmxlLTEgIzEzIGQyMzhmNWFiNmEyMDZjZGIwY2M1Y2Q3MmY4Njg4MjMwZjIzZDU4
+ZGYKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogSGFyZHdhcmUgbmFtZTogVG8gQmUgRmlsbGVk
+IEJ5IE8uRS5NLiBUbyBCZSBGaWxsZWQgQnkgTy5FLk0uL1ozNzAgRXh0cmVtZTQsIEJJT1MgUDQu
+MjAgMTAvMzEvMjAxOQpEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBSSVA6IDAwMTA6X19mb2xp
+b19tYXJrX2RpcnR5ICg/Pzo/KSAKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogQ29kZTogODkg
+ZmUgZTggNTcgMjIgMTQgMDAgNjUgZmYgMGQgYjggZmYgZjIgNjIgMGYgODQgOGQgMDAgMDAgMDAg
+NDkgOGIgM2MgMjQgZTkgNDcgZmUgZmYgZmYgNGMgODkgZmYgZTggYjkgMTggMDggMDAgNDggODkg
+YzYgZWIgODUgPDBmPiAwYiBlOSAyNyBmZSBmZiBmZiA0OCA4YiA1MiAxMCBlOSA1NiBmZiBmZiBm
+ZiA0OCBjNyAwNCA+CkFsbCBjb2RlCj09PT09PT09CiAgIDA6CTg5IGZlICAgICAgICAgICAgICAg
+IAltb3YgICAgJWVkaSwlZXNpCiAgIDI6CWU4IDU3IDIyIDE0IDAwICAgICAgIAljYWxsICAgMHgx
+NDIyNWUKICAgNzoJNjUgZmYgMGQgYjggZmYgZjIgNjIgCWRlY2wgICAlZ3M6MHg2MmYyZmZiOCgl
+cmlwKSAgICAgICAgIyAweDYyZjJmZmM2CiAgIGU6CTBmIDg0IDhkIDAwIDAwIDAwICAgIAlqZSAg
+ICAgMHhhMQogIDE0Ogk0OSA4YiAzYyAyNCAgICAgICAgICAJbW92ICAgICglcjEyKSwlcmRpCiAg
+MTg6CWU5IDQ3IGZlIGZmIGZmICAgICAgIAlqbXAgICAgMHhmZmZmZmZmZmZmZmZmZTY0CiAgMWQ6
+CTRjIDg5IGZmICAgICAgICAgICAgIAltb3YgICAgJXIxNSwlcmRpCiAgMjA6CWU4IGI5IDE4IDA4
+IDAwICAgICAgIAljYWxsICAgMHg4MThkZQogIDI1Ogk0OCA4OSBjNiAgICAgICAgICAgICAJbW92
+ICAgICVyYXgsJXJzaQogIDI4OgllYiA4NSAgICAgICAgICAgICAgICAJam1wICAgIDB4ZmZmZmZm
+ZmZmZmZmZmZhZgogIDJhOioJMGYgMGIgICAgICAgICAgICAgICAgCXVkMgkJPC0tIHRyYXBwaW5n
+IGluc3RydWN0aW9uCiAgMmM6CWU5IDI3IGZlIGZmIGZmICAgICAgIAlqbXAgICAgMHhmZmZmZmZm
+ZmZmZmZmZTU4CiAgMzE6CTQ4IDhiIDUyIDEwICAgICAgICAgIAltb3YgICAgMHgxMCglcmR4KSwl
+cmR4CiAgMzU6CWU5IDU2IGZmIGZmIGZmICAgICAgIAlqbXAgICAgMHhmZmZmZmZmZmZmZmZmZjkw
+CiAgM2E6CTQ4ICAgICAgICAgICAgICAgICAgIAlyZXguVwogIDNiOgljNyAgICAgICAgICAgICAg
+ICAgICAJLmJ5dGUgMHhjNwogIDNjOgkwNCAwMCAgICAgICAgICAgICAgICAJYWRkICAgICQweDAs
+JWFsCgpDb2RlIHN0YXJ0aW5nIHdpdGggdGhlIGZhdWx0aW5nIGluc3RydWN0aW9uCj09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICAgMDoJMGYgMGIgICAgICAgICAg
+ICAgICAgCXVkMgogICAyOgllOSAyNyBmZSBmZiBmZiAgICAgICAJam1wICAgIDB4ZmZmZmZmZmZm
+ZmZmZmUyZQogICA3Ogk0OCA4YiA1MiAxMCAgICAgICAgICAJbW92ICAgIDB4MTAoJXJkeCksJXJk
+eAogICBiOgllOSA1NiBmZiBmZiBmZiAgICAgICAJam1wICAgIDB4ZmZmZmZmZmZmZmZmZmY2Ngog
+IDEwOgk0OCAgICAgICAgICAgICAgICAgICAJcmV4LlcKICAxMToJYzcgICAgICAgICAgICAgICAg
+ICAgCS5ieXRlIDB4YzcKICAxMjoJMDQgMDAgICAgICAgICAgICAgICAgCWFkZCAgICAkMHgwLCVh
+bApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBSU1A6IDAwMTg6ZmZmZmM5MDAwYzAzN2IwMCBF
+RkxBR1M6IDAwMDEwMDQ2CkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6IFJBWDogMDJmZmZmNjAw
+MDAwODAzMCBSQlg6IDAwMDAwMDAwMDAwMDAyODYgUkNYOiBmZmZmODg4NWQ0NGRmZjA4CkRlYyAz
+MCAwNzowMDozNiBzNiBrZXJuZWw6IFJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IGZmZmY4ODgx
+MGQwMTVjYTggUkRJOiBmZmZmODg4MTBkMDE1Y2IwCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6
+IFJCUDogZmZmZjg4ODEwZDAxNWNiMCBSMDg6IGZmZmY4ODg1MjA4YzEzMDAgUjA5OiAwMDAwMDAw
+MDAwMDAwMDAwCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6IFIxMDogMDAwMDAwMDAwMDAwMDIw
+MCBSMTE6IDAwMDAwMDAwMDAwMDAwMDIgUjEyOiBmZmZmODg4MTBkMDE1Y2E4CkRlYyAzMCAwNzow
+MDozNiBzNiBrZXJuZWw6IFIxMzogMDAwMDAwMDAwMDAwMDAwMSBSMTQ6IGZmZmY4ODg1MWVjNzJm
+YzAgUjE1OiBmZmZmZWEwMDEwNWM1ZTAwCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6IEZTOiAg
+MDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBHUzpmZmZmODg4ODllZTAwMDAwKDAwMDApIGtubEdTOjAw
+MDAwMDAwMDAwMDAwMDAKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogQ1M6ICAwMDEwIERTOiAw
+MDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpEZWMgMzAgMDc6MDA6MzYgczYga2Vy
+bmVsOiBDUjI6IDAwMDA3ZmIzYzU5M2IwMjAgQ1IzOiAwMDAwMDAwNjkwZTIwMDAzIENSNDogMDAw
+MDAwMDAwMDM3MDZmMApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBEUjA6IDAwMDAwMDAwMDAw
+MDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMApEZWMgMzAg
+MDc6MDA6MzYgczYga2VybmVsOiBEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZm
+ZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBD
+YWxsIFRyYWNlOgpEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiAgPFRBU0s+CkRlYyAzMCAwNzow
+MDozNiBzNiBrZXJuZWw6ID8gX19mb2xpb19tYXJrX2RpcnR5ICg/Pzo/KSAKRGVjIDMwIDA3OjAw
+OjM2IHM2IGtlcm5lbDogPyBfX3dhcm4gKD8/Oj8pIApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVs
+OiA/IF9fZm9saW9fbWFya19kaXJ0eSAoPz86PykgCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6
+ID8gcmVwb3J0X2J1ZyAoPz86PykgCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6ID8gaGFuZGxl
+X2J1ZyAoPz86PykgCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6ID8gZXhjX2ludmFsaWRfb3Ag
+KD8/Oj8pIApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiA/IGFzbV9leGNfaW52YWxpZF9vcCAo
+Pz86PykgCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6ID8gX19mb2xpb19tYXJrX2RpcnR5ICg/
+Pzo/KSAKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogYmxvY2tfZGlydHlfZm9saW8gKD8/Oj8p
+IApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiB1bm1hcF9wYWdlX3JhbmdlICg/Pzo/KSAKRGVj
+IDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogdW5tYXBfdm1hcyAoPz86PykgCkRlYyAzMCAwNzowMDoz
+NiBzNiBrZXJuZWw6IGV4aXRfbW1hcCAoPz86PykgCkRlYyAzMCAwNzowMDozNiBzNiBrZXJuZWw6
+IF9fbW1wdXQgKD8/Oj8pIApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBkb19leGl0ICg/Pzo/
+KSAKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogZG9fZ3JvdXBfZXhpdCAoPz86PykgCkRlYyAz
+MCAwNzowMDozNiBzNiBrZXJuZWw6IF9feDY0X3N5c19leGl0X2dyb3VwICg/Pzo/KSAKRGVjIDMw
+IDA3OjAwOjM2IHM2IGtlcm5lbDogZG9fc3lzY2FsbF82NCAoPz86PykgCkRlYyAzMCAwNzowMDoz
+NiBzNiBrZXJuZWw6ID8gY291bnRfbWVtY2dfZXZlbnRzLmNvbnN0cHJvcC4wICg/Pzo/KSAKRGVj
+IDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogPyBoYW5kbGVfbW1fZmF1bHQgKD8/Oj8pIApEZWMgMzAg
+MDc6MDA6MzYgczYga2VybmVsOiA/IGRvX3VzZXJfYWRkcl9mYXVsdCAoPz86PykgCkRlYyAzMCAw
+NzowMDozNiBzNiBrZXJuZWw6ID8gZXhjX3BhZ2VfZmF1bHQgKD8/Oj8pIApEZWMgMzAgMDc6MDA6
+MzYgczYga2VybmVsOiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUgKD8/Oj8pIApEZWMg
+MzAgMDc6MDA6MzYgczYga2VybmVsOiBSSVA6IDAwMzM6MHg3ZmIzYzU4MWVlMmQKRGVjIDMwIDA3
+OjAwOjM2IHM2IGtlcm5lbDogQ29kZTogVW5hYmxlIHRvIGFjY2VzcyBvcGNvZGUgYnl0ZXMgYXQg
+MHg3ZmIzYzU4MWVlMDMuCgpDb2RlIHN0YXJ0aW5nIHdpdGggdGhlIGZhdWx0aW5nIGluc3RydWN0
+aW9uCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KRGVjIDMwIDA3
+OjAwOjM2IHM2IGtlcm5lbDogUlNQOiAwMDJiOjAwMDA3ZmZmNjIwNTQxZTggRUZMQUdTOiAwMDAw
+MDIwNiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDBlNwpEZWMgMzAgMDc6MDA6MzYgczYga2VybmVs
+OiBSQVg6IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwN2ZiM2M1OTFlZmE4IFJDWDogMDAwMDdm
+YjNjNTgxZWUyZApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBSRFg6IDAwMDAwMDAwMDAwMDAw
+ZTcgUlNJOiBmZmZmZmZmZmZmZmZmZjg4IFJESTogMDAwMDAwMDAwMDAwMDAwMApEZWMgMzAgMDc6
+MDA6MzYgczYga2VybmVsOiBSQlA6IDAwMDAwMDAwMDAwMDAwMDIgUjA4OiAwMDAwMDAwMDAwMDAw
+MDAwIFIwOTogMDAwMDdmYjNjNTkyNDkyMApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBSMTA6
+IDAwMDA1NjUwZjJlNjE1ZjAgUjExOiAwMDAwMDAwMDAwMDAwMjA2IFIxMjogMDAwMDAwMDAwMDAw
+MDAwMApEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiBSMTM6IDAwMDAwMDAwMDAwMDAwMDAgUjE0
+OiAwMDAwN2ZiM2M1OTFkNjgwIFIxNTogMDAwMDdmYjNjNTkxZWZjMApEZWMgMzAgMDc6MDA6MzYg
+czYga2VybmVsOiAgPC9UQVNLPgpEZWMgMzAgMDc6MDA6MzYgczYga2VybmVsOiAtLS1bIGVuZCB0
+cmFjZSAwMDAwMDAwMDAwMDAwMDAwIF0tLS0KRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogQlVH
+OiBCYWQgcnNzLWNvdW50ZXIgc3RhdGUgbW06MDAwMDAwMDA4ZTI0ZDU3YSB0eXBlOk1NX0ZJTEVQ
+QUdFUyB2YWw6LTEKRGVjIDMwIDA3OjAwOjM2IHM2IGtlcm5lbDogQlVHOiBCYWQgcnNzLWNvdW50
+ZXIgc3RhdGUgbW06MDAwMDAwMDA4ZTI0ZDU3YSB0eXBlOk1NX0FOT05QQUdFUyB2YWw6MQpEZWMg
+MzAgMDc6MDI6MjMgczYga2VybmVsOiBnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQsIHByb2JhYmx5
+IGZvciBub24tY2Fub25pY2FsIGFkZHJlc3MgMHg2ZDY1NTMyZDY2Njk3OTc1OiAwMDAwIFsjMV0g
+UFJFRU1QVCBTTVAgUFRJCkRlYyAzMCAwNzowMjoyMyBzNiBrZXJuZWw6IENQVTogNyBQSUQ6IDUy
+MTU3OCBDb21tOiByc3luYyBUYWludGVkOiBHICAgICAgICBXICAgICAgICAgIDYuNi44LXN0YWJs
+ZS0xICMxMyBkMjM4ZjVhYjZhMjA2Y2RiMGNjNWNkNzJmODY4ODIzMGYyM2Q1OGRmCkRlYyAzMCAw
+NzowMjoyMyBzNiBrZXJuZWw6IEhhcmR3YXJlIG5hbWU6IFRvIEJlIEZpbGxlZCBCeSBPLkUuTS4g
+VG8gQmUgRmlsbGVkIEJ5IE8uRS5NLi9aMzcwIEV4dHJlbWU0LCBCSU9TIFA0LjIwIDEwLzMxLzIw
+MTkKRGVjIDMwIDA3OjAyOjIzIHM2IGtlcm5lbDogUklQOiAwMDEwOl9fbW9kX21lbWNnX2xydXZl
+Y19zdGF0ZSAoPz86PykgCkRlYyAzMCAwNzowMjoyMyBzNiBrZXJuZWw6IENvZGU6IGZmIDkwIDkw
+IDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDkwIDY2IDBmIDFmIDAwIDBm
+IDFmIDQ0IDAwIDAwIDQ4IDhiIDhmIDQwIDBiIDAwIDAwIDQ4IDYzIGMyIDg5IGY2IDQ4IGMxIGU2
+IDAzIDw0OD4gOGIgOTEgMTAgMDcgMDAgMDAgNDggMDEgZjIgNjUgNDggMDEgMDIgNDggMDMgYjcg
+MjggMDYgPgpBbGwgY29kZQo9PT09PT09PQogICAwOglmZiA5MCA5MCA5MCA5MCA5MCAgICAJY2Fs
+bCAgICotMHg2ZjZmNmY3MCglcmF4KQogICA2Ogk5MCAgICAgICAgICAgICAgICAgICAJbm9wCiAg
+IDc6CTkwICAgICAgICAgICAgICAgICAgIAlub3AKICAgODoJOTAgICAgICAgICAgICAgICAgICAg
+CW5vcAogICA5Ogk5MCAgICAgICAgICAgICAgICAgICAJbm9wCiAgIGE6CTkwICAgICAgICAgICAg
+ICAgICAgIAlub3AKICAgYjoJOTAgICAgICAgICAgICAgICAgICAgCW5vcAogICBjOgk5MCAgICAg
+ICAgICAgICAgICAgICAJbm9wCiAgIGQ6CTkwICAgICAgICAgICAgICAgICAgIAlub3AKICAgZToJ
+OTAgICAgICAgICAgICAgICAgICAgCW5vcAogICBmOgk5MCAgICAgICAgICAgICAgICAgICAJbm9w
+CiAgMTA6CTkwICAgICAgICAgICAgICAgICAgIAlub3AKICAxMToJNjYgMGYgMWYgMDAgICAgICAg
+ICAgCW5vcHcgICAoJXJheCkKICAxNToJMGYgMWYgNDQgMDAgMDAgICAgICAgCW5vcGwgICAweDAo
+JXJheCwlcmF4LDEpCiAgMWE6CTQ4IDhiIDhmIDQwIDBiIDAwIDAwIAltb3YgICAgMHhiNDAoJXJk
+aSksJXJjeAogIDIxOgk0OCA2MyBjMiAgICAgICAgICAgICAJbW92c2xxICVlZHgsJXJheAogIDI0
+Ogk4OSBmNiAgICAgICAgICAgICAgICAJbW92ICAgICVlc2ksJWVzaQogIDI2Ogk0OCBjMSBlNiAw
+MyAgICAgICAgICAJc2hsICAgICQweDMsJXJzaQogIDJhOioJNDggOGIgOTEgMTAgMDcgMDAgMDAg
+CW1vdiAgICAweDcxMCglcmN4KSwlcmR4CQk8LS0gdHJhcHBpbmcgaW5zdHJ1Y3Rpb24KICAzMToJ
+NDggMDEgZjIgICAgICAgICAgICAgCWFkZCAgICAlcnNpLCVyZHgKICAzNDoJNjUgNDggMDEgMDIg
+ICAgICAgICAgCWFkZCAgICAlcmF4LCVnczooJXJkeCkKICAzODoJNDggICAgICAgICAgICAgICAg
+ICAgCXJleC5XCiAgMzk6CTAzICAgICAgICAgICAgICAgICAgIAkuYnl0ZSAweDMKICAzYToJYjcg
+MjggICAgICAgICAgICAgICAgCW1vdiAgICAkMHgyOCwlYmgKICAzYzoJMDYgICAgICAgICAgICAg
+ICAgICAgCShiYWQpCgkuLi4KCkNvZGUgc3RhcnRpbmcgd2l0aCB0aGUgZmF1bHRpbmcgaW5zdHJ1
+Y3Rpb24KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAwOgk0
+OCA4YiA5MSAxMCAwNyAwMCAwMCAJbW92ICAgIDB4NzEwKCVyY3gpLCVyZHgKICAgNzoJNDggMDEg
+ZjIgICAgICAgICAgICAgCWFkZCAgICAlcnNpLCVyZHgKICAgYToJNjUgNDggMDEgMDIgICAgICAg
+ICAgCWFkZCAgICAlcmF4LCVnczooJXJkeCkKICAgZToJNDggICAgICAgICAgICAgICAgICAgCXJl
+eC5XCiAgIGY6CTAzICAgICAgICAgICAgICAgICAgIAkuYnl0ZSAweDMKICAxMDoJYjcgMjggICAg
+ICAgICAgICAgICAgCW1vdiAgICAkMHgyOCwlYmgKICAxMjoJMDYgICAgICAgICAgICAgICAgICAg
+CShiYWQpCgkuLi4KRGVjIDMwIDA3OjAyOjIzIHM2IGtlcm5lbDogUlNQOiAwMDE4OmZmZmZjOTAw
+MGMxMmZiNjggRUZMQUdTOiAwMDAxMDIwNgoK
+
+
+--=-tq64fylqLrgyJbZBhP6n--
 
