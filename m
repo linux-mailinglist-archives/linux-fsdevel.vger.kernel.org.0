@@ -1,104 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-7042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7500820972
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Dec 2023 02:10:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EB7820976
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Dec 2023 02:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621B5283BAC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Dec 2023 01:10:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F261C21CDE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Dec 2023 01:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CD4A49;
-	Sun, 31 Dec 2023 01:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OpP4hxLk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FD5A41;
+	Sun, 31 Dec 2023 01:14:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73172658;
-	Sun, 31 Dec 2023 01:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1703985009; bh=mx0sCWNRfBLx3ezGSOMtDchdS/1eDlFrWCt0iQUhKNU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OpP4hxLkOmTkVLj3scT2XftWMuhi13YpPQHW6AlgjPV/8za3/fDH6CD5u3XxPMIwt
-	 6iVoK0NBUe1eIT3BXi6uunNf8/sEXmCV0woP89eR2/eY7rjZ0JxVLeHB/XlrdjSU+0
-	 piP4IftdbHb8KaGUn5P4MqyYR1WptCYe+OS6sAIA=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
-	by newxmesmtplogicsvrszb6-0.qq.com (NewEsmtp) with SMTP
-	id 10432694; Sun, 31 Dec 2023 09:04:04 +0800
-X-QQ-mid: xmsmtpt1703984644twpxpbfs7
-Message-ID: <tencent_897491761D662E3D7336B297BA37064A7C09@qq.com>
-X-QQ-XMAILINFO: M/NR0wiIuy70OXQzeMyHWZy5rl5KZS7wqodldixfgh69aF9vkvxWz4muaOD10b
-	 aBMQtRPP9MzBwYafBYQ0VvVUaglXQzyppcC9sw9rVrJCjwpAL69X+lxMZ+vIEsx9MCWByj6n5cSk
-	 H8K2PPzCvOMjNH0l3Qv7xPs1wu1AANyiHr49kzq/6zfzy/6paTq2Li7vBfwGhXy9nydGvo78d109
-	 bXtFFle6CbOOciTvPabkHnIQs8NQRyyyk0MTYI8ggPooGl++k+bDPOlmDpjvftxhe7kKOXaLQMU+
-	 REMp3xndVQFZ6xL2vHMvbIRzetb0k+XtHWWCiDWR7heSY8byDz5ohpzvTRxg1FCNhx4CmYyj7e28
-	 ReDNLfn5pFYMWyPXY7n6cPn9DVHQLddrULMYf7Lehusysdj6Q1BAvHBNPwrpgD6ML12ZywL/ieK6
-	 XoYWwzAASzyEhSq1VXWCqe3z9cqqkXv5FCQgYJUUS0vjJnM0RQnPgikMOksyikmEFISTnwgtloRF
-	 PYNCHeOZ+UMugUqsruI1q1cZFrOy+ronPdwjo1Y7sw0irTsUPYN95DBCOUytOq/18UrMJKIWQYGu
-	 f1qeM2PHoLBNJsNDqKYCcxaGItIhg0g2WuFt8ybr3rLrSV55IS+c5EMstscBmCwVYpgOh+EA2+Y6
-	 aWtTazPiG0vgLL78vrjYox3N6zOi1Q+EdRtC+hWiCY/FIQlwIFvTeYNy/Ml95UKoG5wfeqtqZiRU
-	 nIfwKg+xN7biFDnwMDeKZdPa8GnrpVjUxVNsURWbQtkarUG9DBSw3FiSY91vUvcVOTZNsq+vfO8n
-	 oSK9tSz5F0GygxI1anrMly265Jq4IHGZJcaJXE8pgs+ip7O9p6YT853Ff/i6gDq+6B9rIfu4CQ5/
-	 LVTzKePriwTuVQxZ9NMmrnalZyTtjag304JRKTN2/KOWO/irVLd8Gz+tYmhJtOwg==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+6450929faa7a97cd42d1@syzkaller.appspotmail.com
-Cc: brauner@kernel.org,
-	damien.lemoal@opensource.wdc.com,
-	edward.shishkin@gmail.com,
-	glider@google.com,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	linuszeng@tencent.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	reiserfs-devel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	willy@infradead.org
-Subject: [PATCH] reiserfs: fix uninit-value in reiserfs_new_inode
-Date: Sun, 31 Dec 2023 09:04:04 +0800
-X-OQ-MSGID: <20231231010403.3061947-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000da757a060d58ebbe@google.com>
-References: <000000000000da757a060d58ebbe@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B572659;
+	Sun, 31 Dec 2023 01:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VzViQy2_1703985251;
+Received: from 192.168.70.84(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VzViQy2_1703985251)
+          by smtp.aliyun-inc.com;
+          Sun, 31 Dec 2023 09:14:12 +0800
+Message-ID: <8f0dd1ed-8849-46ef-af2a-4baf4dc91422@linux.alibaba.com>
+Date: Sun, 31 Dec 2023 09:14:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: fix uninit-value in z_erofs_lz4_decompress
+To: Edward Adam Davis <eadavis@qq.com>,
+ syzbot+6c746eea496f34b3161d@syzkaller.appspotmail.com
+Cc: chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ xiang@kernel.org
+References: <000000000000321c24060d7cfa1c@google.com>
+ <tencent_8D66B23C9D36BA971637084BA27411767F09@qq.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <tencent_8D66B23C9D36BA971637084BA27411767F09@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Before creating a new inode, it is necessary to initialize the "new packing
-locality" tag of the dir.
 
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/reiserfs/namei.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/fs/reiserfs/namei.c b/fs/reiserfs/namei.c
-index 994d6e6995ab..3a824fb170d5 100644
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -638,6 +638,10 @@ static int reiserfs_create(struct mnt_idmap *idmap, struct inode *dir,
- 	if (retval)
- 		return retval;
- 
-+#ifdef DISPLACE_NEW_PACKING_LOCALITIES
-+	REISERFS_I(dir)->new_packing_locality = 0;
-+#endif
-+
- 	if (!(inode = new_inode(dir->i_sb))) {
- 		return -ENOMEM;
- 	}
--- 
-2.43.0
+On 2023/12/29 19:09, Edward Adam Davis wrote:
+> When LZ4 decompression fails, the number of bytes read from out should be
+> inputsize plus the returned overflow value ret.
+> 
+> Reported-and-tested-by: syzbot+6c746eea496f34b3161d@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>   fs/erofs/decompressor.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+> index 021be5feb1bc..8ac3f96676c4 100644
+> --- a/fs/erofs/decompressor.c
+> +++ b/fs/erofs/decompressor.c
+> @@ -250,7 +250,8 @@ static int z_erofs_lz4_decompress_mem(struct z_erofs_lz4_decompress_ctx *ctx,
+>   		print_hex_dump(KERN_DEBUG, "[ in]: ", DUMP_PREFIX_OFFSET,
+>   			       16, 1, src + inputmargin, rq->inputsize, true);
+>   		print_hex_dump(KERN_DEBUG, "[out]: ", DUMP_PREFIX_OFFSET,
+> -			       16, 1, out, rq->outputsize, true);
+> +			       16, 1, out, (ret < 0 && rq->inputsize > 0) ?
+> +			       (ret + rq->inputsize) : rq->outputsize, true);
 
+It's incorrect since output decompressed buffer has no relationship
+with `rq->inputsize` and `ret + rq->inputsize` is meaningless too.
+
+Also, the issue was already fixed by avoiding debugging messages as
+https://lore.kernel.org/r/20231227151903.2900413-1-hsiangkao@linux.alibaba.com
+
+Thanks,
+Gao Xiang
 
