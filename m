@@ -1,200 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-7135-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7134-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF2E822091
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 18:46:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93763822089
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 18:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41EA01F21061
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:46:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F12B21ED9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A19156F4;
-	Tue,  2 Jan 2024 17:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA37154AB;
+	Tue,  2 Jan 2024 17:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dgoP3kcJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SeNwrq0G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1654D156EC;
-	Tue,  2 Jan 2024 17:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 402HI09n019616;
-	Tue, 2 Jan 2024 17:44:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=y42mo2JnJSDN9WOIeW8Q048HnRpueulusig05FfdHSc=;
- b=dgoP3kcJoBgDCM9LrG2PGDCQO/22Bz5HCVjjcGaCW2HD1d78czChL9JN0t8UI/BTCRA6
- nQc7vUnm2EFfMkazXQ/6je+MhIFtH5XXoT6cIt5REwXEUrAsI1T/u6LhWPo1R9o2+1fq
- WR43NDCuqemyLlU9YWC8+9/pR/U1v5HQQFTMqRF1Lvxk7cHS/mCTPr56WOay9HDj3fCn
- V19+gZPAukXreGvyxZ07WKgq4LrTp45CCS6Cy9qpAIydAyuZJuy3PmxMIjeXl0hWdR92
- wnUUH4PSpI0t1p1yDjicQYtPocb4IT+hNdbDuEJfW33Bozg7zhfKHO1l0s4zuIaWpFsb 4Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vcprx8hgq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jan 2024 17:44:21 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 402HJEQj023759;
-	Tue, 2 Jan 2024 17:44:20 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vcprx8hgc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jan 2024 17:44:20 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 402Gn5st007335;
-	Tue, 2 Jan 2024 17:44:19 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3vaxhnxatc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jan 2024 17:44:19 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 402HiILQ3736236
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 2 Jan 2024 17:44:18 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C62F58056;
-	Tue,  2 Jan 2024 17:44:18 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C239858052;
-	Tue,  2 Jan 2024 17:44:16 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.135.171])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  2 Jan 2024 17:44:16 +0000 (GMT)
-Message-ID: <08e90ff7754aad45785ab05576f308a7aaae3438.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 21/24] evm: Move to LSM infrastructure
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Tue, 02 Jan 2024 12:44:16 -0500
-In-Reply-To: <42911719-547d-443a-b2f2-07b0cfb11f7a@huaweicloud.com>
-References: <20231214170834.3324559-1-roberto.sassu@huaweicloud.com>
-	 <20231214170834.3324559-22-roberto.sassu@huaweicloud.com>
-	 <b03e68e9fa1803d6b2cc7a2c0260f78a05a4d88e.camel@linux.ibm.com>
-	 <42911719-547d-443a-b2f2-07b0cfb11f7a@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B181549F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 17:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704217521;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qpYK3XlrSVzoiQg06tW9BiOzquqDi+TLEnPuE5AD4b8=;
+	b=SeNwrq0Gw1OiW+sUuvZoenGOjgVt5QvujesLy93Rd+jjJS9pprTSepBI7m48F/KeDokvN0
+	Xit89YVqAR7CFyfW3tg4+P+lQnEe1OyTKQGno4ulhSQ2stZiruzKKobcJkNENC2xuCmUkK
+	q93YIMgfKK+jUI6xFzuasRpq+C4pYxc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-ms8k78quM8idEC82V53Hmg-1; Tue, 02 Jan 2024 12:45:18 -0500
+X-MC-Unique: ms8k78quM8idEC82V53Hmg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2A1F285A589;
+	Tue,  2 Jan 2024 17:45:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3B6441121313;
+	Tue,  2 Jan 2024 17:45:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <140431.1704208899@warthog.procyon.org.uk>
+References: <140431.1704208899@warthog.procyon.org.uk>
+To: Jeffrey Altman <jaltman@auristor.com>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix error handling with lookup via FS.InlineBulkStatus
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VtIxUobX29if44MZAZlKTPViebn08Xdu
-X-Proofpoint-ORIG-GUID: 4wNfWCza0Tzp9fc5Zi2QfysG-XW8l4q-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-02_06,2024-01-02_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 bulkscore=0 mlxlogscore=926 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 phishscore=0 mlxscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2401020133
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <238256.1704217516.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 02 Jan 2024 17:45:16 +0000
+Message-ID: <238257.1704217516@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Tue, 2024-01-02 at 12:56 +0100, Roberto Sassu wrote:
-> On 12/26/2023 11:13 PM, Mimi Zohar wrote:
-> > On Thu, 2023-12-14 at 18:08 +0100, Roberto Sassu wrote:
-> >> From: Roberto Sassu <roberto.sassu@huawei.com>
-> >>
-> >> As for IMA, move hardcoded EVM function calls from various places in the
-> >> kernel to the LSM infrastructure, by introducing a new LSM named 'evm'
-> >> (last and always enabled like 'ima'). The order in the Makefile ensures
-> >> that 'evm' hooks are executed after 'ima' ones.
-> >>
-> >> Make EVM functions as static (except for evm_inode_init_security(), which
-> >> is exported), and register them as hook implementations in init_evm_lsm().
-> >>
-> >> Unlike before (see commit to move IMA to the LSM infrastructure),
-> >> evm_inode_post_setattr(), evm_inode_post_set_acl(),
-> >> evm_inode_post_remove_acl(), and evm_inode_post_removexattr() are not
-> >> executed for private inodes.
-> >>
-> > 
-> > Missing is a comment on moving the inline function definitions -
-> > evm_inode_remove_acl(), evm_inode_post_remove_acl(), and
-> > evm_inode_post_set_acl() - to evm_main.c.
-> 
-> Ok.
-> 
-> >> Finally, add the LSM_ID_EVM case in lsm_list_modules_test.c
-> >>
-> >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >> ---
-> > 
-> > [...]
-> >> @@ -2307,9 +2299,7 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
-> >>   
-> >>   	if (ret == 1)
-> >>   		ret = cap_inode_setxattr(dentry, name, value, size, flags);
-> >> -	if (ret)
-> >> -		return ret;
-> >> -	return evm_inode_setxattr(idmap, dentry, name, value, size, flags);
-> >> +	return ret;
-> >>   }
-> > 
-> > Even though capability will be called after EVM, it doesn't make a
-> > difference in this instance.
-> > 
-> > [...]
-> > 
-> >>   /**
-> >> @@ -2493,9 +2472,7 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
-> >>   	ret = call_int_hook(inode_removexattr, 1, idmap, dentry, name);
-> >>   	if (ret == 1)
-> >>   		ret = cap_inode_removexattr(idmap, dentry, name);
-> >> -	if (ret)
-> >> -		return ret;
-> >> -	return evm_inode_removexattr(idmap, dentry, name);
-> >> +	return ret;
-> >>   }
-> > 
-> > 'security.capability' is one of the EVM protected xattrs.  As
-> > capability isn't an LSM, it will now be called after EVM, which is a
-> > problem.
-> 
-> Uhm, according to this comment in security_inode_removexattr() and 
-> security_inode_setxattr():
-> 
-> 	/*
-> 	 * SELinux and Smack integrate the cap call,
-> 	 * so assume that all LSMs supplying this call do so.
-> 	 */
-> 
-> We can add the call to IMA and EVM as well, to be compliant.
+Here's a version of the patch against v6.7-rc7 rather than my afs-fix-rota=
+tion
+branch.
 
-SELinux and Smack are the only current LSMs that register the
-security_inode_removexattr hook.  Both enforce mandatory access
-control,
-so their calling capabilities to enforce DAC kind of makes sense.  I'm
-not sure it makes sense for IMA and EVM to call capability directly,
-just because of the comment.
+---
+afs: Fix error handling with lookup via FS.InlineBulkStatus
 
-> However, I'm missing why the two cases are different. It seems 
-> cap_inode_set/removexattr() are doing just checks.
+When afs does a lookup, it tries to use FS.InlineBulkStatus to preemptivel=
+y
+look up a bunch of files in the parent directory and cache this locally, o=
+n
+the basis that we might want to look at them too (for example if someone
+does an ls on a directory, they may want want to then stat every file
+listed).
 
-Both IMA and EVM require CAP_SYS_ADMIN to write/remove security.ima and
-security.evm respectively.  In addition, EVM must recalculate
-security.evm if any protected security xattrs are set or
-removed.   However, security.evm is updated on
-security_inode_post_setxattr, not security_inode_setxattr.
+FS.InlineBulkStatus can be considered a compound op with the normal abort
+code applying to the compound as a whole.  Each status fetch within the
+compound is then given its own individual abort code - but assuming no
+error that prevents the bulk fetch from returning the compound result will
+be 0, even if all the constituent status fetches failed.
 
-Mimi
+At the conclusion of afs_do_lookup(), we should use the abort code from th=
+e
+appropriate status to determine the error to return, if any - but instead
+it is assumed that we were successful if the op as a whole succeeded and w=
+e
+return an incompletely initialised inode, resulting in ENOENT, no matter
+the actual reason.  In the particular instance reported, a vnode with no
+permission granted to be accessed is being given a UAEACCES abort code
+which should be reported as EACCES, but is instead being reported as
+ENOENT.
+
+Fix this by abandoning the inode (which will be cleaned up with the op) if
+file[1] has an abort code indicated and turn that abort code into an error
+instead.
+
+Whilst we're at it, add a tracepoint so that the abort codes of the
+individual subrequests of FS.InlineBulkStatus can be logged.  At the momen=
+t
+only the container abort code can be 0.
+
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" conc=
+ept")
+Reported-by: Jeffrey Altman <jaltman@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/dir.c               |   11 ++++++++---
+ include/trace/events/afs.h |   25 +++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 3 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 5219182e52e1..a9dcb9d994e4 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -707,6 +707,8 @@ static void afs_do_lookup_success(struct afs_operation=
+ *op)
+ 			break;
+ 		}
+ =
+
++		if (vp->scb.status.abort_code)
++			trace_afs_bulkstat_error(op, &vp->fid, i, vp->scb.status.abort_code);
+ 		if (!vp->scb.have_status && !vp->scb.have_error)
+ 			continue;
+ =
+
+@@ -895,12 +897,15 @@ static struct inode *afs_do_lookup(struct inode *dir=
+, struct dentry *dentry,
+ 		afs_begin_vnode_operation(op);
+ 		afs_wait_for_operation(op);
+ 	}
+-	inode =3D ERR_PTR(op->error);
+ =
+
+ out_op:
+ 	if (op->error =3D=3D 0) {
+-		inode =3D &op->file[1].vnode->netfs.inode;
+-		op->file[1].vnode =3D NULL;
++		if (op->file[1].scb.status.abort_code) {
++			op->error =3D afs_abort_to_error(op->file[1].scb.status.abort_code);
++		} else {
++			inode =3D &op->file[1].vnode->netfs.inode;
++			op->file[1].vnode =3D NULL;
++		}
+ 	}
+ =
+
+ 	if (op->file[0].scb.have_status)
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index e9d412d19dbb..caec276515dc 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -1216,6 +1216,31 @@ TRACE_EVENT(afs_file_error,
+ 		      __print_symbolic(__entry->where, afs_file_errors))
+ 	    );
+ =
+
++TRACE_EVENT(afs_bulkstat_error,
++	    TP_PROTO(struct afs_operation *op, struct afs_fid *fid, unsigned int=
+ index, s32 abort),
++
++	    TP_ARGS(op, fid, index, abort),
++
++	    TP_STRUCT__entry(
++		    __field_struct(struct afs_fid,	fid)
++		    __field(unsigned int,		op)
++		    __field(unsigned int,		index)
++		    __field(s32,			abort)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->op =3D op->debug_id;
++		    __entry->fid =3D *fid;
++		    __entry->index =3D index;
++		    __entry->abort =3D abort;
++			   ),
++
++	    TP_printk("OP=3D%08x[%02x] %llx:%llx:%x a=3D%d",
++		      __entry->op, __entry->index,
++		      __entry->fid.vid, __entry->fid.vnode, __entry->fid.unique,
++		      __entry->abort)
++	    );
++
+ TRACE_EVENT(afs_cm_no_server,
+ 	    TP_PROTO(struct afs_call *call, struct sockaddr_rxrpc *srx),
+ =
+
 
 
