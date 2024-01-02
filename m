@@ -1,116 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-7072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7073-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC9E8218B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 10:12:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0128B8218CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 10:15:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7121C21738
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 09:12:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D37728384B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 09:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1371C8F5;
-	Tue,  2 Jan 2024 09:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE3D28F;
+	Tue,  2 Jan 2024 09:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dgpv6VQH"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qbjbK+L5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAE15697;
-	Tue,  2 Jan 2024 09:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1704186724; x=1735722724;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ZUUp125/reT7Tq22vhlJmnu5Uponk8HjKBT4ndhBEac=;
-  b=Dgpv6VQHu3RhxV2FCj+bDXw6/JYN7kFKFDMw0VLe/GyMXKXFjx37NFx7
-   K9LSIovE6Kw0NbY45E3ewL/LVCkqSyc9vFtY1zRkrucuSevmp03Kc/Gx1
-   BUskTf+QwAQ6jFEv6rLxIqVPtsHfb2FCSpEFmeVw4FpbaU9QBSO6fu8o7
-   vJ4faPt4aPjLfcwkRYZQsHcs3dRTVN24NQnIjwBRKkLqXJwsDq+k6jmwp
-   KeqHyEX9IxdYradK1IKV6CkTcDimj7gFxy9LrhNxQRe77zX/U0mjJI8rc
-   ovixFAUDkMUn7cSwNt1lPuELuYUJAYBckThS03ByJ5n3gR3GoGmotY0ON
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="428020231"
-X-IronPort-AV: E=Sophos;i="6.04,324,1695711600"; 
-   d="scan'208";a="428020231"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2024 01:12:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="755861313"
-X-IronPort-AV: E=Sophos;i="6.04,324,1695711600"; 
-   d="scan'208";a="755861313"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2024 01:11:53 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gregory.price@memverge.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
-  <linux-doc@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
-  <x86@kernel.org>,  <akpm@linux-foundation.org>,  <arnd@arndb.de>,
-  <tglx@linutronix.de>,  <luto@kernel.org>,  <mingo@redhat.com>,
-  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <hpa@zytor.com>,
-  <mhocko@kernel.org>,  <tj@kernel.org>,  <corbet@lwn.net>,
-  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <honggyu.kim@sk.com>,
-  <vtavarespetr@micron.com>,  <peterz@infradead.org>,
-  <jgroves@micron.com>,  <ravis.opensrc@micron.com>,
-  <sthanneeru@micron.com>,  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
-  <seungjun.ha@samsung.com>
-Subject: Re: [PATCH v5 03/11] mm/mempolicy: refactor sanitize_mpol_flags for
- reuse
-In-Reply-To: <ZYq9klTts4yg8RhG@memverge.com> (Gregory Price's message of "Tue,
-	26 Dec 2023 06:48:34 -0500")
-References: <20231223181101.1954-1-gregory.price@memverge.com>
-	<20231223181101.1954-4-gregory.price@memverge.com>
-	<87y1dgdoou.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZYp7P1fH8nvkr4o0@memverge.com> <ZYq9klTts4yg8RhG@memverge.com>
-Date: Tue, 02 Jan 2024 17:09:55 +0800
-Message-ID: <871qb0drto.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3B2CA69;
+	Tue,  2 Jan 2024 09:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tlEfMQFt5gK7xTvm4OYyFW6oyrGcWRnYRgh3+dnfWXQ=; b=qbjbK+L5aYe/lDZscjtenI5cjW
+	dZL/n71TVQj2zphfxq3RZ+cNggYEWOSaYIL6eYvVx5t5XbeQtXC5MfvkPEbeyWhD7ffyRT3M3U/Vd
+	VVSFZvNRo70tslTpjdD38Sg+/jUCGJ+dlQkKzla59Tw98eiFplHqpLYGh8x1cESshIjA8i2C7Sn5M
+	muL2EGVBlVq2u1U2wLBjpcL4+E4cCtxzD6oY/ijyD7c2z9wI6Hy3ySQPY+FZTT4GhfgPtObTsn+Mf
+	4GMgFwlfji7YX5rkT/+U0nnZrO6GArNuSqp3UnB6eP/3Dq/eakRRSpeSc0fIN9D8KevfYWMzxiVW4
+	BH4OtoIw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rKaqw-009pns-In; Tue, 02 Jan 2024 09:14:26 +0000
+Date: Tue, 2 Jan 2024 09:14:26 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Hillf Danton <hdanton@sina.com>, kernel@quicinc.com,
+	quic_pkondeti@quicinc.com, keescook@chromium.or,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, oleg@redhat.com,
+	dhowells@redhat.com, jarkko@kernel.org, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
+ tasklist_lock
+Message-ID: <ZZPT8hMiuT1pCBP7@casper.infradead.org>
+References: <20231213101745.4526-1-quic_aiquny@quicinc.com>
+ <ZXnaNSrtaWbS2ivU@casper.infradead.org>
+ <87o7eu7ybq.fsf@email.froward.int.ebiederm.org>
+ <ZY30k7OCtxrdR9oP@casper.infradead.org>
+ <cd0f6613-9aa9-4698-bebe-0f61286d7552@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd0f6613-9aa9-4698-bebe-0f61286d7552@quicinc.com>
 
-Gregory Price <gregory.price@memverge.com> writes:
+On Tue, Jan 02, 2024 at 10:19:47AM +0800, Aiqun Yu (Maria) wrote:
+> On 12/29/2023 6:20 AM, Matthew Wilcox wrote:
+> > On Wed, Dec 13, 2023 at 12:27:05PM -0600, Eric W. Biederman wrote:
+> > > Matthew Wilcox <willy@infradead.org> writes:
+> > > > I think the right way to fix this is to pass a boolean flag to
+> > > > queued_write_lock_slowpath() to let it know whether it can re-enable
+> > > > interrupts while checking whether _QW_WAITING is set.
+> > > 
+> > > Yes.  It seems to make sense to distinguish between write_lock_irq and
+> > > write_lock_irqsave and fix this for all of write_lock_irq.
+> > 
+> > I wasn't planning on doing anything here, but Hillf kind of pushed me into
+> > it.  I think it needs to be something like this.  Compile tested only.
+> > If it ends up getting used,
+> Happy new year!
 
-> On Tue, Dec 26, 2023 at 02:05:35AM -0500, Gregory Price wrote:
->> On Wed, Dec 27, 2023 at 04:39:29PM +0800, Huang, Ying wrote:
->> > Gregory Price <gourry.memverge@gmail.com> writes:
->> > 
->> > > +	unsigned short mode = (*mode_arg & ~MPOL_MODE_FLAGS);
->> > > +
->> > > +	*flags = *mode_arg & MPOL_MODE_FLAGS;
->> > > +	*mode_arg = mode;
->> > 
->> > It appears that it's unnecessary to introduce a local variable to split
->> > mode/flags.  Just reuse the original code?
->> > 
->
-> Revisiting during fixes: Note the change from int to short.
->
-> I chose to make this explicit because validate_mpol_flags takes a short.
->
-> I'm fairly sure changing it back throws a truncation warning.
+Thank you!  I know your new year is a few weeks away still ;-)
 
-Why something like below doesn't work?
+> > -void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
+> > +void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock, bool irq)
+> >   {
+> >   	int cnts;
+> > @@ -82,7 +83,11 @@ void __lockfunc queued_write_lock_slowpath(struct qrwlock *lock)
+> Also a new state showed up after the current design:
+> 1. locked flag with _QW_WAITING, while irq enabled.
+> 2. And this state will be only in interrupt context.
+> 3. lock->wait_lock is hold by the write waiter.
+> So per my understanding, a different behavior also needed to be done in
+> queued_write_lock_slowpath:
+>   when (unlikely(in_interrupt())) , get the lock directly.
 
-int sanitize_mpol_flags(int *mode, unsigned short *flags)
-{
-        *flags = *mode & MPOL_MODE_FLAGS;
-        *mode &= ~MPOL_MODE_FLAGS;
+I don't think so.  Remember that write_lock_irq() can only be called in
+process context, and when interrupts are enabled.
 
-        return validate_mpol_flags(*mode, flags);
-}
+> So needed to be done in release path. This is to address Hillf's concern on
+> possibility of deadlock.
 
---
-Best Regards,
-Huang, Ying
+Hillf's concern is invalid.
+
+> >   	/* When no more readers or writers, set the locked flag */
+> >   	do {
+> > +		if (irq)
+> > +			local_irq_enable();
+> I think write_lock_irqsave also needs to be take account. So
+> loal_irq_save(flags) should be take into account here.
+
+If we did want to support the same kind of spinning with interrupts
+enabled for write_lock_irqsave(), we'd want to pass the flags in
+and do local_irq_restore(), but I don't know how we'd support
+write_lock_irq() if we did that -- can we rely on passing in 0 for flags
+meaning "reenable" on all architectures?  And ~0 meaning "don't
+reenable" on all architectures?
+
+That all seems complicated, so I didn't do that.
+
 
