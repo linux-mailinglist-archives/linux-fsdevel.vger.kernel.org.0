@@ -1,33 +1,33 @@
-Return-Path: <linux-fsdevel+bounces-7113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9549D821C02
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:45:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7BD821C04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436C8282CB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D59280CE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CF511734;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8142C12E63;
 	Tue,  2 Jan 2024 12:42:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45052156E7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A847F156F4;
 	Tue,  2 Jan 2024 12:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CD84W1cz4f3l81;
-	Tue,  2 Jan 2024 20:42:16 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CD51x7lz4f3nK9;
+	Tue,  2 Jan 2024 20:42:13 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 599821A07FD;
+	by mail.maildlp.com (Postfix) with ESMTP id DF7041A0803;
 	Tue,  2 Jan 2024 20:42:18 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S28;
+	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S29;
 	Tue, 02 Jan 2024 20:42:18 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
@@ -44,9 +44,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v2 24/25] filemap: support disable large folios on active inode
-Date: Tue,  2 Jan 2024 20:39:17 +0800
-Message-Id: <20240102123918.799062-25-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 25/25] ext4: enable large folio for regular file with iomap buffered IO path
+Date: Tue,  2 Jan 2024 20:39:18 +0800
+Message-Id: <20240102123918.799062-26-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
 References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
@@ -57,10 +57,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S28
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFW7KF13Ar18uFW5Kw47CFg_yoW8Kw47pF
-	y7Cw4rtrW8XF4YyrykAFsFvF4ag348WayUAFy3Was8A3ZxKF42gFWDCa43Xry7Ar4rAa1x
-	Za1UAry7GFyYg3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S29
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4DXFWfXF47Jw4xAr48Xrb_yoW8Zw4xpr
+	nIk3WrGrW8X34q9an3Kry7Zr1jqa18K3yUurWS9w1DuFZrJa4IgF4jkF1xAF48trW8A3yS
+	qF4Ikr15Zw13C3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,68 +79,60 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Since commit 730633f0b7f9 ("mm: Protect operations adding pages to page
-cache with invalidate_lock"), mapping->invalidate_lock can protect us
-from adding new folios into page cache. So it's possible to disable
-active inodes' large folios support, even through it might be dangerous.
-Filesystems can disable it under mapping->invalidate_lock and drop all
-page cache before dropping AS_LARGE_FOLIO_SUPPORT, besides, the order of
-folio must also be determined under the lock.
+After we convert buffered IO path to iomap for regular files, we can
+enable large foilo for them together, that should be able to bring a lot
+of performance gains for large IO.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- include/linux/pagemap.h | 13 +++++++++++++
- mm/readahead.c          |  6 ++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+ fs/ext4/ialloc.c      | 4 +++-
+ fs/ext4/inode.c       | 4 +++-
+ fs/ext4/move_extent.c | 1 +
+ 3 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 06142ff7f9ce..2554699ba7e3 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -343,6 +343,19 @@ static inline void mapping_set_large_folios(struct address_space *mapping)
- 	__set_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
- }
- 
-+/**
-+ * mapping_clear_large_folios() - The file disable supports large folios.
-+ * @mapping: The file.
-+ *
-+ * The filesystem have to make sure the file is in atomic context and all
-+ * cached folios have been cleared under mapping->invalidate_lock before
-+ * calling this function.
-+ */
-+static inline void mapping_clear_large_folios(struct address_space *mapping)
-+{
-+	__clear_bit(AS_LARGE_FOLIO_SUPPORT, &mapping->flags);
-+}
-+
- /*
-  * Large folio support currently depends on THP.  These dependencies are
-  * being worked on but are not yet fixed.
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 6925e6959fd3..c97eceaf7214 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -493,8 +493,11 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 	int err = 0;
- 	gfp_t gfp = readahead_gfp_mask(mapping);
- 
--	if (!mapping_large_folio_support(mapping) || ra->size < 4)
-+	filemap_invalidate_lock_shared(mapping);
-+	if (!mapping_large_folio_support(mapping) || ra->size < 4) {
-+		filemap_invalidate_unlock_shared(mapping);
- 		goto fallback;
-+	}
- 
- 	limit = min(limit, index + ra->size - 1);
- 
-@@ -506,7 +509,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 			new_order--;
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index 956b9d69c559..5a22fe5aa46b 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -1336,8 +1336,10 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+ 		}
  	}
  
--	filemap_invalidate_lock_shared(mapping);
- 	while (index <= limit) {
- 		unsigned int order = new_order;
+-	if (ext4_should_use_buffered_iomap(inode))
++	if (ext4_should_use_buffered_iomap(inode)) {
+ 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
++		mapping_set_large_folios(inode->i_mapping);
++	}
+ 
+ 	if (ext4_handle_valid(handle)) {
+ 		ei->i_sync_tid = handle->h_transaction->t_tid;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 2d2b8f2b634d..49a5b9b85407 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5319,8 +5319,10 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 	if (ret)
+ 		goto bad_inode;
+ 
+-	if (ext4_should_use_buffered_iomap(inode))
++	if (ext4_should_use_buffered_iomap(inode)) {
+ 		ext4_set_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
++		mapping_set_large_folios(inode->i_mapping);
++	}
+ 
+ 	if (S_ISREG(inode->i_mode)) {
+ 		inode->i_op = &ext4_file_inode_operations;
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index 7a9ca71d4cac..aecd6112d8a2 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -560,6 +560,7 @@ static int ext4_disable_buffered_iomap_aops(struct inode *inode)
+ 	truncate_inode_pages(inode->i_mapping, 0);
+ 
+ 	ext4_clear_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP);
++	mapping_clear_large_folios(inode->i_mapping);
+ 	ext4_set_aops(inode);
+ 	filemap_invalidate_unlock(inode->i_mapping);
  
 -- 
 2.39.2
