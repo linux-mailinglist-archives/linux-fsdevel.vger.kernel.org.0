@@ -1,65 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-7123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460D6821E17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:52:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466BA821E07
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5CD1C22205
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E465B28385D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857B712E60;
-	Tue,  2 Jan 2024 14:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F8314A98;
+	Tue,  2 Jan 2024 14:47:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10CD12E55;
-	Tue,  2 Jan 2024 14:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533E14278;
+	Tue,  2 Jan 2024 14:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7810827e54eso923560985a.2;
-        Tue, 02 Jan 2024 06:52:01 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dbd5b96b12eso6941852276.2;
+        Tue, 02 Jan 2024 06:47:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704207120; x=1704811920;
+        d=1e100.net; s=20230601; t=1704206843; x=1704811643;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RgMSQI9ztusESa2/dVb2946CGIyB/32Wyc20atk9ulA=;
-        b=iqycHvx1x1TFxvSKLR8yYJjR7T1rqF7HIRB0HHlCwS0ZKh2ETP59K/2Mh+2yeZq55v
-         Fe6wqhJBLfPSsarwviFCeEDHHNN0Vu++TD+zIIu60dAknXaKx+yoJoEwt/bldnr8W+FA
-         VDuESk7qmopK4fX1V9Hmtrs8embXS9DT/Pd0XVas/BT9WTuuDyPUNVgQ29gmyLisiEa3
-         QsAafbimZoWhB9kFxF3Yi0Ycxtf2iZC3MVUT/iP60lZlMiExouvcc2f74EHxUbYPSKmT
-         dY3rtKdvhtgVcEQ6++uI2bIIwr91nhd7+hln6L5uYaHNTy/mTE5cznyJkPLMak52r/dq
-         TH5g==
-X-Gm-Message-State: AOJu0Yyib69+GiAzxXOrZbccHiDPM1iGfYRIT1ou82UgqmmCmi/bU6c7
-	Gr9Kg4zT0yMahRS5N3kHXPPa6Qm/i6KxAQ==
-X-Google-Smtp-Source: AGHT+IFos4iNAPSqsAS+F6KLhX3+0g/FBL90JvWJONV2ThJJnQEGp2m1MDBGfJGvbEkDoL66em/P2A==
-X-Received: by 2002:a05:620a:384f:b0:781:1adf:f030 with SMTP id po15-20020a05620a384f00b007811adff030mr18675560qkn.91.1704207120346;
-        Tue, 02 Jan 2024 06:52:00 -0800 (PST)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com. [209.85.222.182])
-        by smtp.gmail.com with ESMTPSA id oo25-20020a05620a531900b007815c45cdc5sm5127462qkn.95.2024.01.02.06.52.00
+        bh=ekkdo/2BplW5G1QGE0ZikpIwpoAMXqmEuZbikDyIFz0=;
+        b=eEDV/TA+yDi9rzS4d29cEX3zzSXoVNRJNzDoGuysOuxpEJEowFV5cGTWrhRu0xSwW7
+         QmWsoZyMIPschgscJszqoLfeFv4XxDsQ33aYgdPlJTgwqfu/+P9iYiXq9nLvE23SUxjP
+         6+mZklDokedEVLK27xGuVT5AxW9BFLVnTR+WwMsxh6nMFNhhcxyy/OTE2Tdre5Se8lYg
+         eMBCvW4SaKM/FgtRDz9wSMTVLUeyEWS3Sy8oTfK86uJPkK2CqNlwiZ6jMxeWVVlqQPOc
+         UaGQ9f4KBe+mmtAs1xlOxh8Z68/X5u6T4GHo94+9jIEidX7pkyPfVZAQwp6j3Jo5j6J9
+         +f3Q==
+X-Gm-Message-State: AOJu0Yzhr/YDWPmrTX0sCNouEozaAkf4LJCFWStKzeAr5UYUD9pvUhtU
+	ubOspSxvGMPYz8VSy0cSmsHGrHuA3WY+Dg==
+X-Google-Smtp-Source: AGHT+IHPLkt35W4v1MnRFFxzaqNEdOiSs5acLz4CQokv3q6zjgT8/l430U6zonddl1yPA24q8/ZR8Q==
+X-Received: by 2002:a5b:752:0:b0:dbd:bc3e:55e3 with SMTP id s18-20020a5b0752000000b00dbdbc3e55e3mr8097056ybq.69.1704206843323;
+        Tue, 02 Jan 2024 06:47:23 -0800 (PST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 204-20020a2501d5000000b00dbdb03e146bsm10210496ybb.51.2024.01.02.06.47.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jan 2024 06:52:00 -0800 (PST)
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7817070291eso406788985a.3;
-        Tue, 02 Jan 2024 06:52:00 -0800 (PST)
-X-Received: by 2002:a0d:eb15:0:b0:5e8:4f42:fe with SMTP id u21-20020a0deb15000000b005e84f4200femr10739224ywe.50.1704206798019;
- Tue, 02 Jan 2024 06:46:38 -0800 (PST)
+        Tue, 02 Jan 2024 06:47:23 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5e7bb1e0db8so73378307b3.0;
+        Tue, 02 Jan 2024 06:47:23 -0800 (PST)
+X-Received: by 2002:a0d:f6c2:0:b0:5e2:5d71:56c with SMTP id
+ g185-20020a0df6c2000000b005e25d71056cmr12772287ywf.32.1704206843051; Tue, 02
+ Jan 2024 06:47:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231223181101.1954-1-gregory.price@memverge.com> <20231223181101.1954-10-gregory.price@memverge.com>
-In-Reply-To: <20231223181101.1954-10-gregory.price@memverge.com>
+References: <20231223181101.1954-1-gregory.price@memverge.com> <20231223181101.1954-11-gregory.price@memverge.com>
+In-Reply-To: <20231223181101.1954-11-gregory.price@memverge.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 2 Jan 2024 15:46:27 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVN2-=Poa_tm5jr_tUE=iDh57hFF-bDpaf7hJiJi9Gtdw@mail.gmail.com>
-Message-ID: <CAMuHMdVN2-=Poa_tm5jr_tUE=iDh57hFF-bDpaf7hJiJi9Gtdw@mail.gmail.com>
-Subject: Re: [PATCH v5 09/11] mm/mempolicy: add get_mempolicy2 syscall
+Date: Tue, 2 Jan 2024 15:47:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXgteq4FSM-ugahDtZq_swM_jFMMonB=K4+A1VjTansLA@mail.gmail.com>
+Message-ID: <CAMuHMdXgteq4FSM-ugahDtZq_swM_jFMMonB=K4+A1VjTansLA@mail.gmail.com>
+Subject: Re: [PATCH v5 10/11] mm/mempolicy: add the mbind2 syscall
 To: Gregory Price <gourry.memverge@gmail.com>
 Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -70,51 +71,47 @@ Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
 	corbet@lwn.net, rakie.kim@sk.com, hyeongtak.ji@sk.com, honggyu.kim@sk.com, 
 	vtavarespetr@micron.com, peterz@infradead.org, jgroves@micron.com, 
 	ravis.opensrc@micron.com, sthanneeru@micron.com, emirakhur@micron.com, 
-	Hasan.Maruf@amd.com, seungjun.ha@samsung.com, Michal Hocko <mhocko@suse.com>
+	Hasan.Maruf@amd.com, seungjun.ha@samsung.com, Michal Hocko <mhocko@suse.com>, 
+	Frank van der Linden <fvdl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Sat, Dec 23, 2023 at 7:14=E2=80=AFPM Gregory Price <gourry.memverge@gmai=
 l.com> wrote:
-> get_mempolicy2 is an extensible get_mempolicy interface which allows
-> a user to retrieve the memory policy for a task or address.
+> mbind2 is an extensible mbind interface which allows a user to
+> set the mempolicy for one or more address ranges.
 >
 > Defined as:
 >
-> get_mempolicy2(struct mpol_args *args, size_t size,
->                unsigned long addr, unsigned long flags)
+> mbind2(unsigned long addr, unsigned long len, struct mpol_args *args,
+>        size_t size, unsigned long flags)
 >
-> Top level input values:
->
-> mpol_args:    The field which collects information about the mempolicy
->               returned to userspace.
-> addr:         if MPOL_F_ADDR is passed in `flags`, this address will be
->               used to return the mempolicy details of the vma the
->               address belongs to
-> flags:        if MPOL_F_ADDR, return mempolicy info vma containing addr
->               else, returns task mempolicy information
+> addr:         address of the memory range to operate on
+> len:          length of the memory range
+> flags:        MPOL_MF_HOME_NODE + original mbind() flags
 >
 > Input values include the following fields of mpol_args:
 >
-> pol_nodes:    if set, the nodemask of the policy returned here
-> pol_maxnodes: if pol_nodes is set, must describe max number of nodes
->               to be copied to pol_nodes
+> mode:         The MPOL_* policy (DEFAULT, INTERLEAVE, etc.)
+> mode_flags:   The MPOL_F_* flags that were previously passed in or'd
+>               into the mode.  This was split to hopefully allow future
+>               extensions additional mode/flag space.
+> home_node:    if (flags & MPOL_MF_HOME_NODE), set home node of policy
+>               to this otherwise it is ignored.
+> pol_maxnodes: The max number of nodes described by pol_nodes
+> pol_nodes:    the nodemask to apply for the memory policy
 >
-> Output values include the following fields of mpol_args:
->
-> mode:         mempolicy mode
-> mode_flags:   mempolicy mode flags
-> home_node:    policy home node will be returned here, or -1 if not.
-> pol_nodes:    if set, the nodemask for the mempolicy
-> policy_node:  if the policy has extended node information, it will
->               be placed here.  For example MPOL_INTERLEAVE will
->               return the next node which will be used for allocation
->
-> MPOL_F_NODE has been dropped from get_mempolicy2 (EINVAL).
-> MPOL_F_MEMS_ALLOWED has been dropped from get_mempolicy2 (EINVAL).
+> The semantics are otherwise the same as mbind(), except that
+> the home_node can be set.
 >
 > Suggested-by: Michal Hocko <mhocko@suse.com>
+> Suggested-by: Frank van der Linden <fvdl@google.com>
+> Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+> Suggested-by: Rakie Kim <rakie.kim@sk.com>
+> Suggested-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
+> Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
 > Signed-off-by: Gregory Price <gregory.price@memverge.com>
+> Co-developed-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
 
 >  arch/m68k/kernel/syscalls/syscall.tbl         |  1 +
 
