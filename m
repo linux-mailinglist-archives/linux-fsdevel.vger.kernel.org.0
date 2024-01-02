@@ -1,104 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-7117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9329821CDA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:40:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33C7821D09
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB77A1C22168
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C3728361C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9008914A8A;
-	Tue,  2 Jan 2024 13:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA83AFC16;
+	Tue,  2 Jan 2024 13:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D857512E63
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 13:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7b7fdc371f7so1081966339f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 05:36:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704202588; x=1704807388;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xq+9JpQRqUPWRsi8LPCu9kv4AtckUKGAz3Nf0QkOMJM=;
-        b=Sgr2FjBrqm0+L0clVWgCEDixWcI9Gy45yqdGWVVVF78SyLfYfUNOavznRstyaz7qgi
-         V6ZN2DSxeslCSF8aO2F2INw5gVhBNPh9sfDDzcYPN5anoV5AN5i1jcEoDC9xWJTu8RjX
-         wgM1FA6wcKoJqg0HKzXd3B84rIqHripRFzSAe0T8vN5Bpvm4x3Xknhlg/VNiZ0En14A6
-         9IuhxkCyUcVM5uBt6K4743de2lHjca8t/IEMZINF0Lf+uoY104+j3Jekb4/ZzCFLTESv
-         RpmxgsSmce+cRbkdwfNbhL5o23cf1jJN0e9XgWDyUE++Okw4iP1uG2wJ0YNQXBbs/RnQ
-         lJbw==
-X-Gm-Message-State: AOJu0YzdlnLtw0JORvIdbLRZDa0lEow+O9lCXCAdNsp3pFhLnazRCdOH
-	jn7YixmUJqwsBAQ3+oJ5Wpm6ii5hzaU1py2LRYns1tOnL6c/
-X-Google-Smtp-Source: AGHT+IGTvLM/soxJTtptngRbvo7c8EtklHcLe01Sh43enMqIUNyziXdQ72rwM8Pc4KX9om/QFroNsPp+89Hx9PGGyBBQnc7xKrWY
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22DA10940;
+	Tue,  2 Jan 2024 13:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BBA4A21FD3;
+	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
+	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
+	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
+	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704203271;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
+	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
+	fUo3jfFhB0zI2pBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
+	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
+	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
+	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704203271;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
+	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
+	fUo3jfFhB0zI2pBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B054313AC6;
+	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qNP9KgcUlGWqVQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 02 Jan 2024 13:47:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3D0A6A07EF; Tue,  2 Jan 2024 14:47:51 +0100 (CET)
+Date: Tue, 2 Jan 2024 14:47:51 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Su Hui <suhui@nfschina.com>, jack@suse.cz, repnop@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
+Message-ID: <20240102134751.2flliwe4lfvp3r5a@quack3>
+References: <20230808091849.505809-1-suhui@nfschina.com>
+ <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3586:b0:46b:6ffc:cb79 with SMTP id
- v6-20020a056638358600b0046b6ffccb79mr514449jal.3.1704202588101; Tue, 02 Jan
- 2024 05:36:28 -0800 (PST)
-Date: Tue, 02 Jan 2024 05:36:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e3a1c3060df6956c@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Jan 2024)
-From: syzbot <syzbot+listb24c70845ff6f3242c14@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -2.12
+X-Spamd-Result: default: False [-2.12 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-0.997];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-1.32)[90.27%]
+X-Spam-Flag: NO
 
-Hello ntfs3 maintainers/developers,
+On Thu 10-08-23 20:58:16, Amir Goldstein wrote:
+> On Tue, Aug 8, 2023 at 12:19 PM Su Hui <suhui@nfschina.com> wrote:
+> >
+> > smatch error:
+> > fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
+> > we previously assumed 'fh' could be null (see line 421)
+> >
+> > Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>'
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+I'm sorry but this has somehow fallen through the cracks. 
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 47 issues are still open and 28 have been fixed so far.
+> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > index f69c451018e3..5a5487ae2460 100644
+> > --- a/fs/notify/fanotify/fanotify_user.c
+> > +++ b/fs/notify/fanotify/fanotify_user.c
+> > @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+> >         if (WARN_ON_ONCE(len < sizeof(handle)))
+> >                 return -EFAULT;
+> >
+> > -       handle.handle_type = fh->type;
+> >         handle.handle_bytes = fh_len;
 
-Some of the still happening issues:
+Well, if passed 'fh' is NULL, we have problems later in the function
+anyway. E.g. in fanotify_fh_buf() a few lines below. So I think this needs
+a bit more work that just this small fixup...
 
-Ref  Crashes Repro Title
-<1>  11376   Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<2>  3629    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
-                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
-<3>  2282    Yes   possible deadlock in ni_fiemap
-                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-<4>  1943    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  1575    Yes   possible deadlock in attr_data_get_block
-                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
-<6>  826     No    possible deadlock in ntfs_mark_rec_free
-                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
-<7>  775     Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<8>  583     Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-<9>  570     Yes   possible deadlock in filemap_fault
-                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
-<10> 312     Yes   kernel BUG at fs/inode.c:LINE! (2)
-                   https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
+								Honza
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+> >
+> >         /* Mangle handle_type for bad file_handle */
+> >         if (!fh_len)
+> >                 handle.handle_type = FILEID_INVALID;
+> > +       else
+> > +               handle.handle_type = fh->type;
+> >
+> >         if (copy_to_user(buf, &handle, sizeof(handle)))
+> >                 return -EFAULT;
+> > --
+> > 2.30.2
+> >
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
