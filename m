@@ -1,175 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-7118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33C7821D09
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:48:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3D4821D53
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:06:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C3728361C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6322815B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA83AFC16;
-	Tue,  2 Jan 2024 13:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Gd9hn96C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lf4aYHUL"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164241171B;
+	Tue,  2 Jan 2024 14:04:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22DA10940;
-	Tue,  2 Jan 2024 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BBA4A21FD3;
-	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
-	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
-	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704203271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
-	fUo3jfFhB0zI2pBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704203271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=Gd9hn96CbvxDZREN/9vBcxFp5oo63p8ln1MRJHJFNTW8bBR4ynjNMEH6Tltih8fDHCtoA+
-	FMu7UYsuCF8rwhDzD5q475ALaJsFqYkmcwCXqWxyPFcYtrWYpanBj5JJSBGxm1t8MkPSyz
-	+peYwb8+F7ck4OD/42Jba7iTzRTzUdo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704203271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fn91W3IuOvD77xTkollMSFA//O+slhWPewfM4nu/8YY=;
-	b=lf4aYHULWqzaj7W0XVWI941+Kj4b88tYBjE2svC80AKn70RYPZdJpAnb7LJX7cedUIZh+I
-	fUo3jfFhB0zI2pBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B054313AC6;
-	Tue,  2 Jan 2024 13:47:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qNP9KgcUlGWqVQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 02 Jan 2024 13:47:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3D0A6A07EF; Tue,  2 Jan 2024 14:47:51 +0100 (CET)
-Date: Tue, 2 Jan 2024 14:47:51 +0100
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Su Hui <suhui@nfschina.com>, jack@suse.cz, repnop@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fanotify: avoid possible NULL dereference
-Message-ID: <20240102134751.2flliwe4lfvp3r5a@quack3>
-References: <20230808091849.505809-1-suhui@nfschina.com>
- <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43699101FA;
+	Tue,  2 Jan 2024 14:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0VzqtEDH_1704204253;
+Received: from 192.168.33.9(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VzqtEDH_1704204253)
+          by smtp.aliyun-inc.com;
+          Tue, 02 Jan 2024 22:04:14 +0800
+Message-ID: <750e8251-ba30-4f53-a17b-73c79e3739ce@linux.alibaba.com>
+Date: Tue, 2 Jan 2024 22:04:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhtZSr-kq3G1vmm4=GyBO3E5RdSbGSp108moRiRBx4vvg@mail.gmail.com>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -2.12
-X-Spamd-Result: default: False [-2.12 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-0.997];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 FREEMAIL_TO(0.00)[gmail.com];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.32)[90.27%]
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 33/40] netfs, cachefiles: Pass upper bound length to
+ allow expansion
+To: David Howells <dhowells@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+ Steve French <smfrench@gmail.com>
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-34-dhowells@redhat.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20231221132400.1601991-34-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu 10-08-23 20:58:16, Amir Goldstein wrote:
-> On Tue, Aug 8, 2023 at 12:19 PM Su Hui <suhui@nfschina.com> wrote:
-> >
-> > smatch error:
-> > fs/notify/fanotify/fanotify_user.c:462 copy_fid_info_to_user():
-> > we previously assumed 'fh' could be null (see line 421)
-> >
-> > Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>'
+Hi David,
+
+On 2023/12/21 21:23, David Howells wrote:
+> Make netfslib pass the maximum length to the ->prepare_write() op to tell
+> the cache how much it can expand the length of a write to.  This allows a
+> write to the server at the end of a file to be limited to a few bytes
+> whilst writing an entire block to the cache (something required by direct
+> I/O).
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> cc: linux-cachefs@redhat.com
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> ---
+>   fs/cachefiles/internal.h |  2 +-
+>   fs/cachefiles/io.c       | 10 ++++++----
+>   fs/cachefiles/ondemand.c |  2 +-
+>   fs/netfs/fscache_io.c    |  2 +-
+>   fs/netfs/io.c            |  2 +-
+>   fs/netfs/objects.c       |  1 +
+>   fs/netfs/output.c        | 25 ++++++++++---------------
+>   fs/smb/client/fscache.c  |  2 +-
+>   include/linux/netfs.h    |  5 +++--
+>   9 files changed, 25 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+> index 2ad58c465208..1af48d576a34 100644
+> --- a/fs/cachefiles/internal.h
+> +++ b/fs/cachefiles/internal.h
+> @@ -233,7 +233,7 @@ extern bool cachefiles_begin_operation(struct netfs_cache_resources *cres,
+>   				       enum fscache_want_state want_state);
+>   extern int __cachefiles_prepare_write(struct cachefiles_object *object,
+>   				      struct file *file,
+> -				      loff_t *_start, size_t *_len,
+> +				      loff_t *_start, size_t *_len, size_t upper_len,
+>   				      bool no_space_allocated_yet);
+>   extern int __cachefiles_write(struct cachefiles_object *object,
+>   			      struct file *file,
+> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+> index 009d23cd435b..bffffedce4a9 100644
+> --- a/fs/cachefiles/io.c
+> +++ b/fs/cachefiles/io.c
+> @@ -518,7 +518,7 @@ cachefiles_prepare_ondemand_read(struct netfs_cache_resources *cres,
+>    */
+>   int __cachefiles_prepare_write(struct cachefiles_object *object,
+>   			       struct file *file,
+> -			       loff_t *_start, size_t *_len,
+> +			       loff_t *_start, size_t *_len, size_t upper_len,
+>   			       bool no_space_allocated_yet)
+>   {
+>   	struct cachefiles_cache *cache = object->volume->cache;
+> @@ -530,6 +530,8 @@ int __cachefiles_prepare_write(struct cachefiles_object *object,
+>   	down = start - round_down(start, PAGE_SIZE);
+>   	*_start = start - down;
+>   	*_len = round_up(down + len, PAGE_SIZE);
+> +	if (down < start || *_len > upper_len)
+> +		return -ENOBUFS;
 
-I'm sorry but this has somehow fallen through the cracks. 
+Sorry for bothering. We just found some strange when testing
+today-next EROFS over fscache.
 
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index f69c451018e3..5a5487ae2460 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -459,12 +459,13 @@ static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
-> >         if (WARN_ON_ONCE(len < sizeof(handle)))
-> >                 return -EFAULT;
-> >
-> > -       handle.handle_type = fh->type;
-> >         handle.handle_bytes = fh_len;
+I'm not sure the meaning of
+     if (down < start
 
-Well, if passed 'fh' is NULL, we have problems later in the function
-anyway. E.g. in fanotify_fh_buf() a few lines below. So I think this needs
-a bit more work that just this small fixup...
+For example, if start is page-aligned, down == 0.
 
-								Honza
+so as long as start > 0 and page-aligned, it will return
+-ENOBUFS.  Does it an intended behavior?
 
-> >
-> >         /* Mangle handle_type for bad file_handle */
-> >         if (!fh_len)
-> >                 handle.handle_type = FILEID_INVALID;
-> > +       else
-> > +               handle.handle_type = fh->type;
-> >
-> >         if (copy_to_user(buf, &handle, sizeof(handle)))
-> >                 return -EFAULT;
-> > --
-> > 2.30.2
-> >
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Gao Xiang
 
