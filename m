@@ -1,199 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-7126-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F961821EF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:42:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE7E821F31
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BEB283AE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0FD2837F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E736E14AAC;
-	Tue,  2 Jan 2024 15:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729FE14F69;
+	Tue,  2 Jan 2024 16:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vXCRF1Z/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E48C14A92;
-	Tue,  2 Jan 2024 15:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2cd1232a2c7so4736911fa.0;
-        Tue, 02 Jan 2024 07:42:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704210131; x=1704814931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YEi6eztajvdH1SfIE7fhB1vy4RNQCLa1wmwHBQHFKBE=;
-        b=g5KcRiNtl0y42uIGJeiBGMPdNyVvGpZxJTsyhWqjEZgWnfWm1z3mA3k1ug28v46yBq
-         XPhVVW1SErnrXtzOUK+hyKkvP4HQqdfyMoeijje3yHpsXbVcpn0sXpM+Ur/RDps7ep2h
-         dovyY/0ZZxoho6b7KiNMFJjexGmLEWE5acPvjpyE+Wh97PdCD3SqHHC/MnuXF+qpkau9
-         ab5WOefXRWSxhZNT+XySk/qsOr8zBnTlrWstYB+L+GaS3KZzzt/fzNKo6P7kwJim8XAH
-         fKWsFMqckYPlcpdsAWF3pRL4YWD3WD4Of3LX2F4BiCSpc5Qua0B4E3xTuUBaGgD4oBzl
-         5QZA==
-X-Gm-Message-State: AOJu0YzPrXrM8+5MNpl6PMX7MVegk5lQhJEv5TxGKBq4D1IfrlLZaTiO
-	VCzxHI9gOc4PSFwY0ddmwT2Wk6yOLeE=
-X-Google-Smtp-Source: AGHT+IFq1YVMRmlB6w09U0C9fCSZ+WkvNpHMSudszz84giuPe5dNEKREoMfMthnV5UWGEz0XP9FriA==
-X-Received: by 2002:a05:651c:10a3:b0:2cc:7159:d466 with SMTP id k3-20020a05651c10a300b002cc7159d466mr7131066ljn.25.1704210130996;
-        Tue, 02 Jan 2024 07:42:10 -0800 (PST)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id h16-20020aa7c950000000b0055534d5e75csm9214019edt.6.2024.01.02.07.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jan 2024 07:42:10 -0800 (PST)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a287be6dbc0so9155266b.1;
-        Tue, 02 Jan 2024 07:42:10 -0800 (PST)
-X-Received: by 2002:a17:906:183:b0:a28:268d:8d7a with SMTP id
- 3-20020a170906018300b00a28268d8d7amr861021ejb.135.1704210130577; Tue, 02 Jan
- 2024 07:42:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D714F62
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 16:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 2 Jan 2024 11:05:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1704211562;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FfBSIcri6gvRT1pMgWG+pIwCoQ0ekq61NfBifzBCZVU=;
+	b=vXCRF1Z/FWzUW4N5OGNmiHEKvwZyzdT3+1J8P3ZO6hx43S12CDxCrbMOYp3+WrmeobPtT7
+	XExCwT7RZ3mdBrIebl5SwCUCpLGollYRHMgxXayWXgCKsr4APLunvwl638XQvLcp5GA48S
+	JxZNtGq0LHmop6gjeCjtxTFNMSL8Wqw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
+Message-ID: <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
+References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
+ <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <140431.1704208899@warthog.procyon.org.uk>
-In-Reply-To: <140431.1704208899@warthog.procyon.org.uk>
-From: Marc Dionne <marc.dionne@auristor.com>
-Date: Tue, 2 Jan 2024 11:41:59 -0400
-X-Gmail-Original-Message-ID: <CAB9dFdvGN=fkuFK++V6ovvCXCQBecQ+JVCh=a8tLzmgVqkk==w@mail.gmail.com>
-Message-ID: <CAB9dFdvGN=fkuFK++V6ovvCXCQBecQ+JVCh=a8tLzmgVqkk==w@mail.gmail.com>
-Subject: Re: [PATCH] afs: Fix error handling with lookup via FS.InlineBulkStatus
-To: David Howells <dhowells@redhat.com>
-Cc: Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jan 2, 2024 at 11:21=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> When afs does a lookup, it tries to use FS.InlineBulkStatus to preemptive=
-ly
-> look up a bunch of files in the parent directory and cache this locally, =
-on
-> the basis that we might want to look at them too (for example if someone
-> does an ls on a directory, they may want want to then stat every file
-> listed).
->
-> FS.InlineBulkStatus can be considered a compound op with the normal abort
-> code applying to the compound as a whole.  Each status fetch within the
-> compound is then given its own individual abort code - but assuming no
-> error that prevents the bulk fetch from returning the compound result wil=
-l
-> be 0, even if all the constituent status fetches failed.
->
-> At the conclusion of afs_do_lookup(), we should use the abort code from t=
-he
-> appropriate status to determine the error to return, if any - but instead
-> it is assumed that we were successful if the op as a whole succeeded and =
-we
-> return an incompletely initialised inode, resulting in ENOENT, no matter
-> the actual reason.  In the particular instance reported, a vnode with no
-> permission granted to be accessed is being given a UAEACCES abort code
-> which should be reported as EACCES, but is instead being reported as
-> ENOENT.
->
-> Fix this by abandoning the inode (which will be cleaned up with the op) i=
-f
-> file[1] has an abort code indicated and turn that abort code into an erro=
-r
-> instead.
->
-> Whilst we're at it, add a tracepoint so that the abort codes of the
-> individual subrequests of FS.InlineBulkStatus can be logged.  At the mome=
-nt
-> only the container abort code can be 0.
->
-> Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" con=
-cept")
-> Reported-by: Jeffrey Altman <jaltman@auristor.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: linux-afs@lists.infradead.org
-> ---
->  fs/afs/dir.c               |   12 +++++++++---
->  include/trace/events/afs.h |   25 +++++++++++++++++++++++++
->  2 files changed, 34 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-> index c14533ef108f..ae563d2a914e 100644
-> --- a/fs/afs/dir.c
-> +++ b/fs/afs/dir.c
-> @@ -708,6 +708,8 @@ static void afs_do_lookup_success(struct afs_operatio=
-n *op)
->                         break;
->                 }
->
-> +               if (vp->scb.status.abort_code)
-> +                       trace_afs_bulkstat_error(op, &vp->fid, i, vp->scb=
-.status.abort_code);
->                 if (!vp->scb.have_status && !vp->scb.have_error)
->                         continue;
->
-> @@ -897,12 +899,16 @@ static struct inode *afs_do_lookup(struct inode *di=
-r, struct dentry *dentry,
->                 afs_begin_vnode_operation(op);
->                 afs_wait_for_operation(op);
->         }
-> -       inode =3D ERR_PTR(afs_op_error(op));
->
->  out_op:
->         if (!afs_op_error(op)) {
-> -               inode =3D &op->file[1].vnode->netfs.inode;
-> -               op->file[1].vnode =3D NULL;
-> +               if (op->file[1].scb.status.abort_code) {
-> +                       afs_op_accumulate_error(op, -ECONNABORTED,
-> +                                               op->file[1].scb.status.ab=
-ort_code);
-> +               } else {
-> +                       inode =3D &op->file[1].vnode->netfs.inode;
-> +                       op->file[1].vnode =3D NULL;
-> +               }
->         }
->
->         if (op->file[0].scb.have_status)
-> diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-> index 5194b7e6dc8d..ce865ea678d3 100644
-> --- a/include/trace/events/afs.h
-> +++ b/include/trace/events/afs.h
-> @@ -1102,6 +1102,31 @@ TRACE_EVENT(afs_file_error,
->                       __print_symbolic(__entry->where, afs_file_errors))
->             );
->
-> +TRACE_EVENT(afs_bulkstat_error,
-> +           TP_PROTO(struct afs_operation *op, struct afs_fid *fid, unsig=
-ned int index, s32 abort),
-> +
-> +           TP_ARGS(op, fid, index, abort),
-> +
-> +           TP_STRUCT__entry(
-> +                   __field_struct(struct afs_fid,      fid)
-> +                   __field(unsigned int,               op)
-> +                   __field(unsigned int,               index)
-> +                   __field(s32,                        abort)
-> +                            ),
-> +
-> +           TP_fast_assign(
-> +                   __entry->op =3D op->debug_id;
-> +                   __entry->fid =3D *fid;
-> +                   __entry->index =3D index;
-> +                   __entry->abort =3D abort;
-> +                          ),
-> +
-> +           TP_printk("OP=3D%08x[%02x] %llx:%llx:%x a=3D%d",
-> +                     __entry->op, __entry->index,
-> +                     __entry->fid.vid, __entry->fid.vnode, __entry->fid.=
-unique,
-> +                     __entry->abort)
-> +           );
-> +
->  TRACE_EVENT(afs_cm_no_server,
->             TP_PROTO(struct afs_call *call, struct sockaddr_rxrpc *srx),
+On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
+> 
+> 
+> > On Jan 2, 2024, at 1:56 AM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > 
+> > LSF topic: bcachefs status & roadmap
+> > 
+> 
+> <skipped>
+> 
+> > 
+> > A delayed allocation for btree nodes mode is coming, which is the main
+> > piece needed for ZNS support
+> > 
+> 
+> I could miss some emails. But have you shared the vision of ZNS support
+> architecture for the case of bcachefs already? It will be interesting to hear
+> the high-level concept.
 
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+There's not a whole lot to it. bcache/bcachefs allocation is already
+bucket based, where the model is that we allocate a bucket, then write
+to it sequentially and never overwrite until the whole bucket is reused.
 
-Marc
+The main exception has been btree nodes, which are log structured and
+typically smaller than a bucket; that doesn't break the "no overwrites"
+property ZNS wants, but it does mean writes within a bucket aren't
+happening sequentially.
+
+So I'm adding a mode where every time we do a btree node write we write
+out the whole node to a new location, instead of appending at an
+existing location. It won't be as efficient for random updates across a
+large working set, but in practice that doesn't happen too much; average
+btree write size has always been quite high on any filesystem I've
+looked at.
+
+Aside from that, it's mostly just plumbing and integration; bcachefs on
+ZNS will work pretty much just the same as bcachefs on regular block devices.
 
