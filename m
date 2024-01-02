@@ -1,92 +1,237 @@
-Return-Path: <linux-fsdevel+bounces-7127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE7E821F31
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:06:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F46821F6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0FD2837F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3471F2303A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729FE14F69;
-	Tue,  2 Jan 2024 16:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C1414F72;
+	Tue,  2 Jan 2024 16:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vXCRF1Z/"
+	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="IBgCl/6S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D714F62
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 16:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 2 Jan 2024 11:05:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704211562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FfBSIcri6gvRT1pMgWG+pIwCoQ0ekq61NfBifzBCZVU=;
-	b=vXCRF1Z/FWzUW4N5OGNmiHEKvwZyzdT3+1J8P3ZO6hx43S12CDxCrbMOYp3+WrmeobPtT7
-	XExCwT7RZ3mdBrIebl5SwCUCpLGollYRHMgxXayWXgCKsr4APLunvwl638XQvLcp5GA48S
-	JxZNtGq0LHmop6gjeCjtxTFNMSL8Wqw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
-Message-ID: <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
-References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
- <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE8814F6E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 16:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dbd721384c0so7762938276.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 08:25:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1704212746; x=1704817546; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jjrvt43eUxDbjYkOtMd56Xtm4TWENol61R3rS+X29Ik=;
+        b=IBgCl/6SgN7nVmtYt/LMmt7mpH9flZipTFwMyyYKhLNooe3TQQq1LdxezQMe5ddrFW
+         AIbqy3+XmldL3Ul1JASs8yiDsi82aRvzsFJ5CgtLfpnOEvN8e7E9HrcZfNVwLlZ8rL7C
+         GORmGDrAlfQh3/zKVbbmPK6RnIvpfGFFpGExII37O5QrZbzJsiqxOxHc0Lo6gtYBXEcA
+         pr0hXuP3uFfz4guajwqU4kxapEeTlh/8wCCP4icDq3UqGjZbEeBKOvvf9c8HRPR8aAI9
+         NWjOJMBDyR9KMgy/1wEYbUCU8a8ONp6xe4DvJOUoZe3rzsEITSjCBfql6zFVxnfVuO2K
+         /uZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704212746; x=1704817546;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jjrvt43eUxDbjYkOtMd56Xtm4TWENol61R3rS+X29Ik=;
+        b=sh2t3UK7RK8RPHDi4mdWIrzTO0Rkq7cb8ri/q6fUZDu1kFuKS7AdBzi2/fhwZmLkiG
+         u7HYJOmToPHumCGiaJR+BRQ6HZewPKvVVbuqvwKKNg3N+PmnWjlamVe5SldyTTLzLQ/D
+         vgD811elBsgb5rxzaDmT9osoQV123pWSZYjAj72OmFCTlvQUa6xOhhoAufnYap5kiHEv
+         hWwIaoAbPmaYlI373qsHEMXz9YwBAXPO/wONN2FQIH5fvWNvAYyAUlEbXET6n4i6vbjl
+         ZcPCR2tqLJEzggq3N6HnuLIsQLxiOGu49qcnVIr38fctSs1EF6lX59Cy4i9vUoxQfmw8
+         I4tw==
+X-Gm-Message-State: AOJu0YwvAcZVYwZgNJ1mPuenlPT4mLGXPPTJgt1NqfzXoYpklPipLfOF
+	Se7xZ3pYw0pH+FPxowLV+cBRaRpcWuNyvBoUSiT8n9hAPPZvbR4cVzg0xZqzlw==
+X-Google-Smtp-Source: AGHT+IHif4OwX29X+zB4A53zmWkbIC0JdUXihe7lrh9+jb7Xvdt5em8i/REKHTatrh0lEdoDLrbhZzHhCUXIr2Y2PbY=
+X-Received: by 2002:a5b:f50:0:b0:dbd:f0c7:891d with SMTP id
+ y16-20020a5b0f50000000b00dbdf0c7891dmr5959520ybr.19.1704212746518; Tue, 02
+ Jan 2024 08:25:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20231220051348.GY1674809@ZenIV> <20231220053238.GT1674809@ZenIV> <CAOg9mSR0KtsdkZ+32n4EtMegw-YOO6o11CNPpotPGDw4F+4Kvw@mail.gmail.com>
+In-Reply-To: <CAOg9mSR0KtsdkZ+32n4EtMegw-YOO6o11CNPpotPGDw4F+4Kvw@mail.gmail.com>
+From: Mike Marshall <hubcap@omnibond.com>
+Date: Tue, 2 Jan 2024 11:25:35 -0500
+Message-ID: <CAOg9mSQc-9-BEGPY5RCR3=nP10QA+5rGXtOi+_BVib723yhLug@mail.gmail.com>
+Subject: Re: [PATCH 21/22] orangefs: saner arguments passing in readdir guts
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Mike Marshall <hubcap@omnibond.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
-> 
-> 
-> > On Jan 2, 2024, at 1:56 AM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > 
-> > LSF topic: bcachefs status & roadmap
-> > 
-> 
-> <skipped>
-> 
-> > 
-> > A delayed allocation for btree nodes mode is coming, which is the main
-> > piece needed for ZNS support
-> > 
-> 
-> I could miss some emails. But have you shared the vision of ZNS support
-> architecture for the case of bcachefs already? It will be interesting to hear
-> the high-level concept.
+Hi Al... without going into detail about me being clumsy,
+there is no new regression. There is a problem I found
+in orangefs and have sent it up to Walt Ligon. I had
+then excluded that test from my xfstests runs and lost that
+particular exclusion when I recently pulled/updated my
+xfstests.
 
-There's not a whole lot to it. bcache/bcachefs allocation is already
-bucket based, where the model is that we allocate a bucket, then write
-to it sequentially and never overwrite until the whole bucket is reused.
+So... I have tested your patch and I think it is good.
 
-The main exception has been btree nodes, which are log structured and
-typically smaller than a bucket; that doesn't break the "no overwrites"
-property ZNS wants, but it does mean writes within a bucket aren't
-happening sequentially.
+Some parts of the motorcycle ride were chilly...
 
-So I'm adding a mode where every time we do a btree node write we write
-out the whole node to a new location, instead of appending at an
-existing location. It won't be as efficient for random updates across a
-large working set, but in practice that doesn't happen too much; average
-btree write size has always been quite high on any filesystem I've
-looked at.
+https://hubcapsc.com/misc/madison_georgia_motel_frost.jpg
 
-Aside from that, it's mostly just plumbing and integration; bcachefs on
-ZNS will work pretty much just the same as bcachefs on regular block devices.
+-Mike
+
+On Wed, Dec 27, 2023 at 7:05=E2=80=AFAM Mike Marshall <hubcap@omnibond.com>=
+ wrote:
+>
+> Howdy Al... I applied your orangefs patch to 6.7.0-rc6 and found one
+> xfstests failure that was not there when I ran against
+> xfstests-6.7.0-rc5. (generic/438)
+>
+> I'm about to hit the road for a several day motorcycle ride in an hour
+> or so, I just wanted to give feedback before Ieft. I'll look into it
+> further when I get back.
+>
+> -Mike
+>
+> On Wed, Dec 20, 2023 at 12:33=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
+> wrote:
+> >
+> > orangefs_dir_fill() doesn't use oi and dentry arguments at all
+> > do_readdir() gets dentry, uses only dentry->d_inode; it also
+> > gets oi, which is ORANGEFS_I(dentry->d_inode) (i.e. ->d_inode -
+> > constant offset).
+> > orangefs_dir_mode() gets dentry and oi, uses only to pass those
+> > to do_readdir().
+> > orangefs_dir_iterate() uses dentry and oi only to pass those to
+> > orangefs_dir_fill() and orangefs_dir_more().
+> >
+> > The only thing it really needs is ->d_inode; moreover, that's
+> > better expressed as file_inode(file) - no need to go through
+> > ->f_path.dentry->d_inode.
+> >
+> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > ---
+> >  fs/orangefs/dir.c | 32 ++++++++++++--------------------
+> >  1 file changed, 12 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/fs/orangefs/dir.c b/fs/orangefs/dir.c
+> > index 9cacce5d55c1..6d1fbeca9d81 100644
+> > --- a/fs/orangefs/dir.c
+> > +++ b/fs/orangefs/dir.c
+> > @@ -58,10 +58,10 @@ struct orangefs_dir {
+> >   * first part of the part list.
+> >   */
+> >
+> > -static int do_readdir(struct orangefs_inode_s *oi,
+> > -    struct orangefs_dir *od, struct dentry *dentry,
+> > +static int do_readdir(struct orangefs_dir *od, struct inode *inode,
+> >      struct orangefs_kernel_op_s *op)
+> >  {
+> > +       struct orangefs_inode_s *oi =3D ORANGEFS_I(inode);
+> >         struct orangefs_readdir_response_s *resp;
+> >         int bufi, r;
+> >
+> > @@ -87,7 +87,7 @@ static int do_readdir(struct orangefs_inode_s *oi,
+> >         op->upcall.req.readdir.buf_index =3D bufi;
+> >
+> >         r =3D service_operation(op, "orangefs_readdir",
+> > -           get_interruptible_flag(dentry->d_inode));
+> > +           get_interruptible_flag(inode));
+> >
+> >         orangefs_readdir_index_put(bufi);
+> >
+> > @@ -158,8 +158,7 @@ static int parse_readdir(struct orangefs_dir *od,
+> >         return 0;
+> >  }
+> >
+> > -static int orangefs_dir_more(struct orangefs_inode_s *oi,
+> > -    struct orangefs_dir *od, struct dentry *dentry)
+> > +static int orangefs_dir_more(struct orangefs_dir *od, struct inode *in=
+ode)
+> >  {
+> >         struct orangefs_kernel_op_s *op;
+> >         int r;
+> > @@ -169,7 +168,7 @@ static int orangefs_dir_more(struct orangefs_inode_=
+s *oi,
+> >                 od->error =3D -ENOMEM;
+> >                 return -ENOMEM;
+> >         }
+> > -       r =3D do_readdir(oi, od, dentry, op);
+> > +       r =3D do_readdir(od, inode, op);
+> >         if (r) {
+> >                 od->error =3D r;
+> >                 goto out;
+> > @@ -238,9 +237,7 @@ static int fill_from_part(struct orangefs_dir_part =
+*part,
+> >         return 1;
+> >  }
+> >
+> > -static int orangefs_dir_fill(struct orangefs_inode_s *oi,
+> > -    struct orangefs_dir *od, struct dentry *dentry,
+> > -    struct dir_context *ctx)
+> > +static int orangefs_dir_fill(struct orangefs_dir *od, struct dir_conte=
+xt *ctx)
+> >  {
+> >         struct orangefs_dir_part *part;
+> >         size_t count;
+> > @@ -304,15 +301,10 @@ static loff_t orangefs_dir_llseek(struct file *fi=
+le, loff_t offset,
+> >  static int orangefs_dir_iterate(struct file *file,
+> >      struct dir_context *ctx)
+> >  {
+> > -       struct orangefs_inode_s *oi;
+> > -       struct orangefs_dir *od;
+> > -       struct dentry *dentry;
+> > +       struct orangefs_dir *od =3D file->private_data;
+> > +       struct inode *inode =3D file_inode(file);
+> >         int r;
+> >
+> > -       dentry =3D file->f_path.dentry;
+> > -       oi =3D ORANGEFS_I(dentry->d_inode);
+> > -       od =3D file->private_data;
+> > -
+> >         if (od->error)
+> >                 return od->error;
+> >
+> > @@ -342,7 +334,7 @@ static int orangefs_dir_iterate(struct file *file,
+> >          */
+> >         while (od->token !=3D ORANGEFS_ITERATE_END &&
+> >             ctx->pos > od->end) {
+> > -               r =3D orangefs_dir_more(oi, od, dentry);
+> > +               r =3D orangefs_dir_more(od, inode);
+> >                 if (r)
+> >                         return r;
+> >         }
+> > @@ -351,17 +343,17 @@ static int orangefs_dir_iterate(struct file *file=
+,
+> >
+> >         /* Then try to fill if there's any left in the buffer. */
+> >         if (ctx->pos < od->end) {
+> > -               r =3D orangefs_dir_fill(oi, od, dentry, ctx);
+> > +               r =3D orangefs_dir_fill(od, ctx);
+> >                 if (r)
+> >                         return r;
+> >         }
+> >
+> >         /* Finally get some more and try to fill. */
+> >         if (od->token !=3D ORANGEFS_ITERATE_END) {
+> > -               r =3D orangefs_dir_more(oi, od, dentry);
+> > +               r =3D orangefs_dir_more(od, inode);
+> >                 if (r)
+> >                         return r;
+> > -               r =3D orangefs_dir_fill(oi, od, dentry, ctx);
+> > +               r =3D orangefs_dir_fill(od, ctx);
+> >         }
+> >
+> >         return r;
+> > --
+> > 2.39.2
+> >
+> >
 
