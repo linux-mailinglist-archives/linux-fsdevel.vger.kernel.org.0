@@ -1,118 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-7130-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA8F821FAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:50:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD547821FD0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 17:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C0B1F22F4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:50:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7916F1F22E6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 16:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B6214F9D;
-	Tue,  2 Jan 2024 16:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48AA15488;
+	Tue,  2 Jan 2024 16:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cxt/tmu0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IjW4QxnT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF95914F8A;
-	Tue,  2 Jan 2024 16:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1704214232; x=1704819032; i=markus.elfring@web.de;
-	bh=YzuA4S6nhHOojFNtxACZ01ivp0AQ+vZQh6tXXT3uSYg=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=cxt/tmu0gTkOeM16FCwRmi7vy74xROcj1smMkUn7BfUYHfasx3s23jnp0w9/YRxj
-	 vttktd3Eeb2W1tTJjcRBanEnGBNjz3VTPtpMq/ur7cFF4OUCuWO87Y+UpAPvRI0zH
-	 z10qgCXBpzHnPXGit13+kHf3ZCGDhqC9f0rInjtQ0Op9JOI7QPK1OnhNANZJATRjg
-	 mZ8rZ/EyJHT4m7j/7db1nA45YJGHeMgsEJkTxLQMyM0rk8CojFMTGScN3zIV5podX
-	 u5IxtTmOymadbnPwHaPEubNqWy3FitxHqA/bSzmIChB6Ywicj024T1mEaYvXQRQvU
-	 mQFz07bJJoL+Pm2swA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIyeU-1rf7AY2eug-00KrZK; Tue, 02
- Jan 2024 17:50:32 +0100
-Message-ID: <a08b7922-c28d-4667-b7f3-a4064ff7d6b3@web.de>
-Date: Tue, 2 Jan 2024 17:50:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024C114F95
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 16:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-5f254d1a6daso12513827b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 08:58:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1704214726; x=1704819526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/kfSvqUQhDDQeZ7w9vi8u82O1MW4zk5hhfYcLpsRKrM=;
+        b=IjW4QxnTXys2dTHJsWz38eoLZWSaTE6apxTe+eRi13iJVSEIpVTfydtj6hFTLJQWk9
+         hKhWJ1i5+qzO2M6z78Mzpbcugv6JUEw/jgsggi/7zhARANmBS77lJj0qXZuquQCuziKk
+         fa8uy3t65HJs8x7QkOWfra5YfWOW5A3YJi36R1JWFJNKLrNSfX9SNikxKyFwtmWIomHA
+         BXbxTyx0Pe7+hAur9pIVN2EKygtbHh1G/zdgXvveQb5sxW8tp17fYMl/PtLN7kiKgn/u
+         YsTl7QNjZwME/8YRVEVWJ2mt4pI1NHwWqOVzfshJoKE7GhTwQ7HpXZ8ggVVqY9bea06T
+         LK0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704214726; x=1704819526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/kfSvqUQhDDQeZ7w9vi8u82O1MW4zk5hhfYcLpsRKrM=;
+        b=N+3vin0b5GHAH8ASxFoNJclZ/D7cVvE+GtV5JyCqN2lzn4+OpwrYKMNk7d+6wYL+rM
+         +EyuI2YR8p3xw9TPPEnmwfZjB/XyF8l+EO0lVmtE06Ig6nhjcyIJhqWSAzVEN1kLHea7
+         qulvK6A9l2N6vjcGCqsImwL4KZvP2rx8iVubgWrWjO01/auVNrhDWnFyy+zvxDnd7V0S
+         GDfhHg6knKQjD97DlqfXRYDl/BTyVS4yOF6LNQflQEeK4yPE5OZUUv/CyizEWBzX13sE
+         LMlmjhC/2a2fb05igxfbAxoPDSI9W5QHSdZW/+NlMyfZ05ckaOqRLWsihg9AtqKNjPUd
+         ggqg==
+X-Gm-Message-State: AOJu0YyHCcNDorvKyboVrkdi79TrUPZD//wpW9qXv28LVpBPC8TJ3qJq
+	cwy3liE3+8C+TIfeo7XElz+I3nCS/P851apR2y8PdrP5K4yc
+X-Google-Smtp-Source: AGHT+IEiET7hC1eLxq7vY+dYnw1pivEcf25fOPa47AK6Yo5ywRpiE2S/bGFSeiyw7FCc/mlNNgWDk+kcawue6+1X1eM=
+X-Received: by 2002:a0d:d2c6:0:b0:5e7:cd6d:b6da with SMTP id
+ u189-20020a0dd2c6000000b005e7cd6db6damr11272113ywd.47.1704214725685; Tue, 02
+ Jan 2024 08:58:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [2/2] virtiofs: Improve error handling in virtio_fs_get_tree()
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, virtualization@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Stefan Hajnoczi
- <stefanha@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <c5c14b02-660a-46e1-9eb3-1a16d7c84922@web.de>
- <5745d81c-3c06-4871-9785-12a469870934@web.de>
- <ZY6Iir/idOZBiREy@casper.infradead.org>
- <54b353b6-949d-45a1-896d-bb5acb2ed4ed@web.de>
- <ZY7V+ywWV/iKs4Hn@casper.infradead.org>
- <691350ea-39e9-4031-a066-27d7064cd9d9@web.de>
- <ZZPisBFGvF/qp2eB@casper.infradead.org>
- <9b27d89d-c410-4898-b801-00d2a00fb693@web.de>
- <ZZQ5vKRcq9kkQxSD@casper.infradead.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZZQ5vKRcq9kkQxSD@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+References: <20231230025607.2476912-1-surenb@google.com> <ZZPQjO91fvB66z1s@x1n>
+In-Reply-To: <ZZPQjO91fvB66z1s@x1n>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 2 Jan 2024 08:58:33 -0800
+Message-ID: <CAJuCfpF8h4aPAvFQv4NjX=DRWTZ1P5DcO16DfT-Sot1cGucjJQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: fix move_pages_pte() splitting folio
+ under RCU read lock
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
+	david@redhat.com, ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com, 
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, 
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com, 
+	jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Fgny9c5f2W3jpLqzVc7i9FuUiueq2RLS53d72LSSK3RKZc3zftm
- SsP1AV7t8VO8xthakUAB6NvI3QaBLyBbnq4mrGqVN/LvkJogBg0W80X8H/yrMhFi1YsU4xv
- C2vSlapjMi+j6VketDeCrzsqKvWK1UecJmULvqMgwHTKNURCdcFTpHJVBoWNsEavBDM4uu7
- DM9zSY0XWfHQMyfaA8ALA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:INHlZ34bTrY=;zJ6eL3Bj8LtupwNNsZ/tNpt+E2E
- rhyAK3+huAVszX+0JbpGi64wipqZXXquvT4FmqAX7pGXUkHtAEoOHZIokacWsiAyrws3VQQeg
- DIXuuLYzp0aIuiVIkLmUmqRsavOE26MAy5tZdoMkNJMu7znwwSxof//lHLJHqspM7G04K+1CB
- lgysUAozHm8yIUawO6/9T0gSrzzF3TXmYjwKDkCpGct18rREpOAfzaO6oY5QVX++Bd9W4CHC+
- NbE6zpqSx/pi/ylp/zDkcYgF07rRsGZHbP2E9yASNv43STyAIK3V2W/A7tStBaWWfle82L5XR
- bNWST7bzpauZtH3bauwe0HWUvoMQvjV0qbllMqX8INYz5x4NR87GRSm+VnS6UwEeWSm0v3fRJ
- +iBHgX0EX3lWuJoBp/eu6Tf5ua9nLns/mUzPDtxetGhdLz9LdfLdYX3bv4W7/1IuLOOWuZ/Ap
- py6IlmAMef9Pd1cL9RM1twOr90kLwBsxQbKM/1TqV9AlEh5BGM1tEZHLTouOTfEmA7JdU7tSH
- RWJj9NRY82jXBs2s2ZomWUoqPdjLvmww41zM80qegF4RQrmASVMjj3DFJJJ6JTcTZ4MXDgJK7
- y7GPQ0WHvENX0DUd7xdEHlrViDvcbHjaoEnbiedprJ0iYRZB2RmynuzyeNSTJGtcP0xakIsFD
- Nhyv/faX+I0RWr8Aiz2KX3susJR7RPm4y8nN4i40T4KSJITTgmtrYsTvpuEl9lzcaQdD7Rdfk
- +BjKi+dBPasvlXNEp4iIxEAWpnqdPu/AJp5iJ3UJaC+GEpPZQ1rUNgu/BGtqaQddSiCMLuOXr
- r0CEC5MpHK2gxv/aBAyEJWHVaQMwQGYDXQaR3zVstjx2w1G+f2VFo7fR7HG+hpV6INVeI4flw
- 0rkTsIFFgwiL75v4U80TKk11B71DGoSjAR1Cg0V2UtZTsoLK8hSh4YWuF83pWInQeZHeSUoIB
- eLOjiw==
 
->> It is probably clear that the function call =E2=80=9Ckfree(NULL)=E2=80=
-=9D does not perform
->> data processing which is really useful for the caller.
->> Such a call is kept in some cases because programmers did not like to i=
-nvest
->> development resources for its avoidance.
+On Tue, Jan 2, 2024 at 1:00=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
 >
-> on the contrary, it is extremely useful for callers to not have to perfo=
-rm
-> the NULL check themselves.
+> On Fri, Dec 29, 2023 at 06:56:07PM -0800, Suren Baghdasaryan wrote:
+> > @@ -1078,9 +1078,14 @@ static int move_pages_pte(struct mm_struct *mm, =
+pmd_t *dst_pmd, pmd_t *src_pmd,
+> >
+> >               /* at this point we have src_folio locked */
+> >               if (folio_test_large(src_folio)) {
+> > +                     /* split_folio() can block */
+> > +                     pte_unmap(&orig_src_pte);
+> > +                     pte_unmap(&orig_dst_pte);
+> > +                     src_pte =3D dst_pte =3D NULL;
+> >                       err =3D split_folio(src_folio);
+> >                       if (err)
+> >                               goto out;
+> > +                     goto retry;
+> >               }
+>
+> Do we also need to clear src_folio and src_folio_pte?  If the folio is a
+> thp, I think it means it's pte mapped here. Then after the split we may
+> want to fetch the small folio after the split, not the head one?
 
-Some function calls indicate a resource allocation failure by a null point=
-er.
-Such pointer checks are generally performed for error detection
-so that appropriate exception handling can be chosen.
+I think we need to re-fetch the src_folio only if the src_addr falls
+into a non-head page. Looking at the __split_huge_page(), the head
+page is skipped in the last loop, so I think it should stay valid.
+That said, maybe it's just an implementation detail of the
+__split_huge_page() and I should not rely on that and refetch anyway?
 
-
->                             It also mirrors userspace where free(NULL)
-> is valid according to ISO/ANSI C, so eases the transition for programmer=
-s
-> who are coming from userspace.  It costs nothing in the implementation
-> as it is part of the check for the ZERO_PTR.
-
-How many development efforts do you dare to spend on more complete
-and efficient error/exception handling?
-
-Regards,
-Markus
+>
+> --
+> Peter Xu
+>
 
