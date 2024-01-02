@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01035821BDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF65821BDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98759B21BCB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94957B21C9B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837041172C;
-	Tue,  2 Jan 2024 12:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7AB125D2;
+	Tue,  2 Jan 2024 12:42:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEA4F9D2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58CFBE5;
 	Tue,  2 Jan 2024 12:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CCy2gjkz4f3l85;
-	Tue,  2 Jan 2024 20:42:06 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4T4CCx2rqJz4f3js5;
+	Tue,  2 Jan 2024 20:42:05 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1BBB81A0972;
+	by mail.maildlp.com (Postfix) with ESMTP id A1E681A017F;
 	Tue,  2 Jan 2024 20:42:08 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S9;
-	Tue, 02 Jan 2024 20:42:07 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S10;
+	Tue, 02 Jan 2024 20:42:08 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v2 05/25] ext4: make ext4_map_blocks() distinguish delalloc only extent
-Date: Tue,  2 Jan 2024 20:38:58 +0800
-Message-Id: <20240102123918.799062-6-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 06/25] ext4: make ext4_set_iomap() recognize IOMAP_DELALLOC map type
+Date: Tue,  2 Jan 2024 20:38:59 +0800
+Message-Id: <20240102123918.799062-7-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
 References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
@@ -57,10 +57,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw47Xw1xGw1DAry7Wry5CFg_yoW8tr4fpa
-	95GF1UGFs8uw1j93yxW3W5XF1UKa9Ykw47Cr4rtr4F9asxJr1ftF4q9F4fZF9YgrWxXF4U
-	XFWUt348CanIkrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S10
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1kKFWkAr45AF4UCrW7Arb_yoW8tFW8pa
+	9xKFy7GF43Xr1jgr48trW7Zr1ak3WUK3y2grWfG3s5Cr10yry8tF48CF1ayF90qrWxZw1S
+	qF4jkr18Wa1SyFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,63 +79,79 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add a new map flag EXT4_MAP_DELAYED to indicate the mapping range is a
-delayed allocated only (not unwritten) one, and making
-ext4_map_blocks() can distinguish it, no longer mixing it with holes.
+Since ext4_map_blocks() can recognize a delayed allocated only extent,
+make ext4_set_iomap() can also recognize it, and remove the useless
+separate check in ext4_iomap_begin_report().
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4.h    | 4 +++-
- fs/ext4/extents.c | 5 +++--
- fs/ext4/inode.c   | 2 ++
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ fs/ext4/inode.c | 32 +++-----------------------------
+ 1 file changed, 3 insertions(+), 29 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index a5d784872303..55195909d32f 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -252,8 +252,10 @@ struct ext4_allocation_request {
- #define EXT4_MAP_MAPPED		BIT(BH_Mapped)
- #define EXT4_MAP_UNWRITTEN	BIT(BH_Unwritten)
- #define EXT4_MAP_BOUNDARY	BIT(BH_Boundary)
-+#define EXT4_MAP_DELAYED	BIT(BH_Delay)
- #define EXT4_MAP_FLAGS		(EXT4_MAP_NEW | EXT4_MAP_MAPPED |\
--				 EXT4_MAP_UNWRITTEN | EXT4_MAP_BOUNDARY)
-+				 EXT4_MAP_UNWRITTEN | EXT4_MAP_BOUNDARY |\
-+				 EXT4_MAP_DELAYED)
- 
- struct ext4_map_blocks {
- 	ext4_fsblk_t m_pblk;
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 0892d0568013..fc69f13cf510 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4073,9 +4073,10 @@ static void ext4_ext_determine_hole(struct inode *inode,
- 	} else if (in_range(map->m_lblk, es.es_lblk, es.es_len)) {
- 		/*
- 		 * Straddle the beginning of the queried range, it's no
--		 * longer a hole, adjust the length to the delayed extent's
--		 * after map->m_lblk.
-+		 * longer a hole, mark it is a delalloc and adjust the
-+		 * length to the delayed extent's after map->m_lblk.
- 		 */
-+		map->m_flags |= EXT4_MAP_DELAYED;
- 		len = es.es_lblk + es.es_len - map->m_lblk;
- 		goto out;
- 	} else {
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 1b5e6409f958..c141bf6d8db2 100644
+index c141bf6d8db2..0458d7f0c059 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -515,6 +515,8 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 			map->m_len = retval;
- 		} else if (ext4_es_is_delayed(&es) || ext4_es_is_hole(&es)) {
- 			map->m_pblk = 0;
-+			map->m_flags |= ext4_es_is_delayed(&es) ?
-+					EXT4_MAP_DELAYED : 0;
- 			retval = es.es_len - (map->m_lblk - es.es_lblk);
- 			if (retval > map->m_len)
- 				retval = map->m_len;
+@@ -3261,6 +3261,9 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
+ 		iomap->addr = (u64) map->m_pblk << blkbits;
+ 		if (flags & IOMAP_DAX)
+ 			iomap->addr += EXT4_SB(inode->i_sb)->s_dax_part_off;
++	} else if (map->m_flags & EXT4_MAP_DELAYED) {
++		iomap->type = IOMAP_DELALLOC;
++		iomap->addr = IOMAP_NULL_ADDR;
+ 	} else {
+ 		iomap->type = IOMAP_HOLE;
+ 		iomap->addr = IOMAP_NULL_ADDR;
+@@ -3423,35 +3426,11 @@ const struct iomap_ops ext4_iomap_overwrite_ops = {
+ 	.iomap_end		= ext4_iomap_end,
+ };
+ 
+-static bool ext4_iomap_is_delalloc(struct inode *inode,
+-				   struct ext4_map_blocks *map)
+-{
+-	struct extent_status es;
+-	ext4_lblk_t offset = 0, end = map->m_lblk + map->m_len - 1;
+-
+-	ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
+-				  map->m_lblk, end, &es);
+-
+-	if (!es.es_len || es.es_lblk > end)
+-		return false;
+-
+-	if (es.es_lblk > map->m_lblk) {
+-		map->m_len = es.es_lblk - map->m_lblk;
+-		return false;
+-	}
+-
+-	offset = map->m_lblk - es.es_lblk;
+-	map->m_len = es.es_len - offset;
+-
+-	return true;
+-}
+-
+ static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+ 				   loff_t length, unsigned int flags,
+ 				   struct iomap *iomap, struct iomap *srcmap)
+ {
+ 	int ret;
+-	bool delalloc = false;
+ 	struct ext4_map_blocks map;
+ 	u8 blkbits = inode->i_blkbits;
+ 
+@@ -3492,13 +3471,8 @@ static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
+ 	ret = ext4_map_blocks(NULL, inode, &map, 0);
+ 	if (ret < 0)
+ 		return ret;
+-	if (ret == 0)
+-		delalloc = ext4_iomap_is_delalloc(inode, &map);
+-
+ set_iomap:
+ 	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
+-	if (delalloc && iomap->type == IOMAP_HOLE)
+-		iomap->type = IOMAP_DELALLOC;
+ 
+ 	return 0;
+ }
 -- 
 2.39.2
 
