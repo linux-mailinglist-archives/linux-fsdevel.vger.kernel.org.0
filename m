@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DA4821BEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:44:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A8E821BF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:44:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2CC283371
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4313D1F242F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE83314F86;
-	Tue,  2 Jan 2024 12:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9BF14F9B;
+	Tue,  2 Jan 2024 12:42:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022F214278;
-	Tue,  2 Jan 2024 12:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A22814A9A;
+	Tue,  2 Jan 2024 12:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CCz2Gc8z4f3nKX;
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CCz67MYz4f3nKM;
 	Tue,  2 Jan 2024 20:42:07 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EC5931A09D7;
-	Tue,  2 Jan 2024 20:42:12 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 7AFD01A07EC;
+	Tue,  2 Jan 2024 20:42:13 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S18;
-	Tue, 02 Jan 2024 20:42:12 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S19;
+	Tue, 02 Jan 2024 20:42:13 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v2 14/25] ext4: introduce seq counter for extent entry
-Date: Tue,  2 Jan 2024 20:39:07 +0800
-Message-Id: <20240102123918.799062-15-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 15/25] ext4: add a new iomap aops for regular file's buffered IO path
+Date: Tue,  2 Jan 2024 20:39:08 +0800
+Message-Id: <20240102123918.799062-16-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
 References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
@@ -57,10 +57,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S18
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw1kZw4xGFy8Jr4DGF15urg_yoW7Zr43pa
-	97AryUGrZ3Xw4j9a1xXw10qr45Za48urW7Gr9Ig34rXFWftrn0gF1DtFyjvF90qFW0kr17
-	XFW0kryDAa17WFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S19
+X-Coremail-Antispam: 1UD129KBjvJXoWxur43KF1xCr4ruw1kKF13twb_yoW5Cr1UpF
+	Z0kas8Gr18Zry7ua1fXFWDZF4Yk34fJw4UKFW3G3WavryrGrW7KFW0ka4jyFyUt3y8Ar1x
+	XF4jkry7WF13CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,174 +79,89 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Add a modify counter for extents to indicate the version of one inode's
-extent status, increase it once extent changes, it will be used for
-converting regular file's buffered write path to iomap.
+Introduce a new iomap address space operations ext4_iomap_aops to
+support regular file's buffered IO path and add an inode state flag
+EXT4_STATE_BUFFERED_IOMAP to indicate that one inode use the iomap
+path. Most of their callbacks should be able to use general
+implementation, the left over read_folio, readahead and writepages
+should be implemented later.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4.h              |  1 +
- fs/ext4/extents_status.c    | 13 ++++++++++++-
- fs/ext4/super.c             |  1 +
- include/trace/events/ext4.h | 19 +++++++++++++------
- 4 files changed, 27 insertions(+), 7 deletions(-)
+ fs/ext4/ext4.h  |  1 +
+ fs/ext4/inode.c | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
 diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 55195909d32f..287284a3f128 100644
+index 287284a3f128..3461cb3ff524 100644
 --- a/fs/ext4/ext4.h
 +++ b/fs/ext4/ext4.h
-@@ -1115,6 +1115,7 @@ struct ext4_inode_info {
- 	ext4_lblk_t i_es_shrink_lblk;	/* Offset where we start searching for
- 					   extents to shrink. Protected by
- 					   i_es_lock  */
-+	unsigned int i_es_seq;		/* modify counter for extents */
+@@ -1913,6 +1913,7 @@ enum {
+ 	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
+ 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
+ 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
++	EXT4_STATE_BUFFERED_IOMAP,	/* Inode use iomap for buffered IO */
+ };
  
- 	/* ialloc */
- 	ext4_group_t	i_last_alloc_group;
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 324a6b0a6283..b0a4aa60b311 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
- 	return es->es_lblk + es->es_len - 1;
- }
+ #define EXT4_INODE_BIT_FNS(name, field, offset)				\
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 9f9b1fce8da8..6b5cd0dab1ad 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3492,6 +3492,22 @@ const struct iomap_ops ext4_iomap_report_ops = {
+ 	.iomap_begin = ext4_iomap_begin_report,
+ };
  
-+static inline void ext4_es_inc_seq(struct inode *inode)
++static int ext4_iomap_read_folio(struct file *file, struct folio *folio)
 +{
-+	struct ext4_inode_info *ei = EXT4_I(inode);
++	return 0;
++}
 +
-+	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
++static void ext4_iomap_readahead(struct readahead_control *rac)
++{
++
++}
++
++static int ext4_iomap_writepages(struct address_space *mapping,
++				 struct writeback_control *wbc)
++{
++	return 0;
 +}
 +
  /*
-  * search through the tree for an delayed extent with a given offset.  If
-  * it can't be found, try to find next extent.
-@@ -876,6 +883,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
- 		WARN_ON(1);
- 	}
+  * For data=journal mode, folio should be marked dirty only when it was
+  * writeably mapped. When that happens, it was already attached to the
+@@ -3581,6 +3597,21 @@ static const struct address_space_operations ext4_da_aops = {
+ 	.swap_activate		= ext4_iomap_swap_activate,
+ };
  
-+	ext4_es_inc_seq(inode);
- 	newes.es_lblk = lblk;
- 	newes.es_len = len;
- 	ext4_es_store_pblock_status(&newes, pblk, status);
-@@ -1503,13 +1511,15 @@ void ext4_es_remove_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return;
- 
--	trace_ext4_es_remove_extent(inode, lblk, len);
- 	es_debug("remove [%u/%u) from extent status tree of inode %lu\n",
- 		 lblk, len, inode->i_ino);
- 
- 	if (!len)
- 		return;
- 
-+	ext4_es_inc_seq(inode);
-+	trace_ext4_es_remove_extent(inode, lblk, len);
++static const struct address_space_operations ext4_iomap_aops = {
++	.read_folio		= ext4_iomap_read_folio,
++	.readahead		= ext4_iomap_readahead,
++	.writepages		= ext4_iomap_writepages,
++	.dirty_folio		= iomap_dirty_folio,
++	.bmap			= ext4_bmap,
++	.invalidate_folio	= iomap_invalidate_folio,
++	.release_folio		= iomap_release_folio,
++	.direct_IO		= noop_direct_IO,
++	.migrate_folio		= filemap_migrate_folio,
++	.is_partially_uptodate  = iomap_is_partially_uptodate,
++	.error_remove_page	= generic_error_remove_page,
++	.swap_activate		= ext4_iomap_swap_activate,
++};
 +
- 	end = lblk + len - 1;
- 	BUG_ON(end < lblk);
- 
-@@ -2080,6 +2090,7 @@ void ext4_es_insert_delayed_extent(struct inode *inode, ext4_lblk_t lblk,
- 	if (!len)
- 		return;
- 
-+	ext4_es_inc_seq(inode);
- 	newes.es_lblk = lblk;
- 	newes.es_len = len;
- 	ext4_es_store_pblock_status(&newes, ~0, EXTENT_STATUS_DELAYED);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c5fcf377ab1f..d4afaae8ab38 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1421,6 +1421,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
- 	ei->i_es_all_nr = 0;
- 	ei->i_es_shk_nr = 0;
- 	ei->i_es_shrink_lblk = 0;
-+	ei->i_es_seq = 0;
- 	ei->i_reserved_data_blocks = 0;
- 	spin_lock_init(&(ei->i_block_reservation_lock));
- 	ext4_init_pending_tree(&ei->i_pending_tree);
-diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-index 53aa7a7fb3be..6ae504c43de7 100644
---- a/include/trace/events/ext4.h
-+++ b/include/trace/events/ext4.h
-@@ -2186,6 +2186,7 @@ DECLARE_EVENT_CLASS(ext4__es_extent,
- 		__field(	ext4_lblk_t,	len		)
- 		__field(	ext4_fsblk_t,	pblk		)
- 		__field(	char, status	)
-+		__field(	unsigned int,	seq		)
- 	),
- 
- 	TP_fast_assign(
-@@ -2195,13 +2196,15 @@ DECLARE_EVENT_CLASS(ext4__es_extent,
- 		__entry->len	= es->es_len;
- 		__entry->pblk	= ext4_es_show_pblock(es);
- 		__entry->status	= ext4_es_status(es);
-+		__entry->seq	= EXT4_I(inode)->i_es_seq;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s",
-+	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s seq %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  (unsigned long) __entry->ino,
- 		  __entry->lblk, __entry->len,
--		  __entry->pblk, show_extent_status(__entry->status))
-+		  __entry->pblk, show_extent_status(__entry->status),
-+		  __entry->seq)
- );
- 
- DEFINE_EVENT(ext4__es_extent, ext4_es_insert_extent,
-@@ -2226,6 +2229,7 @@ TRACE_EVENT(ext4_es_remove_extent,
- 		__field(	ino_t,	ino			)
- 		__field(	loff_t,	lblk			)
- 		__field(	loff_t,	len			)
-+		__field(	unsigned int, seq		)
- 	),
- 
- 	TP_fast_assign(
-@@ -2233,12 +2237,13 @@ TRACE_EVENT(ext4_es_remove_extent,
- 		__entry->ino	= inode->i_ino;
- 		__entry->lblk	= lblk;
- 		__entry->len	= len;
-+		__entry->seq	= EXT4_I(inode)->i_es_seq;
- 	),
- 
--	TP_printk("dev %d,%d ino %lu es [%lld/%lld)",
-+	TP_printk("dev %d,%d ino %lu es [%lld/%lld) seq %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  (unsigned long) __entry->ino,
--		  __entry->lblk, __entry->len)
-+		  __entry->lblk, __entry->len, __entry->seq)
- );
- 
- TRACE_EVENT(ext4_es_find_extent_range_enter,
-@@ -2497,6 +2502,7 @@ TRACE_EVENT(ext4_es_insert_delayed_extent,
- 		__field(	ext4_fsblk_t,	pblk		)
- 		__field(	char,		status		)
- 		__field(	bool,		allocated	)
-+		__field(	unsigned int,	seq		)
- 	),
- 
- 	TP_fast_assign(
-@@ -2507,15 +2513,16 @@ TRACE_EVENT(ext4_es_insert_delayed_extent,
- 		__entry->pblk		= ext4_es_show_pblock(es);
- 		__entry->status		= ext4_es_status(es);
- 		__entry->allocated	= allocated;
-+		__entry->seq		= EXT4_I(inode)->i_es_seq;
- 	),
- 
- 	TP_printk("dev %d,%d ino %lu es [%u/%u) mapped %llu status %s "
--		  "allocated %d",
-+		  "allocated %d seq %u",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  (unsigned long) __entry->ino,
- 		  __entry->lblk, __entry->len,
- 		  __entry->pblk, show_extent_status(__entry->status),
--		  __entry->allocated)
-+		  __entry->allocated, __entry->seq)
- );
- 
- /* fsmap traces */
+ static const struct address_space_operations ext4_dax_aops = {
+ 	.writepages		= ext4_dax_writepages,
+ 	.direct_IO		= noop_direct_IO,
+@@ -3603,6 +3634,8 @@ void ext4_set_aops(struct inode *inode)
+ 	}
+ 	if (IS_DAX(inode))
+ 		inode->i_mapping->a_ops = &ext4_dax_aops;
++	else if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP))
++		inode->i_mapping->a_ops = &ext4_iomap_aops;
+ 	else if (test_opt(inode->i_sb, DELALLOC))
+ 		inode->i_mapping->a_ops = &ext4_da_aops;
+ 	else
 -- 
 2.39.2
 
