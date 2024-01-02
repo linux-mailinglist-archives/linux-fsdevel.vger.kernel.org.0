@@ -1,188 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-7087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B03821B9C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:28:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870E0821BCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:42:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7A8281400
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:28:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82AFA1C21F46
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99D5F4F7;
-	Tue,  2 Jan 2024 12:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCDAFBFE;
+	Tue,  2 Jan 2024 12:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DuwZbI3c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WXBC4wHn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DuwZbI3c";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WXBC4wHn"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="p5Ru6ZUz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6A1EED9;
-	Tue,  2 Jan 2024 12:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B870721DD1;
-	Tue,  2 Jan 2024 12:28:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704198518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WPWVB7Cf3yZ7BOAMwOoyFYC7qFfhnos/F5avdLiFXqQ=;
-	b=DuwZbI3czPHGl/zI9EZ2OQKPhCYM/Jhx8tLP4lfwoGy1g/gR4p0lDBXI0fBnjtJaM4ORzz
-	sXNqzCsPZDgxobykJgcQDWFF6wv1oNTuYwKykTlczRtnxvc0tX36PA5acbb7javPyaomY4
-	Duy64tBAjl8s5kRslmZRGhstBGiaPNM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704198518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WPWVB7Cf3yZ7BOAMwOoyFYC7qFfhnos/F5avdLiFXqQ=;
-	b=WXBC4wHn9+GV0tf/81mFj/oCszjyoYebaCnyvjwsgYrMXHHjkOXYXGNAl4Nsica847Lh9K
-	xEzifbpQCYAgXzAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704198518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WPWVB7Cf3yZ7BOAMwOoyFYC7qFfhnos/F5avdLiFXqQ=;
-	b=DuwZbI3czPHGl/zI9EZ2OQKPhCYM/Jhx8tLP4lfwoGy1g/gR4p0lDBXI0fBnjtJaM4ORzz
-	sXNqzCsPZDgxobykJgcQDWFF6wv1oNTuYwKykTlczRtnxvc0tX36PA5acbb7javPyaomY4
-	Duy64tBAjl8s5kRslmZRGhstBGiaPNM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704198518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WPWVB7Cf3yZ7BOAMwOoyFYC7qFfhnos/F5avdLiFXqQ=;
-	b=WXBC4wHn9+GV0tf/81mFj/oCszjyoYebaCnyvjwsgYrMXHHjkOXYXGNAl4Nsica847Lh9K
-	xEzifbpQCYAgXzAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AD4491340C;
-	Tue,  2 Jan 2024 12:28:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id I79IKnYBlGVcQAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 02 Jan 2024 12:28:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 50F6DA07EF; Tue,  2 Jan 2024 13:28:30 +0100 (CET)
-Date: Tue, 2 Jan 2024 13:28:30 +0100
-From: Jan Kara <jack@suse.cz>
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH -next] fs: fix __sb_write_started() kerneldoc formatting
-Message-ID: <20240102122830.ksqym46ym2yjheyq@quack3>
-References: <20231228100608.3123987-1-vegard.nossum@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2227AFBF0;
+	Tue,  2 Jan 2024 12:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1704199013; bh=KccDZNyBw07ctq/DN3VElW8F3A1ia8xExihctND/oh4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=p5Ru6ZUzBdYcgAA/DvsG1qV+UwFHpVhC425WNXaVRjEB7bjlSWzJuSFfOqKovE6AU
+	 sxWNT+b/YY3bDE0VsX/qthI0XeFtJT6+/qevhbgXswmwchMG0b1OxKalQplqKGoXUM
+	 DcQI+u/SwjokXggvgUP57hbbab6wrAt0G+62F+Nk=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id 93334A1C; Tue, 02 Jan 2024 20:36:51 +0800
+X-QQ-mid: xmsmtpt1704199011tmjb9ifyq
+Message-ID: <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujvVtpMWdxaTVHmbrXzaCl4eDQp1ppMvKr1B3sZmiP2rPKkpDVT2
+	 Wx22gtapO0SWIPeDdMHzM/pDsl7mOzDQP48b0kIWc35lT2+9r8zpfTFP+HKYPUWHHLByu0/s4Ae0
+	 x2ApYkcNEvsVXDZKfqJgLcAJayxcTN+XUyts0x5OPOhqCceFUC12mZy6McngXf/2DnTK2mJyqfHZ
+	 l4H37h5XXIRzXAclsR/47rr3lL7/VuUJ6P8siruJeUdyXbUcAiNoLnHGViUaJ6/3dTelzTVjJ7hB
+	 NYTEMxUu3l3pBaqkXHKRstFYz4tgRIIdBOWlePjNYSSTqHKnWlI39YU1FY1yFPopiTLtrK2vmg+t
+	 vfcpNz5u0lmRkF7vfwfPjxx5+t25QGqtcgwXuPRFxLLD5xpXmyoV8zwqMhpsoeGblOFxun5x8Ce+
+	 btmdSKb2dNRV9GLxSZp/csIEVUlDim/DeIg8fJeVS1CV4EVn7Us8wR/7z7Yyjry2sk2tbSOKk/d0
+	 fxG9ock9UqKE62M9ivXdHKIuIecQlcLBzO4xkgn3bUHCTAsmhS0VZ40mfCFKSCw5aNQ68M6PTCWt
+	 ZnRmLqFfNPSN4HHf/OF208uflBXEP6+3EYF8nGxWTfvL6OjPtcqlXPIZCtbcnMDs4JOdgrpmlXTW
+	 HPvnyHjAkVnBD6G/FofN95KWRnoadgUqQxN1yU5NjG8Iy5emIANXUeUhPrM7AvvzrwDhXky7Awnk
+	 DB7S8uapn1593i1VneE+x5cFU7zZa3A8nknRZ/OU02fTEoZ4gP2Fnpacypdcda/WpR0yk3YpdM6Z
+	 LHR6yjY+sqSrSkJt8p7VRL7YTgbVGLJ487OwXJ6++h9QKYOBgF4ca++/iIvq7Hu7fyKgVbdFzY2n
+	 0Uz9Uk3y5OkUo1Uy4d+p+9cZ6V8ZsGwSr/H/58X2mmXGGANpazBfPYieixh0XEAbrHW4iiYF/zhK
+	 zH6adJif8=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	willy@infradead.org
+Subject: [PATCH] hfs: fix deadlock in hfs_extend_file
+Date: Tue,  2 Jan 2024 20:36:51 +0800
+X-OQ-MSGID: <20240102123651.1582577-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000004efa57060def87be@google.com>
+References: <0000000000004efa57060def87be@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231228100608.3123987-1-vegard.nossum@oracle.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.31 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:106:10:150:64:167:received];
-	 RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[42.87%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com,toxicpanda.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DuwZbI3c;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WXBC4wHn
-X-Spam-Score: -1.31
-X-Rspamd-Queue-Id: B870721DD1
+Content-Transfer-Encoding: 8bit
 
-On Thu 28-12-23 11:06:08, Vegard Nossum wrote:
-> When running 'make htmldocs', I see the following warning:
-> 
->   Documentation/filesystems/api-summary:14: ./include/linux/fs.h:1659: WARNING: Definition list ends without a blank line; unexpected unindent.
-> 
-> The official guidance [1] seems to be to use lists, which will prevent
-> both the "unexpected unindent" warning as well as ensure that each line
-> is formatted on a separate line in the HTML output instead of being
-> all considered a single paragraph.
-> 
-> [1]: https://docs.kernel.org/doc-guide/kernel-doc.html#return-values
-> 
-> Fixes: 8802e580ee64 ("fs: create __sb_write_started() helper")
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
+[syz report]
+syz-executor279/5059 is trying to acquire lock:
+ffff888079c100f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
 
-Thanks! Feel free to add:
+but task is already holding lock:
+ffff888079c10778 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-								Honza
+       CPU0
+       ----
+  lock(&HFS_I(tree->inode)->extents_lock);
+  lock(&HFS_I(tree->inode)->extents_lock);
 
-> ---
-> Applies to git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.rw
-> 
->  include/linux/fs.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index db5d07e6e02e..473063f385e5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1650,9 +1650,9 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
->   * @sb: the super we write to
->   * @level: the freeze level
->   *
-> - * > 0 sb freeze level is held
-> - *   0 sb freeze level is not held
-> - * < 0 !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
-> + * * > 0 - sb freeze level is held
-> + * *   0 - sb freeze level is not held
-> + * * < 0 - !CONFIG_LOCKDEP/LOCK_STATE_UNKNOWN
->   */
->  static inline int __sb_write_started(const struct super_block *sb, int level)
->  {
-> -- 
-> 2.34.1
-> 
+ *** DEADLOCK ***
+[Analysis] 
+ hfs_extend_file()->
+   hfs_ext_read_extent()->
+     __hfs_ext_cache_extent()->
+       __hfs_ext_write_extent()->
+         hfs_bmap_reserve()->
+           hfs_extend_file()->
+
+When an inode has both the HFS_FLG_EXT_DIRTY and HFS_FLG_EXT_NEW flags, it will
+enter the above loop and trigger a deadlock.
+
+[Fix]
+In hfs_ext_read_extent(), check if the above two flags exist simultaneously, 
+and exit the subsequent process when the conditions are met.
+
+Reported-and-tested-by: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/hfs/extent.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 6d1878b99b30..1b02c7b6a10c 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -197,6 +197,10 @@ static int hfs_ext_read_extent(struct inode *inode, u16 block)
+ 	    block < HFS_I(inode)->cached_start + HFS_I(inode)->cached_blocks)
+ 		return 0;
+ 
++	if (HFS_I(inode)->flags & HFS_FLG_EXT_DIRTY && 
++	    HFS_I(inode)->flags & HFS_FLG_EXT_NEW) 
++		return -ENOENT;
++
+ 	res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
+ 	if (!res) {
+ 		res = __hfs_ext_cache_extent(&fd, inode, block);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
