@@ -1,187 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-7144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7342B822458
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 23:02:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB3A82256C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 00:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F641F23785
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 22:02:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF1E1F233C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 23:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698AC1773A;
-	Tue,  2 Jan 2024 21:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CED17747;
+	Tue,  2 Jan 2024 23:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HQPEoHSv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7U12ke9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376FF171CA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 21:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704232189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NfIqhioGhHP/wJG1PyBueewTz4bWCmx/gOhAGW5jQdE=;
-	b=HQPEoHSvPu8tmCVcC9MKJRWG9ZhcTnOPIfSBb5KxWK4xSFNa0f20pmWzq5yhFBmN2j5+Si
-	qYYkQzlcyRq/IicIddLA+pHPLzGVvor5ccjjRvVu3EEucYaXhe3PmgTwQEQ56e7/Jr8CQx
-	OdmqATbUcdivnUA4WTDeod3TwEmdc0M=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-fjvlDl11PWuF-0vej4x9hg-1; Tue, 02 Jan 2024 16:49:43 -0500
-X-MC-Unique: fjvlDl11PWuF-0vej4x9hg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C03CB86D4D5;
-	Tue,  2 Jan 2024 21:49:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9617D492BE6;
-	Tue,  2 Jan 2024 21:49:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
-References: <20231221132400.1601991-41-dhowells@redhat.com> <20231221132400.1601991-1-dhowells@redhat.com>
-To: Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: [PATCH] 9p: Fix initialisation of netfs_inode for 9p
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A5017728
+	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 23:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5e784ce9bb8so74554367b3.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 15:16:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1704237394; x=1704842194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W9VsReBQkICOIEczr/aBz2S0AWm3omPhTa+sgYDFysE=;
+        b=n7U12ke9HUlf9h9JIl4Hr4vTl35sGXHRFMUgb0qxklXMMaAXtpchclYkN9V5/aUTEl
+         Tr+qgAczELBPYnbHzYrM0+3gFdEDFDtoO4vEaRIUxgUQ1qF2AcB5wFnuhKA0ns+ZuYJY
+         V6ZvLt2PtpBTCrbg+9RgWIms6P5JcQDd22XEI7HCgmpV+hjmECCUX2U+6ilocGPbSpzv
+         jZc10ZpGudzYXnBg3WhZ2ITPdYtunH+Jt8XWEV4k444EEbqZ8gBgZxFEgLJLFEht3sA/
+         DyfYjkWmuVp9mjOQ/184BWYsOQdG/a9KSLWXv/ZUXjGxdK7X7brrHc060NlcRki7zmK8
+         vCrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704237394; x=1704842194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W9VsReBQkICOIEczr/aBz2S0AWm3omPhTa+sgYDFysE=;
+        b=w1Be0QRYGQvHjqusrnr+VaHUDvPl2TjJpqyafrO7nvkJsKe91imFuC/4l7mGn1TtSY
+         YREphT2YTLZufQi6cUQYp6PYOuE5XMIiufr+GoduI2DDMRYD7k3gUm+IfD/wl4aUJTB+
+         3+r1RKOjNGNUDu4gZt3K4DyTEu6GPjB/FmdX/uGqDEK4emz7gfuput9zv4fFMoHm7VV9
+         Gtlu7uMzJ5YbHC4jKe8cpNhT9hOJ0UQnYfZqqGmkJ8j4wEgvXfBJs4MpnIYmtSNlBH0C
+         k8BvdRDHfkxjww/7rYe85gRycXCDUUxsVwxfumCB+vX/DqAGT50tsWZk+xREDCfTFhvj
+         chcQ==
+X-Gm-Message-State: AOJu0YyEkXnuURhXRYVvHJN58GkPzKCDWgwSC8dPPDj6wgrJuhCFRnmd
+	l0S4aBWpa7LMVHNfJypleQ+/gtQC57GruirGQSG48MLNMqlZ
+X-Google-Smtp-Source: AGHT+IE8Ax7U2bqyqO1lsnqmhbIiZe0ibMeQxiHn/HbCQlPrEjVBV5+vDgfgYKVCj0YEiEECTa6N9nL3Qu/E0E5RKYw=
+X-Received: by 2002:a81:574d:0:b0:5d3:dacc:63bd with SMTP id
+ l74-20020a81574d000000b005d3dacc63bdmr108135ywb.19.1704237393551; Tue, 02 Jan
+ 2024 15:16:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <292836.1704232179.1@warthog.procyon.org.uk>
+References: <20231230025607.2476912-1-surenb@google.com> <ZZPQjO91fvB66z1s@x1n>
+ <CAJuCfpF8h4aPAvFQv4NjX=DRWTZ1P5DcO16DfT-Sot1cGucjJQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpF8h4aPAvFQv4NjX=DRWTZ1P5DcO16DfT-Sot1cGucjJQ@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 2 Jan 2024 15:16:20 -0800
+Message-ID: <CAJuCfpG4tSPADrSpUCubsymoT_FWO4mONFODb2_sK4f-5RTY-A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: fix move_pages_pte() splitting folio
+ under RCU read lock
+To: Peter Xu <peterx@redhat.com>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com, 
+	david@redhat.com, ryan.roberts@arm.com, hughd@google.com, mhocko@suse.com, 
+	axelrasmussen@google.com, rppt@kernel.org, willy@infradead.org, 
+	Liam.Howlett@oracle.com, jannh@google.com, zhangpeng362@huawei.com, 
+	bgeffon@google.com, kaleshsingh@google.com, ngeoffray@google.com, 
+	jdduke@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 02 Jan 2024 21:49:39 +0000
-Message-ID: <292837.1704232179@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-This needs a fix that I would fold in.  Somehow it gets through xfstests
-without it, but it seems problems can be caused with executables.
+On Tue, Jan 2, 2024 at 8:58=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Jan 2, 2024 at 1:00=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote=
+:
+> >
+> > On Fri, Dec 29, 2023 at 06:56:07PM -0800, Suren Baghdasaryan wrote:
+> > > @@ -1078,9 +1078,14 @@ static int move_pages_pte(struct mm_struct *mm=
+, pmd_t *dst_pmd, pmd_t *src_pmd,
+> > >
+> > >               /* at this point we have src_folio locked */
+> > >               if (folio_test_large(src_folio)) {
+> > > +                     /* split_folio() can block */
+> > > +                     pte_unmap(&orig_src_pte);
+> > > +                     pte_unmap(&orig_dst_pte);
+> > > +                     src_pte =3D dst_pte =3D NULL;
+> > >                       err =3D split_folio(src_folio);
+> > >                       if (err)
+> > >                               goto out;
+> > > +                     goto retry;
+> > >               }
+> >
+> > Do we also need to clear src_folio and src_folio_pte?  If the folio is =
+a
+> > thp, I think it means it's pte mapped here. Then after the split we may
+> > want to fetch the small folio after the split, not the head one?
+>
+> I think we need to re-fetch the src_folio only if the src_addr falls
+> into a non-head page. Looking at the __split_huge_page(), the head
+> page is skipped in the last loop, so I think it should stay valid.
+> That said, maybe it's just an implementation detail of the
+> __split_huge_page() and I should not rely on that and refetch anyway?
 
-David
----
-9p: Fix initialisation of netfs_inode for 9p
+I'll post a v2 with this fix and re-fetching the folio
+unconditionally. We also don't need to reset src_folio_pte value
+because it's used only if src_folio is not NULL.
+Thanks for catching this, Peter!
 
-The 9p filesystem is calling netfs_inode_init() in v9fs_init_inode() -
-before the struct inode fields have been initialised from the obtained fil=
-e
-stats (ie. after v9fs_stat2inode*() has been called), but netfslib wants t=
-o
-set a couple of its fields from i_size.
-
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Marc Dionne <marc.dionne@auristor.com>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: v9fs@lists.linux.dev
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
----
- fs/9p/v9fs_vfs.h       |    1 +
- fs/9p/vfs_inode.c      |    6 +++---
- fs/9p/vfs_inode_dotl.c |    1 +
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/fs/9p/v9fs_vfs.h b/fs/9p/v9fs_vfs.h
-index 731e3d14b67d..0e8418066a48 100644
---- a/fs/9p/v9fs_vfs.h
-+++ b/fs/9p/v9fs_vfs.h
-@@ -42,6 +42,7 @@ struct inode *v9fs_alloc_inode(struct super_block *sb);
- void v9fs_free_inode(struct inode *inode);
- struct inode *v9fs_get_inode(struct super_block *sb, umode_t mode,
- 			     dev_t rdev);
-+void v9fs_set_netfs_context(struct inode *inode);
- int v9fs_init_inode(struct v9fs_session_info *v9ses,
- 		    struct inode *inode, umode_t mode, dev_t rdev);
- void v9fs_evict_inode(struct inode *inode);
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index b66466e97459..32572982f72e 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -246,7 +246,7 @@ void v9fs_free_inode(struct inode *inode)
- /*
-  * Set parameters for the netfs library
-  */
--static void v9fs_set_netfs_context(struct inode *inode)
-+void v9fs_set_netfs_context(struct inode *inode)
- {
- 	struct v9fs_inode *v9inode =3D V9FS_I(inode);
- 	netfs_inode_init(&v9inode->netfs, &v9fs_req_ops, true);
-@@ -326,8 +326,6 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
- 		err =3D -EINVAL;
- 		goto error;
- 	}
--
--	v9fs_set_netfs_context(inode);
- error:
- 	return err;
- =
-
-@@ -359,6 +357,7 @@ struct inode *v9fs_get_inode(struct super_block *sb, u=
-mode_t mode, dev_t rdev)
- 		iput(inode);
- 		return ERR_PTR(err);
- 	}
-+	v9fs_set_netfs_context(inode);
- 	return inode;
- }
- =
-
-@@ -461,6 +460,7 @@ static struct inode *v9fs_qid_iget(struct super_block =
-*sb,
- 		goto error;
- =
-
- 	v9fs_stat2inode(st, inode, sb, 0);
-+	v9fs_set_netfs_context(inode);
- 	v9fs_cache_inode_get_cookie(inode);
- 	unlock_new_inode(inode);
- 	return inode;
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index e25fbc988f09..3505227e1704 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -128,6 +128,7 @@ static struct inode *v9fs_qid_iget_dotl(struct super_b=
-lock *sb,
- 		goto error;
- =
-
- 	v9fs_stat2inode_dotl(st, inode, 0);
-+	v9fs_set_netfs_context(inode);
- 	v9fs_cache_inode_get_cookie(inode);
- 	retval =3D v9fs_get_acl(inode, fid);
- 	if (retval)
-
+>
+> >
+> > --
+> > Peter Xu
+> >
 
