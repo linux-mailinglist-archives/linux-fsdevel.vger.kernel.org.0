@@ -1,129 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-7120-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3D4821D53
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:06:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5B1821DCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 15:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6322815B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FCF1F22D50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164241171B;
-	Tue,  2 Jan 2024 14:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278BD125B5;
+	Tue,  2 Jan 2024 14:38:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43699101FA;
-	Tue,  2 Jan 2024 14:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0VzqtEDH_1704204253;
-Received: from 192.168.33.9(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VzqtEDH_1704204253)
-          by smtp.aliyun-inc.com;
-          Tue, 02 Jan 2024 22:04:14 +0800
-Message-ID: <750e8251-ba30-4f53-a17b-73c79e3739ce@linux.alibaba.com>
-Date: Tue, 2 Jan 2024 22:04:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8208311722;
+	Tue,  2 Jan 2024 14:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dbe344a6cf4so2910306276.0;
+        Tue, 02 Jan 2024 06:38:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704206310; x=1704811110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AObwZt7UaKxT4p/1Mc6Gm1CxPN5HAmUYwmfKr7LdX4E=;
+        b=HCs35ZYcJ3Cl0q39Hx3v56JwtNjrRm5UpvUfM1xTbl4L7XQtkCYVygHhEbyPh27hhn
+         TSLvYQmqA4kPEF+gdTTJ66CgXwvjIOoj40faIq8/8lZjaf+f2NUVM54z/aer735WLn8/
+         ZSMIQtyot0RABKP+KTe1T1Fij+HHfLBOXGzX9e9NjlpDLHn0tTLw2JoAFlwQWpgXu2cp
+         RvpSRHPlGPXaXBABXmlseX5YMhqRlmZVM5oVgUVkK9RJyrfviLn8ypI5oFNc010tl3P/
+         /LWJCQmL3jhDtX2unhmqjdPx0a1sIjdARvjrQ37Fwhv50QL3WqIMNpLLAHLQQg6Dh7bb
+         EeOA==
+X-Gm-Message-State: AOJu0Yz+jitWoUFmPaWqxV/WhN2u4454MkqdpHIpnldLDTCyrzC9Iegt
+	bmpPh4ObTn4iZ4BOgS1+jCm6i8ifc+d/iw==
+X-Google-Smtp-Source: AGHT+IHpwoMJxkzddqYzlbmp30hA/Wm7Bk7Qjql2+o4qZxLYPIbpaG2ucyxYAh3smW/9bB/1FrJu9w==
+X-Received: by 2002:a25:ada5:0:b0:dbc:ec6b:3e47 with SMTP id z37-20020a25ada5000000b00dbcec6b3e47mr9878503ybi.33.1704206310511;
+        Tue, 02 Jan 2024 06:38:30 -0800 (PST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id v17-20020a258491000000b00db5380fc1absm9962074ybk.19.2024.01.02.06.38.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jan 2024 06:38:30 -0800 (PST)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-5edfcba97e3so47552437b3.2;
+        Tue, 02 Jan 2024 06:38:30 -0800 (PST)
+X-Received: by 2002:a81:88c1:0:b0:5d2:5caf:759 with SMTP id
+ y184-20020a8188c1000000b005d25caf0759mr12335901ywf.22.1704206308913; Tue, 02
+ Jan 2024 06:38:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 33/40] netfs, cachefiles: Pass upper bound length to
- allow expansion
-To: David Howells <dhowells@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
- Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- Steve French <smfrench@gmail.com>
-References: <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-34-dhowells@redhat.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20231221132400.1601991-34-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231223181101.1954-1-gregory.price@memverge.com> <20231223181101.1954-9-gregory.price@memverge.com>
+In-Reply-To: <20231223181101.1954-9-gregory.price@memverge.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Jan 2024 15:38:17 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVur0O-Df1jN8SC0wbfPv7o7yZNt2UsupAw2NJjz-bWSw@mail.gmail.com>
+Message-ID: <CAMuHMdVur0O-Df1jN8SC0wbfPv7o7yZNt2UsupAw2NJjz-bWSw@mail.gmail.com>
+Subject: Re: [PATCH v5 08/11] mm/mempolicy: add set_mempolicy2 syscall
+To: Gregory Price <gourry.memverge@gmail.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, x86@kernel.org, akpm@linux-foundation.org, 
+	arnd@arndb.de, tglx@linutronix.de, luto@kernel.org, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org, 
+	tj@kernel.org, ying.huang@intel.com, gregory.price@memverge.com, 
+	corbet@lwn.net, rakie.kim@sk.com, hyeongtak.ji@sk.com, honggyu.kim@sk.com, 
+	vtavarespetr@micron.com, peterz@infradead.org, jgroves@micron.com, 
+	ravis.opensrc@micron.com, sthanneeru@micron.com, emirakhur@micron.com, 
+	Hasan.Maruf@amd.com, seungjun.ha@samsung.com, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+On Sat, Dec 23, 2023 at 7:13=E2=80=AFPM Gregory Price <gourry.memverge@gmai=
+l.com> wrote:
+> set_mempolicy2 is an extensible set_mempolicy interface which allows
+> a user to set the per-task memory policy.
+>
+> Defined as:
+>
+> set_mempolicy2(struct mpol_args *args, size_t size, unsigned long flags);
+>
+> relevant mpol_args fields include the following:
+>
+> mode:         The MPOL_* policy (DEFAULT, INTERLEAVE, etc.)
+> mode_flags:   The MPOL_F_* flags that were previously passed in or'd
+>               into the mode.  This was split to hopefully allow future
+>               extensions additional mode/flag space.
+> home_node:    ignored (see note below)
+> pol_nodes:    the nodemask to apply for the memory policy
+> pol_maxnodes: The max number of nodes described by pol_nodes
+>
+> The usize arg is intended for the user to pass in sizeof(mpol_args)
+> to allow forward/backward compatibility whenever possible.
+>
+> The flags argument is intended to future proof the syscall against
+> future extensions which may require interpreting the arguments in
+> the structure differently.
+>
+> Semantics of `set_mempolicy` are otherwise the same as `set_mempolicy`
+> as of this patch.
+>
+> As of this patch, setting the home node of a task-policy is not
+> supported, as this functionality was not supported by set_mempolicy.
+> Additional research should be done to determine whether adding this
+> functionality is safe, but doing so would only require setting
+> MPOL_MF_HOME_NODE and providing a valid home node value.
+>
+> Suggested-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Gregory Price <gregory.price@memverge.com>
 
-On 2023/12/21 21:23, David Howells wrote:
-> Make netfslib pass the maximum length to the ->prepare_write() op to tell
-> the cache how much it can expand the length of a write to.  This allows a
-> write to the server at the end of a file to be limited to a few bytes
-> whilst writing an entire block to the cache (something required by direct
-> I/O).
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->   fs/cachefiles/internal.h |  2 +-
->   fs/cachefiles/io.c       | 10 ++++++----
->   fs/cachefiles/ondemand.c |  2 +-
->   fs/netfs/fscache_io.c    |  2 +-
->   fs/netfs/io.c            |  2 +-
->   fs/netfs/objects.c       |  1 +
->   fs/netfs/output.c        | 25 ++++++++++---------------
->   fs/smb/client/fscache.c  |  2 +-
->   include/linux/netfs.h    |  5 +++--
->   9 files changed, 25 insertions(+), 26 deletions(-)
-> 
-> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-> index 2ad58c465208..1af48d576a34 100644
-> --- a/fs/cachefiles/internal.h
-> +++ b/fs/cachefiles/internal.h
-> @@ -233,7 +233,7 @@ extern bool cachefiles_begin_operation(struct netfs_cache_resources *cres,
->   				       enum fscache_want_state want_state);
->   extern int __cachefiles_prepare_write(struct cachefiles_object *object,
->   				      struct file *file,
-> -				      loff_t *_start, size_t *_len,
-> +				      loff_t *_start, size_t *_len, size_t upper_len,
->   				      bool no_space_allocated_yet);
->   extern int __cachefiles_write(struct cachefiles_object *object,
->   			      struct file *file,
-> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-> index 009d23cd435b..bffffedce4a9 100644
-> --- a/fs/cachefiles/io.c
-> +++ b/fs/cachefiles/io.c
-> @@ -518,7 +518,7 @@ cachefiles_prepare_ondemand_read(struct netfs_cache_resources *cres,
->    */
->   int __cachefiles_prepare_write(struct cachefiles_object *object,
->   			       struct file *file,
-> -			       loff_t *_start, size_t *_len,
-> +			       loff_t *_start, size_t *_len, size_t upper_len,
->   			       bool no_space_allocated_yet)
->   {
->   	struct cachefiles_cache *cache = object->volume->cache;
-> @@ -530,6 +530,8 @@ int __cachefiles_prepare_write(struct cachefiles_object *object,
->   	down = start - round_down(start, PAGE_SIZE);
->   	*_start = start - down;
->   	*_len = round_up(down + len, PAGE_SIZE);
-> +	if (down < start || *_len > upper_len)
-> +		return -ENOBUFS;
+>  arch/m68k/kernel/syscalls/syscall.tbl         |  1 +
 
-Sorry for bothering. We just found some strange when testing
-today-next EROFS over fscache.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-I'm not sure the meaning of
-     if (down < start
+Gr{oetje,eeting}s,
 
-For example, if start is page-aligned, down == 0.
+                        Geert
 
-so as long as start > 0 and page-aligned, it will return
--ENOBUFS.  Does it an intended behavior?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Thanks,
-Gao Xiang
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
