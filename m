@@ -1,84 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-7116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2312821CD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:39:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9329821CDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 14:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530D61F22BEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB77A1C22168
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2598113ACC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9008914A8A;
 	Tue,  2 Jan 2024 13:36:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8074812E69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D857512E63
 	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 13:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-35fe9fa7f4fso89691595ab.2
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7b7fdc371f7so1081966339f.3
         for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 05:36:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704202587; x=1704807387;
+        d=1e100.net; s=20230601; t=1704202588; x=1704807388;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NGViDqpHpM/PgMAM6SCNiKxlip1nc59Qmx/Gy1A7u2s=;
-        b=wFC6PWcGVuE9sOHsrgdHOAXDQrs24G0uhXchO0PpjM4hmb2SdnPJ/2Chdi+1mrVbcD
-         AaWSQeHerVqZpiX3WYNLalEjMtsZwmUQ+u9Me6kb2BQFvrmhk5iOiYWCy4Wl/HBg+kAu
-         Wn0tsy0a/bTe1R/30icSssby+hLb/wwSNV7aQtWnGDUsmkQPBkSgJiilL6VbC/o22URY
-         oE3dvlBfZSnvO6O0hWSWoyWWBv3nw+JG3Ouw4kMwzfqOKMCQmp9Opj4U8f/CdWQIHFIs
-         v0G2YeKvzpucHSe2QOhO203kr92e1IGDTiYQzS88mcEq5ATnIahsS2nZLY/nwC9t6fki
-         rlvA==
-X-Gm-Message-State: AOJu0Yz7sXu+kU3mZAkc13WVtT5A1NeWQoVrqN1y7/+4i+g8iD5a8ZM2
-	GXO2v+myO16DkGWgTNIuBtvfQwwRXbJfQjAXbawmq+e1pzMA
-X-Google-Smtp-Source: AGHT+IGO5cZ49DcsJTUMBX/0mmakCAVYPbZh16J2Cupgyu97CAh2ZeWEzifLqxwh03tXNJ5lL+PspKorGPR+blyQZ/5Ct7CJmfJf
+        bh=xq+9JpQRqUPWRsi8LPCu9kv4AtckUKGAz3Nf0QkOMJM=;
+        b=Sgr2FjBrqm0+L0clVWgCEDixWcI9Gy45yqdGWVVVF78SyLfYfUNOavznRstyaz7qgi
+         V6ZN2DSxeslCSF8aO2F2INw5gVhBNPh9sfDDzcYPN5anoV5AN5i1jcEoDC9xWJTu8RjX
+         wgM1FA6wcKoJqg0HKzXd3B84rIqHripRFzSAe0T8vN5Bpvm4x3Xknhlg/VNiZ0En14A6
+         9IuhxkCyUcVM5uBt6K4743de2lHjca8t/IEMZINF0Lf+uoY104+j3Jekb4/ZzCFLTESv
+         RpmxgsSmce+cRbkdwfNbhL5o23cf1jJN0e9XgWDyUE++Okw4iP1uG2wJ0YNQXBbs/RnQ
+         lJbw==
+X-Gm-Message-State: AOJu0YzdlnLtw0JORvIdbLRZDa0lEow+O9lCXCAdNsp3pFhLnazRCdOH
+	jn7YixmUJqwsBAQ3+oJ5Wpm6ii5hzaU1py2LRYns1tOnL6c/
+X-Google-Smtp-Source: AGHT+IGTvLM/soxJTtptngRbvo7c8EtklHcLe01Sh43enMqIUNyziXdQ72rwM8Pc4KX9om/QFroNsPp+89Hx9PGGyBBQnc7xKrWY
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa6:b0:35f:535a:9c64 with SMTP id
- l6-20020a056e021aa600b0035f535a9c64mr2057692ilv.3.1704202587794; Tue, 02 Jan
- 2024 05:36:27 -0800 (PST)
-Date: Tue, 02 Jan 2024 05:36:27 -0800
+X-Received: by 2002:a05:6638:3586:b0:46b:6ffc:cb79 with SMTP id
+ v6-20020a056638358600b0046b6ffccb79mr514449jal.3.1704202588101; Tue, 02 Jan
+ 2024 05:36:28 -0800 (PST)
+Date: Tue, 02 Jan 2024 05:36:28 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000def411060df69549@google.com>
-Subject: [syzbot] Monthly kernfs report (Jan 2024)
-From: syzbot <syzbot+list417f71c53317b3ba7ddd@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Message-ID: <000000000000e3a1c3060df6956c@google.com>
+Subject: [syzbot] Monthly ntfs3 report (Jan 2024)
+From: syzbot <syzbot+listb24c70845ff6f3242c14@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello kernfs maintainers/developers,
+Hello ntfs3 maintainers/developers,
 
-This is a 31-day syzbot report for the kernfs subsystem.
+This is a 31-day syzbot report for the ntfs3 subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+https://syzkaller.appspot.com/upstream/s/ntfs3
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 10 issues are still open and 20 have been fixed so far.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 47 issues are still open and 28 have been fixed so far.
 
 Some of the still happening issues:
 
-Ref Crashes Repro Title
-<1> 1669    Yes   possible deadlock in input_event (2)
-                  https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<2> 212     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                  https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<3> 50      Yes   KASAN: use-after-free Read in kernfs_next_descendant_post (2)
-                  https://syzkaller.appspot.com/bug?extid=6bc35f3913193fe7f0d3
-<4> 37      Yes   KASAN: use-after-free Read in kernfs_add_one
-                  https://syzkaller.appspot.com/bug?extid=ef17b5b364116518fd65
-<5> 31      No    possible deadlock in lookup_slow (3)
-                  https://syzkaller.appspot.com/bug?extid=65459fd3b61877d717a3
-<6> 3       Yes   stack segment fault in __stack_depot_save
-                  https://syzkaller.appspot.com/bug?extid=1f564413055af2023f17
+Ref  Crashes Repro Title
+<1>  11376   Yes   VFS: Busy inodes after unmount (use-after-free)
+                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+<2>  3629    Yes   KASAN: slab-out-of-bounds Read in ntfs_iget5
+                   https://syzkaller.appspot.com/bug?extid=b4084c18420f9fad0b4f
+<3>  2282    Yes   possible deadlock in ni_fiemap
+                   https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+<4>  1943    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
+                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
+<5>  1575    Yes   possible deadlock in attr_data_get_block
+                   https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
+<6>  826     No    possible deadlock in ntfs_mark_rec_free
+                   https://syzkaller.appspot.com/bug?extid=f83f0dbef763c426e3cf
+<7>  775     Yes   possible deadlock in mi_read
+                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
+<8>  583     Yes   possible deadlock in ntfs_fiemap
+                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
+<9>  570     Yes   possible deadlock in filemap_fault
+                   https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
+<10> 312     Yes   kernel BUG at fs/inode.c:LINE! (2)
+                   https://syzkaller.appspot.com/bug?extid=c92c93d1f1aaaacdb9db
 
 ---
 This report is generated by a bot. It may contain errors.
