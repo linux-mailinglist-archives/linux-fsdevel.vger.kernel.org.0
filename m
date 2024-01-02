@@ -1,103 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-7067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7068-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49DA821828
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 09:03:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3E9821880
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 09:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF6E1F21ECB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 08:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B955D1F22062
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 08:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5669B46B1;
-	Tue,  2 Jan 2024 08:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA783566B;
+	Tue,  2 Jan 2024 08:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="f66IHl94"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HV4RtWW3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BF24429
-	for <linux-fsdevel@vger.kernel.org>; Tue,  2 Jan 2024 08:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2cd0f4f306fso2326731fa.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 00:03:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704182584; x=1704787384; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1QplbFcSPvwJFHjt+4B4SnC14Nl0/enLaQpF2jB1y8g=;
-        b=f66IHl94areFcglr8O+2oW48fZubRkCvdZpg/yITR9XeLsCL/BH7RrTiqeuYdfvKrj
-         18/opUgZMLtuIft+UDSoBREv7s8+5Zh5p+uFacqK77WVGHGoSTSFiRoAmJh/5Sq+whD8
-         qvB5sMzByO9E22Fkg8a5DQPL9FNskbWE8ykhFWRbrmMoHDetsYoFFeHKPYuBI4OjVJRm
-         iVpqRE746Ntzz09qveqRS84m8d6VNwkJMJGbwX7TCQAQTrbtEM6XEESRoEKxJ5Lt8Lnx
-         s7tlslamWVb1mtk7lXfbi6jGy2cwPOb1N7XkbxPnPTOAGOzp43qErjPG3NqSFyyJZYJa
-         ezwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704182584; x=1704787384;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1QplbFcSPvwJFHjt+4B4SnC14Nl0/enLaQpF2jB1y8g=;
-        b=vV/yJAZGfYCLN0nWdqttrKznk7MptM7FNzKxZgflcEn7Z4LMR7kdduZbu++Ftqfi+U
-         0AHVmJcnNTGkaVAQghd7ZoDvmyCcnudfy86HJy6GmpTnyxrZSVN4dvorPUZ8mfBWWwZD
-         hXh5pRykotHVB+2JALErpL2N7SDeGIDnFO411SQaoR14lbtrPar2uNgNb+w/8mKIbtoE
-         +082fjCp/YiAGlBfkjZ+pmRQYF2Td4cN4rEskTy8l9xjD5xYOE17er5+92YR+50hCGsb
-         Y9dVCaRj17Xhp97FWo3JxhQIOCcX8vwwx5bm1fI3EbqZYiLgX1K8c4ke106vReaL2acP
-         OS+Q==
-X-Gm-Message-State: AOJu0YzKeJiyTWurJU2hVCFPPN8KeHq9qDlIJJLpfN3wGwO3M8QkvFef
-	Z3biu+1ILyQWOpDiT8WFo+uFSXxTaJ1Qog==
-X-Google-Smtp-Source: AGHT+IE4NxMG2ZLQVOnNyoBDNtIcgzfOIKXP662p//dT7ROGNicQbGMVxXFwxHhqd9nyHTbupjL2gQ==
-X-Received: by 2002:a05:651c:78f:b0:2cc:8f7d:4e11 with SMTP id g15-20020a05651c078f00b002cc8f7d4e11mr6233123lje.21.1704182583738;
-        Tue, 02 Jan 2024 00:03:03 -0800 (PST)
-Received: from smtpclient.apple ([2a00:1370:81a4:169c:758c:4713:723a:7dae])
-        by smtp.gmail.com with ESMTPSA id h21-20020a05651c159500b002cd1000cd76sm146364ljq.135.2024.01.02.00.03.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jan 2024 00:03:03 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB5563A6;
+	Tue,  2 Jan 2024 08:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704185089; x=1735721089;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=UvmgInCVS3LhauRxpvGYGqfhEKWYPGEDg6KPf7j+yCc=;
+  b=HV4RtWW3zbgsrg7xsd+HrGGdyb8HJTqDUD67gM6K7KSgE8iYYgBrfNWB
+   12VNThHGdcAeyvYYkH9WfLZ4uZhsbOTBT1FFrIDTDcb3Qeqrjyn2RAnwD
+   c+lOs9WPxbfDVybQQVjNuqc0fyopk7dDdiHrB9jeRZ1bv+94+s+RxcTcd
+   UMLBB+hi0ntDi9Im6jSEG584jmCojHq7wu+JE+Ha4FAZIeM0xg6RjHJCt
+   MLHj3M4ueAZGzuOgKLSEdkB3kES1Fp9lHcqVobepfg/uAf+ytD8tu7HE8
+   sVixbqV0SxLJc+2mrrgbqja78KQM67zVenEUxJtXvlWmkuBLk+IO51qwt
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="4189864"
+X-IronPort-AV: E=Sophos;i="6.04,324,1695711600"; 
+   d="scan'208";a="4189864"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2024 00:44:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10940"; a="779632795"
+X-IronPort-AV: E=Sophos;i="6.04,324,1695711600"; 
+   d="scan'208";a="779632795"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2024 00:44:41 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gregory.price@memverge.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
+  <linux-doc@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
+  <x86@kernel.org>,  <akpm@linux-foundation.org>,  <arnd@arndb.de>,
+  <tglx@linutronix.de>,  <luto@kernel.org>,  <mingo@redhat.com>,
+  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,  <hpa@zytor.com>,
+  <mhocko@kernel.org>,  <tj@kernel.org>,  <corbet@lwn.net>,
+  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <honggyu.kim@sk.com>,
+  <vtavarespetr@micron.com>,  <peterz@infradead.org>,
+  <jgroves@micron.com>,  <ravis.opensrc@micron.com>,
+  <sthanneeru@micron.com>,  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
+  <seungjun.ha@samsung.com>,  Srinivasulu Thanneeru
+ <sthanneeru.opensrc@micron.com>
+Subject: Re: [PATCH v5 02/11] mm/mempolicy: introduce
+ MPOL_WEIGHTED_INTERLEAVE for weighted interleaving
+In-Reply-To: <ZYp6ZRLZQVtTHest@memverge.com> (Gregory Price's message of "Tue,
+	26 Dec 2023 02:01:57 -0500")
+References: <20231223181101.1954-1-gregory.price@memverge.com>
+	<20231223181101.1954-3-gregory.price@memverge.com>
+	<8734vof3kq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZYp6ZRLZQVtTHest@memverge.com>
+Date: Tue, 02 Jan 2024 16:42:42 +0800
+Message-ID: <878r58dt31.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
-Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
-Date: Tue, 2 Jan 2024 11:02:59 +0300
-Cc: lsf-pc@lists.linux-foundation.org,
- linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
-References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3696.120.41.1.4)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 
+Gregory Price <gregory.price@memverge.com> writes:
 
+> On Wed, Dec 27, 2023 at 04:32:37PM +0800, Huang, Ying wrote:
+>> Gregory Price <gourry.memverge@gmail.com> writes:
+>> 
+>> > +static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+>> > +{
+>> > +	nodemask_t nodemask = pol->nodes;
+>> > +	unsigned int target, weight_total = 0;
+>> > +	int nid;
+>> > +	unsigned char weights[MAX_NUMNODES];
+>> 
+>> MAX_NUMNODSE could be as large as 1024.  1KB stack space may be too
+>> large?
+>> 
+>
+> I've been struggling with a good solution to this.  We need a local copy
+> of weights to prevent weights from changing out from under us during
+> allocation (which may take quite some time), but it seemed unwise to
+> to allocate 1KB heap in this particular path.
+>
+> Is my concern unfounded?  If so, I can go ahead and add the allocation
+> code.
 
-> On Jan 2, 2024, at 1:56 AM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->=20
-> LSF topic: bcachefs status & roadmap
->=20
+Please take a look at NODEMASK_ALLOC().
 
-<skipped>
+>> > +	unsigned char weight;
+>> > +
+>> > +	barrier();
+>> 
+>> Memory barrier needs comments.
+>> 
+>
+> Barrier is to stabilize nodemask on the stack, but yes i'll carry the
+> comment from interleave_nid into this barrier as well.
 
->=20
-> A delayed allocation for btree nodes mode is coming, which is the main
-> piece needed for ZNS support
->=20
+Please see below.
 
-I could miss some emails. But have you shared the vision of ZNS support
-architecture for the case of bcachefs already? It will be interesting to =
-hear
-the high-level concept.
+>> > +
+>> > +	/* first ensure we have a valid nodemask */
+>> > +	nid = first_node(nodemask);
+>> > +	if (nid == MAX_NUMNODES)
+>> > +		return nid;
+>> 
+>> It appears that this isn't necessary, because we can check whether
+>> weight_total == 0 after the next loop.
+>> 
+>
+> fair, will snip.
+>
+>> > +
+>> > +	/* Then collect weights on stack and calculate totals */
+>> > +	for_each_node_mask(nid, nodemask) {
+>> > +		weight = iw_table[nid];
+>> > +		weight_total += weight;
+>> > +		weights[nid] = weight;
+>> > +	}
+>> > +
+>> > +	/* Finally, calculate the node offset based on totals */
+>> > +	target = (unsigned int)ilx % weight_total;
+>> 
+>> Why use type casting?
+>> 
+>
+> Artifact of old prototypes, snipped.
+>
+>> > +
+>> > +	/* Stabilize the nodemask on the stack */
+>> > +	barrier();
+>> 
+>> I don't think barrier() is needed to wait for memory operations for
+>> stack.  It's usually used for cross-processor memory order.
+>>
+>
+> This is present in the old interleave code.  To the best of my
+> understanding, the concern is for mempolicy->nodemask rebinding that can
+> occur when cgroups.cpusets.mems_allowed changes.
+>
+> so we can't iterate over (mempolicy->nodemask), we have to take a local
+> copy.
+>
+> My *best* understanding of the barrier here is to prevent the compiler
+> from reordering operations such that it attempts to optimize out the
+> local copy (or do lazy-fetch).
+>
+> It is present in the original interleave code, so I pulled it forward to
+> this, but I have not tested whether this is a bit paranoid or not.
+>
+> from `interleave_nid`:
+>
+>  /*
+>   * The barrier will stabilize the nodemask in a register or on
+>   * the stack so that it will stop changing under the code.
+>   *
+>   * Between first_node() and next_node(), pol->nodes could be changed
+>   * by other threads. So we put pol->nodes in a local stack.
+>   */
+>  barrier();
 
-Thanks,
-Slava.=
+Got it.  This is kind of READ_ONCE() for nodemask.  To avoid to add
+comments all over the place.  Can we implement a wrapper for it?  For
+example, memcpy_once().  __read_once_size() in
+tools/include/linux/compiler.h can be used as reference.
+
+Because node_weights[] may be changed simultaneously too.  We may need
+to consider similar issue for it too.  But RCU seems more appropriate
+for node_weights[].
+
+>> > +		/* Otherwise we adjust nr_pages down, and continue from there */
+>> > +		rem_pages -= pol->wil.cur_weight;
+>> > +		pol->wil.cur_weight = 0;
+>> > +		prev_node = node;
+>> 
+>> If pol->wil.cur_weight == 0, prev_node will be used without being
+>> initialized below.
+>> 
+>
+> pol->wil.cur_weight is not used below.
+>
+>> > +	}
+>> > +
+>> > +	/* Now we can continue allocating as if from 0 instead of an offset */
+>> > +	rounds = rem_pages / weight_total;
+>> > +	delta = rem_pages % weight_total;
+>> > +	for (i = 0; i < nnodes; i++) {
+>> > +		node = next_node_in(prev_node, nodes);
+>> > +		weight = weights[node];
+>> > +		node_pages = weight * rounds;
+>> > +		if (delta) {
+>> > +			if (delta > weight) {
+>> > +				node_pages += weight;
+>> > +				delta -= weight;
+>> > +			} else {
+>> > +				node_pages += delta;
+>> > +				delta = 0;
+>> > +			}
+>> > +		}
+>> > +		/* We may not make it all the way around */
+>> > +		if (!node_pages)
+>> > +			break;
+>> > +		/* If an over-allocation would occur, floor it */
+>> > +		if (node_pages + total_allocated > nr_pages) {
+>> 
+>> Why is this possible?
+>> 
+>
+> this may have been a paranoid artifact from an early prototype, will
+> snip and validate.
+
+--
+Best Regards,
+Huang, Ying
 
