@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4822821BDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC98821BE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C551C21F7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5326282D78
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE88412B86;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E639812E61;
 	Tue,  2 Jan 2024 12:42:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A91101C5;
-	Tue,  2 Jan 2024 12:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A57111A5;
+	Tue,  2 Jan 2024 12:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4T4CCx6bBmz4f3kFq;
-	Tue,  2 Jan 2024 20:42:05 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CD0068yz4f3lXQ;
+	Tue,  2 Jan 2024 20:42:08 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2DC731A6C6B;
+	by mail.maildlp.com (Postfix) with ESMTP id B3B2E1A07DF;
 	Tue,  2 Jan 2024 20:42:09 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S11;
-	Tue, 02 Jan 2024 20:42:08 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S12;
+	Tue, 02 Jan 2024 20:42:09 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v2 07/25] iomap: don't increase i_size if it's not a write operation
-Date: Tue,  2 Jan 2024 20:39:00 +0800
-Message-Id: <20240102123918.799062-8-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 08/25] iomap: add pos and dirty_len into trace_iomap_writepage_map
+Date: Tue,  2 Jan 2024 20:39:01 +0800
+Message-Id: <20240102123918.799062-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
 References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
@@ -57,10 +57,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S11
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15ZFWfGFyfAw48ZrWfuFg_yoW8AF15pr
-	90ka109a1vqr1jgr1kJF95Xa1Yka9Yvr18CrWUKry3urs0yr1Sgr1Fgay5uFW8Jr9xAr4F
-	yr4kK3WFyF13Cr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4xZF18Cw4Utw48CrWUXFb_yoW5AryfpF
+	yqyFZ8Cr4kJr429w1fZ34rArZ0vF95ur4Utr13u3y5Zw4vyr17GF4vkFWjvF95ArnIyr13
+	XF4F934kG3WUCw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,47 +79,85 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Increase i_size in iomap_zero_range() looks not needed, the caller
-should handle it. Especially, when truncate partial block, we should
-not increase i_size beyond the new EOF here. It dosn't affect xfs and
-gfs2 now because they reset the new file size after zero out, it doesn't
-matter that a brief increase in i_size. But it will affect ext4 because
-it set file size before truncate, so avoid increasing if it's not a
-write path.
+Since commit "iomap: map multiple blocks at a time", we could map
+multi-blocks once a time, and the dirty_len indicates the expected map
+length, map_len won't large than it. The pos and dirty_len means the
+dirty range that should be mapped to write, add them into
+trace_iomap_writepage_map() could be more useful for debug.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/iomap/buffered-io.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/iomap/buffered-io.c |  2 +-
+ fs/iomap/trace.h       | 43 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 43 insertions(+), 2 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e0c9cede82ee..293ba00e4bc0 100644
+index 293ba00e4bc0..46675f51d9c9 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -887,6 +887,7 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- {
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	loff_t old_size = iter->inode->i_size;
-+	bool update_size = iter->flags & IOMAP_WRITE;
- 	size_t ret;
+@@ -1787,7 +1787,7 @@ static int iomap_writepage_map_blocks(struct iomap_writepage_ctx *wpc,
+ 		error = wpc->ops->map_blocks(wpc, inode, pos, dirty_len);
+ 		if (error)
+ 			break;
+-		trace_iomap_writepage_map(inode, &wpc->iomap);
++		trace_iomap_writepage_map(inode, pos, dirty_len, &wpc->iomap);
  
- 	if (srcmap->type == IOMAP_INLINE) {
-@@ -903,13 +904,13 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 	 * cache.  It's up to the file system to write the updated size to disk,
- 	 * preferably after I/O completion so that no stale data is exposed.
- 	 */
--	if (pos + ret > old_size) {
-+	if (update_size && pos + ret > old_size) {
- 		i_size_write(iter->inode, pos + ret);
- 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
- 	}
- 	__iomap_put_folio(iter, pos, ret, folio);
+ 		map_len = min_t(u64, dirty_len,
+ 			wpc->iomap.offset + wpc->iomap.length - pos);
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index c16fd55f5595..3ef694f9489f 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -154,7 +154,48 @@ DEFINE_EVENT(iomap_class, name,	\
+ 	TP_ARGS(inode, iomap))
+ DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
+ DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
+-DEFINE_IOMAP_EVENT(iomap_writepage_map);
++
++TRACE_EVENT(iomap_writepage_map,
++	TP_PROTO(struct inode *inode, u64 pos, unsigned int dirty_len,
++		 struct iomap *iomap),
++	TP_ARGS(inode, pos, dirty_len, iomap),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(u64, ino)
++		__field(u64, pos)
++		__field(u64, dirty_len)
++		__field(u64, addr)
++		__field(loff_t, offset)
++		__field(u64, length)
++		__field(u16, type)
++		__field(u16, flags)
++		__field(dev_t, bdev)
++	),
++	TP_fast_assign(
++		__entry->dev = inode->i_sb->s_dev;
++		__entry->ino = inode->i_ino;
++		__entry->pos = pos;
++		__entry->dirty_len = dirty_len;
++		__entry->addr = iomap->addr;
++		__entry->offset = iomap->offset;
++		__entry->length = iomap->length;
++		__entry->type = iomap->type;
++		__entry->flags = iomap->flags;
++		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
++	),
++	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d pos 0x%llx dirty len 0x%llx "
++		  "addr 0x%llx offset 0x%llx length 0x%llx type %s flags %s",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ino,
++		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
++		  __entry->pos,
++		  __entry->dirty_len,
++		  __entry->addr,
++		  __entry->offset,
++		  __entry->length,
++		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
++		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
++);
  
--	if (old_size < pos)
-+	if (update_size && old_size < pos)
- 		pagecache_isize_extended(iter->inode, old_size, pos);
- 	if (ret < len)
- 		iomap_write_failed(iter->inode, pos + ret, len - ret);
+ TRACE_EVENT(iomap_iter,
+ 	TP_PROTO(struct iomap_iter *iter, const void *ops,
 -- 
 2.39.2
 
