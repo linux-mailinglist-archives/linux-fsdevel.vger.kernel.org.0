@@ -1,150 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-7083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2AC821A8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 11:54:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC89821B1B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0FB1C215D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 10:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D886F1F2165B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 11:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D926DDDD;
-	Tue,  2 Jan 2024 10:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534E5FBFC;
+	Tue,  2 Jan 2024 11:39:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CFFD507;
-	Tue,  2 Jan 2024 10:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4T48R00yTDz9xGZH;
-	Tue,  2 Jan 2024 18:36:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 689EF140D05;
-	Tue,  2 Jan 2024 18:54:11 +0800 (CST)
-Received: from [10.48.129.192] (unknown [10.48.129.192])
-	by APP2 (Coremail) with SMTP id GxC2BwAnIlxD65NlVSetAw--.48730S2;
-	Tue, 02 Jan 2024 11:54:10 +0100 (CET)
-Message-ID: <997cfb2f-a493-4f02-9e75-6ebb525c8406@huaweicloud.com>
-Date: Tue, 2 Jan 2024 11:53:50 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B8BFBEC;
+	Tue,  2 Jan 2024 11:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-5f254d1a6daso9553087b3.2;
+        Tue, 02 Jan 2024 03:39:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704195576; x=1704800376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uFi8eMSPsfOFqOHCg4hwloMdrYmzNBUBfM1xQ0dKIbA=;
+        b=PwoKqi6lndOXSnMN02Wi4fOxWcxCNJjQ/tjc/HDCcpJepMUf1FdEAZvL2Z/tX2sMjK
+         z5rLDYH9MwbMUPLmOwctgzyiPdBL/4YDa3vlYYQ5o+W3EBiUvN7bF5rD9zaroNTfpSL1
+         GgtVnMIAqcc9pavEmH84MhIL8TtGpoBLbIvy7kUi7qjb81v/qXlTO/ofcsCkgF3GZ+7i
+         owV7srOaHO8c+cKkPsvSlKiJ+m2ChMr7R+hnOZO+hFstxrM7t4xBE7uUqzv/jT1fYN9E
+         HnuwTGZOabFiTuKkrUmEoS4Dbxs9IwSD9J+bQpfff+ZYmZ0BDeasycWzfMgNB+CdiysF
+         FBlw==
+X-Gm-Message-State: AOJu0YyJfMuQcc0pSe3pDq/hJouxW8y7dXlXWFzrRiJz3svGGyKbChr6
+	GzWUV8VthhqsoMjqw5H5DMRisjxNx1bwxw==
+X-Google-Smtp-Source: AGHT+IGXq1AARTnEfk2PH5xz+CvZUSKTjqgCiCyt+CEGGi4Gik9hnPXj5+RYuZc1mkpEjUxkoFtTBw==
+X-Received: by 2002:a81:5784:0:b0:5ee:7d0f:4458 with SMTP id l126-20020a815784000000b005ee7d0f4458mr4336249ywb.56.1704195576581;
+        Tue, 02 Jan 2024 03:39:36 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id k28-20020a81ac1c000000b005ee999d3941sm5957031ywh.26.2024.01.02.03.39.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Jan 2024 03:39:35 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dbdacafe012so5830521276.1;
+        Tue, 02 Jan 2024 03:39:35 -0800 (PST)
+X-Received: by 2002:a05:6902:e08:b0:da0:5370:fdce with SMTP id
+ df8-20020a0569020e0800b00da05370fdcemr9471148ybb.19.1704195574941; Tue, 02
+ Jan 2024 03:39:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 23/24] ima: Make it independent from 'integrity' LSM
-To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org,
- stephen.smalley.work@gmail.com, eparis@parisplace.org,
- casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Roberto Sassu <roberto.sassu@huawei.com>
-References: <20231214170834.3324559-1-roberto.sassu@huaweicloud.com>
- <20231214170834.3324559-24-roberto.sassu@huaweicloud.com>
- <5aa5986266c3a3f834114a835378455cbbff7b64.camel@linux.ibm.com>
- <ff8e6341-1ff0-4163-b5c7-236a0e8bdc7c@huaweicloud.com>
- <96f82924cd2fda95f0c89341215e128419bf77fd.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <96f82924cd2fda95f0c89341215e128419bf77fd.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAnIlxD65NlVSetAw--.48730S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF1xAF47CF1rZFWkGF4xXrb_yoW5AFWrpF
-	Z7Ka4UGr1DZry2kw4vya9xZrWfK395WFW7urn0kr1kAr1vvrn0qF40kr1UuFy5Gr1Ut3WI
-	qF4UG3sxZ3Wqy3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBF1jj5QiDQABsH
+References: <20231216024834.3510073-1-kent.overstreet@linux.dev>
+ <20231216033552.3553579-1-kent.overstreet@linux.dev> <20231216033552.3553579-7-kent.overstreet@linux.dev>
+ <CAMuHMdW29dAQh+j3s4Af1kMAFKSr2yz7M2L-fWd1uZfL7mEY1Q@mail.gmail.com> <20231220213957.zbslehrx4zkkbabq@moria.home.lan>
+In-Reply-To: <20231220213957.zbslehrx4zkkbabq@moria.home.lan>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 2 Jan 2024 12:39:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXsxh23cv-m3G+_9GxXy9wN5vJDp8C0x43KMLEQXy5SDg@mail.gmail.com>
+Message-ID: <CAMuHMdXsxh23cv-m3G+_9GxXy9wN5vJDp8C0x43KMLEQXy5SDg@mail.gmail.com>
+Subject: Re: [PATCH 50/50] Kill sched.h dependency on rcupdate.h
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org, 
+	tj@kernel.org, peterz@infradead.org, mathieu.desnoyers@efficios.com, 
+	paulmck@kernel.org, keescook@chromium.org, dave.hansen@linux.intel.com, 
+	mingo@redhat.com, will@kernel.org, longman@redhat.com, boqun.feng@gmail.com, 
+	brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/27/2023 8:21 PM, Mimi Zohar wrote:
-> On Wed, 2023-12-27 at 17:39 +0100, Roberto Sassu wrote:
->> On 12/27/2023 2:22 PM, Mimi Zohar wrote:
->>> On Thu, 2023-12-14 at 18:08 +0100, Roberto Sassu wrote:
->>>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>>
->>>> Make the 'ima' LSM independent from the 'integrity' LSM by introducing IMA
->>>> own integrity metadata (ima_iint_cache structure, with IMA-specific fields
->>>> from the integrity_iint_cache structure), and by managing it directly from
->>>> the 'ima' LSM.
->>>>
->>>> Move the remaining IMA-specific flags to security/integrity/ima/ima.h,
->>>> since they are now unnecessary in the common integrity layer.
->>>>
->>>> Replace integrity_iint_cache with ima_iint_cache in various places
->>>> of the IMA code.
->>>>
->>>> Then, reserve space in the security blob for the entire ima_iint_cache
->>>> structure, so that it is available for all inodes having the security blob
->>>> allocated (those for which security_inode_alloc() was called).  Adjust the
->>>> IMA code accordingly, call ima_iint_inode() to retrieve the ima_iint_cache
->>>> structure. Keep the non-NULL checks since there can be inodes without
->>>> security blob.
->>>
->>> Previously the 'iint' memory was only allocated for regular files in
->>> policy and were tagged S_IMA.  This patch totally changes when and how
->>> memory is being allocated.  Does it make sense to allocate memory at
->>> security_inode_alloc()?  Is this change really necessary for making IMA
->>> a full fledged LSM?
->>
->> Good question. I think it wouldn't be necessary, we can reuse the same
->> approach as in the patch 'integrity: Switch from rbtree to LSM-managed
->> blob for integrity_iint_cache'.
-> 
-> Going forward with the v8 proposed solution would require some real
-> memory usage analysis for different types of policies.
-> 
-> To me the "integrity: Switch from rbtree to LSM-managed blob for
-> integrity_iint_cache" makes a lot more sense.   Looking back at the
-> original thread, your reasons back then for not directly allocating the
-> integrity_iint_cache are still valid for the ima_iint_cache structure.
+Hi Kent,
 
-Uhm, ok. It should not be too difficult to restore the old mechanism for 
-ima_iint_cache. Will do it in v9.
+On Wed, Dec 20, 2023 at 10:40=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> On Wed, Dec 20, 2023 at 12:59:44PM +0100, Geert Uytterhoeven wrote:
+> > On Sat, Dec 16, 2023 at 4:39=E2=80=AFAM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > > by moving cond_resched_rcu() to rcupdate.h, we can kill another big
+> > > sched.h dependency.
+> > >
+> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> >
+> > Thanks for your patch, which is now commit dc00f26faea81dc0 ("Kill
+> > sched.h dependency on rcupdate.h") in next-20231220.
+> >
+> > Reported-by: noreply@ellerman.id.au
+> >
+> > $ make ARCH=3Dm68k defconfig arch/m68k/kernel/asm-offsets.i
+> > *** Default configuration is based on 'multi_defconfig'
+> > #
+> > # No change to .config
+> > #
+> >   UPD     include/config/kernel.release
+> >   UPD     include/generated/utsrelease.h
+> >   CC      arch/m68k/kernel/asm-offsets.s
+> > In file included from ./include/asm-generic/bug.h:7,
+> >                  from ./arch/m68k/include/asm/bug.h:32,
+> >                  from ./include/linux/bug.h:5,
+> >                  from ./include/linux/thread_info.h:13,
+> >                  from ./arch/m68k/include/asm/processor.h:11,
+> >                  from ./include/linux/sched.h:13,
+> >                  from arch/m68k/kernel/asm-offsets.c:15:
+> > ./arch/m68k/include/asm/processor.h: In function =E2=80=98set_fc=E2=80=
+=99:
+> > ./arch/m68k/include/asm/processor.h:91:15: error: implicit declaration
+> > of function =E2=80=98in_interrupt=E2=80=99 [-Werror=3Dimplicit-function=
+-declaration]
+> >    91 |  WARN_ON_ONCE(in_interrupt());
+> >       |               ^~~~~~~~~~~~
+> > ./include/linux/once_lite.h:28:27: note: in definition of macro
+> > =E2=80=98DO_ONCE_LITE_IF=E2=80=99
+> >    28 |   bool __ret_do_once =3D !!(condition);   \
+> >       |                           ^~~~~~~~~
+> > ./arch/m68k/include/asm/processor.h:91:2: note: in expansion of macro
+> > =E2=80=98WARN_ON_ONCE=E2=80=99
+> >    91 |  WARN_ON_ONCE(in_interrupt());
+> >       |  ^~~~~~~~~~~~
+> > cc1: some warnings being treated as errors
+> > make[3]: *** [scripts/Makefile.build:116:
+> > arch/m68k/kernel/asm-offsets.s] Error 1
+> > make[2]: *** [Makefile:1191: prepare0] Error 2
+> > make[1]: *** [Makefile:350: __build_one_by_one] Error 2
+> > make: *** [Makefile:234: __sub-make] Error 2
+>
+> Applying this fix:
+>
+> commit 0d7bdfe9726b275c7e9398047763a144c790b575
+> Author: Kent Overstreet <kent.overstreet@linux.dev>
+> Date:   Wed Dec 20 16:39:21 2023 -0500
+>
+>     m68k: Fix missing include
+>
+>     Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
-Thanks
+LGTM.
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Roberto
+Gr{oetje,eeting}s,
 
-> Mimi
-> 
->>>
->>>>
->>>> Don't include the inode pointer as field in the ima_iint_cache structure,
->>>> since the association with the inode is clear. Since the inode field is
->>>> missing in ima_iint_cache, pass the extra inode parameter to
->>>> ima_get_verity_digest().
->>>>
->>>> Finally, register ima_inode_alloc_security/ima_inode_free_security() to
->>>> initialize/deinitialize the new ima_iint_cache structure (before this task
->>>> was done by iint_init_always() and iint_free()). Also, duplicate
->>>> iint_lockdep_annotate() for the ima_iint_cache structure, and name it
->>>> ima_iint_lockdep_annotate().
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>
-> 
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
