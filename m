@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5917A821BE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6436821BE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 13:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2CC1C21F69
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818421F23D3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Jan 2024 12:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADDA12E7E;
-	Tue,  2 Jan 2024 12:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B6414A86;
+	Tue,  2 Jan 2024 12:42:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D841173B;
-	Tue,  2 Jan 2024 12:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08B125CB;
+	Tue,  2 Jan 2024 12:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CCx19MVz4f3nJx;
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4CCx50Zwz4f3nKL;
 	Tue,  2 Jan 2024 20:42:05 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C3C241A017F;
-	Tue,  2 Jan 2024 20:42:10 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 5381B1A017F;
+	Tue,  2 Jan 2024 20:42:11 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S14;
-	Tue, 02 Jan 2024 20:42:10 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgBnwUGUBJRl+EvDFQ--.31823S15;
+	Tue, 02 Jan 2024 20:42:11 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v2 10/25] ext4: correct delalloc extent length
-Date: Tue,  2 Jan 2024 20:39:03 +0800
-Message-Id: <20240102123918.799062-11-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v2 11/25] ext4: also mark extent as delalloc if it's been unwritten
+Date: Tue,  2 Jan 2024 20:39:04 +0800
+Message-Id: <20240102123918.799062-12-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
 References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
@@ -57,10 +57,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7CryfAry5Zw1Uuw1kXr1fJFb_yoW8Gw1Up3
-	93CF1kGr4fuw1UuayxtF13XF1rK3W5K3y7Jr95tw1rZas5Gw1Iga1kA3W7ta40qFWfJF4r
-	XFW7tw1xAw4SyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgBnwUGUBJRl+EvDFQ--.31823S15
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1xtFW8Ww48JrWxur4fGrg_yoW8GFWUpa
+	97C34rGr4UX348uayIyF1UZr1rKa4UKrWUtFs8uF1jya4fGF9a9F10yFyI9FyxKrWrJ3yF
+	qF48Kry8Cay8A37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -79,44 +79,46 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-When adding a delalloc extent in ext4_da_map_blocks(), the extent
-length can be incorrect if we found a cached hole extent entry and the
-hole length is smaller than the origin map->m_len. Fortunately, it
-should not be able to trigger any issue now because the map->m_len is
-always 1. Fix this by adjust length before inserting delalloc extent.
+Mark extent as delalloc if it's been unwritten, this delalloc flag will
+last until write back. It would be useful to indicate the map length
+when writing data back after converting regular file's buffered write
+path to iomap.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/ext4/inode.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bc29c2e92750..44033828db44 100644
+index 44033828db44..9ac9bb548a4c 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -1712,6 +1712,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
- 
- 	/* Lookup extent status tree firstly */
- 	if (ext4_es_lookup_extent(inode, iblock, NULL, &es)) {
-+		retval = es.es_len - (iblock - es.es_lblk);
-+		if (retval > map->m_len)
-+			retval = map->m_len;
-+		map->m_len = retval;
+@@ -1742,7 +1742,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ #ifdef ES_AGGRESSIVE_TEST
+ 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
+ #endif
+-		return retval;
++		if (ext4_es_is_delayed(&es) || ext4_es_is_written(&es))
++			return retval;
 +
- 		if (ext4_es_is_hole(&es))
- 			goto add_delayed;
++		down_read(&EXT4_I(inode)->i_data_sem);
++		goto insert_extent;
+ 	}
  
-@@ -1727,10 +1732,6 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ 	/*
+@@ -1770,9 +1774,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ 				     inode->i_ino, retval, map->m_len);
+ 			WARN_ON(1);
  		}
- 
- 		map->m_pblk = ext4_es_pblock(&es) + iblock - es.es_lblk;
--		retval = es.es_len - (iblock - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
- 		if (ext4_es_is_written(&es))
- 			map->m_flags |= EXT4_MAP_MAPPED;
- 		else if (ext4_es_is_unwritten(&es))
+-
++insert_extent:
+ 		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+ 				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
++		if (status == EXTENT_STATUS_UNWRITTEN)
++			status |= EXTENT_STATUS_DELAYED;
+ 		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+ 				      map->m_pblk, status);
+ 		up_read(&EXT4_I(inode)->i_data_sem);
 -- 
 2.39.2
 
