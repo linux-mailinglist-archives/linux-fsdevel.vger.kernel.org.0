@@ -1,472 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-7264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF5782374B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:53:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7480823752
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478A92867C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:53:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECF73B24999
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1F21DA2A;
-	Wed,  3 Jan 2024 21:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DAF1DA38;
+	Wed,  3 Jan 2024 21:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mELwoRf8"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hujFp86s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C387B1DA23
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 21:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704318795;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=z/reOEVj60kt63+t17d945cr5tY0nN8d19PQUu/8Tvg=;
-	b=mELwoRf8mEgHvSwF8qcQCEOfHyG1eJEthLdpVtBJ02M+Tzz3RYnIX096Zj6FeGv7aB/DGY
-	Qk9/dYhFUjktGAbAisVnw6lvtW6OZ5zJ5sxhAnaK78hy1NajmrZsuEoPctytPAzX9ArTmt
-	o4PZD6scsaDtXsn0DtOYb+udWDl72B4=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH] bcachefs: factor out thread_with_file, thread_with_stdio
-Date: Wed,  3 Jan 2024 16:53:07 -0500
-Message-ID: <20240103215307.3328500-1-kent.overstreet@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70191DA29
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 21:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55539cac143so7756338a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 13:54:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1704318896; x=1704923696; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/TvqoF7ldfcuD+idD2xG95uQQkyuBCue6/M91Hiat8=;
+        b=hujFp86szPr1aZMGlBHa0FmxYNRyrPQZV3EVVwoW5hZb3Y+zwlQ1OZ/mxmZXVir1GA
+         uUloDsqAVACt2Afj5+iituJTt+9DuoMIh7y0CMGviPjs27pLZ6MRPToBayswbRojGQ0J
+         O4WUAAdRwH6nMQrSwK7dYza2gZgVBgKs6UvmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704318896; x=1704923696;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n/TvqoF7ldfcuD+idD2xG95uQQkyuBCue6/M91Hiat8=;
+        b=ATsAH09oqrLICYWKhxeHATSgsZJy/nT1DoGrP7L/G8D5F8oU+vAm2NrcaeN8TIWi56
+         Cv5R99BPKYxPE8wxT9VxEuipoSqxi2K1pu4ifGn5oAY478PRY44shut3hshC7lyXUoWR
+         R1sQCO9bS8c/7BBZjqAaAQvv+LkZNiYTZX1qt4eMfLHb0aeCaYD1+4j3TPj4mCzQ4lv8
+         YH0BduKLnfjuD8K0uR0obVTIxL8EYG1qTYjrCmU9XVkG5Sx2Wv+qTzNZmNINeYruIMwb
+         eCo0zIdiOQc86VqkU7rIZnb+tZaM0EXS2RhUHXE1+xTCSoM6hv95Jmyc9lAOETzzE03N
+         QN6w==
+X-Gm-Message-State: AOJu0YxqGSWYbPx5K+LqNk7IMs0ycg2z5NaYrcsS+ftxZnkF0BP1+Omz
+	R1EWrEvLfHexeX10bRucGa4hkc17LlUywD1Gnw93YEWb7kwGe4yf
+X-Google-Smtp-Source: AGHT+IGQnJDcl8z7MtUX5eBtiIftAEZcaCQGOzDDU8/a53vCs8dNCjx6voRmqOUFvm8sTIoB9WWwyg==
+X-Received: by 2002:a50:9ecc:0:b0:556:a717:a744 with SMTP id a70-20020a509ecc000000b00556a717a744mr1555589edf.2.1704318895759;
+        Wed, 03 Jan 2024 13:54:55 -0800 (PST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id u18-20020aa7db92000000b00554d6b46a3dsm13116483edt.46.2024.01.03.13.54.54
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jan 2024 13:54:54 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a26f5e937b5so776289366b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 13:54:54 -0800 (PST)
+X-Received: by 2002:a17:906:a043:b0:a28:6317:ceb4 with SMTP id
+ bg3-20020a170906a04300b00a286317ceb4mr1512492ejb.76.1704318893840; Wed, 03
+ Jan 2024 13:54:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240103102553.17a19cea@gandalf.local.home> <CAHk-=whrRobm82kcjwj625bZrdK+vvEo0B5PBzP+hVaBcHUkJA@mail.gmail.com>
+ <CAHk-=wjVdGkjDXBbvLn2wbZnqP4UsH46E3gqJ9m7UG6DpX2+WA@mail.gmail.com>
+ <20240103145306.51f8a4cd@gandalf.local.home> <CAHk-=wg=tnnsTjnzTs8xRQOBLvw4ceKe7=yxfzNtx4Z9gb-xJw@mail.gmail.com>
+In-Reply-To: <CAHk-=wg=tnnsTjnzTs8xRQOBLvw4ceKe7=yxfzNtx4Z9gb-xJw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jan 2024 13:54:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh5kkk2+JAv_D1fm8t1SOpTQyb4n7zuMuVSBG094HH7gA@mail.gmail.com>
+Message-ID: <CAHk-=wh5kkk2+JAv_D1fm8t1SOpTQyb4n7zuMuVSBG094HH7gA@mail.gmail.com>
+Subject: Re: [PATCH] eventfs: Stop using dcache_readdir() for getdents()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: multipart/mixed; boundary="0000000000004080e0060e11aa81"
 
-Hi all,
+--0000000000004080e0060e11aa81
+Content-Type: text/plain; charset="UTF-8"
 
-this is some utility code I wrote in bcachefs that might be more widely
-useful - it's used in bcachefs for online fsck, and I was talking to
-Darrick about possibly using it for XFS as well so that we could
-potentially standardize our interfaces for online fsck.
+On Wed, 3 Jan 2024 at 11:57, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Or, you know, you could do what I've told you to do at least TEN TIMES
+> already, which is to not mess with any of this, and just implement the
+> '->permission()' callback (and getattr() to just make 'ls' look sane
+> too, rather than silently saying "we'll act as if gid is set right,
+> but not show it").
 
-Plus, it's nifty.
+Actually, an even simpler option might be to just do this all at
+d_revalidate() time.
 
-This isn't the full patch - I cut it down to just the parts that would
-be more broadly interesting. To see how this hooks up to the rest of the
-bcachefs code, go here:
-https://evilpiepirate.org/git/bcachefs.git/commit/?id=7aa38b1be9fc9d409e5c3fb8fcbc51d4a3e25097
+Here's an updated patch that builds, and is PURELY AN EXAMPLE. I think
+it "works", but it currently always resets the inode mode/uid/gid
+unconditionally, which is wrong - it should not do so if the inode has
+been manually set.
 
---->8---
+So take this as a "this might work", but it probably needs a bit more
+work - eventfs_set_attr() should set some bit in the inode to say
+"these have been set manually", and then revalidate would say "I'll
+not touch inodes that have that bit set".
 
-New helpers for conecting a kthread to a file descriptor; this nicely
-ties the kthread lifetime to the file descriptor lifetime and gives us a
-communications channel for interacting with the kthread.
+Or something.
 
-The file descriptor will typically be returned by an ioctl.
+Anyway, this patch is nwo relative to your latest pull request, so it
+has the check for dentry->d_inode in set_gid() (and still removes the
+whole function).
 
-bare bones version, user provides read and write
-methods via file_operations.
+Again: UNTESTED, and meant as a "this is another way to avoid messing
+with the dentry tree manually, and just using the VFS interfaces we
+already have"
 
-In bcachefs this is used for data jobs, where userspace will
-periodically call the read method to get the status of the data job and
-print a progress indicator.
+               Linus
 
-This provides an object the kthread can read or write to, connected to
-the read and write side channels of the file descriptor.
+--0000000000004080e0060e11aa81
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lqybdnnm0>
+X-Attachment-Id: f_lqybdnnm0
 
-This is used in bcachefs for online fsck: we redirect messages from fsck
-that would otherwise go to the kernel log buffer to the file descriptor,
-and we can prompt the user for whether to fix errors exactly like
-userspace fsck would.
-
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
----
- fs/bcachefs/thread_with_file.c       | 296 +++++++++++++++++++++++++++
- fs/bcachefs/thread_with_file.h       |  41 ++++
- fs/bcachefs/thread_with_file_types.h |  16 ++
- 3 files changed, 353 insertions(+)
- create mode 100644 fs/bcachefs/thread_with_file.c
- create mode 100644 fs/bcachefs/thread_with_file.h
- create mode 100644 fs/bcachefs/thread_with_file_types.h
-
-diff --git a/fs/bcachefs/thread_with_file.c b/fs/bcachefs/thread_with_file.c
-new file mode 100644
-index 000000000000..b24baeabf998
---- /dev/null
-+++ b/fs/bcachefs/thread_with_file.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "bcachefs.h"
-+#include "printbuf.h"
-+#include "thread_with_file.h"
-+
-+#include <linux/anon_inodes.h>
-+#include <linux/file.h>
-+#include <linux/kthread.h>
-+#include <linux/pagemap.h>
-+#include <linux/poll.h>
-+
-+void bch2_thread_with_file_exit(struct thread_with_file *thr)
-+{
-+	if (thr->task) {
-+		kthread_stop(thr->task);
-+		put_task_struct(thr->task);
-+	}
-+}
-+
-+int bch2_run_thread_with_file(struct thread_with_file *thr,
-+			      const struct file_operations *fops,
-+			      int (*fn)(void *))
-+{
-+	struct file *file = NULL;
-+	int ret, fd = -1;
-+	unsigned fd_flags = O_CLOEXEC;
-+
-+	if (fops->read && fops->write)
-+		fd_flags |= O_RDWR;
-+	else if (fops->read)
-+		fd_flags |= O_RDONLY;
-+	else if (fops->write)
-+		fd_flags |= O_WRONLY;
-+
-+	char name[TASK_COMM_LEN];
-+	get_task_comm(name, current);
-+
-+	thr->ret = 0;
-+	thr->task = kthread_create(fn, thr, "%s", name);
-+	ret = PTR_ERR_OR_ZERO(thr->task);
-+	if (ret)
-+		return ret;
-+
-+	ret = get_unused_fd_flags(fd_flags);
-+	if (ret < 0)
-+		goto err;
-+	fd = ret;
-+
-+	file = anon_inode_getfile(name, fops, thr, fd_flags);
-+	ret = PTR_ERR_OR_ZERO(file);
-+	if (ret)
-+		goto err;
-+
-+	fd_install(fd, file);
-+	get_task_struct(thr->task);
-+	wake_up_process(thr->task);
-+	return fd;
-+err:
-+	if (fd >= 0)
-+		put_unused_fd(fd);
-+	if (thr->task)
-+		kthread_stop(thr->task);
-+	return ret;
-+}
-+
-+static inline bool thread_with_stdio_has_output(struct thread_with_stdio *thr)
-+{
-+	return thr->stdio.output_buf.pos ||
-+		thr->output2.nr ||
-+		thr->thr.done;
-+}
-+
-+static ssize_t thread_with_stdio_read(struct file *file, char __user *buf,
-+				      size_t len, loff_t *ppos)
-+{
-+	struct thread_with_stdio *thr =
-+		container_of(file->private_data, struct thread_with_stdio, thr);
-+	size_t copied = 0, b;
-+	int ret = 0;
-+
-+	if ((file->f_flags & O_NONBLOCK) &&
-+	    !thread_with_stdio_has_output(thr))
-+		return -EAGAIN;
-+
-+	ret = wait_event_interruptible(thr->stdio.output_wait,
-+		thread_with_stdio_has_output(thr));
-+	if (ret)
-+		return ret;
-+
-+	if (thr->thr.done)
-+		return 0;
-+
-+	while (len) {
-+		ret = darray_make_room(&thr->output2, thr->stdio.output_buf.pos);
-+		if (ret)
-+			break;
-+
-+		spin_lock_irq(&thr->stdio.output_lock);
-+		b = min_t(size_t, darray_room(thr->output2), thr->stdio.output_buf.pos);
-+
-+		memcpy(&darray_top(thr->output2), thr->stdio.output_buf.buf, b);
-+		memmove(thr->stdio.output_buf.buf,
-+			thr->stdio.output_buf.buf + b,
-+			thr->stdio.output_buf.pos - b);
-+
-+		thr->output2.nr += b;
-+		thr->stdio.output_buf.pos -= b;
-+		spin_unlock_irq(&thr->stdio.output_lock);
-+
-+		b = min(len, thr->output2.nr);
-+		if (!b)
-+			break;
-+
-+		b -= copy_to_user(buf, thr->output2.data, b);
-+		if (!b) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+
-+		copied	+= b;
-+		buf	+= b;
-+		len	-= b;
-+
-+		memmove(thr->output2.data,
-+			thr->output2.data + b,
-+			thr->output2.nr - b);
-+		thr->output2.nr -= b;
-+	}
-+
-+	return copied ?: ret;
-+}
-+
-+static int thread_with_stdio_release(struct inode *inode, struct file *file)
-+{
-+	struct thread_with_stdio *thr =
-+		container_of(file->private_data, struct thread_with_stdio, thr);
-+
-+	bch2_thread_with_file_exit(&thr->thr);
-+	printbuf_exit(&thr->stdio.input_buf);
-+	printbuf_exit(&thr->stdio.output_buf);
-+	darray_exit(&thr->output2);
-+	thr->exit(thr);
-+	return 0;
-+}
-+
-+#define WRITE_BUFFER		4096
-+
-+static inline bool thread_with_stdio_has_input_space(struct thread_with_stdio *thr)
-+{
-+	return thr->stdio.input_buf.pos < WRITE_BUFFER || thr->thr.done;
-+}
-+
-+static ssize_t thread_with_stdio_write(struct file *file, const char __user *ubuf,
-+				       size_t len, loff_t *ppos)
-+{
-+	struct thread_with_stdio *thr =
-+		container_of(file->private_data, struct thread_with_stdio, thr);
-+	struct printbuf *buf = &thr->stdio.input_buf;
-+	size_t copied = 0;
-+	ssize_t ret = 0;
-+
-+	while (len) {
-+		if (thr->thr.done) {
-+			ret = -EPIPE;
-+			break;
-+		}
-+
-+		size_t b = len - fault_in_readable(ubuf, len);
-+		if (!b) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+
-+		spin_lock(&thr->stdio.input_lock);
-+		if (buf->pos < WRITE_BUFFER)
-+			bch2_printbuf_make_room(buf, min(b, WRITE_BUFFER - buf->pos));
-+		b = min(len, printbuf_remaining_size(buf));
-+
-+		if (b && !copy_from_user_nofault(&buf->buf[buf->pos], ubuf, b)) {
-+			ubuf += b;
-+			len -= b;
-+			copied += b;
-+			buf->pos += b;
-+		}
-+		spin_unlock(&thr->stdio.input_lock);
-+
-+		if (b) {
-+			wake_up(&thr->stdio.input_wait);
-+		} else {
-+			if ((file->f_flags & O_NONBLOCK)) {
-+				ret = -EAGAIN;
-+				break;
-+			}
-+
-+			ret = wait_event_interruptible(thr->stdio.input_wait,
-+					thread_with_stdio_has_input_space(thr));
-+			if (ret)
-+				break;
-+		}
-+	}
-+
-+	return copied ?: ret;
-+}
-+
-+static __poll_t thread_with_stdio_poll(struct file *file, struct poll_table_struct *wait)
-+{
-+	struct thread_with_stdio *thr =
-+		container_of(file->private_data, struct thread_with_stdio, thr);
-+
-+	poll_wait(file, &thr->stdio.output_wait, wait);
-+	poll_wait(file, &thr->stdio.input_wait, wait);
-+
-+	__poll_t mask = 0;
-+
-+	if (thread_with_stdio_has_output(thr))
-+		mask |= EPOLLIN;
-+	if (thread_with_stdio_has_input_space(thr))
-+		mask |= EPOLLOUT;
-+	if (thr->thr.done)
-+		mask |= EPOLLHUP|EPOLLERR;
-+	return mask;
-+}
-+
-+static const struct file_operations thread_with_stdio_fops = {
-+	.release	= thread_with_stdio_release,
-+	.read		= thread_with_stdio_read,
-+	.write		= thread_with_stdio_write,
-+	.poll		= thread_with_stdio_poll,
-+	.llseek		= no_llseek,
-+};
-+
-+int bch2_run_thread_with_stdio(struct thread_with_stdio *thr,
-+			       void (*exit)(struct thread_with_stdio *),
-+			       int (*fn)(void *))
-+{
-+	thr->stdio.input_buf = PRINTBUF;
-+	thr->stdio.input_buf.atomic++;
-+	spin_lock_init(&thr->stdio.input_lock);
-+	init_waitqueue_head(&thr->stdio.input_wait);
-+
-+	thr->stdio.output_buf = PRINTBUF;
-+	thr->stdio.output_buf.atomic++;
-+	spin_lock_init(&thr->stdio.output_lock);
-+	init_waitqueue_head(&thr->stdio.output_wait);
-+
-+	darray_init(&thr->output2);
-+	thr->exit = exit;
-+
-+	return bch2_run_thread_with_file(&thr->thr, &thread_with_stdio_fops, fn);
-+}
-+
-+int bch2_stdio_redirect_read(struct stdio_redirect *stdio, char *buf, size_t len)
-+{
-+	wait_event(stdio->input_wait,
-+		   stdio->input_buf.pos || stdio->done);
-+
-+	if (stdio->done)
-+		return -1;
-+
-+	spin_lock(&stdio->input_lock);
-+	int ret = min(len, stdio->input_buf.pos);
-+	stdio->input_buf.pos -= ret;
-+	memcpy(buf, stdio->input_buf.buf, ret);
-+	memmove(stdio->input_buf.buf,
-+		stdio->input_buf.buf + ret,
-+		stdio->input_buf.pos);
-+	spin_unlock(&stdio->input_lock);
-+
-+	wake_up(&stdio->input_wait);
-+	return ret;
-+}
-+
-+int bch2_stdio_redirect_readline(struct stdio_redirect *stdio, char *buf, size_t len)
-+{
-+	wait_event(stdio->input_wait,
-+		   stdio->input_buf.pos || stdio->done);
-+
-+	if (stdio->done)
-+		return -1;
-+
-+	spin_lock(&stdio->input_lock);
-+	int ret = min(len, stdio->input_buf.pos);
-+	char *n = memchr(stdio->input_buf.buf, '\n', ret);
-+	if (n)
-+		ret = min(ret, n + 1 - stdio->input_buf.buf);
-+	stdio->input_buf.pos -= ret;
-+	memcpy(buf, stdio->input_buf.buf, ret);
-+	memmove(stdio->input_buf.buf,
-+		stdio->input_buf.buf + ret,
-+		stdio->input_buf.pos);
-+	spin_unlock(&stdio->input_lock);
-+
-+	wake_up(&stdio->input_wait);
-+	return ret;
-+}
-diff --git a/fs/bcachefs/thread_with_file.h b/fs/bcachefs/thread_with_file.h
-new file mode 100644
-index 000000000000..05879c5048c8
---- /dev/null
-+++ b/fs/bcachefs/thread_with_file.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _BCACHEFS_THREAD_WITH_FILE_H
-+#define _BCACHEFS_THREAD_WITH_FILE_H
-+
-+#include "thread_with_file_types.h"
-+
-+struct task_struct;
-+
-+struct thread_with_file {
-+	struct task_struct	*task;
-+	int			ret;
-+	bool			done;
-+};
-+
-+void bch2_thread_with_file_exit(struct thread_with_file *);
-+int bch2_run_thread_with_file(struct thread_with_file *,
-+			      const struct file_operations *,
-+			      int (*fn)(void *));
-+
-+struct thread_with_stdio {
-+	struct thread_with_file	thr;
-+	struct stdio_redirect	stdio;
-+	DARRAY(char)		output2;
-+	void			(*exit)(struct thread_with_stdio *);
-+};
-+
-+static inline void thread_with_stdio_done(struct thread_with_stdio *thr)
-+{
-+	thr->thr.done = true;
-+	thr->stdio.done = true;
-+	wake_up(&thr->stdio.input_wait);
-+	wake_up(&thr->stdio.output_wait);
-+}
-+
-+int bch2_run_thread_with_stdio(struct thread_with_stdio *,
-+			       void (*exit)(struct thread_with_stdio *),
-+			       int (*fn)(void *));
-+int bch2_stdio_redirect_read(struct stdio_redirect *, char *, size_t);
-+int bch2_stdio_redirect_readline(struct stdio_redirect *, char *, size_t);
-+
-+#endif /* _BCACHEFS_THREAD_WITH_FILE_H */
-diff --git a/fs/bcachefs/thread_with_file_types.h b/fs/bcachefs/thread_with_file_types.h
-new file mode 100644
-index 000000000000..90b5e645e98c
---- /dev/null
-+++ b/fs/bcachefs/thread_with_file_types.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _BCACHEFS_THREAD_WITH_FILE_TYPES_H
-+#define _BCACHEFS_THREAD_WITH_FILE_TYPES_H
-+
-+struct stdio_redirect {
-+	spinlock_t		output_lock;
-+	wait_queue_head_t	output_wait;
-+	struct printbuf		output_buf;
-+
-+	spinlock_t		input_lock;
-+	wait_queue_head_t	input_wait;
-+	struct printbuf		input_buf;
-+	bool			done;
-+};
-+
-+#endif /* _BCACHEFS_THREAD_WITH_FILE_TYPES_H */
--- 
-2.43.0
-
+IGZzL3RyYWNlZnMvaW5vZGUuYyB8IDE0NyArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDI2IGluc2VydGlvbnMoKyks
+IDEyMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy90cmFjZWZzL2lub2RlLmMgYi9mcy90
+cmFjZWZzL2lub2RlLmMKaW5kZXggYmM4NmZmZGIxMDNiLi41YmM5ZTFhMjNhMzEgMTAwNjQ0Ci0t
+LSBhL2ZzL3RyYWNlZnMvaW5vZGUuYworKysgYi9mcy90cmFjZWZzL2lub2RlLmMKQEAgLTE4Myw4
+NyArMTgzLDYgQEAgc3RydWN0IHRyYWNlZnNfZnNfaW5mbyB7CiAJc3RydWN0IHRyYWNlZnNfbW91
+bnRfb3B0cyBtb3VudF9vcHRzOwogfTsKIAotc3RhdGljIHZvaWQgY2hhbmdlX2dpZChzdHJ1Y3Qg
+ZGVudHJ5ICpkZW50cnksIGtnaWRfdCBnaWQpCi17Ci0JaWYgKCFkZW50cnktPmRfaW5vZGUpCi0J
+CXJldHVybjsKLQlkZW50cnktPmRfaW5vZGUtPmlfZ2lkID0gZ2lkOwotfQotCi0vKgotICogVGFr
+ZW4gZnJvbSBkX3dhbGssIGJ1dCB3aXRob3V0IGhlIG5lZWQgZm9yIGhhbmRsaW5nIHJlbmFtZXMu
+Ci0gKiBOb3RoaW5nIGNhbiBiZSByZW5hbWVkIHdoaWxlIHdhbGtpbmcgdGhlIGxpc3QsIGFzIHRy
+YWNlZnMKLSAqIGRvZXMgbm90IHN1cHBvcnQgcmVuYW1lcy4gVGhpcyBpcyBvbmx5IGNhbGxlZCB3
+aGVuIG1vdW50aW5nCi0gKiBvciByZW1vdW50aW5nIHRoZSBmaWxlIHN5c3RlbSwgdG8gc2V0IGFs
+bCB0aGUgZmlsZXMgdG8KLSAqIHRoZSBnaXZlbiBnaWQuCi0gKi8KLXN0YXRpYyB2b2lkIHNldF9n
+aWQoc3RydWN0IGRlbnRyeSAqcGFyZW50LCBrZ2lkX3QgZ2lkKQotewotCXN0cnVjdCBkZW50cnkg
+KnRoaXNfcGFyZW50OwotCXN0cnVjdCBsaXN0X2hlYWQgKm5leHQ7Ci0KLQl0aGlzX3BhcmVudCA9
+IHBhcmVudDsKLQlzcGluX2xvY2soJnRoaXNfcGFyZW50LT5kX2xvY2spOwotCi0JY2hhbmdlX2dp
+ZCh0aGlzX3BhcmVudCwgZ2lkKTsKLXJlcGVhdDoKLQluZXh0ID0gdGhpc19wYXJlbnQtPmRfc3Vi
+ZGlycy5uZXh0OwotcmVzdW1lOgotCXdoaWxlIChuZXh0ICE9ICZ0aGlzX3BhcmVudC0+ZF9zdWJk
+aXJzKSB7Ci0JCXN0cnVjdCB0cmFjZWZzX2lub2RlICp0aTsKLQkJc3RydWN0IGxpc3RfaGVhZCAq
+dG1wID0gbmV4dDsKLQkJc3RydWN0IGRlbnRyeSAqZGVudHJ5ID0gbGlzdF9lbnRyeSh0bXAsIHN0
+cnVjdCBkZW50cnksIGRfY2hpbGQpOwotCQluZXh0ID0gdG1wLT5uZXh0OwotCi0JCS8qIE5vdGUs
+IGdldGRlbnRzKCkgY2FuIGFkZCBhIGN1cnNvciBkZW50cnkgd2l0aCBubyBpbm9kZSAqLwotCQlp
+ZiAoIWRlbnRyeS0+ZF9pbm9kZSkKLQkJCWNvbnRpbnVlOwotCi0JCXNwaW5fbG9ja19uZXN0ZWQo
+JmRlbnRyeS0+ZF9sb2NrLCBERU5UUllfRF9MT0NLX05FU1RFRCk7Ci0KLQkJY2hhbmdlX2dpZChk
+ZW50cnksIGdpZCk7Ci0KLQkJLyogSWYgdGhpcyBpcyB0aGUgZXZlbnRzIGRpcmVjdG9yeSwgdXBk
+YXRlIHRoYXQgdG9vICovCi0JCXRpID0gZ2V0X3RyYWNlZnMoZGVudHJ5LT5kX2lub2RlKTsKLQkJ
+aWYgKHRpICYmICh0aS0+ZmxhZ3MgJiBUUkFDRUZTX0VWRU5UX0lOT0RFKSkKLQkJCWV2ZW50ZnNf
+dXBkYXRlX2dpZChkZW50cnksIGdpZCk7Ci0KLQkJaWYgKCFsaXN0X2VtcHR5KCZkZW50cnktPmRf
+c3ViZGlycykpIHsKLQkJCXNwaW5fdW5sb2NrKCZ0aGlzX3BhcmVudC0+ZF9sb2NrKTsKLQkJCXNw
+aW5fcmVsZWFzZSgmZGVudHJ5LT5kX2xvY2suZGVwX21hcCwgX1JFVF9JUF8pOwotCQkJdGhpc19w
+YXJlbnQgPSBkZW50cnk7Ci0JCQlzcGluX2FjcXVpcmUoJnRoaXNfcGFyZW50LT5kX2xvY2suZGVw
+X21hcCwgMCwgMSwgX1JFVF9JUF8pOwotCQkJZ290byByZXBlYXQ7Ci0JCX0KLQkJc3Bpbl91bmxv
+Y2soJmRlbnRyeS0+ZF9sb2NrKTsKLQl9Ci0JLyoKLQkgKiBBbGwgZG9uZSBhdCB0aGlzIGxldmVs
+IC4uLiBhc2NlbmQgYW5kIHJlc3VtZSB0aGUgc2VhcmNoLgotCSAqLwotCXJjdV9yZWFkX2xvY2so
+KTsKLWFzY2VuZDoKLQlpZiAodGhpc19wYXJlbnQgIT0gcGFyZW50KSB7Ci0JCXN0cnVjdCBkZW50
+cnkgKmNoaWxkID0gdGhpc19wYXJlbnQ7Ci0JCXRoaXNfcGFyZW50ID0gY2hpbGQtPmRfcGFyZW50
+OwotCi0JCXNwaW5fdW5sb2NrKCZjaGlsZC0+ZF9sb2NrKTsKLQkJc3Bpbl9sb2NrKCZ0aGlzX3Bh
+cmVudC0+ZF9sb2NrKTsKLQotCQkvKiBnbyBpbnRvIHRoZSBmaXJzdCBzaWJsaW5nIHN0aWxsIGFs
+aXZlICovCi0JCWRvIHsKLQkJCW5leHQgPSBjaGlsZC0+ZF9jaGlsZC5uZXh0OwotCQkJaWYgKG5l
+eHQgPT0gJnRoaXNfcGFyZW50LT5kX3N1YmRpcnMpCi0JCQkJZ290byBhc2NlbmQ7Ci0JCQljaGls
+ZCA9IGxpc3RfZW50cnkobmV4dCwgc3RydWN0IGRlbnRyeSwgZF9jaGlsZCk7Ci0JCX0gd2hpbGUg
+KHVubGlrZWx5KGNoaWxkLT5kX2ZsYWdzICYgRENBQ0hFX0RFTlRSWV9LSUxMRUQpKTsKLQkJcmN1
+X3JlYWRfdW5sb2NrKCk7Ci0JCWdvdG8gcmVzdW1lOwotCX0KLQlyY3VfcmVhZF91bmxvY2soKTsK
+LQlzcGluX3VubG9jaygmdGhpc19wYXJlbnQtPmRfbG9jayk7Ci0JcmV0dXJuOwotfQotCiBzdGF0
+aWMgaW50IHRyYWNlZnNfcGFyc2Vfb3B0aW9ucyhjaGFyICpkYXRhLCBzdHJ1Y3QgdHJhY2Vmc19t
+b3VudF9vcHRzICpvcHRzKQogewogCXN1YnN0cmluZ190IGFyZ3NbTUFYX09QVF9BUkdTXTsKQEAg
+LTMxNSw0OSArMjM0LDEyIEBAIHN0YXRpYyBpbnQgdHJhY2Vmc19wYXJzZV9vcHRpb25zKGNoYXIg
+KmRhdGEsIHN0cnVjdCB0cmFjZWZzX21vdW50X29wdHMgKm9wdHMpCiAJcmV0dXJuIDA7CiB9CiAK
+LXN0YXRpYyBpbnQgdHJhY2Vmc19hcHBseV9vcHRpb25zKHN0cnVjdCBzdXBlcl9ibG9jayAqc2Is
+IGJvb2wgcmVtb3VudCkKLXsKLQlzdHJ1Y3QgdHJhY2Vmc19mc19pbmZvICpmc2kgPSBzYi0+c19m
+c19pbmZvOwotCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBkX2lub2RlKHNiLT5zX3Jvb3QpOwotCXN0
+cnVjdCB0cmFjZWZzX21vdW50X29wdHMgKm9wdHMgPSAmZnNpLT5tb3VudF9vcHRzOwotCXVtb2Rl
+X3QgdG1wX21vZGU7Ci0KLQkvKgotCSAqIE9uIHJlbW91bnQsIG9ubHkgcmVzZXQgbW9kZS91aWQv
+Z2lkIGlmIHRoZXkgd2VyZSBwcm92aWRlZCBhcyBtb3VudAotCSAqIG9wdGlvbnMuCi0JICovCi0K
+LQlpZiAoIXJlbW91bnQgfHwgb3B0cy0+b3B0cyAmIEJJVChPcHRfbW9kZSkpIHsKLQkJdG1wX21v
+ZGUgPSBSRUFEX09OQ0UoaW5vZGUtPmlfbW9kZSkgJiB+U19JQUxMVUdPOwotCQl0bXBfbW9kZSB8
+PSBvcHRzLT5tb2RlOwotCQlXUklURV9PTkNFKGlub2RlLT5pX21vZGUsIHRtcF9tb2RlKTsKLQl9
+Ci0KLQlpZiAoIXJlbW91bnQgfHwgb3B0cy0+b3B0cyAmIEJJVChPcHRfdWlkKSkKLQkJaW5vZGUt
+PmlfdWlkID0gb3B0cy0+dWlkOwotCi0JaWYgKCFyZW1vdW50IHx8IG9wdHMtPm9wdHMgJiBCSVQo
+T3B0X2dpZCkpIHsKLQkJLyogU2V0IGFsbCB0aGUgZ3JvdXAgaWRzIHRvIHRoZSBtb3VudCBvcHRp
+b24gKi8KLQkJc2V0X2dpZChzYi0+c19yb290LCBvcHRzLT5naWQpOwotCX0KLQotCXJldHVybiAw
+OwotfQotCiBzdGF0aWMgaW50IHRyYWNlZnNfcmVtb3VudChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNi
+LCBpbnQgKmZsYWdzLCBjaGFyICpkYXRhKQogewotCWludCBlcnI7CiAJc3RydWN0IHRyYWNlZnNf
+ZnNfaW5mbyAqZnNpID0gc2ItPnNfZnNfaW5mbzsKIAogCXN5bmNfZmlsZXN5c3RlbShzYik7Ci0J
+ZXJyID0gdHJhY2Vmc19wYXJzZV9vcHRpb25zKGRhdGEsICZmc2ktPm1vdW50X29wdHMpOwotCWlm
+IChlcnIpCi0JCWdvdG8gZmFpbDsKLQotCXRyYWNlZnNfYXBwbHlfb3B0aW9ucyhzYiwgdHJ1ZSk7
+Ci0KLWZhaWw6Ci0JcmV0dXJuIGVycjsKKwlyZXR1cm4gdHJhY2Vmc19wYXJzZV9vcHRpb25zKGRh
+dGEsICZmc2ktPm1vdW50X29wdHMpOwogfQogCiBzdGF0aWMgaW50IHRyYWNlZnNfc2hvd19vcHRp
+b25zKHN0cnVjdCBzZXFfZmlsZSAqbSwgc3RydWN0IGRlbnRyeSAqcm9vdCkKQEAgLTM5OSw4ICsy
+ODEsMzMgQEAgc3RhdGljIHZvaWQgdHJhY2Vmc19kZW50cnlfaXB1dChzdHJ1Y3QgZGVudHJ5ICpk
+ZW50cnksIHN0cnVjdCBpbm9kZSAqaW5vZGUpCiAJaXB1dChpbm9kZSk7CiB9CiAKK3N0YXRpYyBp
+bnQgdHJhY2Vmc19kX3JldmFsaWRhdGUoc3RydWN0IGRlbnRyeSAqZGVudHJ5LCB1bnNpZ25lZCBp
+bnQgZmxhZ3MpCit7CisJc3RydWN0IHRyYWNlZnNfZnNfaW5mbyAqZnNpID0gZGVudHJ5LT5kX3Ni
+LT5zX2ZzX2luZm87CisJc3RydWN0IHRyYWNlZnNfbW91bnRfb3B0cyAqb3B0cyA9ICZmc2ktPm1v
+dW50X29wdHM7CisJc3RydWN0IGlub2RlICppbm9kZTsKKworCXJjdV9yZWFkX2xvY2soKTsKKwlp
+bm9kZSA9IGRfaW5vZGVfcmN1KGRlbnRyeSk7CisJaWYgKGlub2RlKSB7CisJCWlmIChvcHRzLT5v
+cHRzICYgQklUKE9wdF9tb2RlKSkgeworCQkJdW1vZGVfdCB0bXBfbW9kZTsKKwkJCXRtcF9tb2Rl
+ID0gUkVBRF9PTkNFKGlub2RlLT5pX21vZGUpICYgflNfSUFMTFVHTzsKKwkJCXRtcF9tb2RlIHw9
+IG9wdHMtPm1vZGU7CisJCQlXUklURV9PTkNFKGlub2RlLT5pX21vZGUsIHRtcF9tb2RlKTsKKwkJ
+fQorCQlpZiAob3B0cy0+b3B0cyAmIEJJVChPcHRfdWlkKSkKKwkJCWlub2RlLT5pX3VpZCA9IG9w
+dHMtPnVpZDsKKwkJaWYgKG9wdHMtPm9wdHMgJiBCSVQoT3B0X2dpZCkpCisJCQlpbm9kZS0+aV9n
+aWQgPSBvcHRzLT5naWQ7CisJfQorCXJjdV9yZWFkX3VubG9jaygpOworCXJldHVybiAwOworfQor
+CiBzdGF0aWMgY29uc3Qgc3RydWN0IGRlbnRyeV9vcGVyYXRpb25zIHRyYWNlZnNfZGVudHJ5X29w
+ZXJhdGlvbnMgPSB7CiAJLmRfaXB1dCA9IHRyYWNlZnNfZGVudHJ5X2lwdXQsCisJLmRfcmV2YWxp
+ZGF0ZSA9IHRyYWNlZnNfZF9yZXZhbGlkYXRlLAogfTsKIAogc3RhdGljIGludCB0cmFjZV9maWxs
+X3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHZvaWQgKmRhdGEsIGludCBzaWxlbnQpCkBA
+IC00MjcsOCArMzM0LDYgQEAgc3RhdGljIGludCB0cmFjZV9maWxsX3N1cGVyKHN0cnVjdCBzdXBl
+cl9ibG9jayAqc2IsIHZvaWQgKmRhdGEsIGludCBzaWxlbnQpCiAJc2ItPnNfb3AgPSAmdHJhY2Vm
+c19zdXBlcl9vcGVyYXRpb25zOwogCXNiLT5zX2Rfb3AgPSAmdHJhY2Vmc19kZW50cnlfb3BlcmF0
+aW9uczsKIAotCXRyYWNlZnNfYXBwbHlfb3B0aW9ucyhzYiwgZmFsc2UpOwotCiAJcmV0dXJuIDA7
+CiAKIGZhaWw6Cg==
+--0000000000004080e0060e11aa81--
 
