@@ -1,168 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-7218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51F1822E22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:21:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EBF822FEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E14E21C23579
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:21:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36FD01F245F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820C3199AA;
-	Wed,  3 Jan 2024 13:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57101B27F;
+	Wed,  3 Jan 2024 14:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="WPHT2YfT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FB1947B;
-	Wed,  3 Jan 2024 13:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T4r2B0dB3z4f3lfZ;
-	Wed,  3 Jan 2024 21:20:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id BC6371A0AB2;
-	Wed,  3 Jan 2024 21:20:55 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP1 (Coremail) with SMTP id cCh0CgAHVw00X5VlKmyqFQ--.15497S3;
-	Wed, 03 Jan 2024 21:20:53 +0800 (CST)
-Subject: Re: [RFC PATCH v2 05/25] ext4: make ext4_map_blocks() distinguish
- delalloc only extent
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, ritesh.list@gmail.com, hch@infradead.org,
- djwong@kernel.org, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
- <20240102123918.799062-6-yi.zhang@huaweicloud.com>
- <20240103113131.z4jhwim7bzynhrlx@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <62da3bfb-6d50-2eb9-1b9a-13f5287f562d@huaweicloud.com>
-Date: Wed, 3 Jan 2024 21:20:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42CC1A71A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 14:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40d88f9e602so23435795e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 06:57:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1704293830; x=1704898630; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=icDvawPu4N9KUKSqR130iYUVn/OUgGr8Bq/oQWex9vY=;
+        b=WPHT2YfTQga4HY+FF2lul62M8wQ1iG5feTnJj8fRgs9z1FIBofjYwu9WWS6ZGfSHZ/
+         kdkQtWc+nZDiOXyJcmNIgUzt06iXQ+F6PYwaQMN/EiDG18brJ3UhmzIBXa5KvYkQsHT6
+         JeIZIZsEgzwVY9RaGsbxiaGciK8F5DKZPsvTZpdVmHuex6mkJYApIXxOQKdetZIUslW7
+         Xd1l1GqE7fThR01qKjHYxsH7oNuXPcPssiYmjA1DP6ZX4JtKzoUyVfQdOkIEJv3BlU5/
+         xwptPS0lEI+gYRCg8YluWSBQ2LiGqIKJj5loYRrI9bveKFlmA+DjeFoVjNIWPLBkAscF
+         /xWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704293830; x=1704898630;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=icDvawPu4N9KUKSqR130iYUVn/OUgGr8Bq/oQWex9vY=;
+        b=E1fDNlN73yRVndLdlX+AuAG25w0jlDciWb8z5y1l1Nt8MwDcKU1Lumy0Px2QeStRAR
+         pvj0ng1RBaFUuHGtds3+gRTxFF1MyAoja4MEcXYd72wrJdLFGSCsQ+r/bW7v9DEnSmSJ
+         uzqawkBLpub2XnHNppb55gHL2H0WZL0sgTCUVs+JDebwI8cjPE7WeX/xwjMYbtnx3tuG
+         nVfbWxbOrng7ZUFZCSPJBgvaItZrfrAlAvwn6DTvOk0TtiD0C/T2iUy/ym09INgCxaPf
+         0womPp/s3TbW7Z9glSWR8usAU8y2CwTXvKgt/j5fzvs5vOJbeCTXoO7l8cbLa40tcX1m
+         blqQ==
+X-Gm-Message-State: AOJu0Yyi5niG0uVNspseSO6ZHaTBnD66jxRIsittgzPSRjG9I11AbjNC
+	2y0j4ylgRTVr02KWTxvL5mTLOMOTdhbkiA==
+X-Google-Smtp-Source: AGHT+IHU0m0nUfxWCt85QfZ1Hyy8wofZbT1X7PkXXQoJDjZBXbv7f60AE23tsmVwd9s2vZw6rebqdw==
+X-Received: by 2002:a05:600c:4384:b0:40d:3b3f:6040 with SMTP id e4-20020a05600c438400b0040d3b3f6040mr10213519wmn.45.1704293830143;
+        Wed, 03 Jan 2024 06:57:10 -0800 (PST)
+Received: from localhost ([165.225.194.221])
+        by smtp.gmail.com with ESMTPSA id d2-20020a05600c34c200b0040d61b1cecasm2561201wmq.33.2024.01.03.06.57.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jan 2024 06:57:09 -0800 (PST)
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-7-wedsonaf@gmail.com>
+User-agent: mu4e 1.10.8; emacs 28.2.50
+From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent
+ Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Wedson Almeida Filho
+ <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
+Date: Wed, 03 Jan 2024 14:29:33 +0100
+In-reply-to: <20231018122518.128049-7-wedsonaf@gmail.com>
+Message-ID: <87o7e25v2z.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240103113131.z4jhwim7bzynhrlx@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAHVw00X5VlKmyqFQ--.15497S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFWxGw47CFy5AF43trWkZwb_yoW5Zw48pa
-	95AF1UKan8Ww1UuayIqF1UJr1UKa1Fkay7Cr4rtryFkasxGr1fKFn09FsxZFWDtrWxJF1U
-	XFW5t3WUCanIkFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
 
-On 2024/1/3 19:31, Jan Kara wrote:
-> On Tue 02-01-24 20:38:58, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Add a new map flag EXT4_MAP_DELAYED to indicate the mapping range is a
->> delayed allocated only (not unwritten) one, and making
->> ext4_map_blocks() can distinguish it, no longer mixing it with holes.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> One small comment below.
-> 
->> ---
->>  fs/ext4/ext4.h    | 4 +++-
->>  fs/ext4/extents.c | 5 +++--
->>  fs/ext4/inode.c   | 2 ++
->>  3 files changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index a5d784872303..55195909d32f 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -252,8 +252,10 @@ struct ext4_allocation_request {
->>  #define EXT4_MAP_MAPPED		BIT(BH_Mapped)
->>  #define EXT4_MAP_UNWRITTEN	BIT(BH_Unwritten)
->>  #define EXT4_MAP_BOUNDARY	BIT(BH_Boundary)
->> +#define EXT4_MAP_DELAYED	BIT(BH_Delay)
->>  #define EXT4_MAP_FLAGS		(EXT4_MAP_NEW | EXT4_MAP_MAPPED |\
->> -				 EXT4_MAP_UNWRITTEN | EXT4_MAP_BOUNDARY)
->> +				 EXT4_MAP_UNWRITTEN | EXT4_MAP_BOUNDARY |\
->> +				 EXT4_MAP_DELAYED)
->>  
->>  struct ext4_map_blocks {
->>  	ext4_fsblk_t m_pblk;
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index 0892d0568013..fc69f13cf510 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
->> @@ -4073,9 +4073,10 @@ static void ext4_ext_determine_hole(struct inode *inode,
->>  	} else if (in_range(map->m_lblk, es.es_lblk, es.es_len)) {
->>  		/*
->>  		 * Straddle the beginning of the queried range, it's no
->> -		 * longer a hole, adjust the length to the delayed extent's
->> -		 * after map->m_lblk.
->> +		 * longer a hole, mark it is a delalloc and adjust the
->> +		 * length to the delayed extent's after map->m_lblk.
->>  		 */
->> +		map->m_flags |= EXT4_MAP_DELAYED;
-> 
-> I wouldn't set delalloc bit here. If there's delalloc extent containing
-> lblk now, it means the caller of ext4_map_blocks() is not holding i_rwsem
-> (otherwise we would have found already in ext4_map_blocks()) and thus
-> delalloc info is unreliable anyway. So I wouldn't bother. But it's worth a
-> comment here like:
-> 
-> 		/*
-> 		 * There's delalloc extent containing lblk. It must have
-> 		 * been added after ext4_map_blocks() checked the extent
-> 		 * status tree so we are not holding i_rwsem and delalloc
-> 		 * info is only stabilized by i_data_sem we are going to
-> 		 * release soon. Don't modify the extent status tree and
-> 		 * report extent as a hole.
-> 		 */
-> 
 
-Yeah, the delalloc info is still unreliable. Thanks for the advice, I
-will revise it in my next iteration along with your advice in patch 03.
+Wedson Almeida Filho <wedsonaf@gmail.com> writes:
 
-Thanks,
-Yi.
+[...]
 
-> 
->>  		len = es.es_lblk + es.es_len - map->m_lblk;
->>  		goto out;
->>  	} else {
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 1b5e6409f958..c141bf6d8db2 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -515,6 +515,8 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
->>  			map->m_len = retval;
->>  		} else if (ext4_es_is_delayed(&es) || ext4_es_is_hole(&es)) {
->>  			map->m_pblk = 0;
->> +			map->m_flags |= ext4_es_is_delayed(&es) ?
->> +					EXT4_MAP_DELAYED : 0;
->>  			retval = es.es_len - (map->m_lblk - es.es_lblk);
->>  			if (retval > map->m_len)
->>  				retval = map->m_len;
->> -- 
->> 2.39.2
->>
+>  
+> +/// An inode that is locked and hasn't been initialised yet.
+> +#[repr(transparent)]
+> +pub struct NewINode<T: FileSystem + ?Sized>(ARef<INode<T>>);
+> +
+> +impl<T: FileSystem + ?Sized> NewINode<T> {
+> +    /// Initialises the new inode with the given parameters.
+> +    pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
+> +        // SAFETY: This is a new inode, so it's safe to manipulate it mutably.
+> +        let inode = unsafe { &mut *self.0 .0.get() };
 
+Perhaps it would make sense with a `UniqueARef` that guarantees
+uniqueness, in line with `alloc::UniqueRc`?
+
+[...]
+
+>  
+> +impl<T: FileSystem + ?Sized> SuperBlock<T> {
+> +    /// Tries to get an existing inode or create a new one if it doesn't exist yet.
+> +    pub fn get_or_create_inode(&self, ino: Ino) -> Result<Either<ARef<INode<T>>, NewINode<T>>> {
+> +        // SAFETY: The only initialisation missing from the superblock is the root, and this
+> +        // function is needed to create the root, so it's safe to call it.
+> +        let inode =
+> +            ptr::NonNull::new(unsafe { bindings::iget_locked(self.0.get(), ino) }).ok_or(ENOMEM)?;
+
+I can't parse this safety comment properly.
+
+> +
+> +        // SAFETY: `inode` is valid for read, but there could be concurrent writers (e.g., if it's
+> +        // an already-initialised inode), so we use `read_volatile` to read its current state.
+> +        let state = unsafe { ptr::read_volatile(ptr::addr_of!((*inode.as_ptr()).i_state)) };
+> +        if state & u64::from(bindings::I_NEW) == 0 {
+> +            // The inode is cached. Just return it.
+> +            //
+> +            // SAFETY: `inode` had its refcount incremented by `iget_locked`; this increment is now
+> +            // owned by `ARef`.
+> +            Ok(Either::Left(unsafe { ARef::from_raw(inode.cast()) }))
+> +        } else {
+> +            // SAFETY: The new inode is valid but not fully initialised yet, so it's ok to create a
+> +            // `NewINode`.
+> +            Ok(Either::Right(NewINode(unsafe {
+> +                ARef::from_raw(inode.cast())
+
+I would suggest making the destination type explicit for the cast.
+
+> +            })))
+> +        }
+> +    }
+> +}
+> +
+>  /// Required superblock parameters.
+>  ///
+>  /// This is returned by implementations of [`FileSystem::super_params`].
+> @@ -215,41 +345,28 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+>              sb.0.s_blocksize = 1 << sb.0.s_blocksize_bits;
+>              sb.0.s_flags |= bindings::SB_RDONLY;
+>  
+> -            // The following is scaffolding code that will be removed in a subsequent patch. It is
+> -            // needed to build a root dentry, otherwise core code will BUG().
+> -            // SAFETY: `sb` is the superblock being initialised, it is valid for read and write.
+> -            let inode = unsafe { bindings::new_inode(&mut sb.0) };
+> -            if inode.is_null() {
+> -                return Err(ENOMEM);
+> -            }
+> -
+> -            // SAFETY: `inode` is valid for write.
+> -            unsafe { bindings::set_nlink(inode, 2) };
+> -
+> -            {
+> -                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
+> -                // safe to mutably dereference it.
+> -                let inode = unsafe { &mut *inode };
+> -                inode.i_ino = 1;
+> -                inode.i_mode = (bindings::S_IFDIR | 0o755) as _;
+> -
+> -                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
+> -                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
+> +            // SAFETY: The callback contract guarantees that `sb_ptr` is a unique pointer to a
+> +            // newly-created (and initialised above) superblock.
+> +            let sb = unsafe { &mut *sb_ptr.cast() };
+
+Again, I would suggest an explicit destination type for the cast.
+
+> +            let root = T::init_root(sb)?;
+>  
+> -                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
+> -                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
+> +            // Reject root inode if it belongs to a different superblock.
+
+I am curious how this would happen?
+
+BR Andreas
 
