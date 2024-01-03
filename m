@@ -1,88 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-7260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C133F8236B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:41:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702A5823703
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB551F24A34
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9532879E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0848E1D69D;
-	Wed,  3 Jan 2024 20:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800E1DA46;
+	Wed,  3 Jan 2024 21:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="juG5Hu96"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csxKLHo1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1751D692;
-	Wed,  3 Jan 2024 20:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FArP6PojXIZHet0fgMSniHDnTIp6uCjlhRACZk/+G9I=; b=juG5Hu96B9Os64jtzlPJUweiCH
-	NALNeCQr+bp+tXkddMN3ilW5eE+53ZveDjsdEuJ5CcAdIocf0ZMw94aUdhcf6acbGrrtbajHVBMXB
-	HiDhuq3ByVMCFix8qfC/m5NXxwANJRJyWqKbNxzPL779BOXPYx6zmNcA5fNahUOrphf1AnF0rcfKE
-	kusBxHX+pgEG/pLbZl26oUe7OpE4RraljMC5coQ17sgieH28a86sFyL+UosKNkQz+Z+WrwdcxTqdx
-	Y6wYTOJMigCNVwOIpmqXoHIL09c7p1jCK0w6smcSCixsL/HRJbX8Pv3tl1EZSa3JBl8sjhTJBRMfv
-	LJG0GrFg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rL83P-000isv-21;
-	Wed, 03 Jan 2024 20:41:31 +0000
-Date: Wed, 3 Jan 2024 20:41:31 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
-Message-ID: <20240103204131.GL1674809@ZenIV>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
- <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
- <ZZWhQGkl0xPiBD5/@casper.infradead.org>
- <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41FD1D6BC
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 21:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704316554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lz9BpuJT9ZqjBzLEQFTtycxe4tbIVPZFPrNygtaFHDI=;
+	b=csxKLHo1dLIRI41aBVgchwKMJP2JKbNckE4MT3QbtXCiMtNVnl4WyzXbJAmKITCLevnE81
+	16M2kDMWDOipj6FYECdts+CYruFIh0/EAOFWVp2hqY4rdGH+GuryP1VX+RAEPut4cazEGW
+	m4Rl6fIRW0ZJGZ3gA0t9j13dAvbX7Ss=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-1v-GWHbRM9e1RxN52-Av-w-1; Wed,
+ 03 Jan 2024 16:15:48 -0500
+X-MC-Unique: 1v-GWHbRM9e1RxN52-Av-w-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5354F3806710;
+	Wed,  3 Jan 2024 21:15:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 576BF492BC6;
+	Wed,  3 Jan 2024 21:15:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240103145935.384404-1-dhowells@redhat.com>
+References: <20240103145935.384404-1-dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>,
+    Marc Dionne <marc.dionne@auristor.com>
+Cc: dhowells@redhat.com, Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 7/5] netfs: Fix proc/fs/fscache symlink to point to "netfs" not "../netfs"
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <900276.1704316543.1@warthog.procyon.org.uk>
+Date: Wed, 03 Jan 2024 21:15:43 +0000
+Message-ID: <900277.1704316543@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On Wed, Jan 03, 2024 at 02:14:34PM -0500, Kent Overstreet wrote:
+Fix the proc/fs/fscache symlink to point to "netfs" not "../netfs".
 
-> We don't need to copy the C interface as is; we can use this as an
-> opportunity to incrementally design a new API that will obviously take
-> lessons from the C API (since it's wrapping it), but it doesn't have to
-> do things the same and it doesn't have to do everything all at once.
-> 
-> Anyways, like you alluded to the C side is a bit of a mess w.r.t. what's
-> in a_ops vs. i_ops, and cleaning that up on the C side is a giant hassle
-> because then you have to fix _everything_ that implements or consumes
-> those interfaces at the same time.
-> 
-> So instead, it would seem easier to me to do the cleaner version on the
-> Rust side, and then once we know what that looks like, maybe we update
-> the C version to match - or maybe we light it all on fire and continue
-> with rewriting everything in Rust... *shrug*
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Christian Brauner <christian@brauner.io>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-cachefs@redhat.com
+---
+ fs/netfs/fscache_proc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No.  This "cleaner version on the Rust side" is nothing of that sort;
-this "readdir doesn't need any state that might be different for different
-file instances beyond the current position, because none of our examples
-have needed that so far" is a good example of the garbage we really do
-not need to deal with.
+diff --git a/fs/netfs/fscache_proc.c b/fs/netfs/fscache_proc.c
+index ecd0d1edafaa..874d951bc390 100644
+--- a/fs/netfs/fscache_proc.c
++++ b/fs/netfs/fscache_proc.c
+@@ -16,7 +16,7 @@
+  */
+ int __init fscache_proc_init(void)
+ {
+-	if (!proc_symlink("fs/fscache", NULL, "../netfs"))
++	if (!proc_symlink("fs/fscache", NULL, "netfs"))
+ 		goto error_sym;
+ 
+ 	if (!proc_create_seq("fs/netfs/caches", S_IFREG | 0444, NULL,
+
 
