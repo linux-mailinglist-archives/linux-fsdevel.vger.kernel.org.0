@@ -1,518 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-7160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964A78228F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 08:23:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A4582290D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 08:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2033E1F23C1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 07:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7092E283778
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 07:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFDF18053;
-	Wed,  3 Jan 2024 07:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9440A1803D;
+	Wed,  3 Jan 2024 07:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="uqfYW5jk";
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="iB6f9a9X"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="C590/BvQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B4A18027;
-	Wed,  3 Jan 2024 07:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: by nautica.notk.org (Postfix, from userid 108)
-	id 949DBC024; Wed,  3 Jan 2024 08:22:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1704266578; bh=RTWy0dxEMBU7YHmS1XNmpVAiFlJnmT3Et4L/I5ab7Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uqfYW5jksrvCQpt8LmJKFK1pymqZvr0fNs5ydgxd2w2N26tNteDguezFaw3LkQfED
-	 Od1VIvgXutsA2AVW1awCGx02d+AvSNb4MsEKSO1LNMXRmsHTE8D41hpRiY1Bq7VWkb
-	 G3fWDnF6wXkcat124kAGZSyc7CSlL+njN5wcHTn0LsJ0dyUwiu2DgCzx299JrJDPV3
-	 z5cdKETVKuLEDbcIHmo/e8w4ixRV/xmfMU3NxaoDk+OinUwFQLzwBpwjpg+vp/YDpT
-	 MsY3+X94WUWTIU6FQJF2s67pZbV3ILyoKWgqKSvXIUH9T2Ik2Dkmnm+ZW6sfusa3Z2
-	 rc6ojAzLEkhBw==
-X-Spam-Level: 
-Received: from gaia (localhost [127.0.0.1])
-	by nautica.notk.org (Postfix) with ESMTPS id E31CAC009;
-	Wed,  3 Jan 2024 08:22:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1704266574; bh=RTWy0dxEMBU7YHmS1XNmpVAiFlJnmT3Et4L/I5ab7Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iB6f9a9XtKFd8Mc6VqzCmgyJhSyuMHEer6dsobANqz894EpDs8i0AQIcPKF+2fVvG
-	 jlyJVUQYmDp/W0iu/EQsl4XwbetIzk5mwbFBiXBlu/ggfUJcirHhYjssuvmdY4uE21
-	 LtD0O2UioQdUpg5rJrQgdUE8fbHLM4fPus8A4SubgvfihFttaA1h7XEtc/TQ+wxQdz
-	 U/2ehe2gJNG8zWaOv8jS1Qd5NdDwIFiasvGLB8n/7dwEmGytLmRvxs2ZklbFS59ZhZ
-	 Y+dXCw+KunEC0DBMhVJnfjSd2W011G0n6+S3zqpRvtMEq9lAzk5bULE4EZQi6D9Zz+
-	 osuS+JtBTxf5A==
-Received: from localhost (gaia [local])
-	by gaia (OpenSMTPD) with ESMTPA id f52185ec;
-	Wed, 3 Jan 2024 07:22:44 +0000 (UTC)
-Date: Wed, 3 Jan 2024 16:22:29 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-Message-ID: <ZZULNQAZ0n0WQv7p@codewreck.org>
-References: <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4D1802F
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 07:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-50e77a2805fso7161080e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 23:39:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704267593; x=1704872393; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+AbFo3Bg4oMZjrfE+TFYwDX0ZlwLxbfW/PTfwAvhZxA=;
+        b=C590/BvQ+x+TjDQLzADKZQlVt++vWdDjP6ZgZeLpcQ06y2/Z5g2CqJRNYfvJBbAHi+
+         yPbNSOrcxxgbnI0RXNT4HWaogsifw1MQeCvQjbBZWBygd0CcS2KvldX00NfgRb9iohvm
+         czLsY9Op3/o9KpUVhtT7VaMN6nrzW8HJBKGFilVNdQH7NUhpG5pu/HKSGwbUFiosqWVR
+         BPs8jSiclFT0j/dvW//cWnHvvsBaHxARba7GV/3ceHUCWb/N65yG+yIVrmX0FvIHKF+i
+         rQ+lDKLD8frJpVU2yn1isPo9RVkzjHuIGFLtPT+wBXlX9T15Wj7TirMbcvBlf7ZZA9gZ
+         qP5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704267593; x=1704872393;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+AbFo3Bg4oMZjrfE+TFYwDX0ZlwLxbfW/PTfwAvhZxA=;
+        b=QpXMi0Rj7TaMRrcfQmpQK88dWx9MijgMyYTsR14Nc0zcWPUitshYWimVmpAwjYQNzM
+         iJ9GfT9eWmrqTA//w3A4Q7WeEuDslGzKT5nzYrYUe84dC9HKPbfrR5n+ngZKWfk1Xt/E
+         msLorkNm0ZYlNMr8534wMIFzSxPQliQR8E6eUmcvmr8tiU8iAPtQzDF75fV790aQk63Q
+         PYC4vc4mOKqvQu38nUp86jUHvteosRT/MC+KoXBEBOumecPe0RnbD0IEKgB7jQ3KYAOD
+         wUD5X7ucZp3dInDemS6tJzNt6u/3nyT2WEVJDoEdrg74zGksLf0tI9WvJ3NFYpOHIHpm
+         ipbQ==
+X-Gm-Message-State: AOJu0YxEJrWuJJ2wMgAi8wmlQ2JHeH19wmdCydlLjWWCgjFjRuPjg9bj
+	mB88ICVefwnnpqCeYOPeREVIbW7kx2Jom04kDk7aBMJJvAM=
+X-Google-Smtp-Source: AGHT+IGqLUJo7QIpSVAnkZsf7fjF/Nf2AiCvSI6SngMMh/NRhhjNMGkInvDVxHCRiQdE6k74oTMzJQ==
+X-Received: by 2002:a05:6512:20ce:b0:50e:7aef:e9df with SMTP id u14-20020a05651220ce00b0050e7aefe9dfmr2993498lfr.19.1704267592993;
+        Tue, 02 Jan 2024 23:39:52 -0800 (PST)
+Received: from smtpclient.apple ([2a00:1370:81a4:169c:b817:c4e5:4423:6afc])
+        by smtp.gmail.com with ESMTPSA id c25-20020a056512239900b0050e84c1b75fsm2129354lfv.84.2024.01.02.23.39.51
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 02 Jan 2024 23:39:52 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
-
-David Howells wrote on Thu, Dec 21, 2023 at 01:23:35PM +0000:
-> Use netfslib's read and write iteration helpers, allowing netfslib to take
-> over the management of the page cache for 9p files and to manage local disk
-> caching.  In particular, this eliminates write_begin, write_end, writepage
-> and all mentions of struct page and struct folio from 9p.
-> 
-> Note that netfslib now offers the possibility of write-through caching if
-> that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
-> v9inode->netfs.flags in v9fs_set_netfs_context().
-> 
-> Note also this is untested as I can't get ganesha.nfsd to correctly parse
-> the config to turn on 9p support.
-
-(that's appparently no longer true and might need updating)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
+Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
+Date: Wed, 3 Jan 2024 10:39:50 +0300
+Cc: lsf-pc@lists.linux-foundation.org,
+ linux-bcachefs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
+References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
+ <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
+ <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+X-Mailer: Apple Mail (2.3696.120.41.1.4)
 
 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> cc: Eric Van Hensbergen <ericvh@kernel.org>
-> cc: Latchesar Ionkov <lucho@ionkov.net>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
 
-At quite high level, I've played with this a bit and see no obvious
-regression with the extra patch
+> On Jan 2, 2024, at 7:05 PM, Kent Overstreet =
+<kent.overstreet@linux.dev> wrote:
+>=20
+> On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
+>>=20
+>>=20
+>>> On Jan 2, 2024, at 1:56 AM, Kent Overstreet =
+<kent.overstreet@linux.dev> wrote:
+>>>=20
+>>> LSF topic: bcachefs status & roadmap
+>>>=20
+>>=20
+>> <skipped>
+>>=20
+>>>=20
+>>> A delayed allocation for btree nodes mode is coming, which is the =
+main
+>>> piece needed for ZNS support
+>>>=20
+>>=20
+>> I could miss some emails. But have you shared the vision of ZNS =
+support
+>> architecture for the case of bcachefs already? It will be interesting =
+to hear
+>> the high-level concept.
+>=20
+> There's not a whole lot to it. bcache/bcachefs allocation is already
+> bucket based, where the model is that we allocate a bucket, then write
+> to it sequentially and never overwrite until the whole bucket is =
+reused.
+>=20
+> The main exception has been btree nodes, which are log structured and
+> typically smaller than a bucket; that doesn't break the "no =
+overwrites"
+> property ZNS wants, but it does mean writes within a bucket aren't
+> happening sequentially.
+>=20
+> So I'm adding a mode where every time we do a btree node write we =
+write
+> out the whole node to a new location, instead of appending at an
+> existing location. It won't be as efficient for random updates across =
+a
+> large working set, but in practice that doesn't happen too much; =
+average
+> btree write size has always been quite high on any filesystem I've
+> looked at.
+>=20
+> Aside from that, it's mostly just plumbing and integration; bcachefs =
+on
+> ZNS will work pretty much just the same as bcachefs on regular block =
+devices.
 
-I've also manually confirmed one of the big improvements I'd been asking
-for (that writes in cached modes, which used to be chunked to 4k, and
-are now properly aggregated, so e.g 'dd bs=1M count=1' will properly
-issue a minimal number of TWRITE calls capped by msize) -- this is
-great!
+I assume that you are aware about limited number of open/active zones
+on ZNS device. It means that you can open for write operations
+only N zones simultaneously (for example, 14 zones for the case of WDC
+ZNS device). Can bcachefs survive with such limitation? Can you limit =
+the number
+of buckets for write operations?
 
-I've noticed we don't cache xattrs are all, so with the default mount
-options on a kernel built with 9P_FS_SECURITY we'll get a gazillion
-lookups for security.capabilities... But that's another problem, and
-this is still an improvement so no reason to hold back.
+Another potential issue could be the zone size. WDC ZNS device =
+introduces
+2GB zone size (with 1GB capacity). Could be the bucket is so huge? And =
+could
+btree model of operations works with such huge zones?
 
-I've got a couple of questions below, but:
+Technically speaking, limitation (14 open/active zones) could be the =
+factor of
+performance degradation. Could such limitation doesn=E2=80=99t effect =
+the bcachefs
+performance?
 
-Tested-by: Dominique Martinet <asmadeus@codewreck.org>
-Acked-by: Dominique Martinet <asmadeus@codewreck.org>
+Could ZNS model affects a GC operations? Or, oppositely, ZNS model can
+help to manage GC operations more efficiently?
 
+Do you need in conventional zone? Could bcachefs work without using
+the conventional zone of ZNS device?
 
-(I'd still be extremly thanksful if Christian and/or Eric would have
-time to check as well, but I won't push back to merging it this merge
-window next week if they don't have time... I'll also keep trying to run
-some more tests as time allows)
+Thanks,
+Slava.
 
-> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-> cc: v9fs@lists.linux.dev
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> ---
-> 
-> Notes:
->     Changes
->     =======
->     ver #5)
->      - Added some missing remote_i_size setting.
->      - Added missing writepages (else mmap write never written back).
-> 
->  fs/9p/vfs_addr.c       | 293 ++++++++++-------------------------------
->  fs/9p/vfs_file.c       |  89 ++-----------
->  fs/9p/vfs_inode.c      |   5 +-
->  fs/9p/vfs_inode_dotl.c |   7 +-
->  4 files changed, 85 insertions(+), 309 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index 055b672a247d..20f072c18ce9 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -19,12 +19,48 @@
->  #include <linux/netfs.h>
->  #include <net/9p/9p.h>
->  #include <net/9p/client.h>
-> +#include <trace/events/netfs.h>
->  
->  #include "v9fs.h"
->  #include "v9fs_vfs.h"
->  #include "cache.h"
->  #include "fid.h"
->  
-> +static void v9fs_upload_to_server(struct netfs_io_subrequest *subreq)
-> +{
-> +	struct inode *inode = subreq->rreq->inode;
-> +	struct v9fs_inode __maybe_unused *v9inode = V9FS_I(inode);
-
-Any reason to have this variable assignment at all?
-(I assume it'll get optimized away, but it looks like that's not a maybe
-here so was a bit surprised -- I guess it's just been copy-pasted from
-the old code getting the fscache cookie?)
-
-> +	struct p9_fid *fid = subreq->rreq->netfs_priv;
-> +	int err;
-> +
-> +	trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
-> +	p9_client_write(fid, subreq->start, &subreq->io_iter, &err);
-
-p9_client_write return value should always be subreq->len, but I believe
-we should use it unless err is set.
-(It's also possible for partial writes to happen, e.g. p9_client_write
-looped a few times and then failed, at which point the size returned
-would be the amount that actually got through -- we probably should do
-something with that?)
-
-> +	netfs_write_subrequest_terminated(subreq, err < 0 ? err : subreq->len,
-> +					  false);
-> +}
-> +
-> +static void v9fs_upload_to_server_worker(struct work_struct *work)
-> +{
-> +	struct netfs_io_subrequest *subreq =
-> +		container_of(work, struct netfs_io_subrequest, work);
-> +
-> +	v9fs_upload_to_server(subreq);
-> +}
-> +
-> +/*
-> + * Set up write requests for a writeback slice.  We need to add a write request
-> + * for each write we want to make.
-> + */
-> +static void v9fs_create_write_requests(struct netfs_io_request *wreq, loff_t start, size_t len)
-> +{
-> +	struct netfs_io_subrequest *subreq;
-> +
-> +	subreq = netfs_create_write_request(wreq, NETFS_UPLOAD_TO_SERVER,
-> +					    start, len, v9fs_upload_to_server_worker);
-> +	if (subreq)
-> +		netfs_queue_write_request(subreq);
-> +}
-> +
->  /**
->   * v9fs_issue_read - Issue a read from 9P
->   * @subreq: The read to make
-> @@ -33,14 +69,10 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
->  {
->  	struct netfs_io_request *rreq = subreq->rreq;
->  	struct p9_fid *fid = rreq->netfs_priv;
-> -	struct iov_iter to;
-> -	loff_t pos = subreq->start + subreq->transferred;
-> -	size_t len = subreq->len   - subreq->transferred;
->  	int total, err;
->  
-> -	iov_iter_xarray(&to, ITER_DEST, &rreq->mapping->i_pages, pos, len);
-> -
-> -	total = p9_client_read(fid, pos, &to, &err);
-> +	total = p9_client_read(fid, subreq->start + subreq->transferred,
-> +			       &subreq->io_iter, &err);
-
-Just to clarify: subreq->io_iter didn't exist (or some conditions to use
-it weren't cleared) before?
-
->  
->  	/* if we just extended the file size, any portion not in
->  	 * cache won't be on server and is zeroes */
-> @@ -50,23 +82,37 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
->  }
->  
->  /**
-> - * v9fs_init_request - Initialise a read request
-> + * v9fs_init_request - Initialise a request
->   * @rreq: The read request
->   * @file: The file being read from
->   */
->  static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
->  {
-> -	struct p9_fid *fid = file->private_data;
-> -
-> -	BUG_ON(!fid);
-> +	struct p9_fid *fid;
-> +	bool writing = (rreq->origin == NETFS_READ_FOR_WRITE ||
-> +			rreq->origin == NETFS_WRITEBACK ||
-> +			rreq->origin == NETFS_WRITETHROUGH ||
-> +			rreq->origin == NETFS_LAUNDER_WRITE ||
-> +			rreq->origin == NETFS_UNBUFFERED_WRITE ||
-> +			rreq->origin == NETFS_DIO_WRITE);
-> +
-> +	if (file) {
-> +		fid = file->private_data;
-> +		BUG_ON(!fid);
-
-This probably should be WARN + return EINVAL like find by inode?
-It's certainly a huge problem, but we should avoid BUG if possible...
-
-> +		p9_fid_get(fid);
-> +	} else {
-> +		fid = v9fs_fid_find_inode(rreq->inode, writing, INVALID_UID, true);
-> +		if (!fid) {
-> +			WARN_ONCE(1, "folio expected an open fid inode->i_private=%p\n",
-> +				  rreq->inode->i_private);
-
-nit: not sure what's cleaner?
-Since there's a message that makes for a bit awkward if...
-
-if (WARN_ONCE(!fid, "folio expected an open fid inode->i_private=%p\n",
-	      rreq->inode->i_private))
-	return -EINVAL;
-
-(as a side note, I'm not sure what to make of this i_private pointer
-here, but if that'll help you figure something out sure..)
-
-> +			return -EINVAL;
-> +		}
-> +	}
->  
->  	/* we might need to read from a fid that was opened write-only
->  	 * for read-modify-write of page cache, use the writeback fid
->  	 * for that */
-> -	WARN_ON(rreq->origin == NETFS_READ_FOR_WRITE &&
-> -			!(fid->mode & P9_ORDWR));
-> -
-> -	p9_fid_get(fid);
-> +	WARN_ON(writing && !(fid->mode & P9_ORDWR));
-
-This is as follow on your netfs-lib branch:
--       WARN_ON(rreq->origin == NETFS_READ_FOR_WRITE &&
--                       !(fid->mode & P9_ORDWR));
--
--       p9_fid_get(fid);
-+       WARN_ON(rreq->origin == NETFS_READ_FOR_WRITE && !(fid->mode & P9_ORDWR));
-
-So the WARN_ON has been reverted back with only indentation changed;
-I guess there were patterns that were writing despite the fid not having
-been open as RDWR?
-Do you still have details about these?
-
-If a file has been open without the write bit it might not go through,
-and it's incredibly difficult to get such users back to userspace in
-async cases (e.g. mmap flushes), so would like to understand that.
-
->  	rreq->netfs_priv = fid;
->  	return 0;
->  }
-> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-> index 11cd8d23f6f2..bae330c2f0cf 100644
-> --- a/fs/9p/vfs_file.c
-> +++ b/fs/9p/vfs_file.c
-> @@ -353,25 +353,15 @@ static ssize_t
->  v9fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	struct p9_fid *fid = iocb->ki_filp->private_data;
-> -	int ret, err = 0;
->  
->  	p9_debug(P9_DEBUG_VFS, "fid %d count %zu offset %lld\n",
->  		 fid->fid, iov_iter_count(to), iocb->ki_pos);
->  
-> -	if (!(fid->mode & P9L_DIRECT)) {
-> -		p9_debug(P9_DEBUG_VFS, "(cached)\n");
-> -		return generic_file_read_iter(iocb, to);
-> -	}
-> -
-> -	if (iocb->ki_filp->f_flags & O_NONBLOCK)
-> -		ret = p9_client_read_once(fid, iocb->ki_pos, to, &err);
-> -	else
-> -		ret = p9_client_read(fid, iocb->ki_pos, to, &err);
-> -	if (!ret)
-> -		return err;
-> +	if (fid->mode & P9L_DIRECT)
-> +		return netfs_unbuffered_read_iter(iocb, to);
->  
-> -	iocb->ki_pos += ret;
-> -	return ret;
-> +	p9_debug(P9_DEBUG_VFS, "(cached)\n");
-
-(Not a new problem so no need to address here, but having just
-"(cached)" on a split line is a bit weird.. We first compute cached or
-not as a bool and make it %s + cached ? " (cached)" : "" or
-something... I'll send a patch after this gets in to avoid conflicts)
-
-> +	return netfs_file_read_iter(iocb, to);
->  }
->  
->  /*
-> @@ -407,46 +397,14 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct p9_fid *fid = file->private_data;
-> -	ssize_t retval;
-> -	loff_t origin;
-> -	int err = 0;
->  
->  	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
->  
-> -	if (!(fid->mode & (P9L_DIRECT | P9L_NOWRITECACHE))) {
-> -		p9_debug(P9_DEBUG_CACHE, "(cached)\n");
-> -		return generic_file_write_iter(iocb, from);
-> -	}
-> +	if (fid->mode & (P9L_DIRECT | P9L_NOWRITECACHE))
-> +		return netfs_unbuffered_write_iter(iocb, from);
->  
-> -	retval = generic_write_checks(iocb, from);
-> -	if (retval <= 0)
-> -		return retval;
-> -
-> -	origin = iocb->ki_pos;
-> -	retval = p9_client_write(file->private_data, iocb->ki_pos, from, &err);
-> -	if (retval > 0) {
-> -		struct inode *inode = file_inode(file);
-> -		loff_t i_size;
-> -		unsigned long pg_start, pg_end;
-> -
-> -		pg_start = origin >> PAGE_SHIFT;
-> -		pg_end = (origin + retval - 1) >> PAGE_SHIFT;
-> -		if (inode->i_mapping && inode->i_mapping->nrpages)
-> -			invalidate_inode_pages2_range(inode->i_mapping,
-> -						      pg_start, pg_end);
-> -		iocb->ki_pos += retval;
-> -		i_size = i_size_read(inode);
-> -		if (iocb->ki_pos > i_size) {
-> -			inode_add_bytes(inode, iocb->ki_pos - i_size);
-> -			/*
-> -			 * Need to serialize against i_size_write() in
-> -			 * v9fs_stat2inode()
-> -			 */
-> -			v9fs_i_size_write(inode, iocb->ki_pos);
-> -		}
-> -		return retval;
-> -	}
-> -	return err;
-> +	p9_debug(P9_DEBUG_CACHE, "(cached)\n");
-> +	return netfs_file_write_iter(iocb, from);
->  }
->  
->  static int v9fs_file_fsync(struct file *filp, loff_t start, loff_t end,
-> @@ -519,36 +477,7 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
->  static vm_fault_t
->  v9fs_vm_page_mkwrite(struct vm_fault *vmf)
->  {
-> -	struct folio *folio = page_folio(vmf->page);
-> -	struct file *filp = vmf->vma->vm_file;
-> -	struct inode *inode = file_inode(filp);
-> -
-> -
-> -	p9_debug(P9_DEBUG_VFS, "folio %p fid %lx\n",
-> -		 folio, (unsigned long)filp->private_data);
-> -
-> -	/* Wait for the page to be written to the cache before we allow it to
-> -	 * be modified.  We then assume the entire page will need writing back.
-> -	 */
-> -#ifdef CONFIG_9P_FSCACHE
-> -	if (folio_test_fscache(folio) &&
-> -	    folio_wait_fscache_killable(folio) < 0)
-> -		return VM_FAULT_NOPAGE;
-> -#endif
-> -
-> -	/* Update file times before taking page lock */
-> -	file_update_time(filp);
-> -
-> -	if (folio_lock_killable(folio) < 0)
-> -		return VM_FAULT_RETRY;
-> -	if (folio_mapping(folio) != inode->i_mapping)
-> -		goto out_unlock;
-> -	folio_wait_stable(folio);
-> -
-> -	return VM_FAULT_LOCKED;
-> -out_unlock:
-> -	folio_unlock(folio);
-> -	return VM_FAULT_NOPAGE;
-> +	return netfs_page_mkwrite(vmf, NULL);
-
-(I guess there's no helper that could be used directly in .page_mkwrite
-op?)
-
->  }
->  
->  static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
-> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-> index 74122540e00f..55345753ae8d 100644
-> --- a/fs/9p/vfs_inode.c
-> +++ b/fs/9p/vfs_inode.c
-> @@ -374,10 +374,8 @@ void v9fs_evict_inode(struct inode *inode)
->  
->  	truncate_inode_pages_final(&inode->i_data);
->  
-> -#ifdef CONFIG_9P_FSCACHE
->  	version = cpu_to_le32(v9inode->qid.version);
->  	netfs_clear_inode_writeback(inode, &version);
-> -#endif
->  
->  	clear_inode(inode);
->  	filemap_fdatawrite(&inode->i_data);
-> @@ -1112,7 +1110,7 @@ static int v9fs_vfs_setattr(struct mnt_idmap *idmap,
->  	if ((iattr->ia_valid & ATTR_SIZE) &&
->  		 iattr->ia_size != i_size_read(inode)) {
->  		truncate_setsize(inode, iattr->ia_size);
-> -		truncate_pagecache(inode, iattr->ia_size);
-> +		netfs_resize_file(netfs_inode(inode), iattr->ia_size, true);
->  
->  #ifdef CONFIG_9P_FSCACHE
->  		if (v9ses->cache & CACHE_FSCACHE) {
-> @@ -1180,6 +1178,7 @@ v9fs_stat2inode(struct p9_wstat *stat, struct inode *inode,
->  	mode |= inode->i_mode & ~S_IALLUGO;
->  	inode->i_mode = mode;
->  
-> +	v9inode->netfs.remote_i_size = stat->length;
->  	if (!(flags & V9FS_STAT2INODE_KEEP_ISIZE))
->  		v9fs_i_size_write(inode, stat->length);
->  	/* not real number of blocks, but 512 byte ones ... */
-> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-> index c7319af2f471..e25fbc988f09 100644
-> --- a/fs/9p/vfs_inode_dotl.c
-> +++ b/fs/9p/vfs_inode_dotl.c
-> @@ -598,7 +598,7 @@ int v9fs_vfs_setattr_dotl(struct mnt_idmap *idmap,
->  	if ((iattr->ia_valid & ATTR_SIZE) && iattr->ia_size !=
->  		 i_size_read(inode)) {
->  		truncate_setsize(inode, iattr->ia_size);
-> -		truncate_pagecache(inode, iattr->ia_size);
-> +		netfs_resize_file(netfs_inode(inode), iattr->ia_size, true);
->  
->  #ifdef CONFIG_9P_FSCACHE
->  		if (v9ses->cache & CACHE_FSCACHE)
-> @@ -655,6 +655,7 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode,
->  		mode |= inode->i_mode & ~S_IALLUGO;
->  		inode->i_mode = mode;
->  
-> +		v9inode->netfs.remote_i_size = stat->st_size;
->  		if (!(flags & V9FS_STAT2INODE_KEEP_ISIZE))
->  			v9fs_i_size_write(inode, stat->st_size);
->  		inode->i_blocks = stat->st_blocks;
-> @@ -683,8 +684,10 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode,
->  			inode->i_mode = mode;
->  		}
->  		if (!(flags & V9FS_STAT2INODE_KEEP_ISIZE) &&
-> -		    stat->st_result_mask & P9_STATS_SIZE)
-> +		    stat->st_result_mask & P9_STATS_SIZE) {
-> +			v9inode->netfs.remote_i_size = stat->st_size;
->  			v9fs_i_size_write(inode, stat->st_size);
-> +		}
->  		if (stat->st_result_mask & P9_STATS_BLOCKS)
->  			inode->i_blocks = stat->st_blocks;
->  	}
-> 
-
--- 
-Dominique Martinet | Asmadeus
 
