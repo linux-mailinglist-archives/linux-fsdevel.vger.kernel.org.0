@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-7211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E32F822DD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:58:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CFD822DDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B04285BBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562E2285BCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151B71C6AF;
-	Wed,  3 Jan 2024 12:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BA61C6B2;
+	Wed,  3 Jan 2024 12:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVIP+wyC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIiE1LN9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8144B1C692;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E021C696;
+	Wed,  3 Jan 2024 12:56:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F543C433C7;
 	Wed,  3 Jan 2024 12:56:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739F6C433CA;
-	Wed,  3 Jan 2024 12:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704286592;
-	bh=3QdoyKimZ2MzZfuqTDgI4se0zTrQjYhFaZCp+W/qXJU=;
+	s=k20201202; t=1704286594;
+	bh=SNksmdREYQ4G4E9enbuAVrHtdHDfuHJxBC6kFZXSeMc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KVIP+wyC2QC19bsWt70J1tV9mvM5YqTuCiIr7UgMfZCuaELahybc/CmfLUYdn0G/6
-	 vFTl/EgoGBS9vDvCPfsk8cqZNaRYMdBm7ItZafO1o8kZCsp36eXDiDhsHNyNe/sR8/
-	 WBAchS0ihR36Eh+FvTd2rXB2/L1ibRBa3xbtzzb9Q8iyChZju9PiYWwt+oI+oTwxvz
-	 PJo194/X0gyOSybmHXxowe7JnGt5QUhw2NtIQESS4TAZRlbxOAJ9C1MoGXFaMn1cKK
-	 C5THkQptFIKMXdXgsnrc4VennDWtqv9uLrDsgf8+HTxKogVJ7yj9sYwySEpLdKDEyU
-	 ZrnvM7yO5AwJA==
+	b=JIiE1LN9TuT3otlMK8p4cQarxYhmikjja9bRzW0+Sff/+XTEUKS7WoJt4UxhreaIE
+	 Sh2QwbH1CywvpwM3pXt++f04lJ3aUb9Rh1Cp2z5gojzv0JVBZ9EZvJDUuHbSSXCHjT
+	 u1TFEh7D5tx5StHVH7UFW9twKnGpSqM9FpRuLphN8MbGbyAshux9+TKogSHxuOglXe
+	 +8z2joTahRWS6Ir+t0KcoWGNZw/JONDZ7/zTiSQFpTxVr3LsjDs8QoswUB0rVnKs09
+	 y3PDTSihwRko6j0l5dM49z8a0aVWJ91OLe6nMMiWk3Qs+2/uAZqn3j5C3B9n/N3KEs
+	 YhFU4U29xigGw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 03 Jan 2024 13:55:28 +0100
-Subject: [PATCH RFC 30/34] bdev: rework bdev_open_by_dev()
+Date: Wed, 03 Jan 2024 13:55:29 +0100
+Subject: [PATCH RFC 31/34] ext4: rely on sb->f_bdev only
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240103-vfs-bdev-file-v1-30-6c8ee55fb6ef@kernel.org>
+Message-Id: <20240103-vfs-bdev-file-v1-31-6c8ee55fb6ef@kernel.org>
 References: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 In-Reply-To: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -51,309 +51,221 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9361; i=brauner@kernel.org;
- h=from:subject:message-id; bh=3QdoyKimZ2MzZfuqTDgI4se0zTrQjYhFaZCp+W/qXJU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbS9NfdLwgMGbUm+lufS6/3svDIuq91Yprd4/+HXD
- GZsM+YwdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkJR8jw/b7sRbrituP3eKc
- e7BAnimN6/bxtxK/Ci7Pusy8YMmu0LsM/33Zp+85dO4ZU3987tfcP2VXDMT8QlP+Cefe9Quv4Td
- Q4QAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8254; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=SNksmdREYQ4G4E9enbuAVrHtdHDfuHJxBC6kFZXSeMc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbTNFLwgcerw4gPXfT84WrhsVVw5Va+bfZ/817T1l
+ frLTzdGd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykvYeRoUcp2903k0Nt5bxM
+ xkPuGxaJ3Pv1xjTc69HcasUTfAu3VjAyHOtQPB5XE2jweZJ63kbzNkGROR9fG1946NPHJX8nprW
+ GEwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Now that we always use files when opening block devices rework
-bdev_open_by_dev() to work well with both bdev_file_open_by_*() and
-blkdev_open().
-
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- block/bdev.c | 139 +++++++++++++++++++++++++++++++++--------------------------
- block/blk.h  |   6 +--
- block/fops.c |  34 ++++++---------
- 3 files changed, 94 insertions(+), 85 deletions(-)
+ fs/ext4/dir.c         |  2 +-
+ fs/ext4/ext4_jbd2.c   |  2 +-
+ fs/ext4/fast_commit.c |  2 +-
+ fs/ext4/super.c       | 36 ++++++++++++++++++------------------
+ 4 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/block/bdev.c b/block/bdev.c
-index b276ef994858..2867edba0169 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -704,6 +704,24 @@ static int blkdev_get_part(struct block_device *part, blk_mode_t mode)
- 	return ret;
- }
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 3985f8c33f95..992f09aff438 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -192,7 +192,7 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 					(PAGE_SHIFT - inode->i_blkbits);
+ 			if (!ra_has_index(&file->f_ra, index))
+ 				page_cache_sync_readahead(
+-					sb->s_bdev->bd_inode->i_mapping,
++					F_BDEV(sb->s_f_bdev)->bd_inode->i_mapping,
+ 					&file->f_ra, file,
+ 					index, 1);
+ 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
+diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
+index d1a2e6624401..97f9ba412f1e 100644
+--- a/fs/ext4/ext4_jbd2.c
++++ b/fs/ext4/ext4_jbd2.c
+@@ -206,7 +206,7 @@ static void ext4_journal_abort_handle(const char *caller, unsigned int line,
  
-+int bdev_permission(dev_t dev, blk_mode_t mode, void *holder)
-+{
-+	int ret;
-+
-+	ret = devcgroup_check_permission(
-+		DEVCG_DEV_BLOCK, MAJOR(dev), MINOR(dev),
-+		((mode & BLK_OPEN_READ) ? DEVCG_ACC_READ : 0) |
-+			((mode & BLK_OPEN_WRITE) ? DEVCG_ACC_WRITE : 0));
-+	if (ret)
-+		return ret;
-+
-+	/* Blocking writes requires exclusive opener */
-+	if (mode & BLK_OPEN_RESTRICT_WRITES && !holder)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static void blkdev_put_part(struct block_device *part)
+ static void ext4_check_bdev_write_error(struct super_block *sb)
  {
- 	struct block_device *whole = bdev_whole(part);
-@@ -796,15 +814,15 @@ static void bdev_yield_write_access(struct block_device *bdev, blk_mode_t mode)
- }
+-	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
++	struct address_space *mapping = F_BDEV(sb->s_f_bdev)->bd_inode->i_mapping;
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	int err;
  
- /**
-- * bdev_open_by_dev - open a block device by device number
-- * @dev: device number of block device to open
-+ * bdev_open - open a block device
-+ * @bdev: block device to open
-  * @mode: open mode (BLK_OPEN_*)
-  * @holder: exclusive holder identifier
-  * @hops: holder operations
-+ * @f_bdev: file for the block device
-  *
-- * Open the block device described by device number @dev. If @holder is not
-- * %NULL, the block device is opened with exclusive access.  Exclusive opens may
-- * nest for the same @holder.
-+ * Open the block device. If @holder is not %NULL, the block device is opened
-+ * with exclusive access.  Exclusive opens may nest for the same @holder.
-  *
-  * Use this interface ONLY if you really do not have anything better - i.e. when
-  * you are behind a truly sucky interface and all you are given is a device
-@@ -814,52 +832,29 @@ static void bdev_yield_write_access(struct block_device *bdev, blk_mode_t mode)
-  * Might sleep.
-  *
-  * RETURNS:
-- * Handle with a reference to the block_device on success, ERR_PTR(-errno) on
-- * failure.
-+ * zero on success, -errno on failure.
+diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+index 87c009e0c59a..60ca93b7df81 100644
+--- a/fs/ext4/fast_commit.c
++++ b/fs/ext4/fast_commit.c
+@@ -1605,7 +1605,7 @@ static int ext4_fc_replay_inode(struct super_block *sb,
+ out:
+ 	iput(inode);
+ 	if (!ret)
+-		blkdev_issue_flush(sb->s_bdev);
++		blkdev_issue_flush(F_BDEV(sb->s_f_bdev));
+ 
+ 	return 0;
+ }
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 3fec1decccbf..6ea654105076 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -244,7 +244,7 @@ static struct buffer_head *__ext4_sb_bread_gfp(struct super_block *sb,
+ struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
+ 				   blk_opf_t op_flags)
+ {
+-	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
++	gfp_t gfp = mapping_gfp_constraint(F_BDEV(sb->s_f_bdev)->bd_inode->i_mapping,
+ 			~__GFP_FS) | __GFP_MOVABLE;
+ 
+ 	return __ext4_sb_bread_gfp(sb, block, op_flags, gfp);
+@@ -253,7 +253,7 @@ struct buffer_head *ext4_sb_bread(struct super_block *sb, sector_t block,
+ struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
+ 					    sector_t block)
+ {
+-	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_inode->i_mapping,
++	gfp_t gfp = mapping_gfp_constraint(F_BDEV(sb->s_f_bdev)->bd_inode->i_mapping,
+ 			~__GFP_FS);
+ 
+ 	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
+@@ -261,7 +261,7 @@ struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
+ 
+ void ext4_sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+ {
+-	struct buffer_head *bh = bdev_getblk(sb->s_bdev, block,
++	struct buffer_head *bh = bdev_getblk(F_BDEV(sb->s_f_bdev), block,
+ 			sb->s_blocksize, GFP_NOWAIT | __GFP_NOWARN);
+ 
+ 	if (likely(bh)) {
+@@ -477,7 +477,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+ 		return;
+ 
+ 	lifetime_write_kbytes = sbi->s_kbytes_written +
+-		((part_stat_read(sb->s_bdev, sectors[STAT_WRITE]) -
++		((part_stat_read(F_BDEV(sb->s_f_bdev), sectors[STAT_WRITE]) -
+ 		  sbi->s_sectors_written_start) >> 1);
+ 
+ 	/* Get the number of kilobytes not written to disk to account
+@@ -502,7 +502,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
   */
--struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
--				     const struct blk_holder_ops *hops)
-+int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
-+	      const struct blk_holder_ops *hops, struct file *f_bdev)
+ static int block_device_ejected(struct super_block *sb)
  {
- 	struct bdev_handle *handle = kmalloc(sizeof(struct bdev_handle),
- 					     GFP_KERNEL);
--	struct block_device *bdev;
- 	bool unblock_events = true;
--	struct gendisk *disk;
-+	struct gendisk *disk = bdev->bd_disk;
- 	int ret;
+-	struct inode *bd_inode = sb->s_bdev->bd_inode;
++	struct inode *bd_inode = F_BDEV(sb->s_f_bdev)->bd_inode;
+ 	struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
  
-+	handle = kmalloc(sizeof(struct bdev_handle), GFP_KERNEL);
- 	if (!handle)
--		return ERR_PTR(-ENOMEM);
--
--	ret = devcgroup_check_permission(DEVCG_DEV_BLOCK,
--			MAJOR(dev), MINOR(dev),
--			((mode & BLK_OPEN_READ) ? DEVCG_ACC_READ : 0) |
--			((mode & BLK_OPEN_WRITE) ? DEVCG_ACC_WRITE : 0));
--	if (ret)
--		goto free_handle;
--
--	/* Blocking writes requires exclusive opener */
--	if (mode & BLK_OPEN_RESTRICT_WRITES && !holder) {
--		ret = -EINVAL;
--		goto free_handle;
--	}
--
--	bdev = blkdev_get_no_open(dev);
--	if (!bdev) {
--		ret = -ENXIO;
--		goto free_handle;
--	}
--	disk = bdev->bd_disk;
-+		return -ENOMEM;
- 
- 	if (holder) {
- 		mode |= BLK_OPEN_EXCL;
- 		ret = bd_prepare_to_claim(bdev, holder, hops);
- 		if (ret)
--			goto put_blkdev;
-+			return ret;
- 	} else {
--		if (WARN_ON_ONCE(mode & BLK_OPEN_EXCL)) {
--			ret = -EIO;
--			goto put_blkdev;
--		}
-+		if (WARN_ON_ONCE(mode & BLK_OPEN_EXCL))
-+			return -EIO;
+ 	return bdi->dev == NULL;
+@@ -722,7 +722,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
+ 			jbd2_journal_abort(journal, -EIO);
  	}
  
- 	disk_block_events(disk);
-@@ -903,7 +898,22 @@ struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 	handle->bdev = bdev;
- 	handle->holder = holder;
- 	handle->mode = mode;
--	return handle;
-+
-+	/*
-+	 * Preserve backwards compatibility and allow large file access
-+	 * even if userspace doesn't ask for it explicitly. Some mkfs
-+	 * binary needs it. We might want to drop this workaround
-+	 * during an unstable branch.
-+	 */
-+	f_bdev->f_flags |= O_LARGEFILE;
-+	f_bdev->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
-+	if (bdev_nowait(bdev))
-+		f_bdev->f_mode |= FMODE_NOWAIT;
-+	f_bdev->f_mapping = handle->bdev->bd_inode->i_mapping;
-+	f_bdev->f_wb_err = filemap_sample_wb_err(f_bdev->f_mapping);
-+	f_bdev->private_data = handle;
-+
-+	return 0;
- put_module:
- 	module_put(disk->fops->owner);
- abort_claiming:
-@@ -911,11 +921,8 @@ struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 		bd_abort_claiming(bdev, holder);
- 	mutex_unlock(&disk->open_mutex);
- 	disk_unblock_events(disk);
--put_blkdev:
--	blkdev_put_no_open(bdev);
--free_handle:
- 	kfree(handle);
--	return ERR_PTR(ret);
-+	return ret;
- }
+-	if (!bdev_read_only(sb->s_bdev)) {
++	if (!bdev_read_only(F_BDEV(sb->s_f_bdev))) {
+ 		save_error_info(sb, error, ino, block, func, line);
+ 		/*
+ 		 * In case the fs should keep running, we need to writeout
+@@ -1084,7 +1084,7 @@ __acquires(bitlock)
+ 		if (test_opt(sb, WARN_ON_ERROR))
+ 			WARN_ON_ONCE(1);
+ 		EXT4_SB(sb)->s_mount_state |= EXT4_ERROR_FS;
+-		if (!bdev_read_only(sb->s_bdev)) {
++		if (!bdev_read_only(F_BDEV(sb->s_f_bdev))) {
+ 			save_error_info(sb, EFSCORRUPTED, ino, block, function,
+ 					line);
+ 			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+@@ -1357,8 +1357,8 @@ static void ext4_put_super(struct super_block *sb)
+ 		dump_orphan_list(sb, sbi);
+ 	ASSERT(list_empty(&sbi->s_orphan));
  
- static unsigned blk_to_file_flags(blk_mode_t mode)
-@@ -927,8 +934,10 @@ static unsigned blk_to_file_flags(blk_mode_t mode)
- 		flags |= O_RDWR;
- 	else if (mode & BLK_OPEN_WRITE)
- 		flags |= O_WRONLY;
--	else
-+	else if (mode & BLK_OPEN_READ)
- 		flags |= O_RDONLY;
-+	else /* Neither read nor write for a block device requested? */
-+		WARN_ON_ONCE(true);
+-	sync_blockdev(sb->s_bdev);
+-	invalidate_bdev(sb->s_bdev);
++	sync_blockdev(F_BDEV(sb->s_f_bdev));
++	invalidate_bdev(F_BDEV(sb->s_f_bdev));
+ 	if (sbi->s_journal_f_bdev) {
+ 		/*
+ 		 * Invalidate the journal device's buffers.  We don't want them
+@@ -4338,7 +4338,7 @@ static struct ext4_sb_info *ext4_alloc_sbi(struct super_block *sb)
+ 	if (!sbi)
+ 		return NULL;
  
- 	/*
- 	 * O_EXCL is one of those flags that the VFS clears once it's done with
-@@ -952,31 +961,37 @@ static unsigned blk_to_file_flags(blk_mode_t mode)
- struct file *bdev_file_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
- 				   const struct blk_holder_ops *hops)
- {
--	struct file *file;
--	struct bdev_handle *handle;
-+	struct file *f_bdev;
-+	struct block_device *bdev;
- 	unsigned int flags;
-+	int ret;
+-	sbi->s_daxdev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->s_dax_part_off,
++	sbi->s_daxdev = fs_dax_get_by_bdev(F_BDEV(sb->s_f_bdev), &sbi->s_dax_part_off,
+ 					   NULL, NULL);
  
--	handle = bdev_open_by_dev(dev, mode, holder, hops);
--	if (IS_ERR(handle))
--		return ERR_CAST(handle);
-+	ret = bdev_permission(dev, 0, holder);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	bdev = blkdev_get_no_open(dev);
-+	if (!bdev)
-+		return ERR_PTR(-ENXIO);
+ 	sbi->s_blockgroup_lock =
+@@ -5231,7 +5231,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
  
- 	flags = blk_to_file_flags(mode);
--	file = alloc_file_pseudo(handle->bdev->bd_inode, blockdev_mnt, "",
--				 flags | O_LARGEFILE, &def_blk_fops);
--	if (IS_ERR(file)) {
--		bdev_release(handle);
--		return file;
-+	f_bdev = alloc_file_pseudo(bdev->bd_inode, blockdev_mnt, "",
-+				   flags | O_LARGEFILE, &def_blk_fops);
-+	if (IS_ERR(f_bdev)) {
-+		blkdev_put_no_open(bdev);
-+		return f_bdev;
+ 	sbi->s_inode_readahead_blks = EXT4_DEF_INODE_READAHEAD_BLKS;
+ 	sbi->s_sectors_written_start =
+-		part_stat_read(sb->s_bdev, sectors[STAT_WRITE]);
++		part_stat_read(F_BDEV(sb->s_f_bdev), sectors[STAT_WRITE]);
+ 
+ 	err = ext4_load_super(sb, &logical_sb_block, silent);
+ 	if (err)
+@@ -5585,7 +5585,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 	 * used to detect the metadata async write error.
+ 	 */
+ 	spin_lock_init(&sbi->s_bdev_wb_lock);
+-	errseq_check_and_advance(&sb->s_bdev->bd_inode->i_mapping->wb_err,
++	errseq_check_and_advance(&F_BDEV(sb->s_f_bdev)->bd_inode->i_mapping->wb_err,
+ 				 &sbi->s_bdev_wb_err);
+ 	EXT4_SB(sb)->s_mount_state |= EXT4_ORPHAN_FS;
+ 	ext4_orphan_cleanup(sb, es);
+@@ -5605,7 +5605,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 			goto failed_mount10;
  	}
--	ihold(handle->bdev->bd_inode);
--
--	file->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT | FMODE_NOACCOUNT;
--	if (bdev_nowait(handle->bdev))
--		file->f_mode |= FMODE_NOWAIT;
-+	f_bdev->f_mode &= ~FMODE_OPENED;
  
--	file->f_mapping = handle->bdev->bd_inode->i_mapping;
--	file->f_wb_err = filemap_sample_wb_err(file->f_mapping);
--	file->private_data = handle;
--	return file;
-+	ihold(bdev->bd_inode);
-+	ret = bdev_open(bdev, mode, holder, hops, f_bdev);
-+	if (ret) {
-+		fput(f_bdev);
-+		return ERR_PTR(ret);
-+	}
-+	/* Now that thing is opened. */
-+	f_bdev->f_mode |= FMODE_OPENED;
-+	return f_bdev;
+-	if (test_opt(sb, DISCARD) && !bdev_max_discard_sectors(sb->s_bdev))
++	if (test_opt(sb, DISCARD) && !bdev_max_discard_sectors(F_BDEV(sb->s_f_bdev)))
+ 		ext4_msg(sb, KERN_WARNING,
+ 			 "mounting with \"discard\" option, but the device does not support discard");
+ 
+@@ -5684,7 +5684,7 @@ failed_mount9: __maybe_unused
+ 		fput(sbi->s_journal_f_bdev);
+ 	}
+ out_fail:
+-	invalidate_bdev(sb->s_bdev);
++	invalidate_bdev(F_BDEV(sb->s_f_bdev));
+ 	sb->s_fs_info = NULL;
+ 	return err;
  }
- EXPORT_SYMBOL(bdev_file_open_by_dev);
+@@ -5943,7 +5943,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
+ 	if (IS_ERR(f_bdev))
+ 		return ERR_CAST(f_bdev);
  
-diff --git a/block/blk.h b/block/blk.h
-index d1a2030fa5c3..ab1a5ab8cd2e 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -525,7 +525,7 @@ static inline int req_ref_read(struct request *req)
- }
+-	journal = jbd2_journal_init_dev(F_BDEV(f_bdev), sb->s_bdev, j_start,
++	journal = jbd2_journal_init_dev(F_BDEV(f_bdev), F_BDEV(sb->s_f_bdev), j_start,
+ 					j_len, sb->s_blocksize);
+ 	if (IS_ERR(journal)) {
+ 		ext4_msg(sb, KERN_ERR, "failed to create device journal");
+@@ -6008,7 +6008,7 @@ static int ext4_load_journal(struct super_block *sb,
+ 	}
  
- void bdev_release(struct bdev_handle *handle);
--struct bdev_handle *bdev_open_by_dev(dev_t dev, blk_mode_t mode, void *holder,
--		const struct blk_holder_ops *hops);
--
-+int bdev_open(struct block_device *bdev, blk_mode_t mode, void *holder,
-+	      const struct blk_holder_ops *hops, struct file *f_bdev);
-+int bdev_permission(dev_t dev, blk_mode_t mode, void *holder);
- #endif /* BLK_INTERNAL_H */
-diff --git a/block/fops.c b/block/fops.c
-index 0abaac705daf..ed7be8b5810e 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -584,31 +584,25 @@ blk_mode_t file_to_blk_mode(struct file *file)
+ 	journal_dev_ro = bdev_read_only(journal->j_dev);
+-	really_read_only = bdev_read_only(sb->s_bdev) | journal_dev_ro;
++	really_read_only = bdev_read_only(F_BDEV(sb->s_f_bdev)) | journal_dev_ro;
  
- static int blkdev_open(struct inode *inode, struct file *filp)
- {
--	struct bdev_handle *handle;
-+	struct block_device *bdev;
- 	blk_mode_t mode;
--
--	/*
--	 * Preserve backwards compatibility and allow large file access
--	 * even if userspace doesn't ask for it explicitly. Some mkfs
--	 * binary needs it. We might want to drop this workaround
--	 * during an unstable branch.
--	 */
--	filp->f_flags |= O_LARGEFILE;
--	filp->f_mode |= FMODE_BUF_RASYNC | FMODE_CAN_ODIRECT;
-+	void *holder;
-+	int ret;
- 
- 	mode = file_to_blk_mode(filp);
--	handle = bdev_open_by_dev(inode->i_rdev, mode,
--			mode & BLK_OPEN_EXCL ? filp : NULL, NULL);
--	if (IS_ERR(handle))
--		return PTR_ERR(handle);
-+	holder = mode & BLK_OPEN_EXCL ? filp : NULL;
-+	ret = bdev_permission(inode->i_rdev, mode, holder);
-+	if (ret)
-+		return ret;
- 
--	if (bdev_nowait(handle->bdev))
--		filp->f_mode |= FMODE_NOWAIT;
-+	bdev = blkdev_get_no_open(inode->i_rdev);
-+	if (!bdev)
-+		return -ENXIO;
- 
--	filp->f_mapping = handle->bdev->bd_inode->i_mapping;
--	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
--	filp->private_data = handle;
--	return 0;
-+	ret = bdev_open(bdev, mode, holder, NULL, filp);
-+	if (ret)
-+		blkdev_put_no_open(bdev);
-+	return ret;
- }
- 
- static int blkdev_release(struct inode *inode, struct file *filp)
+ 	if (journal_dev_ro && !sb_rdonly(sb)) {
+ 		ext4_msg(sb, KERN_ERR,
+@@ -6125,7 +6125,7 @@ static void ext4_update_super(struct super_block *sb)
+ 		ext4_update_tstamp(es, s_wtime);
+ 	es->s_kbytes_written =
+ 		cpu_to_le64(sbi->s_kbytes_written +
+-		    ((part_stat_read(sb->s_bdev, sectors[STAT_WRITE]) -
++		    ((part_stat_read(F_BDEV(sb->s_f_bdev), sectors[STAT_WRITE]) -
+ 		      sbi->s_sectors_written_start) >> 1));
+ 	if (percpu_counter_initialized(&sbi->s_freeclusters_counter))
+ 		ext4_free_blocks_count_set(es,
+@@ -6359,7 +6359,7 @@ static int ext4_sync_fs(struct super_block *sb, int wait)
+ 		needs_barrier = true;
+ 	if (needs_barrier) {
+ 		int err;
+-		err = blkdev_issue_flush(sb->s_bdev);
++		err = blkdev_issue_flush(F_BDEV(sb->s_f_bdev));
+ 		if (!ret)
+ 			ret = err;
+ 	}
 
 -- 
 2.42.0
