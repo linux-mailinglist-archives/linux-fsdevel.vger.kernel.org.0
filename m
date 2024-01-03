@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-7188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A78C822DA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:56:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9679F822DAA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9612E1F21519
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:56:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11F93B2205B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5F91A594;
-	Wed,  3 Jan 2024 12:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C641A5A3;
+	Wed,  3 Jan 2024 12:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaMMUeLY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grxu89kJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B661A58B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1101A58B;
+	Wed,  3 Jan 2024 12:55:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C096C433C8;
 	Wed,  3 Jan 2024 12:55:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD90C43397;
-	Wed,  3 Jan 2024 12:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704286543;
-	bh=SUWQhrFleGuumt8/1sW8NuFvQDVTinRTMZf3WP5XVts=;
+	s=k20201202; t=1704286545;
+	bh=E1pb3tWRhbIb1ThnWwVIbSlHfg+upza6Ty2NR9Cnaeo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kaMMUeLYYbZ78IpD3F7jMhKX+z+KvLH5HDY/nqkFdFOhaxSylfPnKhZUTRh+j4azH
-	 pofD4Tudko5IplARBFSBPg/2+PgpxPzI0AKFBzvStvB3Pg+CThQ3+jcE8sSQ2Hb1Ip
-	 ioXhx8BLFEAYguKt3BZaeEs8hmtyGzxAKw5yMM2Vr00nhlGBzEMxdf6d/T6Q7lNcFR
-	 22ALwPCWQ8YZMO66ntbWeD7+YER4Sz/AjAu5/lzpTnt3ToQCfvJGRLlwKedHPzGErK
-	 pDvVcAZIrZxpwjOqJDHxYXvLqRb7fIAWmCwQm2OzioutOFemL2c0I1F3QdGHPsLfCp
-	 PogC6gpewChvQ==
+	b=grxu89kJ+vydYrrXOCzqK7V1iNBZwNjTe1Vu6CBbIB6DlYRbSKRhWqkvcklp+SIls
+	 F+lO9QL3sB1bFNut4UAZAt0SAV1Mia6ENpM1hWWzNSLGvyC/UnS6PqC+emxYSX/lag
+	 H/Yuo2tQkjmYfI2C7XBU/Uogj071XL9f5hqWQ2UWRUNag4ezPFxf2y3Tk0Lb7VAGSe
+	 jMz+mtZQBtaN7XZdHbRXCxpNwCjiGX3dYEg+FcztR+DWbkcuvXD3YM1yXuqgpW7LBQ
+	 PfDQnSW25qlfjolbUwhJGic26KUrBlJ2a4JRWoDYfC5tFCVJhoiHczckAnvpLpcJdP
+	 K80I/LgSuJlJQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 03 Jan 2024 13:55:05 +0100
-Subject: [PATCH RFC 07/34] xfs: port block device access to files
+Date: Wed, 03 Jan 2024 13:55:06 +0100
+Subject: [PATCH RFC 08/34] drbd: port block device access to file
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240103-vfs-bdev-file-v1-7-6c8ee55fb6ef@kernel.org>
+Message-Id: <20240103-vfs-bdev-file-v1-8-6c8ee55fb6ef@kernel.org>
 References: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 In-Reply-To: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -51,186 +51,166 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5349; i=brauner@kernel.org;
- h=from:subject:message-id; bh=SUWQhrFleGuumt8/1sW8NuFvQDVTinRTMZf3WP5XVts=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbTZMX/qS8Ffbmv/7qhSXq6y4M7Byek67MYL9Dh65
- tj07vn+oKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiSV2MDD9908/YWmm2Vzl/
- P/PFYrtJvpdRNrN36ErWfR857v8pW8DI8ED50vIks4o4NZv0f3W96TVyS0OWXzTNyro6c9NpC69
- QZgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5353; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=E1pb3tWRhbIb1ThnWwVIbSlHfg+upza6Ty2NR9Cnaeo=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbThjwlW8Ln7f37nk4Lzx67FHp36eGZLAsfZ/2vch
+ QUic2dP7ChhYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI5HaGv4Knar7VNfZ9KT9t
+ 5GLzoJfz2KaeRZwsmUc3V2t9XGX4fTnDN31nz6+fvVYwFgtYnpBYIzVvxuPpF//bGs+Zr5jYadD
+ PCQA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/xfs/xfs_buf.c   | 10 +++++-----
- fs/xfs/xfs_buf.h   |  4 ++--
- fs/xfs/xfs_super.c | 43 +++++++++++++++++++++----------------------
- 3 files changed, 28 insertions(+), 29 deletions(-)
+ drivers/block/drbd/drbd_int.h |  4 +--
+ drivers/block/drbd/drbd_nl.c  | 58 +++++++++++++++++++++----------------------
+ 2 files changed, 31 insertions(+), 31 deletions(-)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 545c7991b9b5..685eb2a9f9d2 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1951,7 +1951,7 @@ xfs_free_buftarg(
- 	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
- 	/* the main block device is closed by kill_block_super */
- 	if (btp->bt_bdev != btp->bt_mount->m_super->s_bdev)
--		bdev_release(btp->bt_bdev_handle);
-+		fput(btp->bt_f_bdev);
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index c21e3732759e..3f57b3a04f39 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -524,9 +524,9 @@ struct drbd_md {
  
- 	kmem_free(btp);
+ struct drbd_backing_dev {
+ 	struct block_device *backing_bdev;
+-	struct bdev_handle *backing_bdev_handle;
++	struct file *f_backing_bdev;
+ 	struct block_device *md_bdev;
+-	struct bdev_handle *md_bdev_handle;
++	struct file *f_md_bdev;
+ 	struct drbd_md md;
+ 	struct disk_conf *disk_conf; /* RCU, for updates: resource->conf_update */
+ 	sector_t known_size; /* last known size of that backing device */
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 43747a1aae43..d53a681286cd 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -1635,45 +1635,45 @@ int drbd_adm_disk_opts(struct sk_buff *skb, struct genl_info *info)
+ 	return 0;
  }
-@@ -1994,7 +1994,7 @@ xfs_setsize_buftarg_early(
- struct xfs_buftarg *
- xfs_alloc_buftarg(
- 	struct xfs_mount	*mp,
--	struct bdev_handle	*bdev_handle)
-+	struct file		*f_bdev)
+ 
+-static struct bdev_handle *open_backing_dev(struct drbd_device *device,
++static struct file *open_backing_dev(struct drbd_device *device,
+ 		const char *bdev_path, void *claim_ptr, bool do_bd_link)
  {
- 	xfs_buftarg_t		*btp;
- 	const struct dax_holder_operations *ops = NULL;
-@@ -2005,9 +2005,9 @@ xfs_alloc_buftarg(
- 	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
+-	struct bdev_handle *handle;
++	struct file *file;
+ 	int err = 0;
  
- 	btp->bt_mount = mp;
--	btp->bt_bdev_handle = bdev_handle;
--	btp->bt_dev = bdev_handle->bdev->bd_dev;
--	btp->bt_bdev = bdev_handle->bdev;
-+	btp->bt_f_bdev = f_bdev;
-+	btp->bt_bdev = F_BDEV(f_bdev);
-+	btp->bt_dev = btp->bt_bdev->bd_dev;
- 	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
- 					    mp, ops);
- 
-diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-index c86e16419656..4005dcffb792 100644
---- a/fs/xfs/xfs_buf.h
-+++ b/fs/xfs/xfs_buf.h
-@@ -98,7 +98,7 @@ typedef unsigned int xfs_buf_flags_t;
-  */
- typedef struct xfs_buftarg {
- 	dev_t			bt_dev;
--	struct bdev_handle	*bt_bdev_handle;
-+	struct file		*bt_f_bdev;
- 	struct block_device	*bt_bdev;
- 	struct dax_device	*bt_daxdev;
- 	u64			bt_dax_part_off;
-@@ -365,7 +365,7 @@ xfs_buf_update_cksum(struct xfs_buf *bp, unsigned long cksum_offset)
-  *	Handling of buftargs.
-  */
- struct xfs_buftarg *xfs_alloc_buftarg(struct xfs_mount *mp,
--		struct bdev_handle *bdev_handle);
-+		struct file *f_bdev);
- extern void xfs_free_buftarg(struct xfs_buftarg *);
- extern void xfs_buftarg_wait(struct xfs_buftarg *);
- extern void xfs_buftarg_drain(struct xfs_buftarg *);
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 0e64220bffdc..01ef0ef83c41 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -362,16 +362,16 @@ STATIC int
- xfs_blkdev_get(
- 	xfs_mount_t		*mp,
- 	const char		*name,
--	struct bdev_handle	**handlep)
-+	struct file		**f_bdevp)
- {
- 	int			error = 0;
- 
--	*handlep = bdev_open_by_path(name,
-+	*f_bdevp = bdev_file_open_by_path(name,
- 		BLK_OPEN_READ | BLK_OPEN_WRITE | BLK_OPEN_RESTRICT_WRITES,
- 		mp->m_super, &fs_holder_ops);
--	if (IS_ERR(*handlep)) {
--		error = PTR_ERR(*handlep);
--		*handlep = NULL;
-+	if (IS_ERR(*f_bdevp)) {
-+		error = PTR_ERR(*f_bdevp);
-+		*f_bdevp = NULL;
- 		xfs_warn(mp, "Invalid device [%s], error=%d", name, error);
+-	handle = bdev_open_by_path(bdev_path, BLK_OPEN_READ | BLK_OPEN_WRITE,
+-				   claim_ptr, NULL);
+-	if (IS_ERR(handle)) {
++	file = bdev_file_open_by_path(bdev_path, BLK_OPEN_READ | BLK_OPEN_WRITE,
++				      claim_ptr, NULL);
++	if (IS_ERR(file)) {
+ 		drbd_err(device, "open(\"%s\") failed with %ld\n",
+-				bdev_path, PTR_ERR(handle));
+-		return handle;
++				bdev_path, PTR_ERR(file));
++		return file;
  	}
  
-@@ -436,26 +436,25 @@ xfs_open_devices(
+ 	if (!do_bd_link)
+-		return handle;
++		return file;
+ 
+-	err = bd_link_disk_holder(handle->bdev, device->vdisk);
++	err = bd_link_disk_holder(F_BDEV(file), device->vdisk);
+ 	if (err) {
+-		bdev_release(handle);
++		fput(file);
+ 		drbd_err(device, "bd_link_disk_holder(\"%s\", ...) failed with %d\n",
+ 				bdev_path, err);
+-		handle = ERR_PTR(err);
++		file = ERR_PTR(err);
+ 	}
+-	return handle;
++	return file;
+ }
+ 
+ static int open_backing_devices(struct drbd_device *device,
+ 		struct disk_conf *new_disk_conf,
+ 		struct drbd_backing_dev *nbc)
  {
- 	struct super_block	*sb = mp->m_super;
- 	struct block_device	*ddev = sb->s_bdev;
--	struct bdev_handle	*logdev_handle = NULL, *rtdev_handle = NULL;
-+	struct file		*f_logdev = NULL, *f_rtdev = NULL;
- 	int			error;
+-	struct bdev_handle *handle;
++	struct file *file;
+ 
+-	handle = open_backing_dev(device, new_disk_conf->backing_dev, device,
++	file = open_backing_dev(device, new_disk_conf->backing_dev, device,
+ 				  true);
+-	if (IS_ERR(handle))
++	if (IS_ERR(file))
+ 		return ERR_OPEN_DISK;
+-	nbc->backing_bdev = handle->bdev;
+-	nbc->backing_bdev_handle = handle;
++	nbc->backing_bdev = F_BDEV(file);
++	nbc->f_backing_bdev = file;
  
  	/*
- 	 * Open real time and log devices - order is important.
+ 	 * meta_dev_idx >= 0: external fixed size, possibly multiple
+@@ -1683,7 +1683,7 @@ static int open_backing_devices(struct drbd_device *device,
+ 	 * should check it for you already; but if you don't, or
+ 	 * someone fooled it, we need to double check here)
  	 */
- 	if (mp->m_logname) {
--		error = xfs_blkdev_get(mp, mp->m_logname, &logdev_handle);
-+		error = xfs_blkdev_get(mp, mp->m_logname, &f_logdev);
- 		if (error)
- 			return error;
- 	}
- 
- 	if (mp->m_rtname) {
--		error = xfs_blkdev_get(mp, mp->m_rtname, &rtdev_handle);
-+		error = xfs_blkdev_get(mp, mp->m_rtname, &f_rtdev);
- 		if (error)
- 			goto out_close_logdev;
- 
--		if (rtdev_handle->bdev == ddev ||
--		    (logdev_handle &&
--		     rtdev_handle->bdev == logdev_handle->bdev)) {
-+		if (F_BDEV(f_rtdev) == ddev ||
-+		    (f_logdev && F_BDEV(f_rtdev) == F_BDEV(f_logdev))) {
- 			xfs_warn(mp,
- 	"Cannot mount filesystem with identical rtdev and ddev/logdev.");
- 			error = -EINVAL;
-@@ -467,25 +466,25 @@ xfs_open_devices(
- 	 * Setup xfs_mount buffer target pointers
- 	 */
- 	error = -ENOMEM;
--	mp->m_ddev_targp = xfs_alloc_buftarg(mp, sb_bdev_handle(sb));
-+	mp->m_ddev_targp = xfs_alloc_buftarg(mp, sb->s_f_bdev);
- 	if (!mp->m_ddev_targp)
- 		goto out_close_rtdev;
- 
--	if (rtdev_handle) {
--		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, rtdev_handle);
-+	if (f_rtdev) {
-+		mp->m_rtdev_targp = xfs_alloc_buftarg(mp, f_rtdev);
- 		if (!mp->m_rtdev_targp)
- 			goto out_free_ddev_targ;
- 	}
- 
--	if (logdev_handle && logdev_handle->bdev != ddev) {
--		mp->m_logdev_targp = xfs_alloc_buftarg(mp, logdev_handle);
-+	if (f_logdev && F_BDEV(f_logdev) != ddev) {
-+		mp->m_logdev_targp = xfs_alloc_buftarg(mp, f_logdev);
- 		if (!mp->m_logdev_targp)
- 			goto out_free_rtdev_targ;
- 	} else {
- 		mp->m_logdev_targp = mp->m_ddev_targp;
- 		/* Handle won't be used, drop it */
--		if (logdev_handle)
--			bdev_release(logdev_handle);
-+		if (f_logdev)
-+			fput(f_logdev);
- 	}
- 
- 	return 0;
-@@ -496,11 +495,11 @@ xfs_open_devices(
-  out_free_ddev_targ:
- 	xfs_free_buftarg(mp->m_ddev_targp);
-  out_close_rtdev:
--	 if (rtdev_handle)
--		bdev_release(rtdev_handle);
-+	 if (f_rtdev)
-+		fput(f_rtdev);
-  out_close_logdev:
--	if (logdev_handle)
--		bdev_release(logdev_handle);
-+	if (f_logdev)
-+		fput(f_logdev);
- 	return error;
+-	handle = open_backing_dev(device, new_disk_conf->meta_dev,
++	file = open_backing_dev(device, new_disk_conf->meta_dev,
+ 		/* claim ptr: device, if claimed exclusively; shared drbd_m_holder,
+ 		 * if potentially shared with other drbd minors */
+ 			(new_disk_conf->meta_dev_idx < 0) ? (void*)device : (void*)drbd_m_holder,
+@@ -1691,21 +1691,21 @@ static int open_backing_devices(struct drbd_device *device,
+ 		 * as would happen with internal metadata. */
+ 			(new_disk_conf->meta_dev_idx != DRBD_MD_INDEX_FLEX_INT &&
+ 			 new_disk_conf->meta_dev_idx != DRBD_MD_INDEX_INTERNAL));
+-	if (IS_ERR(handle))
++	if (IS_ERR(file))
+ 		return ERR_OPEN_MD_DISK;
+-	nbc->md_bdev = handle->bdev;
+-	nbc->md_bdev_handle = handle;
++	nbc->md_bdev = F_BDEV(file);
++	nbc->f_md_bdev = file;
+ 	return NO_ERROR;
  }
  
+ static void close_backing_dev(struct drbd_device *device,
+-		struct bdev_handle *handle, bool do_bd_unlink)
++		struct file *f_bdev, bool do_bd_unlink)
+ {
+-	if (!handle)
++	if (!f_bdev)
+ 		return;
+ 	if (do_bd_unlink)
+-		bd_unlink_disk_holder(handle->bdev, device->vdisk);
+-	bdev_release(handle);
++		bd_unlink_disk_holder(F_BDEV(f_bdev), device->vdisk);
++	fput(f_bdev);
+ }
+ 
+ void drbd_backing_dev_free(struct drbd_device *device, struct drbd_backing_dev *ldev)
+@@ -1713,9 +1713,9 @@ void drbd_backing_dev_free(struct drbd_device *device, struct drbd_backing_dev *
+ 	if (ldev == NULL)
+ 		return;
+ 
+-	close_backing_dev(device, ldev->md_bdev_handle,
++	close_backing_dev(device, ldev->f_md_bdev,
+ 			  ldev->md_bdev != ldev->backing_bdev);
+-	close_backing_dev(device, ldev->backing_bdev_handle, true);
++	close_backing_dev(device, ldev->f_backing_bdev, true);
+ 
+ 	kfree(ldev->disk_conf);
+ 	kfree(ldev);
+@@ -2131,9 +2131,9 @@ int drbd_adm_attach(struct sk_buff *skb, struct genl_info *info)
+  fail:
+ 	conn_reconfig_done(connection);
+ 	if (nbc) {
+-		close_backing_dev(device, nbc->md_bdev_handle,
++		close_backing_dev(device, nbc->f_md_bdev,
+ 			  nbc->md_bdev != nbc->backing_bdev);
+-		close_backing_dev(device, nbc->backing_bdev_handle, true);
++		close_backing_dev(device, nbc->f_backing_bdev, true);
+ 		kfree(nbc);
+ 	}
+ 	kfree(new_disk_conf);
 
 -- 
 2.42.0
