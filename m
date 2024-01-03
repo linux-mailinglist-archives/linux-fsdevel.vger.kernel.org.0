@@ -1,102 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-7249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6846823561
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:14:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C55823566
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6291F24D1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 19:14:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32ECF1F25755
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 19:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3D41CAA4;
-	Wed,  3 Jan 2024 19:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E71CAA8;
+	Wed,  3 Jan 2024 19:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkxoGN4Q"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EqAcBFq9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D771CA97
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 19:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 3 Jan 2024 14:14:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704309278;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r/YNnCrtCw2RaQdRgaw1iiukczrdsnnbdB/yFFLnTZo=;
-	b=VkxoGN4QgL18C5+lbZPadBDhUC5uoPm09m2o6NA/fSQTg2fkmervlluyEb0f/b8yx3GkyP
-	jKc7t5s42cEZqGydIcFtSIGi8KFF7LFZyZL/6xh44hTU4Q9bSmVIhGPfcpIa83OkJBfjQm
-	TUr58dWRa5UdxPFrTEYMVp5tAzcllSw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
-Message-ID: <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
- <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
- <ZZWhQGkl0xPiBD5/@casper.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69ED1CA89
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 19:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-556c3f0d6c5so1257005a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 11:15:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1704309317; x=1704914117; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqpWt6ocefEfDXK+KnHNKXoEM0IL+DB/QDp9HBirG1E=;
+        b=EqAcBFq97pFwtmYe13BC1tWt0GnonY1LTo4njL+s/snL8yXFgvwnYkRUvAtt0zQ9y6
+         1mAGHvuhP4DgrfVmN58DjUqF4MjT9AUfQ9v+xAn91VKSdCaUBG/PJsNgglyc+tUo5uIJ
+         agJzYaT5uMGGPb5c8DZYQb6Ljve9/cQuK6XK0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704309317; x=1704914117;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VqpWt6ocefEfDXK+KnHNKXoEM0IL+DB/QDp9HBirG1E=;
+        b=QVHcTuG35BW/Gd1XgxldsSUFA0VYXO57svQlDjxVzgCoNGQnRp1vt/kEW40ml7TRf0
+         udvMfEzFX3D2Z+H+/IgAqMF/H+Vdg5Mwm0Obv1pqdOaN1CAi+IX55BUs23+lXN6N+PcJ
+         rR9ufLrimo2BZWevUyDwUZHHCclQCjRvf5O6p/5BpfW7c1FK3leUoJlyiHevl5zuG2oD
+         mKXGHLKj3mBjVj/z50u61ERAi1XNwT2GKPgMs3EEXHv+SOEjDG637Got9Xr1yJI+0MJB
+         mSgsjRYDNVhM6vqb2ElrapYjAo9oI8Z5oiWvChKk5pqAzKB/2qcGfFHzzuwQ/Piuba8U
+         CV5g==
+X-Gm-Message-State: AOJu0YwRkKXlV8hgtw9ZJK9w3OIdwXMhAY23Ei8lbUJccR+NPZmKGbZD
+	vhjPrQSLzq++RmzhjhNblH6Rn4ZtPnYLqrfwlJK5mFIZkg7cSZcD
+X-Google-Smtp-Source: AGHT+IHBNk+nZYma5zbbSEtndmaYV8frhbGoyUzQsbo5lCkh1I1dYUsP9ZUfU43EGMhYIa7p/Ewm5Q==
+X-Received: by 2002:a17:906:189:b0:a28:8cb2:e5a5 with SMTP id 9-20020a170906018900b00a288cb2e5a5mr681868ejb.25.1704309316885;
+        Wed, 03 Jan 2024 11:15:16 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id gh33-20020a1709073c2100b00a26b3f29f3dsm11925216ejc.43.2024.01.03.11.15.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jan 2024 11:15:15 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-556cd81163fso1036045a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 11:15:15 -0800 (PST)
+X-Received: by 2002:a17:906:ef0c:b0:a27:6fbc:ce3 with SMTP id
+ f12-20020a170906ef0c00b00a276fbc0ce3mr3854440ejs.42.1704309315585; Wed, 03
+ Jan 2024 11:15:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZZWhQGkl0xPiBD5/@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+ <4dec932dcd027aa5836d70a6d6bedd55914c84c2.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+ <6c3fc5e9-f8cf-4b42-9317-8ce9669160c2@kernel.org>
+In-Reply-To: <6c3fc5e9-f8cf-4b42-9317-8ce9669160c2@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jan 2024 11:14:59 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgLZXULo7pg=nwUMFLsKNUe+1_X=Fk7+f-J0735Oir97w@mail.gmail.com>
+Message-ID: <CAHk-=wgLZXULo7pg=nwUMFLsKNUe+1_X=Fk7+f-J0735Oir97w@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] tty: splice_read: disable
+To: Jiri Slaby <jirislaby@kernel.org>, Oliver Giles <ohw.giles@gmail.com>
+Cc: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>, 
+	Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 03, 2024 at 06:02:40PM +0000, Matthew Wilcox wrote:
-> On Tue, Oct 31, 2023 at 05:14:08PM -0300, Wedson Almeida Filho wrote:
-> > > Also, I see you're passing an inode to read_dir.  Why did you decide to
-> > > do that?  There's information in the struct file that's either necessary
-> > > or useful to have in the filesystem.  Maybe not in toy filesystems, but eg
-> > > network filesystems need user credentials to do readdir, which are stored
-> > > in struct file.  Block filesystems store readahead data in struct file.
-> > 
-> > Because the two file systems we have don't use anything from `struct
-> > file` beyond the inode.
-> > 
-> > Passing a `file` to `read_dir` would require us to introduce an
-> > unnecessary abstraction that no one uses, which we've been told not to
-> > do.
-> > 
-> > There is no technical reason that makes it impractical though. We can
-> > add it when the need arises.
-> 
-> Then we shouldn't merge any of this, or even send it out for review
-> again until there is at least one non-toy filesystems implemented.
-> Either stick to the object orientation we've already defined (ie
-> separate aops, iops, fops, ... with substantially similar arguments)
-> or propose changes to the ones we have in C.  Dealing only with toy
-> filesystems is leading you to bad architecture.
+On Wed, 3 Jan 2024 at 03:36, Jiri Slaby <jirislaby@kernel.org> wrote:
+>
+> What are those "things" doing that "splice to tty", I don't recall and
+> the commit message above ^^^ does not spell that out. Linus?
 
-Not sure I agree - this is a "waterfall vs. incremental" question, and
-personally I would go with doing things incrementally here.
+It's some annoying SSL VPN thing that splices to pppd:
 
-We don't need to copy the C interface as is; we can use this as an
-opportunity to incrementally design a new API that will obviously take
-lessons from the C API (since it's wrapping it), but it doesn't have to
-do things the same and it doesn't have to do everything all at once.
+   https://lore.kernel.org/all/C8KER7U60WXE.25UFD8RE6QZQK@oguc/
 
-Anyways, like you alluded to the C side is a bit of a mess w.r.t. what's
-in a_ops vs. i_ops, and cleaning that up on the C side is a giant hassle
-because then you have to fix _everything_ that implements or consumes
-those interfaces at the same time.
+and I'd be happy to try to limit splice to tty's to maybe just the one
+case that pppd uses.
 
-So instead, it would seem easier to me to do the cleaner version on the
-Rust side, and then once we know what that looks like, maybe we update
-the C version to match - or maybe we light it all on fire and continue
-with rewriting everything in Rust... *shrug*
+So I don't think we should remove splice_write for tty's entirely, but
+maybe we can limit it to only the case that the VPN thing used.
+
+I never saw the original issue personally, and I think only Oliver
+reported it, so cc'ing Oliver.
+
+Maybe that VPN thing already has the pty in non-blocking mode, for
+example, and we could make the tty splicing fail for any blocking op?
+
+                Linus
 
