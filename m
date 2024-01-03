@@ -1,188 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-7221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7226-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3CC822F2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:05:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1822822FEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F5A1F2435D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:05:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51494B231C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE0A1A590;
-	Wed,  3 Jan 2024 14:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC071B296;
+	Wed,  3 Jan 2024 14:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKTr7qNL"
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="rtHrxffC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20E1A28A;
-	Wed,  3 Jan 2024 14:04:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CE6C433C7;
-	Wed,  3 Jan 2024 14:04:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704290699;
-	bh=RYNKFXB1pA6ACfuaqdpya+quA/X8Ww41O670fD+ZNNg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=rKTr7qNLBKgIMnnNZD5kydCgVoB0ShDhCqxZzuZqnQaHxHN+3n8eAD5Q1loCLVjJR
-	 uU1d0eneow4rgu1o41DaW+lS1T3SB/GWC+sAZEwEzhpsz6huPi7L5ffd+A/Osns3xs
-	 7guQ8ydipmDJb1pAO2A/VCrWuk4yQep6SMzb5AfD3U77wP7mA/+hlmJnmLhgOvoAC0
-	 COBE5pracc5vYmGzZV2GMs3Sos2+unnWsqjHeTlXI//wPfvHXLMVJNxASe2Dt+0fkt
-	 aYVcIIjciGqJKBRkXKDfoRcP2UEytgT1ESXUAN6VvIJUMkEXdR8r+HD0owcPqTQJdy
-	 NYdIoSbmFVuKw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099231B277
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 14:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40d5ac76667so54517905e9.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 06:57:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1704293831; x=1704898631; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=1RiYnyjMGkRlvVbGTVdJMyNHcYXgiPC2GcBTk9WI0UU=;
+        b=rtHrxffC07e1zZN5wG4lfkF+f1WHI+aKaJGAjb2gbHNLRbE4K1RAzVgoEprQ5nsjx8
+         11vZipCbP75qIZss1Cl2WkzZciHTurdozLl19bq25AWH5MjfpUQHD9xXzU5ioa0GWo4T
+         WBwquD/kYLCQaRTpvtNyux7KZ/3CrXlJI4m6cQ8TqEed7n3LnubFaih+xbRC33sgI84I
+         btgjb3b9DjucXHNDti2uur0cxclE3BLbuuQzEV580wDze8x/etmUDSudsNgd6KHC+iGQ
+         DQWjGCV8z6OrqM8ihSTtvhEmYEQFo15M4DhID3vKhYV85wwRo8SAfQrft7er5IRLYBbS
+         mX1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704293831; x=1704898631;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1RiYnyjMGkRlvVbGTVdJMyNHcYXgiPC2GcBTk9WI0UU=;
+        b=HvdeIV8bMuCj4Ya45abG4eLXx52itoI4jIch4DezLTH2cUKBkQVaYYVpTD7fsWgB6q
+         lixHBHGShn/giEqXPAhIhCP7brjBB1f9nKZ9W2tz/0nXsy3wLrNSRBpyAdqiW8Y+l5Dl
+         LTIsCkpKQcUPQ2yuFhN5ozbvwbNHQLMPPhlUB5wJnHZWgrn35JDVWBi4TTXzQZiCgtzb
+         A7OdljLKWbguCLn2gAiPxI/PmNjK+6XerDqkEzQlVcSKalgXACRztYQ8WG+bD0JijtXj
+         a63FIBGRHdyLLJVornFLmysAMGyiS3SXfz9ifH4vCGUUui/6v2ej4OvwzRl3vsbV5Gg1
+         Mulg==
+X-Gm-Message-State: AOJu0YxsTXgWywVmvNe9Yykv1Zml7FD/g2hP8n1aSc1T5evm9wD4z6uT
+	CCZcLYOp/YQqKGjc4ABxbH16p6e5uVWn9w==
+X-Google-Smtp-Source: AGHT+IGBfVdl+OwCu7PAJa/VHUoKpnrnnpkIozZ6LK45NUTflG4VVR8fnjI2eJ3uzsdHU/SU1QWBcQ==
+X-Received: by 2002:a05:600c:5190:b0:40d:889c:f213 with SMTP id fa16-20020a05600c519000b0040d889cf213mr2876912wmb.98.1704293831168;
+        Wed, 03 Jan 2024 06:57:11 -0800 (PST)
+Received: from localhost ([165.225.194.221])
+        by smtp.gmail.com with ESMTPSA id p20-20020a05600c469400b0040d85a304desm2540477wmo.35.2024.01.03.06.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jan 2024 06:57:10 -0800 (PST)
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-8-wedsonaf@gmail.com>
+User-agent: mu4e 1.10.8; emacs 28.2.50
+From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent
+ Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Wedson Almeida Filho
+ <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 07/19] rust: fs: introduce `FileSystem::read_dir`
+Date: Wed, 03 Jan 2024 15:09:07 +0100
+In-reply-to: <20231018122518.128049-8-wedsonaf@gmail.com>
+Message-ID: <87jzoq5uvh.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 03 Jan 2024 16:04:54 +0200
-Message-Id: <CY54MOETXVFI.1102C6BQTO36@suppilovahvero>
-Cc: <kernel@quicinc.com>, <quic_pkondeti@quicinc.com>,
- <keescook@chromium.or>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
- <oleg@redhat.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
- <jmorris@namei.org>, <serge@hallyn.com>, <linux-mm@kvack.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
- tasklist_lock
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Maria Yu" <quic_aiquny@quicinc.com>, <ebiederm@xmission.com>
-X-Mailer: aerc 0.15.2
-References: <20231225081932.17752-1-quic_aiquny@quicinc.com>
-In-Reply-To: <20231225081932.17752-1-quic_aiquny@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Mon Dec 25, 2023 at 10:19 AM EET, Maria Yu wrote:
-> As a rwlock for tasklist_lock, there are multiple scenarios to acquire
-> read lock which write lock needed to be waiting for.
-> In freeze_process/thaw_processes it can take about 200+ms for holding rea=
-d
-> lock of tasklist_lock by walking and freezing/thawing tasks in commercial
-> devices. And write_lock_irq will have preempt disabled and local irq
-> disabled to spin until the tasklist_lock can be acquired. This leading to
-> a bad responsive performance of current system.
-> Take an example:
-> 1. cpu0 is holding read lock of tasklist_lock to thaw_processes.
-> 2. cpu1 is waiting write lock of tasklist_lock to exec a new thread with
->    preempt_disabled and local irq disabled.
-> 3. cpu2 is waiting write lock of tasklist_lock to do_exit with
->    preempt_disabled and local irq disabled.
-> 4. cpu3 is waiting write lock of tasklist_lock to do_exit with
->    preempt_disabled and local irq disabled.
-> So introduce a write lock/unlock wrapper for tasklist_lock specificly.
-> The current taskslist_lock writers all have write_lock_irq to hold
-> tasklist_lock, and write_unlock_irq to release tasklist_lock, that means
-> the writers are not suitable or workable to wait on tasklist_lock in irq
-> disabled scenarios. So the write lock/unlock wrapper here only follow the
-> current design of directly use local_irq_disable and local_irq_enable,
-> and not take already irq disabled writer callers into account.
-> Use write_trylock in the loop and enabled irq for cpu to repsond if lock
-> cannot be taken.
->
-> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
-> ---
->  fs/exec.c                  | 10 +++++-----
->  include/linux/sched/task.h | 29 +++++++++++++++++++++++++++++
->  kernel/exit.c              | 16 ++++++++--------
->  kernel/fork.c              |  6 +++---
->  kernel/ptrace.c            | 12 ++++++------
->  kernel/sys.c               |  8 ++++----
->  security/keys/keyctl.c     |  4 ++--
->  7 files changed, 57 insertions(+), 28 deletions(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 4aa19b24f281..030eef6852eb 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1086,7 +1086,7 @@ static int de_thread(struct task_struct *tsk)
-> =20
->  		for (;;) {
->  			cgroup_threadgroup_change_begin(tsk);
-> -			write_lock_irq(&tasklist_lock);
-> +			write_lock_tasklist_lock();
->  			/*
->  			 * Do this under tasklist_lock to ensure that
->  			 * exit_notify() can't miss ->group_exec_task
-> @@ -1095,7 +1095,7 @@ static int de_thread(struct task_struct *tsk)
->  			if (likely(leader->exit_state))
->  				break;
->  			__set_current_state(TASK_KILLABLE);
-> -			write_unlock_irq(&tasklist_lock);
-> +			write_unlock_tasklist_lock();
->  			cgroup_threadgroup_change_end(tsk);
->  			schedule();
->  			if (__fatal_signal_pending(tsk))
-> @@ -1150,7 +1150,7 @@ static int de_thread(struct task_struct *tsk)
->  		 */
->  		if (unlikely(leader->ptrace))
->  			__wake_up_parent(leader, leader->parent);
-> -		write_unlock_irq(&tasklist_lock);
-> +		write_unlock_tasklist_lock();
->  		cgroup_threadgroup_change_end(tsk);
-> =20
->  		release_task(leader);
-> @@ -1198,13 +1198,13 @@ static int unshare_sighand(struct task_struct *me=
-)
-> =20
->  		refcount_set(&newsighand->count, 1);
-> =20
-> -		write_lock_irq(&tasklist_lock);
-> +		write_lock_tasklist_lock();
->  		spin_lock(&oldsighand->siglock);
->  		memcpy(newsighand->action, oldsighand->action,
->  		       sizeof(newsighand->action));
->  		rcu_assign_pointer(me->sighand, newsighand);
->  		spin_unlock(&oldsighand->siglock);
-> -		write_unlock_irq(&tasklist_lock);
-> +		write_unlock_tasklist_lock();
-> =20
->  		__cleanup_sighand(oldsighand);
->  	}
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index a23af225c898..6f69d9a3c868 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -50,6 +50,35 @@ struct kernel_clone_args {
->   * a separate lock).
->   */
->  extern rwlock_t tasklist_lock;
+
+Wedson Almeida Filho <wedsonaf@gmail.com> writes:
+
+[...]
+
+> +    unsafe extern "C" fn read_dir_callback(
+> +        file: *mut bindings::file,
+> +        ctx_ptr: *mut bindings::dir_context,
+> +    ) -> core::ffi::c_int {
+> +        from_result(|| {
+> +            // SAFETY: The C API guarantees that `file` is valid for read. And since `f_inode` is
+> +            // immutable, we can read it directly.
+
+Should this be "the pointee of `f_inode` is immutable" instead?
+
+[...]
+
+> +    pub fn emit(&mut self, pos_inc: i64, name: &[u8], ino: Ino, etype: DirEntryType) -> bool {
+> +        let Ok(name_len) = i32::try_from(name.len()) else {
+> +            return false;
+> +        };
 > +
-> +/*
-> + * Tasklist_lock is a special lock, it takes a good amount of time of
-> + * taskslist_lock readers to finish, and the pure write_irq_lock api
-> + * will do local_irq_disable at the very first, and put the current cpu
-> + * waiting for the lock while is non-responsive for interrupts.
-> + *
-> + * The current taskslist_lock writers all have write_lock_irq to hold
-> + * tasklist_lock, and write_unlock_irq to release tasklist_lock, that
-> + * means the writers are not suitable or workable to wait on
-> + * tasklist_lock in irq disabled scenarios. So the write lock/unlock
-> + * wrapper here only follow the current design of directly use
-> + * local_irq_disable and local_irq_enable.
-> + */
-> +static inline void write_lock_tasklist_lock(void)
-> +{
-> +	while (1) {
-> +		local_irq_disable();
-> +		if (write_trylock(&tasklist_lock))
-> +			break;
-> +		local_irq_enable();
-> +		cpu_relax();
-> +	}
+> +        let Some(actor) = self.0.actor else {
+> +            return false;
+> +        };
+> +
+> +        let Some(new_pos) = self.0.pos.checked_add(pos_inc) else {
+> +            return false;
+> +        };
+> +
+> +        // SAFETY: `name` is valid at least for the duration of the `actor` call.
+> +        let ret = unsafe {
+> +            actor(
+> +                &mut self.0,
+> +                name.as_ptr().cast(),
+> +                name_len,
+> +                self.0.pos,
+> +                ino,
+> +                etype as _,
 
-Maybe:
+I would prefer an explicit target type here.
 
-	local_irq_disable();
-	while (!write_trylock(&tasklist_lock)) {
-		local_irq_enable();
-		cpu_relax();
-		local_irq_disable();
-	}
-
-BR, Jarkko
+BR Andreas
 
