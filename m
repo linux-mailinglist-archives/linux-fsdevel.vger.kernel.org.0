@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-7204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D2A822DC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:58:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083C5822DCB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2D71C23362
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94194285B52
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E815B1BDDD;
-	Wed,  3 Jan 2024 12:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FED01BDF7;
+	Wed,  3 Jan 2024 12:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqEiOYe+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev+/135N"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFDF1BDDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CC71BDE2;
+	Wed,  3 Jan 2024 12:56:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE92FC433C7;
 	Wed,  3 Jan 2024 12:56:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CBDC433CB;
-	Wed,  3 Jan 2024 12:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704286577;
-	bh=7+5QOJ3fzNoJt3ZM8Bte3iZde2IiCDpBP+rwce7BPr0=;
+	s=k20201202; t=1704286579;
+	bh=rz5i3p27iNGMZq3H+CpgPLh9W7l4W+LguQEvw+kLKyI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DqEiOYe+CfkuKcG3qQ3ZrKHenT45sotVFtKbQTsEqHT9UY0eAOwjw+LTj4pTynJ6a
-	 2H75j4xDsTAVQorp4F4D23yfLocJaQbpjULsjQjMTKwSQzDr+AaJ3+0fZw4nCxQSVg
-	 9tYvKsflYDf0LxP3kXxMQnOFBvIPB/VXXMCUKNNsCvaoS1KyYXG4HOn371cjTDRiE8
-	 q9paBo+08AJQy/QbznyLHEF+A/txEVXE1IKf1S41JdAVJT+913EPbb1SZsh1jkJiL5
-	 mS0Q2S1/rNkdgc7ewc+KZQLAnp0TmchvI+75BTz3zx9qTzgP0/KgrpbHyvqjT4ngOp
-	 PfpSA4m6xi5yg==
+	b=ev+/135N9BWwr0aYQlv2/LQj9SW2BgsdQk3inDoOwcFy68N6JrurnmMafZ0aCaZJk
+	 gxxi1uv2ymTXtK3QyH9CneN6L/iYYXiSDuU35tVmqA9edkWEbTmdl3q8arFQG5uUdG
+	 4Xu5Xt8EAlq7sDm+gOecJksQWkvdHJza4IiLgo4uQdzI28Hvw4qpfJE7wFyPU9PVJX
+	 fp7QUc9GIF93daZSptMUxwWau6DFfrj/DDoX95w42Gz2ZjfXAcITTcKmjZFK1JijHw
+	 9Zht0ohFG6CsVOQ5xUmxABMgknKBQTVt3VuRWHJZXqWFQk0lzzWlQbEwB0acBj7A3c
+	 k3TYzK9UjuFNg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 03 Jan 2024 13:55:21 +0100
-Subject: [PATCH RFC 23/34] jfs: port block device access to file
+Date: Wed, 03 Jan 2024 13:55:22 +0100
+Subject: [PATCH RFC 24/34] nfs: port block device access to files
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240103-vfs-bdev-file-v1-23-6c8ee55fb6ef@kernel.org>
+Message-Id: <20240103-vfs-bdev-file-v1-24-6c8ee55fb6ef@kernel.org>
 References: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 In-Reply-To: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -51,147 +51,201 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4516; i=brauner@kernel.org;
- h=from:subject:message-id; bh=7+5QOJ3fzNoJt3ZM8Bte3iZde2IiCDpBP+rwce7BPr0=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbTlij+26o/1iriGLqH4m68mls+70dbJLNryMffE+
- 19/lqy36ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI6j9GhkfxxbNeblGa/+Ll
- i5PX1H5dXVzMbht/4tHW3RODEmdET5zAyHBujnm1nb3trvieX+liCwPvOATwGE0q+raHKfPorW3
- fTrICAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5967; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=rz5i3p27iNGMZq3H+CpgPLh9W7l4W+LguQEvw+kLKyI=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbT13FJoar1SZPe3+MLPbM7Wadv8ti68qbRhFf8iw
+ 28zP/t1d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExkUhIjw7pTb1gVHh6zXuyg
+ WC0txy99d5NA0ZG5l3PMudpMZ+gcvMXw36ft+dT65JyW911m06ZM8p90r++Wf8jhqr6KF0qeLlu
+ VeAE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/jfs/jfs_logmgr.c | 26 +++++++++++++-------------
- fs/jfs/jfs_logmgr.h |  2 +-
- fs/jfs/jfs_mount.c  |  2 +-
- 3 files changed, 15 insertions(+), 15 deletions(-)
+ fs/nfs/blocklayout/blocklayout.h |  2 +-
+ fs/nfs/blocklayout/dev.c         | 68 ++++++++++++++++++++--------------------
+ 2 files changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 8691463956d1..7dd6b3b6fde0 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -1058,7 +1058,7 @@ void jfs_syncpt(struct jfs_log *log, int hard_sync)
- int lmLogOpen(struct super_block *sb)
+diff --git a/fs/nfs/blocklayout/blocklayout.h b/fs/nfs/blocklayout/blocklayout.h
+index b4294a8aa2d4..5f9d9a823c9b 100644
+--- a/fs/nfs/blocklayout/blocklayout.h
++++ b/fs/nfs/blocklayout/blocklayout.h
+@@ -108,7 +108,7 @@ struct pnfs_block_dev {
+ 	struct pnfs_block_dev		*children;
+ 	u64				chunk_size;
+ 
+-	struct bdev_handle		*bdev_handle;
++	struct file			*f_bdev;
+ 	u64				disk_offset;
+ 
+ 	u64				pr_key;
+diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
+index f318a05a80e1..d6534ae9eef7 100644
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -25,17 +25,17 @@ bl_free_device(struct pnfs_block_dev *dev)
+ 	} else {
+ 		if (dev->pr_registered) {
+ 			const struct pr_ops *ops =
+-				dev->bdev_handle->bdev->bd_disk->fops->pr_ops;
++				F_BDEV(dev->f_bdev)->bd_disk->fops->pr_ops;
+ 			int error;
+ 
+-			error = ops->pr_register(dev->bdev_handle->bdev,
++			error = ops->pr_register(F_BDEV(dev->f_bdev),
+ 				dev->pr_key, 0, false);
+ 			if (error)
+ 				pr_err("failed to unregister PR key.\n");
+ 		}
+ 
+-		if (dev->bdev_handle)
+-			bdev_release(dev->bdev_handle);
++		if (dev->f_bdev)
++			fput(dev->f_bdev);
+ 	}
+ }
+ 
+@@ -169,7 +169,7 @@ static bool bl_map_simple(struct pnfs_block_dev *dev, u64 offset,
+ 	map->start = dev->start;
+ 	map->len = dev->len;
+ 	map->disk_offset = dev->disk_offset;
+-	map->bdev = dev->bdev_handle->bdev;
++	map->bdev = F_BDEV(dev->f_bdev);
+ 	return true;
+ }
+ 
+@@ -236,26 +236,26 @@ bl_parse_simple(struct nfs_server *server, struct pnfs_block_dev *d,
+ 		struct pnfs_block_volume *volumes, int idx, gfp_t gfp_mask)
  {
- 	int rc;
+ 	struct pnfs_block_volume *v = &volumes[idx];
 -	struct bdev_handle *bdev_handle;
 +	struct file *f_bdev;
- 	struct jfs_log *log;
- 	struct jfs_sb_info *sbi = JFS_SBI(sb);
+ 	dev_t dev;
  
-@@ -1070,7 +1070,7 @@ int lmLogOpen(struct super_block *sb)
+ 	dev = bl_resolve_deviceid(server, v, gfp_mask);
+ 	if (!dev)
+ 		return -EIO;
  
- 	mutex_lock(&jfs_log_mutex);
- 	list_for_each_entry(log, &jfs_external_logs, journal_list) {
--		if (log->bdev_handle->bdev->bd_dev == sbi->logdev) {
-+		if (F_BDEV(log->f_bdev)->bd_dev == sbi->logdev) {
- 			if (!uuid_equal(&log->uuid, &sbi->loguuid)) {
- 				jfs_warn("wrong uuid on JFS journal");
- 				mutex_unlock(&jfs_log_mutex);
-@@ -1100,14 +1100,14 @@ int lmLogOpen(struct super_block *sb)
- 	 * file systems to log may have n-to-1 relationship;
- 	 */
- 
--	bdev_handle = bdev_open_by_dev(sbi->logdev,
-+	f_bdev = bdev_file_open_by_dev(sbi->logdev,
- 			BLK_OPEN_READ | BLK_OPEN_WRITE, log, NULL);
+-	bdev_handle = bdev_open_by_dev(dev, BLK_OPEN_READ | BLK_OPEN_WRITE,
++	f_bdev = bdev_file_open_by_dev(dev, BLK_OPEN_READ | BLK_OPEN_WRITE,
+ 				       NULL, NULL);
 -	if (IS_ERR(bdev_handle)) {
--		rc = PTR_ERR(bdev_handle);
 +	if (IS_ERR(f_bdev)) {
-+		rc = PTR_ERR(f_bdev);
- 		goto free;
+ 		printk(KERN_WARNING "pNFS: failed to open device %d:%d (%ld)\n",
+-			MAJOR(dev), MINOR(dev), PTR_ERR(bdev_handle));
+-		return PTR_ERR(bdev_handle);
++			MAJOR(dev), MINOR(dev), PTR_ERR(f_bdev));
++		return PTR_ERR(f_bdev);
+ 	}
+-	d->bdev_handle = bdev_handle;
+-	d->len = bdev_nr_bytes(bdev_handle->bdev);
++	d->f_bdev = f_bdev;
++	d->len = bdev_nr_bytes(F_BDEV(f_bdev));
+ 	d->map = bl_map_simple;
+ 
+ 	printk(KERN_INFO "pNFS: using block device %s\n",
+-		bdev_handle->bdev->bd_disk->disk_name);
++		F_BDEV(f_bdev)->bd_disk->disk_name);
+ 	return 0;
+ }
+ 
+@@ -300,10 +300,10 @@ bl_validate_designator(struct pnfs_block_volume *v)
+ 	}
+ }
+ 
+-static struct bdev_handle *
++static struct file *
+ bl_open_path(struct pnfs_block_volume *v, const char *prefix)
+ {
+-	struct bdev_handle *bdev_handle;
++	struct file *f_bdev;
+ 	const char *devname;
+ 
+ 	devname = kasprintf(GFP_KERNEL, "/dev/disk/by-id/%s%*phN",
+@@ -311,15 +311,15 @@ bl_open_path(struct pnfs_block_volume *v, const char *prefix)
+ 	if (!devname)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	bdev_handle = bdev_open_by_path(devname, BLK_OPEN_READ | BLK_OPEN_WRITE,
++	f_bdev = bdev_file_open_by_path(devname, BLK_OPEN_READ | BLK_OPEN_WRITE,
+ 					NULL, NULL);
+-	if (IS_ERR(bdev_handle)) {
++	if (IS_ERR(f_bdev)) {
+ 		pr_warn("pNFS: failed to open device %s (%ld)\n",
+-			devname, PTR_ERR(bdev_handle));
++			devname, PTR_ERR(f_bdev));
  	}
  
--	log->bdev_handle = bdev_handle;
-+	log->f_bdev = f_bdev;
- 	uuid_copy(&log->uuid, &sbi->loguuid);
+ 	kfree(devname);
+-	return bdev_handle;
++	return f_bdev;
+ }
  
- 	/*
-@@ -1141,7 +1141,7 @@ int lmLogOpen(struct super_block *sb)
- 	lbmLogShutdown(log);
- 
-       close:		/* close external log device */
--	bdev_release(bdev_handle);
-+	fput(f_bdev);
- 
-       free:		/* free log descriptor */
- 	mutex_unlock(&jfs_log_mutex);
-@@ -1162,7 +1162,7 @@ static int open_inline_log(struct super_block *sb)
- 	init_waitqueue_head(&log->syncwait);
- 
- 	set_bit(log_INLINELOG, &log->flag);
--	log->bdev_handle = sb_bdev_handle(sb);
-+	log->f_bdev = sb->s_f_bdev;
- 	log->base = addressPXD(&JFS_SBI(sb)->logpxd);
- 	log->size = lengthPXD(&JFS_SBI(sb)->logpxd) >>
- 	    (L2LOGPSIZE - sb->s_blocksize_bits);
-@@ -1436,7 +1436,7 @@ int lmLogClose(struct super_block *sb)
+ static int
+@@ -327,7 +327,7 @@ bl_parse_scsi(struct nfs_server *server, struct pnfs_block_dev *d,
+ 		struct pnfs_block_volume *volumes, int idx, gfp_t gfp_mask)
  {
- 	struct jfs_sb_info *sbi = JFS_SBI(sb);
- 	struct jfs_log *log = sbi->log;
+ 	struct pnfs_block_volume *v = &volumes[idx];
 -	struct bdev_handle *bdev_handle;
 +	struct file *f_bdev;
- 	int rc = 0;
+ 	const struct pr_ops *ops;
+ 	int error;
  
- 	jfs_info("lmLogClose: log:0x%p", log);
-@@ -1482,10 +1482,10 @@ int lmLogClose(struct super_block *sb)
- 	 *	external log as separate logical volume
+@@ -340,32 +340,32 @@ bl_parse_scsi(struct nfs_server *server, struct pnfs_block_dev *d,
+ 	 * On other distributions like Debian, the default SCSI by-id path will
+ 	 * point to the dm-multipath device if one exists.
  	 */
- 	list_del(&log->journal_list);
--	bdev_handle = log->bdev_handle;
-+	f_bdev = log->f_bdev;
- 	rc = lmLogShutdown(log);
+-	bdev_handle = bl_open_path(v, "dm-uuid-mpath-0x");
+-	if (IS_ERR(bdev_handle))
+-		bdev_handle = bl_open_path(v, "wwn-0x");
+-	if (IS_ERR(bdev_handle))
+-		return PTR_ERR(bdev_handle);
+-	d->bdev_handle = bdev_handle;
+-
+-	d->len = bdev_nr_bytes(d->bdev_handle->bdev);
++	f_bdev = bl_open_path(v, "dm-uuid-mpath-0x");
++	if (IS_ERR(f_bdev))
++		f_bdev = bl_open_path(v, "wwn-0x");
++	if (IS_ERR(f_bdev))
++		return PTR_ERR(f_bdev);
++	d->f_bdev = f_bdev;
++
++	d->len = bdev_nr_bytes(F_BDEV(d->f_bdev));
+ 	d->map = bl_map_simple;
+ 	d->pr_key = v->scsi.pr_key;
  
--	bdev_release(bdev_handle);
-+	fput(f_bdev);
+ 	pr_info("pNFS: using block device %s (reservation key 0x%llx)\n",
+-		d->bdev_handle->bdev->bd_disk->disk_name, d->pr_key);
++		F_BDEV(d->f_bdev)->bd_disk->disk_name, d->pr_key);
  
- 	kfree(log);
+-	ops = d->bdev_handle->bdev->bd_disk->fops->pr_ops;
++	ops = F_BDEV(d->f_bdev)->bd_disk->fops->pr_ops;
+ 	if (!ops) {
+ 		pr_err("pNFS: block device %s does not support reservations.",
+-				d->bdev_handle->bdev->bd_disk->disk_name);
++				F_BDEV(d->f_bdev)->bd_disk->disk_name);
+ 		error = -EINVAL;
+ 		goto out_blkdev_put;
+ 	}
  
-@@ -1972,7 +1972,7 @@ static int lbmRead(struct jfs_log * log, int pn, struct lbuf ** bpp)
+-	error = ops->pr_register(d->bdev_handle->bdev, 0, d->pr_key, true);
++	error = ops->pr_register(F_BDEV(d->f_bdev), 0, d->pr_key, true);
+ 	if (error) {
+ 		pr_err("pNFS: failed to register key for block device %s.",
+-				d->bdev_handle->bdev->bd_disk->disk_name);
++				F_BDEV(d->f_bdev)->bd_disk->disk_name);
+ 		goto out_blkdev_put;
+ 	}
  
- 	bp->l_flag |= lbmREAD;
+@@ -373,7 +373,7 @@ bl_parse_scsi(struct nfs_server *server, struct pnfs_block_dev *d,
+ 	return 0;
  
--	bio = bio_alloc(log->bdev_handle->bdev, 1, REQ_OP_READ, GFP_NOFS);
-+	bio = bio_alloc(F_BDEV(log->f_bdev), 1, REQ_OP_READ, GFP_NOFS);
- 	bio->bi_iter.bi_sector = bp->l_blkno << (log->l2bsize - 9);
- 	__bio_add_page(bio, bp->l_page, LOGPSIZE, bp->l_offset);
- 	BUG_ON(bio->bi_iter.bi_size != LOGPSIZE);
-@@ -2115,7 +2115,7 @@ static void lbmStartIO(struct lbuf * bp)
- 	jfs_info("lbmStartIO");
+ out_blkdev_put:
+-	bdev_release(d->bdev_handle);
++	fput(d->f_bdev);
+ 	return error;
+ }
  
- 	if (!log->no_integrity)
--		bdev = log->bdev_handle->bdev;
-+		bdev = F_BDEV(log->f_bdev);
- 
- 	bio = bio_alloc(bdev, 1, REQ_OP_WRITE | REQ_SYNC,
- 			GFP_NOFS);
-diff --git a/fs/jfs/jfs_logmgr.h b/fs/jfs/jfs_logmgr.h
-index 84aa2d253907..c7d2d8fb0204 100644
---- a/fs/jfs/jfs_logmgr.h
-+++ b/fs/jfs/jfs_logmgr.h
-@@ -356,7 +356,7 @@ struct jfs_log {
- 				 *    before writing syncpt.
- 				 */
- 	struct list_head journal_list; /* Global list */
--	struct bdev_handle *bdev_handle; /* 4: log lv pointer */
-+	struct file *f_bdev;	/* 4: log lv pointer */
- 	int serial;		/* 4: log mount serial number */
- 
- 	s64 base;		/* @8: log extent address (inline log ) */
-diff --git a/fs/jfs/jfs_mount.c b/fs/jfs/jfs_mount.c
-index 415eb65a36ff..035ab9de4b4f 100644
---- a/fs/jfs/jfs_mount.c
-+++ b/fs/jfs/jfs_mount.c
-@@ -431,7 +431,7 @@ int updateSuper(struct super_block *sb, uint state)
- 	if (state == FM_MOUNT) {
- 		/* record log's dev_t and mount serial number */
- 		j_sb->s_logdev = cpu_to_le32(
--			new_encode_dev(sbi->log->bdev_handle->bdev->bd_dev));
-+			new_encode_dev(F_BDEV(sbi->log->f_bdev)->bd_dev));
- 		j_sb->s_logserial = cpu_to_le32(sbi->log->serial);
- 	} else if (state == FM_CLEAN) {
- 		/*
 
 -- 
 2.42.0
