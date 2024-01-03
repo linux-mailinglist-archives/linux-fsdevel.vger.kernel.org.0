@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-7206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D1A822DCD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BBD822DD0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 13:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E41A283E51
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:58:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607CD282E5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221331C282;
-	Wed,  3 Jan 2024 12:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719931C29B;
+	Wed,  3 Jan 2024 12:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UA1o5p8x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EufAEbFw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2931BDDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD67B1C291;
+	Wed,  3 Jan 2024 12:56:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D731EC433C9;
 	Wed,  3 Jan 2024 12:56:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4B9C433C9;
-	Wed,  3 Jan 2024 12:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704286581;
-	bh=7sfYV/mhryxnVrcvVKVN+lciO7NJYo09pExkMvO7T7A=;
+	s=k20201202; t=1704286583;
+	bh=VeQ5X6STl1UPSpfWkHXbTgSmv5B3HWmkIlnZ+Gc7KiU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UA1o5p8xm8/2TDGhP9A4o6/e7mB+WudnvqmlO8Plu0HMjqnUb3PeYLfC99oiyFWmi
-	 aOvFXWU5mbaJ9i6wSYGafKwovjNY9q9WCpeckh/1SDWdPMmGMbWJwBo/xkl2QvT4+0
-	 Y6oQGn8v2M1ne3i2I6h6CCB/Vs/yLzFgpurSkohBf9sZSVY5br0zctI2ESMC/AaLTM
-	 DuYo+CsTVUFiZXTpTYUDSneFwsUYU6f/L28dRkvJ26B6VmZ39KBEK332ghvq2CX34z
-	 QPN7kGzj/StnL1cs+dwDw6UkV7b3bHPB0N6rOaGJcbr6jjuhDb99McTtPrPpdraJnb
-	 tWcTzVlLLu5OQ==
+	b=EufAEbFw7i6quxIaVUMcxAtSpFAlfUVyhpBfzXJej+7HkR8WE6U2sms9tAM5fxiJH
+	 6Z/1poXtFYD+GjReLgybRWLoDDjbBm3rJBdva/gFP/43juGzPeFOANsvDquizLUpGB
+	 nLVS3GVmG+9BD6chH96cr0Zqh1/b9NtjJ0TQHT0pCTt6y23SkeqUFb7knatbDZDB3M
+	 vI6JyPLIFfF2OFi4hoF6EmvL/Izbwyvw90yZhZ4RPnoXdU5AI+2AEYKfbe5x8+kg/s
+	 HvgJXiRqV7vzobXA5C0Bs0bp4p2BQI0gd+oocV08YOyugfZ4rTZ2HCTYnBQMBXw6xA
+	 S5EXJ/8H9v5Rw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 03 Jan 2024 13:55:23 +0100
-Subject: [PATCH RFC 25/34] ocfs2: port block device access to file
+Date: Wed, 03 Jan 2024 13:55:24 +0100
+Subject: [PATCH RFC 26/34] reiserfs: port block device access to file
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240103-vfs-bdev-file-v1-25-6c8ee55fb6ef@kernel.org>
+Message-Id: <20240103-vfs-bdev-file-v1-26-6c8ee55fb6ef@kernel.org>
 References: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 In-Reply-To: <20240103-vfs-bdev-file-v1-0-6c8ee55fb6ef@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -51,134 +51,173 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3722; i=brauner@kernel.org;
- h=from:subject:message-id; bh=7sfYV/mhryxnVrcvVKVN+lciO7NJYo09pExkMvO7T7A=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbQ1jvQ+ukBpZnhtY4btv/d3eGbtf7P964cpl/Tq+
- S0l3NdP7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhISQXD/2qWiS7rzq58aTuX
- 5yT/9OD6BsM+PzG1uugdEgdcT56OVWdkeL1HwtHo6A8bj5iiK6/5Sy49WfpqsvScf62VkYI67Vs
- ruAA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6027; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=VeQ5X6STl1UPSpfWkHXbTgSmv5B3HWmkIlnZ+Gc7KiU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaROjbR1TLoYebOisLp/5tFKgW8TFzwz6dLh4lm5btvcy
+ 8Fv4q+od5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkaybDP6NE/udzD7OdeC18
+ yOL3XpEpsbd2xh3QrPx0LbnSdKWbeRQjw03blwuvPha7/2Mxe4Qt79nlmRvWvZ25KHReWM3yXTu
+ FNrMDAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/ocfs2/cluster/heartbeat.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/reiserfs/journal.c  | 38 +++++++++++++++++++-------------------
+ fs/reiserfs/procfs.c   |  2 +-
+ fs/reiserfs/reiserfs.h |  8 ++++----
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index 4d7efefa98c5..e212961493d4 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -213,7 +213,7 @@ struct o2hb_region {
- 	unsigned int		hr_num_pages;
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 171c912af50f..177ccb4d9bc3 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2386,7 +2386,7 @@ static int journal_read(struct super_block *sb)
  
- 	struct page             **hr_slot_data;
--	struct bdev_handle	*hr_bdev_handle;
-+	struct file		*hr_f_bdev;
- 	struct o2hb_disk_slot	*hr_slots;
+ 	cur_dblock = SB_ONDISK_JOURNAL_1st_BLOCK(sb);
+ 	reiserfs_info(sb, "checking transaction log (%pg)\n",
+-		      journal->j_bdev_handle->bdev);
++		      F_BDEV(journal->j_f_bdev));
+ 	start = ktime_get_seconds();
  
- 	/* live node map of this region */
-@@ -263,7 +263,7 @@ struct o2hb_region {
+ 	/*
+@@ -2447,7 +2447,7 @@ static int journal_read(struct super_block *sb)
+ 		 * device and journal device to be the same
+ 		 */
+ 		d_bh =
+-		    reiserfs_breada(journal->j_bdev_handle->bdev, cur_dblock,
++		    reiserfs_breada(F_BDEV(journal->j_f_bdev), cur_dblock,
+ 				    sb->s_blocksize,
+ 				    SB_ONDISK_JOURNAL_1st_BLOCK(sb) +
+ 				    SB_ONDISK_JOURNAL_SIZE(sb));
+@@ -2588,9 +2588,9 @@ static void journal_list_init(struct super_block *sb)
  
- static inline struct block_device *reg_bdev(struct o2hb_region *reg)
+ static void release_journal_dev(struct reiserfs_journal *journal)
  {
--	return reg->hr_bdev_handle ? reg->hr_bdev_handle->bdev : NULL;
-+	return reg->hr_f_bdev ? F_BDEV(reg->hr_f_bdev) : NULL;
+-	if (journal->j_bdev_handle) {
+-		bdev_release(journal->j_bdev_handle);
+-		journal->j_bdev_handle = NULL;
++	if (journal->j_f_bdev) {
++		fput(journal->j_f_bdev);
++		journal->j_f_bdev = NULL;
+ 	}
  }
  
- struct o2hb_bio_wait_ctxt {
-@@ -1509,8 +1509,8 @@ static void o2hb_region_release(struct config_item *item)
- 		kfree(reg->hr_slot_data);
+@@ -2605,7 +2605,7 @@ static int journal_init_dev(struct super_block *super,
+ 
+ 	result = 0;
+ 
+-	journal->j_bdev_handle = NULL;
++	journal->j_f_bdev = NULL;
+ 	jdev = SB_ONDISK_JOURNAL_DEVICE(super) ?
+ 	    new_decode_dev(SB_ONDISK_JOURNAL_DEVICE(super)) : super->s_dev;
+ 
+@@ -2616,37 +2616,37 @@ static int journal_init_dev(struct super_block *super,
+ 	if ((!jdev_name || !jdev_name[0])) {
+ 		if (jdev == super->s_dev)
+ 			holder = NULL;
+-		journal->j_bdev_handle = bdev_open_by_dev(jdev, blkdev_mode,
++		journal->j_f_bdev = bdev_file_open_by_dev(jdev, blkdev_mode,
+ 							  holder, NULL);
+-		if (IS_ERR(journal->j_bdev_handle)) {
+-			result = PTR_ERR(journal->j_bdev_handle);
+-			journal->j_bdev_handle = NULL;
++		if (IS_ERR(journal->j_f_bdev)) {
++			result = PTR_ERR(journal->j_f_bdev);
++			journal->j_f_bdev = NULL;
+ 			reiserfs_warning(super, "sh-458",
+ 					 "cannot init journal device unknown-block(%u,%u): %i",
+ 					 MAJOR(jdev), MINOR(jdev), result);
+ 			return result;
+ 		} else if (jdev != super->s_dev)
+-			set_blocksize(journal->j_bdev_handle->bdev,
++			set_blocksize(F_BDEV(journal->j_f_bdev),
+ 				      super->s_blocksize);
+ 
+ 		return 0;
  	}
  
--	if (reg->hr_bdev_handle)
--		bdev_release(reg->hr_bdev_handle);
-+	if (reg->hr_f_bdev)
-+		fput(reg->hr_f_bdev);
+-	journal->j_bdev_handle = bdev_open_by_path(jdev_name, blkdev_mode,
++	journal->j_f_bdev = bdev_file_open_by_path(jdev_name, blkdev_mode,
+ 						   holder, NULL);
+-	if (IS_ERR(journal->j_bdev_handle)) {
+-		result = PTR_ERR(journal->j_bdev_handle);
+-		journal->j_bdev_handle = NULL;
++	if (IS_ERR(journal->j_f_bdev)) {
++		result = PTR_ERR(journal->j_f_bdev);
++		journal->j_f_bdev = NULL;
+ 		reiserfs_warning(super, "sh-457",
+ 				 "journal_init_dev: Cannot open '%s': %i",
+ 				 jdev_name, result);
+ 		return result;
+ 	}
  
- 	kfree(reg->hr_slots);
- 
-@@ -1569,7 +1569,7 @@ static ssize_t o2hb_region_block_bytes_store(struct config_item *item,
- 	unsigned long block_bytes;
- 	unsigned int block_bits;
- 
--	if (reg->hr_bdev_handle)
-+	if (reg->hr_f_bdev)
- 		return -EINVAL;
- 
- 	status = o2hb_read_block_input(reg, page, &block_bytes,
-@@ -1598,7 +1598,7 @@ static ssize_t o2hb_region_start_block_store(struct config_item *item,
- 	char *p = (char *)page;
- 	ssize_t ret;
- 
--	if (reg->hr_bdev_handle)
-+	if (reg->hr_f_bdev)
- 		return -EINVAL;
- 
- 	ret = kstrtoull(p, 0, &tmp);
-@@ -1623,7 +1623,7 @@ static ssize_t o2hb_region_blocks_store(struct config_item *item,
- 	unsigned long tmp;
- 	char *p = (char *)page;
- 
--	if (reg->hr_bdev_handle)
-+	if (reg->hr_f_bdev)
- 		return -EINVAL;
- 
- 	tmp = simple_strtoul(p, &p, 0);
-@@ -1642,7 +1642,7 @@ static ssize_t o2hb_region_dev_show(struct config_item *item, char *page)
- {
- 	unsigned int ret = 0;
- 
--	if (to_o2hb_region(item)->hr_bdev_handle)
-+	if (to_o2hb_region(item)->hr_f_bdev)
- 		ret = sprintf(page, "%pg\n", reg_bdev(to_o2hb_region(item)));
- 
- 	return ret;
-@@ -1753,7 +1753,7 @@ static int o2hb_populate_slot_data(struct o2hb_region *reg)
+-	set_blocksize(journal->j_bdev_handle->bdev, super->s_blocksize);
++	set_blocksize(F_BDEV(journal->j_f_bdev), super->s_blocksize);
+ 	reiserfs_info(super,
+ 		      "journal_init_dev: journal device: %pg\n",
+-		      journal->j_bdev_handle->bdev);
++		      F_BDEV(journal->j_f_bdev));
+ 	return 0;
  }
  
- /*
-- * this is acting as commit; we set up all of hr_bdev_handle and hr_task or
-+ * this is acting as commit; we set up all of hr_f_bdev and hr_task or
-  * nothing
-  */
- static ssize_t o2hb_region_dev_store(struct config_item *item,
-@@ -1769,7 +1769,7 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
- 	ssize_t ret = -EINVAL;
- 	int live_threshold;
+@@ -2804,7 +2804,7 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
+ 				 "journal header magic %x (device %pg) does "
+ 				 "not match to magic found in super block %x",
+ 				 jh->jh_journal.jp_journal_magic,
+-				 journal->j_bdev_handle->bdev,
++				 F_BDEV(journal->j_f_bdev),
+ 				 sb_jp_journal_magic(rs));
+ 		brelse(bhjh);
+ 		goto free_and_return;
+@@ -2828,7 +2828,7 @@ int journal_init(struct super_block *sb, const char *j_dev_name,
+ 	reiserfs_info(sb, "journal params: device %pg, size %u, "
+ 		      "journal first block %u, max trans len %u, max batch %u, "
+ 		      "max commit age %u, max trans age %u\n",
+-		      journal->j_bdev_handle->bdev,
++		      F_BDEV(journal->j_f_bdev),
+ 		      SB_ONDISK_JOURNAL_SIZE(sb),
+ 		      SB_ONDISK_JOURNAL_1st_BLOCK(sb),
+ 		      journal->j_trans_max,
+diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
+index 83cb9402e0f9..ff90a822e8eb 100644
+--- a/fs/reiserfs/procfs.c
++++ b/fs/reiserfs/procfs.c
+@@ -354,7 +354,7 @@ static int show_journal(struct seq_file *m, void *unused)
+ 		   "prepare: \t%12lu\n"
+ 		   "prepare_retry: \t%12lu\n",
+ 		   DJP(jp_journal_1st_block),
+-		   SB_JOURNAL(sb)->j_bdev_handle->bdev,
++		   F_BDEV(SB_JOURNAL(sb)->j_f_bdev),
+ 		   DJP(jp_journal_dev),
+ 		   DJP(jp_journal_size),
+ 		   DJP(jp_journal_trans_max),
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 725667880e62..ea2f5950e5c6 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -299,7 +299,7 @@ struct reiserfs_journal {
+ 	/* oldest journal block.  start here for traverse */
+ 	struct reiserfs_journal_cnode *j_first;
  
--	if (reg->hr_bdev_handle)
-+	if (reg->hr_f_bdev)
- 		goto out;
+-	struct bdev_handle *j_bdev_handle;
++	struct file *j_f_bdev;
  
- 	/* We can't heartbeat without having had our node number
-@@ -1795,11 +1795,11 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
- 	if (!S_ISBLK(f.file->f_mapping->host->i_mode))
- 		goto out2;
+ 	/* first block on s_dev of reserved area journal */
+ 	int j_1st_reserved_block;
+@@ -2810,10 +2810,10 @@ struct reiserfs_journal_header {
  
--	reg->hr_bdev_handle = bdev_open_by_dev(f.file->f_mapping->host->i_rdev,
-+	reg->hr_f_bdev = bdev_file_open_by_dev(f.file->f_mapping->host->i_rdev,
- 			BLK_OPEN_WRITE | BLK_OPEN_READ, NULL, NULL);
--	if (IS_ERR(reg->hr_bdev_handle)) {
--		ret = PTR_ERR(reg->hr_bdev_handle);
--		reg->hr_bdev_handle = NULL;
-+	if (IS_ERR(reg->hr_f_bdev)) {
-+		ret = PTR_ERR(reg->hr_f_bdev);
-+		reg->hr_f_bdev = NULL;
- 		goto out2;
- 	}
+ /* We need these to make journal.c code more readable */
+ #define journal_find_get_block(s, block) __find_get_block(\
+-		SB_JOURNAL(s)->j_bdev_handle->bdev, block, s->s_blocksize)
+-#define journal_getblk(s, block) __getblk(SB_JOURNAL(s)->j_bdev_handle->bdev,\
++		F_BDEV(SB_JOURNAL(s)->j_f_bdev), block, s->s_blocksize)
++#define journal_getblk(s, block) __getblk(F_BDEV(SB_JOURNAL(s)->j_f_bdev),\
+ 		block, s->s_blocksize)
+-#define journal_bread(s, block) __bread(SB_JOURNAL(s)->j_bdev_handle->bdev,\
++#define journal_bread(s, block) __bread(F_BDEV(SB_JOURNAL(s)->j_f_bdev),\
+ 		block, s->s_blocksize)
  
-@@ -1903,8 +1903,8 @@ static ssize_t o2hb_region_dev_store(struct config_item *item,
- 
- out3:
- 	if (ret < 0) {
--		bdev_release(reg->hr_bdev_handle);
--		reg->hr_bdev_handle = NULL;
-+		fput(reg->hr_f_bdev);
-+		reg->hr_f_bdev = NULL;
- 	}
- out2:
- 	fdput(f);
+ enum reiserfs_bh_state_bits {
 
 -- 
 2.42.0
