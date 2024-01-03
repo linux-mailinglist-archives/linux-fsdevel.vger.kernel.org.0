@@ -1,53 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-7259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5338236AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C133F8236B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3200C1F25980
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB551F24A34
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FE71CABB;
-	Wed,  3 Jan 2024 20:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0848E1D69D;
+	Wed,  3 Jan 2024 20:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VG0xO2tO"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="juG5Hu96"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4071DA22
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 20:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 3 Jan 2024 15:38:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704314292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LFxyz9wssG6um4s3MhUM+MnW6V8Bjf+t4BOKKcwlx0A=;
-	b=VG0xO2tO+cS7WdgFJ6ioE19dU8Gw79wBE2v0qNr+1F0BHkoi7ZLU92Gj9lU8DHTDIf0lzQ
-	XNrYFmqqyuPX7em73otxDHNTndi+TS8PUhr+6A/1ikaxZFXLvEVZ/EGaxO+TZ+t1c9EoM3
-	zNqVUfuyhtgra/VmfDWm6bAEaB+S0UI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Christian Brauner <brauner@kernel.org>, 
-	Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1751D692;
+	Wed,  3 Jan 2024 20:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FArP6PojXIZHet0fgMSniHDnTIp6uCjlhRACZk/+G9I=; b=juG5Hu96B9Os64jtzlPJUweiCH
+	NALNeCQr+bp+tXkddMN3ilW5eE+53ZveDjsdEuJ5CcAdIocf0ZMw94aUdhcf6acbGrrtbajHVBMXB
+	HiDhuq3ByVMCFix8qfC/m5NXxwANJRJyWqKbNxzPL779BOXPYx6zmNcA5fNahUOrphf1AnF0rcfKE
+	kusBxHX+pgEG/pLbZl26oUe7OpE4RraljMC5coQ17sgieH28a86sFyL+UosKNkQz+Z+WrwdcxTqdx
+	Y6wYTOJMigCNVwOIpmqXoHIL09c7p1jCK0w6smcSCixsL/HRJbX8Pv3tl1EZSa3JBl8sjhTJBRMfv
+	LJG0GrFg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rL83P-000isv-21;
+	Wed, 03 Jan 2024 20:41:31 +0000
+Date: Wed, 3 Jan 2024 20:41:31 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
 Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
-Message-ID: <nmpmqptnjgblqyhiz4ma7inevim7h4qh56jobbvmdyucfc754z@nx5nkrijuavp>
+Message-ID: <20240103204131.GL1674809@ZenIV>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
  <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
  <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
  <ZZWhQGkl0xPiBD5/@casper.infradead.org>
- <CANeycqo1v8MYFdmyHfLfiuPAHFWEw80pL7WmEfgXweqKfofp4Q@mail.gmail.com>
- <20240103195358.GK1674809@ZenIV>
+ <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,45 +60,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240103195358.GK1674809@ZenIV>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jan 03, 2024 at 07:53:58PM +0000, Al Viro wrote:
-> On Wed, Jan 03, 2024 at 04:04:26PM -0300, Wedson Almeida Filho wrote:
-> 
-> > > Either stick to the object orientation we've already defined (ie
-> > > separate aops, iops, fops, ... with substantially similar arguments)
-> > > or propose changes to the ones we have in C.  Dealing only with toy
-> > > filesystems is leading you to bad architecture.
-> > 
-> > I'm trying to understand the argument here. Are saying that Rust
-> > cannot have different APIs with the same performance characteristics
-> > as C's, unless we also fix the C apis?
-> 
-> Different expressive power, not performance characteristics.
-> 
-> It's *NOT* about C vs Rust; we have an existing system of objects and
-> properties of such.  Independent from the language being used to work
-> with them.
-> 
-> If we have to keep a separate system for your language, feel free to fork
-> the kernel and do whatever you want with it.  Just don't expect anybody
-> else to play with your toy.
+On Wed, Jan 03, 2024 at 02:14:34PM -0500, Kent Overstreet wrote:
 
-The rust people have been getting conflicting advice, and your response
-is to tell them to fork the kernel and go away?
-
-> In case it's not entirely obvious - your arguments about not needing
-> something or other for the instances you have tried to work with so far
-> do not hold water.  At all.
+> We don't need to copy the C interface as is; we can use this as an
+> opportunity to incrementally design a new API that will obviously take
+> lessons from the C API (since it's wrapping it), but it doesn't have to
+> do things the same and it doesn't have to do everything all at once.
 > 
-> The only acceptable way to use Rust in that space is to treat the existing
-> set of objects and operations as externally given; we *can* change those,
-> with good enough reasons, but "the instances in Rust-using filesystems 
-> don't need this and that" doesn't cut it.
+> Anyways, like you alluded to the C side is a bit of a mess w.r.t. what's
+> in a_ops vs. i_ops, and cleaning that up on the C side is a giant hassle
+> because then you have to fix _everything_ that implements or consumes
+> those interfaces at the same time.
+> 
+> So instead, it would seem easier to me to do the cleaner version on the
+> Rust side, and then once we know what that looks like, maybe we update
+> the C version to match - or maybe we light it all on fire and continue
+> with rewriting everything in Rust... *shrug*
 
-The question was just about whether to add something now that isn't used
-on the Rust side yet, or wait until later when it is.
-
-I think this has gone a bit afield, and gotten a bit dramatic.
+No.  This "cleaner version on the Rust side" is nothing of that sort;
+this "readdir doesn't need any state that might be different for different
+file instances beyond the current position, because none of our examples
+have needed that so far" is a good example of the garbage we really do
+not need to deal with.
 
