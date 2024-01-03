@@ -1,107 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-7255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74BD8235E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:52:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C82268235F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 20:54:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55255282744
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 19:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397E72873C9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 19:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2C11CFAD;
-	Wed,  3 Jan 2024 19:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F8A1CFB4;
+	Wed,  3 Jan 2024 19:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="C41nZn4h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765221D525;
-	Wed,  3 Jan 2024 19:52:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0594C433C7;
-	Wed,  3 Jan 2024 19:52:02 +0000 (UTC)
-Date: Wed, 3 Jan 2024 14:53:06 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Al Viro <viro@ZenIV.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] eventfs: Stop using dcache_readdir() for getdents()
-Message-ID: <20240103145306.51f8a4cd@gandalf.local.home>
-In-Reply-To: <CAHk-=wjVdGkjDXBbvLn2wbZnqP4UsH46E3gqJ9m7UG6DpX2+WA@mail.gmail.com>
-References: <20240103102553.17a19cea@gandalf.local.home>
-	<CAHk-=whrRobm82kcjwj625bZrdK+vvEo0B5PBzP+hVaBcHUkJA@mail.gmail.com>
-	<CAHk-=wjVdGkjDXBbvLn2wbZnqP4UsH46E3gqJ9m7UG6DpX2+WA@mail.gmail.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FCE1CF94;
+	Wed,  3 Jan 2024 19:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SP0nbnT3AvmqkH3t2fYH0Mm3KoSoMBeL9IG/d+j/s5o=; b=C41nZn4h4ycXV0ug3wUFS8f1lp
+	eyGdP3MdWkUv+7im/gYX+nOas2NQCmCRcmMk57LyHtR9/6AkuDBmpTxmMEzBmPonKpm5e63bU9qup
+	a3JqPf8kcM9JfiEoAt8PeMM4/R0p77ZdwkVBEo07l5KcUlFLfNIbDuUJ3PaLV/TJxOJn3fQUt12vY
+	uSXEzKWS0SAeWfT/h0InIMfing5epQ6vwMj2MHGdabEr9kZB+HuvyMffRBhD6Qiei7K/aDbyxWQiI
+	/GFg9YAGwqpf0ubEA+kcoBKg9vAMyV3Kv61WoUq+bSYrqi/if0RM67kI3VqcOVktFbTsY8wuleCm1
+	gOtXNcAQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rL7JO-000gHq-1E;
+	Wed, 03 Jan 2024 19:53:58 +0000
+Date: Wed, 3 Jan 2024 19:53:58 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+Message-ID: <20240103195358.GK1674809@ZenIV>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
+ <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
+ <ZZWhQGkl0xPiBD5/@casper.infradead.org>
+ <CANeycqo1v8MYFdmyHfLfiuPAHFWEw80pL7WmEfgXweqKfofp4Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANeycqo1v8MYFdmyHfLfiuPAHFWEw80pL7WmEfgXweqKfofp4Q@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, 3 Jan 2024 10:38:09 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Jan 03, 2024 at 04:04:26PM -0300, Wedson Almeida Filho wrote:
 
-> @@ -332,10 +255,8 @@ static int tracefs_apply_options(struct super_block *sb, bool remount)
->  	if (!remount || opts->opts & BIT(Opt_uid))
->  		inode->i_uid = opts->uid;
->  
-> -	if (!remount || opts->opts & BIT(Opt_gid)) {
-> -		/* Set all the group ids to the mount option */
-> -		set_gid(sb->s_root, opts->gid);
-> -	}
-> +	if (!remount || opts->opts & BIT(Opt_gid))
-> +		inode->i_gid = opts->gid;
->  
->  	return 0;
->  }
+> > Either stick to the object orientation we've already defined (ie
+> > separate aops, iops, fops, ... with substantially similar arguments)
+> > or propose changes to the ones we have in C.  Dealing only with toy
+> > filesystems is leading you to bad architecture.
+> 
+> I'm trying to understand the argument here. Are saying that Rust
+> cannot have different APIs with the same performance characteristics
+> as C's, unless we also fix the C apis?
 
-This doesn't work because for tracefs (not eventfs) the dentries are
-created at boot up and before the file system is mounted. This means you
-can't even set a gid in /etc/fstab. This will cause a regression.
+Different expressive power, not performance characteristics.
 
-tracefs was designed after debugfs, which also ignores gid. But because
-there's users out there that want non-root accounts to have access to
-tracing, it is documented to set the gid to a group that you can then add
-users to. And that's the reason behind the set_gid() walk.
+It's *NOT* about C vs Rust; we have an existing system of objects and
+properties of such.  Independent from the language being used to work
+with them.
 
-Reverting that one commit won't fix things either, because it only blocked
-OTH to be read, but the creation of the files changed their mode's passed
-to block OTH as well, so all those would need to be changed too. And I
-don't think making the trace files open to OTH is a good solution, even if
-the tracefs top level directory itself blocks other. The issue was that the
-user use to just mount the top level to allow the group access to the files
-below, which allowed all users access. But this is weak control of the file
-system.
+If we have to keep a separate system for your language, feel free to fork
+the kernel and do whatever you want with it.  Just don't expect anybody
+else to play with your toy.
 
-Even my non-test machines have me in the tracing group so my user account
-has access to tracefs.
+In case it's not entirely obvious - your arguments about not needing
+something or other for the instances you have tried to work with so far
+do not hold water.  At all.
 
-On boot up, all the tracefs files are created via tracefs_create_file() and
-directories by tracefs_create_dir() which was copied from
-debugfs_create_file/dir(). At this moment, the dentry is created with the
-permissions set. There's no looking at the super block.
+The only acceptable way to use Rust in that space is to treat the existing
+set of objects and operations as externally given; we *can* change those,
+with good enough reasons, but "the instances in Rust-using filesystems 
+don't need this and that" doesn't cut it.
 
-So we need a way to change the permissions at mount time.
-
-The only solution I can think of that doesn't include walking the current
-dentries, is to convert all of tracefs to be more like eventfs, and have
-the dentries created on demand. But perhaps, different than eventfs, they
-do not need to be freed when they are no longer referenced, which should
-make it easier to implement. And there's not nearly as many files and
-directories, so keeping meta data around isn't as much of an issue.
-
-Instead of creating the inode and dentry in the tracefs_create_file/dir(),
-it could just create a descriptor that holds the fops, data and mode. Then
-on lookup, it would create the inodes and dentries similar to eventfs.
-
-It would need its own iterate_shared as well.
-
--- Steve
+Changes do happen in that area.  Often enough.  And the cost of figuring
+out whether they break things shouldn't be doubled because Rust folks
+want a universe of their own - the benefits of Rust are not worth that
+kind of bother.
 
