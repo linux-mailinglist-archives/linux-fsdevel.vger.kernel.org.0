@@ -1,219 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-7175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BB7822C35
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:35:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACF4822C3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 12:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E3D7B20E97
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 11:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8016E1F2411E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 11:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C5118EA3;
-	Wed,  3 Jan 2024 11:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxFZQYy/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fUnTn6pQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxFZQYy/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fUnTn6pQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474B518E37;
+	Wed,  3 Jan 2024 11:36:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488D618E3C;
-	Wed,  3 Jan 2024 11:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E59A1FD14;
-	Wed,  3 Jan 2024 11:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704281707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w2Ep/9P5IZE4+G9Bla8dB5ARxYNh4FKlAPpzelC9JZc=;
-	b=RxFZQYy/PubsTBXhBVW3caajDrl2NZe1K0VeYp4yf2+RGiobiqDqRLCmC+G+EqRjgvA3Q1
-	St0aLMYw0A5Z1OTbQLh2lGlg4u1StbgG+XtsYxahLMpIrvxxu32Ft9E+0vdWiYuHi36c/y
-	mXkFOYKXwaxUVIeBxSwBZVMKZne9WXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704281707;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w2Ep/9P5IZE4+G9Bla8dB5ARxYNh4FKlAPpzelC9JZc=;
-	b=fUnTn6pQdk42beyQRROH+pwk/FIOdPOh+X7sxl4fB1qe7cqDdXo67GFUyvb7rmLS5U5pEr
-	g4omNbgvGOiLsyDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704281707; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w2Ep/9P5IZE4+G9Bla8dB5ARxYNh4FKlAPpzelC9JZc=;
-	b=RxFZQYy/PubsTBXhBVW3caajDrl2NZe1K0VeYp4yf2+RGiobiqDqRLCmC+G+EqRjgvA3Q1
-	St0aLMYw0A5Z1OTbQLh2lGlg4u1StbgG+XtsYxahLMpIrvxxu32Ft9E+0vdWiYuHi36c/y
-	mXkFOYKXwaxUVIeBxSwBZVMKZne9WXw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704281707;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w2Ep/9P5IZE4+G9Bla8dB5ARxYNh4FKlAPpzelC9JZc=;
-	b=fUnTn6pQdk42beyQRROH+pwk/FIOdPOh+X7sxl4fB1qe7cqDdXo67GFUyvb7rmLS5U5pEr
-	g4omNbgvGOiLsyDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7247413AA6;
-	Wed,  3 Jan 2024 11:35:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 46ffG2tGlWVCFAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 03 Jan 2024 11:35:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 17BE2A07EF; Wed,  3 Jan 2024 12:35:06 +0100 (CET)
-Date: Wed, 3 Jan 2024 12:35:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
-	ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
-	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [RFC PATCH v2 06/25] ext4: make ext4_set_iomap() recognize
- IOMAP_DELALLOC map type
-Message-ID: <20240103113506.kopblefmbkvs4twn@quack3>
-References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
- <20240102123918.799062-7-yi.zhang@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01AA18EA5;
+	Wed,  3 Jan 2024 11:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40d76923ec4so41639345e9.3;
+        Wed, 03 Jan 2024 03:36:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704281808; x=1704886608;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+veDVT1eBu+1Y5mtu6htK2cOsspkbDdNiJTPTmDbYc=;
+        b=EmdyiEuW3jSxcBH0AiZrHFirHi5UudVCC+ZyMuifZjpk0ohDBwRR0D2yJuBrvkc0Cl
+         A1jkFjt39PakAo3bUQEv2HAtkZ1KGLYJy8ujRcNYgzI0NiV1cwLny8s65lG8cpOQL6q6
+         SH1LYsPm+rXxdHWEIsKtIPjUQ2Nnl+I5ZBUPMbzNu1DLSRMjZdXuFo9y7JWg3Xm8j9ZC
+         ssGPIriPHuWxe7Nd1DW0A3q38utvbPLP53EhtQ52FCwR8A1Ho0gFg0eCjw8MYbpp2hSt
+         M/oznESiw4C9PSHwaZZJw4MTmBginGyeN94cuNORFPqIz72KdEu2lDrSU4tzX9hhaJv0
+         4wRA==
+X-Gm-Message-State: AOJu0Yzk59KRITKU4S+PFzz+QuO8JqXZV4WSeFyKpIAZJFd7HvkAqM/I
+	HMS8Mh4fImbUUyxuK+mIkMVDCcfkX0iT/Q==
+X-Google-Smtp-Source: AGHT+IEghIjVUo7bU7ZRejweYuFM2gcWZRs3g8/1GaEwRcIkyHMvn9Y1kdTF6v0QPhpIky5l+0IN2Q==
+X-Received: by 2002:a05:600c:203:b0:40d:2921:2a55 with SMTP id 3-20020a05600c020300b0040d29212a55mr8709609wmi.21.1704281808006;
+        Wed, 03 Jan 2024 03:36:48 -0800 (PST)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:57? ([2a0b:e7c0:0:107::aaaa:57])
+        by smtp.gmail.com with ESMTPSA id he5-20020a05600c540500b0040d8919bf20sm2013795wmb.32.2024.01.03.03.36.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jan 2024 03:36:47 -0800 (PST)
+Message-ID: <6c3fc5e9-f8cf-4b42-9317-8ce9669160c2@kernel.org>
+Date: Wed, 3 Jan 2024 12:36:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240102123918.799062-7-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/11] tty: splice_read: disable
+Content-Language: en-US
+To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
+ "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <cover.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+ <4dec932dcd027aa5836d70a6d6bedd55914c84c2.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <4dec932dcd027aa5836d70a6d6bedd55914c84c2.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue 02-01-24 20:38:59, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 21. 12. 23, 4:09, Ahelenia Ziemiańska wrote:
+> We request non-blocking I/O in the generic copy_splice_read, but
+> "the tty layer doesn't actually honor the IOCB_NOWAIT flag for
+> various historical reasons.". This means that a tty->pipe splice
+> will happily sleep with the pipe locked forever, and any process
+> trying to take it (due to an open/read/write/&c.) will enter
+> uninterruptible sleep.
 > 
-> Since ext4_map_blocks() can recognize a delayed allocated only extent,
-> make ext4_set_iomap() can also recognize it, and remove the useless
-> separate check in ext4_iomap_begin_report().
+> This also masks inconsistent wake-ups (usually every second line)
+> when splicing from ttys in icanon mode.
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good to me. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Link: https://lore.kernel.org/linux-fsdevel/CAHk-=wimmqG_wvSRtMiKPeGGDL816n65u=Mq2+H3-=uM2U6FmA@mail.gmail.com/
+> Signed-off-by: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
 > ---
->  fs/ext4/inode.c | 32 +++-----------------------------
->  1 file changed, 3 insertions(+), 29 deletions(-)
+>   drivers/tty/tty_io.c | 2 --
+>   1 file changed, 2 deletions(-)
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index c141bf6d8db2..0458d7f0c059 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3261,6 +3261,9 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
->  		iomap->addr = (u64) map->m_pblk << blkbits;
->  		if (flags & IOMAP_DAX)
->  			iomap->addr += EXT4_SB(inode->i_sb)->s_dax_part_off;
-> +	} else if (map->m_flags & EXT4_MAP_DELAYED) {
-> +		iomap->type = IOMAP_DELALLOC;
-> +		iomap->addr = IOMAP_NULL_ADDR;
->  	} else {
->  		iomap->type = IOMAP_HOLE;
->  		iomap->addr = IOMAP_NULL_ADDR;
-> @@ -3423,35 +3426,11 @@ const struct iomap_ops ext4_iomap_overwrite_ops = {
->  	.iomap_end		= ext4_iomap_end,
->  };
->  
-> -static bool ext4_iomap_is_delalloc(struct inode *inode,
-> -				   struct ext4_map_blocks *map)
-> -{
-> -	struct extent_status es;
-> -	ext4_lblk_t offset = 0, end = map->m_lblk + map->m_len - 1;
-> -
-> -	ext4_es_find_extent_range(inode, &ext4_es_is_delayed,
-> -				  map->m_lblk, end, &es);
-> -
-> -	if (!es.es_len || es.es_lblk > end)
-> -		return false;
-> -
-> -	if (es.es_lblk > map->m_lblk) {
-> -		map->m_len = es.es_lblk - map->m_lblk;
-> -		return false;
-> -	}
-> -
-> -	offset = map->m_lblk - es.es_lblk;
-> -	map->m_len = es.es_len - offset;
-> -
-> -	return true;
-> -}
-> -
->  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
->  				   loff_t length, unsigned int flags,
->  				   struct iomap *iomap, struct iomap *srcmap)
->  {
->  	int ret;
-> -	bool delalloc = false;
->  	struct ext4_map_blocks map;
->  	u8 blkbits = inode->i_blkbits;
->  
-> @@ -3492,13 +3471,8 @@ static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
->  	ret = ext4_map_blocks(NULL, inode, &map, 0);
->  	if (ret < 0)
->  		return ret;
-> -	if (ret == 0)
-> -		delalloc = ext4_iomap_is_delalloc(inode, &map);
-> -
->  set_iomap:
->  	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
-> -	if (delalloc && iomap->type == IOMAP_HOLE)
-> -		iomap->type = IOMAP_DELALLOC;
->  
->  	return 0;
->  }
-> -- 
-> 2.39.2
-> 
+> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> index 06414e43e0b5..50c2957a9c7f 100644
+> --- a/drivers/tty/tty_io.c
+> +++ b/drivers/tty/tty_io.c
+> @@ -465,7 +465,6 @@ static const struct file_operations tty_fops = {
+>   	.llseek		= no_llseek,
+>   	.read_iter	= tty_read,
+>   	.write_iter	= tty_write,
+> -	.splice_read	= copy_splice_read,
+>   	.splice_write	= iter_file_splice_write,
+
+This and the other patch effectively reverts dd78b0c483e33 and 
+9bb48c82aced0. I.e. it breaks "things". Especially:
+
+commit 9bb48c82aced07698a2d08ee0f1475a6c4f6b266
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue Jan 19 11:41:16 2021 -0800
+
+     tty: implement write_iter
+
+     This makes the tty layer use the .write_iter() function instead of the
+     traditional .write() functionality.
+
+     That allows writev(), but more importantly also makes it possible to
+     enable .splice_write() for ttys, reinstating the "splice to tty"
+     functionality that was lost in commit 36e2c7421f02 ("fs: don't allow
+     splice read/write without explicit ops").
+
+     Fixes: 36e2c7421f02 ("fs: don't allow splice read/write without 
+explicit ops")
+
+
+What are those "things" doing that "splice to tty", I don't recall and 
+the commit message above ^^^ does not spell that out. Linus?
+
+thanks,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+js
+
 
