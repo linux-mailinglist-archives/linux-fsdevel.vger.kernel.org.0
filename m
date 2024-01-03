@@ -1,49 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-7162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6E9822918
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 08:45:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1ACA8229D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 10:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6AF1C2301D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 07:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517BAB22C4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 09:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CE1805C;
-	Wed,  3 Jan 2024 07:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rLv1TTAQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD4918632;
+	Wed,  3 Jan 2024 09:02:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CC81803D;
-	Wed,  3 Jan 2024 07:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mfBmNNXCDgI/7UWz5uYsVwRwFwVSUpKpeSR1CFuUBeE=; b=rLv1TTAQA156NR6NMWeqQzjKE0
-	/sK2JNeruOswotoIFPruqmoTu1yoF11hp6opHbX7KM6wmuuzPeFI3FdSyh4gPZGzxp/hPTIChehhf
-	sSktoLdls2jHEUk5oereue4EWhsEzfLq9qcBNwg2tDdV+O8w3kM36gpA2cmoZf+ji3quMIQfigh7q
-	dlm0lg+KB7yPYExfeWbUowO+dczFs36xubHRGsPSq9f60x6KnGJakWgA2RHR0PdR1pIvJHLU+ob+O
-	k3Wg5la4H7PponKN3BFecDKXx2IhOY8iAfY6nJHw5IH4uJ49/OGCGLBMp3vVSAebQBg3DQnDz1LNJ
-	78JxD6yw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rKvwI-00CNoh-RR; Wed, 03 Jan 2024 07:45:22 +0000
-Date: Wed, 3 Jan 2024 07:45:22 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] hfs: fix deadlock in hfs_extend_file
-Message-ID: <ZZUQkr+oHEEF8njK@casper.infradead.org>
-References: <0000000000004efa57060def87be@google.com>
- <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C1318624;
+	Wed,  3 Jan 2024 09:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9E5E768B05; Wed,  3 Jan 2024 10:02:05 +0100 (CET)
+Date: Wed, 3 Jan 2024 10:02:04 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	Daejun Park <daejun7.park@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: Re: [PATCH v8 06/19] block, fs: Propagate write hints to the block
+ device inode
+Message-ID: <20240103090204.GA1851@lst.de>
+References: <20231219000815.2739120-1-bvanassche@acm.org> <20231219000815.2739120-7-bvanassche@acm.org> <20231228071206.GA13770@lst.de> <00cf8ffa-8ad5-45e4-bf7c-28b07ab4de21@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,67 +47,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
+In-Reply-To: <00cf8ffa-8ad5-45e4-bf7c-28b07ab4de21@acm.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Jan 02, 2024 at 08:36:51PM +0800, Edward Adam Davis wrote:
-> [syz report]
-> syz-executor279/5059 is trying to acquire lock:
-> ffff888079c100f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
-> 
-> but task is already holding lock:
-> ffff888079c10778 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(&HFS_I(tree->inode)->extents_lock);
->   lock(&HFS_I(tree->inode)->extents_lock);
-> 
->  *** DEADLOCK ***
-> [Analysis] 
->  hfs_extend_file()->
->    hfs_ext_read_extent()->
->      __hfs_ext_cache_extent()->
->        __hfs_ext_write_extent()->
->          hfs_bmap_reserve()->
->            hfs_extend_file()->
-> 
-> When an inode has both the HFS_FLG_EXT_DIRTY and HFS_FLG_EXT_NEW flags, it will
-> enter the above loop and trigger a deadlock.
-> 
-> [Fix]
-> In hfs_ext_read_extent(), check if the above two flags exist simultaneously, 
-> and exit the subsequent process when the conditions are met.
+On Thu, Dec 28, 2023 at 02:41:59PM -0800, Bart Van Assche wrote:
+> On 12/27/23 23:12, Christoph Hellwig wrote:
+>> On Mon, Dec 18, 2023 at 04:07:39PM -0800, Bart Van Assche wrote:
+>>> Write hints applied with F_SET_RW_HINT on a block device affect the
+>>> shmem inode only. Propagate these hints to the block device inode
+>>> because that is the inode used when writing back dirty pages.
+>>
+>> What shmem inode?
+>
+> The inode associated with the /dev file, e.g. /dev/sda. That is another
+> inode than the inode associated with the struct block_device instance.
+> Without this patch, when opening /dev/sda and calling fcntl(), the shmem
+> inode is modified but the struct block_device inode not. I think that
+> the code path for allocation of the shmem inode is as follows:
 
-Why is this the correct fix?  Seems to me that returning -ENOENT here is
-going to lead to an error being reported to the user when the user has
-done nothing wrong?
+So the block device node.  That can sit on any file system (or at least
+any Unix-y file system that supports device nodes).
 
-> Reported-and-tested-by: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/hfs/extent.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-> index 6d1878b99b30..1b02c7b6a10c 100644
-> --- a/fs/hfs/extent.c
-> +++ b/fs/hfs/extent.c
-> @@ -197,6 +197,10 @@ static int hfs_ext_read_extent(struct inode *inode, u16 block)
->  	    block < HFS_I(inode)->cached_start + HFS_I(inode)->cached_blocks)
->  		return 0;
->  
-> +	if (HFS_I(inode)->flags & HFS_FLG_EXT_DIRTY && 
-> +	    HFS_I(inode)->flags & HFS_FLG_EXT_NEW) 
-> +		return -ENOENT;
-> +
->  	res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
->  	if (!res) {
->  		res = __hfs_ext_cache_extent(&fd, inode, block);
-> -- 
-> 2.43.0
-> 
-> 
+>>> @@ -317,6 +318,9 @@ static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
+>>>     	inode_lock(inode);
+>>>   	inode->i_write_hint = hint;
+>>> +	apply_whint = inode->i_fop->apply_whint;
+>>> +	if (apply_whint)
+>>> +		apply_whint(file, hint);
+>>
+>> Setting the hint in file->f_mapping->inode is the right thing here,
+>> not adding a method.
+>
+> Is my understanding correct that the only way to reach the struct
+> block_device instance from the shmem code is by dereferencing
+> file->private_data?
+
+No.  See blkdev_open:
+
+	filp->f_mapping = handle->bdev->bd_inode->i_mapping;
+
+So you can use file->f_mapping->inode as I said in my previous mail.
+
 
