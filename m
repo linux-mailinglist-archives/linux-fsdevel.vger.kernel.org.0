@@ -1,165 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-7164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A29D8229E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 10:03:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 784D2822AA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 10:56:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EE4C1C2309C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 09:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C54F1C23201
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 09:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36D218B09;
-	Wed,  3 Jan 2024 09:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28BD1864C;
+	Wed,  3 Jan 2024 09:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="PnTKtKz+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qB8vf1hf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uHSpvrTn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qB8vf1hf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uHSpvrTn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D32D18AE8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 09:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-50e7aed08f4so228165e87.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 01:03:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704272616; x=1704877416; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d52rUVOam7Y2+Idj66TR43fT/VB+iP/aQ8VOjc5QKOE=;
-        b=PnTKtKz+kQVndIbDEn5B3CIvVnJyfyB/gB496aaHH06c2XV1QeNX7FhTLJO0shexdk
-         aY7wJ4sNqXHZrs9ww6uN0PBSb7S3F1hlR3+kbJ4OCwtGl0uRhzN2YPwlMrNAOnIfe1G5
-         4AUJB1F/J7SgGRI1SelEdJld5N8XHiIe++xW/MwG63tagc1ykUG9kiWkfccpLWxBDbM3
-         UKkUSBk0AfEH7j9qqKJ0YrMBkJq3D22XFW6mm+9kyMdWfqJDvGpq7ozqZv8QQT8hO5m9
-         gwFv7CQvXDlfP5MLzw3Q1aaiJDufSh0E5Hl7bocu3+5+PXC02mP6knh0yoc0Pp7JFdmf
-         Exvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704272616; x=1704877416;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d52rUVOam7Y2+Idj66TR43fT/VB+iP/aQ8VOjc5QKOE=;
-        b=HKs0IUwCzRokb28jxvWfJmtcQAgiH7j1F7YVAY/bUG29qk9kCZFP9fY/ZGCYPDGEJ2
-         Yi8e2rKkdsMVyUVTEHC45i6i+9SGdVzVg1X+62wr7jRRz1o/wlSdouLje9fAcYFxLORK
-         Gc1eGgITwYEntTalRYS9riA2PW1S3vAasH9me9yB+WvulMV/BhL1kJC4DcIQTxj8emeZ
-         PiM0G6tWh3+O6NRmvga/rPLO7SnRgNcqCstQE9GuTcrlnczEhYWgb+Gk32lgO0Adr5z8
-         7tWkZEalT1PxR3bSorq3IAY92JY2bnF0FL/IpN0+IAzR+pqOEArAhHo8P/Neh6dd/MRo
-         jyHQ==
-X-Gm-Message-State: AOJu0Yw/L/7v/NsItgND3GXqZdwtu7WNjqOy7R923NlfUGjmMerAV+hn
-	CSLHBBHfEtr55dKmvytZsOX16f42dnEzYfZFuy/El5rDImzIEA==
-X-Google-Smtp-Source: AGHT+IEm48fv+G3Sd9YFNh/EXabrSlC5idoW4Bfr+EYzCDKHmC2KwNYq/f4slVBPwfI9MOLNEHeTNA==
-X-Received: by 2002:ac2:5306:0:b0:50e:7b5e:285d with SMTP id c6-20020ac25306000000b0050e7b5e285dmr389944lfh.2.1704272615772;
-        Wed, 03 Jan 2024 01:03:35 -0800 (PST)
-Received: from smtpclient.apple ([2a00:1370:81a4:169c:b817:c4e5:4423:6afc])
-        by smtp.gmail.com with ESMTPSA id x15-20020a19e00f000000b0050e755939f1sm3268992lfg.166.2024.01.03.01.03.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jan 2024 01:03:35 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C001862A;
+	Wed,  3 Jan 2024 09:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 759D51F79E;
+	Wed,  3 Jan 2024 09:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704275790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDn3hdIl2vZfTIGXyAfw4FepSpSEp9kAZFSPVO0zHqw=;
+	b=qB8vf1hfrJGZ0MZr7M1qmD9j+6eihB/vRijSAj8bg0z2Y28Yj2pCFiSOefh/R0ajjf/Q7I
+	xhwdj82JaLNnIxGdN0EiHeMejeLcDOd0htCihTIvP45rf0GrdZiQKx7iZPVbMro2DhZreZ
+	XYxM1Htqg68dc40dLhPFNYL8gvr5T2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704275790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDn3hdIl2vZfTIGXyAfw4FepSpSEp9kAZFSPVO0zHqw=;
+	b=uHSpvrTnU5rjCbY2ms2WXs3/BV6BaRT6VIAVQlhMJRTHpN1kPKamLlmuMONUveFOPgjJH3
+	11m23fMjOJgPKYCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704275790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDn3hdIl2vZfTIGXyAfw4FepSpSEp9kAZFSPVO0zHqw=;
+	b=qB8vf1hfrJGZ0MZr7M1qmD9j+6eihB/vRijSAj8bg0z2Y28Yj2pCFiSOefh/R0ajjf/Q7I
+	xhwdj82JaLNnIxGdN0EiHeMejeLcDOd0htCihTIvP45rf0GrdZiQKx7iZPVbMro2DhZreZ
+	XYxM1Htqg68dc40dLhPFNYL8gvr5T2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704275790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lDn3hdIl2vZfTIGXyAfw4FepSpSEp9kAZFSPVO0zHqw=;
+	b=uHSpvrTnU5rjCbY2ms2WXs3/BV6BaRT6VIAVQlhMJRTHpN1kPKamLlmuMONUveFOPgjJH3
+	11m23fMjOJgPKYCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 69C6413AA6;
+	Wed,  3 Jan 2024 09:56:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Aj/RGU4vlWVUdgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 03 Jan 2024 09:56:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0AFF9A07EF; Wed,  3 Jan 2024 10:56:30 +0100 (CET)
+Date: Wed, 3 Jan 2024 10:56:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+	ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [RFC PATCH v2 01/25] ext4: refactor ext4_da_map_blocks()
+Message-ID: <20240103095630.jdabiefig4wcyapu@quack3>
+References: <20240102123918.799062-1-yi.zhang@huaweicloud.com>
+ <20240102123918.799062-2-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
-Subject: Re: [PATCH] hfs: fix deadlock in hfs_extend_file
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
-Date: Wed, 3 Jan 2024 12:03:31 +0300
-Cc: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- syzkaller-bugs@googlegroups.com,
- willy@infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6A468D14-579A-4EDF-9AFE-32A51C7101F3@dubeyko.com>
-References: <0000000000004efa57060def87be@google.com>
- <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
-To: Edward Adam Davis <eadavis@qq.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.4)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240102123918.799062-2-yi.zhang@huaweicloud.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: 1.62
+X-Spamd-Bar: +
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [1.62 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 BAYES_HAM(-0.07)[62.09%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,infradead.org,kernel.org,huawei.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qB8vf1hf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uHSpvrTn
+X-Spam-Level: *
+X-Rspamd-Queue-Id: 759D51F79E
 
+On Tue 02-01-24 20:38:54, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Refactor and cleanup ext4_da_map_blocks(), reduce some unnecessary
+> parameters and branches, no logic changes.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
+Looks good. Feel free to add:
 
-> On Jan 2, 2024, at 3:36 PM, Edward Adam Davis <eadavis@qq.com> wrote:
->=20
-> [syz report]
-> syz-executor279/5059 is trying to acquire lock:
-> ffff888079c100f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: =
-hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
->=20
-> but task is already holding lock:
-> ffff888079c10778 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: =
-hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
->=20
-> other info that might help us debug this:
-> Possible unsafe locking scenario:
->=20
->       CPU0
->       ----
->  lock(&HFS_I(tree->inode)->extents_lock);
->  lock(&HFS_I(tree->inode)->extents_lock);
->=20
-> *** DEADLOCK ***
-> [Analysis]=20
-> hfs_extend_file()->
->   hfs_ext_read_extent()->
->     __hfs_ext_cache_extent()->
->       __hfs_ext_write_extent()->
->         hfs_bmap_reserve()->
->           hfs_extend_file()->
->=20
-> When an inode has both the HFS_FLG_EXT_DIRTY and HFS_FLG_EXT_NEW =
-flags, it will
-> enter the above loop and trigger a deadlock.
->=20
-> [Fix]
-> In hfs_ext_read_extent(), check if the above two flags exist =
-simultaneously,=20
-> and exit the subsequent process when the conditions are met.
->=20
-> Reported-and-tested-by: =
-syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
-> fs/hfs/extent.c | 4 ++++
-> 1 file changed, 4 insertions(+)
->=20
-> diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-> index 6d1878b99b30..1b02c7b6a10c 100644
-> --- a/fs/hfs/extent.c
-> +++ b/fs/hfs/extent.c
-> @@ -197,6 +197,10 @@ static int hfs_ext_read_extent(struct inode =
-*inode, u16 block)
-> 	    block < HFS_I(inode)->cached_start + =
-HFS_I(inode)->cached_blocks)
-> 		return 0;
->=20
-> +	if (HFS_I(inode)->flags & HFS_FLG_EXT_DIRTY &&=20
-> +	    HFS_I(inode)->flags & HFS_FLG_EXT_NEW)=20
-> +		return -ENOENT;
+>  fs/ext4/inode.c | 39 +++++++++++++++++----------------------
+>  1 file changed, 17 insertions(+), 22 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 61277f7f8722..5b0d3075be12 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -1704,7 +1704,6 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+>  	/* Lookup extent status tree firstly */
+>  	if (ext4_es_lookup_extent(inode, iblock, NULL, &es)) {
+>  		if (ext4_es_is_hole(&es)) {
+> -			retval = 0;
+>  			down_read(&EXT4_I(inode)->i_data_sem);
+>  			goto add_delayed;
+>  		}
+> @@ -1749,26 +1748,9 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+>  		retval = ext4_ext_map_blocks(NULL, inode, map, 0);
+>  	else
+>  		retval = ext4_ind_map_blocks(NULL, inode, map, 0);
+> -
+> -add_delayed:
+> -	if (retval == 0) {
+> -		int ret;
+> -
+> -		/*
+> -		 * XXX: __block_prepare_write() unmaps passed block,
+> -		 * is it OK?
+> -		 */
+> -
+> -		ret = ext4_insert_delayed_block(inode, map->m_lblk);
+> -		if (ret != 0) {
+> -			retval = ret;
+> -			goto out_unlock;
+> -		}
+> -
+> -		map_bh(bh, inode->i_sb, invalid_block);
+> -		set_buffer_new(bh);
+> -		set_buffer_delay(bh);
+> -	} else if (retval > 0) {
+> +	if (retval < 0)
+> +		goto out_unlock;
+> +	if (retval > 0) {
+>  		unsigned int status;
+>  
+>  		if (unlikely(retval != map->m_len)) {
+> @@ -1783,11 +1765,24 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+>  				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
+>  		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+>  				      map->m_pblk, status);
+> +		goto out_unlock;
+>  	}
+>  
+> +add_delayed:
+> +	/*
+> +	 * XXX: __block_prepare_write() unmaps passed block,
+> +	 * is it OK?
+> +	 */
+> +	retval = ext4_insert_delayed_block(inode, map->m_lblk);
+> +	if (retval)
+> +		goto out_unlock;
 > +
-
-I don=E2=80=99t think that fix can be so simple. It looks like the code =
-requires significant
-refactoring. Because, currently, it looks like bad recursion: =
-hfs_extend_file() finally
-calls hfs_extend_file(). And it smells really badly. Also, from the =
-logical point of view,
-hfs_ext_read_extent() method calls __hfs_ext_write_extent() that sounds =
-like not
-good logic. I believe we need more serious refactoring of =
-hfs_extend_file() logic.
-
-Potentially, hfs_extend_file() can check that we have HFS_FLG_EXT_DIRTY =
-and
-execute logic of write extent without calling himself again. But I =
-haven=E2=80=99t clear picture
-of necessary refactoring efforts yet.
-
-Thanks,
-Slava.
-
+> +	map_bh(bh, inode->i_sb, invalid_block);
+> +	set_buffer_new(bh);
+> +	set_buffer_delay(bh);
+> +
+>  out_unlock:
+>  	up_read((&EXT4_I(inode)->i_data_sem));
+> -
+>  	return retval;
+>  }
+>  
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
