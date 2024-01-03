@@ -1,110 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-7261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702A5823703
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:16:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3881582372A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9532879E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:16:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29183B24B36
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 21:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800E1DA46;
-	Wed,  3 Jan 2024 21:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B2C1D6AF;
+	Wed,  3 Jan 2024 21:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csxKLHo1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2xdHhwi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41FD1D6BC
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 21:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704316554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Lz9BpuJT9ZqjBzLEQFTtycxe4tbIVPZFPrNygtaFHDI=;
-	b=csxKLHo1dLIRI41aBVgchwKMJP2JKbNckE4MT3QbtXCiMtNVnl4WyzXbJAmKITCLevnE81
-	16M2kDMWDOipj6FYECdts+CYruFIh0/EAOFWVp2hqY4rdGH+GuryP1VX+RAEPut4cazEGW
-	m4Rl6fIRW0ZJGZ3gA0t9j13dAvbX7Ss=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-1v-GWHbRM9e1RxN52-Av-w-1; Wed,
- 03 Jan 2024 16:15:48 -0500
-X-MC-Unique: 1v-GWHbRM9e1RxN52-Av-w-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5354F3806710;
-	Wed,  3 Jan 2024 21:15:47 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 576BF492BC6;
-	Wed,  3 Jan 2024 21:15:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240103145935.384404-1-dhowells@redhat.com>
-References: <20240103145935.384404-1-dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Marc Dionne <marc.dionne@auristor.com>
-Cc: dhowells@redhat.com, Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/5] netfs: Fix proc/fs/fscache symlink to point to "netfs" not "../netfs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134D41DA4F;
+	Wed,  3 Jan 2024 21:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6d9bc8939d0so2988002b3a.0;
+        Wed, 03 Jan 2024 13:34:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704317671; x=1704922471; darn=vger.kernel.org;
+        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+cVjY5Pt++Oml7k46uXFJ0gcfn/CPEiqKh/TxTDxjTQ=;
+        b=C2xdHhwi3WIhl6+q9SmtcsJD9RNe1So9YmjKwEWZx/JQdjnijrvwldRnfmzWYhF2YX
+         Os7LiKVBx4+r1k+P10a6LN3R9SLa3oOaD1YxQ/TxwfHKyiiYZuX8BH12MSmpRjWF00oT
+         oE8iAQPAA6aq/bypusIErbFUvW1h5JIli4nYUrEJKar7lbQUAvG4MO+NiTg/oh0U9Yox
+         6Q/45BbFMhQ/J/BAzQPoZVNpflR0XrOKhV2rDHjvnJP5rYMI+qIvyU+deGu6MGvaGiba
+         nKAbG8G3vnN/KwHd747QNuTlJdkMQK1njV+cEUb75+qA42e9CnfIoRIg1TaXYvgwK8GT
+         R0fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704317671; x=1704922471;
+        h=mime-version:references:in-reply-to:message-id:cc:to:subject:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+cVjY5Pt++Oml7k46uXFJ0gcfn/CPEiqKh/TxTDxjTQ=;
+        b=Nn1L4nKZb6jufd2K0+68Ur8kh1IUH+rtgnMitfTraatL9NPqsgWznCmweRj5IJ/Qea
+         O+Ou+uo6N0z+JLID2/6k1ct73TeDQKN8hIVnNc0mf0qOFz7IUe7YPa12fRAu7HpfMxXJ
+         v19wU9zIJAh7gjWqSB7F9ZOh2J1XlvYhQQuhAg3ja/fTLBs7Oc1j5xBLaxn6egFEpP/a
+         3Rs4PP1Ia7dAXaOr3ZSf1G2CZJNwnhw+kOTzyG05tY8kGoONtery6kk0EPb7WkZpL6H9
+         tKGAwTOxFpIH7JyweetyLo8hFZ1RD+KWoTYWWudwRIZMHC6uCUUKMy/v838yNXsExuG/
+         y14Q==
+X-Gm-Message-State: AOJu0YxSYhr+X1WIjdgYpGYBnMuahtQ9ig+zSdx4pxbzO62vsS+I1J3i
+	9OyDvy+EfZx4kko/ExvktoWJYrkVYVk=
+X-Google-Smtp-Source: AGHT+IH9nZVFLiGQx1dtVzf7cyH5HQ9gCnfyFQQwfiAq1rIgzN39tHS6Ync8unOzhVg7BWamte8Adg==
+X-Received: by 2002:a05:6a20:72ac:b0:197:587:aecd with SMTP id o44-20020a056a2072ac00b001970587aecdmr2916093pzk.7.1704317671128;
+        Wed, 03 Jan 2024 13:34:31 -0800 (PST)
+Received: from [192.168.1.135] ([103.77.5.247])
+        by smtp.gmail.com with ESMTPSA id le6-20020a056a004fc600b006da0f15b31csm12649452pfb.97.2024.01.03.13.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jan 2024 13:34:30 -0800 (PST)
+Date: Thu, 04 Jan 2024 10:34:14 +1300
+From: Oliver Giles <ohw.giles@gmail.com>
+Subject: Re: [PATCH v2 08/11] tty: splice_read: disable
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Ahelenia =?iso-8859-2?q?Ziemia=F1ska?=
+	<nabijaczleweli@nabijaczleweli.xyz>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Message-Id: <2XFP6S.GINKQ8IKAA1W1@gmail.com>
+In-Reply-To: <CAHk-=wgLZXULo7pg=nwUMFLsKNUe+1_X=Fk7+f-J0735Oir97w@mail.gmail.com>
+References: <cover.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+	<4dec932dcd027aa5836d70a6d6bedd55914c84c2.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+	<6c3fc5e9-f8cf-4b42-9317-8ce9669160c2@kernel.org>
+	<CAHk-=wgLZXULo7pg=nwUMFLsKNUe+1_X=Fk7+f-J0735Oir97w@mail.gmail.com>
+X-Mailer: geary/44.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <900276.1704316543.1@warthog.procyon.org.uk>
-Date: Wed, 03 Jan 2024 21:15:43 +0000
-Message-ID: <900277.1704316543@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+Content-Type: text/plain; charset=us-ascii; format=flowed
 
-Fix the proc/fs/fscache symlink to point to "netfs" not "../netfs".
 
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Christian Brauner <christian@brauner.io>
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-cachefs@redhat.com
----
- fs/netfs/fscache_proc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Jan 3 2024 at 11:14:59 -08:00:00, Linus Torvalds 
+<torvalds@linux-foundation.org> wrote:
+> 
+> It's some annoying SSL VPN thing that splices to pppd:
+> 
+>    https://lore.kernel.org/all/C8KER7U60WXE.25UFD8RE6QZQK@oguc/
 
-diff --git a/fs/netfs/fscache_proc.c b/fs/netfs/fscache_proc.c
-index ecd0d1edafaa..874d951bc390 100644
---- a/fs/netfs/fscache_proc.c
-+++ b/fs/netfs/fscache_proc.c
-@@ -16,7 +16,7 @@
-  */
- int __init fscache_proc_init(void)
- {
--	if (!proc_symlink("fs/fscache", NULL, "../netfs"))
-+	if (!proc_symlink("fs/fscache", NULL, "netfs"))
- 		goto error_sym;
- 
- 	if (!proc_create_seq("fs/netfs/caches", S_IFREG | 0444, NULL,
+I'm happy to report that that particular SSL VPN tool is no longer 
+around.
+And it had anyway grown a fall-back-to-read/write in case splice() 
+fails.
+So at least from my perspective, no objections to splice-to-tty going 
+away
+altogether.
+
+> and I'd be happy to try to limit splice to tty's to maybe just the one
+> case that pppd uses.
+
+To be exact, pppd is just providing a pty with which other (now all 
+extinct?)
+applications can do nefarious things.
+
+> Maybe that VPN thing already has the pty in non-blocking mode, for
+> example, and we could make the tty splicing fail for any blocking op?
+
+FWIW, the SSL VPN tool did indeed have the pty in non-blocking mode.
+
+Oliver
+
+
 
 
