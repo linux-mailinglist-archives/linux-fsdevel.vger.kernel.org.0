@@ -1,91 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-7148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C50E822609
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 01:40:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0386C8226B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 02:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2CA1F22461
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 00:40:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3003FB2203F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 01:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C42805;
-	Wed,  3 Jan 2024 00:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5165417993;
+	Wed,  3 Jan 2024 01:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GPXoqfoh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE4C63C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 00:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-35fda7cdff8so113531995ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 16:40:05 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C4317988
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 01:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704246915;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+OwCGOsIHEiALaM4BtPfZn1YP8/WcwN0PC3E3A5Muo=;
+	b=GPXoqfoh4ETj8OZvv0L+OHLoV0YhpvhOstzYc6Qf4XQvKe+WhWjfTaL4iHkpQpItXYz1UH
+	k0J7RkNpyDOVh+qjQaHA7QgkqCgr1ZdqBOYQ7KrjbEprwuuoSaognuy5P4DnCs3GfGYM3z
+	96ZuM0oazoT94+mF1z/uUZ8lDDSSHP4=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-BsTnW0h-MhqFBrzoznwFOQ-1; Tue, 02 Jan 2024 20:55:14 -0500
+X-MC-Unique: BsTnW0h-MhqFBrzoznwFOQ-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-28bea0ff98cso2258845a91.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 17:55:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704242405; x=1704847205;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1704246913; x=1704851713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RJf7vSGa/mloGWPSH35KgZw/pf1sF+YVSpzDDB0QvDE=;
-        b=P6ottgWQhxo4O1/aoHbYCNpKBftTZhec5isO0eMrO+MGkmkpTHlJv71PMnV2HPfZvx
-         vhpdAAh57ixkrCvp/rowm5/Jtnew6+dAUImaZZM8NSpFhlBdP+VqHWvbCAdlZsjaGYjK
-         hwMW4gj49bt8jQWSDe6mIGVg1zsukxHSaR4cEyee+sK1Q5aawx8d81cM4h3Dp/eZok2b
-         erhUa1G4qmYygAPSyrSHNzCOQ/hwBkrOswh6EYKaLADRzL6xSQ8UWnK/TgWW8YALe/DV
-         7ijewfUieFZkyTjJ4PUSa3qOisVbS0Gwusvi0WcB+Xfj0kP7l0qSNYNjlzIiFBusjOes
-         8dIQ==
-X-Gm-Message-State: AOJu0YwnUXBctSQkcEw+foG+3/aDWMaMtR6iLIfTXSKK/k2qGqnxG88y
-	Zj8ARDKPOACK/xs4C5AssCTsHF01imRfE6Y181FKM937foLx
-X-Google-Smtp-Source: AGHT+IFmE5GI0godAPqNQyN2YPspMWWMHHYp0iA22IQDb1vdWvkwnmx2bQyjOI0TqH6so35dd1UY/Pedg5CWPbdkZdiUH4mIgEBa
+        bh=5+OwCGOsIHEiALaM4BtPfZn1YP8/WcwN0PC3E3A5Muo=;
+        b=mzh+92PMtte00zYEmaThveM/8ZQzbxNBC1A3OBJ3TDyC69aTO/AfFC8pPTV/PjBreC
+         WW1KW8ORKlKKINEZyNFtq4MudF/Lu/bUExfrS4kweoHGSBNND5QeBRZE6dV46QWqUILA
+         oYMKOJfS/Bgu00uTVl04dik46JH7jRm2UP4UrHedSu+N8E/GtyyRRAWpm4GHw07ENPbA
+         Y/PSWK7k3fUz1B19DaHv1145IqC82Y3n+VnVr0rk1pQ5/1WhK33KwZAqznsvU8bP6B09
+         Y6AtRYGGKRFV5i/ECT0juiSIziO4/gWdMgS90rdBS0l4kKwEJQXhZqXuzOhWg4GlCzqK
+         GcsA==
+X-Gm-Message-State: AOJu0YyPuOZ9/MjsyUvM5c3y/wOZ6egZ5rqu3p6w3lS7LUWu/yMKRF3i
+	ljxa25lfQqG+FEx28yxb0M/HsQcidouAy66WELF7k4oJ9fC/JLs3mV/GoV1XEN5yaRFSY8VsN2H
+	v+qXd4ZxD96w1/E3PyhKofDNtfpxgyHyeaw==
+X-Received: by 2002:a17:902:d389:b0:1d4:f1c:6363 with SMTP id e9-20020a170902d38900b001d40f1c6363mr36694258pld.3.1704246913073;
+        Tue, 02 Jan 2024 17:55:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFE1VRAgZlF4eJzDsAhgUMRAVjD8W2rPGkIhmIJMebLALfwg6LoEE4rio7wycrCnlrts/vgwQ==
+X-Received: by 2002:a17:902:d389:b0:1d4:f1c:6363 with SMTP id e9-20020a170902d38900b001d40f1c6363mr36694251pld.3.1704246912799;
+        Tue, 02 Jan 2024 17:55:12 -0800 (PST)
+Received: from x1n ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id g5-20020a170902868500b001d096757ac1sm22501248plo.47.2024.01.02.17.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jan 2024 17:55:12 -0800 (PST)
+Date: Wed, 3 Jan 2024 09:54:58 +0800
+From: Peter Xu <peterx@redhat.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	shuah@kernel.org, aarcange@redhat.com, lokeshgidra@google.com,
+	david@redhat.com, ryan.roberts@arm.com, hughd@google.com,
+	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org,
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com,
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com,
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix move_pages_pte() splitting folio
+ under RCU read lock
+Message-ID: <ZZS-crdr54WqL7Ns@x1n>
+References: <20240102233256.1077959-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1543:b0:35f:ff56:c0fe with SMTP id
- j3-20020a056e02154300b0035fff56c0femr2296142ilu.1.1704242405290; Tue, 02 Jan
- 2024 16:40:05 -0800 (PST)
-Date: Tue, 02 Jan 2024 16:40:05 -0800
-In-Reply-To: <000000000000d95cf9060c5038e3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002dbc50060dffdba0@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfs_extend_file (2)
-From: syzbot <syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, eadavis@qq.com, ernesto.mnd.fernandez@gmail.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
-	willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240102233256.1077959-1-surenb@google.com>
 
-syzbot has bisected this issue to:
+On Tue, Jan 02, 2024 at 03:32:56PM -0800, Suren Baghdasaryan wrote:
+> While testing the split PMD path with lockdep enabled I've got an
+> "Invalid wait context" error caused by split_huge_page_to_list() trying
+> to lock anon_vma->rwsem while inside RCU read section. The issues is due
+> to move_pages_pte() calling split_folio() under RCU read lock. Fix this
+> by unmapping the PTEs and exiting RCU read section before splitting the
+> folio and then retrying. The same retry pattern is used when locking the
+> folio or anon_vma in this function. After splitting the large folio we
+> unlock and release it because after the split the old folio might not be
+> the one that contains the src_addr.
+> 
+> Fixes: 94b01c885131 ("userfaultfd: UFFDIO_MOVE uABI")
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-commit 54640c7502e5ed41fbf4eedd499e85f9acc9698f
-Author: Ernesto A. Fern=C3=A1ndez <ernesto.mnd.fernandez@gmail.com>
-Date:   Tue Oct 30 22:06:17 2018 +0000
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
-    hfs: prevent btree data loss on ENOSPC
+Thanks,
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1121e49ae800=
-00
-start commit:   610a9b8f49fb Linux 6.7-rc8
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1321e49ae800=
-00
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D1521e49ae80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D247b5a935d307ee=
-5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D41a88b825a315aac2=
-254
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1552fe19e8000=
-0
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1419bcade80000
+-- 
+Peter Xu
 
-Reported-by: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
-Fixes: 54640c7502e5 ("hfs: prevent btree data loss on ENOSPC")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
-n
 
