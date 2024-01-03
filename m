@@ -1,208 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-7305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD56C82382C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 23:29:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B818823837
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 23:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01CD11C2568C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:29:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE07B249EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E3922323;
-	Wed,  3 Jan 2024 22:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096B7208AD;
+	Wed,  3 Jan 2024 22:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gPsth09B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9F20303
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 22:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 403GiLf3027546
-	for <linux-fsdevel@vger.kernel.org>; Wed, 3 Jan 2024 14:25:09 -0800
-Received: from mail.thefacebook.com ([163.114.132.120])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3vcxn2pph9-9
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 14:25:08 -0800
-Received: from twshared24631.38.frc1.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:21d::8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.34; Wed, 3 Jan 2024 14:24:36 -0800
-Received: by devbig019.vll3.facebook.com (Postfix, from userid 137359)
-	id 34A113DF9EC17; Wed,  3 Jan 2024 14:21:42 -0800 (PST)
-From: Andrii Nakryiko <andrii@kernel.org>
-To: <bpf@vger.kernel.org>, <netdev@vger.kernel.org>, <paul@paul-moore.com>,
-        <brauner@kernel.org>, <torvalds@linuxfoundation.org>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <kernel-team@meta.com>
-Subject: [PATCH bpf-next 29/29] selftests/bpf: add tests for LIBBPF_BPF_TOKEN_PATH envvar
-Date: Wed, 3 Jan 2024 14:20:34 -0800
-Message-ID: <20240103222034.2582628-30-andrii@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240103222034.2582628-1-andrii@kernel.org>
-References: <20240103222034.2582628-1-andrii@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501061EB29
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 22:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 3 Jan 2024 17:26:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1704320802;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WNpvu2gzuMScXdnQRqcdeB/4ZK6wtPXrPIS2KUikGK4=;
+	b=gPsth09BZ4Kj+qu67O01/cycZWcN3j3rVPwJSY+w9cyiCepL5qEIYWu5JPbbLRf5eOOyQj
+	/zI6hK58VFP3WacGnfNYNcuGpEQo5CGVhpcFkWucARa6JTFztiS49Br8RNwK9Mx5G28dYR
+	aIR1HP5avdVq1FH8qUB8Y9vRFFW5OUg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Carl E. Thompson" <cet@carlthompson.net>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>, 
+	lsf-pc@lists.linux-foundation.org, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
+Message-ID: <bqbkgz5ivpinp3nl6kqqp23ieow2ovglkjeqsukombuqvqm7qv@ihl5ydpo2llk>
+References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
+ <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
+ <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
+ <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
+ <cgivkso5ugccwkhtd5rh3d6rkoxdrra3hxgxhp5e5m45kn623s@f6hd3iajb3zg>
+ <1377749926.626.1704309748383@mail.carlthompson.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: WU9Dw1drbU8CeI7ZeCzfevHic0ZpiPP_
-X-Proofpoint-GUID: WU9Dw1drbU8CeI7ZeCzfevHic0ZpiPP_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-03_08,2024-01-03_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1377749926.626.1704309748383@mail.carlthompson.net>
+X-Migadu-Flow: FLOW_OUT
 
-Add new subtest validating LIBBPF_BPF_TOKEN_PATH envvar semantics.
-Extend existing test to validate that LIBBPF_BPF_TOKEN_PATH allows to
-disable implicit BPF token creation by setting envvar to empty string.
+On Wed, Jan 03, 2024 at 11:22:28AM -0800, Carl E. Thompson wrote:
+> 
+> > On 2024-01-03 9:52 AM PST Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > ...
+> 
+> > > Could ZNS model affects a GC operations? Or, oppositely, ZNS model can
+> > > help to manage GC operations more efficiently?
+> > 
+> > The ZNS model only adds restrictions on top of a regular block device,
+> > so no it's not _helpful_ for our GC operations.
+> 
+> > ...
+> 
+> Could he be talking about the combination of bcachefs and internal
+> drive garbage collection rather than only bcachefs garbage collection
+> individually? I think the idea with many (most?) ZNS flash drives is
+> that they don't have internal garbage collection at all and that the
+> drive's erase/write cycles are more directly controlled / managed by
+> the filesystem and OS block driver. I think the idea is supposed to be
+> that the OS's drivers can manage garbage collection more efficiently
+> that any generic drive firmware could. So the ZNS model is not just
+> adding restrictions to a regular block devices, it's also shifting the
+> responsibility for the drive's **internal** garbage collection to the
+> OS drivers which is supposed to improve efficiency.
+> 
+> Or I could be completely wrong because this is not an area of
+> expertise for me.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- .../testing/selftests/bpf/prog_tests/token.c  | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
+Yeah nothing really changes for bcachefs, GC-wise. We already have to
+have copygc, and it works the same with ZNS as without.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testi=
-ng/selftests/bpf/prog_tests/token.c
-index 003f7c208f4c..1f6aa685e6f7 100644
---- a/tools/testing/selftests/bpf/prog_tests/token.c
-+++ b/tools/testing/selftests/bpf/prog_tests/token.c
-@@ -773,6 +773,9 @@ static int userns_obj_priv_btf_success(int mnt_fd)
- 	return validate_struct_ops_load(mnt_fd, true /* should succeed */);
- }
-=20
-+#define TOKEN_ENVVAR "LIBBPF_BPF_TOKEN_PATH"
-+#define TOKEN_BPFFS_CUSTOM "/bpf-token-fs"
-+
- static int userns_obj_priv_implicit_token(int mnt_fd)
- {
- 	LIBBPF_OPTS(bpf_object_open_opts, opts);
-@@ -795,6 +798,20 @@ static int userns_obj_priv_implicit_token(int mnt_fd=
-)
- 	if (!ASSERT_OK(err, "move_mount_bpffs"))
- 		return -EINVAL;
-=20
-+	/* disable implicit BPF token creation by setting
-+	 * LIBBPF_BPF_TOKEN_PATH envvar to empty value, load should fail
-+	 */
-+	err =3D setenv(TOKEN_ENVVAR, "", 1 /*overwrite*/);
-+	if (!ASSERT_OK(err, "setenv_token_path"))
-+		return -EINVAL;
-+	skel =3D dummy_st_ops_success__open_and_load();
-+	if (!ASSERT_ERR_PTR(skel, "obj_token_envvar_disabled_load")) {
-+		unsetenv(TOKEN_ENVVAR);
-+		dummy_st_ops_success__destroy(skel);
-+		return -EINVAL;
-+	}
-+	unsetenv(TOKEN_ENVVAR);
-+
- 	/* now the same struct_ops skeleton should succeed thanks to libppf
- 	 * creating BPF token from /sys/fs/bpf mount point
- 	 */
-@@ -818,6 +835,76 @@ static int userns_obj_priv_implicit_token(int mnt_fd=
-)
- 	return 0;
- }
-=20
-+static int userns_obj_priv_implicit_token_envvar(int mnt_fd)
-+{
-+	LIBBPF_OPTS(bpf_object_open_opts, opts);
-+	struct dummy_st_ops_success *skel;
-+	int err;
-+
-+	/* before we mount BPF FS with token delegation, struct_ops skeleton
-+	 * should fail to load
-+	 */
-+	skel =3D dummy_st_ops_success__open_and_load();
-+	if (!ASSERT_ERR_PTR(skel, "obj_tokenless_load")) {
-+		dummy_st_ops_success__destroy(skel);
-+		return -EINVAL;
-+	}
-+
-+	/* mount custom BPF FS over custom location, so libbpf can't create
-+	 * BPF token implicitly, unless pointed to it through
-+	 * LIBBPF_BPF_TOKEN_PATH envvar
-+	 */
-+	rmdir(TOKEN_BPFFS_CUSTOM);
-+	if (!ASSERT_OK(mkdir(TOKEN_BPFFS_CUSTOM, 0777), "mkdir_bpffs_custom"))
-+		goto err_out;
-+	err =3D sys_move_mount(mnt_fd, "", AT_FDCWD, TOKEN_BPFFS_CUSTOM, MOVE_M=
-OUNT_F_EMPTY_PATH);
-+	if (!ASSERT_OK(err, "move_mount_bpffs"))
-+		goto err_out;
-+
-+	/* even though we have BPF FS with delegation, it's not at default
-+	 * /sys/fs/bpf location, so we still fail to load until envvar is set u=
-p
-+	 */
-+	skel =3D dummy_st_ops_success__open_and_load();
-+	if (!ASSERT_ERR_PTR(skel, "obj_tokenless_load2")) {
-+		dummy_st_ops_success__destroy(skel);
-+		goto err_out;
-+	}
-+
-+	err =3D setenv(TOKEN_ENVVAR, TOKEN_BPFFS_CUSTOM, 1 /*overwrite*/);
-+	if (!ASSERT_OK(err, "setenv_token_path"))
-+		goto err_out;
-+
-+	/* now the same struct_ops skeleton should succeed thanks to libppf
-+	 * creating BPF token from custom mount point
-+	 */
-+	skel =3D dummy_st_ops_success__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "obj_implicit_token_load"))
-+		goto err_out;
-+
-+	dummy_st_ops_success__destroy(skel);
-+
-+	/* now disable implicit token through empty bpf_token_path, envvar
-+	 * will be ignored, should fail
-+	 */
-+	opts.bpf_token_path =3D "";
-+	skel =3D dummy_st_ops_success__open_opts(&opts);
-+	if (!ASSERT_OK_PTR(skel, "obj_empty_token_path_open"))
-+		goto err_out;
-+
-+	err =3D dummy_st_ops_success__load(skel);
-+	dummy_st_ops_success__destroy(skel);
-+	if (!ASSERT_ERR(err, "obj_empty_token_path_load"))
-+		goto err_out;
-+
-+	rmdir(TOKEN_BPFFS_CUSTOM);
-+	unsetenv(TOKEN_ENVVAR);
-+	return 0;
-+err_out:
-+	rmdir(TOKEN_BPFFS_CUSTOM);
-+	unsetenv(TOKEN_ENVVAR);
-+	return -EINVAL;
-+}
-+
- #define bit(n) (1ULL << (n))
-=20
- void test_token(void)
-@@ -896,4 +983,15 @@ void test_token(void)
-=20
- 		subtest_userns(&opts, userns_obj_priv_implicit_token);
- 	}
-+	if (test__start_subtest("obj_priv_implicit_token_envvar")) {
-+		struct bpffs_opts opts =3D {
-+			/* allow BTF loading */
-+			.cmds =3D bit(BPF_BTF_LOAD) | bit(BPF_MAP_CREATE) | bit(BPF_PROG_LOAD=
-),
-+			.maps =3D bit(BPF_MAP_TYPE_STRUCT_OPS),
-+			.progs =3D bit(BPF_PROG_TYPE_STRUCT_OPS),
-+			.attachs =3D ~0ULL,
-+		};
-+
-+		subtest_userns(&opts, userns_obj_priv_implicit_token_envvar);
-+	}
- }
---=20
-2.34.1
-
+The only difference is that with the SMR hard drivers buckets are a lot
+bigger than you'd otherwise pick, but how much that affects you is
+entirely dependent on your workload (random overwrites or no).
 
