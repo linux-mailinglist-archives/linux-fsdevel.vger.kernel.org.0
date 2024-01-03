@@ -1,47 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-7238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3180C823061
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 16:19:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E302E823064
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 16:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA2C4284C26
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:19:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516BFB23C0F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930F71B267;
-	Wed,  3 Jan 2024 15:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4A61B285;
+	Wed,  3 Jan 2024 15:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kugt6KIA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plE6VWuw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D561A726;
-	Wed,  3 Jan 2024 15:19:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C822BC433C8;
-	Wed,  3 Jan 2024 15:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42C31B279;
+	Wed,  3 Jan 2024 15:19:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6CAC433C8;
+	Wed,  3 Jan 2024 15:19:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704295172;
-	bh=vgFckl7sis6cgkqsmIhf+TxrHwPjTfuBkdunPtTkBz0=;
-	h=Subject:From:To:Cc:Date:From;
-	b=Kugt6KIA2BaOflKwArKk0JMHW9V7hRS9sNl98bb0qEWaupRf3DK29g1U9YkS1bQt5
-	 0+Ymgnj535kF7E5Mo9sJkSnpX/3XEEuf9WiBnsrzOUOxhOABxeKub+gDqCzD+nH5+B
-	 1sZQkLZXSrop8TLe+cpF6m2NVHg1a59JaaUv3tspb9tVCGiW4OD0DTDn/XBMA6kyl9
-	 yjZalvXoPiqdbHn6msd2pA8FoDlFVrf2il7InIzihoi7m/m0A7bnLEb/dAQIhB64dC
-	 B6Q5qvm8XaoymiuQ3hLWENX1jVQFGAuZRSlArT8xE+0pjhdrCZdpIRuAU8RRBGMRls
-	 WhXe1C+CQkscQ==
-Subject: [PATCH v2 0/2] fix the fallback implementation of get_name
+	s=k20201202; t=1704295179;
+	bh=IhnX4hHtRzrAnyp6d66bwgBG87Kr2elb7Rz8vNJe5Ow=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=plE6VWuwt6yn2R19NJuwEhxEQ475wHEH7bMh1cK8HNRiLKQbsQKb2UYafOeBlVA8k
+	 +RPwQ0S69JONgea/v32RnpGSkgy1Gcm6URJgWqP6VPGeO8ahrhWqRcWZD5qbT9TuYm
+	 1fESNLkXF39Hj5b5xbk5z5FrxsiMFoXNFeHNeip/ruF7U84ooIarcU9ShyfRgW5Gz1
+	 +cqKK9HtkHjDyeeQNCdBYNsoE5bXEK50inR8yy82XNjNgYopamSoYNnI0X+SNj5/C7
+	 edeN0J0cxrP4XwTsRaQisn7WPZA9YWRm2Rkz3+aBqFToJzlMUP1nuK7VeUSLhHxWod
+	 lVrRD+JRJCUZA==
+Subject: [PATCH v2 1/2] exportfs: fix the fallback implementation of the
+ get_name export operation
 From: Chuck Lever <cel@kernel.org>
 To: jlayton@redhat.com, amir73il@gmail.com
-Cc: Jeff Layton <jlayton@kernel.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
- brauner@kernel.org
-Date: Wed, 03 Jan 2024 10:19:30 -0500
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ trondmy@hammerspace.com, viro@zeniv.linux.org.uk, brauner@kernel.org
+Date: Wed, 03 Jan 2024 10:19:37 -0500
 Message-ID: 
+ <170429517779.50646.9656897459585544068.stgit@bazille.1015granger.net>
+In-Reply-To: 
+ <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
+References: 
  <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.5
 Precedence: bulk
@@ -53,35 +57,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-I've set up a testing topic branch for exportfs in my kernel.org git
-repo:
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
+The fallback implementation for the get_name export operation uses
+readdir() to try to match the inode number to a filename. That filename
+is then used together with lookup_one() to produce a dentry.
+A problem arises when we match the '.' or '..' entries, since that
+causes lookup_one() to fail. This has sometimes been seen to occur for
+filesystems that violate POSIX requirements around uniqueness of inode
+numbers, something that is common for snapshot directories.
 
-But IIRC, Christian wants exportfs changes to go through the VFS
-tree. Please correct me if I'm wrong.
+This patch just ensures that we skip '.' and '..' rather than allowing a
+match.
 
-Changes since v1:
-- Fixes: was dropped from 1/2
-- Added a patch to hoist is_dot_dotdot() into linux/fs.h
-
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+Link: https://lore.kernel.org/linux-nfs/CAOQ4uxiOZobN76OKB-VBNXWeFKVwLW_eK5QtthGyYzWU9mjb7Q@mail.gmail.com/
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
+ fs/exportfs/expfs.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Chuck Lever (1):
-      fs: Create a generic is_dot_dotdot() utility
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 3ae0154c5680..84af58eaf2ca 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -255,7 +255,9 @@ static bool filldir_one(struct dir_context *ctx, const char *name, int len,
+ 		container_of(ctx, struct getdents_callback, ctx);
+ 
+ 	buf->sequence++;
+-	if (buf->ino == ino && len <= NAME_MAX) {
++	/* Ignore the '.' and '..' entries */
++	if ((len > 2 || name[0] != '.' || (len == 2 && name[1] != '.')) &&
++	    buf->ino == ino && len <= NAME_MAX) {
+ 		memcpy(buf->name, name, len);
+ 		buf->name[len] = '\0';
+ 		buf->found = 1;
 
-Trond Myklebust (1):
-      exportfs: fix the fallback implementation of the get_name export operation
-
-
- fs/crypto/fname.c    |  8 +-------
- fs/ecryptfs/crypto.c | 10 ----------
- fs/exportfs/expfs.c  |  2 +-
- fs/f2fs/f2fs.h       | 11 -----------
- include/linux/fs.h   |  9 +++++++++
- 5 files changed, 11 insertions(+), 29 deletions(-)
-
---
-Chuck Lever
 
 
