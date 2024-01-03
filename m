@@ -1,142 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-7243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309918233DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 18:52:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413E78233E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 18:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2CF286BF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 17:52:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F05B21829
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 17:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CBE1C2AE;
-	Wed,  3 Jan 2024 17:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA9A1C680;
+	Wed,  3 Jan 2024 17:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OJtRakfh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L1kvXiEP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DDE1C29D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 17:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 3 Jan 2024 12:52:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704304361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khNmJzjGWlE8eh+xfUBZMGjQlfvaaj0d9UZKWMuJ6bU=;
-	b=OJtRakfhfPe0RCNZc6D8+hY4U5YfWw3Wuw4wqYMpHta18s6iQDR65hHQ9k8f4LurxiLz3x
-	ArIYf3r/+pxNc0/w1dQz1bmhVY+ox5BrluXTeZpio/WfaWZaV9YxbR5L2li2G4GU7KkDjY
-	9k4esUnQP72+xPcZLHv8Tiq062W4ASE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
-Message-ID: <cgivkso5ugccwkhtd5rh3d6rkoxdrra3hxgxhp5e5m45kn623s@f6hd3iajb3zg>
-References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
- <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
- <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
- <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0C31C2A3;
+	Wed,  3 Jan 2024 17:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=g3Q6A/OSBTzpvsA+ZueyJpCCrUPX6Gs2jbB2LOMyGZU=; b=L1kvXiEP+N+GxELX905cIpeDO/
+	Fum/7I+llgkoF6au7+5q5lD7WYxqCxjWc3lxB10+2+oQTvnGvGRGQBspPKliCu3alSezpqXATdGrF
+	YNWzJy1nz0yv7YC9tj9b7XKQvQ1YLphocwT/hY57otg/RVTsIBJj/yPZjBX6Kw5C2Z/V02yuxH3J/
+	HK2qNkSLlarydo7UesLCYKwkF4LkpIC/IeklCIgKUcoPzmQ2Ij4UI+78N9tgDkZ7m+wmbZOdzrR8e
+	wcN7B/uKTt6BZEUjw/gUYYjw/e0T9HYFGVjZbirAHs8MdhZctVx+ozf7UOu67ciQg5sjpIBfoDnYb
+	nJ7p6cvg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rL5RH-00DG5A-Jb; Wed, 03 Jan 2024 17:53:59 +0000
+Date: Wed, 3 Jan 2024 17:53:59 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Genes Lists <lists@sapience.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: 6.6.8 stable: crash in folio_mark_dirty
+Message-ID: <ZZWfN6ymZ50MjzuQ@casper.infradead.org>
+References: <8bb29431064fc1f70a42edef75a8788dd4a0eecc.camel@sapience.com>
+ <20231231012846.2355-1-hdanton@sina.com>
+ <20240101015504.2446-1-hdanton@sina.com>
+ <20240101113316.2595-1-hdanton@sina.com>
+ <20240103104907.2657-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240103104907.2657-1-hdanton@sina.com>
 
-On Wed, Jan 03, 2024 at 10:39:50AM +0300, Viacheslav Dubeyko wrote:
+On Wed, Jan 03, 2024 at 06:49:07PM +0800, Hillf Danton wrote:
+> On Mon, 1 Jan 2024 14:11:02 +0000 Matthew Wilcox
+> > 
+> > From an mm point of view, what is implicit is that truncate calls
+> > unmap_mapping_folio -> unmap_mapping_range_tree ->
+> > unmap_mapping_range_vma -> zap_page_range_single -> unmap_single_vma ->
+> > unmap_page_range -> zap_p4d_range -> zap_pud_range -> zap_pmd_range ->
+> > zap_pte_range -> pte_offset_map_lock()
+> > 
+> > So a truncate will take the page lock, then spin on the pte lock
+> > until the racing munmap() has finished (ok, this was an exit(), not
+> > a munmap(), but exit() does an implicit munmap()).
+> > 
+> But ptl fails to explain the warning reported, while the sequence in
+> __block_commit_write()
 > 
+> 	mark_buffer_dirty();
+> 	folio_mark_uptodate();
 > 
-> > On Jan 2, 2024, at 7:05 PM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > 
-> > On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
-> >> 
-> >> 
-> >>> On Jan 2, 2024, at 1:56 AM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >>> 
-> >>> LSF topic: bcachefs status & roadmap
-> >>> 
-> >> 
-> >> <skipped>
-> >> 
-> >>> 
-> >>> A delayed allocation for btree nodes mode is coming, which is the main
-> >>> piece needed for ZNS support
-> >>> 
-> >> 
-> >> I could miss some emails. But have you shared the vision of ZNS support
-> >> architecture for the case of bcachefs already? It will be interesting to hear
-> >> the high-level concept.
-> > 
-> > There's not a whole lot to it. bcache/bcachefs allocation is already
-> > bucket based, where the model is that we allocate a bucket, then write
-> > to it sequentially and never overwrite until the whole bucket is reused.
-> > 
-> > The main exception has been btree nodes, which are log structured and
-> > typically smaller than a bucket; that doesn't break the "no overwrites"
-> > property ZNS wants, but it does mean writes within a bucket aren't
-> > happening sequentially.
-> > 
-> > So I'm adding a mode where every time we do a btree node write we write
-> > out the whole node to a new location, instead of appending at an
-> > existing location. It won't be as efficient for random updates across a
-> > large working set, but in practice that doesn't happen too much; average
-> > btree write size has always been quite high on any filesystem I've
-> > looked at.
-> > 
-> > Aside from that, it's mostly just plumbing and integration; bcachefs on
-> > ZNS will work pretty much just the same as bcachefs on regular block devices.
-> 
-> I assume that you are aware about limited number of open/active zones
-> on ZNS device. It means that you can open for write operations
-> only N zones simultaneously (for example, 14 zones for the case of WDC
-> ZNS device). Can bcachefs survive with such limitation? Can you limit the number
-> of buckets for write operations?
+> hints the warning is bogus.
 
-Yes, open/active zones correspond to write points in the bcachefs
-allocator. The default number of write points is 32 for user writes plus
-a few for internal ones, but it's not a problem to run with fewer.
+The folio is locked when filesystems call __block_commit_write().
 
-> Another potential issue could be the zone size. WDC ZNS device introduces
-> 2GB zone size (with 1GB capacity). Could be the bucket is so huge? And could
-> btree model of operations works with such huge zones?
-
-Yes. It'll put more pressure on copying garbage collection, but that's
-about it.
-
-> Technically speaking, limitation (14 open/active zones) could be the factor of
-> performance degradation. Could such limitation doesn’t effect the bcachefs
-> performance?
-
-I'm not sure what performance degradation you speak of, but no, that
-won't affect bcachefs. 
-
-> Could ZNS model affects a GC operations? Or, oppositely, ZNS model can
-> help to manage GC operations more efficiently?
-
-The ZNS model only adds restrictions on top of a regular block device,
-so no it's not _helpful_ for our GC operations.
-
-But: since our existing allocation model maps so well to zones, our
-existing GC model won't be hurt either, and doing GC in the filesystem
-will naturally have benefits in that we know exactly what data is live
-and we have access to the LBA mapping so can better avoid fragmentation.
-
-> Do you need in conventional zone? Could bcachefs work without using
-> the conventional zone of ZNS device?
-
-Not required, but if zones are all 1GB+ you'd want a small conventional
-zone so as to avoid burning two whole zones for the superblock.
+Nothing explains the reported warning, IMO.  Other than data corruption,
+and I'm not sure that we've found the last data corrupter.
 
