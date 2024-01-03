@@ -1,94 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-7220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8DB822F22
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:04:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3CC822F2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4D92858D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F5A1F2435D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683E21A58C;
-	Wed,  3 Jan 2024 14:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE0A1A590;
+	Wed,  3 Jan 2024 14:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qq+TZ9nM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKTr7qNL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C631A28F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704290669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dm5uQwn+49K96zJWxQsiqkazcQLayYKEShHZEQ+JYDg=;
-	b=Qq+TZ9nM1o4ZomOCIr9KhLWeHeOAEd7d4jwIADH//G7/p4/98DRakhV1gZ+p8jL4UEauup
-	J5YkEbEUq+3XW/XVz+cRkDBjeiGak7oO3YMReV4Nv0wuig3PNy4RSrtOCEOb2oqE0ExBhg
-	OUotu39ZFyq5fbfWeS4YcX+Nz+1S6BM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-i-DxWH5nPu6c-fysuoabdA-1; Wed, 03 Jan 2024 09:04:26 -0500
-X-MC-Unique: i-DxWH5nPu6c-fysuoabdA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1041384AF84;
-	Wed,  3 Jan 2024 14:04:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 372852026D66;
-	Wed,  3 Jan 2024 14:04:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZZVctju5TEjS218p@codewreck.org>
-References: <ZZVctju5TEjS218p@codewreck.org> <20231221132400.1601991-41-dhowells@redhat.com> <20231221132400.1601991-1-dhowells@redhat.com> <292837.1704232179@warthog.procyon.org.uk>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: dhowells@redhat.com, Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH] 9p: Fix initialisation of netfs_inode for 9p
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20E1A28A;
+	Wed,  3 Jan 2024 14:04:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CE6C433C7;
+	Wed,  3 Jan 2024 14:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704290699;
+	bh=RYNKFXB1pA6ACfuaqdpya+quA/X8Ww41O670fD+ZNNg=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=rKTr7qNLBKgIMnnNZD5kydCgVoB0ShDhCqxZzuZqnQaHxHN+3n8eAD5Q1loCLVjJR
+	 uU1d0eneow4rgu1o41DaW+lS1T3SB/GWC+sAZEwEzhpsz6huPi7L5ffd+A/Osns3xs
+	 7guQ8ydipmDJb1pAO2A/VCrWuk4yQep6SMzb5AfD3U77wP7mA/+hlmJnmLhgOvoAC0
+	 COBE5pracc5vYmGzZV2GMs3Sos2+unnWsqjHeTlXI//wPfvHXLMVJNxASe2Dt+0fkt
+	 aYVcIIjciGqJKBRkXKDfoRcP2UEytgT1ESXUAN6VvIJUMkEXdR8r+HD0owcPqTQJdy
+	 NYdIoSbmFVuKw==
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <368445.1704290657.1@warthog.procyon.org.uk>
-Date: Wed, 03 Jan 2024 14:04:17 +0000
-Message-ID: <368446.1704290657@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 03 Jan 2024 16:04:54 +0200
+Message-Id: <CY54MOETXVFI.1102C6BQTO36@suppilovahvero>
+Cc: <kernel@quicinc.com>, <quic_pkondeti@quicinc.com>,
+ <keescook@chromium.or>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+ <oleg@redhat.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
+ <jmorris@namei.org>, <serge@hallyn.com>, <linux-mm@kvack.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH] kernel: Introduce a write lock/unlock wrapper for
+ tasklist_lock
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Maria Yu" <quic_aiquny@quicinc.com>, <ebiederm@xmission.com>
+X-Mailer: aerc 0.15.2
+References: <20231225081932.17752-1-quic_aiquny@quicinc.com>
+In-Reply-To: <20231225081932.17752-1-quic_aiquny@quicinc.com>
 
-Dominique Martinet <asmadeus@codewreck.org> wrote:
+On Mon Dec 25, 2023 at 10:19 AM EET, Maria Yu wrote:
+> As a rwlock for tasklist_lock, there are multiple scenarios to acquire
+> read lock which write lock needed to be waiting for.
+> In freeze_process/thaw_processes it can take about 200+ms for holding rea=
+d
+> lock of tasklist_lock by walking and freezing/thawing tasks in commercial
+> devices. And write_lock_irq will have preempt disabled and local irq
+> disabled to spin until the tasklist_lock can be acquired. This leading to
+> a bad responsive performance of current system.
+> Take an example:
+> 1. cpu0 is holding read lock of tasklist_lock to thaw_processes.
+> 2. cpu1 is waiting write lock of tasklist_lock to exec a new thread with
+>    preempt_disabled and local irq disabled.
+> 3. cpu2 is waiting write lock of tasklist_lock to do_exit with
+>    preempt_disabled and local irq disabled.
+> 4. cpu3 is waiting write lock of tasklist_lock to do_exit with
+>    preempt_disabled and local irq disabled.
+> So introduce a write lock/unlock wrapper for tasklist_lock specificly.
+> The current taskslist_lock writers all have write_lock_irq to hold
+> tasklist_lock, and write_unlock_irq to release tasklist_lock, that means
+> the writers are not suitable or workable to wait on tasklist_lock in irq
+> disabled scenarios. So the write lock/unlock wrapper here only follow the
+> current design of directly use local_irq_disable and local_irq_enable,
+> and not take already irq disabled writer callers into account.
+> Use write_trylock in the loop and enabled irq for cpu to repsond if lock
+> cannot be taken.
+>
+> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> ---
+>  fs/exec.c                  | 10 +++++-----
+>  include/linux/sched/task.h | 29 +++++++++++++++++++++++++++++
+>  kernel/exit.c              | 16 ++++++++--------
+>  kernel/fork.c              |  6 +++---
+>  kernel/ptrace.c            | 12 ++++++------
+>  kernel/sys.c               |  8 ++++----
+>  security/keys/keyctl.c     |  4 ++--
+>  7 files changed, 57 insertions(+), 28 deletions(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 4aa19b24f281..030eef6852eb 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1086,7 +1086,7 @@ static int de_thread(struct task_struct *tsk)
+> =20
+>  		for (;;) {
+>  			cgroup_threadgroup_change_begin(tsk);
+> -			write_lock_irq(&tasklist_lock);
+> +			write_lock_tasklist_lock();
+>  			/*
+>  			 * Do this under tasklist_lock to ensure that
+>  			 * exit_notify() can't miss ->group_exec_task
+> @@ -1095,7 +1095,7 @@ static int de_thread(struct task_struct *tsk)
+>  			if (likely(leader->exit_state))
+>  				break;
+>  			__set_current_state(TASK_KILLABLE);
+> -			write_unlock_irq(&tasklist_lock);
+> +			write_unlock_tasklist_lock();
+>  			cgroup_threadgroup_change_end(tsk);
+>  			schedule();
+>  			if (__fatal_signal_pending(tsk))
+> @@ -1150,7 +1150,7 @@ static int de_thread(struct task_struct *tsk)
+>  		 */
+>  		if (unlikely(leader->ptrace))
+>  			__wake_up_parent(leader, leader->parent);
+> -		write_unlock_irq(&tasklist_lock);
+> +		write_unlock_tasklist_lock();
+>  		cgroup_threadgroup_change_end(tsk);
+> =20
+>  		release_task(leader);
+> @@ -1198,13 +1198,13 @@ static int unshare_sighand(struct task_struct *me=
+)
+> =20
+>  		refcount_set(&newsighand->count, 1);
+> =20
+> -		write_lock_irq(&tasklist_lock);
+> +		write_lock_tasklist_lock();
+>  		spin_lock(&oldsighand->siglock);
+>  		memcpy(newsighand->action, oldsighand->action,
+>  		       sizeof(newsighand->action));
+>  		rcu_assign_pointer(me->sighand, newsighand);
+>  		spin_unlock(&oldsighand->siglock);
+> -		write_unlock_irq(&tasklist_lock);
+> +		write_unlock_tasklist_lock();
+> =20
+>  		__cleanup_sighand(oldsighand);
+>  	}
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index a23af225c898..6f69d9a3c868 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -50,6 +50,35 @@ struct kernel_clone_args {
+>   * a separate lock).
+>   */
+>  extern rwlock_t tasklist_lock;
+> +
+> +/*
+> + * Tasklist_lock is a special lock, it takes a good amount of time of
+> + * taskslist_lock readers to finish, and the pure write_irq_lock api
+> + * will do local_irq_disable at the very first, and put the current cpu
+> + * waiting for the lock while is non-responsive for interrupts.
+> + *
+> + * The current taskslist_lock writers all have write_lock_irq to hold
+> + * tasklist_lock, and write_unlock_irq to release tasklist_lock, that
+> + * means the writers are not suitable or workable to wait on
+> + * tasklist_lock in irq disabled scenarios. So the write lock/unlock
+> + * wrapper here only follow the current design of directly use
+> + * local_irq_disable and local_irq_enable.
+> + */
+> +static inline void write_lock_tasklist_lock(void)
+> +{
+> +	while (1) {
+> +		local_irq_disable();
+> +		if (write_trylock(&tasklist_lock))
+> +			break;
+> +		local_irq_enable();
+> +		cpu_relax();
+> +	}
 
-> Would it make sense to just always update netfs's ctx->remote_i_size in
-> the various stat2inode calls instead?
+Maybe:
 
-Btw, v9fs_i_size_write() should be redundant.  It should be sufficient to just
-use i_size_write() as long as you use i_size_read().
+	local_irq_disable();
+	while (!write_trylock(&tasklist_lock)) {
+		local_irq_enable();
+		cpu_relax();
+		local_irq_disable();
+	}
 
-David
-
+BR, Jarkko
 
