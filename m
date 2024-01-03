@@ -1,77 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-7223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB7E822FEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:57:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59720822FEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2ED21C21733
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:57:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1D91C237C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 14:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CC31A734;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EA01B26D;
 	Wed,  3 Jan 2024 14:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="HCCVy2GJ"
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="vAW5zvyI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD10E1A70B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 14:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0E81A70C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 14:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40d5d8a6730so59907215e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 06:57:09 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40d41555f9dso106121165e9.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 06:57:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1704293828; x=1704898628; darn=vger.kernel.org;
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1704293829; x=1704898629; darn=vger.kernel.org;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQwnCXrd05NY+Z7IX+h0AaqYDBg7QO9Ec6n/qqGH/gE=;
-        b=HCCVy2GJrL6XGXdSgji6P+Ct5PQXrd7ngO5GsWkANxuhm7mP0AsYYYonaDJbm4k9t1
-         VsgCHGtbLWnUALLC4GJ2LGAV3BiQu2n4IJHEaOaK6/EFQ/VBwNOQLNpfT2JQhsw9WSDO
-         BUdvnFhYnwN7qDMOhp1zw+gcaKhML42Br8M2dFYR99/8ae2EZzlTng4PjcGBXtLoFXAK
-         /QBA73EAQqs2d6HGQ581ARMdxxb4M7yFuso9WfTSE0bBx9dDH6sO5nyaqgeHDzQhXmB6
-         s4i2SRNUY/qNFVtk2/4hGTTpIoeceJswW7Qgxhw7uaEhA1/fyLQ7c3uLUXZLXctQvSEu
-         7Rlg==
+        bh=Gr5HbBl5N6cy6sjezjCV1TgQWW1jCwwc89aGHLxyq6c=;
+        b=vAW5zvyIYvkaAS5ajss0kIukb9KLxT0BW+dIZt59iRWBJBgFn6kYzwVsZ8qBO+oEI/
+         KhFrm70DpbFE3OTOgpDEiXs8CEMz1lrMXA4HDp+3ujU6rwCaOD8WHaDN3Y4Z4VOiITcQ
+         d1Iwbjjm/6jbFc9R4JWju5i3fZbovyX94MaWESuxbMy5BRBQDFnnI8Hz9hYE6A96jV8V
+         xxozOvQj6XBxTZbInk+QEumOKueyuyM0mTqZ+CBKD2/XhjVET4EQvI3rvY7pFwDTWz3P
+         ++T1KhaXnRijZI9uv0htrKM87fJXy9hWqupWJcMfX45clCS/hRXLG/bGW4FqMoUi0wb9
+         l0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704293828; x=1704898628;
+        d=1e100.net; s=20230601; t=1704293829; x=1704898629;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qQwnCXrd05NY+Z7IX+h0AaqYDBg7QO9Ec6n/qqGH/gE=;
-        b=qhVdO8EIYKxWcakBReDrELCRHVTQT1tu3es4Tt72wk41bQrDRKvveaAZbQfkNIIZTT
-         n6wsxEj+0z8rLhxwr2kMdEsMEYIVz3Cs0JjdjH8NCZvKh1LrvBXQKIw01ADKggxN+CXe
-         whfjL9+77XI9XLag5+NndBPyy6J3kgNHJM97jHJT8OEelb4Xg1lo8xVc8yrkozx7ZEJG
-         GOJyDnoAZM90kZo4VUWUZb0SaNiWXAUVF404XJkxbyXktCSOBubgUy6HxpbvGoQiRsCR
-         M72UL2EcEV06b7ignR4C5TZLk5jUN8f69FhLEQV/S12dkpfQHmWsJY76b8C9wZDO80F/
-         pUng==
-X-Gm-Message-State: AOJu0YyDw7SWPBS20XvhiH0zbHcgusdBnCc/GpovtYD+40WgZHZxkhfe
-	pT/VDxi6X0IVyTXkgwyglCXPFKqemFb59Q==
-X-Google-Smtp-Source: AGHT+IGAYkAJPhIDHRRMofgASPkn7CgUV4z6XZf0NjmWIz4mrzIVM4J6E1j3RegEGTcVgniGWKZRYQ==
-X-Received: by 2002:a05:600c:4f11:b0:40d:85a2:40e9 with SMTP id l17-20020a05600c4f1100b0040d85a240e9mr2574886wmq.1.1704293828119;
-        Wed, 03 Jan 2024 06:57:08 -0800 (PST)
+        bh=Gr5HbBl5N6cy6sjezjCV1TgQWW1jCwwc89aGHLxyq6c=;
+        b=HGBuipoEG8181vymGvdnAfgYIgo6X0DYQz7RkSVr2KXK07re6nYNJEbj9jNRPcXC4l
+         QoKtFWxLINuKRox5vwh5yRH+0035OzHwbfAy2V+krQ1amrn5xgo0+UuFB//o7/QSTK2Q
+         sTy7ReU/ffYmHAnRUJJ81Y5IA1HVircVFmOf0DqTqaX+Sj7lGITAjappnTW/BpogD0cL
+         jJe2ORKu82A+QwSbkXRZzVHXeJieGbepSWHQLVK+mjq9J8jkkIEKN9Gxx3WhrJGHPmOy
+         yQ0OW2/mPvT1+bP/I9RwQu4u2JK7+FZbEm5XbTrhzr2FeUdSKQKYhuXXgmc/AHTVWEVF
+         yhMw==
+X-Gm-Message-State: AOJu0YzukRZ4mdZggPimZwzDbHth7cCO09dQ9gWX4zsha+Eb5gFAx2I+
+	6o7Isj3GEj6NoYZUkY7TstvlJcNjhpc8aA==
+X-Google-Smtp-Source: AGHT+IG6NkBEBRre4rmvJ5aFuSttrI4POj1UgW3FBTw0+m89hLL4U0g5ob2JT9piT4ekwuslRk4Cig==
+X-Received: by 2002:a7b:cb86:0:b0:40d:71a3:66bb with SMTP id m6-20020a7bcb86000000b0040d71a366bbmr4982697wmi.117.1704293829162;
+        Wed, 03 Jan 2024 06:57:09 -0800 (PST)
 Received: from localhost ([165.225.194.221])
-        by smtp.gmail.com with ESMTPSA id q15-20020a05600c46cf00b0040d87b9eec7sm2562676wmo.32.2024.01.03.06.57.07
+        by smtp.gmail.com with ESMTPSA id bg40-20020a05600c3ca800b0040d87b5a87csm2507258wmb.48.2024.01.03.06.57.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jan 2024 06:57:07 -0800 (PST)
+        Wed, 03 Jan 2024 06:57:08 -0800 (PST)
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
  <20231018122518.128049-6-wedsonaf@gmail.com>
- <86207b78-db19-4847-b039-c84ab9452060@ryhl.io>
 User-agent: mu4e 1.10.8; emacs 28.2.50
 From: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
-To: Alice Ryhl <alice@ryhl.io>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Matthew
- Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Wedson
- Almeida Filho <walmeida@microsoft.com>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent
+ Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Wedson Almeida Filho
+ <walmeida@microsoft.com>
 Subject: Re: [RFC PATCH 05/19] rust: fs: introduce `INode<T>`
-Date: Wed, 03 Jan 2024 13:45:46 +0100
-In-reply-to: <86207b78-db19-4847-b039-c84ab9452060@ryhl.io>
-Message-ID: <87wmsq5v6c.fsf@metaspace.dk>
+Date: Wed, 03 Jan 2024 13:54:34 +0100
+In-reply-to: <20231018122518.128049-6-wedsonaf@gmail.com>
+Message-ID: <87sf3e5v55.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,36 +80,23 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 
-Alice Ryhl <alice@ryhl.io> writes:
+Wedson Almeida Filho <wedsonaf@gmail.com> writes:
 
-> On 10/18/23 14:25, Wedson Almeida Filho wrote:
->> +    /// Returns the super-block that owns the inode.
->> +    pub fn super_block(&self) -> &SuperBlock<T> {
->> +        // SAFETY: `i_sb` is immutable, and `self` is guaranteed to be valid by the existence of a
->> +        // shared reference (&self) to it.
->> +        unsafe { &*(*self.0.get()).i_sb.cast() }
->> +    }
->
-> This makes me a bit nervous. I had to look up whether this field was a pointer
-> to a superblock, or just a superblock embedded directly in `struct inode`. It
-> does look like it's correct as-is, but I'd feel more confident about it if it
-> doesn't use a cast to completely ignore the type going in to the pointer cast.
->
-> Could you define a `from_raw` on `SuperBlock` and change this to:
->
->     unsafe { &*SuperBlock::from_raw((*self.0.get()).i_sb) }
->
-> or perhaps add a type annotation like this:
->
->     let i_sb: *mut super_block = unsafe { (*self.0.get()).i_sb };
->     i_sb.cast()
+> +/// The number of an inode.
+> +pub type Ino = u64;
 
-I think it would also be nice to make the cast explicit:
+Would it be possible to use a descriptive name such as `INodeNumber`?
 
-  i_sb.cast::<SuperBlock<T>>()
+> +    /// Returns the super-block that owns the inode.
+> +    pub fn super_block(&self) -> &SuperBlock<T> {
+> +        // SAFETY: `i_sb` is immutable, and `self` is guaranteed to be valid by the existence of a
+> +        // shared reference (&self) to it.
+> +        unsafe { &*(*self.0.get()).i_sb.cast() }
+> +    }
 
-otherwise the cast is no different than `as _` with all the caveats that
-comes with.
+I think the safety comment should talk about the pointee rather than the
+pointer? "The pointee of `i_sb` is immutable, and ..."
 
 BR Andreas
+
 
