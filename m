@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-7319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1D7823888
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 23:47:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D1A82388C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 23:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 474BDB24761
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7D31C24594
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 22:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8953A21353;
-	Wed,  3 Jan 2024 22:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5D32137D;
+	Wed,  3 Jan 2024 22:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjFD6hnM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWIyoQM/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2580221345;
-	Wed,  3 Jan 2024 22:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AC121375;
+	Wed,  3 Jan 2024 22:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1d3ea5cc137so84265515ad.0;
-        Wed, 03 Jan 2024 14:43:26 -0800 (PST)
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so3045456a12.0;
+        Wed, 03 Jan 2024 14:43:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704321806; x=1704926606; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1704321811; x=1704926611; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JGON5uNofvfE+VQKTV04yG0OYqE17b/v8cI1b6yghm8=;
-        b=KjFD6hnMGhef2DG2P/8Et3CcZEUS/3me4TO6CnfPiAt8gvpEg0ppG80GABdrmD6BX1
-         hfigSGhf3PAHBghJctFgZ+WFQgkbNBsDYuGZXaL26HXouuhs/JL3STq6fnWIk/Q3aGTK
-         WSbwNnIQeRJB+eZ5Upz7hVpoBy5yQ7m70FEJ9RzRpvmqgsGhEuwgU3wqOTQgbFrsaTp+
-         Wa6XoES2+zzlWXXywkzcniqiO9ZATo7XtNDVOnnMlohGFyHbKHZnUsh3LtBvp2GPmA7r
-         OzG33TA2f7Dm3wvU6obIfrs8gJnqXTShLly9mWMGXyta9aNUUrvD7x8eB/8nndEKcIBB
-         JH2w==
+        bh=RTh6xtZGVzP3PdSvCf1bvrsloFYLRrQIaYq034Jk50c=;
+        b=mWIyoQM/MmPyjyOnYICtxyFjABf2yl28me2enOwWU3ljEAM+XJnHAlrRdwSZLDKMV1
+         k4argNxhpwbhLp/pxdKBhoHazDDKTqf5EDdRBawTG76M6Deb25IfRv7h0INKnhdIEFZV
+         Mwa2ust0W5Fi9TT7Za9Blj3BNwqZj+TcIt1VRCMTtVcJYLzXcA7X2vyPmtLqmvFL8+Lz
+         RIi89z3In4frG80IJm71hjt9nB7dnYHql6F+J5+cuYTYDdj9adulboj8PLxc9pXtOb0P
+         nIKbzy2wBmE3F+QKCEoQ6ymsB+hH8Fc1u5Ucvxh4/bF14upN0wuCfkJbK9qNpro9/djG
+         M6Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704321806; x=1704926606;
+        d=1e100.net; s=20230601; t=1704321811; x=1704926611;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JGON5uNofvfE+VQKTV04yG0OYqE17b/v8cI1b6yghm8=;
-        b=EWvuUd0IQvtnIlH9QVi/aqYHdDrPn5GTCGq9xbw4sagGjchbTxxdyDfzkzIahNnysk
-         ZmzTV9PCANHyM8f7kpWtHl0X+m/gKm1i6o2gW2x01i6mfNpN+9POa7RnmzUrd/efq7iu
-         qqJ5n/HphX6olhHAZph+FZ9lGcJItA9MV+7vnVj3tSjc1P8iPt4brqdwlRsrwJnOZTjM
-         sztcmCLKIgnw64E3cczS40nIOxw62qxLuDfjs5vPu7wlSt8s/kjBM0X6zxejueDz9i6N
-         w2ANch4ahRTL0PQDPk4zZJB1SwPuRHx0nJWizrWrSL4yXABcxnTG3LzMxnEQUbK+38Xp
-         tg6A==
-X-Gm-Message-State: AOJu0Yz4zPhSAH3leCU+lC5IR2ek+o7bgrfaMcWC799tHJ/4ZXkO0AZS
-	b+q25rZ07+59S5fzOBtLnAdpY2WjbKYbkVA=
-X-Google-Smtp-Source: AGHT+IGMfKOlH2P1OArn75s/+EDYjmbM+5QEPd1KuUWMUTxPnmPVUk0d/iZKbPi93hOtG88McABlbQ==
-X-Received: by 2002:a17:902:e80b:b0:1d4:c98d:4032 with SMTP id u11-20020a170902e80b00b001d4c98d4032mr3120550plg.23.1704321806467;
-        Wed, 03 Jan 2024 14:43:26 -0800 (PST)
+        bh=RTh6xtZGVzP3PdSvCf1bvrsloFYLRrQIaYq034Jk50c=;
+        b=JYXpsE/t85Z+VKmJMKFhAO+x/bM/cE3WHr1Rp+eMHTCrC6lui+wBygCtox+otK4n6a
+         2fIzQgXjUp6D92Nzx6FJUPlsVDYpamniLc4eBJR4OZI1iyIm08+qhyetPnvsdaAwpJaE
+         uqM+fxwlGhQGX0nPwbKE3c6nWUPBFFmrUND7TNqlor8iPvwBs3GbePQ7J/Ag84n3Bmfa
+         mjbJLpLTR8dX5acnZqkBRcw/L2tVCHOvohOL8aDxs6Ty2lVLbrMwKCXHecYQMIXGFohE
+         z1fyWQAssdHp599aaK5tp7fZ1YNWEywSIUxV/JDng8UNw/wMTY5KkulMOsRnRXL/gxCP
+         Yf6A==
+X-Gm-Message-State: AOJu0Yy/TH0LWI6vGw941C2Wqyuxr+0DqixrNazzRUvEZOOgsnxELIVV
+	fXGytkxV9xt+A4WMkgUaGe90dT1nuGDq8jM=
+X-Google-Smtp-Source: AGHT+IHj4IdnrLjJKicXSl2ez9+yiEio1lEnIuJiRk/U8wWoKnVHnsybkLZIFe48jEEc9NQFScbm2w==
+X-Received: by 2002:a17:902:8b8a:b0:1d0:6ffe:1e6f with SMTP id ay10-20020a1709028b8a00b001d06ffe1e6fmr8043944plb.82.1704321811547;
+        Wed, 03 Jan 2024 14:43:31 -0800 (PST)
 Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id g1-20020a170902fe0100b001d36df58ba2sm24269426plj.308.2024.01.03.14.43.22
+        by smtp.gmail.com with ESMTPSA id g1-20020a170902fe0100b001d36df58ba2sm24269426plj.308.2024.01.03.14.43.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jan 2024 14:43:26 -0800 (PST)
+        Wed, 03 Jan 2024 14:43:31 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org
@@ -88,13 +88,10 @@ Cc: linux-doc@vger.kernel.org,
 	sthanneeru@micron.com,
 	emirakhur@micron.com,
 	Hasan.Maruf@amd.com,
-	seungjun.ha@samsung.com,
-	Michal Hocko <mhocko@suse.com>,
-	Frank van der Linden <fvdl@google.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v6 11/12] mm/mempolicy: add the mbind2 syscall
-Date: Wed,  3 Jan 2024 17:42:08 -0500
-Message-Id: <20240103224209.2541-12-gregory.price@memverge.com>
+	seungjun.ha@samsung.com
+Subject: [PATCH v6 12/12] mm/mempolicy: extend mempolicy2 and mbind2 to support weighted interleave
+Date: Wed,  3 Jan 2024 17:42:09 -0500
+Message-Id: <20240103224209.2541-13-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240103224209.2541-1-gregory.price@memverge.com>
 References: <20240103224209.2541-1-gregory.price@memverge.com>
@@ -106,425 +103,442 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-mbind2 is an extensible mbind interface which allows a user to
-set the mempolicy for one or more address ranges.
+Extend mempolicy2 and mbind2 to support weighted interleave, and
+demonstrate the extensibility of the mpol_param structure.
 
-Defined as:
+To support weighted interleave we add interleave weight fields to the
+following structures:
 
-mbind2(unsigned long addr, unsigned long len, struct mpol_param *param,
-       size_t size, unsigned long flags)
+Kernel Internal:  (include/linux/mempolicy.h)
+struct mempolicy {
+	/* task-local weights to apply to weighted interleave */
+	u8 weights[MAX_NUMNODES];
+}
+struct mempolicy_param {
+	/* Optional: interleave weights for MPOL_WEIGHTED_INTERLEAVE */
+	u8 *il_weights;	/* of size MAX_NUMNODES */
+}
 
-addr:         address of the memory range to operate on
-len:          length of the memory range
-flags:        MPOL_MF_HOME_NODE + original mbind() flags
+UAPI: (/include/uapi/linux/mempolicy.h)
+struct mpol_param {
+	/* Optional: interleave weights for MPOL_WEIGHTED_INTERLEAVE */
+	__u8 *il_weights; /* of size pol_maxnodes */
+}
 
-Input values include the following fields of mpol_param:
+The minimum weight of a node is always 1.  If the user desires 0
+allocations on a node, the node should be removed from the nodemask.
 
-mode:         The MPOL_* policy (DEFAULT, INTERLEAVE, etc.)
-mode_flags:   The MPOL_F_* flags that were previously passed in or'd
-	      into the mode.  This was split to hopefully allow future
-	      extensions additional mode/flag space.
-home_node:    if (flags & MPOL_MF_HOME_NODE), set home node of policy
-	      to this otherwise it is ignored.
-pol_maxnodes: The max number of nodes described by pol_nodes
-pol_nodes:    the nodemask to apply for the memory policy
+If the user does not provide weights (il_weights == NULL), global
+weights will be used during allocation. Changes made to global weights
+will be reflected in future allocations.
 
-The semantics are otherwise the same as mbind(), except that
-the home_node can be set.
+If the user provides weights and a weight is set to 0, the weight for
+that node will be initialized to the global value.
 
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Suggested-by: Frank van der Linden <fvdl@google.com>
-Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+If a user provides weights and a node is not set in the node mask,
+the weight for that node will be set to the globally defined weight.
+This is so a reasonable default value can be expected if the nodemask
+changes (e.g. cgroups causes a migration or mems_allowed change).
+
+Local weights are never updated when a global weight is updated.
+
+Examples:
+
+global weights: [4,4,2,2]
+Set:  Nodes-0,1,2,3  Weights: NULL
+      [global weights] are used.
+
+Set:  Nodes-0,1,2,3  Weights: [1,2,3,4]
+      local_weights = [1,2,3,4]
+
+Set:  Nodes-0,2      Weights: [2,0,2,0]
+      local_weights = [2,4,1,2]
+
+Basic logic during allocation is as follows:
+
+  weight = pol->wil.weights[node]
+  /* if no local weight, use sysfs weight */
+  if (!weight)
+    weight = iw_table[weight]
+  /* if no sysfs weight, use system default */
+  if (!weight)
+    weight = default_iw_table[weight]
+
+To simplify creations and duplication of mempolicies, the weights are
+added as a structure directly within mempolicy. This allows the
+existing logic in __mpol_dup to copy the weights without additional
+allocations:
+
+if (old == current->mempolicy) {
+	task_lock(current);
+	*new = *old;
+	task_unlock(current);
+} else
+	*new = *old
+
 Suggested-by: Rakie Kim <rakie.kim@sk.com>
 Suggested-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
 Suggested-by: Honggyu Kim <honggyu.kim@sk.com>
+Suggested-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
+Suggested-by: Huang Ying <ying.huang@intel.com>
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
+Co-developed-by: Rakie Kim <rakie.kim@sk.com>
+Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+Co-developed-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
+Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
+Co-developed-by: Honggyu Kim <honggyu.kim@sk.com>
+Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
 Co-developed-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Vinicius Tavares Petrucci <vtavarespetr@micron.com>
 ---
- .../admin-guide/mm/numa_memory_policy.rst     | 12 +++++-
- arch/alpha/kernel/syscalls/syscall.tbl        |  1 +
- arch/arm/tools/syscall.tbl                    |  1 +
- arch/arm64/include/asm/unistd.h               |  2 +-
- arch/arm64/include/asm/unistd32.h             |  2 +
- arch/m68k/kernel/syscalls/syscall.tbl         |  1 +
- arch/microblaze/kernel/syscalls/syscall.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl     |  1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl     |  1 +
- arch/parisc/kernel/syscalls/syscall.tbl       |  1 +
- arch/powerpc/kernel/syscalls/syscall.tbl      |  1 +
- arch/s390/kernel/syscalls/syscall.tbl         |  1 +
- arch/sh/kernel/syscalls/syscall.tbl           |  1 +
- arch/sparc/kernel/syscalls/syscall.tbl        |  1 +
- arch/x86/entry/syscalls/syscall_32.tbl        |  1 +
- arch/x86/entry/syscalls/syscall_64.tbl        |  1 +
- arch/xtensa/kernel/syscalls/syscall.tbl       |  1 +
- include/linux/syscalls.h                      |  3 ++
- include/uapi/asm-generic/unistd.h             |  4 +-
- include/uapi/linux/mempolicy.h                |  5 ++-
- kernel/sys_ni.c                               |  1 +
- mm/mempolicy.c                                | 43 +++++++++++++++++++
- .../arch/mips/entry/syscalls/syscall_n64.tbl  |  1 +
- .../arch/powerpc/entry/syscalls/syscall.tbl   |  1 +
- .../perf/arch/s390/entry/syscalls/syscall.tbl |  1 +
- .../arch/x86/entry/syscalls/syscall_64.tbl    |  1 +
- 26 files changed, 85 insertions(+), 5 deletions(-)
+ .../admin-guide/mm/numa_memory_policy.rst     |  12 ++
+ include/linux/mempolicy.h                     |   2 +
+ include/uapi/linux/mempolicy.h                |   1 +
+ mm/mempolicy.c                                | 134 ++++++++++++++++--
+ 4 files changed, 141 insertions(+), 8 deletions(-)
 
 diff --git a/Documentation/admin-guide/mm/numa_memory_policy.rst b/Documentation/admin-guide/mm/numa_memory_policy.rst
-index a2ff6e89e48b..66a778d58899 100644
+index 66a778d58899..620b54ff2cef 100644
 --- a/Documentation/admin-guide/mm/numa_memory_policy.rst
 +++ b/Documentation/admin-guide/mm/numa_memory_policy.rst
-@@ -476,12 +476,18 @@ Install VMA/Shared Policy for a Range of Task's Address Space::
- 	long mbind(void *start, unsigned long len, int mode,
- 		   const unsigned long *nmask, unsigned long maxnode,
- 		   unsigned flags);
-+	long mbind2(void* start, unsigned long len, struct mpol_param *param,
-+		    size_t size, unsigned long flags);
+@@ -254,11 +254,22 @@ MPOL_WEIGHTED_INTERLEAVE
+ 	This mode operates the same as MPOL_INTERLEAVE, except that
+ 	interleaving behavior is executed based on weights set in
+ 	/sys/kernel/mm/mempolicy/weighted_interleave/
++	when configured to utilize global weights, or based on task-local
++	weights configured with set_mempolicy2(2) or mbind2(2).
  
- mbind() installs the policy specified by (mode, nmask, maxnodes) as a
- VMA policy for the range of the calling task's address space specified
- by the 'start' and 'len' arguments.  Additional actions may be
- requested via the 'flags' argument.
+ 	Weighted interleave allocates pages on nodes according to a
+ 	weight.  For example if nodes [0,1] are weighted [5,2], 5 pages
+ 	will be allocated on node0 for every 2 pages allocated on node1.
  
-+mbind2() is an extended version of mbind() capable of setting extended
-+mempolicy features. For example, one can set the home node for the memory
-+policy without an additional call to set_mempolicy_home_node().
++	When utilizing task-local weights, if node's is not set in the
++	nodemask, or its weight was set to 0, the local weight will be
++	set to the system default.  Updates to system default weights
++	will not be refleted in local weights.
 +
- See the mbind(2) man page for more details.
- 
- Set home node for a Range of Task's Address Spacec::
-@@ -497,6 +503,9 @@ closest to which page allocation will come from. Specifying the home node overri
- the default allocation policy to allocate memory close to the local node for an
- executing CPU.
- 
-+mbind2() also provides a way for the home node to be set at the time the
-+mempolicy is set. See the mbind(2) man page for more details.
++	The minimum weight for a node set in the policy nodemask is
++	always 1. If no allocations on a node, the node should be
++	removed from the nodemask.
 +
- Extended Mempolicy Arguments::
+ NUMA memory policy supports the following optional mode flags:
  
- 	struct mpol_param {
-@@ -510,7 +519,8 @@ Extended Mempolicy Arguments::
+ MPOL_F_STATIC_NODES
+@@ -514,6 +525,7 @@ Extended Mempolicy Arguments::
+ 		__s32 home_node;	 /* mbind2: set home node */
+ 		__u64 pol_maxnodes;
+ 		__aligned_u64 pol_nodes; /* nodemask pointer */
++		__aligned_u64 il_weights;  /* u8 buf of size pol_maxnodes */
+ 	};
+ 
  The extended mempolicy argument structure is defined to allow the mempolicy
- interfaces future extensibility without the need for additional system calls.
- 
--Extended interfaces (set_mempolicy2 and get_mempolicy2) use this structure.
-+Extended interfaces (set_mempolicy2, get_mempolicy2, and mbind2) use this
-+this argument structure.
- 
- The core arguments (mode, mode_flags, pol_nodes, and pol_maxnodes) apply to
- all interfaces relative to their non-extended counterparts. Each additional
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 0301a8b0a262..e8239293c35a 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -498,3 +498,4 @@
- 566	common	futex_requeue			sys_futex_requeue
- 567	common	set_mempolicy2			sys_set_mempolicy2
- 568	common	get_mempolicy2			sys_get_mempolicy2
-+569	common	mbind2				sys_mbind2
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 771a33446e8e..a3f39750257a 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -472,3 +472,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index b63f870debaf..abe10a833fcd 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -39,7 +39,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		459
-+#define __NR_compat_syscalls		460
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index f8d01007aee0..446b7f034332 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -923,6 +923,8 @@ __SYSCALL(__NR_futex_requeue, sys_futex_requeue)
- __SYSCALL(__NR_set_mempolicy2, sys_set_mempolicy2)
- #define __NR_get_mempolicy2 458
- __SYSCALL(__NR_get_mempolicy2, sys_get_mempolicy2)
-+#define __NR_mbind2 459
-+__SYSCALL(__NR_mbind2, sys_mbind2)
+diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+index e6795e2d0cc2..9854790a9aac 100644
+--- a/include/linux/mempolicy.h
++++ b/include/linux/mempolicy.h
+@@ -58,6 +58,7 @@ struct mempolicy {
+ 	/* Weighted interleave settings */
+ 	struct {
+ 		u8 cur_weight;
++		u8 weights[MAX_NUMNODES];
+ 		u8 scratch_weights[MAX_NUMNODES]; /* Used to avoid allocations */
+ 	} wil;
+ };
+@@ -71,6 +72,7 @@ struct mempolicy_param {
+ 	unsigned short mode_flags;	/* policy mode flags */
+ 	int home_node;			/* mbind: use MPOL_MF_HOME_NODE */
+ 	nodemask_t *policy_nodes;	/* get/set/mbind */
++	u8 *il_weights;			/* for mode MPOL_WEIGHTED_INTERLEAVE */
+ };
  
  /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 048a409e684c..9a12dface18e 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -458,3 +458,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 327b01bd6793..6cb740123137 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -464,3 +464,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 921d58e1da23..52cf720f8ae2 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -397,3 +397,4 @@
- 456	n32	futex_requeue			sys_futex_requeue
- 457	n32	set_mempolicy2			sys_set_mempolicy2
- 458	n32	get_mempolicy2			sys_get_mempolicy2
-+459	n32	mbind2				sys_mbind2
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 9271c83c9993..fd37c5301a48 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -446,3 +446,4 @@
- 456	o32	futex_requeue			sys_futex_requeue
- 457	o32	set_mempolicy2			sys_set_mempolicy2
- 458	o32	get_mempolicy2			sys_get_mempolicy2
-+459	o32	mbind2				sys_mbind2
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index 0654f3f89fc7..fcd67bc405b1 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -457,3 +457,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index ac11d2064e7a..89715417014c 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -545,3 +545,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 1cdcafe1ccca..c8304e0d0aa7 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -461,3 +461,4 @@
- 456  common	futex_requeue		sys_futex_requeue		sys_futex_requeue
- 457  common	set_mempolicy2		sys_set_mempolicy2		sys_set_mempolicy2
- 458  common	get_mempolicy2		sys_get_mempolicy2		sys_get_mempolicy2
-+459  common	mbind2			sys_mbind2			sys_mbind2
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index f71742024c29..e5c51b6c367f 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -461,3 +461,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 2fbf5dbe0620..74527f585500 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -504,3 +504,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 0af813b9a118..be2e2aa17dd8 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -463,3 +463,4 @@
- 456	i386	futex_requeue		sys_futex_requeue
- 457	i386	set_mempolicy2		sys_set_mempolicy2
- 458	i386	get_mempolicy2		sys_get_mempolicy2
-+459	i386	mbind2			sys_mbind2
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 0b777876fc15..6e2347eb8773 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -380,6 +380,7 @@
- 456	common	futex_requeue		sys_futex_requeue
- 457	common	set_mempolicy2		sys_set_mempolicy2
- 458	common	get_mempolicy2		sys_get_mempolicy2
-+459	common	mbind2			sys_mbind2
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 4536c9a4227d..f00a21317dc0 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -429,3 +429,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index c4dc5069bae7..02f5c1e94ae5 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -817,6 +817,9 @@ asmlinkage long sys_mbind(unsigned long start, unsigned long len,
- 				const unsigned long __user *nmask,
- 				unsigned long maxnode,
- 				unsigned flags);
-+asmlinkage long sys_mbind2(unsigned long start, unsigned long len,
-+			   const struct mpol_param __user *param, size_t usize,
-+			   unsigned long flags);
- asmlinkage long sys_get_mempolicy(int __user *policy,
- 				unsigned long __user *nmask,
- 				unsigned long maxnode,
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 719accc731db..cd31599bb9cc 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -832,9 +832,11 @@ __SYSCALL(__NR_futex_requeue, sys_futex_requeue)
- __SYSCALL(__NR_set_mempolicy2, sys_set_mempolicy2)
- #define __NR_get_mempolicy2 458
- __SYSCALL(__NR_get_mempolicy2, sys_get_mempolicy2)
-+#define __NR_mbind2 459
-+__SYSCALL(__NR_mbind2, sys_mbind2)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 459
-+#define __NR_syscalls 460
- 
- /*
-  * 32 bit systems traditionally used different
 diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
-index 109788c8be92..7c7c384479fc 100644
+index 7c7c384479fc..06e0fc2bb29b 100644
 --- a/include/uapi/linux/mempolicy.h
 +++ b/include/uapi/linux/mempolicy.h
-@@ -53,13 +53,14 @@ struct mpol_param {
- #define MPOL_F_ADDR	(1<<1)	/* look up vma using address */
- #define MPOL_F_MEMS_ALLOWED (1<<2) /* return allowed memories */
+@@ -34,6 +34,7 @@ struct mpol_param {
+ 	__u16 pol_maxnodes;
+ 	__u8 resv[6];
+ 	__aligned_u64 pol_nodes;
++	__aligned_u64 il_weights; /* size: pol_maxnodes * sizeof(__u8) */
+ };
  
--/* Flags for mbind */
-+/* Flags for mbind/mbind2 */
- #define MPOL_MF_STRICT	(1<<0)	/* Verify existing pages in the mapping */
- #define MPOL_MF_MOVE	 (1<<1)	/* Move pages owned by this process to conform
- 				   to policy */
- #define MPOL_MF_MOVE_ALL (1<<2)	/* Move every page to conform to policy */
- #define MPOL_MF_LAZY	 (1<<3)	/* UNSUPPORTED FLAG: Lazy migrate on fault */
--#define MPOL_MF_INTERNAL (1<<4)	/* Internal flags start here */
-+#define MPOL_MF_HOME_NODE (1<<4)	/* mbind2: set home node */
-+#define MPOL_MF_INTERNAL (1<<5)	/* Internal flags start here */
- 
- #define MPOL_MF_VALID	(MPOL_MF_STRICT   | 	\
- 			 MPOL_MF_MOVE     | 	\
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index 6afbd3a41319..2483b5afa99f 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -187,6 +187,7 @@ COND_SYSCALL(process_madvise);
- COND_SYSCALL(process_mrelease);
- COND_SYSCALL(remap_file_pages);
- COND_SYSCALL(mbind);
-+COND_SYSCALL(mbind2);
- COND_SYSCALL(get_mempolicy);
- COND_SYSCALL(get_mempolicy2);
- COND_SYSCALL(set_mempolicy);
+ /* Flags for set_mempolicy */
 diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 0b2e31d8636d..53301e173c90 100644
+index 53301e173c90..78e7614e0cd4 100644
 --- a/mm/mempolicy.c
 +++ b/mm/mempolicy.c
-@@ -1612,6 +1612,49 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
- 	return kernel_mbind(start, len, mode, nmask, maxnode, flags);
+@@ -286,6 +286,7 @@ static struct mempolicy *mpol_new(struct mempolicy_param *param)
+ 	unsigned short mode = param->mode;
+ 	unsigned short flags = param->mode_flags;
+ 	nodemask_t *nodes = param->policy_nodes;
++	int node;
+ 
+ 	if (mode == MPOL_DEFAULT) {
+ 		if (nodes && !nodes_empty(*nodes))
+@@ -323,6 +324,23 @@ static struct mempolicy *mpol_new(struct mempolicy_param *param)
+ 	policy->flags = flags;
+ 	policy->home_node = param->home_node;
+ 	policy->wil.cur_weight = 0;
++	memset(policy->wil.weights, 0, MAX_NUMNODES);
++
++	/* If user provides weights, ensure all weights are set to something */
++	if (policy->mode == MPOL_WEIGHTED_INTERLEAVE && param->il_weights) {
++		for (node = 0; node < MAX_NUMNODES; node++) {
++			u8 weight = 0;
++
++			if (node_isset(node, *nodes))
++				weight = param->il_weights[node];
++			/* If a user sets a weight to 0, use global default */
++			if (!weight)
++				weight = iw_table[node];
++			if (!weight)
++				weight = default_iw_table[node];
++			policy->wil.weights[node] = weight;
++		}
++	}
+ 
+ 	return policy;
+ }
+@@ -952,6 +970,26 @@ static void do_get_mempolicy_nodemask(struct mempolicy *pol, nodemask_t *nmask)
+ 	}
  }
  
-+SYSCALL_DEFINE5(mbind2, unsigned long, start, unsigned long, len,
-+		const struct mpol_param __user *, uparam, size_t, usize,
-+		unsigned long, flags)
++static void do_get_mempolicy_il_weights(struct mempolicy *pol,
++					u8 weights[MAX_NUMNODES])
 +{
-+	struct mpol_param kparam;
-+	struct mempolicy_param mparam;
-+	nodemask_t policy_nodes;
-+	unsigned long __user *nodes_ptr;
-+	int err;
++	int i = 0;
 +
-+	if (!start || !len)
-+		return -EINVAL;
++	if (pol->mode != MPOL_WEIGHTED_INTERLEAVE) {
++		memset(weights, 0, MAX_NUMNODES);
++		return;
++	}
++	for (i = 0; i < MAX_NUMNODES; i++) {
++		u8 weight = pol->wil.weights[i];
 +
-+	err = copy_struct_from_user(&kparam, sizeof(kparam), uparam, usize);
-+	if (err)
-+		return -EINVAL;
-+
-+	err = validate_mpol_flags(kparam.mode, &kparam.mode_flags);
-+	if (err)
-+		return err;
-+
-+	mparam.mode = kparam.mode;
-+	mparam.mode_flags = kparam.mode_flags;
-+
-+	/* if home node given, validate it is online */
-+	if (flags & MPOL_MF_HOME_NODE) {
-+		if ((kparam.home_node >= MAX_NUMNODES) ||
-+			!node_online(kparam.home_node))
-+			return -EINVAL;
-+		mparam.home_node = kparam.home_node;
-+	} else
-+		mparam.home_node = NUMA_NO_NODE;
-+	flags &= ~MPOL_MF_HOME_NODE;
-+
-+	nodes_ptr = u64_to_user_ptr(kparam.pol_nodes);
-+	err = get_nodes(&policy_nodes, nodes_ptr, kparam.pol_maxnodes);
-+	if (err)
-+		return err;
-+	mparam.policy_nodes = &policy_nodes;
-+
-+	return do_mbind(untagged_addr(start), len, &mparam, flags);
++		if (!weight)
++			weight = iw_table[i];
++		if (!weight)
++			weight = default_iw_table[i];
++		weights[i] = weight;
++	}
 +}
 +
- /* Set the process memory policy */
- static long kernel_set_mempolicy(int mode, const unsigned long __user *nmask,
- 				 unsigned long maxnode)
-diff --git a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
-index c34c6877379e..4fd9f742d903 100644
---- a/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
-+++ b/tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl
-@@ -373,3 +373,4 @@
- 456	n64	futex_requeue			sys_futex_requeue
- 457	n64	set_mempolicy2			sys_set_mempolicy2
- 458	n64	get_mempolicy2			sys_get_mempolicy2
-+459	n64	mbind2				sys_mbind2
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-index ac11d2064e7a..89715417014c 100644
---- a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-+++ b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-@@ -545,3 +545,4 @@
- 456	common	futex_requeue			sys_futex_requeue
- 457	common	set_mempolicy2			sys_set_mempolicy2
- 458	common	get_mempolicy2			sys_get_mempolicy2
-+459	common	mbind2				sys_mbind2
-diff --git a/tools/perf/arch/s390/entry/syscalls/syscall.tbl b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
-index 1cdcafe1ccca..c8304e0d0aa7 100644
---- a/tools/perf/arch/s390/entry/syscalls/syscall.tbl
-+++ b/tools/perf/arch/s390/entry/syscalls/syscall.tbl
-@@ -461,3 +461,4 @@
- 456  common	futex_requeue		sys_futex_requeue		sys_futex_requeue
- 457  common	set_mempolicy2		sys_set_mempolicy2		sys_set_mempolicy2
- 458  common	get_mempolicy2		sys_get_mempolicy2		sys_get_mempolicy2
-+459  common	mbind2			sys_mbind2			sys_mbind2
-diff --git a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-index edf338f32645..3fc74241da5d 100644
---- a/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -380,6 +380,7 @@
- 456	common	futex_requeue		sys_futex_requeue
- 457	common 	set_mempolicy2		sys_set_mempolicy2
- 458	common 	get_mempolicy2		sys_get_mempolicy2
-+459	common 	mbind2			sys_mbind2
+ /* Retrieve NUMA policy for a VMA assocated with a given address  */
+ static long do_get_vma_mempolicy(unsigned long addr, int *addr_node,
+ 				 struct mempolicy_param *param)
+@@ -985,6 +1023,9 @@ static long do_get_vma_mempolicy(unsigned long addr, int *addr_node,
+ 	if (param->policy_nodes)
+ 		do_get_mempolicy_nodemask(pol, param->policy_nodes);
  
- #
- # Due to a historical design error, certain syscalls are numbered differently
++	if (param->il_weights)
++		do_get_mempolicy_il_weights(pol, param->il_weights);
++
+ 	if (pol != &default_policy) {
+ 		mpol_put(pol);
+ 		mpol_cond_put(pol);
+@@ -1012,6 +1053,9 @@ static long do_get_task_mempolicy(struct mempolicy_param *param, int *pol_node)
+ 	if (param->policy_nodes)
+ 		do_get_mempolicy_nodemask(pol, param->policy_nodes);
+ 
++	if (param->il_weights)
++		do_get_mempolicy_il_weights(pol, param->il_weights);
++
+ 	return 0;
+ }
+ 
+@@ -1620,6 +1664,8 @@ SYSCALL_DEFINE5(mbind2, unsigned long, start, unsigned long, len,
+ 	struct mempolicy_param mparam;
+ 	nodemask_t policy_nodes;
+ 	unsigned long __user *nodes_ptr;
++	u8 *weights = NULL;
++	u8 __user *weights_ptr;
+ 	int err;
+ 
+ 	if (!start || !len)
+@@ -1652,7 +1698,27 @@ SYSCALL_DEFINE5(mbind2, unsigned long, start, unsigned long, len,
+ 		return err;
+ 	mparam.policy_nodes = &policy_nodes;
+ 
+-	return do_mbind(untagged_addr(start), len, &mparam, flags);
++	if (kparam.mode == MPOL_WEIGHTED_INTERLEAVE) {
++		weights_ptr = u64_to_user_ptr(kparam.il_weights);
++		if (weights_ptr) {
++			weights = kzalloc(MAX_NUMNODES,
++					  GFP_KERNEL | __GFP_NORETRY);
++			if (!weights)
++				return -ENOMEM;
++			err = copy_struct_from_user(weights,
++						    MAX_NUMNODES,
++						    weights_ptr,
++						    kparam.pol_maxnodes);
++			if (err)
++				goto leave_weights;
++		}
++	}
++	mparam.il_weights = weights;
++
++	err = do_mbind(untagged_addr(start), len, &mparam, flags);
++leave_weights:
++	kfree(weights);
++	return err;
+ }
+ 
+ /* Set the process memory policy */
+@@ -1696,6 +1762,8 @@ SYSCALL_DEFINE3(set_mempolicy2, struct mpol_param __user *, uparam,
+ 	int err;
+ 	nodemask_t policy_nodemask;
+ 	unsigned long __user *nodes_ptr;
++	u8 *weights = NULL;
++	u8 __user *weights_ptr;
+ 
+ 	if (flags)
+ 		return -EINVAL;
+@@ -1721,7 +1789,24 @@ SYSCALL_DEFINE3(set_mempolicy2, struct mpol_param __user *, uparam,
+ 	} else
+ 		mparam.policy_nodes = NULL;
+ 
+-	return do_set_mempolicy(&mparam);
++	if (kparam.mode == MPOL_WEIGHTED_INTERLEAVE && kparam.il_weights) {
++		weights = kzalloc(MAX_NUMNODES, GFP_KERNEL | __GFP_NORETRY);
++		if (!weights)
++			return -ENOMEM;
++		weights_ptr = u64_to_user_ptr(kparam.il_weights);
++		err = copy_struct_from_user(weights,
++					    MAX_NUMNODES,
++					    weights_ptr,
++					    kparam.pol_maxnodes);
++		if (err)
++			goto leave_weights;
++	}
++	mparam.il_weights = weights;
++
++	err = do_set_mempolicy(&mparam);
++leave_weights:
++	kfree(weights);
++	return err;
+ }
+ 
+ static int kernel_migrate_pages(pid_t pid, unsigned long maxnode,
+@@ -1924,6 +2009,8 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_param __user *, uparam, size_t, usiz
+ 	int err;
+ 	nodemask_t policy_nodemask;
+ 	unsigned long __user *nodes_ptr;
++	u8 __user *weights_ptr;
++	u8 *weights = NULL;
+ 
+ 	if (flags & ~(MPOL_F_ADDR))
+ 		return -EINVAL;
+@@ -1935,6 +2022,13 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_param __user *, uparam, size_t, usiz
+ 	if (err)
+ 		return -EINVAL;
+ 
++	if (kparam.il_weights) {
++		weights = kzalloc(MAX_NUMNODES, GFP_KERNEL | __GFP_NORETRY);
++		if (!weights)
++			return -ENOMEM;
++	}
++	mparam.il_weights = weights;
++
+ 	mparam.policy_nodes = kparam.pol_nodes ? &policy_nodemask : NULL;
+ 	if (flags & MPOL_F_ADDR)
+ 		err = do_get_vma_mempolicy(untagged_addr(addr), NULL, &mparam);
+@@ -1942,7 +2036,7 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_param __user *, uparam, size_t, usiz
+ 		err = do_get_task_mempolicy(&mparam, NULL);
+ 
+ 	if (err)
+-		return err;
++		goto leave_weights;
+ 
+ 	kparam.mode = mparam.mode;
+ 	kparam.mode_flags = mparam.mode_flags;
+@@ -1952,10 +2046,21 @@ SYSCALL_DEFINE4(get_mempolicy2, struct mpol_param __user *, uparam, size_t, usiz
+ 		err = copy_nodes_to_user(nodes_ptr, kparam.pol_maxnodes,
+ 					 mparam.policy_nodes);
+ 		if (err)
+-			return err;
++			goto leave_weights;
++	}
++
++	if (kparam.mode == MPOL_WEIGHTED_INTERLEAVE && kparam.il_weights) {
++		weights_ptr = u64_to_user_ptr(kparam.il_weights);
++		if (copy_to_user(weights_ptr, weights, kparam.pol_maxnodes)) {
++			err = -EFAULT;
++			goto leave_weights;
++		}
+ 	}
+ 
+-	return copy_to_user(uparam, &kparam, usize) ? -EFAULT : 0;
++	err = copy_to_user(uparam, &kparam, usize) ? -EFAULT : 0;
++leave_weights:
++	kfree(weights);
++	return err;
+ }
+ 
+ bool vma_migratable(struct vm_area_struct *vma)
+@@ -2077,8 +2182,10 @@ static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
+ 		return next;
+ 
+ 	if (!policy->wil.cur_weight) {
+-		u8 next_weight = iw_table[next];
++		u8 next_weight = policy->wil.weights[next];
+ 
++		if (!next_weight)
++			next_weight = iw_table[next];
+ 		if (!next_weight)
+ 			next_weight = default_iw_table[next];
+ 		policy->wil.cur_weight = next_weight;
+@@ -2175,8 +2282,10 @@ static unsigned int read_once_interleave_weights(struct mempolicy *pol,
+ 	/* Similar issue to read_once_policy_nodemask */
+ 	barrier();
+ 	for_each_node_mask(nid, *mask) {
+-		u8 weight = iw_table[nid];
++		u8 weight = pol->wil.weights[nid];
+ 
++		if (!weight)
++			weight = iw_table[nid];
+ 		if (!weight)
+ 			weight = default_iw_table[nid];
+ 		weight_total += weight;
+@@ -3115,21 +3224,28 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ 	if (mpol) {
+ 		struct sp_node *sn;
+ 		struct mempolicy *npol;
++		u8 *weights = NULL;
+ 		NODEMASK_SCRATCH(scratch);
+ 
+ 		if (!scratch)
+ 			goto put_mpol;
+ 
++		weights = kzalloc(MAX_NUMNODES, GFP_KERNEL | __GFP_NORETRY);
++		if (!weights)
++			goto free_scratch;
++		memcpy(weights, mpol->wil.weights, sizeof(weights));
++
+ 		memset(&mparam, 0, sizeof(mparam));
+ 		mparam.mode = mpol->mode;
+ 		mparam.mode_flags = mpol->flags;
+ 		mparam.policy_nodes = &mpol->w.user_nodemask;
+ 		mparam.home_node = NUMA_NO_NODE;
++		mparam.il_weights = weights;
+ 
+ 		/* contextualize the tmpfs mount point mempolicy to this file */
+ 		npol = mpol_new(&mparam);
+ 		if (IS_ERR(npol))
+-			goto free_scratch; /* no valid nodemask intersection */
++			goto free_weights; /* no valid nodemask intersection */
+ 
+ 		task_lock(current);
+ 		ret = mpol_set_nodemask(npol, &mpol->w.user_nodemask, scratch);
+@@ -3143,6 +3259,8 @@ void mpol_shared_policy_init(struct shared_policy *sp, struct mempolicy *mpol)
+ 			sp_insert(sp, sn);
+ put_npol:
+ 		mpol_put(npol);	/* drop initial ref on file's npol */
++free_weights:
++		kfree(weights);
+ free_scratch:
+ 		NODEMASK_SCRATCH_FREE(scratch);
+ put_mpol:
 -- 
 2.39.1
 
