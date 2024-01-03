@@ -1,172 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-7240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126D9823065
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 16:20:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC5C8230C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 16:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30D3283799
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF09285CF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 15:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BFF1B291;
-	Wed,  3 Jan 2024 15:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4901B267;
+	Wed,  3 Jan 2024 15:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYoB6jtC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BGMgJIQW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9971B278;
-	Wed,  3 Jan 2024 15:19:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9164CC433C7;
-	Wed,  3 Jan 2024 15:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704295186;
-	bh=KduI9in51OItaVjmNcwiR5rDC975JQ1mclQc1Lgd3VA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=TYoB6jtCxQ4JvvqePm+gFrBAdjoDkrg/8Qwi1aC7RmNXNUfypPXVBXs/8qfdGQ87C
-	 optTIxb0AH070xa7U8K/iOstpfaUJN0OYf0bEaRfgQK+fXfFa6cb8IFz6F8vp6THJ5
-	 oeaAIOuJyNnVqlAO6Q2T94ClkUj3sX4TkJp5YC2OPIsPhr6O7ckpvLlYr0eWzyUuVy
-	 qGgn0artNxK3YEVoqYH4s7J3XJhVEBu0fAfCwjDRhxx1Bvz8qZwe3AtOTOrs/ShNTm
-	 BRvKxvfpQruuzk1MB5erZWaFeVtcK6D1k9KUiRdw/bO3+YsktlDu+4SfzkDSmGY7tY
-	 Jr2nc+pToQCNQ==
-Subject: [PATCH v2 2/2] fs: Create a generic is_dot_dotdot() utility
-From: Chuck Lever <cel@kernel.org>
-To: jlayton@redhat.com, amir73il@gmail.com
-Cc: Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
- brauner@kernel.org
-Date: Wed, 03 Jan 2024 10:19:44 -0500
-Message-ID: 
- <170429518465.50646.9482690519449281531.stgit@bazille.1015granger.net>
-In-Reply-To: 
- <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
-References: 
- <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
-User-Agent: StGit/1.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008361B26C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 15:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704296842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T4zshVgbXU4KADwit5ys0TaPmzA2s1+8lP1tq0kT5oQ=;
+	b=BGMgJIQW67XbbSphRTd+MzDxQd79LorGW3BfG2KPsbsIetz8XNtPEcWeSBcpDbBRpk9VoK
+	EG8rV3LJ2iygbgTEl8DJ2GJ4V47UOLzNlqUiY59/iMZ+yGgxixiGnRZZ4K+VUEXjFkLHCs
+	hfLRZ64w/0qZptKPpHsdKb8c+fmjk/4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-Lmp8D3ZiP6Ojc5GmI18XTw-1; Wed, 03 Jan 2024 10:47:15 -0500
+X-MC-Unique: Lmp8D3ZiP6Ojc5GmI18XTw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A2F02884346;
+	Wed,  3 Jan 2024 15:47:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.68])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6923E492BE6;
+	Wed,  3 Jan 2024 15:47:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240103145935.384404-1-dhowells@redhat.com>
+References: <20240103145935.384404-1-dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/5] netfs: Rearrange netfs_io_subrequest to put request pointer first
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <396880.1704296824.1@warthog.procyon.org.uk>
+Date: Wed, 03 Jan 2024 15:47:04 +0000
+Message-ID: <396881.1704296824@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-From: Chuck Lever <chuck.lever@oracle.com>
+netfs: Rearrange netfs_io_subrequest to put request pointer first
 
-De-duplicate the same functionality in several places by hoisting
-the is_dot_dotdot() function into linux/fs.h.
+Rearrange the netfs_io_subrequest struct to put the netfs_io_request
+pointer (rreq) first.  This then allows netfs_io_subrequest to be put in a
+union with a pointer to a wrapper around netfs_io_request.  This will be
+useful in the future for cifs and maybe ceph.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: linux-cachefs@redhat.com
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
- fs/crypto/fname.c    |    8 +-------
- fs/ecryptfs/crypto.c |   10 ----------
- fs/exportfs/expfs.c  |    4 +---
- fs/f2fs/f2fs.h       |   11 -----------
- include/linux/fs.h   |    9 +++++++++
- 5 files changed, 11 insertions(+), 31 deletions(-)
+ include/linux/netfs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 7b3fc189593a..0ad52fbe51c9 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
- 
- static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- {
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
-+	return is_dot_dotdot(str->name, str->len);
- }
- 
- /**
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 03bd55069d86..2fe0f3af1a08 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
- 
--static bool is_dot_dotdot(const char *name, size_t name_size)
--{
--	if (name_size == 1 && name[0] == '.')
--		return true;
--	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 84af58eaf2ca..07ea3d62b298 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, const char *name, int len,
- 		container_of(ctx, struct getdents_callback, ctx);
- 
- 	buf->sequence++;
--	/* Ignore the '.' and '..' entries */
--	if ((len > 2 || name[0] != '.' || (len == 2 && name[1] != '.')) &&
--	    buf->ino == ino && len <= NAME_MAX) {
-+	if (buf->ino == ino && len <= NAME_MAX && !is_dot_dotdot(name, len)) {
- 		memcpy(buf->name, name, len);
- 		buf->name[len] = '\0';
- 		buf->found = 1;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9043cedfa12b..322a3b8a3533 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
- 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
- }
- 
--static inline bool is_dot_dotdot(const u8 *name, size_t len)
--{
--	if (len == 1 && name[0] == '.')
--		return true;
--
--	if (len == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
- 					size_t size, gfp_t flags)
- {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98b7a7a8c42e..179eea797c22 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2846,6 +2846,15 @@ extern bool path_is_under(const struct path *, const struct path *);
- 
- extern char *file_path(struct file *, char *, int);
- 
-+static inline bool is_dot_dotdot(const char *name, size_t len)
-+{
-+	if (len == 1 && name[0] == '.')
-+		return true;
-+	if (len == 2 && name[0] == '.' && name[1] == '.')
-+		return true;
-+	return false;
-+}
-+
- #include <linux/err.h>
- 
- /* needed for stackable file system support */
-
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 852956aa3c4b..d3bac60fcd6f 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -204,8 +204,8 @@ struct netfs_cache_resources {
+  * the pages it points to can be relied on to exist for the duration.
+  */
+ struct netfs_io_subrequest {
+-	struct work_struct	work;
+ 	struct netfs_io_request *rreq;		/* Supervising I/O request */
++	struct work_struct	work;
+ 	struct list_head	rreq_link;	/* Link in rreq->subrequests */
+ 	struct iov_iter		io_iter;	/* Iterator for this subrequest */
+ 	loff_t			start;		/* Where to start the I/O */
 
 
