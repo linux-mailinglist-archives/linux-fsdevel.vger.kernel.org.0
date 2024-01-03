@@ -1,165 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-7161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A4582290D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 08:40:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6E9822918
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 08:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7092E283778
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 07:40:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6AF1C2301D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Jan 2024 07:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9440A1803D;
-	Wed,  3 Jan 2024 07:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4CE1805C;
+	Wed,  3 Jan 2024 07:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="C590/BvQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rLv1TTAQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA4D1802F
-	for <linux-fsdevel@vger.kernel.org>; Wed,  3 Jan 2024 07:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-50e77a2805fso7161080e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Jan 2024 23:39:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704267593; x=1704872393; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+AbFo3Bg4oMZjrfE+TFYwDX0ZlwLxbfW/PTfwAvhZxA=;
-        b=C590/BvQ+x+TjDQLzADKZQlVt++vWdDjP6ZgZeLpcQ06y2/Z5g2CqJRNYfvJBbAHi+
-         yPbNSOrcxxgbnI0RXNT4HWaogsifw1MQeCvQjbBZWBygd0CcS2KvldX00NfgRb9iohvm
-         czLsY9Op3/o9KpUVhtT7VaMN6nrzW8HJBKGFilVNdQH7NUhpG5pu/HKSGwbUFiosqWVR
-         BPs8jSiclFT0j/dvW//cWnHvvsBaHxARba7GV/3ceHUCWb/N65yG+yIVrmX0FvIHKF+i
-         rQ+lDKLD8frJpVU2yn1isPo9RVkzjHuIGFLtPT+wBXlX9T15Wj7TirMbcvBlf7ZZA9gZ
-         qP5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704267593; x=1704872393;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+AbFo3Bg4oMZjrfE+TFYwDX0ZlwLxbfW/PTfwAvhZxA=;
-        b=QpXMi0Rj7TaMRrcfQmpQK88dWx9MijgMyYTsR14Nc0zcWPUitshYWimVmpAwjYQNzM
-         iJ9GfT9eWmrqTA//w3A4Q7WeEuDslGzKT5nzYrYUe84dC9HKPbfrR5n+ngZKWfk1Xt/E
-         msLorkNm0ZYlNMr8534wMIFzSxPQliQR8E6eUmcvmr8tiU8iAPtQzDF75fV790aQk63Q
-         PYC4vc4mOKqvQu38nUp86jUHvteosRT/MC+KoXBEBOumecPe0RnbD0IEKgB7jQ3KYAOD
-         wUD5X7ucZp3dInDemS6tJzNt6u/3nyT2WEVJDoEdrg74zGksLf0tI9WvJ3NFYpOHIHpm
-         ipbQ==
-X-Gm-Message-State: AOJu0YxEJrWuJJ2wMgAi8wmlQ2JHeH19wmdCydlLjWWCgjFjRuPjg9bj
-	mB88ICVefwnnpqCeYOPeREVIbW7kx2Jom04kDk7aBMJJvAM=
-X-Google-Smtp-Source: AGHT+IGqLUJo7QIpSVAnkZsf7fjF/Nf2AiCvSI6SngMMh/NRhhjNMGkInvDVxHCRiQdE6k74oTMzJQ==
-X-Received: by 2002:a05:6512:20ce:b0:50e:7aef:e9df with SMTP id u14-20020a05651220ce00b0050e7aefe9dfmr2993498lfr.19.1704267592993;
-        Tue, 02 Jan 2024 23:39:52 -0800 (PST)
-Received: from smtpclient.apple ([2a00:1370:81a4:169c:b817:c4e5:4423:6afc])
-        by smtp.gmail.com with ESMTPSA id c25-20020a056512239900b0050e84c1b75fsm2129354lfv.84.2024.01.02.23.39.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Jan 2024 23:39:52 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CC81803D;
+	Wed,  3 Jan 2024 07:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mfBmNNXCDgI/7UWz5uYsVwRwFwVSUpKpeSR1CFuUBeE=; b=rLv1TTAQA156NR6NMWeqQzjKE0
+	/sK2JNeruOswotoIFPruqmoTu1yoF11hp6opHbX7KM6wmuuzPeFI3FdSyh4gPZGzxp/hPTIChehhf
+	sSktoLdls2jHEUk5oereue4EWhsEzfLq9qcBNwg2tDdV+O8w3kM36gpA2cmoZf+ji3quMIQfigh7q
+	dlm0lg+KB7yPYExfeWbUowO+dczFs36xubHRGsPSq9f60x6KnGJakWgA2RHR0PdR1pIvJHLU+ob+O
+	k3Wg5la4H7PponKN3BFecDKXx2IhOY8iAfY6nJHw5IH4uJ49/OGCGLBMp3vVSAebQBg3DQnDz1LNJ
+	78JxD6yw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rKvwI-00CNoh-RR; Wed, 03 Jan 2024 07:45:22 +0000
+Date: Wed, 3 Jan 2024 07:45:22 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] hfs: fix deadlock in hfs_extend_file
+Message-ID: <ZZUQkr+oHEEF8njK@casper.infradead.org>
+References: <0000000000004efa57060def87be@google.com>
+ <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
-Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
-Date: Wed, 3 Jan 2024 10:39:50 +0300
-Cc: lsf-pc@lists.linux-foundation.org,
- linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
-References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
- <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
- <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3696.120.41.1.4)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_8C1ACE487B4E6C302EE56D8C95C0E8E2EF0A@qq.com>
 
+On Tue, Jan 02, 2024 at 08:36:51PM +0800, Edward Adam Davis wrote:
+> [syz report]
+> syz-executor279/5059 is trying to acquire lock:
+> ffff888079c100f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
+> 
+> but task is already holding lock:
+> ffff888079c10778 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xa2/0xb10 fs/hfs/extent.c:397
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&HFS_I(tree->inode)->extents_lock);
+>   lock(&HFS_I(tree->inode)->extents_lock);
+> 
+>  *** DEADLOCK ***
+> [Analysis] 
+>  hfs_extend_file()->
+>    hfs_ext_read_extent()->
+>      __hfs_ext_cache_extent()->
+>        __hfs_ext_write_extent()->
+>          hfs_bmap_reserve()->
+>            hfs_extend_file()->
+> 
+> When an inode has both the HFS_FLG_EXT_DIRTY and HFS_FLG_EXT_NEW flags, it will
+> enter the above loop and trigger a deadlock.
+> 
+> [Fix]
+> In hfs_ext_read_extent(), check if the above two flags exist simultaneously, 
+> and exit the subsequent process when the conditions are met.
 
+Why is this the correct fix?  Seems to me that returning -ENOENT here is
+going to lead to an error being reported to the user when the user has
+done nothing wrong?
 
-> On Jan 2, 2024, at 7:05 PM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->=20
-> On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
->>=20
->>=20
->>> On Jan 2, 2024, at 1:56 AM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->>>=20
->>> LSF topic: bcachefs status & roadmap
->>>=20
->>=20
->> <skipped>
->>=20
->>>=20
->>> A delayed allocation for btree nodes mode is coming, which is the =
-main
->>> piece needed for ZNS support
->>>=20
->>=20
->> I could miss some emails. But have you shared the vision of ZNS =
-support
->> architecture for the case of bcachefs already? It will be interesting =
-to hear
->> the high-level concept.
->=20
-> There's not a whole lot to it. bcache/bcachefs allocation is already
-> bucket based, where the model is that we allocate a bucket, then write
-> to it sequentially and never overwrite until the whole bucket is =
-reused.
->=20
-> The main exception has been btree nodes, which are log structured and
-> typically smaller than a bucket; that doesn't break the "no =
-overwrites"
-> property ZNS wants, but it does mean writes within a bucket aren't
-> happening sequentially.
->=20
-> So I'm adding a mode where every time we do a btree node write we =
-write
-> out the whole node to a new location, instead of appending at an
-> existing location. It won't be as efficient for random updates across =
-a
-> large working set, but in practice that doesn't happen too much; =
-average
-> btree write size has always been quite high on any filesystem I've
-> looked at.
->=20
-> Aside from that, it's mostly just plumbing and integration; bcachefs =
-on
-> ZNS will work pretty much just the same as bcachefs on regular block =
-devices.
-
-I assume that you are aware about limited number of open/active zones
-on ZNS device. It means that you can open for write operations
-only N zones simultaneously (for example, 14 zones for the case of WDC
-ZNS device). Can bcachefs survive with such limitation? Can you limit =
-the number
-of buckets for write operations?
-
-Another potential issue could be the zone size. WDC ZNS device =
-introduces
-2GB zone size (with 1GB capacity). Could be the bucket is so huge? And =
-could
-btree model of operations works with such huge zones?
-
-Technically speaking, limitation (14 open/active zones) could be the =
-factor of
-performance degradation. Could such limitation doesn=E2=80=99t effect =
-the bcachefs
-performance?
-
-Could ZNS model affects a GC operations? Or, oppositely, ZNS model can
-help to manage GC operations more efficiently?
-
-Do you need in conventional zone? Could bcachefs work without using
-the conventional zone of ZNS device?
-
-Thanks,
-Slava.
-
+> Reported-and-tested-by: syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  fs/hfs/extent.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+> index 6d1878b99b30..1b02c7b6a10c 100644
+> --- a/fs/hfs/extent.c
+> +++ b/fs/hfs/extent.c
+> @@ -197,6 +197,10 @@ static int hfs_ext_read_extent(struct inode *inode, u16 block)
+>  	    block < HFS_I(inode)->cached_start + HFS_I(inode)->cached_blocks)
+>  		return 0;
+>  
+> +	if (HFS_I(inode)->flags & HFS_FLG_EXT_DIRTY && 
+> +	    HFS_I(inode)->flags & HFS_FLG_EXT_NEW) 
+> +		return -ENOENT;
+> +
+>  	res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
+>  	if (!res) {
+>  		res = __hfs_ext_cache_extent(&fd, inode, block);
+> -- 
+> 2.43.0
+> 
+> 
 
