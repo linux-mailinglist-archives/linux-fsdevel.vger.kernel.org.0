@@ -1,101 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-7418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09A6824958
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 21:02:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 557CA8249CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 21:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCEA1C222BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CD91C229EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751412C68B;
-	Thu,  4 Jan 2024 20:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576CF28E03;
+	Thu,  4 Jan 2024 20:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TcAgY24T"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MCTW69+I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430062C687
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 20:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-50ea9daac4cso1000758e87.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 12:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1704398539; x=1705003339; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9jDsDfmbTpiQpvGnfOhd0ROcnisF14caf1vpRK9xqg4=;
-        b=TcAgY24TVMOu9UYln9SgjwiLLt7KXvS7eV38BEAz0LiDd4c8Itbp+aRmvCzgLDsv8z
-         btwA0mPop8VYEmcWhQ9S+Z/LjiG8BmIwlZkLeHhQpB6VdU9jnXdE62t18jTPZqKJsD+z
-         4ZpyUNzjCDiJrE7ciRzvpBMU8+3XQB7D0qeNw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704398539; x=1705003339;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9jDsDfmbTpiQpvGnfOhd0ROcnisF14caf1vpRK9xqg4=;
-        b=NKKMmOJAZ/06YtvzBxoT+Dx2hGQu0BQZzwwxVw3KQhzEuukmlYMbdaPUr+ma9otBL9
-         ZBlH99gay/Vc6Q+DrXb5fRDd8CnnUx6huwY41DQ2JMTi4S+aZGst3YHngC85evY9ojtX
-         vVjc4ZXZhm9M2m0cY2pVXD0jZwTEBK63lJy4X/HVL4eQNu5NCdwwBHq5vXBZYmS5py87
-         xuXa8LCSKA1IQYG5ifBzzHSHtrBhT3z7YuSy9zR8pxUWJtajV/yhcGMHmsqkFFTE9IEO
-         eUPpHflybam1NGAVpXiYrP95w9wIId6kzu9R+ii1IKvdvhTIb2BT2QLO9LfaqQMOdvLn
-         H2pQ==
-X-Gm-Message-State: AOJu0Yy5kGgI7U3/n9c7GMCCul8nq9QrjZ/uRxDExKjf5MjpV9h4L3BG
-	3IHLmInYorrJCdKn4k1z33S9EHv+jLg75rCLx6PqeoWm8WHB8mgW
-X-Google-Smtp-Source: AGHT+IF9bHaykoW4zVo5ypxx6XEMo6nBmCp8tn6zlz/UyAZGkYDKI0gXPK1ybNibUaDNfTg7JQ6EDg==
-X-Received: by 2002:ac2:5973:0:b0:50e:3907:46b7 with SMTP id h19-20020ac25973000000b0050e390746b7mr520125lfp.107.1704398539103;
-        Thu, 04 Jan 2024 12:02:19 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id q25-20020a170906a09900b00a2744368bdesm22407ejy.82.2024.01.04.12.02.17
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 12:02:18 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55719cdc0e1so432321a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 12:02:17 -0800 (PST)
-X-Received: by 2002:a17:907:360b:b0:a1d:932f:9098 with SMTP id
- bk11-20020a170907360b00b00a1d932f9098mr716728ejc.97.1704398537679; Thu, 04
- Jan 2024 12:02:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29401E516
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 20:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 4 Jan 2024 15:52:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1704401531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QzI/Xr56gasgakS2cGy5UqcYQGUMuAr5ihmMpPGJ9TU=;
+	b=MCTW69+I7VIBBwwIy9bILW1IpWe5T8xRRm6gNkTdoc9Rme/e3dvuzKwIjOakTDS+DSKBif
+	CnptzV1NRw2UBY62hDcFYPwH0kMyzls/Ox0wMVOGB5TqFJS1pjey+9oubQ1J8V6PRrQNSV
+	CxpjA61tQoJMciOPDJZrAo2TF3CIilk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Martin Steigerwald <martin@lichtvoll.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs new years fixes for 6.7
+Message-ID: <7pnbw4c5xvek3d3ina4etosspqjtluhbsfb67nwu7zgn4tzgfm@aeof65j2iaof>
+References: <o7py4ia3s75popzz7paf3c6347te6h3qms675lz3s2k5eltskl@cklacfnvxb7k>
+ <6008735.lOV4Wx5bFT@lichtvoll.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103203246.115732ec@gandalf.local.home> <20240104014837.GO1674809@ZenIV>
- <20240103212506.41432d12@gandalf.local.home> <20240104043945.GQ1674809@ZenIV>
- <20240104100544.593030e0@gandalf.local.home> <20240104182502.GR1674809@ZenIV>
- <20240104141517.0657b9d1@gandalf.local.home> <CAHk-=wgxhmMcVGvyxTxvjeBaenOmG8t_Erahj16-68whbvh-Ug@mail.gmail.com>
-In-Reply-To: <CAHk-=wgxhmMcVGvyxTxvjeBaenOmG8t_Erahj16-68whbvh-Ug@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 4 Jan 2024 12:02:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wguvq7yFt3qaLrWoZK5FCK8Joizrb2wu=FN==mYM9PSbg@mail.gmail.com>
-Message-ID: <CAHk-=wguvq7yFt3qaLrWoZK5FCK8Joizrb2wu=FN==mYM9PSbg@mail.gmail.com>
-Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default ownership
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6008735.lOV4Wx5bFT@lichtvoll.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 4 Jan 2024 at 11:35, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->>
-> Which is *NOT* the inode, because the 'struct file' has other things
-> in it (the file position, the permissions that were used at open time
-> etc, close-on-exec state etc etc).
+On Thu, Jan 04, 2024 at 07:13:31PM +0100, Martin Steigerwald wrote:
+> Hi Kent.
+> 
+> Kent Overstreet - 01.01.24, 17:57:04 CET:
+> > Hi Linus, some more fixes for you, and some compatibility work so that
+> > 6.7 will be able to handle the disk space accounting rewrite when it
+> > rolls out.
+> 
+> Is it required to recreate BCacheFS with updated BCacheFS tools from Git 
+> in order to benefit from that compatibility work or does BCacheFS 
+> automatically update the super block?
 
-That close-on-exec thing was a particularly bad example of things that
-are in the 'struct file', because it's in fact the only thing that
-*isn't* in 'struct file' and is associated directly with the 'int fd'.
-
-But hopefully the intent was clear despite me picking a particularly
-bad example.
-
-            Linus
+Automatically updated as soon as a new version writes to it, and the old
+versions just ignore the sections they don't know about.
 
