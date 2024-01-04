@@ -1,189 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-7347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171B4823CE6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 08:45:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF763823CE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 08:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE422886E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 07:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F592285800
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 07:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427D6200C4;
-	Thu,  4 Jan 2024 07:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD3200A7;
+	Thu,  4 Jan 2024 07:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="jiGStf/U"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbEef6mt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780F1F951
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 07:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2cd1eac006eso2404241fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Jan 2024 23:43:58 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234D1F951;
+	Thu,  4 Jan 2024 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-67fa018c116so1204856d6.3;
+        Wed, 03 Jan 2024 23:46:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704354236; x=1704959036; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1704354378; x=1704959178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=W1yThAJfEzlOfxwivhZ6fEV4ArFBKNTkjUY01E38OUc=;
-        b=jiGStf/U7sX4wckOBg9k33xpGzJ9DrwzXWvS45Z2RXFld+hTex5hJS7xvPdh1PgzF1
-         76ycvdFQjGQyhMSQO2bLfxTumXACLdyzi+dmu3QVzTQ9Ij2rbnqpEF534wtj1fGEptPp
-         1V4E9EyjzAqS+7ImTJdZKCFbBs4Yc1XYopGrjxKWXyzJTaV277AcK+15pEyou34kuCXV
-         RAj67/9ErT8ET/r3XiANnONFwJBLvU0i1sslCtAniIKTxw9KWe3YHEShNsfUxZ6ffsux
-         URQxyq2ATNdtO9WyIjB6FB2G0igeXzPB3BiLme6fyJWBMXJDIy/H2Zs/jdWiS01Q/VkW
-         6D+A==
+        bh=Z8JWWAcW5U6HoZv2tvwhmzksu600dRorErCbol8G1zE=;
+        b=AbEef6mtA7KVNzB4ChdJGxpc2d/Fh4KkMFEFxssJPaxkpVlQMZg11j4u5313SvAgFD
+         Ark8CDW099l/H65/PN0vvi6E1YQu2xtC0t86Q/M0jab6HAxuyE6pLtTB8GcXgwY0LO/D
+         PPyIvqboMtu8PH4A4+3fRwlLQD2y2JiPGmqYH8ZBWKdyKXZ7m2xqrbrNUjaUReOWhUND
+         woqn8tITH0SYK0ZcuYvE0BwobehrTQxexnfTxFV1NgcQCHBUrcvSSISVb+SzrO1PJ6do
+         9bf4BvAmkAwHjeBdf1EMVjPopiWN/14yFgGWrlO14shbms7ZSCsyaWrdZ5RLSwPZdz+R
+         /I1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704354236; x=1704959036;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1704354378; x=1704959178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=W1yThAJfEzlOfxwivhZ6fEV4ArFBKNTkjUY01E38OUc=;
-        b=PVBAYCayZNBmiJeYbi3EAtK+QfF0iHDzPHXbkX4SjQSccNeBy3WrksUWPI+8xnomlk
-         nfyHel4BUf3b3k3+9kMGXyUE6FdsubXiNwJ1LAuEvB2rARlfZeAPHh74X4hCFswiHpfb
-         G8Q0Ww9TYZuuw84gdS55pbZ8eBWuCeXRHouQPOkEBhAihY9k3fm/ajs9vKjO9IxkCapO
-         cUurphWB/nyq57EIINL5eeQwsZl7fgFArBfn84i4Qibzf/hhwg94Xio3n8jlCeNKDtMe
-         JPlwND5/b5CUVpyaUGGYKJJUhXjsmYswQMLO4hQujaQfX1cDx+5Tr/OvNcX1O7E6fmdV
-         TuQg==
-X-Gm-Message-State: AOJu0Yy23jGBXs82ZOMOgnInbtcMSQJJMBNaJysH2IoJI1hxCLZi55Vn
-	t7iK8EJS1LCqT69xpOlvQQAv4KD/hOaskfLM12EiyO4+zlo=
-X-Google-Smtp-Source: AGHT+IFosEy9Q4acYcwWdLKciqfLUnI9EMQ7EDAWnAxSzSS/1EmOsbOqZAxSr7g9TgtWbWJSvMfREg==
-X-Received: by 2002:a2e:9d84:0:b0:2cd:1d26:232 with SMTP id c4-20020a2e9d84000000b002cd1d260232mr71013ljj.2.1704354236372;
-        Wed, 03 Jan 2024 23:43:56 -0800 (PST)
-Received: from smtpclient.apple ([2a00:1370:81a4:169c:b9b3:d30e:5f66:5758])
-        by smtp.gmail.com with ESMTPSA id k10-20020a2e920a000000b002ccad70dacfsm5345916ljg.26.2024.01.03.23.43.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Jan 2024 23:43:55 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=Z8JWWAcW5U6HoZv2tvwhmzksu600dRorErCbol8G1zE=;
+        b=SeWlQQW1WvmONQa/XWP05XOKYvhGo9jnK7Gb8sYO80SIgnOOAtGs30RCsoJmerg+jJ
+         rTkgYETXQpSWaLjQY4BFNEBSReY+jgLkMY0rjxJVKv3evykcnRM5egtV8Bq+a5faqLZx
+         27UiG9YxLYAka/P/Fffv71cw690Ae0n8e6ZkSItHOwickIOMtO6NwyCrr+GmX6yAG12t
+         SgvXt8OFvzXN3nBGXCtprLX7fJbz9gHa7mvkmM5cArOx0C8A41GT30GxhlwYEk2upPth
+         2QSRAggR9w7U2P/JefmpPI7mEtjdJZXnifCUnD7P7+JI8462nvYnAxR1/O/mezzWoE/E
+         s0nA==
+X-Gm-Message-State: AOJu0YyYIatfC1nenZcg6sj/mNDZoBhIzlf0Pi0MIllpKeSMXHJCy4Mh
+	y0UwSOw+samaa2InfjLyI0Yy4cbusqVa2G547rY=
+X-Google-Smtp-Source: AGHT+IHnOSLvO5jpQ5cp++B0F0q5nQavs+ClEJ6yaOyBITA3vDzkdwt8QOPHM03MOVWA4J9aOSj2dk6ijzrICPgEy+A=
+X-Received: by 2002:ad4:5b85:0:b0:680:d27c:a416 with SMTP id
+ 5-20020ad45b85000000b00680d27ca416mr252921qvp.107.1704354378515; Wed, 03 Jan
+ 2024 23:46:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
-Subject: Re: [LSF/MM/BPF TOPIC] bcachefs
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <cgivkso5ugccwkhtd5rh3d6rkoxdrra3hxgxhp5e5m45kn623s@f6hd3iajb3zg>
-Date: Thu, 4 Jan 2024 10:43:49 +0300
-Cc: lsf-pc@lists.linux-foundation.org,
- linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
+MIME-Version: 1.0
+References: <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
+ <170429518465.50646.9482690519449281531.stgit@bazille.1015granger.net> <276a17ed09cf6d53d17292b5182a8e08695251a4.camel@kernel.org>
+In-Reply-To: <276a17ed09cf6d53d17292b5182a8e08695251a4.camel@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 4 Jan 2024 09:46:07 +0200
+Message-ID: <CAOQ4uxhKVaL3gvwrURSWFSBf2HH6vg0qwM1LVPkmQLfnvTPrdw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fs: Create a generic is_dot_dotdot() utility
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <cel@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	trondmy@hammerspace.com, viro@zeniv.linux.org.uk, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <D7F7675E-B615-48DC-B4D8-63B867B25887@dubeyko.com>
-References: <i6ugxvkuz7fsnfoqlnmtjyy2owfyr4nlkszdxkexxixxbafhqa@mbsiiiw2jwqi>
- <3EB6181B-2BEA-49BE-A290-AFDE21FFD55F@dubeyko.com>
- <mpvktfgmdhcjohcwg24ssxli3nrv2nu6ev6hyvszabyik2oiam@axba2nsiovyx>
- <74751256-EA58-4EBB-8CA9-F1DD5E2F23FA@dubeyko.com>
- <cgivkso5ugccwkhtd5rh3d6rkoxdrra3hxgxhp5e5m45kn623s@f6hd3iajb3zg>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3696.120.41.1.4)
 
+On Wed, Jan 3, 2024 at 9:08=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> On Wed, 2024-01-03 at 10:19 -0500, Chuck Lever wrote:
+> > From: Chuck Lever <chuck.lever@oracle.com>
+> >
+> > De-duplicate the same functionality in several places by hoisting
+> > the is_dot_dotdot() function into linux/fs.h.
+> >
+> > Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> > ---
+> >  fs/crypto/fname.c    |    8 +-------
+> >  fs/ecryptfs/crypto.c |   10 ----------
+> >  fs/exportfs/expfs.c  |    4 +---
+> >  fs/f2fs/f2fs.h       |   11 -----------
+> >  include/linux/fs.h   |    9 +++++++++
+> >  5 files changed, 11 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> > index 7b3fc189593a..0ad52fbe51c9 100644
+> > --- a/fs/crypto/fname.c
+> > +++ b/fs/crypto/fname.c
+> > @@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
+> >
+> >  static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+> >  {
+> > -     if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')
+> > -             return true;
+> > -
+> > -     if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' && str->name[1] =
+=3D=3D '.')
+> > -             return true;
+> > -
+> > -     return false;
+> > +     return is_dot_dotdot(str->name, str->len);
+> >  }
+> >
+> >  /**
+> > diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+> > index 03bd55069d86..2fe0f3af1a08 100644
+> > --- a/fs/ecryptfs/crypto.c
+> > +++ b/fs/ecryptfs/crypto.c
+> > @@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
+> >       return rc;
+> >  }
+> >
+> > -static bool is_dot_dotdot(const char *name, size_t name_size)
+> > -{
+> > -     if (name_size =3D=3D 1 && name[0] =3D=3D '.')
+> > -             return true;
+> > -     else if (name_size =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=
+=3D '.')
+> > -             return true;
+> > -
+> > -     return false;
+> > -}
+> > -
+> >  /**
+> >   * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher =
+text name to decoded plaintext
+> >   * @plaintext_name: The plaintext name
+> > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> > index 84af58eaf2ca..07ea3d62b298 100644
+> > --- a/fs/exportfs/expfs.c
+> > +++ b/fs/exportfs/expfs.c
+> > @@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, co=
+nst char *name, int len,
+> >               container_of(ctx, struct getdents_callback, ctx);
+> >
+> >       buf->sequence++;
+> > -     /* Ignore the '.' and '..' entries */
+> > -     if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] !=3D=
+ '.')) &&
+> > -         buf->ino =3D=3D ino && len <=3D NAME_MAX) {
+> > +     if (buf->ino =3D=3D ino && len <=3D NAME_MAX && !is_dot_dotdot(na=
+me, len)) {
+> >               memcpy(buf->name, name, len);
+> >               buf->name[len] =3D '\0';
+> >               buf->found =3D 1;
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 9043cedfa12b..322a3b8a3533 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_=
+info *sbi)
+> >       return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
+> >  }
+> >
+> > -static inline bool is_dot_dotdot(const u8 *name, size_t len)
+> > -{
+> > -     if (len =3D=3D 1 && name[0] =3D=3D '.')
+> > -             return true;
+> > -
+> > -     if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
+> > -             return true;
+> > -
+> > -     return false;
+> > -}
+> > -
+> >  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
+> >                                       size_t size, gfp_t flags)
+> >  {
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 98b7a7a8c42e..179eea797c22 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -2846,6 +2846,15 @@ extern bool path_is_under(const struct path *, c=
+onst struct path *);
+> >
+> >  extern char *file_path(struct file *, char *, int);
+> >
+> > +static inline bool is_dot_dotdot(const char *name, size_t len)
+> > +{
+> > +     if (len =3D=3D 1 && name[0] =3D=3D '.')
+> > +             return true;
+> > +     if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
+> > +             return true;
+> > +     return false;
+> > +}
+> > +
+> >  #include <linux/err.h>
+> >
+> >  /* needed for stackable file system support */
+> >
+> >
+>
+> Looks good to me. I took a quick look to see if there were other open-
+> coded versions, but I didn't see any.
+>
 
+The outstanding open-coded version that wasn't deduped is in
+lookup_one_common(), which is the version that Trond used and
+mentioned in his patch.
 
-> On Jan 3, 2024, at 8:52 PM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->=20
-> On Wed, Jan 03, 2024 at 10:39:50AM +0300, Viacheslav Dubeyko wrote:
->>=20
->>=20
->>> On Jan 2, 2024, at 7:05 PM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->>>=20
->>> On Tue, Jan 02, 2024 at 11:02:59AM +0300, Viacheslav Dubeyko wrote:
->>>>=20
->>>>=20
->>>>> On Jan 2, 2024, at 1:56 AM, Kent Overstreet =
-<kent.overstreet@linux.dev> wrote:
->>>>>=20
->>>>> LSF topic: bcachefs status & roadmap
->>>>>=20
->>>>=20
->>>> <skipped>
->>>>=20
->>>>>=20
->>>>> A delayed allocation for btree nodes mode is coming, which is the =
-main
->>>>> piece needed for ZNS support
->>>>>=20
->>>>=20
->>>> I could miss some emails. But have you shared the vision of ZNS =
-support
->>>> architecture for the case of bcachefs already? It will be =
-interesting to hear
->>>> the high-level concept.
->>>=20
->>> There's not a whole lot to it. bcache/bcachefs allocation is already
->>> bucket based, where the model is that we allocate a bucket, then =
-write
->>> to it sequentially and never overwrite until the whole bucket is =
-reused.
->>>=20
->>> The main exception has been btree nodes, which are log structured =
-and
->>> typically smaller than a bucket; that doesn't break the "no =
-overwrites"
->>> property ZNS wants, but it does mean writes within a bucket aren't
->>> happening sequentially.
->>>=20
->>> So I'm adding a mode where every time we do a btree node write we =
-write
->>> out the whole node to a new location, instead of appending at an
->>> existing location. It won't be as efficient for random updates =
-across a
->>> large working set, but in practice that doesn't happen too much; =
-average
->>> btree write size has always been quite high on any filesystem I've
->>> looked at.
->>>=20
->>> Aside from that, it's mostly just plumbing and integration; bcachefs =
-on
->>> ZNS will work pretty much just the same as bcachefs on regular block =
-devices.
->>=20
->> I assume that you are aware about limited number of open/active zones
->> on ZNS device. It means that you can open for write operations
->> only N zones simultaneously (for example, 14 zones for the case of =
-WDC
->> ZNS device). Can bcachefs survive with such limitation? Can you limit =
-the number
->> of buckets for write operations?
->=20
-> Yes, open/active zones correspond to write points in the bcachefs
-> allocator. The default number of write points is 32 for user writes =
-plus
-> a few for internal ones, but it's not a problem to run with fewer.
->=20
+It is also a slightly more "efficient" version, but I have no idea if
+that really matters.
 
-Frankly speaking, the 14 open/active zones limitation is extreme case.
-Samsung provides bigger number for available open/active zones in ZNS =
-SSD.
-Even WDC made some promise to increase this number. But what=E2=80=99s =
-the minimal
-possible number of write pointers that can give opportunity for bcachefs =
-still work
-and survive in the environment of limited number of open/active zones?
-
-So, does this change from default 32 write pointers to smaller number =
-require
-modification of file system driver logic (or maybe even on-disk layout)?
-Or this is configurable parameter of file system? Is it internal =
-configuration parameter
-or end-user can configure the number of write pointers?
-
-I see from documentation that expected size of the bucket is 128KB - =
-8MB.
-Will 256MB - 2GB bucket size being digested by bcachefs without any =
-modifications?
-Or it could require some modification of logic (or even on-disk layout)? =
-It=E2=80=99s pretty
-significant bucket size change for my taste.
+In any case, having lookup_one_common() and get_name() use
+the same helper is clearly prefered, because the check in lookup_one()
+is the declared reason for the get_name() patch.
 
 Thanks,
-Slava.
-
-
+Amir.
 
