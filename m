@@ -1,301 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-7364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBA88241BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 13:27:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8587E8241CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 13:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237981C21B0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 12:27:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107301F25274
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 12:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C8A21A10;
-	Thu,  4 Jan 2024 12:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKPEOYus";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y9TsAerx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKPEOYus";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y9TsAerx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4A522313;
+	Thu,  4 Jan 2024 12:32:54 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573B221A0F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 12:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E6571F806;
-	Thu,  4 Jan 2024 12:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704371208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BhcAIZzPlA8XCKvI+fDxPB+UqIZlAd3/kQvPqOW4WzI=;
-	b=PKPEOYus+Utyb86JmwbjR8IKcuVHyWDJyuN4mcW4lYAL2VxN98KJLH+ktdnyLE3dKmcG1E
-	xJP03W0cOxGc2BdWMJrEdsfSMmblWhHQIQzHZqpyKacrpjmziZO+7tQDOuCSskojUYaYWO
-	fwudJppYJEz6NaCNTkGCBY17H1edpyk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704371208;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BhcAIZzPlA8XCKvI+fDxPB+UqIZlAd3/kQvPqOW4WzI=;
-	b=Y9TsAerxQuCLQyTLRvRn2h2qr2FbORj5kEEYh/arM9CxnHJWL8A5GiaI9LdV0z2RWTSBGZ
-	1Ov6Z4gAvQavV6CA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704371208; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BhcAIZzPlA8XCKvI+fDxPB+UqIZlAd3/kQvPqOW4WzI=;
-	b=PKPEOYus+Utyb86JmwbjR8IKcuVHyWDJyuN4mcW4lYAL2VxN98KJLH+ktdnyLE3dKmcG1E
-	xJP03W0cOxGc2BdWMJrEdsfSMmblWhHQIQzHZqpyKacrpjmziZO+7tQDOuCSskojUYaYWO
-	fwudJppYJEz6NaCNTkGCBY17H1edpyk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704371208;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BhcAIZzPlA8XCKvI+fDxPB+UqIZlAd3/kQvPqOW4WzI=;
-	b=Y9TsAerxQuCLQyTLRvRn2h2qr2FbORj5kEEYh/arM9CxnHJWL8A5GiaI9LdV0z2RWTSBGZ
-	1Ov6Z4gAvQavV6CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2903E137E8;
-	Thu,  4 Jan 2024 12:26:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mO++CQiklmW7FwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Jan 2024 12:26:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 90B4AA07EF; Thu,  4 Jan 2024 13:26:47 +0100 (CET)
-Date: Thu, 4 Jan 2024 13:26:47 +0100
-From: Jan Kara <jack@suse.cz>
-To: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc: linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz
-Subject: Re: [PATCH] fsdax: cleanup tracepoints
-Message-ID: <20240104122647.ynowpqfmhrvftfss@quack3>
-References: <20240104104925.3496797-1-ruansy.fnst@fujitsu.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9531EB57;
+	Thu,  4 Jan 2024 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4T5QwC58Htz4f3jYP;
+	Thu,  4 Jan 2024 20:32:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 00E171A085D;
+	Thu,  4 Jan 2024 20:32:46 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgCnqxFrpZZlWpgFFg--.9161S3;
+	Thu, 04 Jan 2024 20:32:46 +0800 (CST)
+Subject: Re: [PATCH RFC v3 for-6.8/block 11/17] erofs: use bdev api
+To: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, roger.pau@citrix.com, colyli@suse.de,
+ kent.overstreet@gmail.com, joern@lazybastard.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+ hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, clm@fb.com,
+ josef@toxicpanda.com, dsterba@suse.com, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, nico@fluxnic.net, xiang@kernel.org, chao@kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
+ konishi.ryusuke@gmail.com, willy@infradead.org, akpm@linux-foundation.org,
+ hare@suse.de, p.raghav@samsung.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
+ <20231221085826.1768395-1-yukuai1@huaweicloud.com>
+ <20240104120207.ig7tfc3mgckwkp2n@quack3>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7f868579-f993-aaa1-b7d7-eccbe0b0173c@huaweicloud.com>
+Date: Thu, 4 Jan 2024 20:32:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240104104925.3496797-1-ruansy.fnst@fujitsu.com>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+In-Reply-To: <20240104120207.ig7tfc3mgckwkp2n@quack3>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgCnqxFrpZZlWpgFFg--.9161S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFy8ury3GFW8AF18AFy3twb_yoW5CFW7pF
+	y5CF1rGrWrXr9I9w1Igr1jvF4rta97tr48C3yxJw1FvayjqrySgFy0ywnxGF4jkr4vkr4I
+	qF12vryxuw4UKrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6rWU
+	JVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F
+	4UJbIYCTnIWIevJa73UjIFyTuYvjfUoL0eDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu 04-01-24 18:49:25, Shiyang Ruan wrote:
-> Restore the tracepoint that was accidentally deleted before, and rename
-> to dax_insert_entry().  Also, since we are using XArray, rename
-> 'radix_entry' to 'xa_entry'.
+Hi, Jan!
+
+ÔÚ 2024/01/04 20:02, Jan Kara Ð´µÀ:
+> On Thu 21-12-23 16:58:26, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Avoid to access bd_inode directly, prepare to remove bd_inode from
+>> block_device.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> I'm not erofs maintainer but IMO this is quite ugly and grows erofs_buf
+> unnecessarily. I'd rather store 'sb' pointer in erofs_buf and then do the
+> right thing in erofs_bread() which is the only place that seems to care
+> about the erofs_is_fscache_mode() distinction... Also blkszbits is then
+> trivially sb->s_blocksize_bits so it would all seem much more
+> straightforward.
 
-Looks good. Feel free to add:
+Thanks for your suggestion, I'll follow this unless Gao Xiang has other
+suggestions.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/dax.c                      |  2 ++
->  include/trace/events/fs_dax.h | 47 +++++++++++++++++------------------
->  2 files changed, 25 insertions(+), 24 deletions(-)
+Kuai
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 3380b43cb6bb..7e7aabec91d8 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1684,6 +1684,8 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
->  	if (dax_fault_is_synchronous(iter, vmf->vma))
->  		return dax_fault_synchronous_pfnp(pfnp, pfn);
->  
-> +	trace_dax_insert_entry(iter->inode, vmf, *entry);
-> +
->  	/* insert PMD pfn */
->  	if (pmd)
->  		return vmf_insert_pfn_pmd(vmf, pfn, write);
-> diff --git a/include/trace/events/fs_dax.h b/include/trace/events/fs_dax.h
-> index 97b09fcf7e52..2ec2dcc8f66a 100644
-> --- a/include/trace/events/fs_dax.h
-> +++ b/include/trace/events/fs_dax.h
-> @@ -62,15 +62,14 @@ DEFINE_PMD_FAULT_EVENT(dax_pmd_fault_done);
->  
->  DECLARE_EVENT_CLASS(dax_pmd_load_hole_class,
->  	TP_PROTO(struct inode *inode, struct vm_fault *vmf,
-> -		struct page *zero_page,
-> -		void *radix_entry),
-> -	TP_ARGS(inode, vmf, zero_page, radix_entry),
-> +		struct page *zero_page, void *xa_entry),
-> +	TP_ARGS(inode, vmf, zero_page, xa_entry),
->  	TP_STRUCT__entry(
->  		__field(unsigned long, ino)
->  		__field(unsigned long, vm_flags)
->  		__field(unsigned long, address)
->  		__field(struct page *, zero_page)
-> -		__field(void *, radix_entry)
-> +		__field(void *, xa_entry)
->  		__field(dev_t, dev)
->  	),
->  	TP_fast_assign(
-> @@ -79,40 +78,40 @@ DECLARE_EVENT_CLASS(dax_pmd_load_hole_class,
->  		__entry->vm_flags = vmf->vma->vm_flags;
->  		__entry->address = vmf->address;
->  		__entry->zero_page = zero_page;
-> -		__entry->radix_entry = radix_entry;
-> +		__entry->xa_entry = xa_entry;
->  	),
->  	TP_printk("dev %d:%d ino %#lx %s address %#lx zero_page %p "
-> -			"radix_entry %#lx",
-> +			"xa_entry %#lx",
->  		MAJOR(__entry->dev),
->  		MINOR(__entry->dev),
->  		__entry->ino,
->  		__entry->vm_flags & VM_SHARED ? "shared" : "private",
->  		__entry->address,
->  		__entry->zero_page,
-> -		(unsigned long)__entry->radix_entry
-> +		(unsigned long)__entry->xa_entry
->  	)
->  )
->  
->  #define DEFINE_PMD_LOAD_HOLE_EVENT(name) \
->  DEFINE_EVENT(dax_pmd_load_hole_class, name, \
->  	TP_PROTO(struct inode *inode, struct vm_fault *vmf, \
-> -		struct page *zero_page, void *radix_entry), \
-> -	TP_ARGS(inode, vmf, zero_page, radix_entry))
-> +		struct page *zero_page, void *xa_entry), \
-> +	TP_ARGS(inode, vmf, zero_page, xa_entry))
->  
->  DEFINE_PMD_LOAD_HOLE_EVENT(dax_pmd_load_hole);
->  DEFINE_PMD_LOAD_HOLE_EVENT(dax_pmd_load_hole_fallback);
->  
->  DECLARE_EVENT_CLASS(dax_pmd_insert_mapping_class,
->  	TP_PROTO(struct inode *inode, struct vm_fault *vmf,
-> -		long length, pfn_t pfn, void *radix_entry),
-> -	TP_ARGS(inode, vmf, length, pfn, radix_entry),
-> +		long length, pfn_t pfn, void *xa_entry),
-> +	TP_ARGS(inode, vmf, length, pfn, xa_entry),
->  	TP_STRUCT__entry(
->  		__field(unsigned long, ino)
->  		__field(unsigned long, vm_flags)
->  		__field(unsigned long, address)
->  		__field(long, length)
->  		__field(u64, pfn_val)
-> -		__field(void *, radix_entry)
-> +		__field(void *, xa_entry)
->  		__field(dev_t, dev)
->  		__field(int, write)
->  	),
-> @@ -124,10 +123,10 @@ DECLARE_EVENT_CLASS(dax_pmd_insert_mapping_class,
->  		__entry->write = vmf->flags & FAULT_FLAG_WRITE;
->  		__entry->length = length;
->  		__entry->pfn_val = pfn.val;
-> -		__entry->radix_entry = radix_entry;
-> +		__entry->xa_entry = xa_entry;
->  	),
->  	TP_printk("dev %d:%d ino %#lx %s %s address %#lx length %#lx "
-> -			"pfn %#llx %s radix_entry %#lx",
-> +			"pfn %#llx %s xa_entry %#lx",
->  		MAJOR(__entry->dev),
->  		MINOR(__entry->dev),
->  		__entry->ino,
-> @@ -138,15 +137,15 @@ DECLARE_EVENT_CLASS(dax_pmd_insert_mapping_class,
->  		__entry->pfn_val & ~PFN_FLAGS_MASK,
->  		__print_flags_u64(__entry->pfn_val & PFN_FLAGS_MASK, "|",
->  			PFN_FLAGS_TRACE),
-> -		(unsigned long)__entry->radix_entry
-> +		(unsigned long)__entry->xa_entry
->  	)
->  )
->  
->  #define DEFINE_PMD_INSERT_MAPPING_EVENT(name) \
->  DEFINE_EVENT(dax_pmd_insert_mapping_class, name, \
->  	TP_PROTO(struct inode *inode, struct vm_fault *vmf, \
-> -		long length, pfn_t pfn, void *radix_entry), \
-> -	TP_ARGS(inode, vmf, length, pfn, radix_entry))
-> +		long length, pfn_t pfn, void *xa_entry), \
-> +	TP_ARGS(inode, vmf, length, pfn, xa_entry))
->  
->  DEFINE_PMD_INSERT_MAPPING_EVENT(dax_pmd_insert_mapping);
->  
-> @@ -194,14 +193,14 @@ DEFINE_PTE_FAULT_EVENT(dax_load_hole);
->  DEFINE_PTE_FAULT_EVENT(dax_insert_pfn_mkwrite_no_entry);
->  DEFINE_PTE_FAULT_EVENT(dax_insert_pfn_mkwrite);
->  
-> -TRACE_EVENT(dax_insert_mapping,
-> -	TP_PROTO(struct inode *inode, struct vm_fault *vmf, void *radix_entry),
-> -	TP_ARGS(inode, vmf, radix_entry),
-> +TRACE_EVENT(dax_insert_entry,
-> +	TP_PROTO(struct inode *inode, struct vm_fault *vmf, void *xa_entry),
-> +	TP_ARGS(inode, vmf, xa_entry),
->  	TP_STRUCT__entry(
->  		__field(unsigned long, ino)
->  		__field(unsigned long, vm_flags)
->  		__field(unsigned long, address)
-> -		__field(void *, radix_entry)
-> +		__field(void *, xa_entry)
->  		__field(dev_t, dev)
->  		__field(int, write)
->  	),
-> @@ -211,16 +210,16 @@ TRACE_EVENT(dax_insert_mapping,
->  		__entry->vm_flags = vmf->vma->vm_flags;
->  		__entry->address = vmf->address;
->  		__entry->write = vmf->flags & FAULT_FLAG_WRITE;
-> -		__entry->radix_entry = radix_entry;
-> +		__entry->xa_entry = xa_entry;
->  	),
-> -	TP_printk("dev %d:%d ino %#lx %s %s address %#lx radix_entry %#lx",
-> +	TP_printk("dev %d:%d ino %#lx %s %s address %#lx xa_entry %#lx",
->  		MAJOR(__entry->dev),
->  		MINOR(__entry->dev),
->  		__entry->ino,
->  		__entry->vm_flags & VM_SHARED ? "shared" : "private",
->  		__entry->write ? "write" : "read",
->  		__entry->address,
-> -		(unsigned long)__entry->radix_entry
-> +		(unsigned long)__entry->xa_entry
->  	)
->  )
->  
-> -- 
-> 2.34.1
+> 								Honza
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>> ---
+>>   fs/erofs/data.c     | 18 ++++++++++++------
+>>   fs/erofs/internal.h |  2 ++
+>>   2 files changed, 14 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+>> index c98aeda8abb2..bbe2fe199bf3 100644
+>> --- a/fs/erofs/data.c
+>> +++ b/fs/erofs/data.c
+>> @@ -32,8 +32,8 @@ void erofs_put_metabuf(struct erofs_buf *buf)
+>>   void *erofs_bread(struct erofs_buf *buf, erofs_blk_t blkaddr,
+>>   		  enum erofs_kmap_type type)
+>>   {
+>> -	struct inode *inode = buf->inode;
+>> -	erofs_off_t offset = (erofs_off_t)blkaddr << inode->i_blkbits;
+>> +	u8 blkszbits = buf->inode ? buf->inode->i_blkbits : buf->blkszbits;
+>> +	erofs_off_t offset = (erofs_off_t)blkaddr << blkszbits;
+>>   	pgoff_t index = offset >> PAGE_SHIFT;
+>>   	struct page *page = buf->page;
+>>   	struct folio *folio;
+>> @@ -43,7 +43,9 @@ void *erofs_bread(struct erofs_buf *buf, erofs_blk_t blkaddr,
+>>   		erofs_put_metabuf(buf);
+>>   
+>>   		nofs_flag = memalloc_nofs_save();
+>> -		folio = read_cache_folio(inode->i_mapping, index, NULL, NULL);
+>> +		folio = buf->inode ?
+>> +			read_mapping_folio(buf->inode->i_mapping, index, NULL) :
+>> +			bdev_read_folio(buf->bdev, offset);
+>>   		memalloc_nofs_restore(nofs_flag);
+>>   		if (IS_ERR(folio))
+>>   			return folio;
+>> @@ -67,10 +69,14 @@ void *erofs_bread(struct erofs_buf *buf, erofs_blk_t blkaddr,
+>>   
+>>   void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+>>   {
+>> -	if (erofs_is_fscache_mode(sb))
+>> +	if (erofs_is_fscache_mode(sb)) {
+>>   		buf->inode = EROFS_SB(sb)->s_fscache->inode;
+>> -	else
+>> -		buf->inode = sb->s_bdev->bd_inode;
+>> +		buf->bdev = NULL;
+>> +	} else {
+>> +		buf->inode = NULL;
+>> +		buf->bdev = sb->s_bdev;
+>> +		buf->blkszbits = EROFS_SB(sb)->blkszbits;
+>> +	}
+>>   }
+>>   
+>>   void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>> index b0409badb017..c9206351b485 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -224,8 +224,10 @@ enum erofs_kmap_type {
+>>   
+>>   struct erofs_buf {
+>>   	struct inode *inode;
+>> +	struct block_device *bdev;
+>>   	struct page *page;
+>>   	void *base;
+>> +	u8 blkszbits;
+>>   	enum erofs_kmap_type kmap_type;
+>>   };
+>>   #define __EROFS_BUF_INITIALIZER	((struct erofs_buf){ .page = NULL })
+>> -- 
+>> 2.39.2
+>>
+
 
