@@ -1,255 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-7407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD489824824
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:25:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521C282487D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75BEB24619
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 18:25:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C20EBB24DB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C0E28E14;
-	Thu,  4 Jan 2024 18:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D5628E32;
+	Thu,  4 Jan 2024 18:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wAJEnhjH"
+	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="UB/s7/iD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2077.outbound.protection.outlook.com [40.107.96.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203EA28DBD;
-	Thu,  4 Jan 2024 18:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vlx+ZyzaT4C42cyQHsUsGkWLG7RTQETHcAtkqa33ebs=; b=wAJEnhjHNPQBPFB+B3TeYLwccW
-	Jmi4jOF2JdAvFz/Mwtn3bpmQC6Eoyh2SiclUtxYPwIe+GaHAUdMuB176cxT0Wh9/D+VA/whIzSXNg
-	sWUfZesAuVyDEujCKhLQnScShAzJw09YGhXG7XsPf5Q6UMI8iKvaIZ+o+El7Dh8I/uvRZPA4Usfxo
-	dozADWUa+Cu1hHyBMyZWmt0NMtAPz9fZrFj4iVx6xMxarGgriaIWekUYg90FgECYuIQPLRHWKUImd
-	kHatuLbhLvzUqX5/yIwWm1LesyzVaFtiwvpPg+KKQkiGfOqJioUu1Z+nIMCHc4tMb+6pVxm5vbppa
-	lw1vk29Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rLSOs-002CW8-1f;
-	Thu, 04 Jan 2024 18:25:03 +0000
-Date: Thu, 4 Jan 2024 18:25:02 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default
- ownership
-Message-ID: <20240104182502.GR1674809@ZenIV>
-References: <20240103203246.115732ec@gandalf.local.home>
- <20240104014837.GO1674809@ZenIV>
- <20240103212506.41432d12@gandalf.local.home>
- <20240104043945.GQ1674809@ZenIV>
- <20240104100544.593030e0@gandalf.local.home>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222302C190;
+	Thu,  4 Jan 2024 18:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K58tQZ/paax4WwF/anP+UctikYPJpL6jJOpble2V0iOqrLZm2lMVlG0ya6TGWj2Vw8inZF/IbXUcBDHf/2dYza+Lu8QFUt0BRMSMo2sdaVp4wNhGv1C131zSptGeaK/W7lFWoGcUsCu4FJXxHXU+KRJucl/pfEPMRQwBugVnxWOvasRXKoBe/DC12Tmp/p7z39/GCpLVAVJ2PWhssBJ0+u1HPl+fRC9uXqiMGtEXWYCfkjrefjNDxg5ceXzbo9MqjCP+YzqduWzI76bs3E5LQsimmEV/7p4zcqejvPtbACygzlraqn+N4i9AcNUcC6qIHzzWK505hzJ4Hr6nKGgQFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GXTpUkxTXAFp0L9rKPHpEXeP4N6EpdCqIuQ2q2LMdcQ=;
+ b=l/hBi05S/RWk2UlkM81dfIiw9id/OzZvmhsWS1gEmTXRwNF/zQzp6gF03pmcjYTLBKhPZalE3/C8vpcRvR8l4eizAZVCa49SXc+hUE+bHTlGzUpmgDSF6QmNNvIEcMYqtSPElaX/TAFK9pueePC/8UsiaVG9qbsjtbLk+tJROFUkcnX1xzHiwNu/Emc2fte4oBQIyyOx5EmL+D5o1XkavYh73dFK21Xc4Xo/kvt5IOT9fgF/JImNPaMQKfxy0UKwibZqPE/tpRZJGuULz/8F1WHTIGTW2Vc96SNPYuwYIyFrumP9MNBvdmRQ07uo52QlttERbGRZMEo2RzmqpD5OKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
+ dkim=pass header.d=memverge.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GXTpUkxTXAFp0L9rKPHpEXeP4N6EpdCqIuQ2q2LMdcQ=;
+ b=UB/s7/iDQHz/9G74hmP+R0WejWFQyLhy7xWZrMQPmji/k9rOkmqtAFsXGGEbBMjNE/4hbGtu46WHOHvUegTdvCXZG2FB6tx6l74LqSnCEB8a7q4r8KG+K+H5YkgONdmfo31dWofUw/0uXrXvBHNFMIWTTG7GUE72ciZn+kPLlIA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=memverge.com;
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
+ by BY1PR17MB7045.namprd17.prod.outlook.com (2603:10b6:a03:532::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.13; Thu, 4 Jan
+ 2024 18:59:45 +0000
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15]) by SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15%5]) with mapi id 15.20.7159.015; Thu, 4 Jan 2024
+ 18:59:44 +0000
+Date: Thu, 4 Jan 2024 13:59:35 -0500
+From: Gregory Price <gregory.price@memverge.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, akpm@linux-foundation.org, arnd@arndb.de,
+	tglx@linutronix.de, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org,
+	tj@kernel.org, corbet@lwn.net, rakie.kim@sk.com,
+	hyeongtak.ji@sk.com, honggyu.kim@sk.com, vtavarespetr@micron.com,
+	peterz@infradead.org, jgroves@micron.com, ravis.opensrc@micron.com,
+	sthanneeru@micron.com, emirakhur@micron.com, Hasan.Maruf@amd.com,
+	seungjun.ha@samsung.com,
+	Srinivasulu Thanneeru <sthanneeru.opensrc@micron.com>
+Subject: Re: [PATCH v5 02/11] mm/mempolicy: introduce
+ MPOL_WEIGHTED_INTERLEAVE for weighted interleaving
+Message-ID: <ZZcAF4zIpsVN3dLd@memverge.com>
+References: <20231223181101.1954-1-gregory.price@memverge.com>
+ <20231223181101.1954-3-gregory.price@memverge.com>
+ <8734vof3kq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZYp6ZRLZQVtTHest@memverge.com>
+ <878r58dt31.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZZRybDPSoLme8Ldh@memverge.com>
+ <87mstnc6jz.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZZXbN4+2nVbE/lRe@memverge.com>
+ <875y09d5d8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875y09d5d8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+X-ClientProxiedBy: BYAPR08CA0041.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::18) To SJ0PR17MB5512.namprd17.prod.outlook.com
+ (2603:10b6:a03:394::19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240104100544.593030e0@gandalf.local.home>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|BY1PR17MB7045:EE_
+X-MS-Office365-Filtering-Correlation-Id: 559856d7-5c9d-4d35-6aa5-08dc0d57509b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	S1fC7//sixNWkF461pph33cjEWAHaWEmbz0U7cSOb3pEay2cCPKDSohMNtMlHMeHeumqERS8KsN/jdWauOWVfI4huVshFrqrdy56kWxdzT1N2lDo0RsprFpIbQpqqvQTg6HFV0pyNwtVbDnNT0FJwwML08qw1+h1ZBedfZnLHu0vF73AbmlG3aP3PRMQv5UdKLz9ZepnikufFrXEtOd6OYaNcVgqF7u/Nj/gMPa9NpaXl9ZxZ3x+3iyuvI4dLObuFXFUcNPKPCGJhAXDFegZRrAAghOk9MQZiTzMr2PKH85GqU91odI+BrTCMyBRi+2cQBVmbQyYUFsAZUzEYX6yFgDfRrghQqmRbwK0rJhSpJs5n6qMb2/QrTauXh781KguQEnrfPNbdexB5Nfo+8kpIIc8XjKpubvRoqXG/zxtKX3AfV9TEkn0UVS5y3873RjXsHjlliVvb+koaIMlN/r5Z6/pep7Ha6O1cU372HC5HVzLxbEyesy47KzMWqVVMIlzGtqWXZxrQdElx00mlnjrL5TF1FrWxy78G1b7uV2TC62/puA1rQjPv/KO14og0tP1eQde+RMwngdYwk1ajzb3xo9Ud/AlwYVVM/UoH473p1hTBe9GgA7swoSbdH5TVZjv
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(376002)(39840400004)(346002)(366004)(396003)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(7416002)(7406005)(5660300002)(38100700002)(86362001)(41300700001)(26005)(6486002)(2616005)(44832011)(36756003)(83380400001)(2906002)(6512007)(478600001)(6506007)(6666004)(4326008)(8676002)(8936002)(54906003)(316002)(66946007)(66556008)(66476007)(6916009)(16393002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XvGvJYtaJmUH0Mh/OK9NforlbTnnL5leqhHyBOXXE7R+zs7xDc+Qd3DpIYa7?=
+ =?us-ascii?Q?CiE/YB4HiK8tjNgzVUv9r6i51mnapr2B5cBA1sIlTASQvqzVypiLkIkCI2Q+?=
+ =?us-ascii?Q?MZ3Het22KP/iN7xEROLEGlw0B/WOt6R20YFeZl+H0k7DZ7R/R9hRT6js+zjR?=
+ =?us-ascii?Q?xZHTnZ1u14nJ8aKdE/FwVRuhCd3Uo7IcfEOwBqOYY7qFGbCmd02b3h99bsDZ?=
+ =?us-ascii?Q?J94PvRbGR1FNMKUj2IkbSZD6AtKxGbJkHOf/PCHsclK5BynRcafxvqyJfzDM?=
+ =?us-ascii?Q?XvpA9iBvxWN6shfrRLch6tgnwSkUsN/k8meFDTcyuBs/T65H15IhrKvc5cb+?=
+ =?us-ascii?Q?8dOIIKHKbC2a0mEHfcJgBADUTiEc9jt0bhaVjqJ4dYXT4b6AOkBP/3iHohmt?=
+ =?us-ascii?Q?/luJkiKF1dX0HGqcOYNporTVZUVJ63pKaKB7ZGkf8vkvSj0CQTTT5GO5EvpF?=
+ =?us-ascii?Q?GprOu5Tk5tzo1wYNA+/twTi6il+rzhHuA1wGgQgWYTMULT0tkoOnmmKa9moy?=
+ =?us-ascii?Q?bX+MG3XkFM1TZa3FJQIs2ouIeeIGeJQ9QJSwcdY5IjuHn6GLyn/ECTqo0/3I?=
+ =?us-ascii?Q?bGnTVZFwDMAKemT4Kz1ELt9jkzTojBY7dWMwHZQibYhJ8O0d3/Sqg0C5URen?=
+ =?us-ascii?Q?0LMH3qF4UQBvDJgBw1CMOd8X8QwsLUoCDsnGaZOomzmX3bI4zTIUpnjQKENZ?=
+ =?us-ascii?Q?VaLUR0O7o7LJ3ht7KFWOqfUQjyzDRv/jAXN/QsXl+syihOU1v0RaILf7J7Ol?=
+ =?us-ascii?Q?Po2aPHeWmziKPLnbRl4zkORSffzfqHQp/hUKVl3HV1asBgN/4hsjNIHCg+gG?=
+ =?us-ascii?Q?YeCzfdmM2RHcBcVHKClRS4pQpkWOEv6ovTvf8AYWR8rQrDEbtpOzydQR4bDp?=
+ =?us-ascii?Q?rHeEhpoy5+iNVV7L5oc1tblNkMyMX60gtkrBvSMaj8JkYm5KWufn6we/byiS?=
+ =?us-ascii?Q?Rf6gDq7OiAzG6F6KmwEkn2ysJktTxGQsO/7Rgw2E5sDfYMOdDmm49R42dHLy?=
+ =?us-ascii?Q?eYAG/Fv2CM0pcd6us0PIzHhYfvHo4pPfWZM1OZgIaAPAOU+XcD1jlFxJJ5UK?=
+ =?us-ascii?Q?m0bJdVWlFIkfPQdG6QE2UmxBwzoWix+4qKnZGU/9UAXV2oW2vej6Iph/k6Un?=
+ =?us-ascii?Q?l9qUqmi/kCpftoX+kKiVXNh270T4Rfja5GzCFeavoi1Luda2XNgZgVlXM7EA?=
+ =?us-ascii?Q?qBWl6aWHYcwnB8EsQTfTVtLjmdYxaRQ5ECK5qnjtVKnGa0vv8645qfRI4WaM?=
+ =?us-ascii?Q?O5v7lr3jI+R2aWKcbIooixoHKYsGM0DYJV+N7L+9+GwbVTWecGM0S50NCYIj?=
+ =?us-ascii?Q?gO/eNHiuthDZDV5a+7K3cqHwjs7qdSqAKrZd1MENqsw1X0Vn8C/xMSb42DYf?=
+ =?us-ascii?Q?O6tdOjjsiEtZkXO4oLghp717G61F6IMvNx4Ve9/+5DgCaAH/zy3XiaIpB2XE?=
+ =?us-ascii?Q?RPFCo0jYNULkQ8cwW+uKeIDPW6jhpMvGFAZ2Bd+rH+qQ/LmmcqVqRzaDSOIg?=
+ =?us-ascii?Q?T7PljKtblAEapjIuo9WReMi7EJ+hjQdrqmHlNavxthb28OcPPhMP3+tBAWZU?=
+ =?us-ascii?Q?2bq1eeFY2KE+EaC+QbjfGqsrhlyH/K4EL8pUDqM5fgus7mp7N1cyBNVN9082?=
+ =?us-ascii?Q?jg=3D=3D?=
+X-OriginatorOrg: memverge.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 559856d7-5c9d-4d35-6aa5-08dc0d57509b
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jan 2024 18:59:44.7386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FAG0tN0pLhNGePQ4dnYcJOySN9m5ISLE7VgMvFzfo0DbXD1xvZ6K/Zm88rCjQxnTn9GBo/h3w/Jnq2CtrTHcNNSZ9vlPYZw5/7F8nfr0X7k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR17MB7045
 
-On Thu, Jan 04, 2024 at 10:05:44AM -0500, Steven Rostedt wrote:
-
-> This is the "tribal knowledge" I'm talking about. I really didn't know how
-> the root dentry parent worked. I guess that makes sense, as it matches the
-> '..' of a directory, and the '/' directory '..' points to itself. Although
-> mounted file systems do not behave that way. My /proc/.. is '/'. I just
-> figured that the dentry->d_parent would be similar. Learn something everyday.
-
-What would you expect to happen if you have the same filesystem mounted in
-several places?  Having separate dentry trees would be a nightmare - you'd
-get cache coherency problems from hell.  It's survivable for procfs, but
-for something like a normal local filesystem it'd become very painful.
-And if we want them to share dentry tree, how do you choose where the ..
-would lead from the root dentry?
-
-The way it's done is that linkage between the trees is done separately -
-there's a tree of struct mount (well, forest, really - different processes
-can easily have separate trees, which is how namespaces are done) and
-each node in the mount tree refers to a dentry (sub)tree in some filesystem
-instance.  Location is represented by (mount, dentry) pair and handling of
-.. is basically (modulo refcounting, locking, error handling, etc.)
-	while dentry == subtree_root(mount) && mount != mountpoint_mount(mount)
-		// cross into the mountpoint under it
-		dentry = mountpoint_dentry(mount)
-		mount = mountpoint_mount(mount)
-	go_into(mount, dentry->d_parent)
-
-Note that you can have e.g. /usr/lib/gcc/x86_64-linux-gnu/12 mounted on /mnt/blah:
-; mount --bind /usr/lib/gcc/x86_64-linux-gnu/12 /mnt/blah
-will do it.  Then e.g. /mnt/blah/include will resolve to the same dentry as
-/usr/lib/gcc/x86_64-linux-gnu/12/include, etc.
-; chdir /mnt/blah
-; ls
-32                 crtprec80.o        libgomp.so         libsanitizer.spec
-cc1                g++-mapper-server  libgomp.spec       libssp_nonshared.a
-cc1plus            include            libitm.a           libstdc++.a
-collect2           libasan.a          libitm.so          libstdc++fs.a
-crtbegin.o         libasan_preinit.o  libitm.spec        libstdc++.so
-crtbeginS.o        libasan.so         liblsan.a          libsupc++.a
-crtbeginT.o        libatomic.a        liblsan_preinit.o  libtsan.a
-crtend.o           libatomic.so       liblsan.so         libtsan_preinit.o
-crtendS.o          libbacktrace.a     liblto_plugin.so   libtsan.so
-crtfastmath.o      libcc1.so          libobjc.a          libubsan.a
-crtoffloadbegin.o  libgcc.a           libobjc_gc.a       libubsan.so
-crtoffloadend.o    libgcc_eh.a        libobjc_gc.so      lto1
-crtoffloadtable.o  libgcc_s.so        libobjc.so         lto-wrapper
-crtprec32.o        libgcov.a          libquadmath.a      plugin
-crtprec64.o        libgomp.a          libquadmath.so     x32
-
-We obviously want .. to resolve to /mnt, though.
-; ls ..
-; ls /usr/lib/gcc/x86_64-linux-gnu/
-12
-
-So the trigger for "cross into underlying mountpoint" has to be "dentry is
-the root of subtree mount refers to" - it depends upon the mount we are
-in.
-
-> >  Filesystem object contents belongs here; multiple hardlinks
-> > have different dentries and the same inode.
+On Thu, Jan 04, 2024 at 01:39:31PM +0800, Huang, Ying wrote:
+> Gregory Price <gregory.price@memverge.com> writes:
 > 
-> So, can I assume that an inode could only have as many dentries as hard
-> links? I know directories are only allowed to have a single hard link. Is
-> that why they can only have a single dentry?
-
-Not quite.  Single alias for directories is more about cache coherency
-fun; we really can't afford multiple aliases for those.  For non-directories
-it's possible to have an entirely disconnected dentry refering to that
-sucker; if somebody hands you an fhandle with no indication of the parent
-directory, you might end up having to do one of those, no matter how many
-times you find the same inode later.  Not an issue for tracefs, though.
-
-> > namespace: mount tree.  Unlike everything prior, this one is a part of
-> > process state - same as descriptor table, mappings, etc.
+> > On Wed, Jan 03, 2024 at 01:46:56PM +0800, Huang, Ying wrote:
+> >> Gregory Price <gregory.price@memverge.com> writes:
+> >> > I'm specifically concerned about:
+> >> > 	weighted_interleave_nid
+> >> > 	alloc_pages_bulk_array_weighted_interleave
+> >> >
+> >> > I'm unsure whether kmalloc/kfree is safe (and non-offensive) in those
+> >> > contexts. If kmalloc/kfree is safe fine, this problem is trivial.
+> >> >
+> >> > If not, there is no good solution to this without pre-allocating a
+> >> > scratch area per-task.
+> >> 
+> >> You need to audit whether it's safe for all callers.  I guess that you
+> >> need to allocate pages after calling, so you can use the same GFP flags
+> >> here.
+> >> 
+> >
+> > After picking away i realized that this code is usually going to get
+> > called during page fault handling - duh.  So kmalloc is almost never
+> > safe (or can fail), and we it's nasty to try to handle those errors.
 > 
-> And I'm guessing namespace is for containers. At least that's what I've
-> been assuming they are for.
+> Why not just OOM for allocation failure?
+>
 
-It predates containers by quite a few years, but yes, that's one of the
-users.  It is related to virtual machines, in the same sense the set
-of memory mappings is - each thread can be thought of as a VM, with
-a bunch of components.  Just as mmap() manipulates the virtual address
-translation for the threads that share memory space with the caller,
-mount() manipulates the pathname resolution for the threads that share
-the namespace with the caller.
+2 notes:
 
-> > descriptor table: mapping from numbers to IO channels (opened files).
+1) callers of weighted_interleave_nid do not expect OOM conditions, they
+   expect a node selection.  On error, we would simply return the local
+   numa node without indication of failure.
+
+2) callers of alloc_pages_bulk_array_weighted_interleave receive the
+   total number of pages allocated, and they are expected to detect
+   pages allocated != pages requested, and then handle whether to
+   OOM or simply retry (allocation may fail for a variety of reasons).
+
+By introducing an allocation into this area, if an allocation failure
+occurs, we would essentially need to silently squash it and return
+either local_node (interleave_nid) or return 0 (bulk allocator) and
+allow the allocation logic to handle any subsequent OOM condition.
+
+That felt less desirable than just allocating a scratch space up front
+in the mempolicy and avoiding the issue altogether.
+
+> > Instead of doing that, I simply chose to implement the scratch space
+> > in the mempolicy structure
+> >
+> > mempolicy->wil.scratch_weights[MAX_NUMNODES].
+> >
+> > We eat an extra 1kb of memory in the mempolicy, but it gives us a safe
+> > scratch space we can use any time the task is allocating memory, and
+> > prevents the need for any fancy error handling.  That seems like a
+> > perfectly reasonable tradeoff.
 > 
-> This is that "process fd table" I mentioned above (I wrote that before
-> reading this).
+> I don't think that this is a good idea.  The weight array is temporary.
 > 
-> > Again, a part of process state.  dup() creates a new entry, with
-> > reference to the same file as the old one; multiple open() of the
-> 
-> Hmm, wouldn't "dup()" create another "file" that just points to the same
-> dentry? It wouldn't be the "same file", or did you mean "file" from the
-> user space point of view?
 
-No.  The difference between open() and dup() is that the latter will
-result in a descriptor that really refers to the same file.  Current
-IO position belongs to IO channel; it doesn't matter for e.g. terminals,
-but for regular file it immediately becomes an issue.
-	fd1 = open("foo", 0);
-	fd2 = open("foo", 0);
-	read(fd1, &c1, 1);
-	read(fd2, &c2, 1);
-will result in the first byte of foo read into c1 and c2, but
-	fd1 = open("foo", 0);
-	fd2 = dup(fd1);
-	read(fd1, &c1, 1);
-	read(fd2, &c2, 1);
-will have the first byte of foo in c1 and the second one - in c2.
-open() yields a new IO channel attached to new descriptor; dup()
-(and dup2()) attaches the existing IO channel to new descriptor.
-fork() acts like dup() in that respect - child gets its descriptor
-table populated with references to the same IO channels as the
-parent does.
+It's temporary, but it's also only used in the context of the task while
+the alloc lock is held.
 
-Any Unix since about '71 has it done that way and the same goes
-for NT, DOS, etc. - you can't implement redirects to/from regular
-files without that distinction.
+If you think it's fine to introduce another potential OOM generating
+spot, then I'll just go ahead and allocate the memory on the fly.
 
-Unfortunately, the terms are clumsy as hell - POSIX ends up with
-"file descriptor" (for numbers) vs. "file description" (for IO
-channels), which is hard to distinguish when reading and just
-as hard to distinguish when listening.  "Opened file" (as IO
-channel) vs. "file on disc" (as collection of data that might
-be accessed via said channels) distinction on top of that also
-doesn't help, to put it mildly.  It's many decades too late to
-do anything about, unfortunately.  Pity the UNIX 101 students... ;-/
+I do want to point out, though, that weighted_interleave_nid is called
+per allocated page.  So now we're not just collecting weights to
+calculate the offset, we're doing an allocation (that can fail) per page
+allocated for that region.
 
-The bottom line:
-	* struct file represents an IO channel; it might be operating
-on various objects, including regular files, pipes, sockets, etc.
-	* current IO position is a property of IO channel.
-	* struct files_struct represents a descriptor table; each of
-those maps numbers to IO channels.
-	* each thread uses a descriptor table to turn numbers ("file
-descriptors") into struct file references.  Different threads might
-share the same descriptor table or have separate descriptor tables.
-current->files points to the descriptor table of the current thread.
-	* open() creates a new IO channel and attaches it to an
-unused position in descriptor table.
-	* dup(n) takes the IO channel from position 'n' in descriptor
-table and attaches it to an unused position.
-	* dup2(old, new) takes the IO channel from position 'old' and
-attaches it to position 'new'; if there used to be something in position
-'new', it gets detached.
-	* close(n) takes the IO channel from position 'n', flushes and
-detaches it.  Note that it IO channel itself is *NOT* closed until
-all references to it are gone.  E.g. open() + fork() + (in parent) close()
-will end up with the child's descriptor table keeping a reference to
-IO channel established by open(); close() in parent will not shut the
-channel down.  The same goes for implicit close() done by dup2() or
-by exit(), etc.
-	* things like mmap() retain struct file references;
-open() + mmap() + close() ends up with struct file left (in vma->vm_file)
-alive and well for as long as the mapping exists, nevermind the reference
-that used to be in descriptor table.  In other words, IO channels can
-exist with no references in any descriptor tables.  There are other
-ways for such situation to occur (e.g. SCM_RIGHTS stuff); it's entirely
-normal.
+The bulk allocator amortizes the cost of this allocation by doing it
+once while allocating a chunk of pages - but the weighted_interleave_nid
+function is called per-page.
 
-> > same pathname will each yield a separate opened file.  _Some_ state
-> > belongs here (close-on-exec, mostly).  Note that there's no such
-> > thing as "the descriptor of this file" - not even "the user-supplied
-> > number that had been used to get the file we are currently reading
-> > from", since that number might be refering to something entirely
-> > different right after we'd resolved it to opened file and that
-> > happens *without* disrupting the operation.
-> 
-> This last paragraph confused me. What do you mean by ""referring to
-> something entirely different"?
+By comparison, the memory cost to just allocate a static scratch area in
+the mempolicy struct is only incurred by tasks with a mempolicy.
 
-	Two threads share descriptor table; one of them is in
-read(fd, ...), another does dup2(fd2, fd).  If read() gets past the
-point where it gets struct file reference, it will keep accessing that
-IO channel.  dup2() will replace the reference in descriptor table,
-but that won't disrupt the read()...
 
-> 
-> Thanks for this overview. It was very useful, and something I think we
-> should add to kernel doc. I did read Documentation/filesystems/vfs.rst but
-> honestly, I think your writeup here is a better overview.
+So we're talking ~1MB for 1024 threads with mempolicies to avoid error
+conditions mid-page-allocation and to reduce the cost associated with
+applying weighted interleave.
 
-At the very least it would need serious reordering ;-/
+~Gregory
 
