@@ -1,205 +1,282 @@
-Return-Path: <linux-fsdevel+bounces-7387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE7E8244CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:17:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D8D8244C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56FF9B212BA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4982860FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C845F2420F;
-	Thu,  4 Jan 2024 15:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mHk6v/mP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6J4uw5uq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mHk6v/mP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6J4uw5uq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0252F241F9;
+	Thu,  4 Jan 2024 15:16:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EE2241E8;
-	Thu,  4 Jan 2024 15:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B3CFB21D82;
-	Thu,  4 Jan 2024 15:16:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704381415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FMPvsZKYHk+D5kb1N2CM5rR4TjKGNh05qKhD/IuVB8c=;
-	b=mHk6v/mPh0nrF36XeRd9n1G+3dVH07YiQx9gWm/SG7NmXFbckEmPHT+psVuS+Q55O5Ewmm
-	fzZp736IzVr5FNkauue7PYolsCdGhN9oZfdxiUjjwUo5SvRhYKG4JdOSw0VhUWvKC+wi2H
-	9fs2A0RPq42k8lt/8HUXEBH2gHBffpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704381415;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FMPvsZKYHk+D5kb1N2CM5rR4TjKGNh05qKhD/IuVB8c=;
-	b=6J4uw5uqBb70vbWXOXdU9583F4KrmBOAGYenVBa6jTwgLx70IbxaS5CKgObceVLtg+Uuvf
-	BlSynn3hFCWD0KCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704381415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FMPvsZKYHk+D5kb1N2CM5rR4TjKGNh05qKhD/IuVB8c=;
-	b=mHk6v/mPh0nrF36XeRd9n1G+3dVH07YiQx9gWm/SG7NmXFbckEmPHT+psVuS+Q55O5Ewmm
-	fzZp736IzVr5FNkauue7PYolsCdGhN9oZfdxiUjjwUo5SvRhYKG4JdOSw0VhUWvKC+wi2H
-	9fs2A0RPq42k8lt/8HUXEBH2gHBffpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704381415;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FMPvsZKYHk+D5kb1N2CM5rR4TjKGNh05qKhD/IuVB8c=;
-	b=6J4uw5uqBb70vbWXOXdU9583F4KrmBOAGYenVBa6jTwgLx70IbxaS5CKgObceVLtg+Uuvf
-	BlSynn3hFCWD0KCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 88C6E13722;
-	Thu,  4 Jan 2024 15:16:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CnlcIefLlmUgTAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 04 Jan 2024 15:16:55 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 21D02A07EF; Thu,  4 Jan 2024 16:16:55 +0100 (CET)
-Date: Thu, 4 Jan 2024 16:16:55 +0100
-From: Jan Kara <jack@suse.cz>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, axboe@kernel.dk, roger.pau@citrix.com,
-	colyli@suse.de, kent.overstreet@gmail.com, joern@lazybastard.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	sth@linux.ibm.com, hoeppner@linux.ibm.com, hca@linux.ibm.com,
-	gor@linux.ibm.com, agordeev@linux.ibm.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	nico@fluxnic.net, xiang@kernel.org, chao@kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.com, konishi.ryusuke@gmail.com,
-	willy@infradead.org, akpm@linux-foundation.org, hare@suse.de,
-	p.raghav@samsung.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, linux-nilfs@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH RFC v3 for-6.8/block 02/17] xen/blkback: use bdev api in
- xen_update_blkif_status()
-Message-ID: <20240104151655.oiqtn6onge2etlcn@quack3>
-References: <20231221085712.1766333-1-yukuai1@huaweicloud.com>
- <20231221085712.1766333-3-yukuai1@huaweicloud.com>
- <20240104110631.3vspsvxbbvcpdqdu@quack3>
- <29bfcfc7-62b0-3876-78ce-f7ebe3506eb6@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9CD241E7;
+	Thu,  4 Jan 2024 15:16:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC1BC433C7;
+	Thu,  4 Jan 2024 15:16:12 +0000 (UTC)
+Date: Thu, 4 Jan 2024 10:17:17 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: syzbot <syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, bristot@redhat.com, bsegall@google.com,
+ chouhan.shreyansh630@gmail.com, dietmar.eggemann@arm.com, jack@suse.cz,
+ jeffm@suse.com, juri.lelli@redhat.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@suse.de,
+ mingo@redhat.com, peterz@infradead.org, reiserfs-devel@vger.kernel.org,
+ rkovhaev@gmail.com, syzkaller-bugs@googlegroups.com,
+ vincent.guittot@linaro.org
+Subject: Re: [syzbot] [mm?] [reiserfs?] general protection fault in
+ free_swap_cache (4)
+Message-ID: <20240104101717.6c7fd262@gandalf.local.home>
+In-Reply-To: <0000000000008a0fa9060e1d198e@google.com>
+References: <0000000000008a0fa9060e1d198e@google.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <29bfcfc7-62b0-3876-78ce-f7ebe3506eb6@huaweicloud.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Score: 1.90
-X-Spam-Level: *
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [1.90 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 URIBL_BLOCKED(0.00)[suse.com:email,huawei.com:email];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 R_RATELIMIT(0.00)[to_ip_from(RLdan9jouj5dxnqx1npfmn4ucx)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[49];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[suse.cz,kernel.dk,citrix.com,suse.de,gmail.com,lazybastard.org,bootlin.com,nod.at,ti.com,linux.ibm.com,oracle.com,fb.com,toxicpanda.com,suse.com,zeniv.linux.org.uk,kernel.org,fluxnic.net,mit.edu,dilger.ca,infradead.org,linux-foundation.org,samsung.com,vger.kernel.org,lists.xenproject.org,lists.infradead.org,lists.ozlabs.org,huawei.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kuai!
+On Thu, 04 Jan 2024 03:33:25 -0800
+syzbot <syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com> wrote:
 
-On Thu 04-01-24 20:19:05, Yu Kuai wrote:
-> 在 2024/01/04 19:06, Jan Kara 写道:
-> > On Thu 21-12-23 16:56:57, Yu Kuai wrote:
-> > > From: Yu Kuai <yukuai3@huawei.com>
-> > > 
-> > > Avoid to access bd_inode directly, prepare to remove bd_inode from
-> > > block_devcie.
-> > > 
-> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> > > ---
-> > >   drivers/block/xen-blkback/xenbus.c | 3 +--
-> > >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> > > index e34219ea2b05..e645afa4af57 100644
-> > > --- a/drivers/block/xen-blkback/xenbus.c
-> > > +++ b/drivers/block/xen-blkback/xenbus.c
-> > > @@ -104,8 +104,7 @@ static void xen_update_blkif_status(struct xen_blkif *blkif)
-> > >   		xenbus_dev_error(blkif->be->dev, err, "block flush");
-> > >   		return;
-> > >   	}
-> > > -	invalidate_inode_pages2(
-> > > -			blkif->vbd.bdev_handle->bdev->bd_inode->i_mapping);
-> > > +	invalidate_bdev(blkif->vbd.bdev_handle->bdev);
-> > 
-> > This function uses invalidate_inode_pages2() while invalidate_bdev() ends
-> > up using mapping_try_invalidate() and there are subtle behavioral
-> > differences between these two (for example invalidate_inode_pages2() tries
-> > to clean dirty pages using the ->launder_folio method). So I think you'll
-> > need helper like invalidate_bdev2() for this.
-> 
-> Thanks for reviewing this patch, I know the differenct between then,
-> what I don't understand is that why using invalidate_inode_pages2()
-> here.
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    610a9b8f49fb Linux 6.7-rc8
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D106d2699e80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D48ca880a5d56f=
+9b1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfd93e36ced1a43a=
+58f75
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15f4cc41e80=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14d526ade80000
+>=20
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/b1acb98afcb0/dis=
+k-610a9b8f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/4f7d6503eb8c/vmlinu=
+x-610a9b8f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/927f38e505d9/b=
+zImage-610a9b8f.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/c4f427645c=
+60/mount_0.gz
+>=20
+> The issue was bisected to:
+>=20
+> commit 13d257503c0930010ef9eed78b689cec417ab741
+> Author: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
+> Date:   Fri Jul 9 15:29:29 2021 +0000
+>=20
+>     reiserfs: check directory items on read from disk
+>=20
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1603b8f9e8=
+0000
 
-Well, then the change in behavior should be at least noted in the
-changelog.
+=46rom the above there's this:
 
-> sync_blockdev() is just called and 0 is returned, I think in this
-> case it's safe to call invalidate_bdev() directly, or am I missing
-> other things?
+testing commit c81cfb6256d90ea5ba4a6fb280ea3b171be4e05c gcc
+compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.40
+kernel signature: 497e79600c6ea11f26483c542ee335e10f144dccb7fe657a67bd32d52=
+7271e77
+all runs: OK
+false negative chance: 0.000
+# git bisect good c81cfb6256d90ea5ba4a6fb280ea3b171be4e05c
+Bisecting: 936 revisions left to test after this (roughly 10 steps)
+[e04480920d1eec9c061841399aa6f35b6f987d8b] Bluetooth: defer cleanup of reso=
+urces in hci_unregister_dev()
 
-I still think there's a difference. invalidate_inode_pages2() also unmaps
-memory mappings which mapping_try_invalidate() does not do. That being said
-in xen_update_blkif_status() we seem to be bringing up a virtual block
-device so before this function is called, anybody would have hard time
-using anything in it. But this definitely needs a confirmation from Xen
-maintainers and a good documentation of the behavioral change in the
-changelog.
+testing commit e04480920d1eec9c061841399aa6f35b6f987d8b gcc
+compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.40
+kernel signature: 05fb4fd86182a07a0a9fbfcc25fafd9df57e9d38d1c03a915a6b73410=
+507148c
+run #0: crashed: BUG: unable to handle kernel paging request in leaf_paste_=
+in_buffer
+run #1: crashed: BUG: unable to handle kernel NULL pointer dereference in e=
+xpand_downwards
+run #2: crashed: INFO: trying to register non-static key in inode_doinit_wi=
+th_dentry
+run #3: crashed: BUG: unable to handle kernel paging request in do_epoll_wa=
+it
+run #4: OK
+run #5: OK
+run #6: OK
+run #7: OK
+run #8: OK
+run #9: OK
+run #10: OK
+run #11: OK
+run #12: OK
+run #13: OK
+run #14: OK
+run #15: OK
+run #16: OK
+run #17: OK
+run #18: OK
+run #19: OK
+representative crash: BUG: unable to handle kernel paging request in leaf_p=
+aste_in_buffer, types: [UNKNOWN]
+# git bisect bad e04480920d1eec9c061841399aa6f35b6f987d8b
+Bisecting: 456 revisions left to test after this (roughly 9 steps)
+[1e60cebf82948cfdc9497ea4553bab125587593c] net: let flow have same hash in =
+two directions
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If the "bad" only crashed 20% of the time, you can not trust any of the
+"all runs: OK".
+
+Not to mention each crash looks to be a separate bug!
+
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1503b8f9e8=
+0000
+
+And this is:
+
+REISERFS (device loop0): checking transaction log (loop0)
+REISERFS (device loop0): Using r5 hash to sort names
+REISERFS (device loop0): using 3.5.x disk format
+REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storag=
+e.
+Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: =
+__schedule+0x13c2/0x13e0 kernel/sched/core.c:5948
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+Which looks like a corrupted (overrun?) stack. Which saying this is a
+"general protection fault" bug will put us in a wild goose chase.
+
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1103b8f9e80000
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com
+> Fixes: 13d257503c09 ("reiserfs: check directory items on read from disk")
+>=20
+> general protection fault, probably for non-canonical address 0xdffffc0000=
+000001: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+> CPU: 1 PID: 5048 Comm: sshd Not tainted 6.7.0-rc8-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 11/17/2023
+> RIP: 0010:_compound_head include/linux/page-flags.h:247 [inline]
+> RIP: 0010:free_swap_cache+0x25/0x3d0 mm/swap_state.c:287
+> Code: 0f 1f 44 00 00 66 0f 1f 00 41 54 55 53 48 89 fb e8 90 e9 b2 ff 48 8=
+d 7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f=
+ 85 34 03 00 00 4c 8b 63 08 31 ff 4c 89 e5 83 e5 01
+> RSP: 0018:ffffc900034df938 EFLAGS: 00010202
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81d3826a
+> RDX: 0000000000000001 RSI: ffffffff81d37b70 RDI: 0000000000000008
+> RBP: 0000000000000005 R08: 0000000000000004 R09: 0000000000000200
+> R10: 0000000000000004 R11: 0000000000000001 R12: 0000000000000200
+> R13: dffffc0000000000 R14: ffff88807490d010 R15: ffff88807490d008
+> FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ffc22cebe00 CR3: 000000007c973000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  free_pages_and_swap_cache+0x60/0xa0 mm/swap_state.c:315
+>  tlb_batch_pages_flush+0x9a/0x190 mm/mmu_gather.c:98
+>  tlb_flush_mmu_free mm/mmu_gather.c:293 [inline]
+>  tlb_flush_mmu mm/mmu_gather.c:300 [inline]
+>  tlb_finish_mmu+0x14b/0x6f0 mm/mmu_gather.c:392
+>  exit_mmap+0x38b/0xa70 mm/mmap.c:3321
+>  __mmput+0x12a/0x4d0 kernel/fork.c:1349
+>  mmput+0x62/0x70 kernel/fork.c:1371
+>  exit_mm kernel/exit.c:567 [inline]
+>  do_exit+0x9a5/0x2ad0 kernel/exit.c:856
+>  do_group_exit+0xd4/0x2a0 kernel/exit.c:1018
+>  get_signal+0x23b5/0x2790 kernel/signal.c:2904
+>  arch_do_signal_or_restart+0x90/0x7f0 arch/x86/kernel/signal.c:309
+>  exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+>  exit_to_user_mode_prepare+0x121/0x240 kernel/entry/common.c:204
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
+>  syscall_exit_to_user_mode+0x1e/0x60 kernel/entry/common.c:296
+>  do_syscall_64+0x4d/0x110 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x63/0x6b
+> RIP: 0033:0x5623b9f0af8e
+> Code: Unable to access opcode bytes at 0x5623b9f0af64.
+> RSP: 002b:00007fff3b36f178 EFLAGS: 00000246 ORIG_RAX: 000000000000010f
+> RAX: 0000000000000000 RBX: 00000000000668a0 RCX: 00007f85b4f19ad5
+> RDX: 00007fff3b36f180 RSI: 00007fff3b36f2b0 RDI: 0000000000000011
+> RBP: 00005623bb920260 R08: 0000000000000008 R09: 0000000000000000
+> R10: 00007fff3b36f848 R11: 0000000000000246 R12: 00005623b9f8faa4
+> R13: 0000000000000001 R14: 00005623b9f903e8 R15: 00007fff3b36f7c8
+>  </TASK>
+> Modules linked in:
+> ----------------
+> Code disassembly (best guess):
+>    0:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+>    5:	66 0f 1f 00          	nopw   (%rax)
+>    9:	41 54                	push   %r12
+>    b:	55                   	push   %rbp
+>    c:	53                   	push   %rbx
+>    d:	48 89 fb             	mov    %rdi,%rbx
+>   10:	e8 90 e9 b2 ff       	call   0xffb2e9a5
+>   15:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
+>   19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+>   20:	fc ff df
+>   23:	48 89 fa             	mov    %rdi,%rdx
+>   26:	48 c1 ea 03          	shr    $0x3,%rdx
+> * 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instru=
+ction
+>   2e:	0f 85 34 03 00 00    	jne    0x368
+>   34:	4c 8b 63 08          	mov    0x8(%rbx),%r12
+>   38:	31 ff                	xor    %edi,%edi
+>   3a:	4c 89 e5             	mov    %r12,%rbp
+>   3d:	83 e5 01             	and    $0x1,%ebp
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+
+I would say it does.
+
+Anyway, it is possibly a reiserfs bug that's using too much stack.
+
+But it would be nice if these bot reports had a bit better bisecting
+algorithm.
+
+-- Steve
+
+
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+
 
