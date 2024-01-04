@@ -1,126 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-7414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC398248ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:22:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CEF48248F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82821F254F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:22:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6F728297F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0122C690;
-	Thu,  4 Jan 2024 19:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514192C1B2;
+	Thu,  4 Jan 2024 19:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EdnZzLUC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDfn5vH0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDC82C686
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 19:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a1915034144so101792566b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 11:21:44 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464EF2C681;
+	Thu,  4 Jan 2024 19:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-50e766937ddso992942e87.3;
+        Thu, 04 Jan 2024 11:23:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1704396098; x=1705000898; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4MuqzTE/G+T5VrqGABwUELReNnh9TwctX30WQtzQOw=;
-        b=EdnZzLUClgs4ur/8y5FP6tRq02qyWaY5N72vXNV5I9U8bZ/7bKHZvSDwGX01jA1NAz
-         Z/8Dmh9QysgWpFAHjEiv5MnGR2GQbMzilbKtSJTGsR7mqwKBGTHr7a88sJ40n+4iPQSr
-         xtIwlHn98rsYx9laJRh++951DYO2BbepN1hGk=
+        d=gmail.com; s=20230601; t=1704396222; x=1705001022; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PngtyanlhICbee0KDi7iQcNT635NIWO7h/ak7+PfeDI=;
+        b=WDfn5vH0dCPxT+yHZPZRDI8TeRvTVuB8Q8agL3+kLUfzwyaj+4KJYgQPbVbQa0PPTT
+         du0i4R9Pe4sIVEte5zDHJxPoxakjAy5WZ5cVk8MAKgg9SlFIANu+DIwSuOoQNm84wSQ+
+         t9CXQbVDrbCLqX7OZm0Zzb79uAunUwVCk1qtLCxGgYnQhvrBHqkVyRLiBgNQcSGfc82F
+         MsfL91I0rOYGJT33v7zOF7BIGk4u+VanQLt3Y/SDY80QypE9p9pZT2oUoeYzWCWe9WKH
+         gMLzDlrkVnvxgn5LORQGS41Wesln08/NgCD4XFnWptacThrSuQwi+a5knoVPG38wmkV7
+         GTPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704396098; x=1705000898;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v4MuqzTE/G+T5VrqGABwUELReNnh9TwctX30WQtzQOw=;
-        b=EAwi8EL5pwMOSI8HvrzdhBR1Kk5cq1L/Dhgxe7DrgNH1WUEuKGf9CNnYdTbJu9RBVI
-         WT9s8wR3WtQyUKDEy3EaLcaKoS85OE58CXpbZTGAgOdlONDtovx7kfNynrWeyreejD57
-         bT0gvSjeBojlnIp7izHHsKU2rJFi/6ByNdQJbFHTWe+NeEAlBB1lgQVI69dzoL2I/5EK
-         3x5ryIrdYrPo0knWF4XeG+juYr1hzfkK5mYl9WtEx81qN3kaiq1XbXk+ScsIR+zJPnIQ
-         VIp5u7qcaQ7Ebu4gmWj9VMN0PWGyMm4UY6gu9J7mNk0PCIFlTf6+IJDrv+GTjXARn3SB
-         /LPA==
-X-Gm-Message-State: AOJu0YwZSsCM0fFWhsBwktuTMAcL9NXb9RhEi5Y/JnVTuBPAuSZpodDu
-	6IrO4lBDdf/5Rq3oCx/DD/zm+ZmW9IUn7la6lOxggehfSyKgAbk+
-X-Google-Smtp-Source: AGHT+IHBSeRumM0Oxgvr7+xG45/hgX+LHcC766+vKBVaXcHDfF7Fi012L19N/kN+e0kZJE9lyGGJVQ==
-X-Received: by 2002:a17:906:4e89:b0:a28:aa8f:38d9 with SMTP id v9-20020a1709064e8900b00a28aa8f38d9mr461022eju.29.1704396098607;
-        Thu, 04 Jan 2024 11:21:38 -0800 (PST)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id wl1-20020a170907310100b00a2697984204sm13986169ejb.72.2024.01.04.11.21.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Jan 2024 11:21:37 -0800 (PST)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a1915034144so101782866b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 11:21:37 -0800 (PST)
-X-Received: by 2002:a17:906:ee86:b0:a28:fb5:4389 with SMTP id
- wt6-20020a170906ee8600b00a280fb54389mr705009ejb.0.1704396097273; Thu, 04 Jan
- 2024 11:21:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704396222; x=1705001022;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PngtyanlhICbee0KDi7iQcNT635NIWO7h/ak7+PfeDI=;
+        b=UvpLNdN+fE1/lmQRxMm7fyZv2YZFPJ+Vby8JMhMmM6ShEnTTngX6HwmUZyJXquyJk3
+         1K1Uh5Fc5rmmH1zzeInbwjF1jLpefo9pb7bwd4GEwGnZWPPGLuP6dYJjqfBzhEuykgpH
+         ehLYpAuN2fssiURVwP7uEx9kCTgK+Zz7ykhgL/iP//FCF6I4Ovhvl6PsHbBatOk+Szl7
+         GmmeC4OTo5AgmOCLCoq/bnuexklhg/CzBmdCLpNKXWd38Z2u7AVxUdXv1zRKO9OHgWAN
+         VnyIwD1nXzr0fbEJ/H156kS524LkO36Pfv6pMQfLePgXgzUM3zgAGaB/sfbFDQYlFT2l
+         OWKQ==
+X-Gm-Message-State: AOJu0Yz3B8BOjTZAIIYB0NRuU7ACCN0AFakv9HDL7PaqJRRBEOt+32X1
+	8lEIXapsYN/kh9ph0dKFdVtjgqbdjP3rjrtaEOo=
+X-Google-Smtp-Source: AGHT+IG9T0FiiGPu67lzYqzONX+bAfLTPv2+2J1Ro6tvLQzWP52DQMpQdQrscwBC6Mh60CduZkVGLdcqkX7/FVHUKQo=
+X-Received: by 2002:a05:6512:14b:b0:50e:71d4:a37f with SMTP id
+ m11-20020a056512014b00b0050e71d4a37fmr556963lfo.55.1704396221935; Thu, 04 Jan
+ 2024 11:23:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103203246.115732ec@gandalf.local.home> <20240104014837.GO1674809@ZenIV>
- <20240103212506.41432d12@gandalf.local.home> <20240104043945.GQ1674809@ZenIV>
- <20240104100544.593030e0@gandalf.local.home> <20240104182502.GR1674809@ZenIV> <20240104141017.4cd8451f@gandalf.local.home>
-In-Reply-To: <20240104141017.4cd8451f@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 4 Jan 2024 11:21:20 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiLTq-aj2bN_B7-0h2NYdkVxkbkmiOKKer=n0x6pPO77A@mail.gmail.com>
-Message-ID: <CAHk-=wiLTq-aj2bN_B7-0h2NYdkVxkbkmiOKKer=n0x6pPO77A@mail.gmail.com>
-Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default ownership
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-14-andrii@kernel.org>
+ <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
+In-Reply-To: <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 4 Jan 2024 11:23:30 -0800
+Message-ID: <CAEf4BzY6gx+kYmKju+EOtz2MgDa_Ryv+_DSmhtJQRoYvp=DtfA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 13/29] libbpf: add BPF token support to
+ bpf_map_create() API
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 4 Jan 2024 at 11:09, Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Jan 4, 2024 at 11:04=E2=80=AFAM Linus Torvalds
+<torvalds@linuxfoundation.org> wrote:
 >
-> My mistake was thinking that the dentry was attached more to the path than
-> the inode. But that doesn't seem to be the case. I wasn't sure if there was
-> a way to get to a dentry from the inode.
+> On Wed, 3 Jan 2024 at 14:24, Andrii Nakryiko <andrii@kernel.org> wrote:
+> >
+> > Add ability to provide token_fd for BPF_MAP_CREATE command through
+> > bpf_map_create() API.
+>
+> I'll try to look through the series later, but this email was marked
+> as spam for me.
 
-Yeah, so dentry->inode and path->dentry are one-way translations,
-because the other way can have multiple different cases.
+Great, thanks for taking a look!
 
-IOW, a path will specify *one* dentry, and a dentry will specily *one*
-inode, but one inode can be associated with multiple dentries, and
-there may be other undiscovered dentries that *would* point to it but
-aren't even cached right now.
+>
+> And it seems to be due to all your emails failing DMARC, even though
+> the others came through:
+>
+>        dmarc=3Dfail (p=3DNONE sp=3DNONE dis=3DNONE) header.from=3Dkernel.=
+org
+>
+> there's no DKIM signature at all, looks like you never went through
+> the kernel.org smtp servers.
 
-And a single dentry can be part of multiple paths, thanks to bind mounts.
+Yep, thanks for flagging, I guess I'll need to go read Konstantin's
+instructions and adjust my git send-email workflow.
 
-The "inode->i_dentry" list is *not* a way to look up all dentries,
-because - as mentioned - there may be potential other paths (and thus
-other dentries) that lead to the same inode that just haven't been
-looked up yet (or that have already been aged out of the cache).
-
-Of course any *particular* filesystem may not have hard links (so one
-inode has only one possible dentry), and you may not have bind mounts,
-and it might be one of the virtual filesystems where everything is
-always in memory, so none of the above problems are guaranteed to be
-the case in any *particular* situation.
-
-But it's all part of why the dcache is actually really subtle. It's
-not just the RCU lookup rules and the specialized locking (both
-reflock and the rather complicated rules about d_lock ordering), it's
-also that whole "yeah, the filesystem only sees a 'dentry', but
-because of bind mounts the vfs layer actually does things internally
-in terms of 'struct path' in order to be able to then show that single
-fiolesystem in multiple places".
-
-Etc etc.
-
-There's a reason Al Viro ends up owning the dcache. Nobody else can
-wrap their tiny little minds around it all.
-
-               Linus
+>
+>              Linus
 
