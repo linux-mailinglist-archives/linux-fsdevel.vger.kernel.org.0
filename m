@@ -1,221 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-7348-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7349-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF763823CE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 08:46:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E98823E05
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 09:58:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F592285800
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 07:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7C1286C81
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 08:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BD3200A7;
-	Thu,  4 Jan 2024 07:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA04A200CA;
+	Thu,  4 Jan 2024 08:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbEef6mt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lkMsM0GC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6iW/ShH9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lkMsM0GC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6iW/ShH9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A234D1F951;
-	Thu,  4 Jan 2024 07:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-67fa018c116so1204856d6.3;
-        Wed, 03 Jan 2024 23:46:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704354378; x=1704959178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z8JWWAcW5U6HoZv2tvwhmzksu600dRorErCbol8G1zE=;
-        b=AbEef6mtA7KVNzB4ChdJGxpc2d/Fh4KkMFEFxssJPaxkpVlQMZg11j4u5313SvAgFD
-         Ark8CDW099l/H65/PN0vvi6E1YQu2xtC0t86Q/M0jab6HAxuyE6pLtTB8GcXgwY0LO/D
-         PPyIvqboMtu8PH4A4+3fRwlLQD2y2JiPGmqYH8ZBWKdyKXZ7m2xqrbrNUjaUReOWhUND
-         woqn8tITH0SYK0ZcuYvE0BwobehrTQxexnfTxFV1NgcQCHBUrcvSSISVb+SzrO1PJ6do
-         9bf4BvAmkAwHjeBdf1EMVjPopiWN/14yFgGWrlO14shbms7ZSCsyaWrdZ5RLSwPZdz+R
-         /I1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704354378; x=1704959178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z8JWWAcW5U6HoZv2tvwhmzksu600dRorErCbol8G1zE=;
-        b=SeWlQQW1WvmONQa/XWP05XOKYvhGo9jnK7Gb8sYO80SIgnOOAtGs30RCsoJmerg+jJ
-         rTkgYETXQpSWaLjQY4BFNEBSReY+jgLkMY0rjxJVKv3evykcnRM5egtV8Bq+a5faqLZx
-         27UiG9YxLYAka/P/Fffv71cw690Ae0n8e6ZkSItHOwickIOMtO6NwyCrr+GmX6yAG12t
-         SgvXt8OFvzXN3nBGXCtprLX7fJbz9gHa7mvkmM5cArOx0C8A41GT30GxhlwYEk2upPth
-         2QSRAggR9w7U2P/JefmpPI7mEtjdJZXnifCUnD7P7+JI8462nvYnAxR1/O/mezzWoE/E
-         s0nA==
-X-Gm-Message-State: AOJu0YyYIatfC1nenZcg6sj/mNDZoBhIzlf0Pi0MIllpKeSMXHJCy4Mh
-	y0UwSOw+samaa2InfjLyI0Yy4cbusqVa2G547rY=
-X-Google-Smtp-Source: AGHT+IHnOSLvO5jpQ5cp++B0F0q5nQavs+ClEJ6yaOyBITA3vDzkdwt8QOPHM03MOVWA4J9aOSj2dk6ijzrICPgEy+A=
-X-Received: by 2002:ad4:5b85:0:b0:680:d27c:a416 with SMTP id
- 5-20020ad45b85000000b00680d27ca416mr252921qvp.107.1704354378515; Wed, 03 Jan
- 2024 23:46:18 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544FA1EA90
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 08:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 75E071F7F6;
+	Thu,  4 Jan 2024 08:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704358722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=rR6ap2Hh5Afb3mxfpkpDyaMovj9vOv//LhJyDYEU988=;
+	b=lkMsM0GC566Xb7xycDksgRQALZo1t1rRu8SdedVraTDagTAga8B9uIE5xA6kdsxThl9jax
+	8Obh91HbRxf65wgS9BbZMINAMPKDLBkCv+Fy64v1D/m8q7M6Ao+ldsEnOztSLjYSF0XMg7
+	fk1oRCeE1JqKWp2RV+p0DwKl6HeMxro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704358722;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=rR6ap2Hh5Afb3mxfpkpDyaMovj9vOv//LhJyDYEU988=;
+	b=6iW/ShH9ZZX4prWWBpJAmL2/jzEXloPwkIX+KVoaIF9/kjRJ0TV9jrgPmfiv7z+D2cMcJr
+	0DsYqFidkKIur3Ag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704358722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=rR6ap2Hh5Afb3mxfpkpDyaMovj9vOv//LhJyDYEU988=;
+	b=lkMsM0GC566Xb7xycDksgRQALZo1t1rRu8SdedVraTDagTAga8B9uIE5xA6kdsxThl9jax
+	8Obh91HbRxf65wgS9BbZMINAMPKDLBkCv+Fy64v1D/m8q7M6Ao+ldsEnOztSLjYSF0XMg7
+	fk1oRCeE1JqKWp2RV+p0DwKl6HeMxro=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704358722;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=rR6ap2Hh5Afb3mxfpkpDyaMovj9vOv//LhJyDYEU988=;
+	b=6iW/ShH9ZZX4prWWBpJAmL2/jzEXloPwkIX+KVoaIF9/kjRJ0TV9jrgPmfiv7z+D2cMcJr
+	0DsYqFidkKIur3Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66D0913722;
+	Thu,  4 Jan 2024 08:58:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id foAVGUJzlmWQVwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 04 Jan 2024 08:58:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 03A58A07EF; Thu,  4 Jan 2024 09:58:41 +0100 (CET)
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>,
+	Jan Kara <jack@suse.cz>,
+	Guo Xuenan <guoxuenan@huawei.com>
+Subject: [PATCH] readahead: Avoid multiple marked readahead pages
+Date: Thu,  4 Jan 2024 09:58:39 +0100
+Message-Id: <20240104085839.21029-1-jack@suse.cz>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
- <170429518465.50646.9482690519449281531.stgit@bazille.1015granger.net> <276a17ed09cf6d53d17292b5182a8e08695251a4.camel@kernel.org>
-In-Reply-To: <276a17ed09cf6d53d17292b5182a8e08695251a4.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 4 Jan 2024 09:46:07 +0200
-Message-ID: <CAOQ4uxhKVaL3gvwrURSWFSBf2HH6vg0qwM1LVPkmQLfnvTPrdw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fs: Create a generic is_dot_dotdot() utility
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <cel@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	trondmy@hammerspace.com, viro@zeniv.linux.org.uk, brauner@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3264; i=jack@suse.cz; h=from:subject; bh=+UgtsDahSVLdNC5e29UeWUH6z6ypziO0BPHhaCZTopY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBllnM1WAVFvYILan4IAuUJJoJtF8CQZ2zGZPmQSlyM Qe44qAKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZZZzNQAKCRCcnaoHP2RA2RifB/ 4llYzia2TKkEMBhnoCE6IltG0Vd45gb1DVtDgpwZXx3NvwQeKgB6CZxxu+AmLrJhQQPgZayzWOhopb VT3XU1Hz0pubS2KTrFXAMulQbTpaIcp2ydgXw96eu/6ovvoRQTOCJ3PNqLGqD+oHt5OtRuVF6hdYR7 +g0Duvz0pF9wZVYRbmeSMdhdIixv+MY+Ik0uDV5ICm5X2mI6bOCP+LuoqyWvgD0mgFVrqrKArTAJ68 nW69MusTutbenLQiGoKQ0DS4jX2tA3jRnGVJCK8vYxwC51ddhFJFlWMPJce9oZsUjGfYdLlCgSlXur VmQaGXgAfJN6FQ9BpXY4swLqWU2AmI
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: ****
+X-Spamd-Bar: ++++
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lkMsM0GC;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="6iW/ShH9"
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [4.99 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 R_MISSING_CHARSET(2.50)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 MID_CONTAINS_FROM(1.00)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 NEURAL_SPAM_LONG(3.50)[1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: 4.99
+X-Rspamd-Queue-Id: 75E071F7F6
+X-Spam-Flag: NO
 
-On Wed, Jan 3, 2024 at 9:08=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> On Wed, 2024-01-03 at 10:19 -0500, Chuck Lever wrote:
-> > From: Chuck Lever <chuck.lever@oracle.com>
-> >
-> > De-duplicate the same functionality in several places by hoisting
-> > the is_dot_dotdot() function into linux/fs.h.
-> >
-> > Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> > ---
-> >  fs/crypto/fname.c    |    8 +-------
-> >  fs/ecryptfs/crypto.c |   10 ----------
-> >  fs/exportfs/expfs.c  |    4 +---
-> >  fs/f2fs/f2fs.h       |   11 -----------
-> >  include/linux/fs.h   |    9 +++++++++
-> >  5 files changed, 11 insertions(+), 31 deletions(-)
-> >
-> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> > index 7b3fc189593a..0ad52fbe51c9 100644
-> > --- a/fs/crypto/fname.c
-> > +++ b/fs/crypto/fname.c
-> > @@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
-> >
-> >  static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
-> >  {
-> > -     if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')
-> > -             return true;
-> > -
-> > -     if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' && str->name[1] =
-=3D=3D '.')
-> > -             return true;
-> > -
-> > -     return false;
-> > +     return is_dot_dotdot(str->name, str->len);
-> >  }
-> >
-> >  /**
-> > diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-> > index 03bd55069d86..2fe0f3af1a08 100644
-> > --- a/fs/ecryptfs/crypto.c
-> > +++ b/fs/ecryptfs/crypto.c
-> > @@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
-> >       return rc;
-> >  }
-> >
-> > -static bool is_dot_dotdot(const char *name, size_t name_size)
-> > -{
-> > -     if (name_size =3D=3D 1 && name[0] =3D=3D '.')
-> > -             return true;
-> > -     else if (name_size =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=
-=3D '.')
-> > -             return true;
-> > -
-> > -     return false;
-> > -}
-> > -
-> >  /**
-> >   * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher =
-text name to decoded plaintext
-> >   * @plaintext_name: The plaintext name
-> > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> > index 84af58eaf2ca..07ea3d62b298 100644
-> > --- a/fs/exportfs/expfs.c
-> > +++ b/fs/exportfs/expfs.c
-> > @@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, co=
-nst char *name, int len,
-> >               container_of(ctx, struct getdents_callback, ctx);
-> >
-> >       buf->sequence++;
-> > -     /* Ignore the '.' and '..' entries */
-> > -     if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] !=3D=
- '.')) &&
-> > -         buf->ino =3D=3D ino && len <=3D NAME_MAX) {
-> > +     if (buf->ino =3D=3D ino && len <=3D NAME_MAX && !is_dot_dotdot(na=
-me, len)) {
-> >               memcpy(buf->name, name, len);
-> >               buf->name[len] =3D '\0';
-> >               buf->found =3D 1;
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 9043cedfa12b..322a3b8a3533 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_=
-info *sbi)
-> >       return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
-> >  }
-> >
-> > -static inline bool is_dot_dotdot(const u8 *name, size_t len)
-> > -{
-> > -     if (len =3D=3D 1 && name[0] =3D=3D '.')
-> > -             return true;
-> > -
-> > -     if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
-> > -             return true;
-> > -
-> > -     return false;
-> > -}
-> > -
-> >  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
-> >                                       size_t size, gfp_t flags)
-> >  {
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 98b7a7a8c42e..179eea797c22 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2846,6 +2846,15 @@ extern bool path_is_under(const struct path *, c=
-onst struct path *);
-> >
-> >  extern char *file_path(struct file *, char *, int);
-> >
-> > +static inline bool is_dot_dotdot(const char *name, size_t len)
-> > +{
-> > +     if (len =3D=3D 1 && name[0] =3D=3D '.')
-> > +             return true;
-> > +     if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
-> > +             return true;
-> > +     return false;
-> > +}
-> > +
-> >  #include <linux/err.h>
-> >
-> >  /* needed for stackable file system support */
-> >
-> >
->
-> Looks good to me. I took a quick look to see if there were other open-
-> coded versions, but I didn't see any.
->
+ra_alloc_folio() marks a page that should trigger next round of async
+readahead. However it rounds up computed index to the order of page
+being allocated. This can however lead to multiple consecutive pages
+being marked with readahead flag. Consider situation with index == 1,
+mark == 1, order == 0. We insert order 0 page at index 1 and mark it.
+Then we bump order to 1, index to 2, mark (still == 1) is rounded up to
+2 so page at index 2 is marked as well. Then we bump order to 2, index
+is incremented to 4, mark gets rounded to 4 so page at index 4 is marked
+as well. The fact that multiple pages get marked within a single
+readahead window confuses the readahead logic and results in readahead
+window being trimmed back to 1. This situation is triggered in
+particular when maximum readahead window size is not a power of two (in
+the observed case it was 768 KB) and as a result sequential read
+throughput suffers.
 
-The outstanding open-coded version that wasn't deduped is in
-lookup_one_common(), which is the version that Trond used and
-mentioned in his patch.
+Fix the problem by rounding 'mark' down instead of up. Because the index
+is naturally aligned to 'order', we are guaranteed 'rounded mark' ==
+index iff 'mark' is within the page we are allocating at 'index' and
+thus exactly one page is marked with readahead flag as required by the
+readahead code and sequential read performance is restored.
 
-It is also a slightly more "efficient" version, but I have no idea if
-that really matters.
+This effectively reverts part of commit b9ff43dd2743 ("mm/readahead: Fix
+readahead with large folios"). The commit changed the rounding with the
+rationale:
 
-In any case, having lookup_one_common() and get_name() use
-the same helper is clearly prefered, because the check in lookup_one()
-is the declared reason for the get_name() patch.
+"... we were setting the readahead flag on the folio which contains the
+last byte read from the block. This is wrong because we will trigger
+readahead at the end of the read without waiting to see if a subsequent
+read is going to use the pages we just read."
 
-Thanks,
-Amir.
+Although this is true, the fact is this was always the case with read
+sizes not aligned to folio boundaries and large folios in the page cache
+just make the situation more obvious (and frequent). Also for sequential
+read workloads it is better to trigger the readahead earlier rather than
+later. It is true that the difference in the rounding and thus earlier
+triggering of the readahead can result in reading more for semi-random
+workloads. However workloads really suffering from this seem to be rare.
+In particular I have verified that the workload described in commit
+b9ff43dd2743 ("mm/readahead: Fix readahead with large folios") of
+reading random 100k blocks from a file like:
+
+[reader]
+bs=100k
+rw=randread
+numjobs=1
+size=64g
+runtime=60s
+
+is not impacted by the rounding change and achieves ~70MB/s in both
+cases.
+
+Fixes: b9ff43dd2743 ("mm/readahead: Fix readahead with large folios")
+CC: Guo Xuenan <guoxuenan@huawei.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ mm/readahead.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 6925e6959fd3..3032fbdce276 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -469,7 +469,7 @@ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
+ 
+ 	if (!folio)
+ 		return -ENOMEM;
+-	mark = round_up(mark, 1UL << order);
++	mark = round_down(mark, 1UL << order);
+ 	if (index == mark)
+ 		folio_set_readahead(folio);
+ 	err = filemap_add_folio(ractl->mapping, folio, index, gfp);
+-- 
+2.35.3
+
 
