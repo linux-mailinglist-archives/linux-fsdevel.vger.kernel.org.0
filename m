@@ -1,181 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-7369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A2D8242BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 14:37:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F426824399
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF089286E43
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 13:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B265F281962
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 14:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F31224C3;
-	Thu,  4 Jan 2024 13:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA5523778;
+	Thu,  4 Jan 2024 14:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Iod9vDX/"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TPbwZSvi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B39E22313
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 13:37:25 +0000 (UTC)
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638812421B;
+	Thu,  4 Jan 2024 14:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from pop-os.home ([92.140.202.140])
+Received: from [192.168.1.18] ([92.140.202.140])
 	by smtp.orange.fr with ESMTPA
-	id LNn9rqZHtmbVqLNn9rhL4z; Thu, 04 Jan 2024 14:29:48 +0100
+	id LOa0rXuduH4TlLOa0rJH71; Thu, 04 Jan 2024 15:20:16 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1704374988;
-	bh=ciTbDjeP+vCKPdJby2wMqEkjO/zLT5PPfRKymuvu7Ls=;
-	h=From:To:Cc:Subject:Date;
-	b=Iod9vDX/tgK1aAj3D0pbcF1SNX2aOulCB5ziVBgXc2wj6sOGEGBmLWICLdqZHZt1x
-	 UlTjdr32do3p5szUwUxlGYJXZCS9asBZSRogiJqv6CaSbTb6kt9vprVOAq9m0B1Okf
-	 //EXruuhFxkXyxmZeYu0nHTfn0zzJkFcd3ymeIDLQzLloLnZkyaN43xELjdoI9Ys+y
-	 DIW2rbvPF+wBN8W2CB8VEm4/9Mf/bxfNzmMGqUW1d1P8S8t0mu127k442K2KggsUsv
-	 GC1Jh3+mYzZMGZXRoxl6tidDt02gehE5jJOb8Fz3axGOJPBtvHnAsMeSXwnXWhaulV
-	 N60RtHWbmS6zA==
-X-ME-Helo: pop-os.home
+	s=t20230301; t=1704378016;
+	bh=Q9FqaBRUlUJ8QVrn0N9cxjxXK+HP850wiUfYJxgq3pQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=TPbwZSviMLHuvYbnXJii9RDt0jfzC+RqGtoks9U5QwVOElbSmFoctY2tATq3+SLXE
+	 +i5fSeP3I4tisKbYA1fSPj0helfmtrtH3zw7vt3Z0+el3VHhhKSIZzY3QNMrB+p25j
+	 zbWz3kHfvmatrN4qUWvTUOU0JgiW2KjjWz434AwEvzmyPd4IdEh9ZqYAmoT1g4sr+g
+	 Fd6/NlUrDvGuFSRqLQZCoHC2aWYi6TLjpTVxncyBEzxpkbjp38yHGziyUJRmnJz0Aa
+	 262/6XBCiRpQH+Z+bAJ3kQ5pXQwohp3BXpTW/eqWW8P9PgFBtqzOJ5s6VJqgW9Yhwq
+	 qZoErV2YXipkg==
+X-ME-Helo: [192.168.1.18]
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 04 Jan 2024 14:29:48 +0100
+X-ME-Date: Thu, 04 Jan 2024 15:20:16 +0100
 X-ME-IP: 92.140.202.140
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] seq_file: Optimize seq_puts()
-Date: Thu,  4 Jan 2024 14:29:37 +0100
-Message-Id: <5c4f7ad7b88f5026940efa9c8be36a58755ec1b3.1704374916.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+Message-ID: <51ce6e78-023b-4914-96c0-ed1bd664d188@wanadoo.fr>
+Date: Thu, 4 Jan 2024 15:20:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vboxsf: Remove usage of the deprecated ida_simple_xx()
+ API
+Content-Language: fr, en-US
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <2752888783edaed8576777e1763dc0489fd07000.1702963000.git.christophe.jaillet@wanadoo.fr>
+ <b4c96284-1ae8-498b-84ae-34a9f65e9da8@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <b4c96284-1ae8-498b-84ae-34a9f65e9da8@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Most of seq_puts() usages are done with a string literal. In such cases,
-the length of the string car be computed at compile time in order to save
-a strlen() call at run-time. seq_write() can then be used instead.
+Le 19/12/2023 à 10:39, Hans de Goede a écrit :
+> Hi,
+> 
+> On 12/19/23 06:17, Christophe JAILLET wrote:
+>> ida_alloc() and ida_free() should be preferred to the deprecated
+>> ida_simple_get() and ida_simple_remove().
+>>
+>> This is less verbose.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> vboxsf is not really undergoing any active development,
+> if there is a tree which is collecting other ida related
+> patches feel free to route this through that tree.
 
-This saves a few cycles.
+There is still a bit of work to remove the remaining ida_simple_get() 
+calls, so we still have time.
 
-To have an estimation of how often this optimization triggers:
-   $ git grep seq_puts.*\" | wc -l
-   3391
+Based on another experience when phasing out an old API, I would say at 
+least 2-3 months.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Checked by comparing the output of a few .s files.
-Here is one of these outputs:
+If this one is still around when nearly all the other calls have been 
+handled, i'll come back to it to see the best way to have is merged in a 
+tree or in another, so that the old API can be removed.
 
-$ diff -u drivers/clk/clk.s.old drivers/clk/clk.s | grep -C6 seq_w
+CJ
 
- 	call	clk_prepare_unlock	#
- # drivers/clk/clk.c:3320: 	seq_puts(s, "}\n");
- 	movq	%r12, %rdi	# s,
-+	movl	$2, %edx	#,
- 	movq	$.LC66, %rsi	#,
--	call	seq_puts	#
-+	call	seq_write	#
- 	call	__tsan_func_exit	#
- # drivers/clk/clk.c:3322: }
- 	xorl	%eax, %eax	#
-@@ -34520,6 +34521,7 @@
- 	popq	%rbp	#
- 	popq	%r12	#
---
- # drivers/clk/clk.c:3205: 		seq_puts(s, "-----");
- 	call	__sanitizer_cov_trace_pc	#
-+	movl	$5, %edx	#,
- 	movq	$.LC72, %rsi	#,
- 	movq	%r13, %rdi	# s,
--	call	seq_puts	#
-+	call	seq_write	#
- 	jmp	.L2134	#
- .L2144:
- # drivers/clk/clk.c:1793: 	return clk_core_get_accuracy_no_lock(core);
-@@ -35225,20 +35228,23 @@
- 	leaq	240(%r12), %rdi	#, tmp95
- 	call	__tsan_read8	#
---
- 	movq	%r12, %rdi	# s,
-+	movq	$.LC77, %rsi	#,
- # drivers/clk/clk.c:3244: 	struct hlist_head **lists = s->private;
- 	movq	240(%r12), %rbp	# s_9(D)->private, lists
- # drivers/clk/clk.c:3246: 	seq_puts(s, "                                 enable  prepare  protect                                duty  hardware                            connection\n");
--	call	seq_puts	#
-+	call	seq_write	#
- # drivers/clk/clk.c:3247: 	seq_puts(s, "   clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id\n");
-+	movl	$142, %edx	#,
- 	movq	$.LC78, %rsi	#,
- 	movq	%r12, %rdi	# s,
--	call	seq_puts	#
-+	call	seq_write	#
- # drivers/clk/clk.c:3248: 	seq_puts(s, "---------------------------------------------------------------------------------------------------------------------------------------------\n");
-+	movl	$142, %edx	#,
- 	movq	$.LC79, %rsi	#,
- 	movq	%r12, %rdi	# s,
--	call	seq_puts	#
-+	call	seq_write	#
- # drivers/clk/clk.c:3251: 	clk_prepare_lock();
- 	call	clk_prepare_lock	#
- .L2207:
-@@ -37511,7 +37517,7 @@
- 	subq	$16, %rsp	#,
- # drivers/clk/clk.c:3082: {
----
- fs/seq_file.c            |  4 ++--
- include/linux/seq_file.h | 10 +++++++++-
- 2 files changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index f5fdaf3b1572..8ef0a07033ca 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -669,7 +669,7 @@ void seq_putc(struct seq_file *m, char c)
- }
- EXPORT_SYMBOL(seq_putc);
- 
--void seq_puts(struct seq_file *m, const char *s)
-+void __seq_puts(struct seq_file *m, const char *s)
- {
- 	int len = strlen(s);
- 
-@@ -680,7 +680,7 @@ void seq_puts(struct seq_file *m, const char *s)
- 	memcpy(m->buf + m->count, s, len);
- 	m->count += len;
- }
--EXPORT_SYMBOL(seq_puts);
-+EXPORT_SYMBOL(__seq_puts);
- 
- /**
-  * seq_put_decimal_ull_width - A helper routine for putting decimal numbers
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 234bcdb1fba4..15abf45d62c5 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -118,7 +118,15 @@ void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
- __printf(2, 3)
- void seq_printf(struct seq_file *m, const char *fmt, ...);
- void seq_putc(struct seq_file *m, char c);
--void seq_puts(struct seq_file *m, const char *s);
-+void __seq_puts(struct seq_file *m, const char *s);
-+#define seq_puts(m, s)						\
-+do {								\
-+	if (__builtin_constant_p(s))				\
-+		seq_write(m, s, __builtin_strlen(s));		\
-+	else							\
-+		__seq_puts(m, s);				\
-+} while (0)
-+
- void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
- 			       unsigned long long num, unsigned int width);
- void seq_put_decimal_ull(struct seq_file *m, const char *delimiter,
--- 
-2.34.1
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>> ---
+>>   fs/vboxsf/super.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+>> index 1fb8f4df60cb..cd8486bc91bd 100644
+>> --- a/fs/vboxsf/super.c
+>> +++ b/fs/vboxsf/super.c
+>> @@ -155,7 +155,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>>   		}
+>>   	}
+>>   
+>> -	sbi->bdi_id = ida_simple_get(&vboxsf_bdi_ida, 0, 0, GFP_KERNEL);
+>> +	sbi->bdi_id = ida_alloc(&vboxsf_bdi_ida, GFP_KERNEL);
+>>   	if (sbi->bdi_id < 0) {
+>>   		err = sbi->bdi_id;
+>>   		goto fail_free;
+>> @@ -221,7 +221,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>>   	vboxsf_unmap_folder(sbi->root);
+>>   fail_free:
+>>   	if (sbi->bdi_id >= 0)
+>> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
+>> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
+>>   	if (sbi->nls)
+>>   		unload_nls(sbi->nls);
+>>   	idr_destroy(&sbi->ino_idr);
+>> @@ -268,7 +268,7 @@ static void vboxsf_put_super(struct super_block *sb)
+>>   
+>>   	vboxsf_unmap_folder(sbi->root);
+>>   	if (sbi->bdi_id >= 0)
+>> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
+>> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
+>>   	if (sbi->nls)
+>>   		unload_nls(sbi->nls);
+>>   
+> 
+> 
+> 
 
 
