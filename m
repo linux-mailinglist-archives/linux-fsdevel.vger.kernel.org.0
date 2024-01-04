@@ -1,106 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-7415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEF48248F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:24:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638DE824900
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 20:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6F728297F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89CD91C2262D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 19:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514192C1B2;
-	Thu,  4 Jan 2024 19:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AFD2C6A0;
+	Thu,  4 Jan 2024 19:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDfn5vH0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CaTDRcGq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464EF2C681;
-	Thu,  4 Jan 2024 19:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-50e766937ddso992942e87.3;
-        Thu, 04 Jan 2024 11:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704396222; x=1705001022; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PngtyanlhICbee0KDi7iQcNT635NIWO7h/ak7+PfeDI=;
-        b=WDfn5vH0dCPxT+yHZPZRDI8TeRvTVuB8Q8agL3+kLUfzwyaj+4KJYgQPbVbQa0PPTT
-         du0i4R9Pe4sIVEte5zDHJxPoxakjAy5WZ5cVk8MAKgg9SlFIANu+DIwSuOoQNm84wSQ+
-         t9CXQbVDrbCLqX7OZm0Zzb79uAunUwVCk1qtLCxGgYnQhvrBHqkVyRLiBgNQcSGfc82F
-         MsfL91I0rOYGJT33v7zOF7BIGk4u+VanQLt3Y/SDY80QypE9p9pZT2oUoeYzWCWe9WKH
-         gMLzDlrkVnvxgn5LORQGS41Wesln08/NgCD4XFnWptacThrSuQwi+a5knoVPG38wmkV7
-         GTPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704396222; x=1705001022;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PngtyanlhICbee0KDi7iQcNT635NIWO7h/ak7+PfeDI=;
-        b=UvpLNdN+fE1/lmQRxMm7fyZv2YZFPJ+Vby8JMhMmM6ShEnTTngX6HwmUZyJXquyJk3
-         1K1Uh5Fc5rmmH1zzeInbwjF1jLpefo9pb7bwd4GEwGnZWPPGLuP6dYJjqfBzhEuykgpH
-         ehLYpAuN2fssiURVwP7uEx9kCTgK+Zz7ykhgL/iP//FCF6I4Ovhvl6PsHbBatOk+Szl7
-         GmmeC4OTo5AgmOCLCoq/bnuexklhg/CzBmdCLpNKXWd38Z2u7AVxUdXv1zRKO9OHgWAN
-         VnyIwD1nXzr0fbEJ/H156kS524LkO36Pfv6pMQfLePgXgzUM3zgAGaB/sfbFDQYlFT2l
-         OWKQ==
-X-Gm-Message-State: AOJu0Yz3B8BOjTZAIIYB0NRuU7ACCN0AFakv9HDL7PaqJRRBEOt+32X1
-	8lEIXapsYN/kh9ph0dKFdVtjgqbdjP3rjrtaEOo=
-X-Google-Smtp-Source: AGHT+IG9T0FiiGPu67lzYqzONX+bAfLTPv2+2J1Ro6tvLQzWP52DQMpQdQrscwBC6Mh60CduZkVGLdcqkX7/FVHUKQo=
-X-Received: by 2002:a05:6512:14b:b0:50e:71d4:a37f with SMTP id
- m11-20020a056512014b00b0050e71d4a37fmr556963lfo.55.1704396221935; Thu, 04 Jan
- 2024 11:23:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50952C1A5;
+	Thu,  4 Jan 2024 19:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eHJdWxHao+sFhZwo/PLG5+DYdMRYk7fVp+3r2qEb254=; b=CaTDRcGqgAO+q0x5oLCqNKQ2LN
+	Ag4j4XVzZ0Ji8skGNCU7Y4Qq2g1DUI+cTqsU3L8VcW/cEzI/kV6p8D0S3gM3F5ay1BPsPI78vp8o/
+	AAXHrm1DI+OUD8RCfZCbxY2opXHZtaAfpiLZLA4ksMpQVwTGDh1RTsSOnvpkso1eZf7/YrbC/1ATC
+	dPCHo31d5/Pr0Pih4JvYFX/cLoASEEYq3c0zCKYw6elyRZ+R6pvapnTZA+rHAeQl60KUmJmTGJTaZ
+	8saqMU05m60Q6qeuYF7lF0zuIj9Ndx9NGJkJjlgVS/cUf09qQr1zl1z8pP4EXDEx11KnGXRv59df5
+	ZJkxeE7w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rLTMp-00FqUL-44; Thu, 04 Jan 2024 19:26:59 +0000
+Date: Thu, 4 Jan 2024 19:26:59 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default
+ ownership
+Message-ID: <ZZcGg5/SFSOUC9PX@casper.infradead.org>
+References: <20240103203246.115732ec@gandalf.local.home>
+ <20240104014837.GO1674809@ZenIV>
+ <20240103212506.41432d12@gandalf.local.home>
+ <20240104043945.GQ1674809@ZenIV>
+ <20240104100544.593030e0@gandalf.local.home>
+ <20240104182502.GR1674809@ZenIV>
+ <20240104141517.0657b9d1@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-14-andrii@kernel.org>
- <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
-In-Reply-To: <CAHk-=whDxm+nqu0=7TNJ9XJq=hNuO5QsV7+=PTYt+Ykvz51yQg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 4 Jan 2024 11:23:30 -0800
-Message-ID: <CAEf4BzY6gx+kYmKju+EOtz2MgDa_Ryv+_DSmhtJQRoYvp=DtfA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 13/29] libbpf: add BPF token support to
- bpf_map_create() API
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240104141517.0657b9d1@gandalf.local.home>
 
-On Thu, Jan 4, 2024 at 11:04=E2=80=AFAM Linus Torvalds
-<torvalds@linuxfoundation.org> wrote:
->
-> On Wed, 3 Jan 2024 at 14:24, Andrii Nakryiko <andrii@kernel.org> wrote:
-> >
-> > Add ability to provide token_fd for BPF_MAP_CREATE command through
-> > bpf_map_create() API.
->
-> I'll try to look through the series later, but this email was marked
-> as spam for me.
+On Thu, Jan 04, 2024 at 02:15:17PM -0500, Steven Rostedt wrote:
+> On Thu, 4 Jan 2024 18:25:02 +0000
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
+> 
+> > Unfortunately, the terms are clumsy as hell - POSIX ends up with
+> > "file descriptor" (for numbers) vs. "file description" (for IO
+> > channels), which is hard to distinguish when reading and just
+> > as hard to distinguish when listening.  "Opened file" (as IO
+> > channel) vs. "file on disc" (as collection of data that might
+> > be accessed via said channels) distinction on top of that also
+> > doesn't help, to put it mildly.  It's many decades too late to
+> > do anything about, unfortunately.  Pity the UNIX 101 students... ;-/
+> 
+> Just so I understand this correctly.
+> 
+> "file descriptor" - is just what maps to a specific inode.
 
-Great, thanks for taking a look!
+No -- file descriptor is a number in fdtable that maps to a struct file.
 
->
-> And it seems to be due to all your emails failing DMARC, even though
-> the others came through:
->
->        dmarc=3Dfail (p=3DNONE sp=3DNONE dis=3DNONE) header.from=3Dkernel.=
-org
->
-> there's no DKIM signature at all, looks like you never went through
-> the kernel.org smtp servers.
+> "file description" - is how the file is accessed (position in the file and
+> 			flags associated to how it was opened)
 
-Yep, thanks for flagging, I guess I'll need to go read Konstantin's
-instructions and adjust my git send-email workflow.
-
->
->              Linus
+file description is posix's awful name for struct file.
 
