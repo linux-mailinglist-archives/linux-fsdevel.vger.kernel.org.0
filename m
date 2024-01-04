@@ -1,143 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-7358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E98982413C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 13:03:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F7782413E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 13:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27F91F24B8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 12:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA6A2875A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 12:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48612136B;
-	Thu,  4 Jan 2024 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jjJRdywM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CB621373;
+	Thu,  4 Jan 2024 12:04:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD1421366
-	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 12:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-50eaa8b447bso456293e87.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 04:03:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1704369803; x=1704974603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUJhuebzE3MQn2Hp2CPQ9vaRRluvOV5K20Hvjb/8s9M=;
-        b=jjJRdywM+ivClG7RbSa3rurwjlcgBEfGLwZbZsy9SRmJj5c0lUE+0L6rirj6QLp/FJ
-         bjWhIVI7cZmIKiDMGpjAAJA1Vkw376eKGoBoCbcY/MHiYrmdJoU4o8GvWc3+Oo1O9CiB
-         bjOgzgY6+QNNIBmuommpWHXisRyyQNibkKEi8=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EE821369
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 12:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-35fda7cdff8so2345595ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 04:04:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704369803; x=1704974603;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jUJhuebzE3MQn2Hp2CPQ9vaRRluvOV5K20Hvjb/8s9M=;
-        b=K6GzD2/nDWuSGBWgg5hd3wDG7xX5tuNHXMIyyZ1wmp7UUjvOca04Mc0aC4sVS75cVJ
-         Dk/+44jWmJao7KQkbV1+aBrHe9cBJ2zzpxyjJ5028TMOHnG9zEt6yhRMjqIYcI7wTSpa
-         Qbedu71Y+Uk64GTSXw4Rz7oMb56W4mJ5yUojaUQNpWMmzAdeuC2TPZagBMwnWiKYHYDC
-         3alCZAiAb/7VOUkC+kT2VgdeypTnWjFQG50/kBk9wdKo6caM3vogqGUzjJbPAU/PYXpU
-         gIGXYGDU/gknZkkVarZ1Hr+/ebXYDFOaHB3wmMZ9T4bCOBq8/c+oJdeQ0DRaMyaAupbK
-         CBTQ==
-X-Gm-Message-State: AOJu0YyaPhMRGeKm29csWhRfSYzj8AAs/TDqMu0tjAKoDY8ZUmwkNQb/
-	3OfvYuCFkNo1MQoO96ogkLXa3HhbZk/mSrq+wrq4gf8m/FXH4Q==
-X-Google-Smtp-Source: AGHT+IGybP2xoxsloaLm/3TEDKIk6xY/pU9gByXubHSM5AGAloJqEVW+xDjw+GYjrgldCKecTir+pGHS/8R+j1TrGMA=
-X-Received: by 2002:a05:6512:90d:b0:50e:6332:8083 with SMTP id
- e13-20020a056512090d00b0050e63328083mr162372lft.183.1704369802717; Thu, 04
- Jan 2024 04:03:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704369865; x=1704974665;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5h4zCC2hUS/A4eGxWFau/Ir/9rP/TRBrjlRWoRrC1o8=;
+        b=CTo2+wOLMuLBpJuH+8xbHO+oR05Q5wFXtaFY7Vae47MReC+rMaFM+VYL4Kji3S2tIV
+         r/GKXvKcdjFCl21iPMQO0qQ/9pqHkRaE5yQ8jNWql2KW5l8PRLsROHeDP79Dc+e/S+De
+         dUDZe3y4S/WJJXO3DLatJvsZSiZJpa5FkdLRJxIi2j3O9lQ1LadHyll8mIYv3n3lhmWz
+         x3vEkrZZ+Z4ftsP4Gfca0lYeRIniwathTrDoFm6222JHmoGN/NzlhM/7etJKY+MAD9u+
+         0OCx/LD1o4WZ0JahZ4zTkBIiuRdb01AlAX2B/YN5V4dp9f4FbFy71U2Hz8Nf5hq2x+e2
+         toCw==
+X-Gm-Message-State: AOJu0YyAD98as7I597qLmo9gOGDZqQ9xPPAYog0o/GWfnfZzU2sgKhyr
+	rwJchTuWZo3dErTiQ4TBGsNWgK6KZuUCq3dOKYRx4xIF/X6H
+X-Google-Smtp-Source: AGHT+IEpRdYEUpk+QhT8i+5s3rd/dbOy04wsTYq0jFBu6zIyiwxN5sLmfhVs+S11QU0A2JGZ1WH88c+DRE7pk+Bm7MDN3UCGPqZo
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220084928.298302-1-winters.zc@antgroup.com> <20231220084928.298302-2-winters.zc@antgroup.com>
-In-Reply-To: <20231220084928.298302-2-winters.zc@antgroup.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 4 Jan 2024 13:03:11 +0100
-Message-ID: <CAJfpegtTzwANHiZty89qo77ryz0XAN4_uDP9oZ4Syx4D4YkiDA@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 1/2] fuse: Introduce a new notification type for
- resend pending requests
-To: Zhao Chen <winters.zc@antgroup.com>
-Cc: linux-fsdevel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1a2a:b0:35f:f683:f76b with SMTP id
+ g10-20020a056e021a2a00b0035ff683f76bmr75190ile.3.1704369865137; Thu, 04 Jan
+ 2024 04:04:25 -0800 (PST)
+Date: Thu, 04 Jan 2024 04:04:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000060a6c9060e1d8851@google.com>
+Subject: [syzbot] [ntfs3?] KMSAN: kernel-infoleak in listxattr
+From: syzbot <syzbot+608044293020556ff16b@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 20 Dec 2023 at 09:49, Zhao Chen <winters.zc@antgroup.com> wrote:
->
-> When a FUSE daemon panics and failover, we aim to minimize the impact on
-> applications by reusing the existing FUSE connection. During this process,
-> another daemon is employed to preserve the FUSE connection's file
-> descriptor. The new started FUSE Daemon will takeover the fd and continue
-> to provide service.
->
-> However, it is possible for some inflight requests to be lost and never
-> returned. As a result, applications awaiting replies would become stuck
-> forever. To address this, we can resend these pending requests to the
-> new started FUSE daemon.
->
-> This patch introduces a new notification type "FUSE_NOTIFY_RESEND", which
-> can trigger resending of the pending requests, ensuring they are properly
-> processed again.
->
-> Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
-> ---
->  fs/fuse/dev.c             | 64 +++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/fuse.h |  1 +
->  2 files changed, 65 insertions(+)
->
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 1a8f82f478cb..a5a874b2f2e2 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -1775,6 +1775,67 @@ static int fuse_notify_retrieve(struct fuse_conn *fc, unsigned int size,
->         return err;
->  }
->
-> +/*
-> + * Resending all processing queue requests.
-> + *
-> + * During a FUSE daemon panics and failover, it is possible for some inflight
-> + * requests to be lost and never returned. As a result, applications awaiting
-> + * replies would become stuck forever. To address this, we can use notification
-> + * to trigger resending of these pending requests to the FUSE daemon, ensuring
-> + * they are properly processed again.
-> + *
-> + * Please note that this strategy is applicable only to idempotent requests or
-> + * if the FUSE daemon takes careful measures to avoid processing duplicated
-> + * non-idempotent requests.
-> + */
-> +static void fuse_resend(struct fuse_conn *fc)
-> +{
-> +       struct fuse_dev *fud;
-> +       struct fuse_req *req, *next;
-> +       struct fuse_iqueue *fiq = &fc->iq;
-> +       LIST_HEAD(to_queue);
-> +       unsigned int i;
-> +
-> +       spin_lock(&fc->lock);
-> +       if (!fc->connected) {
-> +               spin_unlock(&fc->lock);
-> +               return;
-> +       }
-> +
-> +       list_for_each_entry(fud, &fc->devices, entry) {
-> +               struct fuse_pqueue *fpq = &fud->pq;
-> +
-> +               spin_lock(&fpq->lock);
-> +               list_for_each_entry_safe(req, next, &fpq->io, list) {
+Hello,
 
-Handling of requests on fpq->io is tricky, since they are in the state
-of being read or written by the fuse server.   Re-queuing it in this
-state likely can result in some sort of corruption.
+syzbot found the following issue on:
 
-The simplest solution is to just ignore requests in the I/O state.  Is
-this a good solution for your use case?
+HEAD commit:    8735c7c84d1b Merge tag '6.7rc7-smb3-srv-fix' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11dec9a1e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4130d4bb32c48ef
+dashboard link: https://syzkaller.appspot.com/bug?extid=608044293020556ff16b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Thanks,
-Miklos
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/03cd0531b6f3/disk-8735c7c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6bb4ebecaed0/vmlinux-8735c7c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e40c5a86a2b5/bzImage-8735c7c8.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+608044293020556ff16b@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x100 lib/usercopy.c:40
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _copy_to_user+0xbc/0x100 lib/usercopy.c:40
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ listxattr+0x2e9/0x6a0 fs/xattr.c:843
+ path_listxattr fs/xattr.c:865 [inline]
+ __do_sys_listxattr fs/xattr.c:877 [inline]
+ __se_sys_listxattr fs/xattr.c:874 [inline]
+ __x64_sys_listxattr+0x16b/0x2e0 fs/xattr.c:874
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was stored to memory at:
+ ntfs_list_ea fs/ntfs3/xattr.c:232 [inline]
+ ntfs_listxattr+0x5d2/0x8d0 fs/ntfs3/xattr.c:733
+ vfs_listxattr fs/xattr.c:494 [inline]
+ listxattr+0x1f0/0x6a0 fs/xattr.c:841
+ path_listxattr fs/xattr.c:865 [inline]
+ __do_sys_listxattr fs/xattr.c:877 [inline]
+ __se_sys_listxattr fs/xattr.c:874 [inline]
+ __x64_sys_listxattr+0x16b/0x2e0 fs/xattr.c:874
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Uninit was created at:
+ slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
+ slab_alloc_node mm/slub.c:3478 [inline]
+ __kmem_cache_alloc_node+0x5c9/0x970 mm/slub.c:3517
+ __do_kmalloc_node mm/slab_common.c:1006 [inline]
+ __kmalloc+0x121/0x3c0 mm/slab_common.c:1020
+ kmalloc include/linux/slab.h:604 [inline]
+ ntfs_read_ea+0x78c/0x10b0 fs/ntfs3/xattr.c:118
+ ntfs_list_ea fs/ntfs3/xattr.c:204 [inline]
+ ntfs_listxattr+0x173/0x8d0 fs/ntfs3/xattr.c:733
+ vfs_listxattr fs/xattr.c:494 [inline]
+ listxattr+0x1f0/0x6a0 fs/xattr.c:841
+ path_listxattr fs/xattr.c:865 [inline]
+ __do_sys_listxattr fs/xattr.c:877 [inline]
+ __se_sys_listxattr fs/xattr.c:874 [inline]
+ __x64_sys_listxattr+0x16b/0x2e0 fs/xattr.c:874
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+
+Bytes 26-31 of 63 are uninitialized
+Memory access of size 63 starts at ffff888103174b40
+Data copied to user address 0000000020000080
+
+CPU: 0 PID: 5727 Comm: syz-executor.4 Not tainted 6.7.0-rc7-syzkaller-00029-g8735c7c84d1b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
