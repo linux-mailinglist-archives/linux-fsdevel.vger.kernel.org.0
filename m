@@ -1,104 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-7424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF9A8249FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 22:08:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 450F5824A22
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 22:17:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A176285CBE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 21:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D389F285B4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 21:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5702C6A2;
-	Thu,  4 Jan 2024 21:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA43D2C6AE;
+	Thu,  4 Jan 2024 21:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jCQNvj5s"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ty799Qn8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0B32C191;
-	Thu,  4 Jan 2024 21:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A032C698;
+	Thu,  4 Jan 2024 21:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=cOfSf5C8D1sJUiWQ/RlTxPDbyCpmXzMJ+TOzMFfAhf0=; b=jCQNvj5sCf7R/im7v+/FGKmHFd
-	oV/yyDZymsV0NB7nHUIa1Tfu5USCEst/mhUYmJ4A/qOCY8VbMCe4o3ZLMajwGhyPE2hnM7jm7e6mH
-	BG4PUsUhUW9nSN1UAOE+WJanlUmvX3hk1lk6PbBpmShVHjlvPxjaZyo5NdO2DnMo7ZvyIjXGgQGH/
-	8AvtNCcfeFj2YKC4J4Xt3rTIhvvSmXtqu3OLDmGzhgOHETrxaow6zIXfOoBHdIfQTwej0k4ieFoDd
-	x0VaGGGNX+S1WTOZmWqYlr+g8qIZ58NqznE5NBItJI3CUfhIxf+FxCi5qHNY5283Agksl1V3w28gw
-	Ef8g3WiQ==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rLUxJ-00FEgP-0Q;
-	Thu, 04 Jan 2024 21:08:45 +0000
-Message-ID: <8fd06532-0ae8-47a7-a4f2-f5b01a25bf93@infradead.org>
-Date: Thu, 4 Jan 2024 13:08:44 -0800
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=p5F8u3xrKU8ESZxmcg8jQ8IAjNp1yE/fjU1J5AXQvGQ=; b=ty799Qn8Fd+rytCk14M0ZVq25I
+	YiBoR7XxLbFmlNS85l+O0gooTrHaDk5fhLePvNU0dGp4e1aMmTnss9STQyHl1VejW4/57v7YeIMBT
+	ZP9rfvynFQ/IN6FqUpfPmxtyPBqFFxwyJMh/iOFqQYxJdTTEz1eSljsz03RUgd9NPFc9D695RfHwk
+	+08zzTszFt8/e9TS1tjVeg0a9Dg7clSrdazeYNx0BSMUnh50XbIuN4hkn2wwogAacauBJO2ucG1rP
+	JnlzoMgHsQUMwe3gYgnlXHjcmHCDNYpPswNwzduYNn/s2OLszGXp84YD0ABSGA9UbbP+tu1yvCFeQ
+	WLAfi1sQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rLV5Y-00G1t1-Vo; Thu, 04 Jan 2024 21:17:17 +0000
+Date: Thu, 4 Jan 2024 21:17:16 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <ZZcgXI46AinlcBDP@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] doc: Improve the description of __folio_mark_dirty
-Content-Language: en-US
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240104163652.3705753-1-willy@infradead.org>
- <20240104163652.3705753-2-willy@infradead.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240104163652.3705753-2-willy@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+This is primarily a _FILESYSTEM_ track topic.  All the work has already
+been done on the MM side; the FS people need to do their part.  It could
+be a joint session, but I'm not sure there's much for the MM people
+to say.
 
+There are situations where we need to allocate memory, but cannot call
+into the filesystem to free memory.  Generally this is because we're
+holding a lock or we've started a transaction, and attempting to write
+out dirty folios to reclaim memory would result in a deadlock.
 
-On 1/4/24 08:36, Matthew Wilcox (Oracle) wrote:
-> I've learned why it's safe to call __folio_mark_dirty() from
-> mark_buffer_dirty() without holding the folio lock, so update
-> the description to explain why.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/page-writeback.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index cd4e4ae77c40..96da6716cb86 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2652,11 +2652,15 @@ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
->   * If warn is true, then emit a warning if the folio is not uptodate and has
->   * not been truncated.
->   *
-> - * The caller must hold folio_memcg_lock().  Most callers have the folio
-> - * locked.  A few have the folio blocked from truncation through other
-> - * means (eg zap_vma_pages() has it mapped and is holding the page table
-> - * lock).  This can also be called from mark_buffer_dirty(), which I
-> - * cannot prove is always protected against truncate.
-> + * The caller must hold folio_memcg_lock().  It is the caller's
-> + * responsibility to prevent the folio from being truncated while
-> + * this function is in progress, although it may have been truncated
-> + * before this function is called.  Most callers have the folio locked.
-> + * A few have the folio blocked from truncation through other means (eg
+The old way to solve this problem is to specify GFP_NOFS when allocating
+memory.  This conveys little information about what is being protected
+against, and so it is hard to know when it might be safe to remove.
+It's also a reflex -- many filesystem authors use GFP_NOFS by default
+even when they could use GFP_KERNEL because there's no risk of deadlock.
 
-preferably s/eg/e.g./
+The new way is to use the scoped APIs -- memalloc_nofs_save() and
+memalloc_nofs_restore().  These should be called when we start a
+transaction or take a lock that would cause a GFP_KERNEL allocation to
+deadlock.  Then just use GFP_KERNEL as normal.  The memory allocators
+can see the nofs situation is in effect and will not call back into
+the filesystem.
 
-> + * zap_vma_pages() has it mapped and is holding the page table lock).
-> + * When called from mark_buffer_dirty(), the filesystem should hold a
-> + * reference to the buffer_head that is being marked dirty, which causes
-> + * try_to_free_buffers() to fail.
->   */
->  void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
->  			     int warn)
+This results in better code within your filesystem as you don't need to
+pass around gfp flags as much, and can lead to better performance from
+the memory allocators as GFP_NOFS will not be used unnecessarily.
 
--- 
-#Randy
+The memalloc_nofs APIs were introduced in May 2017, but we still have
+over 1000 uses of GFP_NOFS in fs/ today (and 200 outside fs/, which is
+really sad).  This session is for filesystem developers to talk about
+what they need to do to fix up their own filesystem, or share stories
+about how they made their filesystem better by adopting the new APIs.
+
+My interest in this is that I'd like to get rid of the FGP_NOFS flag.
+It'd also be good to get rid of the __GFP_FS flag since there's always
+demand for more GFP flags.  I have a git branch with some work in this
+area, so there's a certain amount of conference-driven development going
+on here too.
+
+We could mutatis mutandi for GFP_NOIO, memalloc_noio_save/restore,
+__GFP_IO, etc, so maybe the block people are also interested.  I haven't
+looked into that in any detail though.  I guess we'll see what interest
+this topic gains.
 
