@@ -1,282 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-7386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D8D8244C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:16:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A268C8244DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4982860FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:16:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5151F227F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0252F241F9;
-	Thu,  4 Jan 2024 15:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D13241FE;
+	Thu,  4 Jan 2024 15:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t8OW53/b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9CD241E7;
-	Thu,  4 Jan 2024 15:16:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC1BC433C7;
-	Thu,  4 Jan 2024 15:16:12 +0000 (UTC)
-Date: Thu, 4 Jan 2024 10:17:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: syzbot <syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, bristot@redhat.com, bsegall@google.com,
- chouhan.shreyansh630@gmail.com, dietmar.eggemann@arm.com, jack@suse.cz,
- jeffm@suse.com, juri.lelli@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@suse.de,
- mingo@redhat.com, peterz@infradead.org, reiserfs-devel@vger.kernel.org,
- rkovhaev@gmail.com, syzkaller-bugs@googlegroups.com,
- vincent.guittot@linaro.org
-Subject: Re: [syzbot] [mm?] [reiserfs?] general protection fault in
- free_swap_cache (4)
-Message-ID: <20240104101717.6c7fd262@gandalf.local.home>
-In-Reply-To: <0000000000008a0fa9060e1d198e@google.com>
-References: <0000000000008a0fa9060e1d198e@google.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CECD241E2;
+	Thu,  4 Jan 2024 15:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240104152317euoutp02af64ea5d44089fbf76814de916d80a0e~nLjblY91G0383403834euoutp02S;
+	Thu,  4 Jan 2024 15:23:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240104152317euoutp02af64ea5d44089fbf76814de916d80a0e~nLjblY91G0383403834euoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1704381797;
+	bh=JalEKYMkjsneZ1f8omw/O0M8dMeqvgrqvomUY87Fhfg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=t8OW53/bBoW8L9GkkTvvZs4nFJoit0t32xAeCuyCdhzm1xAwgLcS4i+QWCwdYR751
+	 uKMHMPmL5vl+T13dMvzs0JbHPIPONUmbj2fR7/shSJjCihhOnUxf+2BsbU5u+eRnWB
+	 tCGKFybp2cf3kUnCH+qV1xVYfB6EOQwcBXv3BBDg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240104152317eucas1p19950f0b8746d6f6c732a2653a49e0a67~nLjbVXSBN1357313573eucas1p1J;
+	Thu,  4 Jan 2024 15:23:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id D1.15.09539.46DC6956; Thu,  4
+	Jan 2024 15:23:16 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240104152316eucas1p15614f44c3e210a165983df57e9014009~nLja2BBXo1074810748eucas1p17;
+	Thu,  4 Jan 2024 15:23:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240104152316eusmtrp27b5ba330034b29d296ed9522af8c9794~nLja06KbN2376823768eusmtrp2M;
+	Thu,  4 Jan 2024 15:23:16 +0000 (GMT)
+X-AuditID: cbfec7f2-515ff70000002543-5e-6596cd646407
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id D0.E3.09146.46DC6956; Thu,  4
+	Jan 2024 15:23:16 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240104152316eusmtip1a81f893d56955799d8aa2aa6593eae90~nLjaj-tQO0636206362eusmtip1-;
+	Thu,  4 Jan 2024 15:23:16 +0000 (GMT)
+Received: from localhost (106.210.248.231) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 4 Jan 2024 15:23:15 +0000
+Date: Thu, 4 Jan 2024 16:23:11 +0100
+From: Joel Granados <j.granados@samsung.com>
+To: Matthew Wilcox <willy@infradead.org>
+CC: Luis Chamberlain <mcgrof@kernel.org>, <josh@joshtriplett.org>, Kees Cook
+	<keescook@chromium.org>, Eric Biederman <ebiederm@xmission.com>, Iurii
+	Zaikin <yzaikin@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+	Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thomas
+	Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, Stephen
+	Boyd <sboyd@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry
+	<wad@chromium.org>, Ingo Molnar <mingo@redhat.com>, Peter Zijlstra
+	<peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Daniel
+	Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider
+	<vschneid@redhat.com>, Petr Mladek <pmladek@suse.com>, John Ogness
+	<john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S Keshavamurthy
+	<anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
+	Balbir Singh <bsingharora@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+	<john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+	KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 00/10] sysctl: Remove sentinel elements from kernel
+ dir
+Message-ID: <20240104152311.f62uxcnimol5qwxx@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="jzrq2uleinvzsb23"
+Content-Disposition: inline
+In-Reply-To: <ZZbJRiN8ENV/FoTV@casper.infradead.org>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA2VTazBcZxjud87ZcxZds5bwRTpjZkOmFTSRhK8XnaTVyZlp0shM+yP5kdrG
+	GTTsiqWk1RmbirpUY8LSIKxL3NYlNkuo6yg2CEoIJYmUsF0rS12KitXdHG0z03/P+zzv873P
+	8+Pj4oJmypEbLI5gwsWiECFpSdR1bfS7B/RlMAdqdV5obTMbR42/TxBoZWOCQssdGhINTY+Q
+	KFMnI1CO7h6FCvP/xFHOQByBZlJrcbRdF0ehdk0rhS7Xl2KobjgPoI70LJOgkKDnd2tI9Oiq
+	nED3kkNRY+8qhrQtKRhqau4m0P2fckjUUd1HIGVlLAfdHB3EUEViGQeNpc4AlGaYBaiwZB8a
+	alNgSJm+RSFNShuGtqdXOagl4QmGjA9qCDS0ridQY00BiTQlWyS6rZLjKKHDlLC2c41CE0nb
+	FNpcN915oqzjoOKGj4960JPzWwRdkVsB6OzYQYJWl/2K0Q1Zjyg6rmWcohWqSPp2qStd2KTD
+	6KSxIZwe1/vQqvJEkn74oImkDf39FJ0fK8fp1II24Gd/1vLdACYk+Esm/M33/C2DRlpWQJjB
+	KlqxsMyJBVWWScCCC/mHoXawhpMELLkCfimAldX9O8MKgD/f2CTZYRnAyRSdaeC+sMxNO5nd
+	An4JgPoch393rhdMk6ygBnBTv9uMCb4zHPnx1gue5LvBgfmHuPkdO/7rcF7taaZxfg0PXqv/
+	3Ixt+X5w+E4zYcY8vjdUFxkBi21g9/WnBLsfDct0JcD8DM7fA0uMXDNtYUrW1P39Tsq9cEnr
+	z3b8BvaoxzFzSshfsIIVRUrACr6wdqZ1B9vCOY2aYvFrcLshb8eQBmCrcZFiByWAxbJVjN16
+	B8YNP6XYa8fg8x+iWGgNx57ZsDGt4bW6TJyleTAhXsAa90Hl43kiFezNeqlY1kvFsv4rxtJu
+	UNG4RP6P3g+L8/U4i31gVdUCoQBUOXBgIqWhgYz0oJiJ8pCKQqWR4kCP85JQFTD9ql6jZqke
+	3Jj7w6MdYFzQDpxN5qlbyl+AIyGWiBmhHa+6Ko0R8AJEl75iwiWfhUeGMNJ2sIdLCB14LgFO
+	jIAfKIpgLjBMGBP+j4pxLRxjsSh1srvTB13D23M96QNMsFeS59XkA187+oY807r49TRtvjJ7
+	3jXurxP7XeSqXK2xJ/7OqNdxv3apQrKr1Cj3HA+8uy60mu2ydr45ZRt9atHakusq4/jFjJZ7
+	vJVxQt2ZGmJf/UXRR7LVCzZ9HKvEcq3LzOHxty2Go0NqrW1PxvtPFTQHGdw6E1Xnags6Hfo+
+	FZ7SZ2EL7u2jdssXA0YCj6zu+s7rVbfTl+y7f6uXZeMx4yMjYWcMst7MyeDsy55HWk4vGjbu
+	43m7F4nqCApFOE58kluZcebKgkjtHXPl4qH+tW993pCMtZ07+tj3QzcoD9QeEvUvvQ8WDKEn
+	vcUJwcfOpgoJaZDooCseLhX9DXoa/GDQBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA2VTe0xTVxz23Ht7b0FIKuC8dHNulTiHrrbldTqK2UbirpKBWcyW6DatcANk
+	lJI+jDzUwpgpBTeUxyaCFhBRW3mDMhiyrsAYD6EdyFMRBCyvBXwAQ2DtmmUm++873+/7vt/v
+	d3IOE3UZwtnMyGgFLYsWR3FwR6xtrWX4vbCObJrXNe4GF1cuobDuySAGny0PEvCpsQWHprEe
+	HP5gScRgrqWdgIX5L1CYey8Zg+Pp1Shcr0kmoKHlLgGT7lxHYM0fVwA0ZuZYC1opfPlbOQ6H
+	v8/CYHuqBNa1PUfgZMM5BNb/3IpB80+5ODSWdmBQd0vFgEX3uxGoT7nBgH3p4wBmzE0AWFi8
+	A5oatQjUZa4SsOVcIwLXx54zYIN6BIFrveUYNC1NY7CuvACHLcWrOKysyEKh2midsLppkYCD
+	mnUCrixZ+4zoahjwWm3wB1zq4cwqRukv6wF1SdWNUVU3+hGqNmeYoJIbBghKW6GkKq97UoX1
+	FoTS9JlQamA6gKq4mYJTQ731ODXX2UlQ+aoslEovaAQHXzvMFcmkSgX9VoRUrgjgHOFDAZcv
+	hFyBt5DL9/L78n2BD2fPXlEYHRV5gpbt2XuMG3F1fQmLmdl4cvbsNwwV0DtqAJNJsrzJqbFt
+	GuDIdGEVATL1vhnVAAcr/wZZ/qyHYceu5MteDW4XzQPS0DyK2g9VgHz0YPYfFcbyIHt+LMNt
+	GGftJu/NDKG2Dm6sneRMlcCmR1nlzuTy+SbExruygsnKWcomd2b5kVVX14A9sxeQy81NhL2w
+	iWy9+BizYZR1gpxYSGXYvCjrdbJ4jWmjHawL1Lem4fZltpMLk8fsM58in65OgHTgmvNKUM4r
+	QTn/BdlpT7JvzYL8j95FXsufRu04gCwp+RPTAuImcKOVckm4RM7nysUSuTI6nBsqlVQA69Ou
+	aV6uvAMuT81zDQBhAgPwsDpHy3RdgI1FS6NpjptzaUkG7eIcJo6No2XSozJlFC03AB/rHZ5H
+	2ZtDpdZ/Eq04yvfl+fC9fYU8H6GvF2eL8/4YtdiFFS5W0F/TdAwt+9eHMB3YKkTfGPgicKF6
+	5vZJk+jt4n1bk4qkXvFTO7a+8yT+I4fY2aCAd5PIWPzjTdWfhVtOTbVppJOb42I+SVAf6jpn
+	qV3MYgcyhZ5NrR1a+PluP2OeB9tJ43TAkPkX3z8v+9HwhtSzvHjjdp7guI/yixSRQ58AnS84
+	Ejkqdqv+zl2btNJSOpC2JeiQkHTqzB574H885HZDyPyBDRn9v5i/DakZjavifppWh48pLrgT
+	A/2u2cG0MESvzjzofua0Z79upD7PXNv81c6gh6FDjzlzF1R3NfDim7uutA63ByTeEpgWOs2j
+	OlGCaGPCfkk8MIuWeB/2eKyAicPbuk8nninzV1f8PvGrOweTR4j5nqhMLv4bnkmcD28EAAA=
+X-CMS-MailID: 20240104152316eucas1p15614f44c3e210a165983df57e9014009
+X-Msg-Generator: CA
+X-RootMTR: 20240104150558eucas1p2cfaa2a4ea3933e8dfbf1bc94fb9e6ff5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240104150558eucas1p2cfaa2a4ea3933e8dfbf1bc94fb9e6ff5
+References: <20240104-jag-sysctl_remove_empty_elem_kernel-v2-0-836cc04e00ec@samsung.com>
+	<CGME20240104150558eucas1p2cfaa2a4ea3933e8dfbf1bc94fb9e6ff5@eucas1p2.samsung.com>
+	<ZZbJRiN8ENV/FoTV@casper.infradead.org>
+
+--jzrq2uleinvzsb23
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 04 Jan 2024 03:33:25 -0800
-syzbot <syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com> wrote:
-
-> Hello,
+On Thu, Jan 04, 2024 at 03:05:42PM +0000, Matthew Wilcox wrote:
+> On Thu, Jan 04, 2024 at 04:02:21PM +0100, Joel Granados via B4 Relay wrot=
+e:
+> > From: Joel Granados <j.granados@samsung.com>
+> >=20
+> > What?
 >=20
-> syzbot found the following issue on:
+> The reason I wanted you to do the sentinel removal before the split was
+> so that there weren't two rounds of patches.  Ironically, because you
+> refused to do it that way, not only are there two rounds of patches, but
+> I'm being cc'd on all of them, so I get all the $%*^ emails twice.
 >=20
-> HEAD commit:    610a9b8f49fb Linux 6.7-rc8
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D106d2699e80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D48ca880a5d56f=
-9b1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfd93e36ced1a43a=
-58f75
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15f4cc41e80=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14d526ade80000
->=20
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b1acb98afcb0/dis=
-k-610a9b8f.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/4f7d6503eb8c/vmlinu=
-x-610a9b8f.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/927f38e505d9/b=
-zImage-610a9b8f.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/c4f427645c=
-60/mount_0.gz
->=20
-> The issue was bisected to:
->=20
-> commit 13d257503c0930010ef9eed78b689cec417ab741
-> Author: Shreyansh Chouhan <chouhan.shreyansh630@gmail.com>
-> Date:   Fri Jul 9 15:29:29 2021 +0000
->=20
->     reiserfs: check directory items on read from disk
->=20
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1603b8f9e8=
-0000
+> Please at least stop cc'ing me.
+Will do
 
-=46rom the above there's this:
+--=20
 
-testing commit c81cfb6256d90ea5ba4a6fb280ea3b171be4e05c gcc
-compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.40
-kernel signature: 497e79600c6ea11f26483c542ee335e10f144dccb7fe657a67bd32d52=
-7271e77
-all runs: OK
-false negative chance: 0.000
-# git bisect good c81cfb6256d90ea5ba4a6fb280ea3b171be4e05c
-Bisecting: 936 revisions left to test after this (roughly 10 steps)
-[e04480920d1eec9c061841399aa6f35b6f987d8b] Bluetooth: defer cleanup of reso=
-urces in hci_unregister_dev()
+Joel Granados
 
-testing commit e04480920d1eec9c061841399aa6f35b6f987d8b gcc
-compiler: gcc (GCC) 10.2.1 20210217, GNU ld (GNU Binutils for Debian) 2.40
-kernel signature: 05fb4fd86182a07a0a9fbfcc25fafd9df57e9d38d1c03a915a6b73410=
-507148c
-run #0: crashed: BUG: unable to handle kernel paging request in leaf_paste_=
-in_buffer
-run #1: crashed: BUG: unable to handle kernel NULL pointer dereference in e=
-xpand_downwards
-run #2: crashed: INFO: trying to register non-static key in inode_doinit_wi=
-th_dentry
-run #3: crashed: BUG: unable to handle kernel paging request in do_epoll_wa=
-it
-run #4: OK
-run #5: OK
-run #6: OK
-run #7: OK
-run #8: OK
-run #9: OK
-run #10: OK
-run #11: OK
-run #12: OK
-run #13: OK
-run #14: OK
-run #15: OK
-run #16: OK
-run #17: OK
-run #18: OK
-run #19: OK
-representative crash: BUG: unable to handle kernel paging request in leaf_p=
-aste_in_buffer, types: [UNKNOWN]
-# git bisect bad e04480920d1eec9c061841399aa6f35b6f987d8b
-Bisecting: 456 revisions left to test after this (roughly 9 steps)
-[1e60cebf82948cfdc9497ea4553bab125587593c] net: let flow have same hash in =
-two directions
+--jzrq2uleinvzsb23
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If the "bad" only crashed 20% of the time, you can not trust any of the
-"all runs: OK".
+-----BEGIN PGP SIGNATURE-----
 
-Not to mention each crash looks to be a separate bug!
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmWWzV4ACgkQupfNUreW
+QU8FhwwAiNDNSaoaB/pGcA4KJtPoMdEJm9tL4XsYkZf24rQJXWitgrDdtcgoZo65
+VMARclf+GYvEvKwbnBJTK3mvcW4sHq0QoAGQy8AtQuo8dFk2K+n4XvvyKuWRlPRF
+hgE2MsdpbWNSFaKPYw5o6MYcjDmxkusvPifKASX/NANB16gjAWtjHqLfhRN+uXA7
+Hsxg3zQwr0sN+/7apAHCWO5X1A4RLpBoT9tjPnqPCKWCeya9HMpQfIwfRs9qIiM3
+NQsVAtLT8f5e969fRNEzDvPF2m/bV3ecyxTL/mEOd7TP2H0pL/8FkPw55aWMSt0q
+XxavHxTdl1Qo7oPVQMUckL9j58Nc5oDzPevLjGi0wZEpFcuQWRskWSZf7nTh0wEj
+cGU7UYjwF9ZRvp4axwPkIMQ1aanxXZ+KOh6GwORsCpHpnjzDKdBG273k5Lo7GB7j
+KpdO+fxc94k33h0uCV46v8YhAKy3WGnioX0EMwmOjhQiMnGU3cpVLedXpBJUmxFk
+57Osrz7P
+=hr38
+-----END PGP SIGNATURE-----
 
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1503b8f9e8=
-0000
-
-And this is:
-
-REISERFS (device loop0): checking transaction log (loop0)
-REISERFS (device loop0): Using r5 hash to sort names
-REISERFS (device loop0): using 3.5.x disk format
-REISERFS (device loop0): Created .reiserfs_priv - reserved for xattr storag=
-e.
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: =
-__schedule+0x13c2/0x13e0 kernel/sched/core.c:5948
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-Which looks like a corrupted (overrun?) stack. Which saying this is a
-"general protection fault" bug will put us in a wild goose chase.
-
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1103b8f9e80000
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+fd93e36ced1a43a58f75@syzkaller.appspotmail.com
-> Fixes: 13d257503c09 ("reiserfs: check directory items on read from disk")
->=20
-> general protection fault, probably for non-canonical address 0xdffffc0000=
-000001: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-> CPU: 1 PID: 5048 Comm: sshd Not tainted 6.7.0-rc8-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 11/17/2023
-> RIP: 0010:_compound_head include/linux/page-flags.h:247 [inline]
-> RIP: 0010:free_swap_cache+0x25/0x3d0 mm/swap_state.c:287
-> Code: 0f 1f 44 00 00 66 0f 1f 00 41 54 55 53 48 89 fb e8 90 e9 b2 ff 48 8=
-d 7b 08 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f=
- 85 34 03 00 00 4c 8b 63 08 31 ff 4c 89 e5 83 e5 01
-> RSP: 0018:ffffc900034df938 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81d3826a
-> RDX: 0000000000000001 RSI: ffffffff81d37b70 RDI: 0000000000000008
-> RBP: 0000000000000005 R08: 0000000000000004 R09: 0000000000000200
-> R10: 0000000000000004 R11: 0000000000000001 R12: 0000000000000200
-> R13: dffffc0000000000 R14: ffff88807490d010 R15: ffff88807490d008
-> FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffc22cebe00 CR3: 000000007c973000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  free_pages_and_swap_cache+0x60/0xa0 mm/swap_state.c:315
->  tlb_batch_pages_flush+0x9a/0x190 mm/mmu_gather.c:98
->  tlb_flush_mmu_free mm/mmu_gather.c:293 [inline]
->  tlb_flush_mmu mm/mmu_gather.c:300 [inline]
->  tlb_finish_mmu+0x14b/0x6f0 mm/mmu_gather.c:392
->  exit_mmap+0x38b/0xa70 mm/mmap.c:3321
->  __mmput+0x12a/0x4d0 kernel/fork.c:1349
->  mmput+0x62/0x70 kernel/fork.c:1371
->  exit_mm kernel/exit.c:567 [inline]
->  do_exit+0x9a5/0x2ad0 kernel/exit.c:856
->  do_group_exit+0xd4/0x2a0 kernel/exit.c:1018
->  get_signal+0x23b5/0x2790 kernel/signal.c:2904
->  arch_do_signal_or_restart+0x90/0x7f0 arch/x86/kernel/signal.c:309
->  exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
->  exit_to_user_mode_prepare+0x121/0x240 kernel/entry/common.c:204
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
->  syscall_exit_to_user_mode+0x1e/0x60 kernel/entry/common.c:296
->  do_syscall_64+0x4d/0x110 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> RIP: 0033:0x5623b9f0af8e
-> Code: Unable to access opcode bytes at 0x5623b9f0af64.
-> RSP: 002b:00007fff3b36f178 EFLAGS: 00000246 ORIG_RAX: 000000000000010f
-> RAX: 0000000000000000 RBX: 00000000000668a0 RCX: 00007f85b4f19ad5
-> RDX: 00007fff3b36f180 RSI: 00007fff3b36f2b0 RDI: 0000000000000011
-> RBP: 00005623bb920260 R08: 0000000000000008 R09: 0000000000000000
-> R10: 00007fff3b36f848 R11: 0000000000000246 R12: 00005623b9f8faa4
-> R13: 0000000000000001 R14: 00005623b9f903e8 R15: 00007fff3b36f7c8
->  </TASK>
-> Modules linked in:
-> ----------------
-> Code disassembly (best guess):
->    0:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->    5:	66 0f 1f 00          	nopw   (%rax)
->    9:	41 54                	push   %r12
->    b:	55                   	push   %rbp
->    c:	53                   	push   %rbx
->    d:	48 89 fb             	mov    %rdi,%rbx
->   10:	e8 90 e9 b2 ff       	call   0xffb2e9a5
->   15:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
->   19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
->   20:	fc ff df
->   23:	48 89 fa             	mov    %rdi,%rdx
->   26:	48 c1 ea 03          	shr    $0x3,%rdx
-> * 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instru=
-ction
->   2e:	0f 85 34 03 00 00    	jne    0x368
->   34:	4c 8b 63 08          	mov    0x8(%rbx),%r12
->   38:	31 ff                	xor    %edi,%edi
->   3a:	4c 89 e5             	mov    %r12,%rbp
->   3d:	83 e5 01             	and    $0x1,%ebp
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-
-I would say it does.
-
-Anyway, it is possibly a reiserfs bug that's using too much stack.
-
-But it would be nice if these bot reports had a bit better bisecting
-algorithm.
-
--- Steve
-
-
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
-
+--jzrq2uleinvzsb23--
 
