@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-7383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD95824478
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:04:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2172824479
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:04:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F84F1F27070
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:04:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152B31C20E68
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 15:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FA22554C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A7F2554D;
 	Thu,  4 Jan 2024 15:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzKw1YP7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsW7Rb53"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57880249EA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987A224A1A;
 	Thu,  4 Jan 2024 15:02:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0AD6AC433BA;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E381C116D4;
 	Thu,  4 Jan 2024 15:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1704380566;
-	bh=M0lJ+zooV1Yyo+14mKPEjenw2FnX5TBeXLD/QG0EKrM=;
+	bh=kgliciL51YFKa3cLHSM4og0/fDSqaNZhyZTq+Oc81TA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tzKw1YP7iIwTgszbYEuQZQ8dX1nOccWY8M8SGP2Nzp/8LWeIPOGNOr2NNzsoFe9Do
-	 j05IBQDEhuUS2ubHJ5bizSVvzoRJ17h4yzKH75+VO9hik5kXjhUm4A3h3koKADRHct
-	 U+1NakhR+RiLo8W62Qt5qJwvlywtfKPnZzlVgK2qRBTKNMB0y8gwrSxvYmfdZaepNA
-	 hjxHw25riuL0BfKnHW+SchCTLxkgE03cq1ntsNYrLlJDpGACxysJ0+QMD3WIPD0fDO
-	 xU0K5MV2RNIBrUAQapXUgekoxrBZP1PMfyIV2r/cSuP8mxcMYAHXXeM3WrKFsWkaCZ
-	 a8bxTIquTzCbA==
+	b=nsW7Rb53KHfAX0Nh6H1jDfG7qvz2Vk73jXi4InvEpj/YI97BDbcPB6OTAqrJ78lf/
+	 220i2WYgvn/N3OifTztMg+2cewAynAPqsJ1B39cX+q/93lqsNsGEeVhHve4qbdDW2M
+	 nPQzY9L6c062vc8T0G5mM0dJc8nAe/E4TolZpra3XYsf9CSYYoNR4P2w1oqmEmZgGL
+	 f7rFuCacPvM2NcL5SzsSdEObWlRNWhpg4wj7CqJdhchJ23AzKkxLYPvmrryvnoKvMw
+	 6f72MIwHglHjQcf890Y98Ytdkez1qhRl6M2Z9fGBs0QrtVw+UPjtszG88q8Ntr3wGG
+	 skY5giUaXsbsw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F5CC47079;
-	Thu,  4 Jan 2024 15:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0EDC4707C;
+	Thu,  4 Jan 2024 15:02:46 +0000 (UTC)
 From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Thu, 04 Jan 2024 16:02:30 +0100
-Subject: [PATCH v2 09/10] delayacct: Remove the now superfluous sentinel
- elements from ctl_table array
+Date: Thu, 04 Jan 2024 16:02:31 +0100
+Subject: [PATCH v2 10/10] bpf: Remove the now superfluous sentinel elements
+ from ctl_table array
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,7 +48,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Message-Id:
- <20240104-jag-sysctl_remove_empty_elem_kernel-v2-9-836cc04e00ec@samsung.com>
+ <20240104-jag-sysctl_remove_empty_elem_kernel-v2-10-836cc04e00ec@samsung.com>
 References:
  <20240104-jag-sysctl_remove_empty_elem_kernel-v2-0-836cc04e00ec@samsung.com>
 In-Reply-To:
@@ -84,17 +84,17 @@ Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
  linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  bpf@vger.kernel.org, Joel Granados <j.granados@samsung.com>
 X-Mailer: b4 0.13-dev-86aa5
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901; i=j.granados@samsung.com;
- h=from:subject:message-id; bh=PJ/c6fiwMnA0nSEp9ZYMYlywMQK/R+6xe3ijDcw/ADA=;
- b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBllsiRDJVGlokeBPAeSnBuaNAX8JsMtOXt+W+FM
- Cp0ZHKNzvCJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZZbIkQAKCRC6l81St5ZB
- T0exC/0WOlxgdQAPTkUXH2DLj25puL6IGH5/b/8KTxvl+60NCnIK0wEAFPYJnXwxHEsq+TClWFB
- XpCPnd/DbI+DlCwtnb9PaX/0XnOscIW1ghf0w7khP8fPvWHC0bkY33+Kfbi6tS+ntWvPH7ZZvrc
- evDRhuly4KSc4ohC8Qdrdsgmk0yPVg4SKRo4fFUCF0dtwxlt5J1kE22Z6nJ2hG13egE8+T+82xp
- 19Q1JuQuRLHTKzQKqCi1oDxg/XxKIhTZfkS0Vb/9A1DACIS0YLWyMF6lcMcsRfo85Pufe0dOs0k
- H/XDH5JXuHJ1UBeFP1FrRnkIpYr0jkkR6UqYKd3IEzPaz42VXre2MEOIm576M0styOzXhtMTT8D
- ZhJ4mU72oirOt4qo/lmElvXNlIVaD5zsg2WMJgsN2F1r2nmMqo4yGcr2ICMGmjSkqGludZyJFzn
- h+Xn942NzRutgaffrzpd4F8smoC9HOBtKsdbTXiQolKnk7JyhFRKWosghv6n9hJ5OzOO4=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=940; i=j.granados@samsung.com;
+ h=from:subject:message-id; bh=/9ILE3EKbQ2mssrD1gckEhIuv3CDk/DZxHhwPHwwEx0=;
+ b=owEB7QES/pANAwAKAbqXzVK3lkFPAcsmYgBllsiRAKw5WmSLeFL9pLCoRkD2xOQzfyE2LboDw
+ 7ti0+VZZtOJAbMEAAEKAB0WIQSuRwlXJeYxJc7LJ5C6l81St5ZBTwUCZZbIkQAKCRC6l81St5ZB
+ T+WWC/0RXYSdLR/7IJeBBz6p9iDgvsYnr/AK9k7hr4RjLa+NqM+EVZaGeryYzNo/F6bySHxjVV+
+ yCo/sJQztfLOk+xflQF2dbpXVxt4E2GLVXuzPa+t3RnJ/cokx39+4aHygNHzHx4X7xtFEvvdWPE
+ YVk42LgKRPB0L4ZZEMdIq9tHQW7izXPTf7XufBrOUuryFzhStFPaSm4t2vvYugAcHr8nv6Hgvwh
+ zzkB1CJ9WSUqizPTWcvGMxjZm4SG0hxwR/jMkBM/dBWo47XY0GEGmFQPP4NKjklcQd9cfe+lMbF
+ kcnj6FWGOkQmGQLiJCopj0UaNyI7NQmPXqwoglLn3oRUWHv+aPmaByl4Rfau9iD+RIoikEzC0nC
+ NjMbYBfS70oxYAs/nrvCxCOVlp+4t6AS9h1QjsxPffPDrPS8ODiDJ63K3YJQNWZbZdt7xr0CPK4
+ 2RvIJDb3eOOIuAZ/+bSDks7jIt8APRQGbZQOnG2Qr7X+GYIMUcQ92silNWmLhqTEEi6ko=
 X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received:
@@ -110,25 +110,26 @@ will reduce the overall build time size of the kernel and run time
 memory bloat by ~64 bytes per sentinel (further information Link :
 https://lore.kernel.org/all/ZO5Yx5JFogGi%2FcBo@bombadil.infradead.org/)
 
-Remove sentinel element from kern_delayacct_table
+Remove sentinel element from bpf_syscall_table.
 
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 Signed-off-by: Joel Granados <j.granados@samsung.com>
 ---
- kernel/delayacct.c | 1 -
+ kernel/bpf/syscall.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index 6f0c358e73d8..e039b0f99a0b 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -74,7 +74,6 @@ static struct ctl_table kern_delayacct_table[] = {
- 		.extra1         = SYSCTL_ZERO,
- 		.extra2         = SYSCTL_ONE,
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 0ed286b8a0f0..2790deabf639 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -5727,7 +5727,6 @@ static struct ctl_table bpf_syscall_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= bpf_stats_handler,
  	},
 -	{ }
  };
  
- static __init int kernel_delayacct_sysctls_init(void)
+ static int __init bpf_syscall_sysctl_init(void)
 
 -- 
 2.30.2
