@@ -1,158 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-7404-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 640A28247A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 18:43:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C898247CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 18:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B45285A00
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 17:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2474282B89
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 17:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF95128DD1;
-	Thu,  4 Jan 2024 17:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3EC28DBE;
+	Thu,  4 Jan 2024 17:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZBpTMlz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISUYcC5f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29A728DB0;
-	Thu,  4 Jan 2024 17:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4482286BF;
+	Thu,  4 Jan 2024 17:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-67f85d29d14so3442796d6.1;
-        Thu, 04 Jan 2024 09:43:22 -0800 (PST)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dbd5b96b12eso742801276.2;
+        Thu, 04 Jan 2024 09:49:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704390202; x=1704995002; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1704390599; x=1704995399; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZFIIryb7mYBnbq82yqxhExlh548l2vMivKOd0SRme00=;
-        b=LZBpTMlzlvSFhndchxh6GGDnaVyfsaGGPElGi+Aji3acjLRKgkNUQOtw7yfTgpdsBG
-         nikT1jhKiPxLuikCaVbYII5yZGzaXVXCcDKcmVWgBKHeC1yWwurE6tPyI3OxZ+jQcMYa
-         jlObwR82c3Ogtgny5JSRIFwY5cT6tgvssqen/KgDoND6OLsJgO59ld5E9VwfNDugjrJF
-         2BEK6TPsesdNlK3Nid+ckbOspXJ0xO0FJ4cdR9mUH0bpccJRkzbG8SFV2lvur8luxX/z
-         97WD+sUbYRz9sS8OBiy6ycKUpaEJP9p2qeBFF+zacgzOSkUM2862NfzgrCEsw7ARXZRL
-         gujA==
+        bh=c+37izvXEeXVtoNiX+JUfL8hj331igySy/Mhbwc1rQU=;
+        b=ISUYcC5fVq1WIUtK/agw1dIF9s+6CB4jOukHGlnR7dlF4k65AA6D8SKhcFCbenSpdt
+         zRBEHbRhSxR3/z4sj8FcTSexdmY0DUnlfY5H0Ih30wo2Glh1JJJh6BZsZDI+VQnDOfDL
+         pUR0C+bMrd+YS8PaZlFrYxanyMf6wHX4ClG940UVGFZ40Vk2cz6TRyURN6F93/ZIjKEj
+         OTvUHtsba/IAEd3gcZwmva0gINPa+aWlceZd/FJ7HS0HdOcb7SzCEaM0fGbRWkTH1SWV
+         UILkFdbISjaZtsdIba9prbpqibToQ1vEMTFz058eOpTzTM0v9hLcSR/uGi9RMglw5zrF
+         X64g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704390202; x=1704995002;
+        d=1e100.net; s=20230601; t=1704390599; x=1704995399;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZFIIryb7mYBnbq82yqxhExlh548l2vMivKOd0SRme00=;
-        b=gYMvLdJLqAEsAj+cLttgCLRo769n92PK64V/e29d+mCKczWJoVecXFznMoUmZcfJ17
-         qzhB2YZ7KP+N6Ii1GaWC+0wxj/YguFQS6RBcJQMxTnj63IzfScE5atuUlKD78iCRm18N
-         6BjReQLQAitVslvSLOWYq7FOtZTsbDmGPp2RxSGcPTPqdNd4YE2wpS/m7K8LVic11J+P
-         FSLVkzAhRJ36LwrpfBuPPux/yixBLt1EUwvd9s41Hhx/xRN4BZz6oxh6M937PMWk5Umu
-         CayzCcG6xzpojJwPGwSE0oI5xbBNEj1LU8NdkDnRIqyZVAVfIl+Eb0RyWg4q7XtP8hCn
-         qiDA==
-X-Gm-Message-State: AOJu0Yz1DEJfef5TkFH8Adkd6tLKViVTTsn1CRCHoBdzkD6t301qWKlG
-	6SHWePewUIVNp22FXFkeAzyrIjvNuPbqsGDAFKo=
-X-Google-Smtp-Source: AGHT+IEHl1VuMRuCwI1C5vMpY4u0MXtJn5SASZHzotUrJ++6zFJluian9dLYoVysDl6Rvad8aB/SpU7cNEl04nmj9hs=
-X-Received: by 2002:a05:6214:e6d:b0:67e:e37c:6f73 with SMTP id
- jz13-20020a0562140e6d00b0067ee37c6f73mr1101446qvb.54.1704390201715; Thu, 04
- Jan 2024 09:43:21 -0800 (PST)
+        bh=c+37izvXEeXVtoNiX+JUfL8hj331igySy/Mhbwc1rQU=;
+        b=vh5q6pjzZvwKzOEHn4RRlHmlu9GTZmBvf0tklozWuUmFM6O6z/fepPbZ/VJwK5K8hh
+         0z8nDts+XaMSwd1JmWENUtqrw/sXvYHHQ1Up4T/XdrEvfLwODZ9zxIH6P8z9tsa8C6FB
+         wC04sfpLN2D7V7mHN2ETbEKbCigYylOTEsv1RMUXpkL7tJeorN08fjvL7bvvJMbAQP7/
+         ADF21utzJ3bJoPulG9hrNCerE3o0x+aXkZUrNHV/3FC5KatRl44QccBlc595/Ic+reiU
+         3VjvD+zxVCzIA/xcGtLVB7RIEcGzjV061Qqz6sYt+SVjzGaU2SKDSiBlBkxoLlUUZTHo
+         jMag==
+X-Gm-Message-State: AOJu0YyrUdOx0L/JE354sT5h21f3CB0jowqDAXiQM8jxVc/rYabnlsEV
+	3oGrPYOY6k/KPexRXxzjcQea7Kc8AcpImet78kU=
+X-Google-Smtp-Source: AGHT+IHBUFJSviuPospZIVv2OpIi0ss5sY3pA+e0b1l3FCLFxw47TgV821zZPI9PSbRDYHiVvuprzEaMk57NaWhp1XM=
+X-Received: by 2002:a25:8681:0:b0:dbd:bc92:f932 with SMTP id
+ z1-20020a258681000000b00dbdbc92f932mr767124ybk.64.1704390598629; Thu, 04 Jan
+ 2024 09:49:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <170429478711.50646.12675561629884992953.stgit@bazille.1015granger.net>
- <170429517779.50646.9656897459585544068.stgit@bazille.1015granger.net>
- <CAOQ4uxgMLWGqqoSNvSgB=Qfmw6Brk2eO6yB7FZqX6p-DcTiUtw@mail.gmail.com> <ZZbAQEgqbV72RJn8@tissot.1015granger.net>
-In-Reply-To: <ZZbAQEgqbV72RJn8@tissot.1015granger.net>
+References: <170438430288.129184.6116374966267668617.stgit@bazille.1015granger.net>
+ <170438514228.129184.8854845947814287856.stgit@bazille.1015granger.net>
+In-Reply-To: <170438514228.129184.8854845947814287856.stgit@bazille.1015granger.net>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 4 Jan 2024 19:43:10 +0200
-Message-ID: <CAOQ4uxhB506ZunNzmnyk=FKCRHEPOupV34vcfjVMJ9o9SDVJow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] exportfs: fix the fallback implementation of the
- get_name export operation
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Chuck Lever <cel@kernel.org>, jlayton@redhat.com, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Jeff Layton <jlayton@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	trondmy@hammerspace.com, viro@zeniv.linux.org.uk, brauner@kernel.org
+Date: Thu, 4 Jan 2024 19:49:47 +0200
+Message-ID: <CAOQ4uxgC0ysNtgfLL1MOdrok_4WhBW6qvJ+c-MJpzjsYZBrmVg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fs: Create a generic is_dot_dotdot() utility
+To: Chuck Lever <cel@kernel.org>
+Cc: jlayton@redhat.com, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, trondmy@hammerspace.com, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 4, 2024 at 4:27=E2=80=AFPM Chuck Lever <chuck.lever@oracle.com>=
- wrote:
+On Thu, Jan 4, 2024 at 6:19=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
 >
-> On Thu, Jan 04, 2024 at 09:39:04AM +0200, Amir Goldstein wrote:
-> > On Wed, Jan 3, 2024 at 5:19=E2=80=AFPM Chuck Lever <cel@kernel.org> wro=
-te:
-> > >
-> > > From: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > >
-> > > The fallback implementation for the get_name export operation uses
-> > > readdir() to try to match the inode number to a filename. That filena=
-me
-> > > is then used together with lookup_one() to produce a dentry.
-> > > A problem arises when we match the '.' or '..' entries, since that
-> > > causes lookup_one() to fail. This has sometimes been seen to occur fo=
-r
-> > > filesystems that violate POSIX requirements around uniqueness of inod=
-e
-> > > numbers, something that is common for snapshot directories.
-> > >
-> > > This patch just ensures that we skip '.' and '..' rather than allowin=
-g a
-> > > match.
-> > >
-> > > Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > > Acked-by: Amir Goldstein <amir73il@gmail.com>
-> > > Link: https://lore.kernel.org/linux-nfs/CAOQ4uxiOZobN76OKB-VBNXWeFKVw=
-LW_eK5QtthGyYzWU9mjb7Q@mail.gmail.com/
-> > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> > > ---
-> > >  fs/exportfs/expfs.c |    4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> > > index 3ae0154c5680..84af58eaf2ca 100644
-> > > --- a/fs/exportfs/expfs.c
-> > > +++ b/fs/exportfs/expfs.c
-> > > @@ -255,7 +255,9 @@ static bool filldir_one(struct dir_context *ctx, =
-const char *name, int len,
-> > >                 container_of(ctx, struct getdents_callback, ctx);
-> > >
-> > >         buf->sequence++;
-> > > -       if (buf->ino =3D=3D ino && len <=3D NAME_MAX) {
-> > > +       /* Ignore the '.' and '..' entries */
-> > > +       if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] =
-!=3D '.')) &&
-> > > +           buf->ino =3D=3D ino && len <=3D NAME_MAX) {
-> >
-> >
-> > Thank you for creating the helper, but if you already went to this trou=
-ble,
-> > I think it is better to introduce is_dot_dotdot() as a local helper alr=
-eady
-> > in this backportable patch, so that stable kernel code is same as upstr=
-eam
-> > code (good for future fixes) and then dedupe the local helper with the =
-rest
-> > of the local helpers in patch 2?
+> From: Chuck Lever <chuck.lever@oracle.com>
 >
-> There's now no Fixes: nor a Cc: stable on 1/2. You convinced me that
-> 1/2 will not result in any external behavior change.
+> De-duplicate the same functionality in several places by hoisting
+> the is_dot_dotdot() utility function into linux/fs.h.
 >
-> The upshot is I do not expect 1/2 will be backported, unless I have
-> grossly misread your emails.
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> ---
+>  fs/crypto/fname.c    |    8 +-------
+>  fs/ecryptfs/crypto.c |   10 ----------
+>  fs/exportfs/expfs.c  |    4 +---
+>  fs/f2fs/f2fs.h       |   11 -----------
+>  fs/namei.c           |    6 ++----
+>  include/linux/fs.h   |   15 +++++++++++++++
+>  6 files changed, 19 insertions(+), 35 deletions(-)
 >
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 7b3fc189593a..0ad52fbe51c9 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
+>
+>  static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+>  {
+> -       if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')
+> -               return true;
+> -
+> -       if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' && str->name[1] =
+=3D=3D '.')
+> -               return true;
+> -
+> -       return false;
+> +       return is_dot_dotdot(str->name, str->len);
+>  }
+>
+>  /**
+> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+> index 03bd55069d86..2fe0f3af1a08 100644
+> --- a/fs/ecryptfs/crypto.c
+> +++ b/fs/ecryptfs/crypto.c
+> @@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
+>         return rc;
+>  }
+>
+> -static bool is_dot_dotdot(const char *name, size_t name_size)
+> -{
+> -       if (name_size =3D=3D 1 && name[0] =3D=3D '.')
+> -               return true;
+> -       else if (name_size =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=
+=3D '.')
+> -               return true;
+> -
+> -       return false;
+> -}
+> -
+>  /**
+>   * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher te=
+xt name to decoded plaintext
+>   * @plaintext_name: The plaintext name
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index 84af58eaf2ca..07ea3d62b298 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, cons=
+t char *name, int len,
+>                 container_of(ctx, struct getdents_callback, ctx);
+>
+>         buf->sequence++;
+> -       /* Ignore the '.' and '..' entries */
+> -       if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] !=3D=
+ '.')) &&
+> -           buf->ino =3D=3D ino && len <=3D NAME_MAX) {
+> +       if (buf->ino =3D=3D ino && len <=3D NAME_MAX && !is_dot_dotdot(na=
+me, len)) {
+>                 memcpy(buf->name, name, len);
+>                 buf->name[len] =3D '\0';
+>                 buf->found =3D 1;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9043cedfa12b..322a3b8a3533 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_in=
+fo *sbi)
+>         return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
+>  }
+>
+> -static inline bool is_dot_dotdot(const u8 *name, size_t len)
+> -{
+> -       if (len =3D=3D 1 && name[0] =3D=3D '.')
+> -               return true;
+> -
+> -       if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
+> -               return true;
+> -
+> -       return false;
+> -}
+> -
+>  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
+>                                         size_t size, gfp_t flags)
+>  {
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 71c13b2990b4..2386a70667fa 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2667,10 +2667,8 @@ static int lookup_one_common(struct mnt_idmap *idm=
+ap,
+>         if (!len)
+>                 return -EACCES;
+>
+> -       if (unlikely(name[0] =3D=3D '.')) {
+> -               if (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'))
+> -                       return -EACCES;
+> -       }
+> +       if (is_dot_dotdot(name, len))
+> +               return -EACCES;
+>
+>         while (len--) {
+>                 unsigned int c =3D *(const unsigned char *)name++;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98b7a7a8c42e..750c95a2b572 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2846,6 +2846,21 @@ extern bool path_is_under(const struct path *, con=
+st struct path *);
+>
+>  extern char *file_path(struct file *, char *, int);
+>
+> +/**
+> + * is_dot_dotdot - returns true only if @name is "." or ".."
+> + * @name: file name to check
+> + * @len: length of file name, in bytes
+> + *
+> + * Coded for efficiency.
+> + */
+> +static inline bool is_dot_dotdot(const char *name, size_t len)
+> +{
+> +       if (unlikely(name[0] =3D=3D '.'))
+> +               if (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'))
+> +                       return true;
+> +       return false;
+> +}
 
-It's not what I meant, but I don't want to bother you about this.
+I hate to nag, but these double ifs look really odd in the
+context of a helper.
+Also, not sure if all callers guarantee the len > 0
+I did not check.
+Like this?
 
-I meant patch 1 is backportable:
-- adds static is_dot_dotdot() in expfs.c and uses it
-- patch 2 the same as you posted, but also removes is_dot_dotdot() from exp=
-fs.c
-
-No big deal.
-Patch 1, as far as I am concerned, patch 1 can stay as it is
+static inline bool is_dot_dotdot(const char *name, size_t len)
+{
+       return len && unlikely(name[0] =3D=3D '.') &&
+                 (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.');
+}
 
 Thanks,
 Amir.
