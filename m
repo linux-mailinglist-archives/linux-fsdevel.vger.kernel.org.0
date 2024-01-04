@@ -1,49 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-7432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D443824B12
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 23:42:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CDA824BB9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 00:11:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D617C1F232B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 22:42:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62B41C22A0F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 23:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030932D021;
-	Thu,  4 Jan 2024 22:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA262D7A2;
+	Thu,  4 Jan 2024 23:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TQZk5Zen"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDZeDFsr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2UD+lNiA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDZeDFsr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2UD+lNiA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286642CCAD;
-	Thu,  4 Jan 2024 22:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KaEe4j2YqFtbEdXkete4TcSZkc6Zq8WOCZ/Wk+4hPjQ=; b=TQZk5Zen9UZsk8HJmdS/ge2mcZ
-	DKG7C5jljUoCnAxOSxOfi/Dh0EGTGv8yKsIOxzJhI2pobAFPdujqXLrWH5oFQMfUWS+a0ZFsk65bk
-	v5gE8gsUgLoh6F7PCghJzCh9LKCazVcQ1RlRf58TaFlMMdv/WN6NEteTaMokBM9Q3tKiKwIfyKj2M
-	ylOg2P3mS5Ie0SLGptFNgzASbbXJUq0kOzLxSx2bEuTQU5xzIxbIT6Tv0GzgY94rGTnK5ouNWOA+Y
-	xPVdPFBrVYEb70TAMm0o5EAy9psdfwwJclgeJ7GoS2iZMzO4Yj8BgWmz+cCzH9rNlOVrBis+6YMt2
-	lLv4m3zA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rLWPP-00GCek-RS; Thu, 04 Jan 2024 22:41:51 +0000
-Date: Thu, 4 Jan 2024 22:41:51 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] buffer: Add kernel-doc for block_dirty_folio()
-Message-ID: <ZZc0L9ANGS3z3n7c@casper.infradead.org>
-References: <20240104163652.3705753-1-willy@infradead.org>
- <20240104163652.3705753-3-willy@infradead.org>
- <133cd73f-3080-4362-bc3e-ef4cc8880a20@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9171C2D791
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 23:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 939A71F83C;
+	Thu,  4 Jan 2024 23:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704409870;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/j7CRB+Ktnqa0ZviY1seTtrTLtEWjREUKwTyg4hLD0=;
+	b=tDZeDFsrw1EHyuAM55X6vrPIRZ0Z2muXtCzXN5ZfImL476agkdEtrhjbXRF9MlLoPZit8C
+	7yA5/2hj6VGu86DVrAAWsJr1OQVgeW53DOS/kFNBEPbTyqcrjxOeXkS1jPaPzEMufUzjrz
+	psVJqYAmwSW0MEkRDPIn6PKnf5i/A4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704409870;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/j7CRB+Ktnqa0ZviY1seTtrTLtEWjREUKwTyg4hLD0=;
+	b=2UD+lNiAfjnqyNHl8Vkbk0oQxMSjpOYi2q3GdskOaAG/zWvKYrI6c7irEbH5N0eTcP0HEq
+	/CHgxaBJQG5uGYBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704409870;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/j7CRB+Ktnqa0ZviY1seTtrTLtEWjREUKwTyg4hLD0=;
+	b=tDZeDFsrw1EHyuAM55X6vrPIRZ0Z2muXtCzXN5ZfImL476agkdEtrhjbXRF9MlLoPZit8C
+	7yA5/2hj6VGu86DVrAAWsJr1OQVgeW53DOS/kFNBEPbTyqcrjxOeXkS1jPaPzEMufUzjrz
+	psVJqYAmwSW0MEkRDPIn6PKnf5i/A4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704409870;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s/j7CRB+Ktnqa0ZviY1seTtrTLtEWjREUKwTyg4hLD0=;
+	b=2UD+lNiAfjnqyNHl8Vkbk0oQxMSjpOYi2q3GdskOaAG/zWvKYrI6c7irEbH5N0eTcP0HEq
+	/CHgxaBJQG5uGYBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 635EB13722;
+	Thu,  4 Jan 2024 23:11:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A+ggFw47l2X4PAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Thu, 04 Jan 2024 23:11:10 +0000
+Date: Fri, 5 Jan 2024 00:11:09 +0100
+From: Petr Vorel <pvorel@suse.cz>
+To: Cyril Hrubis <chrubis@suse.cz>
+Cc: ltp@lists.linux.it, mszeredi@redhat.com, brauner@kernel.org,
+	Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+	viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [LTP] [PATCH v2 4/4] syscalls: splice07: New splice tst_fd
+ iterator test
+Message-ID: <20240104231109.GB1447350@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20231016123320.9865-1-chrubis@suse.cz>
+ <20231016123320.9865-5-chrubis@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,43 +95,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <133cd73f-3080-4362-bc3e-ef4cc8880a20@infradead.org>
+In-Reply-To: <20231016123320.9865-5-chrubis@suse.cz>
+X-Spam-Level: *
+X-Spam-Level: 
+X-Spam-Score: 0.28
+X-Rspamd-Queue-Id: 939A71F83C
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tDZeDFsr;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=2UD+lNiA
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Bar: /
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [0.28 / 50.00];
+	 HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.01)[45.62%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 REPLYTO_EQ_FROM(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 URIBL_BLOCKED(0.00)[suse.cz:email,suse.cz:dkim];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
 
-On Thu, Jan 04, 2024 at 01:06:10PM -0800, Randy Dunlap wrote:
-> > +/**
-> > + * block_dirty_folio - Mark a folio as dirty.
-> > + * @mapping: The address space containing this folio.
-> > + * @folio: The folio to mark dirty.
-> > + *
-> > + * Filesystems which use buffer_heads can use this function as their
-> > + * ->dirty_folio implementation.  Some filesystems need to do a little
-> > + * work before calling this function.  Filesystems which do not use
-> > + * buffer_heads should call filemap_dirty_folio() instead.
-> > + *
-> > + * If the folio has buffers, the uptodate buffers are set dirty, to
-> > + * preserve dirty-state coherency between the folio and the buffers.
-> > + * It the folio does not have buffers then when they are later attached
-> > + * they will all be set dirty.
-> > + *
-> > + * The buffers are dirtied before the folio is dirtied.  There's a small
-> > + * race window in which writeback may see the folio cleanness but not the
-> > + * buffer dirtiness.  That's fine.  If this code were to set the folio
-> > + * dirty before the buffers, writeback could clear the folio dirty flag,
-> > + * see a bunch of clean buffers and we'd end up with dirty buffers/clean
-> > + * folio on the dirty folio list.
-> > + *
-> > + * We use private_lock to lock against try_to_free_buffers() while
-> > + * using the folio's buffer list.  This also prevents clean buffers
-> > + * being added to the folio after it was set dirty.
-> > + *
-> > + * Context: May only be called from process context.  Does not sleep.
-> > + * Caller must ensure that @folio cannot be truncated during this call,
-> > + * typically by holding the folio lock or having a page in the folio
-> > + * mapped and holding the page table lock.
-> 
->  * Return: tbd
+Hi Cyril,
 
-+ *
-+ * Return: True if the folio was dirtied; false if it was already dirtied.
+...
+> +++ b/testcases/kernel/syscalls/splice/splice07.c
+> @@ -0,0 +1,85 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +/*
+> + * Copyright (C) 2023 Cyril Hrubis <chrubis@suse.cz>
+> + */
+> +
+> +/*\
+> + * [Description]
+> + *
+nit: missing a description.
+> + */
+> +#define _GNU_SOURCE
+> +
+> +#include <sys/socket.h>
+> +#include <netinet/in.h>
+> +
+> +#include "tst_test.h"
+> +
+> +void check_splice(struct tst_fd *fd_in, struct tst_fd *fd_out)
+nit: missing static
 
+> +	/* These produce EBADF instead of EINVAL */
+> +	switch (fd_out->type) {
+> +	case TST_FD_DIR:
+> +	case TST_FD_DEV_ZERO:
+> +	case TST_FD_PROC_MAPS:
+> +	case TST_FD_INOTIFY:
+> +	case TST_FD_PIPE_READ:
+> +		exp_errno = EBADF;
+I tested it just on kernel 6.6. I wonder if this behaves the same on older
+kernels.
+
+> +	default:
+> +	break;
+> +	}
+> +
+> +	if (fd_in->type == TST_FD_PIPE_WRITE)
+> +		exp_errno = EBADF;
+> +
+> +	if (fd_in->type == TST_FD_OPEN_TREE || fd_out->type == TST_FD_OPEN_TREE ||
+> +	    fd_in->type == TST_FD_PATH || fd_out->type == TST_FD_PATH)
+> +		exp_errno = EBADF;
+I suppose you'll send another version, which will make use of TST_EXP_FAIL.
+https://lore.kernel.org/ltp/20240103115700.14585-1-chrubis@suse.cz/
+
+BTW I also wonder if TST_EXP_FAIL() could simplify some of fanotify tests
+(some of them got quite complex over time).
+
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+
+Kind regards,
+Petr
 
