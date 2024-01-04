@@ -1,197 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-7392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A5A824605
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 17:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFF4824637
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 17:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54CA0B23C9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:19:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35770B23D52
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Jan 2024 16:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F9A24B2B;
-	Thu,  4 Jan 2024 16:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D36625567;
+	Thu,  4 Jan 2024 16:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTEY3bMT"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fdn/14QO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9058F24B25;
-	Thu,  4 Jan 2024 16:19:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C145C433C7;
-	Thu,  4 Jan 2024 16:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704385144;
-	bh=r/dCDyVPVjRJZWtpmAX8vVDttoXSpUaXT0VdMiN7efg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=aTEY3bMTt5wNp+f9msfrACtI8eZpsyc8H9CtN5wrvAtH9zcw38/UgAwLBkFrOjTAj
-	 7J0HCDLSN4Ub6axzX/eAlWKSIQIjr/ROTLQ+OqFgX9KfEenKxs9+gzhXovi2sXi4qA
-	 je9NyrQvIICgQX+yejYY5OjK5sknp41LKRarJadKmdPVmbKyy8sW9q1BUXuTvDE10P
-	 Ifa4u2x7nvbmOsBkGP2B2ZQwNuS2xpTDt6NNrieT43M6lj78g+pRXgs2vPjzOzUqtM
-	 TnVklAyuDwNf4GevJygByeZRGjn0wB4z+qGKfmBsfOoDF0osPf2sebH+9fPLch7rGh
-	 68/5pLKJZ/Dlg==
-Subject: [PATCH v3 2/2] fs: Create a generic is_dot_dotdot() utility
-From: Chuck Lever <cel@kernel.org>
-To: jlayton@redhat.com, amir73il@gmail.com
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- trondmy@hammerspace.com, viro@zeniv.linux.org.uk, brauner@kernel.org
-Date: Thu, 04 Jan 2024 11:19:02 -0500
-Message-ID: 
- <170438514228.129184.8854845947814287856.stgit@bazille.1015granger.net>
-In-Reply-To: 
- <170438430288.129184.6116374966267668617.stgit@bazille.1015granger.net>
-References: 
- <170438430288.129184.6116374966267668617.stgit@bazille.1015granger.net>
-User-Agent: StGit/1.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9579B25560
+	for <linux-fsdevel@vger.kernel.org>; Thu,  4 Jan 2024 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-427f21ced6aso3410531cf.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Jan 2024 08:30:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704385819; x=1704990619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aj4IIq0tzuh1/OdFywt45Ed5fBVp3SK/t71RwP6JXSw=;
+        b=fdn/14QOew7x0hZlqE8RvMbT+eay+t99WzcP3kxGSeb8OS5ACFhxqkeI7iB+nyafr0
+         rOuV6rmqZYe/l+tOjY/F68nb75dV/6faHMawGvHRB8Ise/ZVn0TUmrjcNnDvPpYSKK2u
+         +QXD6hqZOg+6u0V1BppZ1Urc5RWCALe2KqPFw8J3VQOjtx6mSqe/+OUnn1A9CxqXE2Rh
+         3JFRqVxezB+DuRVhlYCK/igl86QKpIhEethObsm3dCBF1m3uN1ceVfoGd3oqdi0XHpq+
+         P1ABcTzfX+8k++zN/yVvUWt5pjTlmOe+9OyrAy5cz7M2zWHcj6kYn7fmGKwoBPTTXQfY
+         VfCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704385819; x=1704990619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aj4IIq0tzuh1/OdFywt45Ed5fBVp3SK/t71RwP6JXSw=;
+        b=JfzkPilg49fSamxLAMUyZK+1NVD4sMPVadwrZyvtcgJn+2ma2mdLL7ziL5uu5WKutm
+         mLiB13EJj5ga21c5IXsClIJSWxblKSBz2dJKqIozx15axxufPs8Bk7w2OQxfZwt8OFyz
+         CdGaBxKlo0SUIqqq6rx8yTSogNuQiGxHBX3VpZgVmH8dFDXm1ilj4iAa78vnsdwtnac/
+         keXvfArNH7g+S6/GuYMAqkrGk1I9sZfWTSEuchH0VrHHb87HRiecZ6Bmv782Yy0RuDI1
+         QZbo51nWyCLQqNJHbBXmke+CrptJo2qlN0RJLatkzM9l3sxboebqPHiN7oW+q1EuEJIc
+         4AnA==
+X-Gm-Message-State: AOJu0YwCEFnjAUDxg9v+vqbvmqNHUsfir4TdgPuA6wPKd+8lRapAuX/d
+	9CdVP63FD648WuE5jnlagkyRdYGWeBn+7Z+pV/WNn8UGJRW5jg==
+X-Google-Smtp-Source: AGHT+IHbmPwv6z7KPbpI44YRa4bYQfIXyvmSunk5ru1UyVqC5KptkTXxtDOkWoeYljsAtoXlTJC88ShSxszX3+BvyHo=
+X-Received: by 2002:ac8:5cce:0:b0:428:3602:4ad8 with SMTP id
+ s14-20020ac85cce000000b0042836024ad8mr839527qta.60.1704385819426; Thu, 04 Jan
+ 2024 08:30:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com> <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+In-Reply-To: <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 4 Jan 2024 11:29:43 -0500
+Message-ID: <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chuck Lever <chuck.lever@oracle.com>
+On Thu, Jan 4, 2024 at 10:31=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> Hello.
+>
+> On Tue, Dec 26, 2023 at 08:01:55PM +0000, Pasha Tatashin <pasha.tatashin@=
+soleen.com> wrote:
+> > This patch series solves this problem by adding both observability to
+> > all pages that are allocated by IOMMU, and also accountability, so
+> > admins can limit the amount if via cgroups.
+>
+> Maybe this is a mismatch in vocabulary what you mean by the verb
+> "limit". But I don't see in the patchset that the offending pages would
+> be allocated with GFP_ACCOUNT. So the result is that the pages are
+> accounted (you can view the amount in memory.stat) but they are not
+> subject to memcg limits.
+>
+> Is that what you intend?
 
-De-duplicate the same functionality in several places by hoisting
-the is_dot_dotdot() utility function into linux/fs.h.
+Hi Michal,
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/crypto/fname.c    |    8 +-------
- fs/ecryptfs/crypto.c |   10 ----------
- fs/exportfs/expfs.c  |    4 +---
- fs/f2fs/f2fs.h       |   11 -----------
- fs/namei.c           |    6 ++----
- include/linux/fs.h   |   15 +++++++++++++++
- 6 files changed, 19 insertions(+), 35 deletions(-)
+Thank you for taking a look at this. The two patches [1] [2] which add
+GFP_KERNEL_ACCOUNT were sent separate from this series at request of
+reviewers:
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 7b3fc189593a..0ad52fbe51c9 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
- 
- static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- {
--	if (str->len == 1 && str->name[0] == '.')
--		return true;
--
--	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
--		return true;
--
--	return false;
-+	return is_dot_dotdot(str->name, str->len);
- }
- 
- /**
-diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-index 03bd55069d86..2fe0f3af1a08 100644
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
- 	return rc;
- }
- 
--static bool is_dot_dotdot(const char *name, size_t name_size)
--{
--	if (name_size == 1 && name[0] == '.')
--		return true;
--	else if (name_size == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- /**
-  * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher text name to decoded plaintext
-  * @plaintext_name: The plaintext name
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 84af58eaf2ca..07ea3d62b298 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, const char *name, int len,
- 		container_of(ctx, struct getdents_callback, ctx);
- 
- 	buf->sequence++;
--	/* Ignore the '.' and '..' entries */
--	if ((len > 2 || name[0] != '.' || (len == 2 && name[1] != '.')) &&
--	    buf->ino == ino && len <= NAME_MAX) {
-+	if (buf->ino == ino && len <= NAME_MAX && !is_dot_dotdot(name, len)) {
- 		memcpy(buf->name, name, len);
- 		buf->name[len] = '\0';
- 		buf->found = 1;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9043cedfa12b..322a3b8a3533 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
- 	return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
- }
- 
--static inline bool is_dot_dotdot(const u8 *name, size_t len)
--{
--	if (len == 1 && name[0] == '.')
--		return true;
--
--	if (len == 2 && name[0] == '.' && name[1] == '.')
--		return true;
--
--	return false;
--}
--
- static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
- 					size_t size, gfp_t flags)
- {
-diff --git a/fs/namei.c b/fs/namei.c
-index 71c13b2990b4..2386a70667fa 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2667,10 +2667,8 @@ static int lookup_one_common(struct mnt_idmap *idmap,
- 	if (!len)
- 		return -EACCES;
- 
--	if (unlikely(name[0] == '.')) {
--		if (len < 2 || (len == 2 && name[1] == '.'))
--			return -EACCES;
--	}
-+	if (is_dot_dotdot(name, len))
-+		return -EACCES;
- 
- 	while (len--) {
- 		unsigned int c = *(const unsigned char *)name++;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98b7a7a8c42e..750c95a2b572 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2846,6 +2846,21 @@ extern bool path_is_under(const struct path *, const struct path *);
- 
- extern char *file_path(struct file *, char *, int);
- 
-+/**
-+ * is_dot_dotdot - returns true only if @name is "." or ".."
-+ * @name: file name to check
-+ * @len: length of file name, in bytes
-+ *
-+ * Coded for efficiency.
-+ */
-+static inline bool is_dot_dotdot(const char *name, size_t len)
-+{
-+	if (unlikely(name[0] == '.'))
-+		if (len < 2 || (len == 2 && name[1] == '.'))
-+			return true;
-+	return false;
-+}
-+
- #include <linux/err.h>
- 
- /* needed for stackable file system support */
+Pasha
 
+[1] https://lore.kernel.org/linux-mm/20231226182827.294158-1-pasha.tatashin=
+@soleen.com
+[2] https://lore.kernel.org/linux-mm/20231130200900.2320829-1-pasha.tatashi=
+n@soleen.com
 
+>
+>
+> Regards,
+> Michal
 
