@@ -1,175 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-7469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C5F825512
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:17:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5845F825520
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92FB42845A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 14:17:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB1E0B22705
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 14:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1242E3FF;
-	Fri,  5 Jan 2024 14:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6AA2DF7D;
+	Fri,  5 Jan 2024 14:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="WeGoaF2y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dm0zaC+K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB402DF97
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 14:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ccbc328744so19342581fa.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 06:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704464251; x=1705069051; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QVWWEZC0nTAcEXYkvWfohoACi+DyynjzoGETkqq6WTk=;
-        b=WeGoaF2yyXjLQZI12WAYVr7O2xBY+G217JVPFUTkYakWWGdyuK8FuPD0bemHTBSvAZ
-         GOGw8eHzHSG8Um1Nr0Jr9MQfPVlPZl+LSBhJZRdx/tGwEcNJB9Ca7EHuW3Jx4gJwxvGf
-         Cpcnhp+qSdyN8O8b97XW1YbAYtf3+nq/NO/zVjqUXX/hvWfORtrbshvct9AyQojA8qGH
-         4uMSPM8DCbXbpn5norNbVnRixFh5z3c6acGSm0Tv6fKI9ASpXFGvVDrkS6/A45EOlUv9
-         Jotei+FjExDPzmJM4WHlwFGt8EyFMcCQvBx3W5WRHyZR9LVvlhyw8TdGaL2qsMwqH+N6
-         pSfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704464251; x=1705069051;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QVWWEZC0nTAcEXYkvWfohoACi+DyynjzoGETkqq6WTk=;
-        b=g7Q94/qwTaLe6V03Tq+pkL7wGoLWZRsWw/bYSydcOyif4zOBPClACt3HhJjdRKpSjY
-         4Nf8VS2gPmZGFVE1zeuA0ThC02bnNThZDSYFQtx54yYmfj5tqLGfRpIrWYoBPFmXHG3Z
-         3KtuGdZtSGHaQINWvc+iHReXNjVyOCpC3dPtYIuHXgIF8ooPtQBkz0QbyvQFRZ/h/I3x
-         Tzk7k0hze5o6VmF00VFQxwm9vMv8QdKBecFLqMaBgvvr7/wPdjY7EPntkD9WPBiwWhKR
-         Z8niogBOt4azy0JizMdyoPZF+CC/HE72W1E+okp1yRgEEtGw02ZF/iT3bGhHJuu3yfZg
-         UrMg==
-X-Gm-Message-State: AOJu0YwVLzLQlLvfhhM1+4pz4vntVoTtCh50Zj5+lEI/9DEYKVanURwy
-	5y769KUVdqukXoc4T0ZlK2EfhRRHgoaFrQ==
-X-Google-Smtp-Source: AGHT+IFUzqFY0DMUD4VxQFC0jdTQ+04LaFR5XJF6GZDdXO/19l3HLlkR+Dh2SihaaVqGfq3vwivRNQ==
-X-Received: by 2002:a05:651c:2213:b0:2cc:8bd4:b860 with SMTP id y19-20020a05651c221300b002cc8bd4b860mr1337702ljq.85.1704464251368;
-        Fri, 05 Jan 2024 06:17:31 -0800 (PST)
-Received: from smtpclient.apple ([2a00:1370:81a4:169c:3983:bdeb:5f19:e2e9])
-        by smtp.gmail.com with ESMTPSA id p8-20020a2ea4c8000000b002cca51c54c0sm337155ljm.130.2024.01.05.06.17.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 05 Jan 2024 06:17:30 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C32D7A7;
+	Fri,  5 Jan 2024 14:26:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88058C433C7;
+	Fri,  5 Jan 2024 14:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704464794;
+	bh=2P6hxdoePoEWFrBd8qdykuqOskTZur3E5s/TzD9/Kf8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dm0zaC+K8TFVMUKvLhwb2WqU25tstzG56X+MJwDu/tyO6OoHe99yFHpk0xJJPeyVE
+	 S37yGN5olSRW3fgqQfFwMpJrVnK0p0/SpgKSgBCy4oON9m6omcnv1SHI89KFBqLSAe
+	 4fzz4YC/UJePyHHDKw/2XnMslC4j0BP5rG+1POKKKghsEzFTa3zo2LPtHTGu5bPtBC
+	 48apqSzfkbfW9n3GOLpNQdStzRIdwnOlaKooK5iY1qm/aq2Z3DwX7FhUr+K2tURLts
+	 o/tnGHvXvDVIQWdbpCGpkRO/EHUSCQ9t30Ivw4D8PGs1xCaD//k/LDu+xTx3xa8NBL
+	 K38/iHxdBNYeg==
+Date: Fri, 5 Jan 2024 15:26:28 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default
+ ownership
+Message-ID: <20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
+References: <20240103203246.115732ec@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Removing GFP_NOFS
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <20240105102657.fwy7uxudqdoyogd5@quack3>
-Date: Fri, 5 Jan 2024 17:17:25 +0300
-Cc: Matthew Wilcox <willy@infradead.org>,
- linux-scsi@vger.kernel.org,
- linux-ide@vger.kernel.org,
- linux-nvme@lists.infradead.org,
- linux-block@vger.kernel.org,
- linux-mm@kvack.org,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- lsf-pc@lists.linux-foundation.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FE208054-586E-4365-8F07-4DEBB807755C@dubeyko.com>
-References: <ZZcgXI46AinlcBDP@casper.infradead.org>
- <2EEB5F76-1D68-4B17-82B6-4A459D91E4BF@dubeyko.com>
- <20240105102657.fwy7uxudqdoyogd5@quack3>
-To: Jan Kara <jack@suse.cz>
-X-Mailer: Apple Mail (2.3696.120.41.1.4)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240103203246.115732ec@gandalf.local.home>
 
+On Wed, Jan 03, 2024 at 08:32:46PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> Instead of walking the dentries on mount/remount to update the gid values of
+> all the dentries if a gid option is specified on mount, just update the root
+> inode. Add .getattr, .setattr, and .permissions on the tracefs inode
+> operations to update the permissions of the files and directories.
+> 
+> For all files and directories in the top level instance:
+> 
+>  /sys/kernel/tracing/*
+> 
+> It will use the root inode as the default permissions. The inode that
+> represents: /sys/kernel/tracing (or wherever it is mounted).
+> 
+> When an instance is created:
+> 
+>  mkdir /sys/kernel/tracing/instance/foo
+> 
+> The directory "foo" and all its files and directories underneath will use
+> the default of what foo is when it was created. A remount of tracefs will
+> not affect it.
 
+That kinda sounds like eventfs should actually be a separate filesystem.
+But I don't know enough about the relationship between the two concepts.
 
-> On Jan 5, 2024, at 1:26 PM, Jan Kara <jack@suse.cz> wrote:
->=20
-> On Fri 05-01-24 13:13:11, Viacheslav Dubeyko wrote:
->>=20
->>=20
->>> On Jan 5, 2024, at 12:17 AM, Matthew Wilcox <willy@infradead.org> =
-wrote:
->>>=20
->>> This is primarily a _FILESYSTEM_ track topic.  All the work has =
-already
->>> been done on the MM side; the FS people need to do their part.  It =
-could
->>> be a joint session, but I'm not sure there's much for the MM people
->>> to say.
->>>=20
->>> There are situations where we need to allocate memory, but cannot =
-call
->>> into the filesystem to free memory.  Generally this is because we're
->>> holding a lock or we've started a transaction, and attempting to =
-write
->>> out dirty folios to reclaim memory would result in a deadlock.
->>>=20
->>> The old way to solve this problem is to specify GFP_NOFS when =
-allocating
->>> memory.  This conveys little information about what is being =
-protected
->>> against, and so it is hard to know when it might be safe to remove.
->>> It's also a reflex -- many filesystem authors use GFP_NOFS by =
-default
->>> even when they could use GFP_KERNEL because there's no risk of =
-deadlock.
->>>=20
->>> The new way is to use the scoped APIs -- memalloc_nofs_save() and
->>> memalloc_nofs_restore().  These should be called when we start a
->>> transaction or take a lock that would cause a GFP_KERNEL allocation =
-to
->>> deadlock.  Then just use GFP_KERNEL as normal.  The memory =
-allocators
->>> can see the nofs situation is in effect and will not call back into
->>> the filesystem.
->>>=20
->>> This results in better code within your filesystem as you don't need =
-to
->>> pass around gfp flags as much, and can lead to better performance =
-from
->>> the memory allocators as GFP_NOFS will not be used unnecessarily.
->>>=20
->>> The memalloc_nofs APIs were introduced in May 2017, but we still =
-have
->>> over 1000 uses of GFP_NOFS in fs/ today (and 200 outside fs/, which =
-is
->>> really sad).  This session is for filesystem developers to talk =
-about
->>> what they need to do to fix up their own filesystem, or share =
-stories
->>> about how they made their filesystem better by adopting the new =
-APIs.
->>>=20
->>=20
->> Many file systems are still heavily using GFP_NOFS for kmalloc and
->> kmem_cache_alloc family methods even if  memalloc_nofs_save() and
->> memalloc_nofs_restore() pair is used too. But I can see that GFP_NOFS
->> is used in radix_tree_preload(), bio_alloc(), posix_acl_clone(),
->> sb_issue_zeroout, sb_issue_discard(), alloc_inode_sb(), =
-blkdev_issue_zeroout(),
->> blkdev_issue_secure_erase(), blkdev_zone_mgmt(), etc.
->=20
-> Given the nature of the scoped API, the transition has to start in the
-> leaves (i.e. filesystems itself) and only once all users of say
-> radix_tree_preload() are converted to the scoped API, we can remove =
-the
-> GFP_NOFS use from radix_tree_preload() itself. So Matthew is right =
-that we
-> need to start in the filesystems.
+> 
+> If a user were to modify the permissions of any file or directory in
+> tracefs, it will also no longer be modified by a change in ownership of a
+> remount.
 
-Makes sense to me. So, we need to summarize which file system uses
-the GFP_NOFS for which methods. Then, I assume, it will be possible
-to split the whole modification for particular phases of getting rid of
-GFP_NOFS in particular case (particular method). It looks like that
-we need to declare the whole modification plan and something like
-a schedule for such change. Would it work in such way? :)
+Very odd semantics and I would recommend to avoid that. It's just plain
+weird imo.
 
-Thanks,
-Slava.=20
+> 
+> The events directory, if it is in the top level instance, will use the
+> tracefs root inode as the default ownership for itself and all the files and
+> directories below it.
+> 
+> For the events directory in an instance ("foo"), it will keep the ownership
+> of what it was when it was created, and that will be used as the default
+> ownership for the files and directories beneath it.
+> 
+> Link: https://lore.kernel.org/linux-trace-kernel/CAHk-=wjVdGkjDXBbvLn2wbZnqP4UsH46E3gqJ9m7UG6DpX2+WA@mail.gmail.com/
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
 
+So tracefs supports remounting with different uid/gid mount options and
+then actually wades through _all_ of the inodes and changes their
+ownership internally? What's the use-case for this? Containers?
+
+Aside from optimizing this and the special semantics for this eventfs
+stuff that you really should think twice of doing, here's one idea for
+an extension that might alleviate some of the pain:
+
+If you need flexible dynamic ownership change to e.g., be able to
+delegate (all, a directory, a single file of) tracefs to
+unprivileged/containers/whatever then you might want to consider
+supporting idmapped mounts for tracefs. Because then you can do stuff
+like:
+
+user1@localhost:~/data/scripts$ sudo mount --bind -o X-mount.idmap='g:0:1000:1 u:0:1234:1' /run/ /mnt
+user1@localhost:~/data/scripts$ ls -ln /run/
+total 12
+drwxr-xr-x  2 0  0   40 Jan  5 12:12 credentials
+drwx------  2 0  0   40 Jan  5 11:57 cryptsetup
+drwxr-xr-x  2 0  0   60 Jan  5 11:57 dbus
+drwx------  6 0  0  280 Jan  5 11:57 incus_agent
+prw-------  1 0  0    0 Jan  5 11:57 initctl
+drwxrwxrwt  4 0  0   80 Jan  5 11:57 lock
+drwxr-xr-x  3 0  0   60 Jan  5 11:57 log
+drwx------  2 0  0   40 Jan  5 11:57 lvm
+-r--r--r--  1 0  0   33 Jan  5 11:57 machine-id
+-rw-r--r--  1 0  0  101 Jan  5 11:58 motd.dynamic
+drwxr-xr-x  2 0  0   40 Jan  5 11:57 mount
+drwx------  2 0  0   40 Jan  5 11:57 multipath
+drwxr-xr-x  2 0  0   40 Jan  5 11:57 sendsigs.omit.d
+lrwxrwxrwx  1 0  0    8 Jan  5 11:57 shm -> /dev/shm
+drwx--x--x  2 0  0   40 Jan  5 11:57 sudo
+drwxr-xr-x 24 0  0  660 Jan  5 14:30 systemd
+drwxr-xr-x  6 0  0  140 Jan  5 14:30 udev
+drwxr-xr-x  4 0  0   80 Jan  5 11:58 user
+-rw-rw-r--  1 0 43 2304 Jan  5 15:15 utmp
+
+user1@localhost:~/data/scripts$ ls -ln /mnt/
+total 12
+drwxr-xr-x  2 1234  1000   40 Jan  5 12:12 credentials
+drwx------  2 1234  1000   40 Jan  5 11:57 cryptsetup
+drwxr-xr-x  2 1234  1000   60 Jan  5 11:57 dbus
+drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 incus_agent
+prw-------  1 1234  1000    0 Jan  5 11:57 initctl
+drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 lock
+drwxr-xr-x  3 1234  1000   60 Jan  5 11:57 log
+drwx------  2 1234  1000   40 Jan  5 11:57 lvm
+-r--r--r--  1 1234  1000   33 Jan  5 11:57 machine-id
+-rw-r--r--  1 1234  1000  101 Jan  5 11:58 motd.dynamic
+drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 mount
+drwx------  2 1234  1000   40 Jan  5 11:57 multipath
+drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 sendsigs.omit.d
+lrwxrwxrwx  1 1234  1000    8 Jan  5 11:57 shm -> /dev/shm
+drwx--x--x  2 1234  1000   40 Jan  5 11:57 sudo
+drwxr-xr-x 24 1234  1000  660 Jan  5 14:30 systemd
+drwxr-xr-x  6 1234  1000  140 Jan  5 14:30 udev
+drwxr-xr-x  4 1234  1000   80 Jan  5 11:58 user
+-rw-rw-r--  1 1234 65534 2304 Jan  5 15:15 utmp
+
+Where you can see that ownership of this tmpfs instance in this example
+is changed. I'm not trying to advocate here but this will probably
+ultimately be nicer for your users because it means that a container
+manager or whatever can be handed a part of tracefs (or all of it) and
+the ownership and access rights for that thing is correct. And you can
+get rid of that gid based access completely.
+
+You can change uids, gids, or both. You can specify up to 340 individual
+mappings it's quite flexible.
+
+Because then you can have a single tracefs superblock and have multiple
+mounts with different ownership for the relevant parts of tracefs that
+you want to delegate to whoever. If you need an ownership change you can
+then just create another idmapped mount with the new ownership and then
+use MOVE_MOUNT_BENEATH + umount to replace that mount.
+
+Probably even know someone that would implement this for you (not me) if
+that sounds like something that would cover some of the use-case for the
+proposed change here. But maybe I just misunderstood things completely.
 
