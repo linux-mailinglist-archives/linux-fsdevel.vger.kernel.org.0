@@ -1,232 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-7443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660E9824F3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 08:37:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D9C824FA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 09:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB4E1F2353C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 07:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC501F23970
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 08:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2365E20B0E;
-	Fri,  5 Jan 2024 07:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98F121356;
+	Fri,  5 Jan 2024 08:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW5SQIgq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwNM06PZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4E2032A;
-	Fri,  5 Jan 2024 07:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C538920B29;
+	Fri,  5 Jan 2024 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7815aad83acso25259185a.0;
-        Thu, 04 Jan 2024 23:37:03 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40d604b4b30so1537015e9.1;
+        Fri, 05 Jan 2024 00:20:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704440223; x=1705045023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1704442828; x=1705047628; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5/w5eJtCLO9gyzG6a3HPEPuxuRzY98TrfAvqmGNhpoA=;
-        b=GW5SQIgqS+qt8Ug/S+tlqTmqhq8dH72q7YgTQ0AC3gb56kaOe/ezw/ioR0BNKYKUAq
-         QJAK2qf4HYUPvyA2me+wnEHzBhg627xKAc9OKJrQaixC9mq2zeop+hQxgUoe2iDF0yIj
-         JlHvocU3qN5LvuJDJkP9xGi0tN5lEf4MSb6fnUNsLZ5+HEOnhp/ZzbNb6eKCGT/ghn/g
-         2SoqAfcm0ILPFnu67SsTqqSFynCFZD2ENGRrmLb17SYmV00I+H7lWxjhoIK/EpUbnQOP
-         btwAnrAzFAeRx5yyZl4+WDbjOqDbo7+MedwacDs62h9+0F0MooRgaKbYEWTa79GIkoEV
-         /vVA==
+        bh=UirpifrpW6YIRosDr0Ki+l8kjsuIejuWaHX21FvuZXo=;
+        b=kwNM06PZJap/F/hq6cDd3/9e4mf8q16HbuxZEfDrYasfWHM1ar3BENGRDj1mbRnnl3
+         F/qugWH8GA8d3jbB9fJ7CkSImbnIGgoPX2awJhAKJVlKf/9Z6ImYfSvFuGvvyDYBfl2k
+         8imbrymeTOCgfYO/1vuzl/QEzU8C+R66JNjt7LLPl7Bv7vX32eApSBgyH07b9TQD3mSw
+         1R5jvZPD4iIFVnKDJ1HPA3lqxoLvCnywOF9ZYGrc5p/UCGRMe8SnjAdJfGJuPuhvilnW
+         dSOaPKQL9m4Dns6yItaMygiZYitM2uwmEGQ9CPZqPs+iYwO+2rgKNK5B7Uv0nsiba6ZF
+         kWkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704440223; x=1705045023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1704442828; x=1705047628;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5/w5eJtCLO9gyzG6a3HPEPuxuRzY98TrfAvqmGNhpoA=;
-        b=Q/JDcUgvpOfGiYM2K+iqczEBnNo1SHmIsrPK7g9m9neVf/44XmQ0ZQ3eTEjpoU/nfV
-         efXaX8qpzNTUipQqTzoYHRXBouot3bfD+zuSupNZllN3WnsJPomnU7RAGtR4eNLnggHC
-         R3Kl7Du3ejjrVdIRvq9UtvZU2QKZ8hmS275sqP66+cIr/bweY/mvcqbmVkixJ86a6LX9
-         6lX4TGvWDg2tDipef4B+SlCSBrVHWyORFZ+EK2i3BgvoBubaSeezcXbz/najaHTV15JL
-         FHftahvJIV1brjRpNqERArG5xWR0mpNzF27IpXIyCceI3pvVYh5z8aNbxIYWF7G5pJUH
-         3BGA==
-X-Gm-Message-State: AOJu0YyXZ2fi4CPXEV+GamVyjdDBtt6Qf7PYTJdFeuysEtfxnixn9gP9
-	EYdMHw/43CpZhAoP2hDAvoeG+NA+Spu5ToB0SLk=
-X-Google-Smtp-Source: AGHT+IHBCcbuLeRImH2jx+ovSBg0hgv5cSxZyu/VnUbjeW8foQ8V0JXs3m0L07ACEU2Elum/hTORiOYAYnRg3pAhPfg=
-X-Received: by 2002:ad4:5def:0:b0:680:d159:ca5b with SMTP id
- jn15-20020ad45def000000b00680d159ca5bmr2804839qvb.50.1704440222871; Thu, 04
- Jan 2024 23:37:02 -0800 (PST)
+        bh=UirpifrpW6YIRosDr0Ki+l8kjsuIejuWaHX21FvuZXo=;
+        b=hxsl7IgTR8Fxrt+MlQ6WpS0aA3ZmCAN+vBh0fRK07Z7PAaO++WlJjYaltmuzXrobYv
+         kvzVwYUW24YFCiZsZdXItDKK0sEVO2qCjj5xqxY1ipZzL7DAZsIQZDCfPSMZhnP4ZFSW
+         i/dW76/dQng7Jz6iS1aEpuwSNGOWThp+60189kHLhKDDccTkRXRqhxADOlR3x2UHkQhx
+         Wz5eAJzDzO0adYOHaThdZNaU1av6CB+VVoWVJY9IV6/YlwKzHd3RU1KQ7pkeZTe/k91+
+         3S/7aHzZJg58GPe4OKMYZb/jVV1AcmXXVNyn+USxlDqMVvmZRnUxDuw0VrUTQzuY24Vp
+         LmeQ==
+X-Gm-Message-State: AOJu0YzmupXOIr08XptNYHj92un+/DWZNKxFSqYIozxjdI1CLZGVnfcK
+	ivHmsG38hnt3j/T+HjX0SIY=
+X-Google-Smtp-Source: AGHT+IHMgrGKGIkfpqwpUlWkD6o90yPervTOv/x0T4n2N+OmVuREFRfDKOS87FVN6VWMXcJ9sQ/Mcw==
+X-Received: by 2002:a05:600c:5486:b0:40e:3538:a5c0 with SMTP id iv6-20020a05600c548600b0040e3538a5c0mr821797wmb.1.1704442827675;
+        Fri, 05 Jan 2024 00:20:27 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id j26-20020a05600c1c1a00b0040e3804ea71sm806474wms.10.2024.01.05.00.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jan 2024 00:20:26 -0800 (PST)
+Date: Fri, 5 Jan 2024 09:20:23 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com,
+	alyssa@rosenzweig.io, asahi@lists.linux.dev,
+	baolu.lu@linux.intel.com, bhelgaas@google.com,
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
+	jonathanh@nvidia.com, joro@8bytes.org,
+	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
+	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
+	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
+	samuel@sholland.org, suravee.suthikulpanit@amd.com,
+	sven@svenpeter.dev, tj@kernel.org, tomas.mudrunka@gmail.com,
+	vdumpa@nvidia.com, wens@csie.org, will@kernel.org,
+	yu-cheng.yu@intel.com, rientjes@google.com
+Subject: Re: [PATCH v3 08/10] iommu/tegra-smmu: use page allocation function
+ provided by iommu-pages.h
+Message-ID: <ZZe7x-l3Lxwp-4kq@orome.fritz.box>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <20231226200205.562565-9-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <170440153940.204613.6839922871340228115.stgit@bazille.1015granger.net>
- <170440173389.204613.14502976575665083984.stgit@bazille.1015granger.net>
-In-Reply-To: <170440173389.204613.14502976575665083984.stgit@bazille.1015granger.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 5 Jan 2024 09:36:51 +0200
-Message-ID: <CAOQ4uxhCQ2UrMJZCCTdn5=HtEDPV=ibP4XvGgbwVroepFbLk4g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] fs: Create a generic is_dot_dotdot() utility
-To: Chuck Lever <cel@kernel.org>, viro@zeniv.linux.org.uk
-Cc: jlayton@redhat.com, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, trondmy@hammerspace.com, brauner@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8IeHlBnAmdcVLGIU"
+Content-Disposition: inline
+In-Reply-To: <20231226200205.562565-9-pasha.tatashin@soleen.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+
+
+--8IeHlBnAmdcVLGIU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 4, 2024 at 10:55=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
->
-> From: Chuck Lever <chuck.lever@oracle.com>
->
-> De-duplicate the same functionality in several places by hoisting
-> the is_dot_dotdot() utility function into linux/fs.h.
->
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
+On Tue, Dec 26, 2023 at 08:02:03PM +0000, Pasha Tatashin wrote:
+> Convert iommu/tegra-smmu.c to use the new page allocation functions
+> provided in iommu-pages.h.
+>=20
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Acked-by: David Rientjes <rientjes@google.com>
 > ---
->  fs/crypto/fname.c    |    8 +-------
->  fs/ecryptfs/crypto.c |   10 ----------
->  fs/exportfs/expfs.c  |    4 +---
->  fs/f2fs/f2fs.h       |   11 -----------
->  fs/namei.c           |    6 ++----
->  include/linux/fs.h   |   13 +++++++++++++
->  6 files changed, 17 insertions(+), 35 deletions(-)
->
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index 7b3fc189593a..0ad52fbe51c9 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
->
->  static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
->  {
-> -       if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')
-> -               return true;
-> -
-> -       if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' && str->name[1] =
-=3D=3D '.')
-> -               return true;
-> -
-> -       return false;
-> +       return is_dot_dotdot(str->name, str->len);
->  }
->
->  /**
-> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
-> index 03bd55069d86..2fe0f3af1a08 100644
-> --- a/fs/ecryptfs/crypto.c
-> +++ b/fs/ecryptfs/crypto.c
-> @@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
->         return rc;
->  }
->
-> -static bool is_dot_dotdot(const char *name, size_t name_size)
-> -{
-> -       if (name_size =3D=3D 1 && name[0] =3D=3D '.')
-> -               return true;
-> -       else if (name_size =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=
-=3D '.')
-> -               return true;
-> -
-> -       return false;
-> -}
-> -
->  /**
->   * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher te=
-xt name to decoded plaintext
->   * @plaintext_name: The plaintext name
-> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-> index 84af58eaf2ca..07ea3d62b298 100644
-> --- a/fs/exportfs/expfs.c
-> +++ b/fs/exportfs/expfs.c
-> @@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, cons=
-t char *name, int len,
->                 container_of(ctx, struct getdents_callback, ctx);
->
->         buf->sequence++;
-> -       /* Ignore the '.' and '..' entries */
-> -       if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] !=3D=
- '.')) &&
-> -           buf->ino =3D=3D ino && len <=3D NAME_MAX) {
-> +       if (buf->ino =3D=3D ino && len <=3D NAME_MAX && !is_dot_dotdot(na=
-me, len)) {
->                 memcpy(buf->name, name, len);
->                 buf->name[len] =3D '\0';
->                 buf->found =3D 1;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 9043cedfa12b..322a3b8a3533 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_in=
-fo *sbi)
->         return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
->  }
->
-> -static inline bool is_dot_dotdot(const u8 *name, size_t len)
-> -{
-> -       if (len =3D=3D 1 && name[0] =3D=3D '.')
-> -               return true;
-> -
-> -       if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
-> -               return true;
-> -
-> -       return false;
-> -}
-> -
->  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
->                                         size_t size, gfp_t flags)
->  {
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 71c13b2990b4..2386a70667fa 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2667,10 +2667,8 @@ static int lookup_one_common(struct mnt_idmap *idm=
-ap,
->         if (!len)
->                 return -EACCES;
->
-> -       if (unlikely(name[0] =3D=3D '.')) {
-> -               if (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'))
-> -                       return -EACCES;
-> -       }
-> +       if (is_dot_dotdot(name, len))
-> +               return -EACCES;
->
->         while (len--) {
->                 unsigned int c =3D *(const unsigned char *)name++;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 98b7a7a8c42e..53dd58a907e0 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2846,6 +2846,19 @@ extern bool path_is_under(const struct path *, con=
-st struct path *);
->
->  extern char *file_path(struct file *, char *, int);
->
-> +/**
-> + * is_dot_dotdot - returns true only if @name is "." or ".."
-> + * @name: file name to check
-> + * @len: length of file name, in bytes
-> + *
-> + * Coded for efficiency.
-> + */
-> +static inline bool is_dot_dotdot(const char *name, size_t len)
-> +{
-> +       return len && unlikely(name[0] =3D=3D '.') &&
-> +               (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'));
-> +}
-> +
+>  drivers/iommu/tegra-smmu.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 
-Looking back at the version that I suggested, (len < 2
-here is silly and should be (len =3D=3D 1 || ...
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-But let's wait for inputs from other developers on this helper,
-especially Al.
+--8IeHlBnAmdcVLGIU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Amir.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmWXu8cACgkQ3SOs138+
+s6HXkg//YOz2qzNPS3zbXb9R+gceE/gBdW73WaBVARCvXhhc5PWwWZctFyPH4Hf7
+KDyc0njiNk3tDVY28wbWI3Ex8fbdkb+B8CUlZihhhRxtYaEUiHjkUK7cyR8i81Dq
+pv2Bw67wRrXUthITgzpBOOqdeI+FpB/ch6GKIH0S13F/NpIwmLemg/u5THAgTAyw
+IBi+44VeFWXKky8rT2s/rENv2JAhz5ltYql0CGxFEYhqiIunEb2eqDPgbfr8vLKv
+2mvQmIOZsY04NO86V6eTKTM7+Ue5tzt+jHrMVr0gH/DkHkcmbOoPTn/lBsZ8IFi/
+3nhtBB5ofmX/+80r6w9u/reWpqxUWyvRcJYsE06Nw/AAZN6IZM1ds+6bal1QJ8Zn
+Cw+zagqq5Sqj2ah/tQ/W3rOzbs/XLMD0xLkRl7/kcjjOq+LfZFAzx3zqNyB3Vzlp
+/q+60iAGtwkI04MSGlkKjVkHpIrtSKQFWXbnM79/c5GEevy4r/W2/d7k+phM0y/Y
+GrblcAFFlQfSm4K19PEWARzu0mHOHFqIIcd6vfRONCuGFSAcmtvdB3KOfap5jP4H
+ebZ1R6zDoreUq4hYVBSiRxYxmfDgRUyTQcOTDhEGy/JyteRgvKVhDwgPH+ql3OGS
+wSPkv6/wg5Y8w2lR1QHCG/KXFjZ84iBLdT38/7QZqAR6hfMBGno=
+=MX0T
+-----END PGP SIGNATURE-----
+
+--8IeHlBnAmdcVLGIU--
 
