@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-7463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52236825374
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 13:47:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDE9825375
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 13:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1074B20E3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 12:47:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4BBD1F225E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 12:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A1E2D618;
-	Fri,  5 Jan 2024 12:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF3C2CCBB;
+	Fri,  5 Jan 2024 12:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGJr7qtw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ytl6lCyO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBB12D602;
-	Fri,  5 Jan 2024 12:47:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79FC5C433C7;
-	Fri,  5 Jan 2024 12:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132752D043;
+	Fri,  5 Jan 2024 12:50:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25172C433C9;
+	Fri,  5 Jan 2024 12:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704458824;
-	bh=f7aJUqAeO+62GIOemsYAtg4AYwU9wZ1B8RIVl2IX2Zg=;
+	s=k20201202; t=1704459023;
+	bh=2ulF6/TQ8iLxPsLSmKQRpRjw8sAPwVOnYVIRR+bqtTA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=vGJr7qtwsZz/T4P3Otx5SkXUs+x3QBKWPrH2yQuN2FcOLt8MuhVd+VMUXhKm5aoW7
-	 nwNb+XcFNRHFJuNDTbHXSZx0rTfX686lnJS4WaAmnmwihfjF+K0qoTIEZ6Yj3yfi59
-	 FwLfidcRjJkxUMw7Dqb/wZhzCUpiAATsS/dJWG4sRPf94N0ULNxIYyNsd+ueBUaOOH
-	 Q4GcTrcz2bghhFhD0mYKZFevALT6lMIjFLVn3NgHGoNwn5rLJflSNmDFppxmeW6yF2
-	 WpnFuO0CeiUZeFJ5/xOFMixaa9VJo9ClBHujYeWBjdCfBu+N2kHzwNEG1D9nrejVj5
-	 4GFpz/cQGsyXQ==
+	b=Ytl6lCyOXU/qx0+ryf3yS1qjXXGXt+l6CpO6zKfgLQyJXkdimDfzr7BGq1v6TdeLe
+	 q/n8E4oweEJ6kq7FzafQcbDNyQMj8KChlXQ1ZHRYwaj/usbHNG9esJJfWu12DRJoJ9
+	 zbIqnZ2IyoXAr+T/25QZ+K/LWbEDkePKp7BWhD/DxfBvvvFxgJLSsMtPCEudAhs+CD
+	 lcCN/ER6Tna+wf+3f9MLpin+wyJ9M+O3blHkTDIAw9aK9R0VJvy8nlGucEf6+xLzgq
+	 oYUOu+rxF9GaN8oto2LcOUIm1m7aa4r0G+h0FDjwysaCERpqUhDoekU3j293xnNpQG
+	 3Dy7PAaOVQHCw==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs mount api updates
-Date: Fri,  5 Jan 2024 13:46:53 +0100
-Message-ID: <20240105-vfs-mount-5e94596bd1d1@brauner>
+Subject: [GIT PULL] vfs rw updates
+Date: Fri,  5 Jan 2024 13:49:30 +0100
+Message-ID: <20240105-vfs-rw-9b5809292b57@brauner>
 X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -47,89 +47,43 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8671; i=brauner@kernel.org; h=from:subject:message-id; bh=f7aJUqAeO+62GIOemsYAtg4AYwU9wZ1B8RIVl2IX2Zg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRO/2Vzf7pJ7848R1n7K49Dl90w5NqxMDhEzvCKQ6f1/ EOBNQxBHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJqGD4H38+aPHxVPX0xQ9+ NEVu0v7jzHRMbtfs0BanqQvNdPbMk2JkmJl4N2Eh7yONPvNDX3KufXvCOeV/m9S8uv9uMUq7DvR +YwAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6289; i=brauner@kernel.org; h=from:subject:message-id; bh=2ulF6/TQ8iLxPsLSmKQRpRjw8sAPwVOnYVIRR+bqtTA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRO/3Uj9cOVix8NpIsWqhTN9/4RMd26f6Jl7aqOz2llp 9TvTopv6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIcAwjw9J7Z6c4P2+936+/ RmTtvFOdPUEvExKTT5zTEom763Z53wSG/45X0+Z5ZPUui5m37F140mbv6Q2e0gec/jlWstenT86 VZgIA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
 Hey Linus,
 
+Based on the discussions at Maintainer's Summit I've encouraged relevant people
+to provide pulls if they feel comfortable doing so. So this contains a pull
+from Amir for read-write backing file helpers for stacking filesystems such as
+overlayfs.
+
 /* Summary */
-This contains the work to retrieve detailed information about mounts via two
-new system calls. This is hopefully the beginning of the end of the saga that
-started with fsinfo() years ago. The LWN articles in [1] and [2] can serve as a
-summary so we can avoid rehashing everything here.
+* Fanotify is currently in the process of introducing pre content events.
+  Roughly, a new permission event will be added indicating that it is safe to
+  write to the file being accessed. These events are used by hierarchical
+  storage managers to e.g., fill the content of files on first access.
 
-At LSFMM in May 2022 we got into a room and agreed on what we want to do about
-fsinfo(). Basically, split it into pieces. This is the first part of that
-agreement. Specifically, it is concerned with retrieving information about
-mounts. So this only concerns the mount information retrieval, not the mount
-table change notification, or the extended filesystem specific mount option
-work. That is separate work.
+  During that work we noticed that our current permission checking is
+  inconsistent in rw_verify_area() and remap_verify_area(). Especially in the
+  splice code permission checking is done multiple times. For example, one time
+  for the whole range and then again for partial ranges inside the iterator.
 
-Currently mounts have a 32bit id. Mount ids are already in heavy use by
-libmount and other low-level userspace but they can't be relied upon because
-they're recycled very quickly. We agreed that mounts should carry a unique
-64bit id by which they can be referenced directly. This is now implemented as
-part of this work. The new 64bit mount id is exposed in statx() through the new
-STATX_MNT_ID_UNIQUE flag. If the flag isn't raised the old mount id is
-returned. If it is raised and the kernel supports the new 64bit mount id the
-flag is raised in the result mask and the new 64bit mount id is returned. New
-and old mount ids do not overlap so they cannot be conflated.
+  In addition, we mostly do permission checking before we call
+  file_start_write() except for a few places where we call it after. For
+  pre-content events we need such permission checking to be done before
+  file_start_write(). So this is a nice reason to clean this all up.
 
-Two new system calls are introduced that operate on the 64bit mount id:
-statmount() and listmount(). A summary of the api and usage can be found on LWN
-as well (cf. [3]) but of course, I'll provide a summary here as well.
+  After this series, all permission checking is done before file_start_write().
 
-Both system calls rely on struct mnt_id_req. Which is the request struct used
-to pass the 64bit mount id identifying the mount to operate on. It is
-extensible to allow for the addition of new parameters and for future use in
-other apis that make use of mount ids.
+  As part of this cleanup we also massaged the splice code a bit. We got rid of
+  a few helpers because we are alredy drowning in special read-write helpers.
+  We also cleaned up the return types for splice helpers.
 
-statmount() mimicks the semantics of statx() and exposes a set flags that
-userspace may raise in mnt_id_req to request specific information to be
-retrieved. A statmount() call returns a struct statmount filled in with
-information about the requested mount. Supported requests are indicated by
-raising the request flag passed in struct mnt_id_req in the @mask argument in
-struct statmount. Currently we do support:
-
-* STATMOUNT_SB_BASIC:
-  Basic filesystem info.
-
-* STATMOUNT_MNT_BASIC
-  Mount information (mount id, parent mount id, mount attributes etc.).
-
-* STATMOUNT_PROPAGATE_FROM
-  Propagation from what mount in current namespace.
-
-* STATMOUNT_MNT_ROOT
-  Path of the root of the mount (e.g., mount --bind /bla /mnt returns /bla).
-
-* STATMOUNT_MNT_POINT
-  Path of the mount point (e.g., mount --bind /bla /mnt returns /mnt).
-
-* STATMOUNT_FS_TYPE
-  Name of the filesystem type as the magic number isn't enough due to submounts.
-
-The string options STATMOUNT_MNT_{ROOT,POINT} and STATMOUNT_FS_TYPE are
-appended to the end of the struct. Userspace can use the offsets in @fs_type,
-@mnt_root, and @mnt_point to reference those strings easily.
-
-The struct statmount reserves quite a bit of space currently for future
-extensibility. This isn't really a problem and if this bothers us we can just
-send a follow-up pull request during this cycle.
-
-listmount() is given a 64bit mount id via mnt_id_req just as statmount(). It
-takes a buffer and a size to return an array of the 64bit ids of the child
-mounts of the requested mount. Userspace can thus choose to either retrieve
-child mounts for a mount in batches or iterate through the child mounts. For
-most use-cases it will be sufficient to just leave space for a few child
-mounts. But for big mount tables having an iterator is really helpful.
-Iterating through a mount table works by setting @param in mnt_id_req to the
-mount id of the last child mount retrieved in the previous listmount() call.
-
-[1]: https://lwn.net/Articles/934469
-[2]: https://lwn.net/Articles/829212
-[3]: https://lwn.net/Articles/950569
+* Introduce generic read-write helpers for backing files. This lifts some
+  overlayfs code to common code so it can be used by the FUSE passthrough work
+  coming in over the next cycles. Make Amir and Miklos the maintainers for this
+  new subsystem of the vfs.
 
 /* Testing */
 clang: Debian clang version 16.0.6 (19)
@@ -139,34 +93,9 @@ All patches are based on v6.7-rc1 and have been sitting in linux-next.
 No build failures or warnings were observed.
 
 /* Conflicts */
-
-Merge conflicts with other trees
-================================
-
-[1] linux-next: manual merge of the security tree with the vfs-brauner tree
-    https://lore.kernel.org/linux-next/20231120143106.3f8faedd@canb.auug.org.au
-
-    Possible conflict in system call numbering depending on whether the LSM
-    people do send a pull request including their new system calls.
-
-[2] This will have a merge conflict with the vfs misc pull request.
-    https://lore.kernel.org/r/20240105-vfs-misc-62acb84c5066@brauner
-
-    The resolution is as follows:
-
-    diff --cc tools/testing/selftests/Makefile
-    index 27f9f679ed15,da2e1b0e4dd8..000000000000
-    --- a/tools/testing/selftests/Makefile
-    +++ b/tools/testing/selftests/Makefile
-    @@@ -26,7 -26,7 +26,8 @@@ TARGETS += filesystem
-      TARGETS += filesystems/binderfs
-      TARGETS += filesystems/epoll
-      TARGETS += filesystems/fat
-     +TARGETS += filesystems/overlayfs
-    + TARGETS += filesystems/statmount
-      TARGETS += firmware
-      TARGETS += fpu
-      TARGETS += ftrace
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
 
 The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
@@ -174,68 +103,89 @@ The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8.mount
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8.rw
 
-for you to fetch changes up to 5bd3cf8cbc8a286308ef3f40656659d5abc89995:
+for you to fetch changes up to c39e2ae3943d4ee278af4e1b1dcfd5946da1089b:
 
-  add selftest for statmount/listmount (2023-12-14 16:13:59 +0100)
+  fs: fix __sb_write_started() kerneldoc formatting (2023-12-28 11:40:40 +0100)
 
-Please consider pulling these changes from the signed vfs-6.8.mount tag.
+Please consider pulling these changes from the signed vfs-6.8.rw tag.
 
 Happy New Year!
 Christian
 
 ----------------------------------------------------------------
-vfs-6.8.mount
+vfs-6.8.rw
 
 ----------------------------------------------------------------
-Christian Brauner (3):
-      statmount: simplify numeric option retrieval
-      statmount: simplify string option retrieval
-      fs: keep struct mnt_id_req extensible
+Amir Goldstein (29):
+      scsi: target: core: add missing file_{start,end}_write()
+      ovl: add permission hooks outside of do_splice_direct()
+      splice: remove permission hook from do_splice_direct()
+      splice: move permission hook out of splice_direct_to_actor()
+      splice: move permission hook out of splice_file_to_pipe()
+      splice: remove permission hook from iter_file_splice_write()
+      remap_range: move permission hooks out of do_clone_file_range()
+      remap_range: move file_start_write() to after permission hook
+      btrfs: move file_start_write() to after permission hook
+      coda: change locking order in coda_file_write_iter()
+      fs: move file_start_write() into vfs_iter_write()
+      fs: move permission hook out of do_iter_write()
+      fs: move permission hook out of do_iter_read()
+      fs: move kiocb_start_write() into vfs_iocb_iter_write()
+      fs: create __sb_write_started() helper
+      fs: create file_write_started() helper
+      fs: create {sb,file}_write_not_started() helpers
+      fs: fork splice_file_range() from do_splice_direct()
+      fs: move file_start_write() into direct_splice_actor()
+      fs: use do_splice_direct() for nfsd/ksmbd server-side-copy
+      splice: return type ssize_t from all helpers
+      fs: use splice_copy_file_range() inline helper
+      fsnotify: split fsnotify_perm() into two hooks
+      fsnotify: assert that file_start_write() is not held in permission hooks
+      fsnotify: optionally pass access range in file permission hooks
+      fs: prepare for stackable filesystems backing file helpers
+      fs: factor out backing_file_{read,write}_iter() helpers
+      fs: factor out backing_file_splice_{read,write}() helpers
+      fs: factor out backing_file_mmap() helper
 
-Miklos Szeredi (7):
-      add unique mount ID
-      mounts: keep list of mounts in an rbtree
-      namespace: extract show_path() helper
-      add statmount(2) syscall
-      add listmount(2) syscall
-      wire up syscalls for statmount/listmount
-      add selftest for statmount/listmount
+Christian Brauner (1):
+      Merge tag 'ovl-vfs-6.8' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs
 
- arch/alpha/kernel/syscalls/syscall.tbl             |   2 +
- arch/arm/tools/syscall.tbl                         |   2 +
- arch/arm64/include/asm/unistd32.h                  |   4 +
- arch/m68k/kernel/syscalls/syscall.tbl              |   2 +
- arch/microblaze/kernel/syscalls/syscall.tbl        |   2 +
- arch/mips/kernel/syscalls/syscall_n32.tbl          |   2 +
- arch/mips/kernel/syscalls/syscall_n64.tbl          |   2 +
- arch/mips/kernel/syscalls/syscall_o32.tbl          |   2 +
- arch/parisc/kernel/syscalls/syscall.tbl            |   2 +
- arch/powerpc/kernel/syscalls/syscall.tbl           |   2 +
- arch/s390/kernel/syscalls/syscall.tbl              |   2 +
- arch/sh/kernel/syscalls/syscall.tbl                |   2 +
- arch/sparc/kernel/syscalls/syscall.tbl             |   2 +
- arch/x86/entry/syscalls/syscall_32.tbl             |   2 +
- arch/x86/entry/syscalls/syscall_64.tbl             |   2 +
- arch/xtensa/kernel/syscalls/syscall.tbl            |   2 +
- fs/internal.h                                      |   2 +
- fs/mount.h                                         |  27 +-
- fs/namespace.c                                     | 627 +++++++++++++++++----
- fs/pnode.c                                         |   2 +-
- fs/proc_namespace.c                                |  13 +-
- fs/stat.c                                          |   9 +-
- include/linux/mount.h                              |   5 +-
- include/linux/syscalls.h                           |   8 +
- include/uapi/asm-generic/unistd.h                  |   8 +-
- include/uapi/linux/mount.h                         |  70 +++
- include/uapi/linux/stat.h                          |   1 +
- tools/testing/selftests/Makefile                   |   1 +
- .../selftests/filesystems/statmount/.gitignore     |   2 +
- .../selftests/filesystems/statmount/Makefile       |   6 +
- .../filesystems/statmount/statmount_test.c         | 612 ++++++++++++++++++++
- 31 files changed, 1298 insertions(+), 129 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/statmount/.gitignore
- create mode 100644 tools/testing/selftests/filesystems/statmount/Makefile
- create mode 100644 tools/testing/selftests/filesystems/statmount/statmount_test.c
+Vegard Nossum (1):
+      fs: fix __sb_write_started() kerneldoc formatting
+
+ MAINTAINERS                  |   9 ++
+ drivers/block/loop.c         |   2 -
+ fs/Kconfig                   |   4 +
+ fs/Makefile                  |   1 +
+ fs/backing-file.c            | 336 +++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/ioctl.c             |  12 +-
+ fs/cachefiles/io.c           |   5 +-
+ fs/ceph/file.c               |  13 +-
+ fs/coda/file.c               |   2 -
+ fs/fuse/file.c               |   5 +-
+ fs/internal.h                |   8 +-
+ fs/nfs/nfs4file.c            |   5 +-
+ fs/nfsd/vfs.c                |   7 +-
+ fs/open.c                    |  42 +-----
+ fs/overlayfs/Kconfig         |   1 +
+ fs/overlayfs/copy_up.c       |  30 +++-
+ fs/overlayfs/file.c          | 247 +++++--------------------------
+ fs/overlayfs/overlayfs.h     |   8 +-
+ fs/overlayfs/super.c         |  11 +-
+ fs/read_write.c              | 235 ++++++++++++++++--------------
+ fs/readdir.c                 |   4 +
+ fs/remap_range.c             |  45 +++---
+ fs/smb/client/cifsfs.c       |   5 +-
+ fs/splice.c                  | 243 +++++++++++++++++++------------
+ include/linux/backing-file.h |  42 ++++++
+ include/linux/fs.h           |  71 +++++++--
+ include/linux/fsnotify.h     |  50 +++++--
+ include/linux/splice.h       |  51 ++++---
+ io_uring/splice.c            |   4 +-
+ security/security.c          |  10 +-
+ 30 files changed, 941 insertions(+), 567 deletions(-)
+ create mode 100644 fs/backing-file.c
+ create mode 100644 include/linux/backing-file.h
 
