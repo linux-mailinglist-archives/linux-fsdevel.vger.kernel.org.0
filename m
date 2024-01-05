@@ -1,161 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-7442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D606824F29
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 08:25:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660E9824F3D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 08:37:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91B32852AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 07:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB4E1F2353C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 07:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED13A1EB3D;
-	Fri,  5 Jan 2024 07:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2365E20B0E;
+	Fri,  5 Jan 2024 07:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="JETk18fz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW5SQIgq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BE51DDD9;
-	Fri,  5 Jan 2024 07:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VF1lY4oeGr3LBwJk3ZR7MWAeP9SrHHDK8KwoL2RmjCFN8+3vKuYHETzABjdJrU4HU3+hYvtSPUTXFfulW3e1+MjDWEJAhC89Kr3d7rBWGU6OkVs6eO22InnMd5Omad5uRSfTiNz87cV0onIPBLWG+m6bJS34uo8OmegsTaN6MHyMRc5PKB6N7lxCxpxXcqIxh8/nWC3H6rDH+yoU8FjfDHZ4BLbokj+zhxgGdUAsior8jnhen7Mp84vp8ZogTBrf4S0YHT12yyTY7oClg/Fe4kE8CiLKXbonyWqqpV1M1KM5p6k04cq7SFR6ZHS5e7IfzF1YfnOsMmjMPtwR4mC0Yw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3a5jw1QyWuTRkjCthL/JXi1g5xzyEK1LTY6GX4CW0F4=;
- b=lVSPzoBXvNu4dnmHSMzrMTgVzXec3KgELkIDUFuDw0hQ1shwqKXAPCAhajQRym8yLwgO7NeMPu8f8r1Hb2Og+37YKIjOx1ta4FRUfbe/RHqCBp3YfNp73vY0sEeyB5sFa4hs0WOpz1eJ8QTDY9t4uulYgEHF8loQEmo/Qn4bfFAgnTcCIp4ELkVsni2gZAbaVDwnAwLiyk5zwbJ7Zh/wRFw4SrNCBt4CPEAOUDXQzWWUEMqEYoc4JuRHQ1VoACpNjfcrvn1onTeej6AAjBjMNaBKpAvTqQt9ckGTELBBcfbNMHhoKDBdgo7n6J1amO+0lPrEtJE4YxyfNHlBi8vKfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3a5jw1QyWuTRkjCthL/JXi1g5xzyEK1LTY6GX4CW0F4=;
- b=JETk18fzq7zTgUcBzjp3EQGNohnVFYk7r/AfARowYdGAFH0jsOX97B0AfgAW01ZKoCK2i5iR/eL2Nhc3vtEa71EFhRddiedxnX4PngF2xnX2LmDisLBfoFkZ2traiDHSKvM3ZOKR+eHyXrSME5H/sUn1ppmqC0Ybg5XCVHwtR88=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from MW4PR17MB5515.namprd17.prod.outlook.com (2603:10b6:303:126::5)
- by IA1PR17MB6051.namprd17.prod.outlook.com (2603:10b6:208:388::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.13; Fri, 5 Jan
- 2024 07:25:41 +0000
-Received: from MW4PR17MB5515.namprd17.prod.outlook.com
- ([fe80::f5ca:336b:991c:167b]) by MW4PR17MB5515.namprd17.prod.outlook.com
- ([fe80::f5ca:336b:991c:167b%4]) with mapi id 15.20.7159.015; Fri, 5 Jan 2024
- 07:25:41 +0000
-Date: Fri, 5 Jan 2024 02:25:28 -0500
-From: Gregory Price <gregory.price@memverge.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, akpm@linux-foundation.org, arnd@arndb.de,
-	tglx@linutronix.de, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, mhocko@kernel.org,
-	tj@kernel.org, corbet@lwn.net, rakie.kim@sk.com,
-	hyeongtak.ji@sk.com, honggyu.kim@sk.com, vtavarespetr@micron.com,
-	peterz@infradead.org, jgroves@micron.com, ravis.opensrc@micron.com,
-	sthanneeru@micron.com, emirakhur@micron.com, Hasan.Maruf@amd.com,
-	seungjun.ha@samsung.com,
-	Srinivasulu Thanneeru <sthanneeru.opensrc@micron.com>
-Subject: Re: [PATCH v5 02/11] mm/mempolicy: introduce
- MPOL_WEIGHTED_INTERLEAVE for weighted interleaving
-Message-ID: <ZZeu6DwVt6o0fl14@memverge.com>
-References: <20231223181101.1954-3-gregory.price@memverge.com>
- <8734vof3kq.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZYp6ZRLZQVtTHest@memverge.com>
- <878r58dt31.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZZRybDPSoLme8Ldh@memverge.com>
- <87mstnc6jz.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZZXbN4+2nVbE/lRe@memverge.com>
- <875y09d5d8.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZZcAF4zIpsVN3dLd@memverge.com>
- <87cyugb7cz.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87cyugb7cz.fsf@yhuang6-desk2.ccr.corp.intel.com>
-X-ClientProxiedBy: SJ0PR03CA0290.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::25) To MW4PR17MB5515.namprd17.prod.outlook.com
- (2603:10b6:303:126::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4E2032A;
+	Fri,  5 Jan 2024 07:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7815aad83acso25259185a.0;
+        Thu, 04 Jan 2024 23:37:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704440223; x=1705045023; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5/w5eJtCLO9gyzG6a3HPEPuxuRzY98TrfAvqmGNhpoA=;
+        b=GW5SQIgqS+qt8Ug/S+tlqTmqhq8dH72q7YgTQ0AC3gb56kaOe/ezw/ioR0BNKYKUAq
+         QJAK2qf4HYUPvyA2me+wnEHzBhg627xKAc9OKJrQaixC9mq2zeop+hQxgUoe2iDF0yIj
+         JlHvocU3qN5LvuJDJkP9xGi0tN5lEf4MSb6fnUNsLZ5+HEOnhp/ZzbNb6eKCGT/ghn/g
+         2SoqAfcm0ILPFnu67SsTqqSFynCFZD2ENGRrmLb17SYmV00I+H7lWxjhoIK/EpUbnQOP
+         btwAnrAzFAeRx5yyZl4+WDbjOqDbo7+MedwacDs62h9+0F0MooRgaKbYEWTa79GIkoEV
+         /vVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704440223; x=1705045023;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5/w5eJtCLO9gyzG6a3HPEPuxuRzY98TrfAvqmGNhpoA=;
+        b=Q/JDcUgvpOfGiYM2K+iqczEBnNo1SHmIsrPK7g9m9neVf/44XmQ0ZQ3eTEjpoU/nfV
+         efXaX8qpzNTUipQqTzoYHRXBouot3bfD+zuSupNZllN3WnsJPomnU7RAGtR4eNLnggHC
+         R3Kl7Du3ejjrVdIRvq9UtvZU2QKZ8hmS275sqP66+cIr/bweY/mvcqbmVkixJ86a6LX9
+         6lX4TGvWDg2tDipef4B+SlCSBrVHWyORFZ+EK2i3BgvoBubaSeezcXbz/najaHTV15JL
+         FHftahvJIV1brjRpNqERArG5xWR0mpNzF27IpXIyCceI3pvVYh5z8aNbxIYWF7G5pJUH
+         3BGA==
+X-Gm-Message-State: AOJu0YyXZ2fi4CPXEV+GamVyjdDBtt6Qf7PYTJdFeuysEtfxnixn9gP9
+	EYdMHw/43CpZhAoP2hDAvoeG+NA+Spu5ToB0SLk=
+X-Google-Smtp-Source: AGHT+IHBCcbuLeRImH2jx+ovSBg0hgv5cSxZyu/VnUbjeW8foQ8V0JXs3m0L07ACEU2Elum/hTORiOYAYnRg3pAhPfg=
+X-Received: by 2002:ad4:5def:0:b0:680:d159:ca5b with SMTP id
+ jn15-20020ad45def000000b00680d159ca5bmr2804839qvb.50.1704440222871; Thu, 04
+ Jan 2024 23:37:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR17MB5515:EE_|IA1PR17MB6051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 434657cb-890e-4de2-0fad-08dc0dbf859c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	+YG5GtjxzsjUdbSwdpFawOUDfo09ZjnArb7vqpyVPaOOCZ+C8JdN9DspuYFilOAw7alk46jTktTs7BQsRyXWPCh5BlF4aFzatvcpCTAdvG7P/i2WNXKRkvDIfQFe2VEaG8oILlWiK/yW4ODtOJbqCdZFZ/fP48y24rpQIl+0mqFN7Sq0/BmHAvKJnSp/p58hVSUz63mhcPP7Fl6LSu5u8zSXmEY8aaAcNReXvIy4r8uusMnv0a+2pxENTIpIVideAD/+q+SXCKPiWVPOkzQwMi8Bhodk3AInKHa9qKgag485TcnEJx8QnoZ1kE8gHl8MfGLqzsll4gvCInXK2UedndkJQUpOP/fwXrwdSwXGc/anMYuXCf6WhGMbrtIUp8IN0bMWTyE4PpvfKknQ41baWUmvnh8NIBKD9b6zfdqC/EABhr7wR7aG2Pm49FeGFf5kgxgCPS/PVfiXl7ARypERJxjcB7bNOe7QYv8OpnNgmGOWhFmnMbP18oAblXnScFktduJBbIT1VvNqdn2K2cnKGglbPNyX3qZrhSv9JaMmFWJoLIMekfwP93OelMHX+g9qhJiRLMfWmhF7keOlnFCpliywPDFlrHjCAMSium4MYVY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR17MB5515.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(136003)(366004)(346002)(39840400004)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(2906002)(4744005)(8936002)(7416002)(7406005)(8676002)(4326008)(44832011)(6486002)(36756003)(316002)(86362001)(54906003)(6916009)(66476007)(5660300002)(478600001)(6506007)(41300700001)(6512007)(6666004)(26005)(38100700002)(2616005)(66556008)(66946007)(83380400001)(16393002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LkNWQ16ILwTN61lgtsVuTnQfB7PTjCEsWW+t17j98K5ZV09kDx70XY/Dz/mb?=
- =?us-ascii?Q?yqTjtud268+QBjNDyupxALlkVzkuJiNkxyZIsE60n8fJlSvM9dJtCsRktU8G?=
- =?us-ascii?Q?CRr5yJtptI5bz8EegWWDVjZqdsj5RvjY2whFLEUo8SIJE3RhMbCS3/h8cj/R?=
- =?us-ascii?Q?Z8kWOwyLmHPVuCWsbUO7e/eape/c2QtCyA9ghod4XHxnDTNBvH1GJ/zv7+q9?=
- =?us-ascii?Q?UBCUTHFWzhyL11FsXLZiS8Y2pgVb6AHAonwRnW7amsBpcr2hyfdBTL+JdvGZ?=
- =?us-ascii?Q?eecBOciWYHFq25GEK5HRLvc2GBetbyTirKIpsyieaPho7uagj3lNNopvnLdb?=
- =?us-ascii?Q?1njYoxK+qLe2vKJbUWMUy/fqugxD+2N4k2Ht3zJ/UIA6TUV/MVjZlbxKIt/i?=
- =?us-ascii?Q?JFevkLic+7ZvRSVxpHgUdRXR7Elp7aYQYZtWVjTtqgUf2DljQHyG5sSSGhoU?=
- =?us-ascii?Q?3k96uWSNgzZhuhnfE7mGv71kScveFahPNwCQLz1Gj3I65Yy/5LlTSR96yq5g?=
- =?us-ascii?Q?+3uf1R3487+YXzzbKR8thXogknUoF2eAI3qaAhO1rEzXwass61gvJHdvPh7l?=
- =?us-ascii?Q?w5gDKbmRBPlo9eBsbaghq17C4ZjH8i7iiwbxBV2zypuSoUMf+6qRsrabhedF?=
- =?us-ascii?Q?PmnmQdul3GCummEiQpVHWLZXlJq6ZNcuhy7MrE9dVWkzUAeJrcdPXqYVzrWg?=
- =?us-ascii?Q?c9+VRh25Cr0oge1wbAeqMzpEnsUSkmmjKMjHS0GqsJifE9jaddqfnFQw22rV?=
- =?us-ascii?Q?wVRpt/jDY3aPUrKQiNU1y32oYT/piIifczDNZSnW/GLISgRwAz7zyLllF5+S?=
- =?us-ascii?Q?xyFsftKAzfu1kIvtFXytzBFGECiEy6znMTbXwZZuRx67z0D6UtfsBBza0dVV?=
- =?us-ascii?Q?IAAXRNQ3KuaAp3JIHQlJ3wwy0OKPZx81X4FwQ+U+p6vekV/7Lx/Cp71Hk6e8?=
- =?us-ascii?Q?L27QYzPewcyRKpidT2IR6YaGjZ51NsM1Q+6IRO+BI+0NrvUH3lhoYsgm6yCp?=
- =?us-ascii?Q?NskRv2qegC3j49WQ+KIZZWjit0N/qUPiHwc/r1rldrNsvScYzFWq9PPsbIJr?=
- =?us-ascii?Q?kQiAl5AySUTKDx6pJuBK1gY9N0Wk/MbQVyn/eDx4dY1hjOX3bOHYeLTMoCsp?=
- =?us-ascii?Q?DhkrlJtw6Bv3fbmddL89V0rkcOL02MvjD/1yocMqoTpPdgji/nDNz9TjCcYZ?=
- =?us-ascii?Q?IDFVM7G3ImftDs9zzff+fcB/m0QQPmwRL5DROyS2YHnLdmQQbHOMKUeGFuL4?=
- =?us-ascii?Q?u7ZMIaxpm6z4giMtVbSpHr3dYwDtXuLsgWgHSFeiMc1YAOEdSO6qRPA4AQNm?=
- =?us-ascii?Q?yUgb3BcUhio0RV300o30Wfp37tEBbO8SwXH545imXiRw+MuY5lbwx9xCOaG+?=
- =?us-ascii?Q?18R816AVYYnJmETslVlUSRkLtT0ioV3Ajya8azj1bRSNdKlifmfCeTtBTR3w?=
- =?us-ascii?Q?hjhEAOZDQXljdK8mCUbtbFvoEHKyGHYoOjd2xmFrjLP4ShpnVi07tkFz/lIo?=
- =?us-ascii?Q?lasuXmBBUkrgcJTi3bercGAH9eCybWLdMk3SvAXthNG2tq7J410TJP4LGiw5?=
- =?us-ascii?Q?auI0xEarP18lwP1KqkIYwJKbyYio5ehVX/1E0fgKAh5fmB0H70A3IDfVzh6T?=
- =?us-ascii?Q?sg=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 434657cb-890e-4de2-0fad-08dc0dbf859c
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR17MB5515.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2024 07:25:41.3405
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zv0wK6pEO8api6d5gA2olJtKnhr3afJ3RWhsm3C0NBbZVncnZJ+vsay9vlYmbQtM3Pj7eji2IPLDfptbuH2Boz5gFzVxJP2js8IqkIkeUNQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR17MB6051
+References: <170440153940.204613.6839922871340228115.stgit@bazille.1015granger.net>
+ <170440173389.204613.14502976575665083984.stgit@bazille.1015granger.net>
+In-Reply-To: <170440173389.204613.14502976575665083984.stgit@bazille.1015granger.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 5 Jan 2024 09:36:51 +0200
+Message-ID: <CAOQ4uxhCQ2UrMJZCCTdn5=HtEDPV=ibP4XvGgbwVroepFbLk4g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] fs: Create a generic is_dot_dotdot() utility
+To: Chuck Lever <cel@kernel.org>, viro@zeniv.linux.org.uk
+Cc: jlayton@redhat.com, Jeff Layton <jlayton@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, trondmy@hammerspace.com, brauner@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 05, 2024 at 02:51:40PM +0800, Huang, Ying wrote:
-> >
-> > So we're talking ~1MB for 1024 threads with mempolicies to avoid error
-> > conditions mid-page-allocation and to reduce the cost associated with
-> > applying weighted interleave.
-> 
-> Think about this again.  Why do we need weights array on stack?  I think
-> this is used to keep weights consistent.  If so, we don't need weights
-> array on stack.  Just use RCU to access global weights array.
-> 
+On Thu, Jan 4, 2024 at 10:55=E2=80=AFPM Chuck Lever <cel@kernel.org> wrote:
+>
+> From: Chuck Lever <chuck.lever@oracle.com>
+>
+> De-duplicate the same functionality in several places by hoisting
+> the is_dot_dotdot() utility function into linux/fs.h.
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 
-From the bulk allocation code:
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-__alloc_pages_bulk(gfp, node, NULL, node_pages, NULL, page_array);
+> ---
+>  fs/crypto/fname.c    |    8 +-------
+>  fs/ecryptfs/crypto.c |   10 ----------
+>  fs/exportfs/expfs.c  |    4 +---
+>  fs/f2fs/f2fs.h       |   11 -----------
+>  fs/namei.c           |    6 ++----
+>  include/linux/fs.h   |   13 +++++++++++++
+>  6 files changed, 17 insertions(+), 35 deletions(-)
+>
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 7b3fc189593a..0ad52fbe51c9 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -74,13 +74,7 @@ struct fscrypt_nokey_name {
+>
+>  static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
+>  {
+> -       if (str->len =3D=3D 1 && str->name[0] =3D=3D '.')
+> -               return true;
+> -
+> -       if (str->len =3D=3D 2 && str->name[0] =3D=3D '.' && str->name[1] =
+=3D=3D '.')
+> -               return true;
+> -
+> -       return false;
+> +       return is_dot_dotdot(str->name, str->len);
+>  }
+>
+>  /**
+> diff --git a/fs/ecryptfs/crypto.c b/fs/ecryptfs/crypto.c
+> index 03bd55069d86..2fe0f3af1a08 100644
+> --- a/fs/ecryptfs/crypto.c
+> +++ b/fs/ecryptfs/crypto.c
+> @@ -1949,16 +1949,6 @@ int ecryptfs_encrypt_and_encode_filename(
+>         return rc;
+>  }
+>
+> -static bool is_dot_dotdot(const char *name, size_t name_size)
+> -{
+> -       if (name_size =3D=3D 1 && name[0] =3D=3D '.')
+> -               return true;
+> -       else if (name_size =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=
+=3D '.')
+> -               return true;
+> -
+> -       return false;
+> -}
+> -
+>  /**
+>   * ecryptfs_decode_and_decrypt_filename - converts the encoded cipher te=
+xt name to decoded plaintext
+>   * @plaintext_name: The plaintext name
+> diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> index 84af58eaf2ca..07ea3d62b298 100644
+> --- a/fs/exportfs/expfs.c
+> +++ b/fs/exportfs/expfs.c
+> @@ -255,9 +255,7 @@ static bool filldir_one(struct dir_context *ctx, cons=
+t char *name, int len,
+>                 container_of(ctx, struct getdents_callback, ctx);
+>
+>         buf->sequence++;
+> -       /* Ignore the '.' and '..' entries */
+> -       if ((len > 2 || name[0] !=3D '.' || (len =3D=3D 2 && name[1] !=3D=
+ '.')) &&
+> -           buf->ino =3D=3D ino && len <=3D NAME_MAX) {
+> +       if (buf->ino =3D=3D ino && len <=3D NAME_MAX && !is_dot_dotdot(na=
+me, len)) {
+>                 memcpy(buf->name, name, len);
+>                 buf->name[len] =3D '\0';
+>                 buf->found =3D 1;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9043cedfa12b..322a3b8a3533 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3368,17 +3368,6 @@ static inline bool f2fs_cp_error(struct f2fs_sb_in=
+fo *sbi)
+>         return is_set_ckpt_flags(sbi, CP_ERROR_FLAG);
+>  }
+>
+> -static inline bool is_dot_dotdot(const u8 *name, size_t len)
+> -{
+> -       if (len =3D=3D 1 && name[0] =3D=3D '.')
+> -               return true;
+> -
+> -       if (len =3D=3D 2 && name[0] =3D=3D '.' && name[1] =3D=3D '.')
+> -               return true;
+> -
+> -       return false;
+> -}
+> -
+>  static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
+>                                         size_t size, gfp_t flags)
+>  {
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 71c13b2990b4..2386a70667fa 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2667,10 +2667,8 @@ static int lookup_one_common(struct mnt_idmap *idm=
+ap,
+>         if (!len)
+>                 return -EACCES;
+>
+> -       if (unlikely(name[0] =3D=3D '.')) {
+> -               if (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'))
+> -                       return -EACCES;
+> -       }
+> +       if (is_dot_dotdot(name, len))
+> +               return -EACCES;
+>
+>         while (len--) {
+>                 unsigned int c =3D *(const unsigned char *)name++;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98b7a7a8c42e..53dd58a907e0 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2846,6 +2846,19 @@ extern bool path_is_under(const struct path *, con=
+st struct path *);
+>
+>  extern char *file_path(struct file *, char *, int);
+>
+> +/**
+> + * is_dot_dotdot - returns true only if @name is "." or ".."
+> + * @name: file name to check
+> + * @len: length of file name, in bytes
+> + *
+> + * Coded for efficiency.
+> + */
+> +static inline bool is_dot_dotdot(const char *name, size_t len)
+> +{
+> +       return len && unlikely(name[0] =3D=3D '.') &&
+> +               (len < 2 || (len =3D=3D 2 && name[1] =3D=3D '.'));
+> +}
+> +
 
-This function can block. You cannot block during an RCU read context.
+Looking back at the version that I suggested, (len < 2
+here is silly and should be (len =3D=3D 1 || ...
 
-~Gregory
+But let's wait for inputs from other developers on this helper,
+especially Al.
+
+Thanks,
+Amir.
 
