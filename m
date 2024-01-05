@@ -1,172 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-7458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C9B82526C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 11:52:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4462982527B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 11:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCDFC1F23F02
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 10:52:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E215D286779
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 10:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E1428E08;
-	Fri,  5 Jan 2024 10:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F021528E38;
+	Fri,  5 Jan 2024 10:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MKKjungj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4FVik9ep";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MKKjungj";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4FVik9ep"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B4E250ED;
-	Fri,  5 Jan 2024 10:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4T60dV6Bnfz4f3lVc;
-	Fri,  5 Jan 2024 18:51:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 95B161A05A1;
-	Fri,  5 Jan 2024 18:52:04 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgDnNQxT35dl6D1fFg--.48717S4;
-	Fri, 05 Jan 2024 18:52:04 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	houtao1@huawei.com
-Subject: [PATCH v2] virtiofs: use GFP_NOFS when enqueuing request through kworker
-Date: Fri,  5 Jan 2024 18:53:05 +0800
-Message-Id: <20240105105305.4052672-1-houtao@huaweicloud.com>
-X-Mailer: git-send-email 2.29.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94AC02C85B;
+	Fri,  5 Jan 2024 10:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A8354220B7;
+	Fri,  5 Jan 2024 10:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704452256; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vXxhtyeckuqJFNr/JRv524z1JHaWgmFYD2pXQ0IUDA=;
+	b=MKKjungjIvGWCqbk0Vf4SBIt53LzaJID/tvg9uLrkg6ZvBfMm0/3NvfIX4H3zTrxSvMjK8
+	Mme8raMtSEGYLgrC8FnZJrGRsc72iI4GiAdmYWpBtkOaRZBPXvxaNjohitwW0mRpsIqetd
+	PNI533+jSBdMQ+x69VEGvnZDvktdkIQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704452256;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vXxhtyeckuqJFNr/JRv524z1JHaWgmFYD2pXQ0IUDA=;
+	b=4FVik9epYGd6eXdIFPsDiIvAoOAZNYgVhdckcBQ6otxliwcT7727hvm+6Cy7c2U3FUIAQs
+	bmkQznNaureYqQDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704452256; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vXxhtyeckuqJFNr/JRv524z1JHaWgmFYD2pXQ0IUDA=;
+	b=MKKjungjIvGWCqbk0Vf4SBIt53LzaJID/tvg9uLrkg6ZvBfMm0/3NvfIX4H3zTrxSvMjK8
+	Mme8raMtSEGYLgrC8FnZJrGRsc72iI4GiAdmYWpBtkOaRZBPXvxaNjohitwW0mRpsIqetd
+	PNI533+jSBdMQ+x69VEGvnZDvktdkIQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704452256;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vXxhtyeckuqJFNr/JRv524z1JHaWgmFYD2pXQ0IUDA=;
+	b=4FVik9epYGd6eXdIFPsDiIvAoOAZNYgVhdckcBQ6otxliwcT7727hvm+6Cy7c2U3FUIAQs
+	bmkQznNaureYqQDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A4A4136F5;
+	Fri,  5 Jan 2024 10:57:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xfs2JaDgl2XhZwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 05 Jan 2024 10:57:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 49C52A07EF; Fri,  5 Jan 2024 11:57:36 +0100 (CET)
+Date: Fri, 5 Jan 2024 11:57:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-scsi@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <20240105105736.24jep6q6cd7vsnmz@quack3>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnNQxT35dl6D1fFg--.48717S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4kXrWrJFyfuF4UWF43Awb_yoWrJr45pr
-	Wqya15GFWrJrW2gF95JF4UCw1YkwnakFW7Ga4rXa4akFW7Xw17uFy8ZFy0qrsavrykCF1x
-	Ar4FqF4q9F47Zw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUgEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-	c4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4
-	CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1x
-	MIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6r
-	WUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjxUOyCJDUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZZcgXI46AinlcBDP@casper.infradead.org>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 URIBL_BLOCKED(0.00)[suse.com:email];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-From: Hou Tao <houtao1@huawei.com>
+Hello,
 
-When invoking virtio_fs_enqueue_req() through kworker, both the
-allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
-Considering the size of both the sg array and the bounce buffer may be
-greater than PAGE_SIZE, use GFP_NOFS instead of GFP_ATOMIC to lower the
-possibility of memory allocation failure.
+On Thu 04-01-24 21:17:16, Matthew Wilcox wrote:
+> This is primarily a _FILESYSTEM_ track topic.  All the work has already
+> been done on the MM side; the FS people need to do their part.  It could
+> be a joint session, but I'm not sure there's much for the MM people
+> to say.
+> 
+> There are situations where we need to allocate memory, but cannot call
+> into the filesystem to free memory.  Generally this is because we're
+> holding a lock or we've started a transaction, and attempting to write
+> out dirty folios to reclaim memory would result in a deadlock.
+> 
+> The old way to solve this problem is to specify GFP_NOFS when allocating
+> memory.  This conveys little information about what is being protected
+> against, and so it is hard to know when it might be safe to remove.
+> It's also a reflex -- many filesystem authors use GFP_NOFS by default
+> even when they could use GFP_KERNEL because there's no risk of deadlock.
+> 
+> The new way is to use the scoped APIs -- memalloc_nofs_save() and
+> memalloc_nofs_restore().  These should be called when we start a
+> transaction or take a lock that would cause a GFP_KERNEL allocation to
+> deadlock.  Then just use GFP_KERNEL as normal.  The memory allocators
+> can see the nofs situation is in effect and will not call back into
+> the filesystem.
+> 
+> This results in better code within your filesystem as you don't need to
+> pass around gfp flags as much, and can lead to better performance from
+> the memory allocators as GFP_NOFS will not be used unnecessarily.
+> 
+> The memalloc_nofs APIs were introduced in May 2017, but we still have
+> over 1000 uses of GFP_NOFS in fs/ today (and 200 outside fs/, which is
+> really sad).  This session is for filesystem developers to talk about
+> what they need to do to fix up their own filesystem, or share stories
+> about how they made their filesystem better by adopting the new APIs.
 
-Signed-off-by: Hou Tao <houtao1@huawei.com>
----
-Change log:
-v2:
-  * pass gfp_t instead of bool to virtio_fs_enqueue_req() (Suggested by Matthew)
+I agree this is a worthy goal and the scoped API helped us a lot in the
+ext4/jbd2 land. Still we have some legacy to deal with:
 
-v1: https://lore.kernel.org/linux-fsdevel/20240104015805.2103766-1-houtao@huaweicloud.com
+~> git grep "NOFS" fs/jbd2/ | wc -l
+15
+~> git grep "NOFS" fs/ext4/ | wc -l
+71
 
- fs/fuse/virtio_fs.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+When you are asking about what would help filesystems with the conversion I
+actually have one wish. The most common case is that you need to annotate
+some lock that can be grabbed in the reclaim path and thus you must avoid
+GFP_FS allocations from under it. For example to deal with reclaim
+deadlocks in the writeback paths we had to introduce wrappers like:
 
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 3aac31d451985..8cf518624ce9e 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -87,7 +87,8 @@ struct virtio_fs_req_work {
- };
- 
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
--				 struct fuse_req *req, bool in_flight);
-+				 struct fuse_req *req, bool in_flight,
-+				 gfp_t gfp);
- 
- static const struct constant_table dax_param_enums[] = {
- 	{"always",	FUSE_DAX_ALWAYS },
-@@ -383,7 +384,7 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
- 		list_del_init(&req->list);
- 		spin_unlock(&fsvq->lock);
- 
--		ret = virtio_fs_enqueue_req(fsvq, req, true);
-+		ret = virtio_fs_enqueue_req(fsvq, req, true, GFP_NOFS);
- 		if (ret < 0) {
- 			if (ret == -ENOMEM || ret == -ENOSPC) {
- 				spin_lock(&fsvq->lock);
-@@ -488,7 +489,7 @@ static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
- }
- 
- /* Allocate and copy args into req->argbuf */
--static int copy_args_to_argbuf(struct fuse_req *req)
-+static int copy_args_to_argbuf(struct fuse_req *req, gfp_t gfp)
- {
- 	struct fuse_args *args = req->args;
- 	unsigned int offset = 0;
-@@ -502,7 +503,7 @@ static int copy_args_to_argbuf(struct fuse_req *req)
- 	len = fuse_len_args(num_in, (struct fuse_arg *) args->in_args) +
- 	      fuse_len_args(num_out, args->out_args);
- 
--	req->argbuf = kmalloc(len, GFP_ATOMIC);
-+	req->argbuf = kmalloc(len, gfp);
- 	if (!req->argbuf)
- 		return -ENOMEM;
- 
-@@ -1119,7 +1120,8 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
- 
- /* Add a request to a virtqueue and kick the device */
- static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
--				 struct fuse_req *req, bool in_flight)
-+				 struct fuse_req *req, bool in_flight,
-+				 gfp_t gfp)
- {
- 	/* requests need at least 4 elements */
- 	struct scatterlist *stack_sgs[6];
-@@ -1140,8 +1142,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	/* Does the sglist fit on the stack? */
- 	total_sgs = sg_count_fuse_req(req);
- 	if (total_sgs > ARRAY_SIZE(stack_sgs)) {
--		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), GFP_ATOMIC);
--		sg = kmalloc_array(total_sgs, sizeof(sg[0]), GFP_ATOMIC);
-+		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), gfp);
-+		sg = kmalloc_array(total_sgs, sizeof(sg[0]), gfp);
- 		if (!sgs || !sg) {
- 			ret = -ENOMEM;
- 			goto out;
-@@ -1149,7 +1151,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
- 	}
- 
- 	/* Use a bounce buffer since stack args cannot be mapped */
--	ret = copy_args_to_argbuf(req);
-+	ret = copy_args_to_argbuf(req, gfp);
- 	if (ret < 0)
- 		goto out;
- 
-@@ -1245,7 +1247,7 @@ __releases(fiq->lock)
- 		 fuse_len_args(req->args->out_numargs, req->args->out_args));
- 
- 	fsvq = &fs->vqs[queue_id];
--	ret = virtio_fs_enqueue_req(fsvq, req, false);
-+	ret = virtio_fs_enqueue_req(fsvq, req, false, GFP_ATOMIC);
- 	if (ret < 0) {
- 		if (ret == -ENOMEM || ret == -ENOSPC) {
- 			/*
+static inline int ext4_writepages_down_read(struct super_block *sb)
+{
+        percpu_down_read(&EXT4_SB(sb)->s_writepages_rwsem);
+        return memalloc_nofs_save();
+}
+
+static inline void ext4_writepages_up_read(struct super_block *sb, int ctx)
+{
+        memalloc_nofs_restore(ctx);
+        percpu_up_read(&EXT4_SB(sb)->s_writepages_rwsem);
+}
+
+When you have to do it for 5 locks in your filesystem it gets a bit ugly
+and it would be nice to have some generic way to deal with this. We already
+have the spin_lock_irqsave() precedent we might follow (and I don't
+necessarily mean the calling convention which is a bit weird for today's
+standards)?
+
+Even more lovely would be if we could actually avoid passing around the
+returned reclaim state because sometimes the locks get acquired / released
+in different functions and passing the state around requires quite some
+changes and gets ugly. That would mean we'd have to have
+fs-reclaim-forbidden counter instead of just a flag in task_struct. OTOH
+then we could just mark the lock (mutex / rwsem / whatever) as
+fs-reclaim-unsafe during init and the rest would just magically happen.
+That would be super-easy to use.
+
+								Honza
 -- 
-2.29.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
