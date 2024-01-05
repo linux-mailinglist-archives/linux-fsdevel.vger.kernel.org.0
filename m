@@ -1,203 +1,442 @@
-Return-Path: <linux-fsdevel+bounces-7495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BEE825C73
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 23:19:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E25C825C79
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 23:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4927B285B31
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 22:19:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B178285B29
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 22:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88747358B3;
-	Fri,  5 Jan 2024 22:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA4B364B4;
+	Fri,  5 Jan 2024 22:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8dPLBfO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yrm43cTr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9E72E855;
-	Fri,  5 Jan 2024 22:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2cceb5f0918so133071fa.2;
-        Fri, 05 Jan 2024 14:18:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15CD360B9
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 22:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1d42ed4cdc7so41605ad.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 14:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704493132; x=1705097932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkPTh46pRsjNQCsVTiCDEUWk5jfBj4ByCJ4W9yBlF4M=;
-        b=i8dPLBfOGO/0OoXzhuvKvw8xvRpD54ydr5UWp/tJPjVlunzCdM48x957kkQ3FGOqSC
-         +QFPvoNgUe3piPeou7D4GkC70UDM3JaBgDjRvDf0IjHPMuO/oGpNze35/Iz2bJiuJa6W
-         Dlf809LpJ3Emi8o9l6JPciIrzuUd1q0csg6NYjFzLIjdex8+NEf1PSpaSQ2De+SSgmmC
-         yaSJl9tRufuo0j3cFlY4OOxdfy39T15sXpmITWI7cCxzF7gqzWPqsNkrsiiNUyCAuf+T
-         k2534IkDfN6clk3T63hKBszlHh2jFRqmGGmNt0HHHKlJSWor5ZRa8AlsQhUgPdJ/fWCa
-         U1Lg==
+        d=google.com; s=20230601; t=1704493154; x=1705097954; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEnz61wCSvrZe2jF5Mf/NQp7WuKIRfFXZA6rHuwYX1Q=;
+        b=yrm43cTrY6GSvsHn41juCpAXO9zid6Zj6QzxBwMy0ccfoXOiA/O+/TDQgEsWKb6rwQ
+         iwD7zROCsYMq7lQfRYxO7CsaVsJpeUBj3XVztNeRsnJwlPibuqqx7FbRhV63xFaze7lo
+         2+CZGeFAE6p8Yvn2ItKyJ8ycnDiQYLd36/iIbk7L3lOZX3cEopmW+sSBHjArDQtHKJCh
+         gEMZoa5XaBA3Texd14caXezQ6dsUQGNqtg7IxrhCnI5otoh7doFhabLkdPqBKk9qybjh
+         kLv6l5RZ//sWE/L6ezo8MNMiosdh2klu3iMB0rCVeFrxiVhWQU54NIuXzK0Lq5k1Y33m
+         1bhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704493132; x=1705097932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkPTh46pRsjNQCsVTiCDEUWk5jfBj4ByCJ4W9yBlF4M=;
-        b=Vb6kVNFNDIpFff1HWcC0/koeB3/kwjoj9DKL7U/xDAkjA8jLn8Xwd6+QfLsZssT2gC
-         PqFC1W2WMFBk9N2Q4WLelDSQKE6Sf0lNhjUQnhsO16/JpuaVx66NUpD3N3J/HUTp68I/
-         6fkcNVhWD0a6a9z3qJtEU/b60qj6IQ6seZNtBNBjdw6Jb7avGAmIQRfjtOl1/I0G2sfw
-         fW047/rmwMJK5sbJPlfw8Rtch7KkOUZTs17S7CxUDBvdChKqfQkOw5ZyI9kXv8lX35Q0
-         Wb+ccTv31Ms+nFBkxrE+m8RWPXldtFznbCMXGcz2hrfdHD6ugCTzBdz4f89jQsNS4BH8
-         1H/A==
-X-Gm-Message-State: AOJu0YyCIZYy8N2bE/UvpwpGalMq/xen5ZKsP25ZkFYpgxEp4uF6RX6Q
-	0hbS/kq8cWS3QHJi0hVvlQcq/Pj5B5JcV+av4Lw=
-X-Google-Smtp-Source: AGHT+IHTF9qLfrk+MfstI1+n/BLRASDQfOsfErxjCd02+nlXXqLZJO0oLB90qi8DJcVBrkW4L+1WLmrp2pIO2ThPye8=
-X-Received: by 2002:a2e:8e97:0:b0:2cd:1de9:dfe9 with SMTP id
- z23-20020a2e8e97000000b002cd1de9dfe9mr12020ljk.65.1704493131990; Fri, 05 Jan
- 2024 14:18:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704493154; x=1705097954;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wEnz61wCSvrZe2jF5Mf/NQp7WuKIRfFXZA6rHuwYX1Q=;
+        b=X1Q1Zu7JSfUNzfN4I2rmdtkf8B1+hqQTfScEe1c8jE8hBj8lcK7/pnl9VMhzQgATwN
+         IoHA/IkNQzSDZC3JhW6sTUZyNWDusciwk7/aNgRnIRzMh+sm0W6Ucza/OmV2ePLEgKve
+         H6UOscF2LesumpKyArfk9Oy9R/sdGhSSYak262d0KXgPQKCc+m/Phr4+73mj0zM6Mkg2
+         ErfkOFJeYA2MncxIEoXBMrAfg44D6WsguaNPBqTVAh6XPtTxXXKD0ABWNCVZd//rbJtN
+         cSwk+C+MrOPZWUJfTYcefpEWLABIVotyjY6EVQmJiNDEmSuzrlO7DSDNKfVRG4EtQ8s5
+         t8SQ==
+X-Gm-Message-State: AOJu0YyTBX9ANQ3rqoP0GyHDeycMZRByR8xXMDp2WETJCQyOwHRWwqdv
+	5YWw9PTgRtZ9XCZEaX7uV+uKnB4I2YAB
+X-Google-Smtp-Source: AGHT+IGZIQV6HoMIW2FZhrqA1t+/kBeRsokuQ7inFJFPoJnMXCocwDpviLxPw+YpwJLrIt0RukdS4g==
+X-Received: by 2002:a17:903:32c8:b0:1d3:c097:4a6f with SMTP id i8-20020a17090332c800b001d3c0974a6fmr20999plr.15.1704493153793;
+        Fri, 05 Jan 2024 14:19:13 -0800 (PST)
+Received: from [2620:0:1008:15:e621:8fdd:e5e:628] ([2620:0:1008:15:e621:8fdd:e5e:628])
+        by smtp.gmail.com with ESMTPSA id t185-20020a632dc2000000b005b92e60cf57sm1920764pgt.56.2024.01.05.14.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jan 2024 14:19:13 -0800 (PST)
+Date: Fri, 5 Jan 2024 14:19:11 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+To: Sourav Panda <souravpanda@google.com>
+cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+    Andrew Morton <akpm@linux-foundation.org>, mike.kravetz@oracle.com, 
+    muchun.song@linux.dev, rppt@kernel.org, david@redhat.com, 
+    rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
+    tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+    pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
+    shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+    wangkefeng.wang@huawei.com, adobriyan@gmail.com, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, surenb@google.com, 
+    linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+    linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+    Matthew Wilcox <willy@infradead.org>, weixugc@google.com
+Subject: Re: [PATCH v6 1/1] mm: report per-page metadata information
+In-Reply-To: <20231205223118.3575485-2-souravpanda@google.com>
+Message-ID: <b425ba6e-50b8-d1a6-7cb1-f94ba9e06c35@google.com>
+References: <20231205223118.3575485-1-souravpanda@google.com> <20231205223118.3575485-2-souravpanda@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-4-andrii@kernel.org>
- <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
-In-Reply-To: <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 5 Jan 2024 14:18:40 -0800
-Message-ID: <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	paul@paul-moore.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jan 5, 2024 at 1:45=E2=80=AFPM Linus Torvalds
-<torvalds@linuxfoundation.org> wrote:
->
-> Ok, I've gone through the whole series now, and I don't find anything
-> objectionable.
+On Tue, 5 Dec 2023, Sourav Panda wrote:
 
-That's great, thanks for reviewing!
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 49ef12df631b..d5901d04e082 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -993,6 +993,7 @@ Example output. You may not have all of these fields.
+>      AnonPages:       4654780 kB
+>      Mapped:           266244 kB
+>      Shmem:              9976 kB
+> +    PageMetadata:     513419 kB
+>      KReclaimable:     517708 kB
+>      Slab:             660044 kB
+>      SReclaimable:     517708 kB
+> @@ -1095,6 +1096,8 @@ Mapped
+>                files which have been mmapped, such as libraries
+>  Shmem
+>                Total memory used by shared memory (shmem) and tmpfs
+> +PageMetadata
+> +              Memory used for per-page metadata
+>  KReclaimable
+>                Kernel allocations that the kernel will attempt to reclaim
+>                under memory pressure. Includes SReclaimable (below), and other
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index 45af9a989d40..f141bb2a550d 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -39,7 +39,9 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	long available;
+>  	unsigned long pages[NR_LRU_LISTS];
+>  	unsigned long sreclaimable, sunreclaim;
+> +	unsigned long nr_page_metadata;
 
->
-> Which may only mean that I didn't notice something, of course, but at
-> least there's nothing I'd consider obvious.
->
-> I keep coming back to this 03/29 patch, because it's kind of the heart
-> of it, and I have one more small nit, but it's also purely stylistic:
->
-> On Wed, 3 Jan 2024 at 14:21, Andrii Nakryiko <andrii@kernel.org> wrote:
-> >
-> > +bool bpf_token_capable(const struct bpf_token *token, int cap)
-> > +{
-> > +       /* BPF token allows ns_capable() level of capabilities, but onl=
-y if
-> > +        * token's userns is *exactly* the same as current user's usern=
-s
-> > +        */
-> > +       if (token && current_user_ns() =3D=3D token->userns) {
-> > +               if (ns_capable(token->userns, cap))
-> > +                       return true;
-> > +               if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,=
- CAP_SYS_ADMIN))
-> > +                       return true;
-> > +       }
-> > +       /* otherwise fallback to capable() checks */
-> > +       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_S=
-YS_ADMIN));
-> > +}
->
-> This *feels* like it should be written as
->
->     bool bpf_token_capable(const struct bpf_token *token, int cap)
->     {
->         struct user_namespace *ns =3D &init_ns;
->
->         /* BPF token allows ns_capable() level of capabilities, but only =
-if
->          * token's userns is *exactly* the same as current user's userns
->          */
->         if (token && current_user_ns() =3D=3D token->userns)
->                 ns =3D token->userns;
->         return ns_capable(ns, cap) ||
->                 (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
->     }
->
-> And yes, I realize that the function will end up later growing a
->
->         security_bpf_token_capable(token, cap)
->
-> test inside that 'if (token ..)' statement, and this would change the
-> order of that test so that the LSM hook would now be done before the
-> capability checks are done, but that all still seems just more of an
-> argument for the simplification.
->
-> So the end result would be something like
->
->     bool bpf_token_capable(const struct bpf_token *token, int cap)
->     {
->         struct user_namespace *ns =3D &init_ns;
->
->         if (token && current_user_ns() =3D=3D token->userns) {
->                 if (security_bpf_token_capable(token, cap) < 0)
->                         return false;
->                 ns =3D token->userns;
->         }
->         return ns_capable(ns, cap) ||
->                 (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
->     }
+Initialize it here (if we actually need this variable)?
 
-Yep, it makes sense to use ns_capable with init_ns. I'll change those
-two patches to end up with something like what you suggested here.
+>  	int lru;
+> +	int nid;
+>  
+>  	si_meminfo(&i);
+>  	si_swapinfo(&i);
+> @@ -57,6 +59,10 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+>  	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
+>  
+> +	nr_page_metadata = 0;
+> +	for_each_online_node(nid)
+> +		nr_page_metadata += node_page_state(NODE_DATA(nid), NR_PAGE_METADATA);
 
->
-> although I feel that with that LSM hook, maybe this all should return
-> the error code (zero or negative), not a bool for success?
->
-> Also, should "current_user_ns() !=3D token->userns" perhaps be an error
-> condition, rather than a "fall back to init_ns" condition?
->
-> Again, none of this is a big deal. I do think you're dropping the LSM
-> error code on the floor, and are duplicating the "ns_capable()" vs
-> "capable()" logic as-is, but none of this is a deal breaker, just more
-> of my commentary on the patch and about the logic here.
->
-> And yeah, I don't exactly love how you say "ok, if there's a token and
-> it doesn't match, I'll not use it" rather than "if the token namespace
-> doesn't match, it's an error", but maybe there's some usability issue
-> here?
+Is this intended to be different than 
+global_node_page_state_pages(NR_PAGE_METADATA)?  
 
-Yes, usability was the primary concern. The overall idea with BPF
-token is to make most BPF applications not care or even potentially
-know about its existence, and mostly leave it up to administrators
-and/or container managers to set up an environment with BPF token
-delegation. To make that all possible, libbpf will opportunistically
-try to create BPF token from BPF FS in the container (typically
-/sys/fs/bpf, but it can be tuned, of course). And so if BPF token can
-actually prevent, say, BPF program loading, because it didn't allow
-particular program type to be loaded or whatnot, that would be a
-regression of behavior relative to if BPF token was never even used.
+If so, any hint as to why we want to discount page metadata on offline 
+nodes?  We can't make an inference that metadata is always allocated 
+locally, memoryless nodes need things like struct page allocated on nodes 
+with memory.
 
-So I consciously wanted a behavior in which BPF token can be used as a
-sort of potential/additional rights, but otherwise just fallback to
-current behavior based on capable(CAP_BPF) and other caps we use.
+So even if a memoryless node is offline, we'd still be including its 
+metadata here with the current implementation.
 
-The alternative to the above would be creating a few more APIs to
-proactively check if a given BPF token instance would allow whatever
-operation libbpf needs to perform, and if not, not using it. Which
-would be used to achieve the exact same behavior but in a more round
-about way.
+Or maybe I'm missing a subtlety here for why this is not already 
+global_node_page_state_pages().
 
-And the last piece of thinking was that if the user actually would
-want to fail bpf() operation if the BPF token doesn't grant such
-permissions, we can add a flag that would force this behavior. Some
-sort of BPF_F_TOKEN_STRICT that can be optionally specified. But I
-wanted to wait for an actual production use case that would want that
-(I'm not aware of any right now).
+> +
+>  	show_val_kb(m, "MemTotal:       ", i.totalram);
+>  	show_val_kb(m, "MemFree:        ", i.freeram);
+>  	show_val_kb(m, "MemAvailable:   ", available);
+> @@ -104,6 +110,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  	show_val_kb(m, "Mapped:         ",
+>  		    global_node_page_state(NR_FILE_MAPPED));
+>  	show_val_kb(m, "Shmem:          ", i.sharedram);
+> +	show_val_kb(m, "PageMetadata:   ", nr_page_metadata);
+>  	show_val_kb(m, "KReclaimable:   ", sreclaimable +
+>  		    global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE));
+>  	show_val_kb(m, "Slab:           ", sreclaimable + sunreclaim);
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 3c25226beeed..ef176152be7c 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -207,6 +207,10 @@ enum node_stat_item {
+>  	PGPROMOTE_SUCCESS,	/* promote successfully */
+>  	PGPROMOTE_CANDIDATE,	/* candidate pages to promote */
+>  #endif
+> +	NR_PAGE_METADATA,	/* Page metadata size (struct page and page_ext)
+> +				 * in pages
+> +				 */
+> +	NR_PAGE_METADATA_BOOT,	/* NR_PAGE_METADATA for bootmem */
 
->
->               Linus
+So if some vmemmap pages are freed, then MemTotal could be incremented by 
+a portion of NR_PAGE_METADATA_BOOT and then this stat is decremented?  Is 
+the goal that the sum of MemTotal + SUM(nr_page_metadata_boot) is always 
+constant?
+
+>  	NR_VM_NODE_STAT_ITEMS
+>  };
+>  
+> diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+> index fed855bae6d8..af096a881f03 100644
+> --- a/include/linux/vmstat.h
+> +++ b/include/linux/vmstat.h
+> @@ -656,4 +656,8 @@ static inline void lruvec_stat_sub_folio(struct folio *folio,
+>  {
+>  	lruvec_stat_mod_folio(folio, idx, -folio_nr_pages(folio));
+>  }
+> +
+> +void __init mod_node_early_perpage_metadata(int nid, long delta);
+> +void __init store_early_perpage_metadata(void);
+> +
+>  #endif /* _LINUX_VMSTAT_H */
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 87818ee7f01d..5b10d8d2b471 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -230,10 +230,14 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+>   */
+>  static inline void free_vmemmap_page(struct page *page)
+>  {
+> -	if (PageReserved(page))
+> +	if (PageReserved(page)) {
+>  		free_bootmem_page(page);
+> -	else
+> +		mod_node_page_state(page_pgdat(page), NR_PAGE_METADATA_BOOT,
+> +				    -1);
+> +	} else {
+>  		__free_page(page);
+> +		mod_node_page_state(page_pgdat(page), NR_PAGE_METADATA, -1);
+> +	}
+>  }
+>  
+>  /* Free a list of the vmemmap pages */
+> @@ -389,6 +393,7 @@ static int vmemmap_remap_free(unsigned long start, unsigned long end,
+>  		copy_page(page_to_virt(walk.reuse_page),
+>  			  (void *)walk.reuse_addr);
+>  		list_add(&walk.reuse_page->lru, vmemmap_pages);
+> +		mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA, 1);
+>  	}
+>  
+>  	/*
+> @@ -437,14 +442,20 @@ static int alloc_vmemmap_page_list(unsigned long start, unsigned long end,
+>  	unsigned long nr_pages = (end - start) >> PAGE_SHIFT;
+>  	int nid = page_to_nid((struct page *)start);
+>  	struct page *page, *next;
+> +	int i;
+>  
+> -	while (nr_pages--) {
+> +	for (i = 0; i < nr_pages; i++) {
+>  		page = alloc_pages_node(nid, gfp_mask, 0);
+> -		if (!page)
+> +		if (!page) {
+> +			mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA,
+> +					    i);
+>  			goto out;
+> +		}
+>  		list_add(&page->lru, list);
+>  	}
+>  
+> +	mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA, nr_pages);
+> +
+>  	return 0;
+>  out:
+>  	list_for_each_entry_safe(page, next, list, lru)
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 077bfe393b5e..38f8e1f454a0 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/pgtable.h>
+>  #include <linux/swap.h>
+>  #include <linux/cma.h>
+> +#include <linux/vmstat.h>
+>  #include "internal.h"
+>  #include "slab.h"
+>  #include "shuffle.h"
+> @@ -1656,6 +1657,8 @@ static void __init alloc_node_mem_map(struct pglist_data *pgdat)
+>  			panic("Failed to allocate %ld bytes for node %d memory map\n",
+>  			      size, pgdat->node_id);
+>  		pgdat->node_mem_map = map + offset;
+> +		mod_node_early_perpage_metadata(pgdat->node_id,
+> +						DIV_ROUND_UP(size, PAGE_SIZE));
+>  	}
+>  	pr_debug("%s: node %d, pgdat %08lx, node_mem_map %08lx\n",
+>  				__func__, pgdat->node_id, (unsigned long)pgdat,
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 733732e7e0ba..dd78017105b0 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5636,6 +5636,7 @@ void __init setup_per_cpu_pageset(void)
+>  	for_each_online_pgdat(pgdat)
+>  		pgdat->per_cpu_nodestats =
+>  			alloc_percpu(struct per_cpu_nodestat);
+> +	store_early_perpage_metadata();
+>  }
+>  
+>  __meminit void zone_pcp_init(struct zone *zone)
+> diff --git a/mm/page_ext.c b/mm/page_ext.c
+> index 4548fcc66d74..4ca9f298f34e 100644
+> --- a/mm/page_ext.c
+> +++ b/mm/page_ext.c
+> @@ -201,6 +201,8 @@ static int __init alloc_node_page_ext(int nid)
+>  		return -ENOMEM;
+>  	NODE_DATA(nid)->node_page_ext = base;
+>  	total_usage += table_size;
+> +	mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA_BOOT,
+> +			    DIV_ROUND_UP(table_size, PAGE_SIZE));
+>  	return 0;
+>  }
+>  
+> @@ -255,12 +257,15 @@ static void *__meminit alloc_page_ext(size_t size, int nid)
+>  	void *addr = NULL;
+>  
+>  	addr = alloc_pages_exact_nid(nid, size, flags);
+> -	if (addr) {
+> +	if (addr)
+>  		kmemleak_alloc(addr, size, 1, flags);
+> -		return addr;
+> -	}
+> +	else
+> +		addr = vzalloc_node(size, nid);
+>  
+> -	addr = vzalloc_node(size, nid);
+> +	if (addr) {
+> +		mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA,
+> +				    DIV_ROUND_UP(size, PAGE_SIZE));
+> +	}
+>  
+>  	return addr;
+>  }
+> @@ -303,18 +308,27 @@ static int __meminit init_section_page_ext(unsigned long pfn, int nid)
+>  
+>  static void free_page_ext(void *addr)
+>  {
+> +	size_t table_size;
+> +	struct page *page;
+> +	struct pglist_data *pgdat;
+> +
+> +	table_size = page_ext_size * PAGES_PER_SECTION;
+> +
+>  	if (is_vmalloc_addr(addr)) {
+> +		page = vmalloc_to_page(addr);
+> +		pgdat = page_pgdat(page);
+>  		vfree(addr);
+>  	} else {
+> -		struct page *page = virt_to_page(addr);
+> -		size_t table_size;
+> -
+> -		table_size = page_ext_size * PAGES_PER_SECTION;
+> -
+> +		page = virt_to_page(addr);
+> +		pgdat = page_pgdat(page);
+>  		BUG_ON(PageReserved(page));
+>  		kmemleak_free(addr);
+>  		free_pages_exact(addr, table_size);
+>  	}
+> +
+> +	mod_node_page_state(pgdat, NR_PAGE_METADATA,
+> +			    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+> +
+>  }
+>  
+>  static void __free_page_ext(unsigned long pfn)
+> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+> index a2cbe44c48e1..054b49539843 100644
+> --- a/mm/sparse-vmemmap.c
+> +++ b/mm/sparse-vmemmap.c
+> @@ -469,5 +469,13 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
+>  	if (r < 0)
+>  		return NULL;
+>  
+> +	if (system_state == SYSTEM_BOOTING) {
+> +		mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA_BOOT,
+> +				    DIV_ROUND_UP(end - start, PAGE_SIZE));
+> +	} else {
+> +		mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA,
+> +				    DIV_ROUND_UP(end - start, PAGE_SIZE));
+> +	}
+> +
+>  	return pfn_to_page(pfn);
+>  }
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 77d91e565045..0c100ae1cf8b 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -14,7 +14,7 @@
+>  #include <linux/swap.h>
+>  #include <linux/swapops.h>
+>  #include <linux/bootmem_info.h>
+> -
+> +#include <linux/vmstat.h>
+>  #include "internal.h"
+>  #include <asm/dma.h>
+>  
+> @@ -465,6 +465,9 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+>  	 */
+>  	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
+>  	sparsemap_buf_end = sparsemap_buf + size;
+> +#ifndef CONFIG_SPARSEMEM_VMEMMAP
+> +	mod_node_early_perpage_metadata(nid, DIV_ROUND_UP(size, PAGE_SIZE));
+> +#endif
+>  }
+>  
+>  static void __init sparse_buffer_fini(void)
+> @@ -641,6 +644,8 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
+>  	unsigned long start = (unsigned long) pfn_to_page(pfn);
+>  	unsigned long end = start + nr_pages * sizeof(struct page);
+>  
+> +	mod_node_page_state(page_pgdat(pfn_to_page(pfn)), NR_PAGE_METADATA,
+> +			    -1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
+>  	vmemmap_free(start, end, altmap);
+>  }
+>  static void free_map_bootmem(struct page *memmap)
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 359460deb377..23e88d8c21b7 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1249,7 +1249,8 @@ const char * const vmstat_text[] = {
+>  	"pgpromote_success",
+>  	"pgpromote_candidate",
+>  #endif
+> -
+> +	"nr_page_metadata",
+> +	"nr_page_metadata_boot",
+>  	/* enum writeback_stat_item counters */
+>  	"nr_dirty_threshold",
+>  	"nr_dirty_background_threshold",
+> @@ -2278,4 +2279,27 @@ static int __init extfrag_debug_init(void)
+>  }
+>  
+>  module_init(extfrag_debug_init);
+> +
+>  #endif
+> +
+> +/*
+> + * Page metadata size (struct page and page_ext) in pages
+> + */
+> +static unsigned long early_perpage_metadata[MAX_NUMNODES] __initdata;
+> +
+> +void __init mod_node_early_perpage_metadata(int nid, long delta)
+> +{
+> +	early_perpage_metadata[nid] += delta;
+> +}
+> +
+> +void __init store_early_perpage_metadata(void)
+> +{
+> +	int nid;
+> +	struct pglist_data *pgdat;
+> +
+> +	for_each_online_pgdat(pgdat) {
+> +		nid = pgdat->node_id;
+> +		mod_node_page_state(NODE_DATA(nid), NR_PAGE_METADATA_BOOT,
+> +				    early_perpage_metadata[nid]);
+> +	}
+> +}
+> -- 
+> 2.43.0.472.g3155946c3a-goog
+> 
+> 
+> 
 
