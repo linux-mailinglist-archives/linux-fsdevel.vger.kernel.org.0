@@ -1,132 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-7482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB15825A38
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 19:35:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814BD825B7C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 21:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842E91F27239
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 18:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3727A285385
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 20:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5455335EE1;
-	Fri,  5 Jan 2024 18:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A6736098;
+	Fri,  5 Jan 2024 20:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="hxIhcJXg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iogXcyS+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F173341B1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 18:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4283670b6e2so9159721cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 10:35:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1704479716; x=1705084516; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+fi0onpTGrV63R/StoJONU4NViJ6wCXVAQDgLv/SfZY=;
-        b=hxIhcJXgek4kTcVU5r5+3CF9KqdBn/t/u6jPzsHHXdCK7jkTn8Knn97SZ2fEd644RA
-         NIyZDsqY8mngkUqAzBkUUzBYouJK9DDlzRTpS996dSGsNIvMNmFNCA7HGlvNModSxU6h
-         CmRN6dZKRCtWigNuVixZW+agv4HMEHZKFQbBx4yNyS0xxST6AvgKzIrdjEF7mXQIWjdP
-         toygHEX7vDMQB821PAPOo8+xbokor2mQRlIFnrYnDtp6eu9un8hZS24QD9+htyV6oDFc
-         HTsFfAPzDuShVyuvOLgIGA9LKrzrCDnhT755yYwQtcgO+jSDEmUWb1584XVyQgb26VCI
-         LJpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704479716; x=1705084516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+fi0onpTGrV63R/StoJONU4NViJ6wCXVAQDgLv/SfZY=;
-        b=vRuInk2e/ewGQC69F6TDQf6G6dncB0ihx/S5qQVYNpa8V1yu/tW4yZ9socQ9TyO4Sx
-         c8bsueR8UYfzijxjxT/RLtcayPOFhzIzgGliwlHa94+VN9yvhJJFlxL7GXyA/KFrSucT
-         ZYdVCAN9BBCdAQZpL9nrTFGqidtjNgwBTExjbXo1PZDWj8kUYBrnVevRjKQ+nrLHZimC
-         y0vXhySc9yFUUa0XCHDjKNN64ut0BggFOf1+CJzt3Pi9Z5o2BOLAz4Kn7nvaIRQcZr11
-         2nIAfbcYiJhgMid8ygsIlXpHK5yHShDaztllckdYNyJAAbzpBBTmJGjOS4mc2cDp6N2b
-         oXjg==
-X-Gm-Message-State: AOJu0Yzna5b7XZaiQqcGytuExG0QdQeuDcxPTouzsYvkvhbZH3SU3CBL
-	RetnP6fGDvxLOVpBF+YpvULzj0UuXjV6b7WdfUUhkmS0JEgbUA==
-X-Google-Smtp-Source: AGHT+IHmU5qlRGVBENYOfD7z6dPji/OFPx/ITRYU+YEm9BgcGmgM+TEf6pY7gJVNIC8n1fUbK0KxIgA/D68rxuFpvLM=
-X-Received: by 2002:a05:622a:148d:b0:429:760d:64da with SMTP id
- t13-20020a05622a148d00b00429760d64damr1492011qtx.19.1704479716012; Fri, 05
- Jan 2024 10:35:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD753608B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 20:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704485846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vd1YUEaCt/w4N4YoX8BDZeDQqXK9hd0o4D1WXieyEL8=;
+	b=iogXcyS+tdIUPNciv8rRv0D/HJu+NhIEBbSI4+hi5S+AjxEryi1m5Te4Aca6GkxBUjAhVf
+	SoLcKlwXhK3KC8vBMLnfLDzAgUdBbDiMNdy40uTs8Fx/zk9bO07sORMnwWSRHGfuQNoVlc
+	Aej0EXDRFr5yzaDE6lssEQ5qQef4Ghg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-43-mNga88ZGMVKb53DzxRzGWw-1; Fri, 05 Jan 2024 15:17:21 -0500
+X-MC-Unique: mNga88ZGMVKb53DzxRzGWw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D700A185A781;
+	Fri,  5 Jan 2024 20:17:20 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.8.247])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 81A4F51D5;
+	Fri,  5 Jan 2024 20:17:20 +0000 (UTC)
+Received: by fedora.redhat.com (Postfix, from userid 1000)
+	id D025E28EBD2; Fri,  5 Jan 2024 15:17:19 -0500 (EST)
+Date: Fri, 5 Jan 2024 15:17:19 -0500
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, houtao1@huawei.com
+Subject: Re: [PATCH v2] virtiofs: use GFP_NOFS when enqueuing request through
+ kworker
+Message-ID: <ZZhjzwnQUEJhNJiq@redhat.com>
+References: <20240105105305.4052672-1-houtao@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231205223118.3575485-1-souravpanda@google.com> <20231205223118.3575485-2-souravpanda@google.com>
-In-Reply-To: <20231205223118.3575485-2-souravpanda@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 5 Jan 2024 13:34:39 -0500
-Message-ID: <CA+CK2bDjght3M=uTHcuDbW4C_Co7fXTiq7PN-HBjepF-X44Stw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/1] mm: report per-page metadata information
-To: Sourav Panda <souravpanda@google.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
-	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
-	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, 
-	bhelgaas@google.com, ivan@cloudflare.com, yosryahmed@google.com, 
-	hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com, 
-	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, weixugc@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240105105305.4052672-1-houtao@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Tue, Dec 5, 2023 at 5:31=E2=80=AFPM Sourav Panda <souravpanda@google.com=
-> wrote:
->
-> Adds two new per-node fields, namely nr_page_metadata and
-> nr_page_metadata_boot, to /sys/devices/system/node/nodeN/vmstat
-> and a global PageMetadata field to /proc/meminfo. This information can
-> be used by users to see how much memory is being used by per-page
-> metadata, which can vary depending on build configuration, machine
-> architecture, and system use.
->
-> Per-page metadata is the amount of memory that Linux needs in order to
-> manage memory at the page granularity. The majority of such memory is
-> used by "struct page" and "page_ext" data structures. In contrast to
-> most other memory consumption statistics, per-page metadata might not
-> be included in MemTotal. For example, MemTotal does not include memblock
-> allocations but includes buddy allocations. In this patch, exported
-> field nr_page_metadata in /sys/devices/system/node/nodeN/vmstat would
+On Fri, Jan 05, 2024 at 06:53:05PM +0800, Hou Tao wrote:
+> From: Hou Tao <houtao1@huawei.com>
+> 
+> When invoking virtio_fs_enqueue_req() through kworker, both the
+> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
+> Considering the size of both the sg array and the bounce buffer may be
+> greater than PAGE_SIZE, use GFP_NOFS instead of GFP_ATOMIC to lower the
+> possibility of memory allocation failure.
+> 
 
-It is OK to have nr_page_metadata field in nodeN/vmstat based on this
-discussion:
-https://lore.kernel.org/linux-mm/CA+CK2bB2=3DraEP8W5GDW_JY7TDvwtSCbkQjvn=3D=
-SvbjUjPETXZow@mail.gmail.com
+What's the practical benefit of this patch. Looks like if memory
+allocation fails, we keep retrying at interval of 1ms and don't
+return error to user space.
 
-> exclusively track buddy allocations while nr_page_metadata_boot would
-> exclusively track memblock allocations. Furthermore, PageMetadata in
-> /proc/meminfo would exclusively track buddy allocations allowing it to
-> be compared against MemTotal.
->
-> This memory depends on build configurations, machine architectures, and
-> the way system is used:
->
-> Build configuration may include extra fields into "struct page",
-> and enable / disable "page_ext"
-> Machine architecture defines base page sizes. For example 4K x86,
-> 8K SPARC, 64K ARM64 (optionally), etc. The per-page metadata
-> overhead is smaller on machines with larger page sizes.
-> System use can change per-page overhead by using vmemmap
-> optimizations with hugetlb pages, and emulated pmem devdax pages.
-> Also, boot parameters can determine whether page_ext is needed
-> to be allocated. This memory can be part of MemTotal or be outside
-> MemTotal depending on whether the memory was hot-plugged, booted with,
-> or hugetlb memory was returned back to the system.
->
-> Suggested-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Sourav Panda <souravpanda@google.com>
+Thanks
+Vivek
 
-Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
+> ---
+> Change log:
+> v2:
+>   * pass gfp_t instead of bool to virtio_fs_enqueue_req() (Suggested by Matthew)
+> 
+> v1: https://lore.kernel.org/linux-fsdevel/20240104015805.2103766-1-houtao@huaweicloud.com
+> 
+>  fs/fuse/virtio_fs.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 3aac31d451985..8cf518624ce9e 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -87,7 +87,8 @@ struct virtio_fs_req_work {
+>  };
+>  
+>  static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+> -				 struct fuse_req *req, bool in_flight);
+> +				 struct fuse_req *req, bool in_flight,
+> +				 gfp_t gfp);
+>  
+>  static const struct constant_table dax_param_enums[] = {
+>  	{"always",	FUSE_DAX_ALWAYS },
+> @@ -383,7 +384,7 @@ static void virtio_fs_request_dispatch_work(struct work_struct *work)
+>  		list_del_init(&req->list);
+>  		spin_unlock(&fsvq->lock);
+>  
+> -		ret = virtio_fs_enqueue_req(fsvq, req, true);
+> +		ret = virtio_fs_enqueue_req(fsvq, req, true, GFP_NOFS);
+>  		if (ret < 0) {
+>  			if (ret == -ENOMEM || ret == -ENOSPC) {
+>  				spin_lock(&fsvq->lock);
+> @@ -488,7 +489,7 @@ static void virtio_fs_hiprio_dispatch_work(struct work_struct *work)
+>  }
+>  
+>  /* Allocate and copy args into req->argbuf */
+> -static int copy_args_to_argbuf(struct fuse_req *req)
+> +static int copy_args_to_argbuf(struct fuse_req *req, gfp_t gfp)
+>  {
+>  	struct fuse_args *args = req->args;
+>  	unsigned int offset = 0;
+> @@ -502,7 +503,7 @@ static int copy_args_to_argbuf(struct fuse_req *req)
+>  	len = fuse_len_args(num_in, (struct fuse_arg *) args->in_args) +
+>  	      fuse_len_args(num_out, args->out_args);
+>  
+> -	req->argbuf = kmalloc(len, GFP_ATOMIC);
+> +	req->argbuf = kmalloc(len, gfp);
+>  	if (!req->argbuf)
+>  		return -ENOMEM;
+>  
+> @@ -1119,7 +1120,8 @@ static unsigned int sg_init_fuse_args(struct scatterlist *sg,
+>  
+>  /* Add a request to a virtqueue and kick the device */
+>  static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+> -				 struct fuse_req *req, bool in_flight)
+> +				 struct fuse_req *req, bool in_flight,
+> +				 gfp_t gfp)
+>  {
+>  	/* requests need at least 4 elements */
+>  	struct scatterlist *stack_sgs[6];
+> @@ -1140,8 +1142,8 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+>  	/* Does the sglist fit on the stack? */
+>  	total_sgs = sg_count_fuse_req(req);
+>  	if (total_sgs > ARRAY_SIZE(stack_sgs)) {
+> -		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), GFP_ATOMIC);
+> -		sg = kmalloc_array(total_sgs, sizeof(sg[0]), GFP_ATOMIC);
+> +		sgs = kmalloc_array(total_sgs, sizeof(sgs[0]), gfp);
+> +		sg = kmalloc_array(total_sgs, sizeof(sg[0]), gfp);
+>  		if (!sgs || !sg) {
+>  			ret = -ENOMEM;
+>  			goto out;
+> @@ -1149,7 +1151,7 @@ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+>  	}
+>  
+>  	/* Use a bounce buffer since stack args cannot be mapped */
+> -	ret = copy_args_to_argbuf(req);
+> +	ret = copy_args_to_argbuf(req, gfp);
+>  	if (ret < 0)
+>  		goto out;
+>  
+> @@ -1245,7 +1247,7 @@ __releases(fiq->lock)
+>  		 fuse_len_args(req->args->out_numargs, req->args->out_args));
+>  
+>  	fsvq = &fs->vqs[queue_id];
+> -	ret = virtio_fs_enqueue_req(fsvq, req, false);
+> +	ret = virtio_fs_enqueue_req(fsvq, req, false, GFP_ATOMIC);
+>  	if (ret < 0) {
+>  		if (ret == -ENOMEM || ret == -ENOSPC) {
+>  			/*
+> -- 
+> 2.29.2
+> 
 
-Pasha
 
