@@ -1,108 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-7481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED8C8258F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 18:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB15825A38
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 19:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 812D71C23376
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 17:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842E91F27239
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 18:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF70F321BD;
-	Fri,  5 Jan 2024 17:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5455335EE1;
+	Fri,  5 Jan 2024 18:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="tn6PqWq+";
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="CvojuvDV"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="hxIhcJXg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F9C32186;
-	Fri,  5 Jan 2024 17:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: by nautica.notk.org (Postfix, from userid 108)
-	id 47DCEC026; Fri,  5 Jan 2024 18:20:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1704475255; bh=G5QLtqgPgUPlhX16D8cxgZSrhZwA8FdHTj67GHw0qi8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tn6PqWq+0UHN3QxCRZid+V+fJBenvC3IrIIcqOsdUbUgqD8BvhWt2WB90oSw7XpPg
-	 QlUFE2ue/FCeJ/DLCFsWomlZCxMLnpaB0lM3wvwMCs4jctG4fvUBqrc03/wmY/sc0S
-	 8N2iRbE0aTsPVsWcNX4DCgvZISkj+1s2RpUktuXRQ7liHWaMGGelG/otThKmTb5+o9
-	 rqsKWauiSE5eYZH82ZaqL1LP0H6bbwJzQQG77J3sBIpVhHOvH02KIeT/rFE6grRJ9i
-	 cHB85E+b1u50A//1wjlYgDkzEh8xzHxoPl97Y55v0xmCQmwlSI3+S7yRacHEVsWfLm
-	 H0mNlD3NjjkYw==
-X-Spam-Level: 
-Received: from gaia (localhost [127.0.0.1])
-	by nautica.notk.org (Postfix) with ESMTPS id 448ADC009;
-	Fri,  5 Jan 2024 18:20:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-	t=1704475254; bh=G5QLtqgPgUPlhX16D8cxgZSrhZwA8FdHTj67GHw0qi8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=CvojuvDVolRZkDDlIyj4uY5hFwD/G9sunkTM46WaLCaS3QIrYNL/Um2wFEN1Efbub
-	 AMgqrgm0WuuDyTu9RFhh8PxIVWprskRaMfCAUwhNw8adtnNMYHs5Bky4OntLrV86/Q
-	 XmU2feeoZdQm8hdpDIY+BLbeIyzFOjK2HbobG5a9E+yEpXx9TfaYR70WhcumYdlH5T
-	 HkCWSMxrchak5K5WPOkEkbPG2H9CmhaW1116sshIwrG/ZnK1AyARzAH5rYoKYuS2Jk
-	 AqxoyHMYpNvvuolbdXa2aaLMFmQjd42lAcZqTp8w5LAgtmHV3I+9GZc8lkKE5jXWtd
-	 swfGIM6q8sjVg==
-Received: from localhost (gaia [local])
-	by gaia (OpenSMTPD) with ESMTPA id 39ce6c8b;
-	Fri, 5 Jan 2024 17:20:44 +0000 (UTC)
-Date: Sat, 6 Jan 2024 02:20:29 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Anna Schumaker <Anna.Schumaker@netapp.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix oops in NFS
-Message-ID: <ZZg6XQOjlOA0CL17@codewreck.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F173341B1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 18:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4283670b6e2so9159721cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 10:35:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704479716; x=1705084516; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+fi0onpTGrV63R/StoJONU4NViJ6wCXVAQDgLv/SfZY=;
+        b=hxIhcJXgek4kTcVU5r5+3CF9KqdBn/t/u6jPzsHHXdCK7jkTn8Knn97SZ2fEd644RA
+         NIyZDsqY8mngkUqAzBkUUzBYouJK9DDlzRTpS996dSGsNIvMNmFNCA7HGlvNModSxU6h
+         CmRN6dZKRCtWigNuVixZW+agv4HMEHZKFQbBx4yNyS0xxST6AvgKzIrdjEF7mXQIWjdP
+         toygHEX7vDMQB821PAPOo8+xbokor2mQRlIFnrYnDtp6eu9un8hZS24QD9+htyV6oDFc
+         HTsFfAPzDuShVyuvOLgIGA9LKrzrCDnhT755yYwQtcgO+jSDEmUWb1584XVyQgb26VCI
+         LJpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704479716; x=1705084516;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+fi0onpTGrV63R/StoJONU4NViJ6wCXVAQDgLv/SfZY=;
+        b=vRuInk2e/ewGQC69F6TDQf6G6dncB0ihx/S5qQVYNpa8V1yu/tW4yZ9socQ9TyO4Sx
+         c8bsueR8UYfzijxjxT/RLtcayPOFhzIzgGliwlHa94+VN9yvhJJFlxL7GXyA/KFrSucT
+         ZYdVCAN9BBCdAQZpL9nrTFGqidtjNgwBTExjbXo1PZDWj8kUYBrnVevRjKQ+nrLHZimC
+         y0vXhySc9yFUUa0XCHDjKNN64ut0BggFOf1+CJzt3Pi9Z5o2BOLAz4Kn7nvaIRQcZr11
+         2nIAfbcYiJhgMid8ygsIlXpHK5yHShDaztllckdYNyJAAbzpBBTmJGjOS4mc2cDp6N2b
+         oXjg==
+X-Gm-Message-State: AOJu0Yzna5b7XZaiQqcGytuExG0QdQeuDcxPTouzsYvkvhbZH3SU3CBL
+	RetnP6fGDvxLOVpBF+YpvULzj0UuXjV6b7WdfUUhkmS0JEgbUA==
+X-Google-Smtp-Source: AGHT+IHmU5qlRGVBENYOfD7z6dPji/OFPx/ITRYU+YEm9BgcGmgM+TEf6pY7gJVNIC8n1fUbK0KxIgA/D68rxuFpvLM=
+X-Received: by 2002:a05:622a:148d:b0:429:760d:64da with SMTP id
+ t13-20020a05622a148d00b00429760d64damr1492011qtx.19.1704479716012; Fri, 05
+ Jan 2024 10:35:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1197168.1704465212@warthog.procyon.org.uk>
- <ZZgBcJ7OAS7Ui6gi@casper.infradead.org>
+References: <20231205223118.3575485-1-souravpanda@google.com> <20231205223118.3575485-2-souravpanda@google.com>
+In-Reply-To: <20231205223118.3575485-2-souravpanda@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 5 Jan 2024 13:34:39 -0500
+Message-ID: <CA+CK2bDjght3M=uTHcuDbW4C_Co7fXTiq7PN-HBjepF-X44Stw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/1] mm: report per-page metadata information
+To: Sourav Panda <souravpanda@google.com>
+Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, 
+	bhelgaas@google.com, ivan@cloudflare.com, yosryahmed@google.com, 
+	hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Matthew Wilcox wrote on Fri, Jan 05, 2024 at 01:17:36PM +0000:
-> host on /host type 9p (rw,relatime,access=client,trans=virtio)
+On Tue, Dec 5, 2023 at 5:31=E2=80=AFPM Sourav Panda <souravpanda@google.com=
+> wrote:
+>
+> Adds two new per-node fields, namely nr_page_metadata and
+> nr_page_metadata_boot, to /sys/devices/system/node/nodeN/vmstat
+> and a global PageMetadata field to /proc/meminfo. This information can
+> be used by users to see how much memory is being used by per-page
+> metadata, which can vary depending on build configuration, machine
+> architecture, and system use.
+>
+> Per-page metadata is the amount of memory that Linux needs in order to
+> manage memory at the page granularity. The majority of such memory is
+> used by "struct page" and "page_ext" data structures. In contrast to
+> most other memory consumption statistics, per-page metadata might not
+> be included in MemTotal. For example, MemTotal does not include memblock
+> allocations but includes buddy allocations. In this patch, exported
+> field nr_page_metadata in /sys/devices/system/node/nodeN/vmstat would
 
-David Howells wrote on Fri, Jan 05, 2024 at 02:33:32PM +0000:
-> > This commit (100ccd18bb41 in linux-next 20240104) is bad for me.  After
-> > it, running xfstests gives me first a bunch of errors along these lines:
-> 
-> This may be related to a patch that is in linux-next 20240105, but not
-> 20240104 ("9p: Fix initialisation of netfs_inode for 9p").
+It is OK to have nr_page_metadata field in nodeN/vmstat based on this
+discussion:
+https://lore.kernel.org/linux-mm/CA+CK2bB2=3DraEP8W5GDW_JY7TDvwtSCbkQjvn=3D=
+SvbjUjPETXZow@mail.gmail.com
 
-Yes, you'd be reading zeroes without that patch because the netfs code
-thinks the file has 0 size and doesn't bother reading, that'd explain
-the exec format error loading other modules...
+> exclusively track buddy allocations while nr_page_metadata_boot would
+> exclusively track memblock allocations. Furthermore, PageMetadata in
+> /proc/meminfo would exclusively track buddy allocations allowing it to
+> be compared against MemTotal.
+>
+> This memory depends on build configurations, machine architectures, and
+> the way system is used:
+>
+> Build configuration may include extra fields into "struct page",
+> and enable / disable "page_ext"
+> Machine architecture defines base page sizes. For example 4K x86,
+> 8K SPARC, 64K ARM64 (optionally), etc. The per-page metadata
+> overhead is smaller on machines with larger page sizes.
+> System use can change per-page overhead by using vmemmap
+> optimizations with hugetlb pages, and emulated pmem devdax pages.
+> Also, boot parameters can determine whether page_ext is needed
+> to be allocated. This memory can be part of MemTotal or be outside
+> MemTotal depending on whether the memory was hot-plugged, booted with,
+> or hugetlb memory was returned back to the system.
+>
+> Suggested-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Sourav Panda <souravpanda@google.com>
 
-One thing that surprised me is that this also affects cache=none, I
-thought we had different file ops going straight to p9_client_read in
-this case?
-But turning my brain on this would be the read-only mmap case that we
-need to support for execs, which module loading also uses, so this came
-biting there alright.
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
--- 
-Dominique Martinet | Asmadeus
+Pasha
 
