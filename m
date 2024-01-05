@@ -1,120 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-7447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA10C82518A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 11:13:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FFE825191
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 11:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785E22825FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 10:13:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6336D1C22F1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 10:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B6625115;
-	Fri,  5 Jan 2024 10:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93ED28E2D;
+	Fri,  5 Jan 2024 10:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i1StD7iI"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="zxslvjPl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9B924B49
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 10:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704449586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ogjygCadqZqQPF0RXbXaEDph9fgsETZY7v/OnrLD3js=;
-	b=i1StD7iIATqSAKMXcHGre/9paMnzNs9zDOEuIPlm8eHCZ01WHp+R/+eZQ5dHNymDFZE5II
-	gJvjjgwtIr3HLC4JKMxpqo0HrEbivOpAJSvp0el6WK8orWp5dmuFYSrgrKwSuoN7t9x4M1
-	+D6XsEih2ct+du6hiMRxBUDr7vjCZXA=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-4WUKZcOBNQ-J7NNVXyZBEg-1; Fri,
- 05 Jan 2024 05:13:01 -0500
-X-MC-Unique: 4WUKZcOBNQ-J7NNVXyZBEg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EC9E41C05148;
-	Fri,  5 Jan 2024 10:12:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 96FAA40C6EB9;
-	Fri,  5 Jan 2024 10:12:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZZeLAAf6qiieA5fy@casper.infradead.org>
-References: <ZZeLAAf6qiieA5fy@casper.infradead.org> <2202548.1703245791@warthog.procyon.org.uk> <20231221230153.GA1607352@dev-arch.thelio-3990X> <20231221132400.1601991-1-dhowells@redhat.com> <20231221132400.1601991-38-dhowells@redhat.com> <2229136.1703246451@warthog.procyon.org.uk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Nathan Chancellor <nathan@kernel.org>,
-    Anna Schumaker <Anna.Schumaker@netapp.com>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix oops in NFS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F37724B50
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 10:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ccbded5aa4so16870201fa.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 02:13:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1704449597; x=1705054397; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pb8qWmhccm9eam1IG6/mzCzwkOR/9EGblOaiwee7lpg=;
+        b=zxslvjPlfpEGbydppSZROS4yK9PFl/WyX0EkqitzSpEcuqQb8fYGxbXasU+SmJn1pu
+         0rPIL9a/hYppQy3+SCQxYBeiVGlAc3JL1eedwa67OMwVfBMaVIy3o3uKsgEgGeEP8kJZ
+         kDn2XrRhEN2+Eivt+R0/pv4yd14Nd+zm0VYzJ+azJfd5mihiXZd39vQIswvudDwVnOJx
+         EsFuAaKGE7JOBYkQFdkSHqF2xzf/nbrccglUuZSt7MJZ6bigKmsDSgBIign0NlmGiquB
+         ywd+7flGkHvnkBNzwbiGNmVhsMywddOpoSzOjIwikHTTf7CbonOyKzB3Er+rJ8DWZVWL
+         G6nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704449597; x=1705054397;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pb8qWmhccm9eam1IG6/mzCzwkOR/9EGblOaiwee7lpg=;
+        b=A19M0PF1QS4ff7b2NVejxHcdOPPvuA25G7bvFSHmD+BAeTWbbhPoLFSJkau/5GLXT4
+         N81O9ekQHjcGT7nkibYpUsGq94QqN4LXvKPvbwN/uUbJL+cvKKq9pbIx4iDWfi429Vee
+         oUC3zXOzPzTeweA1rppJtEdhBLHNPJJhpUryizY9BExDPlxd1oMjpFipVynCr7ij/wtW
+         RqjdgMRS+X1o/2sjm3g+gVQeFoBxZFWUI/E6oBfPOFOIoP6+h3GgcydJngS4WGelbJ9U
+         0LX00aO4K16mSCUIntbS6kXEG7OaSJkDbaL8kvfAhCDfiNleNuXdLrazOXPGL3k+R1En
+         C+Hw==
+X-Gm-Message-State: AOJu0Yzdx4GO2tzza+ZFBh8g12LiMm04lbm60NmX4h6gLecqrFyhb3s3
+	pmWMgelePhhFMGGY2YBEevY7SQFh6nhBWg==
+X-Google-Smtp-Source: AGHT+IERFwtvcyoPP3L+QB9SFl8+7lNrV2k0KLfbM/7+3R7xK9hX+EDB4G+sBp41ebG01fKH0Phabg==
+X-Received: by 2002:a2e:be93:0:b0:2cd:1d5d:322e with SMTP id a19-20020a2ebe93000000b002cd1d5d322emr1306524ljr.10.1704449597179;
+        Fri, 05 Jan 2024 02:13:17 -0800 (PST)
+Received: from smtpclient.apple ([2a00:1370:81a4:169c:3983:bdeb:5f19:e2e9])
+        by smtp.gmail.com with ESMTPSA id n23-20020a2e82d7000000b002ccb9f5ffcasm262090ljh.93.2024.01.05.02.13.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 05 Jan 2024 02:13:16 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1094258.1704449575.1@warthog.procyon.org.uk>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
+Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <ZZcgXI46AinlcBDP@casper.infradead.org>
+Date: Fri, 5 Jan 2024 13:13:11 +0300
+Cc: lsf-pc@lists.linux-foundation.org,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ linux-mm@kvack.org,
+ linux-block@vger.kernel.org,
+ linux-ide@vger.kernel.org,
+ linux-scsi@vger.kernel.org,
+ linux-nvme@lists.infradead.org
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 05 Jan 2024 10:12:55 +0000
-Message-ID: <1094259.1704449575@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Message-Id: <2EEB5F76-1D68-4B17-82B6-4A459D91E4BF@dubeyko.com>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3696.120.41.1.4)
 
-Matthew Wilcox <willy@infradead.org> wrote:
 
-> This commit (100ccd18bb41 in linux-next 20240104) is bad for me.  After
-> it, running xfstests gives me first a bunch of errors along these lines:
-> =
 
-> 00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-=
-00037-g100ccd18bb41/kernel/fs/gfs2/gfs2.ko: Exec format error
-> 00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-=
-00037-g100ccd18bb41/kernel/fs/zonefs/zonefs.ko: Exec format error
-> 00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-=
-00037-g100ccd18bb41/kernel/security/keys/encrypted-keys/encrypted-keys.ko:=
- Exec format error
-> =
+> On Jan 5, 2024, at 12:17 AM, Matthew Wilcox <willy@infradead.org> =
+wrote:
+>=20
+> This is primarily a _FILESYSTEM_ track topic.  All the work has =
+already
+> been done on the MM side; the FS people need to do their part.  It =
+could
+> be a joint session, but I'm not sure there's much for the MM people
+> to say.
+>=20
+> There are situations where we need to allocate memory, but cannot call
+> into the filesystem to free memory.  Generally this is because we're
+> holding a lock or we've started a transaction, and attempting to write
+> out dirty folios to reclaim memory would result in a deadlock.
+>=20
+> The old way to solve this problem is to specify GFP_NOFS when =
+allocating
+> memory.  This conveys little information about what is being protected
+> against, and so it is hard to know when it might be safe to remove.
+> It's also a reflex -- many filesystem authors use GFP_NOFS by default
+> even when they could use GFP_KERNEL because there's no risk of =
+deadlock.
+>=20
+> The new way is to use the scoped APIs -- memalloc_nofs_save() and
+> memalloc_nofs_restore().  These should be called when we start a
+> transaction or take a lock that would cause a GFP_KERNEL allocation to
+> deadlock.  Then just use GFP_KERNEL as normal.  The memory allocators
+> can see the nofs situation is in effect and will not call back into
+> the filesystem.
+>=20
+> This results in better code within your filesystem as you don't need =
+to
+> pass around gfp flags as much, and can lead to better performance from
+> the memory allocators as GFP_NOFS will not be used unnecessarily.
+>=20
+> The memalloc_nofs APIs were introduced in May 2017, but we still have
+> over 1000 uses of GFP_NOFS in fs/ today (and 200 outside fs/, which is
+> really sad).  This session is for filesystem developers to talk about
+> what they need to do to fix up their own filesystem, or share stories
+> about how they made their filesystem better by adopting the new APIs.
+>=20
 
-> and then later:
-> =
+Many file systems are still heavily using GFP_NOFS for kmalloc and
+kmem_cache_alloc family methods even if  memalloc_nofs_save() and
+memalloc_nofs_restore() pair is used too. But I can see that GFP_NOFS
+is used in radix_tree_preload(), bio_alloc(), posix_acl_clone(),
+sb_issue_zeroout, sb_issue_discard(), alloc_inode_sb(), =
+blkdev_issue_zeroout(),
+blkdev_issue_secure_erase(), blkdev_zone_mgmt(), etc.
 
-> 00016 generic/001       run fstests generic/001 at 2024-01-05 04:50:46
-> 00017 [not run] this test requires a valid $TEST_DEV
-> 00017 generic/002       run fstests generic/002 at 2024-01-05 04:50:46
-> 00017 [not run] this test requires a valid $TEST_DEV
-> 00017 generic/003       run fstests generic/003 at 2024-01-05 04:50:47
-> 00018 [not run] this test requires a valid $SCRATCH_DEV
-> ...
-> =
+Would it be safe to switch on =
+memalloc_nofs_save()/memalloc_nofs_restore() for
+all possible cases? Any potential issues or downsides?
 
-> so I think that's page cache corruption of some kind.
-
-Is that being run on NFS?  Is /lib on NFS?
-
-David
+Thanks,
+Slava.
 
 
