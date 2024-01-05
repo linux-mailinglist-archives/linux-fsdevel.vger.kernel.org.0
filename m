@@ -1,185 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-7470-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5845F825520
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:26:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081EE825564
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB1E0B22705
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 14:26:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D2B1F211FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 14:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6AA2DF7D;
-	Fri,  5 Jan 2024 14:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41BA2E62B;
+	Fri,  5 Jan 2024 14:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dm0zaC+K"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bwqqz/a3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C32D7A7;
-	Fri,  5 Jan 2024 14:26:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88058C433C7;
-	Fri,  5 Jan 2024 14:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704464794;
-	bh=2P6hxdoePoEWFrBd8qdykuqOskTZur3E5s/TzD9/Kf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dm0zaC+K8TFVMUKvLhwb2WqU25tstzG56X+MJwDu/tyO6OoHe99yFHpk0xJJPeyVE
-	 S37yGN5olSRW3fgqQfFwMpJrVnK0p0/SpgKSgBCy4oON9m6omcnv1SHI89KFBqLSAe
-	 4fzz4YC/UJePyHHDKw/2XnMslC4j0BP5rG+1POKKKghsEzFTa3zo2LPtHTGu5bPtBC
-	 48apqSzfkbfW9n3GOLpNQdStzRIdwnOlaKooK5iY1qm/aq2Z3DwX7FhUr+K2tURLts
-	 o/tnGHvXvDVIQWdbpCGpkRO/EHUSCQ9t30Ivw4D8PGs1xCaD//k/LDu+xTx3xa8NBL
-	 K38/iHxdBNYeg==
-Date: Fri, 5 Jan 2024 15:26:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as default
- ownership
-Message-ID: <20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
-References: <20240103203246.115732ec@gandalf.local.home>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F622DF92
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 14:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704465227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NRYq/WkDD42V/k3bqpx3sCCWkCz2IyRzqVBfkSoWhg=;
+	b=Bwqqz/a3LX3z/lCw+1auxhr9lu6+80TgTPYD82vRw0JC05LUbG2Xzo9BtJ8bDaLfWUkwDh
+	0Qn5wRCZ8CMWI8VMdMibIlDjxlE13E0o4bzazgtBbLgsq6wYmDrvSYvWFCivN9uFrrsN8C
+	yD7u41cudfYKTMqr7OiFAYTykvbRKjY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-303-VfUF81KUMeapj_uVOz0uBA-1; Fri, 05 Jan 2024 09:33:42 -0500
+X-MC-Unique: VfUF81KUMeapj_uVOz0uBA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EDC45863067;
+	Fri,  5 Jan 2024 14:33:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C82BC1121306;
+	Fri,  5 Jan 2024 14:33:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <ZZeLAAf6qiieA5fy@casper.infradead.org>
+References: <ZZeLAAf6qiieA5fy@casper.infradead.org> <2202548.1703245791@warthog.procyon.org.uk> <20231221230153.GA1607352@dev-arch.thelio-3990X> <20231221132400.1601991-1-dhowells@redhat.com> <20231221132400.1601991-38-dhowells@redhat.com> <2229136.1703246451@warthog.procyon.org.uk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: dhowells@redhat.com, Nathan Chancellor <nathan@kernel.org>,
+    Anna Schumaker <Anna.Schumaker@netapp.com>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix oops in NFS
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240103203246.115732ec@gandalf.local.home>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1197167.1704465212.1@warthog.procyon.org.uk>
+Date: Fri, 05 Jan 2024 14:33:32 +0000
+Message-ID: <1197168.1704465212@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Wed, Jan 03, 2024 at 08:32:46PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> Instead of walking the dentries on mount/remount to update the gid values of
-> all the dentries if a gid option is specified on mount, just update the root
-> inode. Add .getattr, .setattr, and .permissions on the tracefs inode
-> operations to update the permissions of the files and directories.
-> 
-> For all files and directories in the top level instance:
-> 
->  /sys/kernel/tracing/*
-> 
-> It will use the root inode as the default permissions. The inode that
-> represents: /sys/kernel/tracing (or wherever it is mounted).
-> 
-> When an instance is created:
-> 
->  mkdir /sys/kernel/tracing/instance/foo
-> 
-> The directory "foo" and all its files and directories underneath will use
-> the default of what foo is when it was created. A remount of tracefs will
-> not affect it.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-That kinda sounds like eventfs should actually be a separate filesystem.
-But I don't know enough about the relationship between the two concepts.
+> This commit (100ccd18bb41 in linux-next 20240104) is bad for me.  After
+> it, running xfstests gives me first a bunch of errors along these lines:
 
-> 
-> If a user were to modify the permissions of any file or directory in
-> tracefs, it will also no longer be modified by a change in ownership of a
-> remount.
+This may be related to a patch that is in linux-next 20240105, but not
+20240104 ("9p: Fix initialisation of netfs_inode for 9p").
 
-Very odd semantics and I would recommend to avoid that. It's just plain
-weird imo.
+David
 
-> 
-> The events directory, if it is in the top level instance, will use the
-> tracefs root inode as the default ownership for itself and all the files and
-> directories below it.
-> 
-> For the events directory in an instance ("foo"), it will keep the ownership
-> of what it was when it was created, and that will be used as the default
-> ownership for the files and directories beneath it.
-> 
-> Link: https://lore.kernel.org/linux-trace-kernel/CAHk-=wjVdGkjDXBbvLn2wbZnqP4UsH46E3gqJ9m7UG6DpX2+WA@mail.gmail.com/
-> 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-
-So tracefs supports remounting with different uid/gid mount options and
-then actually wades through _all_ of the inodes and changes their
-ownership internally? What's the use-case for this? Containers?
-
-Aside from optimizing this and the special semantics for this eventfs
-stuff that you really should think twice of doing, here's one idea for
-an extension that might alleviate some of the pain:
-
-If you need flexible dynamic ownership change to e.g., be able to
-delegate (all, a directory, a single file of) tracefs to
-unprivileged/containers/whatever then you might want to consider
-supporting idmapped mounts for tracefs. Because then you can do stuff
-like:
-
-user1@localhost:~/data/scripts$ sudo mount --bind -o X-mount.idmap='g:0:1000:1 u:0:1234:1' /run/ /mnt
-user1@localhost:~/data/scripts$ ls -ln /run/
-total 12
-drwxr-xr-x  2 0  0   40 Jan  5 12:12 credentials
-drwx------  2 0  0   40 Jan  5 11:57 cryptsetup
-drwxr-xr-x  2 0  0   60 Jan  5 11:57 dbus
-drwx------  6 0  0  280 Jan  5 11:57 incus_agent
-prw-------  1 0  0    0 Jan  5 11:57 initctl
-drwxrwxrwt  4 0  0   80 Jan  5 11:57 lock
-drwxr-xr-x  3 0  0   60 Jan  5 11:57 log
-drwx------  2 0  0   40 Jan  5 11:57 lvm
--r--r--r--  1 0  0   33 Jan  5 11:57 machine-id
--rw-r--r--  1 0  0  101 Jan  5 11:58 motd.dynamic
-drwxr-xr-x  2 0  0   40 Jan  5 11:57 mount
-drwx------  2 0  0   40 Jan  5 11:57 multipath
-drwxr-xr-x  2 0  0   40 Jan  5 11:57 sendsigs.omit.d
-lrwxrwxrwx  1 0  0    8 Jan  5 11:57 shm -> /dev/shm
-drwx--x--x  2 0  0   40 Jan  5 11:57 sudo
-drwxr-xr-x 24 0  0  660 Jan  5 14:30 systemd
-drwxr-xr-x  6 0  0  140 Jan  5 14:30 udev
-drwxr-xr-x  4 0  0   80 Jan  5 11:58 user
--rw-rw-r--  1 0 43 2304 Jan  5 15:15 utmp
-
-user1@localhost:~/data/scripts$ ls -ln /mnt/
-total 12
-drwxr-xr-x  2 1234  1000   40 Jan  5 12:12 credentials
-drwx------  2 1234  1000   40 Jan  5 11:57 cryptsetup
-drwxr-xr-x  2 1234  1000   60 Jan  5 11:57 dbus
-drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 incus_agent
-prw-------  1 1234  1000    0 Jan  5 11:57 initctl
-drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 lock
-drwxr-xr-x  3 1234  1000   60 Jan  5 11:57 log
-drwx------  2 1234  1000   40 Jan  5 11:57 lvm
--r--r--r--  1 1234  1000   33 Jan  5 11:57 machine-id
--rw-r--r--  1 1234  1000  101 Jan  5 11:58 motd.dynamic
-drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 mount
-drwx------  2 1234  1000   40 Jan  5 11:57 multipath
-drwxr-xr-x  2 1234  1000   40 Jan  5 11:57 sendsigs.omit.d
-lrwxrwxrwx  1 1234  1000    8 Jan  5 11:57 shm -> /dev/shm
-drwx--x--x  2 1234  1000   40 Jan  5 11:57 sudo
-drwxr-xr-x 24 1234  1000  660 Jan  5 14:30 systemd
-drwxr-xr-x  6 1234  1000  140 Jan  5 14:30 udev
-drwxr-xr-x  4 1234  1000   80 Jan  5 11:58 user
--rw-rw-r--  1 1234 65534 2304 Jan  5 15:15 utmp
-
-Where you can see that ownership of this tmpfs instance in this example
-is changed. I'm not trying to advocate here but this will probably
-ultimately be nicer for your users because it means that a container
-manager or whatever can be handed a part of tracefs (or all of it) and
-the ownership and access rights for that thing is correct. And you can
-get rid of that gid based access completely.
-
-You can change uids, gids, or both. You can specify up to 340 individual
-mappings it's quite flexible.
-
-Because then you can have a single tracefs superblock and have multiple
-mounts with different ownership for the relevant parts of tracefs that
-you want to delegate to whoever. If you need an ownership change you can
-then just create another idmapped mount with the new ownership and then
-use MOVE_MOUNT_BENEATH + umount to replace that mount.
-
-Probably even know someone that would implement this for you (not me) if
-that sounds like something that would cover some of the use-case for the
-proposed change here. But maybe I just misunderstood things completely.
 
