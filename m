@@ -1,121 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-7477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5292825682
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 16:23:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DFE8256B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 16:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C574F1C22E43
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8387284DE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Jan 2024 15:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF1632197;
-	Fri,  5 Jan 2024 15:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009552E637;
+	Fri,  5 Jan 2024 15:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rwPkPCBi"
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="EFV5pVvH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6F31739
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 15:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DC8743F2D2
-	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 15:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1704468120;
-	bh=3ehRu/Zuzjv9SF1nMloRA0oZhzJAyfoaCoaYcJRfDMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version;
-	b=rwPkPCBiHVlCldgv1sD58NcKh6RZeUqv43gVGNFpIrNa5xhPBiV3B54lXJMaZlnzY
-	 HAudK6cegJ49sxWgtlXKY/Ln+Ht+pmtaB3C2dXn4xqwqCa0Gk51j5ioHbcYzOIufrZ
-	 s5lUzk4QCqTTv02CjFNJdyrpgwvFHmVSRSAB5NPfhfHjnl5iLVUEaofKfMn0dgPRq4
-	 3MRr5lniVgIFsCQmXuz/NwAX1N1IOG6wzLD4WGcFeL+WwHiHJ1Ws2heHfx+GyLyVzO
-	 dZLT9yePaQxNODjaXtb/VVrg5uCB5cIZX/St1u4bLS/tgWrpv0UgIvYZ25Qp6a3OsU
-	 uGlfjEVTvx5Wg==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a19c5cbbe86so93139866b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 07:22:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF962E63B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  5 Jan 2024 15:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-427f4407624so8395051cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 05 Jan 2024 07:34:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704468855; x=1705073655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TY2tK1Et5681qdWkhQWK7TKRb/9setDuVBnoXVgexU=;
+        b=EFV5pVvHiQnqoV9y7BQQq9nRu87mykB2Rai0EIP6qviKgt54hRLI0m9de01VYYt1AX
+         q0UwruXuBCSkrZCZRieqIg7+aevZFSab5kMlO8Jyz2nDpiDlf/Z5Ukub/JzndhhJtuUo
+         8kGZeGqt2vARqYzwIXSAOAVHTNbUBANkLmINPM45sLwhjIxuoA54PLpdUVLS8OMKrfs/
+         qzvQsiIlQ3xMVnvhcKlrxWcl2v9Kgmy7yj69GVJBQLRDbzjkgug6Q4E1c8eG94U3uNhw
+         18Iyqmj1bzy1OkC8j1mxXToPWjmVekiW0bfg8cpp/1/3GgrRhENtdnle6+I78mggTVZE
+         ioaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704468120; x=1705072920;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1704468855; x=1705073655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3ehRu/Zuzjv9SF1nMloRA0oZhzJAyfoaCoaYcJRfDMg=;
-        b=ESokJtBv5P2QhigisNfYXyqVeTYB86QhB/RvPyLVUFTmwHFKLyakD1GfJOOPOABxrS
-         3TJvtv8v5s8hpgxik1xwBb4KMAhoJvZzZ3a239jsyCSDW1XpIIfS0gUpOkizoVV+cAdz
-         Is+LPAwIpwQqFppkQ3MM2Hm/4noyIIekSrKxG4hrJ1QwrMlbFWE7JCTOqxaIuPm9h15O
-         1uFq2df5Yv44VBg7tticzd8Hgi4+qRrV6+hNFITxF1iiRtpvt9B3VI7GGCVVZwEKWXPp
-         J1ZcQPQ6La1ofYDZIa33gizPPkILOkFcxoO20+8c6SQOHV80dl8oanf3IWC35ZfYW2Vh
-         TynA==
-X-Gm-Message-State: AOJu0YzhmcijqjdQAXOEUoA8gvV91WtT/OC/C5DpTNnjUoVGb8wAHo1k
-	erHTfcIS3nlBVIU2+f1uVEUrABMFN2DjpNnSD5pzLsNwC+PCE/BozoWiFDROvX7uUkaBkzPhQwI
-	Mjt8d/aLIKUQjBS8xHa16hXaWl7n+o6fxvqKZxN2sfudhe6x0jA==
-X-Received: by 2002:a17:906:e0d8:b0:a27:6e73:a248 with SMTP id gl24-20020a170906e0d800b00a276e73a248mr773798ejb.68.1704468120504;
-        Fri, 05 Jan 2024 07:22:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE1Qf95Xc1DtQrvYbmkcZs/ajyvnuK5OKpFVhctUoOgo9efyvmBIthHb9SYj+TsVGtv7sYLnA==
-X-Received: by 2002:a17:906:e0d8:b0:a27:6e73:a248 with SMTP id gl24-20020a170906e0d800b00a276e73a248mr773791ejb.68.1704468120298;
-        Fri, 05 Jan 2024 07:22:00 -0800 (PST)
-Received: from amikhalitsyn.lan ([91.64.72.41])
-        by smtp.gmail.com with ESMTPSA id i23-20020a170906115700b00a298adde5a1sm345630eja.189.2024.01.05.07.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jan 2024 07:21:59 -0800 (PST)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: mszeredi@redhat.com
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] fuse: __kuid_val/__kgid_val helpers in fuse_fill_attr_from_inode()
-Date: Fri,  5 Jan 2024 16:21:29 +0100
-Message-Id: <20240105152129.196824-4-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com>
+        bh=0TY2tK1Et5681qdWkhQWK7TKRb/9setDuVBnoXVgexU=;
+        b=snu3dBHZbiQupOktNc5f9lJTCPqFuiaH0bTLG0uw/GfKd6AuperWBczJXhWPzYwykG
+         lR8DR5PFhz3kn31GV/DZbDd87tVCOplyt/jBrI8tZH/jWKuNiUDla7Nxhz8L82rKZ9qN
+         B4wKxl44dGW3JFitA7Ndot/JvXK9s/7xZGjQ1JnHERzowk+FKQUi/UBaX/Ys25qqSpWJ
+         lkPRWG/23nNIa/oodOa/WzxSDGEORkQLp6NPXR/MFoYX4uYTB3t59dy6gfpP3O85TQpK
+         PYhCIpRK7lHX6nmtZsgB8cPSqsOUwBMegiC/EoKH6wO1pkhMVIWiebuUpj64BMUhWY7O
+         817g==
+X-Gm-Message-State: AOJu0YyNCzI0+YQtMhH9341fY44F8RvZ5F465/o7kVQhmx3Tg+lgi8rs
+	exdsNY4vhAfIaUyA6tY7kqC+/JO6dxTMr3wgt674aJ//53srPA==
+X-Google-Smtp-Source: AGHT+IHfTfqU5MoKE0X4xG8QNmKPONd8jiakcdkHu4vud6eBZ8WvRO+n1CsOMpfQPwUC05tcfTICXquuDV0OuNZPOR0=
+X-Received: by 2002:a05:622a:1349:b0:429:791f:9708 with SMTP id
+ w9-20020a05622a134900b00429791f9708mr909674qtk.35.1704468854882; Fri, 05 Jan
+ 2024 07:34:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+ <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
+ <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
+ <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com> <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
+In-Reply-To: <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 5 Jan 2024 10:33:38 -0500
+Message-ID: <CA+CK2bD7gPP6TFR_sYPd=4U4yYrYHNu=qMLJdT+kgT_gbz6wBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For the sake of consistency, let's use these helpers to extract
-{u,g}id_t values from k{u,g}id_t ones.
+On Fri, Jan 5, 2024 at 4:02=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.com=
+> wrote:
+>
+> On Thu, Jan 04, 2024 at 02:12:26PM -0500, Pasha Tatashin <pasha.tatashin@=
+soleen.com> wrote:
+> > Yes, we will have a difference between GFP_ACCOUNT and what
+> > NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
+> > charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
+> > shared data that should not really be charged to a specific process.
+>
+> I see. I'd suggest adding this explanation to commit 10/10 message
+> (perhaps with some ballpark numbers of pages). In order to have a
+> reference and understadning if someone decided to charge (and limit) all
+> in the future.
 
-There are no functional changes, just to make code cleaner.
+Sure, I will update the commit log in 10/10 with this info if we will have =
+v4.
 
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/fuse/inode.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Pasha
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index b8636b5e79dc..ab824a8908b7 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1489,8 +1489,8 @@ static void fuse_fill_attr_from_inode(struct fuse_attr *attr,
- 		.ctimensec	= ctime.tv_nsec,
- 		.mode		= fi->inode.i_mode,
- 		.nlink		= fi->inode.i_nlink,
--		.uid		= fi->inode.i_uid.val,
--		.gid		= fi->inode.i_gid.val,
-+		.uid		= __kuid_val(fi->inode.i_uid),
-+		.gid		= __kgid_val(fi->inode.i_gid),
- 		.rdev		= fi->inode.i_rdev,
- 		.blksize	= 1u << fi->inode.i_blkbits,
- 	};
--- 
-2.34.1
-
+>
+> Thanks,
+> Michal
 
