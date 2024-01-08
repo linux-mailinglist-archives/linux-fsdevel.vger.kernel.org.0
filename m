@@ -1,69 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-7536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC9A826D70
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 13:10:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F70826D71
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 13:10:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB6C1F22A2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 12:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B4F1C22281
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 12:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2233FE58;
-	Mon,  8 Jan 2024 12:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C463FE5F;
+	Mon,  8 Jan 2024 12:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="QTEdAIQS"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jy6tpFZh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA59D3FE3B
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 12:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B93FB28
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 12:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 19BE13F743
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 12:09:46 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8C9473F743
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 12:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1704715786;
-	bh=yjLTFK2sGtmurAPD8/W4cvxOFMossApesuVxAUEmm2k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=QTEdAIQSL1mt2x0tN/Q0tdLz+Yn5qcesXPkBBLIc2jVw4a9Arse/gPzk++8+pdyrM
-	 Z2gQj3RYAJW+XkTwRYhcdkNYk3X/Lu6AfBzYV8l4bvXpd3QZZHQSQciepR6J9q27XU
-	 cRRVFsByk8nQKHMd94zpmiH805Bg3KUGG4HWhXQU0lJBrtka3rTPp7FyCm0SMmeL9F
-	 agrhP00AdsQ4Fm7r7TMpYd4OJnHSaz5Q6rd/EJYPOnIVGLo6EOpW/SeXfEojhulaLs
-	 HWIa8DlWQDf/Fqhlv3GJkfl4jPTMVT1nZPts4USHhBz5fPi1vhJOXRATlpnM4qOfQK
-	 qLV8g+MUEz+vQ==
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-50e8b929997so868873e87.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jan 2024 04:09:46 -0800 (PST)
+	s=20210705; t=1704715799;
+	bh=GtdhYLDKs9o20JRSF0JGIkdiKLo4c8K8/G8DvoYAW44=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version;
+	b=jy6tpFZhfYdMKPc2T1yw/AlsYk6up/wkEUIJGDNovxV5t6t5jdqH99sS/u2QstfSR
+	 XRWa6kEVslGqkz6HSenY6qhAQwB9IcvOsozqhqZBYKjdYqO1I5is1AT20cLWGcc0FR
+	 94v1aUoxtjwlszZabirRWKWCYdZX0bhFYi6WlLjpDQm2WBR/bFAUFfSWbtfClfn//O
+	 HYp+zsuN3z6K9SWM59S7F6zwSeryFxcrUhRz9R4xH9DnBWmhChaqvMIQhjTWBVWyTj
+	 EERJcFeZ0B5GBr3iY+ZhC5k4HLCm7Q6D8+ZlQf2QDVC/oM6ycmcp6tQub6dRFPTXk0
+	 G114XajQD8jqA==
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-50e58b37aebso862120e87.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jan 2024 04:09:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704715785; x=1705320585;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yjLTFK2sGtmurAPD8/W4cvxOFMossApesuVxAUEmm2k=;
-        b=lYDt3IBB5bgSPZaSdzG34qqpiTByydJQpfRHXeomLyi/90MdG+rKIRwbGuv+quBT3N
-         69AMJUrj2d6Gpvu6pOP54jnaKs/E5ya8FXs7tMOru/kctyIVBLjhl6B1YN0jH3AOcVMO
-         BOIg0hkkyoYIesRFeS4SAzfL4qMwaB0wQOUOxmvz2lMpnM2msErlo0wfN0q3meNQh69F
-         S+i2AExOairXA6+/W0+xvNDAbWswOAWBJPAYYjWkjXpkrfSliF5lwXGVhwhXCa0NEg9P
-         DDCydVWcmvWYMx4bzuyLfkfy+ZvlOJPpceay3c5MJy7AsbVqCwUt5dJdrQhcf3uu3sRi
-         K48A==
-X-Gm-Message-State: AOJu0Yyn1EO6n+kbvPuTWMr4Oko4yQX7d4Iw0mP5HywJ9ydHRJKgo3O4
-	SEObixC9bBz/HdXOOtnmiAwFofOmujEf5O5KS1lXee6NqIzTQc3JvmzntSUkOZoxTeSyX1weQvl
-	g0ZDVJZoCgZgCHAI0nV6IVCthwxnvIXgMy4kvTxIc9vj1UMOvPIedc6oBtLMJ
-X-Received: by 2002:a05:6512:3e06:b0:50e:3877:caba with SMTP id i6-20020a0565123e0600b0050e3877cabamr825000lfv.52.1704715784695;
-        Mon, 08 Jan 2024 04:09:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGzM/cYYItv0JtfgT1XOe4lNR1W31/3y8UdFYNPmH2Xh6DdxS5UGo9jy3nzvsAMsCjaNTeyYg==
-X-Received: by 2002:a05:6512:3e06:b0:50e:3877:caba with SMTP id i6-20020a0565123e0600b0050e3877cabamr824991lfv.52.1704715784320;
-        Mon, 08 Jan 2024 04:09:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704715798; x=1705320598;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GtdhYLDKs9o20JRSF0JGIkdiKLo4c8K8/G8DvoYAW44=;
+        b=A76k7g5LomkbnyjrmMDYUant/D79wa/EHxaYpaCsaP0JWyXPlSKkimUsfDD8S7V4b3
+         RGJBNY71/VDdGwBEWQ6pGqcH4iOi7dqpZJ1LscqmCAxjh8qceyIhC5d5y9FWCLpP9zI6
+         bzLMuBi7m02yOqgyl7zKPV6eS2y23zbe10bGdp5QeLyC4eoY6p2qQrMzp6JWRuLw267B
+         7xOMra8k4bLurmgeTI2TkIMXUN+1Hik0xiTPdU/f+26X78RKiK/ik+6y8H4sw2Ijwy8j
+         Ev63zfaxrOrK6S3ax6jk7UXYUUc/MXj5cp3hVj8dCM326EwhMTFCouS0w0P/tDbVKwxa
+         LosA==
+X-Gm-Message-State: AOJu0YxnCKrMXOPGFFRjqsJHYLbN+Zttx0xuo+qzMaXjbJcO7jjt4ZBx
+	ABRe+4Op3jdQR8wagFQc0vsKVLyAnIkfVfuoZpCnYObAO6pObRXrZj7iRc3qgg3jzQBJSYNW5cm
+	R83TfPxogaELzP48MT6gmnF+NWwdwAiFGTzcI3e4ORu6s1KGGaw==
+X-Received: by 2002:a05:6512:10d6:b0:50e:75ee:ec46 with SMTP id k22-20020a05651210d600b0050e75eeec46mr795190lfg.2.1704715798663;
+        Mon, 08 Jan 2024 04:09:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFUqcUNjknvfP6Ue7/xRuCDchF5ew85PuPQCa7e/qAm97tSZSidsvc4p703nLWJuX0caRvEzw==
+X-Received: by 2002:a05:6512:10d6:b0:50e:75ee:ec46 with SMTP id k22-20020a05651210d600b0050e75eeec46mr795186lfg.2.1704715798368;
+        Mon, 08 Jan 2024 04:09:58 -0800 (PST)
 Received: from localhost.localdomain ([91.64.72.41])
-        by smtp.gmail.com with ESMTPSA id fi21-20020a056402551500b005578b816f20sm1767959edb.29.2024.01.08.04.09.43
+        by smtp.gmail.com with ESMTPSA id fi21-20020a056402551500b005578b816f20sm1767959edb.29.2024.01.08.04.09.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jan 2024 04:09:43 -0800 (PST)
+        Mon, 08 Jan 2024 04:09:57 -0800 (PST)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -74,11 +75,14 @@ Cc: brauner@kernel.org,
 	Amir Goldstein <amir73il@gmail.com>,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/9] fuse: basic support for idmapped mounts
-Date: Mon,  8 Jan 2024 13:08:15 +0100
-Message-Id: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v1 1/9] fs/namespace: introduce fs_type->allow_idmap hook
+Date: Mon,  8 Jan 2024 13:08:16 +0100
+Message-Id: <20240108120824.122178-2-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,116 +91,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Dear friends,
+Right now we determine if filesystem support vfs idmappings
+or not basing on the FS_ALLOW_IDMAP flag presence. This
+"static" way works perfecly well for local filesystems
+like ext4, xfs, btrfs, etc. But for network-like filesystems
+like fuse, cephfs this approach is not ideal, because sometimes
+proper support of vfs idmaps requires some extensions for the on-wire
+protocol, which implies that changes have to be made not only
+in the Linux kernel code but also in the 3rd party components like
+libfuse, cephfs MDS server and so on.
 
-This patch series aimed to provide support for idmapped mounts
-for fuse. We already have idmapped mounts support for almost all
-widely-used filesystems:
-* local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
-* network (ceph)
+We have seen that issue during our work on cephfs idmapped mounts [1]
+with Christian, but right now I'm working on the idmapped mounts
+support for fuse and I think that it is a right time for this extension.
 
-Git tree (based on https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/log/?h=for-next):
-v1: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v1
-current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
-
-Having fuse supported looks like a good next step. At the same time
-fuse conceptually close to the network filesystems and supporting it is
-a quite challenging task.
-
-Let me briefly explain what was done in this series and which obstacles we have.
-
-With this series, you can use idmapped mounts with fuse if the following
-conditions are met:
-1. The filesystem daemon declares idmap support (new FUSE_INIT response feature
-flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
-2. The filesystem superblock was mounted with the "default_permissions" parameter
-3. The filesystem fuse daemon does not perform any UID/GID-based checks internally
-and fully trusts the kernel to do that (yes, it's almost the same as 2.)
-
-I have prepared a bunch of real-world examples of the user space modifications
-that can be done to use this extension:
-- libfuse support
-https://github.com/mihalicyn/libfuse/commits/idmap_support
-- fuse-overlayfs support:
-https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
-- cephfs-fuse conversion example
-https://github.com/mihalicyn/ceph/commits/fuse_idmap
-- glusterfs conversion example (there is a conceptual issue)
-https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
-
-The glusterfs is a bit problematic, unfortunately, because even if the glusterfs
-superblock was mounted with the "default_permissions" parameter (1 and 2 conditions
-are satisfied), it fails to satisfy the 3rd condition. The glusterfs fuse daemon sends
-caller UIDs/GIDs over the wire and all the permission checks are done twice (first
-on the client side (in the fuse kernel module) and second on the glusterfs server side).
-Just for demonstration's sake, I found a hacky (but working) solution for glusterfs
-that disables these server-side permission checks (see [1]). This allows you to play
-with the filesystem and idmapped mounts and it works just fine.
-
-The problem described above is the main problem that we can meet when
-working on idmapped mounts support for network-based filesystems (or network-like filesystems
-like fuse). When people look at the idmapped mounts feature at first they tend to think
-that idmaps are for faking caller UIDs/GIDs, but that's not the case. There was a big
-discussion about this in the "ceph: support idmapped mounts" patch series [2], [3].
-The brief outcome from this discussion is that we don't want and don't have to fool
-filesystem code and map a caller's UID/GID everywhere, but only in VFS i_op's
-which are provided with a "struct mnt_idmap *idmap"). For example ->lookup()
-callback is not provided with it and that's on purpose! We don't expect the low-level
-filesystem code to do any permissions checks inside this callback because everything
-was already checked on the higher level (see may_lookup() helper). For local filesystems
-this assumption works like a charm, but for network-based, unfortunately, not.
-For example, the cephfs kernel client *always* send called UID/GID with *any* request
-(->lookup included!) and then *may* (depending on the MDS configuration) perform any
-permissions checks on the server side based on these values, which obviously leads
-to issues/inconsistencies if VFS idmaps are involved.
-
-Fuse filesystem very-very close to cephfs example, because we have req->in.h.uid/req->in.h.gid
-and these values are present in all fuse requests and userspace may use them as it wants.
-
-All of the above explains why we have a "default_permissions" requirement. If filesystem
-does not use it, then permission checks will be widespread across all the i_op's like
-->lookup, ->unlink, ->readlink instead of being consolidated in the one place (->permission callback).
-
-In this series, my approach is the same as in cephfs [4], [5]. Don't touch req->in.h.uid/req->in.h.gid values
-at all (because we can't properly idmap them as we don't have "struct mnt_idmap *idmap" everywhere),
-instead, provide the userspace with a new optional (FUSE_OWNER_UID_GID_EXT) UID/GID suitable
-only for ->mknod, ->mkdir, ->symlink, ->atomic_open and these values have to be used as the
-owner UID and GID for newly created inodes.
-
-Things to discuss:
-- we enable idmapped mounts support only if "default_permissions" mode is enabled,
-because otherwise, we would need to deal with UID/GID mappings on the userspace side OR
-provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
-something that we probably want to do. Idmapped mounts philosophy is not about faking
-caller uid/gid.
-
-- We have a small offlist discussion with Christian about adding fs_type->allow_idmap
-hook. Christian pointed out that it would be nice to have a superblock flag instead like
-SB_I_NOIDMAP and we can set this flag during mount time if we see that the filesystem does not
-support idmappings. But, unfortunately, I didn't succeed here because the kernel will
-know if the filesystem supports idmapping or not after FUSE_INIT request, but FUSE_INIT request
-is being sent at the end of the mounting process, so the mount and superblock will exist and
-visible by the userspace in that time. It seems like setting SB_I_NOIDMAP flag, in this
-case, is too late as a user may do the trick by creating an idmapped mount while it wasn't
-restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive" version SB_I_ALLOWIDMAP
-and a "weak" version of FS_ALLOW_IDMAP like FS_MAY_ALLOW_IDMAP. So if FS_MAY_ALLOW_IDMAP is set,
-then SB_I_ALLOWIDMAP has to be set on the superblock to allow the creation of an idmapped mount.
-But that's a matter of our discussion.
-
-How to play with it:
-1. take any patched filesystem from the list (fuse-overlayfs, cephfs-fuse, glusterfs) and mount it
-2. ./mount-idmapped --map-mount b:1000:0:2 /mnt/my_fuse_mount /mnt/my_fuse_mount_idmapped
-(maps UID/GIDs as 1000 -> 0, 1001 -> 1)
-[ taken from https://raw.githubusercontent.com/brauner/mount-idmapped/master/mount-idmapped.c ]
-
-[1] https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a492b1904d0b2
-[2] https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/
-[3] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
-[4] https://github.com/ceph/ceph/pull/52575
-[5] https://lore.kernel.org/all/20230807132626.182101-4-aleksandr.mikhalitsyn@canonical.com/
-
-Thanks!
-Alex
+[1] 5ccd8530dd7 ("ceph: handle idmapped mounts in create_request_message()")
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -205,28 +114,37 @@ Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ fs/namespace.c     | 3 ++-
+ include/linux/fs.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Alexander Mikhalitsyn (9):
-  fs/namespace: introduce fs_type->allow_idmap hook
-  fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
-  fs/fuse: support idmap for mkdir/mknod/symlink/create
-  fs/fuse: support idmapped getattr inode op
-  fs/fuse: support idmapped ->permission inode op
-  fs/fuse: support idmapped ->setattr op
-  fs/fuse: drop idmap argument from __fuse_get_acl
-  fs/fuse: support idmapped ->set_acl
-  fs/fuse: allow idmapped mounts
-
- fs/fuse/acl.c             |  10 ++-
- fs/fuse/dir.c             | 143 +++++++++++++++++++++++++-------------
- fs/fuse/file.c            |   2 +-
- fs/fuse/fuse_i.h          |  10 ++-
- fs/fuse/inode.c           |  24 ++++++-
- fs/namespace.c            |   3 +-
- include/linux/fs.h        |   1 +
- include/uapi/linux/fuse.h |  24 ++++++-
- 8 files changed, 153 insertions(+), 64 deletions(-)
-
+diff --git a/fs/namespace.c b/fs/namespace.c
+index fbf0e596fcd3..02eb47b3d728 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4300,7 +4300,8 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
+ 		return -EPERM;
+ 
+ 	/* The underlying filesystem doesn't support idmapped mounts yet. */
+-	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
++	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP) ||
++	    (m->mnt_sb->s_type->allow_idmap && !m->mnt_sb->s_type->allow_idmap(m->mnt_sb)))
+ 		return -EINVAL;
+ 
+ 	/* We're not controlling the superblock. */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98b7a7a8c42e..f2e373b5420a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2377,6 +2377,7 @@ struct file_system_type {
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+ 	const struct fs_parameter_spec *parameters;
++	bool (*allow_idmap)(struct super_block *);
+ 	struct dentry *(*mount) (struct file_system_type *, int,
+ 		       const char *, void *);
+ 	void (*kill_sb) (struct super_block *);
 -- 
 2.34.1
 
