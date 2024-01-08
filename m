@@ -1,187 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-7560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0361582754C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 17:34:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D68275A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 17:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EC12B22BB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 16:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A68A1B223CF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 16:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6EB5465D;
-	Mon,  8 Jan 2024 16:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5A353E3E;
+	Mon,  8 Jan 2024 16:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FJVNLQ65"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="O/oflqmm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760E654659
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 16:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC1E53E17
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 16:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dbeff495c16so574875276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jan 2024 08:34:27 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dbed0710c74so1247221276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jan 2024 08:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1704731666; x=1705336466; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1704732329; x=1705337129; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kMWWibImy+Q/qarsSyjsoWJg1cjdH7HjoRETI704KYs=;
-        b=FJVNLQ65B3nnAG4gULP7tMOxDLMbPoHFOyCgweCSKtgRCqJihunfF7gQtDeJliFU81
-         o77RIraDN4/W18iCyjTScXjuaRXf+DZPNDVN3BbFWQqXX/GcWjqScBkd8Gm5rzDKXpcc
-         VDzrkTzW8LHXB0DjfK+grXLkSjjinvjBShYOd2ZIPtANIoHz0pFPqFd4lLv6Ep7yQ0t7
-         ubvk3wDZ7CQRGofs3WESxWzWmOVv6V73m6DyM67BEF4ALmwTW16OisS18b5AFqb0r3Oe
-         zqGGsxAGLGy02BtytbhGvNLakuV6y/VmABMchkDa/4wZ28d2C8SFLoL4XVr9nZNvRPTC
-         wIbw==
+        bh=jVuIgnahugRDwfdeFuBbzBR3KYIVwzwbEm3l+2cHWHs=;
+        b=O/oflqmmVGXi/gsBbl5n3jgKfJd7Ucyqf314VgRuqyaxh4WTNEDGyR6bMRATLr61ws
+         ObR534bSwrget/UfQHk4a5y/efFa8lgdETOGSiuV1g4Dl3htj9uWvmN7jsvRCGTPh9+E
+         B0V5NJwkGvmMsMeyChZWtT7pO/eHCH6f5SogLhWNfXPdegvxCwkQa24Un+DgKVuVQ8Ag
+         rJTtKXDOT+9b8+2nxWvTS+OsHdCKzLb5qeSb68d5z09Tvt8MMHpUDJhWjZWYTTuDT6VY
+         a9d9zHIkRZOEM8zlon1whQim2fTEageFYWGsDleI5IUxew8H74HB/HcECD1h3LJndpr2
+         0vPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704731666; x=1705336466;
+        d=1e100.net; s=20230601; t=1704732329; x=1705337129;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kMWWibImy+Q/qarsSyjsoWJg1cjdH7HjoRETI704KYs=;
-        b=FCmOOdnJDBIlYyHmvoAjEXDgjthtt2RsNkYSSfzjcskylU4Y9DgsJvnYRz5iMRplLz
-         5iXoZKskNbwjAxk08FdEh46k2777wzC8lQGy/Fj+gY1+/Th1E+MC86moh18FcIlWsZH+
-         K0dQc9/Yw+qPkys0NBHq+/gjCurbYl3bOWZZEHhDGqWJRxslm6Enf1Rs1g4YACA9m21B
-         KN5NL4wwZZcZ8s7+ubmZVzFDL6qW2gWjnthF6GQlML5kNFqd9z/2IEK7aAu0pFOM3DPh
-         0i6DNC9hhzBbTTP6OttNK1C+MtV8gXCakaO6vON5k8NIXnVAhbLPLoCEJRxqqwIF5f1H
-         Rl7A==
-X-Gm-Message-State: AOJu0YwbQ4DxYd4ZczI5w6Xiglm91lIKNnI0rkfG1kVV7v4PBIRqvW6b
-	CSQBzPf9bhEX/TYyPuC/G669eKkxen0uo0UyxlQa2Xm91E/h
-X-Google-Smtp-Source: AGHT+IGlY395brmv2wYoWYXJYNf17/winzvq96lagsm0hEeq374QG25W5HzI+NTTqj3YjZsBpB5T9zdgpxL80eHmBzs=
-X-Received: by 2002:a5b:a09:0:b0:dbe:9c77:84ef with SMTP id
- k9-20020a5b0a09000000b00dbe9c7784efmr1338449ybq.19.1704731666364; Mon, 08 Jan
- 2024 08:34:26 -0800 (PST)
+        bh=jVuIgnahugRDwfdeFuBbzBR3KYIVwzwbEm3l+2cHWHs=;
+        b=s735WhqLOIPg269RvlH9iXfA0KmWsNXf3e9jYuK7LVMVOMgfX9vY01p7Zp1KjkSf0o
+         kdP5aGtqFPJTxHqPqi62+Oe9tuHrwgMsgzOWlY8RuA5fa9AN6DW4t3hh9jMb3tgRGoUi
+         pwUkKuByph/mGsCRjnzitThExjydd44se2tEGmn6H05vP54lOH0DSNmvuWAj0+KNqKNC
+         uRMTbz5uZPShjO0l3u2kElAATckORx60LuBs2mKWWsfcgEl+jKbk8titahvhWS2FHfjt
+         6gs0DmEHWgTCLMEyuUjJ7yAY16HWv5evKEVqkR+9bn5LQ8HlEqIEFv2lNHANyYatLQxE
+         9vFw==
+X-Gm-Message-State: AOJu0YwF13W9LNMNqAwvWFcHJ9+WzrxI+OuuDIC0NbEIvT/wIpwIf30a
+	vb+TqTZkLyEMPTwOllQdv1T7T7GawhQixiv5cU+YT4IRf3bt
+X-Google-Smtp-Source: AGHT+IFw22iEGTnFRWzmYXtloBMr6VnOd6CaxkdRy6faH/1+2adk2GdZEx6ti0o3TaY8BDjCpQlMpNb3yTSntSVs0DQ=
+X-Received: by 2002:a05:6902:2747:b0:dbe:346b:b97 with SMTP id
+ ea7-20020a056902274700b00dbe346b0b97mr921467ybb.23.1704732328906; Mon, 08 Jan
+ 2024 08:45:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231213143813.6818-1-michael.weiss@aisec.fraunhofer.de>
- <20231213143813.6818-4-michael.weiss@aisec.fraunhofer.de> <20231215-golfanlage-beirren-f304f9dafaca@brauner>
- <61b39199-022d-4fd8-a7bf-158ee37b3c08@aisec.fraunhofer.de>
- <20231215-kubikmeter-aufsagen-62bf8d4e3d75@brauner> <CAADnVQKeUmV88OfQOfiX04HjKbXq7Wfcv+N3O=5kdL4vic6qrw@mail.gmail.com>
- <20231216-vorrecht-anrief-b096fa50b3f7@brauner> <CAADnVQK7MDUZTUxcqCH=unrrGExCjaagfJFqFPhVSLUisJVk_Q@mail.gmail.com>
- <20231218-chipsatz-abfangen-d62626dfb9e2@brauner> <CAHC9VhSZDMWJ_kh+RaB6dsPLQjkrjDY4bVkqsFDG3JtjinT_bQ@mail.gmail.com>
- <f38ceaaf-916a-4e44-9312-344ed1b4c9c4@aisec.fraunhofer.de>
- <CAHC9VhT3dbFc4DWc8WFRavWY1M+_+DzPbHuQ=PumROsx0rY2vA@mail.gmail.com> <6c2eb494-0cbf-4493-ae31-6dea519c4715@aisec.fraunhofer.de>
-In-Reply-To: <6c2eb494-0cbf-4493-ae31-6dea519c4715@aisec.fraunhofer.de>
+References: <20240103222034.2582628-1-andrii@kernel.org> <20240103222034.2582628-4-andrii@kernel.org>
+ <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
+In-Reply-To: <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 8 Jan 2024 11:34:15 -0500
-Message-ID: <CAHC9VhRcRT9DKtxmtamBCRvNF+dWW4MGx2KtS3CA3xcCGZf+ww@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] devguard: added device guard for mknod in
- non-initial userns
-To: =?UTF-8?Q?Michael_Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Quentin Monnet <quentin@isovalent.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, gyroidos@aisec.fraunhofer.de
+Date: Mon, 8 Jan 2024 11:45:17 -0500
+Message-ID: <CAHC9VhQg7mYnQw-o1TYon_bdtk_CMzJaf6u5FTPosniG-UXK1w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 8, 2024 at 8:45=E2=80=AFAM Michael Wei=C3=9F
-<michael.weiss@aisec.fraunhofer.de> wrote:
-> On 29.12.23 23:31, Paul Moore wrote:
-> > On Wed, Dec 27, 2023 at 9:31=E2=80=AFAM Michael Wei=C3=9F
-> > <michael.weiss@aisec.fraunhofer.de> wrote:
-> >> Hi Paul, what would you think about if we do it as shown in the
-> >> patch below (untested)?
-> >>
-> >> I have adapted Christians patch slightly in a way that we do let
-> >> all LSMs agree on if device access management should be done or not.
-> >> Similar to the security_task_prctl() hook.
+On Fri, Jan 5, 2024 at 4:45=E2=80=AFPM Linus Torvalds
+<torvalds@linuxfoundation.org> wrote:
+> On Wed, 3 Jan 2024 at 14:21, Andrii Nakryiko <andrii@kernel.org> wrote:
 > >
-> > I think it's worth taking a minute to talk about this proposed change
-> > and the existing security_task_prctl() hook, as there is an important
-> > difference between the two which is the source of my concern.
-> >
-> > If you look at the prctl() syscall implementation, right at the top of
-> > the function you see the LSM hook:
-> >
-> >   SYSCALL_DEFINE(prctl, ...)
-> >   {
-> >     ...
-> >
-> >     error =3D security_task_prctl(...);
-> >     if (error !=3D -ENOSYS)
-> >       return error;
-> >
-> >     error =3D 0;
-> >
-> >     ....
-> >   }
-> >
-> > While it is true that the LSM hook returns a "special" value, -ENOSYS,
-> > from a practical perspective this is not significantly different from
-> > the much more common zero value used to indicate no restriction from
-> > the LSM layer.  However, the more important thing to note is that the
-> > return value from security_task_prctl() does not influence any other
-> > access controls in the caller outside of those implemented inside the
-> > LSM; in fact the error code is reset to zero immediately after the LSM
-> > hook.
-> >
-> > More on this below ...
-> >
-> >> diff --git a/fs/super.c b/fs/super.c
-> >> index 076392396e72..6510168d51ce 100644
-> >> --- a/fs/super.c
-> >> +++ b/fs/super.c
-> >> @@ -325,7 +325,7 @@ static struct super_block *alloc_super(struct file=
-_system_type *type, int flags,
-> >>  {
-> >>         struct super_block *s =3D kzalloc(sizeof(struct super_block), =
- GFP_USER);
-> >>         static const struct super_operations default_op;
-> >> -       int i;
-> >> +       int i, err;
-> >>
-> >>         if (!s)
-> >>                 return NULL;
-> >> @@ -362,8 +362,16 @@ static struct super_block *alloc_super(struct fil=
-e_system_type *type, int flags,
-> >>         }
-> >>         s->s_bdi =3D &noop_backing_dev_info;
-> >>         s->s_flags =3D flags;
-> >> -       if (s->s_user_ns !=3D &init_user_ns)
-> >> +
-> >> +       err =3D security_sb_device_access(s);
-> >> +       if (err < 0 && err !=3D -EOPNOTSUPP)
-> >> +               goto fail;
-> >> +
-> >> +       if (err && s->s_user_ns !=3D &init_user_ns)
-> >>                 s->s_iflags |=3D SB_I_NODEV;
-> >> +       else
-> >> +               s->s_iflags |=3D SB_I_MANAGED_DEVICES;
-> >
-> > This is my concern, depending on what the LSM hook returns, the
-> > superblock's flags are set differently, affecting much more than just
-> > a LSM-based security mechanism.
-> >
-> > LSMs should not be able to undermine, shortcut, or otherwise bypass
-> > access controls built into other parts of the kernel.  In other words,
-> > a LSM should only ever be able to deny an operation, it should not be
-> > able to permit an operation that otherwise would have been denied.
+> > +bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > +{
+> > +       /* BPF token allows ns_capable() level of capabilities, but onl=
+y if
+> > +        * token's userns is *exactly* the same as current user's usern=
+s
+> > +        */
+> > +       if (token && current_user_ns() =3D=3D token->userns) {
+> > +               if (ns_capable(token->userns, cap))
+> > +                       return true;
+> > +               if (cap !=3D CAP_SYS_ADMIN && ns_capable(token->userns,=
+ CAP_SYS_ADMIN))
+> > +                       return true;
+> > +       }
+> > +       /* otherwise fallback to capable() checks */
+> > +       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_S=
+YS_ADMIN));
+> > +}
 >
-> Hmm, OK. Then I can't see to come here any further as we would directly
-> or indirectly set the superblock flags based on if a security hook is
-> implemented or not, which I understand now is against LSM architecture.
-> Thanks Paul for clarification.
+> This *feels* like it should be written as
+>
+>     bool bpf_token_capable(const struct bpf_token *token, int cap)
+>     {
+>         struct user_namespace *ns =3D &init_ns;
+>
+>         /* BPF token allows ns_capable() level of capabilities, but only =
+if
+>          * token's userns is *exactly* the same as current user's userns
+>          */
+>         if (token && current_user_ns() =3D=3D token->userns)
+>                 ns =3D token->userns;
+>         return ns_capable(ns, cap) ||
+>                 (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
+>     }
+>
+> And yes, I realize that the function will end up later growing a
+>
+>         security_bpf_token_capable(token, cap)
+>
+> test inside that 'if (token ..)' statement, and this would change the
+> order of that test so that the LSM hook would now be done before the
+> capability checks are done, but that all still seems just more of an
+> argument for the simplification.
 
-No worries, thank you for posting to the LSM list for review and
-consideration.  While it may take me a while to review something
-(there always appears to be a backlog), I'm always happy to review
-patches in this area and work with folks to find a solution.
+I have no problem with rewriting things, my only ask is that we stick
+with the idea of doing the capability checks before the LSM hook.  The
+DAC-before-MAC (capability-before-LSM) pattern is one we try to stick
+to most everywhere in the kernel and deviating from it here could
+potentially result in some odd/unexpected behavior from a user
+perspective.
 
 --=20
 paul-moore.com
