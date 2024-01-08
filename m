@@ -1,87 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-7556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE14C827471
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 16:48:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40DA8274A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 17:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F422A1C22E5A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 15:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC3A283C4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D8051037;
-	Mon,  8 Jan 2024 15:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148F9524AC;
+	Mon,  8 Jan 2024 16:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZdTnMWa"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LdiwUq8j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96855100D
-	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 15:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704728911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LXzSdb2GMelu2RY7M9wBwnEHadZ8ZB5xT40HRRNlufA=;
-	b=dZdTnMWauN85HiaHp06NHH2tiYWMRwWxF4WFUWOfPKq1VqFLbgOI4PVnUO+5LbrX8nTOuA
-	TWtH9wQRKGm2KkxF5zYuqL6nQYNRzoPBAxhraPrzC6YoMUKnIu2KheKBlirpl6DeSbD84c
-	REyHc8QRgD7S94JRf2tPXFfplVujajI=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-82-5TVjKgI4NYCMEu1t82eQcQ-1; Mon,
- 08 Jan 2024 10:48:28 -0500
-X-MC-Unique: 5TVjKgI4NYCMEu1t82eQcQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DEDDD3C025AC;
-	Mon,  8 Jan 2024 15:48:27 +0000 (UTC)
-Received: from [100.85.132.103] (ovpn-0-5.rdu2.redhat.com [10.22.0.5])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id C07A8492BC7;
-	Mon,  8 Jan 2024 15:48:25 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
- Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, houtao1@huawei.com
-Subject: Re: [PATCH v2] virtiofs: use GFP_NOFS when enqueuing request through
- kworker
-Date: Mon, 08 Jan 2024 10:48:24 -0500
-Message-ID: <A7DF37C3-9C00-4C3C-BFD3-12BE0DE699B3@redhat.com>
-In-Reply-To: <20240105105305.4052672-1-houtao@huaweicloud.com>
-References: <20240105105305.4052672-1-houtao@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3781D524A7;
+	Mon,  8 Jan 2024 16:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/cpDn+ySfxlQPGGDlxhV/W8mRwKw5N/zUe55+TIbUnE=; b=LdiwUq8jg92CpSX4y/k9CaNugO
+	yx6B6exjW4bG8lcy4suuh/Utl4Ok17Ge/anthY3W/oW4KHwfmM5a8CjkH2l9aiZwMzIR4aIw6V6lc
+	cmJrNB0Cfp/UrA5zbGfBqVF25RCtXG376Xy9Y5ujJ6uhI4uzfRmibr4UmTz6xH7w9wK6Y+tqI1F3N
+	42naVNnlxKEmKYVk4ePc2PNn9haTssNderpOo669QCACjHnrH1Q1P6HlxlCYR/x/YXVtm69AhflFr
+	V3Fi3at6PsJ4VbKST5GC3ACVDDPAui13407SXDjwjilmgXtehyntF7rPIeUV3zBAPwJC2qboFyUeF
+	TinYbfAg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rMsBR-007rZC-Vk; Mon, 08 Jan 2024 16:09:02 +0000
+Date: Mon, 8 Jan 2024 16:09:01 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] buffer: Fix __bread() kernel-doc
+Message-ID: <ZZweHfmMWnlBFKdV@casper.infradead.org>
+References: <20240104163652.3705753-1-willy@infradead.org>
+ <20240104163652.3705753-5-willy@infradead.org>
+ <20240108145808.2k4rob3ntdknrkp3@localhost>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240108145808.2k4rob3ntdknrkp3@localhost>
 
-On 5 Jan 2024, at 5:53, Hou Tao wrote:
+On Mon, Jan 08, 2024 at 03:58:08PM +0100, Pankaj Raghav (Samsung) wrote:
+> On Thu, Jan 04, 2024 at 04:36:51PM +0000, Matthew Wilcox (Oracle) wrote:
+> > The extra indentation confused the kernel-doc parser, so remove it.
+> > Fix some other wording while I'm here, and advise the user they need to
+> > call brelse() on this buffer.
+> > 
+> It looks like __bread_gfp has the same problem:
 
-> From: Hou Tao <houtao1@huawei.com>
->
-> When invoking virtio_fs_enqueue_req() through kworker, both the
-> allocation of the sg array and the bounce buffer still use GFP_ATOMIC.
-> Considering the size of both the sg array and the bounce buffer may be
-> greater than PAGE_SIZE, use GFP_NOFS instead of GFP_ATOMIC to lower the
-> possibility of memory allocation failure.
+I'm happy to incorporate this patch, but I'll need your S-o-B on it.
 
-Perhaps not appropriate for this case, but are you aware of
-memalloc_nofs_save/restore?  NFS has been converting over and cleaning out
-our GFP_NOFS usage:
-
-Documentation/core-api/gfp_mask-from-fs-io.rst
-
-Ben
-
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 967f34b70aa8..cfdf45cc290a 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1446,16 +1446,18 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
+>  EXPORT_SYMBOL(__breadahead);
+>  
+>  /**
+> - *  __bread_gfp() - reads a specified block and returns the bh
+> - *  @bdev: the block_device to read from
+> - *  @block: number of block
+> - *  @size: size (in bytes) to read
+> - *  @gfp: page allocation flag
+> + * __bread_gfp() - Read a block.
+> + * @bdev: The block device to read from.
+> + * @block: Block number in units of block size.
+> + * @size: Block size in bytes.
+>   *
+> - *  Reads a specified block, and returns buffer head that contains it.
+> - *  The page cache can be allocated from non-movable area
+> - *  not to prevent page migration if you set gfp to zero.
+> - *  It returns NULL if the block was unreadable.
+> + * Read a specified block, and return the buffer head that refers to it.
+> + * The memory can be allocated from a non-movable area to not to prevent
+> + * page migration if you set gfp to zero. The buffer head has its
+> + * refcount elevated and the caller should call brelse() when it has
+> + * finished with the buffer.
+> + *
+> + * Return: NULL if the block was unreadable.
+>   */
+>  struct buffer_head *
+>  __bread_gfp(struct block_device *bdev, sector_t block,
+> (END)
+> 
+> Another option is to just change this in __bread_gfp() and add a See
+> __bread_gfp() in __bread()?
 
