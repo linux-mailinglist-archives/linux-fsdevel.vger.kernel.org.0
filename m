@@ -1,105 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-7553-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A6A8271FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 15:58:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B933D8272E6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 16:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC3E2843AD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 14:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690C728321A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 15:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72574778E;
-	Mon,  8 Jan 2024 14:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="FIDDlGFi"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879AB4C3DC;
+	Mon,  8 Jan 2024 15:22:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796FB47780;
-	Mon,  8 Jan 2024 14:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4T7xyB4mGJz9stX;
-	Mon,  8 Jan 2024 15:58:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1704725890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XcOQZGwoIn5kkIIANZy6IMFdl96tzX2varVM4O162Fo=;
-	b=FIDDlGFi0sWUUnrGD2rmZC9aAqhMgwM5lu8ol3DXN622el7ZATFZLhCpM3E0W/YFMyYuL8
-	wsg1XoctGiwuWF/AM50FTF9zZnK+nHHcDlc2ZKOyXWhYXbJHqyVGcqdZHkF5fWui3qBlEu
-	xwYNLMvTgcu4o5NUB/l05Z6K5szJ8NDTejBq8w+tHOaHlstgjqh1+Lnc4xKURQj1ct+XJN
-	6oMqxVs2Mp1BUPDIUPZX0/Lleol501Fho/av5i2f+MDZVLuOVB5ovOtv11+GejB7032ZF8
-	cLjVynM37Ut1+pxqXd/bGmMtNq3KVtJFCm5zKxDIVNcv8eatzUBLkMBWQhbgyg==
-Date: Mon, 8 Jan 2024 15:58:08 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] buffer: Fix __bread() kernel-doc
-Message-ID: <20240108145808.2k4rob3ntdknrkp3@localhost>
-References: <20240104163652.3705753-1-willy@infradead.org>
- <20240104163652.3705753-5-willy@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361C44C3AD;
+	Mon,  8 Jan 2024 15:22:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFEB3C433C8;
+	Mon,  8 Jan 2024 15:22:35 +0000 (UTC)
+Date: Mon, 8 Jan 2024 10:23:31 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as
+ default ownership
+Message-ID: <20240108102331.7de98cab@gandalf.local.home>
+In-Reply-To: <20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
+References: <20240103203246.115732ec@gandalf.local.home>
+	<20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
+	<20240105095954.67de63c2@gandalf.local.home>
+	<20240107-getrickst-angeeignet-049cea8cad13@brauner>
+	<20240107132912.71b109d8@rorschach.local.home>
+	<20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240104163652.3705753-5-willy@infradead.org>
-X-Rspamd-Queue-Id: 4T7xyB4mGJz9stX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 04, 2024 at 04:36:51PM +0000, Matthew Wilcox (Oracle) wrote:
-> The extra indentation confused the kernel-doc parser, so remove it.
-> Fix some other wording while I'm here, and advise the user they need to
-> call brelse() on this buffer.
+On Mon, 8 Jan 2024 12:04:54 +0100
+Christian Brauner <brauner@kernel.org> wrote:
+
+> > > IOW, the inode_permission() in lookup_one_len() that eventfs does is
+> > > redundant and just wrong.  
+> > 
+> > I don't think so.  
 > 
-It looks like __bread_gfp has the same problem:
+> I'm very well aware that the dentries and inode aren't created during
+> mkdir but the completely directory layout is determined. You're just
+> splicing in dentries and inodes during lookup and readdir.
+> 
+> If mkdir /sys/kernel/tracing/instances/foo has succeeded and you later
+> do a lookup/readdir on
+> 
+> ls -al /sys/kernel/tracing/instances/foo/events
+> 
+> Why should the creation of the dentries and inodes ever fail due to a
+> permission failure?
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 967f34b70aa8..cfdf45cc290a 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1446,16 +1446,18 @@ void __breadahead(struct block_device *bdev, sector_t block, unsigned size)
- EXPORT_SYMBOL(__breadahead);
- 
- /**
-- *  __bread_gfp() - reads a specified block and returns the bh
-- *  @bdev: the block_device to read from
-- *  @block: number of block
-- *  @size: size (in bytes) to read
-- *  @gfp: page allocation flag
-+ * __bread_gfp() - Read a block.
-+ * @bdev: The block device to read from.
-+ * @block: Block number in units of block size.
-+ * @size: Block size in bytes.
-  *
-- *  Reads a specified block, and returns buffer head that contains it.
-- *  The page cache can be allocated from non-movable area
-- *  not to prevent page migration if you set gfp to zero.
-- *  It returns NULL if the block was unreadable.
-+ * Read a specified block, and return the buffer head that refers to it.
-+ * The memory can be allocated from a non-movable area to not to prevent
-+ * page migration if you set gfp to zero. The buffer head has its
-+ * refcount elevated and the caller should call brelse() when it has
-+ * finished with the buffer.
-+ *
-+ * Return: NULL if the block was unreadable.
-  */
- struct buffer_head *
- __bread_gfp(struct block_device *bdev, sector_t block,
-(END)
+They shouldn't.
 
-Another option is to just change this in __bread_gfp() and add a See
-__bread_gfp() in __bread()?
+> The vfs did already verify that you had the required
+> permissions to list entries in that directory. Why should filling up
+> /sys/kernel/tracing/instances/foo/events ever fail then? It shouldn't
+> That tracefs instance would be half-functional. And again, right now
+> that inode_permission() check cannot even fail.
+
+And it shouldn't. But without dentries and inodes, how does VFS know what
+is allowed to open the files?
+
+-- Steve
 
