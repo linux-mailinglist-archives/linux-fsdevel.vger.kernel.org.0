@@ -1,102 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-7515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B6A8266BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 00:09:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7375982679F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 05:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22AC1F2149E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Jan 2024 23:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98D60281DBD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Jan 2024 04:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8968212B87;
-	Sun,  7 Jan 2024 23:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA386AD6;
+	Mon,  8 Jan 2024 04:48:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36906125A8;
-	Sun,  7 Jan 2024 23:09:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1270C433C7;
-	Sun,  7 Jan 2024 23:09:25 +0000 (UTC)
-Date: Sun, 7 Jan 2024 18:09:24 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] eventfs: Updates for v6.8
-Message-ID: <20240107180924.38e25155@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC23522D
+	for <linux-fsdevel@vger.kernel.org>; Mon,  8 Jan 2024 04:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4T7hQ94ytcz1Q7Dk;
+	Mon,  8 Jan 2024 12:48:01 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1EE9C140384;
+	Mon,  8 Jan 2024 12:48:43 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by dggpeml500022.china.huawei.com
+ (7.185.36.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 8 Jan
+ 2024 12:48:42 +0800
+From: Hongbo Li <lihongbo22@huawei.com>
+To: <patchwork@huawei.com>, <willy@infradead.org>, <akpm@linux-foundation.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<ruanjinjie@huawei.com>, <lihongbo22@huawei.com>
+Subject: [PATCH -next] mm/filemap: avoid type conversion
+Date: Mon, 8 Jan 2024 12:48:15 +0800
+Message-ID: <20240108044815.3291487-1-lihongbo22@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
+The return type of function folio_test_hugetlb is bool type, there is no
+need to assign it to an integer type.
 
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Linus,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 750e779c23db..0d7e20edf46f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -843,7 +843,7 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ 		struct folio *folio, pgoff_t index, gfp_t gfp, void **shadowp)
+ {
+ 	XA_STATE(xas, &mapping->i_pages, index);
+-	int huge = folio_test_hugetlb(folio);
++	bool huge = folio_test_hugetlb(folio);
+ 	bool charged = false;
+ 	long nr = 1;
+ 
+-- 
+2.34.1
 
-This is only for tracefs/eventfs. It does not contain any of the
-tracing subsystem updates. It may also conflict with vfs subsystem as
-they had a change in the dentry walk, but that code that conflicts is
-deleted by this pull request.
-
-eventfs updates for v6.8:
-
-Note, this has no new features but only restructures the eventfs and
-tracefs code to simplify it and depend less on how dentry works.
-
-- Remove "lookup" parameter of create_dir_dentry() and
-  create_file_dentry(). These functions were called by lookup and the
-  readdir logic, where readdir needed it to up the ref count of the dentry
-  but the lookup did not. A "lookup" parameter was passed in to tell it
-  what to do, but this complicated the code. It is better to just always
-  up the ref count and require the caller to decrement it, even for
-  lookup.
-
-- Modify the .iterate_shared callback to not use the dcache_readdir()
-  logic and just handle what gets displayed by that one function. This
-  removes the need for eventfs to hijack the file->private_data from the
-  dcache_readdir() "cursor" pointer, and makes the code a bit more sane.
-
-- Use the root and instance inodes for default ownership. Instead of
-  walking the dentry tree and updating each dentry gid, use the getattr(),
-  setattr() and permission() callbacks to set the ownership and
-  permissions using the root or instance as the default.
-
-- Some other optimizations with the eventfs iterate_shared logic.
-
-
-Please pull the latest eventfs-v6.8 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-eventfs-v6.8
-
-Tag SHA1: b24ec2b23e8b77b46510e215ea34887bfb550453
-Head SHA1: 1de94b52d5e8d8b32f0252f14fad1f1edc2e71f1
-
-
-Steven Rostedt (Google) (7):
-      eventfs: Remove "lookup" parameter from create_dir/file_dentry()
-      eventfs: Stop using dcache_readdir() for getdents()
-      tracefs/eventfs: Use root and instance inodes as default ownership
-      eventfs: Have eventfs_iterate() stop immediately if ei->is_freed is set
-      eventfs: Do ctx->pos update for all iterations in eventfs_iterate()
-      eventfs: Read ei->entries before ei->children in eventfs_iterate()
-      eventfs: Shortcut eventfs_iterate() by skipping entries already read
-
-----
- fs/tracefs/event_inode.c | 341 +++++++++++++++++++++++------------------------
- fs/tracefs/inode.c       | 198 +++++++++++++++------------
- fs/tracefs/internal.h    |   3 +
- 3 files changed, 283 insertions(+), 259 deletions(-)
----------------------------
 
