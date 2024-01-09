@@ -1,100 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-7614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845A08287F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 15:24:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB66782880B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 15:28:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1090EB23BD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 14:24:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA151C243FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 14:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2939AC3;
-	Tue,  9 Jan 2024 14:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8BA39ACC;
+	Tue,  9 Jan 2024 14:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIL4c66Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtJmAIXF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2A539848;
-	Tue,  9 Jan 2024 14:24:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12ACFC433C7;
-	Tue,  9 Jan 2024 14:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63C339AC0;
+	Tue,  9 Jan 2024 14:27:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7681FC433C7;
+	Tue,  9 Jan 2024 14:27:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704810243;
-	bh=jtlAf7GbJEb8KC+GO5s0+NRGfPU8y1/U2gB+ZyxG2Jg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PIL4c66YEFKrl/oUi0AvJbJow6+eqXBvJQu3E+B7mkXl2QWTeN5MVNYOnU/r5AH8G
-	 PR185TTOjTqifbB+AOt5KCoz/7HBQH0JKdsxBooULuNEs8w5O5E/GtTxYDKJwwq0K6
-	 erIklOjQErOoFhuIEX+rfwb1Pq1IRox1d+1evUCsrsKYDCNpZD9ZUw9f/P0V9fd3RC
-	 Cqnz1GQURYtRAaVfVCo5y7o4wAVjuYn79Smv1qda4AUrXGNvpbUyVHZpXRHC3ZR4YO
-	 ICZYHFSXUwrpIdP/tkzkEZXI2jC1o73UboGqTkDvqp23QT2JK4hUbVi353lxqzfOy/
-	 02DzZBYrOOQaQ==
-Date: Tue, 9 Jan 2024 15:23:58 +0100
+	s=k20201202; t=1704810469;
+	bh=5UKutk+ST+B6lxLgZc3b+MyL/xXT4h1umGkakQFzmn0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PtJmAIXFOXHRxRTjpft2PmPErgltsZmhAjEByylyN+TPbLoDprQzs8rEDSnzbKN0H
+	 9yJIXIPF5o1FbOPcBKSssCpzKGrPQ7RX77M1MtfQVaxnOA6URaVU/C24QD5MtIzfZ8
+	 gsxtIHXRLvqc6+QMv6Zzykx1NerEkTlCZIW1ZaLPiSeJh5ADNoeffYBVbs8Q2+hCDk
+	 m2y3M/kcfBwTDpFv0siu+kS/X0lxMSq9oSBhC07sw/IViFstTrZk/jeZI2DImhliPi
+	 4KXN1MBCEuaN8hca5SLJ0MSspDeAvJvNFbu5zdEO8IarsI4rqaqj80gmPt0uN54fcH
+	 lTe+s4ksOGAHw==
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs mount api updates
-Message-ID: <20240109-bitten-anzetteln-af76df71c9b3@brauner>
-References: <20240105-vfs-mount-5e94596bd1d1@brauner>
- <CAHk-=wjfbjuNxx7jWa144qVb5ykwPCwVWa26tcFMvE-Cr6=vMg@mail.gmail.com>
+To: Jay <merqqcury@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: fix a typo in attr.c
+Date: Tue,  9 Jan 2024 15:27:04 +0100
+Message-ID: <20240109-amtssiegel-erdboden-02a6731745a9@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240109072927.29626-1-merqqcury@gmail.com>
+References: <20240109072927.29626-1-merqqcury@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjfbjuNxx7jWa144qVb5ykwPCwVWa26tcFMvE-Cr6=vMg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=839; i=brauner@kernel.org; h=from:subject:message-id; bh=5UKutk+ST+B6lxLgZc3b+MyL/xXT4h1umGkakQFzmn0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTODb+hZil4+MT8F3lTbRJznToLutMFujIrEiw+VDyZy 3m8mS2no5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIl2xgZFoe66Lr91Aplyv1T vH9ZHus+gwZbGb//mncVtrvw3+2tZGT47n1mXXBZ18NHn7a8WsJY8eh+1jmrrKYtF8PmXVl9QZ+ LDwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 08, 2024 at 05:02:48PM -0800, Linus Torvalds wrote:
-> On Fri, 5 Jan 2024 at 04:47, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > This contains the work to retrieve detailed information about mounts via two
-> > new system calls.
+On Tue, 09 Jan 2024 15:29:27 +0800, Jay wrote:
+> The word "filesytem" should be "filesystem"
 > 
-> Gaah. While I have an arm64 laptop now, I don't do arm64 builds in
-> between each pull like I do x86 ones.
 > 
-> I *did* just start one, because I got the arm64 pull request.
-> 
-> And this fails the arm64 build, because __NR_statmount and
-> __NR_listmount (457 and 458 respectively) exceed the compat system
-> call array size, which is
-> 
-> arch/arm64/include/asm/unistd.h:
->   #define __NR_compat_syscalls            457
-> 
-> I don't think this is a merge error, I think the error is there in the
-> original, but I'm about to go off and have dinner, so I'm just sending
-> this out for now.
-> 
-> How was this not noted in linux-next? Am I missing something?
-> 
-> Now, admittedly this looks like an easy mistake to make due to that
-> whole odd situation where the compat system calls are listed in
-> unistd32.h, but then the max number is in unistd.h, but I would still
-> have expected this to have raised flags before it hit my tree..
 
-Bah.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-I think Will already provided a good explantion for how this came to be.
-But for full transparency: I've ran into this exact issue before with
-other system calls we added and I've been notified/saved by Arnd who
-pointed out that this file needs to be updated.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-32 bit arm has this annoying extra file where you need to bump that
-single line. But it'd be nice if we finally had some:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-./add-new-syscall
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-script that could automate adding a new system call number into all
-relevant architectures.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-Sorry for the breakage. I see that it's already fixed. I'll make a note
-to reactivate my cross-compilation toolsuite.
+[1/1] fs: fix a typo in attr.c
+      https://git.kernel.org/vfs/vfs/c/6aad0d7ba166
 
