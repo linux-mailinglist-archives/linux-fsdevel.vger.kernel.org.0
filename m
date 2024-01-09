@@ -1,64 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-7664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAAB828E7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 21:24:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894F3828EA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 21:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8AA9B238C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 20:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C83E28802C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 20:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3BC3D963;
-	Tue,  9 Jan 2024 20:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B589D3D98D;
+	Tue,  9 Jan 2024 20:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hn8hp8tk"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XgVXAAEQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC153D572
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jan 2024 20:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-360630beb7bso2825905ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Jan 2024 12:24:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1704831870; x=1705436670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9tVel0UQW1Uo9yWn+sEdOE5Exl8SfVcjWVWSNPbqjKA=;
-        b=hn8hp8tk5HOeI5hwFlgW/kgaG7s+W0t9ohZ/FiH4hp2r5VMNYSvvxMGBP4I1GuL1W/
-         LHoNRIuym3XM57o4hNzC5m8uc34HcFyHcmHAoZ5zktGKQY21/6j8v3n72JsFT6wwKdw4
-         njrsdRErQpxgfPi6+wjRsEvETstuTFSeXGln19CLhxPcWj592KwQrgyX4ZkHL9hWa9l4
-         bwBWLJ1CPJ9INrRM7QEVLrdvknyumoeXv1spvhTjyWbYuq/NWp5uIbdDehjfGM1oBR6h
-         Q5vRimoVlZyGwbEPCwQUxUjbkGzXJ4mNZF+iRG+rqNjXg2MsRMyLogtQgR/QAGKFJV0y
-         +Ecg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704831870; x=1705436670;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tVel0UQW1Uo9yWn+sEdOE5Exl8SfVcjWVWSNPbqjKA=;
-        b=IkfO4zgNvQNUzJtzAwz3hw1bu3T/3qqhvvWo8g7Bc6+ceX7YZGIh8JKy2ZfCcwy+BI
-         tbX4zxhJqPwwnnGlYdsRV/oy7zyl9i4ZzOgNHcJu6xNhurcDWdTz1oAaBQsU4SkmBmSY
-         tK1sKGjChvKPfDdH4ipalAZV65TTAlOaKZgTyk00fNYIQSFTKlpc/0Rp6/iBtFR/+Kw/
-         VjpM6msZfmA52JkHAz2zMmWkeiO6MHG7xYrR16ynTuadUEyuCImcRTquyJsUdoE/JsLC
-         co3dXP7ft20L7e9YoZjIBoHL78x3IUsWqqMb5LORRy7yp85yTooAdmNMi71FP+/Y/75Y
-         FS0A==
-X-Gm-Message-State: AOJu0YwuXRi1NY7EeQAL6UMBcDL7R8ZxtasIO10YQG0FUvs9Zql0w/0w
-	XdCr5Bn+VA+W+6mR9I45LRiULQ6cR+1HWgUGuQ5yGWYT95mK+A==
-X-Google-Smtp-Source: AGHT+IE5CnR7avtY0jtzfOcK1YE/pN1h5Dyx6OJrQ+AETMvniEpBbrytSc01ajUsDDma/3sYXhHLoQ==
-X-Received: by 2002:a5e:d906:0:b0:7be:ed2c:f8b with SMTP id n6-20020a5ed906000000b007beed2c0f8bmr1200396iop.1.1704831870083;
-        Tue, 09 Jan 2024 12:24:30 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id u6-20020a5d9f46000000b007bed8ff57c6sm561618iot.25.2024.01.09.12.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jan 2024 12:24:29 -0800 (PST)
-Message-ID: <2cf86f5f-58a1-4f5c-8016-b92cb24d88f1@kernel.dk>
-Date: Tue, 9 Jan 2024 13:24:28 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1388D3D0B9
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jan 2024 20:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1704833544; x=1736369544;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kjtKnEpnTIb311GdnA0TTfRvaGO8ijaKggG+836s6L0=;
+  b=XgVXAAEQB+KQFdCSBJyk1QT+ndCo/IAyx4GQ6xw2PWQ1F5ACeAdkJqFL
+   K76iWpD/hJFuo/bA4jC9EuPrTo5HHmR9m1gD3Cs13+KRrPDPDlGX7M4IL
+   2bIvpNzZbwpo1vckzHKs1sHhmA92sIA+Q2cj4/YYy4ItAuBOyX7ZtVjgA
+   MuEbtG2ZHZHrMKz0sXQmBkRIx9ir+uJuKtYODw23HfaH/e9PE0taokHhK
+   ZC8aSLcwsLwNyM2hVVOpO/CHjX+jmtcIT+cegFqLhwNgl1Ui900eUG/Lj
+   B5M9dhhmtET/zFul/bGfschB07bbqe4nsbW22pnXhy97zjGk9qSlYXHhl
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="16913809"
+X-IronPort-AV: E=Sophos;i="6.04,183,1695711600"; 
+   d="scan'208";a="16913809"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2024 12:52:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10947"; a="758115836"
+X-IronPort-AV: E=Sophos;i="6.04,183,1695711600"; 
+   d="scan'208";a="758115836"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by orsmga006.jf.intel.com with ESMTP; 09 Jan 2024 12:52:22 -0800
+Received: from [10.249.150.124] (mwajdecz-MOBL.ger.corp.intel.com [10.249.150.124])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 17D16C8381;
+	Tue,  9 Jan 2024 20:52:21 +0000 (GMT)
+Message-ID: <23907baa-7ee2-41c0-a786-a537a42e844c@intel.com>
+Date: Tue, 9 Jan 2024 21:52:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,55 +58,43 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] fsnotify: optimize the case of no access event
- watchers
+Subject: Re: [PATCH 1/3] ida: Introduce ida_weight()
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org
-References: <20240109194818.91465-1-amir73il@gmail.com>
- <91797c50-d7fc-4f58-b52a-e95823b3df52@kernel.dk>
-In-Reply-To: <91797c50-d7fc-4f58-b52a-e95823b3df52@kernel.dk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+References: <20231102153455.1252-1-michal.wajdeczko@intel.com>
+ <20231102153455.1252-2-michal.wajdeczko@intel.com>
+ <ZUPgaAN71ERvQ5/F@casper.infradead.org>
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <ZUPgaAN71ERvQ5/F@casper.infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/9/24 1:12 PM, Jens Axboe wrote:
-> On 1/9/24 12:48 PM, Amir Goldstein wrote:
->> Commit e43de7f0862b ("fsnotify: optimize the case of no marks of any type")
->> optimized the case where there are no fsnotify watchers on any of the
->> filesystem's objects.
->>
->> It is quite common for a system to have a single local filesystem and
->> it is quite common for the system to have some inotify watches on some
->> config files or directories, so the optimization of no marks at all is
->> often not in effect.
->>
->> Access event watchers are far less common, so optimizing the case of
->> no marks with access events could improve performance for more systems,
->> especially for the performance sensitive hot io path.
->>
->> Maintain a per-sb counter of objects that have marks with access
->> events in their mask and use that counter to optimize out the call to
->> fsnotify() in fsnotify access hooks.
->>
->> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->> ---
->>
->> Jens,
->>
->> You may want to try if this patch improves performance for your workload
->> with SECURITY=Y and FANOTIFY_ACCESS_PERMISSIONS=Y.
+
+
+On 02.11.2023 18:46, Matthew Wilcox wrote:
+> On Thu, Nov 02, 2023 at 04:34:53PM +0100, Michal Wajdeczko wrote:
+>> Add helper function that will calculate number of allocated IDs
+>> in the IDA.  This might be helpful both for drivers to estimate
+>> saturation of used IDs and for testing the IDA implementation.
 > 
-> Ran the usual test, and this effectively removes fsnotify from the
-> profiles, which (as per other email) is between 5-6% of CPU time. So I'd
-> say it looks mighty appealing!
+> Since you take & release the lock, the value is already somewhat racy.
+> So why use the lock at all?  Wouldn't the RCU read lock be a better
+> approach?
 
-Tried with an IRQ based workload as well, as those are always impacted
-more by the fsnotify slowness. This patch removes ~8% of useless
-overhead in that case, so even bigger win there.
+Actually I'm not so sure that RCU read lock would be sufficient right
+now as we might hit UAF while checking bitmap_weight() as that bitmap
+could be released in ida_free() before its pointer will be replaced:
 
--- 
-Jens Axboe
+	bitmap = xas_load(&xas);
 
+	if (xa_is_value(bitmap)) {
+...
+	} else {
+...
+		if (bitmap_empty(bitmap->bitmap, IDA_BITMAP_BITS)) {
+			kfree(bitmap);
+delete:
+			xas_store(&xas, NULL);
+		}
 
