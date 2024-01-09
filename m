@@ -1,64 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-7582-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33F5827D90
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 04:51:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6020F827DF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 05:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D958E1C21224
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 03:51:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEA58B2319E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 04:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEBC63CF;
-	Tue,  9 Jan 2024 03:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00237A94A;
+	Tue,  9 Jan 2024 04:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e13/v2wN"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0iXRusis"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337B729426
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jan 2024 03:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1704772209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a0GQAZNSgQ9NYel79tdKOQqcnL4ZPX5GxjXGFUqL5FQ=;
-	b=e13/v2wN/YcjrNNSSG5Ws0edv9GxRJ5hmbbIjKYM+rasZOLO/xX95m6xCTvKEd11fbCj0O
-	LL7YRqtg7jeCESCj3P1mDTV2/S2h4nF6vmGL0dpg6Z25lYMMZ1Oe2Y8GlWOhNaVTzFvfm+
-	Gp/L0bG51h/n0ow9Y/bEJQpVzhue9/o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-445-z2OS85ljPFq20Ze8WhKemQ-1; Mon, 08 Jan 2024 22:50:00 -0500
-X-MC-Unique: z2OS85ljPFq20Ze8WhKemQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 29B0285A588;
-	Tue,  9 Jan 2024 03:49:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.129])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 4FFC53C4F;
-	Tue,  9 Jan 2024 03:49:57 +0000 (UTC)
-Date: Tue, 9 Jan 2024 11:49:54 +0800
-From: Baoquan He <bhe@redhat.com>
-To: kernel test robot <lkp@intel.com>
-Cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	akpm@linux-foundation.org, kexec@lists.infradead.org,
-	hbathini@linux.ibm.com, arnd@arndb.de, ignat@cloudflare.com,
-	eric_devolder@yahoo.com, viro@zeniv.linux.org.uk,
-	ebiederm@xmission.com, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/5] crash: clean up CRASH_DUMP
-Message-ID: <ZZzCYr7t0FrMWafB@MiWiFi-R3L-srv>
-References: <20240105103305.557273-6-bhe@redhat.com>
- <ZZqk+AnXbqnJuMdF@rli9-mobl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1EB9444
+	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jan 2024 04:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5cedfc32250so907749a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Jan 2024 20:47:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1704775662; x=1705380462; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9d1a6daFwQBP+JMhfWhKWCeVA+a5Q2tDHFKvp5Evgc=;
+        b=0iXRusist83Moo9bwd9PoKkbma1g2L4nRVA2VuJTa5FJTXOTV9UPrOZEMuf1nF+Hhd
+         zQOno/vEr9TseqxG+98ltIM6Bxql5tDaH72DOCU8GoSqjncbCyCeuCDJDbCszzisYimr
+         QUnC4sTLrvsreVRZDv9L3gLxJ2VCx8b/l3zcjDCMsK0UTGKc+VDG7QyG7EkV9vogQEjQ
+         /3sLGfOyMIGmEmHavj2NDUbQLrw0kHfTI3NfJqMVSCtcK4deqfVLEslXnymuk5ykGs/6
+         1oXX1kZgA15QVR45t9KAKXyN2ulUwxm/vIKAXi4nkPYrxO7u1kqSL+j5G1Fe3PYNG4gR
+         /mtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704775662; x=1705380462;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/9d1a6daFwQBP+JMhfWhKWCeVA+a5Q2tDHFKvp5Evgc=;
+        b=uALXD1xyzefA4JRSE+1sKpBHoUc1BZPTZhhWKbIFPB6PoZnWuTBpe0YGb5TSzqUNX2
+         fRRARxaW7/SRbJAnR2B61NZFFY053c8wDmFlz+jr5H8CsRrRQgDV9ya7n+q5EdkI8WP1
+         qOke3IgadqUqYqOSP+WyehBgnMYenGpGHTMTVMVmfCdZs4J1MOpMiTugE80713ULf9EI
+         OruuYpP+D52hqJdmQtiOK2GpbZ5KYBceAvRFnPA1zDr4e+Ho8BKHdUdPuI+MvDfI50VR
+         e2ReQx/gQYmXlBjvs08O1JZsXs1i3e6fDazXEHjmN667G8N7SVvZFriuclhj5zfcOvHd
+         kK3Q==
+X-Gm-Message-State: AOJu0YwG8VBH2wzkdAK+8Oo8spLIMYa93ntYm4L7/Y5jPNX0GZLrLYct
+	ShDZR91/0cCoucUZ4bD4QQGVHPeJzgocMg==
+X-Google-Smtp-Source: AGHT+IEXGWamsR7Yytcu+DAmr0p08k3oitSFEY8voIlETwQIHC6HU43wCVNAvJQUiECekKewVk/oIw==
+X-Received: by 2002:a17:90a:4b8e:b0:28c:a5e2:1652 with SMTP id i14-20020a17090a4b8e00b0028ca5e21652mr1845080pjh.12.1704775662422;
+        Mon, 08 Jan 2024 20:47:42 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-249-6.pa.nsw.optusnet.com.au. [49.180.249.6])
+        by smtp.gmail.com with ESMTPSA id b6-20020a17090aa58600b0028cf59fea33sm812372pjq.42.2024.01.08.20.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jan 2024 20:47:42 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rN41b-007vgb-0Q;
+	Tue, 09 Jan 2024 15:47:39 +1100
+Date: Tue, 9 Jan 2024 15:47:39 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-nvme@lists.infradead.org
+Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <ZZzP6731XwZQnz0o@dread.disaster.area>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,92 +78,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZZqk+AnXbqnJuMdF@rli9-mobl>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+In-Reply-To: <ZZcgXI46AinlcBDP@casper.infradead.org>
 
-On 01/07/24 at 09:19pm, kernel test robot wrote:
-> Hi Baoquan,
+On Thu, Jan 04, 2024 at 09:17:16PM +0000, Matthew Wilcox wrote:
+> This is primarily a _FILESYSTEM_ track topic.  All the work has already
+> been done on the MM side; the FS people need to do their part.  It could
+> be a joint session, but I'm not sure there's much for the MM people
+> to say.
 > 
-> kernel test robot noticed the following build errors:
+> There are situations where we need to allocate memory, but cannot call
+> into the filesystem to free memory.  Generally this is because we're
+> holding a lock or we've started a transaction, and attempting to write
+> out dirty folios to reclaim memory would result in a deadlock.
 > 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v6.7-rc8]
-> [cannot apply to powerpc/next powerpc/fixes tip/x86/core arm64/for-next/core next-20240105]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The old way to solve this problem is to specify GFP_NOFS when allocating
+> memory.  This conveys little information about what is being protected
+> against, and so it is hard to know when it might be safe to remove.
+> It's also a reflex -- many filesystem authors use GFP_NOFS by default
+> even when they could use GFP_KERNEL because there's no risk of deadlock.
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Baoquan-He/kexec_core-move-kdump-related-codes-from-crash_core-c-to-kexec_core-c/20240105-223735
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20240105103305.557273-6-bhe%40redhat.com
-> patch subject: [PATCH 5/5] crash: clean up CRASH_DUMP
-> :::::: branch date: 2 days ago
-> :::::: commit date: 2 days ago
-> config: x86_64-randconfig-122-20240106 (https://download.01.org/0day-ci/archive/20240107/202401071326.52yn9Ftd-lkp@intel.com/config)
-> compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240107/202401071326.52yn9Ftd-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/r/202401071326.52yn9Ftd-lkp@intel.com/
+> The new way is to use the scoped APIs -- memalloc_nofs_save() and
+> memalloc_nofs_restore().  These should be called when we start a
+> transaction or take a lock that would cause a GFP_KERNEL allocation to
+> deadlock.  Then just use GFP_KERNEL as normal.  The memory allocators
+> can see the nofs situation is in effect and will not call back into
+> the filesystem.
 
-Thanks for reporting.
+So in rebasing the XFS kmem.[ch] removal patchset I've been working
+on, there is a clear memory allocator function that we need to be
+scoped: __GFP_NOFAIL.
 
-I have reproduced these linking errors, will consier how to rearrange
-code change and fix them. The thing splitting kdump out could be more
-complicated than I thought.
+All of the allocations done through the existing XFS kmem.[ch]
+interfaces (i.e just about everything) have __GFP_NOFAIL semantics
+added except in the explicit cases where we add KM_MAYFAIL to
+indicate that the allocation can fail.
 
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ld.lld: error: undefined symbol: crashk_res
->    >>> referenced by initramfs.c:638 (init/initramfs.c:638)
->    >>>               init/initramfs.o:(kexec_free_initrd) in archive vmlinux.a
->    >>> referenced by initramfs.c:638 (init/initramfs.c:638)
->    >>>               init/initramfs.o:(kexec_free_initrd) in archive vmlinux.a
->    >>> referenced by initramfs.c:0 (init/initramfs.c:0)
->    >>>               init/initramfs.o:(kexec_free_initrd) in archive vmlinux.a
->    >>> referenced 77 more times
-> --
-> >> ld.lld: error: undefined symbol: parse_crashkernel
->    >>> referenced by setup.c:479 (arch/x86/kernel/setup.c:479)
->    >>>               arch/x86/kernel/setup.o:(arch_reserve_crashkernel) in archive vmlinux.a
-> --
-> >> ld.lld: error: undefined symbol: crashk_low_res
->    >>> referenced by machine_kexec_64.c:539 (arch/x86/kernel/machine_kexec_64.c:539)
->    >>>               arch/x86/kernel/machine_kexec_64.o:(kexec_mark_crashkres) in archive vmlinux.a
->    >>> referenced by machine_kexec_64.c:539 (arch/x86/kernel/machine_kexec_64.c:539)
->    >>>               arch/x86/kernel/machine_kexec_64.o:(kexec_mark_crashkres) in archive vmlinux.a
->    >>> referenced by machine_kexec_64.c:539 (arch/x86/kernel/machine_kexec_64.c:539)
->    >>>               arch/x86/kernel/machine_kexec_64.o:(kexec_mark_crashkres) in archive vmlinux.a
->    >>> referenced 36 more times
-> --
-> >> ld.lld: error: undefined symbol: crash_update_vmcoreinfo_safecopy
->    >>> referenced by kexec_core.c:522 (kernel/kexec_core.c:522)
->    >>>               kernel/kexec_core.o:(kimage_crash_copy_vmcoreinfo) in archive vmlinux.a
->    >>> referenced by kexec_core.c:610 (kernel/kexec_core.c:610)
->    >>>               kernel/kexec_core.o:(kimage_free) in archive vmlinux.a
-> --
-> >> ld.lld: error: undefined symbol: crash_save_vmcoreinfo
->    >>> referenced by kexec_core.c:1053 (kernel/kexec_core.c:1053)
->    >>>               kernel/kexec_core.o:(__crash_kexec) in archive vmlinux.a
-> --
-> >> ld.lld: error: undefined symbol: paddr_vmcoreinfo_note
->    >>> referenced by kexec_core.c:1148 (kernel/kexec_core.c:1148)
->    >>>               kernel/kexec_core.o:(crash_prepare_elf64_headers) in archive vmlinux.a
-> --
-> >> ld.lld: error: undefined symbol: append_elf_note
->    >>> referenced by kexec_core.c:1390 (kernel/kexec_core.c:1390)
->    >>>               kernel/kexec_core.o:(crash_save_cpu) in archive vmlinux.a
-> --
-> >> ld.lld: error: undefined symbol: final_note
->    >>> referenced by kexec_core.c:1392 (kernel/kexec_core.c:1392)
->    >>>               kernel/kexec_core.o:(crash_save_cpu) in archive vmlinux.a
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
+The result of this conversion to remove GFP_NOFS is that I'm also
+adding *dozens* of __GFP_NOFAIL annotations because we effectively
+scope that behaviour.
 
+Hence I think this discussion needs to consider that __GFP_NOFAIL is
+also widely used within critical filesystem code that cannot
+gracefully recover from memory allocation failures, and that this
+would also be useful to scope....
+
+Yeah, I know, mm developers hate __GFP_NOFAIL. We've been using
+these semantics NOFAIL in XFS for over 2 decades and the sky hasn't
+fallen. So can we get memalloc_nofail_{save,restore}() so that we
+can change the default allocation behaviour in certain contexts
+(e.g. the same contexts we need NOFS allocations) to be NOFAIL
+unless __GFP_RETRY_MAYFAIL or __GFP_NORETRY are set?
+
+We already have memalloc_noreclaim_{save/restore}() for turning off
+direct memory reclaim for a given context (i.e. equivalent of
+clearing __GFP_DIRECT_RECLAIM), so if we are going to embrace scoped
+allocation contexts, then we should be going all in and providing
+all the contexts that filesystems actually need....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
