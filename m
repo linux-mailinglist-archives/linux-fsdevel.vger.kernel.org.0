@@ -1,140 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-7605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E2D828502
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 12:27:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BFF828380
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 10:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A02B254B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 11:27:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05BA1C23D79
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Jan 2024 09:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B5D38DE6;
-	Tue,  9 Jan 2024 11:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E5835EFC;
+	Tue,  9 Jan 2024 09:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZ5jiUNl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out187-5.us.a.mail.aliyun.com (out187-5.us.a.mail.aliyun.com [47.90.187.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE5C38DE1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  9 Jan 2024 11:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047205;MF=winters.zc@antgroup.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---.W1wcpB2_1704792285;
-Received: from localhost(mailfrom:winters.zc@antgroup.com fp:SMTPD_---.W1wcpB2_1704792285)
-          by smtp.aliyun-inc.com;
-          Tue, 09 Jan 2024 17:24:45 +0800
-From: "Zhao Chen" <winters.zc@antgroup.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu
-Subject: [PATCH v4 2/2] fuse: Use the high bit of request ID for indicating resend requests
-Date: Tue, 09 Jan 2024 17:24:43 +0800
-Message-Id: <20240109092443.519460-3-winters.zc@antgroup.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20240109092443.519460-1-winters.zc@antgroup.com>
-References: <20240109092443.519460-1-winters.zc@antgroup.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AB73588B;
+	Tue,  9 Jan 2024 09:52:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0674BC433F1;
+	Tue,  9 Jan 2024 09:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704793939;
+	bh=E0zakJMzNcSQvgcgc8AtRvLO3GWb7iOulE6UYhMFa9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oZ5jiUNlx+uIcVw0jOrCRHD/HIgkYHSdkfMeXRC7H6k9CdsTHIT6ytv0You6CYPJP
+	 JL2e8ac+pU9wQgh7KeYlMahawI2dCz5kICh0rd9VCJ/Aw4dl4tBwJaNzkSgT66QeZF
+	 t5BL4TZD1oRNAL9gqpqSKF6K3ix7ZFHWv8GEdt+qY/tyL1/DtsiuS/VbK5m3amG05b
+	 ojdmgauWZcv0NL+IwvdbxBoASiVBsgG41pr6N7/s9C1Qp4Z9VBQd49g6gdfkGlmdAo
+	 Nb5Sct9ydw0Iz8l8UbVVGTzz02Xv4ZS5+GV2FAn+uR3NdSCPy+pKd4/cvg7AZxlIfW
+	 tBn2k1JrUKWmQ==
+Date: Tue, 9 Jan 2024 09:52:14 +0000
+From: Will Deacon <will@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs mount api updates
+Message-ID: <20240109095214.GB12915@willie-the-truck>
+References: <20240105-vfs-mount-5e94596bd1d1@brauner>
+ <CAHk-=wjfbjuNxx7jWa144qVb5ykwPCwVWa26tcFMvE-Cr6=vMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjfbjuNxx7jWa144qVb5ykwPCwVWa26tcFMvE-Cr6=vMg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Some FUSE daemons want to know if the received request is a resend
-request. The high bit of the fuse request ID is utilized for indicating
-this, enabling the receiver to perform appropriate handling.
+Hi Linus,
 
-The init flag "FUSE_HAS_RESEND" is added to indicate this feature.
+On Mon, Jan 08, 2024 at 05:02:48PM -0800, Linus Torvalds wrote:
+> On Fri, 5 Jan 2024 at 04:47, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > This contains the work to retrieve detailed information about mounts via two
+> > new system calls.
+> 
+> Gaah. While I have an arm64 laptop now, I don't do arm64 builds in
+> between each pull like I do x86 ones.
+> 
+> I *did* just start one, because I got the arm64 pull request.
+> 
+> And this fails the arm64 build, because __NR_statmount and
+> __NR_listmount (457 and 458 respectively) exceed the compat system
+> call array size, which is
+> 
+> arch/arm64/include/asm/unistd.h:
+>   #define __NR_compat_syscalls            457
+> 
+> I don't think this is a merge error, I think the error is there in the
+> original, but I'm about to go off and have dinner, so I'm just sending
+> this out for now.
+> 
+> How was this not noted in linux-next? Am I missing something?
 
-Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
----
- fs/fuse/dev.c             |  5 ++++-
- fs/fuse/inode.c           |  3 ++-
- include/uapi/linux/fuse.h | 11 +++++++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
+Urgh, that is surprising, and I just confirmed that linux-next builds
+fine! The reason seems to be because there are also some new lsm
+syscalls being added there (lsm_get_self_attr and friends) which bump
+__NR_compat_syscalls to 460 and then Stephen Rothwell's mighty merging
+magic adjusted this up to 462 in the merge of the lsm tree.
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index d3f6a24475f2..437b0b78090d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -28,6 +28,7 @@ MODULE_ALIAS("devname:fuse");
- /* Ordinary requests have even IDs, while interrupts IDs are odd */
- #define FUSE_INT_REQ_BIT (1ULL << 0)
- #define FUSE_REQ_ID_STEP (1ULL << 1)
-+#define FUSE_REQ_ID_MASK (~(FUSE_INT_REQ_BIT | FUSE_UNIQUE_RESEND))
- 
- static struct kmem_cache *fuse_req_cachep;
- 
-@@ -194,7 +195,7 @@ EXPORT_SYMBOL_GPL(fuse_len_args);
- 
- u64 fuse_get_unique(struct fuse_iqueue *fiq)
- {
--	fiq->reqctr += FUSE_REQ_ID_STEP;
-+	fiq->reqctr = (fiq->reqctr + FUSE_REQ_ID_STEP) & FUSE_REQ_ID_MASK;
- 	return fiq->reqctr;
- }
- EXPORT_SYMBOL_GPL(fuse_get_unique);
-@@ -1814,6 +1815,8 @@ static void fuse_resend(struct fuse_conn *fc)
- 
- 	list_for_each_entry_safe(req, next, &to_queue, list) {
- 		__set_bit(FR_PENDING, &req->flags);
-+		/* mark the request as resend request */
-+		req->in.h.unique |= FUSE_UNIQUE_RESEND;
- 	}
- 
- 	spin_lock(&fiq->lock);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 2a6d44f91729..a4f1f539d4d9 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1330,7 +1330,8 @@ void fuse_send_init(struct fuse_mount *fm)
- 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
- 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
- 		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
--		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP;
-+		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
-+		FUSE_HAS_RESEND;
- #ifdef CONFIG_FUSE_DAX
- 	if (fm->fc->dax)
- 		flags |= FUSE_MAP_ALIGNMENT;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 277dc25b7863..c0e38acee083 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -410,6 +410,8 @@ struct fuse_file_lock {
-  *			symlink and mknod (single group that matches parent)
-  * FUSE_HAS_EXPIRE_ONLY: kernel supports expiry-only entry invalidation
-  * FUSE_DIRECT_IO_ALLOW_MMAP: allow shared mmap in FOPEN_DIRECT_IO mode.
-+ * FUSE_HAS_RESEND: kernel supports resending pending requests, and the high bit
-+ *		    of the request ID indicates resend requests
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -449,6 +451,7 @@ struct fuse_file_lock {
- #define FUSE_CREATE_SUPP_GROUP	(1ULL << 34)
- #define FUSE_HAS_EXPIRE_ONLY	(1ULL << 35)
- #define FUSE_DIRECT_IO_ALLOW_MMAP (1ULL << 36)
-+#define FUSE_HAS_RESEND		(1ULL << 37)
- 
- /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
- #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
-@@ -961,6 +964,14 @@ struct fuse_fallocate_in {
- 	uint32_t	padding;
- };
- 
-+/**
-+ * FUSE request unique ID flag
-+ *
-+ * Indicates whether this is a resend request. The receiver should handle this
-+ * request accordingly.
-+ */
-+#define FUSE_UNIQUE_RESEND (1ULL << 63)
-+
- struct fuse_in_header {
- 	uint32_t	len;
- 	uint32_t	opcode;
--- 
-2.32.0.3.g01195cf9f
+> Now, admittedly this looks like an easy mistake to make due to that
+> whole odd situation where the compat system calls are listed in
+> unistd32.h, but then the max number is in unistd.h, but I would still
+> have expected this to have raised flags before it hit my tree..
 
+I suppose the two options for now are either to merge the lsm stuff and
+adjust __NR_compat_syscalls as Stephen did, or to take this patch from
+Florian in the meantime:
+
+https://lore.kernel.org/r/20240109010906.429652-1-florian.fainelli@broadcom.com
+
+Cheers,
+
+Will
 
