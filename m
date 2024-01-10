@@ -1,155 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-7738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7739-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A845682A04C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:32:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2208482A079
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22F01C2241F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A552893BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0C44D58E;
-	Wed, 10 Jan 2024 18:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AAF4D5A5;
+	Wed, 10 Jan 2024 18:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ag7N1ToG"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FeHX1Skv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3824D580;
-	Wed, 10 Jan 2024 18:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dbd99c08cd6so3645139276.0;
-        Wed, 10 Jan 2024 10:32:22 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDED74D58B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 18:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-557ad92cabbso3987874a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:52:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704911542; x=1705516342; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1704912765; x=1705517565; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CzXe4VtXxb8ebiKHKdqJMgNWPOMHrzYBPoyKIRV/O5E=;
-        b=ag7N1ToGXgONA75mq9t7OxYLogZ5fYc/lWqvsYVFfag2C1GnDdgI/h98Mgm3zgzHiy
-         hS0LfadWBh6tUV9PQVQz2FPVGMvwlmE7AjHtlYt6MAJTy0JGO/yolaf5CIHGqQYWGL3n
-         CehW9s3s/CVA9E/Ea6uz+6K5VuvVB0/3dkkAV4wvm4pxf1B3KFQ0X3HDQkevcq+tXNCH
-         OIfPfJ62pyMnbXXIHdgg5xorB9tKoPVF/R3rXO7aTqpT9m2SACs02db+myiOw8H6QERY
-         FxL2JwbtMtywkK9uyX1MEcZH/qCfAaABLi2Gq8Ad2Ksh2dq4dHufnVPyrdxjQWlStL3I
-         7Qrw==
+        bh=m3UJsqaOgk5eE2VQnILkdg8C0bn7x8fx0mLavVcEL4o=;
+        b=FeHX1SkvwsxvfzE/eELwaPdgUllP66IgEj3HgO+eOMZi9w4TJY+UcrzX7NFdAAM55g
+         Uj/NX+yIls9FrQKTQvgTVWhCMicEbJh6vOLtfPbK92oeG+C/esMYA9jUkdxHqMGKtQE0
+         fIsnP9tfKkeBqmMi0zMrMjE8ZeFxcol8g860Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704911542; x=1705516342;
+        d=1e100.net; s=20230601; t=1704912765; x=1705517565;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CzXe4VtXxb8ebiKHKdqJMgNWPOMHrzYBPoyKIRV/O5E=;
-        b=GlUsdPvw4SigQhDoBC4DLHmociSpIJc3lYt/szoaUQKKRz77J1zU9vYkpI1YtViy2F
-         5PEV0K8uBfB4Id20i7sHYx/p2EPnFtSrDpqTbF8wpcjxTa2PH5bvOYhYlKW4Ti+4eSSy
-         j9ZIjU2y+SLsYaqV5uot471Fv+6zDGNE7HzSvmVQ7l2XPiTICT48iWBdymuqDsuRrYK4
-         P4V88aKh3OC0279XzC7E8XvNlxHkGNB7v8dMWIytA+dtn2rf9nm5rmlq2FELWXmUHmXe
-         6BIThnZ5ueN4LSrCtRJ53XYxyQPL477RIhFfOPabE+Tb220QWchHv1dcArcZx14EbRSY
-         tLJA==
-X-Gm-Message-State: AOJu0YxVaH4/WvpAr/kkFWf63ZSHeMnBEqOvuPPbhY3Gx5pNzpMJj0v7
-	t5aObX0cmPbAyM//VivKVf4mJdS3+fAw6YMg7I8=
-X-Google-Smtp-Source: AGHT+IFlTeGG2WFCgrJ4INlA2dJ+Gew9iar7LHCrAPIxE69ziceCfsu+n57sAJnSC8sUOmvEAzSLKK8GHyi7VoGcqGg=
-X-Received: by 2002:a25:5f09:0:b0:dbe:a8e7:a6ea with SMTP id
- t9-20020a255f09000000b00dbea8e7a6eamr36116ybb.22.1704911541912; Wed, 10 Jan
- 2024 10:32:21 -0800 (PST)
+        bh=m3UJsqaOgk5eE2VQnILkdg8C0bn7x8fx0mLavVcEL4o=;
+        b=nBt1EwqBEyDtlHSqyBVLHu+f+3g1ROrCfhTEWxrWCLTCjMngcMLjxwdmLGvVjiFjj0
+         +claY7Tkd2s5iKyDZ8SqOZ6627qrejm7NAAkhoVHE8uiAoNzRhh073XbDooB0j5AHefr
+         vCaUEViuJoa3/hUy0s5+FudnfOYT029SRu99QFVYeOoltFpsSVts2NtRAs6Gkny3cQbw
+         dhzDLXUXVh8kvMZqVWEU8o8kmvKnYjAQcoL+oZhvgttMOMgVn1qi+zRQnrXhFxeR1HCK
+         AL1qn89suOgcaZKxNvXqpcUN6/DXphn6sUDWro6Ub7PRfErUDHTW7UCABN2MuJcKGqD6
+         av9g==
+X-Gm-Message-State: AOJu0Yxjw5ioh9MWsHcuNYBZThHpS6C+SaLJ4R7vviPLlBW4j6VyBHMY
+	gocGgSnbZFatsOT3bV0NdNH55akE0Oo9nWa1ZAlgR9B+Qj4Mlrv3
+X-Google-Smtp-Source: AGHT+IHUJGYFHUtLQtA6yS3XYxTC9nVWzHq8YBhIBjLWnCudvfqlWWAm6GtO5qhKwHUP3sr5Fo2TBQ==
+X-Received: by 2002:a50:d64e:0:b0:557:4a8:e122 with SMTP id c14-20020a50d64e000000b0055704a8e122mr395553edj.2.1704912765096;
+        Wed, 10 Jan 2024 10:52:45 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a23-20020aa7d757000000b00557075b4499sm2268133eds.58.2024.01.10.10.52.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jan 2024 10:52:44 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a28b1095064so490463366b.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:52:44 -0800 (PST)
+X-Received: by 2002:a7b:cb45:0:b0:40e:4ada:b377 with SMTP id
+ v5-20020a7bcb45000000b0040e4adab377mr402184wmj.62.1704912744493; Wed, 10 Jan
+ 2024 10:52:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-2-wedsonaf@gmail.com>
- <ku6rR-zBwLrTfSf1JW07NywKOZFCPMS7nF-mrdBKGJthn7WGBn9lcAQOhoN5V6igk1iGBguGfV5G0PDWQciDQTopf3OYYGt049OJYhsiivk=@proton.me>
-In-Reply-To: <ku6rR-zBwLrTfSf1JW07NywKOZFCPMS7nF-mrdBKGJthn7WGBn9lcAQOhoN5V6igk1iGBguGfV5G0PDWQciDQTopf3OYYGt049OJYhsiivk=@proton.me>
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-Date: Wed, 10 Jan 2024 15:32:11 -0300
-Message-ID: <CANeycqqJsy3rhBEVWspEqhUXgsQNj-Wcy=9axkDX9B3SLgupcA@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/19] rust: fs: add registration/unregistration of
- file systems
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
+References: <ZZ4fyY4r3rqgZL+4@xpf.sh.intel.com> <CAHk-=wgJz36ZE66_8gXjP_TofkkugXBZEpTr_Dtc_JANsH1SEw@mail.gmail.com>
+ <1843374.1703172614@warthog.procyon.org.uk> <20231223172858.GI201037@kernel.org>
+ <2592945.1703376169@warthog.procyon.org.uk> <1694631.1704881668@warthog.procyon.org.uk>
+ <ZZ56MMinZLrmF9Z+@xpf.sh.intel.com> <1784441.1704907412@warthog.procyon.org.uk>
+In-Reply-To: <1784441.1704907412@warthog.procyon.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 10 Jan 2024 10:52:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiyG8BKKZmU7CDHC8+rmvBndrqNSgLV6LtuqN8W_gL3hA@mail.gmail.com>
+Message-ID: <CAHk-=wiyG8BKKZmU7CDHC8+rmvBndrqNSgLV6LtuqN8W_gL3hA@mail.gmail.com>
+Subject: Re: [PATCH] keys, dns: Fix missing size check of V1 server-list header
+To: David Howells <dhowells@redhat.com>
+Cc: Pengfei Xu <pengfei.xu@intel.com>, eadavis@qq.com, Simon Horman <horms@kernel.org>, 
+	Markus Suvanto <markus.suvanto@gmail.com>, Jeffrey E Altman <jaltman@auristor.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Wang Lei <wang840925@gmail.com>, 
+	Jeff Layton <jlayton@redhat.com>, Steve French <smfrench@gmail.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-afs@lists.infradead.org, keyrings@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	heng.su@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 18 Oct 2023 at 12:38, Benno Lossin <benno.lossin@proton.me> wrote:
-> On 18.10.23 14:25, Wedson Almeida Filho wrote:
-> > +/// A registration of a file system.
-> > +#[pin_data(PinnedDrop)]
-> > +pub struct Registration {
-> > +    #[pin]
-> > +    fs: Opaque<bindings::file_system_type>,
-> > +    #[pin]
-> > +    _pin: PhantomPinned,
+On Wed, 10 Jan 2024 at 09:23, David Howells <dhowells@redhat.com> wrote:
 >
-> Note that since commit 0b4e3b6f6b79 ("rust: types: make `Opaque` be
-> `!Unpin`") you do not need an extra pinned `PhantomPinned` in your struct
-> (if you already have a pinned `Opaque`), since `Opaque` already is
-> `!Unpin`.
+> Meh.  Does the attached fix it for you?
 
-Will remove in v2.
+Bah. Obvious fix is obvious.
 
-> > +impl Registration {
-> > +    /// Creates the initialiser of a new file system registration.
-> > +    pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<Self, Error> {
->
-> I am a bit curious why you specify `?Sized` here, is it common
-> for types that implement `FileSystem` to not be `Sized`?
->
-> Or do you want to use `dyn FileSystem`?
+Mind sending it as a proper patch with sign-off etc, and we'll get
+this fixed and marked for stable.
 
-No reason beyond `Sized` being a restriction I don't need.
-
-For something I was doing early on in binder, I ended up having to
-change a bunch of generic type decls to allow !Sized, so here I'm
-doing it preemptively as I don't lose anything.
-
-> > +        try_pin_init!(Self {
-> > +            _pin: PhantomPinned,
-> > +            fs <- Opaque::try_ffi_init(|fs_ptr: *mut bindings::file_system_type| {
-> > +                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write.
-> > +                unsafe { fs_ptr.write(bindings::file_system_type::default()) };
-> > +
-> > +                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write, and it has
-> > +                // just been initialised above, so it's also valid for read.
-> > +                let fs = unsafe { &mut *fs_ptr };
-> > +                fs.owner = module.0;
-> > +                fs.name = T::NAME.as_char_ptr();
-> > +                fs.init_fs_context = Some(Self::init_fs_context_callback);
-> > +                fs.kill_sb = Some(Self::kill_sb_callback);
-> > +                fs.fs_flags = 0;
-> > +
-> > +                // SAFETY: Pointers stored in `fs` are static so will live for as long as the
-> > +                // registration is active (it is undone in `drop`).
-> > +                to_result(unsafe { bindings::register_filesystem(fs_ptr) })
-> > +            }),
-> > +        })
-> > +    }
-> > +
-> > +    unsafe extern "C" fn init_fs_context_callback(
-> > +        _fc_ptr: *mut bindings::fs_context,
-> > +    ) -> core::ffi::c_int {
-> > +        from_result(|| Err(ENOTSUPP))
-> > +    }
-> > +
-> > +    unsafe extern "C" fn kill_sb_callback(_sb_ptr: *mut bindings::super_block) {}
-> > +}
-> > +
-> > +#[pinned_drop]
-> > +impl PinnedDrop for Registration {
-> > +    fn drop(self: Pin<&mut Self>) {
-> > +        // SAFETY: If an instance of `Self` has been successfully created, a call to
-> > +        // `register_filesystem` has necessarily succeeded. So it's ok to call
-> > +        // `unregister_filesystem` on the previously registered fs.
->
-> I would simply add an invariant on `Registration` that `self.fs` is
-> registered, then you do not need such a lengthy explanation here.
-
-Since this is the only place I need this explanation, I prefer to
-leave it here because it's exactly where I need it.
-
-Thanks,
--Wedson
+           Linus
 
