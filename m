@@ -1,76 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-7692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26436829683
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 10:47:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D12829706
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 11:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 881D5B25B0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 09:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8FD284C50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 10:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A6B4122B;
-	Wed, 10 Jan 2024 09:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D103FB33;
+	Wed, 10 Jan 2024 10:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FMDmvclM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtuj9gKL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919D340BFF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 09:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1704879955; x=1705139155;
-	bh=m37CgWVd0919lqVq8UbeVhmrp4RCUxltBdgLKQagUoY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=FMDmvclMRSu2HJjFX9T73QPFzGPhzHTvEZJvCIud5jOUpH/KvpKrbBCGCjL/RR1Hx
-	 l0EWnvhOKT6YXXIXsn0aemtzbKBhASy4wpyALMrtW/3GdVapfcu3+Pb4vK6UdXxBCQ
-	 2LbwQGEPQrsb4Fke5noXqGIz3ZYSHFOOcBdcSQoUfWhhIopkoQGfOTTOJQYDViJtPL
-	 WDQlYqIR34aHbQOKgarXnYWhp5T9eJ7HpSDz1Ufsj8hD/ehU5HvaKwOe5HGkIfRCzL
-	 Qbk2gvGhrbr4V96YqPARHo2cxRVzIDw9hTfJlURD2mvqLzX51IjI27Sy/uaxNXj3HZ
-	 V5YpcZSauoZxg==
-Date: Wed, 10 Jan 2024 09:45:27 +0000
-To: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>, Wedson Almeida Filho <wedsonaf@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 05/19] rust: fs: introduce `INode<T>`
-Message-ID: <0ff0109e-3d1f-4aeb-97fb-6f746791fafd@proton.me>
-In-Reply-To: <87sf3e5v55.fsf@metaspace.dk>
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-6-wedsonaf@gmail.com> <87sf3e5v55.fsf@metaspace.dk>
-Feedback-ID: 71780778:user:proton
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1792D3F8F1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:12:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01118C433F1;
+	Wed, 10 Jan 2024 10:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704881525;
+	bh=LHQ+phcaIrAptda2OFp1S0ww2j/0GuZg3vmGhOwii5Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rtuj9gKL5Hprjerley7/LxOyA5+oCI0o25yuqU8IWV/+tWLGbU7Hh8+JQhfjka8tE
+	 E7AvmfnkJpSojHFckJ7OhXvFBiEFIFOREToQbEgzXWvOts/Wz+sjTsN5rVysci8/LE
+	 X8m+UtIPhkUkiNRqNLM659DEoB+2zdtJgbZxTLOC2CJgSLtPYETwd51Ek4C8pJXmM2
+	 h+EGhsDSv/xdeCCb/3OCzx7csV8n0X8C+VAgzvjZb8fukqA41Rb+tnnrAXImNk8YWF
+	 J5rdgIGeXxBV/kLCRpdJYr/y8DLfDzQiO5Mz/APQA1rYOaxp4TI6bghKVq6Zx0Tkwe
+	 shqYRtUI5wHuw==
+From: Christian Brauner <brauner@kernel.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fsnotify: compile out fsnotify permission hooks if !FANOTIFY_ACCESS_PERMISSIONS
+Date: Wed, 10 Jan 2024 11:11:48 +0100
+Message-ID: <20240110-weinanbau-ergotherapie-653f619b6ad9@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240109182245.38884-1-amir73il@gmail.com>
+References: <20240109182245.38884-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1116; i=brauner@kernel.org; h=from:subject:message-id; bh=LHQ+phcaIrAptda2OFp1S0ww2j/0GuZg3vmGhOwii5Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTOy83JPb9pRtbcDcodM8M8b5rMNhbbON1mx3cnrq2bp m4p2JB8taOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiDIsZ/nA99mRcHs+ntEbi dvKdb4JKZe2fnh86kNR9Tfz8Kx97fg1GhpPTf/AFz0g6tvAfW0CHadmVAklrseluBel3FG84SX3 XZQEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 03.01.24 13:54, Andreas Hindborg (Samsung) wrote:
-> Wedson Almeida Filho <wedsonaf@gmail.com> writes:
->> +    /// Returns the super-block that owns the inode.
->> +    pub fn super_block(&self) -> &SuperBlock<T> {
->> +        // SAFETY: `i_sb` is immutable, and `self` is guaranteed to be =
-valid by the existence of a
->> +        // shared reference (&self) to it.
->> +        unsafe { &*(*self.0.get()).i_sb.cast() }
->> +    }
->=20
-> I think the safety comment should talk about the pointee rather than the
-> pointer? "The pointee of `i_sb` is immutable, and ..."
+On Tue, 09 Jan 2024 20:22:45 +0200, Amir Goldstein wrote:
+> The depency of FANOTIFY_ACCESS_PERMISSIONS on SECURITY made sure that
+> the fsnotify permission hooks were never called when SECURITY was
+> disabled.
+> 
+> Moving the fsnotify permission hook out of the secutiy hook broke that
+> optimisation.
+> 
+> [...]
 
-I think in this case it would be a very good idea to just split
-the `unsafe` block into two parts. That would solve the issue
-of "what does this safety comment justify?".
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
---=20
-Cheers,
-Benno
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fsnotify: compile out fsnotify permission hooks if !FANOTIFY_ACCESS_PERMISSIONS
+      https://git.kernel.org/vfs/vfs/c/b0f2ac4fe541
 
