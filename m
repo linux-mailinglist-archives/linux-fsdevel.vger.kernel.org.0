@@ -1,93 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-7675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5452382930A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 05:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96C582930E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 05:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3731F25A4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 04:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D48B2891E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 04:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DDC6FB8;
-	Wed, 10 Jan 2024 04:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6596D8BF7;
+	Wed, 10 Jan 2024 04:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Awwk7A2T"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xz/QTWGU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CE363A0;
-	Wed, 10 Jan 2024 04:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1704861692; bh=wjCMeyJPmdmkcN4hbqi6emvp6R0v43JLk24xb1h44Tc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Awwk7A2T4PzATkIkg6KwLHhAQqxm4XQMobVT7EFyJ+Xw5grOEfSXUpHNeqivg6gCl
-	 29eeez/yPkpT3YYR3hBi5Fp/XyiJz1MtzXAtM070ORmHE1C049xYXBGKjVDBdQW/uV
-	 BIluLEfzd9Bz50N+4IwJo2zB72Id/GRsyPeW5epc=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.215])
-	by newxmesmtplogicsvrszc5-1.qq.com (NewEsmtp) with SMTP
-	id A5F0C6B3; Wed, 10 Jan 2024 12:41:31 +0800
-X-QQ-mid: xmsmtpt1704861691tlezr7gms
-Message-ID: <tencent_64ED1B1C2576BA24BB29337D9EC41B454B08@qq.com>
-X-QQ-XMAILINFO: OZsapEVPoiO6SFt+zmNyHqZ+98z5/Sl6tJh+uAFU3n/CCrp1ZxWj3pw3W5MnrV
-	 ZSWzA3IGY1gHqDuqcXB6CWYh1HO2WgC9bjwwsUQMcENCiF2yiVXRq537wpEoWHZbYPlQnbIuOubX
-	 RxKmhKwfWqESoVEN7aeVThYoRM5XCLf7Tv/dW3YmaD9fjkQbKr+5QKFawmQKyz68L4DaBkAl/ErD
-	 6gGB3OCN1qLMz3I4MbIkq6Fyw6Whzx4sDlxqk6peIhHd8Jo7BIkwhccdJNJPzXf6Cbc7HoWbuYe7
-	 sK6QJS8itlMd1sg0q6ms/cbyqpYHp6RpAhccZsr+Gc4rFN51x1v1yP+ZcSCh0C2iLPnHua4Vk5Pc
-	 qgzj8R4Z5MH3LjknHk3weX6Fz64XSnFqO7uPp/5jaVRogwgtae4Lhex41b5T7D9NLsck1Qfv9Zw0
-	 QficAWHhJrMlWSHhOKlIjFl/Yf5rDn6EPDDVaOd3TEXHp5qEOgTihWmK8tUeBYQxMOjrBejL0atG
-	 RAWnKtRnDzwC3Ese03fh6tZksjPjchVrR4X7k9zBwstFM0QZNj3bAXlJkW7/dDH1yHlXU8ZoBT9A
-	 dhms9CUobb3sBhonJGROo8cvTHXQ7KDAMn6MHBp6xXkWQO82sFi8DWztd/1hjXSbR5iNdLlHh+El
-	 ELDhsq67NQlu8Q5p4WrLdnuWfqlKuM9o7zk6MoJq6HDCApemHY4Y22TWcbqsxTnYzAgtjFUZU4k+
-	 98FZFB6OWYk/sTzCiJJiBJtkhS0jzhjN8N46EVHgJZqiRhZ+BMl7i0nJ1RN8iQG/e7MHiFfhe8TS
-	 YIpnnuWvLs17S/ih3LTc+ijb52VJ4MG4juz/dwBhSfjuuEf2v1YW5axkJepij5EYYcNIKIJgeTi0
-	 EQiaZEG758Ojuhi7q/BvDLHcysj6mgmv4EJokrRqkjaNrfP8JByGE3C+WPF5nCUA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+91db973302e7b18c7653@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] fs/hfsplus: fix uninit-value in hfsplus_lookup
-Date: Wed, 10 Jan 2024 12:41:31 +0800
-X-OQ-MSGID: <20240110044130.1484750-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000212ec9060e8754e2@google.com>
-References: <000000000000212ec9060e8754e2@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B053A6FAF;
+	Wed, 10 Jan 2024 04:43:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFFCC433F1;
+	Wed, 10 Jan 2024 04:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1704861837;
+	bh=RKClabnfbCkpoH3vhzF2N9v90yEPu3odm1xJiTbC6Qk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xz/QTWGUo/6dZ6/hjpWWoB0F1FjKRq+euouAygBcGRWgToVFGW3nslnADnZ/9K87p
+	 7fu3CoEto8PtfPTdNEMs5pUtTcZ6fMFi4NqNiJn6qtFCwjZWrY1FbOOx1J8sUIuzsH
+	 Ngz4WszWViXwj6voGoRqpPneYmWIfr6RJ3V2k7Fc=
+Date: Tue, 9 Jan 2024 20:43:56 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, David Hildenbrand
+ <david@redhat.com>, Andrei Vagin <avagin@google.com>, Peter Xu
+ <peterx@redhat.com>, Hugh Dickins <hughd@google.com>, Suren Baghdasaryan
+ <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, Kefeng Wang
+ <wangkefeng.wang@huawei.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ =?UTF-8?Q?"Micha=C5=82_Miros=C5=82aw"?= <mirq-linux@rere.qmqm.pl>, Stephen
+ Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>,
+ kernel@collabora.com,
+ syzbot+81227d2bd69e9dedb802@syzkaller.appspotmail.com,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/task_mmu: move mmu notification mechanism
+ inside mm lock
+Message-Id: <20240109204356.6c088124a9ba0ce0b5a4bb00@linux-foundation.org>
+In-Reply-To: <ZZ10FqvnVWIbyo-9@google.com>
+References: <20240109112445.590736-1-usama.anjum@collabora.com>
+	<ZZ10FqvnVWIbyo-9@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add created_date initialization in hfsplus_iget().
+On Tue, 9 Jan 2024 08:28:06 -0800 Sean Christopherson <seanjc@google.com> wrote:
 
-Reported-and-tested-by: syzbot+91db973302e7b18c7653@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/hfsplus/super.c | 1 +
- 1 file changed, 1 insertion(+)
+> > -	/* Protection change for the range is going to happen. */
+> > -	if (p.arg.flags & PM_SCAN_WP_MATCHING) {
+> > -		mmu_notifier_range_init(&range, MMU_NOTIFY_PROTECTION_VMA, 0,
+> > -					mm, p.arg.start, p.arg.end);
+> > -		mmu_notifier_invalidate_range_start(&range);
+> > -	}
+> > -
+> >  	for (walk_start = p.arg.start; walk_start < p.arg.end;
+> >  			walk_start = p.arg.walk_end) {
+> >  		long n_out;
+> 
+> Nit, might be worth moving
+> 
+> 		struct mmu_notifier_range range;
+> 
+> inside the loop to guard against stale usage, but that's definitely optional.
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 1986b4f18a90..a95a6a2246a3 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -73,6 +73,7 @@ struct inode *hfsplus_iget(struct super_block *sb, unsigned long ino)
- 	HFSPLUS_I(inode)->flags = 0;
- 	HFSPLUS_I(inode)->extent_state = 0;
- 	HFSPLUS_I(inode)->rsrc_inode = NULL;
-+	HFSPLUS_I(inode)->create_date = 0;
- 	atomic_set(&HFSPLUS_I(inode)->opencnt, 0);
+Yes, I think that's nicer.
+
+--- a/fs/proc/task_mmu.c~fs-proc-task_mmu-move-mmu-notification-mechanism-inside-mm-lock-fix
++++ a/fs/proc/task_mmu.c
+@@ -2432,7 +2432,6 @@ static long pagemap_scan_flush_buffer(st
  
- 	if (inode->i_ino >= HFSPLUS_FIRSTUSER_CNID ||
--- 
-2.43.0
+ static long do_pagemap_scan(struct mm_struct *mm, unsigned long uarg)
+ {
+-	struct mmu_notifier_range range;
+ 	struct pagemap_scan_private p = {0};
+ 	unsigned long walk_start;
+ 	size_t n_ranges_out = 0;
+@@ -2450,6 +2449,7 @@ static long do_pagemap_scan(struct mm_st
+ 
+ 	for (walk_start = p.arg.start; walk_start < p.arg.end;
+ 			walk_start = p.arg.walk_end) {
++		struct mmu_notifier_range range;
+ 		long n_out;
+ 
+ 		if (fatal_signal_pending(current)) {
+_
 
+
+I'm surprised this code doesn't generate a might-be-used-uninitialized
+warning.  I guess gcc got smarter.
 
 
