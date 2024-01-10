@@ -1,95 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-7707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3433829B8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 14:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 259B7829BDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 14:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B0228A45C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8292847E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF17495D8;
-	Wed, 10 Jan 2024 13:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2A248CFE;
+	Wed, 10 Jan 2024 13:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FvtbhynD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pfAkztn7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BR+qBYMY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pfAkztn7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BR+qBYMY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494DD495CD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 13:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a28da6285c1so739809466b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 05:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1704894195; x=1705498995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XxoWcecCZExIIFdN0xtey41fgRaKWC8kWgC6rhb/9dY=;
-        b=FvtbhynDeAZzJAeE4FygbcENptRvCzftVGzuSnYU/AjtGyK/P9cyVoIloJPB0H/Dqa
-         PP+8LsVlwLDDm0zpHfYB+LYdsUSTa4dvyN3afb0VdXyLTGTvnHy9P1is2hIQBqNF1p1G
-         /zX0/KkjbFxq3fdpq/GovpQAUIBmCxQY3nIyA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704894195; x=1705498995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XxoWcecCZExIIFdN0xtey41fgRaKWC8kWgC6rhb/9dY=;
-        b=ILpf6tKM5mq+iS7h4qE52ZwePjli4nATnMPtKa9DX25RjzBeZ/0yPzc3cRWhHxT0A3
-         w0U70FgTPmqEBXBD7C0YlADMp4ehJb5Sq1NGmmuuxjahjSmKat/NavdR6ecurKANDMKi
-         9tVHBFJ8s+Ahd56sIkGAUxmC88SAToOr4pCgCjvCa8Uc6NneZAsRTvRA8ZlhTLz4x2MD
-         WDkplYfgWiWcF+iRQ04xYF5/jazsKdkBACqQ8jLTGpX0zGxaRet3JoPG5hGlNKPVpC4h
-         GjhpLesOrMXXfxStmcBfyO8x8KJj2kGjdh6KfYrgfwE+pf4kc0+NBlSMNLb+V/jWLD89
-         c71A==
-X-Gm-Message-State: AOJu0Yx71SfVPrU3iq6o5Z9AqioJfwANUsG2XGHFB+iI0QmBioDB6HEj
-	LE5+e/QaH8H1D5R+Jlma8vRWQZ7Vf4U5j8QXiKPfKESK8JXVcw==
-X-Google-Smtp-Source: AGHT+IE7qXen0WzP3eRsTcPJeemmFisOpVGUmxTT0jNIjPU7JJsIbdU7hVIVpCEM3HkGIuIOnfGDYc1af8uv1zg7w4Q=
-X-Received: by 2002:a17:906:fa85:b0:a2c:dfa:4f6 with SMTP id
- lt5-20020a170906fa8500b00a2c0dfa04f6mr92733ejb.16.1704894195507; Wed, 10 Jan
- 2024 05:43:15 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248AE48CE2
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 13:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 69711221D9;
+	Wed, 10 Jan 2024 13:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704894985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLRnWsIRzElnUujRRgoD6us/xfwB7vnIkjGPIIIES3c=;
+	b=pfAkztn7D//NYnaqsJuI6FpiPDvjyjmqj6AsHbKQMXjmFMF5efU7uyqxzhyxjJITpraLqm
+	M5e86OyXQblYpR39Psa1YVRZmLPO9SAq6fsl9uIZeKKooN3IWz4iNl/mrRNut8gU3laev4
+	/QboteiHm7jYLDsb9SOHCbqdUgzO4BI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704894985;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLRnWsIRzElnUujRRgoD6us/xfwB7vnIkjGPIIIES3c=;
+	b=BR+qBYMYNo3E7xL3X97etqmlfAQtU2dOl+e2VU9oUPIlHTbkr69FX91hG3T3TPHFLxJQmr
+	P4AniDlcP/RPZLDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704894985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLRnWsIRzElnUujRRgoD6us/xfwB7vnIkjGPIIIES3c=;
+	b=pfAkztn7D//NYnaqsJuI6FpiPDvjyjmqj6AsHbKQMXjmFMF5efU7uyqxzhyxjJITpraLqm
+	M5e86OyXQblYpR39Psa1YVRZmLPO9SAq6fsl9uIZeKKooN3IWz4iNl/mrRNut8gU3laev4
+	/QboteiHm7jYLDsb9SOHCbqdUgzO4BI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704894985;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mLRnWsIRzElnUujRRgoD6us/xfwB7vnIkjGPIIIES3c=;
+	b=BR+qBYMYNo3E7xL3X97etqmlfAQtU2dOl+e2VU9oUPIlHTbkr69FX91hG3T3TPHFLxJQmr
+	P4AniDlcP/RPZLDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D0E21398A;
+	Wed, 10 Jan 2024 13:56:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fPavFgminmWHUQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 10 Jan 2024 13:56:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E0928A07EB; Wed, 10 Jan 2024 14:56:24 +0100 (CET)
+Date: Wed, 10 Jan 2024 14:56:24 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] fsnotify: optimize the case of no access event
+ watchers
+Message-ID: <20240110135624.kcimvdq6hrteyfb4@quack3>
+References: <20240109194818.91465-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1703126594.git.nabijaczleweli@nabijaczleweli.xyz> <9b5cd13bc9e9c570978ec25b25ba5e4081b3d56b.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
-In-Reply-To: <9b5cd13bc9e9c570978ec25b25ba5e4081b3d56b.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 10 Jan 2024 14:43:04 +0100
-Message-ID: <CAJfpegugS1y4Lwznju+qD2K-kBEctxU5ABCnaE2eOGhtFFZUYg@mail.gmail.com>
-Subject: Re: [PATCH v2 09/11] fuse: file: limit splice_read to virtiofs
-To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240109194818.91465-1-amir73il@gmail.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
 
-On Thu, 21 Dec 2023 at 04:09, Ahelenia Ziemia=C5=84ska
-<nabijaczleweli@nabijaczleweli.xyz> wrote:
->
-> Potentially-blocking splice_reads are allowed for normal filesystems
-> like NFS because they're blessed by root.
->
-> FUSE is commonly used suid-root, and allows anyone to trivially create
-> a file that, when spliced from, will just sleep forever with the pipe
-> lock held.
->
-> The only way IPC to the fusing process could be avoided is if
-> !(ff->open_flags & FOPEN_DIRECT_IO) and the range was already cached
-> and we weren't past the end. Just refuse it.
+On Tue 09-01-24 21:48:18, Amir Goldstein wrote:
+> Commit e43de7f0862b ("fsnotify: optimize the case of no marks of any type")
+> optimized the case where there are no fsnotify watchers on any of the
+> filesystem's objects.
+> 
+> It is quite common for a system to have a single local filesystem and
+> it is quite common for the system to have some inotify watches on some
+> config files or directories, so the optimization of no marks at all is
+> often not in effect.
 
-How is this not going to cause regressions out there?
+I agree.
 
-We need to find an alternative to refusing splice, since this is not
-going to fly, IMO.
+> Access event watchers are far less common, so optimizing the case of
+> no marks with access events could improve performance for more systems,
+> especially for the performance sensitive hot io path.
+> 
+> Maintain a per-sb counter of objects that have marks with access
+> events in their mask and use that counter to optimize out the call to
+> fsnotify() in fsnotify access hooks.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Thanks,
-Miklos
+I'm not saying no to this but let's discuss first before hacking in some
+partial solution :). AFAIU what Jens sees is something similar as was
+reported for example here [1]. In these cases we go through
+fsnotify_parent() down to fsnotify() until the check:
+
+        if (!(test_mask & marks_mask))
+                return 0;
+
+there. And this is all relatively cheap (pure fetches like
+sb->s_fsnotify_marks, mnt->mnt_fsnotify_marks, inode->i_fsnotify_marks,
+sb->s_fsnotify_mask, mnt->mnt_fsnotify_mask, inode->i_fsnotify_mask) except
+for parent handling in __fsnotify_parent(). That requires multiple atomic
+operations - take_dentry_name_snapshot() is lock & unlock of d_lock, dget()
+is cmpxchg on d_lockref, dput() is another cmpxchg on d_lockref - and this
+gets really expensive, even more so if multiple threads race for the same
+parent dentry.
+
+So I think what we ideally need is a way to avoid this expensive "stabilize
+parent & its name" game unless we are pretty sure we are going to generate
+the event. There's no way to avoid fetching the parent early if
+dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED (we can still postpone the
+take_dentry_name_snapshot() cost though). However for the case where
+dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED == 0 (and this is the case
+here AFAICT) we need the parent only after the check of 'test_mask &
+marks_mask'. So in that case we could completely avoid the extra cost of
+parent dentry handling.
+
+So in principle I believe we could make fsnotify noticeably lighter for the
+case where no event is generated. Just the question is how to refactor the
+current set of functions to achieve this without creating an unmaintainable
+mess. I suspect if we lifted creation & some prefilling of iter_info into
+__fsnotify_parent() and then fill in the parent in case we need it for
+reporting only in fsnotify(), the code could be reasonably readable. We'd
+need to always propagate the dentry down to fsnotify() though, currently we
+often propagate only the inode because the dentry may be (still in case of
+create or already in case of unlink) negative. Similarly we'd somehow need
+to communicate down into fsnotify() whether the passed name needs
+snapshotting or not...
+
+What do you think?
+
+								Honza
+
+[1] https://lore.kernel.org/all/SJ0PR08MB6494F5A32B7C60A5AD8B33C2AB09A@SJ0PR08MB6494.namprd08.prod.outlook.com
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
