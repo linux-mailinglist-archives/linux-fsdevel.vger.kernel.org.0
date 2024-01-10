@@ -1,97 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-7705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12E4829AC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:56:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76D9829AE7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 14:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB6D1C25B20
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 12:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3DD91C218B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED19495C1;
-	Wed, 10 Jan 2024 12:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wR5c8Kj+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615F487A1;
+	Wed, 10 Jan 2024 13:06:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C8A48CC7;
-	Wed, 10 Jan 2024 12:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ws3LWjOi7S+S4CtjPbXLD+3eiq35Y86yQtBI0OP55yw=; b=wR5c8Kj+q9PbFk8dgK0hEnHWQI
-	E05ggc6aieDOv/EbX5j0MwQVqynQpDAjlDhHq+z/zEoPJf9ojcamcIsOSEACKEkjMntUvra1heP3I
-	yy0KZgQXJvi38ie+uqx8eqvBO7TInIu8NAaBlAVOG4L97CVevMTcZBpOTf2InaORdE2C02S/sbNe+
-	+Ni9mwgle5ck7dnoSD3ZiGRBN6fJqqho4sYHwm+dNvV6mmiEyPN70piaz0NRQUbfTkY04/spfF7ou
-	Ir4NSIEVtghdBR2QOZdqSVy5/rhaOV4SHMQ0a/W/LGB3u0btTvRSKgEHRsThL6WKs4Da7TGIr/7Zl
-	gPgqpSSg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rNY7t-00BRj6-3S; Wed, 10 Jan 2024 12:56:09 +0000
-Date: Wed, 10 Jan 2024 12:56:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Christian Brauner <brauner@kernel.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
-Message-ID: <ZZ6T6aBjOf+vA9sB@casper.infradead.org>
-References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
- <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
- <ZZWhQGkl0xPiBD5/@casper.infradead.org>
- <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
- <20240103204131.GL1674809@ZenIV>
- <CANeycqrazDc_KKffx3c4C1yKCuSHU14v+L+2wq-pJq+frRf2wg@mail.gmail.com>
- <ZZ2dsiK77Se65wFY@casper.infradead.org>
- <2024010935-tycoon-baggage-a85b@gregkh>
- <CANeycqrubugocT0ZEhcUY4H+kytzhm-E4-PoWtvNobYr32auDA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4ED48788;
+	Wed, 10 Jan 2024 13:06:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3BA7C433C7;
+	Wed, 10 Jan 2024 13:06:46 +0000 (UTC)
+Date: Wed, 10 Jan 2024 08:07:46 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as
+ default ownership
+Message-ID: <20240110080746.50f7767d@gandalf.local.home>
+In-Reply-To: <20240110-murren-extra-cd1241aae470@brauner>
+References: <20240103203246.115732ec@gandalf.local.home>
+	<20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
+	<20240105095954.67de63c2@gandalf.local.home>
+	<20240107-getrickst-angeeignet-049cea8cad13@brauner>
+	<20240107132912.71b109d8@rorschach.local.home>
+	<20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
+	<20240108102331.7de98cab@gandalf.local.home>
+	<20240110-murren-extra-cd1241aae470@brauner>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANeycqrubugocT0ZEhcUY4H+kytzhm-E4-PoWtvNobYr32auDA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 10, 2024 at 04:49:02AM -0300, Wedson Almeida Filho wrote:
-> On Tue, 9 Jan 2024 at 16:32, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Tue, Jan 09, 2024 at 07:25:38PM +0000, Matthew Wilcox wrote:
-> > > You've misunderstood Greg.  He's saying (effectively) "No fs bindings
-> > > without a filesystem to use them".  And Al, myself and others are saying
-> > > "Your filesystem interfaces are wrong because they're not usable for real
-> > > filesystems".  And you're saying "But I'm not allowed to change them".
-> > > And that's not true.  Change them to be laid out how a real filesystem
-> > > would need them to be.
+On Wed, 10 Jan 2024 12:45:36 +0100
+Christian Brauner <brauner@kernel.org> wrote:
+
+> So say you do:
 > 
-> Ok, then I'll update the code to have 3 additional traits:
+> mkdir /sys/kernel/tracing/instances/foo
 > 
-> FileOperations
-> INodeOperations
-> AddressSpaceOperations
+> After this has returned we know everything we need to know about the new
+> tracefs instance including the ownership and the mode of all inodes in
+> /sys/kernel/tracing/instances/foo/events/* and below precisely because
+> ownership is always inherited from the parent dentry and recorded in the
+> metadata struct eventfs_inode.
 > 
-> When one initialises an inode, one gets to pick all three.
-
-That makes sense, yes.
-
-> And FileOperations::read_dir will take a File<T> as its first argument
-> (instead of an INode<T>).
+> So say someone does:
 > 
-> Does this sound reasonable?
+> open("/sys/kernel/tracing/instances/foo/events/xfs");
+> 
+> and say this is the first time that someone accesses that events/
+> directory.
+> 
+> When the open pathwalk is done, the vfs will determine via
+> 
+> [1] may_lookup(inode_of(events))
+> 
+> whether you are able to list entries such as "xfs" in that directory.
+> The vfs checks inode_permission(MAY_EXEC) on "events" and if that holds
+> it ends up calling i_op->eventfs_root_lookup(events).
+> 
+> At this point tracefs/eventfs adds the inodes for all entries in that
+> "events" directory including "xfs" based on the metadata it recorded
+> during the mkdir. Since now someone is actually interested in them. And
+> it initializes the inodes with ownership and everything and adds the
+> dentries that belong into that directory.
+> 
+> Nothing here depends on the permissions of the caller. The only
+> permission that mattered was done in the VFS in [1]. If the caller has
+> permissions to enter a directory they can lookup and list its contents.
+> And its contents where determined/fixed etc when mkdir was called.
+> 
+> So we just need to add the required objects into the caches (inode,
+> dentry) whose addition we intentionally defered until someone actually
+> needed them.
+> 
+> So, eventfs_root_lookup() now initializes the inodes with the ownership
+> from the stored metadata or from the parent dentry and splices in inodes
+> and dentries. No permission checking is needed for this because it is
+> always a recheck of what the vfs did in [1].
+> 
+> We now return to the vfs and path walk continues to the final component
+> that you actually want to open which is that "xfs" directory in this
+> example. We check the permissions on that inode via may_open("xfs") and
+> we open that directory returning an fd to userspace ultimately.
+> 
+> (I'm going by memory since I need to step out the door.)
 
-yep!
+So, let's say we do:
 
+ chgrp -R rostedt /sys/kernel/tracing/
+
+But I don't want rostedt to have access to xfs
+
+ chgrp -R root /sys/kernel/tracing/events/xfs
+
+Both actions will create the inodes and dentries of all files and
+directories (because of "-R"). But once that is done, the ref counts go to
+zero. They stay around until reclaim. But then I open Chrome ;-) and it
+reclaims all the dentries and inodes, so we are back to here we were on
+boot.
+
+Now as rostedt I do:
+
+ ls /sys/kernel/tracing/events/xfs
+
+The VFS layer doesn't know if I have permission to that or not, because all
+the inodes and dentries have been freed. It has to call back to eventfs to
+find out. Which the eventfs_root_lookup() and eventfs_iterate_shared() will
+recreated the inodes with the proper permission.
+
+Or are you saying that I don't need the ".permission" callback, because
+eventfs does it when it creates the inodes? But for eventfs to know what
+the permissions changes are, it uses .getattr and .setattr.
+
+-- Steve
 
