@@ -1,105 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-7704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E460829ABE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:56:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12E4829AC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 13:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E65128782F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 12:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDB6D1C25B20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC454878C;
-	Wed, 10 Jan 2024 12:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED19495C1;
+	Wed, 10 Jan 2024 12:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rr9M+lOm"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wR5c8Kj+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803AB48CD2
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 12:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-67fe0210665so22744366d6.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 04:55:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704891351; x=1705496151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x59FLoPFKwis7T0DeMcmoqy57tbzntCIgEpCDkcCH1Q=;
-        b=Rr9M+lOmvRuHjPnW/ql6Dp+RfvJon3IFAvk9tm8ocHwmkGX8+Q9/bM7UphyN6DrxSQ
-         N5IqMtt8Fe9obCuSbttFMa372tsbBs2p+LUDJjREzfUTVNdvTmAT4seMQJtYhXe0jyp8
-         SqwB1Ga1yDS2mxyf41kj6UpJq+VBFnseCR7PpZosQb7bGUPtvHDeW0SleVbiZ8H9EAzP
-         uQPXoazbSVe8g64VWkPaEMMxpPCdRSBLRVOOOZHERHlhcoj2NJpORYzDDVQk8oz2BUVi
-         vqmKWvS3zzEZ56q8jm6N3J+YoWcbGsbUACz5dpwXPuBxthzpsYsutk+RGL26TZtMqQeI
-         V+bQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704891351; x=1705496151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x59FLoPFKwis7T0DeMcmoqy57tbzntCIgEpCDkcCH1Q=;
-        b=NZ55Uh2H0yympwEhMi8lwklVcVNPaMA8GuatvMEsESnMnqk49HQjkIjCKDd2HkH/Up
-         bYQNCf8oly99entatQ/Q3b11u7oa41fepZuj73ioCWlVewgM9827BK6dANxVW62OQWuR
-         3Vr5NPitKi9GBbgPLwVz0ILApay7egJZ0Lm80ga6vbFKRXqqK3iWBOEziooRmj1kQFzg
-         ymBHJ8op5/+XyzpfHtjf7zsrhmRXBI+f+TRMyikKtJvIWh5We8gR1G/xSzTqyPGncC36
-         MSHftiQz058lCPAVxvuAd7ACCCfKqcoFGpsP/GeylN4puRbTivqFJcd+gWg4B2TkTbNs
-         DLYA==
-X-Gm-Message-State: AOJu0YycH1PbPF6QVJytBQACeCtLtt1KOHycznoEEJG4Zk206VKr8nJ+
-	oMASRvqe0ApcUhh/H4CJmEHQ3+73cM9cQbWjDRkCl5ZaT7o=
-X-Google-Smtp-Source: AGHT+IG5OSZwjZ0QRK6z5VVggw5hgGyN8OVwo/grAcLTDSpXBMDQyBLhtZHWcRImKeoW7f8StwlCWgG30XFTXFQhF9E=
-X-Received: by 2002:ad4:5ae8:0:b0:680:b957:b275 with SMTP id
- c8-20020ad45ae8000000b00680b957b275mr952798qvh.122.1704891351358; Wed, 10 Jan
- 2024 04:55:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C8A48CC7;
+	Wed, 10 Jan 2024 12:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ws3LWjOi7S+S4CtjPbXLD+3eiq35Y86yQtBI0OP55yw=; b=wR5c8Kj+q9PbFk8dgK0hEnHWQI
+	E05ggc6aieDOv/EbX5j0MwQVqynQpDAjlDhHq+z/zEoPJf9ojcamcIsOSEACKEkjMntUvra1heP3I
+	yy0KZgQXJvi38ie+uqx8eqvBO7TInIu8NAaBlAVOG4L97CVevMTcZBpOTf2InaORdE2C02S/sbNe+
+	+Ni9mwgle5ck7dnoSD3ZiGRBN6fJqqho4sYHwm+dNvV6mmiEyPN70piaz0NRQUbfTkY04/spfF7ou
+	Ir4NSIEVtghdBR2QOZdqSVy5/rhaOV4SHMQ0a/W/LGB3u0btTvRSKgEHRsThL6WKs4Da7TGIr/7Zl
+	gPgqpSSg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rNY7t-00BRj6-3S; Wed, 10 Jan 2024 12:56:09 +0000
+Date: Wed, 10 Jan 2024 12:56:09 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Wedson Almeida Filho <wedsonaf@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+Message-ID: <ZZ6T6aBjOf+vA9sB@casper.infradead.org>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <ZT7BPUAxsHQ/H/Hm@casper.infradead.org>
+ <CANeycqrm1KCH=hOf2WyCg8BVZkX3DnPpaA3srrajgRfz0x=PiQ@mail.gmail.com>
+ <ZZWhQGkl0xPiBD5/@casper.infradead.org>
+ <ulideurkqeiqztorsuvhynsrx2np7ohbmnx5nrddzl7zze7qpu@cg27bqalj7i5>
+ <20240103204131.GL1674809@ZenIV>
+ <CANeycqrazDc_KKffx3c4C1yKCuSHU14v+L+2wq-pJq+frRf2wg@mail.gmail.com>
+ <ZZ2dsiK77Se65wFY@casper.infradead.org>
+ <2024010935-tycoon-baggage-a85b@gregkh>
+ <CANeycqrubugocT0ZEhcUY4H+kytzhm-E4-PoWtvNobYr32auDA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240109194818.91465-1-amir73il@gmail.com> <91797c50-d7fc-4f58-b52a-e95823b3df52@kernel.dk>
- <2cf86f5f-58a1-4f5c-8016-b92cb24d88f1@kernel.dk> <CAOQ4uxjtKJ_uiP3hEdTbCh5NNExD5S3+m0oEgB2VjhnD2BrvPw@mail.gmail.com>
- <ZZ6RnO0b4AIFOY7p@casper.infradead.org>
-In-Reply-To: <ZZ6RnO0b4AIFOY7p@casper.infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 10 Jan 2024 14:55:40 +0200
-Message-ID: <CAOQ4uxgU+6qjqZJVc=a3P-gntd+Uuisf+1kyhnwfm7kXp+JtFQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] fsnotify: optimize the case of no access event watchers
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANeycqrubugocT0ZEhcUY4H+kytzhm-E4-PoWtvNobYr32auDA@mail.gmail.com>
 
-On Wed, Jan 10, 2024 at 2:46=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Wed, Jan 10, 2024 at 11:08:17AM +0200, Amir Goldstein wrote:
-> > My thoughts are that the optimization is clearly a win, but do we
-> > really want to waste a full long in super_block for counting access
-> > event watchers that may never exist?
->
-> Would it make more sense for it to be global,
+On Wed, Jan 10, 2024 at 04:49:02AM -0300, Wedson Almeida Filho wrote:
+> On Tue, 9 Jan 2024 at 16:32, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Tue, Jan 09, 2024 at 07:25:38PM +0000, Matthew Wilcox wrote:
+> > > You've misunderstood Greg.  He's saying (effectively) "No fs bindings
+> > > without a filesystem to use them".  And Al, myself and others are saying
+> > > "Your filesystem interfaces are wrong because they're not usable for real
+> > > filesystems".  And you're saying "But I'm not allowed to change them".
+> > > And that's not true.  Change them to be laid out how a real filesystem
+> > > would need them to be.
+> 
+> Ok, then I'll update the code to have 3 additional traits:
+> 
+> FileOperations
+> INodeOperations
+> AddressSpaceOperations
+> 
+> When one initialises an inode, one gets to pick all three.
 
-Ironically, we once tried to disabled fsnotify hooks on pipefs and
-found out (the hard way) that some people are using IN_ACCESS
-event to get notified on pipe reads or something like that, so the
-global option may result in less predictable performance.
+That makes sense, yes.
 
-> and perhaps even use the
-> static key infrastructure to enable/disable fsnotify?
+> And FileOperations::read_dir will take a File<T> as its first argument
+> (instead of an INode<T>).
+> 
+> Does this sound reasonable?
 
-We are talking about disabling specific fsnotify hooks fsnotify_access()
-and fsnotify_perm().
+yep!
 
-I doubt that static key infrastructure is required, because with this patch=
-,
-Jens did not observe any regression compared to the code being compiled out=
-.
-
-Thanks,
-Amir.
 
