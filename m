@@ -1,79 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-7719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09DDE829DBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 16:40:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4BF829DE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 16:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572972861D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 15:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE1E1F28CAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 15:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6063C4C3C0;
-	Wed, 10 Jan 2024 15:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69224C3C3;
+	Wed, 10 Jan 2024 15:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="12YLOq2m"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="WhD/6MP6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B804BAB3;
-	Wed, 10 Jan 2024 15:38:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B660C433C7;
-	Wed, 10 Jan 2024 15:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1704901125;
-	bh=64lqTH5iAcNgqPcOUhTjX1MTBLqxaK2xsqzvXQVWa98=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=12YLOq2msOrGh5ihkM0KYcAfSzQGt2JWuTC0DDJBK8ZQmLPKjhtXQ0oDaGj2TuisX
-	 oTdQV7wRT0kWu+/eQ/4aYSPU+na3UorE7axwiTiigCT/2G/sdmtTYry8mEY7bNk1BP
-	 ZvIMG1YRpOTjNG5aKANS7xGXt7wNQmbk9Ojb9B54=
-Date: Wed, 10 Jan 2024 07:38:43 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chandan Babu R <chandan.babu@oracle.com>, "Darrick J . Wong"
- <djwong@kernel.org>, David Howells <dhowells@redhat.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Christian Koenig
- <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- x86@kernel.org, linux-sgx@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: disable large folios for shmem file used by xfs xfile
-Message-Id: <20240110073843.d663fa6610785a8611b2cebe@linux-foundation.org>
-In-Reply-To: <20240110092109.1950011-1-hch@lst.de>
-References: <20240110092109.1950011-1-hch@lst.de>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D9F4C3AE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 15:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-555aa7fd668so5007946a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 07:47:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1704901656; x=1705506456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ioFiiBHR52hjIdzvcsREnH6I97Ku4C9Wv6P6MdH9Wh4=;
+        b=WhD/6MP6mAbxASjPHCVpdFAwzdaL2RMmbxDXaVIOPghfujPQW87Cqa0q/PTXbgxDjI
+         kq7qh3Nr49HBasmSahg6487pThiN1C2UdhuBjKmSFDS84kJcsM1Ofzp5t1Er4PX55/yr
+         yVRaZbK2tNekr7JKe7Jvn3OMArSF3zyHT/DA8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704901656; x=1705506456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ioFiiBHR52hjIdzvcsREnH6I97Ku4C9Wv6P6MdH9Wh4=;
+        b=TcvwK1ZPBP6hU+7Gp9bxmreriqhREhWBmQXzycCb/dmZUSq2vnAmvZBIjGMWgP/yJ6
+         4Ra/YMrCckbEdsQSTgWy4Ikf5gV77dyOzcU9Rjbw2rHU/DmLma0CviQ6BcdW9mZxZyaT
+         YxEYHNm3ZoxMIHp0vOmwIwVih2nlK53TVADX7LwSy+Y8frSmgQFU6Px7sjbpkdeoE6oq
+         buKO+NITrxF3EormfWBFQCY8WRGz+wcMu0rD34T7Dbd7TnRpWeHYJnhorPIzsY6c5+CA
+         q6q28QegciVxZwBHkJGuT3Wy0u6uTXx05xAjSnMpdlPuXP3/Msij/5+r3oNuJInX+vWm
+         yspg==
+X-Gm-Message-State: AOJu0Yx1QFSsfyxLggTGdybgiIZtc2lJR1N5SpDAEfHB5/1qtZmNRjJe
+	uKLLvBHHIEiEslxdTqRTnyY25gd9wdOjyPUEqWDhVO7ZZP6yolRhYYG3G0lH
+X-Google-Smtp-Source: AGHT+IHA+OuPYsC1tzBqWdoxLHVwHiWSsYMXS2IR9ogBlapWDdJ3nk3Ig2HJ+z1HcTjDmTh0nn25aP29soAg7wAC96c=
+X-Received: by 2002:a17:906:7d18:b0:a28:d163:ea39 with SMTP id
+ u24-20020a1709067d1800b00a28d163ea39mr713908ejo.108.1704901655434; Wed, 10
+ Jan 2024 07:47:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <cover.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+ <9b5cd13bc9e9c570978ec25b25ba5e4081b3d56b.1703126594.git.nabijaczleweli@nabijaczleweli.xyz>
+ <CAJfpegugS1y4Lwznju+qD2K-kBEctxU5ABCnaE2eOGhtFFZUYg@mail.gmail.com> <2wob4ovppjywxmpl5rvuzpktltdlyto5czpglb5il5cehkel6m@tarta.nabijaczleweli.xyz>
+In-Reply-To: <2wob4ovppjywxmpl5rvuzpktltdlyto5czpglb5il5cehkel6m@tarta.nabijaczleweli.xyz>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 10 Jan 2024 16:47:23 +0100
+Message-ID: <CAJfpeguE6E=s_t8WFVrJcXUar9ifr5+rhsmoJZYW5xWrTzRbMw@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] fuse: file: limit splice_read to virtiofs
+To: =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Jan 2024 10:21:07 +0100 Christoph Hellwig <hch@lst.de> wrote:
+On Wed, 10 Jan 2024 at 16:19, Ahelenia Ziemia=C5=84ska
+<nabijaczleweli@nabijaczleweli.xyz> wrote:
 
-> Hi all,
-> 
-> Darrick reported that the fairly new XFS xfile code blows up when force
-> enabling large folio for shmem.  This series fixes this quickly by disabling
-> large folios for this particular shmem file for now until it can be fixed
-> properly, which will be a lot more invasive.
-> 
+> > We need to find an alternative to refusing splice, since this is not
+> > going to fly, IMO.
+> The alternative is to not hold the lock. See the references in the
+> cover letter for why this wasn't done. IMO a potential slight perf
+> hit flies more than a total exclusion on the pipe.
 
-Patches seems reasonable as a short-term only-affects-xfs thing.
+IDGI.  This will make splice(2) return EINVAL for unprivileged fuse
+files, right?
 
-I assume that kernels which contain 137db333b29186 ("xfs: teach xfile
-to pass back direct-map pages to caller") want this, so a Fixes: that
-and a cc:stable are appropriate?
+That would be a regression, not a perf hit, if the application is not
+falling back to plain read; a reasonable scenario, considering splice
+from files (including fuse) has worked on linux for a *long* time.
 
+Thanks,
+Mikos
 
