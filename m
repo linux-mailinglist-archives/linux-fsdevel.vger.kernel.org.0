@@ -1,313 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-7755-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269E782A3FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 23:34:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3586B82A511
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 00:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA6F1C22D1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 22:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F021C22F83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 23:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D154F89F;
-	Wed, 10 Jan 2024 22:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48984F8B1;
+	Wed, 10 Jan 2024 23:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="n5ociDYi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MJJWzZbG"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e520My48"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52B04F888;
-	Wed, 10 Jan 2024 22:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailout.nyi.internal (Postfix) with ESMTP id 095D25C016D;
-	Wed, 10 Jan 2024 17:34:21 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 10 Jan 2024 17:34:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1704926061;
-	 x=1705012461; bh=UnVUbz9SQXayg60OJLWAme7bYrBOjB6TLqClz8YLU18=; b=
-	n5ociDYiPw4LafeAUZGIls2h1LmMgnhVS22kTCVjZva0NRl22lXX88Nfr8KoSKwP
-	TjSx5W2OozAuNiFI4nf3eSOBfGd7I7cMm4q0Hn+AdujPx2kV5qYl6WEr7XQ68Wmo
-	5w+xC0mFE29uqAIDQ1EZOgnEFlbZx8TQKzY3ICbN+KWmd8hLkmrsll46I2dP//Hy
-	EGFvPwRm+wfXK3YjDjfvpyJ9ZxYacAICgIalR0piAICnKnGyABh/Q9obRnIX70xB
-	wXKJsjvkb6YdLuzFniwsdNqZM7D3u4Q7fp2gS3grHIBpWZjC/PmVINzDnMGp0Sbf
-	LyX5+q3pb8X2P6kb+a1wGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1704926061; x=
-	1705012461; bh=UnVUbz9SQXayg60OJLWAme7bYrBOjB6TLqClz8YLU18=; b=M
-	JJWzZbGKXCbc7ludf4of73BPkMwMFlc2flsA7wJxg6tJ69i/TlFSjNfJ8wr2n6bD
-	9y02R2D4bvgAPZHuS2VkeVDfF0+lC3o2iCYf8l7IegRSDtr5dxe9q6vI/Pe50ec3
-	gg7icc8Cx18tYdQ2M0Q7kMQwmFMJk0hWBlRBYesrC+sMUTicx91Y1OzEXejSfsRm
-	0ZLbpJW5wnzDwcyuTjz2ppHtFSP1+zmSYIX20nXZVprCFksWxbQ5R9FE7qS6q7QF
-	zZP0Bc4MMcZL/PDVtvdKQnjdzXkGjJZYwBm2Nlt2C/XWrKytID2vC+3upHZxNqXF
-	lfVAJZyKj/xO+2ls1mjYA==
-X-ME-Sender: <xms:axufZXeMyE6Lj5S2c0gbyvsujRY_b44dZ4W4yjmifuhO2DGFSBkGsg>
-    <xme:axufZdPUQLH1RprjyBwSr0Q7TFT6ODH9w9bFoNZMwIo2mhoB3OXo3E7bOuUnMpFb-
-    cqGLyMXYvfoteaM>
-X-ME-Received: <xmr:axufZQiItNsp8GLf5odKDX4cehUH3b5GWm9Q-r2AdpA-cmsxL5rsYzusX2xS-oe0Ih3hbPudh83yumerEcxS8vgY3qA4kurOOLcDKe_F24-n2y6TeGaK>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdeiuddgudeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepuegv
-    rhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrg
-    hilhdrfhhmqeenucggtffrrghtthgvrhhnpeduleefvdduveduveelgeelffffkedukeeg
-    veelgfekleeuvdehkeehheehkefhfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhl
-    rdhfmh
-X-ME-Proxy: <xmx:bBufZY-HWFo9EYIUqMqmNBxPMZqptW5qrJRr2xFAQWidYvT0_EajdA>
-    <xmx:bBufZTv2kzfWM1Tv0mJWkjRpRsN9g3F1G9polhhgc2oCGb7plcCl9w>
-    <xmx:bBufZXF1g0KuarOnIxF9nQ7Warxg1PsBKryC2NiLu3ZOwHTIXBhvCw>
-    <xmx:bRufZc85JQXAnYIzHfR62-QGw78qWo8OOYRaJebi9MGDkcaeLCRC5g>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 Jan 2024 17:34:18 -0500 (EST)
-Message-ID: <e6b866f1-4102-44aa-85cd-274d2ae0ab7e@fastmail.fm>
-Date: Wed, 10 Jan 2024 23:34:17 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97C44F8A1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 23:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d4414ec9c7so24075365ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 15:48:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1704930524; x=1705535324; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SwuTP7EzLEPd51rCmWc5l3FryuUpUIDaJ3oLG7EKxvs=;
+        b=e520My48wrc6W1VBmjEKzXuD1l4aGEQr9pEN9UAoEUhQd/QUYuqS44jBW1Zw8B7Vwn
+         rrGjOu7rPy2Wuan6f9O5ksZVKuA6URdB0/bxh/IavXl5ikWeLH0TmAyCUV9KNYOG23Tm
+         fqS/uKRfi0lqWFMNaWxyrTbKEOGG3RQ9v03gU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704930524; x=1705535324;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SwuTP7EzLEPd51rCmWc5l3FryuUpUIDaJ3oLG7EKxvs=;
+        b=aRH8KCuzZ33ngBzcgnj98aZOq/JV/Zj0jkwlNlKugMzX5bpRyFcbu8+A1lqD9xAxFF
+         0RQk0s5DTwHQFpX+uQw7xHXMe5pQmqAG8QetLB/cHFqfsiojanvQjxNRBxxSGUNLCQUS
+         yCjHmHlEb8eJRhxr5OkzYDji47hsC2K1AO3/lAKJ9YT+TEIwowY/NKh7bTYftpnqVZnA
+         kT6vt6/UOFPSJN/lizT1ihJ6emvt1mxL7AT3O+B4eQ3aDlqvCtewHVRW94Tobky4QX9c
+         vQu46AoawgTqXaJ6X28hpcaixjCdxbg/t1DF32yRG6UlsCi7ixG8uSmPq3NmLm4NZvIF
+         FqBQ==
+X-Gm-Message-State: AOJu0Ywbrr3DpxEOdjcEz7isfK+HFgzz4JbQjAJMAZuwe9ZKiXnOqDeW
+	0omhI2vIsWfrHBftN8yozVG4AZix87KgDFo57Z1fDpoaP1g3
+X-Google-Smtp-Source: AGHT+IF8fgccVOtXqOEaJFh9qZqdhLe5dF5tch6GtJyBls2H2Ztl8x5oLrB9yayQo3OC6NpC/wcPaA==
+X-Received: by 2002:a17:902:e80d:b0:1d4:f114:62c4 with SMTP id u13-20020a170902e80d00b001d4f11462c4mr399322plg.86.1704930524297;
+        Wed, 10 Jan 2024 15:48:44 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id f12-20020a170902ab8c00b001d3bf27000csm4210321plr.293.2024.01.10.15.48.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jan 2024 15:48:43 -0800 (PST)
+Date: Wed, 10 Jan 2024 15:48:43 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs updates for 6.8
+Message-ID: <202401101525.112E8234@keescook>
+References: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtiofs: limit the length of ITER_KVEC dio by
- max_nopage_rw
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, houtao1@huawei.com
-References: <20240103105929.1902658-1-houtao@huaweicloud.com>
- <b6c0d521-bba8-447f-b114-0a679ca89e4b@fastmail.fm>
- <c71c80af-2813-dee5-a8e5-3782b34e9eb9@huaweicloud.com>
-Content-Language: en-US, de-DE, fr
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <c71c80af-2813-dee5-a8e5-3782b34e9eb9@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
 
+On Wed, Jan 10, 2024 at 02:36:30PM -0500, Kent Overstreet wrote:
+> [...]
+>       bcachefs: %pg is banished
 
+Hi!
 
-On 1/10/24 02:16, Hou Tao wrote:
-> Hi,
-> 
-> On 1/9/2024 9:11 PM, Bernd Schubert wrote:
->>
->>
->> On 1/3/24 11:59, Hou Tao wrote:
->>> From: Hou Tao <houtao1@huawei.com>
->>>
->>> When trying to insert a 10MB kernel module kept in a virtiofs with cache
->>> disabled, the following warning was reported:
->>>
->>>     ------------[ cut here ]------------
->>>     WARNING: CPU: 2 PID: 439 at mm/page_alloc.c:4544 ......
->>>     Modules linked in:
->>>     CPU: 2 PID: 439 Comm: insmod Not tainted 6.7.0-rc7+ #33
->>>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), ......
->>>     RIP: 0010:__alloc_pages+0x2c4/0x360
->>>     ......
->>>     Call Trace:
->>>      <TASK>
->>>      ? __warn+0x8f/0x150
->>>      ? __alloc_pages+0x2c4/0x360
->>>      __kmalloc_large_node+0x86/0x160
->>>      __kmalloc+0xcd/0x140
->>>      virtio_fs_enqueue_req+0x240/0x6d0
->>>      virtio_fs_wake_pending_and_unlock+0x7f/0x190
->>>      queue_request_and_unlock+0x58/0x70
->>>      fuse_simple_request+0x18b/0x2e0
->>>      fuse_direct_io+0x58a/0x850
->>>      fuse_file_read_iter+0xdb/0x130
->>>      __kernel_read+0xf3/0x260
->>>      kernel_read+0x45/0x60
->>>      kernel_read_file+0x1ad/0x2b0
->>>      init_module_from_file+0x6a/0xe0
->>>      idempotent_init_module+0x179/0x230
->>>      __x64_sys_finit_module+0x5d/0xb0
->>>      do_syscall_64+0x36/0xb0
->>>      entry_SYSCALL_64_after_hwframe+0x6e/0x76
->>>      ......
->>>      </TASK>
->>>     ---[ end trace 0000000000000000 ]---
->>>
->>> The warning happened as follow. In copy_args_to_argbuf(), virtiofs uses
->>> kmalloc-ed memory as bound buffer for fuse args, but
->>> fuse_get_user_pages() only limits the length of fuse arg by max_read or
->>> max_write for IOV_KVEC io (e.g., kernel_read_file from finit_module()).
->>> For virtiofs, max_read is UINT_MAX, so a big read request which is about
->>
->>
->> I find this part of the explanation a bit confusing. I guess you
->> wanted to write something like
->>
->> fuse_direct_io() -> fuse_get_user_pages() is limited by
->> fc->max_write/fc->max_read and fc->max_pages. For virtiofs max_pages
->> does not apply as ITER_KVEC is used. As virtiofs sets fc->max_read to
->> UINT_MAX basically no limit is applied at all.
-> 
-> Yes, what you said is just as expected but it is not the root cause of
-> the warning. The culprit of the warning is kmalloc() in
-> copy_args_to_argbuf() just as said in commit message. vmalloc() is also
-> not acceptable, because the physical memory needs to be contiguous. For
-> the problem, because there is no page involved, so there will be extra
-> sg available, maybe we can use these sg to break the big read/write
-> request into page.
+Not a PR blocker, but this patch re-introduces users of strlcpy() which
+has been otherwise removed this cycle. I'll send a patch to replace
+these new uses, but process-wise, I'd like check on how bcachefs patches
+are reviewed.
 
-Hmm ok, I was hoping that contiguous memory is not needed.
-I see that ENOMEM is handled, but how that that perform (or even 
-complete) on a really badly fragmented system? I guess splitting into 
-smaller pages or at least adding some reserve kmem_cache (or even 
-mempool) would make sense?
+Normally I'd go find the original email that posted the patch and reply
+there, but I couldn't find a development list where this patch was
+posted. Where is this happening? (Being posted somewhere is supposed
+to be a prerequisite for living in -next. E.g. quoting from the -next
+inclusion boiler-plate: "* posted to the relevant mailing list,") It
+looks like it was authored 5 days ago, which is cutting it awfully close
+to the merge window opening:
 
->>
->> I also wonder if it wouldn't it make sense to set a sensible limit in
->> virtio_fs_ctx_set_defaults() instead of introducing a new variable?
-> 
-> As said in the commit message:
-> 
-> A feasible solution is to limit the value of max_read for virtiofs, so
-> the length passed to kmalloc() will be limited. However it will affects
-> the max read size for ITER_IOVEC io and the value of max_write also needs
-> limitation.
-> 
-> It is a bit hard to set a reasonable value for both max_read and
-> max_write to handle both normal ITER_IOVEC io and ITER_KVEC io. And
-> considering ITER_KVEC io + dio case is uncommon, I think using a new
-> limitation is more reasonable.
+	AuthorDate: Fri Jan 5 11:58:50 2024 -0500
 
-For ITER_IOVEC max_pages applies - which is limited to 
-FUSE_MAX_MAX_PAGES - why can't this be used in virtio_fs_ctx_set_defaults?
+Actually, it looks like you rebased onto v6.7-rc7? This is normally
+strongly discouraged. The common merge base is -rc2.
 
-@Miklos, is there a reason why there is no upper fc->max_{read,write} 
-limit in process_init_reply()? Shouldn't both be limited to
-(FUSE_MAX_MAX_PAGES * PAGE_SIZE). Or any other reasonable limit?
+It also seems it didn't get a run through scripts/checkpatch.pl, which
+shows 4 warnings, 2 or which point out the strlcpy deprecation:
 
+WARNING: Prefer strscpy over strlcpy - see: https://github.com/KSPP/linux/issues/89
+#123: FILE: fs/bcachefs/super.c:1389:
++               strlcpy(c->name, name.buf, sizeof(c->name));
 
-Thanks,
-Bernd
+WARNING: Prefer strscpy over strlcpy - see: https://github.com/KSPP/linux/issues/89
+#124: FILE: fs/bcachefs/super.c:1390:
++       strlcpy(ca->name, name.buf, sizeof(ca->name));
 
+Please make sure you're running checkpatch.pl -- it'll make integration,
+technical debt reduction, and coding style adjustments much easier. :)
 
+Thanks!
 
->>
->> Also, I guess the issue is kmalloc_array() in virtio_fs_enqueue_req?
->> Wouldn't it make sense to use kvm_alloc_array/kvfree in that function?
->>
->>
->> Thanks,
->> Bernd
->>
->>
->>> 10MB is passed to copy_args_to_argbuf(), kmalloc() is called in turn
->>> with len=10MB, and triggers the warning in __alloc_pages():
->>> WARN_ON_ONCE_GFP(order > MAX_ORDER, gfp)).
->>>
->>> A feasible solution is to limit the value of max_read for virtiofs, so
->>> the length passed to kmalloc() will be limited. However it will affects
->>> the max read size for ITER_IOVEC io and the value of max_write also
->>> needs
->>> limitation. So instead of limiting the values of max_read and max_write,
->>> introducing max_nopage_rw to cap both the values of max_read and
->>> max_write when the fuse dio read/write request is initiated from kernel.
->>>
->>> Considering that fuse read/write request from kernel is uncommon and to
->>> decrease the demand for large contiguous pages, set max_nopage_rw as
->>> 256KB instead of KMALLOC_MAX_SIZE - 4096 or similar.
->>>
->>> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
->>> Signed-off-by: Hou Tao <houtao1@huawei.com>
->>> ---
->>>    fs/fuse/file.c      | 12 +++++++++++-
->>>    fs/fuse/fuse_i.h    |  3 +++
->>>    fs/fuse/inode.c     |  1 +
->>>    fs/fuse/virtio_fs.c |  6 ++++++
->>>    4 files changed, 21 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index a660f1f21540..f1beb7c0b782 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -1422,6 +1422,16 @@ static int fuse_get_user_pages(struct
->>> fuse_args_pages *ap, struct iov_iter *ii,
->>>        return ret < 0 ? ret : 0;
->>>    }
->>>    +static size_t fuse_max_dio_rw_size(const struct fuse_conn *fc,
->>> +                   const struct iov_iter *iter, int write)
->>> +{
->>> +    unsigned int nmax = write ? fc->max_write : fc->max_read;
->>> +
->>> +    if (iov_iter_is_kvec(iter))
->>> +        nmax = min(nmax, fc->max_nopage_rw);
->>> +    return nmax;
->>> +}
->>> +
->>>    ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
->>>                   loff_t *ppos, int flags)
->>>    {
->>> @@ -1432,7 +1442,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io,
->>> struct iov_iter *iter,
->>>        struct inode *inode = mapping->host;
->>>        struct fuse_file *ff = file->private_data;
->>>        struct fuse_conn *fc = ff->fm->fc;
->>> -    size_t nmax = write ? fc->max_write : fc->max_read;
->>> +    size_t nmax = fuse_max_dio_rw_size(fc, iter, write);
->>>        loff_t pos = *ppos;
->>>        size_t count = iov_iter_count(iter);
->>>        pgoff_t idx_from = pos >> PAGE_SHIFT;
->>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->>> index 1df83eebda92..fc753cd34211 100644
->>> --- a/fs/fuse/fuse_i.h
->>> +++ b/fs/fuse/fuse_i.h
->>> @@ -594,6 +594,9 @@ struct fuse_conn {
->>>        /** Constrain ->max_pages to this value during feature
->>> negotiation */
->>>        unsigned int max_pages_limit;
->>>    +    /** Maximum read/write size when there is no page in request */
->>> +    unsigned int max_nopage_rw;
->>> +
->>>        /** Input queue */
->>>        struct fuse_iqueue iq;
->>>    diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>> index 2a6d44f91729..4cbbcb4a4b71 100644
->>> --- a/fs/fuse/inode.c
->>> +++ b/fs/fuse/inode.c
->>> @@ -923,6 +923,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct
->>> fuse_mount *fm,
->>>        fc->user_ns = get_user_ns(user_ns);
->>>        fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
->>>        fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
->>> +    fc->max_nopage_rw = UINT_MAX;
->>>          INIT_LIST_HEAD(&fc->mounts);
->>>        list_add(&fm->fc_entry, &fc->mounts);
->>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
->>> index 5f1be1da92ce..3aac31d45198 100644
->>> --- a/fs/fuse/virtio_fs.c
->>> +++ b/fs/fuse/virtio_fs.c
->>> @@ -1452,6 +1452,12 @@ static int virtio_fs_get_tree(struct
->>> fs_context *fsc)
->>>        /* Tell FUSE to split requests that exceed the virtqueue's size */
->>>        fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
->>>                        virtqueue_size - FUSE_HEADER_OVERHEAD);
->>> +    /* copy_args_to_argbuf() uses kmalloc-ed memory as bounce buffer
->>> +     * for fuse args, so limit the total size of these args to prevent
->>> +     * the warning in __alloc_pages() and decrease the demand for large
->>> +     * contiguous pages.
->>> +     */
->>> +    fc->max_nopage_rw = min(fc->max_nopage_rw, 256U << 10);
->>>          fsc->s_fs_info = fm;
->>>        sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
->> .
-> 
-> 
+-Kees
+
+-- 
+Kees Cook
 
