@@ -1,152 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-7694-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7695-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677B082970C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 11:13:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E9AC829716
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 11:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E595EB26D01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 10:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47449B24D7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 10:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B553FB2E;
-	Wed, 10 Jan 2024 10:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3733FB2A;
+	Wed, 10 Jan 2024 10:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TShPm84o";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IsXaIdU+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TShPm84o";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IsXaIdU+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QW9/ez6b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDDE3FB29
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB8D3FB07
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1704881677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N8fyAvLcym3lieO4wYcel0i1AGhFIX/f3clpYmcSXdA=;
+	b=QW9/ez6bQXNcSy+gf/e8e+US/t6/PNd1zmtCi1p4RbTDmb3t775+dT8RK0YiOv6rZnaevy
+	h7OP6XIsWb4UoPCvcDokA5Se4CwaXZ+IHmmxd+fbmWdswPKZv8HNlLiYvl8wkZsnX0qM6T
+	7q3GF6gkpivM0HajI/RrTZjaxljWh+E=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-546-OvzGbcwzPAGBkz83m5jLww-1; Wed, 10 Jan 2024 05:14:33 -0500
+X-MC-Unique: OvzGbcwzPAGBkz83m5jLww-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B03FD21E1D;
-	Wed, 10 Jan 2024 10:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704881589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vcxlVI/6LvUCJH/YT6qHYKRSiy8vfnR2rGtHFI/h8VU=;
-	b=TShPm84ovAlRla3d+XP0+cAGsY2lClSB4uesV/T6hEsuMwJ0oAYmE1u+DIaPil100dIH5H
-	/qGy4h4UnE2wG/MFjtq/LbcMAhhMW7KdeZzi2qhReKviQwiUyQ/YkWm7n2KasWlSqVJSbY
-	3xkjQqCVsz7AIsjvBME79XbMd9NWLQA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704881589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vcxlVI/6LvUCJH/YT6qHYKRSiy8vfnR2rGtHFI/h8VU=;
-	b=IsXaIdU+pbaMcGjLKP3guuqIy2k/i7r9NtjvHpdjPLUyt0GahK12IpKdezAdG/qe8SU9Ed
-	IuaSlGGp7tJ52hBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704881589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vcxlVI/6LvUCJH/YT6qHYKRSiy8vfnR2rGtHFI/h8VU=;
-	b=TShPm84ovAlRla3d+XP0+cAGsY2lClSB4uesV/T6hEsuMwJ0oAYmE1u+DIaPil100dIH5H
-	/qGy4h4UnE2wG/MFjtq/LbcMAhhMW7KdeZzi2qhReKviQwiUyQ/YkWm7n2KasWlSqVJSbY
-	3xkjQqCVsz7AIsjvBME79XbMd9NWLQA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704881589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vcxlVI/6LvUCJH/YT6qHYKRSiy8vfnR2rGtHFI/h8VU=;
-	b=IsXaIdU+pbaMcGjLKP3guuqIy2k/i7r9NtjvHpdjPLUyt0GahK12IpKdezAdG/qe8SU9Ed
-	IuaSlGGp7tJ52hBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9AEE813CB3;
-	Wed, 10 Jan 2024 10:13:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eL2JJbVtnmUiWgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 10 Jan 2024 10:13:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0231EA07EB; Wed, 10 Jan 2024 11:13:08 +0100 (CET)
-Date: Wed, 10 Jan 2024 11:13:08 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fsnotify: compile out fsnotify permission hooks if
- !FANOTIFY_ACCESS_PERMISSIONS
-Message-ID: <20240110101308.7r5yggtxel7d6ckk@quack3>
-References: <20240109182245.38884-1-amir73il@gmail.com>
- <ee847921-2b4e-4d81-8cfd-9ca5960ac00f@kernel.dk>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 63AC78945A7;
+	Wed, 10 Jan 2024 10:14:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3D79E2026D6F;
+	Wed, 10 Jan 2024 10:14:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <ZZ4fyY4r3rqgZL+4@xpf.sh.intel.com>
+References: <ZZ4fyY4r3rqgZL+4@xpf.sh.intel.com> <CAHk-=wgJz36ZE66_8gXjP_TofkkugXBZEpTr_Dtc_JANsH1SEw@mail.gmail.com> <1843374.1703172614@warthog.procyon.org.uk> <20231223172858.GI201037@kernel.org> <2592945.1703376169@warthog.procyon.org.uk>
+To: Pengfei Xu <pengfei.xu@intel.com>
+Cc: dhowells@redhat.com, eadavis@qq.com,
+    Linus Torvalds <torvalds@linux-foundation.org>,
+    Simon Horman <horms@kernel.org>,
+    Markus Suvanto <markus.suvanto@gmail.com>,
+    Jeffrey E Altman <jaltman@auristor.com>,
+    "Marc
+ Dionne" <marc.dionne@auristor.com>,
+    Wang Lei <wang840925@gmail.com>, "Jeff
+ Layton" <jlayton@redhat.com>,
+    Steve French <smfrench@gmail.com>,
+    "Jarkko
+ Sakkinen" <jarkko@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    "Eric
+ Dumazet" <edumazet@google.com>,
+    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, keyrings@vger.kernel.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    heng.su@intel.com
+Subject: Re: [PATCH] keys, dns: Fix missing size check of V1 server-list header
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee847921-2b4e-4d81-8cfd-9ca5960ac00f@kernel.dk>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: *
-X-Spam-Score: 1.63
-X-Spamd-Result: default: False [1.63 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SUBJECT_HAS_EXCLAIM(0.00)[];
-	 NEURAL_SPAM_LONG(3.50)[1.000];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[gmail.com,kernel.org,suse.cz,vger.kernel.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-2.07)[95.47%]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1694630.1704881668.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 10 Jan 2024 10:14:28 +0000
+Message-ID: <1694631.1704881668@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On Tue 09-01-24 11:23:49, Jens Axboe wrote:
-> On 1/9/24 11:22 AM, Amir Goldstein wrote:
-> > The depency of FANOTIFY_ACCESS_PERMISSIONS on SECURITY made sure that
-> 
-> dependency
-> 
-> > the fsnotify permission hooks were never called when SECURITY was
-> > disabled.
-> > 
-> > Moving the fsnotify permission hook out of the secutiy hook broke that
-> 
-> security
-> 
-> > optimisation.
-> 
-> Patch obviously looks good to me, as I already tested it :-)
-> 
-> Thanks for fixing this up.
+Pengfei Xu <pengfei.xu@intel.com> wrote:
 
-Thanks Amir for the fix and Jens for the spelling fixes. I'll fix them on
-commit.
+>   Bisected info between v6.7-rc7(keyctl05 passed) and v6.7-rc8(keyctl05 =
+failed)
+> is in attached.
+> =
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> keyctl05 failed in add_key with type "dns_resolver" syscall step tracked
+> by strace:
+> "
+> [pid 863107] add_key("dns_resolver", "desc", "\0\0\1\377\0", 5, KEY_SPEC=
+_SESSION_KEYRING <unfinished ...>
+> [pid 863106] <... alarm resumed>)       =3D 30
+> [pid 863107] <... add_key resumed>)     =3D -1 EINVAL (Invalid argument)
+> "
+
+It should fail as the payload is actually invalid.  The payload specifies =
+a
+version 1 format - and that requires a 6-byte header.  The bug the patched
+fixes is that whilst there is a length check for the basic 3-byte header,
+there was no length check for the extended v1 header.
+
+> After increased the dns_res_payload to 7 bytes(6 bytes was still failed)=
+,
+
+The following doesn't work for you?
+
+	echo -n -e '\0\0\01\xff\0\0' | keyctl padd dns_resolver desc @p
+
+David
+
 
