@@ -1,117 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-7735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2135829FEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:56:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CF882A036
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152AA1C213C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 17:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6B01C2238C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF304D590;
-	Wed, 10 Jan 2024 17:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C1F4D588;
+	Wed, 10 Jan 2024 18:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAygTEqZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhdg82t1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB44D125;
-	Wed, 10 Jan 2024 17:55:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCE8BC433F1;
-	Wed, 10 Jan 2024 17:55:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704909315;
-	bh=fu4Rj/eN06CEkV5JbSMpnHawgZaPLeLIgtEFRQv1w5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JAygTEqZWVfylCFiDRG7P1l/VNgkre3NkIa+TSKWtjTWzTjqWxGd+6jLl9JLq9Ff0
-	 HkUiC0YShB3RTedTUqQpvGmjzfg4QuMwsAoJ/Jdw+Tb8AoAVZ2vkZw9wgCj3kSgF+j
-	 yzwcPO01+qwLDH/Y73uLhuwWnuWnal0emVdoFNiftr94w2BLYKTYdnr0oMLshOaGDd
-	 NBbRCi0am1LWayVzGsz33cPYmCO/+nX7iUneIlV6CMd6eTt5zF+47RDDPWe+BOqgei
-	 Z9rVGGi0mIBlfrbcxwOpuT5Te9ccn5QkF6yosVtLxF4wzyuFarxC28PHW4SJAiMXg/
-	 agoDkyYabdckg==
-Date: Wed, 10 Jan 2024 09:55:15 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	x86@kernel.org, linux-sgx@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 2/2] xfs: disable large folio support in xfile_create
-Message-ID: <20240110175515.GA722950@frogsfrogsfrogs>
-References: <20240110092109.1950011-1-hch@lst.de>
- <20240110092109.1950011-3-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516A74CE11;
+	Wed, 10 Jan 2024 18:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbed85ec5b5so3176483276.3;
+        Wed, 10 Jan 2024 10:26:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704911160; x=1705515960; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d2H9T1sQ+e+3ib+8sQexYPwrEmXw0YDH+9KrKh8Ug+Q=;
+        b=jhdg82t1Hxqtkl3FE75USd+k64rTrYjUCMfzaOnyyJgyTu8NsA5uw0p7GZNQaeFspS
+         zlW3MWdg4XNtKCkHyRATf8AmxPseZeVavqdCR8x3RbyCJA1vgwQwLxDh49aNL0R6N/C3
+         fsC1J0JFsOH+hIbp6L7p337XQfa0aAv4YYhpyxdwCFqApHzFuJJWgW2ZzOf5RJxXuD4p
+         fKChekARr+bgaL9CvhTzV4sWclsHpGxD5TKWnIFGhbY6o0/bC1tQdrEdxaqQCf6jnEXW
+         GlGtOwYpQ3cTZSoDUUX85C+NaNyvF1dlQbTJJIOsvJBWDBfSMKXjcWUIw32Po0QsX9nk
+         PNwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704911160; x=1705515960;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d2H9T1sQ+e+3ib+8sQexYPwrEmXw0YDH+9KrKh8Ug+Q=;
+        b=UkNsDzWXZXegvzlH9b8+BNBzY8DDDKFMu6oIA+eLkaAJBIYdcn7/nCoEVb3N17HspX
+         CEupPXt4h/c7mElqOE3mKO3prz6jY9Ce6id64pAR/h31kOgAHvTQfyWEEUFW+N72poZ3
+         N7bCNGn1fhZ4szZ2xiyTjjgbAzkXlfNjn0z7XFjhaURW8cpitYp1EBQxlV4sCTcfoJ5h
+         Gj7iBqM/21TbtrXX5fv0dGCeG8Qscy3aoETAaFHPOjchB/hdiJnmOUyq4SLXfv/lQ0+G
+         beYpDsROe0p0G3jcJpSisU6vI+BUwYKDEPhKG2ta4Gucd0EgdRUiYH7x95gJ/5DEUAGo
+         3mvA==
+X-Gm-Message-State: AOJu0YxFIJUpsXxxy2X2PHHC8C8nELCrhg66Q/ri8fF4Lqa6JHGgPnBZ
+	pGYqnSY5WKasv3QRGYP245wvkP6EAk0fhwY79RorJCJl
+X-Google-Smtp-Source: AGHT+IHxCV7ETRNtwEBaVOUksTrrHEv33kwlVzPX7TcUZocQppKig2RgD+K01TECjaIe652PgP+nQolU0gvr3CIn52k=
+X-Received: by 2002:a25:8609:0:b0:dbe:d072:cc8 with SMTP id
+ y9-20020a258609000000b00dbed0720cc8mr57611ybk.20.1704911160131; Wed, 10 Jan
+ 2024 10:26:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240110092109.1950011-3-hch@lst.de>
+References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-4-wedsonaf@gmail.com>
+ <0278c96f-7a4a-4a3c-81b8-583f2cc62226@ryhl.io>
+In-Reply-To: <0278c96f-7a4a-4a3c-81b8-583f2cc62226@ryhl.io>
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Date: Wed, 10 Jan 2024 15:25:49 -0300
+Message-ID: <CANeycqouuEwFVBogUVDpjN=twnb6O+SzMw3gF6aBX3_9dmNHPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/19] samples: rust: add initial ro file system sample
+To: Alice Ryhl <alice@ryhl.io>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 10, 2024 at 10:21:09AM +0100, Christoph Hellwig wrote:
-> The xfarray code will crash if large folios are force enabled using:
-> 
->    echo force > /sys/kernel/mm/transparent_hugepage/shmem_enabled
-> 
-> Fixing this will require a bit of an API change, and prefeably sorting out
-> the hwpoison story for pages vs folio and where it is placed in the shmem
-> API.  For now use this one liner to disable large folios.
-> 
-> Reported-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Sat, 28 Oct 2023 at 13:17, Alice Ryhl <alice@ryhl.io> wrote:
+>
+> On 10/18/23 14:25, Wedson Almeida Filho wrote:> +kernel::module_fs! {
+> > +    type: RoFs,
+> > +    name: "rust_rofs",
+> > +    author: "Rust for Linux Contributors",
+> > +    description: "Rust read-only file system sample",
+> > +    license: "GPL",
+> > +}
+> > +
+> > +struct RoFs;
+> > +impl fs::FileSystem for RoFs {
+> > +    const NAME: &'static CStr = c_str!("rust-fs");
+> > +}
+>
+> Why use two different names here?
 
-Can someone who knows more about shmem.c than I do please review
-https://lore.kernel.org/linux-xfs/20240103084126.513354-4-hch@lst.de/
-so that I can feel slightly more confident as hch and I sort through the
-xfile.c issues?
+I actually wanted the same name, but the string in the module macros
+don't accept dashes (they need to be identifiers).
 
-For this patch,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+I discussed this with Miguel a couple of years ago but we decided to
+wait and see before doing anything. Since then I noticed that Rust
+automatically converts dashes to underscores in crate names so that
+they can be used as identifiers in the language. So I guess there's a
+precedent if we decide to do something similar.
 
---D
-
-> ---
->  fs/xfs/scrub/xfile.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-> index 090c3ead43fdf1..1a8d1bedd0b0dc 100644
-> --- a/fs/xfs/scrub/xfile.c
-> +++ b/fs/xfs/scrub/xfile.c
-> @@ -94,6 +94,11 @@ xfile_create(
->  
->  	lockdep_set_class(&inode->i_rwsem, &xfile_i_mutex_key);
->  
-> +	/*
-> +	 * We're not quite ready for large folios yet.
-> +	 */
-> +	mapping_clear_large_folios(inode->i_mapping);
-> +
->  	trace_xfile_create(xf);
->  
->  	*xfilep = xf;
-> -- 
-> 2.39.2
-> 
-> 
+For now I'll change rust-fs to rust_rofs as the fs name.
 
