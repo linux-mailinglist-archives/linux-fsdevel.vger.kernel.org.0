@@ -1,64 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-7747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB24982A1AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 21:05:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E1B82A1B6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 21:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E756B23AC7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 20:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB5F1F23988
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 20:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBC14E1DE;
-	Wed, 10 Jan 2024 20:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440384EB2B;
+	Wed, 10 Jan 2024 20:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVS4MaRM"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ignPQt+v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15754CB44;
-	Wed, 10 Jan 2024 20:04:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5DEC433F1;
-	Wed, 10 Jan 2024 20:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704917092;
-	bh=74bvc1MrtZiDKmQ/bu3C4RVeT5D3DZCGTl3NffxKvZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BVS4MaRMctsxFwGuMyM23YFJV6gby6teko8iKECcrhunk0OEiqeoTkDr1l/TiVGJo
-	 D3PqK71jNSb9LbpdngAb4xBI+6SuDkZvu8aVnJYNxh/OMisBhHqJ1KhotiNpAmbU80
-	 wgGpQlW/jizt5hj1i4Su4y/pEDtNZeoWx582CriSM2ffbCyVxzXepeD/lZhUpUFhEL
-	 3pZ64QIq99+20Ie61mUYNRaPAw8gMJJKci/GPwmdlok9izzYq7VX5rwp35NC0GRRW9
-	 PaQ/HQP+gcVFQn1ip2QVte75pNWIrnqTRTsBfuM9W4XhUOM/TRqAV2Ms7tnOQHiw6E
-	 Dr+uuHbo0VtIA==
-Date: Wed, 10 Jan 2024 12:04:51 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	x86@kernel.org, linux-sgx@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: Re: [PATCH 2/2] xfs: disable large folio support in xfile_create
-Message-ID: <20240110200451.GB722950@frogsfrogsfrogs>
-References: <20240110092109.1950011-1-hch@lst.de>
- <20240110092109.1950011-3-hch@lst.de>
- <20240110175515.GA722950@frogsfrogsfrogs>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFF14E1CA;
+	Wed, 10 Jan 2024 20:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4T9JnV3Cmtz9srQ;
+	Wed, 10 Jan 2024 21:10:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1704917422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VJ2kCA8YCwYpXpZJNP0ssP+4NJQXe95ZM95bicTX6po=;
+	b=ignPQt+v9oJPex7kdcjnzAMGI+5KEmpVf4PYzJwEgoelMJNzpBYxvHPT3EPUuUFnTLI4dN
+	JM86hWbKTAW5un+Q5IC2xNoy/Ag9i6YmBHL/DgpJBCrnNoZkJqRw8FwA1qkhiEh9ItWQWz
+	DEEXCTnz8sroyiher4k/qCHanWMO//bD/uiTlJsRuNf4kxLEpApWcVoyoIMRLMLSB095KA
+	TdpZ7jQ5OTPSkRn77xMyLmL5NArdxZH9S9UPcTuviX9Ipl6MTqqMg60NsMjD/OLkX+T8DE
+	i0uHcn0qcCehDnQxBHTWYSfvcQnPvJSErILaWfrQlZGXjUIs38rmNrK5hR4XuQ==
+Date: Wed, 10 Jan 2024 21:10:19 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	p.raghav@samsung.com
+Subject: Re: [PATCH v2 5/8] buffer: Add kernel-doc for brelse() and __brelse()
+Message-ID: <20240110201019.mrmrdelyndweempw@localhost>
+References: <20240109143357.2375046-1-willy@infradead.org>
+ <20240109143357.2375046-6-willy@infradead.org>
+ <20240110143054.lc5t6vewsezwbcyv@localhost>
+ <ZZ7TX/f5/+svtB6i@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,60 +59,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240110175515.GA722950@frogsfrogsfrogs>
+In-Reply-To: <ZZ7TX/f5/+svtB6i@casper.infradead.org>
+X-Rspamd-Queue-Id: 4T9JnV3Cmtz9srQ
 
-On Wed, Jan 10, 2024 at 09:55:15AM -0800, Darrick J. Wong wrote:
-> On Wed, Jan 10, 2024 at 10:21:09AM +0100, Christoph Hellwig wrote:
-> > The xfarray code will crash if large folios are force enabled using:
+On Wed, Jan 10, 2024 at 05:26:55PM +0000, Matthew Wilcox wrote:
+> On Wed, Jan 10, 2024 at 03:30:54PM +0100, Pankaj Raghav (Samsung) wrote:
+> > > + * If all buffers on a folio have zero reference count, are clean
+> > > + * and unlocked, and if the folio is clean and unlocked then
 > > 
-> >    echo force > /sys/kernel/mm/transparent_hugepage/shmem_enabled
-> > 
-> > Fixing this will require a bit of an API change, and prefeably sorting out
-> > the hwpoison story for pages vs folio and where it is placed in the shmem
-> > API.  For now use this one liner to disable large folios.
-> > 
-> > Reported-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > IIUC from your [PATCH 3/8], folio only needs to be unlocked to free the
+> > buffers as try_to_free_buffers() will remove the dirty flag and "clean"
+> > the folio?
+> > So:
+> > s/if folio is clean and unlocked/if folio is unlocked
 > 
-> Can someone who knows more about shmem.c than I do please review
-> https://lore.kernel.org/linux-xfs/20240103084126.513354-4-hch@lst.de/
-> so that I can feel slightly more confident as hch and I sort through the
-> xfile.c issues?
-> 
-> For this patch,
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> That's a good point.  Perhaps "unlocked and not under writeback"
+> would be better wording, since that would be true.
 
-...except that I'm still getting 2M THPs even with this enabled, so I
-guess either we get to fix it now, or create our own private tmpfs mount
-so that we can pass in huge=never, similar to what i915 does. :(
-
---D
-
-> --D
-> 
-> > ---
-> >  fs/xfs/scrub/xfile.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-> > index 090c3ead43fdf1..1a8d1bedd0b0dc 100644
-> > --- a/fs/xfs/scrub/xfile.c
-> > +++ b/fs/xfs/scrub/xfile.c
-> > @@ -94,6 +94,11 @@ xfile_create(
-> >  
-> >  	lockdep_set_class(&inode->i_rwsem, &xfile_i_mutex_key);
-> >  
-> > +	/*
-> > +	 * We're not quite ready for large folios yet.
-> > +	 */
-> > +	mapping_clear_large_folios(inode->i_mapping);
-> > +
-> >  	trace_xfile_create(xf);
-> >  
-> >  	*xfilep = xf;
-> > -- 
-> > 2.39.2
-> > 
-> > 
-> 
+Yeah. That sounds good to me!
 
