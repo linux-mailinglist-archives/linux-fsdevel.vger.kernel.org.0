@@ -1,67 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-7740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47BE82A084
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:55:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED5482A087
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839EC286237
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:55:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC822B2669E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F214D5A5;
-	Wed, 10 Jan 2024 18:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCCC4E1AA;
+	Wed, 10 Jan 2024 18:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H1pJ7uAZ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HF5HZTaD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B574CE11
-	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 18:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE18C1E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 18:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e4f71288bso23479105e9.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:54:46 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40d6b4e2945so52575675e9.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 10:54:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704912885; x=1705517685; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704912896; x=1705517696; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZN9Wo59ib8rrxmGmkNNqnPBXMYJ/gbEqO2erlBDFegk=;
-        b=H1pJ7uAZ/WvGsOGgHHd+lbhQUFMdCRJ5yM91bcgbZG20RwJWbL4bpYvEzQLMV5CiCu
-         sku1Nxgr+Lu3iDe4A+sgs7J0wDBkY+RZL7TwVxVrTk+gP7l4J4YTHQjePoks+qMh/Pvc
-         WUipjJweNSq7uSIA6e2hI7AyuYCX4Uo/NcTsp06Hg0VZuGDCFaAIxDb5hfh5/8QHHYHQ
-         S+C87mF3C5MKLDlDUbnYtbzOAeLlr/Guy/dhIxo+Z4a2aO7uzmqLnU6NtnwdhoDJdU5s
-         Dm6sACHTHdHlObZK7LyQNWF55a9IE0d8jzNEQ4wnIEKB38tkzoTkjNLW+pKOMfa7sSRh
-         VmIg==
+        bh=Vw5h+K8iPYs5+icWSGcWdfm5hPFTfCqkPS7TON/HzoA=;
+        b=HF5HZTaDiGVQ0nKv/eUnU5KXnQHz/R1pEloEv6HzQMeekEU5h7DgsjyniNElSsvPtJ
+         aoULqTua9qu7PRUuq9nYD1qMaDNE7/Z9Z/+1dE8wDGeH1RVn2zn1B0B5xUbvePPYmx69
+         H7xkhNpv4iRA3Ka16orDLcD4RhsowBzEaA2zJ1qke/Oyh69ky/n6z1N7MRw/jmB4kcxH
+         riirZRwPAHr4mjwb7azItTjrQg4C8phOup4kHd9gnbcW0DD0BSpIL9ap0bPCx4bvG3iy
+         8m7lohtpVrI4Bc6+F/UlH8Q8W6QOCPHBTPmF4FnGMBXY9VMqByrUwaaDvZDj6GfloeCK
+         4ncQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704912885; x=1705517685;
+        d=1e100.net; s=20230601; t=1704912896; x=1705517696;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZN9Wo59ib8rrxmGmkNNqnPBXMYJ/gbEqO2erlBDFegk=;
-        b=YZmHhXvhEiQkHkzoDmuPRpWuzRcugopzDwEgHUwNcSz57w4KLN95SAYlrBonHaE4Lh
-         sl56rjzM8A06fR9CygYA6eKE0cEGl6kCEhrTPWTdvn7VmaTziN7bUJcheDfvgtTbnGzp
-         Zdrbyq9G1AuKBLc5pgGgTZ/u6VEQ1JnyiHN1i7sYNVk2pOV3jj0UjbfLmwRH+auhkI9S
-         ctlDNae3U1OM5I3TjDY8l9k+4dFMMjdpAeTG7htfRvPeSennzlCj4a0Mu5eg7LNg0i/Z
-         N0ZRtfTPFnH1nMeuQSLPxOMCIFNQLoDydNM2dRAfvYz1XpEzH5VXKVy7TjHSP89kMXzf
-         tmFA==
-X-Gm-Message-State: AOJu0YydQPO6HMcapSin/LM/mLyQVtUg9/pumIdBdoZqm5qtFgDI2qem
-	vbVsC1lkOD6WPtKZvEWISvLmVzlsl7msGA==
-X-Google-Smtp-Source: AGHT+IGo4oaNW6eXAvoWkHjodOro7xOyXIT4jd7O3rnAWXBHkEooUa8VsjrMm00Kq644jt0paq7FUw==
-X-Received: by 2002:a7b:cd10:0:b0:40d:86a8:2fe9 with SMTP id f16-20020a7bcd10000000b0040d86a82fe9mr573312wmj.280.1704912885337;
-        Wed, 10 Jan 2024 10:54:45 -0800 (PST)
+        bh=Vw5h+K8iPYs5+icWSGcWdfm5hPFTfCqkPS7TON/HzoA=;
+        b=Mc1l4jsq0hAv6Dmsz0sVLQ0YGoMsYghG38Qci6tquPkV2Zrx6c4Y92E1YfxuE6+4eS
+         URgiHruwbcfIIN8G1KLcwoN4mGGidkUVjYg5iEO8LQDh2JJkmtDobO41JWSx7keswAIn
+         Z+CeaqxPanotzIrZE+rZge0kwCbjyzhyZclWPuLV6mq2pqZ7KRfCKsRKhoowtIdEfK2A
+         rwM3LnHHAu2nXXblcf6sxkU0LvUvOeaxJj+h89coOt+LpRl1WdDv/VjRtakUELxbbz6j
+         QMEcOzb4ZyOKK0Vv2BGebIp+KLTimYe4SRwfrWM0iexy33luAMoUyE28bBWlm5K34vTO
+         Wg2A==
+X-Gm-Message-State: AOJu0YzaHVVIxIVVdT/HcWjYNXwYMWGxLtNaYOpo+e4NnUMl9PTI+/IS
+	WAADGcWsozba08YDphVB4QoBIEltRSXv+g==
+X-Google-Smtp-Source: AGHT+IHSk34uwWLBmmfHCsZJ/csyHovbBwA3upD7ZO+iYFsDfG8ClAyqdZ/5IzlTpOWZynEA+QUSJA==
+X-Received: by 2002:a05:600c:a297:b0:40e:4359:ae82 with SMTP id hu23-20020a05600ca29700b0040e4359ae82mr621278wmb.89.1704912896369;
+        Wed, 10 Jan 2024 10:54:56 -0800 (PST)
 Received: from localhost ([102.140.209.237])
-        by smtp.gmail.com with ESMTPSA id h5-20020a05600c350500b0040e55ee7fa7sm3173186wmq.8.2024.01.10.10.54.44
+        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b0040e451fd602sm3091715wmq.33.2024.01.10.10.54.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 10:54:45 -0800 (PST)
-Date: Wed, 10 Jan 2024 21:54:42 +0300
+        Wed, 10 Jan 2024 10:54:56 -0800 (PST)
+Date: Wed, 10 Jan 2024 21:54:53 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: David Howells <dhowells@redhat.com>
-Cc: linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] netfs: Fix a NULL vs IS_ERR() check in netfs_perform_write()
-Message-ID: <29fb1310-8e2d-47ba-b68d-40354eb7b896@moroto.mountain>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] netfs, fscache: Prevent Oops in fscache_put_cache()
+Message-ID: <9872f991-56a8-4915-b9b0-53accd6db0ef@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,33 +73,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The netfs_grab_folio_for_write() function doesn't return NULL, it returns
-error pointers.  Update the check accordingly.
+This function dereferences "cache" and then checks if it's
+IS_ERR_OR_NULL().  Check first, then dereference.
 
-Fixes: c38f4e96e605 ("netfs: Provide func to copy data to pagecache for buffered write")
+Fixes: 9549332df4ed ("fscache: Implement cache registration")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/netfs/buffered_write.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/netfs/fscache_cache.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index a69e6e655320..25d861702bd8 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -205,10 +205,11 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 		if (unlikely(fault_in_iov_iter_readable(iter, part) == part))
- 			break;
+diff --git a/fs/netfs/fscache_cache.c b/fs/netfs/fscache_cache.c
+index d645f8b302a2..f0722cc2eae5 100644
+--- a/fs/netfs/fscache_cache.c
++++ b/fs/netfs/fscache_cache.c
+@@ -179,7 +179,6 @@ EXPORT_SYMBOL(fscache_acquire_cache);
+ void fscache_put_cache(struct fscache_cache *cache,
+ 		       enum fscache_cache_trace where)
+ {
+-	unsigned int debug_id = cache->debug_id;
+ 	bool zero;
+ 	int ref;
  
--		ret = -ENOMEM;
- 		folio = netfs_grab_folio_for_write(mapping, pos, part);
--		if (!folio)
-+		if (IS_ERR(folio)) {
-+			ret = PTR_ERR(folio);
- 			break;
-+		}
+@@ -187,7 +186,7 @@ void fscache_put_cache(struct fscache_cache *cache,
+ 		return;
  
- 		flen = folio_size(folio);
- 		offset = pos & (flen - 1);
+ 	zero = __refcount_dec_and_test(&cache->ref, &ref);
+-	trace_fscache_cache(debug_id, ref - 1, where);
++	trace_fscache_cache(cache->debug_id, ref - 1, where);
+ 
+ 	if (zero) {
+ 		down_write(&fscache_addremove_sem);
 -- 
 2.43.0
 
