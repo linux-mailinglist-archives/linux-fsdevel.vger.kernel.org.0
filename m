@@ -1,80 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-7748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E1B82A1B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 21:10:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB0782A25E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 21:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB5F1F23988
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 20:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81ACF1C21EAF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 20:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440384EB2B;
-	Wed, 10 Jan 2024 20:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ignPQt+v"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D3A4F1F8;
+	Wed, 10 Jan 2024 20:36:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFF14E1CA;
-	Wed, 10 Jan 2024 20:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4T9JnV3Cmtz9srQ;
-	Wed, 10 Jan 2024 21:10:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1704917422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VJ2kCA8YCwYpXpZJNP0ssP+4NJQXe95ZM95bicTX6po=;
-	b=ignPQt+v9oJPex7kdcjnzAMGI+5KEmpVf4PYzJwEgoelMJNzpBYxvHPT3EPUuUFnTLI4dN
-	JM86hWbKTAW5un+Q5IC2xNoy/Ag9i6YmBHL/DgpJBCrnNoZkJqRw8FwA1qkhiEh9ItWQWz
-	DEEXCTnz8sroyiher4k/qCHanWMO//bD/uiTlJsRuNf4kxLEpApWcVoyoIMRLMLSB095KA
-	TdpZ7jQ5OTPSkRn77xMyLmL5NArdxZH9S9UPcTuviX9Ipl6MTqqMg60NsMjD/OLkX+T8DE
-	i0uHcn0qcCehDnQxBHTWYSfvcQnPvJSErILaWfrQlZGXjUIs38rmNrK5hR4XuQ==
-Date: Wed, 10 Jan 2024 21:10:19 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.raghav@samsung.com
-Subject: Re: [PATCH v2 5/8] buffer: Add kernel-doc for brelse() and __brelse()
-Message-ID: <20240110201019.mrmrdelyndweempw@localhost>
-References: <20240109143357.2375046-1-willy@infradead.org>
- <20240109143357.2375046-6-willy@infradead.org>
- <20240110143054.lc5t6vewsezwbcyv@localhost>
- <ZZ7TX/f5/+svtB6i@casper.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DE64EB3A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 20:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bad62322f0so540589739f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 12:36:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704918987; x=1705523787;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yog6wnWNsmydumSZg/VKYh15G73Pd+ZGVgDdER463ZM=;
+        b=loWcjmhm+5Q+uYcoPbFIyXsMdJ8yubgjkeHAfNz97Yi6Wa9TTh14GZsRGWK98/h3Lz
+         bxK0zzMt7f8I4SIdClkYiT+jwQxc6ysq9DhEGbZF2NTZdcfXnkX62QZ2zymMtlUK74Iu
+         bHy1gNKR7k0XgOxKFqSaLoHzrmAHBtnqfgvHUzzpYVpxvh2tQzU7mMajzIjs7RTcP8dk
+         30bs2FDkBcI8tVvxT6vJ00jbpxBWej7/9JqgQZTaMGiU6mjnPZ5SQM0okYEPxy+XBGVo
+         uIcUH7lJA/s803Ae40SiSsr7PlZVrgrvGL832K88aLW9aKW84mfjh4Xp0e8wsOaf7Olw
+         ENBQ==
+X-Gm-Message-State: AOJu0YxfueYzGcH2L0ZJ9iN2Hbds/Er0Ps1rzJItxJZ7n2U8Xu2i1e5t
+	p3bhTuSZiG9aDceUoNf33vRxwCX+KHvDBp94NfH6y/MZt2/v
+X-Google-Smtp-Source: AGHT+IGey5m6ci9iv/2bvmfJNJrYCEYmvuEpE2dwVSvWvKfiKqWL/CXpNgFkbN1fXaIrJT5ruH6NUK0tIXKwhq4LvHnkQtUqce2s
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZZ7TX/f5/+svtB6i@casper.infradead.org>
-X-Rspamd-Queue-Id: 4T9JnV3Cmtz9srQ
+X-Received: by 2002:a05:6638:191a:b0:46e:3cdf:c9d7 with SMTP id
+ p26-20020a056638191a00b0046e3cdfc9d7mr8123jal.2.1704918987058; Wed, 10 Jan
+ 2024 12:36:27 -0800 (PST)
+Date: Wed, 10 Jan 2024 12:36:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009832cf060e9d622f@google.com>
+Subject: [syzbot] Monthly udf report (Jan 2024)
+From: syzbot <syzbot+listdcb21f43dac3dffd8047@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 10, 2024 at 05:26:55PM +0000, Matthew Wilcox wrote:
-> On Wed, Jan 10, 2024 at 03:30:54PM +0100, Pankaj Raghav (Samsung) wrote:
-> > > + * If all buffers on a folio have zero reference count, are clean
-> > > + * and unlocked, and if the folio is clean and unlocked then
-> > 
-> > IIUC from your [PATCH 3/8], folio only needs to be unlocked to free the
-> > buffers as try_to_free_buffers() will remove the dirty flag and "clean"
-> > the folio?
-> > So:
-> > s/if folio is clean and unlocked/if folio is unlocked
-> 
-> That's a good point.  Perhaps "unlocked and not under writeback"
-> would be better wording, since that would be true.
+Hello udf maintainers/developers,
 
-Yeah. That sounds good to me!
+This is a 31-day syzbot report for the udf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/udf
+
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 16 issues are still open and 18 have been fixed so far.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  2016    Yes   WARNING in udf_truncate_extents
+                   https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2>  250     Yes   KMSAN: uninit-value in udf_update_tag
+                   https://syzkaller.appspot.com/bug?extid=d31185aa54170f7fc1f5
+<3>  144     Yes   KASAN: use-after-free Write in udf_close_lvid
+                   https://syzkaller.appspot.com/bug?extid=60864ed35b1073540d57
+<4>  39      Yes   KASAN: use-after-free Read in udf_finalize_lvid
+                   https://syzkaller.appspot.com/bug?extid=46073c22edd7f242c028
+<5>  37      Yes   KASAN: use-after-free Read in udf_sync_fs
+                   https://syzkaller.appspot.com/bug?extid=82df44ede2faca24c729
+<6>  20      Yes   WARNING in udf_setsize (2)
+                   https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+<7>  6       Yes   UBSAN: array-index-out-of-bounds in udf_process_sequence
+                   https://syzkaller.appspot.com/bug?extid=abb7222a58e4ebc930ad
+<8>  5       Yes   KASAN: slab-out-of-bounds Write in udf_adinicb_writepage
+                   https://syzkaller.appspot.com/bug?extid=a3db10baf0c0ee459854
+<9>  3       No    WARNING in udf_prealloc_blocks (2)
+                   https://syzkaller.appspot.com/bug?extid=cc2b732891efbf755b78
+<10> 2       Yes   KASAN: slab-use-after-free Read in udf_free_blocks
+                   https://syzkaller.appspot.com/bug?extid=0b7937459742a0a4cffd
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
