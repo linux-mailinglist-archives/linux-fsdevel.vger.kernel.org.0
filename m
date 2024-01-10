@@ -1,104 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-7736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CF882A036
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:26:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0056E82A046
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6B01C2238C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0A028863D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C1F4D588;
-	Wed, 10 Jan 2024 18:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhdg82t1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178A94B5A6;
+	Wed, 10 Jan 2024 18:30:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516A74CE11;
-	Wed, 10 Jan 2024 18:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbed85ec5b5so3176483276.3;
-        Wed, 10 Jan 2024 10:26:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704911160; x=1705515960; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d2H9T1sQ+e+3ib+8sQexYPwrEmXw0YDH+9KrKh8Ug+Q=;
-        b=jhdg82t1Hxqtkl3FE75USd+k64rTrYjUCMfzaOnyyJgyTu8NsA5uw0p7GZNQaeFspS
-         zlW3MWdg4XNtKCkHyRATf8AmxPseZeVavqdCR8x3RbyCJA1vgwQwLxDh49aNL0R6N/C3
-         fsC1J0JFsOH+hIbp6L7p337XQfa0aAv4YYhpyxdwCFqApHzFuJJWgW2ZzOf5RJxXuD4p
-         fKChekARr+bgaL9CvhTzV4sWclsHpGxD5TKWnIFGhbY6o0/bC1tQdrEdxaqQCf6jnEXW
-         GlGtOwYpQ3cTZSoDUUX85C+NaNyvF1dlQbTJJIOsvJBWDBfSMKXjcWUIw32Po0QsX9nk
-         PNwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704911160; x=1705515960;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d2H9T1sQ+e+3ib+8sQexYPwrEmXw0YDH+9KrKh8Ug+Q=;
-        b=UkNsDzWXZXegvzlH9b8+BNBzY8DDDKFMu6oIA+eLkaAJBIYdcn7/nCoEVb3N17HspX
-         CEupPXt4h/c7mElqOE3mKO3prz6jY9Ce6id64pAR/h31kOgAHvTQfyWEEUFW+N72poZ3
-         N7bCNGn1fhZ4szZ2xiyTjjgbAzkXlfNjn0z7XFjhaURW8cpitYp1EBQxlV4sCTcfoJ5h
-         Gj7iBqM/21TbtrXX5fv0dGCeG8Qscy3aoETAaFHPOjchB/hdiJnmOUyq4SLXfv/lQ0+G
-         beYpDsROe0p0G3jcJpSisU6vI+BUwYKDEPhKG2ta4Gucd0EgdRUiYH7x95gJ/5DEUAGo
-         3mvA==
-X-Gm-Message-State: AOJu0YxFIJUpsXxxy2X2PHHC8C8nELCrhg66Q/ri8fF4Lqa6JHGgPnBZ
-	pGYqnSY5WKasv3QRGYP245wvkP6EAk0fhwY79RorJCJl
-X-Google-Smtp-Source: AGHT+IHxCV7ETRNtwEBaVOUksTrrHEv33kwlVzPX7TcUZocQppKig2RgD+K01TECjaIe652PgP+nQolU0gvr3CIn52k=
-X-Received: by 2002:a25:8609:0:b0:dbe:d072:cc8 with SMTP id
- y9-20020a258609000000b00dbed0720cc8mr57611ybk.20.1704911160131; Wed, 10 Jan
- 2024 10:26:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A114D5A8;
+	Wed, 10 Jan 2024 18:30:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE05C433C7;
+	Wed, 10 Jan 2024 18:30:54 +0000 (UTC)
+Date: Wed, 10 Jan 2024 13:31:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as
+ default ownership
+Message-ID: <20240110133154.6e18feb9@gandalf.local.home>
+In-Reply-To: <20240110105251.48334598@gandalf.local.home>
+References: <20240103203246.115732ec@gandalf.local.home>
+	<20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
+	<20240105095954.67de63c2@gandalf.local.home>
+	<20240107-getrickst-angeeignet-049cea8cad13@brauner>
+	<20240107132912.71b109d8@rorschach.local.home>
+	<20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
+	<20240108102331.7de98cab@gandalf.local.home>
+	<20240110-murren-extra-cd1241aae470@brauner>
+	<20240110080746.50f7767d@gandalf.local.home>
+	<20240110105251.48334598@gandalf.local.home>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-4-wedsonaf@gmail.com>
- <0278c96f-7a4a-4a3c-81b8-583f2cc62226@ryhl.io>
-In-Reply-To: <0278c96f-7a4a-4a3c-81b8-583f2cc62226@ryhl.io>
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
-Date: Wed, 10 Jan 2024 15:25:49 -0300
-Message-ID: <CANeycqouuEwFVBogUVDpjN=twnb6O+SzMw3gF6aBX3_9dmNHPQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/19] samples: rust: add initial ro file system sample
-To: Alice Ryhl <alice@ryhl.io>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, 28 Oct 2023 at 13:17, Alice Ryhl <alice@ryhl.io> wrote:
->
-> On 10/18/23 14:25, Wedson Almeida Filho wrote:> +kernel::module_fs! {
-> > +    type: RoFs,
-> > +    name: "rust_rofs",
-> > +    author: "Rust for Linux Contributors",
-> > +    description: "Rust read-only file system sample",
-> > +    license: "GPL",
-> > +}
-> > +
-> > +struct RoFs;
-> > +impl fs::FileSystem for RoFs {
-> > +    const NAME: &'static CStr = c_str!("rust-fs");
-> > +}
->
-> Why use two different names here?
+On Wed, 10 Jan 2024 10:52:51 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I actually wanted the same name, but the string in the module macros
-don't accept dashes (they need to be identifiers).
+> On Wed, 10 Jan 2024 08:07:46 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > Or are you saying that I don't need the ".permission" callback, because
+> > eventfs does it when it creates the inodes? But for eventfs to know what
+> > the permissions changes are, it uses .getattr and .setattr.  
+> 
+> OK, if your main argument is that we do not need .permission, I agree with
+> you. But that's a trivial change and doesn't affect the complexity that
+> eventfs is doing. In fact, removing the "permission" check is simply this
+> patch:
+> 
+> --
+> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+> index fdff53d5a1f8..f2af07a857e2 100644
+> --- a/fs/tracefs/event_inode.c
+> +++ b/fs/tracefs/event_inode.c
+> @@ -192,18 +192,10 @@ static int eventfs_get_attr(struct mnt_idmap *idmap,
+>  	return 0;
+>  }
+>  
+> -static int eventfs_permission(struct mnt_idmap *idmap,
+> -			      struct inode *inode, int mask)
+> -{
+> -	set_top_events_ownership(inode);
+> -	return generic_permission(idmap, inode, mask);
+> -}
+> -
+>  static const struct inode_operations eventfs_root_dir_inode_operations = {
+>  	.lookup		= eventfs_root_lookup,
+>  	.setattr	= eventfs_set_attr,
+>  	.getattr	= eventfs_get_attr,
+> -	.permission	= eventfs_permission,
+>  };
+>  
+>  static const struct inode_operations eventfs_file_inode_operations = {
+> --
+> 
+> I only did that because Linus mentioned it, and I thought it was needed.
+> I'll apply this patch too, as it appears to work with this code.
 
-I discussed this with Miguel a couple of years ago but we decided to
-wait and see before doing anything. Since then I noticed that Rust
-automatically converts dashes to underscores in crate names so that
-they can be used as identifiers in the language. So I guess there's a
-precedent if we decide to do something similar.
+Oh, eventfs files and directories don't need the .permissions because its
+inodes and dentries are not created until accessed. But the "events"
+directory itself has its dentry and inode created at boot up, but still
+uses the eventfs_root_dir_inode_operations. So the .permissions is still
+needed!
 
-For now I'll change rust-fs to rust_rofs as the fs name.
+If you look at the "set_top_events_ownership()" function, it has:
+
+	/* The top events directory doesn't get automatically updated */
+	if (!ei || !ei->is_events || !(ei->attr.mode & EVENTFS_TOPLEVEL))
+		return;
+
+That is, it does nothing if the entry is not the "events" directory. It
+falls back to he default "->permissions()" function for everything but the
+top level "events" directory.
+
+But this and .getattr are still needed for the events directory, because it
+suffers the same issue as the other tracefs entries. That is, it's inodes
+and dentries are created at boot up before it is mounted. So if the mount
+has gid=1000, it will be ignored.
+
+The .getattr is called by "stat" which ls does. So after boot up if you
+just do:
+
+ # chmod 0750 /sys/kernel/events
+ # chmod 0770 /sys/kernel/tracing
+ # mount -o remount,gid=1000 /sys/kernel/tracing
+ # su - rostedt
+ $ id
+uid=1000(rostedt) gid=1000(rostedt) groups=1000(rostedt)
+ $ ls /sys/kernel/tracing/events/
+9p            ext4            iomap        module      raw_syscalls  thermal
+alarmtimer    fib             iommu        msr         rcu           thp
+avc           fib6            io_uring     napi        regmap        timer
+block         filelock        ipi          neigh       regulator     tlb
+bpf_test_run  filemap         irq          net         resctrl       udp
+bpf_trace     ftrace          irq_matrix   netfs       rpm           virtio_gpu[
+...]
+
+The above works because "ls" does a stat() on the directory first, which
+does a .getattr() call that updates the permissions of the existing "events"
+directory inode.
+
+  BUT!
+
+If I had used my own getents() program that has:
+
+        fd = openat(AT_FDCWD, argv[1], O_RDONLY);
+        if (fd < 0)
+                perror("openat");
+
+        n = getdents64(fd, buf, BUF_SIZE);
+        if (n < 0)
+                perror("getdents64");
+
+Where it calls the openat() without doing a stat fist, and after boot, had done:
+
+ # chmod 0750 /sys/kernel/events
+ # chmod 0770 /sys/kernel/tracing
+ # mount -o remount,gid=1000 /sys/kernel/tracing
+ # su - rostedt
+ $ id
+uid=1000(rostedt) gid=1000(rostedt) groups=1000(rostedt)
+ $ ./getdents /sys/kernel/tracing/events
+openat: Permission denied
+getdents64: Bad file descriptor
+
+It errors because he "events" inode permission hasn't been updated yet.
+Now after getting the above error, if I do the "ls" and then run it again:
+
+ $ ls /sys/kernel/tracing/events > /dev/null
+ $ ./getdents /sys/kernel/tracing/events
+enable
+header_page
+header_event
+initcall
+vsyscall
+syscalls
+
+it works!
+
+so no, I can't remove that .permissions callback from eventfs.
+
+-- Steve
 
