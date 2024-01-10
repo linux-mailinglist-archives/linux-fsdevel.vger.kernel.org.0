@@ -1,138 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-7727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45A7829E9C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 17:29:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBF2829ED8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 17:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746221F251E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 16:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2730F1F24302
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 16:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D5F4CB4E;
-	Wed, 10 Jan 2024 16:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26324CE0F;
+	Wed, 10 Jan 2024 16:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKNe8sSY"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0/W7YZQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HwgEyC1O";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0/W7YZQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HwgEyC1O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575264439B;
-	Wed, 10 Jan 2024 16:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40e461c1f5cso39369415e9.3;
-        Wed, 10 Jan 2024 08:29:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704904145; x=1705508945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zYhs5kBzLpHa7nfxElLc7f+8hwZgrm0a/n3jZ3lJWbI=;
-        b=jKNe8sSY8IbZRu8GlEerTEFyrkxZB0aS1DVtyyF8clbe/24lEgYBsgQEThN3RgKwWF
-         odutLepiq5YN79Ge1QXfAdvpJoS1UYdqWMusTdrxVjlywssNNDAjNOSTdEqTYQs8YFPe
-         GIdVKE/6zlniXt8ctHfmE9KzxlBfJcU7L33MhbIT75SwbV1acWI1Y1PeO+GuFj3qXhL0
-         kic/94kIK3Y2GlvzWTkIOfSw1XCnbr4DGHzO+SC/ao+tD4BctQm3/ZDdgUsLYd1FRvvh
-         WqcpwkI8DzeSf7/Ngc98JL/MnG7RyMZlcsM6pWPT1mz7URJFAsap1O26yDyBE2RMawa7
-         Mfow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704904145; x=1705508945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zYhs5kBzLpHa7nfxElLc7f+8hwZgrm0a/n3jZ3lJWbI=;
-        b=hkF5QOHzlQ3gMEAyiZVrAneYkr9EMfY+AyCeCIPO+srM/XyG+SE3TpTvzgZEuPY8YB
-         oU5nVQ3ToGaav88MI59lRZqkoFCj2kdsM72dZ5+DxiR8O+wO7zuVFev5q+7Zuwrx0NQy
-         ghetnFZzqSofwaqbmjNRSh9ecJ3+Uv66Rej1JHX9C3h/8txrw6HN7Oqh9miUj2fEtVW0
-         wQrQk6ySh1pGv27eCAzY6dWVsoZ3oh1Ax8gyrI8yQUEMJlZFGkuwsMzYwMcXwpjRz7Rj
-         AE5On8E41yNulWUMz1Nu1IlJLifO+oCyU4aCmUQ7kj1JTsBCkqq7vHMQrDNd1X5gUtuA
-         +D0g==
-X-Gm-Message-State: AOJu0YyYb2sjTvKnhNxTJ8u5ug88TSWdAlOgpBPTZ/0Q+IraoKlSIUSV
-	sL4qcd/hoF4sl2bkfeFZ89tcNL6ajgA=
-X-Google-Smtp-Source: AGHT+IEeiu2Ep8vaqs2OqZuOyjc6PpxtgZTxdqYicHmlfPPueKR2XPXUAWsxTkHJtJDPnv16exLt1A==
-X-Received: by 2002:a05:600c:54e3:b0:40e:55a5:85f0 with SMTP id jb3-20020a05600c54e300b0040e55a585f0mr522093wmb.87.1704904145171;
-        Wed, 10 Jan 2024 08:29:05 -0800 (PST)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id s3-20020adff803000000b00336843ae919sm5215839wrp.49.2024.01.10.08.29.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 08:29:04 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2A04CE01
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 16:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A78B51FDA5;
+	Wed, 10 Jan 2024 16:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704905835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ss0j7QLA429M6AJOC+nmztDo3YiZiOJ51iFQeGhQubo=;
+	b=c0/W7YZQ5D2z2shvrrLZil3cuYXPFa54YwiwDoLYq/QxcyHLyJDNygHO0hDLhhgFOevdcK
+	68pWvE34cdvSavnbIkSMRtZY6RaqZPZ9ttEme+HMs6PfRSQ5LciBwsllrFCsEGxz8LGHux
+	ZHqGeJZZvuIzQNTWWVIyuTFfT0Gqzdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704905835;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ss0j7QLA429M6AJOC+nmztDo3YiZiOJ51iFQeGhQubo=;
+	b=HwgEyC1Om2lSp38FF5b2dm+H8ZYbYmeZRktnUDr0vqT1oLRxXBtEF+41VSuDvGQN8TXXsn
+	vjntduAoizqzO0CA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1704905835; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ss0j7QLA429M6AJOC+nmztDo3YiZiOJ51iFQeGhQubo=;
+	b=c0/W7YZQ5D2z2shvrrLZil3cuYXPFa54YwiwDoLYq/QxcyHLyJDNygHO0hDLhhgFOevdcK
+	68pWvE34cdvSavnbIkSMRtZY6RaqZPZ9ttEme+HMs6PfRSQ5LciBwsllrFCsEGxz8LGHux
+	ZHqGeJZZvuIzQNTWWVIyuTFfT0Gqzdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1704905835;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ss0j7QLA429M6AJOC+nmztDo3YiZiOJ51iFQeGhQubo=;
+	b=HwgEyC1Om2lSp38FF5b2dm+H8ZYbYmeZRktnUDr0vqT1oLRxXBtEF+41VSuDvGQN8TXXsn
+	vjntduAoizqzO0CA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 68A27139C6;
+	Wed, 10 Jan 2024 16:57:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id EjSJGWvMnmXACgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 10 Jan 2024 16:57:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9C6BEA07EB; Wed, 10 Jan 2024 17:58:45 +0100 (CET)
+Date: Wed, 10 Jan 2024 17:58:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
 	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs updates for 6.8
-Date: Wed, 10 Jan 2024 18:29:00 +0200
-Message-Id: <20240110162900.174626-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	linux-fsdevel@vger.kernel.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC][PATCH] fsnotify: optimize the case of no access event
+ watchers
+Message-ID: <20240110165845.b7tgghzugm73pwog@quack3>
+References: <20240109194818.91465-1-amir73il@gmail.com>
+ <20240110135624.kcimvdq6hrteyfb4@quack3>
+ <CAOQ4uxhNp57J8_W_x0siaZRCqTueY033iQGsXB2JA9o9jAJCVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhNp57J8_W_x0siaZRCqTueY033iQGsXB2JA9o9jAJCVA@mail.gmail.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="c0/W7YZQ";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HwgEyC1O
+X-Spamd-Result: default: False [-2.81 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: A78B51FDA5
+X-Spam-Level: 
+X-Spam-Score: -2.81
+X-Spam-Flag: NO
 
-Hi Linus,
+On Wed 10-01-24 16:41:46, Amir Goldstein wrote:
+> On Wed, Jan 10, 2024 at 3:56 PM Jan Kara <jack@suse.cz> wrote:
+> > On Tue 09-01-24 21:48:18, Amir Goldstein wrote:
+> > > Commit e43de7f0862b ("fsnotify: optimize the case of no marks of any type")
+> > > optimized the case where there are no fsnotify watchers on any of the
+> > > filesystem's objects.
+> > >
+> > > It is quite common for a system to have a single local filesystem and
+> > > it is quite common for the system to have some inotify watches on some
+> > > config files or directories, so the optimization of no marks at all is
+> > > often not in effect.
+> >
+> > I agree.
+> >
+> > > Access event watchers are far less common, so optimizing the case of
+> > > no marks with access events could improve performance for more systems,
+> > > especially for the performance sensitive hot io path.
+> > >
+> > > Maintain a per-sb counter of objects that have marks with access
+> > > events in their mask and use that counter to optimize out the call to
+> > > fsnotify() in fsnotify access hooks.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > I'm not saying no to this but let's discuss first before hacking in some
+> > partial solution :). AFAIU what Jens sees is something similar as was
+> > reported for example here [1]. In these cases we go through
+> > fsnotify_parent() down to fsnotify() until the check:
+> >
+> >         if (!(test_mask & marks_mask))
+> >                 return 0;
+> >
+> > there. And this is all relatively cheap (pure fetches like
+> > sb->s_fsnotify_marks, mnt->mnt_fsnotify_marks, inode->i_fsnotify_marks,
+> > sb->s_fsnotify_mask, mnt->mnt_fsnotify_mask, inode->i_fsnotify_mask) except
+> > for parent handling in __fsnotify_parent(). That requires multiple atomic
+> > operations - take_dentry_name_snapshot() is lock & unlock of d_lock, dget()
+> > is cmpxchg on d_lockref, dput() is another cmpxchg on d_lockref - and this
+> > gets really expensive, even more so if multiple threads race for the same
+> > parent dentry.
+> 
+> Sorry, I forgot to link the Jens regression report [1] which included this
+> partial perf report:
+> 
+>      3.36%             [kernel.vmlinux]  [k] fsnotify
+>      2.32%             [kernel.vmlinux]  [k] __fsnotify_paren
+> 
+> Your analysis about __fsnotify_parent() may be correct, but what would be
+> the explanation to time spent in fsnotify() in this report?
 
-Please pull overlayfs updates for 6.8.
+OK, I don't have a good explanation for why fsnotify() itself is so high in
+Jens' profile. Maybe cacheline fetches caused by inode->i_fsnotify_mask and
+inode->i_fsnotify_marks checks are causing the overhead but it would be
+good to have it confirmed.
 
-This is a very small update with no bug fixes and no new features.
+> In general, I think that previous optimization work as this commit by Mel:
+> 71d734103edf ("fsnotify: Rearrange fast path to minimise overhead when
+> there is no watcher") showed improvements when checks were inlined.
 
-The larger update of overlayfs for this cycle, the re-factoring
-of overlayfs code into generic backing_file helpers, was already
-merged via a PR that I had sent Christian before the merge window.
+Well, I believe that commit helped exactly because the check for
+DCACHE_FSNOTIFY_PARENT_WATCHED was moved ahead of all the work now in
+__fsnotify_parent().
 
-This branch has been sitting in linux-next for a few weeks and
-it has gone through the usual overlayfs test routines.
+> [1] https://lore.kernel.org/linux-fsdevel/53682ece-f0e7-48de-9a1c-879ee34b0449@kernel.dk/
+> 
+> > So I think what we ideally need is a way to avoid this expensive "stabilize
+> > parent & its name" game unless we are pretty sure we are going to generate
+> > the event. There's no way to avoid fetching the parent early if
+> > dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED (we can still postpone the
+> > take_dentry_name_snapshot() cost though). However for the case where
+> > dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED == 0 (and this is the case
+> > here AFAICT) we need the parent only after the check of 'test_mask &
+> > marks_mask'. So in that case we could completely avoid the extra cost of
+> > parent dentry handling.
+> >
+> > So in principle I believe we could make fsnotify noticeably lighter for the
+> > case where no event is generated. Just the question is how to refactor the
+> > current set of functions to achieve this without creating an unmaintainable
+> > mess. I suspect if we lifted creation & some prefilling of iter_info into
+> > __fsnotify_parent() and then fill in the parent in case we need it for
+> > reporting only in fsnotify(), the code could be reasonably readable. We'd
+> > need to always propagate the dentry down to fsnotify() though, currently we
+> > often propagate only the inode because the dentry may be (still in case of
+> > create or already in case of unlink) negative. Similarly we'd somehow need
+> > to communicate down into fsnotify() whether the passed name needs
+> > snapshotting or not...
+> >
+> > What do you think?
+> 
+> I am not saying no ;)
+> but it sound a bit complicated so if the goal is to reduce the overhead
+> of fsnotify_access() and fsnotify_perm(), which I don't think any application
+> cares about, then I'd rather go with a much simpler solution even if it
+> does not cover all the corner cases.
 
-The branch merges cleanly with master branch of the moment.
+OK, let's figure out what exactly causes slowdown in Jens' case first. I
+agree your solution helps mitigate the cost of fsnotify_access() for reads
+but I forsee people complaining about fsnotify_modify() cost for writes in
+short order :) and there it is not so simple to solve as there's likely
+some watch for FS_MODIFY event somewhere.
 
-Thanks,
-Amir.
-
-----------------------------------------------------------------
-The following changes since commit 98b1cc82c4affc16f5598d4fa14b1858671b2263:
-
-  Linux 6.7-rc2 (2023-11-19 15:02:14 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.8
-
-for you to fetch changes up to d17bb4620f90f81d8a8a45c3d025c679a1b5efcd:
-
-  overlayfs.rst: fix ReST formatting (2023-12-15 12:31:36 +0200)
-
-----------------------------------------------------------------
-overlayfs updates for 6.8
-
-- Simplify/clarify some code
-
-  No bug fixes here, just some changes following questions from Al
-  about overlayfs code that could be a little more simple to follow.
-
-- Overlayfs documentation style fixes
-
-  Mainly fixes for ReST formatting suggested by documentation developers.
-
-----------------------------------------------------------------
-Amir Goldstein (4):
-      ovl: remove redundant ofs->indexdir member
-      ovl: initialize ovl_copy_up_ctx.destname inside ovl_do_copy_up()
-      overlayfs.rst: use consistent feature names
-      overlayfs.rst: fix ReST formatting
-
- Documentation/filesystems/overlayfs.rst | 104 +++++++++++++++++---------------
- fs/overlayfs/copy_up.c                  |   8 ++-
- fs/overlayfs/export.c                   |   4 +-
- fs/overlayfs/namei.c                    |   4 +-
- fs/overlayfs/ovl_entry.h                |   5 +-
- fs/overlayfs/params.c                   |   2 -
- fs/overlayfs/readdir.c                  |   2 +-
- fs/overlayfs/super.c                    |  19 +++---
- fs/overlayfs/util.c                     |   2 +-
- 9 files changed, 76 insertions(+), 74 deletions(-)
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
