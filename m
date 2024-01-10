@@ -1,184 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-7737-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7738-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0056E82A046
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:31:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A845682A04C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 19:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0A028863D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:31:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22F01C2241F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178A94B5A6;
-	Wed, 10 Jan 2024 18:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0C44D58E;
+	Wed, 10 Jan 2024 18:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ag7N1ToG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A114D5A8;
-	Wed, 10 Jan 2024 18:30:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE05C433C7;
-	Wed, 10 Jan 2024 18:30:54 +0000 (UTC)
-Date: Wed, 10 Jan 2024 13:31:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
- <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as
- default ownership
-Message-ID: <20240110133154.6e18feb9@gandalf.local.home>
-In-Reply-To: <20240110105251.48334598@gandalf.local.home>
-References: <20240103203246.115732ec@gandalf.local.home>
-	<20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
-	<20240105095954.67de63c2@gandalf.local.home>
-	<20240107-getrickst-angeeignet-049cea8cad13@brauner>
-	<20240107132912.71b109d8@rorschach.local.home>
-	<20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
-	<20240108102331.7de98cab@gandalf.local.home>
-	<20240110-murren-extra-cd1241aae470@brauner>
-	<20240110080746.50f7767d@gandalf.local.home>
-	<20240110105251.48334598@gandalf.local.home>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3824D580;
+	Wed, 10 Jan 2024 18:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dbd99c08cd6so3645139276.0;
+        Wed, 10 Jan 2024 10:32:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1704911542; x=1705516342; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzXe4VtXxb8ebiKHKdqJMgNWPOMHrzYBPoyKIRV/O5E=;
+        b=ag7N1ToGXgONA75mq9t7OxYLogZ5fYc/lWqvsYVFfag2C1GnDdgI/h98Mgm3zgzHiy
+         hS0LfadWBh6tUV9PQVQz2FPVGMvwlmE7AjHtlYt6MAJTy0JGO/yolaf5CIHGqQYWGL3n
+         CehW9s3s/CVA9E/Ea6uz+6K5VuvVB0/3dkkAV4wvm4pxf1B3KFQ0X3HDQkevcq+tXNCH
+         OIfPfJ62pyMnbXXIHdgg5xorB9tKoPVF/R3rXO7aTqpT9m2SACs02db+myiOw8H6QERY
+         FxL2JwbtMtywkK9uyX1MEcZH/qCfAaABLi2Gq8Ad2Ksh2dq4dHufnVPyrdxjQWlStL3I
+         7Qrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704911542; x=1705516342;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CzXe4VtXxb8ebiKHKdqJMgNWPOMHrzYBPoyKIRV/O5E=;
+        b=GlUsdPvw4SigQhDoBC4DLHmociSpIJc3lYt/szoaUQKKRz77J1zU9vYkpI1YtViy2F
+         5PEV0K8uBfB4Id20i7sHYx/p2EPnFtSrDpqTbF8wpcjxTa2PH5bvOYhYlKW4Ti+4eSSy
+         j9ZIjU2y+SLsYaqV5uot471Fv+6zDGNE7HzSvmVQ7l2XPiTICT48iWBdymuqDsuRrYK4
+         P4V88aKh3OC0279XzC7E8XvNlxHkGNB7v8dMWIytA+dtn2rf9nm5rmlq2FELWXmUHmXe
+         6BIThnZ5ueN4LSrCtRJ53XYxyQPL477RIhFfOPabE+Tb220QWchHv1dcArcZx14EbRSY
+         tLJA==
+X-Gm-Message-State: AOJu0YxVaH4/WvpAr/kkFWf63ZSHeMnBEqOvuPPbhY3Gx5pNzpMJj0v7
+	t5aObX0cmPbAyM//VivKVf4mJdS3+fAw6YMg7I8=
+X-Google-Smtp-Source: AGHT+IFlTeGG2WFCgrJ4INlA2dJ+Gew9iar7LHCrAPIxE69ziceCfsu+n57sAJnSC8sUOmvEAzSLKK8GHyi7VoGcqGg=
+X-Received: by 2002:a25:5f09:0:b0:dbe:a8e7:a6ea with SMTP id
+ t9-20020a255f09000000b00dbea8e7a6eamr36116ybb.22.1704911541912; Wed, 10 Jan
+ 2024 10:32:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-2-wedsonaf@gmail.com>
+ <ku6rR-zBwLrTfSf1JW07NywKOZFCPMS7nF-mrdBKGJthn7WGBn9lcAQOhoN5V6igk1iGBguGfV5G0PDWQciDQTopf3OYYGt049OJYhsiivk=@proton.me>
+In-Reply-To: <ku6rR-zBwLrTfSf1JW07NywKOZFCPMS7nF-mrdBKGJthn7WGBn9lcAQOhoN5V6igk1iGBguGfV5G0PDWQciDQTopf3OYYGt049OJYhsiivk=@proton.me>
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Date: Wed, 10 Jan 2024 15:32:11 -0300
+Message-ID: <CANeycqqJsy3rhBEVWspEqhUXgsQNj-Wcy=9axkDX9B3SLgupcA@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/19] rust: fs: add registration/unregistration of
+ file systems
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 10 Jan 2024 10:52:51 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, 18 Oct 2023 at 12:38, Benno Lossin <benno.lossin@proton.me> wrote:
+> On 18.10.23 14:25, Wedson Almeida Filho wrote:
+> > +/// A registration of a file system.
+> > +#[pin_data(PinnedDrop)]
+> > +pub struct Registration {
+> > +    #[pin]
+> > +    fs: Opaque<bindings::file_system_type>,
+> > +    #[pin]
+> > +    _pin: PhantomPinned,
+>
+> Note that since commit 0b4e3b6f6b79 ("rust: types: make `Opaque` be
+> `!Unpin`") you do not need an extra pinned `PhantomPinned` in your struct
+> (if you already have a pinned `Opaque`), since `Opaque` already is
+> `!Unpin`.
 
-> On Wed, 10 Jan 2024 08:07:46 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > Or are you saying that I don't need the ".permission" callback, because
-> > eventfs does it when it creates the inodes? But for eventfs to know what
-> > the permissions changes are, it uses .getattr and .setattr.  
-> 
-> OK, if your main argument is that we do not need .permission, I agree with
-> you. But that's a trivial change and doesn't affect the complexity that
-> eventfs is doing. In fact, removing the "permission" check is simply this
-> patch:
-> 
-> --
-> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-> index fdff53d5a1f8..f2af07a857e2 100644
-> --- a/fs/tracefs/event_inode.c
-> +++ b/fs/tracefs/event_inode.c
-> @@ -192,18 +192,10 @@ static int eventfs_get_attr(struct mnt_idmap *idmap,
->  	return 0;
->  }
->  
-> -static int eventfs_permission(struct mnt_idmap *idmap,
-> -			      struct inode *inode, int mask)
-> -{
-> -	set_top_events_ownership(inode);
-> -	return generic_permission(idmap, inode, mask);
-> -}
-> -
->  static const struct inode_operations eventfs_root_dir_inode_operations = {
->  	.lookup		= eventfs_root_lookup,
->  	.setattr	= eventfs_set_attr,
->  	.getattr	= eventfs_get_attr,
-> -	.permission	= eventfs_permission,
->  };
->  
->  static const struct inode_operations eventfs_file_inode_operations = {
-> --
-> 
-> I only did that because Linus mentioned it, and I thought it was needed.
-> I'll apply this patch too, as it appears to work with this code.
+Will remove in v2.
 
-Oh, eventfs files and directories don't need the .permissions because its
-inodes and dentries are not created until accessed. But the "events"
-directory itself has its dentry and inode created at boot up, but still
-uses the eventfs_root_dir_inode_operations. So the .permissions is still
-needed!
+> > +impl Registration {
+> > +    /// Creates the initialiser of a new file system registration.
+> > +    pub fn new<T: FileSystem + ?Sized>(module: &'static ThisModule) -> impl PinInit<Self, Error> {
+>
+> I am a bit curious why you specify `?Sized` here, is it common
+> for types that implement `FileSystem` to not be `Sized`?
+>
+> Or do you want to use `dyn FileSystem`?
 
-If you look at the "set_top_events_ownership()" function, it has:
+No reason beyond `Sized` being a restriction I don't need.
 
-	/* The top events directory doesn't get automatically updated */
-	if (!ei || !ei->is_events || !(ei->attr.mode & EVENTFS_TOPLEVEL))
-		return;
+For something I was doing early on in binder, I ended up having to
+change a bunch of generic type decls to allow !Sized, so here I'm
+doing it preemptively as I don't lose anything.
 
-That is, it does nothing if the entry is not the "events" directory. It
-falls back to he default "->permissions()" function for everything but the
-top level "events" directory.
+> > +        try_pin_init!(Self {
+> > +            _pin: PhantomPinned,
+> > +            fs <- Opaque::try_ffi_init(|fs_ptr: *mut bindings::file_system_type| {
+> > +                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write.
+> > +                unsafe { fs_ptr.write(bindings::file_system_type::default()) };
+> > +
+> > +                // SAFETY: `try_ffi_init` guarantees that `fs_ptr` is valid for write, and it has
+> > +                // just been initialised above, so it's also valid for read.
+> > +                let fs = unsafe { &mut *fs_ptr };
+> > +                fs.owner = module.0;
+> > +                fs.name = T::NAME.as_char_ptr();
+> > +                fs.init_fs_context = Some(Self::init_fs_context_callback);
+> > +                fs.kill_sb = Some(Self::kill_sb_callback);
+> > +                fs.fs_flags = 0;
+> > +
+> > +                // SAFETY: Pointers stored in `fs` are static so will live for as long as the
+> > +                // registration is active (it is undone in `drop`).
+> > +                to_result(unsafe { bindings::register_filesystem(fs_ptr) })
+> > +            }),
+> > +        })
+> > +    }
+> > +
+> > +    unsafe extern "C" fn init_fs_context_callback(
+> > +        _fc_ptr: *mut bindings::fs_context,
+> > +    ) -> core::ffi::c_int {
+> > +        from_result(|| Err(ENOTSUPP))
+> > +    }
+> > +
+> > +    unsafe extern "C" fn kill_sb_callback(_sb_ptr: *mut bindings::super_block) {}
+> > +}
+> > +
+> > +#[pinned_drop]
+> > +impl PinnedDrop for Registration {
+> > +    fn drop(self: Pin<&mut Self>) {
+> > +        // SAFETY: If an instance of `Self` has been successfully created, a call to
+> > +        // `register_filesystem` has necessarily succeeded. So it's ok to call
+> > +        // `unregister_filesystem` on the previously registered fs.
+>
+> I would simply add an invariant on `Registration` that `self.fs` is
+> registered, then you do not need such a lengthy explanation here.
 
-But this and .getattr are still needed for the events directory, because it
-suffers the same issue as the other tracefs entries. That is, it's inodes
-and dentries are created at boot up before it is mounted. So if the mount
-has gid=1000, it will be ignored.
+Since this is the only place I need this explanation, I prefer to
+leave it here because it's exactly where I need it.
 
-The .getattr is called by "stat" which ls does. So after boot up if you
-just do:
-
- # chmod 0750 /sys/kernel/events
- # chmod 0770 /sys/kernel/tracing
- # mount -o remount,gid=1000 /sys/kernel/tracing
- # su - rostedt
- $ id
-uid=1000(rostedt) gid=1000(rostedt) groups=1000(rostedt)
- $ ls /sys/kernel/tracing/events/
-9p            ext4            iomap        module      raw_syscalls  thermal
-alarmtimer    fib             iommu        msr         rcu           thp
-avc           fib6            io_uring     napi        regmap        timer
-block         filelock        ipi          neigh       regulator     tlb
-bpf_test_run  filemap         irq          net         resctrl       udp
-bpf_trace     ftrace          irq_matrix   netfs       rpm           virtio_gpu[
-...]
-
-The above works because "ls" does a stat() on the directory first, which
-does a .getattr() call that updates the permissions of the existing "events"
-directory inode.
-
-  BUT!
-
-If I had used my own getents() program that has:
-
-        fd = openat(AT_FDCWD, argv[1], O_RDONLY);
-        if (fd < 0)
-                perror("openat");
-
-        n = getdents64(fd, buf, BUF_SIZE);
-        if (n < 0)
-                perror("getdents64");
-
-Where it calls the openat() without doing a stat fist, and after boot, had done:
-
- # chmod 0750 /sys/kernel/events
- # chmod 0770 /sys/kernel/tracing
- # mount -o remount,gid=1000 /sys/kernel/tracing
- # su - rostedt
- $ id
-uid=1000(rostedt) gid=1000(rostedt) groups=1000(rostedt)
- $ ./getdents /sys/kernel/tracing/events
-openat: Permission denied
-getdents64: Bad file descriptor
-
-It errors because he "events" inode permission hasn't been updated yet.
-Now after getting the above error, if I do the "ls" and then run it again:
-
- $ ls /sys/kernel/tracing/events > /dev/null
- $ ./getdents /sys/kernel/tracing/events
-enable
-header_page
-header_event
-initcall
-vsyscall
-syscalls
-
-it works!
-
-so no, I can't remove that .permissions callback from eventfs.
-
--- Steve
+Thanks,
+-Wedson
 
