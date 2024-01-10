@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-7732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5822F829F4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:37:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FF3829F51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 18:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1631C22B53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 17:37:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3128AB212BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Jan 2024 17:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512D44D119;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C594D13B;
 	Wed, 10 Jan 2024 17:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0b4HsZ3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbtn+c6T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90644D100;
-	Wed, 10 Jan 2024 17:37:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8A368C433F1;
-	Wed, 10 Jan 2024 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C95E4D10C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 17:37:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2301BC43399;
+	Wed, 10 Jan 2024 17:37:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704908253;
-	bh=cVnvDpvdoKXwm1as49CyOv5up7khFNJ58d5ex5FD9+o=;
+	s=k20201202; t=1704908254;
+	bh=0f2CFKZYO9BrkwabzuayHheU5rEx0k1mfzh8LbuLRO8=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=U0b4HsZ3DvrrXeortqJUrT6j6U3uX6Vz/qs3nisPR457jFEoxtxDlJixuNqv7vQvb
-	 hfgHtp/CmRZfyBO+A+X71+3GgPyj+edBOf9Nb0PLuZc2Y0oGxeuKAG+zl7VkXokBfL
-	 8/oI+bYoByL+RDGwgXtJ8E2+lYJWoDtQFRmq+5HRYHxoj9xmUTekpqYsM6yASTJC3k
-	 GDMNf3vdT8eYu50ojP1RAj+WPrdcMhpFTxliZRWu2x1+WXiZDiBoyb6AlP+ZWtI8+E
-	 azgD8s9R66pS/bnl+U4L+06Ld1nURwPoOwUMYgZZB9m0nbTDxBTKaw4psIPPxuR/eh
-	 6FeLPnDoYRqEg==
+	b=qbtn+c6TyNBe7lIvsR9+H5sI0NefMRIrbCAfzlnVRfwM05BkT1jAIskjUElladkNd
+	 CQeK6uHWQyNz7rkNj+RJcIKFjhKSWzuc/LSWkFrHqkdk1iAzmf2g4VvkUc3tNfY1U3
+	 AApEXlusunYYaULCdtWEdLTrZABLERbdFFWqywkcbdvESZWm4d7fU+GpX/OQndCUjv
+	 VbGFgkc32ir+gaysxphVgISgmmDcjMsW+LI5zrx1nDrj4h+sFDemp3FCEwQn38/69g
+	 Gyb7cddtz0JqBYG3gUx/R0YEDd9r9s0kbIhRJ0XGG2ggt129XbhyPHHfhnz+Nz4qnZ
+	 wVPUj6Eho0pqQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7728BD8C96F;
-	Wed, 10 Jan 2024 17:37:33 +0000 (UTC)
-Subject: Re: [GIT PULL] xfs: new code for 6.8
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0D8BDDFC686;
+	Wed, 10 Jan 2024 17:37:34 +0000 (UTC)
+Subject: Re: [GIT PULL] fsnotify changes for 6.8-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <87jzok72py.fsf@debian-BULLSEYE-live-builder-AMD64>
-References: <87jzok72py.fsf@debian-BULLSEYE-live-builder-AMD64>
-X-PR-Tracked-List-Id: <linux-xfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87jzok72py.fsf@debian-BULLSEYE-live-builder-AMD64>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.8-merge-3
-X-PR-Tracked-Commit-Id: bcdfae6ee520b665385020fa3e47633a8af84f12
+In-Reply-To: <20240108140746.viajl65blnibbyjf@quack3>
+References: <20240108140746.viajl65blnibbyjf@quack3>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240108140746.viajl65blnibbyjf@quack3>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.8-rc1
+X-PR-Tracked-Commit-Id: 30ad1938326bf9303ca38090339d948975a626f5
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 12958e9c4c8e93ef694c10960c78453edf21526e
-Message-Id: <170490825348.14271.7652576744197748214.pr-tracker-bot@kernel.org>
-Date: Wed, 10 Jan 2024 17:37:33 +0000
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: torvalds@linux-foundation.org, bagasdotme@gmail.com, bodonnel@redhat.com, chandanbabu@kernel.org, cmaiolino@redhat.com, dan.j.williams@intel.com, david@fromorbit.com, dchinner@redhat.com, djwong@kernel.org, glider@google.com, hch@lst.de, leo.lilong@huawei.com, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, oliver.sang@intel.com, ruansy.fnst@fujitsu.com, sandeen@redhat.com, wangjinchao@xfusion.com, zhangjiachen.jaycee@bytedance.com, zhangtianci.1997@bytedance.com
+X-PR-Merge-Commit-Id: 32720aca900b226653c843bb4e06b8125312f214
+Message-Id: <170490825405.14271.14877535471258650251.pr-tracker-bot@kernel.org>
+Date: Wed, 10 Jan 2024 17:37:34 +0000
+To: Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 08 Jan 2024 11:35:39 +0530:
+The pull request you sent on Mon, 8 Jan 2024 15:07:46 +0100:
 
-> https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.8-merge-3
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.8-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/12958e9c4c8e93ef694c10960c78453edf21526e
+https://git.kernel.org/torvalds/c/32720aca900b226653c843bb4e06b8125312f214
 
 Thank you!
 
