@@ -1,204 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-7813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1C482B5B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 21:06:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BE982B5BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 21:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 441DEB24868
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 20:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396981C247DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 20:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C529456777;
-	Thu, 11 Jan 2024 20:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C656B65;
+	Thu, 11 Jan 2024 20:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QBLhwdLL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE19056767
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 20:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bb0af58117so731473339f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 12:06:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1339A56777
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 20:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e55c885d7so25967865e9.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 12:14:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1705004067; x=1705608867; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MyTiefZUsYAN2QjaStpgms/QKgfX1VBSwRtQTNj32xo=;
+        b=QBLhwdLLsFp2CThRaiCUkkxTMIj5eyyOA1inQ33gthsF+lIJkBJOqjj9MSTyz3iTEi
+         KdveziwMyPcjwe93xrfyD7eE18a0etCPXoc8Y0ups7SIJuq0BFLzZ01037llQDPqCK1G
+         /pBeCn40eRG6Iu1L7MuFR1q4sVcGtVqrKTuTQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705003588; x=1705608388;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=znm2gwyWocE0SyT1+yWxpHNmQurOYh5H30hbOrF7BmA=;
-        b=vtJdHKnuo2sedUw9f+jAPtdVHdWpPQVGppYS0ovDIxtHCLhcpmonaQqRMWc4ov+JEd
-         NCqSt+qWOmS8tePyM2r3/D6N0O7ISuW6RwTVORf4cH7UgpMOE4MnbPOKQ4nLimxhpYQE
-         xoWIxbK8Sdbe5tHOq3eES7NqZlp0NQWlyjsw3k/gS2S+5vAMMEDZIuGM5AzIKAYFJbbE
-         9EZvBaA6/umXEtk/ydW+5mlg9CUVfwuM9DCXG5wazKRdprgH3WXUz+pVpEvMx6GH0aT8
-         rHA+H/6PahyoTuMo4eB6AYs3Uog0esNIVDuOQHy/PTw0sKG2qB3EO4OtZhoOD5frPeuF
-         gZHw==
-X-Gm-Message-State: AOJu0YyToD+umVXpqEhl355PdisldK5L08yMfCv+RD5CKFUSPNN0/rjR
-	Ci7dlk2vDcIcw6N84glpq6eISv5OhGb3l70hHp+z+gdB1Lfj
-X-Google-Smtp-Source: AGHT+IHzE9vzoBADqva8JxjZp7itZuusRaJWFoFt7QqVkfmX39escRu2Y0MTvIxglW4mhRCelpDAp934jjToIAFkZADK60/BbCcY
+        d=1e100.net; s=20230601; t=1705004067; x=1705608867;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MyTiefZUsYAN2QjaStpgms/QKgfX1VBSwRtQTNj32xo=;
+        b=XGCS04Of+PrL/7+enyLfWtzoG0MiOIjwEFEdZyIsq7rMRXvsasQZHEtYaW7wlvMKlr
+         n87jf6T4EPAruuXe0UvMftRveQF0X2GpnG5+4JyCp5x11AYslcM7BGs8wBaCpH+eWjaC
+         mjY+yzQ1Lo9eWzU0li76FWrOcKXHZN0L4jmLTDWhOXz2ax9fxJ4LdUBxGKT+rpX41W8i
+         AaVajCf3v0WIXkImntzb6SNSxD7MQhW6VUERQ4tHNjnqdtvUTFu9nVSJW4e7JiRpKNd6
+         p/afwN2O7E1mdEKkqmKv+Sr7trwgdSd9r7/qNJ7EjXtWpJgUmUzD3vuQc3kN+rLcmiO0
+         Vr8Q==
+X-Gm-Message-State: AOJu0YzYUEuhbehSUcqWRlkIrTfpvPBrY3+fdfgpi2Vq64SRvTo5f3pk
+	wEnvy5Hm18JwFbZ/j22VkvS3lD9SODdPtoMe/DjvoDCgoKN4rJNJ
+X-Google-Smtp-Source: AGHT+IFJsD34496xx69QASaeDt4II4Hnzrnmj3rPR/x3JlBxrL1DUkdjRTD4YZCJNnn6w7Olhn3xHw==
+X-Received: by 2002:a7b:c001:0:b0:40d:5f48:d1ed with SMTP id c1-20020a7bc001000000b0040d5f48d1edmr195345wmb.66.1705004067046;
+        Thu, 11 Jan 2024 12:14:27 -0800 (PST)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
+        by smtp.gmail.com with ESMTPSA id v1-20020a17090606c100b00a2a04754eb1sm949597ejb.8.2024.01.11.12.14.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jan 2024 12:14:25 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e63bc90f2so1171895e9.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 12:14:25 -0800 (PST)
+X-Received: by 2002:a7b:c4cb:0:b0:40d:87b7:24c7 with SMTP id
+ g11-20020a7bc4cb000000b0040d87b724c7mr206716wmk.125.1705004065149; Thu, 11
+ Jan 2024 12:14:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3782:b0:46e:50ab:6a35 with SMTP id
- w2-20020a056638378200b0046e50ab6a35mr8933jal.3.1705003588212; Thu, 11 Jan
- 2024 12:06:28 -0800 (PST)
-Date: Thu, 11 Jan 2024 12:06:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000375f00060eb11585@google.com>
-Subject: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_set_link
-From: syzbot <syzbot+4936b06b07f365af31cc@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20231025140205.3586473-1-mszeredi@redhat.com> <20231025140205.3586473-6-mszeredi@redhat.com>
+ <75b87a85-7d2c-4078-91e3-024ea36cfb42@roeck-us.net> <CAHk-=wjdW-4s6Kpa4izJ2D=yPdCje6Ta=eQxxQG6e2SkP42vnw@mail.gmail.com>
+ <2f595f28-7fcd-4196-a0b1-6598781530b9@roeck-us.net>
+In-Reply-To: <2f595f28-7fcd-4196-a0b1-6598781530b9@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 11 Jan 2024 12:14:07 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjh6Cypo8WC-McXgSzCaou3UXccxB+7PVeSuGR8AjCphg@mail.gmail.com>
+Message-ID: <CAHk-=wjh6Cypo8WC-McXgSzCaou3UXccxB+7PVeSuGR8AjCphg@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
+To: Guenter Roeck <linux@roeck-us.net>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-man@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: multipart/mixed; boundary="000000000000a535af060eb13163"
+
+--000000000000a535af060eb13163
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Thu, 11 Jan 2024 at 10:57, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> Any variance of put_user() with &buf[ctr] or buf + ctr fails
+> if ctr is a variable and permitted to be != 0.
 
-syzbot found the following issue on:
+Crazy. But the 64-bit put_user() is a bit special and tends to require
+more registers (the 64-bit value is passed in two registers), so that
+probably then results in the ICE.
 
-HEAD commit:    52b1853b080a Merge tag 'i2c-for-6.7-final' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10027331e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=4936b06b07f365af31cc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d62025e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c38055e80000
+Side note: looking at the SH version of __put_user_u64(), I think it's
+buggy and is missing the exception handler for the second 32-bit move.
+I dunno, I don't read sh asm, but it looks suspicious.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bf8c17cb6cda/disk-52b1853b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7aa7b6d00e92/vmlinux-52b1853b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dbc54614504d/bzImage-52b1853b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/25a961b83aac/mount_0.gz
+> The following works. Would this be acceptable ?
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+It might be very easy to trigger this once again if somebody goes "that's silly"
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172c038de80000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14ac038de80000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ac038de80000
+That said, I also absolutely detest the "error handling" in that
+function. It's horrible.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4936b06b07f365af31cc@syzkaller.appspotmail.com
+Noticing the user access error in the middle is just sad, and if that
+was just handled better and at least the range was checked first, the
+overflow error couldn't happen and checking for it is thus pointless.
 
-loop0: detected capacity change from 0 to 4096
-==================================================================
-BUG: KASAN: out-of-bounds in nilfs_set_link+0x24d/0x2e0 fs/nilfs2/dir.c:421
-Read of size 2 at addr ffff888078f08008 by task syz-executor397/5051
+And looking at it all, it really looks like the whole interface is
+broken. The "bufsize" argument isn't the size of the buffer at all.
+It's the number of entries.
 
-CPU: 1 PID: 5051 Comm: syz-executor397 Not tainted 6.7.0-rc8-syzkaller-00177-g52b1853b080a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:364 [inline]
- print_report+0x163/0x540 mm/kasan/report.c:475
- kasan_report+0x142/0x170 mm/kasan/report.c:588
- nilfs_set_link+0x24d/0x2e0 fs/nilfs2/dir.c:421
- nilfs_rename+0x5d8/0x6b0 fs/nilfs2/namei.c:414
- vfs_rename+0xaba/0xde0 fs/namei.c:4844
- do_renameat2+0xd5a/0x1390 fs/namei.c:4996
- __do_sys_rename fs/namei.c:5042 [inline]
- __se_sys_rename fs/namei.c:5040 [inline]
- __x64_sys_rename+0x86/0x90 fs/namei.c:5040
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7fb7b8290669
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffd4bb0238 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fb7b8290669
-RDX: 00007fb7b8290669 RSI: 0000000020000040 RDI: 0000000020000180
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000f69 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 431bde82d7b634db R15: 00007fffd4bb02a0
- </TASK>
+Extra confusingly, in the *other* system call, bufsize is in fact the
+size of the buffer.
 
-The buggy address belongs to the physical page:
-page:ffffea0001e3c200 refcount:1 mapcount:1 mapping:0000000000000000 index:0x55b79e908 pfn:0x78f08
-memcg:ffff888141652000
-anon flags: 0xfff000000a0028(uptodate|lru|mappedtodisk|swapbacked|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0x0()
-raw: 00fff000000a0028 ffffea0001391e88 ffffea00013f1b48 ffff888029cbb001
-raw: 000000055b79e908 0000000000000000 0000000100000000 ffff888141652000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 5052, tgid 5052 (udevd), ts 58139256944, free_ts 52307690585
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1544 [inline]
- get_page_from_freelist+0x33ea/0x3570 mm/page_alloc.c:3312
- __alloc_pages+0x255/0x680 mm/page_alloc.c:4568
- alloc_pages_mpol+0x3de/0x640 mm/mempolicy.c:2133
- vma_alloc_folio+0xf3/0x3f0 mm/mempolicy.c:2172
- wp_page_copy mm/memory.c:3120 [inline]
- do_wp_page+0x125e/0x4d40 mm/memory.c:3511
- handle_pte_fault mm/memory.c:5055 [inline]
- __handle_mm_fault mm/memory.c:5180 [inline]
- handle_mm_fault+0x1b1c/0x6680 mm/memory.c:5345
- do_user_addr_fault arch/x86/mm/fault.c:1364 [inline]
- handle_page_fault arch/x86/mm/fault.c:1507 [inline]
- exc_page_fault+0x456/0x870 arch/x86/mm/fault.c:1563
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1137 [inline]
- free_unref_page_prepare+0x931/0xa60 mm/page_alloc.c:2347
- free_unref_page_list+0x5a0/0x840 mm/page_alloc.c:2533
- release_pages+0x2117/0x2400 mm/swap.c:1042
- tlb_batch_pages_flush mm/mmu_gather.c:98 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:293 [inline]
- tlb_flush_mmu+0x34c/0x4e0 mm/mmu_gather.c:300
- tlb_finish_mmu+0xd4/0x1f0 mm/mmu_gather.c:392
- exit_mmap+0x4d3/0xc60 mm/mmap.c:3324
- __mmput+0x115/0x3c0 kernel/fork.c:1349
- exit_mm+0x21f/0x300 kernel/exit.c:567
- do_exit+0x9af/0x2740 kernel/exit.c:856
- do_group_exit+0x206/0x2c0 kernel/exit.c:1018
- __do_sys_exit_group kernel/exit.c:1029 [inline]
- __se_sys_exit_group kernel/exit.c:1027 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1027
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x45/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+And the 'ctr' overflow checking is doubly garbage, because the only
+reason *that* can happen is that we didn't check the incoming
+arguments properly.
 
-Memory state around the buggy address:
- ffff888078f07f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888078f07f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888078f08000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                         ^
- ffff888078f08080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888078f08100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+Same goes for the whole array_index_nospec() - it's pointless, because
+the user controls what that code checks against anyway, so there's no
+point to trying to manage some range checking.
 
+The only range checking there that matters would be the one that
+put_user() has to do against the address space size, but that's done
+by put_user().
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+End result: that thing needs a rewrite.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The SH put_user64() needs to be looked at too, but in the meantime,
+maybe something like this fixes the problems with listmount?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+NOTE! ENTIRELY untested, but that naming and lack of argument sanity
+checking really is horrendous. We should have caught this earlier.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+                   Linus
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+--000000000000a535af060eb13163
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lr9ndngy0>
+X-Attachment-Id: f_lr9ndngy0
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+IGZzL25hbWVzcGFjZS5jIHwgMzEgKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLQogMSBm
+aWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdp
+dCBhL2ZzL25hbWVzcGFjZS5jIGIvZnMvbmFtZXNwYWNlLmMKaW5kZXggZWYxZmQ2ODI5ODE0Li5k
+Zjc0ZjQ3Njk3MzMgMTAwNjQ0Ci0tLSBhL2ZzL25hbWVzcGFjZS5jCisrKyBiL2ZzL25hbWVzcGFj
+ZS5jCkBAIC01MDQzLDEyICs1MDQzLDE3IEBAIHN0YXRpYyBzdHJ1Y3QgbW91bnQgKmxpc3RtbnRf
+bmV4dChzdHJ1Y3QgbW91bnQgKmN1cnIpCiB9CiAKIHN0YXRpYyBzc2l6ZV90IGRvX2xpc3Rtb3Vu
+dChzdHJ1Y3QgbW91bnQgKmZpcnN0LCBzdHJ1Y3QgcGF0aCAqb3JpZywgdTY0IG1udF9pZCwKLQkJ
+CSAgICB1NjQgX191c2VyICpidWYsIHNpemVfdCBidWZzaXplLAorCQkJICAgIHU2NCBfX3VzZXIg
+KmJ1Ziwgc2l6ZV90IG5lbnRyaWVzLAogCQkJICAgIGNvbnN0IHN0cnVjdCBwYXRoICpyb290KQog
+ewogCXN0cnVjdCBtb3VudCAqcjsKLQlzc2l6ZV90IGN0cjsKLQlpbnQgZXJyOworCWNvbnN0IHNp
+emVfdCBtYXhlbnRyaWVzID0gKHNpemVfdCktMSA+PiAzOworCXNzaXplX3QgcmV0OworCisJaWYg
+KHVubGlrZWx5KG5lbnRyaWVzID4gbWF4ZW50cmllcykpCisJCXJldHVybiAtRUZBVUxUOworCWlm
+ICghYWNjZXNzX29rKGJ1ZiwgbmVudHJpZXMgKiBzaXplb2YoKmJ1ZikpKQorCQlyZXR1cm4gLUVG
+QVVMVDsKIAogCS8qCiAJICogRG9uJ3QgdHJpZ2dlciBhdWRpdCBkZW5pYWxzLiBXZSBqdXN0IHdh
+bnQgdG8gZGV0ZXJtaW5lIHdoYXQKQEAgLTUwNTgsMjYgKzUwNjMsMjQgQEAgc3RhdGljIHNzaXpl
+X3QgZG9fbGlzdG1vdW50KHN0cnVjdCBtb3VudCAqZmlyc3QsIHN0cnVjdCBwYXRoICpvcmlnLCB1
+NjQgbW50X2lkLAogCSAgICAhbnNfY2FwYWJsZV9ub2F1ZGl0KCZpbml0X3VzZXJfbnMsIENBUF9T
+WVNfQURNSU4pKQogCQlyZXR1cm4gLUVQRVJNOwogCi0JZXJyID0gc2VjdXJpdHlfc2Jfc3RhdGZz
+KG9yaWctPmRlbnRyeSk7Ci0JaWYgKGVycikKLQkJcmV0dXJuIGVycjsKKwlyZXQgPSBzZWN1cml0
+eV9zYl9zdGF0ZnMob3JpZy0+ZGVudHJ5KTsKKwlpZiAocmV0KQorCQlyZXR1cm4gcmV0OwogCi0J
+Zm9yIChjdHIgPSAwLCByID0gZmlyc3Q7IHIgJiYgY3RyIDwgYnVmc2l6ZTsgciA9IGxpc3RtbnRf
+bmV4dChyKSkgeworCWZvciAocmV0ID0gMCwgciA9IGZpcnN0OyByICYmIG5lbnRyaWVzOyByID0g
+bGlzdG1udF9uZXh0KHIpKSB7CiAJCWlmIChyLT5tbnRfaWRfdW5pcXVlID09IG1udF9pZCkKIAkJ
+CWNvbnRpbnVlOwogCQlpZiAoIWlzX3BhdGhfcmVhY2hhYmxlKHIsIHItPm1udC5tbnRfcm9vdCwg
+b3JpZykpCiAJCQljb250aW51ZTsKLQkJY3RyID0gYXJyYXlfaW5kZXhfbm9zcGVjKGN0ciwgYnVm
+c2l6ZSk7Ci0JCWlmIChwdXRfdXNlcihyLT5tbnRfaWRfdW5pcXVlLCBidWYgKyBjdHIpKQorCQlp
+ZiAocHV0X3VzZXIoci0+bW50X2lkX3VuaXF1ZSwgYnVmKSkKIAkJCXJldHVybiAtRUZBVUxUOwot
+CQlpZiAoY2hlY2tfYWRkX292ZXJmbG93KGN0ciwgMSwgJmN0cikpCi0JCQlyZXR1cm4gLUVSQU5H
+RTsKKwkJYnVmKyssIHJldCsrOyBuZW50cmllcy0tOwogCX0KLQlyZXR1cm4gY3RyOworCXJldHVy
+biByZXQ7CiB9CiAKIFNZU0NBTExfREVGSU5FNChsaXN0bW91bnQsIGNvbnN0IHN0cnVjdCBtbnRf
+aWRfcmVxIF9fdXNlciAqLCByZXEsCi0JCXU2NCBfX3VzZXIgKiwgYnVmLCBzaXplX3QsIGJ1ZnNp
+emUsIHVuc2lnbmVkIGludCwgZmxhZ3MpCisJCXU2NCBfX3VzZXIgKiwgYnVmLCBzaXplX3QsIG5l
+bnRyaWVzLCB1bnNpZ25lZCBpbnQsIGZsYWdzKQogewogCXN0cnVjdCBtbnRfbmFtZXNwYWNlICpu
+cyA9IGN1cnJlbnQtPm5zcHJveHktPm1udF9uczsKIAlzdHJ1Y3QgbW50X2lkX3JlcSBrcmVxOwpA
+QCAtNTExMSw3ICs1MTE0LDcgQEAgU1lTQ0FMTF9ERUZJTkU0KGxpc3Rtb3VudCwgY29uc3Qgc3Ry
+dWN0IG1udF9pZF9yZXEgX191c2VyICosIHJlcSwKIAllbHNlCiAJCWZpcnN0ID0gbW50X2ZpbmRf
+aWRfYXQobnMsIGxhc3RfbW50X2lkICsgMSk7CiAKLQlyZXQgPSBkb19saXN0bW91bnQoZmlyc3Qs
+ICZvcmlnLCBtbnRfaWQsIGJ1ZiwgYnVmc2l6ZSwgJnJvb3QpOworCXJldCA9IGRvX2xpc3Rtb3Vu
+dChmaXJzdCwgJm9yaWcsIG1udF9pZCwgYnVmLCBuZW50cmllcywgJnJvb3QpOwogZXJyOgogCXBh
+dGhfcHV0KCZyb290KTsKIAl1cF9yZWFkKCZuYW1lc3BhY2Vfc2VtKTsK
+--000000000000a535af060eb13163--
 
