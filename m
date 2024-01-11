@@ -1,86 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-7792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C05F82AF95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 14:23:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82A582AFA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 14:27:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F50B26501
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 13:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 653B11F24134
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 13:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BCF18022;
-	Thu, 11 Jan 2024 13:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A375171DB;
+	Thu, 11 Jan 2024 13:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lplxwR3L"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mEvfMIL8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6981774C;
-	Thu, 11 Jan 2024 13:19:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03DAC433C7;
-	Thu, 11 Jan 2024 13:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704979197;
-	bh=Py9GZW6bz3Ftsp/kWmIWKLoUxUT/lIEhBD9mMIzmipM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A9C171BB;
+	Thu, 11 Jan 2024 13:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4T9lp50cJjzMqlwl;
+	Thu, 11 Jan 2024 13:27:25 +0000 (UTC)
+Received: from unknown by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4T9lp40hDzzMpnPr;
+	Thu, 11 Jan 2024 14:27:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+	s=20191114; t=1704979644;
+	bh=NcqqHqbHcG+SCp8ggpuwIKesgMZhBMGU2oOkDWhEbbM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lplxwR3L2EEdttM8HHLNSmBUrM7UmVYJ8JMB3tYBFb2pbmHM+jW/hnjg8kB0Uimnq
-	 z4k2rT+zgutaqfuShuj66anIZ74QRnXXjuvSE1kIXvTojHtgHgZjIqFJNFNN2ObjUH
-	 xG0uQ5jME6E9bZVTZHxP/qbyRh+mZhHm+7Yg1Dizpfd9hWpzu53d26RDNk5RA1z5CD
-	 kOzA4xNomfp6jMctsw8PVNWKlbVjl2LUP4P1nt8ypgHtsktI7/lHq0D1zKjvn+R0WL
-	 YeqK+ANinUKtrg9Px7dl9QTuIfDrCFuQ3XRa2Q9gmO1vmEGwgJyqqvRdT/2dA1jcm4
-	 gjdkPqmdct2bQ==
-Date: Thu, 11 Jan 2024 13:19:50 +0000
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Edward Adam Davis <eadavis@qq.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Markus Suvanto <markus.suvanto@gmail.com>,
-	Jeffrey E Altman <jaltman@auristor.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Wang Lei <wang840925@gmail.com>, Jeff Layton <jlayton@redhat.com>,
-	Steve French <smfrench@gmail.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org, keyrings@vger.kernel.org,
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys, dns: Fix size check of V1 server-list header
-Message-ID: <20240111131950.GB45291@kernel.org>
-References: <1850031.1704921100@warthog.procyon.org.uk>
+	b=mEvfMIL8w/91vuf2+ilbVcjIHYmM1diMZINM0JzdDDczWXcvNNoaBmlCHuEJQnw3L
+	 BF4gtyQax3ytNPKu7AV8CoDCavZzV54n9xTZq2APhQB677qFd/Jar7UulQVKRDVU0Y
+	 Ili5KwP5JpLXiJb25B6Fasjvym0M9aOWUuRxGLpk=
+Date: Thu, 11 Jan 2024 14:27:22 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Hu Yadi <hu.yadi@h3c.com>
+Cc: jmorris@namei.org, serge@hallyn.com, shuah@kernel.org, 
+	mathieu.desnoyers@efficios.com, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, 514118380@qq.com, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v4] selftests/move_mount_set_group:Make tests build with
+ old libc
+Message-ID: <20240111.mee0ohZie5he@digikod.net>
+References: <20240111113229.10820-1-hu.yadi@h3c.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1850031.1704921100@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240111113229.10820-1-hu.yadi@h3c.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jan 10, 2024 at 09:11:40PM +0000, David Howells wrote:
->     
-> Fix the size check added to dns_resolver_preparse() for the V1 server-list
-> header so that it doesn't give EINVAL if the size supplied is the same as
-> the size of the header struct (which should be valid).
+On Thu, Jan 11, 2024 at 07:32:29PM +0800, Hu Yadi wrote:
+> From: "Hu.Yadi" <hu.yadi@h3c.com>
 > 
-> This can be tested with:
+> Replace SYS_<syscall> with __NR_<syscall>.  Using the __NR_<syscall>
+> notation, provided by UAPI, is useful to build tests on systems without
+> the SYS_<syscall> definitions.
 > 
->         echo -n -e '\0\0\01\xff\0\0' | keyctl padd dns_resolver desc @p
+> Replace SYS_move_mount with __NR_move_mount
 > 
-> which will give "add_key: Invalid argument" without this fix.
+> Similar changes: commit 87129ef13603 ("selftests/landlock: Make tests build with old libc")
 > 
-> Fixes: 1997b3cb4217 ("keys, dns: Fix missing size check of V1 server-list header")
-> Reported-by: Pengfei Xu <pengfei.xu@intel.com>
-> Link: https://lore.kernel.org/r/ZZ4fyY4r3rqgZL+4@xpf.sh.intel.com/
-> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: Mickaël Salaün <mic@digikod.net>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Sorry, it should have been Reviewed-by: Mickaël Salaün <mic@digikod.net>
 
+Also, this is maintained by the VFS maintainers. I CCed three relevant addresses.
+
+> Signed-off-by: Hu.Yadi <hu.yadi@h3c.com>
+> Suggested-by: Jiao <jiaoxupo@h3c.com>
+> Reviewed-by: Berlin <berlin@h3c.com>
+> ---
+> Changes v4 -> v3:
+>  - Adjust comments for consistent
+>  - Add Acked-by
+> Changes v2 -> v3:
+>  - Adjust comments
+> Changes v1 -> v2:
+>  - Fix mail of Suggested-by and Reviewed-by
+> 
+>  .../move_mount_set_group/move_mount_set_group_test.c          | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+> index 50ed5d475dd1..bcf51d785a37 100644
+> --- a/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+> +++ b/tools/testing/selftests/move_mount_set_group/move_mount_set_group_test.c
+> @@ -218,7 +218,7 @@ static bool move_mount_set_group_supported(void)
+>  	if (mount(NULL, SET_GROUP_FROM, NULL, MS_SHARED, 0))
+>  		return -1;
+>  
+> -	ret = syscall(SYS_move_mount, AT_FDCWD, SET_GROUP_FROM,
+> +	ret = syscall(__NR_move_mount, AT_FDCWD, SET_GROUP_FROM,
+>  		      AT_FDCWD, SET_GROUP_TO, MOVE_MOUNT_SET_GROUP);
+>  	umount2("/tmp", MNT_DETACH);
+>  
+> @@ -363,7 +363,7 @@ TEST_F(move_mount_set_group, complex_sharing_copying)
+>  		       CLONE_VM | CLONE_FILES); ASSERT_GT(pid, 0);
+>  	ASSERT_EQ(wait_for_pid(pid), 0);
+>  
+> -	ASSERT_EQ(syscall(SYS_move_mount, ca_from.mntfd, "",
+> +	ASSERT_EQ(syscall(__NR_move_mount, ca_from.mntfd, "",
+>  			  ca_to.mntfd, "", MOVE_MOUNT_SET_GROUP
+>  			  | MOVE_MOUNT_F_EMPTY_PATH | MOVE_MOUNT_T_EMPTY_PATH),
+>  		  0);
+> -- 
+> 2.23.0
+> 
+> 
 
