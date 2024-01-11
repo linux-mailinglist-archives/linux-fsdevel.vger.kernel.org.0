@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-7785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E29C82ABBD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 11:16:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D2A82ABC5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 11:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35761F21D40
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 10:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C691C23A9F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 10:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F227B14283;
-	Thu, 11 Jan 2024 10:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561F912E67;
+	Thu, 11 Jan 2024 10:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pO5cxANf"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TcqZHhxj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFE114267
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 10:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFB7125DA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 10:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
 	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=gI7bJxgh/he6YNaO7FlM05wn9SHwZsQeLa6sYvlBEVc=; b=pO5cxANfUMK7I7cP80Wk6sZ6eP
-	6mZfriknvCXEMtLvgjDjplgZW6wJS3dzLxdcgYEN32Bt/n4EQq63Zg3wYUsInzExmGlyxXlUCh2pG
-	N7Cw8n4zPF3xDk1rGmVL9yf8TbXYG2TpkbK/tq97uuhKXzJhombll9l1t+Bn+6mi3zE75OrFj0kdz
-	ytfWZToOQEBPkOgvuD/YH1YZNQhPzI1C+oR0imryYWEhwO7XKIGlQ0wJkWvI4MGkiZzTSOGugGGN1
-	K+b+fkA6KWP4Vps5rA4QPp7VhV+AiWCJHUSOmDQJb2TqAHz7U9Vu7aLmef4w+HVn7eZN2bwLWddyM
-	nC4kq8pg==;
+	bh=RvA3hJ1Q60vBxi593EG/eSYgOlDKvT1i8FSS//qLtV4=; b=TcqZHhxjvHs3BRqKyK38gtFjnG
+	i1+ZkSB8cFQtJVGdJPSncKp2qseluQDVLPT2RGmSnAjpCQHAbIHw+TtqerjIjPzSa2JdfKK90QGlI
+	3jans7UStm8YPDppajPzCu5E6qneWcRuYDHkFk/D2I9fxbQqZ2IxXFkLmbuKNM9d5JYVwgFH97FCi
+	TzyemWy1y04WjxVD+goY+NV62Th6eCdnXmr0VzV7GoT2cMHFpCUvHKvQwJ0MV0WlBA16f5wJKL2eW
+	338mK50lo5/JGjSqsWgGLHoTF7dFtOwVh1xj5yY987oo+fE2Zgef5gOUlYSbWYTo9cWNPW1O6S2en
+	mYhsqjdw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rNs70-00CA1u-2U;
-	Thu, 11 Jan 2024 10:16:35 +0000
-Date: Thu, 11 Jan 2024 10:16:34 +0000
+	id 1rNs7k-00CA6N-1c;
+	Thu, 11 Jan 2024 10:17:20 +0000
+Date: Thu, 11 Jan 2024 10:17:20 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git minixfs series
-Message-ID: <20240111101634.GV1674809@ZenIV>
+Subject: [git pull] rename fixes
+Message-ID: <20240111101720.GW1674809@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,31 +51,66 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+The following changes since commit 4a0b33f771db2b82fdfad08b9f34def786162865:
 
-  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+  selinux: saner handling of policy reloads (2023-11-16 12:45:33 -0500)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-minix
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-rename
 
-for you to fetch changes up to 41e9a7faff514fcb2d4396b0ffde30386a153c7f:
+for you to fetch changes up to a8b0026847b8c43445c921ad2c85521c92eb175f:
 
-  minixfs: switch to kmap_local_page() (2023-12-18 21:07:29 -0500)
+  rename(): avoid a deadlock in the case of parents having no common ancestor (2023-11-25 02:54:14 -0500)
+
+Two trivial conflicts - in Documentation/filesystems/porting.rst and in
+fs/overlayfs/copy_up.c.  The former is "append vs. append", the latter -
+dput(temp) added by overlayfs tree inside an if () with condition slightly
+massaged in this branch.
 
 ----------------------------------------------------------------
-minixfs kmap_local_page() switchover and related fixes - very similar to sysv series.
+fix directory locking scheme on rename
+
+broken in 6.5; we really can't lock two unrelated directories
+without holding ->s_vfs_rename_mutex first and in case of
+same-parent rename of a subdirectory 6.5 ends up doing just
+that.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 ----------------------------------------------------------------
-Al Viro (4):
-      minixfs: use offset_in_page()
-      minixfs: change the signature of dir_get_page()
-      minixfs: Use dir_put_page() in minix_unlink() and minix_rename()
-      minixfs: switch to kmap_local_page()
+Al Viro (5):
+      udf_rename(): only access the child content on cross-directory rename
+      ext4: don't access the source subdirectory content on same-directory rename
+      rename(): fix the locking of subdirectories
+      kill lock_two_inodes()
+      rename(): avoid a deadlock in the case of parents having no common ancestor
 
- fs/minix/dir.c   | 83 +++++++++++++++++++++++---------------------------------
- fs/minix/namei.c | 12 +++-----
- 2 files changed, 38 insertions(+), 57 deletions(-)
+Jan Kara (4):
+      reiserfs: Avoid touching renamed directory if parent does not change
+      ocfs2: Avoid touching renamed directory if parent does not change
+      ext2: Avoid reading renamed directory if parent does not change
+      f2fs: Avoid reading renamed directory if parent does not change
+
+ Documentation/filesystems/directory-locking.rst | 349 +++++++++++++++++-------
+ Documentation/filesystems/locking.rst           |   5 +-
+ Documentation/filesystems/porting.rst           |  27 ++
+ fs/cachefiles/namei.c                           |   2 +
+ fs/ecryptfs/inode.c                             |   2 +
+ fs/ext2/namei.c                                 |  11 +-
+ fs/ext4/namei.c                                 |  21 +-
+ fs/f2fs/namei.c                                 |  15 +-
+ fs/inode.c                                      |  49 +---
+ fs/internal.h                                   |   2 -
+ fs/namei.c                                      |  87 ++++--
+ fs/nfsd/vfs.c                                   |   4 +
+ fs/ocfs2/namei.c                                |   8 +-
+ fs/overlayfs/copy_up.c                          |   9 +-
+ fs/overlayfs/dir.c                              |   4 +
+ fs/overlayfs/super.c                            |   6 +-
+ fs/overlayfs/util.c                             |   7 +-
+ fs/reiserfs/namei.c                             |  54 ++--
+ fs/smb/server/vfs.c                             |   5 +
+ fs/udf/namei.c                                  |   7 +-
+ 20 files changed, 442 insertions(+), 232 deletions(-)
 
