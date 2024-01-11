@@ -1,29 +1,29 @@
-Return-Path: <linux-fsdevel+bounces-7795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4370182B0BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 15:39:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E46C482B0BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 15:39:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5F6B1F24E2A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 14:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A931F244EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 14:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE3C4C3C8;
-	Thu, 11 Jan 2024 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CA94CDFD;
+	Thu, 11 Jan 2024 14:38:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62148CED;
-	Thu, 11 Jan 2024 14:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5D64C3C4;
+	Thu, 11 Jan 2024 14:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
 Received: from r.smirnovsmtp.omp.ru (10.189.215.22) by msexch01.omp.ru
  (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 11 Jan
- 2024 17:38:36 +0300
+ 2024 17:38:39 +0300
 From: Roman Smirnov <r.smirnov@omp.ru>
 To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC: Roman Smirnov <r.smirnov@omp.ru>, "Matthew Wilcox (Oracle)"
@@ -31,11 +31,10 @@ CC: Roman Smirnov <r.smirnov@omp.ru>, "Matthew Wilcox (Oracle)"
  Khoroshilov <khoroshilov@ispras.ru>, Sergey Shtylyov <s.shtylyov@omp.ru>,
 	Karina Yankevich <k.yankevich@omp.ru>, <lvc-project@linuxtesting.org>,
 	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, John Hubbard <jhubbard@nvidia.com>, Christoph Hellwig
-	<hch@lst.de>
-Subject: [PATCH 5.10 1/2] mm/truncate: Inline invalidate_complete_page() into its one caller
-Date: Thu, 11 Jan 2024 14:37:46 +0000
-Message-ID: <20240111143747.4418-2-r.smirnov@omp.ru>
+	<linux-mm@kvack.org>, Miaohe Lin <linmiaohe@huawei.com>
+Subject: [PATCH 5.10 2/2] mm/truncate: Replace page_mapped() call in invalidate_inode_page()
+Date: Thu, 11 Jan 2024 14:37:47 +0000
+Message-ID: <20240111143747.4418-3-r.smirnov@omp.ru>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240111143747.4418-1-r.smirnov@omp.ru>
 References: <20240111143747.4418-1-r.smirnov@omp.ru>
@@ -79,92 +78,41 @@ X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Commit 1b8ddbeeb9b819e62b7190115023ce858a159f5c upstream.
+Commit e41c81d0d30e1a6ebf408feaf561f80cac4457dc upstream.
 
-invalidate_inode_page() is the only caller of invalidate_complete_page()
-and inlining it reveals that the first check is unnecessary (because we
-hold the page locked, and we just retrieved the mapping from the page).
-Actually, it does make a difference, in that tail pages no longer fail
-at this check, so it's now possible to remove a tail page from a mapping.
+folio_mapped() is expensive because it has to check each page's mapcount
+field.  A cheaper check is whether there are any extra references to
+the page, other than the one we own, one from the page private data and
+the ones held by the page cache.
+
+The call to remove_mapping() will fail in any case if it cannot freeze
+the refcount, but failing here avoids cycling the i_pages spinlock.
+
+[Roman: replaced folio_ref_count() call with page_ref_count(),
+folio_nr_pages() call with compound_nr() and
+folio_has_private() call with page_has_private()]
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
 ---
- kernel/futex/core.c |  2 +-
- mm/truncate.c       | 31 +++++--------------------------
- 2 files changed, 6 insertions(+), 27 deletions(-)
+ mm/truncate.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index cde0ca876b93..cbbebc3de1d3 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -578,7 +578,7 @@ static int get_futex_key(u32 __user *uaddr, bool fshared, union futex_key *key,
- 	 * found it, but truncated or holepunched or subjected to
- 	 * invalidate_complete_page2 before we got the page lock (also
- 	 * cases which we are happy to fail).  And we hold a reference,
--	 * so refcount care in invalidate_complete_page's remove_mapping
-+	 * so refcount care in invalidate_inode_page's remove_mapping
- 	 * prevents drop_caches from setting mapping to NULL beneath us.
- 	 *
- 	 * The case we do have to guard against is when memory pressure made
 diff --git a/mm/truncate.c b/mm/truncate.c
-index 8914ca4ce4b1..03998fd86e4a 100644
+index 03998fd86e4a..72d6c62756fd 100644
 --- a/mm/truncate.c
 +++ b/mm/truncate.c
-@@ -190,30 +190,6 @@ static void truncate_cleanup_page(struct page *page)
- 	ClearPageMappedToDisk(page);
- }
- 
--/*
-- * This is for invalidate_mapping_pages().  That function can be called at
-- * any time, and is not supposed to throw away dirty pages.  But pages can
-- * be marked dirty at any time too, so use remove_mapping which safely
-- * discards clean, unused pages.
-- *
-- * Returns non-zero if the page was successfully invalidated.
-- */
--static int
--invalidate_complete_page(struct address_space *mapping, struct page *page)
--{
--	int ret;
--
--	if (page->mapping != mapping)
--		return 0;
--
--	if (page_has_private(page) && !try_to_release_page(page, 0))
--		return 0;
--
--	ret = remove_mapping(mapping, page);
--
--	return ret;
--}
--
- int truncate_inode_page(struct address_space *mapping, struct page *page)
- {
- 	VM_BUG_ON_PAGE(PageTail(page), page);
-@@ -258,7 +234,10 @@ int invalidate_inode_page(struct page *page)
+@@ -232,7 +232,8 @@ int invalidate_inode_page(struct page *page)
  		return 0;
- 	if (page_mapped(page))
+ 	if (PageDirty(page) || PageWriteback(page))
  		return 0;
--	return invalidate_complete_page(mapping, page);
-+	if (page_has_private(page) && !try_to_release_page(page, 0))
-+		return 0;
-+
-+	return remove_mapping(mapping, page);
- }
- 
- /**
-@@ -645,7 +624,7 @@ void invalidate_mapping_pagevec(struct address_space *mapping,
- }
- 
- /*
-- * This is like invalidate_complete_page(), except it ignores the page's
-+ * This is like invalidate_inode_page(), except it ignores the page's
-  * refcount.  We do this because invalidate_inode_pages2() needs stronger
-  * invalidation guarantees, and cannot afford to leave pages behind because
-  * shrink_page_list() has a temp ref on them, or because they're transiently
+-	if (page_mapped(page))
++	if (page_ref_count(page) >
++			compound_nr(page) + page_has_private(page) + 1)
+ 		return 0;
+ 	if (page_has_private(page) && !try_to_release_page(page, 0))
+ 		return 0;
 -- 
 2.34.1
 
