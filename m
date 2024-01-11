@@ -1,166 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-7780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EC882AAC6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 10:22:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A8E82AAF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 10:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50DF3282ED2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 09:22:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20826B26A9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 09:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF36B11C93;
-	Thu, 11 Jan 2024 09:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9924612E74;
+	Thu, 11 Jan 2024 09:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O10PnA5U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pljCv8lT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DLTsdr/R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WuJXopWp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0BCgLY1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54EE12E5B;
-	Thu, 11 Jan 2024 09:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3131F1FB93;
-	Thu, 11 Jan 2024 09:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704964819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
-	b=O10PnA5UoDnOwrvEgUiBBGbjS+bH1vG6SKp0R3FZcMaujzsxWrk45be2UkruykpAlnhyOy
-	FOaiwp6HZgi3uYtfDOLkbCoANBBR/+YbtzDErp3ml2BVwd9dXeleOBm+3rXE0ULg6aED7W
-	MSvN9buA+HtrWQcYmiF8/xqvGtxzKXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704964819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
-	b=pljCv8lTzcTysH3Vk9QOXeS8pQ3SnFj5qeWlQy5YCu2XcNGgrg89pD66/zdUmbvKWr8CYa
-	DbWBrnhydgmghuCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1704964893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
-	b=DLTsdr/RtTsy+HmSVVU6QgVHFa5zgKnnyU2o/LfFTxcurlifeV4zMlzHfliRCMxeRLb5+X
-	v3ZzsydYyNEEGv2MVD38rzrXRcEEHN9QIZmMwc2AKBPTPV5DNRftTdXJgA4BCDGp++k3cx
-	Lgi0B9tr+ZweoiGogwMKVf4tJFwBnhM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1704964893;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BG4l8S4qH/pdeuy9YBJx2ULMPOYWxsdX/Qk0+ysAZFY=;
-	b=WuJXopWpzXx8vtgBM4F+8BniNJcfaY4lMF9y3pOMnN4OhcKu0RBp5dbv4YJFHUnWkhc+yC
-	lWcvAQ2muGx7sHBQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 21930138E5;
-	Thu, 11 Jan 2024 09:20:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id jqgrCNGyn2X8KwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 11 Jan 2024 09:20:17 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5FD84A0807; Thu, 11 Jan 2024 10:21:47 +0100 (CET)
-Date: Thu, 11 Jan 2024 10:21:47 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+28aaddd5a3221d7fd709@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, paul@paul-moore.com,
-	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
-	tomoyo-dev-en-owner@lists.osdn.me, tomoyo-dev-en@lists.osdn.me
-Subject: Re: [syzbot] [hfs] general protection fault in tomoyo_check_acl (3)
-Message-ID: <20240111092147.ywwuk4vopsml3plk@quack3>
-References: <000000000000fcfb4a05ffe48213@google.com>
- <0000000000009e1b00060ea5df51@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087E710962;
+	Thu, 11 Jan 2024 09:31:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA2BC433C7;
+	Thu, 11 Jan 2024 09:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704965473;
+	bh=Rk9NRpDsadZMSSvC4keuPq0iP2/9RWYyuAwhc7yIrX8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h0BCgLY1yflXpmcmYV6znA84kTWM7HBx55M1P4GWlSAu59zmFfn5N87JnXf0/mko7
+	 u6M9Ip8qEx0hYKGxSBtFywDTIOfy6/IfvHv1nYfxR6UlDKf4dlPO726lKhsjjc57vx
+	 qIW38OsFWev/pi8p2uKvZK/x9oL3fhpbzStuF4JEZeLnwODKnm2Of0IASs2IDKKfAl
+	 Hg5VAdPgevSZXKAvueHzlYM2Hpb+DTrE+NVFm8YfZanq7dOWMjgf5faXfUTn8fOD33
+	 MRQrNDXn1+1wJWeYwcTOHvmOsDPV4YG3IHZY94wHKyTGVVkkMA8m9gSoximOZ9KfMF
+	 MvH6jokXogrcA==
+From: Christian Brauner <brauner@kernel.org>
+To: David Disseldorp <ddiss@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] initramfs: remove duplicate built-in __initramfs_start unpacking
+Date: Thu, 11 Jan 2024 10:30:58 +0100
+Message-ID: <20240111-bratwurst-schrebergarten-1444199c8559@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240111062240.9362-1-ddiss@suse.de>
+References: <20240111062240.9362-1-ddiss@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000009e1b00060ea5df51@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="DLTsdr/R";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WuJXopWp
-X-Spamd-Result: default: False [2.66 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7406f415f386e786];
-	 TAGGED_RCPT(0.00)[28aaddd5a3221d7fd709];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BAYES_HAM(-0.03)[56.17%];
-	 R_RATELIMIT(0.00)[to_ip_from(RLfgkate9mdgitaydm133m7cj1)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,syzkaller.appspot.com:url];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 2.66
-X-Rspamd-Queue-Id: 3131F1FB93
-X-Spam-Level: **
-X-Spam-Flag: NO
-X-Spamd-Bar: ++
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1444; i=brauner@kernel.org; h=from:subject:message-id; bh=Rk9NRpDsadZMSSvC4keuPq0iP2/9RWYyuAwhc7yIrX8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTO3xol2NIdmffcsmTa3VkurfpCdc80e7tdMleuSpD9v TNHfCJ/RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERS2BgZZs+s/LLaaYm+v2dz Q+acFVpNop0Nyw5cazz1/2KtaX+dOMM/g98PUi5bb1D6v0Duz+szOzfUdHC2rF3r8rG9WvlRlsM vRgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed 10-01-24 22:44:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Thu, 11 Jan 2024 17:22:40 +1100, David Disseldorp wrote:
+> If initrd_start cpio extraction fails, CONFIG_BLK_DEV_RAM triggers
+> fallback to initrd.image handling via populate_initrd_image().
+> The populate_initrd_image() call follows successful extraction of any
+> built-in cpio archive at __initramfs_start, but currently performs
+> built-in archive extraction a second time.
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
+> Prior to commit b2a74d5f9d446 ("initramfs: remove clean_rootfs"),
+> the second built-in initramfs unpack call was used to repopulate entries
+> removed by clean_rootfs(), but it's no longer necessary now the contents
+> of the previous extraction are retained.
 > 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15135c0be80000
-> start commit:   a901a3568fd2 Merge tag 'iomap-6.5-merge-1' of git://git.ke..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7406f415f386e786
-> dashboard link: https://syzkaller.appspot.com/bug?extid=28aaddd5a3221d7fd709
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b5bb80a80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10193ee7280000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with: 
+> [...]
 
-Makes some sense since fs cannot be corrupted by anybody while it is
-mounted. I just don't see how the reproducer would be corrupting the
-image... Still probably:
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-#syz fix: fs: Block writes to mounted block devices
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-and we'll see if syzbot can find new ways to tickle some similar problem.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] initramfs: remove duplicate built-in __initramfs_start unpacking
+      https://git.kernel.org/vfs/vfs/c/822b1a28fc5f
 
