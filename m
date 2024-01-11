@@ -1,80 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-7805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E064882B31D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 17:37:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501B382B346
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 17:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2671F21CE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 16:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 754151C26BA9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 16:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541935025E;
-	Thu, 11 Jan 2024 16:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFB951004;
+	Thu, 11 Jan 2024 16:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qXSnYYIo"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Hth6fwN7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D80950250
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 16:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 11 Jan 2024 11:37:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1704991031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ybxsMvmrI3V4Ip45Nv9SUAbIu72iHpBLx+E0cWa2rs4=;
-	b=qXSnYYIoy4ElNF2N6nkNJssKCrdmXEui1pc6Rmn7zCs/jUlSBlNmz5CHcupAyNnZuFlrMa
-	sg+umAojRu83LTF1pp1vZH1ykJ9/LMIWvSBeu7WnH1sow+gD4xLIb6tocrkrl6OIPTpU89
-	pmwTdKfvZKG6WxB34g5PMDdUHJGY91Q=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christoph Hellwig <hch@lst.de>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] bcachefs: fix incorrect usage of REQ_OP_FLUSH
-Message-ID: <e6wpysqepf5nfpvugxutqqohkunjvewomk7lkvk2kd2cwkstg2@g7r3qz46txx7>
-References: <20240111073655.2095423-1-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28958524D2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 16:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-360576be804so3341875ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 08:46:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1704991570; x=1705596370; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bZPcHTcItQjzr4WGB8fZNqvF0vIuFiWGljs4FO68GSw=;
+        b=Hth6fwN7/2tuWuOy6+55B0RsHGTxg8dJV77e+h2OrdQJ4bhz2zyg+vKJBU9lFtNf3F
+         2YinD3bMyywXqSmhoByVV92vhxdQI997tewnGUhoetLex/Gbw8tk7/LIfUMAnB/UrSEW
+         8lJrrL70gAESbz2I6pDz7q066ggzFsVHsRT/az3gXbXfEsNM0OvbtBSpWeMNmu+1+YIb
+         tUkeD4LY53ujWlCgY5DnG8llxbQKWN+LXVp0NSaWp3oKf5k0ovxsiKsnL7LskQ+5Bz39
+         AMTSB0xeDVKsjI1CoCP+n1t0PWau5PL05dmuNd4YxRE0rF3a7cWcX0JUx0vmy7YuuGjD
+         +0xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704991570; x=1705596370;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZPcHTcItQjzr4WGB8fZNqvF0vIuFiWGljs4FO68GSw=;
+        b=TmqTogvJXVx16LR3V39ska81et9b2NxWAgm3ngx19AxzUL3VbltLV8u5ykbFlwDeMK
+         XjAZlhRVx4fHCqi9A3HvDDtdVFp9vmUeArI3fvSYgXcKKb6wFv4beY7y6Dx/BoxmZ0mF
+         oCcHfpxiXA5+F8T3mhQnMcBU5ncksR9mVb96NgJIWPdKGjvNuDs9iJQcfsegp0SNbFBc
+         KGf7MDdrdYLa2fxnOz1dnRuV85p4zUqU62F7ezc+FqzpE6+Mywwvmgi54JW8m9IGMZje
+         Bsy882CtMFoihOL55GbbG3XBMg2fOMsSwWXSYzFT4I5Ec2EOzFLGdYI2g7ZpIvH+uaFw
+         zM/g==
+X-Gm-Message-State: AOJu0YyhJgFqseJ7h7xRXIqySueGU8HzQM2B2hIYOhVZT/f6lYsAw+U6
+	anJL59aFnEb47O0ZS6rAhV6FMOS9AVJlOykLjSaBf+OsUQM12w==
+X-Google-Smtp-Source: AGHT+IFLyOsPiRC1dMm1y21fDCbR4LfnBKhm7E7HU5FD4A8p1qzCcxKggorRsZe9PFrx3kFCgLHxDw==
+X-Received: by 2002:a05:6e02:20ee:b0:35f:f59f:9f4c with SMTP id q14-20020a056e0220ee00b0035ff59f9f4cmr3087697ilv.1.1704991570106;
+        Thu, 11 Jan 2024 08:46:10 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8-20020a056e020ca800b0035f75e80d1esm391301ilg.52.2024.01.11.08.46.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jan 2024 08:46:09 -0800 (PST)
+Message-ID: <7be392ea-a622-4195-980f-9edc5497802b@kernel.dk>
+Date: Thu, 11 Jan 2024 09:46:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240111073655.2095423-1-hch@lst.de>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2] fsnotify: optimize the case of no content event
+ watchers
+Content-Language: en-US
+To: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+References: <20240111152233.352912-1-amir73il@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240111152233.352912-1-amir73il@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 11, 2024 at 08:36:55AM +0100, Christoph Hellwig wrote:
-> REQ_OP_FLUSH is only for internal use in the blk-mq and request based
-> drivers. File systems and other block layer consumers must use
-> REQ_OP_WRITE | REQ_PREFLUSH as documented in
-> Documentation/block/writeback_cache_control.rst.
+On 1/11/24 8:22 AM, Amir Goldstein wrote:
+> Jens,
 > 
-> While REQ_OP_FLUSH appears to work for blk-mq drivers it does not
-> get the proper flush state machine handling, and completely fails
-> for any bio based drivers, including all the stacking drivers.  The
-> block layer will also get a check in 6.8 to reject this use case
-> entirely.
-> 
-> [Note: completely untested, but as this never got fixed since the
-> original bug report in November:
-> 
->    https://bugzilla.kernel.org/show_bug.cgi?id=218184
-> 
-> and the the discussion in December:
-> 
->     https://lore.kernel.org/all/20231221053016.72cqcfg46vxwohcj@moria.home.lan/T/
-> 
-> this seems to be best way to force it]
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Can you take v2 for a spin with your workloads?
 
-Hey Christoph, thanks - applied.
+Still looks good from a performance POV, same as v1. No 6-8% of fsnotify
+and parent CPU wastage.
+
+-- 
+Jens Axboe
+
 
