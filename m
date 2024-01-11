@@ -1,118 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-7762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311B882A59E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 02:41:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521E182A5A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 02:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A591C230A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 01:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE724282FCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 01:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FCFEBF;
-	Thu, 11 Jan 2024 01:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AECA4D;
+	Thu, 11 Jan 2024 01:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfDXvP+m"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RcbXVhLx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF19650;
-	Thu, 11 Jan 2024 01:40:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D61C433F1;
-	Thu, 11 Jan 2024 01:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704937257;
-	bh=u51yyq5q6reKn5H0CqnJR7jUYlsGmLnDJKKy8teJDRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cfDXvP+m7491pQR0YUCkm0mTB2aBegWGodHoLZFFG4xnm1HYzXRQuH2gS9jmS4sxK
-	 4a1YcSnAQwsufJxQwNnVNUv8zlTNrN2c8FDL4SvgoPYxlV5HCtl48g/zf8dKFEZFKy
-	 s2oFPeyW0anIBYuwCbKWlfg0iILlMck90/uZ6HjK3pEsmr6x3ggHxQYlbGaZ+LM+u9
-	 Cdp1Me8dqv2fMqivWwzjoUve3j+IWy/LLnsB6hnY7qN7e4nycBAq9OtxqrOqUVgXsd
-	 pNUpTm723vIzDa8WcFdKrRTfElEbLc8gQRM3fqF3Cypry45w0MWn8V/GMykrc5s3y6
-	 6wFr/xhlj/0lw==
-Date: Wed, 10 Jan 2024 17:40:56 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>,
-	John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-	kbusch@kernel.org, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ming.lei@redhat.com, bvanassche@acm.org,
-	ojaswin@linux.ibm.com
-Subject: Re: [PATCH v2 00/16] block atomic writes
-Message-ID: <20240111014056.GL722975@frogsfrogsfrogs>
-References: <c729b03c-b1d1-4458-9983-113f8cd752cd@oracle.com>
- <20231219051456.GB3964019@frogsfrogsfrogs>
- <20231219052121.GA338@lst.de>
- <76c85021-dd9e-49e3-80e3-25a17c7ca455@oracle.com>
- <20231219151759.GA4468@lst.de>
- <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com>
- <20231221065031.GA25778@lst.de>
- <73d03703-6c57-424a-80ea-965e636c34d6@oracle.com>
- <ZZ3Q4GPrKYo91NQ0@dread.disaster.area>
- <20240110091929.GA31003@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FED7EA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 01:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-55569b59f81so5942797a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 17:47:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1704937658; x=1705542458; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6u030KI6il12QBShR1lcsXxHEUIec68JdndFK14yRTA=;
+        b=RcbXVhLxuTvndQgNP5zPdxsAgMaDGuIrCcY58ETZj24DXrGUjns5tAOIE10JNSbOtE
+         tj0bK4y5NJLbW2AChovtzJRx7Wnxraziq1NhoxLSwX74PD910tmOpGvd6yeYhFaWTCTp
+         +OQjUvQbkqV0fQNUcaAHRS1vEIStocxrTtvbk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704937658; x=1705542458;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6u030KI6il12QBShR1lcsXxHEUIec68JdndFK14yRTA=;
+        b=fbsgHOzRMghgdRNaJt8OqM7Gwj2mNWBuDdmjZa4MuQB/9k0xTNR0KAv9zIoibx9MzN
+         AKaZUuw/KLVlRrUyr1srgJ/QOXLVE+GEnEX8onV9KUH0b7I4rLHSMZkLuMS0Lq4lKKjP
+         bCkVlmw5R5SkhHcNc2PwZLHYuRPFIpaxsEO37zZXoUrHwqcfAkUPbBSNP6IeT5w9yObS
+         FYI6ppIRSC0eK9t7weBP0h6iohlwfUTWKRt2Lk8BOdmQQCukg84eKeUwAuqpcKJeOD1L
+         OPI7SyiQ8Vw9sqcbeg13umHwoWG0nFCZ8CANg6RTfqQ7wZbqfiVtrnLYWaGnWd6/fvNQ
+         vAxQ==
+X-Gm-Message-State: AOJu0Yyne/hJzX/S7OzlSkPxVXq+nbYnfzW/PmADBR76SUoRj9CDO14t
+	vmVEOJB4XPgSE9l6z4ywaNXmLT5zqHoE/m96R5VTxSGvgHris/k8
+X-Google-Smtp-Source: AGHT+IHsH+b5UJpzptsJoeci6kQEWyTxop4dT13EHMQp45Y0Stjp3F+kvtQBSG15Flz+WuMD1X38nA==
+X-Received: by 2002:a17:906:2351:b0:a28:b71d:6801 with SMTP id m17-20020a170906235100b00a28b71d6801mr169324eja.149.1704937658346;
+        Wed, 10 Jan 2024 17:47:38 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id n26-20020a1709061d1a00b00a293280c16csm9052ejh.223.2024.01.10.17.47.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jan 2024 17:47:37 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55753dc5cf0so5689128a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Jan 2024 17:47:37 -0800 (PST)
+X-Received: by 2002:a17:906:abc3:b0:a26:8ee9:9b31 with SMTP id
+ kq3-20020a170906abc300b00a268ee99b31mr175059ejb.4.1704937657031; Wed, 10 Jan
+ 2024 17:47:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240110091929.GA31003@lst.de>
+References: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
+ <202401101525.112E8234@keescook> <6pbl6vnzkwdznjqimowfssedtpawsz2j722dgiufi432aldjg4@6vn573zspwy3>
+ <202401101625.3664EA5B@keescook> <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
+In-Reply-To: <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 10 Jan 2024 17:47:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wigjbr7d0ZLo+6wbMk31bBMn8sEwHEJCYBRFuNRhzO+Kw@mail.gmail.com>
+Message-ID: <CAHk-=wigjbr7d0ZLo+6wbMk31bBMn8sEwHEJCYBRFuNRhzO+Kw@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs updates for 6.8
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Kees Cook <keescook@chromium.org>, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 10, 2024 at 10:19:29AM +0100, Christoph Hellwig wrote:
-> On Wed, Jan 10, 2024 at 10:04:00AM +1100, Dave Chinner wrote:
-> > Hence history teaches us that we should be designing the API around
-> > the generic filesystem function required (hard alignment of physical
-> > extent allocation), not the specific use case that requires that
-> > functionality.
-> 
-> I disagree.  The alignment requirement is an artefact of how you
-> implement atomic writes.  As the fs user I care that I can do atomic
-> writes on a file and need to query how big the writes can be and
-> what alignment is required.
-> 
-> The forcealign feature is a sensible fs side implementation of that
-> if using hardware based atomic writes with alignment requirements,
-> but it is a really lousy userspace API.
-> 
-> So with John's API proposal for XFS with hardware alignment based atomic
-> writes we could still use force align.
-> 
-> Requesting atomic writes for an inode will set the forcealign flag
-> and the extent size hint, and after that it'll report atomic write
-> capabilities.  Roughly the same implementation, but not an API
-> tied to an implementation detail.
+On Wed, 10 Jan 2024 at 16:58, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> ...And how does that make any sense? "The warnings weren't getting
+> cleaned up, so get rid of them - except not really, just move them off
+> to the side so they'll be more annoying when they do come up"...
 
-Sounds good to me!  So to summarize, this is approximately what
-userspace programs would have to do something like this:
+Honestly,the checkpatch warnings are often garbage too.
 
-struct statx statx;
-struct fsxattr fsxattr;
-int fd = open('/foofile', O_RDWR | O_DIRECT);
+The whole deprecation warnings never worked. They don't work in
+checkpatch either.
 
-ioctl(fd, FS_IOC_GETXATTR, &fsxattr);
+> Perhaps we could've just switched to deprecation warnings being on in a
+> W=1 build?
 
-fsxattr.fsx_xflags |= FS_XFLAG_FORCEALIGN | FS_XFLAG_WRITE_ATOMIC;
-fsxattr.fsx_extsize = 16384; /* only for hardware no-tears writes */
+No, because the whole idea of "let me mark something deprecated and
+then not just remove it" is GARBAGE.
 
-ioctl(fd, FS_IOC_SETXATTR, &fsxattr);
+If somebody wants to deprecate something, it is up to *them* to finish
+the job. Not annoy thousands of other developers with idiotic
+warnings.
 
-statx(fd, "", AT_EMPTY_PATH, STATX_ALL | STATX_WRITE_ATOMIC, &statx);
-
-if (statx.stx_atomic_write_unit_max >= 16384) {
-	pwrite(fd, &iov, 1, 0, RWF_SYNC | RWF_ATOMIC);
-	printf("HAPPY DANCE\n");
-}
-
-(Assume we bail out on errors.)
-
---D
+            Linus
 
