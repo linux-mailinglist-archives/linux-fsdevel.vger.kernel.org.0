@@ -1,262 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-7801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6CC682B1F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 16:41:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C90282B283
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 17:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8293A1C2396E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 15:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C171F25225
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 16:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B19E4F217;
-	Thu, 11 Jan 2024 15:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FDD4F8A2;
+	Thu, 11 Jan 2024 16:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Twzddbih";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XS4aKgkv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250FC4CDFE;
-	Thu, 11 Jan 2024 15:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F9BE2F4;
-	Thu, 11 Jan 2024 07:42:03 -0800 (PST)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97C073F5A1;
-	Thu, 11 Jan 2024 07:41:15 -0800 (PST)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Barry Song <21cnbao@gmail.com>,
-	John Hubbard <jhubbard@nvidia.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v1] mm/filemap: Allow arch to request folio size for exec memory
-Date: Thu, 11 Jan 2024 15:41:06 +0000
-Message-Id: <20240111154106.3692206-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.25.1
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A015EBE;
+	Thu, 11 Jan 2024 16:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40BG7TwW027131;
+	Thu, 11 Jan 2024 16:11:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=RsTtolez5NfOpxlYyXDYFTxNBSDAZvQHIsCsjntxnEY=;
+ b=TwzddbihyWw88ZTyOjAL3Wv9CE08PpZO1efhu13i5nMbNAtvkYaCwJWc4ux4WT13aWdt
+ 9WpC+Ag685vJtSBVmwL74hAZTbJw+5UOa5+3Zi1lq07CbJdUE1/Uu7P0+rb7scBv4DeG
+ akLCYxTIENWNddkACl91VLm+jjER7AcdJ5OvAe6zKj6ZMPH3qz0MQkYhnsV1lLY7Upew
+ F3hanqxs6jn4XtqxlOUMuufImrHrYpg07PH7Lf/9IDkLQHxGuWGOcT26vOe8sVyYMdlX
+ kLLcNDFZ5YMcBQPLF6fkhKj5MxZK34lNfehmdlZuBCpLmkT2w0JL7bEVJeiatWUI0nWZ bg== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vjkjt00h8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jan 2024 16:11:49 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40BFfWMd035095;
+	Thu, 11 Jan 2024 16:11:47 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3vfuu7vaf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jan 2024 16:11:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ig9r5pBDG+ip0YwLc7DIFki5u1ph02q2i9/nuvI0fPglWrhDNuudzMEf9tpzKO/R2jJDi6dYRqaMXM+QQtEAAbTGqq7iSGp06J/2LA4+lz9G7j4o5+CYq3QpUsRTunM6uKnRrhvP/fTKDxLwglhES7uDgbMp5FrZzl+xjHQlHgkdAGzMkIsWFz0Cx9F4O8qp6h8aIFTAoq11swg+1+ScUJ5ZJuA7JqttslO+59jQm+jaQ3k5YtfInlvEu66SMKuKSlB1Z2VhDK2cJ5oXFffXWJJ4pcGDNjDNUfVCjMUsTgpPpVx+GK1QLDyTg3JG7jsf6dLuUuM0xbUgXXrFEhv/iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RsTtolez5NfOpxlYyXDYFTxNBSDAZvQHIsCsjntxnEY=;
+ b=X3kbSAPgfOcLh7QZCa3kgO9iDJTtqVwxTjBtZKsqqngk5+kx/vgOQVY78J2eUfQusz6SYW4n4ZVa2RjVe0owcnzPQy4F1BqoRr20FIHLx6RuKFmu5d3gqqtaY8RuZ+gMtbOJRgEp+hdxZeilc6XGqWr1iXssDUYIGROGId9dmvQDYTJvSMealB8EVA0bWgLS3tcKloWZd9O0WVagPt1EVEZsGZ0Fflpjk2bQUE1DwEuCclA/tX62zLPto4K0vaWt2x2FgAKNYwHSOTtML/La7spnUeNZTJcPdEHs96OCqWPQnEulxGkR1qJPuY6m6a7c89xQd8LMoT5Z3ifSPTSaAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RsTtolez5NfOpxlYyXDYFTxNBSDAZvQHIsCsjntxnEY=;
+ b=XS4aKgkvhumOj9Mdrtz9U4UghzR4XdXmDV94HgTynWLnmSC1E4ricN0XRzGo8GpVwfSQA+ladrB8EUH2ntrZa5t7P/rhqCE2PTYj5iru8KTdGJ9i29AHJjwZrJ22pjt5sMY3RXtqB+E05Dh5RTzt3io33eI8A+ZC0NiKuX30Ja0=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB7312.namprd10.prod.outlook.com (2603:10b6:208:3fc::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.19; Thu, 11 Jan
+ 2024 16:11:45 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::5d80:6614:f988:172a]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::5d80:6614:f988:172a%4]) with mapi id 15.20.7181.015; Thu, 11 Jan 2024
+ 16:11:44 +0000
+Message-ID: <71063aee-8ba9-4a02-8c09-9b3a9982f6e0@oracle.com>
+Date: Thu, 11 Jan 2024 16:11:38 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/16] block atomic writes
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner
+ <david@fromorbit.com>,
+        axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+        jack@suse.cz, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+        ming.lei@redhat.com, bvanassche@acm.org, ojaswin@linux.ibm.com
+References: <76c85021-dd9e-49e3-80e3-25a17c7ca455@oracle.com>
+ <20231219151759.GA4468@lst.de>
+ <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com>
+ <20231221065031.GA25778@lst.de>
+ <73d03703-6c57-424a-80ea-965e636c34d6@oracle.com>
+ <ZZ3Q4GPrKYo91NQ0@dread.disaster.area> <20240110091929.GA31003@lst.de>
+ <20240111014056.GL722975@frogsfrogsfrogs> <20240111050257.GA4457@lst.de>
+ <d5db2291-36b4-4b22-89f2-1d9e7d30f0f1@oracle.com>
+ <20240111144537.GA9295@lst.de>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240111144537.GA9295@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0489.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:13a::14) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB7312:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56086ad9-a7d8-4662-f594-08dc12c00154
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	ze7gLeEmS+NXwY9qfCQO64RPejWTksXIZsVXHysFAbBpskkJwGjiBVbJdcbQ4c7GQoTBp9I72kmM+g5RvqiZLSmgByq89ijb0OSsGTu++2M5nOaXS0E1DX0CqPNcYyMZm4NNVbfHSev3QhhNzXouLc7Cd0e3JGXp7oyVvfYdnBYzQJ6bj7LFCPx0MyCnjH/4iVvqUFHoHflbVV/+HtxdvxOGScPsaH4sDokibBKt4vyrCVCKMQFYaCguhsIYqy7vcxZ8EKmSPKESwLUPtAdXWvR15NsW5zTcV7bSOGta55o25Veut/T3RYzZfn18YlYymFLLEX2JZFY7Y1fMmQUnv0zfewHaQ7rxfd6BOb8OCftJ7VZ9AOxsFOnUcQZnkSDGwX6CL0ajCkGxZTY1dJDqLaPbArqAtwL7XqKpYkkJmer6su/UeMbSS2QU0s8B3anzGeb2AtRFokEFcP4W1TwcUOaAfXAtl3NAzjqnNViDkzi55TWQOMk5utocHFtZ0UePK8qKp1q+BpTDned1/QFgT1BheUhpWmJ+Acw6U8tdciWbvYdHtf1f3vJU3v2JEc/mIzYfya9VoZ9AGodMK9uGFLzzF3BHisYaoS9tXlFuNb9l5YVYSdm7K1MAl5M4SAu2Gd+177uX01taCu7mDkVdaA==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(366004)(396003)(376002)(39860400002)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(5660300002)(8676002)(8936002)(4326008)(7416002)(54906003)(2906002)(316002)(6916009)(31686004)(66476007)(66946007)(66556008)(6506007)(6512007)(6666004)(6486002)(478600001)(36916002)(36756003)(2616005)(26005)(83380400001)(31696002)(41300700001)(86362001)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?Z3RXdnh6UVQ3enA0ZTExblZpOVdxblFPUk4xWk8ySmpEd01iWXR0SmFiY1RM?=
+ =?utf-8?B?NUZ5b2R5VUwrQjdwcU5IMWxZL3RTemxMQ3JLZVgwbVQzUHRRb2hRL3BEWlFM?=
+ =?utf-8?B?cXBuVEQxVmY2ZUNrUFBSS243K0wrNmxUM2dCQWEzeTl4RjFMcSswWngydith?=
+ =?utf-8?B?NmdWRTJnZnpRREJNSGZVcTc5dEQ3L2ZTTk9EejJ5MGFCY01McFJrSnVBZTVC?=
+ =?utf-8?B?OHhoblE1U0dQb1Q3Yi9sUWFIZmFScFYwOGFuWnlWK1VVNlZ0cEpvRUd3WVJj?=
+ =?utf-8?B?UnVOZXpKbEZxWGV3TDdqdmVHS2xWa24xM3ppNE5TTUpSdEdpVGRyQldQZktM?=
+ =?utf-8?B?SFBMTmRGUXNLUGFHWVQ5M3pFTnJ3QnV6L2dlbTZndllDVFFVa2VrMlNyY1hv?=
+ =?utf-8?B?MG9IZWxVTk9pSjhxU3VkRFRrTHJKTTNuZmFLWTdJZTM3dWFSenE5bHFJVGRQ?=
+ =?utf-8?B?YzQ3Z09yK2NJaGRZeHozWkZCY1VFanMzWi85TXg4eVBSZFo1aU54a1JQTFRo?=
+ =?utf-8?B?UitXSnl5c3p2WmYrVDdPRmJVSno4NElXWExiQUdTYWhVZ093dmxadkgyUjU1?=
+ =?utf-8?B?R3pQS21JSno0aXdQem04b2VMV0ROMy9GRW4vUmhKSFpWNXMySXFYWUJ1eUZs?=
+ =?utf-8?B?YWZMaXQ0MXMrU3B2RWZ2d3ByNUZud3B5TVlXMEdxbFJPYWwvck1iN1IrL0Iy?=
+ =?utf-8?B?Y0FOWWpDTDNKS1RMcU0zSjdBMm1sajREeDVhcHJmMStZWGN1U1FEcno3aDZ3?=
+ =?utf-8?B?R2dyemdOdUtZU0J5RWVDbHovQVFHeGJyQXd6V2I1dHQyNXFHNStPYzFkZUkx?=
+ =?utf-8?B?Y2hGbDdZZWNrMERHdENjQTNyaERDL2ZjZloyQjRyUzZlTnpoTVowY2EwZ0Zw?=
+ =?utf-8?B?Tis4dVcyd2NjMXZQbk1BU0R5K0JTakx0UVNjNWhPaGVmSmVCL3hoeDYrQm5S?=
+ =?utf-8?B?R3N3WjkzOVQ3bUtSWGJreW9ZbzRVQWp4S2FaS0xMZkd3UTFLaFZIOUU2QTli?=
+ =?utf-8?B?UWw0WUxxeEo1L3JpZFU2aWlQaElMNHZGcExOMFlJL1FaREJQcHhqTlVaTkg2?=
+ =?utf-8?B?UUc4UnNzTHJnNGFVY0FTSjZYclhVODRVeDZIdmFXTWZuaVpneEx2RitqbStW?=
+ =?utf-8?B?djBpS0VZSktGWUlOdm10NnJIQ2FuMFJienNkWnA4azZlVXp2LzhIRHc0UTVY?=
+ =?utf-8?B?UjR4TEw5bEtQbWp3aWlKS1NJV3lsenB5a1hEcFlaWkJTNjZ2S0RXZ0gzK0hW?=
+ =?utf-8?B?a082Sy9kaDMwb3lEOUlIbDlJSWJvcCsrL1czTjZja1JDc0pOMm5ld3EzOEw4?=
+ =?utf-8?B?SzhFbWtkbEVQbE9waUVGNmdMbzNpUTJTZVgyVU92NSs2ZEtSZDhic2FBZWJh?=
+ =?utf-8?B?U2tPWlF2SWlWdXcyOUE5TzFKbVVQTjkxTVJYVVNFamhWdVJjMnV6czNuRE9Z?=
+ =?utf-8?B?NXp5QmJpU0RwcjlkanVJNGloKzJVTEl0bFhmbGRFTXBrQ2VLcVRWY1EwVTV2?=
+ =?utf-8?B?UnRRaHR6VGIwb1ZzK210Q3pSUVhPVEJYSFFTQlRaYUlKZVVpSzNjWVFyOVph?=
+ =?utf-8?B?TWlzZXdqWXY1REZyQ0QvUVpEZWF4Y0Q2bmUyNXRteFhOdjBXWmc4NVZGbEEy?=
+ =?utf-8?B?K0Y3Z3lTQ1dCQ2NDREhUcWVnU0tpRUI2bkJHNzRBUndUY3hwZ1R5NHNnV0th?=
+ =?utf-8?B?cXFQV2dQUXNVOXkyUnJLM3VxTzRLMkpTeWxabitXRlpBRnkzUjA4VXdVZnhy?=
+ =?utf-8?B?eGtLSDhyMlRPZkxWU1ltOFI2Z2ZhVVEzN2VITmVBYTc1Y2VTWk9Oa2xVeFVk?=
+ =?utf-8?B?NHJQNTRaTkQ5ZXcyMFdnWTd6SGJwNnZ4L09HM1YxQXorWEEwWmJ6OE5YTmFV?=
+ =?utf-8?B?V2JQZTJSL3hwTkpJNHhWdGJaNGNBWGxRVjBWdmEzdVRRSDJTV2ZaTXV0K0pm?=
+ =?utf-8?B?a29kcHRpTThmbHlYaWI1OVU0dDYvMUZCQkZDQ3JnN1ZMTmlyT0dUTDBUOFZR?=
+ =?utf-8?B?REttWU9tVUt1YU5TeGRPcE9aeE5QYnU4RksxYTFIN1hvNG9uU2VkL1ZBcGtF?=
+ =?utf-8?B?NmlnQVI3RHJEbENYZnlWUmpmbmU1R0xrbGxTVE1hb0hUdTljU2czc1ppMnkr?=
+ =?utf-8?B?bVByeVY3bWdicU5wdEtyaVdOS2M2UHhqVFBjNThvZjB6dEo4RlZEcUtEblcv?=
+ =?utf-8?B?WFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	qp4q8t0MeK65x0sjpNhOXaF+6mOdKOZHOju6Uc3rOVaU9gIG22pGOGBl1uXw7OqRidiOswSY0z/zjleohuTwT9xo6jexVXJ6OnxojAY/b0YRP3NLddGYX5fvtIHuP6bQ0BWKxYemodIzM2cycDTLmWdmLPqXm89O1oAhtDR0wU5D1MxQWI0Sf/NqV7dTPRktpuUiuMIQXK6x6BabaWApfeGjXBkBQoc1MlG1ylCEOrgQ8eXF+WfvfzOsbvjap/FN8jbMwpFY79IqW4fZVRvu76pQnDqnZKKmZdBSSUGIFMsB7uD9HQoVEh45RSB4sCCF8KipMJu1AURgfeNtBkZd1OJa4wMw2zXTgCkOEw4OOk1eRhkKZRgfMn8NacQtM4FPKoN8UY6NeJxuGWBd6w/C7c5hyEZQidb7xA6UsXoIqO7j+WjOSd2zca+cq28hfN6zj4XmZpFWjyCH3UQbGBVbNReOWeStx4dranyCsRp1iwHVPZNN0NTDg6lRHS4zQ1IKdbm6EiSRQdytzRc9eUSOpVfxdozBpTiCJu53HjaOpgrRNVcoWDMwlfMtr/OoUPO8IPqeUispOeb+RlQl6nTpXUSPrk75Ki9KeUEPPgCoY+s=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56086ad9-a7d8-4662-f594-08dc12c00154
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2024 16:11:44.8532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zgiJ2YNNLSEJKGfa8ctjA5T83wZwb40p1ilGhDkm3kGHIohoIWHGtW/kAW8EhqsuLhG4DRvPSiU8rBsneCY9Cw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7312
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-11_09,2024-01-11_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2401110126
+X-Proofpoint-GUID: RP-kC1povyI7qo6ITG8_JDRtnD9ZSXlk
+X-Proofpoint-ORIG-GUID: RP-kC1povyI7qo6ITG8_JDRtnD9ZSXlk
 
-Change the readahead config so that if it is being requested for an
-executable mapping, do a synchronous read of an arch-specified size in a
-naturally aligned manner.
 
-On arm64 if memory is physically contiguous and naturally aligned to the
-"contpte" size, we can use contpte mappings, which improves utilization
-of the TLB. When paired with the "multi-size THP" changes, this works
-well to reduce dTLB pressure. However iTLB pressure is still high due to
-executable mappings having a low liklihood of being in the required
-folio size and mapping alignment, even when the filesystem supports
-readahead into large folios (e.g. XFS).
+> 
+>>> I think this still needs a check if the fs needs alignment for
+>>> atomic writes at all. i.e.
+>>>
+>>> struct statx statx;
+>>> struct fsxattr fsxattr;
+>>> int fd = open('/foofile', O_RDWR | O_DIRECT);
+>>>
+>>> ioctl(fd, FS_IOC_GETXATTR, &fsxattr);
+>>> statx(fd, "", AT_EMPTY_PATH, STATX_ALL | STATX_WRITE_ATOMIC, &statx);
+>>> if (statx.stx_atomic_write_unit_max < 16384) {
+>>> 	bailout();
+>>> }
+>>
+>> How could this value be >= 16384 initially? Would it be from pre-configured
+>> FS alignment, like XFS RT extsize? Or is this from some special CoW-based
+>> atomic write support? Or FS block size of 16384?
+> 
+> Sorry, this check should not be here at all, we should only check it
+> later.
+> 
+>> Incidentally, for consistency only setting FS_XFLAG_WRITE_ATOMIC will lead
+>> to FMODE_CAN_ATOMIC_WRITE being set. So until FS_XFLAG_WRITE_ATOMIC is set
+>> would it make sense to have statx return 0 for STATX_WRITE_ATOMIC.
+> 
+> True.  We might need to report the limits even without that, though.
 
-The reason for the low liklihood is that the current readahead algorithm
-starts with an order-2 folio and increases the folio order by 2 every
-time the readahead mark is hit. But most executable memory is faulted in
-fairly randomly and so the readahead mark is rarely hit and most
-executable folios remain order-2. This is observed impirically and
-confirmed from discussion with a gnu linker expert; in general, the
-linker does nothing to group temporally accessed text together
-spacially. Additionally, with the current read-around approach there are
-no alignment guarrantees between the file and folio. This is
-insufficient for arm64's contpte mapping requirement (order-4 for 4K
-base pages).
-
-So it seems reasonable to special-case the read(ahead) logic for
-executable mappings. The trade-off is performance improvement (due to
-more efficient storage of the translations in iTLB) vs potential read
-amplification (due to reading too much data around the fault which won't
-be used), and the latter is independent of base page size. I've chosen
-64K folio size for arm64 which benefits both the 4K and 16K base page
-size configs and shouldn't lead to any further read-amplification since
-the old read-around path was (usually) reading blocks of 128K (with the
-last 32K being async).
-
-Performance Benchmarking
-------------------------
-
-The below shows kernel compilation and speedometer javascript benchmarks
-on Ampere Altra arm64 system. (The contpte patch series is applied in
-the baseline).
-
-First, confirmation that this patch causes more memory to be contained
-in 64K folios (this is for all file-backed memory so includes
-non-executable too):
-
-| File-backed folios      |   Speedometer   |  Kernel Compile |
-| by size as percentage   |-----------------|-----------------|
-| of all mapped file mem  | before |  after | before |  after |
-|=========================|========|========|========|========|
-|file-thp-aligned-16kB    |    45% |     9% |    46% |     7% |
-|file-thp-aligned-32kB    |     2% |     0% |     3% |     1% |
-|file-thp-aligned-64kB    |     3% |    63% |     5% |    80% |
-|file-thp-aligned-128kB   |    11% |    11% |     0% |     0% |
-|file-thp-unaligned-16kB  |     1% |     0% |     3% |     1% |
-|file-thp-unaligned-128kB |     1% |     0% |     0% |     0% |
-|file-thp-partial         |     0% |     0% |     0% |     0% |
-|-------------------------|--------|--------|--------|--------|
-|file-cont-aligned-64kB   |    16% |    75% |     5% |    80% |
-
-The above shows that for both use cases, the amount of file memory
-backed by 16K folios reduces and the amount backed by 64K folios
-increases significantly. And the amount of memory that is contpte-mapped
-significantly increases (last line).
-
-And this is reflected in performance improvement:
-
-Kernel Compilation (smaller is faster):
-| kernel   |   real-time |   kern-time |   user-time |   peak memory |
-|----------|-------------|-------------|-------------|---------------|
-| before   |        0.0% |        0.0% |        0.0% |          0.0% |
-| after    |       -1.6% |       -2.1% |       -1.7% |          0.0% |
-
-Speedometer (bigger is faster):
-| kernel   |   runs_per_min |   peak memory |
-|----------|----------------|---------------|
-| before   |           0.0% |          0.0% |
-| after    |           1.3% |          1.0% |
-
-Both benchmarks show a ~1.5% improvement once the patch is applied.
-
-Alternatives
-------------
-
-I considered (and rejected for now - but I anticipate this patch will
-stimulate discussion around what the best approach is) alternative
-approaches:
-
-  - Expose a global user-controlled knob to set the preferred folio
-    size; this would move policy to user space and allow (e.g.) setting
-    it to PMD-size for even better iTLB utilizaiton. But this would add
-    ABI, and I prefer to start with the simplest approach first. It also
-    has the downside that a change wouldn't apply to memory already in
-    the page cache that is in active use (e.g. libc) so we don't get the
-    same level of utilization as for something that is fixed from boot.
-
-  - Add a per-vma attribute to allow user space to specify preferred
-    folio size for memory faulted from the range. (we've talked about
-    such a control in the context of mTHP). The dynamic loader would
-    then be responsible for adding the annotations. Again this feels
-    like something that could be added later if value was demonstrated.
-
-  - Enhance MADV_COLLAPSE to collapse to THP sizes less than PMD-size.
-    This would still require dynamic linker involvement, but would
-    additionally neccessitate a copy and all memory in the range would
-    be synchronously faulted in, adding to application load time. It
-    would work for filesystems that don't support large folios though.
-
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
-
-Hi all,
-
-I originally concocted something similar to this, with Matthew's help, as a
-quick proof of concept hack. Since then I've tried a few different approaches
-but always came back to this as the simplest solution. I expect this will raise
-a few eyebrows but given it is providing a real performance win, I hope we can
-converge to something that can be upstreamed.
-
-This depends on my contpte series to actually set the contiguous bit in the page
-table.
+Could we just error the SETXATTR ioctl when FS_XFLAG_FORCEALIGN is not 
+set (and it is required)? The problem is that ioctl reports -EINVAL for 
+any such errors, so hard for the user to know the issue...
 
 Thanks,
-Ryan
-
-
- arch/arm64/include/asm/pgtable.h | 12 ++++++++++++
- include/linux/pgtable.h          | 12 ++++++++++++
- mm/filemap.c                     | 19 +++++++++++++++++++
- 3 files changed, 43 insertions(+)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index f5bf059291c3..8f8f3f7eb8d8 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1143,6 +1143,18 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
-  */
- #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
-
-+/*
-+ * Request exec memory is read into pagecache in at least 64K folios. The
-+ * trade-off here is performance improvement due to storing translations more
-+ * effciently in the iTLB vs the potential for read amplification due to reading
-+ * data from disk that won't be used. The latter is independent of base page
-+ * size, so we set a page-size independent block size of 64K. This size can be
-+ * contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB entry),
-+ * and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base pages are in
-+ * use.
-+ */
-+#define arch_wants_exec_folio_order(void) ilog2(SZ_64K >> PAGE_SHIFT)
-+
- static inline bool pud_sect_supported(void)
- {
- 	return PAGE_SIZE == SZ_4K;
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 170925379534..57090616d09c 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -428,6 +428,18 @@ static inline bool arch_has_hw_pte_young(void)
- }
- #endif
-
-+#ifndef arch_wants_exec_folio_order
-+/*
-+ * Returns preferred minimum folio order for executable file-backed memory. Must
-+ * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
-+ * preference and mm will not special-case executable memory in the pagecache.
-+ */
-+static inline int arch_wants_exec_folio_order(void)
-+{
-+	return -1;
-+}
-+#endif
-+
- #ifndef arch_check_zapped_pte
- static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
- 					 pte_t pte)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 67ba56ecdd32..80a76d755534 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3115,6 +3115,25 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 	}
- #endif
-
-+	/*
-+	 * Allow arch to request a preferred minimum folio order for executable
-+	 * memory. This can often be beneficial to performance if (e.g.) arm64
-+	 * can contpte-map the folio. Executable memory rarely benefits from
-+	 * read-ahead anyway, due to its random access nature.
-+	 */
-+	if (vm_flags & VM_EXEC) {
-+		int order = arch_wants_exec_folio_order();
-+
-+		if (order >= 0) {
-+			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-+			ra->size = 1UL << order;
-+			ra->async_size = 0;
-+			ractl._index &= ~((unsigned long)ra->size - 1);
-+			page_cache_ra_order(&ractl, ra, order);
-+			return fpin;
-+		}
-+	}
-+
- 	/* If we don't want any read-ahead, don't bother */
- 	if (vm_flags & VM_RAND_READ)
- 		return fpin;
---
-2.25.1
+John
 
 
