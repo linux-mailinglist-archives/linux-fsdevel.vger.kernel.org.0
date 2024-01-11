@@ -1,188 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-7817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65FF82B6CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 22:47:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0949682B6DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 22:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 755D81F25489
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 21:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7431C20D5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 21:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08E45820A;
-	Thu, 11 Jan 2024 21:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hheLtr7n"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFBD58212;
+	Thu, 11 Jan 2024 21:52:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01AEF58136;
-	Thu, 11 Jan 2024 21:47:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B170CC433C7;
-	Thu, 11 Jan 2024 21:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705009651;
-	bh=Fu1ypAtEiesdzAwaXB0NR173q0atqGGzYX/w5m6UGjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hheLtr7nOCbCFXbzvVRgp2BcuSbaEVTJK6kby1LPvpB40jQK0L5cbYnXZ2GafJHvu
-	 6leGA8iC2zylszpSetyrvNylol9U/O0snc8H6leCMBhG3Zx/bziqgLhtG9uxZFnvw3
-	 6uNflX+84F9NI/Uh7HuW4x1jOBYWv0/PtG09pTZ/EUxXVPsho/ouEmu1ZWsIpp9BCP
-	 5Y9P5hXK2PZstVvU4V3n4TmDdgmAxuOA4gyzXgQL5+s17png1dNhzwfnLzJR1yNDcn
-	 hy3UT5maSUHtlVyTZINb2l2JGyKlWwmCAAljaw6/GU/L723ZmKRNdIntERTgY2hwoV
-	 Ubivlfzk2TDgg==
-Date: Thu, 11 Jan 2024 21:47:26 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Nikolai Kondrashov <spbnick@gmail.com>
-Subject: Re: [GIT PULL] bcachefs updates for 6.8
-Message-ID: <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
-References: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
- <202401101525.112E8234@keescook>
- <6pbl6vnzkwdznjqimowfssedtpawsz2j722dgiufi432aldjg4@6vn573zspwy3>
- <202401101625.3664EA5B@keescook>
- <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
- <be2fa62f-f4d3-4b1c-984d-698088908ff3@sirena.org.uk>
- <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF7156B83;
+	Thu, 11 Jan 2024 21:52:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573C2C433C7;
+	Thu, 11 Jan 2024 21:52:16 +0000 (UTC)
+Date: Thu, 11 Jan 2024 16:53:19 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] tracefs/eventfs: Use root and instance inodes as
+ default ownership
+Message-ID: <20240111165319.4bb2af76@gandalf.local.home>
+In-Reply-To: <20240111-unzahl-gefegt-433acb8a841d@brauner>
+References: <20240103203246.115732ec@gandalf.local.home>
+	<20240105-wegstecken-sachkenntnis-6289842d6d01@brauner>
+	<20240105095954.67de63c2@gandalf.local.home>
+	<20240107-getrickst-angeeignet-049cea8cad13@brauner>
+	<20240107132912.71b109d8@rorschach.local.home>
+	<20240108-ortsrand-ziehen-4e9a9a58e708@brauner>
+	<20240108102331.7de98cab@gandalf.local.home>
+	<20240110-murren-extra-cd1241aae470@brauner>
+	<20240110080746.50f7767d@gandalf.local.home>
+	<20240111-unzahl-gefegt-433acb8a841d@brauner>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Oaeocmcu2u0GtUMN"
-Content-Disposition: inline
-In-Reply-To: <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
-X-Cookie: Does the name Pavlov ring a bell?
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Thu, 11 Jan 2024 22:01:32 +0100
+Christian Brauner <brauner@kernel.org> wrote:
+
+> What I'm pointing out in the current logic is that the caller is
+> taxed twice:
+> 
+> (1) Once when the VFS has done inode_permission(MAY_EXEC, "xfs")
+> (2) And again when you call lookup_one_len() in eventfs_start_creating()
+>     _because_ the permission check in lookup_one_len() is the exact
+>     same permission check again that the vfs has done
+>     inode_permission(MAY_EXEC, "xfs").
+
+As I described in: https://lore.kernel.org/all/20240110133154.6e18feb9@gandalf.local.home/
+
+The eventfs files below "events" doesn't need the .permissions callback at
+all. It's only there because the "events" inode uses it.
+
+The .permissions call for eventfs has:
+
+static int eventfs_permission(struct mnt_idmap *idmap,
+			      struct inode *inode, int mask)
+{
+	set_top_events_ownership(inode);
+	return generic_permission(idmap, inode, mask);
+}
+
+Where the "set_top_events_ownership() is a nop for everything but the
+"events" directory.
+
+I guess I could have two ops:
+
+static const struct inode_operations eventfs_root_dir_inode_operations = {
+	.lookup		= eventfs_root_lookup,
+	.setattr	= eventfs_set_attr,
+	.getattr	= eventfs_get_attr,
+	.permission	= eventfs_permission,
+};
+
+static const struct inode_operations eventfs_dir_inode_operations = {
+	.lookup		= eventfs_root_lookup,
+	.setattr	= eventfs_set_attr,
+	.getattr	= eventfs_get_attr,
+};
+
+And use the second one for all dentries below the root, but I figured it's
+not that big of a deal if I called the permissions on all. Perhaps I should
+do it with two?
+
+Anyway, the issue is with "events" directory and remounting, because like
+the tracefs system, the inode and dentry for "evnets" is created at boot
+up, before the mount happens. The VFS layer is going to check the
+permissions of its inode and dentry, which will be incorrect if the mount
+was mounted with a "gid" option.
 
 
---Oaeocmcu2u0GtUMN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Jan 11, 2024 at 12:38:57PM -0500, Kent Overstreet wrote:
-> On Thu, Jan 11, 2024 at 03:35:40PM +0000, Mark Brown wrote:
-
-> > IME the actually running the tests bit isn't usually *so* much the
-> > issue, someone making a new test runner and/or output format does mean a
-> > bit of work integrating it into infrastructure but that's more usually
-> > annoying than a blocker.
-
-> No, the proliferation of test runners, test output formats, CI systems,
-> etc. really is an issue; it means we can't have one common driver that
-> anyone can run from the command line, and instead there's a bunch of
-> disparate systems with patchwork integration and all the feedback is nag
-> emails - after you've finished whan you were working on instead of
-> moving on to the next thing - with no way to get immediate feedback.
-
-It's certainly an issue and it's much better if people do manage to fit
-their tests into some existing thing but I'm not convinced that's the
-big reason why you have a bunch of different systems running separately
-and doing different things.  For example the enterprise vendors will
-naturally tend to have a bunch of server systems in their labs and focus
-on their testing needs while I know the Intel audio CI setup has a bunch
-of laptops, laptop like dev boards and things in there with loopback
-audio cables and I think test equipment plugged in and focuses rather
-more on audio.  My own lab is built around on systems I can be in the
-same room as without getting too annoyed and does things I find useful,
-plus using spare bandwidth for KernelCI because they can take donated
-lab time.
-
-I think there's a few different issues you're pointing at here:
-
- - Working out how to run relevant tests for whatever area of the kernel
-   you're working on on whatever hardware you have to hand.
- - Working out exactly what other testers will do.
- - Promptness and consistency of feedback from other testers.
- - UI for getting results from other testers.
-
-and while it really sounds like your main annoyances are the bits with
-other test systems it really seems like the test runner bit is mainly
-for the first issue, possibly also helping with working out what other
-testers are going to do.  These are all very real issues.
-
-> And it's because building something shiny and new is the fun part, no
-> one wants to do the grungy integration work.
-
-I think you may be overestimating people's enthusiasm for writing test
-stuff there!  There is NIH stuff going on for sure but lot of the time
-when you look at something where people have gone off and done their own
-thing it's either much older than you initially thought and predates
-anything they might've integrated with or there's some reason why none
-of the existing systems fit well.  Anecdotally it seems much more common
-to see people looking for things to reuse in order to save time than it
-is to see people going off and reinventing the world.
-
-> > > example tests, example output:
-> > > https://evilpiepirate.org/git/ktest.git/tree/tests/bcachefs/single_device.ktest
-> > > https://evilpiepirate.org/~testdashboard/ci?branch=bcachefs-testing
-
-> > For example looking at the sample test there it looks like it needs
-> > among other things mkfs.btrfs, bcachefs, stress-ng, xfs_io, fio, mdadm,
-> > rsync
-
-> Getting all that set up by the end user is one command:
->   ktest/root_image create
-> and running a test is one morecommand:
-> build-test-kernel run ~/ktest/tests/bcachefs/single_device.ktest
-
-That does assume that you're building and running everything directly on
-the system under test and are happy to have the test in a VM which isn't
-an assumption that holds universally, and also that whoever's doing the
-testing doesn't want to do something like use their own distro or
-something - like I say none of it looks too unreasonable for
-filesystems.
-
-> > and a reasonably performant disk with 40G of space available.
-> > None of that is especially unreasonable for a filesystems test but it's
-> > all things that we need to get onto the system where we want to run the
-> > test and there's a lot of systems where the storage requirements would
-> > be unsustainable for one reason or another.  It also appears to take
-> > about 33000s to run on whatever system you use which is distinctly
-> > non-trivial.
-
-> Getting sufficient coverage in filesystem land does take some amount of
-> resources, but it's not so bad - I'm leasing 80 core ARM64 machines from
-> Hetzner for $250/month and running 10 test VMs per machine, so it's
-> really not that expensive. Other subsystems would probably be fine with
-> less resources.
-
-Some will be, some will have more demanding requirements especially when
-you want to test on actual hardware rather than in a VM.  For example
-with my own test setup which is more focused on hardware the operating
-costs aren't such a big deal but I've got boards that are for various
-reasons irreplaceable, often single instances of boards (which makes
-scheduling a thing) and for some of the tests I'd like to get around to
-setting up I need special physical setup.  Some of the hardware I'd like
-to cover is only available in machines which are in various respects
-annoying to automate, I've got a couple of unused systems waiting for me
-to have sufficient bandwidth to work out how to automate them.  Either
-way I don't think the costs are trival enough to be completely handwaved
-away.
-
-I'd also note that the 9 hour turnaround time for that test set you're
-pointing at isn't exactly what I'd associate with immediate feedback.
-
---Oaeocmcu2u0GtUMN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmWgYe0ACgkQJNaLcl1U
-h9AGUwf9EzzYc9GC3VLgQW2jSAvt8fpBW6u0etaKnnghvRUvtKxavMkeUvUqH/dl
-ozDTR8K91RDvuBe8TatVwk7OsW50oQVFVWQvSRz6SCY2NUPzBL8r7NDgzyCegTU9
-X2LkXX9xT6YUtRFW7xSBuuYXwXMes7nFG0s8CzPhOJAl9MmWbxL3A1PCKPk4rQu4
-hVkn7BbAELXanc8hBqXHbcak8xiNThnIYGRleEzRcQ9R6KBGCdJ8nr114rapXGE5
-17oGv909lvC3B2cXCFXZE1g83fiMXFKJtRVNAWf+uUihr2oH380cymHXUhCzTiPd
-mO0vBJFc9XKQ5OdPxplj6FSkqVGZaQ==
-=TLYT
------END PGP SIGNATURE-----
-
---Oaeocmcu2u0GtUMN--
+-- Steve
 
