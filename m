@@ -1,60 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-7820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80BB82B715
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 23:25:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799A182B73B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 23:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C5812817ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 22:24:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEAF8B2440A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Jan 2024 22:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB3A58AC2;
-	Thu, 11 Jan 2024 22:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B930FC17;
+	Thu, 11 Jan 2024 22:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hnu33nXw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EomzbTzJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B052258AB8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 22:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705011889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gtBG75u/OpOtXGJBN05gREou5jfBtFhy8ymC4RoTAOQ=;
-	b=Hnu33nXwuMqVYYjfh3uEoozIjNZDkh5g2sLH2G9vwm0J0DE9rcdLzH2wUuHzOWCW4KcVku
-	y06YeQg8ynOyzURuJvl/so962LkRAJeddn3zKaIIMIUVuL7Nna6jq8VUMSX3TOv+2CypeQ
-	ShCMyye6/K5DLpeE6DTbCXmljZ30KXU=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-ssZS43TiOFSzq1xxSFsj1w-1; Thu,
- 11 Jan 2024 17:24:46 -0500
-X-MC-Unique: ssZS43TiOFSzq1xxSFsj1w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8FE1C3C29A66;
-	Thu, 11 Jan 2024 22:24:45 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.17.159])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id E6D751121313;
-	Thu, 11 Jan 2024 22:24:44 +0000 (UTC)
-Date: Thu, 11 Jan 2024 16:24:43 -0600
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc: linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
-	dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
-	akpm@linux-foundation.org, djwong@kernel.org, mcgrof@kernel.org
-Subject: Re: [PATCH v12 0/2] mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-Message-ID: <ZaBqqwKuLj5gINed@redhat.com>
-References: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22BBFBF3;
+	Thu, 11 Jan 2024 22:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0rn15vikwOjPu92WIZ1pOLLnXWU6x//npevyjHw8yaU=; b=EomzbTzJzQx9U5EbbMaV2qfdKn
+	m+8Aks0QGEeOKbhHlYUfGI0ESzbPCwu4+T1iJwpAMaa+P+8S7WdUdv0uh9VymFzvAlHqWZdS+1v42
+	VYO+5aZ+YLqzQ9VrPT3bL2J2+Jh26pmRT3GsCtQ+FuTAp5ogzJOhfRTDdZd5nGFmbyHf4Nic43+/j
+	wDbX0twq5Rj7iSd2OySjSEWRPCXpPbuXe/3Q1RVKFIc6G732IcUWMPMXjEy7Po9B7TOpSfuH09+Si
+	ksPBNd2g30LsyFYsilKTNDIkvoFAxmh97MurNp5o/ueUNwULbN3H1vFGwAFhHlhdxkhCRy3J2stsU
+	Y5bchWlg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rO3o9-00FAPE-3J; Thu, 11 Jan 2024 22:45:53 +0000
+Date: Thu, 11 Jan 2024 22:45:53 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Hugh Dickins <hughd@google.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	x86@kernel.org, linux-sgx@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: Re: [PATCH 2/2] xfs: disable large folio support in xfile_create
+Message-ID: <ZaBvoWCCChU5wHDp@casper.infradead.org>
+References: <20240110092109.1950011-1-hch@lst.de>
+ <20240110092109.1950011-3-hch@lst.de>
+ <20240110175515.GA722950@frogsfrogsfrogs>
+ <20240110200451.GB722950@frogsfrogsfrogs>
+ <20240111140053.51948fb3ed10e06d8e389d2e@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,42 +71,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230629081651.253626-1-ruansy.fnst@fujitsu.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+In-Reply-To: <20240111140053.51948fb3ed10e06d8e389d2e@linux-foundation.org>
 
-On Thu, Jun 29, 2023 at 04:16:49PM +0800, Shiyang Ruan wrote:
-> This patchset is to add gracefully unbind support for pmem.
-> Patch1 corrects the calculation of length and end of a given range.
-> Patch2 introduces a new flag call MF_MEM_REMOVE, to let dax holder know
-> it is a remove event.  With the help of notify_failure mechanism, we are
-> able to shutdown the filesystem on the pmem gracefully.
+On Thu, Jan 11, 2024 at 02:00:53PM -0800, Andrew Morton wrote:
+> On Wed, 10 Jan 2024 12:04:51 -0800 "Darrick J. Wong" <djwong@kernel.org> wrote:
+> 
+> > > > Fixing this will require a bit of an API change, and prefeably sorting out
+> > > > the hwpoison story for pages vs folio and where it is placed in the shmem
+> > > > API.  For now use this one liner to disable large folios.
+> > > > 
+> > > > Reported-by: Darrick J. Wong <djwong@kernel.org>
+> > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > 
+> > > Can someone who knows more about shmem.c than I do please review
+> > > https://lore.kernel.org/linux-xfs/20240103084126.513354-4-hch@lst.de/
+> > > so that I can feel slightly more confident as hch and I sort through the
+> > > xfile.c issues?
+> > > 
+> > > For this patch,
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > ...except that I'm still getting 2M THPs even with this enabled, so I
+> > guess either we get to fix it now, or create our own private tmpfs mount
+> > so that we can pass in huge=never, similar to what i915 does. :(
+> 
+> What is "this"?  Are you saying that $Subject doesn't work, or that the
+> above-linked please-review patch doesn't work?
 
-What is the status of this patch?
-Thanks-
-Bill
-
-
-> 
-> Changes since v11:
->  Patch1:
->   1. correct the count calculation in xfs_failure_pgcnt().
->       (was a wrong fix in v11)
->  Patch2:
->   1. use new exclusive freeze_super/thaw_super API, to make sure the unbind
->       progress won't be disturbed by any other freezer.
-> 
-> Shiyang Ruan (2):
->   xfs: fix the calculation for "end" and "length"
->   mm, pmem, xfs: Introduce MF_MEM_REMOVE for unbind
-> 
->  drivers/dax/super.c         |  3 +-
->  fs/xfs/xfs_notify_failure.c | 95 +++++++++++++++++++++++++++++++++----
->  include/linux/mm.h          |  1 +
->  mm/memory-failure.c         | 17 +++++--
->  4 files changed, 101 insertions(+), 15 deletions(-)
-> 
-> -- 
-> 2.40.1
-> 
-
+shmem pays no attention to the mapping_large_folio_support() flag,
+so the proposed fix doesn't work.  It ought to, but it has its own way
+of doing it that predates mapping_large_folio_support existing.
 
