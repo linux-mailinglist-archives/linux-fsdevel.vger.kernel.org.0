@@ -1,76 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-7840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6768782B88C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 01:18:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3788982B8FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 02:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EBAB282B2F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 00:18:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500051C2401C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 01:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A4C7F1;
-	Fri, 12 Jan 2024 00:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA210FE;
+	Fri, 12 Jan 2024 01:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RijKlkpv"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rI9GGQXG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A21362
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 00:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d54b765414so34967625ad.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 16:18:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1705018718; x=1705623518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ckfdvUM867eVAU33Kckg9n+n5xC+joVeZXEKBZM060=;
-        b=RijKlkpvw7ODd5O8Ssv7s5eRunAz8bwp3X8/wkHKPfUGeIjB5ff3SKlat/WrgUDFfs
-         3o43mAPemKNjUN9kx405TWpxN2cuk5rIJ6jyoWY+W+nlyqNcfTNSqAt9PRd5Z99b2b5a
-         XMWQ4TBXMtDEOfaR7bDUDlSWsnirGiecXqVww=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705018718; x=1705623518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ckfdvUM867eVAU33Kckg9n+n5xC+joVeZXEKBZM060=;
-        b=ZE3CxHkOWB/YQkVuI5Y/vyy4sIuy2+nzWdXe40uQjsHcbk9vxdCtvWrOKIawzCntgh
-         4ItoQBWjTHr88mAplQYUiqKc5zpaPx2LJ+PwbIToe15pVXhpGHcM8v83i3T0pLdKppus
-         IE7UQzgJbxJygwh1m3bgXNH+7kJm2wQJiYuhMABeeH/ameU7u8ZYp2WrWCNn+IF7klEY
-         I2CpHIJROb0mD9Jtb0Q7mazNyGFFS1eXgyVltDMLPqKYcqlaO87uAovO4IU467/Q1BiL
-         YqckxPvzWwTwd0Hutt2odM4hlm3xAbWy/u/PzZOGQcgrcgqAUvFUA/gFjgH39GavSakV
-         yYPQ==
-X-Gm-Message-State: AOJu0Yyrv0xGdvkWZRuYOhT/RqB/TKUgS9FvTbQA+1Y7o2lN9NHU/JcV
-	FmQvR6h1s4PGkoUFkHD5i17n0MERlkjl
-X-Google-Smtp-Source: AGHT+IEg/VLeJRae0TCJ6R9QiR4EWdGViVk1gVX6xzgnn/TW4WYKqjLPFs52GnpRs54GewYce/HrxA==
-X-Received: by 2002:a17:903:25c3:b0:1d4:1f06:f4e0 with SMTP id jc3-20020a17090325c300b001d41f06f4e0mr121227plb.137.1705018718030;
-        Thu, 11 Jan 2024 16:18:38 -0800 (PST)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id n11-20020a170902d2cb00b001d398889d4dsm1754222plc.127.2024.01.11.16.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jan 2024 16:18:37 -0800 (PST)
-Date: Thu, 11 Jan 2024 16:18:37 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA0EA3F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 01:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 11 Jan 2024 20:10:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1705021851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6oGLhiFkWJYxCQX4sImM6I3DqLEsgGCfjkZs61RF9Oo=;
+	b=rI9GGQXGx7EXaFlxyd08Frv8dXmrBR3n85SDViVMju9SdaRaaG3W5Qy3t0KmnemS+jJYFV
+	rWDOj85l2M/iD/zZBnMc1tsmtB9LB6FmDdqRYxSEBlqJ0WDaUNkKk+u0Q5rD6JkmZfU7DM
+	AztHuQQ9RALaMvDDp9eslPwBfaZNvps=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Nikolai Kondrashov <spbnick@gmail.com>
 Subject: Re: [GIT PULL] bcachefs updates for 6.8
-Message-ID: <202401111613.781DFC8@keescook>
+Message-ID: <olmilpnd7jb57yarny6poqnw6ysqfnv7vdkc27pqxefaipwbdd@4qtlfeh2jcri>
 References: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
  <202401101525.112E8234@keescook>
  <6pbl6vnzkwdznjqimowfssedtpawsz2j722dgiufi432aldjg4@6vn573zspwy3>
  <202401101625.3664EA5B@keescook>
  <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
- <CAHk-=wigjbr7d0ZLo+6wbMk31bBMn8sEwHEJCYBRFuNRhzO+Kw@mail.gmail.com>
- <ZaByTq3uy0NfYuQs@casper.infradead.org>
- <202401111534.859084884C@keescook>
- <zocgn7zzr4wo3egjnq2vpmh7kpuxcj7gvo3a5tlbidt6wdh4rs@2udxphdcgeug>
+ <be2fa62f-f4d3-4b1c-984d-698088908ff3@sirena.org.uk>
+ <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
+ <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,58 +57,125 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <zocgn7zzr4wo3egjnq2vpmh7kpuxcj7gvo3a5tlbidt6wdh4rs@2udxphdcgeug>
+In-Reply-To: <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jan 11, 2024 at 07:05:06PM -0500, Kent Overstreet wrote:
-> On Thu, Jan 11, 2024 at 03:42:19PM -0800, Kees Cook wrote:
-> > On Thu, Jan 11, 2024 at 10:57:18PM +0000, Matthew Wilcox wrote:
-> > > On Wed, Jan 10, 2024 at 05:47:20PM -0800, Linus Torvalds wrote:
-> > > > No, because the whole idea of "let me mark something deprecated and
-> > > > then not just remove it" is GARBAGE.
-> > > > 
-> > > > If somebody wants to deprecate something, it is up to *them* to finish
-> > > > the job. Not annoy thousands of other developers with idiotic
-> > > > warnings.
-> > > 
-> > > What would be nice is something that warned about _new_ uses being
-> > > added.  ie checkpatch.  Let's at least not make the problem worse.
-> > 
-> > For now, we've just kind of "dealt with it". For things that show up
-> > with new -W options we've enlisted sfr to do the -next builds with it
-> > explicitly added (but not to the tree) so he could generate nag emails
-> > when new warnings appeared. That could happen if we added it to W=1
-> > builds, or some other flag like REPORT_DEPRECATED=1.
-> > 
-> > Another ugly idea would be to do a treewide replacement of "func" to
-> > "func_deprecated", and make "func" just a wrapper for it that is marked
-> > with __deprecated. Then only new instances would show up (assuming people
-> > weren't trying to actively bypass the deprecation work by adding calls to
-> > "func_deprecated"). :P Then the refactoring to replace "func_deprecated"
-> > could happen a bit more easily.
-> > 
-> > Most past deprecations have pretty narrow usage. This is not true with
-> > the string functions, which is why it's more noticeable here. :P
+On Thu, Jan 11, 2024 at 09:47:26PM +0000, Mark Brown wrote:
+> On Thu, Jan 11, 2024 at 12:38:57PM -0500, Kent Overstreet wrote:
+> > On Thu, Jan 11, 2024 at 03:35:40PM +0000, Mark Brown wrote:
 > 
-> Before doing the renaming - why not just leave a kdoc comment that marks
-> it as deprecated? Seems odd that checkpatch was patched, but I can't
-> find anything marking it as deprecated when I cscope to it.
+> > > IME the actually running the tests bit isn't usually *so* much the
+> > > issue, someone making a new test runner and/or output format does mean a
+> > > bit of work integrating it into infrastructure but that's more usually
+> > > annoying than a blocker.
+> 
+> > No, the proliferation of test runners, test output formats, CI systems,
+> > etc. really is an issue; it means we can't have one common driver that
+> > anyone can run from the command line, and instead there's a bunch of
+> > disparate systems with patchwork integration and all the feedback is nag
+> > emails - after you've finished whan you were working on instead of
+> > moving on to the next thing - with no way to get immediate feedback.
+> 
+> It's certainly an issue and it's much better if people do manage to fit
+> their tests into some existing thing but I'm not convinced that's the
+> big reason why you have a bunch of different systems running separately
+> and doing different things.  For example the enterprise vendors will
+> naturally tend to have a bunch of server systems in their labs and focus
+> on their testing needs while I know the Intel audio CI setup has a bunch
+> of laptops, laptop like dev boards and things in there with loopback
+> audio cables and I think test equipment plugged in and focuses rather
+> more on audio.  My own lab is built around on systems I can be in the
+> same room as without getting too annoyed and does things I find useful,
+> plus using spare bandwidth for KernelCI because they can take donated
+> lab time.
 
-It doesn't explicitly say "deprecated", but this language has been in
-the kdoc for a while now (not that people go read this often):
+No, you're overthinking.
 
- * Do not use this function. While FORTIFY_SOURCE tries to avoid
- * over-reads when calculating strlen(@q), it is still possible.
- * Prefer strscpy(), though note its different return values for
- * detecting truncation.
+The vast majority of kernel testing requires no special hardware, just a
+virtual machine.
 
-But it's all fine -- we're about to wipe out strlcpy for v6.8. Once the
-drivers-core and drm-misc-next trees land, (and the bcachefs patch[1])
-we'll be at 0 users. :)
+There is _no fucking reason_ we shouldn't be able to run tests on our
+own local machines - _local_ machines, not waiting for the Intel CI
+setup and asking for a git branch to be tested, not waiting for who
+knows how long for the CI farm to get to it - just run the damn tests
+immediately and get immediate feedback.
 
--Kees
+You guys are overthinking and overengineering and ignoring the basics,
+the way enterprise people always do.
 
-[1] https://lore.kernel.org/lkml/20240110235438.work.385-kees@kernel.org/
+> > And it's because building something shiny and new is the fun part, no
+> > one wants to do the grungy integration work.
+> 
+> I think you may be overestimating people's enthusiasm for writing test
+> stuff there!  There is NIH stuff going on for sure but lot of the time
+> when you look at something where people have gone off and done their own
+> thing it's either much older than you initially thought and predates
+> anything they might've integrated with or there's some reason why none
+> of the existing systems fit well.  Anecdotally it seems much more common
+> to see people looking for things to reuse in order to save time than it
+> is to see people going off and reinventing the world.
 
--- 
-Kees Cook
+It's a basic lack of leadership. Yes, the younger engineers are always
+going to be doing the new and shiny, and always going to want to build
+something new instead of finishing off the tests or integrating with
+something existing. Which is why we're supposed to have managers saying
+"ok, what do I need to prioritize for my team be able to develop
+effectively".
+
+> 
+> > > > example tests, example output:
+> > > > https://evilpiepirate.org/git/ktest.git/tree/tests/bcachefs/single_device.ktest
+> > > > https://evilpiepirate.org/~testdashboard/ci?branch=bcachefs-testing
+> 
+> > > For example looking at the sample test there it looks like it needs
+> > > among other things mkfs.btrfs, bcachefs, stress-ng, xfs_io, fio, mdadm,
+> > > rsync
+> 
+> > Getting all that set up by the end user is one command:
+> >   ktest/root_image create
+> > and running a test is one morecommand:
+> > build-test-kernel run ~/ktest/tests/bcachefs/single_device.ktest
+> 
+> That does assume that you're building and running everything directly on
+> the system under test and are happy to have the test in a VM which isn't
+> an assumption that holds universally, and also that whoever's doing the
+> testing doesn't want to do something like use their own distro or
+> something - like I say none of it looks too unreasonable for
+> filesystems.
+
+No, I'm doing it that way because technically that's the simplest way to
+do it.
+
+All you guys building crazy contraptions for running tests on Google
+Cloud or Amazon or whatever - you're building technical workarounds for
+broken procurement.
+
+Just requisition the damn machines.
+
+> Some will be, some will have more demanding requirements especially when
+> you want to test on actual hardware rather than in a VM.  For example
+> with my own test setup which is more focused on hardware the operating
+> costs aren't such a big deal but I've got boards that are for various
+> reasons irreplaceable, often single instances of boards (which makes
+> scheduling a thing) and for some of the tests I'd like to get around to
+> setting up I need special physical setup.  Some of the hardware I'd like
+> to cover is only available in machines which are in various respects
+> annoying to automate, I've got a couple of unused systems waiting for me
+> to have sufficient bandwidth to work out how to automate them.  Either
+> way I don't think the costs are trival enough to be completely handwaved
+> away.
+
+That does complicate things.
+
+I'd also really like to get automated performance testing going too,
+which would have similar requirements in that jobs would need to be
+scheduled on specific dedicated machines. I think what you're doing
+could still build off of some common infrastructure.
+
+> I'd also note that the 9 hour turnaround time for that test set you're
+> pointing at isn't exactly what I'd associate with immediate feedback.
+
+My CI shards at the subtest level, and like I mentioned I run 10 VMs per
+physical machine, so with just 2 of the 80 core Ampere boxes I get full
+test runs done in ~20 minutes.
 
