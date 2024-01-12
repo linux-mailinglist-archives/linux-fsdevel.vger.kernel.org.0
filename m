@@ -1,91 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-7846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D01682BA06
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 04:40:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056DC82BA09
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 04:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20C07B227DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 03:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C10E1C24960
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 03:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717C61B285;
-	Fri, 12 Jan 2024 03:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65A1B27F;
+	Fri, 12 Jan 2024 03:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QS/AHa6i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD651A735
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 03:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-35fe765d63eso31034045ab.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 19:40:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0337F1A733
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 03:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a28fb463a28so632183966b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 19:40:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1705030850; x=1705635650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gm1uV8nauYydYh4R8L5vh4G6BKRZADuM0xKtlvDNSU8=;
+        b=QS/AHa6iRB5GR5jnufYFCQ82uuhW0VBAlOLo+GJOlAYUz9eb4YB6FBK2h7Pa2MfTwP
+         /v1frWP6omxkSlsJ8/TYApcNcPfO0qYFO2t62zk8uC+PN0QE6oIk9asuy/hDQxUeomD8
+         KwYfZlXuUrXo3J4+1D7/Wy0EwtuWpK6p7gA+U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705030821; x=1705635621;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
-        b=rJ83snvIYjPlrsoiYfdnbTmeXdxMye1bzs8mkDZC6Npe6xENooG65DX45JTKyLuyKm
-         cQ5qMoTLrTrBdOrY+KjWaCDkaoXheiIvHNz7ku4s7/2omsfYS6hPNcFB07gXCrslce+3
-         em3e5+WBkhUC0DAXQh7KkBPk2FRRd+MExI7dAYUtyq/Tj3FlMTOb6HeBItBfdF7molTY
-         sIhMvPAyYHRDeXxkETFCsGHUYoJzYm5InQo9CbRqX7kz3Sxs6/mZzlvD+QskB11gBxml
-         /o8lPi12VQ5L66OruGrkgGoKH6W3aPOWG68k3YBtKX9VKu3Jj6oFjGDqeaMM6DIiBbf/
-         MBYQ==
-X-Gm-Message-State: AOJu0Yw086wIpUBmRMHjBnHX7fM8MTl9aHKBG9945S8ZoYOwkpJRYcaE
-	2xCjwUV0je5ku8aFJeitFM8ionIerppn3K5kY9bjnbtRJ/s9
-X-Google-Smtp-Source: AGHT+IFB9wtwpmlwh1hN38Y/mekRfMgDkX1YMtupYMYRVCkd0mAl9XPC2cSN1Nuc1Ci1vxRGdUPjVwpCgKAHanbVQVeQU5MJSIOV
+        d=1e100.net; s=20230601; t=1705030850; x=1705635650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gm1uV8nauYydYh4R8L5vh4G6BKRZADuM0xKtlvDNSU8=;
+        b=rWQnt5GQ8+AOvT56bOvbtpcmzHzXVI+yQ+aoYM4DBCmPt/ng8RVP6kvUDS4WjSMv+r
+         Aw0RJhYKPrRY12w3/r7RjW8yLghQ8DVVPL/xZkq5hXk2gEfrq0auOUcMwl1zbdrOKpuE
+         m0/admadnev1xTbACz4MGJAkQVuv8wQuP2trYTXbLuZiliMi7eDpIvgUu+BAEk9w8uS4
+         NHoOxRUz81jp5LW9vr85NzLEk7UpQNDDxdTx1RDKrJlL74G50y7AKs7kdtS6GW1VCRSo
+         esjkie5YP7M3KiE10mTqW3PkXWwme2bKAnvbbkggiSqumfa4VnZgnfWMXijANUoXA//w
+         FXOg==
+X-Gm-Message-State: AOJu0YyR+EgDlXBDyBLBD8x/15e8usHSObeYuDreRaMwr/t80lsmDQRd
+	jixlB5DFCwCxLy35yAzqEAVsHrIqyMQTbgQbvH+KvFyqXcTsA03p
+X-Google-Smtp-Source: AGHT+IHlJSqXJx1ov7Uun3a1shyjNFb3gJ0b0IGPdF3Clvv0RZ70dWkgZq1Pbaz9zqj0AUE61RfA2g==
+X-Received: by 2002:a17:907:c9a9:b0:a28:e3b6:a199 with SMTP id uj41-20020a170907c9a900b00a28e3b6a199mr252110ejc.38.1705030850373;
+        Thu, 11 Jan 2024 19:40:50 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id ot8-20020a170906ccc800b00a28a8a7de10sm1276088ejb.159.2024.01.11.19.40.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jan 2024 19:40:49 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a28a6cef709so665960466b.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 19:40:49 -0800 (PST)
+X-Received: by 2002:a17:907:a02:b0:a28:df9e:b2e1 with SMTP id
+ bb2-20020a1709070a0200b00a28df9eb2e1mr358646ejc.54.1705030849339; Thu, 11 Jan
+ 2024 19:40:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24b:0:b0:35f:e864:f6f with SMTP id
- k11-20020a92c24b000000b0035fe8640f6fmr27789ilo.0.1705030821093; Thu, 11 Jan
- 2024 19:40:21 -0800 (PST)
-Date: Thu, 11 Jan 2024 19:40:21 -0800
-In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006c2b4f060eb76cfa@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
-From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+References: <20231025140205.3586473-1-mszeredi@redhat.com> <20231025140205.3586473-6-mszeredi@redhat.com>
+ <75b87a85-7d2c-4078-91e3-024ea36cfb42@roeck-us.net> <CAHk-=wjdW-4s6Kpa4izJ2D=yPdCje6Ta=eQxxQG6e2SkP42vnw@mail.gmail.com>
+ <2f595f28-7fcd-4196-a0b1-6598781530b9@roeck-us.net> <CAHk-=wjh6Cypo8WC-McXgSzCaou3UXccxB+7PVeSuGR8AjCphg@mail.gmail.com>
+ <77b38aa7-a8b1-4450-8c50-379f130dda16@roeck-us.net>
+In-Reply-To: <77b38aa7-a8b1-4450-8c50-379f130dda16@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 11 Jan 2024 19:40:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgK81n4=pfKnhWfYxxtFBS_1UQDaeBGRRJ39qjVw-oyCQ@mail.gmail.com>
+Message-ID: <CAHk-=wgK81n4=pfKnhWfYxxtFBS_1UQDaeBGRRJ39qjVw-oyCQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Miklos Szeredi <mszeredi@redhat.com>, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+	linux-api@vger.kernel.org, linux-man@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
+	Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <christian@brauner.io>, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew House <mattlloydhouse@gmail.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Thu, 11 Jan 2024 at 15:57, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> I wonder if something may be wrong with the definition and use of __m
+> for u64 accesses. The code below also fixes the build problem.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
+Ok, that looks like the right workaround.
 
-#syz fix: exact-commit-title
+> But then I really don't know what
+>
+> struct __large_struct { unsigned long buf[100]; };
+> #define __m(x) (*(struct __large_struct __user *)(x))
 
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
+This is a historical pattern we've used because the gcc docs weren't
+100% clear on what "m" does, and whether it might for example end up
+loading the value from memory into a register, spilling it to the
+stack, and then using the stack address...
 
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+Using the whole "tell the compiler it accesses a big structure" turns
+the memory access into "BLKmode" (in gcc terms) and makes sure that
+never happens.
 
----
-[1] I expect the commit to be present in:
+NOTE! I'm not sure it ever did happen with gcc, but we have literally
+seen clang do that "load from memory, spill to stack, and then use the
+stack address for the asm". Crazy, I know. See
 
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+  https://lore.kernel.org/all/CAHk-=wgobnShg4c2yyMbk2p=U-wmnOmX_0=b3ZY_479Jjey2xw@mail.gmail.com/
 
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+where I point to clang doing basically exactly that with the "rm"
+constraint for another case entirely. I consider it a clang bug, but
+happily I've never seen the "load only to spill" in a case where the
+"stupid code generation" turned into "actively buggy code generation".
 
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+If it ever does, we may need to turn the "m" into a "p" and a memory
+clobber, which will generate horrendous code. Or we may just need to
+tell clang developers that enough is enough, and that they actually
+need to take the asm constraints more seriously.
 
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 9 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+                Linus
 
