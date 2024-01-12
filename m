@@ -1,231 +1,393 @@
-Return-Path: <linux-fsdevel+bounces-7883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A750D82C558
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 19:23:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D777482C576
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 19:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DFFB218F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 18:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D977D1C22520
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 18:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F126C175B0;
-	Fri, 12 Jan 2024 18:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7B9154B3;
+	Fri, 12 Jan 2024 18:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdlcrtmq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRFvabBx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597902560A;
-	Fri, 12 Jan 2024 18:23:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B58C433C7;
-	Fri, 12 Jan 2024 18:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705083780;
-	bh=lU3HCrdKgQWP+2uYW9g0VOt5OLiZn7shgDnF710EWXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cdlcrtmqtc4RIj/ehk3I9GgSPENo8oFhjP05Q1gjkiiVIzH5RcFlOnoRBKmnvhC8S
-	 MGXlhqBNmJ8uXmDzFEhy6HHY8uFIDjaqWE2klebrDfPJj9VW4D3a3jbQ//VIGi2hRH
-	 gspA72SUP4AyCNu0l3Fo/7lOcYKiFnkg1v+4YSbAxd1vmnAe5OaBzZa/eft3LOcfcD
-	 CtS4KbLBHMQ8/pqAfF+aOJPlXRzoPR70YFSHl8dXneVjl0OVTxUUejeYYb5heSdOar
-	 0G9Y46AfkxdhMHfrAKnFBj2aJHokLxuY/VK1E9WXEjbNU9zGnRt47+Ts4v95VnzCEX
-	 bKU0KuUs0/AmQ==
-Date: Fri, 12 Jan 2024 18:22:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Neal Gompa <neal@gompa.dev>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Nikolai Kondrashov <spbnick@gmail.com>
-Subject: Re: [GIT PULL] bcachefs updates for 6.8
-Message-ID: <40bcbbe5-948e-4c92-8562-53e60fd9506d@sirena.org.uk>
-References: <wq27r7e3n5jz4z6pn2twwrcp2zklumcfibutcpxrw6sgaxcsl5@m5z7rwxyuh72>
- <202401101525.112E8234@keescook>
- <6pbl6vnzkwdznjqimowfssedtpawsz2j722dgiufi432aldjg4@6vn573zspwy3>
- <202401101625.3664EA5B@keescook>
- <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
- <be2fa62f-f4d3-4b1c-984d-698088908ff3@sirena.org.uk>
- <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
- <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
- <olmilpnd7jb57yarny6poqnw6ysqfnv7vdkc27pqxefaipwbdd@4qtlfeh2jcri>
- <CAEg-Je8=RijGLavvYDvw3eOf+CtvQ_fqdLZ3DOZfoHKu34LOzQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83DC13FFE;
+	Fri, 12 Jan 2024 18:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40e63bc90f2so11686765e9.2;
+        Fri, 12 Jan 2024 10:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705084337; x=1705689137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cpqRB1614g5tUp1aYWmZo26QvKU2c2x1mRxbJyJjzvo=;
+        b=jRFvabBxHNthKyJyRtETnK0ZI7rbD+3nQytdOR1IUGdjRZy10HvXxiF/8BPQRRcjxp
+         2utjbjlkC8n7pu0QqAKyrzoDjNL4RxzyZfAt/zA/Q+mqVYOwKh2aRT5SRjvqjTy7LiZa
+         b+PkbR31obesIgBSEfbGwdITK5kUGXnRpwtdY4xo/7ShCsHCmoYLVxWyX9OcMkIImzei
+         QN8lepsVvzE7G3gxXrUGm109eWI0kLIh6v6yXRmb1Dr+fjrq1M1qZf/6GmSFKHfir+Go
+         Cid15sFy+kuM0R97/vteEdu/AyIegovF3OMSUiqO0iCiacGgQIt1FRRjpJTvYjQ06t8q
+         OuVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705084337; x=1705689137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cpqRB1614g5tUp1aYWmZo26QvKU2c2x1mRxbJyJjzvo=;
+        b=RKH93VP4pBCxiAbYOFjEOFQ71f2kzzbbiawM4nu9tcF+fgGiL4JeIO28tusdxTF5Gb
+         sHTKvBLP3U5mXQkgTQg3wqjcgfz3pNvr++r8srf6leZVKt9HxkV3KPIrl3uM5m3eYnwa
+         gWxQ7BkWWl92aZQ7XqEe9mWTIwVYSWezjnLYsYlmVuHZF3MeS6RwL332mC59F1c2nDss
+         F0zn8B8LVqm1TIgFrYCEXFY/CtlihUpN7Dk3EZwz6yhLUnBThZzqt6zWfp6/nzdsbHyV
+         Kt6WbjEEf3D8UTITpkRUJqV8zPsCLYl3JLGGX09w2+fR5oYi2cGTWjXLXueHc6tukPpB
+         TPJQ==
+X-Gm-Message-State: AOJu0YxUCZ5KH27D4fop8YKo3s/djcDqqA4FhfkdBy3cnhhu/e84g7ir
+	H9WQJ8Y/d4L+wOa2TLulffE3VGSTzflQILyF1ZU=
+X-Google-Smtp-Source: AGHT+IEDhuxRAnzPSdN608BtoR39g6RJ9qyf1xHFrz+8rRDF67p6wl+4OWxugNeOqGsZVxW7AJfOXGgL7HAfRPMKBS4=
+X-Received: by 2002:a7b:c4cb:0:b0:40d:87b7:24c7 with SMTP id
+ g11-20020a7bc4cb000000b0040d87b724c7mr1043025wmk.125.1705084336638; Fri, 12
+ Jan 2024 10:32:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UV+e11fnWR99TzU9"
-Content-Disposition: inline
-In-Reply-To: <CAEg-Je8=RijGLavvYDvw3eOf+CtvQ_fqdLZ3DOZfoHKu34LOzQ@mail.gmail.com>
-X-Cookie: I want a WESSON OIL lease!!
-
-
---UV+e11fnWR99TzU9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
+ <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
+ <20240108-gasheizung-umstand-a36d89ed36b7@brauner> <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
+ <20240109-tausend-tropenhelm-2a9914326249@brauner> <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
+ <20240110-nervt-monopol-6d307e2518f4@brauner> <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
+ <20240111-amten-stiefel-043027f9520f@brauner> <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
+ <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
+In-Reply-To: <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 12 Jan 2024 10:32:03 -0800
+Message-ID: <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 12, 2024 at 06:11:04AM -0500, Neal Gompa wrote:
-> On Thu, Jan 11, 2024 at 8:11=E2=80=AFPM Kent Overstreet
-> > On Thu, Jan 11, 2024 at 09:47:26PM +0000, Mark Brown wrote:
-
-> > > It's certainly an issue and it's much better if people do manage to f=
-it
-> > > their tests into some existing thing but I'm not convinced that's the
-> > > big reason why you have a bunch of different systems running separate=
-ly
-> > > and doing different things.  For example the enterprise vendors will
-> > > naturally tend to have a bunch of server systems in their labs and fo=
-cus
-> > > on their testing needs while I know the Intel audio CI setup has a bu=
-nch
-
-> > No, you're overthinking.
-
-> > The vast majority of kernel testing requires no special hardware, just a
-> > virtual machine.
-
-This depends a lot on the area of the kernel you're looking at - some
-things are very amenable to testing in a VM but there's plenty of code
-where you really do want to ensure that at some point you're running
-with some actual hardware, ideally as wide a range of it with diverse
-implementation decisions as you can manage.  OTOH some things can only
-be tested virtually because the hardware doesn't exist yet!
-
-> > There is _no fucking reason_ we shouldn't be able to run tests on our
-> > own local machines - _local_ machines, not waiting for the Intel CI
-> > setup and asking for a git branch to be tested, not waiting for who
-> > knows how long for the CI farm to get to it - just run the damn tests
-> > immediately and get immediate feedback.
-
-> > You guys are overthinking and overengineering and ignoring the basics,
-> > the way enterprise people always do.
-
-> As one of those former enterprise people that actually did do this
-> stuff, I can say that even when I was "in the enterprise", I tried to
-> avoid overthinking and overengineering stuff like this. :)
-
-> Nobody can maintain anything that's so complicated nobody can run the
-> tests on their machine. That is the root of all sadness.
-
-Yeah, similar with a lot of the more hardware focused or embedded stuff
-- running something on the machine that's in front of you is seldom the
-bit that causes substantial issues.  Most of the exceptions I've
-personally dealt with involved testing hardware (from simple stuff like
-wiring the audio inputs and outputs together to verify that they're
-working to attaching fancy test equipment to simulate things or validate
-that desired physical parameters are being achieved).
-
-> > > of the existing systems fit well.  Anecdotally it seems much more com=
-mon
-> > > to see people looking for things to reuse in order to save time than =
-it
-> > > is to see people going off and reinventing the world.
-
-> > It's a basic lack of leadership. Yes, the younger engineers are always
-> > going to be doing the new and shiny, and always going to want to build
-> > something new instead of finishing off the tests or integrating with
-> > something existing. Which is why we're supposed to have managers saying
-> > "ok, what do I need to prioritize for my team be able to develop
-> > effectively".
-
-That sounds more like a "(reproducible) tests don't exist" complaint
-which is a different thing again to people going off and NIHing fancy
-frameworks.
-
-> > > That does assume that you're building and running everything directly=
- on
-> > > the system under test and are happy to have the test in a VM which is=
-n't
-> > > an assumption that holds universally, and also that whoever's doing t=
+On Thu, Jan 11, 2024 at 11:58=E2=80=AFPM Christian Brauner <brauner@kernel.=
+org> wrote:
+>
+> On Thu, Jan 11, 2024 at 09:41:25AM -0800, Andrii Nakryiko wrote:
+> > On Thu, Jan 11, 2024 at 2:38=E2=80=AFAM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > > > The current check is inconsisent. It special-cases init_user_ns. =
+The
+> > > > > correct thing to do for what you're intending imho is:
+> > > > >
+> > > > > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > > > > {
+> > > > >         struct user_namespace *userns =3D &init_user_ns;
+> > > > >
+> > > > >         if (token)
+> > > > >                 userns =3D token->userns;
+> > > > >         if (ns_capable(userns, cap))
+> > > > >                 return true;
+> > > > >         return cap !=3D CAP_SYS_ADMIN && ns_capable(userns, CAP_S=
+YS_ADMIN))
+> > > > >
+> > > > > }
+> > > >
+> > > > Unfortunately the above becomes significantly more hairy when LSM
+> > > > (security_bpf_token_capable) gets involved, while preserving the ru=
+le
+> > > > "if token doesn't give rights, fall back to init userns checks".
+> > >
+> > > Why? Please explain your reasoning in detail.
+> >
+> > Why which part? About LSM interaction making this much hairier? Then se=
+e below.
+> >
+> > But if your "why?" is about "pretend no token, if token doesn't give
+> > rights", then that's what I tried to explain in my last email(s). It
+> > significantly alters (for the worse) user-space integration story
+> > (providing a token can be a regression, so now it's not safe to
+> > opportunistically try to create and use BPF token; on the other hand,
+> > automatically retrying inside libbpf makes for confusing user
+> > experience and inefficiencies). Please let me know which parts are not
+> > clear.
+> >
+> > >
+> > > >
+> > > > I'm happy to accommodate any implementation of bpf_token_capable() =
+as
+> > > > long as it behaves as discussed above and also satisfies Paul's
+> > > > requirement that capability checks should happen before LSM checks.
+> > > >
+> > > > >
+> > > > > Because any caller located in an ancestor user namespace of
+> > > > > token->user_ns will be privileged wrt to the token's userns as lo=
+ng as
+> > > > > they have that capability in their user namespace.
+> > > >
+> > > > And with `current_user_ns() =3D=3D token->userns` check we won't be=
+ using
+> > > > token->userns while the caller is in ancestor user namespace, we'll
+> > > > use capable() check, which will succeed only in init user_ns, assum=
+ing
+> > > > corresponding CAP_xxx is actually set.
+> > >
+> > > Why? This isn't how any of our ns_capable() logic works.
+> > >
+> > > This basically argues that anyone in an ancestor user namespace is no=
+t
+> > > allowed to operate on any of their descendant child namespaces unless
+> > > they are in the init_user_ns.
+> > >
+> > > But that's nonsense as I'm trying to tell you. Any process in an
+> > > ancestor user namespace that is privileged over the child namespace c=
+an
+> > > just setns() into it and then pass that bpf_token_capable() check by
+> > > supplying the token.
+> > >
+> > > At this point just do it properly and allow callers that are privileg=
+ed
+> > > in the token user namespace to load bpf programs. It also means you g=
+et
+> > > user namespace nesting done properly.
+> >
+> > Ok, I see. This `current_user_ns() =3D=3D token->userns` check prevents
+> > this part of cap_capable() to ever be exercised:
+> >
+> >  if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner, cred->euid)=
+)
+> >     return 0;
+> >
+> > Got it. I'm all for not adding any unnecessary restrictions.
+> >
+> > >
+> > > >
+> > > > >
+> > > > > For example, if the caller is in the init_user_ns and permissions
+> > > > > for CAP_WHATEVER is checked for in token->user_ns and the caller =
+has
+> > > > > CAP_WHATEVER in init_user_ns then they also have it in all
+> > > > > descendant user namespaces.
+> > > >
+> > > > Right, so if they didn't use a token they would still pass
+> > > > capable(CAP_WHATEVER), right?
+> > >
+> > > Yes, I'm trying to accomodate your request but making it work
+> > > consistently.
+> > >
+> > > >
+> > > > >
+> > > > > The original intention had been to align with what we require dur=
+ing
+> > > > > token creation meaning that once a token has been created interac=
+ting
+> > > > > with this token is specifically confined to caller's located in t=
 he
-> > > testing doesn't want to do something like use their own distro or
-> > > something - like I say none of it looks too unreasonable for
-> > > filesystems.
+> > > > > token's user namespace.
+> > > > >
+> > > > > If that's not the case then it doesn't make sense to not allow
+> > > > > permission checking based on regular capability semantics. IOW, w=
+hy
+> > > > > special case init_user_ns if you're breaking the confinement rest=
+riction
+> > > > > anyway.
+> > > >
+> > > > I'm sorry, perhaps I'm dense, but with `current_user_ns() =3D=3D
+> > > > token->userns` check I think we do fulfill the intention to not all=
+ow
+> > > > using a token in a userns different from the one in which it was
+> > > > created. If that condition isn't satisfied, the token is immediatel=
+y
+> > >
+> > > My request originally was about never being able to interact with a
+> > > token outside of that userns. This is different as you provide an esc=
+ape
+> > > hatch to init_user_ns. But if you need that and ignore the token then
+> > > please do it properly. That's what I'm trying to tell you. See below.
+> >
+> > Yes, I do need that. Thanks for providing the full code implementation
+> > (including LSM), it's much easier this way to converge. Let's see
+> > below.
+> >
+> > >
+> > > > ignored. So you can't use a token from another userns for anything,
+> > > > it's just not there, effectively.
+> > > >
+> > > > And as I tried to explain above, I do think that ignoring the token
+> > > > instead of erroring out early is what we want to provide good
+> > > > user-space ecosystem integration of BPF token.
+> > >
+> > > There is no erroring out early in. It's:
+> > >
+> > > (1) Has a token been provided and is the caller capable wrt to the
+> > >     namespace of the token? Any caller in an ancestor user namespace
+> > >     that has the capability in that user namespace is capable wrt to
+> > >     that token. That __includes__ a callers in the init_user_ns. IOW,
+> > >     you don't need to fallback to any special checking for init_user_=
+ns.
+> > >     It is literally covered in the if (token) branch with the added
+> > >     consistency that a process in an ancestor user namespace is
+> > >     privileged wrt to that token as well.
+> > >
+> > > (2) No token has been provided. Then do what we always did and perfor=
+m
+> > >     the capability checks based on the initial user namespace.
+> > >
+> > > The only thing that you then still need is add that token_capable() h=
+ook
+> > > in there:
+> > >
+> > > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > > {
+> > >         bool has_cap;
+> > >         struct user_namespace *userns =3D &init_user_ns;
+> > >
+> > >         if (token)
+> > >                 userns =3D token->userns;
+> > >         if (ns_capable(userns, cap))
+> >
+> > Here, we still need to check security_bpf_token_capable(token, cap)
+> > result (and only if token !=3D NULL). And if LSM returns < 0, then drop
+> > the token and do the original init userns check.
+> >
+> > And I just realized that my original implementation has the same
+> > problem. In my current implementation if we have a token we will
+> > terminate at LSM call, regardless if LSM allows or disallows the
+> > token. But that's inconsistent behavior and shouldn't be like that.
+> >
+> > I will add new tests that validate LSM interactions in the next revisio=
+n.
+> >
+> > >                 return true;
+> > >         if (cap !=3D CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMI=
+N))
+> > >                 return token ? security_bpf_token_capable(token, cap)=
+ =3D=3D 0 : true;
+> >
+> > here as well, even if we have a token which passes ns_capable() check,
+> > but LSM rejects this token, we still need to forget about the token
+> > and do capable() checks in init userns.
+> >
+> > >         return false;
+> > > }
+> > >
+> > > Or write it however you like. I think this is way more consistent and
+> > > gives you a more flexible permission model.
+> >
+> > Yes, I like it, thanks. Taking into account fixed LSM interactions,
+> > here's what I came up with. Yell if you can spot anything wrong (or
+> > just hate the style). I did have a version without extra function,
+> > just setting the token to NULL and "goto again" approach, but I think
+> > it's way less readable and harder to follow. So this is my version
+> > right now:
+> >
+> > static bool bpf_ns_capable(struct user_namespace *ns, int cap)
+> > {
+> >         return ns_capable(ns, cap) || (cap !=3D CAP_SYS_ADMIN &&
+> > ns_capable(ns, CAP_SYS_ADMIN));
+> > }
+> >
+> > static bool token_capable(const struct bpf_token *token, int cap)
+> > {
+> >         struct user_namespace *userns;
+> >
+> >         userns =3D token ? token->userns : &init_user_ns;
+> >         if (!bpf_ns_capable(userns, cap))
+> >                 return false;
+> >         if (token && security_bpf_token_capable(token, cap) < 0)
+> >                 return false;
+> >         return true;
+> > }
+> >
+> > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > {
+> >         /* BPF token allows ns_capable() level of capabilities, but if =
+it
+> >          * doesn't grant required capabilities, ignore token and fallba=
+ck to
+> >          * init userns-based checks
+> >          */
+> >         if (token && token_capable(token, cap))
+> >                 return true;
+> >         return token_capable(NULL, cap);
+> > }
+>
+> My point is that the capable logic will walk upwards the user namespace
+> hierarchy from the token->userns until the user namespace of the caller
+> and terminate when it reached the init_user_ns.
+>
+> A caller is located in some namespace at the point where they call this
+> function. They provided a token. The caller isn't capable in the
+> namespace of the token so the function falls back to init_user_ns. Two
+> interesting cases:
+>
+> (1) The caller wasn't in an ancestor userns of the token. If that's the
+>     case then it follows that the caller also wasn't in the init_user_ns
+>     because the init_user_ns is a descendant of all other user
+>     namespaces. So falling back will fail.
 
-> > No, I'm doing it that way because technically that's the simplest way to
-> > do it.
+agreed
 
-> > All you guys building crazy contraptions for running tests on Google
-> > Cloud or Amazon or whatever - you're building technical workarounds for
-> > broken procurement.
+>
+> (2) The caller was in the same or an ancestor user namespace of the
+>     token but didn't have the capability in that user namespace:
+>
+>      (i) They were in a non-init_user_ns. Therefore they can't be
+>          privileged in init_user_ns.
+>     (ii) They were in init_user_ns. Therefore, they lacked privileges in
+>          the init_user_ns.
+>
+> In both cases your fallback will do nothing iiuc.
 
-I think you're addressing some specific stuff that I'm not super
-familiar with here?  My own stuff (and most of the stuff I end up
-looking at) involves driving actual hardware.
+agreed as well
 
-> > Just requisition the damn machines.
+And I agree in general that there isn't a *practically useful* case
+where this would matter much. But there is still (at least one) case
+where there could be a regression: if token is created in
+init_user_ns, caller has CAP_BPF in init_user_ns, caller passes that
+token to BPF_PROG_LOAD, and LSM policy rejects that token in
+security_bpf_token_capable(). Without the above implementation such
+operation will be rejected, even though if there was no token passed
+it would succeed. With my implementation above it will succeed as
+expected.
 
-There's some assumptions there which are true for a lot of people
-working on the kernel but not all of them...
+Again, I get that those are unlikely corner cases. But this is kernel
+API and it should behave consistently. I'd like to avoid having an
+asterisk listing exceptional cases where behavior might not be logical
+(however unlikely) and stuff like that. The promise is simple:
+"providing a token can never regress permissions an application would
+have without a token". And libraries like libbpf then can take that as
+a contract to work with.
 
-> Running in the cloud does not mean it has to be complicated. It can be
-> a simple Buildbot or whatever that knows how to spawn spot instances
-> for tests and destroy them when they're done *if the test passed*. If
-> a test failed on an instance, it could hold onto them for a day or two
-> for someone to debug if needed.
+I like this latest implementation above as it is straightforward to
+follow and satisfies that contract "by construction":
 
-> (I mention Buildbot because in a previous life, I used that to run
-> tests for the dattobd out-of-tree kernel module before. That was the
-> strategy I used for it.)
+bool bpf_token_capable(const struct bpf_token *token, int cap)
+{
+       if (token && token_capable(token, cap))
+            return true;
+       return token_capable(NULL, cap);
+}
 
-Yeah, or if your thing runs in a Docker container rather than a VM then
-throwing it at a Kubernetes cluster using a batch job isn't a big jump.
+So in summary, assuming we are converging and the above
+bpf_token_capable() implementation doesn't have any more hidden
+issues, I only have s/kvzalloc/kzalloc/, s/kvfree/kfree/ change that
+Linus asked for on the kernel side. I'm planning to roll those into
+corresponding existing patches. Besides that I'm adding a few new
+tests to validate LSM interactions, which I'll add as a separate patch
+to the series.
 
-> > I'd also really like to get automated performance testing going too,
-> > which would have similar requirements in that jobs would need to be
-> > scheduled on specific dedicated machines. I think what you're doing
-> > could still build off of some common infrastructure.
-
-It does actually - like quite a few test labs mine is based around LAVA,
-labgrid is the other popular option (people were actually thinking about
-integrating the two recently since labgrid is a bit lower level than
-LAVA and they could conceptually play nicely with each other).  Since
-the control API is internet accessible this means that it's really
-simple for me to to donate spare time on the boards to KernelCI as it
-understands how to drive LAVA, testing that I in turn use myself.  Both
-my stuff and KernelCI use a repository of glue which knows how to drive
-various testsuites inside a LAVA job, that's also used by other systems
-using LAVA like LKFT.
-
-The custom stuff I have is all fairly thin (and quite janky), mostly
-just either things specific to my physical lab or managing which tests I
-want to run and what results I expect.  What I've got is *much* more
-limited than I'd like, and frankly if I wasn't able to pick up huge
-amounts of preexisting work most of this stuff would not be happening.
-
-> > > I'd also note that the 9 hour turnaround time for that test set you're
-> > > pointing at isn't exactly what I'd associate with immediate feedback.
-
-> > My CI shards at the subtest level, and like I mentioned I run 10 VMs per
-> > physical machine, so with just 2 of the 80 core Ampere boxes I get full
-> > test runs done in ~20 minutes.
-
-> This design, ironically, is way more cloud-friendly than a lot of
-> testing system designs I've seen in the past. :)
-
-Sounds like a small private cloud to me!  :P
-
---UV+e11fnWR99TzU9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmWhg38ACgkQJNaLcl1U
-h9DHZwf+PUi1dDbFvsjAfmvcY+0m2KkcjKJUtDiUwTEHmzVMfX8ecVVG8n3KvIoK
-yJPiP3akTv4vWMqCVYjXdWrIWgxd9JD3tLscfll2OH1dFJPKVKynWNhqdAKLfBIv
-dZALV/v+MthofRA4/SQclK5mUqp8TfQ9Y+oHdKoc9IZ/ouD2XKpmdx2Pd7czeDXF
-3g5bgNNV0B6qTNySSsk9kFIMqGrFd9x8lD5JGDI+Yn0Pszd1apv0G2Jd0GizYuUa
-0zWhQFJC1o7YVIdocJlIUQMMw4DarW45ZWzhHOqw/l4qyJ5ozT5LPB+PzEmfNLQj
-Sk+tVn8kcBGo7OmCWlw8wcd5eUNqvQ==
-=b3J3
------END PGP SIGNATURE-----
-
---UV+e11fnWR99TzU9--
+I'm thinking of sending the bpf/bpf-next patch set for v2, just like I
+did with v1. But if PR directly to Linus is more preferable, please
+someone do let me know, thank you!
 
