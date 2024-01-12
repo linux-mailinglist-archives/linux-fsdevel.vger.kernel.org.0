@@ -1,76 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-7848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD4C82BA53
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 05:22:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A8A82BAA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 06:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B383282EBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 04:22:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58626B22BEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 05:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7632B25774;
-	Fri, 12 Jan 2024 04:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301455C8F4;
+	Fri, 12 Jan 2024 05:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1QQXl7S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.nfschina.com (unknown [42.101.60.195])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E937A1B290;
-	Fri, 12 Jan 2024 04:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id CC6B9604F047A;
-	Fri, 12 Jan 2024 12:21:37 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	akpm@linux-foundation.org,
-	mudongliangabcd@gmail.com,
-	hch@tuxera.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs: hfsplus: fix an error code problem in hfsplus_sync_fs
-Date: Fri, 12 Jan 2024 12:21:27 +0800
-Message-Id: <20240112042125.3930667-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DFE5C8E7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 05:07:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6FE5AC433F1;
+	Fri, 12 Jan 2024 05:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705036067;
+	bh=8houUmOj7pqJOyIURKOlQvC7sspMvU3rfm+69daPF4o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=V1QQXl7S0033+jjhKMHfwstCw+CKyYHgCG7DBROx6XQjwi33oVZUJXRIeUojMnzCf
+	 SB3VBVZdfga4KjWmVIYEynDpOPrsYfpe838DAK5dLDdxStbWoPnI/1xYDbLHoQbLfY
+	 AOXnokrfL1SHcRxcQQRmOP7LRcRb/wD3pO2f54drpdzZaB1gBSb62Ob2heFgFd0QuS
+	 n6TAgKuBwKR2vdqGKZFtuSrr78g+2V29WCF0e6iuopXThqdvGWT4IXuGcFOMfg/voK
+	 D3Wd2sWh/j1z/NVsjFO5XG5r1n78O0jlpB0H3ST/jLls4SA8Ea5O+7K9ka9Iu/OB/P
+	 oPSzKX2B6Hclw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5F437D8C972;
+	Fri, 12 Jan 2024 05:07:47 +0000 (UTC)
+Subject: Re: [git pull] vfs.git minixfs series
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240111101634.GV1674809@ZenIV>
+References: <20240111101634.GV1674809@ZenIV>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240111101634.GV1674809@ZenIV>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-minix
+X-PR-Tracked-Commit-Id: 41e9a7faff514fcb2d4396b0ffde30386a153c7f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2f444347a8d6b03b4e6a9aeff13d67b8cbbe08ce
+Message-Id: <170503606738.7299.17535488313295398263.pr-tracker-bot@kernel.org>
+Date: Fri, 12 Jan 2024 05:07:47 +0000
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Clang static checker wanrning: Value stored to 'error2' is never read.
-Fix this typo error by assigning 'error2' to 'error'.
+The pull request you sent on Thu, 11 Jan 2024 10:16:34 +0000:
 
-Fixes: 52399b171dfa ("hfsplus: use raw bio access for the volume headers")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/hfsplus/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-minix
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 1986b4f18a90..9f45582faf36 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -233,7 +233,7 @@ static int hfsplus_sync_fs(struct super_block *sb, int wait)
- 				  sbi->s_backup_vhdr_buf, NULL, REQ_OP_WRITE |
- 				  REQ_SYNC);
- 	if (!error)
--		error2 = error;
-+		error = error2;
- out:
- 	mutex_unlock(&sbi->alloc_mutex);
- 	mutex_unlock(&sbi->vh_mutex);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2f444347a8d6b03b4e6a9aeff13d67b8cbbe08ce
+
+Thank you!
+
 -- 
-2.30.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
