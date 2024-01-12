@@ -1,82 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-7845-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0228B82BA02
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 04:39:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D01682BA06
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 04:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959F7B21BD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 03:39:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20C07B227DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 03:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2E01B27F;
-	Fri, 12 Jan 2024 03:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717C61B285;
+	Fri, 12 Jan 2024 03:40:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463BD1A735
-	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 03:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD651A735
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 03:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7bef5e512b6so235662039f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 19:39:04 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-35fe765d63eso31034045ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Jan 2024 19:40:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705030743; x=1705635543;
+        d=1e100.net; s=20230601; t=1705030821; x=1705635621;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsULNSwGIqV6VUSGukBMzcLGajKxNSaJ734615aHwHA=;
-        b=U0KtWdulR/WuxbwQpgRXqk1Oo6X+Nk5uCbFvEx4jjxSAmyKI25d0ETarr/BI59FIzo
-         3M0fJQ+jAbTHnLHV6CoA3zV8YMBl7jpyDEF2aE7Mr95HTchKNFOVJgCD6fvGOLNwfhZA
-         tC15VtTI8gIyw2B3eBrLJAzhHgkLVDEsUaNbXVlGlY49NhdGbk9Cic6XaiZ2WbQaZGkj
-         KLDe483Ivlop9uHj7NPd/FExmTMX5+cnvtaTLU67LH05eq7s77v7TFp9vcMcaZONtVNz
-         wfzW1gOceTHm5tm5K6gQgAm5SvP8WI5GnRLKL1rGnSfJOCI3If6N1u6aPZjlV0ZoH5Dy
-         2nlQ==
-X-Gm-Message-State: AOJu0YyQwWi9e1bGwRqOEy/I9AlKP2yx7r7cds3zjLy0+GkEuOHfQgfH
-	n5x6pI7J1bkk2UIool4TQgz3Dqsll1+Udjrlx2J7XN7HKBWN
-X-Google-Smtp-Source: AGHT+IFGqlpsi8dlH+HvtsYNFd8ARrOfbhWwGMTrVn2p9Ud5mrQRWT6kM7YT+oCmAt1Ng0h+W+FtJ+N/1VkAem0GQDq7T9nGEFaW
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=rJ83snvIYjPlrsoiYfdnbTmeXdxMye1bzs8mkDZC6Npe6xENooG65DX45JTKyLuyKm
+         cQ5qMoTLrTrBdOrY+KjWaCDkaoXheiIvHNz7ku4s7/2omsfYS6hPNcFB07gXCrslce+3
+         em3e5+WBkhUC0DAXQh7KkBPk2FRRd+MExI7dAYUtyq/Tj3FlMTOb6HeBItBfdF7molTY
+         sIhMvPAyYHRDeXxkETFCsGHUYoJzYm5InQo9CbRqX7kz3Sxs6/mZzlvD+QskB11gBxml
+         /o8lPi12VQ5L66OruGrkgGoKH6W3aPOWG68k3YBtKX9VKu3Jj6oFjGDqeaMM6DIiBbf/
+         MBYQ==
+X-Gm-Message-State: AOJu0Yw086wIpUBmRMHjBnHX7fM8MTl9aHKBG9945S8ZoYOwkpJRYcaE
+	2xCjwUV0je5ku8aFJeitFM8ionIerppn3K5kY9bjnbtRJ/s9
+X-Google-Smtp-Source: AGHT+IFB9wtwpmlwh1hN38Y/mekRfMgDkX1YMtupYMYRVCkd0mAl9XPC2cSN1Nuc1Ci1vxRGdUPjVwpCgKAHanbVQVeQU5MJSIOV
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:304a:b0:46e:50ab:6a54 with SMTP id
- u10-20020a056638304a00b0046e50ab6a54mr43374jak.1.1705030743535; Thu, 11 Jan
- 2024 19:39:03 -0800 (PST)
-Date: Thu, 11 Jan 2024 19:39:03 -0800
-In-Reply-To: <000000000000ff4a1505e9f961a2@google.com>
+X-Received: by 2002:a92:c24b:0:b0:35f:e864:f6f with SMTP id
+ k11-20020a92c24b000000b0035fe8640f6fmr27789ilo.0.1705030821093; Thu, 11 Jan
+ 2024 19:40:21 -0800 (PST)
+Date: Thu, 11 Jan 2024 19:40:21 -0800
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ccb6c6060eb767bd@google.com>
-Subject: Re: [syzbot] [jfs?] general protection fault in dtSplitUp
-From: syzbot <syzbot+172bdd582e5d63486948@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000006c2b4f060eb76cfa@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-    fs: Block writes to mounted block devices
+#syz fix: exact-commit-title
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1268fc69e80000
-start commit:   a70385240892 Merge tag 'perf_urgent_for_v6.1_rc2' of git:/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea03ca45176080bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=172bdd582e5d63486948
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15692dba880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15017b2c880000
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
 
-#syz fix: fs: Block writes to mounted block devices
+---
+[1] I expect the commit to be present in:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
