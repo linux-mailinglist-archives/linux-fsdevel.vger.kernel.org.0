@@ -1,321 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-7864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0845482BE44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 11:15:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D125882BEF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 12:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59E7288F5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 10:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46EF1C24516
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 11:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3075B60BB6;
-	Fri, 12 Jan 2024 10:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3E660ED4;
+	Fri, 12 Jan 2024 11:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVioRYqj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmhBq5eE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HpGVRyDB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pmhBq5eE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HpGVRyDB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BA460BAA;
-	Fri, 12 Jan 2024 10:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-466eb1aeb6eso1523045137.2;
-        Fri, 12 Jan 2024 02:13:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705054397; x=1705659197; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLh0yoRDVYS02VLCwwHyJ7G1SLN/WeEw9DcnpYHiLy8=;
-        b=PVioRYqjX2fX5m2P74Pz3RcTvrd2CPXqtGJuFS/ybcx2K50++nl6SEx9w/3RcfquMW
-         sB7SmetKwyM+kkI2uvxIhxnVkN7Sa1KlkvAdK4kQH95E/OOC7C7W1XQlG9BChwBKdDl2
-         RlfuvwAwL4oDfWw9S+yCCybmJ4vXmWWa3G+QYXwhAej3KckSWq8O+QznHBniAhm/oB7/
-         RomEp8jeNy47olaU54gscwxDf11Gg2EnF4lbhrOJ/81RHQzgQe+5z/keEUt4eJ2AnbE8
-         /EGHeOOmGzpmWY3MbZ5LpCPosp4YYkjh5IcqZrP3p3sXW2Yhf3URQHibDT2Yp78wTRkw
-         tHbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705054397; x=1705659197;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLh0yoRDVYS02VLCwwHyJ7G1SLN/WeEw9DcnpYHiLy8=;
-        b=BXkCkTi/Wj0fgi/SQDDYkCnl6RAYTeltBI9ytpsg6PiL+ARmZOcQuE2GvpUNJ+knVe
-         mztpWMQOTma8KoOUnrv68aJk+faqWep4v+ehlQipDQ07r5drj7K0oTXemftmtMiEmnCh
-         dMN/4nLsRcFgH60k/+OtETTq1C5ErCrq3LdlCpUtDHJIpPxthuQDG5qU5qmboh5/btOW
-         Is5jliKwckxmllVbJak8pmgH7sHpSqz7n6uEgNrAEU1AMGuzgIAblx37iQpYEFyqXOVd
-         NSowshowNyjXXdEcHepO47KqqijAeyePYZNR7XPCtUVjXLQGWO4wqdtevCGpvRXBFOaj
-         oGFg==
-X-Gm-Message-State: AOJu0YxvmnQ5G6TWGwc9dMyd32sj/niJqQ77iVt8oa8mbE8Zwnw6TbFv
-	ieS06CDnDVt5t10ueGkKupFmM9Z2xaaSjgmTrcs=
-X-Google-Smtp-Source: AGHT+IFQDf/FIrFVhRhUV9vm5XGLTZjFUEVfwVG8N6ns8pkN03egdrkuBfTz7+ZoClKaKUGTS1c/zqeTKBA+kzrkSng=
-X-Received: by 2002:a05:6102:4a2:b0:467:cbd5:14b6 with SMTP id
- r2-20020a05610204a200b00467cbd514b6mr1033493vsa.7.1705054396637; Fri, 12 Jan
- 2024 02:13:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FED61675
+	for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6AA471FC31;
+	Fri, 12 Jan 2024 11:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1705057781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LyPZaJmiZu98CJI9g8kGq7Jiju1If2+sjDun7ryQyos=;
+	b=pmhBq5eEzkh5DdM90yMfIEdbNKs2wpIn/AIuTPRGimQKW3VMGDo5alX+W1XcrZbm6f1oNr
+	iUoBqtuIIYr6lyr3XDOVjHhV+2tWeeuHIYRkpVeMJJkTmeH+YZnqoxYRJRWbOogEVosC62
+	x65/ExiXsg5048Yzh6QZIQQ3MZXR67g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1705057781;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LyPZaJmiZu98CJI9g8kGq7Jiju1If2+sjDun7ryQyos=;
+	b=HpGVRyDBE2CwWbt4olmfcfx4MYf46e+glOvJ4EB2NUVyxh52WC1LJuyVFOvkoVH9kUL8Ch
+	qMvvFbtBWqye7fAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1705057781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LyPZaJmiZu98CJI9g8kGq7Jiju1If2+sjDun7ryQyos=;
+	b=pmhBq5eEzkh5DdM90yMfIEdbNKs2wpIn/AIuTPRGimQKW3VMGDo5alX+W1XcrZbm6f1oNr
+	iUoBqtuIIYr6lyr3XDOVjHhV+2tWeeuHIYRkpVeMJJkTmeH+YZnqoxYRJRWbOogEVosC62
+	x65/ExiXsg5048Yzh6QZIQQ3MZXR67g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1705057781;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LyPZaJmiZu98CJI9g8kGq7Jiju1If2+sjDun7ryQyos=;
+	b=HpGVRyDBE2CwWbt4olmfcfx4MYf46e+glOvJ4EB2NUVyxh52WC1LJuyVFOvkoVH9kUL8Ch
+	qMvvFbtBWqye7fAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5EFC5136A4;
+	Fri, 12 Jan 2024 11:09:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7MsnF/UdoWUCUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 12 Jan 2024 11:09:41 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D9832A0802; Fri, 12 Jan 2024 12:09:36 +0100 (CET)
+Date: Fri, 12 Jan 2024 12:09:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH v2] fsnotify: optimize the case of no content event
+ watchers
+Message-ID: <20240112110936.ibz4s42x75mjzhlv@quack3>
+References: <20240111152233.352912-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240111154106.3692206-1-ryan.roberts@arm.com>
-In-Reply-To: <20240111154106.3692206-1-ryan.roberts@arm.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 12 Jan 2024 23:13:05 +1300
-Message-ID: <CAGsJ_4xPgmgt57sw2c5==bPN+YL23zn=hZweu8u2ceWei7+q4g@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] mm/filemap: Allow arch to request folio size for
- exec memory
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	John Hubbard <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240111152233.352912-1-amir73il@gmail.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pmhBq5eE;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=HpGVRyDB
+X-Spamd-Result: default: False [-2.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 6AA471FC31
+X-Spam-Level: 
+X-Spam-Score: -2.81
+X-Spam-Flag: NO
 
-On Fri, Jan 12, 2024 at 4:41=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
- wrote:
->
-> Change the readahead config so that if it is being requested for an
-> executable mapping, do a synchronous read of an arch-specified size in a
-> naturally aligned manner.
->
-> On arm64 if memory is physically contiguous and naturally aligned to the
-> "contpte" size, we can use contpte mappings, which improves utilization
-> of the TLB. When paired with the "multi-size THP" changes, this works
-> well to reduce dTLB pressure. However iTLB pressure is still high due to
-> executable mappings having a low liklihood of being in the required
-> folio size and mapping alignment, even when the filesystem supports
-> readahead into large folios (e.g. XFS).
->
-> The reason for the low liklihood is that the current readahead algorithm
-> starts with an order-2 folio and increases the folio order by 2 every
-> time the readahead mark is hit. But most executable memory is faulted in
-> fairly randomly and so the readahead mark is rarely hit and most
-> executable folios remain order-2. This is observed impirically and
-> confirmed from discussion with a gnu linker expert; in general, the
-> linker does nothing to group temporally accessed text together
-> spacially. Additionally, with the current read-around approach there are
-> no alignment guarrantees between the file and folio. This is
-> insufficient for arm64's contpte mapping requirement (order-4 for 4K
-> base pages).
->
-> So it seems reasonable to special-case the read(ahead) logic for
-> executable mappings. The trade-off is performance improvement (due to
-> more efficient storage of the translations in iTLB) vs potential read
-> amplification (due to reading too much data around the fault which won't
-> be used), and the latter is independent of base page size. I've chosen
-> 64K folio size for arm64 which benefits both the 4K and 16K base page
-> size configs and shouldn't lead to any further read-amplification since
-> the old read-around path was (usually) reading blocks of 128K (with the
-> last 32K being async).
->
-> Performance Benchmarking
-> ------------------------
->
-> The below shows kernel compilation and speedometer javascript benchmarks
-> on Ampere Altra arm64 system. (The contpte patch series is applied in
-> the baseline).
->
-> First, confirmation that this patch causes more memory to be contained
-> in 64K folios (this is for all file-backed memory so includes
-> non-executable too):
->
-> | File-backed folios      |   Speedometer   |  Kernel Compile |
-> | by size as percentage   |-----------------|-----------------|
-> | of all mapped file mem  | before |  after | before |  after |
-> |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D|=3D=3D=3D=3D=3D=3D=3D=3D|=3D=3D=3D=3D=3D=3D=3D=3D|=3D=3D=3D=3D=3D=3D=3D=
-=3D|=3D=3D=3D=3D=3D=3D=3D=3D|
-> |file-thp-aligned-16kB    |    45% |     9% |    46% |     7% |
-> |file-thp-aligned-32kB    |     2% |     0% |     3% |     1% |
-> |file-thp-aligned-64kB    |     3% |    63% |     5% |    80% |
-> |file-thp-aligned-128kB   |    11% |    11% |     0% |     0% |
-> |file-thp-unaligned-16kB  |     1% |     0% |     3% |     1% |
-> |file-thp-unaligned-128kB |     1% |     0% |     0% |     0% |
-> |file-thp-partial         |     0% |     0% |     0% |     0% |
-> |-------------------------|--------|--------|--------|--------|
-> |file-cont-aligned-64kB   |    16% |    75% |     5% |    80% |
->
-> The above shows that for both use cases, the amount of file memory
-> backed by 16K folios reduces and the amount backed by 64K folios
-> increases significantly. And the amount of memory that is contpte-mapped
-> significantly increases (last line).
->
-> And this is reflected in performance improvement:
->
-> Kernel Compilation (smaller is faster):
-> | kernel   |   real-time |   kern-time |   user-time |   peak memory |
-> |----------|-------------|-------------|-------------|---------------|
-> | before   |        0.0% |        0.0% |        0.0% |          0.0% |
-> | after    |       -1.6% |       -2.1% |       -1.7% |          0.0% |
->
-> Speedometer (bigger is faster):
-> | kernel   |   runs_per_min |   peak memory |
-> |----------|----------------|---------------|
-> | before   |           0.0% |          0.0% |
-> | after    |           1.3% |          1.0% |
->
-> Both benchmarks show a ~1.5% improvement once the patch is applied.
->
-> Alternatives
-> ------------
->
-> I considered (and rejected for now - but I anticipate this patch will
-> stimulate discussion around what the best approach is) alternative
-> approaches:
->
->   - Expose a global user-controlled knob to set the preferred folio
->     size; this would move policy to user space and allow (e.g.) setting
->     it to PMD-size for even better iTLB utilizaiton. But this would add
->     ABI, and I prefer to start with the simplest approach first. It also
->     has the downside that a change wouldn't apply to memory already in
->     the page cache that is in active use (e.g. libc) so we don't get the
->     same level of utilization as for something that is fixed from boot.
->
->   - Add a per-vma attribute to allow user space to specify preferred
->     folio size for memory faulted from the range. (we've talked about
->     such a control in the context of mTHP). The dynamic loader would
->     then be responsible for adding the annotations. Again this feels
->     like something that could be added later if value was demonstrated.
->
->   - Enhance MADV_COLLAPSE to collapse to THP sizes less than PMD-size.
->     This would still require dynamic linker involvement, but would
->     additionally neccessitate a copy and all memory in the range would
->     be synchronously faulted in, adding to application load time. It
->     would work for filesystems that don't support large folios though.
->
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->
-> Hi all,
->
-> I originally concocted something similar to this, with Matthew's help, as=
- a
-> quick proof of concept hack. Since then I've tried a few different approa=
-ches
-> but always came back to this as the simplest solution. I expect this will=
- raise
-> a few eyebrows but given it is providing a real performance win, I hope w=
-e can
-> converge to something that can be upstreamed.
->
-> This depends on my contpte series to actually set the contiguous bit in t=
-he page
-> table.
->
-> Thanks,
-> Ryan
->
->
->  arch/arm64/include/asm/pgtable.h | 12 ++++++++++++
->  include/linux/pgtable.h          | 12 ++++++++++++
->  mm/filemap.c                     | 19 +++++++++++++++++++
->  3 files changed, 43 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pg=
-table.h
-> index f5bf059291c3..8f8f3f7eb8d8 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -1143,6 +1143,18 @@ static inline void update_mmu_cache_range(struct v=
-m_fault *vmf,
->   */
->  #define arch_wants_old_prefaulted_pte  cpu_has_hw_af
->
-> +/*
-> + * Request exec memory is read into pagecache in at least 64K folios. Th=
-e
-> + * trade-off here is performance improvement due to storing translations=
- more
-> + * effciently in the iTLB vs the potential for read amplification due to=
- reading
-> + * data from disk that won't be used. The latter is independent of base =
-page
-> + * size, so we set a page-size independent block size of 64K. This size =
-can be
-> + * contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB en=
-try),
-> + * and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base page=
-s are in
-> + * use.
-> + */
-> +#define arch_wants_exec_folio_order(void) ilog2(SZ_64K >> PAGE_SHIFT)
-> +
->  static inline bool pud_sect_supported(void)
+On Thu 11-01-24 17:22:33, Amir Goldstein wrote:
+> Commit e43de7f0862b ("fsnotify: optimize the case of no marks of any type")
+> optimized the case where there are no fsnotify watchers on any of the
+> filesystem's objects.
+> 
+> It is quite common for a system to have a single local filesystem and
+> it is quite common for the system to have some inotify watches on some
+> config files or directories, so the optimization of no marks at all is
+> often not in effect.
+> 
+> Content event (i.e. access,modify) watchers on sb/mount more rare, so
+> optimizing the case of no sb/mount marks with content events can improve
+> performance for more systems, especially for performance sensitive io
+> workloads.
+> 
+> Set a per-sb flag SB_I_CONTENT_WATCHED if sb/mount marks with content
+> events in their mask exist and use that flag to optimize out the call to
+> __fsnotify_parent() and fsnotify() in fsnotify access/modify hooks.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+...
+
+> -static inline int fsnotify_file(struct file *file, __u32 mask)
+> +static inline int fsnotify_path(const struct path *path, __u32 mask)
 >  {
->         return PAGE_SIZE =3D=3D SZ_4K;
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 170925379534..57090616d09c 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -428,6 +428,18 @@ static inline bool arch_has_hw_pte_young(void)
->  }
->  #endif
->
-> +#ifndef arch_wants_exec_folio_order
-> +/*
-> + * Returns preferred minimum folio order for executable file-backed memo=
-ry. Must
-> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
-> + * preference and mm will not special-case executable memory in the page=
-cache.
-> + */
-> +static inline int arch_wants_exec_folio_order(void)
-> +{
-> +       return -1;
-> +}
-> +#endif
+> -	const struct path *path;
+> +	struct dentry *dentry = path->dentry;
+>  
+> -	if (file->f_mode & FMODE_NONOTIFY)
+> +	if (!fsnotify_sb_has_watchers(dentry->d_sb))
+>  		return 0;
+>  
+> -	path = &file->f_path;
+> +	/* Optimize the likely case of sb/mount/parent not watching content */
+> +	if (mask & FSNOTIFY_CONTENT_EVENTS &&
+> +	    likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED)) &&
+> +	    likely(!(dentry->d_sb->s_iflags & SB_I_CONTENT_WATCHED))) {
+> +		/*
+> +		 * XXX: if SB_I_CONTENT_WATCHED is not set, checking for content
+> +		 * events in s_fsnotify_mask is redundant, but it will be needed
+> +		 * if we use the flag FS_MNT_CONTENT_WATCHED to indicate the
+> +		 * existence of only mount content event watchers.
+> +		 */
+> +		__u32 marks_mask = d_inode(dentry)->i_fsnotify_mask |
+> +				   dentry->d_sb->s_fsnotify_mask;
 > +
->  #ifndef arch_check_zapped_pte
->  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
->                                          pte_t pte)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 67ba56ecdd32..80a76d755534 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3115,6 +3115,25 @@ static struct file *do_sync_mmap_readahead(struct =
-vm_fault *vmf)
->         }
->  #endif
->
-> +       /*
-> +        * Allow arch to request a preferred minimum folio order for exec=
-utable
-> +        * memory. This can often be beneficial to performance if (e.g.) =
-arm64
-> +        * can contpte-map the folio. Executable memory rarely benefits f=
-rom
-> +        * read-ahead anyway, due to its random access nature.
-> +        */
-> +       if (vm_flags & VM_EXEC) {
-> +               int order =3D arch_wants_exec_folio_order();
-> +
-> +               if (order >=3D 0) {
-> +                       fpin =3D maybe_unlock_mmap_for_io(vmf, fpin);
-> +                       ra->size =3D 1UL << order;
-> +                       ra->async_size =3D 0;
-> +                       ractl._index &=3D ~((unsigned long)ra->size - 1);
-> +                       page_cache_ra_order(&ractl, ra, order);
-> +                       return fpin;
-> +               }
-> +       }
+> +		if (!(mask & marks_mask))
+> +			return 0;
+> +	}
 
-I don't know, but most filesystems don't support large mapping,even iomap.
-This patch might negatively affect them. i feel we need to check
-mapping_large_folio_support() at least.
+So I'm probably missing something but how is all this patch different from:
 
-> +
->         /* If we don't want any read-ahead, don't bother */
->         if (vm_flags & VM_RAND_READ)
->                 return fpin;
-> --
-> 2.25.1
+	if (likely(!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))) {
+		__u32 marks_mask = d_inode(dentry)->i_fsnotify_mask |
+			path->mnt->mnt_fsnotify_mask |
+			dentry->d_sb->s_fsnotify_mask;
+		if (!(mask & marks_mask))
+			return 0;
+	}
 
-Thanks
-Barry
+I mean (mask & FSNOTIFY_CONTENT_EVENTS) is true for the frequent events
+(read & write) we care about. In Jens' case
+
+	!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED) &&
+	!(dentry->d_sb->s_iflags & SB_I_CONTENT_WATCHED)
+
+is true as otherwise we'd go right to fsnotify_parent() and so Jens
+wouldn't see the performance benefit. But then with your patch you fetch
+i_fsnotify_mask and s_fsnotify_mask anyway for the test so the only
+difference to what I suggest above is the path->mnt->mnt_fsnotify_mask
+fetch but that is equivalent to sb->s_iflags (or wherever we store that
+bit) fetch?
+
+So that would confirm that the parent handling costs in fsnotify_parent()
+is what's really making the difference and just avoiding that by checking
+masks early should be enough?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
