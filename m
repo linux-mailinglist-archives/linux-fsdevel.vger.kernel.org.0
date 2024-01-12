@@ -1,272 +1,296 @@
-Return-Path: <linux-fsdevel+bounces-7858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7859-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F6682BC17
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 08:56:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B0682BC22
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 08:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1BFD1C248FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 07:56:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D831F22D8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 12 Jan 2024 07:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6310B5D745;
-	Fri, 12 Jan 2024 07:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC925D8F4;
+	Fri, 12 Jan 2024 07:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0yYy0kr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADED5D73C;
-	Fri, 12 Jan 2024 07:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C2E21FB;
-	Thu, 11 Jan 2024 23:56:47 -0800 (PST)
-Received: from [192.168.68.104] (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BCBC3F64C;
-	Thu, 11 Jan 2024 23:55:59 -0800 (PST)
-Message-ID: <72d2fe84-5a78-4292-9c71-62c9cf5c0da9@arm.com>
-Date: Fri, 12 Jan 2024 07:55:58 +0000
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFF4812;
+	Fri, 12 Jan 2024 07:58:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B75C43394;
+	Fri, 12 Jan 2024 07:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705046317;
+	bh=Uglla99ShZFkkZxMOw+1oo+SNUsVn5iSreLOyPhroTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0yYy0kr0A76VaCGj7yqY7nDzqXvfaO9Co/TJkUAVvHyLlocSL0r/TTZk7ji/vnnM
+	 qXvxBG+CkVOTSf6B5x9Y2wwyiPGNo3zbjlTRA3bE/rxQ4SPgdDudOo0mOnne8a8DIu
+	 UTsDGOExHq067/44ew38TbIcX1bSgkzDhW/HNnWaZDBieo1n0L1HOi6PXebyJcGHNf
+	 fSfWhniFb0+jiLWAnW+x6pTmEDJhQgj5CGyZILbSduuWg7oyrn8g9XRIQ2qaHTe5oV
+	 YdT3si4gAzQ1sOqDJ+eJa2T8G0ItogB2EHdH2ZBElSD6sdb5VyEBBsa17Hwp+X0d/V
+	 0g054ct6biFYQ==
+Date: Fri, 12 Jan 2024 08:58:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+Message-ID: <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
+References: <CAHk-=wgmjr4nhxGheec1OwuYRk02d0+quUAViVk1v+w=Kvg15w@mail.gmail.com>
+ <CAEf4Bzb6jnJL98SLPJB7Vjxo_O33W8HjJuAsyP3+6xigZtsTkA@mail.gmail.com>
+ <20240108-gasheizung-umstand-a36d89ed36b7@brauner>
+ <CAEf4Bzb+7NzYs5ScggtgAJ6A5-oU5GymvdoEbpfNVOG-XmWZig@mail.gmail.com>
+ <20240109-tausend-tropenhelm-2a9914326249@brauner>
+ <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
+ <20240110-nervt-monopol-6d307e2518f4@brauner>
+ <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
+ <20240111-amten-stiefel-043027f9520f@brauner>
+ <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1] mm/filemap: Allow arch to request folio size for
- exec memory
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <21cnbao@gmail.com>,
- John Hubbard <jhubbard@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20240111154106.3692206-1-ryan.roberts@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240111154106.3692206-1-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
 
-On 11/01/2024 15:41, Ryan Roberts wrote:
-> Change the readahead config so that if it is being requested for an
-> executable mapping, do a synchronous read of an arch-specified size in a
-> naturally aligned manner.
+On Thu, Jan 11, 2024 at 09:41:25AM -0800, Andrii Nakryiko wrote:
+> On Thu, Jan 11, 2024 at 2:38 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > > > The current check is inconsisent. It special-cases init_user_ns. The
+> > > > correct thing to do for what you're intending imho is:
+> > > >
+> > > > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > > > {
+> > > >         struct user_namespace *userns = &init_user_ns;
+> > > >
+> > > >         if (token)
+> > > >                 userns = token->userns;
+> > > >         if (ns_capable(userns, cap))
+> > > >                 return true;
+> > > >         return cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
+> > > >
+> > > > }
+> > >
+> > > Unfortunately the above becomes significantly more hairy when LSM
+> > > (security_bpf_token_capable) gets involved, while preserving the rule
+> > > "if token doesn't give rights, fall back to init userns checks".
+> >
+> > Why? Please explain your reasoning in detail.
 > 
-> On arm64 if memory is physically contiguous and naturally aligned to the
-> "contpte" size, we can use contpte mappings, which improves utilization
-> of the TLB. When paired with the "multi-size THP" changes, this works
-> well to reduce dTLB pressure. However iTLB pressure is still high due to
-> executable mappings having a low liklihood of being in the required
-> folio size and mapping alignment, even when the filesystem supports
-> readahead into large folios (e.g. XFS).
+> Why which part? About LSM interaction making this much hairier? Then see below.
 > 
-> The reason for the low liklihood is that the current readahead algorithm
-> starts with an order-2 folio and increases the folio order by 2 every
-> time the readahead mark is hit. But most executable memory is faulted in
-> fairly randomly and so the readahead mark is rarely hit and most
-> executable folios remain order-2. This is observed impirically and
-> confirmed from discussion with a gnu linker expert; in general, the
-> linker does nothing to group temporally accessed text together
-> spacially. Additionally, with the current read-around approach there are
-> no alignment guarrantees between the file and folio. This is
-> insufficient for arm64's contpte mapping requirement (order-4 for 4K
-> base pages).
+> But if your "why?" is about "pretend no token, if token doesn't give
+> rights", then that's what I tried to explain in my last email(s). It
+> significantly alters (for the worse) user-space integration story
+> (providing a token can be a regression, so now it's not safe to
+> opportunistically try to create and use BPF token; on the other hand,
+> automatically retrying inside libbpf makes for confusing user
+> experience and inefficiencies). Please let me know which parts are not
+> clear.
 > 
-> So it seems reasonable to special-case the read(ahead) logic for
-> executable mappings. The trade-off is performance improvement (due to
-> more efficient storage of the translations in iTLB) vs potential read
-> amplification (due to reading too much data around the fault which won't
-> be used), and the latter is independent of base page size. I've chosen
-> 64K folio size for arm64 which benefits both the 4K and 16K base page
-> size configs and shouldn't lead to any further read-amplification since
-> the old read-around path was (usually) reading blocks of 128K (with the
-> last 32K being async).
+> >
+> > >
+> > > I'm happy to accommodate any implementation of bpf_token_capable() as
+> > > long as it behaves as discussed above and also satisfies Paul's
+> > > requirement that capability checks should happen before LSM checks.
+> > >
+> > > >
+> > > > Because any caller located in an ancestor user namespace of
+> > > > token->user_ns will be privileged wrt to the token's userns as long as
+> > > > they have that capability in their user namespace.
+> > >
+> > > And with `current_user_ns() == token->userns` check we won't be using
+> > > token->userns while the caller is in ancestor user namespace, we'll
+> > > use capable() check, which will succeed only in init user_ns, assuming
+> > > corresponding CAP_xxx is actually set.
+> >
+> > Why? This isn't how any of our ns_capable() logic works.
+> >
+> > This basically argues that anyone in an ancestor user namespace is not
+> > allowed to operate on any of their descendant child namespaces unless
+> > they are in the init_user_ns.
+> >
+> > But that's nonsense as I'm trying to tell you. Any process in an
+> > ancestor user namespace that is privileged over the child namespace can
+> > just setns() into it and then pass that bpf_token_capable() check by
+> > supplying the token.
+> >
+> > At this point just do it properly and allow callers that are privileged
+> > in the token user namespace to load bpf programs. It also means you get
+> > user namespace nesting done properly.
 > 
-> Performance Benchmarking
-> ------------------------
+> Ok, I see. This `current_user_ns() == token->userns` check prevents
+> this part of cap_capable() to ever be exercised:
 > 
-> The below shows kernel compilation and speedometer javascript benchmarks
-> on Ampere Altra arm64 system. (The contpte patch series is applied in
-> the baseline).
+>  if ((ns->parent == cred->user_ns) && uid_eq(ns->owner, cred->euid))
+>     return 0;
 > 
-> First, confirmation that this patch causes more memory to be contained
-> in 64K folios (this is for all file-backed memory so includes
-> non-executable too):
+> Got it. I'm all for not adding any unnecessary restrictions.
 > 
-> | File-backed folios      |   Speedometer   |  Kernel Compile |
-> | by size as percentage   |-----------------|-----------------|
-> | of all mapped file mem  | before |  after | before |  after |
-> |=========================|========|========|========|========|
-> |file-thp-aligned-16kB    |    45% |     9% |    46% |     7% |
-> |file-thp-aligned-32kB    |     2% |     0% |     3% |     1% |
-> |file-thp-aligned-64kB    |     3% |    63% |     5% |    80% |
-> |file-thp-aligned-128kB   |    11% |    11% |     0% |     0% |
-> |file-thp-unaligned-16kB  |     1% |     0% |     3% |     1% |
-> |file-thp-unaligned-128kB |     1% |     0% |     0% |     0% |
-> |file-thp-partial         |     0% |     0% |     0% |     0% |
-> |-------------------------|--------|--------|--------|--------|
-> |file-cont-aligned-64kB   |    16% |    75% |     5% |    80% |
+> >
+> > >
+> > > >
+> > > > For example, if the caller is in the init_user_ns and permissions
+> > > > for CAP_WHATEVER is checked for in token->user_ns and the caller has
+> > > > CAP_WHATEVER in init_user_ns then they also have it in all
+> > > > descendant user namespaces.
+> > >
+> > > Right, so if they didn't use a token they would still pass
+> > > capable(CAP_WHATEVER), right?
+> >
+> > Yes, I'm trying to accomodate your request but making it work
+> > consistently.
+> >
+> > >
+> > > >
+> > > > The original intention had been to align with what we require during
+> > > > token creation meaning that once a token has been created interacting
+> > > > with this token is specifically confined to caller's located in the
+> > > > token's user namespace.
+> > > >
+> > > > If that's not the case then it doesn't make sense to not allow
+> > > > permission checking based on regular capability semantics. IOW, why
+> > > > special case init_user_ns if you're breaking the confinement restriction
+> > > > anyway.
+> > >
+> > > I'm sorry, perhaps I'm dense, but with `current_user_ns() ==
+> > > token->userns` check I think we do fulfill the intention to not allow
+> > > using a token in a userns different from the one in which it was
+> > > created. If that condition isn't satisfied, the token is immediately
+> >
+> > My request originally was about never being able to interact with a
+> > token outside of that userns. This is different as you provide an escape
+> > hatch to init_user_ns. But if you need that and ignore the token then
+> > please do it properly. That's what I'm trying to tell you. See below.
 > 
-> The above shows that for both use cases, the amount of file memory
-> backed by 16K folios reduces and the amount backed by 64K folios
-> increases significantly. And the amount of memory that is contpte-mapped
-> significantly increases (last line).
+> Yes, I do need that. Thanks for providing the full code implementation
+> (including LSM), it's much easier this way to converge. Let's see
+> below.
 > 
-> And this is reflected in performance improvement:
+> >
+> > > ignored. So you can't use a token from another userns for anything,
+> > > it's just not there, effectively.
+> > >
+> > > And as I tried to explain above, I do think that ignoring the token
+> > > instead of erroring out early is what we want to provide good
+> > > user-space ecosystem integration of BPF token.
+> >
+> > There is no erroring out early in. It's:
+> >
+> > (1) Has a token been provided and is the caller capable wrt to the
+> >     namespace of the token? Any caller in an ancestor user namespace
+> >     that has the capability in that user namespace is capable wrt to
+> >     that token. That __includes__ a callers in the init_user_ns. IOW,
+> >     you don't need to fallback to any special checking for init_user_ns.
+> >     It is literally covered in the if (token) branch with the added
+> >     consistency that a process in an ancestor user namespace is
+> >     privileged wrt to that token as well.
+> >
+> > (2) No token has been provided. Then do what we always did and perform
+> >     the capability checks based on the initial user namespace.
+> >
+> > The only thing that you then still need is add that token_capable() hook
+> > in there:
+> >
+> > bool bpf_token_capable(const struct bpf_token *token, int cap)
+> > {
+> >         bool has_cap;
+> >         struct user_namespace *userns = &init_user_ns;
+> >
+> >         if (token)
+> >                 userns = token->userns;
+> >         if (ns_capable(userns, cap))
 > 
-> Kernel Compilation (smaller is faster):
-> | kernel   |   real-time |   kern-time |   user-time |   peak memory |
-> |----------|-------------|-------------|-------------|---------------|
-> | before   |        0.0% |        0.0% |        0.0% |          0.0% |
-> | after    |       -1.6% |       -2.1% |       -1.7% |          0.0% |
+> Here, we still need to check security_bpf_token_capable(token, cap)
+> result (and only if token != NULL). And if LSM returns < 0, then drop
+> the token and do the original init userns check.
 > 
-> Speedometer (bigger is faster):
-> | kernel   |   runs_per_min |   peak memory |
-> |----------|----------------|---------------|
-> | before   |           0.0% |          0.0% |
-> | after    |           1.3% |          1.0% |
+> And I just realized that my original implementation has the same
+> problem. In my current implementation if we have a token we will
+> terminate at LSM call, regardless if LSM allows or disallows the
+> token. But that's inconsistent behavior and shouldn't be like that.
 > 
-> Both benchmarks show a ~1.5% improvement once the patch is applied.
+> I will add new tests that validate LSM interactions in the next revision.
 > 
-> Alternatives
-> ------------
+> >                 return true;
+> >         if (cap != CAP_SYS_ADMIN && ns_capable(userns, CAP_SYS_ADMIN))
+> >                 return token ? security_bpf_token_capable(token, cap) == 0 : true;
 > 
-> I considered (and rejected for now - but I anticipate this patch will
-> stimulate discussion around what the best approach is) alternative
-> approaches:
+> here as well, even if we have a token which passes ns_capable() check,
+> but LSM rejects this token, we still need to forget about the token
+> and do capable() checks in init userns.
 > 
->   - Expose a global user-controlled knob to set the preferred folio
->     size; this would move policy to user space and allow (e.g.) setting
->     it to PMD-size for even better iTLB utilizaiton. But this would add
->     ABI, and I prefer to start with the simplest approach first. It also
->     has the downside that a change wouldn't apply to memory already in
->     the page cache that is in active use (e.g. libc) so we don't get the
->     same level of utilization as for something that is fixed from boot.
+> >         return false;
+> > }
+> >
+> > Or write it however you like. I think this is way more consistent and
+> > gives you a more flexible permission model.
 > 
->   - Add a per-vma attribute to allow user space to specify preferred
->     folio size for memory faulted from the range. (we've talked about
->     such a control in the context of mTHP). The dynamic loader would
->     then be responsible for adding the annotations. Again this feels
->     like something that could be added later if value was demonstrated.
+> Yes, I like it, thanks. Taking into account fixed LSM interactions,
+> here's what I came up with. Yell if you can spot anything wrong (or
+> just hate the style). I did have a version without extra function,
+> just setting the token to NULL and "goto again" approach, but I think
+> it's way less readable and harder to follow. So this is my version
+> right now:
 > 
->   - Enhance MADV_COLLAPSE to collapse to THP sizes less than PMD-size.
->     This would still require dynamic linker involvement, but would
->     additionally neccessitate a copy and all memory in the range would
->     be synchronously faulted in, adding to application load time. It
->     would work for filesystems that don't support large folios though.
+> static bool bpf_ns_capable(struct user_namespace *ns, int cap)
+> {
+>         return ns_capable(ns, cap) || (cap != CAP_SYS_ADMIN &&
+> ns_capable(ns, CAP_SYS_ADMIN));
+> }
 > 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
+> static bool token_capable(const struct bpf_token *token, int cap)
+> {
+>         struct user_namespace *userns;
 > 
-> Hi all,
+>         userns = token ? token->userns : &init_user_ns;
+>         if (!bpf_ns_capable(userns, cap))
+>                 return false;
+>         if (token && security_bpf_token_capable(token, cap) < 0)
+>                 return false;
+>         return true;
+> }
 > 
-> I originally concocted something similar to this, with Matthew's help, as a
-> quick proof of concept hack. Since then I've tried a few different approaches
-> but always came back to this as the simplest solution. I expect this will raise
-> a few eyebrows but given it is providing a real performance win, I hope we can
-> converge to something that can be upstreamed.
-> 
-> This depends on my contpte series to actually set the contiguous bit in the page
-> table.
+> bool bpf_token_capable(const struct bpf_token *token, int cap)
+> {
+>         /* BPF token allows ns_capable() level of capabilities, but if it
+>          * doesn't grant required capabilities, ignore token and fallback to
+>          * init userns-based checks
+>          */
+>         if (token && token_capable(token, cap))
+>                 return true;
+>         return token_capable(NULL, cap);
+> }
 
-For clarity, the contpte series I referred to is at [1], and the "exefolio poc
-patch" referred to in the performance section of its cover note is a version of
-this patch. The dependency is not a build dependency, it's just required to get
-the speedup at runtime. Without it, this change is benign.
+My point is that the capable logic will walk upwards the user namespace
+hierarchy from the token->userns until the user namespace of the caller
+and terminate when it reached the init_user_ns.
 
-[1] https://lore.kernel.org/linux-mm/20231218105100.172635-1-ryan.roberts@arm.com/
+A caller is located in some namespace at the point where they call this
+function. They provided a token. The caller isn't capable in the
+namespace of the token so the function falls back to init_user_ns. Two
+interesting cases:
 
-> 
-> Thanks,
-> Ryan
-> 
-> 
->  arch/arm64/include/asm/pgtable.h | 12 ++++++++++++
->  include/linux/pgtable.h          | 12 ++++++++++++
->  mm/filemap.c                     | 19 +++++++++++++++++++
->  3 files changed, 43 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index f5bf059291c3..8f8f3f7eb8d8 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -1143,6 +1143,18 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->   */
->  #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
-> 
-> +/*
-> + * Request exec memory is read into pagecache in at least 64K folios. The
-> + * trade-off here is performance improvement due to storing translations more
-> + * effciently in the iTLB vs the potential for read amplification due to reading
-> + * data from disk that won't be used. The latter is independent of base page
-> + * size, so we set a page-size independent block size of 64K. This size can be
-> + * contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB entry),
-> + * and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base pages are in
-> + * use.
-> + */
-> +#define arch_wants_exec_folio_order(void) ilog2(SZ_64K >> PAGE_SHIFT)
-> +
->  static inline bool pud_sect_supported(void)
->  {
->  	return PAGE_SIZE == SZ_4K;
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 170925379534..57090616d09c 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -428,6 +428,18 @@ static inline bool arch_has_hw_pte_young(void)
->  }
->  #endif
-> 
-> +#ifndef arch_wants_exec_folio_order
-> +/*
-> + * Returns preferred minimum folio order for executable file-backed memory. Must
-> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
-> + * preference and mm will not special-case executable memory in the pagecache.
-> + */
-> +static inline int arch_wants_exec_folio_order(void)
-> +{
-> +	return -1;
-> +}
-> +#endif
-> +
->  #ifndef arch_check_zapped_pte
->  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
->  					 pte_t pte)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 67ba56ecdd32..80a76d755534 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3115,6 +3115,25 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	}
->  #endif
-> 
-> +	/*
-> +	 * Allow arch to request a preferred minimum folio order for executable
-> +	 * memory. This can often be beneficial to performance if (e.g.) arm64
-> +	 * can contpte-map the folio. Executable memory rarely benefits from
-> +	 * read-ahead anyway, due to its random access nature.
-> +	 */
-> +	if (vm_flags & VM_EXEC) {
-> +		int order = arch_wants_exec_folio_order();
-> +
-> +		if (order >= 0) {
-> +			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> +			ra->size = 1UL << order;
-> +			ra->async_size = 0;
-> +			ractl._index &= ~((unsigned long)ra->size - 1);
-> +			page_cache_ra_order(&ractl, ra, order);
-> +			return fpin;
-> +		}
-> +	}
-> +
->  	/* If we don't want any read-ahead, don't bother */
->  	if (vm_flags & VM_RAND_READ)
->  		return fpin;
-> --
-> 2.25.1
-> 
+(1) The caller wasn't in an ancestor userns of the token. If that's the
+    case then it follows that the caller also wasn't in the init_user_ns
+    because the init_user_ns is a descendant of all other user
+    namespaces. So falling back will fail.
 
+(2) The caller was in the same or an ancestor user namespace of the
+    token but didn't have the capability in that user namespace:
+    
+     (i) They were in a non-init_user_ns. Therefore they can't be
+         privileged in init_user_ns.
+    (ii) They were in init_user_ns. Therefore, they lacked privileges in
+         the init_user_ns.
+    
+In both cases your fallback will do nothing iiuc.
 
