@@ -1,84 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-7902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9267082C91B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jan 2024 03:20:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB2982CA46
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jan 2024 07:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B7A1C2299E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jan 2024 02:20:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 968F6B23405
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 13 Jan 2024 06:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B231018EA9;
-	Sat, 13 Jan 2024 02:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f9eEllow"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E4F18E0F;
+	Sat, 13 Jan 2024 06:38:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D7418E03
-	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jan 2024 02:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 12 Jan 2024 21:20:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1705112445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C4BmKSgEj//6SJN4Mq1odyJx9fBqW4W1Nd/3t5TPmKw=;
-	b=f9eEllowWHv07IwyE/Xq7H6dEStboZi+D9VFR5kkRS2TnJc1j0zrN90a4jiH8jYSPZWgR+
-	33LZOPSWfD+u7qB0FEdAvBoz6P4z9H+dpg3QDWoNdGO+ogAHLB+sTKrI1pE/szqhffSc9u
-	t2B0OWPtIktUs37DXFf4ZVR26PPhhNc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] bcachefs locking fix
-Message-ID: <zrgooauqvxuw4zih77d7y3wbli2nwf5hssdzdzteujn44id3q5@5lmxsw7sgxvf>
-References: <20240112072954.GC1674809@ZenIV>
- <degsfnsjxknfeizu7mow5vqwel27zdtfxa3p5yxt2l7cd74ndo@5z6424jtcra6>
- <20240112192540.GE1674809@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D52E15487
+	for <linux-fsdevel@vger.kernel.org>; Sat, 13 Jan 2024 06:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7bc3dd97ddaso646058439f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 12 Jan 2024 22:38:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705127884; x=1705732684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/sGOHyENyQ7i0bMTzfDcnKoPl21TmOJ32DC/X68Sl4=;
+        b=qVACSiPvSgLXYt6kf9b5D8mWhXcEfv8+ojsRaPhhe8GoqQCjGnhG8GjnouyzD8tcx4
+         Az7ByDMdj6x/CRRBqlYtVrK2AAof4guPRoSxa5y+MTpbkwEW2faNszvmuzM8vX9sqjtr
+         wybYOGA65ysR8M/FfpMlLsUMNZCJjTfKtu/vj+dqh7XAA3BkCAlB2pAc/0Ar1ArbWhG+
+         NUMyOl3dx1bJIT55jdK7r13KKjEfppSOhc2/8rKjw7KiBK9H3Bek+QhPiu9gzZpkqo/M
+         Tc3kiwSz1sLzfDcdNhzG4+uoMPqeh0RcRGFIMYFcNFiKeWlxGj+0MCGcTuAcQcN3+VSM
+         eDfw==
+X-Gm-Message-State: AOJu0YxB9Pksvt/DC2mdZC2APzk/QztGMi0r7BRQVNxCLuk3AaYF6mSS
+	3iaWdW9sYE21/0Tmps+ni0RlMpJNG4QwXdGLVWmSIcPK75cK
+X-Google-Smtp-Source: AGHT+IGNM+FdG1AbyUYcw6kxC9URY0S3T+KJqSYkHLA8+jx0v5cOSRLiGSC4NszsTS++2Ts56IlniAXgBLCjDqqD3qjYpWr6CSAN
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240112192540.GE1674809@ZenIV>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6638:130a:b0:46d:1c7:3b12 with SMTP id
+ r10-20020a056638130a00b0046d01c73b12mr146543jad.5.1705127884248; Fri, 12 Jan
+ 2024 22:38:04 -0800 (PST)
+Date: Fri, 12 Jan 2024 22:38:04 -0800
+In-Reply-To: <0000000000006cb174060ec34502@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d65af9060ece0537@google.com>
+Subject: Re: [syzbot] [f2fs?] KASAN: slab-use-after-free Read in kill_f2fs_super
+From: syzbot <syzbot+8f477ac014ff5b32d81f@syzkaller.appspotmail.com>
+To: chao@kernel.org, ebiggers@google.com, ebiggers@kernel.org, 
+	hdanton@sina.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jan 12, 2024 at 07:25:40PM +0000, Al Viro wrote:
-> On Fri, Jan 12, 2024 at 10:22:39AM -0500, Kent Overstreet wrote:
-> > On Fri, Jan 12, 2024 at 07:29:54AM +0000, Al Viro wrote:
-> > > Looks like Kent hadn't merged that into his branch for some reason;
-> > > IIRC, he'd been OK with the fix and had no objections to that stuff
-> > > sitting in -next, so...
-> > 
-> > I did, but then you said something about duplicate commit IDs? I thought
-> > that meant they were going through your tree.
-> 
-> Huh?  Same patch applied in two trees => problem.  A tree pulling a branch
-> from another => perfectly fine, as long as the branch pulled is not rebased
-> in the first tree.  So something like "I have a patch your tree needs,
-> but I might end up doing more stuff on top of it for my own work" can be
-> solved by creating a never-rebased branch in my tree, with just the stuff
-> that might need to be shared and telling you to pull from it.  After that each
-> of us can ignore the other tree.  No conflicts in -next, no worries about
-> the order of pull requests to mainline...
+syzbot has bisected this issue to:
 
-I'm confused about what rebasing has to do with this?
+commit 275dca4630c165edea9abe27113766bc1173f878
+Author: Eric Biggers <ebiggers@google.com>
+Date:   Wed Dec 27 17:14:28 2023 +0000
 
-I was assuming the patches would take the same route into Linus's tree
-as into -next, that just seemed simplest to me; I'm completely fine with
-either taking them into my tree or you sending them directly, I'd
-already looked at them.
+    f2fs: move release of block devices to after kill_block_super()
 
-Or was the issue that they were in your -next branch because you had
-other stuff on top of them, but you still thought I was taking them?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16071613e80000
+start commit:   70d201a40823 Merge tag 'f2fs-for-6.8-rc1' of git://git.ker..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15071613e80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11071613e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4607bc15d1c4bb90
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f477ac014ff5b32d81f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112b660be80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c1df5de80000
+
+Reported-by: syzbot+8f477ac014ff5b32d81f@syzkaller.appspotmail.com
+Fixes: 275dca4630c1 ("f2fs: move release of block devices to after kill_block_super()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
