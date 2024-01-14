@@ -1,121 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-7913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA6682D03D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jan 2024 11:14:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99AE82D042
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jan 2024 11:15:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBDD1C20F86
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jan 2024 10:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9318AB21E1B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 14 Jan 2024 10:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D5E2116;
-	Sun, 14 Jan 2024 10:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B2B1FD1;
+	Sun, 14 Jan 2024 10:15:23 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1961FB5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jan 2024 10:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778C65396
+	for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jan 2024 10:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-36037f2de0aso69866155ab.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jan 2024 02:14:17 -0800 (PST)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-35ff23275b8so74171185ab.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 14 Jan 2024 02:15:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705227256; x=1705832056;
+        d=1e100.net; s=20230601; t=1705227320; x=1705832120;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QrvREBUnMEJS2CzujDbDhJ4E9qQTed9wyaoazMHtiC0=;
-        b=j8fxu71IkmiF9YBuYKGz0wj76mAog41huHMDoYgqXNIQIS/9rU0iz+ZQvZf0LSBYmq
-         gmzBeZLdkQEKO71VaGTlbxJ7hivu6ZSrSqjBT2PjXOrTclgxolKPd6qdRLZ3v2gAItV9
-         083yQhjk/IGL4GdyPLEqAWjV+cAS04MDPyGI9tumrE89TsCYP9IFz0CgwJvgKy/NDlgs
-         WbhAjvZ9MrVH8oReN+I+kIkb5boQW2Np6rDR3+F5PIGjZBl6QBEPts11afsFf32gyLdI
-         7geQTvJiQGg1XG6sGfQvljnIGan7pLUsCg8upd/gmUFsTl5mwl1K2lFBqpnbryAth5Mg
-         M7Gg==
-X-Gm-Message-State: AOJu0Yzk62TqTSpIS/IGUzLIO6coBPaB1CQahUvba74c1BUs2mS5Ir6U
-	F5M+EgUamD6QWBZptiNwP2ha04XlpQaJdwDviW7+6ObdlWSf
-X-Google-Smtp-Source: AGHT+IEgqMBYvqGrYA24w+LW96Eta29eUzTxngRiauLZkHYbupaUjAMNNmp2DbmjfBY+orf8/b96du/cdCjl19nOaL2LA2roXyq5
+        bh=ef8RlfvNizusNJEpFPPJswpir101aPuFjW55VZ/jFAE=;
+        b=DCkjnnyMT6HrszqQrlLVoZSokKROW3DuYjBu0GLG3sQAcK3YqBPqOm2NmhxGOZVIzJ
+         BWtw0KcNDIDOXzibCuI0yIXehBYCBOT7mEFFVSLpK/UjZA3Ks9OTcqHeBVTs7GA2CMIp
+         WpixdHfoXrffJGdp7TbGetNeKPrJ283Q6nr5nYCiXJcoc9K8jL6JYdpMFymXwTjB/xaF
+         0jcqPsyLx2ZR+bSKhv/HqHxVXMjR0cT9FQExh9NvbHIXYYTk029bwVvgM1UiTmEQ1wWZ
+         7t3hM+0pljnLxoUFEkU4CJaShOBBL/2oj9B0O9lP1vDezlP0UhWEnnbf1srlgxDXJdwY
+         aPwA==
+X-Gm-Message-State: AOJu0YyBpxnk/xAZYd4W3ZRo4EBUywOCwgoO/IpTbjmV5SWTXOmTOTv+
+	ZttSrTJ6nXtkx4X7/du/OJRV8t4pBssltOtpnLYE/eeH67j6
+X-Google-Smtp-Source: AGHT+IH4paAtnH1GJFNpGmWxNyqSDgEl+vpHoOr+kybnQ1rSsj6CcqUHkvD2v8RpwUFwLc1rO0kDVuvGqOYmC9+eM+6+83UNe4yt
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180d:b0:35f:9ada:73a8 with SMTP id
- a13-20020a056e02180d00b0035f9ada73a8mr551115ilv.2.1705227256582; Sun, 14 Jan
- 2024 02:14:16 -0800 (PST)
-Date: Sun, 14 Jan 2024 02:14:16 -0800
+X-Received: by 2002:a05:6e02:1b85:b0:35f:f01e:bb1d with SMTP id
+ h5-20020a056e021b8500b0035ff01ebb1dmr548548ili.5.1705227320751; Sun, 14 Jan
+ 2024 02:15:20 -0800 (PST)
+Date: Sun, 14 Jan 2024 02:15:20 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e3d83a060ee5285a@google.com>
-Subject: [syzbot] [nfs?] KMSAN: kernel-infoleak in sys_name_to_handle_at (4)
-From: syzbot <syzbot+09b349b3066c2e0b1e96@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, brauner@kernel.org, chuck.lever@oracle.com, 
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000b6ffa9060ee52c74@google.com>
+Subject: [syzbot] [btrfs?] KMSAN: uninit-value in bcmp (2)
+From: syzbot <syzbot+3ce5dea5b1539ff36769@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    861deac3b092 Linux 6.7-rc7
+HEAD commit:    610a9b8f49fb Linux 6.7-rc8
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=155d9131e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e0c7078a6b901aa3
-dashboard link: https://syzkaller.appspot.com/bug?extid=09b349b3066c2e0b1e96
+console output: https://syzkaller.appspot.com/x/log.txt?x=110b4555e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e51fe20c3e51ba7f
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ce5dea5b1539ff36769
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cefdc9e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164fe7e9e80000
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0ea60ee8ed32/disk-861deac3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6d69fdc33021/vmlinux-861deac3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0158750d452/bzImage-861deac3.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/bb450f076a10/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/daced691c987/disk-610a9b8f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5e37367a7d1e/vmlinux-610a9b8f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/013b65c960ab/bzImage-610a9b8f.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+09b349b3066c2e0b1e96@syzkaller.appspotmail.com
+Reported-by: syzbot+3ce5dea5b1539ff36769@syzkaller.appspotmail.com
 
-         option from the mount to silence this warning.
-=======================================================
 =====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x100 lib/usercopy.c:40
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- _copy_to_user+0xbc/0x100 lib/usercopy.c:40
- copy_to_user include/linux/uaccess.h:191 [inline]
- do_sys_name_to_handle fs/fhandle.c:73 [inline]
- __do_sys_name_to_handle_at fs/fhandle.c:112 [inline]
- __se_sys_name_to_handle_at+0x949/0xb10 fs/fhandle.c:94
- __x64_sys_name_to_handle_at+0xe4/0x140 fs/fhandle.c:94
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+BUG: KMSAN: uninit-value in memcmp lib/string.c:681 [inline]
+BUG: KMSAN: uninit-value in bcmp+0xc3/0x1c0 lib/string.c:713
+ memcmp lib/string.c:681 [inline]
+ bcmp+0xc3/0x1c0 lib/string.c:713
+ sample_repeated_patterns fs/btrfs/compression.c:1298 [inline]
+ btrfs_compress_heuristic+0x926/0x31f0 fs/btrfs/compression.c:1380
+ inode_need_compress fs/btrfs/inode.c:804 [inline]
+ btrfs_run_delalloc_range+0x156c/0x16c0 fs/btrfs/inode.c:2272
+ writepage_delalloc+0x244/0x6b0 fs/btrfs/extent_io.c:1189
+ __extent_writepage fs/btrfs/extent_io.c:1440 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2108 [inline]
+ extent_writepages+0x1d22/0x3f20 fs/btrfs/extent_io.c:2230
+ btrfs_writepages+0x35/0x40 fs/btrfs/inode.c:7836
+ do_writepages+0x426/0x870 mm/page-writeback.c:2553
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:387
+ start_delalloc_inodes+0x91d/0x1560 fs/btrfs/inode.c:9284
+ btrfs_start_delalloc_roots+0x874/0xe80 fs/btrfs/inode.c:9361
+ shrink_delalloc fs/btrfs/space-info.c:649 [inline]
+ flush_space+0xbd4/0x16c0 fs/btrfs/space-info.c:759
+ btrfs_async_reclaim_metadata_space+0x76d/0x9c0 fs/btrfs/space-info.c:1089
+ process_one_work kernel/workqueue.c:2627 [inline]
+ process_scheduled_works+0x104e/0x1e70 kernel/workqueue.c:2700
+ worker_thread+0xf45/0x1490 kernel/workqueue.c:2781
+ kthread+0x3ed/0x540 kernel/kthread.c:388
+ ret_from_fork+0x66/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+
+Uninit was stored to memory at:
+ heuristic_collect_sample fs/btrfs/compression.c:1338 [inline]
+ btrfs_compress_heuristic+0x303/0x31f0 fs/btrfs/compression.c:1378
+ inode_need_compress fs/btrfs/inode.c:804 [inline]
+ btrfs_run_delalloc_range+0x156c/0x16c0 fs/btrfs/inode.c:2272
+ writepage_delalloc+0x244/0x6b0 fs/btrfs/extent_io.c:1189
+ __extent_writepage fs/btrfs/extent_io.c:1440 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2108 [inline]
+ extent_writepages+0x1d22/0x3f20 fs/btrfs/extent_io.c:2230
+ btrfs_writepages+0x35/0x40 fs/btrfs/inode.c:7836
+ do_writepages+0x426/0x870 mm/page-writeback.c:2553
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:387
+ start_delalloc_inodes+0x91d/0x1560 fs/btrfs/inode.c:9284
+ btrfs_start_delalloc_roots+0x874/0xe80 fs/btrfs/inode.c:9361
+ shrink_delalloc fs/btrfs/space-info.c:649 [inline]
+ flush_space+0xbd4/0x16c0 fs/btrfs/space-info.c:759
+ btrfs_async_reclaim_metadata_space+0x76d/0x9c0 fs/btrfs/space-info.c:1089
+ process_one_work kernel/workqueue.c:2627 [inline]
+ process_scheduled_works+0x104e/0x1e70 kernel/workqueue.c:2700
+ worker_thread+0xf45/0x1490 kernel/workqueue.c:2781
+ kthread+0x3ed/0x540 kernel/kthread.c:388
+ ret_from_fork+0x66/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
 
 Uninit was created at:
- slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
- slab_alloc_node mm/slub.c:3478 [inline]
- __kmem_cache_alloc_node+0x5c9/0x970 mm/slub.c:3517
- __do_kmalloc_node mm/slab_common.c:1006 [inline]
- __kmalloc+0x121/0x3c0 mm/slab_common.c:1020
- kmalloc include/linux/slab.h:604 [inline]
- do_sys_name_to_handle fs/fhandle.c:39 [inline]
- __do_sys_name_to_handle_at fs/fhandle.c:112 [inline]
- __se_sys_name_to_handle_at+0x441/0xb10 fs/fhandle.c:94
- __x64_sys_name_to_handle_at+0xe4/0x140 fs/fhandle.c:94
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x44/0x110 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
+ __alloc_pages+0x9a4/0xe00 mm/page_alloc.c:4591
+ alloc_pages_mpol+0x62b/0x9d0 mm/mempolicy.c:2133
+ alloc_pages mm/mempolicy.c:2204 [inline]
+ folio_alloc+0x1da/0x380 mm/mempolicy.c:2211
+ filemap_alloc_folio+0xa5/0x430 mm/filemap.c:974
+ __filemap_get_folio+0xa5a/0x1760 mm/filemap.c:1918
+ pagecache_get_page+0x4a/0x1a0 mm/folio-compat.c:99
+ prepare_pages+0x1f2/0x1050 fs/btrfs/file.c:922
+ btrfs_buffered_write+0xe48/0x2be0 fs/btrfs/file.c:1316
+ btrfs_do_write_iter+0x370/0x2300 fs/btrfs/file.c:1687
+ btrfs_file_write_iter+0x38/0x40 fs/btrfs/file.c:1704
+ __kernel_write_iter+0x329/0x930 fs/read_write.c:517
+ dump_emit_page fs/coredump.c:888 [inline]
+ dump_user_range+0x593/0xcd0 fs/coredump.c:915
+ elf_core_dump+0x59e8/0x5c60 fs/binfmt_elf.c:2077
+ do_coredump+0x32c9/0x4920 fs/coredump.c:764
+ get_signal+0x2185/0x2d10 kernel/signal.c:2890
+ arch_do_signal_or_restart+0x53/0xca0 arch/x86/kernel/signal.c:309
+ exit_to_user_mode_loop+0xe8/0x320 kernel/entry/common.c:168
+ exit_to_user_mode_prepare+0x163/0x220 kernel/entry/common.c:204
+ irqentry_exit_to_user_mode+0xd/0x30 kernel/entry/common.c:309
+ irqentry_exit+0x16/0x40 kernel/entry/common.c:412
+ exc_page_fault+0x246/0x6f0 arch/x86/mm/fault.c:1564
+ asm_exc_page_fault+0x2b/0x30 arch/x86/include/asm/idtentry.h:570
 
-Bytes 18-19 of 20 are uninitialized
-Memory access of size 20 starts at ffff888128a46380
-Data copied to user address 0000000020000240
-
-CPU: 0 PID: 5006 Comm: syz-executor975 Not tainted 6.7.0-rc7-syzkaller #0
+CPU: 1 PID: 56 Comm: kworker/u4:4 Not tainted 6.7.0-rc8-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+Workqueue: events_unbound btrfs_async_reclaim_metadata_space
 =====================================================
 
 
@@ -129,10 +172,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
