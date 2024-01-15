@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-7987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808E882E01C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:39:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92AB82E01F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1396B285DCB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:39:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2518BB217FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF318EA0;
-	Mon, 15 Jan 2024 18:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2167B18ECA;
+	Mon, 15 Jan 2024 18:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p74byPgz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="racXoa4T"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FB918E1D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262BF18E34
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 18:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbe9c7932b3so13992979276.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 10:38:43 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc221ed88d9so12655276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 10:38:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705343923; x=1705948723; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1705343925; x=1705948725; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oLlMsVPwk9YFRfJ1xkZa3gURgHKOqqqaOLfJjGTa1Bw=;
-        b=p74byPgz+dtfmyc2Mci897DKkR+m9CFVuXWEUMpI/9zbFHW+i3VJk1TmMonhR67NQP
-         EA3jqiVrcAUnodwE/e/sqHUNWr+8WZsjqqeZOfBLV9leh4Aoh5Vp65L5mRtPZkCnd2Vr
-         qQ/pRb9jy+L2tq5pwDaluDl4vsiGbEENgKDSH4n7nb4mOwgFnXU94kqMCKxOz1rZTqcI
-         X6FhfuCQtAGWTby0uPZuFGwf89jUk45W7ycUVKanPQPlKF94By7TIN3VUaNqk6i02VRa
-         M/kILqSzbLDbqWYkd//QJ+WFzzQzGuwqpoCQDaN/OtlvO3FaTf6sRR+8yRceHP4tEAH/
-         FWOQ==
+        bh=ch6T6Lsnf4fqmqV9A6xFsxD4eG+jCeNRaJgu+LlgQig=;
+        b=racXoa4TnsLPy0OFLS+xzftOB6e28+Lm+G2K0Tue45QfDYhuBJN8zPqvCSUGQLIRGB
+         Ex7Z6px6V8c6e9Z+zu1ZevP638iygpxyIbCeKxw+/zA1/m3DWs3ASyzMRqrxxKdRy5d2
+         wDUSFiLSWkykFnGsS1vGxi/zl/FfuDuWQ9fqAKrxd/AzlFxQhDZmsmgQtFs+EA3fu0AC
+         UhGvm4g0XgBnaKtwq1QV/3UFtrDZHaafByjh3e66qJ3jjE7xnQcwWxNoEKsCr8pl5Mbz
+         boLb+9tYXQq2eQtoiY8sAg8FH99i29PfnKLuRpSLH30hqUjWZm6ROwwLw6d7ZAfmClIa
+         zW0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705343923; x=1705948723;
+        d=1e100.net; s=20230601; t=1705343925; x=1705948725;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oLlMsVPwk9YFRfJ1xkZa3gURgHKOqqqaOLfJjGTa1Bw=;
-        b=JnMu5Z+gPLXbEogwlV9M6g6OipUEeo0LGWpVko/kcbbkH1vgIMXtrn2h4lLsmOEIka
-         LGluSrckIkt6jqGeRdvASgHiGo+ZPVCRHF/buUv/1waHJYNC7RSjIojvZICzWfvYm3CZ
-         wbc6AVYIxKM8Q+i3Yi4hWGnrZRTNn1VysDn1mofNJJ7qAKoJwl4eCXj4m2lLaovHNKZO
-         clvK0BFoEfBAd/Ed5K0kvftqJ/GjA2wXAuE8kq6vgQneaMm7zUl3ksNvX+R4a/DZFkJ1
-         3LeeYHkVhOOvqQSCNKAiGy8kipH42PvCs1Vp4QmHLRytcDrRC+3cDWan6Cful/KyA8it
-         WF2A==
-X-Gm-Message-State: AOJu0YxjIGk/XsK6tliCfhU8hoHMn5oqY7VTL9hjQ66vq3ZQGiE0ZGHr
-	dkobwQlmYMBubXyKe6SUOYdR8GAVcR4mYSRoWw==
-X-Google-Smtp-Source: AGHT+IETYM+vP+GcA1bz5ffGAn7xpFLG8rQcpZyAKLVas4y2HqU4DVH4yHlOoP/EqERN0tEXwr857q4NqX0=
+        bh=ch6T6Lsnf4fqmqV9A6xFsxD4eG+jCeNRaJgu+LlgQig=;
+        b=ghxee/i5FSPwJH3cqkqwLP3ptURhw3uR8XoctSz80kzt5BCietVzhHAqEf6k/QnEci
+         NsP+0wMS8+Vaesz3elrsVynnZuz7crgl0zBdFwLWVU9UCmOlvSGpDZqV82JBiMK9BxgI
+         U4WE6a6DTjsrai48ACFE6GztQKm8TziujQ6M/ofQ49veejF95CAJJU6ouJgoQBtB1VFa
+         4YOK/8gjkoOE8zTIFr4QMsvLVaYQOs38wTIzELvDg3ICF9coZaB5SALV6BecJvjy+o57
+         zboL4EgF0mfJwHjiylqUw62Ng1ZFTd85iMEQw7LVUuacSdkq+JxLFy6LusbnaUAiVlrz
+         XpeQ==
+X-Gm-Message-State: AOJu0YxDiclgRx+jDAKl6wwC0S0t8ubR9WNU1cqzi2YWv8HMwivucsqi
+	7xfXid8zO+9dyfjQmALoaEo1b3afEDUaKqNWtw==
+X-Google-Smtp-Source: AGHT+IGN2VvUUxNx3HDpn+LUP1maSJ793VbScOs1XRHuqJsGhFfM1RNtInfsiW1wKVri/L8s95oaaZe3g/g=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3af2:e48e:2785:270])
- (user=surenb job=sendgmr) by 2002:a25:a292:0:b0:dc1:f71f:a0ad with SMTP id
- c18-20020a25a292000000b00dc1f71fa0admr1244231ybi.13.1705343922947; Mon, 15
- Jan 2024 10:38:42 -0800 (PST)
-Date: Mon, 15 Jan 2024 10:38:34 -0800
+ (user=surenb job=sendgmr) by 2002:a05:6902:1364:b0:dbd:7149:a389 with SMTP id
+ bt4-20020a056902136400b00dbd7149a389mr269675ybb.11.1705343925137; Mon, 15 Jan
+ 2024 10:38:45 -0800 (PST)
+Date: Mon, 15 Jan 2024 10:38:35 -0800
 In-Reply-To: <20240115183837.205694-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -63,8 +63,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240115183837.205694-1-surenb@google.com>
 X-Mailer: git-send-email 2.43.0.381.gb435a96ce8-goog
-Message-ID: <20240115183837.205694-2-surenb@google.com>
-Subject: [RFC 1/3] mm: make vm_area_struct anon_name field RCU-safe
+Message-ID: <20240115183837.205694-3-surenb@google.com>
+Subject: [RFC 2/3] seq_file: add validate() operation to seq_operations
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
@@ -82,140 +82,90 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
 	surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-For lockless /proc/pid/maps reading we have to ensure all the fields
-used when generating the output are RCU-safe. The only pointer fields
-in vm_area_struct which are used to generate that file's output are
-vm_file and anon_name. vm_file is RCU-safe but anon_name is not. Make
-anon_name RCU-safe as well.
+seq_file outputs data in chunks using seq_file.buf as the intermediate
+storage before outputting the generated data for the current chunk. It is
+possible for already buffered data to become stale before it gets reported.
+In certain situations it is desirable to regenerate that data instead of
+reporting the stale one. Provide a validate() operation called before
+outputting the buffered data to allow users to validate buffered data.
+To indicate valid data, user's validate callback should return 0, to
+request regeneration of the stale data it should return -EAGAIN, any
+other error will be considered fatal and read operation will be aborted.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- include/linux/mm_inline.h | 10 +++++++++-
- include/linux/mm_types.h  |  3 ++-
- mm/madvise.c              | 30 ++++++++++++++++++++++++++----
- 3 files changed, 37 insertions(+), 6 deletions(-)
+ fs/seq_file.c            | 24 +++++++++++++++++++++++-
+ include/linux/seq_file.h |  1 +
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index f4fe593c1400..bbdb0ca857f1 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -389,7 +389,7 @@ static inline void dup_anon_vma_name(struct vm_area_struct *orig_vma,
- 	struct anon_vma_name *anon_name = anon_vma_name(orig_vma);
- 
- 	if (anon_name)
--		new_vma->anon_name = anon_vma_name_reuse(anon_name);
-+		rcu_assign_pointer(new_vma->anon_name, anon_vma_name_reuse(anon_name));
- }
- 
- static inline void free_anon_vma_name(struct vm_area_struct *vma)
-@@ -411,6 +411,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
- 		!strcmp(anon_name1->name, anon_name2->name);
- }
- 
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma);
-+
- #else /* CONFIG_ANON_VMA_NAME */
- static inline void anon_vma_name_get(struct anon_vma_name *anon_name) {}
- static inline void anon_vma_name_put(struct anon_vma_name *anon_name) {}
-@@ -424,6 +426,12 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
- 	return true;
- }
- 
-+static inline
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
-+{
-+	return NULL;
-+}
-+
- #endif  /* CONFIG_ANON_VMA_NAME */
- 
- static inline void init_tlb_flush_pending(struct mm_struct *mm)
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index b2d3a88a34d1..1f0a30c00795 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -545,6 +545,7 @@ struct vm_userfaultfd_ctx {};
- 
- struct anon_vma_name {
- 	struct kref kref;
-+	struct rcu_head rcu;
- 	/* The name needs to be at the end because it is dynamically sized. */
- 	char name[];
- };
-@@ -699,7 +700,7 @@ struct vm_area_struct {
- 	 * terminated string containing the name given to the vma, or NULL if
- 	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
- 	 */
--	struct anon_vma_name *anon_name;
-+	struct anon_vma_name __rcu *anon_name;
- #endif
- #ifdef CONFIG_SWAP
- 	atomic_long_t swap_readahead_info;
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 912155a94ed5..0f222d464254 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -88,14 +88,15 @@ void anon_vma_name_free(struct kref *kref)
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index f5fdaf3b1572..77833bbe5909 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -172,6 +172,8 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
  {
- 	struct anon_vma_name *anon_name =
- 			container_of(kref, struct anon_vma_name, kref);
--	kfree(anon_name);
-+	kfree_rcu(anon_name, rcu);
- }
- 
- struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
- {
- 	mmap_assert_locked(vma->vm_mm);
- 
--	return vma->anon_name;
-+	return rcu_dereference_protected(vma->anon_name,
-+		rwsem_is_locked(&vma->vm_mm->mmap_lock));
- }
- 
- /* mmap_lock should be write-locked */
-@@ -105,7 +106,7 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- 	struct anon_vma_name *orig_name = anon_vma_name(vma);
- 
- 	if (!anon_name) {
--		vma->anon_name = NULL;
-+		rcu_assign_pointer(vma->anon_name, NULL);
- 		anon_vma_name_put(orig_name);
- 		return 0;
+ 	struct seq_file *m = iocb->ki_filp->private_data;
+ 	size_t copied = 0;
++	loff_t orig_index;
++	size_t orig_count;
+ 	size_t n;
+ 	void *p;
+ 	int err = 0;
+@@ -220,6 +222,10 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		if (m->count)	// hadn't managed to copy everything
+ 			goto Done;
  	}
-@@ -113,11 +114,32 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- 	if (anon_vma_name_eq(orig_name, anon_name))
- 		return 0;
++
++	orig_index = m->index;
++	orig_count = m->count;
++Again:
+ 	// get a non-empty record in the buffer
+ 	m->from = 0;
+ 	p = m->op->start(m, &m->index);
+@@ -278,6 +284,22 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		}
+ 	}
+ 	m->op->stop(m, p);
++	/* Note: we validate even if err<0 to prevent publishing copied data */
++	if (m->op->validate) {
++		int val_err = m->op->validate(m, p);
++
++		if (val_err) {
++			if (val_err == -EAGAIN) {
++				m->index = orig_index;
++				m->count = orig_count;
++				// data is stale, retry
++				goto Again;
++			}
++			// data is invalid, return the last error
++			err = val_err;
++			goto Done;
++		}
++	}
+ 	n = copy_to_iter(m->buf, m->count, iter);
+ 	copied += n;
+ 	m->count -= n;
+@@ -572,7 +594,7 @@ static void single_stop(struct seq_file *p, void *v)
+ int single_open(struct file *file, int (*show)(struct seq_file *, void *),
+ 		void *data)
+ {
+-	struct seq_operations *op = kmalloc(sizeof(*op), GFP_KERNEL_ACCOUNT);
++	struct seq_operations *op = kzalloc(sizeof(*op), GFP_KERNEL_ACCOUNT);
+ 	int res = -ENOMEM;
  
--	vma->anon_name = anon_vma_name_reuse(anon_name);
-+	rcu_assign_pointer(vma->anon_name, anon_vma_name_reuse(anon_name));
- 	anon_vma_name_put(orig_name);
+ 	if (op) {
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index 234bcdb1fba4..d0fefac2990f 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -34,6 +34,7 @@ struct seq_operations {
+ 	void (*stop) (struct seq_file *m, void *v);
+ 	void * (*next) (struct seq_file *m, void *v, loff_t *pos);
+ 	int (*show) (struct seq_file *m, void *v);
++	int (*validate)(struct seq_file *m, void *v);
+ };
  
- 	return 0;
- }
-+
-+/*
-+ * Returned anon_vma_name is stable due to elevated refcount but not guaranteed
-+ * to be assigned to the original VMA after the call.
-+ */
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
-+{
-+	struct anon_vma_name __rcu *anon_name;
-+
-+	WARN_ON_ONCE(!rcu_read_lock_held());
-+
-+	anon_name = rcu_dereference(vma->anon_name);
-+	if (!anon_name)
-+		return NULL;
-+
-+	if (unlikely(!kref_get_unless_zero(&anon_name->kref)))
-+		return NULL;
-+
-+	return anon_name;
-+}
-+
- #else /* CONFIG_ANON_VMA_NAME */
- static int replace_anon_vma_name(struct vm_area_struct *vma,
- 				 struct anon_vma_name *anon_name)
+ #define SEQ_SKIP 1
 -- 
 2.43.0.381.gb435a96ce8-goog
 
